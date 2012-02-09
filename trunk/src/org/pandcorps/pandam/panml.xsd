@@ -1,0 +1,122 @@
+<xs:schema
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:pan="pandcorps.org/pandam"
+	targetNamespace="pandcorps.org/pandam" elementFormDefault="qualified">
+	<xs:complexType name="Game">
+		<xs:sequence>
+			<xs:element type="pan:Images" name="Images"/>
+			<xs:element type="pan:Frames" name="Frames" minOccurs="0"/>
+			<xs:element type="pan:Animations" name="Animations" minOccurs="0"/>
+			<xs:element type="pan:Types" name="Types"/>
+			<xs:element type="pan:Rooms" name="Rooms"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Entity">
+		<xs:sequence>
+			<xs:element type="xs:string" name="Id"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Images">
+		<xs:sequence>
+			<xs:element type="pan:Image" name="Image" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Image">
+		<xs:complexContent>
+			<xs:extension base="pan:Entity">
+				<xs:sequence>
+					<xs:element type="xs:string" name="Location"/>
+					<xs:element type="pan:Tuple" name="Origin" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Frames">
+		<xs:sequence>
+			<xs:element type="pan:Frame" name="Frame" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Frame">
+		<xs:complexContent>
+			<xs:extension base="pan:Entity">
+				<xs:sequence>
+					<xs:element type="xs:string" name="ImageId"/>
+					<xs:element type="xs:int" name="Duration"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Animations">
+		<xs:sequence>
+			<xs:element type="pan:Animation" name="Animation" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Animation">
+		<xs:complexContent>
+			<xs:extension base="pan:Entity">
+				<xs:sequence>
+					<xs:element type="pan:FrameIds" name="FrameIds"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="FrameIds">
+		<xs:sequence>
+			<xs:element type="xs:string" name="FrameId" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Types">
+		<xs:sequence>
+			<xs:element type="pan:Type" name="Type" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Type">
+		<xs:complexContent>
+			<xs:extension base="pan:Entity">
+				<xs:sequence>
+					<xs:element type="xs:string" name="ActorClass"/>
+					<xs:element type="xs:string" name="AnimationId"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Rooms">
+		<xs:sequence>
+			<xs:element type="pan:Room" name="Room" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Room">
+		<xs:complexContent>
+			<xs:extension base="pan:Entity">
+				<xs:sequence>
+					<xs:element type="pan:Tuple" name="Size"/>
+					<xs:element type="pan:Actors" name="Actors"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Actors">
+		<xs:sequence>
+			<xs:element type="pan:Actor" name="Actor" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Actor">
+		<xs:complexContent>
+			<xs:extension base="pan:Entity">
+				<xs:sequence>
+					<xs:element type="xs:string" name="TypeId"/>
+					<xs:element type="pan:Tuple" name="Position"/>
+					<xs:element type="xs:boolean" name="Visible"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Tuple">
+		<xs:sequence>
+			<xs:element type="xs:float" name="X"/>
+			<xs:element type="xs:float" name="Y"/>
+			<xs:element type="xs:float" name="Z"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element type="pan:Game" name="Game"/>
+</xs:schema>
