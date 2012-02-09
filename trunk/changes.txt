@@ -1,0 +1,222 @@
+b-0001
+
+LwjglPanmage
+Replaced ByteBuffer.wrap with ByteBuffer.allocateDirect
+
+Added pandax.tile
+
+Added getImage/etc. to Pangine
+
+Added active to Panput, Pangine, and LwjglPangine
+
+PanmlGame firstRoom assigned immediately so that actors being added can access it
+Don't yet know how multiple rooms will be handled
+
+Panroom/Pangine add/remove actor is now deferred
+
+PanmlGame/panml.xsd/Pangine/LwjglPangine/UnitPangine image.origin parsing
+
+LwjglPanmage/LwjglPangine rendering optimizations
+
+FloatChain
+
+*****
+
+b-0002
+
+Added Panlayer
+Modified Pangine, LwjglPangine, Panmage, LwjglPanmage, Panderer, LwjglPanplementation, Panroom, Panctor, Pantext, TileMap, UnitPanmage, UnitPangine, and RenderActor to support layers
+
+Modified Pangine, LwjglPangine, and LwjglPanmage to support image sheet cutting
+
+Added TileMap.getWidth/Height
+
+Added Mathtil.rand(array)
+
+*****
+
+b-0003
+
+Modified Pangine, LwjglPangine to support zooming
+
+Added Panlayer.getBase/Top, detach, destroy
+
+Added Pangine.createLayer
+
+Added Pantext.message
+
+Added letters to Font8.png
+
+Modified Pangine, Panteraction, and Panput to support temporary inactivation of inputs
+
+Added Pangine.getActor
+
+Added Panteraction.unregister
+
+Added UnmodPanple, modified LwjglPanmage and FinPanple to use it
+
+Added HashMultimap, SequenceIterable
+
+Added Coltil.unnull(Iterable)
+
+Modified ActionStartEvent to contain the triggering Panput
+
+Deprecated Panction to a txt file
+
+*****
+
+b-0004
+
+Added characters to Font8.png
+
+Added borders to Pantext
+
+Added titles to Pantext
+
+Modified LwjglPangine to support zooming without tracking
+
+Modified LwjglPangine to confine to room boundaries when tracking
+
+Added setDisplaySize/getDisplayWidth/getDisplayHeight to Pangine/LwjglPangine
+
+Added getGameWidth/getGameHeight to Pangine
+
+Added to TextItem
+
+Added Coltil.get
+
+Added Chartil
+
+Added empty Imtil
+
+*****
+
+b-0005
+
+Added Imtil.load; modified LwjglPanmage to use it
+
+Added Pangine/LwjglPangine/UnitPangine.newImage(Image), LwjglPanmage.getTexture(Image)
+
+Added fight package to game folder
+
+Added Pancolor
+
+Added Pangine/LwjglPangine/UnitPangine.setBgColor
+
+Added Panctor/Panplementation.changeView
+
+Added Panplementation.initAnim
+
+Added mirroring to Panmage/LwjglPanmage/Panplementation/LwjglPanplementation/Panctor
+
+*****
+
+b-0006
+
+Added MapSet, IdentityHashSet
+
+Added flipping to Panmage/LwjglPanmage/Panplementation/LwjglPanplementation/Panctor
+
+Added mirroring/flipping to Panframe/ImplPanframe
+
+Modified Panplementation/LwjglPanplementation/Pangine to support Panframe mirroring/flipping
+
+Added Imtil.toTransparent
+
+Changed visibility of Panplementation.currFrame/Dur, added Panctor.getCurrentFrame/Dur
+
+Added Pangine.getClock
+
+Added Any/AllOobEvent/Listener
+
+Modified Pangine to support other OobEvents
+
+Added Panctor/SpecPanctor.getBoundingMin/Maximum
+
+Modified Pangine.isCollision to use Panctor.getBoundingMin/Maximum (now uses Pansplay.origin)
+
+*****
+
+b-0007
+
+Added rotating to Panmage/LwjglPanmage/Panplementation/LwjglPanplementation/Panctor/Panframe/ImplPanframe/Pangine
+
+*****
+
+b-0008
+
+Added Imtil.recolor
+
+Added Pangame.step, modified Pangine to call it
+
+Added Pangame.initBeforeEngine
+
+Added Imtil.getArithmeticMeanColor
+
+Added Pancolor short[] constructor
+
+Moved Pancolor.toFloat to Imtil
+
+Added Panple.add method with min/max parameters
+
+Added StackReader
+
+Added core.seg package
+
+Added Coltil.getOnly/unmodifiableList/set/add/toArray
+
+Added Iotil.getBufferedReader
+
+Added Impl/FinPanple.getImpl/FinPanple(Segment/Field)
+
+Added Mathtil.byte/int/floatValue, toByte/Integer/Float
+
+Added Pantil.booleanValue, toBoolean
+
+Added Chartil.isValued/Empty, startsWith/equalsIgnoreCase
+
+Fixed a NullPointerException in Panplementation
+
+*****
+
+b-0009
+
+Added EmptyPanmage, Pangine.createEmptyPanmage
+
+Modified Panctor boundaries to support mirror and ignore origin
+
+Added Panple.toString
+
+Fixed Chartil.equalsIgnoreCase
+
+*****
+
+b-0010
+
+Added origin override to Panframe/ImplPanframe/Pangine/Panmage/Panplementation/LwjglPanplementation
+
+Added boundaries to Panframe/ImplPanframe/Pangine/Panctor
+
+Added FinPanple.getFinPanple(Segment, defaults)
+
+Added Panframe/ImplPanframe.getEffectiveOrigin/BoundingMin/Maximum
+
+*****
+
+TODO
+
+ActionEvent, ActionEndEvent need triggering Panput, Panteraction.register/get
+
+Register for only keys instead of all inputs?
+
+Add configuration option for frame rate and enforce it
+
+Some layers are drawn but not updated
+(if the player brings up a menu that covers part of the screen, we might want to pause the base layer)
+Some layers are not even drawn
+(no need to draw base layer if a menu covers the whole screen)
+Some layers are drawn without filling/checking depth buffer
+(a background layer without overlapping tiles doesn't need to compare depths among itself,
+and a foreground layer shouldn't need to clear the background's depth)
+If a layer is not updated, it shouldn't receive events,
+but event handlers don't need to be Panctors or be tied to layers; how to resolve?
