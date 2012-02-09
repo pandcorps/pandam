@@ -1,0 +1,66 @@
+FTR|Kwon
+COM|FTR|name
+COM|Internal id will be type.[name]
+# Lines starting with # will always be skipped in segment files.
+COM|Segment names that should be skipped can be registered in SegmentStream.
+PLS|104^104^104~120^120^120~136^136^136~152^152^152~168^168^168~184^184^184~200^200^200
+PLD|040^040^040~056^056^056~072^072^072~088^088^088~040^040^040~056^056^056~072^072^072
+IMG|still|0|8^1
+COM|IMG|id|index|origin
+COM|Internal id will be type.[name].[id]
+COM|There could be reasons to skip frames of a sheet or to process out of order, so the index is explicit
+COM|Define images apart from their frames; we'll use some in multiple frames
+IMG|quick|1|6^1
+IMG|strong|2|6^1
+IMG|walk1|3|8^1
+IMG|walk2|4|8^1
+IMG|project|5|8^1
+IMG|spin1|6|8^1
+COM|We'll create a recolored copy of this to create a trail
+IMG|spin2|7|8^1
+IMG|spin3|8|8^1
+IMG|hurt|9|9^1
+IMG|projectile|10|8^8
+COM|We'll use this image in a normal frame and a flipped frame
+FRM|still|still|6
+COM|FRM|id|image|duration|rotation|mirror|flip
+FRM|walk1|walk1|6
+FRM|walk2|walk2|6
+FRM|hurt|hurt|6
+COM|This duration doesn't control the duration of the hurt state
+FRM|quick|quick|4
+COM|Attack animations will automatically have a pause frame added
+FRM|strong|strong|8
+FRM|project|project|8
+FRM|projectile|projectile|6|0|false|false|8^3
+FRM|spin1|spin1|8
+FRM|spin2|spin2|4
+FRM|spin3|spin3|8
+ANM|still|still
+COM|ANM|id|frames
+ANM|walk|walk1~still~walk2~still
+ANM|hurt|hurt
+ANM|projectile|projectile|flip
+MVD|quick|1|false
+COM|MVD|id|loop|stopAfterHit
+MVF|quick
+COM|MVF|frame|velocity
+EMT|0^0|spark|hurt||1||true
+COM|EMT|offset|impact|react|velocity|time|animation|linked|color
+MVD|strong|1|false
+MVF|strong
+EMT|0^0|spark|hurt||1||true
+MVD|spec1|1|false
+MVF|project
+EMT|16^0|explosion|burn|4^0||projectile|false
+MVD|spec2|1|false
+COM|MVD.4 indicates source image to use for recoloring the move's trail
+MVF|spin1|0^0
+EMT|0^0|explosion|burn||1||true|projectile
+MVF|spin2|1^0
+MVF|spin3|1^0
+EMT|0^0|explosion|burn||1||true|projectile
+MVF|spin2
+MVF|spin1
+EXT
+COM|EXT.1 indicates blood color
