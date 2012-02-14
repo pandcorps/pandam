@@ -58,8 +58,8 @@ public final class Iotil {
 		if (in != null) {
 			try {
 				in.close();
-			} catch (IOException e) {
-				throw new RuntimeException(e);
+			} catch (final Exception e) {
+				handleCloseException(e);
 			}
 		}
 	}
@@ -68,11 +68,35 @@ public final class Iotil {
 		if (out != null) {
 			try {
 				out.close();
-			} catch (IOException e) {
-				throw new RuntimeException(e);
+			} catch (final Exception e) {
+                handleCloseException(e);
 			}
 		}
 	}
+	
+	public final static void close(final Reader in) {
+        if (in != null) {
+            try {
+                in.close();
+            } catch (final Exception e) {
+                handleCloseException(e);
+            }
+        }
+    }
+    
+    public final static void close(final Writer out) {
+        if (out != null) {
+            try {
+                out.close();
+            } catch (final Exception e) {
+                handleCloseException(e);
+            }
+        }
+    }
+    
+    private final static void handleCloseException(final Exception e) {
+        throw Pantil.toRuntimeException(e); // Sometimes might want to silently ignore
+    }
 	
 	public final static BufferedInputStream getBufferedInputStream(final InputStream in) {
         return in instanceof BufferedInputStream ? (BufferedInputStream) in : new BufferedInputStream(in);
