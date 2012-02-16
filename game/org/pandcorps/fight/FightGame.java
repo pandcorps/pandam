@@ -235,6 +235,7 @@ public class FightGame extends Pangame {
     }
     
     private final static void startFight() throws Exception {
+        room.removeAllActors();
         background = backgrounds.load("org/pandcorps/fight/res/bg/Mountain.txt"); // Grid
         room.addActor(background);
         

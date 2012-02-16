@@ -36,10 +36,10 @@ public class Panlayer extends BasePantity {
     private final IdentityHashMap<Panctor, Object> actors
         = new IdentityHashMap<Panctor, Object>();
     private final Set<Panctor> pactors = Collections.unmodifiableSet(actors.keySet());
-    private ArrayList<Panctor> addedActors = new ArrayList<Panctor>();
-    private ArrayList<Panctor> removedActors = new ArrayList<Panctor>();
-    private ArrayList<Panctor> addedActorsBack = new ArrayList<Panctor>();
-    private ArrayList<Panctor> removedActorsBack = new ArrayList<Panctor>();
+    private IdentityHashSet<Panctor> addedActors = new IdentityHashSet<Panctor>();
+    private IdentityHashSet<Panctor> removedActors = new IdentityHashSet<Panctor>();
+    private IdentityHashSet<Panctor> addedActorsBack = new IdentityHashSet<Panctor>();
+    private IdentityHashSet<Panctor> removedActorsBack = new IdentityHashSet<Panctor>();
     /*package*/ final ArrayList<FinPantry<Object, ArrayList<CollisionListener>>> colliders
         = new ArrayList<FinPantry<Object, ArrayList<CollisionListener>>>();
     /*package*/ final ArrayList<FinPantry<Object, ArrayList<Collidable>>> collidables
@@ -141,13 +141,19 @@ public class Panlayer extends BasePantity {
         removedActors.add(actor);
     }
     
+    public final void removeAllActors() {
+        for (final Panctor actor : pactors) {
+            removeActor(actor);
+        }
+    }
+    
     private final void applyRemoveActor(final Panctor actor) {
         actors.remove(actor);
         removeCol(actor);
     }
     
     /*package*/ final void applyActorChanges() {
-        ArrayList<Panctor> buf;
+        IdentityHashSet<Panctor> buf;
         
         buf = addedActors;
         addedActors = addedActorsBack;
