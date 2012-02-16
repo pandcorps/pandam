@@ -52,7 +52,11 @@ public class FightGame extends Pangame {
     private static Panmage shadowImage = null;
     //private static boolean shadowVisible = true;
     private static byte shadowTimer = 0;
+    private static Panroom room = null;
+    private final static BackgroundLoader backgrounds = new BackgroundLoader();
     private static Background background = null;
+    private final static FighterLoader fighters = new FighterLoader();
+    private static Panmage bamImage1 = null;
     /*package*/ static Panimation bamAnim = null;
     private final static FinPanple explodeOrigin = new FinPanple(8, 8, 0);
     private static BufferedImage[] explodeImgs = null;
@@ -111,20 +115,21 @@ public class FightGame extends Pangame {
         Pangine.getEngine().setDisplaySize(WIN_W, WIN_H);
     }
     
-    @Override
-    protected Panroom getFirstRoom() throws Exception {
+    private final static void initWindow() {
         final Pangine engine = Pangine.getEngine();
-        loadGame();
         engine.setIcon("org/pandcorps/fight/res/misc/MicroMeleeIcon32.png", "org/pandcorps/fight/res/misc/MicroMeleeIcon16.png");
         engine.setBgColor(new Pancolor((short) 63, (short) 255, (short) 191, (short) 255));
         engine.zoom(4);
-        
+    }
+    
+    private final static void loadConstants() {
+        final Pangine engine = Pangine.getEngine();
         final BufferedImage constantsImg = loadImage("org/pandcorps/fight/res/misc/Constants.png");
         final BufferedImage[] constantImgs = Imtil.toStrip(constantsImg, DIM);
         shadowImage = engine.createImage("Shadow", new FinPanple(8, 4, 0), null, null, constantImgs[0]);
-        final Panmage bam1 = engine.createImage("Bam0", new FinPanple(8, 8, 0), null, null, constantImgs[1]);
+        bamImage1 = engine.createImage("Bam0", new FinPanple(8, 8, 0), null, null, constantImgs[1]);
         final Panmage bam2 = engine.createImage("Bam1", new FinPanple(8, 8, 0), null, null, constantImgs[2]);
-        bamAnim = engine.createAnimation("Bam", engine.createFrame("BamF1", bam1, 3), engine.createFrame("BamF2", bam2, 3));
+        bamAnim = engine.createAnimation("Bam", engine.createFrame("BamF1", bamImage1, 3), engine.createFrame("BamF2", bam2, 3));
         explodeImgs = new BufferedImage[] { constantImgs[3], constantImgs[4], constantImgs[5] };
         /*final Panmage explode1 = engine.createImage("Explode0", new FinPanple(8, 8, 0), null, null, constantImgs[3]);
         final Panmage explode2 = engine.createImage("Explode1", new FinPanple(8, 8, 0), null, null, constantImgs[4]);
@@ -142,6 +147,14 @@ public class FightGame extends Pangame {
         burnImgs = Imtil.toStrip(loadImage("org/pandcorps/fight/res/misc/Burn.png"), DIM);
         
         font = engine.createImage("font", "org/pandcorps/res/img/FontOutline8.png");
+    }
+    
+    @Override
+    protected Panroom getFirstRoom() throws Exception {
+        final Pangine engine = Pangine.getEngine();
+        loadGame();
+        initWindow();
+        loadConstants();
         
         /*
         TODO
@@ -206,15 +219,23 @@ public class FightGame extends Pangame {
             Flip/mirror/rotate
             Save to file
         */
-        final Panroom room = engine.createRoom("FightRoom", ROOM_W, ROOM_H, 0);
+        room = engine.createRoom("FightRoom", ROOM_W, ROOM_H, 0);
+        createTypes();
+        startFight();
+        return room;
+    }
+    
+    private final static void createTypes() {
+        final Pangine engine = Pangine.getEngine();
         final Panimation fighterView;
         fighterView = null;
         engine.createType("FighterType", Fighter.class, fighterView);
-        
-        engine.createType("ProjectileType", Projectile.class, bam1);
-        
+        engine.createType("ProjectileType", Projectile.class, bamImage1);
         engine.createType("BackgroundType", Background.class, fighterView);
-        background = loadBackground("org/pandcorps/fight/res/bg/Mountain.txt"); // Grid
+    }
+    
+    private final static void startFight() throws Exception {
+        background = backgrounds.load("org/pandcorps/fight/res/bg/Mountain.txt"); // Grid
         room.addActor(background);
         
         final Fighter fighter, cpu;
@@ -222,8 +243,8 @@ public class FightGame extends Pangame {
         //fighter = new Fighter("FighterActor", room, animStill, walk, moveQuick, moveStrong, moveSpec1, moveSpec2, animHurt, getBloodAnimation(null));
         //final SegmentStream in = openSegmentStream("org/pandcorps/fight/Def.txt");
         //try {
-        fighter = loadFighter(room, "org/pandcorps/fight/res/char/Bourei.txt"); // Kwon, Nate
-        cpu = loadFighter(room, "org/pandcorps/fight/res/char/Clive.txt");
+        fighter = fighters.load("org/pandcorps/fight/res/char/Bourei.txt"); // Kwon, Nate
+        cpu = fighters.load("org/pandcorps/fight/res/char/Clive.txt");
         //} finally {
         //    in.close();
         //}
@@ -245,8 +266,6 @@ public class FightGame extends Pangame {
         new Ai().setFighter(cpu);
         cpu.getPosition().set(centerX + 16, centerY);
         //room.addActor(cpu);
-        
-        return room;
     }
     
     @Override
@@ -313,16 +332,14 @@ public class FightGame extends Pangame {
         }
     }
     
-    private final static Fighter loadFighter(final Panroom room, final String loc) throws IOException {
-        final SegmentStream in = openSegmentStream(loc);
-        try {
-            return loadFighter(room, in);
-        } finally {
-            in.close();
+    private final static class FighterLoader extends Loader<Fighter> {
+        @Override
+        protected final Fighter loadUncached(final SegmentStream in) throws IOException {
+            return loadFighter(in);
         }
     }
     
-    private final static Fighter loadFighter(final Panroom room, final SegmentStream in) throws IOException {
+    private final static Fighter loadFighter(final SegmentStream in) throws IOException {
         final Segment ftr = in.read();
         if (ftr == null) {
             return null;
@@ -656,32 +673,46 @@ public class FightGame extends Pangame {
         return Pangine.getEngine().createFrame(fid, frame.getImage(), dur, rot, mirror, flip, fo, min, max);
     }
     
-    private final static Background loadBackground(final String loc) throws IOException {
-        final SegmentStream in = openSegmentStream(loc);
-        try {
-            return loadBackground(in);
-        } finally {
-            in.close();
+    private abstract static class Loader<T> {
+        private final HashMap<String, T> cache = new HashMap<String, T>();
+        
+        protected final T load(final String loc) throws IOException {
+            T item = cache.get(loc);
+            if (item == null) {
+                final SegmentStream in = openSegmentStream(loc);
+                try {
+                    item = loadUncached(in);
+                    cache.put(loc, item);
+                } finally {
+                    in.close();
+                }
+            }
+            return item;
         }
+        
+        protected abstract T loadUncached(final SegmentStream in) throws IOException;
     }
     
-    private final static Background loadBackground(final SegmentStream in) throws IOException {
-        final Segment bak = in.read();
-        if (bak == null) {
-            return null;
+    private final static class BackgroundLoader extends Loader<Background> {
+        @Override
+        protected final Background loadUncached(final SegmentStream in) throws IOException {
+            final Segment bak = in.read();
+            if (bak == null) {
+                return null;
+            }
+            /*
+            Redundant to have in file name and content?  Same with .java files.
+            Would also be necessary if we want to allow multiple resources to be defined in one file.
+            */
+            final String name = bak.getValue(0);
+            final Pangine engine = Pangine.getEngine();
+            final Panmage bg = engine.createImage("Background." + name, "org/pandcorps/fight/res/bg/" + name + ".png");
+            final float bgMinX = Mathtil.floatValue(bak.getFloat(1), 0);
+            final float bgMinY = Mathtil.floatValue(bak.getFloat(2), 0);
+            final float bgMaxX = Mathtil.floatValue(bak.getFloat(3), 255);
+            final float bgMaxY = Mathtil.floatValue(bak.getFloat(4), 191);
+            return new Background("BackgroundActor", bg, bgMinX, bgMinY, bgMaxX, bgMaxY);
         }
-        /*
-        Redundant to have in file name and content?  Same with .java files.
-        Would also be necessary if we want to allow multiple resources to be defined in one file.
-        */
-        final String name = bak.getValue(0);
-        final Pangine engine = Pangine.getEngine();
-        final Panmage bg = engine.createImage("Background." + name, "org/pandcorps/fight/res/bg/" + name + ".png");
-        final float bgMinX = Mathtil.floatValue(bak.getFloat(1), 0);
-        final float bgMinY = Mathtil.floatValue(bak.getFloat(2), 0);
-        final float bgMaxX = Mathtil.floatValue(bak.getFloat(3), 255);
-        final float bgMaxY = Mathtil.floatValue(bak.getFloat(4), 191);
-        return new Background("BackgroundActor", bg, bgMinX, bgMinY, bgMaxX, bgMaxY);
     }
     
     private final static void loadGame() throws IOException {
