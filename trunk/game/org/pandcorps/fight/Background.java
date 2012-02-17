@@ -25,18 +25,30 @@ package org.pandcorps.fight;
 import org.pandcorps.pandam.*;
 
 public class Background extends Panctor {
-    /*package*/ final float minX;
-    /*package*/ final float minY;
-    /*package*/ final float maxX;
-    /*package*/ final float maxY;
+    /*package*/ final static class BackgroundDefinition {
+        /*package*/ final String name;
+        /*package*/ final Panmage img;
+        /*package*/ final float minX;
+        /*package*/ final float minY;
+        /*package*/ final float maxX;
+        /*package*/ final float maxY;
+        
+        protected BackgroundDefinition(final String name, final Panmage img, final float minX, final float minY, final float maxX, final float maxY) {
+            this.name = name;
+            this.img = img;
+            this.minX = minX;
+            this.minY = minY;
+            this.maxX = maxX;
+            this.maxY = maxY;
+        }
+    }
     
-    protected Background(final String id, final Panmage img, final float minX, final float minY, final float maxX, final float maxY) {
+    /*package*/ final BackgroundDefinition def;
+    
+    protected Background(final String id, final BackgroundDefinition def) {
         super(id);
-        setView(img);
+        setView(def.img);
         getPosition().setZ(Fighter.DEPTH_BG);
-        this.minX = minX;
-        this.minY = minY;
-        this.maxX = maxX;
-        this.maxY = maxY;
+        this.def = def;
     }
 }

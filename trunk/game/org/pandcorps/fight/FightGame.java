@@ -28,6 +28,7 @@ import java.util.*;
 import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
 import org.pandcorps.core.seg.*;
+import org.pandcorps.fight.Background.BackgroundDefinition;
 import org.pandcorps.fight.Fighter.FighterDefinition;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.impl.*;
@@ -237,7 +238,8 @@ public class FightGame extends Pangame {
     
     private final static void startFight() throws Exception {
         room.destroyAllActors();
-        background = backgrounds.load("org/pandcorps/fight/res/bg/Mountain.txt"); // Grid
+        final BackgroundDefinition bdef = backgrounds.load("org/pandcorps/fight/res/bg/Mountain.txt"); // Grid
+        background = new Background("BAK." + bdef.name, bdef);
         room.addActor(background);
         
         final Fighter fighter, cpu;
@@ -255,8 +257,8 @@ public class FightGame extends Pangame {
         final float centerX, centerY;
         //centerX = ROOM_W / 2;
         //centerY = ROOM_H / 2;
-        centerX = (background.minX + background.maxX) / 2;
-        centerY = (background.minY + background.maxY) / 2;
+        centerX = (bdef.minX + bdef.maxX) / 2;
+        centerY = (bdef.minY + bdef.maxY) / 2;
         fighter.getPosition().set(centerX - 16, centerY);
         //room.addActor(fighter);
         
@@ -695,9 +697,9 @@ public class FightGame extends Pangame {
         protected abstract T loadUncached(final SegmentStream in) throws IOException;
     }
     
-    private final static class BackgroundLoader extends Loader<Background> {
+    private final static class BackgroundLoader extends Loader<BackgroundDefinition> {
         @Override
-        protected final Background loadUncached(final SegmentStream in) throws IOException {
+        protected final BackgroundDefinition loadUncached(final SegmentStream in) throws IOException {
             final Segment bak = in.read();
             if (bak == null) {
                 return null;
@@ -713,7 +715,7 @@ public class FightGame extends Pangame {
             final float bgMinY = Mathtil.floatValue(bak.getFloat(2), 0);
             final float bgMaxX = Mathtil.floatValue(bak.getFloat(3), 255);
             final float bgMaxY = Mathtil.floatValue(bak.getFloat(4), 191);
-            return new Background("BackgroundActor", bg, bgMinX, bgMinY, bgMaxX, bgMaxY);
+            return new BackgroundDefinition(name, bg, bgMinX, bgMinY, bgMaxX, bgMaxY);
         }
     }
     

@@ -24,6 +24,7 @@ package org.pandcorps.fight;
 
 import org.pandcorps.core.*;
 import org.pandcorps.core.col.*;
+import org.pandcorps.fight.Background.BackgroundDefinition;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.impl.FinPanple;
@@ -151,7 +152,7 @@ public final class Fighter extends Panctor implements StepListener, CollisionLis
                 changeView(def.still);
                 break;
         }
-        final Background background = FightGame.getBackground();
+        final BackgroundDefinition background = FightGame.getBackground().def;
         pos.add(dx, dy, background.minX, background.minY, background.maxX, background.maxY);
         final float px = pos.getX();
         if (mode == MODE_MOVE && (px < 0 || px > Pangame.getGame().getCurrentRoom().getSize().getX())) {
