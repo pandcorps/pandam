@@ -141,9 +141,15 @@ public class Panlayer extends BasePantity {
         removedActors.add(actor);
     }
     
-    public final void removeAllActors() {
+    /*public final void removeAllActors() { // Would we ever want this?
         for (final Panctor actor : pactors) {
             removeActor(actor);
+        }
+    }*/
+    
+    public final void destroyAllActors() {
+        for (final Panctor actor : pactors) {
+            actor.destroy(); // will call removeActor
         }
     }
     
