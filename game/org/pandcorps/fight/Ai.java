@@ -23,6 +23,7 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.fight;
 
 import org.pandcorps.core.Mathtil;
+import org.pandcorps.fight.Background.BackgroundDefinition;
 import org.pandcorps.pandam.*;
 
 public final class Ai extends Controller {
@@ -123,7 +124,7 @@ public final class Ai extends Controller {
     		}
     	} else if (action == ACTION_RETREAT) {
     		//Change behavior if hit boundary, but hitting x boundary wouldn't need to mean to stop y movement.
-    		final Background bg = FightGame.getBackground();
+    		final BackgroundDefinition bg = FightGame.getBackground().def;
     		if (x <= bg.minX || x >= bg.maxX || y <= bg.minY || y >= bg.maxY) {
     			action = ACTION_STILL;
     		} else {
