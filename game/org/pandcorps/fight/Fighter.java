@@ -48,26 +48,44 @@ public final class Fighter extends Panctor implements StepListener, CollisionLis
     
     private final static float speed = 2;
     
-    private final Panimation still;
-    private final Panimation walk;
-    //private final Panmage quick;
-    private final Move quick;
-    private final Move strong;
-    private final Move spec1;
-    private final Move spec2;
-    //private final Panmage hurt;
-    /*
-    This will likely be one frame.
-    The hurt status won't end when the animation ends.
-    It will just loop.
-    The animation is not intended to show the Fighter reeling further back with each frame.
-    The intent is to allow a Fighter with some intrinsic animation.
-    Like a flashing light, puffs of smoke, fire, etc.
-    */
-    private final Panimation hurt;
-    private final Panimation blood;
-    private final Decoration shadow;
+    public final static class FighterDefinition {
+        private final String name;
+        private final Panimation still;
+        private final Panimation walk;
+        //private final Panmage quick;
+        private final Move quick;
+        private final Move strong;
+        private final Move spec1;
+        private final Move spec2;
+        //private final Panmage hurt;
+        /*
+        This will likely be one frame.
+        The hurt status won't end when the animation ends.
+        It will just loop.
+        The animation is not intended to show the Fighter reeling further back with each frame.
+        The intent is to allow a Fighter with some intrinsic animation.
+        Like a flashing light, puffs of smoke, fire, etc.
+        */
+        private final Panimation hurt;
+        private final Panimation blood;
+        
+        public FighterDefinition(final String name, final Panimation still, final Panimation walk,
+                                 final Move quick, final Move strong, final Move spec1, final Move spec2,
+                                 final Panimation hurt, final Panimation blood) {
+            this.name = name;
+            this.still = still;
+            this.walk = walk;
+            this.quick = quick;
+            this.strong = strong;
+            this.spec1 = spec1;
+            this.spec2 = spec2;
+            this.hurt = hurt;
+            this.blood = blood;
+        }
+    }
     
+    private final FighterDefinition def;
+    private final Decoration shadow;
     private byte mode = MODE_STILL;
     private Panimation reactView = null;
     private Move move = null;
@@ -79,20 +97,11 @@ public final class Fighter extends Panctor implements StepListener, CollisionLis
     private long lastHit = 0;
     private int health = 256;
     
-    public Fighter(final String id, final Panroom room, final Panimation still, final Panimation walk,
-                   final Move quick, final Move strong, final Move spec1, final Move spec2,
-                   final Panimation hurt, final Panimation blood) {
+    public Fighter(final String id, final Panroom room, final FighterDefinition def) {
         super(id);
 
-        this.still = still;
-        setView(still);
-        this.walk = walk;
-        this.quick = quick;
-        this.strong = strong;
-        this.spec1 = spec1;
-        this.spec2 = spec2;
-        this.hurt = hurt;
-        this.blood = blood;
+        this.def = def;
+        setView(def.still);
         shadow = new Decoration(id + ".shadow");
         shadow.setView(FightGame.getShadowImage());
         room.addActor(this);
@@ -121,7 +130,7 @@ public final class Fighter extends Panctor implements StepListener, CollisionLis
                 //final Background background = FightGame.getBackground();
                 //pos.add(dx, dy, background.minX, background.minY, background.maxX, background.maxY);
                 // move can change pos, evaluate below
-                changeView(walk);
+                changeView(def.walk);
                 mode = MODE_STILL;
                 break;
             case MODE_MOVE :
@@ -131,7 +140,7 @@ public final class Fighter extends Panctor implements StepListener, CollisionLis
                 //mode = MODE_STILL;
                 break;
             case MODE_HURT :
-                changeView(hurt);
+                changeView(def.hurt);
                 duringHurt();
                 break;
             case MODE_BURN :
@@ -139,7 +148,7 @@ public final class Fighter extends Panctor implements StepListener, CollisionLis
                 duringHurt();
                 break;
             default :
-                changeView(still);
+                changeView(def.still);
                 break;
         }
         final Background background = FightGame.getBackground();
@@ -175,7 +184,7 @@ public final class Fighter extends Panctor implements StepListener, CollisionLis
                 moveLoop = 0;
             }
         }
-        changeView(still);
+        changeView(def.still);
     }
     
     @Override
@@ -229,7 +238,7 @@ public final class Fighter extends Panctor implements StepListener, CollisionLis
                         impactAnim = emitter.impactView; // Store projectile-specific color of anim in Emitter
                         break;
                     default :
-                        impactAnim = blood; // Store character-specific color of anim in Fighter
+                        impactAnim = def.blood; // Store character-specific color of anim in Fighter
                         break;
                 }
                 final float xo = Mathtil.randf(-6, 6), yo = Mathtil.randf(-6, 6); // random offset for x/y
@@ -273,14 +282,14 @@ public final class Fighter extends Panctor implements StepListener, CollisionLis
 //System.out.println("Attack - hits = " + hits + "; clock = " + Pangine.getEngine().getClock() + "; lastHit = " + lastHit);
             final Move move;
             if (hits < 2) {
-                move = quick;
+                move = def.quick;
             } else {
                 hits = 0;
                 final long clock = Pangine.getEngine().getClock();
                 if (clock - lastHit < THRESHOLD_STRONG) {
-                    move = strong;
+                    move = def.strong;
                 } else {
-                    move = quick;
+                    move = def.quick;
                 }
             }
 //System.out.println("Move = " + (move == quick ? "quick" : "strong"));
@@ -300,7 +309,7 @@ public final class Fighter extends Panctor implements StepListener, CollisionLis
     }
     
     protected final void strong() {
-        startMoveIfCanAttack(strong);
+        startMoveIfCanAttack(def.strong);
     }
     
     private final void move() {
@@ -393,11 +402,11 @@ System.out.println("targ max: " + t.getBoundingMaximum());*/
     //private final void addActor(final Panctor actor, final Panple pos, final
     
     protected final void spec1() {
-        spec(spec1);
+        spec(def.spec1);
     }
     
     protected final void spec2() {
-        spec(spec2);
+        spec(def.spec2);
     }
     
     private final void spec(final Move m) {

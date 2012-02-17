@@ -28,6 +28,7 @@ import java.util.*;
 import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
 import org.pandcorps.core.seg.*;
+import org.pandcorps.fight.Fighter.FighterDefinition;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.impl.*;
 
@@ -244,8 +245,8 @@ public class FightGame extends Pangame {
         //fighter = new Fighter("FighterActor", room, animStill, walk, moveQuick, moveStrong, moveSpec1, moveSpec2, animHurt, getBloodAnimation(null));
         //final SegmentStream in = openSegmentStream("org/pandcorps/fight/Def.txt");
         //try {
-        fighter = fighters.load("org/pandcorps/fight/res/char/Bourei.txt"); // Kwon, Nate
-        cpu = fighters.load("org/pandcorps/fight/res/char/Clive.txt");
+        fighter = new Fighter("FTR.1", room, fighters.load("org/pandcorps/fight/res/char/Bourei.txt")); // Kwon, Nate
+        cpu = new Fighter("FTR.2", room, fighters.load("org/pandcorps/fight/res/char/Clive.txt"));
         //} finally {
         //    in.close();
         //}
@@ -333,14 +334,14 @@ public class FightGame extends Pangame {
         }
     }
     
-    private final static class FighterLoader extends Loader<Fighter> {
+    private final static class FighterLoader extends Loader<FighterDefinition> {
         @Override
-        protected final Fighter loadUncached(final SegmentStream in) throws IOException {
+        protected final FighterDefinition loadUncached(final SegmentStream in) throws IOException {
             return loadFighter(in);
         }
     }
     
-    private final static Fighter loadFighter(final SegmentStream in) throws IOException {
+    private final static FighterDefinition loadFighter(final SegmentStream in) throws IOException {
         final Segment ftr = in.read();
         if (ftr == null) {
             return null;
@@ -573,7 +574,7 @@ public class FightGame extends Pangame {
         final Move spec1 = mvdMap.get("spec1");
         final Move spec2 = mvdMap.get("spec2");
         final Panimation hurt = anmMap.get("hurt");
-        return new Fighter("FTR." + name, room, still, walk, quick, strong, spec1, spec2, hurt, blood);
+        return new FighterDefinition(name, still, walk, quick, strong, spec1, spec2, hurt, blood);
     }
     
     private final static short[] getColor(final HashMap<String, LoadImage> imgMap, final Segment seg, final int i) {
