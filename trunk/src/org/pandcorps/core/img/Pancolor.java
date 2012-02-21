@@ -26,7 +26,10 @@ import org.pandcorps.core.*;
 import org.pandcorps.core.seg.*;
 
 public final class Pancolor {
+    public final static short MIN_VALUE = 0;
 	public final static short MAX_VALUE = 255;
+	public final static Pancolor BLACK = new Pancolor(MIN_VALUE, MIN_VALUE, MIN_VALUE, MAX_VALUE);
+	public final static Pancolor WHITE = new Pancolor(MAX_VALUE, MAX_VALUE, MAX_VALUE, MAX_VALUE);
     private short r;
     private short g;
     private short b;
