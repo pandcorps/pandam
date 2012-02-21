@@ -25,11 +25,11 @@ package org.pandcorps.core.img;
 import org.pandcorps.core.*;
 import org.pandcorps.core.seg.*;
 
-public final class Pancolor {
+public class Pancolor {
     public final static short MIN_VALUE = 0;
 	public final static short MAX_VALUE = 255;
-	public final static Pancolor BLACK = new Pancolor(MIN_VALUE, MIN_VALUE, MIN_VALUE, MAX_VALUE);
-	public final static Pancolor WHITE = new Pancolor(MAX_VALUE, MAX_VALUE, MAX_VALUE, MAX_VALUE);
+	public final static FinPancolor BLACK = new FinPancolor(MIN_VALUE, MIN_VALUE, MIN_VALUE, MAX_VALUE);
+	public final static FinPancolor WHITE = new FinPancolor(MAX_VALUE, MAX_VALUE, MAX_VALUE, MAX_VALUE);
     private short r;
     private short g;
     private short b;
@@ -105,19 +105,19 @@ public final class Pancolor {
     	return Imtil.colorToFloat(getV());
     }
     
-    public final void setR(final short r) {
+    public void setR(final short r) {
         this.r = r;
     }
     
-    public final void setG(final short g) {
+    public void setG(final short g) {
         this.g = g;
     }
     
-    public final void setB(final short b) {
+    public void setB(final short b) {
         this.b = b;
     }
     
-    public final void setA(final short a) {
+    public void setA(final short a) {
         this.a = a;
     }
     
