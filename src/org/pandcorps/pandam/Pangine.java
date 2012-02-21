@@ -291,8 +291,9 @@ public abstract class Pangine {
 			throw new NullPointerException("Id is null");
 		}
 		//if (entities.containsKey(id)) {
-		if (entities.put(id, entity) != null) {
-			throw new Panception("Id " + id + " already registered");
+		final Pantity prev = entities.put(id, entity);
+		if (prev != null) {
+			throw new Panception("Id " + id + " already registered to " + prev);
 		}
 		//entities.put(id, entity);
 	}
