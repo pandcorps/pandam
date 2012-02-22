@@ -47,6 +47,8 @@ public abstract class Pangine {
 	private final static Class<?>[] CLASS_ARRAY_STRING = new Class<?>[] {String.class};
 
 	private final Panderer renderer = new Panderer();
+	
+	private final ArrayList<Object> timers = new ArrayList<Object>();
 
 	/*package*/ final ArrayList<AnimationEndListener> animationEndListeners =
 		new ArrayList<AnimationEndListener>();
@@ -422,6 +424,18 @@ public abstract class Pangine {
 				((StepListener) actor).onStep(stepEvent);
 			}
 		}
+		
+		int timerSize = timers.size();
+		for (int i = 0; i < timerSize; i += 2) {
+		    final TimerEvent timerEvent = (TimerEvent) timers.get(i);
+		    if (timerEvent.getClockEvent() <= clock) {
+		        ((TimerListener) timers.get(i + 1)).onTimer(timerEvent);
+		        timers.remove(i);
+		        timers.remove(i);
+		        i -= 2;
+		        timerSize -= 2;
+		    }
+		}
 
 		final Panple size = room.getSize();
 		final float width = size.getX();
@@ -653,6 +667,11 @@ public abstract class Pangine {
 	
 	public final long getClock() {
 	    return clock;
+	}
+	
+	public final void addTimer(final long duration, final TimerListener listener) {
+	    timers.add(new TimerEvent(clock + duration));
+	    timers.add(listener);
 	}
 	
 	public abstract void setTitle(final String title);
