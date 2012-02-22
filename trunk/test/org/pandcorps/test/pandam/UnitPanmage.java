@@ -43,4 +43,8 @@ public final class UnitPanmage extends Panmage {
 	protected final void render(final Panlayer layer, final float x, final float y, final float z,
 		final float ix, final float iy, final float iw, final float ih, final int rot, final boolean mirror, final boolean flip) {
 	}
+	
+	@Override
+    protected final void close() {
+    }
 }

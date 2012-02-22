@@ -41,4 +41,8 @@ public final class EmptyPanmage extends Panmage {
                                 final float ix, final float iy, final float iw, final float ih,
                                 final int rot, final boolean mirror, final boolean flip) {
     }
+    
+    @Override
+    protected final void close() {
+    }
 }

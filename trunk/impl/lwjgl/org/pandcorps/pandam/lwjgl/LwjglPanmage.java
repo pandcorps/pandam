@@ -507,4 +507,11 @@ public final class LwjglPanmage extends Panmage {
     //    ib.rewind();
     //    return ib;
     //}
+	
+	@Override
+    protected final void close() {
+	    //System.out.println("Closing " + tid + "; isTexture: " + GL11.glIsTexture(tid)); // true
+	    GL11.glDeleteTextures(tid);
+	    //System.out.println("Closed " + tid + "; isTexture: " + GL11.glIsTexture(tid)); // false, and no longer displayed
+    }
 }
