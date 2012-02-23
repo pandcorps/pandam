@@ -31,7 +31,9 @@ import org.pandcorps.core.seg.*;
 import org.pandcorps.fight.Background.BackgroundDefinition;
 import org.pandcorps.fight.Fighter.FighterDefinition;
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.impl.*;
+import org.pandcorps.pandax.text.*;
 
 public class FightGame extends Pangame {
     private final static String PROP_DEBUG = "org.pandcorps.fight.FightGame.debug";
@@ -223,7 +225,8 @@ public class FightGame extends Pangame {
         */
         room = engine.createRoom("FightRoom", ROOM_W, ROOM_H, 0);
         createTypes();
-        startFight();
+        showLogo();
+        //startFight();
         return room;
     }
     
@@ -234,6 +237,31 @@ public class FightGame extends Pangame {
         engine.createType("FighterType", Fighter.class, fighterView);
         engine.createType("ProjectileType", Projectile.class, bamImage1);
         engine.createType("BackgroundType", Background.class, fighterView);
+    }
+    
+    private final static void showLogo() {
+        final Pangine engine = Pangine.getEngine();
+        room.destroyAllActors();
+        engine.setBgColor(Pancolor.WHITE);
+        final Panmage font = engine.createImage("PandcorpsFont", "org/pandcorps/res/img/FontGradient16.png");
+        //new Message(font, "PANDCORPS").init();
+        final Pantext text = new Pantext("PandcorpsLogo", font, "PANDCORPS");
+        text.getPosition().set(48, 88);
+        room.addActor(text);
+        final Panmage icon = engine.createImage("PandcorpsIcon", "org/pandcorps/res/img/PandcorpsIcon16.png");
+        final Panctor img = new Panctor("PandcorpsImage");
+        img.setView(icon);
+        img.getPosition().set(192, 88);
+        room.addActor(img);
+        engine.addTimer(30, new TimerListener() { @Override public final void onTimer(final TimerEvent event) {
+            font.destroy();
+            icon.destroy();
+            try {
+                startFight();
+            } catch (final Exception e) {
+                throw Pantil.toRuntimeException(e);
+            }
+        }} );
     }
     
     private final static void startFight() throws Exception {
