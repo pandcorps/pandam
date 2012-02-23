@@ -43,11 +43,11 @@ public class FightGame extends Pangame {
     ///*package*/ final static float yb = 14;
     /*package*/ final static float yb = 1; // Currently treat bottom left as 0, 0, maybe this needs to be changed
     
-    private final static int WIN_W = 1024;
-    private final static int WIN_H = 768;
+    //private final static int WIN_W = 1024;
+    //private final static int WIN_H = 768;
     private final static int ZOOM = 4;
-    private final static int ROOM_W = WIN_W / ZOOM;
-    private final static int ROOM_H = WIN_H / ZOOM;
+    private final static int ROOM_W = 256;
+    private final static int ROOM_H = 192;
     protected final static int DIM = 16;
     private final static int BOUND_MAX = 2;
     private final static int BOUND_MIN = -BOUND_MAX;
@@ -116,14 +116,13 @@ public class FightGame extends Pangame {
     
     @Override
     public void initBeforeEngine() {
-        Pangine.getEngine().setDisplaySize(WIN_W, WIN_H);
+        Pangine.getEngine().setMaxZoomedDisplaySize(ROOM_W, ROOM_H);
     }
     
     private final static void initWindow() {
         final Pangine engine = Pangine.getEngine();
         engine.setIcon("org/pandcorps/fight/res/misc/MicroMeleeIcon32.png", "org/pandcorps/fight/res/misc/MicroMeleeIcon16.png");
         engine.setBgColor(new Pancolor((short) 63, (short) 255, (short) 191, (short) 255));
-        engine.zoom(4);
     }
     
     private final static void loadConstants() {
@@ -241,7 +240,7 @@ public class FightGame extends Pangame {
     
     private final static void showLogo() {
         final Pangine engine = Pangine.getEngine();
-        room.destroyAllActors();
+        room.destroyAllActors(); // Clear listeners? Panscreen class to always do this and call abstract destroy method?
         engine.setBgColor(Pancolor.WHITE);
         final Panmage font = engine.createImage("PandcorpsFont", "org/pandcorps/res/img/FontGradient16.png");
         //new Message(font, "PANDCORPS").init();
