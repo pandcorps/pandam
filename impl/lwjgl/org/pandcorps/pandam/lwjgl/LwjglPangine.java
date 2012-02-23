@@ -92,6 +92,16 @@ public final class LwjglPangine extends Pangine {
 	public final Panteraction getInteraction() {
 		return interaction;
 	}
+	
+	@Override
+    public final int getScreenWidth() {
+        return Display.getDesktopDisplayMode().getWidth();
+    }
+    
+    @Override
+    public final int getScreenHeight() {
+        return Display.getDesktopDisplayMode().getHeight();
+    }
 
 	private int w = 640, h = 480;
 	private boolean initialized = false;

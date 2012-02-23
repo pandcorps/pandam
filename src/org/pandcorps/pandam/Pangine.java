@@ -264,6 +264,10 @@ public abstract class Pangine {
 
 	public abstract Panteraction getInteraction();
 	
+	public abstract int getScreenWidth();
+	
+	public abstract int getScreenHeight();
+	
 	//TODO Add to Panml
 	public abstract void setDisplaySize(final int w, final int h);
     
@@ -663,6 +667,21 @@ public abstract class Pangine {
 	
 	protected final float getZoom() {
 	    return zoomMag;
+	}
+	
+	public final void setMaxZoomedDisplaySize(final int baseWidth, final int baseHeight) {
+	    final int absWidth = getScreenWidth() - 12, absHeight = getScreenHeight() - 24;
+	    final int zoom = Math.min(getMaxDim(baseWidth, absWidth), getMaxDim(baseHeight, absHeight));
+	    setDisplaySize(zoom * baseWidth, zoom * baseHeight);
+        zoom(zoom);
+	}
+	
+	private final int getMaxDim(final int base, final int abs) {
+	    int zoom;
+	    for (zoom = 1; zoom * base < abs; zoom += 1) {
+	        // Nothing
+	    }
+	    return Math.max(1, zoom - 1);
 	}
 	
 	public final long getClock() {

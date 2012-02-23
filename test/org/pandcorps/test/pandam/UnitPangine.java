@@ -59,6 +59,16 @@ public final class UnitPangine extends Pangine {
 	}
 	
 	@Override
+    public final int getScreenWidth() {
+        return 1024;
+    }
+    
+    @Override
+    public final int getScreenHeight() {
+        return 768;
+    }
+	
+	@Override
 	public final void setDisplaySize(final int w, final int h) {
 	    this.w = w;
 	    this.h = h;
