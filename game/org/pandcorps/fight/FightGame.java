@@ -153,7 +153,12 @@ public class FightGame extends Pangame {
     }
     
     @Override
-    protected Panroom getFirstRoom() throws Exception {
+    protected final FinPanple getFirstRoomSize() {
+        return new FinPanple(ROOM_W, ROOM_H, 0);
+    }
+    
+    @Override
+    protected void init(final Panroom room) throws Exception {
         final Pangine engine = Pangine.getEngine();
         loadGame();
         initWindow();
@@ -222,11 +227,10 @@ public class FightGame extends Pangame {
             Flip/mirror/rotate
             Save to file
         */
-        room = engine.createRoom("FightRoom", ROOM_W, ROOM_H, 0);
+        FightGame.room = room;
         createTypes();
         showLogo();
         //startFight();
-        return room;
     }
     
     private final static void createTypes() {

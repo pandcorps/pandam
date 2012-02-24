@@ -23,12 +23,13 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.demo.pandam.visual;
 
 import org.pandcorps.core.*;
+import org.pandcorps.demo.DemoGame;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 
-public final class AnimationEndDemo extends Pangame {
+public final class AnimationEndDemo extends DemoGame {
 	@Override
-	protected final Panroom getFirstRoom() {
+	protected final void init(final Panroom room) {
 		final class AnimationEndActor extends Panctor implements AnimationEndListener {
 			public AnimationEndActor(final String id) {
 				super(id);
@@ -41,7 +42,6 @@ public final class AnimationEndDemo extends Pangame {
 		}
 
 		final Pangine engine = Pangine.getEngine();
-		final Panroom room = engine.createRoom("AnimationEndRoom", 640, 480, 0);
 		final Panmage image1 = engine.createImage("AnimationEndImage1", "org/pandcorps/demo/res/img/SquareGuy.gif");
 		final Panframe frame1 = engine.createFrame("AnimationEndFrame1", image1, 25);
 		final Panmage image2 = engine.createImage("AnimationEndImage2", "org/pandcorps/demo/res/img/SquareGuyBlink.gif");
@@ -51,8 +51,6 @@ public final class AnimationEndDemo extends Pangame {
 		final Panctor actor = new AnimationEndActor("AnimationEndActor");
 		actor.getPosition().set(320, 240);
 		room.addActor(actor);
-
-		return room;
 	}
 
 	public final static void main(final String[] args) {

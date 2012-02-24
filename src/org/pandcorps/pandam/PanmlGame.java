@@ -250,6 +250,16 @@ public final class PanmlGame extends Pangame {
 	private final static boolean isNamed(final Element node, final String localName) {
 		return localName.equals(node.getLocalName()) && NS_URI.equals(node.getNamespaceURI());
 	}
+	
+	@Override
+	protected final FinPanple getFirstRoomSize() {
+	    throw new UnsupportedOperationException();
+	}
+
+	@Override
+    protected final void init(final Panroom room) throws Exception {
+        throw new UnsupportedOperationException();
+    }
 
 	@Override
 	protected final Panroom getFirstRoom() {
