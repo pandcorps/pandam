@@ -23,11 +23,12 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.pandam;
 
 import org.pandcorps.core.Pantil;
+import org.pandcorps.pandam.impl.FinPanple;
 
 public abstract class Pangame {
 	private static Pangame game = null;
 
-	private Panroom currentRoom;
+	private Panroom currentRoom = null;
 
 	// Could imagine a game with two different modes,
 	// like flying a ship and walking on a planet surface,
@@ -41,8 +42,26 @@ public abstract class Pangame {
 	public static Pangame getGame() {
 		return game;
 	}
+	
+	protected abstract FinPanple getFirstRoomSize();
 
-	protected abstract Panroom getFirstRoom() throws Exception;
+	protected abstract void init(final Panroom room) throws Exception;
+	
+	protected Panroom getFirstRoom() throws Exception {
+	    /*
+	    Games can override this and retrieve the first room however they want.
+	    They can throw UnsupportedOperationExceptions in getFirstRoomSize and init if they don't want to use them.
+	    Nothing else will.
+	    This method allows init to call methods that use Pangame.getCurrentRoom().
+	    If it's overridden, the game will need to be careful about that.
+	    */
+	    final Panroom room = Pangine.getEngine().createRoom(Pantil.vmid(), getFirstRoomSize());
+	    if (currentRoom == null) {
+	        currentRoom = room;
+	    }
+        init(room);
+        return room;
+	}
 
 	public Panroom getCurrentRoom() {
 		if (currentRoom == null) {

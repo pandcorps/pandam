@@ -20,27 +20,14 @@ PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY
 TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 */
-package org.pandcorps.demo.pandam.visual;
+package org.pandcorps.demo;
 
-import org.pandcorps.demo.DemoGame;
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.impl.FinPanple;
 
-public final class ImageDemo extends DemoGame {
-	@Override
-	protected final void init(final Panroom room) {
-		final Pangine engine = Pangine.getEngine();
-		final Panmage image = engine.createImage("ImageImage", "org/pandcorps/demo/res/img/SquareGuy.gif");
-		engine.createType("ImageType", Panctor.class, image);
-		final Panctor actor = new Panctor("ImageActor");
-		actor.getPosition().set(320, 240);
-		room.addActor(actor);
-	}
-
-	public final static void main(final String[] args) {
-		try {
-			new ImageDemo().start();
-		} catch (final Throwable e) {
-			e.printStackTrace();
-		}
-	}
+public abstract class DemoGame extends Pangame {
+    @Override
+    public final FinPanple getFirstRoomSize() {
+        return new FinPanple(640, 480, 0);
+    }
 }

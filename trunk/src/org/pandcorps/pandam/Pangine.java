@@ -233,6 +233,15 @@ public abstract class Pangine {
 		return room;
 	}
 	
+	public final Panroom createRoom
+        (final String id, final FinPanple size) {
+        final Panroom room = new Panroom(id, size);
+    
+        register(room);
+    
+        return room;
+    }
+	
 	public final Panlayer createLayer
         (final String id, final float width, final float height, final float depth, final Panroom room) {
         final Panlayer layer = new Panlayer(id, width, height, depth, room);

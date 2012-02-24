@@ -56,8 +56,12 @@ public class Panlayer extends BasePantity {
     /*package*/ Panlayer(
         final String id,
         final float width, final float height, final float depth, final Panroom room) {
+        this(id, new FinPanple(width, height, depth), room);
+    }
+    
+    /*package*/ Panlayer(final String id, final FinPanple size, final Panroom room) {
         super(id);
-        size = new FinPanple(width, height, depth);
+        this.size = size;
         initCollisionGroups();
         this.room = room == null ? (Panroom) this : room;
     }

@@ -23,6 +23,7 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.test.pandam;
 
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.impl.FinPanple;
 
 public final class TestPanmlGame extends PandamTest {
 	public final void testInit() {
@@ -62,6 +63,16 @@ public final class TestPanmlGame extends PandamTest {
 			bigAc.setVisible(false);
 			room.addActor(bigAc);
 		}
+		
+		@Override
+		protected final FinPanple getFirstRoomSize() {
+	        throw new UnsupportedOperationException();
+	    }
+
+		@Override
+	    protected final void init(final Panroom room) throws Exception {
+	        throw new UnsupportedOperationException();
+	    }
 
 		@Override
 		protected final Panroom getFirstRoom() {

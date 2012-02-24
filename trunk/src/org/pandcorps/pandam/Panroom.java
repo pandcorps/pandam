@@ -23,8 +23,9 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.pandam;
 
 import org.pandcorps.pandam.event.RoomAddEvent;
+import org.pandcorps.pandam.impl.FinPanple;
 
-public class Panroom extends Panlayer {
+public final class Panroom extends Panlayer {
     /*package*/ final RoomAddEvent addEvent = new RoomAddEvent(this);
     
     /*package*/ Panlayer base;
@@ -35,6 +36,11 @@ public class Panroom extends Panlayer {
 	    super(id, width, height, depth, null);
 	    base = this;
 	}
+	
+	/*package*/ Panroom(final String id, final FinPanple size) {
+        super(id, size, null);
+        base = this;
+    }
 
 	@Override
 	public final Panlayer getBase() {
