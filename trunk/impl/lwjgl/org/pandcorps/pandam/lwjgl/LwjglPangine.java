@@ -94,12 +94,12 @@ public final class LwjglPangine extends Pangine {
 	}
 	
 	@Override
-    public final int getScreenWidth() {
+    public final int getDesktopWidth() {
         return Display.getDesktopDisplayMode().getWidth();
     }
     
     @Override
-    public final int getScreenHeight() {
+    public final int getDesktopHeight() {
         return Display.getDesktopDisplayMode().getHeight();
     }
 

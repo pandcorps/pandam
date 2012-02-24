@@ -59,12 +59,12 @@ public final class UnitPangine extends Pangine {
 	}
 	
 	@Override
-    public final int getScreenWidth() {
+    public final int getDesktopWidth() {
         return 1024;
     }
     
     @Override
-    public final int getScreenHeight() {
+    public final int getDesktopHeight() {
         return 768;
     }
 	
