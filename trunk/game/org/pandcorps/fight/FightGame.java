@@ -229,7 +229,8 @@ public class FightGame extends Pangame {
         */
         FightGame.room = room;
         createTypes();
-        showLogo();
+        //showLogo();
+        Panscreen.set(new LogoScreen());
         //startFight();
     }
     
@@ -242,65 +243,80 @@ public class FightGame extends Pangame {
         engine.createType("BackgroundType", Background.class, fighterView);
     }
     
-    private final static void showLogo() {
-        final Pangine engine = Pangine.getEngine();
-        room.destroyAllActors(); // Clear listeners? Panscreen class to always do this and call abstract destroy method?
-        engine.setBgColor(Pancolor.WHITE);
-        final Panmage font = engine.createImage("PandcorpsFont", "org/pandcorps/res/img/FontGradient16.png");
-        //new Message(font, "PANDCORPS").init();
-        final Pantext text = new Pantext("PandcorpsLogo", font, "PANDCORPS");
-        text.getPosition().set(48, 88);
-        room.addActor(text);
-        final Panmage icon = engine.createImage("PandcorpsIcon", "org/pandcorps/res/img/PandcorpsIcon16.png");
-        final Panctor img = new Panctor("PandcorpsImage");
-        img.setView(icon);
-        img.getPosition().set(192, 88);
-        room.addActor(img);
-        engine.addTimer(30, new TimerListener() { @Override public final void onTimer(final TimerEvent event) {
-            font.destroy();
-            icon.destroy();
-            try {
-                startFight();
-            } catch (final Exception e) {
-                throw Pantil.toRuntimeException(e);
-            }
-        }} );
+    private final static class LogoScreen extends Panscreen {
+        private Panmage font = null;
+        private Panmage icon = null;
+        
+        @Override
+        protected final void load() {
+            final Pangine engine = Pangine.getEngine();
+            engine.setBgColor(Pancolor.WHITE);
+            font = engine.createImage("PandcorpsFont", "org/pandcorps/res/img/FontGradient16.png");
+            //new Message(font, "PANDCORPS").init();
+            final Pantext text = new Pantext("PandcorpsLogo", font, "PANDCORPS");
+            text.getPosition().set(48, 88);
+            room.addActor(text);
+            icon = engine.createImage("PandcorpsIcon", "org/pandcorps/res/img/PandcorpsIcon16.png");
+            final Panctor img = new Panctor("PandcorpsImage");
+            img.setView(icon);
+            img.getPosition().set(192, 88);
+            room.addActor(img);
+            engine.addTimer(30, new TimerListener() { @Override public final void onTimer(final TimerEvent event) {
+                try {
+                    startFight();
+                } catch (final Exception e) {
+                    throw Pantil.toRuntimeException(e);
+                }
+            }} );
+        }
+        
+        @Override
+        protected final void destroy() {
+            Panmage.destroy(font);
+            Panmage.destroy(icon);
+        }
     }
     
     private final static void startFight() throws Exception {
-        room.destroyAllActors();
-        final BackgroundDefinition bdef = backgrounds.load("org/pandcorps/fight/res/bg/Mountain.txt"); // Grid
-        background = new Background("BAK." + bdef.name, bdef);
-        room.addActor(background);
-        
-        final Fighter fighter, cpu;
-        //fighter = new Player("FighterActor", still, walk, quick, spec1, hurt);
-        //fighter = new Fighter("FighterActor", room, animStill, walk, moveQuick, moveStrong, moveSpec1, moveSpec2, animHurt, getBloodAnimation(null));
-        //final SegmentStream in = openSegmentStream("org/pandcorps/fight/Def.txt");
-        //try {
-        fighter = new Fighter("FTR.1", room, fighters.load("org/pandcorps/fight/res/char/Bourei.txt")); // Kwon, Nate
-        cpu = new Fighter("FTR.2", room, fighters.load("org/pandcorps/fight/res/char/Clive.txt"));
-        //} finally {
-        //    in.close();
-        //}
-        /*final Player player = *///new Player(fighter);
-        new Player().setFighter(fighter);
-        final float centerX, centerY;
-        //centerX = ROOM_W / 2;
-        //centerY = ROOM_H / 2;
-        centerX = (bdef.minX + bdef.maxX) / 2;
-        centerY = (bdef.minY + bdef.maxY) / 2;
-        fighter.getPosition().set(centerX - 16, centerY);
-        //room.addActor(fighter);
-        
-        //cpu = new Fighter("CpuActor", room, animStill, walk, moveQuick, moveStrong, moveSpec1, moveSpec2, animHurt, getBloodAnimation(meanFireball));
-        cpu.setMirror(true);
-        //cpu.setFlip(true); // Testing
-        //cpu.setView(animFireball); // Testing, Fighter class should clobber anyway
-        //new Ai(cpu);
-        new Ai().setFighter(cpu);
-        cpu.getPosition().set(centerX + 16, centerY);
-        //room.addActor(cpu);
+        Panscreen.set(new FightScreen());
+    }
+    
+    private final static class FightScreen extends Panscreen {
+        @Override
+        protected final void load() throws Exception {
+            final BackgroundDefinition bdef = backgrounds.load("org/pandcorps/fight/res/bg/Mountain.txt"); // Grid
+            background = new Background("BAK." + bdef.name, bdef);
+            room.addActor(background);
+            
+            final Fighter fighter, cpu;
+            //fighter = new Player("FighterActor", still, walk, quick, spec1, hurt);
+            //fighter = new Fighter("FighterActor", room, animStill, walk, moveQuick, moveStrong, moveSpec1, moveSpec2, animHurt, getBloodAnimation(null));
+            //final SegmentStream in = openSegmentStream("org/pandcorps/fight/Def.txt");
+            //try {
+            fighter = new Fighter("FTR.1", room, fighters.load("org/pandcorps/fight/res/char/Bourei.txt")); // Kwon, Nate
+            cpu = new Fighter("FTR.2", room, fighters.load("org/pandcorps/fight/res/char/Clive.txt"));
+            //} finally {
+            //    in.close();
+            //}
+            /*final Player player = *///new Player(fighter);
+            new Player().setFighter(fighter);
+            final float centerX, centerY;
+            //centerX = ROOM_W / 2;
+            //centerY = ROOM_H / 2;
+            centerX = (bdef.minX + bdef.maxX) / 2;
+            centerY = (bdef.minY + bdef.maxY) / 2;
+            fighter.getPosition().set(centerX - 16, centerY);
+            //room.addActor(fighter);
+            
+            //cpu = new Fighter("CpuActor", room, animStill, walk, moveQuick, moveStrong, moveSpec1, moveSpec2, animHurt, getBloodAnimation(meanFireball));
+            cpu.setMirror(true);
+            //cpu.setFlip(true); // Testing
+            //cpu.setView(animFireball); // Testing, Fighter class should clobber anyway
+            //new Ai(cpu);
+            new Ai().setFighter(cpu);
+            cpu.getPosition().set(centerX + 16, centerY);
+            //room.addActor(cpu);
+        }
     }
     
     @Override
