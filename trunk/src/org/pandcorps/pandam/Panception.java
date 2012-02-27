@@ -33,4 +33,8 @@ public class Panception extends RuntimeException {
 	public Panception(final Throwable cause) {
 		super(cause);
 	}
+	
+	public final static Panception get(final Throwable e) {
+	    return e instanceof Panception ? (Panception) e : new Panception(e);
+	}
 }
