@@ -126,4 +126,10 @@ public abstract class Panmage extends BasePantity implements Panview, Pansplay {
 	}
 	
 	protected abstract void close();
+	
+	public final static void destroy(final Panmage image) {
+	    if (image != null) {
+	        image.destroy();
+	    }
+	}
 }
