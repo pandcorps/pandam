@@ -60,7 +60,8 @@ public class Segment extends Record {
                     seg = new Segment(line.substring(0, i));
                 } else {
                     final Field field = Field.parse(line, start, i);
-                    if (field != null) {
+                    // SEG|| should have no SEG.0 at all; SEG|~value| should have a null repetition before value
+                    if (field != null || c == DELIM_REP) {
                         ArrayList<Field> reps = Coltil.get(seg.fields, f);
                         if (reps == null) {
                             reps = new ArrayList<Field>();
