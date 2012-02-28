@@ -34,6 +34,7 @@ public final class Move {
     /*package*/ final static byte ANIM_MIRROR = 2;
     /*package*/ final static byte ANIM_DIAGONAL = 3;
     /*package*/ final static byte ANIM_RISE = 4;
+    ///*package*/ final static byte ANIM_LUNGE = 5; // Just normal
     
     /*package*/ final int loop; // number of loops (or OOB)
     /*package*/ final boolean stopAfterHit;
@@ -65,6 +66,8 @@ public final class Move {
             return ANIM_DIAGONAL;
         } else if ("rise".equalsIgnoreCase(val)) {
             return ANIM_RISE;
+        //} else if ("lunge".equalsIgnoreCase(val)) {
+        //    return ANIM_LUNGE;
         } else if ("normal".equalsIgnoreCase(val) || Chartil.isEmpty(val)) {
         	return ANIM_NORMAL;
         }
