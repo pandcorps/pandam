@@ -46,7 +46,7 @@ public class FightGame extends Pangame {
     
     //private final static int WIN_W = 1024;
     //private final static int WIN_H = 768;
-    private final static int ZOOM = 4;
+    //private final static int ZOOM = 4;
     private final static int ROOM_W = 256;
     private final static int ROOM_H = 192;
     protected final static int DIM = 16;
@@ -182,10 +182,10 @@ public class FightGame extends Pangame {
         . Panframe rotating
         Panctor coloring
         . Shadow trail effect
-        Logo
+        . Logo
         Title
         Menu (arcade, infinite, creator)
-        Character select
+        . Character select
         . Palette swapping for primary palette
         Alternate palettes
         . Automatic darkening of outline color
