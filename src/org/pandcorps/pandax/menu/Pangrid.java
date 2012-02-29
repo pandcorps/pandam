@@ -104,7 +104,11 @@ public abstract class Pangrid<I> extends Panctor {
                 interaction.unregister(leftListener);
                 interaction.unregister(rightListener);
                 Panput.inactivate(submit, up, down, left, right);
-                onSubmit(getCurrentItem());
+                try {
+                    onSubmit(new GridSubmitEvent<I>(curRow, curCol, getCurrentItem()));
+                } catch (final Exception e) {
+                    throw Panception.get(e);
+                }
             }};
         interaction.register(submit, submitListener);
         interaction.register(up, upListener);
@@ -164,5 +168,5 @@ public abstract class Pangrid<I> extends Panctor {
     
     protected abstract Panmage getImage(final I item);
     
-    protected abstract void onSubmit(final I item);
+    protected abstract void onSubmit(final GridSubmitEvent<I> event) throws Exception;
 }
