@@ -33,6 +33,7 @@ import org.pandcorps.fight.Fighter.FighterDefinition;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.impl.*;
+import org.pandcorps.pandax.menu.*;
 import org.pandcorps.pandax.text.*;
 
 public class FightGame extends Pangame {
@@ -53,6 +54,7 @@ public class FightGame extends Pangame {
     private final static int BOUND_MIN = -BOUND_MAX;
     private final static short OUTLINE_DEFAULT = 16;
     
+    private static Panmage cursorImage = null;
     private static Panmage shadowImage = null;
     //private static boolean shadowVisible = true;
     private static byte shadowTimer = 0;
@@ -60,6 +62,7 @@ public class FightGame extends Pangame {
     private final static BackgroundLoader backgrounds = new BackgroundLoader();
     private static Background background = null;
     private final static FighterLoader fighters = new FighterLoader();
+    private final static ArrayList<ArrayList<FighterDefinition>> characterSelect = new ArrayList<ArrayList<FighterDefinition>>();
     private static Panmage bamImage1 = null;
     /*package*/ static Panimation bamAnim = null;
     private final static FinPanple explodeOrigin = new FinPanple(8, 8, 0);
@@ -72,6 +75,7 @@ public class FightGame extends Pangame {
     private static BufferedImage[] burnImgs = null;
     /*package*/ static Panimation puffAnim = null;
     /*package*/ static Panmage font = null;
+    private static FighterDefinition playerDef = null;
     
     private static short outlineR = OUTLINE_DEFAULT;
     private static short outlineG = OUTLINE_DEFAULT;
@@ -127,6 +131,9 @@ public class FightGame extends Pangame {
     
     private final static void loadConstants() {
         final Pangine engine = Pangine.getEngine();
+        final BufferedImage menuImg = loadImage("org/pandcorps/fight/res/misc/Menu.png");
+        final BufferedImage[] menuImgs = Imtil.toStrip(menuImg, DIM);
+        cursorImage = engine.createImage("Cursor", new FinPanple(8, 1, 0), null, null, menuImgs[0]);
         final BufferedImage constantsImg = loadImage("org/pandcorps/fight/res/misc/Constants.png");
         final BufferedImage[] constantImgs = Imtil.toStrip(constantsImg, DIM);
         shadowImage = engine.createImage("Shadow", new FinPanple(8, 4, 0), null, null, constantImgs[0]);
@@ -160,9 +167,9 @@ public class FightGame extends Pangame {
     @Override
     protected void init(final Panroom room) throws Exception {
         final Pangine engine = Pangine.getEngine();
+        loadConstants();
         loadGame();
         initWindow();
-        loadConstants();
         
         /*
         TODO
@@ -263,7 +270,7 @@ public class FightGame extends Pangame {
             room.addActor(img);
             engine.addTimer(30, new TimerListener() { @Override public final void onTimer(final TimerEvent event) {
                 try {
-                    startFight();
+                    Panscreen.set(new CharacterSelectScreen());
                 } catch (final Exception e) {
                     throw Pantil.toRuntimeException(e);
                 }
@@ -274,6 +281,31 @@ public class FightGame extends Pangame {
         protected final void destroy() {
             Panmage.destroy(font);
             Panmage.destroy(icon);
+        }
+    }
+    
+    private final static class CharacterSelectScreen extends Panscreen {
+        @Override
+        protected final void load() {
+            room.addActor(new CharacterSelectGrid());
+        }
+    }
+    
+    private final static class CharacterSelectGrid extends Pangrid<FighterDefinition> {
+        private CharacterSelectGrid() {
+            super("CharacterSelect", characterSelect, cursorImage, -2);
+            getPosition().set(new FinPanple(ROOM_W / 2, ROOM_H / 2, 0));
+        }
+        
+        @Override
+        protected final Panmage getImage(final FighterDefinition def) {
+            return def.getStill().getFrames()[0].getImage();
+        }
+        
+        @Override
+        protected final void onSubmit(final GridSubmitEvent<FighterDefinition> event) throws Exception {
+            playerDef = event.getItem();
+            startFight();
         }
     }
     
@@ -293,7 +325,7 @@ public class FightGame extends Pangame {
             //fighter = new Fighter("FighterActor", room, animStill, walk, moveQuick, moveStrong, moveSpec1, moveSpec2, animHurt, getBloodAnimation(null));
             //final SegmentStream in = openSegmentStream("org/pandcorps/fight/Def.txt");
             //try {
-            fighter = new Fighter("FTR.1", room, fighters.load("org/pandcorps/fight/res/char/Bourei.txt")); // Kwon, Nate
+            fighter = new Fighter("FTR.1", room, playerDef);
             cpu = new Fighter("FTR.2", room, fighters.load("org/pandcorps/fight/res/char/Clive.txt"));
             //} finally {
             //    in.close();
@@ -508,6 +540,9 @@ public class FightGame extends Pangame {
             while ((mvf = in.readUnless("MVD", "EXT", "FTR")) != null) {
             	final String fid = mvf.getValue(0);
                 final Panframe frame = frmMap.get(fid);
+                if (frame == null) {
+                    throw new Panception("Could not find frame " + fid + " for character " + name);
+                }
                 Segment emt;
                 ArrayList<Emitter> emitters = null;
                 while ((emt = in.readIf("EMT")) != null) {
@@ -780,6 +815,15 @@ public class FightGame extends Pangame {
     			final short d = OUTLINE_DEFAULT, m = Pancolor.MAX_VALUE;
     			outlineSrc = new Pancolor(d, d, d, m);
     			outlineDst = new Pancolor(outlineR, outlineG, outlineB, m);
+    		}
+    		Segment sel;
+    		while ((sel = in.read()) != null) {
+    		    final ArrayList<FighterDefinition> row = new ArrayList<FighterDefinition>();
+    		    characterSelect.add(row);
+    		    for (final Field f : sel.getRepetitions(0)) {
+    		        final String name = Field.getValue(f);
+		            row.add(Chartil.isValued(name) ? fighters.load("org/pandcorps/fight/res/char/" + name + ".txt") : null);
+    		    }
     		}
     	} finally {
     		in.close();

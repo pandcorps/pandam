@@ -83,6 +83,14 @@ public final class Fighter extends Panctor implements StepListener, CollisionLis
             this.hurt = hurt;
             this.blood = blood;
         }
+        
+        public final String getName() {
+            return name;
+        }
+        
+        public final Panimation getStill() {
+            return still;
+        }
     }
     
     private final FighterDefinition def;
