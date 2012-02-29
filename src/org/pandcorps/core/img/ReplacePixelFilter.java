@@ -23,11 +23,18 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.core.img;
 
 import java.util.*;
+import java.util.Map.Entry;
 
 public final class ReplacePixelFilter extends PixelFilter {
 	private final HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
 	
-	private ReplacePixelFilter() { // Can probably be public
+	private ReplacePixelFilter() {
+	}
+	
+	public ReplacePixelFilter(final Map<Pancolor, Pancolor> map) {
+	    for (final Entry<Pancolor, Pancolor> entry : map.entrySet()) {
+	        put(entry.getKey(), entry.getValue());
+	    }
 	}
 	
 	public ReplacePixelFilter(final int src, final int dst) {
