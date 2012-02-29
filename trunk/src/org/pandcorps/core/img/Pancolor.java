@@ -121,6 +121,20 @@ public class Pancolor {
         this.a = a;
     }
     
+    @Override
+    public final int hashCode() {
+        return r + (256 * g) + (65536 * b) + (16777216 * a);
+    }
+    
+    @Override
+    public final boolean equals(final Object o) {
+        if (!(o instanceof Pancolor)) {
+            return false;
+        }
+        final Pancolor c = (Pancolor) o;
+        return r == c.r && g == c.g && b == c.b && a == c.a;
+    }
+    
     public final static Pancolor getPancolor(final Segment seg, final int i) {
         return getPancolor(seg.getField(i));
     }
