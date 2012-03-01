@@ -32,6 +32,9 @@ public final class ReplacePixelFilter extends PixelFilter {
 	}
 	
 	public ReplacePixelFilter(final Map<Pancolor, Pancolor> map) {
+	    if (map.size() == 0) { // Want NullPointerException
+	        throw new IllegalArgumentException("ReplacePixelFilter requires a non-empty Map");
+	    }
 	    for (final Entry<Pancolor, Pancolor> entry : map.entrySet()) {
 	        put(entry.getKey(), entry.getValue());
 	    }
