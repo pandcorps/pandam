@@ -120,6 +120,10 @@ public abstract class Pangine {
 	
 	protected abstract Panmage newImage(String id, final Panple origin, final Panple boundMin, final Panple boundMax, BufferedImage img) throws Panception;
 	
+	public final Panmage createImage(final String id, final BufferedImage img) throws Panception {
+        return createImage(id, null, null, null, img);
+	}
+	
 	public final Panmage createImage(final String id, final Panple origin, final Panple boundMin, final Panple boundMax, final BufferedImage img) throws Panception {
         final Panmage image = newImage(id, origin, boundMin, boundMax, img);
 
