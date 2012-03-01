@@ -156,7 +156,8 @@ public class FightGame extends Pangame {
         
         burnImgs = Imtil.toStrip(loadImage("org/pandcorps/fight/res/misc/Burn.png"), DIM);
         
-        font = engine.createImage("font", "org/pandcorps/res/img/FontOutline8.png");
+        //font = engine.createImage("font", "org/pandcorps/res/img/FontOutline8.png");
+        font = Fonts.getOutline(8, Pancolor.RED);
     }
     
     @Override
