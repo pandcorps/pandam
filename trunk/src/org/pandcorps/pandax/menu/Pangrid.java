@@ -33,8 +33,9 @@ public abstract class Pangrid<I> extends Panctor {
     private final float dimX;
     private final float dimY;
     private final float curOff;
-    private int curRow = 0;
-    private int curCol = 0;
+    /*package*/ int curRow = 0;
+    /*package*/ int curCol = 0;
+    private final GridChangeEvent<I> changeEvent = new GridChangeEvent<I>(this);
     
     public Pangrid(final String id, final List<? extends List<I>> rows, final Panmage cursor, final float cursorOff) {
         super(id);
@@ -58,7 +59,7 @@ public abstract class Pangrid<I> extends Panctor {
         final Panteraction interaction = engine.getInteraction();
         final Panput submit = interaction.KEY_ENTER, up = interaction.KEY_UP, down = interaction.KEY_DOWN;
         final Panput left = interaction.KEY_LEFT, right = interaction.KEY_RIGHT;
-        Panput.inactivate(submit, up, down);
+        Panput.inactivate(submit, up, down, left, right);
         final ActionStartListener upListener = new ActionStartListener() {
             @Override
             public void onActionStart(final ActionStartEvent event) {
@@ -68,6 +69,7 @@ public abstract class Pangrid<I> extends Panctor {
                         curRow = rows.size() - 1;
                     }
                 } while (rows.get(curRow).get(curCol) == null);
+                change();
             }};
         final ActionStartListener downListener = new ActionStartListener() {
             @Override
@@ -78,6 +80,7 @@ public abstract class Pangrid<I> extends Panctor {
                         curRow = 0;
                     }
                 } while (rows.get(curRow).get(curCol) == null);
+                change();
             }};
         final ActionStartListener leftListener = new ActionStartListener() {
             @Override
@@ -89,6 +92,7 @@ public abstract class Pangrid<I> extends Panctor {
                         curCol = row.size() - 1;
                     }
                 } while (row.get(curCol) == null);
+                change();
             }};
         final ActionStartListener rightListener = new ActionStartListener() {
             @Override
@@ -105,7 +109,7 @@ public abstract class Pangrid<I> extends Panctor {
                 interaction.unregister(rightListener);
                 Panput.inactivate(submit, up, down, left, right);
                 try {
-                    onSubmit(new GridSubmitEvent<I>(curRow, curCol, getCurrentItem()));
+                    onSubmit(new GridSubmitEvent<I>(Pangrid.this));
                 } catch (final Exception e) {
                     throw Panception.get(e);
                 }
@@ -117,7 +121,7 @@ public abstract class Pangrid<I> extends Panctor {
         interaction.register(right, rightListener);
     }
     
-    private final I getCurrentItem() {
+    public final I getCurrentItem() {
         return rows.get(curRow).get(curCol);
     }
     
@@ -129,6 +133,7 @@ public abstract class Pangrid<I> extends Panctor {
                 curCol = 0;
             }
         } while (row.get(curCol) == null);
+        change();
     }
     
     @Override
@@ -167,6 +172,17 @@ public abstract class Pangrid<I> extends Panctor {
     }
     
     protected abstract Panmage getImage(final I item);
+    
+    protected final void change() {
+    	try {
+    		onChange(changeEvent);
+    	} catch (final Exception e) {
+    		throw Panception.get(e);
+    	}
+    }
+    
+    protected void onChange(final GridChangeEvent<I> event) throws Exception {
+    }
     
     protected abstract void onSubmit(final GridSubmitEvent<I> event) throws Exception;
 }

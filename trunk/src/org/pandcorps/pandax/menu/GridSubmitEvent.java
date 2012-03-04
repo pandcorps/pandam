@@ -22,26 +22,8 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandax.menu;
 
-public final class GridSubmitEvent<I> {
-    private final int row;
-    private final int col;
-    private final I item;
-    
-    /*package*/ GridSubmitEvent(final int row, final int col, final I item) {
-        this.row = row;
-        this.col = col;
-        this.item = item;
-    }
-    
-    public final int getRow() {
-        return row;
-    }
-    
-    public final int getColumn() {
-        return col;
-    }
-    
-    public final I getItem() {
-        return item;
+public final class GridSubmitEvent<I> extends GridEvent<I> {
+    /*package*/ GridSubmitEvent(final Pangrid<I> grid) {
+        super(grid);
     }
 }
