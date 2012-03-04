@@ -25,6 +25,10 @@ package org.pandcorps.pandam;
 public abstract class Panscreen {
     private static Panscreen screen = null;
     
+    public final static Panscreen get() {
+    	return screen;
+    }
+    
     public final static void set(final Panscreen screen) {
         if (Panscreen.screen != null) {
             Panscreen.screen.destroy();
@@ -47,6 +51,9 @@ public abstract class Panscreen {
     }
     
     protected abstract void load() throws Exception;
+    
+    protected void step() {
+    }
     
     protected void destroy() {
     }
