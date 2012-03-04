@@ -293,14 +293,34 @@ public class FightGame extends Pangame {
     }
     
     private final static class CharacterSelectGrid extends Pangrid<FighterDefinition> {
+    	private final Decoration selected = new Decoration("selected");
+    	private Pantext name = null;
+    	
         private CharacterSelectGrid() {
             super("CharacterSelect", characterSelect, cursorImage, -2);
-            getPosition().set(new FinPanple(ROOM_W / 2, ROOM_H / 2, 0));
+            final int midH = ROOM_H / 2;
+            getPosition().set(new FinPanple(ROOM_W / 2, midH, 0));
+            room.addActor(selected);
+            selected.getPosition().set(32, midH);
+            change();
         }
         
         @Override
         protected final Panmage getImage(final FighterDefinition def) {
             return def.getStill().getFrames()[0].getImage();
+        }
+        
+        @Override
+        protected final void onChange(final GridChangeEvent<FighterDefinition> event) {
+        	final FighterDefinition def = event.getItem();
+        	selected.setView(def.getStill());
+        	if (name != null) {
+        		name.destroy();
+        	}
+        	//TODO UpperFont
+        	name = new Pantext("selected.name", font, def.getName().toUpperCase());
+        	name.getPosition().set(16, ROOM_H / 2 - DIM);
+        	room.addActor(name);
         }
         
         @Override
