@@ -271,7 +271,7 @@ public class FightGame extends Pangame {
             room.addActor(img);
             engine.addTimer(30, new TimerListener() { @Override public final void onTimer(final TimerEvent event) {
                 try {
-                    Panscreen.set(new CharacterSelectScreen());
+                    showSelect();
                 } catch (final Exception e) {
                     throw Pantil.toRuntimeException(e);
                 }
@@ -283,6 +283,10 @@ public class FightGame extends Pangame {
             Panmage.destroy(font);
             Panmage.destroy(icon);
         }
+    }
+    
+    private final static void showSelect() {
+    	Panscreen.set(new CharacterSelectScreen());
     }
     
     private final static class CharacterSelectScreen extends Panscreen {
@@ -391,6 +395,11 @@ public class FightGame extends Pangame {
         		final Pantext text = new Pantext("Win", font, msg);
         		text.getPosition().set(48, ROOM_H * 7 / 8);
         		room.addActor(text);
+        		Pangine.getEngine().addTimer(60, new TimerListener() {
+					@Override
+					public void onTimer(final TimerEvent event) {
+						showSelect();
+					}});
         		won = true;
         	}
         }
