@@ -325,6 +325,10 @@ public abstract class Pangine {
 	    clock++;
 	    final Pangame game = Pangame.getGame();
 	    game.step();
+	    final Panscreen screen = Panscreen.get();
+	    if (screen != null) {
+	    	screen.step();
+	    }
 		final Panroom room = game.getCurrentRoom();
 		if (room == null) {
 			return;
