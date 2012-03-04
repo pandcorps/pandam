@@ -93,7 +93,7 @@ public final class Fighter extends Panctor implements StepListener, CollisionLis
         }
     }
     
-    private final FighterDefinition def;
+    /*package*/ final FighterDefinition def;
     private final Decoration shadow;
     private byte mode = MODE_STILL;
     private Panimation reactView = null;
