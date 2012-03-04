@@ -335,6 +335,8 @@ public class FightGame extends Pangame {
     }
     
     private final static class FightScreen extends Panscreen {
+    	private boolean won = false;
+    	
         @Override
         protected final void load() throws Exception {
             final BackgroundDefinition bdef = backgrounds.load("org/pandcorps/fight/res/bg/Mountain.txt"); // Grid
@@ -369,6 +371,28 @@ public class FightGame extends Pangame {
             new Ai().setFighter(cpu);
             cpu.getPosition().set(centerX + 16, centerY);
             //room.addActor(cpu);
+        }
+        
+        @Override
+        protected final void step() {
+        	if (won) {
+        		return;
+        	}
+        	int count = 0;
+        	Fighter f = null;
+        	for (final Panctor actor : room.getActors()) {
+        		if (actor.getClass() == Fighter.class) {
+        			count++;
+        			f = (Fighter) actor;
+        		}
+        	}
+        	if (count == 1) {
+        		final String msg = f.def.getName().toUpperCase() + " WINS"; //TODO UpperFont
+        		final Pantext text = new Pantext("Win", font, msg);
+        		text.getPosition().set(48, ROOM_H * 7 / 8);
+        		room.addActor(text);
+        		won = true;
+        	}
         }
     }
     
