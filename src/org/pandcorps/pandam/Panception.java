@@ -22,17 +22,23 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandam;
 
+import org.pandcorps.core.Chartil;
+
 // Pandam Exception
 public class Panception extends RuntimeException {
 	private final static long serialVersionUID = -1291162771609712083L;
 
-	public Panception(final String msg) {
-		super(msg);
+	public Panception(final CharSequence msg) {
+		super(Chartil.toString(msg));
 	}
 
 	public Panception(final Throwable cause) {
 		super(cause);
 	}
+	
+	public Panception(final CharSequence msg, final Throwable cause) {
+        super(Chartil.toString(msg), cause);
+    }
 	
 	public final static Panception get(final Throwable e) {
 	    return e instanceof Panception ? (Panception) e : new Panception(e);
