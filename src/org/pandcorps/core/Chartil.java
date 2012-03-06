@@ -39,6 +39,10 @@ public final class Chartil {
         return size(s) == 0;
     }
     
+    public final static String toString(final Object o) {
+        return o == null ? null : o.toString();
+    }
+    
     public final static char charAt(final CharSequence s, final int i) {
         return size(s) <= i ? 0 : s.charAt(i);
     }
