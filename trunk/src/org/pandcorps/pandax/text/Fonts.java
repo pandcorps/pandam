@@ -108,7 +108,7 @@ public final class Fonts {
         if (image == null) {
             BufferedImage img = Imtil.load("org/pandcorps/res/img/Font" + name + ".png");
             if (type == FontType.Number) {
-                Imtil.save(img, "c:\\raw.png");
+                //Imtil.save(img, "c:\\raw.png");
                 final int newSize = size * NumberFont.NUM;
                 final BufferedImage out = new BufferedImage(newSize, newSize, BufferedImage.TYPE_INT_ARGB);
                 Imtil.copy(img, out, 10 * size, 2 * size, 4 * size, size, 0, 0);
@@ -116,7 +116,7 @@ public final class Fonts {
                 Imtil.copy(img, out, 0, 3 * size, 2 * size, size, size * 2, size);
                 Imtil.copy(img, out, 2 * size, 3 * size, 4 * size, size, 0, size * 2);
                 Imtil.copy(img, out, 6 * size, 3 * size, 4 * size, size, 0, size * 3);
-                Imtil.save(out, "c:\\num.png");
+                //Imtil.save(out, "c:\\num.png");
                 img = out;
             }
             image = engine.createImage(id, Imtil.filter(img, filter));
