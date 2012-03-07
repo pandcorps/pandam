@@ -37,12 +37,7 @@ public final class ByteFont extends BaseFont {
     }
     
     @Override
-    public final int getRow(final char c) {
-        return c / NUM;
-    }
-    
-    @Override
-    public final int getColumn(final char c) {
-        return c % NUM;
+    public final int getIndex(final char c) {
+        return c;
     }
 }

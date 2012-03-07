@@ -36,4 +36,6 @@ public interface Font {
     public int getRow(final char c);
     
     public int getColumn(final char c);
+    
+    public int getIndex(final char c);
 }

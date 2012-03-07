@@ -32,6 +32,7 @@ import org.pandcorps.pandam.*;
 public final class Fonts {
     public static enum FontType {
         Byte,
+        Upper,
         Number
     }
     
@@ -118,11 +119,26 @@ public final class Fonts {
                 Imtil.copy(img, out, 6 * size, 3 * size, 4 * size, size, 0, size * 3);
                 //Imtil.save(out, "c:\\num.png");
                 img = out;
+            } else if (type == FontType.Upper) {
+                final int newSize = size * UpperFont.NUM;
+                final BufferedImage out = new BufferedImage(newSize, newSize, BufferedImage.TYPE_INT_ARGB);
+                Imtil.copy(img, out, 0, 2 * size, 8 * size, size, 0, 0);
+                Imtil.copy(img, out, 8 * size, 2 * size, 8 * size, size, 0, size);
+                Imtil.copy(img, out, 0, 3 * size, 8 * size, size, 0, size * 2);
+                Imtil.copy(img, out, 8 * size, 3 * size, 8 * size, size, 0, size * 3);
+                Imtil.copy(img, out, 0, 4 * size, 8 * size, size, 0, size * 4);
+                Imtil.copy(img, out, 8 * size, 4 * size, 8 * size, size, 0, size * 5);
+                Imtil.copy(img, out, 0, 5 * size, 8 * size, size, 0, size * 6);
+                Imtil.copy(img, out, 8 * size, 5 * size, 8 * size, size, 0, size * 7);
+                //Imtil.save(out, "c:\\up.png");
+                img = out;
             }
             image = engine.createImage(id, Imtil.filter(img, filter));
         }
         if (type == FontType.Number) {
             return new NumberFont(image);
+        } else if (type == FontType.Upper) {
+            return new UpperFont(image);
         }
         return new ByteFont(image);
     }
