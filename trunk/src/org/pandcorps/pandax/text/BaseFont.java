@@ -41,4 +41,14 @@ public abstract class BaseFont implements Font {
         final int r = getRowAmount();
         return r * r;
     }
+    
+    @Override
+    public final int getRow(final char c) {
+        return getIndex(c) / getRowAmount();
+    }
+    
+    @Override
+    public final int getColumn(final char c) {
+        return getIndex(c) % getRowAmount();
+    }
 }

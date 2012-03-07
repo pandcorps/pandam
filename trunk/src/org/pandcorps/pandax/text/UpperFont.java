@@ -24,10 +24,10 @@ package org.pandcorps.pandax.text;
 
 import org.pandcorps.pandam.Panmage;
 
-public final class NumberFont extends BaseFont {
-    /*package*/ final static int NUM = 4;
+public final class UpperFont extends BaseFont {
+    /*package*/ final static int NUM = 8;
     
-    protected NumberFont(final Panmage image) {
+    protected UpperFont(final Panmage image) {
         super(image);
     }
 
@@ -38,6 +38,6 @@ public final class NumberFont extends BaseFont {
     
     @Override
     public final int getIndex(final char c) {
-        return c - '*';
+        return Character.toUpperCase(c) - ' ';
     }
 }
