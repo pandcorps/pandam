@@ -26,7 +26,6 @@ import java.util.Collections;
 
 import org.pandcorps.core.Pantil;
 import org.pandcorps.pandam.Pangine;
-import org.pandcorps.pandam.Panmage;
 import org.pandcorps.pandam.Panput;
 import org.pandcorps.pandam.Panteraction;
 import org.pandcorps.pandam.event.action.ActionStartEvent;
@@ -36,7 +35,7 @@ public class Input extends TextItem {
     private final StringBuffer buf;
     private final InputSubmitListener listener;
     
-    public Input(final Panmage font, final InputSubmitListener listener) {
+    public Input(final Font font, final InputSubmitListener listener) {
         super(new Pantext(Pantil.vmid(), font, Collections.singletonList(new StringBuffer())));
         buf = (StringBuffer) label.text.get(0);
         this.listener = listener;

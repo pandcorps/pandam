@@ -32,13 +32,14 @@ import org.pandcorps.pandam.Panmage;
 import org.pandcorps.pandam.Panroom;
 import org.pandcorps.pandam.event.RoomAddEvent;
 import org.pandcorps.pandam.event.RoomAddListener;
+import org.pandcorps.pandax.text.*;
 import org.pandcorps.pandax.tile.DepthMode;
 //import org.pandcorps.pandax.tile.Tile;
 import org.pandcorps.pandax.tile.TileMap;
 
 public class Town extends Panctor implements RoomAddListener {
     
-    /*package*/ static Panmage font = null;
+    /*package*/ static Font font = null;
     
     public Town(final String id) {
         super(id);
@@ -52,7 +53,7 @@ public class Town extends Panctor implements RoomAddListener {
         room.addActor(map);
         final Pangine engine = Pangine.getEngine();
         //font = engine.createImage("FontImage", "org/pandcorps/demo/resource/img/Font8.png");
-        font = engine.getImage("FontImage");
+        font = new ByteFont(engine.getImage("FontImage"));
         //map.fillBackground(engine.getImage("GrassImage"));
         final Panmage[] bg = {engine.getImage("GrassImage"), engine.getImage("GrassFlowersImage"), engine.getImage("GrassFlowers2Image"), engine.getImage("GrassDirtImage")};
         final int w = map.getWidth(), h = map.getHeight();
