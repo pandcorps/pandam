@@ -22,9 +22,11 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.demo.pandax.text;
 
+import org.pandcorps.core.img.Pancolor;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandax.text.*;
+import org.pandcorps.pandax.text.Fonts.*;
 
 public final class TextActor extends Panctor implements RoomAddListener {
 	public TextActor(final String id) {
@@ -36,5 +38,21 @@ public final class TextActor extends Panctor implements RoomAddListener {
 		final Pantext text = new Pantext("TextText", new ByteFont((Panmage) getCurrentDisplay()), "Aa1");
 		event.getRoom().addActor(text);
 		text.getPosition().set(getPosition());
+		
+		final Font upper = Fonts.getSimple(new FontRequest(FontType.Upper), Pancolor.GREEN);
+		// Upper Fonts don't contain lowercase letters but will automatically convert them to uppercase.
+		// They contain everything from ' ' to '_'.
+		final Pantext text2 = new Pantext("Text2", upper, "Upper & stuff like '_'");
+		event.getRoom().addActor(text2);
+        text2.getPosition().set(getPosition());
+        text2.getPosition().add(0, -16);
+		
+		final Font number = Fonts.getSimple(new FontRequest(FontType.Number), Pancolor.RED);
+		// Number Fonts don't contain space characters but will automatically leave an empty slot for them when rendering.
+		// They contain everything from '*' to '9'.
+		final Pantext text3 = new Pantext("Text3", number, "1 2... 3*3 - 9");
+        event.getRoom().addActor(text3);
+        text3.getPosition().set(getPosition());
+        text3.getPosition().add(0, -32);
 	}
 }
