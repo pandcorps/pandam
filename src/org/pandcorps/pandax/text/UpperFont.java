@@ -37,7 +37,8 @@ public final class UpperFont extends BaseFont {
     }
     
     @Override
-    public final int getIndex(final char c) {
-        return Character.toUpperCase(c) - ' ';
+    public final int getIndex(char c) {
+        c = Character.toUpperCase(c);
+        return (c < ' ' || c > '_') ? INDEX_ILLEGAL : (c - ' ');
     }
 }

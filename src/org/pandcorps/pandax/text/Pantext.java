@@ -302,6 +302,11 @@ public class Pantext extends Panctor {
 	                          final float x, final float y, final float z,
 	                          final char c, final int i, final int j) {
 	    final int index = f.getIndex(c);
+	    if (index == Font.INDEX_EMPTY) {
+	        return;
+	    } else if (index == Font.INDEX_ILLEGAL) {
+	        throw new IllegalArgumentException("Cannot render " + c + " with " + f.getClass().getName());
+	    }
 	    final float xoff = BaseFont.getColumn(index, fontNum) * fontSize;
         final float yoff = BaseFont.getRow(index, fontNum) * fontSize;
         renderer.render(layer, font, x + (i * fontSize), y - ((j - firstLine) * fontSize), z, xoff, yoff, fontSize, fontSize);
