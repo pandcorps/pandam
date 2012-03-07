@@ -22,46 +22,23 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandax.text;
 
-import org.pandcorps.core.Pantil;
-import org.pandcorps.pandam.Pangine;
-import org.pandcorps.pandam.Panput;
-import org.pandcorps.pandam.Panteraction;
-import org.pandcorps.pandam.event.action.ActionStartEvent;
-import org.pandcorps.pandam.event.action.ActionStartListener;
+import org.pandcorps.pandam.Panmage;
 
-// Conversation? Dialogue?
-public class Message extends TextItem {
-    public Message(final Font font, final String text) {
-        super(new Pantext(Pantil.vmid(), font, text, 7));
-        label.setLinesPerPage(2);
+public abstract class BaseFont implements Font {
+    private final Panmage image;
+    
+    protected BaseFont(final Panmage image) {
+        this.image = image;
     }
     
     @Override
-    protected final void enable() {
-        /*
-        TODO
-        Add appropriate setters instead of a fixed argument list.
-        Class probably isn't a Panctor.
-        It might create multiple Panctors internally.
-        It would need a method like addToLayer(Panlayer).
-        Or maybe just enable() which would create its own layer.
-        */
-        final Pangine engine = Pangine.getEngine();
-        final Panteraction interaction = engine.getInteraction();
-        final Panput submit = interaction.KEY_SPACE;
-        submit.inactivate();
-        //label.setRadioLine(1);
-        interaction.register(submit, new ActionStartListener() {
-            @Override
-            public void onActionStart(final ActionStartEvent event) {
-                if (label.scrollPage()) {
-                    return;
-                }
-                //label.destroy();
-                //layer.detach();
-                layer.destroy();
-                interaction.unregister(this);
-                submit.inactivate();
-            }});
+    public final Panmage getImage() {
+        return image;
+    }
+    
+    @Override
+    public final int getAmount() {
+        final int r = getRowAmount();
+        return r * r;
     }
 }

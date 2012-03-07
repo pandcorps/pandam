@@ -26,7 +26,6 @@ import java.util.List;
 
 import org.pandcorps.core.Pantil;
 import org.pandcorps.pandam.Pangine;
-import org.pandcorps.pandam.Panmage;
 import org.pandcorps.pandam.Panput;
 import org.pandcorps.pandam.Panteraction;
 import org.pandcorps.pandam.event.action.ActionStartEvent;
@@ -36,7 +35,7 @@ public class RadioGroup extends TextItem {
     private final List<? extends CharSequence> options;
     private final RadioSubmitListener listener;
     
-    public RadioGroup(final Panmage font, final List<? extends CharSequence> options, final RadioSubmitListener listener) {
+    public RadioGroup(final Font font, final List<? extends CharSequence> options, final RadioSubmitListener listener) {
         super(new Pantext(Pantil.vmid(), font, options));
         label.setRadioLine(1);
         this.options = options;

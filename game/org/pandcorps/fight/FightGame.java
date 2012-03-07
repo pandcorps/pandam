@@ -35,6 +35,7 @@ import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.menu.*;
 import org.pandcorps.pandax.text.*;
+import org.pandcorps.pandax.text.Fonts.*;
 
 public class FightGame extends Pangame {
     private final static String PROP_DEBUG = "org.pandcorps.fight.FightGame.debug";
@@ -74,7 +75,8 @@ public class FightGame extends Pangame {
     private final static FinPanple burnOrigin = new FinPanple(9, yb, 0);
     private static BufferedImage[] burnImgs = null;
     /*package*/ static Panimation puffAnim = null;
-    /*package*/ static Panmage font = null;
+    /*package*/ static Font fontDamage = null;
+    /*package*/ static Font fontText = null;
     private static FighterDefinition playerDef = null;
     
     private static short outlineR = OUTLINE_DEFAULT;
@@ -157,7 +159,9 @@ public class FightGame extends Pangame {
         burnImgs = Imtil.toStrip(loadImage("org/pandcorps/fight/res/misc/Burn.png"), DIM);
         
         //font = engine.createImage("font", "org/pandcorps/res/img/FontOutline8.png");
-        font = Fonts.getOutline(8, Pancolor.RED);
+        fontDamage = Fonts.getOutline(new FontRequest(FontType.Number, 8), Pancolor.RED);
+        final short c = (short) 192;
+        fontText = Fonts.getOutline(new FontRequest(FontType.Byte, 8), new FinPancolor(c, c, c, Pancolor.MAX_VALUE));
     }
     
     @Override
@@ -261,7 +265,7 @@ public class FightGame extends Pangame {
             engine.setBgColor(Pancolor.WHITE);
             font = engine.createImage("PandcorpsFont", "org/pandcorps/res/img/FontGradient16.png");
             //new Message(font, "PANDCORPS").init();
-            final Pantext text = new Pantext("PandcorpsLogo", font, "PANDCORPS");
+            final Pantext text = new Pantext("PandcorpsLogo", new ByteFont(font), "PANDCORPS");
             text.getPosition().set(48, 88);
             room.addActor(text);
             icon = engine.createImage("PandcorpsIcon", "org/pandcorps/res/img/PandcorpsIcon16.png");
@@ -322,7 +326,7 @@ public class FightGame extends Pangame {
         		name.destroy();
         	}
         	//TODO UpperFont
-        	name = new Pantext("selected.name", font, def.getName().toUpperCase());
+        	name = new Pantext("selected.name", fontText, def.getName().toUpperCase());
         	name.getPosition().set(16, ROOM_H / 2 - DIM);
         	room.addActor(name);
         }
@@ -392,7 +396,7 @@ public class FightGame extends Pangame {
         	}
         	if (count == 1) {
         		final String msg = f.def.getName().toUpperCase() + " WINS"; //TODO UpperFont
-        		final Pantext text = new Pantext("Win", font, msg);
+        		final Pantext text = new Pantext("Win", fontText, msg);
         		text.getPosition().set(48, ROOM_H * 7 / 8);
         		room.addActor(text);
         		Pangine.getEngine().addTimer(60, new TimerListener() {

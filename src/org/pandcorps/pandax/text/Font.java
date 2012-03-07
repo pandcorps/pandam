@@ -20,33 +20,20 @@ PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY
 TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 */
-package org.pandcorps.fight;
+package org.pandcorps.pandax.text;
 
-import org.pandcorps.core.Pantil;
-import org.pandcorps.pandam.Panple;
-import org.pandcorps.pandam.event.*;
-import org.pandcorps.pandax.text.*;
+import org.pandcorps.pandam.Panmage;
 
-public class Info extends Pantext implements StepListener {
-	private byte age = 0;
-	
-	protected Info(final int i) {
-		this(Integer.toString(i));
-	}
-	
-	protected Info(final String text) {
-        super(Pantil.vmid(), FightGame.fontDamage, text);
-    }
-
-	@Override
-	public final void onStep(final StepEvent event) {
-		age++;
-		if (age > 30) {
-			destroy();
-			return;
-		}
-		final Panple pos = getPosition();
-		pos.setY(pos.getY() + 1);
-		pos.setZ(pos.getZ() - 1);
-	}
+public interface Font {
+    public Panmage getImage();
+    
+    // The number of characters in a row or column of the font
+    public int getRowAmount();
+    
+    // The number of characters in the font
+    public int getAmount();
+    
+    public int getRow(final char c);
+    
+    public int getColumn(final char c);
 }

@@ -55,9 +55,11 @@ public class Pantext extends Panctor {
     public final static char CHAR_DARK = 178;
     public final static char CHAR_SOLID = 219;
     
+    private final Font f;
 	private final Panmage font;
 	//private final String text;
 	/*package*/ final List<? extends CharSequence> text;
+	/*package*/ final int fontNum;
 	/*package*/ final float fontSize;
 	//private final FinPanple size;
 	/*package*/ final SizePanple size = new SizePanple();
@@ -79,24 +81,26 @@ public class Pantext extends Panctor {
 	private char bg = CHAR_NULL;
 	private BorderStyle borderStyle = null;
 
-	public Pantext(final String id, final Panmage font, final String text) {
+	public Pantext(final String id, final Font font, final String text) {
 	    this(id, font, Collections.singletonList(text));
 	}
 	
-	public Pantext(final String id, final Panmage font, final String text, final int charactersPerLine) {
+	public Pantext(final String id, final Font font, final String text, final int charactersPerLine) {
 	    this(id, font, split(text, charactersPerLine));
 	    this.charactersPerLine = charactersPerLine;
 	}
 	
-	public Pantext(final String id, final Panmage font, final List<? extends CharSequence> text) {
+	public Pantext(final String id, final Font font, final List<? extends CharSequence> text) {
 	    this(id, font, text, 0);
 	}
 	
-	public Pantext(final String id, final Panmage font, final List<? extends CharSequence> text, final int charactersPerLine) {
+	public Pantext(final String id, final Font font, final List<? extends CharSequence> text, final int charactersPerLine) {
 		super(id);
-		this.font = font;
+		f = font;
+		this.font = font.getImage();
 		this.text = text;
-		fontSize = font.getSize().getX() / 16;
+		fontNum = font.getRowAmount();
+		fontSize = this.font.getSize().getX() / fontNum;
 		//size = new FinPanple(fontSize * text.length(), fontSize, 0);
 	}
 	
@@ -297,8 +301,8 @@ public class Pantext extends Panctor {
 	private final void render(final Panderer renderer, final Panlayer layer,
 	                          final float x, final float y, final float z,
 	                          final char c, final int i, final int j) {
-	    final float xoff = (c % 16) * fontSize;
-        final float yoff = (c / 16) * fontSize;
+	    final float xoff = f.getColumn(c) * fontSize;
+        final float yoff = f.getRow(c) * fontSize;
         renderer.render(layer, font, x + (i * fontSize), y - ((j - firstLine) * fontSize), z, xoff, yoff, fontSize, fontSize);
 	}
 	

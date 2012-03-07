@@ -33,7 +33,7 @@ public final class TextActor extends Panctor implements RoomAddListener {
 
 	@Override
 	public void onRoomAdd(RoomAddEvent event) {
-		final Pantext text = new Pantext("TextText", (Panmage) getCurrentDisplay(), "Aa1");
+		final Pantext text = new Pantext("TextText", new ByteFont((Panmage) getCurrentDisplay()), "Aa1");
 		event.getRoom().addActor(text);
 		text.getPosition().set(getPosition());
 	}
