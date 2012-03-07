@@ -301,8 +301,9 @@ public class Pantext extends Panctor {
 	private final void render(final Panderer renderer, final Panlayer layer,
 	                          final float x, final float y, final float z,
 	                          final char c, final int i, final int j) {
-	    final float xoff = f.getColumn(c) * fontSize;
-        final float yoff = f.getRow(c) * fontSize;
+	    final int index = f.getIndex(c);
+	    final float xoff = BaseFont.getColumn(index, fontNum) * fontSize;
+        final float yoff = BaseFont.getRow(index, fontNum) * fontSize;
         renderer.render(layer, font, x + (i * fontSize), y - ((j - firstLine) * fontSize), z, xoff, yoff, fontSize, fontSize);
 	}
 	
