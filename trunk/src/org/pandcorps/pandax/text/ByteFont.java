@@ -38,6 +38,6 @@ public final class ByteFont extends BaseFont {
     
     @Override
     public final int getIndex(final char c) {
-        return c;
+        return (c < 0 || c > 255) ? INDEX_ILLEGAL : c;
     }
 }

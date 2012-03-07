@@ -25,6 +25,10 @@ package org.pandcorps.pandax.text;
 import org.pandcorps.pandam.Panmage;
 
 public interface Font {
+    public final static int INDEX_EMPTY = -1;
+    
+    public final static int INDEX_ILLEGAL = -2;
+    
     public Panmage getImage();
     
     // The number of characters in a row or column of the font

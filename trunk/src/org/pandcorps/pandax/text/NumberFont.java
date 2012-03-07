@@ -38,6 +38,9 @@ public final class NumberFont extends BaseFont {
     
     @Override
     public final int getIndex(final char c) {
-        return c - '*';
+        if (c == ' ') {
+            return INDEX_EMPTY;
+        }
+        return (c < '*' || c > '9') ? INDEX_ILLEGAL : (c - '*');
     }
 }
