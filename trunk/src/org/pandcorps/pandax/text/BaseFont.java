@@ -44,11 +44,19 @@ public abstract class BaseFont implements Font {
     
     @Override
     public final int getRow(final char c) {
-        return getIndex(c) / getRowAmount();
+        return getRow(getIndex(c), getRowAmount());
     }
     
     @Override
     public final int getColumn(final char c) {
-        return getIndex(c) % getRowAmount();
+        return getColumn(getIndex(c), getRowAmount());
+    }
+    
+    protected final static int getRow(final int index, final int rowAmount) {
+        return index / rowAmount;
+    }
+    
+    protected final static int getColumn(final int index, final int rowAmount) {
+        return index % rowAmount;
     }
 }
