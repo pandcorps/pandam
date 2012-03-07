@@ -50,6 +50,14 @@ public final class Imtil {
         }
     }
     
+    public final static void save(final BufferedImage img, final String location) {
+        try {
+            ImageIO.write(img, "png", new File(location));
+        } catch (final IOException e) {
+            throw new Panception(e);
+        }
+    }
+    
     //public final static BufferedImage sub(final BufferedImage img, final int x, final int y, final int w, final int h) {
         //final BufferedImage out = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
     //    return img.getSubimage(x, y, w, h);
@@ -67,6 +75,63 @@ public final class Imtil {
     
     public final static BufferedImage toTransparent(final BufferedImage img, final int rgb) {
     	return filter(img, new ReplacePixelFilter(rgb));
+    }
+    
+    public final static void copy(final BufferedImage src, final BufferedImage dst, final int srcX, final int srcY, final int w, final int h, final int dstX, final int dstY) {
+        for (int x = 0; x < w; x++) {
+            final int srcCol = srcX + x, dstCol = dstX + x;
+            for (int y = 0; y < h; y++) {
+                // Different color models?
+                final int srcP;
+                final int srcRow = srcY + y;
+                try {
+                    srcP = src.getRGB(srcCol, srcRow);
+                } catch (final Exception e) {
+                    throw err(src, dst, srcX, srcY, w, h, dstX, dstY, "get", srcCol, srcRow, e);
+                }
+                final int dstRow = dstY + y;
+                try {
+                    dst.setRGB(dstCol, dstRow, srcP);
+                } catch (final Exception e) {
+                    throw err(src, dst, srcX, srcY, w, h, dstX, dstY, "set", dstCol, dstRow, e);
+                }
+            }
+        }
+    }
+    
+    private final static Panception err(final BufferedImage src, final BufferedImage dst, final int srcX, final int srcY, final int w, final int h, final int dstX, final int dstY, final String op, final int errX, final int errY, final Exception e) {
+        final StringBuilder b = new StringBuilder();
+        b.append("Copying from src whose dimensions are");
+        appendDim(b, src);
+        b.append("\nStarting at");
+        appendCoord(b, srcX, srcY);
+        b.append("\nCopying dimensions");
+        appendDim(b, w, h);
+        b.append("\nCopying to dst whose dimensions are");
+        appendDim(b, dst);
+        b.append("\nStarting at");
+        appendCoord(b, dstX, dstY);
+        b.append("\nCould not").append(op);
+        b.append("\nAt");
+        appendCoord(b, errX, errY);
+        throw new Panception(b, e);
+    }
+    
+    private final static StringBuilder appendDim(final StringBuilder b, final BufferedImage img) {
+        return appendDim(b, img.getWidth(), img.getHeight());
+    }
+    
+    private final static StringBuilder appendDim(final StringBuilder b, final int w, final int h) {
+        return appendPair(b, w, h, '*');
+    }
+    
+    private final static StringBuilder appendCoord(final StringBuilder b, final int x, final int y) {
+        return appendPair(b, x, y, ',');
+    }
+    
+    private final static StringBuilder appendPair(final StringBuilder b, final int w, final int h, final char delim) {
+        b.append(" (").append(w).append(delim).append(h).append(')');
+        return b;
     }
     
     public final static BufferedImage filter(final BufferedImage img, final PixelFilter... fs) {
