@@ -33,6 +33,7 @@ import org.pandcorps.fight.Fighter.FighterDefinition;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.impl.*;
+import org.pandcorps.pandax.visual.*;
 import org.pandcorps.pandax.menu.*;
 import org.pandcorps.pandax.text.*;
 import org.pandcorps.pandax.text.Fonts.*;
@@ -56,6 +57,7 @@ public class FightGame extends Pangame {
     private final static short OUTLINE_DEFAULT = 16;
     
     private static Panmage cursorImage = null;
+    private static Panmage menuBackground = null;
     private static Panmage shadowImage = null;
     //private static boolean shadowVisible = true;
     private static byte shadowTimer = 0;
@@ -136,6 +138,7 @@ public class FightGame extends Pangame {
         final BufferedImage menuImg = loadImage("org/pandcorps/fight/res/misc/Menu.png");
         final BufferedImage[] menuImgs = Imtil.toStrip(menuImg, DIM);
         cursorImage = engine.createImage("Cursor", new FinPanple(8, 1, 0), null, null, menuImgs[0]);
+        menuBackground = engine.createImage("MenuBgImage", "org/pandcorps/fight/res/misc/MenuBackground.png");
         final BufferedImage constantsImg = loadImage("org/pandcorps/fight/res/misc/Constants.png");
         final BufferedImage[] constantImgs = Imtil.toStrip(constantsImg, DIM);
         shadowImage = engine.createImage("Shadow", new FinPanple(8, 4, 0), null, null, constantImgs[0]);
@@ -297,6 +300,11 @@ public class FightGame extends Pangame {
         @Override
         protected final void load() {
             room.addActor(new CharacterSelectGrid());
+            final ScrollTexture texture = new ScrollTexture("MenuBgActor", menuBackground);
+            texture.setSize(ROOM_W, ROOM_H);
+            texture.setVelocity(1, -1);
+            room.addActor(texture);
+            texture.getPosition().setZ(-200);
         }
     }
     
