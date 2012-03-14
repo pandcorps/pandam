@@ -93,15 +93,19 @@ public abstract class Panteraction {
 		    {'~'}},
 		    {{'1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '='},
 		    {'!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+'}},
-		    {{'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\\'},
-		    {'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '{', '}', '|'}},
+		    {{'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']'},
+		    {'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '{', '}'}},
 		    {{'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', '\''},
 		    {'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', ':', '"'}},
 		    {{'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/'},
 		    {'Z', 'X', 'C', 'V', 'B', 'N', 'M', '<', '>', '?'}},
 		    {{' '},
-		    {' '}}};
-        final int[] offs = {IND_GRAVE, IND_1, IND_Q, IND_A, IND_Z, IND_SPACE};
+		    {' '}},
+		    {{'\\'},
+		    {'|'}}
+		    };
+		final int indBackslash = getIndexBackslash();
+        final int[] offs = {IND_GRAVE, IND_1, IND_Q, IND_A, IND_Z, IND_SPACE, indBackslash};
 		for (int i = 0; i < size; i++) {
 		    /*final char b, s;
 		    final boolean l;
@@ -148,7 +152,7 @@ public abstract class Panteraction {
         KEY_APOSTROPHE = keys[40];
         KEY_GRAVE = keys[IND_GRAVE]; // tilde with shift
         KEY_SHIFT_LEFT = keys[IND_SHIFT_LEFT];
-        KEY_BACKSLASH = keys[43];
+        KEY_BACKSLASH = keys[indBackslash];
         KEY_Z = keys[IND_Z];
         KEY_COMMA = keys[51];
         KEY_PERIOD = keys[52];
@@ -191,6 +195,8 @@ public abstract class Panteraction {
 	public abstract boolean isInsEnabled();
 
 	public abstract int getKeyCount();
+	
+	protected abstract int getIndexBackslash();
 
 	public final Key getKey(final int index) {
 		return keys[index];

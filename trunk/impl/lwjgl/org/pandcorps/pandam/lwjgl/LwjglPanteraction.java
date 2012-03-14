@@ -40,4 +40,17 @@ public final class LwjglPanteraction extends Panteraction {
 	public final boolean isInsEnabled() {
 	    return LwjglPangine.getEngine().ins;
 	}
+	
+	@Override
+	protected final int getIndexBackslash() {
+		/*
+		When backslash is pressed, Keyboard returns
+		0 on a Linux netbook, 43 on a Windows laptop
+		System.out.println("0=" + Keyboard.getKeyName(0)); // NONE, even on netbook
+		System.out.println("43=" + Keyboard.getKeyName(43)); // BACKSLASH, even on netbook
+		System.out.println("\\=" + Keyboard.getKeyIndex("\\")); // 0 on netbook
+		System.out.println("KEY_BACKSLASH=" + Keyboard.KEY_BACKSLASH); // 43, even on netbook
+		*/
+		return Keyboard.getKeyIndex("\\");
+	}
 }
