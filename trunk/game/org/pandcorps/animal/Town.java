@@ -69,14 +69,14 @@ public class Town extends Panctor implements RoomAddListener {
         //player.setView(rabbit[0][0]);
         //player.setView(rabbitSouth);
         //final Panmage[][] rabbit = engine.createSheet("Rabbit", null, null, null, "org/pandcorps/animal/res/rabbit.png", 16, 16);
-        player.setView("org/pandcorps/animal/res/concept/rabbitsquare2.png");
+        player.setView("org/pandcorps/animal/res/rabbit.png");
         player.setPosition(map.getTile(7, 7));
         room.addActor(player);
         engine.track(player);
         engine.zoom(2);
         for (int i = 0; i < 2; i++) {
             final Neighbor neighbor = new Neighbor(Pantil.vmid());
-            neighbor.setView("org/pandcorps/animal/res/concept/rabbitsquare2.png");
+            neighbor.setView("org/pandcorps/animal/res/rabbit.png");
             final int c = 9 + i * 2;
             neighbor.setPosition(map.getTile(c, c));
             room.addActor(neighbor);
