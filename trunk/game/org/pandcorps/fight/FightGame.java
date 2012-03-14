@@ -276,9 +276,9 @@ public class FightGame extends Pangame {
             img.setView(icon);
             img.getPosition().set(192, 88);
             room.addActor(img);
-            engine.addTimer(30, new TimerListener() { @Override public final void onTimer(final TimerEvent event) {
+            engine.addTimer(45, new TimerListener() { @Override public final void onTimer(final TimerEvent event) {
                 try {
-                    showSelect();
+                    Panscreen.set(new TitleScreen());
                 } catch (final Exception e) {
                     throw Pantil.toRuntimeException(e);
                 }
@@ -289,6 +289,33 @@ public class FightGame extends Pangame {
         protected final void destroy() {
             Panmage.destroy(font);
             Panmage.destroy(icon);
+        }
+    }
+    
+    private final static class TitleScreen extends Panscreen {
+        private Panmage title = null;
+        
+        @Override
+        protected final void load() {
+            final Pangine engine = Pangine.getEngine();
+            engine.setBgColor(Pancolor.WHITE);
+            title = engine.createImage("TitleImg", "org/pandcorps/fight/res/misc/Title.png");
+            final Panctor act = new Panctor("TitleAct");
+            act.setView(title);
+            act.getPosition().set(64, 32);
+            room.addActor(act);
+            engine.addTimer(75, new TimerListener() { @Override public final void onTimer(final TimerEvent event) {
+                try {
+                    showSelect();
+                } catch (final Exception e) {
+                    throw Pantil.toRuntimeException(e);
+                }
+            }} );
+        }
+        
+        @Override
+        protected final void destroy() {
+            Panmage.destroy(title);
         }
     }
     
