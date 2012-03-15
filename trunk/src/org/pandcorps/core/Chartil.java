@@ -43,6 +43,10 @@ public final class Chartil {
         return o == null ? null : o.toString();
     }
     
+    public final static String toUpperCase(final String s) {
+        return s == null ? null : s.toUpperCase();
+    }
+    
     public final static char charAt(final CharSequence s, final int i) {
         return size(s) <= i ? 0 : s.charAt(i);
     }
