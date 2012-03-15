@@ -23,6 +23,7 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.pandam.lwjgl;
 
 import org.lwjgl.input.*;
+import org.pandcorps.core.Chartil;
 import org.pandcorps.pandam.*;
 
 public final class LwjglPanteraction extends Panteraction {
@@ -48,9 +49,14 @@ public final class LwjglPanteraction extends Panteraction {
 		0 on a Linux netbook, 43 on a Windows laptop
 		System.out.println("0=" + Keyboard.getKeyName(0)); // NONE, even on netbook
 		System.out.println("43=" + Keyboard.getKeyName(43)); // BACKSLASH, even on netbook
-		System.out.println("\\=" + Keyboard.getKeyIndex("\\")); // 0 on netbook
+		System.out.println("\\=" + Keyboard.getKeyIndex("\\")); // 0 on netbook, also laptop
 		System.out.println("KEY_BACKSLASH=" + Keyboard.KEY_BACKSLASH); // 43, even on netbook
+		System.out.println("os=" + System.getProperty("os.name"));
 		*/
-		return Keyboard.getKeyIndex("\\");
+	    final String os = Chartil.toUpperCase(System.getProperty("os.name"));
+	    if (os != null && (os.contains("NIX") || os.contains("NUX") || os.contains("BSD"))) {
+	        return 0;
+	    }
+		return 43;
 	}
 }
