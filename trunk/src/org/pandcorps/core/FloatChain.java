@@ -22,13 +22,9 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.core;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
 public final class FloatChain {
-    
-    private final static int FLOAT_SIZE = Float.SIZE / 8;
     
     private final static int DEFAULT_CAPACITY = 16;
     
@@ -41,13 +37,13 @@ public final class FloatChain {
     }
     
     public FloatChain(final int initialCapacity) {
-        buf = alloc(initialCapacity);
+        buf = Pantil.allocateDirectFloatBuffer(initialCapacity);
     }
     
     public final FloatChain append(final float f) {
         size++;
         if (size > buf.limit()) {
-            final FloatBuffer t = alloc((int) (size * 1.5));
+            final FloatBuffer t = Pantil.allocateDirectFloatBuffer((int) (size * 1.5));
             t.put(buf);
             buf = t;
         }
@@ -66,9 +62,5 @@ public final class FloatChain {
     public final void clear() {
         buf.rewind();
         size = 0;
-    }
-    
-    private final static FloatBuffer alloc(final int capacity) {
-        return ByteBuffer.allocateDirect(capacity * FLOAT_SIZE).order(ByteOrder.nativeOrder()).asFloatBuffer();
     }
 }

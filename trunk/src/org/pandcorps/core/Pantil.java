@@ -22,10 +22,14 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.core;
 
+import java.nio.*;
 import java.rmi.dgc.*;
 
 // Pancorps Utility
 public final class Pantil {
+    private final static int INT_SIZE = Integer.SIZE / 8;
+    private final static int FLOAT_SIZE = Float.SIZE / 8;
+    
 	private Pantil() {
 		throw new Error();
 	}
@@ -52,5 +56,17 @@ public final class Pantil {
 	
 	public final static Boolean toBoolean(final String value) {
         return Chartil.isValued(value) ? Boolean.valueOf(value) : null;
+    }
+	
+	public final static FloatBuffer allocateDirectFloatBuffer(final int capacity) {
+	    return alloc(capacity * FLOAT_SIZE).asFloatBuffer();
+	}
+	
+	public final static IntBuffer allocateDirectIntBuffer(final int capacity) {
+        return alloc(capacity * INT_SIZE).asIntBuffer();
+    }
+	
+	private final static ByteBuffer alloc(final int adjustedCapacity) {
+        return ByteBuffer.allocateDirect(adjustedCapacity).order(ByteOrder.nativeOrder());
     }
 }
