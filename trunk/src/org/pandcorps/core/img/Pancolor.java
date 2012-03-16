@@ -127,6 +127,59 @@ public class Pancolor {
         this.a = a;
     }
     
+    public final void set(final Pancolor color) {
+        setR(color.getR());
+        setG(color.getG());
+        setB(color.getB());
+        setA(color.getA());
+    }
+    
+    public final boolean addR(final short r) {
+        final short n = add(this.r, r);
+        if (n == this.r) {
+            return false;
+        }
+        setR(n);
+        return true;
+    }
+    
+    public final boolean addG(final short g) {
+        final short n = add(this.g, g);
+        if (n == this.g) {
+            return false;
+        }
+        setG(n);
+        return true;
+    }
+    
+    public final boolean addB(final short b) {
+        final short n = add(this.b, b);
+        if (n == this.b) {
+            return false;
+        }
+        setB(n);
+        return true;
+    }
+    
+    public final boolean addA(final short a) {
+        final short n = add(this.a, a);
+        if (n == this.a) {
+            return false;
+        }
+        setA(n);
+        return true;
+    }
+    
+    private final static short add(short c, final short i) {
+        c += i;
+        if (c > MAX_VALUE) {
+            c = MAX_VALUE;
+        } else if (c < 0) {
+            c = 0;
+        }
+        return c;
+    }
+    
     @Override
     public final int hashCode() {
         return r + (256 * g) + (65536 * b) + (16777216 * a);
