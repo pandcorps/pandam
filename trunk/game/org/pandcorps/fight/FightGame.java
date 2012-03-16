@@ -258,12 +258,16 @@ public class FightGame extends Pangame {
         engine.createType("BackgroundType", Background.class, fighterView);
     }
     
-    private final static class LogoScreen extends Panscreen {
+    private final static class LogoScreen extends FadeScreen {
         private Panmage font = null;
         private Panmage icon = null;
         
+        private LogoScreen() {
+            super(Pancolor.WHITE, 30);
+        }
+        
         @Override
-        protected final void load() {
+        protected final void start() {
             final Pangine engine = Pangine.getEngine();
             engine.setBgColor(Pancolor.WHITE);
             font = engine.createImage("PandcorpsFont", "org/pandcorps/res/img/FontGradient16.png");
@@ -276,13 +280,11 @@ public class FightGame extends Pangame {
             img.setView(icon);
             img.getPosition().set(192, 88);
             room.addActor(img);
-            engine.addTimer(45, new TimerListener() { @Override public final void onTimer(final TimerEvent event) {
-                try {
-                    Panscreen.set(new TitleScreen());
-                } catch (final Exception e) {
-                    throw Pantil.toRuntimeException(e);
-                }
-            }} );
+        }
+        
+        @Override
+        protected final void finish() {
+            Panscreen.set(new TitleScreen());
         }
         
         @Override
@@ -292,11 +294,15 @@ public class FightGame extends Pangame {
         }
     }
     
-    private final static class TitleScreen extends Panscreen {
+    private final static class TitleScreen extends FadeScreen {
         private Panmage title = null;
         
+        private TitleScreen() {
+            super(Pancolor.WHITE, 60);
+        }
+        
         @Override
-        protected final void load() {
+        protected final void start() {
             final Pangine engine = Pangine.getEngine();
             engine.setBgColor(Pancolor.WHITE);
             title = engine.createImage("TitleImg", "org/pandcorps/fight/res/misc/Title.png");
@@ -304,13 +310,11 @@ public class FightGame extends Pangame {
             act.setView(title);
             act.getPosition().set(64, 32);
             room.addActor(act);
-            engine.addTimer(75, new TimerListener() { @Override public final void onTimer(final TimerEvent event) {
-                try {
-                    showSelect();
-                } catch (final Exception e) {
-                    throw Pantil.toRuntimeException(e);
-                }
-            }} );
+        }
+        
+        @Override
+        protected final void finish() {
+            showSelect();
         }
         
         @Override
