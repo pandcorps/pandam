@@ -108,7 +108,7 @@ public abstract class Panplementation {
     protected abstract void setFlip(boolean flip);
 
 	/*package*/ final void updateView() {
-		if (view instanceof Panmage) {
+		if (view == null || view instanceof Panmage) {
 			return;
 		}
 		final Panframe[] frames = ((Panimation) view).getFrames();
