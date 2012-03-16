@@ -24,7 +24,7 @@ package org.pandcorps.pandam.lwjgl;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
-import java.nio.ByteBuffer;
+import java.nio.*;
 import java.util.*;
 //import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Keyboard;
@@ -44,6 +44,7 @@ public final class LwjglPangine extends Pangine {
 	private final static ArrayList<LwjglPanmage> images = new ArrayList<LwjglPanmage>();
 	private final HashSet<Panput> active = new HashSet<Panput>();
 	private final HashSet<Panput> newActive = new HashSet<Panput>();
+	private final FloatBuffer blendRectangle = Pantil.allocateDirectFloatBuffer(12);
 	/*package*/ boolean capsLock = false;
 	/*package*/ boolean ins = false;
 	//private Panctor tracked = null;
@@ -369,7 +370,51 @@ public final class LwjglPangine extends Pangine {
             }*/
 		    image.renderAll(room);
 		}
+		blend(room);
 		//Display.update();
+	}
+	
+	private final byte toByte(final short c) {
+	    return (byte) (c + Byte.MIN_VALUE);
+	}
+	
+	private void blend(final Panlayer room) {
+	    // opengl.org - the depth buffer is not updated if the depth test is disabled
+	    final Pancolor color = room.getBlendColor();
+	    final short a = color.getA();
+	    if (a == 0) {
+	        return;
+	    }
+	    GL11.glLoadIdentity();
+	    GL11.glDisable(GL11.GL_DEPTH_TEST);
+	    GL11.glDisable(GL11.GL_TEXTURE_2D);
+	    GL11.glDisableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
+	    GL11.glEnable(GL11.GL_BLEND);
+	    GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GL11.glColor4b(toByte(color.getR()), toByte(color.getG()), toByte(color.getB()), toByte(a));
+        final int maxx = 256, maxy = 192; //TODO real dimensions/coordinates based on window size and camera location
+        blendRectangle.rewind();
+        blendRectangle.put(maxx);
+        blendRectangle.put(maxy);
+        blendRectangle.put(0);
+        blendRectangle.put(0);
+        blendRectangle.put(maxy);
+        blendRectangle.put(0);
+        blendRectangle.put(0);
+        blendRectangle.put(0);
+        blendRectangle.put(0);
+        blendRectangle.put(maxx);
+        blendRectangle.put(0);
+        blendRectangle.put(0);
+        blendRectangle.rewind();
+        //GL11.glDrawElements(GL11.GL_QUADS, blendRectangle); array of indices into other arrays
+        GL11.glVertexPointer(3, 0, blendRectangle);
+        GL11.glDrawArrays(GL11.GL_QUADS, 0, 4); // Number of vertices
+        GL11.glColor4b(Byte.MAX_VALUE, Byte.MAX_VALUE, Byte.MAX_VALUE, Byte.MAX_VALUE);
+        GL11.glDisable(GL11.GL_BLEND);
+        GL11.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
+        GL11.glEnable(GL11.GL_DEPTH_TEST);
 	}
 
 	private final void onAction(final Panput input) {

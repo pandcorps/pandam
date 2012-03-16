@@ -27,15 +27,13 @@ import java.awt.image.ColorModel;
 //import java.awt.image.DataBufferByte;
 //import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.IdentityHashMap;
 
 //import javax.imageio.ImageIO;
 import org.lwjgl.opengl.GL11;
-import org.pandcorps.core.FloatChain;
-import org.pandcorps.core.Imtil;
+import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.impl.UnmodPanple;
 
@@ -145,7 +143,7 @@ public final class LwjglPanmage extends Panmage {
 		scratch.rewind();
 
 		// Create A IntBuffer For Image Address In Memory
-		final IntBuffer buf = ByteBuffer.allocateDirect(4).order(ByteOrder.nativeOrder()).asIntBuffer();
+		final IntBuffer buf = Pantil.allocateDirectIntBuffer(1);
 		GL11.glGenTextures(buf); // Create Texture In OpenGL
 		// Create Nearest Filtered Texture
 		final int tid = buf.get(0);
@@ -485,24 +483,18 @@ public final class LwjglPanmage extends Panmage {
         */
 	}
 	
-	//private final static int FLOAT_SIZE = Float.SIZE / 8;
-	
 	//private final static FloatBuffer wrap(final float[] f) {
 	//    //return FloatBuffer.wrap(f); // FloatBuffer is not direct
 	//    //final ByteBuffer bb = ByteBuffer.allocateDirect(f.length * FLOAT_SIZE);
-	//    final ByteBuffer bb = ByteBuffer.allocateDirect(f.length * FLOAT_SIZE).order(ByteOrder.nativeOrder());
-	//    final FloatBuffer fb = bb.asFloatBuffer();
+	//    final FloatBuffer fb = Pantil.allocateDirectFloatBuffer(f.length);
 	//    fb.put(f);
 	//    fb.rewind();
 	//    return fb;
 	//}
 	
-	//private final static int INT_SIZE = Integer.SIZE / 8;
-    
     //private final static IntBuffer wrap(final int[] i) {
     //    //return IntBuffer.wrap(i); // IntBuffer is not direct
-    //    final ByteBuffer bb = ByteBuffer.allocateDirect(i.length * INT_SIZE);
-    //    final IntBuffer ib = bb.asIntBuffer();
+    //    final ByteBuffer bb = Pantil.allocateDirectIntBuffer(i.length);
     //    ib.put(i);
     //    ib.rewind();
     //    return ib;
