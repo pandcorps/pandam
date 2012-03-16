@@ -26,6 +26,7 @@ import java.util.*;
 import java.util.Map.*;
 import org.pandcorps.core.*;
 import org.pandcorps.core.col.*;
+import org.pandcorps.core.img.Pancolor;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.impl.*;
 
@@ -47,6 +48,7 @@ public class Panlayer extends BasePantity {
     //private final ArrayList<Panctor> actors = new ArrayList<Panctor>();
     /*package*/ Panctor tracked = null;
     private final Panroom room;
+    private final Pancolor blendColor = new Pancolor(Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, Pancolor.MIN_VALUE);
     private Panlayer beneath = null;
     private Panlayer above = null;
     private boolean clearDepthEnabled = true;
@@ -119,6 +121,10 @@ public class Panlayer extends BasePantity {
     
     public final Panroom getRoom() {
         return room;
+    }
+    
+    public final Pancolor getBlendColor() {
+        return blendColor;
     }
 
     //public ArrayList<Panctor> getActors() {
