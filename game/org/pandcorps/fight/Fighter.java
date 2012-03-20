@@ -459,4 +459,9 @@ System.out.println("targ max: " + t.getBoundingMaximum());*/
     final boolean isFree() {
         return mode == MODE_STILL || mode == MODE_WALK;
     }
+    
+    @Override
+    protected final void onDestroy() {
+        controller.destroy();
+    }
 }

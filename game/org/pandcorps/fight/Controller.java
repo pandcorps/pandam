@@ -64,4 +64,7 @@ public abstract class Controller {
 	/*package*/ final void walkRight() {
 		this.fighter.walkRight();
 	}
+	
+	/*package*/ void destroy() {
+	}
 }
