@@ -710,6 +710,15 @@ public abstract class Pangine {
 	    timers.add(listener);
 	}
 	
+	public final void removeTimer(final TimerListener listener) {
+	    for (int i = timers.size() - 1; i > 0; i -= 2) {
+	        if (timers.get(i) == listener) {
+	            timers.remove(i);
+	            timers.remove(i - 1);
+	        }
+	    }
+	}
+	
 	public abstract void setTitle(final String title);
 	
 	public abstract void setIcon(final String... locations);
