@@ -223,6 +223,16 @@ public abstract class Panteraction {
 	    unregister(startListeners, listener);
 	}
 	
+	public final void unregisterAllStart(final Iterable<ActionStartListener> list) {
+        unregister(startListeners, list);
+    }
+	
+	private final static <T> void unregister(final HashMultimap<?, T> map, final Iterable<T> list) {
+	    for (final T listener : list) {
+	        unregister(map, listener);
+	    }
+	}
+	
 	private final static <T> void unregister(final HashMultimap<?, T> listeners, final T listener) {
 	    for (final ArrayList<T> list : listeners.values()) {
     	    final Iterator<T> iter = list.iterator();
@@ -245,6 +255,10 @@ public abstract class Panteraction {
 	public final void unregister(final ActionListener listener) {
         unregister(listeners, listener);
     }
+	
+	public final void unregisterAll(final Iterable<ActionListener> list) {
+        unregister(listeners, list);
+    }
 
 	public final void register(final Panput input, final ActionEndListener listener) {
 		endListeners.add(input, listener);
@@ -257,6 +271,16 @@ public abstract class Panteraction {
 	public final void unregister(final ActionEndListener listener) {
         unregister(endListeners, listener);
     }
+	
+	public final void unregisterAllEnd(final Iterable<ActionEndListener> list) {
+        unregister(endListeners, list);
+    }
+	
+	public final void unregisterAll() {
+	    startListeners.clear();
+	    listeners.clear();
+	    endListeners.clear();
+	}
 
 	/*public final void register(final Panput input, final Panction action) {
 		actions.add(input, action);
