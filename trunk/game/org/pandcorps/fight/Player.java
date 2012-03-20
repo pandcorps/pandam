@@ -28,6 +28,9 @@ import org.pandcorps.pandam.event.action.*;
 
 //public final class Player extends Fighter {
 public final class Player extends Controller {
+    private final ArrayList<ActionListener> listeners = new ArrayList<ActionListener>();
+    private final ArrayList<ActionStartListener> startListeners = new ArrayList<ActionStartListener>();
+    
     //public Player(final String id, final Panmage still, final Panimation walk, final Panmage quick) {
         //final Fighter fighter = this;
     public Player() {
@@ -38,17 +41,29 @@ public final class Player extends Controller {
         // At first used ActionListener; don't think we'd ever want to use that for attacks
         // That would require extra work to prevent constant attacks
         //inter.register(inter.KEY_SHIFT_RIGHT, new ActionListener() {@Override public void onAction(final ActionEvent event) {
-        inter.register(inter.KEY_SHIFT_RIGHT, new ActionStartListener() {@Override public void onActionStart(final ActionStartEvent event) {
+        register(inter.KEY_SHIFT_RIGHT, new ActionStartListener() {@Override public void onActionStart(final ActionStartEvent event) {
             attack();
         }});
         if (FightGame.isDebug()) {
-            inter.register(inter.KEY_SLASH, new ActionStartListener() {@Override public void onActionStart(final ActionStartEvent event) {
+            register(inter.KEY_SLASH, new ActionStartListener() {@Override public void onActionStart(final ActionStartEvent event) {
             	// Controller subclasses should only call Controller setter/action methods
             	// Fighter methods just for debugging
                 fighter.strong();
             }});
-            inter.register(inter.KEY_GRAVE, new ActionStartListener() {@Override public void onActionStart(final ActionStartEvent event) {
-            	for (final Panctor actor : fighter.getLayer().getActors()) {
+            register(inter.KEY_GRAVE, new ActionStartListener() {@Override public void onActionStart(final ActionStartEvent event) {
+                if (fighter == null) {
+                    throw new NullPointerException("Player Controller's Fighter is null");
+                }
+                final Panlayer layer = fighter.getLayer();
+                if (layer == null) {
+                    // After a fight ends, input listeners must be unregistered, or this will fire for the new one and the old one
+                    throw new NullPointerException("Fighter's Panlayer is null");
+                }
+                final Set<Panctor> actors = layer.getActors();
+                if (actors == null) {
+                    throw new NullPointerException("Panlayer's Panctor Set is null");
+                }
+            	for (final Panctor actor : actors) {
             		if (actor.getClass() == Fighter.class) {
             			final Controller c = ((Fighter) actor).controller;
             			if (c instanceof Ai) {
@@ -59,27 +74,27 @@ public final class Player extends Controller {
             	}
             }});
         }
-        inter.register(inter.KEY_ENTER, new ActionStartListener() {@Override public void onActionStart(final ActionStartEvent event) {
+        register(inter.KEY_ENTER, new ActionStartListener() {@Override public void onActionStart(final ActionStartEvent event) {
             spec1();
         }});
-        inter.register(inter.KEY_BACKSLASH, new ActionStartListener() {@Override public void onActionStart(final ActionStartEvent event) {
+        register(inter.KEY_BACKSLASH, new ActionStartListener() {@Override public void onActionStart(final ActionStartEvent event) {
             spec2();
         }});
         
-        inter.register(inter.KEY_DOWN, new ActionListener() {@Override public void onAction(final ActionEvent event) {
+        register(inter.KEY_DOWN, new ActionListener() {@Override public void onAction(final ActionEvent event) {
             walkDown();
         }});
-        inter.register(inter.KEY_UP, new ActionListener() {@Override public void onAction(final ActionEvent event) {
+        register(inter.KEY_UP, new ActionListener() {@Override public void onAction(final ActionEvent event) {
             walkUp();
         }});
-        inter.register(inter.KEY_LEFT, new ActionListener() {@Override public void onAction(final ActionEvent event) {
+        register(inter.KEY_LEFT, new ActionListener() {@Override public void onAction(final ActionEvent event) {
             walkLeft();
         }});
-        inter.register(inter.KEY_RIGHT, new ActionListener() {@Override public void onAction(final ActionEvent event) {
+        register(inter.KEY_RIGHT, new ActionListener() {@Override public void onAction(final ActionEvent event) {
             walkRight();
         }});
         
-        inter.register(inter.KEY_TAB, new ActionStartListener() {@Override public void onActionStart(final ActionStartEvent event) {
+        register(inter.KEY_TAB, new ActionStartListener() {@Override public void onActionStart(final ActionStartEvent event) {
             //TODO only allow switching among own team unless debugging
             final Set<Panctor> actors = fighter.getLayer().getRoom().getActors();
             boolean ready = false;
@@ -96,5 +111,24 @@ public final class Player extends Controller {
                 }
             }
         }});
+    }
+    
+    private void register(final Panput input, final ActionListener listener) {
+        final Panteraction inter = Pangine.getEngine().getInteraction();
+        inter.register(input, listener);
+        listeners.add(listener);
+    }
+    
+    private void register(final Panput input, final ActionStartListener listener) {
+        final Panteraction inter = Pangine.getEngine().getInteraction();
+        inter.register(input, listener);
+        startListeners.add(listener);
+    }
+    
+    @Override
+    /*package*/ void destroy() {
+        final Panteraction inter = Pangine.getEngine().getInteraction();
+        inter.unregisterAllStart(startListeners);
+        inter.unregisterAll(listeners);
     }
 }
