@@ -26,13 +26,17 @@ import org.pandcorps.core.Pantil;
 import org.pandcorps.core.img.Pancolor;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
+import org.pandcorps.pandam.event.action.*;
 
 public abstract class FadeScreen extends Panscreen {
+    private final static int SPEED = 4;
     private final FadeController c = new FadeScreenController();
     private final Panroom room;
     private final Pancolor color;
     private final short oldAlpha;
     private final int time;
+    private TimerListener timer = null;
+    private ActionStartListener anyKey = null;
     
     protected FadeScreen(final Pancolor color, final int time) {
         room = Pangame.getGame().getCurrentRoom();
@@ -46,7 +50,14 @@ public abstract class FadeScreen extends Panscreen {
     protected final void load() throws Exception {
         room.addActor(c);
         color.setA(Pancolor.MAX_VALUE);
-        c.setVelocity((short) -4);
+        c.setVelocity((short) -SPEED);
+        final Pangine engine = Pangine.getEngine();
+        final Panteraction inter = engine.getInteraction();
+        anyKey = new ActionStartListener() { @Override public final void onActionStart(final ActionStartEvent event) {
+            c.setVelocity((short) SPEED);
+            engine.removeTimer(timer);
+        }};
+        inter.register(anyKey);
         start();
     }
     
@@ -61,13 +72,15 @@ public abstract class FadeScreen extends Panscreen {
         
         @Override
         protected final void onFadeEnd() {
+            final Pangine engine = Pangine.getEngine();
             if (color.getA() == 0) {
-                final Pangine engine = Pangine.getEngine();
-                engine.addTimer(time, new TimerListener() { @Override public final void onTimer(final TimerEvent event) {
-                    setVelocity((short) 4);
-                }} );
+                timer = new TimerListener() { @Override public final void onTimer(final TimerEvent event) {
+                    setVelocity((short) SPEED);
+                }};
+                engine.addTimer(time, timer);
             } else {
                 color.setA(oldAlpha);
+                engine.getInteraction().unregister(anyKey);
                 finish(); // Might open a new FadeScreen, so revert alpha first
             }
         }
