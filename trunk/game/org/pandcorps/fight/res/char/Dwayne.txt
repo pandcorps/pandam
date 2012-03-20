@@ -1,6 +1,6 @@
 FTR|Dwayne
 IMG|still|0|8^1
-IMG|quick|1|7^1
+IMG|quick|1|6^1
 IMG|strong|2|6^1
 IMG|walk1|3|8^0
 IMG|walk2|4|8^0
