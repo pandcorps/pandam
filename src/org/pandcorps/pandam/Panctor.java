@@ -276,12 +276,16 @@ public class Panctor extends BasePantity implements SpecPanctor {
 	}
 
 	public final void destroy() {
+	    onDestroy();
 		//Pangame.getGame().getCurrentRoom().removeActor(this);
 	    if (layer != null) {
 	        layer.removeActor(this);
 	        layer = null;
 	    }
 		destroyed = true;
+	}
+	
+	protected void onDestroy() {
 	}
 
 	//TODO transform is messy; what if the Panctor instance always stayed the same;
