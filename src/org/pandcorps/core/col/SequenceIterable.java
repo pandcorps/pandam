@@ -22,8 +22,9 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.core.col;
 
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.*;
+
+import org.pandcorps.core.*;
 
 public final class SequenceIterable<E> implements Iterable<E> {
     
@@ -52,18 +53,34 @@ public final class SequenceIterable<E> implements Iterable<E> {
     
     private final class SequenceIterator implements Iterator<E> {
         
+        private final Iterator<Iterable<E>> siter = sequence.iterator();
+        
+        private Iterator<E> citer = null;
+        
+        private final void init() {
+            while (!Coltil.hasNext(citer) && siter.hasNext()) {
+                citer = siter.next().iterator();
+            }
+        }
+        
         @Override
         public boolean hasNext() {
-            return false;
+            init();
+            return Coltil.hasNext(citer);
         }
 
         @Override
         public E next() {
-            return null;
+            init();
+            if (citer == null) {
+                throw new NoSuchElementException();
+            }
+            return citer.next();
         }
 
         @Override
         public void remove() {
+            throw new UnsupportedOperationException();
         }
     }
 }
