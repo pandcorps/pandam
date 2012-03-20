@@ -189,11 +189,12 @@ public final class Fighter extends Panctor implements StepListener, CollisionLis
             moveLoop--;
             if (moveLoop == 0) {
                 mode = MODE_STILL;
+                changeView(def.still);
                 move = null;
                 moveLoop = 0;
             }
         }
-        changeView(def.still);
+        //changeView(def.still); // Why did we do between loop iterations?
     }
     
     @Override
