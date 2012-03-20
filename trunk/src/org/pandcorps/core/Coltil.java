@@ -136,4 +136,8 @@ public final class Coltil {
 	public final static <E, T extends E> ArrayList<E> addIfValued(ArrayList<E> list, final T elem) {
 		return elem == null ? list : add(list, elem);
 	}
+	
+	public final static boolean hasNext(final Iterator<?> iter) {
+	    return iter == null ? false : iter.hasNext();
+	}
 }
