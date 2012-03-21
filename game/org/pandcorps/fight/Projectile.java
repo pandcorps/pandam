@@ -133,14 +133,14 @@ public class Projectile extends Panctor implements StepListener, AllOobListener,
     }
     
     /*package*/ final void hit(final Fighter fighter) {
-        /*if (!isLinked()) {
-            // Skipping unlink because we know this is not linked
-            dieWithoutUnlink();
-        } // Else hurtTime should probably be 1*/
-        die();
         if (age < lastCanHit) {
             lastCanHit = age;
         }
+        if (!isLinked()) {
+            // Skipping unlink because we know this is not linked
+            dieWithoutUnlink();
+        } // Else hurtTime should probably be 1
+        //die(); // If linked (like a long limb image), keep showing it
     }
     
     /*package*/ final boolean canHit() {
