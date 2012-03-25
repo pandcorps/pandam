@@ -120,7 +120,7 @@ public abstract class Pangrid<I> extends Panctor {
     
     @Override
     protected final void onDestroy() {
-    	actions.unregister(); //TODO RadioGroup, Fighter; Make ActionListenerGroup?
+    	actions.unregister();
     }
     
     public final I getCurrentItem() {
