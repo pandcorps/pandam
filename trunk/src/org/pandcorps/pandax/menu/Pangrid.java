@@ -36,6 +36,7 @@ public abstract class Pangrid<I> extends Panctor {
     /*package*/ int curRow = 0;
     /*package*/ int curCol = 0;
     private final GridChangeEvent<I> changeEvent = new GridChangeEvent<I>(this);
+    private final ActionGroup actions = new ActionGroup();
     
     public Pangrid(final String id, final List<? extends List<I>> rows, final Panmage cursor, final float cursorOff) {
         super(id);
@@ -102,11 +103,7 @@ public abstract class Pangrid<I> extends Panctor {
         final ActionStartListener submitListener = new ActionStartListener() {
             @Override
             public void onActionStart(final ActionStartEvent event) {
-                interaction.unregister(this);
-                interaction.unregister(upListener);
-                interaction.unregister(downListener);
-                interaction.unregister(leftListener);
-                interaction.unregister(rightListener);
+            	actions.unregister();
                 Panput.inactivate(submit, up, down, left, right);
                 try {
                     onSubmit(new GridSubmitEvent<I>(Pangrid.this));
@@ -114,11 +111,16 @@ public abstract class Pangrid<I> extends Panctor {
                     throw Panception.get(e);
                 }
             }};
-        interaction.register(submit, submitListener);
-        interaction.register(up, upListener);
-        interaction.register(down, downListener);
-        interaction.register(left, leftListener);
-        interaction.register(right, rightListener);
+        actions.register(submit, submitListener);
+        actions.register(up, upListener);
+        actions.register(down, downListener);
+        actions.register(left, leftListener);
+        actions.register(right, rightListener);
+    }
+    
+    @Override
+    protected final void onDestroy() {
+    	actions.unregister(); //TODO RadioGroup, Fighter; Make ActionListenerGroup?
     }
     
     public final I getCurrentItem() {
