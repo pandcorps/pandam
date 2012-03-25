@@ -66,6 +66,12 @@ public final class Coltil {
 	    return i;
 	}
 	
+	public final static <E> Iterable<E> copy(final Iterable<E> i) {
+		final ArrayList<E> list = new ArrayList<E>();
+		addAll(list, i);
+		return list;
+	}
+	
 	//private final static Object[] EMPTY = {};
 	
 	//public final static <E> E[] unnull(final E... a) {
@@ -135,6 +141,12 @@ public final class Coltil {
 	
 	public final static <E, T extends E> ArrayList<E> addIfValued(ArrayList<E> list, final T elem) {
 		return elem == null ? list : add(list, elem);
+	}
+	
+	public final static <E> void addAll(final Collection<E> dst, final Iterable<E> src) {
+		for (final E elem : unnull(src)) {
+			dst.add(elem);
+		}
 	}
 	
 	public final static boolean hasNext(final Iterator<?> iter) {
