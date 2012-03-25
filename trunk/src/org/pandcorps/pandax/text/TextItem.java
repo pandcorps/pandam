@@ -36,6 +36,7 @@ public abstract class TextItem {
     protected TextItem(final Pantext label) {
         //this.font = font; // in label
         this.label = label;
+        label.setItem(this);
         //label.getPosition().set(label.fontSize, 240 - label.fontSize);
         //label.getPosition().set(label.fontSize, 120 - label.fontSize);
         final Pangine engine = Pangine.getEngine();
@@ -44,8 +45,10 @@ public abstract class TextItem {
         ly = (engine.getGameHeight() / 2) - label.fontSize;
         label.getPosition().set(lx, ly);
         //label.setBorder(true);
-        label.setBackground(Pantext.CHAR_DARK);
-        label.setBorderStyle(BorderStyle.Distinct);
+        if (label.f instanceof ByteFont) {
+        	label.setBackground(Pantext.CHAR_DARK);
+        	label.setBorderStyle(BorderStyle.Distinct);
+        }
     }
     
     public final void setTitle(final String title) {
@@ -66,5 +69,12 @@ public abstract class TextItem {
         enable();
     }
     
+    public final Pantext getLabel() {
+    	return label;
+    }
+    
     protected abstract void enable();
+    
+    protected void onDestroy() {
+    }
 }

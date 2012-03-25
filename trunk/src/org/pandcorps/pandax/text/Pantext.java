@@ -55,7 +55,7 @@ public class Pantext extends Panctor {
     public final static char CHAR_DARK = 178;
     public final static char CHAR_SOLID = 219;
     
-    private final Font f;
+    /*package*/ final Font f;
 	private final Panmage font;
 	//private final String text;
 	/*package*/ final List<? extends CharSequence> text;
@@ -80,6 +80,8 @@ public class Pantext extends Panctor {
 	private String title = null;
 	private char bg = CHAR_NULL;
 	private BorderStyle borderStyle = null;
+	/*package*/ char charRadio = CHAR_RADIO;
+	private TextItem item = null;
 
 	public Pantext(final String id, final Font font, final String text) {
 	    this(id, font, Collections.singletonList(text));
@@ -220,7 +222,7 @@ public class Pantext extends Panctor {
         }
         
         if (radioLine >= 0) {
-            render(renderer, layer, x, y, z, CHAR_RADIO, -1, radioLine);
+            render(renderer, layer, x, y, z, charRadio, -1, radioLine);
         }
         
         if (cursorLine >= 0 && cursorChar >= 0) { // && cursorLine on page
@@ -450,4 +452,14 @@ public class Pantext extends Panctor {
         }
         return list;
     }
+	
+	/*package*/ final void setItem(final TextItem item) {
+		this.item = item;
+	}
+	
+	@Override
+	protected final void onDestroy() {
+		if (item != null)
+			item.onDestroy();
+	}
 }

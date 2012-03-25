@@ -28,16 +28,20 @@ import org.pandcorps.core.Pantil;
 import org.pandcorps.pandam.Pangine;
 import org.pandcorps.pandam.Panput;
 import org.pandcorps.pandam.Panteraction;
-import org.pandcorps.pandam.event.action.ActionStartEvent;
-import org.pandcorps.pandam.event.action.ActionStartListener;
+import org.pandcorps.pandam.event.action.*;
 
 public class RadioGroup extends TextItem {
     private final List<? extends CharSequence> options;
     private final RadioSubmitListener listener;
+    private Panput submit = Pangine.getEngine().getInteraction().KEY_SPACE;
+    private final ActionGroup actions = new ActionGroup();
     
     public RadioGroup(final Font font, final List<? extends CharSequence> options, final RadioSubmitListener listener) {
         super(new Pantext(Pantil.vmid(), font, options));
-        label.setRadioLine(1);
+        if (!(font instanceof ByteFont)) {
+        	setCharacter('-');
+        }
+        label.setRadioLine(0);
         this.options = options;
         this.listener = listener;
     }
@@ -47,7 +51,7 @@ public class RadioGroup extends TextItem {
         //TODO Some todo notes in message apply here
         final Pangine engine = Pangine.getEngine();
         final Panteraction interaction = engine.getInteraction();
-        final Panput submit = interaction.KEY_SPACE, up = interaction.KEY_UP, down = interaction.KEY_DOWN;
+        final Panput up = interaction.KEY_UP, down = interaction.KEY_DOWN;
         Panput.inactivate(submit, up, down);
         final ActionStartListener upListener = new ActionStartListener() {
             @Override
@@ -63,16 +67,27 @@ public class RadioGroup extends TextItem {
             @Override
             public void onActionStart(final ActionStartEvent event) {
                 layer.destroy();
-                interaction.unregister(this);
-                interaction.unregister(upListener);
-                interaction.unregister(downListener);
+                actions.unregister();
                 // inactivate should only apply for the current press (and not at all if the key isn't currently pressed).
                 // This disableed the next up/down press if they weren't currently pressed before adding the active check to inactivate
                 Panput.inactivate(submit, up, down);
                 listener.onSubmit(new RadioSubmitEvent(label.radioLine, options.get(label.radioLine)));
             }};
-        interaction.register(submit, submitListener);
-        interaction.register(up, upListener);
-        interaction.register(down, downListener);
+        actions.register(submit, submitListener);
+        actions.register(up, upListener);
+        actions.register(down, downListener);
+    }
+    
+    public void setCharacter(final char c) {
+    	label.charRadio = c;
+    }
+    
+    public void setSubmit(final Panput input) {
+    	submit = input;
+    }
+    
+    @Override
+    protected final void onDestroy() {
+    	actions.unregister();
     }
 }
