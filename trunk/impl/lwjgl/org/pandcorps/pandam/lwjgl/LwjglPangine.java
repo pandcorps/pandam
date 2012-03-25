@@ -228,7 +228,8 @@ public final class LwjglPangine extends Pangine {
 				            capsLock = !capsLock;
 				        }
 				    }
-					for (final ActionStartListener startListener : Coltil.unnull(interaction.getStartListeners(key))) {
+				    // copy to prevent ConcurrentModificationException
+					for (final ActionStartListener startListener : Coltil.copy(interaction.getStartListeners(key))) {
 						//startListener.onActionStart(ActionStartEvent.INSTANCE);
 					    //startListener.onActionStart(ActionStartEvent.getEvent(key, Character.valueOf(Keyboard.getEventCharacter())));
 					    startListener.onActionStart(ActionStartEvent.getEvent(key));
