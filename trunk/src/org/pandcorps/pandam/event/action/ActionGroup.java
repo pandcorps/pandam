@@ -48,5 +48,7 @@ public class ActionGroup {
         startListeners = null;
         inter.unregisterAll(listeners);
         listeners = null;
+        inter.unregisterAllEnd(endListeners);
+        endListeners = null;
     }
 }
