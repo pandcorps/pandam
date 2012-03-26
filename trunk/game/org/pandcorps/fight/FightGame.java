@@ -32,6 +32,7 @@ import org.pandcorps.fight.Background.BackgroundDefinition;
 import org.pandcorps.fight.Fighter.FighterDefinition;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
+import org.pandcorps.pandam.event.action.*;
 import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.visual.*;
 import org.pandcorps.pandax.menu.*;
@@ -80,6 +81,8 @@ public class FightGame extends Pangame {
     /*package*/ static Font fontDamage = null;
     /*package*/ static Font fontText = null;
     private static FighterDefinition playerDef = null;
+    private static Panmage title = null;
+    private static int mode = 0;
     
     private static short outlineR = OUTLINE_DEFAULT;
     private static short outlineG = OUTLINE_DEFAULT;
@@ -139,6 +142,7 @@ public class FightGame extends Pangame {
         final BufferedImage[] menuImgs = Imtil.toStrip(menuImg, DIM);
         cursorImage = engine.createImage("Cursor", new FinPanple(8, 1, 0), null, null, menuImgs[0]);
         menuBackground = engine.createImage("MenuBgImage", "org/pandcorps/fight/res/misc/MenuBackground.png");
+        title = engine.createImage("TitleImg", "org/pandcorps/fight/res/misc/Title.png");
         final BufferedImage constantsImg = loadImage("org/pandcorps/fight/res/misc/Constants.png");
         final BufferedImage[] constantImgs = Imtil.toStrip(constantsImg, DIM);
         shadowImage = engine.createImage("Shadow", new FinPanple(8, 4, 0), null, null, constantImgs[0]);
@@ -295,8 +299,6 @@ public class FightGame extends Pangame {
     }
     
     private final static class TitleScreen extends FadeScreen {
-        private Panmage title = null;
-        
         private TitleScreen() {
             super(Pancolor.WHITE, 60);
         }
@@ -305,7 +307,6 @@ public class FightGame extends Pangame {
         protected final void start() {
             final Pangine engine = Pangine.getEngine();
             engine.setBgColor(Pancolor.WHITE);
-            title = engine.createImage("TitleImg", "org/pandcorps/fight/res/misc/Title.png");
             final Panctor act = new Panctor("TitleAct");
             act.setView(title);
             act.getPosition().set(64, 32);
@@ -314,12 +315,38 @@ public class FightGame extends Pangame {
         
         @Override
         protected final void finish() {
-            showSelect();
+            showMenu();
         }
         
         @Override
         protected final void destroy() {
-            Panmage.destroy(title);
+            //Panmage.destroy(title);
+        }
+    }
+    
+    private final static void showMenu() {
+    	Panscreen.set(new MenuScreen());
+    }
+    
+    private final static class MenuScreen extends Panscreen {
+        @Override
+        protected final void load() {
+        	final RadioSubmitListener listener = new RadioSubmitListener() {
+				@Override
+				public void onSubmit(final RadioSubmitEvent event) {
+					mode = event.getIndex();
+					showSelect();
+				}
+			};
+			final Panctor actor = new Panctor("TitleActor");
+			actor.setView(title);
+			actor.getPosition().set(64, 48);
+			room.addActor(actor);
+			final RadioGroup g;
+        	g = new RadioGroup(fontText, Arrays.asList("Arcade", "Practice"), listener);
+        	g.setSubmit(Pangine.getEngine().getInteraction().KEY_ENTER);
+        	g.getLabel().getPosition().setY(16);
+        	g.init();
         }
     }
     
@@ -336,6 +363,13 @@ public class FightGame extends Pangame {
             texture.setVelocity(1, -1);
             room.addActor(texture);
             texture.getPosition().setZ(-200);
+            final Panteraction inter = Pangine.getEngine().getInteraction();
+            inter.register(inter.KEY_ESCAPE, new ActionStartListener() {
+            	@Override
+            	public final void onActionStart(final ActionStartEvent event) {
+            		showMenu();
+            	}
+            });
         }
     }
     
@@ -385,7 +419,16 @@ public class FightGame extends Pangame {
     	
         @Override
         protected final void load() throws Exception {
-            final BackgroundDefinition bdef = backgrounds.load("org/pandcorps/fight/res/bg/Mountain.txt"); // Grid
+        	final String bg;
+        	final byte aiMode;
+        	if (mode == 0) {
+        		bg = "Mountain";
+        		aiMode = Ai.MODE_FIGHT;
+        	} else {
+        		bg = "Grid";
+        		aiMode = Ai.MODE_STARE;
+        	}
+            final BackgroundDefinition bdef = backgrounds.load("org/pandcorps/fight/res/bg/" + bg + ".txt");
             background = new Background("BAK." + bdef.name, bdef);
             room.addActor(background);
             
@@ -414,8 +457,10 @@ public class FightGame extends Pangame {
             //cpu.setFlip(true); // Testing
             //cpu.setView(animFireball); // Testing, Fighter class should clobber anyway
             //new Ai(cpu);
-            new Ai().setFighter(cpu);
+            final Ai ai = new Ai();
+            ai.setFighter(cpu);
             cpu.getPosition().set(centerX + 16, centerY);
+            ai.mode = aiMode;
             //room.addActor(cpu);
         }
         
