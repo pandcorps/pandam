@@ -27,9 +27,9 @@ import org.pandcorps.fight.Background.BackgroundDefinition;
 import org.pandcorps.pandam.*;
 
 public final class Ai extends Controller {
-	private final static byte MODE_LOCK = 0;
-	private final static byte MODE_STARE = 1;
-	private final static byte MODE_FIGHT = 2;
+	/*package*/ final static byte MODE_LOCK = 0;
+	/*package*/ final static byte MODE_STARE = 1;
+	/*package*/ final static byte MODE_FIGHT = 2;
 	
 	private final static byte ACTION_STILL = 0;
 	private final static byte ACTION_ADVANCE = 1;
