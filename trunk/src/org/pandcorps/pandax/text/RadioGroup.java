@@ -34,7 +34,6 @@ public class RadioGroup extends TextItem {
     private final List<? extends CharSequence> options;
     private final RadioSubmitListener listener;
     private Panput submit = Pangine.getEngine().getInteraction().KEY_SPACE;
-    private final ActionGroup actions = new ActionGroup();
     
     public RadioGroup(final Font font, final List<? extends CharSequence> options, final RadioSubmitListener listener) {
         super(new Pantext(Pantil.vmid(), font, options));
@@ -67,15 +66,15 @@ public class RadioGroup extends TextItem {
             @Override
             public void onActionStart(final ActionStartEvent event) {
                 layer.destroy();
-                actions.unregister();
+                label.unregisterListeners();
                 // inactivate should only apply for the current press (and not at all if the key isn't currently pressed).
                 // This disableed the next up/down press if they weren't currently pressed before adding the active check to inactivate
                 Panput.inactivate(submit, up, down);
                 listener.onSubmit(new RadioSubmitEvent(label.radioLine, options.get(label.radioLine)));
             }};
-        actions.register(submit, submitListener);
-        actions.register(up, upListener);
-        actions.register(down, downListener);
+        label.register(submit, submitListener);
+        label.register(up, upListener);
+        label.register(down, downListener);
     }
     
     public void setCharacter(final char c) {
@@ -84,10 +83,5 @@ public class RadioGroup extends TextItem {
     
     public void setSubmit(final Panput input) {
     	submit = input;
-    }
-    
-    @Override
-    protected final void onDestroy() {
-    	actions.unregister();
     }
 }

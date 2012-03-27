@@ -36,7 +36,7 @@ public abstract class TextItem {
     protected TextItem(final Pantext label) {
         //this.font = font; // in label
         this.label = label;
-        label.setItem(this);
+        //label.setItem(this);
         //label.getPosition().set(label.fontSize, 240 - label.fontSize);
         //label.getPosition().set(label.fontSize, 120 - label.fontSize);
         final Pangine engine = Pangine.getEngine();
@@ -74,7 +74,4 @@ public abstract class TextItem {
     }
     
     protected abstract void enable();
-    
-    protected void onDestroy() {
-    }
 }

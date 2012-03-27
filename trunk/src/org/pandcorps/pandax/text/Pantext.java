@@ -81,7 +81,7 @@ public class Pantext extends Panctor {
 	private char bg = CHAR_NULL;
 	private BorderStyle borderStyle = null;
 	/*package*/ char charRadio = CHAR_RADIO;
-	private TextItem item = null;
+	//private TextItem item = null;
 
 	public Pantext(final String id, final Font font, final String text) {
 	    this(id, font, Collections.singletonList(text));
@@ -453,13 +453,7 @@ public class Pantext extends Panctor {
         return list;
     }
 	
-	/*package*/ final void setItem(final TextItem item) {
-		this.item = item;
-	}
-	
-	@Override
-	protected final void onDestroy() {
-		if (item != null)
-			item.onDestroy();
-	}
+	///*package*/ final void setItem(final TextItem item) {
+	//	this.item = item;
+	//}
 }

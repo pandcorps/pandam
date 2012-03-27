@@ -51,7 +51,7 @@ public class Message extends TextItem {
         final Panput submit = interaction.KEY_SPACE;
         submit.inactivate();
         //label.setRadioLine(1);
-        interaction.register(submit, new ActionStartListener() {
+        label.register(submit, new ActionStartListener() {
             @Override
             public void onActionStart(final ActionStartEvent event) {
                 if (label.scrollPage()) {
