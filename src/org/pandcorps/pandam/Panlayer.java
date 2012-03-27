@@ -158,9 +158,8 @@ public class Panlayer extends BasePantity {
     }*/
     
     public final void destroyAllActors() {
-        for (final Panctor actor : pactors) {
-            actor.destroy(); // will call removeActor
-        }
+    	destroy(actors.keySet());
+        destroy(addedActors);
     }
     
     private final void applyRemoveActor(final Panctor actor) {
@@ -293,14 +292,13 @@ public class Panlayer extends BasePantity {
     }
     
     public final void destroy() {
-        destroy(actors.keySet());
-        destroy(addedActors);
+        destroyAllActors();
         detach();
     }
     
     private final void destroy(final Collection<Panctor> actors) {
         for (final Panctor actor : actors) {
-            actor.destroy();
+            actor.destroy(); // will call removeActor
         }
         actors.clear();
     }
