@@ -364,7 +364,7 @@ public class FightGame extends Pangame {
             room.addActor(texture);
             texture.getPosition().setZ(-200);
             final Panteraction inter = Pangine.getEngine().getInteraction();
-            inter.register(inter.KEY_ESCAPE, new ActionStartListener() {
+            texture.register(inter.KEY_ESCAPE, new ActionStartListener() {
             	@Override
             	public final void onActionStart(final ActionStartEvent event) {
             		showMenu();
@@ -443,7 +443,7 @@ public class FightGame extends Pangame {
             //    in.close();
             //}
             /*final Player player = *///new Player(fighter);
-            new Player().setFighter(fighter);
+            new Player(background).setFighter(fighter);
             final float centerX, centerY;
             //centerX = ROOM_W / 2;
             //centerY = ROOM_H / 2;
