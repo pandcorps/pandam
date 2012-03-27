@@ -48,6 +48,7 @@ public abstract class Panscreen {
     
     private final void init() {
         Pangame.getGame().getCurrentRoom().destroyAllActors(); // Clear listeners?
+        //destroyExtraLayers();
     }
     
     protected abstract void load() throws Exception;
