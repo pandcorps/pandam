@@ -38,33 +38,30 @@ public abstract class Controller {
     }
     
 	/*package*/ final void attack() {
-		this.fighter.attack();
+		fighter.attack();
 	}
 	
 	/*package*/ final void spec1() {
-		this.fighter.spec1();
+		fighter.spec1();
 	}
 
 	/*package*/ final void spec2() {
-		this.fighter.spec2();
+		fighter.spec2();
 	}
 
 	/*package*/ final void walkDown() {
-		this.fighter.walkDown();
+		fighter.walkDown();
 	}
 
 	/*package*/ final void walkUp() {
-		this.fighter.walkUp();
+		fighter.walkUp();
 	}
 
 	/*package*/ final void walkLeft() {
-		this.fighter.walkLeft();
+		fighter.walkLeft();
 	}
 
 	/*package*/ final void walkRight() {
-		this.fighter.walkRight();
-	}
-	
-	/*package*/ void destroy() {
+		fighter.walkRight();
 	}
 }
