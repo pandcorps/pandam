@@ -104,7 +104,7 @@ public class Input extends TextItem {
                 listener.onSubmit(new InputSubmitEvent(buf));
             }
         };
-        interaction.register(startListener);
+        label.register(startListener);
     }
     
     private final void home() {

@@ -36,7 +36,6 @@ public abstract class FadeScreen extends Panscreen {
     private final short oldAlpha;
     private final int time;
     private TimerListener timer = null;
-    private ActionStartListener anyKey = null;
     
     protected FadeScreen(final Pancolor color, final int time) {
         room = Pangame.getGame().getCurrentRoom();
@@ -52,12 +51,12 @@ public abstract class FadeScreen extends Panscreen {
         color.setA(Pancolor.MAX_VALUE);
         c.setVelocity((short) -SPEED);
         final Pangine engine = Pangine.getEngine();
-        final Panteraction inter = engine.getInteraction();
+        final ActionStartListener anyKey;
         anyKey = new ActionStartListener() { @Override public final void onActionStart(final ActionStartEvent event) {
             c.setVelocity((short) SPEED);
             engine.removeTimer(timer);
         }};
-        inter.register(anyKey);
+        c.register(anyKey);
         start();
     }
     
@@ -80,7 +79,6 @@ public abstract class FadeScreen extends Panscreen {
                 engine.addTimer(time, timer);
             } else {
                 color.setA(oldAlpha);
-                engine.getInteraction().unregister(anyKey);
                 finish(); // Might open a new FadeScreen, so revert alpha first
             }
         }
