@@ -24,8 +24,8 @@ package org.pandcorps.pandam;
 
 import java.util.*;
 
-import org.pandcorps.core.col.HashMultimap;
-import org.pandcorps.core.col.SequenceIterable;
+import org.pandcorps.core.Coltil;
+import org.pandcorps.core.col.*;
 import org.pandcorps.pandam.Panput.*;
 import org.pandcorps.pandam.event.action.*;
 
@@ -83,6 +83,8 @@ public abstract class Panteraction {
 	public final int IND_Z = 44;
     public final int IND_SHIFT_RIGHT = 54;
     public final int IND_SPACE = 57;
+    
+    private final IdentityHashMap<Panctor, ActionGroup> actors = new IdentityHashMap<Panctor, ActionGroup>();
 
 	public Panteraction() {
 		//final int size = 209;//getKeyCount();
@@ -206,12 +208,32 @@ public abstract class Panteraction {
         Panput.inactivate(keys);
     }
 
-	public final void register(final ActionStartListener listener) {
-	    register(Panput.any, listener);
+	public final void register(final Panctor actor, final ActionStartListener listener) {
+	    register(actor, Panput.any, listener);
 	}
 	
-	public final void register(final Panput input, final ActionStartListener listener) {
+	public final void register(final Panctor actor, final Panput input, final ActionStartListener listener) {
 		startListeners.add(input, listener);
+		if (actor != null) {
+			get(actor).add(listener);
+		}
+	}
+	
+	private final ActionGroup get(final Panctor actor) {
+		// Would be faster to store in Panctor, but would take more RAM for a mostly null extra field
+		ActionGroup g = actors.get(actor);
+		if (g == null) {
+			g = new ActionGroup();
+			actors.put(actor, g);
+		}
+		return g;
+	}
+	
+	/*package*/ final void unregister(final Panctor actor) {
+		final ActionGroup g = actors.remove(actor);
+		if (g != null) {
+			g.unregister();
+		}
 	}
 
 	public final Iterable<ActionStartListener> getStartListeners(final Panput input) {
@@ -228,7 +250,7 @@ public abstract class Panteraction {
     }
 	
 	private final static <T> void unregister(final HashMultimap<?, T> map, final Iterable<T> list) {
-	    for (final T listener : list) {
+	    for (final T listener : Coltil.unnull(list)) {
 	        unregister(map, listener);
 	    }
 	}
@@ -244,8 +266,11 @@ public abstract class Panteraction {
 	    }
 	}
 
-	public final void register(final Panput input, final ActionListener listener) {
+	public final void register(final Panctor actor, final Panput input, final ActionListener listener) {
 		listeners.add(input, listener);
+		if (actor != null) {
+			get(actor).add(listener);
+		}
 	}
 
 	public final Iterable<ActionListener> getListeners(final Panput input) {
@@ -260,8 +285,11 @@ public abstract class Panteraction {
         unregister(listeners, list);
     }
 
-	public final void register(final Panput input, final ActionEndListener listener) {
+	public final void register(final Panctor actor, final Panput input, final ActionEndListener listener) {
 		endListeners.add(input, listener);
+		if (actor != null) {
+			get(actor).add(listener);
+		}
 	}
 
 	public final Iterable<ActionEndListener> getEndListeners(final Panput input) {

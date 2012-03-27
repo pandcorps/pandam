@@ -22,6 +22,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandam;
 
+import org.pandcorps.pandam.event.action.*;
 import org.pandcorps.pandam.impl.*;
 
 // Pandam Actor
@@ -274,9 +275,32 @@ public class Panctor extends BasePantity implements SpecPanctor {
 	public final Panlayer getLayer() {
 	    return layer;
 	}
+	
+	public final void register(final ActionStartListener listener) {
+		Pangine.getEngine().getInteraction().register(this, listener);
+	}
+	
+	//TODO Combine Timers here too
+	
+	public final void register(final Panput input, final ActionStartListener listener) {
+		Pangine.getEngine().getInteraction().register(this, input, listener);
+	}
+	
+	public final void register(final Panput input, final ActionListener listener) {
+		Pangine.getEngine().getInteraction().register(this, input, listener);
+	}
+	
+	public final void register(final Panput input, final ActionEndListener listener) {
+		Pangine.getEngine().getInteraction().register(this, input, listener);
+	}
+	
+	public final void unregisterListeners() {
+		Pangine.getEngine().getInteraction().unregister(this);
+	}
 
 	public final void destroy() {
 	    onDestroy();
+	    unregisterListeners();
 		//Pangame.getGame().getCurrentRoom().removeActor(this);
 	    if (layer != null) {
 	        layer.removeActor(this);
