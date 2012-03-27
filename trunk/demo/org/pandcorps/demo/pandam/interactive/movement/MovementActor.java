@@ -31,13 +31,13 @@ public final class MovementActor extends Panctor {
 	public MovementActor(final String id) {
 		super(id);
 		final Panteraction interaction = Pangine.getEngine().getInteraction();
-		interaction.register(interaction.KEY_UP, new ActionListener() {
+		register(interaction.KEY_UP, new ActionListener() {
 			@Override public void onAction(final ActionEvent event) {up();}});
-		interaction.register(interaction.KEY_LEFT, new ActionListener() {
+		register(interaction.KEY_LEFT, new ActionListener() {
 			@Override public void onAction(final ActionEvent event) {left();}});
-		interaction.register(interaction.KEY_RIGHT, new ActionListener() {
+		register(interaction.KEY_RIGHT, new ActionListener() {
 			@Override public void onAction(final ActionEvent event) {right();}});
-		interaction.register(interaction.KEY_DOWN, new ActionListener() {
+		register(interaction.KEY_DOWN, new ActionListener() {
 			@Override public void onAction(final ActionEvent event) {down();}});
 	}
 

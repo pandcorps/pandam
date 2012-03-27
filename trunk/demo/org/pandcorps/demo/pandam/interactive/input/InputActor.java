@@ -29,7 +29,7 @@ public final class InputActor extends Panctor {
 	public InputActor(final String id) {
 		super(id);
 		final Panteraction interaction = Pangine.getEngine().getInteraction();
-		interaction.register(interaction.KEY_ESCAPE, new ActionStartListener() {
+		register(interaction.KEY_ESCAPE, new ActionStartListener() {
 			@Override public void onActionStart(final ActionStartEvent event) {Pangine.getEngine().exit();}});
 	}
 }
