@@ -195,8 +195,8 @@ public class FightGame extends Pangame {
         Panctor coloring
         . Shadow trail effect
         . Logo
-        Title
-        Menu (arcade, infinite, creator)
+        . Title
+        . Menu (arcade, practice, infinite, creator)
         . Character select
         . Palette swapping for primary palette
         Alternate palettes
