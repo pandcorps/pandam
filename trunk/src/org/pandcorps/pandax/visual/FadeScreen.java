@@ -79,6 +79,8 @@ public abstract class FadeScreen extends Panscreen {
                 engine.addTimer(time, timer);
             } else {
                 color.setA(oldAlpha);
+                // If we open a new Panscreen, this will be automatic, but do it in case finish does something else
+                c.unregisterListeners();
                 finish(); // Might open a new FadeScreen, so revert alpha first
             }
         }
