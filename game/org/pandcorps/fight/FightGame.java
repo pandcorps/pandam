@@ -335,6 +335,10 @@ public class FightGame extends Pangame {
 				@Override
 				public void onSubmit(final RadioSubmitEvent event) {
 					mode = event.getIndex();
+					if (mode == 2) {
+					    Pangine.getEngine().exit();
+					    return;
+					}
 					showSelect();
 				}
 			};
@@ -343,9 +347,9 @@ public class FightGame extends Pangame {
 			actor.getPosition().set(64, 48);
 			room.addActor(actor);
 			final RadioGroup g;
-        	g = new RadioGroup(fontText, Arrays.asList("Arcade", "Practice"), listener);
+        	g = new RadioGroup(fontText, Arrays.asList("Arcade", "Practice", "Exit"), listener);
         	g.setSubmit(Pangine.getEngine().getInteraction().KEY_ENTER);
-        	g.getLabel().getPosition().setY(16);
+        	g.getLabel().getPosition().setY(24);
         	g.init();
         }
     }
