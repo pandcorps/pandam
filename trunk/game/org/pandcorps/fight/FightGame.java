@@ -486,7 +486,7 @@ public class FightGame extends Pangame {
         		final Pantext text = new Pantext("Win", fontText, msg);
         		text.getPosition().set(48, ROOM_H * 7 / 8);
         		room.addActor(text);
-        		Pangine.getEngine().addTimer(60, new TimerListener() {
+        		text.register(60, new TimerListener() {
 					@Override
 					public void onTimer(final TimerEvent event) {
 						showSelect();
