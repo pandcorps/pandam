@@ -71,12 +71,11 @@ public abstract class FadeScreen extends Panscreen {
         
         @Override
         protected final void onFadeEnd() {
-            final Pangine engine = Pangine.getEngine();
             if (color.getA() == 0) {
                 timer = new TimerListener() { @Override public final void onTimer(final TimerEvent event) {
                     setVelocity((short) SPEED);
                 }};
-                engine.addTimer(time, timer);
+                c.register(time, timer);
             } else {
                 color.setA(oldAlpha);
                 // If we open a new Panscreen, this will be automatic, but do it in case finish does something else
