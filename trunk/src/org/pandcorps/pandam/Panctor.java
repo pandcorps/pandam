@@ -22,6 +22,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandam;
 
+import org.pandcorps.pandam.event.TimerListener;
 import org.pandcorps.pandam.event.action.*;
 import org.pandcorps.pandam.impl.*;
 
@@ -280,8 +281,6 @@ public class Panctor extends BasePantity implements SpecPanctor {
 		Pangine.getEngine().getInteraction().register(this, listener);
 	}
 	
-	//TODO Combine Timers here too
-	
 	public final void register(final Panput input, final ActionStartListener listener) {
 		Pangine.getEngine().getInteraction().register(this, input, listener);
 	}
@@ -292,6 +291,10 @@ public class Panctor extends BasePantity implements SpecPanctor {
 	
 	public final void register(final Panput input, final ActionEndListener listener) {
 		Pangine.getEngine().getInteraction().register(this, input, listener);
+	}
+	
+	public final void register(final long duration, final TimerListener listener) {
+		Pangine.getEngine().addTimer(this, duration, listener);
 	}
 	
 	public final void unregisterListeners() {
