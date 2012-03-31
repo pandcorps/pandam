@@ -219,7 +219,7 @@ public abstract class Panteraction {
 		}
 	}
 	
-	private final ActionGroup get(final Panctor actor) {
+	/*package*/ final ActionGroup get(final Panctor actor) {
 		// Would be faster to store in Panctor, but would take more RAM for a mostly null extra field
 		ActionGroup g = actors.get(actor);
 		if (g == null) {
