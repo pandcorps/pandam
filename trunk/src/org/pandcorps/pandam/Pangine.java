@@ -446,15 +446,20 @@ public abstract class Pangine {
 			}
 		}
 		
-		int timerSize = timers.size();
+		// List will change here and maybe in onTimer, so copy
+		final ArrayList<Object> _timers = new ArrayList<Object>(timers);
+		final int timerSize = timers.size();
 		for (int i = 0; i < timerSize; i += 2) {
-		    final TimerEvent timerEvent = (TimerEvent) timers.get(i);
+		    final TimerEvent timerEvent = (TimerEvent) _timers.get(i);
 		    if (timerEvent.getClockEvent() <= clock) {
-		        ((TimerListener) timers.get(i + 1)).onTimer(timerEvent);
-		        timers.remove(i);
-		        timers.remove(i);
-		        i -= 2;
-		        timerSize -= 2;
+		    	final TimerListener timerListener = (TimerListener) _timers.get(i + 1);
+		        timerListener.onTimer(timerEvent);
+		        // Only remove if onTimer didn't
+		        final int n = timers.indexOf(timerListener);
+		        if (n >= 0) {
+		        	timers.remove(n);
+		        	timers.remove(n - 1);
+		        }
 		    }
 		}
 
@@ -705,9 +710,12 @@ public abstract class Pangine {
 	    return clock;
 	}
 	
-	public final void addTimer(final long duration, final TimerListener listener) {
+	public final void addTimer(final Panctor actor, final long duration, final TimerListener listener) {
 	    timers.add(new TimerEvent(clock + duration));
 	    timers.add(listener);
+	    if (actor != null) {
+	    	getInteraction().get(actor).add(listener);
+	    }
 	}
 	
 	public final void removeTimer(final TimerListener listener) {
@@ -717,6 +725,12 @@ public abstract class Pangine {
 	            timers.remove(i - 1);
 	        }
 	    }
+	}
+	
+	public final void removeTimers(final Iterable<TimerListener> listeners) {
+		for (final TimerListener listener : Coltil.unnull(listeners)) {
+			removeTimer(listener);
+		}
 	}
 	
 	public abstract void setTitle(final String title);
