@@ -28,6 +28,7 @@ import org.pandcorps.fight.Background.BackgroundDefinition;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.impl.FinPanple;
+import org.pandcorps.pandax.text.Font;
 
 public final class Fighter extends Panctor implements StepListener, CollisionListener, AnimationEndListener {
     
@@ -43,6 +44,8 @@ public final class Fighter extends Panctor implements StepListener, CollisionLis
     
     private final static byte THRESHOLD_QUICK = 12; // Two quick attacks must be performed within this many frames to be considered a combo building to a strong attack
     private final static byte THRESHOLD_STRONG = 16; // A strong attack must be performed within this many frames after the last quick attack
+    
+    private final static int POINTS_PER_SPECIAL = 3;
     
     /*package*/ Controller controller = null;
     /*package*/ final IdentityHashSet<Projectile> linkedProjectiles = new IdentityHashSet<Projectile>();
@@ -105,6 +108,8 @@ public final class Fighter extends Panctor implements StepListener, CollisionLis
     private byte hits = 0;
     private long lastHit = 0;
     private int health = 256;
+    private int specials = 0;
+    private int specialPoints = 0;
     
     public Fighter(final String id, final Panroom room, final FighterDefinition def) {
         super(id);
@@ -116,6 +121,9 @@ public final class Fighter extends Panctor implements StepListener, CollisionLis
         room.addActor(this);
         room.addActor(shadow);
         shadow.getPosition().setZ(DEPTH_SHADOW);
+        if (FightGame.mode == 1) {
+        	health *= 4;
+        }
     }
     
     @Override
@@ -216,6 +224,7 @@ public final class Fighter extends Panctor implements StepListener, CollisionLis
                         hurtTime = 12;
                         break;
                 }
+                pfighter.addSpecialPoint();
                 projectile.hit(this);
                 // Clear linkedProjectiles
                 for (final Projectile p : linkedProjectiles) {
@@ -260,16 +269,20 @@ public final class Fighter extends Panctor implements StepListener, CollisionLis
                 	destroy();
                 	shadow.destroy(); // linked projectiles destroyed when hit, regardless of defeat
                 }
-                final String text = Integer.toString(health);
-                final Info info = new Info(text);
-                add(info, 0, 4, -1); // - text.length() * 4
-                info.centerX();
+                addInfo(FightGame.fontDamage, health, 1);
             }
         }
     }
     
     private final void addBurst(final Panimation anim, final float xo, final float yo) {
     	add(new Burst(Pantil.vmid(), anim), xo, 6 + yo, 1);
+    }
+    
+    private final void addInfo(final Font font, final int amt, final int vel) {
+    	//final String text = Integer.toString(amt);
+        final Info info = new Info(font, amt, vel);
+        add(info, 0, 4, -1); // - text.length() * 4
+        info.centerX();
     }
     
     private final void add(final Panctor actor, final float xo, final float yo, final float zo) {
@@ -420,8 +433,19 @@ System.out.println("targ max: " + t.getBoundingMaximum());*/
     }
     
     private final void spec(final Move m) {
-        //TODO normal attacks fill a meter which enables specials
-        startMoveIfCanAttack(m);
+    	if (specials > 0 || FightGame.isDebug()) {
+    		specials--;
+    		startMoveIfCanAttack(m);
+    	}
+    }
+    
+    private final void addSpecialPoint() {
+    	specialPoints++;
+    	if (specialPoints >= POINTS_PER_SPECIAL) {
+    		specialPoints -= POINTS_PER_SPECIAL;
+    		specials++;
+    		addInfo(FightGame.fontSpecial, specials, 2);
+    	}
     }
     
     private final void startMoveIfCanAttack(final Move m) {

@@ -28,14 +28,16 @@ import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandax.text.*;
 
 public class Info extends Pantext implements StepListener {
+	private final int vel;
 	private byte age = 0;
 	
-	protected Info(final int i) {
-		this(Integer.toString(i));
+	protected Info(final Font font, final int i, final int vel) {
+		this(font, Integer.toString(i), vel);
 	}
 	
-	protected Info(final String text) {
-        super(Pantil.vmid(), FightGame.fontDamage, text);
+	protected Info(final Font font, final String text, final int vel) {
+        super(Pantil.vmid(), font, text);
+        this.vel = vel;
     }
 
 	@Override
@@ -46,7 +48,7 @@ public class Info extends Pantext implements StepListener {
 			return;
 		}
 		final Panple pos = getPosition();
-		pos.setY(pos.getY() + 1);
-		pos.setZ(pos.getZ() - 1);
+		pos.setY(pos.getY() + vel);
+		pos.setZ(pos.getZ() - vel);
 	}
 }
