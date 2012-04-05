@@ -79,10 +79,11 @@ public class FightGame extends Pangame {
     private static BufferedImage[] burnImgs = null;
     /*package*/ static Panimation puffAnim = null;
     /*package*/ static Font fontDamage = null;
+    /*package*/ static Font fontSpecial = null;
     /*package*/ static Font fontText = null;
     private static FighterDefinition playerDef = null;
     private static Panmage title = null;
-    private static int mode = 0;
+    /*package*/ static int mode = 0;
     
     private static short outlineR = OUTLINE_DEFAULT;
     private static short outlineG = OUTLINE_DEFAULT;
@@ -167,6 +168,7 @@ public class FightGame extends Pangame {
         
         //font = engine.createImage("font", "org/pandcorps/res/img/FontOutline8.png");
         fontDamage = Fonts.getOutline(new FontRequest(FontType.Number, 8), Pancolor.RED);
+        fontSpecial = Fonts.getOutline(new FontRequest(FontType.Number, 8), Pancolor.CYAN);
         final short c = (short) 192;
         fontText = Fonts.getOutline(new FontRequest(FontType.Upper, 8), new FinPancolor(c, c, c, Pancolor.MAX_VALUE));
     }
@@ -236,9 +238,9 @@ public class FightGame extends Pangame {
             None for freeze
         . Display health after damage above characters
         . Remove defeated characters (poof? explode? fade?)
-        End fight when only one team remains
-        Track normal attacks to award special attacks
-        Display special attack awards above characters
+        . End fight when only one team remains
+        . Track normal attacks to award special attacks
+        . Display special attack awards above characters
         Move editor
             Order of frames for animations
             Duration of frames
