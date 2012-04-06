@@ -30,6 +30,7 @@ import org.pandcorps.core.img.*;
 import org.pandcorps.core.seg.*;
 import org.pandcorps.fight.Background.BackgroundDefinition;
 import org.pandcorps.fight.Fighter.FighterDefinition;
+import org.pandcorps.game.ImtilX;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.action.*;
@@ -54,7 +55,7 @@ public class FightGame extends Pangame {
     //private final static int ZOOM = 4;
     private final static int ROOM_W = 256;
     private final static int ROOM_H = 192;
-    protected final static int DIM = 16;
+    protected final static int DIM = ImtilX.DIM;
     private final static int BOUND_MAX = 2;
     private final static int BOUND_MIN = -BOUND_MAX;
     private final static short OUTLINE_DEFAULT = 16;
@@ -90,43 +91,6 @@ public class FightGame extends Pangame {
     private static short outlineR = OUTLINE_DEFAULT;
     private static short outlineG = OUTLINE_DEFAULT;
     private static short outlineB = OUTLINE_DEFAULT;
-    private static Pancolor outlineSrc = null;
-    private static Pancolor outlineDst = null;
-    
-    private final static BufferedImage loadImage(final String path) {
-    	return loadImage(path, null);
-    }
-    
-    private final static BufferedImage loadImage(final String path, final ReplacePixelFilter filter) {
-    	return loadImage(path, DIM, filter);
-    }
-    
-    private final static BufferedImage loadImage(final String path, final int dim, ReplacePixelFilter filter) {
-        BufferedImage img = Imtil.load(path);
-        final int h = img.getHeight();
-        if (h == dim + 1) {
-            // During drawing/debugging, there's an extra row at the bottom
-            img = img.getSubimage(0, 0, img.getWidth(), dim);
-        } else if (h != dim) {
-            throw new UnsupportedOperationException("Expected image to have height=16");
-        }
-        final ColorModel cm = img.getColorModel();
-        boolean transparency = false;
-        for (int x = 0; x < dim; x++) {
-            for (int y = 0; y < dim; y++) {
-                final int rgb = img.getRGB(x, y);
-                if (cm.getAlpha(rgb) == 0) {
-                    transparency = true;
-                    break;
-                }
-            }
-        }
-        if (!transparency) {
-        	filter = ReplacePixelFilter.putToTransparent(filter, img.getRGB(0, 0));
-        }
-        filter = ReplacePixelFilter.putIfValued(filter, outlineSrc, outlineDst);
-        return Imtil.filter(img, filter);
-    }
     
     @Override
     public void initBeforeEngine() {
@@ -141,12 +105,12 @@ public class FightGame extends Pangame {
     
     private final static void loadConstants() {
         final Pangine engine = Pangine.getEngine();
-        final BufferedImage menuImg = loadImage("org/pandcorps/fight/res/misc/Menu.png");
+        final BufferedImage menuImg = ImtilX.loadImage("org/pandcorps/fight/res/misc/Menu.png");
         final BufferedImage[] menuImgs = Imtil.toStrip(menuImg, DIM);
         cursorImage = engine.createImage("Cursor", new FinPanple(8, 1, 0), null, null, menuImgs[0]);
         menuBackground = engine.createImage("MenuBgImage", "org/pandcorps/fight/res/misc/MenuBackground.png");
         title = engine.createImage("TitleImg", "org/pandcorps/fight/res/misc/Title.png");
-        final BufferedImage constantsImg = loadImage("org/pandcorps/fight/res/misc/Constants.png");
+        final BufferedImage constantsImg = ImtilX.loadImage("org/pandcorps/fight/res/misc/Constants.png");
         final BufferedImage[] constantImgs = Imtil.toStrip(constantsImg, DIM);
         shadowImage = engine.createImage("Shadow", new FinPanple(8, 4, 0), null, null, constantImgs[0]);
         bamImage1 = engine.createImage("Bam0", new FinPanple(8, 8, 0), null, null, constantImgs[1]);
@@ -166,7 +130,7 @@ public class FightGame extends Pangame {
         final Panmage puff3 = engine.createImage("Puff2", new FinPanple(8, 8, 0), null, null, constantImgs[10]);
         puffAnim = engine.createAnimation("Puff", engine.createFrame("PuffF1", puff1, 3), engine.createFrame("PuffF2", puff2, 3), engine.createFrame("PuffF3", puff3, 3));
         
-        burnImgs = Imtil.toStrip(loadImage("org/pandcorps/fight/res/misc/Burn.png"), DIM);
+        burnImgs = Imtil.toStrip(ImtilX.loadImage("org/pandcorps/fight/res/misc/Burn.png"), DIM);
         
         //font = engine.createImage("font", "org/pandcorps/res/img/FontOutline8.png");
         fontDamage = Fonts.getOutline(new FontRequest(FontType.Number, 8), Pancolor.RED);
@@ -591,7 +555,7 @@ public class FightGame extends Pangame {
         	}
         }
         final String name = ftr.getValue(0);
-        final BufferedImage sheet = loadImage(PATH_CHR + name + ".png", filter);
+        final BufferedImage sheet = ImtilX.loadImage(PATH_CHR + name + ".png", filter);
         final BufferedImage[] frms = Imtil.toStrip(sheet, DIM);
         Segment img;
         final HashMap<String, LoadImage> imgMap = new HashMap<String, LoadImage>();
@@ -962,8 +926,8 @@ public class FightGame extends Pangame {
     			outlineG = col.getG();
     			outlineB = col.getB();
     			final short d = OUTLINE_DEFAULT, m = Pancolor.MAX_VALUE;
-    			outlineSrc = new Pancolor(d, d, d, m);
-    			outlineDst = new Pancolor(outlineR, outlineG, outlineB, m);
+    			ImtilX.outlineSrc = new Pancolor(d, d, d, m);
+    			ImtilX.outlineDst = new Pancolor(outlineR, outlineG, outlineB, m);
     		}
     		Segment sel;
     		while ((sel = in.read()) != null) {
