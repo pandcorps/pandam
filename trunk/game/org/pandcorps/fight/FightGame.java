@@ -30,7 +30,7 @@ import org.pandcorps.core.img.*;
 import org.pandcorps.core.seg.*;
 import org.pandcorps.fight.Background.BackgroundDefinition;
 import org.pandcorps.fight.Fighter.FighterDefinition;
-import org.pandcorps.game.ImtilX;
+import org.pandcorps.game.core.ImtilX;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.action.*;
