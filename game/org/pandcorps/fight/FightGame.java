@@ -42,6 +42,8 @@ import org.pandcorps.pandax.text.Fonts.*;
 public class FightGame extends Pangame {
     private final static String PROP_DEBUG = "org.pandcorps.fight.FightGame.debug";
     
+    private final static String PATH_CHR = "org/pandcorps/fight/res/chr/"; // Was char; could be bad to use reserved word
+    
     private final static boolean debug = Boolean.getBoolean(PROP_DEBUG);
     
     ///*package*/ final static float yb = 14;
@@ -444,7 +446,7 @@ public class FightGame extends Pangame {
             //final SegmentStream in = openSegmentStream("org/pandcorps/fight/Def.txt");
             //try {
             fighter = new Fighter("FTR.1", room, playerDef);
-            cpu = new Fighter("FTR.2", room, fighters.load("org/pandcorps/fight/res/char/Clive.txt"));
+            cpu = new Fighter("FTR.2", room, fighters.load(PATH_CHR + "Clive.txt"));
             //} finally {
             //    in.close();
             //}
@@ -589,7 +591,7 @@ public class FightGame extends Pangame {
         	}
         }
         final String name = ftr.getValue(0);
-        final BufferedImage sheet = loadImage("org/pandcorps/fight/res/char/" + name + ".png", filter);
+        final BufferedImage sheet = loadImage(PATH_CHR + name + ".png", filter);
         final BufferedImage[] frms = Imtil.toStrip(sheet, DIM);
         Segment img;
         final HashMap<String, LoadImage> imgMap = new HashMap<String, LoadImage>();
@@ -969,7 +971,7 @@ public class FightGame extends Pangame {
     		    characterSelect.add(row);
     		    for (final Field f : sel.getRepetitions(0)) {
     		        final String name = Field.getValue(f);
-		            row.add(Chartil.isValued(name) ? fighters.load("org/pandcorps/fight/res/char/" + name + ".txt") : null);
+		            row.add(Chartil.isValued(name) ? fighters.load(PATH_CHR + name + ".txt") : null);
     		    }
     		}
     	} finally {
