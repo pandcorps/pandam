@@ -26,7 +26,7 @@ import org.pandcorps.core.Mathtil;
 import org.pandcorps.fight.Background.BackgroundDefinition;
 import org.pandcorps.pandam.*;
 
-public final class Ai extends Controller {
+public final class Ai extends FighterController {
 	/*package*/ final static byte MODE_LOCK = 0;
 	/*package*/ final static byte MODE_STARE = 1;
 	/*package*/ final static byte MODE_FIGHT = 2;
@@ -58,7 +58,7 @@ public final class Ai extends Controller {
     }
     
     @Override
-    protected final void step() {
+    public final void step() {
         if (target == null) {
             target = getTarget(fighter);
         }
@@ -125,7 +125,8 @@ public final class Ai extends Controller {
     	} else if (action == ACTION_RETREAT) {
     		//Change behavior if hit boundary, but hitting x boundary wouldn't need to mean to stop y movement.
     		final BackgroundDefinition bg = FightGame.getBackground().def;
-    		if (x <= bg.minX || x >= bg.maxX || y <= bg.minY || y >= bg.maxY) {
+    		final Panple min = bg.min, max = bg.max;
+    		if (x <= min.getX() || x >= max.getX() || y <= min.getY() || y >= max.getY()) {
     			action = ACTION_STILL;
     		} else {
 	    		if (tx < x) {

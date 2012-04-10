@@ -27,7 +27,7 @@ import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.action.*;
 
 //public final class Player extends Fighter {
-public final class Player extends Controller {
+public final class Player extends FighterController {
 	//private final Panctor bound;
     //public Player(final String id, final Panmage still, final Panimation walk, final Panmage quick) {
         //final Fighter fighter = this;
@@ -64,7 +64,7 @@ public final class Player extends Controller {
                 }
             	for (final Panctor actor : actors) {
             		if (actor.getClass() == Fighter.class) {
-            			final Controller c = ((Fighter) actor).controller;
+            			final FighterController c = ((Fighter) actor).controller;
             			if (c instanceof Ai) {
             				final Ai ai = (Ai) c;
             				ai.mode = (byte) ((ai.mode + 1) % 3);
@@ -103,7 +103,7 @@ public final class Player extends Controller {
                         ready = true;
                     } else if (ready && actor.getClass() == Fighter.class) {
                         final Fighter other = (Fighter) actor;
-                        final Controller oc = other.controller;
+                        final FighterController oc = other.controller;
                         fighter.controller.setFighter(other);
                         oc.setFighter(fighter);
                     }

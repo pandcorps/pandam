@@ -22,19 +22,19 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.fight;
 
-public abstract class Controller {
+public abstract class FighterController {
     //protected final Fighter fighter; // Allow player to control a team and to toggle between characters
     protected Fighter fighter = null;
     
-    protected Controller() {
+    protected FighterController() {
+    }
+    
+    public void step() {
     }
     
     protected void setFighter(final Fighter fighter) {
         this.fighter = fighter;
         fighter.controller = this;
-    }
-    
-    protected void step() {
     }
     
 	/*package*/ final void attack() {
