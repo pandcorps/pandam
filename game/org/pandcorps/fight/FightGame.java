@@ -30,6 +30,9 @@ import org.pandcorps.core.img.*;
 import org.pandcorps.core.seg.*;
 import org.pandcorps.fight.Background.BackgroundDefinition;
 import org.pandcorps.fight.Fighter.FighterDefinition;
+import org.pandcorps.game.actor.Decoration;
+import org.pandcorps.game.actor.Guy2;
+import org.pandcorps.game.actor.Guy2.Guy2Type;
 import org.pandcorps.game.core.ImtilX;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
@@ -63,8 +66,7 @@ public class FightGame extends Pangame {
     private static Panmage cursorImage = null;
     private static Panmage menuBackground = null;
     private static Panmage shadowImage = null;
-    //private static boolean shadowVisible = true;
-    private static byte shadowTimer = 0;
+    /*package*/ static Guy2Type type = null;
     private static Panroom room = null;
     private final static BackgroundLoader backgrounds = new BackgroundLoader();
     private static Background background = null;
@@ -113,6 +115,7 @@ public class FightGame extends Pangame {
         final BufferedImage constantsImg = ImtilX.loadImage("org/pandcorps/fight/res/misc/Constants.png");
         final BufferedImage[] constantImgs = Imtil.toStrip(constantsImg, DIM);
         shadowImage = engine.createImage("Shadow", new FinPanple(8, 4, 0), null, null, constantImgs[0]);
+        type = new Guy2Type(shadowImage, Fighter.DEPTH_SHADOW);
         bamImage1 = engine.createImage("Bam0", new FinPanple(8, 8, 0), null, null, constantImgs[1]);
         final Panmage bam2 = engine.createImage("Bam1", new FinPanple(8, 8, 0), null, null, constantImgs[2]);
         bamAnim = engine.createAnimation("Bam", engine.createFrame("BamF1", bamImage1, 3), engine.createFrame("BamF2", bam2, 3));
@@ -419,8 +422,9 @@ public class FightGame extends Pangame {
             final float centerX, centerY;
             //centerX = ROOM_W / 2;
             //centerY = ROOM_H / 2;
-            centerX = (bdef.minX + bdef.maxX) / 2;
-            centerY = (bdef.minY + bdef.maxY) / 2;
+            final Panple min = bdef.min, max = bdef.max;
+            centerX = (min.getX() + max.getX()) / 2;
+            centerY = (min.getY() + max.getY()) / 2;
             fighter.getPosition().set(centerX - 16, centerY);
             //room.addActor(fighter);
             
@@ -466,21 +470,11 @@ public class FightGame extends Pangame {
     
     @Override
     public final void step() {
-        //shadowVisible = !shadowVisible;
-        shadowTimer++;
-        if (shadowTimer > 4) {
-            shadowTimer = 0;
-        }
+        Guy2.step();
     }
     
     /*package*/ final static boolean isDebug() {
         return debug;
-    }
-    
-    /*package*/ final static boolean isShadowVisible() {
-        //return shadowVisible;
-        //return shadowTimer <= 1;
-        return shadowTimer == 0;
     }
     
     /*package*/ final static Panmage getShadowImage() {
