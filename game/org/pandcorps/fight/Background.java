@@ -23,23 +23,20 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.fight;
 
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.impl.FinPanple;
 
 public class Background extends Panctor {
     /*package*/ final static class BackgroundDefinition {
         /*package*/ final String name;
         /*package*/ final Panmage img;
-        /*package*/ final float minX;
-        /*package*/ final float minY;
-        /*package*/ final float maxX;
-        /*package*/ final float maxY;
+        /*package*/ final FinPanple min;
+        /*package*/ final FinPanple max;
         
         protected BackgroundDefinition(final String name, final Panmage img, final float minX, final float minY, final float maxX, final float maxY) {
             this.name = name;
             this.img = img;
-            this.minX = minX;
-            this.minY = minY;
-            this.maxX = maxX;
-            this.maxY = maxY;
+            this.min = new FinPanple(minX, minY, 0);
+            this.max = new FinPanple(maxX, maxY, 0);
         }
     }
     
