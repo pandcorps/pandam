@@ -1,0 +1,165 @@
+/*
+Copyright (c) 2009-2011, Andrew M. Martin
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
+conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this list of conditions and the following
+   disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following
+   disclaimer in the documentation and/or other materials provided with the distribution.
+ * Neither the name of Pandam nor the names of its contributors may be used to endorse or promote products derived from this
+   software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
+BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+*/
+package org.pandcorps.game.actor;
+
+import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.event.StepEvent;
+import org.pandcorps.pandam.event.StepListener;
+
+// A Guy that can look in 2 directions, left or right
+public abstract class Guy2 extends Panctor implements StepListener {
+	protected final static byte MODE_STILL = 0;
+	protected final static byte MODE_WALK = 1;
+    
+	private final static float speed = 2;
+	
+	//private static boolean shadowVisible = true;
+    private static byte shadowTimer = 0;
+	
+	protected final Decoration shadow;
+    protected byte mode = MODE_STILL;
+    protected float dx = 0;
+    protected float dy = 0;
+    
+    public final static class Guy2Type {
+    	private final Panmage shadowImage;
+    	private final int depthShadow;
+    	
+    	public Guy2Type(final Panmage shadowImage, final int depthShadow) {
+    		this.shadowImage = shadowImage;
+    		this.depthShadow = depthShadow;
+    	}
+    }
+	
+	protected Guy2(final String id, final Panroom room, final Guy2Type type) {
+		super(id);
+		shadow = new Decoration(id + ".shadow");
+        shadow.setView(type.shadowImage);
+        shadow.getPosition().setZ(type.depthShadow);
+        room.addActor(shadow);
+        room.addActor(this);
+	}
+	
+	@Override
+    public void onStep(final StepEvent event) {
+        final Panple pos = getPosition();
+        switch(mode) {
+            case MODE_WALK :
+                /*
+                 * We don't want to walk while attacking.
+                 * If we register an attack input event after a walk input event,
+                 * we don't want to process the walk event.
+                 * So we put mirror/position logic here, after all events have been processed.
+                 */
+                if (dx != 0) {
+                    setMirror(dx < 0);
+                }
+                //pos.add(dx, dy);
+                //final Panple roomSize = Pangame.getGame().getCurrentRoom().getSize();
+                //pos.add(dx, dy, 0, 0, roomSize.getX(), roomSize.getY());
+                //final Background background = FightGame.getBackground();
+                //pos.add(dx, dy, background.minX, background.minY, background.maxX, background.maxY);
+                // move can change pos, evaluate below
+                changeView(getWalk());
+                mode = MODE_STILL;
+                break;
+            case MODE_STILL :
+                changeView(getStill());
+                break;
+            default :
+            	handleMode(mode);
+            	break;
+        }
+        final Panple min = getMin(), max = getMax();
+        pos.add(dx, dy, min.getX(), min.getY(), max.getX(), max.getY());
+        pos.setZ(-pos.getY());
+        //shadow.getPosition().set(pos);
+        shadow.getPosition().set(pos.getX(), pos.getY());
+        shadow.setVisible(areShadowsVisible());
+        shadow.setMirror(isMirror());
+        dx = 0;
+        dy = 0;
+    }
+	
+	protected void handleMode(final byte mode) {
+		// Can override
+	}
+	
+	protected abstract Panimation getStill();
+	
+	protected abstract Panimation getWalk();
+	
+	protected abstract Panple getMin();
+	
+	protected abstract Panple getMax();
+	
+	public final void walkDown() {
+        walk(0, -speed);
+    }
+    
+	public final void walkUp() {
+        walk(0, speed);
+    }
+    
+	public final void walkLeft() {
+        walk(-speed, 0);
+        //setMirror(true);
+    }
+    
+	public final void walkRight() {
+        walk(speed, 0);
+        //setMirror(false);
+    }
+    
+    private final void walk(final float dx, final float dy) {
+        if (isFree()) {
+            this.dx += dx;
+            this.dy += dy;
+            //getPosition().add(dx, dy);
+            mode = MODE_WALK;
+        }
+    }
+    
+    protected final boolean isFree() {
+        return mode == MODE_STILL || mode == MODE_WALK;
+    }
+    
+    public final static void step() {
+    	//shadowVisible = !shadowVisible;
+        shadowTimer++;
+        if (shadowTimer > 4) {
+            shadowTimer = 0;
+        }
+    }
+    
+    public final static boolean areShadowsVisible() {
+        //return shadowVisible;
+        //return shadowTimer <= 1;
+        return shadowTimer == 0;
+    }
+    
+    @Override
+    protected void onDestroy() {
+    	shadow.destroy();
+    }
+}
