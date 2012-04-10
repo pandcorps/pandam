@@ -24,19 +24,17 @@ package org.pandcorps.fight;
 
 import org.pandcorps.core.*;
 import org.pandcorps.core.col.*;
-import org.pandcorps.fight.Background.BackgroundDefinition;
+import org.pandcorps.game.actor.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.impl.FinPanple;
 import org.pandcorps.pandax.text.Font;
 
-public final class Fighter extends Panctor implements StepListener, CollisionListener, AnimationEndListener {
+public final class Fighter extends Guy2 implements CollisionListener, AnimationEndListener {
     
     /*package*/ final static int DEPTH_SHADOW = -480;
     /*package*/ final static int DEPTH_BG = -481;
     
-    private final static byte MODE_STILL = 0;
-    private final static byte MODE_WALK = 1;
     //private final static byte MODE_QUICK = 2;
     private final static byte MODE_MOVE = 2;
     private final static byte MODE_HURT = 3;
@@ -47,10 +45,8 @@ public final class Fighter extends Panctor implements StepListener, CollisionLis
     
     private final static int POINTS_PER_SPECIAL = 3;
     
-    /*package*/ Controller controller = null;
+    /*package*/ FighterController controller = null;
     /*package*/ final IdentityHashSet<Projectile> linkedProjectiles = new IdentityHashSet<Projectile>();
-    
-    private final static float speed = 2;
     
     public final static class FighterDefinition {
         private final String name;
@@ -97,13 +93,9 @@ public final class Fighter extends Panctor implements StepListener, CollisionLis
     }
     
     /*package*/ final FighterDefinition def;
-    private final Decoration shadow;
-    private byte mode = MODE_STILL;
     private Panimation reactView = null;
     private Move move = null;
     private int moveLoop = 0;
-    private float dx = 0;
-    private float dy = 0;
     private byte hurtTime = 0;
     private byte hits = 0;
     private long lastHit = 0;
@@ -112,75 +104,63 @@ public final class Fighter extends Panctor implements StepListener, CollisionLis
     private int specialPoints = 0;
     
     public Fighter(final String id, final Panroom room, final FighterDefinition def) {
-        super(id);
+        super(id, room, FightGame.type);
 
         this.def = def;
         setView(def.still);
-        shadow = new Decoration(id + ".shadow");
-        shadow.setView(FightGame.getShadowImage());
-        room.addActor(this);
-        room.addActor(shadow);
-        shadow.getPosition().setZ(DEPTH_SHADOW);
         if (FightGame.mode == 1) {
         	health *= 4;
         }
     }
     
     @Override
-    public void onStep(final StepEvent event) {
-        controller.step();
-        final Panple pos = getPosition();
-        switch(mode) {
-            case MODE_WALK :
-                /*
-                 * We don't want to walk while attacking.
-                 * If we register an attack input event after a walk input event,
-                 * we don't want to process the walk event.
-                 * So we put mirror/position logic here, after all events have been processed.
-                 */
-                if (dx != 0) {
-                    setMirror(dx < 0);
-                }
-                //pos.add(dx, dy);
-                //final Panple roomSize = Pangame.getGame().getCurrentRoom().getSize();
-                //pos.add(dx, dy, 0, 0, roomSize.getX(), roomSize.getY());
-                //final Background background = FightGame.getBackground();
-                //pos.add(dx, dy, background.minX, background.minY, background.maxX, background.maxY);
-                // move can change pos, evaluate below
-                changeView(def.walk);
-                mode = MODE_STILL;
-                break;
-            case MODE_MOVE :
-                changeView(move.anim);
-                move();
-                //changeView(quick.anim);
-                //mode = MODE_STILL;
-                break;
-            case MODE_HURT :
-                changeView(def.hurt);
-                duringHurt();
-                break;
-            case MODE_BURN :
-                changeView(reactView);
-                duringHurt();
-                break;
-            default :
-                changeView(def.still);
-                break;
-        }
-        final BackgroundDefinition background = FightGame.getBackground().def;
-        pos.add(dx, dy, background.minX, background.minY, background.maxX, background.maxY);
-        final float px = pos.getX();
-        if (mode == MODE_MOVE && (px < 0 || px > Pangame.getGame().getCurrentRoom().getSize().getX())) {
+    public final void onStep(final StepEvent event) {
+    	controller.step();
+    	super.onStep(event);
+    	final float px = getPosition().getX();
+    	if (mode == MODE_MOVE && (px < 0 || px > Pangame.getGame().getCurrentRoom().getSize().getX())) {
             moveLoop = 1;
         }
-        pos.setZ(-pos.getY());
-        //shadow.getPosition().set(pos);
-        shadow.getPosition().set(px, pos.getY());
-        shadow.setVisible(FightGame.isShadowVisible());
-        shadow.setMirror(isMirror());
-        dx = 0;
-        dy = 0;
+    }
+    
+    @Override
+    protected final void handleMode(final byte mode) {
+    	switch(mode) {
+	    	case MODE_MOVE :
+	            changeView(move.anim);
+	            move();
+	            //changeView(quick.anim);
+	            //mode = MODE_STILL;
+	            break;
+	        case MODE_HURT :
+	            changeView(def.hurt);
+	            duringHurt();
+	            break;
+	        case MODE_BURN :
+	            changeView(reactView);
+	            duringHurt();
+	            break;
+    	}
+    }
+    
+    @Override
+    protected final Panimation getStill() {
+    	return def.still;
+    }
+	
+    @Override
+	protected final Panimation getWalk() {
+    	return def.walk;
+    }
+    
+    @Override
+    protected final Panple getMin() {
+    	return FightGame.getBackground().def.min;
+    }
+	
+    @Override
+	protected final Panple getMax() {
+    	return FightGame.getBackground().def.max;
     }
     
     private final void duringHurt() {
@@ -267,7 +247,7 @@ public final class Fighter extends Panctor implements StepListener, CollisionLis
                 	health = 0;
                 	addBurst(FightGame.puffAnim, 0, 0);
                 	destroy();
-                	shadow.destroy(); // linked projectiles destroyed when hit, regardless of defeat
+                	// linked projectiles destroyed when hit, regardless of defeat
                 }
                 addInfo(FightGame.fontDamage, health, 1);
             }
@@ -452,36 +432,5 @@ System.out.println("targ max: " + t.getBoundingMaximum());*/
         if (canAttack()) {
             startMove(m);
         }
-    }
-    
-    protected final void walkDown() {
-        walk(0, -speed);
-    }
-    
-    protected final void walkUp() {
-        walk(0, speed);
-    }
-    
-    protected final void walkLeft() {
-        walk(-speed, 0);
-        //setMirror(true);
-    }
-    
-    protected final void walkRight() {
-        walk(speed, 0);
-        //setMirror(false);
-    }
-    
-    private final void walk(final float dx, final float dy) {
-        if (isFree()) {
-            this.dx += dx;
-            this.dy += dy;
-            //getPosition().add(dx, dy);
-            mode = MODE_WALK;
-        }
-    }
-    
-    final boolean isFree() {
-        return mode == MODE_STILL || mode == MODE_WALK;
     }
 }
