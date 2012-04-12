@@ -72,4 +72,8 @@ public final class ImtilX {
         filter = ReplacePixelFilter.putIfValued(filter, outlineSrc, outlineDst);
         return Imtil.filter(img, filter);
     }
+    
+    public final static BufferedImage[] loadStrip(final String path) {
+    	return Imtil.toStrip(loadImage(path), DIM);
+    }
 }
