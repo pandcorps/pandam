@@ -107,13 +107,11 @@ public class FightGame extends Pangame {
     
     private final static void loadConstants() {
         final Pangine engine = Pangine.getEngine();
-        final BufferedImage menuImg = ImtilX.loadImage("org/pandcorps/fight/res/misc/Menu.png");
-        final BufferedImage[] menuImgs = Imtil.toStrip(menuImg, DIM);
+        final BufferedImage[] menuImgs = ImtilX.loadStrip("org/pandcorps/fight/res/misc/Menu.png");
         cursorImage = engine.createImage("Cursor", new FinPanple(8, 1, 0), null, null, menuImgs[0]);
         menuBackground = engine.createImage("MenuBgImage", "org/pandcorps/fight/res/misc/MenuBackground.png");
         title = engine.createImage("TitleImg", "org/pandcorps/fight/res/misc/Title.png");
-        final BufferedImage constantsImg = ImtilX.loadImage("org/pandcorps/fight/res/misc/Constants.png");
-        final BufferedImage[] constantImgs = Imtil.toStrip(constantsImg, DIM);
+        final BufferedImage[] constantImgs = ImtilX.loadStrip("org/pandcorps/fight/res/misc/Constants.png");
         shadowImage = engine.createImage("Shadow", new FinPanple(8, 4, 0), null, null, constantImgs[0]);
         type = new Guy2Type(shadowImage, Fighter.DEPTH_SHADOW);
         bamImage1 = engine.createImage("Bam0", new FinPanple(8, 8, 0), null, null, constantImgs[1]);
@@ -133,7 +131,7 @@ public class FightGame extends Pangame {
         final Panmage puff3 = engine.createImage("Puff2", new FinPanple(8, 8, 0), null, null, constantImgs[10]);
         puffAnim = engine.createAnimation("Puff", engine.createFrame("PuffF1", puff1, 3), engine.createFrame("PuffF2", puff2, 3), engine.createFrame("PuffF3", puff3, 3));
         
-        burnImgs = Imtil.toStrip(ImtilX.loadImage("org/pandcorps/fight/res/misc/Burn.png"), DIM);
+        burnImgs = ImtilX.loadStrip("org/pandcorps/fight/res/misc/Burn.png");
         
         //font = engine.createImage("font", "org/pandcorps/res/img/FontOutline8.png");
         fontDamage = Fonts.getOutline(new FontRequest(FontType.Number, 8), Pancolor.RED);
