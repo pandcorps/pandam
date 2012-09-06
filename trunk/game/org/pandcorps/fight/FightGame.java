@@ -30,8 +30,8 @@ import org.pandcorps.core.img.*;
 import org.pandcorps.core.seg.*;
 import org.pandcorps.fight.Background.BackgroundDefinition;
 import org.pandcorps.fight.Fighter.FighterDefinition;
-import org.pandcorps.game.actor.Decoration;
-import org.pandcorps.game.actor.Guy2;
+import org.pandcorps.game.*;
+import org.pandcorps.game.actor.*;
 import org.pandcorps.game.actor.Guy2.Guy2Type;
 import org.pandcorps.game.core.ImtilX;
 import org.pandcorps.pandam.*;
@@ -43,7 +43,7 @@ import org.pandcorps.pandax.menu.*;
 import org.pandcorps.pandax.text.*;
 import org.pandcorps.pandax.text.Fonts.*;
 
-public class FightGame extends Pangame {
+public class FightGame extends Guy2Game {
     private final static String PROP_DEBUG = "org.pandcorps.fight.FightGame.debug";
     
     private final static String PATH_CHR = "org/pandcorps/fight/res/chr/"; // Was char; could be bad to use reserved word
@@ -56,8 +56,6 @@ public class FightGame extends Pangame {
     //private final static int WIN_W = 1024;
     //private final static int WIN_H = 768;
     //private final static int ZOOM = 4;
-    private final static int ROOM_W = 256;
-    private final static int ROOM_H = 192;
     protected final static int DIM = ImtilX.DIM;
     private final static int BOUND_MAX = 2;
     private final static int BOUND_MIN = -BOUND_MAX;
@@ -93,11 +91,6 @@ public class FightGame extends Pangame {
     private static short outlineR = OUTLINE_DEFAULT;
     private static short outlineG = OUTLINE_DEFAULT;
     private static short outlineB = OUTLINE_DEFAULT;
-    
-    @Override
-    public void initBeforeEngine() {
-        Pangine.getEngine().setMaxZoomedDisplaySize(ROOM_W, ROOM_H);
-    }
     
     private final static void initWindow() {
         final Pangine engine = Pangine.getEngine();
@@ -138,11 +131,6 @@ public class FightGame extends Pangame {
         fontSpecial = Fonts.getOutline(new FontRequest(FontType.Number, 8), Pancolor.CYAN);
         final short c = (short) 192;
         fontText = Fonts.getOutline(new FontRequest(FontType.Upper, 8), new FinPancolor(c, c, c, Pancolor.MAX_VALUE));
-    }
-    
-    @Override
-    protected final FinPanple getFirstRoomSize() {
-        return new FinPanple(ROOM_W, ROOM_H, 0);
     }
     
     @Override
@@ -464,11 +452,6 @@ public class FightGame extends Pangame {
         		won = true;
         	}
         }
-    }
-    
-    @Override
-    public final void step() {
-        Guy2.step();
     }
     
     /*package*/ final static boolean isDebug() {
