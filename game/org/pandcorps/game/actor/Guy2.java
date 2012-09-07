@@ -40,6 +40,7 @@ public abstract class Guy2 extends Panctor implements StepListener {
     protected byte mode = MODE_STILL;
     protected float dx = 0;
     protected float dy = 0;
+    protected Guy2Controller controller = null;
     
     public final static class Guy2Type {
     	private final Panmage shadowImage;
@@ -62,6 +63,7 @@ public abstract class Guy2 extends Panctor implements StepListener {
 	
 	@Override
     public void onStep(final StepEvent event) {
+		controller.step();
         final Panple pos = getPosition();
         switch(mode) {
             case MODE_WALK :
@@ -156,6 +158,10 @@ public abstract class Guy2 extends Panctor implements StepListener {
         //return shadowVisible;
         //return shadowTimer <= 1;
         return shadowTimer == 0;
+    }
+    
+    public Guy2Controller getController() {
+    	return controller;
     }
     
     @Override

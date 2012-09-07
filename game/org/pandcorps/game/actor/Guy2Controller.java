@@ -22,7 +22,9 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.game.actor;
 
-import org.pandcorps.fight.Fighter;
+import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.event.action.ActionEvent;
+import org.pandcorps.pandam.event.action.ActionListener;
 
 public class Guy2Controller {
 	protected Guy2 guy = null;
@@ -35,6 +37,7 @@ public class Guy2Controller {
     
     protected void setGuy(final Guy2 guy) {
         this.guy = guy;
+        guy.controller = this;
     }
     
 	protected final void walkDown() {
@@ -51,5 +54,21 @@ public class Guy2Controller {
 
 	protected final void walkRight() {
 		guy.walkRight();
+	}
+	
+	protected final void registerPlayer(final Panctor bound) {
+		final Panteraction inter = Pangine.getEngine().getInteraction();
+		bound.register(inter.KEY_DOWN, new ActionListener() {@Override public void onAction(final ActionEvent event) {
+            walkDown();
+        }});
+        bound.register(inter.KEY_UP, new ActionListener() {@Override public void onAction(final ActionEvent event) {
+            walkUp();
+        }});
+        bound.register(inter.KEY_LEFT, new ActionListener() {@Override public void onAction(final ActionEvent event) {
+            walkLeft();
+        }});
+        bound.register(inter.KEY_RIGHT, new ActionListener() {@Override public void onAction(final ActionEvent event) {
+            walkRight();
+        }});
 	}
 }
