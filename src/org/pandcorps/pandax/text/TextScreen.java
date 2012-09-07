@@ -20,62 +20,57 @@ PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY
 TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 */
-package org.pandcorps.pandax.visual;
+package org.pandcorps.pandax.text;
 
-import org.pandcorps.core.Pantil;
-import org.pandcorps.core.img.Pancolor;
 import org.pandcorps.pandam.*;
-import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.action.*;
+import org.pandcorps.pandax.visual.*;
 
-public abstract class FadeScreen extends TempScreen {
-    private final static int SPEED = 4;
-    private final FadeController c = new FadeScreenController();
-    private final Panroom room;
-    private final Pancolor color;
-    private final short oldAlpha;
-    private final int time;
-    private TimerListener timer = null;
+public abstract class TextScreen extends TempScreen {
+    protected final TextScreenSequence sequence;
+    protected final Pantext text;
     
-    protected FadeScreen(final Pancolor color, final int time) {
-        room = Pangame.getGame().getCurrentRoom();
-        this.color = room.getBlendColor();
-        oldAlpha = this.color.getA();
-        this.color.set(color);
-        this.time = time;
+    public TextScreen(final Pantext text) {
+        this(null, text);
+    }
+    
+    public TextScreen(final TextScreenSequence sequence, final Pantext text) {
+        this.sequence = sequence;
+        this.text = text;
+        if (text.getLinesPerPage() <= 0) {
+            // scrollPage is a no-op with 0 signs per page, breaks any-key advancing through text
+            text.setLinesPerPage(1);
+        }
+        // Can't add to room in constructor, Panscreen.set will clear it; must do in init
+        //Pangame.getGame().getCurrentRoom().addActor(text);
     }
     
     @Override
     protected final void init() throws Exception {
-        room.addActor(c);
-        color.setA(Pancolor.MAX_VALUE);
-        c.setVelocity((short) -SPEED);
-        final Pangine engine = Pangine.getEngine();
+        Pangame.getGame().getCurrentRoom().addActor(text);
         final ActionStartListener anyKey;
+        final Panput esc = Pangine.getEngine().getInteraction().KEY_ESCAPE;
         anyKey = new ActionStartListener() { @Override public final void onActionStart(final ActionStartEvent event) {
-            c.setVelocity((short) SPEED);
-            engine.removeTimer(timer);
+            if (esc.equals(event.getInput())) {
+                cancel();
+                return;
+            }
+            if (!text.scrollPage()) {
+                finish(text);
+            }
         }};
-        c.register(anyKey);
+        text.register(anyKey);
     }
     
-    private final class FadeScreenController extends FadeController {
-        private FadeScreenController() {
-            super(Pantil.vmid());
+    protected final void cancel() {
+        if (sequence == null) {
+            finish(text);
+            return;
         }
-        
-        @Override
-        protected final void onFadeEnd() {
-            if (color.getA() == 0) {
-                timer = new TimerListener() { @Override public final void onTimer(final TimerEvent event) {
-                    setVelocity((short) SPEED);
-                }};
-                c.register(time, timer);
-            } else {
-                color.setA(oldAlpha);
-                // Might open a new FadeScreen, so revert alpha first
-                finish(this);
-            }
-        }
+        // If we open a new Panscreen, this will be automatic, but do it in case finish does something else
+        // Like TempScreen.finish
+        text.unregisterListeners();
+        sequence.cancel();
+        text.destroy();
     }
 }
