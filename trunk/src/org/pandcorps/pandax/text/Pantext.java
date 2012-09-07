@@ -322,6 +322,10 @@ public class Pantext extends Panctor {
 	    this.linesPerPage = linesPerPage;
 	}
 	
+	public final int getLinesPerPage() {
+	    return linesPerPage;
+	}
+	
 	public final void setFirstLine(final int firstLine) {
 	    this.firstLine = firstLine;
 	}
@@ -411,6 +415,10 @@ public class Pantext extends Panctor {
 	public final void centerX() {
 		final Panple pos = getPosition();
 		pos.setX(pos.getX() - (size.getX() / 2));
+	}
+	
+	public final Font getFont() {
+	    return f;
 	}
 	
 	public final static List<String> split(final String text, final int charactersPerLine) {
