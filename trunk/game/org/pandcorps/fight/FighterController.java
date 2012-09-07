@@ -22,17 +22,17 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.fight;
 
-public abstract class FighterController {
+import org.pandcorps.game.actor.*;
+
+public abstract class FighterController extends Guy2Controller {
     //protected final Fighter fighter; // Allow player to control a team and to toggle between characters
     protected Fighter fighter = null;
     
     protected FighterController() {
     }
     
-    public void step() {
-    }
-    
     protected void setFighter(final Fighter fighter) {
+    	setGuy(fighter);
         this.fighter = fighter;
         fighter.controller = this;
     }
@@ -47,21 +47,5 @@ public abstract class FighterController {
 
 	/*package*/ final void spec2() {
 		fighter.spec2();
-	}
-
-	/*package*/ final void walkDown() {
-		fighter.walkDown();
-	}
-
-	/*package*/ final void walkUp() {
-		fighter.walkUp();
-	}
-
-	/*package*/ final void walkLeft() {
-		fighter.walkLeft();
-	}
-
-	/*package*/ final void walkRight() {
-		fighter.walkRight();
 	}
 }
