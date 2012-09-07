@@ -64,7 +64,7 @@ public final class Player extends FighterController {
                 }
             	for (final Panctor actor : actors) {
             		if (actor.getClass() == Fighter.class) {
-            			final FighterController c = ((Fighter) actor).controller;
+            			final FighterController c = ((Fighter) actor).getController();
             			if (c instanceof Ai) {
             				final Ai ai = (Ai) c;
             				ai.mode = (byte) ((ai.mode + 1) % 3);
@@ -80,18 +80,7 @@ public final class Player extends FighterController {
             spec2();
         }});
         
-        bound.register(inter.KEY_DOWN, new ActionListener() {@Override public void onAction(final ActionEvent event) {
-            walkDown();
-        }});
-        bound.register(inter.KEY_UP, new ActionListener() {@Override public void onAction(final ActionEvent event) {
-            walkUp();
-        }});
-        bound.register(inter.KEY_LEFT, new ActionListener() {@Override public void onAction(final ActionEvent event) {
-            walkLeft();
-        }});
-        bound.register(inter.KEY_RIGHT, new ActionListener() {@Override public void onAction(final ActionEvent event) {
-            walkRight();
-        }});
+        registerPlayer(bound);
         
         bound.register(inter.KEY_TAB, new ActionStartListener() {@Override public void onActionStart(final ActionStartEvent event) {
             //TODO only allow switching among own team unless debugging
@@ -103,8 +92,8 @@ public final class Player extends FighterController {
                         ready = true;
                     } else if (ready && actor.getClass() == Fighter.class) {
                         final Fighter other = (Fighter) actor;
-                        final FighterController oc = other.controller;
-                        fighter.controller.setFighter(other);
+                        final FighterController oc = other.getController();
+                        fighter.getController().setFighter(other);
                         oc.setFighter(fighter);
                     }
                 }

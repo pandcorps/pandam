@@ -45,7 +45,6 @@ public final class Fighter extends Guy2 implements CollisionListener, AnimationE
     
     private final static int POINTS_PER_SPECIAL = 3;
     
-    /*package*/ FighterController controller = null;
     /*package*/ final IdentityHashSet<Projectile> linkedProjectiles = new IdentityHashSet<Projectile>();
     
     public final static class FighterDefinition {
@@ -115,7 +114,6 @@ public final class Fighter extends Guy2 implements CollisionListener, AnimationE
     
     @Override
     public final void onStep(final StepEvent event) {
-    	controller.step();
     	super.onStep(event);
     	final float px = getPosition().getX();
     	if (mode == MODE_MOVE && (px < 0 || px > Pangame.getGame().getCurrentRoom().getSize().getX())) {
@@ -432,5 +430,10 @@ System.out.println("targ max: " + t.getBoundingMaximum());*/
         if (canAttack()) {
             startMove(m);
         }
+    }
+    
+    @Override
+    public FighterController getController() {
+    	return (FighterController) controller;
     }
 }

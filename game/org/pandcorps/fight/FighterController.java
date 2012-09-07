@@ -34,7 +34,6 @@ public abstract class FighterController extends Guy2Controller {
     protected void setFighter(final Fighter fighter) {
     	setGuy(fighter);
         this.fighter = fighter;
-        fighter.controller = this;
     }
     
 	/*package*/ final void attack() {
