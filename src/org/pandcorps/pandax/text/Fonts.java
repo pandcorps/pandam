@@ -61,6 +61,7 @@ public final class Fonts {
     private final static Pancolor COLOR_BASE;
     private final static Pancolor COLOR_BACKGROUND;
     private final static Pancolor COLOR_CURSOR;
+    private final static Pancolor COLOR_OUTLINE;
     
     static {
         final short base = 66;
@@ -69,6 +70,7 @@ public final class Fonts {
         COLOR_BACKGROUND = new FinPancolor(bg, bg, Pancolor.MAX_VALUE, Pancolor.MAX_VALUE);
         final short cursor = 32, cursorBlue = 128;
         COLOR_CURSOR = new FinPancolor(cursor, cursor, cursorBlue, Pancolor.MAX_VALUE);
+        COLOR_OUTLINE = Pancolor.BLACK;
     }
     
     public final static Font getOutline(final FontRequest req, final Pancolor color) {
@@ -76,7 +78,11 @@ public final class Fonts {
     }
     
     public final static Font getOutline(final FontRequest req, final Pancolor base, final Pancolor background, final Pancolor cursor) {
-        return getBasic("Outline", req, base, background, cursor);
+    	return getOutline(req, base, background, cursor, COLOR_OUTLINE);
+    }
+    
+    public final static Font getOutline(final FontRequest req, final Pancolor base, final Pancolor background, final Pancolor cursor, final Pancolor outline) {
+        return getBasic("Outline", req, base, background, cursor, outline);
     }
     
     public final static Font getSimple(final FontRequest req, final Pancolor color) {
@@ -84,14 +90,15 @@ public final class Fonts {
     }
     
     public final static Font getSimple(final FontRequest req, final Pancolor base, final Pancolor background, final Pancolor cursor) {
-        return getBasic("Simple", req, base, background, cursor);
+        return getBasic("Simple", req, base, background, cursor, COLOR_OUTLINE);
     }
     
-    private final static Font getBasic(final String style, final FontRequest req, final Pancolor base, final Pancolor background, final Pancolor cursor) {
+    private final static Font getBasic(final String style, final FontRequest req, final Pancolor base, final Pancolor background, final Pancolor cursor, final Pancolor outline) {
         final HashMap<Pancolor, Pancolor> map = new HashMap<Pancolor, Pancolor>();
         map.put(COLOR_BASE, base);
         map.put(COLOR_BACKGROUND, background);
         map.put(COLOR_CURSOR, cursor);
+        map.put(COLOR_OUTLINE, outline);
         final ReplacePixelFilter filter = new ReplacePixelFilter(map);
         return get(style, req, base.toString() + '.' + background + '.' + cursor, filter);
     }
