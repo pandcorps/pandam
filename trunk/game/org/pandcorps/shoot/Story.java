@@ -22,10 +22,14 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.shoot;
 
+import java.awt.image.BufferedImage;
+
+import org.pandcorps.core.Imtil;
 import org.pandcorps.core.Pantil;
 import org.pandcorps.core.img.FinPancolor;
 import org.pandcorps.core.img.Pancolor;
 import org.pandcorps.game.actor.Decoration;
+import org.pandcorps.game.core.ImtilX;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandax.text.*;
 import org.pandcorps.pandax.text.Fonts.FontRequest;
@@ -38,6 +42,11 @@ public class Story {
 	private static Panmage bgPodium = null;
 	private static Panmage bgOvalOffice = null;
 	private static Panmage bgGym = null;
+	private static Panmage chrBladimir = null;
+	private static Panmage chrBladigar = null;
+	private static Panmage chrBladander = null;
+	private static Panmage chrPotus = null;
+	private static Panmage chrWill = null;
 	
 	protected abstract static class StoryScreen extends TextScreen {
 		private final Panmage bgImg;
@@ -48,12 +57,18 @@ public class Story {
 			bgImg = bg;
 		}
 		
+		protected Decoration addDec(final Panmage img, final float x, final float y, final float z) {
+			final Decoration act = new Decoration(Pantil.vmid());
+			act.setView(img);
+			act.getPosition().set(x, y, z);
+			Pangame.getGame().getCurrentRoom().addActor(act);
+			return act;
+		}
+		
 		@Override
 		protected final void start() throws Exception {
-			final Decoration bgAct = new Decoration(Pantil.vmid());
-			bgAct.setView(bgImg);
-			bgAct.getPosition().set(96, 96, 0);
-			Pangame.getGame().getCurrentRoom().addActor(bgAct);
+			addDec(bgImg, 96, 96, 0);
+			startExtra();
 		}
 		
 		protected void startExtra() throws Exception {
@@ -67,6 +82,11 @@ public class Story {
 			bgPodium.destroy();
 			bgOvalOffice.destroy();
 			bgGym.destroy();
+			chrBladimir.destroy();
+			chrBladigar.destroy();
+			chrBladander.destroy();
+			chrPotus.destroy();
+			chrWill.destroy();
 			Panscreen.set(new ShootScreen());
 		}		
 	}
@@ -102,7 +122,9 @@ public class Story {
 
 		@Override
 		protected void startExtra() throws Exception {
-			
+			addDec(chrBladimir, 120, 124, 1);
+			addDec(chrBladigar, 96, 104, 1);
+			addDec(chrBladander, 159, 104, 1).setMirror(true);
 		}
 
 		@Override
@@ -119,7 +141,7 @@ public class Story {
 
 		@Override
 		protected void startExtra() throws Exception {
-			
+			addDec(chrPotus, 120, 124, 1);
 		}
 
 		@Override
@@ -136,7 +158,7 @@ public class Story {
 
 		@Override
 		protected void startExtra() throws Exception {
-			
+			addDec(chrWill, 120, 100, 1);
 		}
 
 		@Override
@@ -145,8 +167,30 @@ public class Story {
 		}
 	}
 	
+	private final static Panmage getImg(final String type, final String name) {
+		return Pangine.getEngine().createImage("img." + type + '.' + name, "org/pandcorps/shoot/res/" + type + '/' + name + ".png");
+	}
+	
 	private final static Panmage getBg(final String name) {
-		return Pangine.getEngine().createImage("img.bg." + name, "org/pandcorps/shoot/res/story/" + name + ".png");
+		return getImg("story", name);
+	}
+	
+	private final static BufferedImage getChrBi(final String name) {
+		return ImtilX.loadStrip("org/pandcorps/shoot/res/chr/" + name + ".png")[0];
+	}
+	
+	private final static Panmage getChr(final String name) {
+		return getChr(name, -1);
+	}
+	
+	private final static Panmage getChr(final String name, int h) {
+		BufferedImage bi = getChrBi(name);
+		if (h >= 0) {
+			//bi = bi.getSubimage(0, 0, 16, h);
+			final short m = Pancolor.MIN_VALUE;
+			Imtil.drawRectangle(bi, 0, h, 16, 16 - h, m, m, m, m);
+		}
+		return Pangine.getEngine().createImage("img.chr." + name, bi);
 	}
 	
 	protected final static void playIntro() {
@@ -154,6 +198,11 @@ public class Story {
 		bgPodium = getBg("Podium");
 		bgOvalOffice = getBg("OvalOffice");
 		bgGym = getBg("Gym");
+		chrBladimir = getChr("Bladimir", 12);
+		chrBladigar = getChr("Bladigar");
+		chrBladander = getChr("Bladander");
+		chrPotus = getChr("Potus", 12);
+		chrWill = getChr("Will");
 		font = Fonts.getOutline(new FontRequest(8), Pancolor.BLUE, Pancolor.BLUE, Pancolor.BLUE, new FinPancolor(Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, (short) 128, Pancolor.MAX_VALUE));
 		Panscreen.set(new MapScreen());
 	}
