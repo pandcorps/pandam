@@ -250,4 +250,19 @@ public final class Imtil {
     private final static int getComponent(double avg, double exponent) {
         return Math.min(255, Math.max(0, (int) (Math.pow(avg, exponent) * 255.0)));
     }
+    
+    public final static BufferedImage drawRectangle(final BufferedImage in,
+    		final int x, final int y, final int w, final int h,
+    		final short r, final short g, final short b, final short a) {
+    	//TODO copy if not already right ColorModel
+    	final ColorModel cm = ColorModel.getRGBdefault();
+    	final int[] rgba = {r, g, b, a};
+    	final int c = cm.getDataElement(rgba, 0);
+    	for (int j = y + h - 1; j >= y; j--) {
+    		for (int i = x + w - 1; i >= x; i--) {
+    			in.setRGB(i, j, c);
+    		}
+    	}
+    	return in;
+    }
 }
