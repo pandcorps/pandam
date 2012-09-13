@@ -25,6 +25,7 @@ package org.pandcorps.pandax.text;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.pandcorps.core.Chartil;
 import org.pandcorps.core.Coltil;
@@ -421,11 +422,22 @@ public class Pantext extends Panctor {
 	    return f;
 	}
 	
+	private final static Pattern PAT_BR = Pattern.compile("[\r\n]");
+	
 	public final static List<String> split(final String text, final int charactersPerLine) {
+		//TODO option not to treat '\n' as a line break?
+        final String[] tokens = PAT_BR.split(text);
+		final List<String> list = new ArrayList<String>();
+		final int size = tokens.length;
+		for (int i = 0; i < size; i++) {
+			splitIntern(list, tokens[i], charactersPerLine);
+		}
+		return list;
+	}
+	
+	private final static List<String> splitIntern(final List<String> list, final String text, final int charactersPerLine) {
         int textSize = text.length(), off = 0;
-        final List<String> list = new ArrayList<String>();
         while (true) {
-            //TODO treat '\n' as a line break?
             //TODO '\t'?
             int indent;
             for (indent = 0; indent < textSize; indent++) {
