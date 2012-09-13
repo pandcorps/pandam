@@ -56,8 +56,7 @@ public final class Chartil {
         final int subSize = size(sub);
         if (subSize == 0) {
             return true;
-        }
-        if (size(s) < subSize) {
+        } else if (size(s) < subSize) {
             return false;
         }
         for (int i = 0; i < subSize; i++) {
