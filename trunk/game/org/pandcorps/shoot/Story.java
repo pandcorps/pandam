@@ -42,6 +42,7 @@ public class Story {
 	private static Panmage bgPodium = null;
 	private static Panmage bgOvalOffice = null;
 	private static Panmage bgGym = null;
+	private static Panmage bgTitle = null;
 	private static Panmage chrBladimir = null;
 	private static Panmage chrBladigar = null;
 	private static Panmage chrBladander = null;
@@ -82,6 +83,7 @@ public class Story {
 			bgPodium.destroy();
 			bgOvalOffice.destroy();
 			bgGym.destroy();
+			bgTitle.destroy();
 			chrBladimir.destroy();
 			chrBladigar.destroy();
 			chrBladander.destroy();
@@ -100,7 +102,19 @@ public class Story {
 	protected final static class MapScreen extends IntroScreen {
 
 		public MapScreen() {
-			super("Hi", bgEurope);
+			super("Europe\n2079", bgEurope);
+		}
+
+		@Override
+		protected void finish() {
+			Panscreen.set(new Map2Screen());
+		}
+	}
+	
+	protected final static class Map2Screen extends IntroScreen {
+
+		public Map2Screen() {
+			super("The Black Reich of Bladavosnia spreads across the continent.  None can withstand the onslaught of the deadly Blitztroopers.", bgEurope);
 		}
 
 		@Override
@@ -117,7 +131,7 @@ public class Story {
 	protected final static class PodiumScreen extends IntroScreen {
 
 		public PodiumScreen() {
-			super("Hi", bgPodium);
+			super("The ruthless dictator Bladimir will not stop until the entire world is in his grasp.\nHurravah, Bladavosnia!  Hurravah, Bladavosnia!", bgPodium);
 		}
 
 		@Override
@@ -136,7 +150,7 @@ public class Story {
 	protected final static class OvalOfficeScreen extends IntroScreen {
 
 		public OvalOfficeScreen() {
-			super("Hi", bgOvalOffice);
+			super("Joseph Darkwater, the President of the United States, remembers his days with the Marines and reaches out to an old friend.  Will, I don't know what to do.", bgOvalOffice);
 		}
 
 		@Override
@@ -153,12 +167,24 @@ public class Story {
 	protected final static class GymScreen extends IntroScreen {
 
 		public GymScreen() {
-			super("Hi", bgGym);
+			super("I do.  I will kill 'em.  All of 'em.", bgGym);
 		}
 
 		@Override
 		protected void startExtra() throws Exception {
 			addDec(chrWill, 120, 100, 1);
+		}
+
+		@Override
+		protected void finish() {
+			Panscreen.set(new TitleScreen());
+		}
+	}
+	
+	protected final static class TitleScreen extends IntroScreen {
+
+		public TitleScreen() {
+			super("Will Killem\nEpisode 1\nVeni, Vidi, Vici, Baby", bgTitle);
 		}
 
 		@Override
@@ -198,6 +224,7 @@ public class Story {
 		bgPodium = getBg("Podium");
 		bgOvalOffice = getBg("OvalOffice");
 		bgGym = getBg("Gym");
+		bgTitle = getBg("Title");
 		chrBladimir = getChr("Bladimir", 12);
 		chrBladigar = getChr("Bladigar");
 		chrBladander = getChr("Bladander");
