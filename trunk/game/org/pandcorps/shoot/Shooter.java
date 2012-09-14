@@ -9,9 +9,9 @@ import org.pandcorps.pandam.impl.FinPanple;
 public class Shooter extends Guy2 {
 	public final static class ShooterDefinition {
 		private final Panimation still;
-		private final Panimation walk;
+		protected final Panimation walk;
 		
-		public final static ShooterDefinition create(final String name, final BufferedImage[] imgs) {
+		public final static ShooterDefinition create(final String name, final BufferedImage... imgs) {
 			final Pangine engine = Pangine.getEngine();
 			final String pre = name + '.';
 			final String ipre = pre + "img.", fpre = pre + "frm.", apre = pre + "anm.";
