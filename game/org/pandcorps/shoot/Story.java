@@ -32,12 +32,14 @@ import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandax.text.*;
 import org.pandcorps.pandax.text.Fonts.FontRequest;
+import org.pandcorps.pandax.visual.Pantexture;
 import org.pandcorps.shoot.ShootGame.ShootScreen;
 import org.pandcorps.shoot.Shooter.ShooterDefinition;
 
 public class Story {
 	private static Font font = null;
 	private static IntroSequence intro = new IntroSequence();
+	private static Panmage imgBlack = null;
 	private static Panmage bgEurope = null;
 	private static Panmage bgEurope2 = null;
 	private static Panmage bgPodium = null;
@@ -81,6 +83,7 @@ public class Story {
 	protected final static class IntroSequence extends TextScreenSequence {
 		@Override
 		protected void cancel() {
+			imgBlack.destroy();
 			bgEurope.destroy();
 			bgEurope2.destroy();
 			bgPodium.destroy();
@@ -119,10 +122,19 @@ public class Story {
 		public Map2Screen() {
 			super("The Black Reich of Bladavosnia spreads across the continent.  None can withstand the onslaught of the deadly Blitztroopers.", bgEurope2);
 		}
+		
+		private void addBorder(final Panroom room, final int x, final int y, final int w, final int h) {
+			final Pantexture left = new Pantexture("tex." + x + "." + y, imgBlack);
+			room.addActor(left);
+			left.getPosition().set(x, y, 256);
+			left.setSize(w, h);
+		}
 
 		@Override
 		protected void startExtra() throws Exception {
 			final Panroom room = Pangame.getGame().getCurrentRoom();
+			addBorder(room, 16, 96, 80, 96);
+			addBorder(room, 96, 80, 64, 16);
 			for (int j = 0; j < 6; j++) {
 				final int yoff = j * 8;
 				for (int i = 0; i < 2; i++) {
@@ -269,7 +281,16 @@ public class Story {
 		}
 	}
 	
+	private final static Panmage getBlack() {
+		final int d = 16;
+		BufferedImage bi = new BufferedImage(d, d, Imtil.TYPE);
+		final short m = Pancolor.MIN_VALUE;
+		bi = Imtil.drawRectangle(bi, 0, 0, d, d, m, m, m, Pancolor.MAX_VALUE);
+		return Pangine.getEngine().createImage("img.black", bi);
+	}
+	
 	protected final static void playIntro() {
+		imgBlack = getBlack();
 		bgEurope = getBg("Europe");
 		bgEurope2 = getBg("Europe2");
 		bgPodium = getBg("Podium");
