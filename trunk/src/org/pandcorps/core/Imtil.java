@@ -82,6 +82,10 @@ public final class Imtil {
     }
     
     public final static void copy(final BufferedImage src, final BufferedImage dst, final int srcX, final int srcY, final int w, final int h, final int dstX, final int dstY) {
+    	copy(src, dst, srcX, srcY, w, h, dstX, dstY, false);
+    }
+    
+    public final static void copy(final BufferedImage src, final BufferedImage dst, final int srcX, final int srcY, final int w, final int h, final int dstX, final int dstY, final boolean respectAlpha) {
         final ColorModel cm = getColorModel();
     	for (int x = 0; x < w; x++) {
             final int srcCol = srcX + x, dstCol = dstX + x;
@@ -94,7 +98,7 @@ public final class Imtil {
                 } catch (final Exception e) {
                     throw err(src, dst, srcX, srcY, w, h, dstX, dstY, "get", srcCol, srcRow, e);
                 }
-                if (cm.getAlpha(srcP) == 0) {
+                if (respectAlpha && cm.getAlpha(srcP) == 0) {
                 	continue;
                 }
                 final int dstRow = dstY + y;
