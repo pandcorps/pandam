@@ -24,13 +24,12 @@ package org.pandcorps.shoot;
 
 import java.awt.image.BufferedImage;
 
-import org.pandcorps.core.Imtil;
-import org.pandcorps.core.Pantil;
-import org.pandcorps.core.img.FinPancolor;
-import org.pandcorps.core.img.Pancolor;
+import org.pandcorps.core.*;
+import org.pandcorps.core.img.*;
 import org.pandcorps.game.actor.Decoration;
 import org.pandcorps.game.core.ImtilX;
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandax.text.*;
 import org.pandcorps.pandax.text.Fonts.FontRequest;
 import org.pandcorps.shoot.ShootGame.ShootScreen;
@@ -124,9 +123,14 @@ public class Story {
 		@Override
 		protected void startExtra() throws Exception {
 			final Panroom room = Pangame.getGame().getCurrentRoom();
-			final Trp trp = new Trp();
-			trp.getPosition().set(128, 128, 1);
-			room.addActor(trp);
+			for (int j = 0; j < 6; j++) {
+				final int yoff = j * 8;
+				for (int i = 0; i < 2; i++) {
+					final Trp trp = new Trp();
+					trp.getPosition().set(80 - (i * 16) - yoff, 128 + yoff, 64 - yoff);
+					room.addActor(trp);
+				}
+			}
 		}
 
 		@Override
@@ -250,10 +254,18 @@ public class Story {
 		return ShooterDefinition.create("Blitztrooper", still, left, right).walk;
 	}
 	
-	private final static class Trp extends Panctor {
+	private final static class Trp extends Panctor implements StepListener {
 		public Trp() {
 			super(Pantil.vmid());
 			setView(anmTrp);
+		}
+		
+		public void onStep(final StepEvent event) {
+			final Panple pos = getPosition();
+			pos.add(1, -1, 1);
+			if (pos.getY() < 80) {
+				pos.add(-48, 48, -48);
+			}
 		}
 	}
 	
