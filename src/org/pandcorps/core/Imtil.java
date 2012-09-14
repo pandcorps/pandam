@@ -58,6 +58,10 @@ public final class Imtil {
         }
     }
     
+    public final static ColorModel getColorModel() {
+    	return ColorModel.getRGBdefault();
+    }
+    
     //public final static BufferedImage sub(final BufferedImage img, final int x, final int y, final int w, final int h) {
         //final BufferedImage out = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
     //    return img.getSubimage(x, y, w, h);
@@ -78,7 +82,8 @@ public final class Imtil {
     }
     
     public final static void copy(final BufferedImage src, final BufferedImage dst, final int srcX, final int srcY, final int w, final int h, final int dstX, final int dstY) {
-        for (int x = 0; x < w; x++) {
+        final ColorModel cm = getColorModel();
+    	for (int x = 0; x < w; x++) {
             final int srcCol = srcX + x, dstCol = dstX + x;
             for (int y = 0; y < h; y++) {
                 // Different color models?
@@ -88,6 +93,9 @@ public final class Imtil {
                     srcP = src.getRGB(srcCol, srcRow);
                 } catch (final Exception e) {
                     throw err(src, dst, srcX, srcY, w, h, dstX, dstY, "get", srcCol, srcRow, e);
+                }
+                if (cm.getAlpha(srcP) == 0) {
+                	continue;
                 }
                 final int dstRow = dstY + y;
                 try {
@@ -160,7 +168,7 @@ public final class Imtil {
     
     public final static short[] getArithmeticMeanColor(final BufferedImage img) {
         final int w = img.getWidth(), h = img.getHeight();
-        final ColorModel cm = ColorModel.getRGBdefault();
+        final ColorModel cm = getColorModel();
         long imgR = 0, imgG = 0, imgB = 0;
         int total = 0;
         for (int y = 0; y < h; y++) {
@@ -204,7 +212,7 @@ public final class Imtil {
         final double exponentBlue = getExponent(baseBlue);
         
         final int rgba[] = new int[4];
-        final ColorModel cm = ColorModel.getRGBdefault();
+        final ColorModel cm = getColorModel();
         // img.getColorModel might be indexed, and our recolored version might not work very well with the limited palette.
         // So, we always use the more flexible model.
         // That's also why the output is always a .png regardless of the input.
@@ -255,7 +263,7 @@ public final class Imtil {
     		final int x, final int y, final int w, final int h,
     		final short r, final short g, final short b, final short a) {
     	//TODO copy if not already right ColorModel
-    	final ColorModel cm = ColorModel.getRGBdefault();
+    	final ColorModel cm = getColorModel();
     	final int[] rgba = {r, g, b, a};
     	final int c = cm.getDataElement(rgba, 0);
     	for (int j = y + h - 1; j >= y; j--) {
