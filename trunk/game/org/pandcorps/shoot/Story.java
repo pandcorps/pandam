@@ -273,6 +273,9 @@ public class Story {
 		}
 		
 		public void onStep(final StepEvent event) {
+			if ((Pangine.getEngine().getClock() % 2) != 0) {
+				return;
+			}
 			final Panple pos = getPosition();
 			pos.add(1, -1, 1);
 			if (pos.getY() < 80) {
