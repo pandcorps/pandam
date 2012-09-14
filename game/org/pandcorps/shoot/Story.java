@@ -34,6 +34,7 @@ import org.pandcorps.pandam.*;
 import org.pandcorps.pandax.text.*;
 import org.pandcorps.pandax.text.Fonts.FontRequest;
 import org.pandcorps.shoot.ShootGame.ShootScreen;
+import org.pandcorps.shoot.Shooter.ShooterDefinition;
 
 public class Story {
 	private static Font font = null;
@@ -49,6 +50,7 @@ public class Story {
 	private static Panmage chrBladander = null;
 	private static Panmage chrPotus = null;
 	private static Panmage chrWill = null;
+	private static Panimation anmTrp = null;
 	
 	protected abstract static class StoryScreen extends TextScreen {
 		private final Panmage bgImg;
@@ -121,7 +123,10 @@ public class Story {
 
 		@Override
 		protected void startExtra() throws Exception {
-			
+			final Panroom room = Pangame.getGame().getCurrentRoom();
+			final Trp trp = new Trp();
+			trp.getPosition().set(128, 128, 1);
+			room.addActor(trp);
 		}
 
 		@Override
@@ -203,8 +208,12 @@ public class Story {
 		return getImg("story", name);
 	}
 	
+	private final static BufferedImage[] getChrStrip(final String name) {
+		return ImtilX.loadStrip("org/pandcorps/shoot/res/chr/" + name + ".png");
+	}
+	
 	private final static BufferedImage getChrBi(final String name) {
-		return ImtilX.loadStrip("org/pandcorps/shoot/res/chr/" + name + ".png")[0];
+		return getChrStrip(name)[0];
 	}
 	
 	private final static Panmage getChr(final String name) {
@@ -218,7 +227,34 @@ public class Story {
 			final short m = Pancolor.MIN_VALUE;
 			Imtil.drawRectangle(bi, 0, h, 16, 16 - h, m, m, m, m);
 		}
+		return getChr(name, bi);
+	}
+	
+	private final static Panmage getChr(final String name, final BufferedImage bi) {
 		return Pangine.getEngine().createImage("img.chr." + name, bi);
+	}
+	
+	private final static BufferedImage getTrpImg(final BufferedImage[] strip, final int i, final BufferedImage head, final int h) {
+		final BufferedImage body = strip[i];
+		Imtil.copy(head, body, 0, 0, ImtilX.DIM, ImtilX.DIM - h, 0, -h, true);
+		//return getChr("Blitztrooper." + i, body);
+		return body;
+	}
+	
+	private final static Panimation getTrpAnm() {
+		final BufferedImage[] strip = getChrStrip("Blitztrooper");
+		final BufferedImage head = strip[4];
+		final BufferedImage still = getTrpImg(strip, 0, head, 0);
+		final BufferedImage left = getTrpImg(strip, 1, head, 1);
+		final BufferedImage right = getTrpImg(strip, 2, head, 1);
+		return ShooterDefinition.create("Blitztrooper", still, left, right).walk;
+	}
+	
+	private final static class Trp extends Panctor {
+		public Trp() {
+			super(Pantil.vmid());
+			setView(anmTrp);
+		}
 	}
 	
 	protected final static void playIntro() {
@@ -233,6 +269,7 @@ public class Story {
 		chrBladander = getChr("Bladander");
 		chrPotus = getChr("Potus", 12);
 		chrWill = getChr("Will");
+		anmTrp = getTrpAnm();
 		font = Fonts.getOutline(new FontRequest(8), Pancolor.BLUE, Pancolor.BLUE, Pancolor.BLUE, new FinPancolor(Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, (short) 128, Pancolor.MAX_VALUE));
 		Panscreen.set(new MapScreen());
 	}
