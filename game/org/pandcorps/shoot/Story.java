@@ -39,6 +39,7 @@ public class Story {
 	private static Font font = null;
 	private static IntroSequence intro = new IntroSequence();
 	private static Panmage bgEurope = null;
+	private static Panmage bgEurope2 = null;
 	private static Panmage bgPodium = null;
 	private static Panmage bgOvalOffice = null;
 	private static Panmage bgGym = null;
@@ -80,6 +81,7 @@ public class Story {
 		@Override
 		protected void cancel() {
 			bgEurope.destroy();
+			bgEurope2.destroy();
 			bgPodium.destroy();
 			bgOvalOffice.destroy();
 			bgGym.destroy();
@@ -114,7 +116,7 @@ public class Story {
 	protected final static class Map2Screen extends IntroScreen {
 
 		public Map2Screen() {
-			super("The Black Reich of Bladavosnia spreads across the continent.  None can withstand the onslaught of the deadly Blitztroopers.", bgEurope);
+			super("The Black Reich of Bladavosnia spreads across the continent.  None can withstand the onslaught of the deadly Blitztroopers.", bgEurope2);
 		}
 
 		@Override
@@ -131,7 +133,7 @@ public class Story {
 	protected final static class PodiumScreen extends IntroScreen {
 
 		public PodiumScreen() {
-			super("The ruthless dictator Bladimir will not stop until the entire world is in his grasp.\nHurravah, Bladavosnia!  Hurravah, Bladavosnia!", bgPodium);
+			super("The ruthless dictator Bladimir will not stop until the entire world is in his grasp.\n\"Hurravah, Bladavosnia!\"\n\"Hurravah, Bladavosnia!\"", bgPodium);
 		}
 
 		@Override
@@ -150,7 +152,7 @@ public class Story {
 	protected final static class OvalOfficeScreen extends IntroScreen {
 
 		public OvalOfficeScreen() {
-			super("Joseph Darkwater, the President of the United States, remembers his days with the Marines and reaches out to an old friend.  Will, I don't know what to do.", bgOvalOffice);
+			super("Joseph Darkwater, the President of the United States, remembers his days with the Marines and reaches out to an old friend.  \"Will, I don't know what to do.\"", bgOvalOffice);
 		}
 
 		@Override
@@ -167,7 +169,7 @@ public class Story {
 	protected final static class GymScreen extends IntroScreen {
 
 		public GymScreen() {
-			super("I do.  I will kill 'em.  All of 'em.", bgGym);
+			super("\"I do.  I will kill 'em.  All of 'em.\"", bgGym);
 		}
 
 		@Override
@@ -221,6 +223,7 @@ public class Story {
 	
 	protected final static void playIntro() {
 		bgEurope = getBg("Europe");
+		bgEurope2 = getBg("Europe2");
 		bgPodium = getBg("Podium");
 		bgOvalOffice = getBg("OvalOffice");
 		bgGym = getBg("Gym");
