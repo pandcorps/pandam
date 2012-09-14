@@ -31,6 +31,8 @@ import org.pandcorps.pandam.*;
 
 // Image Utility
 public final class Imtil {
+	public final static int TYPE = BufferedImage.TYPE_INT_ARGB;
+	
     private Imtil() {
         throw new Error();
     }
@@ -63,7 +65,7 @@ public final class Imtil {
     }
     
     //public final static BufferedImage sub(final BufferedImage img, final int x, final int y, final int w, final int h) {
-        //final BufferedImage out = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+        //final BufferedImage out = new BufferedImage(w, h, TYPE);
     //    return img.getSubimage(x, y, w, h);
     //}
     
@@ -157,7 +159,7 @@ public final class Imtil {
         final int w = img.getWidth(), h = img.getHeight();
         //final ColorModel cm = img.getColorModel();
         //cm.getRGB(inData)
-        final BufferedImage out = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+        final BufferedImage out = new BufferedImage(w, h, TYPE);
         for (int x = 0; x < w; x++) {
             for (int y = 0; y < h; y++) {
                 int p = img.getRGB(x, y);
@@ -223,7 +225,7 @@ public final class Imtil {
         //ColorModel model = img.getColorModel();
 
         final int w = in.getWidth(), h = in.getHeight();
-        final BufferedImage out = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+        final BufferedImage out = new BufferedImage(w, h, TYPE);
 
         for (int y = 0; y < h; y++) {
             for (int x = 0; x < w; x++) {
