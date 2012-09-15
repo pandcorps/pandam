@@ -15,9 +15,10 @@ public class Shooter extends Guy2 {
 			final Pangine engine = Pangine.getEngine();
 			final String pre = name + '.';
 			final String ipre = pre + "img.", fpre = pre + "frm.", apre = pre + "anm.";
-			final Panmage stillImg = engine.createImage(ipre + "still", imgs[0]);
-			final Panmage leftImg = engine.createImage(ipre + "left", imgs[1]);
-			final Panmage rightImg = engine.createImage(ipre + "right", imgs[2]);
+			final FinPanple o = new FinPanple(8, 1, 0);
+			final Panmage stillImg = engine.createImage(ipre + "still", o, null, null, imgs[0]);
+			final Panmage leftImg = engine.createImage(ipre + "left", o, null, null, imgs[1]);
+			final Panmage rightImg = engine.createImage(ipre + "right", o, null, null, imgs[2]);
 			final Panframe stillFrm = engine.createFrame(fpre + "still", stillImg, 4);
 			final Panframe leftFrm = engine.createFrame(fpre + "left", leftImg, 4);
 			final Panframe rightFrm = engine.createFrame(fpre + "right", rightImg, 4);
