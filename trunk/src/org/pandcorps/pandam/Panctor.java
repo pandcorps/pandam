@@ -344,4 +344,10 @@ public class Panctor extends BasePantity implements SpecPanctor {
 		return super.hashCode(); // Same as super, but final so can't be overridden
 	}
 	*/
+	
+	public final static void destroy(final Panctor actor) {
+		if (actor != null) {
+			actor.destroy();
+		}
+	}
 }
