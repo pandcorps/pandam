@@ -13,7 +13,7 @@ import org.pandcorps.shoot.Weapon.WeaponDefinition;
 public class ShootGame extends Guy2Game {
 	/*package*/ static Guy2Type type = null;
 	private static ShooterDefinition playerDef = null;
-	private static WeaponDefinition[] weaponDefs = null;
+	/*package*/ static WeaponDefinition[] weaponDefs = null;
 	private static Panroom room = null;
 
 	@Override
@@ -36,9 +36,18 @@ public class ShootGame extends Guy2Game {
 	
 	private final static void loadWeapons() {
 		final BufferedImage[] strip = loadStrip("misc/Weapons");
-		final Panmage img = Pangine.getEngine().createImage("img.wpn.Magnums", new FinPanple(2, 1, 0), null, null, strip[2]);
 		weaponDefs = new WeaponDefinition[6];
-		weaponDefs[1] = new WeaponDefinition(img);
+		loadWeapon(0, "Chainsaw", 2, 1, strip, 0);
+		loadWeapon(1, "Magnums", 2, 1, strip, 2);
+		loadWeapon(2, "Shotgun", 8, 1, strip, 3);
+		loadWeapon(3, "Minigun", 2, 1, strip, 4);
+		loadWeapon(4, "Flamethrower", 2, 1, strip, 6);
+		loadWeapon(5, "RocketLauncher", 2, 1, strip, 7);
+	}
+	
+	private final static void loadWeapon(final int wpnIdx, final String name, final int x, final int y, final BufferedImage[] strip, final int imgIdx) {
+		final Panmage img = Pangine.getEngine().createImage("img.wpn." + name, new FinPanple(x, y, 0), null, null, strip[imgIdx]);
+		weaponDefs[wpnIdx] = new WeaponDefinition(img);
 	}
 	
 	protected final static BufferedImage[] loadStrip(final String loc) {
