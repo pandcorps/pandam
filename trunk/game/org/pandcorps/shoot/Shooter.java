@@ -48,9 +48,11 @@ public class Shooter extends Guy2 {
     public final void onStep(final StepEvent event) {
 		super.onStep(event);
 		if (weapon != null) {
+			updateView(); // Make sure current frame is accurate for synchronization
 			final Panple pos = getPosition();
-			// Same as shadow, except for depth
-			weapon.getPosition().set(pos.getX(), pos.getY(), pos.getZ() + 1);
+			final int off = (getView() == def.walk && getCurrentFrame() % 2 == 0) ? 1 : 0;
+			// Similar to shadow, except for depth and offset
+			weapon.getPosition().set(pos.getX(), pos.getY() + off, pos.getZ() + 1);
 			weapon.setMirror(isMirror());
 		}
 	}
