@@ -224,12 +224,8 @@ public class Story {
 		return getImg("story", name);
 	}
 	
-	private final static BufferedImage[] getChrStrip(final String name) {
-		return ImtilX.loadStrip("org/pandcorps/shoot/res/chr/" + name + ".png");
-	}
-	
 	private final static BufferedImage getChrBi(final String name) {
-		return getChrStrip(name)[0];
+		return ShootGame.loadChrStrip(name)[0];
 	}
 	
 	private final static Panmage getChr(final String name) {
@@ -258,7 +254,7 @@ public class Story {
 	}
 	
 	private final static Panimation getTrpAnm() {
-		final BufferedImage[] strip = getChrStrip("Blitztrooper");
+		final BufferedImage[] strip = ShootGame.loadChrStrip("Blitztrooper");
 		final BufferedImage head = strip[4];
 		final BufferedImage still = getTrpImg(strip, 0, head, 0);
 		final BufferedImage left = getTrpImg(strip, 1, head, 1);

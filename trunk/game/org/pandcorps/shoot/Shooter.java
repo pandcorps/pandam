@@ -4,7 +4,9 @@ import java.awt.image.BufferedImage;
 
 import org.pandcorps.game.actor.Guy2;
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.event.StepEvent;
 import org.pandcorps.pandam.impl.FinPanple;
+import org.pandcorps.shoot.Weapon.WeaponDefinition;
 
 public class Shooter extends Guy2 {
 	public final static class ShooterDefinition {
@@ -34,11 +36,28 @@ public class Shooter extends Guy2 {
 	}
 	
 	/*package*/ final ShooterDefinition def;
+	private Weapon weapon = null;
 	
 	protected Shooter(final String id, final Panroom room, final ShooterDefinition def) {
 		super(id, room, ShootGame.type);
 		this.def = def;
 		setView(def.still);
+	}
+	
+	@Override
+    public final void onStep(final StepEvent event) {
+		super.onStep(event);
+		if (weapon != null) {
+			final Panple pos = getPosition();
+			// Same as shadow, except for depth
+			weapon.getPosition().set(pos.getX(), pos.getY(), pos.getZ() + 1);
+			weapon.setMirror(isMirror());
+		}
+	}
+	
+	protected void setWeapon(final WeaponDefinition wdef) {
+		weapon = new Weapon(wdef);
+		Pangame.getGame().getCurrentRoom().addActor(weapon);
 	}
 
 	@Override
