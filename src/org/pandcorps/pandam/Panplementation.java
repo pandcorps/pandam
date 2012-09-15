@@ -34,6 +34,7 @@ public abstract class Panplementation {
 	protected boolean currMirror = false; // Might be able to implement Panframe flipping by using Panplementation.setMirror,
 	protected boolean currFlip = false; // but Panctor.isFlipped() should reflect Panctor's state, independent of current Panframe
 	protected Panple currOrigin = null;
+	private long lastUpdateView = -1;
 
 	protected Panplementation(final Panctor actor) {
 		this.actor = actor;
@@ -111,6 +112,19 @@ public abstract class Panplementation {
 		if (view == null || view instanceof Panmage) {
 			return;
 		}
+		final Pangine engine = Pangine.getEngine();
+		final long clock = engine.getClock();
+		if (clock == lastUpdateView) {
+			/*
+			Actors might want to synchronize with animation.
+			If they know they're done changing the view,
+			they might want to force an update before the engine
+			automatically does so.
+			If there's a manual update, we want to skip the next automatic update.
+			*/
+			return;
+		}
+		lastUpdateView = clock;
 		final Panframe[] frames = ((Panimation) view).getFrames();
 
 		currFrameDur++;
@@ -121,7 +135,7 @@ public abstract class Panplementation {
 				currFrame = 0;
 				if (actor instanceof AnimationEndListener) {
 					//((AnimationEndListener) actor).onAnimationEnd(AnimationEndEvent.INSTANCE);
-					Pangine.getEngine().animationEndListeners.add((AnimationEndListener) actor);
+					engine.animationEndListeners.add((AnimationEndListener) actor);
 				}
 			}
 			setFrame(frames[currFrame]);
