@@ -57,7 +57,32 @@ public class Shooter extends Guy2 {
 		}
 	}
 	
+	protected void weapon1() {
+		setWeapon(ShootGame.weaponDefs[0]);
+	}
+	
+	protected void weapon2() {
+		setWeapon(ShootGame.weaponDefs[1]);
+	}
+	
+	protected void weapon3() {
+		setWeapon(ShootGame.weaponDefs[2]);
+	}
+	
+	protected void weapon4() {
+		setWeapon(ShootGame.weaponDefs[3]);
+	}
+	
+	protected void weapon5() {
+		setWeapon(ShootGame.weaponDefs[4]);
+	}
+	
+	protected void weapon6() {
+		setWeapon(ShootGame.weaponDefs[5]);
+	}
+	
 	protected void setWeapon(final WeaponDefinition wdef) {
+		Panctor.destroy(weapon);
 		weapon = new Weapon(wdef);
 		Pangame.getGame().getCurrentRoom().addActor(weapon);
 	}

@@ -35,7 +35,27 @@ public abstract class ShooterController extends Guy2Controller {
         this.shooter = shooter;
     }
     
-	///*package*/ final void attack() {
-	//	shooter.attack();
-	//}
+	/*package*/ final void weapon1() {
+		shooter.weapon1();
+	}
+	
+	/*package*/ final void weapon2() {
+		shooter.weapon2();
+	}
+	
+	/*package*/ final void weapon3() {
+		shooter.weapon3();
+	}
+	
+	/*package*/ final void weapon4() {
+		shooter.weapon4();
+	}
+	
+	/*package*/ final void weapon5() {
+		shooter.weapon5();
+	}
+	
+	/*package*/ final void weapon6() {
+		shooter.weapon6();
+	}
 }
