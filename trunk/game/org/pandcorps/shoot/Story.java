@@ -139,7 +139,7 @@ public class Story {
 				final int yoff = j * 8;
 				for (int i = 0; i < 2; i++) {
 					final Trp trp = new Trp();
-					trp.getPosition().set(80 - (i * 16) - yoff, 128 + yoff, 64 - yoff);
+					trp.getPosition().set(88 - (i * 16) - yoff, 128 + yoff, 64 - yoff);
 					room.addActor(trp);
 				}
 			}
