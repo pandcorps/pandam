@@ -34,7 +34,7 @@ public abstract class Panplementation {
 	protected boolean currMirror = false; // Might be able to implement Panframe flipping by using Panplementation.setMirror,
 	protected boolean currFlip = false; // but Panctor.isFlipped() should reflect Panctor's state, independent of current Panframe
 	protected Panple currOrigin = null;
-	private long lastUpdateView = -1;
+	private long lastUpdateView;
 
 	protected Panplementation(final Panctor actor) {
 		this.actor = actor;
@@ -44,6 +44,7 @@ public abstract class Panplementation {
 	private final void initAnim() {
 	    currFrame = 0;
 	    currFrameDur = 0;
+	    lastUpdateView = -1;
 	}
 
 	/*package*/ final Panview getView() {
