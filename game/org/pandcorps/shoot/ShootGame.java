@@ -2,6 +2,7 @@ package org.pandcorps.shoot;
 
 import java.awt.image.BufferedImage;
 
+import org.pandcorps.core.img.Pancolor;
 import org.pandcorps.game.*;
 import org.pandcorps.game.actor.Guy2.*;
 import org.pandcorps.game.core.ImtilX;
@@ -37,12 +38,12 @@ public class ShootGame extends Guy2Game {
 	private final static void loadWeapons() {
 		final BufferedImage[] strip = loadStrip("misc/Weapons");
 		weaponDefs = new WeaponDefinition[6];
-		loadWeapon(0, "Chainsaw", 2, 1, strip, 0);
+		loadWeapon(0, "Chainsaw", 1, 1, strip, 0);
 		loadWeapon(1, "Magnums", 2, 1, strip, 2);
-		loadWeapon(2, "Shotgun", 8, 1, strip, 3);
+		loadWeapon(2, "Shotgun", 7, 1, strip, 3);
 		loadWeapon(3, "Minigun", 2, 1, strip, 4);
-		loadWeapon(4, "Flamethrower", 2, 1, strip, 6);
-		loadWeapon(5, "RocketLauncher", 2, 1, strip, 7);
+		loadWeapon(4, "Flamethrower", 5, 1, strip, 6);
+		loadWeapon(5, "RocketLauncher", 6, 1, strip, 7);
 	}
 	
 	private final static void loadWeapon(final int wpnIdx, final String name, final int x, final int y, final BufferedImage[] strip, final int imgIdx) {
@@ -61,6 +62,7 @@ public class ShootGame extends Guy2Game {
 	protected final static class ShootScreen extends Panscreen {
 		@Override
         protected final void load() throws Exception {
+			Pangine.getEngine().setBgColor(Pancolor.GREEN);
 			final Shooter shooter = new Shooter("STR.1", room, playerDef);
 			shooter.setWeapon(weaponDefs[1]);
 			new Player(shooter).setShooter(shooter);
