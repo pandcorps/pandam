@@ -38,6 +38,14 @@ public abstract class Panteraction {
 	//private final HashMultimap<Panput, Panction> actions = new HashMultimap<Panput, Panction>();
 	public final Key KEY_ESCAPE;
 	public final Key KEY_1;
+	public final Key KEY_2;
+	public final Key KEY_3;
+	public final Key KEY_4;
+	public final Key KEY_5;
+	public final Key KEY_6;
+	public final Key KEY_7;
+	public final Key KEY_8;
+	public final Key KEY_9;
 	public final Key KEY_MINUS;
 	public final Key KEY_EQUALS;
 	public final Key KEY_BACKSPACE;
@@ -140,6 +148,14 @@ public abstract class Panteraction {
 		}
 		KEY_ESCAPE = keys[1];
 		KEY_1 = keys[IND_1];
+		KEY_2 = keys[IND_1 + 1];
+		KEY_3 = keys[IND_1 + 2];
+		KEY_4 = keys[IND_1 + 3];
+		KEY_5 = keys[IND_1 + 4];
+		KEY_6 = keys[IND_1 + 5];
+		KEY_7 = keys[IND_1 + 6];
+		KEY_8 = keys[IND_1 + 7];
+		KEY_9 = keys[IND_1 + 8];
 		KEY_MINUS = keys[12];
 		KEY_EQUALS = keys[13];
 		KEY_BACKSPACE = keys[14];
