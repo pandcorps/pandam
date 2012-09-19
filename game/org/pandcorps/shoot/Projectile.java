@@ -30,14 +30,20 @@ public class Projectile extends org.pandcorps.game.actor.Projectile implements S
     ///*package*/ final Shooter shooter;
     ///*package*/ final Emitter emitter;
     
-    public Projectile(final Shooter shooter, final Emitter emitter, final boolean mirror) {
-        super(shooter, emitter, mirror);
+    //public Projectile(final Shooter shooter, final Emitter emitter, final boolean mirror) {
         //this.shooter = shooter;
         //this.emitter = emitter;
-    }
+    //}
     
     @Override
     public void die() {
     	destroy();
+    }
+    
+    public final static class FlameProjectile extends Projectile implements AnimationEndListener {
+        @Override
+        public final void onAnimationEnd(final AnimationEndEvent event) {
+            changeView(ShootGame.flameLoopAnm);
+        }
     }
 }

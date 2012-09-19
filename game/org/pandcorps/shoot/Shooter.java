@@ -77,7 +77,7 @@ public class Shooter extends Guy2 {
 		}
 		final boolean mirror = isMirror();
 		for (final Emitter em : emitters) {
-			new Projectile(this, em, mirror);
+		    em.emit(this, mirror);
 		}
 	}
 	

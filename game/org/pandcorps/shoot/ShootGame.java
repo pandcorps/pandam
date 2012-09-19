@@ -8,6 +8,7 @@ import org.pandcorps.game.actor.Guy2.*;
 import org.pandcorps.game.core.ImtilX;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.impl.FinPanple;
+import org.pandcorps.shoot.Projectile.*;
 import org.pandcorps.shoot.Shooter.ShooterDefinition;
 import org.pandcorps.shoot.Weapon.WeaponDefinition;
 
@@ -16,6 +17,7 @@ public class ShootGame extends Guy2Game {
 	private static ShooterDefinition playerDef = null;
 	/*package*/ static WeaponDefinition[] weaponDefs = null;
 	private static Panroom room = null;
+	/*package*/ static Panimation flameLoopAnm = null;
 
 	@Override
 	protected void init(final Panroom room) throws Exception {
@@ -51,7 +53,7 @@ public class ShootGame extends Guy2Game {
 		final Panframe projFlame3Frm = engine.createFrame("frm.proj.flame.3", projFlame3Img, 4);
 		final Panframe projFlame4Frm = engine.createFrame("frm.proj.flame.4", projFlame4Img, 4);
 		final Panimation projFlame1Anm = engine.createAnimation("anm.proj.flame.1", projFlame1Frm, projFlame2Frm);
-		final Panimation projFlame2Anm = engine.createAnimation("anm.proj.flame.2", projFlame3Frm, projFlame4Frm);
+		flameLoopAnm = engine.createAnimation("anm.proj.flame.2", projFlame3Frm, projFlame4Frm);
 		final Panmage projRocketImg = engine.createImage("img.proj.rocket", strip8[3]);
 		final Panple velBullet = new FinPanple(3, 0, 0);
 		final Emitter magEmit1 = new Emitter(0, 4, velBullet, (byte) -1, projMagImg);
@@ -61,7 +63,7 @@ public class ShootGame extends Guy2Game {
 		final Emitter shotEmit3 = new Emitter(10, 4, new FinPanple(2.8f, -.2f, 0), (byte) -1, projShotImg);
 		final Emitter shotEmit4 = new Emitter(10, 4, new FinPanple(2.6f, .4f, 0), (byte) -1, projShotImg);
 		final Emitter shotEmit5 = new Emitter(10, 4, new FinPanple(2.6f, -.4f, 0), (byte) -1, projShotImg);
-		final Emitter flameEmit = new Emitter(10, 4, velBullet, (byte) 28, projFlame1Anm, projFlame2Anm);
+		final Emitter flameEmit = new Emitter(FlameProjectile.class, 10, 4, velBullet, (byte) 28, projFlame1Anm);
 		final Emitter rocketEmit = new Emitter(10, 4, velBullet, (byte) -1, projRocketImg);
 		weaponDefs = new WeaponDefinition[6];
 		loadWeapon(0, "Chainsaw", 1, 1, strip, 0, null, new Emitter[] {});
