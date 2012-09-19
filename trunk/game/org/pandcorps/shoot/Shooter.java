@@ -61,8 +61,22 @@ public class Shooter extends Guy2 {
 		if (weapon == null) {
 			return;
 		}
+		attack(weapon.def.attackEmitters);
+	}
+	
+	protected void attacking() {
+		if (weapon == null) {
+			return;
+		}
+		attack(weapon.def.attackingEmitters);
+	}
+	
+	private final void attack(final Emitter[] emitters) {
+		if (emitters == null) {
+			return;
+		}
 		final boolean mirror = isMirror();
-		for (final Emitter em : weapon.def.emitters) {
+		for (final Emitter em : emitters) {
 			new Projectile(this, em, mirror);
 		}
 	}
