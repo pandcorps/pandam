@@ -23,7 +23,6 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.fight;
 
 import org.pandcorps.core.*;
-import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.boundary.*;
 
