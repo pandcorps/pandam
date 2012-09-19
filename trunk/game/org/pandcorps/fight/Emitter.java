@@ -23,37 +23,25 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.fight;
 
 import org.pandcorps.pandam.*;
-import org.pandcorps.pandam.impl.FinPanple;
 
-public class Emitter {
-    /*package*/ final float xoff;
-    /*package*/ final float yoff;
+public class Emitter extends org.pandcorps.game.actor.Emitter {
     /*package*/ final byte type;
     /*package*/ final byte impact;
     /*package*/ final Panimation impactView;
     /*package*/ final byte react;
     /*package*/ final Panimation reactView;
-    /*package*/ final Panple vel;
-    /*package*/ final Panple mirVel;
-    /*package*/ final byte time;
-    /*package*/ final Panview projView;
     /*package*/ final boolean linked;
     /*package*/ final int damage = 32;
     
     public Emitter(final float xoff, final float yoff, final byte type,
                    final byte impact, final Panimation impactView, final byte react, final Panimation reactView,
                    final Panple vel, final byte time, final Panview projView, final boolean linked) {
-        this.xoff = xoff;
-        this.yoff = yoff;
+        super(xoff, yoff, vel, time, projView);
         this.type = type;
         this.impact = impact;
         this.impactView = impactView;
         this.react = react;
         this.reactView = reactView;
-        this.vel = vel;
-        mirVel = vel == null ? null : new FinPanple(-vel.getX(), vel.getY(), vel.getZ());
-        this.time = time;
-        this.projView = projView;
         this.linked = linked;
     }
 }
