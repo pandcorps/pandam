@@ -27,20 +27,22 @@ import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.boundary.*;
 
-public abstract class Projectile extends Panctor implements StepListener, AllOobListener, AnimationEndListener, Collidable /*Or CollisionListener if we want two Projectiles to collide with each other*/ {
+public abstract class Projectile extends Panctor implements StepListener, AllOobListener, Collidable /*Or CollisionListener if we want two Projectiles to collide with each other*/ {
     
-    /*package*/ final Emitter emitter;
-    protected final Panple vel;
+    /*package*/ Emitter emitter = null;
+    protected Panple vel = null;
     protected byte time;
     protected byte age = 0;
-    private int nextView = -1;
     
-    public Projectile(final Guy2 guy, final Emitter emitter, final boolean mirror) {
+    public Projectile() {
         super(Pantil.vmid());
+    }
+    
+    protected void init(final Guy2 guy, final Emitter emitter, final boolean mirror) {
         this.emitter = emitter;
         this.vel = mirror ? emitter.mirVel : emitter.vel;
         this.time = emitter.time;
-        setView(0);
+        setView(emitter.projView);
         final Panple pos = guy.getPosition();
         final int mult = mirror ? -1 : 1; // Maybe add Panctor.getMirrorMultiplier()
         getPosition().set(pos.getX() + (emitter.xoff * mult), pos.getY() + emitter.yoff, pos.getZ() + 1);
@@ -48,17 +50,11 @@ public abstract class Projectile extends Panctor implements StepListener, AllOob
         guy.getLayer().addActor(this);
     }
     
-    private final void setView(int i) {
-    	final Panview view = emitter.projViews[i];
+    private final void setView(final Panview view) {
     	if (view instanceof Panmage) {
             setView((Panmage) view);
         } else {
             setView((Panimation) view);
-            if (emitter.projViews.length > i + 1) {
-            	nextView = i + 1;
-            } else {
-            	nextView = -1;
-            }
         }
     }
     
@@ -79,13 +75,6 @@ public abstract class Projectile extends Panctor implements StepListener, AllOob
     @Override
     public final void onAllOob(final AllOobEvent event) {
         die();
-    }
-    
-    @Override
-    public final void onAnimationEnd(final AnimationEndEvent event) {
-    	if (nextView >= 0) {
-    		setView(nextView);
-    	}
     }
     
     public abstract void die();

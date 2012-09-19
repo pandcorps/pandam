@@ -22,24 +22,35 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.game.actor;
 
+import java.lang.reflect.Constructor;
+
+import org.pandcorps.core.Reftil;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.impl.FinPanple;
 
 public class Emitter {
+    private final Constructor<? extends Projectile> projConstructor;
     public final float xoff;
     public final float yoff;
     public final Panple vel;
     public final Panple mirVel;
     public final byte time;
-    public final Panview[] projViews;
+    public final Panview projView;
     
-    public Emitter(final float xoff, final float yoff,
-                   final Panple vel, final byte time, final Panview... projViews) {
+    public Emitter(final Class<? extends Projectile> projClass, final float xoff, final float yoff,
+                   final Panple vel, final byte time, final Panview projView) {
+        projConstructor = Reftil.getConstructor(projClass);
         this.xoff = xoff;
         this.yoff = yoff;
         this.vel = vel;
         mirVel = vel == null ? null : new FinPanple(-vel.getX(), vel.getY(), vel.getZ());
         this.time = time;
-        this.projViews = projViews;
+        this.projView = projView;
+    }
+    
+    public final Projectile emit(final Guy2 guy, final boolean mirror) {
+        final Projectile p = Reftil.newInstance(projConstructor);
+        p.init(guy, this, mirror);
+        return p;
     }
 }
