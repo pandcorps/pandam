@@ -354,7 +354,6 @@ public final class Fighter extends Guy2 implements CollisionListener, AnimationE
         */
         final int tmult = tmirror ? -1 : 1;
         final boolean mirror = tmirror ^ mframe.pframe.isMirror();
-        final int mult = mirror ? -1 : 1; // Maybe add Panctor.getMirrorMultiplier()
         
         /*
         When position change is before the frameDur exit check,
@@ -378,10 +377,7 @@ public final class Fighter extends Guy2 implements CollisionListener, AnimationE
         if (mframe.emitters != null) {
             for (final Emitter em : mframe.emitters) {
                 //final Projectile p = new Projectile(Pantil.vmid(), this, em.type, em.impact, em.react, mirror ? em.mirVel : em.vel, em.time, em.anim);
-                final Projectile p = new Projectile(Pantil.vmid(), this, em, mirror ? em.mirVel : em.vel);
-                p.getPosition().set(pos.getX() + (em.xoff * mult), pos.getY() + em.yoff, pos.getZ());
-                p.setMirror(mirror);
-                getLayer().addActor(p);
+                final Projectile p = new Projectile(this, em, mirror);
                 if (em.linked) {
                     linkedProjectiles.add(p);
                 }

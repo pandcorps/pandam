@@ -32,7 +32,7 @@ import org.pandcorps.pandam.event.boundary.*;
  * Stretched limb attack - visible, linked, no velocity, time? visible for multiple frames, painful for only first?
  * Fireball - visible, unlinked, velocity, time = -1
  */
-public class Projectile extends Panctor implements StepListener, AllOobListener, Collidable /*Or CollisionListener if we want two Projectiles to collide with each other*/ {
+public class Projectile extends org.pandcorps.game.actor.Projectile implements StepListener, AllOobListener, Collidable /*Or CollisionListener if we want two Projectiles to collide with each other*/ {
     /*package*/ final static byte TYPE_QUICK = 0; // Do we need TYPE_STRONG?  If Strong is treated as quick, does that allow QQSQS?
     /*package*/ final static byte TYPE_SPEC = 1; // So far this is just for knowing when to count quicks and when to clear count, so STRONG/SPEC would be the same
     
@@ -50,30 +50,13 @@ public class Projectile extends Panctor implements StepListener, AllOobListener,
     ///*package*/ final byte impact;
     ///*package*/ final byte react;
     /*package*/ final Emitter emitter;
-    private final Panple vel;
-    private byte time;
-    private byte age = 0;
     private byte lastCanHit = 1;
     
     //public Projectile(final String id, final Fighter fighter, final byte type, final byte impact, final byte react, final Panple vel, final byte time, final Panimation anim) {
-    public Projectile(final String id, final Fighter fighter, final Emitter emitter, final Panple vel) {
-        super(id);
+    public Projectile(final Fighter fighter, final Emitter emitter, final boolean mirror) {
+        super(fighter, emitter, mirror);
         this.fighter = fighter;
-        //this.type = type;
-        //this.impact = impact;
-        //this.react = react;
         this.emitter = emitter;
-        this.vel = vel;
-        //this.time = time;
-        this.time = emitter.time;
-        if (emitter.projView instanceof Panmage) {
-            setView((Panmage) emitter.projView);
-            //if (emitter.projView.getClass() == EmptyPanmage.class) {
-            //    setVisible(false);
-            //}
-        } else {
-            setView((Panimation) emitter.projView);
-        }
     }
     
     /*package*/ final static byte parseType(final String val) {
@@ -103,25 +86,7 @@ public class Projectile extends Panctor implements StepListener, AllOobListener,
     }
     
     @Override
-    public final void onStep(final StepEvent event) {
-        age++;
-        if (time > 0) {
-            time--;
-        }
-        if (time == 0) {
-            die();
-        }
-        if (vel != null) {
-            getPosition().add(vel);
-        }
-    }
-    
-    @Override
-    public final void onAllOob(final AllOobEvent event) {
-        die();
-    }
-    
-    /*package*/ final void die() {
+    public final void die() {
         fighter.linkedProjectiles.remove(this);
         dieWithoutUnlink();
     }
