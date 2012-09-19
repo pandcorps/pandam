@@ -377,7 +377,7 @@ public final class Fighter extends Guy2 implements CollisionListener, AnimationE
         if (mframe.emitters != null) {
             for (final Emitter em : mframe.emitters) {
                 //final Projectile p = new Projectile(Pantil.vmid(), this, em.type, em.impact, em.react, mirror ? em.mirVel : em.vel, em.time, em.anim);
-                final Projectile p = new Projectile(this, em, mirror);
+                final Projectile p = (Projectile) em.emit(this, mirror);
                 if (em.linked) {
                     linkedProjectiles.add(p);
                 }

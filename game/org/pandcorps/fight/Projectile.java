@@ -23,6 +23,7 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.fight;
 
 import org.pandcorps.core.*;
+import org.pandcorps.game.actor.Guy2;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.boundary.*;
 
@@ -44,18 +45,18 @@ public class Projectile extends org.pandcorps.game.actor.Projectile implements S
     ///*package*/ final static byte REACT_ELECTRIC = 2;
     ///*package*/ final static byte REACT_FREEZE = 3;
     
-    /*package*/ final Fighter fighter;
+    /*package*/ Fighter fighter = null;
     ///*package*/ final byte type; // Maybe should just store Emitter instead of type, impact, and react
     ///*package*/ final byte impact;
     ///*package*/ final byte react;
-    /*package*/ final Emitter emitter;
+    /*package*/ Emitter emitter = null;
     private byte lastCanHit = 1;
     
     //public Projectile(final String id, final Fighter fighter, final byte type, final byte impact, final byte react, final Panple vel, final byte time, final Panimation anim) {
-    public Projectile(final Fighter fighter, final Emitter emitter, final boolean mirror) {
-        super(fighter, emitter, mirror);
-        this.fighter = fighter;
-        this.emitter = emitter;
+    @Override
+    protected void init(final Guy2 fighter, final org.pandcorps.game.actor.Emitter emitter, final boolean mirror) {
+        this.fighter = (Fighter) fighter;
+        this.emitter = (Emitter) emitter;
     }
     
     /*package*/ final static byte parseType(final String val) {
