@@ -44,10 +44,22 @@ public final class Reftil {
 	}
 
 	public final static <T> T newInstance(final Class<T> c) {
+	    return newInstance(getConstructor(c));
+	}
+	
+	public final static <T> T newInstance(final Constructor<T> c) {
+        try {
+            return c.newInstance(EMPTY_ARRAY_OBJECT);
+        } catch (final Exception e) {
+            throw Pantil.toRuntimeException(e);
+        }
+    }
+	
+	public final static <T> Constructor<T> getConstructor(final Class<T> c) {
 		try {
 			final Constructor<T> constructor = c.getDeclaredConstructor(EMPTY_ARRAY_CLASS);
 			constructor.setAccessible(true);
-			return constructor.newInstance(EMPTY_ARRAY_OBJECT);
+			return constructor;
 		} catch (final Exception e) {
 			throw Pantil.toRuntimeException(e);
 		}
