@@ -27,7 +27,7 @@ import org.pandcorps.pandam.Panview;
 
 public class Emitter extends org.pandcorps.game.actor.Emitter {
 	public Emitter(final float xoff, final float yoff,
-            final Panple vel, final byte time, final Panview projView) {
-		super(xoff, yoff, vel, time, projView);
+            final Panple vel, final byte time, final Panview... projViews) {
+		super(xoff, yoff, vel, time, projViews);
 	}
 }

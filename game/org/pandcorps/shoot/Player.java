@@ -32,6 +32,9 @@ public final class Player extends ShooterController {
         bound.register(inter.KEY_SHIFT_RIGHT, new ActionStartListener() {@Override public void onActionStart(final ActionStartEvent event) {
             attack();
         }});
+        bound.register(inter.KEY_SHIFT_RIGHT, new ActionListener() {@Override public void onAction(final ActionEvent event) {
+            attacking();
+        }});
         bound.register(inter.KEY_1, new ActionStartListener() {@Override public void onActionStart(final ActionStartEvent event) {
             weapon1();
         }});
