@@ -6,13 +6,15 @@ import org.pandcorps.pandam.*;
 public class Weapon extends Panctor {
 	public final static class WeaponDefinition {
 		private final Panmage image;
+		protected final Emitter[] emitters;
 		
-		public WeaponDefinition(final Panmage image) {
+		public WeaponDefinition(final Panmage image, final Emitter[] emitters) {
 			this.image = image;
+			this.emitters = emitters;
 		}
 	}
 	
-	private final WeaponDefinition def;
+	protected final WeaponDefinition def;
 	
 	protected Weapon(final WeaponDefinition def) {
 		super(Pantil.vmid());
