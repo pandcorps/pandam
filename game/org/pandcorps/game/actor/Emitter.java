@@ -31,15 +31,15 @@ public class Emitter {
     public final Panple vel;
     public final Panple mirVel;
     public final byte time;
-    public final Panview projView;
+    public final Panview[] projViews;
     
     public Emitter(final float xoff, final float yoff,
-                   final Panple vel, final byte time, final Panview projView) {
+                   final Panple vel, final byte time, final Panview... projViews) {
         this.xoff = xoff;
         this.yoff = yoff;
         this.vel = vel;
         mirVel = vel == null ? null : new FinPanple(-vel.getX(), vel.getY(), vel.getZ());
         this.time = time;
-        this.projView = projView;
+        this.projViews = projViews;
     }
 }
