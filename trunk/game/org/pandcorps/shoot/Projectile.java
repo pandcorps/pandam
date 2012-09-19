@@ -22,35 +22,22 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.shoot;
 
-import org.pandcorps.pandam.*;
-import org.pandcorps.pandam.event.action.*;
+import org.pandcorps.pandam.event.*;
+import org.pandcorps.pandam.event.boundary.*;
 
-public final class Player extends ShooterController {
-    public Player(final Panctor bound) {
-        final Panteraction inter = Pangine.getEngine().getInteraction();
-        
-        bound.register(inter.KEY_SHIFT_RIGHT, new ActionStartListener() {@Override public void onActionStart(final ActionStartEvent event) {
-            attack();
-        }});
-        bound.register(inter.KEY_1, new ActionStartListener() {@Override public void onActionStart(final ActionStartEvent event) {
-            weapon1();
-        }});
-        bound.register(inter.KEY_2, new ActionStartListener() {@Override public void onActionStart(final ActionStartEvent event) {
-            weapon2();
-        }});
-        bound.register(inter.KEY_3, new ActionStartListener() {@Override public void onActionStart(final ActionStartEvent event) {
-            weapon3();
-        }});
-        bound.register(inter.KEY_4, new ActionStartListener() {@Override public void onActionStart(final ActionStartEvent event) {
-            weapon4();
-        }});
-        bound.register(inter.KEY_5, new ActionStartListener() {@Override public void onActionStart(final ActionStartEvent event) {
-            weapon5();
-        }});
-        bound.register(inter.KEY_6, new ActionStartListener() {@Override public void onActionStart(final ActionStartEvent event) {
-            weapon6();
-        }});
-        
-        registerPlayer(bound);
+public class Projectile extends org.pandcorps.game.actor.Projectile implements StepListener, AllOobListener, Collidable /*Or CollisionListener if we want two Projectiles to collide with each other*/ {
+    
+    ///*package*/ final Shooter shooter;
+    ///*package*/ final Emitter emitter;
+    
+    public Projectile(final Shooter shooter, final Emitter emitter, final boolean mirror) {
+        super(shooter, emitter, mirror);
+        //this.shooter = shooter;
+        //this.emitter = emitter;
+    }
+    
+    @Override
+    public void die() {
+    	destroy();
     }
 }

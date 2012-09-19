@@ -57,6 +57,16 @@ public class Shooter extends Guy2 {
 		}
 	}
 	
+	protected void attack() {
+		if (weapon == null) {
+			return;
+		}
+		final boolean mirror = isMirror();
+		for (final Emitter em : weapon.def.emitters) {
+			new Projectile(this, em, mirror);
+		}
+	}
+	
 	protected void weapon1() {
 		setWeapon(ShootGame.weaponDefs[0]);
 	}
