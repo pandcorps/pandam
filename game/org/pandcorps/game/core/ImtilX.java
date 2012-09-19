@@ -74,6 +74,10 @@ public final class ImtilX {
     }
     
     public final static BufferedImage[] loadStrip(final String path) {
-    	return Imtil.toStrip(loadImage(path), DIM);
+    	return loadStrip(path, DIM);
+    }
+    
+    public final static BufferedImage[] loadStrip(final String path, final int dim) {
+    	return Imtil.toStrip(loadImage(path, dim, null), dim);
     }
 }
