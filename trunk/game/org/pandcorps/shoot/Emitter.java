@@ -22,12 +22,16 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.shoot;
 
-import org.pandcorps.pandam.Panple;
-import org.pandcorps.pandam.Panview;
+import org.pandcorps.pandam.*;
 
 public class Emitter extends org.pandcorps.game.actor.Emitter {
 	public Emitter(final float xoff, final float yoff,
-            final Panple vel, final byte time, final Panview... projViews) {
-		super(xoff, yoff, vel, time, projViews);
+            final Panple vel, final byte time, final Panview projView) {
+	    this(Projectile.class, xoff, yoff, vel, time, projView);
+	}
+	
+	public Emitter(final Class<? extends Projectile> projClass, final float xoff, final float yoff,
+	        final Panple vel, final byte time, final Panview projView) {
+		super(projClass, xoff, yoff, vel, time, projView);
 	}
 }
