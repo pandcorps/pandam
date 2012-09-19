@@ -36,7 +36,7 @@ public class Emitter extends org.pandcorps.game.actor.Emitter {
     public Emitter(final float xoff, final float yoff, final byte type,
                    final byte impact, final Panimation impactView, final byte react, final Panimation reactView,
                    final Panple vel, final byte time, final Panview projView, final boolean linked) {
-        super(xoff, yoff, vel, time, projView);
+        super(Projectile.class, xoff, yoff, vel, time, projView);
         this.type = type;
         this.impact = impact;
         this.impactView = impactView;
