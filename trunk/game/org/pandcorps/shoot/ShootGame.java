@@ -18,6 +18,7 @@ public class ShootGame extends Guy2Game {
 	/*package*/ static WeaponDefinition[] weaponDefs = null;
 	private static Panroom room = null;
 	/*package*/ static Panimation flameLoopAnm = null;
+	/*package*/ static Panimation rocketFireAnm = null;
 
 	@Override
 	protected void init(final Panroom room) throws Exception {
@@ -54,7 +55,12 @@ public class ShootGame extends Guy2Game {
 		final Panframe projFlame4Frm = engine.createFrame("frm.proj.flame.4", projFlame4Img, 4);
 		final Panimation projFlame1Anm = engine.createAnimation("anm.proj.flame.1", projFlame1Frm, projFlame2Frm);
 		flameLoopAnm = engine.createAnimation("anm.proj.flame.2", projFlame3Frm, projFlame4Frm);
-		final Panmage projRocketImg = engine.createImage("img.proj.rocket", strip8[3]);
+		final Panmage projRocketImg = engine.createImage("img.proj.rocket", new FinPanple(4, 4, 0), null, null, strip8[3]);
+		final Panmage projRocketFire1Img = engine.createImage("img.proj.rocket.fire.1", new FinPanple(2, 2, 0), null, null, strip4[11]);
+		final Panmage projRocketFire2Img = engine.createImage("img.proj.rocket.fire.2", new FinPanple(2, 2, 0), null, null, strip4[12]);
+		final Panframe projRocketFire1Frm = engine.createFrame("frm.proj.rocket.fire.1", projRocketFire1Img, 3);
+		final Panframe projRocketFire2Frm = engine.createFrame("frm.proj.rocket.fire.2", projRocketFire2Img, 3);
+		rocketFireAnm = engine.createAnimation("anm.proj.rocket.fire.1", projRocketFire1Frm, projRocketFire2Frm);
 		final Panple velBullet = new FinPanple(3, 0, 0);
 		final Emitter magEmit1 = new Emitter(0, 4, velBullet, (byte) -1, projMagImg);
 		final Emitter magEmit2 = new Emitter(10, 4, velBullet, (byte) -1, projMagImg);
@@ -64,7 +70,7 @@ public class ShootGame extends Guy2Game {
 		final Emitter shotEmit4 = new Emitter(10, 4, new FinPanple(2.6f, .4f, 0), (byte) -1, projShotImg);
 		final Emitter shotEmit5 = new Emitter(10, 4, new FinPanple(2.6f, -.4f, 0), (byte) -1, projShotImg);
 		final Emitter flameEmit = new Emitter(FlameProjectile.class, 10, 4, velBullet, (byte) 28, projFlame1Anm);
-		final Emitter rocketEmit = new Emitter(10, 4, velBullet, (byte) -1, projRocketImg);
+		final Emitter rocketEmit = new Emitter(RocketProjectile.class, 10, 4, velBullet, (byte) -1, projRocketImg);
 		weaponDefs = new WeaponDefinition[6];
 		loadWeapon(0, "Chainsaw", 1, 1, strip, 0, null, new Emitter[] {});
 		loadWeapon(1, "Magnums", 2, 1, strip, 2, new Emitter[] {magEmit1, magEmit2}, null);
