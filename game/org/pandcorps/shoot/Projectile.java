@@ -22,10 +22,10 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.shoot;
 
+import org.pandcorps.core.Mathtil;
 import org.pandcorps.core.Pantil;
-import org.pandcorps.game.actor.Decoration;
+import org.pandcorps.game.actor.*;
 import org.pandcorps.game.actor.Emitter;
-import org.pandcorps.game.actor.Guy2;
 import org.pandcorps.pandam.Panple;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.boundary.*;
@@ -68,7 +68,14 @@ public class Projectile extends org.pandcorps.game.actor.Projectile implements S
     	public void onStep(final StepEvent event) {
     		super.onStep(event);
     		final Panple pos = getPosition();
-    		fire.getPosition().set(pos.getX() + (isMirror() ? 5 : -5), pos.getY(), pos.getZ());
+    		final int m = 5;
+    		final float x = pos.getX() + (isMirror() ? m : -m), y = pos.getY(), z = pos.getZ();
+    		fire.getPosition().set(x, y, z);
+    		if ((age % 2) == 1) {
+    			final Burst smoke = new Burst(Pantil.vmid(), ShootGame.smokeBigAnm);
+    			smoke.getPosition().set(x + Mathtil.randi(-2, 2), y + Mathtil.randi(-2, 2), z - 1);
+    			getLayer().addActor(smoke);
+    		}
     	}
     	
     	@Override

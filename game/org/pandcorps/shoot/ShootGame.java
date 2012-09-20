@@ -17,6 +17,7 @@ public class ShootGame extends Guy2Game {
 	private static ShooterDefinition playerDef = null;
 	/*package*/ static WeaponDefinition[] weaponDefs = null;
 	private static Panroom room = null;
+	/*package*/ static Panimation smokeBigAnm = null;
 	/*package*/ static Panimation flameLoopAnm = null;
 	/*package*/ static Panimation rocketFireAnm = null;
 
@@ -43,6 +44,17 @@ public class ShootGame extends Guy2Game {
 		final BufferedImage[] strip = loadStrip("misc/Weapons");
 		final BufferedImage[] strip4 = loadStrip("misc/Weapons4", 4);
 		final BufferedImage[] strip8 = loadStrip("misc/Weapons8", 8);
+		final FinPanple o8 = new FinPanple(4, 4, 0);
+		final FinPanple o4 = new FinPanple(2, 2, 0);
+		final Panmage smoke1Img = engine.createImage("img.smoke.1", o4, null, null, strip4[4]);
+		final Panmage smoke2Img = engine.createImage("img.smoke.2", o4, null, null, strip4[5]);
+		final Panmage smoke4Img = engine.createImage("img.smoke.4", o8, null, null, strip8[4]);
+		final Panmage smoke5Img = engine.createImage("img.smoke.5", o8, null, null, strip8[5]);
+		final Panframe smoke1Frm = engine.createFrame("frm.smoke.1", smoke1Img, 4);
+		final Panframe smoke2Frm = engine.createFrame("frm.smoke.2", smoke2Img, 4);
+		final Panframe smoke4Frm = engine.createFrame("frm.smoke.4", smoke4Img, 4);
+		final Panframe smoke5Frm = engine.createFrame("frm.smoke.5", smoke5Img, 4);
+		smokeBigAnm = engine.createAnimation("anm.smoke.big", smoke1Frm, smoke2Frm, smoke4Frm, smoke5Frm);
 		final Panmage projMagImg = engine.createImage("img.proj.mag", strip4[0]);
 		final Panmage projShotImg = engine.createImage("img.proj.shot", strip4[1]);
 		final Panmage projFlame1Img = engine.createImage("img.proj.flame.1", strip4[3]);
@@ -55,9 +67,9 @@ public class ShootGame extends Guy2Game {
 		final Panframe projFlame4Frm = engine.createFrame("frm.proj.flame.4", projFlame4Img, 4);
 		final Panimation projFlame1Anm = engine.createAnimation("anm.proj.flame.1", projFlame1Frm, projFlame2Frm);
 		flameLoopAnm = engine.createAnimation("anm.proj.flame.2", projFlame3Frm, projFlame4Frm);
-		final Panmage projRocketImg = engine.createImage("img.proj.rocket", new FinPanple(4, 4, 0), null, null, strip8[3]);
-		final Panmage projRocketFire1Img = engine.createImage("img.proj.rocket.fire.1", new FinPanple(2, 2, 0), null, null, strip4[11]);
-		final Panmage projRocketFire2Img = engine.createImage("img.proj.rocket.fire.2", new FinPanple(2, 2, 0), null, null, strip4[12]);
+		final Panmage projRocketImg = engine.createImage("img.proj.rocket", o8, null, null, strip8[3]);
+		final Panmage projRocketFire1Img = engine.createImage("img.proj.rocket.fire.1", o4, null, null, strip4[11]);
+		final Panmage projRocketFire2Img = engine.createImage("img.proj.rocket.fire.2", o4, null, null, strip4[12]);
 		final Panframe projRocketFire1Frm = engine.createFrame("frm.proj.rocket.fire.1", projRocketFire1Img, 3);
 		final Panframe projRocketFire2Frm = engine.createFrame("frm.proj.rocket.fire.2", projRocketFire2Img, 3);
 		rocketFireAnm = engine.createAnimation("anm.proj.rocket.fire.1", projRocketFire1Frm, projRocketFire2Frm);
