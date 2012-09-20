@@ -76,6 +76,20 @@ public abstract class Panple {
 		add(src.getX(), src.getY(), src.getZ());
 	}
 	
+	public double getMagnitude() {
+	    final float x = getX(), y = getY(), z = getZ();
+	    return Math.sqrt(x * x + y * y + z * z);
+	}
+	
+	public double getMagnitude2() {
+        final float x = getX(), y = getY();
+        return Math.sqrt(x * x + y * y);
+    }
+	
+	public double getDirection2() {
+	    return Math.cos(getX() / getMagnitude2()); // ?
+	}
+	
 	@Override
 	public final String toString() {
 	    return "(" + getX() + ", " + getY() + ", " + getZ() + ")";
