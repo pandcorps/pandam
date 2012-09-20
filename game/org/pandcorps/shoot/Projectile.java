@@ -22,6 +22,11 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.shoot;
 
+import org.pandcorps.core.Pantil;
+import org.pandcorps.game.actor.Decoration;
+import org.pandcorps.game.actor.Emitter;
+import org.pandcorps.game.actor.Guy2;
+import org.pandcorps.pandam.Panple;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.boundary.*;
 
@@ -45,5 +50,31 @@ public class Projectile extends org.pandcorps.game.actor.Projectile implements S
         public final void onAnimationEnd(final AnimationEndEvent event) {
             changeView(ShootGame.flameLoopAnm);
         }
+    }
+    
+    public final static class RocketProjectile extends Projectile {
+    	private Decoration fire = null;
+    	
+    	@Override
+    	protected void init(final Guy2 guy, final Emitter emitter, final boolean mirror) {
+    		super.init(guy, emitter, mirror);
+    		fire = new Decoration(Pantil.vmid());
+    		fire.setView(ShootGame.rocketFireAnm);
+    		fire.setMirror(isMirror());
+    		getLayer().addActor(fire);
+    	}
+    	
+    	@Override
+    	public void onStep(final StepEvent event) {
+    		super.onStep(event);
+    		final Panple pos = getPosition();
+    		fire.getPosition().set(pos.getX() + (isMirror() ? 5 : -5), pos.getY(), pos.getZ());
+    	}
+    	
+    	@Override
+    	public void die() {
+    		super.die();
+    		fire.destroy();
+    	}
     }
 }

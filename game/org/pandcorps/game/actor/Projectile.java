@@ -59,7 +59,7 @@ public abstract class Projectile extends Panctor implements StepListener, AllOob
     }
     
     @Override
-    public final void onStep(final StepEvent event) {
+    public void onStep(final StepEvent event) {
         age++;
         if (time > 0) {
             time--;
