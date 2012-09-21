@@ -253,7 +253,7 @@ public final class Fighter extends Guy2 implements CollisionListener, AnimationE
     }
     
     private final void addBurst(final Panimation anim, final float xo, final float yo) {
-    	add(new Burst(Pantil.vmid(), anim), xo, 6 + yo, 1);
+    	add(new Burst(anim), xo, 6 + yo, 1);
     }
     
     private final void addInfo(final Font font, final int amt, final int vel) {
