@@ -72,7 +72,7 @@ public class Projectile extends org.pandcorps.game.actor.Projectile implements S
     		final float x = pos.getX() + (isMirror() ? m : -m), y = pos.getY(), z = pos.getZ();
     		fire.getPosition().set(x, y, z);
     		if ((age % 2) == 1) {
-    			final Burst smoke = new Burst(Pantil.vmid(), ShootGame.smokeBigAnm);
+    			final Burst smoke = new Burst(ShootGame.smokeBigAnm);
     			smoke.getPosition().set(x + Mathtil.randi(-2, 2), y + Mathtil.randi(-2, 2), z - 1);
     			getLayer().addActor(smoke);
     		}
