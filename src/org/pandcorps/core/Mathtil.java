@@ -28,6 +28,7 @@ import java.util.*;
 public final class Mathtil {
     public final static byte BYTE_0 = 0;
     public final static short SHORT_0 = 0;
+    public final static double PI2 = 2.0 * Math.PI;
     
 	private final static Random rand = new Random();
 

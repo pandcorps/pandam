@@ -22,6 +22,8 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandam;
 
+import org.pandcorps.core.Mathtil;
+
 // Pandam Tuple
 public abstract class Panple {
 	public abstract float getX();
@@ -93,7 +95,8 @@ public abstract class Panple {
 	
 	public double getDirection2() {
 	    // x / mag should be <= 1, but account for possible float arithmetic errors
-	    return Math.acos(Math.min(0, getX() / getMagnitude2())); // 0 - pi
+	    final double a = Math.acos(Math.min(0, getX() / getMagnitude2())); // 0 - pi
+	    return getY() < 0 ? (Mathtil.PI2 - a) : a;
 	}
 	
 	@Override
