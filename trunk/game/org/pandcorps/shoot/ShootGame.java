@@ -67,9 +67,14 @@ public class ShootGame extends Guy2Game {
 		final Panimation flashBigAnm = engine.createAnimation("anm.flash.big", flashBig1Frm, flashBig2Frm);
 		final Panmage casing1Img = engine.createImage("img.casing.1", o4, null, null, strip4[7]);
 		final Panmage casing2Img = engine.createImage("img.casing.2", o4, null, null, strip4[8]);
-		final Panframe casing1Frm = engine.createFrame("frm.casing.1", casing1Img, 5);
-		final Panframe casing2Frm = engine.createFrame("frm.casing.2", casing2Img, 5);
-		final Panimation casingAnm = engine.createAnimation("anm.casing", casing1Frm, casing2Frm);
+		final int cd = 2;
+		final Panframe casing1Frm = engine.createFrame("frm.casing.1", casing1Img, cd);
+		final Panframe casing2Frm = engine.createFrame("frm.casing.2", casing2Img, cd);
+		final Panframe casing3Frm = engine.createFrame("frm.casing.3", casing1Img, cd, 1, false, false);
+        final Panframe casing4Frm = engine.createFrame("frm.casing.4", casing2Img, cd, 1, false, false);
+        final Panframe casing5Frm = engine.createFrame("frm.casing.5", casing1Img, cd, 2, false, false);
+        final Panframe casing6Frm = engine.createFrame("frm.casing.6", casing2Img, cd, 2, false, false);
+		final Panimation casingAnm = engine.createAnimation("anm.casing", casing1Frm, casing2Frm, casing3Frm, casing4Frm, casing5Frm, casing6Frm);
 		final Panmage projMagImg = engine.createImage("img.proj.mag", new FinPanple(2, 1, 0), null, null, strip4[0]);
 		final Panmage projShotImg = engine.createImage("img.proj.shot", new FinPanple(1, 2, 0), null, null, strip4[1]);
 		final Panmage projFlame1Img = engine.createImage("img.proj.flame.1", strip4[3]);
@@ -100,17 +105,17 @@ public class ShootGame extends Guy2Game {
 		final Emitter flameEmit = new Emitter(FlameProjectile.class, 10, 4, velBullet, (byte) 28, projFlame1Anm);
 		final Emitter rocketEmit = new Emitter(RocketProjectile.class, 13, 8, velBullet, (byte) -1, projRocketImg);
 		weaponDefs = new WeaponDefinition[6];
-		loadWeapon(0, "Chainsaw", 1, 1, strip, 0, null, null, new Emitter[] {});
-		loadWeapon(1, "Magnums", 2, 1, strip, 2, flashSmallAnm, new Emitter[] {magEmit1, magEmit2}, null);
-		loadWeapon(2, "Shotgun", 7, 1, strip, 3, flashSmallAnm, new Emitter[] {shotEmit1, shotEmit2, shotEmit3, shotEmit4, shotEmit5}, null);
-		loadWeapon(3, "Minigun", 2, 1, strip, 4, flashSmallAnm, null, new Emitter[] {});
-		loadWeapon(4, "Flamethrower", 5, 1, strip, 6, null, null, new Emitter[] {flameEmit});
-		loadWeapon(5, "RocketLauncher", 6, 1, strip, 7, flashBigAnm, new Emitter[] {rocketEmit}, null);
+		loadWeapon(0, "Chainsaw", 1, 1, strip, 0, null, null, null, new Emitter[] {});
+		loadWeapon(1, "Magnums", 2, 1, strip, 2, flashSmallAnm, casingAnm, new Emitter[] {magEmit1, magEmit2}, null);
+		loadWeapon(2, "Shotgun", 7, 1, strip, 3, flashSmallAnm, casingAnm, new Emitter[] {shotEmit1, shotEmit2, shotEmit3, shotEmit4, shotEmit5}, null);
+		loadWeapon(3, "Minigun", 2, 1, strip, 4, flashSmallAnm, casingAnm, null, new Emitter[] {});
+		loadWeapon(4, "Flamethrower", 5, 1, strip, 6, null, null, null, new Emitter[] {flameEmit});
+		loadWeapon(5, "RocketLauncher", 6, 1, strip, 7, flashBigAnm, null, new Emitter[] {rocketEmit}, null);
 	}
 	
-	private final static void loadWeapon(final int wpnIdx, final String name, final int x, final int y, final BufferedImage[] strip, final int imgIdx, final Panimation flash, final Emitter[] attackEmitters, final Emitter[] attackingEmitters) {
+	private final static void loadWeapon(final int wpnIdx, final String name, final int x, final int y, final BufferedImage[] strip, final int imgIdx, final Panimation flash, final Panimation casing, final Emitter[] attackEmitters, final Emitter[] attackingEmitters) {
 		final Panmage img = Pangine.getEngine().createImage("img.wpn." + name, new FinPanple(x, y, 0), null, null, strip[imgIdx]);
-		weaponDefs[wpnIdx] = new WeaponDefinition(img, flash, attackEmitters, attackingEmitters);
+		weaponDefs[wpnIdx] = new WeaponDefinition(img, flash, casing, attackEmitters, attackingEmitters);
 	}
 	
 	protected final static BufferedImage[] loadStrip(final String loc) {
