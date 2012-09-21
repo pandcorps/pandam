@@ -94,4 +94,18 @@ public abstract class Panple {
 	public final String toString() {
 	    return "(" + getX() + ", " + getY() + ", " + getZ() + ")";
 	}
+	
+	@Override
+	public final boolean equals(final Object o) {
+		if (!(o instanceof Panple)) {
+			return false;
+		}
+		final Panple p = (Panple) o;
+		return getX() == p.getX() && getY() == p.getY() && getZ() == p.getZ();
+	}
+	
+	@Override
+	public final int hashCode() {
+		return Float.floatToIntBits(getX()) ^ Float.floatToIntBits(getY()) ^ Float.floatToIntBits(getZ());
+	}
 }
