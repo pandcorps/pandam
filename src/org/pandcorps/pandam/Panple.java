@@ -45,6 +45,11 @@ public abstract class Panple {
 		set(x, y);
 		setZ(z);
 	}
+	
+	public void setMagnitudeDirection(final double mag, final double dir) {
+	    setX((float) (Math.cos(dir) * mag));
+	    setY((float) (Math.sin(dir) * mag));
+	}
 
 	public void set(final Panple src) {
 		set(src.getX(), src.getY(), src.getZ());
@@ -87,7 +92,8 @@ public abstract class Panple {
     }
 	
 	public double getDirection2() {
-	    return Math.cos(getX() / getMagnitude2()); // ?
+	    // x / mag should be <= 1, but account for possible float arithmetic errors
+	    return Math.acos(Math.min(0, getX() / getMagnitude2())); // 0 - pi
 	}
 	
 	@Override
