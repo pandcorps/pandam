@@ -1,5 +1,7 @@
 package org.pandcorps.shoot;
 
+import java.util.HashSet;
+
 import org.pandcorps.core.Pantil;
 import org.pandcorps.game.actor.Burst;
 import org.pandcorps.pandam.*;
@@ -32,14 +34,16 @@ public class Weapon extends Panctor {
 			return;
 		}
 		final boolean mirror = isMirror();
-		Panple projPos = null;
+		final HashSet<Panple> projPositions = new HashSet<Panple>();
 		for (final Emitter em : emitters) {
-		    projPos = em.emit(shooter, mirror).getPosition();
+			projPositions.add(em.emit(shooter, mirror).getPosition());
 		}
 		if (def.flashAnm != null) {
-			final Burst flash = new Burst(def.flashAnm);
-			flash.getPosition().set(projPos);
-			getLayer().addActor(flash);
+			for (final Panple projPos : projPositions) {
+				final Burst flash = new Burst(def.flashAnm);
+				flash.getPosition().set(projPos);
+				getLayer().addActor(flash);
+			}
 		}
 	}
 }
