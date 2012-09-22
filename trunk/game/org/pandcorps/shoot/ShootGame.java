@@ -60,6 +60,9 @@ public class ShootGame extends Guy2Game {
 		final Panframe flashSmall1Frm = engine.createFrame("frm.flash.small.1", flashSmall1Img, 3);
 		final Panframe flashSmall2Frm = engine.createFrame("frm.flash.small.2", flashSmall2Img, 3);
 		final Panimation flashSmallAnm = engine.createAnimation("anm.flash.small", flashSmall1Frm, flashSmall2Frm);
+		final Panframe flashFast1Frm = engine.createFrame("frm.flash.fast.1", flashSmall1Img, 1);
+		final Panframe flashFast2Frm = engine.createFrame("frm.flash.fast.2", flashSmall2Img, 1);
+		final Panimation flashFastAnm = engine.createAnimation("anm.flash.fast", flashFast1Frm, flashFast2Frm);
 		final Panmage flashBig1Img = engine.createImage("img.flash.big.1", o8, null, null, strip8[6]);
 		final Panmage flashBig2Img = engine.createImage("img.flash.big.2", o8, null, null, strip8[7]);
 		final Panframe flashBig1Frm = engine.createFrame("frm.flash.big.1", flashBig1Img, 5);
@@ -103,19 +106,23 @@ public class ShootGame extends Guy2Game {
 		final Emitter shotEmit3 = new Emitter(sx, sy, new FinPanple(2.8f, -.2f, 0), (byte) -1, projShotImg);
 		final Emitter shotEmit4 = new Emitter(sx, sy, new FinPanple(2.6f, .4f, 0), (byte) -1, projShotImg);
 		final Emitter shotEmit5 = new Emitter(sx, sy, new FinPanple(2.6f, -.4f, 0), (byte) -1, projShotImg);
-		final Emitter miniEmit = new Emitter(15, 3, new FinPanple(5, 0, 0), (byte) -1, projMiniImg);
+		final Emitter miniEmit = new Emitter(15, 3, new FinPanple(4, 0, 0), (byte) -1, projMiniImg);
 		final Emitter flameEmit = new Emitter(FlameProjectile.class, 10, 4, velBullet, (byte) 28, projFlame1Anm);
 		final Emitter rocketEmit = new Emitter(RocketProjectile.class, 13, 8, velBullet, (byte) -1, projRocketImg);
 		weaponDefs = new WeaponDefinition[6];
-		loadWeapon(0, "Chainsaw", 1, 1, strip, 0, null, null, 1, null, new Emitter[] {});
-		loadWeapon(1, "Magnums", 2, 1, strip, 2, flashSmallAnm, casingAnm, -1, new Emitter[] {magEmit1, magEmit2}, null);
-		loadWeapon(2, "Shotgun", 7, 1, strip, 3, flashSmallAnm, casingAnm, -1, new Emitter[] {shotEmit1, shotEmit2, shotEmit3, shotEmit4, shotEmit5}, null);
-		loadWeapon(3, "Minigun", 2, 1, strip, 4, flashSmallAnm, casingAnm, 5, null, new Emitter[] {miniEmit});
-		loadWeapon(4, "Flamethrower", 5, 1, strip, 6, null, null, -1, null, new Emitter[] {flameEmit});
-		loadWeapon(5, "RocketLauncher", 6, 1, strip, 7, flashBigAnm, null, -1, new Emitter[] {rocketEmit}, null);
+		loadWeapon(0, "Chainsaw", 1, 1, strip, 0, null, null, 1, null, new Emitter[] {}, 0);
+		loadWeapon(1, "Magnums", 2, 1, strip, 2, flashSmallAnm, casingAnm, -1, new Emitter[] {magEmit1, magEmit2}, null, 8);
+		loadWeapon(2, "Shotgun", 7, 1, strip, 3, flashSmallAnm, casingAnm, -1, new Emitter[] {shotEmit1, shotEmit2, shotEmit3, shotEmit4, shotEmit5}, null, 12);
+		loadWeapon(3, "Minigun", 2, 1, strip, 4, flashFastAnm, casingAnm, 5, null, new Emitter[] {miniEmit}, 1);
+		loadWeapon(4, "Flamethrower", 5, 1, strip, 6, null, null, -1, null, new Emitter[] {flameEmit}, 0);
+		loadWeapon(5, "RocketLauncher", 6, 1, strip, 7, flashBigAnm, null, -1, new Emitter[] {rocketEmit}, null, 20);
 	}
 	
-	private final static void loadWeapon(final int wpnIdx, final String name, final int x, final int y, final BufferedImage[] strip, final int imgIdx, final Panimation flash, final Panimation casing, final int imgIdx2, final Emitter[] attackEmitters, final Emitter[] attackingEmitters) {
+	private final static void loadWeapon(final int wpnIdx, final String name,
+			final int x, final int y, final BufferedImage[] strip, final int imgIdx,
+			final Panimation flash, final Panimation casing, final int imgIdx2,
+			final Emitter[] attackEmitters, final Emitter[] attackingEmitters,
+			final int delay) {
 		final Pangine engine = Pangine.getEngine();
 		final String imgName = "img.wpn." + name;
 		final FinPanple o = new FinPanple(x, y, 0);
@@ -130,7 +137,7 @@ public class ShootGame extends Guy2Game {
 			final Panframe frm2 = engine.createFrame(frmName + ".2", img2, 3);
 			attack = engine.createAnimation("anm.wpn." + name, frm1, frm2);
 		}
-		weaponDefs[wpnIdx] = new WeaponDefinition(img, flash, casing, attack, attackEmitters, attackingEmitters);
+		weaponDefs[wpnIdx] = new WeaponDefinition(img, flash, casing, attack, attackEmitters, attackingEmitters, delay);
 	}
 	
 	protected final static BufferedImage[] loadStrip(final String loc) {
