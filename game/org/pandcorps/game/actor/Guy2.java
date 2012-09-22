@@ -50,6 +50,10 @@ public abstract class Guy2 extends Panctor implements StepListener {
     		this.shadowImage = shadowImage;
     		this.depthShadow = depthShadow;
     	}
+    	
+    	public final int getDepthShadow() {
+    		return depthShadow;
+    	}
     }
 	
 	protected Guy2(final String id, final Panroom room, final Guy2Type type) {
