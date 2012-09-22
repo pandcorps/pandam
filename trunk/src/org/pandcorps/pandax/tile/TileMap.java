@@ -29,6 +29,7 @@ import org.pandcorps.pandam.Panmage;
 import org.pandcorps.pandam.Panple;
 import org.pandcorps.pandam.Panroom;
 import org.pandcorps.pandam.Pansplay;
+import org.pandcorps.pandax.tile.Tile.*;
 
 public class TileMap extends Panctor {
     
@@ -43,6 +44,8 @@ public class TileMap extends Panctor {
     /*package*/ final int th;
     
     /*package*/ Object occupantDepth = null;
+    
+    /*package*/ Panmage imgMap = null;
     
     public TileMap(final String id, final int w, final int h, final int tw, final int th) {
         super(id);
@@ -78,6 +81,14 @@ public class TileMap extends Panctor {
     //}
     
     public final void fillBackground(final Panmage background) {
+    	fillBackgroundO(background);
+    }
+    
+    public final void fillBackground(final TileMapImage background) {
+    	fillBackgroundO(background);
+    }
+    
+    private final void fillBackgroundO(final Object background) {
         for (int i = 0; i < w; i++) {
             for (int j = 0; j < h; j++) {
                 Tile tile = getTile(i, j);
@@ -85,7 +96,7 @@ public class TileMap extends Panctor {
                     //tile = new Tile(this, i, j);
                     tile = initTile(i, j);
                 }
-                tile.setBackground(background);
+                tile.setBackgroundO(background);
             }
         }
     }
@@ -130,14 +141,35 @@ public class TileMap extends Panctor {
                     continue;
                 }
                 final float xitw = x + (i * tw);
-                if (tile.foreground != null) {
-                    renderer.render(layer, tile.foreground, xitw, yjth, foregroundDepth);
-                }
-                if (tile.background != null) {
-                    renderer.render(layer, tile.background, xitw, yjth, z);
-                }
+                render(renderer, layer, tile.foreground, xitw, yjth, foregroundDepth);
+                render(renderer, layer, tile.background, xitw, yjth, z);
             }
         }
+    }
+    
+    private final void render(final Panderer renderer, final Panlayer layer, final Object img, final float xitw, final float yjth, final float z) {
+    	if (img == null) {
+    		return;
+    	}
+    	final Panmage imgMap;
+    	final TileMapImage timg;
+    	final Class<?> imgClass = img.getClass();
+    	if (imgClass == TileImage.class) {
+    		final TileImage t = (TileImage) img;
+    		timg = t;
+    		imgMap = t.img;
+    	} else if (imgClass == TileMapImage.class) {
+    		timg = (TileMapImage) img;
+    		imgMap = this.imgMap;
+    	} else {
+    		imgMap = null;
+    		timg = null;
+    	}
+    	if (imgMap == null) {
+    		renderer.render(layer, (Panmage) img, xitw, yjth, z);
+    	} else {
+    		renderer.render(layer, imgMap, xitw, yjth, z, timg.ix, timg.iy, tw, th);
+    	}
     }
     
     public void setOccupantDepth(final float occupantDepth) {
@@ -146,6 +178,10 @@ public class TileMap extends Panctor {
     
     public void setOccupantDepth(final DepthMode occupantDepth) {
         this.occupantDepth = occupantDepth;
+    }
+    
+    public void setImageMap(final Panmage imgMap) {
+    	this.imgMap = imgMap;
     }
     
     public float getForegroundDepth() {
@@ -160,5 +196,20 @@ public class TileMap extends Panctor {
     
     public final int getHeight() {
         return h;
+    }
+    
+    public TileMapImage[][] splitImageMap() {
+    	final Panple idim = imgMap.getBoundingMaximum();
+    	final int iw = (int) idim.getX() / tw, ih = (int) idim.getY() / th;
+    	final TileMapImage[][] t = new TileMapImage[ih][];
+    	for (int j = 0; j < ih; j++) {
+    		final TileMapImage[] r = new TileMapImage[iw];
+    		t[j] = r;
+    		final int jth = j * th;
+    		for (int i = 0; i < iw; i++) {
+    			r[i] = new TileMapImage(i * tw, jth);
+        	}
+    	}
+    	return t;
     }
 }
