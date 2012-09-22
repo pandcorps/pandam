@@ -37,9 +37,9 @@ public final class Tile {
     /*package*/ final FinPanple position;
     
     // Panimation?
-    /*package*/ Panmage background = null;
+    /*package*/ Object background = null;
     
-    /*package*/ Panmage foreground = null;
+    /*package*/ Object foreground = null;
     
     ///*package*/ Panctor occupant = null;
     /*package*/ TileOccupant occupant = null;
@@ -66,6 +66,10 @@ public final class Tile {
         this.background = background;
     }
     
+    /*package*/ final void setBackgroundO(final Object background) {
+        this.background = background;
+    }
+    
     public final void setForeground(final Panmage foreground) {
         this.foreground = foreground;
     }
@@ -78,5 +82,24 @@ public final class Tile {
     
     public final void setSolid(final boolean solid) {
         this.solid = solid;
+    }
+    
+    public static class TileMapImage {
+    	/*package*/ final float ix;
+    	/*package*/ final float iy;
+    	
+    	/*package*/ TileMapImage(final float ix, final float iy) {
+    		this.ix = ix;
+    		this.iy = iy;
+    	}
+    }
+    
+    public final static class TileImage extends TileMapImage {
+    	/*package*/ final Panmage img;
+    	
+    	/*package*/ TileImage(final Panmage img, final float ix, final float iy) {
+    		super(ix, iy);
+    		this.img = img;
+    	}
     }
 }
