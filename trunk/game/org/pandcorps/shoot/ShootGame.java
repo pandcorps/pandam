@@ -57,8 +57,8 @@ public class ShootGame extends Guy2Game {
 		smokeBigAnm = engine.createAnimation("anm.smoke.big", smoke1Frm, smoke2Frm, smoke4Frm, smoke5Frm);
 		final Panmage flashSmall1Img = engine.createImage("img.flash.small.1", o4, null, null, strip4[9]);
 		final Panmage flashSmall2Img = engine.createImage("img.flash.small.2", o4, null, null, strip4[10]);
-		final Panframe flashSmall1Frm = engine.createFrame("frm.flash.small.1", flashSmall1Img, 2);
-		final Panframe flashSmall2Frm = engine.createFrame("frm.flash.small.2", flashSmall2Img, 2);
+		final Panframe flashSmall1Frm = engine.createFrame("frm.flash.small.1", flashSmall1Img, 3);
+		final Panframe flashSmall2Frm = engine.createFrame("frm.flash.small.2", flashSmall2Img, 3);
 		final Panimation flashSmallAnm = engine.createAnimation("anm.flash.small", flashSmall1Frm, flashSmall2Frm);
 		final Panmage flashBig1Img = engine.createImage("img.flash.big.1", o8, null, null, strip8[6]);
 		final Panmage flashBig2Img = engine.createImage("img.flash.big.2", o8, null, null, strip8[7]);
