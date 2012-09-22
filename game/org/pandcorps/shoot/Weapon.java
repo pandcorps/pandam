@@ -14,18 +14,20 @@ public class Weapon extends Panctor {
 		private final Panmage image;
 		private final Panimation flashAnm;
 		private final Panimation casingAnm;
+		private final Panimation smokeAnm;
 		private final Panimation attackAnm;
 		protected final Emitter[] attackEmitters;
 		protected final Emitter[] attackingEmitters;
 		private final int delay;
 		
 		public WeaponDefinition(final Panmage image, final Panimation flashAnm,
-				final Panimation casingAnm, final Panimation attackAnm,
+				final Panimation casingAnm, final Panimation smokeAnm, final Panimation attackAnm,
 				final Emitter[] attackEmitters, final Emitter[] attackingEmitters,
 				final int delay) {
 			this.image = image;
 			this.flashAnm = flashAnm;
 			this.casingAnm = casingAnm;
+			this.smokeAnm = smokeAnm;
 			this.attackAnm = attackAnm;
 			this.attackEmitters = attackEmitters;
 			this.attackingEmitters = attackingEmitters;
@@ -75,17 +77,31 @@ public class Weapon extends Panctor {
 		if (def.flashAnm != null) {
 			for (final Panple projPos : projPositions) {
 				final Burst flash = new Burst(def.flashAnm);
+				flash.setMirror(mirror);
 				flash.getPosition().set(projPos);
 				getLayer().addActor(flash);
 			}
 		}
+		final int mult = mirror ? -1 : 1;
 		if (def.casingAnm != null) {
 		    for (final Panple projPos : projPositions) {
 		        final Casing casing = new Casing(def.casingAnm);
-		        casing.getPosition().set(projPos.getX() - 7, projPos.getY(), projPos.getZ());
+		        casing.setMirror(mirror);
+		        casing.getPosition().set(projPos.getX() - (7 * mult), projPos.getY(), projPos.getZ());
 		        final float rx = Mathtil.randf(1, 2.5f), ry = Mathtil.randf(2.5f, 4.5f);
-		        casing.getVelocity().set(mirror ? rx : -rx, ry);
+		        casing.getVelocity().set(-mult * rx, ry);
 		        casing.getAcceleration().setY(-.75f);
+                getLayer().addActor(casing);
+		    }
+		}
+		if (def.smokeAnm != null) {
+		    for (final Panple projPos : projPositions) {
+		        final Casing casing = new Casing(def.smokeAnm);
+		        casing.setMirror(mirror);
+		        casing.getPosition().set(projPos.getX() - (7 * mult), projPos.getY(), projPos.getZ());
+		        final float rx = Mathtil.randf(-1.25f, 1.25f), ry = Mathtil.randf(0.1f, 0.5f);
+		        casing.getVelocity().set(rx, ry);
+		        casing.getAcceleration().setY(.25f);
                 getLayer().addActor(casing);
 		    }
 		}
