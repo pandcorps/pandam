@@ -14,19 +14,22 @@ public class Weapon extends Panctor {
 		private final Panmage image;
 		private final Panimation flashAnm;
 		private final Panimation casingAnm;
+		private final Panimation attackAnm;
 		protected final Emitter[] attackEmitters;
 		protected final Emitter[] attackingEmitters;
 		
-		public WeaponDefinition(final Panmage image, final Panimation flashAnm, final Panimation casingAnm, final Emitter[] attackEmitters, final Emitter[] attackingEmitters) {
+		public WeaponDefinition(final Panmage image, final Panimation flashAnm, final Panimation casingAnm, final Panimation attackAnm, final Emitter[] attackEmitters, final Emitter[] attackingEmitters) {
 			this.image = image;
 			this.flashAnm = flashAnm;
 			this.casingAnm = casingAnm;
+			this.attackAnm = attackAnm;
 			this.attackEmitters = attackEmitters;
 			this.attackingEmitters = attackingEmitters;
 		}
 	}
 	
 	protected final WeaponDefinition def;
+	private boolean attacking = false;
 	
 	protected Weapon(final WeaponDefinition def) {
 		super(Pantil.vmid());
@@ -34,9 +37,21 @@ public class Weapon extends Panctor {
 		setView(def.image);
 	}
 	
+	protected final void step() {
+		if (attacking) {
+			attacking = false;
+		} else {
+			changeView(def.image);
+		}
+	}
+	
 	protected final void attack(final Shooter shooter, final Emitter[] emitters) {
 		if (emitters == null) {
 			return;
+		}
+		attacking = true;
+		if (def.attackAnm != null) {
+			changeView(def.attackAnm);
 		}
 		final boolean mirror = isMirror();
 		final HashSet<Panple> projPositions = new HashSet<Panple>();

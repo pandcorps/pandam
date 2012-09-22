@@ -77,6 +77,7 @@ public class ShootGame extends Guy2Game {
 		final Panimation casingAnm = engine.createAnimation("anm.casing", casing1Frm, casing2Frm, casing3Frm, casing4Frm, casing5Frm, casing6Frm);
 		final Panmage projMagImg = engine.createImage("img.proj.mag", new FinPanple(2, 1, 0), null, null, strip4[0]);
 		final Panmage projShotImg = engine.createImage("img.proj.shot", new FinPanple(1, 2, 0), null, null, strip4[1]);
+		final Panmage projMiniImg = engine.createImage("img.proj.mini", o4, null, null, strip4[2]);
 		final Panmage projFlame1Img = engine.createImage("img.proj.flame.1", strip4[3]);
 		final Panmage projFlame2Img = engine.createImage("img.proj.flame.2", strip8[0]);
 		final Panmage projFlame3Img = engine.createImage("img.proj.flame.3", strip8[1]);
@@ -102,20 +103,34 @@ public class ShootGame extends Guy2Game {
 		final Emitter shotEmit3 = new Emitter(sx, sy, new FinPanple(2.8f, -.2f, 0), (byte) -1, projShotImg);
 		final Emitter shotEmit4 = new Emitter(sx, sy, new FinPanple(2.6f, .4f, 0), (byte) -1, projShotImg);
 		final Emitter shotEmit5 = new Emitter(sx, sy, new FinPanple(2.6f, -.4f, 0), (byte) -1, projShotImg);
+		final Emitter miniEmit = new Emitter(15, 3, new FinPanple(5, 0, 0), (byte) -1, projMiniImg);
 		final Emitter flameEmit = new Emitter(FlameProjectile.class, 10, 4, velBullet, (byte) 28, projFlame1Anm);
 		final Emitter rocketEmit = new Emitter(RocketProjectile.class, 13, 8, velBullet, (byte) -1, projRocketImg);
 		weaponDefs = new WeaponDefinition[6];
-		loadWeapon(0, "Chainsaw", 1, 1, strip, 0, null, null, null, new Emitter[] {});
-		loadWeapon(1, "Magnums", 2, 1, strip, 2, flashSmallAnm, casingAnm, new Emitter[] {magEmit1, magEmit2}, null);
-		loadWeapon(2, "Shotgun", 7, 1, strip, 3, flashSmallAnm, casingAnm, new Emitter[] {shotEmit1, shotEmit2, shotEmit3, shotEmit4, shotEmit5}, null);
-		loadWeapon(3, "Minigun", 2, 1, strip, 4, flashSmallAnm, casingAnm, null, new Emitter[] {});
-		loadWeapon(4, "Flamethrower", 5, 1, strip, 6, null, null, null, new Emitter[] {flameEmit});
-		loadWeapon(5, "RocketLauncher", 6, 1, strip, 7, flashBigAnm, null, new Emitter[] {rocketEmit}, null);
+		loadWeapon(0, "Chainsaw", 1, 1, strip, 0, null, null, 1, null, new Emitter[] {});
+		loadWeapon(1, "Magnums", 2, 1, strip, 2, flashSmallAnm, casingAnm, -1, new Emitter[] {magEmit1, magEmit2}, null);
+		loadWeapon(2, "Shotgun", 7, 1, strip, 3, flashSmallAnm, casingAnm, -1, new Emitter[] {shotEmit1, shotEmit2, shotEmit3, shotEmit4, shotEmit5}, null);
+		loadWeapon(3, "Minigun", 2, 1, strip, 4, flashSmallAnm, casingAnm, 5, null, new Emitter[] {miniEmit});
+		loadWeapon(4, "Flamethrower", 5, 1, strip, 6, null, null, -1, null, new Emitter[] {flameEmit});
+		loadWeapon(5, "RocketLauncher", 6, 1, strip, 7, flashBigAnm, null, -1, new Emitter[] {rocketEmit}, null);
 	}
 	
-	private final static void loadWeapon(final int wpnIdx, final String name, final int x, final int y, final BufferedImage[] strip, final int imgIdx, final Panimation flash, final Panimation casing, final Emitter[] attackEmitters, final Emitter[] attackingEmitters) {
-		final Panmage img = Pangine.getEngine().createImage("img.wpn." + name, new FinPanple(x, y, 0), null, null, strip[imgIdx]);
-		weaponDefs[wpnIdx] = new WeaponDefinition(img, flash, casing, attackEmitters, attackingEmitters);
+	private final static void loadWeapon(final int wpnIdx, final String name, final int x, final int y, final BufferedImage[] strip, final int imgIdx, final Panimation flash, final Panimation casing, final int imgIdx2, final Emitter[] attackEmitters, final Emitter[] attackingEmitters) {
+		final Pangine engine = Pangine.getEngine();
+		final String imgName = "img.wpn." + name;
+		final FinPanple o = new FinPanple(x, y, 0);
+		final Panmage img = engine.createImage(imgName, o, null, null, strip[imgIdx]);
+		final Panimation attack;
+		if (imgIdx2 < 0) {
+			attack = null;
+		} else  {
+			final Panmage img2 = engine.createImage(imgName + ".2", o, null, null, strip[imgIdx2]);
+			final String frmName = "frm.wpn." + name;
+			final Panframe frm1 = engine.createFrame(frmName, img, 3);
+			final Panframe frm2 = engine.createFrame(frmName + ".2", img2, 3);
+			attack = engine.createAnimation("anm.wpn." + name, frm1, frm2);
+		}
+		weaponDefs[wpnIdx] = new WeaponDefinition(img, flash, casing, attack, attackEmitters, attackingEmitters);
 	}
 	
 	protected final static BufferedImage[] loadStrip(final String loc) {

@@ -54,6 +54,7 @@ public class Shooter extends Guy2 {
 			// Similar to shadow, except for depth and offset
 			weapon.getPosition().set(pos.getX(), pos.getY() + off, pos.getZ() + 1);
 			weapon.setMirror(isMirror());
+			weapon.step();
 		}
 	}
 	
