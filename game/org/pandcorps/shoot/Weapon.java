@@ -17,19 +17,26 @@ public class Weapon extends Panctor {
 		private final Panimation attackAnm;
 		protected final Emitter[] attackEmitters;
 		protected final Emitter[] attackingEmitters;
+		private final int delay;
 		
-		public WeaponDefinition(final Panmage image, final Panimation flashAnm, final Panimation casingAnm, final Panimation attackAnm, final Emitter[] attackEmitters, final Emitter[] attackingEmitters) {
+		public WeaponDefinition(final Panmage image, final Panimation flashAnm,
+				final Panimation casingAnm, final Panimation attackAnm,
+				final Emitter[] attackEmitters, final Emitter[] attackingEmitters,
+				final int delay) {
 			this.image = image;
 			this.flashAnm = flashAnm;
 			this.casingAnm = casingAnm;
 			this.attackAnm = attackAnm;
 			this.attackEmitters = attackEmitters;
 			this.attackingEmitters = attackingEmitters;
+			// step occurs in same cycle after setting delay, 1 acts like 0 if we don't add 1
+			this.delay = delay <= 0 ? 0 : delay + 1;
 		}
 	}
 	
 	protected final WeaponDefinition def;
 	private boolean attacking = false;
+	private int timer = 0;
 	
 	protected Weapon(final WeaponDefinition def) {
 		super(Pantil.vmid());
@@ -43,6 +50,9 @@ public class Weapon extends Panctor {
 		} else {
 			changeView(def.image);
 		}
+		if (timer > 0) {
+			timer--;
+		}
 	}
 	
 	protected final void attack(final Shooter shooter, final Emitter[] emitters) {
@@ -53,6 +63,10 @@ public class Weapon extends Panctor {
 		if (def.attackAnm != null) {
 			changeView(def.attackAnm);
 		}
+		if (timer > 0) {
+			return;
+		}
+		timer = def.delay;
 		final boolean mirror = isMirror();
 		final HashSet<Panple> projPositions = new HashSet<Panple>();
 		for (final Emitter em : emitters) {
