@@ -8,6 +8,8 @@ import org.pandcorps.game.actor.Guy2.*;
 import org.pandcorps.game.core.ImtilX;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.impl.FinPanple;
+import org.pandcorps.pandax.tile.*;
+import org.pandcorps.pandax.tile.Tile.*;
 import org.pandcorps.shoot.Projectile.*;
 import org.pandcorps.shoot.Shooter.ShooterDefinition;
 import org.pandcorps.shoot.Weapon.WeaponDefinition;
@@ -20,11 +22,12 @@ public class ShootGame extends Guy2Game {
 	/*package*/ static Panimation smokeBigAnm = null;
 	/*package*/ static Panimation flameLoopAnm = null;
 	/*package*/ static Panimation rocketFireAnm = null;
+	private static TileMap tm = null;
 
 	@Override
 	protected void init(final Panroom room) throws Exception {
-		loadConstants();
 		ShootGame.room = room;
+		loadConstants();
 		Story.playIntro();
 	}
 	
@@ -36,7 +39,16 @@ public class ShootGame extends Guy2Game {
 		final BufferedImage[] chrs;
 		chrs = loadChrStrip("Will");
 		playerDef = ShooterDefinition.create("Will", chrs);
+		loadBackground();
 		loadWeapons();
+	}
+	
+	private final static void loadBackground() {
+		tm = new TileMap("act.bg", room, 16, 16);
+		tm.setImageMap(Pangine.getEngine().createImage("img.bg.city", "org/pandcorps/shoot/res/bg/TileCity.png"));
+		final TileMapImage[][] imgMap = tm.splitImageMap();
+		tm.fillBackground(imgMap[7][0]);
+		tm.getPosition().setZ(type.getDepthShadow() - 1);
 	}
 	
 	private final static void loadWeapons() {
@@ -164,6 +176,7 @@ public class ShootGame extends Guy2Game {
 			final Shooter shooter = new Shooter("STR.1", room, playerDef);
 			shooter.setWeapon(weaponDefs[1]);
 			new Player(shooter).setShooter(shooter);
+			room.addActor(tm);
 		}
 	}
 	
