@@ -70,11 +70,12 @@ public class Story {
 			return act;
 		}
 		
-		protected void addBorder(final int x, final int y, final int w, final int h) {
-            final Pantexture left = new Pantexture("tex." + x + "." + y, imgBlack);
-            Pangame.getGame().getCurrentRoom().addActor(left);
-            left.getPosition().set(x, y, 256);
-            left.setSize(w, h);
+		protected Pantexture addTex(final int x, final int y, final int w, final int h) {
+            final Pantexture tex = new Pantexture("tex." + x + "." + y, imgBlack);
+            Pangame.getGame().getCurrentRoom().addActor(tex);
+            tex.getPosition().set(x, y, 256);
+            tex.setSize(w, h);
+            return tex;
         }
 		
 		@Override
@@ -133,8 +134,8 @@ public class Story {
 		@Override
 		protected void startExtra() throws Exception {
 			final Panroom room = Pangame.getGame().getCurrentRoom();
-			addBorder(16, 96, 80, 96);
-			addBorder(96, 80, 64, 16);
+			addTex(16, 96, 80, 96);
+			addTex(96, 80, 64, 16);
 			for (int j = 0; j < 6; j++) {
 				final int yoff = j * 8;
 				for (int i = 0; i < 2; i++) {
@@ -152,7 +153,8 @@ public class Story {
 	}
 	
 	protected final static class PodiumScreen extends IntroScreen {
-
+	    private Pantexture mouth = null;
+	    
 		public PodiumScreen() {
 			super("The ruthless dictator Bladimir will not stop until the entire world is in his grasp.\n\"Hurravah, Bladavosnia!\"\n\"Hurravah, Bladavosnia!\"", bgPodium);
 		}
@@ -160,10 +162,16 @@ public class Story {
 		@Override
 		protected void startExtra() throws Exception {
 			addDec(chrBladimir, 135, 124, 1).setMirror(true);
-			addBorder(126, 131, 1, 1);
+			mouth = addTex(126, 131, 1, 1);
 			addDec(chrBladigar, 96, 104, 1);
 			addDec(chrBladander, 159, 104, 1).setMirror(true);
 		}
+		
+		@Override
+        protected void step() {
+		    //TODO Add Pangine method to generalize these things
+		    mouth.setVisible((Pangine.getEngine().getClock() % 12) < 6);
+        }
 
 		@Override
 		protected void finish() {
