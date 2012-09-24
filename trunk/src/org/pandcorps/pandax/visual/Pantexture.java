@@ -57,6 +57,9 @@ public class Pantexture extends Panctor {
 
 	@Override
 	protected void renderView(final Panderer renderer) {
+	    if (!isVisible()) {
+	        return;
+	    }
 		final Panple pos = getPosition();
 		renderer.render(getLayer(), image, pos.getX(), pos.getY(), pos.getZ(), offX, offY, width, height);
 	}
