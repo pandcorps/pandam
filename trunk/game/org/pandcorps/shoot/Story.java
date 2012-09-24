@@ -70,6 +70,13 @@ public class Story {
 			return act;
 		}
 		
+		protected void addBorder(final int x, final int y, final int w, final int h) {
+            final Pantexture left = new Pantexture("tex." + x + "." + y, imgBlack);
+            Pangame.getGame().getCurrentRoom().addActor(left);
+            left.getPosition().set(x, y, 256);
+            left.setSize(w, h);
+        }
+		
 		@Override
 		protected final void start() throws Exception {
 			addDec(bgImg, 96, 96, 0);
@@ -123,18 +130,11 @@ public class Story {
 			super("The Black Reich of Bladavosnia spreads across the continent.  None can withstand the onslaught of the deadly Blitztroopers.", bgEurope2);
 		}
 		
-		private void addBorder(final Panroom room, final int x, final int y, final int w, final int h) {
-			final Pantexture left = new Pantexture("tex." + x + "." + y, imgBlack);
-			room.addActor(left);
-			left.getPosition().set(x, y, 256);
-			left.setSize(w, h);
-		}
-
 		@Override
 		protected void startExtra() throws Exception {
 			final Panroom room = Pangame.getGame().getCurrentRoom();
-			addBorder(room, 16, 96, 80, 96);
-			addBorder(room, 96, 80, 64, 16);
+			addBorder(16, 96, 80, 96);
+			addBorder(96, 80, 64, 16);
 			for (int j = 0; j < 6; j++) {
 				final int yoff = j * 8;
 				for (int i = 0; i < 2; i++) {
@@ -160,6 +160,7 @@ public class Story {
 		@Override
 		protected void startExtra() throws Exception {
 			addDec(chrBladimir, 135, 124, 1).setMirror(true);
+			addBorder(126, 131, 1, 1);
 			addDec(chrBladigar, 96, 104, 1);
 			addDec(chrBladander, 159, 104, 1).setMirror(true);
 		}
