@@ -159,7 +159,7 @@ public class Story {
 
 		@Override
 		protected void startExtra() throws Exception {
-			addDec(chrBladimir, 120, 124, 1);
+			addDec(chrBladimir, 135, 124, 1).setMirror(true);
 			addDec(chrBladigar, 96, 104, 1);
 			addDec(chrBladander, 159, 104, 1).setMirror(true);
 		}
