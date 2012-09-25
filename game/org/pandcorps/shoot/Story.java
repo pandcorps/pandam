@@ -134,13 +134,13 @@ public class Story {
 		@Override
 		protected void startExtra() throws Exception {
 			final Panroom room = Pangame.getGame().getCurrentRoom();
-			addTex(16, 96, 80, 96);
+			addTex(0, 96, 96, 96);
 			addTex(96, 80, 64, 16);
-			for (int j = 0; j < 6; j++) {
+			for (int j = 0; j < 7; j++) {
 				final int yoff = j * 8;
 				for (int i = 0; i < 2; i++) {
 					final Trp trp = new Trp();
-					trp.getPosition().set(88 - (i * 16) - yoff, 128 + yoff, 64 - yoff);
+					trp.getPosition().set(80 - (i * 16) - yoff, 144 + yoff, 48 - yoff);
 					room.addActor(trp);
 				}
 			}
@@ -284,7 +284,8 @@ public class Story {
 			final Panple pos = getPosition();
 			pos.add(1, -1, 1);
 			if (pos.getY() < 80) {
-				pos.add(-48, 48, -48);
+			    final int o = 56;
+				pos.add(-o, o, -o);
 			}
 		}
 	}
