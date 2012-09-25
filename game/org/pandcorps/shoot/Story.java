@@ -187,7 +187,7 @@ public class Story {
 
 		@Override
 		protected void startExtra() throws Exception {
-			addDec(chrPotus, 120, 124, 1);
+			addDec(chrPotus, 124, 124, 1);
 		}
 
 		@Override
