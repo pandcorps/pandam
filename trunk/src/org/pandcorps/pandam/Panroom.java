@@ -57,4 +57,10 @@ public final class Panroom extends Panlayer {
 			layer.destroy();
 		}
 	}
+	
+	@Override
+	public final void destroy() {
+		clear();
+		super.destroy();
+	}
 }
