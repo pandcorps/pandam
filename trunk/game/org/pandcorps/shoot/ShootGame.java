@@ -47,7 +47,11 @@ public class ShootGame extends Guy2Game {
 		tm = new TileMap("act.bg", room, 16, 16);
 		tm.setImageMap(Pangine.getEngine().createImage("img.bg.city", "org/pandcorps/shoot/res/bg/TileCity.png"));
 		final TileMapImage[][] imgMap = tm.splitImageMap();
-		tm.fillBackground(imgMap[7][0]);
+		tm.fillBackground(imgMap[7][0], 0, 2);
+		tm.fillBackground(imgMap[6][0], 2, 1);
+		tm.fillBackground(imgMap[5][0], 3, 2);
+		tm.fillBackground(imgMap[4][1], 5, 1);
+		tm.fillBackground(imgMap[3][1], 6, 6);
 		tm.getPosition().setZ(type.getDepthShadow() - 1);
 	}
 	

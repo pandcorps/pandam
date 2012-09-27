@@ -84,13 +84,37 @@ public class TileMap extends Panctor {
     	fillBackgroundO(background);
     }
     
+    public final void fillBackground(final Panmage background, final int y, final int h) {
+    	fillBackgroundO(background, y, h);
+    }
+    
+    public final void fillBackground(final Panmage background, final int x, final int y, final int w, final int h) {
+    	fillBackgroundO(background, x, y, w, h);
+    }
+    
     public final void fillBackground(final TileMapImage background) {
     	fillBackgroundO(background);
     }
     
+    public final void fillBackground(final TileMapImage background, final int y, final int h) {
+    	fillBackgroundO(background, y, h);
+    }
+    
+    public final void fillBackground(final TileMapImage background, final int x, final int y, final int w, final int h) {
+    	fillBackgroundO(background, x, y, w, h);
+    }
+    
     private final void fillBackgroundO(final Object background) {
-        for (int i = 0; i < w; i++) {
-            for (int j = 0; j < h; j++) {
+    	fillBackgroundO(background, 0, 0, w, h);
+    }
+    
+    private final void fillBackgroundO(final Object background, final int y, final int h) {
+    	fillBackgroundO(background, 0, y, w, h);
+    }
+    
+    private final void fillBackgroundO(final Object background, final int x, final int y, final int w, final int h) {
+        for (int i = x + w - 1; i >= x; i--) {
+            for (int j = y + h - 1; j >= y; j--) {
                 Tile tile = getTile(i, j);
                 if (tile == null) {
                     //tile = new Tile(this, i, j);
