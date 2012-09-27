@@ -41,7 +41,6 @@ public class ShootGame extends Guy2Game {
 		final BufferedImage[] chrs;
 		chrs = loadChrStrip("Will");
 		playerDef = ShooterDefinition.create("Will", chrs);
-		loadBackground();
 		loadWeapons();
 	}
 	
@@ -183,10 +182,12 @@ public class ShootGame extends Guy2Game {
 			room = engine.createRoom(Pantil.vmid(), new FinPanple(512, 192, 0));
 			max = new FinPanple(512, 95, 0);
 			Pangame.getGame().setCurrentRoom(room);
+			loadBackground();
 			engine.setBgColor(Pancolor.GREEN);
 			final Shooter shooter = new Shooter("STR.1", room, playerDef);
 			shooter.setWeapon(weaponDefs[1]);
 			new Player(shooter).setShooter(shooter);
+			engine.track(shooter);
 			room.addActor(tm);
 		}
 	}
