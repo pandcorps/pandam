@@ -73,6 +73,10 @@ public abstract class Pangame {
 		}
 		return currentRoom;
 	}
+	
+	public void setCurrentRoom(final Panroom currentRoom) {
+		this.currentRoom = currentRoom;
+	}
 
 	public final void start() throws Panception {
 		try {

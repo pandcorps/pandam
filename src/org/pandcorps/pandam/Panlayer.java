@@ -291,9 +291,10 @@ public class Panlayer extends BasePantity {
         beneath = null;
     }
     
-    public final void destroy() {
+    public void destroy() {
         destroyAllActors();
         detach();
+        Pangine.getEngine().unregister(this);
     }
     
     private final void destroy(final Collection<Panctor> actors) {
