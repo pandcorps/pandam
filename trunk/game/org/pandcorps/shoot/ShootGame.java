@@ -2,6 +2,7 @@ package org.pandcorps.shoot;
 
 import java.awt.image.BufferedImage;
 
+import org.pandcorps.core.Pantil;
 import org.pandcorps.core.img.Pancolor;
 import org.pandcorps.game.*;
 import org.pandcorps.game.actor.Guy2.*;
@@ -176,7 +177,11 @@ public class ShootGame extends Guy2Game {
 	protected final static class ShootScreen extends Panscreen {
 		@Override
         protected final void load() throws Exception {
-			Pangine.getEngine().setBgColor(Pancolor.GREEN);
+			final Pangine engine = Pangine.getEngine();
+			room.destroy();
+			room = engine.createRoom(Pantil.vmid(), new FinPanple(512, 192, 0));
+			Pangame.getGame().setCurrentRoom(room);
+			engine.setBgColor(Pancolor.GREEN);
 			final Shooter shooter = new Shooter("STR.1", room, playerDef);
 			shooter.setWeapon(weaponDefs[1]);
 			new Player(shooter).setShooter(shooter);
