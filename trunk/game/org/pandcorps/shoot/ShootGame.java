@@ -20,6 +20,7 @@ public class ShootGame extends Guy2Game {
 	private static ShooterDefinition playerDef = null;
 	/*package*/ static WeaponDefinition[] weaponDefs = null;
 	private static Panroom room = null;
+	/*package*/ static FinPanple max = null;
 	/*package*/ static Panimation smokeBigAnm = null;
 	/*package*/ static Panimation flameLoopAnm = null;
 	/*package*/ static Panimation rocketFireAnm = null;
@@ -180,6 +181,7 @@ public class ShootGame extends Guy2Game {
 			final Pangine engine = Pangine.getEngine();
 			room.destroy();
 			room = engine.createRoom(Pantil.vmid(), new FinPanple(512, 192, 0));
+			max = new FinPanple(512, 95, 0);
 			Pangame.getGame().setCurrentRoom(room);
 			engine.setBgColor(Pancolor.GREEN);
 			final Shooter shooter = new Shooter("STR.1", room, playerDef);
