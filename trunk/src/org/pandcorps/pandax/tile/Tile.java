@@ -66,6 +66,10 @@ public final class Tile {
         this.background = background;
     }
     
+    public final void setBackground(final TileMapImage background) {
+        this.background = background;
+    }
+    
     /*package*/ final void setBackgroundO(final Object background) {
         this.background = background;
     }
