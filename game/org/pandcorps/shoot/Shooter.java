@@ -119,6 +119,6 @@ public class Shooter extends Guy2 {
 
 	@Override
 	protected Panple getMax() {
-		return Pangame.getGame().getCurrentRoom().getSize();
+		return ShootGame.max;
 	}
 }
