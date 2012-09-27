@@ -55,7 +55,8 @@ public class Projectile extends org.pandcorps.game.actor.Projectile implements S
     //public Projectile(final String id, final Fighter fighter, final byte type, final byte impact, final byte react, final Panple vel, final byte time, final Panimation anim) {
     @Override
     protected void init(final Guy2 fighter, final org.pandcorps.game.actor.Emitter emitter, final boolean mirror) {
-        this.fighter = (Fighter) fighter;
+        super.init(fighter, emitter, mirror);
+    	this.fighter = (Fighter) fighter;
         this.emitter = (Emitter) emitter;
     }
     
