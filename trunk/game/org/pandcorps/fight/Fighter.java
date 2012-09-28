@@ -263,12 +263,6 @@ public final class Fighter extends Guy2 implements CollisionListener, AnimationE
         info.centerX();
     }
     
-    private final void add(final Panctor actor, final float xo, final float yo, final float zo) {
-        final Panple pos = getPosition();
-        actor.getPosition().set(pos.getX() + xo, pos.getY() + yo, pos.getZ() + zo);
-        Pangame.getGame().getCurrentRoom().addActor(actor);
-    }
-    
     private final boolean canAttack() {
         if (isFree()) {
             //mode = MODE_QUICK;
