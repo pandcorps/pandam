@@ -2,13 +2,14 @@ package org.pandcorps.shoot;
 
 import java.awt.image.BufferedImage;
 
+import org.pandcorps.game.actor.Burst;
 import org.pandcorps.game.actor.Guy2;
 import org.pandcorps.pandam.*;
-import org.pandcorps.pandam.event.StepEvent;
+import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.impl.FinPanple;
 import org.pandcorps.shoot.Weapon.WeaponDefinition;
 
-public class Shooter extends Guy2 {
+public class Shooter extends Guy2 implements CollisionListener {
 	public final static class ShooterDefinition {
 		private final Panimation still;
 		protected final Panimation walk;
@@ -55,6 +56,17 @@ public class Shooter extends Guy2 {
 			weapon.getPosition().set(pos.getX(), pos.getY() + off, pos.getZ() + 1);
 			weapon.setMirror(isMirror());
 			weapon.step();
+		}
+	}
+	
+	@Override
+    public void onCollision(final CollisionEvent event) {
+		final Collidable c = event.getCollider();
+		if (c.getClass() == Projectile.class) {
+			if (this == ((Projectile) c).shooter) {
+				return;
+			}
+			add(new Burst(ShootGame.blood), 0f, 6f, 1f);
 		}
 	}
 	

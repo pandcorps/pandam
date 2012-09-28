@@ -32,13 +32,15 @@ import org.pandcorps.pandam.event.boundary.*;
 
 public class Projectile extends org.pandcorps.game.actor.Projectile implements StepListener, AllOobListener, Collidable /*Or CollisionListener if we want two Projectiles to collide with each other*/ {
     
-    ///*package*/ final Shooter shooter;
-    ///*package*/ final Emitter emitter;
+    /*package*/ Shooter shooter = null;
+    ///*package*/ Emitter emitter = null;
     
-    //public Projectile(final Shooter shooter, final Emitter emitter, final boolean mirror) {
-        //this.shooter = shooter;
-        //this.emitter = emitter;
-    //}
+	@Override
+	protected void init(final Guy2 guy, final Emitter emitter, final boolean mirror) {
+		super.init(guy, emitter, mirror);
+		this.shooter = (Shooter) guy;
+		//this.emitter = emitter;
+	}
     
     @Override
     public void die() {
