@@ -215,8 +215,13 @@ public class ShootGame extends Guy2Game {
 			engine.setBgColor(Pancolor.GREEN);
 			final Shooter shooter = new Shooter("STR.1", room, playerDef);
 			shooter.setWeapon(weaponDefs[1]);
+			shooter.getPosition().set(64, 64);
 			new Player(shooter).setShooter(shooter);
 			engine.track(shooter);
+			final Shooter enemy = new Shooter("ENM.1", room, trooperDefs[3]);
+			enemy.getPosition().set(192, 64);
+			enemy.setMirror(true);
+			new Ai().setShooter(enemy);
 			room.addActor(tm);
 		}
 	}
