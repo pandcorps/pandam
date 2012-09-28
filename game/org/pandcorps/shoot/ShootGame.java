@@ -2,7 +2,7 @@ package org.pandcorps.shoot;
 
 import java.awt.image.BufferedImage;
 
-import org.pandcorps.core.Pantil;
+import org.pandcorps.core.*;
 import org.pandcorps.core.img.Pancolor;
 import org.pandcorps.game.*;
 import org.pandcorps.game.actor.Guy2.*;
@@ -18,6 +18,7 @@ import org.pandcorps.shoot.Weapon.WeaponDefinition;
 public class ShootGame extends Guy2Game {
 	/*package*/ static Guy2Type type = null;
 	private static ShooterDefinition playerDef = null;
+	/*package*/ static ShooterDefinition[] trooperDefs = null;
 	/*package*/ static WeaponDefinition[] weaponDefs = null;
 	private static Panroom room = null;
 	/*package*/ static FinPanple max = null;
@@ -38,9 +39,7 @@ public class ShootGame extends Guy2Game {
 		final BufferedImage[] constantImgs = ImtilX.loadStrip("org/pandcorps/game/res/misc/Constants.png");
 		final Panmage shadowImage = engine.createImage("Shadow", new FinPanple(8, 4, 0), null, null, constantImgs[0]);
         type = new Guy2Type(shadowImage, -480);
-		final BufferedImage[] chrs;
-		chrs = loadChrStrip("Will");
-		playerDef = ShooterDefinition.create("Will", chrs);
+		loadCharacters();
 		loadWeapons();
 	}
 	
@@ -60,6 +59,15 @@ public class ShootGame extends Guy2Game {
 		tm.getTile(22, 6).setBackground(imgMap[2][4]);
 		tm.getTile(23, 6).setBackground(imgMap[3][0]);
 		tm.getPosition().setZ(type.getDepthShadow() - 1);
+	}
+	
+	private final static void loadCharacters() {
+		playerDef = ShooterDefinition.create("Will", loadChrStrip("Will"));
+		final int numTrps = 5;
+		trooperDefs = new ShooterDefinition[numTrps];
+		for (int i = 0; i < trooperDefs.length; i++) {
+			trooperDefs[i] = getTrp(i + 4);
+		}
 	}
 	
 	private final static void loadWeapons() {
@@ -178,6 +186,21 @@ public class ShootGame extends Guy2Game {
 	
 	protected final static BufferedImage[] loadChrStrip(final String name) {
 		return loadStrip("chr/" + name);
+	}
+	
+	private final static BufferedImage getTrpImg(final BufferedImage[] strip, final int i, final BufferedImage head, final int h) {
+		final BufferedImage body = strip[i];
+		Imtil.copy(head, body, 0, 0, ImtilX.DIM, ImtilX.DIM - h, 0, -h, true);
+		return body;
+	}
+	
+	protected final static ShooterDefinition getTrp(final int headIndex) {
+		final BufferedImage[] strip = loadChrStrip("Blitztrooper");
+		final BufferedImage head = strip[headIndex];
+		final BufferedImage still = getTrpImg(strip, 0, head, 0);
+		final BufferedImage left = getTrpImg(strip, 1, head, 1);
+		final BufferedImage right = getTrpImg(strip, 2, head, 1);
+		return ShooterDefinition.create("Blitztrooper." + headIndex, still, left, right);
 	}
 	
 	protected final static class ShootScreen extends Panscreen {
