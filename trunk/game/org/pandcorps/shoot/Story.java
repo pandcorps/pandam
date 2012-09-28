@@ -27,14 +27,12 @@ import java.awt.image.BufferedImage;
 import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
 import org.pandcorps.game.actor.Decoration;
-import org.pandcorps.game.core.ImtilX;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandax.text.*;
 import org.pandcorps.pandax.text.Fonts.FontRequest;
 import org.pandcorps.pandax.visual.Pantexture;
 import org.pandcorps.shoot.ShootGame.ShootScreen;
-import org.pandcorps.shoot.Shooter.ShooterDefinition;
 
 public class Story {
 	private static Font font = null;
@@ -255,22 +253,6 @@ public class Story {
 		return Pangine.getEngine().createImage("img.chr." + name, bi);
 	}
 	
-	private final static BufferedImage getTrpImg(final BufferedImage[] strip, final int i, final BufferedImage head, final int h) {
-		final BufferedImage body = strip[i];
-		Imtil.copy(head, body, 0, 0, ImtilX.DIM, ImtilX.DIM - h, 0, -h, true);
-		//return getChr("Blitztrooper." + i, body);
-		return body;
-	}
-	
-	private final static Panimation getTrpAnm() {
-		final BufferedImage[] strip = ShootGame.loadChrStrip("Blitztrooper");
-		final BufferedImage head = strip[4];
-		final BufferedImage still = getTrpImg(strip, 0, head, 0);
-		final BufferedImage left = getTrpImg(strip, 1, head, 1);
-		final BufferedImage right = getTrpImg(strip, 2, head, 1);
-		return ShooterDefinition.create("Blitztrooper", still, left, right).walk;
-	}
-	
 	private final static class Trp extends Panctor implements StepListener {
 		public Trp() {
 			super(Pantil.vmid());
@@ -311,7 +293,7 @@ public class Story {
 		chrBladander = getChr("Bladander");
 		chrPotus = getChr("Potus", 12);
 		chrWill = getChr("Will");
-		anmTrp = getTrpAnm();
+		anmTrp = ShootGame.trooperDefs[0].walk;
 		font = Fonts.getOutline(new FontRequest(8), Pancolor.BLUE, Pancolor.BLUE, Pancolor.BLUE, new FinPancolor(Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, (short) 128, Pancolor.MAX_VALUE));
 		Panscreen.set(new MapScreen());
 	}
