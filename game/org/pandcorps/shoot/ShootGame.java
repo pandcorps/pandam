@@ -20,6 +20,7 @@ public class ShootGame extends Guy2Game {
 	private static ShooterDefinition playerDef = null;
 	/*package*/ static ShooterDefinition[] trooperDefs = null;
 	/*package*/ static WeaponDefinition[] weaponDefs = null;
+	/*package*/ static Panimation blood = null;
 	private static Panroom room = null;
 	/*package*/ static FinPanple max = null;
 	/*package*/ static Panimation smokeBigAnm = null;
@@ -37,9 +38,15 @@ public class ShootGame extends Guy2Game {
 	private final static void loadConstants() {
 		final Pangine engine = Pangine.getEngine();
 		final BufferedImage[] constantImgs = ImtilX.loadStrip("org/pandcorps/game/res/misc/Constants.png");
-		final Panmage shadowImage = engine.createImage("Shadow", new FinPanple(8, 4, 0), null, null, constantImgs[0]);
-        type = new Guy2Type(shadowImage, -480);
-		loadCharacters();
+		final Panmage shadowImg = engine.createImage("img.shadow", new FinPanple(8, 4, 0), null, null, constantImgs[0]);
+        type = new Guy2Type(shadowImg, -480);
+        final FinPanple o = new FinPanple(8, 8, 0);
+        final Panmage bld1Img = engine.createImage("img.blood.1", o, null, null, constantImgs[6]);
+        final Panmage bld2Img = engine.createImage("img.blood.2", o, null, null, constantImgs[7]);
+        final Panframe bld1Frm = engine.createFrame("frm.blood.1", bld1Img, 2);
+        final Panframe bld2Frm = engine.createFrame("frm.blood.2", bld2Img, 2);
+        blood = engine.createAnimation("anm.blood", bld1Frm, bld2Frm);
+        loadCharacters();
 		loadWeapons();
 	}
 	
