@@ -95,7 +95,7 @@ public abstract class Panple {
 	
 	public double getDirection2() {
 	    // x / mag should be <= 1, but account for possible float arithmetic errors
-	    final double a = Math.acos(Math.min(1, getX() / getMagnitude2())); // 0 - pi
+	    final double a = Math.acos(Math.max(-1, Math.min(1, getX() / getMagnitude2()))); // 0 - pi
 	    return getY() < 0 ? (Mathtil.PI2 - a) : a;
 	}
 	
