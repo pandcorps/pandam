@@ -710,6 +710,10 @@ public abstract class Pangine {
 	    return clock;
 	}
 	
+	public final boolean isOn(final int half) {
+		return (clock % (half * 2)) < half;
+	}
+	
 	public final void addTimer(final Panctor actor, final long duration, final TimerListener listener) {
 	    timers.add(new TimerEvent(clock + duration));
 	    timers.add(listener);

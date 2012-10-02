@@ -167,8 +167,7 @@ public class Story {
 		
 		@Override
         protected void step() {
-		    //TODO Add Pangine method to generalize these things
-		    mouth.setVisible((Pangine.getEngine().getClock() % 12) < 6);
+		    mouth.setVisible(Pangine.getEngine().isOn(6));
         }
 
 		@Override
@@ -260,7 +259,7 @@ public class Story {
 		}
 		
 		public void onStep(final StepEvent event) {
-			if ((Pangine.getEngine().getClock() % 2) != 0) {
+			if (Pangine.getEngine().isOn(1)) {
 				return;
 			}
 			final Panple pos = getPosition();
