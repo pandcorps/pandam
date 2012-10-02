@@ -2,9 +2,9 @@ package org.pandcorps.shoot;
 
 import java.awt.image.BufferedImage;
 
-import org.pandcorps.core.Mathtil;
-import org.pandcorps.game.actor.Burst;
-import org.pandcorps.game.actor.Guy2;
+import org.pandcorps.core.*;
+import org.pandcorps.core.col.IdentityHashSet;
+import org.pandcorps.game.actor.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.impl.FinPanple;
@@ -64,9 +64,16 @@ public class Shooter extends Guy2 implements CollisionListener {
     public void onCollision(final CollisionEvent event) {
 		final Collidable c = event.getCollider();
 		if (c.getClass() == Projectile.class) {
-			if (this == ((Projectile) c).shooter) {
+			final Projectile p = (Projectile) c;
+			if (this == p.shooter) {
+				return;
+			} else if (Coltil.contains(p.victims, this)) {
 				return;
 			}
+			if (p.victims == null) {
+				p.victims = new IdentityHashSet<Shooter>();
+			}
+			p.victims.add(this);
 			add(new Burst(ShootGame.blood), Mathtil.randf(-4, 4), Mathtil.randf(2, 10), 1f);
 		}
 	}
