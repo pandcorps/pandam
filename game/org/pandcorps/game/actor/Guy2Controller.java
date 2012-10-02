@@ -71,4 +71,45 @@ public class Guy2Controller {
             walkRight();
         }});
 	}
+	
+	protected final void stepAdvance(final Panctor target) {
+		final Panple pos = guy.getPosition();
+		final Panple tpos = target.getPosition();
+		final float x = pos.getX(), y = pos.getY();
+		final float tx = tpos.getX(), ty = tpos.getY();
+		if (tx < x - 1) {
+			walkLeft();
+		} else if (tx > x + 1) {
+			walkRight();
+		}
+		if (ty < y - 1) { // Without +/- 1, can get rapid up/down alternating
+			walkDown();
+		} else if (ty > y + 1) {
+			walkUp();
+		}
+	}
+	
+	protected final boolean stepRetreat(final Panctor target) {
+		final Panple pos = guy.getPosition();
+		final Panple tpos = target.getPosition();
+		final float x = pos.getX(), y = pos.getY();
+		final float tx = tpos.getX(), ty = tpos.getY();
+		//Change behavior if hit boundary, but hitting x boundary wouldn't need to mean to stop y movement.
+		final Panple min = guy.getMin(), max = guy.getMax();
+		if (x <= min.getX() || x >= max.getX() || y <= min.getY() || y >= max.getY()) {
+			return false;
+		} else {
+    		if (tx < x) {
+				walkRight();
+			} else if (tx > x) {
+				walkLeft();
+			} //TODO else walk toward center of bg
+			if (ty < y) {
+				walkUp();
+			} else if (ty > y) {
+				walkDown();
+			} //TODO else walk toward center of bg
+		}
+		return true;
+	}
 }

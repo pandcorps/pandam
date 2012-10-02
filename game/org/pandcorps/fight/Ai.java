@@ -23,7 +23,6 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.fight;
 
 import org.pandcorps.core.Mathtil;
-import org.pandcorps.fight.Background.BackgroundDefinition;
 import org.pandcorps.pandam.*;
 
 public final class Ai extends FighterController {
@@ -103,42 +102,15 @@ public final class Ai extends FighterController {
     		}
     	}
     	timer--;
-    	final Panple pos = fighter.getPosition();
-		final Panple tpos = target.getPosition();
-		final float x = pos.getX(), y = pos.getY();
-		final float tx = tpos.getX(), ty = tpos.getY();
     	if (action == ACTION_ADVANCE) {
     		if (canAttack()) {
     			timer = 0;
     		} else {
-    			if (tx < x - 1) {
-    				walkLeft();
-    			} else if (tx > x + 1) {
-    				walkRight();
-    			}
-    			if (ty < y - 1) { // Without +/- 1, can get rapid up/down alternating
-    				walkDown();
-    			} else if (ty > y + 1) {
-    				walkUp();
-    			}
+    			stepAdvance(target);
     		}
     	} else if (action == ACTION_RETREAT) {
-    		//Change behavior if hit boundary, but hitting x boundary wouldn't need to mean to stop y movement.
-    		final BackgroundDefinition bg = FightGame.getBackground().def;
-    		final Panple min = bg.min, max = bg.max;
-    		if (x <= min.getX() || x >= max.getX() || y <= min.getY() || y >= max.getY()) {
+    		if (!stepRetreat(target)) {
     			action = ACTION_STILL;
-    		} else {
-	    		if (tx < x) {
-					walkRight();
-				} else if (tx > x) {
-					walkLeft();
-				} //TODO else walk toward center of bg
-				if (ty < y) {
-					walkUp();
-				} else if (ty > y) {
-					walkDown();
-				} //TODO else walk toward center of bg
     		}
     	} else if (action == ACTION_ATTACK) {
     		//TODO special attacks
