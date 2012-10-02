@@ -105,6 +105,10 @@ public final class Coltil {
 	    return a;
 	}
 	
+	public final static boolean contains(final Collection<?> col, final Object o) {
+		return col == null ? false : col.contains(o);
+	}
+	
 	public final static <E> E get(final List<E> list, final int i) {
 	    return size(list) <= i ? null : list.get(i);
 	}
