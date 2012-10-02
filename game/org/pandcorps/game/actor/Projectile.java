@@ -22,7 +22,6 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.game.actor;
 
-import org.pandcorps.core.Pantil;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.boundary.*;
@@ -33,10 +32,6 @@ public abstract class Projectile extends Panctor implements StepListener, AllOob
     protected Panple vel = null;
     protected byte time;
     protected byte age = 0;
-    
-    public Projectile() {
-        super(Pantil.vmid());
-    }
     
     protected void init(final Guy2 guy, final Emitter emitter, final boolean mirror) {
         this.emitter = emitter;
