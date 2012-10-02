@@ -37,6 +37,10 @@ public final class FinPanple extends UnmodPanple {
 		this.y = y;
 		this.z = z;
 	}
+	
+	public final static FinPanple newMagnitudeDirection(final double mag, final double dir, final float z) {
+		return new FinPanple(Mathtil.getXf(mag, dir), Mathtil.getYf(mag, dir), z);
+	}
 
 	@Override
 	public final float getX() {

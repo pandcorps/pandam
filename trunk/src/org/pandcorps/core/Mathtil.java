@@ -94,6 +94,22 @@ public final class Mathtil {
 		return m;
 	}
 	
+	public final static double getX(final double mag, final double dir) {
+		return Math.cos(dir) * mag;
+	}
+	
+	public final static double getY(final double mag, final double dir) {
+		return Math.sin(dir) * mag;
+	}
+	
+	public final static float getXf(final double mag, final double dir) {
+		return (float) getX(mag, dir);
+	}
+	
+	public final static float getYf(final double mag, final double dir) {
+		return (float) getY(mag, dir);
+	}
+	
 	public final static int byteValue(final Number n) {
         return byteValue(n, BYTE_0);
     }
