@@ -2,6 +2,7 @@ package org.pandcorps.shoot;
 
 import java.awt.image.BufferedImage;
 
+import org.pandcorps.core.Mathtil;
 import org.pandcorps.game.actor.Burst;
 import org.pandcorps.game.actor.Guy2;
 import org.pandcorps.pandam.*;
@@ -66,7 +67,7 @@ public class Shooter extends Guy2 implements CollisionListener {
 			if (this == ((Projectile) c).shooter) {
 				return;
 			}
-			add(new Burst(ShootGame.blood), 0f, 6f, 1f);
+			add(new Burst(ShootGame.blood), Mathtil.randf(-4, 4), Mathtil.randf(2, 10), 1f);
 		}
 	}
 	
