@@ -144,11 +144,15 @@ public class ShootGame extends Guy2Game {
 		final Emitter magEmit1 = new Emitter(7, 5, velBullet, (byte) -1, projMagImg);
 		final Emitter magEmit2 = new Emitter(16, 5, velBullet, (byte) -1, projMagImg);
 		final float sx = 11, sy = 5;
-		final Emitter shotEmit1 = new Emitter(sx, sy, new FinPanple(3, 0, 0), (byte) -1, projShotImg);
-		final Emitter shotEmit2 = new Emitter(sx, sy, new FinPanple(2.8f, .2f, 0), (byte) -1, projShotImg);
+		final Emitter shotEmit1 = new Emitter(ShotProjectile.class, sx, sy, new FinPanple(3, 0, 0), (byte) -1, projShotImg);
+		final Emitter shotEmit2 = new Emitter(ShotProjectile.class, sx, sy, new FinPanple(3, 0, 0), (byte) -1, projShotImg);
+		final Emitter shotEmit3 = new Emitter(ShotProjectile.class, sx, sy, new FinPanple(3, 0, 0), (byte) -1, projShotImg);
+		final Emitter shotEmit4 = new Emitter(ShotProjectile.class, sx, sy, new FinPanple(3, 0, 0), (byte) -1, projShotImg);
+		final Emitter shotEmit5 = new Emitter(ShotProjectile.class, sx, sy, new FinPanple(3, 0, 0), (byte) -1, projShotImg);
+		/*final Emitter shotEmit2 = new Emitter(sx, sy, new FinPanple(2.8f, .2f, 0), (byte) -1, projShotImg);
 		final Emitter shotEmit3 = new Emitter(sx, sy, new FinPanple(2.8f, -.2f, 0), (byte) -1, projShotImg);
 		final Emitter shotEmit4 = new Emitter(sx, sy, new FinPanple(2.6f, .4f, 0), (byte) -1, projShotImg);
-		final Emitter shotEmit5 = new Emitter(sx, sy, new FinPanple(2.6f, -.4f, 0), (byte) -1, projShotImg);
+		final Emitter shotEmit5 = new Emitter(sx, sy, new FinPanple(2.6f, -.4f, 0), (byte) -1, projShotImg);*/
 		final Emitter miniEmit = new Emitter(15, 3, new FinPanple(4, 0, 0), (byte) -1, projMiniImg);
 		final Emitter flameEmit = new Emitter(FlameProjectile.class, 10, 4, velBullet, (byte) 28, projFlame1Anm);
 		final Emitter rocketEmit = new Emitter(RocketProjectile.class, 13, 8, velBullet, (byte) -1, projRocketImg);

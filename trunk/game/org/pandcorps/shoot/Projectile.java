@@ -30,6 +30,7 @@ import org.pandcorps.game.actor.Emitter;
 import org.pandcorps.pandam.Panple;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.boundary.*;
+import org.pandcorps.pandam.impl.FinPanple;
 
 public class Projectile extends org.pandcorps.game.actor.Projectile implements StepListener, AllOobListener, Collidable /*Or CollisionListener if we want two Projectiles to collide with each other*/ {
     
@@ -48,6 +49,16 @@ public class Projectile extends org.pandcorps.game.actor.Projectile implements S
     @Override
     public void die() {
     	destroy();
+    }
+    
+    public final static class ShotProjectile extends Projectile {
+    	private final static float r = (float) (Math.PI / 6.0);
+    	
+    	@Override
+    	protected final Panple getVelocity(final boolean mirror) {
+    		final Panple base = super.getVelocity(mirror);
+    		return FinPanple.newMagnitudeDirection(base.getMagnitude2(), base.getDirection2() + Mathtil.randf(-r, r), base.getZ());
+    	}
     }
     
     public final static class FlameProjectile extends Projectile implements AnimationEndListener {

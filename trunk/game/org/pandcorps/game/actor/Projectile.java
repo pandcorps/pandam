@@ -35,7 +35,7 @@ public abstract class Projectile extends Panctor implements StepListener, AllOob
     
     protected void init(final Guy2 guy, final Emitter emitter, final boolean mirror) {
         this.emitter = emitter;
-        this.vel = mirror ? emitter.mirVel : emitter.vel;
+        this.vel = getVelocity(mirror);
         this.time = emitter.time;
         setView(emitter.projView);
         final Panple pos = guy.getPosition();
@@ -43,6 +43,10 @@ public abstract class Projectile extends Panctor implements StepListener, AllOob
         getPosition().set(pos.getX() + (emitter.xoff * mult), pos.getY() + emitter.yoff, pos.getZ() + 1);
         setMirror(mirror);
         guy.getLayer().addActor(this);
+    }
+    
+    protected Panple getVelocity(final boolean mirror) {
+    	return mirror ? emitter.mirVel : emitter.vel;
     }
     
     private final void setView(final Panview view) {
