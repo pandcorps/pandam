@@ -22,6 +22,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandam;
 
+import org.pandcorps.core.Pantil;
 import org.pandcorps.pandam.event.TimerListener;
 import org.pandcorps.pandam.event.action.*;
 import org.pandcorps.pandam.impl.*;
@@ -35,6 +36,10 @@ public class Panctor extends BasePantity implements SpecPanctor {
 	private boolean destroyed = false;
 	/*package*/ Object collisionGroup = Panroom.defaultCollisionGroup;
 	/*package*/ Panlayer layer = null;
+	
+	public Panctor() {
+		this(Pantil.vmid());
+	}
 
 	public Panctor(final String id) {
 		super(id);
