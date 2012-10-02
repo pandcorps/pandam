@@ -24,6 +24,7 @@ package org.pandcorps.shoot;
 
 import org.pandcorps.core.Mathtil;
 import org.pandcorps.core.Pantil;
+import org.pandcorps.core.col.IdentityHashSet;
 import org.pandcorps.game.actor.*;
 import org.pandcorps.game.actor.Emitter;
 import org.pandcorps.pandam.Panple;
@@ -34,6 +35,7 @@ public class Projectile extends org.pandcorps.game.actor.Projectile implements S
     
     /*package*/ Shooter shooter = null;
     ///*package*/ Emitter emitter = null;
+    /*package*/ IdentityHashSet<Shooter> victims = null;
     
 	@Override
 	protected void init(final Guy2 guy, final Emitter emitter, final boolean mirror) {
