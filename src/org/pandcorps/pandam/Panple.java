@@ -49,8 +49,8 @@ public abstract class Panple {
 	}
 	
 	public void setMagnitudeDirection(final double mag, final double dir) {
-	    setX((float) (Math.cos(dir) * mag));
-	    setY((float) (Math.sin(dir) * mag));
+		setX(Mathtil.getXf(mag, dir));
+	    setY(Mathtil.getYf(mag, dir));
 	}
 
 	public void set(final Panple src) {
