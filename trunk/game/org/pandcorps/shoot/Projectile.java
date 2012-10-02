@@ -35,6 +35,7 @@ public class Projectile extends org.pandcorps.game.actor.Projectile implements S
     
     /*package*/ Shooter shooter = null;
     ///*package*/ Emitter emitter = null;
+    /*package*/ Weapon weapon = null;
     /*package*/ IdentityHashSet<Shooter> victims = null;
     
 	@Override

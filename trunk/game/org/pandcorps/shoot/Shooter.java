@@ -74,6 +74,9 @@ public class Shooter extends Guy2 implements CollisionListener {
 				p.victims = new IdentityHashSet<Shooter>();
 			}
 			p.victims.add(this);
+			if (p.victims.size() >= p.weapon.getPierce()) {
+				p.die();
+			}
 			add(new Burst(ShootGame.blood), Mathtil.randf(-4, 4), Mathtil.randf(2, 10), 1f);
 		}
 	}
