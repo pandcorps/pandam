@@ -63,7 +63,7 @@ public class Shooter extends Guy2 implements CollisionListener {
 	@Override
     public void onCollision(final CollisionEvent event) {
 		final Collidable c = event.getCollider();
-		if (c.getClass() == Projectile.class) {
+		if (c instanceof Projectile) {
 			final Projectile p = (Projectile) c;
 			if (this == p.shooter) {
 				return;
