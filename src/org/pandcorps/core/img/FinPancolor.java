@@ -31,18 +31,22 @@ public class FinPancolor extends Pancolor {
         super(r, g, b, a);
     }
     
+    @Override
     public final void setR(final short r) {
         throw new UnsupportedOperationException();
     }
     
+    @Override
     public final void setG(final short g) {
         throw new UnsupportedOperationException();
     }
     
+    @Override
     public final void setB(final short b) {
         throw new UnsupportedOperationException();
     }
     
+    @Override
     public final void setA(final short a) {
         throw new UnsupportedOperationException();
     }
