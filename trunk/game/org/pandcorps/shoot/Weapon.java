@@ -43,6 +43,7 @@ public class Weapon extends Panctor {
 	protected final WeaponDefinition def;
 	private boolean attacking = false;
 	private int timer = 0;
+	private int smoke = 0;
 	
 	protected Weapon(final WeaponDefinition def) {
 		super(Pantil.vmid());
@@ -58,6 +59,9 @@ public class Weapon extends Panctor {
 		}
 		if (timer > 0) {
 			timer--;
+		}
+		if (smoke > 0) {
+		    smoke--;
 		}
 	}
 	
@@ -103,7 +107,7 @@ public class Weapon extends Panctor {
                 getLayer().addActor(casing);
 		    }
 		}
-		if (def.smokeAnm != null) {
+		if (def.smokeAnm != null && smoke <= 0) {
 		    for (final Panple projPos : projPositions) {
 		        final Casing casing = new Casing(def.smokeAnm);
 		        casing.setMirror(mirror);
@@ -112,6 +116,7 @@ public class Weapon extends Panctor {
 		        casing.getVelocity().set(rx, ry);
 		        casing.getAcceleration().setY(.25f);
                 getLayer().addActor(casing);
+                smoke = 5;
 		    }
 		}
 	}
