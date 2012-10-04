@@ -20,11 +20,12 @@ public class Weapon extends Panctor {
 		protected final Emitter[] attackingEmitters;
 		private final int delay;
 		private final int minPierce;
+		private final int minSpray;
 		
 		public WeaponDefinition(final Panmage image, final Panimation flashAnm,
 				final Panimation casingAnm, final Panimation smokeAnm, final Panimation attackAnm,
 				final Emitter[] attackEmitters, final Emitter[] attackingEmitters,
-				final int delay, final int minPierce) {
+				final int delay, final int minPierce, final int minSpray) {
 			this.image = image;
 			this.flashAnm = flashAnm;
 			this.casingAnm = casingAnm;
@@ -35,6 +36,7 @@ public class Weapon extends Panctor {
 			// step occurs in same cycle after setting delay, 1 acts like 0 if we don't add 1
 			this.delay = delay <= 0 ? 0 : delay + 1;
 			this.minPierce = minPierce;
+			this.minSpray = minSpray;
 		}
 	}
 	
@@ -73,10 +75,13 @@ public class Weapon extends Panctor {
 		timer = def.delay;
 		final boolean mirror = isMirror();
 		final HashSet<Panple> projPositions = new HashSet<Panple>();
-		for (final Emitter em : emitters) {
-			final Projectile p = (Projectile) em.emit(shooter, mirror);
-			projPositions.add(p.getPosition());
-			p.weapon = this;
+		final int spray = getSpray();
+		for (int i = 0; i < spray; i++) {
+    		for (final Emitter em : emitters) {
+    			final Projectile p = (Projectile) em.emit(shooter, mirror);
+    			projPositions.add(p.getPosition());
+    			p.weapon = this;
+    		}
 		}
 		if (def.flashAnm != null) {
 			for (final Panple projPos : projPositions) {
@@ -113,6 +118,10 @@ public class Weapon extends Panctor {
 	
 	public int getPierce() {
 		return def.minPierce;
+	}
+	
+	public int getSpray() {
+	    return def.minSpray;
 	}
 	
 	private final static class Casing extends Pandy implements AnimationEndListener {
