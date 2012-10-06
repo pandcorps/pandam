@@ -23,6 +23,7 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.pandam;
 
 import java.util.*;
+import java.util.Map.Entry;
 
 import org.pandcorps.core.Coltil;
 import org.pandcorps.core.col.*;
@@ -235,6 +236,11 @@ public abstract class Panteraction {
 		}
 	}
 	
+	/*public final void push(final Panctor actor, final Panput input, final ActionStartListener listener) {
+		startListeners.remove(input); // push somewhere
+		register(actor, input, listener);
+	}*/
+	
 	/*package*/ final ActionGroup get(final Panctor actor) {
 		// Would be faster to store in Panctor, but would take more RAM for a mostly null extra field
 		ActionGroup g = actors.get(actor);
@@ -243,6 +249,24 @@ public abstract class Panteraction {
 			actors.put(actor, g);
 		}
 		return g;
+	}
+	
+	/*package*/ final Panctor getActor(final ActionListener listener) {
+		for (final Entry<Panctor, ActionGroup> entry : actors.entrySet()) {
+			if (Coltil.contains(entry.getValue().getListeners(), listener)) {
+				return entry.getKey();
+			}
+		}
+		return null;
+	}
+	
+	/*package*/ final Panctor getActor(final ActionStartListener listener) {
+		for (final Entry<Panctor, ActionGroup> entry : actors.entrySet()) {
+			if (Coltil.contains(entry.getValue().getStartListeners(), listener)) {
+				return entry.getKey();
+			}
+		}
+		return null;
 	}
 	
 	/*package*/ final void unregister(final Panctor actor) {

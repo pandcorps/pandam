@@ -1,6 +1,7 @@
 package org.pandcorps.pandam.event.action;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.pandcorps.core.Coltil;
 import org.pandcorps.pandam.*;
@@ -22,6 +23,10 @@ public class ActionGroup {
         listeners = Coltil.add(listeners, listener);
     }
     
+    public List<ActionListener> getListeners() {
+    	return Coltil.unmodifiableList(listeners);
+    }
+    
     public void register(final Panput input, final ActionStartListener listener) {
         final Panteraction inter = Pangine.getEngine().getInteraction();
         inter.register(null, input, listener);
@@ -30,6 +35,10 @@ public class ActionGroup {
     
     public void add(final ActionStartListener listener) {
         startListeners = Coltil.add(startListeners, listener);
+    }
+    
+    public List<ActionStartListener> getStartListeners() {
+    	return Coltil.unmodifiableList(startListeners);
     }
     
     public void register(final Panput input, final ActionEndListener listener) {
