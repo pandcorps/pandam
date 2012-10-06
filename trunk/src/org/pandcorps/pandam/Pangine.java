@@ -28,6 +28,7 @@ import org.pandcorps.core.*;
 import org.pandcorps.core.col.*;
 import org.pandcorps.core.img.*;
 import org.pandcorps.pandam.event.*;
+import org.pandcorps.pandam.event.action.*;
 import org.pandcorps.pandam.event.boundary.*;
 import org.pandcorps.pandam.impl.*;
 
@@ -276,6 +277,24 @@ public abstract class Pangine {
 	}
 
 	public abstract Panteraction getInteraction();
+	
+	protected Panctor getActor(final ActionStartListener listener) {
+		return getInteraction().getActor(listener);
+	}
+	
+	protected Panctor getActor(final ActionListener listener) {
+		return getInteraction().getActor(listener);
+	}
+	
+	public boolean isActive(final Panctor actor) {
+		if (actor != null) {
+			final Panlayer layer = actor.getLayer();
+			if (layer != null && layer.isActive()) {
+				return true;
+			}
+		}
+		return false;
+	}
 	
 	public abstract int getDesktopWidth();
 	
