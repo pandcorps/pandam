@@ -162,7 +162,7 @@ public final class LwjglPangine extends Pangine {
 	}
 
 	private boolean running = true;
-
+	
 	//private final void play() {
 	@Override
 	protected final void start() throws Exception {
@@ -232,7 +232,10 @@ public final class LwjglPangine extends Pangine {
 					for (final ActionStartListener startListener : Coltil.copy(interaction.getStartListeners(key))) {
 						//startListener.onActionStart(ActionStartEvent.INSTANCE);
 					    //startListener.onActionStart(ActionStartEvent.getEvent(key, Character.valueOf(Keyboard.getEventCharacter())));
-					    startListener.onActionStart(ActionStartEvent.getEvent(key));
+					    if (!isActive(getActor(startListener))) {
+					    	continue;
+					    }
+						startListener.onActionStart(ActionStartEvent.getEvent(key));
 					}
 					/*final Panction action = interaction.getAction(key);
 					if (action != null) {
@@ -421,6 +424,9 @@ public final class LwjglPangine extends Pangine {
 	private final void onAction(final Panput input) {
 		for (final ActionListener listener : Coltil.unnull(interaction.getListeners(input))) {
 			//listener.onAction(ActionEvent.INSTANCE);
+			if (!isActive(getActor(listener))) {
+		    	continue;
+		    }
 		    listener.onAction(ActionEvent.getEvent(input));
 		}
 	}
