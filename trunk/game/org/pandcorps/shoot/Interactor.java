@@ -22,56 +22,28 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.shoot;
 
-import org.pandcorps.game.actor.*;
+import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.event.*;
 
-public abstract class ShooterController extends Guy2Controller {
-    protected Shooter shooter = null;
-    
-    protected ShooterController() {
-    }
-    
-    protected void setShooter(final Shooter shooter) {
-    	setGuy(shooter);
-        this.shooter = shooter;
-    }
-    
-    /*package*/ final void attack() {
-		shooter.attack();
-	}
-    
-    /*package*/ final void attacking() {
-		shooter.attacking();
-	}
-    
-    /*package*/ final void interact() {
-    	shooter.interact();
-    }
-    
-	/*package*/ final void weapon1() {
-		shooter.weapon1();
+public class Interactor extends Panctor implements Collidee {
+	private final Shooter initiator;
+	private boolean finished = false;
+	
+	public Interactor(final Shooter initiator) {
+		this.initiator = initiator;
+		setVisible(false);
+		setView(ShootGame.interact);
 	}
 	
-	/*package*/ final void weapon2() {
-		shooter.weapon2();
+	public final Shooter getInitiator() {
+		return initiator;
 	}
 	
-	/*package*/ final void weapon3() {
-		shooter.weapon3();
-	}
-	
-	/*package*/ final void weapon4() {
-		shooter.weapon4();
-	}
-	
-	/*package*/ final void weapon5() {
-		shooter.weapon5();
-	}
-	
-	/*package*/ final void weapon6() {
-		shooter.weapon6();
-	}
-	
-	/*package*/ boolean onInteract(final Shooter initiator) {
-		return false;
+	@Override
+	public final void onCollision(final Shooter collider, final CollisionEvent event) {
+		if (finished) {
+			return; //TODO Check for multiple collisions, ask player to pick desired one
+		}
+		finished = collider.onInteract(initiator);
 	}
 }

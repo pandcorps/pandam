@@ -3,12 +3,15 @@ package org.pandcorps.shoot;
 import java.awt.image.BufferedImage;
 
 import org.pandcorps.core.*;
-import org.pandcorps.core.img.Pancolor;
+import org.pandcorps.core.img.*;
 import org.pandcorps.game.*;
 import org.pandcorps.game.actor.Guy2.*;
 import org.pandcorps.game.core.ImtilX;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.impl.FinPanple;
+import org.pandcorps.pandax.text.Font;
+import org.pandcorps.pandax.text.Fonts;
+import org.pandcorps.pandax.text.Fonts.FontRequest;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.tile.Tile.*;
 import org.pandcorps.shoot.Projectile.*;
@@ -18,9 +21,12 @@ import org.pandcorps.shoot.Weapon.WeaponDefinition;
 public class ShootGame extends Guy2Game {
 	/*package*/ static Guy2Type type = null;
 	private static ShooterDefinition playerDef = null;
+	private static ShooterDefinition merchantDef = null;
 	/*package*/ static ShooterDefinition[] trooperDefs = null;
 	/*package*/ static WeaponDefinition[] weaponDefs = null;
 	/*package*/ static Panimation blood = null;
+	/*package*/ static Panmage interact = null;
+	/*package*/ static Font font = null;
 	private static Panroom room = null;
 	/*package*/ static FinPanple max = null;
 	/*package*/ static Panimation smokeBigAnm = null;
@@ -46,7 +52,9 @@ public class ShootGame extends Guy2Game {
         final Panframe bld1Frm = engine.createFrame("frm.blood.1", bld1Img, 2);
         final Panframe bld2Frm = engine.createFrame("frm.blood.2", bld2Img, 2);
         blood = engine.createAnimation("anm.blood", bld1Frm, bld2Frm);
-        loadCharacters();
+        interact = engine.createEmptyImage("img.interact", new FinPanple(1, 1, 1), new FinPanple(0, 0, 0), new FinPanple(2, 2, 2));
+        font = Fonts.getOutline(new FontRequest(8), Pancolor.BLUE);
+		loadCharacters();
 		loadWeapons();
 	}
 	
@@ -75,6 +83,7 @@ public class ShootGame extends Guy2Game {
 		for (int i = 0; i < trooperDefs.length; i++) {
 			trooperDefs[i] = getTrp(i + 4);
 		}
+		merchantDef = ShooterDefinition.create("Merchant", loadChrStrip("Merchant"));
 	}
 	
 	private final static void loadWeapons() {
@@ -226,6 +235,10 @@ public class ShootGame extends Guy2Game {
 			enemy.setMirror(true);
 			new Ai().setShooter(enemy);
 			room.addActor(tm);
+			final Shooter merchant = new Shooter("MER", room, merchantDef);
+			merchant.getPosition().set(224, 88);
+			merchant.setMirror(true);
+			new Merchant().setShooter(merchant);
 		}
 	}
 	

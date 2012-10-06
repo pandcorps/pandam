@@ -22,6 +22,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.shoot;
 
+import org.pandcorps.core.Coltil;
 import org.pandcorps.core.Mathtil;
 import org.pandcorps.core.Pantil;
 import org.pandcorps.core.col.IdentityHashSet;
@@ -32,7 +33,7 @@ import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.boundary.*;
 import org.pandcorps.pandam.impl.FinPanple;
 
-public class Projectile extends org.pandcorps.game.actor.Projectile implements StepListener, AllOobListener, Collidable /*Or CollisionListener if we want two Projectiles to collide with each other*/ {
+public class Projectile extends org.pandcorps.game.actor.Projectile implements StepListener, AllOobListener, Collidee /*Or CollisionListener if we want two Projectiles to collide with each other*/ {
     
     /*package*/ Shooter shooter = null;
     ///*package*/ Emitter emitter = null;
@@ -44,6 +45,23 @@ public class Projectile extends org.pandcorps.game.actor.Projectile implements S
 		super.init(guy, emitter, mirror);
 		this.shooter = (Shooter) guy;
 		//this.emitter = emitter;
+	}
+	
+	@Override
+	public final void onCollision(final Shooter collider, final CollisionEvent event) {
+		if (collider == shooter) {
+			return;
+		} else if (Coltil.contains(victims, collider)) {
+			return;
+		}
+		if (victims == null) {
+			victims = new IdentityHashSet<Shooter>();
+		}
+		victims.add(collider);
+		if (victims.size() >= weapon.getPierce()) {
+			die();
+		}
+		collider.add(new Burst(ShootGame.blood), Mathtil.randf(-4, 4), Mathtil.randf(2, 10), 1f);
 	}
     
     @Override

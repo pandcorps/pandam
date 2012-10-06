@@ -22,56 +22,10 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.shoot;
 
-import org.pandcorps.game.actor.*;
-
-public abstract class ShooterController extends Guy2Controller {
-    protected Shooter shooter = null;
-    
-    protected ShooterController() {
-    }
-    
-    protected void setShooter(final Shooter shooter) {
-    	setGuy(shooter);
-        this.shooter = shooter;
-    }
-    
-    /*package*/ final void attack() {
-		shooter.attack();
-	}
-    
-    /*package*/ final void attacking() {
-		shooter.attacking();
-	}
-    
-    /*package*/ final void interact() {
-    	shooter.interact();
-    }
-    
-	/*package*/ final void weapon1() {
-		shooter.weapon1();
-	}
-	
-	/*package*/ final void weapon2() {
-		shooter.weapon2();
-	}
-	
-	/*package*/ final void weapon3() {
-		shooter.weapon3();
-	}
-	
-	/*package*/ final void weapon4() {
-		shooter.weapon4();
-	}
-	
-	/*package*/ final void weapon5() {
-		shooter.weapon5();
-	}
-	
-	/*package*/ final void weapon6() {
-		shooter.weapon6();
-	}
-	
-	/*package*/ boolean onInteract(final Shooter initiator) {
-		return false;
+public class Merchant extends ShooterController {
+	@Override
+	public final boolean onInteract(final Shooter initiator) {
+		guy.add(new org.pandcorps.fight.Info(ShootGame.font, "Hello, friend.", 1), 0, 0, 0);
+		return true;
 	}
 }

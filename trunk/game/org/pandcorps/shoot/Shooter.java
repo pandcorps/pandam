@@ -2,8 +2,6 @@ package org.pandcorps.shoot;
 
 import java.awt.image.BufferedImage;
 
-import org.pandcorps.core.*;
-import org.pandcorps.core.col.IdentityHashSet;
 import org.pandcorps.game.actor.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
@@ -63,22 +61,16 @@ public class Shooter extends Guy2 implements CollisionListener {
 	@Override
     public void onCollision(final CollisionEvent event) {
 		final Collidable c = event.getCollider();
-		if (c instanceof Projectile) {
-			final Projectile p = (Projectile) c;
-			if (this == p.shooter) {
-				return;
-			} else if (Coltil.contains(p.victims, this)) {
-				return;
-			}
-			if (p.victims == null) {
-				p.victims = new IdentityHashSet<Shooter>();
-			}
-			p.victims.add(this);
-			if (p.victims.size() >= p.weapon.getPierce()) {
-				p.die();
-			}
-			add(new Burst(ShootGame.blood), Mathtil.randf(-4, 4), Mathtil.randf(2, 10), 1f);
+		if (c instanceof Collidee) {
+			((Collidee) c).onCollision(this, event);
 		}
+	}
+	
+	protected boolean onInteract(final Shooter initiator) {
+		if (controller != null) {
+			return ((ShooterController) controller).onInteract(initiator);
+		}
+		return false;
 	}
 	
 	protected void attack() {
@@ -93,6 +85,10 @@ public class Shooter extends Guy2 implements CollisionListener {
 			return;
 		}
 		weapon.attack(this, weapon.def.attackingEmitters);
+	}
+	
+	protected void interact() {
+		add(new Interactor(this), 4, 0, 0);
 	}
 	
 	protected void weapon1() {
