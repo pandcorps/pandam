@@ -31,11 +31,11 @@ public class Info extends Pantext implements StepListener {
 	private final int vel;
 	private byte age = 0;
 	
-	protected Info(final Font font, final int i, final int vel) {
+	public Info(final Font font, final int i, final int vel) {
 		this(font, Integer.toString(i), vel);
 	}
 	
-	protected Info(final Font font, final String text, final int vel) {
+	public Info(final Font font, final String text, final int vel) {
         super(Pantil.vmid(), font, text);
         this.vel = vel;
     }
