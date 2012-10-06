@@ -66,7 +66,11 @@ public abstract class Guy2 extends Panctor implements StepListener {
 	
 	@Override
     public void onStep(final StepEvent event) {
-		controller.step();
+		if (controller == null) {
+			mode = MODE_STILL;
+		} else {
+			controller.step();
+		}
         final Panple pos = getPosition();
         switch(mode) {
             case MODE_WALK :
