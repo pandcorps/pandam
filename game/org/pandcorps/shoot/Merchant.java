@@ -22,10 +22,44 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.shoot;
 
+import java.util.ArrayList;
+
+import org.pandcorps.pandax.text.*;
+import org.pandcorps.shoot.Weapon.WeaponDefinition;
+
 public class Merchant extends ShooterController {
 	@Override
 	public final boolean onInteract(final Shooter initiator) {
-		guy.add(new org.pandcorps.fight.Info(ShootGame.font, "Hello, friend.", 1), 0, 0, 0);
+		final ShooterController controller = (ShooterController) initiator.getController();
+		//controller.setShooter(null);
+		shooter.getLayer().setActive(false); //TODO Move this and reactivate into TextItem?
+		upgrade(initiator, controller, initiator.weapon); //TODO list of weapons
 		return true;
+	}
+	
+	private final static String UP_SPRAY = "Upgrade Spray";
+	
+	private void upgrade(final Shooter initiator, final ShooterController controller, final Weapon weapon) {
+		final ArrayList<String> opts = new ArrayList<String>();
+		final WeaponDefinition def = weapon.def;
+		if (def.minSpray < def.maxSpray) {
+			//TODO display if applicable, grey out if maxed
+			//TODO Class to standardize upgrades
+			opts.add(UP_SPRAY);
+		}
+		final class WeaponListener implements RadioSubmitListener {
+			@Override
+			public void onSubmit(final RadioSubmitEvent event) {
+				final CharSequence elem = event.getElement();
+				if (UP_SPRAY.equals(elem)) {
+					weapon.upgradeSpray();
+				}
+				//controller.setShooter(initiator);
+				shooter.getLayer().setActive(true);
+			}
+		}
+		final RadioGroup rg = new RadioGroup(ShootGame.font, opts, new WeaponListener());
+		rg.setTitle("Upgrade " + def.name);
+		rg.init();
 	}
 }
