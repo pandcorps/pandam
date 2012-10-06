@@ -20,12 +20,15 @@ public class Weapon extends Panctor {
 		protected final Emitter[] attackingEmitters;
 		private final int delay;
 		private final int minPierce;
+		private final int maxPierce;
 		private final int minSpray;
+		private final int maxSpray;
 		
 		public WeaponDefinition(final Panmage image, final Panimation flashAnm,
 				final Panimation casingAnm, final Panimation smokeAnm, final Panimation attackAnm,
 				final Emitter[] attackEmitters, final Emitter[] attackingEmitters,
-				final int delay, final int minPierce, final int minSpray) {
+				final int delay, final int minPierce, final int maxPierce,
+				final int minSpray, final int maxSpray) {
 			this.image = image;
 			this.flashAnm = flashAnm;
 			this.casingAnm = casingAnm;
@@ -36,11 +39,15 @@ public class Weapon extends Panctor {
 			// step occurs in same cycle after setting delay, 1 acts like 0 if we don't add 1
 			this.delay = delay <= 0 ? 0 : delay + 1;
 			this.minPierce = minPierce;
+			this.maxPierce = maxPierce;
 			this.minSpray = minSpray;
+			this.maxSpray = maxSpray;
 		}
 	}
 	
 	protected final WeaponDefinition def;
+	private int pierce;
+	private int spray;
 	private boolean attacking = false;
 	private int timer = 0;
 	private int smoke = 0;
@@ -48,6 +55,8 @@ public class Weapon extends Panctor {
 	protected Weapon(final WeaponDefinition def) {
 		super(Pantil.vmid());
 		this.def = def;
+		pierce = def.minPierce;
+		spray = def.minSpray;
 		setView(def.image);
 	}
 	
@@ -122,11 +131,11 @@ public class Weapon extends Panctor {
 	}
 	
 	public int getPierce() {
-		return def.minPierce;
+		return pierce;
 	}
 	
 	public int getSpray() {
-	    return def.minSpray;
+	    return spray;
 	}
 	
 	private final static class Casing extends Pandy implements AnimationEndListener {
