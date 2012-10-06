@@ -36,8 +36,19 @@ public class Guy2Controller {
     }
     
     protected void setGuy(final Guy2 guy) {
+    	if (this.guy == guy) {
+    		return;
+    	}
+    	if (this.guy != null) {
+    		this.guy.controller = null;
+    	}
         this.guy = guy;
-        guy.controller = this;
+        if (guy != null) {
+        	if (guy.controller != null) {
+        		guy.controller.guy = null;
+        	}
+        	guy.controller = this;
+        }
     }
     
 	protected final void walkDown() {
