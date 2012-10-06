@@ -91,10 +91,11 @@ public final class Player extends FighterController {
                     if (actor == fighter) {
                         ready = true;
                     } else if (ready && actor.getClass() == Fighter.class) {
-                        final Fighter other = (Fighter) actor;
+                        final Fighter tfighter = fighter, other = (Fighter) actor;
                         final FighterController oc = other.getController();
-                        fighter.getController().setFighter(other);
-                        oc.setFighter(fighter);
+                        setFighter(other);
+                        oc.setFighter(tfighter);
+                        return;
                     }
                 }
             }
