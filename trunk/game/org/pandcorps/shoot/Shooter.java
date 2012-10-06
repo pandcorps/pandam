@@ -36,7 +36,7 @@ public class Shooter extends Guy2 implements CollisionListener {
 	}
 	
 	/*package*/ final ShooterDefinition def;
-	private Weapon weapon = null;
+	/*package*/ Weapon weapon = null;
 	
 	protected Shooter(final String id, final Panroom room, final ShooterDefinition def) {
 		super(id, room, ShootGame.type);

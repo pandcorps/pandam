@@ -30,7 +30,7 @@ public abstract class ShooterController extends Guy2Controller {
     protected ShooterController() {
     }
     
-    protected void setShooter(final Shooter shooter) {
+    public void setShooter(final Shooter shooter) {
     	setGuy(shooter);
         this.shooter = shooter;
     }

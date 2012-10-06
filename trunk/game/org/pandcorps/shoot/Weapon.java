@@ -11,6 +11,7 @@ import org.pandcorps.pandax.Pandy;
 
 public class Weapon extends Panctor {
 	public final static class WeaponDefinition {
+		/*package*/ final String name;
 		private final Panmage image;
 		private final Panimation flashAnm;
 		private final Panimation casingAnm;
@@ -19,16 +20,17 @@ public class Weapon extends Panctor {
 		protected final Emitter[] attackEmitters;
 		protected final Emitter[] attackingEmitters;
 		private final int delay;
-		private final int minPierce;
-		private final int maxPierce;
-		private final int minSpray;
-		private final int maxSpray;
+		/*package*/ final int minPierce;
+		/*package*/ final int maxPierce;
+		/*package*/ final int minSpray;
+		/*package*/ final int maxSpray;
 		
-		public WeaponDefinition(final Panmage image, final Panimation flashAnm,
+		public WeaponDefinition(final String name, final Panmage image, final Panimation flashAnm,
 				final Panimation casingAnm, final Panimation smokeAnm, final Panimation attackAnm,
 				final Emitter[] attackEmitters, final Emitter[] attackingEmitters,
 				final int delay, final int minPierce, final int maxPierce,
 				final int minSpray, final int maxSpray) {
+			this.name = name;
 			this.image = image;
 			this.flashAnm = flashAnm;
 			this.casingAnm = casingAnm;
@@ -136,6 +138,18 @@ public class Weapon extends Panctor {
 	
 	public int getSpray() {
 	    return spray;
+	}
+	
+	public boolean canUpgradeSpray() {
+		return spray < def.maxSpray;
+	}
+	
+	public boolean upgradeSpray() {
+		if (!canUpgradeSpray()) {
+			return false;
+		}
+		this.spray++;
+		return true;
 	}
 	
 	private final static class Casing extends Pandy implements AnimationEndListener {

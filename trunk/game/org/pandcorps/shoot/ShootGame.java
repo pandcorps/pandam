@@ -186,7 +186,7 @@ public class ShootGame extends Guy2Game {
 			final Panframe frm2 = engine.createFrame(frmName + ".2", img2, 3);
 			attack = engine.createAnimation("anm.wpn." + name, frm1, frm2);
 		}
-		weaponDefs[wpnIdx] = new WeaponDefinition(img, flash, casing, smoke, attack, attackEmitters, attackingEmitters, delay, minPierce, maxPierce, minSpray, maxSpray);
+		weaponDefs[wpnIdx] = new WeaponDefinition(name, img, flash, casing, smoke, attack, attackEmitters, attackingEmitters, delay, minPierce, maxPierce, minSpray, maxSpray);
 	}
 	
 	protected final static BufferedImage[] loadStrip(final String loc) {
