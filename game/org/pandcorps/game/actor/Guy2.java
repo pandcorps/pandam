@@ -167,9 +167,10 @@ public abstract class Guy2 extends Panctor implements StepListener {
     	return controller;
     }
     
-    protected final void add(final Panctor actor, final float xo, final float yo, final float zo) {
+    public final void add(final Panctor actor, final float xo, final float yo, final float zo) {
         final Panple pos = getPosition();
-        actor.getPosition().set(pos.getX() + xo, pos.getY() + yo, pos.getZ() + zo);
+        final int mult = isMirror() ? -1 : 1;
+        actor.getPosition().set(pos.getX() + (mult * xo), pos.getY() + yo, pos.getZ() + zo);
         Pangame.getGame().getCurrentRoom().addActor(actor);
     }
     
