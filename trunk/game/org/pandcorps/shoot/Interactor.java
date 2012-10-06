@@ -25,9 +25,10 @@ package org.pandcorps.shoot;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 
-public class Interactor extends Panctor implements Collidee {
+public class Interactor extends Panctor implements StepListener, Collidee {
 	private final Shooter initiator;
 	private boolean finished = false;
+	private byte timer = (byte) 2;
 	
 	public Interactor(final Shooter initiator) {
 		this.initiator = initiator;
@@ -37,6 +38,14 @@ public class Interactor extends Panctor implements Collidee {
 	
 	public final Shooter getInitiator() {
 		return initiator;
+	}
+	
+	@Override
+	public final void onStep(final StepEvent event) {
+		timer--;
+		if (timer <= 0) {
+			destroy();
+		}
 	}
 	
 	@Override
