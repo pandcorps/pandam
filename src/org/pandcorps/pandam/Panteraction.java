@@ -269,6 +269,15 @@ public abstract class Panteraction {
 		return null;
 	}
 	
+	/*package*/ final Panctor getActor(final ActionEndListener listener) {
+        for (final Entry<Panctor, ActionGroup> entry : actors.entrySet()) {
+            if (Coltil.contains(entry.getValue().getEndListeners(), listener)) {
+                return entry.getKey();
+            }
+        }
+        return null;
+    }
+	
 	/*package*/ final void unregister(final Panctor actor) {
 		final ActionGroup g = actors.remove(actor);
 		if (g != null) {

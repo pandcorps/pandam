@@ -51,6 +51,10 @@ public class ActionGroup {
         endListeners = Coltil.add(endListeners, listener);
     }
     
+    public List<ActionEndListener> getEndListeners() {
+        return Coltil.unmodifiableList(endListeners);
+    }
+    
     public void register(final long duration, final TimerListener listener) {
         Pangine.getEngine().addTimer(null, duration, listener);
         add(listener);

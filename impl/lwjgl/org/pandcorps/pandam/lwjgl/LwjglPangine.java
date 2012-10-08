@@ -253,6 +253,9 @@ public final class LwjglPangine extends Pangine {
 				else {
 					for (final ActionEndListener endListener : Coltil.unnull(interaction.getEndListeners(key))) {
 						//endListener.onActionEnd(ActionEndEvent.INSTANCE);
+					    if (!isActive(getActor(endListener))) {
+                            continue;
+                        }
 					    endListener.onActionEnd(ActionEndEvent.getEvent(key));
 					}
 					/*

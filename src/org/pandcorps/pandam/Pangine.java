@@ -278,13 +278,17 @@ public abstract class Pangine {
 
 	public abstract Panteraction getInteraction();
 	
-	protected Panctor getActor(final ActionStartListener listener) {
-		return getInteraction().getActor(listener);
-	}
-	
 	protected Panctor getActor(final ActionListener listener) {
 		return getInteraction().getActor(listener);
 	}
+	
+	protected Panctor getActor(final ActionStartListener listener) {
+        return getInteraction().getActor(listener);
+    }
+	
+	protected Panctor getActor(final ActionEndListener listener) {
+        return getInteraction().getActor(listener);
+    }
 	
 	public abstract int getDesktopWidth();
 	
