@@ -10,6 +10,16 @@ import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandax.Pandy;
 
 public class Weapon extends Panctor {
+    public final static class WeaponDefinitionAttribute {
+        public final int min;
+        public final int max;
+        
+        public WeaponDefinitionAttribute(final int min, final int max) {
+            this.min = min;
+            this.max = max;
+        }
+    }
+    
 	public final static class WeaponDefinition {
 		/*package*/ final String name;
 		private final Panmage image;
@@ -20,10 +30,8 @@ public class Weapon extends Panctor {
 		protected final Emitter[] attackEmitters;
 		protected final Emitter[] attackingEmitters;
 		private final int delay;
-		/*package*/ final int minPierce;
-		/*package*/ final int maxPierce;
-		/*package*/ final int minSpray;
-		/*package*/ final int maxSpray;
+		/*package*/ final WeaponDefinitionAttribute pierce;
+		/*package*/ final WeaponDefinitionAttribute spray;
 		
 		public WeaponDefinition(final String name, final Panmage image, final Panimation flashAnm,
 				final Panimation casingAnm, final Panimation smokeAnm, final Panimation attackAnm,
@@ -40,11 +48,15 @@ public class Weapon extends Panctor {
 			this.attackingEmitters = attackingEmitters;
 			// step occurs in same cycle after setting delay, 1 acts like 0 if we don't add 1
 			this.delay = delay <= 0 ? 0 : delay + 1;
-			this.minPierce = minPierce;
-			this.maxPierce = maxPierce;
-			this.minSpray = minSpray;
-			this.maxSpray = maxSpray;
+			this.pierce = new WeaponDefinitionAttribute(minPierce, maxPierce);
+			this.spray = new WeaponDefinitionAttribute(minSpray, maxSpray);
 		}
+	}
+	
+	public final static class WeaponAttribute {
+	    public final WeaponDefinitionAttribute def;
+	    
+	    private int val;
 	}
 	
 	protected final WeaponDefinition def;
@@ -57,8 +69,8 @@ public class Weapon extends Panctor {
 	protected Weapon(final WeaponDefinition def) {
 		super(Pantil.vmid());
 		this.def = def;
-		pierce = def.minPierce;
-		spray = def.minSpray;
+		pierce = def.pierce.min;
+		spray = def.spray.min;
 		setView(def.image);
 	}
 	
