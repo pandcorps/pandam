@@ -163,6 +163,11 @@ public final class LwjglPangine extends Pangine {
 
 	private boolean running = true;
 	
+	private final static boolean isActive(final Panctor actor) {
+	    // Listeners that aren't bound to an actor are always active
+	    return actor == null ? true : actor.isActive();
+	}
+	
 	//private final void play() {
 	@Override
 	protected final void start() throws Exception {

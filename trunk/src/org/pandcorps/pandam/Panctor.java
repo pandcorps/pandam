@@ -327,6 +327,11 @@ public class Panctor extends BasePantity implements SpecPanctor {
 	public final boolean isDestroyed() {
 		return destroyed;
 	}
+	
+	public final boolean isActive() {
+        final Panlayer layer = getLayer();
+        return layer != null && layer.isActive();
+    }
 
 	public final <P extends Panctor> P transform(final Class<P> newClass) {
 		final Pangine engine = Pangine.getEngine();

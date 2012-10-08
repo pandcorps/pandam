@@ -286,16 +286,6 @@ public abstract class Pangine {
 		return getInteraction().getActor(listener);
 	}
 	
-	public boolean isActive(final Panctor actor) {
-		if (actor != null) {
-			final Panlayer layer = actor.getLayer();
-			if (layer != null && layer.isActive()) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
 	public abstract int getDesktopWidth();
 	
 	public abstract int getDesktopHeight();
