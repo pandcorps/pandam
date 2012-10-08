@@ -10,11 +10,11 @@ import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandax.Pandy;
 
 public class Weapon extends Panctor {
-    public final static class WeaponDefinitionAttribute {
+    public final static class WeaponParameter {
         public final int min;
         public final int max;
         
-        public WeaponDefinitionAttribute(final int min, final int max) {
+        public WeaponParameter(final int min, final int max) {
             this.min = min;
             this.max = max;
         }
@@ -30,8 +30,8 @@ public class Weapon extends Panctor {
 		protected final Emitter[] attackEmitters;
 		protected final Emitter[] attackingEmitters;
 		private final int delay;
-		/*package*/ final WeaponDefinitionAttribute pierce;
-		/*package*/ final WeaponDefinitionAttribute spray;
+		/*package*/ final WeaponParameter pierce;
+		/*package*/ final WeaponParameter spray;
 		
 		public WeaponDefinition(final String name, final Panmage image, final Panimation flashAnm,
 				final Panimation casingAnm, final Panimation smokeAnm, final Panimation attackAnm,
@@ -48,13 +48,13 @@ public class Weapon extends Panctor {
 			this.attackingEmitters = attackingEmitters;
 			// step occurs in same cycle after setting delay, 1 acts like 0 if we don't add 1
 			this.delay = delay <= 0 ? 0 : delay + 1;
-			this.pierce = new WeaponDefinitionAttribute(minPierce, maxPierce);
-			this.spray = new WeaponDefinitionAttribute(minSpray, maxSpray);
+			this.pierce = new WeaponParameter(minPierce, maxPierce);
+			this.spray = new WeaponParameter(minSpray, maxSpray);
 		}
 	}
 	
-	public final static class WeaponAttribute {
-	    public final WeaponDefinitionAttribute def;
+	public final static class WeaponArgument {
+	    public final WeaponParameter def;
 	    
 	    private int val;
 	}
