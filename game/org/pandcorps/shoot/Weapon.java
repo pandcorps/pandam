@@ -54,14 +54,31 @@ public class Weapon extends Panctor {
 	}
 	
 	public final static class WeaponArgument {
-	    public final WeaponParameter def;
+	    public final WeaponParameter parm;
 	    
 	    private int val;
+	    
+	    public WeaponArgument(final WeaponParameter parm) {
+	        this.parm = parm;
+	        val = parm.min;
+	    }
+	    
+	    public boolean canUpgrade() {
+	        return val < parm.max;
+	    }
+	    
+	    public boolean upgrade() {
+	        if (!canUpgrade()) {
+	            return false;
+	        }
+	        this.val++;
+	        return true;
+	    }
 	}
 	
 	protected final WeaponDefinition def;
-	private int pierce;
-	private int spray;
+	private WeaponArgument pierce;
+	private WeaponArgument spray;
 	private boolean attacking = false;
 	private int timer = 0;
 	private int smoke = 0;
@@ -69,8 +86,8 @@ public class Weapon extends Panctor {
 	protected Weapon(final WeaponDefinition def) {
 		super(Pantil.vmid());
 		this.def = def;
-		pierce = def.pierce.min;
-		spray = def.spray.min;
+		pierce = new WeaponArgument(def.pierce);
+		spray = new WeaponArgument(def.spray);
 		setView(def.image);
 	}
 	
@@ -145,23 +162,11 @@ public class Weapon extends Panctor {
 	}
 	
 	public int getPierce() {
-		return pierce;
+		return pierce.val;
 	}
 	
 	public int getSpray() {
-	    return spray;
-	}
-	
-	public boolean canUpgradeSpray() {
-		return spray < def.maxSpray;
-	}
-	
-	public boolean upgradeSpray() {
-		if (!canUpgradeSpray()) {
-			return false;
-		}
-		this.spray++;
-		return true;
+	    return spray.val;
 	}
 	
 	private final static class Casing extends Pandy implements AnimationEndListener {
