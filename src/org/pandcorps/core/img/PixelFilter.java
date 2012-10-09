@@ -24,14 +24,16 @@ package org.pandcorps.core.img;
 
 import java.awt.image.ColorModel;
 
+import org.pandcorps.core.Imtil;
+
 public abstract class PixelFilter {
-	protected final ColorModel cm = ColorModel.getRGBdefault();
+	protected final static ColorModel cm = Imtil.getColorModel();
 	
-	protected final int getRgba(final int r, final int g, final int b, final int a) {
+	public final static int getRgba(final int r, final int g, final int b, final int a) {
 		return cm.getDataElement(new int[] {r, g, b, a}, 0);
 	}
 	
-	protected final int getRgba(final Pancolor c) {
+	public final static int getRgba(final Pancolor c) {
 		return getRgba(c.getR(), c.getG(), c.getB(), c.getA());
 	}
 	
