@@ -11,12 +11,18 @@ import org.pandcorps.pandax.Pandy;
 
 public class Weapon extends Panctor {
     public final static class WeaponParameter {
+        public final String name;
         public final int min;
         public final int max;
         
-        public WeaponParameter(final int min, final int max) {
+        public WeaponParameter(final String name, final int min, final int max) {
+            this.name = name;
             this.min = min;
             this.max = max;
+        }
+        
+        public final boolean isUpgradeApplicable() {
+            return min < max;
         }
     }
     
@@ -48,8 +54,8 @@ public class Weapon extends Panctor {
 			this.attackingEmitters = attackingEmitters;
 			// step occurs in same cycle after setting delay, 1 acts like 0 if we don't add 1
 			this.delay = delay <= 0 ? 0 : delay + 1;
-			this.pierce = new WeaponParameter(minPierce, maxPierce);
-			this.spray = new WeaponParameter(minSpray, maxSpray);
+			this.pierce = new WeaponParameter("Pierce", minPierce, maxPierce);
+			this.spray = new WeaponParameter("Spray", minSpray, maxSpray);
 		}
 	}
 	
@@ -63,16 +69,20 @@ public class Weapon extends Panctor {
 	        val = parm.min;
 	    }
 	    
-	    public boolean canUpgrade() {
+	    public boolean isUpgradePossible() {
 	        return val < parm.max;
 	    }
 	    
 	    public boolean upgrade() {
-	        if (!canUpgrade()) {
+	        if (!isUpgradePossible()) {
 	            return false;
 	        }
 	        this.val++;
 	        return true;
+	    }
+	    
+	    public final int getValue() {
+	        return val;
 	    }
 	}
 	
@@ -119,7 +129,7 @@ public class Weapon extends Panctor {
 		timer = def.delay;
 		final boolean mirror = isMirror();
 		final HashSet<Panple> projPositions = new HashSet<Panple>();
-		final int spray = getSpray();
+		final int spray = this.spray.val;
 		for (int i = 0; i < spray; i++) {
     		for (final Emitter em : emitters) {
     			final Projectile p = (Projectile) em.emit(shooter, mirror);
@@ -161,12 +171,12 @@ public class Weapon extends Panctor {
 		}
 	}
 	
-	public int getPierce() {
-		return pierce.val;
+	public WeaponArgument getPierce() {
+		return pierce;
 	}
 	
-	public int getSpray() {
-	    return spray.val;
+	public WeaponArgument getSpray() {
+	    return spray;
 	}
 	
 	private final static class Casing extends Pandy implements AnimationEndListener {

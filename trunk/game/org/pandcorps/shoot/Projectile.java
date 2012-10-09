@@ -30,10 +30,9 @@ import org.pandcorps.game.actor.*;
 import org.pandcorps.game.actor.Emitter;
 import org.pandcorps.pandam.Panple;
 import org.pandcorps.pandam.event.*;
-import org.pandcorps.pandam.event.boundary.*;
 import org.pandcorps.pandam.impl.FinPanple;
 
-public class Projectile extends org.pandcorps.game.actor.Projectile implements StepListener, AllOobListener, Collidee /*Or CollisionListener if we want two Projectiles to collide with each other*/ {
+public class Projectile extends org.pandcorps.game.actor.Projectile implements Collidee /*Or CollisionListener if we want two Projectiles to collide with each other*/ {
     
     /*package*/ Shooter shooter = null;
     ///*package*/ Emitter emitter = null;
@@ -58,7 +57,7 @@ public class Projectile extends org.pandcorps.game.actor.Projectile implements S
 			victims = new IdentityHashSet<Shooter>();
 		}
 		victims.add(collider);
-		if (victims.size() >= weapon.getPierce()) {
+		if (victims.size() >= weapon.getPierce().getValue()) {
 			die();
 		}
 		collider.add(new Burst(ShootGame.blood), Mathtil.randf(-4, 4), Mathtil.randf(2, 10), 1f);
