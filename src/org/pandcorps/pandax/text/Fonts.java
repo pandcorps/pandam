@@ -82,7 +82,11 @@ public final class Fonts {
     }
     
     public final static Font getOutline(final FontRequest req, final Pancolor base, final Pancolor background, final Pancolor cursor, final Pancolor outline) {
-        return getBasic("Outline", req, base, background, cursor, outline);
+        return getOutline(req, base, background, cursor, outline, null);
+    }
+    
+    public final static Font getOutline(final FontRequest req, final Pancolor base, final Pancolor background, final Pancolor cursor, final Pancolor outline, final Pancolor transparent) {
+        return getBasic("Outline", req, base, background, cursor, outline, transparent);
     }
     
     public final static Font getSimple(final FontRequest req, final Pancolor color) {
@@ -90,31 +94,40 @@ public final class Fonts {
     }
     
     public final static Font getSimple(final FontRequest req, final Pancolor base, final Pancolor background, final Pancolor cursor) {
-        return getBasic("Simple", req, base, background, cursor, COLOR_OUTLINE);
+        return getSimple(req, base, background, cursor, null);
     }
     
-    private final static Font getBasic(final String style, final FontRequest req, final Pancolor base, final Pancolor background, final Pancolor cursor, final Pancolor outline) {
+    public final static Font getSimple(final FontRequest req, final Pancolor base, final Pancolor background, final Pancolor cursor, final Pancolor transparent) {
+        return getBasic("Simple", req, base, background, cursor, COLOR_OUTLINE, transparent);
+    }
+    
+    private final static Font getBasic(final String style, final FontRequest req, final Pancolor base, final Pancolor background, final Pancolor cursor, final Pancolor outline, final Pancolor transparent) {
         final HashMap<Pancolor, Pancolor> map = new HashMap<Pancolor, Pancolor>();
         map.put(COLOR_BASE, base);
         map.put(COLOR_BACKGROUND, background);
         map.put(COLOR_CURSOR, cursor);
         map.put(COLOR_OUTLINE, outline);
         final ReplacePixelFilter filter = new ReplacePixelFilter(map);
-        return get(style, req, base.toString() + '.' + background + '.' + cursor, filter);
+        return get(style, req, base.toString() + '.' + background + '.' + cursor, filter, transparent);
     }
     
-    private final static Font get(final String style, FontRequest req, final String filterDesc, final PixelFilter filter) {
+    private final static Font get(final String style, FontRequest req, final String filterDesc, final PixelFilter filter, final Pancolor transparent) {
         if (req == null) {
             req = DEFAULT_REQUEST;
         }
         final int size = req.size;
         final String name = style + size;
         final FontType type = req.type;
-        final String id = "org.pandcorps.pandax.text.Fonts." + name + '.' + type + '.' + filterDesc;
+        final String id = "org.pandcorps.pandax.text.Fonts." + name + '.' + type + '.' + filterDesc + '.' + transparent;
         final Pangine engine = Pangine.getEngine();
         Panmage image = engine.getImage(id);
         if (image == null) {
             BufferedImage img = Imtil.load("org/pandcorps/res/img/Font" + name + ".png");
+            final ArrayList<PixelFilter> filters = new ArrayList<PixelFilter>(2);
+            filters.add(filter);
+            if (transparent != null) {
+                filters.add(new ReplacePixelFilter(img.getRGB(0, 0), PixelFilter.getRgba(transparent)));
+            }
             if (type == FontType.Number) {
                 //Imtil.save(img, "c:\\raw.png");
                 final int newSize = size * NumberFont.NUM;
@@ -140,7 +153,7 @@ public final class Fonts {
                 //Imtil.save(out, "c:\\up.png");
                 img = out;
             }
-            image = engine.createImage(id, Imtil.filter(img, filter));
+            image = engine.createImage(id, Imtil.filter(img, filters));
         }
         if (type == FontType.Number) {
             return new NumberFont(image);
