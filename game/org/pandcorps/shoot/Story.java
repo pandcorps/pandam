@@ -258,6 +258,7 @@ public class Story {
 			setView(anmTrp);
 		}
 		
+		@Override
 		public void onStep(final StepEvent event) {
 			if (Pangine.getEngine().isOn(1)) {
 				return;

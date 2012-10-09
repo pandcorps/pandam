@@ -24,15 +24,13 @@ package org.pandcorps.fight;
 
 import org.pandcorps.core.*;
 import org.pandcorps.game.actor.Guy2;
-import org.pandcorps.pandam.event.*;
-import org.pandcorps.pandam.event.boundary.*;
 
 /*
  * Normal attack - invisible, linked, no velocity, time = 1
  * Stretched limb attack - visible, linked, no velocity, time? visible for multiple frames, painful for only first?
  * Fireball - visible, unlinked, velocity, time = -1
  */
-public class Projectile extends org.pandcorps.game.actor.Projectile implements StepListener, AllOobListener, Collidable /*Or CollisionListener if we want two Projectiles to collide with each other*/ {
+public class Projectile extends org.pandcorps.game.actor.Projectile {
     /*package*/ final static byte TYPE_QUICK = 0; // Do we need TYPE_STRONG?  If Strong is treated as quick, does that allow QQSQS?
     /*package*/ final static byte TYPE_SPEC = 1; // So far this is just for knowing when to count quicks and when to clear count, so STRONG/SPEC would be the same
     
