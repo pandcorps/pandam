@@ -60,6 +60,9 @@ public class Merchant extends ShooterController {
 			}
 		}
 		final RadioGroup rg = new RadioGroup(ShootGame.font, opts, new WeaponListener());
+		final Pantext label = rg.getLabel();
+		label.setBorderStyle(BorderStyle.Simple);
+		label.setBackground(Pantext.CHAR_SPACE);
 		rg.setTitle("Upgrade " + def.name);
 		rg.init();
 	}

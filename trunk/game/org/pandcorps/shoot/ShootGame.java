@@ -53,7 +53,7 @@ public class ShootGame extends Guy2Game {
         final Panframe bld2Frm = engine.createFrame("frm.blood.2", bld2Img, 2);
         blood = engine.createAnimation("anm.blood", bld1Frm, bld2Frm);
         interact = engine.createEmptyImage("img.interact", new FinPanple(1, 1, 1), new FinPanple(0, 0, 0), new FinPanple(2, 2, 2));
-        font = Fonts.getOutline(new FontRequest(8), Pancolor.BLUE);
+        font = Fonts.getSimple(new FontRequest(8), Pancolor.BLUE, Pancolor.CYAN, Pancolor.CYAN, Pancolor.BLACK);
 		loadCharacters();
 		loadWeapons();
 	}
