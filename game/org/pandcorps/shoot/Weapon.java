@@ -96,10 +96,10 @@ public class Weapon extends Panctor {
 	}
 	
 	protected final WeaponDefinition def;
-	private WeaponArgument power;
-	private WeaponArgument capacity;
-	private WeaponArgument pierce;
-	private WeaponArgument spray;
+	private final WeaponArgument power;
+	private final WeaponArgument capacity;
+	private final WeaponArgument pierce;
+	private final WeaponArgument spray;
 	private boolean attacking = false;
 	private int timer = 0;
 	private int smoke = 0;
@@ -107,6 +107,8 @@ public class Weapon extends Panctor {
 	protected Weapon(final WeaponDefinition def) {
 		super(Pantil.vmid());
 		this.def = def;
+		power = new WeaponArgument(def.power);
+		capacity = new WeaponArgument(def.capacity);
 		pierce = new WeaponArgument(def.pierce);
 		spray = new WeaponArgument(def.spray);
 		setView(def.image);
