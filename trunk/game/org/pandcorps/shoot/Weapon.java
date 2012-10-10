@@ -10,6 +10,8 @@ import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandax.Pandy;
 
 public class Weapon extends Panctor {
+    /*package*/ final static int INF = Integer.MAX_VALUE;
+    
     public final static class WeaponParameter {
         public final String name;
         public final int min;
@@ -35,14 +37,19 @@ public class Weapon extends Panctor {
 		private final Panimation attackAnm;
 		protected final Emitter[] attackEmitters;
 		protected final Emitter[] attackingEmitters;
-		private final int delay;
+		private final int delay; // move into WeaponParameter
+		/*package*/ final WeaponParameter power;
+		/*package*/ final WeaponParameter capacity;
+		//WeaponParameter rate
 		/*package*/ final WeaponParameter pierce;
 		/*package*/ final WeaponParameter spray;
 		
 		public WeaponDefinition(final String name, final Panmage image, final Panimation flashAnm,
 				final Panimation casingAnm, final Panimation smokeAnm, final Panimation attackAnm,
 				final Emitter[] attackEmitters, final Emitter[] attackingEmitters,
-				final int delay, final int minPierce, final int maxPierce,
+				final int delay, final int minPower, final int maxPower,
+				final int minCapacity, final int maxCapacity,
+				final int minPierce, final int maxPierce,
 				final int minSpray, final int maxSpray) {
 			this.name = name;
 			this.image = image;
@@ -54,6 +61,8 @@ public class Weapon extends Panctor {
 			this.attackingEmitters = attackingEmitters;
 			// step occurs in same cycle after setting delay, 1 acts like 0 if we don't add 1
 			this.delay = delay <= 0 ? 0 : delay + 1;
+			this.power = new WeaponParameter("Power", minPower, maxPower);
+			this.capacity = new WeaponParameter("Capacity", minCapacity, maxCapacity);
 			this.pierce = new WeaponParameter("Pierce", minPierce, maxPierce);
 			this.spray = new WeaponParameter("Spray", minSpray, maxSpray);
 		}
@@ -87,6 +96,8 @@ public class Weapon extends Panctor {
 	}
 	
 	protected final WeaponDefinition def;
+	private WeaponArgument power;
+	private WeaponArgument capacity;
 	private WeaponArgument pierce;
 	private WeaponArgument spray;
 	private boolean attacking = false;
@@ -170,6 +181,14 @@ public class Weapon extends Panctor {
 		    }
 		}
 	}
+	
+	public WeaponArgument getPower() {
+        return power;
+    }
+	
+	public WeaponArgument getCapacity() {
+        return capacity;
+    }
 	
 	public WeaponArgument getPierce() {
 		return pierce;
