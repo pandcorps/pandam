@@ -42,18 +42,18 @@ public class Merchant extends ShooterController {
 	private void upgrade(final Shooter initiator, final ShooterController controller, final Weapon weapon) {
 		final ArrayList<String> opts = new ArrayList<String>();
 		final WeaponDefinition def = weapon.def;
-		final WeaponArgument arg = weapon.getSpray();
-		final WeaponParameter parm = arg.parm;
-		if (parm.isUpgradeApplicable()) {
-			//TODO display if applicable, grey out if maxed
-			opts.add(getUpgradeLabel(parm));
-		}
+		add(opts, weapon.getPower());
+		add(opts, weapon.getCapacity());
+		add(opts, weapon.getPierce());
+		add(opts, weapon.getSpray());
 		final class WeaponListener implements RadioSubmitListener {
 			@Override
 			public void onSubmit(final RadioSubmitEvent event) {
 				final CharSequence elem = event.getElement();
-				if (getUpgradeLabel(parm).equals(elem)) {
-					weapon.getSpray().upgrade();
+				for (final WeaponArgument arg : weapon.getArguments()) {
+    				if (getUpgradeLabel(arg.parm).equals(elem)) {
+    					arg.upgrade();
+    				}
 				}
 				//controller.setShooter(initiator);
 				shooter.getLayer().setActive(true);
@@ -65,6 +65,14 @@ public class Merchant extends ShooterController {
 		label.setBackground(Pantext.CHAR_SPACE);
 		rg.setTitle("Upgrade " + def.name);
 		rg.init();
+	}
+	
+	private void add(final ArrayList<String> opts, final WeaponArgument arg) {
+        final WeaponParameter parm = arg.parm;
+        if (parm.isUpgradeApplicable()) {
+            //TODO display if applicable, grey out if maxed
+            opts.add(getUpgradeLabel(parm));
+        }
 	}
 	
 	private final static String getUpgradeLabel(final WeaponParameter parm) {
