@@ -1,7 +1,9 @@
 package org.pandcorps.shoot;
 
 import java.util.HashSet;
+import java.util.List;
 
+import org.pandcorps.core.Coltil;
 import org.pandcorps.core.Mathtil;
 import org.pandcorps.core.Pantil;
 import org.pandcorps.game.actor.Burst;
@@ -100,6 +102,7 @@ public class Weapon extends Panctor {
 	private final WeaponArgument capacity;
 	private final WeaponArgument pierce;
 	private final WeaponArgument spray;
+	private final List<WeaponArgument> args;
 	private boolean attacking = false;
 	private int timer = 0;
 	private int smoke = 0;
@@ -111,6 +114,7 @@ public class Weapon extends Panctor {
 		capacity = new WeaponArgument(def.capacity);
 		pierce = new WeaponArgument(def.pierce);
 		spray = new WeaponArgument(def.spray);
+		args = Coltil.unmodifiableList(Coltil.asList(power, capacity, pierce, spray));
 		setView(def.image);
 	}
 	
@@ -198,6 +202,10 @@ public class Weapon extends Panctor {
 	
 	public WeaponArgument getSpray() {
 	    return spray;
+	}
+	
+	public List<WeaponArgument> getArguments() {
+	    return args;
 	}
 	
 	private final static class Casing extends Pandy implements AnimationEndListener {
