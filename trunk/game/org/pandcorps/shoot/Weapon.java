@@ -1,3 +1,25 @@
+/*
+Copyright (c) 2009-2011, Andrew M. Martin
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
+conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this list of conditions and the following
+   disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following
+   disclaimer in the documentation and/or other materials provided with the distribution.
+ * Neither the name of Pandam nor the names of its contributors may be used to endorse or promote products derived from this
+   software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
+BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+*/
 package org.pandcorps.shoot;
 
 import java.util.HashSet;
@@ -11,7 +33,7 @@ import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandax.Pandy;
 
-public class Weapon extends Panctor {
+public class Weapon extends Panctor implements Upgradeable {
     /*package*/ final static int INF = Integer.MAX_VALUE;
     
     public final static class WeaponParameter {
@@ -70,7 +92,7 @@ public class Weapon extends Panctor {
 		}
 	}
 	
-	public final static class WeaponArgument {
+	public final static class WeaponArgument implements Upgradeable {
 	    public final WeaponParameter parm;
 	    
 	    private int val;
@@ -80,6 +102,17 @@ public class Weapon extends Panctor {
 	        val = parm.min;
 	    }
 	    
+	    @Override
+	    public final String getName() {
+	        return parm.name;
+	    }
+	        
+	    @Override
+	    public final boolean isUpgradeApplicable() {
+	        return parm.isUpgradeApplicable();
+	    }
+	    
+	    @Override
 	    public boolean isUpgradePossible() {
 	        return val < parm.max;
 	    }
@@ -188,6 +221,11 @@ public class Weapon extends Panctor {
 		}
 	}
 	
+	@Override
+    public final String getName() {
+        return def.name;
+    }
+	
 	public WeaponArgument getPower() {
         return power;
     }
@@ -206,6 +244,26 @@ public class Weapon extends Panctor {
 	
 	public List<WeaponArgument> getArguments() {
 	    return args;
+	}
+	
+	@Override
+	public boolean isUpgradeApplicable() {
+        for (final WeaponArgument arg : args) {
+            if (arg.parm.isUpgradeApplicable()) {
+                return true;
+            }
+        }
+        return false;
+    }
+	
+	@Override
+	public boolean isUpgradePossible() {
+	    for (final WeaponArgument arg : args) {
+	        if (arg.isUpgradePossible()) {
+	            return true;
+	        }
+	    }
+	    return false;
 	}
 	
 	private final static class Casing extends Pandy implements AnimationEndListener {
