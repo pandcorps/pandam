@@ -230,7 +230,10 @@ public class ShootGame extends Guy2Game {
 			loadBackground();
 			engine.setBgColor(Pancolor.GREEN);
 			final Shooter shooter = new Shooter("STR.1", room, playerDef);
-			shooter.setWeapon(weaponDefs[1]);
+			for (int i = 0; i < weaponDefs.length; i++) {
+			    shooter.addWeapon(i);
+			}
+			shooter.weapon2();
 			shooter.getPosition().set(64, 64);
 			new Player(shooter).setShooter(shooter);
 			engine.track(shooter);
