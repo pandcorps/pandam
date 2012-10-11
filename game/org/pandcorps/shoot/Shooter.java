@@ -1,12 +1,13 @@
 package org.pandcorps.shoot;
 
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
+import org.pandcorps.core.*;
 import org.pandcorps.game.actor.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.impl.FinPanple;
-import org.pandcorps.shoot.Weapon.WeaponDefinition;
 
 public class Shooter extends Guy2 implements CollisionListener {
 	public final static class ShooterDefinition {
@@ -36,6 +37,7 @@ public class Shooter extends Guy2 implements CollisionListener {
 	}
 	
 	/*package*/ final ShooterDefinition def;
+	/*package*/ ArrayList<Weapon> weapons = null;
 	/*package*/ Weapon weapon = null;
 	
 	protected Shooter(final String id, final Panroom room, final ShooterDefinition def) {
@@ -92,33 +94,59 @@ public class Shooter extends Guy2 implements CollisionListener {
 	}
 	
 	protected void weapon1() {
-		setWeapon(ShootGame.weaponDefs[0]);
+	    weapon(0);
 	}
 	
 	protected void weapon2() {
-		setWeapon(ShootGame.weaponDefs[1]);
+	    weapon(1);
 	}
 	
 	protected void weapon3() {
-		setWeapon(ShootGame.weaponDefs[2]);
+	    weapon(2);
 	}
 	
 	protected void weapon4() {
-		setWeapon(ShootGame.weaponDefs[3]);
+	    weapon(3);
 	}
 	
 	protected void weapon5() {
-		setWeapon(ShootGame.weaponDefs[4]);
+	    weapon(4);
 	}
 	
 	protected void weapon6() {
-		setWeapon(ShootGame.weaponDefs[5]);
+	    weapon(5);
 	}
 	
-	protected void setWeapon(final WeaponDefinition wdef) {
+	private final void weapon(final int i) {
+	    //setWeapon(ShootGame.weaponDefs[i]);
+        setWeapon(Coltil.get(weapons, i));
+	}
+	
+	/*protected void setWeapon(final WeaponDefinition wdef) {
 		Panctor.destroy(weapon);
 		weapon = new Weapon(wdef);
 		Pangame.getGame().getCurrentRoom().addActor(weapon);
+	}*/
+	
+	protected void setWeapon(final Weapon weapon) {
+	    if (weapon == null) {
+	        return;
+	    }
+        if (this.weapon != null) {
+            this.weapon.getLayer().removeActor(this.weapon);
+        }
+        this.weapon = weapon;
+        Pangame.getGame().getCurrentRoom().addActor(weapon);
+    }
+	
+	protected void addWeapon(final int i) {
+	    if (Coltil.get(weapons, i) != null) {
+	        return;
+	    }
+	    if (weapons == null) {
+	        weapons = new ArrayList<Weapon>(ShootGame.weaponDefs.length);
+	    }
+	    Coltil.set(weapons, i, new Weapon(ShootGame.weaponDefs[i]));
 	}
 
 	@Override
