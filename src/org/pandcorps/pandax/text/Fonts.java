@@ -111,7 +111,7 @@ public final class Fonts {
         return get(style, req, base.toString() + '.' + background + '.' + cursor, filter, transparent);
     }
     
-    private final static Font get(final String style, FontRequest req, final String filterDesc, final PixelFilter filter, final Pancolor transparent) {
+    private final static Font get(final String style, FontRequest req, final String filterDesc, ReplacePixelFilter filter, final Pancolor transparent) {
         if (req == null) {
             req = DEFAULT_REQUEST;
         }
@@ -123,10 +123,13 @@ public final class Fonts {
         Panmage image = engine.getImage(id);
         if (image == null) {
             BufferedImage img = Imtil.load("org/pandcorps/res/img/Font" + name + ".png");
-            final ArrayList<PixelFilter> filters = new ArrayList<PixelFilter>(2);
-            filters.add(filter);
             if (transparent != null) {
-                filters.add(new ReplacePixelFilter(img.getRGB(0, 0), PixelFilter.getRgba(transparent)));
+            	final int src = img.getRGB(0, 0), dst = PixelFilter.getRgba(transparent);
+            	if (filter == null) {
+            		filter = new ReplacePixelFilter(src, dst);
+            	} else {
+            		filter.put(src, dst);
+            	}
             }
             if (type == FontType.Number) {
                 //Imtil.save(img, "c:\\raw.png");
@@ -153,7 +156,7 @@ public final class Fonts {
                 //Imtil.save(out, "c:\\up.png");
                 img = out;
             }
-            image = engine.createImage(id, Imtil.filter(img, filters));
+            image = engine.createImage(id, Imtil.filter(img, filter));
         }
         if (type == FontType.Number) {
             return new NumberFont(image);
