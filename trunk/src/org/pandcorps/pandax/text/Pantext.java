@@ -201,7 +201,8 @@ public class Pantext extends Panctor {
 		final int stop = height + firstLine;
         //for (final String line : text) {
 		//int maxLineSize = 0;
-		final int maxLineSize = getNumColumns();
+		//final int maxLineSize = getNumColumns();
+		final int maxLineSize = charactersPerLine > 0 ? charactersPerLine : getNumColumns();
         for (int j = firstLine; j < stop; j++) {
             final CharSequence line = Coltil.get(text, j);
 		    //final int lineSize = line.length();
@@ -239,15 +240,16 @@ public class Pantext extends Panctor {
         }
         
         if (borderStyle != null) {
-            final int lineLim = (charactersPerLine > 0 ? charactersPerLine : maxLineSize) + 1;
+            //final int lineLim = (charactersPerLine > 0 ? charactersPerLine : maxLineSize) + 1;
+        	//final int lineLim = maxLineSize + 1;
             //final int height = stop - firstLine;
-            renderTop(renderer, layer, x, y, z, -1, lineLim, -1, height);
+            renderTop(renderer, layer, x, y, z, -1, maxLineSize, -1, height);
             render(renderer, layer, x, y, z, CHAR_BOTTOM_LEFT, -1, height);
             final char bottom = borderStyle == BorderStyle.Simple ? CHAR_HORIZ : CHAR_BOTTOM;
-            for (int i = 0; i < lineLim; i++) {
+            for (int i = 0; i < maxLineSize; i++) {
                 render(renderer, layer, x, y, z, bottom, i, height);
             }
-            render(renderer, layer, x, y, z, CHAR_BOTTOM_RIGHT, lineLim, height);
+            render(renderer, layer, x, y, z, CHAR_BOTTOM_RIGHT, maxLineSize, height);
         }
         
 		//renderer.render(font, x, y, z, 8, 32, fontSize, fontSize);
@@ -292,8 +294,7 @@ public class Pantext extends Panctor {
             final char c = Chartil.charAt(line, i);
             if (c > 255) {
                 continue;
-            }
-            if (c == CHAR_NULL || c == CHAR_SPACE) {
+            } else if (c == CHAR_NULL || c == CHAR_SPACE) {
                 continue;
             }
             //render(renderer, layer, x, y, z, c, i, j);
