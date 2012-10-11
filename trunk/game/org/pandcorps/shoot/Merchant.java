@@ -65,6 +65,12 @@ public class Merchant extends ShooterController {
 		label.setBackground(Pantext.CHAR_SPACE);
 		rg.setTitle("Upgrade " + def.name);
 		rg.init();
+		
+		/*final Message m = new Message(ShootGame.font, "Test");
+		final Pantext labelm = m.getLabel();
+		labelm.setBorderStyle(BorderStyle.Simple);
+		labelm.setBackground(Pantext.CHAR_SPACE);
+		m.init();*/
 	}
 	
 	private void add(final ArrayList<String> opts, final WeaponArgument arg) {
