@@ -195,7 +195,7 @@ public class PandScaler {
                 			final boolean inBg = ine == inc && ine == inf || ine == ing && ine == inh;
                 			if (inBg && !outBg) {
                 				out0 = ind;
-                			} else if (!inBg && !outBg) {
+                			} else if (!inBg && outBg) {
                 				out0 = ine;
                 			} else if (darker(ind, ine)) {
                 				out0 = ind;
@@ -217,7 +217,7 @@ public class PandScaler {
                 			final boolean inBg = ine == ina && ine == ind || ine == ini && ine == inh;
                 			if (inBg && !outBg) {
                 				out1 = inb;
-                			} else if (!inBg && !outBg) {
+                			} else if (!inBg && outBg) {
                 				out1 = ine;
                 			} else if (darker(inb, ine)) {
                 				out1 = inb;
@@ -239,7 +239,7 @@ public class PandScaler {
                 			final boolean inBg = ine == ina && ine == inb || ine == ini && ine == inf;
                 			if (inBg && !outBg) {
                 				out2 = ind;
-                			} else if (!inBg && !outBg) {
+                			} else if (!inBg && outBg) {
                 				out2 = ine;
                 			} else if (darker(ind, ine)) {
                 				out2 = ind;
@@ -261,7 +261,7 @@ public class PandScaler {
                 			final boolean inBg = ine == inc && ine == inb || ine == ing && ine == ind;
                 			if (inBg && !outBg) {
                 				out3 = inh;
-                			} else if (!inBg && !outBg) {
+                			} else if (!inBg && outBg) {
                 				out3 = ine;
                 			} else if (darker(inh, ine)) {
                 				out3 = inh;
@@ -280,10 +280,50 @@ public class PandScaler {
                     out2 = ine;
                     out3 = ine;
                 }
-                out.setRGB(x * 2, y * 2, out0);
-                out.setRGB(x * 2 + 1, y * 2, out1);
-                out.setRGB(x * 2, y * 2 + 1, out2);
-                out.setRGB(x * 2 + 1, y * 2 + 1, out3);
+                //final int fin0, fin1, fin2, fin3;
+                int fin0 = out0, fin1 = out1, fin2 = out2, fin3 = out3;
+                if (out0 == inb && out0 == ind) {
+                    if (out0 == inc) {
+                        fin1 = out0;
+                    }
+                    if (out0 == ing) {
+                        fin2 = out0;
+                    }
+                }
+                if (out1 == inb && out1 == inf) {
+                    if (out1 == ina) {
+                        fin0 = out1;
+                    }
+                    if (out1 == ini) {
+                        fin3 = out1;
+                    }
+                }
+                if (out2 == inh && out2 == ind) {
+                    if (out2 == ina) {
+                        fin0 = out2;
+                    }
+                    if (out2 == ini) {
+                        fin3 = out2;
+                    }
+                }
+                if (out3 == inh && out3 == inf) {
+                    if (out3 == inc) {
+                        fin1 = out3;
+                    }
+                    if (out3 == ing) {
+                        fin2 = out3;
+                    }
+                }
+                if (fin0 != ine && fin1 != ine && fin2 != ine && fin3 != ine) {
+                    fin0 = out0;
+                    fin1 = out1;
+                    fin2 = out2;
+                    fin3 = out3;
+                }
+                out.setRGB(x * 2, y * 2, fin0);
+                out.setRGB(x * 2 + 1, y * 2, fin1);
+                out.setRGB(x * 2, y * 2 + 1, fin2);
+                out.setRGB(x * 2 + 1, y * 2 + 1, fin3);
             }
         }
         return out;
