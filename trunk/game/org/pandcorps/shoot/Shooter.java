@@ -129,10 +129,9 @@ public class Shooter extends Guy2 implements CollisionListener {
 	}*/
 	
 	protected void setWeapon(final Weapon weapon) {
-	    if (weapon == null) {
+	    if (weapon == null || weapon == this.weapon) {
 	        return;
-	    }
-        if (this.weapon != null) {
+	    } else if (this.weapon != null) {
             this.weapon.getLayer().removeActor(this.weapon);
         }
         this.weapon = weapon;
@@ -142,8 +141,7 @@ public class Shooter extends Guy2 implements CollisionListener {
 	protected void addWeapon(final int i) {
 	    if (Coltil.get(weapons, i) != null) {
 	        return;
-	    }
-	    if (weapons == null) {
+	    } else if (weapons == null) {
 	        weapons = new ArrayList<Weapon>(ShootGame.weaponDefs.length);
 	    }
 	    Coltil.set(weapons, i, new Weapon(ShootGame.weaponDefs[i]));
