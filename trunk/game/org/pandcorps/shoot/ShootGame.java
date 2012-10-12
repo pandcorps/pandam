@@ -150,8 +150,8 @@ public class ShootGame extends Guy2Game {
 		rocketFireAnm = engine.createAnimation("anm.proj.rocket.fire.1", projRocketFire1Frm, projRocketFire2Frm);
 		final Panple velBullet = new FinPanple(3, 0, 0);
 		final Emitter sawEmit = new Emitter(15, 1, FinPanple.ORIGIN, (byte) 1, projSawImg);
-		final Emitter magEmit1 = new Emitter(7, 5, velBullet, (byte) -1, projMagImg);
-		final Emitter magEmit2 = new Emitter(16, 5, velBullet, (byte) -1, projMagImg);
+		final Emitter magEmit1 = new Emitter(7, 5, new FinPanple(3, -0.125f, 0), (byte) -1, projMagImg);
+		final Emitter magEmit2 = new Emitter(16, 5, new FinPanple(3, 0.125f, 0), (byte) -1, projMagImg);
 		final float sx = 11, sy = 5;
 		final Emitter shotEmit = new Emitter(ShotProjectile.class, sx, sy, new FinPanple(3, 0, 0), (byte) -1, projShotImg);
 		final Emitter miniEmit = new Emitter(15, 3, new FinPanple(4, 0, 0), (byte) -1, projMiniImg);
