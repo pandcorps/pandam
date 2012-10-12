@@ -76,7 +76,7 @@ public class Scale2xScaler {
                         out3 = ine;
                     }
                 }
-                // Repeated multiplacation, could use bit shifting
+                // Repeated multiplication, could use bit shifting
                 out.setRGB(x * 2, y * 2, out0);
                 out.setRGB(x * 2 + 1, y * 2, out1);
                 out.setRGB(x * 2, y * 2 + 1, out2);
