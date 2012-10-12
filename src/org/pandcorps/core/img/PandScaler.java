@@ -141,7 +141,7 @@ Rule for this:
 X..
 .XX
 
-Is?
+Is:
 
 ......
 ......
@@ -156,7 +156,7 @@ XX.
 ..X
 ...
 
-Is?
+Is:
 
 XXXX..
 XXXX..
