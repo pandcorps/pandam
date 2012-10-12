@@ -23,11 +23,8 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.pandax.text;
 
 import org.pandcorps.core.Pantil;
-import org.pandcorps.pandam.Pangine;
-import org.pandcorps.pandam.Panput;
-import org.pandcorps.pandam.Panteraction;
-import org.pandcorps.pandam.event.action.ActionStartEvent;
-import org.pandcorps.pandam.event.action.ActionStartListener;
+import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.event.action.*;
 
 // Conversation? Dialogue?
 public class Message extends TextItem {
@@ -62,6 +59,7 @@ public class Message extends TextItem {
                 layer.destroy();
                 interaction.unregister(this);
                 submit.inactivate();
+                activateParent(true);
             }});
     }
 }

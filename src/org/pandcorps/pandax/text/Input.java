@@ -101,6 +101,7 @@ public class Input extends TextItem {
                 layer.destroy();
                 interaction.unregister(this);
                 interaction.inactivateAll();
+                activateParent(true);
                 listener.onSubmit(new InputSubmitEvent(buf));
             }
         };
