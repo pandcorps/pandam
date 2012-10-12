@@ -24,13 +24,20 @@ package org.pandcorps.pandax.text;
 
 public final class RadioSubmitEvent {
     
+    private final RadioGroup group;
+    
     private final int index;
     
     private final CharSequence element;
     
-    /*package*/ RadioSubmitEvent(final int index, final CharSequence element) {
+    /*package*/ RadioSubmitEvent(final RadioGroup group, final int index, final CharSequence element) {
+        this.group = group;
         this.index = index;
         this.element = element;
+    }
+    
+    public final RadioGroup getGroup() {
+        return group;
     }
     
     public final int getIndex() {

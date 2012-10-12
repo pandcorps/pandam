@@ -23,15 +23,12 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.pandax.text;
 
 import org.pandcorps.core.Pantil;
-import org.pandcorps.pandam.Pangame;
-import org.pandcorps.pandam.Pangine;
-import org.pandcorps.pandam.Panlayer;
-import org.pandcorps.pandam.Panple;
-import org.pandcorps.pandam.Panroom;
+import org.pandcorps.pandam.*;
 
 public abstract class TextItem {
     protected final Pantext label;
     protected Panlayer layer = null;
+    protected Panctor parent = null;
     
     protected TextItem(final Pantext label) {
         //this.font = font; // in label
@@ -56,6 +53,10 @@ public abstract class TextItem {
     }
     
     public final void init() {
+        init(null);
+    }
+    
+    public final void init(final Panctor parent) {
         final Panroom room = Pangame.getGame().getCurrentRoom();
         //final Panple size = room.getSize();
         //TODO make sure zoom for overlayer matches main layer
@@ -67,6 +68,14 @@ public abstract class TextItem {
         room.getTop().addAbove(layer);
         layer.addActor(label);
         enable();
+        this.parent = parent;
+        activateParent(false);
+    }
+    
+    protected void activateParent(final boolean active) {
+        if (parent != null) {
+            parent.getLayer().setActive(active);
+        }
     }
     
     public final Pantext getLabel() {

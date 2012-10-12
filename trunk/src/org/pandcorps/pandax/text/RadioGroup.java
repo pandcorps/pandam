@@ -25,9 +25,7 @@ package org.pandcorps.pandax.text;
 import java.util.List;
 
 import org.pandcorps.core.Pantil;
-import org.pandcorps.pandam.Pangine;
-import org.pandcorps.pandam.Panput;
-import org.pandcorps.pandam.Panteraction;
+import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.action.*;
 
 public class RadioGroup extends TextItem {
@@ -70,7 +68,9 @@ public class RadioGroup extends TextItem {
                 // inactivate should only apply for the current press (and not at all if the key isn't currently pressed).
                 // This disableed the next up/down press if they weren't currently pressed before adding the active check to inactivate
                 Panput.inactivate(submit, up, down);
-                listener.onSubmit(new RadioSubmitEvent(label.radioLine, options.get(label.radioLine)));
+                // onSubmit might create a new TextItem with same parent (deactivating it); activate first so we don't undo onSubmit
+                activateParent(true);
+                listener.onSubmit(new RadioSubmitEvent(RadioGroup.this, label.radioLine, options.get(label.radioLine)));
             }};
         label.register(submit, submitListener);
         label.register(up, upListener);
