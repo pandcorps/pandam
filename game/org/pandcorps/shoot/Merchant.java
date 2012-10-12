@@ -30,33 +30,55 @@ import org.pandcorps.shoot.Weapon.*;
 public class Merchant extends ShooterController {
 	@Override
 	public final boolean onInteract(final Shooter initiator) {
+System.out.println("Talking to Merchant");
 		final ShooterController controller = (ShooterController) initiator.getController();
 		//controller.setShooter(null);
-		shooter.getLayer().setActive(false); //TODO Move this and reactivate into TextItem?
-		upgrade(initiator, controller, initiator.weapon); //TODO list of weapons
+		final ArrayList<String> opts = new ArrayList<String>();
+		for (final Weapon weapon : initiator.weapons) {
+		    add(opts, weapon);
+		}
+		final class MerchantListener implements RadioSubmitListener {
+            @Override
+            public void onSubmit(final RadioSubmitEvent event) {
+                final CharSequence elem = event.getElement();
+                for (final Weapon weapon : initiator.weapons) {
+                    if (getUpgradeLabel(weapon).equals(elem)) {
+                        upgrade(event.getGroup().getLabel(), controller, weapon);
+                    }
+                }
+                //controller.setShooter(initiator);
+                //shooter.getLayer().setActive(true);
+            }
+        }
+		final RadioGroup rg = new RadioGroup(ShootGame.font, opts, new MerchantListener());
+        final Pantext label = rg.getLabel();
+        label.setBorderStyle(BorderStyle.Simple);
+        label.setBackground(Pantext.CHAR_SPACE);
+        rg.setTitle("Upgrade Weapons");
+        rg.init(shooter);
 		return true;
 	}
 	
 	private final static String UP = "Upgrade ";
 	
-	private void upgrade(final Shooter initiator, final ShooterController controller, final Weapon weapon) {
+	private void upgrade(final Pantext parent, final ShooterController controller, final Weapon weapon) {
+System.out.println("Upgrading " + weapon.getName());
 		final ArrayList<String> opts = new ArrayList<String>();
 		final WeaponDefinition def = weapon.def;
-		add(opts, weapon.getPower());
-		add(opts, weapon.getCapacity());
-		add(opts, weapon.getPierce());
-		add(opts, weapon.getSpray());
+		for (final WeaponArgument arg : weapon.getArguments()) {
+		    add(opts, arg);
+		}
 		final class WeaponListener implements RadioSubmitListener {
 			@Override
 			public void onSubmit(final RadioSubmitEvent event) {
 				final CharSequence elem = event.getElement();
 				for (final WeaponArgument arg : weapon.getArguments()) {
-    				if (getUpgradeLabel(arg.parm).equals(elem)) {
+    				if (getUpgradeLabel(arg).equals(elem)) {
+System.out.println("Upgrading " + arg.getName());
     					arg.upgrade();
     				}
 				}
-				//controller.setShooter(initiator);
-				shooter.getLayer().setActive(true);
+				//parent.getLayer().setActive(true);
 			}
 		}
 		final RadioGroup rg = new RadioGroup(ShootGame.font, opts, new WeaponListener());
@@ -64,7 +86,8 @@ public class Merchant extends ShooterController {
 		label.setBorderStyle(BorderStyle.Simple);
 		label.setBackground(Pantext.CHAR_SPACE);
 		rg.setTitle("Upgrade " + def.name);
-		rg.init();
+		//rg.init(parent);
+		rg.init(shooter);
 		
 		/*final Message m = new Message(ShootGame.font, "Test");
 		final Pantext labelm = m.getLabel();
@@ -73,15 +96,14 @@ public class Merchant extends ShooterController {
 		m.init();*/
 	}
 	
-	private void add(final ArrayList<String> opts, final WeaponArgument arg) {
-        final WeaponParameter parm = arg.parm;
-        if (parm.isUpgradeApplicable()) {
+	private void add(final ArrayList<String> opts, final Upgradeable u) {
+        if (u.isUpgradeApplicable()) {
             //TODO display if applicable, grey out if maxed
-            opts.add(getUpgradeLabel(parm));
+            opts.add(getUpgradeLabel(u));
         }
 	}
 	
-	private final static String getUpgradeLabel(final WeaponParameter parm) {
-	    return UP + parm.name;
+	private final static String getUpgradeLabel(final Upgradeable u) {
+	    return UP + u.getName();
 	}
 }
