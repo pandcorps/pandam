@@ -23,21 +23,10 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.core.img.scale;
 
 import java.awt.image.*;
-import java.util.HashSet;
 
 import org.pandcorps.core.Imtil;
-import org.pandcorps.core.img.*;
 
 public class Scale2xScaler extends Scaler {
-    
-    private HashSet<Integer> preservedColors = null;
-    
-    protected void addPreservedColor(final Pancolor color) {
-        if (preservedColors == null) {
-            preservedColors = new HashSet<Integer>();
-        }
-        preservedColors.add(Integer.valueOf(PixelFilter.getRgba(color)));
-    }
     
     // http://scale2x.sourceforge.net/download.html
     // you are free to use the algorithm, but please call the effect "Scale2x"
@@ -50,29 +39,22 @@ public class Scale2xScaler extends Scaler {
             for (int y = 0; y < h; y++) {
                 final int ine = in.getRGB(x, y);
                 final int out0, out1, out2, out3;
-                if (preservedColors != null && preservedColors.contains(Integer.valueOf(ine))) {
+                // Retrieve same pixels repeatedly
+                // Repeated comparisons
+                final int inb = y > 0 ? in.getRGB(x, y - 1) : ine;
+                final int ind = x > 0 ? in.getRGB(x - 1, y) : ine;
+                final int inf = x < w1 ? in.getRGB(x + 1, y) : ine;
+                final int inh = y < h1 ? in.getRGB(x, y + 1) : ine;
+                if (inb != inh && ind != inf) {
+                    out0 = ind == inb ? ind : ine;
+                    out1 = inb == inf ? inf : ine;
+                    out2 = ind == inh ? ind : ine;
+                    out3 = inh == inf ? inf : ine;
+                } else {
                     out0 = ine;
                     out1 = ine;
                     out2 = ine;
                     out3 = ine;
-                } else {
-                    // Retrieve same pixels repeatedly
-                    // Repeated comparisons
-                    final int inb = y > 0 ? in.getRGB(x, y - 1) : ine;
-                    final int ind = x > 0 ? in.getRGB(x - 1, y) : ine;
-                    final int inf = x < w1 ? in.getRGB(x + 1, y) : ine;
-                    final int inh = y < h1 ? in.getRGB(x, y + 1) : ine;
-                    if (inb != inh && ind != inf) {
-                        out0 = ind == inb ? ind : ine;
-                        out1 = inb == inf ? inf : ine;
-                        out2 = ind == inh ? ind : ine;
-                        out3 = inh == inf ? inf : ine;
-                    } else {
-                        out0 = ine;
-                        out1 = ine;
-                        out2 = ine;
-                        out3 = ine;
-                    }
                 }
                 // Repeated multiplication, could use bit shifting
                 out.setRGB(x * 2, y * 2, out0);
@@ -88,8 +70,7 @@ public class Scale2xScaler extends Scaler {
         try {
             final String name = args[0];
             final Scale2xScaler scaler = new Scale2xScaler();
-            scaler.addPreservedColor(Pancolor.BLACK);
-            Imtil.save(scaler.scale(Imtil.load(name)), name + ".Scale2x.000000.png");
+            Imtil.save(scaler.scale(Imtil.load(name)), name + ".Scale2x.png");
         } catch (final Throwable e) {
             e.printStackTrace();
         }
