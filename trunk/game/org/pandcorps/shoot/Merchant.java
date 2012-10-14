@@ -23,6 +23,7 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.shoot;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.pandcorps.pandax.text.*;
 import org.pandcorps.shoot.Weapon.*;
@@ -33,10 +34,7 @@ public class Merchant extends ShooterController {
 System.out.println("Talking to Merchant");
 		final ShooterController controller = (ShooterController) initiator.getController();
 		//controller.setShooter(null);
-		final ArrayList<String> opts = new ArrayList<String>();
-		for (final Weapon weapon : initiator.weapons) {
-		    add(opts, weapon);
-		}
+		final ArrayList<String> opts = toMenu(initiator.weapons);
 		final class MerchantListener implements RadioSubmitListener {
             @Override
             public void onSubmit(final RadioSubmitEvent event) {
@@ -63,12 +61,9 @@ System.out.println("Talking to Merchant");
 	
 	private void upgrade(final Pantext parent, final ShooterController controller, final Weapon weapon) {
 System.out.println("Upgrading " + weapon.getName());
-		final ArrayList<String> opts = new ArrayList<String>();
+		final ArrayList<String> opts = toMenu(weapon.getArguments());;
 		final WeaponDefinition def = weapon.def;
-		for (final WeaponArgument arg : weapon.getArguments()) {
-		    add(opts, arg);
-		}
-		final class WeaponListener implements RadioSubmitListener {
+	    final class WeaponListener implements RadioSubmitListener {
 			@Override
 			public void onSubmit(final RadioSubmitEvent event) {
 				final CharSequence elem = event.getElement();
@@ -96,11 +91,15 @@ System.out.println("Upgrading " + arg.getName());
 		m.init();*/
 	}
 	
-	private void add(final ArrayList<String> opts, final Upgradeable u) {
-        if (u.isUpgradeApplicable()) {
-            //TODO display if applicable, grey out if maxed
-            opts.add(getUpgradeLabel(u));
-        }
+	private ArrayList<String> toMenu(final List<? extends Upgradeable> list) {
+		final ArrayList<String> opts = new ArrayList<String>(list.size());
+		for (final Upgradeable u : list) {
+	        if (u.isUpgradeApplicable()) {
+	            //TODO display if applicable, grey out if maxed
+	            opts.add(getUpgradeLabel(u));
+	        }
+		}
+		return opts;
 	}
 	
 	private final static String getUpgradeLabel(final Upgradeable u) {
