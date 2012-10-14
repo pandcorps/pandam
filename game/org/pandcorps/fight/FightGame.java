@@ -206,7 +206,7 @@ public class FightGame extends Guy2Game {
         FightGame.room = room;
         createTypes();
         //showLogo();
-        Panscreen.set(new LogoScreen());
+        Panscreen.set(new FightLogoScreen());
         //startFight();
     }
     
@@ -219,39 +219,10 @@ public class FightGame extends Guy2Game {
         engine.createType("BackgroundType", Background.class, fighterView);
     }
     
-    private final static class LogoScreen extends FadeScreen {
-        private Panmage font = null;
-        private Panmage icon = null;
-        
-        private LogoScreen() {
-            super(Pancolor.WHITE, 30);
-        }
-        
-        @Override
-        protected final void start() {
-            final Pangine engine = Pangine.getEngine();
-            engine.setBgColor(Pancolor.WHITE);
-            font = engine.createImage("PandcorpsFont", "org/pandcorps/res/img/FontGradient16.png");
-            //new Message(font, "PANDCORPS").init();
-            final Pantext text = new Pantext("PandcorpsLogo", new ByteFont(font), "PANDCORPS");
-            text.getPosition().set(48, 88);
-            room.addActor(text);
-            icon = engine.createImage("PandcorpsIcon", "org/pandcorps/res/img/PandcorpsIcon16.png");
-            final Panctor img = new Panctor("PandcorpsImage");
-            img.setView(icon);
-            img.getPosition().set(192, 88);
-            room.addActor(img);
-        }
-        
+    private final static class FightLogoScreen extends LogoScreen {
         @Override
         protected final void finish() {
             Panscreen.set(new TitleScreen());
-        }
-        
-        @Override
-        protected final void destroy() {
-            Panmage.destroy(font);
-            Panmage.destroy(icon);
         }
     }
     
