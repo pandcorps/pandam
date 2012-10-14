@@ -154,7 +154,7 @@ public class ShootGame extends Guy2Game {
 		final Emitter magEmit2 = new Emitter(16, 5, new FinPanple(3, 0.125f, 0), (byte) -1, projMagImg);
 		final float sx = 11, sy = 5;
 		final Emitter shotEmit = new Emitter(ShotProjectile.class, sx, sy, new FinPanple(3, 0, 0), (byte) -1, projShotImg);
-		final Emitter miniEmit = new Emitter(15, 3, new FinPanple(4, 0, 0), (byte) -1, projMiniImg);
+		final Emitter miniEmit = new Emitter(MiniProjectile.class, 15, 3, new FinPanple(4, 0, 0), (byte) -1, projMiniImg);
 		final Emitter flameEmit = new Emitter(FlameProjectile.class, 10, 4, velBullet, (byte) 28, projFlame1Anm);
 		final Emitter rocketEmit = new Emitter(RocketProjectile.class, 13, 8, velBullet, (byte) -1, projRocketImg);
 		weaponDefs = new WeaponDefinition[6];

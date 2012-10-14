@@ -68,13 +68,32 @@ public class Projectile extends org.pandcorps.game.actor.Projectile implements C
     	destroy();
     }
     
-    public final static class ShotProjectile extends Projectile {
-    	private final static float r = (float) (Math.PI / 6.0);
+    private abstract static class RandProjectile extends Projectile {
+    	protected abstract float getR();
     	
     	@Override
     	protected final Panple getVelocity(final boolean mirror) {
     		final Panple base = super.getVelocity(mirror);
+    		final float r = getR();
     		return FinPanple.newMagnitudeDirection(base.getMagnitude2(), base.getDirection2() + Mathtil.randf(-r, r), base.getZ());
+    	}
+    }
+    
+    public final static class ShotProjectile extends RandProjectile {
+    	private final static float r = (float) (Math.PI / 6.0);
+    	
+    	@Override
+    	protected final float getR() {
+    		return r;
+    	}
+    }
+    
+    public final static class MiniProjectile extends RandProjectile {
+    	private final static float r = (float) (Math.PI / 48.0);
+    	
+    	@Override
+    	protected final float getR() {
+    		return r;
     	}
     }
     
