@@ -206,7 +206,7 @@ public class FightGame extends Guy2Game {
         FightGame.room = room;
         createTypes();
         //showLogo();
-        Panscreen.set(new FightLogoScreen());
+        Panscreen.set(new LogoScreen(TitleScreen.class));
         //startFight();
     }
     
@@ -217,13 +217,6 @@ public class FightGame extends Guy2Game {
         engine.createType("FighterType", Fighter.class, fighterView);
         engine.createType("ProjectileType", Projectile.class, bamImage1);
         engine.createType("BackgroundType", Background.class, fighterView);
-    }
-    
-    private final static class FightLogoScreen extends LogoScreen {
-        @Override
-        protected final void finish() {
-            Panscreen.set(new TitleScreen());
-        }
     }
     
     private final static class TitleScreen extends FadeScreen {

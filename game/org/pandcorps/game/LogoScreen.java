@@ -22,17 +22,20 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.game;
 
+import org.pandcorps.core.Reftil;
 import org.pandcorps.core.img.Pancolor;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandax.text.*;
 import org.pandcorps.pandax.visual.FadeScreen;
 
-public abstract class LogoScreen extends FadeScreen {
+public final class LogoScreen extends FadeScreen {
     private Panmage font = null;
     private Panmage icon = null;
+    private final Class<? extends Panscreen> titleClass;
     
-    public LogoScreen() {
+    public LogoScreen(final Class<? extends Panscreen> titleClass) {
         super(Pancolor.WHITE, 30);
+        this.titleClass = titleClass;
     }
     
     @Override
@@ -49,6 +52,11 @@ public abstract class LogoScreen extends FadeScreen {
         img.setView(icon);
         img.getPosition().set(192, 88);
         room.addActor(img);
+    }
+    
+    @Override
+    protected final void finish() {
+        Panscreen.set(Reftil.newInstance(titleClass));
     }
     
     @Override
