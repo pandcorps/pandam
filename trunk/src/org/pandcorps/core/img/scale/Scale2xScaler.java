@@ -20,12 +20,13 @@ PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY
 TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 */
-package org.pandcorps.core.img;
+package org.pandcorps.core.img.scale;
 
 import java.awt.image.*;
 import java.util.HashSet;
 
 import org.pandcorps.core.Imtil;
+import org.pandcorps.core.img.*;
 
 public class Scale2xScaler {
     
