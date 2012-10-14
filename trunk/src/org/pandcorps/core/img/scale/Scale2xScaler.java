@@ -28,7 +28,7 @@ import java.util.HashSet;
 import org.pandcorps.core.Imtil;
 import org.pandcorps.core.img.*;
 
-public class Scale2xScaler {
+public class Scale2xScaler extends Scaler {
     
     private HashSet<Integer> preservedColors = null;
     
@@ -41,7 +41,8 @@ public class Scale2xScaler {
     
     // http://scale2x.sourceforge.net/download.html
     // you are free to use the algorithm, but please call the effect "Scale2x"
-    protected BufferedImage scale(final BufferedImage in) {
+    @Override
+    public BufferedImage scale(final BufferedImage in) {
         final int w = in.getWidth(), h = in.getHeight();
         final int w1 = w - 1, h1 = h - 1;
         final BufferedImage out = new BufferedImage(w * 2, h * 2, Imtil.TYPE);

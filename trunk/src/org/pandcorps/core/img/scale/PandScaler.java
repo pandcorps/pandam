@@ -165,9 +165,10 @@ XXXX..
 ......
 ......
 */
-public class PandScaler {
+public class PandScaler extends Scaler {
     
-    protected BufferedImage scale(final BufferedImage in) {
+	@Override
+    public BufferedImage scale(final BufferedImage in) {
         final int w = in.getWidth(), h = in.getHeight();
         final int w1 = w - 1, h1 = h - 1;
         final BufferedImage out = new BufferedImage(w * 2, h * 2, Imtil.TYPE);
