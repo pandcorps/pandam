@@ -281,6 +281,7 @@ public class Story {
 	}
 	
 	protected final static void playIntro() {
+		Pangine.getEngine().setBgColor(Pancolor.BLACK);
 		imgBlack = getBlack();
 		bgEurope = getBg("Europe");
 		bgEurope2 = getBg("Europe2");

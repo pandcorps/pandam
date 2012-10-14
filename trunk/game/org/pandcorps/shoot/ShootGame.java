@@ -14,6 +14,7 @@ import org.pandcorps.pandax.text.Fonts;
 import org.pandcorps.pandax.text.Fonts.FontRequest;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.tile.Tile.*;
+import org.pandcorps.pandax.visual.FadeScreen;
 import org.pandcorps.shoot.Projectile.*;
 import org.pandcorps.shoot.Shooter.ShooterDefinition;
 import org.pandcorps.shoot.Weapon.WeaponDefinition;
@@ -24,6 +25,7 @@ public class ShootGame extends Guy2Game {
 	private static ShooterDefinition merchantDef = null;
 	/*package*/ static ShooterDefinition[] trooperDefs = null;
 	/*package*/ static WeaponDefinition[] weaponDefs = null;
+	private static Panmage title = null;
 	/*package*/ static Panimation blood = null;
 	/*package*/ static Panmage interact = null;
 	/*package*/ static Font font = null;
@@ -38,12 +40,13 @@ public class ShootGame extends Guy2Game {
 	protected void init(final Panroom room) throws Exception {
 		ShootGame.room = room;
 		loadConstants();
-		Story.playIntro();
+		Panscreen.set(new LogoScreen(TitleScreen.class));
 	}
 	
 	private final static void loadConstants() {
 		final Pangine engine = Pangine.getEngine();
-		final BufferedImage[] constantImgs = ImtilX.loadStrip("org/pandcorps/game/res/misc/Constants.png");
+		title = createImage("misc/Title", 128);
+        final BufferedImage[] constantImgs = ImtilX.loadStrip("org/pandcorps/game/res/misc/Constants.png");
 		final Panmage shadowImg = engine.createImage("img.shadow", new FinPanple(8, 4, 0), null, null, constantImgs[0]);
         type = new Guy2Type(shadowImg, -480);
         final FinPanple o = new FinPanple(8, 8, 0);
@@ -200,6 +203,10 @@ public class ShootGame extends Guy2Game {
 		return ImtilX.loadStrip("org/pandcorps/shoot/res/" + loc + ".png", dim);
 	}
 	
+	protected final static Panmage createImage(final String loc, final int dim) {
+		return Pangine.getEngine().createImage("img." + loc, ImtilX.loadImage("org/pandcorps/shoot/res/" + loc + ".png", dim, null));
+	}
+	
 	protected final static BufferedImage[] loadChrStrip(final String name) {
 		return loadStrip("chr/" + name);
 	}
@@ -218,6 +225,32 @@ public class ShootGame extends Guy2Game {
 		final BufferedImage right = getTrpImg(strip, 2, head, 1);
 		return ShooterDefinition.create("Blitztrooper." + headIndex, still, left, right);
 	}
+	
+	private final static class TitleScreen extends FadeScreen {
+        private TitleScreen() {
+            super(Pancolor.WHITE, 60);
+        }
+        
+        @Override
+        protected final void start() {
+            final Pangine engine = Pangine.getEngine();
+            engine.setBgColor(Pancolor.WHITE);
+            final Panctor act = new Panctor("TitleAct");
+            act.setView(title);
+            act.getPosition().set(64, 32);
+            room.addActor(act);
+        }
+        
+        @Override
+        protected final void finish() {
+        	Story.playIntro();
+        }
+        
+        @Override
+        protected final void destroy() {
+            //Panmage.destroy(title);
+        }
+    }
 	
 	protected final static class ShootScreen extends Panscreen {
 		@Override
