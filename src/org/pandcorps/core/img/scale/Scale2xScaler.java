@@ -57,14 +57,10 @@ public class Scale2xScaler {
                 } else {
                     // Retrieve same pixels repeatedly
                     // Repeated comparisons
-                    //final int ina = x > 0 && y > 0 ? in.getRGB(x - 1, y - 1) : ine; // Maybe more complex
                     final int inb = y > 0 ? in.getRGB(x, y - 1) : ine;
-                    //final int inc = x < w1 && y > 0 ? in.getRGB(x + 1, y - 1) : ine;
                     final int ind = x > 0 ? in.getRGB(x - 1, y) : ine;
                     final int inf = x < w1 ? in.getRGB(x + 1, y) : ine;
-                    //final int ing = x > 0 && y < h1 ? in.getRGB(x - 1, y + 1) : ine;
                     final int inh = y < h1 ? in.getRGB(x, y + 1) : ine;
-                    //final int ini = x < w1 && y < h1 ? in.getRGB(x + 1, y + 1) : ine;
                     if (inb != inh && ind != inf) {
                         out0 = ind == inb ? ind : ine;
                         out1 = inb == inf ? inf : ine;
