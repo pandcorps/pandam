@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 
 import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
+import org.pandcorps.core.img.scale.PandScaler;
 import org.pandcorps.game.*;
 import org.pandcorps.game.actor.Guy2.*;
 import org.pandcorps.game.core.ImtilX;
@@ -203,8 +204,12 @@ public class ShootGame extends Guy2Game {
 		return ImtilX.loadStrip("org/pandcorps/shoot/res/" + loc + ".png", dim);
 	}
 	
+	protected final static BufferedImage loadImage(final String loc, final int dim) {
+		return ImtilX.loadImage("org/pandcorps/shoot/res/" + loc + ".png", dim, null);
+	}
+	
 	protected final static Panmage createImage(final String loc, final int dim) {
-		return Pangine.getEngine().createImage("img." + loc, ImtilX.loadImage("org/pandcorps/shoot/res/" + loc + ".png", dim, null));
+		return Pangine.getEngine().createImage("img." + loc, loadImage(loc, dim));
 	}
 	
 	protected final static BufferedImage[] loadChrStrip(final String name) {
@@ -227,8 +232,10 @@ public class ShootGame extends Guy2Game {
 	}
 	
 	private final static class TitleScreen extends FadeScreen {
+		private Panmage will = null;
+		
         private TitleScreen() {
-            super(Pancolor.WHITE, 60);
+            super(Pancolor.WHITE, 240);
         }
         
         @Override
@@ -237,8 +244,14 @@ public class ShootGame extends Guy2Game {
             engine.setBgColor(Pancolor.WHITE);
             final Panctor act = new Panctor("TitleAct");
             act.setView(title);
-            act.getPosition().set(64, 32);
+            act.getPosition().set(64, 60);
             room.addActor(act);
+            final BufferedImage willImg = new PandScaler().scale(loadImage("misc/WillBig", 64));
+            will = engine.createImage("img.title.will", willImg);
+            final Panctor guy = new Panctor("GuyAct");
+            guy.setView(will);
+            guy.getPosition().set(112, 4, -1);
+            room.addActor(guy);
         }
         
         @Override
@@ -248,7 +261,7 @@ public class ShootGame extends Guy2Game {
         
         @Override
         protected final void destroy() {
-            //Panmage.destroy(title);
+            Panmage.destroy(will);
         }
     }
 	
