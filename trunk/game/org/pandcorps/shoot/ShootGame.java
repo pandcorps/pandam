@@ -46,6 +46,7 @@ public class ShootGame extends Guy2Game {
 	
 	private final static void loadConstants() {
 		final Pangine engine = Pangine.getEngine();
+		engine.setTitle("Will Killem");
 		title = createImage("misc/Title", 128);
         final BufferedImage[] constantImgs = ImtilX.loadStrip("org/pandcorps/game/res/misc/Constants.png");
 		final Panmage shadowImg = engine.createImage("img.shadow", new FinPanple(8, 4, 0), null, null, constantImgs[0]);
