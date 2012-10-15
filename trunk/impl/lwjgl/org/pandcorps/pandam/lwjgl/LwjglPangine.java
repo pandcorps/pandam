@@ -104,9 +104,10 @@ public final class LwjglPangine extends Pangine {
         return Display.getDesktopDisplayMode().getHeight();
     }
 
-	private int w = 640, h = 480;
+    private int w = 640, h = 480;
 	private boolean initialized = false;
 	private float clr = 0.0f, clg = 0.0f, clb = 0.0f, cla = 0.0f;
+	//private ByteBuffer buf;
 	
 	@Override
 	public final void setDisplaySize(final int w, final int h) {
@@ -115,6 +116,7 @@ public final class LwjglPangine extends Pangine {
 	    }
 	    this.w = w;
 	    this.h = h;
+	    //buf = Pantil.allocateDirectByteBuffer(w * h * 3);
 	}
 	
 	@Override
@@ -346,6 +348,8 @@ public final class LwjglPangine extends Pangine {
 		for (Panlayer layer = room.getBase(); layer != null; layer = layer.getAbove()) {
 		    draw(layer);
 		}
+		//buf.rewind();
+		//GL11.glReadPixels(0, 0, w, h, GL11.GL_RGB, GL11.GL_BYTE, buf); // Could read and filter, but very slow
 		Display.update();
 	}
 	
