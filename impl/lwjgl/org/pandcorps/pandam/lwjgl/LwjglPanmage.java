@@ -34,6 +34,7 @@ import java.util.IdentityHashMap;
 //import javax.imageio.ImageIO;
 import org.lwjgl.opengl.GL11;
 import org.pandcorps.core.*;
+import org.pandcorps.core.img.scale.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.impl.UnmodPanple;
 
@@ -94,7 +95,16 @@ public final class LwjglPanmage extends Panmage {
 	    return getTexture(Imtil.load(location));
 	}
 	
-	private final static Texture getTexture(final BufferedImage img) {
+	private final static Texture getTexture(final BufferedImage _img) {
+		final Pangine engine = Pangine.getEngine();
+		final Scaler scaler = engine.getImageScaler();
+		final float zoom = engine.getZoom();
+		BufferedImage img = _img;
+		if (scaler != null) {
+			for (int i = 1; i < zoom; i *= 2) {
+				img = scaler.scale(img);
+			}
+		}
 		final int w = img.getWidth();
 		final int h = img.getHeight();
 		
@@ -154,7 +164,7 @@ public final class LwjglPanmage extends Panmage {
 			GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, w, h, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE,
 			scratch);
 		
-		return new Texture(w, h, tid);
+		return new Texture(_img.getWidth(), _img.getHeight(), tid);
 ////
 	}
 	
@@ -262,7 +272,7 @@ public final class LwjglPanmage extends Panmage {
 	protected final void render(final Panlayer layer, final float x, final float y, final float z,
 		//final float ix, final float iy, final float iw, final float ih) {
         final float ix, final float iy, final float iw, final float ih, final int rot, final boolean mirror, final boolean flip) {
-	    //final boolean mirror = true;
+		//final boolean mirror = true;
 		//GL11.glLoadIdentity();
 		//GL11.glTranslatef(x, y, z);
 		// Might be better to store rounded values whenever they are changed

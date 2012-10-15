@@ -1,5 +1,6 @@
 package org.pandcorps.game;
 
+import org.pandcorps.core.img.scale.*;
 import org.pandcorps.game.actor.Guy2;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.impl.FinPanple;
@@ -10,7 +11,9 @@ public abstract class Guy2Game extends Pangame {
 	
 	@Override
     public void initBeforeEngine() {
-        Pangine.getEngine().setMaxZoomedDisplaySize(ROOM_W, ROOM_H);
+        final Pangine engine = Pangine.getEngine();
+        engine.setImageScaler(new PandScaler());
+        engine.setMaxZoomedDisplaySize(ROOM_W, ROOM_H);
     }
 	
 	@Override

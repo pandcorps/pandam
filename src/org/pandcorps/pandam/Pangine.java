@@ -27,6 +27,7 @@ import java.util.*;
 import org.pandcorps.core.*;
 import org.pandcorps.core.col.*;
 import org.pandcorps.core.img.*;
+import org.pandcorps.core.img.scale.Scaler;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.action.*;
 import org.pandcorps.pandam.event.boundary.*;
@@ -57,6 +58,8 @@ public abstract class Pangine {
 	/*package*/ Map<Object, Set<Object>> collisionGroups = null;
 	
 	private float zoomMag = 1;
+	
+	private Scaler scaler = null;
 	
 	private long clock = 0;
 
@@ -700,8 +703,17 @@ public abstract class Pangine {
 	    zoomMag = mag;
 	}
 	
-	protected final float getZoom() {
+	public final float getZoom() {
 	    return zoomMag;
+	}
+	
+	// Pre-scales each image, not the rendered screen
+	public final void setImageScaler(final Scaler scaler) {
+		this.scaler = scaler;
+	}
+	
+	public final Scaler getImageScaler() {
+		return scaler;
 	}
 	
 	public final void setMaxZoomedDisplaySize(final int baseWidth, final int baseHeight) {
@@ -713,10 +725,13 @@ public abstract class Pangine {
 	
 	private final int getMaxDim(final int base, final int abs) {
 	    int zoom;
-	    for (zoom = 1; zoom * base < abs; zoom += 1) {
-	        // Nothing
+	    if (scaler == null) {
+	    	for (zoom = 1; zoom * base < abs; zoom += 1);
+	    	return Math.max(1, zoom - 1);
+	    } else {
+	    	for (zoom = 1; zoom * base < abs; zoom *= 2);
+	    	return Math.max(1, zoom / 2);
 	    }
-	    return Math.max(1, zoom - 1);
 	}
 	
 	public final long getClock() {
