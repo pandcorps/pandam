@@ -59,14 +59,14 @@ public final class Pantil {
     }
 	
 	public final static FloatBuffer allocateDirectFloatBuffer(final int capacity) {
-	    return alloc(capacity * FLOAT_SIZE).asFloatBuffer();
+	    return allocateDirectByteBuffer(capacity * FLOAT_SIZE).asFloatBuffer();
 	}
 	
 	public final static IntBuffer allocateDirectIntBuffer(final int capacity) {
-        return alloc(capacity * INT_SIZE).asIntBuffer();
+        return allocateDirectByteBuffer(capacity * INT_SIZE).asIntBuffer();
     }
 	
-	private final static ByteBuffer alloc(final int adjustedCapacity) {
-        return ByteBuffer.allocateDirect(adjustedCapacity).order(ByteOrder.nativeOrder());
+	public final static ByteBuffer allocateDirectByteBuffer(final int capacity) {
+        return ByteBuffer.allocateDirect(capacity).order(ByteOrder.nativeOrder());
     }
 }
