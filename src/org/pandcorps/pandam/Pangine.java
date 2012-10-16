@@ -64,10 +64,16 @@ public abstract class Pangine {
 	private long clock = 0;
 
 	static {
-		int i;
+		int i = 0;
 
-		for (i = 0; i == (int) (float) i; i++);
-
+		while (true) {
+		    final float f = i;
+		    if (i != (int) f) {
+		        break;
+		    }
+		    i++;
+		}
+		
 		maxDimension = i;
 		maxRoomSize = new FinPanple(i, i, 0);
 		/*
