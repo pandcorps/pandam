@@ -28,6 +28,7 @@ public class ShootGame extends Guy2Game {
 	/*package*/ static WeaponDefinition[] weaponDefs = null;
 	private static Panmage title = null;
 	/*package*/ static Panimation blood = null;
+	/*package*/ static Panimation explosion = null;
 	/*package*/ static Panmage interact = null;
 	/*package*/ static Font font = null;
 	private static Panroom room = null;
@@ -48,15 +49,10 @@ public class ShootGame extends Guy2Game {
 		final Pangine engine = Pangine.getEngine();
 		engine.setTitle("Will Killem");
 		title = createImage("misc/Title", 128);
-        final BufferedImage[] constantImgs = ImtilX.loadStrip("org/pandcorps/game/res/misc/Constants.png");
+        final BufferedImage[] constantImgs = loadConstantImgs();
 		final Panmage shadowImg = engine.createImage("img.shadow", new FinPanple(8, 4, 0), null, null, constantImgs[0]);
         type = new Guy2Type(shadowImg, -480);
-        final FinPanple o = new FinPanple(8, 8, 0);
-        final Panmage bld1Img = engine.createImage("img.blood.1", o, null, null, constantImgs[6]);
-        final Panmage bld2Img = engine.createImage("img.blood.2", o, null, null, constantImgs[7]);
-        final Panframe bld1Frm = engine.createFrame("frm.blood.1", bld1Img, 2);
-        final Panframe bld2Frm = engine.createFrame("frm.blood.2", bld2Img, 2);
-        blood = engine.createAnimation("anm.blood", bld1Frm, bld2Frm);
+        blood = createBloodAnm(constantImgs, 2);
         interact = engine.createEmptyImage("img.interact", new FinPanple(1, 1, 1), new FinPanple(0, 0, 0), new FinPanple(2, 2, 2));
         font = Fonts.getSimple(new FontRequest(8), Pancolor.BLUE, Pancolor.CYAN, Pancolor.CYAN, Pancolor.BLACK);
 		loadCharacters();

@@ -72,9 +72,9 @@ public class FightGame extends Guy2Game {
     private final static ArrayList<ArrayList<FighterDefinition>> characterSelect = new ArrayList<ArrayList<FighterDefinition>>();
     private static Panmage bamImage1 = null;
     /*package*/ static Panimation bamAnim = null;
-    private final static FinPanple explodeOrigin = new FinPanple(8, 8, 0);
+    private final static FinPanple explodeOrigin = CENTER_16;
     private static BufferedImage[] explodeImgs = null;
-    private final static FinPanple bloodOrigin = new FinPanple(8, 8, 0);
+    private final static FinPanple bloodOrigin = CENTER_16;
     private final static int bloodDuration = 3;
     private static BufferedImage[] bloodImgs = null;
     private static Panimation bloodAnim = null;
@@ -104,7 +104,7 @@ public class FightGame extends Guy2Game {
         cursorImage = engine.createImage("Cursor", new FinPanple(8, 1, 0), null, null, menuImgs[0]);
         menuBackground = engine.createImage("MenuBgImage", "org/pandcorps/fight/res/misc/MenuBackground.png");
         title = engine.createImage("TitleImg", "org/pandcorps/fight/res/misc/Title.png");
-        final BufferedImage[] constantImgs = ImtilX.loadStrip("org/pandcorps/game/res/misc/Constants.png");
+        final BufferedImage[] constantImgs = loadConstantImgs();
         shadowImage = engine.createImage("Shadow", new FinPanple(8, 4, 0), null, null, constantImgs[0]);
         type = new Guy2Type(shadowImage, Fighter.DEPTH_SHADOW);
         bamImage1 = engine.createImage("Bam0", new FinPanple(8, 8, 0), null, null, constantImgs[1]);
@@ -115,9 +115,7 @@ public class FightGame extends Guy2Game {
         final Panmage explode2 = engine.createImage("Explode1", new FinPanple(8, 8, 0), null, null, constantImgs[4]);
         final Panmage explode3 = engine.createImage("Explode2", new FinPanple(8, 8, 0), null, null, constantImgs[5]);
         explodeAnim = engine.createAnimation("Explode", engine.createFrame("ExplodeF1", explode1, 3), engine.createFrame("ExplodeF2", explode2, 3), engine.createFrame("ExplodeF3", explode3, 3));*/
-        final Panmage blood1 = engine.createImage("Blood0", bloodOrigin, null, null, constantImgs[6]);
-        final Panmage blood2 = engine.createImage("Blood1", bloodOrigin, null, null, constantImgs[7]);
-        bloodAnim = engine.createAnimation("Blood", engine.createFrame("BloodF1", blood1, bloodDuration), engine.createFrame("BloodF2", blood2, bloodDuration));
+        bloodAnim = createBloodAnm(constantImgs, bloodDuration);
         bloodImgs = new BufferedImage[] { constantImgs[6], constantImgs[7] };
         final Panmage puff1 = engine.createImage("Puff0", new FinPanple(8, 8, 0), null, null, constantImgs[8]);
         final Panmage puff2 = engine.createImage("Puff1", new FinPanple(8, 8, 0), null, null, constantImgs[9]);
