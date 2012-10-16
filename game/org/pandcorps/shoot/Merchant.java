@@ -44,13 +44,17 @@ public class Merchant extends ShooterController {
                 }
             }
         }
-		final RadioGroup rg = new RadioGroup(ShootGame.font, opts, new MerchantListener());
+		menu(opts, new MerchantListener(), "Upgrade Weapons");
+		return true;
+	}
+	
+	private void menu(final ArrayList<String> opts, final RadioSubmitListener listener, final String title) {
+		final RadioGroup rg = new RadioGroup(ShootGame.font, opts, listener);
         final Pantext label = rg.getLabel();
         label.setBorderStyle(BorderStyle.Simple);
         label.setBackground(Pantext.CHAR_SPACE);
-        rg.setTitle("Upgrade Weapons");
+        rg.setTitle(title);
         rg.init(shooter);
-		return true;
 	}
 	
 	private final static String UP = "Upgrade ";
@@ -69,12 +73,7 @@ public class Merchant extends ShooterController {
 				}
 			}
 		}
-		final RadioGroup rg = new RadioGroup(ShootGame.font, opts, new WeaponListener());
-		final Pantext label = rg.getLabel();
-		label.setBorderStyle(BorderStyle.Simple);
-		label.setBackground(Pantext.CHAR_SPACE);
-		rg.setTitle("Upgrade " + def.name);
-		rg.init(shooter);
+	    menu(opts, new WeaponListener(), "Upgrade " + def.name);
 		
 		/*final Message m = new Message(ShootGame.font, "Test");
 		final Pantext labelm = m.getLabel();
