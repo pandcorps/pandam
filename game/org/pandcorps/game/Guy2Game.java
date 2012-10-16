@@ -13,6 +13,8 @@ public abstract class Guy2Game extends Pangame {
 	protected final static int ROOM_W = 256;
 	protected final static int ROOM_H = 192;
 	protected final static FinPanple CENTER_16 = new FinPanple(8, 8, 0);
+	protected final static FinPanple CENTER_8 = new FinPanple(4, 4, 0);
+	protected final static FinPanple CENTER_4 = new FinPanple(2, 2, 0);
 	
 	@Override
     public void initBeforeEngine() {
