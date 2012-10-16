@@ -60,7 +60,7 @@ public class Merchant extends ShooterController {
 	private final static String UP = "Upgrade ";
 	
 	private void upgrade(final Pantext parent, final ShooterController controller, final Weapon weapon) {
-		final ArrayList<String> opts = toMenu(weapon.getArguments());;
+		final ArrayList<String> opts = toMenu(weapon.getArguments());
 		final WeaponDefinition def = weapon.def;
 	    final class WeaponListener implements RadioSubmitListener {
 			@Override
