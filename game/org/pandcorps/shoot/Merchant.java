@@ -31,9 +31,7 @@ import org.pandcorps.shoot.Weapon.*;
 public class Merchant extends ShooterController {
 	@Override
 	public final boolean onInteract(final Shooter initiator) {
-System.out.println("Talking to Merchant");
 		final ShooterController controller = (ShooterController) initiator.getController();
-		//controller.setShooter(null);
 		final ArrayList<String> opts = toMenu(initiator.weapons);
 		final class MerchantListener implements RadioSubmitListener {
             @Override
@@ -44,8 +42,6 @@ System.out.println("Talking to Merchant");
                         upgrade(event.getGroup().getLabel(), controller, weapon);
                     }
                 }
-                //controller.setShooter(initiator);
-                //shooter.getLayer().setActive(true);
             }
         }
 		final RadioGroup rg = new RadioGroup(ShootGame.font, opts, new MerchantListener());
@@ -60,7 +56,6 @@ System.out.println("Talking to Merchant");
 	private final static String UP = "Upgrade ";
 	
 	private void upgrade(final Pantext parent, final ShooterController controller, final Weapon weapon) {
-System.out.println("Upgrading " + weapon.getName());
 		final ArrayList<String> opts = toMenu(weapon.getArguments());;
 		final WeaponDefinition def = weapon.def;
 	    final class WeaponListener implements RadioSubmitListener {
@@ -69,11 +64,9 @@ System.out.println("Upgrading " + weapon.getName());
 				final CharSequence elem = event.getElement();
 				for (final WeaponArgument arg : weapon.getArguments()) {
     				if (getUpgradeLabel(arg).equals(elem)) {
-System.out.println("Upgrading " + arg.getName());
     					arg.upgrade();
     				}
 				}
-				//parent.getLayer().setActive(true);
 			}
 		}
 		final RadioGroup rg = new RadioGroup(ShootGame.font, opts, new WeaponListener());
@@ -81,7 +74,6 @@ System.out.println("Upgrading " + arg.getName());
 		label.setBorderStyle(BorderStyle.Simple);
 		label.setBackground(Pantext.CHAR_SPACE);
 		rg.setTitle("Upgrade " + def.name);
-		//rg.init(parent);
 		rg.init(shooter);
 		
 		/*final Message m = new Message(ShootGame.font, "Test");
