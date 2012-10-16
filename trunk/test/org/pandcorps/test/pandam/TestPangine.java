@@ -28,7 +28,8 @@ public class TestPangine extends PandamTest {
 	public final void testMaxRoomSize() {
 		final int size = (int) Pangine.getEngine().getMaxRoomSize().getX();
 		for (int i = 0; i <= size; i++) {
-			assertEquals(i, (int) ((float) i));
+		    final float f = i;
+			assertEquals(i, (int) f);
 		}
 	}
 }
