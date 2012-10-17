@@ -48,6 +48,10 @@ public abstract class Guy2Game extends Pangame {
         return createAnm("explosion", constantImgs, dur, 3, 4, 5);
     }
 	
+	protected final static Panimation createPuffAnm(final BufferedImage[] constantImgs, final int dur) {
+	    return createAnm("puff", constantImgs, dur, 8, 9, 10);
+	}
+	
 	protected final static Panimation createAnm(final String name, final BufferedImage[] constantImgs, final int dur, final int... is) {
 	    final Pangine engine = Pangine.getEngine();
 	    final int size = is.length;

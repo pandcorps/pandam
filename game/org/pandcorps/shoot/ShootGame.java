@@ -29,6 +29,7 @@ public class ShootGame extends Guy2Game {
 	private static Panmage title = null;
 	/*package*/ static Panimation blood = null;
 	/*package*/ static Panimation explosion = null;
+	/*package*/ static Panimation puff = null;
 	/*package*/ static Panmage interact = null;
 	/*package*/ static Font font = null;
 	private static Panroom room = null;
@@ -54,6 +55,7 @@ public class ShootGame extends Guy2Game {
         type = new Guy2Type(shadowImg, -480);
         blood = createBloodAnm(constantImgs, 2);
         explosion = createExplosionAnm(constantImgs, 3);
+        puff = createPuffAnm(constantImgs, 1);
         interact = engine.createEmptyImage("img.interact", new FinPanple(1, 1, 1), new FinPanple(0, 0, 0), new FinPanple(2, 2, 2));
         font = Fonts.getSimple(new FontRequest(8), Pancolor.BLUE, Pancolor.CYAN, Pancolor.CYAN, Pancolor.BLACK);
 		loadCharacters();
@@ -162,7 +164,7 @@ public class ShootGame extends Guy2Game {
 		loadWeapon(1, "Magnums", 2, 1, strip, 2, flashSmallAnm, casingAnm, null, -1, new Emitter[] {magEmit1, magEmit2}, null, 8, 10, 100, Weapon.INF, Weapon.INF, 2, 5, 1, 1);
 		loadWeapon(2, "Shotgun", 7, 1, strip, 3, flashSmallAnm, casingAnm, null, -1, new Emitter[] {shotEmit}, null, 12, 2, 20, 50, 200, 1, 1, 4, 8);
 		loadWeapon(3, "Minigun", 2, 1, strip, 4, flashFastAnm, casingAnm, null, 5, null, new Emitter[] {miniEmit}, 1, 1, 10, 100, 400, 1, 1, 1, 1);
-		loadWeapon(4, "Flamethrower", 5, 1, strip, 6, null, null, null, -1, null, new Emitter[] {flameEmit}, 0, 5, 15, 200, 1000, 5, 5, 1, 1);
+		loadWeapon(4, "Flamethrower", 5, 1, strip, 6, null, null, null, -1, null, new Emitter[] {flameEmit}, 0, 5, 15, 200, 1000, 1, 1, 1, 1);
 		loadWeapon(5, "RocketLauncher", 6, 1, strip, 7, flashBigAnm, null, null, -1, new Emitter[] {rocketEmit}, null, 20, 50, 500, 1, 10, 1, 1, 1, 1);
 	}
 	
