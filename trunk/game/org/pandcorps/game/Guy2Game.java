@@ -41,11 +41,21 @@ public abstract class Guy2Game extends Pangame {
 	}
 	
 	protected final static Panimation createBloodAnm(final BufferedImage[] constantImgs, final int dur) {
+	    return createAnm("blood", constantImgs, dur, 6, 7);
+	}
+	
+	protected final static Panimation createExplosionAnm(final BufferedImage[] constantImgs, final int dur) {
+        return createAnm("explosion", constantImgs, dur, 3, 4, 5);
+    }
+	
+	protected final static Panimation createAnm(final String name, final BufferedImage[] constantImgs, final int dur, final int... is) {
 	    final Pangine engine = Pangine.getEngine();
-	    final Panmage bld1Img = engine.createImage("img.blood.1", CENTER_16, null, null, constantImgs[6]);
-        final Panmage bld2Img = engine.createImage("img.blood.2", CENTER_16, null, null, constantImgs[7]);
-        final Panframe bld1Frm = engine.createFrame("frm.blood.1", bld1Img, dur);
-        final Panframe bld2Frm = engine.createFrame("frm.blood.2", bld2Img, dur);
-        return engine.createAnimation("anm.blood", bld1Frm, bld2Frm);
+	    final int size = is.length;
+	    final Panframe[] frms = new Panframe[size];
+	    for (int i = 0; i < size; i++) {
+    	    final Panmage img = engine.createImage("img." + name + "." + i, CENTER_16, null, null, constantImgs[is[i]]);
+            frms[i] = engine.createFrame("frm." + name + "." + i, img, dur);
+	    }
+        return engine.createAnimation("anm." + name, frms);
 	}
 }

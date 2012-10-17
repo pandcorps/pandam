@@ -46,6 +46,10 @@ public class Projectile extends org.pandcorps.game.actor.Projectile implements C
 		//this.emitter = emitter;
 	}
 	
+	protected void impact(final Shooter collider) {
+	    collider.add(new Burst(ShootGame.blood), Mathtil.randf(-4, 4), Mathtil.randf(2, 10), 1f);
+	}
+	
 	@Override
 	public final void onCollision(final Shooter collider, final CollisionEvent event) {
 		if (collider == shooter) {
@@ -60,7 +64,7 @@ public class Projectile extends org.pandcorps.game.actor.Projectile implements C
 		if (victims.size() >= weapon.getPierce().getValue()) {
 			die();
 		}
-		collider.add(new Burst(ShootGame.blood), Mathtil.randf(-4, 4), Mathtil.randf(2, 10), 1f);
+		impact(collider);
 	}
     
     @Override
@@ -135,5 +139,25 @@ public class Projectile extends org.pandcorps.game.actor.Projectile implements C
     		super.die();
     		fire.destroy();
     	}
+    	
+    	@Override
+    	protected void impact(final Shooter collider) {
+    	    final int blast = 5; //TODO Upgradeable  WeaponParameter
+    	    final float off = blast * 2.5f;
+    	    for (int i = 0; i < blast; i++) {
+    	        collider.add(new Blast(), Mathtil.randf(-off, off), Mathtil.randf(6 - off, 6 + off), 1f);
+    	    }
+        }
+    }
+    
+    private final static class Blast extends Burst implements Collidee {
+        private Blast() {
+            super(ShootGame.explosion);
+        }
+        
+        @Override
+        public final void onCollision(final Shooter collider, final CollisionEvent event) {
+System.err.println("Blast.onCollision not implemented");
+        }
     }
 }
