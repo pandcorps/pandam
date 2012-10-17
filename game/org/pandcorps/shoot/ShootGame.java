@@ -53,6 +53,7 @@ public class ShootGame extends Guy2Game {
 		final Panmage shadowImg = engine.createImage("img.shadow", new FinPanple(8, 4, 0), null, null, constantImgs[0]);
         type = new Guy2Type(shadowImg, -480);
         blood = createBloodAnm(constantImgs, 2);
+        explosion = createExplosionAnm(constantImgs, 3);
         interact = engine.createEmptyImage("img.interact", new FinPanple(1, 1, 1), new FinPanple(0, 0, 0), new FinPanple(2, 2, 2));
         font = Fonts.getSimple(new FontRequest(8), Pancolor.BLUE, Pancolor.CYAN, Pancolor.CYAN, Pancolor.BLACK);
 		loadCharacters();
