@@ -117,10 +117,7 @@ public class FightGame extends Guy2Game {
         explodeAnim = engine.createAnimation("Explode", engine.createFrame("ExplodeF1", explode1, 3), engine.createFrame("ExplodeF2", explode2, 3), engine.createFrame("ExplodeF3", explode3, 3));*/
         bloodAnim = createBloodAnm(constantImgs, bloodDuration);
         bloodImgs = new BufferedImage[] { constantImgs[6], constantImgs[7] };
-        final Panmage puff1 = engine.createImage("Puff0", new FinPanple(8, 8, 0), null, null, constantImgs[8]);
-        final Panmage puff2 = engine.createImage("Puff1", new FinPanple(8, 8, 0), null, null, constantImgs[9]);
-        final Panmage puff3 = engine.createImage("Puff2", new FinPanple(8, 8, 0), null, null, constantImgs[10]);
-        puffAnim = engine.createAnimation("Puff", engine.createFrame("PuffF1", puff1, 3), engine.createFrame("PuffF2", puff2, 3), engine.createFrame("PuffF3", puff3, 3));
+        puffAnim = createPuffAnm(constantImgs, 3);
         
         burnImgs = ImtilX.loadStrip("org/pandcorps/fight/res/misc/Burn.png");
         

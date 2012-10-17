@@ -22,13 +22,11 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.shoot;
 
-import org.pandcorps.core.Coltil;
-import org.pandcorps.core.Mathtil;
-import org.pandcorps.core.Pantil;
+import org.pandcorps.core.*;
 import org.pandcorps.core.col.IdentityHashSet;
 import org.pandcorps.game.actor.*;
 import org.pandcorps.game.actor.Emitter;
-import org.pandcorps.pandam.Panple;
+import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.impl.FinPanple;
 
@@ -47,8 +45,16 @@ public class Projectile extends org.pandcorps.game.actor.Projectile implements C
 	}
 	
 	protected void impact(final Shooter collider) {
-	    collider.add(new Burst(ShootGame.blood), Mathtil.randf(-4, 4), Mathtil.randf(2, 10), 1f);
+	    burst(collider, ShootGame.blood, 4);
 	}
+	
+	protected final void burst(final Shooter collider, final Panimation anm, final float off) {
+	    add(collider, new Burst(anm), off);
+	}
+	
+	protected final void add(final Shooter collider, final Panctor actor, final float off) {
+        collider.add(actor, Mathtil.randf(-off, off), Mathtil.randf(6 - off, 6 + off), 1f);
+    }
 	
 	@Override
 	public final void onCollision(final Shooter collider, final CollisionEvent event) {
@@ -106,6 +112,11 @@ public class Projectile extends org.pandcorps.game.actor.Projectile implements C
         public final void onAnimationEnd(final AnimationEndEvent event) {
             changeView(ShootGame.flameLoopAnm);
         }
+        
+        @Override
+        protected void impact(final Shooter collider) {
+            burst(collider, ShootGame.puff, 7.5f);
+        }
     }
     
     public final static class RocketProjectile extends Projectile {
@@ -145,7 +156,7 @@ public class Projectile extends org.pandcorps.game.actor.Projectile implements C
     	    final int blast = 5; //TODO Upgradeable  WeaponParameter
     	    final float off = blast * 2.5f;
     	    for (int i = 0; i < blast; i++) {
-    	        collider.add(new Blast(), Mathtil.randf(-off, off), Mathtil.randf(6 - off, 6 + off), 1f);
+    	        add(collider, new Blast(), off);
     	    }
         }
     }
@@ -157,7 +168,7 @@ public class Projectile extends org.pandcorps.game.actor.Projectile implements C
         
         @Override
         public final void onCollision(final Shooter collider, final CollisionEvent event) {
-System.err.println("Blast.onCollision not implemented");
+System.err.println("Blast.onCollision not implemented"); //TODO Share Projectile's victims, don't hurt same one twice
         }
     }
 }
