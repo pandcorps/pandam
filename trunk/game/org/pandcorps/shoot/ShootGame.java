@@ -162,10 +162,10 @@ public class ShootGame extends Guy2Game {
 		weaponDefs = new WeaponDefinition[6];
 		loadWeapon(0, "Chainsaw", 1, 1, strip, 0, null, null, smokeSmallAnm, 1, null, new Emitter[] {sawEmit}, 20, 20, Weapon.INF, Weapon.INF, 0, 0, 5, 5, 1, 1, -1, -1, 1, 1);
 		loadWeapon(1, "Magnums", 2, 1, strip, 2, flashSmallAnm, casingAnm, null, -1, new Emitter[] {magEmit1, magEmit2}, null, 10, 100, Weapon.INF, Weapon.INF, 8, 2, 2, 5, 1, 1, -1, -1, 1, 1);
-		loadWeapon(2, "Shotgun", 7, 1, strip, 3, flashSmallAnm, casingAnm, null, -1, new Emitter[] {shotEmit}, null, 2, 20, 50, 200, 12, 6, 1, 1, 4, 8, -1, -1, 1, 1);
+		loadWeapon(2, "Shotgun", 7, 1, strip, 3, flashSmallAnm, casingAnm, null, -1, new Emitter[] {shotEmit}, null, 2, 20, 50, 200, 14, 6, 1, 1, 4, 8, -1, -1, 1, 1);
 		loadWeapon(3, "Minigun", 2, 1, strip, 4, flashFastAnm, casingAnm, null, 5, null, new Emitter[] {miniEmit}, 1, 10, 100, 400, 1, 1, 1, 1, 1, 1, -1, -1, 1, 1);
 		loadWeapon(4, "Flamethrower", 5, 1, strip, 6, null, null, null, -1, null, new Emitter[] {flameEmit}, 5, 15, 200, 1000, 0, 0, 1, 1, 1, 1, 16, 32, 1, 1);
-		loadWeapon(5, "RocketLauncher", 6, 1, strip, 7, flashBigAnm, null, null, -1, new Emitter[] {rocketEmit}, null, 50, 500, 1, 10, 50, 30, 1, 1, 1, 1, -1, -1, 3, 8);
+		loadWeapon(5, "RocketLauncher", 6, 1, strip, 7, flashBigAnm, null, null, -1, new Emitter[] {rocketEmit}, null, 50, 500, 1, 10, 25, 15, 1, 1, 1, 1, -1, -1, 3, 8);
 	}
 	
 	private final static void loadWeapon(final int wpnIdx, final String name,
