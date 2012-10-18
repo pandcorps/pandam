@@ -32,6 +32,7 @@ import org.pandcorps.pandax.Pandy;
 
 public class Weapon extends Panctor implements Upgradeable {
     /*package*/ final static int INF = Integer.MAX_VALUE;
+    /*package*/ final static int DELAY = 50;
     
     public final static class WeaponParameter {
         public final String name;
@@ -58,10 +59,9 @@ public class Weapon extends Panctor implements Upgradeable {
 		private final Panimation attackAnm;
 		protected final Emitter[] attackEmitters;
 		protected final Emitter[] attackingEmitters;
-		private final int delay; // move into WeaponParameter
 		/*package*/ final WeaponParameter power;
 		/*package*/ final WeaponParameter capacity;
-		//WeaponParameter rate
+		/*package*/ final WeaponParameter rate;
 		/*package*/ final WeaponParameter pierce;
 		/*package*/ final WeaponParameter spray;
 		/*package*/ final WeaponParameter range;
@@ -70,8 +70,9 @@ public class Weapon extends Panctor implements Upgradeable {
 		public WeaponDefinition(final String name, final Panmage image, final Panimation flashAnm,
 				final Panimation casingAnm, final Panimation smokeAnm, final Panimation attackAnm,
 				final Emitter[] attackEmitters, final Emitter[] attackingEmitters,
-				final int delay, final int minPower, final int maxPower,
+				final int minPower, final int maxPower,
 				final int minCapacity, final int maxCapacity,
+				final int minRate, final int maxRate,
 				final int minPierce, final int maxPierce,
 				final int minSpray, final int maxSpray,
 				final int minRange, final int maxRange,
@@ -84,10 +85,9 @@ public class Weapon extends Panctor implements Upgradeable {
 			this.attackAnm = attackAnm;
 			this.attackEmitters = attackEmitters;
 			this.attackingEmitters = attackingEmitters;
-			// step occurs in same cycle after setting delay, 1 acts like 0 if we don't add 1
-			this.delay = delay <= 0 ? 0 : delay + 1;
 			this.power = new WeaponParameter("Power", minPower, maxPower);
 			this.capacity = new WeaponParameter("Capacity", minCapacity, maxCapacity);
+			this.rate = new WeaponParameter("Rate", DELAY - minRate, DELAY - maxRate);
 			this.pierce = new WeaponParameter("Pierce", minPierce, maxPierce);
 			this.spray = new WeaponParameter("Spray", minSpray, maxSpray);
 			this.range = new WeaponParameter("Range", minRange, maxRange);
@@ -136,6 +136,7 @@ public class Weapon extends Panctor implements Upgradeable {
 	protected final WeaponDefinition def;
 	private final WeaponArgument power;
 	private final WeaponArgument capacity;
+	private final WeaponArgument rate;
 	private final WeaponArgument pierce;
 	private final WeaponArgument spray;
 	private final WeaponArgument range;
@@ -150,11 +151,12 @@ public class Weapon extends Panctor implements Upgradeable {
 		this.def = def;
 		power = new WeaponArgument(def.power);
 		capacity = new WeaponArgument(def.capacity);
+		rate = new WeaponArgument(def.rate);
 		pierce = new WeaponArgument(def.pierce);
 		spray = new WeaponArgument(def.spray);
 		range = new WeaponArgument(def.range);
 		blast = new WeaponArgument(def.blast);
-		args = Coltil.unmodifiableList(Coltil.asList(power, capacity, pierce, spray, range, blast));
+		args = Coltil.unmodifiableList(Coltil.asList(power, capacity, rate, pierce, spray, range, blast));
 		setView(def.image);
 	}
 	
@@ -183,7 +185,7 @@ public class Weapon extends Panctor implements Upgradeable {
 		if (timer > 0) {
 			return;
 		}
-		timer = def.delay;
+		timer = getDelay();
 		final boolean mirror = isMirror();
 		final HashSet<Panple> projPositions = new HashSet<Panple>();
 		final int spray = this.spray.val;
@@ -241,6 +243,10 @@ public class Weapon extends Panctor implements Upgradeable {
         return capacity;
     }
 	
+	public WeaponArgument getRate() {
+        return capacity;
+    }
+	
 	public WeaponArgument getPierce() {
 		return pierce;
 	}
@@ -255,6 +261,12 @@ public class Weapon extends Panctor implements Upgradeable {
 	
 	public WeaponArgument getBlast() {
 	    return blast;
+	}
+	
+	private final int getDelay() {
+	    final int delay = DELAY - rate.getValue();
+	    // step occurs in same cycle after setting delay, 1 acts like 0 if we don't add 1
+	    return delay <= 0 ? 0 : delay + 1;
 	}
 	
 	public List<WeaponArgument> getArguments() {
