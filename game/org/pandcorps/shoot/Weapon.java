@@ -22,12 +22,9 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.shoot;
 
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
-import org.pandcorps.core.Coltil;
-import org.pandcorps.core.Mathtil;
-import org.pandcorps.core.Pantil;
+import org.pandcorps.core.*;
 import org.pandcorps.game.actor.Burst;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
@@ -67,6 +64,7 @@ public class Weapon extends Panctor implements Upgradeable {
 		//WeaponParameter rate
 		/*package*/ final WeaponParameter pierce;
 		/*package*/ final WeaponParameter spray;
+		/*package*/ final WeaponParameter blast;
 		
 		public WeaponDefinition(final String name, final Panmage image, final Panimation flashAnm,
 				final Panimation casingAnm, final Panimation smokeAnm, final Panimation attackAnm,
@@ -74,7 +72,8 @@ public class Weapon extends Panctor implements Upgradeable {
 				final int delay, final int minPower, final int maxPower,
 				final int minCapacity, final int maxCapacity,
 				final int minPierce, final int maxPierce,
-				final int minSpray, final int maxSpray) {
+				final int minSpray, final int maxSpray,
+				final int minBlast, final int maxBlast) {
 			this.name = name;
 			this.image = image;
 			this.flashAnm = flashAnm;
@@ -89,6 +88,7 @@ public class Weapon extends Panctor implements Upgradeable {
 			this.capacity = new WeaponParameter("Capacity", minCapacity, maxCapacity);
 			this.pierce = new WeaponParameter("Pierce", minPierce, maxPierce);
 			this.spray = new WeaponParameter("Spray", minSpray, maxSpray);
+			this.blast = new WeaponParameter("Blast", minBlast, maxBlast);
 		}
 	}
 	
@@ -135,6 +135,7 @@ public class Weapon extends Panctor implements Upgradeable {
 	private final WeaponArgument capacity;
 	private final WeaponArgument pierce;
 	private final WeaponArgument spray;
+	private final WeaponArgument blast;
 	private final List<WeaponArgument> args;
 	private boolean attacking = false;
 	private int timer = 0;
@@ -147,7 +148,8 @@ public class Weapon extends Panctor implements Upgradeable {
 		capacity = new WeaponArgument(def.capacity);
 		pierce = new WeaponArgument(def.pierce);
 		spray = new WeaponArgument(def.spray);
-		args = Coltil.unmodifiableList(Coltil.asList(power, capacity, pierce, spray));
+		blast = new WeaponArgument(def.blast);
+		args = Coltil.unmodifiableList(Coltil.asList(power, capacity, pierce, spray, blast));
 		setView(def.image);
 	}
 	
@@ -240,6 +242,10 @@ public class Weapon extends Panctor implements Upgradeable {
 	
 	public WeaponArgument getSpray() {
 	    return spray;
+	}
+	
+	public WeaponArgument getBlast() {
+	    return blast;
 	}
 	
 	public List<WeaponArgument> getArguments() {

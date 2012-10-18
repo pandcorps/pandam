@@ -153,7 +153,7 @@ public class Projectile extends org.pandcorps.game.actor.Projectile implements C
     	
     	@Override
     	protected void impact(final Shooter collider) {
-    	    final int blast = 5; //TODO Upgradeable  WeaponParameter
+    	    final int blast = weapon.getBlast().getValue();
     	    final float off = blast * 2.5f;
     	    for (int i = 0; i < blast; i++) {
     	        add(collider, new Blast(), off);
