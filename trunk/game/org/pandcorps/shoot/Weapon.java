@@ -64,6 +64,7 @@ public class Weapon extends Panctor implements Upgradeable {
 		//WeaponParameter rate
 		/*package*/ final WeaponParameter pierce;
 		/*package*/ final WeaponParameter spray;
+		/*package*/ final WeaponParameter range;
 		/*package*/ final WeaponParameter blast;
 		
 		public WeaponDefinition(final String name, final Panmage image, final Panimation flashAnm,
@@ -73,6 +74,7 @@ public class Weapon extends Panctor implements Upgradeable {
 				final int minCapacity, final int maxCapacity,
 				final int minPierce, final int maxPierce,
 				final int minSpray, final int maxSpray,
+				final int minRange, final int maxRange,
 				final int minBlast, final int maxBlast) {
 			this.name = name;
 			this.image = image;
@@ -88,6 +90,7 @@ public class Weapon extends Panctor implements Upgradeable {
 			this.capacity = new WeaponParameter("Capacity", minCapacity, maxCapacity);
 			this.pierce = new WeaponParameter("Pierce", minPierce, maxPierce);
 			this.spray = new WeaponParameter("Spray", minSpray, maxSpray);
+			this.range = new WeaponParameter("Range", minRange, maxRange);
 			this.blast = new WeaponParameter("Blast", minBlast, maxBlast);
 		}
 	}
@@ -135,6 +138,7 @@ public class Weapon extends Panctor implements Upgradeable {
 	private final WeaponArgument capacity;
 	private final WeaponArgument pierce;
 	private final WeaponArgument spray;
+	private final WeaponArgument range;
 	private final WeaponArgument blast;
 	private final List<WeaponArgument> args;
 	private boolean attacking = false;
@@ -148,8 +152,9 @@ public class Weapon extends Panctor implements Upgradeable {
 		capacity = new WeaponArgument(def.capacity);
 		pierce = new WeaponArgument(def.pierce);
 		spray = new WeaponArgument(def.spray);
+		range = new WeaponArgument(def.range);
 		blast = new WeaponArgument(def.blast);
-		args = Coltil.unmodifiableList(Coltil.asList(power, capacity, pierce, spray, blast));
+		args = Coltil.unmodifiableList(Coltil.asList(power, capacity, pierce, spray, range, blast));
 		setView(def.image);
 	}
 	
@@ -242,6 +247,10 @@ public class Weapon extends Panctor implements Upgradeable {
 	
 	public WeaponArgument getSpray() {
 	    return spray;
+	}
+	
+	public WeaponArgument getRange() {
+	    return range;
 	}
 	
 	public WeaponArgument getBlast() {

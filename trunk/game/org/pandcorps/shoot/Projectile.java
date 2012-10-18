@@ -108,6 +108,12 @@ public class Projectile extends org.pandcorps.game.actor.Projectile implements C
     }
     
     public final static class FlameProjectile extends Projectile implements AnimationEndListener {
+    	@Override
+    	protected void init(final Guy2 guy, final Emitter emitter, final boolean mirror) {
+    		super.init(guy, emitter, mirror);
+    		time = (byte) ((Shooter) guy).weapon.getRange().getValue();
+    	}
+    	
         @Override
         public final void onAnimationEnd(final AnimationEndEvent event) {
             changeView(ShootGame.flameLoopAnm);
