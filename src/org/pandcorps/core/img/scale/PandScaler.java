@@ -285,33 +285,37 @@ public class PandScaler extends Scaler {
                 int fin0 = out0, fin1 = out1, fin2 = out2, fin3 = out3;
                 if (out0 == inb && out0 == ind) {
                     if (out0 == inc) {
-                        fin1 = out0;
-                    }
-                    if (out0 == ing) {
+                        if (out0 != ing) {
+                            fin1 = out0;
+                        }
+                    } else if (out0 == ing) {
                         fin2 = out0;
                     }
                 }
                 if (out1 == inb && out1 == inf) {
                     if (out1 == ina) {
-                        fin0 = out1;
-                    }
-                    if (out1 == ini) {
+                        if (out1 != ini) {
+                            fin0 = out1;
+                        }
+                    } else if (out1 == ini) {
                         fin3 = out1;
                     }
                 }
                 if (out2 == inh && out2 == ind) {
                     if (out2 == ina) {
-                        fin0 = out2;
-                    }
-                    if (out2 == ini) {
+                        if (out2 != ini) {
+                            fin0 = out2;
+                        }
+                    } else if (out2 == ini) {
                         fin3 = out2;
                     }
                 }
                 if (out3 == inh && out3 == inf) {
                     if (out3 == inc) {
-                        fin1 = out3;
-                    }
-                    if (out3 == ing) {
+                        if (out3 != ing) {
+                            fin1 = out3;
+                        }
+                    } else if (out3 == ing) {
                         fin2 = out3;
                     }
                 }
