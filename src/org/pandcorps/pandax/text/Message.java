@@ -28,8 +28,15 @@ import org.pandcorps.pandam.event.action.*;
 
 // Conversation? Dialogue?
 public class Message extends TextItem {
+    private final MessageCloseListener listener;
+    
     public Message(final Font font, final String text) {
+        this(font, text, null);
+    }
+    
+    public Message(final Font font, final String text, final MessageCloseListener listener) {
         super(new Pantext(Pantil.vmid(), font, text, 7));
+        this.listener = listener;
         label.setLinesPerPage(2);
     }
     
@@ -60,6 +67,9 @@ public class Message extends TextItem {
                 interaction.unregister(this);
                 submit.inactivate();
                 activateParent(true);
+                if (listener != null) {
+                    listener.onClose(MessageCloseEvent.getInstance());
+                }
             }});
     }
 }
