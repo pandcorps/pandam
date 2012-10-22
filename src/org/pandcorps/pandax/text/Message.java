@@ -35,7 +35,11 @@ public class Message extends TextItem {
     }
     
     public Message(final Font font, final String text, final MessageCloseListener listener) {
-        super(new Pantext(Pantil.vmid(), font, text, 7));
+        this(font, new Pantext(Pantil.vmid(), font, text), listener);
+    }
+    
+    public Message(final Font font, final Pantext text, final MessageCloseListener listener) {
+        super(text);
         this.listener = listener;
         label.setLinesPerPage(2);
     }
