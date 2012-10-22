@@ -29,8 +29,11 @@ import org.pandcorps.pandax.text.*;
 import org.pandcorps.shoot.Weapon.*;
 
 public class Merchant extends ShooterController {
+    private Shooter initiator = null;
+    
 	@Override
 	public final boolean onInteract(final Shooter initiator) {
+	    this.initiator = initiator;
 		final ShooterController controller = (ShooterController) initiator.getController();
 		final ArrayList<String> opts = toMenu(initiator.weapons);
 		final class MerchantListener implements RadioSubmitListener {
@@ -48,16 +51,21 @@ public class Merchant extends ShooterController {
 		return true;
 	}
 	
-	private void menu(final ArrayList<String> opts, final RadioSubmitListener listener, final String title) {
-		final RadioGroup rg = new RadioGroup(ShootGame.font, opts, listener);
-        final Pantext label = rg.getLabel();
+	private void init(final TextItem t) {
+	    final Pantext label = t.getLabel();
         label.setBorderStyle(BorderStyle.Simple);
         label.setBackground(Pantext.CHAR_SPACE);
-        rg.setTitle(title);
-        rg.init(shooter);
+        t.init(shooter);
+	}
+	
+	private void menu(final ArrayList<String> opts, final RadioSubmitListener listener, final String title) {
+		final RadioGroup rg = new RadioGroup(ShootGame.font, opts, listener);
+		rg.setTitle(title);
+        init(rg);
 	}
 	
 	private final static String UP = "Upgrade ";
+	private final static String EXIT = "Exit";
 	
 	private void upgrade(final Pantext parent, final ShooterController controller, final Weapon weapon) {
 		final ArrayList<String> opts = toMenu(weapon.getArguments());
@@ -69,17 +77,23 @@ public class Merchant extends ShooterController {
 				for (final WeaponArgument arg : weapon.getArguments()) {
     				if (getUpgradeLabel(arg).equals(elem)) {
     					arg.upgrade();
+    					msg("Enjoy it, friend.", new MessageCloseListener() {@Override public void onClose(final MessageCloseEvent event) {upgrade(parent, controller, weapon);}});
+    					return;
     				}
 				}
+				if (EXIT.equals(elem)) {
+				    onInteract(initiator);
+				    return;
+				}
+				throw new IllegalStateException("Could not understand " + elem);
 			}
 		}
 	    menu(opts, new WeaponListener(), "Upgrade " + def.name);
-		
-		/*final Message m = new Message(ShootGame.font, "Test");
-		final Pantext labelm = m.getLabel();
-		labelm.setBorderStyle(BorderStyle.Simple);
-		labelm.setBackground(Pantext.CHAR_SPACE);
-		m.init();*/
+	}
+	
+	private void msg(final String text, final MessageCloseListener listener) {
+		final Message m = new Message(ShootGame.font, text, listener);
+		init(m);
 	}
 	
 	private ArrayList<String> toMenu(final List<? extends Upgradeable> list) {
@@ -90,6 +104,7 @@ public class Merchant extends ShooterController {
 	            opts.add(getUpgradeLabel(u));
 	        }
 		}
+		opts.add(EXIT);
 		return opts;
 	}
 	
