@@ -171,12 +171,15 @@ public class PandScaler extends Scaler {
     public BufferedImage scale(final BufferedImage in) {
         final int w = in.getWidth(), h = in.getHeight();
         final int w1 = w - 1, h1 = h - 1;
+        final int w2 = w - 2, h2 = h - 2;
         final BufferedImage out = new BufferedImage(w * 2, h * 2, Imtil.TYPE);
         for (int x = 0; x < w; x++) {
+        	final int xm1 = x > 0 ? x - 1 : x, xp1 = x < w1 ? x + 1 : x;
+        	final int xm2 = x > 1 ? x - 2 : x, xp2 = x < w2 ? x + 2 : x;
             for (int y = 0; y < h; y++) {
                 final int out0, out1, out2, out3;
-                final int xm1 = x > 0 ? x - 1 : x, xp1 = x < w1 ? x + 1 : x;
                 final int ym1 = y > 0 ? y - 1 : y, yp1 = y < h1 ? y + 1 : y;
+                final int ym2 = y > 1 ? y - 2 : y, yp2 = y < h2 ? y + 2 : y;
                 final int ina = in.getRGB(xm1, ym1);
                 final int inb = in.getRGB(x, ym1);
                 final int inc = in.getRGB(xp1, ym1);
@@ -285,37 +288,37 @@ public class PandScaler extends Scaler {
                 int fin0 = out0, fin1 = out1, fin2 = out2, fin3 = out3;
                 if (out0 == inb && out0 == ind) {
                     if (out0 == inc) {
-                        if (out0 != ing) {
+                        if (out0 != ing && out0 == in.getRGB(xm2, y)) {
                             fin1 = out0;
                         }
-                    } else if (out0 == ing) {
+                    } else if (out0 == ing && out0 == in.getRGB(x, ym2)) {
                         fin2 = out0;
                     }
                 }
                 if (out1 == inb && out1 == inf) {
                     if (out1 == ina) {
-                        if (out1 != ini) {
+                        if (out1 != ini && out1 == in.getRGB(xp2, y)) {
                             fin0 = out1;
                         }
-                    } else if (out1 == ini) {
+                    } else if (out1 == ini && out1 == in.getRGB(x, ym2)) {
                         fin3 = out1;
                     }
                 }
                 if (out2 == inh && out2 == ind) {
                     if (out2 == ina) {
-                        if (out2 != ini) {
+                        if (out2 != ini && out2 == in.getRGB(x, yp2)) {
                             fin0 = out2;
                         }
-                    } else if (out2 == ini) {
+                    } else if (out2 == ini && out2 == in.getRGB(xm2, y)) {
                         fin3 = out2;
                     }
                 }
                 if (out3 == inh && out3 == inf) {
                     if (out3 == inc) {
-                        if (out3 != ing) {
+                        if (out3 != ing && out3 == in.getRGB(x, yp2)) {
                             fin1 = out3;
                         }
-                    } else if (out3 == ing) {
+                    } else if (out3 == ing && out3 == in.getRGB(xp2, y)) {
                         fin2 = out3;
                     }
                 }
