@@ -71,6 +71,10 @@ public class Projectile extends org.pandcorps.game.actor.Projectile implements C
 			die();
 		}
 		impact(collider);
+		hurt(collider);
+	}
+	
+	private void hurt(final Shooter victim) {
 	}
     
     @Override
@@ -162,19 +166,25 @@ public class Projectile extends org.pandcorps.game.actor.Projectile implements C
     	    final int blast = weapon.getBlast().getValue();
     	    final float off = blast * 2.5f;
     	    for (int i = 0; i < blast; i++) {
-    	        add(collider, new Blast(), off);
+    	        add(collider, new Blast(this), off);
     	    }
         }
     }
     
     private final static class Blast extends Burst implements Collidee {
-        private Blast() {
+    	private final Projectile projectile;
+    	
+        private Blast(final Projectile projectile) {
             super(ShootGame.explosion);
+            this.projectile = projectile;
         }
         
         @Override
         public final void onCollision(final Shooter collider, final CollisionEvent event) {
-System.err.println("Blast.onCollision not implemented"); //TODO Share Projectile's victims, don't hurt same one twice
+        	if (!projectile.victims.add(collider)) {
+        		return;
+        	}
+        	projectile.hurt(collider);
         }
     }
 }
