@@ -244,7 +244,7 @@ public class Weapon extends Panctor implements Upgradeable {
     }
 	
 	public WeaponArgument getRate() {
-        return capacity;
+        return rate;
     }
 	
 	public WeaponArgument getPierce() {
