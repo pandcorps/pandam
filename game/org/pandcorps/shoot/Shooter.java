@@ -11,10 +11,11 @@ import org.pandcorps.pandam.impl.FinPanple;
 
 public class Shooter extends Guy2 implements CollisionListener {
 	public final static class ShooterDefinition {
+	    private final int constitution;
 		private final Panimation still;
 		protected final Panimation walk;
 		
-		public final static ShooterDefinition create(final String name, final BufferedImage... imgs) {
+		public final static ShooterDefinition create(final String name, final int constitution, final BufferedImage... imgs) {
 			final Pangine engine = Pangine.getEngine();
 			final String pre = name + '.';
 			final String ipre = pre + "img.", fpre = pre + "frm.", apre = pre + "anm.";
@@ -27,10 +28,11 @@ public class Shooter extends Guy2 implements CollisionListener {
 			final Panframe rightFrm = engine.createFrame(fpre + "right", rightImg, 4);
 			final Panimation stillAnm = engine.createAnimation(apre + "still", stillFrm);
 			final Panimation walkAnm = engine.createAnimation(apre + "walk", leftFrm, stillFrm, rightFrm, stillFrm);
-			return new ShooterDefinition(stillAnm, walkAnm);
+			return new ShooterDefinition(constitution, stillAnm, walkAnm);
 		}
 		
-		public ShooterDefinition(final Panimation still, final Panimation walk) {
+		public ShooterDefinition(final int constitution, final Panimation still, final Panimation walk) {
+		    this.constitution = constitution;
 			this.still = still;
 			this.walk = walk;
 		}
@@ -39,11 +41,12 @@ public class Shooter extends Guy2 implements CollisionListener {
 	/*package*/ final ShooterDefinition def;
 	/*package*/ ArrayList<Weapon> weapons = null;
 	/*package*/ Weapon weapon = null;
-	private int health = 100;
+	private int health;
 	
 	protected Shooter(final String id, final Panroom room, final ShooterDefinition def) {
 		super(id, room, ShootGame.type);
 		this.def = def;
+		health = def.constitution;
 		setView(def.still);
 	}
 	
@@ -70,6 +73,9 @@ public class Shooter extends Guy2 implements CollisionListener {
 	}
 	
 	/*package*/ void onHurt(final Projectile p) {
+	    if (health == Weapon.INF) {
+	        return;
+	    }
 		health -= p.weapon.getPower().getValue();
 		if (health <= 0) {
 			add(new Burst(ShootGame.puff), 0, 0, 0);

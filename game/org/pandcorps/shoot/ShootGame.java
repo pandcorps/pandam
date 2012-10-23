@@ -81,13 +81,13 @@ public class ShootGame extends Guy2Game {
 	}
 	
 	private final static void loadCharacters() {
-		playerDef = ShooterDefinition.create("Will", loadChrStrip("Will"));
+		playerDef = ShooterDefinition.create("Will", 100, loadChrStrip("Will"));
 		final int numTrps = 5;
 		trooperDefs = new ShooterDefinition[numTrps];
 		for (int i = 0; i < trooperDefs.length; i++) {
 			trooperDefs[i] = getTrp(i + 4);
 		}
-		merchantDef = ShooterDefinition.create("Merchant", loadChrStrip("Merchant"));
+		merchantDef = ShooterDefinition.create("Merchant", Weapon.INF, loadChrStrip("Merchant"));
 	}
 	
 	private final static void loadWeapons() {
@@ -229,7 +229,7 @@ public class ShootGame extends Guy2Game {
 		final BufferedImage still = getTrpImg(strip, 0, head, 0);
 		final BufferedImage left = getTrpImg(strip, 1, head, 1);
 		final BufferedImage right = getTrpImg(strip, 2, head, 1);
-		return ShooterDefinition.create("Blitztrooper." + headIndex, still, left, right);
+		return ShooterDefinition.create("Blitztrooper." + headIndex, 100, still, left, right);
 	}
 	
 	private final static class TitleScreen extends FadeScreen {
