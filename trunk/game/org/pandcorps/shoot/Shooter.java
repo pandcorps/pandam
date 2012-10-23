@@ -39,6 +39,7 @@ public class Shooter extends Guy2 implements CollisionListener {
 	/*package*/ final ShooterDefinition def;
 	/*package*/ ArrayList<Weapon> weapons = null;
 	/*package*/ Weapon weapon = null;
+	private int health = 100;
 	
 	protected Shooter(final String id, final Panroom room, final ShooterDefinition def) {
 		super(id, room, ShootGame.type);
@@ -65,6 +66,14 @@ public class Shooter extends Guy2 implements CollisionListener {
 		final Collidable c = event.getCollider();
 		if (c instanceof Collidee) {
 			((Collidee) c).onCollision(this, event);
+		}
+	}
+	
+	/*package*/ void onHurt(final Projectile p) {
+		health -= p.weapon.getPower().getValue();
+		if (health <= 0) {
+			add(new Burst(ShootGame.puff), 0, 0, 0);
+			destroy();
 		}
 	}
 	

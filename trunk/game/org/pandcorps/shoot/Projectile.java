@@ -75,6 +75,7 @@ public class Projectile extends org.pandcorps.game.actor.Projectile implements C
 	}
 	
 	private void hurt(final Shooter victim) {
+		victim.onHurt(this);
 	}
     
     @Override
