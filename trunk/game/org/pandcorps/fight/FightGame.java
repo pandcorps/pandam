@@ -107,9 +107,8 @@ public class FightGame extends Guy2Game {
         final BufferedImage[] constantImgs = loadConstantImgs();
         shadowImage = engine.createImage("Shadow", new FinPanple(8, 4, 0), null, null, constantImgs[0]);
         type = new Guy2Type(shadowImage, Fighter.DEPTH_SHADOW);
-        bamImage1 = engine.createImage("Bam0", new FinPanple(8, 8, 0), null, null, constantImgs[1]);
-        final Panmage bam2 = engine.createImage("Bam1", new FinPanple(8, 8, 0), null, null, constantImgs[2]);
-        bamAnim = engine.createAnimation("Bam", engine.createFrame("BamF1", bamImage1, 3), engine.createFrame("BamF2", bam2, 3));
+        bamAnim = createBamAnm(constantImgs, 3);
+        bamImage1 = bamAnim.getFrames()[0].getImage();
         explodeImgs = new BufferedImage[] { constantImgs[3], constantImgs[4], constantImgs[5] };
         /*final Panmage explode1 = engine.createImage("Explode0", new FinPanple(8, 8, 0), null, null, constantImgs[3]);
         final Panmage explode2 = engine.createImage("Explode1", new FinPanple(8, 8, 0), null, null, constantImgs[4]);
