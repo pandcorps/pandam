@@ -56,6 +56,18 @@ public abstract class Panple {
 	public void set(final Panple src) {
 		set(src.getX(), src.getY(), src.getZ());
 	}
+	
+	public void addX(final float x) {
+		setX(getX() + x);
+	}
+	
+	public void addY(final float y) {
+		setY(getY() + y);
+	}
+	
+	public void addZ(final float z) {
+		setZ(getZ() + z);
+	}
 
 	public void add(final float x, final float y) {
 		set(getX() + x, getY() + y);
