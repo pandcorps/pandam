@@ -10,6 +10,8 @@ import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.impl.FinPanple;
 
 public class Shooter extends Guy2 implements CollisionListener {
+	/*package*/ final static int OFF_ADD_Y = 6;
+	
 	public final static class ShooterDefinition {
 	    private final int constitution;
 		private final Panimation still;

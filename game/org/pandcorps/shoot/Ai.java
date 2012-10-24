@@ -44,6 +44,8 @@ public class Ai extends ShooterController {
 			pos.set(shooter.getPosition());
 			pos.add(this.guy.getPosition());
 			pos.multiply(0.5f);
+			pos.addY(Shooter.OFF_ADD_Y);
+			pos.addZ(2);
 			shooter.getLayer().addActor(bam);
 			shooter.onHurt(10);
 			bamTimer = bamDelay;

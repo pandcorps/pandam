@@ -53,7 +53,8 @@ public class Projectile extends org.pandcorps.game.actor.Projectile implements C
 	}
 	
 	protected final void add(final Shooter collider, final Panctor actor, final float off) {
-        collider.add(actor, Mathtil.randf(-off, off), Mathtil.randf(6 - off, 6 + off), 1f);
+		final int y = Shooter.OFF_ADD_Y;
+        collider.add(actor, Mathtil.randf(-off, off), Mathtil.randf(y - off, y + off), 1f);
     }
 	
 	@Override
