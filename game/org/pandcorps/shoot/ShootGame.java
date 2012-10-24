@@ -30,9 +30,11 @@ public class ShootGame extends Guy2Game {
 	/*package*/ static Panimation blood = null;
 	/*package*/ static Panimation explosion = null;
 	/*package*/ static Panimation puff = null;
+	/*package*/ static Panimation bam = null;
 	/*package*/ static Panmage interact = null;
 	/*package*/ static Font font = null;
 	private static Panroom room = null;
+	/*package*/ static Shooter shooter = null;
 	/*package*/ static FinPanple max = null;
 	/*package*/ static Panimation smokeBigAnm = null;
 	/*package*/ static Panimation flameLoopAnm = null;
@@ -56,6 +58,8 @@ public class ShootGame extends Guy2Game {
         blood = createBloodAnm(constantImgs, 2);
         explosion = createExplosionAnm(constantImgs, 3);
         puff = createPuffAnm(constantImgs, 1);
+        bam = createBamAnm(constantImgs, 2);
+        Ai.bamDelay = bam.getDuration() + 2;
         interact = engine.createEmptyImage("img.interact", new FinPanple(1, 1, 1), new FinPanple(0, 0, 0), new FinPanple(2, 2, 2));
         font = Fonts.getSimple(new FontRequest(8), Pancolor.BLUE, Pancolor.CYAN, Pancolor.CYAN, Pancolor.BLACK);
 		loadCharacters();
@@ -276,7 +280,7 @@ public class ShootGame extends Guy2Game {
 			Pangame.getGame().setCurrentRoom(room);
 			loadBackground();
 			engine.setBgColor(Pancolor.GREEN);
-			final Shooter shooter = new Shooter("STR.1", room, playerDef);
+			shooter = new Shooter("STR.1", room, playerDef);
 			for (int i = 0; i < weaponDefs.length; i++) {
 			    shooter.addWeapon(i);
 			}

@@ -22,8 +22,35 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.shoot;
 
+import org.pandcorps.game.actor.Burst;
+import org.pandcorps.pandam.Panple;
+
 public class Ai extends ShooterController {
+	/*package*/ static int bamDelay;
+	private int bamTimer = 0;
+	
 	@Override
     public final void step() {
+		if (bamTimer > 0) {
+			bamTimer--;
+		}
+	}
+	
+	@Override
+	/*package*/ final void onCollision(final Shooter shooter) {
+		if (bamTimer == 0 && shooter == getTarget()) {
+			final Burst bam = new Burst(ShootGame.bam);
+			final Panple pos = bam.getPosition();
+			pos.set(shooter.getPosition());
+			pos.add(this.guy.getPosition());
+			pos.multiply(0.5f);
+			shooter.getLayer().addActor(bam);
+			shooter.onHurt(10);
+			bamTimer = bamDelay;
+		}
+	}
+	
+	private final Shooter getTarget() {
+		return ShootGame.shooter;
 	}
 }
