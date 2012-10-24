@@ -37,4 +37,13 @@ public class ImplPanimation extends BasePantity implements Panimation {
 	public Panframe[] getFrames() {
 		return frames;
 	}
+	
+	@Override
+	public int getDuration() {
+		int d = 0;
+		for (final Panframe f : frames) {
+			d += f.getDuration();
+		}
+		return d;
+	}
 }
