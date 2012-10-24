@@ -74,4 +74,7 @@ public abstract class ShooterController extends Guy2Controller {
 	/*package*/ boolean onInteract(final Shooter initiator) {
 		return false;
 	}
+	
+	/*package*/ void onCollision(final Shooter shooter) {
+	}
 }

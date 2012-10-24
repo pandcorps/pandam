@@ -69,17 +69,31 @@ public class Shooter extends Guy2 implements CollisionListener {
 		final Collidable c = event.getCollider();
 		if (c instanceof Collidee) {
 			((Collidee) c).onCollision(this, event);
+		} else if (c instanceof Shooter) {
+			((ShooterController) controller).onCollision((Shooter) c);
 		}
 	}
 	
 	/*package*/ void onHurt(final Projectile p) {
+		onHurt(p.weapon.getPower().getValue());
+	}
+	
+	/*package*/ void onHurt(final int damage) {
 	    if (health == Weapon.INF) {
 	        return;
 	    }
-		health -= p.weapon.getPower().getValue();
+		health -= damage;
 		if (health <= 0) {
 			add(new Burst(ShootGame.puff), 0, 0, 0);
 			destroy();
+		}
+	}
+	
+	@Override
+	protected final void onDestroy() {
+		Panctor.destroy(weapon);
+		for (final Weapon w : this.weapons) {
+			Panctor.destroy(w);
 		}
 	}
 	
