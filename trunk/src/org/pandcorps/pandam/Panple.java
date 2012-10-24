@@ -83,6 +83,10 @@ public abstract class Panple {
 		add(src.getX(), src.getY(), src.getZ());
 	}
 	
+	public void multiply(final float s) {
+		set(getX() * s, getY() * s, getZ() * s);
+	}
+	
 	public double getMagnitude() {
 	    final float x = getX(), y = getY(), z = getZ();
 	    return Math.sqrt(x * x + y * y + z * z);
