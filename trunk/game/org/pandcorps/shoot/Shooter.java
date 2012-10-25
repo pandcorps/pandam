@@ -73,13 +73,16 @@ public class Shooter extends Guy2 implements CollisionListener {
 		final Collidable c = event.getCollider();
 		if (c instanceof Collidee) {
 			((Collidee) c).onCollision(this, event);
-		} else if (c instanceof Shooter) {
+		} else if (controller != null && c instanceof Shooter) {
 			((ShooterController) controller).onCollision((Shooter) c);
 		}
 	}
 	
 	/*package*/ void onHurt(final Projectile p) {
 		onHurt(p.weapon.getPower().getValue());
+		if (controller != null) {
+			((ShooterController) controller).onHurt(p);
+		}
 	}
 	
 	/*package*/ void onHurt(final int damage) {
