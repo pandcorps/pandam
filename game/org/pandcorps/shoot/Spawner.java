@@ -51,7 +51,8 @@ public class Spawner extends Panctor implements StepListener {
 	
 	private void spawn() {
 		final Shooter enemy = new Shooter(Pantil.vmid(), getLayer(), def);
-		enemy.getPosition().set(192, 64);
+		// randomly put on left; if oob, put on other side
+		enemy.getPosition().set(getLayer().getViewMaximum().getX() + 20, 64);
 		enemy.setMirror(true);
 		enemy.spawner = this;
 		new Ai().setShooter(enemy);
