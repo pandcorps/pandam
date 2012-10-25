@@ -35,6 +35,10 @@ public final class Mathtil {
 	private Mathtil() {
 		throw new Error();
 	}
+	
+	public final static byte randb(final byte min, final byte max) {
+		return (byte) randi(min, max);
+	}
 
 	public final static int randi(final int min, final int max) {
 		return rand.nextInt(max + 1 - min) + min;
