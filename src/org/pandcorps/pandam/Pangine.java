@@ -705,6 +705,14 @@ public abstract class Pangine {
 	    actor.layer.tracked = actor;
 	}
 	
+	protected Panple getRawViewMinimum(final Panlayer layer) {
+		return layer.rawViewMin;
+	}
+	
+	protected Panple getRawViewMaximum(final Panlayer layer) {
+		return layer.rawViewMax;
+	}
+	
 	public final void zoom(final float mag) {
 	    zoomMag = mag;
 	}
