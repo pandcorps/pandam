@@ -46,8 +46,9 @@ public class Shooter extends Guy2 implements CollisionListener {
 	/*package*/ ArrayList<Weapon> weapons = null;
 	/*package*/ Weapon weapon = null;
 	private int health;
+	/*package*/ Spawner spawner = null;
 	
-	protected Shooter(final String id, final Panroom room, final ShooterDefinition def) {
+	protected Shooter(final String id, final Panlayer room, final ShooterDefinition def) {
 		super(id, room, ShootGame.type);
 		this.def = def;
 		health = def.constitution;
@@ -98,9 +99,13 @@ public class Shooter extends Guy2 implements CollisionListener {
 	
 	@Override
 	protected final void onDestroy() {
+		super.onDestroy();
 		Panctor.destroy(weapon);
 		for (final Weapon w : Coltil.unnull(weapons)) {
 			Panctor.destroy(w);
+		}
+		if (spawner != null) {
+			spawner.remove();
 		}
 	}
 	

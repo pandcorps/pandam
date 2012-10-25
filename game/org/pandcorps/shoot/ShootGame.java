@@ -34,7 +34,7 @@ public class ShootGame extends Guy2Game {
 	/*package*/ static Panimation bam = null;
 	/*package*/ static Panmage interact = null;
 	/*package*/ static Font font = null;
-	private static Panroom room = null;
+	/*package*/ static Panroom room = null;
 	/*package*/ static Shooter shooter = null;
 	/*package*/ static FinPanple max = null;
 	/*package*/ static Panimation smokeBigAnm = null;
@@ -291,10 +291,7 @@ public class ShootGame extends Guy2Game {
 			shooter.getPosition().set(64, 64);
 			new Player(shooter).setShooter(shooter);
 			engine.track(shooter);
-			final Shooter enemy = new Shooter("ENM.1", room, trooperDefs[3]);
-			enemy.getPosition().set(192, 64);
-			enemy.setMirror(true);
-			new Ai().setShooter(enemy);
+			new Spawner(room, trooperDefs[3], 5, 1);
 			room.addActor(tm);
 			final Shooter merchant = new Shooter("MER", room, merchantDef);
 			merchant.getPosition().set(224, 88);
