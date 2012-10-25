@@ -22,10 +22,18 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.shoot;
 
+import org.pandcorps.core.Mathtil;
 import org.pandcorps.game.actor.Burst;
 import org.pandcorps.pandam.Panple;
 
 public class Ai extends ShooterController {
+	private final static byte ACTION_STILL = 0;
+	private final static byte ACTION_ADVANCE = 1;
+	private final static byte ACTION_RETREAT = 2;
+	
+    private byte timer = 0;
+    private byte action = ACTION_STILL;
+    
 	/*package*/ static int bamDelay;
 	private int bamTimer = 0;
 	
@@ -33,6 +41,29 @@ public class Ai extends ShooterController {
     public final void step() {
 		if (bamTimer > 0) {
 			bamTimer--;
+		}
+		if (timer > 0) {
+			timer--;
+		} else {
+			final int r = Mathtil.randi(0, 99);
+			if (r < 50) {
+				action = ACTION_STILL;
+				timer = Mathtil.randb((byte) 15, (byte) 50);
+			} else if (r < 80) {
+				action = ACTION_ADVANCE;
+				timer = Mathtil.randb((byte) 15, (byte) 40);
+			} else {
+				action = ACTION_RETREAT;
+				timer = Mathtil.randb((byte) 10, (byte) 30);
+			}
+		}
+		if (action == ACTION_ADVANCE) {
+			stepAdvance(getTarget());
+		} else if (action == ACTION_RETREAT) {
+			if (!stepRetreat(getTarget())) {
+				action = ACTION_STILL;
+				timer = 0;
+			}
 		}
 	}
 	
