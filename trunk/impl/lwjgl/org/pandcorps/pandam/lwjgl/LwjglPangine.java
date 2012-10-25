@@ -302,8 +302,8 @@ public final class LwjglPangine extends Pangine {
 		final float zoomMag = getZoom();
 		final float wz = w / zoomMag, hz = h / zoomMag;
 		if (tracked == null) {
-			//GL11.glOrtho(0, w, 0, h, near, far);
-		    GL11.glOrtho(0, wz, 0, hz, near, far);
+			//cam(layer, 0, w, 0, h, near, far);
+		    cam(layer, 0, wz, 0, hz, near, far);
 		}
 		else {
 			final Panple pos = tracked.getPosition();
@@ -319,10 +319,16 @@ public final class LwjglPangine extends Pangine {
 			final float xc1 = cr[0], xc2 = cr[1];
 			checkCamRange(y, hz, lsize.getY());
 			final float yc1 = cr[0], yc2 = cr[1];
-			GL11.glOrtho(xc1, xc2, yc1, yc2, near, far);
+			cam(layer, xc1, xc2, yc1, yc2, near, far);
 		}
 		//GL11.glOrtho(0, w, 0, h, -maxDimension, maxDimension);
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);		
+	}
+	
+	private void cam(final Panlayer layer, final float xi, final float xa, final float yi, final float ya, final float zi, final float za) {
+		GL11.glOrtho(xi, xa, yi, ya, zi, za);
+		getRawViewMinimum(layer).set(xi, yi, zi);
+		getRawViewMaximum(layer).set(xa, ya, za);
 	}
 	
 	private final void checkCamRange(final float p, final float sz, final float sl) {
