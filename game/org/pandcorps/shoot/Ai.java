@@ -46,6 +46,11 @@ public class Ai extends ShooterController {
 	    action = ACTION_STILL;
 	}
 	
+	private final void retreat() {
+		action = ACTION_RETREAT;
+		timer = Mathtil.randb((byte) 10, (byte) 30);
+	}
+	
 	@Override
     public final void step() {
 		if (bamTimer > 0) {
@@ -62,8 +67,7 @@ public class Ai extends ShooterController {
 				action = ACTION_ADVANCE;
 				timer = Mathtil.randb((byte) 15, (byte) 40);
 			} else {
-				action = ACTION_RETREAT;
-				timer = Mathtil.randb((byte) 10, (byte) 30);
+				retreat();
 			}
 		}
 		if (action == ACTION_ADVANCE) {
@@ -89,6 +93,13 @@ public class Ai extends ShooterController {
 			other.onHurt(shooter.def.melee);
 			bamTimer = bamDelay;
 			clear();
+		}
+	}
+	
+	@Override
+	/*package*/ final void onHurt(final Projectile p) {
+		if (ShootGame.chainsaw.equals(p.weapon.def)) {
+			retreat();
 		}
 	}
 	

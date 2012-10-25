@@ -77,4 +77,7 @@ public abstract class ShooterController extends Guy2Controller {
 	
 	/*package*/ void onCollision(final Shooter shooter) {
 	}
+	
+	/*package*/ void onHurt(final Projectile p) {
+	}
 }
