@@ -22,25 +22,27 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandam.impl;
 
-import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.Panple;
 
-public abstract class UnmodPanple extends Panple {
-    public final static UnmodPanple toUnmod(final Panple p) {
-    	return p instanceof UnmodPanple ? (UnmodPanple) p : new WrapPanple(p);
-    }
-    
-    @Override
-    public final void setX(final float x) {
-        throw new UnsupportedOperationException();
-    }
-    
-    @Override
-    public final void setY(final float y) {
-        throw new UnsupportedOperationException();
-    }
-    
-    @Override
-    public final void setZ(final float z) {
-        throw new UnsupportedOperationException();
-    }
+public final class WrapPanple extends UnmodPanple {
+	private final Panple p;
+	
+	public WrapPanple(final Panple p) {
+		this.p = p;
+	}
+	
+	@Override
+	public float getX() {
+		return p.getX();
+	}
+
+	@Override
+	public float getY() {
+		return p.getY();
+	}
+
+	@Override
+	public float getZ() {
+		return p.getZ();
+	}
 }
