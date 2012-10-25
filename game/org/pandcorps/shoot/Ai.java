@@ -31,11 +31,20 @@ public class Ai extends ShooterController {
 	private final static byte ACTION_ADVANCE = 1;
 	private final static byte ACTION_RETREAT = 2;
 	
-    private byte timer = 0;
-    private byte action = ACTION_STILL;
+    private byte timer;
+    private byte action;
     
 	/*package*/ static int bamDelay;
 	private int bamTimer = 0;
+	
+	{
+		clear();
+	}
+	
+	private final void clear() {
+		timer = 0;
+	    action = ACTION_STILL;
+	}
 	
 	@Override
     public final void step() {
@@ -61,25 +70,25 @@ public class Ai extends ShooterController {
 			stepAdvance(getTarget());
 		} else if (action == ACTION_RETREAT) {
 			if (!stepRetreat(getTarget())) {
-				action = ACTION_STILL;
-				timer = 0;
+				clear();
 			}
 		}
 	}
 	
 	@Override
-	/*package*/ final void onCollision(final Shooter shooter) {
-		if (bamTimer == 0 && shooter == getTarget()) {
+	/*package*/ final void onCollision(final Shooter other) {
+		if (bamTimer == 0 && other == getTarget()) {
 			final Burst bam = new Burst(ShootGame.bam);
 			final Panple pos = bam.getPosition();
-			pos.set(shooter.getPosition());
-			pos.add(this.guy.getPosition());
+			pos.set(other.getPosition());
+			pos.add(guy.getPosition());
 			pos.multiply(0.5f);
 			pos.addY(Shooter.OFF_ADD_Y);
-			pos.addZ(2);
-			shooter.getLayer().addActor(bam);
-			shooter.onHurt(10);
+			pos.addZ(10);
+			other.getLayer().addActor(bam);
+			other.onHurt(shooter.def.melee);
 			bamTimer = bamDelay;
+			clear();
 		}
 	}
 	

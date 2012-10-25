@@ -14,10 +14,11 @@ public class Shooter extends Guy2 implements CollisionListener {
 	
 	public final static class ShooterDefinition {
 	    private final int constitution;
+	    protected final int melee;
 		private final Panimation still;
 		protected final Panimation walk;
 		
-		public final static ShooterDefinition create(final String name, final int constitution, final BufferedImage... imgs) {
+		public final static ShooterDefinition create(final String name, final int constitution, final int melee, final BufferedImage... imgs) {
 			final Pangine engine = Pangine.getEngine();
 			final String pre = name + '.';
 			final String ipre = pre + "img.", fpre = pre + "frm.", apre = pre + "anm.";
@@ -30,11 +31,12 @@ public class Shooter extends Guy2 implements CollisionListener {
 			final Panframe rightFrm = engine.createFrame(fpre + "right", rightImg, 4);
 			final Panimation stillAnm = engine.createAnimation(apre + "still", stillFrm);
 			final Panimation walkAnm = engine.createAnimation(apre + "walk", leftFrm, stillFrm, rightFrm, stillFrm);
-			return new ShooterDefinition(constitution, stillAnm, walkAnm);
+			return new ShooterDefinition(constitution, melee, stillAnm, walkAnm);
 		}
 		
-		public ShooterDefinition(final int constitution, final Panimation still, final Panimation walk) {
+		public ShooterDefinition(final int constitution, final int melee, final Panimation still, final Panimation walk) {
 		    this.constitution = constitution;
+		    this.melee = melee;
 			this.still = still;
 			this.walk = walk;
 		}
