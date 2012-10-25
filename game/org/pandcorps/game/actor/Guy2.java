@@ -55,7 +55,7 @@ public abstract class Guy2 extends Panctor implements StepListener {
     	}
     }
 	
-	protected Guy2(final String id, final Panroom room, final Guy2Type type) {
+	protected Guy2(final String id, final Panlayer room, final Guy2Type type) {
 		super(id);
 		shadow = new Decoration(id + ".shadow");
         shadow.setView(type.shadowImage);
