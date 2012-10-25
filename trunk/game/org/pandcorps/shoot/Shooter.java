@@ -94,7 +94,7 @@ public class Shooter extends Guy2 implements CollisionListener {
 	@Override
 	protected final void onDestroy() {
 		Panctor.destroy(weapon);
-		for (final Weapon w : this.weapons) {
+		for (final Weapon w : Coltil.unmodifiableList(weapons)) {
 			Panctor.destroy(w);
 		}
 	}
