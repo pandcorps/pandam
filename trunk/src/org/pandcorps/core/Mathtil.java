@@ -37,7 +37,7 @@ public final class Mathtil {
 	}
 	
 	public final static boolean rand() {
-	    return randi(0, 999) < 500;
+	    return rand.nextBoolean();
 	}
 	
 	public final static byte randb(final byte min, final byte max) {
