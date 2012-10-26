@@ -22,12 +22,13 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.shoot;
 
-import org.pandcorps.core.Pantil;
+import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.shoot.Shooter.ShooterDefinition;
 
 public class Spawner extends Panctor implements StepListener {
+    private final static int OFF = 20;
 	private final ShooterDefinition def;
 	private final int maxTotal;
 	private final int maxCurrent;
@@ -51,9 +52,21 @@ public class Spawner extends Panctor implements StepListener {
 	
 	private void spawn() {
 		final Shooter enemy = new Shooter(Pantil.vmid(), getLayer(), def);
-		// randomly put on left; if oob, put on other side
-		enemy.getPosition().set(getLayer().getViewMaximum().getX() + 20, 64);
-		enemy.setMirror(true);
+		final Panlayer layer = getLayer();
+		final Panple guyMin = enemy.getMin(), guyMax = enemy.getMax();
+		float x;
+		if (Mathtil.rand()) {
+		    x = layer.getViewMaximum().getX() + OFF;
+		    if (x >= guyMax.getX()) {
+		        x = layer.getViewMinimum().getX() - OFF;
+		    }
+		} else {
+		    x = layer.getViewMinimum().getX() - OFF;
+		    if (x <= guyMin.getX()) {
+		        x = layer.getViewMaximum().getX() + OFF;
+		    }
+		}
+		enemy.getPosition().set(x, Mathtil.randf(guyMin.getY() + 1, guyMax.getY() - 1));
 		enemy.spawner = this;
 		new Ai().setShooter(enemy);
 		total++;
