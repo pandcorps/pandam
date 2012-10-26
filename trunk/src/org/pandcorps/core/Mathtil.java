@@ -36,6 +36,10 @@ public final class Mathtil {
 		throw new Error();
 	}
 	
+	public final static boolean rand() {
+	    return randi(0, 999) < 500;
+	}
+	
 	public final static byte randb(final byte min, final byte max) {
 		return (byte) randi(min, max);
 	}
