@@ -40,6 +40,10 @@ public final class Mathtil {
 	    return rand.nextBoolean();
 	}
 	
+	public final static boolean rand(final int percentage) {
+	    return randi(0, 100) < percentage;
+	}
+	
 	public final static byte randb(final byte min, final byte max) {
 		return (byte) randi(min, max);
 	}
