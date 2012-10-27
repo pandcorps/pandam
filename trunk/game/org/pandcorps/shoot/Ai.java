@@ -37,6 +37,9 @@ public class Ai extends ShooterController {
 	/*package*/ static int bamDelay;
 	private int bamTimer = 0;
 	
+	private byte attackTimer = 0;
+	private boolean attacking = false;
+	
 	{
 		clear();
 	}
@@ -47,8 +50,16 @@ public class Ai extends ShooterController {
 	}
 	
 	private final void retreat() {
-		action = ACTION_RETREAT;
-		timer = Mathtil.randb((byte) 10, (byte) 30);
+		retreat((byte) 10, (byte) 30);
+	}
+	
+	private final void retreat(final byte min, final byte max) {
+		setAction(ACTION_RETREAT, min, max);
+	}
+	
+	private final void setAction(final byte act, final byte min, final byte max) {
+		action = act;
+		timer = Mathtil.randb(min, max);
 	}
 	
 	@Override
@@ -61,11 +72,9 @@ public class Ai extends ShooterController {
 		} else {
 			final int r = Mathtil.randi(0, 99);
 			if (r < 50) {
-				action = ACTION_STILL;
-				timer = Mathtil.randb((byte) 15, (byte) 50);
+				setAction(action = ACTION_STILL, (byte) 15, (byte) 50);
 			} else if (r < 80) {
-				action = ACTION_ADVANCE;
-				timer = Mathtil.randb((byte) 15, (byte) 40);
+				setAction(ACTION_ADVANCE, (byte) 15, (byte) 40);
 			} else {
 				retreat();
 			}
@@ -77,11 +86,32 @@ public class Ai extends ShooterController {
 				clear();
 			}
 		}
+		if (shooter.weapon != null) {
+			if (attackTimer > 0) {
+				attackTimer--;
+			} else {
+				if (attacking) {
+					attacking = false;
+				} else {
+					attacking = Mathtil.rand(25);
+					if (attacking) {
+						attack();
+					}
+				}
+				attackTimer = Mathtil.randb((byte) 15, (byte) 30);
+			}
+			if (attacking) {
+				attacking();
+			}
+		}
 	}
 	
 	@Override
 	/*package*/ final void onCollision(final Shooter other) {
-		if (bamTimer == 0 && other == getTarget()) {
+		if (other != getTarget()) {
+			return;
+		}
+		if (shooter.weapon == null && bamTimer == 0) {
 			final Burst bam = new Burst(ShootGame.bam);
 			final Panple pos = bam.getPosition();
 			pos.set(other.getPosition());
@@ -94,6 +124,7 @@ public class Ai extends ShooterController {
 			bamTimer = bamDelay;
 			clear();
 		}
+		retreat((byte) 3, (byte) 12);
 	}
 	
 	@Override

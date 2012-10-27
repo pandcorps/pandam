@@ -69,6 +69,9 @@ public class Spawner extends Panctor implements StepListener {
 		enemy.getPosition().set(x, Mathtil.randf(guyMin.getY() + 1, guyMax.getY() - 1));
 		enemy.spawner = this;
 		new Ai().setShooter(enemy);
+		if (def.weapon != null) {
+			enemy.setWeapon(new Weapon(def.weapon));
+		}
 		total++;
 		if (total >= maxTotal) {
 			destroy();

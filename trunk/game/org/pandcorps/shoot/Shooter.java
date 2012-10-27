@@ -8,6 +8,7 @@ import org.pandcorps.game.actor.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.impl.FinPanple;
+import org.pandcorps.shoot.Weapon.WeaponDefinition;
 
 public class Shooter extends Guy2 implements CollisionListener {
 	/*package*/ final static int OFF_ADD_Y = 6;
@@ -15,10 +16,15 @@ public class Shooter extends Guy2 implements CollisionListener {
 	public final static class ShooterDefinition {
 	    private final int constitution;
 	    protected final int melee;
+	    protected final WeaponDefinition weapon;
 		private final Panimation still;
 		protected final Panimation walk;
 		
-		public final static ShooterDefinition create(final String name, final int constitution, final int melee, final BufferedImage... imgs) {
+		public final static ShooterDefinition create(final String name, final int constitution, final BufferedImage... imgs) {
+			return create(name, constitution, 0, null, imgs);
+		}
+		
+		public final static ShooterDefinition create(final String name, final int constitution, final int melee, final WeaponDefinition weapon, final BufferedImage... imgs) {
 			final Pangine engine = Pangine.getEngine();
 			final String pre = name + '.';
 			final String ipre = pre + "img.", fpre = pre + "frm.", apre = pre + "anm.";
@@ -31,12 +37,13 @@ public class Shooter extends Guy2 implements CollisionListener {
 			final Panframe rightFrm = engine.createFrame(fpre + "right", rightImg, 4);
 			final Panimation stillAnm = engine.createAnimation(apre + "still", stillFrm);
 			final Panimation walkAnm = engine.createAnimation(apre + "walk", leftFrm, stillFrm, rightFrm, stillFrm);
-			return new ShooterDefinition(constitution, melee, stillAnm, walkAnm);
+			return new ShooterDefinition(constitution, melee, weapon, stillAnm, walkAnm);
 		}
 		
-		public ShooterDefinition(final int constitution, final int melee, final Panimation still, final Panimation walk) {
+		public ShooterDefinition(final int constitution, final int melee, final WeaponDefinition weapon, final Panimation still, final Panimation walk) {
 		    this.constitution = constitution;
 		    this.melee = melee;
+		    this.weapon = weapon;
 			this.still = still;
 			this.walk = walk;
 		}
@@ -158,7 +165,7 @@ public class Shooter extends Guy2 implements CollisionListener {
 	    weapon(5);
 	}
 	
-	private final void weapon(final int i) {
+	protected final void weapon(final int i) {
 	    //setWeapon(ShootGame.weaponDefs[i]);
         setWeapon(Coltil.get(weapons, i));
 	}
@@ -179,13 +186,16 @@ public class Shooter extends Guy2 implements CollisionListener {
         Pangame.getGame().getCurrentRoom().addActor(weapon);
     }
 	
-	protected void addWeapon(final int i) {
-	    if (Coltil.get(weapons, i) != null) {
-	        return;
+	protected Weapon addWeapon(final int i) {
+		Weapon w = Coltil.get(weapons, i);
+	    if (w != null) {
+	        return w;
 	    } else if (weapons == null) {
 	        weapons = new ArrayList<Weapon>(ShootGame.weaponDefs.length);
 	    }
-	    Coltil.set(weapons, i, new Weapon(ShootGame.weaponDefs[i]));
+	    w = new Weapon(ShootGame.weaponDefs[i]);
+	    Coltil.set(weapons, i, w);
+	    return w;
 	}
 
 	@Override

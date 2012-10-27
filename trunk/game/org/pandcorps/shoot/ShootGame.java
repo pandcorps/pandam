@@ -63,8 +63,8 @@ public class ShootGame extends Guy2Game {
         Ai.bamDelay = bam.getDuration() + 2;
         interact = engine.createEmptyImage("img.interact", new FinPanple(1, 1, 1), new FinPanple(0, 0, 0), new FinPanple(2, 2, 2));
         font = Fonts.getSimple(new FontRequest(8), Pancolor.BLUE, Pancolor.CYAN, Pancolor.CYAN, Pancolor.BLACK);
-		loadCharacters();
-		loadWeapons();
+        loadWeapons();
+        loadCharacters();
 	}
 	
 	private final static void loadBackground() {
@@ -86,13 +86,16 @@ public class ShootGame extends Guy2Game {
 	}
 	
 	private final static void loadCharacters() {
-		playerDef = ShooterDefinition.create("Will", 100, 0, loadChrStrip("Will"));
-		final int numTrps = 5;
-		trooperDefs = new ShooterDefinition[numTrps];
-		for (int i = 0; i < trooperDefs.length; i++) {
-			trooperDefs[i] = getTrp(i + 4);
-		}
-		merchantDef = ShooterDefinition.create("Merchant", Weapon.INF, 0, loadChrStrip("Merchant"));
+		playerDef = ShooterDefinition.create("Will", 100, loadChrStrip("Will"));
+		trooperDefs = new ShooterDefinition[7];
+		trooperDefs[0] = getTrp(7, 1, null);
+		trooperDefs[1] = getTrp(5, 2, null);
+		trooperDefs[2] = getTrp(6, 4, null);
+		trooperDefs[3] = getTrp(8, 7, null);
+		trooperDefs[4] = getTrp(4, 11, null);
+		trooperDefs[5] = getTrp(6, 3, weaponDefs[2]);
+		trooperDefs[6] = getTrp(8, 3, weaponDefs[4]);
+		merchantDef = ShooterDefinition.create("Merchant", Weapon.INF, loadChrStrip("Merchant"));
 	}
 	
 	private final static void loadWeapons() {
@@ -230,13 +233,13 @@ public class ShootGame extends Guy2Game {
 		return body;
 	}
 	
-	protected final static ShooterDefinition getTrp(final int headIndex) {
+	protected final static ShooterDefinition getTrp(final int headIndex, final int melee, final WeaponDefinition weapon) {
 		final BufferedImage[] strip = loadChrStrip("Blitztrooper");
 		final BufferedImage head = strip[headIndex];
 		final BufferedImage still = getTrpImg(strip, 0, head, 0);
 		final BufferedImage left = getTrpImg(strip, 1, head, 1);
 		final BufferedImage right = getTrpImg(strip, 2, head, 1);
-		return ShooterDefinition.create("Blitztrooper." + headIndex, 100, 2, still, left, right);
+		return ShooterDefinition.create("Blitztrooper." + headIndex + "." + (weapon == null ? "Unarmed" : weapon.name), 100, melee, weapon, still, left, right);
 	}
 	
 	private final static class TitleScreen extends FadeScreen {
@@ -291,7 +294,9 @@ public class ShootGame extends Guy2Game {
 			shooter.getPosition().set(64, 64);
 			new Player(shooter).setShooter(shooter);
 			engine.track(shooter);
-			new Spawner(room, trooperDefs[3], 5, 1);
+			new Spawner(room, trooperDefs[0], 5, 1);
+			new Spawner(room, trooperDefs[5], 2, 1);
+			new Spawner(room, trooperDefs[6], 1, 1);
 			room.addActor(tm);
 			final Shooter merchant = new Shooter("MER", room, merchantDef);
 			merchant.getPosition().set(224, 88);

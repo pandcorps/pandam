@@ -294,7 +294,7 @@ public class Story {
 		chrBladander = getChr("Bladander");
 		chrPotus = getChr("Potus", 12);
 		chrWill = getChr("Will");
-		anmTrp = ShootGame.trooperDefs[0].walk;
+		anmTrp = ShootGame.trooperDefs[4].walk;
 		font = Fonts.getOutline(new FontRequest(8), Pancolor.BLUE, Pancolor.BLUE, Pancolor.BLUE, new FinPancolor(Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, (short) 128, Pancolor.MAX_VALUE));
 		Panscreen.set(new MapScreen());
 	}
