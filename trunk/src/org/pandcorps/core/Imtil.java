@@ -84,10 +84,14 @@ public final class Imtil {
     }
     
     public final static void copy(final BufferedImage src, final BufferedImage dst, final int srcX, final int srcY, final int w, final int h, final int dstX, final int dstY) {
-    	copy(src, dst, srcX, srcY, w, h, dstX, dstY, false);
+    	copy(src, dst, srcX, srcY, w, h, dstX, dstY, COPY_REPLACE);
     }
     
-    public final static void copy(final BufferedImage src, final BufferedImage dst, final int srcX, final int srcY, final int w, final int h, final int dstX, final int dstY, final boolean respectAlpha) {
+    public final static byte COPY_REPLACE = 0;
+    public final static byte COPY_FOREGROUND = 1;
+    public final static byte COPY_BACKGROUND = 2;
+    
+    public final static void copy(final BufferedImage src, final BufferedImage dst, final int srcX, final int srcY, final int w, final int h, final int dstX, final int dstY, final byte mode) {
         final ColorModel cm = getColorModel();
     	for (int x = 0; x < w; x++) {
             final int srcCol = srcX + x, dstCol = dstX + x;
@@ -100,10 +104,13 @@ public final class Imtil {
                 } catch (final Exception e) {
                     throw err(src, dst, srcX, srcY, w, h, dstX, dstY, "get", srcCol, srcRow, e);
                 }
-                if (respectAlpha && cm.getAlpha(srcP) == 0) {
+                if (mode == COPY_FOREGROUND && cm.getAlpha(srcP) == 0) {
                 	continue;
                 }
                 final int dstRow = dstY + y;
+                if (mode == COPY_BACKGROUND && cm.getAlpha(dst.getRGB(dstCol, dstRow)) != 0) {
+                	continue;
+                }
                 try {
                     dst.setRGB(dstCol, dstRow, srcP);
                 } catch (final Exception e) {
