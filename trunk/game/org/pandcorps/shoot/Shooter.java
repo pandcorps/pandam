@@ -177,13 +177,20 @@ public class Shooter extends Guy2 implements CollisionListener {
 	}*/
 	
 	protected void setWeapon(final Weapon weapon) {
-	    if (weapon == null || weapon == this.weapon) {
+	    if (weapon == null) {
+	        return;
+	    }
+	    setWeaponIntern(weapon);
+	    Pangame.getGame().getCurrentRoom().addActor(weapon);
+	}
+	
+	private void setWeaponIntern(final Weapon weapon) {
+	    if (weapon == this.weapon) {
 	        return;
 	    } else if (this.weapon != null) {
             this.weapon.getLayer().removeActor(this.weapon);
         }
         this.weapon = weapon;
-        Pangame.getGame().getCurrentRoom().addActor(weapon);
     }
 	
 	protected Weapon addWeapon(final int i) {
@@ -196,6 +203,19 @@ public class Shooter extends Guy2 implements CollisionListener {
 	    w = new Weapon(ShootGame.weaponDefs[i]);
 	    Coltil.set(weapons, i, w);
 	    return w;
+	}
+	
+	protected void chooseWeapon() {
+	    if (weapon != null && weapon.getAmmo() > 0) {
+	        return;
+	    }
+	    for (final Weapon w : Coltil.unnull(weapons)) {
+	        if (w != null && w.getAmmo() > 0) {
+	            setWeapon(w);
+	            return;
+	        }
+	    }
+	    setWeaponIntern(null);
 	}
 
 	@Override
