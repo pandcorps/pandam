@@ -72,7 +72,7 @@ public class Ai extends ShooterController {
 		} else {
 			final int r = Mathtil.randi(0, 99);
 			if (r < 50) {
-				setAction(action = ACTION_STILL, (byte) 15, (byte) 50);
+				setAction(ACTION_STILL, (byte) 15, (byte) 50);
 			} else if (r < 80) {
 				setAction(ACTION_ADVANCE, (byte) 15, (byte) 40);
 			} else {
