@@ -21,6 +21,12 @@ import org.pandcorps.shoot.Shooter.ShooterDefinition;
 import org.pandcorps.shoot.Weapon.WeaponDefinition;
 
 public class ShootGame extends Guy2Game {
+    /*
+    Add labels for player health/ammo.
+    Make enemies drop ammo/money when defeated.
+    Define reasonable intervals for upgrades instead of always incrementing by 1.
+    Add prices to upgrades.
+    */
 	/*package*/ static Guy2Type type = null;
 	private static ShooterDefinition playerDef = null;
 	private static ShooterDefinition merchantDef = null;
