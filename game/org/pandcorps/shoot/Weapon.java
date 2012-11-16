@@ -142,6 +142,7 @@ public class Weapon extends Panctor implements Upgradeable {
 	private final WeaponArgument range;
 	private final WeaponArgument blast;
 	private final List<WeaponArgument> args;
+	private int ammo;
 	private boolean attacking = false;
 	private int timer = 0;
 	private int smoke = 0;
@@ -157,6 +158,7 @@ public class Weapon extends Panctor implements Upgradeable {
 		range = new WeaponArgument(def.range);
 		blast = new WeaponArgument(def.blast);
 		args = Coltil.unmodifiableList(Coltil.asList(power, capacity, rate, pierce, spray, range, blast));
+		ammo = capacity.getValue();
 		setView(def.image);
 	}
 	
@@ -228,6 +230,12 @@ public class Weapon extends Panctor implements Upgradeable {
                 smoke = 5;
 		    }
 		}
+		if (ammo != INF) {
+            ammo--;
+            if (ammo <= 0) {
+                shooter.chooseWeapon();
+            }
+        }
 	}
 	
 	@Override
@@ -291,6 +299,10 @@ public class Weapon extends Panctor implements Upgradeable {
 	        }
 	    }
 	    return false;
+	}
+	
+	public final int getAmmo() {
+	    return ammo;
 	}
 	
 	private final static class Casing extends Pandy implements AnimationEndListener {
