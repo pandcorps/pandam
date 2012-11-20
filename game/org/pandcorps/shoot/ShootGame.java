@@ -24,8 +24,9 @@ public class ShootGame extends Guy2Game {
     /*
     Add labels for player health/ammo.
     Make enemies drop ammo/money when defeated.
-    Define reasonable intervals for upgrades instead of always incrementing by 1.
     Add prices to upgrades.
+    Show prices and upgrade amount in menu.
+    Grey out menu options.
     */
 	/*package*/ static Guy2Type type = null;
 	private static ShooterDefinition playerDef = null;
