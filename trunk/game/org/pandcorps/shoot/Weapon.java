@@ -38,15 +38,52 @@ public class Weapon extends Panctor implements Upgradeable {
         public final String name;
         public final int min;
         public final int max;
+        private final int inc;
+        private final int numUp;
         
         public WeaponParameter(final String name, final int min, final int max) {
             this.name = name;
             this.min = min;
             this.max = max;
+            if (isUpgradeApplicable()) {
+                final int amt = max - min;
+                final int half = amt / 2;
+                final double damt = amt;
+                int numUpgrades;
+                int tinc = -1;
+                for (numUpgrades = 4; numUpgrades < half; numUpgrades++) {
+                    final double dnum = numUpgrades;
+                    final double d = damt / dnum; 
+                    final int i = (int) d;
+                    final double di = i;
+                    if (d == di) {
+                        tinc = i;
+                        break;
+                    }
+                }
+                if (tinc > 0) {
+                    inc = tinc;
+                    numUp = numUpgrades;
+                } else {
+                    inc = 1;
+                    numUp = amt;
+                }
+            } else {
+                inc = 0;
+                numUp = 0;
+            }
         }
         
         public final boolean isUpgradeApplicable() {
             return min < max;
+        }
+        
+        public final int getUpgradeIncrement() {
+            return inc;
+        }
+        
+        public final int getNumberOfUpgrades() {
+            return numUp;
         }
     }
     
@@ -124,7 +161,7 @@ public class Weapon extends Panctor implements Upgradeable {
 	        if (!isUpgradePossible()) {
 	            return false;
 	        }
-	        this.val++;
+	        val += parm.getUpgradeIncrement();
 	        return true;
 	    }
 	    
