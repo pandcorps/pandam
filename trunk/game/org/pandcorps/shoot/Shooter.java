@@ -181,7 +181,6 @@ public class Shooter extends Guy2 implements CollisionListener {
 	        return;
 	    }
 	    setWeaponIntern(weapon);
-	    Pangame.getGame().getCurrentRoom().addActor(weapon);
 	}
 	
 	private void setWeaponIntern(final Weapon weapon) {
@@ -191,6 +190,9 @@ public class Shooter extends Guy2 implements CollisionListener {
             this.weapon.getLayer().removeActor(this.weapon);
         }
         this.weapon = weapon;
+        if (weapon != null) {
+        	Pangame.getGame().getCurrentRoom().addActor(weapon);
+        }
     }
 	
 	protected Weapon addWeapon(final int i) {
