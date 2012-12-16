@@ -16,6 +16,7 @@ import org.pandcorps.pandax.text.Fonts.FontRequest;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.tile.Tile.*;
 import org.pandcorps.pandax.visual.FadeScreen;
+import org.pandcorps.shoot.PowerUp.*;
 import org.pandcorps.shoot.Projectile.*;
 import org.pandcorps.shoot.Shooter.ShooterDefinition;
 import org.pandcorps.shoot.Weapon.WeaponDefinition;
@@ -47,6 +48,8 @@ public class ShootGame extends Guy2Game {
 	/*package*/ static Panimation smokeBigAnm = null;
 	/*package*/ static Panimation flameLoopAnm = null;
 	/*package*/ static Panimation rocketFireAnm = null;
+	/*package*/ static Panmage money = null;
+	/*package*/ static Panmage health = null;
 	private static TileMap tm = null;
 
 	@Override
@@ -70,6 +73,12 @@ public class ShootGame extends Guy2Game {
         Ai.bamDelay = bam.getDuration() + 2;
         interact = engine.createEmptyImage("img.interact", new FinPanple(1, 1, 1), new FinPanple(0, 0, 0), new FinPanple(2, 2, 2));
         font = Fonts.getSimple(new FontRequest(8), Pancolor.BLUE, Pancolor.CYAN, Pancolor.CYAN, Pancolor.BLACK);
+        final BufferedImage[] powerUps = loadStrip("misc/PowerUps", 16);
+        final FinPanple opu = new FinPanple(8, 5, 0);
+        final FinPanple npu = new FinPanple(-4, 1, 0);
+        final FinPanple xpu = new FinPanple(4, 9, 0);
+        money = engine.createImage("img.money", opu, npu, xpu, powerUps[0]);
+        health = engine.createImage("img.health", opu, npu, xpu, powerUps[5]);
         loadWeapons();
         loadCharacters();
 	}
@@ -315,6 +324,8 @@ public class ShootGame extends Guy2Game {
 			merchant.getPosition().set(224, 88);
 			merchant.setMirror(true);
 			new Merchant().setShooter(merchant);
+			new Money(8, 80);
+			new Health(32, 80);
 		}
 	}
 	
