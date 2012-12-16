@@ -101,7 +101,7 @@ public abstract class Guy2 extends Panctor implements StepListener {
         }
         final Panple min = getMin(), max = getMax();
         pos.add(dx, dy, min.getX(), min.getY(), max.getX(), max.getY());
-        pos.setZ(-pos.getY());
+        setZ(pos);
         //shadow.getPosition().set(pos);
         shadow.getPosition().set(pos.getX(), pos.getY());
         shadow.setVisible(areShadowsVisible());
@@ -109,6 +109,10 @@ public abstract class Guy2 extends Panctor implements StepListener {
         dx = 0;
         dy = 0;
     }
+	
+	public final static void setZ(final Panple pos) {
+		pos.setZ(-pos.getY());
+	}
 	
 	protected void handleMode(final byte mode) {
 		// Can override
