@@ -53,6 +53,7 @@ public class Shooter extends Guy2 implements CollisionListener {
 	/*package*/ ArrayList<Weapon> weapons = null;
 	/*package*/ Weapon weapon = null;
 	private int health;
+	private int money;
 	/*package*/ Spawner spawner = null;
 	
 	protected Shooter(final String id, final Panlayer room, final ShooterDefinition def) {
@@ -102,6 +103,20 @@ public class Shooter extends Guy2 implements CollisionListener {
 			add(new Burst(ShootGame.puff), 0, 0, 0);
 			destroy();
 		}
+	}
+	
+	/*package*/ void addHealth(final int health) {
+		if (health <= 0) {
+			throw new IllegalArgumentException("Cannot add " + health + " health");
+		}
+		this.health = Math.min(this.health + health, def.constitution);
+	}
+	
+	/*package*/ void addMoney(final int money) {
+		if (money <= 0) {
+			throw new IllegalArgumentException("Cannot add " + money + " money");
+		}
+		this.money += money;
 	}
 	
 	@Override

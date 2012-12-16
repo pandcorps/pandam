@@ -216,7 +216,10 @@ public class Weapon extends Panctor implements Upgradeable {
 	protected final void attack(final Shooter shooter, final Emitter[] emitters) {
 		if (emitters == null) {
 			return;
-		}
+		} else if (ammo <= 0) {
+            shooter.chooseWeapon();
+            return;
+        }
 		attacking = true;
 		if (def.attackAnm != null) {
 			changeView(def.attackAnm);
