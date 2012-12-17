@@ -80,4 +80,7 @@ public abstract class ShooterController extends Guy2Controller {
 	
 	/*package*/ void onHurt(final Projectile p) {
 	}
+	
+	/*package*/ void onDestroy() {
+	}
 }

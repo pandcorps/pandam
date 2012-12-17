@@ -134,6 +134,11 @@ public class Ai extends ShooterController {
 		}
 	}
 	
+	@Override
+	/*package*/ void onDestroy() {
+		PowerUp.newPowerUp(shooter);
+	}
+	
 	private final Shooter getTarget() {
 		return ShootGame.shooter;
 	}

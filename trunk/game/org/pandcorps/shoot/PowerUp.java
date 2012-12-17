@@ -22,6 +22,8 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.shoot;
 
+import org.pandcorps.core.Coltil;
+import org.pandcorps.core.Mathtil;
 import org.pandcorps.game.actor.Guy2;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.CollisionEvent;
@@ -87,5 +89,54 @@ public abstract class PowerUp extends Panctor implements Collidee {
 		protected final boolean give(final Shooter shooter) {
 			return shooter.addHealth(50);
 		}
+	}
+	
+	public final static PowerUp newPowerUp(final Shooter defeated) {
+		final Shooter victor = ShootGame.shooter;
+		final Panple pos = defeated.getPosition();
+		final float x = pos.getX(), y = pos.getY();
+		final int health = victor.getHealth(), constitution = victor.def.constitution;
+	    if (health < constitution / 5) {
+	    	return new Health(x, y);
+	    } else if (Mathtil.rand()) {
+			return null;
+		} else if (health < constitution / 3) {
+			return new Health(x, y);
+		} else if (health < constitution && Mathtil.rand(30)) {
+			return new Health(x, y);
+		} else if (Mathtil.rand(30)) {
+			return new Money(x, y);
+		}
+		final Weapon defeatedWeapon = defeated.weapon;
+		if (defeatedWeapon != null && defeatedWeapon.getAmmo() > 0) {
+			WeaponDefinition defeatedDef = defeatedWeapon.def;
+			if (defeatedDef.capacity.min != Weapon.INF) {
+				final Weapon victorWeapon = victor.getWeapon(defeatedDef);
+				if (victorWeapon != null && victorWeapon.getAmmo() < victorWeapon.getCapacity().getValue()) {
+					return new Ammo(defeatedDef, x, y);
+				}
+			}
+		} else if (Mathtil.rand(40)) {
+			return new Money(x, y);
+		} else {
+			Weapon chosenWeapon = null;
+			float ratio = -1;
+			for (final Weapon victorWeapon : Coltil.unnull(victor.weapons)) {
+				final int ammo = victorWeapon.getAmmo();
+				final int capacity = victorWeapon.getCapacity().getValue();
+				if (ammo == Weapon.INF || ammo >= capacity) {
+					continue;
+				}
+				final float currRatio = (float) ammo / (float) capacity;
+				if (chosenWeapon == null || currRatio < ratio) {
+					chosenWeapon = victorWeapon;
+					ratio = currRatio;
+				}
+			}
+			if (chosenWeapon != null) {
+				return new Ammo(chosenWeapon.def, x, y);
+			}
+		}
+		return new Money(x, y);
 	}
 }

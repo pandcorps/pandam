@@ -24,7 +24,6 @@ import org.pandcorps.shoot.Weapon.WeaponDefinition;
 public class ShootGame extends Guy2Game {
     /*
     Add labels for player health/ammo.
-    Make enemies drop ammo/money when defeated.
     Add prices to upgrades.
     Show prices and upgrade amount in menu.
     Grey out menu options.
