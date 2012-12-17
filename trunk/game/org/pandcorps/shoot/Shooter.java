@@ -105,11 +105,14 @@ public class Shooter extends Guy2 implements CollisionListener {
 		}
 	}
 	
-	/*package*/ void addHealth(final int health) {
+	/*package*/ boolean addHealth(final int health) {
+		// Similar to Weapon.addAmmo
 		if (health <= 0) {
 			throw new IllegalArgumentException("Cannot add " + health + " health");
 		}
+		final int old = this.health;
 		this.health = Math.min(this.health + health, def.constitution);
+		return this.health != old;
 	}
 	
 	/*package*/ void addMoney(final int money) {
@@ -233,6 +236,15 @@ public class Shooter extends Guy2 implements CollisionListener {
 	        }
 	    }
 	    setWeaponIntern(null);
+	}
+	
+	protected Weapon getWeapon(final WeaponDefinition def) {
+		for (final Weapon w : Coltil.unnull(weapons)) {
+			if (w.def.equals(def)) {
+				return w;
+			}
+		}
+		return null;
 	}
 
 	@Override

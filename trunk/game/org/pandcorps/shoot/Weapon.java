@@ -94,6 +94,7 @@ public class Weapon extends Panctor implements Upgradeable {
 		private final Panimation casingAnm;
 		private final Panimation smokeAnm;
 		private final Panimation attackAnm;
+		/*package*/ final Panmage ammo;
 		protected final Emitter[] attackEmitters;
 		protected final Emitter[] attackingEmitters;
 		/*package*/ final WeaponParameter power;
@@ -106,6 +107,7 @@ public class Weapon extends Panctor implements Upgradeable {
 		
 		public WeaponDefinition(final String name, final Panmage image, final Panimation flashAnm,
 				final Panimation casingAnm, final Panimation smokeAnm, final Panimation attackAnm,
+				final Panmage ammo,
 				final Emitter[] attackEmitters, final Emitter[] attackingEmitters,
 				final int minPower, final int maxPower,
 				final int minCapacity, final int maxCapacity,
@@ -120,6 +122,7 @@ public class Weapon extends Panctor implements Upgradeable {
 			this.casingAnm = casingAnm;
 			this.smokeAnm = smokeAnm;
 			this.attackAnm = attackAnm;
+			this.ammo = ammo;
 			this.attackEmitters = attackEmitters;
 			this.attackingEmitters = attackingEmitters;
 			this.power = new WeaponParameter("Power", minPower, maxPower);
@@ -343,6 +346,16 @@ public class Weapon extends Panctor implements Upgradeable {
 	
 	public final int getAmmo() {
 	    return ammo;
+	}
+	
+	public final boolean addAmmo(final int ammo) {
+		// Similar to Shooter.addHealth
+		if (ammo <= 0) {
+			throw new IllegalArgumentException("Cannot add " + ammo + " ammo");
+		}
+		final int old = this.ammo;
+		this.ammo = Math.min(this.ammo + ammo, capacity.getValue());
+		return this.ammo != old;
 	}
 	
 	private final static class Casing extends Pandy implements AnimationEndListener {

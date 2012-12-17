@@ -25,6 +25,7 @@ package org.pandcorps.shoot;
 import org.pandcorps.game.actor.Guy2;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.CollisionEvent;
+import org.pandcorps.shoot.Weapon.WeaponDefinition;
 
 public abstract class PowerUp extends Panctor implements Collidee {
 	protected PowerUp(final Panmage view, final float x, final float y) {
@@ -39,12 +40,13 @@ public abstract class PowerUp extends Panctor implements Collidee {
 	public void onCollision(final Shooter collider, final CollisionEvent event) {
 		if (collider.getController().getClass() != Player.class) {
 			return;
+		} else if (!give(collider)) {
+			return;
 		}
-		give(collider);
 		destroy();
 	}
 	
-	protected abstract void give(final Shooter shooter);
+	protected abstract boolean give(final Shooter shooter);
 	
 	public final static class Money extends PowerUp {
 		public Money(final float x, final float y) {
@@ -52,8 +54,27 @@ public abstract class PowerUp extends Panctor implements Collidee {
 		}
 		
 		@Override
-		protected final void give(final Shooter shooter) {
+		protected final boolean give(final Shooter shooter) {
 			shooter.addMoney(50);
+			return true;
+		}
+	}
+	
+	public final static class Ammo extends PowerUp {
+		private final WeaponDefinition def;
+		
+		public Ammo(final WeaponDefinition def, final float x, final float y) {
+			super(def.ammo, x, y);
+			this.def = def;
+		}
+		
+		@Override
+		protected final boolean give(final Shooter shooter) {
+			final Weapon w = shooter.getWeapon(def);
+			if (w == null) {
+				return false;
+			}
+			return w.addAmmo(Math.max(1, def.capacity.min / 2));
 		}
 	}
 	
@@ -63,8 +84,8 @@ public abstract class PowerUp extends Panctor implements Collidee {
 		}
 		
 		@Override
-		protected final void give(final Shooter shooter) {
-			shooter.addHealth(50);
+		protected final boolean give(final Shooter shooter) {
+			return shooter.addHealth(50);
 		}
 	}
 }
