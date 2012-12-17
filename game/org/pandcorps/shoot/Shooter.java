@@ -14,7 +14,7 @@ public class Shooter extends Guy2 implements CollisionListener {
 	/*package*/ final static int OFF_ADD_Y = 6;
 	
 	public final static class ShooterDefinition {
-	    private final int constitution;
+	    protected final int constitution;
 	    protected final int melee;
 	    protected final WeaponDefinition weapon;
 		private final Panimation still;
@@ -101,8 +101,15 @@ public class Shooter extends Guy2 implements CollisionListener {
 		health -= damage;
 		if (health <= 0) {
 			add(new Burst(ShootGame.puff), 0, 0, 0);
+			if (controller != null) {
+				((ShooterController) controller).onDestroy();
+			}
 			destroy();
 		}
+	}
+	
+	/*package*/ int getHealth() {
+		return health;
 	}
 	
 	/*package*/ boolean addHealth(final int health) {
