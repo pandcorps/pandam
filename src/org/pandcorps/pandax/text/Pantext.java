@@ -81,7 +81,7 @@ public class Pantext extends Panctor {
 	/*package*/ char charRadio = CHAR_RADIO;
 	//private TextItem item = null;
 
-	public Pantext(final String id, final Font font, final String text) {
+	public Pantext(final String id, final Font font, final CharSequence text) {
 	    this(id, font, Collections.singletonList(text));
 	}
 	
