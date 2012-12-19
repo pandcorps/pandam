@@ -3,6 +3,7 @@ package org.pandcorps.shoot;
 import java.awt.image.BufferedImage;
 
 import org.pandcorps.core.*;
+import org.pandcorps.core.chr.CallSequence;
 import org.pandcorps.core.img.*;
 import org.pandcorps.core.img.scale.PandScaler;
 import org.pandcorps.game.*;
@@ -10,8 +11,7 @@ import org.pandcorps.game.actor.Guy2.*;
 import org.pandcorps.game.core.ImtilX;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.impl.FinPanple;
-import org.pandcorps.pandax.text.Font;
-import org.pandcorps.pandax.text.Fonts;
+import org.pandcorps.pandax.text.*;
 import org.pandcorps.pandax.text.Fonts.FontRequest;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.tile.Tile.*;
@@ -23,7 +23,6 @@ import org.pandcorps.shoot.Weapon.WeaponDefinition;
 
 public class ShootGame extends Guy2Game {
     /*
-    Add labels for player health/ammo.
     Add prices to upgrades.
     Show prices and upgrade amount in menu.
     Grey out menu options.
@@ -41,6 +40,7 @@ public class ShootGame extends Guy2Game {
 	/*package*/ static Panimation bam = null;
 	/*package*/ static Panmage interact = null;
 	/*package*/ static Font font = null;
+	/*package*/ static Font hudFont = null;
 	/*package*/ static Panroom room = null;
 	/*package*/ static Shooter shooter = null;
 	/*package*/ static FinPanple max = null;
@@ -76,6 +76,7 @@ public class ShootGame extends Guy2Game {
         Ai.bamDelay = bam.getDuration() + 2;
         interact = engine.createEmptyImage("img.interact", new FinPanple(1, 1, 1), new FinPanple(0, 0, 0), new FinPanple(2, 2, 2));
         font = Fonts.getSimple(new FontRequest(8), Pancolor.BLUE, Pancolor.CYAN, Pancolor.CYAN, Pancolor.BLACK);
+        hudFont = Fonts.getOutline(new FontRequest(8), Pancolor.BLUE, Pancolor.BLUE, Pancolor.BLUE, new FinPancolor(Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, (short) 128, Pancolor.MAX_VALUE));
         final BufferedImage[] powerUps = loadStrip("misc/PowerUps", 16);
         final FinPanple opu = new FinPanple(8, 5, 0);
         final FinPanple npu = new FinPanple(-4, 1, 0);
@@ -337,6 +338,26 @@ public class ShootGame extends Guy2Game {
 			new Ammo(weaponDefs[4], 80, 80);
 			new Ammo(weaponDefs[5], 104, 80);
 			new Health(128, 80);
+			final float h = engine.getGameHeight();
+			final Panlayer hud = engine.createLayer("layer.hud", engine.getGameWidth(), h, 1, room);
+			room.addAbove(hud);
+			final Pantext hudHealth, hudAmmo, hudMoney;
+			hudHealth = new Pantext("hud.health", hudFont, new CallSequence() {@Override protected String call() {
+				return getHud(2, shooter.getHealth());}});
+			hudHealth.getPosition().set(4, h - 12);
+			hud.addActor(hudHealth);
+			hudAmmo = new Pantext("hud.ammo", hudFont, new CallSequence() {@Override protected String call() {
+				return getHud(132, shooter.weapon.getAmmo());}});
+			hudAmmo.getPosition().set(100, h - 12);
+			hud.addActor(hudAmmo);
+			hudMoney = new Pantext("hud.money", hudFont, new CallSequence() {@Override protected String call() {
+				return getHud(225, shooter.getMoney());}});
+			hudMoney.getPosition().set(204, h - 12);
+			hud.addActor(hudMoney);
+		}
+		
+		private static String getHud(final int label, final int val) {
+			return Character.toString((char) label) + ' ' + (val == Weapon.INF ? Character.toString((char) 236) : Integer.toString(val));
 		}
 	}
 	

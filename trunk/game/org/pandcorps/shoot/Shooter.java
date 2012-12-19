@@ -122,6 +122,10 @@ public class Shooter extends Guy2 implements CollisionListener {
 		return this.health != old;
 	}
 	
+	/*package*/ int getMoney() {
+		return money;
+	}
+	
 	/*package*/ void addMoney(final int money) {
 		if (money <= 0) {
 			throw new IllegalArgumentException("Cannot add " + money + " money");

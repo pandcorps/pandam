@@ -30,12 +30,10 @@ import org.pandcorps.game.actor.Decoration;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandax.text.*;
-import org.pandcorps.pandax.text.Fonts.FontRequest;
 import org.pandcorps.pandax.visual.Pantexture;
 import org.pandcorps.shoot.ShootGame.ShootScreen;
 
 public class Story {
-	private static Font font = null;
 	private static IntroSequence intro = new IntroSequence();
 	private static Panmage imgBlack = null;
 	private static Panmage bgEurope = null;
@@ -54,7 +52,7 @@ public class Story {
 	protected abstract static class StoryScreen extends TextScreen {
 		private final Panmage bgImg;
 		public StoryScreen(final TextScreenSequence sequence, final String msg, final Panmage bg) {
-			super(sequence, new Pantext(Pantil.vmid(), font, msg, 28));
+			super(sequence, new Pantext(Pantil.vmid(), ShootGame.hudFont, msg, 28));
 			text.getPosition().set(16, 64, 0);
 			text.setLinesPerPage(4);
 			bgImg = bg;
@@ -295,7 +293,6 @@ public class Story {
 		chrPotus = getChr("Potus", 12);
 		chrWill = getChr("Will");
 		anmTrp = ShootGame.trooperDefs[4].walk;
-		font = Fonts.getOutline(new FontRequest(8), Pancolor.BLUE, Pancolor.BLUE, Pancolor.BLUE, new FinPancolor(Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, (short) 128, Pancolor.MAX_VALUE));
 		Panscreen.set(new MapScreen());
 	}
 }
