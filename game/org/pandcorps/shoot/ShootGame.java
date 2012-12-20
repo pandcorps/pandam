@@ -337,7 +337,7 @@ public class ShootGame extends Guy2Game {
 			new Ammo(weaponDefs[3], 56, 80);
 			new Ammo(weaponDefs[4], 80, 80);
 			new Ammo(weaponDefs[5], 104, 80);
-			new Health(128, 80);
+			new Health(50, 128, 80);
 			final float h = engine.getGameHeight();
 			final Panlayer hud = engine.createLayer("layer.hud", engine.getGameWidth(), h, 1, room);
 			room.addAbove(hud);

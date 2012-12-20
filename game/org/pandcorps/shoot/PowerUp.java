@@ -88,13 +88,20 @@ public abstract class PowerUp extends Panctor implements Collidee {
 	}
 	
 	public final static class Health extends PowerUp {
-		public Health(final float x, final float y) {
+		private final int amount;
+		
+		public Health(final Shooter defeated, final float x, final float y) {
+			this(defeated.def.constitution / 2, x, y);
+		}
+		
+		public Health(final int amount, final float x, final float y) {
 			super(ShootGame.health, x, y);
+			this.amount = amount;
 		}
 		
 		@Override
 		protected final boolean give(final Shooter shooter) {
-			return shooter.addHealth(50);
+			return shooter.addHealth(amount);
 		}
 	}
 	
@@ -104,13 +111,13 @@ public abstract class PowerUp extends Panctor implements Collidee {
 		final float x = pos.getX(), y = pos.getY();
 		final int health = victor.getHealth(), constitution = victor.def.constitution;
 	    if (health < constitution / 5) {
-	    	return new Health(x, y);
+	    	return new Health(defeated, x, y);
 	    } else if (Mathtil.rand()) {
 			return null;
 		} else if (health < constitution / 3) {
-			return new Health(x, y);
+			return new Health(defeated, x, y);
 		} else if (health < constitution && Mathtil.rand(30)) {
-			return new Health(x, y);
+			return new Health(defeated, x, y);
 		} else if (Mathtil.rand(30)) {
 			return new Money(defeated, x, y);
 		}
