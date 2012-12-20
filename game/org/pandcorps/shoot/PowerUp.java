@@ -51,13 +51,20 @@ public abstract class PowerUp extends Panctor implements Collidee {
 	protected abstract boolean give(final Shooter shooter);
 	
 	public final static class Money extends PowerUp {
-		public Money(final float x, final float y) {
+		private final int amount;
+		
+		public Money(final Shooter defeated, final float x, final float y) {
+			this(defeated.def.constitution, x, y);
+		}
+		
+		public Money(final int amount, final float x, final float y) {
 			super(ShootGame.money, x, y);
+			this.amount = amount;
 		}
 		
 		@Override
 		protected final boolean give(final Shooter shooter) {
-			shooter.addMoney(50);
+			shooter.addMoney(amount);
 			return true;
 		}
 	}
@@ -105,7 +112,7 @@ public abstract class PowerUp extends Panctor implements Collidee {
 		} else if (health < constitution && Mathtil.rand(30)) {
 			return new Health(x, y);
 		} else if (Mathtil.rand(30)) {
-			return new Money(x, y);
+			return new Money(defeated, x, y);
 		}
 		final Weapon defeatedWeapon = defeated.weapon;
 		if (defeatedWeapon != null && defeatedWeapon.getAmmo() > 0) {
@@ -117,7 +124,7 @@ public abstract class PowerUp extends Panctor implements Collidee {
 				}
 			}
 		} else if (Mathtil.rand(40)) {
-			return new Money(x, y);
+			return new Money(defeated, x, y);
 		} else {
 			Weapon chosenWeapon = null;
 			float ratio = -1;
@@ -137,6 +144,6 @@ public abstract class PowerUp extends Panctor implements Collidee {
 				return new Ammo(chosenWeapon.def, x, y);
 			}
 		}
-		return new Money(x, y);
+		return new Money(defeated, x, y);
 	}
 }

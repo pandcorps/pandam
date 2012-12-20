@@ -332,7 +332,7 @@ public class ShootGame extends Guy2Game {
 			merchant.getPosition().set(224, 88);
 			merchant.setMirror(true);
 			new Merchant().setShooter(merchant);
-			new Money(8, 80);
+			new Money(50, 8, 80);
 			new Ammo(weaponDefs[2], 32, 80);
 			new Ammo(weaponDefs[3], 56, 80);
 			new Ammo(weaponDefs[4], 80, 80);
