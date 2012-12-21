@@ -160,9 +160,17 @@ public class Weapon extends Panctor implements Upgradeable {
 	        return val < parm.max;
 	    }
 	    
-	    public boolean upgrade() {
+	    public int getUpgradeCost() {
+	    	final int num = parm.getNumberOfUpgrades();
+	    	// 5 * 7 * 8 * 9 * 10
+	    	return num <= 0 ? 0 : (25200 / num);
+	    }
+	    
+	    public boolean upgrade(final Shooter buyer) {
 	        if (!isUpgradePossible()) {
 	            return false;
+	        } else if (!buyer.subtractMoney(getUpgradeCost())) {
+	        	return false;
 	        }
 	        val += parm.getUpgradeIncrement();
 	        return true;

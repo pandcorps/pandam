@@ -133,6 +133,16 @@ public class Shooter extends Guy2 implements CollisionListener {
 		this.money += money;
 	}
 	
+	/*package*/ boolean subtractMoney(final int money) {
+		if (money <= 0) {
+			throw new IllegalArgumentException("Cannot subtract " + money + " money");
+		} else if (this.money < money) {
+			return false;
+		}
+		this.money -= money;
+		return true;
+	}
+	
 	@Override
 	protected final void onDestroy() {
 		super.onDestroy();

@@ -23,10 +23,12 @@ import org.pandcorps.shoot.Weapon.WeaponDefinition;
 
 public class ShootGame extends Guy2Game {
     /*
-    Add prices to upgrades.
-    Show prices and upgrade amount in menu.
     Grey out menu options.
+    Make upgrade costs progressively more expensive.
     */
+	/*package*/ final static char CHAR_HEALTH = 2;
+	/*package*/ final static char CHAR_AMMO = 132;
+	/*package*/ final static char CHAR_MONEY = 225;
 	/*package*/ static Guy2Type type = null;
 	private static ShooterDefinition playerDef = null;
 	private static ShooterDefinition merchantDef = null;
@@ -322,6 +324,7 @@ public class ShootGame extends Guy2Game {
 			}
 			shooter.weapon2();
 			shooter.getPosition().set(64, 64);
+			shooter.addMoney(10000);
 			new Player(shooter).setShooter(shooter);
 			engine.track(shooter);
 			new Spawner(room, trooperDefs[0], 5, 1);
@@ -343,21 +346,21 @@ public class ShootGame extends Guy2Game {
 			room.addAbove(hud);
 			final Pantext hudHealth, hudAmmo, hudMoney;
 			hudHealth = new Pantext("hud.health", hudFont, new CallSequence() {@Override protected String call() {
-				return getHud(2, shooter.getHealth());}});
+				return getHud(CHAR_HEALTH, shooter.getHealth());}});
 			hudHealth.getPosition().set(4, h - 12);
 			hud.addActor(hudHealth);
 			hudAmmo = new Pantext("hud.ammo", hudFont, new CallSequence() {@Override protected String call() {
-				return getHud(132, shooter.weapon.getAmmo());}});
+				return getHud(CHAR_AMMO, shooter.weapon.getAmmo());}});
 			hudAmmo.getPosition().set(100, h - 12);
 			hud.addActor(hudAmmo);
 			hudMoney = new Pantext("hud.money", hudFont, new CallSequence() {@Override protected String call() {
-				return getHud(225, shooter.getMoney());}});
-			hudMoney.getPosition().set(204, h - 12);
+				return getHud(CHAR_MONEY, shooter.getMoney());}});
+			hudMoney.getPosition().set(188, h - 12);
 			hud.addActor(hudMoney);
 		}
 		
-		private static String getHud(final int label, final int val) {
-			return Character.toString((char) label) + ' ' + (val == Weapon.INF ? Character.toString((char) 236) : Integer.toString(val));
+		private static String getHud(final char label, final int val) {
+			return Character.toString(label) + ' ' + (val == Weapon.INF ? Character.toString((char) 236) : Integer.toString(val));
 		}
 	}
 	
