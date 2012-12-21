@@ -64,7 +64,7 @@ public class Merchant extends ShooterController {
         init(rg);
 	}
 	
-	private final static String UP = "Upgrade ";
+	private final static String UP = ""; // "Upgrade ";
 	private final static String EXIT = "Exit";
 	
 	private void upgrade(final Pantext parent, final ShooterController controller, final Weapon weapon) {
@@ -76,8 +76,9 @@ public class Merchant extends ShooterController {
 				final CharSequence elem = event.getElement();
 				for (final WeaponArgument arg : weapon.getArguments()) {
     				if (getUpgradeLabel(arg).equals(elem)) {
-    					arg.upgrade();
-    					msg("Enjoy it, friend.", new MessageCloseListener() {@Override public void onClose(final MessageCloseEvent event) {upgrade(parent, controller, weapon);}});
+    					final String m = arg.upgrade(initiator) ? "Enjoy it, friend." : "Sorry, friend.";
+    					msg(m, new MessageCloseListener() { @Override public void onClose(final MessageCloseEvent event) {
+    						upgrade(parent, controller, weapon);}});
     					return;
     				}
 				}
@@ -109,6 +110,18 @@ public class Merchant extends ShooterController {
 	}
 	
 	private final static String getUpgradeLabel(final Upgradeable u) {
-	    return UP + u.getName();
+		final StringBuilder b = new StringBuilder();
+		b.append(UP).append(u.getName());
+		if (u.isUpgradePossible()) {
+			if (u instanceof WeaponArgument) {
+				final WeaponArgument arg = (WeaponArgument) u;
+				b.append(' ').append(arg.getValue()).append('+').append(arg.parm.getUpgradeIncrement());
+				final int cost = arg.getUpgradeCost();
+				b.append(' ').append(ShootGame.CHAR_MONEY).append(cost);
+			}
+		} else {
+			b.append(" (Maxed)");
+		}
+		return b.toString();
 	}
 }
