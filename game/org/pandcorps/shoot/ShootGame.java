@@ -24,7 +24,6 @@ import org.pandcorps.shoot.Weapon.WeaponDefinition;
 public class ShootGame extends Guy2Game {
     /*
     Grey out menu options.
-    Make upgrade costs progressively more expensive.
     */
 	/*package*/ final static char CHAR_HEALTH = 2;
 	/*package*/ final static char CHAR_AMMO = 132;
@@ -324,7 +323,7 @@ public class ShootGame extends Guy2Game {
 			}
 			shooter.weapon2();
 			shooter.getPosition().set(64, 64);
-			shooter.addMoney(10000);
+			shooter.addMoney(1000000);
 			new Player(shooter).setShooter(shooter);
 			engine.track(shooter);
 			new Spawner(room, trooperDefs[0], 5, 1);
