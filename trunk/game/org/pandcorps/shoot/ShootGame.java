@@ -24,6 +24,7 @@ import org.pandcorps.shoot.Weapon.WeaponDefinition;
 public class ShootGame extends Guy2Game {
     /*
     Grey out menu options.
+    Balance weapons/health/damage.
     */
 	/*package*/ final static char CHAR_HEALTH = 2;
 	/*package*/ final static char CHAR_AMMO = 132;
@@ -195,11 +196,11 @@ public class ShootGame extends Guy2Game {
 		final Emitter rocketEmit = new Emitter(RocketProjectile.class, 13, 8, velBullet, (byte) -1, projRocketImg);
 		weaponDefs = new WeaponDefinition[6];
 		chainsaw = loadWeapon(0, "Chainsaw", 1, 1, strip, 0, null, null, smokeSmallAnm, 1, null, null, new Emitter[] {sawEmit}, 20, 20, Weapon.INF, Weapon.INF, 0, 0, 5, 5, 1, 1, -1, -1, 1, 1);
-		loadWeapon(1, "Magnums", 2, 1, strip, 2, flashSmallAnm, casingAnm, null, -1, null, new Emitter[] {magEmit1, magEmit2}, null, 10, 100, Weapon.INF, Weapon.INF, 8, 2, 2, 5, 1, 1, -1, -1, 1, 1);
-		loadWeapon(2, "Shotgun", 7, 1, strip, 3, flashSmallAnm, casingAnm, null, -1, ammoShotgun, new Emitter[] {shotEmit}, null, 2, 20, 50, 200, 14, 6, 1, 1, 4, 8, -1, -1, 1, 1);
+		loadWeapon(1, "Magnums", 2, 1, strip, 2, flashSmallAnm, casingAnm, null, -1, null, new Emitter[] {magEmit1, magEmit2}, null, 10, 100, Weapon.INF, Weapon.INF, 4, 4, 2, 5, 1, 1, -1, -1, 1, 1);
+		loadWeapon(2, "Shotgun", 7, 1, strip, 3, flashSmallAnm, casingAnm, null, -1, ammoShotgun, new Emitter[] {shotEmit}, null, 12, 12, 100, 100, 14, 6, 1, 1, 4, 8, -1, -1, 1, 1);
 		loadWeapon(3, "Minigun", 2, 1, strip, 4, flashFastAnm, casingAnm, null, 5, ammoMinigun, null, new Emitter[] {miniEmit}, 1, 10, 100, 400, 1, 1, 1, 1, 1, 1, -1, -1, 1, 1);
-		loadWeapon(4, "Flamethrower", 5, 1, strip, 6, null, null, null, -1, ammoFlamethrower, null, new Emitter[] {flameEmit}, 5, 15, 200, 1000, 0, 0, 1, 1, 1, 1, 16, 32, 1, 1);
-		loadWeapon(5, "RocketLauncher", 6, 1, strip, 7, flashBigAnm, null, null, -1, ammoRocketLauncher, new Emitter[] {rocketEmit}, null, 50, 500, 1, 10, 25, 15, 1, 1, 1, 1, -1, -1, 3, 8);
+		loadWeapon(4, "Flamethrower", 5, 1, strip, 6, null, null, null, -1, ammoFlamethrower, null, new Emitter[] {flameEmit}, 5, 15, 1000, 1000, 0, 0, 1, 1, 1, 1, 16, 32, 1, 1);
+		loadWeapon(5, "RocketLauncher", 6, 1, strip, 7, flashBigAnm, null, null, -1, ammoRocketLauncher, new Emitter[] {rocketEmit}, null, 250, 250, 1, 10, 20, 20, 1, 1, 1, 1, -1, -1, 3, 8);
 	}
 	
 	private final static WeaponDefinition loadWeapon(final int wpnIdx, final String name,
