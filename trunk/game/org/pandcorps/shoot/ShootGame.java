@@ -25,7 +25,7 @@ public class ShootGame extends Guy2Game {
     /*
     Grey out menu options.
     Balance weapons/health/damage.
-    Add infinite ammo upgrade after maximizing a weapon (50400 if under MAX_MONEY).
+    Pantext size doesn't seem to consider title label.
     */
 	/*package*/ final static char CHAR_HEALTH = 2;
 	/*package*/ final static char CHAR_AMMO = 132;
