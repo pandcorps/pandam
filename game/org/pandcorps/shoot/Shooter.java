@@ -14,6 +14,8 @@ public class Shooter extends Guy2 implements CollisionListener {
 	/*
 	10 regular upgrades, 50400 to max each.
 	504000 for all regular maximums.
+	5 infinite ammo upgrade, 50400 each.
+	756000 for all weapon upgrades.
 	*/
 	/*package*/ final static int MAX_MONEY = 999999;
 	/*package*/ final static int OFF_ADD_Y = 6;

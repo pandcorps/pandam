@@ -32,6 +32,7 @@ import org.pandcorps.pandax.Pandy;
 
 public class Weapon extends Panctor implements Upgradeable {
     /*package*/ final static int INF = Integer.MAX_VALUE;
+    /*package*/ final static int COST_INF = 50400; // 5 * 7 * 8 * 9 * 10
     /*package*/ final static int DELAY = 50;
     
     public final static class WeaponParameter {
@@ -166,8 +167,7 @@ public class Weapon extends Panctor implements Upgradeable {
 	    
 	    public int getUpgradeCost() {
 	    	final int num = parm.getNumberOfUpgrades();
-	    	// 5 * 7 * 8 * 9 * 10
-	    	final int avg = num <= 0 ? 0 : (50400 / num);
+	    	final int avg = num <= 0 ? 0 : (COST_INF / num);
 	    	//return avg;
 	    	final int off1 = (getCurrentUpgradeIndex() - num / 2) * 5040 / num;
 	    	final int off2 = ((num % 2) == 0) ? (2520 / num) : 0;
@@ -182,6 +182,14 @@ public class Weapon extends Panctor implements Upgradeable {
 	        }
 	        val += parm.getUpgradeIncrement();
 	        return true;
+	    }
+	    
+	    public boolean setInfinite(final Shooter buyer) {
+	    	if (!buyer.subtractMoney(COST_INF)) {
+	    		return false;
+	    	}
+	    	val = INF;
+	    	return true;
 	    }
 	    
 	    public final int getValue() {
@@ -350,14 +358,34 @@ public class Weapon extends Panctor implements Upgradeable {
         return false;
     }
 	
-	@Override
-	public boolean isUpgradePossible() {
+	public boolean isRegularUpgradePossible() {
 	    for (final WeaponArgument arg : args) {
 	        if (arg.isUpgradePossible()) {
 	            return true;
 	        }
 	    }
 	    return false;
+	}
+	
+	private boolean isCapacityInfinite() {
+		return getCapacity().getValue() == INF;
+	}
+	
+	public boolean isInfiniteUpgradePossible() {
+		return !(isRegularUpgradePossible() || isCapacityInfinite());
+	}
+	
+	@Override
+	public boolean isUpgradePossible() {
+	    return isRegularUpgradePossible() || !isCapacityInfinite();
+	}
+	
+	public boolean setInfinite(final Shooter buyer) {
+		if (!getCapacity().setInfinite(buyer)) {
+			return false;
+		}
+		ammo = INF;
+		return true;
 	}
 	
 	public final int getAmmo() {

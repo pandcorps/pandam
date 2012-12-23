@@ -35,7 +35,7 @@ public class Merchant extends ShooterController {
 	public final boolean onInteract(final Shooter initiator) {
 	    this.initiator = initiator;
 		final ShooterController controller = (ShooterController) initiator.getController();
-		final ArrayList<String> opts = toMenu(initiator.weapons);
+		final ArrayList<String> opts = toMenu(null, initiator.weapons);
 		final class MerchantListener implements RadioSubmitListener {
             @Override
             public void onSubmit(final RadioSubmitEvent event) {
@@ -65,10 +65,11 @@ public class Merchant extends ShooterController {
 	}
 	
 	private final static String UP = ""; // "Upgrade ";
+	private final static String INF = "Infinite Ammo";
 	private final static String EXIT = "Exit";
 	
 	private void upgrade(final Pantext parent, final ShooterController controller, final Weapon weapon) {
-		final ArrayList<String> opts = toMenu(weapon.getArguments());
+		final ArrayList<String> opts = toMenu(weapon, weapon.getArguments());
 		final WeaponDefinition def = weapon.def;
 	    final class WeaponListener implements RadioSubmitListener {
 			@Override
@@ -76,13 +77,14 @@ public class Merchant extends ShooterController {
 				final CharSequence elem = event.getElement();
 				for (final WeaponArgument arg : weapon.getArguments()) {
     				if (getUpgradeLabel(arg).equals(elem)) {
-    					final String m = arg.upgrade(initiator) ? "Enjoy it, friend." : "Sorry, friend.";
-    					msg(m, new MessageCloseListener() { @Override public void onClose(final MessageCloseEvent event) {
-    						upgrade(parent, controller, weapon);}});
+    					sale(parent, controller, weapon, arg.upgrade(initiator));
     					return;
     				}
 				}
-				if (EXIT.equals(elem)) {
+				if (getInfiniteLabel().equals(elem)) {
+					sale(parent, controller, weapon, weapon.setInfinite(initiator));
+					return;
+				} else if (EXIT.equals(elem)) {
 				    onInteract(initiator);
 				    return;
 				}
@@ -92,18 +94,27 @@ public class Merchant extends ShooterController {
 	    menu(opts, new WeaponListener(), "Upgrade " + def.name);
 	}
 	
+	private void sale(final Pantext parent, final ShooterController controller, final Weapon weapon, final boolean success) {
+		final String m = success ? "Enjoy it, friend." : "Sorry, friend.";
+		msg(m, new MessageCloseListener() { @Override public void onClose(final MessageCloseEvent event) {
+			upgrade(parent, controller, weapon);}});
+	}
+	
 	private void msg(final String text, final MessageCloseListener listener) {
 		final Message m = new Message(ShootGame.font, text, listener);
 		init(m);
 	}
 	
-	private ArrayList<String> toMenu(final List<? extends Upgradeable> list) {
+	private ArrayList<String> toMenu(final Weapon w, final List<? extends Upgradeable> list) {
 		final ArrayList<String> opts = new ArrayList<String>(list.size());
 		for (final Upgradeable u : list) {
 	        if (u.isUpgradeApplicable()) {
 	            //TODO display if applicable, grey out if maxed
 	            opts.add(getUpgradeLabel(u));
 	        }
+		}
+		if (w != null && w.isInfiniteUpgradePossible()) {
+			opts.add(getInfiniteLabel());
 		}
 		opts.add(EXIT);
 		return opts;
@@ -116,12 +127,21 @@ public class Merchant extends ShooterController {
 			if (u instanceof WeaponArgument) {
 				final WeaponArgument arg = (WeaponArgument) u;
 				b.append(' ').append(arg.getValue()).append('+').append(arg.parm.getUpgradeIncrement());
-				final int cost = arg.getUpgradeCost();
-				b.append(" (").append(ShootGame.CHAR_MONEY).append(' ').append(cost).append(')');
+				appendCost(b, arg.getUpgradeCost());
 			}
 		} else {
 			b.append(" (Maxed)");
 		}
 		return b.toString();
+	}
+	
+	private final static String getInfiniteLabel() {
+		final StringBuilder b = new StringBuilder(INF);
+		appendCost(b, Weapon.COST_INF);
+		return b.toString();
+	}
+	
+	private final static void appendCost(final StringBuilder b, final int cost) {
+		b.append(" (").append(ShootGame.CHAR_MONEY).append(' ').append(cost).append(')');
 	}
 }
