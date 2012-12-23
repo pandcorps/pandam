@@ -111,7 +111,7 @@ public class Weapon extends Panctor implements Upgradeable {
 				final Emitter[] attackEmitters, final Emitter[] attackingEmitters,
 				final int minPower, final int maxPower,
 				final int minCapacity, final int maxCapacity,
-				final int minRate, final int maxRate,
+				final int maxDelay, final int minDelay,
 				final int minPierce, final int maxPierce,
 				final int minSpray, final int maxSpray,
 				final int minRange, final int maxRange,
@@ -127,7 +127,7 @@ public class Weapon extends Panctor implements Upgradeable {
 			this.attackingEmitters = attackingEmitters;
 			this.power = new WeaponParameter("Power", minPower, maxPower);
 			this.capacity = new WeaponParameter("Capacity", minCapacity, maxCapacity);
-			this.rate = new WeaponParameter("Rate", DELAY - minRate, DELAY - maxRate);
+			this.rate = new WeaponParameter("Rate", DELAY - maxDelay, DELAY - minDelay);
 			this.pierce = new WeaponParameter("Pierce", minPierce, maxPierce);
 			this.spray = new WeaponParameter("Spray", minSpray, maxSpray);
 			this.range = new WeaponParameter("Range", minRange, maxRange);
