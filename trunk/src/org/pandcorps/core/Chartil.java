@@ -93,4 +93,24 @@ public final class Chartil {
         sb.append(s);
         return sb.toString();
     }
+    
+    public final static String remove(final String s, final char toRemove) {
+    	StringBuilder b = null;
+    	final int size = size(s);
+    	int start = 0;
+    	for (int i = 0; i < size; i++) {
+    		if (s.charAt(i) == toRemove) {
+    			if (b == null) {
+    				b = new StringBuilder();
+    			}
+    			b.append(s, start, i);
+    			start = i + 1;
+    		}
+    	}
+    	if (b == null) {
+    		return s;
+    	}
+    	b.append(s, start, size);
+    	return b.toString();
+    }
 }
