@@ -117,7 +117,7 @@ public class Merchant extends ShooterController {
 				final WeaponArgument arg = (WeaponArgument) u;
 				b.append(' ').append(arg.getValue()).append('+').append(arg.parm.getUpgradeIncrement());
 				final int cost = arg.getUpgradeCost();
-				b.append(' ').append(ShootGame.CHAR_MONEY).append(cost);
+				b.append(" (").append(ShootGame.CHAR_MONEY).append(' ').append(cost).append(')');
 			}
 		} else {
 			b.append(" (Maxed)");

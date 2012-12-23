@@ -25,6 +25,7 @@ public class ShootGame extends Guy2Game {
     /*
     Grey out menu options.
     Balance weapons/health/damage.
+    Rate upgrades working right?
     */
 	/*package*/ final static char CHAR_HEALTH = 2;
 	/*package*/ final static char CHAR_AMMO = 132;
@@ -200,7 +201,7 @@ public class ShootGame extends Guy2Game {
 		loadWeapon(2, "Shotgun", 7, 1, strip, 3, flashSmallAnm, casingAnm, null, -1, ammoShotgun, new Emitter[] {shotEmit}, null, 12, 12, 100, 100, 14, 6, 1, 1, 4, 8, -1, -1, 1, 1);
 		loadWeapon(3, "Minigun", 2, 1, strip, 4, flashFastAnm, casingAnm, null, 5, ammoMinigun, null, new Emitter[] {miniEmit}, 1, 10, 100, 400, 1, 1, 1, 1, 1, 1, -1, -1, 1, 1);
 		loadWeapon(4, "Flamethrower", 5, 1, strip, 6, null, null, null, -1, ammoFlamethrower, null, new Emitter[] {flameEmit}, 5, 15, 1000, 1000, 0, 0, 1, 1, 1, 1, 16, 32, 1, 1);
-		loadWeapon(5, "RocketLauncher", 6, 1, strip, 7, flashBigAnm, null, null, -1, ammoRocketLauncher, new Emitter[] {rocketEmit}, null, 250, 250, 1, 10, 20, 20, 1, 1, 1, 1, -1, -1, 3, 8);
+		loadWeapon(5, "Rocket Launcher", 6, 1, strip, 7, flashBigAnm, null, null, -1, ammoRocketLauncher, new Emitter[] {rocketEmit}, null, 250, 250, 1, 10, 20, 20, 1, 1, 1, 1, -1, -1, 3, 8);
 	}
 	
 	private final static WeaponDefinition loadWeapon(final int wpnIdx, final String name,
@@ -215,7 +216,8 @@ public class ShootGame extends Guy2Game {
 			final int minRange, final int maxRange,
 			final int minBlast, final int maxBlast) {
 		final Pangine engine = Pangine.getEngine();
-		final String imgName = "img.wpn." + name;
+		final String code = Chartil.remove(name, ' ');
+		final String imgName = "img.wpn." + code;
 		final FinPanple o = new FinPanple(x, y, 0);
 		final Panmage img = engine.createImage(imgName, o, null, null, strip[imgIdx]);
 		final Panimation attack;
@@ -223,10 +225,10 @@ public class ShootGame extends Guy2Game {
 			attack = null;
 		} else  {
 			final Panmage img2 = engine.createImage(imgName + ".2", o, null, null, strip[imgIdx2]);
-			final String frmName = "frm.wpn." + name;
+			final String frmName = "frm.wpn." + code;
 			final Panframe frm1 = engine.createFrame(frmName, img, 3);
 			final Panframe frm2 = engine.createFrame(frmName + ".2", img2, 3);
-			attack = engine.createAnimation("anm.wpn." + name, frm1, frm2);
+			attack = engine.createAnimation("anm.wpn." + code, frm1, frm2);
 		}
 		final WeaponDefinition d = new WeaponDefinition(name, img, flash, casing, smoke, attack, ammo, attackEmitters, attackingEmitters,
 		    minPower, maxPower, minCapacity, maxCapacity, minRate, maxRate, minPierce, maxPierce, minSpray, maxSpray, minRange, maxRange, minBlast, maxBlast);
@@ -324,7 +326,7 @@ public class ShootGame extends Guy2Game {
 			}
 			shooter.weapon2();
 			shooter.getPosition().set(64, 64);
-			shooter.addMoney(1000000);
+			shooter.addMoney(999999);
 			new Player(shooter).setShooter(shooter);
 			engine.track(shooter);
 			new Spawner(room, trooperDefs[0], 5, 1);
