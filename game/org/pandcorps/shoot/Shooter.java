@@ -11,6 +11,11 @@ import org.pandcorps.pandam.impl.FinPanple;
 import org.pandcorps.shoot.Weapon.WeaponDefinition;
 
 public class Shooter extends Guy2 implements CollisionListener {
+	/*
+	10 regular upgrades, 50400 to max each.
+	504000 for all regular maximums.
+	*/
+	/*package*/ final static int MAX_MONEY = 999999;
 	/*package*/ final static int OFF_ADD_Y = 6;
 	
 	public final static class ShooterDefinition {
@@ -130,7 +135,7 @@ public class Shooter extends Guy2 implements CollisionListener {
 		if (money <= 0) {
 			throw new IllegalArgumentException("Cannot add " + money + " money");
 		}
-		this.money += money;
+		this.money = Math.min(this.money + money, MAX_MONEY);
 	}
 	
 	/*package*/ boolean subtractMoney(final int money) {
