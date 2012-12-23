@@ -25,6 +25,7 @@ public class ShootGame extends Guy2Game {
     /*
     Grey out menu options.
     Balance weapons/health/damage.
+    Add infinite ammo upgrade after maximizing a weapon (50400 if under MAX_MONEY).
     */
 	/*package*/ final static char CHAR_HEALTH = 2;
 	/*package*/ final static char CHAR_AMMO = 132;
@@ -329,7 +330,7 @@ public class ShootGame extends Guy2Game {
 			}
 			shooter.weapon2();
 			shooter.getPosition().set(64, 64);
-			shooter.addMoney(999999);
+			shooter.addMoney(Shooter.MAX_MONEY);
 			new Player(shooter).setShooter(shooter);
 			engine.track(shooter);
 			new Spawner(room, trooperDefs[0], 5, 1);
