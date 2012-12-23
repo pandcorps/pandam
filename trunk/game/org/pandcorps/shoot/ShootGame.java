@@ -25,7 +25,6 @@ public class ShootGame extends Guy2Game {
     /*
     Grey out menu options.
     Balance weapons/health/damage.
-    Rate upgrades working right?
     */
 	/*package*/ final static char CHAR_HEALTH = 2;
 	/*package*/ final static char CHAR_AMMO = 132;
@@ -197,7 +196,11 @@ public class ShootGame extends Guy2Game {
 		final Emitter rocketEmit = new Emitter(RocketProjectile.class, 13, 8, velBullet, (byte) -1, projRocketImg);
 		weaponDefs = new WeaponDefinition[6];
 		chainsaw = loadWeapon(0, "Chainsaw", 1, 1, strip, 0, null, null, smokeSmallAnm, 1, null, null, new Emitter[] {sawEmit}, 20, 20, Weapon.INF, Weapon.INF, 0, 0, 5, 5, 1, 1, -1, -1, 1, 1);
-		loadWeapon(1, "Magnums", 2, 1, strip, 2, flashSmallAnm, casingAnm, null, -1, null, new Emitter[] {magEmit1, magEmit2}, null, 10, 100, Weapon.INF, Weapon.INF, 4, 4, 2, 5, 1, 1, -1, -1, 1, 1);
+		loadWeapon(1, "Magnums", 2, 1, strip, 2, flashSmallAnm, casingAnm, null, -1, null, new Emitter[] {magEmit1, magEmit2}, null, 10, 100, Weapon.INF, Weapon.INF, 5, 5, 2, 5, 1, 1, -1, -1, 1, 1);
+		/*
+		WeaponDefinition converts delay (which upgrades should decrease) to rate (which upgrades should increase).
+		So menu's rate shouldn't match these numbers and should increase with each purchase.
+		*/
 		loadWeapon(2, "Shotgun", 7, 1, strip, 3, flashSmallAnm, casingAnm, null, -1, ammoShotgun, new Emitter[] {shotEmit}, null, 12, 12, 100, 100, 14, 6, 1, 1, 4, 8, -1, -1, 1, 1);
 		loadWeapon(3, "Minigun", 2, 1, strip, 4, flashFastAnm, casingAnm, null, 5, ammoMinigun, null, new Emitter[] {miniEmit}, 1, 10, 100, 400, 1, 1, 1, 1, 1, 1, -1, -1, 1, 1);
 		loadWeapon(4, "Flamethrower", 5, 1, strip, 6, null, null, null, -1, ammoFlamethrower, null, new Emitter[] {flameEmit}, 5, 15, 1000, 1000, 0, 0, 1, 1, 1, 1, 16, 32, 1, 1);
@@ -210,7 +213,7 @@ public class ShootGame extends Guy2Game {
 			final Panmage ammo, final Emitter[] attackEmitters, final Emitter[] attackingEmitters,
 			final int minPower, final int maxPower,
 			final int minCapacity, final int maxCapacity,
-			final int minRate, final int maxRate,
+			final int maxDelay, final int minDelay,
 			final int minPierce, final int maxPierce,
 			final int minSpray, final int maxSpray,
 			final int minRange, final int maxRange,
@@ -231,7 +234,7 @@ public class ShootGame extends Guy2Game {
 			attack = engine.createAnimation("anm.wpn." + code, frm1, frm2);
 		}
 		final WeaponDefinition d = new WeaponDefinition(name, img, flash, casing, smoke, attack, ammo, attackEmitters, attackingEmitters,
-		    minPower, maxPower, minCapacity, maxCapacity, minRate, maxRate, minPierce, maxPierce, minSpray, maxSpray, minRange, maxRange, minBlast, maxBlast);
+		    minPower, maxPower, minCapacity, maxCapacity, maxDelay, minDelay, minPierce, maxPierce, minSpray, maxSpray, minRange, maxRange, minBlast, maxBlast);
 		weaponDefs[wpnIdx] = d;
 		return d;
 	}
