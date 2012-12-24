@@ -36,11 +36,7 @@ public abstract class TextItem {
         //label.setItem(this);
         //label.getPosition().set(label.fontSize, 240 - label.fontSize);
         //label.getPosition().set(label.fontSize, 120 - label.fontSize);
-        final Pangine engine = Pangine.getEngine();
-        final float lx, ly;
-        lx = (engine.getGameWidth() - label.size.getX()) / 2 + label.fontSize;
-        ly = (engine.getGameHeight() / 2) - label.fontSize;
-        label.getPosition().set(lx, ly);
+        //setPos();
         //label.setBorder(true);
         if (label.f instanceof ByteFont) {
         	label.setBackground(Pantext.CHAR_DARK);
@@ -48,8 +44,17 @@ public abstract class TextItem {
         }
     }
     
+    private void setPos() {
+    	final Pangine engine = Pangine.getEngine();
+    	final float lx, ly;
+        lx = (engine.getGameWidth() - label.size.getX()) / 2 + label.fontSize;
+        ly = (engine.getGameHeight() / 2) - label.fontSize;
+        label.getPosition().set(lx, ly);
+    }
+    
     public final void setTitle(final String title) {
         label.setTitle(title);
+        //setPos();
     }
     
     public final void init() {
@@ -67,6 +72,7 @@ public abstract class TextItem {
         layer.setVisible(true);
         room.getTop().addAbove(layer);
         layer.addActor(label);
+        setPos();
         enable();
         this.parent = parent;
         activateParent(false);
