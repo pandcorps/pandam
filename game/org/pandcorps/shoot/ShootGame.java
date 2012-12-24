@@ -24,7 +24,6 @@ import org.pandcorps.shoot.Weapon.WeaponDefinition;
 public class ShootGame extends Guy2Game {
     /*
     Grey out menu options.
-    Balance weapons/health/damage.
     */
 	/*package*/ final static char CHAR_HEALTH = 2;
 	/*package*/ final static char CHAR_AMMO = 132;
@@ -201,8 +200,8 @@ public class ShootGame extends Guy2Game {
 		WeaponDefinition converts delay (which upgrades should decrease) to rate (which upgrades should increase).
 		So menu's rate shouldn't match these numbers and should increase with each purchase.
 		*/
-		loadWeapon(2, "Shotgun", 7, 1, strip, 3, flashSmallAnm, casingAnm, null, -1, ammoShotgun, new Emitter[] {shotEmit}, null, 12, 12, 100, 100, 14, 6, 1, 1, 4, 8, -1, -1, 1, 1);
-		loadWeapon(3, "Minigun", 2, 1, strip, 4, flashFastAnm, casingAnm, null, 5, ammoMinigun, null, new Emitter[] {miniEmit}, 1, 10, 100, 400, 1, 1, 1, 1, 1, 1, -1, -1, 1, 1);
+		loadWeapon(2, "Shotgun", 7, 1, strip, 3, flashSmallAnm, casingAnm, null, -1, ammoShotgun, new Emitter[] {shotEmit}, null, 20, 20, 100, 100, 14, 6, 1, 1, 4, 8, -1, -1, 1, 1);
+		loadWeapon(3, "Minigun", 2, 1, strip, 4, flashFastAnm, casingAnm, null, 5, ammoMinigun, null, new Emitter[] {miniEmit}, 8, 20, 100, 400, 1, 1, 1, 1, 1, 1, -1, -1, 1, 1);
 		loadWeapon(4, "Flamethrower", 5, 1, strip, 6, null, null, null, -1, ammoFlamethrower, null, new Emitter[] {flameEmit}, 5, 15, 1000, 1000, 0, 0, 1, 1, 1, 1, 16, 32, 1, 1);
 		loadWeapon(5, "Rocket Launcher", 6, 1, strip, 7, flashBigAnm, null, null, -1, ammoRocketLauncher, new Emitter[] {rocketEmit}, null, 250, 250, 1, 10, 20, 20, 1, 1, 1, 1, -1, -1, 3, 8);
 	}
