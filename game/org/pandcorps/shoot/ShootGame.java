@@ -25,11 +25,13 @@ public class ShootGame extends Guy2Game {
     /*
     Grey out menu options.
     Could pick up shotgun ammo after infinite upgrade. And amount became negative.
-    Save/load.
+    Save/load (weapon args, ammo, money, constitution, health).
     Constitution upgrades.
     Multiple screens.
     Use all available tiles.
     Bosses.
+    Cheats/debug.
+    More money awarded.
     */
 	/*package*/ final static char CHAR_HEALTH = 2;
 	/*package*/ final static char CHAR_AMMO = 132;
