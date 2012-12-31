@@ -206,7 +206,7 @@ public class Weapon extends Panctor implements Upgradeable {
 	private final WeaponArgument range;
 	private final WeaponArgument blast;
 	private final List<WeaponArgument> args;
-	private int ammo;
+	private Attribute ammo;
 	private boolean attacking = false;
 	private int timer = 0;
 	private int smoke = 0;
@@ -222,7 +222,7 @@ public class Weapon extends Panctor implements Upgradeable {
 		range = new WeaponArgument(def.range);
 		blast = new WeaponArgument(def.blast);
 		args = Coltil.unmodifiableList(Coltil.asList(power, capacity, rate, pierce, spray, range, blast));
-		ammo = capacity.getValue();
+		ammo = new Attribute(capacity.getValue()) {@Override public int max() {return capacity.getValue();}};
 		setView(def.image);
 	}
 	
@@ -243,7 +243,7 @@ public class Weapon extends Panctor implements Upgradeable {
 	protected final void attack(final Shooter shooter, final Emitter[] emitters) {
 		if (emitters == null) {
 			return;
-		} else if (ammo <= 0) {
+		} else if (getAmmo() <= 0) {
             shooter.chooseWeapon();
             return;
         }
@@ -297,11 +297,9 @@ public class Weapon extends Panctor implements Upgradeable {
                 smoke = 5;
 		    }
 		}
-		if (ammo != INF) {
-            ammo--;
-            if (ammo <= 0) {
-                shooter.chooseWeapon();
-            }
+		ammo.dec();
+        if (getAmmo() <= 0) {
+            shooter.chooseWeapon();
         }
 	}
 	
@@ -384,22 +382,16 @@ public class Weapon extends Panctor implements Upgradeable {
 		if (!getCapacity().setInfinite(buyer)) {
 			return false;
 		}
-		ammo = INF;
+		ammo.set(INF);
 		return true;
 	}
 	
 	public final int getAmmo() {
-	    return ammo;
+	    return ammo.get();
 	}
 	
 	public final boolean addAmmo(final int ammo) {
-		// Similar to Shooter.addHealth
-		if (ammo <= 0) {
-			throw new IllegalArgumentException("Cannot add " + ammo + " ammo");
-		}
-		final int old = this.ammo;
-		this.ammo = Math.min(this.ammo + ammo, capacity.getValue());
-		return this.ammo != old;
+		return this.ammo.inc(ammo);
 	}
 	
 	private final static class Casing extends Pandy implements AnimationEndListener {

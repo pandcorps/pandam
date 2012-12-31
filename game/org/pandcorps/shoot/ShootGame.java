@@ -24,7 +24,6 @@ import org.pandcorps.shoot.Weapon.WeaponDefinition;
 public class ShootGame extends Guy2Game {
     /*
     Grey out menu options.
-    Could pick up shotgun ammo after infinite upgrade. And amount became negative.
     Save/load (weapon args, ammo, money, constitution, health).
     Constitution upgrades.
     Multiple screens.

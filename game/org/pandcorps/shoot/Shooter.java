@@ -59,14 +59,14 @@ public class Shooter extends Guy2 implements CollisionListener {
 	/*package*/ final ShooterDefinition def;
 	/*package*/ ArrayList<Weapon> weapons = null;
 	/*package*/ Weapon weapon = null;
-	private int health;
+	private Attribute health;
 	private int money;
 	/*package*/ Spawner spawner = null;
 	
 	protected Shooter(final String id, final Panlayer room, final ShooterDefinition def) {
 		super(id, room, ShootGame.type);
 		this.def = def;
-		health = def.constitution;
+		health = new Attribute(def.constitution) {@Override public int max() {return def.constitution;}};
 		setView(def.still);
 	}
 	
@@ -102,11 +102,11 @@ public class Shooter extends Guy2 implements CollisionListener {
 	}
 	
 	/*package*/ void onHurt(final int damage) {
-	    if (health == Weapon.INF) {
-	        return;
+	    if (health.isInfinite()) {
+	        return; // Skip burst/destroy, not just dec
 	    }
-		health -= damage;
-		if (health <= 0) {
+		health.dec(damage);
+		if (getHealth() <= 0) {
 			add(new Burst(ShootGame.puff), 0, 0, 0);
 			if (controller != null) {
 				((ShooterController) controller).onDestroy();
@@ -116,17 +116,11 @@ public class Shooter extends Guy2 implements CollisionListener {
 	}
 	
 	/*package*/ int getHealth() {
-		return health;
+		return health.get();
 	}
 	
 	/*package*/ boolean addHealth(final int health) {
-		// Similar to Weapon.addAmmo
-		if (health <= 0) {
-			throw new IllegalArgumentException("Cannot add " + health + " health");
-		}
-		final int old = this.health;
-		this.health = Math.min(this.health + health, def.constitution);
-		return this.health != old;
+		return this.health.inc(health);
 	}
 	
 	/*package*/ int getMoney() {
