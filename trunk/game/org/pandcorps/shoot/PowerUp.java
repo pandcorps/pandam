@@ -54,7 +54,7 @@ public abstract class PowerUp extends Panctor implements Collidee {
 		private final int amount;
 		
 		public Money(final Shooter defeated, final float x, final float y) {
-			this(defeated.def.constitution * 2, x, y);
+			this(defeated.def.constitution * 5, x, y);
 		}
 		
 		public Money(final int amount, final float x, final float y) {

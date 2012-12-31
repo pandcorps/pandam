@@ -30,7 +30,6 @@ public class ShootGame extends Guy2Game {
     Use all available tiles.
     Bosses.
     Cheats/debug.
-    More money awarded.
     Acknowledge victory and defeat, then return to menu.
     */
 	/*package*/ final static char CHAR_HEALTH = 2;
