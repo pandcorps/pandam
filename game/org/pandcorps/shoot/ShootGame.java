@@ -32,6 +32,7 @@ public class ShootGame extends Guy2Game {
     Bosses.
     Cheats/debug.
     More money awarded.
+    Acknowledge victory and defeat, then return to menu.
     */
 	/*package*/ final static char CHAR_HEALTH = 2;
 	/*package*/ final static char CHAR_AMMO = 132;
