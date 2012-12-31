@@ -61,6 +61,7 @@ public class Shooter extends Guy2 implements CollisionListener {
 	/*package*/ Weapon weapon = null;
 	private Attribute health;
 	private int money;
+	private int experience = 0;
 	/*package*/ Spawner spawner = null;
 	
 	protected Shooter(final String id, final Panlayer room, final ShooterDefinition def) {
@@ -142,6 +143,13 @@ public class Shooter extends Guy2 implements CollisionListener {
 		}
 		this.money -= money;
 		return true;
+	}
+	
+	/*package*/ void addExperience(final int experience) {
+		if (experience <= 0) {
+			throw new IllegalArgumentException("Cannot add " + experience + " experience");
+		}
+		this.experience += experience;
 	}
 	
 	@Override
