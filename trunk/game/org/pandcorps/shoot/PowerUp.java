@@ -107,6 +107,7 @@ public abstract class PowerUp extends Panctor implements Collidee {
 	
 	public final static PowerUp newPowerUp(final Shooter defeated) {
 		final Shooter victor = ShootGame.shooter;
+		victor.addExperience(defeated.def.constitution);
 		final Panple pos = defeated.getPosition();
 		final float x = pos.getX(), y = pos.getY();
 		final int health = victor.getHealth(), constitution = victor.def.constitution;
