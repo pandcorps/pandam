@@ -54,49 +54,15 @@ public final class Iotil {
 		}
 	}
 
-	public final static void close(final InputStream in) {
-		if (in != null) {
+	public final static void close(final Closeable s) {
+		if (s != null) {
 			try {
-				in.close();
+				s.close();
 			} catch (final Exception e) {
-				handleCloseException(e);
+			    throw Pantil.toRuntimeException(e); // Sometimes might want to silently ignore
 			}
 		}
 	}
-	
-	public final static void close(final OutputStream out) {
-		if (out != null) {
-			try {
-				out.close();
-			} catch (final Exception e) {
-                handleCloseException(e);
-			}
-		}
-	}
-	
-	public final static void close(final Reader in) {
-        if (in != null) {
-            try {
-                in.close();
-            } catch (final Exception e) {
-                handleCloseException(e);
-            }
-        }
-    }
-    
-    public final static void close(final Writer out) {
-        if (out != null) {
-            try {
-                out.close();
-            } catch (final Exception e) {
-                handleCloseException(e);
-            }
-        }
-    }
-    
-    private final static void handleCloseException(final Exception e) {
-        throw Pantil.toRuntimeException(e); // Sometimes might want to silently ignore
-    }
 	
 	public final static BufferedInputStream getBufferedInputStream(final InputStream in) {
         return in instanceof BufferedInputStream ? (BufferedInputStream) in : new BufferedInputStream(in);
