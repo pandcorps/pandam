@@ -28,9 +28,10 @@ public class ShootGame extends Guy2Game {
     Multiple screens.
     Use all available tiles.
     Bosses.
-    Cheats/debug.
     Acknowledge victory and defeat, then return to menu.
     */
+    private final static String PROP_DEBUG = "org.pandcorps.shoot.ShootGame.debug";
+    private final static boolean debug = Boolean.getBoolean(PROP_DEBUG);
 	/*package*/ final static char CHAR_HEALTH = 2;
 	/*package*/ final static char CHAR_AMMO = 132;
 	/*package*/ final static char CHAR_MONEY = 225;
@@ -117,7 +118,7 @@ public class ShootGame extends Guy2Game {
 	}
 	
 	private final static void loadCharacters() {
-		playerDef = ShooterDefinition.create("Will", 10000, loadChrStrip("Will"));
+		playerDef = ShooterDefinition.create("Will", debug ? 10000 : 200, loadChrStrip("Will"));
 		trooperDefs = new ShooterDefinition[8];
 		trooperDefs[0] = getTrp(7, 50, 1, null, false);
 		trooperDefs[1] = getTrp(5, 60, 2, null, false);
@@ -334,7 +335,9 @@ public class ShootGame extends Guy2Game {
 			}
 			shooter.weapon2();
 			shooter.getPosition().set(64, 64);
-			shooter.addMoney(Shooter.MAX_MONEY);
+			if (debug) {
+			    shooter.addMoney(Shooter.MAX_MONEY);
+			}
 			new Player(shooter).setShooter(shooter);
 			engine.track(shooter);
 			new Spawner(room, trooperDefs[0], 5, 1);
