@@ -149,7 +149,29 @@ public class Shooter extends Guy2 implements CollisionListener {
 		if (experience <= 0) {
 			throw new IllegalArgumentException("Cannot add " + experience + " experience");
 		}
+		final int oldLevel = getLevel();
 		this.experience += experience;
+		final int newLevel = getLevel();
+		for (int i = oldLevel; i < newLevel; i++) {
+		    // increment constitution
+		}
+	}
+	
+	/*package*/ int getLevel() {
+	    /*
+	    1    2    3    4    5    6    7    8    9   10   11   12
+	    0 2000 2100 2200 2300 2400 2500 2600 2700 2800 2900 3000
+	    */
+	    int level = 1, total = 2000, next = 2100;
+	    while (experience < total) {
+	        level++;
+	        if (level == 12) {
+	            break;
+	        }
+	        total += next;
+	        next += 100;
+	    }
+	    return level;
 	}
 	
 	@Override
