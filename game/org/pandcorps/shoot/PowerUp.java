@@ -54,7 +54,7 @@ public abstract class PowerUp extends Panctor implements Collidee {
 		private final int amount;
 		
 		public Money(final Shooter defeated, final float x, final float y) {
-			this(defeated.def.constitution * 5, x, y);
+			this(defeated.getConstitution() * 5, x, y);
 		}
 		
 		public Money(final int amount, final float x, final float y) {
@@ -91,7 +91,7 @@ public abstract class PowerUp extends Panctor implements Collidee {
 		private final int amount;
 		
 		public Health(final Shooter defeated, final float x, final float y) {
-			this(defeated.def.constitution / 2, x, y);
+			this(defeated.getConstitution() / 2, x, y);
 		}
 		
 		public Health(final int amount, final float x, final float y) {
@@ -107,10 +107,10 @@ public abstract class PowerUp extends Panctor implements Collidee {
 	
 	public final static PowerUp newPowerUp(final Shooter defeated) {
 		final Shooter victor = ShootGame.shooter;
-		victor.addExperience(defeated.def.constitution);
+		victor.addExperience(defeated.getConstitution());
 		final Panple pos = defeated.getPosition();
 		final float x = pos.getX(), y = pos.getY();
-		final int health = victor.getHealth(), constitution = victor.def.constitution;
+		final int health = victor.getHealth(), constitution = victor.getConstitution();
 	    if (health < constitution / 5) {
 	    	return new Health(defeated, x, y);
 	    } else if (Mathtil.rand()) {

@@ -21,7 +21,7 @@ public class Shooter extends Guy2 implements CollisionListener {
 	/*package*/ final static int OFF_ADD_Y = 6;
 	
 	public final static class ShooterDefinition {
-	    protected final int constitution;
+	    private final int baseConstitution;
 	    protected final int melee;
 	    protected final WeaponDefinition weapon;
 		private final Panimation still;
@@ -48,7 +48,7 @@ public class Shooter extends Guy2 implements CollisionListener {
 		}
 		
 		public ShooterDefinition(final int constitution, final int melee, final WeaponDefinition weapon, final Panimation still, final Panimation walk) {
-		    this.constitution = constitution;
+		    this.baseConstitution = constitution;
 		    this.melee = melee;
 		    this.weapon = weapon;
 			this.still = still;
@@ -60,6 +60,7 @@ public class Shooter extends Guy2 implements CollisionListener {
 	/*package*/ ArrayList<Weapon> weapons = null;
 	/*package*/ Weapon weapon = null;
 	private Attribute health;
+	private int constitution;
 	private int money;
 	private int experience = 0;
 	/*package*/ Spawner spawner = null;
@@ -67,7 +68,8 @@ public class Shooter extends Guy2 implements CollisionListener {
 	protected Shooter(final String id, final Panlayer room, final ShooterDefinition def) {
 		super(id, room, ShootGame.type);
 		this.def = def;
-		health = new Attribute(def.constitution) {@Override public int max() {return def.constitution;}};
+		constitution = def.baseConstitution;
+		health = new Attribute(constitution) {@Override public int max() {return constitution;}};
 		setView(def.still);
 	}
 	
@@ -122,6 +124,10 @@ public class Shooter extends Guy2 implements CollisionListener {
 	
 	/*package*/ boolean addHealth(final int health) {
 		return this.health.inc(health);
+	}
+	
+	/*package*/ int getConstitution() {
+	    return constitution;
 	}
 	
 	/*package*/ int getMoney() {
