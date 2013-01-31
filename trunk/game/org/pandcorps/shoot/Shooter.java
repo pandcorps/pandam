@@ -18,6 +18,7 @@ public class Shooter extends Guy2 implements CollisionListener {
 	705600 for all weapon upgrades.
 	*/
 	/*package*/ final static int MAX_MONEY = 999999;
+	/*package*/ final static int MAX_LEVEL = 12;
 	/*package*/ final static int OFF_ADD_Y = 6;
 	
 	public final static class ShooterDefinition {
@@ -159,7 +160,12 @@ public class Shooter extends Guy2 implements CollisionListener {
 		this.experience += experience;
 		final int newLevel = getLevel();
 		for (int i = oldLevel; i < newLevel; i++) {
-		    // increment constitution
+		    if (i == (MAX_LEVEL - 1)) {
+		        constitution = Weapon.INF;
+		    } else {
+		        constitution += 20;
+		    }
+		    health.set(constitution);
 		}
 	}
 	
@@ -171,7 +177,7 @@ public class Shooter extends Guy2 implements CollisionListener {
 	    int level = 1, total = 2000, next = 2100;
 	    while (experience < total) {
 	        level++;
-	        if (level == 12) {
+	        if (level == MAX_LEVEL) {
 	            break;
 	        }
 	        total += next;
