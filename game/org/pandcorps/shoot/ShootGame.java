@@ -25,7 +25,6 @@ public class ShootGame extends Guy2Game {
     /*
     Grey out menu options.
     Save/load (weapon args, ammo, money, constitution, health, experience).
-    Constitution upgrades.
     Multiple screens.
     Use all available tiles.
     Bosses.
