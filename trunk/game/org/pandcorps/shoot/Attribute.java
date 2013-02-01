@@ -57,13 +57,14 @@ public abstract class Attribute {
 		if (isFinite()) {
             value -= amount;
 		}
-		/*
-		Illegal for ammunition; must be checked ahead of time.
-		Legal for health; will check for defeat after this.
 		if (value < 0) {
+		    /*
+	        Illegal for ammunition; must be checked ahead of time.
+	        Legal for health; will check for defeat after this.
 			throw new IllegalStateException("Negative value " + value);
+			*/
+		    value = 0;
 		}
-		*/
 	}
 	
 	public final boolean isInfinite() {
