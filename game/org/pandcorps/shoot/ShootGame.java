@@ -101,6 +101,7 @@ public class ShootGame extends Guy2Game {
 	
 	private final static void loadBackground() {
 		tm = new TileMap("act.bg", room, 16, 16);
+		final int w = tm.getWidth(), s = w / 16;
 		tm.setImageMap(Pangine.getEngine().createImage("img.bg.city", "org/pandcorps/shoot/res/bg/TileCity.png"));
 		final TileMapImage[][] imgMap = tm.splitImageMap();
 		tm.fillBackground(imgMap[7][0], 0, 2);
@@ -114,6 +115,26 @@ public class ShootGame extends Guy2Game {
 		tm.getTile(21, 6).setBackground(imgMap[3][2]);
 		tm.getTile(22, 6).setBackground(imgMap[2][4]);
 		tm.getTile(23, 6).setBackground(imgMap[3][0]);
+		
+		for (int i = 0; i < (s * 2); i++) { // Street crack
+		    tm.getTile(Mathtil.randi(0, w - 1), Mathtil.randi(0, 1)).setBackground(imgMap[7][3]);
+		}
+		for (int i = 0; i < (s * 2); i++) { // Sidewalk crack
+            tm.getTile(Mathtil.randi(0, w - 1), Mathtil.randi(3, 4)).setBackground(imgMap[7][4]);
+        }
+		for (int i = 1; i < w; i += 3) { // Street paint
+		    tm.getTile(i, 1).setBackground(imgMap[7][1]);
+		}
+		for (int i = 2; i < w; i += 9) { // Manhole
+		    tm.getTile(i, 0).setBackground(imgMap[7][2]);
+		}
+		for (int i = 5; i < w; i += 9) { // Grate
+            tm.getTile(i, 2).setBackground(imgMap[6][2]);
+        }
+		for (int i = 8; i < w; i += 9) { // Vent
+            tm.getTile(i, 4).setBackground(imgMap[5][2]);
+        }
+		
 		tm.getPosition().setZ(type.getDepthShadow() - 1);
 	}
 	
