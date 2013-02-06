@@ -110,13 +110,17 @@ public class ShootGame extends Guy2Game {
 		tm.fillBackground(imgMap[4][1], 5, 1);
 		tm.fillBackground(imgMap[3][1], 6, 6);
 		
-		tm.getTile(5, 6).setBackground(imgMap[3][2]);
-		tm.getTile(6, 6).setBackground(imgMap[1][4]);
-		tm.getTile(7, 6).setBackground(imgMap[3][0]);
+		tm.getTile(4, 6).setBackground(imgMap[3][2]); // Black storefront
+		tm.getTile(5, 6).setBackground(imgMap[1][4]);
+		tm.getTile(6, 6).setBackground(imgMap[1][5]);
+		tm.getTile(7, 6).setBackground(imgMap[1][3]);
+		tm.getTile(8, 6).setBackground(imgMap[3][0]);
 		
-		tm.getTile(14, 6).setBackground(imgMap[3][2]);
-		tm.getTile(15, 6).setBackground(imgMap[2][4]);
-		tm.getTile(16, 6).setBackground(imgMap[3][0]);
+		tm.getTile(13, 6).setBackground(imgMap[3][2]); // Blue storefront
+		tm.getTile(14, 6).setBackground(imgMap[2][3]);
+		tm.getTile(15, 6).setBackground(imgMap[2][5]);
+		tm.getTile(16, 6).setBackground(imgMap[2][4]);
+		tm.getTile(17, 6).setBackground(imgMap[3][0]);
 		
 		for (int i = 0; i < (s * 2); i++) { // Street crack
 		    tm.getTile(Mathtil.randi(0, w - 1), Mathtil.randi(0, 1)).setBackground(imgMap[7][3]);
