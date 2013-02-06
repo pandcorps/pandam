@@ -109,12 +109,14 @@ public class ShootGame extends Guy2Game {
 		tm.fillBackground(imgMap[5][0], 3, 2);
 		tm.fillBackground(imgMap[4][1], 5, 1);
 		tm.fillBackground(imgMap[3][1], 6, 6);
-		tm.getTile(7, 6).setBackground(imgMap[3][2]);
-		tm.getTile(8, 6).setBackground(imgMap[1][4]);
-		tm.getTile(9, 6).setBackground(imgMap[3][0]);
-		tm.getTile(21, 6).setBackground(imgMap[3][2]);
-		tm.getTile(22, 6).setBackground(imgMap[2][4]);
-		tm.getTile(23, 6).setBackground(imgMap[3][0]);
+		
+		tm.getTile(5, 6).setBackground(imgMap[3][2]);
+		tm.getTile(6, 6).setBackground(imgMap[1][4]);
+		tm.getTile(7, 6).setBackground(imgMap[3][0]);
+		
+		tm.getTile(14, 6).setBackground(imgMap[3][2]);
+		tm.getTile(15, 6).setBackground(imgMap[2][4]);
+		tm.getTile(16, 6).setBackground(imgMap[3][0]);
 		
 		for (int i = 0; i < (s * 2); i++) { // Street crack
 		    tm.getTile(Mathtil.randi(0, w - 1), Mathtil.randi(0, 1)).setBackground(imgMap[7][3]);
@@ -134,6 +136,45 @@ public class ShootGame extends Guy2Game {
 		for (int i = 8; i < w; i += 9) { // Vent
             tm.getTile(i, 4).setBackground(imgMap[5][2]);
         }
+		
+        tm.getTile(21, 2).setBackground(imgMap[6][3]);
+        tm.getTile(22, 2).setBackground(imgMap[7][0]);
+        tm.getTile(23, 2).setBackground(imgMap[7][0]);
+        tm.getTile(24, 2).setBackground(imgMap[7][0]);
+        tm.getTile(25, 2).setBackground(imgMap[6][4]);
+		tm.getTile(21, 3).setBackground(imgMap[5][3]);
+        tm.getTile(22, 3).setBackground(imgMap[6][3]);
+        tm.getTile(23, 3).setBackground(imgMap[7][0]);
+        tm.getTile(24, 3).setBackground(imgMap[7][0]);
+        tm.getTile(25, 3).setBackground(imgMap[5][4]);
+        tm.getTile(22, 4).setBackground(imgMap[5][3]);
+        tm.getTile(23, 4).setBackground(imgMap[6][3]);
+        tm.getTile(24, 4).setBackground(imgMap[7][0]);
+        tm.getTile(25, 4).setBackground(imgMap[7][0]);
+        tm.getTile(26, 4).setBackground(imgMap[5][4]);
+        tm.getTile(23, 5).setBackground(imgMap[4][2]);
+        tm.getTile(24, 5).setBackground(imgMap[4][3]);
+        tm.getTile(25, 5).setBackground(imgMap[4][3]);
+        tm.getTile(26, 5).setBackground(imgMap[4][3]);
+        tm.getTile(27, 5).setBackground(imgMap[4][4]);
+        tm.getTile(23, 6).setBackground(imgMap[3][2]);
+        tm.getTile(24, 6).setBackground(imgMap[3][3]);
+        tm.getTile(25, 6).setBackground(imgMap[3][3]);
+        tm.getTile(26, 6).setBackground(imgMap[3][3]);
+        tm.getTile(27, 6).setBackground(imgMap[3][3]);
+        tm.getTile(28, 6).setBackground(imgMap[3][0]);
+        tm.getTile(23, 7).setBackground(imgMap[3][2]);
+        tm.getTile(24, 7).setBackground(imgMap[3][3]);
+        tm.getTile(25, 7).setBackground(imgMap[3][3]);
+        tm.getTile(26, 7).setBackground(imgMap[3][3]);
+        tm.getTile(27, 7).setBackground(imgMap[3][3]);
+        tm.getTile(28, 7).setBackground(imgMap[3][0]);
+        tm.getTile(23, 8).setBackground(imgMap[3][2]);
+        tm.getTile(24, 8).setBackground(imgMap[3][3]);
+        tm.getTile(25, 8).setBackground(imgMap[3][3]);
+        tm.getTile(26, 8).setBackground(imgMap[3][3]);
+        tm.getTile(27, 8).setBackground(imgMap[3][3]);
+        tm.getTile(28, 8).setBackground(imgMap[3][0]);
 		
 		tm.getPosition().setZ(type.getDepthShadow() - 1);
 	}
