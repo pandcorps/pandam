@@ -22,6 +22,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandax.tile;
 
+import org.pandcorps.core.Mathtil;
 import org.pandcorps.pandam.Panctor;
 import org.pandcorps.pandam.Panderer;
 import org.pandcorps.pandam.Panlayer;
@@ -122,6 +123,12 @@ public class TileMap extends Panctor {
                 }
                 tile.setBackgroundO(background);
             }
+        }
+    }
+    
+    public final void randBackground(final TileMapImage img, final int y, final int h, final int n) {
+        for (int i = 0; i < n; i++) {
+            getTile(Mathtil.randi(0, w - 1), Mathtil.randi(y, y + h - 1)).setBackground(img);
         }
     }
     
