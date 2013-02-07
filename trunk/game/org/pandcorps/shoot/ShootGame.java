@@ -117,14 +117,16 @@ public class ShootGame extends Guy2Game {
 		tm.getTile(3, 6).setBackground(imgMap[1][4]);
 		tm.getTile(4, 6).setBackground(imgMap[1][5]);
 		tm.getTile(5, 6).setBackground(imgMap[1][3]);
-		tm.getTile(6, 6).setBackground(imgMap[3][0]);
-		
-		tm.getTile(8, 6).setBackground(imgMap[3][2]);
-		tm.getTile(9, 6).setBackground(imgMap[1][4]);
-		tm.getTile(10, 6).setBackground(imgMap[0][3]);
-        tm.getTile(11, 6).setBackground(imgMap[0][4]);
-        tm.getTile(12, 6).setBackground(imgMap[0][5]);
-        tm.getTile(13, 6).setBackground(imgMap[3][0]);
+		tm.getTile(6, 6).setBackground(imgMap[0][6]);
+		tm.getTile(7, 6).setBackground(imgMap[1][4]);
+		tm.getTile(8, 6).setBackground(imgMap[0][3]);
+        tm.getTile(9, 6).setBackground(imgMap[0][4]);
+        tm.getTile(10, 6).setBackground(imgMap[0][5]);
+        tm.getTile(11, 6).setBackground(imgMap[3][0]);
+        
+        tm.getTile(13, 6).setBackground(imgMap[2][6]); // Pipe
+        tm.getTile(13, 7).setBackground(imgMap[2][6]);
+        tm.getTile(13, 8).setBackground(imgMap[1][6]);
 		
 		tm.getTile(15, 6).setBackground(imgMap[3][2]); // Blue storefront
 		tm.getTile(16, 6).setBackground(imgMap[2][3]);
