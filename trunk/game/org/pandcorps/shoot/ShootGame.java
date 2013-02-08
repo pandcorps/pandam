@@ -187,6 +187,20 @@ public class ShootGame extends Guy2Game {
         tm.getTile(26, 8).setBackground(imgMap[3][3]);
         tm.getTile(27, 8).setBackground(imgMap[3][3]);
         tm.getTile(28, 8).setBackground(imgMap[3][0]);
+        
+        tm.fillBackground(imgMap[0][7], 0, 10, 21, 2); // Sky
+        tm.fillBackground(imgMap[0][1], 0, 9, 20, 1); // Roof
+        tm.getTile(20, 9).setBackground(imgMap[0][2]);
+        tm.fillBackground(imgMap[3][2], 20, 6, 1, 3);
+        tm.fillBackground(imgMap[3][0], 21, 6, 1, 6);
+        
+        tm.getTile(21, 11).setBackground(imgMap[0][0]);
+        tm.fillBackground(imgMap[0][1], 22, 11, 10, 1);
+        
+        tm.getTile(29, 8).setBackground(imgMap[1][1]); // Flag
+        tm.getTile(30, 8).setBackground(imgMap[1][2]);
+        tm.getTile(29, 7).setBackground(imgMap[2][1]);
+        tm.getTile(30, 7).setBackground(imgMap[2][2]);
 		
 		tm.getPosition().setZ(type.getDepthShadow() - 1);
 	}
