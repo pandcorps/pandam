@@ -110,8 +110,8 @@ public class ShootGame extends Guy2Game {
 		tm.fillBackground(imgMap[4][1], 5, 1);
 		tm.fillBackground(imgMap[3][1], 6, 6);
 		
-		tm.randBackground(imgMap[3][4], 6, 6, s * 3); // Chipped brick
-        tm.randBackground(imgMap[3][5], 6, 6, s * 4); // Cracked brick
+		tm.randBackground(imgMap[3][4], 6, 6, s * 4); // Chipped brick
+        tm.randBackground(imgMap[3][5], 6, 6, s * 5); // Cracked brick
 		
 		tm.getTile(2, 6).setBackground(imgMap[3][2]); // Black storefront
 		tm.getTile(3, 6).setBackground(imgMap[1][4]);
@@ -192,8 +192,8 @@ public class ShootGame extends Guy2Game {
         tm.fillBackground(imgMap[0][1], 0, 9, 20, 1); // Roof
         tm.getTile(20, 9).setBackground(imgMap[0][2]);
         tm.fillBackground(imgMap[3][2], 20, 6, 1, 3);
-        tm.fillBackground(imgMap[3][0], 21, 6, 1, 6);
         
+        tm.fillBackground(imgMap[3][0], 21, 6, 1, 5);
         tm.getTile(21, 11).setBackground(imgMap[0][0]);
         tm.fillBackground(imgMap[0][1], 22, 11, 10, 1);
         
@@ -201,6 +201,15 @@ public class ShootGame extends Guy2Game {
         tm.getTile(30, 8).setBackground(imgMap[1][2]);
         tm.getTile(29, 7).setBackground(imgMap[2][1]);
         tm.getTile(30, 7).setBackground(imgMap[2][2]);
+        
+        tm.getTile(1, 8).setBackground(imgMap[1][0]); // Banner
+        tm.getTile(1, 7).setBackground(imgMap[2][0]);
+        
+        tm.getTile(10, 8).setBackground(imgMap[1][0]);
+        tm.getTile(10, 7).setBackground(imgMap[2][0]);
+        
+        tm.getTile(19, 8).setBackground(imgMap[1][0]);
+        tm.getTile(19, 7).setBackground(imgMap[2][0]);
 		
 		tm.getPosition().setZ(type.getDepthShadow() - 1);
 	}
@@ -413,7 +422,7 @@ public class ShootGame extends Guy2Game {
 			final Pangine engine = Pangine.getEngine();
 			room.destroy();
 			room = engine.createRoom(Pantil.vmid(), new FinPanple(512, 192, 0));
-			max = new FinPanple(512, 95, 0);
+			max = new FinPanple(512, 93, 0);
 			Pangame.getGame().setCurrentRoom(room);
 			loadBackground();
 			engine.setBgColor(Pancolor.GREEN);
