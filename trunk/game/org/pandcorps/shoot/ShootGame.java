@@ -195,7 +195,7 @@ public class ShootGame extends Guy2Game {
         
         tm.fillBackground(imgMap[3][0], 21, 6, 1, 5);
         tm.getTile(21, 11).setBackground(imgMap[0][0]);
-        tm.fillBackground(imgMap[0][1], 22, 11, 10, 1);
+        tm.fillBackground(imgMap[0][1], 22, 11, 9, 1);
         
         tm.getTile(29, 8).setBackground(imgMap[1][1]); // Flag
         tm.getTile(30, 8).setBackground(imgMap[1][2]);
@@ -210,6 +210,14 @@ public class ShootGame extends Guy2Game {
         
         tm.getTile(19, 8).setBackground(imgMap[1][0]);
         tm.getTile(19, 7).setBackground(imgMap[2][0]);
+        
+        tm.fillBackground(imgMap[3][2], 31, 6, 1, 5);
+        tm.getTile(31, 11).setBackground(imgMap[0][2]);
+        
+        tm.fillBackground(imgMap[3][7], 32, 6, 8, 1); // Fence
+        tm.fillBackground(imgMap[2][7], 32, 7, 8, 1);
+        tm.fillBackground(imgMap[1][7], 32, 8, 8, 1);
+        tm.fillBackground(imgMap[0][7], 32, 9, 8, 3);
 		
 		tm.getPosition().setZ(type.getDepthShadow() - 1);
 	}
@@ -421,8 +429,9 @@ public class ShootGame extends Guy2Game {
         protected final void load() throws Exception {
 			final Pangine engine = Pangine.getEngine();
 			room.destroy();
-			room = engine.createRoom(Pantil.vmid(), new FinPanple(512, 192, 0));
-			max = new FinPanple(512, 93, 0);
+			final int w = 640;
+			room = engine.createRoom(Pantil.vmid(), new FinPanple(w, 192, 0));
+			max = new FinPanple(w, 93, 0);
 			Pangame.getGame().setCurrentRoom(room);
 			loadBackground();
 			engine.setBgColor(Pancolor.GREEN);
