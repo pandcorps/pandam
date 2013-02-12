@@ -14,7 +14,6 @@ import org.pandcorps.pandam.impl.FinPanple;
 import org.pandcorps.pandax.text.*;
 import org.pandcorps.pandax.text.Fonts.FontRequest;
 import org.pandcorps.pandax.tile.*;
-import org.pandcorps.pandax.tile.Tile.*;
 import org.pandcorps.pandax.visual.FadeScreen;
 import org.pandcorps.shoot.PowerUp.*;
 import org.pandcorps.shoot.Projectile.*;
@@ -97,129 +96,6 @@ public class ShootGame extends Guy2Game {
         health = engine.createImage("img.health", opu, npu, xpu, powerUps[5]);
         loadWeapons();
         loadCharacters();
-	}
-	
-	private final static void loadBackground() {
-		tm = new TileMap("act.bg", room, 16, 16);
-		final int w = tm.getWidth(), s = w / 16;
-		tm.setImageMap(Pangine.getEngine().createImage("img.bg.city", "org/pandcorps/shoot/res/bg/TileCity.png"));
-		final TileMapImage[][] imgMap = tm.splitImageMap();
-		tm.fillBackground(imgMap[7][0], 0, 2);
-		tm.fillBackground(imgMap[6][0], 2, 1);
-		tm.fillBackground(imgMap[5][0], 3, 2);
-		tm.fillBackground(imgMap[4][1], 5, 1);
-		tm.fillBackground(imgMap[3][1], 6, 6);
-		
-		tm.randBackground(imgMap[3][4], 6, 6, s * 4); // Chipped brick
-        tm.randBackground(imgMap[3][5], 6, 6, s * 5); // Cracked brick
-		
-		tm.getTile(2, 6).setBackground(imgMap[3][2]); // Black storefront
-		tm.getTile(3, 6).setBackground(imgMap[1][4]);
-		tm.getTile(4, 6).setBackground(imgMap[1][5]);
-		tm.getTile(5, 6).setBackground(imgMap[1][3]);
-		tm.getTile(6, 6).setBackground(imgMap[0][6]);
-		tm.getTile(7, 6).setBackground(imgMap[1][4]);
-		tm.getTile(8, 6).setBackground(imgMap[0][3]);
-        tm.getTile(9, 6).setBackground(imgMap[0][4]);
-        tm.getTile(10, 6).setBackground(imgMap[0][5]);
-        tm.getTile(11, 6).setBackground(imgMap[3][0]);
-        
-        tm.getTile(13, 6).setBackground(imgMap[2][6]); // Pipe
-        tm.getTile(13, 7).setBackground(imgMap[2][6]);
-        tm.getTile(13, 8).setBackground(imgMap[1][6]);
-		
-		tm.getTile(15, 6).setBackground(imgMap[3][2]); // Blue storefront
-		tm.getTile(16, 6).setBackground(imgMap[2][3]);
-		tm.getTile(17, 6).setBackground(imgMap[2][5]);
-		tm.getTile(18, 6).setBackground(imgMap[2][4]);
-		tm.getTile(19, 6).setBackground(imgMap[3][0]);
-		
-		tm.randBackground(imgMap[7][3], 0, 2, s * 2); // Street crack
-		tm.randBackground(imgMap[7][4], 3, 2, s * 2); // Sidewalk crack
-		for (int i = 1; i < w; i += 3) { // Street paint
-		    tm.getTile(i, 1).setBackground(imgMap[7][1]);
-		}
-		for (int i = 2; i < w; i += 9) { // Manhole
-		    tm.getTile(i, 0).setBackground(imgMap[7][2]);
-		}
-		for (int i = 5; i < w; i += 9) { // Grate
-            tm.getTile(i, 2).setBackground(imgMap[6][2]);
-        }
-		for (int i = 8; i < w; i += 9) { // Vent
-            tm.getTile(i, 4).setBackground(imgMap[5][2]);
-        }
-		
-        tm.getTile(21, 2).setBackground(imgMap[6][3]);
-        tm.getTile(22, 2).setBackground(imgMap[7][0]);
-        tm.getTile(23, 2).setBackground(imgMap[7][0]);
-        tm.getTile(24, 2).setBackground(imgMap[7][0]);
-        tm.getTile(25, 2).setBackground(imgMap[6][4]);
-		tm.getTile(21, 3).setBackground(imgMap[5][3]);
-        tm.getTile(22, 3).setBackground(imgMap[6][3]);
-        tm.getTile(23, 3).setBackground(imgMap[7][0]);
-        tm.getTile(24, 3).setBackground(imgMap[7][0]);
-        tm.getTile(25, 3).setBackground(imgMap[5][4]);
-        tm.getTile(22, 4).setBackground(imgMap[5][3]);
-        tm.getTile(23, 4).setBackground(imgMap[6][3]);
-        tm.getTile(24, 4).setBackground(imgMap[7][0]);
-        tm.getTile(25, 4).setBackground(imgMap[7][0]);
-        tm.getTile(26, 4).setBackground(imgMap[5][4]);
-        tm.getTile(23, 5).setBackground(imgMap[4][2]);
-        tm.getTile(24, 5).setBackground(imgMap[4][3]);
-        tm.getTile(25, 5).setBackground(imgMap[4][3]);
-        tm.getTile(26, 5).setBackground(imgMap[4][3]);
-        tm.getTile(27, 5).setBackground(imgMap[4][4]);
-        tm.getTile(23, 6).setBackground(imgMap[3][2]);
-        tm.getTile(24, 6).setBackground(imgMap[3][3]);
-        tm.getTile(25, 6).setBackground(imgMap[3][3]);
-        tm.getTile(26, 6).setBackground(imgMap[3][3]);
-        tm.getTile(27, 6).setBackground(imgMap[3][3]);
-        tm.getTile(28, 6).setBackground(imgMap[3][0]);
-        tm.getTile(23, 7).setBackground(imgMap[3][2]);
-        tm.getTile(24, 7).setBackground(imgMap[3][3]);
-        tm.getTile(25, 7).setBackground(imgMap[3][3]);
-        tm.getTile(26, 7).setBackground(imgMap[3][3]);
-        tm.getTile(27, 7).setBackground(imgMap[3][3]);
-        tm.getTile(28, 7).setBackground(imgMap[3][0]);
-        tm.getTile(23, 8).setBackground(imgMap[3][2]);
-        tm.getTile(24, 8).setBackground(imgMap[3][3]);
-        tm.getTile(25, 8).setBackground(imgMap[3][3]);
-        tm.getTile(26, 8).setBackground(imgMap[3][3]);
-        tm.getTile(27, 8).setBackground(imgMap[3][3]);
-        tm.getTile(28, 8).setBackground(imgMap[3][0]);
-        
-        tm.fillBackground(imgMap[0][7], 0, 10, 21, 2); // Sky
-        tm.fillBackground(imgMap[0][1], 0, 9, 20, 1); // Roof
-        tm.getTile(20, 9).setBackground(imgMap[0][2]);
-        tm.fillBackground(imgMap[3][2], 20, 6, 1, 3);
-        
-        tm.fillBackground(imgMap[3][0], 21, 6, 1, 5);
-        tm.getTile(21, 11).setBackground(imgMap[0][0]);
-        tm.fillBackground(imgMap[0][1], 22, 11, 9, 1);
-        
-        tm.getTile(29, 8).setBackground(imgMap[1][1]); // Flag
-        tm.getTile(30, 8).setBackground(imgMap[1][2]);
-        tm.getTile(29, 7).setBackground(imgMap[2][1]);
-        tm.getTile(30, 7).setBackground(imgMap[2][2]);
-        
-        tm.getTile(1, 8).setBackground(imgMap[1][0]); // Banner
-        tm.getTile(1, 7).setBackground(imgMap[2][0]);
-        
-        tm.getTile(10, 8).setBackground(imgMap[1][0]);
-        tm.getTile(10, 7).setBackground(imgMap[2][0]);
-        
-        tm.getTile(19, 8).setBackground(imgMap[1][0]);
-        tm.getTile(19, 7).setBackground(imgMap[2][0]);
-        
-        tm.fillBackground(imgMap[3][2], 31, 6, 1, 5);
-        tm.getTile(31, 11).setBackground(imgMap[0][2]);
-        
-        tm.fillBackground(imgMap[3][7], 32, 6, 8, 1); // Fence
-        tm.fillBackground(imgMap[2][7], 32, 7, 8, 1);
-        tm.fillBackground(imgMap[1][7], 32, 8, 8, 1);
-        tm.fillBackground(imgMap[0][7], 32, 9, 8, 3);
-		
-		tm.getPosition().setZ(type.getDepthShadow() - 1);
 	}
 	
 	private final static void loadCharacters() {
@@ -433,7 +309,7 @@ public class ShootGame extends Guy2Game {
 			room = engine.createRoom(Pantil.vmid(), new FinPanple(w, 192, 0));
 			max = new FinPanple(w, 93, 0);
 			Pangame.getGame().setCurrentRoom(room);
-			loadBackground();
+			tm = Level.e1m1();
 			engine.setBgColor(Pancolor.GREEN);
 			shooter = new Shooter("STR.1", room, playerDef);
 			for (int i = 0; i < weaponDefs.length; i++) {
