@@ -27,6 +27,10 @@ public class FinPancolor extends Pancolor {
         super(rgb);
     }
     
+    public FinPancolor(final short r, final short g, final short b) {
+        super(r, g, b);
+    }
+    
     public FinPancolor(final short r, final short g, final short b, final short a) {
         super(r, g, b, a);
     }

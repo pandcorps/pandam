@@ -28,14 +28,14 @@ import org.pandcorps.core.seg.*;
 public class Pancolor {
     public final static short MIN_VALUE = 0;
 	public final static short MAX_VALUE = 255;
-	public final static FinPancolor BLACK = new FinPancolor(MIN_VALUE, MIN_VALUE, MIN_VALUE, MAX_VALUE);
-	public final static FinPancolor WHITE = new FinPancolor(MAX_VALUE, MAX_VALUE, MAX_VALUE, MAX_VALUE);
-	public final static FinPancolor RED = new FinPancolor(MAX_VALUE, MIN_VALUE, MIN_VALUE, MAX_VALUE);
-	public final static FinPancolor GREEN = new FinPancolor(MIN_VALUE, MAX_VALUE, MIN_VALUE, MAX_VALUE);
-	public final static FinPancolor BLUE = new FinPancolor(MIN_VALUE, MIN_VALUE, MAX_VALUE, MAX_VALUE);
-	public final static FinPancolor YELLOW = new FinPancolor(MAX_VALUE, MAX_VALUE, MIN_VALUE, MAX_VALUE);
-	public final static FinPancolor CYAN = new FinPancolor(MIN_VALUE, MAX_VALUE, MAX_VALUE, MAX_VALUE);
-	public final static FinPancolor MAGENTA = new FinPancolor(MAX_VALUE, MIN_VALUE, MAX_VALUE, MAX_VALUE);
+	public final static FinPancolor BLACK = new FinPancolor(MIN_VALUE, MIN_VALUE, MIN_VALUE);
+	public final static FinPancolor WHITE = new FinPancolor(MAX_VALUE, MAX_VALUE, MAX_VALUE);
+	public final static FinPancolor RED = new FinPancolor(MAX_VALUE, MIN_VALUE, MIN_VALUE);
+	public final static FinPancolor GREEN = new FinPancolor(MIN_VALUE, MAX_VALUE, MIN_VALUE);
+	public final static FinPancolor BLUE = new FinPancolor(MIN_VALUE, MIN_VALUE, MAX_VALUE);
+	public final static FinPancolor YELLOW = new FinPancolor(MAX_VALUE, MAX_VALUE, MIN_VALUE);
+	public final static FinPancolor CYAN = new FinPancolor(MIN_VALUE, MAX_VALUE, MAX_VALUE);
+	public final static FinPancolor MAGENTA = new FinPancolor(MAX_VALUE, MIN_VALUE, MAX_VALUE);
     private short r;
     private short g;
     private short b;
@@ -43,6 +43,10 @@ public class Pancolor {
     
     public Pancolor(final short[] rgb) {
         this(rgb[0], rgb[1], rgb[2], rgb.length > 3 ? rgb[3] : MAX_VALUE);
+    }
+    
+    public Pancolor(final short r, final short g, final short b) {
+        this(r, g, b, MAX_VALUE);
     }
     
     public Pancolor(final short r, final short g, final short b, final short a) {
