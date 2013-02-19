@@ -15,7 +15,6 @@ import org.pandcorps.pandax.text.*;
 import org.pandcorps.pandax.text.Fonts.FontRequest;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.visual.FadeScreen;
-import org.pandcorps.shoot.PowerUp.*;
 import org.pandcorps.shoot.Projectile.*;
 import org.pandcorps.shoot.Shooter.ShooterDefinition;
 import org.pandcorps.shoot.Weapon.WeaponDefinition;
@@ -36,7 +35,7 @@ public class ShootGame extends Guy2Game {
 	/*package*/ final static char CHAR_MONEY = 225;
 	/*package*/ static Guy2Type type = null;
 	private static ShooterDefinition playerDef = null;
-	private static ShooterDefinition merchantDef = null;
+	/*package*/ static ShooterDefinition merchantDef = null;
 	/*package*/ static ShooterDefinition[] trooperDefs = null;
 	/*package*/ static WeaponDefinition[] weaponDefs = null;
 	/*package*/ static WeaponDefinition chainsaw = null;
@@ -310,7 +309,9 @@ public class ShootGame extends Guy2Game {
 			max = new FinPanple(w, 93, 0);
 			Pangame.getGame().setCurrentRoom(room);
 			tm = Level.e1m1();
+			room.addActor(tm);
 			engine.setBgColor(Pancolor.GREEN);
+			
 			shooter = new Shooter("STR.1", room, playerDef);
 			for (int i = 0; i < weaponDefs.length; i++) {
 			    shooter.addWeapon(i);
@@ -322,20 +323,12 @@ public class ShootGame extends Guy2Game {
 			}
 			new Player(shooter).setShooter(shooter);
 			engine.track(shooter);
-			new Spawner(room, trooperDefs[0], 5, 1);
-			new Spawner(room, trooperDefs[7], 2, 1);
-			new Spawner(room, trooperDefs[6], 1, 1);
-			room.addActor(tm);
-			final Shooter merchant = new Shooter("MER", room, merchantDef);
-			merchant.getPosition().set(224, 88);
-			merchant.setMirror(true);
-			new Merchant().setShooter(merchant);
-			new Money(50, 8, 80);
-			new Ammo(weaponDefs[2], 32, 80);
-			new Ammo(weaponDefs[3], 56, 80);
-			new Ammo(weaponDefs[4], 80, 80);
-			new Ammo(weaponDefs[5], 104, 80);
-			new Health(50, 128, 80);
+			
+			createHud();
+		}
+		
+		private static void createHud() {
+		    final Pangine engine = Pangine.getEngine();
 			final float h = engine.getGameHeight();
 			final Panlayer hud = engine.createLayer("layer.hud", engine.getGameWidth(), h, 1, room);
 			room.addAbove(hud);
