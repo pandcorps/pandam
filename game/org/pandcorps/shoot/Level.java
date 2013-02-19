@@ -22,15 +22,86 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.shoot;
 
+import java.awt.image.*;
+import java.util.*;
+
+import org.pandcorps.core.*;
+import org.pandcorps.core.img.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.tile.Tile.*;
 
 public class Level {
+    private final static BufferedImage createBlueCityImage() {
+        final BufferedImage raw = Imtil.load("org/pandcorps/shoot/res/bg/TileCity.png");
+        final HashMap<Pancolor, Pancolor> map = new HashMap<Pancolor, Pancolor>();
+        putBlue(map, 40, 40, 24);
+        putBlue(map, 56, 64, 0);
+        putBlue(map, 64, 72, 0);
+        putBlue(map, 72, 80, 0);
+        putBlue(map, 80, 88, 0);
+        putBlue(map, 80, 88, 8);
+        putBlue(map, 88, 96, 0);
+        putBlue(map, 96, 104, 0);
+        putBlue(map, 96, 104, 8);
+        putBlue(map, 96, 104, 24);
+        putBlue(map, 104, 112, 0);
+        putBlue(map, 104, 112, 8);
+        putBlue(map, 104, 112, 24);
+        putBlue(map, 104, 112, 32);
+        putBlue(map, 112, 120, 8);
+        putBlue(map, 112, 120, 24);
+        putBlue(map, 112, 120, 32);
+        putBlue(map, 112, 120, 40);
+        putBlue(map, 120, 128, 0);
+        putBlue(map, 120, 128, 8);
+        putBlue(map, 120, 128, 24);
+        putBlue(map, 120, 128, 40);
+        putBlue(map, 128, 136, 8);
+        putBlue(map, 128, 136, 24);
+        putBlue(map, 128, 136, 40);
+        putBlue(map, 128, 144, 16);
+        putBlue(map, 136, 144, 24);
+        putBlue(map, 136, 144, 40);
+        putBlue(map, 136, 152, 16);
+        putBlue(map, 144, 152, 24);
+        putBlue(map, 144, 152, 40);
+        putBlue(map, 144, 160, 32);
+        putBlue(map, 152, 160, 40);
+        putBlue(map, 152, 160, 48);
+        putBlue(map, 152, 160, 56);
+        putBlue(map, 152, 168, 32);
+        putBlue(map, 160, 168, 40);
+        putBlue(map, 160, 168, 48);
+        putBlue(map, 160, 168, 56);
+        putBlue(map, 160, 168, 72);
+        putBlue(map, 160, 176, 48);
+        putBlue(map, 168, 176, 48);
+        putBlue(map, 168, 176, 56);
+        putBlue(map, 168, 176, 72);
+        putBlue(map, 168, 184, 48);
+        putBlue(map, 168, 184, 56);
+        putBlue(map, 176, 184, 56);
+        putBlue(map, 176, 192, 64);
+        putBlue(map, 184, 192, 72);
+        putBlue(map, 192, 200, 72);
+        putBlue(map, 192, 208, 80);
+        putBlue(map, 200, 216, 80);
+        final ReplacePixelFilter filter = new ReplacePixelFilter(map);
+        return Imtil.filter(raw, filter);
+    }
+    
+    private final static void putBlue(final HashMap<Pancolor, Pancolor> map, final int r, final int g, final int b) {
+        final short rs = (short) r, gs = (short) g;
+        map.put(new Pancolor(rs, gs, (short) b), new Pancolor((short) ((b + g) / 2), rs, gs));
+        
+    }
+    
     /*package*/ final static TileMap e1m1() {
         final TileMap tm = new TileMap("act.bg", ShootGame.room, 16, 16);
         final int w = tm.getWidth(), s = w / 16;
         tm.setImageMap(Pangine.getEngine().createImage("img.bg.city", "org/pandcorps/shoot/res/bg/TileCity.png"));
+        createBlueCityImage();
         final TileMapImage[][] imgMap = tm.splitImageMap();
         tm.fillBackground(imgMap[7][0], 0, 2);
         tm.fillBackground(imgMap[6][0], 2, 1);
