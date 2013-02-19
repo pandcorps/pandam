@@ -103,7 +103,6 @@ public class Level {
         final TileMap tm = new TileMap("act.bg", room, 16, 16);
         final int w = tm.getWidth(), s = w / 16;
         tm.setImageMap(Pangine.getEngine().createImage("img.bg.city", "org/pandcorps/shoot/res/bg/TileCity.png"));
-        createBlueCityImage();
         final TileMapImage[][] imgMap = tm.splitImageMap();
         tm.fillBackground(imgMap[7][0], 0, 2);
         tm.fillBackground(imgMap[6][0], 2, 1);
@@ -220,8 +219,6 @@ public class Level {
         tm.fillBackground(imgMap[1][7], 32, 8, 8, 1);
         tm.fillBackground(imgMap[0][7], 32, 9, 8, 3);
         
-        tm.getPosition().setZ(ShootGame.type.getDepthShadow() - 1);
-        
         new Spawner(room, ShootGame.trooperDefs[0], 5, 1);
         new Spawner(room, ShootGame.trooperDefs[7], 2, 1);
         new Spawner(room, ShootGame.trooperDefs[6], 1, 1);
@@ -237,6 +234,20 @@ public class Level {
         new Ammo(ShootGame.weaponDefs[4], 80, 80);
         new Ammo(ShootGame.weaponDefs[5], 104, 80);
         new Health(50, 128, 80);
+        
+        return tm;
+    }
+    
+    /*package*/ final static TileMap e1m2() {
+        final Panroom room = ShootGame.room;
+        final TileMap tm = new TileMap("act.bg", room, 16, 16);
+        tm.setImageMap(Pangine.getEngine().createImage("img.bg.city2", createBlueCityImage()));
+        final TileMapImage[][] imgMap = tm.splitImageMap();
+        tm.fillBackground(imgMap[7][0], 0, 2);
+        tm.fillBackground(imgMap[6][0], 2, 1);
+        tm.fillBackground(imgMap[5][0], 3, 2);
+        tm.fillBackground(imgMap[4][1], 5, 1);
+        tm.fillBackground(imgMap[3][1], 6, 6);
         
         return tm;
     }

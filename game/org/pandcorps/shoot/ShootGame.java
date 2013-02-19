@@ -308,7 +308,8 @@ public class ShootGame extends Guy2Game {
 			room = engine.createRoom(Pantil.vmid(), new FinPanple(w, 192, 0));
 			max = new FinPanple(w, 93, 0);
 			Pangame.getGame().setCurrentRoom(room);
-			tm = Level.e1m1();
+			tm = Level.e1m2(); //1();
+			tm.getPosition().setZ(type.getDepthShadow() - 1);
 			room.addActor(tm);
 			engine.setBgColor(Pancolor.GREEN);
 			
