@@ -30,6 +30,7 @@ import org.pandcorps.core.img.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.tile.Tile.*;
+import org.pandcorps.shoot.PowerUp.*;
 
 public class Level {
     private final static BufferedImage createBlueCityImage() {
@@ -98,7 +99,8 @@ public class Level {
     }
     
     /*package*/ final static TileMap e1m1() {
-        final TileMap tm = new TileMap("act.bg", ShootGame.room, 16, 16);
+        final Panroom room = ShootGame.room;
+        final TileMap tm = new TileMap("act.bg", room, 16, 16);
         final int w = tm.getWidth(), s = w / 16;
         tm.setImageMap(Pangine.getEngine().createImage("img.bg.city", "org/pandcorps/shoot/res/bg/TileCity.png"));
         createBlueCityImage();
@@ -219,6 +221,22 @@ public class Level {
         tm.fillBackground(imgMap[0][7], 32, 9, 8, 3);
         
         tm.getPosition().setZ(ShootGame.type.getDepthShadow() - 1);
+        
+        new Spawner(room, ShootGame.trooperDefs[0], 5, 1);
+        new Spawner(room, ShootGame.trooperDefs[7], 2, 1);
+        new Spawner(room, ShootGame.trooperDefs[6], 1, 1);
+        
+        final Shooter merchant = new Shooter("MER", room, ShootGame.merchantDef);
+        merchant.getPosition().set(224, 88);
+        merchant.setMirror(true);
+        new Merchant().setShooter(merchant);
+        
+        new Money(50, 8, 80);
+        new Ammo(ShootGame.weaponDefs[2], 32, 80);
+        new Ammo(ShootGame.weaponDefs[3], 56, 80);
+        new Ammo(ShootGame.weaponDefs[4], 80, 80);
+        new Ammo(ShootGame.weaponDefs[5], 104, 80);
+        new Health(50, 128, 80);
         
         return tm;
     }
