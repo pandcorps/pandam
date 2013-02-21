@@ -24,6 +24,8 @@ public class ShootGame extends Guy2Game {
     Grey out menu options.
     Save/load (weapon args, ammo, money, constitution, health, experience).
     Multiple screens.
+    Add arrow to HUD when time for next screen.
+    Rain.
     Use all available tiles.
     Bosses.
     Acknowledge victory and defeat, then return to menu.
@@ -31,6 +33,7 @@ public class ShootGame extends Guy2Game {
     private final static String PROP_DEBUG = "org.pandcorps.shoot.ShootGame.debug";
     private final static boolean debug = Boolean.getBoolean(PROP_DEBUG);
 	/*package*/ final static char CHAR_HEALTH = 2;
+	/*package*/ final static char CHAR_ARROW = 16;
 	/*package*/ final static char CHAR_AMMO = 132;
 	/*package*/ final static char CHAR_MONEY = 225;
 	/*package*/ static Guy2Type type = null;
@@ -59,7 +62,8 @@ public class ShootGame extends Guy2Game {
 	/*package*/ static Panmage ammoFlamethrower = null;
 	/*package*/ static Panmage ammoRocketLauncher = null;
 	/*package*/ static Panmage health = null;
-	private static TileMap tm = null;
+	/*package*/ static TileMap tm = null;
+	private static Pantext hudArrow = null; 
 
 	@Override
 	protected void init(final Panroom room) throws Exception {
@@ -300,6 +304,12 @@ public class ShootGame extends Guy2Game {
     }
 	
 	protected final static class ShootScreen extends Panscreen {
+	    private final Level level;
+	    
+	    protected ShootScreen(final Level level) {
+	        this.level = level;
+	    }
+	    
 		@Override
         protected final void load() throws Exception {
 			final Pangine engine = Pangine.getEngine();
@@ -308,24 +318,31 @@ public class ShootGame extends Guy2Game {
 			room = engine.createRoom(Pantil.vmid(), new FinPanple(w, 192, 0));
 			max = new FinPanple(w, 93, 0);
 			Pangame.getGame().setCurrentRoom(room);
-			tm = Level.e1m2(); //1();
+			level.start();
 			tm.getPosition().setZ(type.getDepthShadow() - 1);
 			room.addActor(tm);
 			engine.setBgColor(Pancolor.GREEN);
 			
-			shooter = new Shooter("STR.1", room, playerDef);
-			for (int i = 0; i < weaponDefs.length; i++) {
-			    shooter.addWeapon(i);
-			}
-			shooter.weapon2();
-			shooter.getPosition().set(64, 64);
-			if (debug) {
-			    shooter.addMoney(Shooter.MAX_MONEY);
-			}
-			new Player(shooter).setShooter(shooter);
-			engine.track(shooter);
-			
+			createPlayer();
 			createHud();
+		}
+		
+		private static void createPlayer() {
+		    if (shooter == null) {
+    			shooter = new Shooter("STR.1", room, playerDef);
+    			for (int i = 0; i < weaponDefs.length; i++) {
+    			    shooter.addWeapon(i);
+    			}
+    			shooter.weapon2();
+    			if (debug) {
+    			    shooter.addMoney(Shooter.MAX_MONEY);
+    			}
+    			new Player(shooter).setShooter(shooter);
+		    } else {
+		        shooter.attach(room);
+		    }
+		    shooter.getPosition().set(64, 64);
+			Pangine.getEngine().track(shooter);
 		}
 		
 		private static void createHud() {
@@ -346,11 +363,37 @@ public class ShootGame extends Guy2Game {
 				return getHud(CHAR_MONEY, shooter.getMoney());}});
 			hudMoney.getPosition().set(188, h - 12);
 			hud.addActor(hudMoney);
+			hudArrow = new Pantext("hud.arrow", hudFont, Character.toString(CHAR_ARROW));
+			hudArrow.getPosition().set(244, h - 24);
+			hudArrow.setVisible(false);
+			hud.addActor(hudArrow);
 		}
 		
 		private static String getHud(final char label, final int val) {
 			return Character.toString(label) + ' ' + (val == Weapon.INF ? Character.toString((char) 236) : Integer.toString(val));
 		}
+		
+		@Override
+	    public final void step() {
+		    final boolean cleared = isCleared();
+	        hudArrow.setVisible(cleared && Pangine.getEngine().isOn(15));
+	        if (cleared && !shooter.isMirror() && shooter.getPosition().getX() >= (max.getX() - shooter.getSpeed())) {
+	            shooter.detach();
+	            Panscreen.set(new ShootScreen(new Level.E1M2()));
+	        }
+	    }
+	}
+	
+	private static boolean isCleared() {
+	    for (final Panctor actor : room.getActors()) {
+	        final Class<?> c = actor.getClass();
+	        if (c == Spawner.class) {
+	            return false;
+	        } else if (c == Shooter.class && ((Shooter) actor).getController() instanceof Ai) {
+	            return false;
+	        }
+	    }
+	    return true;
 	}
 	
 	public final static void main(final String[] args) {
