@@ -99,7 +99,7 @@ public class Story {
 			chrBladander.destroy();
 			chrPotus.destroy();
 			chrWill.destroy();
-			Panscreen.set(new ShootScreen());
+			Panscreen.set(new ShootScreen(new Level.E1M1()));
 		}		
 	}
 	
