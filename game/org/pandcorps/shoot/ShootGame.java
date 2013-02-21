@@ -24,7 +24,6 @@ public class ShootGame extends Guy2Game {
     Grey out menu options.
     Save/load (weapon args, ammo, money, constitution, health, experience).
     Multiple screens.
-    Add arrow to HUD when time for next screen.
     Rain.
     Use all available tiles.
     Bosses.
