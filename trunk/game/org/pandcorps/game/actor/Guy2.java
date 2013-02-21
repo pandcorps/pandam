@@ -60,7 +60,16 @@ public abstract class Guy2 extends Panctor implements StepListener {
 		shadow = new Decoration(id + ".shadow");
         shadow.setView(type.shadowImage);
         shadow.getPosition().setZ(type.depthShadow);
-        room.addActor(shadow);
+        attach(room);
+	}
+	
+	public void detach() {
+	    getLayer().removeActor(this);
+	    shadow.getLayer().removeActor(shadow);
+	}
+	
+	public void attach(final Panlayer room) {
+	    room.addActor(shadow);
         room.addActor(this);
 	}
 	
@@ -173,6 +182,10 @@ public abstract class Guy2 extends Panctor implements StepListener {
     
     public Guy2Controller getController() {
     	return controller;
+    }
+    
+    public float getSpeed() {
+        return speed;
     }
     
     public final void add(final Panctor actor, final float xo, final float yo, final float zo) {
