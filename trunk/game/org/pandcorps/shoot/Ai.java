@@ -30,6 +30,7 @@ public class Ai extends ShooterController {
 	private final static byte ACTION_STILL = 0;
 	private final static byte ACTION_ADVANCE = 1;
 	private final static byte ACTION_RETREAT = 2;
+	private final static byte ACTION_SCROLLED = 3;
 	
     private byte timer;
     private byte action;
@@ -37,16 +38,26 @@ public class Ai extends ShooterController {
 	/*package*/ static int bamDelay;
 	private int bamTimer = 0;
 	
-	private byte attackTimer = 0;
-	private boolean attacking = false;
+	private byte attackTimer;
+	private boolean attacking;
 	
 	{
 		clear();
+		clearAttack();
 	}
 	
 	private final void clear() {
 		timer = 0;
 	    action = ACTION_STILL;
+	}
+	
+	private final void clearAttack() {
+	    attackTimer = 0;
+	    attacking = false;
+	}
+	
+	private final void advance() {
+	    setAction(ACTION_ADVANCE, (byte) 15, (byte) 40);
 	}
 	
 	private final void retreat() {
@@ -64,45 +75,60 @@ public class Ai extends ShooterController {
 	
 	@Override
     public final void step() {
-		if (bamTimer > 0) {
-			bamTimer--;
+		final Shooter target = getTarget();
+		final float dist = target == null ? 0 : Math.abs(shooter.getPosition().getX() - target.getPosition().getX());
+		if (dist > (ShootGame.SCREEN_W * 2.5f)) {
+		    action = ACTION_SCROLLED;
+		    shooter.destroy(); // Very distant off-screen enemies should be destroyed
+		    return;
 		}
+		if (bamTimer > 0) {
+            bamTimer--;
+        }
 		if (timer > 0) {
 			timer--;
 		} else {
-			final int r = Mathtil.randi(0, 99);
-			if (r < 50) {
-				setAction(ACTION_STILL, (byte) 15, (byte) 50);
-			} else if (r < 80) {
-				setAction(ACTION_ADVANCE, (byte) 15, (byte) 40);
-			} else {
-				retreat();
-			}
+		    if (dist > ShootGame.SCREEN_W) {
+		        advance(); // Off-screen enemies should try to get on-screen
+		    } else {
+    			final int r = Mathtil.randi(0, 99);
+    			if (r < 50) {
+    				setAction(ACTION_STILL, (byte) 15, (byte) 50);
+    			} else if (r < 80) {
+    				advance();
+    			} else {
+    				retreat();
+    			}
+		    }
 		}
 		if (action == ACTION_ADVANCE) {
-			stepAdvance(getTarget());
+			stepAdvance(target);
 		} else if (action == ACTION_RETREAT) {
-			if (!stepRetreat(getTarget())) {
+			if (!stepRetreat(target)) {
 				clear();
 			}
 		}
 		if (shooter.weapon != null) {
-			if (attackTimer > 0) {
-				attackTimer--;
-			} else {
-				if (attacking) {
-					attacking = false;
-				} else {
-					attacking = Mathtil.rand(25);
-					if (attacking) {
-						attack();
-					}
-				}
-				attackTimer = Mathtil.randb((byte) 15, (byte) 30);
-			}
-			if (attacking) {
-				attacking();
-			}
+		    if (dist > (ShootGame.SCREEN_W * 1.5f)) {
+		        clearAttack(); // Distant off-screen enemies should not shoot
+		    } else {
+    			if (attackTimer > 0) {
+    				attackTimer--;
+    			} else {
+    				if (attacking) {
+    					attacking = false;
+    				} else {
+    					attacking = Mathtil.rand(25);
+    					if (attacking) {
+    						attack();
+    					}
+    				}
+    				attackTimer = Mathtil.randb((byte) 15, (byte) 30);
+    			}
+    			if (attacking) {
+    				attacking();
+    			}
+		    }
 		}
 	}
 	
@@ -136,6 +162,9 @@ public class Ai extends ShooterController {
 	
 	@Override
 	/*package*/ void onDestroy() {
+	    if (action == ACTION_SCROLLED) {
+	        return;
+	    }
 		PowerUp.newPowerUp(shooter);
 	}
 	
