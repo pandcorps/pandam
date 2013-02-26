@@ -10,8 +10,8 @@ import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.impl.FinPanple;
 
 public abstract class Guy2Game extends Pangame {
-	protected final static int ROOM_W = 256;
-	protected final static int ROOM_H = 192;
+	public final static int SCREEN_W = 256;
+	public final static int SCREEN_H = 192;
 	protected final static FinPanple CENTER_16 = new FinPanple(8, 8, 0);
 	protected final static FinPanple CENTER_8 = new FinPanple(4, 4, 0);
 	protected final static FinPanple CENTER_4 = new FinPanple(2, 2, 0);
@@ -23,12 +23,12 @@ public abstract class Guy2Game extends Pangame {
         if (scalerClassName != null) {
         	engine.setImageScaler((Scaler) Reftil.newInstance(scalerClassName));
         }
-        engine.setMaxZoomedDisplaySize(ROOM_W, ROOM_H);
+        engine.setMaxZoomedDisplaySize(SCREEN_W, SCREEN_H);
     }
 	
 	@Override
     protected final FinPanple getFirstRoomSize() {
-        return new FinPanple(ROOM_W, ROOM_H, 0);
+        return new FinPanple(SCREEN_W, SCREEN_H, 0);
     }
     
 	@Override
