@@ -278,7 +278,7 @@ public class FightGame extends Guy2Game {
         protected final void load() {
             room.addActor(new CharacterSelectGrid());
             final ScrollTexture texture = new ScrollTexture("MenuBgActor", menuBackground);
-            texture.setSize(ROOM_W, ROOM_H);
+            texture.setSize(SCREEN_W, SCREEN_H);
             texture.setVelocity(1, -1);
             room.addActor(texture);
             texture.getPosition().setZ(-200);
@@ -298,8 +298,8 @@ public class FightGame extends Guy2Game {
     	
         private CharacterSelectGrid() {
             super("CharacterSelect", characterSelect, cursorImage, -2);
-            final int midH = ROOM_H / 2;
-            getPosition().set(new FinPanple(ROOM_W / 2, midH, 0));
+            final int midH = SCREEN_H / 2;
+            getPosition().set(new FinPanple(SCREEN_W / 2, midH, 0));
             room.addActor(selected);
             selected.getPosition().set(32, midH);
             change();
@@ -318,7 +318,7 @@ public class FightGame extends Guy2Game {
         		name.destroy();
         	}
         	name = new Pantext("selected.name", fontText, def.getName());
-        	name.getPosition().set(16, ROOM_H / 2 - DIM);
+        	name.getPosition().set(16, SCREEN_H / 2 - DIM);
         	room.addActor(name);
         }
         
@@ -400,7 +400,7 @@ public class FightGame extends Guy2Game {
         	if (count == 1) {
         		final String msg = f.def.getName() + " WINS";
         		final Pantext text = new Pantext("Win", fontText, msg);
-        		text.getPosition().set(48, ROOM_H * 7 / 8);
+        		text.getPosition().set(48, SCREEN_H * 7 / 8);
         		room.addActor(text);
         		text.register(60, new TimerListener() {
 					@Override
