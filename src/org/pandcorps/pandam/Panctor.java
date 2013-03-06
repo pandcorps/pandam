@@ -328,6 +328,14 @@ public class Panctor extends BasePantity implements SpecPanctor {
 		return destroyed;
 	}
 	
+	public final void detach() {
+	    onDetach();
+        getLayer().removeActor(this);
+    }
+	
+	protected void onDetach() {
+    }
+	
 	public final boolean isActive() {
         final Panlayer layer = getLayer();
         return layer != null && layer.isActive();
