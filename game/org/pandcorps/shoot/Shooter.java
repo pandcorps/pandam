@@ -201,9 +201,7 @@ public class Shooter extends Guy2 implements CollisionListener {
 	@Override
 	protected final void onDetach() {
 	    super.onDetach();
-	    if (weapon != null) {
-	        weapon.detach();
-	    }
+	    detach(weapon);
 	}
 	
 	@Override
