@@ -330,7 +330,10 @@ public class Panctor extends BasePantity implements SpecPanctor {
 	
 	public final void detach() {
 	    onDetach();
-        getLayer().removeActor(this);
+        final Panlayer layer = getLayer();
+        if (layer != null) {
+            layer.removeActor(this);
+        }
     }
 	
 	protected void onDetach() {
@@ -368,4 +371,10 @@ public class Panctor extends BasePantity implements SpecPanctor {
 			actor.destroy();
 		}
 	}
+	
+	public final static void detach(final Panctor actor) {
+        if (actor != null) {
+            actor.detach();
+        }
+    }
 }
