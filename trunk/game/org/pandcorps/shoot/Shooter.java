@@ -198,6 +198,22 @@ public class Shooter extends Guy2 implements CollisionListener {
 		}
 	}
 	
+	@Override
+	protected final void onDetach() {
+	    super.onDetach();
+	    if (weapon != null) {
+	        weapon.detach();
+	    }
+	}
+	
+	@Override
+	public void attach(final Panlayer room) {
+	    super.attach(room);
+	    final Weapon w = weapon;
+	    weapon = null;
+	    setWeapon(w);
+	}
+	
 	protected boolean onInteract(final Shooter initiator) {
 		if (controller != null) {
 			return ((ShooterController) controller).onInteract(initiator);

@@ -63,9 +63,9 @@ public abstract class Guy2 extends Panctor implements StepListener {
         attach(room);
 	}
 	
-	public void detach() {
-	    getLayer().removeActor(this);
-	    shadow.getLayer().removeActor(shadow);
+	@Override
+	protected void onDetach() {
+	    shadow.detach();
 	}
 	
 	public void attach(final Panlayer room) {
