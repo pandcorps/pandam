@@ -82,8 +82,9 @@ public class Ai extends ShooterController {
 	@Override
     public final void step() {
 		final Shooter target = getTarget();
+		final boolean boss = shooter.isBoss();
 		final float dist = Math.abs(getDistance(shooter, target));
-		if (dist > DISTANCE_SCROLLED) {
+		if (!boss && dist > DISTANCE_SCROLLED) {
 		    action = ACTION_SCROLLED;
 		    shooter.destroy(); // Very distant off-screen enemies should be destroyed
 		    return;
@@ -98,9 +99,9 @@ public class Ai extends ShooterController {
 		        advance(); // Off-screen enemies should try to get on-screen
 		    } else {
     			final int r = Mathtil.randi(0, 99);
-    			if (r < 50) {
+    			if (r < (boss ? 40 : 50)) {
     				setAction(ACTION_STILL, (byte) 15, (byte) 50);
-    			} else if (r < 80) {
+    			} else if (r < (boss ? 85 : 80)) {
     				advance();
     			} else {
     				retreat();
@@ -124,7 +125,7 @@ public class Ai extends ShooterController {
     				if (attacking) {
     					attacking = false;
     				} else {
-    					attacking = Mathtil.rand(25);
+    					attacking = Mathtil.rand(boss ? 40 : 25);
     					if (attacking) {
     						attack();
     					}
