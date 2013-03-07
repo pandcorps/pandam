@@ -31,6 +31,10 @@ public class Pantexture extends Panctor {
 	protected int width = 0;
 	protected int height = 0;
 	
+	public Pantexture(final Panmage image) {
+	    this.image = image;
+	}
+	
 	public Pantexture(final String id, final Panmage image) {
 		super(id);
 		this.image = image;
