@@ -55,6 +55,10 @@ public class Shooter extends Guy2 implements CollisionListener {
 			this.still = still;
 			this.walk = walk;
 		}
+		
+		public boolean isBoss() {
+			return baseConstitution >= 300;
+		}
 	}
 	
 	/*package*/ final ShooterDefinition def;

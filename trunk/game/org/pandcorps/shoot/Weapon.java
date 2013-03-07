@@ -382,8 +382,12 @@ public class Weapon extends Panctor implements Upgradeable {
 		if (!getCapacity().setInfinite(buyer)) {
 			return false;
 		}
-		ammo.set(INF);
+		setInfiniteIntern();
 		return true;
+	}
+	
+	protected final void setInfiniteIntern() {
+		ammo.set(INF);
 	}
 	
 	public final int getAmmo() {
