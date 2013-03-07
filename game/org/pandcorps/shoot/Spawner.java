@@ -35,17 +35,24 @@ public class Spawner extends Panctor implements StepListener {
 	private int total = 0;
 	private int current = 0;
 	
-	public Spawner(final Panlayer room, final ShooterDefinition def, final int maxTotal, final int maxCurrent) {
+	public Spawner(final Panlayer room, final float x, final ShooterDefinition def, final int maxTotal, final int maxCurrent) {
 		setVisible(false);
 		this.def = def;
 		this.maxTotal = maxTotal;
 		this.maxCurrent = maxCurrent;
 		room.addActor(this);
+		getPosition().setX(x);
 	}
 	
 	@Override
 	public void onStep(final StepEvent event) {
-		if (current < maxCurrent) {
+		final float dist = Ai.getDistance(this, ShootGame.shooter); // Positive when Spawner is right of Shooter
+		if (dist < -Ai.DISTANCE_SCROLLED) {
+			destroy();
+			return;
+		} else if (dist > 0) {
+			return;
+		} else if (current < maxCurrent) {
 			spawn();
 		}
 	}

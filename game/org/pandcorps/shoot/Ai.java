@@ -24,9 +24,11 @@ package org.pandcorps.shoot;
 
 import org.pandcorps.core.Mathtil;
 import org.pandcorps.game.actor.Burst;
-import org.pandcorps.pandam.Panple;
+import org.pandcorps.pandam.*;
 
 public class Ai extends ShooterController {
+	protected final static float DISTANCE_SCROLLED = ShootGame.SCREEN_W * 2.5f;
+	
 	private final static byte ACTION_STILL = 0;
 	private final static byte ACTION_ADVANCE = 1;
 	private final static byte ACTION_RETREAT = 2;
@@ -73,11 +75,15 @@ public class Ai extends ShooterController {
 		timer = Mathtil.randb(min, max);
 	}
 	
+	protected static float getDistance(final Panctor source, final Panctor target) {
+		return target == null ? 0 : (source.getPosition().getX() - target.getPosition().getX());
+	}
+	
 	@Override
     public final void step() {
 		final Shooter target = getTarget();
-		final float dist = target == null ? 0 : Math.abs(shooter.getPosition().getX() - target.getPosition().getX());
-		if (dist > (ShootGame.SCREEN_W * 2.5f)) {
+		final float dist = Math.abs(getDistance(shooter, target));
+		if (dist > DISTANCE_SCROLLED) {
 		    action = ACTION_SCROLLED;
 		    shooter.destroy(); // Very distant off-screen enemies should be destroyed
 		    return;
