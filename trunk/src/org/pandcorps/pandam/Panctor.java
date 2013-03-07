@@ -310,10 +310,7 @@ public class Panctor extends BasePantity implements SpecPanctor {
 	    onDestroy();
 	    unregisterListeners();
 		//Pangame.getGame().getCurrentRoom().removeActor(this);
-	    if (layer != null) {
-	        layer.removeActor(this);
-	        layer = null;
-	    }
+	    detachIntern();
 		destroyed = true;
 	}
 	
@@ -330,9 +327,13 @@ public class Panctor extends BasePantity implements SpecPanctor {
 	
 	public final void detach() {
 	    onDetach();
-        final Panlayer layer = getLayer();
+	    detachIntern();
+	}
+	
+	private final void detachIntern() {
         if (layer != null) {
             layer.removeActor(this);
+            layer = null;
         }
     }
 	

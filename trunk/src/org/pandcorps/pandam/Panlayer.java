@@ -162,6 +162,7 @@ public class Panlayer extends BasePantity {
     }*/
     
     public final void destroyAllActors() {
+        applyActorChanges(); // If we detach an actor before clearing the layer, this prevents its destruction
     	destroy(actors.keySet());
         destroy(addedActors);
     }
