@@ -54,7 +54,7 @@ public abstract class PowerUp extends Panctor implements Collidee {
 		private final int amount;
 		
 		public Money(final Shooter defeated, final float x, final float y) {
-			this(defeated.getConstitution() * 5, x, y);
+			this(defeated.getConstitution() * (defeated.isBoss() ? 10 : 5), x, y);
 		}
 		
 		public Money(final int amount, final float x, final float y) {
@@ -110,6 +110,9 @@ public abstract class PowerUp extends Panctor implements Collidee {
 		victor.addExperience(defeated.getConstitution());
 		final Panple pos = defeated.getPosition();
 		final float x = pos.getX(), y = pos.getY();
+		if (defeated.isBoss()) {
+			return new Money(defeated, x, y);
+		}
 		final int health = victor.getHealth(), constitution = victor.getConstitution();
 	    if (health < constitution / 5) {
 	    	return new Health(defeated, x, y);
