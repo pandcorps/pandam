@@ -276,10 +276,10 @@ public class ShootGame extends Guy2Game {
 		return ShooterDefinition.create(name, constitution, melee, weapon, loadChrStrip(name));
 	}
 	
-	private final static class TitleScreen extends FadeScreen {
+	/*package*/ final static class TitleScreen extends FadeScreen {
 		private Panmage will = null;
 		
-        private TitleScreen() {
+		/*package*/ TitleScreen() {
             super(Pancolor.WHITE, 240);
         }
         
