@@ -28,7 +28,6 @@ public class ShootGame extends Guy2Game {
     Use all available tiles.
     Bosses.
     Acknowledge victory and defeat, then return to menu.
-    Spawners should wait until player is near.
     */
     private final static String PROP_DEBUG = "org.pandcorps.shoot.ShootGame.debug";
     private final static boolean debug = Boolean.getBoolean(PROP_DEBUG);
