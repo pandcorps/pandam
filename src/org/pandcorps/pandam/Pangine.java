@@ -24,6 +24,8 @@ package org.pandcorps.pandam;
 
 import java.awt.image.BufferedImage;
 import java.util.*;
+import java.util.concurrent.Callable;
+
 import org.pandcorps.core.*;
 import org.pandcorps.core.col.*;
 import org.pandcorps.core.img.*;
@@ -271,6 +273,22 @@ public abstract class Pangine {
 	
 	public final Panmage getImage(final String id) {
         return (Panmage) getEntity(id);
+    }
+	
+	public final Panmage getImage(final String id, final Callable<Panmage> loader) {
+        Panmage image = getImage(id);
+        if (image != null) {
+        	return image;
+        }
+        try {
+        	image = loader.call();
+        } catch (final Exception e) {
+        	throw Pantil.toRuntimeException(e);
+        }
+        if (!image.getId().equals(id)) {
+        	throw new IllegalStateException("Requested " + id + " but " + loader.getClass().getName() + " generated " + image.getId());
+        }
+        return image;
     }
 	
 	public final Panimation getAnimation(final String id) {
