@@ -260,6 +260,27 @@ public abstract class Level {
             tm.fillBackground(imgMap[5][0], 3, 2);
             tm.fillBackground(imgMap[4][1], 5, 1);
             tm.fillBackground(imgMap[3][1], 6, 6);
+            
+            tm.getTile(3, 6).setBackground(imgMap[3][2]);
+            tm.getTile(4, 6).setBackground(imgMap[7][7]);
+            tm.getTile(5, 6).setBackground(imgMap[5][7]);
+            tm.getTile(6, 6).setBackground(imgMap[7][7]);
+            tm.getTile(7, 6).setBackground(imgMap[3][0]);
+            
+            tm.fillBackground(imgMap[3][2], 9, 6, 1, 2);
+            tm.fillBackground(imgMap[7][7], 10, 6, 1, 2);
+            tm.getTile(11, 6).setBackground(imgMap[4][7]);
+            tm.getTile(11, 7).setBackground(imgMap[7][7]);
+            tm.fillBackground(imgMap[7][7], 12, 6, 1, 2);
+            tm.getTile(13, 6).setBackground(imgMap[5][7]);
+            tm.getTile(13, 7).setBackground(imgMap[7][7]);
+            tm.fillBackground(imgMap[7][7], 14, 6, 1, 2);
+            tm.fillBackground(imgMap[3][0], 15, 6, 1, 2);
+            
+            tm.getTile(16, 6).setBackground(imgMap[3][2]);
+            tm.getTile(17, 6).setBackground(imgMap[6][7]);
+            tm.getTile(18, 6).setBackground(imgMap[5][7]);
+            tm.getTile(19, 6).setBackground(imgMap[3][0]);
         }
     }
 }
