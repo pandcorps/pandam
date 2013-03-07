@@ -190,6 +190,10 @@ public class Shooter extends Guy2 implements CollisionListener {
 	    return level;
 	}
 	
+	public boolean isBoss() {
+		return def.isBoss();
+	}
+	
 	@Override
 	protected final void onDestroy() {
 		super.onDestroy();
