@@ -59,4 +59,9 @@ public final class Player extends ShooterController {
         
         registerPlayer(bound);
     }
+    
+    @Override
+	/*package*/ void onDestroy() {
+    	Panscreen.set(new ShootGame.TitleScreen());
+    }
 }
