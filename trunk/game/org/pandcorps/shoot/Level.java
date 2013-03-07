@@ -231,6 +231,7 @@ public abstract class Level {
             //new Spawner(room, 65, ShootGame.trooperDefs[0], 5, 1);
             //new Spawner(room, 65, ShootGame.trooperDefs[7], 2, 1);
             new Spawner(room, 65, ShootGame.trooperDefs[6], 1, 1);
+            new Spawner(room, 400, ShootGame.bossDefs[0], 1, 1);
             
             final Shooter merchant = new Shooter("MER", room, ShootGame.merchantDef);
             merchant.getPosition().set(224, 88);

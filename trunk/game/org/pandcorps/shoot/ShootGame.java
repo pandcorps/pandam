@@ -26,7 +26,6 @@ public class ShootGame extends Guy2Game {
     Multiple screens.
     Rain.
     Use all available tiles.
-    Bosses.
     Acknowledge victory and defeat, then return to menu.
     */
     private final static String PROP_DEBUG = "org.pandcorps.shoot.ShootGame.debug";
@@ -39,6 +38,7 @@ public class ShootGame extends Guy2Game {
 	private static ShooterDefinition playerDef = null;
 	/*package*/ static ShooterDefinition merchantDef = null;
 	/*package*/ static ShooterDefinition[] trooperDefs = null;
+	/*package*/ static ShooterDefinition[] bossDefs = null;
 	/*package*/ static WeaponDefinition[] weaponDefs = null;
 	/*package*/ static WeaponDefinition chainsaw = null;
 	private static Panmage title = null;
@@ -111,6 +111,10 @@ public class ShootGame extends Guy2Game {
 		trooperDefs[5] = getTrp(6, 100, 3, weaponDefs[2], false);
 		trooperDefs[6] = getTrp(8, 110, 3, weaponDefs[4], false);
 		trooperDefs[7] = getTrp(4, 200, 3, weaponDefs[1], true);
+		bossDefs = new ShooterDefinition[3];
+		bossDefs[0] = getBoss("Bladander", 400, 10, weaponDefs[3]);
+		bossDefs[1] = getBoss("Bladigar", 800, 15, weaponDefs[4]);
+		bossDefs[2] = getBoss("Bladimir", 1600, 20, weaponDefs[1]);
 		merchantDef = ShooterDefinition.create("Merchant", Weapon.INF, loadChrStrip("Merchant"));
 	}
 	
@@ -266,6 +270,10 @@ public class ShootGame extends Guy2Game {
 		final BufferedImage left = getTrpImg(strip, 1, head, 1, cape);
 		final BufferedImage right = getTrpImg(strip, 2, head, 1, cape);
 		return ShooterDefinition.create("Blitztrooper." + headIndex + "." + (weapon == null ? "Unarmed" : weapon.name), constitution, melee, weapon, still, left, right);
+	}
+	
+	protected final static ShooterDefinition getBoss(final String name, final int constitution, final int melee, final WeaponDefinition weapon) {
+		return ShooterDefinition.create(name, constitution, melee, weapon, loadChrStrip(name));
 	}
 	
 	private final static class TitleScreen extends FadeScreen {
