@@ -24,6 +24,7 @@ package org.pandcorps.shoot;
 
 import java.awt.image.*;
 import java.util.*;
+import java.util.concurrent.Callable;
 
 import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
@@ -111,7 +112,10 @@ public abstract class Level {
             final TileMap tm = new TileMap("act.bg", room, 16, 16);
             ShootGame.tm = tm;
             final int w = tm.getWidth(), s = w / 16;
-            tm.setImageMap(Pangine.getEngine().createImage("img.bg.city", "org/pandcorps/shoot/res/bg/TileCity.png"));
+            final Pangine engine = Pangine.getEngine();
+            final String tmName = "img.bg.city";
+            tm.setImageMap(engine.getImage(tmName, new Callable<Panmage>() { @Override public Panmage call() {
+            	return engine.createImage(tmName, "org/pandcorps/shoot/res/bg/TileCity.png"); }}));
             final TileMapImage[][] imgMap = tm.splitImageMap();
             tm.fillBackground(imgMap[7][0], 0, 2);
             tm.fillBackground(imgMap[6][0], 2, 1);
@@ -254,7 +258,10 @@ public abstract class Level {
             final Panroom room = ShootGame.room;
             final TileMap tm = new TileMap("act.bg", room, 16, 16);
             ShootGame.tm = tm;
-            tm.setImageMap(Pangine.getEngine().createImage("img.bg.city2", createBlueCityImage()));
+            final Pangine engine = Pangine.getEngine();
+            final String tmName = "img.bg.city2";
+            tm.setImageMap(engine.getImage(tmName, new Callable<Panmage>() { @Override public Panmage call() {
+            	return engine.createImage(tmName, createBlueCityImage()); }}));
             final TileMapImage[][] imgMap = tm.splitImageMap();
             tm.fillBackground(imgMap[7][0], 0, 2);
             tm.fillBackground(imgMap[6][0], 2, 1);
