@@ -27,6 +27,9 @@ public class ShootGame extends Guy2Game {
     Rain.
     Use all available tiles.
     Acknowledge victory and defeat, then return to menu.
+    "You lose" screen.
+    Enemy melee damage seems to stop working, especially near the top of the screen.
+    Player ShooterController doesn't work when starting a second game.
     */
     private final static String PROP_DEBUG = "org.pandcorps.shoot.ShootGame.debug";
     private final static boolean debug = Boolean.getBoolean(PROP_DEBUG);
