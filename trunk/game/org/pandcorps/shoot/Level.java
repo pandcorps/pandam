@@ -31,6 +31,7 @@ import org.pandcorps.core.img.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.tile.Tile.*;
+import org.pandcorps.pandax.visual.*;
 import org.pandcorps.shoot.PowerUp.*;
 
 public abstract class Level {
@@ -289,6 +290,12 @@ public abstract class Level {
             tm.getTile(17, 6).setBackground(imgMap[6][7]);
             tm.getTile(18, 6).setBackground(imgMap[5][7]);
             tm.getTile(19, 6).setBackground(imgMap[3][0]);
+            
+            final ScrollTexture rain = new ScrollTexture(ShootGame.money);
+            rain.getPosition().setZ(-10);
+            rain.setVelocity(0, -2);
+            rain.setSize(ShootGame.SCREEN_W, ShootGame.SCREEN_H);
+            ShootGame.hud.addActor(rain);
         }
     }
 }
