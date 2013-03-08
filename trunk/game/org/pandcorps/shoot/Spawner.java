@@ -62,7 +62,7 @@ public class Spawner extends Panctor implements StepListener {
 		final Panlayer layer = getLayer();
 		final Panple guyMin = enemy.getMin(), guyMax = enemy.getMax();
 		float x;
-		if (Mathtil.rand()) {
+		if (def.isBoss() || Mathtil.rand()) {
 		    x = layer.getViewMaximum().getX() + OFF;
 		    if (x >= guyMax.getX()) {
 		        x = layer.getViewMinimum().getX() - OFF;
