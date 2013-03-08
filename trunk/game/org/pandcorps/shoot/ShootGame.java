@@ -53,6 +53,7 @@ public class ShootGame extends Guy2Game {
 	/*package*/ static Font font = null;
 	/*package*/ static Font hudFont = null;
 	/*package*/ static Panroom room = null;
+	/*package*/ static Panlayer hud = null;
 	/*package*/ static Shooter shooter = null;
 	/*package*/ static FinPanple max = null;
 	/*package*/ static Panimation smokeBigAnm = null;
@@ -328,13 +329,12 @@ public class ShootGame extends Guy2Game {
 			room = engine.createRoom(Pantil.vmid(), new FinPanple(w, 192, 0));
 			max = new FinPanple(w, 93, 0);
 			Pangame.getGame().setCurrentRoom(room);
+			createHud();
 			level.start();
 			tm.getPosition().setZ(type.getDepthShadow() - 1);
 			room.addActor(tm);
 			engine.setBgColor(Pancolor.GREEN);
-			
 			createPlayer();
-			createHud();
 		}
 		
 		private static void createPlayer() {
@@ -358,7 +358,7 @@ public class ShootGame extends Guy2Game {
 		private static void createHud() {
 		    final Pangine engine = Pangine.getEngine();
 			final float h = engine.getGameHeight();
-			final Panlayer hud = engine.createLayer("layer.hud", engine.getGameWidth(), h, 1, room);
+			hud = engine.createLayer("layer.hud", engine.getGameWidth(), h, 1, room);
 			room.addAbove(hud);
 			final Pantext hudHealth, hudAmmo, hudMoney;
 			hudHealth = new Pantext("hud.health", hudFont, new CallSequence() {@Override protected String call() {
