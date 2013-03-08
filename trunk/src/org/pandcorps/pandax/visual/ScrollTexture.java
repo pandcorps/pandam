@@ -29,6 +29,10 @@ public final class ScrollTexture extends Pantexture implements StepListener {
 	private int velX = 0;
 	private int velY = 0;
 	
+	public ScrollTexture(final Panmage image) {
+        super(image);
+    }
+	
 	public ScrollTexture(final String id, final Panmage image) {
 		super(id, image);
 	}
