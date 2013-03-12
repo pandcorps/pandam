@@ -40,6 +40,16 @@ public abstract class Guy2Game extends Pangame {
 	    return ImtilX.loadStrip("org/pandcorps/game/res/misc/Constants.png");
 	}
 	
+	protected final static Panmage[] createSheet(final String prefix, final String path) {
+	    final BufferedImage[] b = ImtilX.loadStrip(path);
+	    final int size = b.length;
+	    final Panmage[] p = new Panmage[size];
+	    for (int i = 0; i < size; i++) {
+	        p[i] = Pangine.getEngine().createImage(prefix + "." + i, b[i]);
+	    }
+	    return p;
+	}
+	
 	protected final static Panimation createBloodAnm(final BufferedImage[] constantImgs, final int dur) {
 	    return createAnm("blood", constantImgs, dur, 6, 7);
 	}
