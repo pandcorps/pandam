@@ -49,6 +49,7 @@ public class ShootGame extends Guy2Game {
 	/*package*/ static Panimation explosion = null;
 	/*package*/ static Panimation puff = null;
 	/*package*/ static Panimation bam = null;
+	/*package*/ static Panmage[] rain = null;
 	/*package*/ static Panmage interact = null;
 	/*package*/ static Font font = null;
 	/*package*/ static Font hudFont = null;
@@ -87,6 +88,7 @@ public class ShootGame extends Guy2Game {
         puff = createPuffAnm(constantImgs, 1);
         bam = createBamAnm(constantImgs, 2);
         Ai.bamDelay = bam.getDuration() + 2;
+        rain = createSheet("img.rain", "org/pandcorps/game/res/misc/Rain.png");
         interact = engine.createEmptyImage("img.interact", new FinPanple(1, 1, 1), new FinPanple(0, 0, 0), new FinPanple(2, 2, 2));
         font = Fonts.getSimple(new FontRequest(8), Pancolor.BLUE, Pancolor.CYAN, Pancolor.CYAN, Pancolor.BLACK);
         hudFont = Fonts.getOutline(new FontRequest(8), Pancolor.BLUE, Pancolor.BLUE, Pancolor.BLUE, new FinPancolor(Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, (short) 128, Pancolor.MAX_VALUE));
