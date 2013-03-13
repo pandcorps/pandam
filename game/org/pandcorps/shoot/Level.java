@@ -291,11 +291,13 @@ public abstract class Level {
             tm.getTile(18, 6).setBackground(imgMap[5][7]);
             tm.getTile(19, 6).setBackground(imgMap[3][0]);
             
-            final ScrollTexture rain = new ScrollTexture(ShootGame.money);
-            rain.getPosition().setZ(-10);
-            rain.setVelocity(0, -2);
-            rain.setSize(ShootGame.SCREEN_W, ShootGame.SCREEN_H);
-            ShootGame.hud.addActor(rain);
+            for (int i = 0; i < 2; i++) {
+                final ScrollTexture rain = new ScrollTexture(ShootGame.rain[i]);
+                rain.getPosition().setZ(-10 * (i + 1));
+                rain.setVelocity(0, i - 3);
+                rain.setSize(ShootGame.SCREEN_W, ShootGame.SCREEN_H);
+                ShootGame.hud.addActor(rain);
+            }
         }
     }
 }
