@@ -345,7 +345,7 @@ public class Shooter extends Guy2 implements CollisionListener {
 
 	@Override
 	protected Panple getMin() {
-		return FinPanple.ORIGIN;
+		return ShootGame.min;
 	}
 
 	@Override

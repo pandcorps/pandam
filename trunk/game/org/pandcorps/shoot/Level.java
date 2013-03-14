@@ -28,7 +28,9 @@ import java.util.concurrent.Callable;
 
 import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
+import org.pandcorps.game.actor.Burst;
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.tile.Tile.*;
 import org.pandcorps.pandax.visual.*;
@@ -298,6 +300,21 @@ public abstract class Level {
                 rain.setSize(ShootGame.SCREEN_W, ShootGame.SCREEN_H);
                 ShootGame.hud.addActor(rain);
             }
+            new Splasher(room);
+        }
+    }
+    
+    private final static class Splasher extends Panctor implements StepListener {
+        public Splasher(final Panlayer room) {
+            setVisible(false);
+            room.addActor(this);
+        }
+        
+        @Override
+        public void onStep(final StepEvent event) {
+            final Burst splash = new Burst(ShootGame.splash);
+            splash.getPosition().set(Mathtil.randf(0, ShootGame.SCREEN_W), Mathtil.randf(ShootGame.min.getY(), ShootGame.max.getY())); //TODO current camera x
+            getLayer().addActor(splash);
         }
     }
 }
