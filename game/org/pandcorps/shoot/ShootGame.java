@@ -50,12 +50,14 @@ public class ShootGame extends Guy2Game {
 	/*package*/ static Panimation puff = null;
 	/*package*/ static Panimation bam = null;
 	/*package*/ static Panmage[] rain = null;
+	/*package*/ static Panimation splash = null;
 	/*package*/ static Panmage interact = null;
 	/*package*/ static Font font = null;
 	/*package*/ static Font hudFont = null;
 	/*package*/ static Panroom room = null;
 	/*package*/ static Panlayer hud = null;
 	/*package*/ static Shooter shooter = null;
+	/*package*/ final static FinPanple min = FinPanple.ORIGIN;
 	/*package*/ static FinPanple max = null;
 	/*package*/ static Panimation smokeBigAnm = null;
 	/*package*/ static Panimation flameLoopAnm = null;
@@ -88,7 +90,8 @@ public class ShootGame extends Guy2Game {
         puff = createPuffAnm(constantImgs, 1);
         bam = createBamAnm(constantImgs, 2);
         Ai.bamDelay = bam.getDuration() + 2;
-        rain = createSheet("img.rain", "org/pandcorps/game/res/misc/Rain.png");
+        rain = createSheet("rain", "org/pandcorps/game/res/misc/Rain.png");
+        splash = createAnm("rain4", "org/pandcorps/game/res/misc/Rain4.png", 4, 3);
         interact = engine.createEmptyImage("img.interact", new FinPanple(1, 1, 1), new FinPanple(0, 0, 0), new FinPanple(2, 2, 2));
         font = Fonts.getSimple(new FontRequest(8), Pancolor.BLUE, Pancolor.CYAN, Pancolor.CYAN, Pancolor.BLACK);
         hudFont = Fonts.getOutline(new FontRequest(8), Pancolor.BLUE, Pancolor.BLUE, Pancolor.BLUE, new FinPancolor(Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, (short) 128, Pancolor.MAX_VALUE));
