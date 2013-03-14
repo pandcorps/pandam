@@ -40,14 +40,35 @@ public abstract class Guy2Game extends Pangame {
 	    return ImtilX.loadStrip("org/pandcorps/game/res/misc/Constants.png");
 	}
 	
-	protected final static Panmage[] createSheet(final String prefix, final String path) {
-	    final BufferedImage[] b = ImtilX.loadStrip(path);
+	protected final static Panmage[] createSheet(final String name, final String path) {
+	    return createSheet(name, path, ImtilX.DIM);
+	}
+	
+	protected final static Panmage[] createSheet(final String name, final String path, final int dim) {
+	    final Pangine engine = Pangine.getEngine();
+	    final BufferedImage[] b = ImtilX.loadStrip(path, dim);
 	    final int size = b.length;
 	    final Panmage[] p = new Panmage[size];
 	    for (int i = 0; i < size; i++) {
-	        p[i] = Pangine.getEngine().createImage(prefix + "." + i, b[i]);
+	        p[i] = engine.createImage("img." + name + "." + i, b[i]);
 	    }
 	    return p;
+	}
+	
+	protected final static Panimation createAnm(final String name, final String path, final int dur) {
+	    return createAnm(name, path, ImtilX.DIM, dur);
+	}
+	
+	protected final static Panimation createAnm(final String name, final String path, final int dim, final int dur) {
+	    final Pangine engine = Pangine.getEngine();
+	    final Panmage[] ia = createSheet(name, path, dim);
+	    final int size = ia.length;
+	    final Panframe[] fa = new Panframe[size];
+	    for (int i = 0; i < size; i++) {
+	        final Panmage img = ia[i];
+	        fa[i] = engine.createFrame("frm." + name + "." + i, img, dur);
+	    }
+	    return engine.createAnimation("anm." + name, fa);
 	}
 	
 	protected final static Panimation createBloodAnm(final BufferedImage[] constantImgs, final int dur) {
