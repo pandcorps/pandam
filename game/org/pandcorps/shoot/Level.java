@@ -313,7 +313,15 @@ public abstract class Level {
         @Override
         public void onStep(final StepEvent event) {
             final Burst splash = new Burst(ShootGame.splash);
-            splash.getPosition().set(Mathtil.randf(0, ShootGame.SCREEN_W), Mathtil.randf(ShootGame.min.getY(), ShootGame.max.getY())); //TODO current camera x
+            final Panlayer layer = getLayer();
+            /*
+            If player is walking, it's good to create some a little off-screen.
+            Then we see some in progress as the player moves.
+            Otherwise, the edge of the screen is constantly empty during movement.
+            */
+            final float x = Mathtil.randf(layer.getViewMinimum().getX() - 32, layer.getViewMaximum().getX() + 32);
+            final float y = Mathtil.randf(ShootGame.min.getY(), ShootGame.max.getY());
+            splash.getPosition().set(x, y);
             getLayer().addActor(splash);
         }
     }
