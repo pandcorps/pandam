@@ -23,8 +23,6 @@ public class ShootGame extends Guy2Game {
     /*
     Grey out menu options.
     Save/load (weapon args, ammo, money, constitution, health, experience).
-    Multiple screens.
-    Rain.
     Use all available tiles.
     Acknowledge victory and defeat, then return to menu.
     "You lose" screen.
