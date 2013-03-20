@@ -25,8 +25,8 @@ public class ShootGame extends Guy2Game {
     Save/load (weapon args, ammo, money, constitution, health, experience).
     Use all available tiles.
     Acknowledge victory and defeat, then return to menu.
-    "You lose" screen.
     Enemy melee damage seems to stop working, especially near the top of the screen.
+    Icon.
     */
     private final static String PROP_DEBUG = "org.pandcorps.shoot.ShootGame.debug";
     private final static boolean debug = Boolean.getBoolean(PROP_DEBUG);
@@ -66,7 +66,7 @@ public class ShootGame extends Guy2Game {
 	/*package*/ static Panmage ammoRocketLauncher = null;
 	/*package*/ static Panmage health = null;
 	/*package*/ static TileMap tm = null;
-	private static Pantext hudArrow = null; 
+	/*package*/ static Pantext hudArrow = null; 
 
 	@Override
 	protected void init(final Panroom room) throws Exception {
