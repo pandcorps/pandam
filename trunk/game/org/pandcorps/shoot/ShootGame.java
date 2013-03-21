@@ -26,7 +26,6 @@ public class ShootGame extends Guy2Game {
     Use all available tiles.
     Acknowledge victory and defeat, then return to menu.
     Enemy melee damage seems to stop working, especially near the top of the screen.
-    Icon.
     */
     private final static String PROP_DEBUG = "org.pandcorps.shoot.ShootGame.debug";
     private final static boolean debug = Boolean.getBoolean(PROP_DEBUG);
@@ -70,6 +69,7 @@ public class ShootGame extends Guy2Game {
 
 	@Override
 	protected void init(final Panroom room) throws Exception {
+	    Pangine.getEngine().setIcon("org/pandcorps/shoot/res/misc/WillKillemIcon32.png", "org/pandcorps/shoot/res/misc/WillKillemIcon16.png");
 		ShootGame.room = room;
 		loadConstants();
 		Panscreen.set(new LogoScreen(TitleScreen.class));
