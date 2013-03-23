@@ -104,23 +104,44 @@ public class Guy2Controller {
 		final Panple pos = guy.getPosition();
 		final Panple tpos = target.getPosition();
 		final float x = pos.getX(), y = pos.getY();
-		final float tx = tpos.getX(), ty = tpos.getY();
-		//Change behavior if hit boundary, but hitting x boundary wouldn't need to mean to stop y movement.
+		float tx = tpos.getX(), ty = tpos.getY();
+		// Change behavior if hit boundary
 		final Panple min = guy.getMin(), max = guy.getMax();
-		if (x <= min.getX() || x >= max.getX() || y <= min.getY() || y >= max.getY()) {
-			return false;
-		} else {
-    		if (tx < x) {
-				walkRight();
-			} else if (tx > x) {
-				walkLeft();
-			} //TODO else walk toward center of bg
-			if (ty < y) {
-				walkUp();
-			} else if (ty > y) {
-				walkDown();
-			} //TODO else walk toward center of bg
+		if (tx == x && ty == y) {
+			if (x < (min.getX() + max.getX()) / 2) {
+				tx = min.getX() - 1;
+			} else {
+				tx = max.getX() + 1;
+			}
+			if (y < (min.getY() + max.getY()) / 2) {
+				ty = min.getY() - 1;
+			} else {
+				ty = max.getY() + 1;
+			}
 		}
-		return true;
+		boolean success = false;
+		if (tx < x) {
+			if (x < max.getX()) {
+				walkRight();
+				success = true;
+			}
+		} else if (tx > x) {
+			if (x > min.getX()) {
+				walkLeft();
+				success = true;
+			}
+		}
+		if (ty < y) {
+			if (y < max.getY()) {
+				walkUp();
+				success = true;
+			}
+		} else if (ty > y) {
+			if (y > min.getY()) {
+				walkDown();
+				success = true;
+			}
+		}
+		return success;
 	}
 }
