@@ -43,6 +43,8 @@ public class Ai extends ShooterController {
 	private byte attackTimer;
 	private boolean attacking;
 	
+	private byte forceTimer = 0;
+	
 	{
 		clear();
 		clearAttack();
@@ -92,6 +94,9 @@ public class Ai extends ShooterController {
 		if (bamTimer > 0) {
             bamTimer--;
         }
+		if (forceTimer > 0) {
+			forceTimer--;
+		}
 		if (timer > 0) {
 			timer--;
 		} else {
@@ -112,7 +117,8 @@ public class Ai extends ShooterController {
 			stepAdvance(target);
 		} else if (action == ACTION_RETREAT) {
 			if (!stepRetreat(target)) {
-				clear();
+				forceTimer = 30;
+				advance();
 			}
 		}
 		if (shooter.weapon != null) {
@@ -144,7 +150,7 @@ public class Ai extends ShooterController {
 		if (other != getTarget()) {
 			return;
 		}
-		if (shooter.weapon == null && bamTimer == 0) {
+		if (/*shooter.weapon == null &&*/ bamTimer == 0) {
 			final Burst bam = new Burst(ShootGame.bam);
 			final Panple pos = bam.getPosition();
 			pos.set(other.getPosition());
@@ -157,7 +163,9 @@ public class Ai extends ShooterController {
 			bamTimer = bamDelay;
 			clear();
 		}
-		retreat((byte) 3, (byte) 12);
+		if (forceTimer <= 0) {
+			retreat((byte) 3, (byte) 12);
+		}
 	}
 	
 	@Override
