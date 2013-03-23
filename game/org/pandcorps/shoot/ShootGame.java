@@ -337,6 +337,7 @@ public class ShootGame extends Guy2Game {
 			room.addActor(tm);
 			engine.setBgColor(Pancolor.GREEN);
 			createPlayer();
+			clearDelay();
 		}
 		
 		private static void createPlayer() {
@@ -400,16 +401,24 @@ public class ShootGame extends Guy2Game {
 	    }
 	}
 	
+	private static long clearTime = 0;
+	
+	private final static void clearDelay() {
+		clearTime = Pangine.getEngine().getClock() + 5;
+	}
+	
 	private static boolean isCleared() {
 	    for (final Panctor actor : room.getActors()) {
 	        final Class<?> c = actor.getClass();
 	        if (c == Spawner.class) {
+	        	clearDelay();
 	            return false;
 	        } else if (c == Shooter.class && ((Shooter) actor).getController() instanceof Ai) {
+	        	clearDelay();
 	            return false;
 	        }
 	    }
-	    return true;
+	    return Pangine.getEngine().getClock() > clearTime;
 	}
 	
 	/*package*/ static void end(final String msg) {
