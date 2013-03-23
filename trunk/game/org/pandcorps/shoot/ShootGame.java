@@ -10,6 +10,8 @@ import org.pandcorps.game.*;
 import org.pandcorps.game.actor.Guy2.*;
 import org.pandcorps.game.core.ImtilX;
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.event.TimerEvent;
+import org.pandcorps.pandam.event.TimerListener;
 import org.pandcorps.pandam.impl.FinPanple;
 import org.pandcorps.pandax.text.*;
 import org.pandcorps.pandax.text.Fonts.FontRequest;
@@ -24,7 +26,6 @@ public class ShootGame extends Guy2Game {
     Grey out menu options.
     Save/load (weapon args, ammo, money, constitution, health, experience).
     Use all available tiles.
-    Acknowledge victory, then return to menu.
     */
     private final static String PROP_DEBUG = "org.pandcorps.shoot.ShootGame.debug";
     private final static boolean debug = Boolean.getBoolean(PROP_DEBUG);
@@ -387,10 +388,14 @@ public class ShootGame extends Guy2Game {
 		@Override
 	    public final void step() {
 		    final boolean cleared = isCleared();
-	        hudArrow.setVisible(cleared && Pangine.getEngine().isOn(15));
-	        if (cleared && !shooter.isMirror() && shooter.getPosition().getX() >= (max.getX() - shooter.getSpeed())) {
-	            shooter.detach();
-	            Panscreen.set(new ShootScreen(new Level.E1M2()));
+	        hudArrow.setVisible(cleared && level.next != null && Pangine.getEngine().isOn(15));
+	        if (cleared) {
+	        	if (level.next == null) {
+	        		end("YOU WIN");
+	        	} else if (!shooter.isMirror() && shooter.getPosition().getX() >= (max.getX() - shooter.getSpeed())) {
+	        		shooter.detach();
+	        		Panscreen.set(new ShootScreen(level.next));
+	        	}
 	        }
 	    }
 	}
@@ -405,6 +410,14 @@ public class ShootGame extends Guy2Game {
 	        }
 	    }
 	    return true;
+	}
+	
+	/*package*/ static void end(final String msg) {
+		final Pantext text = new Pantext("end", hudFont, msg);
+        text.getPosition().set(SCREEN_W / 2, hudArrow.getPosition().getY() - 16);
+        text.centerX();
+        hud.addActor(text);
+        Pangine.getEngine().addTimer(tm, 60, new TimerListener() { @Override public void onTimer(final TimerEvent event) { Panscreen.set(new ShootGame.TitleScreen()); }});
 	}
 	
 	public final static void main(final String[] args) {
