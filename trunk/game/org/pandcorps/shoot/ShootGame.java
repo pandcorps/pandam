@@ -24,8 +24,7 @@ public class ShootGame extends Guy2Game {
     Grey out menu options.
     Save/load (weapon args, ammo, money, constitution, health, experience).
     Use all available tiles.
-    Acknowledge victory and defeat, then return to menu.
-    Enemy melee damage seems to stop working, especially near the top of the screen.
+    Acknowledge victory, then return to menu.
     */
     private final static String PROP_DEBUG = "org.pandcorps.shoot.ShootGame.debug";
     private final static boolean debug = Boolean.getBoolean(PROP_DEBUG);
