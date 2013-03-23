@@ -33,6 +33,7 @@ public class Merchant extends ShooterController {
     
 	@Override
 	public final boolean onInteract(final Shooter initiator) {
+		// blavods, blevils
 	    this.initiator = initiator;
 		final ShooterController controller = (ShooterController) initiator.getController();
 		final ArrayList<String> opts = toMenu(null, initiator.weapons);

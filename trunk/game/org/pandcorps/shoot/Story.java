@@ -125,7 +125,7 @@ public class Story {
 	protected final static class Map2Screen extends IntroScreen {
 
 		public Map2Screen() {
-			super("The Black Reich of Bladavosnia spreads across the continent.  None can withstand the onslaught of the deadly Blitztroopers.", bgEurope2);
+			super("The Black Reich of Bladavosnia spreads across the continent.  None can withstand the onslaught of the deadly Blitztroopers and Bladiators.", bgEurope2);
 		}
 		
 		@Override
@@ -153,7 +153,7 @@ public class Story {
 	    private Pantexture mouth = null;
 	    
 		public PodiumScreen() {
-			super("The ruthless dictator Bladimir will not stop until the entire world is in his grasp.\n\"Hurravah, Bladavosnia!\"\n\"Hurravah, Bladavosnia!\"", bgPodium);
+			super("Bladimir, the Royal High Chief Bladministrator, rules the Bladreich from within the Bladavosnian capital of Bladingrad.\nHe will not stop until the entire world is in his grasp.\n\"Hurravah, Bladavosnia!\"\n\"Hurravah, Bladavosnia!\"", bgPodium);
 		}
 
 		@Override
@@ -213,6 +213,8 @@ public class Story {
 
 		public TitleScreen() {
 			super("Will Killem\nEpisode 1\nVeni, Vidi, Vici, Baby", bgTitle);
+			// Tempis Fugit, Baby
+			// Memento Mori, Baby
 		}
 
 		@Override
