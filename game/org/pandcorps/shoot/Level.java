@@ -284,11 +284,7 @@ public abstract class Level {
             tm.fillBackground(imgMap[4][1], 5, 1);
             tm.fillBackground(imgMap[3][1], 6, 6);
             
-            tm.getTile(3, 6).setBackground(imgMap[3][2]);
-            tm.getTile(4, 6).setBackground(imgMap[7][7]);
-            tm.getTile(5, 6).setBackground(imgMap[5][7]);
-            tm.getTile(6, 6).setBackground(imgMap[7][7]);
-            tm.getTile(7, 6).setBackground(imgMap[3][0]);
+            base1(tm, imgMap, 3);
             
             tm.fillBackground(imgMap[3][2], 9, 6, 1, 2);
             tm.fillBackground(imgMap[7][7], 10, 6, 1, 2);
@@ -300,10 +296,19 @@ public abstract class Level {
             tm.fillBackground(imgMap[7][7], 14, 6, 1, 2);
             tm.fillBackground(imgMap[3][0], 15, 6, 1, 2);
             
-            tm.getTile(16, 6).setBackground(imgMap[3][2]);
-            tm.getTile(17, 6).setBackground(imgMap[6][7]);
-            tm.getTile(18, 6).setBackground(imgMap[5][7]);
-            tm.getTile(19, 6).setBackground(imgMap[3][0]);
+            base2(tm, imgMap, 16);
+            
+            tm.fillBackground(imgMap[3][2], 21, 6, 1, 6);
+            tm.fillBackground(imgMap[3][0], 22, 6, 1, 3);
+            tm.getTile(22, 9).setBackground(imgMap[0][0]);
+            tm.fillBackground(imgMap[0][7], 22, 10, 18, 2);
+            tm.fillBackground(imgMap[0][1], 23, 9, 17, 1);
+            
+            base2(tm, imgMap, 24);
+            
+            base1(tm, imgMap, 29);
+            
+            base2(tm, imgMap, 35);
             
             new Spawner(room, 65, ShootGame.trooperDefs[7], 2, 1);
             new Spawner(room, 400, ShootGame.bossDefs[0], 1, 1);
@@ -317,6 +322,21 @@ public abstract class Level {
             }
             new Splasher(room);
         }
+    }
+    
+    private static void base1(final TileMap tm, final TileMapImage[][] imgMap, final int x) {
+    	tm.getTile(x, 6).setBackground(imgMap[3][2]);
+        tm.getTile(x + 1, 6).setBackground(imgMap[7][7]);
+        tm.getTile(x + 2, 6).setBackground(imgMap[5][7]);
+        tm.getTile(x + 3, 6).setBackground(imgMap[7][7]);
+        tm.getTile(x + 4, 6).setBackground(imgMap[3][0]);
+    }
+    
+    private static void base2(final TileMap tm, final TileMapImage[][] imgMap, final int x) {
+    	tm.getTile(x, 6).setBackground(imgMap[3][2]);
+        tm.getTile(x + 1, 6).setBackground(imgMap[6][7]);
+        tm.getTile(x + 2, 6).setBackground(imgMap[5][7]);
+        tm.getTile(x + 3, 6).setBackground(imgMap[3][0]);
     }
     
     private final static class Splasher extends Panctor implements StepListener {
