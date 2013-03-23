@@ -37,6 +37,12 @@ import org.pandcorps.pandax.visual.*;
 import org.pandcorps.shoot.PowerUp.*;
 
 public abstract class Level {
+	/*package*/ final Level next;
+	
+	private Level(final Level next) {
+		this.next = next;
+	}
+	
     private final static BufferedImage createBlueCityImage() {
         final BufferedImage raw = Imtil.load("org/pandcorps/shoot/res/bg/TileCity.png");
         final HashMap<Pancolor, Pancolor> map = new HashMap<Pancolor, Pancolor>();
@@ -109,6 +115,10 @@ public abstract class Level {
     protected abstract void init();
     
     /*package*/ final static class E1M1 extends Level {
+    	/*package*/ E1M1() {
+    		super(new E1M2());
+    	}
+    	
         @Override
         protected final void init() {
             final Panroom room = ShootGame.room;
@@ -235,10 +245,8 @@ public abstract class Level {
             tm.fillBackground(imgMap[1][7], 32, 8, 8, 1);
             tm.fillBackground(imgMap[0][7], 32, 9, 8, 3);
             
-            //new Spawner(room, 65, ShootGame.trooperDefs[0], 5, 1);
-            //new Spawner(room, 65, ShootGame.trooperDefs[7], 2, 1);
+            new Spawner(room, 65, ShootGame.trooperDefs[0], 5, 1);
             new Spawner(room, 65, ShootGame.trooperDefs[6], 1, 1);
-            new Spawner(room, 400, ShootGame.bossDefs[0], 1, 1);
             
             final Shooter merchant = new Shooter("MER", room, ShootGame.merchantDef);
             merchant.getPosition().set(224, 88);
@@ -255,6 +263,10 @@ public abstract class Level {
     }
     
     /*package*/ final static class E1M2 extends Level {
+    	/*package*/ E1M2() {
+    		super(null);
+    	}
+    	
         @Override
         protected final void init() {
             // Add rain effect
@@ -292,6 +304,9 @@ public abstract class Level {
             tm.getTile(17, 6).setBackground(imgMap[6][7]);
             tm.getTile(18, 6).setBackground(imgMap[5][7]);
             tm.getTile(19, 6).setBackground(imgMap[3][0]);
+            
+            new Spawner(room, 65, ShootGame.trooperDefs[7], 2, 1);
+            new Spawner(room, 400, ShootGame.bossDefs[0], 1, 1);
             
             for (int i = 0; i < 2; i++) {
                 final ScrollTexture rain = new ScrollTexture(ShootGame.rain[i]);

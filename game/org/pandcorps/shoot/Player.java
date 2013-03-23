@@ -23,9 +23,7 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.shoot;
 
 import org.pandcorps.pandam.*;
-import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.action.*;
-import org.pandcorps.pandax.text.Pantext;
 
 public final class Player extends ShooterController {
     public Player(final Panctor bound) {
@@ -64,10 +62,6 @@ public final class Player extends ShooterController {
     
     @Override
 	/*package*/ void onDestroy() {
-        final Pantext text = new Pantext("defeated", ShootGame.hudFont, "YOU LOSE");
-        text.getPosition().set(ShootGame.SCREEN_W / 2, ShootGame.hudArrow.getPosition().getY() - 16);
-        text.centerX();
-        ShootGame.hud.addActor(text);
-        Pangine.getEngine().addTimer(ShootGame.tm, 60, new TimerListener() { @Override public void onTimer(final TimerEvent event) { Panscreen.set(new ShootGame.TitleScreen()); }});
+    	ShootGame.end("YOU LOSE");
     }
 }
