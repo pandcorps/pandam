@@ -20,40 +20,49 @@ PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY
 TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 */
-package org.pandcorps.animal;
+package org.pandcorps.game.actor;
 
-import java.util.*;
-
-import org.pandcorps.game.actor.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandax.tile.*;
 
-public abstract class Animal extends Guy4 {
-    protected final static Direction[] directions;
+public class Guy4 extends TileWalker {
+	protected Panmage[] stills = new Panmage[4];
+	protected Panimation[] walks = new Panimation[4];
     
-    protected final static int[] weights = {1, 1, 1, 1, 150};
-    
-    private final HashMap<Item, Integer> inventory = new HashMap<Item, Integer>();
-    
-    static {
-        final Direction[] d = Direction.values();
-        final int size = d.length;
-        directions = new Direction[size + 1];
-        System.arraycopy(d, 0, directions, 0, size);
-        directions[size] = null;
-    }
-    
-    protected Animal(final String id) {
+    protected Guy4(final String id) {
         super(id);
-        setSpeed(2);
     }
     
-    protected final void setView(final String location) {
-        setView(Pangine.getEngine().createSheet(getId() + "Image", null, null, null, location, 16, 16));
+    protected final void setView(final Panmage[][] sheet) {
+        final Pangine engine = Pangine.getEngine();
+        final String id = getId() + "-";
+        for (int i = 0; i < 4; i++) {
+            final Panmage still = sheet[0][i];
+            stills[i] = still;
+            walks[i] = engine.createAnimation(
+                id + "Animation-" + i,
+                engine.createFrame(id + "Frame-" + i + "-" + 0, still, 4),
+                engine.createFrame(id + "Frame-" + i + "-" + 1, sheet[1][i], 4));
+        }
+        face(Direction.South);
     }
     
-    protected void addInventory(final Item item) {
-        final Integer prev = inventory.get(item);
-        inventory.put(item, Integer.valueOf(prev == null ? 1 : (prev.intValue() + 1))); 
+    @Override
+    protected final void onFace(final Direction oldDir, final Direction newDir) {
+        setImage(newDir);
+    }
+    
+    @Override
+    protected void onWalk() {
+        setView(walks[getDirection().ordinal()]);
+    }
+    
+    @Override
+    protected void onWalked() {
+        setImage(getDirection());
+    }
+    
+    private final void setImage(final Direction dir) {
+        setView(stills[dir.ordinal()]);
     }
 }
