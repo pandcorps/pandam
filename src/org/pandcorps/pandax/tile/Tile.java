@@ -78,6 +78,10 @@ public final class Tile {
         this.foreground = foreground;
     }
     
+    public final void setForeground(final TileMapImage foreground) {
+        this.foreground = foreground;
+    }
+    
     //TileOccupant has setTile
     //public final void setOccupant(final TileOccupant occupant) {
     //    if (this.occupant != null) {
