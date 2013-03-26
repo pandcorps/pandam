@@ -31,6 +31,10 @@ import org.pandcorps.pandax.tile.Tile.TileMapImage;
 public class RpgGame extends BaseGame {
     /*
     TileMap support for animated tiles.
+    Character sprite generator.
+    Doors that open and transport player (but not NPCs).
+    Load/unload neighboring TileMaps for large areas as needed
+    (and maybe offset actor positions so current TileMap always starts at origin).
     */
     
 	private static Panroom room = null;
