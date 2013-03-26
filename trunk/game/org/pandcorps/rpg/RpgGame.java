@@ -29,6 +29,10 @@ import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.tile.Tile.TileMapImage;
 
 public class RpgGame extends BaseGame {
+    /*
+    TileMap support for animated tiles.
+    */
+    
 	private static Panroom room = null;
 	
 	@Override
@@ -55,7 +59,7 @@ public class RpgGame extends BaseGame {
 		tm.getTile(6, 9).setBackground(imgMap[1][1]);
 		tm.getTile(6, 9).setSolid(true);
 		tm.getTile(6, 10).setForeground(imgMap[0][1]);
-		tm.getTile(7, 6).setBackground(imgMap[3][4]);
+		tm.getTile(7, 6).setBackground(imgMap[3][4]); // Sign
 		tm.getTile(7, 6).setSolid(true);
 		tm.getTile(7, 7).setBackground(imgMap[3][2]);
 		tm.getTile(7, 7).setSolid(true);
@@ -82,7 +86,14 @@ public class RpgGame extends BaseGame {
             tm.getTile(i, 9).setSolid(true);
             tm.getTile(i, 10).setForeground(imgMap[0][1]);
 		}
-		tm.getTile(10, 7).setBackground(imgMap[0][5]);
+		tm.getTile(10, 7).setBackground(imgMap[0][5]); // Window
+		tm.getTile(4, 8).setBackground(imgMap[1][0]); // Tree
+		tm.getTile(4, 8).setSolid(true);
+		tm.getTile(4, 9).setForeground(imgMap[0][0]);
+		tm.getTile(7, 4).setBackground(imgMap[2][0]); // Many flowers
+		tm.getTile(9, 2).setBackground(imgMap[3][0]); // Some flowers
+		tm.getTile(11, 11).setBackground(imgMap[3][0]);
+		tm.getTile(12, 3).setBackground(imgMap[4][0]); // Dirt patch
 		room.addActor(tm);
 		final Player player = new Player("act.player");
 		player.setPosition(tm.getTile(5, 5));
