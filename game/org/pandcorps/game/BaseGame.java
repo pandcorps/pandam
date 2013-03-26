@@ -57,7 +57,7 @@ public abstract class BaseGame extends Pangame {
 	}
 	
 	public final static Panmage[] createSheet(final String name, final String path, final int dim) {
-	    return createSheet(name, path, dim);
+	    return createSheet(name, path, dim, null);
 	}
 	
 	public final static Panmage[] createSheet(final String name, final String path, final int dim, final Panple o) {
