@@ -34,7 +34,7 @@ import org.pandcorps.pandax.tile.Tile.*;
 
 public class TileMap extends Panctor {
     
-    private final Tile[] tiles;
+    /*package*/ final Tile[] tiles;
     
     private final int w;
     
