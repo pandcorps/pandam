@@ -45,7 +45,6 @@ public abstract class Animal extends Guy4 {
     
     protected Animal(final String id) {
         super(id);
-        setSpeed(2);
     }
     
     protected final void setView(final String location) {

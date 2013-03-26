@@ -31,6 +31,20 @@ public class Guy4 extends TileWalker {
     
     protected Guy4(final String id) {
         super(id);
+        setSpeed(2);
+    }
+    
+    protected final void setView(final Panmage[] strip) {
+    	final Panmage[][] sheet = new Panmage[2][];
+    	for (int i = 0; i < 2; i++) {
+    		final Panmage[] a = new Panmage[4];
+    		sheet[i] = a;
+    		final int o = i * 4;
+    		for (int j = 0; j < 4; j++) {
+    			a[j] = strip[o + j];
+    		}
+    	}
+    	setView(sheet);
     }
     
     protected final void setView(final Panmage[][] sheet) {
