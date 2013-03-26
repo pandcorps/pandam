@@ -65,4 +65,8 @@ public class Guy4 extends TileWalker {
     private final void setImage(final Direction dir) {
         setView(stills[dir.ordinal()]);
     }
+    
+    protected final boolean go(final Direction dir) {
+    	return walk(dir);
+    }
 }
