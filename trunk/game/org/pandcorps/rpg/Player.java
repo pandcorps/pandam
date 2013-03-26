@@ -23,11 +23,15 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.rpg;
 
 import org.pandcorps.game.actor.*;
+import org.pandcorps.game.core.*;
+import org.pandcorps.pandam.impl.*;
 
 public class Player extends Guy4 {
+    private final static FinPanple o = new FinPanple(0, -4, 0);
+    
 	protected Player(final String id) {
 		super(id);
-		setView(RpgGame.createSheet("player", "org/pandcorps/rpg/res/chr/Player.png"));
+		setView(RpgGame.createSheet("player", "org/pandcorps/rpg/res/chr/Player.png", ImtilX.DIM, o));
 	}
 
 	@Override
