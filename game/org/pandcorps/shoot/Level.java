@@ -136,6 +136,13 @@ public abstract class Level {
             tm.fillBackground(imgMap[4][1], 5, 1);
             tm.fillBackground(imgMap[3][1], 6, 6);
             
+            /*
+            Posters:
+            Bladimir is benevolent
+            Bladimir secures peace
+            Bladimir defends borders
+            */
+            
             tm.randBackground(imgMap[3][4], 6, 6, s * 4); // Chipped brick
             tm.randBackground(imgMap[3][5], 6, 6, s * 5); // Cracked brick
             
