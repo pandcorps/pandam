@@ -55,7 +55,7 @@ public class RpgGame extends BaseGame {
 		tm.getTile(6, 9).setBackground(imgMap[1][1]);
 		tm.getTile(6, 9).setSolid(true);
 		tm.getTile(6, 10).setForeground(imgMap[0][1]);
-		tm.getTile(7, 6).setBackground(imgMap[3][2]);
+		tm.getTile(7, 6).setBackground(imgMap[3][4]);
 		tm.getTile(7, 6).setSolid(true);
 		tm.getTile(7, 7).setBackground(imgMap[3][2]);
 		tm.getTile(7, 7).setSolid(true);
@@ -73,6 +73,16 @@ public class RpgGame extends BaseGame {
 		tm.getTile(8, 9).setBackground(imgMap[1][3]);
 		tm.getTile(8, 9).setSolid(true);
 		tm.getTile(8, 10).setForeground(imgMap[0][1]);
+		for (int i = 9; i <= 11; i++) {
+    		tm.getTile(i, 7).setBackground(imgMap[3][2]);
+            tm.getTile(i, 7).setSolid(true);
+            tm.getTile(i, 8).setBackground(imgMap[3][2]);
+            tm.getTile(i, 8).setSolid(true);
+            tm.getTile(i, 9).setBackground(imgMap[2][4]);
+            tm.getTile(i, 9).setSolid(true);
+            tm.getTile(i, 10).setForeground(imgMap[0][1]);
+		}
+		tm.getTile(10, 7).setBackground(imgMap[0][5]);
 		room.addActor(tm);
 		final Player player = new Player("act.player");
 		player.setPosition(tm.getTile(5, 5));
