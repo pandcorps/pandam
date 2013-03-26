@@ -20,34 +20,25 @@ PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY
 TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 */
-package org.pandcorps.animal;
+package org.pandcorps.game.actor;
 
-import org.pandcorps.game.actor.Guy4Controller;
-import org.pandcorps.pandam.Pangine;
-import org.pandcorps.pandax.tile.TileOccupant;
+import org.pandcorps.pandam.*;
+import org.pandcorps.pandax.tile.*;
 
-public class Player extends Animal {
-    private static Player player = null;
-    
-    protected Player(final String id) {
-        super(id);
-        player = this;
-    }
-    
-    protected final static Player getPlayer() {
-        return player;
-    }
-    
-    @Override
-    protected void onStill() {
-        if (Guy4Controller.onStillPlayer(this)) {
-        } else if (Pangine.getEngine().getInteraction().KEY_SPACE.isActive()) {
-            final TileOccupant neighbor = getNeighbor(getDirection());
-            if (neighbor instanceof Tree) {
-                ((Tree) neighbor).onShake();
-            } else if (neighbor instanceof Neighbor) {
-                ((Neighbor) neighbor).onInteract();
-            }
+public abstract class Guy4Controller {
+	public final static boolean onStillPlayer(final Guy4 guy) {
+		final Panteraction interaction = Pangine.getEngine().getInteraction();
+        if (interaction.KEY_DOWN.isActive()) {
+            guy.go(Direction.South);
+        } else if (interaction.KEY_UP.isActive()) {
+        	guy.go(Direction.North);
+        } else if (interaction.KEY_LEFT.isActive()) {
+        	guy.go(Direction.West);
+        } else if (interaction.KEY_RIGHT.isActive()) {
+        	guy.go(Direction.East);
+        } else {
+        	return false;
         }
-    }
+        return true;
+	}
 }
