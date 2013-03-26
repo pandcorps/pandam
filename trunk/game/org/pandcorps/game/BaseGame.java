@@ -52,11 +52,11 @@ public abstract class BaseGame extends Pangame {
         return new FinPanple(SCREEN_W, SCREEN_H, 0);
     }
 	
-	protected final static Panmage[] createSheet(final String name, final String path) {
+	public final static Panmage[] createSheet(final String name, final String path) {
 	    return createSheet(name, path, ImtilX.DIM);
 	}
 	
-	protected final static Panmage[] createSheet(final String name, final String path, final int dim) {
+	public final static Panmage[] createSheet(final String name, final String path, final int dim) {
 	    final Pangine engine = Pangine.getEngine();
 	    final BufferedImage[] b = ImtilX.loadStrip(path, dim);
 	    final int size = b.length;
@@ -67,11 +67,11 @@ public abstract class BaseGame extends Pangame {
 	    return p;
 	}
 	
-	protected final static Panimation createAnm(final String name, final String path, final int dur) {
+	public final static Panimation createAnm(final String name, final String path, final int dur) {
 	    return createAnm(name, path, ImtilX.DIM, dur);
 	}
 	
-	protected final static Panimation createAnm(final String name, final String path, final int dim, final int dur) {
+	public final static Panimation createAnm(final String name, final String path, final int dim, final int dur) {
 	    final Pangine engine = Pangine.getEngine();
 	    final Panmage[] ia = createSheet(name, path, dim);
 	    final int size = ia.length;
