@@ -22,33 +22,6 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandax.tile;
 
-import org.pandcorps.pandam.*;
-import org.pandcorps.pandam.event.*;
-
-public class DynamicTileMap extends TileMap implements StepListener {
-    private TileListener tileListener = null;
-    
-	public DynamicTileMap(final String id, final int w, final int h, final int tw, final int th) {
-		super(id, w, h, tw, th);
-	}
-	
-	public DynamicTileMap(final String id, final Panroom room, final int tw, final int th) {
-		super(id, room, tw, th);
-	}
-
-	@Override
-	public void onStep(final StepEvent event) {
-		for (final Tile tile : tiles) {
-			onStep(tile);
-		}
-	}
-	
-	protected void onStep(final Tile tile) {
-	    // Can override this instead of supplying a listener
-	    tileListener.onStep(tile);
-	}
-	
-	public void setTileListener(final TileListener tileListener) {
-	    this.tileListener = tileListener;
-	}
+public interface TileListener {
+    public void onStep(final Tile tile);
 }
