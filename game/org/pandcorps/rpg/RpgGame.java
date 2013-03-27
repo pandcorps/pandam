@@ -118,6 +118,8 @@ public class RpgGame extends BaseGame {
             tm.getTile(i, 10).setForeground(imgMap[0][1]);
 		}
 		tm.getTile(10, 7).setBackground(imgMap[0][5]); // Window
+		tm.getTile(12, 7).setBackground(imgMap[1][6]); // Shadow
+		tm.getTile(12, 8).setBackground(imgMap[0][6]);
 		tm.getTile(4, 8).setBackground(imgMap[1][0]); // Tree
 		tm.getTile(4, 8).setSolid(true);
 		tm.getTile(4, 9).setForeground(imgMap[0][0]);
