@@ -90,7 +90,7 @@ public class RpgGame extends BaseGame {
 		tm.getTile(6, 9).setBackground(imgMap[1][1]);
 		tm.getTile(6, 9).setSolid(true);
 		tm.getTile(6, 10).setForeground(imgMap[0][1]);
-		tm.getTile(7, 6).setBackground(imgMap[3][4]); // Sign
+		tm.getTile(7, 6).setBackground(imgMap[3][4]); // Window
 		tm.getTile(7, 6).setSolid(true);
 		tm.getTile(7, 7).setBackground(imgMap[3][2]);
 		tm.getTile(7, 7).setSolid(true);
@@ -117,7 +117,7 @@ public class RpgGame extends BaseGame {
             tm.getTile(i, 9).setSolid(true);
             tm.getTile(i, 10).setForeground(imgMap[0][1]);
 		}
-		tm.getTile(10, 7).setBackground(imgMap[0][5]); // Window
+		tm.getTile(10, 7).setBackground(imgMap[0][5]); // Sign
 		tm.getTile(12, 7).setBackground(imgMap[1][6]); // Shadow
 		tm.getTile(12, 8).setBackground(imgMap[0][6]);
 		tm.getTile(4, 8).setBackground(imgMap[1][0]); // Tree
@@ -163,6 +163,14 @@ public class RpgGame extends BaseGame {
 		tm.getTile(3, 1).setBackground(imgMap[4][4]);
 		tm.getTile(3, 1).setSolid(true);
 		tm.getTile(2, 0).setBackground(imgMap[5][6]);
+		tm.getTile(10, 6).setBackground(imgMap[3][7]); // Path
+		tm.getTile(10, 5).setBackground(imgMap[2][7]);
+		tm.getTile(10, 4).setBackground(imgMap[5][6]);
+		for (int i = 11; i < 16; i++) {
+			tm.getTile(i, 6).setBackground(imgMap[2][6]);
+			tm.getTile(i, 5).setBackground(imgMap[0][7]);
+			tm.getTile(i, 4).setBackground(imgMap[5][6]);
+		}
 		room.addActor(tm);
 		final Player player = new Player("act.player");
 		player.setPosition(tm.getTile(5, 5));
