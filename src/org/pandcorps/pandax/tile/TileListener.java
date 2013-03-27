@@ -23,5 +23,7 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.pandax.tile;
 
 public interface TileListener {
+	public boolean isActive();
+	
     public void onStep(final Tile tile);
 }

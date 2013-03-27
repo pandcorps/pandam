@@ -38,17 +38,19 @@ public class DynamicTileMap extends TileMap implements StepListener {
 
 	@Override
 	public void onStep(final StepEvent event) {
-		for (final Tile tile : tiles) {
-			onStep(tile);
+		if (!tileListener.isActive()) {
+			return;
 		}
-	}
-	
-	protected void onStep(final Tile tile) {
-	    // Can override this instead of supplying a listener
-	    tileListener.onStep(tile);
+		for (final Tile tile : tiles) {
+			tileListener.onStep(tile);
+		}
 	}
 	
 	public void setTileListener(final TileListener tileListener) {
 	    this.tileListener = tileListener;
+	}
+	
+	public static Object getRawBackground(final Tile tile) {
+		return tile.background;
 	}
 }
