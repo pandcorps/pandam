@@ -22,6 +22,8 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.rpg;
 
+import java.util.IdentityHashMap;
+
 import org.pandcorps.game.*;
 import org.pandcorps.game.core.*;
 import org.pandcorps.pandam.*;
@@ -30,7 +32,6 @@ import org.pandcorps.pandax.tile.Tile.TileMapImage;
 
 public class RpgGame extends BaseGame {
     /*
-    TileMap support for animated tiles.
     Character sprite generator.
     Doors that open and transport player (but not NPCs).
     Load/unload neighboring TileMaps for large areas as needed
@@ -47,13 +48,38 @@ public class RpgGame extends BaseGame {
 		loadBackground();
 	}
 	
+	private final static class QuaintTileListener implements TileListener {
+		private final IdentityHashMap<TileMapImage, TileMapImage> map = new IdentityHashMap<TileMapImage, TileMapImage>();
+		
+		private QuaintTileListener(final TileMapImage[][] imgMap) {
+			for (int x = 1; x <= 5; x++) {
+				for (int y = 0; y <= 2; y++) {
+					map.put(imgMap[4 + y][x], imgMap[4 + ((y + 1) % 3)][x]);
+				}
+			}
+		}
+		
+		@Override
+		public boolean isActive() {
+			return Pangine.getEngine().getClock() % 8 == 0;
+		}
+		
+		@Override
+		public final void onStep(final Tile tile) {
+			final TileMapImage next = map.get(DynamicTileMap.getRawBackground(tile));
+			if (next != null) {
+				tile.setBackground(next);
+			}
+		}
+	}
+	
 	private final static void loadBackground() {
 		final Pangine engine = Pangine.getEngine();
-		final TileMap tm = new TileMap("act.tilemap", room, ImtilX.DIM, ImtilX.DIM);
-		//tm.getPosition().setZ(-100);
+		final DynamicTileMap tm = new DynamicTileMap("act.tilemap", room, ImtilX.DIM, ImtilX.DIM);
 		tm.setOccupantDepth(DepthMode.Y);
 		tm.setImageMap(engine.createImage("img.tile.quaint", ImtilX.loadImage("org/pandcorps/rpg/res/bg/TileQuaint.png", 128, null)));
 		final TileMapImage[][] imgMap = tm.splitImageMap();
+		tm.setTileListener(new QuaintTileListener(imgMap));
 		tm.fillBackground(imgMap[5][0]);
 		tm.getTile(6, 6).setBackground(imgMap[3][1]);
 		tm.getTile(6, 6).setSolid(true);
@@ -99,6 +125,42 @@ public class RpgGame extends BaseGame {
 		tm.getTile(9, 2).setBackground(imgMap[3][0]); // Some flowers
 		tm.getTile(11, 11).setBackground(imgMap[3][0]);
 		tm.getTile(12, 3).setBackground(imgMap[4][0]); // Dirt patch
+		tm.getTile(2, 5).setBackground(imgMap[2][6]);
+		tm.getTile(3, 5).setBackground(imgMap[2][6]);
+		tm.getTile(1, 4).setBackground(imgMap[4][1]); // Water
+		tm.getTile(1, 4).setSolid(true);
+		tm.getTile(2, 4).setBackground(imgMap[4][5]);
+		tm.getTile(2, 4).setSolid(true);
+		tm.getTile(3, 4).setBackground(imgMap[4][5]);
+		tm.getTile(3, 4).setSolid(true);
+		tm.getTile(4, 4).setBackground(imgMap[4][2]);
+		tm.getTile(4, 4).setSolid(true);
+		tm.getTile(0, 3).setBackground(imgMap[4][6]);
+		tm.getTile(1, 3).setBackground(imgMap[4][5]);
+		tm.getTile(1, 3).setSolid(true);
+		tm.getTile(2, 3).setBackground(imgMap[4][5]);
+		tm.getTile(2, 3).setSolid(true);
+		tm.getTile(3, 3).setBackground(imgMap[4][5]);
+		tm.getTile(3, 3).setSolid(true);
+		tm.getTile(4, 3).setBackground(imgMap[4][5]);
+		tm.getTile(4, 3).setSolid(true);
+		tm.getTile(5, 3).setBackground(imgMap[3][6]);
+		tm.getTile(0, 2).setBackground(imgMap[4][6]);
+		tm.getTile(1, 2).setBackground(imgMap[4][5]);
+		tm.getTile(1, 2).setSolid(true);
+		tm.getTile(2, 2).setBackground(imgMap[4][5]);
+		tm.getTile(2, 2).setSolid(true);
+		tm.getTile(3, 2).setBackground(imgMap[4][5]);
+		tm.getTile(3, 2).setSolid(true);
+		tm.getTile(4, 2).setBackground(imgMap[4][4]);
+		tm.getTile(4, 2).setSolid(true);
+		tm.getTile(1, 1).setBackground(imgMap[4][3]);
+		tm.getTile(1, 1).setSolid(true);
+		tm.getTile(2, 1).setBackground(imgMap[4][5]);
+		tm.getTile(2, 1).setSolid(true);
+		tm.getTile(3, 1).setBackground(imgMap[4][4]);
+		tm.getTile(3, 1).setSolid(true);
+		tm.getTile(2, 0).setBackground(imgMap[5][6]);
 		room.addActor(tm);
 		final Player player = new Player("act.player");
 		player.setPosition(tm.getTile(5, 5));
