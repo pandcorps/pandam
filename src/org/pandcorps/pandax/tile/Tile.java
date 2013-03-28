@@ -93,7 +93,7 @@ public final class Tile {
     }
     
     public static class TileMapImage {
-    	/*package*/ final float ix;
+    	/*package*/ final float ix; // These could probably be int
     	/*package*/ final float iy;
     	
     	/*package*/ TileMapImage(final float ix, final float iy) {
