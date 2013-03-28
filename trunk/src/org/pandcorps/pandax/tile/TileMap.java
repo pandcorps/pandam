@@ -230,7 +230,7 @@ public class TileMap extends Panctor {
     }
     
     public TileMapImage[][] splitImageMap() {
-    	final Panple idim = imgMap.getBoundingMaximum();
+    	final Panple idim = imgMap.getBoundingMaximum(); // or getSize()?
     	final int iw = (int) idim.getX() / tw, ih = (int) idim.getY() / th;
     	final TileMapImage[][] t = new TileMapImage[ih][];
     	for (int j = 0; j < ih; j++) {
