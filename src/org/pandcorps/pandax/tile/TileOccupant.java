@@ -29,6 +29,9 @@ public class TileOccupant extends Panctor {
     
     /*package*/ Tile tile = null;
     
+    public TileOccupant() {
+    }
+    
     public TileOccupant(final String id) {
         super(id);
     }
@@ -72,5 +75,9 @@ public class TileOccupant extends Panctor {
     public TileOccupant getNeighbor(final Direction dir) {
         final Tile nt = tile.getNeighbor(dir);
         return nt == null ? null : nt.occupant;
+    }
+    
+    //@OverrideMe
+    public void onInteract(final TileWalker initiator) {
     }
 }
