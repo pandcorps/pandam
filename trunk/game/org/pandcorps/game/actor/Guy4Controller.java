@@ -36,6 +36,11 @@ public abstract class Guy4Controller {
         	guy.go(Direction.West);
         } else if (interaction.KEY_RIGHT.isActive()) {
         	guy.go(Direction.East);
+        } else if (interaction.KEY_SPACE.isActive()) {
+            final TileOccupant neighbor = guy.getFacing();
+            if (neighbor != null) {
+                neighbor.onInteract(guy);
+            }
         } else {
         	return false;
         }
