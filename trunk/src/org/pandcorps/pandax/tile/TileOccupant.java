@@ -80,4 +80,13 @@ public class TileOccupant extends Panctor {
     //@OverrideMe
     public void onInteract(final TileWalker initiator) {
     }
+    
+    //@OverrideMe
+    public String getInteractLabel() {
+    	return null;
+    }
+    
+    public final static String getInteractLabel(final TileOccupant o) {
+    	return o == null ? null : o.getInteractLabel();
+    }
 }
