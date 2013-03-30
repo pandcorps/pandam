@@ -86,4 +86,11 @@ public abstract class BaseGame extends Pangame {
 	    }
 	    return engine.createAnimation("anm." + name, fa);
 	}
+	
+	public final static Panlayer createHud(final Panroom room) {
+		final Pangine engine = Pangine.getEngine();
+		final Panlayer hud = engine.createLayer("layer.hud", engine.getGameWidth(), engine.getGameHeight(), 1, room);
+		room.addAbove(hud);
+		return hud;
+	}
 }
