@@ -23,18 +23,15 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.rpg;
 
 import org.pandcorps.pandam.*;
-import org.pandcorps.pandam.impl.FinPanple;
 import org.pandcorps.pandax.tile.*;
 
-public class Container extends Openable {
-	/*package*/ final static FinPanple o = new FinPanple(0, -3, 0);
-	
-    public Container(final Panmage closed, final Panmage open) {
+public class Door extends Openable {
+    public Door(final Panmage closed, final Panmage open) {
         super(closed, open);
     }
     
     @Override
     public void onOpen(final TileWalker initiator) {
-        // Open inventory
+        // Move initiator
     }
 }

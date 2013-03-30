@@ -33,7 +33,7 @@ import org.pandcorps.pandax.tile.Tile.TileMapImage;
 public class RpgGame extends BaseGame {
     /*
     Character sprite generator.
-    Doors that open and transport player (but not NPCs).
+    Doors transport player.
     Load/unload neighboring TileMaps for large areas as needed
     (and maybe offset actor positions so current TileMap always starts at origin).
     License comment years.
@@ -76,6 +76,7 @@ public class RpgGame extends BaseGame {
 	private final static void loadBackground() {
 		final Pangine engine = Pangine.getEngine();
 		final Panmage[] containers = createSheet("container", "org/pandcorps/rpg/res/misc/Container01.png", ImtilX.DIM, Container.o);
+		final Panmage[] doors = createSheet("door", "org/pandcorps/rpg/res/misc/DoorQuaint.png");
 		final DynamicTileMap tm = new DynamicTileMap("act.tilemap", room, ImtilX.DIM, ImtilX.DIM);
 		tm.setOccupantDepth(DepthMode.Y);
 		tm.setImageMap(engine.createImage("img.tile.quaint", ImtilX.loadImage("org/pandcorps/rpg/res/bg/TileQuaint.png", 128, null)));
@@ -115,7 +116,7 @@ public class RpgGame extends BaseGame {
 		tm.getTile(8, 9).setBackground(imgMap[1][3]);
 		tm.getTile(8, 9).setSolid(true);
 		tm.getTile(8, 10).setForeground(imgMap[0][1]);
-		for (int i = 9; i <= 11; i++) {
+		for (int i = 9; i <= 13; i++) {
     		tm.getTile(i, 7).setBackground(imgMap[4][2]);
             tm.getTile(i, 7).setSolid(true);
             tm.getTile(i, 8).setBackground(imgMap[4][2]);
@@ -124,9 +125,9 @@ public class RpgGame extends BaseGame {
             tm.getTile(i, 9).setSolid(true);
             tm.getTile(i, 10).setForeground(imgMap[0][1]);
 		}
-		tm.getTile(10, 7).setBackground(imgMap[0][5]); // Sign
-		tm.getTile(12, 7).setBackground(imgMap[1][6]); // Shadow
-		tm.getTile(12, 8).setBackground(imgMap[0][6]);
+		tm.getTile(12, 7).setBackground(imgMap[0][5]); // Sign
+		tm.getTile(14, 7).setBackground(imgMap[1][6]); // Shadow
+		tm.getTile(14, 8).setBackground(imgMap[0][6]);
 		tm.getTile(4, 8).setBackground(imgMap[1][0]); // Tree
 		tm.getTile(4, 8).setSolid(true);
 		tm.getTile(4, 9).setForeground(imgMap[0][0]);
@@ -179,6 +180,9 @@ public class RpgGame extends BaseGame {
 			tm.getTile(i, 4).setBackground(imgMap[5][6]);
 		}
 		room.addActor(tm);
+		final Door door = new Door(doors[0], doors[1]);
+		door.setPosition(tm.getTile(10, 7));
+		room.addActor(door);
 		final Container barrel = new Container(containers[2], null);
 		barrel.setPosition(tm.getTile(6, 4));
 		room.addActor(barrel);
