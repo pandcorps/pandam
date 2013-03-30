@@ -26,12 +26,17 @@ import org.pandcorps.pandam.*;
 import org.pandcorps.pandax.tile.*;
 
 public class Door extends Openable {
-    public Door(final Panmage closed, final Panmage open) {
-        super(closed, open);
+    public Door(final String name, final Panmage closed, final Panmage open) {
+        super(name, closed, open);
     }
     
     @Override
     public void onOpen(final TileWalker initiator) {
         // Move initiator
+    }
+    
+    @Override
+    public String getInteractLabel() {
+    	return "ENTER " + name;
     }
 }

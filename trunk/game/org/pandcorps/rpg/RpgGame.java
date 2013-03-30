@@ -24,9 +24,12 @@ package org.pandcorps.rpg;
 
 import java.util.IdentityHashMap;
 
+import org.pandcorps.core.img.Pancolor;
 import org.pandcorps.game.*;
 import org.pandcorps.game.core.*;
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandax.text.*;
+import org.pandcorps.pandax.text.Fonts.FontRequest;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.tile.Tile.TileMapImage;
 
@@ -40,6 +43,8 @@ public class RpgGame extends BaseGame {
     */
     
 	private static Panroom room = null;
+	/*package*/ static Pantext hudInteract = null;
+	/*package*/ final static StringBuilder hudInteractText = new StringBuilder();
 	
 	@Override
 	protected void init(final Panroom room) throws Exception {
@@ -77,6 +82,7 @@ public class RpgGame extends BaseGame {
 		final Pangine engine = Pangine.getEngine();
 		final Panmage[] containers = createSheet("container", "org/pandcorps/rpg/res/misc/Container01.png", ImtilX.DIM, Container.o);
 		final Panmage[] doors = createSheet("door", "org/pandcorps/rpg/res/misc/DoorQuaint.png");
+		final Font hudFont = Fonts.getClassic(new FontRequest(8), Pancolor.WHITE);
 		final DynamicTileMap tm = new DynamicTileMap("act.tilemap", room, ImtilX.DIM, ImtilX.DIM);
 		tm.setOccupantDepth(DepthMode.Y);
 		tm.setImageMap(engine.createImage("img.tile.quaint", ImtilX.loadImage("org/pandcorps/rpg/res/bg/TileQuaint.png", 128, null)));
@@ -180,19 +186,22 @@ public class RpgGame extends BaseGame {
 			tm.getTile(i, 4).setBackground(imgMap[5][6]);
 		}
 		room.addActor(tm);
-		final Door door = new Door(doors[0], doors[1]);
+		final Door door = new Door("STORE", doors[0], doors[1]);
 		door.setPosition(tm.getTile(10, 7));
 		room.addActor(door);
-		final Container barrel = new Container(containers[2], null);
+		final Container barrel = new Container("BARREL", containers[2], null);
 		barrel.setPosition(tm.getTile(6, 4));
 		room.addActor(barrel);
-		final Container chest = new Container(containers[0], containers[1]);
+		final Container chest = new Container("CHEST", containers[0], containers[1]);
 		chest.setPosition(tm.getTile(8, 4));
 		room.addActor(chest);
 		final Player player = new Player("act.player");
 		player.setPosition(tm.getTile(5, 5));
 		room.addActor(player);
 		engine.track(player);
+		final Panlayer hud = createHud(room);
+		hudInteract = new Pantext("hud.interact", hudFont, hudInteractText);
+		hud.addActor(hudInteract);
 	}
 	
 	public final static void main(final String[] args) {

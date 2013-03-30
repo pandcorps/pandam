@@ -26,10 +26,12 @@ import org.pandcorps.pandam.*;
 import org.pandcorps.pandax.tile.*;
 
 public abstract class Openable extends TileOccupant {
+	protected final String name;
     private final Panmage closed;
     private final Panmage open;
     
-    public Openable(final Panmage closed, final Panmage open) {
+    public Openable(final String name, final Panmage closed, final Panmage open) {
+    	this.name = name;
         this.closed = closed;
         this.open = open;
         setView(this.closed);
