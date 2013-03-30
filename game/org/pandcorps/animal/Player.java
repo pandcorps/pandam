@@ -23,8 +23,6 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.animal;
 
 import org.pandcorps.game.actor.Guy4Controller;
-import org.pandcorps.pandam.Pangine;
-import org.pandcorps.pandax.tile.TileOccupant;
 
 public class Player extends Animal {
     private static Player player = null;
@@ -40,14 +38,6 @@ public class Player extends Animal {
     
     @Override
     protected void onStill() {
-        if (Guy4Controller.onStillPlayer(this)) {
-        } else if (Pangine.getEngine().getInteraction().KEY_SPACE.isActive()) {
-            final TileOccupant neighbor = getNeighbor(getDirection());
-            if (neighbor instanceof Tree) {
-                ((Tree) neighbor).onShake();
-            } else if (neighbor instanceof Neighbor) {
-                ((Neighbor) neighbor).onInteract();
-            }
-        }
+        Guy4Controller.onStillPlayer(this);
     }
 }
