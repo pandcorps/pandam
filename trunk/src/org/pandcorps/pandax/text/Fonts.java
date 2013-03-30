@@ -101,6 +101,18 @@ public final class Fonts {
         return getBasic("Simple", req, base, background, cursor, COLOR_OUTLINE, transparent);
     }
     
+    public final static Font getClassic(final FontRequest req, final Pancolor color) {
+        return getClassic(req, color, color, color);
+    }
+    
+    public final static Font getClassic(final FontRequest req, final Pancolor base, final Pancolor background, final Pancolor cursor) {
+        return getClassic(req, base, background, cursor, null);
+    }
+    
+    public final static Font getClassic(final FontRequest req, final Pancolor base, final Pancolor background, final Pancolor cursor, final Pancolor transparent) {
+        return getBasic("Classic", req, base, background, cursor, COLOR_OUTLINE, transparent);
+    }
+    
     private final static Font getBasic(final String style, final FontRequest req, final Pancolor base, final Pancolor background, final Pancolor cursor, final Pancolor outline, final Pancolor transparent) {
         final HashMap<Pancolor, Pancolor> map = new HashMap<Pancolor, Pancolor>();
         map.put(COLOR_BASE, base);
