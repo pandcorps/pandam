@@ -54,7 +54,7 @@ public class RpgGame extends BaseGame {
 		private QuaintTileListener(final TileMapImage[][] imgMap) {
 			for (int x = 1; x <= 5; x++) {
 				for (int y = 0; y <= 2; y++) {
-					map.put(imgMap[4 + y][x], imgMap[4 + ((y + 1) % 3)][x]);
+					map.put(imgMap[5 + y][x], imgMap[5 + ((y + 1) % 3)][x]);
 				}
 			}
 		}
@@ -82,7 +82,9 @@ public class RpgGame extends BaseGame {
 		final TileMapImage[][] imgMap = tm.splitImageMap();
 		tm.setTileListener(new QuaintTileListener(imgMap));
 		tm.fillBackground(imgMap[5][0]);
-		tm.getTile(6, 6).setBackground(imgMap[3][1]);
+		tm.getTile(6, 5).setBackground(imgMap[4][1]);
+		tm.getTile(6, 5).setSolid(true);
+		tm.getTile(6, 6).setBackground(imgMap[4][1]);
 		tm.getTile(6, 6).setSolid(true);
 		tm.getTile(6, 7).setBackground(imgMap[3][1]);
 		tm.getTile(6, 7).setSolid(true);
@@ -91,7 +93,9 @@ public class RpgGame extends BaseGame {
 		tm.getTile(6, 9).setBackground(imgMap[1][1]);
 		tm.getTile(6, 9).setSolid(true);
 		tm.getTile(6, 10).setForeground(imgMap[0][1]);
-		tm.getTile(7, 6).setBackground(imgMap[3][4]); // Window
+		tm.getTile(7, 5).setBackground(imgMap[3][4]); // Window
+		tm.getTile(7, 5).setSolid(true);
+		tm.getTile(7, 6).setBackground(imgMap[4][2]);
 		tm.getTile(7, 6).setSolid(true);
 		tm.getTile(7, 7).setBackground(imgMap[3][2]);
 		tm.getTile(7, 7).setSolid(true);
@@ -100,7 +104,9 @@ public class RpgGame extends BaseGame {
 		tm.getTile(7, 9).setBackground(imgMap[1][2]);
 		tm.getTile(7, 9).setSolid(true);
 		tm.getTile(7, 10).setForeground(imgMap[0][2]);
-		tm.getTile(8, 6).setBackground(imgMap[3][3]);
+		tm.getTile(8, 5).setBackground(imgMap[4][3]);
+		tm.getTile(8, 5).setSolid(true);
+		tm.getTile(8, 6).setBackground(imgMap[4][3]);
 		tm.getTile(8, 6).setSolid(true);
 		tm.getTile(8, 7).setBackground(imgMap[3][3]);
 		tm.getTile(8, 7).setSolid(true);
@@ -110,9 +116,9 @@ public class RpgGame extends BaseGame {
 		tm.getTile(8, 9).setSolid(true);
 		tm.getTile(8, 10).setForeground(imgMap[0][1]);
 		for (int i = 9; i <= 11; i++) {
-    		tm.getTile(i, 7).setBackground(imgMap[3][2]);
+    		tm.getTile(i, 7).setBackground(imgMap[4][2]);
             tm.getTile(i, 7).setSolid(true);
-            tm.getTile(i, 8).setBackground(imgMap[3][2]);
+            tm.getTile(i, 8).setBackground(imgMap[4][2]);
             tm.getTile(i, 8).setSolid(true);
             tm.getTile(i, 9).setBackground(imgMap[2][4]);
             tm.getTile(i, 9).setSolid(true);
@@ -124,44 +130,44 @@ public class RpgGame extends BaseGame {
 		tm.getTile(4, 8).setBackground(imgMap[1][0]); // Tree
 		tm.getTile(4, 8).setSolid(true);
 		tm.getTile(4, 9).setForeground(imgMap[0][0]);
-		tm.getTile(7, 4).setBackground(imgMap[2][0]); // Many flowers
-		tm.getTile(9, 2).setBackground(imgMap[3][0]); // Some flowers
+		tm.getTile(7, 3).setBackground(imgMap[2][0]); // Many flowers
+		tm.getTile(9, 1).setBackground(imgMap[3][0]); // Some flowers
 		tm.getTile(11, 11).setBackground(imgMap[3][0]);
-		tm.getTile(12, 3).setBackground(imgMap[4][0]); // Dirt patch
+		tm.getTile(12, 2).setBackground(imgMap[4][0]); // Dirt patch
 		tm.getTile(2, 5).setBackground(imgMap[2][6]);
 		tm.getTile(3, 5).setBackground(imgMap[2][6]);
-		tm.getTile(1, 4).setBackground(imgMap[4][1]); // Water
+		tm.getTile(1, 4).setBackground(imgMap[5][1]); // Water
 		tm.getTile(1, 4).setSolid(true);
-		tm.getTile(2, 4).setBackground(imgMap[4][5]);
+		tm.getTile(2, 4).setBackground(imgMap[5][5]);
 		tm.getTile(2, 4).setSolid(true);
-		tm.getTile(3, 4).setBackground(imgMap[4][5]);
+		tm.getTile(3, 4).setBackground(imgMap[5][5]);
 		tm.getTile(3, 4).setSolid(true);
-		tm.getTile(4, 4).setBackground(imgMap[4][2]);
+		tm.getTile(4, 4).setBackground(imgMap[5][2]);
 		tm.getTile(4, 4).setSolid(true);
 		tm.getTile(0, 3).setBackground(imgMap[4][6]);
-		tm.getTile(1, 3).setBackground(imgMap[4][5]);
+		tm.getTile(1, 3).setBackground(imgMap[5][5]);
 		tm.getTile(1, 3).setSolid(true);
-		tm.getTile(2, 3).setBackground(imgMap[4][5]);
+		tm.getTile(2, 3).setBackground(imgMap[5][5]);
 		tm.getTile(2, 3).setSolid(true);
-		tm.getTile(3, 3).setBackground(imgMap[4][5]);
+		tm.getTile(3, 3).setBackground(imgMap[5][5]);
 		tm.getTile(3, 3).setSolid(true);
-		tm.getTile(4, 3).setBackground(imgMap[4][5]);
+		tm.getTile(4, 3).setBackground(imgMap[5][5]);
 		tm.getTile(4, 3).setSolid(true);
 		tm.getTile(5, 3).setBackground(imgMap[3][6]);
 		tm.getTile(0, 2).setBackground(imgMap[4][6]);
-		tm.getTile(1, 2).setBackground(imgMap[4][5]);
+		tm.getTile(1, 2).setBackground(imgMap[5][5]);
 		tm.getTile(1, 2).setSolid(true);
-		tm.getTile(2, 2).setBackground(imgMap[4][5]);
+		tm.getTile(2, 2).setBackground(imgMap[5][5]);
 		tm.getTile(2, 2).setSolid(true);
-		tm.getTile(3, 2).setBackground(imgMap[4][5]);
+		tm.getTile(3, 2).setBackground(imgMap[5][5]);
 		tm.getTile(3, 2).setSolid(true);
-		tm.getTile(4, 2).setBackground(imgMap[4][4]);
+		tm.getTile(4, 2).setBackground(imgMap[5][4]);
 		tm.getTile(4, 2).setSolid(true);
-		tm.getTile(1, 1).setBackground(imgMap[4][3]);
+		tm.getTile(1, 1).setBackground(imgMap[5][3]);
 		tm.getTile(1, 1).setSolid(true);
-		tm.getTile(2, 1).setBackground(imgMap[4][5]);
+		tm.getTile(2, 1).setBackground(imgMap[5][5]);
 		tm.getTile(2, 1).setSolid(true);
-		tm.getTile(3, 1).setBackground(imgMap[4][4]);
+		tm.getTile(3, 1).setBackground(imgMap[5][4]);
 		tm.getTile(3, 1).setSolid(true);
 		tm.getTile(2, 0).setBackground(imgMap[5][6]);
 		tm.getTile(10, 6).setBackground(imgMap[3][7]); // Path
@@ -174,10 +180,10 @@ public class RpgGame extends BaseGame {
 		}
 		room.addActor(tm);
 		final Container barrel = new Container(containers[2], null);
-		barrel.setPosition(tm.getTile(6, 5));
+		barrel.setPosition(tm.getTile(6, 4));
 		room.addActor(barrel);
 		final Container chest = new Container(containers[0], containers[1]);
-		chest.setPosition(tm.getTile(8, 5));
+		chest.setPosition(tm.getTile(8, 4));
 		room.addActor(chest);
 		final Player player = new Player("act.player");
 		player.setPosition(tm.getTile(5, 5));
