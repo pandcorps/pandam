@@ -23,11 +23,8 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.animal;
 
 import org.pandcorps.core.Mathtil;
-import org.pandcorps.pandax.text.Input;
-import org.pandcorps.pandax.text.InputSubmitEvent;
-import org.pandcorps.pandax.text.InputSubmitListener;
-import org.pandcorps.pandax.text.Message;
-import org.pandcorps.pandax.tile.Direction;
+import org.pandcorps.pandax.text.*;
+import org.pandcorps.pandax.tile.*;
 
 public class Neighbor extends Animal {
     protected Neighbor(final String id) {
@@ -42,7 +39,8 @@ public class Neighbor extends Animal {
         }
     }
     
-    protected final void onInteract() {
+    @Override
+    public final void onInteract(final TileWalker initiator) {
         //Pantext.message(Town.font, "Hello there buddy");
         /*Pantext.radio(Town.font, Arrays.asList("Yes", "No"), new Pantext.RadioSubmitListener() {
             @Override

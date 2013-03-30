@@ -24,11 +24,9 @@ package org.pandcorps.animal;
 
 import org.pandcorps.animal.Fruit.FruitType;
 import org.pandcorps.core.Pantil;
-import org.pandcorps.pandam.Pangame;
-import org.pandcorps.pandam.Panple;
-import org.pandcorps.pandam.event.StepEvent;
-import org.pandcorps.pandam.event.StepListener;
-import org.pandcorps.pandax.tile.TileOccupant;
+import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.event.*;
+import org.pandcorps.pandax.tile.*;
 
 public class Tree extends TileOccupant implements StepListener {
     
@@ -57,7 +55,8 @@ public class Tree extends TileOccupant implements StepListener {
         }
     }
     
-    protected void onShake() {
+    @Override
+    public final void onInteract(final TileWalker initiator) {
         if (fruits[0] != null) {
             final Player player = Player.getPlayer();
             for (int i = 0; i < NUM_FRUIT; i++) {
