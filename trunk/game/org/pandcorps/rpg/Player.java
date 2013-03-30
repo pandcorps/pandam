@@ -36,7 +36,6 @@ public class Player extends Guy4 {
 
 	@Override
     protected void onStill() {
-        if (Guy4Controller.onStillPlayer(this)) {
-        }
+        Guy4Controller.onStillPlayer(this);
 	}
 }
