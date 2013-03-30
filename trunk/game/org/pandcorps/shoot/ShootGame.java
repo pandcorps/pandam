@@ -381,10 +381,8 @@ public class ShootGame extends Guy2Game {
 		}
 		
 		private static void createHud() {
-		    final Pangine engine = Pangine.getEngine();
-			final float h = engine.getGameHeight();
-			hud = engine.createLayer("layer.hud", engine.getGameWidth(), h, 1, room);
-			room.addAbove(hud);
+			final float h = Pangine.getEngine().getGameHeight();
+			hud = BaseGame.createHud(room);
 			final Pantext hudHealth, hudAmmo, hudMoney;
 			hudHealth = new Pantext("hud.health", hudFont, new CallSequence() {@Override protected String call() {
 				return getHud(CHAR_HEALTH, shooter.getHealth());}});
