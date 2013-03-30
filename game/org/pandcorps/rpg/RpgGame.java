@@ -75,6 +75,7 @@ public class RpgGame extends BaseGame {
 	
 	private final static void loadBackground() {
 		final Pangine engine = Pangine.getEngine();
+		final Panmage[] containers = createSheet("container", "org/pandcorps/rpg/res/misc/Container01.png", ImtilX.DIM, Container.o);
 		final DynamicTileMap tm = new DynamicTileMap("act.tilemap", room, ImtilX.DIM, ImtilX.DIM);
 		tm.setOccupantDepth(DepthMode.Y);
 		tm.setImageMap(engine.createImage("img.tile.quaint", ImtilX.loadImage("org/pandcorps/rpg/res/bg/TileQuaint.png", 128, null)));
@@ -172,6 +173,12 @@ public class RpgGame extends BaseGame {
 			tm.getTile(i, 4).setBackground(imgMap[5][6]);
 		}
 		room.addActor(tm);
+		final Container barrel = new Container(containers[2], null);
+		barrel.setPosition(tm.getTile(6, 5));
+		room.addActor(barrel);
+		final Container chest = new Container(containers[0], containers[1]);
+		chest.setPosition(tm.getTile(8, 5));
+		room.addActor(chest);
 		final Player player = new Player("act.player");
 		player.setPosition(tm.getTile(5, 5));
 		room.addActor(player);

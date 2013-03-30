@@ -27,7 +27,7 @@ import org.pandcorps.game.core.*;
 import org.pandcorps.pandam.impl.*;
 
 public class Player extends Guy4 {
-    private final static FinPanple o = new FinPanple(0, -4, 0);
+    /*package*/ final static FinPanple o = new FinPanple(0, -5, 0);
     
 	protected Player(final String id) {
 		super(id);

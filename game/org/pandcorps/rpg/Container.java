@@ -23,9 +23,12 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.rpg;
 
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.impl.FinPanple;
 import org.pandcorps.pandax.tile.*;
 
 public class Container extends TileOccupant {
+	/*package*/ final static FinPanple o = new FinPanple(0, -3, 0);
+	
     private final Panmage closed;
     private final Panmage open;
     
