@@ -22,9 +22,11 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.rpg;
 
+import org.pandcorps.game.BaseGame;
 import org.pandcorps.game.actor.*;
 import org.pandcorps.game.core.*;
 import org.pandcorps.pandam.impl.*;
+import org.pandcorps.pandax.tile.TileOccupant;
 
 public class Player extends Guy4 {
     /*package*/ final static FinPanple o = new FinPanple(0, -5, 0);
@@ -37,5 +39,15 @@ public class Player extends Guy4 {
 	@Override
     protected void onStill() {
         Guy4Controller.onStillPlayer(this);
+        final String label = TileOccupant.getInteractLabel(getFacing());
+        if (label == null) {
+        	RpgGame.hudInteract.setVisible(false);
+        } else if (!(RpgGame.hudInteract.isVisible() && label.equals(RpgGame.hudInteractText))) {
+        	RpgGame.hudInteract.setVisible(true);
+        	RpgGame.hudInteractText.setLength(0);
+        	RpgGame.hudInteractText.append(label);
+        	RpgGame.hudInteract.getPosition().set(BaseGame.SCREEN_W / 2, 12);
+        	RpgGame.hudInteract.centerX();
+        }
 	}
 }
