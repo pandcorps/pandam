@@ -43,14 +43,18 @@ public class RpgGame extends BaseGame {
     */
     
 	private static Panroom room = null;
+	private static Font hudFont = null;
 	/*package*/ static Pantext hudInteract = null;
 	/*package*/ final static StringBuilder hudInteractText = new StringBuilder();
+	private static DynamicTileMap tm = null;
+	private static Player player = null;
 	
 	@Override
 	protected void init(final Panroom room) throws Exception {
 		Pangine.getEngine().setTitle("RPG");
 		RpgGame.room = room;
-		loadBackground();
+		loadConstants();
+		loadArea(new Town());
 	}
 	
 	private final static class QuaintTileListener implements TileListener {
@@ -78,14 +82,40 @@ public class RpgGame extends BaseGame {
 		}
 	}
 	
-	private final static void loadBackground() {
-		final Pangine engine = Pangine.getEngine();
+	private final static void loadConstants() {
+		hudFont = Fonts.getClassic(new FontRequest(8), Pancolor.WHITE);
+	}
+	
+	/*package*/ final static void loadArea(final Area area) {
+		if (player != null) {
+			player.detach();
+		}
+		Panscreen.set(new RpgScreen(area));
+	}
+	
+	protected final static class RpgScreen extends Panscreen {
+		private final Area area;
+	    
+	    protected RpgScreen(Area area) {
+	        this.area = area;
+	    }
+	    
+		@Override
+        protected final void load() throws Exception {
+			tm = new DynamicTileMap("act.tilemap", room, ImtilX.DIM, ImtilX.DIM);
+			tm.setOccupantDepth(DepthMode.Y);
+			//tm.getPosition().setZ(-10);
+			room.addActor(tm);
+			area.start();
+			createPlayer();
+			createHud();
+		}
+	}
+	
+	private final static void loadTown() {
 		final Panmage[] containers = createSheet("container", "org/pandcorps/rpg/res/misc/Container01.png", ImtilX.DIM, Container.o);
 		final Panmage[] doors = createSheet("door", "org/pandcorps/rpg/res/misc/DoorQuaint.png");
-		final Font hudFont = Fonts.getClassic(new FontRequest(8), Pancolor.WHITE);
-		final DynamicTileMap tm = new DynamicTileMap("act.tilemap", room, ImtilX.DIM, ImtilX.DIM);
-		tm.setOccupantDepth(DepthMode.Y);
-		tm.setImageMap(engine.createImage("img.tile.quaint", ImtilX.loadImage("org/pandcorps/rpg/res/bg/TileQuaint.png", 128, null)));
+		tm.setImageMap(Pangine.getEngine().createImage("img.tile.quaint", ImtilX.loadImage("org/pandcorps/rpg/res/bg/TileQuaint.png", 128, null)));
 		final TileMapImage[][] imgMap = tm.splitImageMap();
 		tm.setTileListener(new QuaintTileListener(imgMap));
 		tm.fillBackground(imgMap[5][0]);
@@ -151,7 +181,6 @@ public class RpgGame extends BaseGame {
 			tm.getTile(i, 5).setBackground(imgMap[0][7]);
 			tm.getTile(i, 4).setBackground(imgMap[5][6]);
 		}
-		room.addActor(tm);
 		final Door door = new Door("STORE", doors[0], doors[1]);
 		door.setPosition(tm.getTile(10, 7));
 		room.addActor(door);
@@ -161,10 +190,56 @@ public class RpgGame extends BaseGame {
 		final Container chest = new Container("CHEST", containers[0], containers[1]);
 		chest.setPosition(tm.getTile(8, 4));
 		room.addActor(chest);
-		final Player player = new Player("act.player");
-		player.setPosition(tm.getTile(5, 5));
+	}
+	
+	private abstract static class Area {
+		protected void start() {
+	        init();
+	    }
+		
+		protected abstract void init();
+	}
+	
+	private final static class Town extends Area {
+		@Override
+		protected final void init() {
+			loadTown();
+		}
+	}
+	
+	/*package*/ final static class Store extends Area {
+		@Override
+		protected final void init() {
+			tm.setImageMap(Pangine.getEngine().createImage("img.tile.inside", ImtilX.loadImage("org/pandcorps/rpg/res/bg/TileInside.png", 128, null)));
+			final TileMapImage[][] imgMap = tm.splitImageMap();
+			tm.fillBackground(imgMap[2][3]);
+			tm.getTile(0, 0).setBackground(imgMap[2][0], true);
+			tm.getTile(0, 11).setBackground(imgMap[0][0], true);
+			for (int i = 1; i < 15; i++) {
+				tm.getTile(i, 0).setForeground(imgMap[2][1]);
+				tm.getTile(i, 11).setBackground(imgMap[0][1], true);
+			}
+			tm.getTile(15, 0).setBackground(imgMap[2][2], true);
+			tm.getTile(15, 11).setBackground(imgMap[0][2], true);
+			for (int j = 1; j < 11; j++) {
+				tm.getTile(0, j).setBackground(imgMap[1][0], true);
+				tm.getTile(1, j).setBackground(imgMap[0][3]);
+				tm.getTile(15, j).setBackground(imgMap[1][2], true);
+			}
+			tm.getTile(1, 1).setBackground(imgMap[1][3]);
+		}
+	}
+	
+	private final static void createPlayer() {
+		if (player == null) {
+			player = new Player("act.player");
+		}
 		room.addActor(player);
-		engine.track(player);
+		player.setPosition(tm.getTile(5, 5));
+		Pangine.getEngine().track(player);
+	}
+	
+	private final static void createHud() {
 		final Panlayer hud = createHud(room);
 		hudInteract = new Pantext("hud.interact", hudFont, hudInteractText);
 		hud.addActor(hudInteract);
