@@ -23,6 +23,7 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.rpg;
 
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandax.tile.*;
 
 public class Door extends Openable {
@@ -32,7 +33,9 @@ public class Door extends Openable {
     
     @Override
     public void onOpen(final TileWalker initiator) {
-        RpgGame.loadArea(new RpgGame.Store());
+    	Pangine.getEngine().addTimer(this, 24, new TimerListener() { @Override public void onTimer(final TimerEvent event) {
+    		RpgGame.loadArea(new RpgGame.Store());
+    	}});
     }
     
     @Override
