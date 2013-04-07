@@ -115,4 +115,8 @@ public final class Tile {
     		this.img = img;
     	}
     }
+    
+    public final static TileOccupant getOccupant(final Tile t) {
+    	return t == null ? null : t.occupant;
+    }
 }
