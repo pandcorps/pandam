@@ -47,7 +47,8 @@ public class RpgGame extends BaseGame {
 	/*package*/ static Pantext hudInteract = null;
 	/*package*/ final static StringBuilder hudInteractText = new StringBuilder();
 	private static DynamicTileMap tm = null;
-	private static Player player = null;
+	private static Panmage[] containers = null;
+	/*package*/ static Player player = null;
 	
 	@Override
 	protected void init(final Panroom room) throws Exception {
@@ -84,6 +85,7 @@ public class RpgGame extends BaseGame {
 	
 	private final static void loadConstants() {
 		hudFont = Fonts.getClassic(new FontRequest(8), Pancolor.WHITE);
+		containers = createSheet("container", "org/pandcorps/rpg/res/misc/Container01.png", ImtilX.DIM, Container.o);
 	}
 	
 	/*package*/ final static void loadArea(final Area area) {
@@ -113,7 +115,6 @@ public class RpgGame extends BaseGame {
 	}
 	
 	private final static void loadTown() {
-		final Panmage[] containers = createSheet("container", "org/pandcorps/rpg/res/misc/Container01.png", ImtilX.DIM, Container.o);
 		final Panmage[] doors = createSheet("door", "org/pandcorps/rpg/res/misc/DoorQuaint.png");
 		tm.setImageMap(Pangine.getEngine().createImage("img.tile.quaint", ImtilX.loadImage("org/pandcorps/rpg/res/bg/TileQuaint.png", 128, null)));
 		final TileMapImage[][] imgMap = tm.splitImageMap();
@@ -210,23 +211,40 @@ public class RpgGame extends BaseGame {
 	/*package*/ final static class Store extends Area {
 		@Override
 		protected final void init() {
+			final Panmage[] counters = createSheet("counter", "org/pandcorps/rpg/res/misc/Counter01.png");
 			tm.setImageMap(Pangine.getEngine().createImage("img.tile.inside", ImtilX.loadImage("org/pandcorps/rpg/res/bg/TileInside.png", 128, null)));
 			final TileMapImage[][] imgMap = tm.splitImageMap();
 			tm.fillBackground(imgMap[2][3]);
-			tm.getTile(0, 0).setBackground(imgMap[2][0], true);
+			tm.getTile(0, 0).setBackground(null, true);
+			tm.getTile(0, 1).setBackground(imgMap[2][0], true);
 			tm.getTile(0, 11).setBackground(imgMap[0][0], true);
 			for (int i = 1; i < 15; i++) {
-				tm.getTile(i, 0).setForeground(imgMap[2][1]);
+				tm.getTile(i, 0).setBackground(null, true);
+				tm.getTile(i, 1).setForeground(imgMap[2][1]);
 				tm.getTile(i, 11).setBackground(imgMap[0][1], true);
 			}
-			tm.getTile(15, 0).setBackground(imgMap[2][2], true);
+			tm.getTile(15, 0).setBackground(null, true);
+			tm.getTile(15, 1).setBackground(imgMap[2][2], true);
 			tm.getTile(15, 11).setBackground(imgMap[0][2], true);
-			for (int j = 1; j < 11; j++) {
+			for (int j = 2; j < 11; j++) {
 				tm.getTile(0, j).setBackground(imgMap[1][0], true);
 				tm.getTile(1, j).setBackground(imgMap[0][3]);
 				tm.getTile(15, j).setBackground(imgMap[1][2], true);
 			}
-			tm.getTile(1, 1).setBackground(imgMap[1][3]);
+			tm.getTile(1, 2).setBackground(imgMap[1][3]);
+			tm.getTile(10, 1).setForeground(imgMap[1][1]);
+			tm.getTile(10, 1).setBackground(imgMap[1][3]);
+			for (int i = 1; i < 9; i++) {
+				final Counter c = new Counter(counters[i == 1 ? 0 : i == 8 ? 6 : 1]);
+				c.setPosition(tm.getTile(i, 8));
+				room.addActor(c);
+			}
+			final Counter c = new Counter(counters[9]);
+			c.setPosition(tm.getTile(8, 9));
+			room.addActor(c);
+			final Container chest = new Container("CHEST", containers[0], containers[1]);
+			chest.setPosition(tm.getTile(1, 9));
+			room.addActor(chest);
 		}
 	}
 	
