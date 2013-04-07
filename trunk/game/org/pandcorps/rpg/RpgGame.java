@@ -252,6 +252,7 @@ public class RpgGame extends BaseGame {
 		if (player == null) {
 			player = new Player("act.player");
 		}
+		player.active = true;
 		room.addActor(player);
 		player.setPosition(tm.getTile(5, 5));
 		Pangine.getEngine().track(player);

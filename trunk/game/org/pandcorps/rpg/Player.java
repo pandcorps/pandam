@@ -30,6 +30,7 @@ import org.pandcorps.pandax.tile.TileOccupant;
 
 public class Player extends Guy4 {
     /*package*/ final static FinPanple o = new FinPanple(0, -5, 0);
+    /*package*/ boolean active = true;
     
 	protected Player(final String id) {
 		super(id);
@@ -38,6 +39,9 @@ public class Player extends Guy4 {
 
 	@Override
     protected void onStill() {
+		if (!active) {
+			return;
+		}
         Guy4Controller.onStillPlayer(this);
         final String label = TileOccupant.getInteractLabel(getFacing());
         if (label == null) {

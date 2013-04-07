@@ -33,6 +33,7 @@ public class Door extends Openable {
     
     @Override
     public void onOpen(final TileWalker initiator) {
+    	RpgGame.player.active = false;
     	Pangine.getEngine().addTimer(this, 24, new TimerListener() { @Override public void onTimer(final TimerEvent event) {
     		RpgGame.loadArea(new RpgGame.Store());
     	}});
