@@ -62,7 +62,7 @@ public class TileOccupant extends Panctor {
             if (depth.getClass() == Float.class) {
                 pos.setZ(((Float) depth).floatValue());
             } else {
-                pos.setZ(map.getForegroundDepth() - pos.getY());
+                pos.setZ(map.getForegroundDepth() - pos.getY() - 1);
             }
         }
     }

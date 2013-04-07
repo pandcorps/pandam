@@ -218,7 +218,7 @@ public class TileMap extends Panctor {
     public float getForegroundDepth() {
         //return Float.MAX_VALUE;
         //return z + 1;
-        return getPosition().getZ() + (h * th);
+        return getPosition().getZ() + (h * th) + 1;
     }
     
     public final int getWidth() {
