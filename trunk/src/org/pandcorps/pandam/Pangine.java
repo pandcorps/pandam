@@ -291,6 +291,11 @@ public abstract class Pangine {
         return image;
     }
 	
+	public final Panmage getImage(final String id, final String location) {
+		return getImage(id, new Callable<Panmage>() { @Override public Panmage call() {
+        	return createImage(id, location); }});
+	}
+	
 	public final Panimation getAnimation(final String id) {
         return (Panimation) getEntity(id);
     }
