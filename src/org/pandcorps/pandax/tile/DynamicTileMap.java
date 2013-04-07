@@ -38,7 +38,7 @@ public class DynamicTileMap extends TileMap implements StepListener {
 
 	@Override
 	public void onStep(final StepEvent event) {
-		if (!tileListener.isActive()) {
+		if (tileListener == null || !tileListener.isActive()) {
 			return;
 		}
 		for (final Tile tile : tiles) {
