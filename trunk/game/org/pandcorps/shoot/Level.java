@@ -127,8 +127,7 @@ public abstract class Level {
             final int w = tm.getWidth(), s = w / 16;
             final Pangine engine = Pangine.getEngine();
             final String tmName = "img.bg.city";
-            tm.setImageMap(engine.getImage(tmName, new Callable<Panmage>() { @Override public Panmage call() {
-            	return engine.createImage(tmName, "org/pandcorps/shoot/res/bg/TileCity.png"); }}));
+            tm.setImageMap(engine.getImage(tmName, "org/pandcorps/shoot/res/bg/TileCity.png"));
             final TileMapImage[][] imgMap = tm.splitImageMap();
             tm.fillBackground(imgMap[7][0], 0, 2);
             tm.fillBackground(imgMap[6][0], 2, 1);
