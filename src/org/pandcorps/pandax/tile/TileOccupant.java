@@ -71,10 +71,17 @@ public class TileOccupant extends Panctor {
     //    setPosition(dst);
     //    Pangine.getEngine.getRoom.add(this);
     //}
+
+    public Tile getTile() {
+    	return tile;
+    }
     
     public TileOccupant getNeighbor(final Direction dir) {
-        final Tile nt = tile.getNeighbor(dir);
-        return nt == null ? null : nt.occupant;
+        return Tile.getOccupant(tile.getNeighbor(dir));
+    }
+    
+    public TileOccupant getOpposite(final TileWalker src) {
+    	return Tile.getOccupant(tile.map.getTile(tile.i * 2 - src.tile.i, tile.j * 2 - src.tile.j));
     }
     
     //@OverrideMe
