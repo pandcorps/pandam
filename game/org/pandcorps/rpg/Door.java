@@ -32,7 +32,7 @@ public class Door extends Openable {
     
     @Override
     public void onOpen(final TileWalker initiator) {
-        // Move initiator
+        RpgGame.loadArea(new RpgGame.Store());
     }
     
     @Override
