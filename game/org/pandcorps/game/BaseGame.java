@@ -31,6 +31,11 @@ import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.impl.FinPanple;
 
 public abstract class BaseGame extends Pangame {
+    /*
+    16-bit (and effective 8-bit) - 256 x 224
+    Portable - 256 x 192
+    Sample phone - 192 x 192
+    */
 	public final static int SCREEN_W = 256;
 	public final static int SCREEN_H = 192;
 	protected final static FinPanple CENTER_16 = new FinPanple(8, 8, 0);
