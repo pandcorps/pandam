@@ -182,7 +182,7 @@ public class RpgGame extends BaseGame {
 			tm.getTile(i, 5).setBackground(imgMap[0][7]);
 			tm.getTile(i, 4).setBackground(imgMap[5][6]);
 		}
-		final Door door = new Door("STORE", doors[0], doors[1]);
+		final Door door = new Door("STORE", doors[0], doors[1], new Store());
 		door.setPosition(tm.getTile(10, 7));
 		room.addActor(door);
 		final Container barrel = new Container("BARREL", containers[2], null);
@@ -196,7 +196,7 @@ public class RpgGame extends BaseGame {
 		room.addActor(npc);
 	}
 	
-	private abstract static class Area {
+	/*package*/ abstract static class Area {
 		protected void start() {
 	        init();
 	    }
