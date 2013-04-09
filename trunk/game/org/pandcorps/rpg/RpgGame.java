@@ -182,18 +182,10 @@ public class RpgGame extends BaseGame {
 			tm.getTile(i, 5).setBackground(imgMap[0][7]);
 			tm.getTile(i, 4).setBackground(imgMap[5][6]);
 		}
-		final Door door = new Door("STORE", doors[0], doors[1], new Store());
-		door.setPosition(tm.getTile(10, 7));
-		room.addActor(door);
-		final Container barrel = new Container("BARREL", containers[2], null);
-		barrel.setPosition(tm.getTile(6, 4));
-		room.addActor(barrel);
-		final Container chest = new Container("CHEST", containers[0], containers[1]);
-		chest.setPosition(tm.getTile(8, 4));
-		room.addActor(chest);
-		final Npc npc = new Npc("act.npc");
-		npc.setPosition(tm.getTile(10, 5));
-		room.addActor(npc);
+		new Door("STORE", doors[0], doors[1], new Store()).init(tm, 10, 7);
+		new Container("BARREL", containers[2], null).init(tm, 6, 4);
+		new Container("CHEST", containers[0], containers[1]).init(tm, 8, 4);
+		new Npc("act.npc").init(tm, 10, 5);
 	}
 	
 	/*package*/ abstract static class Area {
@@ -238,16 +230,10 @@ public class RpgGame extends BaseGame {
 			tm.getTile(10, 1).setForeground(imgMap[1][1]);
 			tm.getTile(10, 1).setBackground(imgMap[1][3]);
 			for (int i = 1; i < 9; i++) {
-				final Counter c = new Counter(counters[i == 1 ? 0 : i == 8 ? 6 : 1]);
-				c.setPosition(tm.getTile(i, 8));
-				room.addActor(c);
+				new Counter(counters[i == 1 ? 0 : i == 8 ? 6 : 1]).init(tm, i, 8);
 			}
-			final Counter c = new Counter(counters[9]);
-			c.setPosition(tm.getTile(8, 9));
-			room.addActor(c);
-			final Container chest = new Container("CHEST", containers[0], containers[1]);
-			chest.setPosition(tm.getTile(1, 9));
-			room.addActor(chest);
+			new Counter(counters[9]).init(tm, 8, 9);
+			new Container("CHEST", containers[0], containers[1]).init(tm, 1, 9);
 		}
 	}
 	
@@ -256,8 +242,7 @@ public class RpgGame extends BaseGame {
 			player = new Player("act.player");
 		}
 		player.active = true;
-		room.addActor(player);
-		player.setPosition(tm.getTile(5, 5));
+		player.init(tm, 5, 5);
 		Pangine.getEngine().track(player);
 	}
 	

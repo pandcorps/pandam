@@ -46,6 +46,11 @@ public class TileOccupant extends Panctor {
         tile = dst;
     }
     
+    public void init(final TileMap tm, final int i, final int j) {
+    	setPosition(tm.getTile(i, j));
+    	tm.getLayer().addActor(this);
+    }
+    
     public final void setPosition(final Tile dst) {
         setTile(dst);
         getPosition().set(dst.position);
