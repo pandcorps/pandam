@@ -22,7 +22,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.animal;
 
-import org.pandcorps.core.Mathtil;
+import org.pandcorps.game.actor.*;
 import org.pandcorps.pandax.text.*;
 import org.pandcorps.pandax.tile.*;
 
@@ -33,10 +33,7 @@ public class Neighbor extends Animal {
     
     @Override
     protected void onStill() {
-        final Direction dir = Mathtil.rand(weights, directions);
-        if (dir != null) {
-            walk(dir);
-        }
+        Guy4Controller.onStillNpc(this);
     }
     
     @Override

@@ -26,22 +26,9 @@ import java.util.*;
 
 import org.pandcorps.game.actor.*;
 import org.pandcorps.pandam.*;
-import org.pandcorps.pandax.tile.*;
 
 public abstract class Animal extends Guy4 {
-    protected final static Direction[] directions;
-    
-    protected final static int[] weights = {1, 1, 1, 1, 150};
-    
     private final HashMap<Item, Integer> inventory = new HashMap<Item, Integer>();
-    
-    static {
-        final Direction[] d = Direction.values();
-        final int size = d.length;
-        directions = new Direction[size + 1];
-        System.arraycopy(d, 0, directions, 0, size);
-        directions[size] = null;
-    }
     
     protected Animal(final String id) {
         super(id);
