@@ -29,17 +29,21 @@ import org.pandcorps.rpg.RpgGame.*;
 
 public class Door extends Openable {
 	private final Area targetArea;
+	private final int targetI;
+	private final int targetJ;
 	
-    public Door(final String name, final Panmage closed, final Panmage open, final Area targetArea) {
+    public Door(final String name, final Panmage closed, final Panmage open, final Area targetArea, final int targetI, final int targetJ) {
         super(name, closed, open);
         this.targetArea = targetArea;
+        this.targetI = targetI;
+        this.targetJ = targetJ;
     }
     
     @Override
     public void onOpen(final TileWalker initiator) {
     	RpgGame.player.active = false;
     	Pangine.getEngine().addTimer(this, 24, new TimerListener() { @Override public void onTimer(final TimerEvent event) {
-    		RpgGame.loadArea(targetArea);
+    		RpgGame.loadArea(targetArea, targetI, targetJ);
     	}});
     }
     

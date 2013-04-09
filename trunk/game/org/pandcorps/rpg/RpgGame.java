@@ -55,7 +55,7 @@ public class RpgGame extends BaseGame {
 		Pangine.getEngine().setTitle("RPG");
 		RpgGame.room = room;
 		loadConstants();
-		loadArea(new Town());
+		loadArea(new Town(), 5, 5);
 	}
 	
 	private final static class QuaintTileListener implements TileListener {
@@ -88,18 +88,22 @@ public class RpgGame extends BaseGame {
 		containers = createSheet("container", "org/pandcorps/rpg/res/misc/Container01.png", ImtilX.DIM, Container.o);
 	}
 	
-	/*package*/ final static void loadArea(final Area area) {
+	/*package*/ final static void loadArea(final Area area, final int i, final int j) {
 		if (player != null) {
 			player.detach();
 		}
-		Panscreen.set(new RpgScreen(area));
+		Panscreen.set(new RpgScreen(area, i, j));
 	}
 	
 	protected final static class RpgScreen extends Panscreen {
 		private final Area area;
+		private final int i;
+		private final int j;
 	    
-	    protected RpgScreen(Area area) {
+	    protected RpgScreen(final Area area, final int i, final int j) {
 	        this.area = area;
+	        this.i = i;
+	        this.j = j;
 	    }
 	    
 		@Override
@@ -109,7 +113,7 @@ public class RpgGame extends BaseGame {
 			//tm.getPosition().setZ(-10);
 			room.addActor(tm);
 			area.start();
-			createPlayer();
+			createPlayer(i, j);
 			createHud();
 		}
 	}
@@ -182,7 +186,7 @@ public class RpgGame extends BaseGame {
 			tm.getTile(i, 5).setBackground(imgMap[0][7]);
 			tm.getTile(i, 4).setBackground(imgMap[5][6]);
 		}
-		new Door("STORE", doors[0], doors[1], new Store()).init(tm, 10, 7);
+		new Door("STORE", doors[0], doors[1], new Store(), 10, 1).init(tm, 10, 7);
 		new Container("BARREL", containers[2], null).init(tm, 6, 4);
 		new Container("CHEST", containers[0], containers[1]).init(tm, 8, 4);
 		new Npc("act.npc").init(tm, 10, 5);
@@ -237,12 +241,12 @@ public class RpgGame extends BaseGame {
 		}
 	}
 	
-	private final static void createPlayer() {
+	private final static void createPlayer(final int i, final int j) {
 		if (player == null) {
 			player = new Player("act.player");
 		}
 		player.active = true;
-		player.init(tm, 5, 5);
+		player.init(tm, i, j);
 		Pangine.getEngine().track(player);
 	}
 	
