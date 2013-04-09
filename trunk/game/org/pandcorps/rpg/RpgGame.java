@@ -36,9 +36,10 @@ import org.pandcorps.pandax.tile.Tile.TileMapImage;
 public class RpgGame extends BaseGame {
     /*
     Character sprite generator.
-    Doors transport player.
     Load/unload neighboring TileMaps for large areas as needed
     (and maybe offset actor positions so current TileMap always starts at origin).
+    Check resolution: n, s, g.
+    Shaded counter seems to have a pixel that's too dark.
     License comment years.
     */
     
