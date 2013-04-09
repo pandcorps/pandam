@@ -22,6 +22,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.game.actor;
 
+import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandax.tile.*;
 
@@ -46,4 +47,11 @@ public abstract class Guy4Controller {
         }
         return true;
 	}
+	
+	public final static void onStillNpc(final Guy4 guy) {
+        final Direction dir = Mathtil.rand(Guy4.weights, Guy4.directions);
+        if (dir != null) {
+            guy.go(dir);
+        }
+    }
 }
