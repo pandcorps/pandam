@@ -25,17 +25,21 @@ package org.pandcorps.rpg;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandax.tile.*;
+import org.pandcorps.rpg.RpgGame.*;
 
 public class Door extends Openable {
-    public Door(final String name, final Panmage closed, final Panmage open) {
+	private final Area targetArea;
+	
+    public Door(final String name, final Panmage closed, final Panmage open, final Area targetArea) {
         super(name, closed, open);
+        this.targetArea = targetArea;
     }
     
     @Override
     public void onOpen(final TileWalker initiator) {
     	RpgGame.player.active = false;
     	Pangine.getEngine().addTimer(this, 24, new TimerListener() { @Override public void onTimer(final TimerEvent event) {
-    		RpgGame.loadArea(new RpgGame.Store());
+    		RpgGame.loadArea(targetArea);
     	}});
     }
     
