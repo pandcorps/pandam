@@ -191,6 +191,9 @@ public class RpgGame extends BaseGame {
 		final Container chest = new Container("CHEST", containers[0], containers[1]);
 		chest.setPosition(tm.getTile(8, 4));
 		room.addActor(chest);
+		final Npc npc = new Npc("act.npc");
+		npc.setPosition(tm.getTile(10, 5));
+		room.addActor(npc);
 	}
 	
 	private abstract static class Area {
