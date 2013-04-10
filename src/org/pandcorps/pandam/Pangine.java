@@ -296,6 +296,10 @@ public abstract class Pangine {
         	return createImage(id, location); }});
 	}
 	
+	public final Panmage findImage(final String location) {
+		return getImage(location, location);
+	}
+	
 	public final Panimation getAnimation(final String id) {
         return (Panimation) getEntity(id);
     }
