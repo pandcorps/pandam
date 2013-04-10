@@ -43,6 +43,7 @@ public class RpgGame extends BaseGame {
     */
     
 	private static Panroom room = null;
+	private static Panmage empty = null;
 	private static Font hudFont = null;
 	/*package*/ static Pantext hudInteract = null;
 	/*package*/ final static StringBuilder hudInteractText = new StringBuilder();
@@ -84,6 +85,7 @@ public class RpgGame extends BaseGame {
 	}
 	
 	private final static void loadConstants() {
+		empty = Pangine.getEngine().createEmptyImage("img.empty", null, null, null);
 		hudFont = Fonts.getClassic(new FontRequest(8), Pancolor.WHITE);
 		containers = createSheet("container", "org/pandcorps/rpg/res/misc/Container01.png", ImtilX.DIM, Container.o);
 	}
@@ -238,6 +240,7 @@ public class RpgGame extends BaseGame {
 			}
 			new Counter(counters[9]).init(tm, 8, 9);
 			new Container("CHEST", containers[0], containers[1]).init(tm, 1, 9);
+			new Door("OUTSIDE", empty, null, new Town(), 10, 6).init(tm, 10, 0);
 		}
 	}
 	
