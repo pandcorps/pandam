@@ -27,6 +27,9 @@ import org.pandcorps.pandam.*;
 import org.pandcorps.pandax.tile.*;
 
 public abstract class Guy4Controller {
+    public final static RandomController RANDOM = new RandomController();
+    //public final static NpcController STILL = null;
+    
 	public final static boolean onStillPlayer(final Guy4 guy) {
 		final Panteraction interaction = Pangine.getEngine().getInteraction();
         if (interaction.KEY_DOWN.isActive()) {
@@ -54,4 +57,24 @@ public abstract class Guy4Controller {
             guy.go(dir);
         }
     }
+	
+	public final static void onStill(final Guy4 guy, final NpcController controller) {
+	    if (controller != null) {
+	        controller.onStill(guy);
+	    }
+	}
+	
+	public static interface NpcController {
+	    public void onStill(final Guy4 guy);
+	}
+	
+	public final static class RandomController implements NpcController {
+	    private RandomController() {
+	    }
+	    
+        @Override
+        public final void onStill(final Guy4 guy) {
+            onStillNpc(guy);
+        }
+	}
 }
