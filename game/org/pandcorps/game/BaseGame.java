@@ -23,6 +23,7 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.game;
 
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 import org.pandcorps.core.Reftil;
 import org.pandcorps.core.img.scale.Scaler;
@@ -57,6 +58,13 @@ public abstract class BaseGame extends Pangame {
         return new FinPanple(SCREEN_W, SCREEN_H, 0);
     }
 	
+	public final static Panmage createImage(final String name, final String path, final int dim) {
+		final Pangine engine = Pangine.getEngine();
+		final String in = "img." + name;
+		final Panmage img = engine.getImage(in);
+		return img == null ? engine.createImage(in, ImtilX.loadImage(path, dim, null)) : img;
+	}
+	
 	public final static Panmage[] createSheet(final String name, final String path) {
 	    return createSheet(name, path, ImtilX.DIM);
 	}
@@ -67,6 +75,17 @@ public abstract class BaseGame extends Pangame {
 	
 	public final static Panmage[] createSheet(final String name, final String path, final int dim, final Panple o) {
 	    final Pangine engine = Pangine.getEngine();
+	    Panmage t;
+	    ArrayList<Panmage> list = null;
+	    for (int i = 0; (t = engine.getImage("img." + name + "." + i)) != null; i++) {
+	    	if (list == null) {
+	    		list = new ArrayList<Panmage>();
+	    	}
+	    	list.add(t);
+	    }
+	    if (list != null) {
+	    	return list.toArray(new Panmage[list.size()]);
+	    }
 	    final BufferedImage[] b = ImtilX.loadStrip(path, dim);
 	    final int size = b.length;
 	    final Panmage[] p = new Panmage[size];
