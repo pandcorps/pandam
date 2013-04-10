@@ -23,16 +23,31 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.rpg;
 
 import org.pandcorps.game.actor.*;
+import org.pandcorps.game.actor.Guy4Controller.NpcController;
 import org.pandcorps.game.core.*;
 
 public class Npc extends Guy4 {
-    protected Npc(final String id) {
+    private NpcController controller = null;
+    
+    protected Npc(final String id, final NpcController controller) {
         super(id);
         setView(RpgGame.createSheet("npc", "org/pandcorps/rpg/res/chr/Player.png", ImtilX.DIM, Player.o));
+        this.controller = controller;
     }
     
     @Override
     protected void onStill() {
-        Guy4Controller.onStillNpc(this);
+        Guy4Controller.onStill(this, controller);
+    }
+    
+    //TODO
+    public final static class CounterController implements NpcController {
+        private CounterController() {
+        }
+        
+        @Override
+        public final void onStill(final Guy4 guy) {
+            // Make sure next position is still touching a Counter
+        }
     }
 }
