@@ -122,7 +122,7 @@ public class RpgGame extends BaseGame {
 	
 	private final static void loadTown() {
 		final Panmage[] doors = createSheet("door", "org/pandcorps/rpg/res/misc/DoorQuaint.png");
-		tm.setImageMap(Pangine.getEngine().createImage("img.tile.quaint", ImtilX.loadImage("org/pandcorps/rpg/res/bg/TileQuaint.png", 128, null)));
+		tm.setImageMap(createImage("tile.quaint", "org/pandcorps/rpg/res/bg/TileQuaint.png", 128));
 		final TileMapImage[][] imgMap = tm.splitImageMap();
 		tm.setTileListener(new QuaintTileListener(imgMap));
 		tm.fillBackground(imgMap[5][0]);
@@ -191,7 +191,9 @@ public class RpgGame extends BaseGame {
 		new Door("STORE", doors[0], doors[1], new Store(), 10, 1).init(tm, 10, 7);
 		new Container("BARREL", containers[2], null).init(tm, 6, 4);
 		new Container("CHEST", containers[0], containers[1]).init(tm, 8, 4);
-		new Npc("act.npc").init(tm, 10, 5);
+		if (player == null || player.getPosition().getX() < 100) {
+			new Npc("act.npc").init(tm, 10, 5);
+		}
 	}
 	
 	/*package*/ abstract static class Area {
@@ -213,7 +215,7 @@ public class RpgGame extends BaseGame {
 		@Override
 		protected final void init() {
 			final Panmage[] counters = createSheet("counter", "org/pandcorps/rpg/res/misc/Counter01.png");
-			tm.setImageMap(Pangine.getEngine().createImage("img.tile.inside", ImtilX.loadImage("org/pandcorps/rpg/res/bg/TileInside.png", 128, null)));
+			tm.setImageMap(createImage("tile.inside", "org/pandcorps/rpg/res/bg/TileInside.png", 128));
 			final TileMapImage[][] imgMap = tm.splitImageMap();
 			tm.fillBackground(imgMap[2][3]);
 			tm.getTile(0, 0).setBackground(null, true);
