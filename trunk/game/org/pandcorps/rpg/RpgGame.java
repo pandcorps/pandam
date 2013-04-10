@@ -26,6 +26,7 @@ import java.util.IdentityHashMap;
 
 import org.pandcorps.core.img.Pancolor;
 import org.pandcorps.game.*;
+import org.pandcorps.game.actor.*;
 import org.pandcorps.game.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandax.text.*;
@@ -195,7 +196,7 @@ public class RpgGame extends BaseGame {
 		new Container("BARREL", containers[2], null).init(tm, 6, 4);
 		new Container("CHEST", containers[0], containers[1]).init(tm, 8, 4);
 		if (player == null || player.getPosition().getX() < 100) {
-			new Npc("act.npc").init(tm, 10, 5);
+			new Npc("act.npc", Guy4Controller.RANDOM).init(tm, 10, 5);
 		}
 	}
 	
