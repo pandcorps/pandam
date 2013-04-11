@@ -25,8 +25,10 @@ package org.pandcorps.rpg;
 import org.pandcorps.game.actor.*;
 import org.pandcorps.game.actor.Guy4Controller.NpcController;
 import org.pandcorps.game.core.*;
+import org.pandcorps.pandax.tile.*;
 
 public class Npc extends Guy4 {
+    private final String name = "GUY";
     private NpcController controller = null;
     
     protected Npc(final String id, final NpcController controller) {
@@ -38,6 +40,16 @@ public class Npc extends Guy4 {
     @Override
     protected void onStill() {
         Guy4Controller.onStill(this, controller);
+    }
+    
+    @Override
+    public void onInteract(final TileWalker initiator) {
+        face(initiator.getDirection().getOpposite());
+    }
+    
+    @Override
+    public String getInteractLabel() {
+        return "TALK TO " + name;
     }
     
     //TODO
