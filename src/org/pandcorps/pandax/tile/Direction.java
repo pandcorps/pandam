@@ -26,5 +26,16 @@ public enum Direction {
     South, // A more natural sprite sheet
     East,
     North,
-    West
+    West;
+    
+    public final Direction getOpposite() {
+        if (this == South) {
+            return North;
+        } else if (this == East) {
+            return West;
+        } else if (this == North) {
+            return South;
+        }
+        return East;
+    }
 }
