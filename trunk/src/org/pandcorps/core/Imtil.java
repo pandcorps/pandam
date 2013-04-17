@@ -155,6 +155,18 @@ public final class Imtil {
         return b;
     }
     
+    public final static void mirror(final BufferedImage img) {
+        final int w = img.getWidth(), w2 = w / 2, h = img.getHeight();
+        for (int x = 0; x < w2; x++) {
+            for (int y = 0; y < h; y++) {
+                final int wx = w - x - 1;
+                final int l = img.getRGB(x, y), r = img.getRGB(wx, y);
+                img.setRGB(x, y, r);
+                img.setRGB(wx, y, l);
+            }
+        }
+    }
+    
     public final static BufferedImage filter(final BufferedImage img, final PixelFilter... fs) {
     	return filter(img, Coltil.asList(fs));
     }
