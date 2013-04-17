@@ -47,13 +47,21 @@ public final class ImtilX {
     }
     
     public final static BufferedImage loadImage(final String path, final int dim, ReplacePixelFilter filter) {
+        return loadImage(path, dim, filter, true);
+    }
+    
+    public final static BufferedImage loadImage(final String path, int dim, ReplacePixelFilter filter, final boolean validate) {
         BufferedImage img = Imtil.load(path);
         final int h = img.getHeight();
-        if (h == dim + 1) {
-            // During drawing/debugging, there's an extra row at the bottom
-            img = img.getSubimage(0, 0, img.getWidth(), dim);
-        } else if (h != dim) {
-            throw new UnsupportedOperationException("Expected image to have height=" + dim);
+        if (validate) {
+            if (h == dim + 1) {
+                // During drawing/debugging, there's an extra row at the bottom
+                img = img.getSubimage(0, 0, img.getWidth(), dim);
+            } else if (h != dim) {
+                throw new UnsupportedOperationException("Expected image to have height=" + dim);
+            }
+        } else {
+            dim = h;
         }
         final ColorModel cm = img.getColorModel();
         boolean transparency = false;
@@ -79,5 +87,9 @@ public final class ImtilX {
     
     public final static BufferedImage[] loadStrip(final String path, final int dim) {
     	return Imtil.toStrip(loadImage(path, dim, null), dim);
+    }
+    
+    public final static BufferedImage[] loadStrip(final String path, final int w, final boolean validate) {
+        return Imtil.toStrip(loadImage(path, w, null, validate), w);
     }
 }
