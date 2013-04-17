@@ -22,33 +22,15 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.rpg;
 
-import org.pandcorps.game.BaseGame;
 import org.pandcorps.game.actor.*;
-import org.pandcorps.game.core.*;
-import org.pandcorps.pandax.tile.TileOccupant;
+import org.pandcorps.pandam.Panmage;
+import org.pandcorps.pandam.impl.*;
 
-public class Player extends Character {
-    /*package*/ boolean active = true;
+public class Character extends Guy4 {
+    /*package*/ final static FinPanple o = new FinPanple(0, -5, 0);
     
-	protected Player(final String id) {
-		super(id, RpgGame.createSheet("player", "org/pandcorps/rpg/res/chr/Player.png", ImtilX.DIM, o));
-	}
-
-	@Override
-    protected void onStill() {
-		if (!active) {
-			return;
-		}
-        Guy4Controller.onStillPlayer(this);
-        final String label = TileOccupant.getInteractLabel(getFacing());
-        if (label == null) {
-        	RpgGame.hudInteract.setVisible(false);
-        } else if (!(RpgGame.hudInteract.isVisible() && label.equals(RpgGame.hudInteractText))) {
-        	RpgGame.hudInteract.setVisible(true);
-        	RpgGame.hudInteractText.setLength(0);
-        	RpgGame.hudInteractText.append(label);
-        	RpgGame.hudInteract.getPosition().set(BaseGame.SCREEN_W / 2, 12);
-        	RpgGame.hudInteract.centerX();
-        }
-	}
+    protected Character(final String id, final Panmage[] sheet) {
+        super(id);
+        setView(sheet);
+    }
 }

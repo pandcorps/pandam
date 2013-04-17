@@ -22,19 +22,45 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.rpg;
 
+import java.awt.image.*;
+
+import org.pandcorps.core.*;
 import org.pandcorps.game.actor.*;
 import org.pandcorps.game.actor.Guy4Controller.NpcController;
 import org.pandcorps.game.core.*;
+import org.pandcorps.pandam.*;
 import org.pandcorps.pandax.tile.*;
 
-public class Npc extends Guy4 {
+public class Npc extends Character {
     private final String name = "GUY";
     private NpcController controller = null;
     
     protected Npc(final String id, final NpcController controller) {
-        super(id);
-        setView(RpgGame.createSheet("npc", "org/pandcorps/rpg/res/chr/Player.png", ImtilX.DIM, Player.o));
+        super(id, getSheet());
         this.controller = controller;
+    }
+    
+    private final static Panmage[] getSheet() {
+        final BufferedImage[] body = ImtilX.loadStrip("org/pandcorps/rpg/res/chr/MBody.png");
+        final BufferedImage[] face = ImtilX.loadStrip("org/pandcorps/rpg/res/chr/MFace01.png", 8, false);
+        final BufferedImage[] eyes = ImtilX.loadStrip("org/pandcorps/rpg/res/chr/Eyes01.png", 8, false);
+        for (int i = 0; i < 5; i += 4) {
+            Imtil.copy(face[0], body[i], 0, 0, 8, 8, 4, 1, Imtil.COPY_FOREGROUND);
+            Imtil.copy(eyes[0], body[i], 0, 0, 8, 4, 4, 5, Imtil.COPY_FOREGROUND);
+            Imtil.copy(face[1], body[i + 1], 0, 0, 8, 8, 4, 1, Imtil.COPY_FOREGROUND);
+            Imtil.copy(eyes[1], body[i + 1], 0, 0, 8, 4, 5, 5, Imtil.COPY_FOREGROUND);
+        }
+        Imtil.mirror(face[1]);
+        Imtil.mirror(eyes[1]);
+        for (int i = 0; i < 5; i += 4) {
+            Imtil.copy(face[1], body[i + 3], 0, 0, 8, 8, 4, 1, Imtil.COPY_FOREGROUND);
+            Imtil.copy(eyes[1], body[i + 3], 0, 0, 8, 4, 3, 5, Imtil.COPY_FOREGROUND);
+        }
+        //for (int i = 0; i < 8; i++) {
+            //final BufferedImage b = body[i];
+            //Imtil.save(b, "c:\\t" + i + ".png");
+        //}
+        return RpgGame.createSheet("npc", "org/pandcorps/rpg/res/chr/Player.png", ImtilX.DIM, o);
     }
     
     @Override
