@@ -56,11 +56,12 @@ public class Npc extends Character {
             Imtil.copy(face[1], body[i + 3], 0, 0, 8, 8, 4, 1, Imtil.COPY_FOREGROUND);
             Imtil.copy(eyes[1], body[i + 3], 0, 0, 8, 4, 3, 5, Imtil.COPY_FOREGROUND);
         }
-        //for (int i = 0; i < 8; i++) {
-            //final BufferedImage b = body[i];
-            //Imtil.save(b, "c:\\t" + i + ".png");
-        //}
-        return RpgGame.createSheet("npc", "org/pandcorps/rpg/res/chr/Player.png", ImtilX.DIM, o);
+        final Panmage[] sheet = new Panmage[8];
+        final Pangine engine = Pangine.getEngine();
+        for (int i = 0; i < 8; i++) {
+            sheet[i] = engine.createImage(Pantil.vmid(), o, null, null, body[i]);
+        }
+        return sheet;
     }
     
     @Override
