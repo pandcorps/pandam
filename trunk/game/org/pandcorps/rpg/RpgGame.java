@@ -36,7 +36,6 @@ import org.pandcorps.pandax.tile.Tile.TileMapImage;
 
 public class RpgGame extends BaseGame {
     /*
-    Character sprite generator.
     Load/unload neighboring TileMaps for large areas as needed
     (and maybe offset actor positions so current TileMap always starts at origin).
     Shaded counter seems to have a pixel that's too dark (try removing floor bg behind it).
