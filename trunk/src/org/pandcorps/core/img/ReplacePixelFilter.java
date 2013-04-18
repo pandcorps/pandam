@@ -28,7 +28,7 @@ import java.util.Map.Entry;
 public final class ReplacePixelFilter extends PixelFilter {
 	private final HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
 	
-	private ReplacePixelFilter() {
+	public ReplacePixelFilter() {
 	}
 	
 	public ReplacePixelFilter(final Map<Pancolor, Pancolor> map) {

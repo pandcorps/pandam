@@ -45,8 +45,16 @@ public class Pancolor {
         this(rgb[0], rgb[1], rgb[2], rgb.length > 3 ? rgb[3] : MAX_VALUE);
     }
     
+    public Pancolor(final short v) {
+        this(v, v, v);
+    }
+    
     public Pancolor(final short r, final short g, final short b) {
         this(r, g, b, MAX_VALUE);
+    }
+    
+    public Pancolor(final int r, final int g, final int b) {
+        this((short) r, (short) g, (short) b);
     }
     
     public Pancolor(final short r, final short g, final short b, final short a) {
