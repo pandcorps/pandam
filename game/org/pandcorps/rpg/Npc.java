@@ -49,23 +49,24 @@ public class Npc extends Character {
     private final static Panmage[] getSheet() {
         final BufferedImage[] body = ImtilX.loadStrip("org/pandcorps/rpg/res/chr/MBody.png");
         final BufferedImage[] face = ImtilX.loadStrip("org/pandcorps/rpg/res/chr/MFace01.png", 8, false);
-        final BufferedImage[] eyes = ImtilX.loadStrip("org/pandcorps/rpg/res/chr/Eyes01.png", 8, false);
+        final BufferedImage[] eyes = ImtilX.loadStrip("org/pandcorps/rpg/res/chr/Eyes00.png", 8, false);
         final PixelFilter skinFilter = getFilter(new Pancolor(180, 130, 90), new Pancolor(200, 150, 110), new Pancolor(220, 170, 130), new Pancolor(240, 190, 150));
+        final BufferedImage eyeSide = eyes.length < 2 ? eyes[0] : eyes[1];
         for (int i = 0; i < 5; i += 4) {
             Imtil.copy(face[0], body[i], 0, 0, 8, 8, 4, 1, Imtil.COPY_FOREGROUND);
             body[i] = Imtil.filter(body[i], skinFilter);
             Imtil.copy(eyes[0], body[i], 0, 0, 8, 4, 4, 5, Imtil.COPY_FOREGROUND);
             Imtil.copy(face[1], body[i + 1], 0, 0, 8, 8, 4, 1, Imtil.COPY_FOREGROUND);
             body[i + 1] = Imtil.filter(body[i + 1], skinFilter);
-            Imtil.copy(eyes[1], body[i + 1], 0, 0, 8, 4, 5, 5, Imtil.COPY_FOREGROUND);
+            Imtil.copy(eyeSide, body[i + 1], 0, 0, 8, 4, 5, 5, Imtil.COPY_FOREGROUND);
             body[i + 2] = Imtil.filter(body[i + 2], skinFilter);
         }
         Imtil.mirror(face[1]);
-        Imtil.mirror(eyes[1]);
+        Imtil.mirror(eyeSide);
         for (int i = 0; i < 5; i += 4) {
             Imtil.copy(face[1], body[i + 3], 0, 0, 8, 8, 4, 1, Imtil.COPY_FOREGROUND);
             body[i + 3] = Imtil.filter(body[i + 3], skinFilter);
-            Imtil.copy(eyes[1], body[i + 3], 0, 0, 8, 4, 3, 5, Imtil.COPY_FOREGROUND);
+            Imtil.copy(eyeSide, body[i + 3], 0, 0, 8, 4, 3, 5, Imtil.COPY_FOREGROUND);
         }
         final Panmage[] sheet = new Panmage[8];
         final Pangine engine = Pangine.getEngine();
