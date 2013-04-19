@@ -26,7 +26,6 @@ import java.awt.image.*;
 
 import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
-import org.pandcorps.core.img.ReplacePixelFilter;
 import org.pandcorps.game.actor.*;
 import org.pandcorps.game.actor.Guy4Controller.NpcController;
 import org.pandcorps.game.core.*;
