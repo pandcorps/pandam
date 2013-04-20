@@ -81,6 +81,18 @@ public class TileMap extends Panctor {
     //    tile.map = this;
     //}
     
+    public final Tile getContainer(final Panctor act) {
+    	return getContainer(act.getPosition());
+    }
+    
+    public final Tile getContainer(final Panple pos) {
+    	return getContainer(pos.getX(), pos.getY());
+    }
+    
+    public final Tile getContainer(final float x, final float y) {
+    	return getTile((int) x / tw, (int) y / th);
+    }
+    
     public final void fillBackground(final Panmage background) {
     	fillBackgroundO(background);
     }
