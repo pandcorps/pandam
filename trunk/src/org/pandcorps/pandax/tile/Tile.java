@@ -97,6 +97,10 @@ public final class Tile {
         this.solid = solid;
     }
     
+    public final boolean isSolid() {
+    	return solid;
+    }
+    
     public static class TileMapImage {
     	/*package*/ final float ix; // These could probably be int
     	/*package*/ final float iy;
