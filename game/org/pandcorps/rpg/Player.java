@@ -24,14 +24,13 @@ package org.pandcorps.rpg;
 
 import org.pandcorps.game.BaseGame;
 import org.pandcorps.game.actor.*;
-import org.pandcorps.game.core.*;
 import org.pandcorps.pandax.tile.TileOccupant;
 
 public class Player extends Character {
     /*package*/ boolean active = true;
     
-	protected Player(final String id) {
-		super(id, RpgGame.createSheet("player", "org/pandcorps/rpg/res/chr/Player.png", ImtilX.DIM, o));
+	protected Player(final String id, final CharacterDefinition def) {
+		super(id, def);
 	}
 
 	@Override

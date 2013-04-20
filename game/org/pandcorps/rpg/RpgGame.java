@@ -24,7 +24,7 @@ package org.pandcorps.rpg;
 
 import java.util.IdentityHashMap;
 
-import org.pandcorps.core.img.Pancolor;
+import org.pandcorps.core.img.*;
 import org.pandcorps.game.*;
 import org.pandcorps.game.actor.*;
 import org.pandcorps.game.core.*;
@@ -33,6 +33,7 @@ import org.pandcorps.pandax.text.*;
 import org.pandcorps.pandax.text.Fonts.FontRequest;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.tile.Tile.TileMapImage;
+import org.pandcorps.rpg.Character.*;
 
 public class RpgGame extends BaseGame {
     /*
@@ -195,7 +196,13 @@ public class RpgGame extends BaseGame {
 		new Container("BARREL", containers[2], null).init(tm, 6, 4);
 		new Container("CHEST", containers[0], containers[1]).init(tm, 8, 4);
 		if (player == null || player.getPosition().getX() < 100) {
-			new Npc("act.npc", Guy4Controller.RANDOM).init(tm, 10, 5);
+			final CharacterLayer face = new CharacterLayer(0, 180, 130, 90, 200, 150, 110, 220, 170, 130, 240, 190, 150);
+			final CharacterLayer hair = new CharacterLayer(0, 128, 64, 0, 160, 80, 0, 192, 96, 0, 224, 112, 0);
+			final CharacterLayer legs = new CharacterLayer(0, 128, 0, 0, 160, 0, 0, 192, 0, 0, 224, 0, 0);
+			final CharacterLayer feet = new CharacterLayer(0, 96, 24, 0, 128, 32, 0, 160, 40, 0, 192, 48, 0);
+			final CharacterLayer torso = new CharacterLayer(1, 32, 32, 24, 48, 48, 40, 64, 64, 56, 80, 80, 72);
+			final CharacterDefinition def = new CharacterDefinition(face, 0, hair, legs, feet, torso);
+			new Npc("act.npc", def, Guy4Controller.RANDOM).init(tm, 10, 5);
 		}
 	}
 	
@@ -251,7 +258,13 @@ public class RpgGame extends BaseGame {
 	
 	private final static void createPlayer(final int i, final int j) {
 		if (player == null) {
-			player = new Player("act.player");
+			final CharacterLayer face = new CharacterLayer(1, 200, 152, 112, 216, 168, 128, 232, 184, 144, 248, 200, 160);
+			final CharacterLayer hair = new CharacterLayer(1, 0, 0, 128, 0, 0, 160, 00, 0, 192, 0, 0, 224);
+			final CharacterLayer legs = new CharacterLayer(0, 0, 128, 128, 0, 160, 160, 0, 192, 192, 0, 224, 224);
+			final CharacterLayer feet = new CharacterLayer(0, 72, 72, 72, 104, 104, 104, 136, 136, 136, 168, 168, 168);
+			final CharacterLayer torso = new CharacterLayer(0, 128, 128, 128, 160, 160, 160, 192, 192, 192, 224, 224, 224);
+			final CharacterDefinition def = new CharacterDefinition(face, 4, hair, legs, feet, torso);
+			player = new Player("act.player", def);
 		}
 		player.active = true;
 		player.init(tm, i, j);
