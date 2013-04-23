@@ -25,6 +25,7 @@ package org.pandcorps.platform;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.action.*;
+import org.pandcorps.pandam.impl.FinPanple;
 import org.pandcorps.pandax.tile.*;
 
 public class Player extends Panctor implements StepListener {
@@ -37,7 +38,7 @@ public class Player extends Panctor implements StepListener {
 	
 	public Player() {
 		final Pangine engine = Pangine.getEngine();
-		setView(engine.createImage("guy", "org/pandcorps/demo/res/img/SquareGuy.gif"));
+		setView(engine.createImage("guy", new FinPanple(8, 0, 0), null, null, "org/pandcorps/demo/res/img/SquareGuy.gif"));
 		final Panteraction interaction = engine.getInteraction();
 		interaction.register(this, interaction.KEY_SPACE, new ActionStartListener() {
 			@Override public final void onActionStart(final ActionStartEvent event) { jump(); }});
@@ -108,7 +109,11 @@ public class Player extends Panctor implements StepListener {
 	
 	private boolean isSolid(final int off) {
 		final Panple pos = getPosition();
-		final Tile tile = PlatformGame.tm.getContainer(pos.getX(), pos.getY() + off);
+		final float y = pos.getY() + off;
+		return isSolid(PlatformGame.tm.getContainer(pos.getX() - 8, y)) || isSolid(PlatformGame.tm.getContainer(pos.getX() + 7, y));
+	}
+	
+	private boolean isSolid(final Tile tile) {
 		return tile != null && tile.isSolid();
 	}
 }

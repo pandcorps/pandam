@@ -48,6 +48,7 @@ public class PlatformGame extends BaseGame {
 		for (int i = 0; i < 16; i++) {
 			tm.getTile(i, 0).setBackground(imgMap[5][0], true);
 		}
+		tm.getTile(5, 3).setBackground(imgMap[5][0], true);
 		final Player player = new Player();
 		room.addActor(player);
 		player.getPosition().set(16, 16, 16);
