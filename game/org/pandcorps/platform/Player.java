@@ -29,8 +29,10 @@ import org.pandcorps.pandam.impl.FinPanple;
 import org.pandcorps.pandax.tile.*;
 
 public class Player extends Panctor implements StepListener {
+    private final static int H = 16;
 	private final static int OFF_GROUNDED = -1;
-	private final static int OFF_BUTTING = 17;
+	private final static int OFF_BUTTING = H + 1;
+	private final static int OFF_X = 7;
 	private final static int VEL_WALK = 3;
 	
 	protected static int g = -1;
@@ -63,11 +65,25 @@ public class Player extends Panctor implements StepListener {
 	}
 	
 	private final void right() {
-		getPosition().addX(VEL_WALK);
+	    setMirror(false);
+		addX(VEL_WALK);
 	}
 	
 	private final void left() {
-		getPosition().addX(-VEL_WALK);
+	    setMirror(true);
+		addX(-VEL_WALK);
+	}
+	
+	private final void addX(final int v) {
+	    final int mult = v > 0 ? 1 : -1;
+	    final int n = v * mult;
+	    final int offWall = (OFF_X + 1) * mult;
+	    for (int i = 0; i < n; i++) {
+	        if (isWall(offWall)) {
+	            break;
+	        }
+	        getPosition().addX(mult);
+	    }
 	}
 
 	@Override
@@ -109,9 +125,22 @@ public class Player extends Panctor implements StepListener {
 	
 	private boolean isSolid(final int off) {
 		final Panple pos = getPosition();
-		final float y = pos.getY() + off;
-		return isSolid(PlatformGame.tm.getContainer(pos.getX() - 8, y)) || isSolid(PlatformGame.tm.getContainer(pos.getX() + 7, y));
+		final float x = pos.getX(), y = pos.getY() + off, x1, x2;
+		if (isMirror()) {
+		    x1 = x - OFF_X;
+            x2 = x + OFF_X + 1;
+		} else {
+		    x1 = x - OFF_X - 1;
+		    x2 = x + OFF_X;
+		}
+		return isSolid(PlatformGame.tm.getContainer(x1, y)) || isSolid(PlatformGame.tm.getContainer(x2, y));
 	}
+	
+	private boolean isWall(final int off) {
+        final Panple pos = getPosition();
+        final float x = pos.getX() + off, y = pos.getY();
+        return isSolid(PlatformGame.tm.getContainer(x, y)) || isSolid(PlatformGame.tm.getContainer(x, y + H - 1));
+    }
 	
 	private boolean isSolid(final Tile tile) {
 		return tile != null && tile.isSolid();
