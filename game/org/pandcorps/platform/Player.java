@@ -88,9 +88,6 @@ public class Player extends Panctor implements StepListener {
 
 	@Override
 	public final void onStep(final StepEvent event) {
-		//if (Pangine.getEngine().getClock() == 10) {
-		//	jump();
-		//}
 		final Panple pos = getPosition();
 		final int offSol, mult, n;
 		if (v > 0) {
@@ -103,14 +100,12 @@ public class Player extends Panctor implements StepListener {
 		n = v * mult;
 		for (int i = 0; i < n; i++) {
 			if (isSolid(offSol)) {
-				//System.out.println("SOLID");
 				v = 0;
 				break;
 			}
 			pos.addY(mult);
 		}
 		if (!isGrounded()) {
-			//System.out.println("JUMPING");
 			v += g;
 		}
 	}
