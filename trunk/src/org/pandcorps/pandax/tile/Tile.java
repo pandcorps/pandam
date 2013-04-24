@@ -36,6 +36,8 @@ public final class Tile {
     
     /*package*/ final FinPanple position;
     
+    // bg/fg/solid behavior could likely be moved into a TileDefinition; many Tiles would likely share the same definition
+    
     // Panimation?
     /*package*/ Object background = null;
     
@@ -44,7 +46,7 @@ public final class Tile {
     ///*package*/ Panctor occupant = null;
     /*package*/ TileOccupant occupant = null;
     
-    /*package*/ boolean solid = false;
+    /*package*/ byte behavior = 0;
     
     //int brightness
     
@@ -92,6 +94,11 @@ public final class Tile {
         setSolid(solid);
     }
     
+    public final void setForeground(final TileMapImage foreground, final byte behavior) {
+        setForeground(foreground);
+        setBehavior(behavior);
+    }
+    
     //TileOccupant has setTile
     //public final void setOccupant(final TileOccupant occupant) {
     //    if (this.occupant != null) {
@@ -99,11 +106,19 @@ public final class Tile {
     //}
     
     public final void setSolid(final boolean solid) {
-        this.solid = solid;
+        behavior = (byte) (solid ? 1 : 0);
     }
     
     public final boolean isSolid() {
-    	return solid;
+    	return behavior == 1;
+    }
+    
+    public final void setBehavior(final byte behavior) {
+        this.behavior = behavior;
+    }
+    
+    public final byte getBehavior() {
+        return behavior;
     }
     
     public static class TileMapImage {
