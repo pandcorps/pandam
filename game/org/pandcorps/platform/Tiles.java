@@ -22,44 +22,10 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.platform;
 
-import org.pandcorps.game.*;
-import org.pandcorps.game.core.*;
-import org.pandcorps.pandam.*;
 import org.pandcorps.pandax.tile.*;
-import org.pandcorps.pandax.tile.Tile.TileMapImage;
 
-public class PlatformGame extends BaseGame {
-	private static Panroom room = null;
-	protected static TileMap tm = null;
-	
-	@Override
-	protected final void init(final Panroom room) throws Exception {
-		Pangine.getEngine().setTitle("Platformer");
-		PlatformGame.room = room;
-		loadLevel();
-	}
-	
-	private final static void loadLevel() {
-		tm = new TileMap("act.tilemap", room, ImtilX.DIM, ImtilX.DIM);
-		room.addActor(tm);
-		tm.setImageMap(createImage("tiles", "org/pandcorps/rpg/res/bg/TileQuaint.png", 128));
-		final TileMapImage[][] imgMap = tm.splitImageMap();
-		tm.fillBackground(imgMap[4][2]);
-		for (int i = 0; i < 16; i++) {
-			tm.getTile(i, 0).setForeground(imgMap[5][0], true);
-		}
-		tm.getTile(5, 3).setForeground(imgMap[5][0], true);
-		tm.getTile(9, 1).setForeground(imgMap[5][0], true);
-		final Player player = new Player();
-		room.addActor(player);
-		player.getPosition().set(16, 16, 16);
-	}
-	
-	public final static void main(final String[] args) {
-        try {
-            new PlatformGame().start();
-        } catch (final Throwable e) {
-            e.printStackTrace();
-        }
+public class Tiles {
+    protected final static void bump(final Tile t) {
+        t.setForeground(null, false);
     }
 }
