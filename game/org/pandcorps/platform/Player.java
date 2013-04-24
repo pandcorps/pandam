@@ -112,6 +112,21 @@ public class Player extends Panctor implements StepListener {
 		if (!isGrounded()) {
 			v += g;
 		}
+		/*if (v <= 0) {
+		    final Tile t = PlatformGame.tm.getContainer(pos);
+		    if (t != null) {
+		        final byte b = t.getBehavior();
+		        if (b == PlatformGame.TILE_UP) {
+		            // trunc/round should match getContainer
+		            final int minHeight = (int) pos.getX() % ImtilX.DIM;
+		            final int iy = (int) pos.getY();
+		            final int curHeight = iy % ImtilX.DIM;
+		            if (curHeight < minHeight) {
+		                pos.setY((iy / ImtilX.DIM) * ImtilX.DIM + minHeight);
+		            }
+		        }
+		    }
+		}*/
 	}
 	
 	private boolean isGrounded() {
