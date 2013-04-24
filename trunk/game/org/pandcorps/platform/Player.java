@@ -99,7 +99,11 @@ public class Player extends Panctor implements StepListener {
 		}
 		n = v * mult;
 		for (int i = 0; i < n; i++) {
-			if (isSolid(offSol)) {
+		    final Tile t = getSolid(offSol);
+			if (t != null) {
+			    if (v > 0) {
+			        Tiles.bump(t);
+			    }
 				v = 0;
 				break;
 			}
@@ -119,6 +123,10 @@ public class Player extends Panctor implements StepListener {
 	}
 	
 	private boolean isSolid(final int off) {
+	    return getSolid(off) != null;
+	}
+	
+	private Tile getSolid(final int off) {
 		final Panple pos = getPosition();
 		final float x = pos.getX(), y = pos.getY() + off, x1, x2;
 		if (isMirror()) {
@@ -128,7 +136,18 @@ public class Player extends Panctor implements StepListener {
 		    x1 = x - OFF_X - 1;
 		    x2 = x + OFF_X;
 		}
-		return isSolid(PlatformGame.tm.getContainer(x1, y)) || isSolid(PlatformGame.tm.getContainer(x2, y));
+		Tile t1 = PlatformGame.tm.getContainer(x1, y), t2 = PlatformGame.tm.getContainer(x2, y);
+		if (t2 == PlatformGame.tm.getContainer(x, y)) {
+		    final Tile t = t1;
+		    t1 = t2;
+		    t2 = t;
+		}
+		if (isSolid(t1)) {
+		    return t1;
+		} else if (isSolid(t2)) {
+		    return t2;
+		}
+		return null;
 	}
 	
 	private boolean isWall(final int off) {
