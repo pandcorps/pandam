@@ -29,6 +29,7 @@ import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.tile.Tile.TileMapImage;
 
 public class PlatformGame extends BaseGame {
+    //protected final static byte TILE_UP = 2;
 	private static Panroom room = null;
 	protected static TileMap tm = null;
 	
@@ -49,10 +50,12 @@ public class PlatformGame extends BaseGame {
 			tm.getTile(i, 0).setForeground(imgMap[5][0], true);
 		}
 		tm.getTile(5, 3).setForeground(imgMap[5][0], true);
+		//tm.getTile(8, 1).setForeground(imgMap[7][4], TILE_UP);
 		tm.getTile(9, 1).setForeground(imgMap[5][0], true);
+		//tm.getTile(10, 1).setForeground(imgMap[7][3], TILE_DOWN);
 		final Player player = new Player();
 		room.addActor(player);
-		player.getPosition().set(16, 16, 16);
+		player.getPosition().set(16, 16, tm.getForegroundDepth() + 1);
 	}
 	
 	public final static void main(final String[] args) {
