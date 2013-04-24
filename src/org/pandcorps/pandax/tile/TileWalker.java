@@ -42,7 +42,7 @@ public class TileWalker extends TileOccupant implements StepListener {
     
     /*package*/ final Tile getDestination(final Direction dir) {
         final Tile dst = tile.getNeighbor(dir);
-        return (dst == null || dst.solid || dst.occupant != null) ? null : dst;
+        return (dst == null || dst.isSolid() || dst.occupant != null) ? null : dst;
     }
     
     // Would it ever be useful to call this
