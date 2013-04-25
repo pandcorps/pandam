@@ -29,9 +29,12 @@ import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.tile.Tile.TileMapImage;
 
 public class PlatformGame extends BaseGame {
+	protected final static byte TILE_BREAK = 2;
+	protected final static byte TILE_BUMP = 3;
     //protected final static byte TILE_UP = 2;
 	private static Panroom room = null;
 	protected static TileMap tm = null;
+	protected static TileMapImage[][] imgMap = null;
 	
 	@Override
 	protected final void init(final Panroom room) throws Exception {
@@ -43,15 +46,17 @@ public class PlatformGame extends BaseGame {
 	private final static void loadLevel() {
 		tm = new TileMap("act.tilemap", room, ImtilX.DIM, ImtilX.DIM);
 		room.addActor(tm);
-		tm.setImageMap(createImage("tiles", "org/pandcorps/rpg/res/bg/TileQuaint.png", 128));
-		final TileMapImage[][] imgMap = tm.splitImageMap();
-		tm.fillBackground(imgMap[4][2]);
+		tm.setImageMap(createImage("tiles", "org/pandcorps/platform/res/bg/Tiles.png", 128));
+		imgMap = tm.splitImageMap();
+		tm.fillBackground(imgMap[0][3]);
 		for (int i = 0; i < 16; i++) {
-			tm.getTile(i, 0).setForeground(imgMap[5][0], true);
+			tm.getTile(i, 0).setForeground(imgMap[1][1], true);
 		}
-		tm.getTile(5, 3).setForeground(imgMap[5][0], true);
+		tm.getTile(3, 3).setForeground(imgMap[0][2], TILE_BREAK);
+		tm.getTile(4, 3).setForeground(imgMap[0][0], TILE_BUMP);
+		tm.getTile(5, 3).setForeground(imgMap[0][1], true);
 		//tm.getTile(8, 1).setForeground(imgMap[7][4], TILE_UP);
-		tm.getTile(9, 1).setForeground(imgMap[5][0], true);
+		tm.getTile(9, 1).setForeground(imgMap[0][1], true);
 		//tm.getTile(10, 1).setForeground(imgMap[7][3], TILE_DOWN);
 		final Player player = new Player();
 		room.addActor(player);

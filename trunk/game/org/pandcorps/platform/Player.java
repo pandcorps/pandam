@@ -172,6 +172,13 @@ public class Player extends Panctor implements StepListener {
     }
 	
 	private boolean isSolid(final Tile tile) {
-		return tile != null && tile.isSolid();
+		if (tile == null) {
+			return false;
+		}
+		if (tile.isSolid()) {
+			return true;
+		}
+		final byte b = tile.getBehavior();
+		return b == PlatformGame.TILE_BREAK || b == PlatformGame.TILE_BUMP;
 	}
 }
