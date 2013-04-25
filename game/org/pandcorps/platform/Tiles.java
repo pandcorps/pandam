@@ -26,6 +26,11 @@ import org.pandcorps.pandax.tile.*;
 
 public class Tiles {
     protected final static void bump(final Tile t) {
-        t.setForeground(null, false);
+    	final byte b = t.getBehavior();
+    	if (b == PlatformGame.TILE_BREAK) {
+    		t.setForeground(null, false);
+    	} else if (b == PlatformGame.TILE_BUMP) {
+    		t.setForeground(PlatformGame.imgMap[0][1]);
+    	}
     }
 }
