@@ -22,15 +22,38 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.platform;
 
+import org.pandcorps.core.Mathtil;
+import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.impl.*;
+import org.pandcorps.pandax.*;
 import org.pandcorps.pandax.tile.*;
 
 public class Tiles {
+    private final static FinPanple g = new FinPanple(0, Player.g, 0);
+    
     protected final static void bump(final Tile t) {
     	final byte b = t.getBehavior();
     	if (b == PlatformGame.TILE_BREAK) {
     		t.setForeground(null, false);
+    		final Panple pos = t.getPosition();
+    		final float x = pos.getX(), y = pos.getY();
+    		new Shatter(x, y, -2, 2);
+    		new Shatter(x + 8, y, 2, 2);
+    		new Shatter(x, y + 8, -1, 3);
+    		new Shatter(x + 8, y + 8, 1, 3);
     	} else if (b == PlatformGame.TILE_BUMP) {
     		t.setForeground(PlatformGame.imgMap[0][1]);
     	}
+    }
+    
+    private final static class Shatter extends Pandy {
+        private Shatter(final float x, final float y, final int xm, final int ym) {
+            super(g);
+            setView(PlatformGame.block8);
+            PlatformGame.setPosition(this, x, y, PlatformGame.DEPTH_SHATTER);
+            getVelocity().set(xm * Mathtil.randf(0.7f, 1.3f), ym * Mathtil.randf(0.7f, 1.3f));
+            PlatformGame.room.addActor(this);
+        }
+        //TODO OOB
     }
 }
