@@ -32,15 +32,27 @@ public class PlatformGame extends BaseGame {
 	protected final static byte TILE_BREAK = 2;
 	protected final static byte TILE_BUMP = 3;
     //protected final static byte TILE_UP = 2;
-	private static Panroom room = null;
+	
+	//protected final static int DEPTH_POWERUP = 0;
+	//protected final static int DEPTH_ENEMY = 1;
+	protected final static int DEPTH_PLAYER = 2;
+	protected final static int DEPTH_SHATTER = 3;
+	
+	protected static Panroom room = null;
 	protected static TileMap tm = null;
 	protected static TileMapImage[][] imgMap = null;
+	protected static Panmage block8 = null;
 	
 	@Override
 	protected final void init(final Panroom room) throws Exception {
 		Pangine.getEngine().setTitle("Platformer");
 		PlatformGame.room = room;
+		loadConstants();
 		loadLevel();
+	}
+	
+	private final static void loadConstants() {
+	    block8 = createImage("block8", "org/pandcorps/platform/res/misc/Block8.png", 8);
 	}
 	
 	private final static void loadLevel() {
@@ -52,6 +64,7 @@ public class PlatformGame extends BaseGame {
 		for (int i = 0; i < 16; i++) {
 			tm.getTile(i, 0).setForeground(imgMap[1][1], true);
 		}
+		tm.getTile(2, 3).setForeground(imgMap[0][2], TILE_BREAK);
 		tm.getTile(3, 3).setForeground(imgMap[0][2], TILE_BREAK);
 		tm.getTile(4, 3).setForeground(imgMap[0][0], TILE_BUMP);
 		tm.getTile(5, 3).setForeground(imgMap[0][1], true);
@@ -60,7 +73,11 @@ public class PlatformGame extends BaseGame {
 		//tm.getTile(10, 1).setForeground(imgMap[7][3], TILE_DOWN);
 		final Player player = new Player();
 		room.addActor(player);
-		player.getPosition().set(16, 16, tm.getForegroundDepth() + 1);
+		setPosition(player, 16, 16, DEPTH_PLAYER);
+	}
+	
+	protected static void setPosition(final Panctor act, final float x, final float y, final float depth) {
+	    act.getPosition().set(x, y, tm.getForegroundDepth() + depth);
 	}
 	
 	public final static void main(final String[] args) {
