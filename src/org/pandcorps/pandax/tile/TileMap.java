@@ -168,7 +168,6 @@ public class TileMap extends Panctor {
 
     @Override
     protected void renderView(final Panderer renderer) {
-        //System.out.println(new java.util.Date());
         final Panple pos = getPosition();
         final float x = pos.getX();
         final float y = pos.getY();
@@ -190,7 +189,7 @@ public class TileMap extends Panctor {
         }
     }
     
-    private final void render(final Panderer renderer, final Panlayer layer, final Object img, final float xitw, final float yjth, final float z) {
+    protected final void render(final Panderer renderer, final Panlayer layer, final Object img, final float xitw, final float yjth, final float z) {
     	if (img == null) {
     		return;
     	}
