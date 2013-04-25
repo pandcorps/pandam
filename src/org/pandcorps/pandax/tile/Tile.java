@@ -58,6 +58,10 @@ public final class Tile {
         position = new FinPanple(mapPos.getX() + i * map.tw, mapPos.getY() + j * map.th, mapPos.getZ());
     }
     
+    public final Panple getPosition() {
+        return position;
+    }
+    
     /*package*/ final Tile getNeighbor(final Direction dir) {
         final int ni = i + (dir == Direction.East ? 1 : dir == Direction.West ? -1 : 0);
         final int nj = j + (dir == Direction.North ? 1 : dir == Direction.South ? -1 : 0);
