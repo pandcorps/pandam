@@ -22,8 +22,10 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.platform;
 
-import org.pandcorps.core.Mathtil;
+import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.event.*;
+import org.pandcorps.pandam.event.boundary.*;
 import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.*;
 import org.pandcorps.pandax.tile.*;
@@ -42,11 +44,12 @@ public class Tiles {
     		new Shatter(x, y + 8, -1, 3);
     		new Shatter(x + 8, y + 8, 1, 3);
     	} else if (b == PlatformGame.TILE_BUMP) {
+    	    new Bump(t); // Copy image before changing
     		t.setForeground(PlatformGame.imgMap[0][1]);
     	}
     }
     
-    private final static class Shatter extends Pandy {
+    private final static class Shatter extends Pandy implements AllOobListener {
         private Shatter(final float x, final float y, final int xm, final int ym) {
             super(g);
             setView(PlatformGame.block8);
@@ -54,6 +57,33 @@ public class Tiles {
             getVelocity().set(xm * Mathtil.randf(0.7f, 1.3f), ym * Mathtil.randf(0.7f, 1.3f));
             PlatformGame.room.addActor(this);
         }
-        //TODO OOB
+
+        @Override
+        public final void onAllOob(final AllOobEvent event) {
+            destroy();
+        }
+    }
+    
+    private final static class Bump extends TileActor implements StepListener {
+        private int age = 0;
+        private Bump(final Tile t) {
+            setViewFromForeground(t);
+            final Panple pos = t.getPosition();
+            PlatformGame.setPosition(this, pos.getX(), pos.getY() + 2, PlatformGame.DEPTH_SHATTER);
+            PlatformGame.room.addActor(this);
+        }
+
+        @Override
+        public final void onStep(final StepEvent event) {
+            if (age < 2) {
+                getPosition().addY(2);
+            } else if (age < 5) {
+                getPosition().addY(-1);
+            } else {
+                destroy();
+                return;
+            }
+            age++;
+        }
     }
 }

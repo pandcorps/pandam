@@ -67,7 +67,8 @@ public class PlatformGame extends BaseGame {
 		tm.getTile(2, 3).setForeground(imgMap[0][2], TILE_BREAK);
 		tm.getTile(3, 3).setForeground(imgMap[0][2], TILE_BREAK);
 		tm.getTile(4, 3).setForeground(imgMap[0][0], TILE_BUMP);
-		tm.getTile(5, 3).setForeground(imgMap[0][1], true);
+		tm.getTile(5, 3).setForeground(imgMap[0][0], TILE_BUMP);
+		tm.getTile(6, 3).setForeground(imgMap[0][1], true);
 		//tm.getTile(8, 1).setForeground(imgMap[7][4], TILE_UP);
 		tm.getTile(9, 1).setForeground(imgMap[0][1], true);
 		//tm.getTile(10, 1).setForeground(imgMap[7][3], TILE_DOWN);
