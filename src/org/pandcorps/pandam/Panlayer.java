@@ -55,6 +55,7 @@ public class Panlayer extends BasePantity {
     private final Pancolor blendColor = new Pancolor(Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, Pancolor.MIN_VALUE);
     private Panlayer beneath = null;
     private Panlayer above = null;
+    /*package*/ Panlayer master = null; // Camera for this layer will be derived from master layer for parallax scrolling
     private boolean clearDepthEnabled = true;
     private boolean visible = true;
     private boolean active = true;
@@ -307,6 +308,7 @@ public class Panlayer extends BasePantity {
     
     public void destroy() {
         destroyAllActors();
+        master = null;
         detach();
         Pangine.getEngine().unregister(this);
     }
@@ -352,5 +354,14 @@ public class Panlayer extends BasePantity {
             curr = next;
         }
         return curr;
+    }
+    
+    public final void setMaster(final Panlayer master) {
+    	this.master = master;
+    	tracked = null;
+    }
+    
+    public final Panlayer getMaster() {
+    	return master;
     }
 }

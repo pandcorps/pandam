@@ -291,21 +291,43 @@ public final class LwjglPangine extends Pangine {
 	private final static int near = -1000, far = 1000;
 	
 	private final float[] cr = new float[2];
+	
+	private final static class Camera {
+		final float xi, xa, yi, ya, zi, za;
+		
+		private Camera(final float xi, final float xa, final float yi, final float ya, final float zi, final float za) {
+			this.xi = xi;
+			this.xa = xa;
+			this.yi = yi;
+			this.ya = ya;
+			this.zi = zi;
+			this.za = za;
+		}
+	}
+	
+	private final IdentityHashMap<Panlayer, Camera> cams = new IdentityHashMap<Panlayer, Camera>();
 
-	private final void camera(final Panlayer layer) {
-//if (layer.getClass() != Panroom.class) return;
-		GL11.glMatrixMode(GL11.GL_PROJECTION); // Select The Projection Matrix
-		GL11.glLoadIdentity(); // Reset The Projection Matrix
-		//GLU.gluOrtho2D(-w / 2, w / 2, -h / 2, h / 2);
-		//GLU.gluOrtho2D(0, w, 0, h);
-		final Panctor tracked = layer.getTracked();
+	private final void initCamera(final Panlayer layer) {
+		if (cams.containsKey(layer)) {
+			return;
+		}
 		final float zoomMag = getZoom();
 		final float wz = w / zoomMag, hz = h / zoomMag;
-		if (tracked == null) {
-			//cam(layer, 0, w, 0, h, near, far);
-		    cam(layer, 0, wz, 0, hz, near, far);
+		final Panlayer master = layer.getMaster();
+		if (master != null) {
+			initCamera(master);
+			final Camera mcam = cams.get(master);
+			final Panple lsize = layer.getSize(), msize = master.getSize();
+			final float xc1 = getCamMin(mcam.xi, lsize.getX(), msize.getX(), wz);
+			final float yc1 = getCamMin(mcam.yi, lsize.getY(), msize.getY(), hz);
+			cams.put(layer, new Camera(xc1, xc1 + wz, yc1, yc1 + hz, near, far));
+			return;
 		}
-		else {
+		final Panctor tracked = layer.getTracked();
+		if (tracked == null) {
+			//cams.put(layer, new Camera(0, w, 0, h, near, far));
+		    cams.put(layer, new Camera(0, wz, 0, hz, near, far));
+		} else {
 			final Panple pos = tracked.getPosition();
 			final int x = Math.round(pos.getX());
 			final int y = Math.round(pos.getY());
@@ -319,13 +341,24 @@ public final class LwjglPangine extends Pangine {
 			final float xc1 = cr[0], xc2 = cr[1];
 			checkCamRange(y, hz, lsize.getY());
 			final float yc1 = cr[0], yc2 = cr[1];
-			cam(layer, xc1, xc2, yc1, yc2, near, far);
+			cams.put(layer, new Camera(xc1, xc2, yc1, yc2, near, far));
 		}
+	}
+	
+	private final void camera(final Panlayer layer) {
+//if (layer.getClass() != Panroom.class) return;
+		GL11.glMatrixMode(GL11.GL_PROJECTION); // Select The Projection Matrix
+		GL11.glLoadIdentity(); // Reset The Projection Matrix
+		//GLU.gluOrtho2D(-w / 2, w / 2, -h / 2, h / 2);
+		//GLU.gluOrtho2D(0, w, 0, h);
+		cam(layer);
 		//GL11.glOrtho(0, w, 0, h, -maxDimension, maxDimension);
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);		
 	}
 	
-	private void cam(final Panlayer layer, final float xi, final float xa, final float yi, final float ya, final float zi, final float za) {
+	private void cam(final Panlayer layer) {
+		final Camera c = cams.get(layer);
+		final float xi = c.xi, xa = c.xa, yi = c.yi, ya = c.ya, zi = c.zi, za = c.za;
 		GL11.glOrtho(xi, xa, yi, ya, zi, za);
 		getRawViewMinimum(layer).set(xi, yi, zi);
 		getRawViewMaximum(layer).set(xa, ya, za);
@@ -347,10 +380,18 @@ public final class LwjglPangine extends Pangine {
         cr[0] = pc1;
         cr[1] = pc2;
 	}
+	
+	private final float getCamMin(final float i, final float lp, final float mp, final float sz) {
+		return lp == mp ? i : (i * (lp - sz) / (mp - sz));
+	}
 
 	private final void draw() {
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
 		final Panroom room = Pangame.getGame().getCurrentRoom();
+		cams.clear();
+		for (Panlayer layer = room.getBase(); layer != null; layer = layer.getAbove()) {
+			initCamera(layer);
+		}
 		for (Panlayer layer = room.getBase(); layer != null; layer = layer.getAbove()) {
 		    draw(layer);
 		}

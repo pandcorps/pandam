@@ -22,9 +22,11 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.platform;
 
+import org.pandcorps.core.Pantil;
 import org.pandcorps.game.*;
 import org.pandcorps.game.core.*;
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.impl.FinPanple;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.tile.Tile.TileMapImage;
 
@@ -48,7 +50,14 @@ public class PlatformGame extends BaseGame {
 		Pangine.getEngine().setTitle("Platformer");
 		PlatformGame.room = room;
 		loadConstants();
-		loadLevel();
+		Panscreen.set(new LogoScreen(PlatformScreen.class));
+	}
+	
+	protected final static class PlatformScreen extends Panscreen {
+		@Override
+        protected final void load() throws Exception {
+			loadLevel();
+		}
 	}
 	
 	private final static void loadConstants() {
@@ -56,12 +65,26 @@ public class PlatformGame extends BaseGame {
 	}
 	
 	private final static void loadLevel() {
+		final Pangine engine = Pangine.getEngine();
+		room.destroy();
+		room = engine.createRoom(Pantil.vmid(), new FinPanple(512, 192, 0));
+		Pangame.getGame().setCurrentRoom(room);
 		tm = new TileMap("act.tilemap", room, ImtilX.DIM, ImtilX.DIM);
 		room.addActor(tm);
-		tm.setImageMap(createImage("tiles", "org/pandcorps/platform/res/bg/Tiles.png", 128));
+		final Panmage timg = createImage("tiles", "org/pandcorps/platform/res/bg/Tiles.png", 128);
+		tm.setImageMap(timg);
 		imgMap = tm.splitImageMap();
-		tm.fillBackground(imgMap[0][3]);
-		for (int i = 0; i < 16; i++) {
+		
+		final Panlayer bg = engine.createLayer(Pantil.vmid(), 384, 192, 1, room);
+		room.addBeneath(bg);
+		bg.setMaster(room);
+		final TileMap bgtm = new TileMap("act.bgmap", bg, ImtilX.DIM, ImtilX.DIM);
+		bg.addActor(bgtm);
+		bgtm.setImageMap(timg);
+		bgtm.fillBackground(imgMap[0][3]);
+		
+		tm.fillBackground(imgMap[7][7]); //TODO Don't require transparent image
+		for (int i = 0; i < 32; i++) {
 			tm.getTile(i, 0).setForeground(imgMap[1][1], true);
 		}
 		tm.getTile(2, 3).setForeground(imgMap[0][2], TILE_BREAK);
@@ -74,6 +97,7 @@ public class PlatformGame extends BaseGame {
 		//tm.getTile(10, 1).setForeground(imgMap[7][3], TILE_DOWN);
 		final Player player = new Player();
 		room.addActor(player);
+		Pangine.getEngine().track(player);
 		setPosition(player, 16, 16, DEPTH_PLAYER);
 	}
 	
