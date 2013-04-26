@@ -22,14 +22,8 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandax.tile;
 
-import org.pandcorps.core.Mathtil;
-import org.pandcorps.pandam.Panctor;
-import org.pandcorps.pandam.Panderer;
-import org.pandcorps.pandam.Panlayer;
-import org.pandcorps.pandam.Panmage;
-import org.pandcorps.pandam.Panple;
-import org.pandcorps.pandam.Panroom;
-import org.pandcorps.pandam.Pansplay;
+import org.pandcorps.core.*;
+import org.pandcorps.pandam.*;
 import org.pandcorps.pandax.tile.Tile.*;
 
 public class TileMap extends Panctor {
@@ -57,7 +51,7 @@ public class TileMap extends Panctor {
         this.th = th;
     }
     
-    public TileMap(final String id, final Panroom room, final int tw, final int th) {
+    public TileMap(final String id, final Panlayer room, final int tw, final int th) {
         this(id, (int) (room.getSize().getX() / tw), (int) (room.getSize().getY() / th), tw, th);
     }
     

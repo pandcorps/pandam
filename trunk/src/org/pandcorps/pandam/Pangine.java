@@ -730,6 +730,7 @@ public abstract class Pangine {
 
 	public final void track(final Panctor actor) {
 	    actor.layer.tracked = actor;
+	    actor.layer.master = null;
 	}
 	
 	protected Panple getRawViewMinimum(final Panlayer layer) {
@@ -773,6 +774,14 @@ public abstract class Pangine {
 	    	for (zoom = 1; zoom * base < abs; zoom *= 2);
 	    	return Math.max(1, zoom / 2);
 	    }
+	}
+	
+	public final int getEffectiveWidth() {
+		return (int) (getDisplayWidth() / getZoom());
+	}
+	
+	public final int getEffectiveHeight() {
+		return (int) (getDisplayHeight() / getZoom());
 	}
 	
 	public final long getClock() {
