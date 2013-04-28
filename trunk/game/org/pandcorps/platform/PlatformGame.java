@@ -81,8 +81,12 @@ public class PlatformGame extends BaseGame {
 		bg.setMaster(room);
 		final TileMap bgtm = new TileMap("act.bgmap", bg, ImtilX.DIM, ImtilX.DIM);
 		bg.addActor(bgtm);
-		bgtm.setImageMap(timg);
-		bgtm.fillBackground(imgMap[0][3]);
+		//bgtm.setImageMap(timg);
+		bgtm.setImageMap(createImage("bg", "org/pandcorps/platform/res/bg/Hills.png", 128));
+		final TileMapImage[][] bgMap = bgtm.splitImageMap();
+		bgtm.fillBackground(bgMap[0][3]);
+		hill(bgtm, bgMap, 3, 8, 12);
+		hill(bgtm, bgMap, 1, 5, 8);
 		
 		tm.fillBackground(imgMap[7][7]); //TODO Don't require transparent image
 		for (int i = 0; i < 32; i++) {
@@ -119,6 +123,22 @@ public class PlatformGame extends BaseGame {
 	
 	protected static void setPosition(final Panctor act, final float x, final float y, final float depth) {
 	    act.getPosition().set(x, y, tm.getForegroundDepth() + depth);
+	}
+	
+	private static void hill(final TileMap tm, final TileMapImage[][] imgMap, final int x, final int y, final int w) {
+		for (int j = 0; j < y; j++) {
+			tm.getTile(x, j).setBackground(imgMap[1][0]);
+			tm.getTile(x + w + 1, j).setBackground(imgMap[1][2]);
+		}
+		final int stop = x + w;
+		for (int i = x + 1; i <= stop; i++) {
+			tm.getTile(i, y).setBackground(imgMap[0][1]);
+			for (int j = 0; j < y; j++) {
+				tm.getTile(i, j).setBackground(imgMap[1][1]);
+			}
+		}
+		tm.getTile(x, y).setForeground(imgMap[0][0]);
+		tm.getTile(stop + 1, y).setForeground(imgMap[0][2]);
 	}
 	
 	public final static void main(final String[] args) {

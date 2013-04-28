@@ -45,7 +45,7 @@ public class Tiles {
     		new Shatter(x + 8, y + 8, 1, 3);
     	} else if (b == PlatformGame.TILE_BUMP) {
     	    new Bump(t); // Copy image before changing
-    		t.setForeground(PlatformGame.imgMap[0][1]);
+    		t.setForeground(null, true);
     	}
     }
     
@@ -65,8 +65,11 @@ public class Tiles {
     }
     
     private final static class Bump extends TileActor implements StepListener {
+    	private final Tile t;
         private int age = 0;
+        
         private Bump(final Tile t) {
+        	this.t = t;
             setViewFromForeground(t);
             final Panple pos = t.getPosition();
             PlatformGame.setPosition(this, pos.getX(), pos.getY() + 2, PlatformGame.DEPTH_SHATTER);
@@ -81,6 +84,7 @@ public class Tiles {
                 getPosition().addY(-1);
             } else {
                 destroy();
+                t.setForeground(PlatformGame.imgMap[0][1]);
                 return;
             }
             age++;
