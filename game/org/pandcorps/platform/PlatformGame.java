@@ -33,7 +33,8 @@ import org.pandcorps.pandax.tile.Tile.TileMapImage;
 public class PlatformGame extends BaseGame {
 	protected final static byte TILE_BREAK = 2;
 	protected final static byte TILE_BUMP = 3;
-    //protected final static byte TILE_UP = 2;
+	protected final static byte TILE_FLOOR = 4;
+    //protected final static byte TILE_UPSLOPE = 2;
 	
 	//protected final static int DEPTH_POWERUP = 0;
 	//protected final static int DEPTH_ENEMY = 1;
@@ -87,6 +88,21 @@ public class PlatformGame extends BaseGame {
 		for (int i = 0; i < 32; i++) {
 			tm.getTile(i, 0).setForeground(imgMap[1][1], true);
 		}
+		tm.getTile(12, 0).setForeground(imgMap[3][0], true);
+		tm.getTile(12, 1).setForeground(imgMap[2][0], true);
+		tm.getTile(12, 2).setForeground(imgMap[1][0], true);
+		tm.getTile(13, 2).setForeground(imgMap[1][1], true);
+		tm.getTile(13, 1).setForeground(imgMap[2][1], true);
+		tm.getTile(13, 0).setForeground(imgMap[2][1], true);
+		tm.getTile(14, 2).setForeground(imgMap[1][2], true);
+		tm.getTile(14, 1).setForeground(imgMap[2][2], true);
+		tm.getTile(14, 0).setForeground(imgMap[3][2], true);
+		tm.getTile(18, 1).setForeground(imgMap[2][3], false);
+		tm.getTile(18, 2).setForeground(imgMap[1][3], TILE_FLOOR);
+		tm.getTile(19, 2).setForeground(imgMap[1][1], TILE_FLOOR);
+		tm.getTile(19, 1).setForeground(imgMap[2][1], false);
+		tm.getTile(20, 2).setForeground(imgMap[1][4], TILE_FLOOR);
+		tm.getTile(20, 1).setForeground(imgMap[2][4], false);
 		tm.getTile(2, 3).setForeground(imgMap[0][2], TILE_BREAK);
 		tm.getTile(3, 3).setForeground(imgMap[0][2], TILE_BREAK);
 		tm.getTile(4, 3).setForeground(imgMap[0][0], TILE_BUMP);

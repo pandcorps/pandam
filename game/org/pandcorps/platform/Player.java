@@ -131,12 +131,13 @@ public class Player extends Panctor implements StepListener {
 	}
 	
 	private boolean isGrounded() {
-		return isSolid(OFF_GROUNDED);
+		// v == 0 so that jumping through floor doesn't cause big jump
+		return v == 0 && isSolid(OFF_GROUNDED);
 	}
 	
-	protected boolean isButting() {
+	/*protected boolean isButting() {
 		return isSolid(OFF_BUTTING);
-	}
+	}*/
 	
 	private boolean isSolid(final int off) {
 	    return getSolid(off) != null;
@@ -158,9 +159,10 @@ public class Player extends Panctor implements StepListener {
 		    t1 = t2;
 		    t2 = t;
 		}
-		if (isSolid(t1)) {
+		final boolean floor = off < 0 && (Math.round(y) % ImtilX.DIM == 15);
+		if (isSolid(t1, floor)) {
 		    return t1;
-		} else if (isSolid(t2)) {
+		} else if (isSolid(t2, floor)) {
 		    return t2;
 		}
 		return null;
@@ -169,17 +171,21 @@ public class Player extends Panctor implements StepListener {
 	private boolean isWall(final int off) {
         final Panple pos = getPosition();
         final float x = pos.getX() + off, y = pos.getY();
+        //TODO for (i = 0; i += 16; ...) if h > 16
         return isSolid(PlatformGame.tm.getContainer(x, y)) || isSolid(PlatformGame.tm.getContainer(x, y + H - 1));
     }
 	
 	private boolean isSolid(final Tile tile) {
+		return isSolid(tile, false);
+	}
+	
+	private boolean isSolid(final Tile tile, final boolean floor) {
 		if (tile == null) {
 			return false;
-		}
-		if (tile.isSolid()) {
+		} else if (tile.isSolid()) {
 			return true;
 		}
 		final byte b = tile.getBehavior();
-		return b == PlatformGame.TILE_BREAK || b == PlatformGame.TILE_BUMP;
+		return b == PlatformGame.TILE_BREAK || b == PlatformGame.TILE_BUMP || (floor && b == PlatformGame.TILE_FLOOR);
 	}
 }
