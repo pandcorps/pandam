@@ -87,6 +87,7 @@ public class PlatformGame extends BaseGame {
 		bgtm.fillBackground(bgMap[0][3]);
 		bgtm.fillBackground(bgMap[1][3], 7, 1);
 		bgtm.fillBackground(bgMap[2][3], 0, 7);
+		cloud(bgtm, bgMap, 10, 10, 7);
 		hill(bgtm, bgMap, 13, 10, 5, 4);
 		hill(bgtm, bgMap, 3, 8, 12, 2);
 		hill(bgtm, bgMap, 1, 4, 8, 0);
@@ -125,21 +126,39 @@ public class PlatformGame extends BaseGame {
 	    act.getPosition().set(x, y, tm.getForegroundDepth() + depth);
 	}
 	
+	private static void setBg(final TileMap tm, final int i, final int j, final TileMapImage[][] imgMap, final int iy, final int ix) {
+	    final Tile t = tm.getTile(i, j);
+	    t.setBackground(imgMap[iy][ix]);
+	    t.setForeground(null, false);
+	}
+	
 	private static void hill(final TileMap tm, final TileMapImage[][] imgMap, final int x, final int y, final int w, final int iy) {
 		for (int j = 0; j < y; j++) {
-			tm.getTile(x, j).setBackground(imgMap[iy + 1][0]);
-			tm.getTile(x + w + 1, j).setBackground(imgMap[iy + 1][2]);
+			setBg(tm, x, j, imgMap, iy + 1, 0);
+			setBg(tm, x + w + 1, j, imgMap, iy + 1, 2);
 		}
 		final int stop = x + w;
 		for (int i = x + 1; i <= stop; i++) {
-			tm.getTile(i, y).setBackground(imgMap[iy][1]);
+		    setBg(tm, i, y, imgMap, iy, 1);
 			for (int j = 0; j < y; j++) {
-				tm.getTile(i, j).setBackground(imgMap[iy + 1][1]);
+			    setBg(tm, i, j, imgMap, iy + 1, 1);
 			}
 		}
 		tm.getTile(x, y).setForeground(imgMap[iy][0]);
 		tm.getTile(stop + 1, y).setForeground(imgMap[iy][2]);
 	}
+	
+	private static void cloud(final TileMap tm, final TileMapImage[][] imgMap, final int x, final int y, final int w) {
+        final int stop = x + w;
+        for (int i = x + 1; i <= stop; i++) {
+            tm.getTile(i, y).setBackground(imgMap[7][1]);
+            tm.getTile(i, y + 1).setBackground(imgMap[6][1]);
+        }
+        tm.getTile(x, y).setForeground(imgMap[7][0]);
+        tm.getTile(x, y + 1).setForeground(imgMap[6][0]);
+        tm.getTile(stop + 1, y).setForeground(imgMap[7][2]);
+        tm.getTile(stop + 1, y + 1).setForeground(imgMap[6][2]);
+    }
 	
 	private static void rise(final int x, final int y, final int w, final int h) {
 		final int ystop = y + h;
