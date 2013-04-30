@@ -81,6 +81,11 @@ public final class Tile {
         setSolid(solid);
     }
     
+    public final void setBackground(final TileMapImage foreground, final byte behavior) {
+        setBackground(foreground);
+        setBehavior(behavior);
+    }
+    
     /*package*/ final void setBackgroundO(final Object background) {
         this.background = background;
     }
