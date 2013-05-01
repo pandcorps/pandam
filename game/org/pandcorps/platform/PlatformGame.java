@@ -22,7 +22,10 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.platform;
 
-import org.pandcorps.core.Pantil;
+import java.awt.image.BufferedImage;
+
+import org.pandcorps.core.*;
+import org.pandcorps.core.img.*;
 import org.pandcorps.game.*;
 import org.pandcorps.game.core.*;
 import org.pandcorps.pandam.*;
@@ -72,7 +75,17 @@ public class PlatformGame extends BaseGame {
 		Pangame.getGame().setCurrentRoom(room);
 		tm = new TileMap("act.tilemap", room, ImtilX.DIM, ImtilX.DIM);
 		room.addActor(tm);
-		final Panmage timg = createImage("tiles", "org/pandcorps/platform/res/bg/Tiles.png", 128);
+		BufferedImage tileImg = ImtilX.loadImage("org/pandcorps/platform/res/bg/Tiles.png", 128, null);
+        final BufferedImage dirt = Imtil.loadStrip("org/pandcorps/platform/res/bg/Dirt.png", ImtilX.DIM)[0];
+        final PixelMask tileMask = new AntiPixelMask(new ColorPixelMask(224, 112, 0, Pancolor.MAX_VALUE));
+        for (int x = 0; x < 80; x += 16) {
+            for (int y = 16; y < 48; y += 16) {
+                Imtil.copy(dirt, tileImg, 0, 0, 16, 16, x, y, null, tileMask);
+            }
+        }
+        Imtil.copy(dirt, tileImg, 0, 0, 16, 16, 0, 48, null, tileMask);
+        Imtil.copy(dirt, tileImg, 0, 0, 16, 16, 32, 48, null, tileMask);
+		final Panmage timg = engine.createImage("img.tiles", tileImg);
 		tm.setImageMap(timg);
 		imgMap = tm.splitImageMap();
 		
