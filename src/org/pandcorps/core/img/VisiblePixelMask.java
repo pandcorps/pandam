@@ -22,6 +22,18 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.core.img;
 
-public abstract class PixelFilter extends PixelTool {
-	public abstract int filter(final int p);
+public class VisiblePixelMask extends PixelMask {
+    private final static VisiblePixelMask instance = new VisiblePixelMask();
+    
+    private VisiblePixelMask() {
+    }
+    
+    public final static VisiblePixelMask getInstance() {
+        return instance;
+    }
+    
+    @Override
+    public final boolean isMasked(final int p) {
+        return cm.getAlpha(p) != 0;
+    }
 }

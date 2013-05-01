@@ -69,6 +69,10 @@ public final class Imtil {
     //    return img.getSubimage(x, y, w, h);
     //}
     
+    public final static BufferedImage[] loadStrip(final String location, final int w) {
+        return toStrip(load(location), w);
+    }
+    
     public final static BufferedImage[] toStrip(final BufferedImage img, final int w) {
         final int tw = img.getWidth();
         final BufferedImage[] strip = new BufferedImage[tw / w];
@@ -92,7 +96,11 @@ public final class Imtil {
     public final static byte COPY_BACKGROUND = 2;
     
     public final static void copy(final BufferedImage src, final BufferedImage dst, final int srcX, final int srcY, final int w, final int h, final int dstX, final int dstY, final byte mode) {
-        final ColorModel cm = getColorModel();
+        copy(src, dst, srcX, srcY, w, h, dstX, dstY, mode == COPY_FOREGROUND ? TransparentPixelMask.getInstance() : null, mode == COPY_BACKGROUND ? VisiblePixelMask.getInstance() : null);
+    }
+    
+    public final static void copy(final BufferedImage src, final BufferedImage dst, final int srcX, final int srcY, final int w, final int h, final int dstX, final int dstY,
+                                  final PixelMask srcMask, final PixelMask dstMask) {
     	for (int x = 0; x < w; x++) {
             final int srcCol = srcX + x, dstCol = dstX + x;
             for (int y = 0; y < h; y++) {
@@ -104,11 +112,11 @@ public final class Imtil {
                 } catch (final Exception e) {
                     throw err(src, dst, srcX, srcY, w, h, dstX, dstY, "get", srcCol, srcRow, e);
                 }
-                if (mode == COPY_FOREGROUND && cm.getAlpha(srcP) == 0) {
+                if (PixelMask.isMasked(srcMask, srcP)) {
                 	continue;
                 }
                 final int dstRow = dstY + y;
-                if (mode == COPY_BACKGROUND && cm.getAlpha(dst.getRGB(dstCol, dstRow)) != 0) {
+                if (PixelMask.isMasked(dstMask, dst.getRGB(dstCol, dstRow))) {
                 	continue;
                 }
                 try {

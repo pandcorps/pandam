@@ -22,6 +22,18 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.core.img;
 
-public abstract class PixelFilter extends PixelTool {
-	public abstract int filter(final int p);
+import java.awt.image.ColorModel;
+
+import org.pandcorps.core.Imtil;
+
+public abstract class PixelTool {
+    protected final static ColorModel cm = Imtil.getColorModel();
+    
+    public final static int getRgba(final int r, final int g, final int b, final int a) {
+        return cm.getDataElement(new int[] {r, g, b, a}, 0);
+    }
+    
+    public final static int getRgba(final Pancolor c) {
+        return getRgba(c.getR(), c.getG(), c.getB(), c.getA());
+    }
 }

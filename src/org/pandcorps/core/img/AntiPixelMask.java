@@ -22,6 +22,15 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.core.img;
 
-public abstract class PixelFilter extends PixelTool {
-	public abstract int filter(final int p);
+public class AntiPixelMask extends PixelMask {
+    private final PixelMask m;
+    
+    public AntiPixelMask(final PixelMask m) {
+        this.m = m;
+    }
+    
+    @Override
+    public final boolean isMasked(final int p) {
+        return !m.isMasked(p);
+    }
 }
