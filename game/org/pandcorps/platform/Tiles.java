@@ -84,7 +84,7 @@ public class Tiles {
                 getPosition().addY(-1);
             } else {
                 destroy();
-                t.setForeground(PlatformGame.imgMap[0][1]);
+                t.setForeground(PlatformGame.imgMap[0][4]);
                 return;
             }
             age++;
