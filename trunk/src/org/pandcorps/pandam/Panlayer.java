@@ -356,6 +356,12 @@ public class Panlayer extends BasePantity {
         return curr;
     }
     
+    /*
+    Scroll ratio
+    1 pixel of sub movement for every n pixels of master movement
+    1 / n = (sub - screen) / (master - screen)
+    sub = screen + ((master - screen) / n)
+    */
     public final void setMaster(final Panlayer master) {
     	this.master = master;
     	tracked = null;
