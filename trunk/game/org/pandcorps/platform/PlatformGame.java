@@ -45,7 +45,7 @@ public class PlatformGame extends BaseGame {
 	protected final static int DEPTH_SHATTER = 3;
 	
 	protected static Panroom room = null;
-	protected static TileMap tm = null;
+	protected static DynamicTileMap tm = null;
 	protected static TileMapImage[][] imgMap = null;
 	protected static Panmage block8 = null;
 	
@@ -68,12 +68,40 @@ public class PlatformGame extends BaseGame {
 	    block8 = createImage("block8", "org/pandcorps/platform/res/misc/Block8.png", 8);
 	}
 	
+	private final static class BlockTileListener implements TileListener {
+		final TileMapImage[] blocks;
+		private int tick = 0;
+		
+		private BlockTileListener(final TileMapImage[][] imgMap) {
+			blocks = imgMap[0];
+		}
+		
+		@Override
+		public boolean isActive() {
+			tick = (int) Pangine.getEngine().getClock() % 60;
+			if (tick < 4) {
+				tick = (tick + 1) % 4;
+				return true;
+			}
+			return false;
+		}
+		
+		@Override
+		public final void onStep(final Tile tile) {
+			if (tile == null || tile.getBehavior() != TILE_BUMP) {
+				return;
+			}
+			tile.setForeground(blocks[tick]);
+		}
+	}
+	
 	private final static void loadLevel() {
 		final Pangine engine = Pangine.getEngine();
 		room.destroy();
-		room = engine.createRoom(Pantil.vmid(), new FinPanple(512, 192, 0));
+		final int w = 768;
+		room = engine.createRoom(Pantil.vmid(), new FinPanple(w, 192, 0));
 		Pangame.getGame().setCurrentRoom(room);
-		tm = new TileMap("act.tilemap", room, ImtilX.DIM, ImtilX.DIM);
+		tm = new DynamicTileMap("act.tilemap", room, ImtilX.DIM, ImtilX.DIM);
 		room.addActor(tm);
 		BufferedImage tileImg = ImtilX.loadImage("org/pandcorps/platform/res/bg/Tiles.png", 128, null);
         final BufferedImage dirt = Imtil.loadStrip("org/pandcorps/platform/res/bg/Dirt.png", ImtilX.DIM)[0];
@@ -83,13 +111,15 @@ public class PlatformGame extends BaseGame {
                 Imtil.copy(dirt, tileImg, 0, 0, 16, 16, x, y, null, tileMask);
             }
         }
-        Imtil.copy(dirt, tileImg, 0, 0, 16, 16, 0, 48, null, tileMask);
-        Imtil.copy(dirt, tileImg, 0, 0, 16, 16, 32, 48, null, tileMask);
+        for (int x = 0; x < 48; x += 16) {
+        	Imtil.copy(dirt, tileImg, 0, 0, 16, 16, x, 48, null, tileMask);
+        }
 		final Panmage timg = engine.createImage("img.tiles", tileImg);
 		tm.setImageMap(timg);
 		imgMap = tm.splitImageMap();
+		tm.setTileListener(new BlockTileListener(imgMap));
 		
-		final Panlayer bg1 = engine.createLayer(Pantil.vmid(), 480, 192, 1, room); // Should be 384; others should be lower
+		final Panlayer bg1 = engine.createLayer(Pantil.vmid(), 512, 192, 1, room);
 		room.addBeneath(bg1);
 		bg1.setMaster(room);
 		final TileMap bgtm1 = new TileMap("act.bgmap1", bg1, ImtilX.DIM, ImtilX.DIM);
@@ -100,7 +130,7 @@ public class PlatformGame extends BaseGame {
 		hill(bgtm1, bgMap, 1, 4, 8, 0);
 		hill(bgtm1, bgMap, 15, 5, 6, 0);
 		
-		final Panlayer bg2 = engine.createLayer(Pantil.vmid(), 448, 192, 1, room);
+		final Panlayer bg2 = engine.createLayer(Pantil.vmid(), 384, 192, 1, room);
         bg1.addBeneath(bg2);
         bg2.setMaster(room);
         final TileMap bgtm2 = new TileMap("act.bgmap2", bg2, ImtilX.DIM, ImtilX.DIM);
@@ -108,7 +138,7 @@ public class PlatformGame extends BaseGame {
         bgtm2.setImageMap(bgimg);
         hill(bgtm2, bgMap, 3, 8, 12, 2);
         
-        final Panlayer bg3 = engine.createLayer(Pantil.vmid(), 384, 192, 1, room);
+        final Panlayer bg3 = engine.createLayer(Pantil.vmid(), 320, 192, 1, room);
         bg2.addBeneath(bg3);
         bg3.setMaster(room);
         final TileMap bgtm3 = new TileMap("act.bgmap3", bg3, ImtilX.DIM, ImtilX.DIM);
@@ -121,7 +151,8 @@ public class PlatformGame extends BaseGame {
         hill(bgtm3, bgMap, 13, 10, 5, 4);
 		
 		//tm.fillBackground(imgMap[7][7]); // Don't require transparent image
-		for (int i = 0; i < 32; i++) {
+        final int n = w / 16;
+		for (int i = 0; i < n; i++) {
 			tm.initTile(i, 0).setForeground(imgMap[1][1], true);
 		}
 		tm.initTile(12, 0).setForeground(imgMap[3][0], true);
@@ -133,15 +164,19 @@ public class PlatformGame extends BaseGame {
 		tm.initTile(14, 2).setForeground(imgMap[1][2], true);
 		tm.initTile(14, 1).setForeground(imgMap[2][2], true);
 		tm.initTile(14, 0).setForeground(imgMap[3][2], true);
+		bush(1, 1, 0);
+		bush(28, 1, 2);
 		rise(19, 1, 5, 3);
+		tm.initTile(23, 3).setBackground(imgMap[3][1]);
+		tm.initTile(22, 2).setBackground(imgMap[3][1]);
 		rise(18, 1, 1, 1);
-		tm.initTile(2, 3).setForeground(imgMap[0][2], TILE_BREAK);
-		tm.initTile(3, 3).setForeground(imgMap[0][2], TILE_BREAK);
+		tm.initTile(2, 3).setForeground(imgMap[0][5], TILE_BREAK);
+		tm.initTile(3, 3).setForeground(imgMap[0][5], TILE_BREAK);
 		tm.initTile(4, 3).setForeground(imgMap[0][0], TILE_BUMP);
 		tm.initTile(5, 3).setForeground(imgMap[0][0], TILE_BUMP);
-		tm.initTile(6, 3).setForeground(imgMap[0][1], true);
+		tm.initTile(6, 3).setForeground(imgMap[0][4], true);
 		//tm.initTile(8, 1).setForeground(imgMap[7][4], TILE_UP);
-		tm.initTile(9, 1).setForeground(imgMap[0][1], true);
+		tm.initTile(9, 1).setForeground(imgMap[0][4], true);
 		//tm.initTile(10, 1).setForeground(imgMap[7][3], TILE_DOWN);
 		final Player player = new Player();
 		room.addActor(player);
@@ -202,6 +237,15 @@ public class PlatformGame extends BaseGame {
 		}
 		tm.initTile(x, ystop).setForeground(imgMap[1][3], TILE_FLOOR);
 		tm.initTile(stop + 1, ystop).setForeground(imgMap[1][4], TILE_FLOOR);
+	}
+	
+	private static void bush(final int x, final int y, final int w) {
+		tm.initTile(x, y).setForeground(imgMap[1][5]);
+		final int stop = x + w;
+		for (int i = x + 1; i <= stop; i++) {
+			tm.initTile(i, y).setForeground(imgMap[1][6]);
+		}
+		tm.initTile(stop + 1, y).setForeground(imgMap[1][7]);
 	}
 	
 	public final static void main(final String[] args) {
