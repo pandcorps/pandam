@@ -89,22 +89,36 @@ public class PlatformGame extends BaseGame {
 		tm.setImageMap(timg);
 		imgMap = tm.splitImageMap();
 		
-		final Panlayer bg = engine.createLayer(Pantil.vmid(), 384, 192, 1, room);
-		room.addBeneath(bg);
-		bg.setMaster(room);
-		final TileMap bgtm = new TileMap("act.bgmap", bg, ImtilX.DIM, ImtilX.DIM);
-		bg.addActor(bgtm);
-		//bgtm.setImageMap(timg);
-		bgtm.setImageMap(createImage("bg", "org/pandcorps/platform/res/bg/Hills.png", 128));
-		final TileMapImage[][] bgMap = bgtm.splitImageMap();
-		bgtm.fillBackground(bgMap[0][3]);
-		bgtm.fillBackground(bgMap[1][3], 7, 1);
-		bgtm.fillBackground(bgMap[2][3], 0, 7);
-		cloud(bgtm, bgMap, 10, 10, 7);
-		hill(bgtm, bgMap, 13, 10, 5, 4);
-		hill(bgtm, bgMap, 3, 8, 12, 2);
-		hill(bgtm, bgMap, 1, 4, 8, 0);
-		hill(bgtm, bgMap, 15, 5, 6, 0);
+		final Panlayer bg1 = engine.createLayer(Pantil.vmid(), 480, 192, 1, room); // Should be 384; others should be lower
+		room.addBeneath(bg1);
+		bg1.setMaster(room);
+		final TileMap bgtm1 = new TileMap("act.bgmap1", bg1, ImtilX.DIM, ImtilX.DIM);
+		bg1.addActor(bgtm1);
+		final Panmage bgimg = createImage("bg", "org/pandcorps/platform/res/bg/Hills.png", 128);
+		bgtm1.setImageMap(bgimg);
+		final TileMapImage[][] bgMap = bgtm1.splitImageMap();
+		hill(bgtm1, bgMap, 1, 4, 8, 0);
+		hill(bgtm1, bgMap, 15, 5, 6, 0);
+		
+		final Panlayer bg2 = engine.createLayer(Pantil.vmid(), 448, 192, 1, room);
+        bg1.addBeneath(bg2);
+        bg2.setMaster(room);
+        final TileMap bgtm2 = new TileMap("act.bgmap2", bg2, ImtilX.DIM, ImtilX.DIM);
+        bg2.addActor(bgtm2);
+        bgtm2.setImageMap(bgimg);
+        hill(bgtm2, bgMap, 3, 8, 12, 2);
+        
+        final Panlayer bg3 = engine.createLayer(Pantil.vmid(), 384, 192, 1, room);
+        bg2.addBeneath(bg3);
+        bg3.setMaster(room);
+        final TileMap bgtm3 = new TileMap("act.bgmap3", bg3, ImtilX.DIM, ImtilX.DIM);
+        bg3.addActor(bgtm3);
+        bgtm3.setImageMap(bgimg);
+        bgtm3.fillBackground(bgMap[0][3]);
+        bgtm3.fillBackground(bgMap[1][3], 7, 1);
+        bgtm3.fillBackground(bgMap[2][3], 0, 7);
+        cloud(bgtm3, bgMap, 10, 10, 7);
+        hill(bgtm3, bgMap, 13, 10, 5, 4);
 		
 		//tm.fillBackground(imgMap[7][7]); // Don't require transparent image
 		for (int i = 0; i < 32; i++) {
