@@ -124,7 +124,6 @@ public class TileMap extends Panctor {
             for (int j = y + h - 1; j >= y; j--) {
                 Tile tile = getTile(i, j);
                 if (tile == null) {
-                    //tile = new Tile(this, i, j);
                     tile = initTile(i, j);
                 }
                 tile.setBackgroundO(background);
@@ -143,8 +142,10 @@ public class TileMap extends Panctor {
             throw new IllegalArgumentException(i + ", " + j + " is out of bounds");
         }
         final int index = getIndex(i, j);
-        if (tiles[index] != null) {
-            throw new IllegalArgumentException(i + ", " + j + " is already initialized");
+        final Tile old = tiles[index];
+        if (old != null) {
+            //throw new IllegalArgumentException(i + ", " + j + " is already initialized");
+            return old;
         }
         final Tile tile = new Tile(this, i, j);
         tiles[index] = tile;

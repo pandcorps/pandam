@@ -106,29 +106,29 @@ public class PlatformGame extends BaseGame {
 		hill(bgtm, bgMap, 1, 4, 8, 0);
 		hill(bgtm, bgMap, 15, 5, 6, 0);
 		
-		tm.fillBackground(imgMap[7][7]); //TODO Don't require transparent image
+		//tm.fillBackground(imgMap[7][7]); // Don't require transparent image
 		for (int i = 0; i < 32; i++) {
-			tm.getTile(i, 0).setForeground(imgMap[1][1], true);
+			tm.initTile(i, 0).setForeground(imgMap[1][1], true);
 		}
-		tm.getTile(12, 0).setForeground(imgMap[3][0], true);
-		tm.getTile(12, 1).setForeground(imgMap[2][0], true);
-		tm.getTile(12, 2).setForeground(imgMap[1][0], true);
-		tm.getTile(13, 2).setForeground(imgMap[1][1], true);
-		tm.getTile(13, 1).setForeground(imgMap[2][1], true);
-		tm.getTile(13, 0).setForeground(imgMap[2][1], true);
-		tm.getTile(14, 2).setForeground(imgMap[1][2], true);
-		tm.getTile(14, 1).setForeground(imgMap[2][2], true);
-		tm.getTile(14, 0).setForeground(imgMap[3][2], true);
+		tm.initTile(12, 0).setForeground(imgMap[3][0], true);
+		tm.initTile(12, 1).setForeground(imgMap[2][0], true);
+		tm.initTile(12, 2).setForeground(imgMap[1][0], true);
+		tm.initTile(13, 2).setForeground(imgMap[1][1], true);
+		tm.initTile(13, 1).setForeground(imgMap[2][1], true);
+		tm.initTile(13, 0).setForeground(imgMap[2][1], true);
+		tm.initTile(14, 2).setForeground(imgMap[1][2], true);
+		tm.initTile(14, 1).setForeground(imgMap[2][2], true);
+		tm.initTile(14, 0).setForeground(imgMap[3][2], true);
 		rise(19, 1, 5, 3);
 		rise(18, 1, 1, 1);
-		tm.getTile(2, 3).setForeground(imgMap[0][2], TILE_BREAK);
-		tm.getTile(3, 3).setForeground(imgMap[0][2], TILE_BREAK);
-		tm.getTile(4, 3).setForeground(imgMap[0][0], TILE_BUMP);
-		tm.getTile(5, 3).setForeground(imgMap[0][0], TILE_BUMP);
-		tm.getTile(6, 3).setForeground(imgMap[0][1], true);
-		//tm.getTile(8, 1).setForeground(imgMap[7][4], TILE_UP);
-		tm.getTile(9, 1).setForeground(imgMap[0][1], true);
-		//tm.getTile(10, 1).setForeground(imgMap[7][3], TILE_DOWN);
+		tm.initTile(2, 3).setForeground(imgMap[0][2], TILE_BREAK);
+		tm.initTile(3, 3).setForeground(imgMap[0][2], TILE_BREAK);
+		tm.initTile(4, 3).setForeground(imgMap[0][0], TILE_BUMP);
+		tm.initTile(5, 3).setForeground(imgMap[0][0], TILE_BUMP);
+		tm.initTile(6, 3).setForeground(imgMap[0][1], true);
+		//tm.initTile(8, 1).setForeground(imgMap[7][4], TILE_UP);
+		tm.initTile(9, 1).setForeground(imgMap[0][1], true);
+		//tm.initTile(10, 1).setForeground(imgMap[7][3], TILE_DOWN);
 		final Player player = new Player();
 		room.addActor(player);
 		Pangine.getEngine().track(player);
@@ -140,7 +140,7 @@ public class PlatformGame extends BaseGame {
 	}
 	
 	private static void setBg(final TileMap tm, final int i, final int j, final TileMapImage[][] imgMap, final int iy, final int ix) {
-	    final Tile t = tm.getTile(i, j);
+	    final Tile t = tm.initTile(i, j);
 	    t.setBackground(imgMap[iy][ix]);
 	    t.setForeground(null, false);
 	}
@@ -157,37 +157,37 @@ public class PlatformGame extends BaseGame {
 			    setBg(tm, i, j, imgMap, iy + 1, 1);
 			}
 		}
-		tm.getTile(x, y).setForeground(imgMap[iy][0]);
-		tm.getTile(stop + 1, y).setForeground(imgMap[iy][2]);
+		tm.initTile(x, y).setForeground(imgMap[iy][0]);
+		tm.initTile(stop + 1, y).setForeground(imgMap[iy][2]);
 	}
 	
 	private static void cloud(final TileMap tm, final TileMapImage[][] imgMap, final int x, final int y, final int w) {
         final int stop = x + w;
         for (int i = x + 1; i <= stop; i++) {
-            tm.getTile(i, y).setBackground(imgMap[7][1]);
-            tm.getTile(i, y + 1).setBackground(imgMap[6][1]);
+            tm.initTile(i, y).setBackground(imgMap[7][1]);
+            tm.initTile(i, y + 1).setBackground(imgMap[6][1]);
         }
-        tm.getTile(x, y).setForeground(imgMap[7][0]);
-        tm.getTile(x, y + 1).setForeground(imgMap[6][0]);
-        tm.getTile(stop + 1, y).setForeground(imgMap[7][2]);
-        tm.getTile(stop + 1, y + 1).setForeground(imgMap[6][2]);
+        tm.initTile(x, y).setForeground(imgMap[7][0]);
+        tm.initTile(x, y + 1).setForeground(imgMap[6][0]);
+        tm.initTile(stop + 1, y).setForeground(imgMap[7][2]);
+        tm.initTile(stop + 1, y + 1).setForeground(imgMap[6][2]);
     }
 	
 	private static void rise(final int x, final int y, final int w, final int h) {
 		final int ystop = y + h;
 		for (int j = y; j < ystop; j++) {
-			tm.getTile(x, j).setBackground(imgMap[2][3]);
-			tm.getTile(x + w + 1, j).setBackground(imgMap[2][4]);
+			tm.initTile(x, j).setBackground(imgMap[2][3]);
+			tm.initTile(x + w + 1, j).setBackground(imgMap[2][4]);
 		}
 		final int stop = x + w;
 		for (int i = x + 1; i <= stop; i++) {
-			tm.getTile(i, ystop).setBackground(imgMap[1][1], TILE_FLOOR);
+			tm.initTile(i, ystop).setBackground(imgMap[1][1], TILE_FLOOR);
 			for (int j = y; j < ystop; j++) {
-				tm.getTile(i, j).setBackground(imgMap[2][1]);
+				tm.initTile(i, j).setBackground(imgMap[2][1]);
 			}
 		}
-		tm.getTile(x, ystop).setForeground(imgMap[1][3], TILE_FLOOR);
-		tm.getTile(stop + 1, ystop).setForeground(imgMap[1][4], TILE_FLOOR);
+		tm.initTile(x, ystop).setForeground(imgMap[1][3], TILE_FLOOR);
+		tm.initTile(stop + 1, ystop).setForeground(imgMap[1][4], TILE_FLOOR);
 	}
 	
 	public final static void main(final String[] args) {
