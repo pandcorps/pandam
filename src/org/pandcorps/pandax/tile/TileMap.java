@@ -122,11 +122,7 @@ public class TileMap extends Panctor {
     private final void fillBackgroundO(final Object background, final int x, final int y, final int w, final int h) {
         for (int i = x + w - 1; i >= x; i--) {
             for (int j = y + h - 1; j >= y; j--) {
-                Tile tile = getTile(i, j);
-                if (tile == null) {
-                    tile = initTile(i, j);
-                }
-                tile.setBackgroundO(background);
+                initTile(i, j).setBackgroundO(background);
             }
         }
     }
