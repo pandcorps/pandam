@@ -22,39 +22,31 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.platform;
 
-import org.pandcorps.pandam.*;
+import org.pandcorps.game.core.ImtilX;
+import org.pandcorps.pandam.Panple;
 import org.pandcorps.pandam.event.*;
-import org.pandcorps.pandax.tile.TileOccupant;
+import org.pandcorps.pandax.Pandy;
+import org.pandcorps.pandax.tile.Tile;
 
-public class Gem extends TileOccupant implements StepListener {
-	{
-		setView(PlatformGame.gem[0]);
+public class GemBumped extends Pandy {
+	int age = 0;
+	
+	public GemBumped(final Player player, final Tile tile) {
+		super(Tiles.g);
+		Gem.collect(player);
+		setView(PlatformGame.gemAnm);
+		final Panple pos = tile.getPosition();
+		PlatformGame.setPosition(this, pos.getX(), pos.getY() + ImtilX.DIM, PlatformGame.DEPTH_SHATTER);
+		getVelocity().set(0, 6);
+        PlatformGame.room.addActor(this);
 	}
 	
 	@Override
 	public final void onStep(final StepEvent event) {
-		// Panimation would allow flashes to be out of synch for gems created at different times
-		final long tick = Pangine.getEngine().getClock() % PlatformGame.TIME_FLASH;
-		if (tick < 3) {
-			setView(PlatformGame.gem[(((int) tick) + 1) % 3]);
+		super.onStep(event);
+		age++;
+		if (age >= 12) {
+			Gem.spark(this);
 		}
-	}
-	
-	protected final void onCollide(final Player player) {
-		if (isDestroyed()) {
-			return;
-		}
-		collect(player);
-		spark(this);
-	}
-	
-	protected final static void collect(final Player player) {
-		// Add to counter
-	}
-	
-	protected final static void spark(final Panctor gem) {
-		final Panple pos = gem.getPosition();
-		new Spark(3, pos.getX() + 8, pos.getY() + 8);
-		gem.destroy();
 	}
 }
