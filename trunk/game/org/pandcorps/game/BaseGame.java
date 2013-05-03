@@ -99,7 +99,7 @@ public abstract class BaseGame extends Pangame {
 	    return createAnm(name, path, ImtilX.DIM, dur);
 	}
 	
-	public final static Panimation createAnm(final String name, final String path, final int dim, final int dur) {
+	public final static Panframe[] createFrames(final String name, final String path, final int dim, final int dur) {
 	    final Pangine engine = Pangine.getEngine();
 	    final Panmage[] ia = createSheet(name, path, dim);
 	    final int size = ia.length;
@@ -108,7 +108,11 @@ public abstract class BaseGame extends Pangame {
 	        final Panmage img = ia[i];
 	        fa[i] = engine.createFrame("frm." + name + "." + i, img, dur);
 	    }
-	    return engine.createAnimation("anm." + name, fa);
+	    return fa;
+	}
+	
+	public final static Panimation createAnm(final String name, final String path, final int dim, final int dur) {
+	    return Pangine.getEngine().createAnimation("anm." + name, createFrames(name, path, dim, dur));
 	}
 	
 	public final static Panlayer createHud(final Panroom room) {

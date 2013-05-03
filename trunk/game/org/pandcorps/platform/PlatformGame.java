@@ -43,6 +43,7 @@ public class PlatformGame extends BaseGame {
 	//protected final static int DEPTH_ENEMY = 1;
 	protected final static int DEPTH_PLAYER = 2;
 	protected final static int DEPTH_SHATTER = 3;
+	protected final static int DEPTH_SPARK = 4;
 	
 	protected final static int TIME_FLASH = 60;
 	
@@ -51,6 +52,7 @@ public class PlatformGame extends BaseGame {
 	protected static TileMapImage[][] imgMap = null;
 	protected static Panmage block8 = null;
 	protected static Panmage[] gem = null;
+	protected static Panimation spark = null;
 	protected static final TileActor bump = new TileActor();
 	
 	@Override
@@ -71,6 +73,8 @@ public class PlatformGame extends BaseGame {
 	private final static void loadConstants() {
 	    block8 = createImage("block8", "org/pandcorps/platform/res/misc/Block8.png", 8);
 	    gem = createSheet("gem", "org/pandcorps/platform/res/misc/Gem.png");
+	    final Panframe[] sa = createFrames("spark", "org/pandcorps/platform/res/misc/Spark.png", 8, 1);
+	    spark = Pangine.getEngine().createAnimation("anm.spark", sa[0], sa[1], sa[2], sa[3], sa[2], sa[1], sa[0]);
 	}
 	
 	private final static class BlockTileListener implements TileListener {
