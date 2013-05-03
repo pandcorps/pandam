@@ -22,31 +22,30 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.platform;
 
-import org.pandcorps.pandam.*;
+import org.pandcorps.core.Mathtil;
+import org.pandcorps.game.actor.Burst;
+import org.pandcorps.pandam.Panple;
 import org.pandcorps.pandam.event.*;
-import org.pandcorps.pandax.tile.TileOccupant;
 
-public class Gem extends TileOccupant implements StepListener {
-	{
-		setView(PlatformGame.gem[0]);
-	}
+public final class Spark extends Burst implements StepListener {
+	private final int count;
+	private int age = 0;
 	
+	public Spark(final int count, final float x, final float y) {
+		super(PlatformGame.spark);
+		this.count = count;
+		PlatformGame.setPosition(this, x + Mathtil.randf(-7, 7), y + Mathtil.randf(-7, 7), PlatformGame.DEPTH_SPARK);
+		PlatformGame.room.addActor(this);
+	}
+
 	@Override
 	public final void onStep(final StepEvent event) {
-		// Panimation would allow flashes to be out of synch for gems created at different times
-		final long tick = Pangine.getEngine().getClock() % PlatformGame.TIME_FLASH;
-		if (tick < 3) {
-			setView(PlatformGame.gem[(((int) tick) + 1) % 3]);
-		}
-	}
-	
-	protected final void onCollide(final Player player) {
-		if (isDestroyed()) {
+		if (count <= 0) {
 			return;
+		} else if (age == 2) {
+			final Panple pos = getPosition();
+			new Spark(count - 1, pos.getX(), pos.getY());
 		}
-		// Add to counter
-		final Panple pos = getPosition();
-		new Spark(4, pos.getX() + 8, pos.getY() + 8);
-		destroy();
+		age++;
 	}
 }
