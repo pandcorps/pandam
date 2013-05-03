@@ -44,10 +44,13 @@ public class PlatformGame extends BaseGame {
 	protected final static int DEPTH_PLAYER = 2;
 	protected final static int DEPTH_SHATTER = 3;
 	
+	protected final static int TIME_FLASH = 60;
+	
 	protected static Panroom room = null;
 	protected static DynamicTileMap tm = null;
 	protected static TileMapImage[][] imgMap = null;
 	protected static Panmage block8 = null;
+	protected static Panmage[] gem = null;
 	protected static final TileActor bump = new TileActor();
 	
 	@Override
@@ -67,6 +70,7 @@ public class PlatformGame extends BaseGame {
 	
 	private final static void loadConstants() {
 	    block8 = createImage("block8", "org/pandcorps/platform/res/misc/Block8.png", 8);
+	    gem = createSheet("gem", "org/pandcorps/platform/res/misc/Gem.png");
 	}
 	
 	private final static class BlockTileListener implements TileListener {
@@ -79,7 +83,7 @@ public class PlatformGame extends BaseGame {
 		
 		@Override
 		public boolean isActive() {
-			tick = (int) Pangine.getEngine().getClock() % 60;
+			tick = (int) Pangine.getEngine().getClock() % TIME_FLASH;
 			if (tick < 4) {
 				tick = (tick + 1) % 4;
 				return true;
@@ -178,6 +182,8 @@ public class PlatformGame extends BaseGame {
 		bump.setViewFromForeground(block);
 		tm.initTile(5, 3).setForeground(imgMap[0][0], TILE_BUMP);
 		tm.initTile(6, 3).setForeground(imgMap[0][4], true);
+		gem(4, 1);
+		gem(13, 5);
 		//tm.initTile(8, 1).setForeground(imgMap[7][4], TILE_UP);
 		tm.initTile(9, 1).setForeground(imgMap[0][4], true);
 		//tm.initTile(10, 1).setForeground(imgMap[7][3], TILE_DOWN);
@@ -249,6 +255,12 @@ public class PlatformGame extends BaseGame {
 			tm.initTile(i, y).setForeground(imgMap[1][6]);
 		}
 		tm.initTile(stop + 1, y).setForeground(imgMap[1][7]);
+	}
+	
+	private static void gem(final int x, final int y) {
+		final Gem gem = new Gem();
+		gem.setPosition(tm.initTile(x, y));
+		room.addActor(gem);
 	}
 	
 	public final static void main(final String[] args) {

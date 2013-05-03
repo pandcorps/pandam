@@ -159,6 +159,8 @@ public class Player extends Panctor implements StepListener {
 		    t1 = t2;
 		    t2 = t;
 		}
+		collide(t1);
+		collide(t2);
 		final boolean floor = off < 0 && (Math.round(y) % ImtilX.DIM == 15);
 		if (isSolid(t1, floor)) {
 		    return t1;
@@ -172,7 +174,10 @@ public class Player extends Panctor implements StepListener {
         final Panple pos = getPosition();
         final float x = pos.getX() + off, y = pos.getY();
         //TODO for (i = 0; i += 16; ...) if h > 16
-        return isSolid(PlatformGame.tm.getContainer(x, y)) || isSolid(PlatformGame.tm.getContainer(x, y + H - 1));
+        final Tile t1 = PlatformGame.tm.getContainer(x, y), t2 = PlatformGame.tm.getContainer(x, y + H - 1);
+        collide(t1);
+        collide(t2);
+        return isSolid(t1) || isSolid(t2);
     }
 	
 	private boolean isSolid(final Tile tile) {
@@ -187,5 +192,13 @@ public class Player extends Panctor implements StepListener {
 		}
 		final byte b = tile.getBehavior();
 		return b == PlatformGame.TILE_BREAK || b == PlatformGame.TILE_BUMP || (floor && b == PlatformGame.TILE_FLOOR);
+	}
+	
+	private void collide(final Tile tile) {
+		final TileOccupant o = Tile.getOccupant(tile);
+		if (o == null) {
+			return;
+		}
+		((Gem) o).onCollide(this);
 	}
 }
