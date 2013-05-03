@@ -38,6 +38,11 @@ public class TileActor extends Panctor {
         view = t.foreground;
     }
     
+    public void setView(final TileActor actor) {
+    	map = actor.map;
+    	view = actor.view;
+    }
+    
     @Override
     protected void updateView() {       
     }
