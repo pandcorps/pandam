@@ -31,9 +31,9 @@ import org.pandcorps.pandax.*;
 import org.pandcorps.pandax.tile.*;
 
 public class Tiles {
-    private final static FinPanple g = new FinPanple(0, Player.g, 0);
+    protected final static FinPanple g = new FinPanple(0, Player.g, 0);
     
-    protected final static void bump(final Tile t) {
+    protected final static void bump(final Player player, final Tile t) {
     	final byte b = t.getBehavior();
     	if (b == PlatformGame.TILE_BREAK) {
     		t.setForeground(null, false);
@@ -45,6 +45,7 @@ public class Tiles {
     		new Shatter(x + 8, y + 8, 1, 3);
     	} else if (b == PlatformGame.TILE_BUMP) {
     	    new Bump(t); // Copy image before changing
+    	    new GemBumped(player, t);
     		t.setForeground(null, true);
     	}
     }

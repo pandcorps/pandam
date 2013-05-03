@@ -103,7 +103,7 @@ public class Player extends Panctor implements StepListener {
 		    final Tile t = getSolid(offSol);
 			if (t != null) {
 			    if (v > 0) {
-			        Tiles.bump(t);
+			        Tiles.bump(this, t);
 			    }
 				v = 0;
 				break;

@@ -52,6 +52,7 @@ public class PlatformGame extends BaseGame {
 	protected static TileMapImage[][] imgMap = null;
 	protected static Panmage block8 = null;
 	protected static Panmage[] gem = null;
+	protected static Panimation gemAnm = null;
 	protected static Panimation spark = null;
 	protected static final TileActor bump = new TileActor();
 	
@@ -71,10 +72,12 @@ public class PlatformGame extends BaseGame {
 	}
 	
 	private final static void loadConstants() {
+		final Pangine engine = Pangine.getEngine();
 	    block8 = createImage("block8", "org/pandcorps/platform/res/misc/Block8.png", 8);
 	    gem = createSheet("gem", "org/pandcorps/platform/res/misc/Gem.png");
+	    gemAnm = engine.createAnimation("anm.gem", engine.createFrame("frm.gem.0", gem[0], 3), engine.createFrame("frm.gem.1", gem[1], 1), engine.createFrame("frm.gem.2", gem[2], 1));
 	    final Panframe[] sa = createFrames("spark", "org/pandcorps/platform/res/misc/Spark.png", 8, 1);
-	    spark = Pangine.getEngine().createAnimation("anm.spark", sa[0], sa[1], sa[2], sa[3], sa[2], sa[1], sa[0]);
+	    spark = engine.createAnimation("anm.spark", sa[0], sa[1], sa[2], sa[3], sa[2], sa[1], sa[0]);
 	}
 	
 	private final static class BlockTileListener implements TileListener {
