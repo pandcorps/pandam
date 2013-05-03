@@ -70,7 +70,8 @@ public class Tiles {
         
         private Bump(final Tile t) {
         	this.t = t;
-            setViewFromForeground(t);
+            //setViewFromForeground(t);
+        	setView(PlatformGame.bump);
             final Panple pos = t.getPosition();
             PlatformGame.setPosition(this, pos.getX(), pos.getY() + 2, PlatformGame.DEPTH_SHATTER);
             PlatformGame.room.addActor(this);

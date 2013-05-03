@@ -48,6 +48,7 @@ public class PlatformGame extends BaseGame {
 	protected static DynamicTileMap tm = null;
 	protected static TileMapImage[][] imgMap = null;
 	protected static Panmage block8 = null;
+	protected static final TileActor bump = new TileActor();
 	
 	@Override
 	protected final void init(final Panroom room) throws Exception {
@@ -172,7 +173,9 @@ public class PlatformGame extends BaseGame {
 		rise(18, 1, 1, 1);
 		tm.initTile(2, 3).setForeground(imgMap[0][5], TILE_BREAK);
 		tm.initTile(3, 3).setForeground(imgMap[0][5], TILE_BREAK);
-		tm.initTile(4, 3).setForeground(imgMap[0][0], TILE_BUMP);
+		final Tile block = tm.initTile(4, 3);
+		block.setForeground(imgMap[0][0], TILE_BUMP);
+		bump.setViewFromForeground(block);
 		tm.initTile(5, 3).setForeground(imgMap[0][0], TILE_BUMP);
 		tm.initTile(6, 3).setForeground(imgMap[0][4], true);
 		//tm.initTile(8, 1).setForeground(imgMap[7][4], TILE_UP);
