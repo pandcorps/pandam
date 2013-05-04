@@ -113,6 +113,22 @@ public class Player extends Panctor implements StepListener {
 		if (!isGrounded()) {
 			v += g;
 		}
+		/*
+		Issues with slopes:
+		
+		If Player walks into a slope, it should raise him.
+		If he jumps onto a slope, it should stop him at the right spot.
+		If he jumps from a slope, it should work (realize he's grounded).
+		If he walks down a slope, he should be able to jump while walking
+		(not move horizontally faster than falling vertically, breaking the grounding).
+		If he walks to the end of the slope, he should walk onto the flat ground beyond it.
+		
+		Maybe smarter horizontal movement is key.
+		We do it one pixel at a time anyway.
+		Maybe we should allow collisions at the bottom pixel and raise by one pixel at time of h-move.
+		Previous attempts ignored the slope during h-move and corrected afterward.
+		Each pixel of h-move could also check for a slope one pixel below and lower by one pixel at that time.
+		*/
 		/*if (v <= 0) {
 		    final Tile t = PlatformGame.tm.getContainer(pos);
 		    if (t != null) {
@@ -153,6 +169,7 @@ public class Player extends Panctor implements StepListener {
 		    x1 = x - OFF_X - 1;
 		    x2 = x + OFF_X;
 		}
+		// Interesting glitch if breakpoint here
 		Tile t1 = PlatformGame.tm.getContainer(x1, y), t2 = PlatformGame.tm.getContainer(x2, y);
 		if (t2 == PlatformGame.tm.getContainer(x, y)) {
 		    final Tile t = t1;
