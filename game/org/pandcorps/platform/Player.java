@@ -226,7 +226,11 @@ public class Player extends Panctor implements StepListener {
 	
 	private boolean isSlope(final Tile tile, final float left, final float right, final float y) {
 		// isSolid will check for non-slopes, could cut straight to slope logic
-		return tile != null && tile.getBehavior() == PlatformGame.TILE_UPSLOPE && isSolid(tile, left, right, y);
+		if (tile == null) {
+		    return false;
+		}
+		final int b = tile.getBehavior();
+		return (b == PlatformGame.TILE_UPSLOPE || b == PlatformGame.TILE_DOWNSLOPE) && isSolid(tile, left, right, y);
 	}
 	
 	private boolean isSolid(final Tile tile, final float left, final float right, final float y) {
@@ -257,7 +261,15 @@ public class Player extends Panctor implements StepListener {
             final int curHeight = iy % ImtilX.DIM;
             return curHeight <= minHeight;
 			//}
-		}
+		} else if (b == PlatformGame.TILE_DOWNSLOPE) {
+            if (tile.getMap().getContainer(left, y) != tile) {
+                return false;
+            }
+            final int minHeight = 15 - ((int) left % ImtilX.DIM);
+            final int iy = (int) y;
+            final int curHeight = iy % ImtilX.DIM;
+            return curHeight <= minHeight;
+        }
 		return false;
 	}
 	

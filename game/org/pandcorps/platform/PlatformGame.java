@@ -38,6 +38,7 @@ public class PlatformGame extends BaseGame {
 	protected final static byte TILE_BUMP = 3;
 	protected final static byte TILE_FLOOR = 4;
     protected final static byte TILE_UPSLOPE = 5;
+    protected final static byte TILE_DOWNSLOPE = 6;
 	
 	//protected final static int DEPTH_POWERUP = 0;
 	//protected final static int DEPTH_ENEMY = 1;
@@ -193,7 +194,7 @@ public class PlatformGame extends BaseGame {
 		gem(13, 5);
 		tm.initTile(8, 1).setForeground(imgMap[0][6], TILE_UPSLOPE);
 		tm.initTile(9, 1).setForeground(imgMap[0][4], true);
-		//tm.initTile(10, 1).setForeground(imgMap[7][3], TILE_DOWN);
+		tm.initTile(10, 1).setForeground(imgMap[0][7], TILE_DOWNSLOPE);
 		final Player player = new Player();
 		room.addActor(player);
 		Pangine.getEngine().track(player);
