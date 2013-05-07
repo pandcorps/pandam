@@ -231,6 +231,14 @@ public class TileMap extends Panctor {
         return h;
     }
     
+    public final int getTileWidth() {
+    	return tw;
+    }
+    
+    public final int getTileHeight() {
+    	return th;
+    }
+    
     public TileMapImage[][] splitImageMap() {
     	final Panple idim = imgMap.getBoundingMaximum(); // or getSize()?
     	final int iw = (int) idim.getX() / tw, ih = (int) idim.getY() / th;

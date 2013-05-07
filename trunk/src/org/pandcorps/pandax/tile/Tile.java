@@ -58,6 +58,10 @@ public final class Tile {
         position = new FinPanple(mapPos.getX() + i * map.tw, mapPos.getY() + j * map.th, mapPos.getZ());
     }
     
+    public final TileMap getMap() {
+    	return map;
+    }
+    
     public final Panple getPosition() {
         return position;
     }
