@@ -79,11 +79,20 @@ public class Player extends Panctor implements StepListener {
 	    final int mult = v > 0 ? 1 : -1;
 	    final int n = v * mult;
 	    final int offWall = (OFF_X + 1) * mult;
+	    final Panple pos = getPosition();
 	    for (int i = 0; i < n; i++) {
-	        if (isWall(offWall)) {
-	            break;
+	    	boolean down = true;
+	        if (isWall(offWall, 0)) {
+	        	if (isWall(offWall, 1)) {
+	        		break;
+	        	}
+	            pos.addY(1);
+	            down = false;
 	        }
-	        getPosition().addX(mult);
+	        if (down && !isWall(offWall, -1) && isWall(offWall, -2)) {
+	        	pos.addY(-1);
+	        }
+	        pos.addX(mult);
 	    }
 	}
 
@@ -159,16 +168,17 @@ public class Player extends Panctor implements StepListener {
 	    return getSolid(off) != null;
 	}
 	
+	private final int getOffLeft() {
+		return isMirror() ? -OFF_X : (-OFF_X - 1);
+	}
+	
+	private final int getOffRight() {
+		return isMirror() ? (OFF_X + 1) : OFF_X;
+	}
+	
 	private Tile getSolid(final int off) {
 		final Panple pos = getPosition();
-		final float x = pos.getX(), y = pos.getY() + off, x1, x2;
-		if (isMirror()) {
-		    x1 = x - OFF_X;
-            x2 = x + OFF_X + 1;
-		} else {
-		    x1 = x - OFF_X - 1;
-		    x2 = x + OFF_X;
-		}
+		final float x = pos.getX(), y = pos.getY() + off, x1 = x + getOffLeft(), x2 = x + getOffRight();
 		// Interesting glitch if breakpoint here
 		Tile t1 = PlatformGame.tm.getContainer(x1, y), t2 = PlatformGame.tm.getContainer(x2, y);
 		if (t2 == PlatformGame.tm.getContainer(x, y)) {
@@ -179,36 +189,76 @@ public class Player extends Panctor implements StepListener {
 		collide(t1);
 		collide(t2);
 		final boolean floor = off < 0 && (Math.round(y) % ImtilX.DIM == 15);
-		if (isSolid(t1, floor)) {
+		if (isSolid(t1, floor, x1, x2, y)) {
 		    return t1;
-		} else if (isSolid(t2, floor)) {
+		} else if (isSolid(t2, floor, x1, x2, y)) {
 		    return t2;
 		}
 		return null;
 	}
 	
-	private boolean isWall(final int off) {
+	private boolean isWall(final int off, final int yoff) {
         final Panple pos = getPosition();
-        final float x = pos.getX() + off, y = pos.getY();
+        final float px = pos.getX(), f = px + off, y = pos.getY() + yoff;
+        final float left, right, b, top = y + H - 1;
+        if (off > 0) {
+        	right = f;
+        	left = px - OFF_X;
+        	b = left;
+        } else {
+        	left = f;
+        	right = px + OFF_X;
+        	b = right;
+        }
         //TODO for (i = 0; i += 16; ...) if h > 16
-        final Tile t1 = PlatformGame.tm.getContainer(x, y), t2 = PlatformGame.tm.getContainer(x, y + H - 1);
+        //final float x = yoff == 0 ? f : b;
+        final Tile t1 = PlatformGame.tm.getContainer(f, y), t2 = PlatformGame.tm.getContainer(f, top);
         collide(t1);
         collide(t2);
-        return isSolid(t1) || isSolid(t2);
+        if (isSolid(t1, left, right, y) || isSolid(t2, left, right, y)) {
+        	return true;
+        } else if (yoff < 0) {
+        	final Tile t3 = PlatformGame.tm.getContainer(b, y), t4 = PlatformGame.tm.getContainer(b, top);
+        	return isSlope(t3, left, right, y) || isSlope(t4, left, right, y);
+        }
+        return false;
     }
 	
-	private boolean isSolid(final Tile tile) {
-		return isSolid(tile, false);
+	private boolean isSlope(final Tile tile, final float left, final float right, final float y) {
+		// isSolid will check for non-slopes, could cut straight to slope logic
+		return tile != null && tile.getBehavior() == PlatformGame.TILE_UPSLOPE && isSolid(tile, left, right, y);
 	}
 	
-	private boolean isSolid(final Tile tile, final boolean floor) {
+	private boolean isSolid(final Tile tile, final float left, final float right, final float y) {
+		return isSolid(tile, false, left, right, y);
+	}
+	
+	private boolean isSolid(final Tile tile, final boolean floor, final float left, final float right, final float y) {
 		if (tile == null) {
 			return false;
 		} else if (tile.isSolid()) {
 			return true;
 		}
 		final byte b = tile.getBehavior();
-		return b == PlatformGame.TILE_BREAK || b == PlatformGame.TILE_BUMP || (floor && b == PlatformGame.TILE_FLOOR);
+		if (b == PlatformGame.TILE_BREAK || b == PlatformGame.TILE_BUMP || (floor && b == PlatformGame.TILE_FLOOR)) {
+			return true;
+		} else if (b == PlatformGame.TILE_UPSLOPE) {
+			//if (v <= 0) {
+			//final Panple pos = getPosition();
+            // trunc/round should match getContainer
+			//if (right > tile.getPosition().getX() + tile.getMap().getTileWidth()) {
+			//	return false;
+			//}
+			if (tile.getMap().getContainer(right, y) != tile) {
+				return false;
+			}
+            final int minHeight = (int) right % ImtilX.DIM;
+            final int iy = (int) y;
+            final int curHeight = iy % ImtilX.DIM;
+            return curHeight <= minHeight;
+			//}
+		}
+		return false;
 	}
 	
 	private void collide(final Tile tile) {

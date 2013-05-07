@@ -37,7 +37,7 @@ public class PlatformGame extends BaseGame {
 	protected final static byte TILE_BREAK = 2;
 	protected final static byte TILE_BUMP = 3;
 	protected final static byte TILE_FLOOR = 4;
-    //protected final static byte TILE_UPSLOPE = 2;
+    protected final static byte TILE_UPSLOPE = 5;
 	
 	//protected final static int DEPTH_POWERUP = 0;
 	//protected final static int DEPTH_ENEMY = 1;
@@ -191,7 +191,7 @@ public class PlatformGame extends BaseGame {
 		tm.initTile(6, 3).setForeground(imgMap[0][4], true);
 		gem(4, 1);
 		gem(13, 5);
-		//tm.initTile(8, 1).setForeground(imgMap[7][4], TILE_UP);
+		tm.initTile(8, 1).setForeground(imgMap[0][6], TILE_UPSLOPE);
 		tm.initTile(9, 1).setForeground(imgMap[0][4], true);
 		//tm.initTile(10, 1).setForeground(imgMap[7][3], TILE_DOWN);
 		final Player player = new Player();
