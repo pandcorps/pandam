@@ -121,11 +121,11 @@ public class PlatformGame extends BaseGame {
         final BufferedImage dirt = Imtil.loadStrip("org/pandcorps/platform/res/bg/Dirt.png", ImtilX.DIM)[bgMode];
         final PixelMask tileMask = new AntiPixelMask(new ColorPixelMask(224, 112, 0, Pancolor.MAX_VALUE));
         for (int x = 0; x < 80; x += 16) {
-            for (int y = 16; y < 48; y += 16) {
+            for (int y = 16; y < 64; y += 16) {
                 Imtil.copy(dirt, tileImg, 0, 0, 16, 16, x, y, null, tileMask);
             }
         }
-        for (int x = 0; x < 48; x += 16) {
+        for (int x = 0; x < 64; x += 16) {
         	Imtil.copy(dirt, tileImg, 0, 0, 16, 16, x, 48, null, tileMask);
         }
 		final Panmage timg = engine.createImage("img.tiles", tileImg);
@@ -194,15 +194,23 @@ public class PlatformGame extends BaseGame {
 		tm.initTile(15, 1).setForeground(imgMap[2][2], true);
 		tm.initTile(15, 0).setForeground(imgMap[3][2], true);
 		bush(1, 1, 0);
-		tm.initTile(28, 1).setForeground(imgMap[3][3], TILE_UPSLOPE);
-		tm.initTile(29, 2).setForeground(imgMap[3][3], TILE_UPSLOPE);
-		tm.initTile(30, 3).setForeground(imgMap[3][3], TILE_UPSLOPE);
-		for (int i = 31; i < 37; i++) {
-		    tm.initTile(i, 3).setForeground(imgMap[2][1], true);
+		for (int j = 0; j <= 3; j++) {
+		    if (j != 0) {
+        		tm.initTile(27 + j, j).setForeground(imgMap[3][3], TILE_UPSLOPE);
+        		tm.initTile(40 - j, j).setForeground(imgMap[3][4], TILE_DOWNSLOPE);
+		    }
+    		if (j == 3) {
+        		for (int i = 27 + j + 1; i < 40 - j; i++) {
+        		    tm.initTile(i, j).setForeground(imgMap[1][1], true);
+        		}
+    		} else {
+    		    tm.initTile(28 + j, j).setForeground(imgMap[3][0], true);
+    		    for (int i = 28 + j + 1; i < 39 - j; i++) {
+                    tm.initTile(i, j).setForeground(imgMap[2][1], true);
+                }
+    		    tm.initTile(39 - j, j).setForeground(imgMap[3][2], true);
+    		}
 		}
-		tm.initTile(37, 3).setForeground(imgMap[3][4], TILE_DOWNSLOPE);
-        tm.initTile(38, 2).setForeground(imgMap[3][4], TILE_DOWNSLOPE);
-        tm.initTile(39, 1).setForeground(imgMap[3][4], TILE_DOWNSLOPE);
 		bush(32, 4, 2);
 		rise(19, 1, 5, 3);
 		tm.initTile(23, 3).setBackground(imgMap[3][1]);
