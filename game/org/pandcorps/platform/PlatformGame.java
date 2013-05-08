@@ -158,8 +158,9 @@ public class PlatformGame extends BaseGame {
 		final Panmage bgimg = engine.createImage("img.bg", backImg);
 		bgtm1.setImageMap(bgimg);
 		final TileMapImage[][] bgMap = bgtm1.splitImageMap();
-		hill(bgtm1, bgMap, 1, 4, 8, 0);
-		hill(bgtm1, bgMap, 15, 5, 6, 0);
+		hill(bgtm1, bgMap, 1, 4, 8, 0, 0);
+		hill(bgtm1, bgMap, 15, 5, 6, 3, 0);
+		hill(bgtm1, bgMap, 24, 4, 4, 0, 0);
 		
 		final Panlayer bg2 = engine.createLayer(Pantil.vmid(), 384, 192, 1, room);
         bg1.addBeneath(bg2);
@@ -167,7 +168,8 @@ public class PlatformGame extends BaseGame {
         final TileMap bgtm2 = new TileMap("act.bgmap2", bg2, ImtilX.DIM, ImtilX.DIM);
         bg2.addActor(bgtm2);
         bgtm2.setImageMap(bgimg);
-        hill(bgtm2, bgMap, 3, 8, 12, 2);
+        hill(bgtm2, bgMap, 0, 6, 4, 3, 2);
+        hill(bgtm2, bgMap, 7, 8, 7, 0, 2);
         
         final Panlayer bg3 = engine.createLayer(Pantil.vmid(), 320, 192, 1, room);
         bg2.addBeneath(bg3);
@@ -175,11 +177,13 @@ public class PlatformGame extends BaseGame {
         final TileMap bgtm3 = new TileMap("act.bgmap3", bg3, ImtilX.DIM, ImtilX.DIM);
         bg3.addActor(bgtm3);
         bgtm3.setImageMap(bgimg);
-        bgtm3.fillBackground(bgMap[0][3]);
-        bgtm3.fillBackground(bgMap[1][3], 7, 1);
-        bgtm3.fillBackground(bgMap[2][3], 0, 7);
+        bgtm3.fillBackground(bgMap[0][6]);
+        bgtm3.fillBackground(bgMap[1][6], 7, 1);
+        bgtm3.fillBackground(bgMap[2][6], 0, 7);
         cloud(bgtm3, bgMap, 10, 10, 7);
-        hill(bgtm3, bgMap, 13, 10, 5, 4);
+        hill(bgtm3, bgMap, 2, 9, 4, 0, 4);
+        cloud(bgtm3, bgMap, 4, 6, 3);
+        hill(bgtm3, bgMap, 13, 10, 5, 3, 4);
 		
 		//tm.fillBackground(imgMap[7][7]); // Don't require transparent image
         final int n = w / 16;
@@ -246,20 +250,20 @@ public class PlatformGame extends BaseGame {
 	    t.setForeground(null, false);
 	}
 	
-	private static void hill(final TileMap tm, final TileMapImage[][] imgMap, final int x, final int y, final int w, final int iy) {
+	private static void hill(final TileMap tm, final TileMapImage[][] imgMap, final int x, final int y, final int w, final int ix, final int iy) {
 		for (int j = 0; j < y; j++) {
-			setBg(tm, x, j, imgMap, iy + 1, 0);
-			setBg(tm, x + w + 1, j, imgMap, iy + 1, 2);
+			setBg(tm, x, j, imgMap, iy + 1, ix);
+			setBg(tm, x + w + 1, j, imgMap, iy + 1, ix + 2);
 		}
 		final int stop = x + w;
 		for (int i = x + 1; i <= stop; i++) {
-		    setBg(tm, i, y, imgMap, iy, 1);
+		    setBg(tm, i, y, imgMap, iy, ix + 1);
 			for (int j = 0; j < y; j++) {
-			    setBg(tm, i, j, imgMap, iy + 1, 1);
+			    setBg(tm, i, j, imgMap, iy + 1, ix + 1);
 			}
 		}
-		tm.initTile(x, y).setForeground(imgMap[iy][0]);
-		tm.initTile(stop + 1, y).setForeground(imgMap[iy][2]);
+		tm.initTile(x, y).setForeground(imgMap[iy][ix]);
+		tm.initTile(stop + 1, y).setForeground(imgMap[iy][ix + 2]);
 	}
 	
 	private static void cloud(final TileMap tm, final TileMapImage[][] imgMap, final int x, final int y, final int w) {
