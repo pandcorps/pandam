@@ -184,17 +184,26 @@ public class PlatformGame extends BaseGame {
 		for (int i = 0; i < n; i++) {
 			tm.initTile(i, 0).setForeground(imgMap[1][1], true);
 		}
-		tm.initTile(12, 0).setForeground(imgMap[3][0], true);
-		tm.initTile(12, 1).setForeground(imgMap[2][0], true);
-		tm.initTile(12, 2).setForeground(imgMap[1][0], true);
-		tm.initTile(13, 2).setForeground(imgMap[1][1], true);
-		tm.initTile(13, 1).setForeground(imgMap[2][1], true);
-		tm.initTile(13, 0).setForeground(imgMap[2][1], true);
-		tm.initTile(14, 2).setForeground(imgMap[1][2], true);
-		tm.initTile(14, 1).setForeground(imgMap[2][2], true);
-		tm.initTile(14, 0).setForeground(imgMap[3][2], true);
+		tm.initTile(13, 0).setForeground(imgMap[3][0], true);
+		tm.initTile(13, 1).setForeground(imgMap[2][0], true);
+		tm.initTile(13, 2).setForeground(imgMap[1][0], true);
+		tm.initTile(14, 2).setForeground(imgMap[1][1], true);
+		tm.initTile(14, 1).setForeground(imgMap[2][1], true);
+		tm.initTile(14, 0).setForeground(imgMap[2][1], true);
+		tm.initTile(15, 2).setForeground(imgMap[1][2], true);
+		tm.initTile(15, 1).setForeground(imgMap[2][2], true);
+		tm.initTile(15, 0).setForeground(imgMap[3][2], true);
 		bush(1, 1, 0);
-		bush(28, 1, 2);
+		tm.initTile(28, 1).setForeground(imgMap[3][3], TILE_UPSLOPE);
+		tm.initTile(29, 2).setForeground(imgMap[3][3], TILE_UPSLOPE);
+		tm.initTile(30, 3).setForeground(imgMap[3][3], TILE_UPSLOPE);
+		for (int i = 31; i < 37; i++) {
+		    tm.initTile(i, 3).setForeground(imgMap[2][1], true);
+		}
+		tm.initTile(37, 3).setForeground(imgMap[3][4], TILE_DOWNSLOPE);
+        tm.initTile(38, 2).setForeground(imgMap[3][4], TILE_DOWNSLOPE);
+        tm.initTile(39, 1).setForeground(imgMap[3][4], TILE_DOWNSLOPE);
+		bush(32, 4, 2);
 		rise(19, 1, 5, 3);
 		tm.initTile(23, 3).setBackground(imgMap[3][1]);
 		tm.initTile(22, 2).setBackground(imgMap[3][1]);
@@ -207,7 +216,7 @@ public class PlatformGame extends BaseGame {
 		tm.initTile(5, 3).setForeground(imgMap[0][0], TILE_BUMP);
 		tm.initTile(6, 3).setForeground(imgMap[0][4], true);
 		gem(4, 1);
-		gem(13, 5);
+		gem(14, 5);
 		tm.initTile(8, 1).setForeground(imgMap[0][6], TILE_UPSLOPE);
 		tm.initTile(9, 1).setForeground(imgMap[0][4], true);
 		tm.initTile(10, 1).setForeground(imgMap[0][7], TILE_DOWNSLOPE);
