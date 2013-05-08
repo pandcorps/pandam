@@ -154,7 +154,7 @@ public class PlatformGame extends BaseGame {
 				}
 			}
 		}
-		backImg = Imtil.filter(backImg, 0, 0, 48, 96, getHillFilter(0));
+		backImg = Imtil.filter(backImg, 0, 0, 96, 96, getHillFilter(0));
 		final Panmage bgimg = engine.createImage("img.bg", backImg);
 		bgtm1.setImageMap(bgimg);
 		final TileMapImage[][] bgMap = bgtm1.splitImageMap();
