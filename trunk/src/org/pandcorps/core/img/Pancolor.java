@@ -41,6 +41,13 @@ public class Pancolor {
     private short b;
     private short a;
     
+    public static enum Channel {
+        Red,
+        Green,
+        Blue,
+        Alpha
+    }
+    
     public Pancolor(final short[] rgb) {
         this(rgb[0], rgb[1], rgb[2], rgb.length > 3 ? rgb[3] : MAX_VALUE);
     }
@@ -78,6 +85,19 @@ public class Pancolor {
     
     public final short getA() {
         return a;
+    }
+    
+    public final short get(final Channel c) {
+        if (c == Channel.Red) {
+            return r;
+        } else if (c == Channel.Green) {
+            return g;
+        } else if (c == Channel.Blue) {
+            return b;
+        } else if (c == Channel.Alpha) {
+            return a;
+        }
+        throw new IllegalArgumentException(c.toString());
     }
     
     // Lightness
