@@ -117,7 +117,8 @@ public class PlatformGame extends BaseGame {
 		tm = new DynamicTileMap("act.tilemap", room, ImtilX.DIM, ImtilX.DIM);
 		room.addActor(tm);
 		BufferedImage tileImg = ImtilX.loadImage("org/pandcorps/platform/res/bg/Tiles.png", 128, null);
-        final BufferedImage dirt = Imtil.loadStrip("org/pandcorps/platform/res/bg/Dirt.png", ImtilX.DIM)[0];
+		final int bgMode = 0;
+        final BufferedImage dirt = Imtil.loadStrip("org/pandcorps/platform/res/bg/Dirt.png", ImtilX.DIM)[bgMode];
         final PixelMask tileMask = new AntiPixelMask(new ColorPixelMask(224, 112, 0, Pancolor.MAX_VALUE));
         for (int x = 0; x < 80; x += 16) {
             for (int y = 16; y < 48; y += 16) {
@@ -137,7 +138,22 @@ public class PlatformGame extends BaseGame {
 		bg1.setMaster(room);
 		final TileMap bgtm1 = new TileMap("act.bgmap1", bg1, ImtilX.DIM, ImtilX.DIM);
 		bg1.addActor(bgtm1);
-		final Panmage bgimg = createImage("bg", "org/pandcorps/platform/res/bg/Hills.png", 128);
+		final BufferedImage backImg = ImtilX.loadImage("org/pandcorps/platform/res/bg/Hills.png", 128, null);
+		BufferedImage terrain = Imtil.loadStrip("org/pandcorps/platform/res/bg/Terrain.png", ImtilX.DIM)[bgMode];
+		final PixelFilter backFilter = new BrightnessPixelFilter((short) -40, (short) -24, (short) -32);
+		for (int z = 0; z < 3; z++) {
+			final PixelMask backMask = new AntiPixelMask(new ColorPixelMask(196 - 40 * z, 220 - 24 * z, 208 - 32 * z, Pancolor.MAX_VALUE));
+			if (z > 0) {
+				terrain = Imtil.filter(terrain, backFilter);
+			}
+			for (int x = 0; x < 64; x += 16) {
+				final int yoff = z * 32, ystop = yoff + 32;
+				for (int y = yoff; y < ystop; y += 16) {
+					Imtil.copy(terrain, backImg, 0, 0, 16, 16, x, y, null, backMask);
+				}
+			}
+		}
+		final Panmage bgimg = engine.createImage("img.bg", backImg);
 		bgtm1.setImageMap(bgimg);
 		final TileMapImage[][] bgMap = bgtm1.splitImageMap();
 		hill(bgtm1, bgMap, 1, 4, 8, 0);
