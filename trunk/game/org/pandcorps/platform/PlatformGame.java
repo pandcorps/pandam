@@ -26,6 +26,7 @@ import java.awt.image.BufferedImage;
 
 import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
+import org.pandcorps.core.img.Pancolor.Channel;
 import org.pandcorps.game.*;
 import org.pandcorps.game.core.*;
 import org.pandcorps.pandam.*;
@@ -138,7 +139,7 @@ public class PlatformGame extends BaseGame {
 		bg1.setMaster(room);
 		final TileMap bgtm1 = new TileMap("act.bgmap1", bg1, ImtilX.DIM, ImtilX.DIM);
 		bg1.addActor(bgtm1);
-		final BufferedImage backImg = ImtilX.loadImage("org/pandcorps/platform/res/bg/Hills.png", 128, null);
+		BufferedImage backImg = ImtilX.loadImage("org/pandcorps/platform/res/bg/Hills.png", 128, null);
 		BufferedImage terrain = Imtil.loadStrip("org/pandcorps/platform/res/bg/Terrain.png", ImtilX.DIM)[bgMode];
 		final PixelFilter backFilter = new BrightnessPixelFilter((short) -40, (short) -24, (short) -32);
 		for (int z = 0; z < 3; z++) {
@@ -153,6 +154,7 @@ public class PlatformGame extends BaseGame {
 				}
 			}
 		}
+		backImg = Imtil.filter(backImg, 0, 0, 48, 96, getHillFilter(0));
 		final Panmage bgimg = engine.createImage("img.bg", backImg);
 		bgtm1.setImageMap(bgimg);
 		final TileMapImage[][] bgMap = bgtm1.splitImageMap();
@@ -302,6 +304,15 @@ public class PlatformGame extends BaseGame {
 		final Gem gem = new Gem();
 		gem.setPosition(tm.initTile(x, y));
 		room.addActor(gem);
+	}
+	
+	private static PixelFilter getHillFilter(final int mode) {
+		switch (mode) {
+			case 0 : return null;
+			case 1 : return new SwapPixelFilter(Channel.Red, Channel.Blue, Channel.Green);
+			case 2 : return new SwapPixelFilter(Channel.Blue, Channel.Red, Channel.Green);
+		}
+		throw new IllegalArgumentException(String.valueOf(mode));
 	}
 	
 	public final static void main(final String[] args) {
