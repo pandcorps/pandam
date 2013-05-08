@@ -179,19 +179,30 @@ public final class Imtil {
     	return filter(img, Coltil.asList(fs));
     }
     
+    public final static BufferedImage filter(final BufferedImage img, final int ox, final int oy, final int w, final int h, final PixelFilter... fs) {
+    	return filter(img, ox, oy, w, h, Coltil.asList(fs));
+    }
+    
     public final static BufferedImage filter(final BufferedImage img, final Iterable<PixelFilter> fs) {
+    	return filter(img, 0, 0, img.getWidth(), img.getHeight(), fs);
+    }
+    
+    public final static BufferedImage filter(final BufferedImage img, final int ox, final int oy, final int w, final int h, final Iterable<PixelFilter> fs) {
     	if (Coltil.isEmpty(fs)) {
     		return img;
     	}
-        final int w = img.getWidth(), h = img.getHeight();
         //final ColorModel cm = img.getColorModel();
         //cm.getRGB(inData)
-        final BufferedImage out = new BufferedImage(w, h, TYPE);
-        for (int x = 0; x < w; x++) {
-            for (int y = 0; y < h; y++) {
+    	final int iw = img.getWidth(), ih = img.getHeight();
+        final BufferedImage out = new BufferedImage(iw, ih, TYPE);
+        final int sx = ox + w, sy = oy + h;
+        for (int x = 0; x < iw; x++) {
+            for (int y = 0; y < ih; y++) {
                 int p = img.getRGB(x, y);
-                for (final PixelFilter f : fs) {
-                	p = f.filter(p);
+                if (x >= ox && x < sx && y >= oy && y < sy) {
+	                for (final PixelFilter f : fs) {
+	                	p = f.filter(p);
+	                }
                 }
                 out.setRGB(x, y, p);
             }
