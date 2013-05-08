@@ -56,7 +56,8 @@ public final class Coltil {
 	}
 	
 	public final static <E> List<E> asList(final E... a) {
-		return a == null ? null : Arrays.asList(a);
+		final int size = size((Object[]) a);
+		return (size == 0 || (size == 1 && a[0] == null)) ? null : Arrays.asList(a);
 	}
 	
 	public final static <E> Iterable<E> unnull(final Iterable<E> i) {
