@@ -23,30 +23,29 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.core.img;
 
 public class BrightnessPixelFilter extends ColorPixelFilter {
-	private final short off;
+	private final short roff;
+	private final short goff;
+	private final short boff;
 	
 	public BrightnessPixelFilter(final short off) {
-		this.off = off;
+		this(off, off, off);
+	}
+	
+	public BrightnessPixelFilter(final short roff, final short goff, final short boff) {
+		this.roff = roff;
+		this.goff = goff;
+		this.boff = boff;
 	}
 	
 	@Override
 	public final void filter() {
-		if (off > 0) {
-			c.setR(add(c.getR()));
-			c.setG(add(c.getG()));
-			c.setB(add(c.getB()));
-		} else {
-			c.setR(sub(c.getR()));
-			c.setG(sub(c.getG()));
-			c.setB(sub(c.getB()));
-		}
+		c.setR(add(c.getR(), roff));
+		c.setG(add(c.getG(), goff));
+		c.setB(add(c.getB(), boff));
 	}
 	
-	private final short add(final short c) {
-		return (short) Math.min(c + off, Pancolor.MAX_VALUE);
-	}
-	
-	private final short sub(final short c) {
-		return (short) Math.max(c + off, 0);
+	private final short add(final short c, final short off) {
+		final int n = c + off;
+		return (short) (off > 0 ? Math.min(n, Pancolor.MAX_VALUE) : Math.max(n, 0));
 	}
 }
