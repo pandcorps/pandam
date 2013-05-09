@@ -25,7 +25,7 @@ package org.pandcorps.game;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
-import org.pandcorps.core.Reftil;
+import org.pandcorps.core.*;
 import org.pandcorps.core.img.scale.Scaler;
 import org.pandcorps.game.core.ImtilX;
 import org.pandcorps.pandam.*;
@@ -120,5 +120,16 @@ public abstract class BaseGame extends Pangame {
 		final Panlayer hud = engine.createLayer("layer.hud", engine.getGameWidth(), engine.getGameHeight(), 1, room);
 		room.addAbove(hud);
 		return hud;
+	}
+	
+	public final static Panlayer createParallax(final Panroom masterRoom, final Panlayer above, final int motionDivisor) {
+	    final Pangine engine = Pangine.getEngine();
+	    final int ew = engine.getEffectiveWidth(), eh = engine.getEffectiveHeight();
+	    final Panple ms = masterRoom.getSize();
+	    final float w = ew + ((ms.getX() - ew) / motionDivisor), h = eh + ((ms.getY() - eh) / motionDivisor);
+	    final Panlayer bg = engine.createLayer(Pantil.vmid(), w, h, 1, masterRoom);
+        above.addBeneath(bg);
+        bg.setMaster(masterRoom);
+        return bg;
 	}
 }
