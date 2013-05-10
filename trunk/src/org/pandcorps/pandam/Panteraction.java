@@ -47,6 +47,7 @@ public abstract class Panteraction {
 	public final Key KEY_7;
 	public final Key KEY_8;
 	public final Key KEY_9;
+	public final Key KEY_0;
 	public final Key KEY_MINUS;
 	public final Key KEY_EQUALS;
 	public final Key KEY_BACKSPACE;
@@ -157,6 +158,7 @@ public abstract class Panteraction {
 		KEY_7 = keys[IND_1 + 6];
 		KEY_8 = keys[IND_1 + 7];
 		KEY_9 = keys[IND_1 + 8];
+		KEY_0 = keys[IND_1 + 9];
 		KEY_MINUS = keys[12];
 		KEY_EQUALS = keys[13];
 		KEY_BACKSPACE = keys[14];
