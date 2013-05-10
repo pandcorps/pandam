@@ -134,7 +134,7 @@ public class PlatformGame extends BaseGame {
 		imgMap = tm.splitImageMap();
 		tm.setTileListener(new BlockTileListener(imgMap));
 		
-		final Panlayer bg1 = createParallax(room, room, 2);
+		final Panlayer bg1 = createParallax(room, 2);
 		final TileMap bgtm1 = new TileMap("act.bgmap1", bg1, ImtilX.DIM, ImtilX.DIM);
 		bg1.addActor(bgtm1);
 		BufferedImage backImg = ImtilX.loadImage("org/pandcorps/platform/res/bg/Hills.png", 128, null);
@@ -160,14 +160,19 @@ public class PlatformGame extends BaseGame {
 		hill(bgtm1, bgMap, 15, 5, 6, 3, 0);
 		hill(bgtm1, bgMap, 24, 4, 4, 0, 0);
 		
-		final Panlayer bg2 = createParallax(room, bg1, 4);
+		/*
+		It would look strange if layers 1 and 3 moved without 2.
+		So it's probably best if each layer's master is the one directly above it
+		instead of basing all on the foreground with different divisors.
+		*/
+		final Panlayer bg2 = createParallax(bg1, 2);
         final TileMap bgtm2 = new TileMap("act.bgmap2", bg2, ImtilX.DIM, ImtilX.DIM);
         bg2.addActor(bgtm2);
         bgtm2.setImageMap(bgimg);
         hill(bgtm2, bgMap, 0, 6, 4, 3, 2);
         hill(bgtm2, bgMap, 7, 8, 7, 0, 2);
         
-        final Panlayer bg3 = createParallax(room, bg2, 8);
+        final Panlayer bg3 = createParallax(bg2, 2);
         final TileMap bgtm3 = new TileMap("act.bgmap3", bg3, ImtilX.DIM, ImtilX.DIM);
         bg3.addActor(bgtm3);
         bgtm3.setImageMap(bgimg);

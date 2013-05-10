@@ -122,14 +122,18 @@ public abstract class BaseGame extends Pangame {
 		return hud;
 	}
 	
-	public final static Panlayer createParallax(final Panroom masterRoom, final Panlayer above, final int motionDivisor) {
+	public final static Panlayer createParallax(final Panlayer masterAbove, final int motionDivisor) {
+	    return createParallax(masterAbove, masterAbove, motionDivisor);
+	}
+	
+	public final static Panlayer createParallax(final Panlayer master, final Panlayer above, final int motionDivisor) {
 	    final Pangine engine = Pangine.getEngine();
 	    final int ew = engine.getEffectiveWidth(), eh = engine.getEffectiveHeight();
-	    final Panple ms = masterRoom.getSize();
+	    final Panple ms = master.getSize();
 	    final float w = ew + ((ms.getX() - ew) / motionDivisor), h = eh + ((ms.getY() - eh) / motionDivisor);
-	    final Panlayer bg = engine.createLayer(Pantil.vmid(), w, h, 1, masterRoom);
+	    final Panlayer bg = engine.createLayer(Pantil.vmid(), w, h, 1, master.getRoom());
         above.addBeneath(bg);
-        bg.setMaster(masterRoom);
+        bg.setMaster(master);
         return bg;
 	}
 }
