@@ -296,12 +296,16 @@ public final class LwjglPangine extends Pangine {
 		final float xi, xa, yi, ya, zi, za;
 		
 		private Camera(final float xi, final float xa, final float yi, final float ya, final float zi, final float za) {
-			this.xi = xi;
-			this.xa = xa;
-			this.yi = yi;
-			this.ya = ya;
-			this.zi = zi;
-			this.za = za;
+		    /*
+		    Format right away so that dependent layers are based on the final values.
+		    Otherwise it might be possible to move layers 1 and 3 but not 2, which looks wrong.
+		    */
+			this.xi = formatCam(xi);
+			this.xa = formatCam(xa);
+			this.yi = formatCam(yi);
+			this.ya = formatCam(ya);
+			this.zi = formatCam(zi);
+			this.za = formatCam(za);
 		}
 	}
 	
@@ -356,10 +360,17 @@ public final class LwjglPangine extends Pangine {
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);		
 	}
 	
+	private final static int formatCam(final float c) {
+	    return Math.round(c);
+	}
+	
 	private void cam(final Panlayer layer) {
 		final Camera c = cams.get(layer);
 		final float xi = c.xi, xa = c.xa, yi = c.yi, ya = c.ya, zi = c.zi, za = c.za;
 		GL11.glOrtho(xi, xa, yi, ya, zi, za);
+		//GL11.glOrtho((int) xi, (int) xa, (int) yi, (int) ya, zi, za);
+		// Formatted in Camera constructor
+		//GL11.glOrtho(formatCam(xi), formatCam(xa), formatCam(yi), formatCam(ya), zi, za);
 		getRawViewMinimum(layer).set(xi, yi, zi);
 		getRawViewMaximum(layer).set(xa, ya, za);
 	}
