@@ -51,6 +51,16 @@ public class Player extends Panctor implements StepListener {
 			@Override public final void onAction(final ActionEvent event) { right(); }});
 		interaction.register(this, interaction.KEY_LEFT, new ActionListener() {
 			@Override public final void onAction(final ActionEvent event) { left(); }});
+		
+		// Debug
+		interaction.register(this, interaction.KEY_1, new ActionStartListener() {
+            @Override public final void onActionStart(final ActionStartEvent event) { left(); }});
+		interaction.register(this, interaction.KEY_2, new ActionStartListener() {
+            @Override public final void onActionStart(final ActionStartEvent event) { right(); }});
+		interaction.register(this, interaction.KEY_9, new ActionStartListener() {
+            @Override public final void onActionStart(final ActionStartEvent event) { addX(-1); }});
+        interaction.register(this, interaction.KEY_0, new ActionStartListener() {
+            @Override public final void onActionStart(final ActionStartEvent event) { addX(1); }});
 	}
 	
 	private final void jump() {
@@ -66,16 +76,15 @@ public class Player extends Panctor implements StepListener {
 	}
 	
 	private final void right() {
-	    setMirror(false);
 		addX(VEL_WALK);
 	}
 	
 	private final void left() {
-	    setMirror(true);
 		addX(-VEL_WALK);
 	}
 	
 	private final void addX(final int v) {
+	    setMirror(v < 0);
 	    final int mult = v > 0 ? 1 : -1;
 	    final int n = v * mult;
 	    final int offWall = (OFF_X + 1) * mult;
