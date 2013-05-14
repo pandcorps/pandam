@@ -40,6 +40,8 @@ public class PlatformGame extends BaseGame {
 	protected final static byte TILE_FLOOR = 4;
     protected final static byte TILE_UPSLOPE = 5;
     protected final static byte TILE_DOWNSLOPE = 6;
+    protected final static byte TILE_UPSLOPE_FLOOR = 7;
+    protected final static byte TILE_DOWNSLOPE_FLOOR = 8;
 	
 	//protected final static int DEPTH_POWERUP = 0;
 	//protected final static int DEPTH_ENEMY = 1;
@@ -122,12 +124,9 @@ public class PlatformGame extends BaseGame {
         final BufferedImage dirt = Imtil.loadStrip("org/pandcorps/platform/res/bg/Dirt.png", ImtilX.DIM)[bgMode];
         final PixelMask tileMask = new AntiPixelMask(new ColorPixelMask(224, 112, 0, Pancolor.MAX_VALUE));
         for (int x = 0; x < 80; x += 16) {
-            for (int y = 16; y < 64; y += 16) {
+            for (int y = 16; y < 128; y += 16) {
                 Imtil.copy(dirt, tileImg, 0, 0, 16, 16, x, y, null, tileMask);
             }
-        }
-        for (int x = 0; x < 64; x += 16) {
-        	Imtil.copy(dirt, tileImg, 0, 0, 16, 16, x, 48, null, tileMask);
         }
 		final Panmage timg = engine.createImage("img.tiles", tileImg);
 		tm.setImageMap(timg);
@@ -228,11 +227,28 @@ public class PlatformGame extends BaseGame {
 		bump.setViewFromForeground(block);
 		tm.initTile(5, 3).setForeground(imgMap[0][0], TILE_BUMP);
 		tm.initTile(6, 3).setForeground(imgMap[0][4], true);
+		tm.initTile(2, 6).setForeground(imgMap[0][6], TILE_UPSLOPE);
+		tm.initTile(6, 6).setForeground(imgMap[0][7], TILE_DOWNSLOPE);
 		gem(4, 1);
 		gem(14, 5);
 		tm.initTile(8, 1).setForeground(imgMap[0][6], TILE_UPSLOPE);
 		tm.initTile(9, 1).setForeground(imgMap[0][4], true);
 		tm.initTile(10, 1).setForeground(imgMap[0][7], TILE_DOWNSLOPE);
+		for (int y = 1; y <= 3; y++) {
+			tm.initTile(43 - y, y).setForeground(imgMap[y == 3 ? 7 : 5][3]);
+			for (int x = 1; x <= 3; x++) {
+				tm.initTile(43 + x - y, y).setForeground(imgMap[2][1]);
+			}
+			tm.initTile(47 - y, y).setForeground(imgMap[4][4]);
+		}
+		for (int y = 1; y <= 2; y++) {
+			tm.initTile(39 + y, 3 + y).setForeground(imgMap[3][3], TILE_UPSLOPE_FLOOR);
+			tm.initTile(40 + y, 3 + y).setForeground(y == 2 ? imgMap[6][4] : imgMap[3][0]);
+			if (y < 2) {
+				tm.initTile(43 - y, 3 + y).setForeground(imgMap[2][1]);
+				tm.initTile(44 - y, 3 + y).setForeground(imgMap[4][4]);
+			}
+		}
 		final Player player = new Player();
 		room.addActor(player);
 		Pangine.getEngine().track(player);
