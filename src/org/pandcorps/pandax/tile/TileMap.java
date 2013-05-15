@@ -103,6 +103,15 @@ public class TileMap extends Panctor {
     	fillBackgroundO(background);
     }
     
+    public final void fillBackground(final TileMapImage background, final boolean solid) {
+        fillBackground(background);
+        for (int i = 0; i < w; i++) {
+            for (int j = 0; j < h; j++) {
+                getTile(i, j).setSolid(solid);
+            }
+        }
+    }
+    
     public final void fillBackground(final TileMapImage background, final int y, final int h) {
     	fillBackgroundO(background, y, h);
     }

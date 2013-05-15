@@ -64,7 +64,7 @@ public class TileWalker extends TileOccupant implements StepListener {
     }
     
     protected final boolean walk(final Direction dir, final Direction dir2) {
-        Tile dst = getDestination(dir);
+        Tile dst = dir2 == null ? getDestination(dir) : tile.getNeighbor(dir);
         face(dir);
         if (dst == null) {
             return false;
