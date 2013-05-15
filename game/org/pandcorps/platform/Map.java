@@ -59,22 +59,24 @@ public class Map {
 	protected final static class Player extends TileWalker {
 		{
 			setView(Pangine.getEngine().createImage("map.guy", new FinPanple(0, 0, 0), null, null, ImtilX.loadImage("org/pandcorps/platform/res/chr/Player.png")));
+			setSpeed(2);
+		}
+		
+		@Override
+		protected void onStill() {
 			final Panteraction interaction = Pangine.getEngine().getInteraction();
-	        register(interaction.KEY_DOWN, new ActionStartListener() {
-	        	@Override public final void onActionStart(final ActionStartEvent event) {
-	        		walk(Direction.South); }});
-	        register(interaction.KEY_UP, new ActionStartListener() {
-	        	@Override public final void onActionStart(final ActionStartEvent event) {
-	        		walk(Direction.North); }});
-	        register(interaction.KEY_LEFT, new ActionStartListener() {
-	        	@Override public final void onActionStart(final ActionStartEvent event) {
-	        		walk(Direction.West); }});
-	        register(interaction.KEY_RIGHT, new ActionStartListener() {
-	        	@Override public final void onActionStart(final ActionStartEvent event) {
-	        		walk(Direction.East); }});
-	        register(interaction.KEY_SPACE, new ActionStartListener() {
-				@Override final public void onActionStart(final ActionStartEvent event) {
-					Panscreen.set(new PlatformGame.PlatformScreen()); }});
+			// Similar to Guy4Controller
+	        if (interaction.KEY_DOWN.isActive()) {
+	            walk(Direction.South);
+	        } else if (interaction.KEY_UP.isActive()) {
+	        	walk(Direction.North);
+	        } else if (interaction.KEY_LEFT.isActive()) {
+	        	walk(Direction.West);
+	        } else if (interaction.KEY_RIGHT.isActive()) {
+	        	walk(Direction.East);
+	        } else if (interaction.KEY_SPACE.isActive()) {
+				Panscreen.set(new PlatformGame.PlatformScreen());
+			}
 		}
 		
 		@Override
