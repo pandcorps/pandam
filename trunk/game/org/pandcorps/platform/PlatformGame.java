@@ -65,7 +65,7 @@ public class PlatformGame extends BaseGame {
 		Pangine.getEngine().setTitle("Platformer");
 		PlatformGame.room = room;
 		loadConstants();
-		Panscreen.set(new LogoScreen(PlatformScreen.class));
+		Panscreen.set(new LogoScreen(Map.MapScreen.class));
 	}
 	
 	protected final static class PlatformScreen extends Panscreen {
