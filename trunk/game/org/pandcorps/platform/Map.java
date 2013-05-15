@@ -128,7 +128,7 @@ public class Map {
 		final Panmage timg = PlatformGame.createImage("Map", "org/pandcorps/platform/res/bg/Map.png", 128);
 		tm.setImageMap(timg);
 		imgMap = tm.splitImageMap();
-		tm.fillBackground(imgMap[0][6]);
+		tm.fillBackground(imgMap[0][6], true);
 		for (int i = 2; i < 14; i++) {
 			for (int j = 1; j < 4; j++) {
 				tm.initTile(i, j).setBackground(imgMap[0][4]);
