@@ -36,11 +36,15 @@ public class TileWalker extends TileOccupant implements StepListener {
     
     /*package*/ float speed = 1;
     
+    public TileWalker() {
+    	super();
+    }
+    
     public TileWalker(final String id) {
         super(id);
     }
     
-    /*package*/ final Tile getDestination(final Direction dir) {
+    protected final Tile getDestination(final Direction dir) {
         final Tile dst = tile.getNeighbor(dir);
         return (dst == null || dst.isSolid() || dst.occupant != null) ? null : dst;
     }
@@ -56,12 +60,26 @@ public class TileWalker extends TileOccupant implements StepListener {
     }
     
     protected final boolean walk(final Direction dir) {
-        final Tile dst = getDestination(dir);
+    	return walk(dir, null);
+    }
+    
+    protected final boolean walk(final Direction dir, final Direction dir2) {
+        Tile dst = getDestination(dir);
         face(dir);
         if (dst == null) {
             return false;
         } else {
+        	final Tile prev = tile;
             setTile(dst);
+            if (dir2 != null) {
+            	dst = getDestination(dir2);
+            	if (dst == null) {
+            		setTile(prev);
+            		return false;
+            	} else {
+            		setTile(dst);
+            	}
+            }
             //TODO Update Z?
             final Panple pos = getPosition();
             final Panple dstPos = dst.position;
