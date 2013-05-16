@@ -36,6 +36,17 @@ import org.pandcorps.pandax.tile.Tile.TileMapImage;
 import org.pandcorps.pandax.visual.FadeController;
 
 public class PlatformGame extends BaseGame {
+	/*
+	Count player's gems.
+	HUD to display gem count.
+	Bottomless pits take gems.
+	Enemies.
+	Stomp to defeat enemies.
+	Take gems when hit by enemy.
+	Random levels.
+	Random maps.
+	*/
+	
 	protected final static byte TILE_BREAK = 2;
 	protected final static byte TILE_BUMP = 3;
 	protected final static byte TILE_FLOOR = 4;
@@ -250,6 +261,10 @@ public class PlatformGame extends BaseGame {
 		for (int i = 0; i < n; i++) {
 			tm.initTile(i, 0).setForeground(imgMap[1][1], true);
 		}
+		tm.removeTile(0, 0);
+		tm.removeTile(1, 0);
+		tm.initTile(2, 0).setForeground(imgMap[1][0], true);
+		
 		tm.initTile(13, 0).setForeground(imgMap[3][0], true);
 		tm.initTile(13, 1).setForeground(imgMap[2][0], true);
 		tm.initTile(13, 2).setForeground(imgMap[1][0], true);
@@ -259,7 +274,7 @@ public class PlatformGame extends BaseGame {
 		tm.initTile(15, 2).setForeground(imgMap[1][2], true);
 		tm.initTile(15, 1).setForeground(imgMap[2][2], true);
 		tm.initTile(15, 0).setForeground(imgMap[3][2], true);
-		bush(1, 1, 0);
+		bush(4, 1, 0);
 		for (int j = 0; j <= 3; j++) {
 		    if (j != 0) {
         		tm.initTile(27 + j, j).setForeground(imgMap[3][3], TILE_UPSLOPE);
@@ -291,7 +306,7 @@ public class PlatformGame extends BaseGame {
 		tm.initTile(6, 3).setForeground(imgMap[0][4], true);
 		tm.initTile(2, 6).setForeground(imgMap[0][6], TILE_UPSLOPE);
 		tm.initTile(6, 6).setForeground(imgMap[0][7], TILE_DOWNSLOPE);
-		gem(4, 1);
+		gem(9, 4);
 		gem(14, 5);
 		tm.initTile(8, 1).setForeground(imgMap[0][6], TILE_UPSLOPE);
 		tm.initTile(9, 1).setForeground(imgMap[0][4], true);
@@ -315,7 +330,7 @@ public class PlatformGame extends BaseGame {
 		final Player player = new Player();
 		room.addActor(player);
 		Pangine.getEngine().track(player);
-		setPosition(player, 16, 16, DEPTH_PLAYER);
+		setPosition(player, 40, 16, DEPTH_PLAYER);
 	}
 	
 	protected static void setPosition(final Panctor act, final float x, final float y, final float depth) {
