@@ -34,6 +34,6 @@ public class Burst extends Decoration implements AnimationEndListener {
 
     @Override
     public final void onAnimationEnd(final AnimationEndEvent event) {
-        this.destroy();
+        destroy();
     }
 }

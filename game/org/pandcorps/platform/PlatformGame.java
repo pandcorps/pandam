@@ -133,8 +133,7 @@ public class PlatformGame extends BaseGame {
 	protected final static boolean isFlash(final Tile tile) {
 		final Object bg = DynamicTileMap.getRawForeground(tile);
 		for (int i = 0; i < 4; i++) {
-			final TileMapImage block = flashBlock[i];
-			if (block == bg) {
+			if (flashBlock[i] == bg) {
 				return true;
 			}
 		}

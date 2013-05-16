@@ -25,15 +25,18 @@ package org.pandcorps.platform;
 import org.pandcorps.core.Mathtil;
 import org.pandcorps.game.actor.Burst;
 import org.pandcorps.pandam.Panple;
+import org.pandcorps.pandam.Panscreen;
 import org.pandcorps.pandam.event.*;
 
 public final class Spark extends Burst implements StepListener {
 	private final int count;
+	private final boolean end; // Could replace with handler
 	private int age = 0;
 	
-	public Spark(final int count, final float x, final float y) {
+	public Spark(final int count, final float x, final float y, final boolean end) {
 		super(PlatformGame.spark);
 		this.count = count;
+		this.end = end;
 		PlatformGame.setPosition(this, x + Mathtil.randf(-7, 7), y + Mathtil.randf(-7, 7), PlatformGame.DEPTH_SPARK);
 		PlatformGame.room.addActor(this);
 	}
@@ -44,8 +47,15 @@ public final class Spark extends Burst implements StepListener {
 			return;
 		} else if (age == 2) {
 			final Panple pos = getPosition();
-			new Spark(count - 1, pos.getX(), pos.getY());
+			new Spark(count - 1, pos.getX(), pos.getY(), end);
 		}
 		age++;
+	}
+	
+	@Override
+	public void onDestroy() {
+		if (end && count <= 0) {
+			Panscreen.set(new Map.MapScreen());
+		}
 	}
 }
