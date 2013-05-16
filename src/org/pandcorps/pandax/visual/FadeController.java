@@ -40,7 +40,7 @@ public class FadeController extends Panctor implements StepListener {
     
     @Override
     public final void onStep(final StepEvent event) {
-        if (velocity == 0) {
+        if (velocity == 0 || isDestroyed()) {
             return;
         }
         final Pancolor color = getLayer().getBlendColor();
@@ -58,6 +58,7 @@ public class FadeController extends Panctor implements StepListener {
     }
     
     public final static void fadeIn(final Panlayer layer, final short r, final short g, final short b, final short speed) {
+    	clearFadeControllers(layer);
         layer.getBlendColor().set(r, g, b, Pancolor.MAX_VALUE);
         final FadeController c = new FadeController();
         c.setVelocity((short) -speed);
@@ -65,12 +66,22 @@ public class FadeController extends Panctor implements StepListener {
     }
     
     public final static void fadeOut(final Panlayer layer, final short r, final short g, final short b, final short speed, final Panscreen nextScreen) {
-        layer.getBlendColor().set(r, g, b, Pancolor.MIN_VALUE);
+    	clearFadeControllers(layer);
+    	// Will normally already be min; but if it's already partially faded, just use that as starting point
+        //layer.getBlendColor().set(r, g, b, Pancolor.MIN_VALUE);
         final FadeController c = new FadeController() {
             @Override protected final void onFadeEnd() {
                 Panscreen.set(nextScreen);
             }};
         c.setVelocity(speed);
         layer.addActor(c);
+    }
+    
+    private final static void clearFadeControllers(final Panlayer layer) {
+    	for (final Panctor actor : layer.getActors()) {
+    		if (actor instanceof FadeController) {
+    			actor.destroy();
+    		}
+    	}
     }
 }
