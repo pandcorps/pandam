@@ -466,20 +466,22 @@ public final class LwjglPangine extends Pangine {
 	    GL11.glEnable(GL11.GL_BLEND);
 	    GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GL11.glColor4b(toByte(color.getR()), toByte(color.getG()), toByte(color.getB()), toByte(a));
-        final int maxx = 256, maxy = 192; //TODO real dimensions/coordinates based on window size and camera location
+        //final int maxx = 256, maxy = 192;
+        final Camera c = cams.get(room);
+		final float minx = c.xi, maxx = c.xa, miny = c.yi, maxy = c.ya, z = c.za;
         blendRectangle.rewind();
         blendRectangle.put(maxx);
         blendRectangle.put(maxy);
-        blendRectangle.put(0);
-        blendRectangle.put(0);
+        blendRectangle.put(z);
+        blendRectangle.put(minx);
         blendRectangle.put(maxy);
-        blendRectangle.put(0);
-        blendRectangle.put(0);
-        blendRectangle.put(0);
-        blendRectangle.put(0);
+        blendRectangle.put(z);
+        blendRectangle.put(minx);
+        blendRectangle.put(miny);
+        blendRectangle.put(z);
         blendRectangle.put(maxx);
-        blendRectangle.put(0);
-        blendRectangle.put(0);
+        blendRectangle.put(miny);
+        blendRectangle.put(z);
         blendRectangle.rewind();
         //GL11.glDrawElements(GL11.GL_QUADS, blendRectangle); array of indices into other arrays
         GL11.glVertexPointer(3, 0, blendRectangle);
