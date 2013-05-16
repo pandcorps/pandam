@@ -29,6 +29,7 @@ import org.pandcorps.pandax.Pandy;
 import org.pandcorps.pandax.tile.Tile;
 
 public class GemBumped extends Pandy {
+	private final boolean end;
 	int age = 0;
 	
 	public GemBumped(final Player player, final Tile tile) {
@@ -37,6 +38,7 @@ public class GemBumped extends Pandy {
 	
 	public GemBumped(final Player player, final Tile tile, final Panimation anm) {
 		super(Tiles.g);
+		end = !PlatformGame.isFlash(tile);
 		Gem.collect(player);
 		setView(anm);
 		final Panple pos = tile.getPosition();
@@ -50,7 +52,7 @@ public class GemBumped extends Pandy {
 		super.onStep(event);
 		age++;
 		if (age >= 12) {
-			Gem.spark(this);
+			Gem.spark(this, end);
 		}
 	}
 }
