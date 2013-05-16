@@ -33,6 +33,7 @@ import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.impl.FinPanple;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.tile.Tile.TileMapImage;
+import org.pandcorps.pandax.visual.FadeController;
 
 public class PlatformGame extends BaseGame {
 	protected final static byte TILE_BREAK = 2;
@@ -50,6 +51,8 @@ public class PlatformGame extends BaseGame {
 	protected final static int DEPTH_SPARK = 4;
 	
 	protected final static int TIME_FLASH = 60;
+	
+	protected final static short SPEED_FADE = 3;
 	
 	protected static Panroom room = null;
 	protected static DynamicTileMap tm = null;
@@ -79,6 +82,7 @@ public class PlatformGame extends BaseGame {
 		@Override
         protected final void load() throws Exception {
 			loadLevel();
+			FadeController.fadeIn(room, Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, SPEED_FADE);
 		}
 		
 		@Override
