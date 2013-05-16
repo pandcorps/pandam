@@ -62,6 +62,8 @@ public class Map {
 	}
 	
 	protected final static class Player extends TileWalker {
+		private boolean disabled = false;
+		
 		{
 			setView(PlatformGame.guyMap);
 			setSpeed(2);
@@ -69,6 +71,9 @@ public class Map {
 		
 		@Override
 		protected void onStill() {
+			if (disabled) {
+				return;
+			}
 			final Panteraction interaction = Pangine.getEngine().getInteraction();
 			// Similar to Guy4Controller
 	        if (interaction.KEY_DOWN.isActive()) {
@@ -80,6 +85,10 @@ public class Map {
 	        } else if (interaction.KEY_RIGHT.isActive()) {
 	        	walk(Direction.East);
 	        } else if (interaction.KEY_SPACE.isActive()) {
+	        	/*if (room.getBlendColor().getA() > Pancolor.MIN_VALUE) {
+	        		return;
+	        	}*/
+	        	disabled = true;
 	        	PlatformGame.fadeOut(room, new PlatformGame.PlatformScreen());
 			}
 		}

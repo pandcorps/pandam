@@ -26,6 +26,7 @@ import org.pandcorps.game.core.ImtilX;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.action.*;
+import org.pandcorps.pandam.impl.ImplPanple;
 import org.pandcorps.pandax.tile.*;
 
 public class Player extends Panctor implements StepListener {
@@ -34,9 +35,14 @@ public class Player extends Panctor implements StepListener {
 	private final static int OFF_BUTTING = H + 1;
 	private final static int OFF_X = 7;
 	private final static int VEL_WALK = 3;
+	private final static int VEL_RETURN = 2;
+	private final static byte MODE_NORMAL = 0;
+	private final static byte MODE_RETURN = 1;
 	
 	protected static int g = -1;
+	private byte mode = MODE_NORMAL;
 	private int v = 0;
+	private final Panple safe = new ImplPanple(0, 0, 0);
 	
 	public Player() {
 		final Pangine engine = Pangine.getEngine();
@@ -83,6 +89,9 @@ public class Player extends Panctor implements StepListener {
 	}
 	
 	private final void addX(final int v) {
+		if (mode == MODE_RETURN) {
+			return;
+		}
 	    setMirror(v < 0);
 	    final int mult = v > 0 ? 1 : -1;
 	    final int n = v * mult;
@@ -107,6 +116,19 @@ public class Player extends Panctor implements StepListener {
 	@Override
 	public final void onStep(final StepEvent event) {
 		final Panple pos = getPosition();
+		if (mode == MODE_RETURN) {
+			final Panple diff = Panple.subtract(safe, pos);
+			final double dist = diff.getMagnitude();
+			if (dist <= VEL_RETURN) {
+				pos.set(safe);
+				mode = MODE_NORMAL;
+				return;
+			}
+			diff.multiply((float) (VEL_RETURN / dist));
+			pos.add(diff);
+			return;
+		}
+		
 		final int offSol, mult, n;
 		if (v > 0) {
 			offSol = OFF_BUTTING;
@@ -126,8 +148,14 @@ public class Player extends Panctor implements StepListener {
 				break;
 			}
 			pos.addY(mult);
+			if (pos.getY() < 0) {
+				v = 0;
+				mode = MODE_RETURN;
+			}
 		}
-		if (!isGrounded()) {
+		if (isGrounded()) {
+			safe.set(pos);
+		} else {
 			v += g;
 		}
 		/*
