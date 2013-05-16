@@ -53,4 +53,8 @@ public class DynamicTileMap extends TileMap implements StepListener {
 	public static Object getRawBackground(final Tile tile) {
 		return tile.background;
 	}
+	
+	public static Object getRawForeground(final Tile tile) {
+		return tile.foreground;
+	}
 }
