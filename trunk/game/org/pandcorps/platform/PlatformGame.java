@@ -78,11 +78,19 @@ public class PlatformGame extends BaseGame {
 		Panscreen.set(new LogoScreen(Map.MapScreen.class));
 	}
 	
+	protected final static void fadeIn(final Panlayer layer) {
+		FadeController.fadeIn(layer, Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, SPEED_FADE);
+	}
+	
+	protected final static void fadeOut(final Panlayer layer, final Panscreen screen) {
+		FadeController.fadeOut(layer, Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, SPEED_FADE, screen);
+	}
+	
 	protected final static class PlatformScreen extends Panscreen {
 		@Override
         protected final void load() throws Exception {
 			loadLevel();
-			FadeController.fadeIn(room, Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, SPEED_FADE);
+			fadeIn(room);
 		}
 		
 		@Override
