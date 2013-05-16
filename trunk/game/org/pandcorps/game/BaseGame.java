@@ -86,7 +86,11 @@ public abstract class BaseGame extends Pangame {
 	    if (list != null) {
 	    	return list.toArray(new Panmage[list.size()]);
 	    }
-	    final BufferedImage[] b = ImtilX.loadStrip(path, dim);
+	    return createSheet(name, ImtilX.loadStrip(path, dim), o);
+	}
+	
+	public final static Panmage[] createSheet(final String name, final BufferedImage[] b, final Panple o) {
+		final Pangine engine = Pangine.getEngine();
 	    final int size = b.length;
 	    final Panmage[] p = new Panmage[size];
 	    for (int i = 0; i < size; i++) {
