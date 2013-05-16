@@ -23,13 +23,11 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.platform;
 
 import org.pandcorps.core.*;
-import org.pandcorps.core.img.Pancolor;
 import org.pandcorps.game.core.ImtilX;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.impl.FinPanple;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.tile.Tile.TileMapImage;
-import org.pandcorps.pandax.visual.*;
 
 public class Map {
 	private final static byte TILE_HORIZ = 2;
@@ -48,6 +46,7 @@ public class Map {
 		@Override
         protected final void load() throws Exception {
 			loadMap();
+			PlatformGame.fadeIn(room);
 		}
 		
 		@Override
@@ -81,7 +80,7 @@ public class Map {
 	        } else if (interaction.KEY_RIGHT.isActive()) {
 	        	walk(Direction.East);
 	        } else if (interaction.KEY_SPACE.isActive()) {
-	            FadeController.fadeOut(room, Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, PlatformGame.SPEED_FADE, new PlatformGame.PlatformScreen());
+	        	PlatformGame.fadeOut(room, new PlatformGame.PlatformScreen());
 			}
 		}
 		
