@@ -51,9 +51,17 @@ public final class Panroom extends Panlayer {
 		base.destroyAllActors();
 		Panlayer layer;
 		while ((layer = base.getAbove()) != null) {
-			layer.destroy();
+			destroy(layer);
 		}
 		while ((layer = base.getBeneath()) != null) {
+			destroy(layer);
+		}
+	}
+	
+	private final void destroy(final Panlayer layer) {
+		if (layer == this) {
+			superDestroy();
+		} else {
 			layer.destroy();
 		}
 	}
@@ -61,6 +69,10 @@ public final class Panroom extends Panlayer {
 	@Override
 	public final void destroy() {
 		clear();
+		superDestroy();
+	}
+	
+	private final void superDestroy() {
 		super.destroy();
 	}
 }
