@@ -23,6 +23,7 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.pandam;
 
 import org.pandcorps.core.Mathtil;
+import org.pandcorps.pandam.impl.ImplPanple;
 
 // Pandam Tuple
 public abstract class Panple {
@@ -37,6 +38,10 @@ public abstract class Panple {
 	public abstract float getZ();
 
 	public abstract void setZ(float z);
+	
+	public final static Panple subtract(final Panple p1, final Panple p2) {
+		return new ImplPanple(p1.getX() - p2.getX(), p1.getY() - p2.getY(), p1.getZ() - p2.getZ());
+	}
 
 	public void set(final float x, final float y) {
 		setX(x);
@@ -113,6 +118,12 @@ public abstract class Panple {
 	    // x / mag should be <= 1, but account for possible float arithmetic errors
 	    final double a = Math.acos(Math.max(-1, Math.min(1, getX() / getMagnitude2()))); // 0 - pi
 	    return getY() < 0 ? (Mathtil.PI2 - a) : a;
+	}
+	
+	public Panple toUnit() {
+		final Panple unit = new ImplPanple(this);
+		unit.multiply((float) (1.0 / unit.getMagnitude()));
+		return unit;
 	}
 	
 	@Override

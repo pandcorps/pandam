@@ -30,6 +30,10 @@ public final class ImplPanple extends Panple {
 	private float y;
 	private float z;
 
+	public ImplPanple(final Panple p) {
+		this(p.getX(), p.getY(), p.getZ());
+	}
+	
 	public ImplPanple(final float x, final float y, final float z) {
 		this.x = x;
 		this.y = y;

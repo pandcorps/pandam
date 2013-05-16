@@ -70,10 +70,9 @@ public class TileMap extends Panctor {
         return tiles[getIndex(i, j)];
     }
     
-    ///*package*/ final void setTile(final int i, final int j, final Tile tile) {
-    //    tiles[getIndex(i, j)] = tile;
-    //    tile.map = this;
-    //}
+    public final void removeTile(final int i, final int j) {
+        tiles[getIndex(i, j)] = null;
+    }
     
     public final Tile getContainer(final Panctor act) {
     	return getContainer(act.getPosition());
