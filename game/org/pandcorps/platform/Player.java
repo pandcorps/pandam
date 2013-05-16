@@ -26,7 +26,6 @@ import org.pandcorps.game.core.ImtilX;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.action.*;
-import org.pandcorps.pandam.impl.FinPanple;
 import org.pandcorps.pandax.tile.*;
 
 public class Player extends Panctor implements StepListener {
@@ -41,7 +40,7 @@ public class Player extends Panctor implements StepListener {
 	
 	public Player() {
 		final Pangine engine = Pangine.getEngine();
-		setView(engine.createImage("guy", new FinPanple(8, 0, 0), null, null, ImtilX.loadImage("org/pandcorps/platform/res/chr/Player.png")));
+		setView(PlatformGame.guy);
 		final Panteraction interaction = engine.getInteraction();
 		interaction.register(this, interaction.KEY_SPACE, new ActionStartListener() {
 			@Override public final void onActionStart(final ActionStartEvent event) { jump(); }});

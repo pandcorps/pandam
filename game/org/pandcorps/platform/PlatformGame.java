@@ -54,13 +54,18 @@ public class PlatformGame extends BaseGame {
 	protected static Panroom room = null;
 	protected static DynamicTileMap tm = null;
 	protected static TileMapImage[][] imgMap = null;
+	protected static Panmage guy = null;
+	protected static Panmage guyMap = null;
 	protected static Panmage block8 = null;
 	protected static Panmage[] gem = null;
 	protected static Panimation gemAnm = null;
 	protected static Panimation gemCyanAnm = null;
 	protected static Panimation spark = null;
 	protected static TileMapImage[] flashBlock;
+	protected static Panmage timg = null;
+	protected static Panmage bgimg = null;
 	protected static final TileActor bump = new TileActor();
+	protected static Panimation marker = null;
 	
 	@Override
 	protected final void init(final Panroom room) throws Exception {
@@ -75,10 +80,19 @@ public class PlatformGame extends BaseGame {
         protected final void load() throws Exception {
 			loadLevel();
 		}
+		
+		@Override
+	    protected final void destroy() {
+	        Panmage.destroy(timg);
+	        Panmage.destroy(bgimg);
+	    }
 	}
 	
 	private final static void loadConstants() {
 		final Pangine engine = Pangine.getEngine();
+	    guy = engine.createImage("guy", new FinPanple(8, 0, 0), null, null, ImtilX.loadImage("org/pandcorps/platform/res/chr/Player.png"));
+	    guyMap = engine.createImage("guy.map", ImtilX.loadImage("org/pandcorps/platform/res/chr/PlayerMap.png"));
+	    
 	    block8 = createImage("block8", "org/pandcorps/platform/res/misc/Block8.png", 8);
 	    
 	    final BufferedImage[] gemStrip = ImtilX.loadStrip("org/pandcorps/platform/res/misc/Gem.png");
@@ -95,6 +109,13 @@ public class PlatformGame extends BaseGame {
 	    final Panframe[] sa = createFrames("spark", "org/pandcorps/platform/res/misc/Spark.png", 8, 1);
 	    spark = engine.createAnimation("anm.spark", sa[0], sa[1], sa[2], sa[3], sa[2], sa[1], sa[0]);
 	    Spark.class.getClass(); // Force class load? Save time later?
+	    
+	    final Panmage[] ma = PlatformGame.createSheet("Marker", "org/pandcorps/platform/res/bg/Marker.png", 8, new FinPanple(-4, -4, 0));
+		final Panframe[] fa = new Panframe[ma.length];
+		for (int i = 0; i < ma.length; i++) {
+			fa[i] = engine.createFrame("frm.marker." + i, ma[i], 2 * (2 - i % 2));
+		}
+		marker = engine.createAnimation("anm.marker", fa);
 	}
 	
 	private final static Panimation createGemAnimation(final String name, final Panmage[] gem) {
@@ -157,7 +178,7 @@ public class PlatformGame extends BaseGame {
                 Imtil.copy(dirt, tileImg, 0, 0, 16, 16, x, y, null, tileMask);
             }
         }
-		final Panmage timg = engine.createImage("img.tiles", tileImg);
+		timg = engine.createImage("img.tiles", tileImg);
 		tm.setImageMap(timg);
 		imgMap = tm.splitImageMap();
 		tm.setTileListener(new BlockTileListener(imgMap));
@@ -181,7 +202,7 @@ public class PlatformGame extends BaseGame {
 			}
 		}
 		backImg = Imtil.filter(backImg, 0, 0, 96, 96, getHillFilter(0));
-		final Panmage bgimg = engine.createImage("img.bg", backImg);
+		bgimg = engine.createImage("img.bg", backImg);
 		bgtm1.setImageMap(bgimg);
 		final TileMapImage[][] bgMap = bgtm1.splitImageMap();
 		hill(bgtm1, bgMap, 1, 4, 8, 0, 0);

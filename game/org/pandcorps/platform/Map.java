@@ -38,26 +38,31 @@ public class Map {
 	private final static byte TILE_RIGHTDOWN = 7;
 	private final static byte TILE_MARKER = 8;
 	private static Panroom room = null;
+	private static Panmage timg = null;
 	private static TileMap tm = null;
 	private static TileMapImage[][] imgMap = null;
-	private static Panimation marker = null;
 	
 	protected final static class MapScreen extends Panscreen {
 		@Override
         protected final void load() throws Exception {
 			loadMap();
 		}
+		
+		@Override
+	    protected final void destroy() {
+	        Panmage.destroy(timg);
+	    }
 	}
 	
 	protected final static class Marker extends Panctor {
 		{
-			setView(marker);
+			setView(PlatformGame.marker);
 		}
 	}
 	
 	protected final static class Player extends TileWalker {
 		{
-			setView(Pangine.getEngine().createImage("map.guy", new FinPanple(0, 0, 0), null, null, ImtilX.loadImage("org/pandcorps/platform/res/chr/Player.png")));
+			setView(PlatformGame.guyMap);
 			setSpeed(2);
 		}
 		
@@ -114,19 +119,13 @@ public class Map {
 	
 	private final static void loadMap() {
 		final Pangine engine = Pangine.getEngine();
-		final Panmage[] ma = PlatformGame.createSheet("Marker", "org/pandcorps/platform/res/bg/Marker.png", 8, new FinPanple(-4, -4, 0));
-		final Panframe[] fa = new Panframe[ma.length];
-		for (int i = 0; i < ma.length; i++) {
-			fa[i] = engine.createFrame("frm.marker." + i, ma[i], 2 * (2 - i % 2));
-		}
-		marker = engine.createAnimation("anm.marker", fa);
 		PlatformGame.room.destroy();
 		room = engine.createRoom(Pantil.vmid(), new FinPanple(256, 192, 0));
 		PlatformGame.room = room;
 		Pangame.getGame().setCurrentRoom(room);
 		tm = new DynamicTileMap("act.tilemap", room, ImtilX.DIM, ImtilX.DIM);
 		room.addActor(tm);
-		final Panmage timg = PlatformGame.createImage("Map", "org/pandcorps/platform/res/bg/Map.png", 128);
+		timg = PlatformGame.createImage("Map", "org/pandcorps/platform/res/bg/Map.png", 128);
 		tm.setImageMap(timg);
 		imgMap = tm.splitImageMap();
 		tm.fillBackground(imgMap[0][6], true);

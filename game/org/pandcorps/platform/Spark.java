@@ -24,8 +24,7 @@ package org.pandcorps.platform;
 
 import org.pandcorps.core.Mathtil;
 import org.pandcorps.game.actor.Burst;
-import org.pandcorps.pandam.Panple;
-import org.pandcorps.pandam.Panscreen;
+import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 
 public final class Spark extends Burst implements StepListener {
@@ -43,7 +42,7 @@ public final class Spark extends Burst implements StepListener {
 
 	@Override
 	public final void onStep(final StepEvent event) {
-		if (count <= 0) {
+		if (count == 0) {
 			return;
 		} else if (age == 2) {
 			final Panple pos = getPosition();
@@ -54,7 +53,8 @@ public final class Spark extends Burst implements StepListener {
 	
 	@Override
 	public void onDestroy() {
-		if (end && count <= 0) {
+		if (end && count == 0 && age != -1) {
+			age = -1;
 			Panscreen.set(new Map.MapScreen());
 		}
 	}
