@@ -57,7 +57,9 @@ public class PlatformGame extends BaseGame {
 	protected static Panmage block8 = null;
 	protected static Panmage[] gem = null;
 	protected static Panimation gemAnm = null;
+	protected static Panimation gemCyanAnm = null;
 	protected static Panimation spark = null;
+	protected static TileMapImage[] flashBlock;
 	protected static final TileActor bump = new TileActor();
 	
 	@Override
@@ -78,18 +80,33 @@ public class PlatformGame extends BaseGame {
 	private final static void loadConstants() {
 		final Pangine engine = Pangine.getEngine();
 	    block8 = createImage("block8", "org/pandcorps/platform/res/misc/Block8.png", 8);
-	    gem = createSheet("gem", "org/pandcorps/platform/res/misc/Gem.png");
-	    gemAnm = engine.createAnimation("anm.gem", engine.createFrame("frm.gem.0", gem[0], 3), engine.createFrame("frm.gem.1", gem[1], 1), engine.createFrame("frm.gem.2", gem[2], 1));
+	    
+	    final BufferedImage[] gemStrip = ImtilX.loadStrip("org/pandcorps/platform/res/misc/Gem.png");
+	    gem = createSheet("gem", gemStrip, null);
+	    gemAnm = createGemAnimation("gem", gem);
+	    
+	    final SwapPixelFilter gemFilter = new SwapPixelFilter(Channel.Green, Channel.Red, Channel.Blue);
+	    for (int i = 0; i < 3; i++) {
+	    	gemStrip[i] = Imtil.filter(gemStrip[i], gemFilter);
+	    }
+	    final Panmage[] gemCyan = createSheet("gem.cyan", gemStrip, null);
+	    gemCyanAnm = createGemAnimation("gem.cyan", gemCyan);
+	    
 	    final Panframe[] sa = createFrames("spark", "org/pandcorps/platform/res/misc/Spark.png", 8, 1);
 	    spark = engine.createAnimation("anm.spark", sa[0], sa[1], sa[2], sa[3], sa[2], sa[1], sa[0]);
+	    Spark.class.getClass(); // Force class load? Save time later?
+	}
+	
+	private final static Panimation createGemAnimation(final String name, final Panmage[] gem) {
+		final Pangine engine = Pangine.getEngine();
+		return engine.createAnimation("anm." + name, engine.createFrame("frm." + name + ".0", gem[0], 3), engine.createFrame("frm." + name + ".1", gem[1], 1), engine.createFrame("frm." + name + ".2", gem[2], 1));
 	}
 	
 	private final static class BlockTileListener implements TileListener {
-		final TileMapImage[] blocks;
 		private int tick = 0;
 		
 		private BlockTileListener(final TileMapImage[][] imgMap) {
-			blocks = imgMap[0];
+			flashBlock = imgMap[0];
 		}
 		
 		@Override
@@ -106,9 +123,22 @@ public class PlatformGame extends BaseGame {
 		public final void onStep(final Tile tile) {
 			if (tile == null || tile.getBehavior() != TILE_BUMP) {
 				return;
+			} else if (!isFlash(tile)) {
+				return;
 			}
-			tile.setForeground(blocks[tick]);
+			tile.setForeground(flashBlock[tick]);
 		}
+	}
+	
+	protected final static boolean isFlash(final Tile tile) {
+		final Object bg = DynamicTileMap.getRawForeground(tile);
+		for (int i = 0; i < 4; i++) {
+			final TileMapImage block = flashBlock[i];
+			if (block == bg) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	private final static void loadLevel() {
@@ -249,6 +279,7 @@ public class PlatformGame extends BaseGame {
 				tm.initTile(44 - y, 3 + y).setForeground(imgMap[4][4]);
 			}
 		}
+		tm.initTile(42, 8).setForeground(imgMap[7][0], TILE_BUMP);
 		final Player player = new Player();
 		room.addActor(player);
 		Pangine.getEngine().track(player);

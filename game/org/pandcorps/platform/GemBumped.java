@@ -23,7 +23,7 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.platform;
 
 import org.pandcorps.game.core.ImtilX;
-import org.pandcorps.pandam.Panple;
+import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandax.Pandy;
 import org.pandcorps.pandax.tile.Tile;
@@ -32,9 +32,13 @@ public class GemBumped extends Pandy {
 	int age = 0;
 	
 	public GemBumped(final Player player, final Tile tile) {
+		this(player, tile, PlatformGame.gemAnm);
+	}
+	
+	public GemBumped(final Player player, final Tile tile, final Panimation anm) {
 		super(Tiles.g);
 		Gem.collect(player);
-		setView(PlatformGame.gemAnm);
+		setView(anm);
 		final Panple pos = tile.getPosition();
 		PlatformGame.setPosition(this, pos.getX(), pos.getY() + ImtilX.DIM, PlatformGame.DEPTH_SHATTER);
 		getVelocity().set(0, 6);
