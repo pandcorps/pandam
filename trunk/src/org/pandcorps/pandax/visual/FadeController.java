@@ -23,11 +23,15 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.pandax.visual;
 
 import org.pandcorps.core.img.Pancolor;
-import org.pandcorps.pandam.Panctor;
+import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 
 public class FadeController extends Panctor implements StepListener {
     private short velocity = 0;
+    
+    public FadeController() {
+        setVisible(false);
+    }
     
     public FadeController(final String id) {
         super(id);
@@ -51,5 +55,22 @@ public class FadeController extends Panctor implements StepListener {
     
     public void setVelocity(final short velocity) {
         this.velocity = velocity;
+    }
+    
+    public final static void fadeIn(final Panlayer layer, final short r, final short g, final short b, final short speed) {
+        layer.getBlendColor().set(r, g, b, Pancolor.MAX_VALUE);
+        final FadeController c = new FadeController();
+        c.setVelocity((short) -speed);
+        layer.addActor(c);
+    }
+    
+    public final static void fadeOut(final Panlayer layer, final short r, final short g, final short b, final short speed, final Panscreen nextScreen) {
+        layer.getBlendColor().set(r, g, b, Pancolor.MIN_VALUE);
+        final FadeController c = new FadeController() {
+            @Override protected final void onFadeEnd() {
+                Panscreen.set(nextScreen);
+            }};
+        c.setVelocity(speed);
+        layer.addActor(c);
     }
 }

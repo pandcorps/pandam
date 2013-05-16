@@ -160,10 +160,14 @@ public class Pancolor {
     }
     
     public final void set(final Pancolor color) {
-        setR(color.getR());
-        setG(color.getG());
-        setB(color.getB());
-        setA(color.getA());
+        set(color.getR(), color.getG(), color.getB(), color.getA());
+    }
+    
+    public final void set(final short r, final short g, final short b, final short a) {
+        setR(r);
+        setG(g);
+        setB(b);
+        setA(a);
     }
     
     public final boolean addR(final short r) {
