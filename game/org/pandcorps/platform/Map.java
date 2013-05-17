@@ -179,6 +179,8 @@ public class Map {
 		player.setPosition(tm.getTile(2, 6));
 		player.getPosition().setZ(tm.getForegroundDepth() + 1);
 		room.addActor(player);
+		
+		PlatformGame.addHud(room);
 	}
 	
 	private static void marker(final int i, final int j) {
