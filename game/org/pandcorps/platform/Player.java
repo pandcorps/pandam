@@ -39,12 +39,34 @@ public class Player extends Panctor implements StepListener {
 	private final static byte MODE_NORMAL = 0;
 	private final static byte MODE_RETURN = 1;
 	
+	// Player attributes preserved between levels
+	public final static class PlayerContext {
+	    private int gems = 0;
+	    
+	    public final int getGems() {
+	        return gems;
+	    }
+	    
+	    public final void addGem() {
+	        gems++;
+	    }
+	    
+	    public final void onHurt() {
+	        if (gems == 0) {
+	            return;
+	        }
+	        gems -= (Math.max(1, gems / 10));
+	    }
+	}
+	
 	protected static int g = -1;
+	protected final PlayerContext pc;
 	private byte mode = MODE_NORMAL;
 	private int v = 0;
 	private final Panple safe = new ImplPanple(0, 0, 0);
 	
-	public Player() {
+	public Player(final PlayerContext pc) {
+	    this.pc = pc;
 		final Pangine engine = Pangine.getEngine();
 		setView(PlatformGame.guy);
 		final Panteraction interaction = engine.getInteraction();
@@ -150,6 +172,7 @@ public class Player extends Panctor implements StepListener {
 			pos.addY(mult);
 			if (pos.getY() < 0) {
 				v = 0;
+				pc.onHurt();
 				mode = MODE_RETURN;
 			}
 		}

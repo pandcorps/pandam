@@ -34,6 +34,7 @@ import org.pandcorps.pandam.impl.FinPanple;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.tile.Tile.TileMapImage;
 import org.pandcorps.pandax.visual.FadeController;
+import org.pandcorps.platform.Player.PlayerContext;
 
 public class PlatformGame extends BaseGame {
 	/*
@@ -327,7 +328,8 @@ public class PlatformGame extends BaseGame {
 			}
 		}
 		tm.initTile(42, 8).setForeground(imgMap[7][0], TILE_BUMP);
-		final Player player = new Player();
+		final PlayerContext pc = new PlayerContext();
+		final Player player = new Player(pc);
 		room.addActor(player);
 		Pangine.getEngine().track(player);
 		setPosition(player, 40, 16, DEPTH_PLAYER);
