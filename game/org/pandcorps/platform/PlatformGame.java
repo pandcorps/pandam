@@ -41,9 +41,6 @@ import org.pandcorps.platform.Player.PlayerContext;
 
 public class PlatformGame extends BaseGame {
 	/*
-	Count player's gems.
-	HUD to display gem count.
-	Bottomless pits take gems.
 	Enemies.
 	Stomp to defeat enemies.
 	Take gems when hit by enemy.
