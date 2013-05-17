@@ -25,12 +25,15 @@ package org.pandcorps.platform;
 import java.awt.image.BufferedImage;
 
 import org.pandcorps.core.*;
+import org.pandcorps.core.chr.CallSequence;
 import org.pandcorps.core.img.*;
 import org.pandcorps.core.img.Pancolor.Channel;
 import org.pandcorps.game.*;
 import org.pandcorps.game.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.impl.FinPanple;
+import org.pandcorps.pandax.text.*;
+import org.pandcorps.pandax.text.Fonts.FontRequest;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.tile.Tile.TileMapImage;
 import org.pandcorps.pandax.visual.FadeController;
@@ -67,6 +70,8 @@ public class PlatformGame extends BaseGame {
 	protected final static short SPEED_FADE = 3;
 	
 	protected static Panroom room = null;
+	protected static PlayerContext pc = new PlayerContext();
+	protected static Font font = null;
 	protected static DynamicTileMap tm = null;
 	protected static TileMapImage[][] imgMap = null;
 	protected static Panmage guy = null;
@@ -116,6 +121,8 @@ public class PlatformGame extends BaseGame {
 		final Pangine engine = Pangine.getEngine();
 	    guy = engine.createImage("guy", new FinPanple(8, 0, 0), null, null, ImtilX.loadImage("org/pandcorps/platform/res/chr/Player.png"));
 	    guyMap = engine.createImage("guy.map", ImtilX.loadImage("org/pandcorps/platform/res/chr/PlayerMap.png"));
+	    
+	    font = Fonts.getClassic(new FontRequest(8), Pancolor.WHITE);
 	    
 	    block8 = createImage("block8", "org/pandcorps/platform/res/misc/Block8.png", 8);
 	    
@@ -328,11 +335,23 @@ public class PlatformGame extends BaseGame {
 			}
 		}
 		tm.initTile(42, 8).setForeground(imgMap[7][0], TILE_BUMP);
-		final PlayerContext pc = new PlayerContext();
 		final Player player = new Player(pc);
 		room.addActor(player);
 		Pangine.getEngine().track(player);
 		setPosition(player, 40, 16, DEPTH_PLAYER);
+		
+		addHud(room);
+	}
+	
+	protected final static void addHud(final Panroom room) {
+		final Panlayer hud = createHud(room);
+        final Gem hudGem = new Gem();
+        hudGem.getPosition().setY(175);
+        hud.addActor(hudGem);
+        final Pantext hudGems = new Pantext("hud.gems", font, new CallSequence() {@Override protected String call() {
+            return String.valueOf(pc.getGems());}});
+        hudGems.getPosition().set(16, 178);
+        hud.addActor(hudGems);
 	}
 	
 	protected static void setPosition(final Panctor act, final float x, final float y, final float depth) {

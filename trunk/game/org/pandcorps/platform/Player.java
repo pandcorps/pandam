@@ -174,6 +174,7 @@ public class Player extends Panctor implements StepListener {
 				v = 0;
 				pc.onHurt();
 				mode = MODE_RETURN;
+				return;
 			}
 		}
 		if (isGrounded()) {
