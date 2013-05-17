@@ -43,6 +43,9 @@ public class Tiles {
     		new Shatter(x + 8, y, 2, 2);
     		new Shatter(x, y + 8, -1, 3);
     		new Shatter(x + 8, y + 8, 1, 3);
+    		if (Mathtil.rand()) {
+    		    new GemBumped(player, t);
+    		}
     	} else if (b == PlatformGame.TILE_BUMP) {
     	    new Bump(t); // Copy image before changing
     	    new GemBumped(player, t, PlatformGame.isFlash(t) ? PlatformGame.gemAnm : PlatformGame.gemCyanAnm);

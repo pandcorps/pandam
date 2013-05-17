@@ -38,7 +38,7 @@ public class GemBumped extends Pandy {
 	
 	public GemBumped(final Player player, final Tile tile, final Panimation anm) {
 		super(Tiles.g);
-		end = !PlatformGame.isFlash(tile);
+		end = anm != PlatformGame.gemAnm && !PlatformGame.isFlash(tile);
 		Gem.collect(player);
 		setView(anm);
 		final Panple pos = tile.getPosition();
