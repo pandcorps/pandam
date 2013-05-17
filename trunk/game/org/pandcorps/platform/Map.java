@@ -146,7 +146,7 @@ public class Map {
 			tm.initTile(i, 1).setForeground(imgMap[1][4]);
 			tm.initTile(i, 3).setForeground(imgMap[2][1]);
 			for (int j = 4; j < 10; j++) {
-				tm.initTile(i, j).setBackground(Mathtil.rand(80) ? imgMap[1][1] : imgMap[4][Mathtil.randi(0, 1)]);
+				tm.initTile(i, j).setBackground(Mathtil.rand(75) ? imgMap[1][1] : imgMap[4][Mathtil.randi(0, 3)]);
 			}
 			tm.initTile(i, 10).setForeground(imgMap[0][1]);
 		}
