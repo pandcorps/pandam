@@ -22,6 +22,8 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.platform;
 
+import java.awt.image.BufferedImage;
+
 import org.pandcorps.core.*;
 import org.pandcorps.game.core.ImtilX;
 import org.pandcorps.pandam.*;
@@ -37,6 +39,8 @@ public class Map {
 	private final static byte TILE_LEFTDOWN = 6;
 	private final static byte TILE_RIGHTDOWN = 7;
 	private final static byte TILE_MARKER = 8;
+	protected static final int bgTexture = 0;
+	protected static final int bgColor = 1;
 	private static Panroom room = null;
 	private static Panmage timg = null;
 	private static TileMap tm = null;
@@ -127,6 +131,10 @@ public class Map {
 	    }
 	}
 	
+	private final static TileMapImage getBaseImage() {
+		return Mathtil.rand(75) ? imgMap[1][1] : imgMap[4][Mathtil.randi(0, 3)];
+	}
+	
 	private final static void loadMap() {
 		final Pangine engine = Pangine.getEngine();
 		PlatformGame.room.destroy();
@@ -135,7 +143,12 @@ public class Map {
 		Pangame.getGame().setCurrentRoom(room);
 		tm = new DynamicTileMap("act.tilemap", room, ImtilX.DIM, ImtilX.DIM);
 		room.addActor(tm);
-		timg = PlatformGame.createImage("Map", "org/pandcorps/platform/res/bg/Map.png", 128);
+		BufferedImage tileImg = ImtilX.loadImage("org/pandcorps/platform/res/bg/Map.png", 128, null);
+		PlatformGame.applyDirtTexture(tileImg, 48, 0, 96, 16);
+		final BufferedImage terrain = PlatformGame.getDarkenedTerrain(PlatformGame.getTerrainTexture());
+		PlatformGame.applyTerrainTexture(tileImg, 0, 80, 48, 96, terrain, PlatformGame.getTerrainMask(1));
+		tileImg = PlatformGame.getColoredTerrain(tileImg, 0, 80, 48, 16);
+		timg = engine.createImage("img.map", tileImg);
 		tm.setImageMap(timg);
 		imgMap = tm.splitImageMap();
 		tm.fillBackground(imgMap[0][6], true);
@@ -146,10 +159,12 @@ public class Map {
 			tm.initTile(i, 1).setForeground(imgMap[1][4]);
 			tm.initTile(i, 3).setForeground(imgMap[2][1]);
 			for (int j = 4; j < 10; j++) {
-				tm.initTile(i, j).setBackground(Mathtil.rand(75) ? imgMap[1][1] : imgMap[4][Mathtil.randi(0, 3)]);
+				tm.initTile(i, j).setBackground(getBaseImage());
 			}
 			tm.initTile(i, 10).setForeground(imgMap[0][1]);
 		}
+		mountain(5, 11);
+		mountain(10, 9);
 		for (int j = 1; j < 4; j++) {
 			tm.initTile(1, j).setBackground(imgMap[0][3]);
 			tm.initTile(14, j).setBackground(imgMap[0][5]);
@@ -181,6 +196,16 @@ public class Map {
 		room.addActor(player);
 		
 		PlatformGame.addHud(room);
+	}
+	
+	private static void mountain(final int x, final int y) {
+		tm.initTile(x, y).setForeground(imgMap[5][0]);
+		tm.initTile(x + 1, y).setForeground(imgMap[5][1]);
+		tm.initTile(x + 2, y).setForeground(imgMap[5][2]);
+		final int stop = x + 2, yshadow = y - 1;
+		for (int i = x; i <= stop; i++) {
+			tm.initTile(i, yshadow).setForeground(getBaseImage());
+		}
 	}
 	
 	private static void marker(final int i, final int j) {
