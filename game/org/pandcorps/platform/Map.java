@@ -25,9 +25,11 @@ package org.pandcorps.platform;
 import java.awt.image.BufferedImage;
 
 import org.pandcorps.core.*;
+import org.pandcorps.core.chr.CallSequence;
 import org.pandcorps.game.core.ImtilX;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.impl.FinPanple;
+import org.pandcorps.pandax.text.Pantext;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.tile.Tile.TileMapImage;
 
@@ -39,12 +41,17 @@ public class Map {
 	private final static byte TILE_LEFTDOWN = 6;
 	private final static byte TILE_RIGHTDOWN = 7;
 	private final static byte TILE_MARKER = 8;
+	private final static String[] ADJECTIVES = { "Green", "Fun", "Happy", "Wonder" };
+	private final static String[] NATURES = { "Grass", "Hill", "Mound", "Plains", "Rise" };
+	private final static String[] PLACES = { "Area", "Kingdom", "Land", "Realm", "World", "Zone" };
 	protected static final int bgTexture = 0;
 	protected static final int bgColor = 1;
 	private static Panroom room = null;
 	private static Panmage timg = null;
 	private static TileMap tm = null;
 	private static TileMapImage[][] imgMap = null;
+	private static TileMapImage water = null;
+	private static TileMapImage base = null;
 	
 	protected final static class MapScreen extends Panscreen {
 		@Override
@@ -132,12 +139,13 @@ public class Map {
 	}
 	
 	private final static TileMapImage getBaseImage() {
-		return Mathtil.rand(75) ? imgMap[1][1] : imgMap[4][Mathtil.randi(0, 3)];
+		return Mathtil.rand(75) ? base : imgMap[4][Mathtil.randi(0, 3)];
 	}
 	
 	private final static void loadMap() {
 		final Pangine engine = Pangine.getEngine();
 		PlatformGame.room.destroy();
+		PlatformGame.player = null;
 		room = engine.createRoom(Pantil.vmid(), new FinPanple(256, 192, 0));
 		PlatformGame.room = room;
 		Pangame.getGame().setCurrentRoom(room);
@@ -151,7 +159,9 @@ public class Map {
 		timg = engine.createImage("img.map", tileImg);
 		tm.setImageMap(timg);
 		imgMap = tm.splitImageMap();
-		tm.fillBackground(imgMap[0][6], true);
+		water = imgMap[0][6];
+		base = imgMap[1][1];
+		tm.fillBackground(water, true);
 		for (int i = 2; i < 14; i++) {
 			for (int j = 1; j < 4; j++) {
 				tm.initTile(i, j).setBackground(imgMap[0][4]);
@@ -195,16 +205,32 @@ public class Map {
 		player.getPosition().setZ(tm.getForegroundDepth() + 1);
 		room.addActor(player);
 		
-		PlatformGame.addHud(room);
+		final Pantext name = new Pantext("map.name", PlatformGame.font, generateName());
+		name.getPosition().set(PlatformGame.SCREEN_W / 2, 0);
+		name.centerX();
+		final Panlayer hud = PlatformGame.addHud(room, new CallSequence() {@Override protected String call() {
+            return String.valueOf(PlatformGame.pc.getGems());}});
+		hud.addActor(name);
 	}
 	
 	private static void mountain(final int x, final int y) {
-		tm.initTile(x, y).setForeground(imgMap[5][0]);
-		tm.initTile(x + 1, y).setForeground(imgMap[5][1]);
-		tm.initTile(x + 2, y).setForeground(imgMap[5][2]);
+		setForeground(x, y, 5, 0);
+		setForeground(x + 1, y, 5, 1);
+		setForeground(x + 2, y, 5, 2);
 		final int stop = x + 2, yshadow = y - 1;
 		for (int i = x; i <= stop; i++) {
-			tm.initTile(i, yshadow).setForeground(getBaseImage());
+			final Tile t = tm.initTile(i, yshadow);
+			final TileMapImage b = getBaseImage();
+			t.setBackground(b);
+			t.setForeground(b);
+		}
+	}
+	
+	private static void setForeground(final int x, final int y, final int ij, final int ii) {
+		final Tile t = tm.initTile(x, y);
+		t.setForeground(imgMap[ij][ii]);
+		if (DynamicTileMap.getRawBackground(t) != water) {
+			t.setBackground(base);
 		}
 	}
 	
@@ -215,5 +241,9 @@ public class Map {
 		//m.setPosition(tile);
 		m.getPosition().set(tile.getPosition());
 		room.addActor(m);
+	}
+	
+	private final static String generateName() {
+		return Mathtil.rand(ADJECTIVES) + ' ' + Mathtil.rand(NATURES) + ' ' + Mathtil.rand(PLACES);
 	}
 }

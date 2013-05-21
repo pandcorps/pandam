@@ -41,6 +41,7 @@ import org.pandcorps.platform.Player.PlayerContext;
 
 public class PlatformGame extends BaseGame {
 	/*
+	Animated water on Map.
 	Enemies.
 	Stomp to defeat enemies.
 	Take gems when hit by enemy.
@@ -70,6 +71,7 @@ public class PlatformGame extends BaseGame {
 	
 	protected static Panroom room = null;
 	protected static PlayerContext pc = new PlayerContext();
+	protected static Player player = null;
 	protected static Font font = null;
 	protected static DynamicTileMap tm = null;
 	protected static TileMapImage[][] imgMap = null;
@@ -361,23 +363,24 @@ public class PlatformGame extends BaseGame {
 			}
 		}
 		tm.initTile(42, 8).setForeground(imgMap[7][0], TILE_BUMP);
-		final Player player = new Player(pc);
+		player = new Player(pc);
 		room.addActor(player);
 		Pangine.getEngine().track(player);
 		setPosition(player, 40, 16, DEPTH_PLAYER);
 		
-		addHud(room);
+		addHud(room, new CallSequence() {@Override protected String call() {
+            return String.valueOf(player.getCurrentLevelGems());}});
 	}
 	
-	protected final static void addHud(final Panroom room) {
+	protected final static Panlayer addHud(final Panroom room, final CallSequence gemSeq) {
 		final Panlayer hud = createHud(room);
         final Gem hudGem = new Gem();
         hudGem.getPosition().setY(175);
         hud.addActor(hudGem);
-        final Pantext hudGems = new Pantext("hud.gems", font, new CallSequence() {@Override protected String call() {
-            return String.valueOf(pc.getGems());}});
+        final Pantext hudGems = new Pantext("hud.gems", font, gemSeq);
         hudGems.getPosition().set(16, 178);
         hud.addActor(hudGems);
+        return hud;
 	}
 	
 	protected static void setPosition(final Panctor act, final float x, final float y, final float depth) {

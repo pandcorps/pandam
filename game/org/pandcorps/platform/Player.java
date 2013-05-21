@@ -46,17 +46,6 @@ public class Player extends Panctor implements StepListener {
 	    public final int getGems() {
 	        return gems;
 	    }
-	    
-	    public final void addGem() {
-	        gems++;
-	    }
-	    
-	    public final void onHurt() {
-	        if (gems == 0) {
-	            return;
-	        }
-	        gems -= (Math.max(1, gems / 10));
-	    }
 	}
 	
 	protected static int g = -1;
@@ -64,6 +53,7 @@ public class Player extends Panctor implements StepListener {
 	private byte mode = MODE_NORMAL;
 	private int v = 0;
 	private final Panple safe = new ImplPanple(0, 0, 0);
+	private int levelGems = 0;
 	
 	public Player(final PlayerContext pc) {
 	    this.pc = pc;
@@ -172,7 +162,7 @@ public class Player extends Panctor implements StepListener {
 			pos.addY(mult);
 			if (pos.getY() < 0) {
 				v = 0;
-				pc.onHurt();
+				onHurt();
 				mode = MODE_RETURN;
 				return;
 			}
@@ -345,5 +335,24 @@ public class Player extends Panctor implements StepListener {
 			return;
 		}
 		((Gem) o).onCollide(this);
+	}
+	
+	public final int getCurrentLevelGems() {
+        return levelGems;
+    }
+	
+	public final void addGem() {
+        levelGems++;
+    }
+	
+	public final void onHurt() {
+        if (levelGems == 0) {
+            return;
+        }
+        levelGems -= (Math.max(1, levelGems / 10));
+    }
+	
+	public final void onFinishLevel() {
+		pc.gems += levelGems;
 	}
 }
