@@ -30,12 +30,13 @@ import org.pandcorps.pandam.impl.ImplPanple;
 import org.pandcorps.pandax.tile.*;
 
 public class Player extends Panctor implements StepListener {
-    private final static int H = 16;
+    private final static int H = 15;
 	private final static int OFF_GROUNDED = -1;
 	private final static int OFF_BUTTING = H + 1;
 	private final static int OFF_X = 7;
 	private final static int VEL_WALK = 3;
 	private final static int VEL_RETURN = 2;
+	private final static int MAX_V = 10;
 	private final static byte MODE_NORMAL = 0;
 	private final static byte MODE_RETURN = 1;
 	private final static byte JUMP_HIGH = 1;
@@ -52,7 +53,7 @@ public class Player extends Panctor implements StepListener {
 	    }
 	}
 	
-	protected static float g = -0.75f;
+	protected static float g = -0.65f;
 	protected final PlayerContext pc;
 	private byte mode = MODE_NORMAL;
 	private byte jumpMode = MODE_NORMAL;
@@ -95,11 +96,11 @@ public class Player extends Panctor implements StepListener {
 	private final void jump() {
 	    if (jumpMode == JUMP_FLY) {
 	        flying = true;
-	        v -= g;
+	        addV(-g);
 	        return;
 	    }
 		if (isGrounded()) {
-			v = jumpMode == JUMP_HIGH ? 11 : 8;
+			v = jumpMode == JUMP_HIGH ? MAX_V : 8;
 		}
 	}
 	
@@ -145,6 +146,15 @@ public class Player extends Panctor implements StepListener {
 	        pos.addX(mult);
 	    }
 	}
+	
+	private final void addV(final float a) {
+	    v += a;
+	    if (a > 0 && v > MAX_V) {
+	        v = MAX_V;
+	    } else if (v < -MAX_V) {
+	        v = -MAX_V;
+	    }
+	}
 
 	@Override
 	public final void onStep(final StepEvent event) {
@@ -181,24 +191,35 @@ public class Player extends Panctor implements StepListener {
 				break;
 			}
 			pos.addY(mult);
-			if (pos.getY() < 0) {
+			final float y = pos.getY();
+			if (y < 0) {
+			    pos.setY(0);
 				v = 0;
-				onHurt();
-				mode = MODE_RETURN;
+				if (jumpMode != JUMP_FLY) {
+    				onHurt();
+    				mode = MODE_RETURN;
+				}
 				return;
+			} else {
+			    final float max = PlatformGame.room.getSize().getY() - H;
+			    if (y >= max) {
+    			    pos.setY(max - 1);
+    			    v = 0;
+    			    return;
+			    }
 			}
 		}
 		if (flying) {
 		    if (jumpMode != JUMP_FLY) {
 		        flying = false;
 		    } else {
-		        v -= g;
+		        addV(-g);
 		    }
 		}
 		if (isGrounded()) {
 			safe.set(pos);
 		} else if (!flying) {
-			v += g;
+			addV(g);
 		}
 		/*
 		Issues with slopes:
