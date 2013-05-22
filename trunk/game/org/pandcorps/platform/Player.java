@@ -38,6 +38,10 @@ public class Player extends Panctor implements StepListener {
 	private final static int VEL_RETURN = 2;
 	private final static byte MODE_NORMAL = 0;
 	private final static byte MODE_RETURN = 1;
+	private final static byte JUMP_HIGH = 1;
+	//private final static byte JUMP_DOUBLE = 2;
+	//private final static byte JUMP_INFINITE = 3;
+	private final static byte JUMP_FLY = 4;
 	
 	// Player attributes preserved between levels
 	public final static class PlayerContext {
@@ -48,10 +52,12 @@ public class Player extends Panctor implements StepListener {
 	    }
 	}
 	
-	protected static int g = -1;
+	protected static float g = -0.75f;
 	protected final PlayerContext pc;
 	private byte mode = MODE_NORMAL;
-	private int v = 0;
+	private byte jumpMode = MODE_NORMAL;
+	private boolean flying = false;
+	private float v = 0;
 	private final Panple safe = new ImplPanple(0, 0, 0);
 	private int levelGems = 0;
 	
@@ -78,15 +84,30 @@ public class Player extends Panctor implements StepListener {
             @Override public final void onActionStart(final ActionStartEvent event) { addX(-1); }});
         interaction.register(this, interaction.KEY_0, new ActionStartListener() {
             @Override public final void onActionStart(final ActionStartEvent event) { addX(1); }});
+        interaction.register(this, interaction.KEY_Q, new ActionStartListener() {
+            @Override public final void onActionStart(final ActionStartEvent event) { jumpMode = MODE_NORMAL; }});
+        interaction.register(this, interaction.KEY_W, new ActionStartListener() {
+            @Override public final void onActionStart(final ActionStartEvent event) { jumpMode = JUMP_HIGH; }});
+        interaction.register(this, interaction.KEY_E, new ActionStartListener() {
+            @Override public final void onActionStart(final ActionStartEvent event) { jumpMode = JUMP_FLY; }});
 	}
 	
 	private final void jump() {
+	    if (jumpMode == JUMP_FLY) {
+	        flying = true;
+	        v -= g;
+	        return;
+	    }
 		if (isGrounded()) {
-			v = 10;
+			v = jumpMode == JUMP_HIGH ? 11 : 8;
 		}
 	}
 	
 	private final void releaseJump() {
+	    if (jumpMode == JUMP_FLY) {
+            flying = false;
+            return;
+        }
 		if (v > 0) {
 			v = 0;
 		}
@@ -149,7 +170,7 @@ public class Player extends Panctor implements StepListener {
 			offSol = OFF_GROUNDED;
 			mult = -1;
 		}
-		n = v * mult;
+		n = Math.round(v * mult);
 		for (int i = 0; i < n; i++) {
 		    final Tile t = getSolid(offSol);
 			if (t != null) {
@@ -167,9 +188,16 @@ public class Player extends Panctor implements StepListener {
 				return;
 			}
 		}
+		if (flying) {
+		    if (jumpMode != JUMP_FLY) {
+		        flying = false;
+		    } else {
+		        v -= g;
+		    }
+		}
 		if (isGrounded()) {
 			safe.set(pos);
-		} else {
+		} else if (!flying) {
 			v += g;
 		}
 		/*
