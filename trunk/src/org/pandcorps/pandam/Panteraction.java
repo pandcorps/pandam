@@ -53,6 +53,11 @@ public abstract class Panteraction {
 	public final Key KEY_BACKSPACE;
 	public final Key KEY_TAB;
 	public final Key KEY_Q;
+	public final Key KEY_W;
+	public final Key KEY_E;
+	public final Key KEY_R;
+	public final Key KEY_T;
+	public final Key KEY_Y;
 	public final Key KEY_BRACKET_LEFT;
 	public final Key KEY_BRACKET_RIGHT;
 	public final Key KEY_ENTER;
@@ -164,6 +169,11 @@ public abstract class Panteraction {
 		KEY_BACKSPACE = keys[14];
         KEY_TAB = keys[15];
         KEY_Q = keys[IND_Q];
+        KEY_W = keys[IND_Q + 1];
+        KEY_E = keys[IND_Q + 2];
+        KEY_R = keys[IND_Q + 3];
+        KEY_T = keys[IND_Q + 4];
+        KEY_Y = keys[IND_Q + 5];
         KEY_BRACKET_LEFT = keys[26];
         KEY_BRACKET_RIGHT = keys[27];
 		KEY_ENTER = keys[28];
