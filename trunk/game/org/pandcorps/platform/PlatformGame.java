@@ -41,6 +41,7 @@ import org.pandcorps.platform.Player.PlayerContext;
 
 public class PlatformGame extends BaseGame {
 	/*
+	Player falling/sliding images.
 	Animated water on Map.
 	Enemies.
 	Stomp to defeat enemies.
@@ -76,6 +77,8 @@ public class PlatformGame extends BaseGame {
 	protected static DynamicTileMap tm = null;
 	protected static TileMapImage[][] imgMap = null;
 	protected static Panmage guy = null;
+	protected static Panimation guyRun = null;
+	protected static Panmage guyJump = null;
 	protected static Panmage guyMap = null;
 	protected static Panmage block8 = null;
 	protected static Panmage[] gem = null;
@@ -122,7 +125,15 @@ public class PlatformGame extends BaseGame {
 	
 	private final static void loadConstants() {
 		final Pangine engine = Pangine.getEngine();
-	    guy = engine.createImage("guy", new FinPanple(8, 0, 0), null, null, ImtilX.loadImage("org/pandcorps/platform/res/chr/Player.png"));
+		final BufferedImage[] guys = ImtilX.loadStrip("org/pandcorps/platform/res/chr/Bear.png", 32);
+		final FinPanple og = new FinPanple(16, 1, 0);
+		guy = engine.createImage("guy", og, null, null, guys[0]);
+		final Panmage guy2 = engine.createImage("guy.2", og, null, null, guys[1]);
+		final Panmage guy3 = engine.createImage("guy.3", og, null, null, guys[2]);
+		final Panframe gf1 = engine.createFrame("frm.guy.1", guy, 2), gf2 = engine.createFrame("frm.guy.2", guy2, 2), gf3 = engine.createFrame("frm.guy.3", guy3, 2);
+		guyRun = engine.createAnimation("anm.guy.run", gf1, gf2, gf3);
+		guyJump = engine.createImage("guy.jump", og, null, null, guys[3]);
+	    //guy = engine.createImage("guy", new FinPanple(8, 0, 0), null, null, ImtilX.loadImage("org/pandcorps/platform/res/chr/Player.png"));
 	    guyMap = engine.createImage("guy.map", ImtilX.loadImage("org/pandcorps/platform/res/chr/PlayerMap.png"));
 	    
 	    font = Fonts.getClassic(new FontRequest(8), Pancolor.WHITE);
