@@ -66,10 +66,14 @@ public final class Tile {
         return position;
     }
     
-    /*package*/ final Tile getNeighbor(final Direction dir) {
+    public final Tile getNeighbor(final Direction dir) {
         final int ni = i + (dir == Direction.East ? 1 : dir == Direction.West ? -1 : 0);
         final int nj = j + (dir == Direction.North ? 1 : dir == Direction.South ? -1 : 0);
         return map.getTile(ni, nj);
+    }
+    
+    public final Tile getRelative(final int offX, final int offY) {
+    	return map.getTile(i + offX, j + offY);
     }
     
     public final void setBackground(final Panmage background) {
@@ -155,5 +159,9 @@ public final class Tile {
     
     public final static TileOccupant getOccupant(final Tile t) {
     	return t == null ? null : t.occupant;
+    }
+    
+    public final static byte getBehavior(final Tile t) {
+    	return t == null ? 0 : t.behavior;
     }
 }
