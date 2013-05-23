@@ -160,10 +160,6 @@ public class Player extends Panctor implements StepListener {
 
 	@Override
 	public final void onStep(final StepEvent event) {
-		addX(hv);
-		final boolean running = hv != 0;
-		hv = 0;
-		
 		final Panple pos = getPosition();
 		if (mode == MODE_RETURN) {
 			final Panple diff = Panple.subtract(safe, pos);
@@ -204,17 +200,23 @@ public class Player extends Panctor implements StepListener {
 				if (jumpMode != JUMP_FLY) {
     				onHurt();
     				mode = MODE_RETURN;
+    				return;
 				}
-				return;
+				break;
 			} else {
 			    final float max = PlatformGame.room.getSize().getY() - H;
 			    if (y >= max) {
     			    pos.setY(max - 1);
     			    v = 0;
-    			    return;
+    			    break;
 			    }
 			}
 		}
+		
+		addX(hv);
+		final boolean running = hv != 0;
+		hv = 0;
+		
 		if (flying) {
 		    if (jumpMode != JUMP_FLY) {
 		        flying = false;
@@ -323,12 +325,32 @@ public class Player extends Panctor implements StepListener {
         	right = px + OFF_X;
         	b = right;
         }
-        //TODO for (i = 0; i += 16; ...) if h > 16
-        //final float x = yoff == 0 ? f : b;
-        final Tile t1 = PlatformGame.tm.getContainer(f, y), t2 = PlatformGame.tm.getContainer(f, top);
-        collide(t1);
-        collide(t2);
-        if (isSolid(t1, left, right, y) || isSolid(t2, left, right, y) /*|| isSolid(t2, left, right, top)*/) {
+        boolean sol = false;
+        Tile t = null;
+        for (int i = 0; true; i += 16) {
+        	float yi = y + i;
+        	final boolean done = yi >= top;
+        	if (done) {
+        		yi = top;
+        	}
+	        final Tile temp = PlatformGame.tm.getContainer(f, yi);
+	        if (temp != t) {
+	        	t = temp;
+		        collide(t);
+		        if (!sol && isSolid(t, left, right, y)) {
+		        	sol = true;
+		        }
+		        
+		        /*if (!sol && yoff < 0) {
+		        	final Tile tb = PlatformGame.tm.getContainer(b, yi);
+		        	sol = isSlope(tb, left, right, y);
+		        }*/
+	        }
+	        if (done) {
+	        	break;
+	        }
+        }
+        if (sol) {
         	return true;
         } else if (yoff < 0) {
         	final Tile t3 = PlatformGame.tm.getContainer(b, y), t4 = PlatformGame.tm.getContainer(b, top);
@@ -373,8 +395,19 @@ public class Player extends Panctor implements StepListener {
 			if (map.getContainer(right, y) != tile) {
 				if (b == PlatformGame.TILE_UPSLOPE_FLOOR && curHeight != 15) {
 					return false;
+				} else if (map.getContainer(left, y) == tile) {
+					return b != PlatformGame.TILE_UPSLOPE_FLOOR || Tile.getBehavior(tile.getRelative(1, 1)) != PlatformGame.TILE_UPSLOPE_FLOOR;
+				} else if (b == PlatformGame.TILE_UPSLOPE_FLOOR) {
+					return false;
 				}
-				return map.getContainer(left, y) == tile || (b != PlatformGame.TILE_UPSLOPE_FLOOR && (map.getContainer(left, top) == tile || map.getContainer(right, top) == tile));
+				for (int i = 0; true; i += 16) {
+					final float t = top - i;
+					if (t <= y) {
+						return false;
+					} else if (map.getContainer(left, t) == tile || map.getContainer(right, t) == tile) {
+						return true;
+					}
+				}
 			}
             final int minHeight = (int) right % ImtilX.DIM;
             return (b == PlatformGame.TILE_UPSLOPE_FLOOR) ? (curHeight == minHeight) : (curHeight <= minHeight);
@@ -383,8 +416,19 @@ public class Player extends Panctor implements StepListener {
             if (map.getContainer(left, y) != tile) {
             	if (b == PlatformGame.TILE_DOWNSLOPE_FLOOR && curHeight != 15) {
 					return false;
+				} else if (map.getContainer(right, y) == tile) {
+					return b != PlatformGame.TILE_DOWNSLOPE_FLOOR || Tile.getBehavior(tile.getRelative(-1, 1)) != PlatformGame.TILE_DOWNSLOPE_FLOOR;
+				} else if (b == PlatformGame.TILE_DOWNSLOPE_FLOOR) {
+					return false;
 				}
-                return map.getContainer(right, y) == tile || (b != PlatformGame.TILE_DOWNSLOPE_FLOOR && (map.getContainer(right, top) == tile || map.getContainer(left, top) == tile));
+            	for (int i = 0; true; i += 16) {
+					final float t = top - i;
+					if (t <= y) {
+						return false;
+					} else if (map.getContainer(right, t) == tile || map.getContainer(left, t) == tile) {
+						return true;
+					}
+				}
             }
             final int minHeight = 15 - ((int) left % ImtilX.DIM);
             return (b == PlatformGame.TILE_DOWNSLOPE_FLOOR) ? (curHeight == minHeight) : (curHeight <= minHeight);
