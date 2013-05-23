@@ -30,7 +30,8 @@ import org.pandcorps.pandam.impl.ImplPanple;
 import org.pandcorps.pandax.tile.*;
 
 public class Player extends Panctor implements StepListener {
-    private final static int H = 15;
+    //private final static int H = 15;
+	private final static int H = 23;
 	private final static int OFF_GROUNDED = -1;
 	private final static int OFF_BUTTING = H + 1;
 	private final static int OFF_X = 7;
@@ -59,6 +60,7 @@ public class Player extends Panctor implements StepListener {
 	private byte jumpMode = MODE_NORMAL;
 	private boolean flying = false;
 	private float v = 0;
+	private int hv = 0;
 	private final Panple safe = new ImplPanple(0, 0, 0);
 	private int levelGems = 0;
 	
@@ -115,15 +117,15 @@ public class Player extends Panctor implements StepListener {
 	}
 	
 	private final void right() {
-		addX(VEL_WALK);
+		hv = VEL_WALK;
 	}
 	
 	private final void left() {
-		addX(-VEL_WALK);
+		hv = -VEL_WALK;
 	}
 	
 	private final void addX(final int v) {
-		if (mode == MODE_RETURN) {
+		if (mode == MODE_RETURN || v == 0) {
 			return;
 		}
 	    setMirror(v < 0);
@@ -158,6 +160,10 @@ public class Player extends Panctor implements StepListener {
 
 	@Override
 	public final void onStep(final StepEvent event) {
+		addX(hv);
+		final boolean running = hv != 0;
+		hv = 0;
+		
 		final Panple pos = getPosition();
 		if (mode == MODE_RETURN) {
 			final Panple diff = Panple.subtract(safe, pos);
@@ -218,8 +224,16 @@ public class Player extends Panctor implements StepListener {
 		}
 		if (isGrounded()) {
 			safe.set(pos);
-		} else if (!flying) {
-			addV(g);
+			if (running) {
+				changeView(PlatformGame.guyRun);
+			} else {
+				changeView(PlatformGame.guy);
+			}
+		} else {
+			changeView(PlatformGame.guyJump);
+			if (!flying) {
+				addV(g);
+			}
 		}
 		/*
 		Issues with slopes:
