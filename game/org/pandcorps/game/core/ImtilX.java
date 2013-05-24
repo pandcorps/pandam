@@ -42,6 +42,10 @@ public final class ImtilX {
     	return loadImage(path, null);
     }
     
+    public final static BufferedImage loadImage(final String path, final boolean validate) {
+    	return loadImage(path, DIM, null, validate);
+    }
+    
     public final static BufferedImage loadImage(final String path, final ReplacePixelFilter filter) {
     	return loadImage(path, DIM, filter);
     }
