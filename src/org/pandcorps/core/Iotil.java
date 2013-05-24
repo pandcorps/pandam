@@ -27,6 +27,8 @@ import java.net.*;
 
 // Input/Output Utility
 public final class Iotil {
+	private final static BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+	
 	private Iotil() {
 		throw new Error();
 	}
@@ -81,6 +83,14 @@ public final class Iotil {
 				break;
 			}
 			out.write(buf, 0, len);
+		}
+	}
+	
+	public final static String readln() {
+		try {
+			return in.readLine();
+		} catch (final IOException e) {
+			throw new RuntimeException(e);
 		}
 	}
 }
