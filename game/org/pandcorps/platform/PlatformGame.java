@@ -123,9 +123,23 @@ public class PlatformGame extends BaseGame {
 	    }
 	}
 	
+	private final static BufferedImage[] createAnimalStrip(final String anm, final int eye) {
+		final BufferedImage[] strip = ImtilX.loadStrip("org/pandcorps/platform/res/chr/Bear.png", 32);
+		final BufferedImage face = ImtilX.loadImage("org/pandcorps/platform/res/chr/Face" + anm + ".png", false);
+		final BufferedImage eyes = ImtilX.loadImage("org/pandcorps/platform/res/chr/Eyes0" + eye + ".png", false);
+		final int size = strip.length;
+		for (int i = 0; i < size; i++) {
+			final int y = (i == 3) ? -1 : 0;
+			Imtil.copy(face, strip[i], 0, 0, 18, 18, 8, 1 + y, Imtil.COPY_FOREGROUND);
+			Imtil.copy(eyes, strip[i], 0, 0, 8, 4, 15, 10 + y, Imtil.COPY_FOREGROUND);
+		}
+		return strip;
+	}
+	
 	private final static void loadConstants() {
 		final Pangine engine = Pangine.getEngine();
-		final BufferedImage[] guys = ImtilX.loadStrip("org/pandcorps/platform/res/chr/Bear.png", 32);
+		final BufferedImage[] guys = createAnimalStrip("Bear", 1);
+		//final BufferedImage[] guys = createAnimalStrip("Rabbit", 2);
 		final FinPanple og = new FinPanple(16, 1, 0);
 		guy = engine.createImage("guy", og, null, null, guys[0]);
 		final Panmage guy2 = engine.createImage("guy.2", og, null, null, guys[1]);
