@@ -42,7 +42,11 @@ import org.pandcorps.platform.Player.PlayerContext;
 public class PlatformGame extends BaseGame {
 	/*
 	Player falling/sliding images.
+	Grey Map marker for beaten levels.
+	Don't allow Player to pass unbeaten levels on Map.
+	Warp Map marker for entry/exit point.
 	Animated water on Map.
+	Bridge tile for Map to connect multiple islands.
 	Enemies.
 	Stomp to defeat enemies.
 	Take gems when hit by enemy.
