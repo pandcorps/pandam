@@ -42,9 +42,11 @@ public class Map {
 	private final static byte TILE_RIGHTDOWN = 7;
 	private final static byte TILE_MARKER = 8;
 	private final static String[] ADJECTIVES =
-		{ "Cheery", "Emerald", "Enchanted", "Green", "Fun", "Happy", "Incredible", "Merry", "Mystic", "Verdant", "Wonder" };
-	private final static String[] NATURES = { "Bounce", "Grass", "Hill", "Jump", "Mound", "Plains", "Rise", "Run" };
-	private final static String[] PLACES = { "Area", "Island", "Kingdom", "Land", "Realm", "World", "Zone" };
+		{ "Bright", "Bubbly", "Cheery", "Emerald", "Enchanted", "Fragrant", "Green", "Fun", "Happy", "Incredible", "Merry",
+		"Mystic", "Sugar", "Sunny", "Sweet", "Tender", "Tranquil", "Verdant", "Vibrant", "Wonder" };
+	private final static String[] NATURES = { "Beat", "Bliss", "Bounce", "Candy", "Dash", "Flower", "Grass", "Harmony", "Hill",
+		"Jump", "Meadow", "Melody", "Mound", "Music", "Petal", "Plains", "Rhythm", "Rise", "Run", "Rush", "Shine" };
+	private final static String[] PLACES = { "Area", "Country", "Island", "Kingdom", "Land", "Realm", "World", "Zone" };
 	protected static final int bgTexture = 0;
 	protected static final int bgColor = 1;
 	private static Panroom room = null;
