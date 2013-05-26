@@ -22,8 +22,6 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.rpg;
 
-import java.util.IdentityHashMap;
-
 import org.pandcorps.core.img.*;
 import org.pandcorps.game.*;
 import org.pandcorps.game.actor.*;
@@ -61,31 +59,6 @@ public class RpgGame extends BaseGame {
 		RpgGame.room = room;
 		loadConstants();
 		loadArea(new Town(), 5, 5);
-	}
-	
-	private final static class QuaintTileListener implements TileListener {
-		private final IdentityHashMap<TileMapImage, TileMapImage> map = new IdentityHashMap<TileMapImage, TileMapImage>();
-		
-		private QuaintTileListener(final TileMapImage[][] imgMap) {
-			for (int x = 1; x <= 5; x++) {
-				for (int y = 0; y <= 2; y++) {
-					map.put(imgMap[5 + y][x], imgMap[5 + ((y + 1) % 3)][x]);
-				}
-			}
-		}
-		
-		@Override
-		public boolean isActive() {
-			return Pangine.getEngine().getClock() % 8 == 0;
-		}
-		
-		@Override
-		public final void onStep(final Tile tile) {
-			final TileMapImage next = map.get(DynamicTileMap.getRawBackground(tile));
-			if (next != null) {
-				tile.setBackground(next);
-			}
-		}
 	}
 	
 	private final static void loadConstants() {
@@ -128,7 +101,13 @@ public class RpgGame extends BaseGame {
 		final Panmage[] doors = createSheet("door", "org/pandcorps/rpg/res/misc/DoorQuaint.png");
 		tm.setImageMap(createImage("tile.quaint", "org/pandcorps/rpg/res/bg/TileQuaint.png", 128));
 		final TileMapImage[][] imgMap = tm.splitImageMap();
-		tm.setTileListener(new QuaintTileListener(imgMap));
+		final MapTileListener mtl = new MapTileListener(8);
+		for (int x = 1; x <= 5; x++) {
+			for (int y = 0; y <= 2; y++) {
+				mtl.put(imgMap[5 + y][x], imgMap[5 + ((y + 1) % 3)][x]);
+			}
+		}
+		tm.setTileListener(mtl);
 		tm.fillBackground(imgMap[5][0]);
 		tm.getTile(6, 5).setBackground(imgMap[4][1], true);
 		tm.getTile(6, 6).setBackground(imgMap[4][1], true);
