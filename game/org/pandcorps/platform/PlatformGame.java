@@ -45,8 +45,7 @@ public class PlatformGame extends BaseGame {
 	Grey Map marker for beaten levels.
 	Don't allow Player to pass unbeaten levels on Map.
 	Warp Map marker for entry/exit point.
-	Animated water on Map.
-	Bridge tile for Map to connect multiple islands.
+	Multiple islands for Map.
 	Enemies.
 	Stomp to defeat enemies.
 	Take gems when hit by enemy.
