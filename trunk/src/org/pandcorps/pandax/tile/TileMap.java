@@ -167,6 +167,14 @@ public class TileMap extends Panctor {
 
     @Override
     protected void renderView(final Panderer renderer) {
+    	/*
+    	TODO
+    	Only render tiles visible by current camera.
+    	Allow some wiggle room if camera can move between call to this and actual rendering.
+    	DynamicTileMap could call TileListener only for visible tiles too.
+    	But listener implementations would not be able to rely on previous image.
+    	They would need to be based on the clock so tiles don't get out of synch.
+    	*/
         final Panple pos = getPosition();
         final float x = pos.getX();
         final float y = pos.getY();
