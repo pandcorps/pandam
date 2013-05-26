@@ -26,6 +26,7 @@ import java.awt.image.BufferedImage;
 
 import org.pandcorps.core.*;
 import org.pandcorps.core.chr.CallSequence;
+import org.pandcorps.game.MapTileListener;
 import org.pandcorps.game.core.ImtilX;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.impl.FinPanple;
@@ -51,7 +52,7 @@ public class Map {
 	protected static final int bgColor = 1;
 	private static Panroom room = null;
 	private static Panmage timg = null;
-	private static TileMap tm = null;
+	private static DynamicTileMap tm = null;
 	private static TileMapImage[][] imgMap = null;
 	private static TileMapImage water = null;
 	private static TileMapImage base = null;
@@ -142,7 +143,7 @@ public class Map {
 	}
 	
 	private final static TileMapImage getBaseImage() {
-		return Mathtil.rand(75) ? base : imgMap[4][Mathtil.randi(0, 3)];
+		return Mathtil.rand(75) ? base : imgMap[4][Mathtil.randi(0, 5)];
 	}
 	
 	private final static void loadMap() {
@@ -157,12 +158,17 @@ public class Map {
 		BufferedImage tileImg = ImtilX.loadImage("org/pandcorps/platform/res/bg/Map.png", 128, null);
 		PlatformGame.applyDirtTexture(tileImg, 48, 0, 96, 16);
 		final BufferedImage terrain = PlatformGame.getDarkenedTerrain(PlatformGame.getTerrainTexture());
-		PlatformGame.applyTerrainTexture(tileImg, 0, 80, 48, 96, terrain, PlatformGame.getTerrainMask(1));
-		tileImg = PlatformGame.getColoredTerrain(tileImg, 0, 80, 48, 16);
+		PlatformGame.applyTerrainTexture(tileImg, 48, 32, 96, 48, terrain, PlatformGame.getTerrainMask(1));
+		tileImg = PlatformGame.getColoredTerrain(tileImg, 48, 32, 48, 16);
 		timg = engine.createImage("img.map", tileImg);
 		tm.setImageMap(timg);
 		imgMap = tm.splitImageMap();
-		water = imgMap[0][6];
+		final MapTileListener mtl = new MapTileListener(6);
+		for (int y = 0; y <= 2; y++) {
+			mtl.put(imgMap[5 + y][6], imgMap[5 + ((y + 1) % 3)][6]);
+		}
+		tm.setTileListener(mtl);
+		water = imgMap[5][6];
 		base = imgMap[1][1];
 		tm.fillBackground(water, true);
 		for (int i = 2; i < 14; i++) {
@@ -217,9 +223,9 @@ public class Map {
 	}
 	
 	private static void mountain(final int x, final int y) {
-		setForeground(x, y, 5, 0);
-		setForeground(x + 1, y, 5, 1);
-		setForeground(x + 2, y, 5, 2);
+		setForeground(x, y, 2, 3);
+		setForeground(x + 1, y, 2, 4);
+		setForeground(x + 2, y, 2, 5);
 		final int stop = x + 2, yshadow = y - 1;
 		for (int i = x; i <= stop; i++) {
 			final Tile t = tm.initTile(i, yshadow);
