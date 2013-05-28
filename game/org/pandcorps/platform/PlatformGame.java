@@ -93,6 +93,7 @@ public class PlatformGame extends BaseGame {
 	protected static Panmage bgimg = null;
 	protected static final TileActor bump = new TileActor();
 	protected static Panimation marker = null;
+	protected static Panmage markerDefeated = null;
 	protected static BufferedImage[] dirts = null;
 	protected static BufferedImage[] terrains = null;
 	
@@ -174,12 +175,14 @@ public class PlatformGame extends BaseGame {
 	    spark = engine.createAnimation("anm.spark", sa[0], sa[1], sa[2], sa[3], sa[2], sa[1], sa[0]);
 	    Spark.class.getClass(); // Force class load? Save time later?
 	    
-	    final Panmage[] ma = PlatformGame.createSheet("Marker", "org/pandcorps/platform/res/bg/Marker.png", 8, new FinPanple(-4, -4, 0));
+	    final FinPanple mo = new FinPanple(-4, -4, 0);
+	    final Panmage[] ma = PlatformGame.createSheet("Marker", "org/pandcorps/platform/res/bg/Marker.png", 8, mo);
 		final Panframe[] fa = new Panframe[ma.length];
 		for (int i = 0; i < ma.length; i++) {
 			fa[i] = engine.createFrame("frm.marker." + i, ma[i], 2 * (2 - i % 2));
 		}
 		marker = engine.createAnimation("anm.marker", fa);
+		markerDefeated = engine.createImage("img.Marker.def", mo, null, null, ImtilX.loadStrip("org/pandcorps/platform/res/bg/Marker.png", 8)[3]);
 		
 		dirts = Imtil.loadStrip("org/pandcorps/platform/res/bg/Dirt.png", ImtilX.DIM);
 		terrains = Imtil.loadStrip("org/pandcorps/platform/res/bg/Terrain.png", ImtilX.DIM);

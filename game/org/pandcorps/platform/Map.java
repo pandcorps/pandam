@@ -23,6 +23,7 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.platform;
 
 import java.awt.image.BufferedImage;
+import java.util.*;
 
 import org.pandcorps.core.*;
 import org.pandcorps.core.chr.CallSequence;
@@ -48,8 +49,14 @@ public class Map {
 	private final static String[] NATURES = { "Beat", "Bliss", "Bounce", "Candy", "Dash", "Flower", "Grass", "Harmony", "Hill",
 		"Jump", "Meadow", "Melody", "Mound", "Music", "Petal", "Plains", "Rhythm", "Rise", "Run", "Rush", "Shine" };
 	private final static String[] PLACES = { "Area", "Country", "Island", "Kingdom", "Land", "Realm", "World", "Zone" };
-	protected static final int bgTexture = 0;
-	protected static final int bgColor = 1;
+	protected final static int bgTexture = 0;
+	protected final static int bgColor = 1;
+	
+	private final static IdentityHashMap<Pair<Integer, Integer>, Boolean> open = new IdentityHashMap<Pair<Integer, Integer>, Boolean>();
+	private static int row = 2;
+	private static int column = 6;
+	private static boolean first = true;
+	
 	private static Panroom room = null;
 	private static Panmage timg = null;
 	private static DynamicTileMap tm = null;
@@ -71,8 +78,12 @@ public class Map {
 	}
 	
 	protected final static class Marker extends Panctor {
-		{
-			setView(PlatformGame.marker);
+		private Marker(final boolean open) {
+		    if (open) {
+		        setView(PlatformGame.markerDefeated);
+		    } else {
+		        setView(PlatformGame.marker);
+		    }
 		}
 	}
 	
@@ -92,27 +103,74 @@ public class Map {
 			final Panteraction interaction = Pangine.getEngine().getInteraction();
 			// Similar to Guy4Controller
 	        if (interaction.KEY_DOWN.isActive()) {
-	            walk(Direction.South);
+	            go(Direction.South);
 	        } else if (interaction.KEY_UP.isActive()) {
-	        	walk(Direction.North);
+	            go(Direction.North);
 	        } else if (interaction.KEY_LEFT.isActive()) {
-	        	walk(Direction.West);
+	            go(Direction.West);
 	        } else if (interaction.KEY_RIGHT.isActive()) {
-	        	walk(Direction.East);
+	            go(Direction.East);
 	        } else if (interaction.KEY_SPACE.isActive()) {
 	        	/*if (room.getBlendColor().getA() > Pancolor.MIN_VALUE) {
 	        		return;
 	        	}*/
+	            if (isOpen(getTile())) {
+	                return;
+	            }
 	        	disabled = true;
 	        	PlatformGame.fadeOut(room, new PlatformGame.PlatformScreen());
 			}
 		}
 		
+		protected boolean go(final Direction d0) {
+		    final Tile t0 = getTile();
+		    Tile t = t0;
+		    Direction d = d0;
+		    while (true) {
+    		    t = t.getNeighbor(d);
+    		    if (t == null || t.isSolid()) {
+    		        return false;
+    		    }
+    		    final byte b = t.getBehavior();
+    		    switch (b) {
+    		        case TILE_MARKER :
+        		        if (isOpen(t0) || isOpen(t)) {
+        		            walk(d0);
+        		            return true;
+        		        }
+        		        return false;
+    		        case TILE_VERT :
+    		        case TILE_HORIZ :
+    		            // d stays the same
+    		            break;
+    		        case TILE_LEFTUP :
+    		            d = getOther(d, Direction.West, Direction.North);
+    		            break;
+    		        case TILE_LEFTDOWN :
+                        d = getOther(d, Direction.West, Direction.South);
+                        break;
+    		        case TILE_RIGHTUP :
+                        d = getOther(d, Direction.East, Direction.North);
+                        break;
+    		        case TILE_RIGHTDOWN :
+                        d = getOther(d, Direction.East, Direction.South);
+                        break;
+    		    }
+		    }
+		}
+		
+		private final Direction getOther(final Direction c, final Direction o1, final Direction o2) {
+		    return c.getOpposite() == o1 ? o2 : o1;
+		}
+		
 		@Override
 		protected void onWalked() {
-			final byte b = getTile().getBehavior();
+		    final Tile t = getTile();
+			final byte b = t.getBehavior();
 			switch (b) {
 				case TILE_MARKER :
+				    row = t.getRow();
+				    column = t.getColumn();
 					return;
 				case TILE_VERT : {
 					final Direction d1 = getDirection();
@@ -145,6 +203,20 @@ public class Map {
 	private final static TileMapImage getBaseImage() {
 		return Mathtil.rand(75) ? base : imgMap[4][Mathtil.randi(0, 5)];
 	}
+	
+	private final static Pair<Integer, Integer> getKey(final Tile t) {
+	    return Pair.get(Integer.valueOf(t.getRow()), Integer.valueOf(t.getColumn()));
+	}
+	
+	private final static boolean isOpen(final Tile t) {
+	    final Pair<Integer, Integer> key = getKey(t);
+	    Boolean val = open.get(key);
+	    if (val == null) {
+	        val = Boolean.FALSE;
+	        open.put(key, val);
+	    }
+        return val.booleanValue();
+    }
 	
 	private final static void loadMap() {
 		final Pangine engine = Pangine.getEngine();
@@ -210,7 +282,13 @@ public class Map {
 		marker(6, 6);
 		
 		final Player player = new Player();
-		player.setPosition(tm.getTile(2, 6));
+		final Tile t = tm.getTile(row, column);
+		if (first) {
+		    first = false;
+		} else {
+		    open.put(getKey(t), Boolean.TRUE);
+		}
+		player.setPosition(t);
 		player.getPosition().setZ(tm.getForegroundDepth() + 1);
 		room.addActor(player);
 		
@@ -246,7 +324,7 @@ public class Map {
 	private static void marker(final int i, final int j) {
 		final Tile tile = tm.initTile(i, j);
 		tile.setBackground(imgMap[3][0], TILE_MARKER);
-		final Marker m = new Marker();
+		final Marker m = new Marker(isOpen(tile));
 		//m.setPosition(tile);
 		m.getPosition().set(tile.getPosition());
 		room.addActor(m);
