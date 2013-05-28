@@ -58,6 +58,10 @@ public final class Pantil {
         return Chartil.isValued(value) ? Boolean.valueOf(value) : null;
     }
 	
+	public final static int hashCode(final Object o) {
+	    return o == null ? 0 : o.hashCode();
+	}
+	
 	public final static FloatBuffer allocateDirectFloatBuffer(final int capacity) {
 	    return allocateDirectByteBuffer(capacity * FLOAT_SIZE).asFloatBuffer();
 	}

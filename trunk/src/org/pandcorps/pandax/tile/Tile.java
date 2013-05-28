@@ -62,6 +62,14 @@ public final class Tile {
     	return map;
     }
     
+    public final int getRow() {
+        return j;
+    }
+    
+    public final int getColumn() {
+        return i;
+    }
+    
     public final Panple getPosition() {
         return position;
     }
