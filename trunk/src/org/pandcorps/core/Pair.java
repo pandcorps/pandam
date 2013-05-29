@@ -47,6 +47,11 @@ public class Pair<T1, T2> {
             return false;
         }
         final Pair<?, ?> p = (Pair<?, ?>) o;
-        return o1 == p.o1 && o2 == p.o2;
+        return Pantil.equals(o1, p.o1) && Pantil.equals(o2, p.o2);
+    }
+    
+    @Override
+    public String toString() {
+        return "[" + Chartil.toString(o1) + ", " + Chartil.toString(o2) + "]";
     }
 }
