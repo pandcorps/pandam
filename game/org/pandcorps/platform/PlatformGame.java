@@ -182,7 +182,7 @@ public class PlatformGame extends BaseGame {
 			fa[i] = engine.createFrame("frm.marker." + i, ma[i], 2 * (2 - i % 2));
 		}
 		marker = engine.createAnimation("anm.marker", fa);
-		markerDefeated = engine.createImage("img.Marker.def", mo, null, null, ImtilX.loadStrip("org/pandcorps/platform/res/bg/Marker.png", 8)[3]);
+		markerDefeated = engine.createImage("img.Marker.def", mo, null, null, ImtilX.loadStrip("org/pandcorps/platform/res/bg/MarkerDefeated.png", 8)[3]);
 		
 		dirts = Imtil.loadStrip("org/pandcorps/platform/res/bg/Dirt.png", ImtilX.DIM);
 		terrains = Imtil.loadStrip("org/pandcorps/platform/res/bg/Terrain.png", ImtilX.DIM);

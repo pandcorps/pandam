@@ -52,7 +52,7 @@ public class Map {
 	protected final static int bgTexture = 0;
 	protected final static int bgColor = 1;
 	
-	private final static IdentityHashMap<Pair<Integer, Integer>, Boolean> open = new IdentityHashMap<Pair<Integer, Integer>, Boolean>();
+	private final static HashMap<Pair<Integer, Integer>, Boolean> open = new HashMap<Pair<Integer, Integer>, Boolean>();
 	private static int row = 2;
 	private static int column = 6;
 	private static boolean first = true;
@@ -209,13 +209,7 @@ public class Map {
 	}
 	
 	private final static boolean isOpen(final Tile t) {
-	    final Pair<Integer, Integer> key = getKey(t);
-	    Boolean val = open.get(key);
-	    if (val == null) {
-	        val = Boolean.FALSE;
-	        open.put(key, val);
-	    }
-        return val.booleanValue();
+	    return open.get(getKey(t)) != null;
     }
 	
 	private final static void loadMap() {
@@ -271,6 +265,13 @@ public class Map {
 		tm.initTile(1, 10).setForeground(imgMap[0][0]);
 		tm.initTile(14, 10).setForeground(imgMap[0][2]);
 		
+		final Tile t = tm.getTile(row, column);
+        if (first) {
+            first = false;
+        } else {
+            open.put(getKey(t), Boolean.TRUE);
+        }
+		
 		marker(2, 6);
 		tm.initTile(2, 7).setBackground(imgMap[3][2], TILE_VERT);
 		tm.initTile(2, 8).setBackground(imgMap[3][6], TILE_RIGHTDOWN);
@@ -282,12 +283,6 @@ public class Map {
 		marker(6, 6);
 		
 		final Player player = new Player();
-		final Tile t = tm.getTile(row, column);
-		if (first) {
-		    first = false;
-		} else {
-		    open.put(getKey(t), Boolean.TRUE);
-		}
 		player.setPosition(t);
 		player.getPosition().setZ(tm.getForegroundDepth() + 1);
 		room.addActor(player);
