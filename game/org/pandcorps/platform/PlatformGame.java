@@ -42,13 +42,12 @@ import org.pandcorps.platform.Player.PlayerContext;
 public class PlatformGame extends BaseGame {
 	/*
 	Player falling/sliding images.
-	Grey Map marker for beaten levels.
-	Don't allow Player to pass unbeaten levels on Map.
 	Warp Map marker for entry/exit point.
 	Multiple islands for Map.
 	Enemies.
 	Stomp to defeat enemies.
 	Take gems when hit by enemy.
+	Replace bush with Rise.png for some levels; rise will be higher than 1 tile; separate build method.
 	Random levels.
 	Random maps.
 	*/
