@@ -22,17 +22,44 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.game;
 
+import java.util.*;
+
 import org.pandcorps.core.*;
 
 public abstract class Namer {
+    public final static Namer get(final String[]... components) {
+        return new SimpleNamer(components);
+    }
+    
+    public final static Namer get(final Namer... namers) {
+        return new MultiNamer(namers);
+    }
+    
     public abstract String get();
     
     public abstract int size();
     
-    public final static class SimpleNamer extends Namer {
+    public final String get(final Collection<String> used) {
+        // Would be redundant for MultiNamer to have a used field in Namer
+        while (true) {
+            final String name = get();
+            if (used.add(name)) {
+                return name;
+            }
+        }
+    }
+    
+    public final void printDemo() {
+        System.out.println(getClass().getName() + " (size=" + size() + ")");
+        for (int i = 0; i < 50; i++) {
+            System.out.println(get());
+        }
+    }
+    
+    private final static class SimpleNamer extends Namer {
         private final String[][] components;
         
-        public SimpleNamer(final String[][] components) {
+        public SimpleNamer(final String[]... components) {
             this.components = components;
         }
         
@@ -63,7 +90,7 @@ public abstract class Namer {
         }
     }
     
-    public final static class MultiNamer extends Namer {
+    private final static class MultiNamer extends Namer {
         private final Namer[] namers;
         private final int[] weights;
         
