@@ -50,9 +50,11 @@ public abstract class Namer {
     }
     
     public final void printDemo() {
+        final int n = 50;
+        final HashSet<String> used = new HashSet<String>(n);
         System.out.println(getClass().getName() + " (size=" + size() + ")");
-        for (int i = 0; i < 50; i++) {
-            System.out.println(get());
+        for (int i = 0; i < n; i++) {
+            System.out.println(get(used));
         }
     }
     
