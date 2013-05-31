@@ -91,7 +91,7 @@ public class Map {
 		private boolean disabled = false;
 		
 		{
-			setView(PlatformGame.guyMap);
+			setView(PlatformGame.guySouth);
 			setSpeed(2);
 		}
 		
@@ -164,6 +164,19 @@ public class Map {
 		}
 		
 		@Override
+	    protected void onFace(final Direction oldDir, final Direction newDir) {
+			if (newDir == Direction.North) {
+				setView(PlatformGame.guyNorth);
+			} else if (newDir == Direction.East) {
+				setView(PlatformGame.guyEast);
+			} else if (newDir == Direction.West) {
+				setView(PlatformGame.guyWest);
+			} else if (newDir == Direction.South) {
+				setView(PlatformGame.guySouth);
+			}
+	    }
+		
+		@Override
 		protected void onWalked() {
 		    final Tile t = getTile();
 			final byte b = t.getBehavior();
@@ -171,6 +184,7 @@ public class Map {
 				case TILE_MARKER :
 				    row = t.getRow();
 				    column = t.getColumn();
+				    setView(PlatformGame.guySouth);
 					return;
 				case TILE_VERT : {
 					final Direction d1 = getDirection();

@@ -81,7 +81,10 @@ public class PlatformGame extends BaseGame {
 	protected static Panmage guy = null;
 	protected static Panimation guyRun = null;
 	protected static Panmage guyJump = null;
-	protected static Panmage guyMap = null;
+	protected static Panimation guySouth = null;
+	protected static Panimation guyEast = null;
+	protected static Panimation guyWest = null;
+	protected static Panimation guyNorth = null;
 	protected static Panmage block8 = null;
 	protected static Panmage[] gem = null;
 	protected static Panimation gemAnm = null;
@@ -128,23 +131,18 @@ public class PlatformGame extends BaseGame {
 	    }
 	}
 	
-	private final static BufferedImage[] createAnimalStrip(final String anm, final int eye) {
-		final BufferedImage[] strip = ImtilX.loadStrip("org/pandcorps/platform/res/chr/Bear.png", 32);
+	private final static void createAnimalStrip(final String anm, final int eye) {
+		final BufferedImage[] guys = ImtilX.loadStrip("org/pandcorps/platform/res/chr/Bear.png", 32);
 		final BufferedImage face = ImtilX.loadImage("org/pandcorps/platform/res/chr/Face" + anm + ".png", false);
 		final BufferedImage eyes = ImtilX.loadImage("org/pandcorps/platform/res/chr/Eyes0" + eye + ".png", false);
-		final int size = strip.length;
+		final int size = guys.length;
 		for (int i = 0; i < size; i++) {
 			final int y = (i == 3) ? -1 : 0;
-			Imtil.copy(face, strip[i], 0, 0, 18, 18, 8, 1 + y, Imtil.COPY_FOREGROUND);
-			Imtil.copy(eyes, strip[i], 0, 0, 8, 4, 15, 10 + y, Imtil.COPY_FOREGROUND);
+			Imtil.copy(face, guys[i], 0, 0, 18, 18, 8, 1 + y, Imtil.COPY_FOREGROUND);
+			Imtil.copy(eyes, guys[i], 0, 0, 8, 4, 15, 10 + y, Imtil.COPY_FOREGROUND);
 		}
-		return strip;
-	}
-	
-	private final static void loadConstants() {
+		
 		final Pangine engine = Pangine.getEngine();
-		final BufferedImage[] guys = createAnimalStrip("Bear", 1);
-		//final BufferedImage[] guys = createAnimalStrip("Rabbit", 2);
 		final FinPanple og = new FinPanple(16, 1, 0);
 		guy = engine.createImage("guy", og, null, null, guys[0]);
 		final Panmage guy2 = engine.createImage("guy.2", og, null, null, guys[1]);
@@ -153,21 +151,63 @@ public class PlatformGame extends BaseGame {
 		guyRun = engine.createAnimation("anm.guy.run", gf1, gf2, gf3);
 		guyJump = engine.createImage("guy.jump", og, null, null, guys[3]);
 	    //guy = engine.createImage("guy", new FinPanple(8, 0, 0), null, null, ImtilX.loadImage("org/pandcorps/platform/res/chr/Player.png"));
-	    guyMap = engine.createImage("guy.map", ImtilX.loadImage("org/pandcorps/platform/res/chr/PlayerMap.png"));
+	    
+		final BufferedImage[] maps = ImtilX.loadStrip("org/pandcorps/platform/res/chr/BearMap.png", 32);
+		final BufferedImage[] faceMap = ImtilX.loadStrip("org/pandcorps/platform/res/chr/FaceMap" + anm + ".png", 18);
+		final BufferedImage south1 = maps[0], south2 = Imtil.copy(south1), faceSouth = faceMap[0];
+		Imtil.mirror(south2);
+		for (final BufferedImage south : new BufferedImage[] {south1, south2}) {
+			Imtil.copy(faceSouth, south, 0, 0, 18, 18, 7, 5, Imtil.COPY_FOREGROUND);
+			Imtil.copy(eyes, south, 0, 0, 8, 4, 12, 14, Imtil.COPY_FOREGROUND);
+		}
+		final FinPanple om = new FinPanple(8, -6, 0);
+		final int dm = 6;
+		guySouth = createAnm("guy.south", dm, om, south1, south2);
+		final BufferedImage east1 = maps[1], east2 = maps[2], faceEast = faceMap[1];
+		final BufferedImage[] easts = {east1, east2};
+		for (final BufferedImage east : easts) {
+			Imtil.copy(faceEast, east, 0, 0, 18, 18, 7, 5, Imtil.COPY_FOREGROUND);
+		}
+		final BufferedImage west1 = Imtil.copy(east1), west2 = Imtil.copy(east2);
+		final BufferedImage eyesEast = eyes.getSubimage(0, 0, 4, 4);
+		for (final BufferedImage east : easts) {
+			Imtil.copy(eyesEast, east, 0, 0, 4, 4, 18, 14, Imtil.COPY_FOREGROUND);
+		}
+		guyEast = createAnm("guy.east", dm, om, east1, east2);
+		Imtil.mirror(west1);
+		Imtil.mirror(west2);
+		final BufferedImage eyesWest = eyes.getSubimage(4, 0, 4, 4);
+		for (final BufferedImage west : new BufferedImage[] {west1, west2}) {
+			Imtil.copy(eyesWest, west, 0, 0, 4, 4, 10, 14, Imtil.COPY_FOREGROUND);
+		}
+		guyWest = createAnm("guy.west", dm, om, west1, west2);
+		final BufferedImage north1 = maps[3], north2 = Imtil.copy(north1), faceNorth = faceMap[2];
+		Imtil.mirror(north2);
+		for (final BufferedImage north : new BufferedImage[] {north1, north2}) {
+			Imtil.copy(faceNorth, north, 0, 0, 18, 18, 7, 5, Imtil.COPY_FOREGROUND);
+		}
+		guyNorth = createAnm("guy.north", dm, om, north1, north2);
+		//guyMap = engine.createImage("guy.map", ImtilX.loadImage("org/pandcorps/platform/res/chr/PlayerMap.png"));
+	}
+	
+	private final static void loadConstants() {
+		final Pangine engine = Pangine.getEngine();
+		createAnimalStrip("Bear", 1);
+		//createAnimalStrip("Rabbit", 2);
 	    
 	    font = Fonts.getClassic(new FontRequest(8), Pancolor.WHITE);
 	    
 	    block8 = createImage("block8", "org/pandcorps/platform/res/misc/Block8.png", 8);
 	    
 	    final BufferedImage[] gemStrip = ImtilX.loadStrip("org/pandcorps/platform/res/misc/Gem.png");
-	    gem = createSheet("gem", gemStrip, null);
+	    gem = createSheet("gem", null, gemStrip);
 	    gemAnm = createGemAnimation("gem", gem);
 	    
 	    final SwapPixelFilter gemFilter = new SwapPixelFilter(Channel.Green, Channel.Red, Channel.Blue);
 	    for (int i = 0; i < 3; i++) {
 	    	gemStrip[i] = Imtil.filter(gemStrip[i], gemFilter);
 	    }
-	    final Panmage[] gemCyan = createSheet("gem.cyan", gemStrip, null);
+	    final Panmage[] gemCyan = createSheet("gem.cyan", null, gemStrip);
 	    gemCyanAnm = createGemAnimation("gem.cyan", gemCyan);
 	    
 	    final Panframe[] sa = createFrames("spark", "org/pandcorps/platform/res/misc/Spark.png", 8, 1);
