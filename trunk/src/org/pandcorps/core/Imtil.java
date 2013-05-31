@@ -87,6 +87,13 @@ public final class Imtil {
     	return filter(img, new ReplacePixelFilter(rgb));
     }
     
+    public final static BufferedImage copy(final BufferedImage img) {
+    	final int iw = img.getWidth(), ih = img.getHeight();
+        final BufferedImage out = new BufferedImage(iw, ih, TYPE);
+        copy(img, out, 0, 0, iw, ih, 0, 0);
+        return out;
+    }
+    
     public final static void copy(final BufferedImage src, final BufferedImage dst, final int srcX, final int srcY, final int w, final int h, final int dstX, final int dstY) {
     	copy(src, dst, srcX, srcY, w, h, dstX, dstY, COPY_REPLACE);
     }
