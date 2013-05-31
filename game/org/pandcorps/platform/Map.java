@@ -53,8 +53,8 @@ public class Map {
 	protected final static int bgColor = 1;
 	
 	private final static HashMap<Pair<Integer, Integer>, Boolean> open = new HashMap<Pair<Integer, Integer>, Boolean>();
-	private static int row = 2;
-	private static int column = 6;
+	private static int column = 2;
+	private static int row = 6;
 	private static boolean first = true;
 	
 	private static Panroom room = null;
@@ -279,7 +279,7 @@ public class Map {
 		tm.initTile(1, 10).setForeground(imgMap[0][0]);
 		tm.initTile(14, 10).setForeground(imgMap[0][2]);
 		
-		final Tile t = tm.getTile(row, column);
+		final Tile t = tm.getTile(column, row);
         if (first) {
             first = false;
         } else {
