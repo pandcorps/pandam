@@ -27,7 +27,7 @@ import java.util.*;
 
 import org.pandcorps.core.*;
 import org.pandcorps.core.chr.CallSequence;
-import org.pandcorps.game.MapTileListener;
+import org.pandcorps.game.*;
 import org.pandcorps.game.core.ImtilX;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.impl.FinPanple;
@@ -43,12 +43,46 @@ public class Map {
 	private final static byte TILE_LEFTDOWN = 6;
 	private final static byte TILE_RIGHTDOWN = 7;
 	private final static byte TILE_MARKER = 8;
-	private final static String[] ADJECTIVES =
+	
+	/*private final static String[] ADJECTIVES =
 		{ "Bright", "Bubbly", "Cheery", "Emerald", "Enchanted", "Fragrant", "Green", "Fun", "Happy", "Incredible", "Merry",
 		"Mystic", "Sugar", "Sunny", "Sweet", "Tender", "Tranquil", "Verdant", "Vibrant", "Wonder" };
 	private final static String[] NATURES = { "Beat", "Bliss", "Bounce", "Candy", "Dash", "Flower", "Grass", "Harmony", "Hill",
 		"Jump", "Meadow", "Melody", "Mound", "Music", "Petal", "Plains", "Rhythm", "Rise", "Run", "Rush", "Shine" };
-	private final static String[] PLACES = { "Area", "Country", "Island", "Kingdom", "Land", "Realm", "World", "Zone" };
+	private final static String[] PLACES = { "Area", "Country", "Island", "Kingdom", "Land", "Realm", "World", "Zone" };*/
+	
+	/*private final static String[] NAME0 = { "fur" };
+	private final static String[] NAMEH = { "b", "d", "g", "m", "n", "p" }; // 1=H, 4=S; or vice versa
+	private final static String[] NAME2 = { "a", "e", "o", "u" };
+	private final static String[] NAME3 = { "l", "n", "r", "" };
+	private final static String[] NAMES = { "s", "th", "v" };
+	private final static String[] NAMEC = { "br", "dr", "mpr", "ndr", "pr", "str" };
+	private final static String[] NAME5 = { "and", "ay", "esse", "eth", "ia", "ing", "ion", "ior", "ire", "oft", "old", "om", "osh" };
+	private final static Namer nmr = Namer.get( // 8640
+	    Namer.get(NAME0, NAMEH, NAME2, NAME3, NAMES, NAME5),
+	    Namer.get(NAME0, NAMES, NAME2, NAME3, NAMEH, NAME5),
+	    Namer.get(NAME0, NAMEH, NAME2, NAMEC, NAME5));*/
+	
+	private final static String[] NAME0 = { "fur" };
+	private final static String[] NAME1 = { "b", "g", "m", "n", "v", "w" };
+	private final static String[] NAME2 = { "aladr", "alend", "andr", "ard", "eld", "eleb", "empr", "endl", "ill", "istr", "othel" };
+	private final static String[] NAME3 = { "eth", "ia", "ing", "ion", "ost" };
+	private final static Namer nmr = Namer.get(NAME0, NAME1, NAME2, NAME3);
+    
+    /*private final static String[] ADJECTIVES = { "brav", "bright", "fair", "good", "grand", "green", "kind", "north", "sweet", "verd" };
+    private final static String[] NOUNS = { "beat", "bliss", "grass", "hill", "mead", "mound", "plain" };
+    private final static String[] VERBS = { "bloom", "bound", "dash", "grow", "leap", "ris", "runn", "rush", "shin" };
+    private final static String[] LINK_ADJ = { "al", "em", "est", "ing" };
+    private final static String[] LINK_NON = { "al", "em", "en", "ing" };
+    private final static String[] LINK_VRB = { "al", "em", "er", "ing" };
+    private final static String[] PLACES = { "berg", "by", "croft", "fold", "gard", "ham", "holt", "march", "land", "nesse", "port", "shire", "stead", "strand", "thorp", "ton" };
+    private final static Namer nmr = Namer.get(
+        Namer.get(ADJECTIVES, LINK_ADJ, PLACES),
+        Namer.get(NOUNS, LINK_NON, PLACES),
+        Namer.get(VERBS, LINK_VRB, PLACES));
+    // burgh, field, heim, town
+    // bloomingberg, blooming-gard*/
+	
 	protected final static int bgTexture = 0;
 	protected final static int bgColor = 1;
 	
@@ -166,13 +200,13 @@ public class Map {
 		@Override
 	    protected void onFace(final Direction oldDir, final Direction newDir) {
 			if (newDir == Direction.North) {
-				setView(PlatformGame.guyNorth);
+				changeView(PlatformGame.guyNorth);
 			} else if (newDir == Direction.East) {
-				setView(PlatformGame.guyEast);
+			    changeView(PlatformGame.guyEast);
 			} else if (newDir == Direction.West) {
-				setView(PlatformGame.guyWest);
+			    changeView(PlatformGame.guyWest);
 			} else if (newDir == Direction.South) {
-				setView(PlatformGame.guySouth);
+			    changeView(PlatformGame.guySouth);
 			}
 	    }
 		
@@ -184,7 +218,7 @@ public class Map {
 				case TILE_MARKER :
 				    row = t.getRow();
 				    column = t.getColumn();
-				    setView(PlatformGame.guySouth);
+				    changeView(PlatformGame.guySouth);
 					return;
 				case TILE_VERT : {
 					final Direction d1 = getDirection();
@@ -340,6 +374,11 @@ public class Map {
 	}
 	
 	private final static String generateName() {
-		return Mathtil.rand(ADJECTIVES) + ' ' + Mathtil.rand(NATURES) + ' ' + Mathtil.rand(PLACES);
+		//return Mathtil.rand(ADJECTIVES) + ' ' + Mathtil.rand(NATURES) + ' ' + Mathtil.rand(PLACES);
+	    return nmr.get();
+	}
+	
+	public final static void main(final String[] args) {
+	    nmr.printDemo();
 	}
 }
