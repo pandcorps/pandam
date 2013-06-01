@@ -41,6 +41,7 @@ import org.pandcorps.platform.Player.PlayerContext;
 
 public class PlatformGame extends BaseGame {
 	/*
+	Dog, cat player face.
 	Player falling/sliding images.
 	Warp Map marker for entry/exit point.
 	Multiple islands for Map.
@@ -131,9 +132,20 @@ public class PlatformGame extends BaseGame {
 	    }
 	}
 	
-	private final static void createAnimalStrip(final String anm, final int eye) {
-		final BufferedImage[] guys = ImtilX.loadStrip("org/pandcorps/platform/res/chr/Bear.png", 32);
-		final BufferedImage face = ImtilX.loadImage("org/pandcorps/platform/res/chr/Face" + anm + ".png", false);
+	private final static BufferedImage[] loadChrStrip(final String name, final int dim, final PixelFilter f) {
+		final BufferedImage[] strip = ImtilX.loadStrip("org/pandcorps/platform/res/chr/" + name, dim);
+		if (f != null) {
+			final int size = strip.length;
+			for (int i = 0; i < size; i++) {
+				strip[i] = Imtil.filter(strip[i], f);
+			}
+		}
+		return strip;
+	}
+	
+	private final static void createAnimalStrip(final String anm, final int eye, final PixelFilter f) {
+		final BufferedImage[] guys = loadChrStrip("Bear.png", 32, f);
+		final BufferedImage face = Imtil.filter(ImtilX.loadImage("org/pandcorps/platform/res/chr/Face" + anm + ".png", false), f);
 		final BufferedImage eyes = ImtilX.loadImage("org/pandcorps/platform/res/chr/Eyes0" + eye + ".png", false);
 		final int size = guys.length;
 		for (int i = 0; i < size; i++) {
@@ -152,8 +164,8 @@ public class PlatformGame extends BaseGame {
 		guyJump = engine.createImage("guy.jump", og, null, null, guys[3]);
 	    //guy = engine.createImage("guy", new FinPanple(8, 0, 0), null, null, ImtilX.loadImage("org/pandcorps/platform/res/chr/Player.png"));
 	    
-		final BufferedImage[] maps = ImtilX.loadStrip("org/pandcorps/platform/res/chr/BearMap.png", 32);
-		final BufferedImage[] faceMap = ImtilX.loadStrip("org/pandcorps/platform/res/chr/FaceMap" + anm + ".png", 18);
+		final BufferedImage[] maps = loadChrStrip("BearMap.png", 32, f);
+		final BufferedImage[] faceMap = loadChrStrip("FaceMap" + anm + ".png", 18, f);
 		final BufferedImage south1 = maps[0], south2 = Imtil.copy(south1), faceSouth = faceMap[0];
 		Imtil.mirror(south2);
 		for (final BufferedImage south : new BufferedImage[] {south1, south2}) {
@@ -192,8 +204,9 @@ public class PlatformGame extends BaseGame {
 	
 	private final static void loadConstants() {
 		final Pangine engine = Pangine.getEngine();
-		createAnimalStrip("Bear", 1);
-		//createAnimalStrip("Rabbit", 2);
+		createAnimalStrip("Bear", 1, null);
+		//createAnimalStrip("Rabbit", 2, new SwapPixelFilter(Channel.Red, Channel.Blue, Channel.Red));
+		//createAnimalStrip("Mouse", 1, new SwapPixelFilter(Channel.Blue, Channel.Red, Channel.Blue));
 	    
 	    font = Fonts.getClassic(new FontRequest(8), Pancolor.WHITE);
 	    
