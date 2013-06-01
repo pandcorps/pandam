@@ -76,7 +76,7 @@ public class PlatformGame extends BaseGame {
 	protected static Panroom room = null;
 	protected static PlayerContext pc = new PlayerContext();
 	protected static Player player = null;
-	protected static Font font = null;
+	protected static MultiFont font = null;
 	protected static DynamicTileMap tm = null;
 	protected static TileMapImage[][] imgMap = null;
 	protected static Panmage guy = null;
@@ -208,7 +208,7 @@ public class PlatformGame extends BaseGame {
 		//createAnimalStrip("Rabbit", 2, new SwapPixelFilter(Channel.Red, Channel.Blue, Channel.Red));
 		//createAnimalStrip("Mouse", 3, new SwapPixelFilter(Channel.Blue, Channel.Red, Channel.Blue));
 	    
-	    font = Fonts.getClassic(new FontRequest(8), Pancolor.WHITE);
+	    font = Fonts.getClassics(new FontRequest(8), Pancolor.WHITE, Pancolor.BLACK);
 	    
 	    block8 = createImage("block8", "org/pandcorps/platform/res/misc/Block8.png", 8);
 	    
