@@ -25,13 +25,12 @@ package org.pandcorps.platform;
 import org.pandcorps.game.core.ImtilX;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
-import org.pandcorps.pandax.tile.Tile;
-import org.pandcorps.pandax.tile.TileMap;
+import org.pandcorps.pandax.tile.*;
 
-public abstract class Character extends Panctor implements StepListener {
+public abstract class Character extends Panctor implements StepListener, Collidable {
 	protected final static int MAX_V = 10;
 	protected static float g = -0.65f;
-	private final int H;
+	protected final int H;
 	private final int OFF_GROUNDED = -1;
 	private final int OFF_BUTTING;
 	private final int OFF_X = 7;
@@ -130,7 +129,7 @@ public abstract class Character extends Panctor implements StepListener {
 			}
 		}
 		
-		hv = 0;
+		onStepEnd();
 		/*
 		Issues with slopes:
 		
@@ -341,6 +340,10 @@ public abstract class Character extends Panctor implements StepListener {
 	
 	//@OverrideMe
 	protected void onStepping() {
+	}
+	
+	//@OverrideMe
+	protected void onStepEnd() {
 	}
 	
 	//@OverrideMe

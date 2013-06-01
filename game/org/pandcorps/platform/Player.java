@@ -23,13 +23,16 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.platform;
 
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.action.*;
 import org.pandcorps.pandam.impl.ImplPanple;
 import org.pandcorps.pandax.tile.*;
 
-public class Player extends Character {
+public class Player extends Character implements CollisionListener {
     private final static int VEL_WALK = 3;
 	private final static int VEL_RETURN = 2;
+	private final static int VEL_JUMP = 8;
+	private final static int VEL_BUMP = 4;
 	private final static byte MODE_NORMAL = 0;
 	private final static byte MODE_RETURN = 1;
 	private final static byte JUMP_HIGH = 1;
@@ -91,7 +94,7 @@ public class Player extends Character {
 	        addV(-g);
 	        return;
 	    } else if (isGrounded()) {
-			v = jumpMode == JUMP_HIGH ? MAX_V : 8;
+			v = jumpMode == JUMP_HIGH ? MAX_V : VEL_JUMP;
 		}
 	}
 	
@@ -174,6 +177,11 @@ public class Player extends Character {
 	}
 	
 	@Override
+	protected final void onStepEnd() {
+		hv = 0;
+	}
+	
+	@Override
 	protected final void onGrounded() {
 		safe.set(getPosition());
 		if (hv != 0) {
@@ -187,6 +195,20 @@ public class Player extends Character {
 	protected final boolean onAir() {
 		changeView(PlatformGame.guyJump);
 		return flying;
+	}
+	
+	@Override
+	public void onCollision(final CollisionEvent event) {
+		final Collidable other = event.getCollider();
+		if (other instanceof Enemy) {
+			if (v < 0 && getPosition().getY() > other.getPosition().getY()) {
+				((Enemy) other).onStomp();
+				v = VEL_BUMP;
+			} else {
+				onHurt();
+				// enable temporary invincibility
+			}
+		}
 	}
 	
 	public final void onHurt() {

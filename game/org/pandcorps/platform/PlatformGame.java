@@ -51,6 +51,7 @@ public class PlatformGame extends BaseGame {
 	Replace bush with Rise.png for some levels; rise will be higher than 1 tile; separate build method.
 	Random levels.
 	Random maps.
+	Kill Music thread when window is closed.
 	*/
 	
 	protected final static byte TILE_BREAK = 2;
@@ -62,8 +63,8 @@ public class PlatformGame extends BaseGame {
     protected final static byte TILE_DOWNSLOPE_FLOOR = 8;
 	
 	//protected final static int DEPTH_POWERUP = 0;
-	//protected final static int DEPTH_ENEMY = 1;
-	protected final static int DEPTH_PLAYER = 2;
+	protected final static int DEPTH_ENEMY = 2;
+	protected final static int DEPTH_PLAYER = 1;
 	protected final static int DEPTH_SHATTER = 3;
 	protected final static int DEPTH_SPARK = 4;
 	
@@ -86,6 +87,7 @@ public class PlatformGame extends BaseGame {
 	protected static Panimation guyEast = null;
 	protected static Panimation guyWest = null;
 	protected static Panimation guyNorth = null;
+	protected static Panimation enemy01 = null;
 	protected static Panmage block8 = null;
 	protected static Panmage[] gem = null;
 	protected static Panimation gemAnm = null;
@@ -207,6 +209,8 @@ public class PlatformGame extends BaseGame {
 		createAnimalStrip("Bear", 1, null);
 		//createAnimalStrip("Rabbit", 2, new SwapPixelFilter(Channel.Red, Channel.Blue, Channel.Red));
 		//createAnimalStrip("Mouse", 3, new SwapPixelFilter(Channel.Blue, Channel.Red, Channel.Blue));
+		
+		enemy01 = createAnm("enemy", "org/pandcorps/platform/res/enemy/Enemy01.png", 16, 6, new FinPanple(8, 1, 0));
 	    
 	    font = Fonts.getClassics(new FontRequest(8), Pancolor.WHITE, Pancolor.BLACK);
 	    
@@ -452,6 +456,8 @@ public class PlatformGame extends BaseGame {
 		room.addActor(player);
 		Pangine.getEngine().track(player);
 		setPosition(player, 40, 16, DEPTH_PLAYER);
+		
+		new Enemy(232, 48);
 		
 		addHud(room, new CallSequence() {@Override protected String call() {
             return String.valueOf(player.getCurrentLevelGems());}});

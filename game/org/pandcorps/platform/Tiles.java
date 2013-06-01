@@ -58,12 +58,16 @@ public class Tiles {
     	}
     }
     
-    private final static class Shatter extends Pandy implements AllOobListener {
-        private Shatter(final float x, final float y, final int xm, final int ym) {
+    public static class Faller extends Pandy implements AllOobListener {
+    	public Faller(final Panmage img, final float x, final float y) {
+    		this(img, x, y, 0, 0);
+    	}
+    	
+        public Faller(final Panmage img, final float x, final float y, final float xv, final float yv) {
             super(g);
-            setView(PlatformGame.block8);
+            setView(img);
             PlatformGame.setPosition(this, x, y, PlatformGame.DEPTH_SHATTER);
-            getVelocity().set(xm * Mathtil.randf(0.7f, 1.3f), ym * Mathtil.randf(0.7f, 1.3f));
+            getVelocity().set(xv, yv);
             PlatformGame.room.addActor(this);
         }
 
@@ -71,6 +75,12 @@ public class Tiles {
         public final void onAllOob(final AllOobEvent event) {
             destroy();
         }
+    }
+    
+    private final static class Shatter extends Faller {
+    	private Shatter(final float x, final float y, final int xm, final int ym) {
+    		super(PlatformGame.block8, x, y, xm * Mathtil.randf(0.7f, 1.3f), ym * Mathtil.randf(0.7f, 1.3f));
+    	}
     }
     
     private final static class Bump extends TileActor implements StepListener {
