@@ -63,15 +63,19 @@ public class Map {
 	    Namer.get(NAME0, NAMES, NAME2, NAME3, NAMEH, NAME5),
 	    Namer.get(NAME0, NAMEH, NAME2, NAMEC, NAME5));*/
 	
-	private final static String[] NAME0 = { "fur" };
-	private final static String[] NAME1 = { "b", "g", "m", "n", "v", "w" };
-	private final static String[] NAME2 = { "aladr", "alend", "andr", "ard", "eld", "eleb", "empr", "endl", "ill", "istr", "othel" };
+	/*private final static String[] NAME0 = { "fur" };
+	private final static String[] NAME1 = { "b", "br", "g", "m", "n", "v", "w" };
+	private final static String[] NAME2 =
+		{ "aladr", "alend", "andr", "ard", "eld", "eleb", "empr", "endl", "ere", "ill", "istr", "ora", "othel" };
 	private final static String[] NAME3 = { "eth", "ia", "ing", "ion", "ost" };
-	private final static Namer nmr = Namer.get(NAME0, NAME1, NAME2, NAME3);
+	private final static Namer nmr = Namer.get(NAME0, NAME1, NAME2, NAME3);*/
     
-    /*private final static String[] ADJECTIVES = { "brav", "bright", "fair", "good", "grand", "green", "kind", "north", "sweet", "verd" };
-    private final static String[] NOUNS = { "beat", "bliss", "grass", "hill", "mead", "mound", "plain" };
-    private final static String[] VERBS = { "bloom", "bound", "dash", "grow", "leap", "ris", "runn", "rush", "shin" };
+    private final static String[] ADJECTIVES =
+    	{ "brav", "bright", "clear", "fair", "good", "grand", "green", "kind", "north", "sweet", "verd" };
+    private final static String[] NOUNS =
+    	{ "beat", "bliss", "breez", "furr", "grass", "hill", "mead", "mound", "plain", "sunn" };
+    private final static String[] VERBS =
+    	{ "bloom", "bound", "dash", "grow", "leap", "ris", "runn", "rush", "shin", "wind" };
     private final static String[] LINK_ADJ = { "al", "em", "est", "ing" };
     private final static String[] LINK_NON = { "al", "em", "en", "ing" };
     private final static String[] LINK_VRB = { "al", "em", "er", "ing" };
@@ -81,7 +85,7 @@ public class Map {
         Namer.get(NOUNS, LINK_NON, PLACES),
         Namer.get(VERBS, LINK_VRB, PLACES));
     // burgh, field, heim, town
-    // bloomingberg, blooming-gard*/
+    // bloomingberg, blooming-gard
 	
 	protected final static int bgTexture = 0;
 	protected final static int bgColor = 1;
@@ -90,6 +94,7 @@ public class Map {
 	private static int column = 2;
 	private static int row = 6;
 	private static boolean first = true;
+	private static String name = generateName();
 	
 	private static Panroom room = null;
 	private static Panmage timg = null;
@@ -335,7 +340,7 @@ public class Map {
 		player.getPosition().setZ(tm.getForegroundDepth() + 1);
 		room.addActor(player);
 		
-		final Pantext name = new Pantext("map.name", PlatformGame.font, generateName());
+		final Pantext name = new Pantext("map.name", PlatformGame.font, Map.name);
 		name.getPosition().set(PlatformGame.SCREEN_W / 2, 0);
 		name.centerX();
 		final Panlayer hud = PlatformGame.addHud(room, new CallSequence() {@Override protected String call() {
