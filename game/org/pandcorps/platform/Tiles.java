@@ -35,6 +35,7 @@ public class Tiles {
     
     protected final static void bump(final Player player, final Tile t) {
     	final byte b = t.getBehavior();
+    	//TODO if a tile is bumped or broken, it should bump creatures standing on it.
     	if (b == PlatformGame.TILE_BREAK) {
     		t.setForeground(null, false);
     		final Panple pos = t.getPosition();

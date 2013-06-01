@@ -167,6 +167,17 @@ public class Player extends Panctor implements StepListener {
 			if (dist <= VEL_RETURN) {
 				pos.set(safe);
 				mode = MODE_NORMAL;
+				if (!isGrounded()) {
+					/*
+					Previously safe spot might have been a block that was broken after player left it
+					(or causing player to leave it).
+					So if the safe spot is no longer safe, bounce the player to give a chance to find a new safe spot.
+					Still might be possible, though.
+					So if we reach this point twice in a row, we might want to do something more drastic,
+					like allowing the player to float until a new safe spot is found.
+					*/
+					jump();
+				}
 				return;
 			}
 			diff.multiply((float) (VEL_RETURN / dist));
