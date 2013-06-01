@@ -22,17 +22,14 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.platform;
 
-import org.pandcorps.game.core.ImtilX;
 import org.pandcorps.pandam.*;
-import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.action.*;
 import org.pandcorps.pandam.impl.ImplPanple;
 import org.pandcorps.pandax.tile.*;
 
-public class Player extends Panctor implements StepListener {
+public class Player extends Character {
     private final static int VEL_WALK = 3;
 	private final static int VEL_RETURN = 2;
-	private final static int MAX_V = 10;
 	private final static byte MODE_NORMAL = 0;
 	private final static byte MODE_RETURN = 1;
 	private final static byte JUMP_HIGH = 1;
@@ -49,22 +46,15 @@ public class Player extends Panctor implements StepListener {
 	    }
 	}
 	
-	protected static float g = -0.65f;
 	protected final PlayerContext pc;
 	private byte mode = MODE_NORMAL;
 	private byte jumpMode = MODE_NORMAL;
 	private boolean flying = false;
-	//private final int H = 15;
-	private final int H = 23;
-	private final int OFF_GROUNDED = -1;
-	private final int OFF_BUTTING = H + 1;
-	private final int OFF_X = 7;
-	private float v = 0;
-	private int hv = 0;
 	private final Panple safe = new ImplPanple(0, 0, 0);
 	private int levelGems = 0;
 	
 	public Player(final PlayerContext pc) {
+		super(23); // 15
 	    this.pc = pc;
 		final Pangine engine = Pangine.getEngine();
 		setView(PlatformGame.guy);
@@ -100,8 +90,7 @@ public class Player extends Panctor implements StepListener {
 	        flying = true;
 	        addV(-g);
 	        return;
-	    }
-		if (isGrounded()) {
+	    } else if (isGrounded()) {
 			v = jumpMode == JUMP_HIGH ? MAX_V : 8;
 		}
 	}
@@ -110,8 +99,7 @@ public class Player extends Panctor implements StepListener {
 	    if (jumpMode == JUMP_FLY) {
             flying = false;
             return;
-        }
-		if (v > 0) {
+        } else if (v > 0) {
 			v = 0;
 		}
 	}
@@ -122,40 +110,6 @@ public class Player extends Panctor implements StepListener {
 	
 	private final void left() {
 		hv = -VEL_WALK;
-	}
-	
-	private final void addX(final int v) {
-		if (mode == MODE_RETURN || v == 0) {
-			return;
-		}
-	    setMirror(v < 0);
-	    final int mult = v > 0 ? 1 : -1;
-	    final int n = v * mult;
-	    final int offWall = (OFF_X + 1) * mult;
-	    final Panple pos = getPosition();
-	    for (int i = 0; i < n; i++) {
-	    	boolean down = true;
-	        if (isWall(offWall, 0)) {
-	        	if (isWall(offWall, 1)) {
-	        		break;
-	        	}
-	            pos.addY(1);
-	            down = false;
-	        }
-	        if (down && !isWall(offWall, -1) && isWall(offWall, -2)) {
-	        	pos.addY(-1);
-	        }
-	        pos.addX(mult);
-	    }
-	}
-	
-	private final void addV(final float a) {
-	    v += a;
-	    if (a > 0 && v > MAX_V) {
-	        v = MAX_V;
-	    } else if (v < -MAX_V) {
-	        v = -MAX_V;
-	    }
 	}
 	
 	private final void onStepReturn() {
@@ -182,6 +136,7 @@ public class Player extends Panctor implements StepListener {
 		pos.add(diff);
 	}
 	
+	@Override
 	protected final boolean onStepCustom() {
 		if (mode == MODE_RETURN) {
 			onStepReturn();
@@ -191,259 +146,7 @@ public class Player extends Panctor implements StepListener {
 	}
 
 	@Override
-	public final void onStep(final StepEvent event) {
-		if (onStepCustom()) {
-			return;
-		}
-		
-		final Panple pos = getPosition();
-		final int offSol, mult, n;
-		if (v > 0) {
-			offSol = OFF_BUTTING;
-			mult = 1;
-		} else {
-			offSol = OFF_GROUNDED;
-			mult = -1;
-		}
-		n = Math.round(v * mult);
-		for (int i = 0; i < n; i++) {
-		    final Tile t = getSolid(offSol);
-			if (t != null) {
-			    if (v > 0) {
-			        Tiles.bump(this, t);
-			    }
-				v = 0;
-				break;
-			}
-			pos.addY(mult);
-			final float y = pos.getY();
-			if (y < 0) {
-			    pos.setY(0);
-				v = 0;
-				onFell();
-				break;
-			} else {
-			    final float max = PlatformGame.room.getSize().getY() - H;
-			    if (y >= max) {
-    			    pos.setY(max - 1);
-    			    v = 0;
-    			    break;
-			    }
-			}
-		}
-		
-		addX(hv);
-		
-		onStepping();
-		if (isGrounded()) {
-			onGrounded();
-		} else {
-			if (!onAir()) {
-				addV(g);
-			}
-		}
-		
-		hv = 0;
-		/*
-		Issues with slopes:
-		
-		If Player walks into a slope, it should raise him.
-		If he jumps onto a slope, it should stop him at the right spot.
-		If he jumps from a slope, it should work (realize he's grounded).
-		If he walks down a slope, he should be able to jump while walking
-		(not move horizontally faster than falling vertically, breaking the grounding).
-		If he walks to the end of the slope, he should walk onto the flat ground beyond it.
-		
-		Maybe smarter horizontal movement is key.
-		We do it one pixel at a time anyway.
-		Maybe we should allow collisions at the bottom pixel and raise by one pixel at time of h-move.
-		Previous attempts ignored the slope during h-move and corrected afterward.
-		Each pixel of h-move could also check for a slope one pixel below and lower by one pixel at that time.
-		*/
-		/*if (v <= 0) {
-		    final Tile t = PlatformGame.tm.getContainer(pos);
-		    if (t != null) {
-		        final byte b = t.getBehavior();
-		        if (b == PlatformGame.TILE_UP) {
-		            // trunc/round should match getContainer
-		            final int minHeight = (int) pos.getX() % ImtilX.DIM;
-		            final int iy = (int) pos.getY();
-		            final int curHeight = iy % ImtilX.DIM;
-		            if (curHeight < minHeight) {
-		                pos.setY((iy / ImtilX.DIM) * ImtilX.DIM + minHeight);
-		            }
-		        }
-		    }
-		}*/
-	}
-	
-	private boolean isGrounded() {
-		// v == 0 so that jumping through floor doesn't cause big jump
-		return v == 0 && isSolid(OFF_GROUNDED);
-	}
-	
-	/*protected boolean isButting() {
-		return isSolid(OFF_BUTTING);
-	}*/
-	
-	private boolean isSolid(final int off) {
-	    return getSolid(off) != null;
-	}
-	
-	private final int getOffLeft() {
-		return isMirror() ? -OFF_X : (-OFF_X - 1);
-	}
-	
-	private final int getOffRight() {
-		return isMirror() ? (OFF_X + 1) : OFF_X;
-	}
-	
-	private Tile getSolid(final int off) {
-		final Panple pos = getPosition();
-		final float x = pos.getX(), y = pos.getY() + off, x1 = x + getOffLeft(), x2 = x + getOffRight();
-		// Interesting glitch if breakpoint here
-		Tile t1 = PlatformGame.tm.getContainer(x1, y), t2 = PlatformGame.tm.getContainer(x2, y);
-		if (t2 == PlatformGame.tm.getContainer(x, y)) {
-		    final Tile t = t1;
-		    t1 = t2;
-		    t2 = t;
-		}
-		collide(t1);
-		collide(t2);
-		final boolean floor = off < 0 && (Math.round(y) % ImtilX.DIM == 15);
-		if (isSolid(t1, floor, x1, x2, y)) {
-		    return t1;
-		} else if (isSolid(t2, floor, x1, x2, y)) {
-		    return t2;
-		}
-		return null;
-	}
-	
-	private boolean isWall(final int off, final int yoff) {
-        final Panple pos = getPosition();
-        final float px = pos.getX(), f = px + off, y = pos.getY() + yoff;
-        final float left, right, b, top = y + H - 1;
-        if (off > 0) {
-        	right = f;
-        	left = px - OFF_X;
-        	b = left;
-        } else {
-        	left = f;
-        	right = px + OFF_X;
-        	b = right;
-        }
-        boolean sol = false;
-        Tile t = null;
-        for (int i = 0; true; i += 16) {
-        	float yi = y + i;
-        	final boolean done = yi >= top;
-        	if (done) {
-        		yi = top;
-        	}
-	        final Tile temp = PlatformGame.tm.getContainer(f, yi);
-	        if (temp != t) {
-	        	t = temp;
-		        collide(t);
-		        if (!sol && isSolid(t, left, right, y)) {
-		        	sol = true;
-		        }
-		        
-		        /*if (!sol && yoff < 0) {
-		        	final Tile tb = PlatformGame.tm.getContainer(b, yi);
-		        	sol = isSlope(tb, left, right, y);
-		        }*/
-	        }
-	        if (done) {
-	        	break;
-	        }
-        }
-        if (sol) {
-        	return true;
-        } else if (yoff < 0) {
-        	final Tile t3 = PlatformGame.tm.getContainer(b, y), t4 = PlatformGame.tm.getContainer(b, top);
-        	return isSlope(t3, left, right, y) || isSlope(t4, left, right, y);
-        }
-        return false;
-    }
-	
-	private boolean isSlope(final Tile tile, final float left, final float right, final float y) {
-		// isSolid will check for non-slopes, could cut straight to slope logic
-		if (tile == null) {
-		    return false;
-		}
-		final int b = tile.getBehavior();
-		return (b == PlatformGame.TILE_UPSLOPE || b == PlatformGame.TILE_DOWNSLOPE || b == PlatformGame.TILE_UPSLOPE_FLOOR || b == PlatformGame.TILE_DOWNSLOPE_FLOOR) && isSolid(tile, left, right, y);
-	}
-	
-	private boolean isSolid(final Tile tile, final float left, final float right, final float y) {
-		return isSolid(tile, false, left, right, y);
-	}
-	
-	private boolean isSolid(final Tile tile, final boolean floor, final float left, final float right, final float y) {
-		if (tile == null) {
-			return false;
-		} else if (tile.isSolid()) {
-			return true;
-		}
-		final byte b = tile.getBehavior();
-		if (b == PlatformGame.TILE_BREAK || b == PlatformGame.TILE_BUMP || (floor && b == PlatformGame.TILE_FLOOR)) {
-			return true;
-		}
-		final float top = y + H - 1, yoff = y - getPosition().getY();
-		final TileMap map = tile.getMap();
-		final int iy = (int) y, curHeight = iy % ImtilX.DIM;
-		if (b == PlatformGame.TILE_UPSLOPE || (yoff <= 0 && b == PlatformGame.TILE_UPSLOPE_FLOOR)) {
-			//if (v <= 0) {
-			//final Panple pos = getPosition();
-            // trunc/round should match getContainer
-			//if (right > tile.getPosition().getX() + tile.getMap().getTileWidth()) {
-			//	return false;
-			//}
-			if (map.getContainer(right, y) != tile) {
-				if (b == PlatformGame.TILE_UPSLOPE_FLOOR && curHeight != 15) {
-					return false;
-				} else if (map.getContainer(left, y) == tile) {
-					return b != PlatformGame.TILE_UPSLOPE_FLOOR || Tile.getBehavior(tile.getRelative(1, 1)) != PlatformGame.TILE_UPSLOPE_FLOOR;
-				} else if (b == PlatformGame.TILE_UPSLOPE_FLOOR) {
-					return false;
-				}
-				for (int i = 0; true; i += 16) {
-					final float t = top - i;
-					if (t <= y) {
-						return false;
-					} else if (map.getContainer(left, t) == tile || map.getContainer(right, t) == tile) {
-						return true;
-					}
-				}
-			}
-            final int minHeight = (int) right % ImtilX.DIM;
-            return (b == PlatformGame.TILE_UPSLOPE_FLOOR) ? (curHeight == minHeight) : (curHeight <= minHeight);
-			//}
-		} else if (b == PlatformGame.TILE_DOWNSLOPE || (yoff <= 0 && b == PlatformGame.TILE_DOWNSLOPE_FLOOR)) {
-            if (map.getContainer(left, y) != tile) {
-            	if (b == PlatformGame.TILE_DOWNSLOPE_FLOOR && curHeight != 15) {
-					return false;
-				} else if (map.getContainer(right, y) == tile) {
-					return b != PlatformGame.TILE_DOWNSLOPE_FLOOR || Tile.getBehavior(tile.getRelative(-1, 1)) != PlatformGame.TILE_DOWNSLOPE_FLOOR;
-				} else if (b == PlatformGame.TILE_DOWNSLOPE_FLOOR) {
-					return false;
-				}
-            	for (int i = 0; true; i += 16) {
-					final float t = top - i;
-					if (t <= y) {
-						return false;
-					} else if (map.getContainer(right, t) == tile || map.getContainer(left, t) == tile) {
-						return true;
-					}
-				}
-            }
-            final int minHeight = 15 - ((int) left % ImtilX.DIM);
-            return (b == PlatformGame.TILE_DOWNSLOPE_FLOOR) ? (curHeight == minHeight) : (curHeight <= minHeight);
-        }
-		return false;
-	}
-	
-	private void collide(final Tile tile) {
+	protected final void onCollide(final Tile tile) {
 		final TileOccupant o = Tile.getOccupant(tile);
 		if (o == null) {
 			return;
@@ -459,6 +162,7 @@ public class Player extends Panctor implements StepListener {
         levelGems++;
     }
 	
+	@Override
 	protected final void onStepping() {
 		if (flying) {
 		    if (jumpMode != JUMP_FLY) {
@@ -469,6 +173,7 @@ public class Player extends Panctor implements StepListener {
 		}
 	}
 	
+	@Override
 	protected final void onGrounded() {
 		safe.set(getPosition());
 		if (hv != 0) {
@@ -478,6 +183,7 @@ public class Player extends Panctor implements StepListener {
 		}
 	}
 	
+	@Override
 	protected final boolean onAir() {
 		changeView(PlatformGame.guyJump);
 		return flying;
@@ -490,6 +196,7 @@ public class Player extends Panctor implements StepListener {
         levelGems -= (Math.max(1, levelGems / 10));
     }
 	
+	@Override
 	protected final void onFell() {
 		if (jumpMode != JUMP_FLY) {
 			onHurt();
