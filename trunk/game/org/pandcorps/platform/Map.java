@@ -49,7 +49,7 @@ public class Map {
 		"Mystic", "Sugar", "Sunny", "Sweet", "Tender", "Tranquil", "Verdant", "Vibrant", "Wonder" };
 	private final static String[] NATURES = { "Beat", "Bliss", "Bounce", "Candy", "Dash", "Flower", "Grass", "Harmony", "Hill",
 		"Jump", "Meadow", "Melody", "Mound", "Music", "Petal", "Plains", "Rhythm", "Rise", "Run", "Rush", "Shine" };
-	private final static String[] PLACES = { "Area", "Country", "Island", "Kingdom", "Land", "Realm", "World", "Zone" };*/
+	private final static String[] PLACES = { "Area", "Country", "Domain", "Island", "Kingdom", "Land", "Realm", "World", "Zone" };*/
 	
 	/*private final static String[] NAME0 = { "fur" };
 	private final static String[] NAMEH = { "b", "d", "g", "m", "n", "p" }; // 1=H, 4=S; or vice versa
@@ -71,15 +71,18 @@ public class Map {
 	private final static Namer nmr = Namer.get(NAME0, NAME1, NAME2, NAME3);*/
     
     private final static String[] ADJECTIVES =
-    	{ "brav", "bright", "clear", "fair", "good", "grand", "green", "kind", "north", "sweet", "verd" };
+    	{ "brav", "bright", "clear", "fair", "good", "grand", "green", "kind", "north", "old", "strong", "sweet", "verd", "wood" };
     private final static String[] NOUNS =
-    	{ "beat", "bliss", "breez", "furr", "grass", "hill", "mead", "mound", "plain", "sunn" };
+    	{ "beat", "bell", "bliss", "branch", "breez", "claw", "day", "furr", "grass", "heart", "hill", "leaf", "mead", "morn",
+    	"mound", "paw", "plain", "plant", "root", "soul", "spring", "stepp", "sunn", "vin", "well" };
     private final static String[] VERBS =
-    	{ "bloom", "bound", "dash", "grow", "leap", "ris", "runn", "rush", "shin", "wind" };
+    	{ "bloom", "bound", "dash", "grow", "leap", "ris", "runn", "rush", "shin", "thriv", "wind" };
     private final static String[] LINK_ADJ = { "al", "em", "est", "ing" };
-    private final static String[] LINK_NON = { "al", "em", "en", "ing" };
+    private final static String[] LINK_NON = { "en", "ing", "ic", "y" }; // "ish"
     private final static String[] LINK_VRB = { "al", "em", "er", "ing" };
-    private final static String[] PLACES = { "berg", "by", "croft", "fold", "gard", "ham", "holt", "march", "land", "nesse", "port", "shire", "stead", "strand", "thorp", "ton" };
+    private final static String[] PLACES =
+    	{ "berg", "by", "croft", "fold", "gard", "ham", "holt", "march", "land", "nesse", "port", "shire", "stead", "strand",
+    	"thorp", "ton" };
     private final static Namer nmr = Namer.get(
         Namer.get(ADJECTIVES, LINK_ADJ, PLACES),
         Namer.get(NOUNS, LINK_NON, PLACES),
@@ -341,7 +344,7 @@ public class Map {
 		room.addActor(player);
 		
 		final Pantext name = new Pantext("map.name", PlatformGame.font, Map.name);
-		name.getPosition().set(PlatformGame.SCREEN_W / 2, 0);
+		name.getPosition().set(PlatformGame.SCREEN_W / 2, 1);
 		name.centerX();
 		final Panlayer hud = PlatformGame.addHud(room, new CallSequence() {@Override protected String call() {
             return String.valueOf(PlatformGame.pc.getGems());}});
