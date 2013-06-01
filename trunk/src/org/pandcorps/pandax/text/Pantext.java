@@ -27,6 +27,7 @@ import java.util.regex.Pattern;
 
 import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.impl.FinPanple;
 import org.pandcorps.pandam.impl.UnmodPanple;
 
 public class Pantext extends Panctor {
@@ -53,12 +54,13 @@ public class Pantext extends Panctor {
     public final static char CHAR_DARK = 178;
     public final static char CHAR_SOLID = 219;
     
-    /*package*/ final Font f;
-	private final Panmage font;
+    private final MultiFont fonts;
+    /*package*/ Font f;
+	private Panmage font;
 	//private final String text;
 	/*package*/ final List<? extends CharSequence> text;
-	/*package*/ final int fontNum;
-	/*package*/ final float fontSize;
+	/*package*/ int fontNum;
+	/*package*/ float fontSize;
 	//private final FinPanple size;
 	/*package*/ final SizePanple size = new SizePanple();
 	/*
@@ -95,10 +97,31 @@ public class Pantext extends Panctor {
 	}
 	
 	public Pantext(final String id, final Font font, final List<? extends CharSequence> text, final int charactersPerLine) {
+		this(id, new MultiFont(new FontLayer(font, FinPanple.ORIGIN)), text, charactersPerLine);
+	}
+	
+	public Pantext(final String id, final MultiFont fonts, final CharSequence text) {
+	    this(id, fonts, Collections.singletonList(text));
+	}
+	
+	public Pantext(final String id, final MultiFont fonts, final List<? extends CharSequence> text) {
+		this(id, fonts, text, 0);
+	}
+	
+	public Pantext(final String id, final MultiFont fonts, final List<? extends CharSequence> text, final int charactersPerLine) {
 		super(id);
+		this.text = text;
+		this.fonts = fonts;
+		init();
+	}
+	
+	private final void init() {
+		set(fonts.layers[0].font);
+	}
+	
+	private final void set(final Font font) {
 		f = font;
 		this.font = font.getImage();
-		this.text = text;
 		fontNum = font.getRowAmount();
 		fontSize = this.font.getSize().getX() / fontNum;
 		//size = new FinPanple(fontSize * text.length(), fontSize, 0);
@@ -165,6 +188,15 @@ public class Pantext extends Panctor {
 		final float x = pos.getX();
 		final float y = pos.getY();
 		final float z = pos.getZ();
+		for (final FontLayer layer : fonts.layers) {
+			set(layer.font);
+			final Panple off = layer.off;
+			renderFont(renderer, x + off.getX(), y + off.getY(), z + off.getZ());
+		}
+		init();
+	}
+	
+	private final void renderFont(final Panderer renderer, final float x, final float y, final float z) {
 		final Panlayer layer = getLayer();
 		/*int textSize = text.length(), off = 0;
 		while (true) {
