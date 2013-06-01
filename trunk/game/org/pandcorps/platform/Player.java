@@ -30,12 +30,7 @@ import org.pandcorps.pandam.impl.ImplPanple;
 import org.pandcorps.pandax.tile.*;
 
 public class Player extends Panctor implements StepListener {
-    //private final static int H = 15;
-	private final static int H = 23;
-	private final static int OFF_GROUNDED = -1;
-	private final static int OFF_BUTTING = H + 1;
-	private final static int OFF_X = 7;
-	private final static int VEL_WALK = 3;
+    private final static int VEL_WALK = 3;
 	private final static int VEL_RETURN = 2;
 	private final static int MAX_V = 10;
 	private final static byte MODE_NORMAL = 0;
@@ -59,6 +54,11 @@ public class Player extends Panctor implements StepListener {
 	private byte mode = MODE_NORMAL;
 	private byte jumpMode = MODE_NORMAL;
 	private boolean flying = false;
+	//private final int H = 15;
+	private final int H = 23;
+	private final int OFF_GROUNDED = -1;
+	private final int OFF_BUTTING = H + 1;
+	private final int OFF_X = 7;
 	private float v = 0;
 	private int hv = 0;
 	private final Panple safe = new ImplPanple(0, 0, 0);
@@ -157,34 +157,46 @@ public class Player extends Panctor implements StepListener {
 	        v = -MAX_V;
 	    }
 	}
+	
+	private final void onStepReturn() {
+		final Panple pos = getPosition();
+		final Panple diff = Panple.subtract(safe, pos);
+		final double dist = diff.getMagnitude();
+		if (dist <= VEL_RETURN) {
+			pos.set(safe);
+			mode = MODE_NORMAL;
+			if (!isGrounded()) {
+				/*
+				Previously safe spot might have been a block that was broken after player left it
+				(or causing player to leave it).
+				So if the safe spot is no longer safe, bounce the player to give a chance to find a new safe spot.
+				Still might be possible, though.
+				So if we reach this point twice in a row, we might want to do something more drastic,
+				like allowing the player to float until a new safe spot is found.
+				*/
+				jump();
+			}
+			return;
+		}
+		diff.multiply((float) (VEL_RETURN / dist));
+		pos.add(diff);
+	}
+	
+	protected final boolean onStepCustom() {
+		if (mode == MODE_RETURN) {
+			onStepReturn();
+			return true;
+		}
+		return false;
+	}
 
 	@Override
 	public final void onStep(final StepEvent event) {
-		final Panple pos = getPosition();
-		if (mode == MODE_RETURN) {
-			final Panple diff = Panple.subtract(safe, pos);
-			final double dist = diff.getMagnitude();
-			if (dist <= VEL_RETURN) {
-				pos.set(safe);
-				mode = MODE_NORMAL;
-				if (!isGrounded()) {
-					/*
-					Previously safe spot might have been a block that was broken after player left it
-					(or causing player to leave it).
-					So if the safe spot is no longer safe, bounce the player to give a chance to find a new safe spot.
-					Still might be possible, though.
-					So if we reach this point twice in a row, we might want to do something more drastic,
-					like allowing the player to float until a new safe spot is found.
-					*/
-					jump();
-				}
-				return;
-			}
-			diff.multiply((float) (VEL_RETURN / dist));
-			pos.add(diff);
+		if (onStepCustom()) {
 			return;
 		}
 		
+		final Panple pos = getPosition();
 		final int offSol, mult, n;
 		if (v > 0) {
 			offSol = OFF_BUTTING;
@@ -208,11 +220,7 @@ public class Player extends Panctor implements StepListener {
 			if (y < 0) {
 			    pos.setY(0);
 				v = 0;
-				if (jumpMode != JUMP_FLY) {
-    				onHurt();
-    				mode = MODE_RETURN;
-    				return;
-				}
+				onFell();
 				break;
 			} else {
 			    final float max = PlatformGame.room.getSize().getY() - H;
@@ -225,29 +233,17 @@ public class Player extends Panctor implements StepListener {
 		}
 		
 		addX(hv);
-		final boolean running = hv != 0;
-		hv = 0;
 		
-		if (flying) {
-		    if (jumpMode != JUMP_FLY) {
-		        flying = false;
-		    } else {
-		        addV(-g);
-		    }
-		}
+		onStepping();
 		if (isGrounded()) {
-			safe.set(pos);
-			if (running) {
-				changeView(PlatformGame.guyRun);
-			} else {
-				changeView(PlatformGame.guy);
-			}
+			onGrounded();
 		} else {
-			changeView(PlatformGame.guyJump);
-			if (!flying) {
+			if (!onAir()) {
 				addV(g);
 			}
 		}
+		
+		hv = 0;
 		/*
 		Issues with slopes:
 		
@@ -463,12 +459,44 @@ public class Player extends Panctor implements StepListener {
         levelGems++;
     }
 	
+	protected final void onStepping() {
+		if (flying) {
+		    if (jumpMode != JUMP_FLY) {
+		        flying = false;
+		    } else {
+		        addV(-g);
+		    }
+		}
+	}
+	
+	protected final void onGrounded() {
+		safe.set(getPosition());
+		if (hv != 0) {
+			changeView(PlatformGame.guyRun);
+		} else {
+			changeView(PlatformGame.guy);
+		}
+	}
+	
+	protected final boolean onAir() {
+		changeView(PlatformGame.guyJump);
+		return flying;
+	}
+	
 	public final void onHurt() {
         if (levelGems == 0) {
             return;
         }
         levelGems -= (Math.max(1, levelGems / 10));
     }
+	
+	protected final void onFell() {
+		if (jumpMode != JUMP_FLY) {
+			onHurt();
+			mode = MODE_RETURN;
+			return;
+		}
+	}
 	
 	public final void onFinishLevel() {
 		pc.gems += levelGems;
