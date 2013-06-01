@@ -33,7 +33,11 @@ import org.pandcorps.pandax.tile.*;
 public class Tiles {
     protected final static FinPanple g = new FinPanple(0, Player.g, 0);
     
-    protected final static void bump(final Player player, final Tile t) {
+    protected final static void bump(final Character chr, final Tile t) {
+    	if (chr.getClass() != Player.class) {
+    		return;
+    	}
+    	final Player player = (Player) chr;
     	final byte b = t.getBehavior();
     	//TODO if a tile is bumped or broken, it should bump creatures standing on it.
     	if (b == PlatformGame.TILE_BREAK) {
