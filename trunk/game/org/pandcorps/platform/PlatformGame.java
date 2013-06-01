@@ -206,7 +206,7 @@ public class PlatformGame extends BaseGame {
 		final Pangine engine = Pangine.getEngine();
 		createAnimalStrip("Bear", 1, null);
 		//createAnimalStrip("Rabbit", 2, new SwapPixelFilter(Channel.Red, Channel.Blue, Channel.Red));
-		//createAnimalStrip("Mouse", 1, new SwapPixelFilter(Channel.Blue, Channel.Red, Channel.Blue));
+		//createAnimalStrip("Mouse", 3, new SwapPixelFilter(Channel.Blue, Channel.Red, Channel.Blue));
 	    
 	    font = Fonts.getClassic(new FontRequest(8), Pancolor.WHITE);
 	    
