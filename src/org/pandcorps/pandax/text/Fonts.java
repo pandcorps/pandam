@@ -28,6 +28,7 @@ import java.util.*;
 import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.impl.FinPanple;
 
 public final class Fonts {
     public static enum FontType {
@@ -176,5 +177,9 @@ public final class Fonts {
             return new UpperFont(image);
         }
         return new ByteFont(image);
+    }
+    
+    public final static MultiFont getClassics(final FontRequest req, final Pancolor foreground, final Pancolor shadow) {
+    	return new MultiFont(new FontLayer(getClassic(req, foreground), FinPanple.ORIGIN), new FontLayer(getClassic(req, shadow), new FinPanple(1, -1, -1)));
     }
 }
