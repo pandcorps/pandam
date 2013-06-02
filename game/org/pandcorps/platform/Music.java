@@ -24,53 +24,29 @@ package org.pandcorps.platform;
 
 import javax.sound.midi.*;
 
-import org.pandcorps.core.Iotil;
+import org.pandcorps.core.*;
+import org.pandcorps.pandam.*;
 
 public class Music {
-	private static Sequencer sequencer = null;
-	
 	protected final static Sequence createSequence() throws Exception {
 		// key/vel 0 - 127
 		final int channel = 0, key = 64, vel = 64;
 		final Sequence seq = new Sequence(Sequence.SMPTE_30, 1);
 		final Track track = seq.createTrack();
-		addNote(track, 0, channel, key, vel);
-		addNote(track, 15, channel, 68, vel);
-		addNote(track, 30, channel, 72, vel);
+		Mustil.addNote(track, 0, channel, key, vel);
+		Mustil.addNote(track, 15, channel, 68, vel);
+		Mustil.addNote(track, 30, channel, 72, vel);
 		return seq;
-	}
-	
-	protected final static void start(final Sequence seq) throws Exception {
-		sequencer = MidiSystem.getSequencer();
-		sequencer.setLoopCount(Sequencer.LOOP_CONTINUOUSLY);
-		sequencer.setSequence(seq);
-		sequencer.open();
-		sequencer.start();
-	}
-		
-	protected final static void end() {
-		if (sequencer != null) {
-			sequencer.close();
-			sequencer = null;
-		}
-	}
-	
-	private static void addNote(final Track track, final long tick, final int channel, final int key, final int vel) throws Exception {
-		final ShortMessage onMessage = new ShortMessage();
-		final ShortMessage offMessage = new ShortMessage();
-		onMessage.setMessage(ShortMessage.NOTE_ON, channel, key, vel);
-		offMessage.setMessage(ShortMessage.NOTE_OFF, channel, key, 0);
-		track.add(new MidiEvent(onMessage, tick));
-		track.add(new MidiEvent(offMessage, tick + 30));
 	}
 	
 	private final static void run() throws Exception {
 		System.out.println("Starting");
 		final Sequence seq = createSequence();
-		start(seq);
+		final Pansic music = Pangine.getEngine().getMusic();
+		music.start(seq);
 		System.out.println("Started; press enter to stop");
 		Iotil.readln();
-		end();
+		music.end();
 		System.out.println("End");
 	}
 	

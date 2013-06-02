@@ -121,12 +121,12 @@ public class PlatformGame extends BaseGame {
         protected final void load() throws Exception {
 			loadLevel();
 			fadeIn(room);
-			Music.start(Music.createSequence());
+			Pangine.getEngine().getMusic().start(Music.createSequence());
 		}
 		
 		@Override
 	    protected final void destroy() {
-			Music.end();
+			Pangine.getEngine().getMusic().end();
 	        Panmage.destroy(timg);
 	        Panmage.destroy(bgimg);
 	    }
