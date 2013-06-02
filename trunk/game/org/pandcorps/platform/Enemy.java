@@ -24,7 +24,7 @@ package org.pandcorps.platform;
 
 import org.pandcorps.pandam.*;
 
-public class Enemy extends Character {
+public final class Enemy extends Character {
 	protected Enemy(final float x, final float y) {
 		super(15);
 		setView(PlatformGame.enemy01);
@@ -33,16 +33,21 @@ public class Enemy extends Character {
 		PlatformGame.setPosition(this, x, y, PlatformGame.DEPTH_ENEMY);
 	}
 	
-	protected void onStomp() {
+	protected final void onStomp() {
 		final Panple pos = getPosition();
 		final Tiles.Faller f = new Tiles.Faller((Panmage) getCurrentDisplay(), pos.getX(), pos.getY() + H);
 		f.setMirror(isMirror());
 		f.setFlip(true);
 		destroy();
 	}
+	
+	@Override
+	protected final void onWall() {
+		hv *= -1;
+	}
 
 	@Override
-	protected void onFell() {
+	protected final void onFell() {
 		destroy();
 	}
 }

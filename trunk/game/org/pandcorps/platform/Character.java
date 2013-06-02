@@ -42,9 +42,9 @@ public abstract class Character extends Panctor implements StepListener, Collida
 		OFF_BUTTING = H + 1;
 	}
 	
-	protected final void addX(final int v) {
+	protected final boolean addX(final int v) {
 		if (v == 0) {
-			return;
+			return true; // No movement, but request was successful
 		}
 	    setMirror(v < 0);
 	    final int mult = v > 0 ? 1 : -1;
@@ -55,7 +55,7 @@ public abstract class Character extends Panctor implements StepListener, Collida
 	    	boolean down = true;
 	        if (isWall(offWall, 0)) {
 	        	if (isWall(offWall, 1)) {
-	        		break;
+	        		return false;
 	        	}
 	            pos.addY(1);
 	            down = false;
@@ -65,6 +65,7 @@ public abstract class Character extends Panctor implements StepListener, Collida
 	        }
 	        pos.addX(mult);
 	    }
+	    return true;
 	}
 	
 	protected final void addV(final float a) {
@@ -118,7 +119,9 @@ public abstract class Character extends Panctor implements StepListener, Collida
 			}
 		}
 		
-		addX(hv);
+		if (!addX(hv)) {
+			onWall();
+		}
 		
 		onStepping();
 		if (isGrounded()) {
@@ -353,6 +356,10 @@ public abstract class Character extends Panctor implements StepListener, Collida
 	//@OverrideMe
 	protected boolean onAir() {
 		return false;
+	}
+	
+	//@OverrideMe
+	protected void onWall() {
 	}
 	
 	protected abstract void onFell();

@@ -45,13 +45,11 @@ public class PlatformGame extends BaseGame {
 	Player falling/sliding images.
 	Warp Map marker for entry/exit point.
 	Multiple islands for Map.
-	Enemies.
-	Stomp to defeat enemies.
-	Take gems when hit by enemy.
 	Replace bush with Rise.png for some levels; rise will be higher than 1 tile; separate build method.
 	Random levels.
 	Random maps.
 	Kill Music thread when window is closed.
+	Don't spawn Enemies until Player is near.
 	*/
 	
 	protected final static byte TILE_BREAK = 2;
@@ -458,6 +456,7 @@ public class PlatformGame extends BaseGame {
 		setPosition(player, 40, 16, DEPTH_PLAYER);
 		
 		new Enemy(232, 48);
+		new Enemy(360, 16);
 		
 		addHud(room, new CallSequence() {@Override protected String call() {
             return String.valueOf(player.getCurrentLevelGems());}});
