@@ -39,7 +39,6 @@ public class Tiles {
     	}
     	final Player player = (Player) chr;
     	final byte b = t.getBehavior();
-    	//TODO if a tile is bumped or broken, it should bump creatures standing on it.
     	if (b == PlatformGame.TILE_BREAK) {
     		t.setForeground(null, false);
     		final Panple pos = t.getPosition();
@@ -51,6 +50,7 @@ public class Tiles {
     		if (Mathtil.rand()) {
     		    new GemBumped(player, t);
     		}
+    		new Bump(t).setVisible(false); // To bump Characters above
     	} else if (b == PlatformGame.TILE_BUMP) {
     	    new Bump(t); // Copy image before changing
     	    new GemBumped(player, t, PlatformGame.isFlash(t) ? PlatformGame.gemAnm : PlatformGame.gemCyanAnm);
@@ -59,10 +59,6 @@ public class Tiles {
     }
     
     public static class Faller extends Pandy implements AllOobListener {
-    	public Faller(final Panmage img, final float x, final float y) {
-    		this(img, x, y, 0, 0);
-    	}
-    	
         public Faller(final Panmage img, final float x, final float y, final float xv, final float yv) {
             super(g);
             setView(img);
@@ -83,7 +79,7 @@ public class Tiles {
     	}
     }
     
-    private final static class Bump extends TileActor implements StepListener {
+    private final static class Bump extends TileActor implements StepListener, CollisionListener {
     	private final Tile t;
         private int age = 0;
         
@@ -107,10 +103,20 @@ public class Tiles {
                 getPosition().addY(-1);
             } else {
                 destroy();
-                t.setForeground(PlatformGame.imgMap[0][4]);
+                if (isVisible()) {
+                	t.setForeground(PlatformGame.imgMap[0][4]);
+                }
                 return;
             }
             age++;
+        }
+        
+        @Override
+        public final void onCollision(final CollisionEvent event) {
+        	final Collidable c = event.getCollider();
+        	if (c instanceof Character) {
+        		((Character) c).onBump();
+        	}
         }
     }
 }

@@ -371,5 +371,9 @@ public abstract class Character extends Panctor implements StepListener, Collida
 	protected void onWall() {
 	}
 	
+	//@OverrideMe
+	protected void onBump() {
+	}
+	
 	protected abstract void onFell();
 }

@@ -50,6 +50,7 @@ public class PlatformGame extends BaseGame {
 	Random maps.
 	Kill Music thread when window is closed.
 	Don't spawn Enemies until Player is near.
+	Clear Enemies on level end.
 	*/
 	
 	protected final static byte TILE_BREAK = 2;
@@ -156,12 +157,13 @@ public class PlatformGame extends BaseGame {
 		
 		final Pangine engine = Pangine.getEngine();
 		final FinPanple og = new FinPanple(16, 1, 0);
-		guy = engine.createImage("guy", og, null, null, guys[0]);
-		final Panmage guy2 = engine.createImage("guy.2", og, null, null, guys[1]);
-		final Panmage guy3 = engine.createImage("guy.3", og, null, null, guys[2]);
+		final FinPanple ng = new FinPanple(-Player.PLAYER_X, 0, 0), xg = new FinPanple(Player.PLAYER_X, Player.PLAYER_H, 0);
+		guy = engine.createImage("guy", og, ng, xg, guys[0]);
+		final Panmage guy2 = engine.createImage("guy.2", og, ng, xg, guys[1]);
+		final Panmage guy3 = engine.createImage("guy.3", og, ng, xg, guys[2]);
 		final Panframe gf1 = engine.createFrame("frm.guy.1", guy, 2), gf2 = engine.createFrame("frm.guy.2", guy2, 2), gf3 = engine.createFrame("frm.guy.3", guy3, 2);
 		guyRun = engine.createAnimation("anm.guy.run", gf1, gf2, gf3);
-		guyJump = engine.createImage("guy.jump", og, null, null, guys[3]);
+		guyJump = engine.createImage("guy.jump", og, ng, xg, guys[3]);
 	    //guy = engine.createImage("guy", new FinPanple(8, 0, 0), null, null, ImtilX.loadImage("org/pandcorps/platform/res/chr/Player.png"));
 	    
 		final BufferedImage[] maps = loadChrStrip("BearMap.png", 32, f);
@@ -208,7 +210,7 @@ public class PlatformGame extends BaseGame {
 		//createAnimalStrip("Rabbit", 2, new SwapPixelFilter(Channel.Red, Channel.Blue, Channel.Red));
 		//createAnimalStrip("Mouse", 3, new SwapPixelFilter(Channel.Blue, Channel.Red, Channel.Blue));
 		
-		enemy01 = createAnm("enemy", "org/pandcorps/platform/res/enemy/Enemy01.png", 16, 6, new FinPanple(8, 1, 0));
+		enemy01 = createAnm("enemy", "org/pandcorps/platform/res/enemy/Enemy01.png", 16, 6, new FinPanple(8, 1, 0), new FinPanple(-Enemy.ENEMY_X, 0, 0), new FinPanple(Enemy.ENEMY_X, Enemy.ENEMY_H, 0));
 	    
 	    font = Fonts.getClassics(new FontRequest(8), Pancolor.WHITE, Pancolor.BLACK);
 	    
@@ -455,6 +457,7 @@ public class PlatformGame extends BaseGame {
 		Pangine.getEngine().track(player);
 		setPosition(player, 40, 16, DEPTH_PLAYER);
 		
+		new Enemy(80, 64);
 		new Enemy(232, 48);
 		new Enemy(360, 16);
 		
