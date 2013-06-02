@@ -33,11 +33,12 @@ public abstract class Character extends Panctor implements StepListener, Collida
 	protected final int H;
 	private final int OFF_GROUNDED = -1;
 	private final int OFF_BUTTING;
-	private final int OFF_X = 7;
+	private final int OFF_X;
 	protected float v = 0;
 	protected int hv = 0;
 	
-	protected Character(final int h) {
+	protected Character(final int offX, final int h) {
+		OFF_X = offX;
 		H = h;
 		OFF_BUTTING = H + 1;
 	}
@@ -52,6 +53,9 @@ public abstract class Character extends Panctor implements StepListener, Collida
 	    final int offWall = (OFF_X + 1) * mult;
 	    final Panple pos = getPosition();
 	    for (int i = 0; i < n; i++) {
+	    	if (onHorizontal(mult)) {
+	    		return true; // onHorizontal ran successfully
+	    	}
 	    	boolean down = true;
 	        if (isWall(offWall, 0)) {
 	        	if (isWall(offWall, 1)) {
@@ -351,6 +355,11 @@ public abstract class Character extends Panctor implements StepListener, Collida
 	
 	//@OverrideMe
 	protected void onGrounded() {
+	}
+	
+	//@OverrideMe
+	protected boolean onHorizontal(final int off) {
+		return false;
 	}
 	
 	//@OverrideMe
