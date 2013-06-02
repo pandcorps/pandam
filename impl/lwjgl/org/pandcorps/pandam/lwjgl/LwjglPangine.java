@@ -557,5 +557,6 @@ public final class LwjglPangine extends Pangine {
 		running = false;
 		GL11.glDisableClientState(GL11.GL_VERTEX_ARRAY);
         GL11.glDisableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
+        getMusic().end();
 	}
 }
