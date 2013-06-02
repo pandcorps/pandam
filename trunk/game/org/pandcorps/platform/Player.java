@@ -29,10 +29,12 @@ import org.pandcorps.pandam.impl.ImplPanple;
 import org.pandcorps.pandax.tile.*;
 
 public class Player extends Character implements CollisionListener {
+	protected final static int PLAYER_X = 7;
+	protected final static int PLAYER_H = 23; // 15
     private final static int VEL_WALK = 3;
 	private final static int VEL_RETURN = 2;
 	private final static int VEL_JUMP = 8;
-	private final static int VEL_BUMP = 4;
+	protected final static int VEL_BUMP = 4;
 	private final static byte MODE_NORMAL = 0;
 	private final static byte MODE_RETURN = 1;
 	private final static byte JUMP_HIGH = 1;
@@ -57,7 +59,7 @@ public class Player extends Character implements CollisionListener {
 	private int levelGems = 0;
 	
 	public Player(final PlayerContext pc) {
-		super(7, 23); // h=15
+		super(PLAYER_X, PLAYER_H);
 	    this.pc = pc;
 		final Pangine engine = Pangine.getEngine();
 		setView(PlatformGame.guy);
@@ -217,6 +219,13 @@ public class Player extends Character implements CollisionListener {
         }
         levelGems -= (Math.max(1, levelGems / 10));
     }
+	
+	@Override
+	protected final void onBump() {
+		if (v <= 0) {
+			v = VEL_BUMP;
+		}
+	}
 	
 	@Override
 	protected final void onFell() {
