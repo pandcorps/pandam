@@ -57,7 +57,7 @@ public class Player extends Character implements CollisionListener {
 	private int levelGems = 0;
 	
 	public Player(final PlayerContext pc) {
-		super(23); // 15
+		super(7, 23); // h=15
 	    this.pc = pc;
 		final Pangine engine = Pangine.getEngine();
 		setView(PlatformGame.guy);

@@ -26,7 +26,7 @@ import org.pandcorps.pandam.*;
 
 public final class Enemy extends Character {
 	protected Enemy(final float x, final float y) {
-		super(15);
+		super(5, 15);
 		setView(PlatformGame.enemy01);
 		hv = -1;
 		PlatformGame.room.addActor(this);
@@ -39,6 +39,25 @@ public final class Enemy extends Character {
 		f.setMirror(isMirror());
 		f.setFlip(true);
 		destroy();
+	}
+	
+	@Override
+	protected final boolean onHorizontal(final int off) {
+		final Panple pos = getPosition();
+		final float x = pos.getX(), y = pos.getY();
+		pos.addX(off);
+		try {
+			if (!isGrounded()) {
+				pos.addY(-1);
+				if (!isGrounded()) {
+					hv *= -1;
+					return true;
+				}
+			}
+		} finally {
+			pos.set(x, y);
+		}
+		return false;
 	}
 	
 	@Override
