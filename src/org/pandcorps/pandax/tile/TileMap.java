@@ -24,8 +24,7 @@ package org.pandcorps.pandax.tile;
 
 import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
-import org.pandcorps.pandam.impl.FinPanple;
-import org.pandcorps.pandam.impl.ImplPansplay;
+import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.tile.Tile.*;
 
 public class TileMap extends Panctor {
