@@ -20,43 +20,33 @@ PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY
 TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 */
-package org.pandcorps.pandax.tile;
+package org.pandcorps.pandam.impl;
 
 import org.pandcorps.pandam.*;
 
-public class TileActor extends Panctor {
-    private TileMap map = null;
-    private Object view = null;
-    
-    public void setViewFromBackground(final Tile t) {
-        map = t.map;
-        view = t.background;
-    }
-    
-    public void setViewFromForeground(final Tile t) {
-        map = t.map;
-        view = t.foreground;
-    }
-    
-    public void setView(final TileActor actor) {
-    	map = actor.map;
-    	view = actor.view;
-    }
-    
-    @Override
-    protected void updateView() {       
-    }
+public final class ImplPansplay implements Pansplay {
+	private final Panple o;
+	private final Panple min;
+	private final Panple max;
+	
+	public ImplPansplay(final Panple o, final Panple min, final Panple max) {
+		this.o = o;
+		this.min = min;
+		this.max = max;
+	}
+	
+	@Override
+	public final Panple getOrigin() {
+		return o;
+	}
 
-    @Override
-    public Pansplay getCurrentDisplay() {
-        return map.tileDisplay;
-    }
+	@Override
+	public final Panple getBoundingMinimum() {
+		return min;
+	}
 
-    @Override
-    protected void renderView(final Panderer renderer) {
-        if (map != null) {
-            final Panple pos = getPosition();
-            map.render(renderer, map.getLayer(), view, pos.getX(), pos.getY(), pos.getZ());
-        }
-    }
+	@Override
+	public final Panple getBoundingMaximum() {
+		return max;
+	}
 }
