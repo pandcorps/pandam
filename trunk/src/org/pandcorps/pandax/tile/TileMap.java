@@ -24,6 +24,8 @@ package org.pandcorps.pandax.tile;
 
 import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.impl.FinPanple;
+import org.pandcorps.pandam.impl.ImplPansplay;
 import org.pandcorps.pandax.tile.Tile.*;
 
 public class TileMap extends Panctor {
@@ -42,6 +44,8 @@ public class TileMap extends Panctor {
     
     /*package*/ Panmage imgMap = null;
     
+    protected final ImplPansplay tileDisplay;
+    
     public TileMap(final String id, final int w, final int h, final int tw, final int th) {
         super(id);
         tiles = new Tile[w * h];
@@ -49,6 +53,7 @@ public class TileMap extends Panctor {
         this.h = h;
         this.tw = tw;
         this.th = th;
+        tileDisplay = new ImplPansplay(FinPanple.ORIGIN, FinPanple.ORIGIN, new FinPanple(tw, th, 0));
     }
     
     public TileMap(final String id, final Panlayer room, final int tw, final int th) {
