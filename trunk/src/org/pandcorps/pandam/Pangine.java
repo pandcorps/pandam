@@ -51,6 +51,7 @@ public abstract class Pangine {
 	private final static Class<?>[] CLASS_ARRAY_STRING = new Class<?>[] {String.class};
 
 	private final Panderer renderer = new Panderer();
+	private final Pansic music = new Pansic();
 	
 	private final ArrayList<Object> timers = new ArrayList<Object>();
 
@@ -310,6 +311,10 @@ public abstract class Pangine {
 
 	public final Pantype getType(Class<? extends Panctor> actorClass) {
 		return types.get(actorClass);
+	}
+	
+	public final Pansic getMusic() {
+		return music;
 	}
 
 	public abstract Panteraction getInteraction();
