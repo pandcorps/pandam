@@ -41,14 +41,13 @@ import org.pandcorps.platform.Player.PlayerContext;
 
 public class PlatformGame extends BaseGame {
 	/*
-	Dog, cat player face.
+	Dog player face.
 	Player falling/sliding images.
 	Warp Map marker for entry/exit point.
 	Multiple islands for Map.
 	Replace bush with Rise.png for some levels; rise will be higher than 1 tile; separate build method.
 	Random levels.
 	Random maps.
-	Kill Music thread when game crashes.
 	Don't spawn Enemies until Player is near.
 	*/
 	
@@ -210,6 +209,7 @@ public class PlatformGame extends BaseGame {
 		createAnimalStrip("Bear", 1, null);
 		//createAnimalStrip("Rabbit", 2, new SwapPixelFilter(Channel.Red, Channel.Blue, Channel.Red));
 		//createAnimalStrip("Mouse", 3, new SwapPixelFilter(Channel.Blue, Channel.Red, Channel.Blue));
+		//createAnimalStrip("Cat", 4, new SwapPixelFilter(Channel.Red, Channel.Red, Channel.Blue));
 		
 		enemy01 = createAnm("enemy", "org/pandcorps/platform/res/enemy/Enemy01.png", 16, 6, new FinPanple(8, 1, 0), new FinPanple(-Enemy.ENEMY_X, 0, 0), new FinPanple(Enemy.ENEMY_X, Enemy.ENEMY_H, 0));
 		
