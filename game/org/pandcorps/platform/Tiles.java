@@ -53,7 +53,11 @@ public class Tiles {
     		new Bump(t).setVisible(false); // To bump Characters above
     	} else if (b == PlatformGame.TILE_BUMP) {
     	    new Bump(t); // Copy image before changing
-    	    new GemBumped(player, t, PlatformGame.isFlash(t) ? PlatformGame.gemAnm : PlatformGame.gemCyanAnm);
+    	    final boolean normal = PlatformGame.isFlash(t);
+    	    new GemBumped(player, t, normal ? PlatformGame.gemAnm : PlatformGame.gemCyanAnm);
+    	    if (!normal) {
+    	        PlatformGame.levelVictory();
+    	    }
     		t.setForeground(null, true);
     	}
     }

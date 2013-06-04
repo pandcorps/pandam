@@ -48,9 +48,8 @@ public class PlatformGame extends BaseGame {
 	Replace bush with Rise.png for some levels; rise will be higher than 1 tile; separate build method.
 	Random levels.
 	Random maps.
-	Kill Music thread when window is closed.
+	Kill Music thread when game crashes.
 	Don't spawn Enemies until Player is near.
-	Clear Enemies on level end.
 	*/
 	
 	protected final static byte TILE_BREAK = 2;
@@ -433,6 +432,7 @@ public class PlatformGame extends BaseGame {
 		tm.initTile(6, 6).setForeground(imgMap[0][7], TILE_DOWNSLOPE);
 		gem(9, 4);
 		gem(14, 5);
+		gem(34, 7);
 		tm.initTile(8, 1).setForeground(imgMap[0][6], TILE_UPSLOPE);
 		tm.initTile(9, 1).setForeground(imgMap[0][4], true);
 		tm.initTile(10, 1).setForeground(imgMap[0][7], TILE_DOWNSLOPE);
@@ -553,6 +553,21 @@ public class PlatformGame extends BaseGame {
 			case 2 : return new SwapPixelFilter(Channel.Blue, Channel.Red, Channel.Green);
 		}
 		throw new IllegalArgumentException(String.valueOf(mode));
+	}
+	
+	protected final static void levelVictory() {
+	    for (final Panctor actor : room.getActors()) {
+            if (actor instanceof Enemy) {
+                ((Enemy) actor).onBump();
+            } else if (actor instanceof Gem) {
+                ((Gem) actor).spark();
+            }
+        }
+	}
+	
+	protected final static void levelClose() {
+	    player.onFinishLevel();
+        fadeOut(PlatformGame.room, new Map.MapScreen());
 	}
 	
 	public final static void main(final String[] args) {

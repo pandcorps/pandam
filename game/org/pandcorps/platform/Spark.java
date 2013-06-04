@@ -55,8 +55,7 @@ public final class Spark extends Burst implements StepListener {
 	public void onDestroy() {
 		if (end && count == 0 && age != -1) {
 			age = -1;
-			PlatformGame.player.onFinishLevel();
-			PlatformGame.fadeOut(PlatformGame.room, new Map.MapScreen());
+			PlatformGame.levelClose();
 		}
 	}
 }
