@@ -61,10 +61,11 @@ public class PlatformGame extends BaseGame {
     protected final static byte TILE_DOWNSLOPE_FLOOR = 8;
 	
 	//protected final static int DEPTH_POWERUP = 0;
-	protected final static int DEPTH_ENEMY = 2;
+	protected final static int DEPTH_ENEMY = 3;
 	protected final static int DEPTH_PLAYER = 1;
-	protected final static int DEPTH_SHATTER = 3;
-	protected final static int DEPTH_SPARK = 4;
+	protected final static int DEPTH_BUBBLE = 2;
+	protected final static int DEPTH_SHATTER = 4;
+	protected final static int DEPTH_SPARK = 5;
 	
 	protected final static int TIME_FLASH = 60;
 	
@@ -81,10 +82,12 @@ public class PlatformGame extends BaseGame {
 	protected static Panmage guy = null;
 	protected static Panimation guyRun = null;
 	protected static Panmage guyJump = null;
+	protected final static FinPanple og = new FinPanple(16, 1, 0);
 	protected static Panimation guySouth = null;
 	protected static Panimation guyEast = null;
 	protected static Panimation guyWest = null;
 	protected static Panimation guyNorth = null;
+	protected static Panmage bubble = null;
 	protected static Panimation enemy01 = null;
 	protected static Panmage block8 = null;
 	protected static Panmage[] gem = null;
@@ -155,7 +158,6 @@ public class PlatformGame extends BaseGame {
 		}
 		
 		final Pangine engine = Pangine.getEngine();
-		final FinPanple og = new FinPanple(16, 1, 0);
 		final FinPanple ng = new FinPanple(-Player.PLAYER_X, 0, 0), xg = new FinPanple(Player.PLAYER_X, Player.PLAYER_H, 0);
 		guy = engine.createImage("guy", og, ng, xg, guys[0]);
 		final Panmage guy2 = engine.createImage("guy.2", og, ng, xg, guys[1]);
@@ -210,6 +212,8 @@ public class PlatformGame extends BaseGame {
 		//createAnimalStrip("Mouse", 3, new SwapPixelFilter(Channel.Blue, Channel.Red, Channel.Blue));
 		
 		enemy01 = createAnm("enemy", "org/pandcorps/platform/res/enemy/Enemy01.png", 16, 6, new FinPanple(8, 1, 0), new FinPanple(-Enemy.ENEMY_X, 0, 0), new FinPanple(Enemy.ENEMY_X, Enemy.ENEMY_H, 0));
+		
+		bubble = createImage("bubble", "org/pandcorps/platform/res/chr/Bubble.png", 32, og);
 	    
 	    font = Fonts.getClassics(new FontRequest(8), Pancolor.WHITE, Pancolor.BLACK);
 	    

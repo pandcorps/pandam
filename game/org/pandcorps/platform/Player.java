@@ -58,12 +58,14 @@ public class Player extends Character implements CollisionListener {
 	private final Panple safe = new ImplPanple(0, 0, 0);
 	private int levelGems = 0;
 	private int hurtTimer = 0;
+	private final Bubble bubble = new Bubble();
 	
 	public Player(final PlayerContext pc) {
 		super(PLAYER_X, PLAYER_H);
 	    this.pc = pc;
 		final Pangine engine = Pangine.getEngine();
 		setView(PlatformGame.guy);
+		PlatformGame.room.addActor(bubble);
 		final Panteraction interaction = engine.getInteraction();
 		interaction.register(this, interaction.KEY_SPACE, new ActionStartListener() {
 			@Override public final void onActionStart(final ActionStartEvent event) { jump(); }});
@@ -116,6 +118,10 @@ public class Player extends Character implements CollisionListener {
 	
 	private final void left() {
 		hv = -VEL_WALK;
+	}
+	
+	private boolean isInvincible() {
+		return hurtTimer > 0 || mode == MODE_RETURN;
 	}
 	
 	private final void onStepReturn() {
@@ -185,6 +191,9 @@ public class Player extends Character implements CollisionListener {
 	@Override
 	protected final void onStepEnd() {
 		hv = 0;
+		final Panple pos = getPosition();
+		PlatformGame.setPosition(bubble, pos.getX(), pos.getY() - 1, PlatformGame.DEPTH_BUBBLE);
+		bubble.setVisible(isInvincible() && Pangine.getEngine().isOn(4));
 	}
 	
 	@Override
@@ -210,7 +219,7 @@ public class Player extends Character implements CollisionListener {
 			if (v < 0 && getPosition().getY() > other.getPosition().getY()) {
 				((Enemy) other).onStomp();
 				v = VEL_BUMP;
-			} else if (hurtTimer == 0) {
+			} else if (!isInvincible()) {
 				onHurt();
 				hurtTimer = 60; // Enable temporary invincibility
 			}
@@ -242,5 +251,16 @@ public class Player extends Character implements CollisionListener {
 	
 	public final void onFinishLevel() {
 		pc.gems += levelGems;
+	}
+	
+	@Override
+	protected final void onDestroy() {
+		bubble.destroy();
+	}
+	
+	private final static class Bubble extends Panctor {
+		{
+			setView(PlatformGame.bubble);
+		}
 	}
 }

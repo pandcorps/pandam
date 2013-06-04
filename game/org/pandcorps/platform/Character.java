@@ -84,6 +84,7 @@ public abstract class Character extends Panctor implements StepListener, Collida
 	@Override
 	public final void onStep(final StepEvent event) {
 		if (onStepCustom()) {
+			onStepEnd();
 			return;
 		}
 		
