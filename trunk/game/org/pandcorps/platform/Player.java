@@ -57,6 +57,7 @@ public class Player extends Character implements CollisionListener {
 	private boolean flying = false;
 	private final Panple safe = new ImplPanple(0, 0, 0);
 	private int levelGems = 0;
+	private int hurtTimer = 0;
 	
 	public Player(final PlayerContext pc) {
 		super(PLAYER_X, PLAYER_H);
@@ -143,6 +144,9 @@ public class Player extends Character implements CollisionListener {
 	
 	@Override
 	protected final boolean onStepCustom() {
+	    if (hurtTimer > 0) {
+	        hurtTimer--;
+	    }
 		if (mode == MODE_RETURN) {
 			onStepReturn();
 			return true;
@@ -206,9 +210,9 @@ public class Player extends Character implements CollisionListener {
 			if (v < 0 && getPosition().getY() > other.getPosition().getY()) {
 				((Enemy) other).onStomp();
 				v = VEL_BUMP;
-			} else {
+			} else if (hurtTimer == 0) {
 				onHurt();
-				// enable temporary invincibility
+				hurtTimer = 60; // Enable temporary invincibility
 			}
 		}
 	}
