@@ -79,8 +79,8 @@ public abstract class Pangame {
 	}
 
 	public final void start() throws Panception {
+		final Pangine engine = Pangine.getEngine();
 		try {
-			final Pangine engine = Pangine.getEngine();
 			//engine.start();
 			initBeforeEngine();
 			engine.init();
@@ -88,6 +88,7 @@ public abstract class Pangame {
 			init(); // Don't know why this happens after engine.init; can't set window size here; don't know what steps should happen here; adding initBeforeEngine
 			engine.start();
 		} catch (final Exception e) {
+			engine.exit();
 			throw new Panception(e);
 		}
 	}
