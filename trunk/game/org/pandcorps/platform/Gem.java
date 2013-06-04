@@ -45,11 +45,15 @@ public class Gem extends TileOccupant implements StepListener {
 			return;
 		}
 		collect(player);
-		spark(this, false);
+		spark();
 	}
 	
 	protected final static void collect(final Player player) {
 		player.addGem();
+	}
+	
+	protected final void spark() {
+	    spark(this, false);
 	}
 	
 	protected final static void spark(final Panctor gem, final boolean end) {
