@@ -71,17 +71,18 @@ public class Map {
 	private final static Namer nmr = Namer.get(NAME0, NAME1, NAME2, NAME3);*/
     
     private final static String[] ADJECTIVES =
-    	{ "brav", "bright", "clear", "fair", "good", "grand", "green", "kind", "north", "old", "strong", "sweet", "verd", "wood" };
+    	{ "brav", "bright", "clear", "deep", "fair", "good", "grand", "green", "kind", "north", "old", "strong", "sweet", "verd", "warm", "wood" };
     private final static String[] NOUNS =
-    	{ "beat", "bell", "bliss", "branch", "breez", "claw", "day", "furr", "grass", "heart", "hill", "leaf", "mead", "morn",
-    	"mound", "paw", "plain", "plant", "root", "soul", "spring", "stepp", "sunn", "vin", "well" };
+    	{ "beat", "bell", "bliss", "branch", "breez", "brush", "claw", "clov", "cross", "day", "flow", "furr",
+        "grain", "grass", "grov", "heart", "heath", "hill", "holl", "hom", "king", "leaf", "mead", "mint", "morn",
+    	"mound", "paw", "plain", "plant", "ring", "root", "shield", "soul", "spring", "stepp", "sunn", "vin", "well", "wheat" };
     private final static String[] VERBS =
-    	{ "bloom", "bound", "dash", "grow", "leap", "ris", "runn", "rush", "shin", "thriv", "wind" };
+    	{ "bloom", "bound", "dash", "grow", "leap", "ris", "runn", "rush", "shin", "thriv", "wind", "wish" };
     private final static String[] LINK_ADJ = { "al", "em", "est", "ing" };
     private final static String[] LINK_NON = { "en", "ing", "ic", "y" }; // "ish"
     private final static String[] LINK_VRB = { "al", "em", "er", "ing" };
     private final static String[] PLACES =
-    	{ "berg", "by", "croft", "fold", "gard", "ham", "holt", "march", "land", "nesse", "port", "shire", "stead", "strand",
+    	{ "berg", "by", "croft", "dom", "fold", "gard", "ham", "holt", "march", "land", "nesse", "port", "shire", "stead", "strand",
     	"thorp", "ton" };
     private final static Namer nmr = Namer.get(
         Namer.get(ADJECTIVES, LINK_ADJ, PLACES),
