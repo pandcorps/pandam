@@ -73,7 +73,7 @@ public class PlatformGame extends BaseGame {
 	protected final static PixelFilter terrainDarkener = new BrightnessPixelFilter((short) -40, (short) -24, (short) -32);
 	
 	protected static Panroom room = null;
-	protected static PlayerContext pc = new PlayerContext();
+	protected static PlayerContext pc = null;
 	protected static Player player = null;
 	protected static MultiFont font = null;
 	protected static DynamicTileMap tm = null;
@@ -145,7 +145,7 @@ public class PlatformGame extends BaseGame {
 		return strip;
 	}
 	
-	private final static void createAnimalStrip(final String anm, final int eye, final PixelFilter f) {
+	private final static void createAnimalStrip(final String name, final String anm, final int eye, final PixelFilter f) {
 		final BufferedImage[] guys = loadChrStrip("Bear.png", 32, f);
 		final BufferedImage face = Imtil.filter(ImtilX.loadImage("org/pandcorps/platform/res/chr/Face" + anm + ".png", false), f);
 		final BufferedImage eyes = ImtilX.loadImage("org/pandcorps/platform/res/chr/Eyes0" + eye + ".png", false);
@@ -202,14 +202,16 @@ public class PlatformGame extends BaseGame {
 		}
 		guyNorth = createAnm("guy.north", dm, om, north1, north2);
 		//guyMap = engine.createImage("guy.map", ImtilX.loadImage("org/pandcorps/platform/res/chr/PlayerMap.png"));
+		
+		pc = new PlayerContext(name);
 	}
 	
 	private final static void loadConstants() {
 		final Pangine engine = Pangine.getEngine();
-		createAnimalStrip("Bear", 1, null);
-		//createAnimalStrip("Rabbit", 2, new SwapPixelFilter(Channel.Red, Channel.Blue, Channel.Red));
-		//createAnimalStrip("Mouse", 3, new SwapPixelFilter(Channel.Blue, Channel.Red, Channel.Blue));
-		//createAnimalStrip("Cat", 4, new SwapPixelFilter(Channel.Red, Channel.Red, Channel.Blue));
+		createAnimalStrip("Balue", "Bear", 1, null);
+		//createAnimalStrip("Grabbit", "Rabbit", 2, new SwapPixelFilter(Channel.Red, Channel.Blue, Channel.Red));
+		//createAnimalStrip("Roddy", "Mouse", 3, new SwapPixelFilter(Channel.Blue, Channel.Red, Channel.Blue));
+		//createAnimalStrip("Felip", "Cat", 4, new SwapPixelFilter(Channel.Red, Channel.Red, Channel.Blue));
 		
 		enemy01 = createAnm("enemy", "org/pandcorps/platform/res/enemy/Enemy01.png", 16, 6, new FinPanple(8, 1, 0), new FinPanple(-Enemy.ENEMY_X, 0, 0), new FinPanple(Enemy.ENEMY_X, Enemy.ENEMY_H, 0));
 		
@@ -474,8 +476,11 @@ public class PlatformGame extends BaseGame {
         final Gem hudGem = new Gem();
         hudGem.getPosition().setY(175);
         hud.addActor(hudGem);
+        final Pantext hudName = new Pantext("hud.name", font, pc.getName());
+        hudName.getPosition().set(16, 183);
+        hud.addActor(hudName);
         final Pantext hudGems = new Pantext("hud.gems", font, gemSeq);
-        hudGems.getPosition().set(16, 178);
+        hudGems.getPosition().set(16, 175);
         hud.addActor(hudGems);
         return hud;
 	}

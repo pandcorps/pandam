@@ -44,7 +44,16 @@ public class Player extends Character implements CollisionListener {
 	
 	// Player attributes preserved between levels
 	public final static class PlayerContext {
+	    private String name = null;
 	    private int gems = 0;
+	    
+	    public PlayerContext(final String name) {
+	        this.name = name;
+	    }
+	    
+	    public String getName() {
+	        return name;
+	    }
 	    
 	    public final int getGems() {
 	        return gems;
