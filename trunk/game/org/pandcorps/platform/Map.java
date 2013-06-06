@@ -26,7 +26,6 @@ import java.awt.image.BufferedImage;
 import java.util.*;
 
 import org.pandcorps.core.*;
-import org.pandcorps.core.chr.CallSequence;
 import org.pandcorps.game.*;
 import org.pandcorps.game.core.ImtilX;
 import org.pandcorps.pandam.*;
@@ -34,6 +33,7 @@ import org.pandcorps.pandam.impl.FinPanple;
 import org.pandcorps.pandax.text.Pantext;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.tile.Tile.TileMapImage;
+import org.pandcorps.platform.Player.PlayerContext;
 
 public class Map {
 	private final static byte TILE_HORIZ = 2;
@@ -131,10 +131,12 @@ public class Map {
 	}
 	
 	protected final static class Player extends TileWalker {
+	    private final PlayerContext pc;
 		private boolean disabled = false;
 		
-		{
-			setView(PlatformGame.guySouth);
+		private Player(final PlayerContext pc) {
+		    this.pc = pc;
+			setView(pc.guySouth);
 			setSpeed(2);
 		}
 		
@@ -209,13 +211,13 @@ public class Map {
 		@Override
 	    protected void onFace(final Direction oldDir, final Direction newDir) {
 			if (newDir == Direction.North) {
-				changeView(PlatformGame.guyNorth);
+				changeView(pc.guyNorth);
 			} else if (newDir == Direction.East) {
-			    changeView(PlatformGame.guyEast);
+			    changeView(pc.guyEast);
 			} else if (newDir == Direction.West) {
-			    changeView(PlatformGame.guyWest);
+			    changeView(pc.guyWest);
 			} else if (newDir == Direction.South) {
-			    changeView(PlatformGame.guySouth);
+			    changeView(pc.guySouth);
 			}
 	    }
 		
@@ -227,7 +229,7 @@ public class Map {
 				case TILE_MARKER :
 				    row = t.getRow();
 				    column = t.getColumn();
-				    changeView(PlatformGame.guySouth);
+				    changeView(pc.guySouth);
 					return;
 				case TILE_VERT : {
 					final Direction d1 = getDirection();
@@ -272,7 +274,9 @@ public class Map {
 	private final static void loadMap() {
 		final Pangine engine = Pangine.getEngine();
 		PlatformGame.room.destroy();
-		PlatformGame.player = null;
+		for (final PlayerContext pc : PlatformGame.pcs) {
+		    pc.player = null;
+		}
 		room = engine.createRoom(Pantil.vmid(), new FinPanple(256, 192, 0));
 		PlatformGame.room = room;
 		Pangame.getGame().setCurrentRoom(room);
@@ -339,7 +343,7 @@ public class Map {
 		}
 		marker(6, 6);
 		
-		final Player player = new Player();
+		final Player player = new Player(PlatformGame.pcs.get(0));
 		player.setPosition(t);
 		player.getPosition().setZ(tm.getForegroundDepth() + 1);
 		room.addActor(player);
@@ -347,8 +351,7 @@ public class Map {
 		final Pantext name = new Pantext("map.name", PlatformGame.font, Map.name);
 		name.getPosition().set(PlatformGame.SCREEN_W / 2, 1);
 		name.centerX();
-		final Panlayer hud = PlatformGame.addHud(room, new CallSequence() {@Override protected String call() {
-            return String.valueOf(PlatformGame.pc.getGems());}});
+		final Panlayer hud = PlatformGame.addHud(room, false);
 		hud.addActor(name);
 	}
 	

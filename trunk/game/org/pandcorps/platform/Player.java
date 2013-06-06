@@ -44,14 +44,24 @@ public class Player extends Character implements CollisionListener {
 	
 	// Player attributes preserved between levels
 	public final static class PlayerContext {
+	    protected transient Player player = null;
+	    
 	    private String name = null;
 	    private int gems = 0;
+	    
+	    protected Panmage guy = null;
+	    protected Panimation guyRun = null;
+	    protected Panmage guyJump = null;
+	    protected Panimation guySouth = null;
+	    protected Panimation guyEast = null;
+	    protected Panimation guyWest = null;
+	    protected Panimation guyNorth = null;
 	    
 	    public PlayerContext(final String name) {
 	        this.name = name;
 	    }
 	    
-	    public String getName() {
+	    public final String getName() {
 	        return name;
 	    }
 	    
@@ -72,8 +82,9 @@ public class Player extends Character implements CollisionListener {
 	public Player(final PlayerContext pc) {
 		super(PLAYER_X, PLAYER_H);
 	    this.pc = pc;
+	    pc.player = this;
 		final Pangine engine = Pangine.getEngine();
-		setView(PlatformGame.guy);
+		setView(pc.guy);
 		PlatformGame.room.addActor(bubble);
 		final Panteraction interaction = engine.getInteraction();
 		interaction.register(this, interaction.KEY_SPACE, new ActionStartListener() {
@@ -209,15 +220,15 @@ public class Player extends Character implements CollisionListener {
 	protected final void onGrounded() {
 		safe.set(getPosition());
 		if (hv != 0) {
-			changeView(PlatformGame.guyRun);
+			changeView(pc.guyRun);
 		} else {
-			changeView(PlatformGame.guy);
+			changeView(pc.guy);
 		}
 	}
 	
 	@Override
 	protected final boolean onAir() {
-		changeView(PlatformGame.guyJump);
+		changeView(pc.guyJump);
 		return flying;
 	}
 	
