@@ -49,6 +49,10 @@ public class Player extends Character implements CollisionListener {
 	    private String name = null;
 	    private int gems = 0;
 	    
+	    protected Panput inJump = null;
+	    protected Panput inLeft = null;
+	    protected Panput inRight = null;
+	    
 	    protected Panmage guy = null;
 	    protected Panimation guyRun = null;
 	    protected Panmage guyJump = null;
@@ -87,13 +91,13 @@ public class Player extends Character implements CollisionListener {
 		setView(pc.guy);
 		PlatformGame.room.addActor(bubble);
 		final Panteraction interaction = engine.getInteraction();
-		interaction.register(this, interaction.KEY_SPACE, new ActionStartListener() {
+		interaction.register(this, pc.inJump, new ActionStartListener() {
 			@Override public final void onActionStart(final ActionStartEvent event) { jump(); }});
-		interaction.register(this, interaction.KEY_SPACE, new ActionEndListener() {
+		interaction.register(this, pc.inJump, new ActionEndListener() {
 			@Override public final void onActionEnd(final ActionEndEvent event) { releaseJump(); }});
-		interaction.register(this, interaction.KEY_RIGHT, new ActionListener() {
+		interaction.register(this, pc.inRight, new ActionListener() {
 			@Override public final void onAction(final ActionEvent event) { right(); }});
-		interaction.register(this, interaction.KEY_LEFT, new ActionListener() {
+		interaction.register(this, pc.inLeft, new ActionListener() {
 			@Override public final void onAction(final ActionEvent event) { left(); }});
 		
 		// Debug
