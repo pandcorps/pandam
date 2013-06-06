@@ -23,6 +23,7 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.platform;
 
 import java.awt.image.BufferedImage;
+import java.util.*;
 
 import org.pandcorps.core.*;
 import org.pandcorps.core.chr.CallSequence;
@@ -48,6 +49,8 @@ public class PlatformGame extends BaseGame {
 	Replace bush with Rise.png for some levels; rise will be higher than 1 tile; separate build method.
 	Random levels.
 	Random maps.
+	Gamepads.
+	Multiplayer.
 	Don't spawn Enemies until Player is near.
 	*/
 	
@@ -73,19 +76,11 @@ public class PlatformGame extends BaseGame {
 	protected final static PixelFilter terrainDarkener = new BrightnessPixelFilter((short) -40, (short) -24, (short) -32);
 	
 	protected static Panroom room = null;
-	protected static PlayerContext pc = null;
-	protected static Player player = null;
+	protected final static ArrayList<PlayerContext> pcs = new ArrayList<PlayerContext>();
 	protected static MultiFont font = null;
 	protected static DynamicTileMap tm = null;
 	protected static TileMapImage[][] imgMap = null;
-	protected static Panmage guy = null;
-	protected static Panimation guyRun = null;
-	protected static Panmage guyJump = null;
 	protected final static FinPanple og = new FinPanple(16, 1, 0);
-	protected static Panimation guySouth = null;
-	protected static Panimation guyEast = null;
-	protected static Panimation guyWest = null;
-	protected static Panimation guyNorth = null;
 	protected static Panmage bubble = null;
 	protected static Panimation enemy01 = null;
 	protected static Panmage block8 = null;
@@ -155,16 +150,19 @@ public class PlatformGame extends BaseGame {
 			Imtil.copy(face, guys[i], 0, 0, 18, 18, 8, 1 + y, Imtil.COPY_FOREGROUND);
 			Imtil.copy(eyes, guys[i], 0, 0, 8, 4, 15, 10 + y, Imtil.COPY_FOREGROUND);
 		}
+		final String pre = "guy." + pcs.size();
+		final PlayerContext pc = new PlayerContext(name);
 		
 		final Pangine engine = Pangine.getEngine();
 		final FinPanple ng = new FinPanple(-Player.PLAYER_X, 0, 0), xg = new FinPanple(Player.PLAYER_X, Player.PLAYER_H, 0);
-		guy = engine.createImage("guy", og, ng, xg, guys[0]);
-		final Panmage guy2 = engine.createImage("guy.2", og, ng, xg, guys[1]);
-		final Panmage guy3 = engine.createImage("guy.3", og, ng, xg, guys[2]);
-		final Panframe gf1 = engine.createFrame("frm.guy.1", guy, 2), gf2 = engine.createFrame("frm.guy.2", guy2, 2), gf3 = engine.createFrame("frm.guy.3", guy3, 2);
-		guyRun = engine.createAnimation("anm.guy.run", gf1, gf2, gf3);
-		guyJump = engine.createImage("guy.jump", og, ng, xg, guys[3]);
-	    //guy = engine.createImage("guy", new FinPanple(8, 0, 0), null, null, ImtilX.loadImage("org/pandcorps/platform/res/chr/Player.png"));
+		pc.guy = engine.createImage(pre, og, ng, xg, guys[0]);
+		final Panmage guy2 = engine.createImage(pre + ".2", og, ng, xg, guys[1]);
+		final Panmage guy3 = engine.createImage(pre + ".3", og, ng, xg, guys[2]);
+		final String fpre = "frm." + pre + ".";
+		final Panframe gf1 = engine.createFrame(fpre + "1", pc.guy, 2), gf2 = engine.createFrame(fpre + "2", guy2, 2), gf3 = engine.createFrame(fpre + "3", guy3, 2);
+		pc.guyRun = engine.createAnimation("anm." + pre + ".run", gf1, gf2, gf3);
+		pc.guyJump = engine.createImage(pre + ".jump", og, ng, xg, guys[3]);
+	    //guy = engine.createImage(pre, new FinPanple(8, 0, 0), null, null, ImtilX.loadImage("org/pandcorps/platform/res/chr/Player.png"));
 	    
 		final BufferedImage[] maps = loadChrStrip("BearMap.png", 32, f);
 		final BufferedImage[] faceMap = loadChrStrip("FaceMap" + anm + ".png", 18, f);
@@ -176,7 +174,7 @@ public class PlatformGame extends BaseGame {
 		}
 		final FinPanple om = new FinPanple(8, -6, 0);
 		final int dm = 6;
-		guySouth = createAnm("guy.south", dm, om, south1, south2);
+		pc.guySouth = createAnm(pre + ".south", dm, om, south1, south2);
 		final BufferedImage east1 = maps[1], east2 = maps[2], faceEast = faceMap[1];
 		final BufferedImage[] easts = {east1, east2};
 		for (final BufferedImage east : easts) {
@@ -187,29 +185,29 @@ public class PlatformGame extends BaseGame {
 		for (final BufferedImage east : easts) {
 			Imtil.copy(eyesEast, east, 0, 0, 4, 4, 18, 14, Imtil.COPY_FOREGROUND);
 		}
-		guyEast = createAnm("guy.east", dm, om, east1, east2);
+		pc.guyEast = createAnm(pre + ".east", dm, om, east1, east2);
 		Imtil.mirror(west1);
 		Imtil.mirror(west2);
 		final BufferedImage eyesWest = eyes.getSubimage(4, 0, 4, 4);
 		for (final BufferedImage west : new BufferedImage[] {west1, west2}) {
 			Imtil.copy(eyesWest, west, 0, 0, 4, 4, 10, 14, Imtil.COPY_FOREGROUND);
 		}
-		guyWest = createAnm("guy.west", dm, om, west1, west2);
+		pc.guyWest = createAnm(pre + ".west", dm, om, west1, west2);
 		final BufferedImage north1 = maps[3], north2 = Imtil.copy(north1), faceNorth = faceMap[2];
 		Imtil.mirror(north2);
 		for (final BufferedImage north : new BufferedImage[] {north1, north2}) {
 			Imtil.copy(faceNorth, north, 0, 0, 18, 18, 7, 5, Imtil.COPY_FOREGROUND);
 		}
-		guyNorth = createAnm("guy.north", dm, om, north1, north2);
-		//guyMap = engine.createImage("guy.map", ImtilX.loadImage("org/pandcorps/platform/res/chr/PlayerMap.png"));
+		pc.guyNorth = createAnm(pre + ".north", dm, om, north1, north2);
+		//guyMap = engine.createImage(pre + ".map", ImtilX.loadImage("org/pandcorps/platform/res/chr/PlayerMap.png"));
 		
-		pc = new PlayerContext(name);
+		pcs.add(pc);
 	}
 	
 	private final static void loadConstants() {
 		final Pangine engine = Pangine.getEngine();
 		createAnimalStrip("Balue", "Bear", 1, null);
-		//createAnimalStrip("Grabbit", "Rabbit", 2, new SwapPixelFilter(Channel.Red, Channel.Blue, Channel.Red));
+		createAnimalStrip("Grabbit", "Rabbit", 2, new SwapPixelFilter(Channel.Red, Channel.Blue, Channel.Red));
 		//createAnimalStrip("Roddy", "Mouse", 3, new SwapPixelFilter(Channel.Blue, Channel.Red, Channel.Blue));
 		//createAnimalStrip("Felip", "Cat", 4, new SwapPixelFilter(Channel.Red, Channel.Red, Channel.Blue));
 		
@@ -458,30 +456,45 @@ public class PlatformGame extends BaseGame {
 			}
 		}
 		tm.initTile(42, 8).setForeground(imgMap[7][0], TILE_BUMP);
-		player = new Player(pc);
-		room.addActor(player);
-		Pangine.getEngine().track(player);
-		setPosition(player, 40, 16, DEPTH_PLAYER);
+		final int size = pcs.size();
+		for (int i = 0; i < size; i++) {
+    		final Player player = new Player(pcs.get(i));
+    		room.addActor(player);
+    		Pangine.getEngine().track(player);
+    		setPosition(player, 40 + (20 * i), 16, DEPTH_PLAYER);
+		}
 		
 		new Enemy(80, 64);
 		new Enemy(232, 48);
 		new Enemy(360, 16);
 		
-		addHud(room, new CallSequence() {@Override protected String call() {
-            return String.valueOf(player.getCurrentLevelGems());}});
+		addHud(room, true);
 	}
 	
-	protected final static Panlayer addHud(final Panroom room, final CallSequence gemSeq) {
+	protected final static Panlayer addHud(final Panroom room, final boolean level) {
 		final Panlayer hud = createHud(room);
         final Gem hudGem = new Gem();
         hudGem.getPosition().setY(175);
         hud.addActor(hudGem);
-        final Pantext hudName = new Pantext("hud.name", font, pc.getName());
-        hudName.getPosition().set(16, 183);
-        hud.addActor(hudName);
-        final Pantext hudGems = new Pantext("hud.gems", font, gemSeq);
-        hudGems.getPosition().set(16, 175);
-        hud.addActor(hudGems);
+        final int size = pcs.size();
+        for (int i = 0; i < size; i++) {
+            final PlayerContext pc = pcs.get(i);
+            final CallSequence gemSeq;
+            if (level) {
+                gemSeq = new CallSequence() {@Override protected String call() {
+                    return String.valueOf(pc.player.getCurrentLevelGems());}};
+            } else {
+                gemSeq = new CallSequence() {@Override protected String call() {
+                    return String.valueOf(pc.getGems());}};
+            }
+            final Pantext hudName = new Pantext("hud.name." + i, font, pc.getName());
+            final int x = 16 + (i * 56);
+            hudName.getPosition().set(x, 183);
+            hud.addActor(hudName);
+            final Pantext hudGems = new Pantext("hud.gems." + i, font, gemSeq);
+            hudGems.getPosition().set(x, 175);
+            hud.addActor(hudGems);
+        }
         return hud;
 	}
 	
@@ -575,7 +588,9 @@ public class PlatformGame extends BaseGame {
 	}
 	
 	protected final static void levelClose() {
-	    player.onFinishLevel();
+	    for (final PlayerContext pc : pcs) {
+	        pc.player.onFinishLevel();
+	    }
         fadeOut(PlatformGame.room, new Map.MapScreen());
 	}
 	
