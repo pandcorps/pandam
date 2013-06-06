@@ -50,7 +50,7 @@ public class PlatformGame extends BaseGame {
 	Random levels.
 	Random maps.
 	Gamepads.
-	Multiplayer.
+	Multiplayer camera.
 	Don't spawn Enemies until Player is near.
 	*/
 	
@@ -140,7 +140,7 @@ public class PlatformGame extends BaseGame {
 		return strip;
 	}
 	
-	private final static void createAnimalStrip(final String name, final String anm, final int eye, final PixelFilter f) {
+	private final static void createAnimalStrip(final String name, final String anm, final int eye, final PixelFilter f, final int ctrl) {
 		final BufferedImage[] guys = loadChrStrip("Bear.png", 32, f);
 		final BufferedImage face = Imtil.filter(ImtilX.loadImage("org/pandcorps/platform/res/chr/Face" + anm + ".png", false), f);
 		final BufferedImage eyes = ImtilX.loadImage("org/pandcorps/platform/res/chr/Eyes0" + eye + ".png", false);
@@ -201,15 +201,26 @@ public class PlatformGame extends BaseGame {
 		pc.guyNorth = createAnm(pre + ".north", dm, om, north1, north2);
 		//guyMap = engine.createImage(pre + ".map", ImtilX.loadImage("org/pandcorps/platform/res/chr/PlayerMap.png"));
 		
+		final Panteraction interaction = engine.getInteraction();
+		if (ctrl == 0) {
+    		pc.inJump = interaction.KEY_SPACE;
+    		pc.inLeft = interaction.KEY_LEFT;
+    		pc.inRight = interaction.KEY_RIGHT;
+		} else {
+		    pc.inJump = interaction.KEY_W;
+            pc.inLeft = interaction.KEY_A;
+            pc.inRight = interaction.KEY_D;
+		}
+		
 		pcs.add(pc);
 	}
 	
 	private final static void loadConstants() {
 		final Pangine engine = Pangine.getEngine();
-		createAnimalStrip("Balue", "Bear", 1, null);
-		createAnimalStrip("Grabbit", "Rabbit", 2, new SwapPixelFilter(Channel.Red, Channel.Blue, Channel.Red));
-		//createAnimalStrip("Roddy", "Mouse", 3, new SwapPixelFilter(Channel.Blue, Channel.Red, Channel.Blue));
-		//createAnimalStrip("Felip", "Cat", 4, new SwapPixelFilter(Channel.Red, Channel.Red, Channel.Blue));
+		createAnimalStrip("Balue", "Bear", 1, null, 0);
+		createAnimalStrip("Grabbit", "Rabbit", 2, new SwapPixelFilter(Channel.Red, Channel.Blue, Channel.Red), 1);
+		//createAnimalStrip("Roddy", "Mouse", 3, new SwapPixelFilter(Channel.Blue, Channel.Red, Channel.Blue), 0);
+		//createAnimalStrip("Felip", "Cat", 4, new SwapPixelFilter(Channel.Red, Channel.Red, Channel.Blue), 0);
 		
 		enemy01 = createAnm("enemy", "org/pandcorps/platform/res/enemy/Enemy01.png", 16, 6, new FinPanple(8, 1, 0), new FinPanple(-Enemy.ENEMY_X, 0, 0), new FinPanple(Enemy.ENEMY_X, Enemy.ENEMY_H, 0));
 		
