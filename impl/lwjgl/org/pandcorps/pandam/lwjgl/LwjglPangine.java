@@ -26,7 +26,9 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.nio.*;
 import java.util.*;
-//import org.lwjgl.input.Keyboard;
+
+import org.lwjgl.input.Controller;
+import org.lwjgl.input.Controllers;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
@@ -159,6 +161,17 @@ public final class LwjglPangine extends Pangine {
 		//GL11.glEnable(GL11.GL_BLEND); // Needed?
 		GL11.glEnable(GL11.GL_ALPHA_TEST);
 		GL11.glAlphaFunc(GL11.GL_GREATER, 0);
+		
+		Controllers.create();
+		final int cs = Controllers.getControllerCount();
+		for (int i = 0; i < cs; i++) {
+			final int bs = Controllers.getController(i).getButtonCount();
+			final List<Button> blist = new ArrayList<Button>(bs);
+			for (int j = 0; j < bs; j++) {
+				blist.add(newButton());
+			}
+			addController(newButton(), newButton(), newButton(), newButton(), blist);
+		}
 
 		//new Thread(new Runnable() {public void run() {play();}}).start();
 	}
@@ -216,7 +229,8 @@ public final class LwjglPangine extends Pangine {
 				//System.out.println(java.awt.AWTKeyStroke.getAWTKeyStroke(key.getIndex(), 0).getKeyChar()); // Always '?'
 				//System.out.println(java.awt.AWTKeyStroke.getAWTKeyStroke(key.getIndex(), java.awt.event.InputEvent.BUTTON1_DOWN_MASK).getKeyChar()); // Always '?'
 				//System.out.println(javax.swing.KeyStroke.getKeyStroke(key.getIndex(), java.awt.event.InputEvent.BUTTON1_DOWN_MASK).getKeyChar()); // Always '?'
-				if (Keyboard.getEventKeyState()) {
+				final boolean active = Keyboard.getEventKeyState();
+				if (active) {
 				    if (key == interaction.KEY_CAPS_LOCK) {
 				        capsLock = !capsLock;
 				    } else if (key == interaction.KEY_INS) {
@@ -235,48 +249,50 @@ public final class LwjglPangine extends Pangine {
 				            capsLock = !capsLock;
 				        }
 				    }
-				    // copy to prevent ConcurrentModificationException
-					for (final ActionStartListener startListener : Coltil.copy(interaction.getStartListeners(key))) {
-						//startListener.onActionStart(ActionStartEvent.INSTANCE);
-					    //startListener.onActionStart(ActionStartEvent.getEvent(key, Character.valueOf(Keyboard.getEventCharacter())));
-					    if (!isActive(getActor(startListener))) {
-					    	continue;
-					    }
-						startListener.onActionStart(ActionStartEvent.getEvent(key));
-					}
-					/*final Panction action = interaction.getAction(key);
-					if (action != null) {
-						setActive(action, true);
-					}*/
-					onAction(key);
-					newActive.add(key);
-					setActive(key, true);
 				}
-				else {
-					for (final ActionEndListener endListener : Coltil.unnull(interaction.getEndListeners(key))) {
-						//endListener.onActionEnd(ActionEndEvent.INSTANCE);
-					    if (!isActive(getActor(endListener))) {
-                            continue;
-                        }
-					    endListener.onActionEnd(ActionEndEvent.getEvent(key));
-					}
-					/*
-					TODO
-					If a key is pressed and released during the same frame,
-					then action.isActive() will return false for that frame.
-					This is different than an ActionListener,
-					which would still fire its event for that one frame.
-					*/
-					/*final Panction action = interaction.getAction(key);
-					if (action != null) {
-						setActive(action, false);
-					}*/
-					active.remove(key);
-					newActive.remove(key);
-					setActive(key, false);
-				}
+				activate(key, active);
 				//System.out.println("EK " + f + " " + Keyboard.getEventKey() + Keyboard.getEventKeyState());
 			}
+			
+			Controllers.poll();
+			while (Controllers.next()) {
+				final Button button;
+				final boolean a;
+				final Controller src = Controllers.getEventSource();
+				final Panteraction.Controller pc = interaction.CONTROLLERS.get(src.getIndex());
+				if (Controllers.isEventButton()) {
+					final int ind = Controllers.getEventControlIndex();
+					button = pc.BUTTONS.get(ind);
+					a = Controllers.getEventSource().isButtonPressed(ind);
+				} else {
+					final float val;
+					final Button pos, neg;
+					if (Controllers.isEventXAxis()) {
+						val = src.getXAxisValue();
+						pos = pc.RIGHT;
+						neg = pc.LEFT;
+					} else if (Controllers.isEventYAxis()) {
+						val = src.getYAxisValue();
+						pos = pc.DOWN;
+						neg = pc.UP;
+					} else {
+						continue;
+					}
+					if (val > 0) {
+						button = pos;
+						a = true;
+					} else if (val < 0) {
+						button = neg;
+						a = true;
+					} else {
+						button = Pantil.nvl(Coltil.has(active, pos), Coltil.has(active, neg), Coltil.has(newActive, pos), Coltil.has(newActive, neg));
+						a = false;
+					}
+				}
+				activate(button, a);
+			}
+			Controllers.clearEvents();
+			
 			for (final Panput input : active) {
 				onAction(input);
 			}
@@ -286,6 +302,60 @@ public final class LwjglPangine extends Pangine {
 			draw();
 		}
 		Display.destroy();
+		Controllers.destroy();
+	}
+	
+	private final void activate(final Panput input, final boolean active) {
+		if (input == null) {
+			return;
+		} else if (active) {
+			activate(input);
+		} else {
+			deactivate(input);
+		}
+	}
+	
+	private final void activate(final Panput input) {
+		// copy to prevent ConcurrentModificationException
+		for (final ActionStartListener startListener : Coltil.copy(interaction.getStartListeners(input))) {
+			//startListener.onActionStart(ActionStartEvent.INSTANCE);
+		    //startListener.onActionStart(ActionStartEvent.getEvent(input, Character.valueOf(Keyboard.getEventCharacter())));
+		    if (!isActive(getActor(startListener))) {
+		    	continue;
+		    }
+			startListener.onActionStart(ActionStartEvent.getEvent(input));
+		}
+		/*final Panction action = interaction.getAction(input);
+		if (action != null) {
+			setActive(action, true);
+		}*/
+		onAction(input);
+		newActive.add(input);
+		setActive(input, true);
+	}
+	
+	private final void deactivate(final Panput input) {
+		for (final ActionEndListener endListener : Coltil.unnull(interaction.getEndListeners(input))) {
+			//endListener.onActionEnd(ActionEndEvent.INSTANCE);
+		    if (!isActive(getActor(endListener))) {
+                continue;
+            }
+		    endListener.onActionEnd(ActionEndEvent.getEvent(input));
+		}
+		/*
+		TODO
+		If a key is pressed and released during the same frame,
+		then action.isActive() will return false for that frame.
+		This is different than an ActionListener,
+		which would still fire its event for that one frame.
+		*/
+		/*final Panction action = interaction.getAction(input);
+		if (action != null) {
+			setActive(action, false);
+		}*/
+		active.remove(input);
+		newActive.remove(input);
+		setActive(input, false);
 	}
 	
 	private final static int near = -1000, far = 1000;

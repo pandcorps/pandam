@@ -93,6 +93,29 @@ public abstract class Panteraction {
 	public final Key KEY_INS;
 	public final Key KEY_DEL;
 	
+	public final static class Controller {
+		public final Button LEFT;
+		public final Button RIGHT;
+		public final Button UP;
+		public final Button DOWN;
+		public final List<Button> BUTTONS;
+		public final Button BUTTON_0;
+		public final Button BUTTON_1; // For convenience
+		
+		protected Controller(final Button l, final Button r, final Button u, final Button d, final List<Button> bs) {
+			LEFT = l;
+			RIGHT = r;
+			UP = u;
+			DOWN = d;
+			BUTTONS = Collections.unmodifiableList(bs);
+			BUTTON_0 = Coltil.get(BUTTONS, 0);
+			BUTTON_1 = Coltil.get(BUTTONS, 1);
+		}
+	}
+	
+	protected final List<Controller> _controllers = new ArrayList<Controller>();
+	public final List<Controller> CONTROLLERS = Collections.unmodifiableList(_controllers);
+	
 	public final int IND_1 = 2;
 	public final int IND_Q = 16;
 	public final int IND_A = 30;

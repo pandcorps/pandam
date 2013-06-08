@@ -86,6 +86,11 @@ public abstract class Panput {
 		//}
 	}
 	
+	public final static class Button extends Panput {
+		/*package*/ Button() {
+		}
+	}
+	
 	/*package*/ final static class Any extends Panput {
 	    private Any() {
 	    }
