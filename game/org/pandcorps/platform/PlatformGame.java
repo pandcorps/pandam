@@ -49,7 +49,6 @@ public class PlatformGame extends BaseGame {
 	Replace bush with Rise.png for some levels; rise will be higher than 1 tile; separate build method.
 	Random levels.
 	Random maps.
-	Gamepads.
 	Multiplayer camera.
 	Don't spawn Enemies until Player is near.
 	*/
@@ -207,9 +206,16 @@ public class PlatformGame extends BaseGame {
     		pc.inLeft = interaction.KEY_LEFT;
     		pc.inRight = interaction.KEY_RIGHT;
 		} else {
-		    pc.inJump = interaction.KEY_W;
-            pc.inLeft = interaction.KEY_A;
-            pc.inRight = interaction.KEY_D;
+			final Panteraction.Controller c = Coltil.get(interaction.CONTROLLERS, 0);
+			if (c == null) {
+			    pc.inJump = interaction.KEY_W;
+	            pc.inLeft = interaction.KEY_A;
+	            pc.inRight = interaction.KEY_D;
+			} else {
+				pc.inJump = c.BUTTON_1;
+				pc.inLeft = c.LEFT;
+				pc.inRight = c.RIGHT;
+			}
 		}
 		
 		pcs.add(pc);
