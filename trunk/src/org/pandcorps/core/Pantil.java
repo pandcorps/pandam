@@ -46,6 +46,30 @@ public final class Pantil {
 		return o1 == null ? o2 == null : o1.equals(o2);
 	}
 	
+	public final static <T> T nvl(final T t1, final T t2) {
+		return t1 == null ? t2 : t1;
+	}
+	
+	public final static <T> T nvl(final T t1, final T t2, final T t3) {
+		return nvl(nvl(t1, t2), t3);
+	}
+	
+	public final static <T> T nvl(final T t1, final T t2, final T t3, final T t4) {
+		return nvl(nvl(t1, t2, t3), t4);
+	}
+	
+	public final static <T> T coalesce(final T... ts) {
+		if (ts == null) {
+			return null;
+		}
+		for (final T t : ts) {
+			if (t != null) {
+				return t;
+			}
+		}
+		return null;
+	}
+	
 	public final static boolean booleanValue(final Boolean b) {
         return booleanValue(b, false);
     }
