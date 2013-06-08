@@ -39,6 +39,24 @@ public abstract class Panple {
 
 	public abstract void setZ(float z);
 	
+	public final float getC(final int i) {
+		switch(i) {
+			case 0 : return getX();
+			case 1 : return getY();
+			case 2 : return getZ();
+		}
+		throw new ArrayIndexOutOfBoundsException(i);
+	}
+	
+	public final void setC(final int i, final float v) {
+		switch(i) {
+			case 0 : setX(v); return;
+			case 1 : setY(v); return;
+			case 2 : setZ(v); return;
+		}
+		throw new ArrayIndexOutOfBoundsException(i);
+	}
+	
 	public final static Panple subtract(final Panple p1, final Panple p2) {
 		return new ImplPanple(p1.getX() - p2.getX(), p1.getY() - p2.getY(), p1.getZ() - p2.getZ());
 	}
