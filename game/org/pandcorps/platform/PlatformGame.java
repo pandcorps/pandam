@@ -33,6 +33,7 @@ import org.pandcorps.game.*;
 import org.pandcorps.game.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.impl.FinPanple;
+import org.pandcorps.pandax.Panverage;
 import org.pandcorps.pandax.text.*;
 import org.pandcorps.pandax.text.Fonts.FontRequest;
 import org.pandcorps.pandax.tile.*;
@@ -474,12 +475,14 @@ public class PlatformGame extends BaseGame {
 		}
 		tm.initTile(42, 8).setForeground(imgMap[7][0], TILE_BUMP);
 		final int size = pcs.size();
+		final ArrayList<Player> players = new ArrayList<Player>(size);
 		for (int i = 0; i < size; i++) {
     		final Player player = new Player(pcs.get(i));
     		room.addActor(player);
-    		Pangine.getEngine().track(player);
     		setPosition(player, 40 + (20 * i), 16, DEPTH_PLAYER);
+    		players.add(player);
 		}
+		Pangine.getEngine().track(Panverage.getArithmeticMean(players));
 		
 		new Enemy(80, 64);
 		new Enemy(232, 48);
