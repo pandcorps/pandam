@@ -43,6 +43,26 @@ public final class Coltil {
 		return a == null ? 0 : a.length;
 	}
 	
+	public final static int size(final Iterable<?> c) {
+		return c instanceof Collection ? size((Collection<?>) c) : size(iterator(c));
+	}
+	
+	public final static int size(final Iterator<?> ator) {
+		if (ator == null) {
+			return 0;
+		}
+		int i = 0;
+		while (ator.hasNext()) {
+			ator.next();
+			i++;
+		}
+		return i;
+	}
+	
+	public final static <E> Iterator<E> iterator(final Iterable<E> able) {
+		return able == null ? null : able.iterator();
+	}
+	
 	public final static boolean isValued(final Iterable<?> able) {
 		return able == null ? false : isValued(able.iterator());
 	}
