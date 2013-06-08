@@ -30,6 +30,7 @@ import org.pandcorps.core.*;
 import org.pandcorps.core.col.*;
 import org.pandcorps.core.img.*;
 import org.pandcorps.core.img.scale.Scaler;
+import org.pandcorps.pandam.Panput.Button;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.action.*;
 import org.pandcorps.pandam.event.boundary.*;
@@ -355,6 +356,14 @@ public abstract class Pangine {
 	    if (!active) {
 	        input.inactivated = false;
 	    }
+	}
+	
+	protected final Button newButton() {
+		return new Panput.Button();
+	}
+	
+	protected final void addController(final Button l, final Button r, final Button u, final Button d, final List<Button> bs) {
+		getInteraction()._controllers.add(new Panteraction.Controller(l, r, u, d, bs));
 	}
 
 	private void register(final Pantity entity) throws Panception {
