@@ -55,6 +55,10 @@ public final class Coltil {
 		return !isValued(able);
 	}
 	
+	public final static <E, T extends E> T has(final Collection<E> c, final T e) {
+		return c.contains(e) ? e : null;
+	}
+	
 	public final static <E> List<E> asList(final E... a) {
 		final int size = size((Object[]) a);
 		return (size == 0 || (size == 1 && a[0] == null)) ? null : Arrays.asList(a);
