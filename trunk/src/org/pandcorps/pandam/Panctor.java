@@ -344,6 +344,25 @@ public class Panctor extends BasePantity implements SpecPanctor {
         final Panlayer layer = getLayer();
         return layer != null && layer.isActive();
     }
+	
+	public final boolean isInView() {
+		final Panlayer layer = getLayer();
+		if (layer == null) {
+			return false;
+		}
+		final Panple vn = layer.getViewMinimum(), vx = layer.getViewMaximum();
+		final Panple bn = getBoundingMinimum(), bx = getBoundingMaximum();
+		if (bn.getX() > vx.getX()) {
+			return false;
+		} else if (bx.getX() < vn.getX()) {
+			return false;
+		} else if (bn.getY() > vx.getY()) {
+			return false;
+		} else if (bx.getY() < vn.getY()) {
+			return false;
+		}
+		return true;
+	}
 
 	public final <P extends Panctor> P transform(final Class<P> newClass) {
 		final Pangine engine = Pangine.getEngine();
