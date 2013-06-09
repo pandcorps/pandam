@@ -50,7 +50,6 @@ public class PlatformGame extends BaseGame {
 	Replace bush with Rise.png for some levels; rise will be higher than 1 tile; separate build method.
 	Random levels.
 	Random maps.
-	Multiplayer camera.
 	Don't spawn Enemies until Player is near.
 	*/
 	
