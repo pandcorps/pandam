@@ -33,6 +33,7 @@ public class Player extends Character implements CollisionListener {
 	protected final static int PLAYER_H = 23; // 15
     private final static int VEL_WALK = 3;
 	private final static int VEL_RETURN = 2;
+	private final static int VEL_CATCH_UP = 8;
 	private final static int VEL_JUMP = 8;
 	protected final static int VEL_BUMP = 4;
 	private final static byte MODE_NORMAL = 0;
@@ -79,8 +80,11 @@ public class Player extends Character implements CollisionListener {
 	private byte jumpMode = MODE_NORMAL;
 	private boolean flying = false;
 	private final Panple safe = new ImplPanple(0, 0, 0);
+	private Panple returnDestination = null;
+	private int returnVelocity = 0;
 	private int levelGems = 0;
 	private int hurtTimer = 0;
+	private int activeTimer = 0;
 	private final Bubble bubble = new Bubble();
 	
 	public Player(final PlayerContext pc) {
@@ -148,12 +152,35 @@ public class Player extends Character implements CollisionListener {
 		return hurtTimer > 0 || mode == MODE_RETURN;
 	}
 	
+	private final static Player getActive() {
+		Player a = null;
+		for (final PlayerContext pc : PlatformGame.pcs) {
+			final Player c = pc.player;
+			// Tie breaker?
+			if (a == null || a.activeTimer < c.activeTimer) {
+				a = c;
+			}
+		}
+		return a;
+	}
+	
+	private final void startReturn(final Panple dst, final int vel) {
+		mode = MODE_RETURN;
+		returnDestination = dst;
+		returnVelocity = vel;
+	}
+	
+	private final void startCatchUp(final Player active) {
+		startReturn(active.getPosition(), VEL_CATCH_UP);
+		safe.set(active.safe);
+	}
+	
 	private final void onStepReturn() {
 		final Panple pos = getPosition();
-		final Panple diff = Panple.subtract(safe, pos);
+		final Panple diff = Panple.subtract(returnDestination, pos);
 		final double dist = diff.getMagnitude();
-		if (dist <= VEL_RETURN) {
-			pos.set(safe);
+		if (dist <= returnVelocity) {
+			pos.set(returnDestination);
 			mode = MODE_NORMAL;
 			if (!isGrounded()) {
 				/*
@@ -168,7 +195,7 @@ public class Player extends Character implements CollisionListener {
 			}
 			return;
 		}
-		diff.multiply((float) (VEL_RETURN / dist));
+		diff.multiply((float) (returnVelocity / dist));
 		pos.add(diff);
 	}
 	
@@ -180,6 +207,13 @@ public class Player extends Character implements CollisionListener {
 		if (mode == MODE_RETURN) {
 			onStepReturn();
 			return true;
+		}
+		if (hv == 0) {
+			if (activeTimer > 0) {
+				activeTimer -= Math.max(1, activeTimer / 2);
+			}
+		} else {
+			activeTimer++;
 		}
 		return false;
 	}
@@ -209,6 +243,21 @@ public class Player extends Character implements CollisionListener {
 		    } else {
 		        addV(-g);
 		    }
+		}
+	}
+	
+	@Override
+	protected final void onScrolled() {
+		final Player active = getActive();
+		if (this == active) {
+			for (final PlayerContext pc : PlatformGame.pcs) {
+				final Player other = pc.player;
+				if (other != this) {
+					other.startCatchUp(this);
+				}
+			}
+		} else {
+			startCatchUp(active);
 		}
 	}
 	
@@ -268,7 +317,7 @@ public class Player extends Character implements CollisionListener {
 	protected final void onFell() {
 		if (jumpMode != JUMP_FLY) {
 			onHurt();
-			mode = MODE_RETURN;
+			startReturn(safe, VEL_RETURN);
 			return;
 		}
 	}

@@ -137,6 +137,10 @@ public abstract class Character extends Panctor implements StepListener, Collida
 			}
 		}
 		
+		if (!isInView()) {
+			onScrolled();
+		}
+		
 		onStepEnd();
 		/*
 		Issues with slopes:
@@ -348,6 +352,10 @@ public abstract class Character extends Panctor implements StepListener, Collida
 	
 	//@OverrideMe
 	protected void onStepping() {
+	}
+	
+	//@OverrideMe
+	protected void onScrolled() {
 	}
 	
 	//@OverrideMe
