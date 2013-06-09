@@ -51,6 +51,8 @@ public class PlatformGame extends BaseGame {
 	Random levels.
 	Random maps.
 	Don't spawn Enemies until Player is near.
+	Maximum effective (per tick) velocity & higher absolute max; set current to max effective before evaluating.
+	Horizontal acceleration.
 	*/
 	
 	protected final static byte TILE_BREAK = 2;
