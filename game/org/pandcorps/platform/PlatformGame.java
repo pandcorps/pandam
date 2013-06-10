@@ -226,7 +226,7 @@ public class PlatformGame extends BaseGame {
 	private final static void loadConstants() {
 		final Pangine engine = Pangine.getEngine();
 		createAnimalStrip("Balue", "Bear", 1, null, 0);
-		createAnimalStrip("Grabbit", "Rabbit", 2, new SwapPixelFilter(Channel.Red, Channel.Blue, Channel.Red), 1);
+		createAnimalStrip("Grabbit", "Rabbit", 2, new MultiplyPixelFilter(Channel.Blue, 0f, Channel.Blue, 1f, Channel.Blue, 0.25f), 1);
 		//createAnimalStrip("Roddy", "Mouse", 3, new SwapPixelFilter(Channel.Blue, Channel.Red, Channel.Blue), 0);
 		//createAnimalStrip("Felip", "Cat", 4, new SwapPixelFilter(Channel.Red, Channel.Red, Channel.Blue), 0);
 		
