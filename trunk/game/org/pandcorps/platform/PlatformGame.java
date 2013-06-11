@@ -425,14 +425,14 @@ public class PlatformGame extends BaseGame {
 		bump.setViewFromForeground(block);
 		tm.initTile(5, 3).setForeground(imgMap[0][0], TILE_BUMP);
 		solidBlock(6, 3);
-		tm.initTile(2, 6).setForeground(imgMap[0][6], TILE_UPSLOPE);
-		tm.initTile(6, 6).setForeground(imgMap[0][7], TILE_DOWNSLOPE);
+		upBlock(2, 6);
+		downBlock(6, 6);
 		gem(9, 4);
 		gem(14, 5);
 		gem(34, 7);
-		tm.initTile(8, 1).setForeground(imgMap[0][6], TILE_UPSLOPE);
+		upBlock(8, 1);
 		solidBlock(9, 1);
-		tm.initTile(10, 1).setForeground(imgMap[0][7], TILE_DOWNSLOPE);
+		downBlock(10, 1);
 		for (int y = 1; y <= 3; y++) { // slant
 			tm.initTile(43 - y, y).setForeground(imgMap[y == 3 ? 7 : 5][3]);
 			for (int x = 1; x <= 3; x++) {
@@ -537,6 +537,14 @@ public class PlatformGame extends BaseGame {
 	
 	private static void breakableBlock(final int x, final int y) {
 		tm.initTile(x, y).setForeground(imgMap[0][5], TILE_BREAK);
+	}
+	
+	private static void upBlock(final int x, final int y) {
+		tm.initTile(x, y).setForeground(imgMap[0][6], TILE_UPSLOPE);
+	}
+	
+	private static void downBlock(final int x, final int y) {
+		tm.initTile(x, y).setForeground(imgMap[0][7], TILE_DOWNSLOPE);
 	}
 	
 	private static void step(final int x, final int y, final int w, final int h) {
