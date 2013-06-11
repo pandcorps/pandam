@@ -417,8 +417,6 @@ public class PlatformGame extends BaseGame {
 		ramp(27, 0, 6, 3);
 		bush(32, 4, 2);
 		rise(19, 1, 5, 3);
-		tm.initTile(23, 3).setBackground(imgMap[3][1]);
-		tm.initTile(22, 2).setBackground(imgMap[3][1]);
 		rise(18, 1, 1, 1);
 		tm.initTile(2, 3).setForeground(imgMap[0][5], TILE_BREAK);
 		tm.initTile(3, 3).setForeground(imgMap[0][5], TILE_BREAK);
@@ -438,7 +436,7 @@ public class PlatformGame extends BaseGame {
 		for (int y = 1; y <= 3; y++) { // slant
 			tm.initTile(43 - y, y).setForeground(imgMap[y == 3 ? 7 : 5][3]);
 			for (int x = 1; x <= 3; x++) {
-				tm.initTile(43 + x - y, y).setForeground(imgMap[2][1]);
+				tm.initTile(43 + x - y, y).setForeground(getDirtImage());
 			}
 			tm.initTile(47 - y, y).setForeground(imgMap[4][4]);
 		}
@@ -446,7 +444,7 @@ public class PlatformGame extends BaseGame {
 			tm.initTile(39 + y, 3 + y).setForeground(imgMap[3][3], TILE_UPSLOPE_FLOOR);
 			tm.initTile(40 + y, 3 + y).setForeground(y == 2 ? imgMap[6][4] : imgMap[3][0]);
 			if (y < 2) {
-				tm.initTile(43 - y, 3 + y).setForeground(imgMap[2][1]);
+				tm.initTile(43 - y, 3 + y).setForeground(getDirtImage());
 				tm.initTile(44 - y, 3 + y).setForeground(imgMap[4][4]);
 			}
 		}
@@ -541,13 +539,13 @@ public class PlatformGame extends BaseGame {
 	        tm.initTile(x, j).setForeground(imgMap[2][0], true);
 	        tm.initTile(stop, j).setForeground(imgMap[2][2], true);
 	        for (int i = x + 1; i < stop; i++) {
-	            tm.initTile(i, j).setForeground(imgMap[2][1], true);
+	            tm.initTile(i, j).setForeground(getDirtImage(), true);
 	        }
 	    }
         tm.initTile(x, ystop).setForeground(imgMap[1][0], true);
         for (int i = x + 1; i < stop; i++) {
             tm.initTile(i, ystop).setForeground(imgMap[1][1], true);
-            tm.initTile(i, y).setForeground(imgMap[2][1], true);
+            tm.initTile(i, y).setForeground(getDirtImage(), true);
         }
         tm.initTile(stop, ystop).setForeground(imgMap[1][2], true);
         tm.initTile(stop, y).setForeground(imgMap[3][2], true);
@@ -569,7 +567,7 @@ public class PlatformGame extends BaseGame {
             } else {
                 tm.initTile(x + jb + 1, jo).setForeground(imgMap[3][0], true);
                 for (int i = x + jb + 2; i < stop; i++) {
-                    tm.initTile(i, jo).setForeground(imgMap[2][1], true);
+                    tm.initTile(i, jo).setForeground(getDirtImage(), true);
                 }
                 tm.initTile(stop, jo).setForeground(imgMap[3][2], true);
             }
@@ -586,11 +584,15 @@ public class PlatformGame extends BaseGame {
 		for (int i = x + 1; i <= stop; i++) {
 			tm.initTile(i, ystop).setBackground(imgMap[1][1], TILE_FLOOR);
 			for (int j = y; j < ystop; j++) {
-				tm.initTile(i, j).setBackground(imgMap[2][1]);
+				tm.initTile(i, j).setBackground(getDirtImage());
 			}
 		}
 		tm.initTile(x, ystop).setForeground(imgMap[1][3], TILE_FLOOR);
 		tm.initTile(stop + 1, ystop).setForeground(imgMap[1][4], TILE_FLOOR);
+	}
+	
+	private static TileMapImage getDirtImage() {
+		return imgMap[Mathtil.rand(90) ? 2 : 3][1];
 	}
 	
 	private static void bush(final int x, final int y, final int w) {
