@@ -418,20 +418,20 @@ public class PlatformGame extends BaseGame {
 		bush(32, 4, 2);
 		rise(19, 1, 5, 3);
 		rise(18, 1, 1, 1);
-		tm.initTile(2, 3).setForeground(imgMap[0][5], TILE_BREAK);
-		tm.initTile(3, 3).setForeground(imgMap[0][5], TILE_BREAK);
+		breakableBlock(2, 3);
+		breakableBlock(3, 3);
 		final Tile block = tm.initTile(4, 3);
 		block.setForeground(imgMap[0][0], TILE_BUMP);
 		bump.setViewFromForeground(block);
 		tm.initTile(5, 3).setForeground(imgMap[0][0], TILE_BUMP);
-		tm.initTile(6, 3).setForeground(imgMap[0][4], true);
+		solidBlock(6, 3);
 		tm.initTile(2, 6).setForeground(imgMap[0][6], TILE_UPSLOPE);
 		tm.initTile(6, 6).setForeground(imgMap[0][7], TILE_DOWNSLOPE);
 		gem(9, 4);
 		gem(14, 5);
 		gem(34, 7);
 		tm.initTile(8, 1).setForeground(imgMap[0][6], TILE_UPSLOPE);
-		tm.initTile(9, 1).setForeground(imgMap[0][4], true);
+		solidBlock(9, 1);
 		tm.initTile(10, 1).setForeground(imgMap[0][7], TILE_DOWNSLOPE);
 		for (int y = 1; y <= 3; y++) { // slant
 			tm.initTile(43 - y, y).setForeground(imgMap[y == 3 ? 7 : 5][3]);
@@ -530,6 +530,14 @@ public class PlatformGame extends BaseGame {
         tm.initTile(stop + 1, y).setForeground(imgMap[7][2]);
         tm.initTile(stop + 1, y + 1).setForeground(imgMap[6][2]);
     }
+	
+	private static void solidBlock(final int x, final int y) {
+		tm.initTile(x, y).setForeground(imgMap[0][4], true);
+	}
+	
+	private static void breakableBlock(final int x, final int y) {
+		tm.initTile(x, y).setForeground(imgMap[0][5], TILE_BREAK);
+	}
 	
 	private static void step(final int x, final int y, final int w, final int h) {
 	    // Will also want 1-way steps going up and 1-way down; same with ramps
