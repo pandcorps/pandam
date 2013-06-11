@@ -446,7 +446,7 @@ public class PlatformGame extends BaseGame {
 				tm.initTile(44 - y, 3 + y).setForeground(imgMap[4][4]);
 			}
 		}
-		tm.initTile(42, 8).setForeground(imgMap[7][0], TILE_BUMP);
+		goalBlock(42, 8);
 		final int size = pcs.size();
 		final ArrayList<Player> players = new ArrayList<Player>(size);
 		for (int i = 0; i < size; i++) {
@@ -549,6 +549,10 @@ public class PlatformGame extends BaseGame {
 	
 	private static void downBlock(final int x, final int y) {
 		tm.initTile(x, y).setForeground(imgMap[0][7], TILE_DOWNSLOPE);
+	}
+	
+	private static void goalBlock(final int x, final int y) {
+		tm.initTile(x, y).setForeground(imgMap[7][0], TILE_BUMP);
 	}
 	
 	private static void step(final int x, final int y, final int w, final int h) {
