@@ -420,10 +420,8 @@ public class PlatformGame extends BaseGame {
 		rise(18, 1, 1, 1);
 		breakableBlock(2, 3);
 		breakableBlock(3, 3);
-		final Tile block = tm.initTile(4, 3);
-		block.setForeground(imgMap[0][0], TILE_BUMP);
-		bump.setViewFromForeground(block);
-		tm.initTile(5, 3).setForeground(imgMap[0][0], TILE_BUMP);
+		bumpableBlock(4, 3);
+		bumpableBlock(5, 3);
 		solidBlock(6, 3);
 		upBlock(2, 6);
 		downBlock(6, 6);
@@ -533,6 +531,12 @@ public class PlatformGame extends BaseGame {
 	
 	private static void solidBlock(final int x, final int y) {
 		tm.initTile(x, y).setForeground(imgMap[0][4], true);
+	}
+	
+	private static void bumpableBlock(final int x, final int y) {
+		final Tile block = tm.initTile(x, y);
+		block.setForeground(imgMap[0][0], TILE_BUMP);
+		bump.setViewFromForeground(block);
 	}
 	
 	private static void breakableBlock(final int x, final int y) {
