@@ -412,17 +412,9 @@ public class PlatformGame extends BaseGame {
 		tm.removeTile(1, 0);
 		tm.initTile(2, 0).setForeground(imgMap[1][0], true);
 		
-		tm.initTile(13, 0).setForeground(imgMap[3][0], true);
-		tm.initTile(13, 1).setForeground(imgMap[2][0], true);
-		tm.initTile(13, 2).setForeground(imgMap[1][0], true);
-		tm.initTile(14, 2).setForeground(imgMap[1][1], true);
-		tm.initTile(14, 1).setForeground(imgMap[2][1], true);
-		tm.initTile(14, 0).setForeground(imgMap[2][1], true);
-		tm.initTile(15, 2).setForeground(imgMap[1][2], true);
-		tm.initTile(15, 1).setForeground(imgMap[2][2], true);
-		tm.initTile(15, 0).setForeground(imgMap[3][2], true);
+		step(13, 0, 1, 1);
 		bush(4, 1, 0);
-		for (int j = 0; j <= 3; j++) {
+		for (int j = 0; j <= 3; j++) { // ramp
 		    if (j != 0) {
         		tm.initTile(27 + j, j).setForeground(imgMap[3][3], TILE_UPSLOPE);
         		tm.initTile(40 - j, j).setForeground(imgMap[3][4], TILE_DOWNSLOPE);
@@ -556,6 +548,26 @@ public class PlatformGame extends BaseGame {
         tm.initTile(stop + 1, y).setForeground(imgMap[7][2]);
         tm.initTile(stop + 1, y + 1).setForeground(imgMap[6][2]);
     }
+	
+	private static void step(final int x, final int y, final int w, final int h) {
+	    // Will also want 1-way steps going up and 1-way down; same with ramps
+	    tm.initTile(x, y).setForeground(imgMap[3][0], true);
+	    final int stop = x + w + 1, ystop = y + h + 1;
+	    for (int j = y + 1; j < ystop; j++) {
+	        tm.initTile(x, j).setForeground(imgMap[2][0], true);
+	        tm.initTile(stop, j).setForeground(imgMap[2][2], true);
+	        for (int i = x + 1; i < stop; i++) {
+	            tm.initTile(i, j).setForeground(imgMap[2][1], true);
+	        }
+	    }
+        tm.initTile(x, ystop).setForeground(imgMap[1][0], true);
+        for (int i = x + 1; i < stop; i++) {
+            tm.initTile(i, ystop).setForeground(imgMap[1][1], true);
+            tm.initTile(i, y).setForeground(imgMap[2][1], true);
+        }
+        tm.initTile(stop, ystop).setForeground(imgMap[1][2], true);
+        tm.initTile(stop, y).setForeground(imgMap[3][2], true);
+	}
 	
 	private static void rise(final int x, final int y, final int w, final int h) {
 		final int ystop = y + h;
