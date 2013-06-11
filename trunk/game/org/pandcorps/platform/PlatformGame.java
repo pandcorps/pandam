@@ -414,23 +414,7 @@ public class PlatformGame extends BaseGame {
 		
 		step(13, 0, 1, 1);
 		bush(4, 1, 0);
-		for (int j = 0; j <= 3; j++) { // ramp
-		    if (j != 0) {
-        		tm.initTile(27 + j, j).setForeground(imgMap[3][3], TILE_UPSLOPE);
-        		tm.initTile(40 - j, j).setForeground(imgMap[3][4], TILE_DOWNSLOPE);
-		    }
-    		if (j == 3) {
-        		for (int i = 27 + j + 1; i < 40 - j; i++) {
-        		    tm.initTile(i, j).setForeground(imgMap[1][1], true);
-        		}
-    		} else {
-    		    tm.initTile(28 + j, j).setForeground(imgMap[3][0], true);
-    		    for (int i = 28 + j + 1; i < 39 - j; i++) {
-                    tm.initTile(i, j).setForeground(imgMap[2][1], true);
-                }
-    		    tm.initTile(39 - j, j).setForeground(imgMap[3][2], true);
-    		}
-		}
+		ramp(27, 0, 6, 3);
 		bush(32, 4, 2);
 		rise(19, 1, 5, 3);
 		tm.initTile(23, 3).setBackground(imgMap[3][1]);
@@ -451,7 +435,7 @@ public class PlatformGame extends BaseGame {
 		tm.initTile(8, 1).setForeground(imgMap[0][6], TILE_UPSLOPE);
 		tm.initTile(9, 1).setForeground(imgMap[0][4], true);
 		tm.initTile(10, 1).setForeground(imgMap[0][7], TILE_DOWNSLOPE);
-		for (int y = 1; y <= 3; y++) {
+		for (int y = 1; y <= 3; y++) { // slant
 			tm.initTile(43 - y, y).setForeground(imgMap[y == 3 ? 7 : 5][3]);
 			for (int x = 1; x <= 3; x++) {
 				tm.initTile(43 + x - y, y).setForeground(imgMap[2][1]);
@@ -567,6 +551,29 @@ public class PlatformGame extends BaseGame {
         }
         tm.initTile(stop, ystop).setForeground(imgMap[1][2], true);
         tm.initTile(stop, y).setForeground(imgMap[3][2], true);
+	}
+	
+	private static void ramp(final int x, final int y, final int w, final int h) {
+	    // f 39
+	    final int fstop = x + w + h * 2, ystop = y + h;
+	    for (int jo = y; jo <= ystop; jo++) {
+	        final int jb = jo - y, stop = fstop - jb;
+            if (jb != 0) {
+                tm.initTile(x + jb, jo).setForeground(imgMap[3][3], TILE_UPSLOPE);
+                tm.initTile(stop + 1, jo).setForeground(imgMap[3][4], TILE_DOWNSLOPE);
+            }
+            if (jo == ystop) {
+                for (int i = x + jb + 1; i <= stop; i++) {
+                    tm.initTile(i, jo).setForeground(imgMap[1][1], true);
+                }
+            } else {
+                tm.initTile(x + jb + 1, jo).setForeground(imgMap[3][0], true);
+                for (int i = x + jb + 2; i < stop; i++) {
+                    tm.initTile(i, jo).setForeground(imgMap[2][1], true);
+                }
+                tm.initTile(stop, jo).setForeground(imgMap[3][2], true);
+            }
+        }
 	}
 	
 	private static void rise(final int x, final int y, final int w, final int h) {
