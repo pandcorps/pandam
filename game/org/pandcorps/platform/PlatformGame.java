@@ -431,21 +431,7 @@ public class PlatformGame extends BaseGame {
 		upBlock(8, 1);
 		solidBlock(9, 1);
 		downBlock(10, 1);
-		for (int y = 1; y <= 3; y++) { // slant
-			tm.initTile(43 - y, y).setForeground(imgMap[y == 3 ? 7 : 5][3]);
-			for (int x = 1; x <= 3; x++) {
-				tm.initTile(43 + x - y, y).setForeground(getDirtImage());
-			}
-			tm.initTile(47 - y, y).setForeground(imgMap[4][4]);
-		}
-		for (int y = 1; y <= 2; y++) {
-			tm.initTile(39 + y, 3 + y).setForeground(imgMap[3][3], TILE_UPSLOPE_FLOOR);
-			tm.initTile(40 + y, 3 + y).setForeground(y == 2 ? imgMap[6][4] : imgMap[3][0]);
-			if (y < 2) {
-				tm.initTile(43 - y, 3 + y).setForeground(getDirtImage());
-				tm.initTile(44 - y, 3 + y).setForeground(imgMap[4][4]);
-			}
-		}
+		slantUp(42, 1, 1, 3);
 		goalBlock(42, 8);
 		final int size = pcs.size();
 		final ArrayList<Player> players = new ArrayList<Player>(size);
@@ -613,6 +599,29 @@ public class PlatformGame extends BaseGame {
 		}
 		tm.initTile(x, ystop).setForeground(imgMap[1][3], TILE_FLOOR);
 		tm.initTile(stop + 1, ystop).setForeground(imgMap[1][4], TILE_FLOOR);
+	}
+	
+	private static void slantUp(final int x, final int y, final int stop, final int h) {
+		final int ystop = y + h, w = (stop + 1) * 2 - 1;
+		for (int jo = y; jo < ystop; jo++) {
+			final int jb = jo - y;
+			tm.initTile(x - jb, jo).setForeground(imgMap[jb == (h - 1) ? 7 : 5][3]);
+			for (int i = 1; i <= w; i++) {
+				tm.initTile(x + i - jb, jo).setForeground(getDirtImage());
+			}
+			tm.initTile(x + w + 1 - jb, jo).setForeground(imgMap[4][4]);
+		}
+		for (int jb = 0; jb <= stop; jb++) {
+			final int jo = jb + ystop;
+			tm.initTile(x - 2 + jb, jo).setForeground(imgMap[3][3], TILE_UPSLOPE_FLOOR);
+			tm.initTile(x - 1 + jb, jo).setForeground(jb == stop ? imgMap[6][4] : imgMap[3][0]);
+			if (jb < stop) {
+				for (int i = jb; i <= w - 3 - jb; i++) {
+					tm.initTile(x + i, jo).setForeground(getDirtImage());
+				}
+				tm.initTile(x + w - 2 - jb, jo).setForeground(imgMap[4][4]);
+			}
+		}
 	}
 	
 	private static TileMapImage getDirtImage() {

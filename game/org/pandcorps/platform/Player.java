@@ -152,12 +152,16 @@ public class Player extends Character implements CollisionListener {
 		return hurtTimer > 0 || mode == MODE_RETURN;
 	}
 	
+	private boolean isReturningFromScroll() {
+		return mode == MODE_RETURN && returnDestination != safe;
+	}
+	
 	private final static Player getActive() {
 		Player a = null;
 		for (final PlayerContext pc : PlatformGame.pcs) {
 			final Player c = pc.player;
 			// Tie breaker?
-			if (a == null || a.activeTimer < c.activeTimer) {
+			if (!c.isReturningFromScroll() && a == null || a.activeTimer < c.activeTimer) {
 				a = c;
 			}
 		}
@@ -179,7 +183,8 @@ public class Player extends Character implements CollisionListener {
 		final Panple pos = getPosition();
 		final Panple diff = Panple.subtract(returnDestination, pos);
 		final double dist = diff.getMagnitude();
-		if (dist <= returnVelocity) {
+		if (dist <= returnVelocity /*&& !destinationPlayer.isReturningFromScroll()*/) {
+//TODO If destination is another Player that is also currently returning, then just keep following
 			pos.set(returnDestination);
 			mode = MODE_NORMAL;
 			if (!isGrounded()) {
@@ -249,7 +254,9 @@ public class Player extends Character implements CollisionListener {
 	@Override
 	protected final void onScrolled() {
 		final Player active = getActive();
-		if (this == active) {
+		if (active == null) {
+			return;
+		} else if (this == active) {
 			for (final PlayerContext pc : PlatformGame.pcs) {
 				final Player other = pc.player;
 				if (other != this) {
