@@ -191,7 +191,7 @@ public class Level {
         step(13, 0, 1, 1);
         bush(4, 1, 0);
         ramp(27, 0, 6, 3);
-        bush(32, 4, 2);
+        wall(32, 4, 2, 2);
         naturalRise(19, 1, 5, 3);
         naturalRise(18, 1, 1, 1);
         breakableBlock(2, 3);
@@ -363,6 +363,17 @@ public class Level {
         }
         tm.initTile(x, ystop).setForeground(imgMap[o][5], PlatformGame.TILE_FLOOR);
         tm.initTile(stop + 1, ystop).setForeground(imgMap[o][7], PlatformGame.TILE_FLOOR);
+    }
+    
+    private static void wall(final int x, final int y, final int w, final int h) {
+        final int ystop = y + h, xstop = x + w + 1;
+        for (int j = y; j < ystop; j++) {
+            tm.initTile(x, j).setForeground(imgMap[4][0], true);
+            for (int i = x + 1; i < xstop; i++) {
+                tm.initTile(i, j).setForeground(imgMap[4][1], true);
+            }
+            tm.initTile(xstop, j).setForeground(imgMap[4][2], true);
+        }
     }
     
     private static void slantUp(final int x, final int y, final int stop, final int h) {
