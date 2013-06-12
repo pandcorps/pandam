@@ -192,8 +192,8 @@ public class Level {
         bush(4, 1, 0);
         ramp(27, 0, 6, 3);
         bush(32, 4, 2);
-        rise(19, 1, 5, 3);
-        rise(18, 1, 1, 1);
+        naturalRise(19, 1, 5, 3);
+        naturalRise(18, 1, 1, 1);
         breakableBlock(2, 3);
         breakableBlock(3, 3);
         bumpableBlock(4, 3);
@@ -327,7 +327,11 @@ public class Level {
         }
     }
     
-    private static void rise(final int x, final int y, final int w, final int h) {
+    private static void naturalRise(final int x, final int y, final int w, final int h) {
+        colorRise(x, y, w, h, 6);
+        if (Level.class != null) {
+            return;
+        }
         final int ystop = y + h;
         for (int j = y; j < ystop; j++) {
             tm.initTile(x, j).setBackground(imgMap[2][3]);
@@ -342,6 +346,23 @@ public class Level {
         }
         tm.initTile(x, ystop).setForeground(imgMap[1][3], PlatformGame.TILE_FLOOR);
         tm.initTile(stop + 1, ystop).setForeground(imgMap[1][4], PlatformGame.TILE_FLOOR);
+    }
+    
+    private static void colorRise(final int x, final int y, final int w, final int h, final int o) {
+        final int o1 = o + 1, ystop = y + h;
+        for (int j = y; j < ystop; j++) {
+            tm.initTile(x, j).setBackground(imgMap[o1][5]);
+            tm.initTile(x + w + 1, j).setBackground(imgMap[o1][7]);
+        }
+        final int stop = x + w;
+        for (int i = x + 1; i <= stop; i++) {
+            tm.initTile(i, ystop).setBackground(imgMap[o][6], PlatformGame.TILE_FLOOR);
+            for (int j = y; j < ystop; j++) {
+                tm.initTile(i, j).setBackground(imgMap[o1][6]);
+            }
+        }
+        tm.initTile(x, ystop).setForeground(imgMap[o][5], PlatformGame.TILE_FLOOR);
+        tm.initTile(stop + 1, ystop).setForeground(imgMap[o][7], PlatformGame.TILE_FLOOR);
     }
     
     private static void slantUp(final int x, final int y, final int stop, final int h) {
