@@ -283,10 +283,10 @@ public class Map {
 		tm = new DynamicTileMap("act.tilemap", room, ImtilX.DIM, ImtilX.DIM);
 		room.addActor(tm);
 		BufferedImage tileImg = ImtilX.loadImage("org/pandcorps/platform/res/bg/Map.png", 128, null);
-		PlatformGame.applyDirtTexture(tileImg, 48, 0, 96, 16);
-		final BufferedImage terrain = PlatformGame.getDarkenedTerrain(PlatformGame.getTerrainTexture());
-		PlatformGame.applyTerrainTexture(tileImg, 48, 32, 96, 48, terrain, PlatformGame.getTerrainMask(1));
-		tileImg = PlatformGame.getColoredTerrain(tileImg, 48, 32, 48, 16);
+		Level.applyDirtTexture(tileImg, 48, 0, 96, 16);
+		final BufferedImage terrain = Level.getDarkenedTerrain(Level.getTerrainTexture());
+		Level.applyTerrainTexture(tileImg, 48, 32, 96, 48, terrain, Level.getTerrainMask(1));
+		tileImg = Level.getColoredTerrain(tileImg, 48, 32, 48, 16);
 		timg = engine.createImage("img.map", tileImg);
 		tm.setImageMap(timg);
 		imgMap = tm.splitImageMap();

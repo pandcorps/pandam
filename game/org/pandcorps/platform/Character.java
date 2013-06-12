@@ -200,8 +200,8 @@ public abstract class Character extends Panctor implements StepListener, Collida
 		final Panple pos = getPosition();
 		final float x = pos.getX(), y = pos.getY() + off, x1 = x + getOffLeft(), x2 = x + getOffRight();
 		// Interesting glitch if breakpoint here
-		Tile t1 = PlatformGame.tm.getContainer(x1, y), t2 = PlatformGame.tm.getContainer(x2, y);
-		if (t2 == PlatformGame.tm.getContainer(x, y)) {
+		Tile t1 = Level.tm.getContainer(x1, y), t2 = Level.tm.getContainer(x2, y);
+		if (t2 == Level.tm.getContainer(x, y)) {
 		    final Tile t = t1;
 		    t1 = t2;
 		    t2 = t;
@@ -238,7 +238,7 @@ public abstract class Character extends Panctor implements StepListener, Collida
         	if (done) {
         		yi = top;
         	}
-	        final Tile temp = PlatformGame.tm.getContainer(f, yi);
+	        final Tile temp = Level.tm.getContainer(f, yi);
 	        if (temp != t) {
 	        	t = temp;
 		        onCollide(t);
@@ -258,7 +258,7 @@ public abstract class Character extends Panctor implements StepListener, Collida
         if (sol) {
         	return true;
         } else if (yoff < 0) {
-        	final Tile t3 = PlatformGame.tm.getContainer(b, y), t4 = PlatformGame.tm.getContainer(b, top);
+        	final Tile t3 = Level.tm.getContainer(b, y), t4 = Level.tm.getContainer(b, top);
         	return isSlope(t3, left, right, y) || isSlope(t4, left, right, y);
         }
         return false;
