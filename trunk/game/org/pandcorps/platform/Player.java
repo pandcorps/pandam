@@ -80,8 +80,10 @@ public class Player extends Character implements CollisionListener {
 	private byte jumpMode = MODE_NORMAL;
 	private boolean flying = false;
 	private final Panple safe = new ImplPanple(0, 0, 0);
+	private boolean safeMirror = false;
 	private Panple returnDestination = null;
 	private int returnVelocity = 0;
+	private Player returnPlayer = null;
 	private int levelGems = 0;
 	private int hurtTimer = 0;
 	private int activeTimer = 0;
@@ -153,7 +155,7 @@ public class Player extends Character implements CollisionListener {
 	}
 	
 	private boolean isReturningFromScroll() {
-		return mode == MODE_RETURN && returnDestination != safe;
+		return mode == MODE_RETURN && returnPlayer != null;
 	}
 	
 	private final static Player getActive() {
@@ -168,24 +170,40 @@ public class Player extends Character implements CollisionListener {
 		return a;
 	}
 	
-	private final void startReturn(final Panple dst, final int vel) {
+	private final void startReturn(final Panple dst, final int vel, final Player player) {
+	    v = 0;
 		mode = MODE_RETURN;
 		returnDestination = dst;
 		returnVelocity = vel;
+		returnPlayer = player;
+	}
+	
+	private final void startSafety() {
+	    startReturn(safe, VEL_RETURN, null);
+	    setMirror(safeMirror);
 	}
 	
 	private final void startCatchUp(final Player active) {
-		startReturn(active.getPosition(), VEL_CATCH_UP);
+		startReturn(active.getPosition(), VEL_CATCH_UP, active);
 		safe.set(active.safe);
+		safeMirror = active.safeMirror;
 	}
 	
 	private final void onStepReturn() {
 		final Panple pos = getPosition();
 		final Panple diff = Panple.subtract(returnDestination, pos);
 		final double dist = diff.getMagnitude();
-		if (dist <= returnVelocity /*&& !destinationPlayer.isReturningFromScroll()*/) {
-//TODO If destination is another Player that is also currently returning, then just keep following
+		if (dist <= returnVelocity) {
+		    if (returnPlayer != null) {
+		        if (returnPlayer.mode == MODE_RETURN) {
+		            startSafety();
+		            return;
+		        } else {
+		            setMirror(returnPlayer.isMirror());
+		        }
+		    }
 			pos.set(returnDestination);
+			startReturn(null, 0, null);
 			mode = MODE_NORMAL;
 			if (!isGrounded()) {
 				/*
@@ -196,7 +214,8 @@ public class Player extends Character implements CollisionListener {
 				So if we reach this point twice in a row, we might want to do something more drastic,
 				like allowing the player to float until a new safe spot is found.
 				*/
-				jump();
+				//jump(); // Only works if grounded
+			    v = MAX_V;
 			}
 			return;
 		}
@@ -279,6 +298,7 @@ public class Player extends Character implements CollisionListener {
 	@Override
 	protected final void onGrounded() {
 		safe.set(getPosition());
+		safeMirror = isMirror();
 		if (hv != 0) {
 			changeView(pc.guyRun);
 		} else {
@@ -324,7 +344,7 @@ public class Player extends Character implements CollisionListener {
 	protected final void onFell() {
 		if (jumpMode != JUMP_FLY) {
 			onHurt();
-			startReturn(safe, VEL_RETURN);
+			startSafety();
 			return;
 		}
 	}
