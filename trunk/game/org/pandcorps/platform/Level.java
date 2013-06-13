@@ -44,7 +44,12 @@ public class Level {
     protected static Panmage timg = null;
     protected static Panmage bgimg = null;
     protected static DynamicTileMap tm = null;
+    protected static TileMap bgtm1 = null;
+    protected static TileMap bgtm2 = null;
+    protected static TileMap bgtm3 = null;
     protected static TileMapImage[][] imgMap = null;
+    protected static TileMapImage[][] bgMap = null;
+    private static int w = 0;
     
     private final static class BlockTileListener implements TileListener {
         private int tick = 0;
@@ -118,10 +123,9 @@ public class Level {
         return Imtil.filter(backImg, x, y, w, h, getHillFilter(Map.bgColor));
     }
     
-    protected final static void loadLevel() {
+    protected final static void loadLayers() {
         final Pangine engine = Pangine.getEngine();
         PlatformGame.room.destroy();
-        final int w = 768;
         room = engine.createRoom(Pantil.vmid(), new FinPanple(w, 192, 0));
         PlatformGame.room = room;
         Pangame.getGame().setCurrentRoom(room);
@@ -136,7 +140,7 @@ public class Level {
         tm.setTileListener(new BlockTileListener(imgMap));
         
         final Panlayer bg1 = PlatformGame.createParallax(room, 2);
-        final TileMap bgtm1 = new TileMap("act.bgmap1", bg1, ImtilX.DIM, ImtilX.DIM);
+        bgtm1 = new TileMap("act.bgmap1", bg1, ImtilX.DIM, ImtilX.DIM);
         bg1.addActor(bgtm1);
         BufferedImage backImg = ImtilX.loadImage("org/pandcorps/platform/res/bg/Hills.png", 128, null);
         BufferedImage terrain = getTerrainTexture();
@@ -150,10 +154,7 @@ public class Level {
         backImg = getColoredTerrain(backImg, 0, 0, 96, 96);
         bgimg = engine.createImage("img.bg", backImg);
         bgtm1.setImageMap(bgimg);
-        final TileMapImage[][] bgMap = bgtm1.splitImageMap();
-        hill(bgtm1, bgMap, 1, 4, 8, 0, 0);
-        hill(bgtm1, bgMap, 15, 5, 6, 3, 0);
-        hill(bgtm1, bgMap, 24, 4, 4, 0, 0);
+        bgMap = bgtm1.splitImageMap();
         
         /*
         It would look strange if layers 1 and 3 moved without 2.
@@ -161,25 +162,43 @@ public class Level {
         instead of basing all on the foreground with different divisors.
         */
         final Panlayer bg2 = PlatformGame.createParallax(bg1, 2);
-        final TileMap bgtm2 = new TileMap("act.bgmap2", bg2, ImtilX.DIM, ImtilX.DIM);
+        bgtm2 = new TileMap("act.bgmap2", bg2, ImtilX.DIM, ImtilX.DIM);
         bg2.addActor(bgtm2);
         bgtm2.setImageMap(bgimg);
-        hill(bgtm2, bgMap, 0, 6, 4, 3, 2);
-        hill(bgtm2, bgMap, 7, 8, 7, 0, 2);
         
         final Panlayer bg3 = PlatformGame.createParallax(bg2, 2);
-        final TileMap bgtm3 = new TileMap("act.bgmap3", bg3, ImtilX.DIM, ImtilX.DIM);
+        bgtm3 = new TileMap("act.bgmap3", bg3, ImtilX.DIM, ImtilX.DIM);
         bg3.addActor(bgtm3);
         bgtm3.setImageMap(bgimg);
         bgtm3.fillBackground(bgMap[0][6]);
         bgtm3.fillBackground(bgMap[1][6], 7, 1);
         bgtm3.fillBackground(bgMap[2][6], 0, 7);
-        cloud(bgtm3, bgMap, 10, 10, 7);
-        hill(bgtm3, bgMap, 2, 9, 4, 0, 4);
-        cloud(bgtm3, bgMap, 4, 6, 3);
-        hill(bgtm3, bgMap, 13, 10, 5, 3, 4);
+    }
+    
+    protected final static void loadLevel() {
+    	w = 768;
+    	loadLayers();
+    	buildLevel();
+    	addPlayers();
+    }
+    
+    private final static void buildLevel() {
+    	buildDemo();
+    }
+    
+    protected final static void buildDemo() {
+        hill(bgtm1, 1, 4, 8, 0, 0);
+        hill(bgtm1, 15, 5, 6, 3, 0);
+        hill(bgtm1, 24, 4, 4, 0, 0);
         
-        //tm.fillBackground(imgMap[7][7]); // Don't require transparent image
+        hill(bgtm2, 0, 6, 4, 3, 2);
+        hill(bgtm2, 7, 8, 7, 0, 2);
+        
+        cloud(bgtm3, 10, 10, 7);
+        hill(bgtm3, 2, 9, 4, 0, 4);
+        cloud(bgtm3, 4, 6, 3);
+        hill(bgtm3, 13, 10, 5, 3, 4);
+        
         final int n = w / 16;
         for (int i = 0; i < n; i++) {
             tm.initTile(i, 0).setForeground(imgMap[1][1], true);
@@ -191,9 +210,10 @@ public class Level {
         step(13, 0, 1, 1);
         bush(4, 1, 0);
         ramp(27, 0, 6, 3);
-        wall(32, 4, 2, 2);
-        naturalRise(19, 1, 5, 3);
-        naturalRise(18, 1, 1, 1);
+        wall(32, 4, 2, 1);
+        naturalRise(18, 1, 4, 3);
+        naturalRise(17, 1, 1, 1);
+        colorRise(25, 1, 0, 2, 0);
         breakableBlock(2, 3);
         breakableBlock(3, 3);
         bumpableBlock(4, 3);
@@ -209,7 +229,14 @@ public class Level {
         downBlock(10, 1);
         slantUp(42, 1, 1, 3);
         goalBlock(42, 8);
-        final int size = PlatformGame.pcs.size();
+        
+        new Enemy(80, 64);
+        new Enemy(232, 48);
+        new Enemy(360, 16);
+    }
+    
+    private static void addPlayers() {
+    	final int size = PlatformGame.pcs.size();
         final ArrayList<Player> players = new ArrayList<Player>(size);
         for (int i = 0; i < size; i++) {
             final Player player = new Player(PlatformGame.pcs.get(i));
@@ -218,10 +245,6 @@ public class Level {
             players.add(player);
         }
         Pangine.getEngine().track(Panverage.getArithmeticMean(players));
-        
-        new Enemy(80, 64);
-        new Enemy(232, 48);
-        new Enemy(360, 16);
     }
     
     private static void setBg(final TileMap tm, final int i, final int j, final TileMapImage[][] imgMap, final int iy, final int ix) {
@@ -230,32 +253,32 @@ public class Level {
         t.setForeground(null, false);
     }
     
-    private static void hill(final TileMap tm, final TileMapImage[][] imgMap, final int x, final int y, final int w, final int ix, final int iy) {
+    private static void hill(final TileMap tm, final int x, final int y, final int w, final int ix, final int iy) {
         for (int j = 0; j < y; j++) {
-            setBg(tm, x, j, imgMap, iy + 1, ix);
-            setBg(tm, x + w + 1, j, imgMap, iy + 1, ix + 2);
+            setBg(tm, x, j, bgMap, iy + 1, ix);
+            setBg(tm, x + w + 1, j, bgMap, iy + 1, ix + 2);
         }
         final int stop = x + w;
         for (int i = x + 1; i <= stop; i++) {
-            setBg(tm, i, y, imgMap, iy, ix + 1);
+            setBg(tm, i, y, bgMap, iy, ix + 1);
             for (int j = 0; j < y; j++) {
-                setBg(tm, i, j, imgMap, iy + 1, ix + 1);
+                setBg(tm, i, j, bgMap, iy + 1, ix + 1);
             }
         }
-        tm.initTile(x, y).setForeground(imgMap[iy][ix]);
-        tm.initTile(stop + 1, y).setForeground(imgMap[iy][ix + 2]);
+        tm.initTile(x, y).setForeground(bgMap[iy][ix]);
+        tm.initTile(stop + 1, y).setForeground(bgMap[iy][ix + 2]);
     }
     
-    private static void cloud(final TileMap tm, final TileMapImage[][] imgMap, final int x, final int y, final int w) {
+    private static void cloud(final TileMap tm, final int x, final int y, final int w) {
         final int stop = x + w;
         for (int i = x + 1; i <= stop; i++) {
-            tm.initTile(i, y).setBackground(imgMap[7][1]);
-            tm.initTile(i, y + 1).setBackground(imgMap[6][1]);
+            tm.initTile(i, y).setBackground(bgMap[7][1]);
+            tm.initTile(i, y + 1).setBackground(bgMap[6][1]);
         }
-        tm.initTile(x, y).setForeground(imgMap[7][0]);
-        tm.initTile(x, y + 1).setForeground(imgMap[6][0]);
-        tm.initTile(stop + 1, y).setForeground(imgMap[7][2]);
-        tm.initTile(stop + 1, y + 1).setForeground(imgMap[6][2]);
+        tm.initTile(x, y).setForeground(bgMap[7][0]);
+        tm.initTile(x, y + 1).setForeground(bgMap[6][0]);
+        tm.initTile(stop + 1, y).setForeground(bgMap[7][2]);
+        tm.initTile(stop + 1, y + 1).setForeground(bgMap[6][2]);
     }
     
     private static void solidBlock(final int x, final int y) {
@@ -328,10 +351,6 @@ public class Level {
     }
     
     private static void naturalRise(final int x, final int y, final int w, final int h) {
-        colorRise(x, y, w, h, 6);
-        if (Level.class != null) {
-            return;
-        }
         final int ystop = y + h;
         for (int j = y; j < ystop; j++) {
             tm.initTile(x, j).setBackground(imgMap[2][3]);
@@ -348,8 +367,8 @@ public class Level {
         tm.initTile(stop + 1, ystop).setForeground(imgMap[1][4], PlatformGame.TILE_FLOOR);
     }
     
-    private static void colorRise(final int x, final int y, final int w, final int h, final int o) {
-        final int o1 = o + 1, ystop = y + h;
+    private static void colorRise(final int x, final int y, final int w, final int h, final int _o) {
+        final int o = _o * 2 + 2, o1 = o + 1, ystop = y + h;
         for (int j = y; j < ystop; j++) {
             tm.initTile(x, j).setBackground(imgMap[o1][5]);
             tm.initTile(x + w + 1, j).setBackground(imgMap[o1][7]);
