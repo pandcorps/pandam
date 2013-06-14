@@ -67,6 +67,10 @@ public final class Mathtil {
 	    return array[randi(0, array.length - 1)];
 	}
 	
+	public final static <E> E rand(final List<E> list) {
+        return list.get(randi(0, list.size() - 1));
+    }
+	
 	public final static <E> E rand(final int[] weights, final E... array) {
 	    int sum = 0;
 	    for (final int weight : weights) {
