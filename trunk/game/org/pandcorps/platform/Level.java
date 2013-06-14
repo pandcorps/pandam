@@ -50,6 +50,7 @@ public class Level {
     protected static TileMapImage[][] imgMap = null;
     protected static TileMapImage[][] bgMap = null;
     private static int w = 0;
+    private static int n = 0;
     
     private final static class BlockTileListener implements TileListener {
         private int tick = 0;
@@ -176,8 +177,9 @@ public class Level {
     }
     
     protected final static void loadLevel() {
-    	final Builder b = new DemoBuilder();
+    	final Builder b = new RandomBuilder();
     	w = b.getW();
+    	n = w / 16;
     	loadLayers();
     	b.build();
     	addPlayers();
@@ -214,7 +216,6 @@ public class Level {
         cloud(bgtm3, 4, 6, 3);
         hill(bgtm3, 13, 10, 5, 3, 4);
         
-        final int n = w / 16;
         for (int i = 0; i < n; i++) {
             tm.initTile(i, 0).setForeground(imgMap[1][1], true);
         }
@@ -250,6 +251,35 @@ public class Level {
         new Enemy(360, 16);
     }
     
+    protected final static class RandomBuilder implements Builder {
+    	@Override
+    	public int getW() {
+    		return 3200;
+    	}
+    	
+    	@Override
+    	public void build() {
+    		buildBg(bgtm1, 4, 5, 0); // Nearest
+    		buildBg(bgtm2, 6, 8, 2);
+    		buildBg(bgtm3, 9, 12, 4); // Farthest
+            //cloud
+    		
+    		for (int i = 0; i < n; i++) {
+                tm.initTile(i, 0).setForeground(imgMap[1][1], true);
+            }
+    	}
+    }
+    
+    private static void buildBg(final TileMap tm, final int miny, final int maxy, final int iy) {
+    	final int maxx = tm.getWidth() + 1;
+    	int x = Mathtil.randi(-1, 4);
+    	while (x < maxx) {
+    		final int w = Mathtil.randi(4, 8);
+    		hill(tm, x, Mathtil.randi(miny, maxy), w, Mathtil.rand() ? 0 : 3, iy);
+    		x += (w + Mathtil.randi(3, 7));
+    	}
+    }
+    
     private static void addPlayers() {
     	final int size = PlatformGame.pcs.size();
         final ArrayList<Player> players = new ArrayList<Player>(size);
@@ -263,9 +293,19 @@ public class Level {
     }
     
     private static void setBg(final TileMap tm, final int i, final int j, final TileMapImage[][] imgMap, final int iy, final int ix) {
+    	if (tm.isBad(i, j)) {
+    		return;
+    	}
         final Tile t = tm.initTile(i, j);
         t.setBackground(imgMap[iy][ix]);
         t.setForeground(null, false);
+    }
+    
+    private static void setFg(final TileMap tm, final int i, final int j, final TileMapImage[][] imgMap, final int iy, final int ix) {
+    	if (tm.isBad(i, j)) {
+    		return;
+    	}
+    	tm.initTile(i, j).setForeground(imgMap[iy][ix]);
     }
     
     private static void hill(final TileMap tm, final int x, final int y, final int w, final int ix, final int iy) {
@@ -280,8 +320,8 @@ public class Level {
                 setBg(tm, i, j, bgMap, iy + 1, ix + 1);
             }
         }
-        tm.initTile(x, y).setForeground(bgMap[iy][ix]);
-        tm.initTile(stop + 1, y).setForeground(bgMap[iy][ix + 2]);
+        setFg(tm, x, y, bgMap, iy, ix);
+        setFg(tm, stop + 1, y, bgMap, iy, ix + 2);
     }
     
     private static void cloud(final TileMap tm, final int x, final int y, final int w) {
