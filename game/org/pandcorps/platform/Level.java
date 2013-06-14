@@ -263,9 +263,9 @@ public class Level {
     	public void build() {
     	    loadTemplates();
     	    
-    		buildBg(bgtm1, 4, 5, 0); // Nearest
-    		buildBg(bgtm2, 6, 8, 2);
-    		buildBg(bgtm3, 9, 12, 4); // Farthest
+    		buildBg(bgtm1, 4, 6, 0); // Nearest
+    		buildBg(bgtm2, 7, 9, 2);
+    		buildBg(bgtm3, 10, 12, 4); // Farthest
             //cloud
     		
     		for (int i = 0; i < n; i++) {
@@ -281,6 +281,12 @@ public class Level {
     
     private final static ArrayList<Template> templates = new ArrayList<Template>();
     private final static int[] scratch = new int[128];
+    
+    private final static void swapScrach(final int i, final int j) {
+        final int t = scratch[i];
+        scratch[i] = scratch[j];
+        scratch[j] = t;
+    }
     
     private final static void loadTemplates() {
         if (templates.size() > 0) {
@@ -322,6 +328,12 @@ public class Level {
             }
             if (bx >= n) {
                 return;
+            }
+            for (int i = 0; i < amt; i++) {
+                final int r = Mathtil.randi(0, amt - 1);
+                final int io = amt + i * 2, ro = amt + r * 2;
+                swapScrach(io, ro);
+                swapScrach(io + 1, ro + 1);
             }
             for (int i = 0; i < amt; i++) {
                 final int xo = amt + i * 2;
