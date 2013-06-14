@@ -298,6 +298,9 @@ public class Level {
         }
         new NaturalRiseTemplate();
         new ColorRiseTemplate();
+        new WallTemplate();
+        new StepTemplate();
+        new RampTemplate();
     }
     
     private static abstract class Template {
@@ -382,6 +385,42 @@ public class Level {
         protected final void rise(final int x, final int y, final int w, final int h) {
             colorRise(x, y, w, h, colors[colorIndex]);
             colorIndex = (colorIndex + 1) % 3;
+        }
+    }
+    
+    private static final class WallTemplate extends Template {
+        @Override
+        protected final void build() {
+        	final int w = Mathtil.randi(0, 8), x = bx;
+        	bx += (w + 2);
+        	if (bx >= n) {
+                return;
+            }
+        	wall(x, 1, w, Mathtil.randi(0, 3));
+        }
+    }
+    
+    private static final class StepTemplate extends Template {
+        @Override
+        protected final void build() {
+        	final int w = Mathtil.randi(0, 8), x = bx;
+        	bx += (w + 2);
+        	if (bx >= n) {
+                return;
+            }
+        	step(x, 0, w, Mathtil.randi(0, 2));
+        }
+    }
+    
+    private static final class RampTemplate extends Template {
+        @Override
+        protected final void build() {
+        	final int w = Mathtil.randi(0, 6), h = Mathtil.randi(1, 4), x = bx;
+        	bx += (w + h * 2 + 2);
+        	if (bx >= n) {
+                return;
+            }
+        	ramp(x, 0, w, h);
         }
     }
     
@@ -498,7 +537,6 @@ public class Level {
     }
     
     private static void ramp(final int x, final int y, final int w, final int h) {
-        // f 39
         final int fstop = x + w + h * 2, ystop = y + h;
         for (int jo = y; jo <= ystop; jo++) {
             final int jb = jo - y, stop = fstop - jb;
