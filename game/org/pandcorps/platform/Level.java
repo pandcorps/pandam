@@ -176,14 +176,29 @@ public class Level {
     }
     
     protected final static void loadLevel() {
-    	w = 768;
+    	final Builder b = new DemoBuilder();
+    	w = b.getW();
     	loadLayers();
-    	buildLevel();
+    	b.build();
     	addPlayers();
     }
     
-    private final static void buildLevel() {
-    	buildDemo();
+    private static interface Builder {
+    	public int getW();
+    	
+    	public void build();
+    }
+    
+    protected final static class DemoBuilder implements Builder {
+    	@Override
+    	public int getW() {
+    		return 768;
+    	}
+    	
+    	@Override
+    	public void build() {
+    		buildDemo();
+    	}
     }
     
     protected final static void buildDemo() {
