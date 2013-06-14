@@ -282,10 +282,14 @@ public class Level {
     private final static ArrayList<Template> templates = new ArrayList<Template>();
     private final static int[] scratch = new int[128];
     
-    private final static void swapScrach(final int i, final int j) {
-        final int t = scratch[i];
-        scratch[i] = scratch[j];
-        scratch[j] = t;
+    private final static void swapScratch(final int i, final int j) {
+    	swap(scratch, i, j);
+    }
+    
+    private final static void swap(final int[] a, final int i, final int j) {
+        final int t = a[i];
+        a[i] = a[j];
+        a[j] = t;
     }
     
     private final static void loadTemplates() {
@@ -304,7 +308,7 @@ public class Level {
         protected abstract void build();
     }
     
-    private static final class NaturalRiseTemplate extends Template {
+    private static abstract class RiseTemplate extends Template {
         @Override
         protected final void build() {
             final int amt = Mathtil.randi(1, 3);
@@ -336,25 +340,48 @@ public class Level {
             for (int i = 0; i < amt; i++) {
                 final int r = Mathtil.randi(0, amt - 1);
                 final int io = amt + i * 2, ro = amt + r * 2;
-                swapScrach(io, ro);
-                swapScrach(io + 1, ro + 1);
+                swapScratch(io, ro);
+                swapScratch(io + 1, ro + 1);
             }
+            init();
             for (int i = 0; i < amt; i++) {
                 final int xo = amt + i * 2;
-                naturalRise(scratch[xo], 1, scratch[xo + 1], scratch[amt - i - 1]);
+                rise(scratch[xo], 1, scratch[xo + 1], scratch[amt - i - 1]);
             }
         }
+        
+        protected void init() {
+        }
+        
+        protected abstract void rise(final int x, final int y, final int w, final int h);
     }
     
-    private static final class ColorRiseTemplate extends Template {
+    private static final class NaturalRiseTemplate extends RiseTemplate {
+    	@Override
+    	protected final void rise(final int x, final int y, final int w, final int h) {
+    		naturalRise(x, y, w, h);
+    	}
+    }
+    
+    private static int[] colors = new int[3];
+    private static int colorIndex = 0;
+    
+    private static final class ColorRiseTemplate extends RiseTemplate {
+    	@Override
+    	protected final void init() {
+    		for (int i = 0; i < 3; i++) {
+    			colors[i] = i;
+    		}
+    		colorIndex = 0;
+    		for (int i = 0; i < 3; i++) {
+    			swap(colors, i, Mathtil.randi(0, 2));
+    		}
+    	}
+    	
         @Override
-        protected final void build() {
-            final int x = bx, w = Mathtil.randi(0, 8);
-            bx += (w + 2);
-            if (bx >= n) {
-                return;
-            }
-            colorRise(x, 1, w, Mathtil.randi(0, 8), Mathtil.randi(0, 2));
+        protected final void rise(final int x, final int y, final int w, final int h) {
+            colorRise(x, y, w, h, colors[colorIndex]);
+            colorIndex = (colorIndex + 1) % 3;
         }
     }
     
