@@ -172,8 +172,8 @@ public class Level {
         bg3.addActor(bgtm3);
         bgtm3.setImageMap(bgimg);
         bgtm3.fillBackground(bgMap[0][6]);
-        bgtm3.fillBackground(bgMap[1][6], 7, 1);
-        bgtm3.fillBackground(bgMap[2][6], 0, 7);
+        bgtm3.fillBackground(bgMap[1][6], 8, 1);
+        bgtm3.fillBackground(bgMap[2][6], 0, 8);
     }
     
     protected final static void loadLevel() {
@@ -323,6 +323,10 @@ public class Level {
                     }
                 }
                 start += (Mathtil.randi(1, w + 1));
+                if (i > amt && start == scratch[i - 2] + scratch[i - 1] + 2) {
+                    start++;
+                    w++;
+                }
                 scratch[i + 1] = w;
                 bx = start + w + 2;
             }
