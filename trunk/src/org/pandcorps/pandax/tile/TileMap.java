@@ -59,7 +59,7 @@ public class TileMap extends Panctor {
         this(id, (int) (room.getSize().getX() / tw), (int) (room.getSize().getY() / th), tw, th);
     }
     
-    private final boolean isBad(final int i, final int j) {
+    public final boolean isBad(final int i, final int j) {
         return i < 0 || j < 0 || i >= w || j >= h;
     }
     
