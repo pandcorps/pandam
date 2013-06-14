@@ -280,6 +280,7 @@ public class Level {
     }
     
     private final static ArrayList<Template> templates = new ArrayList<Template>();
+    private final static int[] scratch = new int[128];
     
     private final static void loadTemplates() {
         if (templates.size() > 0) {
@@ -300,12 +301,32 @@ public class Level {
     private static final class NaturalRiseTemplate extends Template {
         @Override
         protected final void build() {
-            final int x = bx, w = Mathtil.randi(0, 8);
-            bx += (w + 2);
+            final int amt = Mathtil.randi(1, 3);
+            for (int i = 0; i < amt; i++) {
+                scratch[i] = ((i == 0) ? -1 : scratch[i - 1]) + Mathtil.randi(1, 3);
+            }
+            final int stop = amt * 3;
+            int start = bx;
+            for (int i = amt; i < stop; i += 2) {
+                scratch[i] = start;
+                int w = Mathtil.randi(0, 8);
+                if (i > amt) {
+                    final int min = scratch[i - 2] + scratch[i - 1];
+                    if (start + w <= min) {
+                        w = min + 1 - start;
+                    }
+                }
+                start += (Mathtil.randi(1, w + 1));
+                scratch[i + 1] = w;
+                bx = start + w + 2;
+            }
             if (bx >= n) {
                 return;
             }
-            naturalRise(x, 1, w, Mathtil.randi(0, 8));
+            for (int i = 0; i < amt; i++) {
+                final int xo = amt + i * 2;
+                naturalRise(scratch[xo], 1, scratch[xo + 1], scratch[amt - i - 1]);
+            }
         }
     }
     
