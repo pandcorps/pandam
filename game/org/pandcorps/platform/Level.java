@@ -251,6 +251,8 @@ public class Level {
         new Enemy(360, 16);
     }
     
+    private static int bx;
+    
     protected final static class RandomBuilder implements Builder {
     	@Override
     	public int getW() {
@@ -259,6 +261,8 @@ public class Level {
     	
     	@Override
     	public void build() {
+    	    loadTemplates();
+    	    
     		buildBg(bgtm1, 4, 5, 0); // Nearest
     		buildBg(bgtm2, 6, 8, 2);
     		buildBg(bgtm3, 9, 12, 4); // Farthest
@@ -267,7 +271,54 @@ public class Level {
     		for (int i = 0; i < n; i++) {
                 tm.initTile(i, 0).setForeground(imgMap[1][1], true);
             }
+    		
+    		for (bx = 8; bx < n; ) {
+    		    Mathtil.rand(templates).build();
+    		    bx += Mathtil.randi(1, 4);
+    		}
     	}
+    }
+    
+    private final static ArrayList<Template> templates = new ArrayList<Template>();
+    
+    private final static void loadTemplates() {
+        if (templates.size() > 0) {
+            return;
+        }
+        new NaturalRiseTemplate();
+        new ColorRiseTemplate();
+    }
+    
+    private static abstract class Template {
+        protected Template() {
+            templates.add(this);
+        }
+        
+        protected abstract void build();
+    }
+    
+    private static final class NaturalRiseTemplate extends Template {
+        @Override
+        protected final void build() {
+            final int x = bx, w = Mathtil.randi(0, 8);
+            bx += (w + 2);
+            if (bx >= n) {
+                return;
+            }
+            naturalRise(x, 1, w, Mathtil.randi(0, 8));
+        }
+    }
+    
+    private static final class ColorRiseTemplate extends Template {
+        @Override
+        protected final void build() {
+            final int x = bx, w = Mathtil.randi(0, 8);
+            bx += (w + 2);
+            if (bx >= n) {
+                return;
+            }
+            colorRise(x, 1, w, Mathtil.randi(0, 8), Mathtil.randi(0, 2));
+        }
     }
     
     private static void buildBg(final TileMap tm, final int miny, final int maxy, final int iy) {
