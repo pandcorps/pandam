@@ -51,6 +51,7 @@ public class Level {
     protected static TileMapImage[][] bgMap = null;
     private static int w = 0;
     private static int n = 0;
+    private static int floor = 0;
     
     private final static class BlockTileListener implements TileListener {
         private int tick = 0;
@@ -127,7 +128,8 @@ public class Level {
     protected final static void loadLayers() {
         final Pangine engine = Pangine.getEngine();
         PlatformGame.room.destroy();
-        room = engine.createRoom(Pantil.vmid(), new FinPanple(w, 192, 0));
+        final int h = 192;
+        room = engine.createRoom(Pantil.vmid(), new FinPanple(w, h, 0));
         PlatformGame.room = room;
         Pangame.getGame().setCurrentRoom(room);
         tm = new DynamicTileMap("act.tilemap", room, ImtilX.DIM, ImtilX.DIM);
@@ -171,7 +173,7 @@ public class Level {
         bgtm3 = new TileMap("act.bgmap3", bg3, ImtilX.DIM, ImtilX.DIM);
         bg3.addActor(bgtm3);
         bgtm3.setImageMap(bgimg);
-        bgtm3.fillBackground(bgMap[0][6]);
+        bgtm3.fillBackground(bgMap[0][6], 9, h / ImtilX.DIM - 9);
         bgtm3.fillBackground(bgMap[1][6], 8, 1);
         bgtm3.fillBackground(bgMap[2][6], 0, 8);
     }
@@ -179,7 +181,8 @@ public class Level {
     protected final static void loadLevel() {
     	final Builder b = new RandomBuilder();
     	w = b.getW();
-    	n = w / 16;
+    	n = w / ImtilX.DIM;
+    	floor = 0;
     	loadLayers();
     	b.build();
     	addPlayers();
@@ -252,6 +255,7 @@ public class Level {
     }
     
     private static int bx;
+    private static int px = 0;
     
     protected final static class RandomBuilder implements Builder {
     	@Override
@@ -268,9 +272,9 @@ public class Level {
     		buildBg(bgtm3, 10, 12, 4); // Farthest
             //cloud
     		
-    		for (int i = 0; i < n; i++) {
-                tm.initTile(i, 0).setForeground(imgMap[1][1], true);
-            }
+    		/*for (int i = 0; i < n; i++) {
+                tm.initTile(i, floor).setForeground(imgMap[1][1], true);
+            }*/
     		
     		for (bx = 8; bx < n; ) {
     			/*
@@ -284,9 +288,35 @@ public class Level {
     			Goal
     			*/
     		    Mathtil.rand(templates).build();
-    		    bx += Mathtil.randi(1, 4);
+    		    if (Mathtil.rand(33)) {
+    		    	if (bx + 3 < n) {
+    		    		ground(); // Undoes work by the templates
+	    		    	final int h = Mathtil.randi(0, 2);
+	    		    	if (floor < 4) {
+	    		    		upStep(bx + 1, floor, h);
+	    		    		floor += (h + 1);
+	    		    	} else {
+	    		    		floor -= (h + 1);
+	    		    		downStep(bx + 1, floor, h);
+	    		    	}
+    		    	}
+    		    	bx += 3;
+    		    }
+   		    	bx += Mathtil.randi(1, 4);
     		}
+    		ground();
     	}
+    }
+    
+    private static void ground() {
+    	final int stop = Math.min(bx + 1, n - 1);
+    	for (int i = px; i <= stop; i++) {
+            tm.initTile(i, floor).setForeground(imgMap[1][1], true);
+            for (int j = 0; j < floor; j++) {
+            	tm.initTile(i, j).setForeground(getDirtImage(), true);
+            }
+        }
+    	px = bx + 2;
     }
     
     private final static ArrayList<Template> templates = new ArrayList<Template>();
@@ -372,7 +402,7 @@ public class Level {
             init();
             for (int i = 0; i < amt; i++) {
                 final int xo = amt + i * 2;
-                rise(scratch[xo], 1, scratch[xo + 1], scratch[amt - i - 1]);
+                rise(scratch[xo], floor + 1, scratch[xo + 1], scratch[amt - i - 1]);
             }
         }
         
@@ -419,7 +449,7 @@ public class Level {
         	if (bx >= n) {
                 return;
             }
-        	wall(x, 1, w, Mathtil.randi(0, 3));
+        	wall(x, floor + 1, w, Mathtil.randi(0, 3));
         }
     }
     
@@ -431,7 +461,7 @@ public class Level {
         	if (bx >= n) {
                 return;
             }
-        	step(x, 0, w, Mathtil.randi(0, 2));
+        	step(x, floor, w, Mathtil.randi(0, 2));
         }
     }
     
@@ -443,7 +473,7 @@ public class Level {
         	if (bx >= n) {
                 return;
             }
-        	ramp(x, 0, w, h);
+        	ramp(x, floor, w, h);
         }
     }
     
@@ -455,7 +485,7 @@ public class Level {
         	if (bx >= n) {
                 return;
             }
-        	pit(x, 0, w);
+        	pit(x, floor, w);
         }
     }
     
@@ -470,7 +500,7 @@ public class Level {
         	pit(x, 0, w);
         	final int stop = x + w;
         	for (int i = x + 2; i < stop; i++) {
-        		solidBlock(i, 3);
+        		solidBlock(i, floor + 3);
         	}
         }
     }
@@ -483,7 +513,7 @@ public class Level {
         	if (bx >= n) {
                 return;
             }
-        	upBlockStep(x, 1, w);
+        	upBlockStep(x, floor + 1, w);
         }
     }
     
@@ -495,7 +525,7 @@ public class Level {
         	if (bx >= n) {
                 return;
             }
-        	downBlockStep(x, 1, w);
+        	downBlockStep(x, floor + 1, w);
         }
     }
     
@@ -507,7 +537,7 @@ public class Level {
         	if (bx >= n) {
                 return;
             }
-        	blockWall(x, 1, w, Mathtil.randi(1, 3));
+        	blockWall(x, floor + 1, w, Mathtil.randi(1, 3));
         }
     }
     
@@ -523,9 +553,9 @@ public class Level {
         	final boolean flag = Mathtil.rand();
         	for (int i = x; i < stop; i++) {
         		if (flag) {
-        			bumpableBlock(i, 3);
+        			bumpableBlock(i, floor + 3);
         		} else {
-        			breakableBlock(i, 3);
+        			breakableBlock(i, floor + 3);
         		}
         	}
         }
@@ -539,7 +569,7 @@ public class Level {
         	if (bx >= n) {
                 return;
             }
-        	bush(x, 1, w);
+        	bush(x, floor + 1, w);
         }
     }
     
@@ -559,7 +589,7 @@ public class Level {
         for (int i = 0; i < size; i++) {
             final Player player = new Player(PlatformGame.pcs.get(i));
             room.addActor(player);
-            PlatformGame.setPosition(player, 40 + (20 * i), 16, PlatformGame.DEPTH_PLAYER);
+            PlatformGame.setPosition(player, 40 + (20 * i), (floor + 1) * 16, PlatformGame.DEPTH_PLAYER);
             players.add(player);
         }
         Pangine.getEngine().track(Panverage.getArithmeticMean(players));
@@ -636,23 +666,49 @@ public class Level {
     }
     
     private static void step(final int x, final int y, final int w, final int h) {
+    	step(x, y, w, h, 1);
+    }
+    
+    private static void upStep(final int x, final int y, final int h) {
+    	step(x, y, 0, h, 0);
+    }
+    
+    private static void downStep(final int x, final int y, final int h) {
+    	step(x, y, -1, h, 2);
+    }
+    
+    private static void step(final int x, final int y, final int w, final int h, final int mode) {
         // Will also want 1-way steps going up and 1-way down; same with ramps
-        tm.initTile(x, y).setForeground(imgMap[3][0], true);
+    	if (mode != 2) {
+    		tm.initTile(x, y).setForeground(imgMap[3][0], true);
+    	}
         final int stop = x + w + 1, ystop = y + h + 1;
         for (int j = y + 1; j < ystop; j++) {
-            tm.initTile(x, j).setForeground(imgMap[2][0], true);
-            tm.initTile(stop, j).setForeground(imgMap[2][2], true);
-            for (int i = x + 1; i < stop; i++) {
-                tm.initTile(i, j).setForeground(getDirtImage(), true);
-            }
+        	if (mode != 2) {
+        		tm.initTile(x, j).setForeground(imgMap[2][0], true);
+        	}
+        	if (mode != 0) {
+        		tm.initTile(stop, j).setForeground(imgMap[2][2], true);
+        	}
+        	if (mode == 1) {
+	            for (int i = x + 1; i < stop; i++) {
+	                tm.initTile(i, j).setForeground(getDirtImage(), true);
+	            }
+        	}
         }
-        tm.initTile(x, ystop).setForeground(imgMap[1][0], true);
-        for (int i = x + 1; i < stop; i++) {
-            tm.initTile(i, ystop).setForeground(imgMap[1][1], true);
-            tm.initTile(i, y).setForeground(getDirtImage(), true);
+        if (mode != 2) {
+        	tm.initTile(x, ystop).setForeground(imgMap[1][0], true);
         }
-        tm.initTile(stop, ystop).setForeground(imgMap[1][2], true);
-        tm.initTile(stop, y).setForeground(imgMap[3][2], true);
+        if (mode == 1) {
+	        for (int i = x + 1; i < stop; i++) {
+	            tm.initTile(i, ystop).setForeground(imgMap[1][1], true);
+	            tm.initTile(i, y).setForeground(getDirtImage(), true);
+	        }
+        }
+        if (mode != 0) {
+	        tm.initTile(stop, ystop).setForeground(imgMap[1][2], true);
+	        tm.initTile(stop, y).setForeground(imgMap[3][2], true);
+        }
     }
     
     private static void ramp(final int x, final int y, final int w, final int h) {
