@@ -273,6 +273,16 @@ public class Level {
             }
     		
     		for (bx = 8; bx < n; ) {
+    			/*
+    			Raise/lower floor (with 1-way steps or ramps)
+    			Some templates should allow any other template on top of it
+    			Some templates should allow decorations on top
+    			Block ramps, stairs, gap patterns, 2x2 block patterns
+    			Slant
+    			Gems
+    			Enemies
+    			Goal
+    			*/
     		    Mathtil.rand(templates).build();
     		    bx += Mathtil.randi(1, 4);
     		}
@@ -301,6 +311,12 @@ public class Level {
         new WallTemplate();
         new StepTemplate();
         new RampTemplate();
+        new BushTemplate();
+        new PitTemplate();
+        new BridgePitTemplate();
+        new UpBlockStepTemplate();
+        new DownBlockStepTemplate();
+        new BlockWallTemplate();
     }
     
     private static abstract class Template {
@@ -421,6 +437,82 @@ public class Level {
                 return;
             }
         	ramp(x, 0, w, h);
+        }
+    }
+    
+    private static final class PitTemplate extends Template {
+        @Override
+        protected final void build() {
+        	final int w = Mathtil.randi(2, 4), x = bx;
+        	bx += (w + 2);
+        	if (bx >= n) {
+                return;
+            }
+        	pit(x, 0, w);
+        }
+    }
+    
+    private static final class BridgePitTemplate extends Template {
+        @Override
+        protected final void build() {
+        	final int w = Mathtil.randi(5, 10), x = bx;
+        	bx += (w + 2);
+        	if (bx >= n) {
+                return;
+            }
+        	pit(x, 0, w);
+        	final int stop = x + w;
+        	for (int i = x + 2; i < stop; i++) {
+        		solidBlock(i, 3);
+        	}
+        }
+    }
+    
+    private static final class UpBlockStepTemplate extends Template {
+        @Override
+        protected final void build() {
+        	final int w = Mathtil.randi(1, 3), x = bx;
+        	bx += w;
+        	if (bx >= n) {
+                return;
+            }
+        	upBlockStep(x, 1, w);
+        }
+    }
+    
+    private static final class DownBlockStepTemplate extends Template {
+        @Override
+        protected final void build() {
+        	final int w = Mathtil.randi(1, 3), x = bx;
+        	bx += w;
+        	if (bx >= n) {
+                return;
+            }
+        	downBlockStep(x, 1, w);
+        }
+    }
+    
+    private static final class BlockWallTemplate extends Template {
+        @Override
+        protected final void build() {
+        	final int w = Mathtil.randi(1, 8), x = bx;
+        	bx += w;
+        	if (bx >= n) {
+                return;
+            }
+        	blockWall(x, 1, w, Mathtil.randi(1, 3));
+        }
+    }
+    
+    private static final class BushTemplate extends Template {
+    	@Override
+        protected final void build() {
+        	final int w = Mathtil.randi(0, 6), x = bx;
+        	bx += (w + 2);
+        	if (bx >= n) {
+                return;
+            }
+        	bush(x, 1, w);
         }
     }
     
@@ -558,6 +650,33 @@ public class Level {
         }
     }
     
+    private static void blockWall(final int x, final int y, final int w, final int h) {
+    	for (int i = 0; i < w; i++) {
+    		final int xi = x + i;
+    		for (int j = 0; j < h; j++) {
+    			solidBlock(xi, y + j);
+    		}
+    	}
+    }
+    
+    private static void upBlockStep(final int x, final int y, final int w) {
+    	for (int i = 0; i < w; i++) {
+    		final int xi = x + i;
+    		for (int j = 0; j <= i; j++) {
+    			solidBlock(xi, y + j);
+    		}
+    	}
+    }
+    
+    private static void downBlockStep(final int x, final int y, final int w) {
+    	for (int i = 0; i < w; i++) {
+    		final int xi = x + w - i - 1;
+    		for (int j = 0; j <= i; j++) {
+    			solidBlock(xi, y + j);
+    		}
+    	}
+    }
+    
     private static void naturalRise(final int x, final int y, final int w, final int h) {
         final int ystop = y + h;
         for (int j = y; j < ystop; j++) {
@@ -628,6 +747,15 @@ public class Level {
     
     private static TileMapImage getDirtImage() {
         return imgMap[Mathtil.rand(90) ? 2 : 3][1];
+    }
+    
+    private static void pit(final int x, final int y, final int w) {
+    	tm.initTile(x, 0).setForeground(imgMap[1][2], true);
+    	final int stop = x + w + 1;
+    	for (int i = x + 1; i < stop; i++) {
+    		tm.removeTile(i, 0);
+    	}
+        tm.initTile(stop, 0).setForeground(imgMap[1][0], true);
     }
     
     private static void bush(final int x, final int y, final int w) {
