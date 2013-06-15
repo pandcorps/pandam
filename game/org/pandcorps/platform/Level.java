@@ -306,25 +306,32 @@ public class Level {
         if (templates.size() > 0) {
             return;
         }
-        new NaturalRiseTemplate();
-        new ColorRiseTemplate();
-        new WallTemplate();
-        new StepTemplate();
-        new RampTemplate();
-        new BushTemplate();
-        new PitTemplate();
-        new BridgePitTemplate();
-        new UpBlockStepTemplate();
-        new DownBlockStepTemplate();
-        new BlockWallTemplate();
+        templates.add(new NaturalRiseTemplate());
+        templates.add(new ColorRiseTemplate());
+        templates.add(new WallTemplate());
+        templates.add(new StepTemplate());
+        templates.add(new RampTemplate());
+        templates.add(new BushTemplate());
+        templates.add(new ChoiceTemplate(new PitTemplate(), new BridgePitTemplate()));
+        templates.add(new ChoiceTemplate(new UpBlockStepTemplate(), new DownBlockStepTemplate(),  new BlockWallTemplate()));
+        templates.add(new BlockBonusTemplate());
     }
     
     private static abstract class Template {
-        protected Template() {
-            templates.add(this);
-        }
-        
         protected abstract void build();
+    }
+    
+    private static final class ChoiceTemplate extends Template {
+    	private final Template[] choices;
+    	
+    	private ChoiceTemplate(final Template... choices) {
+    		this.choices = choices;
+    	}
+    	
+    	@Override
+    	protected final void build() {
+    		Mathtil.rand(choices).build();
+    	}
     }
     
     private static abstract class RiseTemplate extends Template {
@@ -501,6 +508,26 @@ public class Level {
                 return;
             }
         	blockWall(x, 1, w, Mathtil.randi(1, 3));
+        }
+    }
+    
+    private static final class BlockBonusTemplate extends Template {
+        @Override
+        protected final void build() {
+        	final int w = Mathtil.randi(1, 5), x = bx;
+        	bx += w;
+        	if (bx >= n) {
+                return;
+            }
+        	final int stop = x + w;
+        	final boolean flag = Mathtil.rand();
+        	for (int i = x; i < stop; i++) {
+        		if (flag) {
+        			bumpableBlock(i, 3);
+        		} else {
+        			breakableBlock(i, 3);
+        		}
+        	}
         }
     }
     
