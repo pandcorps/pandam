@@ -56,7 +56,7 @@ public class TileMap extends Panctor {
     }
     
     public TileMap(final String id, final Panlayer room, final int tw, final int th) {
-        this(id, (int) (room.getSize().getX() / tw), (int) (room.getSize().getY() / th), tw, th);
+        this(id, Mathtil.ceil(room.getSize().getX() / tw), Mathtil.ceil(room.getSize().getY() / th), tw, th);
     }
     
     public final boolean isBad(final int i, final int j) {

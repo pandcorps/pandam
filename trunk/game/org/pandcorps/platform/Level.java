@@ -128,8 +128,7 @@ public class Level {
     protected final static void loadLayers() {
         final Pangine engine = Pangine.getEngine();
         PlatformGame.room.destroy();
-        final int h = 192;
-        room = engine.createRoom(Pantil.vmid(), new FinPanple(w, h, 0));
+        room = engine.createRoom(Pantil.vmid(), new FinPanple(w, 256, 0));
         PlatformGame.room = room;
         Pangame.getGame().setCurrentRoom(room);
         tm = new DynamicTileMap("act.tilemap", room, ImtilX.DIM, ImtilX.DIM);
@@ -173,7 +172,7 @@ public class Level {
         bgtm3 = new TileMap("act.bgmap3", bg3, ImtilX.DIM, ImtilX.DIM);
         bg3.addActor(bgtm3);
         bgtm3.setImageMap(bgimg);
-        bgtm3.fillBackground(bgMap[0][6], 9, h / ImtilX.DIM - 9);
+        bgtm3.fillBackground(bgMap[0][6], 9, bgtm3.getHeight() - 9);
         bgtm3.fillBackground(bgMap[1][6], 8, 1);
         bgtm3.fillBackground(bgMap[2][6], 0, 8);
     }
@@ -286,6 +285,8 @@ public class Level {
     			Gems
     			Enemies
     			Goal
+    			
+    			Fix pits when elevation is higher.
     			*/
     		    final Template template = Mathtil.rand(templates);
     		    template.plan();
