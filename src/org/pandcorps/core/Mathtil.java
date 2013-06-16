@@ -91,6 +91,12 @@ public final class Mathtil {
 	    throw new RuntimeException("Internal logic error");
 	}
 	
+	public final static int ceil(final float f) {
+		final int i = (int) f;
+		final float fi = i;
+		return (f == fi) ? i : (i + 1);
+	}
+	
 	public final static int max(final int... a) {
 		return bound(true, a);
 	}
