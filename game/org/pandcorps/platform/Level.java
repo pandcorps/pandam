@@ -285,8 +285,6 @@ public class Level {
     			Gems
     			Enemies
     			Goal
-    			
-    			Fix pits when elevation is higher.
     			*/
     		    final Template template = Mathtil.rand(templates);
     		    template.plan();
@@ -869,12 +867,15 @@ public class Level {
     }
     
     private static void pit(final int x, final int y, final int w) {
-    	tm.initTile(x, 0).setForeground(imgMap[1][2], true);
     	final int stop = x + w + 1;
-    	for (int i = x + 1; i < stop; i++) {
-    		tm.removeTile(i, 0);
+    	for (int j = 0; j <= y; j++) {
+    		final int iy = (j == y) ? 1 : 2;
+	    	tm.initTile(x, j).setForeground(imgMap[iy][2], true);
+	    	for (int i = x + 1; i < stop; i++) {
+	    		tm.removeTile(i, j);
+	    	}
+	        tm.initTile(stop, j).setForeground(imgMap[iy][0], true);
     	}
-        tm.initTile(stop, 0).setForeground(imgMap[1][0], true);
     }
     
     private static void bush(final int x, final int y, final int w) {
