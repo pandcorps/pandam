@@ -287,10 +287,14 @@ public class Level {
     			Enemies
     			Goal
     			*/
-    		    Mathtil.rand(templates).build();
+    		    final Template template = Mathtil.rand(templates);
+    		    template.plan();
+    		    ground();
+    		    if (bx < n) {
+    		    	template.build();
+    		    }
     		    if (Mathtil.rand(33)) {
     		    	if (bx + 3 < n) {
-    		    		ground(); // Undoes work by the templates
 	    		    	final int h = Mathtil.randi(0, 2);
 	    		    	if (floor < 4) {
 	    		    		upStep(bx + 1, floor, h);
@@ -348,26 +352,37 @@ public class Level {
     }
     
     private static abstract class Template {
+    	protected abstract void plan();
+    	
         protected abstract void build();
     }
     
     private static final class ChoiceTemplate extends Template {
     	private final Template[] choices;
+    	private Template curr = null;
     	
     	private ChoiceTemplate(final Template... choices) {
     		this.choices = choices;
     	}
     	
     	@Override
+    	protected final void plan() {
+    		curr = Mathtil.rand(choices);
+    		curr.plan();
+    	}
+    	
+    	@Override
     	protected final void build() {
-    		Mathtil.rand(choices).build();
+    		curr.build();
     	}
     }
     
     private static abstract class RiseTemplate extends Template {
+    	private int amt;
+    	
         @Override
-        protected final void build() {
-            final int amt = Mathtil.randi(1, 3);
+        protected final void plan() {
+            amt = Mathtil.randi(1, 3);
             for (int i = 0; i < amt; i++) {
                 scratch[i] = ((i == 0) ? -1 : scratch[i - 1]) + Mathtil.randi(1, 3);
             }
@@ -390,9 +405,10 @@ public class Level {
                 scratch[i + 1] = w;
                 bx = start + w + 2;
             }
-            if (bx >= n) {
-                return;
-            }
+        }
+        
+        @Override
+        protected final void build() {
             for (int i = 0; i < amt; i++) {
                 final int r = Mathtil.randi(0, amt - 1);
                 final int io = amt + i * 2, ro = amt + r * 2;
@@ -441,62 +457,86 @@ public class Level {
         }
     }
     
-    private static final class WallTemplate extends Template {
+    private static abstract class SimpleTemplate extends Template {
+    	private final int minW;
+    	private final int maxW;
+    	private final int ext;
+    	protected int x;
+    	protected int w;
+    	
+    	protected SimpleTemplate() {
+    		this(0, 8);
+    	}
+    	
+    	protected SimpleTemplate(final int minW, final int maxW) {
+    		this(minW, maxW, 2);
+    	}
+    	
+    	protected SimpleTemplate(final int minW, final int maxW, final int ext) {
+    		this.minW = minW;
+    		this.maxW = maxW;
+    		this.ext = ext;
+    	}
+    	
         @Override
+        protected final void plan() {
+        	w = Mathtil.randi(minW, maxW);
+        	x = bx;
+        	bx += (w + ext);
+        }
+    }
+    
+    private static final class WallTemplate extends SimpleTemplate {
+    	@Override
         protected final void build() {
-        	final int w = Mathtil.randi(0, 8), x = bx;
-        	bx += (w + 2);
-        	if (bx >= n) {
-                return;
-            }
         	wall(x, floor + 1, w, Mathtil.randi(0, 3));
         }
     }
     
-    private static final class StepTemplate extends Template {
+    private static final class StepTemplate extends SimpleTemplate {
         @Override
         protected final void build() {
-        	final int w = Mathtil.randi(0, 8), x = bx;
-        	bx += (w + 2);
-        	if (bx >= n) {
-                return;
-            }
         	step(x, floor, w, Mathtil.randi(0, 2));
         }
     }
     
     private static final class RampTemplate extends Template {
+    	private int w;
+    	private int h;
+    	private int x;
+    	
+        @Override
+        protected final void plan() {
+        	w = Mathtil.randi(0, 6);
+        	h = Mathtil.randi(1, 4);
+        	x = bx;
+        	bx += (w + h * 2 + 2);
+        }
+        
         @Override
         protected final void build() {
-        	final int w = Mathtil.randi(0, 6), h = Mathtil.randi(1, 4), x = bx;
-        	bx += (w + h * 2 + 2);
-        	if (bx >= n) {
-                return;
-            }
         	ramp(x, floor, w, h);
         }
     }
     
-    private static final class PitTemplate extends Template {
+    private static final class PitTemplate extends SimpleTemplate {
+    	protected PitTemplate() {
+    		super(2, 4);
+    	}
+    	
         @Override
         protected final void build() {
-        	final int w = Mathtil.randi(2, 4), x = bx;
-        	bx += (w + 2);
-        	if (bx >= n) {
-                return;
-            }
         	pit(x, floor, w);
         }
     }
     
-    private static final class BridgePitTemplate extends Template {
+    private static final class BridgePitTemplate extends SimpleTemplate {
+    	protected BridgePitTemplate() {
+    		super(5, 10);
+    	}
+    	
         @Override
         protected final void build() {
-        	final int w = Mathtil.randi(5, 10), x = bx;
-        	bx += (w + 2);
-        	if (bx >= n) {
-                return;
-            }
         	pit(x, 0, w);
         	final int stop = x + w;
         	for (int i = x + 2; i < stop; i++) {
@@ -505,50 +545,46 @@ public class Level {
         }
     }
     
-    private static final class UpBlockStepTemplate extends Template {
+    private static final class UpBlockStepTemplate extends SimpleTemplate {
+    	protected UpBlockStepTemplate() {
+    		super(1, 3, 0);
+    	}
+    	
         @Override
         protected final void build() {
-        	final int w = Mathtil.randi(1, 3), x = bx;
-        	bx += w;
-        	if (bx >= n) {
-                return;
-            }
         	upBlockStep(x, floor + 1, w);
         }
     }
     
-    private static final class DownBlockStepTemplate extends Template {
+    private static final class DownBlockStepTemplate extends SimpleTemplate {
+    	protected DownBlockStepTemplate() {
+    		super(1, 3, 0);
+    	}
+    	
         @Override
         protected final void build() {
-        	final int w = Mathtil.randi(1, 3), x = bx;
-        	bx += w;
-        	if (bx >= n) {
-                return;
-            }
         	downBlockStep(x, floor + 1, w);
         }
     }
     
-    private static final class BlockWallTemplate extends Template {
+    private static final class BlockWallTemplate extends SimpleTemplate {
+    	protected BlockWallTemplate() {
+    		super(1, 8, 0);
+    	}
+    	
         @Override
         protected final void build() {
-        	final int w = Mathtil.randi(1, 8), x = bx;
-        	bx += w;
-        	if (bx >= n) {
-                return;
-            }
         	blockWall(x, floor + 1, w, Mathtil.randi(1, 3));
         }
     }
     
-    private static final class BlockBonusTemplate extends Template {
+    private static final class BlockBonusTemplate extends SimpleTemplate {
+    	protected BlockBonusTemplate() {
+    		super(1, 5, 0);
+    	}
+    	
         @Override
         protected final void build() {
-        	final int w = Mathtil.randi(1, 5), x = bx;
-        	bx += w;
-        	if (bx >= n) {
-                return;
-            }
         	final int stop = x + w;
         	final boolean flag = Mathtil.rand();
         	for (int i = x; i < stop; i++) {
@@ -561,14 +597,13 @@ public class Level {
         }
     }
     
-    private static final class BushTemplate extends Template {
+    private static final class BushTemplate extends SimpleTemplate {
+    	protected BushTemplate() {
+    		super(0, 6);
+    	}
+    	
     	@Override
         protected final void build() {
-        	final int w = Mathtil.randi(0, 6), x = bx;
-        	bx += (w + 2);
-        	if (bx >= n) {
-                return;
-            }
         	bush(x, floor + 1, w);
         }
     }
