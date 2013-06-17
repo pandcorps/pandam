@@ -41,17 +41,35 @@ import org.pandcorps.platform.Player.PlayerContext;
 
 public class PlatformGame extends BaseGame {
 	/*
-	Dog player face.
+	Dog/horse/hippo/rhino/elephant/squirrel/koala/gator/pig/walrus/beaver/stag/bull/ram player face.
+	Player tail image for each species.
+	Player shirts.
 	Player falling/sliding images.
 	Warp Map marker for entry/exit point.
 	Multiple islands for Map.
 	Replace bush with Rise.png for some levels; rise will be higher than 1 tile; separate build method.
+	Taller bushes.
+	Map landmarks: Mountain, forest, garden, crater.
 	Random levels.
 	Random maps.
+	Bubble when map-traveling.
+	Train-riding levels.
+	Cannons that Player enters to be launched.
 	Don't spawn Enemies until Player is near.
 	Maximum effective (per tick) velocity & higher absolute max; set current to max effective before evaluating.
 	Horizontal acceleration.
 	Shatter Gem effect when hurt.
+	Options (in/out game) - track active/p1
+	Game supports multiple profiles each w/ multiple characters.
+	Save/load.
+	Font w/ custom chars for custom string/min square/case space if needed.
+	Colored player names.
+	Bump w/o break ceiling block.
+	Bounce/blow floor.
+	Spike/fire floor tile.
+	Spike/fire enemy.
+	Achievements: 1st level, 1st map, level w/ no damage.
+	Random music per map.
 	*/
 	
 	protected final static byte TILE_BREAK = 2;

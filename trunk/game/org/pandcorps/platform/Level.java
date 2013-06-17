@@ -277,12 +277,17 @@ public class Level {
     		
     		for (bx = 8; bx < n; ) {
     			/*
-    			Raise/lower floor (with 1-way steps or ramps)
+    			Raise/lower floor with 1-way ramps
     			Some templates should allow any other template on top of it
     			Some templates should allow decorations on top
     			Block ramps, stairs, gap patterns, 2x2 block patterns
+    			Natural step stairs
+    			Ramp/steps around pit
+    			Valleys
+    			Rises woven w/ pit edges
     			Slant
     			Gems
+    			Block letter patterns
     			Enemies
     			Goal
     			*/
@@ -605,6 +610,7 @@ public class Level {
 		protected final void plan() {
 			x = bx;
 			msg = Mathtil.rand(PlatformGame.pcs).getName();
+			"HURRAY"
 			bx += gemMsg(x, floor + 1, msg, false) + 2;
 		}
 
