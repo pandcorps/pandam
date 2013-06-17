@@ -183,8 +183,8 @@ public class Level {
     	n = w / ImtilX.DIM;
     	floor = 0;
     	loadLayers();
+    	addPlayers(); // Add Players while floor has initial value before build() changes it
     	b.build();
-    	addPlayers();
     }
     
     private static interface Builder {
@@ -348,6 +348,7 @@ public class Level {
         templates.add(new ChoiceTemplate(new PitTemplate(), new BridgePitTemplate()));
         templates.add(new ChoiceTemplate(new UpBlockStepTemplate(), new DownBlockStepTemplate(),  new BlockWallTemplate()));
         templates.add(new BlockBonusTemplate());
+        templates.add(new GemMsgTemplate());
     }
     
     private static abstract class Template {
@@ -594,6 +595,23 @@ public class Level {
         		}
         	}
         }
+    }
+    
+    private static final class GemMsgTemplate extends Template {
+    	private int x;
+    	private String msg;
+    	
+		@Override
+		protected final void plan() {
+			x = bx;
+			msg = Mathtil.rand(PlatformGame.pcs).getName();
+			bx += gemMsg(x, floor + 1, msg, false) + 2;
+		}
+
+		@Override
+		protected final void build() {
+			gemMsg(x + 1, floor + 1, msg, true);
+		}
     }
     
     private static final class BushTemplate extends SimpleTemplate {
@@ -891,6 +909,196 @@ public class Level {
         final Gem gem = new Gem();
         gem.setPosition(tm.initTile(x, y));
         room.addActor(gem);
+    }
+    
+    private final static String[] gemFont = {
+    	" *\n" +
+        "* *\n" +
+        "***\n" +
+        "* *\n" +
+        "* *",
+        
+        "**\n" +
+        "* *\n" +
+        "**\n" +
+        "* *\n" +
+        "**",
+        
+        "***\n" +
+        "*\n" +
+        "*\n" +
+        "*\n" +
+        "***",
+        
+        "**\n" +
+        "* *\n" +
+        "* *\n" +
+        "* *\n" +
+        "**",
+        
+        "***\n" +
+        "*\n" +
+        "***\n" +
+        "*\n" +
+        "***",
+        
+        "***\n" +
+        "*\n" +
+        "***\n" +
+        "*\n" +
+        "*",
+        
+        " ***\n" +
+        "*\n" +
+        "* **\n" +
+        "*  *\n" +
+        " ***",
+        
+        "* *\n" +
+        "* *\n" +
+        "***\n" +
+        "* *\n" +
+        "* *",
+        
+        "***\n" +
+        " *\n" +
+        " *\n" +
+        " *\n" +
+        "***",
+        
+        "  *\n" +
+        "  *\n" +
+        "  *\n" +
+        "* *\n" +
+        "***",
+        
+        "*  *\n" +
+        "* *\n" +
+        "** \n" +
+        "* *\n" +
+        "*  *",
+        
+        "*\n" +
+        "*\n" +
+        "*\n" +
+        "*\n" +
+        "***",
+        
+        "*   *\n" +
+        "*   *\n" +
+        "** **\n" +
+        "* * *\n" +
+        "* * *",
+        
+        "*  *\n" +
+        "** *\n" +
+        "* **\n" +
+        "*  *\n" +
+        "*  *",
+        
+        "***\n" +
+        "* *\n" +
+        "* *\n" +
+        "* *\n" +
+        "***",
+        
+        "**\n" +
+        "* *\n" +
+        "**\n" +
+        "*\n" +
+        "*",
+        
+        "****\n" +
+        "*  *\n" +
+        "*  *\n" +
+        "* *\n" +
+        "** *",
+        
+        "**\n" +
+        "* *\n" +
+        "**\n" +
+        "* *\n" +
+        "* *",
+        
+        "***\n" +
+        "*\n" +
+        "***\n" +
+        "  *\n" +
+        "***",
+        
+        "***\n" +
+        " *\n" +
+        " *\n" +
+        " *\n" +
+        " *",
+        
+        "* *\n" +
+        "* *\n" +
+        "* *\n" +
+        "* *\n" +
+        "***",
+        
+        "* *\n" +
+        "* *\n" +
+        "* *\n" +
+        "* *\n" +
+        " *",
+        
+        "* * *\n" +
+        "* * *\n" +
+        "** **\n" +
+        "** **\n" +
+        "*   *",
+        
+        "* *\n" +
+        "* *\n" +
+        " *\n" +
+        "* *\n" +
+        "* *",
+        
+        "* *\n" +
+        "* *\n" +
+        "***\n" +
+        " *\n" +
+        " *",
+        
+        "***\n" +
+        "  *\n" +
+        " *\n" +
+        "*\n" +
+        "***"
+    };
+    
+    private static int gemMsg(final int x, final int y, final String msg, final boolean render) {
+    	final int size = msg.length();
+    	int xc = x;
+    	for (int i = 0; i < size; i++) {
+    		xc += (1 + gemChr(xc, y, msg.charAt(i), render));
+    	}
+    	return xc - x - 1;
+    }
+    
+    private static int gemChr(final int x, final int y, final char chr, final boolean render) {
+    	final int c = java.lang.Character.toUpperCase(chr) - 'A';
+    	if (c < 0 || c >= gemFont.length) {
+    		return -1;
+    	}
+    	final String s = gemFont[c];
+    	final int size = s.length();
+    	int xc = x, yc = y + 4, max = 0;
+    	for (int i = 0; i < size; i++) {
+    		final char t = s.charAt(i);
+    		if (t == '\n') {
+    			max = Math.max(max, xc - x);
+    			xc = x;
+    			yc--;
+    			continue;
+    		} else if (render && t == '*') {
+    			gem(xc, yc);
+    		}
+    		xc++;
+    	}
+    	return Math.max(max, xc - x);
     }
     
     private static PixelFilter getHillFilter(final int mode) {
