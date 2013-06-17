@@ -69,6 +69,7 @@ public class PlatformGame extends BaseGame {
 	Spike/fire floor tile.
 	Spike/fire enemy.
 	Achievements: 1st level, 1st map, level w/ no damage.
+	Goals: Collect n gems, defeat n enemies.
 	Random music per map.
 	*/
 	
