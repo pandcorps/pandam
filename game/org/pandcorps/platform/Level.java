@@ -280,13 +280,11 @@ public class Level {
     			Raise/lower floor with 1-way ramps
     			Some templates should allow any other template on top of it
     			Some templates should allow decorations on top
-    			Block ramps, stairs, gap patterns, 2x2 block patterns
+    			Block gap patterns, 2x2 block patterns
     			Natural step stairs
-    			Ramp/steps around pit
     			Valleys
     			Rises woven w/ pit edges
     			Slant
-    			Gems
     			Block letter patterns
     			Enemies
     			Goal
@@ -299,8 +297,14 @@ public class Level {
     		    }
     		    if (Mathtil.rand(33)) {
     		    	if (bx + 3 < n) {
-	    		    	final int h = Mathtil.randi(0, 2);
-	    		    	if (floor < 4) {
+    		    		boolean up = Mathtil.rand();
+    		    		final int h = Mathtil.randi(0, 2);
+    		    		if (up) {
+    		    			up = (floor + h) < 6;
+    		    		} else {
+    		    			up = (floor - h) < 1;
+    		    		}
+	    		    	if (up) {
 	    		    		upStep(bx + 1, floor, h);
 	    		    		floor += (h + 1);
 	    		    	} else {
@@ -350,10 +354,10 @@ public class Level {
         templates.add(new StepTemplate());
         templates.add(new RampTemplate());
         templates.add(new BushTemplate());
-        templates.add(new ChoiceTemplate(new PitTemplate(), new BridgePitTemplate()));
-        templates.add(new ChoiceTemplate(new UpBlockStepTemplate(), new DownBlockStepTemplate(),  new BlockWallTemplate()));
+        templates.add(new ChoiceTemplate(new PitTemplate(), new BridgePitTemplate(), new BlockPitTemplate()));
+        templates.add(new ChoiceTemplate(new UpBlockStepTemplate(), new DownBlockStepTemplate(), new BlockWallTemplate(), new BlockGroupTemplate()));
         templates.add(new BlockBonusTemplate());
-        templates.add(new GemMsgTemplate());
+        templates.add(new ChoiceTemplate(new GemTemplate(), new GemMsgTemplate()));
     }
     
     private static abstract class Template {
@@ -542,7 +546,7 @@ public class Level {
     	
         @Override
         protected final void build() {
-        	pit(x, 0, w);
+        	pit(x, floor, w);
         	final int stop = x + w;
         	for (int i = x + 2; i < stop; i++) {
         		solidBlock(i, floor + 3);
@@ -557,7 +561,7 @@ public class Level {
     	
         @Override
         protected final void build() {
-        	upBlockStep(x, floor + 1, w);
+        	upBlockStep(x, floor + 1, w, Mathtil.rand());
         }
     }
     
@@ -568,7 +572,7 @@ public class Level {
     	
         @Override
         protected final void build() {
-        	downBlockStep(x, floor + 1, w);
+        	downBlockStep(x, floor + 1, w, Mathtil.rand());
         }
     }
     
@@ -581,6 +585,70 @@ public class Level {
         protected final void build() {
         	blockWall(x, floor + 1, w, Mathtil.randi(1, 3));
         }
+    }
+    
+    private static abstract class BlockBaseTemplate extends Template {
+    	private int x;
+    	protected int wSlope;
+    	private int wFlat;
+    	
+    	@Override
+        protected final void plan() {
+        	wSlope = Mathtil.randi(1, 3);
+        	wFlat = Mathtil.randi(getMinFlat(), getMaxFlat());
+        	x = bx;
+        	bx += (wSlope * 2 + wFlat);
+        }
+        
+        @Override
+        protected final void build() {
+        	final boolean ramp = Mathtil.rand();
+        	final int f = floor + 1;
+        	upBlockStep(x, f, wSlope, ramp);
+        	x += wSlope;
+        	center(x, wFlat, ramp);
+        	downBlockStep(x + wFlat, f, wSlope, ramp);
+        }
+        
+        protected abstract int getMinFlat();
+        
+        protected abstract int getMaxFlat();
+        
+        protected abstract void center(final int x, final int w, final boolean ramp);
+    }
+    
+    private static final class BlockGroupTemplate extends BlockBaseTemplate {
+    	@Override
+    	protected final int getMinFlat() {
+    		return 0;
+    	}
+        
+    	@Override
+        protected final int getMaxFlat() {
+    		return 6;
+    	}
+        
+    	@Override
+    	protected final void center(final int x, final int w, final boolean ramp) {
+    		blockWall(x, floor + 1, w, wSlope + (ramp ? 0 : 1));
+    	}
+    }
+    
+    private static final class BlockPitTemplate extends BlockBaseTemplate {
+    	@Override
+    	protected final int getMinFlat() {
+    		return 2;
+    	}
+        
+    	@Override
+        protected final int getMaxFlat() {
+    		return 4;
+    	}
+    	
+    	@Override
+    	protected final void center(final int x, final int w, final boolean ramp) {
+    		pit(x - 1, floor, w);
+    	}
     }
     
     private static final class BlockBonusTemplate extends SimpleTemplate {
@@ -602,6 +670,26 @@ public class Level {
         }
     }
     
+    private static final class GemTemplate extends SimpleTemplate {
+    	protected GemTemplate() {
+    		super(1, 10, 0);
+    	}
+    	
+    	@Override
+		protected final void build() {
+    		final int stop = x + w;
+    		final boolean block = Mathtil.rand();
+    		for (int i = x; i < stop; i++) {
+    			if (block) {
+    				solidBlock(i, floor + 3);
+    				gem(i, floor + 4);
+    			} else {
+    				gem(i, floor + 3);
+    			}
+    		}
+    	}
+    }
+    
     private static final class GemMsgTemplate extends Template {
     	private int x;
     	private String msg;
@@ -609,8 +697,10 @@ public class Level {
 		@Override
 		protected final void plan() {
 			x = bx;
-			msg = Mathtil.rand(PlatformGame.pcs).getName();
-			"HURRAY"
+			msg = Mathtil.rand("PLAYER", "GEMS", "HURRAY", "GO", "YAY", "GREAT", "PERFECT");
+			if ("PLAYER".equals(msg)) {
+				msg = Mathtil.rand(PlatformGame.pcs).getName();
+			}
 			bx += gemMsg(x, floor + 1, msg, false) + 2;
 		}
 
@@ -800,20 +890,28 @@ public class Level {
     	}
     }
     
-    private static void upBlockStep(final int x, final int y, final int w) {
+    private static void upBlockStep(final int x, final int y, final int w, final boolean ramp) {
     	for (int i = 0; i < w; i++) {
     		final int xi = x + i;
     		for (int j = 0; j <= i; j++) {
-    			solidBlock(xi, y + j);
+    			if (ramp && j == i) {
+    				upBlock(xi, y + j);
+    			} else {
+    				solidBlock(xi, y + j);
+    			}
     		}
     	}
     }
     
-    private static void downBlockStep(final int x, final int y, final int w) {
+    private static void downBlockStep(final int x, final int y, final int w, final boolean ramp) {
     	for (int i = 0; i < w; i++) {
     		final int xi = x + w - i - 1;
     		for (int j = 0; j <= i; j++) {
-    			solidBlock(xi, y + j);
+    			if (ramp && j == i) {
+    				downBlock(xi, y + j);
+    			} else {
+    				solidBlock(xi, y + j);
+    			}
     		}
     	}
     }
