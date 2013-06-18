@@ -78,7 +78,8 @@ public final class Enemy extends Character {
 	}
 
 	@Override
-	protected final void onFell() {
+	protected final boolean onFell() {
 		destroy();
+		return true;
 	}
 }

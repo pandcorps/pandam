@@ -112,7 +112,9 @@ public abstract class Character extends Panctor implements StepListener, Collida
 			if (y < 0) {
 			    pos.setY(0);
 				v = 0;
-				onFell();
+				if (onFell()) {
+					return;
+				}
 				break;
 			} else {
 			    final float max = PlatformGame.room.getSize().getY() - H;
@@ -384,5 +386,5 @@ public abstract class Character extends Panctor implements StepListener, Collida
 	protected void onBump() {
 	}
 	
-	protected abstract void onFell();
+	protected abstract boolean onFell();
 }

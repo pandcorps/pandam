@@ -172,6 +172,7 @@ public class Player extends Character implements CollisionListener {
 	
 	private final void startReturn(final Panple dst, final int vel, final Player player) {
 	    v = 0;
+	    hv = 0;
 		mode = MODE_RETURN;
 		returnDestination = dst;
 		returnVelocity = vel;
@@ -341,12 +342,13 @@ public class Player extends Character implements CollisionListener {
 	}
 	
 	@Override
-	protected final void onFell() {
+	protected final boolean onFell() {
 		if (jumpMode != JUMP_FLY) {
 			onHurt();
 			startSafety();
-			return;
+			return true;
 		}
+		return false;
 	}
 	
 	public final void onFinishLevel() {
