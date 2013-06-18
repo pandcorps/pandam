@@ -87,7 +87,7 @@ public class TileMap extends Panctor {
     }
     
     public final Tile getContainer(final float x, final float y) {
-    	return getTile((int) x / tw, (int) y / th);
+    	return (x < 0 || y < 0) ? null : getTile((int) x / tw, (int) y / th);
     }
     
     public final void fillBackground(final Panmage background) {
