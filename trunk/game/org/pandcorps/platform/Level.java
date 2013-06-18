@@ -271,10 +271,6 @@ public class Level {
     		buildBg(bgtm3, 10, 12, 4); // Farthest
             //cloud
     		
-    		/*for (int i = 0; i < n; i++) {
-                tm.initTile(i, floor).setForeground(imgMap[1][1], true);
-            }*/
-    		
     		for (bx = 8; bx < n; ) {
     			/*
     			Raise/lower floor with 1-way ramps
@@ -283,10 +279,12 @@ public class Level {
     			Block gap patterns, 2x2 block patterns
     			Natural step stairs
     			Valleys
+    			Rises with ramps in them
     			Rises woven w/ pit edges
     			Slant
     			Block letter patterns
     			Enemies
+    			Trees
     			Goal
     			*/
     		    final Template template = Mathtil.rand(templates);
@@ -358,6 +356,7 @@ public class Level {
         templates.add(new ChoiceTemplate(new UpBlockStepTemplate(), new DownBlockStepTemplate(), new BlockWallTemplate(), new BlockGroupTemplate()));
         templates.add(new BlockBonusTemplate());
         templates.add(new ChoiceTemplate(new GemTemplate(), new GemMsgTemplate()));
+        templates.add(new SlantUpTemplate());
     }
     
     private static abstract class Template {
@@ -525,6 +524,25 @@ public class Level {
         @Override
         protected final void build() {
         	ramp(x, floor, w, h);
+        }
+    }
+    
+    private static final class SlantUpTemplate extends Template {
+        private int stop;
+        private int h;
+        private int x;
+        
+        @Override
+        protected final void plan() {
+            stop = Mathtil.randi(0, 2);
+            h = Mathtil.randi(2, 4);
+            x = bx + h - 2;
+            bx += Math.max(h + (stop * 2) + 1, 2);
+        }
+        
+        @Override
+        protected final void build() {
+            slantUp(x, floor + 1, stop, h);
         }
     }
     
@@ -961,6 +979,7 @@ public class Level {
         }
     }
     
+    // x - h + 2 to x + ((stop + 1) * 2 - 1) + 1
     private static void slantUp(final int x, final int y, final int stop, final int h) {
         final int ystop = y + h, w = (stop + 1) * 2 - 1;
         for (int jo = y; jo < ystop; jo++) {
@@ -972,14 +991,14 @@ public class Level {
             tm.initTile(x + w + 1 - jb, jo).setForeground(imgMap[4][4]);
         }
         for (int jb = 0; jb <= stop; jb++) {
-            final int jo = jb + ystop;
-            tm.initTile(x - 2 + jb, jo).setForeground(imgMap[3][3], PlatformGame.TILE_UPSLOPE_FLOOR);
-            tm.initTile(x - 1 + jb, jo).setForeground(jb == stop ? imgMap[6][4] : imgMap[3][0]);
+            final int jo = jb + ystop, off = jb + 3 - h;
+            tm.initTile(x - 2 + off, jo).setForeground(imgMap[3][3], PlatformGame.TILE_UPSLOPE_FLOOR);
+            tm.initTile(x - 1 + off, jo).setForeground(jb == stop ? imgMap[6][4] : imgMap[3][0]);
             if (jb < stop) {
                 for (int i = jb; i <= w - 3 - jb; i++) {
-                    tm.initTile(x + i, jo).setForeground(getDirtImage());
+                    tm.initTile(x + i + 3 - h, jo).setForeground(getDirtImage());
                 }
-                tm.initTile(x + w - 2 - jb, jo).setForeground(imgMap[4][4]);
+                tm.initTile(x + w + 1 - h - jb, jo).setForeground(imgMap[4][4]);
             }
         }
     }
