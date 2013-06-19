@@ -542,7 +542,7 @@ public class Level {
         protected final void plan() {
             stop = Mathtil.randi(0, 2);
             h = Mathtil.randi(2, 4);
-            x = getSlantStart(bx, h);
+            x = up ? getSlantStart(bx, h) : bx;
             bx += getSlantWidth(stop, h);
         }
         
@@ -1009,7 +1009,8 @@ public class Level {
             c3 = 0;
             b = PlatformGame.TILE_UPSLOPE_FLOOR;
         } else {
-            //o = getSlantStart(x, h) + getSlantWidth(stop, h) - 1;
+            // Down slope doesn't start in middle, and SlopeTemplate only offset for up slope
+            //o = -getSlantStart(x, h) + getSlantWidth(stop, h) - 1;
             o = x + getSlantWidth(stop, h) - 1;
             m = -1;
             c1 = 4;
