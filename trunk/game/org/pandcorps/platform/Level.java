@@ -537,7 +537,7 @@ public class Level {
             stop = Mathtil.randi(0, 2);
             h = Mathtil.randi(2, 4);
             x = bx + h - 2;
-            bx += Math.max(h + (stop * 2) + 1, 2);
+            bx += Math.max(h + (stop * 2) + 2, 2);
         }
         
         @Override
