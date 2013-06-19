@@ -356,7 +356,8 @@ public class Level {
         templates.add(new ChoiceTemplate(new UpBlockStepTemplate(), new DownBlockStepTemplate(), new BlockWallTemplate(), new BlockGroupTemplate()));
         templates.add(new BlockBonusTemplate());
         templates.add(new ChoiceTemplate(new GemTemplate(), new GemMsgTemplate()));
-        templates.add(new SlantUpTemplate());
+        templates.add(new SlantTemplate(true));
+        templates.add(new SlantTemplate(false));
     }
     
     private static abstract class Template {
@@ -527,23 +528,36 @@ public class Level {
         }
     }
     
-    private static final class SlantUpTemplate extends Template {
+    private static final class SlantTemplate extends Template {
+        private final boolean up;
         private int stop;
         private int h;
         private int x;
+        
+        private SlantTemplate(final boolean up) {
+            this.up = up;
+        }
         
         @Override
         protected final void plan() {
             stop = Mathtil.randi(0, 2);
             h = Mathtil.randi(2, 4);
-            x = bx + h - 2;
-            bx += Math.max(h + (stop * 2) + 2, 2);
+            x = getSlantStart(bx, h);
+            bx += getSlantWidth(stop, h);
         }
         
         @Override
         protected final void build() {
-            slantUp(x, floor + 1, stop, h);
+            slant(x, floor + 1, stop, h, up);
         }
+    }
+    
+    private final static int getSlantStart(final int x, final int h) {
+        return bx + h - 2;
+    }
+    
+    private final static int getSlantWidth(final int stop, final int h) {
+        return Math.max(h + (stop * 2) + 2, 2);
     }
     
     private static final class PitTemplate extends SimpleTemplate {
@@ -981,24 +995,45 @@ public class Level {
     
     // x - h + 2 to x + ((stop + 1) * 2 - 1) + 1
     private static void slantUp(final int x, final int y, final int stop, final int h) {
-        final int ystop = y + h, w = (stop + 1) * 2 - 1;
+        slant(x, y, stop, h, true);
+    }
+    
+    private static void slant(final int x, final int y, final int stop, final int h, final boolean up) {
+        final int ystop = y + h, w = (stop + 1) * 2 - 1, o, m, c1, c2, c3;
+        final byte b;
+        if (up) {
+            o = x;
+            m = 1;
+            c1 = 3;
+            c2 = 4;
+            c3 = 0;
+            b = PlatformGame.TILE_UPSLOPE_FLOOR;
+        } else {
+            //o = getSlantStart(x, h) + getSlantWidth(stop, h) - 1;
+            o = x + getSlantWidth(stop, h) - 1;
+            m = -1;
+            c1 = 4;
+            c2 = 3;
+            c3 = 2;
+            b = PlatformGame.TILE_DOWNSLOPE_FLOOR;
+        }
         for (int jo = y; jo < ystop; jo++) {
             final int jb = jo - y;
-            tm.initTile(x - jb, jo).setForeground(imgMap[jb == (h - 1) ? 7 : 5][3]);
+            tm.initTile(o - m * jb, jo).setForeground(imgMap[jb == (h - 1) ? 7 : 5][c1]);
             for (int i = 1; i <= w; i++) {
-                tm.initTile(x + i - jb, jo).setForeground(getDirtImage());
+                tm.initTile(o + m * (i - jb), jo).setForeground(getDirtImage());
             }
-            tm.initTile(x + w + 1 - jb, jo).setForeground(imgMap[4][4]);
+            tm.initTile(o + m * (w + 1 - jb), jo).setForeground(imgMap[4][c2]);
         }
         for (int jb = 0; jb <= stop; jb++) {
             final int jo = jb + ystop, off = jb + 3 - h;
-            tm.initTile(x - 2 + off, jo).setForeground(imgMap[3][3], PlatformGame.TILE_UPSLOPE_FLOOR);
-            tm.initTile(x - 1 + off, jo).setForeground(jb == stop ? imgMap[6][4] : imgMap[3][0]);
+            tm.initTile(o + m * (off - 2), jo).setForeground(imgMap[3][c1], b);
+            tm.initTile(o + m * (off - 1), jo).setForeground(jb == stop ? imgMap[6][c2] : imgMap[3][c3]);
             if (jb < stop) {
                 for (int i = jb; i <= w - 3 - jb; i++) {
-                    tm.initTile(x + i + 3 - h, jo).setForeground(getDirtImage());
+                    tm.initTile(o + m * (i + 3 - h), jo).setForeground(getDirtImage());
                 }
-                tm.initTile(x + w + 1 - h - jb, jo).setForeground(imgMap[4][4]);
+                tm.initTile(o + m * (w + 1 - h - jb), jo).setForeground(imgMap[4][c2]);
             }
         }
     }
