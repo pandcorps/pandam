@@ -323,7 +323,7 @@ public class PlatformGame extends BaseGame {
 	protected final static void levelVictory() {
 	    for (final Panctor actor : room.getActors()) {
             if (actor instanceof Enemy) {
-                ((Enemy) actor).onBump();
+                ((Enemy) actor).onBump(null);
             } else if (actor instanceof Gem) {
                 ((Gem) actor).spark();
             }
