@@ -281,10 +281,10 @@ public class Level {
     			Valleys
     			Rises with ramps in them
     			Rises woven w/ pit edges
-    			Slant
+    			Slant groups
     			Block letter patterns
-    			Enemies
     			Trees
+    			Checkered, diagonal stripe gem patterns
     			Goal
     			*/
     		    final Template template = Mathtil.rand(templates);
@@ -329,6 +329,13 @@ public class Level {
     	px = bx + 2;
     }
     
+    private static void enemy(final int x, final int y, final int w) {
+    	if (w < 3 || Mathtil.rand(40)) {
+    		return;
+    	}
+    	new Spawner(tm.getTileWidth() * (x + Mathtil.randi(1, w - 2)), tm.getTileHeight() * y);
+    }
+    
     private final static ArrayList<Template> templates = new ArrayList<Template>();
     private final static int[] scratch = new int[128];
     
@@ -346,17 +353,21 @@ public class Level {
         if (templates.size() > 0) {
             return;
         }
-        templates.add(new NaturalRiseTemplate());
-        templates.add(new ColorRiseTemplate());
-        templates.add(new WallTemplate());
-        templates.add(new StepTemplate());
-        templates.add(new RampTemplate());
-        templates.add(new BushTemplate());
-        templates.add(new ChoiceTemplate(new PitTemplate(), new BridgePitTemplate(), new BlockPitTemplate()));
-        templates.add(new ChoiceTemplate(new UpBlockStepTemplate(), new DownBlockStepTemplate(), new BlockWallTemplate(), new BlockGroupTemplate()));
-        templates.add(new BlockBonusTemplate());
-        templates.add(new ChoiceTemplate(new GemTemplate(), new GemMsgTemplate()));
-        templates.add(new ChoiceTemplate(new SlantTemplate(true), new SlantTemplate(false)));
+        addTemplate(new NaturalRiseTemplate());
+        addTemplate(new ColorRiseTemplate());
+        addTemplate(new WallTemplate());
+        addTemplate(new StepTemplate());
+        addTemplate(new RampTemplate());
+        addTemplate(new BushTemplate());
+        addTemplate(new PitTemplate(), new BridgePitTemplate(), new BlockPitTemplate());
+        addTemplate(new UpBlockStepTemplate(), new DownBlockStepTemplate(), new BlockWallTemplate(), new BlockGroupTemplate());
+        addTemplate(new BlockBonusTemplate());
+        addTemplate(new GemTemplate(), new GemMsgTemplate());
+        addTemplate(new SlantTemplate(true), new SlantTemplate(false));
+    }
+    
+    private final static void addTemplate(final Template... a) {
+    	templates.add(a.length == 1 ? a[0] : new ChoiceTemplate(a));
     }
     
     private static abstract class Template {
@@ -425,8 +436,9 @@ public class Level {
             }
             init();
             for (int i = 0; i < amt; i++) {
-                final int xo = amt + i * 2;
-                rise(scratch[xo], floor + 1, scratch[xo + 1], scratch[amt - i - 1]);
+                final int xo = amt + i * 2, x = scratch[xo], y = floor + 1, w = scratch[xo + 1], h = scratch[amt - i - 1];
+                rise(x, y, w, h);
+                enemy(x, y + h + 1, w);
             }
         }
         
@@ -497,14 +509,18 @@ public class Level {
     private static final class WallTemplate extends SimpleTemplate {
     	@Override
         protected final void build() {
-        	wall(x, floor + 1, w, Mathtil.randi(0, 3));
+    		final int y = floor + 1, h = Mathtil.randi(1, 3);
+        	wall(x, y, w, h);
+        	enemy(x, y + h, w);
         }
     }
     
     private static final class StepTemplate extends SimpleTemplate {
         @Override
         protected final void build() {
-        	step(x, floor, w, Mathtil.randi(0, 2));
+        	final int h = Mathtil.randi(0, 2);
+        	step(x, floor, w, h);
+        	enemy(x, floor + h + 1, w);
         }
     }
     
@@ -587,6 +603,7 @@ public class Level {
         	for (int i = x + 2; i < stop; i++) {
         		solidBlock(i, floor + 3);
         	}
+        	enemy(x + 2, floor + 4, w);
         }
     }
     
@@ -619,7 +636,9 @@ public class Level {
     	
         @Override
         protected final void build() {
-        	blockWall(x, floor + 1, w, Mathtil.randi(1, 3));
+        	final int y = floor + 1, h = Mathtil.randi(1, 3);
+        	blockWall(x, y, w, h);
+        	enemy(x, y + h, w);
         }
     }
     
