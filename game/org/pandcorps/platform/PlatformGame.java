@@ -45,6 +45,7 @@ public class PlatformGame extends BaseGame {
 	Player tail image for each species.
 	Player shirts.
 	Player falling/sliding images.
+	Allow jumping a little above top of Level.
 	Warp Map marker for entry/exit point.
 	Multiple islands for Map.
 	Replace bush with Rise.png for some levels; rise will be higher than 1 tile; separate build method.
@@ -55,7 +56,6 @@ public class PlatformGame extends BaseGame {
 	Bubble when map-traveling.
 	Train-riding levels.
 	Cannons that Player enters to be launched.
-	Clear Enemies when Player has passed it.
 	Maximum effective (per tick) velocity & higher absolute max; set current to max effective before evaluating.
 	Horizontal acceleration.
 	Shatter Gem effect when hurt.

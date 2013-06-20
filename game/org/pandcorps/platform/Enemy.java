@@ -57,6 +57,13 @@ public final class Enemy extends Character {
 	}
 	
 	@Override
+	protected final void onScrolled() {
+		if (getPosition().getX() + 80 < getLayer().getViewMinimum().getX()) {
+			destroy();
+		}
+	}
+	
+	@Override
 	protected final boolean onHorizontal(final int off) {
 		final Panple pos = getPosition();
 		final float x = pos.getX(), y = pos.getY();

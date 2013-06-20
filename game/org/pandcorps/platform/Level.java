@@ -713,7 +713,7 @@ public class Level {
     
     private static final class BlockBonusTemplate extends SimpleTemplate {
     	protected BlockBonusTemplate() {
-    		super(1, 5, 0);
+    		super(1, 8, 0);
     	}
     	
         @Override
@@ -779,6 +779,7 @@ public class Level {
     	@Override
         protected final void build() {
         	bush(x, floor + 1, w);
+        	enemy(x, floor + 1, w);
         }
     }
     
