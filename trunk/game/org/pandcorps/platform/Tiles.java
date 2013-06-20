@@ -50,9 +50,9 @@ public class Tiles {
     		if (Mathtil.rand()) {
     		    new GemBumped(player, t);
     		}
-    		new Bump(t).setVisible(false); // To bump Characters above
+    		new Bump(chr, t).setVisible(false); // To bump Characters above
     	} else if (b == PlatformGame.TILE_BUMP) {
-    	    new Bump(t); // Copy image before changing
+    	    new Bump(chr, t); // Copy image before changing
     	    final boolean normal = Level.isFlash(t);
     	    new GemBumped(player, t, normal ? PlatformGame.gemAnm : PlatformGame.gemCyanAnm);
     	    if (!normal) {
@@ -84,10 +84,12 @@ public class Tiles {
     }
     
     private final static class Bump extends TileActor implements StepListener, CollisionListener {
+    	private final Character bumper;
     	private final Tile t;
         private int age = 0;
         
-        private Bump(final Tile t) {
+        private Bump(final Character bumper, final Tile t) {
+        	this.bumper = bumper;
         	this.t = t;
         	if (Level.isFlash(t)) {
         		setView(PlatformGame.bump);
@@ -119,7 +121,7 @@ public class Tiles {
         public final void onCollision(final CollisionEvent event) {
         	final Collidable c = event.getCollider();
         	if (c instanceof Character) {
-        		((Character) c).onBump();
+        		((Character) c).onBump(bumper);
         	}
         }
     }

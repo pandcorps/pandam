@@ -276,6 +276,7 @@ public class Level {
     			Raise/lower floor with 1-way ramps
     			Some templates should allow any other template on top of it
     			Some templates should allow decorations on top
+    			Bonus blocks can go in front of background rises/slants
     			Block gap patterns, 2x2 block patterns
     			Natural step stairs
     			Valleys
@@ -398,9 +399,11 @@ public class Level {
     
     private static abstract class RiseTemplate extends Template {
     	private int amt;
+    	private int x;
     	
         @Override
         protected final void plan() {
+        	x = bx;
             amt = Mathtil.randi(1, 3);
             for (int i = 0; i < amt; i++) {
                 scratch[i] = ((i == 0) ? -1 : scratch[i - 1]) + Mathtil.randi(1, 3);
@@ -440,6 +443,7 @@ public class Level {
                 rise(x, y, w, h);
                 enemy(x, y + h + 1, w);
             }
+            enemy(x, floor + 1, bx - x - 2);
         }
         
         protected void init() {
@@ -565,6 +569,7 @@ public class Level {
         @Override
         protected final void build() {
             slant(x, floor + 1, stop, h, up);
+            enemy(x, floor + 1, bx - x - 2);
         }
     }
     
@@ -722,6 +727,7 @@ public class Level {
         			breakableBlock(i, floor + 3);
         		}
         	}
+        	enemy(x, floor + 4, w);
         }
     }
     

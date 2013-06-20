@@ -37,11 +37,18 @@ public class GemBumped extends Pandy {
 	}
 	
 	public GemBumped(final Player player, final Tile tile, final Panimation anm) {
+		this(player, tile.getPosition(), anm != PlatformGame.gemAnm && !Level.isFlash(tile), anm);
+	}
+	
+	public GemBumped(final Player player, final Enemy defeated) {
+		this(player, defeated.getBoundingMinimum(), false, PlatformGame.gemAnm);
+	}
+	
+	private GemBumped(final Player player, final Panple pos, final boolean end, final Panimation anm) {
 		super(Tiles.g);
-		end = anm != PlatformGame.gemAnm && !Level.isFlash(tile);
+		this.end = end;
 		Gem.collect(player);
 		setView(anm);
-		final Panple pos = tile.getPosition();
 		PlatformGame.setPosition(this, pos.getX(), pos.getY() + ImtilX.DIM, PlatformGame.DEPTH_SHATTER);
 		getVelocity().set(0, 6);
         PlatformGame.room.addActor(this);

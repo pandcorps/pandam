@@ -318,7 +318,7 @@ public class Player extends Character implements CollisionListener {
 		final Collidable other = event.getCollider();
 		if (other instanceof Enemy) {
 			if (v < 0 && getPosition().getY() > other.getPosition().getY()) {
-				((Enemy) other).onStomp();
+				((Enemy) other).onStomp(this);
 				v = VEL_BUMP;
 			} else if (!isInvincible()) {
 				onHurt();
@@ -335,7 +335,7 @@ public class Player extends Character implements CollisionListener {
     }
 	
 	@Override
-	protected final void onBump() {
+	protected final void onBump(final Character c) {
 		if (v <= 0) {
 			v = VEL_BUMP;
 		}
