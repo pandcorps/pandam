@@ -55,7 +55,7 @@ public class PlatformGame extends BaseGame {
 	Bubble when map-traveling.
 	Train-riding levels.
 	Cannons that Player enters to be launched.
-	Don't spawn Enemies until Player is near.
+	Clear Enemies when Player has passed it.
 	Maximum effective (per tick) velocity & higher absolute max; set current to max effective before evaluating.
 	Horizontal acceleration.
 	Shatter Gem effect when hurt.
@@ -68,6 +68,8 @@ public class PlatformGame extends BaseGame {
 	Bounce/blow floor.
 	Spike/fire floor tile.
 	Spike/fire enemy.
+	Collect fruit from trees.
+	Level to-do notes.
 	Achievements: 1st level, 1st map, level w/ no damage.
 	Goals: Collect n gems, defeat n enemies.
 	Random music per map.
