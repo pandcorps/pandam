@@ -284,7 +284,6 @@ public class Level {
     			Rises woven w/ pit edges
     			Slant groups
     			Block letter patterns
-    			Trees
     			Checkered, diagonal stripe gem patterns
     			Goal
     			*/
@@ -359,7 +358,7 @@ public class Level {
         addTemplate(new WallTemplate());
         addTemplate(new StepTemplate());
         addTemplate(new RampTemplate());
-        addTemplate(new BushTemplate());
+        addTemplate(new BushTemplate(), new TreeTemplate());
         addTemplate(new PitTemplate(), new BridgePitTemplate(), new BlockPitTemplate());
         addTemplate(new UpBlockStepTemplate(), new DownBlockStepTemplate(), new BlockWallTemplate(), new BlockGroupTemplate());
         addTemplate(new BlockBonusTemplate());
@@ -783,6 +782,18 @@ public class Level {
         }
     }
     
+    private static final class TreeTemplate extends SimpleTemplate {
+    	protected TreeTemplate() {
+    		super(4, 4, 0);
+    	}
+    	
+    	@Override
+        protected final void build() {
+        	tree(x, floor + 1);
+        	enemy(x, floor + 1, w);
+        }
+    }
+    
     private static void buildBg(final TileMap tm, final int miny, final int maxy, final int iy) {
     	final int maxx = tm.getWidth() + 1;
     	int x = Mathtil.randi(-1, 4);
@@ -1088,6 +1099,19 @@ public class Level {
             tm.initTile(i, y).setForeground(imgMap[1][6]);
         }
         tm.initTile(stop + 1, y).setForeground(imgMap[1][7]);
+    }
+    
+    private static void tree(final int x, final int y) {
+    	for (int j = 0; j < 2; j++) {
+    		tm.initTile(x + 1, y + j).setForeground(imgMap[7][1]);
+    		tm.initTile(x + 2, y + j).setForeground(imgMap[7][2]);
+    		tm.initTile(x + 1 + j, y + 2).setForeground(imgMap[6][2]);
+    		tm.initTile(x + 1 + j, y + 3).setForeground(imgMap[5][2]);
+    		tm.initTile(x + j, y + 3 + j).setForeground(imgMap[5][0]);
+    		tm.initTile(x + 3 - j, y + 3 + j).setForeground(imgMap[5][1]);
+    	}
+    	tm.initTile(x, y + 2).setForeground(imgMap[6][0]);
+		tm.initTile(x + 3, y + 2).setForeground(imgMap[6][1]);
     }
     
     private static void gem(final int x, final int y) {
