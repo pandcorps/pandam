@@ -266,10 +266,9 @@ public class Level {
     	public void build() {
     	    loadTemplates();
     	    
-    		buildBg(bgtm1, 4, 6, 0); // Nearest
-    		buildBg(bgtm2, 7, 9, 2);
-    		buildBg(bgtm3, 10, 12, 4); // Farthest
-            //cloud
+    		buildBg(bgtm1, 4, 6, 0, false); // Nearest
+    		buildBg(bgtm2, 7, 9, 2, false);
+    		buildBg(bgtm3, 10, 12, 4, true); // Farthest
     		
     		for (bx = 8; bx < n; ) {
     			/*
@@ -523,7 +522,7 @@ public class Level {
         protected final void build() {
         	final int h = Mathtil.randi(0, 2);
         	step(x, floor, w, h);
-        	enemy(x, floor + h + 1, w);
+        	enemy(x, floor + h + 2, w);
         }
     }
     
@@ -794,13 +793,42 @@ public class Level {
         }
     }
     
-    private static void buildBg(final TileMap tm, final int miny, final int maxy, final int iy) {
+    private static void buildBg(final TileMap tm, final int miny, final int maxy, final int iy, final boolean cloud) {
     	final int maxx = tm.getWidth() + 1;
     	int x = Mathtil.randi(-1, 4);
+    	boolean c = Mathtil.rand();
     	while (x < maxx) {
-    		final int w = Mathtil.randi(4, 8);
-    		hill(tm, x, Mathtil.randi(miny, maxy), w, Mathtil.rand() ? 0 : 3, iy);
-    		x += (w + Mathtil.randi(3, 7));
+    		final int y = Mathtil.randi(miny, maxy), w = Mathtil.randi(0, 8);
+    		int cx = -100, cy = cx, cw = cx, g = Mathtil.randi(3, 5);
+    		boolean cb = false;
+    		if (cloud) {
+    			if (c) {
+    				final int o = Mathtil.randi(1, 3);
+    				if (Mathtil.rand()) {
+    					cx = x;
+    					x += o;
+    				} else {
+    					cx = x + o;
+    					g += o;
+    				}
+    				if (w == 0 || w + 1 == o) {
+    					cy = y - Mathtil.randi(2, 4);
+    				} else {
+    					cy = y - (Mathtil.rand() ? 0 : 2);
+    				}
+    				cw = Math.max(1, w);
+    				cb = Mathtil.rand();
+    			}
+    			c = !c;
+    		}
+    		if (cb && cx != -100) {
+    			cloud(tm, cx, cy, cw);
+    		}
+    		hill(tm, x, y, w, Mathtil.rand() ? 0 : 3, iy);
+    		if (!cb && cx != -100) {
+    			cloud(tm, cx, cy, cw);
+    		}
+    		x += (w + g);
     	}
     }
     
@@ -851,13 +879,13 @@ public class Level {
     private static void cloud(final TileMap tm, final int x, final int y, final int w) {
         final int stop = x + w;
         for (int i = x + 1; i <= stop; i++) {
-            tm.initTile(i, y).setBackground(bgMap[7][1]);
-            tm.initTile(i, y + 1).setBackground(bgMap[6][1]);
+            setBg(tm, i, y, bgMap, 7, 1);
+            setBg(tm, i, y + 1, bgMap, 6, 1);
         }
-        tm.initTile(x, y).setForeground(bgMap[7][0]);
-        tm.initTile(x, y + 1).setForeground(bgMap[6][0]);
-        tm.initTile(stop + 1, y).setForeground(bgMap[7][2]);
-        tm.initTile(stop + 1, y + 1).setForeground(bgMap[6][2]);
+        setFg(tm, x, y, bgMap, 7, 0);
+        setFg(tm, x, y + 1, bgMap, 6, 0);
+        setFg(tm, stop + 1, y, bgMap, 7, 2);
+        setFg(tm, stop + 1, y + 1, bgMap, 6, 2);
     }
     
     private static void solidBlock(final int x, final int y) {
