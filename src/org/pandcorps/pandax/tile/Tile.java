@@ -124,6 +124,11 @@ public final class Tile {
         setBehavior(behavior);
     }
     
+    public final void setImages(final TileMapImage background, final TileMapImage foreground) {
+        setBackground(background);
+        setForeground(foreground);
+    }
+    
     //TileOccupant has setTile
     //public final void setOccupant(final TileOccupant occupant) {
     //    if (this.occupant != null) {
