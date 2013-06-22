@@ -50,7 +50,8 @@ public class Level {
     protected static TileMapImage[][] imgMap = null;
     protected static TileMapImage[][] bgMap = null;
     private static int w = 0;
-    private static int n = 0;
+    private static int ng = 0;
+    private static int nt = 0;
     private static int floor = 0;
     
     private final static class BlockTileListener implements TileListener {
@@ -180,7 +181,8 @@ public class Level {
     protected final static void loadLevel() {
     	final Builder b = new RandomBuilder();
     	w = b.getW();
-    	n = w / ImtilX.DIM;
+    	nt = w / ImtilX.DIM;
+    	ng = nt;
     	floor = 0;
     	loadLayers();
     	addPlayers(); // Add Players while floor has initial value before build() changes it
@@ -218,7 +220,7 @@ public class Level {
         cloud(bgtm3, 4, 6, 3);
         hill(bgtm3, 13, 10, 5, 3, 4);
         
-        for (int i = 0; i < n; i++) {
+        for (int i = 0; i < nt; i++) {
             tm.initTile(i, 0).setForeground(imgMap[1][1], true);
         }
         tm.removeTile(0, 0);
@@ -254,7 +256,7 @@ public class Level {
     }
     
     private static int bx;
-    private static int px = 0;
+    private static int px;
     
     protected final static class RandomBuilder implements Builder {
     	@Override
@@ -270,7 +272,11 @@ public class Level {
     		buildBg(bgtm2, 7, 9, 2, false);
     		buildBg(bgtm3, 10, 12, 4, true); // Farthest
     		
-    		for (bx = 8; bx < n; ) {
+    		final Goal goal = Mathtil.rand(goals);
+    		ng = nt - goal.getWidth();
+    		
+    		px = 0;
+    		for (bx = 8; bx < ng; ) {
     			/*
     			Raise/lower floor with 1-way ramps
     			Some templates should allow any other template on top of it
@@ -284,16 +290,15 @@ public class Level {
     			Slant groups
     			Block letter patterns
     			Checkered, diagonal stripe gem patterns
-    			Goal
     			*/
     		    final Template template = Mathtil.rand(templates);
     		    template.plan();
     		    ground();
-    		    if (bx < n) {
+    		    if (bx < ng) {
     		    	template.build();
     		    }
     		    if (Mathtil.rand(33)) {
-    		    	if (bx + 3 < n) {
+    		    	if (bx + 3 < ng) {
     		    		boolean up = Mathtil.rand();
     		    		final int h = Mathtil.randi(0, 2);
     		    		if (up) {
@@ -313,12 +318,14 @@ public class Level {
     		    }
    		    	bx += Mathtil.randi(1, 4);
     		}
+    		bx = nt;
     		ground();
+    		goal.build();
     	}
     }
     
     private static void ground() {
-    	final int stop = Math.min(bx + 1, n - 1);
+    	final int stop = Math.min(bx + 1, nt - 1);
     	for (int i = px; i <= stop; i++) {
             tm.initTile(i, floor).setForeground(imgMap[1][1], true);
             for (int j = 0; j < floor; j++) {
@@ -336,6 +343,7 @@ public class Level {
     }
     
     private final static ArrayList<Template> templates = new ArrayList<Template>();
+    private final static ArrayList<Goal> goals = new ArrayList<Goal>();
     private final static int[] scratch = new int[128];
     
     private final static void swapScratch(final int i, final int j) {
@@ -363,19 +371,47 @@ public class Level {
         addTemplate(new BlockBonusTemplate());
         addTemplate(new GemTemplate(), new GemMsgTemplate());
         addTemplate(new SlantTemplate(true), new SlantTemplate(false));
+        goals.add(new SlantGoal());
     }
     
     private final static void addTemplate(final Template... a) {
     	templates.add(a.length == 1 ? a[0] : new ChoiceTemplate(a));
     }
     
-    private static abstract class Template {
+    private abstract static class Goal {
+    	protected abstract int getWidth();
+    	
+    	protected abstract void build();
+    }
+    
+    private static class SlantGoal extends Goal {
+    	private int stop;
+    	private int h;
+    	private int w;
+    	
+    	@Override
+    	protected final int getWidth() {
+    		stop = 1;
+    		h = 3;
+    		w = getSlantWidth(getSlantBase(stop), h);
+    		return w;
+    	}
+    	
+    	@Override
+    	protected final void build() {
+    		final int x = getSlantStart(ng, w, h, true);
+    		slantUp(x, floor + 1, stop, h);
+            goalBlock(x, floor + 8);
+    	}
+    }
+    
+    private abstract static class Template {
     	protected abstract void plan();
     	
         protected abstract void build();
     }
     
-    private static final class ChoiceTemplate extends Template {
+    private final static class ChoiceTemplate extends Template {
     	private final Template[] choices;
     	private Template curr = null;
     	
@@ -395,7 +431,7 @@ public class Level {
     	}
     }
     
-    private static abstract class RiseTemplate extends Template {
+    private abstract static class RiseTemplate extends Template {
     	private int amt;
     	private int x;
     	
@@ -450,7 +486,7 @@ public class Level {
         protected abstract void rise(final int x, final int y, final int w, final int h);
     }
     
-    private static final class NaturalRiseTemplate extends RiseTemplate {
+    private final static class NaturalRiseTemplate extends RiseTemplate {
     	@Override
     	protected final void rise(final int x, final int y, final int w, final int h) {
     		naturalRise(x, y, w, h);
@@ -460,7 +496,7 @@ public class Level {
     private static int[] colors = new int[3];
     private static int colorIndex = 0;
     
-    private static final class ColorRiseTemplate extends RiseTemplate {
+    private final static class ColorRiseTemplate extends RiseTemplate {
     	@Override
     	protected final void init() {
     		for (int i = 0; i < 3; i++) {
@@ -479,7 +515,7 @@ public class Level {
         }
     }
     
-    private static abstract class SimpleTemplate extends Template {
+    private abstract static class SimpleTemplate extends Template {
     	private final int minW;
     	private final int maxW;
     	private final int ext;
@@ -508,7 +544,7 @@ public class Level {
         }
     }
     
-    private static final class WallTemplate extends SimpleTemplate {
+    private final static class WallTemplate extends SimpleTemplate {
     	@Override
         protected final void build() {
     		final int y = floor + 1, h = Mathtil.randi(1, 3);
@@ -517,7 +553,7 @@ public class Level {
         }
     }
     
-    private static final class StepTemplate extends SimpleTemplate {
+    private final static class StepTemplate extends SimpleTemplate {
         @Override
         protected final void build() {
         	final int h = Mathtil.randi(0, 2);
@@ -526,7 +562,7 @@ public class Level {
         }
     }
     
-    private static final class RampTemplate extends Template {
+    private final static class RampTemplate extends Template {
     	private int w;
     	private int h;
     	private int x;
@@ -545,7 +581,7 @@ public class Level {
         }
     }
     
-    private static final class SlantTemplate extends Template {
+    private final static class SlantTemplate extends Template {
         private final boolean up;
         private int stop;
         private int h;
@@ -583,7 +619,7 @@ public class Level {
         return Math.max(h + w + 1, 2);
     }
     
-    private static final class PitTemplate extends SimpleTemplate {
+    private final static class PitTemplate extends SimpleTemplate {
     	protected PitTemplate() {
     		super(2, 4);
     	}
@@ -594,7 +630,7 @@ public class Level {
         }
     }
     
-    private static final class BridgePitTemplate extends SimpleTemplate {
+    private final static class BridgePitTemplate extends SimpleTemplate {
     	protected BridgePitTemplate() {
     		super(5, 10);
     	}
@@ -610,7 +646,7 @@ public class Level {
         }
     }
     
-    private static final class UpBlockStepTemplate extends SimpleTemplate {
+    private final static class UpBlockStepTemplate extends SimpleTemplate {
     	protected UpBlockStepTemplate() {
     		super(1, 3, 0);
     	}
@@ -621,7 +657,7 @@ public class Level {
         }
     }
     
-    private static final class DownBlockStepTemplate extends SimpleTemplate {
+    private final static class DownBlockStepTemplate extends SimpleTemplate {
     	protected DownBlockStepTemplate() {
     		super(1, 3, 0);
     	}
@@ -632,7 +668,7 @@ public class Level {
         }
     }
     
-    private static final class BlockWallTemplate extends SimpleTemplate {
+    private final static class BlockWallTemplate extends SimpleTemplate {
     	protected BlockWallTemplate() {
     		super(1, 8, 0);
     	}
@@ -645,7 +681,7 @@ public class Level {
         }
     }
     
-    private static abstract class BlockBaseTemplate extends Template {
+    private abstract static class BlockBaseTemplate extends Template {
     	private int x;
     	protected int wSlope;
     	private int wFlat;
@@ -675,7 +711,7 @@ public class Level {
         protected abstract void center(final int x, final int w, final boolean ramp);
     }
     
-    private static final class BlockGroupTemplate extends BlockBaseTemplate {
+    private final static class BlockGroupTemplate extends BlockBaseTemplate {
     	@Override
     	protected final int getMinFlat() {
     		return 0;
@@ -692,7 +728,7 @@ public class Level {
     	}
     }
     
-    private static final class BlockPitTemplate extends BlockBaseTemplate {
+    private final static class BlockPitTemplate extends BlockBaseTemplate {
     	@Override
     	protected final int getMinFlat() {
     		return 2;
@@ -709,7 +745,7 @@ public class Level {
     	}
     }
     
-    private static final class BlockBonusTemplate extends SimpleTemplate {
+    private final static class BlockBonusTemplate extends SimpleTemplate {
     	protected BlockBonusTemplate() {
     		super(1, 8, 0);
     	}
@@ -729,7 +765,7 @@ public class Level {
         }
     }
     
-    private static final class GemTemplate extends SimpleTemplate {
+    private final static class GemTemplate extends SimpleTemplate {
     	protected GemTemplate() {
     		super(1, 10, 0);
     	}
@@ -749,7 +785,7 @@ public class Level {
     	}
     }
     
-    private static final class GemMsgTemplate extends Template {
+    private final static class GemMsgTemplate extends Template {
     	private int x;
     	private String msg;
     	
@@ -769,7 +805,7 @@ public class Level {
 		}
     }
     
-    private static final class BushTemplate extends SimpleTemplate {
+    private final static class BushTemplate extends SimpleTemplate {
     	protected BushTemplate() {
     		super(0, 6);
     	}
@@ -781,7 +817,7 @@ public class Level {
         }
     }
     
-    private static final class TreeTemplate extends SimpleTemplate {
+    private final static class TreeTemplate extends SimpleTemplate {
     	protected TreeTemplate() {
     		super(4, 4, 0);
     	}
