@@ -34,6 +34,7 @@ import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.*;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.tile.Tile.*;
+import org.pandcorps.platform.Enemy.EnemyDefinition;
 
 public class Level {
     protected final static PixelFilter terrainDarkener = new BrightnessPixelFilter((short) -40, (short) -24, (short) -32);
@@ -250,9 +251,10 @@ public class Level {
         slantUp(42, 1, 1, 3);
         goalBlock(42, 8);
         
-        new Enemy(80, 64);
-        new Enemy(232, 48);
-        new Enemy(360, 16);
+        final EnemyDefinition def = PlatformGame.enemies.get(0);
+        new Enemy(def, 80, 64);
+        new Enemy(def, 232, 48);
+        new Enemy(def, 360, 16);
     }
     
     private static int bx;

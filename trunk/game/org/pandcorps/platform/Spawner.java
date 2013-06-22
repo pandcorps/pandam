@@ -22,6 +22,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.platform;
 
+import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 
@@ -37,7 +38,7 @@ public class Spawner extends Panctor implements StepListener {
 		final Panple pos = getPosition();
 		final float x = pos.getX();
 		if (x <= getLayer().getViewMaximum().getX() + Player.MAX_V) {
-			new Enemy(x, pos.getY());
+			new Enemy(Mathtil.rand(PlatformGame.enemies), x, pos.getY());
 			destroy();
 		}
 	}
