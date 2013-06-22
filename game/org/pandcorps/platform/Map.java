@@ -95,8 +95,8 @@ public class Map {
 	protected final static int bgColor = 1;
 	
 	private final static HashMap<Pair<Integer, Integer>, Boolean> open = new HashMap<Pair<Integer, Integer>, Boolean>();
-	private static int column = 2;
-	private static int row = 6;
+	private static int column = -1;
+	private static int row = -1;
 	private static boolean first = true;
 	private static String name = generateName();
 	
@@ -278,7 +278,7 @@ public class Map {
 		    pc.player = null;
 		}
 		final Mapper b = new RandomMapper();
-		room = engine.createRoom(Pantil.vmid(), new FinPanple(256, b.getH(), 0));
+		room = engine.createRoom(Pantil.vmid(), new FinPanple(b.getW(), b.getH(), 0));
 		PlatformGame.room = room;
 		Pangame.getGame().setCurrentRoom(room);
 		tm = new DynamicTileMap("act.tilemap", room, ImtilX.DIM, ImtilX.DIM);
@@ -299,6 +299,7 @@ public class Map {
 		water = imgMap[5][6];
 		base = imgMap[1][1];
 		tm.fillBackground(water, true);
+		b.init();
 		final Tile t = getStartTile();
 		b.build();
 		addPlayer(t);
@@ -306,15 +307,30 @@ public class Map {
 	}
 	
 	private static interface Mapper {
+		public int getW();
+		
 		public int getH();
+		
+		public void init();
 		
     	public void build();
     }
     
     protected final static class DemoMapper implements Mapper {
     	@Override
+    	public final int getW() {
+    		return 256;
+    	}
+    	
+    	@Override
     	public final int getH() {
     		return 192;
+    	}
+    	
+    	@Override
+    	public final void init() {
+    		column = 2;
+    		row = 6;
     	}
     	
     	@Override
@@ -365,55 +381,81 @@ public class Map {
 	
 	protected final static class RandomMapper implements Mapper {
 		@Override
+    	public final int getW() {
+    		return 400;
+    	}
+		
+		@Override
     	public final int getH() {
     		return 272;
     	}
 		
 		@Override
+    	public final void init() {
+    		//column = 2;
+    		//row = 6 + Mathtil.randi(0, 3) * 2;
+			column = 14;
+			row = 10;
+    	}
+		
+		@Override
     	public final void build() {
-			final int stop = 15;
-			int b = Mathtil.randi(4, 6), t = Mathtil.randi(13, 15), dir = Mathtil.randi(-1, 0), tdir = Mathtil.randi(0, 1);
-			tm.fillBackground(imgMap[1][0], 1, b, 1, t - b);
-			baseLeft(1, b);
-			topUp(1, t);
-			for (int i = 2; i < stop - 1; i++) {
-				dir = updateDir(dir, b, 4, 6);
-				tdir = updateDir(tdir, t, 13, 15);
-				final int cb, ct;
-				if (dir < 0) {
-					b += dir;
-					cb = b;
-					baseDown(i, b);
-				} else if (dir > 0) {
-					cb = b;
-					baseUp(i, b);
-					b += dir;
-				} else {
-					cb = b;
-					baseMid(i, b);
-				}
-				if (tdir < 0) {
-					ct = t;
-					topDown(i, t);
-					t += tdir;
-				} else if (tdir > 0) {
-					t += tdir;
-					ct = t;
-					topUp(i, t);
-				} else {
-					ct = t;
-					tm.initTile(i, t + 1).setForeground(imgMap[0][1]);
-				}
-				mid(i, cb, ct);
+			final int stop = tm.getWidth() - 1;
+			final int mid = 12 + (Mathtil.randi(-2, 2) * 2);
+			if (Mathtil.rand(0)) {
+				island(2, stop);
+			} else {
+				island(2, mid - 2);
+				island(mid, stop);
 			}
-			tm.fillBackground(imgMap[1][2], stop - 1, b, 1, t - b);
-			baseRight(stop - 1, b);
-			topDown(stop - 1, t);
-			landmark(3 + Mathtil.randi(0, 3) * 2, 7 + Mathtil.randi(0, 1) * 2, Mathtil.rand() ? 0 : 3);
+			final int il = Mathtil.rand() ? 0 : 3;
+			landmark(3 + Mathtil.randi(0, (mid - 2) / 2) * 2, 7 + Mathtil.randi(0, 1) * 2, il);
+			landmark(mid + 1 + (Mathtil.randi(0, (stop - mid - 2) / 2) * 2), 7 + Mathtil.randi(0, 1) * 2, (il + 3) % 6);
+			marker(column, row);
 			//mountains
 			//ladder
 			//bridge
 		}
+	}
+	
+	private final static void island(final int start, final int stop) {
+		int b = Mathtil.randi(4, 6), t = Mathtil.randi(13, 15), dir = Mathtil.randi(-1, 0), tdir = Mathtil.randi(0, 1);
+		tm.fillBackground(imgMap[1][0], start - 1, b, 1, t - b + 1);
+		baseLeft(start - 1, b);
+		topUp(start - 1, t);
+		for (int i = start; i < stop - 1; i++) {
+			dir = updateDir(dir, b, 4, 6);
+			tdir = updateDir(tdir, t, 13, 15);
+			final int cb, ct;
+			if (dir < 0) {
+				b += dir;
+				cb = b;
+				baseDown(i, b);
+			} else if (dir > 0) {
+				cb = b;
+				baseUp(i, b);
+				b += dir;
+			} else {
+				cb = b;
+				baseMid(i, b);
+			}
+			if (tdir < 0) {
+				ct = t;
+				topDown(i, t);
+				t += tdir;
+			} else if (tdir > 0) {
+				t += tdir;
+				ct = t;
+				topUp(i, t);
+			} else {
+				ct = t;
+				tm.initTile(i, t + 1).setForeground(imgMap[0][1]);
+			}
+			mid(i, cb, ct);
+		}
+		tm.fillBackground(imgMap[1][2], stop - 1, b, 1, t - b + 1);
+		baseRight(stop - 1, b);
+		topDown(stop - 1, t);
 	}
 	
 	private final static int updateDir(int dir, final int b, final int n, final int x) {
