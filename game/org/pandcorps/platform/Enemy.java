@@ -23,14 +23,32 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.platform;
 
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.impl.FinPanple;
 
 public final class Enemy extends Character {
 	protected final static int ENEMY_X = 5;
 	protected final static int ENEMY_H = 15;
 	
-	protected Enemy(final float x, final float y) {
+	private final static FinPanple O = new FinPanple(8, 1, 0);
+	private final static FinPanple MIN = new FinPanple(-ENEMY_X, 0, 0);
+	private final static FinPanple MAX = new FinPanple(ENEMY_X, ENEMY_H, 0);
+	
+	protected final static class EnemyDefinition {
+		private final Panimation walk;
+		private final boolean ledgeTurn;
+		
+		protected EnemyDefinition(final String name, final int i, final boolean ledgeTurn) {
+			this.walk = PlatformGame.createAnm("enemy." + i, "org/pandcorps/platform/res/enemy/Enemy0" + i + ".png", 16, 6, O, MIN, MAX);
+			this.ledgeTurn = ledgeTurn;
+		}
+	}
+	
+	private final EnemyDefinition def;
+	
+	protected Enemy(final EnemyDefinition def, final float x, final float y) {
 		super(ENEMY_X, ENEMY_H);
-		setView(PlatformGame.enemy01);
+		this.def = def;
+		setView(def.walk);
 		hv = -1;
 		PlatformGame.room.addActor(this);
 		PlatformGame.setPosition(this, x, y, PlatformGame.DEPTH_ENEMY);
@@ -65,6 +83,9 @@ public final class Enemy extends Character {
 	
 	@Override
 	protected final boolean onHorizontal(final int off) {
+		if (!def.ledgeTurn) {
+			return false;
+		}
 		final Panple pos = getPosition();
 		final float x = pos.getX(), y = pos.getY();
 		pos.addX(off);

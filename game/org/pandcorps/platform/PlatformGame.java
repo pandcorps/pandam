@@ -37,6 +37,7 @@ import org.pandcorps.pandax.text.*;
 import org.pandcorps.pandax.text.Fonts.FontRequest;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.visual.FadeController;
+import org.pandcorps.platform.Enemy.EnemyDefinition;
 import org.pandcorps.platform.Player.PlayerContext;
 
 public class PlatformGame extends BaseGame {
@@ -51,7 +52,6 @@ public class PlatformGame extends BaseGame {
 	Replace bush with Rise.png for some levels; rise will be higher than 1 tile; separate build method.
 	Taller bushes.
 	Map landmarks: Mountain, forest, garden, crater.
-	Random levels.
 	Random maps.
 	Bubble when map-traveling.
 	Train-riding levels.
@@ -99,7 +99,7 @@ public class PlatformGame extends BaseGame {
 	protected static MultiFont font = null;
 	protected final static FinPanple og = new FinPanple(16, 1, 0);
 	protected static Panmage bubble = null;
-	protected static Panimation enemy01 = null;
+	protected final static ArrayList<EnemyDefinition> enemies = new ArrayList<EnemyDefinition>();
 	protected static Panmage block8 = null;
 	protected static Panmage[] gem = null;
 	protected static Panimation gemAnm = null;
@@ -243,7 +243,8 @@ public class PlatformGame extends BaseGame {
 		//createAnimalStrip("Roddy", "Mouse", 3, new SwapPixelFilter(Channel.Blue, Channel.Red, Channel.Blue), 0);
 		//createAnimalStrip("Felip", "Cat", 4, new SwapPixelFilter(Channel.Red, Channel.Red, Channel.Blue), 0);
 		
-		enemy01 = createAnm("enemy", "org/pandcorps/platform/res/enemy/Enemy01.png", 16, 6, new FinPanple(8, 1, 0), new FinPanple(-Enemy.ENEMY_X, 0, 0), new FinPanple(Enemy.ENEMY_X, Enemy.ENEMY_H, 0));
+		enemies.add(new EnemyDefinition("", 1, true));
+		enemies.add(new EnemyDefinition("Troblin", 2, false));
 		
 		bubble = createImage("bubble", "org/pandcorps/platform/res/chr/Bubble.png", 32, og);
 	    
