@@ -277,7 +277,8 @@ public class Map {
 		for (final PlayerContext pc : PlatformGame.pcs) {
 		    pc.player = null;
 		}
-		room = engine.createRoom(Pantil.vmid(), new FinPanple(256, 192, 0));
+		final Mapper b = new RandomMapper();
+		room = engine.createRoom(Pantil.vmid(), new FinPanple(256, b.getH(), 0));
 		PlatformGame.room = room;
 		Pangame.getGame().setCurrentRoom(room);
 		tm = new DynamicTileMap("act.tilemap", room, ImtilX.DIM, ImtilX.DIM);
@@ -299,12 +300,30 @@ public class Map {
 		base = imgMap[1][1];
 		tm.fillBackground(water, true);
 		final Tile t = getStartTile();
-		buildMap();
+		b.build();
 		addPlayer(t);
 		addHud();
 	}
 	
-	private final static void buildMap() {
+	private static interface Mapper {
+		public int getH();
+		
+    	public void build();
+    }
+    
+    protected final static class DemoMapper implements Mapper {
+    	@Override
+    	public final int getH() {
+    		return 192;
+    	}
+    	
+    	@Override
+    	public final void build() {
+    		buildDemo();
+    	}
+    }
+	
+	private final static void buildDemo() {
 		for (int i = 2; i < 14; i++) {
 			for (int j = 1; j < 4; j++) {
 				tm.initTile(i, j).setBackground(imgMap[0][4]);
@@ -344,6 +363,89 @@ public class Map {
 		marker(6, 6);
 	}
 	
+	protected final static class RandomMapper implements Mapper {
+		@Override
+    	public final int getH() {
+    		return 272;
+    	}
+		
+		@Override
+    	public final void build() {
+			final int stop = 15;
+			int b = Mathtil.randi(4, 6), t = Mathtil.randi(13, 15), dir = Mathtil.randi(-1, 0);
+			tm.fillBackground(imgMap[1][0], 1, b, 1, t - b);
+			baseLeft(1, b);
+			for (int i = 2; i < stop - 1; i++) {
+				dir = updateDir(dir, b, 4, 6);
+				if (dir < 0) {
+					b += dir;
+					mid(i, b, t);
+					baseDown(i, b);
+				} else if (dir > 0) {
+					mid(i, b, t);
+					baseUp(i, b);
+					b += dir;
+				} else {
+					mid(i, b, t);
+					baseMid(i, b);
+				}
+			}
+			tm.fillBackground(imgMap[1][2], stop - 1, b, 1, t - b);
+			baseRight(stop - 1, b);
+		}
+	}
+	
+	private final static int updateDir(int dir, final int b, final int n, final int x) {
+		if (Mathtil.rand(45)) {
+			if (dir < 0) {
+				dir = 0;
+			} else if (dir > 0) {
+				dir = 0;
+			} else {
+				dir = Mathtil.rand() ? -1 : 1;
+			}
+		}
+		if (dir < 0 && b <= n) {
+			dir = 0;
+		} else if (dir > 0 && b >= x) {
+			dir = 0;
+		}
+		return dir;
+	}
+	
+	private final static void base(final int x, final int y, final int tx, final int wx) {
+		final TileMapImage terrain = imgMap[0][tx];
+		tm.initTile(x, y - 1).setImages(terrain, imgMap[2][wx - 3]);
+		tm.initTile(x, y - 2).setBackground(terrain);
+		tm.initTile(x, y - 3).setImages(terrain, imgMap[1][wx]);
+	}
+	
+	private final static void baseLeft(final int x, final int y) {
+		base(x, y, 3, 3);
+	}
+	
+	private final static void baseDown(final int x, final int y) {
+		base(x, y, 4, 3);
+	}
+	
+	private final static void baseMid(final int x, final int y) {
+		base(x, y, 4, 4);
+	}
+	
+	private final static void baseUp(final int x, final int y) {
+		base(x, y, 4, 5);
+	}
+	
+	private final static void baseRight(final int x, final int y) {
+		base(x, y, 5, 5);
+	}
+	
+	private final static void mid(final int x, final int b, final int t) {
+		for (int j = b; j <= t; j++) {
+			tm.initTile(x, j).setBackground(getBaseImage());
+		}
+	}
+	
 	private final static Tile getStartTile() {
 		final Tile t = tm.getTile(column, row);
         if (first) {
@@ -359,6 +461,7 @@ public class Map {
 		player.setPosition(t);
 		player.getPosition().setZ(tm.getForegroundDepth() + 1);
 		room.addActor(player);
+		Pangine.getEngine().track(player);
 	}
 	
 	private final static void addHud() {
