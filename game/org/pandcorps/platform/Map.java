@@ -298,6 +298,13 @@ public class Map {
 		water = imgMap[5][6];
 		base = imgMap[1][1];
 		tm.fillBackground(water, true);
+		final Tile t = getStartTile();
+		buildMap();
+		addPlayer(t);
+		addHud();
+	}
+	
+	private final static void buildMap() {
 		for (int i = 2; i < 14; i++) {
 			for (int j = 1; j < 4; j++) {
 				tm.initTile(i, j).setBackground(imgMap[0][4]);
@@ -326,13 +333,6 @@ public class Map {
 		tm.initTile(1, 10).setForeground(imgMap[0][0]);
 		tm.initTile(14, 10).setForeground(imgMap[0][2]);
 		
-		final Tile t = tm.getTile(column, row);
-        if (first) {
-            first = false;
-        } else {
-            open.put(getKey(t), Boolean.TRUE);
-        }
-		
 		marker(2, 6);
 		tm.initTile(2, 7).setBackground(imgMap[3][2], TILE_VERT);
 		tm.initTile(2, 8).setBackground(imgMap[3][6], TILE_RIGHTDOWN);
@@ -342,12 +342,26 @@ public class Map {
 			tm.initTile(i, 6).setBackground(imgMap[3][1], TILE_HORIZ);
 		}
 		marker(6, 6);
-		
+	}
+	
+	private final static Tile getStartTile() {
+		final Tile t = tm.getTile(column, row);
+        if (first) {
+            first = false;
+        } else {
+            open.put(getKey(t), Boolean.TRUE);
+        }
+        return t;
+	}
+	
+	private final static void addPlayer(final Tile t) {
 		final Player player = new Player(PlatformGame.pcs.get(0));
 		player.setPosition(t);
 		player.getPosition().setZ(tm.getForegroundDepth() + 1);
 		room.addActor(player);
-		
+	}
+	
+	private final static void addHud() {
 		final Pantext name = new Pantext("map.name", PlatformGame.font, Map.name);
 		name.getPosition().set(PlatformGame.SCREEN_W / 2, 1);
 		name.centerX();
