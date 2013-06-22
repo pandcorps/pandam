@@ -236,6 +236,10 @@ public class PlatformGame extends BaseGame {
 		pcs.add(pc);
 	}
 	
+	private final static void replace(final ReplacePixelFilter f, final short r, final short g, final short b) {
+		f.put(r, g, b, Pancolor.MAX_VALUE, r, b, g, Pancolor.MAX_VALUE);
+	}
+	
 	private final static void loadConstants() {
 		final Pangine engine = Pangine.getEngine();
 		createAnimalStrip("Balue", "Bear", 1, null, 0);
@@ -243,8 +247,14 @@ public class PlatformGame extends BaseGame {
 		//createAnimalStrip("Roddy", "Mouse", 3, new SwapPixelFilter(Channel.Blue, Channel.Red, Channel.Blue), 0);
 		//createAnimalStrip("Felip", "Cat", 4, new SwapPixelFilter(Channel.Red, Channel.Red, Channel.Blue), 0);
 		
-		enemies.add(new EnemyDefinition("", 1, true));
-		enemies.add(new EnemyDefinition("Troblin", 2, false));
+		enemies.add(new EnemyDefinition("", 1, null, true));
+		enemies.add(new EnemyDefinition("Troblin", 2, null, false));
+		final ReplacePixelFilter f = new ReplacePixelFilter();
+		replace(f, (short) 104, (short) 120, (short) 172);
+		replace(f, (short) 80, (short) 96, (short) 144);
+		replace(f, (short) 64, (short) 80, (short) 112);
+		replace(f, (short) 48, (short) 56, (short) 80);
+		enemies.add(new EnemyDefinition("Obglin", 2, f, false));
 		
 		bubble = createImage("bubble", "org/pandcorps/platform/res/chr/Bubble.png", 32, og);
 	    

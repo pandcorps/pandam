@@ -22,6 +22,11 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.platform;
 
+import java.awt.image.BufferedImage;
+
+import org.pandcorps.core.Imtil;
+import org.pandcorps.core.img.PixelFilter;
+import org.pandcorps.game.core.ImtilX;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.impl.FinPanple;
 
@@ -37,8 +42,15 @@ public final class Enemy extends Character {
 		private final Panimation walk;
 		private final boolean ledgeTurn;
 		
-		protected EnemyDefinition(final String name, final int i, final boolean ledgeTurn) {
-			this.walk = PlatformGame.createAnm("enemy." + i, "org/pandcorps/platform/res/enemy/Enemy0" + i + ".png", 16, 6, O, MIN, MAX);
+		protected EnemyDefinition(final String name, final int ind, final PixelFilter f, final boolean ledgeTurn) {
+			final BufferedImage[] strip = ImtilX.loadStrip("org/pandcorps/platform/res/enemy/Enemy0" + ind + ".png");
+			if (f != null) {
+				final int size = strip.length;
+				for (int i = 0; i < size; i++) {
+					strip[i] = Imtil.filter(strip[i], f);
+				}
+			}
+			this.walk = PlatformGame.createAnm("enemy." + name, 6, O, MIN, MAX, strip);
 			this.ledgeTurn = ledgeTurn;
 		}
 	}
