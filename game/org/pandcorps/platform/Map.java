@@ -372,26 +372,47 @@ public class Map {
 		@Override
     	public final void build() {
 			final int stop = 15;
-			int b = Mathtil.randi(4, 6), t = Mathtil.randi(13, 15), dir = Mathtil.randi(-1, 0);
+			int b = Mathtil.randi(4, 6), t = Mathtil.randi(13, 15), dir = Mathtil.randi(-1, 0), tdir = Mathtil.randi(0, 1);
 			tm.fillBackground(imgMap[1][0], 1, b, 1, t - b);
 			baseLeft(1, b);
+			topUp(1, t);
 			for (int i = 2; i < stop - 1; i++) {
 				dir = updateDir(dir, b, 4, 6);
+				tdir = updateDir(tdir, t, 13, 15);
+				final int cb, ct;
 				if (dir < 0) {
 					b += dir;
-					mid(i, b, t);
+					cb = b;
 					baseDown(i, b);
 				} else if (dir > 0) {
-					mid(i, b, t);
+					cb = b;
 					baseUp(i, b);
 					b += dir;
 				} else {
-					mid(i, b, t);
+					cb = b;
 					baseMid(i, b);
 				}
+				if (tdir < 0) {
+					ct = t;
+					topDown(i, t);
+					t += tdir;
+				} else if (tdir > 0) {
+					t += tdir;
+					ct = t;
+					topUp(i, t);
+				} else {
+					ct = t;
+					tm.initTile(i, t + 1).setForeground(imgMap[0][1]);
+				}
+				mid(i, cb, ct);
 			}
 			tm.fillBackground(imgMap[1][2], stop - 1, b, 1, t - b);
 			baseRight(stop - 1, b);
+			topDown(stop - 1, t);
+			landmark(3 + Mathtil.randi(0, 3) * 2, 7 + Mathtil.randi(0, 1) * 2, Mathtil.rand() ? 0 : 3);
+			//mountains
+			//ladder
+			//bridge
 		}
 	}
 	
@@ -446,6 +467,14 @@ public class Map {
 		}
 	}
 	
+	private final static void topUp(final int x, final int y) {
+		tm.initTile(x, y + 1).setForeground(imgMap[0][0]);
+	}
+	
+	private final static void topDown(final int x, final int y) {
+		tm.initTile(x, y + 1).setForeground(imgMap[0][2]);
+	}
+	
 	private final static Tile getStartTile() {
 		final Tile t = tm.getTile(column, row);
         if (first) {
@@ -482,6 +511,15 @@ public class Map {
 			final TileMapImage b = getBaseImage();
 			t.setBackground(b);
 			t.setForeground(b);
+		}
+	}
+	
+	private static void landmark(final int x, final int y, final int ix) {
+		for (int j = 0; j < 3; j++) {
+			final int yj = y + j, j7 = 7 - j;
+			for (int i = 0; i < 3; i++) {
+				setForeground(x + i, yj, j7, ix + i);
+			}
 		}
 	}
 	
