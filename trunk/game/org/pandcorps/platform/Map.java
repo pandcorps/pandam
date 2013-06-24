@@ -412,21 +412,38 @@ if (Pangine.getEngine().getClock() >= 0) {
     	public final void build() {
 			final int stop = tm.getWidth() - 1;
 			final int mid = 12 + (Mathtil.randi(-1, 3) * 2);
-			final boolean single = Mathtil.rand(0);
-			if (single) {
+			if (Mathtil.rand(0)) {
 				island(2, stop);
 			} else {
 				island(2, mid - 2);
 				island(mid, stop);
 			}
 			final int il = Mathtil.rand() ? 0 : 3;
-			landmark(3 + Mathtil.randi(0, (mid / 2) - 5) * 2, newLandmarkY(), il);
-			landmark(mid + 1 + (Mathtil.randi(0, ((stop - mid) / 2) - 3) * 2), newLandmarkY(), (il + 3) % 6);
+			final int[] used = new int[11];
+			Arrays.fill(used, -1);
+			landmark(3 + Mathtil.randi(0, (mid / 2) - 5) * 2, newLandmarkY(), il, used);
+			landmark(mid + 1 + (Mathtil.randi(0, ((stop - mid) / 2) - 3) * 2), newLandmarkY(), (il + 3) % 6, used);
 			marker(column, row);
 			final int cs = column + 2;
 			int c, r = row;
 			for (c = cs; c <= stop - 2; c += 2) {
-				final int nr = c == mid ? r : newMarkerRow(), c2 = c - 2;
+				final int nr, c2 = c - 2;
+				if (c == mid) {
+					nr = r;
+				} else {
+					final int used1 = used[getIndex(c)], used2 = used[getIndex(c2)];
+					int tr = newMarkerRow();
+					while (true) {
+						if ((used1 == -1 || used1 != tr) && (used2 == -1 || used2 < Math.min(r, tr) || used2 > Math.max(r, tr))) {
+							break;
+						}
+						tr += 2;
+						if (tr > 12) {
+							tr = 6;
+						}
+					}
+					nr = tr;
+				}
 				if (r != nr) {
 					final int rn = Math.min(r, nr) + 1, rx = Math.max(r, nr) - 1;
 					for (int j = rn; j <= rx; j++) {
@@ -452,8 +469,11 @@ if (Pangine.getEngine().getClock() >= 0) {
 			marker(c - 2, r);
 			//mountains
 			//ladder
-			//if (!single) bridge
 		}
+	}
+	
+	private final static int getIndex(final int tile) {
+		return (tile - 2) / 2;
 	}
 	
 	private final static int newMarkerRow() {
@@ -602,7 +622,8 @@ if (Pangine.getEngine().getClock() >= 0) {
 		}
 	}
 	
-	private static void landmark(final int x, final int y, final int ix) {
+	private static void landmark(final int x, final int y, final int ix, final int[] used) {
+		used[getIndex(x + 1)] = y + 1;
 		for (int j = 0; j < 3; j++) {
 			final int yj = y + j, j7 = 7 - j;
 			for (int i = 0; i < 3; i++) {
