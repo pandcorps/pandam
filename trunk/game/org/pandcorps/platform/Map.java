@@ -167,10 +167,22 @@ public class Map {
 			}
 		}
 		
+		private void setPos(final Tile t) {
+			setPosition(t);
+			getPosition().setZ(tm.getForegroundDepth() + 1);
+		}
+		
 		protected boolean go(final Direction d0) {
 		    final Tile t0 = getTile();
 		    Tile t = t0;
 		    Direction d = d0;
+if (Pangine.getEngine().getClock() >= 0) {
+	final Tile tmp = t0.getNeighbor(d0);
+	if (tmp != null) {
+		setPos(tmp);
+	}
+	return true;
+}
 		    while (true) {
     		    t = t.getNeighbor(d);
     		    if (t == null || t.isSolid()) {
@@ -401,7 +413,7 @@ public class Map {
 		@Override
     	public final void build() {
 			final int stop = tm.getWidth() - 1;
-			final int mid = 12 + (Mathtil.randi(-2, 2) * 2);
+			final int mid = 12 + (Mathtil.randi(-1, 3) * 2);
 			if (Mathtil.rand(0)) {
 				island(2, stop);
 			} else {
@@ -409,8 +421,8 @@ public class Map {
 				island(mid, stop);
 			}
 			final int il = Mathtil.rand() ? 0 : 3;
-			landmark(3 + Mathtil.randi(0, (mid - 2) / 2) * 2, 7 + Mathtil.randi(0, 1) * 2, il);
-			landmark(mid + 1 + (Mathtil.randi(0, (stop - mid - 2) / 2) * 2), 7 + Mathtil.randi(0, 1) * 2, (il + 3) % 6);
+			landmark(3 + Mathtil.randi(0, (mid / 2) - 5) * 2, 7 + Mathtil.randi(0, 1) * 2, il);
+			landmark(mid + 1 + (Mathtil.randi(0, ((stop - mid) / 2) - 3) * 2), 7 + Mathtil.randi(0, 1) * 2, (il + 3) % 6);
 			marker(column, row);
 			//mountains
 			//ladder
@@ -419,13 +431,14 @@ public class Map {
 	}
 	
 	private final static void island(final int start, final int stop) {
-		int b = Mathtil.randi(4, 6), t = Mathtil.randi(13, 15), dir = Mathtil.randi(-1, 0), tdir = Mathtil.randi(0, 1);
+		final int bn = 4, bx = 6, tn = 12, tx = 14;
+		int b = Mathtil.randi(bn, bx), t = Mathtil.randi(tn, tx), dir = Mathtil.randi(-1, 0), tdir = Mathtil.randi(0, 1);
 		tm.fillBackground(imgMap[1][0], start - 1, b, 1, t - b + 1);
 		baseLeft(start - 1, b);
 		topUp(start - 1, t);
 		for (int i = start; i < stop - 1; i++) {
-			dir = updateDir(dir, b, 4, 6);
-			tdir = updateDir(tdir, t, 13, 15);
+			dir = updateDir(dir, b, bn, bx);
+			tdir = updateDir(tdir, t, tn, tx);
 			final int cb, ct;
 			if (dir < 0) {
 				b += dir;
@@ -529,8 +542,7 @@ public class Map {
 	
 	private final static void addPlayer(final Tile t) {
 		final Player player = new Player(PlatformGame.pcs.get(0));
-		player.setPosition(t);
-		player.getPosition().setZ(tm.getForegroundDepth() + 1);
+		player.setPos(t);
 		room.addActor(player);
 		Pangine.getEngine().track(player);
 	}
