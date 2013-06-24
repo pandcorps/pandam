@@ -381,12 +381,12 @@ if (Pangine.getEngine().getClock() >= 0) {
 		tm.initTile(14, 10).setForeground(imgMap[0][2]);
 		
 		marker(2, 6);
-		tm.initTile(2, 7).setBackground(imgMap[3][2], TILE_VERT);
-		tm.initTile(2, 8).setBackground(imgMap[3][6], TILE_RIGHTDOWN);
-		tm.initTile(3, 8).setBackground(imgMap[3][1], TILE_HORIZ);
+		vert(2, 7);
+		rightDown(2, 8);
+		horiz(3, 8);
 		marker(4, 8);
 		for (int i = 3; i < 6; i++) {
-			tm.initTile(i, 6).setBackground(imgMap[3][1], TILE_HORIZ);
+			horiz(i, 6);
 		}
 		marker(6, 6);
 	}
@@ -404,30 +404,64 @@ if (Pangine.getEngine().getClock() >= 0) {
 		
 		@Override
     	public final void init() {
-    		//column = 2;
-    		//row = 6 + Mathtil.randi(0, 3) * 2;
-			column = 14;
-			row = 10;
+    		column = 2;
+    		row = newMarkerRow();
     	}
 		
 		@Override
     	public final void build() {
 			final int stop = tm.getWidth() - 1;
 			final int mid = 12 + (Mathtil.randi(-1, 3) * 2);
-			if (Mathtil.rand(0)) {
+			final boolean single = Mathtil.rand(0);
+			if (single) {
 				island(2, stop);
 			} else {
 				island(2, mid - 2);
 				island(mid, stop);
 			}
 			final int il = Mathtil.rand() ? 0 : 3;
-			landmark(3 + Mathtil.randi(0, (mid / 2) - 5) * 2, 7 + Mathtil.randi(0, 1) * 2, il);
-			landmark(mid + 1 + (Mathtil.randi(0, ((stop - mid) / 2) - 3) * 2), 7 + Mathtil.randi(0, 1) * 2, (il + 3) % 6);
+			landmark(3 + Mathtil.randi(0, (mid / 2) - 5) * 2, newLandmarkY(), il);
+			landmark(mid + 1 + (Mathtil.randi(0, ((stop - mid) / 2) - 3) * 2), newLandmarkY(), (il + 3) % 6);
 			marker(column, row);
+			final int cs = column + 2;
+			int c, r = row;
+			for (c = cs; c <= stop - 2; c += 2) {
+				final int nr = c == mid ? r : newMarkerRow(), c2 = c - 2;
+				if (r != nr) {
+					final int rn = Math.min(r, nr) + 1, rx = Math.max(r, nr) - 1;
+					for (int j = rn; j <= rx; j++) {
+						vert(c2, j);
+					}
+					if (nr < r) {
+						if (c > cs) {
+							leftDown(c2, r);
+						}
+						rightUp(c2, nr);
+					} else {
+						if (c > cs) {
+							leftUp(c2, r);
+						}
+						rightDown(c2, nr);
+					}
+				} else if (c > cs) {
+					horiz(c2, nr);
+				}
+				horiz(c - 1, nr);
+				r = nr;
+			}
+			marker(c - 2, r);
 			//mountains
 			//ladder
-			//bridge
+			//if (!single) bridge
 		}
+	}
+	
+	private final static int newMarkerRow() {
+		return 6 + Mathtil.randi(0, 3) * 2;
+	}
+	
+	private final static int newLandmarkY() {
+		return 7 + Mathtil.randi(0, 1) * 2;
 	}
 	
 	private final static void island(final int start, final int stop) {
@@ -580,9 +614,13 @@ if (Pangine.getEngine().getClock() >= 0) {
 	private static void setForeground(final int x, final int y, final int ij, final int ii) {
 		final Tile t = tm.initTile(x, y);
 		t.setForeground(imgMap[ij][ii]);
-		if (DynamicTileMap.getRawBackground(t) != water) {
+		if (!isWater(t)) {
 			t.setBackground(base);
 		}
+	}
+	
+	private static boolean isWater(final Tile t) {
+		return DynamicTileMap.getRawBackground(t) == water;
 	}
 	
 	private static void marker(final int i, final int j) {
@@ -592,6 +630,37 @@ if (Pangine.getEngine().getClock() >= 0) {
 		//m.setPosition(tile);
 		m.getPosition().set(tile.getPosition());
 		room.addActor(m);
+	}
+	
+	private static void horiz(final int i, final int j) {
+		final Tile t = tm.initTile(i, j);
+		if (isWater(t)) {
+			t.setForeground(imgMap[0][7], TILE_HORIZ);
+		} else if (isWater(tm.getTile(i - 1, j)) || isWater(tm.getTile(i + 1, j))) {
+			t.setBehavior(TILE_HORIZ);
+		} else {
+			t.setBackground(imgMap[3][1], TILE_HORIZ);
+		}
+	}
+	
+	private static void vert(final int i, final int j) {
+		tm.initTile(i, j).setBackground(imgMap[3][2], TILE_VERT);
+	}
+	
+	private static void leftUp(final int i, final int j) {
+		tm.initTile(i, j).setBackground(imgMap[3][3], TILE_LEFTUP);
+	}
+	
+	private static void rightUp(final int i, final int j) {
+		tm.initTile(i, j).setBackground(imgMap[3][4], TILE_RIGHTUP);
+	}
+	
+	private static void leftDown(final int i, final int j) {
+		tm.initTile(i, j).setBackground(imgMap[3][5], TILE_LEFTDOWN);
+	}
+	
+	private static void rightDown(final int i, final int j) {
+		tm.initTile(i, j).setBackground(imgMap[3][6], TILE_RIGHTDOWN);
 	}
 	
 	private final static String generateName() {
