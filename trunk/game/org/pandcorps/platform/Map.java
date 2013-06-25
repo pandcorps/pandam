@@ -426,12 +426,14 @@ if (Pangine.getEngine().getClock() >= 0) {
 			marker(column, row);
 			final int cs = column + 2;
 			int c, r = row;
+			boolean needFork = true;
 			for (c = cs; c <= stop - 2; c += 2) {
 				final int nr, c2 = c - 2;
-				if (c == mid) {
+				final int used1 = used[getIndex(c)], used2 = used[getIndex(c2)];
+				final boolean currFork = needFork && used2 == -1 && c != mid; // && !isWater(tm.getTile(c, nr)) (handled by mid)
+				if (currFork || c == mid) {
 					nr = r;
 				} else {
-					final int used1 = used[getIndex(c)], used2 = used[getIndex(c2)];
 					int tr = newMarkerRow();
 					while (true) {
 						if ((used1 == -1 || used1 != tr) && (used2 == -1 || used2 < Math.min(r, tr) || used2 > Math.max(r, tr))) {
@@ -461,7 +463,17 @@ if (Pangine.getEngine().getClock() >= 0) {
 						rightDown(c2, nr);
 					}
 				} else if (c > cs) {
-					horiz(c2, nr);
+				    if (currFork) {
+				        marker(c2, nr);
+				        needFork = false;
+				        final int dir = nr <= 8 ? 1 : -1;
+				        vert(c2, nr + dir);
+				        marker(c2, nr + dir * 2); // Level that could be skipped
+				        vert(c2, nr + dir * 3);
+				        marker(c2, nr + dir * 4); // Bonus unlocked by playing optional Level
+				    } else {
+				        horiz(c2, nr);
+				    }
 				}
 				horiz(c - 1, nr);
 				r = nr;
