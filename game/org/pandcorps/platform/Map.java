@@ -406,6 +406,8 @@ if (Pangine.getEngine().getClock() >= 0) {
     	public final void init() {
     		column = 2;
     		row = newMarkerRow();
+    		//row = Mathtil.rand() ? 8 : 10;
+    		//row = Mathtil.rand() ? 6 : 12;
     	}
 		
 		@Override
@@ -422,6 +424,7 @@ if (Pangine.getEngine().getClock() >= 0) {
 			final int[] used = new int[11];
 			Arrays.fill(used, -1);
 			landmark(3 + Mathtil.randi(0, (mid / 2) - 5) * 2, newLandmarkY(), il, used);
+			//landmark(3, newLandmarkY(), il, used);
 			landmark(mid + 1 + (Mathtil.randi(0, ((stop - mid) / 2) - 3) * 2), newLandmarkY(), (il + 3) % 6, used);
 			marker(column, row);
 			final int cs = column + 2;
@@ -430,11 +433,14 @@ if (Pangine.getEngine().getClock() >= 0) {
 			for (c = cs; c <= stop - 2; c += 2) {
 				final int nr, c2 = c - 2;
 				final int used1 = used[getIndex(c)], used2 = used[getIndex(c2)];
-				final boolean currFork = needFork && used2 == -1 && c != mid; // && !isWater(tm.getTile(c, nr)) (handled by mid)
+				final boolean currFork = c > cs && needFork && used2 == -1 && c != mid; // && !isWater(tm.getTile(c, nr)) (handled by mid)
 				if (currFork || c == mid) {
 					nr = r;
 				} else {
 					int tr = newMarkerRow();
+					if (used2 == r) {
+					    throw new RuntimeException("used2 == r == " + r);
+					}
 					while (true) {
 						if ((used1 == -1 || used1 != tr) && (used2 == -1 || used2 < Math.min(r, tr) || used2 > Math.max(r, tr))) {
 							break;
