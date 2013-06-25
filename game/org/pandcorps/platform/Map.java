@@ -363,8 +363,8 @@ if (Pangine.getEngine().getClock() >= 0) {
 			}
 			tm.initTile(i, 10).setForeground(imgMap[0][1]);
 		}
-		mountain(5, 11);
-		mountain(10, 9);
+		mountain(5, 11, 3);
+		mountain(10, 9, 3);
 		for (int j = 1; j < 4; j++) {
 			tm.initTile(1, j).setBackground(imgMap[0][3]);
 			tm.initTile(14, j).setBackground(imgMap[0][5]);
@@ -433,7 +433,7 @@ if (Pangine.getEngine().getClock() >= 0) {
 			for (c = cs; c <= stop - 2; c += 2) {
 				final int nr, c2 = c - 2;
 				final int used1 = used[getIndex(c)], used2 = used[getIndex(c2)];
-				final boolean currFork = c > cs && needFork && used2 == -1 && c != mid; // && !isWater(tm.getTile(c, nr)) (handled by mid)
+				final boolean currFork = c > cs && needFork && used2 == -1 && c != mid; // && !isWater(c, nr) (handled by mid)
 				if (currFork || c == mid) {
 					nr = r;
 				} else {
@@ -485,7 +485,25 @@ if (Pangine.getEngine().getClock() >= 0) {
 				r = nr;
 			}
 			marker(c - 2, r);
-			//mountains
+			int bc = 0, br = 0, bl = 0;
+			for (r = 6; r <= 12; r++) {
+				int cc = column;
+				for (c = cc; c <= stop - 1; c++) {
+					// Check for landmark
+					if (!(c != (stop - 1) && tm.getTile(c, r).isSolid() && (c + 1) != mid && (c + 2) != mid && (c + 3) != mid)) {
+						final int cl = c - cc;
+						if (cl > bl) {
+							bc = cc;
+							br = r;
+							bl = cl;
+						}
+						cc = c + 1;
+					}
+				}
+			}
+			if (bl > 1) {
+				mountain(bc, br, bl);
+			}
 			//ladder
 		}
 	}
@@ -627,16 +645,22 @@ if (Pangine.getEngine().getClock() >= 0) {
 		hud.addActor(name);
 	}
 	
-	private static void mountain(final int x, final int y) {
+	private static void mountain(final int x, final int y, final int w) {
+		final boolean wtr = isWater(x, y);
+		final int stop = x + w - 1;
 		setForeground(x, y, 2, 3);
-		setForeground(x + 1, y, 2, 4);
-		setForeground(x + 2, y, 2, 5);
-		final int stop = x + 2, yshadow = y - 1;
-		for (int i = x; i <= stop; i++) {
-			final Tile t = tm.initTile(i, yshadow);
-			final TileMapImage b = getBaseImage();
-			t.setBackground(b);
-			t.setForeground(b);
+		for (int i = x + 1; i < stop; i++) {
+			setForeground(i, y, 2, 4);
+		}
+		setForeground(stop, y, 2, 5);
+		if (wtr) {
+			final int yshadow = y - 1;
+			for (int i = x; i <= stop; i++) {
+				final Tile t = tm.initTile(i, yshadow);
+				final TileMapImage b = getBaseImage();
+				t.setBackground(b);
+				t.setForeground(b);
+			}
 		}
 	}
 	
@@ -658,6 +682,10 @@ if (Pangine.getEngine().getClock() >= 0) {
 		}
 	}
 	
+	private static boolean isWater(final int x, final int y) {
+		return isWater(tm.initTile(x, y));
+	}
+	
 	private static boolean isWater(final Tile t) {
 		return DynamicTileMap.getRawBackground(t) == water;
 	}
@@ -675,7 +703,7 @@ if (Pangine.getEngine().getClock() >= 0) {
 		final Tile t = tm.initTile(i, j);
 		if (isWater(t)) {
 			t.setForeground(imgMap[0][7], TILE_HORIZ);
-		} else if (isWater(tm.getTile(i - 1, j)) || isWater(tm.getTile(i + 1, j))) {
+		} else if (isWater(i - 1, j) || isWater(i + 1, j)) {
 			t.setBehavior(TILE_HORIZ);
 		} else {
 			t.setBackground(imgMap[3][1], TILE_HORIZ);
