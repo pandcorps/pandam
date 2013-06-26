@@ -140,7 +140,7 @@ public final class Tile {
     //}
     
     public final void setSolid(final boolean solid) {
-        behavior = (byte) (solid ? BEHAVIOR_SOLID : BEHAVIOR_OPEN);
+        behavior = solid ? BEHAVIOR_SOLID : BEHAVIOR_OPEN;
     }
     
     public final boolean isSolid() {
