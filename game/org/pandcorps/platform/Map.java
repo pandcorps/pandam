@@ -96,6 +96,8 @@ public class Map {
 	protected final static int bgColor = 1;
 	
 	private final static HashMap<Pair<Integer, Integer>, Boolean> open = new HashMap<Pair<Integer, Integer>, Boolean>();
+	private static int roomW = -1;
+	private static int roomH = -1;
 	private static int column = -1;
 	private static int row = -1;
 	private static boolean first = true;
@@ -111,15 +113,26 @@ public class Map {
 	protected final static class MapScreen extends Panscreen {
 		@Override
         protected final void load() throws Exception {
-			loadImages();
-			loadMap();
+		    if (timg == null) {
+		        loadImages();
+		    }
+			clear();
+			final Tile t;
+			if (tm == null) {
+			    t = loadMap();
+			} else {
+			    initRoom(); // Markers disappear second time
+			    t = getStartTile();
+			}
+		    addPlayer(t);
+            addHud();
 			PlatformGame.fadeIn(room);
 		}
 		
-		@Override
+		/*@Override
 	    protected final void destroy() {
 	        Panmage.destroy(timg);
-	    }
+	    }*/
 	}
 	
 	protected final static class Marker extends Panctor {
@@ -294,38 +307,51 @@ if (Pangine.getEngine().getClock() >= 0) {
 		timg = Pangine.getEngine().createImage("img.map", tileImg);
 	}
 	
-	private final static void loadMap() {
+	private final static Tile loadMap() {
+	    Tile t;
 		//for (int i = 0; i < 100; i++) { // For testing rarely randomly generating errors
-			loadMap2();
+	        //tm = null;
+			t = loadMap2();
 		//}
+		return t;
 	}
 	
-	private final static void loadMap2() {
+	private final static void clear() {
 		PlatformGame.room.destroy();
 		for (final PlayerContext pc : PlatformGame.pcs) {
 		    pc.player = null;
 		}
+	}
+	
+	private final static Tile loadMap2() {
 		final Mapper b = new RandomMapper();
-		room = Pangine.getEngine().createRoom(Pantil.vmid(), new FinPanple(b.getW(), b.getH(), 0));
-		PlatformGame.room = room;
-		Pangame.getGame().setCurrentRoom(room);
-		tm = new DynamicTileMap("act.tilemap", room, ImtilX.DIM, ImtilX.DIM);
-		room.addActor(tm);
+		roomW = b.getW();
+		roomH = b.getH();
+		initRoom();
 		tm.setImageMap(timg);
-		imgMap = tm.splitImageMap();
-		final MapTileListener mtl = new MapTileListener(6);
-		for (int y = 0; y <= 2; y++) {
-			mtl.put(imgMap[5 + y][6], imgMap[5 + ((y + 1) % 3)][6]);
-		}
-		tm.setTileListener(mtl);
-		water = imgMap[5][6];
-		base = imgMap[1][1];
+        imgMap = tm.splitImageMap();
+        final MapTileListener mtl = new MapTileListener(6);
+        for (int y = 0; y <= 2; y++) {
+            mtl.put(imgMap[5 + y][6], imgMap[5 + ((y + 1) % 3)][6]);
+        }
+        tm.setTileListener(mtl);
+        water = imgMap[5][6];
+        base = imgMap[1][1];
 		tm.fillBackground(water, true);
 		b.init();
 		final Tile t = getStartTile();
 		b.build();
-		addPlayer(t);
-		addHud();
+		return t;
+	}
+	
+	private final static void initRoom() {
+	    room = Pangine.getEngine().createRoom(Pantil.vmid(), new FinPanple(roomW, roomH, 0));
+        PlatformGame.room = room;
+        Pangame.getGame().setCurrentRoom(room);
+        if (tm == null) {
+            tm = new DynamicTileMap("act.tilemap", room, ImtilX.DIM, ImtilX.DIM);
+        }
+	    room.addActor(tm);
 	}
 	
 	private static interface Mapper {
