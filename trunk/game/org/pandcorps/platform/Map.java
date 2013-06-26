@@ -295,6 +295,12 @@ if (Pangine.getEngine().getClock() >= 0) {
 	}
 	
 	private final static void loadMap() {
+		//for (int i = 0; i < 100; i++) { // For testing rarely randomly generating errors
+			loadMap2();
+		//}
+	}
+	
+	private final static void loadMap2() {
 		PlatformGame.room.destroy();
 		for (final PlayerContext pc : PlatformGame.pcs) {
 		    pc.player = null;
@@ -433,13 +439,21 @@ if (Pangine.getEngine().getClock() >= 0) {
 			marker(column, row);
 			final int cs = column + 2;
 			int c, r = row;
-			boolean needFork = true;
+			boolean needMin = row > 6, needMax = row < 12, needFork = true;
 			for (c = cs; c <= stop - 2; c += 2) {
 				final int nr, c2 = c - 2;
 				final int used1 = used[getIndex(c)], used2 = used[getIndex(c2)];
 				final boolean currFork = c > cs && needFork && used1 == -1 && used2 == -1 && (c - 2) != mid && c != mid && (c + 2) != mid; // && !isWater(c, nr) (handled by mid)
 				if (currFork || c == mid) {
 					nr = r;
+				} else if (c > 6 && (needMin || needMax) && used1 == -1 && used2 == -1) {
+					if (needMin) {
+						nr = 6;
+						needMin = false;
+					} else {
+						nr = 12;
+						needMax = false;
+					}
 				} else {
 					int tr = newMarkerRow();
 					if (used2 == r) {
@@ -455,6 +469,8 @@ if (Pangine.getEngine().getClock() >= 0) {
 							tr = 6;
 						}
 					}
+					needMin = needMin && tr > 6;
+					needMax = needMax && tr < 12;
 					nr = tr;
 				}
 				if (r != nr) {
