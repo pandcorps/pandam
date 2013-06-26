@@ -111,6 +111,7 @@ public class Map {
 	protected final static class MapScreen extends Panscreen {
 		@Override
         protected final void load() throws Exception {
+			loadImages();
 			loadMap();
 			PlatformGame.fadeIn(room);
 		}
@@ -284,24 +285,26 @@ if (Pangine.getEngine().getClock() >= 0) {
 	    return open.get(getKey(t)) != null;
     }
 	
-	private final static void loadMap() {
-		final Pangine engine = Pangine.getEngine();
-		PlatformGame.room.destroy();
-		for (final PlayerContext pc : PlatformGame.pcs) {
-		    pc.player = null;
-		}
-		final Mapper b = new RandomMapper();
-		room = engine.createRoom(Pantil.vmid(), new FinPanple(b.getW(), b.getH(), 0));
-		PlatformGame.room = room;
-		Pangame.getGame().setCurrentRoom(room);
-		tm = new DynamicTileMap("act.tilemap", room, ImtilX.DIM, ImtilX.DIM);
-		room.addActor(tm);
+	private final static void loadImages() {
 		BufferedImage tileImg = ImtilX.loadImage("org/pandcorps/platform/res/bg/Map.png", 128, null);
 		Level.applyDirtTexture(tileImg, 48, 0, 96, 16);
 		final BufferedImage terrain = Level.getDarkenedTerrain(Level.getTerrainTexture());
 		Level.applyTerrainTexture(tileImg, 48, 32, 96, 48, terrain, Level.getTerrainMask(1));
 		tileImg = Level.getColoredTerrain(tileImg, 48, 32, 48, 16);
-		timg = engine.createImage("img.map", tileImg);
+		timg = Pangine.getEngine().createImage("img.map", tileImg);
+	}
+	
+	private final static void loadMap() {
+		PlatformGame.room.destroy();
+		for (final PlayerContext pc : PlatformGame.pcs) {
+		    pc.player = null;
+		}
+		final Mapper b = new RandomMapper();
+		room = Pangine.getEngine().createRoom(Pantil.vmid(), new FinPanple(b.getW(), b.getH(), 0));
+		PlatformGame.room = room;
+		Pangame.getGame().setCurrentRoom(room);
+		tm = new DynamicTileMap("act.tilemap", room, ImtilX.DIM, ImtilX.DIM);
+		room.addActor(tm);
 		tm.setImageMap(timg);
 		imgMap = tm.splitImageMap();
 		final MapTileListener mtl = new MapTileListener(6);
@@ -434,13 +437,14 @@ if (Pangine.getEngine().getClock() >= 0) {
 			for (c = cs; c <= stop - 2; c += 2) {
 				final int nr, c2 = c - 2;
 				final int used1 = used[getIndex(c)], used2 = used[getIndex(c2)];
-				final boolean currFork = c > cs && needFork && used2 == -1 && c != mid; // && !isWater(c, nr) (handled by mid)
+				final boolean currFork = c > cs && needFork && used1 == -1 && used2 == -1 && (c - 2) != mid && c != mid && (c + 2) != mid; // && !isWater(c, nr) (handled by mid)
 				if (currFork || c == mid) {
 					nr = r;
 				} else {
 					int tr = newMarkerRow();
 					if (used2 == r) {
-					    throw new RuntimeException("used2 == r == " + r);
+					    throw new RuntimeException("\nused2 = r = " + r + "\nc = " + c + "\nmid = " + mid
+					    		+ "\nneedFork = " + needFork);
 					}
 					while (true) {
 						if ((used1 == -1 || used1 != tr) && (used2 == -1 || used2 < Math.min(r, tr) || used2 > Math.max(r, tr))) {
