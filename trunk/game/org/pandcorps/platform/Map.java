@@ -100,7 +100,6 @@ public class Map {
 	private static int roomH = -1;
 	private static int column = -1;
 	private static int row = -1;
-	private static boolean first = true;
 	private static String name = generateName();
 	
 	private static Panroom room = null;
@@ -110,6 +109,8 @@ public class Map {
 	private static TileMapImage[][] imgMap = null;
 	private static TileMapImage water = null;
 	private static TileMapImage base = null;
+	
+	private static boolean debug = false;
 	
 	protected final static class MapScreen extends Panscreen {
 		@Override
@@ -122,8 +123,9 @@ public class Map {
 			if (tm == null) {
 			    t = loadMap();
 			} else {
-			    initRoom(); //TODO Markers/open not updated second time
-			    t = getStartTile();
+				t = getStartTile();
+				open.put(getKey(t), Boolean.TRUE);
+			    initRoom();
 			}
 		    addPlayer(t);
             addHud();
@@ -141,6 +143,10 @@ public class Map {
 	
 	protected final static class Marker extends Panctor {
 		private Marker(final boolean open) {
+			setView(open);
+		}
+		
+		private void setView(final boolean open) {
 		    if (open) {
 		        setView(PlatformGame.markerDefeated);
 		    } else {
@@ -178,11 +184,16 @@ public class Map {
 	        	/*if (room.getBlendColor().getA() > Pancolor.MIN_VALUE) {
 	        		return;
 	        	}*/
-	            if (isOpen(getTile())) {
+	        	final Tile t = getTile();
+	            if (isOpen(t)) {
 	                return;
 	            }
+	            setPlayerPosition(t);
 	        	disabled = true;
 	        	PlatformGame.fadeOut(room, new PlatformGame.PlatformScreen());
+			} else if (interaction.KEY_TAB.isActive()) {
+				interaction.KEY_TAB.inactivate();
+				debug = !debug;
 			}
 		}
 		
@@ -195,13 +206,13 @@ public class Map {
 		    final Tile t0 = getTile();
 		    Tile t = t0;
 		    Direction d = d0;
-if (Pangine.getEngine().getClock() >= 0) {
-	final Tile tmp = t0.getNeighbor(d0);
-	if (tmp != null) {
-		setPos(tmp);
-	}
-	return true;
-}
+			if (debug) {
+				final Tile tmp = t0.getNeighbor(d0);
+				if (tmp != null) {
+					setPos(tmp);
+				}
+				return true;
+			}
 		    while (true) {
     		    t = t.getNeighbor(d);
     		    if (t == null || t.isSolid()) {
@@ -258,8 +269,7 @@ if (Pangine.getEngine().getClock() >= 0) {
 			final byte b = t.getBehavior();
 			switch (b) {
 				case TILE_MARKER :
-				    row = t.getRow();
-				    column = t.getColumn();
+					setPlayerPosition(t);
 				    changeView(pc.guySouth);
 					return;
 				case TILE_VERT : {
@@ -357,6 +367,7 @@ if (Pangine.getEngine().getClock() >= 0) {
         } else {
             for (final Marker m : markers) {
                 room.addActor(m);
+                m.setView(isOpen(tm.getContainer(m)));
             }
         }
 	    room.addActor(tm);
@@ -385,8 +396,7 @@ if (Pangine.getEngine().getClock() >= 0) {
     	
     	@Override
     	public final void init() {
-    		column = 2;
-    		row = 6;
+    		setPlayerPosition(2, 6);
     	}
     	
     	@Override
@@ -448,8 +458,7 @@ if (Pangine.getEngine().getClock() >= 0) {
 		
 		@Override
     	public final void init() {
-    		column = 2;
-    		row = newMarkerRow();
+    		setPlayerPosition(2, newMarkerRow());
     		//row = Mathtil.rand() ? 8 : 10;
     		//row = Mathtil.rand() ? 6 : 12;
     	}
@@ -676,13 +685,7 @@ if (Pangine.getEngine().getClock() >= 0) {
 	}
 	
 	private final static Tile getStartTile() {
-		final Tile t = tm.getTile(column, row);
-        if (first) {
-            first = false;
-        } else {
-            open.put(getKey(t), Boolean.TRUE);
-        }
-        return t;
+		return tm.getTile(column, row);
 	}
 	
 	private final static void addPlayer(final Tile t) {
@@ -790,6 +793,15 @@ if (Pangine.getEngine().getClock() >= 0) {
 	private final static String generateName() {
 		//return Mathtil.rand(ADJECTIVES) + ' ' + Mathtil.rand(NATURES) + ' ' + Mathtil.rand(PLACES);
 	    return nmr.get();
+	}
+	
+	private final static void setPlayerPosition(final Tile t) {
+		setPlayerPosition(t.getColumn(), t.getRow());
+	}
+	
+	private final static void setPlayerPosition(final int column, final int row) {
+		Map.column = column;
+		Map.row = row;
 	}
 	
 	public final static void main(final String[] args) {
