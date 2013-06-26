@@ -106,6 +106,7 @@ public class Map {
 	private static Panroom room = null;
 	private static Panmage timg = null;
 	private static DynamicTileMap tm = null;
+	private final static ArrayList<Marker> markers = new ArrayList<Marker>();
 	private static TileMapImage[][] imgMap = null;
 	private static TileMapImage water = null;
 	private static TileMapImage base = null;
@@ -121,7 +122,7 @@ public class Map {
 			if (tm == null) {
 			    t = loadMap();
 			} else {
-			    initRoom(); // Markers disappear second time
+			    initRoom(); //TODO Markers/open not updated second time
 			    t = getStartTile();
 			}
 		    addPlayer(t);
@@ -129,10 +130,13 @@ public class Map {
 			PlatformGame.fadeIn(room);
 		}
 		
-		/*@Override
+		@Override
 	    protected final void destroy() {
-	        Panmage.destroy(timg);
-	    }*/
+	        //Panmage.destroy(timg);
+		    for (final Marker m : markers) {
+		        m.detach();
+		    }
+	    }
 	}
 	
 	protected final static class Marker extends Panctor {
@@ -310,7 +314,7 @@ if (Pangine.getEngine().getClock() >= 0) {
 	private final static Tile loadMap() {
 	    Tile t;
 		//for (int i = 0; i < 100; i++) { // For testing rarely randomly generating errors
-	        //tm = null;
+	        //tm.destroy(); tm = null; destroy/clear markers
 			t = loadMap2();
 		//}
 		return t;
@@ -350,6 +354,10 @@ if (Pangine.getEngine().getClock() >= 0) {
         Pangame.getGame().setCurrentRoom(room);
         if (tm == null) {
             tm = new DynamicTileMap("act.tilemap", room, ImtilX.DIM, ImtilX.DIM);
+        } else {
+            for (final Marker m : markers) {
+                room.addActor(m);
+            }
         }
 	    room.addActor(tm);
 	}
@@ -742,6 +750,7 @@ if (Pangine.getEngine().getClock() >= 0) {
 		final Tile tile = tm.initTile(i, j);
 		tile.setBackground(imgMap[3][0], TILE_MARKER);
 		final Marker m = new Marker(isOpen(tile));
+		markers.add(m);
 		//m.setPosition(tile);
 		m.getPosition().set(tile.getPosition());
 		room.addActor(m);
