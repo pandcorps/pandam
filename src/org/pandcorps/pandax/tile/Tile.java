@@ -28,6 +28,10 @@ import org.pandcorps.pandam.impl.FinPanple;
 
 public final class Tile {
     
+	private final static byte BEHAVIOR_OPEN = 0;
+	
+	public final static byte BEHAVIOR_SOLID = 1;
+	
     /*package*/ final TileMap map;
     
     /*package*/ final int i;
@@ -46,7 +50,7 @@ public final class Tile {
     ///*package*/ Panctor occupant = null;
     /*package*/ TileOccupant occupant = null;
     
-    /*package*/ byte behavior = 0;
+    /*package*/ byte behavior = BEHAVIOR_OPEN;
     
     //int brightness
     
@@ -136,11 +140,11 @@ public final class Tile {
     //}
     
     public final void setSolid(final boolean solid) {
-        behavior = (byte) (solid ? 1 : 0);
+        behavior = (byte) (solid ? BEHAVIOR_SOLID : BEHAVIOR_OPEN);
     }
     
     public final boolean isSolid() {
-    	return behavior == 1;
+    	return behavior == BEHAVIOR_SOLID;
     }
     
     public final void setBehavior(final byte behavior) {
@@ -175,6 +179,6 @@ public final class Tile {
     }
     
     public final static byte getBehavior(final Tile t) {
-    	return t == null ? 0 : t.behavior;
+    	return t == null ? BEHAVIOR_OPEN : t.behavior;
     }
 }

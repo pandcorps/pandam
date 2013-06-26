@@ -90,6 +90,25 @@ public class TileMap extends Panctor {
     	return (x < 0 || y < 0) ? null : getTile((int) x / tw, (int) y / th);
     }
     
+    public final void fillBehavior(final byte behavior) {
+    	for (int i = 0; i < w; i++) {
+            for (int j = 0; j < h; j++) {
+                initTile(i, j).setBehavior(behavior);
+            }
+        } 
+    }
+    
+    public final void replaceBehavior(final byte orig, final byte replace) {
+    	for (int i = 0; i < w; i++) {
+            for (int j = 0; j < h; j++) {
+                final Tile t = initTile(i, j);
+                if (t.getBehavior() == orig) {
+                	t.setBehavior(replace);
+                }
+            }
+        } 
+    }
+    
     public final void fillBackground(final Panmage background) {
     	fillBackgroundO(background);
     }
