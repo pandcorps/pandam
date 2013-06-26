@@ -88,7 +88,7 @@ public final class Enemy extends Character {
 	
 	@Override
 	protected final void onScrolled() {
-		if (getPosition().getX() + 80 < getLayer().getViewMinimum().getX()) {
+		if (!isDestroyed() && getPosition().getX() + 80 < getLayer().getViewMinimum().getX()) {
 			destroy();
 		}
 	}
