@@ -43,6 +43,7 @@ public class Map {
 	private final static byte TILE_LEFTDOWN = 6;
 	private final static byte TILE_RIGHTDOWN = 7;
 	private final static byte TILE_MARKER = 8;
+	private final static byte TILE_SPECIAL = 9;
 	
 	/*private final static String[] ADJECTIVES =
 		{ "Bright", "Bubbly", "Cheery", "Emerald", "Enchanted", "Fragrant", "Green", "Fun", "Happy", "Incredible", "Merry",
@@ -489,10 +490,9 @@ if (Pangine.getEngine().getClock() >= 0) {
 			for (r = 6; r <= 12; r++) {
 				int cc = column;
 				for (c = cc; c <= stop - 1; c++) {
-					// Check for landmark
 					if (!(c != (stop - 1) && tm.getTile(c, r).isSolid() && (c + 1) != mid && (c + 2) != mid && (c + 3) != mid)) {
 						final int cl = c - cc;
-						if (cl > bl) {
+						if (cl > bl || (cl == bl && Mathtil.rand())) {
 							bc = cc;
 							br = r;
 							bl = cl;
@@ -505,6 +505,7 @@ if (Pangine.getEngine().getClock() >= 0) {
 				mountain(bc, br, bl);
 			}
 			//ladder
+			tm.replaceBehavior(TILE_SPECIAL, Tile.BEHAVIOR_SOLID);
 		}
 	}
 	
@@ -669,17 +670,18 @@ if (Pangine.getEngine().getClock() >= 0) {
 		for (int j = 0; j < 3; j++) {
 			final int yj = y + j, j7 = 7 - j;
 			for (int i = 0; i < 3; i++) {
-				setForeground(x + i, yj, j7, ix + i);
+				setForeground(x + i, yj, j7, ix + i).setBehavior(TILE_SPECIAL);
 			}
 		}
 	}
 	
-	private static void setForeground(final int x, final int y, final int ij, final int ii) {
+	private static Tile setForeground(final int x, final int y, final int ij, final int ii) {
 		final Tile t = tm.initTile(x, y);
 		t.setForeground(imgMap[ij][ii]);
 		if (!isWater(t)) {
 			t.setBackground(base);
 		}
+		return t;
 	}
 	
 	private static boolean isWater(final int x, final int y) {
