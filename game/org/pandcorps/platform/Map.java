@@ -476,7 +476,7 @@ public class Map {
     	public final void build() {
 			final int stop = tm.getWidth() - 1;
 			final int mid = 12 + (Mathtil.randi(-1, 3) * 2);
-			final boolean single = Mathtil.rand(0); //TODO > 0
+			final boolean single = Mathtil.rand(25);
 			if (single) {
 				island(2, stop);
 			} else {
@@ -585,7 +585,6 @@ public class Map {
 			if (bl > 1) {
 				mountain(bc, br, bl);
 			}
-			//ladder
 			tm.replaceBehavior(TILE_SPECIAL, Tile.BEHAVIOR_SOLID);
 		}
 	}
