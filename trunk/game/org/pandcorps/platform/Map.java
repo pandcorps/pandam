@@ -476,7 +476,8 @@ public class Map {
     	public final void build() {
 			final int stop = tm.getWidth() - 1;
 			final int mid = 12 + (Mathtil.randi(-1, 3) * 2);
-			if (Mathtil.rand(0)) {
+			final boolean single = Mathtil.rand(0); //TODO > 0
+			if (single) {
 				island(2, stop);
 			} else {
 				island(2, mid - 2);
@@ -525,9 +526,9 @@ public class Map {
 					needMax = needMax && tr < 12;
 					nr = tr;
 				}
+				final int rn = Math.min(r, nr), rx = Math.max(r, nr);
 				if (r != nr) {
-					final int rn = Math.min(r, nr) + 1, rx = Math.max(r, nr) - 1;
-					for (int j = rn; j <= rx; j++) {
+					for (int j = rn + 1; j < rx; j++) {
 						vert(c2, j);
 					}
 					if (nr < r) {
@@ -553,6 +554,10 @@ public class Map {
 				    } else {
 				        horiz(c2, nr);
 				    }
+				}
+				if (!currFork && c2 >= cs) {
+					final int mr = Mathtil.randi(rn, rx);
+					marker(c2, mr, single || !isWater(c2, mr));
 				}
 				horiz(c - 1, nr);
 				r = nr;
@@ -761,12 +766,20 @@ public class Map {
 	}
 	
 	private static void marker(final int i, final int j) {
+		marker(i, j, true);
+	}
+	
+	private static void marker(final int i, final int j, final boolean bg) {
 		final Tile tile = tm.initTile(i, j);
-		tile.setBackground(imgMap[3][0], TILE_MARKER);
+		if (bg) {
+			tile.setBackground(imgMap[3][0], TILE_MARKER);
+		}
 		final Marker m = new Marker(isOpen(tile));
 		markers.add(m);
 		//m.setPosition(tile);
-		m.getPosition().set(tile.getPosition());
+		final Panple pos = m.getPosition();
+		pos.set(tile.getPosition());
+		pos.setZ(tm.getForegroundDepth() + 1);
 		room.addActor(m);
 	}
 	

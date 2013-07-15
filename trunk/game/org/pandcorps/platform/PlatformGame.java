@@ -52,7 +52,6 @@ public class PlatformGame extends BaseGame {
 	Replace bush with Rise.png for some levels; rise will be higher than 1 tile; separate build method.
 	Taller bushes.
 	Map landmarks: Mountain, forest, garden, crater.
-	Random maps.
 	Bubble when map-traveling.
 	Train-riding levels.
 	Cannons that Player enters to be launched.
