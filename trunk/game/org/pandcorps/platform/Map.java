@@ -491,7 +491,7 @@ public class Map {
 			landmark(mid + 1 + (Mathtil.randi(0, ((stop - mid) / 2) - 3) * 2), newLandmarkY(), (il + 3) % 6, used);
 			marker(column, row);
 			final int cs = column + 2;
-			int c, r = row;
+			int c, r = row, fc = -1;
 			boolean needMin = row > 6, needMax = row < 12, needFork = true;
 			for (c = cs; c <= stop - 2; c += 2) {
 				final int nr, c2 = c - 2;
@@ -544,6 +544,7 @@ public class Map {
 					}
 				} else if (c > cs) {
 				    if (currFork) {
+				    	fc = c2;
 				        marker(c2, nr);
 				        needFork = false;
 				        final int dir = nr <= 8 ? 1 : -1;
@@ -565,6 +566,7 @@ public class Map {
 			endColumn = c - 2;
 			endRow = r;
 			marker(endColumn, endRow);
+			cliff(fc);
 			int bc = 0, br = 0, bl = 0;
 			for (r = 6; r <= 12; r++) {
 				int cc = column;
@@ -598,6 +600,30 @@ public class Map {
 	
 	private final static int newLandmarkY() {
 		return 7 + Mathtil.randi(0, 1) * 2;
+	}
+	
+	private final static void cliff(final int m) {
+		final int n = m - 1, x = m + 1;
+		tm.getTile(n, 16).setForeground(imgMap[0][0]);
+		tm.getTile(m, 16).setForeground(imgMap[0][1]);
+		tm.getTile(x, 16).setForeground(imgMap[0][2]);
+		tm.getTile(n, 15).setForeground(imgMap[1][0]);
+		tm.getTile(m, 15).setForeground((Panmage) null);
+		marker(m, 15);
+		tm.getTile(x, 15).setForeground(imgMap[1][2]);
+		tm.getTile(n, 14).setImages(imgMap[0][3], imgMap[2][0]);
+		tm.getTile(m, 14).setImages(imgMap[0][4], imgMap[2][1], TILE_VERT);
+		tm.getTile(x, 14).setImages(imgMap[0][5], imgMap[2][2]);
+		tm.getTile(n, 13).setImages(imgMap[0][3], imgMap[0][2]);
+		tm.getTile(m, 13).setImages(imgMap[0][4], imgMap[0][6], TILE_VERT);
+		tm.getTile(x, 13).setImages(imgMap[0][5], imgMap[0][0]);
+		for (int y = 12; ; y--) {
+			final Tile tile = tm.getTile(m, y);
+			if (!tile.isSolid()) {
+				break;
+			}
+			vert(m, y);
+		}
 	}
 	
 	private final static void island(final int start, final int stop) {

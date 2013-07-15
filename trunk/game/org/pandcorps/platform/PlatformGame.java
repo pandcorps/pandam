@@ -48,7 +48,8 @@ public class PlatformGame extends BaseGame {
 	Player falling/sliding images.
 	Allow jumping a little above top of Level.
 	Warp Map marker for entry/exit point.
-	Multiple islands for Map.
+	Ladder climb Map animation.
+	Pick random mountain color/texture shape used by Map and Level whenever a new Map is generated.
 	Replace bush with Rise.png for some levels; rise will be higher than 1 tile; separate build method.
 	Taller bushes.
 	Map landmarks: Mountain, forest, garden, crater.
