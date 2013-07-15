@@ -100,7 +100,9 @@ public class Map {
 	private static int roomH = -1;
 	private static int column = -1;
 	private static int row = -1;
-	private static String name = generateName();
+	private static int endColumn = -1;
+	private static int endRow = -1;
+	private static String name = null;
 	
 	private static Panroom room = null;
 	private static Panmage timg = null;
@@ -119,6 +121,10 @@ public class Map {
 		        loadImages();
 		    }
 			clear();
+			if (tm != null && row == endRow && column == endColumn) {
+				tm.destroy(); // Trigger generation of new Map
+				tm = null;
+			}
 			final Tile t;
 			if (tm == null) {
 			    t = loadMap();
@@ -322,6 +328,9 @@ public class Map {
 	}
 	
 	private final static Tile loadMap() {
+		open.clear();
+		Panctor.destroy(markers);
+		name = generateName();
 	    Tile t;
 		//for (int i = 0; i < 100; i++) { // For testing rarely randomly generating errors
 	        //tm.destroy(); tm = null; destroy/clear markers
@@ -548,7 +557,9 @@ public class Map {
 				horiz(c - 1, nr);
 				r = nr;
 			}
-			marker(c - 2, r);
+			endColumn = c - 2;
+			endRow = r;
+			marker(endColumn, endRow);
 			int bc = 0, br = 0, bl = 0;
 			for (r = 6; r <= 12; r++) {
 				int cc = column;
