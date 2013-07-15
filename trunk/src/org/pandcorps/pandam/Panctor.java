@@ -22,6 +22,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandam;
 
+import java.util.*;
 import org.pandcorps.core.Pantil;
 import org.pandcorps.pandam.event.TimerListener;
 import org.pandcorps.pandam.event.action.*;
@@ -390,6 +391,16 @@ public class Panctor extends BasePantity implements SpecPanctor {
 		if (actor != null) {
 			actor.destroy();
 		}
+	}
+	
+	public final static void destroy(final Collection<? extends Panctor> actors) {
+		if (actors == null) {
+			return;
+		}
+		for (final Panctor actor : actors) {
+			destroy(actor);
+		}
+		actors.clear();
 	}
 	
 	public final static void detach(final Panctor actor) {
