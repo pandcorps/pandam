@@ -165,7 +165,13 @@ public class PlatformGame extends BaseGame {
 			Imtil.copy(eyes, guys[i], 0, 0, 8, 4, 15, 10 + y, Imtil.COPY_FOREGROUND);
 		}
 		final String pre = "guy." + pcs.size();
-		final PlayerContext pc = new PlayerContext(name);
+		final Profile profile = new Profile();
+		profile.setName("A");
+		final Avatar avatar = new Avatar();
+		avatar.setName(name);
+		profile.currentAvatar = avatar;
+		profile.avatars.add(avatar);
+		final PlayerContext pc = new PlayerContext(profile);
 		
 		final Pangine engine = Pangine.getEngine();
 		final FinPanple ng = new FinPanple(-Player.PLAYER_X, 0, 0), xg = new FinPanple(Player.PLAYER_X, Player.PLAYER_H, 0);

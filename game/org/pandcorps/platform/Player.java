@@ -43,12 +43,22 @@ public class Player extends Character implements CollisionListener {
 	//private final static byte JUMP_INFINITE = 3;
 	private final static byte JUMP_FLY = 4;
 	
+	public static class PlayerData {
+	    private String name = null;
+	    
+	    public final String getName() {
+            return name;
+        }
+	    
+	    public final void setName(final String name) {
+            this.name = name;
+        }
+	}
+	
 	// Player attributes preserved between levels
 	public final static class PlayerContext {
-	    protected transient Player player = null;
-	    
-	    private String name = null;
-	    private int gems = 0;
+	    protected final Profile profile;
+	    protected Player player = null;
 	    
 	    protected Panput inJump = null;
 	    protected Panput inLeft = null;
@@ -62,16 +72,16 @@ public class Player extends Character implements CollisionListener {
 	    protected Panimation guyWest = null;
 	    protected Panimation guyNorth = null;
 	    
-	    public PlayerContext(final String name) {
-	        this.name = name;
+	    public PlayerContext(final Profile profile) {
+	        this.profile = profile;
 	    }
 	    
 	    public final String getName() {
-	        return name;
+	        return profile.currentAvatar.getName();
 	    }
 	    
 	    public final int getGems() {
-	        return gems;
+	        return profile.gems;
 	    }
 	}
 	
@@ -352,7 +362,7 @@ public class Player extends Character implements CollisionListener {
 	}
 	
 	public final void onFinishLevel() {
-		pc.gems += levelGems;
+		pc.profile.gems += levelGems;
 	}
 	
 	@Override
