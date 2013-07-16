@@ -154,10 +154,12 @@ public class PlatformGame extends BaseGame {
 		return strip;
 	}
 	
-	private final static void createAnimalStrip(final String name, final String anm, final int eye, final PixelFilter f, final int ctrl) {
+	private final static void createAnimalStrip(final Profile profile, final PixelFilter f, final int ctrl) {
 		final BufferedImage[] guys = loadChrStrip("Bear.png", 32, f);
+		final Avatar avatar = profile.currentAvatar;
+		final String anm = avatar.anm;
 		final BufferedImage face = Imtil.filter(ImtilX.loadImage("org/pandcorps/platform/res/chr/Face" + anm + ".png", false), f);
-		final BufferedImage eyes = ImtilX.loadImage("org/pandcorps/platform/res/chr/Eyes0" + eye + ".png", false);
+		final BufferedImage eyes = ImtilX.loadImage("org/pandcorps/platform/res/chr/Eyes0" + avatar.eye + ".png", false);
 		final int size = guys.length;
 		for (int i = 0; i < size; i++) {
 			final int y = (i == 3) ? -1 : 0;
@@ -165,12 +167,6 @@ public class PlatformGame extends BaseGame {
 			Imtil.copy(eyes, guys[i], 0, 0, 8, 4, 15, 10 + y, Imtil.COPY_FOREGROUND);
 		}
 		final String pre = "guy." + pcs.size();
-		final Profile profile = new Profile();
-		profile.setName("A");
-		final Avatar avatar = new Avatar();
-		avatar.setName(name);
-		profile.currentAvatar = avatar;
-		profile.avatars.add(avatar);
 		final PlayerContext pc = new PlayerContext(profile);
 		
 		final Pangine engine = Pangine.getEngine();
@@ -248,7 +244,15 @@ public class PlatformGame extends BaseGame {
 	
 	private final static void loadConstants() {
 		final Pangine engine = Pangine.getEngine();
-		createAnimalStrip("Balue", "Bear", 1, null, 0);
+		final Profile profile = new Profile();
+        profile.setName("A");
+        final Avatar avatar = new Avatar();
+        avatar.setName("Balue");
+        avatar.anm = "Bear";
+        avatar.eye = 1;
+        profile.currentAvatar = avatar;
+        profile.avatars.add(avatar);
+		createAnimalStrip(profile, null, 0);
 		//createAnimalStrip("Grabbit", "Rabbit", 2, new MultiplyPixelFilter(Channel.Blue, 0f, Channel.Blue, 1f, Channel.Blue, 0.25f), 1);
 		//createAnimalStrip("Roddy", "Mouse", 3, new SwapPixelFilter(Channel.Blue, Channel.Red, Channel.Blue), 0);
 		//createAnimalStrip("Felip", "Cat", 4, new SwapPixelFilter(Channel.Red, Channel.Red, Channel.Blue), 0);

@@ -29,4 +29,7 @@ public class Profile extends PlayerData {
     protected final ArrayList<Avatar> avatars = new ArrayList<Avatar>();
     protected Avatar currentAvatar = null;
     protected int gems = 0;
+    // Levels/Maps defeated statistics
+    // Achievements
+    // Control Options
 }
