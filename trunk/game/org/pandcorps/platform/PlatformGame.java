@@ -244,24 +244,31 @@ public class PlatformGame extends BaseGame {
 		f.put(r, g, b, Pancolor.MAX_VALUE, r, b, g, Pancolor.MAX_VALUE);
 	}
 	
-	private final static void loadConstants() {
+	private final static void loadConstants() throws Exception {
 		final Pangine engine = Pangine.getEngine();
 		final Segment cfg = SegmentStream.readLocation("Config.txt").get(0);
 		final String pname = cfg.getValue(0);
-		final List<Segment> plist = SegmentStream.readLocation(pname + ".txt");
+		final SegmentStream plist = SegmentStream.openLocation(pname + ".txt");
 		final Profile profile = new Profile();
         profile.setName(pname);
-        final Avatar avatar = new Avatar();
-        avatar.load(plist.get(0));
+        Segment seg = null;
+        seg = plist.readRequire("PRF");
+        profile.load(seg);
+        final String curName = seg.getValue(1);
+        while ((seg = plist.readIf("AVT")) != null) {
+        	final Avatar avatar = new Avatar();
+        	avatar.load(seg);
+        	profile.avatars.add(avatar);
+        }
+        plist.close();
         /*avatar.setName("Balue");
         avatar.anm = "Bear";
         avatar.eye = 1;
         avatar.r = 0;
         avatar.g = 1;
         avatar.b = 1;*/
-        profile.currentAvatar = avatar;
-        profile.avatars.add(avatar);
-        profile.ctrl = 0;
+        profile.currentAvatar = profile.getAvatar(curName);
+        //profile.ctrl = 0;
 		createAnimalStrip(profile);
 		//createAnimalStrip("Grabbit", "Rabbit", 2, new MultiplyPixelFilter(Channel.Blue, 0f, Channel.Blue, 1f, Channel.Blue, 0.25f), 1);
 		//createAnimalStrip("Roddy", "Mouse", 3, new SwapPixelFilter(Channel.Blue, Channel.Red, Channel.Blue), 0);
