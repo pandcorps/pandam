@@ -25,5 +25,6 @@ package org.pandcorps.platform;
 import org.pandcorps.platform.Player.PlayerData;
 
 public class Avatar extends PlayerData {
-    
+    protected String anm = null;
+    protected int eye = -1;
 }
