@@ -23,6 +23,8 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.platform;
 
 import java.util.*;
+
+import org.pandcorps.core.seg.*;
 import org.pandcorps.platform.Player.PlayerData;
 
 public class Profile extends PlayerData {
@@ -32,4 +34,8 @@ public class Profile extends PlayerData {
     // Levels/Maps defeated statistics
     // Achievements
     protected int ctrl = -1;
+    
+    public void load(final Segment seg) {
+    	//seg.
+    }
 }

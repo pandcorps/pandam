@@ -22,6 +22,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.platform;
 
+import org.pandcorps.core.seg.*;
 import org.pandcorps.platform.Player.PlayerData;
 
 public class Avatar extends PlayerData {
@@ -30,4 +31,13 @@ public class Avatar extends PlayerData {
     protected float r = -1; // These should probably be multiples of 0.25
     protected float g = -1;
     protected float b = -1;
+    
+    public void load(final Segment seg) {
+    	setName(seg.getValue(0));
+    	anm = seg.getValue(1);
+    	eye = seg.intValue(2);
+    	r = seg.floatValue(3);
+    	g = seg.floatValue(4);
+    	b = seg.floatValue(5);
+    }
 }

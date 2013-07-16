@@ -29,6 +29,7 @@ import org.pandcorps.core.*;
 import org.pandcorps.core.chr.CallSequence;
 import org.pandcorps.core.img.*;
 import org.pandcorps.core.img.Pancolor.Channel;
+import org.pandcorps.core.seg.*;
 import org.pandcorps.game.*;
 import org.pandcorps.game.core.*;
 import org.pandcorps.pandam.*;
@@ -245,15 +246,19 @@ public class PlatformGame extends BaseGame {
 	
 	private final static void loadConstants() {
 		final Pangine engine = Pangine.getEngine();
+		final Segment cfg = SegmentStream.readLocation("Config.txt").get(0);
+		final String pname = cfg.getValue(0);
+		final List<Segment> plist = SegmentStream.readLocation(pname + ".txt");
 		final Profile profile = new Profile();
-        profile.setName("A");
+        profile.setName(pname);
         final Avatar avatar = new Avatar();
-        avatar.setName("Balue");
+        avatar.load(plist.get(0));
+        /*avatar.setName("Balue");
         avatar.anm = "Bear";
         avatar.eye = 1;
         avatar.r = 0;
         avatar.g = 1;
-        avatar.b = 1;
+        avatar.b = 1;*/
         profile.currentAvatar = avatar;
         profile.avatars.add(avatar);
         profile.ctrl = 0;
