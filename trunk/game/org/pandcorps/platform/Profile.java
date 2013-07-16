@@ -31,5 +31,5 @@ public class Profile extends PlayerData {
     protected int gems = 0;
     // Levels/Maps defeated statistics
     // Achievements
-    // Control Options
+    protected int ctrl = -1;
 }
