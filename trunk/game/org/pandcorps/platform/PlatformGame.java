@@ -154,9 +154,10 @@ public class PlatformGame extends BaseGame {
 		return strip;
 	}
 	
-	private final static void createAnimalStrip(final Profile profile, final PixelFilter f) {
+	private final static void createAnimalStrip(final Profile profile) {
+	    final Avatar avatar = profile.currentAvatar;
+	    final PixelFilter f = new MultiplyPixelFilter(Channel.Blue, avatar.r, Channel.Blue, avatar.g, Channel.Blue, avatar.b);
 		final BufferedImage[] guys = loadChrStrip("Bear.png", 32, f);
-		final Avatar avatar = profile.currentAvatar;
 		final String anm = avatar.anm;
 		final BufferedImage face = Imtil.filter(ImtilX.loadImage("org/pandcorps/platform/res/chr/Face" + anm + ".png", false), f);
 		final BufferedImage eyes = ImtilX.loadImage("org/pandcorps/platform/res/chr/Eyes0" + avatar.eye + ".png", false);
@@ -250,10 +251,13 @@ public class PlatformGame extends BaseGame {
         avatar.setName("Balue");
         avatar.anm = "Bear";
         avatar.eye = 1;
+        avatar.r = 0;
+        avatar.g = 1;
+        avatar.b = 1;
         profile.currentAvatar = avatar;
         profile.avatars.add(avatar);
         profile.ctrl = 0;
-		createAnimalStrip(profile, null);
+		createAnimalStrip(profile);
 		//createAnimalStrip("Grabbit", "Rabbit", 2, new MultiplyPixelFilter(Channel.Blue, 0f, Channel.Blue, 1f, Channel.Blue, 0.25f), 1);
 		//createAnimalStrip("Roddy", "Mouse", 3, new SwapPixelFilter(Channel.Blue, Channel.Red, Channel.Blue), 0);
 		//createAnimalStrip("Felip", "Cat", 4, new SwapPixelFilter(Channel.Red, Channel.Red, Channel.Blue), 0);
