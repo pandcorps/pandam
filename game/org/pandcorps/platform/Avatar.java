@@ -27,4 +27,7 @@ import org.pandcorps.platform.Player.PlayerData;
 public class Avatar extends PlayerData {
     protected String anm = null;
     protected int eye = -1;
+    protected float r = -1; // These should probably be multiples of 0.25
+    protected float g = -1;
+    protected float b = -1;
 }
