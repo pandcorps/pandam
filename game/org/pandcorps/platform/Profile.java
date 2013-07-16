@@ -35,7 +35,18 @@ public class Profile extends PlayerData {
     // Achievements
     protected int ctrl = -1;
     
+    public Avatar getAvatar(final String name) {
+    	for (final Avatar avatar : avatars) {
+    		if (avatar.getName().equals(name)) {
+    			return avatar;
+    		}
+    	}
+    	return null;
+    }
+    
     public void load(final Segment seg) {
-    	//seg.
+    	setName(seg.getValue(0));
+    	gems = seg.intValue(2);
+    	ctrl = seg.intValue(3);
     }
 }
