@@ -95,4 +95,31 @@ public class Segment extends Record {
     public final String getValue(final int i) {
         return Field.getValue(getField(i));
     }
+    
+    public final void setRepetitions(final int i, final ArrayList<Field> repetitions) {
+    	Coltil.setIfNeeded(fields, i, repetitions);
+    }
+    
+    public final void setField(final int i, final Field field) {
+    	final ArrayList<Field> repetitions;
+    	if (field == null) {
+    		repetitions = null;
+    	} else {
+    		repetitions = new ArrayList<Field>(1);
+    		repetitions.add(field);
+    	}
+    	setRepetitions(i, repetitions);
+    }
+    
+    @Override
+    public final void setValue(final int i, final String value) {
+    	final Field field;
+    	if (value == null) {
+    		field = null;
+    	} else {
+    		field = new Field();
+    		field.setValue(0, value);
+    	}
+    	setField(i, field);
+    }
 }

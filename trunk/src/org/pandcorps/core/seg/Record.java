@@ -27,6 +27,8 @@ import org.pandcorps.core.*;
 public abstract class Record {
     public abstract String getValue(final int i);
     
+    public abstract void setValue(final int i, final String v);
+    
     public final byte byteValue(final int i) {
         return parseByte(getValue(i));
     }
@@ -65,6 +67,46 @@ public abstract class Record {
     
     public final Boolean getBoolean(final int i) {
         return Pantil.toBoolean(getValue(i));
+    }
+    
+    public final void setByte(final int i, final byte value) {
+    	setValue(i, String.valueOf(value));
+    }
+    
+    public final void setShort(final int i, final short value) {
+    	setValue(i, String.valueOf(value));
+    }
+    
+    public final void setInt(final int i, final int value) {
+    	setValue(i, String.valueOf(value));
+    }
+    
+    public final void setFloat(final int i, final float value) {
+    	setValue(i, String.valueOf(value));
+    }
+    
+    public final void setBoolean(final int i, final boolean value) {
+    	setValue(i, String.valueOf(value));
+    }
+    
+    public final void setByte(final int i, final Byte value) {
+    	setValue(i, Chartil.toString(value));
+    }
+    
+    public final void setShort(final int i, final Short value) {
+    	setValue(i, Chartil.toString(value));
+    }
+    
+    public final void setInteger(final int i, final Integer value) {
+    	setValue(i, Chartil.toString(value));
+    }
+    
+    public final void setFloat(final int i, final Float value) {
+    	setValue(i, Chartil.toString(value));
+    }
+    
+    public final void setBoolean(final int i, final Boolean value) {
+    	setValue(i, Chartil.toString(value));
     }
     
     protected final static byte parseByte(final String value) {
