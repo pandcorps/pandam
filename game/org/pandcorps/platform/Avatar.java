@@ -40,4 +40,13 @@ public class Avatar extends PlayerData {
     	g = seg.floatValue(4);
     	b = seg.floatValue(5);
     }
+    
+    public void save(final Segment seg) {
+    	seg.setValue(0, getName());
+    	seg.setValue(1, anm);
+    	seg.setInt(2, eye);
+    	seg.setFloat(3, r);
+    	seg.setFloat(4, g);
+    	seg.setFloat(5, b);
+    }
 }

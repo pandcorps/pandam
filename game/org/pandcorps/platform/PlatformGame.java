@@ -247,8 +247,14 @@ public class PlatformGame extends BaseGame {
 	private final static void loadConstants() throws Exception {
 		final Pangine engine = Pangine.getEngine();
 		final Segment cfg = SegmentStream.readLocation("Config.txt").get(0);
+		// CFG|Andrew
 		final String pname = cfg.getValue(0);
 		final SegmentStream plist = SegmentStream.openLocation(pname + ".txt");
+		/*
+		PRF|Andrew|Balue|1|0
+		AVT|Grabbit|Rabbit|2|0|1|0.25
+		AVT|Balue|Bear|1|0|1|1
+		*/
 		final Profile profile = new Profile();
         profile.setName(pname);
         Segment seg = null;
