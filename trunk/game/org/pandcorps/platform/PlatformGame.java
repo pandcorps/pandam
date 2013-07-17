@@ -256,7 +256,7 @@ public class PlatformGame extends BaseGame {
 		AVT|Balue|Bear|1|0|1|1
 		*/
 		final Profile profile = new Profile();
-        profile.setName(pname);
+        //profile.setName(pname);
         Segment seg = null;
         seg = plist.readRequire("PRF");
         profile.load(seg);

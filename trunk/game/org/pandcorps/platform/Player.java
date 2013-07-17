@@ -53,6 +53,10 @@ public class Player extends Character implements CollisionListener {
 	    public final void setName(final String name) {
             this.name = name;
         }
+	    
+	    public final static String getName(final PlayerData data) {
+	        return data == null ? null : data.getName();
+	    }
 	}
 	
 	// Player attributes preserved between levels

@@ -49,4 +49,11 @@ public class Profile extends PlayerData {
     	gems = seg.intValue(2);
     	ctrl = seg.intValue(3);
     }
+    
+    public void save(final Segment seg) {
+        seg.setValue(0, getName());
+        seg.setValue(1, getName(currentAvatar));
+        seg.setInt(2, gems);
+        seg.setInt(3, ctrl);
+    }
 }
