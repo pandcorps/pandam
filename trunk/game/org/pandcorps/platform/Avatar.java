@@ -25,7 +25,7 @@ package org.pandcorps.platform;
 import org.pandcorps.core.seg.*;
 import org.pandcorps.platform.Player.PlayerData;
 
-public class Avatar extends PlayerData {
+public class Avatar extends PlayerData implements Segmented {
     protected String anm = null;
     protected int eye = -1;
     protected float r = -1; // These should probably be multiples of 0.25
@@ -41,7 +41,9 @@ public class Avatar extends PlayerData {
     	b = seg.floatValue(5);
     }
     
+    @Override
     public void save(final Segment seg) {
+        seg.setName("AVT");
     	seg.setValue(0, getName());
     	seg.setValue(1, anm);
     	seg.setInt(2, eye);
