@@ -22,6 +22,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.core.seg;
 
+import java.io.*;
 import java.util.*;
 
 import org.pandcorps.core.*;
@@ -30,16 +31,13 @@ public class Segment extends Record {
     private final static char DELIM_FIELD = '|';
     private final static char DELIM_REP = '~';
     
-    private final String name;
+    private String name = null;
     private final ArrayList<ArrayList<Field>> fields = new ArrayList<ArrayList<Field>>();
     
-    /*
-    Current use is for parsing segment files.
-    We should eventually need to create Segments programmatically and to serialize them.
-    So this should probably be public.
-    We'd also need public setters.
-    */
-    private Segment(final String name) {
+    public Segment() {
+    }
+    
+    public Segment(final String name) {
         this.name = name;
     }
     
@@ -79,6 +77,23 @@ public class Segment extends Record {
         return seg;
     }
     
+    @Override
+    public final void serialize(final Writer w) throws IOException {
+        w.write(name);
+        for (final List<Field> field : fields) {
+            w.write(DELIM_FIELD);
+            boolean first = true;
+            for (final Field rep : field) {
+                if (first) {
+                    first = false;
+                } else {
+                    w.write(DELIM_REP);
+                }
+                rep.serialize(w);
+            }
+        }
+    }
+    
     public final String getName() {
         return name;
     }
@@ -94,6 +109,10 @@ public class Segment extends Record {
     @Override
     public final String getValue(final int i) {
         return Field.getValue(getField(i));
+    }
+    
+    public final void setName(final String name) {
+        this.name = name;
     }
     
     public final void setRepetitions(final int i, final ArrayList<Field> repetitions) {

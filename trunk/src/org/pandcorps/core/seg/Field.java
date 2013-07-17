@@ -22,6 +22,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.core.seg;
 
+import java.io.*;
 import java.util.*;
 
 import org.pandcorps.core.*;
@@ -51,6 +52,19 @@ public class Field extends Record {
             }
         }
         return fld;
+    }
+    
+    @Override
+    public final void serialize(final Writer w) throws IOException {
+        boolean first = true;
+        for (final String cmp : components) {
+            if (first) {
+                first = false;
+            } else {
+                w.write(DELIM_COMPONENT);
+            }
+            w.write(cmp);
+        }
     }
     
     public final String getValue() {
