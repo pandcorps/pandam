@@ -160,6 +160,12 @@ public final class Coltil {
 	    list.set(i, elem);
 	}
 	
+	public final static <E, T extends E> void setIfNeeded(final List<E> list, final int i, final T elem) {
+		if (elem != null || (list.size() - 1) >= i) {
+    		Coltil.set(list, i, elem);
+    	}
+	}
+	
 	public final static <E, T extends E> ArrayList<E> add(ArrayList<E> list, final T elem) {
 	    if (list == null) {
 	        list = new ArrayList<E>();
