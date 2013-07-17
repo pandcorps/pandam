@@ -22,12 +22,13 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.platform;
 
+import java.io.*;
 import java.util.*;
 
 import org.pandcorps.core.seg.*;
 import org.pandcorps.platform.Player.PlayerData;
 
-public class Profile extends PlayerData {
+public class Profile extends PlayerData implements Segmented {
     protected final ArrayList<Avatar> avatars = new ArrayList<Avatar>();
     protected Avatar currentAvatar = null;
     protected int gems = 0;
@@ -50,10 +51,19 @@ public class Profile extends PlayerData {
     	ctrl = seg.intValue(3);
     }
     
+    @Override
     public void save(final Segment seg) {
+        seg.setName("PRF");
         seg.setValue(0, getName());
         seg.setValue(1, getName(currentAvatar));
         seg.setInt(2, gems);
         seg.setInt(3, ctrl);
+    }
+    
+    public void serialize(final Writer out) throws IOException {
+        Segtil.serialize(this, out);
+        for (final Avatar avatar : avatars) {
+            Segtil.serialize(avatar, out);
+        }
     }
 }

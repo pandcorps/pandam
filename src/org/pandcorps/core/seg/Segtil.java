@@ -22,6 +22,8 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.core.seg;
 
+import java.io.*;
+
 import org.pandcorps.core.*;
 
 public final class Segtil {
@@ -40,5 +42,12 @@ public final class Segtil {
     
     public final static String toPiped(final Segmented s) {
         return Chartil.toString(toSegment(s));
+    }
+    
+    public final static void serialize(final Segmented s, final Writer w) throws IOException {
+        final Segment seg = toSegment(s);
+        if (seg != null) {
+            seg.serialize(w);
+        }
     }
 }
