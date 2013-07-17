@@ -27,6 +27,8 @@ import java.net.*;
 
 // Input/Output Utility
 public final class Iotil {
+	public final static String BR = System.getProperty("line.separator");
+	
 	private final static BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 	
 	private Iotil() {
@@ -55,6 +57,14 @@ public final class Iotil {
 			throw new RuntimeException(e);
 		}
 	}
+	
+	public final static Writer getWriter(final String location) {
+		try {
+			return new FileWriter(location);
+		} catch (final IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
 	public final static void close(final Closeable s) {
 		if (s != null) {
@@ -74,6 +84,22 @@ public final class Iotil {
 	    return in instanceof BufferedReader ? (BufferedReader) in : new BufferedReader(in);
 	}
 	
+	public final static BufferedOutputStream getBufferedOutputStream(final OutputStream out) {
+	    return out instanceof BufferedOutputStream ? (BufferedOutputStream) out : new BufferedOutputStream(out);
+	}
+	
+	public final static BufferedWriter getBufferedWriter(final Writer out) {
+	    return out instanceof BufferedWriter ? (BufferedWriter) out : new BufferedWriter(out);
+	}
+	
+	public final static BufferedInputStream getBufferedInputStream(final String location) {
+		return getBufferedInputStream(getInputStream(location));
+	}
+	
+	public final static BufferedWriter getBufferedWriter(final String location) {
+		return getBufferedWriter(getWriter(location));
+	}
+	
 	public final static void copy(final InputStream in, final OutputStream out) throws IOException {
 		final int size = 1024;
 		final byte[] buf = new byte[size];
@@ -83,6 +109,14 @@ public final class Iotil {
 				break;
 			}
 			out.write(buf, 0, len);
+		}
+	}
+	
+	public final static void println(final Writer w) {
+		try {
+			w.write(BR);
+		} catch (final IOException e) {
+			throw new RuntimeException(e);
 		}
 	}
 	
