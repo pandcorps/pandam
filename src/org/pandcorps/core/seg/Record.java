@@ -22,12 +22,29 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.core.seg;
 
+import java.io.*;
+
 import org.pandcorps.core.*;
 
 public abstract class Record {
+    public abstract void serialize(final Writer w) throws IOException;
+    
     public abstract String getValue(final int i);
     
     public abstract void setValue(final int i, final String v);
+    
+    @Override
+    public final String toString() {
+        final StringWriter w = new StringWriter();
+        try {
+            serialize(w);
+            return w.toString();
+        } catch (final IOException e) {
+            throw new RuntimeException(e);
+        } finally {
+            Iotil.close(w);
+        }
+    }
     
     public final byte byteValue(final int i) {
         return parseByte(getValue(i));
