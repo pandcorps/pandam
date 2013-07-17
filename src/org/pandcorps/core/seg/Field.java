@@ -62,6 +62,13 @@ public class Field extends Record {
         return Coltil.get(components, i);
     }
     
+    @Override
+    public final void setValue(final int i, final String value) {
+        Coltil.setIfNeeded(components, i, value);
+    }
+    
+    // Could add setters with no index that default to 0
+    
     public final byte byteValue() {
         return parseByte(getValue());
     }
