@@ -25,6 +25,7 @@ package org.pandcorps.platform;
 import java.io.*;
 import java.util.*;
 
+import org.pandcorps.core.Iotil;
 import org.pandcorps.core.seg.*;
 import org.pandcorps.platform.Player.PlayerData;
 
@@ -63,7 +64,17 @@ public class Profile extends PlayerData implements Segmented {
     public void serialize(final Writer out) throws IOException {
         Segtil.serialize(this, out);
         for (final Avatar avatar : avatars) {
+        	Iotil.println(out);
             Segtil.serialize(avatar, out);
         }
+    }
+    
+    public void serialize(final String loc) throws IOException {
+    	final Writer out = Iotil.getBufferedWriter(loc);
+    	try {
+    		serialize(out);
+    	} finally {
+    		Iotil.close(out);
+    	}
     }
 }
