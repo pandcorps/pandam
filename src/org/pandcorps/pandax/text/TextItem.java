@@ -68,11 +68,11 @@ public abstract class TextItem {
     }
     
     public final void init(final Panctor parent) {
-        final Panroom room = Pangame.getGame().getCurrentRoom();
-        //final Panple size = room.getSize();
-        //TODO make sure zoom for overlayer matches main layer
-        final Panple size = label.size;
         if (ownLayer) {
+            final Panroom room = Pangame.getGame().getCurrentRoom();
+            //final Panple size = room.getSize();
+            //TODO make sure zoom for overlayer matches main layer
+            final Panple size = label.size;
             layer = Pangine.getEngine().createLayer(Pantil.vmid(), size.getX(), size.getY(), size.getZ(), room);
             layer.setActive(true);
             layer.setClearDepthEnabled(true);
@@ -81,7 +81,7 @@ public abstract class TextItem {
         }
         layer.addActor(label);
         setPos();
-        enable();
+        focus();
         this.parent = parent;
         activateParent(false);
     }
@@ -104,5 +104,9 @@ public abstract class TextItem {
     	return label;
     }
     
-    protected abstract void enable();
+    protected abstract void focus();
+    
+    protected void blur() {
+        label.unregisterListeners();
+    }
 }
