@@ -63,13 +63,11 @@ public class RadioGroup extends TextItem {
         final ActionStartListener submitListener = new ActionStartListener() {
             @Override
             public void onActionStart(final ActionStartEvent event) {
-                layer.destroy();
-                label.unregisterListeners();
+                close();
                 // inactivate should only apply for the current press (and not at all if the key isn't currently pressed).
                 // This disableed the next up/down press if they weren't currently pressed before adding the active check to inactivate
                 Panput.inactivate(submit, up, down);
                 // onSubmit might create a new TextItem with same parent (deactivating it); activate first so we don't undo onSubmit
-                activateParent(true);
                 listener.onSubmit(new RadioSubmitEvent(RadioGroup.this, label.radioLine, options.get(label.radioLine)));
             }};
         label.register(submit, submitListener);

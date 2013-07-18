@@ -276,7 +276,7 @@ public class PlatformGame extends BaseGame {
         profile.currentAvatar = profile.getAvatar(curName);
         //profile.ctrl = 0;
 		createAnimalStrip(profile);
-		profile.serialize("temptemp.txt");
+		//profile.serialize("temptemp.txt");
 		//createAnimalStrip("Grabbit", "Rabbit", 2, new MultiplyPixelFilter(Channel.Blue, 0f, Channel.Blue, 1f, Channel.Blue, 0.25f), 1);
 		//createAnimalStrip("Roddy", "Mouse", 3, new SwapPixelFilter(Channel.Blue, Channel.Red, Channel.Blue), 0);
 		//createAnimalStrip("Felip", "Cat", 4, new SwapPixelFilter(Channel.Red, Channel.Red, Channel.Blue), 0);
