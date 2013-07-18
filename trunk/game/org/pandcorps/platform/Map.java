@@ -200,6 +200,9 @@ public class Map {
 			} else if (interaction.KEY_TAB.isActive()) {
 				interaction.KEY_TAB.inactivate();
 				debug = !debug;
+			} else if (interaction.KEY_ESCAPE.isActive()) {
+				interaction.KEY_ESCAPE.inactivate();
+				Panscreen.set(new Menu.AvatarScreen(pc));
 			}
 		}
 		
