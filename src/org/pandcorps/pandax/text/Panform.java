@@ -24,17 +24,38 @@ package org.pandcorps.pandax.text;
 
 import java.util.ArrayList;
 
-public class Panform {
-    // Might move layer-managing code from TextItem into a common super class for TextItem/Panform
+import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.event.action.*;
+
+public class Panform extends MenuItem {
+    // Might move layer-managing code from TextItem into MenuItem
     private final ArrayList<TextItem> items = new ArrayList<TextItem>();
     private int curr = 0;
+    
+    public Panform() {
+        super(new Panctor());
+        layer = Pangame.getGame().getCurrentRoom();
+        layer.addActor(bound);
+    }
     
     public void addItem(final TextItem item) {
         items.add(item);
     }
     
     public final void init() {
+        focus();
         items.get(curr).focus();
+    }
+    
+    @Override
+    protected final void focus() {
+        final Panteraction interaction = Pangine.getEngine().getInteraction();
+        bound.register(interaction.KEY_LEFT, new ActionStartListener() { @Override public final void onActionStart(final ActionStartEvent event) {
+            back();
+        }});
+        bound.register(interaction.KEY_RIGHT, new ActionStartListener() { @Override public final void onActionStart(final ActionStartEvent event) {
+            forward();
+        }});
     }
     
     protected void close() {
