@@ -25,13 +25,13 @@ package org.pandcorps.pandax.text;
 import org.pandcorps.core.Pantil;
 import org.pandcorps.pandam.*;
 
-public abstract class TextItem {
+public abstract class TextItem extends MenuItem {
     protected final Pantext label;
-    protected Panlayer layer = null;
     protected boolean ownLayer = true;
     protected Panctor parent = null;
     
     protected TextItem(final Pantext label) {
+        super(label);
         //this.font = font; // in label
         this.label = label;
         //label.setItem(this);
@@ -105,8 +105,4 @@ public abstract class TextItem {
     }
     
     protected abstract void focus();
-    
-    protected void blur() {
-        label.unregisterListeners();
-    }
 }
