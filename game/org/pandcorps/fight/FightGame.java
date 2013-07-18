@@ -263,9 +263,10 @@ public class FightGame extends Guy2Game {
 			room.addActor(actor);
 			final RadioGroup g;
         	g = new RadioGroup(fontText, Arrays.asList("Arcade", "Practice", "Exit"), listener);
+        	g.setLayer(room);
         	g.setSubmit(Pangine.getEngine().getInteraction().KEY_ENTER);
+        	g.init(); // Centers vertically
         	g.getLabel().getPosition().setY(24);
-        	g.init();
         }
     }
     
