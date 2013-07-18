@@ -38,17 +38,17 @@ public class Input extends TextItem {
     public Input(final Font font, final InputSubmitListener listener) {
         super(new Pantext(Pantil.vmid(), font, Collections.singletonList(new StringBuffer())));
         buf = (StringBuffer) label.text.get(0);
+        home();
         this.listener = listener;
     }
     
     @Override
-    protected final void enable() {
+    protected final void focus() {
         //TODO Some todo notes in message apply here
         //System.out.println("Input");
         final Pangine engine = Pangine.getEngine();
         final Panteraction interaction = engine.getInteraction();
         interaction.inactivateAll();
-        home();
         final ActionStartListener startListener = new ActionStartListener() {
             @Override
             public void onActionStart(final ActionStartEvent event) {

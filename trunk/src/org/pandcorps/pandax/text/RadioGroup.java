@@ -44,7 +44,7 @@ public class RadioGroup extends TextItem {
     }
     
     @Override
-    protected final void enable() {
+    protected final void focus() {
         //TODO Some todo notes in message apply here
         final Pangine engine = Pangine.getEngine();
         final Panteraction interaction = engine.getInteraction();

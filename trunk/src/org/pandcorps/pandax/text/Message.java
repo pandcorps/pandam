@@ -45,7 +45,7 @@ public class Message extends TextItem {
     }
     
     @Override
-    protected final void enable() {
+    protected final void focus() {
         /*
         TODO
         Add appropriate setters instead of a fixed argument list.
