@@ -98,10 +98,9 @@ public class Input extends TextItem {
             }
             
             private final void submit() {
-                layer.destroy();
+                close();
                 interaction.unregister(this);
                 interaction.inactivateAll();
-                activateParent(true);
                 listener.onSubmit(new InputSubmitEvent(buf));
             }
         };

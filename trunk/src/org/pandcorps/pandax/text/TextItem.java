@@ -28,6 +28,7 @@ import org.pandcorps.pandam.*;
 public abstract class TextItem {
     protected final Pantext label;
     protected Panlayer layer = null;
+    protected boolean ownLayer = true;
     protected Panctor parent = null;
     
     protected TextItem(final Pantext label) {
@@ -57,6 +58,11 @@ public abstract class TextItem {
         //setPos();
     }
     
+    public final void setLayer(final Panlayer layer) {
+        this.layer = layer;
+        ownLayer = false;
+    }
+    
     public final void init() {
         init(null);
     }
@@ -66,16 +72,26 @@ public abstract class TextItem {
         //final Panple size = room.getSize();
         //TODO make sure zoom for overlayer matches main layer
         final Panple size = label.size;
-        layer = Pangine.getEngine().createLayer(Pantil.vmid(), size.getX(), size.getY(), size.getZ(), room);
-        layer.setActive(true);
-        layer.setClearDepthEnabled(true);
-        layer.setVisible(true);
-        room.getTop().addAbove(layer);
+        if (ownLayer) {
+            layer = Pangine.getEngine().createLayer(Pantil.vmid(), size.getX(), size.getY(), size.getZ(), room);
+            layer.setActive(true);
+            layer.setClearDepthEnabled(true);
+            layer.setVisible(true);
+            room.getTop().addAbove(layer);
+        }
         layer.addActor(label);
         setPos();
         enable();
         this.parent = parent;
         activateParent(false);
+    }
+    
+    protected void close() {
+        label.destroy();
+        if (ownLayer) {
+            layer.destroy();
+        }
+        activateParent(true);
     }
     
     protected void activateParent(final boolean active) {
