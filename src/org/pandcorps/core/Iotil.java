@@ -58,6 +58,10 @@ public final class Iotil {
 		}
 	}
 	
+	public final static Reader getReader(final String location) {
+		return new InputStreamReader(getInputStream(location));
+	}
+	
 	public final static Writer getWriter(final String location) {
 		try {
 			return new FileWriter(location);
@@ -94,6 +98,10 @@ public final class Iotil {
 	
 	public final static BufferedInputStream getBufferedInputStream(final String location) {
 		return getBufferedInputStream(getInputStream(location));
+	}
+	
+	public final static BufferedReader getBufferedReader(final String location) {
+		return getBufferedReader(getReader(location));
 	}
 	
 	public final static BufferedWriter getBufferedWriter(final String location) {
