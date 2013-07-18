@@ -44,7 +44,6 @@ public class Panform extends MenuItem {
     
     public final void init() {
         focus();
-        items.get(curr).focus();
     }
     
     @Override
@@ -56,6 +55,13 @@ public class Panform extends MenuItem {
         bound.register(interaction.KEY_RIGHT, new ActionStartListener() { @Override public final void onActionStart(final ActionStartEvent event) {
             forward();
         }});
+        focusItem();
+    }
+    
+    @Override
+    protected final void blur() {
+        blurItem();
+        super.blur();
     }
     
     protected void close() {
@@ -65,18 +71,30 @@ public class Panform extends MenuItem {
         items.clear();
     }
     
+    private final TextItem item() {
+        return items.get(curr);
+    }
+    
+    private final void blurItem() {
+        item().blur();
+    }
+    
+    private final void focusItem() {
+        item().focus();
+    }
+    
     protected final void forward() {
-        items.get(curr).blur();
+        blurItem();
         curr = (curr + 1) % items.size();
-        items.get(curr).focus();
+        focusItem();
     }
     
     protected final void back() {
-        items.get(curr).blur();
+        blurItem();
         curr--;
         if (curr < 0) {
             curr = items.size() - 1;
         }
-        items.get(curr).focus();
+        focusItem();
     }
 }
