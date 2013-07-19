@@ -22,8 +22,12 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.platform;
 
+import java.util.*;
+
 import org.pandcorps.core.Pantil;
+import org.pandcorps.core.img.Pancolor;
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandax.text.*;
 import org.pandcorps.platform.Player.*;
 
 public class Menu {
@@ -37,12 +41,36 @@ public class Menu {
 		@Override
 		protected final void load() throws Exception {
 			final float w = PlatformGame.SCREEN_W, h = PlatformGame.SCREEN_H;
-			final Panroom room = Pangine.getEngine().createRoom(Pantil.vmid(), w, h, 0);
+			final Pangine engine = Pangine.getEngine();
+			final Panroom room = engine.createRoom(Pantil.vmid(), w, h, 0);
+			engine.setBgColor(Pancolor.YELLOW);
 			Pangame.getGame().setCurrentRoom(room);
 			final Panctor actor = new Panctor();
 			actor.setView(pc.guy);
 			actor.getPosition().set(w / 2, h / 2);
 			room.addActor(actor);
+			final Avatar avt = pc.profile.currentAvatar;
+			final Panform form = new Panform();
+			final List<String> animals = Arrays.asList("Bear", "Cat", "Mouse", "Rabbit");
+			final RadioSubmitListener anmLsn = new RadioSubmitListener() {
+				@Override public final void onSubmit(final RadioSubmitEvent event) {
+					avt.anm = event.toString(); }};
+			addRadio(form, animals, anmLsn, 8);
+			final List<String> eyes = Arrays.asList("1", "2", "3", "4");
+			final RadioSubmitListener eyeLsn = new RadioSubmitListener() {
+				@Override public final void onSubmit(final RadioSubmitEvent event) {
+					avt.eye = Integer.parseInt(event.toString()); }};
+			addRadio(form, eyes, eyeLsn, 80);
+			form.init();
 		}
+	}
+	
+	private final static void addRadio(final Panform form, final List<String> list, final RadioSubmitListener lsn, final int x) {
+		final RadioGroup anmGrp = new RadioGroup(PlatformGame.font, list, lsn);
+		final Pantext anmLbl = anmGrp.getLabel();
+		anmLbl.getPosition().set(x, 64);
+		anmLbl.setBackground(Pantext.CHAR_SPACE);
+		anmLbl.setBorderStyle(BorderStyle.Simple);
+		form.addItem(anmGrp);
 	}
 }
