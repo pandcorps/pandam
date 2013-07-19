@@ -34,8 +34,16 @@ public class RadioGroup extends TextItem {
     private Panput submit = Pangine.getEngine().getInteraction().KEY_SPACE;
     
     public RadioGroup(final Font font, final List<? extends CharSequence> options, final RadioSubmitListener listener) {
-        super(new Pantext(Pantil.vmid(), font, options));
-        if (!(font instanceof ByteFont)) {
+    	this(new Pantext(Pantil.vmid(), font, options), options, listener);
+    }
+    
+    public RadioGroup(final MultiFont fonts, final List<? extends CharSequence> options, final RadioSubmitListener listener) {
+    	this(new Pantext(Pantil.vmid(), fonts, options), options, listener);
+    }
+    
+    private RadioGroup(final Pantext text, final List<? extends CharSequence> options, final RadioSubmitListener listener) {
+        super(text);
+        if (!(text.getFont() instanceof ByteFont)) {
         	setCharacter('-');
         }
         label.setRadioLine(0);

@@ -22,6 +22,8 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandax.text;
 
+import org.pandcorps.core.Chartil;
+
 public final class RadioSubmitEvent {
     
     private final RadioGroup group;
@@ -46,5 +48,10 @@ public final class RadioSubmitEvent {
     
     public final CharSequence getElement() {
         return element;
+    }
+    
+    @Override
+    public final String toString() {
+    	return Chartil.toString(element);
     }
 }

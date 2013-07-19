@@ -103,6 +103,4 @@ public abstract class TextItem extends MenuItem {
     public final Pantext getLabel() {
     	return label;
     }
-    
-    protected abstract void focus();
 }

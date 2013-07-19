@@ -34,6 +34,7 @@ public class Panform extends MenuItem {
     
     public Panform() {
         super(new Panctor());
+        bound.setVisible(false);
         layer = Pangame.getGame().getCurrentRoom();
         layer.addActor(bound);
     }
@@ -43,6 +44,10 @@ public class Panform extends MenuItem {
     }
     
     public final void init() {
+    	for (final TextItem item : items) {
+    		item.setLayer(layer);
+    		layer.addActor(item.label);
+    	}
         focus();
     }
     
