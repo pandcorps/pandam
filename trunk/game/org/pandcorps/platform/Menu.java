@@ -25,14 +25,18 @@ package org.pandcorps.platform;
 import java.util.*;
 
 import org.pandcorps.core.Pantil;
-import org.pandcorps.core.img.Pancolor;
+import org.pandcorps.core.img.*;
+import org.pandcorps.game.core.ImtilX;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandax.text.*;
+import org.pandcorps.pandax.tile.Tile.*;
+import org.pandcorps.pandax.tile.*;
 import org.pandcorps.platform.Player.*;
 
 public class Menu {
 	protected final static class AvatarScreen extends Panscreen {
 		private final PlayerContext pc;
+		private Panmage timg = null;
 		
 		protected AvatarScreen(final PlayerContext pc) {
 			this.pc = pc;
@@ -43,11 +47,19 @@ public class Menu {
 			final float w = PlatformGame.SCREEN_W, h = PlatformGame.SCREEN_H;
 			final Pangine engine = Pangine.getEngine();
 			final Panroom room = engine.createRoom(Pantil.vmid(), w, h, 0);
-			engine.setBgColor(Pancolor.YELLOW);
+			engine.setBgColor(new FinPancolor((short) 128, (short) 192, Pancolor.MAX_VALUE));
 			Pangame.getGame().setCurrentRoom(room);
+			
+			final TileMap tm = new TileMap(Pantil.vmid(), room, ImtilX.DIM, ImtilX.DIM);
+			timg = Level.getTileImage();
+			tm.setImageMap(timg);
+			final TileMapImage[][] imgMap = tm.splitImageMap();
+			tm.fillBackground(imgMap[1][1], 0, 1);
+			room.addActor(tm);
+			
 			final Panctor actor = new Panctor();
 			actor.setView(pc.guy);
-			actor.getPosition().set(w / 2, h / 2);
+			actor.getPosition().set(w / 2, 16);
 			room.addActor(actor);
 			final Avatar avt = pc.profile.currentAvatar;
 			final Panform form = new Panform();
@@ -63,13 +75,18 @@ public class Menu {
 			addRadio(form, eyes, eyeLsn, 80);
 			form.init();
 		}
+		
+		@Override
+	    protected final void destroy() {
+			timg.destroy();
+		}
 	}
 	
 	private final static void addRadio(final Panform form, final List<String> list, final RadioSubmitListener lsn, final int x) {
 		final RadioGroup anmGrp = new RadioGroup(PlatformGame.font, list, null);
 		anmGrp.setChangeListener(lsn);
 		final Pantext anmLbl = anmGrp.getLabel();
-		anmLbl.getPosition().set(x, 64);
+		anmLbl.getPosition().set(x, 176);
 		anmLbl.setBackground(Pantext.CHAR_SPACE);
 		anmLbl.setBorderStyle(BorderStyle.Simple);
 		form.addItem(anmGrp);

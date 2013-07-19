@@ -127,6 +127,12 @@ public class Level {
         return Imtil.filter(backImg, x, y, w, h, getHillFilter(Map.bgColor));
     }
     
+    protected final static Panmage getTileImage() {
+    	final BufferedImage tileImg = ImtilX.loadImage("org/pandcorps/platform/res/bg/Tiles.png", 128, null);
+        applyDirtTexture(tileImg, 0, 16, 80, 128);
+        return Pangine.getEngine().createImage("img.tiles", tileImg);
+    }
+    
     protected final static void loadLayers() {
         final Pangine engine = Pangine.getEngine();
         PlatformGame.room.destroy();
@@ -135,10 +141,8 @@ public class Level {
         Pangame.getGame().setCurrentRoom(room);
         tm = new DynamicTileMap("act.tilemap", room, ImtilX.DIM, ImtilX.DIM);
         room.addActor(tm);
-        final BufferedImage tileImg = ImtilX.loadImage("org/pandcorps/platform/res/bg/Tiles.png", 128, null);
         
-        applyDirtTexture(tileImg, 0, 16, 80, 128);
-        timg = engine.createImage("img.tiles", tileImg);
+        timg = getTileImage();
         tm.setImageMap(timg);
         imgMap = tm.splitImageMap();
         tm.setTileListener(new BlockTileListener(imgMap));
