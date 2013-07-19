@@ -31,6 +31,7 @@ import org.pandcorps.pandam.event.action.*;
 public class RadioGroup extends TextItem {
     private final List<? extends CharSequence> options;
     private final RadioSubmitListener listener;
+    private RadioSubmitListener changeListener = null;
     private Panput submit = Pangine.getEngine().getInteraction().KEY_SPACE;
     
     public RadioGroup(final Font font, final List<? extends CharSequence> options, final RadioSubmitListener listener) {
@@ -62,25 +63,35 @@ public class RadioGroup extends TextItem {
             @Override
             public void onActionStart(final ActionStartEvent event) {
                 label.decRadioLine();
+                submit(changeListener);
             }};
         final ActionStartListener downListener = new ActionStartListener() {
             @Override
             public void onActionStart(final ActionStartEvent event) {
                 label.incRadioLine();
+                submit(changeListener);
             }};
         final ActionStartListener submitListener = new ActionStartListener() {
             @Override
             public void onActionStart(final ActionStartEvent event) {
-                close();
+            	if (form == null) { // Might check form in super class, but Panform also calls this close method
+            		close();
+            	}
                 // inactivate should only apply for the current press (and not at all if the key isn't currently pressed).
                 // This disableed the next up/down press if they weren't currently pressed before adding the active check to inactivate
                 Panput.inactivate(submit, up, down);
                 // onSubmit might create a new TextItem with same parent (deactivating it); activate first so we don't undo onSubmit
-                listener.onSubmit(new RadioSubmitEvent(RadioGroup.this, label.radioLine, options.get(label.radioLine)));
+                submit(listener);
             }};
         label.register(submit, submitListener);
         label.register(up, upListener);
         label.register(down, downListener);
+    }
+    
+    private void submit(final RadioSubmitListener listener) {
+    	if (listener != null) {
+        	listener.onSubmit(new RadioSubmitEvent(RadioGroup.this, label.radioLine, options.get(label.radioLine)));
+        }
     }
     
     public void setCharacter(final char c) {
@@ -89,5 +100,9 @@ public class RadioGroup extends TextItem {
     
     public void setSubmit(final Panput input) {
     	submit = input;
+    }
+    
+    public void setChangeListener(final RadioSubmitListener changeListener) {
+    	this.changeListener = changeListener;
     }
 }

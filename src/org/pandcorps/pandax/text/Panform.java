@@ -41,6 +41,7 @@ public class Panform extends MenuItem {
     
     public void addItem(final TextItem item) {
         items.add(item);
+        item.form = this;
     }
     
     public final void init() {

@@ -29,6 +29,7 @@ public abstract class TextItem extends MenuItem {
     protected final Pantext label;
     protected boolean ownLayer = true;
     protected Panctor parent = null;
+    protected Panform form = null;
     
     protected TextItem(final Pantext label) {
         super(label);
