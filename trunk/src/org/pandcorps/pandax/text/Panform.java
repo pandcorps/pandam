@@ -48,6 +48,7 @@ public class Panform extends MenuItem {
     	for (final TextItem item : items) {
     		item.setLayer(layer);
     		layer.addActor(item.label);
+    		item.label.setBorderEnabled(false);
     	}
         focus();
     }
@@ -82,11 +83,15 @@ public class Panform extends MenuItem {
     }
     
     private final void blurItem() {
-        item().blur();
+        final TextItem item = item();
+        item.label.setBorderEnabled(false);
+        item.blur();
     }
     
     private final void focusItem() {
-        item().focus();
+    	final TextItem item = item();
+        item.label.setBorderEnabled(true);
+        item.focus();
     }
     
     protected final void forward() {

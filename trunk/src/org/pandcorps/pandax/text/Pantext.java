@@ -76,7 +76,7 @@ public class Pantext extends Panctor {
 	private int cursorLine = -1;
 	/*package*/ int cursorChar = -1;
 	private int cursorTime = 0;
-	//private boolean border = false; // Replaced by borderStyle
+	private boolean borderEnabled = false;
 	private String title = null;
 	private char bg = CHAR_NULL;
 	private BorderStyle borderStyle = null;
@@ -271,7 +271,7 @@ public class Pantext extends Panctor {
             }
         }
         
-        if (borderStyle != null) {
+        if (isBorderNeeded()) {
             //final int lineLim = (charactersPerLine > 0 ? charactersPerLine : maxLineSize) + 1;
         	//final int lineLim = maxLineSize + 1;
             //final int height = stop - firstLine;
@@ -287,11 +287,15 @@ public class Pantext extends Panctor {
 		//renderer.render(font, x, y, z, 8, 32, fontSize, fontSize);
 	}
 	
+	private final boolean isBorderNeeded() {
+		return borderEnabled && borderStyle != null;
+	}
+	
 	private final void renderTop(final Panderer renderer, final Panlayer layer,
 	                             final float x, final float y, final float z,
 	                             final int lineStart, final int lineLim,
 	                             final int j, final int height) {
-	    if (borderStyle == null) {
+	    if (!isBorderNeeded()) {
 	        return;
 	    }
 	    
@@ -430,9 +434,9 @@ public class Pantext extends Panctor {
         }
     }
 	
-	//public final void setBorder(final boolean border) {
-	//    this.border = border;
-	//}
+	public final void setBorderEnabled(final boolean borderEnabled) {
+	    this.borderEnabled = borderEnabled;
+	}
 	
 	public final void setTitle(final String title) {
 	    this.title = title;
