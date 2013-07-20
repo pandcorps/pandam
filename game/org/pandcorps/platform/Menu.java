@@ -37,6 +37,7 @@ public class Menu {
 	protected final static class AvatarScreen extends Panscreen {
 		private final PlayerContext pc;
 		private Panmage timg = null;
+		private Panctor actor = null;
 		
 		protected AvatarScreen(final PlayerContext pc) {
 			this.pc = pc;
@@ -57,27 +58,55 @@ public class Menu {
 			tm.fillBackground(imgMap[1][1], 0, 1);
 			room.addActor(tm);
 			
-			final Panctor actor = new Panctor();
+			actor = new Panctor();
 			actor.setView(pc.guy);
 			actor.getPosition().set(w / 2, 16);
 			room.addActor(actor);
 			final Avatar avt = pc.profile.currentAvatar;
 			final Panform form = new Panform();
 			final List<String> animals = Arrays.asList("Bear", "Cat", "Mouse", "Rabbit");
-			final RadioSubmitListener anmLsn = new RadioSubmitListener() {
-				@Override public final void onSubmit(final RadioSubmitEvent event) {
-					avt.anm = event.toString();
-					PlatformGame.reloadAnimalStrip(pc);
-					actor.setView(pc.guy); }};
+			final AvtListener anmLsn = new AvtListener() {
+				@Override public final void update(final String value) {
+					avt.anm = value; }};
 			addRadio(form, animals, anmLsn, 8);
 			final List<String> eyes = Arrays.asList("1", "2", "3", "4");
-			final RadioSubmitListener eyeLsn = new RadioSubmitListener() {
-				@Override public final void onSubmit(final RadioSubmitEvent event) {
-					avt.eye = Integer.parseInt(event.toString());
-					PlatformGame.reloadAnimalStrip(pc);
-					actor.setView(pc.guy);}};
-			addRadio(form, eyes, eyeLsn, 80);
+			final AvtListener eyeLsn = new AvtListener() {
+				@Override public final void update(final String value) {
+					avt.eye = Integer.parseInt(value); }};
+			addRadio(form, eyes, eyeLsn, 72);
+			final List<String> colors = Arrays.asList("0", "1", "2", "3", "4");
+			final AvtListener redLsn = new ColorListener() {
+				@Override public final void update(final float value) {
+					avt.r = value; }};
+			addRadio(form, colors, redLsn, 96);
+			final AvtListener greenLsn = new ColorListener() {
+				@Override public final void update(final float value) {
+					avt.g = value; }};
+			addRadio(form, colors, greenLsn, 120);
+			final AvtListener blueLsn = new ColorListener() {
+				@Override public final void update(final float value) {
+					avt.b = value; }};
+			addRadio(form, colors, blueLsn, 144);
 			form.init();
+		}
+		
+		private abstract class AvtListener implements RadioSubmitListener {
+			@Override public final void onSubmit(final RadioSubmitEvent event) {
+				update(event.toString());
+				PlatformGame.reloadAnimalStrip(pc);
+				actor.setView(pc.guy);
+			}
+			
+			protected abstract void update(final String value);
+		}
+		
+		private abstract class ColorListener extends AvtListener {
+			@Override
+			protected final void update(final String value) {
+				update(Integer.parseInt(value) / 4f);
+			}
+			
+			protected abstract void update(final float value);
 		}
 		
 		@Override
