@@ -66,12 +66,16 @@ public class Menu {
 			final List<String> animals = Arrays.asList("Bear", "Cat", "Mouse", "Rabbit");
 			final RadioSubmitListener anmLsn = new RadioSubmitListener() {
 				@Override public final void onSubmit(final RadioSubmitEvent event) {
-					avt.anm = event.toString(); }};
+					avt.anm = event.toString();
+					PlatformGame.reloadAnimalStrip(pc);
+					actor.setView(pc.guy); }};
 			addRadio(form, animals, anmLsn, 8);
 			final List<String> eyes = Arrays.asList("1", "2", "3", "4");
 			final RadioSubmitListener eyeLsn = new RadioSubmitListener() {
 				@Override public final void onSubmit(final RadioSubmitEvent event) {
-					avt.eye = Integer.parseInt(event.toString()); }};
+					avt.eye = Integer.parseInt(event.toString());
+					PlatformGame.reloadAnimalStrip(pc);
+					actor.setView(pc.guy);}};
 			addRadio(form, eyes, eyeLsn, 80);
 			form.init();
 		}
