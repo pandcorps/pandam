@@ -44,7 +44,7 @@ public class Neighbor extends Animal {
             public void onSubmit(final RadioSubmitEvent event) {
                 Pantext.message(Town.font, event.getIndex() == 0 ? "Me too" : "Why not");
             }});*/
-        final Input input = new Input(Town.font, new InputSubmitListener() {
+        final Input input = new Input.KeyInput(Town.font, new InputSubmitListener() {
             @Override
             public void onSubmit(final InputSubmitEvent event) {
                 new Message(Town.font, "I like " + event.getValue()).init();

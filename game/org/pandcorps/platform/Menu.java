@@ -68,25 +68,28 @@ public class Menu {
 			final AvtListener anmLsn = new AvtListener() {
 				@Override public final void update(final String value) {
 					avt.anm = value; }};
-			addRadio(form, animals, anmLsn, 8);
+			addRadio(form, "Animal", animals, anmLsn, 8);
 			final List<String> eyes = Arrays.asList("1", "2", "3", "4");
 			final AvtListener eyeLsn = new AvtListener() {
 				@Override public final void update(final String value) {
 					avt.eye = Integer.parseInt(value); }};
-			addRadio(form, eyes, eyeLsn, 72);
+			addRadio(form, "Eye", eyes, eyeLsn, 80);
 			final List<String> colors = Arrays.asList("0", "1", "2", "3", "4");
 			final AvtListener redLsn = new ColorListener() {
 				@Override public final void update(final float value) {
 					avt.r = value; }};
-			addRadio(form, colors, redLsn, 96);
+			addRadio(form, "Red", colors, redLsn, 112);
 			final AvtListener greenLsn = new ColorListener() {
 				@Override public final void update(final float value) {
 					avt.g = value; }};
-			addRadio(form, colors, greenLsn, 120);
+			addRadio(form, "Grn", colors, greenLsn, 144);
 			final AvtListener blueLsn = new ColorListener() {
 				@Override public final void update(final float value) {
 					avt.b = value; }};
-			addRadio(form, colors, blueLsn, 144);
+			addRadio(form, "Blu", colors, blueLsn, 176);
+			final ControllerInput namIn = new ControllerInput(PlatformGame.font, null);
+			addItem(form, namIn, 40, 112);
+			addTitle(form, "Name", 0, 112);
 			form.init();
 		}
 		
@@ -115,13 +118,26 @@ public class Menu {
 		}
 	}
 	
-	private final static void addRadio(final Panform form, final List<String> list, final RadioSubmitListener lsn, final int x) {
+	private final static void addRadio(final Panform form, final String title, final List<String> list, final RadioSubmitListener lsn, final int x) {
 		final RadioGroup anmGrp = new RadioGroup(PlatformGame.font, list, null);
 		anmGrp.setChangeListener(lsn);
-		final Pantext anmLbl = anmGrp.getLabel();
-		anmLbl.getPosition().set(x, 176);
+		//final Pantext anmLbl = anmGrp.getLabel();
+		addItem(form, anmGrp, x, 168);
+		addTitle(form, title, x, 184);
+		//anmLbl.setTitle(title);
+	}
+	
+	private final static void addItem(final Panform form, final TextItem item, final int x, final int y) {
+		final Pantext anmLbl = item.getLabel();
+		anmLbl.getPosition().set(x, y);
 		anmLbl.setBackground(Pantext.CHAR_SPACE);
 		anmLbl.setBorderStyle(BorderStyle.Simple);
-		form.addItem(anmGrp);
+		form.addItem(item);
+	}
+	
+	private final static void addTitle(final Panform form, final String title, final int x, final int y) {
+		final Pantext tLbl = new Pantext(Pantil.vmid(), PlatformGame.font, title);
+		tLbl.getPosition().set(x, y);
+		form.getLayer().addActor(tLbl);
 	}
 }
