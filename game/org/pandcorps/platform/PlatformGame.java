@@ -156,6 +156,31 @@ public class PlatformGame extends BaseGame {
 	}
 	
 	private final static void createAnimalStrip(final Profile profile) {
+		final PlayerContext pc = new PlayerContext(profile, pcs.size());
+		reloadAnimalStrip(pc);
+		final Panteraction interaction = Pangine.getEngine().getInteraction();
+		if (profile.ctrl == 0) {
+    		pc.inJump = interaction.KEY_SPACE;
+    		pc.inLeft = interaction.KEY_LEFT;
+    		pc.inRight = interaction.KEY_RIGHT;
+		} else {
+			final Panteraction.Controller c = Coltil.get(interaction.CONTROLLERS, 0);
+			if (c == null) {
+			    pc.inJump = interaction.KEY_W;
+	            pc.inLeft = interaction.KEY_A;
+	            pc.inRight = interaction.KEY_D;
+			} else {
+				pc.inJump = c.BUTTON_1;
+				pc.inLeft = c.LEFT;
+				pc.inRight = c.RIGHT;
+			}
+		}
+		pcs.add(pc);
+	}
+	
+	protected final static void reloadAnimalStrip(final PlayerContext pc) {
+		pc.destroy();
+		final Profile profile = pc.profile;
 	    final Avatar avatar = profile.currentAvatar;
 	    final PixelFilter f = new MultiplyPixelFilter(Channel.Blue, avatar.r, Channel.Blue, avatar.g, Channel.Blue, avatar.b);
 		final BufferedImage[] guys = loadChrStrip("Bear.png", 32, f);
@@ -168,8 +193,7 @@ public class PlatformGame extends BaseGame {
 			Imtil.copy(face, guys[i], 0, 0, 18, 18, 8, 1 + y, Imtil.COPY_FOREGROUND);
 			Imtil.copy(eyes, guys[i], 0, 0, 8, 4, 15, 10 + y, Imtil.COPY_FOREGROUND);
 		}
-		final String pre = "guy." + pcs.size();
-		final PlayerContext pc = new PlayerContext(profile);
+		final String pre = "guy." + pc.index;
 		
 		final Pangine engine = Pangine.getEngine();
 		final FinPanple ng = new FinPanple(-Player.PLAYER_X, 0, 0), xg = new FinPanple(Player.PLAYER_X, Player.PLAYER_H, 0);
@@ -218,26 +242,6 @@ public class PlatformGame extends BaseGame {
 		}
 		pc.guyNorth = createAnm(pre + ".north", dm, om, north1, north2);
 		//guyMap = engine.createImage(pre + ".map", ImtilX.loadImage("org/pandcorps/platform/res/chr/PlayerMap.png"));
-		
-		final Panteraction interaction = engine.getInteraction();
-		if (profile.ctrl == 0) {
-    		pc.inJump = interaction.KEY_SPACE;
-    		pc.inLeft = interaction.KEY_LEFT;
-    		pc.inRight = interaction.KEY_RIGHT;
-		} else {
-			final Panteraction.Controller c = Coltil.get(interaction.CONTROLLERS, 0);
-			if (c == null) {
-			    pc.inJump = interaction.KEY_W;
-	            pc.inLeft = interaction.KEY_A;
-	            pc.inRight = interaction.KEY_D;
-			} else {
-				pc.inJump = c.BUTTON_1;
-				pc.inLeft = c.LEFT;
-				pc.inRight = c.RIGHT;
-			}
-		}
-		
-		pcs.add(pc);
 	}
 	
 	private final static void replace(final ReplacePixelFilter f, final short r, final short g, final short b) {

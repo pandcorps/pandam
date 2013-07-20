@@ -62,6 +62,7 @@ public class Player extends Character implements CollisionListener {
 	// Player attributes preserved between levels
 	public final static class PlayerContext {
 	    protected final Profile profile;
+	    protected final int index;
 	    protected Player player = null;
 	    
 	    protected Panput inJump = null;
@@ -76,8 +77,9 @@ public class Player extends Character implements CollisionListener {
 	    protected Panimation guyWest = null;
 	    protected Panimation guyNorth = null;
 	    
-	    public PlayerContext(final Profile profile) {
+	    public PlayerContext(final Profile profile, final int index) {
 	        this.profile = profile;
+	        this.index = index;
 	    }
 	    
 	    public final String getName() {
@@ -86,6 +88,19 @@ public class Player extends Character implements CollisionListener {
 	    
 	    public final int getGems() {
 	        return profile.gems;
+	    }
+	    
+	    public void destroy() {
+	    	if (guy == null) {
+	    		return;
+	    	}
+	    	guy.destroy();
+	    	guyRun.destroyAll();
+	    	guyJump.destroy();
+	    	guySouth.destroyAll();
+	    	guyEast.destroyAll();
+	    	guyWest.destroyAll();
+	    	guyNorth.destroyAll();
 	    }
 	}
 	
