@@ -22,26 +22,40 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandax.text;
 
-import java.util.Collections;
+import java.util.*;
 
 import org.pandcorps.core.Pantil;
-import org.pandcorps.pandam.Pangine;
-import org.pandcorps.pandam.Panput;
-import org.pandcorps.pandam.Panteraction;
-import org.pandcorps.pandam.event.action.ActionStartEvent;
-import org.pandcorps.pandam.event.action.ActionStartListener;
+import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.event.action.*;
 
-public class Input extends TextItem {
-    private final StringBuffer buf;
-    private final InputSubmitListener listener;
+public abstract class Input extends TextItem {
+    protected final StringBuffer buf;
+    protected final InputSubmitListener listener;
     
     public Input(final Font font, final InputSubmitListener listener) {
-        super(new Pantext(Pantil.vmid(), font, Collections.singletonList(new StringBuffer())));
+    	this(new Pantext(Pantil.vmid(), font, newText()), listener);
+    }
+    
+    public Input(final MultiFont fonts, final InputSubmitListener listener) {
+    	this(new Pantext(Pantil.vmid(), fonts, newText()), listener);
+    }
+    
+    private final static List<? extends CharSequence> newText() {
+    	return Collections.singletonList(new StringBuffer());
+    }
+    
+    private Input(final Pantext text, final InputSubmitListener listener) {
+        super(text);
         buf = (StringBuffer) label.text.get(0);
         home();
         this.listener = listener;
     }
     
+    public final static class KeyInput extends Input {
+    	public KeyInput(final Font font, final InputSubmitListener listener) {
+    		super(font, listener);
+    	}
+    	
     @Override
     protected final void focus() {
         //TODO Some todo notes in message apply here
@@ -106,8 +120,9 @@ public class Input extends TextItem {
         };
         label.register(startListener);
     }
+    }
     
-    private final void home() {
+    protected final void home() {
         label.setCursor(0, 0);
     }
 }

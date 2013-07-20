@@ -37,4 +37,8 @@ public abstract class MenuItem {
     protected void blur() {
         bound.unregisterListeners();
     }
+    
+    public final Panlayer getLayer() {
+    	return layer;
+    }
 }
