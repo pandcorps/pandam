@@ -306,11 +306,12 @@ public class Panlayer extends BasePantity {
         beneath = null;
     }
     
+    @Override
     public void destroy() {
         destroyAllActors();
         master = null;
         detach();
-        Pangine.getEngine().unregister(this);
+        super.destroy();
     }
     
     private final void destroy(final Collection<Panctor> actors) {

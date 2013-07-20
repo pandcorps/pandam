@@ -46,4 +46,12 @@ public class ImplPanimation extends BasePantity implements Panimation {
 		}
 		return d;
 	}
+	
+	@Override
+	public void destroyAll() {
+		destroy();
+		for (final Panframe frame : frames) {
+			frame.destroyAll();
+		}
+	}
 }

@@ -25,4 +25,6 @@ package org.pandcorps.pandam;
 // Pandam Entity
 public interface Pantity {
 	public String getId();
+	
+	public void destroy();
 }

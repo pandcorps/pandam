@@ -39,6 +39,7 @@ import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.impl.UnmodPanple;
 
 public final class LwjglPanmage extends Panmage {
+	private final static int NULL_TID = 0;
 	private final int w;
 	private final int h;
 	/*package*/ final SizePanple size;
@@ -174,6 +175,9 @@ public final class LwjglPanmage extends Panmage {
 	    w = tex.w;
 	    h = tex.h;
 	    tid = tex.tid;
+	    if (tid == NULL_TID) {
+	    	throw new IllegalStateException("New texture id was unexpectedly " + tid);
+	    }
 		//size = new FinPanple(w, h, 0);
 		size = new SizePanple();
 		offx = 0;
@@ -512,8 +516,12 @@ public final class LwjglPanmage extends Panmage {
 	
 	@Override
     protected final void close() {
+		if (tid == NULL_TID) {
+			return;
+		}
 	    //System.out.println("Closing " + tid + "; isTexture: " + GL11.glIsTexture(tid)); // true
 	    GL11.glDeleteTextures(tid);
 	    //System.out.println("Closed " + tid + "; isTexture: " + GL11.glIsTexture(tid)); // false, and no longer displayed
+	    tid = NULL_TID;
     }
 }

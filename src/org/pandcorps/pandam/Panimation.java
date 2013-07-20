@@ -27,4 +27,6 @@ public interface Panimation extends Panview {
 	public Panframe[] getFrames();
 	
 	public int getDuration();
+	
+	public void destroyAll();
 }

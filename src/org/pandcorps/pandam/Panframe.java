@@ -45,4 +45,6 @@ public interface Panframe extends Pantity{
 	public Panple getEffectiveBoundingMinimum();
     
     public Panple getEffectiveBoundingMaximum();
+    
+    public void destroyAll();
 }

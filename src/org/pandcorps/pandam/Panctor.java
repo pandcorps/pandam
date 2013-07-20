@@ -307,6 +307,7 @@ public class Panctor extends BasePantity implements SpecPanctor {
 		Pangine.getEngine().getInteraction().unregister(this);
 	}
 
+	@Override
 	public final void destroy() {
 	    onDestroy();
 	    unregisterListeners();
