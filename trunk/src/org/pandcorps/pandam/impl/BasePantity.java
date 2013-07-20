@@ -35,4 +35,15 @@ public abstract class BasePantity implements Pantity {
 	public final String getId() {
 		return id;
 	}
+	
+	@Override
+	public void destroy() {
+	    Pangine.getEngine().unregister(this);
+	}
+	
+	public final static void destroy(final Pantity entity) {
+	    if (entity != null) {
+	    	entity.destroy();
+	    }
+	}
 }

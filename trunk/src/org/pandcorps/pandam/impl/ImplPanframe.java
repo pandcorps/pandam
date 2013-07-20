@@ -102,4 +102,10 @@ public final class ImplPanframe extends BasePantity implements Panframe {
     public final Panple getEffectiveBoundingMaximum() {
         return boundMax == null ? image.getBoundingMaximum() : boundMax;
     }
+	
+	@Override
+	public void destroyAll() {
+		destroy();
+		destroy(image);
+	}
 }
