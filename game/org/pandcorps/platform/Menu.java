@@ -121,7 +121,6 @@ public class Menu {
 	private final static void addRadio(final Panform form, final String title, final List<String> list, final RadioSubmitListener lsn, final int x) {
 		final RadioGroup anmGrp = new RadioGroup(PlatformGame.font, list, null);
 		anmGrp.setChangeListener(lsn);
-		//final Pantext anmLbl = anmGrp.getLabel();
 		addItem(form, anmGrp, x, 168);
 		addTitle(form, title, x, 184);
 		//anmLbl.setTitle(title);

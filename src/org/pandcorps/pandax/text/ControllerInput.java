@@ -44,14 +44,33 @@ public final class ControllerInput extends Input {
 		super(fonts, listener);
 	}
 	
+	private int getValue(final char c) {
+		final int size = chars.length;
+		for (int i = 0; i < size; i++) {
+			if (c == chars[i]) {
+				return i;
+			}
+		}
+		return size;
+	}
+	
+	private final void initChr(final int ind) {
+		initChr(ind, chars.length);
+	}
+	
+	private final void initChr(final int ind, final int val) {
+		index = ind;
+    	value = val;
+    	label.setCursor(0, index);
+	}
+	
 	@Override
     protected final void focus() {
-		index = buf.length();
-		value = chars.length;
+		initChr(buf.length());
 		final Pangine engine = Pangine.getEngine();
         final Panteraction interaction = engine.getInteraction();
-        final Panput submit = interaction.KEY_SPACE, up = interaction.KEY_UP, down = interaction.KEY_DOWN;
-        Panput.inactivate(submit, up, down);
+        final Panput adv = interaction.KEY_SPACE, bak = interaction.KEY_ESCAPE, up = interaction.KEY_UP, down = interaction.KEY_DOWN;
+        Panput.inactivate(adv, bak, up, down);
         final ActionStartListener upListener = new ActionStartListener() {
             @Override
             public void onActionStart(final ActionStartEvent event) {
@@ -71,11 +90,12 @@ public final class ControllerInput extends Input {
         final ActionStartListener downListener = new ActionStartListener() {
             @Override
             public void onActionStart(final ActionStartEvent event) {
-            	if (value == chars.length) {
-            		buf.append(' ');
-            	} else if (value == 0) {
+            	if (value == 0) {
             		value = chars.length;
             	} else {
+            		if (value == chars.length) {
+                		buf.append(' ');
+                	}
             		value--;
             	}
             	if (value != chars.length) {
@@ -85,8 +105,26 @@ public final class ControllerInput extends Input {
             	}
                 //submit(changeListener);
             }};
-        //label.register(submit, submitListener);
+        final ActionStartListener advListener = new ActionStartListener() {
+            @Override
+            public void onActionStart(final ActionStartEvent event) {
+            	if (value != chars.length) {
+            		initChr(index + 1);
+            	}
+            }};
+        final ActionStartListener bakListener = new ActionStartListener() {
+            @Override
+            public void onActionStart(final ActionStartEvent event) {
+            	if (index == 0) {
+            		return;
+            	} else if (value != chars.length) {
+            		buf.setLength(buf.length() - 1);
+            	}
+            	initChr(index - 1, getValue(buf.charAt(buf.length() - 1)));
+            }};
         label.register(up, upListener);
         label.register(down, downListener);
+        label.register(adv, advListener);
+        label.register(bak, bakListener);
 	}
 }
