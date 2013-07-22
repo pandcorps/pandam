@@ -100,6 +100,7 @@ public class Menu {
 				@Override public final void onClose(final MessageCloseEvent event) {
 					Panscreen.set(new Map.MapScreen()); }};
 			final Message sav = new Message(PlatformGame.font, "Save", savLsn);
+			sav.getLabel().setUnderlineEnabled(true);
 			addItem(form, sav, 8, 96);
 			anmGrp.setSelected(animals.indexOf(avt.anm));
 			eyeGrp.setSelected(avt.eye - 1);
