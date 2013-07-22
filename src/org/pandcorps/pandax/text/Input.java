@@ -49,6 +49,7 @@ public abstract class Input extends TextItem {
     private Input(final Pantext text, final InputSubmitListener listener) {
         super(text);
         buf = (StringBuffer) label.text.get(0);
+        label.setCursorEnabled(false);
         home();
         this.listener = listener;
     }
@@ -65,6 +66,7 @@ public abstract class Input extends TextItem {
         final Pangine engine = Pangine.getEngine();
         final Panteraction interaction = engine.getInteraction();
         interaction.inactivateAll();
+        label.setCursorEnabled(true);
         final ActionStartListener startListener = new ActionStartListener() {
             @Override
             public void onActionStart(final ActionStartEvent event) {
@@ -124,6 +126,11 @@ public abstract class Input extends TextItem {
     }
     }
     
+    @Override
+    protected final void blur() {
+    	label.setCursorEnabled(false);
+    }
+    
     protected final void submit() {
     	submit(listener);
     }
@@ -148,5 +155,10 @@ public abstract class Input extends TextItem {
     
     public void setMax(final int max) {
     	this.max = max;
+    }
+    
+    public void append(final String v) {
+    	buf.append(v);
+    	label.setCursor(0, buf.length());
     }
 }

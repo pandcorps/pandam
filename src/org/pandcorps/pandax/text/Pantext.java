@@ -76,6 +76,7 @@ public class Pantext extends Panctor {
 	private int cursorLine = -1;
 	/*package*/ int cursorChar = -1;
 	private int cursorTime = 0;
+	private boolean cursorEnabled = true;
 	private boolean borderEnabled = false;
 	private String title = null;
 	private char bg = CHAR_NULL;
@@ -260,7 +261,7 @@ public class Pantext extends Panctor {
         }
         
         if (cursorLine >= 0 && cursorChar >= 0) { // && cursorLine on page
-            if (cursorTime < 6) {
+            if (cursorEnabled && cursorTime < 6) {
                 final Panteraction interaction = Pangine.getEngine().getInteraction();
                 final char ch = interaction.isInsEnabled() ? CHAR_CURSOR_INS : CHAR_CURSOR;
                 render(renderer, layer, x, y, z + 1, ch, cursorChar, cursorLine);
@@ -433,6 +434,10 @@ public class Pantext extends Panctor {
             cursorChar--;
         }
     }
+	
+	public final void setCursorEnabled(final boolean cursorEnabled) {
+		this.cursorEnabled = cursorEnabled;
+	}
 	
 	public final void setBorderEnabled(final boolean borderEnabled) {
 	    this.borderEnabled = borderEnabled;
