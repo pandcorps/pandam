@@ -73,7 +73,7 @@ public class Panform extends MenuItem {
     
     protected void close() {
         for (final TextItem item : items) {
-            item.close();
+            item.forceClose();
         }
         items.clear();
     }

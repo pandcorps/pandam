@@ -69,6 +69,9 @@ public abstract class Input extends TextItem {
             public void onActionStart(final ActionStartEvent event) {
                 final Panput input = event.getInput();
                 if (interaction.KEY_ENTER == input) {
+                	close();
+                    interaction.unregister(this);
+                    interaction.inactivateAll();
                     submit();
                 } else if (interaction.KEY_BACKSPACE == input) {
                     //TODO hold shift and move cursor to create/modify selection
@@ -111,16 +114,15 @@ public abstract class Input extends TextItem {
                     }
                 }
             }
-            
-            private final void submit() {
-                close();
-                interaction.unregister(this);
-                interaction.inactivateAll();
-                listener.onSubmit(new InputSubmitEvent(buf));
-            }
         };
         label.register(startListener);
     }
+    }
+    
+    protected final void submit() {
+    	if (listener != null) {
+        	listener.onSubmit(new InputSubmitEvent(buf));
+        }
     }
     
     protected final void home() {

@@ -74,9 +74,7 @@ public class RadioGroup extends TextItem {
         final ActionStartListener submitListener = new ActionStartListener() {
             @Override
             public void onActionStart(final ActionStartEvent event) {
-            	if (form == null) { // Might check form in super class, but Panform also calls this close method
-            		close();
-            	}
+            	close();
                 // inactivate should only apply for the current press (and not at all if the key isn't currently pressed).
                 // This disableed the next up/down press if they weren't currently pressed before adding the active check to inactivate
                 Panput.inactivate(submit, up, down);

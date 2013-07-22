@@ -68,9 +68,9 @@ public final class ControllerInput extends Input {
     protected final void focus() {
 		initChr(buf.length());
 		final Pangine engine = Pangine.getEngine();
-        final Panteraction interaction = engine.getInteraction();
-        final Panput adv = interaction.KEY_SPACE, bak = interaction.KEY_ESCAPE, up = interaction.KEY_UP, down = interaction.KEY_DOWN;
-        Panput.inactivate(adv, bak, up, down);
+        final Panteraction in = engine.getInteraction();
+        final Panput sub = in.KEY_ENTER, adv = in.KEY_SPACE, bak = in.KEY_ESCAPE, up = in.KEY_UP, down = in.KEY_DOWN;
+        Panput.inactivate(sub, adv, bak, up, down);
         final ActionStartListener upListener = new ActionStartListener() {
             @Override
             public void onActionStart(final ActionStartEvent event) {
@@ -122,9 +122,17 @@ public final class ControllerInput extends Input {
             	}
             	initChr(index - 1, getValue(buf.charAt(buf.length() - 1)));
             }};
+        final ActionStartListener subListener = new ActionStartListener() {
+            @Override
+            public void onActionStart(final ActionStartEvent event) {
+            	close();
+            	sub.inactivate();
+            	submit();
+            }};
         label.register(up, upListener);
         label.register(down, downListener);
         label.register(adv, advListener);
         label.register(bak, bakListener);
+        label.register(sub, subListener);
 	}
 }
