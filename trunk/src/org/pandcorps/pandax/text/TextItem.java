@@ -88,6 +88,12 @@ public abstract class TextItem extends MenuItem {
     }
     
     protected void close() {
+    	if (form == null) {
+    		forceClose();
+    	}
+    }
+    
+    protected void forceClose() {
         label.destroy();
         if (ownLayer) {
             layer.destroy();
