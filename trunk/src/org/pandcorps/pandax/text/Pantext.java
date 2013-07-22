@@ -77,6 +77,7 @@ public class Pantext extends Panctor {
 	/*package*/ int cursorChar = -1;
 	private int cursorTime = 0;
 	private boolean cursorEnabled = true;
+	private boolean underlineEnabled = false;
 	private boolean borderEnabled = false;
 	private String title = null;
 	private char bg = CHAR_NULL;
@@ -336,6 +337,9 @@ public class Pantext extends Panctor {
             }
             //render(renderer, layer, x, y, z, c, i, j);
             render(renderer, layer, x, y, z, c, offi, j);
+            if (underlineEnabled && (!cursorEnabled || cursorChar != offi || cursorLine != j)) {
+            	render(renderer, layer, x, y, z - 2, CHAR_CURSOR, offi, j);
+            }
         }
 	}
 	
@@ -441,6 +445,10 @@ public class Pantext extends Panctor {
 	
 	public final void setCursorEnabled(final boolean cursorEnabled) {
 		this.cursorEnabled = cursorEnabled;
+	}
+	
+	public final void setUnderlineEnabled(final boolean underlineEnabled) {
+		this.underlineEnabled = underlineEnabled;
 	}
 	
 	public final void setBorderEnabled(final boolean borderEnabled) {
