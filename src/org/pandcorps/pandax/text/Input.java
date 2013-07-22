@@ -31,6 +31,7 @@ import org.pandcorps.pandam.event.action.*;
 public abstract class Input extends TextItem {
     protected final StringBuffer buf;
     protected final InputSubmitListener listener;
+    protected int max = 0;
     
     public Input(final Font font, final InputSubmitListener listener) {
     	this(new Pantext(Pantil.vmid(), font, newText()), listener);
@@ -99,10 +100,10 @@ public abstract class Input extends TextItem {
                         //Character.getType(ch)
                         if (!Character.isISOControl(ch)) {
                             //buf.append(ch);
-                            final int ind = label.cursorChar;
-                            if (interaction.isInsEnabled() && ind < buf.length()) {
+                            final int ind = label.cursorChar, size = buf.length();
+                            if (interaction.isInsEnabled() && ind < size) {
                                 buf.setCharAt(ind, ch);
-                            } else {
+                            } else if (max <= 0 || max > size) {
                                 buf.insert(ind, ch);
                             }
                             label.incCursor();
@@ -124,5 +125,9 @@ public abstract class Input extends TextItem {
     
     protected final void home() {
         label.setCursor(0, 0);
+    }
+    
+    public void setMax(final int max) {
+    	this.max = max;
     }
 }

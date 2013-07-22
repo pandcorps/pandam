@@ -88,6 +88,7 @@ public class Menu {
 					avt.b = value; }};
 			addRadio(form, "Blu", colors, blueLsn, 176);
 			final ControllerInput namIn = new ControllerInput(PlatformGame.font, null);
+			namIn.setMax(8);
 			addItem(form, namIn, 40, 112);
 			addTitle(form, "Name", 0, 112);
 			form.init();
