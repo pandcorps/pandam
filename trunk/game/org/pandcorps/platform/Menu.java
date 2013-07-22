@@ -91,6 +91,8 @@ public class Menu {
 			namIn.setMax(8);
 			addItem(form, namIn, 40, 112);
 			addTitle(form, "Name", 0, 112);
+			namIn.setLetter();
+			namIn.append(avt.getName());
 			form.init();
 		}
 		
