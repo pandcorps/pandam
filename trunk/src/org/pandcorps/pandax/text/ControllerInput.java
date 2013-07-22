@@ -108,7 +108,7 @@ public final class ControllerInput extends Input {
         final ActionStartListener advListener = new ActionStartListener() {
             @Override
             public void onActionStart(final ActionStartEvent event) {
-            	if (value != chars.length) {
+            	if (value != chars.length && (max <= 0 || buf.length() < max)) {
             		initChr(index + 1);
             	}
             }};
