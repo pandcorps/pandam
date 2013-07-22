@@ -22,17 +22,18 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandax.text;
 
-import org.pandcorps.pandam.Pangine;
-import org.pandcorps.pandam.Panput;
-import org.pandcorps.pandam.Panteraction;
-import org.pandcorps.pandam.event.action.ActionStartEvent;
-import org.pandcorps.pandam.event.action.ActionStartListener;
+import org.pandcorps.core.*;
+import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.event.action.*;
 
 public final class ControllerInput extends Input {
 	private final static char[] UPPER
 		= {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
+	private final static char[] LOWER
+		= {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
+	private final static char[] LETTER = Chartil.concat(LOWER, UPPER);
 	
-	private final char[] chars = UPPER;
+	private char[] chars = UPPER;
 	private int index;
 	private int value;
 	
@@ -135,5 +136,21 @@ public final class ControllerInput extends Input {
         label.register(adv, advListener);
         label.register(bak, bakListener);
         label.register(sub, subListener);
+	}
+	
+	public final void setChars(final char[] chars) {
+		this.chars = chars;
+	}
+	
+	public final void setUpper() {
+		setChars(UPPER);
+	}
+	
+	public final void setLower() {
+		setChars(LOWER);
+	}
+	
+	public final void setLetter() {
+		setChars(LETTER);
 	}
 }

@@ -128,6 +128,7 @@ public abstract class Input extends TextItem {
     
     @Override
     protected final void blur() {
+    	super.blur();
     	label.setCursorEnabled(false);
     }
     
