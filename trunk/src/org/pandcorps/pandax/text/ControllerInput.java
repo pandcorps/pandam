@@ -66,6 +66,7 @@ public final class ControllerInput extends Input {
 	
 	@Override
     protected final void focus() {
+		label.setCursorEnabled(true);
 		initChr(buf.length());
 		final Pangine engine = Pangine.getEngine();
         final Panteraction in = engine.getInteraction();
