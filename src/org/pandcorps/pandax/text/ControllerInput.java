@@ -85,7 +85,7 @@ public final class ControllerInput extends Input {
             	} else {
             		buf.setLength(index);
             	}
-                //submit(changeListener);
+                change();
             }};
         final ActionStartListener downListener = new ActionStartListener() {
             @Override
@@ -103,7 +103,7 @@ public final class ControllerInput extends Input {
             	} else {
             		buf.setLength(index);
             	}
-                //submit(changeListener);
+            	change();
             }};
         final ActionStartListener advListener = new ActionStartListener() {
             @Override

@@ -31,6 +31,7 @@ import org.pandcorps.pandam.event.action.*;
 public abstract class Input extends TextItem {
     protected final StringBuffer buf;
     protected final InputSubmitListener listener;
+    protected InputSubmitListener changeListener = null;
     protected int max = 0;
     
     public Input(final Font font, final InputSubmitListener listener) {
@@ -83,10 +84,12 @@ public abstract class Input extends TextItem {
                     if (label.cursorChar > 0) {
                         label.decCursor();
                         buf.deleteCharAt(label.cursorChar);
+                        change();
                     }
                 } else if (interaction.KEY_DEL == input) {
                     if (label.cursorChar < buf.length()) {
                         buf.deleteCharAt(label.cursorChar);
+                        change();
                     }
                 } else if (interaction.KEY_LEFT == input) {
                     label.decCursor();
@@ -102,13 +105,15 @@ public abstract class Input extends TextItem {
                         final char ch = c.charValue();
                         //Character.getType(ch)
                         if (!Character.isISOControl(ch)) {
-                            //buf.append(ch);
                             final int ind = label.cursorChar, size = buf.length();
                             if (interaction.isInsEnabled() && ind < size) {
                                 buf.setCharAt(ind, ch);
                             } else if (max <= 0 || max > size) {
                                 buf.insert(ind, ch);
+                            } else {
+                            	return;
                             }
+                            change();
                             label.incCursor();
                         }
                     }
@@ -120,6 +125,14 @@ public abstract class Input extends TextItem {
     }
     
     protected final void submit() {
+    	submit(listener);
+    }
+    
+    protected final void change() {
+    	submit(changeListener);
+    }
+    
+    protected final void submit(final InputSubmitListener listener) {
     	if (listener != null) {
         	listener.onSubmit(new InputSubmitEvent(buf));
         }
@@ -127,6 +140,10 @@ public abstract class Input extends TextItem {
     
     protected final void home() {
         label.setCursor(0, 0);
+    }
+    
+    public void setChangeListener(final InputSubmitListener changeListener) {
+    	this.changeListener = changeListener;
     }
     
     public void setMax(final int max) {
