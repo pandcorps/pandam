@@ -87,11 +87,20 @@ public class Menu {
 				@Override public final void update(final float value) {
 					avt.b = value; }};
 			final RadioGroup bluGrp = addRadio(form, "Blu", colors, blueLsn, 176);
+			final InputSubmitListener namLsn = new InputSubmitListener() {
+				@Override public final void onSubmit(final InputSubmitEvent event) {
+					avt.setName(event.toString()); }};
 			final ControllerInput namIn = new ControllerInput(PlatformGame.font, null);
+			namIn.setChangeListener(namLsn);
 			namIn.setMax(8);
-			addItem(form, namIn, 40, 112);
-			addTitle(form, "Name", 0, 112);
+			addItem(form, namIn, 48, 112);
+			addTitle(form, "Name", 8, 112);
 			namIn.setLetter();
+			final MessageCloseListener savLsn = new MessageCloseListener() {
+				@Override public final void onClose(final MessageCloseEvent event) {
+					Panscreen.set(new Map.MapScreen()); }};
+			final Message sav = new Message(PlatformGame.font, "Save", savLsn);
+			addItem(form, sav, 8, 96);
 			anmGrp.setSelected(animals.indexOf(avt.anm));
 			eyeGrp.setSelected(avt.eye - 1);
 			redGrp.setSelected(getLineColor(avt.r));
