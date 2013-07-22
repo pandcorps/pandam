@@ -353,6 +353,10 @@ public class Pantext extends Panctor {
         renderer.render(layer, font, x + (i * fontSize), y - ((j - firstLine) * fontSize), z, xoff, yoff, fontSize, fontSize);
 	}
 	
+	public final int getTotalLines() {
+		return text.size();
+	}
+	
 	//public final void setCharactersPerLine(final int charactersPerLine) {
 	//    this.charactersPerLine = charactersPerLine;
 	//}

@@ -35,13 +35,17 @@ public class Message extends TextItem {
     }
     
     public Message(final Font font, final String text, final MessageCloseListener listener) {
-        this(font, new Pantext(Pantil.vmid(), font, text), listener);
+        this(new Pantext(Pantil.vmid(), font, text), listener);
     }
     
-    public Message(final Font font, final Pantext text, final MessageCloseListener listener) {
+    public Message(final MultiFont fonts, final String text, final MessageCloseListener listener) {
+        this(new Pantext(Pantil.vmid(), fonts, text), listener);
+    }
+    
+    public Message(final Pantext text, final MessageCloseListener listener) {
         super(text);
         this.listener = listener;
-        label.setLinesPerPage(2);
+        label.setLinesPerPage(Math.min(2, label.getTotalLines()));
     }
     
     @Override

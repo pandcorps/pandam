@@ -22,6 +22,8 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandax.text;
 
+import org.pandcorps.core.Chartil;
+
 public final class InputSubmitEvent {
     
     private final CharSequence value;
@@ -32,5 +34,10 @@ public final class InputSubmitEvent {
     
     public final CharSequence getValue() {
         return value;
+    }
+    
+    @Override
+    public final String toString() {
+    	return Chartil.toString(value);
     }
 }
