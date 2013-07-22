@@ -103,4 +103,8 @@ public class RadioGroup extends TextItem {
     public void setChangeListener(final RadioSubmitListener changeListener) {
     	this.changeListener = changeListener;
     }
+    
+    public void setSelected(final int line) {
+    	label.setRadioLine(line);
+    }
 }
