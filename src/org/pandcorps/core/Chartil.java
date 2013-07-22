@@ -113,4 +113,19 @@ public final class Chartil {
     	b.append(s, start, size);
     	return b.toString();
     }
+    
+    public final static char[] concat(final char[]... a) {
+    	int size = 0;
+    	for (final char[] e : a) {
+    		size += e.length;
+    	}
+    	final char[] c = new char[size];
+    	int ci = 0;
+    	for (final char[] e : a) {
+    		size = e.length;
+    		System.arraycopy(e, 0, c, ci, size);
+    		ci += size;
+    	}
+    	return c;
+    }
 }
