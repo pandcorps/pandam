@@ -68,30 +68,35 @@ public class Menu {
 			final AvtListener anmLsn = new AvtListener() {
 				@Override public final void update(final String value) {
 					avt.anm = value; }};
-			addRadio(form, "Animal", animals, anmLsn, 8);
+			final RadioGroup anmGrp = addRadio(form, "Animal", animals, anmLsn, 8);
 			final List<String> eyes = Arrays.asList("1", "2", "3", "4");
 			final AvtListener eyeLsn = new AvtListener() {
 				@Override public final void update(final String value) {
 					avt.eye = Integer.parseInt(value); }};
-			addRadio(form, "Eye", eyes, eyeLsn, 80);
+			final RadioGroup eyeGrp = addRadio(form, "Eye", eyes, eyeLsn, 80);
 			final List<String> colors = Arrays.asList("0", "1", "2", "3", "4");
 			final AvtListener redLsn = new ColorListener() {
 				@Override public final void update(final float value) {
 					avt.r = value; }};
-			addRadio(form, "Red", colors, redLsn, 112);
+			final RadioGroup redGrp = addRadio(form, "Red", colors, redLsn, 112);
 			final AvtListener greenLsn = new ColorListener() {
 				@Override public final void update(final float value) {
 					avt.g = value; }};
-			addRadio(form, "Grn", colors, greenLsn, 144);
+			final RadioGroup grnGrp = addRadio(form, "Grn", colors, greenLsn, 144);
 			final AvtListener blueLsn = new ColorListener() {
 				@Override public final void update(final float value) {
 					avt.b = value; }};
-			addRadio(form, "Blu", colors, blueLsn, 176);
+			final RadioGroup bluGrp = addRadio(form, "Blu", colors, blueLsn, 176);
 			final ControllerInput namIn = new ControllerInput(PlatformGame.font, null);
 			namIn.setMax(8);
 			addItem(form, namIn, 40, 112);
 			addTitle(form, "Name", 0, 112);
 			namIn.setLetter();
+			anmGrp.setSelected(animals.indexOf(avt.anm));
+			eyeGrp.setSelected(avt.eye - 1);
+			redGrp.setSelected(getLineColor(avt.r));
+			grnGrp.setSelected(getLineColor(avt.g));
+			bluGrp.setSelected(getLineColor(avt.b));
 			namIn.append(avt.getName());
 			form.init();
 		}
@@ -121,12 +126,17 @@ public class Menu {
 		}
 	}
 	
-	private final static void addRadio(final Panform form, final String title, final List<String> list, final RadioSubmitListener lsn, final int x) {
+	private final static int getLineColor(final float c) {
+		return Math.round(c * 4);
+	}
+	
+	private final static RadioGroup addRadio(final Panform form, final String title, final List<String> list, final RadioSubmitListener lsn, final int x) {
 		final RadioGroup anmGrp = new RadioGroup(PlatformGame.font, list, null);
 		anmGrp.setChangeListener(lsn);
 		addItem(form, anmGrp, x, 168);
 		addTitle(form, title, x, 184);
 		//anmLbl.setTitle(title);
+		return anmGrp;
 	}
 	
 	private final static void addItem(final Panform form, final TextItem item, final int x, final int y) {
