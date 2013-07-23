@@ -62,7 +62,8 @@ public class Menu {
 			actor.setView(pc.guy);
 			actor.getPosition().set(w / 2, 16);
 			room.addActor(actor);
-			final Avatar avt = pc.profile.currentAvatar;
+			final Avatar old = pc.profile.currentAvatar, avt = new Avatar(old);
+			pc.profile.currentAvatar = avt;
 			final Panform form = new Panform();
 			final List<String> animals = Arrays.asList("Bear", "Cat", "Mouse", "Rabbit");
 			final AvtListener anmLsn = new AvtListener() {
@@ -99,9 +100,13 @@ public class Menu {
 			final MessageCloseListener savLsn = new MessageCloseListener() {
 				@Override public final void onClose(final MessageCloseEvent event) {
 					Panscreen.set(new Map.MapScreen()); }};
-			final Message sav = new Message(PlatformGame.font, "Save", savLsn);
-			sav.getLabel().setUnderlineEnabled(true);
-			addItem(form, sav, 8, 96);
+			addLink(form, "Save", savLsn, 8, 96);
+			final MessageCloseListener canLsn = new MessageCloseListener() {
+                @Override public final void onClose(final MessageCloseEvent event) {
+                    pc.profile.currentAvatar = old;
+                    PlatformGame.reloadAnimalStrip(pc);
+                    Panscreen.set(new Map.MapScreen()); }};
+            addLink(form, "Cancel", canLsn, 48, 96);
 			anmGrp.setSelected(animals.indexOf(avt.anm));
 			eyeGrp.setSelected(avt.eye - 1);
 			redGrp.setSelected(getLineColor(avt.r));
@@ -141,19 +146,24 @@ public class Menu {
 	}
 	
 	private final static RadioGroup addRadio(final Panform form, final String title, final List<String> list, final RadioSubmitListener lsn, final int x) {
-		final RadioGroup anmGrp = new RadioGroup(PlatformGame.font, list, null);
-		anmGrp.setChangeListener(lsn);
-		addItem(form, anmGrp, x, 168);
+		final RadioGroup grp = new RadioGroup(PlatformGame.font, list, null);
+		grp.setChangeListener(lsn);
+		addItem(form, grp, x, 168);
 		addTitle(form, title, x, 184);
-		//anmLbl.setTitle(title);
-		return anmGrp;
+		return grp;
+	}
+	
+	private final static void addLink(final Panform form, final String txt, final MessageCloseListener lsn, final int x, final int y) {
+	    final Message msg = new Message(PlatformGame.font, txt, lsn);
+	    msg.getLabel().setUnderlineEnabled(true);
+        addItem(form, msg, x, y);
 	}
 	
 	private final static void addItem(final Panform form, final TextItem item, final int x, final int y) {
-		final Pantext anmLbl = item.getLabel();
-		anmLbl.getPosition().set(x, y);
-		anmLbl.setBackground(Pantext.CHAR_SPACE);
-		anmLbl.setBorderStyle(BorderStyle.Simple);
+		final Pantext lbl = item.getLabel();
+		lbl.getPosition().set(x, y);
+		lbl.setBackground(Pantext.CHAR_SPACE);
+		lbl.setBorderStyle(BorderStyle.Simple);
 		form.addItem(item);
 	}
 	
