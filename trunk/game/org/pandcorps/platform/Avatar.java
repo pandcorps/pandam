@@ -32,6 +32,22 @@ public class Avatar extends PlayerData implements Segmented {
     protected float g = -1;
     protected float b = -1;
     
+    public Avatar() {
+    }
+    
+    public Avatar(final Avatar src) {
+        load(src);
+    }
+    
+    public void load(final Avatar src) {
+        setName(src.getName());
+        anm = src.anm;
+        eye = src.eye;
+        r = src.r;
+        g = src.g;
+        b = src.b;
+    }
+    
     public void load(final Segment seg) {
     	setName(seg.getValue(0));
     	anm = seg.getValue(1);
