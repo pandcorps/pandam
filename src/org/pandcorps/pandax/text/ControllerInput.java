@@ -121,6 +121,7 @@ public final class ControllerInput extends Input {
             		return;
             	} else if (value != chars.length) {
             		buf.setLength(buf.length() - 1);
+            		change();
             	}
             	initChr(index - 1, getValue(buf.charAt(buf.length() - 1)));
             }};
