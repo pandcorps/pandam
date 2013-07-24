@@ -98,6 +98,7 @@ public class Map {
 	protected final static int bgColor = 1;
 	
 	private final static HashMap<Pair<Integer, Integer>, Boolean> open = new HashMap<Pair<Integer, Integer>, Boolean>();
+	protected static boolean victory = false;
 	private static int roomW = -1;
 	private static int roomH = -1;
 	private static int column = -1;
@@ -132,7 +133,10 @@ public class Map {
 			    t = loadMap();
 			} else {
 				t = getStartTile();
-				open.put(getKey(t), Boolean.TRUE);
+				if (victory) {
+				    victory = false;
+				    open.put(getKey(t), Boolean.TRUE);
+				}
 			    initRoom();
 			}
 		    addPlayer(t);
