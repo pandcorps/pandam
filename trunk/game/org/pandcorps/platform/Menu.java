@@ -134,6 +134,7 @@ public class Menu {
 			addExit("Exit", 58, 112);
 			// Rename Profile
 			// New
+			// Delete
 		}
 		
 		@Override
