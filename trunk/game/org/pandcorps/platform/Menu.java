@@ -59,7 +59,7 @@ public class Menu {
 			
 			actor = new Panctor();
 			actor.setView(pc.guy);
-			actor.getPosition().set(w / 2, 16);
+			actor.getPosition().set(w / 2, 16, tm.getForegroundDepth() + 1);
 			room.addActor(actor);
 			final Avatar old = pc.profile.currentAvatar, avt = new Avatar(old);
 			pc.profile.currentAvatar = avt;
