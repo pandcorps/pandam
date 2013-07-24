@@ -38,6 +38,7 @@ public class Menu {
 		private final PlayerContext pc;
 		private Panmage timg = null;
 		private Panctor actor = null;
+		private boolean disabled = false;
 		
 		protected AvatarScreen(final PlayerContext pc) {
 			this.pc = pc;
@@ -45,11 +46,9 @@ public class Menu {
 		
 		@Override
 		protected final void load() throws Exception {
-			final float w = PlatformGame.SCREEN_W, h = PlatformGame.SCREEN_H;
-			final Pangine engine = Pangine.getEngine();
-			final Panroom room = engine.createRoom(Pantil.vmid(), w, h, 0);
-			engine.setBgColor(new FinPancolor((short) 128, (short) 192, Pancolor.MAX_VALUE));
-			Pangame.getGame().setCurrentRoom(room);
+			final int w = PlatformGame.SCREEN_W;
+			final Panroom room = PlatformGame.createRoom(w, PlatformGame.SCREEN_H);
+			Pangine.getEngine().setBgColor(new FinPancolor((short) 128, (short) 192, Pancolor.MAX_VALUE));
 			
 			final TileMap tm = new TileMap(Pantil.vmid(), room, ImtilX.DIM, ImtilX.DIM);
 			timg = Level.getTileImage();
@@ -99,13 +98,20 @@ public class Menu {
 			namIn.setLetter();
 			final MessageCloseListener savLsn = new MessageCloseListener() {
 				@Override public final void onClose(final MessageCloseEvent event) {
-					Panscreen.set(new Map.MapScreen()); }};
+				    if (disabled) {
+	                    return;
+	                }
+					goMap(); }};
 			addLink(form, "Save", savLsn, 8, 96);
 			final MessageCloseListener canLsn = new MessageCloseListener() {
                 @Override public final void onClose(final MessageCloseEvent event) {
+                    if (disabled) {
+                        return;
+                    }
                     pc.profile.currentAvatar = old;
                     PlatformGame.reloadAnimalStrip(pc);
-                    Panscreen.set(new Map.MapScreen()); }};
+                    actor.setView(pc.guy);
+                    goMap(); }};
             addLink(form, "Cancel", canLsn, 48, 96);
 			anmGrp.setSelected(animals.indexOf(avt.anm));
 			eyeGrp.setSelected(avt.eye - 1);
@@ -114,10 +120,14 @@ public class Menu {
 			bluGrp.setSelected(getLineColor(avt.b));
 			namIn.append(avt.getName());
 			form.init();
+			PlatformGame.fadeIn(room);
 		}
 		
 		private abstract class AvtListener implements RadioSubmitListener {
 			@Override public final void onSubmit(final RadioSubmitEvent event) {
+			    if (disabled) {
+			        return;
+			    }
 				update(event.toString());
 				PlatformGame.reloadAnimalStrip(pc);
 				actor.setView(pc.guy);
@@ -133,6 +143,11 @@ public class Menu {
 			}
 			
 			protected abstract void update(final float value);
+		}
+		
+		private void goMap() {
+		    disabled = true;
+		    PlatformGame.goMap();
 		}
 		
 		@Override
