@@ -48,6 +48,9 @@ public final class Panroom extends Panlayer {
 	}
 	
 	public void clear() {
+	    if (base == null) {
+	        return;
+	    }
 		base.destroyAllActors();
 		Panlayer layer;
 		while ((layer = base.getAbove()) != null) {
