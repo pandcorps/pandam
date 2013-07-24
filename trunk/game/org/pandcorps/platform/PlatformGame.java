@@ -316,7 +316,7 @@ public class PlatformGame extends BaseGame {
 	    Spark.class.getClass(); // Force class load? Save time later?
 	    
 	    final FinPanple mo = new FinPanple(-4, -4, 0);
-	    final Panmage[] ma = PlatformGame.createSheet("Marker", "org/pandcorps/platform/res/bg/Marker.png", 8, mo);
+	    final Panmage[] ma = createSheet("Marker", "org/pandcorps/platform/res/bg/Marker.png", 8, mo);
 		final Panframe[] fa = new Panframe[ma.length];
 		for (int i = 0; i < ma.length; i++) {
 			fa[i] = engine.createFrame("frm.marker." + i, ma[i], 2 * (2 - i % 2));
