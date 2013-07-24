@@ -29,7 +29,6 @@ import org.pandcorps.core.*;
 import org.pandcorps.game.*;
 import org.pandcorps.game.core.ImtilX;
 import org.pandcorps.pandam.*;
-import org.pandcorps.pandam.impl.FinPanple;
 import org.pandcorps.pandax.text.Pantext;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.tile.Tile.TileMapImage;
@@ -195,15 +194,19 @@ public class Map {
 	                return;
 	            }
 	            setPlayerPosition(t);
-	        	disabled = true;
-	        	PlatformGame.fadeOut(room, new PlatformGame.PlatformScreen());
+	        	fadeOut(new PlatformGame.PlatformScreen());
 			} else if (interaction.KEY_TAB.isActive()) {
 				interaction.KEY_TAB.inactivate();
 				debug = !debug;
 			} else if (interaction.KEY_ESCAPE.isActive()) {
 				interaction.KEY_ESCAPE.inactivate();
-				Panscreen.set(new Menu.AvatarScreen(pc));
+				fadeOut(new Menu.AvatarScreen(pc));
 			}
+		}
+		
+		private final void fadeOut(final Panscreen screen) {
+		    disabled = true;
+		    PlatformGame.fadeOut(room, screen);
 		}
 		
 		private void setPos(final Tile t) {
@@ -371,9 +374,7 @@ public class Map {
 	}
 	
 	private final static void initRoom() {
-	    room = Pangine.getEngine().createRoom(Pantil.vmid(), new FinPanple(roomW, roomH, 0));
-        PlatformGame.room = room;
-        Pangame.getGame().setCurrentRoom(room);
+	    room = PlatformGame.createRoom(roomW, roomH);
         if (tm == null) {
             tm = new DynamicTileMap("act.tilemap", room, ImtilX.DIM, ImtilX.DIM);
         } else {

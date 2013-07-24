@@ -30,7 +30,6 @@ import org.pandcorps.core.img.*;
 import org.pandcorps.core.img.Pancolor.*;
 import org.pandcorps.game.core.*;
 import org.pandcorps.pandam.*;
-import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.*;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.tile.Tile.*;
@@ -134,11 +133,7 @@ public class Level {
     }
     
     protected final static void loadLayers() {
-        final Pangine engine = Pangine.getEngine();
-        PlatformGame.room.destroy();
-        room = engine.createRoom(Pantil.vmid(), new FinPanple(w, 256, 0));
-        PlatformGame.room = room;
-        Pangame.getGame().setCurrentRoom(room);
+        room = PlatformGame.createRoom(w, 256);
         tm = new DynamicTileMap("act.tilemap", room, ImtilX.DIM, ImtilX.DIM);
         room.addActor(tm);
         
@@ -160,7 +155,7 @@ public class Level {
             applyTerrainTexture(backImg, 0, yoff, 64, yoff + 32, terrain, getTerrainMask(z));
         }
         backImg = getColoredTerrain(backImg, 0, 0, 96, 96);
-        bgimg = engine.createImage("img.bg", backImg);
+        bgimg = Pangine.getEngine().createImage("img.bg", backImg);
         bgtm1.setImageMap(bgimg);
         bgMap = bgtm1.splitImageMap();
         

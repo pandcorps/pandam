@@ -383,7 +383,20 @@ public class PlatformGame extends BaseGame {
 	    for (final PlayerContext pc : pcs) {
 	        pc.player.onFinishLevel();
 	    }
-        fadeOut(PlatformGame.room, new Map.MapScreen());
+	    goMap();
+	}
+	
+	protected final static void goMap() {
+        fadeOut(room, new Map.MapScreen());
+	}
+	
+	protected final static Panroom createRoom(final int w, final int h) {
+	    if (room != null) {
+	        room.destroy();
+	    }
+	    room = Pangine.getEngine().createRoom(Pantil.vmid(), w, h, 0);
+	    Pangame.getGame().setCurrentRoom(room);
+	    return room;
 	}
 	
 	public final static void main(final String[] args) {
