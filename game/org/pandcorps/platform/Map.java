@@ -207,7 +207,8 @@ public class Map {
 				debug = !debug;
 			} else if (interaction.KEY_ESCAPE.isActive()) {
 				interaction.KEY_ESCAPE.inactivate();
-				fadeOut(new Menu.AvatarScreen(pc));
+				//fadeOut(new Menu.AvatarScreen(pc));
+				fadeOut(new Menu.ProfileScreen(pc));
 			}
 		}
 		
