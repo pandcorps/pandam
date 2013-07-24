@@ -46,6 +46,11 @@ public class Profile extends PlayerData implements Segmented {
     	return null;
     }
     
+    public void replaceAvatar(final Avatar avt) {
+		avatars.set(avatars.indexOf(currentAvatar), avt);
+		currentAvatar = avt;
+    }
+    
     public void load(final Segment seg) {
     	setName(seg.getValue(0));
     	gems = seg.intValue(2);

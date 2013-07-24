@@ -34,13 +34,14 @@ import org.pandcorps.pandax.tile.*;
 import org.pandcorps.platform.Player.*;
 
 public class Menu {
-	protected final static class AvatarScreen extends Panscreen {
-		private final PlayerContext pc;
-		private Panmage timg = null;
-		private Panctor actor = null;
-		private boolean disabled = false;
+	protected abstract static class PlayerScreen extends Panscreen {
+		protected final PlayerContext pc;
+		protected Panmage timg = null;
+		protected Panctor actor = null;
+		protected boolean disabled = false;
+		protected Panform form = null;
 		
-		protected AvatarScreen(final PlayerContext pc) {
+		protected PlayerScreen(final PlayerContext pc) {
 			this.pc = pc;
 		}
 		
@@ -61,69 +62,39 @@ public class Menu {
 			actor.setView(pc.guy);
 			actor.getPosition().set(w / 2, 16, tm.getForegroundDepth() + 1);
 			room.addActor(actor);
-			final Avatar old = pc.profile.currentAvatar, avt = new Avatar(old);
-			pc.profile.currentAvatar = avt;
-			final Panform form = new Panform();
-			final List<String> animals = Arrays.asList("Bear", "Cat", "Mouse", "Rabbit");
-			final AvtListener anmLsn = new AvtListener() {
-				@Override public final void update(final String value) {
-					avt.anm = value; }};
-			final RadioGroup anmGrp = addRadio(form, "Animal", animals, anmLsn, 8);
-			final List<String> eyes = Arrays.asList("1", "2", "3", "4");
-			final AvtListener eyeLsn = new AvtListener() {
-				@Override public final void update(final String value) {
-					avt.eye = Integer.parseInt(value); }};
-			final RadioGroup eyeGrp = addRadio(form, "Eye", eyes, eyeLsn, 80);
-			final List<String> colors = Arrays.asList("0", "1", "2", "3", "4");
-			final AvtListener redLsn = new ColorListener() {
-				@Override public final void update(final float value) {
-					avt.r = value; }};
-			final RadioGroup redGrp = addRadio(form, "Red", colors, redLsn, 112);
-			final AvtListener greenLsn = new ColorListener() {
-				@Override public final void update(final float value) {
-					avt.g = value; }};
-			final RadioGroup grnGrp = addRadio(form, "Grn", colors, greenLsn, 144);
-			final AvtListener blueLsn = new ColorListener() {
-				@Override public final void update(final float value) {
-					avt.b = value; }};
-			final RadioGroup bluGrp = addRadio(form, "Blu", colors, blueLsn, 176);
-			final InputSubmitListener namLsn = new InputSubmitListener() {
-				@Override public final void onSubmit(final InputSubmitEvent event) {
-					avt.setName(event.toString()); }};
-			final ControllerInput namIn = new ControllerInput(PlatformGame.font, null);
-			namIn.setChangeListener(namLsn);
-			namIn.setMax(8);
-			addItem(form, namIn, 48, 112);
-			addTitle(form, "Name", 8, 112);
-			namIn.setLetter();
+			
+			form = new Panform();
+			menu();
+			form.init();
+			
+			PlatformGame.fadeIn(room);
+		}
+		
+		@Override
+	    protected final void destroy() {
+			timg.destroy();
+		}
+		
+		protected abstract void menu() throws Exception;
+		
+		protected final void exit() {
+		    disabled = true;
+		    onExit();
+		}
+		
+		protected abstract void onExit();
+		
+		protected final void addExit(final String title, final int x, final int y) {
 			final MessageCloseListener savLsn = new MessageCloseListener() {
 				@Override public final void onClose(final MessageCloseEvent event) {
 				    if (disabled) {
 	                    return;
 	                }
-					goMap(); }};
-			addLink(form, "Save", savLsn, 8, 96);
-			final MessageCloseListener canLsn = new MessageCloseListener() {
-                @Override public final void onClose(final MessageCloseEvent event) {
-                    if (disabled) {
-                        return;
-                    }
-                    pc.profile.currentAvatar = old;
-                    PlatformGame.reloadAnimalStrip(pc);
-                    actor.setView(pc.guy);
-                    goMap(); }};
-            addLink(form, "Cancel", canLsn, 48, 96);
-			anmGrp.setSelected(animals.indexOf(avt.anm));
-			eyeGrp.setSelected(avt.eye - 1);
-			redGrp.setSelected(getLineColor(avt.r));
-			grnGrp.setSelected(getLineColor(avt.g));
-			bluGrp.setSelected(getLineColor(avt.b));
-			namIn.append(avt.getName());
-			form.init();
-			PlatformGame.fadeIn(room);
+					exit(); }};
+			addLink(form, title, savLsn, x, y);
 		}
 		
-		private abstract class AvtListener implements RadioSubmitListener {
+		protected abstract class AvtListener implements RadioSubmitListener {
 			@Override public final void onSubmit(final RadioSubmitEvent event) {
 			    if (disabled) {
 			        return;
@@ -135,6 +106,109 @@ public class Menu {
 			
 			protected abstract void update(final String value);
 		}
+	}
+	
+	protected final static class ProfileScreen extends PlayerScreen {
+		protected ProfileScreen(final PlayerContext pc) {
+			super(pc);
+		}
+		
+		@Override
+		protected final void menu() {
+			final List<String> avatars = new ArrayList<String>(pc.profile.avatars.size());
+            for (final Avatar a : pc.profile.avatars) {
+            	avatars.add(a.getName());
+            }
+			final AvtListener avtLsn = new AvtListener() {
+				@Override public final void update(final String value) {
+					pc.profile.currentAvatar = pc.profile.getAvatar(value); }};
+			final RadioGroup avtGrp = addRadio(form, "Pick Avatar", avatars, avtLsn, 8, 184);
+			avtGrp.setSelected(avatars.indexOf(pc.profile.currentAvatar.getName()));
+			final MessageCloseListener edtLsn = new MessageCloseListener() {
+                @Override public final void onClose(final MessageCloseEvent event) {
+                    if (disabled) {
+                        return;
+                    }
+                    PlatformGame.fadeOut(PlatformGame.room, new AvatarScreen(pc)); }};
+            addLink(form, "Edit", edtLsn, 8, 112);
+			addExit("Exit", 58, 112);
+			// Rename Profile
+			// New
+		}
+		
+		@Override
+		protected void onExit() {
+		    PlatformGame.goMap();
+		}
+	}
+	
+	protected final static class AvatarScreen extends PlayerScreen {
+		private Avatar old = null;
+		private Avatar avt = null;
+		
+		protected AvatarScreen(final PlayerContext pc) {
+			super(pc);
+		}
+		
+		private final void initAvatar() {
+			old = pc.profile.currentAvatar;
+			avt = new Avatar(old);
+			pc.profile.replaceAvatar(avt);
+		}
+		
+		@Override
+		protected final void menu() throws Exception {
+			initAvatar();
+			final List<String> animals = Arrays.asList("Bear", "Cat", "Mouse", "Rabbit");
+			final AvtListener anmLsn = new AvtListener() {
+				@Override public final void update(final String value) {
+					avt.anm = value; }};
+			final RadioGroup anmGrp = addRadio(form, "Animal", animals, anmLsn, 8, 184);
+			final List<String> eyes = Arrays.asList("1", "2", "3", "4");
+			final AvtListener eyeLsn = new AvtListener() {
+				@Override public final void update(final String value) {
+					avt.eye = Integer.parseInt(value); }};
+			final RadioGroup eyeGrp = addRadio(form, "Eye", eyes, eyeLsn, 80, 184);
+			final List<String> colors = Arrays.asList("0", "1", "2", "3", "4");
+			final AvtListener redLsn = new ColorListener() {
+				@Override public final void update(final float value) {
+					avt.r = value; }};
+			final RadioGroup redGrp = addRadio(form, "Red", colors, redLsn, 112, 184);
+			final AvtListener greenLsn = new ColorListener() {
+				@Override public final void update(final float value) {
+					avt.g = value; }};
+			final RadioGroup grnGrp = addRadio(form, "Grn", colors, greenLsn, 144, 184);
+			final AvtListener blueLsn = new ColorListener() {
+				@Override public final void update(final float value) {
+					avt.b = value; }};
+			final RadioGroup bluGrp = addRadio(form, "Blu", colors, blueLsn, 176, 184);
+			final InputSubmitListener namLsn = new InputSubmitListener() {
+				@Override public final void onSubmit(final InputSubmitEvent event) {
+					avt.setName(event.toString()); }};
+			final ControllerInput namIn = new ControllerInput(PlatformGame.font, null);
+			namIn.setChangeListener(namLsn);
+			namIn.setMax(8);
+			addItem(form, namIn, 48, 112);
+			addTitle(form, "Name", 8, 112);
+			namIn.setLetter();
+			addExit("Save", 8, 96);
+			final MessageCloseListener canLsn = new MessageCloseListener() {
+                @Override public final void onClose(final MessageCloseEvent event) {
+                    if (disabled) {
+                        return;
+                    }
+                    pc.profile.replaceAvatar(old);
+                    PlatformGame.reloadAnimalStrip(pc);
+                    actor.setView(pc.guy);
+                    exit(); }};
+            addLink(form, "Cancel", canLsn, 48, 96);
+			anmGrp.setSelected(animals.indexOf(avt.anm));
+			eyeGrp.setSelected(avt.eye - 1);
+			redGrp.setSelected(getLineColor(avt.r));
+			grnGrp.setSelected(getLineColor(avt.g));
+			bluGrp.setSelected(getLineColor(avt.b));
+			namIn.append(avt.getName());
+		}
 		
 		private abstract class ColorListener extends AvtListener {
 			@Override
@@ -145,14 +219,10 @@ public class Menu {
 			protected abstract void update(final float value);
 		}
 		
-		private void goMap() {
-		    disabled = true;
-		    PlatformGame.goMap();
-		}
-		
 		@Override
-	    protected final void destroy() {
-			timg.destroy();
+		protected void onExit() {
+		    //PlatformGame.goMap();
+		    PlatformGame.fadeOut(PlatformGame.room, new ProfileScreen(pc));
 		}
 	}
 	
@@ -160,11 +230,11 @@ public class Menu {
 		return Math.round(c * 4);
 	}
 	
-	private final static RadioGroup addRadio(final Panform form, final String title, final List<String> list, final RadioSubmitListener lsn, final int x) {
+	private final static RadioGroup addRadio(final Panform form, final String title, final List<String> list, final RadioSubmitListener lsn, final int x, final int y) {
 		final RadioGroup grp = new RadioGroup(PlatformGame.font, list, null);
 		grp.setChangeListener(lsn);
-		addItem(form, grp, x, 168);
-		addTitle(form, title, x, 184);
+		addItem(form, grp, x, y - 16);
+		addTitle(form, title, x, y);
 		return grp;
 	}
 	
