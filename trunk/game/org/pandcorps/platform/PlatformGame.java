@@ -383,6 +383,7 @@ public class PlatformGame extends BaseGame {
 	    for (final PlayerContext pc : pcs) {
 	        pc.player.onFinishLevel();
 	    }
+	    Map.victory = true;
 	    goMap();
 	}
 	
