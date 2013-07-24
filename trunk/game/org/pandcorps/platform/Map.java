@@ -44,6 +44,9 @@ public class Map {
 	private final static byte TILE_MARKER = 8;
 	private final static byte TILE_SPECIAL = 9;
 	
+	private final static int DEPTH_MARKER = 1;
+	private final static int DEPTH_PLAYER = 2;
+	
 	/*private final static String[] ADJECTIVES =
 		{ "Bright", "Bubbly", "Cheery", "Emerald", "Enchanted", "Fragrant", "Green", "Fun", "Happy", "Incredible", "Merry",
 		"Mystic", "Sugar", "Sunny", "Sweet", "Tender", "Tranquil", "Verdant", "Vibrant", "Wonder" };
@@ -211,7 +214,7 @@ public class Map {
 		
 		private void setPos(final Tile t) {
 			setPosition(t);
-			getPosition().setZ(tm.getForegroundDepth() + 1);
+			setZ(getPosition(), DEPTH_PLAYER);
 		}
 		
 		protected boolean go(final Direction d0) {
@@ -808,8 +811,12 @@ public class Map {
 		//m.setPosition(tile);
 		final Panple pos = m.getPosition();
 		pos.set(tile.getPosition());
-		pos.setZ(tm.getForegroundDepth() + 1);
+		setZ(pos, DEPTH_MARKER);
 		room.addActor(m);
+	}
+	
+	private final static void setZ(final Panple pos, final int depth) {
+	    pos.setZ(tm.getForegroundDepth() + depth);
 	}
 	
 	private static void horiz(final int i, final int j) {
