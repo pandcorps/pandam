@@ -36,6 +36,7 @@ import org.pandcorps.platform.Player.*;
 public class Menu {
     private final static short SPEED_MENU_FADE = 6;
     private final static String NAME_NEW = "org.pandcorps.new";
+    private final static String WARN_DELETE = "Press Erase again to confirm";
     
 	protected abstract static class PlayerScreen extends Panscreen {
 		protected final PlayerContext pc;
@@ -101,6 +102,10 @@ public class Menu {
 			addLink(form, title, savLsn, x, y);
 		}
 		
+		protected final void goProfile() {
+			Panscreen.set(new ProfileScreen(pc, false));
+		}
+		
 		protected abstract class AvtListener implements RadioSubmitListener {
 			@Override public final void onSubmit(final RadioSubmitEvent event) {
 			    if (disabled) {
@@ -122,6 +127,9 @@ public class Menu {
 		
 		@Override
 		protected final void menu() {
+			final StringBuilder wrn = new StringBuilder();
+			final int wrnX = PlatformGame.SCREEN_W / 2;
+			final Pantext wrnLbl = addTitle(form, wrn, wrnX, 64);
 			final List<String> avatars = new ArrayList<String>(pc.profile.avatars.size());
             for (final Avatar a : pc.profile.avatars) {
             	avatars.add(a.getName());
@@ -137,7 +145,8 @@ public class Menu {
                         return;
                     }
                     goAvatar(); }};
-            addLink(form, "Edit", edtLsn, 8, 112);
+            int x = 8;
+            x = addLink(form, "Edit", edtLsn, x, 112);
             final MessageCloseListener newLsn = new MessageCloseListener() {
                 @Override public final void onClose(final MessageCloseEvent event) {
                     if (disabled) {
@@ -151,14 +160,37 @@ public class Menu {
                     PlatformGame.reloadAnimalStrip(pc);
                     actor.setView(pc.guy);
                     goAvatar(); }};
-            addLink(form, "New", newLsn, 56, 112);
-			addExit("Exit", 96, 112);
+            x = addLink(form, "New", newLsn, x, 112);
+            if (pc.profile.avatars.size() > 1) {
+	            final MessageCloseListener delLsn = new MessageCloseListener() {
+	                @Override public final void onClose(final MessageCloseEvent event) {
+	                    if (disabled) {
+	                        return;
+	                    } else if (pc.profile.avatars.size() == 1) {
+	                    	return;
+	                    }
+	                    if (!wrn.toString().equals(WARN_DELETE)) {
+	                    	wrn.setLength(0);
+	                    	wrn.append(WARN_DELETE);
+	                    	wrnLbl.getPosition().setX(wrnX);
+	                    	wrnLbl.centerX();
+	                    	return;
+	                    }
+	                    wrn.setLength(0);
+	                    pc.profile.avatars.remove(pc.profile.currentAvatar);
+	                    pc.profile.currentAvatar = pc.profile.avatars.get(0);
+	                    PlatformGame.reloadAnimalStrip(pc);
+	                    actor.setView(pc.guy);
+	                    goProfile(); }};
+	            x = addLink(form, "Erase", delLsn, x, 112);
+            }
+			addExit("Exit", x, 112);
 			// Rename Profile
-			// Delete
+			// Change Profile (Link to separate menu, can also create new Profile)
+			// Drop out (if other players? if not player 1?)
 		}
 		
 		private final void goAvatar() {
-		    //PlatformGame.fadeOut(PlatformGame.room, SPEED_MENU_FADE, new AvatarScreen(pc));
 		    Panscreen.set(new AvatarScreen(pc));
 		}
 		
@@ -243,7 +275,7 @@ public class Menu {
 			addItem(form, namIn, 48, 112);
 			addTitle(form, "Name", 8, 112);
 			namIn.setLetter();
-			addExit("Save", 8, 96);
+			addExit("Save", 8, 96); //TODO Don't allow same name? Or store index in save file?
 			final MessageCloseListener canLsn = new MessageCloseListener() {
                 @Override public final void onClose(final MessageCloseEvent event) {
                     if (disabled) {
@@ -277,9 +309,7 @@ public class Menu {
 		
 		@Override
 		protected void onExit() {
-		    //PlatformGame.goMap();
-		    //PlatformGame.fadeOut(PlatformGame.room, new ProfileScreen(pc));
-		    Panscreen.set(new ProfileScreen(pc, false));
+		    goProfile();
 		}
 	}
 	
@@ -295,10 +325,11 @@ public class Menu {
 		return grp;
 	}
 	
-	private final static void addLink(final Panform form, final String txt, final MessageCloseListener lsn, final int x, final int y) {
+	private final static int addLink(final Panform form, final String txt, final MessageCloseListener lsn, final int x, final int y) {
 	    final Message msg = new Message(PlatformGame.font, txt, lsn);
 	    msg.getLabel().setUnderlineEnabled(true);
         addItem(form, msg, x, y);
+        return x + (8 * (txt.length() + 1));
 	}
 	
 	private final static void addItem(final Panform form, final TextItem item, final int x, final int y) {
@@ -309,9 +340,10 @@ public class Menu {
 		form.addItem(item);
 	}
 	
-	private final static void addTitle(final Panform form, final String title, final int x, final int y) {
+	private final static Pantext addTitle(final Panform form, final CharSequence title, final int x, final int y) {
 		final Pantext tLbl = new Pantext(Pantil.vmid(), PlatformGame.font, title);
 		tLbl.getPosition().set(x, y);
 		form.getLayer().addActor(tLbl);
+		return tLbl;
 	}
 }
