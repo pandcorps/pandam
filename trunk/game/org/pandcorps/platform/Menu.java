@@ -34,7 +34,7 @@ import org.pandcorps.pandax.tile.*;
 import org.pandcorps.platform.Player.*;
 
 public class Menu {
-    private final static short SPEED_MENU_FADE = 6;
+    private final static short SPEED_MENU_FADE = 9;
     private final static String NAME_NEW = "org.pandcorps.new";
     
 	protected abstract static class PlayerScreen extends Panscreen {
@@ -70,7 +70,14 @@ public class Menu {
 			menu();
 			form.init();
 			
-			PlatformGame.fadeIn(room, SPEED_MENU_FADE);
+			final short speed = getSpeedFade();
+			if (speed > 0) {
+			    PlatformGame.fadeIn(room, speed);
+			}
+		}
+		
+		protected short getSpeedFade() {
+		    return 0;
 		}
 		
 		@Override
@@ -132,7 +139,7 @@ public class Menu {
                     if (disabled) {
                         return;
                     }
-                    PlatformGame.fadeOut(PlatformGame.room, SPEED_MENU_FADE, new AvatarScreen(pc)); }};
+                    goAvatar(); }};
             addLink(form, "Edit", edtLsn, 8, 112);
             final MessageCloseListener newLsn = new MessageCloseListener() {
                 @Override public final void onClose(final MessageCloseEvent event) {
@@ -146,12 +153,22 @@ public class Menu {
                     pc.profile.currentAvatar = avt;
                     PlatformGame.reloadAnimalStrip(pc);
                     actor.setView(pc.guy);
-                    PlatformGame.fadeOut(PlatformGame.room, SPEED_MENU_FADE, new AvatarScreen(pc)); }};
+                    goAvatar(); }};
             addLink(form, "New", newLsn, 56, 112);
 			addExit("Exit", 96, 112);
 			// Rename Profile
 			// Delete
 		}
+		
+		private final void goAvatar() {
+		    //PlatformGame.fadeOut(PlatformGame.room, SPEED_MENU_FADE, new AvatarScreen(pc));
+		    Panscreen.set(new AvatarScreen(pc));
+		}
+		
+		@Override
+		protected short getSpeedFade() {
+            return SPEED_MENU_FADE;
+        }
 		
 		@Override
 		protected void onExit() {
@@ -269,7 +286,8 @@ public class Menu {
 		@Override
 		protected void onExit() {
 		    //PlatformGame.goMap();
-		    PlatformGame.fadeOut(PlatformGame.room, new ProfileScreen(pc));
+		    //PlatformGame.fadeOut(PlatformGame.room, new ProfileScreen(pc));
+		    Panscreen.set(new ProfileScreen(pc));
 		}
 	}
 	
