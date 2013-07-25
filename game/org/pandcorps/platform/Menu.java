@@ -130,6 +130,8 @@ public class Menu {
 			final StringBuilder wrn = new StringBuilder();
 			final int wrnX = PlatformGame.SCREEN_W / 2;
 			final Pantext wrnLbl = addTitle(form, wrn, wrnX, 64);
+			form.setTabListener(new FormTabListener() {@Override public void onTab(final FormTabEvent event) {
+				wrn.setLength(0); }});
 			final List<String> avatars = new ArrayList<String>(pc.profile.avatars.size());
             for (final Avatar a : pc.profile.avatars) {
             	avatars.add(a.getName());
