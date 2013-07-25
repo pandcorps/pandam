@@ -25,6 +25,7 @@ package org.pandcorps.pandax.text;
 public class FormTabEvent {
 	private final TextItem blurred;
 	private final TextItem focused;
+	/*package*/ boolean allowed = true;
 	
 	/*package*/ FormTabEvent(final TextItem blurred, final TextItem focused) {
         this.blurred = blurred;
@@ -37,5 +38,9 @@ public class FormTabEvent {
 	
 	public final TextItem getFocused() {
 		return focused;
+	}
+	
+	public final void cancel() {
+		allowed = false;
 	}
 }
