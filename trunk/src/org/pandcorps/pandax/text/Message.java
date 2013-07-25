@@ -72,7 +72,9 @@ public class Message extends TextItem {
                 //label.destroy();
                 //layer.detach();
                 close();
-                interaction.unregister(this);
+                if (form == null) {
+                	interaction.unregister(this);
+                }
                 submit.inactivate();
                 if (listener != null) {
                     listener.onClose(MessageCloseEvent.getInstance());
