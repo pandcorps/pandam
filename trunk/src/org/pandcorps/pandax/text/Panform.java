@@ -114,11 +114,15 @@ public class Panform extends MenuItem {
     }
     
     private final void tab(final int next) {
-    	final TextItem blurred = blurItem();
-    	curr = next;
-    	final TextItem focused = focusItem();
     	if (tabListener != null) {
-    		tabListener.onTab(new FormTabEvent(blurred, focused));
+    		final FormTabEvent event = new FormTabEvent(item(), items.get(next));
+    		tabListener.onTab(event);
+    		if (!event.allowed) {
+    			return;
+    		}
     	}
+    	blurItem();
+    	curr = next;
+    	focusItem();
     }
 }
