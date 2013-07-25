@@ -224,7 +224,7 @@ public class Menu {
                         return;
                     }
                     if (NAME_NEW.equals(old.getName())) {
-                        pc.profile.avatars.remove(old);
+                        pc.profile.avatars.remove(pc.profile.currentAvatar);
                         pc.profile.currentAvatar = pc.profile.avatars.get(0);
                     } else {
                         pc.profile.replaceAvatar(old);
