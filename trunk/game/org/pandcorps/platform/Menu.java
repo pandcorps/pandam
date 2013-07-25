@@ -159,6 +159,23 @@ public class Menu {
 		}
 	}
 	
+	private final static String getNewName(final Profile profile) {
+	    for (char c = 'A' - 1; c <= 'Z'; c++) {
+	        final String name = "New" + (c >= 'A' ? String.valueOf(c) : "");
+	        boolean missing = true;
+	        for (final Avatar avt : profile.avatars) {
+	            if (name.equals(avt.getName())) {
+	                missing = false;
+	                break;
+	            }
+	        }
+	        if (missing) {
+	            return name;
+	        }
+	    }
+	    return "RenameUs";
+	}
+	
 	protected final static class AvatarScreen extends PlayerScreen {
 		private Avatar old = null;
 		private Avatar avt = null;
@@ -179,7 +196,7 @@ public class Menu {
 			initAvatar();
 			if (NAME_NEW.equals(old.getName())) {
 			    //newAvt = true;
-			    avt.setName("New"); // If old keeps NAME_NEW, then cancel can rely on that
+			    avt.setName(getNewName(pc.profile)); // If old keeps NAME_NEW, then cancel can rely on that
 			}
 			final List<String> animals = PlatformGame.getAnimals();
 			final AvtListener anmLsn = new AvtListener() {
@@ -222,8 +239,7 @@ public class Menu {
                 @Override public final void onClose(final MessageCloseEvent event) {
                     if (disabled) {
                         return;
-                    }
-                    if (NAME_NEW.equals(old.getName())) {
+                    } else if (NAME_NEW.equals(old.getName())) {
                         pc.profile.avatars.remove(pc.profile.currentAvatar);
                         pc.profile.currentAvatar = pc.profile.avatars.get(0);
                     } else {
