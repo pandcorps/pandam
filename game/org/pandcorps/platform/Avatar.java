@@ -22,6 +22,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.platform;
 
+import org.pandcorps.core.Mathtil;
 import org.pandcorps.core.seg.*;
 import org.pandcorps.platform.Player.PlayerData;
 
@@ -37,6 +38,14 @@ public class Avatar extends PlayerData implements Segmented {
     
     public Avatar(final Avatar src) {
         load(src);
+    }
+    
+    public void randomize() {
+        anm = Mathtil.rand(PlatformGame.getAnimals());
+        eye = Mathtil.randi(1, PlatformGame.getNumEyes());
+        r = randColor();
+        g = randColor();
+        b = randColor();
     }
     
     public void load(final Avatar src) {
@@ -66,5 +75,13 @@ public class Avatar extends PlayerData implements Segmented {
     	seg.setFloat(3, r);
     	seg.setFloat(4, g);
     	seg.setFloat(5, b);
+    }
+    
+    private final static float randColor() {
+        return toColor(Mathtil.randi(0, 4));
+    }
+    
+    protected final static float toColor(final int i) {
+        return i / 4f;
     }
 }

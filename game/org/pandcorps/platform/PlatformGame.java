@@ -121,11 +121,19 @@ public class PlatformGame extends BaseGame {
 	}
 	
 	protected final static void fadeIn(final Panlayer layer) {
-		FadeController.fadeIn(layer, Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, SPEED_FADE);
+	    fadeIn(layer, SPEED_FADE);
+	}
+	
+	protected final static void fadeIn(final Panlayer layer, final short speed) {
+		FadeController.fadeIn(layer, Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, speed);
 	}
 	
 	protected final static void fadeOut(final Panlayer layer, final Panscreen screen) {
-		FadeController.fadeOut(layer, Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, SPEED_FADE, screen);
+	    fadeOut(layer, SPEED_FADE, screen);
+	}
+	
+	protected final static void fadeOut(final Panlayer layer, final short speed, final Panscreen screen) {
+		FadeController.fadeOut(layer, Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, speed, screen);
 	}
 	
 	protected final static class PlatformScreen extends Panscreen {
@@ -398,6 +406,14 @@ public class PlatformGame extends BaseGame {
 	    room = Pangine.getEngine().createRoom(Pantil.vmid(), w, h, 0);
 	    Pangame.getGame().setCurrentRoom(room);
 	    return room;
+	}
+	
+	protected final static List<String> getAnimals() {
+	    return Arrays.asList("Bear", "Cat", "Mouse", "Rabbit");
+	}
+	
+	protected final static int getNumEyes() {
+	    return 4;
 	}
 	
 	public final static void main(final String[] args) {
