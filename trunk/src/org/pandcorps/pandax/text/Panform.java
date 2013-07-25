@@ -30,6 +30,7 @@ import org.pandcorps.pandam.event.action.*;
 public class Panform extends MenuItem {
     // Might move layer-managing code from TextItem into MenuItem
     private final ArrayList<TextItem> items = new ArrayList<TextItem>();
+    private FormTabListener tabListener = null;
     private int curr = 0;
     
     public Panform() {
@@ -37,6 +38,10 @@ public class Panform extends MenuItem {
         bound.setVisible(false);
         layer = Pangame.getGame().getCurrentRoom();
         layer.addActor(bound);
+    }
+    
+    public void setTabListener(final FormTabListener tabListener) {
+    	this.tabListener = tabListener;
     }
     
     public void addItem(final TextItem item) {
@@ -82,30 +87,38 @@ public class Panform extends MenuItem {
         return items.get(curr);
     }
     
-    private final void blurItem() {
+    private final TextItem blurItem() {
         final TextItem item = item();
         item.label.setBorderEnabled(false);
         item.blur();
+        return item;
     }
     
-    private final void focusItem() {
+    private final TextItem focusItem() {
     	final TextItem item = item();
         item.label.setBorderEnabled(true);
         item.focus();
+        return item;
     }
     
     protected final void forward() {
-        blurItem();
-        curr = (curr + 1) % items.size();
-        focusItem();
+        tab((curr + 1) % items.size());
     }
     
     protected final void back() {
-        blurItem();
-        curr--;
-        if (curr < 0) {
-            curr = items.size() - 1;
+        int next = curr - 1;
+        if (next < 0) {
+        	next = items.size() - 1;
         }
-        focusItem();
+        tab(next);
+    }
+    
+    private final void tab(final int next) {
+    	final TextItem blurred = blurItem();
+    	curr = next;
+    	final TextItem focused = focusItem();
+    	if (tabListener != null) {
+    		tabListener.onTab(new FormTabEvent(blurred, focused));
+    	}
     }
 }
