@@ -34,6 +34,9 @@ import org.pandcorps.pandax.tile.*;
 import org.pandcorps.platform.Player.*;
 
 public class Menu {
+    private final static short SPEED_MENU_FADE = 6;
+    private final static String NAME_NEW = "org.pandcorps.new";
+    
 	protected abstract static class PlayerScreen extends Panscreen {
 		protected final PlayerContext pc;
 		protected Panmage timg = null;
@@ -67,7 +70,7 @@ public class Menu {
 			menu();
 			form.init();
 			
-			PlatformGame.fadeIn(room);
+			PlatformGame.fadeIn(room, SPEED_MENU_FADE);
 		}
 		
 		@Override
@@ -129,11 +132,24 @@ public class Menu {
                     if (disabled) {
                         return;
                     }
-                    PlatformGame.fadeOut(PlatformGame.room, new AvatarScreen(pc)); }};
+                    PlatformGame.fadeOut(PlatformGame.room, SPEED_MENU_FADE, new AvatarScreen(pc)); }};
             addLink(form, "Edit", edtLsn, 8, 112);
-			addExit("Exit", 58, 112);
+            final MessageCloseListener newLsn = new MessageCloseListener() {
+                @Override public final void onClose(final MessageCloseEvent event) {
+                    if (disabled) {
+                        return;
+                    }
+                    final Avatar avt = new Avatar();
+                    avt.randomize();
+                    avt.setName(NAME_NEW);
+                    pc.profile.avatars.add(avt);
+                    pc.profile.currentAvatar = avt;
+                    PlatformGame.reloadAnimalStrip(pc);
+                    actor.setView(pc.guy);
+                    PlatformGame.fadeOut(PlatformGame.room, SPEED_MENU_FADE, new AvatarScreen(pc)); }};
+            addLink(form, "New", newLsn, 56, 112);
+			addExit("Exit", 96, 112);
 			// Rename Profile
-			// New
 			// Delete
 		}
 		
@@ -146,6 +162,7 @@ public class Menu {
 	protected final static class AvatarScreen extends PlayerScreen {
 		private Avatar old = null;
 		private Avatar avt = null;
+		//private boolean newAvt = false;
 		
 		protected AvatarScreen(final PlayerContext pc) {
 			super(pc);
@@ -160,12 +177,20 @@ public class Menu {
 		@Override
 		protected final void menu() throws Exception {
 			initAvatar();
-			final List<String> animals = Arrays.asList("Bear", "Cat", "Mouse", "Rabbit");
+			if (NAME_NEW.equals(old.getName())) {
+			    //newAvt = true;
+			    avt.setName("New"); // If old keeps NAME_NEW, then cancel can rely on that
+			}
+			final List<String> animals = PlatformGame.getAnimals();
 			final AvtListener anmLsn = new AvtListener() {
 				@Override public final void update(final String value) {
 					avt.anm = value; }};
 			final RadioGroup anmGrp = addRadio(form, "Animal", animals, anmLsn, 8, 184);
-			final List<String> eyes = Arrays.asList("1", "2", "3", "4");
+			final int numEyes = PlatformGame.getNumEyes();
+			final ArrayList<String> eyes = new ArrayList<String>(numEyes);
+			for (int i = 0; i < numEyes; i++) {
+			    eyes.add(Integer.toString(i + 1));
+			}
 			final AvtListener eyeLsn = new AvtListener() {
 				@Override public final void update(final String value) {
 					avt.eye = Integer.parseInt(value); }};
@@ -198,7 +223,12 @@ public class Menu {
                     if (disabled) {
                         return;
                     }
-                    pc.profile.replaceAvatar(old);
+                    if (NAME_NEW.equals(old.getName())) {
+                        pc.profile.avatars.remove(old);
+                        pc.profile.currentAvatar = pc.profile.avatars.get(0);
+                    } else {
+                        pc.profile.replaceAvatar(old);
+                    }
                     PlatformGame.reloadAnimalStrip(pc);
                     actor.setView(pc.guy);
                     exit(); }};
@@ -214,7 +244,7 @@ public class Menu {
 		private abstract class ColorListener extends AvtListener {
 			@Override
 			protected final void update(final String value) {
-				update(Integer.parseInt(value) / 4f);
+				update(Avatar.toColor(Integer.parseInt(value)));
 			}
 			
 			protected abstract void update(final float value);
