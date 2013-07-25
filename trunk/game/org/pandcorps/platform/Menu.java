@@ -34,18 +34,20 @@ import org.pandcorps.pandax.tile.*;
 import org.pandcorps.platform.Player.*;
 
 public class Menu {
-    private final static short SPEED_MENU_FADE = 9;
+    private final static short SPEED_MENU_FADE = 6;
     private final static String NAME_NEW = "org.pandcorps.new";
     
 	protected abstract static class PlayerScreen extends Panscreen {
 		protected final PlayerContext pc;
+		private final boolean fadeIn;
 		protected Panmage timg = null;
 		protected Panctor actor = null;
 		protected boolean disabled = false;
 		protected Panform form = null;
 		
-		protected PlayerScreen(final PlayerContext pc) {
+		protected PlayerScreen(final PlayerContext pc, final boolean fadeIn) {
 			this.pc = pc;
+			this.fadeIn = fadeIn;
 		}
 		
 		@Override
@@ -70,14 +72,9 @@ public class Menu {
 			menu();
 			form.init();
 			
-			final short speed = getSpeedFade();
-			if (speed > 0) {
-			    PlatformGame.fadeIn(room, speed);
+			if (fadeIn) {
+			    PlatformGame.fadeIn(room, SPEED_MENU_FADE);
 			}
-		}
-		
-		protected short getSpeedFade() {
-		    return 0;
 		}
 		
 		@Override
@@ -119,8 +116,8 @@ public class Menu {
 	}
 	
 	protected final static class ProfileScreen extends PlayerScreen {
-		protected ProfileScreen(final PlayerContext pc) {
-			super(pc);
+		protected ProfileScreen(final PlayerContext pc, final boolean fadeIn) {
+			super(pc, fadeIn);
 		}
 		
 		@Override
@@ -166,13 +163,8 @@ public class Menu {
 		}
 		
 		@Override
-		protected short getSpeedFade() {
-            return SPEED_MENU_FADE;
-        }
-		
-		@Override
 		protected void onExit() {
-		    PlatformGame.goMap();
+		    PlatformGame.goMap(SPEED_MENU_FADE);
 		}
 	}
 	
@@ -199,7 +191,7 @@ public class Menu {
 		//private boolean newAvt = false;
 		
 		protected AvatarScreen(final PlayerContext pc) {
-			super(pc);
+			super(pc, false);
 		}
 		
 		private final void initAvatar() {
@@ -222,8 +214,8 @@ public class Menu {
 			final RadioGroup anmGrp = addRadio(form, "Animal", animals, anmLsn, 8, 184);
 			final int numEyes = PlatformGame.getNumEyes();
 			final ArrayList<String> eyes = new ArrayList<String>(numEyes);
-			for (int i = 0; i < numEyes; i++) {
-			    eyes.add(Integer.toString(i + 1));
+			for (int i = 1; i <= numEyes; i++) {
+			    eyes.add(Integer.toString(i));
 			}
 			final AvtListener eyeLsn = new AvtListener() {
 				@Override public final void update(final String value) {
@@ -287,7 +279,7 @@ public class Menu {
 		protected void onExit() {
 		    //PlatformGame.goMap();
 		    //PlatformGame.fadeOut(PlatformGame.room, new ProfileScreen(pc));
-		    Panscreen.set(new ProfileScreen(pc));
+		    Panscreen.set(new ProfileScreen(pc, false));
 		}
 	}
 	
