@@ -396,7 +396,11 @@ public class PlatformGame extends BaseGame {
 	}
 	
 	protected final static void goMap() {
-        fadeOut(room, new Map.MapScreen());
+		goMap(SPEED_FADE);
+	}
+	
+	protected final static void goMap(final short speed) {
+        fadeOut(room, speed, new Map.MapScreen());
 	}
 	
 	protected final static Panroom createRoom(final int w, final int h) {
