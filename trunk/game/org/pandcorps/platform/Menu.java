@@ -24,6 +24,7 @@ package org.pandcorps.platform;
 
 import java.util.*;
 
+import org.pandcorps.core.Chartil;
 import org.pandcorps.core.Pantil;
 import org.pandcorps.core.img.*;
 import org.pandcorps.game.core.ImtilX;
@@ -37,14 +38,19 @@ public class Menu {
     private final static short SPEED_MENU_FADE = 6;
     private final static String NAME_NEW = "org.pandcorps.new";
     private final static String WARN_DELETE = "Press Erase again to confirm";
+    private final static String WARN_EMPTY = "Must have a name";
+    private final static String WARN_DUPLICATE = "Name already used";
     
 	protected abstract static class PlayerScreen extends Panscreen {
 		protected final PlayerContext pc;
 		private final boolean fadeIn;
+		protected final StringBuilder wrn = new StringBuilder();
 		protected Panmage timg = null;
 		protected Panctor actor = null;
+		protected Pantext wrnLbl = null;
 		protected boolean disabled = false;
 		protected Panform form = null;
+		protected int center = -1;
 		
 		protected PlayerScreen(final PlayerContext pc, final boolean fadeIn) {
 			this.pc = pc;
@@ -66,10 +72,19 @@ public class Menu {
 			
 			actor = new Panctor();
 			actor.setView(pc.guy);
-			actor.getPosition().set(w / 2, 16, tm.getForegroundDepth() + 1);
+			center = w / 2;
+			actor.getPosition().set(center, 16, tm.getForegroundDepth() + 1);
 			room.addActor(actor);
 			
 			form = new Panform();
+			wrnLbl = addTitle(form, wrn, center, 64);
+			form.setTabListener(new FormTabListener() {@Override public void onTab(final FormTabEvent event) {
+				if (allow()) {
+					wrn.setLength(0);
+				} else {
+					event.cancel();
+				}
+			}});
 			menu();
 			form.init();
 			
@@ -85,12 +100,23 @@ public class Menu {
 		
 		protected abstract void menu() throws Exception;
 		
+		protected boolean allow() {
+			return true;
+		}
+		
 		protected final void exit() {
 		    disabled = true;
 		    onExit();
 		}
 		
 		protected abstract void onExit();
+		
+		protected final void setWarning(final String val) {
+			wrn.setLength(0);
+        	wrn.append(val);
+        	wrnLbl.getPosition().setX(center);
+        	wrnLbl.centerX();
+		}
 		
 		protected final void addExit(final String title, final int x, final int y) {
 			final MessageCloseListener savLsn = new MessageCloseListener() {
@@ -127,11 +153,6 @@ public class Menu {
 		
 		@Override
 		protected final void menu() {
-			final StringBuilder wrn = new StringBuilder();
-			final int wrnX = PlatformGame.SCREEN_W / 2;
-			final Pantext wrnLbl = addTitle(form, wrn, wrnX, 64);
-			form.setTabListener(new FormTabListener() {@Override public void onTab(final FormTabEvent event) {
-				wrn.setLength(0); }});
 			final List<String> avatars = new ArrayList<String>(pc.profile.avatars.size());
             for (final Avatar a : pc.profile.avatars) {
             	avatars.add(a.getName());
@@ -172,10 +193,7 @@ public class Menu {
 	                    	return;
 	                    }
 	                    if (!wrn.toString().equals(WARN_DELETE)) {
-	                    	wrn.setLength(0);
-	                    	wrn.append(WARN_DELETE);
-	                    	wrnLbl.getPosition().setX(wrnX);
-	                    	wrnLbl.centerX();
+	                    	setWarning(WARN_DELETE);
 	                    	return;
 	                    }
 	                    wrn.setLength(0);
@@ -277,7 +295,7 @@ public class Menu {
 			addItem(form, namIn, 48, 112);
 			addTitle(form, "Name", 8, 112);
 			namIn.setLetter();
-			addExit("Save", 8, 96); //TODO Don't allow same name? Or store index in save file?
+			addExit("Save", 8, 96);
 			final MessageCloseListener canLsn = new MessageCloseListener() {
                 @Override public final void onClose(final MessageCloseEvent event) {
                     if (disabled) {
@@ -298,6 +316,22 @@ public class Menu {
 			grnGrp.setSelected(getLineColor(avt.g));
 			bluGrp.setSelected(getLineColor(avt.b));
 			namIn.append(avt.getName());
+		}
+		
+		@Override
+		protected boolean allow() {
+			final String curr = avt.getName();
+			if (Chartil.isEmpty(curr)) {
+				setWarning(WARN_EMPTY);
+				return false;
+			}
+			for (final Avatar a : pc.profile.avatars) {
+				if (a != avt && a.getName().equals(curr)) {
+					setWarning(WARN_DUPLICATE);
+					return false;
+				}
+			}
+			return true;
 		}
 		
 		private abstract class ColorListener extends AvtListener {
