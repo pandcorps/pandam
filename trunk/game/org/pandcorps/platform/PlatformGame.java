@@ -23,6 +23,7 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.platform;
 
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.*;
 
 import org.pandcorps.core.*;
@@ -95,6 +96,8 @@ public class PlatformGame extends BaseGame {
 	
 	protected final static short SPEED_FADE = 3;
 	
+	private final static String EXT_PRF = ".prf.txt";
+	
 	protected static Panroom room = null;
 	protected final static ArrayList<PlayerContext> pcs = new ArrayList<PlayerContext>();
 	protected static MultiFont font = null;
@@ -163,8 +166,8 @@ public class PlatformGame extends BaseGame {
 		return strip;
 	}
 	
-	private final static void createAnimalStrip(final Profile profile) {
-		final PlayerContext pc = new PlayerContext(profile, pcs.size());
+	private final static void createAnimalStrip(final Profile profile, final int index) {
+		final PlayerContext pc = new PlayerContext(profile, index);
 		reloadAnimalStrip(pc);
 		final Panteraction interaction = Pangine.getEngine().getInteraction();
 		if (profile.ctrl == 0) {
@@ -183,7 +186,7 @@ public class PlatformGame extends BaseGame {
 				pc.inRight = c.RIGHT;
 			}
 		}
-		pcs.add(pc);
+		Coltil.set(pcs, index, pc);
 	}
 	
 	protected final static void reloadAnimalStrip(final PlayerContext pc) {
@@ -256,12 +259,8 @@ public class PlatformGame extends BaseGame {
 		f.put(r, g, b, Pancolor.MAX_VALUE, r, b, g, Pancolor.MAX_VALUE);
 	}
 	
-	private final static void loadConstants() throws Exception {
-		final Pangine engine = Pangine.getEngine();
-		final Segment cfg = SegmentStream.readLocation("Config.txt").get(0);
-		// CFG|Andrew
-		final String pname = cfg.getValue(0);
-		final SegmentStream plist = SegmentStream.openLocation(pname + ".txt");
+	protected final static Profile loadProfile(final String pname, final int index) throws Exception {
+		final SegmentStream plist = SegmentStream.openLocation(pname + EXT_PRF);
 		/*
 		PRF|Andrew|Balue|1|0
 		AVT|Grabbit|Rabbit|2|0|1|0.25
@@ -287,11 +286,20 @@ public class PlatformGame extends BaseGame {
         avatar.b = 1;*/
         profile.currentAvatar = profile.getAvatar(curName);
         //profile.ctrl = 0;
-		createAnimalStrip(profile);
+		createAnimalStrip(profile, index);
 		//profile.serialize("temptemp.txt");
 		//createAnimalStrip("Grabbit", "Rabbit", 2, new MultiplyPixelFilter(Channel.Blue, 0f, Channel.Blue, 1f, Channel.Blue, 0.25f), 1);
 		//createAnimalStrip("Roddy", "Mouse", 3, new SwapPixelFilter(Channel.Blue, Channel.Red, Channel.Blue), 0);
 		//createAnimalStrip("Felip", "Cat", 4, new SwapPixelFilter(Channel.Red, Channel.Red, Channel.Blue), 0);
+		return profile;
+	}
+	
+	private final static void loadConstants() throws Exception {
+		final Pangine engine = Pangine.getEngine();
+		final Segment cfg = SegmentStream.readLocation("Config.txt").get(0);
+		// CFG|Andrew
+		final String pname = cfg.getValue(0);
+		loadProfile(pname, pcs.size());
 		
 		enemies.add(new EnemyDefinition("", 1, null, true));
 		enemies.add(new EnemyDefinition("Troblin", 2, null, false));
@@ -410,6 +418,29 @@ public class PlatformGame extends BaseGame {
 	    room = Pangine.getEngine().createRoom(Pantil.vmid(), w, h, 0);
 	    Pangame.getGame().setCurrentRoom(room);
 	    return room;
+	}
+	
+	protected final static PlayerContext getPlayerContext(final String name) {
+		for (final PlayerContext pc : pcs) {
+			if (name.equals(pc.profile.getName())) {
+				return pc;
+			}
+		}
+		return null;
+	}
+	
+	protected final static List<String> getAvailableProfiles() {
+		final ArrayList<String> list = new ArrayList<String>();
+		final int extLen = EXT_PRF.length();
+		for (final String f : new File(".").list()) {
+			if (f.endsWith(EXT_PRF)) {
+				final String prf = f.substring(0, f.length() - extLen);
+				if (getPlayerContext(prf) == null) {
+					list.add(prf);
+				}
+			}
+		}
+		return list;
 	}
 	
 	protected final static List<String> getAnimals() {
