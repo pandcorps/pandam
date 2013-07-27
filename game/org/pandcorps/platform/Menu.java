@@ -25,6 +25,7 @@ package org.pandcorps.platform;
 import java.util.*;
 
 import org.pandcorps.core.Chartil;
+import org.pandcorps.core.Coltil;
 import org.pandcorps.core.Pantil;
 import org.pandcorps.core.img.*;
 import org.pandcorps.game.core.ImtilX;
@@ -42,7 +43,7 @@ public class Menu {
     private final static String WARN_DUPLICATE = "Name already used";
     
 	protected abstract static class PlayerScreen extends Panscreen {
-		protected final PlayerContext pc;
+		protected PlayerContext pc;
 		private final boolean fadeIn;
 		protected final StringBuilder wrn = new StringBuilder();
 		protected Panmage timg = null;
@@ -70,11 +71,13 @@ public class Menu {
 			tm.fillBackground(imgMap[1][1], 0, 1);
 			room.addActor(tm);
 			
-			actor = new Panctor();
-			actor.setView(pc.guy);
-			center = w / 2;
-			actor.getPosition().set(center, 16, tm.getForegroundDepth() + 1);
-			room.addActor(actor);
+			if (pc != null) {
+				actor = new Panctor();
+				actor.setView(pc.guy);
+				center = w / 2;
+				actor.getPosition().set(center, 16, tm.getForegroundDepth() + 1);
+				room.addActor(actor);
+			}
 			
 			form = new Panform();
 			wrnLbl = addTitle(form, wrn, center, 64);
@@ -146,6 +149,49 @@ public class Menu {
 		}
 	}
 	
+	protected final static class SelectScreen extends PlayerScreen {
+		final PlayerContext curr;
+		
+		protected SelectScreen(final PlayerContext pc, final boolean fadeIn) {
+			super(null, fadeIn);
+			curr = pc;
+		}
+		
+		@Override
+		protected final void menu() {
+			final List<String> list = PlatformGame.getAvailableProfiles();
+			if (Coltil.isValued(list)) {
+				final RadioSubmitListener prfLsn = new RadioSubmitListener() {
+					@Override public final void onSubmit(final RadioSubmitEvent event) {
+						if (curr != null) {
+							curr.destroy();
+						}
+						final int index = curr == null ? PlatformGame.pcs.size() : curr.index;
+						try {
+							PlatformGame.loadProfile(event.toString(), index);
+						} catch (final Exception e) {
+							throw Pantil.toRuntimeException(e);
+						}
+						pc = PlatformGame.pcs.get(index);
+						goProfile();
+				}};
+				addRadio(form, "Pick Profile", list, prfLsn, null, 8, 184);
+			}
+			//addLink(form, "New", newLsn, 8, 128); //TODO
+			if (curr != null) {
+				addExit("Cancel", 40, 128);
+			}
+		}
+
+		@Override
+		protected final void onExit() {
+			if (pc == null) {
+				pc = curr;
+			}
+			goProfile();
+		}
+	}
+	
 	protected final static class ProfileScreen extends PlayerScreen {
 		protected ProfileScreen(final PlayerContext pc, final boolean fadeIn) {
 			super(pc, fadeIn);
@@ -205,8 +251,14 @@ public class Menu {
 	            x = addLink(form, "Erase", delLsn, x, 112);
             }
 			addExit("Exit", x, 112);
-			// Rename Profile
-			// Change Profile (Link to separate menu, can also create new Profile)
+			final MessageCloseListener prfLsn = new MessageCloseListener() {
+                @Override public final void onClose(final MessageCloseEvent event) {
+                    if (disabled) {
+                        return;
+                    }
+                    Panscreen.set(new SelectScreen(pc, false)); }};
+            addLink(form, "Pick Profile", prfLsn, 8, 96);
+			// Rename Profile //TODO
 			// Drop out (if other players? if not player 1?)
 		}
 		
@@ -354,8 +406,12 @@ public class Menu {
 	}
 	
 	private final static RadioGroup addRadio(final Panform form, final String title, final List<String> list, final RadioSubmitListener lsn, final int x, final int y) {
-		final RadioGroup grp = new RadioGroup(PlatformGame.font, list, null);
-		grp.setChangeListener(lsn);
+		return addRadio(form, title, list, null, lsn, x, y);
+	}
+	
+	private final static RadioGroup addRadio(final Panform form, final String title, final List<String> list, final RadioSubmitListener subLsn, final RadioSubmitListener chgLsn, final int x, final int y) {
+		final RadioGroup grp = new RadioGroup(PlatformGame.font, list, subLsn);
+		grp.setChangeListener(chgLsn);
 		addItem(form, grp, x, y - 16);
 		addTitle(form, title, x, y);
 		return grp;
