@@ -64,9 +64,11 @@ public class SegmentStream implements Closeable {
     public final static List<Segment> readLocation(final String location, final String defaultContent) {
     	try {
     		return readLocation(location);
-    	} catch (final Exception e) {
+    	} catch (final RuntimeException e) {
     		if (e.getCause() instanceof FileNotFoundException) {
     			Iotil.writeFile(location, defaultContent);
+    		} else {
+    			throw e;
     		}
     	}
     	return readLocation(location);
