@@ -119,8 +119,8 @@ public class PlatformGame extends BaseGame {
 	protected final void init(final Panroom room) throws Exception {
 		Pangine.getEngine().setTitle("Platformer");
 		PlatformGame.room = room;
-		loadConstants();
-		Panscreen.set(new LogoScreen(Map.MapScreen.class));
+		final Class<? extends Panscreen> next = loadConstants() ? Map.MapScreen.class : Menu.ProfileScreen.class;
+		Panscreen.set(new LogoScreen(next));
 	}
 	
 	protected final static void fadeIn(final Panlayer layer) {
@@ -166,8 +166,14 @@ public class PlatformGame extends BaseGame {
 		return strip;
 	}
 	
-	private final static void createAnimalStrip(final Profile profile, final int index) {
+	protected final static PlayerContext newPlayerContext(final Profile profile, final int index) {
 		final PlayerContext pc = new PlayerContext(profile, index);
+		Coltil.set(pcs, index, pc);
+		return pc;
+	}
+	
+	private final static void createAnimalStrip(final Profile profile, final int index) {
+		final PlayerContext pc = newPlayerContext(profile, index);
 		reloadAnimalStrip(pc);
 		final Panteraction interaction = Pangine.getEngine().getInteraction();
 		if (profile.ctrl == 0) {
@@ -186,7 +192,6 @@ public class PlatformGame extends BaseGame {
 				pc.inRight = c.RIGHT;
 			}
 		}
-		Coltil.set(pcs, index, pc);
 	}
 	
 	protected final static void reloadAnimalStrip(final PlayerContext pc) {
@@ -294,12 +299,15 @@ public class PlatformGame extends BaseGame {
 		return profile;
 	}
 	
-	private final static void loadConstants() throws Exception {
+	private final static boolean loadConstants() throws Exception {
 		final Pangine engine = Pangine.getEngine();
-		final Segment cfg = SegmentStream.readLocation("Config.txt").get(0);
+		final Segment cfg = SegmentStream.readLocation("Config.txt", "CFG|").get(0);
 		// CFG|Andrew
 		final String pname = cfg.getValue(0);
-		loadProfile(pname, pcs.size());
+		final boolean success = pname != null;
+		if (success) {
+			loadProfile(pname, pcs.size()); //TODO handle missing profile
+		}
 		
 		enemies.add(new EnemyDefinition("", 1, null, true));
 		enemies.add(new EnemyDefinition("Troblin", 2, null, false));
@@ -342,6 +350,8 @@ public class PlatformGame extends BaseGame {
 		
 		dirts = Imtil.loadStrip("org/pandcorps/platform/res/bg/Dirt.png", ImtilX.DIM);
 		terrains = Imtil.loadStrip("org/pandcorps/platform/res/bg/Terrain.png", ImtilX.DIM);
+		
+		return success;
 	}
 	
 	private final static Panimation createGemAnimation(final String name, final Panmage[] gem) {

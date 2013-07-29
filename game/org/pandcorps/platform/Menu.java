@@ -152,6 +152,10 @@ public class Menu {
 	protected final static class SelectScreen extends PlayerScreen {
 		final PlayerContext curr;
 		
+		protected SelectScreen() {
+			this(PlatformGame.newPlayerContext(null, 0), true);
+		}
+		
 		protected SelectScreen(final PlayerContext pc, final boolean fadeIn) {
 			super(null, fadeIn);
 			curr = pc;
