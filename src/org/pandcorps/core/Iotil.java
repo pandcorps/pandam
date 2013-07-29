@@ -69,6 +69,17 @@ public final class Iotil {
 			throw new RuntimeException(e);
 		}
 	}
+	
+	public final static void writeFile(final String location, final String content) {
+		final Writer out = getWriter(location);
+		try {
+			out.write(content);
+		} catch (final IOException e) {
+			throw new RuntimeException(e);
+		} finally {
+			close(out);
+		}
+	}
 
 	public final static void close(final Closeable s) {
 		if (s != null) {
