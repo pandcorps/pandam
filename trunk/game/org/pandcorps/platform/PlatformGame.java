@@ -96,6 +96,9 @@ public class PlatformGame extends BaseGame {
 	
 	protected final static short SPEED_FADE = 3;
 	
+	protected final static int MAX_NAME_PROFILE = 8;
+	protected final static int MAX_NAME_AVATAR = 8;
+	
 	private final static String EXT_PRF = ".prf.txt";
 	
 	protected static Panroom room = null;
@@ -119,7 +122,12 @@ public class PlatformGame extends BaseGame {
 	protected final void init(final Panroom room) throws Exception {
 		Pangine.getEngine().setTitle("Platformer");
 		PlatformGame.room = room;
-		final Class<? extends Panscreen> next = loadConstants() ? Map.MapScreen.class : Menu.ProfileScreen.class;
+		final Class<? extends Panscreen> next;
+		if (loadConstants()) {
+		    next = Map.MapScreen.class;
+		} else {
+		    next = Menu.SelectScreen.class;
+		}
 		Panscreen.set(new LogoScreen(next));
 	}
 	
