@@ -24,9 +24,7 @@ package org.pandcorps.platform;
 
 import java.util.*;
 
-import org.pandcorps.core.Chartil;
-import org.pandcorps.core.Coltil;
-import org.pandcorps.core.Pantil;
+import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
 import org.pandcorps.game.core.ImtilX;
 import org.pandcorps.pandam.*;
@@ -150,10 +148,10 @@ public class Menu {
 	}
 	
 	protected final static class SelectScreen extends PlayerScreen {
-		final PlayerContext curr;
+		private final PlayerContext curr;
 		
 		protected SelectScreen() {
-			this(PlatformGame.newPlayerContext(null, 0), true);
+			this(null, true);
 		}
 		
 		protected SelectScreen(final PlayerContext pc, final boolean fadeIn) {
@@ -181,7 +179,25 @@ public class Menu {
 				}};
 				addRadio(form, "Pick Profile", list, prfLsn, null, 8, 184);
 			}
-			//addLink(form, "New", newLsn, 8, 128); //TODO
+			final MessageCloseListener newLsn = new MessageCloseListener() {
+                @Override public final void onClose(final MessageCloseEvent event) {
+                    if (disabled) {
+                        return;
+                    }
+                    if (curr != null) {
+                        curr.destroy();
+                    }
+                    final Profile prf = new Profile();
+                    final Avatar avt = new Avatar();
+                    prf.setName("New");
+                    avt.randomize();
+                    avt.setName("New");
+                    prf.currentAvatar = avt;
+                    prf.avatars.add(avt);
+                    pc = PlatformGame.newPlayerContext(prf, curr == null ? PlatformGame.pcs.size() : curr.index);
+                    PlatformGame.reloadAnimalStrip(pc);
+                    Panscreen.set(new NewScreen(pc, false)); }};
+			addLink(form, "New", newLsn, 8, 128);
 			if (curr != null) {
 				addExit("Cancel", 40, 128);
 			}
@@ -194,6 +210,35 @@ public class Menu {
 			}
 			goProfile();
 		}
+	}
+	
+	protected final static class NewScreen extends PlayerScreen {
+	    private final PlayerContext curr;
+	    
+        protected NewScreen(final PlayerContext pc, final boolean fadeIn) {
+            super(null, fadeIn);
+            curr = pc;
+        }
+
+        @Override
+        protected final void menu() {
+	        /*final Profile prf = new Profile();
+	        final Avatar avt = new Avatar();
+	        avt.randomize();
+	        avt.setName("New");*/
+	        final InputSubmitListener namLsn = new InputSubmitListener() {
+                @Override public final void onSubmit(final InputSubmitEvent event) {
+                    exit(); }};
+	        addNameInput(form, curr.profile, namLsn, 8, 112); //TODO validation, submit link
+	    }
+
+        @Override
+        protected final void onExit() {
+            if (pc == null) {
+                pc = curr;
+            }
+            goProfile();
+        }
 	}
 	
 	protected final static class ProfileScreen extends PlayerScreen {
@@ -342,15 +387,7 @@ public class Menu {
 				@Override public final void update(final float value) {
 					avt.b = value; }};
 			final RadioGroup bluGrp = addRadio(form, "Blu", colors, blueLsn, 176, 184);
-			final InputSubmitListener namLsn = new InputSubmitListener() {
-				@Override public final void onSubmit(final InputSubmitEvent event) {
-					avt.setName(event.toString()); }};
-			final ControllerInput namIn = new ControllerInput(PlatformGame.font, null);
-			namIn.setChangeListener(namLsn);
-			namIn.setMax(8);
-			addItem(form, namIn, 48, 112);
-			addTitle(form, "Name", 8, 112);
-			namIn.setLetter();
+			final ControllerInput namIn = addNameInput(form, avt, null, 8, 112);
 			addExit("Save", 8, 96);
 			final MessageCloseListener canLsn = new MessageCloseListener() {
                 @Override public final void onClose(final MessageCloseEvent event) {
@@ -419,6 +456,19 @@ public class Menu {
 		addItem(form, grp, x, y - 16);
 		addTitle(form, title, x, y);
 		return grp;
+	}
+	
+	private final static ControllerInput addNameInput(final Panform form, final PlayerData pd, final InputSubmitListener subLsn, final int x, final int y) {
+	    final InputSubmitListener chgLsn = new InputSubmitListener() {
+            @Override public final void onSubmit(final InputSubmitEvent event) {
+                pd.setName(event.toString()); }};
+        final ControllerInput in = new ControllerInput(PlatformGame.font, subLsn);
+        in.setChangeListener(chgLsn);
+        in.setMax(PlatformGame.MAX_NAME_AVATAR);
+        addItem(form, in, x + 40, y);
+        addTitle(form, "Name", x, y);
+        in.setLetter();
+        return in;
 	}
 	
 	private final static int addLink(final Panform form, final String txt, final MessageCloseListener lsn, final int x, final int y) {
