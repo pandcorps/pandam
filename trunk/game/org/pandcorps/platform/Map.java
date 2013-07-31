@@ -125,17 +125,20 @@ public class Map {
 		    }
 			clear();
 			if (tm != null && row == endRow && column == endColumn) {
+			    victory = false;
 				tm.destroy(); // Trigger generation of new Map
 				tm = null;
 			}
 			final Tile t;
 			if (tm == null) {
 			    t = loadMap();
+			    PlatformGame.saveGame();
 			} else {
 				t = getStartTile();
 				if (victory) {
 				    victory = false;
 				    open.put(getKey(t), Boolean.TRUE);
+				    PlatformGame.saveGame();
 				}
 			    initRoom();
 			}

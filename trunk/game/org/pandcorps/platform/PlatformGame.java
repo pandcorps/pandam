@@ -421,6 +421,13 @@ public class PlatformGame extends BaseGame {
 	    goMap();
 	}
 	
+	protected final static void saveGame() {
+	    // Map must call after updating markers (at least for player 1 who is bound to that Map)
+	    for (final PlayerContext pc : pcs) {
+            pc.profile.serialize();
+        }
+	}
+	
 	protected final static void goMap() {
 		goMap(SPEED_FADE);
 	}
