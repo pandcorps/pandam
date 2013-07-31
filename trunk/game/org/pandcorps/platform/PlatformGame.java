@@ -99,7 +99,7 @@ public class PlatformGame extends BaseGame {
 	protected final static int MAX_NAME_PROFILE = 8;
 	protected final static int MAX_NAME_AVATAR = 8;
 	
-	private final static String EXT_PRF = ".prf.txt";
+	protected final static String EXT_PRF = ".prf.txt";
 	
 	protected static Panroom room = null;
 	protected final static ArrayList<PlayerContext> pcs = new ArrayList<PlayerContext>();

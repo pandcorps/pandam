@@ -229,7 +229,7 @@ public class Menu {
 	        final InputSubmitListener namLsn = new InputSubmitListener() {
                 @Override public final void onSubmit(final InputSubmitEvent event) {
                     exit(); }};
-	        addNameInput(form, curr.profile, namLsn, 8, 112); //TODO validation, submit link
+	        addNameInput(form, curr.profile, namLsn, 8, 112); //TODO validation length, unique, submit link
 	    }
 
         @Override
@@ -237,6 +237,7 @@ public class Menu {
             if (pc == null) {
                 pc = curr;
             }
+            pc.profile.serialize();
             goProfile();
         }
 	}
@@ -299,7 +300,7 @@ public class Menu {
 	                    goProfile(); }};
 	            x = addLink(form, "Erase", delLsn, x, 112);
             }
-			addExit("Exit", x, 112);
+			addExit("Exit", x, 112); //TODO Label Start if in Menu before seeing Map
 			final MessageCloseListener prfLsn = new MessageCloseListener() {
                 @Override public final void onClose(final MessageCloseEvent event) {
                     if (disabled) {
@@ -309,6 +310,9 @@ public class Menu {
             addLink(form, "Pick Profile", prfLsn, 8, 96);
 			// Rename Profile //TODO
 			// Drop out (if other players? if not player 1?)
+            // Exit to title (if player 1)
+            // Delete Profile (if player 1)
+            // Make default Profile (if player 1)
 		}
 		
 		private final void goAvatar() {
@@ -339,6 +343,7 @@ public class Menu {
 	}
 	
 	protected final static class AvatarScreen extends PlayerScreen {
+	    private boolean save = true;
 		private Avatar old = null;
 		private Avatar avt = null;
 		//private boolean newAvt = false;
@@ -401,6 +406,7 @@ public class Menu {
                     }
                     PlatformGame.reloadAnimalStrip(pc);
                     actor.setView(pc.guy);
+                    save = false;
                     exit(); }};
             addLink(form, "Cancel", canLsn, 48, 96);
 			anmGrp.setSelected(animals.indexOf(avt.anm));
@@ -438,6 +444,9 @@ public class Menu {
 		
 		@Override
 		protected void onExit() {
+		    if (save) {
+		        pc.profile.serialize();
+		    }
 		    goProfile();
 		}
 	}
