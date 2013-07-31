@@ -82,4 +82,12 @@ public class Profile extends PlayerData implements Segmented {
     		Iotil.close(out);
     	}
     }
+    
+    public void serialize() {
+        try {
+            serialize(getName() + PlatformGame.EXT_PRF);
+        } catch (final IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
