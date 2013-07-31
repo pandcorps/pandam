@@ -110,6 +110,10 @@ public class Menu {
 		    onExit();
 		}
 		
+		protected final void save() {
+		    pc.profile.serialize();
+		}
+		
 		protected abstract void onExit();
 		
 		protected final void setWarning(final String val) {
@@ -237,14 +241,18 @@ public class Menu {
             if (pc == null) {
                 pc = curr;
             }
-            pc.profile.serialize();
+            save();
             goProfile();
         }
 	}
 	
 	protected final static class ProfileScreen extends PlayerScreen {
+	    private boolean save = false;
+	    private final Avatar originalAvatar;
+	    
 		protected ProfileScreen(final PlayerContext pc, final boolean fadeIn) {
 			super(pc, fadeIn);
+			originalAvatar = pc.profile.currentAvatar;
 		}
 		
 		@Override
@@ -297,6 +305,7 @@ public class Menu {
 	                    pc.profile.currentAvatar = pc.profile.avatars.get(0);
 	                    PlatformGame.reloadAnimalStrip(pc);
 	                    actor.setView(pc.guy);
+	                    save = true;
 	                    goProfile(); }};
 	            x = addLink(form, "Erase", delLsn, x, 112);
             }
@@ -321,6 +330,9 @@ public class Menu {
 		
 		@Override
 		protected void onExit() {
+		    if (save || pc.profile.currentAvatar != originalAvatar) {
+		        save();
+		    }
 		    PlatformGame.goMap(SPEED_MENU_FADE);
 		}
 	}
@@ -445,7 +457,7 @@ public class Menu {
 		@Override
 		protected void onExit() {
 		    if (save) {
-		        pc.profile.serialize();
+		        save();
 		    }
 		    goProfile();
 		}
