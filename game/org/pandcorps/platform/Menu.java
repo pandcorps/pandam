@@ -318,11 +318,21 @@ public class Menu {
                     }
                     Panscreen.set(new SelectScreen(pc, false)); }};
             addLink(form, "Pick Profile", prfLsn, 8, 96);
+            if (pc.index == 0 && !pc.profile.getName().equals(Config.defaultProfileName)) {
+                final MessageCloseListener defLsn = new MessageCloseListener() {
+                    @Override public final void onClose(final MessageCloseEvent event) {
+                        if (disabled) {
+                            return;
+                        }
+                        //TODO event.getMessage().destroy();
+                        Config.defaultProfileName = pc.profile.getName();
+                        Config.serialize(); }};
+                addLink(form, "Load this Profile when the game starts", defLsn, 8, 80);
+            }
 			// Rename Profile //TODO
 			// Drop out (if other players? if not player 1?)
             // Exit to title (if player 1)
             // Delete Profile (if player 1)
-            // Make default Profile (if player 1)
 		}
 		
 		private final void goAvatar() {

@@ -99,6 +99,7 @@ public class PlatformGame extends BaseGame {
 	protected final static int MAX_NAME_PROFILE = 8;
 	protected final static int MAX_NAME_AVATAR = 8;
 	
+	protected final static String FILE_CFG = "Config.txt";
 	protected final static String EXT_PRF = ".prf.txt";
 	
 	protected static Panroom room = null;
@@ -292,9 +293,10 @@ public class PlatformGame extends BaseGame {
 	
 	private final static boolean loadConstants() throws Exception {
 		final Pangine engine = Pangine.getEngine();
-		final Segment cfg = SegmentStream.readLocation("Config.txt", "CFG|").get(0);
+		final Segment cfg = SegmentStream.readLocation(FILE_CFG, "CFG|").get(0);
 		// CFG|Andrew
 		final String pname = cfg.getValue(0);
+		Config.defaultProfileName = pname;
 		final boolean success = pname != null;
 		if (success) {
 			loadProfile(pname, pcs.size()); //TODO handle missing profile
