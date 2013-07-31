@@ -310,7 +310,7 @@ public class Menu {
 	                    goProfile(); }};
 	            x = addLink(form, "Erase", delLsn, x, 112);
             }
-			addExit("Exit", x, 112); //TODO Label Start if in Menu before seeing Map
+			addExit(Map.started ? "Exit" : "Start", x, 112);
 			final MessageCloseListener prfLsn = new MessageCloseListener() {
                 @Override public final void onClose(final MessageCloseEvent event) {
                     if (disabled) {
