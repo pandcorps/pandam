@@ -93,7 +93,27 @@ public abstract class Panteraction {
 	public final Key KEY_INS;
 	public final Key KEY_DEL;
 	
-	public final static class Controller {
+	public abstract static class Device {
+		private final String name;
+		
+		protected Device(final String name) {
+			this.name = name;
+		}
+		
+		public final String getName() {
+			return name;
+		}
+	}
+	
+	public final static class Keyboard extends Device {
+		private Keyboard() {
+			super("Keyboard");
+		}
+	}
+	
+	public final Keyboard KEYBOARD = new Keyboard();
+	
+	public final static class Controller extends Device {
 		public final Button LEFT;
 		public final Button RIGHT;
 		public final Button UP;
@@ -102,7 +122,15 @@ public abstract class Panteraction {
 		public final Button BUTTON_0;
 		public final Button BUTTON_1; // For convenience
 		
-		protected Controller(final Button l, final Button r, final Button u, final Button d, final List<Button> bs) {
+		protected Controller(final String name, final Button l, final Button r, final Button u, final Button d, final List<Button> bs) {
+			super(name);
+			l.device = this;
+			r.device = this;
+			u.device = this;
+			d.device = this;
+			for (final Button b : bs) {
+				b.device = this;
+			}
 			LEFT = l;
 			RIGHT = r;
 			UP = u;

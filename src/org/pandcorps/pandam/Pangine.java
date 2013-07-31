@@ -362,8 +362,8 @@ public abstract class Pangine {
 		return new Panput.Button();
 	}
 	
-	protected final void addController(final Button l, final Button r, final Button u, final Button d, final List<Button> bs) {
-		getInteraction()._controllers.add(new Panteraction.Controller(l, r, u, d, bs));
+	protected final void addController(final String name, final Button l, final Button r, final Button u, final Button d, final List<Button> bs) {
+		getInteraction()._controllers.add(new Panteraction.Controller(name, l, r, u, d, bs));
 	}
 
 	private void register(final Pantity entity) throws Panception {

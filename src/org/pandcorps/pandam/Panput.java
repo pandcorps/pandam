@@ -22,11 +22,22 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandam;
 
+import org.pandcorps.pandam.Panteraction.*;
+
 // Pandam Input
 public abstract class Panput {
     /*package*/ final static Any any = new Any();
+    /*package*/ Device device;
     /*package*/ boolean active = false;
     /*package*/ boolean inactivated = false;
+    
+    protected Panput(final Device device) {
+    	this.device = device;
+    }
+    
+    public final Device getDevice() {
+    	return device;
+    }
     
     // We allow event-based input and polling
     //TODO Do we need this and Panction?
@@ -57,6 +68,7 @@ public abstract class Panput {
 		private final Character shift;
 		private final boolean letter;
 		/*package*/ Key(final Panteraction interaction, final int index, final Character base, final Character shift, final boolean letter) {
+			super(interaction.KEYBOARD);
 		    this.interaction = interaction;
 			this.index = index;
 			this.base = base;
@@ -88,11 +100,13 @@ public abstract class Panput {
 	
 	public final static class Button extends Panput {
 		/*package*/ Button() {
+			super(null); // Buttons are created before Controller and passed to Controller constructor which assigns device
 		}
 	}
 	
 	/*package*/ final static class Any extends Panput {
 	    private Any() {
+	    	super(null);
 	    }
 	}
 }
