@@ -107,6 +107,8 @@ public class Map {
 	private static int endRow = -1;
 	private static String name = null;
 	
+	protected static boolean started = false;
+	
 	private static Panroom room = null;
 	private static Panmage timg = null;
 	private static DynamicTileMap tm = null;
@@ -120,6 +122,7 @@ public class Map {
 	protected final static class MapScreen extends Panscreen {
 		@Override
         protected final void load() throws Exception {
+		    started = true;
 		    if (timg == null) {
 		        loadImages();
 		    }
