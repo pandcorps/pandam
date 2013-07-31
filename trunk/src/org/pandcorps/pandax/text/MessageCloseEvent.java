@@ -23,12 +23,13 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.pandax.text;
 
 public final class MessageCloseEvent {
-    private final static MessageCloseEvent instance = new MessageCloseEvent();
+    private final Message message;
     
-    private MessageCloseEvent() {
+    /*package*/ MessageCloseEvent(final Message message) {
+    	this.message = message;
     }
     
-    /*package*/ final static MessageCloseEvent getInstance() {
-        return instance;
+    public final Message getMessage() {
+        return message;
     }
 }
