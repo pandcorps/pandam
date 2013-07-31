@@ -77,7 +77,7 @@ public class Message extends TextItem {
                 }
                 submit.inactivate();
                 if (listener != null) {
-                    listener.onClose(MessageCloseEvent.getInstance());
+                    listener.onClose(new MessageCloseEvent(Message.this));
                 }
             }});
     }
