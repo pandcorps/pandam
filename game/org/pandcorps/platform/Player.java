@@ -22,6 +22,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.platform;
 
+import org.pandcorps.core.Coltil;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.action.*;
@@ -80,6 +81,24 @@ public class Player extends Character implements CollisionListener {
 	    public PlayerContext(final Profile profile, final int index) {
 	        this.profile = profile;
 	        this.index = index;
+	        
+	        final Panteraction interaction = Pangine.getEngine().getInteraction();
+	        if (profile.ctrl == 0) {
+	            inJump = interaction.KEY_SPACE;
+	            inLeft = interaction.KEY_LEFT;
+	            inRight = interaction.KEY_RIGHT;
+	        } else {
+	            final Panteraction.Controller c = Coltil.get(interaction.CONTROLLERS, 0);
+	            if (c == null) {
+	                inJump = interaction.KEY_W;
+	                inLeft = interaction.KEY_A;
+	                inRight = interaction.KEY_D;
+	            } else {
+	                inJump = c.BUTTON_1;
+	                inLeft = c.LEFT;
+	                inRight = c.RIGHT;
+	            }
+	        }
 	    }
 	    
 	    public final String getName() {

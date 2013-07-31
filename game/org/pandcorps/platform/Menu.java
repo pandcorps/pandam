@@ -198,6 +198,7 @@ public class Menu {
                     avt.setName("New");
                     prf.currentAvatar = avt;
                     prf.avatars.add(avt);
+                    prf.ctrl = 0;
                     pc = PlatformGame.newPlayerContext(prf, curr == null ? PlatformGame.pcs.size() : curr.index);
                     PlatformGame.reloadAnimalStrip(pc);
                     Panscreen.set(new NewScreen(pc, false)); }};
