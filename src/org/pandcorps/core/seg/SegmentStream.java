@@ -23,6 +23,7 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.core.seg;
 
 import java.io.*;
+import java.net.*;
 import java.util.*;
 
 import org.pandcorps.core.Iotil;
@@ -65,7 +66,8 @@ public class SegmentStream implements Closeable {
     	try {
     		return readLocation(location);
     	} catch (final RuntimeException e) {
-    		if (e.getCause() instanceof FileNotFoundException) {
+    	    final Throwable c = e.getCause();
+    		if (c instanceof FileNotFoundException || c instanceof MalformedURLException) {
     			Iotil.writeFile(location, defaultContent);
     		} else {
     			throw e;
