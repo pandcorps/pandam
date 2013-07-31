@@ -22,14 +22,13 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandam.lwjgl;
 
-import org.lwjgl.input.*;
 import org.pandcorps.core.Chartil;
 import org.pandcorps.pandam.*;
 
 public final class LwjglPanteraction extends Panteraction {
 	@Override
 	public final int getKeyCount() {
-		return Keyboard.getKeyCount();
+		return org.lwjgl.input.Keyboard.getKeyCount();
 	}
 	
 	@Override
