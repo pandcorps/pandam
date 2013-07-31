@@ -183,23 +183,6 @@ public class PlatformGame extends BaseGame {
 	private final static void createAnimalStrip(final Profile profile, final int index) {
 		final PlayerContext pc = newPlayerContext(profile, index);
 		reloadAnimalStrip(pc);
-		final Panteraction interaction = Pangine.getEngine().getInteraction();
-		if (profile.ctrl == 0) {
-    		pc.inJump = interaction.KEY_SPACE;
-    		pc.inLeft = interaction.KEY_LEFT;
-    		pc.inRight = interaction.KEY_RIGHT;
-		} else {
-			final Panteraction.Controller c = Coltil.get(interaction.CONTROLLERS, 0);
-			if (c == null) {
-			    pc.inJump = interaction.KEY_W;
-	            pc.inLeft = interaction.KEY_A;
-	            pc.inRight = interaction.KEY_D;
-			} else {
-				pc.inJump = c.BUTTON_1;
-				pc.inLeft = c.LEFT;
-				pc.inRight = c.RIGHT;
-			}
-		}
 	}
 	
 	protected final static void reloadAnimalStrip(final PlayerContext pc) {
