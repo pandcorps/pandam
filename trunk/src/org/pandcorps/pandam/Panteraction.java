@@ -144,14 +144,34 @@ public abstract class Panteraction {
 	protected final List<Controller> _controllers = new ArrayList<Controller>();
 	public final List<Controller> CONTROLLERS = Collections.unmodifiableList(_controllers);
 	
+	public final int IND_ESCAPE = 1;
 	public final int IND_1 = 2;
+	public final int IND_BACKSPACE = 14;
+	public final int IND_TAB = 15;
 	public final int IND_Q = 16;
+	public final int IND_ENTER = 28;
+	public final int IND_CTRL_LEFT = 29;
 	public final int IND_A = 30;
 	public final int IND_GRAVE = 41;
 	public final int IND_SHIFT_LEFT = 42;
 	public final int IND_Z = 44;
     public final int IND_SHIFT_RIGHT = 54;
+    public final int IND_ALT_LEFT = 56;
     public final int IND_SPACE = 57;
+    public final int IND_CAPS_LOCK = 58;
+    public final int IND_F1 = 59;
+    public final int IND_CTRL_RIGHT = 157;
+    public final int IND_ALT_RIGHT = 184;
+    public final int IND_HOME = 199;
+    public final int IND_UP = 200;
+    public final int IND_PG_UP = 201;
+    public final int IND_LEFT = 203;
+    public final int IND_RIGHT = 205;
+    public final int IND_END = 207;
+    public final int IND_DOWN = 208;
+    public final int IND_PG_DN = 209;
+    public final int IND_INS = 210;
+    public final int IND_DEL = 211;
     
     private final IdentityHashMap<Panctor, ActionGroup> actors = new IdentityHashMap<Panctor, ActionGroup>();
 
@@ -205,9 +225,9 @@ public abstract class Panteraction {
 		        sc = Character.valueOf(thePair[1][ind]);
 		        l = Character.isLetter(b);
 		    }
-			keys[i] = new Key(this, i, bc, sc, l);
+			keys[i] = new Key(this, i, bc, sc, l, getName(i));
 		}
-		KEY_ESCAPE = keys[1];
+		KEY_ESCAPE = keys[IND_ESCAPE];
 		KEY_1 = keys[IND_1];
 		KEY_2 = keys[IND_1 + 1];
 		KEY_3 = keys[IND_1 + 2];
@@ -220,8 +240,8 @@ public abstract class Panteraction {
 		KEY_0 = keys[IND_1 + 9];
 		KEY_MINUS = keys[12];
 		KEY_EQUALS = keys[13];
-		KEY_BACKSPACE = keys[14];
-        KEY_TAB = keys[15];
+		KEY_BACKSPACE = keys[IND_BACKSPACE];
+        KEY_TAB = keys[IND_TAB];
         KEY_Q = keys[IND_Q];
         KEY_W = keys[IND_Q + 1];
         KEY_E = keys[IND_Q + 2];
@@ -230,8 +250,8 @@ public abstract class Panteraction {
         KEY_Y = keys[IND_Q + 5];
         KEY_BRACKET_LEFT = keys[26];
         KEY_BRACKET_RIGHT = keys[27];
-		KEY_ENTER = keys[28];
-        KEY_CTRL_LEFT = keys[29];
+		KEY_ENTER = keys[IND_ENTER];
+        KEY_CTRL_LEFT = keys[IND_CTRL_LEFT];
         KEY_A = keys[IND_A];
         KEY_S = keys[IND_A + 1];
         KEY_D = keys[IND_A + 2];
@@ -246,22 +266,59 @@ public abstract class Panteraction {
         KEY_PERIOD = keys[52];
         KEY_SLASH = keys[53];
         KEY_SHIFT_RIGHT = keys[IND_SHIFT_RIGHT];
-        KEY_ALT_LEFT = keys[56];
+        KEY_ALT_LEFT = keys[IND_ALT_LEFT];
 		KEY_SPACE = keys[IND_SPACE];
-        KEY_CAPS_LOCK = keys[58];
-        KEY_F1 = keys[59];
-        KEY_CTRL_RIGHT = keys[157];
-        KEY_ALT_RIGHT = keys[184];
-        KEY_HOME = keys[199];
-		KEY_UP = keys[200];
-        KEY_PG_UP = keys[201];
-		KEY_LEFT = keys[203];
-		KEY_RIGHT = keys[205];
-		KEY_END = keys[207];
-		KEY_DOWN = keys[208];
-		KEY_PG_DN = keys[209];
-		KEY_INS = keys[210];
-		KEY_DEL = keys[211];
+        KEY_CAPS_LOCK = keys[IND_CAPS_LOCK];
+        KEY_F1 = keys[IND_F1];
+        KEY_CTRL_RIGHT = keys[IND_CTRL_RIGHT];
+        KEY_ALT_RIGHT = keys[IND_ALT_RIGHT];
+        KEY_HOME = keys[IND_HOME];
+		KEY_UP = keys[IND_UP];
+        KEY_PG_UP = keys[IND_PG_UP];
+		KEY_LEFT = keys[IND_LEFT];
+		KEY_RIGHT = keys[IND_RIGHT];
+		KEY_END = keys[IND_END];
+		KEY_DOWN = keys[IND_DOWN];
+		KEY_PG_DN = keys[IND_PG_DN];
+		KEY_INS = keys[IND_INS];
+		KEY_DEL = keys[IND_DEL];
+	}
+	
+	private final String getName(final int i) {
+		switch(i) {
+	    	case IND_ESCAPE : return "Escape";
+	    	case IND_BACKSPACE : return "Backspace";
+	    	case IND_TAB : return "Tab";
+	    	case IND_ENTER : return "Enter";
+	    	case IND_CTRL_LEFT : return "Ctrl-Left";
+	    	case IND_SHIFT_LEFT : return "Shift-Left";
+	    	case IND_SHIFT_RIGHT : return "Shift-Right";
+	    	case IND_ALT_LEFT : return "Alt-Left";
+	    	case IND_SPACE : return "Space";
+	    	case IND_CAPS_LOCK : return "Caps-Lock";
+	    	case IND_F1 : return "F1";
+	    	case IND_F1 + 1 : return "F2";
+	    	case IND_F1 + 2 : return "F3";
+	    	case IND_F1 + 3 : return "F4";
+	    	case IND_F1 + 4 : return "F5";
+	    	case IND_F1 + 5 : return "F6";
+	    	case IND_F1 + 6 : return "F7";
+	    	case IND_F1 + 7 : return "F8";
+	    	case IND_F1 + 8 : return "F9";
+	    	case IND_CTRL_RIGHT : return "Ctrl-Right";
+	    	case IND_ALT_RIGHT : return "Alt-Right";
+	    	case IND_HOME : return "Home";
+	    	case IND_UP : return "Up";
+	    	case IND_PG_UP : return "Pg-Up";
+	    	case IND_LEFT : return "Left";
+	    	case IND_RIGHT : return "Right";
+	    	case IND_END : return "End";
+	    	case IND_DOWN : return "Down";
+	    	case IND_PG_DN : return "Pg-Dn";
+	    	case IND_INS : return "Ins";
+	    	case IND_DEL : return "Del";
+	    }
+		return null;
 	}
 	
 	public boolean isShiftActive() {

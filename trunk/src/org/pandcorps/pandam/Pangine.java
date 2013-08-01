@@ -358,8 +358,8 @@ public abstract class Pangine {
 	    }
 	}
 	
-	protected final Button newButton() {
-		return new Panput.Button();
+	protected final Button newButton(final String name) {
+		return new Panput.Button(name);
 	}
 	
 	protected final void addController(final String name, final Button l, final Button r, final Button u, final Button d, final List<Button> bs) {

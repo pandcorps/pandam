@@ -22,21 +22,28 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandam;
 
+import org.pandcorps.core.Chartil;
 import org.pandcorps.pandam.Panteraction.*;
 
 // Pandam Input
 public abstract class Panput {
     /*package*/ final static Any any = new Any();
     /*package*/ Device device;
+    private final String name;
     /*package*/ boolean active = false;
     /*package*/ boolean inactivated = false;
     
-    protected Panput(final Device device) {
+    protected Panput(final Device device, final String name) {
     	this.device = device;
+    	this.name = name;
     }
     
     public final Device getDevice() {
     	return device;
+    }
+    
+    public final String getName() {
+    	return name;
     }
     
     // We allow event-based input and polling
@@ -67,8 +74,11 @@ public abstract class Panput {
 		private final Character base;
 		private final Character shift;
 		private final boolean letter;
-		/*package*/ Key(final Panteraction interaction, final int index, final Character base, final Character shift, final boolean letter) {
-			super(interaction.KEYBOARD);
+		/*package*/ Key(final Panteraction interaction, final int index, final Character base, final Character shift, final boolean letter, final String s) {
+			super(interaction.KEYBOARD, s == null ? Chartil.toString(base) : s);
+			/*if (getName() == null) {
+				System.err.println("No name for key " + index);
+			}*/
 		    this.interaction = interaction;
 			this.index = index;
 			this.base = base;
@@ -99,14 +109,14 @@ public abstract class Panput {
 	}
 	
 	public final static class Button extends Panput {
-		/*package*/ Button() {
-			super(null); // Buttons are created before Controller and passed to Controller constructor which assigns device
+		/*package*/ Button(final String name) {
+			super(null, name); // Buttons are created before Controller and passed to Controller constructor which assigns device
 		}
 	}
 	
 	/*package*/ final static class Any extends Panput {
 	    private Any() {
-	    	super(null);
+	    	super(null, "Any");
 	    }
 	}
 }
