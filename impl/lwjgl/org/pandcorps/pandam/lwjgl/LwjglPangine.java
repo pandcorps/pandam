@@ -169,9 +169,9 @@ public final class LwjglPangine extends Pangine {
 			final int bs = c.getButtonCount();
 			final List<Button> blist = new ArrayList<Button>(bs);
 			for (int j = 0; j < bs; j++) {
-				blist.add(newButton());
+				blist.add(newButton(c.getButtonName(j)));
 			}
-			addController(c.getName(), newButton(), newButton(), newButton(), newButton(), blist);
+			addController(c.getName(), newButton("Left"), newButton("Right"), newButton("Up"), newButton("Down"), blist);
 		}
 
 		//new Thread(new Runnable() {public void run() {play();}}).start();
