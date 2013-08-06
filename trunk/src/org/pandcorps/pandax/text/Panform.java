@@ -26,6 +26,7 @@ import java.util.ArrayList;
 
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.action.*;
+import org.pandcorps.pandax.in.ControlScheme;
 
 public class Panform extends MenuItem {
     // Might move layer-managing code from TextItem into MenuItem
@@ -33,8 +34,8 @@ public class Panform extends MenuItem {
     private FormTabListener tabListener = null;
     private int curr = 0;
     
-    public Panform() {
-        super(new Panctor());
+    public Panform(final ControlScheme ctrl) {
+        super(new Panctor(), ctrl);
         bound.setVisible(false);
         layer = Pangame.getGame().getCurrentRoom();
         layer.addActor(bound);
@@ -51,6 +52,7 @@ public class Panform extends MenuItem {
     
     public final void init() {
     	for (final TextItem item : items) {
+    	    item.setControlScheme(ctrl);
     		item.setLayer(layer);
     		layer.addActor(item.label);
     		item.label.setBorderEnabled(false);
@@ -60,11 +62,10 @@ public class Panform extends MenuItem {
     
     @Override
     protected final void focus() {
-        final Panteraction interaction = Pangine.getEngine().getInteraction();
-        bound.register(interaction.KEY_LEFT, new ActionStartListener() { @Override public final void onActionStart(final ActionStartEvent event) {
+        bound.register(ctrl.getLeft(), new ActionStartListener() { @Override public final void onActionStart(final ActionStartEvent event) {
             back();
         }});
-        bound.register(interaction.KEY_RIGHT, new ActionStartListener() { @Override public final void onActionStart(final ActionStartEvent event) {
+        bound.register(ctrl.getRight(), new ActionStartListener() { @Override public final void onActionStart(final ActionStartEvent event) {
             forward();
         }});
         focusItem();

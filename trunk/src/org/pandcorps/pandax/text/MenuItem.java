@@ -23,13 +23,23 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.pandax.text;
 
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandax.in.*;
 
 public abstract class MenuItem {
     protected final Panctor bound;
+    protected ControlScheme ctrl = null;
     protected Panlayer layer = null;
     
+    // Adding an item to a form will assign a ControlScheme, so it's not required.
+    // Maybe bound should be part of ControlScheme.
+    // If so, probably wouldn't be the same bound as MenuItem; each item in a form would have its own.
     protected MenuItem(final Panctor bound) {
+        this(bound, null);
+    }
+    
+    protected MenuItem(final Panctor bound, final ControlScheme ctrl) {
         this.bound = bound;
+        this.ctrl = ctrl;
     }
     
     protected abstract void focus();

@@ -24,6 +24,7 @@ package org.pandcorps.pandax.text;
 
 import org.pandcorps.core.Pantil;
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandax.in.*;
 
 public abstract class TextItem extends MenuItem {
     protected final Pantext label;
@@ -31,6 +32,7 @@ public abstract class TextItem extends MenuItem {
     protected Panctor parent = null;
     protected Panform form = null;
     
+    // Should we add ControlScheme to constructor?  Also Panlayer?
     protected TextItem(final Pantext label) {
         super(label);
         //this.font = font; // in label
@@ -57,6 +59,10 @@ public abstract class TextItem extends MenuItem {
     public final void setTitle(final String title) {
         label.setTitle(title);
         //setPos();
+    }
+    
+    public final void setControlScheme(final ControlScheme ctrl) {
+        this.ctrl = ctrl;
     }
     
     public final void setLayer(final Panlayer layer) {
