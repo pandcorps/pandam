@@ -29,6 +29,7 @@ import org.pandcorps.core.*;
 import org.pandcorps.game.*;
 import org.pandcorps.game.core.ImtilX;
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandax.in.ControlScheme;
 import org.pandcorps.pandax.text.Pantext;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.tile.Tile.TileMapImage;
@@ -189,16 +190,17 @@ public class Map {
 				return;
 			}
 			final Panteraction interaction = Pangine.getEngine().getInteraction();
+			final ControlScheme ctrl = pc.ctrl;
 			// Similar to Guy4Controller
-	        if (interaction.KEY_DOWN.isActive()) {
+	        if (ctrl.getDown().isActive()) {
 	            go(Direction.South);
-	        } else if (interaction.KEY_UP.isActive()) {
+	        } else if (ctrl.getUp().isActive()) {
 	            go(Direction.North);
-	        } else if (interaction.KEY_LEFT.isActive()) {
+	        } else if (ctrl.getLeft().isActive()) {
 	            go(Direction.West);
-	        } else if (interaction.KEY_RIGHT.isActive()) {
+	        } else if (ctrl.getRight().isActive()) {
 	            go(Direction.East);
-	        } else if (interaction.KEY_SPACE.isActive()) {
+	        } else if (ctrl.get1().isActive()) {
 	        	/*if (room.getBlendColor().getA() > Pancolor.MIN_VALUE) {
 	        		return;
 	        	}*/
@@ -211,8 +213,8 @@ public class Map {
 			} else if (interaction.KEY_TAB.isActive()) {
 				interaction.KEY_TAB.inactivate();
 				debug = !debug;
-			} else if (interaction.KEY_ESCAPE.isActive()) {
-				interaction.KEY_ESCAPE.inactivate();
+			} else if (ctrl.get2().isActive()) {
+			    ctrl.get2().inactivate();
 				//fadeOut(new Menu.AvatarScreen(pc));
 				fadeOut(new Menu.ProfileScreen(pc, true));
 			}

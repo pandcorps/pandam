@@ -28,6 +28,7 @@ import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
 import org.pandcorps.game.core.ImtilX;
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandax.in.ControlScheme;
 import org.pandcorps.pandax.text.*;
 import org.pandcorps.pandax.tile.Tile.*;
 import org.pandcorps.pandax.tile.*;
@@ -77,7 +78,7 @@ public class Menu {
 				room.addActor(actor);
 			}
 			
-			form = new Panform();
+			form = new Panform(pc == null ? ControlScheme.getDefaultKeyboard() : pc.ctrl);
 			wrnLbl = addTitle(form, wrn, center, 64);
 			form.setTabListener(new FormTabListener() {@Override public void onTab(final FormTabEvent event) {
 				if (allow()) {
