@@ -27,6 +27,7 @@ import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.action.*;
 import org.pandcorps.pandam.impl.ImplPanple;
+import org.pandcorps.pandax.in.ControlScheme;
 import org.pandcorps.pandax.tile.*;
 
 public class Player extends Character implements CollisionListener {
@@ -66,9 +67,7 @@ public class Player extends Character implements CollisionListener {
 	    protected final int index;
 	    protected Player player = null;
 	    
-	    protected Panput inJump = null;
-	    protected Panput inLeft = null;
-	    protected Panput inRight = null;
+	    protected final ControlScheme ctrl;
 	    
 	    protected Panmage guy = null;
 	    protected Panimation guyRun = null;
@@ -82,21 +81,26 @@ public class Player extends Character implements CollisionListener {
 	        this.profile = profile;
 	        this.index = index;
 	        
+	        ctrl = new ControlScheme();
 	        final Panteraction interaction = Pangine.getEngine().getInteraction();
 	        if (profile.ctrl == 0) {
-	            inJump = interaction.KEY_SPACE;
-	            inLeft = interaction.KEY_LEFT;
-	            inRight = interaction.KEY_RIGHT;
+	            ctrl.setDefaultKeyboard();
 	        } else {
 	            final Panteraction.Controller c = Coltil.get(interaction.CONTROLLERS, 0);
 	            if (c == null) {
-	                inJump = interaction.KEY_W;
-	                inLeft = interaction.KEY_A;
-	                inRight = interaction.KEY_D;
+	                ctrl.set1(interaction.KEY_2);
+	                ctrl.set2(interaction.KEY_1);
+	                ctrl.setDown(interaction.KEY_S);
+	                ctrl.setUp(interaction.KEY_W);
+	                ctrl.setLeft(interaction.KEY_A);
+	                ctrl.setRight(interaction.KEY_D);
 	            } else {
-	                inJump = c.BUTTON_1;
-	                inLeft = c.LEFT;
-	                inRight = c.RIGHT;
+	                ctrl.set1(c.BUTTON_1);
+	                ctrl.set2(c.BUTTON_0);
+	                ctrl.setDown(c.DOWN);
+	                ctrl.setUp(c.UP);
+	                ctrl.setLeft(c.LEFT);
+	                ctrl.setRight(c.RIGHT);
 	            }
 	        }
 	    }
@@ -145,29 +149,30 @@ public class Player extends Character implements CollisionListener {
 		setView(pc.guy);
 		PlatformGame.room.addActor(bubble);
 		final Panteraction interaction = engine.getInteraction();
-		interaction.register(this, pc.inJump, new ActionStartListener() {
+		final ControlScheme ctrl = pc.ctrl;
+		register(ctrl.get1(), new ActionStartListener() {
 			@Override public final void onActionStart(final ActionStartEvent event) { jump(); }});
-		interaction.register(this, pc.inJump, new ActionEndListener() {
+		register(ctrl.get1(), new ActionEndListener() {
 			@Override public final void onActionEnd(final ActionEndEvent event) { releaseJump(); }});
-		interaction.register(this, pc.inRight, new ActionListener() {
+		register(ctrl.getRight(), new ActionListener() {
 			@Override public final void onAction(final ActionEvent event) { right(); }});
-		interaction.register(this, pc.inLeft, new ActionListener() {
+		register(ctrl.getLeft(), new ActionListener() {
 			@Override public final void onAction(final ActionEvent event) { left(); }});
 		
 		// Debug
-		interaction.register(this, interaction.KEY_1, new ActionStartListener() {
+		register(interaction.KEY_1, new ActionStartListener() {
             @Override public final void onActionStart(final ActionStartEvent event) { left(); }});
-		interaction.register(this, interaction.KEY_2, new ActionStartListener() {
+		register(interaction.KEY_2, new ActionStartListener() {
             @Override public final void onActionStart(final ActionStartEvent event) { right(); }});
-		interaction.register(this, interaction.KEY_9, new ActionStartListener() {
+		register(interaction.KEY_9, new ActionStartListener() {
             @Override public final void onActionStart(final ActionStartEvent event) { addX(-1); }});
-        interaction.register(this, interaction.KEY_0, new ActionStartListener() {
+        register(interaction.KEY_0, new ActionStartListener() {
             @Override public final void onActionStart(final ActionStartEvent event) { addX(1); }});
-        interaction.register(this, interaction.KEY_Q, new ActionStartListener() {
+        register(interaction.KEY_Q, new ActionStartListener() {
             @Override public final void onActionStart(final ActionStartEvent event) { jumpMode = MODE_NORMAL; }});
-        interaction.register(this, interaction.KEY_W, new ActionStartListener() {
+        register(interaction.KEY_W, new ActionStartListener() {
             @Override public final void onActionStart(final ActionStartEvent event) { jumpMode = JUMP_HIGH; }});
-        interaction.register(this, interaction.KEY_E, new ActionStartListener() {
+        register(interaction.KEY_E, new ActionStartListener() {
             @Override public final void onActionStart(final ActionStartEvent event) { jumpMode = JUMP_FLY; }});
 	}
 	
