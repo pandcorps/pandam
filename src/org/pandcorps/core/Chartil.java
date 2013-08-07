@@ -47,6 +47,10 @@ public final class Chartil {
         return s == null ? null : s.toUpperCase();
     }
     
+    public final static String unnull(final String s) {
+    	return s == null ? "" : s;
+    }
+    
     public final static char charAt(final CharSequence s, final int i) {
         return size(s) <= i ? 0 : s.charAt(i);
     }
@@ -78,6 +82,15 @@ public final class Chartil {
             }
         }
         return false;
+    }
+    
+    public final static void clear(final StringBuilder b) {
+    	b.setLength(0);
+    }
+    
+    public final static void set(final StringBuilder b, final String value) {
+    	clear(b);
+    	b.append(value);
     }
     
     public final static String padZero(final int i, final int size) {

@@ -30,15 +30,15 @@ import org.pandcorps.pandam.event.action.*;
 public class Message extends TextItem {
     private final MessageCloseListener listener;
     
-    public Message(final Font font, final String text) {
+    public Message(final Font font, final CharSequence text) {
         this(font, text, null);
     }
     
-    public Message(final Font font, final String text, final MessageCloseListener listener) {
+    public Message(final Font font, final CharSequence text, final MessageCloseListener listener) {
         this(new Pantext(Pantil.vmid(), font, text), listener);
     }
     
-    public Message(final MultiFont fonts, final String text, final MessageCloseListener listener) {
+    public Message(final MultiFont fonts, final CharSequence text, final MessageCloseListener listener) {
         this(new Pantext(Pantil.vmid(), fonts, text), listener);
     }
     
