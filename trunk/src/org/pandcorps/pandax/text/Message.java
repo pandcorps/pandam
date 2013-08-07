@@ -60,7 +60,7 @@ public class Message extends TextItem {
         */
         final Pangine engine = Pangine.getEngine();
         final Panteraction interaction = engine.getInteraction();
-        final Panput submit = interaction.KEY_SPACE;
+        final Panput submit = ctrl == null ? interaction.KEY_SPACE : ctrl.get1();
         submit.inactivate();
         //label.setRadioLine(1);
         label.register(submit, new ActionStartListener() {

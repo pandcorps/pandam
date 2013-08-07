@@ -70,8 +70,21 @@ public final class ControllerInput extends Input {
 		label.setCursorEnabled(true);
 		initChr(buf.length());
 		final Pangine engine = Pangine.getEngine();
-        final Panteraction in = engine.getInteraction();
-        final Panput sub = in.KEY_ENTER, adv = in.KEY_SPACE, bak = in.KEY_ESCAPE, up = in.KEY_UP, down = in.KEY_DOWN;
+		final Panput sub, adv, bak, up, down;
+		if (ctrl == null) {
+            final Panteraction in = engine.getInteraction();
+            sub = in.KEY_ENTER;
+            adv = in.KEY_SPACE;
+            bak = in.KEY_ESCAPE;
+            up = in.KEY_UP;
+            down = in.KEY_DOWN;
+		} else {
+		    sub = ctrl.getSubmit();
+            adv = ctrl.get1();
+            bak = ctrl.get2();
+            up = ctrl.getUp();
+            down = ctrl.getDown();
+		}
         Panput.inactivate(sub, adv, bak, up, down);
         final ActionStartListener upListener = new ActionStartListener() {
             @Override

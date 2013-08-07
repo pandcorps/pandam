@@ -31,12 +31,13 @@ public class ControlScheme {
     private Panput right = null;
     private Panput act1 = null;
     private Panput act2 = null;
+    private Panput sub = null;
     
     public ControlScheme() {
     }
     
-    public ControlScheme(final Panput down, final Panput up, final Panput left, final Panput right, final Panput act1, final Panput act2) {
-        set(down, up, left, right, act1, act2);
+    public ControlScheme(final Panput down, final Panput up, final Panput left, final Panput right, final Panput act1, final Panput act2, final Panput sub) {
+        set(down, up, left, right, act1, act2, sub);
     }
     
     public final static ControlScheme getDefaultKeyboard() {
@@ -47,16 +48,17 @@ public class ControlScheme {
     
     public final void setDefaultKeyboard() {
         final Panteraction in = Pangine.getEngine().getInteraction();
-        set(in.KEY_DOWN, in.KEY_UP, in.KEY_LEFT, in.KEY_RIGHT, in.KEY_SPACE, in.KEY_ESCAPE);
+        set(in.KEY_DOWN, in.KEY_UP, in.KEY_LEFT, in.KEY_RIGHT, in.KEY_SPACE, in.KEY_ESCAPE, in.KEY_ENTER);
     }
     
-    public void set(final Panput down, final Panput up, final Panput left, final Panput right, final Panput act1, final Panput act2) {
+    public void set(final Panput down, final Panput up, final Panput left, final Panput right, final Panput act1, final Panput act2, final Panput sub) {
         this.down = down;
         this.up = up;
         this.left = left;
         this.right = right;
         this.act1 = act1;
         this.act2 = act2;
+        this.sub = sub;
     }
     
     public final Panput getDown() {
@@ -105,5 +107,13 @@ public class ControlScheme {
     
     public final void set2(final Panput act2) {
         this.act2 = act2;
+    }
+    
+    public final Panput getSubmit() {
+        return sub;
+    }
+    
+    public final void setSubmit(final Panput sub) {
+        this.sub = sub;
     }
 }

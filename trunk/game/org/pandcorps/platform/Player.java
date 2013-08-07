@@ -90,6 +90,7 @@ public class Player extends Character implements CollisionListener {
 	            if (c == null) {
 	                ctrl.set1(interaction.KEY_2);
 	                ctrl.set2(interaction.KEY_1);
+	                ctrl.setSubmit(interaction.KEY_3);
 	                ctrl.setDown(interaction.KEY_S);
 	                ctrl.setUp(interaction.KEY_W);
 	                ctrl.setLeft(interaction.KEY_A);
@@ -97,6 +98,7 @@ public class Player extends Character implements CollisionListener {
 	            } else {
 	                ctrl.set1(c.BUTTON_1);
 	                ctrl.set2(c.BUTTON_0);
+	                ctrl.setSubmit(c.BUTTONS.get(c.BUTTONS.size() - 1));
 	                ctrl.setDown(c.DOWN);
 	                ctrl.setUp(c.UP);
 	                ctrl.setLeft(c.LEFT);
