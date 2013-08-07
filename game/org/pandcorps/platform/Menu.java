@@ -43,10 +43,12 @@ public class Menu {
     private final static String WARN_DUPLICATE = "Name already used";
     
 	protected abstract static class PlayerScreen extends Panscreen {
+		protected Panroom room;
 		protected PlayerContext pc;
 		protected ControlScheme ctrl = null;
 		private final boolean fadeIn;
 		protected final StringBuilder wrn = new StringBuilder();
+		protected TileMap tm = null;
 		protected Panmage timg = null;
 		protected Panctor actor = null;
 		protected Pantext wrnLbl = null;
@@ -62,10 +64,11 @@ public class Menu {
 		@Override
 		protected final void load() throws Exception {
 			final int w = PlatformGame.SCREEN_W;
-			final Panroom room = PlatformGame.createRoom(w, PlatformGame.SCREEN_H);
+			center = w / 2;
+			room = PlatformGame.createRoom(w, PlatformGame.SCREEN_H);
 			Pangine.getEngine().setBgColor(new FinPancolor((short) 128, (short) 192, Pancolor.MAX_VALUE));
 			
-			final TileMap tm = new TileMap(Pantil.vmid(), room, ImtilX.DIM, ImtilX.DIM);
+			tm = new TileMap(Pantil.vmid(), room, ImtilX.DIM, ImtilX.DIM);
 			timg = Level.getTileImage();
 			tm.setImageMap(timg);
 			final TileMapImage[][] imgMap = tm.splitImageMap();
@@ -73,14 +76,7 @@ public class Menu {
 			room.addActor(tm);
 			
 			if (pc != null) {
-				actor = new Panctor();
-				actor.setView(pc.guy);
-				center = w / 2;
-				actor.getPosition().set(center, 16, tm.getForegroundDepth() + 1);
-				room.addActor(actor);
-			}
-			
-			if (pc != null) {
+				actor = addActor(pc, center);
 			    ctrl = pc.ctrl;
 			}
 			form = new Panform(ctrl);
@@ -102,8 +98,16 @@ public class Menu {
 			}
 		}
 		
+		protected final Panctor addActor(final PlayerContext pc, final int x) {
+			final Panctor actor = new Panctor();
+			actor.setView(pc.guy);
+			actor.getPosition().set(x, 16, tm.getForegroundDepth() + 1);
+			room.addActor(actor);
+			return actor;
+		}
+		
 		@Override
-	    protected final void destroy() {
+	    protected void destroy() {
 			timg.destroy();
 		}
 		
@@ -159,35 +163,58 @@ public class Menu {
 	}
 	
 	protected final static class TitleScreen extends PlayerScreen {
+		private final static int NUM_CHRS = 4;
+		private final ArrayList<PlayerContext> tcs = new ArrayList<PlayerContext>(NUM_CHRS);
+		
 	    protected TitleScreen() {
             super(null, true);
         }
 	    
 	    @Override
         protected final void menu() {
-	        final Pantext text = addTitle(form, "Press anything", center, 96);
+	        final Pantext text = addTitle(form, "Press anything", center, 56);
+	        text.centerX();
 	        text.register(new ActionStartListener() {@Override public void onActionStart(final ActionStartEvent event) {
 	            ctrl = ControlScheme.getDefault(event.getInput().getDevice());
 	            exit();
 	        }});
+	        for (int i = 0; i < NUM_CHRS; i++) {
+	        	final Profile prf = new Profile();
+	        	final Avatar avt = new Avatar();
+	        	avt.randomize();
+	        	prf.currentAvatar = avt;
+	        	prf.avatars.add(avt);
+	        	final PlayerContext tc = new PlayerContext(prf, null, Integer.MAX_VALUE - i);
+	        	PlatformGame.reloadAnimalStrip(tc);
+	        	final Panctor actor = addActor(tc, PlatformGame.SCREEN_W * (i + 1) / (NUM_CHRS + 1));
+	        	if (i >= NUM_CHRS / 2) {
+	        		actor.setMirror(true);
+	        	}
+	        }
 	    }
 	    
 	    @Override
         protected final void onExit() {
-	    	final Panscreen screen;
 			if (Config.defaultProfileName == null) {
-				final SelectScreen sscreen = new SelectScreen(null, false);
-		        sscreen.ctrl = ctrl;
-		        screen = sscreen;
+				final SelectScreen screen = new SelectScreen(null, false);
+		        screen.ctrl = ctrl;
+		        Panscreen.set(screen);
 			} else {
 				try {
 					PlatformGame.loadProfile(Config.defaultProfileName, ctrl, PlatformGame.pcs.size());
 				} catch (final Exception e) {
 					throw Pantil.toRuntimeException(e); //TODO handle missing profile
 				}
-				screen = new Map.MapScreen();
+				PlatformGame.goMap();
 			}
-	        Panscreen.set(screen);
+	    }
+	    
+	    @Override
+	    protected final void destroy() {
+	    	super.destroy();
+	    	for (final PlayerContext tc : tcs) {
+				tc.destroy();
+			}
 	    }
 	}
 	
