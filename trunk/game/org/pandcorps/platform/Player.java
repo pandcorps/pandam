@@ -96,13 +96,7 @@ public class Player extends Character implements CollisionListener {
 	                ctrl.setLeft(interaction.KEY_A);
 	                ctrl.setRight(interaction.KEY_D);
 	            } else {
-	                ctrl.set1(c.BUTTON_1);
-	                ctrl.set2(c.BUTTON_0);
-	                ctrl.setSubmit(c.BUTTONS.get(c.BUTTONS.size() - 1));
-	                ctrl.setDown(c.DOWN);
-	                ctrl.setUp(c.UP);
-	                ctrl.setLeft(c.LEFT);
-	                ctrl.setRight(c.RIGHT);
+	                ctrl.setDefault(c);
 	            }
 	        }
 	    }

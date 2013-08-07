@@ -23,6 +23,7 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.pandax.in;
 
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.Panteraction.*;
 
 public class ControlScheme {
     private Panput down = null;
@@ -46,9 +47,27 @@ public class ControlScheme {
         return ctrl;
     }
     
+    public final static ControlScheme getDefault(final Device d) {
+        final ControlScheme ctrl = new ControlScheme();
+        ctrl.setDefault(d);
+        return ctrl;
+    }
+    
     public final void setDefaultKeyboard() {
         final Panteraction in = Pangine.getEngine().getInteraction();
         set(in.KEY_DOWN, in.KEY_UP, in.KEY_LEFT, in.KEY_RIGHT, in.KEY_SPACE, in.KEY_ESCAPE, in.KEY_ENTER);
+    }
+    
+    public final void setDefault(final Device d) {
+        if (d instanceof Controller) {
+            final Controller c = (Controller) d;
+            set(c.DOWN, c.UP, c.LEFT, c.RIGHT, c.BUTTON_1, c.BUTTON_0, c.BUTTONS.get(c.BUTTONS.size() - 1));
+        } else if (d instanceof Keyboard) {
+            setDefaultKeyboard();
+        } else if (d == null) {
+            throw new NullPointerException("Requested ControlScheme for null Device");
+        }
+        throw new UnsupportedOperationException("No default ControlScheme for Device " + d.getName());
     }
     
     public void set(final Panput down, final Panput up, final Panput left, final Panput right, final Panput act1, final Panput act2, final Panput sub) {
