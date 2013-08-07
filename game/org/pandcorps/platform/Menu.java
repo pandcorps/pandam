@@ -93,7 +93,9 @@ public class Menu {
 				}
 			}});
 			menu();
-			form.init();
+			if (ctrl != null) { // Null on TitleScreen
+				form.init();
+			}
 			
 			if (fadeIn) {
 			    PlatformGame.fadeIn(room, SPEED_MENU_FADE);
@@ -173,8 +175,19 @@ public class Menu {
 	    
 	    @Override
         protected final void onExit() {
-	        final SelectScreen screen = new SelectScreen(null, false);
-	        screen.ctrl = ctrl;
+	    	final Panscreen screen;
+			if (Config.defaultProfileName == null) {
+				final SelectScreen sscreen = new SelectScreen(null, false);
+		        sscreen.ctrl = ctrl;
+		        screen = sscreen;
+			} else {
+				try {
+					PlatformGame.loadProfile(Config.defaultProfileName, ctrl, PlatformGame.pcs.size());
+				} catch (final Exception e) {
+					throw Pantil.toRuntimeException(e); //TODO handle missing profile
+				}
+				screen = new Map.MapScreen();
+			}
 	        Panscreen.set(screen);
 	    }
 	}
@@ -202,7 +215,7 @@ public class Menu {
 						}
 						final int index = curr == null ? PlatformGame.pcs.size() : curr.index;
 						try {
-							PlatformGame.loadProfile(event.toString(), index);
+							PlatformGame.loadProfile(event.toString(), ctrl, index);
 						} catch (final Exception e) {
 							throw Pantil.toRuntimeException(e);
 						}
@@ -227,7 +240,7 @@ public class Menu {
                     prf.currentAvatar = avt;
                     prf.avatars.add(avt);
                     //prf.ctrl = 0;
-                    pc = PlatformGame.newPlayerContext(prf, curr == null ? PlatformGame.pcs.size() : curr.index);
+                    pc = PlatformGame.newPlayerContext(prf, ctrl, curr == null ? PlatformGame.pcs.size() : curr.index);
                     PlatformGame.reloadAnimalStrip(pc);
                     Panscreen.set(new NewScreen(pc, false)); }};
 			addLink(form, "New", newLsn, 8, 128);
