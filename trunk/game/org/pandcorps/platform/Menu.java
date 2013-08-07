@@ -28,6 +28,7 @@ import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
 import org.pandcorps.game.core.ImtilX;
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.event.action.*;
 import org.pandcorps.pandax.in.ControlScheme;
 import org.pandcorps.pandax.text.*;
 import org.pandcorps.pandax.tile.Tile.*;
@@ -43,6 +44,7 @@ public class Menu {
     
 	protected abstract static class PlayerScreen extends Panscreen {
 		protected PlayerContext pc;
+		protected ControlScheme ctrl = null;
 		private final boolean fadeIn;
 		protected final StringBuilder wrn = new StringBuilder();
 		protected Panmage timg = null;
@@ -78,7 +80,10 @@ public class Menu {
 				room.addActor(actor);
 			}
 			
-			form = new Panform(pc == null ? ControlScheme.getDefaultKeyboard() : pc.ctrl);
+			if (pc != null) {
+			    ctrl = pc.ctrl;
+			}
+			form = new Panform(ctrl);
 			wrnLbl = addTitle(form, wrn, center, 64);
 			form.setTabListener(new FormTabListener() {@Override public void onTab(final FormTabEvent event) {
 				if (allow()) {
@@ -152,6 +157,28 @@ public class Menu {
 		}
 	}
 	
+	protected final static class TitleScreen extends PlayerScreen {
+	    protected TitleScreen() {
+            super(null, true);
+        }
+	    
+	    @Override
+        protected final void menu() {
+	        final Pantext text = addTitle(form, "Press anything", center, 96);
+	        text.register(new ActionStartListener() {@Override public void onActionStart(final ActionStartEvent event) {
+	            ctrl = ControlScheme.getDefault(event.getInput().getDevice());
+	            exit();
+	        }});
+	    }
+	    
+	    @Override
+        protected final void onExit() {
+	        final SelectScreen screen = new SelectScreen(null, false);
+	        screen.ctrl = ctrl;
+	        Panscreen.set(screen);
+	    }
+	}
+	
 	protected final static class SelectScreen extends PlayerScreen {
 		private final PlayerContext curr;
 		
@@ -199,7 +226,7 @@ public class Menu {
                     avt.setName("New");
                     prf.currentAvatar = avt;
                     prf.avatars.add(avt);
-                    prf.ctrl = 0;
+                    //prf.ctrl = 0;
                     pc = PlatformGame.newPlayerContext(prf, curr == null ? PlatformGame.pcs.size() : curr.index);
                     PlatformGame.reloadAnimalStrip(pc);
                     Panscreen.set(new NewScreen(pc, false)); }};
@@ -235,7 +262,7 @@ public class Menu {
 	        final InputSubmitListener namLsn = new InputSubmitListener() {
                 @Override public final void onSubmit(final InputSubmitEvent event) {
                     exit(); }};
-	        addNameInput(form, curr.profile, namLsn, 8, 112); //TODO validation length, unique, submit link
+	        addNameInput(form, curr.profile, namLsn, PlatformGame.MAX_NAME_PROFILE, 8, 112); //TODO validation unique, submit link
 	    }
 
         @Override
@@ -416,7 +443,7 @@ public class Menu {
 				@Override public final void update(final float value) {
 					avt.b = value; }};
 			final RadioGroup bluGrp = addRadio(form, "Blu", colors, blueLsn, 176, 184);
-			final ControllerInput namIn = addNameInput(form, avt, null, 8, 112);
+			final ControllerInput namIn = addNameInput(form, avt, null, PlatformGame.MAX_NAME_AVATAR, 8, 112);
 			addExit("Save", 8, 96);
 			final MessageCloseListener canLsn = new MessageCloseListener() {
                 @Override public final void onClose(final MessageCloseEvent event) {
@@ -491,13 +518,13 @@ public class Menu {
 		return grp;
 	}
 	
-	private final static ControllerInput addNameInput(final Panform form, final PlayerData pd, final InputSubmitListener subLsn, final int x, final int y) {
+	private final static ControllerInput addNameInput(final Panform form, final PlayerData pd, final InputSubmitListener subLsn, final int max, final int x, final int y) {
 	    final InputSubmitListener chgLsn = new InputSubmitListener() {
             @Override public final void onSubmit(final InputSubmitEvent event) {
                 pd.setName(event.toString()); }};
         final ControllerInput in = new ControllerInput(PlatformGame.font, subLsn);
         in.setChangeListener(chgLsn);
-        in.setMax(PlatformGame.MAX_NAME_AVATAR);
+        in.setMax(max);
         addItem(form, in, x + 40, y);
         addTitle(form, "Name", x, y);
         in.setLetter();

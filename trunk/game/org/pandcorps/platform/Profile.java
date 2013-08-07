@@ -35,7 +35,7 @@ public class Profile extends PlayerData implements Segmented {
     protected int gems = 0;
     // Levels/Maps defeated statistics
     // Achievements
-    protected int ctrl = -1;
+    //protected int ctrl = -1; // Should store a preferred scheme for gamepads plus a preferred one for keyboards; don't know which device player will have
     
     public Avatar getAvatar(final String name) {
     	for (final Avatar avatar : avatars) {
@@ -54,7 +54,7 @@ public class Profile extends PlayerData implements Segmented {
     public void load(final Segment seg) {
     	setName(seg.getValue(0));
     	gems = seg.intValue(2);
-    	ctrl = seg.intValue(3);
+    	//ctrl = seg.intValue(3);
     }
     
     @Override
@@ -63,7 +63,7 @@ public class Profile extends PlayerData implements Segmented {
         seg.setValue(0, getName());
         seg.setValue(1, getName(currentAvatar));
         seg.setInt(2, gems);
-        seg.setInt(3, ctrl);
+        //seg.setInt(3, ctrl);
     }
     
     public void serialize(final Writer out) throws IOException {

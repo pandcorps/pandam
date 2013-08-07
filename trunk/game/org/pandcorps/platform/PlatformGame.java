@@ -35,6 +35,7 @@ import org.pandcorps.game.*;
 import org.pandcorps.game.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.impl.FinPanple;
+import org.pandcorps.pandax.in.ControlScheme;
 import org.pandcorps.pandax.text.*;
 import org.pandcorps.pandax.text.Fonts.FontRequest;
 import org.pandcorps.pandax.tile.*;
@@ -125,6 +126,8 @@ public class PlatformGame extends BaseGame {
 		PlatformGame.room = room;
 		final Class<? extends Panscreen> next;
 		if (loadConstants()) {
+		    // Move into TitleScreen; pick scheme based on input device used to press anything
+	        loadProfile(pname, pcs.size()); //TODO handle missing profile
 		    next = Map.MapScreen.class;
 		} else {
 		    next = Menu.SelectScreen.class;
@@ -175,14 +178,14 @@ public class PlatformGame extends BaseGame {
 		return strip;
 	}
 	
-	protected final static PlayerContext newPlayerContext(final Profile profile, final int index) {
-		final PlayerContext pc = new PlayerContext(profile, index);
+	protected final static PlayerContext newPlayerContext(final Profile profile, final ControlScheme ctrl, final int index) {
+		final PlayerContext pc = new PlayerContext(profile, ctrl, index);
 		Coltil.set(pcs, index, pc);
 		return pc;
 	}
 	
-	private final static void createAnimalStrip(final Profile profile, final int index) {
-		final PlayerContext pc = newPlayerContext(profile, index);
+	private final static void createAnimalStrip(final Profile profile, final ControlScheme ctrl, final int index) {
+		final PlayerContext pc = newPlayerContext(profile, ctrl, index);
 		reloadAnimalStrip(pc);
 	}
 	
@@ -298,9 +301,6 @@ public class PlatformGame extends BaseGame {
 		final String pname = cfg.getValue(0);
 		Config.defaultProfileName = pname;
 		final boolean success = pname != null;
-		if (success) {
-			loadProfile(pname, pcs.size()); //TODO handle missing profile
-		}
 		
 		enemies.add(new EnemyDefinition("", 1, null, true));
 		enemies.add(new EnemyDefinition("Troblin", 2, null, false));
