@@ -66,8 +66,9 @@ public class ControlScheme {
             setDefaultKeyboard();
         } else if (d == null) {
             throw new NullPointerException("Requested ControlScheme for null Device");
+        } else {
+        	throw new UnsupportedOperationException("No default ControlScheme for Device " + d.getName());
         }
-        throw new UnsupportedOperationException("No default ControlScheme for Device " + d.getName());
     }
     
     public void set(final Panput down, final Panput up, final Panput left, final Panput right, final Panput act1, final Panput act2, final Panput sub) {
