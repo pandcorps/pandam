@@ -124,15 +124,8 @@ public class PlatformGame extends BaseGame {
 	protected final void init(final Panroom room) throws Exception {
 		Pangine.getEngine().setTitle("Platformer");
 		PlatformGame.room = room;
-		final Class<? extends Panscreen> next;
-		if (loadConstants()) {
-		    // Move into TitleScreen; pick scheme based on input device used to press anything
-	        loadProfile(pname, pcs.size()); //TODO handle missing profile
-		    next = Map.MapScreen.class;
-		} else {
-		    next = Menu.SelectScreen.class;
-		}
-		Panscreen.set(new LogoScreen(next));
+		loadConstants();
+		Panscreen.set(new LogoScreen(Menu.TitleScreen.class));
 	}
 	
 	protected final static void fadeIn(final Panlayer layer) {
@@ -259,7 +252,7 @@ public class PlatformGame extends BaseGame {
 		f.put(r, g, b, Pancolor.MAX_VALUE, r, b, g, Pancolor.MAX_VALUE);
 	}
 	
-	protected final static Profile loadProfile(final String pname, final int index) throws Exception {
+	protected final static Profile loadProfile(final String pname, final ControlScheme ctrl, final int index) throws Exception {
 		final SegmentStream plist = SegmentStream.openLocation(pname + EXT_PRF);
 		/*
 		PRF|Andrew|Balue|1|0
@@ -286,7 +279,7 @@ public class PlatformGame extends BaseGame {
         avatar.b = 1;*/
         profile.currentAvatar = profile.getAvatar(curName);
         //profile.ctrl = 0;
-		createAnimalStrip(profile, index);
+		createAnimalStrip(profile, ctrl, index);
 		//profile.serialize("temptemp.txt");
 		//createAnimalStrip("Grabbit", "Rabbit", 2, new MultiplyPixelFilter(Channel.Blue, 0f, Channel.Blue, 1f, Channel.Blue, 0.25f), 1);
 		//createAnimalStrip("Roddy", "Mouse", 3, new SwapPixelFilter(Channel.Blue, Channel.Red, Channel.Blue), 0);
@@ -294,13 +287,11 @@ public class PlatformGame extends BaseGame {
 		return profile;
 	}
 	
-	private final static boolean loadConstants() throws Exception {
+	private final static void loadConstants() throws Exception {
 		final Pangine engine = Pangine.getEngine();
 		final Segment cfg = SegmentStream.readLocation(FILE_CFG, "CFG|").get(0);
 		// CFG|Andrew
-		final String pname = cfg.getValue(0);
-		Config.defaultProfileName = pname;
-		final boolean success = pname != null;
+		Config.defaultProfileName = cfg.getValue(0);
 		
 		enemies.add(new EnemyDefinition("", 1, null, true));
 		enemies.add(new EnemyDefinition("Troblin", 2, null, false));
@@ -343,8 +334,6 @@ public class PlatformGame extends BaseGame {
 		
 		dirts = Imtil.loadStrip("org/pandcorps/platform/res/bg/Dirt.png", ImtilX.DIM);
 		terrains = Imtil.loadStrip("org/pandcorps/platform/res/bg/Terrain.png", ImtilX.DIM);
-		
-		return success;
 	}
 	
 	private final static Panimation createGemAnimation(final String name, final Panmage[] gem) {
