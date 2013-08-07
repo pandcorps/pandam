@@ -56,8 +56,16 @@ public class RadioGroup extends TextItem {
     protected final void focus() {
         //TODO Some todo notes in message apply here
         final Pangine engine = Pangine.getEngine();
-        final Panteraction interaction = engine.getInteraction();
-        final Panput up = interaction.KEY_UP, down = interaction.KEY_DOWN;
+        final Panput up, down;
+        if (ctrl == null) {
+            final Panteraction interaction = engine.getInteraction();
+            up = interaction.KEY_UP;
+            down = interaction.KEY_DOWN;
+        } else {
+            submit = ctrl.get1();
+            up = ctrl.getUp();
+            down = ctrl.getDown();
+        }
         Panput.inactivate(submit, up, down);
         final ActionStartListener upListener = new ActionStartListener() {
             @Override
