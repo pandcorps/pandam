@@ -125,8 +125,7 @@ public class Menu {
 		protected abstract void onExit();
 		
 		protected final void setWarning(final String val) {
-			wrn.setLength(0);
-        	wrn.append(val);
+			Chartil.set(wrn, val);
         	wrnLbl.getPosition().setX(center);
         	wrnLbl.centerX();
 		}
@@ -359,21 +358,35 @@ public class Menu {
                     }
                     Panscreen.set(new SelectScreen(pc, false)); }};
             addLink(form, "Pick Profile", prfLsn, 8, 96);
-            if (pc.index == 0 && !pc.profile.getName().equals(Config.defaultProfileName)) {
+            if (pc.index == 0) {
+            	final StringBuilder defStr = new StringBuilder();
+            	defStr.append(getDefaultProfileText());
                 final MessageCloseListener defLsn = new MessageCloseListener() {
                     @Override public final void onClose(final MessageCloseEvent event) {
                         if (disabled) {
                             return;
                         }
-                        //TODO event.getMessage().destroy();
-                        Config.defaultProfileName = pc.profile.getName();
-                        Config.serialize(); }};
-                addLink(form, "Load this Profile when the game starts", defLsn, 8, 80);
+                        if (isDefaultProfile()) {
+                        	Config.defaultProfileName = null;
+                        } else {
+                        	Config.defaultProfileName = pc.profile.getName();
+                        }
+                        Config.serialize();
+                        Chartil.set(defStr, getDefaultProfileText()); }};
+                addLink(form, defStr, defLsn, 8, 80);
             }
 			// Rename Profile //TODO
 			// Drop out (if other players? if not player 1?)
             // Exit to title (if player 1)
             // Delete Profile (if player 1)
+		}
+		
+		private final boolean isDefaultProfile() {
+			return pc.profile.getName().equals(Config.defaultProfileName);
+		}
+		
+		private final String getDefaultProfileText() {
+			return isDefaultProfile() ? "Clear default Profile" : "Use this Profile by default";
 		}
 		
 		private final void goAvatar() {
@@ -544,7 +557,7 @@ public class Menu {
         return in;
 	}
 	
-	private final static int addLink(final Panform form, final String txt, final MessageCloseListener lsn, final int x, final int y) {
+	private final static int addLink(final Panform form, final CharSequence txt, final MessageCloseListener lsn, final int x, final int y) {
 	    final Message msg = new Message(PlatformGame.font, txt, lsn);
 	    msg.getLabel().setUnderlineEnabled(true);
         addItem(form, msg, x, y);
