@@ -22,12 +22,12 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.platform;
 
-import org.pandcorps.core.Iotil;
+import org.pandcorps.core.*;
 
 public class Config {
     protected static String defaultProfileName = null;
     
     protected final static void serialize() {
-        Iotil.writeFile(PlatformGame.FILE_CFG, "CFG|" + defaultProfileName);
+        Iotil.writeFile(PlatformGame.FILE_CFG, "CFG|" + Chartil.unnull(defaultProfileName));
     }
 }
