@@ -33,10 +33,12 @@ import org.pandcorps.pandam.impl.FinPanple;
 
 public abstract class BaseGame extends Pangame {
     /*
+    Sample monitor - 1920 x 1200
     1080p - 1920 x 1080
     720p - 1280 x 720
     1080p / 2 - 960 x 540
     720p / 2 - 640 x 360
+    Sample monitor / 4 - 480 x 300
     1080p / 4 - 480 x 270
     16-bit (and effective 8-bit) - 256 x 224
     Portable - 256 x 192
