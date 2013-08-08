@@ -386,6 +386,7 @@ public class Menu {
                     Panscreen.set(new SelectScreen(pc, false)); }};
             addLink(form, "Pick Profile", prfLsn, 8, 96);
             if (pc.index == 0) {
+                addTitle(form, "Default Profile:", 8, 80);
             	final StringBuilder defStr = new StringBuilder();
             	defStr.append(getDefaultProfileText());
                 final MessageCloseListener defLsn = new MessageCloseListener() {
@@ -400,7 +401,7 @@ public class Menu {
                         }
                         Config.serialize();
                         Chartil.set(defStr, getDefaultProfileText()); }};
-                addLink(form, defStr, defLsn, 8, 80);
+                addLink(form, defStr, defLsn, 144, 80);
             }
 			// Rename Profile //TODO
 			// Drop out (if other players? if not player 1?)
@@ -413,7 +414,7 @@ public class Menu {
 		}
 		
 		private final String getDefaultProfileText() {
-			return isDefaultProfile() ? "Clear default Profile" : "Use this Profile by default";
+			return isDefaultProfile() ? "Y" : "N";
 		}
 		
 		private final void goAvatar() {
