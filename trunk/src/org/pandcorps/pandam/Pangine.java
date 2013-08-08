@@ -343,6 +343,10 @@ public abstract class Pangine {
     
     public abstract int getDisplayHeight();
     
+    public abstract void setFullScreen(final boolean fullScreen);
+    
+    public abstract boolean isFullScreen();
+    
     public final float getGameWidth() {
         return getDisplayWidth() / zoomMag;
     }
@@ -772,6 +776,7 @@ public abstract class Pangine {
 		return scaler;
 	}
 	
+	// Will zoom to make window size as big as possible for the current display device, making it a multiple of given dimensions
 	public final void setMaxZoomedDisplaySize(final int baseWidth, final int baseHeight) {
 	    final int absWidth = getDesktopWidth() - 12, absHeight = getDesktopHeight() - 24;
 	    final int zoom = Math.min(getMaxDim(baseWidth, absWidth), getMaxDim(baseHeight, absHeight));
@@ -789,6 +794,12 @@ public abstract class Pangine {
 	    	return Math.max(1, zoom / 2);
 	    }
 	}
+	
+	// Will halve the display size until it can do so no longer without dropping below given dimensions
+	public final void setApproximateFullScreenZoomedDisplaySize(final int minWidth, final int minHeight) {
+	    //final int topWidth = getDesktopWidth(), topHeight = getDesktopHeight();
+	    setFullScreen(true);
+    }
 	
 	public final int getEffectiveWidth() {
 		return (int) (getDisplayWidth() / getZoom());
