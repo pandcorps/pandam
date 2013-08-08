@@ -107,6 +107,7 @@ public final class LwjglPangine extends Pangine {
     }
 
     private int w = 640, h = 480;
+    private boolean fullScreen = false;
 	private boolean initialized = false;
 	private float clr = 0.0f, clg = 0.0f, clb = 0.0f, cla = 0.0f;
 	//private ByteBuffer buf;
@@ -130,12 +131,30 @@ public final class LwjglPangine extends Pangine {
 	public final int getDisplayHeight() {
 	    return h;
 	}
+	
+	@Override
+    public final void setFullScreen(final boolean fullScreen) {
+        if (initialized) {
+            throw new UnsupportedOperationException("Cannot change full-screen after initialization");
+        }
+        this.fullScreen = fullScreen;
+    }
+	
+	@Override
+	public final boolean isFullScreen() {
+	    return fullScreen;
+	}
 
 	@Override
 	//protected final void start() throws Exception {
 	protected final void init() throws Exception {
 	    initialized = true;
-		Display.setDisplayMode(new DisplayMode(w, h));
+	    if (fullScreen) {
+	        Display.setFullscreen(fullScreen);
+	    } else {
+	        // Should be able to set resolution, but only certain values would be valid
+	        Display.setDisplayMode(new DisplayMode(w, h));
+	    }
 		/*
 		Display.setFullscreen(true);
 		org.lwjgl.util.Display.getAvailableDisplayModes
