@@ -29,6 +29,8 @@ import org.pandcorps.core.*;
 import org.pandcorps.game.*;
 import org.pandcorps.game.core.ImtilX;
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.Panteraction.*;
+import org.pandcorps.pandam.event.action.*;
 import org.pandcorps.pandax.in.ControlScheme;
 import org.pandcorps.pandax.text.Pantext;
 import org.pandcorps.pandax.tile.*;
@@ -182,6 +184,23 @@ public class Map {
 		    this.pc = pc;
 			setView(pc.guySouth);
 			setSpeed(2);
+			register(new ActionStartListener() { @Override public final void onActionStart(final ActionStartEvent event) {
+			    final Panput input = event.getInput();
+			    final Device device = input.getDevice();
+			    boolean newDevice = true;
+			    for (final PlayerContext oc : PlatformGame.pcs) {
+			        if (oc.getDevice().equals(device)) {
+			            newDevice = false;
+			            break;
+			        }
+			    }
+			    if (newDevice) {
+    			    input.inactivate();
+    			    final Menu.SelectScreen screen = new Menu.SelectScreen(null, true);
+                    screen.ctrl = ControlScheme.getDefault(device);
+                    fadeOut(screen);
+			    }
+			}});
 		}
 		
 		@Override
@@ -215,8 +234,7 @@ public class Map {
 				debug = !debug;
 			} else if (ctrl.get2().isActive()) {
 			    ctrl.get2().inactivate();
-				//fadeOut(new Menu.AvatarScreen(pc));
-				fadeOut(new Menu.ProfileScreen(pc, true));
+			    fadeOut(new Menu.ProfileScreen(pc, true));
 			}
 		}
 		

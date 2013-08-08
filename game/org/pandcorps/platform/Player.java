@@ -23,6 +23,7 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.platform;
 
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.Panteraction.Device;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.action.*;
 import org.pandcorps.pandam.impl.ImplPanple;
@@ -109,7 +110,11 @@ public class Player extends Character implements CollisionListener {
 	        return profile.gems;
 	    }
 	    
-	    public void destroy() {
+	    public final Device getDevice() {
+	        return ctrl.get1().getDevice();
+	    }
+	    
+	    public final void destroy() {
 	    	if (guy == null) {
 	    		return;
 	    	}
