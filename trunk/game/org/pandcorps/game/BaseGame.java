@@ -66,7 +66,6 @@ public abstract class BaseGame extends Pangame {
             final float zoom = engine.getZoom();
             SCREEN_W = (int) (engine.getDesktopWidth() / zoom);
             SCREEN_H = (int) (engine.getDesktopHeight() / zoom);
-            System.out.println(SCREEN_W + " * " + SCREEN_H);
         } else {
             engine.setMaxZoomedDisplaySize(SCREEN_W, SCREEN_H);
         }
