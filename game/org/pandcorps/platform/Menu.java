@@ -377,7 +377,7 @@ public class Menu {
 	                    goProfile(); }};
 	            x = addLink(form, "Erase", delLsn, x, 112);
             }
-			addExit(Map.started ? "Exit" : "Start", x, 112);
+			addExit(Map.started ? "Back" : "Start", x, 112);
 			final MessageCloseListener prfLsn = new MessageCloseListener() {
                 @Override public final void onClose(final MessageCloseEvent event) {
                     if (disabled) {
@@ -385,8 +385,9 @@ public class Menu {
                     }
                     Panscreen.set(new SelectScreen(pc, false)); }};
             addLink(form, "Pick Profile", prfLsn, 8, 96);
+            int y = 80;
             if (pc.index == 0) {
-                addTitle(form, "Default Profile:", 8, 80);
+                addTitle(form, "Default Profile:", 8, y);
             	final StringBuilder defStr = new StringBuilder();
             	defStr.append(getDefaultProfileText());
                 final MessageCloseListener defLsn = new MessageCloseListener() {
@@ -401,7 +402,9 @@ public class Menu {
                         }
                         Config.serialize();
                         Chartil.set(defStr, getDefaultProfileText()); }};
-                addLink(form, defStr, defLsn, 144, 80);
+                addLink(form, defStr, defLsn, 144, y);
+                y -= 16;
+                addLink(form, "Quit Game", qutLsn, 8, y);
             }
 			// Rename Profile //TODO
 			// Drop out (if other players? if not player 1?)
