@@ -29,6 +29,7 @@ import org.pandcorps.pandam.*;
 
 public final class UnitPangine extends Pangine {
     private int w, h;
+    private boolean full;
     
 	public final static void setEngine(final UnitPangine engine) {
 		Pangine.engine = engine;
@@ -82,6 +83,16 @@ public final class UnitPangine extends Pangine {
 	@Override
     public final int getDisplayHeight() {
         return h;
+    }
+	
+	@Override
+	public final void setFullScreen(final boolean full) {
+	    this.full = full;
+	}
+	
+	@Override
+    public final boolean isFullScreen() {
+        return full;
     }
 
 	@Override

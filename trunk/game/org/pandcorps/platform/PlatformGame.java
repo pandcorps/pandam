@@ -121,6 +121,11 @@ public class PlatformGame extends BaseGame {
 	protected static BufferedImage[] terrains = null;
 	
 	@Override
+	protected final boolean isFullScreen() {
+        return true;
+    }
+	
+	@Override
 	protected final void init(final Panroom room) throws Exception {
 		Pangine.getEngine().setTitle("Platformer");
 		PlatformGame.room = room;

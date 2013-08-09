@@ -797,9 +797,17 @@ public abstract class Pangine {
 	
 	// Will halve the display size until it can do so no longer without dropping below given dimensions
 	public final void setApproximateFullScreenZoomedDisplaySize(final int minWidth, final int minHeight) {
-	    //final int topWidth = getDesktopWidth(), topHeight = getDesktopHeight();
+	    final int topWidth = getDesktopWidth(), topHeight = getDesktopHeight();
 	    setFullScreen(true);
+	    zoom(Math.min(getApproxDim(minWidth, topWidth), getApproxDim(minHeight, topHeight)));
     }
+	
+	private final int getApproxDim(final int min, final int top) {
+	    int zoom;
+	    // Check that top is a multiple of zoom?
+        for (zoom = 1; top / zoom >= min; zoom *= 2);
+        return Math.max(1, zoom / 2);
+	}
 	
 	public final int getEffectiveWidth() {
 		return (int) (getDisplayWidth() / getZoom());
