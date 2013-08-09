@@ -44,11 +44,15 @@ public abstract class BaseGame extends Pangame {
     Portable - 256 x 192
     Sample phone - 192 x 192
     */
-	public final static int SCREEN_W = 256;
-	public final static int SCREEN_H = 192;
+	public static int SCREEN_W = 256;
+	public static int SCREEN_H = 192;
 	protected final static FinPanple CENTER_16 = new FinPanple(8, 8, 0);
 	protected final static FinPanple CENTER_8 = new FinPanple(4, 4, 0);
 	protected final static FinPanple CENTER_4 = new FinPanple(2, 2, 0);
+	
+	protected boolean isFullScreen() {
+	    return false;
+	}
 	
 	@Override
     public void initBeforeEngine() {
@@ -57,7 +61,15 @@ public abstract class BaseGame extends Pangame {
         if (scalerClassName != null) {
         	engine.setImageScaler((Scaler) Reftil.newInstance(scalerClassName));
         }
-        engine.setMaxZoomedDisplaySize(SCREEN_W, SCREEN_H);
+        if (isFullScreen()) {
+            engine.setApproximateFullScreenZoomedDisplaySize(SCREEN_W, SCREEN_H);
+            final float zoom = engine.getZoom();
+            SCREEN_W = (int) (engine.getDesktopWidth() / zoom);
+            SCREEN_H = (int) (engine.getDesktopHeight() / zoom);
+            System.out.println(SCREEN_W + " * " + SCREEN_H);
+        } else {
+            engine.setMaxZoomedDisplaySize(SCREEN_W, SCREEN_H);
+        }
     }
 	
 	@Override
