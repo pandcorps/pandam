@@ -354,7 +354,8 @@ public class PlatformGame extends BaseGame {
 	protected final static Panlayer addHud(final Panroom room, final boolean level) {
 		final Panlayer hud = createHud(room);
         final Gem hudGem = new Gem();
-        hudGem.getPosition().setY(175);
+        final int h = Pangine.getEngine().getEffectiveHeight() - 17;
+        hudGem.getPosition().setY(h);
         hud.addActor(hudGem);
         final int size = pcs.size();
         for (int i = 0; i < size; i++) {
@@ -369,10 +370,10 @@ public class PlatformGame extends BaseGame {
             }
             final Pantext hudName = new Pantext("hud.name." + i, font, pc.getName());
             final int x = 16 + (i * 56);
-            hudName.getPosition().set(x, 183);
+            hudName.getPosition().set(x, h + 8);
             hud.addActor(hudName);
             final Pantext hudGems = new Pantext("hud.gems." + i, font, gemSeq);
-            hudGems.getPosition().set(x, 175);
+            hudGems.getPosition().set(x, h);
             hud.addActor(hudGems);
         }
         return hud;
