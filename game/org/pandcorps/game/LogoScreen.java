@@ -44,13 +44,14 @@ public final class LogoScreen extends FadeScreen {
         engine.setBgColor(Pancolor.WHITE);
         font = engine.createImage("PandcorpsFont", "org/pandcorps/res/img/FontGradient16.png");
         final Pantext text = new Pantext("PandcorpsLogo", new ByteFont(font), "PANDCORPS");
-        text.getPosition().set(48, 88);
+        final int x = engine.getEffectiveWidth() / 2, y = engine.getEffectiveHeight() / 2 - 8;
+        text.getPosition().set(x - 80, y);
         final Panroom room = Pangame.getGame().getCurrentRoom();
         room.addActor(text);
         icon = engine.createImage("PandcorpsIcon", "org/pandcorps/res/img/PandcorpsIcon16.png");
         final Panctor img = new Panctor("PandcorpsImage");
         img.setView(icon);
-        img.getPosition().set(192, 88);
+        img.getPosition().set(x + 64, y);
         room.addActor(img);
     }
     
