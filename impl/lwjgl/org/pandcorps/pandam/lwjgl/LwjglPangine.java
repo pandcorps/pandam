@@ -30,6 +30,7 @@ import java.util.*;
 import org.lwjgl.input.Controller;
 import org.lwjgl.input.Controllers;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
@@ -151,6 +152,7 @@ public final class LwjglPangine extends Pangine {
 	    initialized = true;
 	    if (fullScreen) {
 	        Display.setFullscreen(fullScreen);
+	        Mouse.setGrabbed(true); // Some games might use cursor; might also want to disable in Window; might expose in Pangine
 	    } else {
 	        // Should be able to set resolution in full-screen too, but only certain values would be valid
 	        Display.setDisplayMode(new DisplayMode(w, h));
