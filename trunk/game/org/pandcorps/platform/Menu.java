@@ -108,7 +108,7 @@ public class Menu {
 		}
 		
 		protected final int getLeft() {
-			return 0;
+			return (Pangine.getEngine().getEffectiveWidth() / 2) - 120;
 		}
 		
 		protected final RadioGroup addRadio(final String title, final List<String> list, final RadioSubmitListener lsn, final int x, final int y) {
@@ -301,7 +301,8 @@ public class Menu {
 		@Override
 		protected final void menu() {
 			final List<String> list = PlatformGame.getAvailableProfiles();
-			int y = getTop();
+			final int left = getLeft();
+			int x = left, y = getTop();
 			if (Coltil.isValued(list)) {
 				final RadioSubmitListener prfLsn = new RadioSubmitListener() {
 					@Override public final void onSubmit(final RadioSubmitEvent event) {
@@ -317,7 +318,7 @@ public class Menu {
 						pc = PlatformGame.pcs.get(index);
 						goProfile();
 				}};
-				addRadio("Pick Profile", list, prfLsn, null, 8, y);
+				addRadio("Pick Profile", list, prfLsn, null, x, y);
 			}
 			final MessageCloseListener newLsn = new MessageCloseListener() {
                 @Override public final void onClose(final MessageCloseEvent event) {
@@ -339,7 +340,7 @@ public class Menu {
                     PlatformGame.reloadAnimalStrip(pc);
                     Panscreen.set(new NewScreen(pc, false)); }};
             y -= 64;
-			int x = addLink("New", newLsn, 8, y);
+			x = addLink("New", newLsn, left, y);
 			if (curr != null) {
 				x = addPipe(x, y);
 				addExit("Cancel", x, y);
@@ -375,8 +376,8 @@ public class Menu {
 	        final InputSubmitListener namLsn = new InputSubmitListener() {
                 @Override public final void onSubmit(final InputSubmitEvent event) {
                     exit(); }};
-            int y = getTop() - 72;
-	        addNameInput(curr.profile, namLsn, PlatformGame.MAX_NAME_PROFILE, 8, y); //TODO validation unique, submit link
+            int x = getLeft(), y = getTop() - 72;
+	        addNameInput(curr.profile, namLsn, PlatformGame.MAX_NAME_PROFILE, x, y); //TODO validation unique, submit link
 	    }
 
         @Override
@@ -407,8 +408,9 @@ public class Menu {
 			final AvtListener avtLsn = new AvtListener() {
 				@Override public final void update(final String value) {
 					pc.profile.currentAvatar = pc.profile.getAvatar(value); }};
-			int y = getTop();
-			final RadioGroup avtGrp = addRadio("Pick Avatar", avatars, avtLsn, 8, y);
+			final int left = getLeft();
+			int x = left, y = getTop();
+			final RadioGroup avtGrp = addRadio("Pick Avatar", avatars, avtLsn, x, y);
 			avtGrp.setSelected(avatars.indexOf(pc.profile.currentAvatar.getName()));
 			final MessageCloseListener edtLsn = new MessageCloseListener() {
                 @Override public final void onClose(final MessageCloseEvent event) {
@@ -416,9 +418,8 @@ public class Menu {
                         return;
                     }
                     goAvatar(); }};
-            int x = 8;
             y -= 64;
-            x = addLink("Edit", edtLsn, x, y);
+            x = addLink("Edit", edtLsn, left, y);
             final MessageCloseListener newLsn = new MessageCloseListener() {
                 @Override public final void onClose(final MessageCloseEvent event) {
                     if (disabled) {
@@ -463,9 +464,11 @@ public class Menu {
                     }
                     Panscreen.set(new SelectScreen(pc, false)); }};
             y -= 16;
-            addTitle("Profile", 8, y);
+            x = left;
+            addTitle("Profile", x, y);
             y -= 16;
-            x = addLink("Pick", prfLsn, 16, y);
+            x = left + 8;
+            x = addLink("Pick", prfLsn, x, y);
             if (pc.index == 0) {
             	x = addPipe(x, y);
                 addTitle("Default", x, y);
@@ -486,15 +489,17 @@ public class Menu {
                 x += 64;
                 addLink(defStr, defLsn, x, y);
                 y -= 16;
+                x = left;
                 final MessageCloseListener qutLsn = new MessageCloseListener() {
                     @Override public final void onClose(final MessageCloseEvent event) {
                         if (disabled) {
                             return;
                         }
                         Pangine.getEngine().exit(); }}; // Exit to TitleScreen instead? Quit game from there?
-                addTitle("Game", 8, y);
+                addTitle("Game", x, y);
                 y -= 16;
-                x = addExit(Map.started ? "Back" : "Play", 16, y);
+                x = left + 8;
+                x = addExit(Map.started ? "Back" : "Play", x, y);
                 x = addPipe(x, y);
                 addLink("Quit", qutLsn, x, y);
             }
@@ -569,8 +574,9 @@ public class Menu {
 			final AvtListener anmLsn = new AvtListener() {
 				@Override public final void update(final String value) {
 					avt.anm = value; }};
-			int y = getTop();
-			final RadioGroup anmGrp = addRadio("Animal", animals, anmLsn, 8, y);
+			final int left = getLeft();
+			int x = left, y = getTop();
+			final RadioGroup anmGrp = addRadio("Animal", animals, anmLsn, x, y);
 			final int numEyes = PlatformGame.getNumEyes();
 			final ArrayList<String> eyes = new ArrayList<String>(numEyes);
 			for (int i = 1; i <= numEyes; i++) {
@@ -579,24 +585,29 @@ public class Menu {
 			final AvtListener eyeLsn = new AvtListener() {
 				@Override public final void update(final String value) {
 					avt.eye = Integer.parseInt(value); }};
-			final RadioGroup eyeGrp = addRadio("Eye", eyes, eyeLsn, 80, y);
+			x += 72;
+			final RadioGroup eyeGrp = addRadio("Eye", eyes, eyeLsn, x, y);
 			final List<String> colors = Arrays.asList("0", "1", "2", "3", "4");
 			final AvtListener redLsn = new ColorListener() {
 				@Override public final void update(final float value) {
 					avt.r = value; }};
-			final RadioGroup redGrp = addRadio("Red", colors, redLsn, 112, y);
+			x += 32;
+			final RadioGroup redGrp = addRadio("Red", colors, redLsn, x, y);
 			final AvtListener greenLsn = new ColorListener() {
 				@Override public final void update(final float value) {
 					avt.g = value; }};
-			final RadioGroup grnGrp = addRadio("Grn", colors, greenLsn, 144, y);
+			x += 32;
+			final RadioGroup grnGrp = addRadio("Grn", colors, greenLsn, x, y);
 			final AvtListener blueLsn = new ColorListener() {
 				@Override public final void update(final float value) {
 					avt.b = value; }};
-			final RadioGroup bluGrp = addRadio("Blu", colors, blueLsn, 176, y);
+			x += 32;
+			final RadioGroup bluGrp = addRadio("Blu", colors, blueLsn, x, y);
 			y -= 64;
-			final ControllerInput namIn = addNameInput(avt, null, PlatformGame.MAX_NAME_AVATAR, 8, y);
+			x = left;
+			final ControllerInput namIn = addNameInput(avt, null, PlatformGame.MAX_NAME_AVATAR, x, y);
 			y -= 16;
-			int x = addExit("Save", 8, y);
+			x = addExit("Save", left, y);
 			final MessageCloseListener canLsn = new MessageCloseListener() {
                 @Override public final void onClose(final MessageCloseEvent event) {
                     if (disabled) {
