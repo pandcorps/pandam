@@ -404,6 +404,12 @@ public class Menu {
                         Chartil.set(defStr, getDefaultProfileText()); }};
                 addLink(form, defStr, defLsn, 144, y);
                 y -= 16;
+                final MessageCloseListener qutLsn = new MessageCloseListener() {
+                    @Override public final void onClose(final MessageCloseEvent event) {
+                        if (disabled) {
+                            return;
+                        }
+                        Pangine.getEngine().exit(); }}; // Exit to TitleScreen instead? Quit game from there?
                 addLink(form, "Quit Game", qutLsn, 8, y);
             }
 			// Rename Profile //TODO
