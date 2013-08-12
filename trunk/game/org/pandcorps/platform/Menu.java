@@ -80,7 +80,7 @@ public class Menu {
 			    ctrl = pc.ctrl;
 			}
 			form = new Panform(ctrl);
-			wrnLbl = addTitle(form, wrn, center, 64);
+			wrnLbl = addTitle(form, wrn, center, getBottom());
 			form.setTabListener(new FormTabListener() {@Override public void onTab(final FormTabEvent event) {
 				if (allow()) {
 					wrn.setLength(0);
@@ -96,6 +96,14 @@ public class Menu {
 			if (fadeIn) {
 			    PlatformGame.fadeIn(room, SPEED_MENU_FADE);
 			}
+		}
+		
+		protected final int getTop() {
+			return (Pangine.getEngine().getEffectiveHeight() / 2) + 87;
+		}
+		
+		protected final int getBottom() {
+			return 56;
 		}
 		
 		protected final Panctor addActor(final PlayerContext pc, final int x) {
@@ -172,7 +180,7 @@ public class Menu {
 	    
 	    @Override
         protected final void menu() {
-	        final Pantext text = addTitle(form, "Press anything", center, 56);
+	        final Pantext text = addTitle(form, "Press anything", center, getBottom());
 	        text.centerX();
 	        text.register(new ActionStartListener() {@Override public void onActionStart(final ActionStartEvent event) {
 	            ctrl = ControlScheme.getDefault(event.getInput().getDevice());
@@ -227,12 +235,16 @@ public class Menu {
 		
 		protected SelectScreen(final PlayerContext pc, final boolean fadeIn) {
 			super(null, fadeIn);
+			if (pc != null) {
+				ctrl = pc.ctrl;
+			}
 			curr = pc;
 		}
 		
 		@Override
 		protected final void menu() {
 			final List<String> list = PlatformGame.getAvailableProfiles();
+			int y = getTop();
 			if (Coltil.isValued(list)) {
 				final RadioSubmitListener prfLsn = new RadioSubmitListener() {
 					@Override public final void onSubmit(final RadioSubmitEvent event) {
@@ -248,7 +260,7 @@ public class Menu {
 						pc = PlatformGame.pcs.get(index);
 						goProfile();
 				}};
-				addRadio(form, "Pick Profile", list, prfLsn, null, 8, 184);
+				addRadio(form, "Pick Profile", list, prfLsn, null, 8, y);
 			}
 			final MessageCloseListener newLsn = new MessageCloseListener() {
                 @Override public final void onClose(final MessageCloseEvent event) {
@@ -269,9 +281,10 @@ public class Menu {
                     pc = PlatformGame.newPlayerContext(prf, ctrl, curr == null ? PlatformGame.pcs.size() : curr.index);
                     PlatformGame.reloadAnimalStrip(pc);
                     Panscreen.set(new NewScreen(pc, false)); }};
-			addLink(form, "New", newLsn, 8, 128);
+            y -= 56;
+			addLink(form, "New", newLsn, 8, y);
 			if (curr != null) {
-				addExit("Cancel", 40, 128);
+				addExit("Cancel", 40, y);
 			}
 		}
 
@@ -289,6 +302,9 @@ public class Menu {
 	    
         protected NewScreen(final PlayerContext pc, final boolean fadeIn) {
             super(null, fadeIn);
+            if (pc != null) {
+				ctrl = pc.ctrl;
+			}
             curr = pc;
         }
 
@@ -301,7 +317,8 @@ public class Menu {
 	        final InputSubmitListener namLsn = new InputSubmitListener() {
                 @Override public final void onSubmit(final InputSubmitEvent event) {
                     exit(); }};
-	        addNameInput(form, curr.profile, namLsn, PlatformGame.MAX_NAME_PROFILE, 8, 112); //TODO validation unique, submit link
+            int y = getTop() - 72;
+	        addNameInput(form, curr.profile, namLsn, PlatformGame.MAX_NAME_PROFILE, 8, y); //TODO validation unique, submit link
 	    }
 
         @Override
@@ -332,6 +349,7 @@ public class Menu {
 			final AvtListener avtLsn = new AvtListener() {
 				@Override public final void update(final String value) {
 					pc.profile.currentAvatar = pc.profile.getAvatar(value); }};
+			int y = getTop();
 			final RadioGroup avtGrp = addRadio(form, "Pick Avatar", avatars, avtLsn, 8, 184);
 			avtGrp.setSelected(avatars.indexOf(pc.profile.currentAvatar.getName()));
 			final MessageCloseListener edtLsn = new MessageCloseListener() {
@@ -341,7 +359,8 @@ public class Menu {
                     }
                     goAvatar(); }};
             int x = 8;
-            x = addLink(form, "Edit", edtLsn, x, 112);
+            y -= 72;
+            x = addLink(form, "Edit", edtLsn, x, y);
             final MessageCloseListener newLsn = new MessageCloseListener() {
                 @Override public final void onClose(final MessageCloseEvent event) {
                     if (disabled) {
@@ -355,7 +374,7 @@ public class Menu {
                     PlatformGame.reloadAnimalStrip(pc);
                     actor.setView(pc.guy);
                     goAvatar(); }};
-            x = addLink(form, "New", newLsn, x, 112);
+            x = addLink(form, "New", newLsn, x, y);
             if (pc.profile.avatars.size() > 1) {
 	            final MessageCloseListener delLsn = new MessageCloseListener() {
 	                @Override public final void onClose(final MessageCloseEvent event) {
@@ -375,17 +394,18 @@ public class Menu {
 	                    actor.setView(pc.guy);
 	                    save = true;
 	                    goProfile(); }};
-	            x = addLink(form, "Erase", delLsn, x, 112);
+	            x = addLink(form, "Erase", delLsn, x, y);
             }
-			addExit(Map.started ? "Back" : "Start", x, 112);
+			addExit(Map.started ? "Back" : "Start", x, y);
 			final MessageCloseListener prfLsn = new MessageCloseListener() {
                 @Override public final void onClose(final MessageCloseEvent event) {
                     if (disabled) {
                         return;
                     }
                     Panscreen.set(new SelectScreen(pc, false)); }};
-            addLink(form, "Pick Profile", prfLsn, 8, 96);
-            int y = 80;
+            y -= 16;
+            addLink(form, "Pick Profile", prfLsn, 8, y);
+            y -= 16;
             if (pc.index == 0) {
                 addTitle(form, "Default Profile:", 8, y);
             	final StringBuilder defStr = new StringBuilder();
@@ -483,7 +503,8 @@ public class Menu {
 			final AvtListener anmLsn = new AvtListener() {
 				@Override public final void update(final String value) {
 					avt.anm = value; }};
-			final RadioGroup anmGrp = addRadio(form, "Animal", animals, anmLsn, 8, 184);
+			int y = getTop();
+			final RadioGroup anmGrp = addRadio(form, "Animal", animals, anmLsn, 8, y);
 			final int numEyes = PlatformGame.getNumEyes();
 			final ArrayList<String> eyes = new ArrayList<String>(numEyes);
 			for (int i = 1; i <= numEyes; i++) {
@@ -492,22 +513,24 @@ public class Menu {
 			final AvtListener eyeLsn = new AvtListener() {
 				@Override public final void update(final String value) {
 					avt.eye = Integer.parseInt(value); }};
-			final RadioGroup eyeGrp = addRadio(form, "Eye", eyes, eyeLsn, 80, 184);
+			final RadioGroup eyeGrp = addRadio(form, "Eye", eyes, eyeLsn, 80, y);
 			final List<String> colors = Arrays.asList("0", "1", "2", "3", "4");
 			final AvtListener redLsn = new ColorListener() {
 				@Override public final void update(final float value) {
 					avt.r = value; }};
-			final RadioGroup redGrp = addRadio(form, "Red", colors, redLsn, 112, 184);
+			final RadioGroup redGrp = addRadio(form, "Red", colors, redLsn, 112, y);
 			final AvtListener greenLsn = new ColorListener() {
 				@Override public final void update(final float value) {
 					avt.g = value; }};
-			final RadioGroup grnGrp = addRadio(form, "Grn", colors, greenLsn, 144, 184);
+			final RadioGroup grnGrp = addRadio(form, "Grn", colors, greenLsn, 144, y);
 			final AvtListener blueLsn = new ColorListener() {
 				@Override public final void update(final float value) {
 					avt.b = value; }};
-			final RadioGroup bluGrp = addRadio(form, "Blu", colors, blueLsn, 176, 184);
-			final ControllerInput namIn = addNameInput(form, avt, null, PlatformGame.MAX_NAME_AVATAR, 8, 112);
-			addExit("Save", 8, 96);
+			final RadioGroup bluGrp = addRadio(form, "Blu", colors, blueLsn, 176, y);
+			y -= 72;
+			final ControllerInput namIn = addNameInput(form, avt, null, PlatformGame.MAX_NAME_AVATAR, 8, y);
+			y -= 16;
+			addExit("Save", 8, y);
 			final MessageCloseListener canLsn = new MessageCloseListener() {
                 @Override public final void onClose(final MessageCloseEvent event) {
                     if (disabled) {
@@ -522,7 +545,7 @@ public class Menu {
                     actor.setView(pc.guy);
                     save = false;
                     exit(); }};
-            addLink(form, "Cancel", canLsn, 48, 96);
+            addLink(form, "Cancel", canLsn, 48, y);
 			anmGrp.setSelected(animals.indexOf(avt.anm));
 			eyeGrp.setSelected(avt.eye - 1);
 			redGrp.setSelected(getLineColor(avt.r));
