@@ -152,7 +152,7 @@ public final class LwjglPangine extends Pangine {
 	    if (fullScreen) {
 	        Display.setFullscreen(fullScreen);
 	    } else {
-	        // Should be able to set resolution, but only certain values would be valid
+	        // Should be able to set resolution in full-screen too, but only certain values would be valid
 	        Display.setDisplayMode(new DisplayMode(w, h));
 	    }
 		/*
