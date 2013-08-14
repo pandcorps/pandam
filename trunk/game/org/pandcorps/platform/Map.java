@@ -185,11 +185,14 @@ public class Map {
 			setView(pc.guySouth);
 			setSpeed(2);
 			register(new ActionStartListener() { @Override public final void onActionStart(final ActionStartEvent event) {
+				if (disabled) {
+					return;
+				}
 			    final Panput input = event.getInput();
 			    final Device device = input.getDevice();
 			    for (final PlayerContext oc : PlatformGame.pcs) {
 			        if (oc.getDevice().equals(device)) {
-			        	if (getMenuInput(oc.ctrl) == input) {
+			        	if (oc.index > 0 && getMenuInput(oc.ctrl) == input) {
 			        		goMenu(input, oc);
 			        	}
 			            return;
