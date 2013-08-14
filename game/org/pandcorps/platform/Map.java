@@ -187,20 +187,23 @@ public class Map {
 			register(new ActionStartListener() { @Override public final void onActionStart(final ActionStartEvent event) {
 			    final Panput input = event.getInput();
 			    final Device device = input.getDevice();
-			    boolean newDevice = true;
 			    for (final PlayerContext oc : PlatformGame.pcs) {
 			        if (oc.getDevice().equals(device)) {
-			            newDevice = false;
-			            break;
+			        	if (getMenuInput(oc.ctrl) == input) {
+			        		goMenu(input, oc);
+			        	}
+			            return;
 			        }
 			    }
-			    if (newDevice) {
-    			    input.inactivate();
-    			    final Menu.SelectScreen screen = new Menu.SelectScreen(null, true);
-                    screen.ctrl = ControlScheme.getDefault(device);
-                    fadeOut(screen);
-			    }
+			    input.inactivate();
+			    final Menu.SelectScreen screen = new Menu.SelectScreen(null, true);
+                screen.ctrl = ControlScheme.getDefault(device);
+                fadeOut(screen);
 			}});
+		}
+		
+		private final Panput getMenuInput(final ControlScheme ctrl) {
+			return ctrl.get2();
 		}
 		
 		@Override
@@ -232,10 +235,14 @@ public class Map {
 			} else if (interaction.KEY_TAB.isActive()) {
 				interaction.KEY_TAB.inactivate();
 				debug = !debug;
-			} else if (ctrl.get2().isActive()) {
-			    ctrl.get2().inactivate();
-			    fadeOut(new Menu.ProfileScreen(pc, true));
+			} else if (getMenuInput(ctrl).isActive()) {
+				goMenu(getMenuInput(ctrl), pc);
 			}
+		}
+		
+		private final void goMenu(final Panput input, final PlayerContext pc) {
+			input.inactivate();
+		    fadeOut(new Menu.ProfileScreen(pc, true));
 		}
 		
 		private final void fadeOut(final Panscreen screen) {
