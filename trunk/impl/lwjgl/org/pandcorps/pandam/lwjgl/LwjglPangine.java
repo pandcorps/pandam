@@ -282,19 +282,34 @@ public final class LwjglPangine extends Pangine {
 				final boolean a;
 				final Controller src = Controllers.getEventSource();
 				final Panteraction.Controller pc = interaction.CONTROLLERS.get(src.getIndex());
+				/*System.out.println("Name: " + src.getName()
+						+ "; AxisCount: " + src.getAxisCount() + "; ButtonCount: " + src.getButtonCount());
+				System.out.println("Axis: " + Controllers.isEventAxis()
+						+ "; X: " + Controllers.isEventXAxis() + "; Y: " + Controllers.isEventYAxis()
+						+ "; PX: " + Controllers.isEventPovX() + "; PY: " + Controllers.isEventPovY()
+						+ "; Btn: " + Controllers.isEventButton() + "; Ind: " + Controllers.getEventControlIndex());*/
 				if (Controllers.isEventButton()) {
 					final int ind = Controllers.getEventControlIndex();
 					button = pc.BUTTONS.get(ind);
-					a = Controllers.getEventSource().isButtonPressed(ind);
+					a = src.isButtonPressed(ind);
 				} else {
 					final float val;
 					final Button pos, neg;
-					if (Controllers.isEventXAxis()) {
+					final boolean simple = src.getAxisCount() <= 2;
+					if (simple && Controllers.isEventXAxis()) {
 						val = src.getXAxisValue();
 						pos = pc.RIGHT;
 						neg = pc.LEFT;
-					} else if (Controllers.isEventYAxis()) {
+					} else if (simple && Controllers.isEventYAxis()) {
 						val = src.getYAxisValue();
+						pos = pc.DOWN;
+						neg = pc.UP;
+					} else if (Controllers.isEventPovX()) {
+						val = src.getPovX();
+						pos = pc.RIGHT;
+						neg = pc.LEFT;
+					} else if (Controllers.isEventPovY()) {
+						val = src.getPovY();
 						pos = pc.DOWN;
 						neg = pc.UP;
 					} else {
@@ -302,9 +317,12 @@ public final class LwjglPangine extends Pangine {
 					}
 					if (val > 0) {
 						button = pos;
+						// Check for immediate direction change without releasing axis
+						activate(Pantil.nvl(Coltil.has(active, neg), Coltil.has(newActive, neg)), false);
 						a = true;
 					} else if (val < 0) {
 						button = neg;
+						activate(Pantil.nvl(Coltil.has(active, pos), Coltil.has(newActive, pos)), false);
 						a = true;
 					} else {
 						button = Pantil.nvl(Coltil.has(active, pos), Coltil.has(active, neg), Coltil.has(newActive, pos), Coltil.has(newActive, neg));

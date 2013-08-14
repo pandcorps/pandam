@@ -61,7 +61,11 @@ public class ControlScheme {
     public final void setDefault(final Device d) {
         if (d instanceof Controller) {
             final Controller c = (Controller) d;
-            set(c.DOWN, c.UP, c.LEFT, c.RIGHT, c.BUTTON_1, c.BUTTON_0, c.BUTTONS.get(c.BUTTONS.size() - 1));
+            if (d.getName().startsWith("Controller")) {
+            	set(c.DOWN, c.UP, c.LEFT, c.RIGHT, c.BUTTON_0, c.BUTTONS.get(2), c.BUTTONS.get(c.BUTTONS.size() - 3));
+            } else {
+            	set(c.DOWN, c.UP, c.LEFT, c.RIGHT, c.BUTTON_1, c.BUTTON_0, c.BUTTONS.get(c.BUTTONS.size() - 1));
+            }
         } else if (d instanceof Keyboard) {
             setDefaultKeyboard();
         } else if (d == null) {
