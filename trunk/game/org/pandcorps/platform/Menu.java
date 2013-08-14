@@ -240,6 +240,9 @@ public class Menu {
 	        final Pantext text = addTitle("Press anything", center, getBottom());
 	        text.centerX();
 	        text.register(new ActionStartListener() {@Override public void onActionStart(final ActionStartEvent event) {
+	        	if (disabled) {
+	        		return;
+	        	}
 	            ctrl = ControlScheme.getDefault(event.getInput().getDevice());
 	            exit();
 	        }});
@@ -488,18 +491,20 @@ public class Menu {
                         Chartil.set(defStr, getDefaultProfileText()); }};
                 x += 64;
                 addLink(defStr, defLsn, x, y);
-                y -= 16;
-                x = left;
+            }
+            y -= 16;
+            x = left;
+            addTitle("Game", x, y);
+            y -= 16;
+            x = left + 8;
+            x = addExit(Map.started ? "Back" : "Play", x, y);
+            if (pc.index == 0) {
                 final MessageCloseListener qutLsn = new MessageCloseListener() {
                     @Override public final void onClose(final MessageCloseEvent event) {
                         if (disabled) {
                             return;
                         }
-                        Pangine.getEngine().exit(); }}; // Exit to TitleScreen instead? Quit game from there?
-                addTitle("Game", x, y);
-                y -= 16;
-                x = left + 8;
-                x = addExit(Map.started ? "Back" : "Play", x, y);
+                        Pangine.getEngine().exit(); }}; // Exit to TitleScreen instead? Quit game from there? Or separate Reset link?
                 x = addPipe(x, y);
                 addLink("Quit", qutLsn, x, y);
             }
