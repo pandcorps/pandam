@@ -29,6 +29,7 @@ import java.util.*;
 
 import org.lwjgl.input.Controller;
 import org.lwjgl.input.Controllers;
+import org.lwjgl.input.Cursor;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
@@ -174,6 +175,18 @@ public final class LwjglPangine extends Pangine {
 	    		System.err.println("    " + dm);
 	    	}
 	    	throw e;
+	    }
+	    
+	    if (fullScreen) {
+	        // setGrabbed above doesn't hide cursor in newer OS; these don't either, though 
+	        final IntBuffer buf = Pantil.allocateDirectIntBuffer(4);
+	        for (int i = 0; i < 4; i++) {
+	            buf.put(0);
+	        }
+	        buf.rewind();
+	        Mouse.setNativeCursor(new Cursor(1, 1, 0, 0, 1, buf, null));
+	        Mouse.setGrabbed(true);
+	        Mouse.setCursorPosition(0, 0);
 	    }
 
 		GL11.glEnable(GL11.GL_TEXTURE_2D); // Enable Texture Mapping
