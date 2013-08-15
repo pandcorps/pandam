@@ -162,7 +162,19 @@ public final class LwjglPangine extends Pangine {
 		org.lwjgl.util.Display.getAvailableDisplayModes
 		org.lwjgl.util.Display.setDisplayMode
 		*/
-		Display.create();
+	    try {
+	    	Display.create();
+	    } catch (final Exception e) {
+	    	System.err.println("Could not create display");
+	    	System.err.println("Desktop: " + engine.getDesktopWidth() + " * " + engine.getDesktopHeight());
+	    	System.err.println("DesktopDisplayMode" + Display.getDesktopDisplayMode());
+	    	System.err.println("DisplayMode: " + Display.getDisplayMode());
+	    	System.err.println("AvailableDisplayModes:");
+	    	for (final DisplayMode dm : Display.getAvailableDisplayModes()) {
+	    		System.err.println("    " + dm);
+	    	}
+	    	throw e;
+	    }
 
 		GL11.glEnable(GL11.GL_TEXTURE_2D); // Enable Texture Mapping
 		setBgColor();
