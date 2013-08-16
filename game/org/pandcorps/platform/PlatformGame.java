@@ -103,6 +103,11 @@ public class PlatformGame extends BaseGame {
 	protected final static String FILE_CFG = "Config.txt";
 	protected final static String EXT_PRF = ".prf.txt";
 	
+	protected final static String SEG_CFG = "CFG";
+	protected final static String SEG_PRF = "PRF";
+	protected final static String SEG_STX = "STX";
+	protected final static String SEG_AVT = "AVT";
+	
 	protected static Panroom room = null;
 	protected final static ArrayList<PlayerContext> pcs = new ArrayList<PlayerContext>();
 	protected static MultiFont font = null;
@@ -267,10 +272,14 @@ public class PlatformGame extends BaseGame {
 		final Profile profile = new Profile();
         //profile.setName(pname);
         Segment seg = null;
-        seg = plist.readRequire("PRF");
+        seg = plist.readRequire(SEG_PRF);
         profile.load(seg);
         final String curName = seg.getValue(1);
-        while ((seg = plist.readIf("AVT")) != null) {
+        seg = plist.readIf(SEG_STX);
+        if (seg != null) {
+        	profile.stats.load(seg);
+        }
+        while ((seg = plist.readIf(SEG_AVT)) != null) {
         	final Avatar avatar = new Avatar();
         	avatar.load(seg);
         	profile.avatars.add(avatar);
@@ -395,10 +404,16 @@ public class PlatformGame extends BaseGame {
 	
 	protected final static void levelClose() {
 	    for (final PlayerContext pc : pcs) {
-	        pc.player.onFinishLevel();
+	        pc.onFinishLevel();
 	    }
 	    Map.victory = true;
 	    goMap();
+	}
+	
+	protected final static void worldClose() {
+		for (final PlayerContext pc : PlatformGame.pcs) {
+			pc.onFinishWorld();
+		}
 	}
 	
 	protected final static void saveGame() {

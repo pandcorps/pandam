@@ -68,7 +68,7 @@ public class Avatar extends PlayerData implements Segmented {
     
     @Override
     public void save(final Segment seg) {
-        seg.setName("AVT");
+        seg.setName(PlatformGame.SEG_AVT);
     	seg.setValue(0, getName());
     	seg.setValue(1, anm);
     	seg.setInt(2, eye);

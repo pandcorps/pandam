@@ -33,7 +33,7 @@ public class Profile extends PlayerData implements Segmented {
     protected final ArrayList<Avatar> avatars = new ArrayList<Avatar>();
     protected Avatar currentAvatar = null;
     protected int gems = 0;
-    // Levels/Maps defeated statistics
+    protected final Statistics stats = new Statistics();
     // Achievements
     //protected int ctrl = -1; // Should store a preferred scheme for gamepads plus a preferred one for keyboards; don't know which device player will have
     
@@ -59,7 +59,7 @@ public class Profile extends PlayerData implements Segmented {
     
     @Override
     public void save(final Segment seg) {
-        seg.setName("PRF");
+        seg.setName(PlatformGame.SEG_PRF);
         seg.setValue(0, getName());
         seg.setValue(1, getName(currentAvatar));
         seg.setInt(2, gems);
@@ -68,6 +68,8 @@ public class Profile extends PlayerData implements Segmented {
     
     public void serialize(final Writer out) throws IOException {
         Segtil.serialize(this, out);
+        Iotil.println(out);
+        Segtil.serialize(stats, out);
         for (final Avatar avatar : avatars) {
         	Iotil.println(out);
             Segtil.serialize(avatar, out);
@@ -89,5 +91,22 @@ public class Profile extends PlayerData implements Segmented {
         } catch (final IOException e) {
             throw new RuntimeException(e);
         }
+    }
+    
+    public final static class Statistics implements Segmented {
+    	protected int defeatedLevels = 0;
+    	protected int defeatedWorlds = 0;
+    	
+    	public void load(final Segment seg) {
+        	defeatedLevels = seg.intValue(0);
+        	defeatedWorlds = seg.intValue(1);
+        }
+    	
+		@Override
+		public void save(final Segment seg) {
+			seg.setName(PlatformGame.SEG_STX);
+	        seg.setInt(0, defeatedLevels);
+	        seg.setInt(1, defeatedWorlds);
+		}
     }
 }

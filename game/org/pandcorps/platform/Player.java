@@ -114,6 +114,15 @@ public class Player extends Character implements CollisionListener {
 	        return ctrl.get1().getDevice();
 	    }
 	    
+	    public final void onFinishLevel() {
+			profile.gems += player.levelGems;
+			profile.stats.defeatedLevels++;
+		}
+		
+		public final void onFinishWorld() {
+			profile.stats.defeatedWorlds++;
+		}
+	    
 	    public final void destroy() {
 	    	if (guy == null) {
 	    		return;
@@ -403,10 +412,6 @@ public class Player extends Character implements CollisionListener {
 			return true;
 		}
 		return false;
-	}
-	
-	public final void onFinishLevel() {
-		pc.profile.gems += levelGems;
 	}
 	
 	@Override

@@ -28,6 +28,6 @@ public class Config {
     protected static String defaultProfileName = null;
     
     protected final static void serialize() {
-        Iotil.writeFile(PlatformGame.FILE_CFG, "CFG|" + Chartil.unnull(defaultProfileName));
+        Iotil.writeFile(PlatformGame.FILE_CFG, PlatformGame.SEG_CFG + "|" + Chartil.unnull(defaultProfileName));
     }
 }
