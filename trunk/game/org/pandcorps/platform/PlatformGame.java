@@ -63,8 +63,6 @@ public class PlatformGame extends BaseGame {
 	Horizontal acceleration.
 	Shatter Gem effect when hurt.
 	Options (in/out game) - track active/p1
-	Game supports multiple profiles each w/ multiple characters.
-	Save/load.
 	Font w/ custom chars for custom string/min square/case space if needed.
 	Colored player names.
 	Bump w/o break ceiling block.
@@ -73,9 +71,10 @@ public class PlatformGame extends BaseGame {
 	Spike/fire enemy.
 	Collect fruit from trees.
 	Level to-do notes.
-	Achievements: 1st level, 1st map, level w/ no damage.
+	HUD notification queue, display if none currently displayed, else wait.
 	Goals: Collect n gems, defeat n enemies.
 	Random music per map.
+	Sound effects for jump, bump, stomp, etc.
 	*/
 	
 	protected final static byte TILE_BREAK = 2;
@@ -106,6 +105,7 @@ public class PlatformGame extends BaseGame {
 	protected final static String SEG_CFG = "CFG";
 	protected final static String SEG_PRF = "PRF";
 	protected final static String SEG_STX = "STX";
+	protected final static String SEG_ACH = "ACH";
 	protected final static String SEG_AVT = "AVT";
 	
 	protected static Panroom room = null;
@@ -279,6 +279,10 @@ public class PlatformGame extends BaseGame {
         if (seg != null) {
         	profile.stats.load(seg);
         }
+        seg = plist.readIf(SEG_ACH);
+        if (seg != null) {
+        	profile.loadAchievements(seg);
+        }
         while ((seg = plist.readIf(SEG_AVT)) != null) {
         	final Avatar avatar = new Avatar();
         	avatar.load(seg);
@@ -406,6 +410,7 @@ public class PlatformGame extends BaseGame {
 	    for (final PlayerContext pc : pcs) {
 	        pc.onFinishLevel();
 	    }
+	    Achievement.evaluate();
 	    Map.victory = true;
 	    goMap();
 	}
@@ -414,6 +419,7 @@ public class PlatformGame extends BaseGame {
 		for (final PlayerContext pc : PlatformGame.pcs) {
 			pc.onFinishWorld();
 		}
+		Achievement.evaluate();
 	}
 	
 	protected final static void saveGame() {
