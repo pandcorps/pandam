@@ -130,15 +130,56 @@ public class Segment extends Record {
     	setRepetitions(i, repetitions);
     }
     
+    public final void addField(final int i, final Field field) {
+    	setRepetitions(i, Coltil.add(Coltil.get(fields, i), field));
+    }
+    
     @Override
     public final void setValue(final int i, final String value) {
-    	final Field field;
-    	if (value == null) {
-    		field = null;
-    	} else {
-    		field = new Field();
-    		field.setValue(0, value);
-    	}
-    	setField(i, field);
+    	setField(i, Field.create(value));
+    }
+    
+    public final void addValue(final int i, final String value) {
+    	addField(i, Field.create(value));
+    }
+    
+    public final void addByte(final int i, final byte value) {
+    	addValue(i, String.valueOf(value));
+    }
+    
+    public final void addShort(final int i, final short value) {
+    	addValue(i, String.valueOf(value));
+    }
+    
+    public final void addInt(final int i, final int value) {
+    	addValue(i, String.valueOf(value));
+    }
+    
+    public final void addFloat(final int i, final float value) {
+    	addValue(i, String.valueOf(value));
+    }
+    
+    public final void addBoolean(final int i, final boolean value) {
+    	addValue(i, String.valueOf(value));
+    }
+    
+    public final void addByte(final int i, final Byte value) {
+    	addValue(i, Chartil.toString(value));
+    }
+    
+    public final void addShort(final int i, final Short value) {
+    	addValue(i, Chartil.toString(value));
+    }
+    
+    public final void addInteger(final int i, final Integer value) {
+    	addValue(i, Chartil.toString(value));
+    }
+    
+    public final void addFloat(final int i, final Float value) {
+    	addValue(i, Chartil.toString(value));
+    }
+    
+    public final void addBoolean(final int i, final Boolean value) {
+    	addValue(i, Chartil.toString(value));
     }
 }

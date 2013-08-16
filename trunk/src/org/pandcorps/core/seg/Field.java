@@ -32,6 +32,16 @@ public class Field extends Record {
     
     private final List<String> components = new ArrayList<String>();
     
+    public final static Field create(final String value) {
+    	if (value == null) {
+    		return null;
+    	} else {
+    		final Field field = new Field();
+    		field.setValue(0, value);
+    		return field;
+    	}
+    }
+    
     public final static Field parse(final String line, final int start, final int end) {
         if (end <= start) {
             return null;
