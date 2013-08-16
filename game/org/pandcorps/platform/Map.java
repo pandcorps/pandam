@@ -130,7 +130,9 @@ public class Map {
 		        loadImages();
 		    }
 			clear();
-			if (victory && tm != null && row == endRow && column == endColumn) {
+			if (!victory) {
+				Achievement.evaluate();
+			} else if (tm != null && row == endRow && column == endColumn) {
 				PlatformGame.worldClose();
 			    victory = false;
 				tm.destroy(); // Trigger generation of new Map

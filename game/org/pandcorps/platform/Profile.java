@@ -34,7 +34,7 @@ public class Profile extends PlayerData implements Segmented {
     protected Avatar currentAvatar = null;
     protected int gems = 0;
     protected final Statistics stats = new Statistics();
-    // Achievements
+    protected final TreeSet<Integer> achievements = new TreeSet<Integer>();
     //protected int ctrl = -1; // Should store a preferred scheme for gamepads plus a preferred one for keyboards; don't know which device player will have
     
     public Avatar getAvatar(final String name) {
@@ -66,10 +66,27 @@ public class Profile extends PlayerData implements Segmented {
         //seg.setInt(3, ctrl);
     }
     
+    protected void loadAchievements(final Segment seg) {
+    	for (final Field f : seg.getRepetitions(0)) {
+    		achievements.add(f.getInteger());
+    	}
+    }
+    
+    private void saveAchievements(final Segment seg) {
+    	seg.setName(PlatformGame.SEG_ACH);
+    	for (final Integer ach : achievements) {
+    		seg.addInteger(0, ach);
+    	}
+    }
+    
     public void serialize(final Writer out) throws IOException {
         Segtil.serialize(this, out);
         Iotil.println(out);
         Segtil.serialize(stats, out);
+        Iotil.println(out);
+        final Segment ach = new Segment();
+        saveAchievements(ach);
+        ach.serialize(out);
         for (final Avatar avatar : avatars) {
         	Iotil.println(out);
             Segtil.serialize(avatar, out);
