@@ -159,12 +159,12 @@ public class PlatformGame extends BaseGame {
         protected final void load() throws Exception {
 			loadLevel();
 			fadeIn(room);
-			Pangine.getEngine().getMusic().start(Music.createSequence());
+			Pangine.getEngine().getMusic().loop(Music.newSongCreepy());
 		}
 		
 		@Override
 	    protected final void destroy() {
-			Pangine.getEngine().getMusic().end();
+			Pangine.getEngine().getMusic().stop();
 	        Panmage.destroy(Level.timg);
 	        Panmage.destroy(Level.bgimg);
 	    }
@@ -352,6 +352,8 @@ public class PlatformGame extends BaseGame {
 		
 		dirts = Imtil.loadStrip("org/pandcorps/platform/res/bg/Dirt.png", ImtilX.DIM);
 		terrains = Imtil.loadStrip("org/pandcorps/platform/res/bg/Terrain.png", ImtilX.DIM);
+		
+		engine.getMusic().ensureCapacity(5);
 	}
 	
 	private final static Panimation createGemAnimation(final String name, final Panmage[] gem) {

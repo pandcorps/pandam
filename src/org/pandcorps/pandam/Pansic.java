@@ -30,7 +30,7 @@ import org.pandcorps.core.Pantil;
 
 // Pandam Music
 public final class Pansic {
-	private static List<Sequencer> sequencers = new ArrayList<Sequencer>();
+	private final static List<Sequencer> sequencers = new ArrayList<Sequencer>();
 	
 	protected Pansic() {
 	}

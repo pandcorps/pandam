@@ -28,7 +28,17 @@ import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
 
 public class Music {
-	protected final static Sequence createSequence() throws Exception {
+	protected final static Sequence gem;
+	
+	static {
+		try {
+			gem = newFxGem();
+		} catch (final Exception e) {
+			throw Pantil.toRuntimeException(e);
+		}
+	}
+	
+	protected final static Sequence newSongCreepy() throws Exception {
 		// key/vel 0 - 127
 		final int channel = 0, key = 64, vel = 64;
 		final Sequence seq = new Sequence(Sequence.SMPTE_30, 1);
@@ -39,14 +49,27 @@ public class Music {
 		return seq;
 	}
 	
+	protected final static Sequence newFxGem() throws Exception {
+		final int channel = 0, vel = 64;
+		final Sequence seq = new Sequence(Sequence.SMPTE_30, 1);
+		final Track track = seq.createTrack();
+		for (int i = 0; i < 5; i++) {
+			Mustil.addNote(track, i * 3, 3, channel, 72 + i * 4, vel);
+		}
+		return seq;
+	}
+	
 	private final static void run() throws Exception {
 		System.out.println("Starting");
-		final Sequence seq = createSequence();
+		final Sequence seq = newSongCreepy();
 		final Pansic music = Pangine.getEngine().getMusic();
-		music.start(seq);
-		System.out.println("Started; press enter to stop");
-		Iotil.readln();
-		music.end();
+		music.ensureCapacity(4);
+		music.loop(seq);
+		System.out.println("Started; press enter to play sound; press x and enter to stop");
+		while (!Iotil.readln().equals("x")) {
+			music.play(gem);
+		}
+		music.close();
 		System.out.println("End");
 	}
 	

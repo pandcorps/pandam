@@ -27,6 +27,8 @@ import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandax.tile.TileOccupant;
 
 public class Gem extends TileOccupant implements StepListener {
+	private static long lastSound = -1;
+	
 	{
 		setView(PlatformGame.gem[0]);
 	}
@@ -60,5 +62,11 @@ public class Gem extends TileOccupant implements StepListener {
 		final Panple pos = gem.getPosition();
 		new Spark(3, pos.getX() + 8, pos.getY() + 8, end);
 		gem.destroy();
+		final Pangine engine = Pangine.getEngine();
+		final long clock = engine.getClock();
+		if (clock != lastSound) {
+			engine.getMusic().play(Music.gem);
+			lastSound = clock;
+		}
 	}
 }
