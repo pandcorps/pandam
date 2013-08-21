@@ -22,27 +22,80 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandam;
 
+import java.util.*;
+
 import javax.sound.midi.*;
+
+import org.pandcorps.core.Pantil;
 
 // Pandam Music
 public final class Pansic {
-	private static Sequencer sequencer = null;
+	private static List<Sequencer> sequencers = new ArrayList<Sequencer>();
 	
 	protected Pansic() {
 	}
 	
-	public final void start(final Sequence seq) throws Exception {
-		sequencer = MidiSystem.getSequencer();
-		sequencer.setLoopCount(Sequencer.LOOP_CONTINUOUSLY);
-		sequencer.setSequence(seq);
-		sequencer.open();
+	private Sequencer newSequencer() {
+		final Sequencer sequencer;
+		try {
+			sequencer = MidiSystem.getSequencer();
+			sequencer.open();
+		} catch (final Exception e) {
+			throw Pantil.toRuntimeException(e);
+		}
+		sequencers.add(sequencer);
+		return sequencer;
+	}
+	
+	public final void ensureCapacity(final int capacity) {
+		while (sequencers.size() < capacity) {
+			newSequencer();
+		}
+	}
+	
+	// For music
+	public final void loop(final Sequence seq) {
+		play(seq, Sequencer.LOOP_CONTINUOUSLY);
+	}
+	
+	// For sound effects
+	public final void play(final Sequence seq) {
+		play(seq, 0);
+	}
+	
+	public final void play(final Sequence seq, final int loopCount) {
+		Sequencer sequencer = null;
+		for (final Sequencer s : sequencers) {
+			if (!s.isRunning()) {
+				sequencer = s;
+				break;
+			}
+		}
+		if (sequencer == null) {
+			// Could set absolute limit and ignore requests after that
+			sequencer = newSequencer();
+		}
+		sequencer.setTickPosition(0);
+		sequencer.setLoopCount(loopCount);
+		try {
+			sequencer.setSequence(seq);
+		} catch (final Exception e) {
+			throw Pantil.toRuntimeException(e);
+		}
 		sequencer.start();
 	}
-		
-	public final void end() {
-		if (sequencer != null) {
-			sequencer.close();
-			sequencer = null;
+	
+	public final void stop() {
+		for (final Sequencer sequencer : sequencers) {
+			sequencer.stop();
 		}
+	}
+		
+	public final void close() {
+		stop();
+		for (final Sequencer sequencer : sequencers) {
+			sequencer.close();
+		}
+		sequencers.clear();
 	}
 }

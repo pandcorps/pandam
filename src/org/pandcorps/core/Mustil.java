@@ -31,11 +31,15 @@ public final class Mustil {
     }
 	
 	public final static void addNote(final Track track, final long tick, final int channel, final int key, final int vel) throws Exception {
+		addNote(track, tick, 30, channel, key, vel);
+	}
+	
+	public final static void addNote(final Track track, final long tick, final int dur, final int channel, final int key, final int vel) throws Exception {
 		final ShortMessage onMessage = new ShortMessage();
 		final ShortMessage offMessage = new ShortMessage();
 		onMessage.setMessage(ShortMessage.NOTE_ON, channel, key, vel);
 		offMessage.setMessage(ShortMessage.NOTE_OFF, channel, key, 0);
 		track.add(new MidiEvent(onMessage, tick));
-		track.add(new MidiEvent(offMessage, tick + 30));
+		track.add(new MidiEvent(offMessage, tick + dur));
 	}
 }
