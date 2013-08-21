@@ -55,9 +55,12 @@ public class Music {
 		final int channel = 0, vel = 64;
 		final Sequence seq = new Sequence(Sequence.SMPTE_30, 1);
 		final Track track = seq.createTrack();
-		for (int i = 0; i < 5; i++) {
-			Mustil.addNote(track, i * 3, 3, channel, 72 + i * 4, vel);
+		Mustil.setInstrument(track, channel, 112); // Tinkle bell
+		final int d = 2;
+		for (int i = 0; i < 4; i++) {
+			Mustil.addNote(track, i * d, d, channel, 72 + i * 4, vel);
 		}
+		Mustil.addNote(track, 8, 4, channel, 88, vel);
 		return seq;
 	}
 	
