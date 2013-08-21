@@ -42,4 +42,10 @@ public final class Mustil {
 		track.add(new MidiEvent(onMessage, tick));
 		track.add(new MidiEvent(offMessage, tick + dur));
 	}
+	
+	public final static void setInstrument(final Track track, final int channel, final int program) throws Exception {
+		final ShortMessage message = new ShortMessage();
+		message.setMessage(ShortMessage.PROGRAM_CHANGE, channel, program, 0);
+		track.add(new MidiEvent(message, 0));
+	}
 }

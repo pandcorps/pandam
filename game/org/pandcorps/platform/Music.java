@@ -39,10 +39,12 @@ public class Music {
 	}
 	
 	protected final static Sequence newSongCreepy() throws Exception {
-		// key/vel 0 - 127
+		// channel 0 - 15; key/vel 0 - 127
 		final int channel = 0, key = 64, vel = 64;
 		final Sequence seq = new Sequence(Sequence.SMPTE_30, 1);
 		final Track track = seq.createTrack();
+		// Track has 16 channels for different instruments; they can be changed to 128 possible instruments
+		//Mustil.setInstrument(track, channel, 123); // 19 - organ, 98 - crystal, 123 - tweet
 		Mustil.addNote(track, 0, channel, key, vel);
 		Mustil.addNote(track, 15, channel, 68, vel);
 		Mustil.addNote(track, 30, channel, 72, vel);
