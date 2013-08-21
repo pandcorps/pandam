@@ -39,28 +39,28 @@ public class Music {
 	}
 	
 	protected final static Sequence newSongCreepy() throws Exception {
-		// channel 0 - 15; key/vel 0 - 127
-		final int channel = 0, key = 64, vel = 64;
+		// channel 0 - 15; key/vol 0 - 127
+		final int channel = 0, key = 64, vol = 64;
 		final Sequence seq = new Sequence(Sequence.SMPTE_30, 1);
 		final Track track = seq.createTrack();
 		// Track has 16 channels for different instruments; they can be changed to 128 possible instruments
 		//Mustil.setInstrument(track, channel, 123); // 19 - organ, 98 - crystal, 123 - tweet
-		Mustil.addNote(track, 0, channel, key, vel);
-		Mustil.addNote(track, 15, channel, 68, vel);
-		Mustil.addNote(track, 30, channel, 72, vel);
+		Mustil.addNote(track, 0, channel, key, vol);
+		Mustil.addNote(track, 15, channel, 68, vol);
+		Mustil.addNote(track, 30, channel, 72, vol);
 		return seq;
 	}
 	
 	protected final static Sequence newFxGem() throws Exception {
-		final int channel = 0, vel = 64;
+		final int channel = 0, vol = 64;
 		final Sequence seq = new Sequence(Sequence.SMPTE_30, 1);
 		final Track track = seq.createTrack();
 		Mustil.setInstrument(track, channel, 112); // Tinkle bell
 		final int d = 2;
 		for (int i = 0; i < 4; i++) {
-			Mustil.addNote(track, i * d, d, channel, 72 + i * 4, vel);
+			Mustil.addNote(track, i * d, d, channel, 72 + i * 4, vol);
 		}
-		Mustil.addNote(track, 8, 4, channel, 88, vel);
+		Mustil.addNote(track, 8, 4, channel, 88, vol);
 		return seq;
 	}
 	
