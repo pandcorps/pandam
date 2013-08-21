@@ -74,7 +74,7 @@ public class PlatformGame extends BaseGame {
 	HUD notification queue, display if none currently displayed, else wait.
 	Goals: Collect n gems, defeat n enemies.
 	Random music per map.
-	Sound effects for jump, bump, stomp, etc.
+	Sound effects for jump, bump, stomp, hurt, etc.
 	*/
 	
 	protected final static byte TILE_BREAK = 2;
