@@ -25,7 +25,7 @@ package org.pandcorps.platform;
 import java.io.*;
 import java.util.*;
 
-import org.pandcorps.core.Iotil;
+import org.pandcorps.core.*;
 import org.pandcorps.core.seg.*;
 import org.pandcorps.platform.Player.PlayerData;
 
@@ -67,7 +67,7 @@ public class Profile extends PlayerData implements Segmented {
     }
     
     protected void loadAchievements(final Segment seg) {
-    	for (final Field f : seg.getRepetitions(0)) {
+    	for (final Field f : Coltil.unnull(seg.getRepetitions(0))) {
     		achievements.add(f.getInteger());
     	}
     }
