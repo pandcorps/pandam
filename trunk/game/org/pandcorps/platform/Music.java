@@ -44,7 +44,7 @@ public class Music {
 		final Sequence seq = new Sequence(Sequence.SMPTE_30, 1);
 		final Track track = seq.createTrack();
 		// Track has 16 channels for different instruments; they can be changed to 128 possible instruments
-		//Mustil.setInstrument(track, channel, 123); // 19 - organ, 98 - crystal, 123 - tweet
+		//Mustil.setInstrument(track, channel, Mustil.PRG_BIRD_TWEET); // PRG_CRYSTAL
 		Mustil.addNote(track, 0, channel, key, vol);
 		Mustil.addNote(track, 15, channel, 68, vol);
 		Mustil.addNote(track, 30, channel, 72, vol);
@@ -55,12 +55,14 @@ public class Music {
 		final int channel = 0, vol = 64;
 		final Sequence seq = new Sequence(Sequence.SMPTE_30, 1);
 		final Track track = seq.createTrack();
-		Mustil.setInstrument(track, channel, 112); // Tinkle bell
+		Mustil.setInstrument(track, channel, Mustil.PRG_TINKLE_BELL);
 		final int d = 2;
 		for (int i = 0; i < 4; i++) {
 			Mustil.addNote(track, i * d, d, channel, 72 + i * 4, vol);
 		}
 		Mustil.addNote(track, 8, 4, channel, 88, vol);
+		//Mustil.setVolume(track, 10, channel, 32);
+		//Mustil.setVolume(track, 12, channel, 127);
 		return seq;
 	}
 	
