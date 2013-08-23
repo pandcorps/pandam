@@ -193,6 +193,7 @@ public class Player extends Character implements CollisionListener {
 	        return;
 	    } else if (isGrounded()) {
 			v = jumpMode == JUMP_HIGH ? MAX_V : VEL_JUMP;
+			pc.profile.stats.jumps++;
 		}
 	}
 	
