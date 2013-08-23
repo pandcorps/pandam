@@ -47,6 +47,7 @@ public class Panlayer extends BasePantity {
         = new ArrayList<FinPantry<Object, ArrayList<Collidable>>>();
     //private final ArrayList<Panctor> actors = new ArrayList<Panctor>();
     /*package*/ Panctor tracked = null;
+    private final Panple origin = new ImplPanple(0, 0, 0);
     /*package*/ final Panple rawViewMin = new ImplPanple(0, 0, 0);
     /*package*/ final Panple rawViewMax = new ImplPanple(0, 0, 0);
     private final WrapPanple unmodViewMin = new WrapPanple(rawViewMin);
@@ -241,6 +242,10 @@ public class Panlayer extends BasePantity {
     
     public final Panctor getTracked() {
         return tracked;
+    }
+    
+    public final Panple getOrigin() {
+        return origin;
     }
     
     public final UnmodPanple getViewMinimum() {

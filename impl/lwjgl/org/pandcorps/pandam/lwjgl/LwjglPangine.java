@@ -463,9 +463,11 @@ public final class LwjglPangine extends Pangine {
 			return;
 		}
 		final Panctor tracked = layer.getTracked();
+		final Panple origin = layer.getOrigin();
+		final float ox = origin.getX(), oy = origin.getY();
 		if (tracked == null) {
 			//cams.put(layer, new Camera(0, w, 0, h, near, far));
-		    cams.put(layer, new Camera(0, wz, 0, hz, near, far));
+		    cams.put(layer, new Camera(ox, ox + wz, oy, oy + hz, near, far));
 		} else {
 			final Panple pos = tracked.getPosition();
 			final int x = Math.round(pos.getX());
@@ -476,9 +478,9 @@ public final class LwjglPangine extends Pangine {
 			// Does this work if w or h is odd?
 			//GL11.glOrtho(x - w2, x + w2, y - h2, y + h2, near, far);
 			final Panple lsize = layer.getSize();
-			checkCamRange(x, wz, lsize.getX());
+			checkCamRange(x, ox, wz, lsize.getX());
 			final float xc1 = cr[0], xc2 = cr[1];
-			checkCamRange(y, hz, lsize.getY());
+			checkCamRange(y, oy, hz, lsize.getY());
 			final float yc1 = cr[0], yc2 = cr[1];
 			cams.put(layer, new Camera(xc1, xc2, yc1, yc2, near, far));
 		}
@@ -510,14 +512,15 @@ public final class LwjglPangine extends Pangine {
 		getRawViewMaximum(layer).set(xa, ya, za);
 	}
 	
-	private final void checkCamRange(final float p, final float sz, final float sl) {
+	private final void checkCamRange(final float p, final float o, final float sz, final float _sl) {
 	    final float s2 = sz / 2;
 	    float pc1 = p - s2, pc2;
-        if (pc1 < 0) {
-            pc1 = 0;
-            pc2 = sz;
+        if (pc1 < o) {
+            pc1 = o;
+            pc2 = o + sz;
         } else {
             pc2 = p + s2;
+            final float sl = Math.max(_sl, o + sz);
             if (pc2 > sl) {
                 pc1 = sl - sz;
                 pc2 = sl;
