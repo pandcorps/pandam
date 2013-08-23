@@ -66,6 +66,18 @@ public abstract class Record {
         return getInt(i, 0);
     }
     
+    public final long longValue(final int i) {
+        return parseLong(getValue(i));
+    }
+    
+    public final long getLong(final int i, final long def) {
+        return parseLong(getValue(i), def);
+    }
+    
+    public final long initLong(final int i) {
+        return getLong(i, 0);
+    }
+    
     public final float floatValue(final int i) {
         return parseFloat(getValue(i));
     }
@@ -106,6 +118,10 @@ public abstract class Record {
     	setValue(i, String.valueOf(value));
     }
     
+    public final void setLong(final int i, final long value) {
+        setValue(i, String.valueOf(value));
+    }
+    
     public final void setFloat(final int i, final float value) {
     	setValue(i, String.valueOf(value));
     }
@@ -124,6 +140,10 @@ public abstract class Record {
     
     public final void setInteger(final int i, final Integer value) {
     	setValue(i, Chartil.toString(value));
+    }
+    
+    public final void setLong(final int i, final Long value) {
+        setValue(i, Chartil.toString(value));
     }
     
     public final void setFloat(final int i, final Float value) {
@@ -148,6 +168,14 @@ public abstract class Record {
     
     protected final static int parseInt(final String value, final int def) {
         return Chartil.isEmpty(value) ? def : parseInt(value);
+    }
+    
+    protected final static long parseLong(final String value) {
+        return Long.parseLong(value);
+    }
+    
+    protected final static long parseLong(final String value, final long def) {
+        return Chartil.isEmpty(value) ? def : parseLong(value);
     }
     
     protected final static float parseFloat(final String value) {
