@@ -113,6 +113,18 @@ public class Field extends Record {
         return getInt(0);
     }
     
+    public final long longValue() {
+        return parseLong(getValue());
+    }
+    
+    public final long getLong(final long def) {
+        return parseLong(getValue(), def);
+    }
+    
+    public final long initLong() {
+        return getLong(0);
+    }
+    
     public final float floatValue() {
         return parseFloat(getValue());
     }
