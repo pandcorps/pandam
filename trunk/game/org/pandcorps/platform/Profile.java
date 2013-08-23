@@ -113,10 +113,17 @@ public class Profile extends PlayerData implements Segmented {
     public final static class Statistics implements Segmented {
     	protected int defeatedLevels = 0;
     	protected int defeatedWorlds = 0;
+    	protected int defeatedEnemies = 0;
+    	protected int bumpedBlocks = 0;
+    	protected int brokenBlocks = 0;
+    	//totalGems?
     	
     	public void load(final Segment seg) {
-        	defeatedLevels = seg.intValue(0);
-        	defeatedWorlds = seg.intValue(1);
+        	defeatedLevels = seg.initInt(0);
+        	defeatedWorlds = seg.initInt(1);
+        	defeatedEnemies = seg.initInt(2);
+        	bumpedBlocks = seg.initInt(3);
+        	brokenBlocks = seg.initInt(4);
         }
     	
 		@Override
@@ -124,6 +131,9 @@ public class Profile extends PlayerData implements Segmented {
 			seg.setName(PlatformGame.SEG_STX);
 	        seg.setInt(0, defeatedLevels);
 	        seg.setInt(1, defeatedWorlds);
+	        seg.setInt(2, defeatedEnemies);
+	        seg.setInt(3, bumpedBlocks);
+	        seg.setInt(4, brokenBlocks);
 		}
     }
 }
