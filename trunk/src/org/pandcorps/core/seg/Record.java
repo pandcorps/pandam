@@ -62,6 +62,10 @@ public abstract class Record {
         return parseInt(getValue(i), def);
     }
     
+    public final int initInt(final int i) {
+        return getInt(i, 0);
+    }
+    
     public final float floatValue(final int i) {
         return parseFloat(getValue(i));
     }
