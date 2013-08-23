@@ -58,6 +58,10 @@ public abstract class Record {
         return parseInt(getValue(i));
     }
     
+    public final int getInt(final int i, final int def) {
+        return parseInt(getValue(i), def);
+    }
+    
     public final float floatValue(final int i) {
         return parseFloat(getValue(i));
     }
@@ -136,6 +140,10 @@ public abstract class Record {
     
     protected final static int parseInt(final String value) {
         return Integer.parseInt(value); // Define here in case we decide to default to 0 or something
+    }
+    
+    protected final static int parseInt(final String value, final int def) {
+        return Chartil.isEmpty(value) ? def : parseInt(value);
     }
     
     protected final static float parseFloat(final String value) {
