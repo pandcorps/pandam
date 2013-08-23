@@ -22,6 +22,8 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.platform;
 
+import javax.sound.midi.Sequence;
+
 import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
@@ -39,6 +41,7 @@ public class Tiles {
     	}
     	final Player player = (Player) chr;
     	final byte b = t.getBehavior();
+    	final Sequence seq;
     	if (b == PlatformGame.TILE_BREAK) {
     		t.setForeground(null, false);
     		final Panple pos = t.getPosition();
@@ -52,6 +55,7 @@ public class Tiles {
     		}
     		new Bump(chr, t).setVisible(false); // To bump Characters above
     		player.pc.profile.stats.brokenBlocks++;
+    		seq = Music.bump; // break
     	} else if (b == PlatformGame.TILE_BUMP) {
     	    new Bump(chr, t); // Copy image before changing
     	    final boolean normal = Level.isFlash(t);
@@ -61,7 +65,11 @@ public class Tiles {
     	    }
     		t.setForeground(null, true);
     		player.pc.profile.stats.bumpedBlocks++;
+    		seq = Music.bump;
+    	} else {
+    		seq = Music.thud;
     	}
+    	Pangine.getEngine().getMusic().play(seq);
     }
     
     public static class Faller extends Pandy implements AllOobListener {

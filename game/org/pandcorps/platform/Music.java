@@ -29,10 +29,14 @@ import org.pandcorps.pandam.*;
 
 public class Music {
 	protected final static Sequence gem;
+	protected final static Sequence bump;
+	protected final static Sequence thud;
 	
 	static {
 		try {
 			gem = newFxGem();
+			bump = newFxBump();
+			thud = newFxThud();
 		} catch (final Exception e) {
 			throw Pantil.toRuntimeException(e);
 		}
@@ -51,7 +55,7 @@ public class Music {
 		return seq;
 	}
 	
-	protected final static Sequence newFxGem() throws Exception {
+	private final static Sequence newFxGem() throws Exception {
 		final int channel = 0, vol = 64;
 		final Sequence seq = new Sequence(Sequence.SMPTE_30, 1);
 		final Track track = seq.createTrack();
@@ -63,6 +67,24 @@ public class Music {
 		Mustil.addNote(track, 8, 4, channel, 88, vol);
 		//Mustil.setVolume(track, 10, channel, 32);
 		//Mustil.setVolume(track, 12, channel, 127);
+		return seq;
+	}
+	
+	private final static Sequence newFxBump() throws Exception {
+		final int channel = 0, vol = 72;
+		final Sequence seq = new Sequence(Sequence.SMPTE_30, 1);
+		final Track track = seq.createTrack();
+		Mustil.setInstrument(track, channel, Mustil.PRG_XYLOPHONE);
+		Mustil.addNote(track, 0, 6, channel, 64, vol);
+		return seq;
+	}
+	
+	private final static Sequence newFxThud() throws Exception {
+		final int channel = 0, vol = 72;
+		final Sequence seq = new Sequence(Sequence.SMPTE_30, 1);
+		final Track track = seq.createTrack();
+		Mustil.setInstrument(track, channel, Mustil.PRG_SLAP_BASS_1);
+		Mustil.addNote(track, 0, 6, channel, 48, vol);
 		return seq;
 	}
 	
