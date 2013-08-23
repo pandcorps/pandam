@@ -784,6 +784,9 @@ public class Map {
 		final Player player = new Player(PlatformGame.pcs.get(0));
 		player.setPos(t);
 		room.addActor(player);
+		if (room.center()) {
+		    // Add border
+		}
 		Pangine.getEngine().track(player);
 	}
 	

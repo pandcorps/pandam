@@ -248,6 +248,17 @@ public class Panlayer extends BasePantity {
         return origin;
     }
     
+    public final boolean center() {
+        final Pangine engine = Pangine.getEngine();
+        final int maxW = engine.getEffectiveWidth(), maxH = engine.getEffectiveHeight();
+        final float layerW = size.getX(), layerH = size.getY();
+        if (layerW < maxW || layerH < maxH) {
+            origin.set((layerW < maxW) ? ((layerW - maxW) / 2) : 0, (layerH < maxH) ? ((layerH - maxH) / 2) : 0);
+            return true;
+        }
+        return false;
+    }
+    
     public final UnmodPanple getViewMinimum() {
     	return unmodViewMin;
     }
