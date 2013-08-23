@@ -77,6 +77,8 @@ public class PlatformGame extends BaseGame {
 	Sound effects for jump, bump, stomp, hurt, etc.
 	*/
 	
+	private final static boolean MUSIC_ENABLED = false;
+	
 	protected final static byte TILE_BREAK = 2;
 	protected final static byte TILE_BUMP = 3;
 	protected final static byte TILE_FLOOR = 4;
@@ -159,7 +161,9 @@ public class PlatformGame extends BaseGame {
         protected final void load() throws Exception {
 			loadLevel();
 			fadeIn(room);
-			Pangine.getEngine().getMusic().loop(Music.newSongCreepy());
+			if (MUSIC_ENABLED) {
+				Pangine.getEngine().getMusic().loop(Music.newSongCreepy());
+			}
 		}
 		
 		@Override
