@@ -105,6 +105,10 @@ public class Field extends Record {
         return parseInt(getValue());
     }
     
+    public final int getInt(final int def) {
+        return parseInt(getValue(), def);
+    }
+    
     public final float floatValue() {
         return parseFloat(getValue());
     }
