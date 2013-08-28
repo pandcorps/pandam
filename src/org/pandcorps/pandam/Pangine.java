@@ -38,7 +38,7 @@ import org.pandcorps.pandam.impl.*;
 
 // Pandam Engine
 public abstract class Pangine {
-	public final static String PROP_IMPL = Pangine.class.getName() + ".impl";
+	public final static String PROP_IMPL = "org.pandcorps.pandam.engineImpl";
 
 	protected static Pangine engine = null;
 
@@ -102,7 +102,7 @@ public abstract class Pangine {
 		if (engine != null) {
 			return engine;
 		}
-		String className = System.getProperty(PROP_IMPL);
+		String className = Pantil.getProperty(PROP_IMPL);
 		if (className == null) {
 			className = "org.pandcorps.pandam.lwjgl.LwjglPangine";
 			System.setProperty(PROP_IMPL, className);

@@ -69,7 +69,7 @@ public class Tiles {
     	} else {
     		seq = Music.thud;
     	}
-    	Pangine.getEngine().getMusic().play(seq);
+    	Pangine.getEngine().getMusic().playSound(seq);
     }
     
     public static class Faller extends Pandy implements AllOobListener {

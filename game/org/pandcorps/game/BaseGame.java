@@ -57,7 +57,7 @@ public abstract class BaseGame extends Pangame {
 	@Override
     public void initBeforeEngine() {
         final Pangine engine = Pangine.getEngine();
-        final String scalerClassName = System.getProperty("org.pandcorps.game.Scaler.impl");
+        final String scalerClassName = Pantil.getProperty("org.pandcorps.game.scalerImpl");
         if (scalerClassName != null) {
         	engine.setImageScaler((Scaler) Reftil.newInstance(scalerClassName));
         }

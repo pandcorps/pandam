@@ -30,9 +30,35 @@ import org.pandcorps.core.Pantil;
 
 // Pandam Music
 public final class Pansic {
-	private final static List<Sequencer> sequencers = new ArrayList<Sequencer>();
+    private final static String PROP_MUSIC_ENABLED = "org.pandcorps.pandam.musicEnabled";
+    private final static String PROP_SOUND_ENABLED = "org.pandcorps.pandam.soundEnabled";
+    
+	private final List<Sequencer> sequencers = new ArrayList<Sequencer>();
+	private boolean musicEnabled = Pantil.isProperty(PROP_MUSIC_ENABLED, true);
+	private boolean soundEnabled = Pantil.isProperty(PROP_SOUND_ENABLED, true);
 	
 	protected Pansic() {
+	}
+	
+	public final void setMusicEnabled(final boolean musicEnabled) {
+	    this.musicEnabled = musicEnabled;
+	    setEnabled(true, musicEnabled);
+	}
+	
+	public final void setSoundEnabled(final boolean soundEnabled) {
+        this.soundEnabled = soundEnabled;
+        setEnabled(false, soundEnabled);
+    }
+	
+	private final void setEnabled(final boolean music, final boolean enabled) {
+	    if (enabled) {
+	        return;
+	    }
+	    for (final Sequencer sequencer : sequencers) {
+	        if (sequencer.isRunning() && (sequencer.getLoopCount() == Sequencer.LOOP_CONTINUOUSLY) == music) {
+	            sequencer.stop();
+	        }
+	    }
 	}
 	
 	private Sequencer newSequencer() {
@@ -53,14 +79,16 @@ public final class Pansic {
 		}
 	}
 	
-	// For music
-	public final void loop(final Sequence seq) {
-		play(seq, Sequencer.LOOP_CONTINUOUSLY);
+	public final void playMusic(final Sequence seq) {
+	    if (musicEnabled) {
+	        play(seq, Sequencer.LOOP_CONTINUOUSLY);
+	    }
 	}
 	
-	// For sound effects
-	public final void play(final Sequence seq) {
-		play(seq, 0);
+	public final void playSound(final Sequence seq) {
+	    if (soundEnabled) {
+	        play(seq, 0);
+	    }
 	}
 	
 	public final void play(final Sequence seq, final int loopCount) {
