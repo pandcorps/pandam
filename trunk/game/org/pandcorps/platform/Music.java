@@ -93,10 +93,10 @@ public class Music {
 		final Sequence seq = newSongCreepy();
 		final Pansic music = Pangine.getEngine().getMusic();
 		music.ensureCapacity(4);
-		music.loop(seq);
+		music.playMusic(seq);
 		System.out.println("Started; press enter to play sound; press x and enter to stop");
 		while (!Iotil.readln().equals("x")) {
-			music.play(gem);
+			music.playSound(gem);
 		}
 		music.close();
 		System.out.println("End");

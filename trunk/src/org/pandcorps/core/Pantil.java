@@ -33,6 +33,15 @@ public final class Pantil {
 	private Pantil() {
 		throw new Error();
 	}
+	
+	public final static String getProperty(final String key) {
+	    return System.getProperty(key);
+	}
+	
+	public final static boolean isProperty(final String key, final boolean def) {
+	    final String val = getProperty(key);
+	    return Chartil.isValued(val) ? Boolean.parseBoolean(val) : def;
+	}
 
 	public final static String vmid() {
 		return new VMID().toString();
