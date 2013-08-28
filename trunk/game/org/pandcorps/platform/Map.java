@@ -116,6 +116,7 @@ public class Map {
 	private static Panmage timg = null;
 	private static DynamicTileMap tm = null;
 	private final static ArrayList<Marker> markers = new ArrayList<Marker>();
+	private static MapTileListener mtl = null;
 	private static TileMapImage[][] imgMap = null;
 	private static TileMapImage water = null;
 	private static TileMapImage base = null;
@@ -404,13 +405,12 @@ public class Map {
 		roomW = b.getW();
 		roomH = b.getH();
 		initRoom();
-		tm.setImageMap(timg);
+		mtl = new MapTileListener(6);
+		initTileMap(tm);
         imgMap = tm.splitImageMap();
-        final MapTileListener mtl = new MapTileListener(6);
         for (int y = 0; y <= 2; y++) {
             mtl.put(imgMap[5 + y][6], imgMap[5 + ((y + 1) % 3)][6]);
         }
-        tm.setTileListener(mtl);
         water = imgMap[5][6];
         base = imgMap[1][1];
 		tm.fillBackground(water, true);
@@ -418,6 +418,11 @@ public class Map {
 		final Tile t = getStartTile();
 		b.build();
 		return t;
+	}
+	
+	private final static void initTileMap(final DynamicTileMap tm) {
+	    tm.setImageMap(timg);
+        tm.setTileListener(mtl);
 	}
 	
 	private final static void initRoom() {
@@ -784,10 +789,21 @@ public class Map {
 		final Player player = new Player(PlatformGame.pcs.get(0));
 		player.setPos(t);
 		room.addActor(player);
+		final Pangine engine = Pangine.getEngine();
 		if (room.center()) {
 		    // Add border
+		    final int maxW = engine.getEffectiveWidth(), maxH = engine.getEffectiveHeight();
+		    final Panple size = room.getSize(), origin = room.getOrigin();
+		    final float layerW = size.getX();
+		    if (layerW < maxW) {
+		        final DynamicTileMap left = new DynamicTileMap("act.border.left", 2, 2, ImtilX.DIM, ImtilX.DIM);
+		        left.getPosition().set(origin.getX(), maxH + origin.getY() - ImtilX.DIM * 3);
+		        initTileMap(left);
+		        left.fillBackground(water, true);
+		        room.addActor(left);
+		    }
 		}
-		Pangine.getEngine().track(player);
+		engine.track(player);
 	}
 	
 	private final static void addHud() {
