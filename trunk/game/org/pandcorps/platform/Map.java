@@ -791,19 +791,33 @@ public class Map {
 		room.addActor(player);
 		final Pangine engine = Pangine.getEngine();
 		if (room.center()) {
-		    // Add border
 		    final int maxW = engine.getEffectiveWidth(), maxH = engine.getEffectiveHeight();
 		    final Panple size = room.getSize(), origin = room.getOrigin();
-		    final float layerW = size.getX();
+		    final float layerW = size.getX(), layerH = size.getY();
+		    final float ox = origin.getX(), oy = origin.getY();
 		    if (layerW < maxW) {
-		        final DynamicTileMap left = new DynamicTileMap("act.border.left", 2, 2, ImtilX.DIM, ImtilX.DIM);
-		        left.getPosition().set(origin.getX(), maxH + origin.getY() - ImtilX.DIM * 3);
-		        initTileMap(left);
-		        left.fillBackground(water, true);
-		        room.addActor(left);
+		        final float bordW = -ox, bordH = Math.max(maxH, layerH);
+		        final int tilesX = Mathtil.ceil(bordW / ImtilX.DIM), tilesY = Mathtil.ceil(bordH / ImtilX.DIM);
+		        addBorder("left", tilesX, tilesY, -tilesX * ImtilX.DIM, oy);
+		        addBorder("right", tilesX, tilesY, layerW, oy);
+		    }
+		    if (layerH < maxH) {
+		        final float bordW = layerW, bordH = -oy;
+		        final int tilesX = Mathtil.ceil(bordW / ImtilX.DIM), tilesY = Mathtil.ceil(bordH / ImtilX.DIM);
+                addBorder("top", tilesX, tilesY, 0, layerH);
+                addBorder("bottom", tilesX, tilesY, 0, oy);
 		    }
 		}
 		engine.track(player);
+	}
+	
+	private final static DynamicTileMap addBorder(final String name, final int tx, final int ty, final float px, final float py) {
+	    final DynamicTileMap bord = new DynamicTileMap("act.border." + name, tx, ty, ImtilX.DIM, ImtilX.DIM);
+        initTileMap(bord);
+        bord.fillBackground(water, true);
+        room.addActor(bord);
+        bord.getPosition().set(px, py);
+        return bord;
 	}
 	
 	private final static void addHud() {
