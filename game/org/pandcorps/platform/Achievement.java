@@ -158,7 +158,7 @@ public abstract class Achievement {
         
         @Override
         public final boolean isMet(final Player player) {
-            return player.levelDefeatedEnemies == 0;
+            return Level.numEnemies > 0 && player.levelDefeatedEnemies == Level.numEnemies;
         }
     }
 	
