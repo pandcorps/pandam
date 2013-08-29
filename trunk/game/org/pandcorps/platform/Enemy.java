@@ -79,7 +79,7 @@ public final class Enemy extends Character {
 		if (defeater != null && defeater.getClass() == Player.class) {
 		    final Player player = (Player) defeater;
 			new GemBumped(player, this);
-			player.pc.profile.stats.defeatedEnemies++;
+			player.levelDefeatedEnemies++;
 		}
 		final Panple pos = getPosition();
 		final Tiles.Faller f = new Tiles.Faller((Panmage) getCurrentDisplay(), pos.getX(), pos.getY() + H, 0, v);

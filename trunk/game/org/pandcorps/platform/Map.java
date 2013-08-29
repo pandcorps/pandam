@@ -398,6 +398,7 @@ public class Map {
 		for (final PlayerContext pc : PlatformGame.pcs) {
 		    pc.player = null;
 		}
+		Level.numEnemies = 0;
 	}
 	
 	private final static Tile loadMap2() {
