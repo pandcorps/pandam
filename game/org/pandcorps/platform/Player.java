@@ -116,6 +116,7 @@ public class Player extends Character implements CollisionListener {
 	    
 	    public final void onFinishLevel() {
 			profile.gems += player.levelGems;
+			profile.stats.defeatedEnemies += player.levelDefeatedEnemies;
 			profile.stats.defeatedLevels++;
 		}
 		
@@ -147,6 +148,7 @@ public class Player extends Character implements CollisionListener {
 	private int returnVelocity = 0;
 	private Player returnPlayer = null;
 	private int levelGems = 0;
+	protected int levelDefeatedEnemies = 0;
 	private int hurtTimer = 0;
 	private int activeTimer = 0;
 	private final Bubble bubble = new Bubble();

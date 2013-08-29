@@ -53,6 +53,7 @@ public class Level {
     private static int ng = 0;
     private static int nt = 0;
     private static int floor = 0;
+    protected static int numEnemies = 0;
     
     private final static class BlockTileListener implements TileListener {
         private int tick = 0;
@@ -341,6 +342,7 @@ public class Level {
     		return;
     	}
     	new Spawner(tm.getTileWidth() * (x + Mathtil.randi(1, w - 2)), tm.getTileHeight() * y);
+    	numEnemies++;
     }
     
     private final static ArrayList<Template> templates = new ArrayList<Template>();

@@ -25,12 +25,16 @@ package org.pandcorps.platform;
 import java.util.Set;
 
 import org.pandcorps.platform.Player.PlayerContext;
+import org.pandcorps.platform.Profile.Statistics;
 
 public abstract class Achievement {
 	protected final static Achievement[] ALL = {
 		new LevelFeat("Level 1", 1), new LevelFeat("Level Champ", 50),
-		new WorldFeat("World 1", 1), new WorldFeat("World Tour", 10)
+		new WorldFeat("World 1", 1), new WorldFeat("World Tour", 10),
+		new NoEnemyFeat(), new AllEnemyFeat()
 		// level w/ no damage
+		// level w/ no gems
+		// block milestones
 		// Gem milestones
 	};
 	
@@ -82,7 +86,33 @@ public abstract class Achievement {
 		}
 	}
 	
-	private final static class LevelFeat extends Achievement {
+	private abstract static class StatFeat extends Achievement {
+	    protected StatFeat(final String name, final String desc) {
+	        super(name, desc);
+	    }
+	    
+	    @Override
+        public final boolean isMet(final PlayerContext pc) {
+	        return isMet(pc.profile.stats);
+	    }
+	    
+	    public abstract boolean isMet(final Statistics stats);
+	}
+	
+	private abstract static class CurrentFeat extends Achievement {
+        protected CurrentFeat(final String name, final String desc) {
+            super(name, desc);
+        }
+        
+        @Override
+        public final boolean isMet(final PlayerContext pc) {
+            return pc.player == null ? false : isMet(pc.player);
+        }
+        
+        public abstract boolean isMet(final Player player);
+    }
+	
+	private final static class LevelFeat extends StatFeat {
 		private final int n;
 		
 		protected LevelFeat(final String name, final int n) {
@@ -91,12 +121,12 @@ public abstract class Achievement {
 		}
 		
 		@Override
-		public final boolean isMet(final PlayerContext pc) {
-			return pc.profile.stats.defeatedLevels >= n;
+		public final boolean isMet(final Statistics stats) {
+			return stats.defeatedLevels >= n;
 		}
 	}
 	
-	private final static class WorldFeat extends Achievement {
+	private final static class WorldFeat extends StatFeat {
 		private final int n;
 		
 		protected WorldFeat(final String name, final int n) {
@@ -105,10 +135,32 @@ public abstract class Achievement {
 		}
 		
 		@Override
-		public final boolean isMet(final PlayerContext pc) {
-			return pc.profile.stats.defeatedWorlds >= n;
+		public final boolean isMet(final Statistics stats) {
+			return stats.defeatedWorlds >= n;
 		}
 	}
+	
+	private final static class NoEnemyFeat extends CurrentFeat {
+	    protected NoEnemyFeat() {
+            super("Dove", "Finish level without defeating any enemies");
+        }
+        
+        @Override
+        public final boolean isMet(final Player player) {
+            return player.levelDefeatedEnemies == 0;
+        }
+	}
+	
+	private final static class AllEnemyFeat extends CurrentFeat {
+        protected AllEnemyFeat() {
+            super("Hawk", "Defeat all enemies in level");
+        }
+        
+        @Override
+        public final boolean isMet(final Player player) {
+            return player.levelDefeatedEnemies == 0;
+        }
+    }
 	
 	private final static String getS(final int n) {
 		return n == 1 ? "" : "s";
