@@ -26,6 +26,10 @@ import javax.sound.midi.*;
 
 // Music Utility
 public final class Mustil {
+	public final static int CHN_PERCUSSION = 9;
+	
+	public final static int VOL_MAX = 127;
+	
     public final static int PRG_ACOUSTIC_GRAND_PIANO = 0;
     public final static int PRG_BRIGHT_ACOUSTIC_PIANO = 1;
     public final static int PRG_ELECTRIC_GRAND_PIANO = 2;
@@ -154,22 +158,74 @@ public final class Mustil {
     public final static int PRG_HELICOPTER = 125;
     public final static int PRG_APPLAUSE = 126;
     public final static int PRG_GUNSHOT = 127;
+    
+    public final static int PRC_BASS_DRUM_2 = 35;
+    public final static int PRC_BASS_DRUM_1 = 36;
+    public final static int PRC_SIDE_STICK_RIMSHOT = 37;
+    public final static int PRC_SNARE_DRUM_1 = 38;
+    public final static int PRC_HAND_CLAP = 39;
+    public final static int PRC_SNARE_DRUM_2 = 40;
+    public final static int PRC_LOW_TOM_2 = 41;
+    public final static int PRC_CLOSED_HI_HAT = 42;
+    public final static int PRC_LOW_TOM_1 = 43;
+    public final static int PRC_PEDAL_HI_HAT = 44;
+    public final static int PRC_MID_TOM_2 = 45;
+    public final static int PRC_OPEM_HI_HAT = 46;
+    public final static int PRC_MID_TOM_1 = 47;
+    public final static int PRC_HIGH_TOM_2 = 48;
+    public final static int PRC_CRASH_CYMBAL_1 = 49;
+    public final static int PRC_HIGH_TOM_1 = 50;
+    public final static int PRC_RIDE_CYMBAL_1 = 51;
+    public final static int PRC_CHINESE_CYMBAL = 52;
+    public final static int PRC_RIDE_BELL = 53;
+    public final static int PRC_TAMBOURINE = 54;
+    public final static int PRC_SPLASH_CYMBAL = 55;
+    public final static int PRC_COWBELL = 56;
+    public final static int PRC_CRASH_CYMBAL_2 = 57;
+    public final static int PRC_VIBRA_SLAP = 58;
+    public final static int PRC_RIDE_CYMBAL_2 = 59;
+    public final static int PRC_HIGH_BONGO = 60;
+    public final static int PRC_LOW_BONGO = 61;
+    public final static int PRC_MUTE_HIGH_CONGA = 62;
+    public final static int PRC_OPEN_HIGH_CONGA = 63;
+    public final static int PRC_LOW_CONGA = 64;
+    public final static int PRC_HIGH_TIMBALE = 65;
+    public final static int PRC_LOW_TIMBALE = 66;
+    public final static int PRC_HIGH_AGOGO = 67;
+    public final static int PRC_LOW_AGOGO = 68;
+    public final static int PRC_CABASA = 69;
+    public final static int PRC_MARACAS = 70;
+    public final static int PRC_SHORT_WHISTLE = 71;
+    public final static int PRC_LONG_WHISTLE = 72;
+    public final static int PRC_SHORT_GUIRO = 73;
+    public final static int PRC_LONG_GUIRO = 74;
+    public final static int PRC_CLAVES = 75;
+    public final static int PRC_HIGH_WOOD_BLOCK = 76;
+    public final static int PRC_LOW_WOOD_BLOCK = 77;
+    public final static int PRC_MUTE_CUICA = 78;
+    public final static int PRC_OPEN_CUICA = 79;
+    public final static int PRC_MUTE_TRIANGLE = 80;
+    public final static int PRC_OPEN_TRIANGLE = 81;
 	
 	private Mustil() {
         throw new Error();
     }
 	
-	public final static void addNote(final Track track, final long tick, final int channel, final int key, final int vel) throws Exception {
-		addNote(track, tick, 30, channel, key, vel);
+	public final static void addNote(final Track track, final long tick, final int channel, final int key, final int vol) throws Exception {
+		addNote(track, tick, 30, channel, key, vol);
 	}
 	
-	public final static void addNote(final Track track, final long tick, final int dur, final int channel, final int key, final int vel) throws Exception {
+	public final static void addNote(final Track track, final long tick, final int dur, final int channel, final int key, final int vol) throws Exception {
 		final ShortMessage onMessage = new ShortMessage();
 		final ShortMessage offMessage = new ShortMessage();
-		onMessage.setMessage(ShortMessage.NOTE_ON, channel, key, vel);
+		onMessage.setMessage(ShortMessage.NOTE_ON, channel, key, vol);
 		offMessage.setMessage(ShortMessage.NOTE_OFF, channel, key, 0);
 		track.add(new MidiEvent(onMessage, tick));
 		track.add(new MidiEvent(offMessage, tick + dur));
+	}
+	
+	public final static void addPercussion(final Track track, final long tick, final int key) throws Exception {
+		addNote(track, tick, 8, CHN_PERCUSSION, key, VOL_MAX);
 	}
 	
 	public final static void setInstrument(final Track track, final int channel, final int program) throws Exception {
