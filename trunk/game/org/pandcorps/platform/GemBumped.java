@@ -52,6 +52,11 @@ public class GemBumped extends Pandy {
 		PlatformGame.setPosition(this, pos.getX(), pos.getY() + ImtilX.DIM, PlatformGame.DEPTH_SHATTER);
 		getVelocity().set(0, 6);
         PlatformGame.room.addActor(this);
+        if (end) {
+        	Pangine.getEngine().getMusic().playSound(Music.gemLevel);
+        } else {
+        	Gem.playSound();
+        }
 	}
 	
 	@Override

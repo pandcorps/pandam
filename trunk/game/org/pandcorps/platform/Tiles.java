@@ -51,11 +51,13 @@ public class Tiles {
     		new Shatter(x, y + 8, -1, 3);
     		new Shatter(x + 8, y + 8, 1, 3);
     		if (Mathtil.rand()) {
-    		    new GemBumped(player, t);
+    		    new GemBumped(player, t); // Plays a sound
+    		    seq = null;
+    		} else {
+    			seq = Music.crumble; // break
     		}
     		new Bump(chr, t).setVisible(false); // To bump Characters above
     		player.pc.profile.stats.brokenBlocks++;
-    		seq = Music.bump; // break
     	} else if (b == PlatformGame.TILE_BUMP) {
     	    new Bump(chr, t); // Copy image before changing
     	    final boolean normal = Level.isFlash(t);
@@ -65,7 +67,7 @@ public class Tiles {
     	    }
     		t.setForeground(null, true);
     		player.pc.profile.stats.bumpedBlocks++;
-    		seq = Music.bump;
+    		seq = null;
     	} else {
     		seq = Music.thud;
     	}
