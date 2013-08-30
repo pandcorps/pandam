@@ -56,12 +56,16 @@ public class Gem extends TileOccupant implements StepListener {
 	
 	protected final void spark() {
 	    spark(this, false);
+	    playSound();
 	}
 	
 	protected final static void spark(final Panctor gem, final boolean end) {
 		final Panple pos = gem.getPosition();
 		new Spark(3, pos.getX() + 8, pos.getY() + 8, end);
 		gem.destroy();
+	}
+	
+	protected final static void playSound() {
 		final Pangine engine = Pangine.getEngine();
 		final long clock = engine.getClock();
 		if (clock != lastSound) {

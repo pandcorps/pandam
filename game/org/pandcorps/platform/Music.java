@@ -29,14 +29,18 @@ import org.pandcorps.pandam.*;
 
 public class Music {
 	protected final static Sequence gem;
-	protected final static Sequence bump;
+	protected final static Sequence gemLevel;
+	protected final static Sequence crumble;
 	protected final static Sequence thud;
+	protected final static Sequence jump;
 	
 	static {
 		try {
-			gem = newFxGem();
-			bump = newFxBump();
+			gem = newFxGem(0);
+			gemLevel = newFxGem(1);
+			crumble = newFxCrumble();
 			thud = newFxThud();
+			jump = newFxJump();
 		} catch (final Exception e) {
 			throw Pantil.toRuntimeException(e);
 		}
@@ -55,36 +59,57 @@ public class Music {
 		return seq;
 	}
 	
-	private final static Sequence newFxGem() throws Exception {
+	private final static Sequence newFxGem(final int mag) throws Exception {
 		final int channel = 0, vol = 64;
 		final Sequence seq = new Sequence(Sequence.SMPTE_30, 1);
 		final Track track = seq.createTrack();
 		Mustil.setInstrument(track, channel, Mustil.PRG_TINKLE_BELL);
 		final int d = 2;
-		for (int i = 0; i < 4; i++) {
-			Mustil.addNote(track, i * d, d, channel, 72 + i * 4, vol);
+		for (int j = 0; j <= mag; j++) {
+			for (int i = 0; i < 4; i++) {
+				Mustil.addNote(track, (j * 6 + i) * d, d, channel, 72 + i * 4, vol);
+			}
+			if (j == mag) {
+				Mustil.addNote(track, (j * 6 + 4) * d, 4, channel, 88, vol);
+				//Mustil.setVolume(track, 10, channel, 32);
+				//Mustil.setVolume(track, 12, channel, 127);
+			} else {
+				for (int i = 0; i < 2; i++) {
+					Mustil.addNote(track, (j * 6 + 4 + i) * d, d, channel, 80 - i * 4, vol);
+				}
+			}
 		}
-		Mustil.addNote(track, 8, 4, channel, 88, vol);
-		//Mustil.setVolume(track, 10, channel, 32);
-		//Mustil.setVolume(track, 12, channel, 127);
 		return seq;
 	}
 	
-	private final static Sequence newFxBump() throws Exception {
-		final int channel = 0, vol = 72;
+	private final static Sequence newFxCrumble() throws Exception {
+		final int channel = 0, vol = 80;
 		final Sequence seq = new Sequence(Sequence.SMPTE_30, 1);
 		final Track track = seq.createTrack();
-		Mustil.setInstrument(track, channel, Mustil.PRG_XYLOPHONE);
-		Mustil.addNote(track, 0, 6, channel, 64, vol);
+		Mustil.setInstrument(track, channel, Mustil.PRG_MELODIC_TOM);
+		for (int i = 0; i < 6; i++) {
+			Mustil.addNote(track, i, 1, channel, 62 - i * 4, vol);
+			Mustil.addNote(track, i + 1, 1, channel, 66 - i * 4, vol);
+		}
 		return seq;
 	}
 	
 	private final static Sequence newFxThud() throws Exception {
-		final int channel = 0, vol = 72;
 		final Sequence seq = new Sequence(Sequence.SMPTE_30, 1);
 		final Track track = seq.createTrack();
-		Mustil.setInstrument(track, channel, Mustil.PRG_SLAP_BASS_1);
-		Mustil.addNote(track, 0, 6, channel, 48, vol);
+		Mustil.addPercussion(track, 0, Mustil.PRC_HIGH_BONGO);
+		return seq;
+	}
+	
+	private final static Sequence newFxJump() throws Exception {
+		final int channel = 0, vol = 32;
+		final Sequence seq = new Sequence(Sequence.SMPTE_30, 1);
+		final Track track = seq.createTrack();
+		Mustil.setInstrument(track, channel, Mustil.PRG_SLAP_BASS_2);
+		Mustil.addNote(track, 0, 8, channel, 66, vol);
+		Mustil.setPitch(track, 2, channel, 80);
+		Mustil.setPitch(track, 4, channel, 96);
+		Mustil.setPitch(track, 6, channel, 80);
 		return seq;
 	}
 	
@@ -96,7 +121,7 @@ public class Music {
 		music.playMusic(seq);
 		System.out.println("Started; press enter to play sound; press x and enter to stop");
 		while (!Iotil.readln().equals("x")) {
-			music.playSound(gem);
+			music.playSound(jump);
 		}
 		music.close();
 		System.out.println("End");

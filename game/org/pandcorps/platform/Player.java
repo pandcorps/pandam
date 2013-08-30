@@ -196,6 +196,7 @@ public class Player extends Character implements CollisionListener {
 	    } else if (isGrounded()) {
 			v = jumpMode == JUMP_HIGH ? MAX_V : VEL_JUMP;
 			pc.profile.stats.jumps++;
+			Pangine.getEngine().getMusic().playSound(Music.jump);
 		}
 	}
 	
