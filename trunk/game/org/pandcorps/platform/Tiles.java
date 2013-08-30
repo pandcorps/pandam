@@ -54,7 +54,7 @@ public class Tiles {
     		    new GemBumped(player, t); // Plays a sound
     		    seq = null;
     		} else {
-    			seq = Music.crumble; // break
+    			seq = Music.crumble;
     		}
     		new Bump(chr, t).setVisible(false); // To bump Characters above
     		player.pc.profile.stats.brokenBlocks++;
