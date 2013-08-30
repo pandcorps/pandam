@@ -211,17 +211,20 @@ public final class Mustil {
         throw new Error();
     }
 	
+	private final static void addShort(final Track track, final int cmd, final long tick, final int channel, final int a1, final int a2) throws Exception {
+		final ShortMessage message = new ShortMessage();
+		message.setMessage(cmd, channel, a1, a2);
+		track.add(new MidiEvent(message, tick));
+	}
+	
 	public final static void addNote(final Track track, final long tick, final int channel, final int key, final int vol) throws Exception {
 		addNote(track, tick, 30, channel, key, vol);
 	}
 	
 	public final static void addNote(final Track track, final long tick, final int dur, final int channel, final int key, final int vol) throws Exception {
-		final ShortMessage onMessage = new ShortMessage();
-		final ShortMessage offMessage = new ShortMessage();
-		onMessage.setMessage(ShortMessage.NOTE_ON, channel, key, vol);
-		offMessage.setMessage(ShortMessage.NOTE_OFF, channel, key, 0);
-		track.add(new MidiEvent(onMessage, tick));
-		track.add(new MidiEvent(offMessage, tick + dur));
+		//System.out.println(tick + " - " + key);
+		addShort(track, ShortMessage.NOTE_ON, tick, channel, key, vol);
+		addShort(track, ShortMessage.NOTE_OFF, tick + dur, channel, key, 0);
 	}
 	
 	public final static void addPercussion(final Track track, final long tick, final int key) throws Exception {
@@ -229,19 +232,22 @@ public final class Mustil {
 	}
 	
 	public final static void setInstrument(final Track track, final int channel, final int program) throws Exception {
-		final ShortMessage message = new ShortMessage();
-		message.setMessage(ShortMessage.PROGRAM_CHANGE, channel, program, 0);
-		track.add(new MidiEvent(message, 0));
+		addShort(track, ShortMessage.PROGRAM_CHANGE, 0, channel, program, 0);
+	}
+	
+	public final static void setPitch(final Track track, final int tick, final int channel, final int amt) throws Exception {
+		addShort(track, ShortMessage.PITCH_BEND, tick, channel, 0, amt); // < 64 to lower, > 65 to raise
 	}
 	
 	/*
 	Don't know how CONTROL_CHANGE 7 is supposed to work.
 	This method doesn't seem to work as intended.
 	Lowering the volume of a channel seems to permanently mute the Sequence after it has been played once.
+	Sometimes Java uses 0-based where spec uses 1-based, so maybe 6 should be used.
+	That doesn't seem to do anything though.
+	Maybe 7 is for start of track, 11 is for changes during track.
 	*/
 	/*public final static void setVolume(final Track track, final long tick, final int channel, final int vol) throws Exception {
-		final ShortMessage message = new ShortMessage();
-		message.setMessage(ShortMessage.CONTROL_CHANGE, channel, 7, vol);
-		track.add(new MidiEvent(message, tick));
+		addShort(track, ShortMessage.CONTROL_CHANGE, tick, channel, 7, vol);
 	}*/
 }

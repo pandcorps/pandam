@@ -86,7 +86,7 @@ public final class Pansic {
 	}
 	
 	public final void playSound(final Sequence seq) {
-	    if (soundEnabled) {
+	    if (soundEnabled && seq != null) {
 	        play(seq, 0);
 	    }
 	}
