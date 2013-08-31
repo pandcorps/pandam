@@ -46,19 +46,22 @@ import org.pandcorps.platform.Player.PlayerContext;
 public class PlatformGame extends BaseGame {
 	/*
 	Dog/horse/hippo/rhino/elephant/squirrel/koala/gator/pig/walrus/beaver/stag/bull/ram player face.
-	Player tail image for each species.
 	Player shirts.
 	Player falling/sliding images.
 	Allow jumping a little above top of Level.
 	Warp Map marker for entry/exit point.
 	Ladder climb Map animation.
+	Character pose image on Map when a Level is picked.
 	Pick random mountain color/texture shape used by Map and Level whenever a new Map is generated.
 	Replace bush with Rise.png for some levels; rise will be higher than 1 tile; separate build method.
 	Taller bushes.
 	Map landmarks: Mountain, forest, garden, crater.
 	Bubble when map-traveling.
 	Train-riding levels.
-	Cannons that Player enters to be launched.
+	Ridable dragons.
+	Gargoyles catch/carry Player, like moving platforms, one can jump to/from them, but not run on them.
+	Cannons on ground that Player enters to be launched.
+	Cannons in air that auto-fire, others that wait for jump input.
 	Maximum effective (per tick) velocity & higher absolute max; set current to max effective before evaluating.
 	Horizontal acceleration.
 	Shatter Gem effect when hurt.
@@ -75,6 +78,7 @@ public class PlatformGame extends BaseGame {
 	Goals: Collect n gems, defeat n enemies.
 	Random music per map.
 	Sound effects for jump, bump, stomp, hurt, etc.
+	Player doesn't follow Map trail when curve touches a Marker.
 	*/
 	
 	protected final static byte TILE_BREAK = 2;
@@ -200,12 +204,16 @@ public class PlatformGame extends BaseGame {
 		final BufferedImage[] guys = loadChrStrip("Bear.png", 32, f);
 		final String anm = avatar.anm;
 		final BufferedImage face = Imtil.filter(ImtilX.loadImage("org/pandcorps/platform/res/chr/Face" + anm + ".png", false), f);
+		final BufferedImage[] tails = loadChrStrip("Tail" + anm + ".png", 12, f);
 		final BufferedImage eyes = ImtilX.loadImage("org/pandcorps/platform/res/chr/Eyes0" + avatar.eye + ".png", false);
 		final int size = guys.length;
 		for (int i = 0; i < size; i++) {
 			final int y = (i == 3) ? -1 : 0;
-			Imtil.copy(face, guys[i], 0, 0, 18, 18, 8, 1 + y, Imtil.COPY_FOREGROUND);
-			Imtil.copy(eyes, guys[i], 0, 0, 8, 4, 15, 10 + y, Imtil.COPY_FOREGROUND);
+			final BufferedImage guy = guys[i];
+			Imtil.copy(face, guy, 0, 0, 18, 18, 8, 1 + y, Imtil.COPY_FOREGROUND);
+			Imtil.copy(eyes, guy, 0, 0, 8, 4, 15, 10 + y, Imtil.COPY_FOREGROUND);
+			Imtil.copy(tails[0], guy, 0, 0, 12, 12, 0, 20 + y, Imtil.COPY_BACKGROUND);
+			//Imtil.save(guy, "Guy" + i + ".png");
 		}
 		final String pre = "guy." + pc.index;
 		
@@ -233,26 +241,39 @@ public class PlatformGame extends BaseGame {
 		pc.guySouth = createAnm(pre + ".south", dm, om, south1, south2);
 		final BufferedImage east1 = maps[1], east2 = maps[2], faceEast = faceMap[1];
 		final BufferedImage[] easts = {east1, east2};
-		for (final BufferedImage east : easts) {
+		final int mapSize = easts.length;
+		for (int i = 0; i < mapSize; i++) {
+			final BufferedImage east = easts[i];
 			Imtil.copy(faceEast, east, 0, 0, 18, 18, 7, 5, Imtil.COPY_FOREGROUND);
+			Imtil.copy(tails[1], east, 0, 0, 12, 12, 1, 20, Imtil.COPY_BACKGROUND);
 		}
 		final BufferedImage west1 = Imtil.copy(east1), west2 = Imtil.copy(east2);
 		final BufferedImage eyesEast = eyes.getSubimage(0, 0, 4, 4);
-		for (final BufferedImage east : easts) {
+		for (int i = 0; i < mapSize; i++) {
+			final BufferedImage east = easts[i];
 			Imtil.copy(eyesEast, east, 0, 0, 4, 4, 18, 14, Imtil.COPY_FOREGROUND);
+			//Imtil.save(east, "GuyEast" + i + ".png");
 		}
 		pc.guyEast = createAnm(pre + ".east", dm, om, east1, east2);
 		Imtil.mirror(west1);
 		Imtil.mirror(west2);
 		final BufferedImage eyesWest = eyes.getSubimage(4, 0, 4, 4);
-		for (final BufferedImage west : new BufferedImage[] {west1, west2}) {
+		final BufferedImage[] wests = {west1, west2};
+		for (int i = 0; i < mapSize; i++) {
+			final BufferedImage west = wests[i];
 			Imtil.copy(eyesWest, west, 0, 0, 4, 4, 10, 14, Imtil.COPY_FOREGROUND);
+			//Imtil.save(west, "GuyWest" + i + ".png");
 		}
 		pc.guyWest = createAnm(pre + ".west", dm, om, west1, west2);
-		final BufferedImage north1 = maps[3], north2 = Imtil.copy(north1), faceNorth = faceMap[2];
+		final BufferedImage north1 = maps[3];
+		Imtil.copy(tails[2], north1, 0, 0, 12, 12, 10, 20, Imtil.COPY_FOREGROUND);
+		final BufferedImage north2 = Imtil.copy(north1), faceNorth = faceMap[2];
 		Imtil.mirror(north2);
-		for (final BufferedImage north : new BufferedImage[] {north1, north2}) {
+		final BufferedImage[] norths = {north1, north2};
+		for (int i = 0; i < mapSize; i++) {
+			final BufferedImage north = norths[i];
 			Imtil.copy(faceNorth, north, 0, 0, 18, 18, 7, 5, Imtil.COPY_FOREGROUND);
+			//Imtil.save(north, "GuyNorth" + i + ".png");
 		}
 		pc.guyNorth = createAnm(pre + ".north", dm, om, north1, north2);
 		//guyMap = engine.createImage(pre + ".map", ImtilX.loadImage("org/pandcorps/platform/res/chr/PlayerMap.png"));
