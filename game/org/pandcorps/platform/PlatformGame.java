@@ -98,6 +98,9 @@ public class PlatformGame extends BaseGame {
 	
 	protected final static int TIME_FLASH = 60;
 	
+	private final static FinPanple ORIG_MAP = new FinPanple(8, -6, 0);
+	private final static int DUR_MAP = 6;
+	
 	protected final static short SPEED_FADE = 3;
 	
 	protected final static int MAX_NAME_PROFILE = 8;
@@ -237,9 +240,7 @@ public class PlatformGame extends BaseGame {
 			Imtil.copy(faceSouth, south, 0, 0, 18, 18, 7, 5, Imtil.COPY_FOREGROUND);
 			Imtil.copy(eyes, south, 0, 0, 8, 4, 12, 14, Imtil.COPY_FOREGROUND);
 		}
-		final FinPanple om = new FinPanple(8, -6, 0);
-		final int dm = 6;
-		pc.guySouth = createAnm(pre + ".south", dm, om, south1, south2);
+		pc.guySouth = createAnm(pre + ".south", DUR_MAP, ORIG_MAP, south1, south2);
 		final BufferedImage east1 = maps[1], east2 = maps[2], faceEast = faceMap[1];
 		final BufferedImage[] easts = {east1, east2};
 		final int mapSize = easts.length;
@@ -255,7 +256,7 @@ public class PlatformGame extends BaseGame {
 			Imtil.copy(eyesEast, east, 0, 0, 4, 4, 18, 14, Imtil.COPY_FOREGROUND);
 			//Imtil.save(east, "GuyEast" + i + ".png");
 		}
-		pc.guyEast = createAnm(pre + ".east", dm, om, east1, east2);
+		pc.guyEast = createAnm(pre + ".east", DUR_MAP, ORIG_MAP, east1, east2);
 		Imtil.mirror(west1);
 		Imtil.mirror(west2);
 		final BufferedImage eyesWest = eyes.getSubimage(4, 0, 4, 4);
@@ -265,19 +266,26 @@ public class PlatformGame extends BaseGame {
 			Imtil.copy(eyesWest, west, 0, 0, 4, 4, 10, 14, Imtil.COPY_FOREGROUND);
 			//Imtil.save(west, "GuyWest" + i + ".png");
 		}
-		pc.guyWest = createAnm(pre + ".west", dm, om, west1, west2);
-		final BufferedImage north1 = maps[3];
-		Imtil.copy(tails[2], north1, 0, 0, 12, 12, 10, 20, Imtil.COPY_FOREGROUND);
-		final BufferedImage north2 = Imtil.copy(north1), faceNorth = faceMap[2];
+		pc.guyWest = createAnm(pre + ".west", DUR_MAP, ORIG_MAP, west1, west2);
+		final BufferedImage tailNorth = tails[2], faceNorth = faceMap[2];
+		pc.guyNorth = createNorth(maps, 3, tailNorth, faceNorth, pre, "North");
+		createNorth(maps, 4, tailNorth, faceNorth, pre, "Ladder");
+	}
+	
+	private final static Panimation createNorth(final BufferedImage[] maps, final int mi, final BufferedImage tailNorth, final BufferedImage faceNorth,
+	                                            final String pre, final String suf) {
+		final BufferedImage north1 = maps[mi];
+		Imtil.copy(tailNorth, north1, 0, 0, 12, 12, 10, 20, Imtil.COPY_FOREGROUND);
+		final BufferedImage north2 = Imtil.copy(north1);
 		Imtil.mirror(north2);
 		final BufferedImage[] norths = {north1, north2};
+		final int mapSize = norths.length;
 		for (int i = 0; i < mapSize; i++) {
 			final BufferedImage north = norths[i];
 			Imtil.copy(faceNorth, north, 0, 0, 18, 18, 7, 5, Imtil.COPY_FOREGROUND);
-			//Imtil.save(north, "GuyNorth" + i + ".png");
+			//Imtil.save(north, "Guy" + suf + i + ".png");
 		}
-		pc.guyNorth = createAnm(pre + ".north", dm, om, north1, north2);
-		//guyMap = engine.createImage(pre + ".map", ImtilX.loadImage("org/pandcorps/platform/res/chr/PlayerMap.png"));
+		return createAnm(pre + "." + suf.toLowerCase(), DUR_MAP, ORIG_MAP, north1, north2);
 	}
 	
 	private final static void replace(final ReplacePixelFilter f, final short r, final short g, final short b) {
