@@ -72,10 +72,12 @@ public class Player extends Character implements CollisionListener {
 	    protected Panmage guy = null;
 	    protected Panimation guyRun = null;
 	    protected Panmage guyJump = null;
-	    protected Panimation guySouth = null;
-	    protected Panimation guyEast = null;
-	    protected Panimation guyWest = null;
-	    protected Panimation guyNorth = null;
+	    protected Panimation mapSouth = null;
+	    protected Panimation mapEast = null;
+	    protected Panimation mapWest = null;
+	    protected Panimation mapNorth = null;
+	    protected Panimation mapLadder = null;
+	    protected Panmage mapPose = null;
 	    
 	    public PlayerContext(final Profile profile, final ControlScheme ctrl, final int index) {
 	        this.profile = profile;
@@ -131,10 +133,12 @@ public class Player extends Character implements CollisionListener {
 	    	guy.destroy();
 	    	guyRun.destroyAll();
 	    	guyJump.destroy();
-	    	guySouth.destroyAll();
-	    	guyEast.destroyAll();
-	    	guyWest.destroyAll();
-	    	guyNorth.destroyAll();
+	    	mapSouth.destroyAll();
+	    	mapEast.destroyAll();
+	    	mapWest.destroyAll();
+	    	mapNorth.destroyAll();
+	    	mapLadder.destroyAll();
+	    	mapPose.destroy();
 	    }
 	}
 	
