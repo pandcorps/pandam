@@ -237,6 +237,7 @@ public class Map {
 	            if (isOpen(t)) {
 	                return;
 	            }
+	            changeView(pc.mapPose);
 	            setPlayerPosition(t);
 	        	fadeOut(new PlatformGame.PlatformScreen());
 			} else if (interaction.KEY_TAB.isActive()) {

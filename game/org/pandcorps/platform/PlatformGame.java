@@ -218,7 +218,7 @@ public class PlatformGame extends BaseGame {
 			Imtil.copy(eyes, guy, 0, 0, 8, 4, 15, 10 + y, Imtil.COPY_FOREGROUND);
 			final int t = (i < 3) ? i : 1;
 			Imtil.copy(tails[0], guy, 0, 0, 12, 12, t, 20 + y - t, Imtil.COPY_BACKGROUND);
-			//Imtil.save(guy, "Guy" + i + ".png");
+			//Imtil.save(guy, "Guy" + i + ".png"); // Enable Pangine flag to save all BufferedImages before making Panmage?
 		}
 		final String pre = "guy." + pc.index;
 		
