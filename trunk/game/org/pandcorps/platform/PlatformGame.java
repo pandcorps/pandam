@@ -79,6 +79,7 @@ public class PlatformGame extends BaseGame {
 	Random music per map.
 	Sound effects for jump, bump, stomp, hurt, etc.
 	Player doesn't follow Map trail when curve touches a Marker.
+	Add Map onWalked on Marker timer?
 	*/
 	
 	protected final static byte TILE_BREAK = 2;
@@ -234,13 +235,18 @@ public class PlatformGame extends BaseGame {
 	    
 		final BufferedImage[] maps = loadChrStrip("BearMap.png", 32, f);
 		final BufferedImage[] faceMap = loadChrStrip("FaceMap" + anm + ".png", 18, f);
-		final BufferedImage south1 = maps[0], south2 = Imtil.copy(south1), faceSouth = faceMap[0];
+		final BufferedImage south1 = maps[0], south2 = Imtil.copy(south1), southPose = maps[5], faceSouth = faceMap[0];
 		Imtil.mirror(south2);
-		for (final BufferedImage south : new BufferedImage[] {south1, south2}) {
+		final BufferedImage[] souths = new BufferedImage[] {south1, south2, southPose};
+		final int southSize = souths.length;
+		for (int i = 0; i < southSize; i++) {
+		    final BufferedImage south = souths[i];
 			Imtil.copy(faceSouth, south, 0, 0, 18, 18, 7, 5, Imtil.COPY_FOREGROUND);
 			Imtil.copy(eyes, south, 0, 0, 8, 4, 12, 14, Imtil.COPY_FOREGROUND);
+			//Imtil.save(south, "GuySouth" + i + ".png");
 		}
-		pc.guySouth = createAnm(pre + ".south", DUR_MAP, ORIG_MAP, south1, south2);
+		pc.mapSouth = createAnmMap(pre, "south", south1, south2);
+        pc.mapPose = engine.createImage(pre + ".map.pose", ORIG_MAP, null, null, southPose);
 		final BufferedImage east1 = maps[1], east2 = maps[2], faceEast = faceMap[1];
 		final BufferedImage[] easts = {east1, east2};
 		final int mapSize = easts.length;
@@ -256,7 +262,7 @@ public class PlatformGame extends BaseGame {
 			Imtil.copy(eyesEast, east, 0, 0, 4, 4, 18, 14, Imtil.COPY_FOREGROUND);
 			//Imtil.save(east, "GuyEast" + i + ".png");
 		}
-		pc.guyEast = createAnm(pre + ".east", DUR_MAP, ORIG_MAP, east1, east2);
+		pc.mapEast = createAnmMap(pre, "east", east1, east2);
 		Imtil.mirror(west1);
 		Imtil.mirror(west2);
 		final BufferedImage eyesWest = eyes.getSubimage(4, 0, 4, 4);
@@ -266,10 +272,10 @@ public class PlatformGame extends BaseGame {
 			Imtil.copy(eyesWest, west, 0, 0, 4, 4, 10, 14, Imtil.COPY_FOREGROUND);
 			//Imtil.save(west, "GuyWest" + i + ".png");
 		}
-		pc.guyWest = createAnm(pre + ".west", DUR_MAP, ORIG_MAP, west1, west2);
+		pc.mapWest = createAnmMap(pre, "west", west1, west2);
 		final BufferedImage tailNorth = tails[2], faceNorth = faceMap[2];
-		pc.guyNorth = createNorth(maps, 3, tailNorth, faceNorth, pre, "North");
-		createNorth(maps, 4, tailNorth, faceNorth, pre, "Ladder");
+		pc.mapNorth = createNorth(maps, 3, tailNorth, faceNorth, pre, "North");
+		pc.mapLadder = createNorth(maps, 4, tailNorth, faceNorth, pre, "Ladder");
 	}
 	
 	private final static Panimation createNorth(final BufferedImage[] maps, final int mi, final BufferedImage tailNorth, final BufferedImage faceNorth,
@@ -285,7 +291,11 @@ public class PlatformGame extends BaseGame {
 			Imtil.copy(faceNorth, north, 0, 0, 18, 18, 7, 5, Imtil.COPY_FOREGROUND);
 			//Imtil.save(north, "Guy" + suf + i + ".png");
 		}
-		return createAnm(pre + "." + suf.toLowerCase(), DUR_MAP, ORIG_MAP, north1, north2);
+		return createAnmMap(pre, suf, north1, north2);
+	}
+	
+	private final static Panimation createAnmMap(final String pre, final String suf, final BufferedImage... a) {
+		return createAnm(pre + ".map." + suf.toLowerCase(), DUR_MAP, ORIG_MAP, a);
 	}
 	
 	private final static void replace(final ReplacePixelFilter f, final short r, final short g, final short b) {

@@ -186,7 +186,7 @@ public class Map {
 		
 		private Player(final PlayerContext pc) {
 		    this.pc = pc;
-			setView(pc.guySouth);
+			setView(pc.mapSouth);
 			setSpeed(2);
 			register(new ActionStartListener() { @Override public final void onActionStart(final ActionStartEvent event) {
 				if (disabled) {
@@ -313,13 +313,13 @@ public class Map {
 		@Override
 	    protected void onFace(final Direction oldDir, final Direction newDir) {
 			if (newDir == Direction.North) {
-				changeView(pc.guyNorth);
+				changeView(pc.mapNorth);
 			} else if (newDir == Direction.East) {
-			    changeView(pc.guyEast);
+			    changeView(pc.mapEast);
 			} else if (newDir == Direction.West) {
-			    changeView(pc.guyWest);
+			    changeView(pc.mapWest);
 			} else if (newDir == Direction.South) {
-			    changeView(pc.guySouth);
+			    changeView(pc.mapSouth);
 			}
 	    }
 		
@@ -330,7 +330,7 @@ public class Map {
 			switch (b) {
 				case TILE_MARKER :
 					setPlayerPosition(t);
-				    changeView(pc.guySouth);
+				    changeView(pc.mapSouth); // Add timer so other view is seen a little longer?
 					return;
 				case TILE_VERT : {
 					final Direction d1 = getDirection();
