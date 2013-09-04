@@ -212,7 +212,8 @@ public class PlatformGame extends BaseGame {
 			final BufferedImage guy = guys[i];
 			Imtil.copy(face, guy, 0, 0, 18, 18, 8, 1 + y, Imtil.COPY_FOREGROUND);
 			Imtil.copy(eyes, guy, 0, 0, 8, 4, 15, 10 + y, Imtil.COPY_FOREGROUND);
-			Imtil.copy(tails[0], guy, 0, 0, 12, 12, 0, 20 + y, Imtil.COPY_BACKGROUND);
+			final int t = (i < 3) ? i : 1;
+			Imtil.copy(tails[0], guy, 0, 0, 12, 12, t, 20 + y - t, Imtil.COPY_BACKGROUND);
 			//Imtil.save(guy, "Guy" + i + ".png");
 		}
 		final String pre = "guy." + pc.index;
