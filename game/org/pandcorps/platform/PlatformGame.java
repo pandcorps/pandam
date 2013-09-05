@@ -76,7 +76,6 @@ public class PlatformGame extends BaseGame {
 	Goals: Collect n gems, defeat n enemies.
 	Random music per map.
 	Sound effects for jump, bump, stomp, hurt, etc.
-	Player doesn't follow Map trail when curve touches a Marker.
 	Player doesn't stop on bridge Map Markers.
 	Add Map onWalked on Marker timer?
 	*/

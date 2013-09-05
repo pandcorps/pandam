@@ -122,7 +122,10 @@ public class Map {
 	private static TileMapImage base = null;
 	private static TileMapImage ladder = null;
 	
-	private static boolean debug = false;
+	private final static short MOVE_NORMAL = 0;
+	private final static short MOVE_ANY_PATH = 1;
+	private final static short MOVE_ANY_TILE = 2;
+	private static short modeMove = MOVE_NORMAL;
 	
 	protected final static class MapScreen extends Panscreen {
 		@Override
@@ -244,7 +247,7 @@ public class Map {
 	        	fadeOut(new PlatformGame.PlatformScreen());
 			} else if (interaction.KEY_TAB.isActive()) {
 				interaction.KEY_TAB.inactivate();
-				debug = !debug;
+				modeMove = (short) ((modeMove + 1) % 3);
 			} else if (getMenuInput(ctrl).isActive()) {
 				goMenu(getMenuInput(ctrl), pc);
 			}
@@ -267,15 +270,16 @@ public class Map {
 		
 		protected boolean go(final Direction d0) {
 		    final Tile t0 = getTile();
-		    Tile t = t0;
-		    Direction d = d0;
-			if (debug) {
+			if (modeMove == MOVE_ANY_TILE) {
 				final Tile tmp = t0.getNeighbor(d0);
 				if (tmp != null) {
 					setPos(tmp);
 				}
 				return true;
 			}
+			Tile t = t0;
+            Direction d = d0, d1 = null;
+            boolean first = true;
 		    while (true) {
     		    t = t.getNeighbor(d);
     		    if (t == null || t.isSolid()) {
@@ -284,9 +288,12 @@ public class Map {
     		    final byte b = t.getBehavior();
     		    switch (b) {
     		        case TILE_MARKER :
-        		        if (isOpen(t0) || isOpen(t)) {
-    		            //if (Pangine.getEngine().getClock() >= 0) {
-        		            walk(d0);
+        		        if (modeMove == MOVE_ANY_PATH || isOpen(t0) || isOpen(t)) {
+        		            if (d1 == null) {
+        		                walk(d0);
+        		            } else {
+        		                walk(d1, d0);
+        		            }
         		            return true;
         		        }
         		        return false;
@@ -306,6 +313,12 @@ public class Map {
     		        case TILE_RIGHTDOWN :
                         d = getOther(d, Direction.East, Direction.South);
                         break;
+    		    }
+    		    if (first) {
+    		        if (d != d0) {
+    		            d1 = d;
+    		        }
+    		        first = false;
     		    }
 		    }
 		}
