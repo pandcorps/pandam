@@ -188,6 +188,7 @@ public class Map {
 	    private final PlayerContext pc;
 		private boolean disabled = false;
 		private boolean onLadder = false;
+		private int stillTimer = -1;
 		
 		private Player(final PlayerContext pc) {
 		    this.pc = pc;
@@ -222,6 +223,11 @@ public class Map {
 		protected void onStill() {
 			if (disabled) {
 				return;
+			} else if (stillTimer >= 0) {
+			    if (stillTimer == 0) {
+			        changeView(pc.mapSouth);
+			    }
+			    stillTimer--;
 			}
 			final Panteraction interaction = Pangine.getEngine().getInteraction();
 			final ControlScheme ctrl = pc.ctrl;
@@ -355,7 +361,7 @@ public class Map {
 			switch (b) {
 				case TILE_MARKER :
 					setPlayerPosition(t);
-				    changeView(pc.mapSouth); // Add timer so other view is seen a little longer?
+					stillTimer = 15;
 					return;
 				case TILE_VERT : {
 					final Direction d1 = getDirection();
