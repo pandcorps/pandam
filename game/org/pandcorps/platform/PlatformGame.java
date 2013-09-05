@@ -50,8 +50,6 @@ public class PlatformGame extends BaseGame {
 	Player falling/sliding images.
 	Allow jumping a little above top of Level.
 	Warp Map marker for entry/exit point.
-	Ladder climb Map animation.
-	Character pose image on Map when a Level is picked.
 	Pick random mountain color/texture shape used by Map and Level whenever a new Map is generated.
 	Replace bush with Rise.png for some levels; rise will be higher than 1 tile; separate build method.
 	Taller bushes.
@@ -79,6 +77,7 @@ public class PlatformGame extends BaseGame {
 	Random music per map.
 	Sound effects for jump, bump, stomp, hurt, etc.
 	Player doesn't follow Map trail when curve touches a Marker.
+	Player doesn't stop on bridge Map Markers.
 	Add Map onWalked on Marker timer?
 	*/
 	
