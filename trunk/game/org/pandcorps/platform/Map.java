@@ -917,8 +917,9 @@ public class Map {
 	private static void marker(final int i, final int j, final boolean bg) {
 		final Tile tile = tm.initTile(i, j);
 		if (bg) {
-			tile.setBackground(imgMap[3][0], TILE_MARKER);
+			tile.setBackground(imgMap[3][0]);
 		}
+		tile.setBehavior(TILE_MARKER);
 		final Marker m = new Marker(isOpen(tile));
 		markers.add(m);
 		//m.setPosition(tile);
