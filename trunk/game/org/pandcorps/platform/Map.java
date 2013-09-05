@@ -120,6 +120,7 @@ public class Map {
 	private static TileMapImage[][] imgMap = null;
 	private static TileMapImage water = null;
 	private static TileMapImage base = null;
+	private static TileMapImage ladder = null;
 	
 	private static boolean debug = false;
 	
@@ -183,6 +184,7 @@ public class Map {
 	protected final static class Player extends TileWalker {
 	    private final PlayerContext pc;
 		private boolean disabled = false;
+		private boolean onLadder = false;
 		
 		private Player(final PlayerContext pc) {
 		    this.pc = pc;
@@ -283,6 +285,7 @@ public class Map {
     		    switch (b) {
     		        case TILE_MARKER :
         		        if (isOpen(t0) || isOpen(t)) {
+    		            //if (Pangine.getEngine().getClock() >= 0) {
         		            walk(d0);
         		            return true;
         		        }
@@ -314,19 +317,27 @@ public class Map {
 		@Override
 	    protected void onFace(final Direction oldDir, final Direction newDir) {
 			if (newDir == Direction.North) {
-				changeView(pc.mapNorth);
+			    if (!onLadder) {
+			        changeView(pc.mapNorth);
+			    }
 			} else if (newDir == Direction.East) {
 			    changeView(pc.mapEast);
 			} else if (newDir == Direction.West) {
 			    changeView(pc.mapWest);
 			} else if (newDir == Direction.South) {
-			    changeView(pc.mapSouth);
+			    if (!onLadder) {
+			        changeView(pc.mapSouth);
+			    }
 			}
 	    }
 		
 		@Override
 		protected void onWalked() {
 		    final Tile t = getTile();
+		    onLadder = isLadder(t);
+		    if (onLadder) {
+		        changeView(pc.mapLadder);
+		    }
 			final byte b = t.getBehavior();
 			switch (b) {
 				case TILE_MARKER :
@@ -335,12 +346,17 @@ public class Map {
 					return;
 				case TILE_VERT : {
 					final Direction d1 = getDirection();
-					final byte b2 = getDestination(d1).getBehavior();
+					final Tile t2 = getDestination(d1);
+					final byte b2 = t2.getBehavior();
 					if (b2 == TILE_LEFTUP || b2 == TILE_LEFTDOWN) {
 						walk(Direction.West, d1);
 					} else if (b2 == TILE_RIGHTUP || b2 == TILE_RIGHTDOWN) {
 						walk(Direction.East, d1);
 					} else {
+					    if (isLadder(t2)) {
+					        changeView(pc.mapLadder);
+					        onLadder = true;
+					    }
 						walk(d1);
 					}
 					return;
@@ -415,6 +431,7 @@ public class Map {
         }
         water = imgMap[5][6];
         base = imgMap[1][1];
+        ladder = imgMap[0][6];
 		tm.fillBackground(water, true);
 		b.init();
 		final Tile t = getStartTile();
@@ -874,6 +891,10 @@ public class Map {
 	
 	private static boolean isWater(final Tile t) {
 		return DynamicTileMap.getRawBackground(t) == water;
+	}
+	
+	private static boolean isLadder(final Tile t) {
+	    return DynamicTileMap.getRawForeground(t) == ladder;
 	}
 	
 	private static void marker(final int i, final int j) {
