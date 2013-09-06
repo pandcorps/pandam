@@ -45,7 +45,7 @@ import org.pandcorps.platform.Player.PlayerContext;
 
 public class PlatformGame extends BaseGame {
 	/*
-	Dog/horse/hippo/rhino/elephant/squirrel/koala/gator/pig/walrus/beaver/stag/bull/ram player face.
+	Dog/horse/hippo/rhino/elephant/squirrel/gator/pig/walrus/beaver/stag/bull/ram player face.
 	Player shirts.
 	Player falling/sliding images.
 	Allow jumping a little above top of Level.
@@ -76,7 +76,6 @@ public class PlatformGame extends BaseGame {
 	Goals: Collect n gems, defeat n enemies.
 	Random music per map.
 	Sound effects for jump, bump, stomp, hurt, etc.
-	Disable Map stillTimer for ladder animation.
 	*/
 	
 	protected final static byte TILE_BREAK = 2;

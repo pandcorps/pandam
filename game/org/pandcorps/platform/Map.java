@@ -297,6 +297,7 @@ public class Map {
         		        if (modeMove == MOVE_ANY_PATH || isOpen(t0) || isOpen(t)) {
         		            if (d1 == null) {
         		                walk(d0);
+        		                setLadder(getTile());
         		            } else {
         		                walk(d1, d0);
         		            }
@@ -350,18 +351,23 @@ public class Map {
 			}
 	    }
 		
+		private final void setLadder(final Tile t) {
+		    onLadder = isLadder(t);
+            if (onLadder) {
+                changeView(pc.mapLadder);
+            }
+		}
+		
 		@Override
 		protected void onWalked() {
 		    final Tile t = getTile();
-		    onLadder = isLadder(t);
-		    if (onLadder) {
-		        changeView(pc.mapLadder);
-		    }
+		    final boolean oldLadder = onLadder;
+		    setLadder(t);
 			final byte b = t.getBehavior();
 			switch (b) {
 				case TILE_MARKER :
 					setPlayerPosition(t);
-					stillTimer = 15;
+					stillTimer = oldLadder ? 0 : 15;
 					return;
 				case TILE_VERT : {
 					final Direction d1 = getDirection();
@@ -374,7 +380,7 @@ public class Map {
 					} else {
 					    if (isLadder(t2)) {
 					        changeView(pc.mapLadder);
-					        onLadder = true;
+					        onLadder = true; // But don't set to false if old Tile was ladder
 					    }
 						walk(d1);
 					}
