@@ -66,6 +66,8 @@ public abstract class Pangine {
 	private Scaler scaler = null;
 	
 	private long clock = 0;
+	
+	private boolean imageSavingEnabled = false;
 
 	static {
 		int i = 0;
@@ -139,6 +141,9 @@ public abstract class Pangine {
 	}
 	
 	public final Panmage createImage(final String id, final Panple origin, final Panple boundMin, final Panple boundMax, final BufferedImage img) throws Panception {
+		if (imageSavingEnabled) {
+			Imtil.save(img, id + ".png");
+		}
         final Panmage image = newImage(id, origin, boundMin, boundMax, img);
 
         register(image);
@@ -847,6 +852,10 @@ public abstract class Pangine {
 		for (final TimerListener listener : Coltil.unnull(listeners)) {
 			removeTimer(listener);
 		}
+	}
+	
+	public final void setImageSavingEnabled(final boolean imageSavingEnabled) {
+		this.imageSavingEnabled = imageSavingEnabled;
 	}
 	
 	public abstract void setTitle(final String title);

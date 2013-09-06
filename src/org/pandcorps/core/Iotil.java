@@ -47,8 +47,7 @@ public final class Iotil {
 
 		//return Iotil.class.getResourceAsStream(location);
 		URL url = Iotil.class.getClassLoader().getResource(location);
-		try
-			{
+		try {
 			if (url == null) {
 				url = new URL(location);
 			}
@@ -56,6 +55,14 @@ public final class Iotil {
 		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}
+	}
+	
+	public final static boolean exists(final String location) {
+		final File f = new File(location);
+		if (f.exists()) {
+			return true;
+		}
+		return Iotil.class.getClassLoader().getResource(location) != null;
 	}
 	
 	public final static Reader getReader(final String location) {
