@@ -36,6 +36,7 @@ public abstract class Achievement {
 		// level w/ no gems
 		// block milestones
 		// Gem milestones
+		// Pegasus, Finish Level as a winged horse
 	};
 	
 	private final String name;
