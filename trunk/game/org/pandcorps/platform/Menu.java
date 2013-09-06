@@ -42,17 +42,18 @@ public class Menu {
     private final static String WARN_DELETE = "Press Erase again to confirm";
     private final static String WARN_EMPTY = "Must have a name";
     private final static String WARN_DUPLICATE = "Name already used";
+    private final static String INFO_SAVED = "Saved images";
     
 	protected abstract static class PlayerScreen extends Panscreen {
 		protected Panroom room;
 		protected PlayerContext pc;
 		protected ControlScheme ctrl = null;
 		private final boolean fadeIn;
-		protected final StringBuilder wrn = new StringBuilder();
+		protected final StringBuilder inf = new StringBuilder();
 		protected TileMap tm = null;
 		protected Panmage timg = null;
 		protected Panctor actor = null;
-		protected Pantext wrnLbl = null;
+		protected Pantext infLbl = null;
 		protected boolean disabled = false;
 		protected Panform form = null;
 		protected int center = -1;
@@ -81,10 +82,10 @@ public class Menu {
 			    ctrl = pc.ctrl;
 			}
 			form = new Panform(ctrl);
-			wrnLbl = addTitle(wrn, center, getBottom());
+			infLbl = addTitle(inf, center, getBottom());
 			form.setTabListener(new FormTabListener() {@Override public void onTab(final FormTabEvent event) {
 				if (allow()) {
-					wrn.setLength(0);
+					inf.setLength(0);
 				} else {
 					event.cancel();
 				}
@@ -193,10 +194,10 @@ public class Menu {
 		
 		protected abstract void onExit();
 		
-		protected final void setWarning(final String val) {
-			Chartil.set(wrn, val);
-        	wrnLbl.getPosition().setX(center);
-        	wrnLbl.centerX();
+		protected final void setInfo(final String val) {
+			Chartil.set(inf, val);
+        	infLbl.getPosition().setX(center);
+        	infLbl.centerX();
 		}
 		
 		protected final int addExit(final String title, final int x, final int y) {
@@ -446,11 +447,11 @@ public class Menu {
 	                    } else if (pc.profile.avatars.size() == 1) {
 	                    	return;
 	                    }
-	                    if (!wrn.toString().equals(WARN_DELETE)) {
-	                    	setWarning(WARN_DELETE);
+	                    if (!inf.toString().equals(WARN_DELETE)) {
+	                    	setInfo(WARN_DELETE);
 	                    	return;
 	                    }
-	                    wrn.setLength(0);
+	                    inf.setLength(0);
 	                    pc.profile.avatars.remove(pc.profile.currentAvatar);
 	                    pc.profile.currentAvatar = pc.profile.avatars.get(0);
 	                    PlatformGame.reloadAnimalStrip(pc);
@@ -628,7 +629,20 @@ public class Menu {
                     save = false;
                     exit(); }};
             x = addPipe(x, y);
-            addLink("Cancel", canLsn, x, y);
+            x = addLink("Cancel", canLsn, x, y);
+            final MessageCloseListener expLsn = new MessageCloseListener() {
+                @Override public final void onClose(final MessageCloseEvent event) {
+                    if (disabled) {
+                        return;
+                    }
+                    final Pangine engine = Pangine.getEngine();
+                    engine.setImageSavingEnabled(true);
+                    PlatformGame.reloadAnimalStrip(pc);
+                    engine.setImageSavingEnabled(false);
+                    setInfo(INFO_SAVED);
+                    actor.setView(pc.guy); }};
+            x = addPipe(x, y);
+            x = addLink("Export", expLsn, x, y);
 			anmGrp.setSelected(animals.indexOf(avt.anm));
 			eyeGrp.setSelected(avt.eye - 1);
 			redGrp.setSelected(getLineColor(avt.r));
@@ -641,12 +655,12 @@ public class Menu {
 		protected boolean allow() {
 			final String curr = avt.getName();
 			if (Chartil.isEmpty(curr)) {
-				setWarning(WARN_EMPTY);
+				setInfo(WARN_EMPTY);
 				return false;
 			}
 			for (final Avatar a : pc.profile.avatars) {
 				if (a != avt && a.getName().equals(curr)) {
-					setWarning(WARN_DUPLICATE);
+					setInfo(WARN_DUPLICATE);
 					return false;
 				}
 			}
