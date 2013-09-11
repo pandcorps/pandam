@@ -60,7 +60,8 @@ public class Pantext extends Panctor {
 	//private final String text;
 	/*package*/ final List<? extends CharSequence> text;
 	/*package*/ int fontNum;
-	/*package*/ float fontSize;
+	/*package*/ float fontWidth;
+	/*package*/ float fontHeight;
 	//private final FinPanple size;
 	/*package*/ final SizePanple size = new SizePanple();
 	/*
@@ -125,7 +126,9 @@ public class Pantext extends Panctor {
 		f = font;
 		this.font = font.getImage();
 		fontNum = font.getRowAmount();
-		fontSize = this.font.getSize().getX() / fontNum;
+		final Panple fontSize = this.font.getSize();
+		fontWidth = fontSize.getX() / fontNum;
+		fontHeight = fontSize.getY() / fontNum;
 		//size = new FinPanple(fontSize * text.length(), fontSize, 0);
 	}
 	
@@ -133,12 +136,12 @@ public class Pantext extends Panctor {
 
         @Override
         public float getX() {
-            return getNumColumns() * fontSize;
+            return getNumColumns() * fontWidth;
         }
 
         @Override
         public float getY() {
-            return getNumRows() * fontSize;
+            return getNumRows() * fontHeight;
         }
 
         @Override
@@ -253,7 +256,7 @@ public class Pantext extends Panctor {
 		}
         
         // Character rendering accounts for first line of page; border is independent; this will undo that
-        final float by = y - firstLine * fontSize;
+        final float by = y - firstLine * fontHeight;
         
         if (title != null) {
             final int lineSize = title.length();
@@ -359,9 +362,9 @@ public class Pantext extends Panctor {
 	    } else if (index == Font.INDEX_ILLEGAL) {
 	        throw new IllegalArgumentException("Cannot render " + c + " with " + f.getClass().getName());
 	    }
-	    final float xoff = BaseFont.getColumn(index, fontNum) * fontSize;
-        final float yoff = BaseFont.getRow(index, fontNum) * fontSize;
-        renderer.render(layer, font, x + (i * fontSize), y - ((j - firstLine) * fontSize), z, xoff, yoff, fontSize, fontSize);
+	    final float xoff = BaseFont.getColumn(index, fontNum) * fontWidth;
+        final float yoff = BaseFont.getRow(index, fontNum) * fontHeight;
+        renderer.render(layer, font, x + (i * fontWidth), y - ((j - firstLine) * fontHeight), z, xoff, yoff, fontWidth, fontHeight);
 	}
 	
 	public final int getTotalLines() {
