@@ -583,6 +583,7 @@ public class Menu {
 			final int left = getLeft();
 			int x = left, y = getTop();
 			final RadioGroup anmGrp = addRadio("Animal", animals, anmLsn, x, y);
+			anmGrp.getLabel().setLinesPerPage(5);
 			final int numEyes = PlatformGame.getNumEyes();
 			final ArrayList<String> eyes = new ArrayList<String>(numEyes);
 			for (int i = 1; i <= numEyes; i++) {
