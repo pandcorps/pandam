@@ -76,7 +76,6 @@ public class PlatformGame extends BaseGame {
 	Goals: Collect n gems, defeat n enemies.
 	Random music per map.
 	Sound effects for jump, bump, stomp, hurt, etc.
-	Run animation should start with middle frame.
 	Animal selection on Avatar editor should be fixed size and scroll.
 	*/
 	
@@ -237,7 +236,7 @@ public class PlatformGame extends BaseGame {
 		final Panmage guy3 = engine.createImage(ipre + "3", og, ng, xg, guys[2]);
 		final String fpre = PRE_FRM + pre + ".";
 		final Panframe gf1 = engine.createFrame(fpre + "1", pc.guy, 2), gf2 = engine.createFrame(fpre + "2", guy2, 2), gf3 = engine.createFrame(fpre + "3", guy3, 2);
-		pc.guyRun = engine.createAnimation(PRE_ANM + pre + ".run", gf1, gf2, gf3);
+		pc.guyRun = engine.createAnimation(PRE_ANM + pre + ".run", gf2, gf3, gf1);
 		pc.guyJump = engine.createImage(ipre + "jump", og, ng, xg, guys[3]);
 	    //guy = engine.createImage(pre, new FinPanple(8, 0, 0), null, null, ImtilX.loadImage("org/pandcorps/platform/res/chr/Player.png"));
 	    
