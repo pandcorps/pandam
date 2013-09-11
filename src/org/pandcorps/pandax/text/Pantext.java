@@ -252,11 +252,14 @@ public class Pantext extends Panctor {
     		off += lineSize;*/
 		}
         
+        // Character rendering accounts for first line of page; border is independent; this will undo that
+        final float by = y - firstLine * fontSize;
+        
         if (title != null) {
             final int lineSize = title.length();
             //maxLineSize = Math.max(lineSize + 1, maxLineSize);
             render(renderer, layer, x, y, z, title, lineSize, 1, -2);
-            renderTop(renderer, layer, x, y, z, 0, lineSize + 1, -3, 1);
+            renderTop(renderer, layer, x, by, z, 0, lineSize + 1, -3, 1);
             //render(renderer, layer, x, y, z, title, maxLineSize - 1, 1, -2);
             //renderTop(renderer, layer, x, y, z, 0, maxLineSize, -3, 1);
         }
@@ -281,13 +284,13 @@ public class Pantext extends Panctor {
             //final int lineLim = (charactersPerLine > 0 ? charactersPerLine : maxLineSize) + 1;
         	//final int lineLim = maxLineSize + 1;
             //final int height = stop - firstLine;
-            renderTop(renderer, layer, x, y, z, -1, maxLineSize, -1, height);
-            render(renderer, layer, x, y, z, CHAR_BOTTOM_LEFT, -1, height);
+            renderTop(renderer, layer, x, by, z, -1, maxLineSize, -1, height);
+            render(renderer, layer, x, by, z, CHAR_BOTTOM_LEFT, -1, height);
             final char bottom = borderStyle == BorderStyle.Simple ? CHAR_HORIZ : CHAR_BOTTOM;
             for (int i = 0; i < maxLineSize; i++) {
-                render(renderer, layer, x, y, z, bottom, i, height);
+                render(renderer, layer, x, by, z, bottom, i, height);
             }
-            render(renderer, layer, x, y, z, CHAR_BOTTOM_RIGHT, maxLineSize, height);
+            render(renderer, layer, x, by, z, CHAR_BOTTOM_RIGHT, maxLineSize, height);
         }
         
 		//renderer.render(font, x, y, z, 8, 32, fontSize, fontSize);

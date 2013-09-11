@@ -76,7 +76,7 @@ public class PlatformGame extends BaseGame {
 	Goals: Collect n gems, defeat n enemies.
 	Random music per map.
 	Sound effects for jump, bump, stomp, hurt, etc.
-	Animal selection on Avatar editor should be fixed size and scroll.
+	Support fonts with non-square characters.
 	*/
 	
 	protected final static byte TILE_BREAK = 2;
