@@ -169,7 +169,11 @@ public class Pantext extends Panctor {
 	protected final int getNumRows() {
 	    //return text.size(); // Old
         //return (getStopLine() - firstLine); // Wrong?
-        return linesPerPage <= 0 ? text.size() : linesPerPage;
+        return isPagingEnabled() ? linesPerPage : text.size();
+	}
+	
+	protected final boolean isPagingEnabled() {
+	    return linesPerPage > 0;
 	}
 
 	@Override
@@ -378,7 +382,11 @@ public class Pantext extends Panctor {
 	}
 	
 	private final boolean scroll(final int numLines) {
-	    if (firstLine >= text.size() - numLines) {
+	    if (!isPagingEnabled()) {
+	        return false;
+	    } else if (firstLine + numLines + linesPerPage - 1 >= text.size()) {
+            return false;
+        } else if (firstLine + numLines < 0) {
             return false;
         }
         firstLine += numLines;
@@ -395,7 +403,7 @@ public class Pantext extends Panctor {
 	
 	private final int getStopLine() {
         final int totalLines = text.size();
-        return linesPerPage <= 0 ? totalLines : Math.min(totalLines, firstLine + linesPerPage);
+        return isPagingEnabled() ? Math.min(totalLines, firstLine + linesPerPage) : totalLines;
     }
 	
 	public final void setRadioLine(final int radioLine) {
@@ -404,15 +412,21 @@ public class Pantext extends Panctor {
 	
 	public final void incRadioLine() {
 	    radioLine++;
-	    if (radioLine >= getStopLine()) {
-	        radioLine = firstLine;
+	    if (radioLine >= getStopLine() && !scrollLine()) {
+	        radioLine = 0;
+	        firstLine = 0;
 	    }
 	}
 	
 	public final void decRadioLine() {
 	    radioLine--;
-	    if (radioLine < firstLine) {
-	        radioLine = getStopLine() - 1;
+	    if (radioLine < firstLine && !scroll(-1)) {
+	        //radioLine = getStopLine() - 1;
+	        final int size = text.size();
+	        radioLine = size - 1;
+	        if (isPagingEnabled() && radioLine >= getStopLine()) {
+	            firstLine = size - linesPerPage;
+	        }
 	    }
 	}
 	
