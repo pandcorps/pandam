@@ -36,7 +36,7 @@ import org.pandcorps.pandax.tile.*;
 import org.pandcorps.platform.Player.*;
 
 public class Menu {
-    private final static short SPEED_MENU_FADE = 6;
+    private final static short SPEED_MENU_FADE = 9;
     private final static int SIZE_FONT = 8;
     private final static String NAME_NEW = "org.pandcorps.new";
     private final static String WARN_DELETE = "Press Erase again to confirm";
