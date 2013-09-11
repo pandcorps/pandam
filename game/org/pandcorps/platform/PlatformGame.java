@@ -45,7 +45,7 @@ import org.pandcorps.platform.Player.PlayerContext;
 
 public class PlatformGame extends BaseGame {
 	/*
-	Dog/horse/hippo/rhino/elephant/squirrel/gator/pig/walrus/beaver/stag/bull/ram player face.
+	Dog/horse/hippo/elephant/squirrel/gator/pig/walrus/beaver/stag/bull/ram player face.
 	Player shirts.
 	Player falling/sliding images.
 	Allow jumping a little above top of Level.
@@ -76,6 +76,8 @@ public class PlatformGame extends BaseGame {
 	Goals: Collect n gems, defeat n enemies.
 	Random music per map.
 	Sound effects for jump, bump, stomp, hurt, etc.
+	Run animation should start with middle frame.
+	Animal selection on Avatar editor should be fixed size and scroll.
 	*/
 	
 	protected final static byte TILE_BREAK = 2;
@@ -98,7 +100,7 @@ public class PlatformGame extends BaseGame {
 	private final static FinPanple ORIG_MAP = new FinPanple(8, -6, 0);
 	private final static int DUR_MAP = 6;
 	
-	protected final static short SPEED_FADE = 3;
+	protected final static short SPEED_FADE = 6;
 	
 	protected final static int MAX_NAME_PROFILE = 8;
 	protected final static int MAX_NAME_AVATAR = 8;
@@ -507,7 +509,7 @@ public class PlatformGame extends BaseGame {
 	}
 	
 	protected final static List<String> getAnimals() {
-	    return Arrays.asList("Bear", "Cat", "Koala", "Mouse", "Rabbit");
+	    return Arrays.asList("Bear", "Cat", "Koala", "Mouse", "Rabbit", "Rhino");
 	}
 	
 	protected final static int getNumEyes() {
