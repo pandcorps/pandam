@@ -260,6 +260,12 @@ public class Menu {
 	        		actor.setMirror(true);
 	        	}
 	        }
+	        /*final Panmage tmpImg = Pangine.getEngine().createImage("img.tmp", "Tall.png"); // Must destroy
+	        final Panctor tmp = new Panctor();
+	        tmp.setView(tmpImg);
+	        System.out.println(tmpImg.getSize());
+	        tmp.getPosition().set(8, 24);
+	        room.addActor(tmp);*/
 	    }
 	    
 	    @Override
