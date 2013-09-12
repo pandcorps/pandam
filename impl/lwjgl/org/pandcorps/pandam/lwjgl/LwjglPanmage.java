@@ -78,15 +78,18 @@ public final class LwjglPanmage extends Panmage {
 	}
 	
 	private final static class Texture {
-	    private final int w;
+	    private final int usableWidth;
 	    
-	    private final int h;
+	    private final int usableHeight;
+	    
+	    private final int paddedSize;
 	    
 	    private final int tid;
 	    
-	    private Texture(final int w, final int h, final int tid) {
-	        this.w = w;
-	        this.h = h;
+	    private Texture(final int usableWidth, final int usableHeight, final int paddedSize, final int tid) {
+	        this.usableWidth = usableWidth;
+	        this.usableHeight = usableHeight;
+	        this.paddedSize = paddedSize;
 	        this.tid = tid;
 	    }
 	}
@@ -96,11 +99,28 @@ public final class LwjglPanmage extends Panmage {
 	    return getTexture(Imtil.load(location));
 	}
 	
+	private final static int toPow2(final int d) {
+	    for (int i = 1; ; i *= 2) {
+	        if (i >= d) {
+	            return i;
+	        }
+	    }
+	}
+	
+	private final static BufferedImage pad(final BufferedImage _img) {
+	    final int usableWidth = _img.getWidth(), usableHeight = _img.getHeight();
+	    final int d = Math.max(toPow2(usableWidth), toPow2(usableHeight));
+	    final BufferedImage padded = new BufferedImage(d, d, Imtil.TYPE);
+	    Imtil.copy(_img, padded, 0, 0, usableWidth, usableHeight, 0, 0);
+	    return padded;
+	}
+	
 	private final static Texture getTexture(final BufferedImage _img) {
 		final Pangine engine = Pangine.getEngine();
 		final Scaler scaler = engine.getImageScaler();
 		final float zoom = engine.getZoom();
-		BufferedImage img = _img;
+		final BufferedImage padded = pad(_img);
+		BufferedImage img = padded;
 		if (scaler != null) {
 			for (int i = 1; i < zoom; i *= 2) {
 				img = scaler.scale(img);
@@ -165,15 +185,15 @@ public final class LwjglPanmage extends Panmage {
 			GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, w, h, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE,
 			scratch);
 		
-		return new Texture(_img.getWidth(), _img.getHeight(), tid);
+		return new Texture(_img.getWidth(), _img.getHeight(), padded.getWidth(), tid);
 ////
 	}
 	
 	private LwjglPanmage(final String id, final Panple origin,
 	                    final Panple boundMin, final Panple boundMax, final Texture tex) {
 	    super(id, origin, boundMin, boundMax);
-	    w = tex.w;
-	    h = tex.h;
+	    w = tex.usableWidth;
+	    h = tex.usableHeight;
 	    tid = tex.tid;
 	    if (tid == NULL_TID) {
 	    	throw new IllegalStateException("New texture id was unexpectedly " + tid);
@@ -182,8 +202,8 @@ public final class LwjglPanmage extends Panmage {
 		size = new SizePanple();
 		offx = 0;
 		offy = 0;
-		tw = tex.w;
-		th = tex.h;
+		tw = tex.paddedSize;
+		th = tex.paddedSize;
 	}
 	
 	public LwjglPanmage(final String id, final Panple origin,
@@ -217,11 +237,11 @@ public final class LwjglPanmage extends Panmage {
 	                                                 final String location,
 	                                                 final int iw, final int ih) {
 	    final Texture tex = getTexture(location);
-	    final int tw = tex.w;
+	    final int tw = tex.usableWidth;
 	    if (tw % iw != 0) {
 	        throw new IllegalArgumentException("Texture width " + tw + " not divisible by image width " + iw);
 	    }
-	    final int th = tex.h;
+	    final int th = tex.usableHeight;
         if (th % ih != 0) {
             throw new IllegalArgumentException("Texture height " + th + " not divisible by image height " + ih);
         }
