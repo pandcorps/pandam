@@ -37,7 +37,7 @@ import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.impl.FinPanple;
 import org.pandcorps.pandax.in.ControlScheme;
 import org.pandcorps.pandax.text.*;
-import org.pandcorps.pandax.text.Fonts.FontRequest;
+import org.pandcorps.pandax.text.Fonts.*;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.visual.FadeController;
 import org.pandcorps.platform.Enemy.EnemyDefinition;
@@ -76,7 +76,6 @@ public class PlatformGame extends BaseGame {
 	Goals: Collect n gems, defeat n enemies.
 	Random music per map.
 	Sound effects for jump, bump, stomp, hurt, etc.
-	Support fonts with non-square characters.
 	*/
 	
 	protected final static byte TILE_BREAK = 2;
