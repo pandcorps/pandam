@@ -45,7 +45,7 @@ import org.pandcorps.platform.Player.PlayerContext;
 
 public class PlatformGame extends BaseGame {
 	/*
-	Dog/horse/hippo/elephant/squirrel/gator/pig/walrus/beaver/stag/bull/ram player face.
+	Horse/hippo/elephant/squirrel/gator/pig/walrus/beaver/stag/bull/ram player face.
 	Player shirts.
 	Player falling/sliding images.
 	Allow jumping a little above top of Level.
@@ -76,6 +76,9 @@ public class PlatformGame extends BaseGame {
 	Goals: Collect n gems, defeat n enemies.
 	Random music per map.
 	Sound effects for jump, bump, stomp, hurt, etc.
+	Animal border shrinks/grows on Avatar screen.
+	Animal selector must show page containing selection when first rendered.
+	Does bump cause damage for more than 1 frame?  It probably shouldn't.
 	*/
 	
 	protected final static byte TILE_BREAK = 2;
@@ -507,7 +510,7 @@ public class PlatformGame extends BaseGame {
 	}
 	
 	protected final static List<String> getAnimals() {
-	    return Arrays.asList("Bear", "Cat", "Koala", "Mouse", "Rabbit", "Rhino");
+	    return Arrays.asList("Bear", "Cat", "Dog", "Koala", "Mouse", "Rabbit", "Rhino");
 	}
 	
 	protected final static int getNumEyes() {
