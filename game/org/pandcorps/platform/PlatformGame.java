@@ -47,6 +47,7 @@ public class PlatformGame extends BaseGame {
 	/*
 	Horse/hippo/elephant/squirrel/gator/pig/walrus/beaver/stag/bull/ram player face.
 	Player shirts.
+	Wings power-up.
 	Player falling/sliding images.
 	Allow jumping a little above top of Level.
 	Warp Map marker for entry/exit point.
@@ -79,6 +80,8 @@ public class PlatformGame extends BaseGame {
 	Animal border shrinks/grows on Avatar screen.
 	Animal selector must show page containing selection when first rendered.
 	Does bump cause damage for more than 1 frame?  It probably shouldn't.
+	If a Player stomps two Enemies at same time, the non-defeated Enemy hurts the Player.
+	If two Players stomp the same Enemy, one Player seems to get hurt.
 	*/
 	
 	protected final static byte TILE_BREAK = 2;
