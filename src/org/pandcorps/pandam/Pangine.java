@@ -624,11 +624,10 @@ public abstract class Pangine {
 			}
 		}
 		final int numCollisions = cols.size();
-		for (int i = 0; i < numCollisions; i += 2)
-		{
+		for (int i = 0; i < numCollisions; i += 2) {
 			final CollisionListener coli = (CollisionListener) cols.get(i);
 			final Collidable colj = cols.get(i + 1);
-			if (!coli.isDestroyed()) {
+			if (!(coli.isDestroyed() || colj.isDestroyed())) {
 				coli.onCollision(new CollisionEvent(colj));
 			}
 		}

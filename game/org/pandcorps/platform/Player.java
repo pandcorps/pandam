@@ -388,7 +388,9 @@ public class Player extends Character implements CollisionListener {
 	public void onCollision(final CollisionEvent event) {
 		final Collidable other = event.getCollider();
 		if (other instanceof Enemy) {
-			if (v < 0 && getPosition().getY() > other.getPosition().getY()) {
+		    /*if (other.isDestroyed()) { // Might happen if two Players stomp same Enemy at same time
+		        return; // But this is handled in Pangine
+		    } else*/ if (v < 0 && getPosition().getY() > other.getPosition().getY()) {
 				((Enemy) other).onStomp(this);
 				v = VEL_BUMP;
 			} else if (!isInvincible()) {
