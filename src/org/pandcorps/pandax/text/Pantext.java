@@ -413,7 +413,14 @@ public class Pantext extends Panctor {
     }
 	
 	public final void setRadioLine(final int radioLine) {
-	    this.radioLine = radioLine;
+	    //this.radioLine = radioLine; // Doesn't account for firstLine, paging
+	    final int orig = this.radioLine;
+	    while (this.radioLine != radioLine) {
+	        incRadioLine();
+	        if (this.radioLine == orig) {
+	            throw new IllegalArgumentException("Invalid radioLine " + radioLine);
+	        }
+	    }
 	}
 	
 	public final void incRadioLine() {
