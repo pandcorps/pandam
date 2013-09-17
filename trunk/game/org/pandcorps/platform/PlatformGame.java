@@ -78,7 +78,6 @@ public class PlatformGame extends BaseGame {
 	Random music per map.
 	Sound effects for jump, bump, stomp, hurt, etc.
 	Animal border shrinks/grows on Avatar screen.
-	Animal selector must show page containing selection when first rendered.
 	Does bump cause damage for more than 1 frame?  It probably shouldn't.
 	If a Player stomps two Enemies at same time, the non-defeated Enemy hurts the Player.
 	If two Players stomp the same Enemy, one Player seems to get hurt.
