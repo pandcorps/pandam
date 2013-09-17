@@ -150,11 +150,19 @@ public class Pantext extends Panctor {
         }
 	}
 	
+	// Number of columns on current page
 	protected final int getNumColumns() {
+	    return getNumColumns(firstLine, getStopLine());
+	}
+	
+	private final int getMaxColumns() {
+	    return getNumColumns(0, text.size());
+	}
+	
+	private final int getNumColumns(final int start, final int stop) {
 	    int max = 0;
-        final int stop = getStopLine();
         //for (final String line : text) {
-        for (int i = firstLine; i < stop; i++) {
+        for (int i = start; i < stop; i++) {
             final CharSequence line = text.get(i);
             int lineLength = line.length();
             if (i == cursorLine) {
@@ -371,9 +379,13 @@ public class Pantext extends Panctor {
 		return text.size();
 	}
 	
-	//public final void setCharactersPerLine(final int charactersPerLine) {
-	//    this.charactersPerLine = charactersPerLine;
-	//}
+	public final void setCharactersPerLine(final int charactersPerLine) {
+	    this.charactersPerLine = charactersPerLine;
+	}
+	
+	public final void stretchCharactersPerLineToFit() {
+	    this.charactersPerLine = getMaxColumns();
+	}
 	
 	public final void setLinesPerPage(final int linesPerPage) {
 	    this.linesPerPage = linesPerPage;
