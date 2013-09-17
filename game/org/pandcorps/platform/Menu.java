@@ -651,6 +651,7 @@ public class Menu {
             x = addPipe(x, y);
             x = addLink("Export", expLsn, x, y);
 			anmGrp.setSelected(animals.indexOf(avt.anm));
+			anmGrp.getLabel().stretchCharactersPerLineToFit();
 			eyeGrp.setSelected(avt.eye - 1);
 			redGrp.setSelected(getLineColor(avt.r));
 			grnGrp.setSelected(getLineColor(avt.g));
