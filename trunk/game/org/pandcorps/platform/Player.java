@@ -154,6 +154,7 @@ public class Player extends Character implements CollisionListener {
 	private int levelGems = 0;
 	protected int levelDefeatedEnemies = 0;
 	private int hurtTimer = 0;
+	private int stompTimer = 0;
 	private int activeTimer = 0;
 	private final Bubble bubble = new Bubble();
 	
@@ -300,6 +301,9 @@ public class Player extends Character implements CollisionListener {
 	    if (hurtTimer > 0) {
 	        hurtTimer--;
 	    }
+	    if (stompTimer > 0) {
+	        stompTimer--;
+	    }
 		if (mode == MODE_RETURN) {
 			onStepReturn();
 			return true;
@@ -390,9 +394,20 @@ public class Player extends Character implements CollisionListener {
 		if (other instanceof Enemy) {
 		    /*if (other.isDestroyed()) { // Might happen if two Players stomp same Enemy at same time
 		        return; // But this is handled in Pangine
-		    } else*/ if (v < 0 && getPosition().getY() > other.getPosition().getY()) {
+		    }*/
+		    final boolean aboveEnemy = getPosition().getY() > other.getPosition().getY();
+		    if (aboveEnemy && v < 0) {
 				((Enemy) other).onStomp(this);
 				v = VEL_BUMP;
+				stompTimer = 2;
+		    } else if (aboveEnemy && stompTimer > 0) {
+		        /*
+		        This Player just stomped two Enemies at the same time.
+		        The first one was already processed, causing the bounce.
+		        So the Player is no longer falling.
+		        But don't fall through to call onHurt below.
+		        Just ignore the second Enemy, so this case is a no-op.
+		        */
 			} else if (!isInvincible()) {
 				onHurt();
 				hurtTimer = 60; // Enable temporary invincibility
