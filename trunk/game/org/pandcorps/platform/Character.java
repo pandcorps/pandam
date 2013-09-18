@@ -48,10 +48,21 @@ public abstract class Character extends Panctor implements StepListener, Collida
 			return true; // No movement, but request was successful
 		}
 	    setMirror(v < 0);
-	    final int mult = v > 0 ? 1 : -1;
+	    final int mult;
+	    final Panple pos = getPosition();
+	    if (v > 0) {
+	        mult = 1;
+	        if (pos.getX() > PlatformGame.room.getSize().getX()) {
+	            return false;
+	        }
+	    } else {
+	        mult = -1;
+	        if (pos.getX() <= 0) {
+	            return false;
+	        }
+	    }
 	    final int n = v * mult;
 	    final int offWall = (OFF_X + 1) * mult;
-	    final Panple pos = getPosition();
 	    for (int i = 0; i < n; i++) {
 	    	if (onHorizontal(mult)) {
 	    		return true; // onHorizontal ran successfully
