@@ -49,6 +49,8 @@ public class PlatformGame extends BaseGame {
 	Player shirts.
 	Wings power-up.
 	Player falling/sliding images.
+	Blinking eye image, when still several seconds in Level, random on title.
+	Don't allow shadow avatars (at least in random generator, maybe in Menu)
 	Allow jumping a little above top of Level.
 	Warp Map marker for entry/exit point.
 	Pick random mountain color/texture shape used by Map and Level whenever a new Map is generated.
@@ -65,6 +67,7 @@ public class PlatformGame extends BaseGame {
 	Horizontal acceleration.
 	Shatter Gem effect when hurt.
 	Options (in/out game) - track active/p1
+	Exit game from within Level.
 	Font w/ custom chars for custom string/min square/case space if needed.
 	Colored player names.
 	Bump w/o break ceiling block.
@@ -74,12 +77,10 @@ public class PlatformGame extends BaseGame {
 	Collect fruit from trees.
 	Level to-do notes.
 	HUD notification queue, display if none currently displayed, else wait.
+	View Achievements in Menu.
 	Goals: Collect n gems, defeat n enemies.
 	Random music per map.
 	Sound effects for jump, bump, stomp, hurt, etc.
-	Does bump cause damage for more than 1 frame?  It probably shouldn't.
-	If a Player stomps two Enemies at same time, the non-defeated Enemy hurts the Player.
-	If two Players stomp the same Enemy, one Player seems to get hurt.
 	*/
 	
 	protected final static byte TILE_BREAK = 2;

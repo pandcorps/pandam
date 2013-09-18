@@ -132,7 +132,7 @@ public class Tiles {
         @Override
         public final void onCollision(final CollisionEvent event) {
             if (age > 1) {
-                return;
+                return; // Looks strange if Enemy walks onto tile shortly after bump and gets hit
             }
         	final Collidable c = event.getCollider();
         	if (c instanceof Character) {
