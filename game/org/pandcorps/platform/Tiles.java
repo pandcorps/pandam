@@ -131,6 +131,9 @@ public class Tiles {
         
         @Override
         public final void onCollision(final CollisionEvent event) {
+            if (age > 1) {
+                return;
+            }
         	final Collidable c = event.getCollider();
         	if (c instanceof Character) {
         		((Character) c).onBump(bumper);
