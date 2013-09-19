@@ -50,7 +50,6 @@ public class PlatformGame extends BaseGame {
 	Wings power-up.
 	Player falling/sliding images.
 	Blinking random on title.
-	Don't allow shadow avatars (at least in random generator, maybe in Menu)
 	Allow jumping a little above top of Level.
 	Warp Map marker for entry/exit point.
 	Pick random mountain color/texture shape used by Map and Level whenever a new Map is generated.
