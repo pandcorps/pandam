@@ -28,6 +28,7 @@ import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
 import org.pandcorps.game.core.ImtilX;
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.action.*;
 import org.pandcorps.pandax.in.ControlScheme;
 import org.pandcorps.pandax.text.*;
@@ -168,7 +169,7 @@ public class Menu {
 		}
 		
 		protected final Panctor addActor(final PlayerContext pc, final int x) {
-			final Panctor actor = new Panctor();
+			final Panctor actor = new Model();
 			actor.setView(pc.guy);
 			actor.getPosition().set(x, 16, tm.getForegroundDepth() + 1);
 			room.addActor(actor);
@@ -696,5 +697,18 @@ public class Menu {
 	
 	private final static int getLineColor(final float c) {
 		return Math.round(c * 4);
+	}
+	
+	private final static class Model extends Panctor implements StepListener {
+	    private int blinkTimer = Mathtil.randi(PlatformGame.DUR_BLINK / 4, PlatformGame.DUR_BLINK * 3 / 4);
+	    
+        @Override
+        public final void onStep(final StepEvent event) {
+            blinkTimer--;
+            if (blinkTimer <= 0) {
+                setView((Panimation) getView());
+                blinkTimer = Mathtil.randi(PlatformGame.DUR_BLINK * 5 / 4, PlatformGame.DUR_BLINK * 7 / 4);
+            }
+        }
 	}
 }

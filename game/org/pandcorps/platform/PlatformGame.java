@@ -49,7 +49,7 @@ public class PlatformGame extends BaseGame {
 	Player shirts.
 	Wings power-up.
 	Player falling/sliding images.
-	Blinking random on title.
+	Mirror randomly on title.
 	Allow jumping a little above top of Level.
 	Warp Map marker for entry/exit point.
 	Pick random mountain color/texture shape used by Map and Level whenever a new Map is generated.
@@ -101,6 +101,7 @@ public class PlatformGame extends BaseGame {
 	
 	private final static FinPanple ORIG_MAP = new FinPanple(8, -6, 0);
 	private final static int DUR_MAP = 6;
+	protected final static int DUR_BLINK = 120;
 	
 	protected final static short SPEED_FADE = 6;
 	
@@ -242,7 +243,8 @@ public class PlatformGame extends BaseGame {
 		final Panmage guyB = engine.createImage(ipre + "blink", og, ng, xg, guyBlink);
 		final String fpre = PRE_FRM + pre + ".";
 		final String spre = fpre + "still.";
-		final Panframe gfs1 = engine.createFrame(spre + "1", guy, 116), gfs2 = engine.createFrame(spre + "2", guyB, 4);
+		final int durClosed = DUR_BLINK / 30;
+		final Panframe gfs1 = engine.createFrame(spre + "1", guy, DUR_BLINK - durClosed), gfs2 = engine.createFrame(spre + "2", guyB, durClosed);
 		pc.guy = engine.createAnimation(PRE_ANM + pre + ".still", gfs1, gfs2);
 		final Panmage guy2 = engine.createImage(ipre + "2", og, ng, xg, guys[1]);
 		final Panmage guy3 = engine.createImage(ipre + "3", og, ng, xg, guys[2]);
