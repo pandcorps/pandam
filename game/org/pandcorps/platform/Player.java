@@ -69,7 +69,7 @@ public class Player extends Character implements CollisionListener {
 	    
 	    protected final ControlScheme ctrl;
 	    
-	    protected Panmage guy = null;
+	    protected Panimation guy = null;
 	    protected Panimation guyRun = null;
 	    protected Panmage guyJump = null;
 	    protected Panimation mapSouth = null;
@@ -130,7 +130,7 @@ public class Player extends Character implements CollisionListener {
 	    	if (guy == null) {
 	    		return;
 	    	}
-	    	guy.destroy();
+	    	guy.destroyAll();
 	    	guyRun.destroyAll();
 	    	guyJump.destroy();
 	    	mapSouth.destroyAll();
