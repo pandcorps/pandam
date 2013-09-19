@@ -516,7 +516,7 @@ public class PlatformGame extends BaseGame {
 	}
 	
 	protected final static int getNumEyes() {
-	    return 4;
+	    return 8;
 	}
 	
 	public final static void main(final String[] args) {

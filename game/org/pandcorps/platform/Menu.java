@@ -121,6 +121,9 @@ public class Menu {
 			grp.setChangeListener(chgLsn);
 			addItem(grp, x, y - 16);
 			addTitle(title, x, y);
+			final Pantext label = grp.getLabel();
+			label.setLinesPerPage(5);
+			label.stretchCharactersPerLineToFit();
 			return grp;
 		}
 		
@@ -589,7 +592,6 @@ public class Menu {
 			final int left = getLeft();
 			int x = left, y = getTop();
 			final RadioGroup anmGrp = addRadio("Animal", animals, anmLsn, x, y);
-			anmGrp.getLabel().setLinesPerPage(5);
 			final int numEyes = PlatformGame.getNumEyes();
 			final ArrayList<String> eyes = new ArrayList<String>(numEyes);
 			for (int i = 1; i <= numEyes; i++) {
@@ -651,7 +653,6 @@ public class Menu {
             x = addPipe(x, y);
             x = addLink("Export", expLsn, x, y);
 			anmGrp.setSelected(animals.indexOf(avt.anm));
-			anmGrp.getLabel().stretchCharactersPerLineToFit();
 			eyeGrp.setSelected(avt.eye - 1);
 			redGrp.setSelected(getLineColor(avt.r));
 			grnGrp.setSelected(getLineColor(avt.g));
