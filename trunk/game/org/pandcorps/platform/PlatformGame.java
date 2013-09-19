@@ -49,7 +49,7 @@ public class PlatformGame extends BaseGame {
 	Player shirts.
 	Wings power-up.
 	Player falling/sliding images.
-	Blinking eye image, when still several seconds in Level, random on title.
+	Blinking random on title.
 	Don't allow shadow avatars (at least in random generator, maybe in Menu)
 	Allow jumping a little above top of Level.
 	Warp Map marker for entry/exit point.
@@ -209,38 +209,47 @@ public class PlatformGame extends BaseGame {
 		reloadAnimalStrip(pc);
 	}
 	
+	private final static void buildGuy(final BufferedImage guy, final BufferedImage face, final BufferedImage[] tails, final BufferedImage eyes, final int y, final int t) {
+	    Imtil.copy(face, guy, 0, 0, 18, 18, 8, 1 + y, Imtil.COPY_FOREGROUND);
+        Imtil.copy(eyes, guy, 0, 0, 8, 4, 15, 10 + y, Imtil.COPY_FOREGROUND);
+        if (tails != null) {
+            Imtil.copy(tails[0], guy, 0, 0, 12, 12, t, 20 + y - t, Imtil.COPY_BACKGROUND);
+        }
+	}
+	
 	protected final static void reloadAnimalStrip(final PlayerContext pc) {
 		pc.destroy();
 		final Profile profile = pc.profile;
 	    final Avatar avatar = profile.currentAvatar;
 	    final PixelFilter f = new MultiplyPixelFilter(Channel.Blue, avatar.r, Channel.Blue, avatar.g, Channel.Blue, avatar.b);
 		final BufferedImage[] guys = loadChrStrip("Bear.png", 32, f);
+		final BufferedImage guyBlink = Imtil.copy(guys[0]);
 		final String anm = avatar.anm;
 		final BufferedImage face = Imtil.filter(ImtilX.loadImage("org/pandcorps/platform/res/chr/Face" + anm + ".png", false), f);
 		final BufferedImage[] tails = loadChrStrip("Tail" + anm + ".png", 12, f, false);
 		final BufferedImage eyes = ImtilX.loadImage("org/pandcorps/platform/res/chr/Eyes0" + avatar.eye + ".png", false);
+		final BufferedImage eyesBlink = ImtilX.loadImage("org/pandcorps/platform/res/chr/EyesBlink.png", false);
 		final int size = guys.length;
 		for (int i = 0; i < size; i++) {
-			final int y = (i == 3) ? -1 : 0;
-			final BufferedImage guy = guys[i];
-			Imtil.copy(face, guy, 0, 0, 18, 18, 8, 1 + y, Imtil.COPY_FOREGROUND);
-			Imtil.copy(eyes, guy, 0, 0, 8, 4, 15, 10 + y, Imtil.COPY_FOREGROUND);
-			final int t = (i < 3) ? i : 1;
-			if (tails != null) {
-				Imtil.copy(tails[0], guy, 0, 0, 12, 12, t, 20 + y - t, Imtil.COPY_BACKGROUND);
-			}
+			buildGuy(guys[i], face, tails, eyes, (i == 3) ? -1 : 0, (i < 3) ? i : 1);
 		}
+		buildGuy(guyBlink, face, tails, eyesBlink, 0, 0);
 		final String pre = "guy." + pc.index;
 		
 		final Pangine engine = Pangine.getEngine();
 		final FinPanple ng = new FinPanple(-Player.PLAYER_X, 0, 0), xg = new FinPanple(Player.PLAYER_X, Player.PLAYER_H, 0);
 		final String ipre = PRE_IMG + pre + ".";
-		pc.guy = engine.createImage(ipre + "1", og, ng, xg, guys[0]);
+		final Panmage guy = engine.createImage(ipre + "1", og, ng, xg, guys[0]);
+		final Panmage guyB = engine.createImage(ipre + "blink", og, ng, xg, guyBlink);
+		final String fpre = PRE_FRM + pre + ".";
+		final String spre = fpre + "still.";
+		final Panframe gfs1 = engine.createFrame(spre + "1", guy, 116), gfs2 = engine.createFrame(spre + "2", guyB, 4);
+		pc.guy = engine.createAnimation(PRE_ANM + pre + ".still", gfs1, gfs2);
 		final Panmage guy2 = engine.createImage(ipre + "2", og, ng, xg, guys[1]);
 		final Panmage guy3 = engine.createImage(ipre + "3", og, ng, xg, guys[2]);
-		final String fpre = PRE_FRM + pre + ".";
-		final Panframe gf1 = engine.createFrame(fpre + "1", pc.guy, 2), gf2 = engine.createFrame(fpre + "2", guy2, 2), gf3 = engine.createFrame(fpre + "3", guy3, 2);
-		pc.guyRun = engine.createAnimation(PRE_ANM + pre + ".run", gf2, gf3, gf1);
+		final String rpre = fpre + "run.";
+		final Panframe gfr1 = engine.createFrame(rpre + "1", guy, 2), gfr2 = engine.createFrame(rpre + "2", guy2, 2), gfr3 = engine.createFrame(rpre + "3", guy3, 2);
+		pc.guyRun = engine.createAnimation(PRE_ANM + pre + ".run", gfr2, gfr3, gfr1);
 		pc.guyJump = engine.createImage(ipre + "jump", og, ng, xg, guys[3]);
 	    //guy = engine.createImage(pre, new FinPanple(8, 0, 0), null, null, ImtilX.loadImage("org/pandcorps/platform/res/chr/Player.png"));
 	    
