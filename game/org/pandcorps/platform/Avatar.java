@@ -43,9 +43,11 @@ public class Avatar extends PlayerData implements Segmented {
     public void randomize() {
         anm = Mathtil.rand(PlatformGame.getAnimals());
         eye = Mathtil.randi(1, PlatformGame.getNumEyes());
-        r = randColor();
-        g = randColor();
-        b = randColor();
+        do {
+            r = randColor();
+            g = randColor();
+            b = randColor();
+        } while (r == 0 && g == 0 && b == 0);
     }
     
     public void load(final Avatar src) {
