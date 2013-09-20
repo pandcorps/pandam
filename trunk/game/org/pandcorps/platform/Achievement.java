@@ -37,8 +37,9 @@ public abstract class Achievement {
 		// block milestones
 		// Gem milestones
 		// Pegasus, Finish Level as a winged horse
+		// Beyond Belief, Finish Level as a flying pig
 		// Babe, Finish Level as a blue bull/ox
-		// Menagerie, Use each animal to finish a Level
+		// Menagerie (Zoologist), Use each animal to finish a Level
 	};
 	
 	private final String name;
