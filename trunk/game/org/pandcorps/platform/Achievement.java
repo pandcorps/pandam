@@ -35,6 +35,7 @@ public abstract class Achievement {
 		// level w/ no damage
 		// Bear Market, Finish Level w/ no gems
 		// Bull Market, Collect all gems in a Level
+		// Juggernaut, Break all blocks in a Level
 		// block milestones
 		// Gem milestones
 		// Pegasus, Finish Level as a winged horse
