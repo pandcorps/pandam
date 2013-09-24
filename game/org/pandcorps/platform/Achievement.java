@@ -33,7 +33,8 @@ public abstract class Achievement {
 		new WorldFeat("World 1", 1), new WorldFeat("World Tour", 10),
 		new NoEnemyFeat(), new AllEnemyFeat()
 		// level w/ no damage
-		// level w/ no gems
+		// Bear Market, Finish Level w/ no gems
+		// Bull Market, Collect all gems in a Level
 		// block milestones
 		// Gem milestones
 		// Pegasus, Finish Level as a winged horse
