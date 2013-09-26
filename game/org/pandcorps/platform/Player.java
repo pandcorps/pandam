@@ -72,6 +72,7 @@ public class Player extends Character implements CollisionListener {
 	    protected Panimation guy = null;
 	    protected Panimation guyRun = null;
 	    protected Panmage guyJump = null;
+	    protected Panmage guyFall = null;
 	    protected Panimation mapSouth = null;
 	    protected Panimation mapEast = null;
 	    protected Panimation mapWest = null;
@@ -133,6 +134,7 @@ public class Player extends Character implements CollisionListener {
 	    	guy.destroyAll();
 	    	guyRun.destroyAll();
 	    	guyJump.destroy();
+	    	guyFall.destroy();
 	    	mapSouth.destroyAll();
 	    	mapEast.destroyAll();
 	    	mapWest.destroyAll();
@@ -384,7 +386,7 @@ public class Player extends Character implements CollisionListener {
 	
 	@Override
 	protected final boolean onAir() {
-		changeView(pc.guyJump);
+		changeView(v > 0 ? pc.guyJump : pc.guyFall);
 		return flying;
 	}
 	

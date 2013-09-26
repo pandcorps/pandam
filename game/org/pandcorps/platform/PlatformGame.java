@@ -50,7 +50,7 @@ public class PlatformGame extends BaseGame {
 	Ghost trail, particle trail.
 	Wings power-up, spin-float when hold jump while falling, 2xjump, inf flip-jump.
 	Gem multipliers, invincibility.
-	Player falling/sliding images.
+	Player sliding image.
 	Mirror randomly on title.
 	Allow jumping a little above top of Level.
 	Warp Map marker for entry/exit point.
@@ -255,6 +255,7 @@ public class PlatformGame extends BaseGame {
 		final Panframe gfr1 = engine.createFrame(rpre + "1", guy, 2), gfr2 = engine.createFrame(rpre + "2", guy2, 2), gfr3 = engine.createFrame(rpre + "3", guy3, 2);
 		pc.guyRun = engine.createAnimation(PRE_ANM + pre + ".run", gfr2, gfr3, gfr1);
 		pc.guyJump = engine.createImage(ipre + "jump", og, ng, xg, guys[3]);
+		pc.guyFall = engine.createImage(ipre + "fall", og, ng, xg, guys[4]);
 	    //guy = engine.createImage(pre, new FinPanple(8, 0, 0), null, null, ImtilX.loadImage("org/pandcorps/platform/res/chr/Player.png"));
 	    
 		final BufferedImage[] maps = loadChrStrip("BearMap.png", 32, f);
