@@ -50,8 +50,24 @@ public abstract class Record {
         return parseByte(getValue(i));
     }
     
+    public final byte getByte(final int i, final byte def) {
+        return parseByte(getValue(i), def);
+    }
+    
+    public final byte initByte(final int i) {
+        return getByte(i, (byte) 0);
+    }
+    
     public final short shortValue(final int i) {
         return parseShort(getValue(i));
+    }
+    
+    public final short getShort(final int i, final short def) {
+        return parseShort(getValue(i), def);
+    }
+    
+    public final short initShort(final int i) {
+        return getShort(i, (short) 0);
     }
     
     public final int intValue(final int i) {
@@ -82,8 +98,20 @@ public abstract class Record {
         return parseFloat(getValue(i));
     }
     
+    public final float getFloat(final int i, final float def) {
+        return parseFloat(getValue(i), def);
+    }
+    
+    public final float initFloat(final int i) {
+        return getFloat(i, 0);
+    }
+    
     public final boolean booleanValue(final int i) {
         return parseBoolean(getValue(i));
+    }
+    
+    public final boolean getBoolean(final int i, final boolean def) {
+        return parseBoolean(getValue(i), def);
     }
     
     public final Byte getByte(final int i) {
@@ -158,8 +186,16 @@ public abstract class Record {
         return Byte.parseByte(value);
     }
     
+    protected final static byte parseByte(final String value, final byte def) {
+        return Chartil.isEmpty(value) ? def : parseByte(value);
+    }
+    
     protected final static short parseShort(final String value) {
         return Short.parseShort(value);
+    }
+    
+    protected final static short parseShort(final String value, final short def) {
+        return Chartil.isEmpty(value) ? def : parseShort(value);
     }
     
     protected final static int parseInt(final String value) {
@@ -182,7 +218,15 @@ public abstract class Record {
         return Float.parseFloat(value);
     }
     
+    protected final static float parseFloat(final String value, final float def) {
+        return Chartil.isEmpty(value) ? def : parseFloat(value);
+    }
+    
     protected final static boolean parseBoolean(final String value) {
         return Boolean.parseBoolean(value);
+    }
+    
+    protected final static boolean parseBoolean(final String value, final boolean def) {
+        return Chartil.isEmpty(value) ? def : parseBoolean(value);
     }
 }
