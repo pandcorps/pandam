@@ -144,6 +144,9 @@ public class Player extends Character implements CollisionListener {
 	    	mapNorth.destroyAll();
 	    	mapLadder.destroyAll();
 	    	mapPose.destroy();
+	    	back.destroy();
+	    	backJump.destroyAll();
+	    	backFall.destroyAll();
 	    }
 	}
 	
