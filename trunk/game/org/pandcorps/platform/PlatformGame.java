@@ -47,7 +47,9 @@ public class PlatformGame extends BaseGame {
 	/*
 	Horse/hippo/elephant/squirrel/gator/pig/walrus/beaver/stag/bull/ram player face.
 	Player shirts.
-	Wings power-up.
+	Ghost trail, particle trail.
+	Wings power-up, spin-float when hold jump while falling, 2xjump, inf flip-jump.
+	Gem multipliers, invincibility.
 	Player falling/sliding images.
 	Mirror randomly on title.
 	Allow jumping a little above top of Level.
@@ -59,6 +61,7 @@ public class PlatformGame extends BaseGame {
 	Bubble when map-traveling.
 	Train-riding levels.
 	Ridable dragons.
+	Mage Enemy w/ pointy hat.
 	Gargoyles catch/carry Player, like moving platforms, one can jump to/from them, but not run on them.
 	Cannons on ground that Player enters to be launched.
 	Cannons in air that auto-fire, others that wait for jump input.
