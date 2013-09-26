@@ -403,7 +403,7 @@ public class Map {
 	}
 	
 	private final static TileMapImage getBaseImage() {
-		return Mathtil.rand(75) ? base : imgMap[4][Mathtil.randi(0, 5)];
+		return Mathtil.rand(75) ? base : imgMap[4][Mathtil.randi(0, 6)];
 	}
 	
 	private final static Pair<Integer, Integer> getKey(final Tile t) {
@@ -711,7 +711,7 @@ public class Map {
 		marker(m, 15);
 		tm.getTile(x, 15).setForeground(imgMap[1][2]);
 		tm.getTile(n, 14).setImages(imgMap[0][3], imgMap[2][0]);
-		tm.getTile(m, 14).setImages(imgMap[0][4], imgMap[2][1], TILE_VERT);
+		tm.getTile(m, 14).setImages(imgMap[0][4], imgMap[2][6], TILE_VERT);
 		tm.getTile(x, 14).setImages(imgMap[0][5], imgMap[2][2]);
 		tm.getTile(n, 13).setImages(imgMap[0][3], imgMap[0][2]);
 		tm.getTile(m, 13).setImages(imgMap[0][4], imgMap[0][6], TILE_VERT);
@@ -949,8 +949,10 @@ public class Map {
 		final Tile t = tm.initTile(i, j);
 		if (isWater(t)) {
 			t.setForeground(imgMap[0][7], TILE_HORIZ);
-		} else if (isWater(i - 1, j) || isWater(i + 1, j)) {
-			t.setBehavior(TILE_HORIZ);
+		} else if (isWater(i - 1, j)) {
+			t.setBackground(imgMap[1][6], TILE_HORIZ);
+		} else if (isWater(i + 1, j)) {
+			t.setBackground(imgMap[1][7], TILE_HORIZ);
 		} else {
 			t.setBackground(imgMap[3][1], TILE_HORIZ);
 		}
