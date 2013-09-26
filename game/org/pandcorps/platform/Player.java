@@ -38,7 +38,7 @@ public class Player extends Character implements CollisionListener {
 	private final static int VEL_CATCH_UP = 8;
 	private final static int VEL_JUMP = 8;
 	protected final static int VEL_BUMP = 4;
-	private final static byte MODE_NORMAL = 0;
+	protected final static byte MODE_NORMAL = 0;
 	private final static byte MODE_RETURN = 1;
 	private final static byte JUMP_HIGH = 1;
 	//private final static byte JUMP_DOUBLE = 2;
@@ -164,6 +164,7 @@ public class Player extends Character implements CollisionListener {
 		super(PLAYER_X, PLAYER_H);
 	    this.pc = pc;
 	    pc.player = this;
+	    jumpMode = pc.profile.currentAvatar.jumpMode;
 		final Pangine engine = Pangine.getEngine();
 		setView(pc.guy);
 		PlatformGame.room.addActor(bubble);
