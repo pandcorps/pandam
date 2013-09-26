@@ -43,7 +43,7 @@ public class Player extends Character implements CollisionListener {
 	private final static byte JUMP_HIGH = 1;
 	//private final static byte JUMP_DOUBLE = 2;
 	//private final static byte JUMP_INFINITE = 3;
-	private final static byte JUMP_FLY = 4;
+	protected final static byte JUMP_FLY = 4;
 	
 	public static class PlayerData {
 	    private String name = null;
@@ -79,6 +79,9 @@ public class Player extends Character implements CollisionListener {
 	    protected Panimation mapNorth = null;
 	    protected Panimation mapLadder = null;
 	    protected Panmage mapPose = null;
+	    protected Panmage back = null;
+	    protected Panimation backJump = null;
+	    protected Panimation backFall = null;
 	    
 	    public PlayerContext(final Profile profile, final ControlScheme ctrl, final int index) {
 	        this.profile = profile;
@@ -159,6 +162,7 @@ public class Player extends Character implements CollisionListener {
 	private int stompTimer = 0;
 	private int activeTimer = 0;
 	private final Bubble bubble = new Bubble();
+	private Panctor back = null;
 	
 	public Player(final PlayerContext pc) {
 		super(PLAYER_X, PLAYER_H);
@@ -168,6 +172,11 @@ public class Player extends Character implements CollisionListener {
 		final Pangine engine = Pangine.getEngine();
 		setView(pc.guy);
 		PlatformGame.room.addActor(bubble);
+		if (jumpMode == JUMP_FLY) {
+		    back = new Panctor();
+		    back.setView(pc.back);
+		    PlatformGame.room.addActor(back);
+		}
 		final Panteraction interaction = engine.getInteraction();
 		final ControlScheme ctrl = pc.ctrl;
 		register(ctrl.get1(), new ActionStartListener() {
@@ -372,6 +381,9 @@ public class Player extends Character implements CollisionListener {
 		final Panple pos = getPosition();
 		PlatformGame.setPosition(bubble, pos.getX(), pos.getY() - 1, PlatformGame.DEPTH_BUBBLE);
 		bubble.setVisible(isInvincible() && Pangine.getEngine().isOn(4));
+		if (back != null) {
+		    PlatformGame.setPosition(back, pos.getX(), pos.getY(), PlatformGame.DEPTH_PLAYER_BACK);
+		}
 	}
 	
 	@Override
@@ -445,6 +457,7 @@ public class Player extends Character implements CollisionListener {
 	@Override
 	protected final void onDestroy() {
 		bubble.destroy();
+		Panctor.destroy(back);
 	}
 	
 	private final static class Bubble extends Panctor {

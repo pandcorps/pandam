@@ -94,11 +94,12 @@ public class PlatformGame extends BaseGame {
     protected final static byte TILE_DOWNSLOPE_FLOOR = 8;
 	
 	//protected final static int DEPTH_POWERUP = 0;
-	protected final static int DEPTH_ENEMY = 3;
-	protected final static int DEPTH_PLAYER = 1;
-	protected final static int DEPTH_BUBBLE = 2;
-	protected final static int DEPTH_SHATTER = 4;
-	protected final static int DEPTH_SPARK = 5;
+	protected final static int DEPTH_ENEMY = 4;
+	protected final static int DEPTH_PLAYER_BACK = 1;
+	protected final static int DEPTH_PLAYER = 2;
+	protected final static int DEPTH_BUBBLE = 3;
+	protected final static int DEPTH_SHATTER = 5;
+	protected final static int DEPTH_SPARK = 6;
 	
 	protected final static int TIME_FLASH = 60;
 	
@@ -124,6 +125,7 @@ public class PlatformGame extends BaseGame {
 	protected final static ArrayList<PlayerContext> pcs = new ArrayList<PlayerContext>();
 	protected static MultiFont font = null;
 	protected final static FinPanple og = new FinPanple(16, 1, 0);
+	protected final static FinPanple ow = new FinPanple(17, 1, 0);
 	protected static Panmage bubble = null;
 	protected final static ArrayList<EnemyDefinition> enemies = new ArrayList<EnemyDefinition>();
 	protected static Panmage block8 = null;
@@ -292,6 +294,12 @@ public class PlatformGame extends BaseGame {
 		final BufferedImage tailNorth = Coltil.get(tails, 2), faceNorth = faceMap[2];
 		pc.mapNorth = createNorth(maps, 3, tailNorth, faceNorth, pre, "North");
 		pc.mapLadder = createNorth(maps, 4, tailNorth, faceNorth, pre, "Ladder");
+		
+		if (avatar.jumpMode == Player.JUMP_FLY) {
+		    final String wpre = pre + ".wing";
+		    final BufferedImage[] wings = loadChrStrip("Wings.png", 32, f);
+		    pc.back = engine.createImage(wpre, ow, ng, xg, wings[0]);
+		}
 	}
 	
 	private final static Panimation createNorth(final BufferedImage[] maps, final int mi, final BufferedImage tailNorth, final BufferedImage faceNorth,
