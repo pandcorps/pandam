@@ -43,7 +43,7 @@ public class Level {
     protected static Panroom room = null;
     protected static Panmage timg = null;
     protected static Panmage bgimg = null;
-    protected static DynamicTileMap tm = null;
+    protected static TileMap tm = null;
     protected static TileMap bgtm1 = null;
     protected static TileMap bgtm2 = null;
     protected static TileMap bgtm3 = null;
@@ -135,13 +135,14 @@ public class Level {
     
     protected final static void loadLayers() {
         room = PlatformGame.createRoom(w, 256);
-        tm = new DynamicTileMap("act.tilemap", room, ImtilX.DIM, ImtilX.DIM);
+        final DynamicTileMap dtm = new DynamicTileMap("act.tilemap", room, ImtilX.DIM, ImtilX.DIM);
+        tm = dtm;
         room.addActor(tm);
         
         timg = getTileImage();
         tm.setImageMap(timg);
         imgMap = tm.splitImageMap();
-        tm.setTileListener(new BlockTileListener(imgMap));
+        dtm.setTileListener(new BlockTileListener(imgMap));
         
         final Panlayer bg1 = PlatformGame.createParallax(room, 2);
         bgtm1 = new TileMap("act.bgmap1", bg1, ImtilX.DIM, ImtilX.DIM);

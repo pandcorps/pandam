@@ -165,7 +165,7 @@ public class Player extends Character implements CollisionListener {
 	private int stompTimer = 0;
 	private int activeTimer = 0;
 	private final Bubble bubble = new Bubble();
-	private Panctor back = null;
+	private final Accessories acc;
 	
 	public Player(final PlayerContext pc) {
 		super(PLAYER_X, PLAYER_H);
@@ -175,11 +175,7 @@ public class Player extends Character implements CollisionListener {
 		final Pangine engine = Pangine.getEngine();
 		setView(pc.guy);
 		PlatformGame.room.addActor(bubble);
-		if (jumpMode == JUMP_FLY) {
-		    back = new Panctor();
-		    back.setView(pc.back);
-		    PlatformGame.room.addActor(back);
-		}
+		acc = new Accessories(pc);
 		final Panteraction interaction = engine.getInteraction();
 		final ControlScheme ctrl = pc.ctrl;
 		register(ctrl.get1(), new ActionStartListener() {
@@ -384,10 +380,7 @@ public class Player extends Character implements CollisionListener {
 		final Panple pos = getPosition();
 		PlatformGame.setPosition(bubble, pos.getX(), pos.getY() - 1, PlatformGame.DEPTH_BUBBLE);
 		bubble.setVisible(isInvincible() && Pangine.getEngine().isOn(4));
-		if (back != null) {
-		    PlatformGame.setPosition(back, pos.getX(), pos.getY(), PlatformGame.DEPTH_PLAYER_BACK);
-		    back.setMirror(isMirror());
-		}
+		acc.onStepEnd(this);
 	}
 	
 	@Override
@@ -399,16 +392,16 @@ public class Player extends Character implements CollisionListener {
 		} else {
 			changeView(pc.guy);
 		}
-		if (back != null) {
-			back.changeView(pc.back);
+		if (acc.back != null) {
+			acc.back.changeView(pc.back);
 		}
 	}
 	
 	@Override
 	protected final boolean onAir() {
 		changeView(v > 0 ? pc.guyJump : pc.guyFall);
-		if (back != null) {
-			back.changeView(flying ? pc.backJump : pc.backFall); // v > 0 doesn't flap as soon as jump is pressed
+		if (acc.back != null) {
+			acc.back.changeView(flying ? pc.backJump : pc.backFall); // v > 0 doesn't flap as soon as jump is pressed
 		}
 		return flying;
 	}
@@ -467,12 +460,36 @@ public class Player extends Character implements CollisionListener {
 	@Override
 	protected final void onDestroy() {
 		bubble.destroy();
-		Panctor.destroy(back);
+		acc.destroy();
 	}
 	
 	private final static class Bubble extends Panctor {
 		{
 			setView(PlatformGame.bubble);
+		}
+	}
+	
+	protected final static class Accessories {
+		private Panctor back = null;
+		
+		protected Accessories(final PlayerContext pc) {
+			if (pc.profile.currentAvatar.jumpMode == JUMP_FLY) {
+			    back = new Panctor();
+			    back.setView(pc.back);
+			    PlatformGame.room.addActor(back);
+			}
+		}
+		
+		protected void onStepEnd(final Panctor act) {
+			if (back != null) {
+				final Panple pos = act.getPosition();
+			    PlatformGame.setPosition(back, pos.getX(), pos.getY(), PlatformGame.DEPTH_PLAYER_BACK);
+			    back.setMirror(act.isMirror());
+			}
+		}
+		
+		protected void destroy() {
+			Panctor.destroy(back);
 		}
 	}
 }

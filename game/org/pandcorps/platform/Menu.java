@@ -53,7 +53,7 @@ public class Menu {
 		protected final StringBuilder inf = new StringBuilder();
 		protected TileMap tm = null;
 		protected Panmage timg = null;
-		protected Panctor actor = null;
+		protected Model actor = null;
 		protected Pantext infLbl = null;
 		protected boolean disabled = false;
 		protected Panform form = null;
@@ -72,6 +72,7 @@ public class Menu {
 			Pangine.getEngine().setBgColor(new FinPancolor((short) 128, (short) 192, Pancolor.MAX_VALUE));
 			
 			tm = new TileMap(Pantil.vmid(), room, ImtilX.DIM, ImtilX.DIM);
+			Level.tm = tm;
 			timg = Level.getTileImage();
 			tm.setImageMap(timg);
 			final TileMapImage[][] imgMap = tm.splitImageMap();
@@ -168,16 +169,16 @@ public class Menu {
 			return x + (SIZE_FONT * 2);
 		}
 		
-		protected final Panctor addActor(final PlayerContext pc, final int x) {
-			final Panctor actor = new Model();
-			actor.setView(pc.guy);
-			actor.getPosition().set(x, 16, tm.getForegroundDepth() + 1);
+		protected final Model addActor(final PlayerContext pc, final int x) {
+			final Model actor = new Model(pc);
+			PlatformGame.setPosition(actor, x, 16, PlatformGame.DEPTH_PLAYER);
 			room.addActor(actor);
 			return actor;
 		}
 		
 		@Override
 	    protected void destroy() {
+			Level.tm = null;
 			timg.destroy();
 		}
 		
@@ -225,7 +226,7 @@ public class Menu {
 			    }
 				update(event.toString());
 				PlatformGame.reloadAnimalStrip(pc);
-				actor.setView(pc.guy);
+				actor.load(pc);
 			}
 			
 			protected abstract void update(final String value);
@@ -445,7 +446,7 @@ public class Menu {
                     pc.profile.avatars.add(avt);
                     pc.profile.currentAvatar = avt;
                     PlatformGame.reloadAnimalStrip(pc);
-                    actor.setView(pc.guy);
+                    actor.load(pc);
                     goAvatar(); }};
             x = addPipe(x, y);
             x = addLink("New", newLsn, x, y);
@@ -465,7 +466,7 @@ public class Menu {
 	                    pc.profile.avatars.remove(pc.profile.currentAvatar);
 	                    pc.profile.currentAvatar = pc.profile.avatars.get(0);
 	                    PlatformGame.reloadAnimalStrip(pc);
-	                    actor.setView(pc.guy);
+	                    actor.load(pc);
 	                    save = true;
 	                    goProfile(); }};
 	            x = addPipe(x, y);
@@ -635,7 +636,7 @@ public class Menu {
                         pc.profile.replaceAvatar(old);
                     }
                     PlatformGame.reloadAnimalStrip(pc);
-                    actor.setView(pc.guy);
+                    actor.load(pc);
                     save = false;
                     exit(); }};
             x = addPipe(x, y);
@@ -650,7 +651,7 @@ public class Menu {
                     PlatformGame.reloadAnimalStrip(pc);
                     engine.setImageSavingEnabled(false);
                     setInfo(INFO_SAVED);
-                    actor.setView(pc.guy); }};
+                    actor.load(pc); }};
             x = addPipe(x, y);
             x = addLink("Export", expLsn, x, y);
 			anmGrp.setSelected(animals.indexOf(avt.anm));
@@ -701,6 +702,19 @@ public class Menu {
 	
 	private final static class Model extends Panctor implements StepListener {
 	    private int blinkTimer = Mathtil.randi(PlatformGame.DUR_BLINK / 4, PlatformGame.DUR_BLINK * 3 / 4);
+	    private Accessories acc = null;
+	    
+	    private Model(final PlayerContext pc) {
+	    	load(pc);
+	    }
+	    
+	    private void load(final PlayerContext pc) {
+	    	if (acc != null) {
+	    		acc.destroy();
+	    	}
+	    	acc = new Accessories(pc);
+	    	setView(pc.guy);
+	    }
 	    
         @Override
         public final void onStep(final StepEvent event) {
@@ -709,6 +723,12 @@ public class Menu {
                 setView((Panimation) getView());
                 blinkTimer = Mathtil.randi(PlatformGame.DUR_BLINK * 5 / 4, PlatformGame.DUR_BLINK * 7 / 4);
             }
+            acc.onStepEnd(this);
         }
+        
+        @Override
+    	protected final void onDestroy() {
+    		acc.destroy();
+    	}
 	}
 }
