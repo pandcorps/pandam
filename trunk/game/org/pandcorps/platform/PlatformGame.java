@@ -48,7 +48,7 @@ public class PlatformGame extends BaseGame {
 	Horse/hippo/elephant/squirrel/gator/pig/walrus/beaver/stag/bull/ram player face.
 	Player shirts.
 	Ghost trail, particle trail.
-	Wings power-up (on Map), spin-float when hold jump while falling, 2xjump, inf flip-jump.
+	Wings power-up (buy/equip), spin-float when hold jump while falling, 2xjump, inf flip-jump.
 	Gem multipliers, invincibility.
 	Player sliding image.
 	Allow jumping a little above top of Level.
@@ -261,8 +261,16 @@ public class PlatformGame extends BaseGame {
 	    //guy = engine.createImage(pre, new FinPanple(8, 0, 0), null, null, ImtilX.loadImage("org/pandcorps/platform/res/chr/Player.png"));
 	    
 		final BufferedImage[] maps = loadChrStrip("BearMap.png", 32, f);
+		final boolean needWing = avatar.jumpMode == Player.JUMP_FLY;
+		final BufferedImage[] wingMap = needWing ? loadChrStrip("WingsMap.png", 32, f) : null;
 		final BufferedImage[] faceMap = loadChrStrip("FaceMap" + anm + ".png", 18, f);
-		final BufferedImage south1 = maps[0], south2 = Imtil.copy(south1), southPose = maps[5], faceSouth = faceMap[0];
+		final BufferedImage south1 = maps[0], southPose = maps[5], faceSouth = faceMap[0];
+		if (needWing) {
+			for (final BufferedImage south : new BufferedImage[] {south1, southPose}) {
+				Imtil.copy(wingMap[0], south, 0, 0, 32, 32, 0, 0, Imtil.COPY_BACKGROUND);
+			}
+		}
+		final BufferedImage south2 = Imtil.copy(south1);
 		Imtil.mirror(south2);
 		for (final BufferedImage south : new BufferedImage[] {south1, south2, southPose}) {
 			Imtil.copy(faceSouth, south, 0, 0, 18, 18, 7, 5, Imtil.COPY_FOREGROUND);
@@ -273,6 +281,9 @@ public class PlatformGame extends BaseGame {
 		final BufferedImage east1 = maps[1], east2 = maps[2], faceEast = faceMap[1];
 		final BufferedImage[] easts = {east1, east2};
 		for (final BufferedImage east : easts) {
+			if (needWing) {
+				Imtil.copy(wingMap[1], east, 0, 0, 32, 32, 0, 0, Imtil.COPY_BACKGROUND);
+			}
 			Imtil.copy(faceEast, east, 0, 0, 18, 18, 7, 5, Imtil.COPY_FOREGROUND);
 			if (tails != null) {
 				Imtil.copy(tails[1], east, 0, 0, 12, 12, 1, 20, Imtil.COPY_BACKGROUND);
@@ -292,10 +303,11 @@ public class PlatformGame extends BaseGame {
 		}
 		pc.mapWest = createAnmMap(pre, "west", west1, west2);
 		final BufferedImage tailNorth = Coltil.get(tails, 2), faceNorth = faceMap[2];
-		pc.mapNorth = createNorth(maps, 3, tailNorth, faceNorth, pre, "North");
-		pc.mapLadder = createNorth(maps, 4, tailNorth, faceNorth, pre, "Ladder");
+		final BufferedImage wing = needWing ? wingMap[0] : null;
+		pc.mapNorth = createNorth(maps, 3, wing, tailNorth, faceNorth, pre, "North");
+		pc.mapLadder = createNorth(maps, 4, wing, tailNorth, faceNorth, pre, "Ladder");
 		
-		if (avatar.jumpMode == Player.JUMP_FLY) {
+		if (needWing) {
 		    final String wpre = pre + ".wing.";
 		    final String iwpre = PRE_IMG + wpre;
 		    final BufferedImage[] wings = loadChrStrip("Wings.png", 32, f);
@@ -311,11 +323,14 @@ public class PlatformGame extends BaseGame {
 		}
 	}
 	
-	private final static Panimation createNorth(final BufferedImage[] maps, final int mi, final BufferedImage tailNorth, final BufferedImage faceNorth,
+	private final static Panimation createNorth(final BufferedImage[] maps, final int mi, final BufferedImage wing, final BufferedImage tailNorth, final BufferedImage faceNorth,
 	                                            final String pre, final String suf) {
 		final BufferedImage north1 = maps[mi];
 		if (tailNorth != null) {
 			Imtil.copy(tailNorth, north1, 0, 0, 12, 12, 10, 20, Imtil.COPY_FOREGROUND);
+		}
+		if (wing != null) {
+			Imtil.copy(wing, north1, 0, 0, 32, 32, 0, 0, Imtil.COPY_FOREGROUND);
 		}
 		final BufferedImage north2 = Imtil.copy(north1);
 		Imtil.mirror(north2);
