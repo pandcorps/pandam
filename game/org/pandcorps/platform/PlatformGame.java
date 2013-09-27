@@ -48,10 +48,9 @@ public class PlatformGame extends BaseGame {
 	Horse/hippo/elephant/squirrel/gator/pig/walrus/beaver/stag/bull/ram player face.
 	Player shirts.
 	Ghost trail, particle trail.
-	Wings power-up, spin-float when hold jump while falling, 2xjump, inf flip-jump.
+	Wings power-up (on Map), spin-float when hold jump while falling, 2xjump, inf flip-jump.
 	Gem multipliers, invincibility.
 	Player sliding image.
-	Mirror randomly on title.
 	Allow jumping a little above top of Level.
 	Warp Map marker for entry/exit point.
 	Pick random mountain color/texture shape used by Map and Level whenever a new Map is generated.

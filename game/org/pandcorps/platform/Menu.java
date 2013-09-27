@@ -702,6 +702,8 @@ public class Menu {
 	
 	private final static class Model extends Panctor implements StepListener {
 	    private int blinkTimer = Mathtil.randi(PlatformGame.DUR_BLINK / 4, PlatformGame.DUR_BLINK * 3 / 4);
+	    private int mirrorTimer = Mathtil.randi(60, 240);
+	    private boolean origDir = true;
 	    private Accessories acc = null;
 	    
 	    private Model(final PlayerContext pc) {
@@ -713,6 +715,7 @@ public class Menu {
 	    		acc.destroy();
 	    	}
 	    	acc = new Accessories(pc);
+	    	acc.onStepEnd(this);
 	    	setView(pc.guy);
 	    }
 	    
@@ -722,6 +725,13 @@ public class Menu {
             if (blinkTimer <= 0) {
                 setView((Panimation) getView());
                 blinkTimer = Mathtil.randi(PlatformGame.DUR_BLINK * 5 / 4, PlatformGame.DUR_BLINK * 7 / 4);
+            }
+            mirrorTimer--;
+            if (mirrorTimer <= 0) {
+            	setMirror(!isMirror());
+            	origDir = !origDir;
+            	final int base = origDir ? 90 : 30;
+            	mirrorTimer = Mathtil.randi(base, base * 2);
             }
             acc.onStepEnd(this);
         }
