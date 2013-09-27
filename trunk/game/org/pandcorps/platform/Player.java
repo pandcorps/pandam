@@ -386,6 +386,7 @@ public class Player extends Character implements CollisionListener {
 		bubble.setVisible(isInvincible() && Pangine.getEngine().isOn(4));
 		if (back != null) {
 		    PlatformGame.setPosition(back, pos.getX(), pos.getY(), PlatformGame.DEPTH_PLAYER_BACK);
+		    back.setMirror(isMirror());
 		}
 	}
 	
@@ -398,11 +399,17 @@ public class Player extends Character implements CollisionListener {
 		} else {
 			changeView(pc.guy);
 		}
+		if (back != null) {
+			back.changeView(pc.back);
+		}
 	}
 	
 	@Override
 	protected final boolean onAir() {
 		changeView(v > 0 ? pc.guyJump : pc.guyFall);
+		if (back != null) {
+			back.changeView(flying ? pc.backJump : pc.backFall); // v > 0 doesn't flap as soon as jump is pressed
+		}
 		return flying;
 	}
 	

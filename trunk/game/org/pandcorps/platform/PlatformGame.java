@@ -126,6 +126,7 @@ public class PlatformGame extends BaseGame {
 	protected static MultiFont font = null;
 	protected final static FinPanple og = new FinPanple(16, 1, 0);
 	protected final static FinPanple ow = new FinPanple(17, 1, 0);
+	protected final static FinPanple owf = new FinPanple(17, 2, 0);
 	protected static Panmage bubble = null;
 	protected final static ArrayList<EnemyDefinition> enemies = new ArrayList<EnemyDefinition>();
 	protected static Panmage block8 = null;
@@ -296,9 +297,18 @@ public class PlatformGame extends BaseGame {
 		pc.mapLadder = createNorth(maps, 4, tailNorth, faceNorth, pre, "Ladder");
 		
 		if (avatar.jumpMode == Player.JUMP_FLY) {
-		    final String wpre = pre + ".wing";
+		    final String wpre = pre + ".wing.";
+		    final String iwpre = PRE_IMG + wpre;
 		    final BufferedImage[] wings = loadChrStrip("Wings.png", 32, f);
-		    pc.back = engine.createImage(wpre, ow, ng, xg, wings[0]);
+		    pc.back = engine.createImage(iwpre + "still", ow, ng, xg, wings[0]);
+		    final String fwpre = PRE_FRM + wpre;
+		    final Panframe[] frames = new Panframe[6];
+		    for (int i = 0; i < 6; i++) {
+			    final Panmage img = engine.createImage(iwpre + "fly." + i, i > 3 ? owf : ow, ng, xg, wings[i + 1]);
+				frames[i] = engine.createFrame(fwpre + "fly." + i, img, (i == 0 || i == 3) ? 6 : 3);
+		    }
+		    pc.backJump = engine.createAnimation(PRE_ANM + wpre + ".fly", frames[1], frames[2], frames[3], frames[0]);
+		    pc.backFall = engine.createAnimation(PRE_ANM + wpre + ".fall", frames[4], frames[5]);
 		}
 	}
 	
