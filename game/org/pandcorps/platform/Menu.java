@@ -86,7 +86,7 @@ public class Menu {
 			form = new Panform(ctrl);
 			infLbl = addTitle(inf, center, getBottom());
 			form.setTabListener(new FormTabListener() {@Override public void onTab(final FormTabEvent event) {
-				if (allow()) {
+				if (allow(event.getFocused())) {
 					inf.setLength(0);
 				} else {
 					event.cancel();
@@ -184,7 +184,7 @@ public class Menu {
 		
 		protected abstract void menu() throws Exception;
 		
-		protected boolean allow() {
+		protected boolean allow(final TextItem focused) {
 			return true;
 		}
 		
@@ -484,6 +484,14 @@ public class Menu {
             y -= 16;
             x = left + 8;
             x = addLink("Pick", prfLsn, x, y);
+            final MessageCloseListener infLsn = new MessageCloseListener() {
+                @Override public final void onClose(final MessageCloseEvent event) {
+                    if (disabled) {
+                        return;
+                    }
+                    Panscreen.set(new InfoScreen(pc)); }};
+            x = addPipe(x, y);
+            x = addLink("Info", infLsn, x, y);
             if (pc.index == 0) {
             	x = addPipe(x, y);
                 addTitle("Default", x, y);
@@ -663,7 +671,7 @@ public class Menu {
 		}
 		
 		@Override
-		protected boolean allow() {
+		protected boolean allow(final TextItem focused) {
 			final String curr = avt.getName();
 			if (Chartil.isEmpty(curr)) {
 				setInfo(WARN_EMPTY);
@@ -694,6 +702,53 @@ public class Menu {
 		    }
 		    goProfile();
 		}
+	}
+	
+	protected final static class InfoScreen extends PlayerScreen {
+	    private RadioGroup achRadio = null;
+	    private final StringBuilder achDesc = new StringBuilder();
+	    
+        protected InfoScreen(final PlayerContext pc) {
+            super(pc, false);
+        }
+        
+        @Override
+        protected final void menu() throws Exception {
+            final int total = Achievement.ALL.length;
+            final StringBuilder b = new StringBuilder();
+            final List<String> ach = new ArrayList<String>(total);
+            for (int i = 0; i < total; i++) {
+                Chartil.clear(b);
+                b.append(pc.profile.achievements.contains(Integer.valueOf(i)) ? (char) 1 : ' ').append(' ');
+                b.append(Achievement.ALL[i].getName());
+                ach.add(b.toString());
+            }
+            final RadioSubmitListener achLsn = new RadioSubmitListener() {
+                @Override public final void onSubmit(final RadioSubmitEvent event) {
+                    setAchDesc(event.toString());
+            }};
+            achRadio = addRadio("Achievements", ach, achLsn, getLeft(), getTop());
+            //TODO Add achDesc to screen
+        }
+        
+        private final void setAchDesc(final String achName) {
+            Chartil.set(achDesc, Achievement.get(achName).getDescription());
+        }
+        
+        @Override
+        protected boolean allow(final TextItem focused) {
+            if (focused == achRadio) {
+                setAchDesc((String) achRadio.getSelected());
+            } else {
+                Chartil.clear(achDesc);
+            }
+            return super.allow(focused);
+        }
+        
+        @Override
+        protected void onExit() {
+            goProfile();
+        }
 	}
 	
 	private final static int getLineColor(final float c) {

@@ -123,6 +123,7 @@ public class PlatformGame extends BaseGame {
 	protected static Panroom room = null;
 	protected final static ArrayList<PlayerContext> pcs = new ArrayList<PlayerContext>();
 	protected static MultiFont font = null;
+	protected static Font fontTiny = null;
 	protected final static FinPanple og = new FinPanple(16, 1, 0);
 	protected final static FinPanple ow = new FinPanple(17, 1, 0);
 	protected final static FinPanple owf = new FinPanple(17, 2, 0);
@@ -409,6 +410,7 @@ public class PlatformGame extends BaseGame {
 		bubble = createImage("bubble", "org/pandcorps/platform/res/chr/Bubble.png", 32, og);
 	    
 	    font = Fonts.getClassics(new FontRequest(8), Pancolor.WHITE, Pancolor.BLACK);
+	    fontTiny = Fonts.getTiny(FontType.Byte, Pancolor.WHITE);
 	    
 	    block8 = createImage("block8", "org/pandcorps/platform/res/misc/Block8.png", 8);
 	    
