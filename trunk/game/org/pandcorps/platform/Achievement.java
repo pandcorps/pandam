@@ -148,7 +148,7 @@ public abstract class Achievement {
 	
 	private final static class NoEnemyFeat extends CurrentFeat {
 	    protected NoEnemyFeat() {
-            super("Dove", "Finish level without defeating any enemies");
+            super("Dove", "Finish a level without defeating any enemies");
         }
         
         @Override
@@ -159,7 +159,7 @@ public abstract class Achievement {
 	
 	private final static class AllEnemyFeat extends CurrentFeat {
         protected AllEnemyFeat() {
-            super("Hawk", "Defeat all enemies in level");
+            super("Hawk", "Defeat all enemies in a level");
         }
         
         @Override

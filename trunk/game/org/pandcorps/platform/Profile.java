@@ -138,5 +138,16 @@ public class Profile extends PlayerData implements Segmented {
 	        seg.setLong(4, brokenBlocks);
 	        seg.setLong(5, jumps);
 		}
+		
+		public List<String> toList() {
+			final List<String> list = new ArrayList<String>(6);
+			list.add("Levels defeated: " + defeatedLevels);
+			list.add("Worlds defeated: " + defeatedWorlds);
+			list.add("Enemies defeated: " + defeatedEnemies);
+			list.add("Blocks bumped: " + bumpedBlocks);
+			list.add("Blocks broken: " + brokenBlocks);
+			list.add("Jumps: " + jumps);
+			return list;
+		}
     }
 }
