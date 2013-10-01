@@ -171,4 +171,13 @@ public abstract class Achievement {
 	private final static String getS(final int n) {
 		return n == 1 ? "" : "s";
 	}
+	
+	public final static Achievement get(final String name) {
+	    for (final Achievement a : ALL) {
+	        if (a.getName().equals(name)) {
+	            return a;
+	        }
+	    }
+	    return null;
+	}
 }
