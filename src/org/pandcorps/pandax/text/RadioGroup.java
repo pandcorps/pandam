@@ -96,7 +96,7 @@ public class RadioGroup extends TextItem {
     
     private void submit(final RadioSubmitListener listener) {
     	if (listener != null) {
-        	listener.onSubmit(new RadioSubmitEvent(this, label.radioLine, options.get(label.radioLine)));
+        	listener.onSubmit(new RadioSubmitEvent(this, label.radioLine, getSelected()));
         }
     }
     
@@ -114,5 +114,9 @@ public class RadioGroup extends TextItem {
     
     public void setSelected(final int line) {
     	label.setRadioLine(line);
+    }
+    
+    public CharSequence getSelected() {
+        return options.get(label.radioLine);
     }
 }
