@@ -736,6 +736,8 @@ public class Menu {
             y -= 64;
             addTitle(new Pantext(Pantil.vmid(), PlatformGame.fontTiny, achDesc), left, y);
             y -= 16;
+            addRadio("Statistics", pc.profile.stats.toList(), null, left, y);
+            y -= 64;
             addExit("Back", left, y);
             initAchDesc();
         }

@@ -48,7 +48,7 @@ public class PlatformGame extends BaseGame {
 	Horse/hippo/elephant/squirrel/gator/pig/walrus/beaver/stag/bull/ram player face.
 	Player shirts.
 	Ghost trail, particle trail.
-	Wings power-up (buy/equip), spin-float when hold jump while falling, 2xjump, inf flip-jump.
+	Wings power-up (buy/equip), spring heels, spin-float when hold jump while falling, 2xjump, inf flip-jump.
 	Gem multipliers, invincibility.
 	Player sliding image.
 	Allow jumping a little above top of Level.
@@ -78,7 +78,6 @@ public class PlatformGame extends BaseGame {
 	Collect fruit from trees.
 	Level to-do notes.
 	HUD notification queue, display if none currently displayed, else wait.
-	View statistics in Menu.
 	Goals: Collect n gems, defeat n enemies.
 	Random music per map.
 	Sound effects for jump, bump, stomp, hurt, etc.
