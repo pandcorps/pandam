@@ -158,7 +158,10 @@ public class Menu {
 		}
 		
 		protected final Pantext addTitle(final CharSequence title, final int x, final int y) {
-			final Pantext tLbl = new Pantext(Pantil.vmid(), PlatformGame.font, title);
+			return addTitle(new Pantext(Pantil.vmid(), PlatformGame.font, title), x, y);
+		}
+		
+		protected final Pantext addTitle(final Pantext tLbl, final int x, final int y) {
 			tLbl.getPosition().set(x, y);
 			form.getLayer().addActor(tLbl);
 			return tLbl;
@@ -719,7 +722,7 @@ public class Menu {
             final List<String> ach = new ArrayList<String>(total);
             for (int i = 0; i < total; i++) {
                 Chartil.clear(b);
-                b.append(pc.profile.achievements.contains(Integer.valueOf(i)) ? (char) 1 : ' ').append(' ');
+                b.append(pc.profile.achievements.contains(Integer.valueOf(i)) ? (char) 2 : ' ').append(' ');
                 b.append(Achievement.ALL[i].getName());
                 ach.add(b.toString());
             }
@@ -727,18 +730,39 @@ public class Menu {
                 @Override public final void onSubmit(final RadioSubmitEvent event) {
                     setAchDesc(event.toString());
             }};
-            achRadio = addRadio("Achievements", ach, achLsn, getLeft(), getTop());
-            //TODO Add achDesc to screen
+            final int left = getLeft();
+            int y = getTop();
+            achRadio = addRadio("Achievements", ach, achLsn, left, y);
+            y -= 64;
+            addTitle(new Pantext(Pantil.vmid(), PlatformGame.fontTiny, achDesc), left, y);
+            y -= 16;
+            addExit("Back", left, y);
+            initAchDesc();
         }
         
-        private final void setAchDesc(final String achName) {
-            Chartil.set(achDesc, Achievement.get(achName).getDescription());
+        private final void setAchDesc(String achName) {
+            final String newDesc;
+            if (Chartil.isEmpty(achName)) {
+                newDesc = "";
+            } else {
+                achName = achName.substring(2);
+                final Achievement ach = Achievement.get(achName);
+                if (ach == null) {
+                    throw new IllegalArgumentException("Could not find Achievement " + achName);
+                }
+                newDesc = ach.getDescription();
+            }
+            Chartil.set(achDesc, newDesc);
+        }
+        
+        private final void initAchDesc() {
+            setAchDesc((String) achRadio.getSelected());
         }
         
         @Override
         protected boolean allow(final TextItem focused) {
             if (focused == achRadio) {
-                setAchDesc((String) achRadio.getSelected());
+                initAchDesc();
             } else {
                 Chartil.clear(achDesc);
             }
