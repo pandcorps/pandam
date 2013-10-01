@@ -246,11 +246,11 @@ public class Player extends Character implements CollisionListener {
 		for (final PlayerContext pc : PlatformGame.pcs) {
 			final Player c = pc.player;
 			// Tie breaker?
-			if (!c.isReturningFromScroll() && a == null || a.activeTimer < c.activeTimer) {
+			if (!c.isReturningFromScroll() && (a == null || a.activeTimer < c.activeTimer)) {
 				a = c;
 			}
 		}
-		return a;
+		return a == null ? PlatformGame.pcs.get(0).player : a;
 	}
 	
 	private final void startReturn(final Panple dst, final int vel, final Player player) {
