@@ -78,7 +78,7 @@ public class PlatformGame extends BaseGame {
 	Collect fruit from trees.
 	Level to-do notes.
 	HUD notification queue, display if none currently displayed, else wait.
-	View Achievements in Menu.
+	View statistics in Menu.
 	Goals: Collect n gems, defeat n enemies.
 	Random music per map.
 	Sound effects for jump, bump, stomp, hurt, etc.
@@ -410,7 +410,7 @@ public class PlatformGame extends BaseGame {
 		bubble = createImage("bubble", "org/pandcorps/platform/res/chr/Bubble.png", 32, og);
 	    
 	    font = Fonts.getClassics(new FontRequest(8), Pancolor.WHITE, Pancolor.BLACK);
-	    fontTiny = Fonts.getTiny(FontType.Byte, Pancolor.WHITE);
+	    fontTiny = Fonts.getTiny(FontType.Upper, Pancolor.WHITE);
 	    
 	    block8 = createImage("block8", "org/pandcorps/platform/res/misc/Block8.png", 8);
 	    
