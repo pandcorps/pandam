@@ -51,7 +51,6 @@ public class PlatformGame extends BaseGame {
 	Wings power-up (buy/equip), spring heels, spin-float when hold jump while falling, 2xjump, inf flip-jump.
 	Gem multipliers, invincibility.
 	Player sliding image.
-	Allow jumping a little above top of Level.
 	Warp Map marker for entry/exit point.
 	Pick random mountain color/texture shape used by Map and Level whenever a new Map is generated.
 	Replace bush with Rise.png for some levels; rise will be higher than 1 tile; separate build method.

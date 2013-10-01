@@ -29,6 +29,7 @@ import org.pandcorps.pandax.tile.*;
 
 public abstract class Character extends Panctor implements StepListener, Collidable {
 	protected final static int MAX_V = 10;
+	protected final static int MIN_Y = -12;
 	protected static float g = -0.65f;
 	protected final int H;
 	private final int OFF_GROUNDED = -1;
@@ -120,15 +121,15 @@ public abstract class Character extends Panctor implements StepListener, Collida
 			}
 			pos.addY(mult);
 			final float y = pos.getY();
-			if (y < 0) {
-			    pos.setY(0);
+			if (y < MIN_Y) {
+			    pos.setY(MIN_Y);
 				v = 0;
 				if (onFell()) {
 					return;
 				}
 				break;
 			} else {
-			    final float max = PlatformGame.room.getSize().getY() - H;
+			    final float max = PlatformGame.room.getSize().getY() + 4 - H;
 			    if (y >= max) {
     			    pos.setY(max - 1);
     			    v = 0;
