@@ -439,6 +439,7 @@ public class Player extends Character implements CollisionListener {
             return;
         }
         levelGems -= (Math.max(1, levelGems / 10));
+        GemBumped.newShatter(this);
     }
 	
 	@Override
