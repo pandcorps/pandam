@@ -401,7 +401,7 @@ public class Player extends Character implements CollisionListener {
 	protected final boolean onAir() {
 		changeView(v > 0 ? pc.guyJump : pc.guyFall);
 		if (acc.back != null) {
-			acc.back.changeView(flying || getPosition().getY() <= MIN_Y ? pc.backJump : pc.backFall);
+			acc.back.changeView((flying || getPosition().getY() <= MIN_Y) ? pc.backJump : pc.backFall);
 			// v > 0 doesn't flap as soon as jump is pressed
 		}
 		return flying;
