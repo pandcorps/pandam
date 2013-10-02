@@ -45,6 +45,10 @@ public class GemBumped extends Pandy {
 		this(player, defeated.getBoundingMinimum(), true, false, PlatformGame.gemAnm);
 	}
 	
+	public static GemBumped newShatter(final Player player) {
+	    return new GemBumped(player, player.getPosition(), false, false, PlatformGame.gemAnm);
+	}
+	
 	private GemBumped(final Player player, final Panple pos, final boolean award, final boolean end, final Panimation anm) {
 		super(Tiles.g);
 		this.award = award;
@@ -74,6 +78,7 @@ public class GemBumped extends Pandy {
 		        Gem.spark(this, end);
 		    } else {
 		        Tiles.shatter(PlatformGame.gemShatter, getPosition(), true);
+		        destroy();
 		    }
 		}
 	}
