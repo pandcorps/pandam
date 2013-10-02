@@ -29,6 +29,7 @@ import org.pandcorps.pandax.Pandy;
 import org.pandcorps.pandax.tile.Tile;
 
 public class GemBumped extends Pandy {
+    private final boolean award;
 	private final boolean end;
 	int age = 0;
 	
@@ -37,25 +38,30 @@ public class GemBumped extends Pandy {
 	}
 	
 	public GemBumped(final Player player, final Tile tile, final Panimation anm) {
-		this(player, tile.getPosition(), anm != PlatformGame.gemAnm && !Level.isFlash(tile), anm);
+		this(player, tile.getPosition(), true, anm != PlatformGame.gemAnm && !Level.isFlash(tile), anm);
 	}
 	
 	public GemBumped(final Player player, final Enemy defeated) {
-		this(player, defeated.getBoundingMinimum(), false, PlatformGame.gemAnm);
+		this(player, defeated.getBoundingMinimum(), true, false, PlatformGame.gemAnm);
 	}
 	
-	private GemBumped(final Player player, final Panple pos, final boolean end, final Panimation anm) {
+	private GemBumped(final Player player, final Panple pos, final boolean award, final boolean end, final Panimation anm) {
 		super(Tiles.g);
+		this.award = award;
 		this.end = end;
-		Gem.collect(player);
+		if (award) {
+		    Gem.collect(player);
+		}
 		setView(anm);
 		PlatformGame.setPosition(this, pos.getX(), pos.getY() + ImtilX.DIM, PlatformGame.DEPTH_SHATTER);
 		getVelocity().set(0, 6);
         PlatformGame.room.addActor(this);
         if (end) {
         	Pangine.getEngine().getMusic().playSound(Music.gemLevel);
-        } else {
+        } else if (award) {
         	Gem.playSound();
+        } else {
+            // gemShatter
         }
 	}
 	
@@ -64,7 +70,11 @@ public class GemBumped extends Pandy {
 		super.onStep(event);
 		age++;
 		if (age >= 12) {
-			Gem.spark(this, end);
+		    if (award) {
+		        Gem.spark(this, end);
+		    } else {
+		        Tiles.shatter(PlatformGame.gemShatter, getPosition(), true);
+		    }
 		}
 	}
 }

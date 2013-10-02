@@ -44,12 +44,7 @@ public class Tiles {
     	final Sequence seq;
     	if (b == PlatformGame.TILE_BREAK) {
     		t.setForeground(null, false);
-    		final Panple pos = t.getPosition();
-    		final float x = pos.getX(), y = pos.getY();
-    		new Shatter(x, y, -2, 2);
-    		new Shatter(x + 8, y, 2, 2);
-    		new Shatter(x, y + 8, -1, 3);
-    		new Shatter(x + 8, y + 8, 1, 3);
+    		shatter(PlatformGame.block8, t.getPosition(), false);
     		if (Mathtil.rand()) {
     		    new GemBumped(player, t); // Plays a sound
     		    seq = null;
@@ -89,9 +84,17 @@ public class Tiles {
         }
     }
     
+    protected final static void shatter(final Panmage img, final Panple pos, final boolean rot) {
+        final float x = pos.getX(), y = pos.getY();
+        new Shatter(img, x, y, -2, 2).setMirror(rot);
+        new Shatter(img, x + 8, y, 2, 2);
+        new Shatter(img, x, y + 8, -1, 3).setRot(rot ? 2 : 0);
+        new Shatter(img, x + 8, y + 8, 1, 3).setFlip(rot);
+    }
+    
     private final static class Shatter extends Faller {
-    	private Shatter(final float x, final float y, final int xm, final int ym) {
-    		super(PlatformGame.block8, x, y, xm * Mathtil.randf(0.7f, 1.3f), ym * Mathtil.randf(0.7f, 1.3f));
+    	private Shatter(final Panmage img, final float x, final float y, final int xm, final int ym) {
+    		super(img, x, y, xm * Mathtil.randf(0.7f, 1.3f), ym * Mathtil.randf(0.7f, 1.3f));
     	}
     }
     

@@ -131,6 +131,7 @@ public class PlatformGame extends BaseGame {
 	protected static Panmage[] gem = null;
 	protected static Panimation gemAnm = null;
 	protected static Panimation gemCyanAnm = null;
+	protected static Panmage gemShatter = null;
 	protected static Panimation spark = null;
 	protected static final TileActor bump = new TileActor();
 	protected static Panimation marker = null;
@@ -415,6 +416,7 @@ public class PlatformGame extends BaseGame {
 	    final BufferedImage[] gemStrip = ImtilX.loadStrip("org/pandcorps/platform/res/misc/Gem.png");
 	    gem = createSheet("gem", null, gemStrip);
 	    gemAnm = createGemAnimation("gem", gem);
+	    gemShatter = createImage("gem.shatter", "org/pandcorps/platform/res/misc/GemShatter.png", 8);
 	    
 	    final SwapPixelFilter gemFilter = new SwapPixelFilter(Channel.Green, Channel.Red, Channel.Blue);
 	    for (int i = 0; i < 3; i++) {
