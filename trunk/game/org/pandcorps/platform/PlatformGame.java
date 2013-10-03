@@ -65,7 +65,6 @@ public class PlatformGame extends BaseGame {
 	Cannons in air that auto-fire, others that wait for jump input.
 	Maximum effective (per tick) velocity & higher absolute max; set current to max effective before evaluating.
 	Horizontal acceleration.
-	Shatter Gem effect when hurt.
 	Options (in/out game) - track active/p1
 	Exit game from within Level.
 	Font w/ custom chars for custom string/min square/case space if needed.
