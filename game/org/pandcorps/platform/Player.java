@@ -45,9 +45,38 @@ public class Player extends Character implements CollisionListener {
 	//private final static byte JUMP_INFINITE = 3;
 	protected final static byte JUMP_FLY = 4;
 	
-	public static class PlayerData {
+	public static enum JumpMode implements Named {
+	    Normal(MODE_NORMAL, "Normal"),
+	    High(JUMP_HIGH, "Spring Heels"),
+	    Fly(JUMP_FLY, "Wings");
+	    
+	    private final byte index;
+	    
+	    private final String name;
+	    
+	    private JumpMode(final byte index, final String name) {
+	        this.index = index;
+	        this.name = name;
+	    }
+	    
+	    public final byte getIndex() {
+	        return index;
+	    }
+	    
+	    @Override
+	    public final String getName() {
+	        return name;
+	    }
+	}
+	
+	public static interface Named {
+	    public String getName();
+	}
+	
+	public static class PlayerData implements Named {
 	    private String name = null;
 	    
+	    @Override
 	    public final String getName() {
             return name;
         }
@@ -55,11 +84,20 @@ public class Player extends Character implements CollisionListener {
 	    public final void setName(final String name) {
             this.name = name;
         }
-	    
-	    public final static String getName(final PlayerData data) {
-	        return data == null ? null : data.getName();
-	    }
 	}
+	
+	public final static String getName(final Named data) {
+        return data == null ? null : data.getName();
+    }
+	
+	public final static <E extends Named> E get(final E[] a, final String name) {
+        for (final E e : a) {
+            if (e.getName().equals(name)) {
+                return e;
+            }
+        }
+        return null;
+    }
 	
 	// Player attributes preserved between levels
 	public final static class PlayerContext {

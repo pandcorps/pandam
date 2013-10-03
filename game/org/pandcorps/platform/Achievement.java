@@ -24,10 +24,10 @@ package org.pandcorps.platform;
 
 import java.util.Set;
 
-import org.pandcorps.platform.Player.PlayerContext;
+import org.pandcorps.platform.Player.*;
 import org.pandcorps.platform.Profile.Statistics;
 
-public abstract class Achievement {
+public abstract class Achievement implements Named {
 	protected final static Achievement[] ALL = {
 		new LevelFeat("Level 1", 1), new LevelFeat("Level Champ", 50),
 		new WorldFeat("World 1", 1), new WorldFeat("World Tour", 10),
@@ -53,6 +53,7 @@ public abstract class Achievement {
 		this.desc = desc;
 	}
 	
+	@Override
 	public final String getName() {
 		return name;
 	}
@@ -173,11 +174,6 @@ public abstract class Achievement {
 	}
 	
 	public final static Achievement get(final String name) {
-	    for (final Achievement a : ALL) {
-	        if (a.getName().equals(name)) {
-	            return a;
-	        }
-	    }
-	    return null;
+	    return Player.get(ALL, name);
 	}
 }
