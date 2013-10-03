@@ -61,7 +61,7 @@ public class Profile extends PlayerData implements Segmented {
     public void save(final Segment seg) {
         seg.setName(PlatformGame.SEG_PRF);
         seg.setValue(0, getName());
-        seg.setValue(1, getName(currentAvatar));
+        seg.setValue(1, Player.getName(currentAvatar));
         seg.setInt(2, gems);
         //seg.setInt(3, ctrl);
     }

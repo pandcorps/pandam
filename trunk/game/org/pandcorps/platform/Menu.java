@@ -585,7 +585,16 @@ public class Menu {
 			super(pc, false);
 		}
 		
+		protected AvatarScreen(final PlayerContext pc, final Avatar old, final Avatar avt) {
+		    this(pc);
+		    this.old = old;
+		    this.avt = avt;
+		}
+		
 		private final void initAvatar() {
+		    if (old != null) {
+		        return;
+		    }
 			old = pc.profile.currentAvatar;
 			avt = new Avatar(old);
 			pc.profile.replaceAvatar(avt);
@@ -633,6 +642,14 @@ public class Menu {
 			final RadioGroup bluGrp = addRadio("Blu", colors, blueLsn, x, y);
 			y -= 64;
 			x = left;
+			final MessageCloseListener gearLsn = new MessageCloseListener() {
+                @Override public final void onClose(final MessageCloseEvent event) {
+                    if (disabled) {
+                        return;
+                    }
+                    Panscreen.set(new GearScreen(pc, old, avt)); }};
+			addLink("Gear", gearLsn, x, y);
+			y -= 16;
 			final ControllerInput namIn = addNameInput(avt, null, PlatformGame.MAX_NAME_AVATAR, x, y);
 			y -= 16;
 			x = addExit("Save", left, y);
@@ -705,6 +722,40 @@ public class Menu {
 		    }
 		    goProfile();
 		}
+	}
+	
+	protected final static class GearScreen extends PlayerScreen {
+	    private final Avatar old;
+        private final Avatar avt;
+        
+        protected GearScreen(final PlayerContext pc, final Avatar old, final Avatar avt) {
+            super(pc, false);
+            this.old = old;
+            this.avt = avt;
+        }
+        
+        @Override
+        protected final void menu() throws Exception {
+            final int left = getLeft();
+            int y = getTop();
+            final JumpMode[] jumpModes = Player.JumpMode.values();
+            final List<String> jmps = new ArrayList<String>(jumpModes.length);
+            for (final JumpMode jm : jumpModes) {
+                jmps.add(jm.getName());
+            }
+            final AvtListener jmpLsn = new AvtListener() {
+                @Override public final void update(final String value) {
+                    avt.jumpMode = Player.get(jumpModes, value).getIndex(); }};
+            addRadio("Jump Mode", jmps, jmpLsn, left, y);
+            //TODO Set correct radio line for current mode
+            y -= 64;
+            addExit("Back", left, y);
+        }
+        
+        @Override
+        protected void onExit() {
+            Panscreen.set(new AvatarScreen(pc, old, avt));
+        }
 	}
 	
 	protected final static class InfoScreen extends PlayerScreen {
