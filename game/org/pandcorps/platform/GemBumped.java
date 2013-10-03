@@ -46,7 +46,7 @@ public class GemBumped extends Pandy {
 	}
 	
 	public static GemBumped newShatter(final Player player) {
-	    return new GemBumped(player, player.getPosition(), false, false, PlatformGame.gemAnm);
+	    return new GemBumped(player, player.getBoundingMinimum(), false, false, PlatformGame.gemAnm);
 	}
 	
 	private GemBumped(final Player player, final Panple pos, final boolean award, final boolean end, final Panimation anm) {
