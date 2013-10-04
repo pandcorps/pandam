@@ -738,7 +738,7 @@ public class Menu {
         protected final void menu() throws Exception {
             final int left = getLeft();
             int y = getTop();
-            final JumpMode[] jumpModes = Player.JumpMode.values();
+            final JumpMode[] jumpModes = JumpMode.values();
             final List<String> jmps = new ArrayList<String>(jumpModes.length);
             for (final JumpMode jm : jumpModes) {
                 jmps.add(jm.getName());
@@ -746,8 +746,7 @@ public class Menu {
             final AvtListener jmpLsn = new AvtListener() {
                 @Override public final void update(final String value) {
                     avt.jumpMode = Player.get(jumpModes, value).getIndex(); }};
-            addRadio("Jump Mode", jmps, jmpLsn, left, y);
-            //TODO Set correct radio line for current mode
+            addRadio("Jump Mode", jmps, jmpLsn, left, y).setSelected(JumpMode.get(avt.jumpMode).getName());
             y -= 64;
             addExit("Back", left, y);
         }
