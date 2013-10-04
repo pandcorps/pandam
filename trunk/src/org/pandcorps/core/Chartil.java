@@ -55,6 +55,24 @@ public final class Chartil {
         return size(s) <= i ? 0 : s.charAt(i);
     }
     
+    public final static boolean equals(final CharSequence s1, final CharSequence s2) {
+        if (s1 == null) {
+            return s2 == null;
+        } else if (s2 == null) {
+            return false;
+        }
+        final int size = s1.length();
+        if (s2.length() != size) {
+            return false;
+        }
+        for (int i = 0; i < size; i++) {
+            if (s1.charAt(i) != s2.charAt(i)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
     public final static boolean startsWithIgnoreCase(final CharSequence s, final CharSequence sub) {
         // String.startsWith(String) is true if sub is empty or equals s
         final int subSize = size(sub);
