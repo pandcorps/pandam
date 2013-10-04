@@ -116,6 +116,10 @@ public class RadioGroup extends TextItem {
     	label.setRadioLine(line);
     }
     
+    public void setSelected(final CharSequence s) {
+        label.setRadioLine(label.lineOf(s));
+    }
+    
     public CharSequence getSelected() {
         return options.get(label.radioLine);
     }

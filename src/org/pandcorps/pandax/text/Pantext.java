@@ -455,6 +455,17 @@ public class Pantext extends Panctor {
 	    }
 	}
 	
+	public final int lineOf(final CharSequence s) {
+	    int i = 0;
+	    for (final CharSequence line : text) {
+	        if (Chartil.equals(s, line)) {
+	            return i;
+	        }
+	        i++;
+	    }
+	    return -1;
+    }
+	
 	public final void setCursor(final int cursorLine, final int cursorChar) {
 	    this.cursorLine = cursorLine;
 	    this.cursorChar = cursorChar;
