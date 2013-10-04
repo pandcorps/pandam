@@ -48,7 +48,7 @@ public class PlatformGame extends BaseGame {
 	Horse/hippo/elephant/squirrel/gator/pig/walrus/beaver/stag/bull/ram player face.
 	Player shirts.
 	Ghost trail, particle trail.
-	Wings power-up (buy/equip), spring heels, spin-float when hold jump while falling, 2xjump, inf flip-jump.
+	Wings power-up (buy), spring heels, spin-float when hold jump while falling, 2xjump, inf flip-jump.
 	Gem multipliers, invincibility.
 	Player sliding image.
 	Warp Map marker for entry/exit point.

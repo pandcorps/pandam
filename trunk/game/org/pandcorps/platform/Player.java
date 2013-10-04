@@ -67,6 +67,15 @@ public class Player extends Character implements CollisionListener {
 	    public final String getName() {
 	        return name;
 	    }
+	    
+	    public final static JumpMode get(final int index) {
+	        for (final JumpMode jm : values()) {
+	            if (jm.index == index) {
+	                return jm;
+	            }
+	        }
+	        return null;
+	    }
 	}
 	
 	public static interface Named {
