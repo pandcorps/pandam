@@ -46,17 +46,20 @@ public class Player extends Character implements CollisionListener {
 	protected final static byte JUMP_FLY = 4;
 	
 	public static enum JumpMode implements Named {
-	    Normal(MODE_NORMAL, "Normal"),
-	    High(JUMP_HIGH, "Spring Heels"),
-	    Fly(JUMP_FLY, "Wings");
+	    Normal(MODE_NORMAL, "Normal", 0),
+	    High(JUMP_HIGH, "Spring Heels", 250),
+	    Fly(JUMP_FLY, "Wings", 1000);
 	    
 	    private final byte index;
 	    
 	    private final String name;
 	    
-	    private JumpMode(final byte index, final String name) {
+	    private final int cost;
+	    
+	    private JumpMode(final byte index, final String name, final int cost) {
 	        this.index = index;
 	        this.name = name;
+	        this.cost = cost;
 	    }
 	    
 	    public final byte getIndex() {
@@ -66,6 +69,10 @@ public class Player extends Character implements CollisionListener {
 	    @Override
 	    public final String getName() {
 	        return name;
+	    }
+	    
+	    public final int getCost() {
+	        return cost;
 	    }
 	    
 	    public final static JumpMode get(final int index) {

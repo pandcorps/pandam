@@ -87,7 +87,7 @@ public class Menu {
 			infLbl = addTitle(inf, center, getBottom());
 			form.setTabListener(new FormTabListener() {@Override public void onTab(final FormTabEvent event) {
 				if (allow(event.getFocused())) {
-					inf.setLength(0);
+					clearInfo();
 				} else {
 					event.cancel();
 				}
@@ -206,6 +206,10 @@ public class Menu {
 			Chartil.set(inf, val);
         	infLbl.getPosition().setX(center);
         	infLbl.centerX();
+		}
+		
+		protected final void clearInfo() {
+		    inf.setLength(0);
 		}
 		
 		protected final int addExit(final String title, final int x, final int y) {
@@ -465,7 +469,7 @@ public class Menu {
 	                    	setInfo(WARN_DELETE);
 	                    	return;
 	                    }
-	                    inf.setLength(0);
+	                    clearInfo();
 	                    pc.profile.avatars.remove(pc.profile.currentAvatar);
 	                    pc.profile.currentAvatar = pc.profile.avatars.get(0);
 	                    PlatformGame.reloadAnimalStrip(pc);
@@ -727,6 +731,7 @@ public class Menu {
 	protected final static class GearScreen extends PlayerScreen {
 	    private final Avatar old;
         private final Avatar avt;
+        private RadioGroup jmpRadio = null;
         
         protected GearScreen(final PlayerContext pc, final Avatar old, final Avatar avt) {
             super(pc, false);
@@ -745,10 +750,47 @@ public class Menu {
             }
             final AvtListener jmpLsn = new AvtListener() {
                 @Override public final void update(final String value) {
-                    avt.jumpMode = Player.get(jumpModes, value).getIndex(); }};
-            addRadio("Jump Mode", jmps, jmpLsn, left, y).setSelected(JumpMode.get(avt.jumpMode).getName());
+                    final JumpMode jm = Player.get(jumpModes, value);
+                    final byte index = jm.getIndex();
+                    if (pc.profile.isJumpModeAvailable(index)) {
+                        clearInfo();
+                        avt.jumpMode = index;
+                    } else {
+                        setInfo("Buy for " + jm.getCost() + "? You have " + pc.profile.gems);
+                    }
+                }};
+            final RadioSubmitListener jmpSubLsn = new RadioSubmitListener() {
+                @Override public final void onSubmit(final RadioSubmitEvent event) {
+                    final JumpMode jm = Player.get(jumpModes, event.toString());
+                    final byte index = jm.getIndex();
+                    if (!pc.profile.isJumpModeAvailable(index)) {
+                        final int cost = jm.getCost();
+                        if (pc.profile.gems > cost) {
+                            pc.profile.gems -= cost;
+                            pc.profile.availableJumpModes.add(Integer.valueOf(index));
+                            setInfo("Purchased!");
+                        } else {
+                            setInfo("You need more Gems");
+                        }
+                    }
+                }};
+            jmpRadio = addRadio("Jump Mode", jmps, jmpSubLsn, jmpLsn, left, y);
+            initJumpMode();
             y -= 64;
             addExit("Back", left, y);
+        }
+        
+        private final void initJumpMode() {
+            jmpRadio.setSelected(JumpMode.get(avt.jumpMode).getName());
+        }
+        
+        @Override
+        protected boolean allow(final TextItem focused) {
+            final boolean a = super.allow(focused);
+            if (a) {
+                initJumpMode();
+            }
+            return a;
         }
         
         @Override

@@ -33,9 +33,14 @@ public class Profile extends PlayerData implements Segmented {
     protected final ArrayList<Avatar> avatars = new ArrayList<Avatar>();
     protected Avatar currentAvatar = null;
     protected int gems = 0;
+    protected final TreeSet<Integer> availableJumpModes = new TreeSet<Integer>(); // Index stored as byte in JumpMode
     protected final Statistics stats = new Statistics();
     protected final TreeSet<Integer> achievements = new TreeSet<Integer>();
     //protected int ctrl = -1; // Should store a preferred scheme for gamepads plus a preferred one for keyboards; don't know which device player will have
+    
+    {
+        availableJumpModes.add(Integer.valueOf(0));
+    }
     
     public Avatar getAvatar(final String name) {
     	for (final Avatar avatar : avatars) {
@@ -54,6 +59,7 @@ public class Profile extends PlayerData implements Segmented {
     public void load(final Segment seg) {
     	setName(seg.getValue(0));
     	gems = seg.intValue(2);
+    	addAll(availableJumpModes, seg, 3);
     	//ctrl = seg.intValue(3);
     }
     
@@ -63,19 +69,28 @@ public class Profile extends PlayerData implements Segmented {
         seg.setValue(0, getName());
         seg.setValue(1, Player.getName(currentAvatar));
         seg.setInt(2, gems);
+        addAll(seg, 3, availableJumpModes);
         //seg.setInt(3, ctrl);
     }
     
     protected void loadAchievements(final Segment seg) {
-    	for (final Field f : Coltil.unnull(seg.getRepetitions(0))) {
-    		achievements.add(f.getInteger());
+        addAll(achievements, seg, 0);
+    }
+    
+    private void addAll(final Collection<Integer> values, final Segment seg, final int i) {
+    	for (final Field f : Coltil.unnull(seg.getRepetitions(i))) {
+    		values.add(f.getInteger());
     	}
     }
     
     private void saveAchievements(final Segment seg) {
     	seg.setName(PlatformGame.SEG_ACH);
-    	for (final Integer ach : achievements) {
-    		seg.addInteger(0, ach);
+    	addAll(seg, 0, achievements);
+    }
+    
+    private void addAll(final Segment seg, final int i, final Collection<Integer> values) {
+    	for (final Integer ach : Coltil.unnull(values)) {
+    		seg.addInteger(i, ach);
     	}
     }
     
@@ -149,5 +164,9 @@ public class Profile extends PlayerData implements Segmented {
 			list.add("Jumps: " + jumps);
 			return list;
 		}
+    }
+    
+    public final boolean isJumpModeAvailable(final byte index) {
+        return availableJumpModes.contains(Integer.valueOf(index));
     }
 }
