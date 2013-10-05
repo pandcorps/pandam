@@ -48,7 +48,6 @@ public class PlatformGame extends BaseGame {
 	Horse/hippo/elephant/squirrel/gator/pig/walrus/beaver/stag/bull/ram player face.
 	Player shirts.
 	Ghost trail, particle trail.
-	Free sample powerups for 1 level.
 	Spring heels, spin-float when hold jump while falling, 2xjump, inf flip-jump.
 	Gem multipliers, invincibility.
 	Player sliding image.

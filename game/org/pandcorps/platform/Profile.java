@@ -34,6 +34,7 @@ public class Profile extends PlayerData implements Segmented {
     protected Avatar currentAvatar = null;
     protected int gems = 0;
     protected final TreeSet<Integer> availableJumpModes = new TreeSet<Integer>(); // Index stored as byte in JumpMode
+    protected final TreeSet<Integer> triedJumpModes = new TreeSet<Integer>();
     protected final Statistics stats = new Statistics();
     protected final TreeSet<Integer> achievements = new TreeSet<Integer>();
     //protected int ctrl = -1; // Should store a preferred scheme for gamepads plus a preferred one for keyboards; don't know which device player will have
@@ -60,6 +61,7 @@ public class Profile extends PlayerData implements Segmented {
     	setName(seg.getValue(0));
     	gems = seg.intValue(2);
     	addAll(availableJumpModes, seg, 3);
+    	addAll(triedJumpModes, seg, 4);
     	//ctrl = seg.intValue(3);
     }
     
@@ -70,6 +72,7 @@ public class Profile extends PlayerData implements Segmented {
         seg.setValue(1, Player.getName(currentAvatar));
         seg.setInt(2, gems);
         addAll(seg, 3, availableJumpModes);
+        addAll(seg, 4, triedJumpModes);
         //seg.setInt(3, ctrl);
     }
     
@@ -171,6 +174,6 @@ public class Profile extends PlayerData implements Segmented {
     }
     
     public final boolean isJumpModeTryable(final byte index) {
-    	return true;
+    	return !triedJumpModes.contains(Integer.valueOf(index));
     }
 }
