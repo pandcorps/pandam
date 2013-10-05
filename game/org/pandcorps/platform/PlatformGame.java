@@ -225,7 +225,11 @@ public class PlatformGame extends BaseGame {
 		pc.destroy();
 		final Profile profile = pc.profile;
 	    final Avatar avatar = profile.currentAvatar;
-	    final PixelFilter f = new MultiplyPixelFilter(Channel.Blue, avatar.r, Channel.Blue, avatar.g, Channel.Blue, avatar.b);
+	    float r = avatar.r, g = avatar.g, b = avatar.b;
+	    if (r == 0 && g == 0 && b == 0) {
+	    	r = g = b = 0.09375f;
+	    }
+	    final PixelFilter f = new MultiplyPixelFilter(Channel.Blue, r, Channel.Blue, g, Channel.Blue, b);
 		final BufferedImage[] guys = loadChrStrip("Bear.png", 32, f);
 		final BufferedImage guyBlink = Imtil.copy(guys[0]);
 		final String anm = avatar.anm;
