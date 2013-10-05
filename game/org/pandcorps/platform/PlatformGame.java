@@ -40,6 +40,7 @@ import org.pandcorps.pandax.text.*;
 import org.pandcorps.pandax.text.Fonts.*;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.visual.FadeController;
+import org.pandcorps.platform.Avatar.*;
 import org.pandcorps.platform.Enemy.EnemyDefinition;
 import org.pandcorps.platform.Player.*;
 
@@ -227,15 +228,19 @@ public class PlatformGame extends BaseGame {
         }
 	}
 	
+	private final static PixelFilter getFilter(final SimpleColor col) {
+		float r = col.r, g = col.g, b = col.b;
+	    if (r == 0 && g == 0 && b == 0) {
+	    	r = g = b = 0.09375f;
+	    }
+	    return new MultiplyPixelFilter(Channel.Blue, r, Channel.Blue, g, Channel.Blue, b);
+	}
+	
 	protected final static void reloadAnimalStrip(final PlayerContext pc) {
 		pc.destroy();
 		final Profile profile = pc.profile;
 	    final Avatar avatar = profile.currentAvatar;
-	    float r = avatar.col.r, g = avatar.col.g, b = avatar.col.b;
-	    if (r == 0 && g == 0 && b == 0) {
-	    	r = g = b = 0.09375f;
-	    }
-	    final PixelFilter f = new MultiplyPixelFilter(Channel.Blue, r, Channel.Blue, g, Channel.Blue, b);
+	    final PixelFilter f = getFilter(avatar.col);
 		final BufferedImage[] guys = loadChrStrip("Bear.png", 32, f);
 		final BufferedImage guyBlink = Imtil.copy(guys[0]);
 		final String anm = avatar.anm;
