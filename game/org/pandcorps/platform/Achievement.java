@@ -83,8 +83,7 @@ public abstract class Achievement implements Named {
 			final Achievement ach = ALL[i];
 			if (ach.isMet(pc)) {
 				achieved.add(key);
-				// Notify
-				System.out.println(pc.getName() + ": " + ach.getName());
+				PlatformGame.notify(pc, ach.getName());
 				any = true;
 			}
 		}

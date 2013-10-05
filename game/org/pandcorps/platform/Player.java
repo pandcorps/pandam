@@ -116,7 +116,7 @@ public class Player extends Character implements CollisionListener {
     }
 	
 	// Player attributes preserved between levels
-	public final static class PlayerContext {
+	public final static class PlayerContext implements Named {
 	    protected final Profile profile;
 	    protected final int index;
 	    protected Player player = null;
@@ -162,6 +162,7 @@ public class Player extends Character implements CollisionListener {
 	        }*/
 	    }
 	    
+	    @Override
 	    public final String getName() {
 	        return profile.currentAvatar.getName();
 	    }
