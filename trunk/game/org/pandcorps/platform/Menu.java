@@ -759,19 +759,25 @@ public class Menu {
                     if (pc.profile.isJumpModeAvailable(index)) {
                         clearInfo();
                         avt.jumpMode = index;
+                    } else if (pc.profile.isJumpModeTryable(index) && avt.jumpMode != index) {
+                    	setInfo("Free trial for 1 Level?");
                     } else {
-                        setInfo("Buy for " + jm.getCost() + "?");
+                    	setInfo("Buy for " + jm.getCost() + "?");
                     }
                 }};
-            final RadioSubmitListener jmpSubLsn = new RadioSubmitListener() {
-                @Override public final void onSubmit(final RadioSubmitEvent event) {
-                    final JumpMode jm = Player.get(jumpModes, event.toString());
+            final RadioSubmitListener jmpSubLsn = new AvtListener() {
+                @Override public final void update(final String value) {
+                    final JumpMode jm = Player.get(jumpModes, value);
                     final byte index = jm.getIndex();
                     if (!pc.profile.isJumpModeAvailable(index)) {
                         final int cost = jm.getCost();
-                        if (pc.profile.gems > cost) {
+                        if (Chartil.charAt(inf, 0) == 'F') {
+                        	avt.jumpMode = index;
+                        	setInfo("Equipped! Buy for " + jm.getCost() + "?");
+                        } else if (pc.profile.gems > cost) {
                             pc.profile.gems -= cost;
                             pc.profile.availableJumpModes.add(Integer.valueOf(index));
+                            avt.jumpMode = index;
                             setInfo("Purchased!");
                         } else {
                             setInfo("You need more Gems");

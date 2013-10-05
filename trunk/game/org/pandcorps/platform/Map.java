@@ -35,7 +35,7 @@ import org.pandcorps.pandax.in.ControlScheme;
 import org.pandcorps.pandax.text.Pantext;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.tile.Tile.TileMapImage;
-import org.pandcorps.platform.Player.PlayerContext;
+import org.pandcorps.platform.Player.*;
 
 public class Map {
 	private final static byte TILE_HORIZ = 2;
@@ -137,11 +137,22 @@ public class Map {
 			clear();
 			if (!victory) {
 				Achievement.evaluate();
-			} else if (tm != null && row == endRow && column == endColumn) {
-				PlatformGame.worldClose();
-			    victory = false;
-				tm.destroy(); // Trigger generation of new Map
-				tm = null;
+			} else {
+				for (final PlayerContext pc : PlatformGame.pcs) {
+					final Profile profile = pc.profile;
+					if (!profile.isJumpModeAvailable(profile.currentAvatar.jumpMode)) {
+						final JumpMode jm = JumpMode.get(profile.currentAvatar.jumpMode);
+						PlatformGame.notify(pc, jm.getName() + " trial ended");
+						profile.currentAvatar.jumpMode = Player.MODE_NORMAL;
+						PlatformGame.reloadAnimalStrip(pc);
+					}
+				}
+				if (tm != null && row == endRow && column == endColumn) {
+					PlatformGame.worldClose();
+				    victory = false;
+					tm.destroy(); // Trigger generation of new Map
+					tm = null;
+				}
 			}
 			final Tile t;
 			if (tm == null) {
@@ -184,13 +195,13 @@ public class Map {
 		}
 	}
 	
-	protected final static class Player extends TileWalker {
+	protected final static class MapPlayer extends TileWalker {
 	    private final PlayerContext pc;
 		private boolean disabled = false;
 		private boolean onLadder = false;
 		private int stillTimer = -1;
 		
-		private Player(final PlayerContext pc) {
+		private MapPlayer(final PlayerContext pc) {
 		    this.pc = pc;
 			setView(pc.mapSouth);
 			setSpeed(2);
@@ -830,7 +841,7 @@ public class Map {
 	}
 	
 	private final static void addPlayer(final Tile t) {
-		final Player player = new Player(PlatformGame.pcs.get(0));
+		final MapPlayer player = new MapPlayer(PlatformGame.pcs.get(0));
 		player.setPos(t);
 		room.addActor(player);
 		final Pangine engine = Pangine.getEngine();

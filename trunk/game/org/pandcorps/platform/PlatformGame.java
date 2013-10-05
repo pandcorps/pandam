@@ -41,7 +41,7 @@ import org.pandcorps.pandax.text.Fonts.*;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.visual.FadeController;
 import org.pandcorps.platform.Enemy.EnemyDefinition;
-import org.pandcorps.platform.Player.PlayerContext;
+import org.pandcorps.platform.Player.*;
 
 public class PlatformGame extends BaseGame {
 	/*
@@ -168,6 +168,10 @@ public class PlatformGame extends BaseGame {
 	
 	protected final static void fadeOut(final Panlayer layer, final short speed, final Panscreen screen) {
 		FadeController.fadeOut(layer, Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, speed, screen);
+	}
+	
+	protected final static void notify(final Named n, final String msg) {
+		System.out.println(n.getName() + ": " + msg);
 	}
 	
 	protected final static class PlatformScreen extends Panscreen {

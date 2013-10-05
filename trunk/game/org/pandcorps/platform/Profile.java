@@ -169,4 +169,8 @@ public class Profile extends PlayerData implements Segmented {
     public final boolean isJumpModeAvailable(final byte index) {
         return availableJumpModes.contains(Integer.valueOf(index));
     }
+    
+    public final boolean isJumpModeTryable(final byte index) {
+    	return true;
+    }
 }
