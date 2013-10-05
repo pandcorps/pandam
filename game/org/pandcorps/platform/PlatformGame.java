@@ -48,6 +48,7 @@ public class PlatformGame extends BaseGame {
 	Horse/hippo/elephant/squirrel/gator/pig/walrus/beaver/stag/bull/ram player face.
 	Player shirts.
 	Ghost trail, particle trail.
+	Free sample powerups for 1 level.
 	Spring heels, spin-float when hold jump while falling, 2xjump, inf flip-jump.
 	Gem multipliers, invincibility.
 	Player sliding image.
@@ -96,6 +97,8 @@ public class PlatformGame extends BaseGame {
 	protected final static int DEPTH_BUBBLE = 3;
 	protected final static int DEPTH_SHATTER = 5;
 	protected final static int DEPTH_SPARK = 6;
+	
+	protected final static int OFF_GEM = 16;
 	
 	protected final static int TIME_FLASH = 60;
 	
@@ -459,30 +462,37 @@ public class PlatformGame extends BaseGame {
 	
 	protected final static Panlayer addHud(final Panroom room, final boolean level) {
 		final Panlayer hud = createHud(room);
-        final Gem hudGem = new Gem();
-        final int h = Pangine.getEngine().getEffectiveHeight() - 17;
-        hudGem.getPosition().setY(h);
-        hud.addActor(hudGem);
+		final int h = Pangine.getEngine().getEffectiveHeight() - 17;
+		addHudGem(hud, 0, h);
         final int size = pcs.size();
         for (int i = 0; i < size; i++) {
-            final PlayerContext pc = pcs.get(i);
-            final CallSequence gemSeq;
-            if (level) {
-                gemSeq = new CallSequence() {@Override protected String call() {
-                    return String.valueOf(pc.player.getCurrentLevelGems());}};
-            } else {
-                gemSeq = new CallSequence() {@Override protected String call() {
-                    return String.valueOf(pc.getGems());}};
-            }
-            final Pantext hudName = new Pantext("hud.name." + i, font, pc.getName());
-            final int x = 16 + (i * 56);
-            hudName.getPosition().set(x, h + 8);
-            hud.addActor(hudName);
-            final Pantext hudGems = new Pantext("hud.gems." + i, font, gemSeq);
-            hudGems.getPosition().set(x, h);
-            hud.addActor(hudGems);
+        	addHud(hud, pcs.get(i), OFF_GEM + (i * 56), h, level);
         }
         return hud;
+	}
+	
+	protected final static void addHudGem(final Panlayer hud, final int x, final int y) {
+		final Gem hudGem = new Gem();
+        hudGem.getPosition().set(x, y);
+        hud.addActor(hudGem);
+	}
+	
+	protected final static void addHud(final Panlayer hud, final PlayerContext pc, final int x, final int y, final boolean level) {
+        final CallSequence gemSeq;
+        if (level) {
+            gemSeq = new CallSequence() {@Override protected String call() {
+                return String.valueOf(pc.player.getCurrentLevelGems());}};
+        } else {
+            gemSeq = new CallSequence() {@Override protected String call() {
+                return String.valueOf(pc.getGems());}};
+        }
+        final int i = pc.index;
+        final Pantext hudName = new Pantext("hud.name." + i, font, pc.getName());
+        hudName.getPosition().set(x, y + 8);
+        hud.addActor(hudName);
+        final Pantext hudGems = new Pantext("hud.gems." + i, font, gemSeq);
+        hudGems.getPosition().set(x, y);
+        hud.addActor(hudGems);
 	}
 	
 	protected static void setPosition(final Panctor act, final float x, final float y, final float depth) {

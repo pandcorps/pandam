@@ -531,6 +531,7 @@ public class Menu {
                         if (disabled) {
                             return;
                         }
+                        save();
                         Pangine.getEngine().exit(); }}; // Exit to TitleScreen instead? Quit game from there? Or separate Reset link?
                 x = addPipe(x, y);
                 addLink("Quit", qutLsn, x, y);
@@ -741,6 +742,9 @@ public class Menu {
         
         @Override
         protected final void menu() throws Exception {
+        	final int gemX = center + 16, gemY = 20;
+        	PlatformGame.addHudGem(room, gemX, gemY);
+        	PlatformGame.addHud(room, pc, gemX + PlatformGame.OFF_GEM, gemY, false);
             final int left = getLeft();
             int y = getTop();
             final JumpMode[] jumpModes = JumpMode.values();
@@ -756,7 +760,7 @@ public class Menu {
                         clearInfo();
                         avt.jumpMode = index;
                     } else {
-                        setInfo("Buy for " + jm.getCost() + "? You have " + pc.profile.gems);
+                        setInfo("Buy for " + jm.getCost() + "?");
                     }
                 }};
             final RadioSubmitListener jmpSubLsn = new RadioSubmitListener() {
