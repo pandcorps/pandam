@@ -140,10 +140,13 @@ public class Map {
 			} else {
 				for (final PlayerContext pc : PlatformGame.pcs) {
 					final Profile profile = pc.profile;
-					if (!profile.isJumpModeAvailable(profile.currentAvatar.jumpMode)) {
-						final JumpMode jm = JumpMode.get(profile.currentAvatar.jumpMode);
+					final byte jmi = profile.currentAvatar.jumpMode;
+					if (!profile.isJumpModeAvailable(jmi)) {
+						final JumpMode jm = JumpMode.get(jmi);
 						PlatformGame.notify(pc, jm.getName() + " trial ended");
+						profile.triedJumpModes.add(Integer.valueOf(jmi));
 						profile.currentAvatar.jumpMode = Player.MODE_NORMAL;
+						profile.serialize();
 						PlatformGame.reloadAnimalStrip(pc);
 					}
 				}
