@@ -34,6 +34,7 @@ import org.pandcorps.pandax.in.ControlScheme;
 import org.pandcorps.pandax.text.*;
 import org.pandcorps.pandax.tile.Tile.*;
 import org.pandcorps.pandax.tile.*;
+import org.pandcorps.platform.Avatar.*;
 import org.pandcorps.platform.Player.*;
 
 public class Menu {
@@ -127,6 +128,38 @@ public class Menu {
 			label.setLinesPerPage(5);
 			label.stretchCharactersPerLineToFit();
 			return grp;
+		}
+		
+		protected final int addColor(final SimpleColor col, int x, int y) {
+			final List<String> colors = Arrays.asList("0", "1", "2", "3", "4");
+			final AvtListener redLsn = new ColorListener() {
+				@Override public final void update(final float value) {
+					col.r = value; }};
+			x += 32;
+			final RadioGroup redGrp = addRadio("Red", colors, redLsn, x, y);
+			final AvtListener greenLsn = new ColorListener() {
+				@Override public final void update(final float value) {
+					col.g = value; }};
+			x += 32;
+			final RadioGroup grnGrp = addRadio("Grn", colors, greenLsn, x, y);
+			final AvtListener blueLsn = new ColorListener() {
+				@Override public final void update(final float value) {
+					col.b = value; }};
+			x += 32;
+			final RadioGroup bluGrp = addRadio("Blu", colors, blueLsn, x, y);
+			redGrp.setSelected(getLineColor(col.r));
+			grnGrp.setSelected(getLineColor(col.g));
+			bluGrp.setSelected(getLineColor(col.b));
+			return x;
+		}
+		
+		private abstract class ColorListener extends AvtListener {
+			@Override
+			protected final void update(final String value) {
+				update(Avatar.toColor(Integer.parseInt(value)));
+			}
+			
+			protected abstract void update(final float value);
 		}
 		
 		protected final ControllerInput addNameInput(final PlayerData pd, final InputSubmitListener subLsn, final int max, final int x, final int y) {
@@ -629,22 +662,7 @@ public class Menu {
 					avt.eye = Integer.parseInt(value); }};
 			x += 72;
 			final RadioGroup eyeGrp = addRadio("Eye", eyes, eyeLsn, x, y);
-			final List<String> colors = Arrays.asList("0", "1", "2", "3", "4");
-			final AvtListener redLsn = new ColorListener() {
-				@Override public final void update(final float value) {
-					avt.r = value; }};
-			x += 32;
-			final RadioGroup redGrp = addRadio("Red", colors, redLsn, x, y);
-			final AvtListener greenLsn = new ColorListener() {
-				@Override public final void update(final float value) {
-					avt.g = value; }};
-			x += 32;
-			final RadioGroup grnGrp = addRadio("Grn", colors, greenLsn, x, y);
-			final AvtListener blueLsn = new ColorListener() {
-				@Override public final void update(final float value) {
-					avt.b = value; }};
-			x += 32;
-			final RadioGroup bluGrp = addRadio("Blu", colors, blueLsn, x, y);
+			x = addColor(avt.col, x, y);
 			y -= 64;
 			x = left;
 			final MessageCloseListener gearLsn = new MessageCloseListener() {
@@ -689,9 +707,6 @@ public class Menu {
             x = addLink("Export", expLsn, x, y);
 			anmGrp.setSelected(animals.indexOf(avt.anm));
 			eyeGrp.setSelected(avt.eye - 1);
-			redGrp.setSelected(getLineColor(avt.r));
-			grnGrp.setSelected(getLineColor(avt.g));
-			bluGrp.setSelected(getLineColor(avt.b));
 			namIn.append(avt.getName());
 		}
 		
@@ -709,15 +724,6 @@ public class Menu {
 				}
 			}
 			return true;
-		}
-		
-		private abstract class ColorListener extends AvtListener {
-			@Override
-			protected final void update(final String value) {
-				update(Avatar.toColor(Integer.parseInt(value)));
-			}
-			
-			protected abstract void update(final float value);
 		}
 		
 		@Override

@@ -29,10 +29,32 @@ import org.pandcorps.platform.Player.PlayerData;
 public class Avatar extends PlayerData implements Segmented {
     protected String anm = null;
     protected int eye = -1;
-    protected float r = -1; // These should probably be multiples of 0.25
-    protected float g = -1;
-    protected float b = -1;
+    protected final SimpleColor col = new SimpleColor();
     protected byte jumpMode = -1;
+    
+    protected final static class SimpleColor {
+    	protected float r = -1; // These should probably be multiples of 0.25
+        protected float g = -1;
+        protected float b = -1;
+        
+        protected final void load(final SimpleColor col) {
+        	r = col.r;
+        	g = col.g;
+        	b = col.b;
+        }
+        
+        protected void load(final Segment seg, final int i) {
+        	r = seg.floatValue(i);
+        	g = seg.floatValue(i + 1);
+        	b = seg.floatValue(i + 2);
+        }
+        
+        protected void save(final Segment seg, final int i) {
+        	seg.setFloat(i, r);
+        	seg.setFloat(i + 1, g);
+        	seg.setFloat(i + 2, b);
+        }
+    }
     
     public Avatar() {
     }
@@ -45,10 +67,10 @@ public class Avatar extends PlayerData implements Segmented {
         anm = Mathtil.rand(PlatformGame.getAnimals());
         eye = Mathtil.randi(1, PlatformGame.getNumEyes());
         do {
-            r = randColor();
-            g = randColor();
-            b = randColor();
-        } while (r == 0 && g == 0 && b == 0);
+            col.r = randColor();
+            col.g = randColor();
+            col.b = randColor();
+        } while (col.r == 0 && col.g == 0 && col.b == 0);
         jumpMode = Player.MODE_NORMAL;
     }
     
@@ -56,9 +78,7 @@ public class Avatar extends PlayerData implements Segmented {
         setName(src.getName());
         anm = src.anm;
         eye = src.eye;
-        r = src.r;
-        g = src.g;
-        b = src.b;
+        col.load(src.col);
         jumpMode = src.jumpMode;
     }
     
@@ -66,9 +86,7 @@ public class Avatar extends PlayerData implements Segmented {
     	setName(seg.getValue(0));
     	anm = seg.getValue(1);
     	eye = seg.intValue(2);
-    	r = seg.floatValue(3);
-    	g = seg.floatValue(4);
-    	b = seg.floatValue(5);
+    	col.load(seg, 3);
     	jumpMode = seg.getByte(6, Player.MODE_NORMAL);
     }
     
@@ -78,9 +96,7 @@ public class Avatar extends PlayerData implements Segmented {
     	seg.setValue(0, getName());
     	seg.setValue(1, anm);
     	seg.setInt(2, eye);
-    	seg.setFloat(3, r);
-    	seg.setFloat(4, g);
-    	seg.setFloat(5, b);
+    	col.save(seg, 3);
     	seg.setInt(6, jumpMode);
     }
     

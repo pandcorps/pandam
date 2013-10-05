@@ -231,7 +231,7 @@ public class PlatformGame extends BaseGame {
 		pc.destroy();
 		final Profile profile = pc.profile;
 	    final Avatar avatar = profile.currentAvatar;
-	    float r = avatar.r, g = avatar.g, b = avatar.b;
+	    float r = avatar.col.r, g = avatar.col.g, b = avatar.col.b;
 	    if (r == 0 && g == 0 && b == 0) {
 	    	r = g = b = 0.09375f;
 	    }
