@@ -123,14 +123,14 @@ public class Menu {
 			final RadioGroup grp = new RadioGroup(PlatformGame.font, list, subLsn);
 			grp.setChangeListener(chgLsn);
 			addItem(grp, x, y - 16);
-			addTitle(title, x, y);
+			grp.addChild(addTitle(title, x, y));
 			final Pantext label = grp.getLabel();
 			label.setLinesPerPage(5);
 			label.stretchCharactersPerLineToFit();
 			return grp;
 		}
 		
-		protected final int addColor(final SimpleColor col, int x, int y) {
+		protected final List<RadioGroup> addColor(final SimpleColor col, int x, int y) {
 			final List<String> colors = Arrays.asList("0", "1", "2", "3", "4");
 			final AvtListener redLsn = new ColorListener() {
 				@Override public final void update(final float value) {
@@ -150,7 +150,11 @@ public class Menu {
 			redGrp.setSelected(getLineColor(col.r));
 			grnGrp.setSelected(getLineColor(col.g));
 			bluGrp.setSelected(getLineColor(col.b));
-			return x;
+			final List<RadioGroup> list = new ArrayList<RadioGroup>(3);
+			list.add(redGrp);
+			list.add(grnGrp);
+			list.add(bluGrp);
+			return list;
 		}
 		
 		private abstract class ColorListener extends AvtListener {
@@ -662,7 +666,7 @@ public class Menu {
 					avt.eye = Integer.parseInt(value); }};
 			x += 72;
 			final RadioGroup eyeGrp = addRadio("Eye", eyes, eyeLsn, x, y);
-			x = addColor(avt.col, x, y);
+			addColor(avt.col, x, y);
 			y -= 64;
 			x = left;
 			final MessageCloseListener gearLsn = new MessageCloseListener() {
@@ -739,6 +743,7 @@ public class Menu {
 	    private final Avatar old;
         private final Avatar avt;
         private RadioGroup jmpRadio = null;
+        private List<RadioGroup> jmpColors = null;
         
         protected GearScreen(final PlayerContext pc, final Avatar old, final Avatar avt) {
             super(pc, false);
@@ -764,7 +769,7 @@ public class Menu {
                     final byte index = jm.getIndex();
                     if (pc.profile.isJumpModeAvailable(index)) {
                         clearInfo();
-                        avt.jumpMode = index;
+                        setJumpMode(index);
                     } else if (pc.profile.isJumpModeTryable(index) && avt.jumpMode != index) {
                     	setInfo("Free trial for 1 Level?");
                     } else {
@@ -778,12 +783,12 @@ public class Menu {
                     if (!pc.profile.isJumpModeAvailable(index)) {
                         final int cost = jm.getCost();
                         if (Chartil.charAt(inf, 0) == 'F') {
-                        	avt.jumpMode = index;
+                        	setJumpMode(index);
                         	setInfo("Equipped! Buy for " + jm.getCost() + "?");
                         } else if (pc.profile.gems > cost) {
                             pc.profile.gems -= cost;
                             pc.profile.availableJumpModes.add(Integer.valueOf(index));
-                            avt.jumpMode = index;
+                            setJumpMode(index);
                             setInfo("Purchased!");
                         } else {
                             setInfo("You need more Gems");
@@ -792,8 +797,17 @@ public class Menu {
                 }};
             jmpRadio = addRadio("Jump Mode", jmps, jmpSubLsn, jmpLsn, left, y);
             initJumpMode();
+            jmpColors = addColor(avt.jumpCol, left + 88, y);
             y -= 64;
             addExit("Back", left, y);
+        }
+        
+        private final void setJumpMode(final byte index) {
+        	avt.jumpMode = index;
+        	final boolean vis = index == Player.JUMP_FLY;
+        	for (final RadioGroup jmpColor : jmpColors) {
+        		jmpColor.setVisible(vis);
+        	}
         }
         
         private final void initJumpMode() {
