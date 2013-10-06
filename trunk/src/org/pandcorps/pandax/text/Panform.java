@@ -102,16 +102,24 @@ public class Panform extends MenuItem {
         return item;
     }
     
+    private final boolean isInvalid() {
+    	return !item().isEnabled();
+    }
+    
     protected final void forward() {
-        tab((curr + 1) % items.size());
+    	do {
+    		tab((curr + 1) % items.size());
+    	} while (isInvalid());
     }
     
     protected final void back() {
-        int next = curr - 1;
-        if (next < 0) {
-        	next = items.size() - 1;
-        }
-        tab(next);
+    	do {
+	        int next = curr - 1;
+	        if (next < 0) {
+	        	next = items.size() - 1;
+	        }
+	        tab(next);
+    	} while (isInvalid());
     }
     
     private final void tab(final int next) {

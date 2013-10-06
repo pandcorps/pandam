@@ -22,6 +22,9 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandax.text;
 
+import java.util.*;
+
+import org.pandcorps.core.Coltil;
 import org.pandcorps.core.Pantil;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandax.in.*;
@@ -30,6 +33,7 @@ public abstract class TextItem extends MenuItem {
     protected final Pantext label;
     protected boolean ownLayer = true;
     protected Panctor parent = null;
+    protected ArrayList<Panctor> children = null;
     protected Panform form = null;
     
     // Should we add ControlScheme to constructor?  Also Panlayer?
@@ -115,5 +119,20 @@ public abstract class TextItem extends MenuItem {
     
     public final Pantext getLabel() {
     	return label;
+    }
+    
+    protected final boolean isEnabled() {
+    	return label.isVisible(); // Might want to disable visible items
+    }
+    
+    public final void setVisible(final boolean vis) {
+    	label.setVisible(vis);
+    	for (final Panctor child : Coltil.unnull(children)) {
+    		child.setVisible(vis);
+    	}
+    }
+    
+    public final void addChild(final Panctor actor) {
+    	children = Coltil.add(children, actor);
     }
 }
