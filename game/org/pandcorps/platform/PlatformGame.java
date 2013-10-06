@@ -276,7 +276,15 @@ public class PlatformGame extends BaseGame {
 	    
 		final BufferedImage[] maps = loadChrStrip("BearMap.png", 32, f);
 		final boolean needWing = avatar.jumpMode == Player.JUMP_FLY;
-		final BufferedImage[] wingMap = needWing ? loadChrStrip("WingsMap.png", 32, f) : null;
+		final PixelFilter pf;
+		final BufferedImage[] wingMap;
+		if (needWing) {
+			pf = getFilter(avatar.jumpCol);
+			wingMap = loadChrStrip("WingsMap.png", 32, pf);
+		} else {
+			pf = null;
+			wingMap = null;
+		}
 		final BufferedImage[] faceMap = loadChrStrip("FaceMap" + anm + ".png", 18, f);
 		final BufferedImage south1 = maps[0], southPose = maps[5], faceSouth = faceMap[0];
 		if (needWing) {
@@ -324,7 +332,7 @@ public class PlatformGame extends BaseGame {
 		if (needWing) {
 		    final String wpre = pre + ".wing.";
 		    final String iwpre = PRE_IMG + wpre;
-		    final BufferedImage[] wings = loadChrStrip("Wings.png", 32, f);
+		    final BufferedImage[] wings = loadChrStrip("Wings.png", 32, pf);
 		    pc.back = engine.createImage(iwpre + "still", ow, ng, xg, wings[0]);
 		    final String fwpre = PRE_FRM + wpre;
 		    final Panframe[] frames = new Panframe[6];

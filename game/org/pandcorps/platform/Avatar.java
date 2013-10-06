@@ -31,6 +31,7 @@ public class Avatar extends PlayerData implements Segmented {
     protected int eye = -1;
     protected final SimpleColor col = new SimpleColor();
     protected byte jumpMode = -1;
+    protected final SimpleColor jumpCol = new SimpleColor();
     
     protected final static class SimpleColor {
     	protected float r = -1; // These should probably be multiples of 0.25
@@ -44,9 +45,9 @@ public class Avatar extends PlayerData implements Segmented {
         }
         
         protected void load(final Segment seg, final int i) {
-        	r = seg.floatValue(i);
-        	g = seg.floatValue(i + 1);
-        	b = seg.floatValue(i + 2);
+        	r = seg.getFloat(i, 1);
+        	g = seg.getFloat(i + 1, 1);
+        	b = seg.getFloat(i + 2, 1);
         }
         
         protected void save(final Segment seg, final int i) {
@@ -80,6 +81,7 @@ public class Avatar extends PlayerData implements Segmented {
         eye = src.eye;
         col.load(src.col);
         jumpMode = src.jumpMode;
+        jumpCol.load(src.jumpCol);
     }
     
     public void load(final Segment seg) {
@@ -88,6 +90,7 @@ public class Avatar extends PlayerData implements Segmented {
     	eye = seg.intValue(2);
     	col.load(seg, 3);
     	jumpMode = seg.getByte(6, Player.MODE_NORMAL);
+    	jumpCol.load(seg, 7);
     }
     
     @Override
@@ -98,6 +101,7 @@ public class Avatar extends PlayerData implements Segmented {
     	seg.setInt(2, eye);
     	col.save(seg, 3);
     	seg.setInt(6, jumpMode);
+    	jumpCol.save(seg, 7);
     }
     
     private final static float randColor() {
