@@ -27,6 +27,7 @@ import org.pandcorps.core.seg.*;
 import org.pandcorps.platform.Player.PlayerData;
 
 public class Avatar extends PlayerData implements Segmented {
+	private final static float DEF_JUMP_COL = 1;
     protected String anm = null;
     protected int eye = -1;
     protected final SimpleColor col = new SimpleColor();
@@ -45,9 +46,9 @@ public class Avatar extends PlayerData implements Segmented {
         }
         
         protected void load(final Segment seg, final int i) {
-        	r = seg.getFloat(i, 1);
-        	g = seg.getFloat(i + 1, 1);
-        	b = seg.getFloat(i + 2, 1);
+        	r = seg.getFloat(i, DEF_JUMP_COL);
+        	g = seg.getFloat(i + 1, DEF_JUMP_COL);
+        	b = seg.getFloat(i + 2, DEF_JUMP_COL);
         }
         
         protected void save(final Segment seg, final int i) {
@@ -73,6 +74,7 @@ public class Avatar extends PlayerData implements Segmented {
             col.b = randColor();
         } while (col.r == 0 && col.g == 0 && col.b == 0);
         jumpMode = Player.MODE_NORMAL;
+        jumpCol.r = jumpCol.g = jumpCol.b = DEF_JUMP_COL;
     }
     
     public void load(final Avatar src) {

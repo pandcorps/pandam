@@ -168,7 +168,7 @@ public class PlatformGame extends BaseGame {
 	}
 	
 	protected final static void fadeOut(final Panlayer layer, final short speed, final Panscreen screen) {
-		Notifications.fadeOut(notifications, layer, Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, speed, screen);
+		Notifications.fadeOut(notifications, layer, Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, speed, screen, true);
 	}
 	
 	protected final static void notify(final Named n, final String msg) {
@@ -514,8 +514,12 @@ public class PlatformGame extends BaseGame {
 	}
 	
 	protected final static void addNotifications(final Panlayer layer) {
-	    notifications = new Notifications(layer, font);
-	    notifications.getLabel().getPosition().set(8, Pangine.getEngine().getEffectiveHeight() - 25);
+		if (notifications == null) {
+			notifications = new Notifications(layer, font);
+			notifications.getLabel().getPosition().set(8, Pangine.getEngine().getEffectiveHeight() - 25);
+		} else {
+			layer.addActor(notifications);
+		}
 	}
 	
 	protected static void setPosition(final Panctor act, final float x, final float y, final float depth) {

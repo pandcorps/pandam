@@ -798,13 +798,18 @@ public class Menu {
             jmpRadio = addRadio("Jump Mode", jmps, jmpSubLsn, jmpLsn, left, y);
             initJumpMode();
             jmpColors = addColor(avt.jumpCol, left + 88, y);
+            initJumpColors();
             y -= 64;
             addExit("Back", left, y);
         }
         
         private final void setJumpMode(final byte index) {
         	avt.jumpMode = index;
-        	final boolean vis = index == Player.JUMP_FLY;
+        	initJumpColors();
+        }
+        
+        private final void initJumpColors() {
+        	final boolean vis = avt.jumpMode == Player.JUMP_FLY;
         	for (final RadioGroup jmpColor : jmpColors) {
         		jmpColor.setVisible(vis);
         	}
