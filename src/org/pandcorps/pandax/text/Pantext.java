@@ -27,8 +27,7 @@ import java.util.regex.Pattern;
 
 import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
-import org.pandcorps.pandam.impl.FinPanple;
-import org.pandcorps.pandam.impl.UnmodPanple;
+import org.pandcorps.pandam.impl.*;
 
 public class Pantext extends Panctor {
     public final static char CHAR_NULL = 0;
@@ -517,10 +516,19 @@ public class Pantext extends Panctor {
         this.borderStyle = borderStyle;
     }
 	
+	//TODO class Orientation? Justification? Center/Left/Right? Center/Min/Max? set(Justification, x)
+	// Centers relative to the current position, not the screen/layer/etc.
 	public final void centerX() {
 		final Panple pos = getPosition();
 		pos.setX(pos.getX() - (size.getX() / 2));
 	}
+	
+	// Justifies relative to the current position, not the screen/layer/etc.
+	// Justifies the chunk, not each individual line
+    public final void rightJustify() {
+        final Panple pos = getPosition();
+        pos.setX(pos.getX() - size.getX());
+    }
 	
 	public final Font getFont() {
 	    return f;

@@ -124,6 +124,7 @@ public class PlatformGame extends BaseGame {
 	protected final static ArrayList<PlayerContext> pcs = new ArrayList<PlayerContext>();
 	protected static MultiFont font = null;
 	protected static Font fontTiny = null;
+	protected static Notifications notifications = null;
 	protected final static FinPanple og = new FinPanple(16, 1, 0);
 	protected final static FinPanple ow = new FinPanple(17, 1, 0);
 	protected final static FinPanple owf = new FinPanple(17, 2, 0);
@@ -167,11 +168,11 @@ public class PlatformGame extends BaseGame {
 	}
 	
 	protected final static void fadeOut(final Panlayer layer, final short speed, final Panscreen screen) {
-		FadeController.fadeOut(layer, Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, speed, screen);
+		Notifications.fadeOut(notifications, layer, Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, speed, screen);
 	}
 	
 	protected final static void notify(final Named n, final String msg) {
-		System.out.println(n.getName() + ": " + msg);
+		notifications.enqueue(n.getName() + ": " + msg);
 	}
 	
 	protected final static class PlatformScreen extends Panscreen {
@@ -484,6 +485,7 @@ public class PlatformGame extends BaseGame {
         for (int i = 0; i < size; i++) {
         	addHud(hud, pcs.get(i), OFF_GEM + (i * 56), h, level);
         }
+        addNotifications(hud);
         return hud;
 	}
 	
@@ -509,6 +511,11 @@ public class PlatformGame extends BaseGame {
         final Pantext hudGems = new Pantext("hud.gems." + i, font, gemSeq);
         hudGems.getPosition().set(x, y);
         hud.addActor(hudGems);
+	}
+	
+	protected final static void addNotifications(final Panlayer layer) {
+	    notifications = new Notifications(layer, font);
+	    notifications.getLabel().getPosition().set(8, Pangine.getEngine().getEffectiveHeight() - 25);
 	}
 	
 	protected static void setPosition(final Panctor act, final float x, final float y, final float depth) {
