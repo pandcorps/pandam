@@ -59,6 +59,12 @@ public final class Coltil {
 		return i;
 	}
 	
+	public final static void clear(final Collection<?> c) {
+	    if (c != null) {
+	        c.clear();
+	    }
+	}
+	
 	public final static <E> Iterator<E> iterator(final Iterable<E> able) {
 		return able == null ? null : able.iterator();
 	}

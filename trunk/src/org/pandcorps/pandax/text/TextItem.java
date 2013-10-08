@@ -24,8 +24,7 @@ package org.pandcorps.pandax.text;
 
 import java.util.*;
 
-import org.pandcorps.core.Coltil;
-import org.pandcorps.core.Pantil;
+import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandax.in.*;
 
