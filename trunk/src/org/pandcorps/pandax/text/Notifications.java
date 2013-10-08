@@ -54,7 +54,9 @@ public class Notifications extends Panctor implements StepListener {
     }
     
     public void enqueue(final String msg) {
-        if (!label.isVisible()) {
+    	if (isDestroyed()) {
+    		throw new IllegalStateException("Added \"" + msg + "\" to a destroyed Notifications queue");
+    	} else if (!label.isVisible()) {
             init(msg);
             label.setVisible(true);
         } else {
@@ -73,18 +75,25 @@ public class Notifications extends Panctor implements StepListener {
         }
     }
     
-    public final void fadeOut(final Panlayer layer, final short r, final short g, final short b, final short speed, final Panscreen nextScreen) {
+    public final void fadeOut(final Panlayer layer, final short r, final short g, final short b, final short speed, final Panscreen nextScreen, final boolean detach) {
         addFreeListener(new Runnable() {
             @Override public final void run() {
+            	if (detach) {
+            		detach();
+            	}
                 FadeController.fadeOut(layer, r, g, b, speed, nextScreen);
             }});
     }
-
+    
     @Override
     public void onStep(final StepEvent event) {
         if (timer <= 0) {
             free();
             return;
+        } else if (FadeController.isFadingIn()) {
+        	return;
+        } else if (label.getLayer() == null) {
+        	getLayer().addActor(label);
         }
         timer--;
         if (timer <= 0) {
@@ -96,6 +105,11 @@ public class Notifications extends Panctor implements StepListener {
                 init(queue.poll());
             }
         }
+    }
+    
+    @Override
+    protected void onDetach() {
+    	label.detach();
     }
     
     private final void init(final String msg) {
@@ -114,11 +128,11 @@ public class Notifications extends Panctor implements StepListener {
         return label;
     }
     
-    public final static void fadeOut(final Notifications q, final Panlayer layer, final short r, final short g, final short b, final short speed, final Panscreen nextScreen) {
+    public final static void fadeOut(final Notifications q, final Panlayer layer, final short r, final short g, final short b, final short speed, final Panscreen nextScreen, final boolean detach) {
         if (q == null) {
             FadeController.fadeOut(layer, r, g, b, speed, nextScreen);
         } else {
-            q.fadeOut(layer, r, g, b, speed, nextScreen);
+            q.fadeOut(layer, r, g, b, speed, nextScreen, detach);
         }
     }
 }
