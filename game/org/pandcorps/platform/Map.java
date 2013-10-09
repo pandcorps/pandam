@@ -100,8 +100,8 @@ public class Map {
     // burgh, field, heim, town
     // bloomingberg, blooming-gard
 	
-	protected final static int bgTexture = 0;
-	protected final static int bgColor = 1;
+	protected static int bgTexture = 0;
+	protected static int bgColor = 1;
 	
 	private final static HashMap<Pair<Integer, Integer>, Boolean> open = new HashMap<Pair<Integer, Integer>, Boolean>();
 	protected static boolean victory = false;
@@ -158,6 +158,8 @@ public class Map {
 				    victory = false;
 					tm.destroy(); // Trigger generation of new Map
 					tm = null;
+					timg = null;
+					loadImages();
 				}
 			}
 			final Tile t;
@@ -432,6 +434,8 @@ public class Map {
     }
 	
 	private final static void loadImages() {
+	    bgTexture = Mathtil.randi(0, PlatformGame.dirts.length - 1);
+	    bgColor = Mathtil.randi(0, 2);
 		BufferedImage tileImg = ImtilX.loadImage("org/pandcorps/platform/res/bg/Map.png", 128, null);
 		int lm1 = Mathtil.randi(0, MAX_LANDMARK), lm2;
 		do {
