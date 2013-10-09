@@ -44,10 +44,10 @@ public final class Segtil {
         return Chartil.toString(toSegment(s));
     }
     
-    public final static void serialize(final Segmented s, final Writer w) throws IOException {
+    public final static void save(final Segmented s, final Writer w) throws IOException {
         final Segment seg = toSegment(s);
         if (seg != null) {
-            seg.serialize(w);
+            seg.save(w);
         }
     }
 }

@@ -65,7 +65,7 @@ public class Field extends Record {
     }
     
     @Override
-    public final void serialize(final Writer w) throws IOException {
+    public final void save(final Writer w) throws IOException {
         boolean first = true;
         for (final String cmp : components) {
             if (first) {
@@ -73,7 +73,9 @@ public class Field extends Record {
             } else {
                 w.write(DELIM_COMPONENT);
             }
-            w.write(cmp);
+            if (cmp != null) {
+            	w.write(cmp);
+            }
         }
     }
     
@@ -92,6 +94,11 @@ public class Field extends Record {
     }
     
     // Could add setters with no index that default to 0
+    
+    @Override
+    public final void clear() {
+    	Coltil.clear(components);
+    }
     
     public final byte byteValue() {
         return parseByte(getValue());

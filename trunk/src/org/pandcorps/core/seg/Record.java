@@ -25,19 +25,20 @@ package org.pandcorps.core.seg;
 import java.io.*;
 
 import org.pandcorps.core.*;
+import org.pandcorps.core.io.*;
 
-public abstract class Record {
-    public abstract void serialize(final Writer w) throws IOException;
-    
+public abstract class Record implements Savable {
     public abstract String getValue(final int i);
     
     public abstract void setValue(final int i, final String v);
+    
+    public abstract void clear();
     
     @Override
     public final String toString() {
         final StringWriter w = new StringWriter();
         try {
-            serialize(w);
+            save(w);
             return w.toString();
         } catch (final IOException e) {
             throw new RuntimeException(e);
@@ -228,5 +229,11 @@ public abstract class Record {
     
     protected final static boolean parseBoolean(final String value, final boolean def) {
         return Chartil.isEmpty(value) ? def : parseBoolean(value);
+    }
+    
+    public final static void clear(final Record r) {
+    	if (r != null) {
+    		r.clear();
+    	}
     }
 }

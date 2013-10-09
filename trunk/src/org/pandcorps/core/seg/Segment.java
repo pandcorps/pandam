@@ -78,18 +78,18 @@ public class Segment extends Record {
     }
     
     @Override
-    public final void serialize(final Writer w) throws IOException {
+    public final void save(final Writer w) throws IOException {
         w.write(name);
         for (final List<Field> field : fields) {
             w.write(DELIM_FIELD);
             boolean first = true;
-            for (final Field rep : field) {
+            for (final Field rep : Coltil.unnull(field)) {
                 if (first) {
                     first = false;
                 } else {
                     w.write(DELIM_REP);
                 }
-                rep.serialize(w);
+                rep.save(w);
             }
         }
     }
@@ -137,6 +137,11 @@ public class Segment extends Record {
     @Override
     public final void setValue(final int i, final String value) {
     	setField(i, Field.create(value));
+    }
+    
+    @Override
+    public final void clear() {
+    	Coltil.clear(fields);
     }
     
     public final void addValue(final int i, final String value) {
