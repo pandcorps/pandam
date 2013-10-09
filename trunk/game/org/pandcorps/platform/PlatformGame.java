@@ -113,6 +113,7 @@ public class PlatformGame extends BaseGame {
 	
 	protected final static String FILE_CFG = "Config.txt";
 	protected final static String EXT_PRF = ".prf.txt";
+	protected final static String EXT_MAP = ".map.txt";
 	
 	protected final static String SEG_CFG = "CFG";
 	protected final static String SEG_PRF = "PRF";
@@ -555,7 +556,7 @@ public class PlatformGame extends BaseGame {
 	protected final static void saveGame() {
 	    // Map must call after updating markers (at least for player 1 who is bound to that Map)
 	    for (final PlayerContext pc : pcs) {
-            pc.profile.serialize();
+            pc.profile.save();
         }
 	}
 	

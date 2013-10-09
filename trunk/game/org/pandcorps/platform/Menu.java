@@ -234,7 +234,7 @@ public class Menu {
 		}
 		
 		protected final void save() {
-		    pc.profile.serialize();
+		    pc.profile.save();
 		}
 		
 		protected abstract void onExit();
