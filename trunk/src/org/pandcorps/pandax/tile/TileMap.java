@@ -23,22 +23,25 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.pandax.tile;
 
 import java.io.*;
+import java.util.*;
 
 import org.pandcorps.core.*;
+import org.pandcorps.core.io.*;
+import org.pandcorps.core.seg.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.tile.Tile.*;
 
-public class TileMap extends Panctor {
+public class TileMap extends Panctor implements Savable {
+	private final static String SEG_TMP = "TMP";
+    private final static String SEG_ROW = "ROW";
     
     /*package*/ final Tile[] tiles;
     
     private final int w;
-    
     private final int h;
     
     /*package*/ final int tw;
-    
     /*package*/ final int th;
     
     /*package*/ Object occupantDepth = null;
@@ -295,10 +298,44 @@ public class TileMap extends Panctor {
     	return t;
     }
     
-    public void serialize(final Writer out) throws IOException {
+    @Override
+    public void save(final Writer out) throws IOException {
+    	final Segment tmp = new Segment(SEG_TMP);
+    	tmp.setInt(0, w);
+    	tmp.setInt(1, h);
+    	tmp.setInt(2, tw);
+    	tmp.setInt(3, th);
+    	tmp.save(out);
+    	final Segment row = new Segment(SEG_ROW);
+    	final ArrayList<Field> list = new ArrayList<Field>(w);
+    	row.setRepetitions(0, list);
         for (int j = 0; j < h; j++) {
+        	Iotil.println(out);
             for (int i = 0; i < w; i++) {
+            	final Tile t = getTile(i, j);
+            	Field f = Coltil.get(list, i);
+            	Field.clear(f);
+            	if (t != null) {
+            		if (f == null) {
+            			f = new Field();
+            			Coltil.set(list, i, f);
+            		}
+            		setImage(f, 0, t.background);
+            		setImage(f, 2, t.foreground);
+            		f.setByte(4, t.behavior);
+            	}
             }
+            row.save(out);
         }
+    }
+    
+    private void setImage(final Field f, final int i, final Object img) {
+    	if (img == null) {
+    		return;
+    	}
+    	// Currently don't support other images here
+    	final TileMapImage tmimg = (TileMapImage) img;
+    	f.setFloat(i, tmimg.ix);
+    	f.setFloat(i + 1, tmimg.iy);
     }
 }

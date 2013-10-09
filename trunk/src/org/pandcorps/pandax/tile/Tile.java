@@ -33,23 +33,16 @@ public final class Tile {
 	public final static byte BEHAVIOR_SOLID = 1;
 	
     /*package*/ final TileMap map;
-    
     /*package*/ final int i;
-    
     /*package*/ final int j;
-    
     /*package*/ final FinPanple position;
     
     // bg/fg/solid behavior could likely be moved into a TileDefinition; many Tiles would likely share the same definition
     
     // Panimation?
     /*package*/ Object background = null;
-    
     /*package*/ Object foreground = null;
-    
-    ///*package*/ Panctor occupant = null;
     /*package*/ TileOccupant occupant = null;
-    
     /*package*/ byte behavior = BEHAVIOR_OPEN;
     
     //int brightness
