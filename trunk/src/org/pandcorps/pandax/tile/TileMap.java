@@ -22,6 +22,8 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandax.tile;
 
+import java.io.*;
+
 import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.impl.*;
@@ -291,5 +293,12 @@ public class TileMap extends Panctor {
         	}
     	}
     	return t;
+    }
+    
+    public void serialize(final Writer out) throws IOException {
+        for (int j = 0; j < h; j++) {
+            for (int i = 0; i < w; i++) {
+            }
+        }
     }
 }
