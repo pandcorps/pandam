@@ -88,7 +88,7 @@ public abstract class Achievement implements Named {
 			}
 		}
 		if (any) {
-			profile.serialize();
+			profile.save();
 		}
 	}
 	

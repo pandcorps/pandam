@@ -26,10 +26,11 @@ import java.io.*;
 import java.util.*;
 
 import org.pandcorps.core.*;
+import org.pandcorps.core.io.*;
 import org.pandcorps.core.seg.*;
-import org.pandcorps.platform.Player.PlayerData;
+import org.pandcorps.platform.Player.*;
 
-public class Profile extends PlayerData implements Segmented {
+public class Profile extends PlayerData implements Segmented, Savable {
     protected final ArrayList<Avatar> avatars = new ArrayList<Avatar>();
     protected Avatar currentAvatar = null;
     protected int gems = 0;
@@ -97,35 +98,23 @@ public class Profile extends PlayerData implements Segmented {
     	}
     }
     
-    public void serialize(final Writer out) throws IOException {
-        Segtil.serialize(this, out);
+    @Override
+    public void save(final Writer out) throws IOException {
+        Segtil.save(this, out);
         Iotil.println(out);
-        Segtil.serialize(stats, out);
+        Segtil.save(stats, out);
         Iotil.println(out);
         final Segment ach = new Segment();
         saveAchievements(ach);
-        ach.serialize(out);
+        ach.save(out);
         for (final Avatar avatar : avatars) {
         	Iotil.println(out);
-            Segtil.serialize(avatar, out);
+            Segtil.save(avatar, out);
         }
     }
     
-    public void serialize(final String loc) throws IOException {
-    	final Writer out = Iotil.getBufferedWriter(loc);
-    	try {
-    		serialize(out);
-    	} finally {
-    		Iotil.close(out);
-    	}
-    }
-    
-    public void serialize() {
-        try {
-            serialize(getName() + PlatformGame.EXT_PRF);
-        } catch (final IOException e) {
-            throw new RuntimeException(e);
-        }
+    public void save() {
+        Savtil.save(this, getName() + PlatformGame.EXT_PRF);
     }
     
     public final static class Statistics implements Segmented {

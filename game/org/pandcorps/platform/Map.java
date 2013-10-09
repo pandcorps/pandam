@@ -22,19 +22,20 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.platform;
 
-import java.awt.image.BufferedImage;
+import java.awt.image.*;
 import java.util.*;
 
 import org.pandcorps.core.*;
+import org.pandcorps.core.io.*;
 import org.pandcorps.game.*;
-import org.pandcorps.game.core.ImtilX;
+import org.pandcorps.game.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.Panteraction.*;
 import org.pandcorps.pandam.event.action.*;
-import org.pandcorps.pandax.in.ControlScheme;
-import org.pandcorps.pandax.text.Pantext;
+import org.pandcorps.pandax.in.*;
+import org.pandcorps.pandax.text.*;
 import org.pandcorps.pandax.tile.*;
-import org.pandcorps.pandax.tile.Tile.TileMapImage;
+import org.pandcorps.pandax.tile.Tile.*;
 import org.pandcorps.platform.Player.*;
 
 public class Map {
@@ -149,7 +150,7 @@ public class Map {
 						PlatformGame.notify(pc, jm.getName() + " trial ended");
 						profile.triedJumpModes.add(Integer.valueOf(jmi));
 						profile.currentAvatar.jumpMode = Player.MODE_NORMAL;
-						profile.serialize();
+						profile.save();
 						PlatformGame.reloadAnimalStrip(pc);
 					}
 				}
@@ -167,6 +168,7 @@ public class Map {
 			if (tm == null) {
 			    t = loadMap();
 			    PlatformGame.saveGame();
+			    saveMap();
 			} else {
 				t = getStartTile();
 				if (victory) {
@@ -871,8 +873,12 @@ public class Map {
 		return tm.getTile(column, row);
 	}
 	
+	private final static PlayerContext getPlayerContext() {
+		return PlatformGame.pcs.get(0);
+	}
+	
 	private final static void addPlayer(final Tile t) {
-		final MapPlayer player = new MapPlayer(PlatformGame.pcs.get(0));
+		final MapPlayer player = new MapPlayer(getPlayerContext());
 		player.setPos(t);
 		room.addActor(player);
 		final Pangine engine = Pangine.getEngine();
@@ -1032,6 +1038,10 @@ public class Map {
 	private final static void setPlayerPosition(final int column, final int row) {
 		Map.column = column;
 		Map.row = row;
+	}
+	
+	private final static void saveMap() {
+		Savtil.save(tm, getPlayerContext().profile.getName() + PlatformGame.EXT_MAP);
 	}
 	
 	public final static void main(final String[] args) {
