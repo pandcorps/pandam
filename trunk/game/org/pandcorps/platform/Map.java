@@ -50,6 +50,9 @@ public class Map {
 	private final static int DEPTH_MARKER = 1;
 	private final static int DEPTH_PLAYER = 2;
 	
+	private final static String[] EXT_LANDMARKS = { "Forest", "Crater" };
+	private final static int MAX_LANDMARK = 3;
+	
 	/*private final static String[] ADJECTIVES =
 		{ "Bright", "Bubbly", "Cheery", "Emerald", "Enchanted", "Fragrant", "Green", "Fun", "Happy", "Incredible", "Merry",
 		"Mystic", "Sugar", "Sunny", "Sweet", "Tender", "Tranquil", "Verdant", "Vibrant", "Wonder" };
@@ -430,11 +433,31 @@ public class Map {
 	
 	private final static void loadImages() {
 		BufferedImage tileImg = ImtilX.loadImage("org/pandcorps/platform/res/bg/Map.png", 128, null);
+		int lm1 = Mathtil.randi(0, MAX_LANDMARK), lm2;
+		do {
+		    lm2 = Mathtil.randi(0, MAX_LANDMARK);
+		} while (lm2 == lm1);
+		if (lm1 == 1 || (lm2 != 1 && lm2 < lm1)) {
+		    final int t = lm1;
+		    lm1 = lm2;
+		    lm2 = t;
+		}
+		applyLandmark(tileImg, 0, lm1, 0);
+		applyLandmark(tileImg, 48, lm2, 1);
 		Level.applyDirtTexture(tileImg, 48, 0, 96, 16);
 		final BufferedImage terrain = Level.getDarkenedTerrain(Level.getTerrainTexture());
 		Level.applyTerrainTexture(tileImg, 48, 32, 96, 48, terrain, Level.getTerrainMask(1));
 		tileImg = Level.getColoredTerrain(tileImg, 48, 32, 48, 16);
 		timg = Pangine.getEngine().createImage("img.map", tileImg);
+	}
+	
+	private final static void applyLandmark(final BufferedImage tileImg, final int x, final int lm, final int max) {
+	    if (lm == max) {
+	        return;
+	    }
+	    final int lmd = 48;
+	    final BufferedImage lmImg = ImtilX.loadImage("org/pandcorps/platform/res/bg/Landmark" + EXT_LANDMARKS[lm - 2] + ".png", lmd, null);
+	    Imtil.copy(lmImg, tileImg, 0, 0, lmd, lmd, x, 80);
 	}
 	
 	private final static Tile loadMap() {
