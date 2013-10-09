@@ -158,6 +158,7 @@ public class Map {
 				    victory = false;
 					tm.destroy(); // Trigger generation of new Map
 					tm = null;
+					Panmage.destroy(timg);
 					timg = null;
 					loadImages();
 				}
