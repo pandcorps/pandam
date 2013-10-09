@@ -56,7 +56,8 @@ public class PlatformGame extends BaseGame {
 	Pick random mountain color/texture shape used by Map and Level whenever a new Map is generated.
 	Replace bush with Rise.png for some levels; rise will be higher than 1 tile; separate build method.
 	Taller bushes.
-	Map landmarks: Mountain, forest, garden, crater.
+	Map landmarks: Mountain, garden.
+	Save Map (possibly separate from profile, with only cleared levels in profile, so only save whole Map when created).
 	Bubble when map-traveling.
 	Train-riding levels.
 	Ridable dragons.
@@ -76,7 +77,6 @@ public class PlatformGame extends BaseGame {
 	Spike/fire enemy.
 	Collect fruit from trees.
 	Level to-do notes.
-	HUD notification queue, display if none currently displayed, else wait.
 	Goals: Collect n gems, defeat n enemies.
 	Random music per map.
 	Sound effects for jump, bump, stomp, hurt, etc.
