@@ -53,12 +53,12 @@ public class PlatformGame extends BaseGame {
 	Gem multipliers, invincibility.
 	Player sliding image.
 	Warp Map marker for entry/exit point.
-	Pick random mountain color/texture shape used by Map and Level whenever a new Map is generated.
 	Replace bush with Rise.png for some levels; rise will be higher than 1 tile; separate build method.
 	Taller bushes.
 	Map landmarks: Mountain, garden.
 	Save Map (possibly separate from profile, with only cleared levels in profile, so only save whole Map when created).
 	Bubble when map-traveling.
+	Portal near castle, source of monsters, must enter to close, another plane/dimension.
 	Train-riding levels.
 	Ridable dragons.
 	Mage Enemy w/ pointy hat.
