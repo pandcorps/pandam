@@ -119,6 +119,7 @@ public class PlatformGame extends BaseGame {
 	protected final static String SEG_PRF = "PRF";
 	protected final static String SEG_STX = "STX";
 	protected final static String SEG_ACH = "ACH";
+	protected final static String SEG_LOC = "LOC";
 	protected final static String SEG_AVT = "AVT";
 	
 	protected static Panroom room = null;
@@ -392,6 +393,10 @@ public class PlatformGame extends BaseGame {
         seg = plist.readIf(SEG_ACH);
         if (seg != null) {
         	profile.loadAchievements(seg);
+        }
+        seg = plist.readIf(SEG_LOC);
+        if (seg != null) {
+            profile.loadLocation(seg);
         }
         while ((seg = plist.readIf(SEG_AVT)) != null) {
         	final Avatar avatar = new Avatar();

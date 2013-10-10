@@ -111,8 +111,8 @@ public class Map {
 	protected static boolean victory = false;
 	private static int roomW = -1;
 	private static int roomH = -1;
-	private static int column = -1;
-	private static int row = -1;
+	protected static int column = -1;
+	protected static int row = -1;
 	private static int endColumn = -1;
 	private static int endRow = -1;
 	private static String name = null;
@@ -540,8 +540,7 @@ public class Map {
         base = imgMap[1][1];
         ladder = imgMap[0][6];
         if (b == null) {
-        	column = 5; //TODO Load from profile
-        	row = 5;
+        	//column, row handled in Profile
         	return getStartTile();
         } else {
 			tm.fillBackground(water, true);
