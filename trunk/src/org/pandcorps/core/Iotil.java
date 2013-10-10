@@ -65,6 +65,10 @@ public final class Iotil {
 		return Iotil.class.getClassLoader().getResource(location) != null;
 	}
 	
+	public final static void delete(final String location) {
+	    new File(location).delete();
+	}
+	
 	public final static Reader getReader(final String location) {
 		return new InputStreamReader(getInputStream(location));
 	}
