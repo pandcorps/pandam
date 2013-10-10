@@ -47,6 +47,7 @@ public class TileMap extends Panctor implements Savable {
     /*package*/ Object occupantDepth = null;
     
     /*package*/ Panmage imgMap = null;
+    private TileMapImage[][] imgs = null;
     
     protected final ImplPansplay tileDisplay;
     
@@ -284,6 +285,9 @@ public class TileMap extends Panctor implements Savable {
     }
     
     public TileMapImage[][] splitImageMap() {
+    	if (imgs != null) {
+    		return imgs;
+    	}
     	final Panple idim = imgMap.getBoundingMaximum(); // or getSize()?
     	final int iw = (int) idim.getX() / tw, ih = (int) idim.getY() / th;
     	final TileMapImage[][] t = new TileMapImage[ih][];
@@ -295,7 +299,39 @@ public class TileMap extends Panctor implements Savable {
     			r[i] = new TileMapImage(i * tw, jth);
         	}
     	}
+    	imgs = t;
     	return t;
+    }
+    
+    public final static <T extends TileMap> T load(final Class<T> c, final SegmentStream in, final Panmage timg) throws IOException {
+    	final Segment tmp = in.readRequire(SEG_TMP);
+    	final int w = tmp.intValue(0), h = tmp.intValue(1);
+    	final int tw = tmp.intValue(2), th = tmp.intValue(3);
+    	final T tm = Reftil.newInstance(Reftil.getConstructor(c, String.class, Integer.TYPE, Integer.TYPE, Integer.TYPE, Integer.TYPE),
+    			Pantil.vmid(), Integer.valueOf(w), Integer.valueOf(h), Integer.valueOf(tw), Integer.valueOf(th));
+    	tm.setImageMap(timg);
+		final TileMapImage[][] imgMap = tm.splitImageMap();
+    	for (int j = 0; j < h; j++) {
+    		final Segment row = in.readRequire(SEG_ROW);
+    		final List<Field> list = row.getRepetitions(0);
+    		for (int i = 0; i < w; i++) {
+    			final Field f = Coltil.get(list, i);
+    			if (f == null) {
+    				continue;
+    			}
+    			tm.initTile(i, j).setImages(tm.getImage(imgMap, f, 0), tm.getImage(imgMap, f, 2), f.byteValue(4));
+    		}
+    	}
+    	return tm;
+    }
+    
+    private final TileMapImage getImage(final TileMapImage[][] imgMap, final Field f, final int i) {
+    	final String v = f.getValue(i);
+    	if (v == null) {
+    		return null;
+    	}
+    	//TODO More efficient to divide in save once instead of each load?
+    	return imgMap[(int) f.floatValue(i + 1) / th][(int) Field.parseFloat(v) / tw];
     }
     
     @Override
