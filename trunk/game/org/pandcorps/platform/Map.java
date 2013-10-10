@@ -23,10 +23,12 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.platform;
 
 import java.awt.image.*;
+import java.io.*;
 import java.util.*;
 
 import org.pandcorps.core.*;
 import org.pandcorps.core.io.*;
+import org.pandcorps.core.seg.*;
 import org.pandcorps.game.*;
 import org.pandcorps.game.core.*;
 import org.pandcorps.pandam.*;
@@ -168,7 +170,6 @@ public class Map {
 			if (tm == null) {
 			    t = loadMap();
 			    PlatformGame.saveGame();
-			    saveMap();
 			} else {
 				t = getStartTile();
 				if (victory) {
@@ -488,9 +489,25 @@ public class Map {
 	}
 	
 	private final static Tile loadMap2() {
-		final Mapper b = new RandomMapper();
-		roomW = b.getW();
-		roomH = b.getH();
+		final String mapFile = getMapFile();
+		final Mapper b;
+		if (Iotil.exists(mapFile)) {
+			final SegmentStream in = SegmentStream.openLocation(mapFile);
+			try {
+				tm = TileMap.load(DynamicTileMap.class, in, timg);
+				roomW = tm.getWidth() * tm.getTileWidth();
+				roomH = tm.getHeight() * tm.getTileHeight();
+			} catch (final IOException e) {
+				throw new RuntimeException(e);
+			} finally {
+				in.close();
+			}
+			b = null;
+		} else {
+			b = new RandomMapper();
+			roomW = b.getW();
+			roomH = b.getH();
+		}
 		initRoom();
 		mtl = new MapTileListener(6);
 		initTileMap(tm);
@@ -501,11 +518,18 @@ public class Map {
         water = imgMap[5][6];
         base = imgMap[1][1];
         ladder = imgMap[0][6];
-		tm.fillBackground(water, true);
-		b.init();
-		final Tile t = getStartTile();
-		b.build();
-		return t;
+        if (b == null) {
+        	column = 5; //TODO Load
+        	row = 5;
+        	return getStartTile();
+        } else {
+			tm.fillBackground(water, true);
+			b.init();
+			final Tile t = getStartTile();
+			b.build();
+			saveMap();
+			return t;
+        }
 	}
 	
 	private final static void initTileMap(final DynamicTileMap tm) {
@@ -1040,8 +1064,12 @@ public class Map {
 		Map.row = row;
 	}
 	
+	private final static String getMapFile() {
+		return getPlayerContext().profile.getName() + PlatformGame.EXT_MAP;
+	}
+	
 	private final static void saveMap() {
-		Savtil.save(tm, getPlayerContext().profile.getName() + PlatformGame.EXT_MAP);
+		Savtil.save(tm, getMapFile());
 	}
 	
 	public final static void main(final String[] args) {
