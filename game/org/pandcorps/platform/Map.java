@@ -27,7 +27,6 @@ import java.io.*;
 import java.util.*;
 
 import org.pandcorps.core.*;
-import org.pandcorps.core.io.*;
 import org.pandcorps.core.seg.*;
 import org.pandcorps.game.*;
 import org.pandcorps.game.core.*;
@@ -52,6 +51,8 @@ public class Map {
 	
 	private final static int DEPTH_MARKER = 1;
 	private final static int DEPTH_PLAYER = 2;
+	
+	private final static String SEG_MAP = "MAP";
 	
 	private final static String[] EXT_LANDMARKS = { "Forest", "Crater" };
 	private final static int MAX_LANDMARK = 3;
@@ -160,6 +161,7 @@ public class Map {
 					PlatformGame.worldClose();
 				    victory = false;
 					tm.destroy(); // Trigger generation of new Map
+					Iotil.delete(getMapFile());
 					tm = null;
 					Panmage.destroy(timg);
 					timg = null;
@@ -438,8 +440,22 @@ public class Map {
     }
 	
 	private final static void loadImages() {
-	    bgTexture = Mathtil.randi(0, PlatformGame.dirts.length - 1);
-	    bgColor = Mathtil.randi(0, 2);
+	    final String mapFile = getMapFile();
+	    if (Iotil.exists(mapFile)) {
+	        final SegmentStream in = SegmentStream.openLocation(mapFile);
+            try {
+                final Segment seg = in.readRequire(SEG_MAP);
+                bgTexture = seg.intValue(1);
+                bgColor = seg.intValue(2);
+            } catch (final IOException e) {
+                throw new RuntimeException(e);
+            } finally {
+                in.close();
+            }
+	    } else {
+    	    bgTexture = Mathtil.randi(0, PlatformGame.dirts.length - 1);
+    	    bgColor = Mathtil.randi(0, 2);
+	    }
 		BufferedImage tileImg = ImtilX.loadImage("org/pandcorps/platform/res/bg/Map.png", 128, null);
 		int lm1 = Mathtil.randi(0, MAX_LANDMARK), lm2;
 		do {
@@ -471,7 +487,6 @@ public class Map {
 	private final static Tile loadMap() {
 		open.clear();
 		Panctor.destroy(markers);
-		name = generateName();
 	    Tile t;
 		//for (int i = 0; i < 100; i++) { // For testing rarely randomly generating errors
 	        //tm.destroy(); tm = null; destroy/clear markers
@@ -494,6 +509,11 @@ public class Map {
 		if (Iotil.exists(mapFile)) {
 			final SegmentStream in = SegmentStream.openLocation(mapFile);
 			try {
+			    final Segment seg = in.readRequire(SEG_MAP);
+	            name = seg.getValue(0);
+	            //bgTexture, bgColor already handled in loadImages
+	            endColumn = seg.intValue(3);
+	            endRow = seg.intValue(4);
 				tm = TileMap.load(DynamicTileMap.class, in, timg);
 				roomW = tm.getWidth() * tm.getTileWidth();
 				roomH = tm.getHeight() * tm.getTileHeight();
@@ -504,6 +524,7 @@ public class Map {
 			}
 			b = null;
 		} else {
+		    name = generateName();
 			b = new RandomMapper();
 			roomW = b.getW();
 			roomH = b.getH();
@@ -519,7 +540,7 @@ public class Map {
         base = imgMap[1][1];
         ladder = imgMap[0][6];
         if (b == null) {
-        	column = 5; //TODO Load
+        	column = 5; //TODO Load from profile
         	row = 5;
         	return getStartTile();
         } else {
@@ -1069,7 +1090,22 @@ public class Map {
 	}
 	
 	private final static void saveMap() {
-		Savtil.save(tm, getMapFile());
+	    final Writer w = Iotil.getBufferedWriter(getMapFile());
+	    try {
+	        final Segment seg = new Segment(SEG_MAP);
+	        seg.setValue(0, name);
+	        seg.setInt(1, bgTexture);
+	        seg.setInt(2, bgColor);
+	        seg.setInt(3, endColumn);
+	        seg.setInt(4, endRow);
+	        seg.save(w);
+	        Iotil.println(w);
+	        tm.save(w);
+	    } catch (final IOException e) {
+	        throw new RuntimeException(e);
+	    } finally {
+	        Iotil.close(w);
+	    }
 	}
 	
 	public final static void main(final String[] args) {
