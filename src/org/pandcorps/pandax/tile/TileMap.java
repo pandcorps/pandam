@@ -330,8 +330,7 @@ public class TileMap extends Panctor implements Savable {
     	if (v == null) {
     		return null;
     	}
-    	//TODO More efficient to divide in save once instead of each load?
-    	return imgMap[(int) f.floatValue(i + 1) / th][(int) Field.parseFloat(v) / tw];
+    	return imgMap[f.intValue(i + 1)][Field.parseInt(v)];
     }
     
     @Override
@@ -371,7 +370,7 @@ public class TileMap extends Panctor implements Savable {
     	}
     	// Currently don't support other images here
     	final TileMapImage tmimg = (TileMapImage) img;
-    	f.setFloat(i, tmimg.ix);
-    	f.setFloat(i + 1, tmimg.iy);
+    	f.setInt(i, (int) tmimg.ix / tw);
+    	f.setInt(i + 1, (int) tmimg.iy / th);
     }
 }
