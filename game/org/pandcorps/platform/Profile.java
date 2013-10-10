@@ -81,6 +81,11 @@ public class Profile extends PlayerData implements Segmented, Savable {
         addAll(achievements, seg, 0);
     }
     
+    protected void loadLocation(final Segment seg) {
+        Map.column = seg.intValue(0);
+        Map.row = seg.intValue(1);
+    }
+    
     private void addAll(final Collection<Integer> values, final Segment seg, final int i) {
     	for (final Field f : Coltil.unnull(seg.getRepetitions(i))) {
     		values.add(f.getInteger());
@@ -90,6 +95,13 @@ public class Profile extends PlayerData implements Segmented, Savable {
     private void saveAchievements(final Segment seg) {
     	seg.setName(PlatformGame.SEG_ACH);
     	addAll(seg, 0, achievements);
+    }
+    
+    private void saveLocation(final Segment seg) {
+        seg.setName(PlatformGame.SEG_LOC);
+        seg.setInt(0, Map.column);
+        seg.setInt(1, Map.row);
+        //TODO Cleared markers
     }
     
     private void addAll(final Segment seg, final int i, final Collection<Integer> values) {
@@ -106,6 +118,10 @@ public class Profile extends PlayerData implements Segmented, Savable {
         Iotil.println(out);
         final Segment ach = new Segment();
         saveAchievements(ach);
+        ach.save(out);
+        Iotil.println(out);
+        final Segment loc = new Segment();
+        saveLocation(loc);
         ach.save(out);
         for (final Avatar avatar : avatars) {
         	Iotil.println(out);
