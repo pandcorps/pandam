@@ -183,51 +183,52 @@ public abstract class Record implements Savable {
     	setValue(i, Chartil.toString(value));
     }
     
-    protected final static byte parseByte(final String value) {
+    // Caller might use getValue, check for null, then want to parse in same way as Record.byteValue, so this is public
+    public final static byte parseByte(final String value) {
         return Byte.parseByte(value);
     }
     
-    protected final static byte parseByte(final String value, final byte def) {
+    public final static byte parseByte(final String value, final byte def) {
         return Chartil.isEmpty(value) ? def : parseByte(value);
     }
     
-    protected final static short parseShort(final String value) {
+    public final static short parseShort(final String value) {
         return Short.parseShort(value);
     }
     
-    protected final static short parseShort(final String value, final short def) {
+    public final static short parseShort(final String value, final short def) {
         return Chartil.isEmpty(value) ? def : parseShort(value);
     }
     
-    protected final static int parseInt(final String value) {
+    public final static int parseInt(final String value) {
         return Integer.parseInt(value); // Define here in case we decide to default to 0 or something
     }
     
-    protected final static int parseInt(final String value, final int def) {
+    public final static int parseInt(final String value, final int def) {
         return Chartil.isEmpty(value) ? def : parseInt(value);
     }
     
-    protected final static long parseLong(final String value) {
+    public final static long parseLong(final String value) {
         return Long.parseLong(value);
     }
     
-    protected final static long parseLong(final String value, final long def) {
+    public final static long parseLong(final String value, final long def) {
         return Chartil.isEmpty(value) ? def : parseLong(value);
     }
     
-    protected final static float parseFloat(final String value) {
+    public final static float parseFloat(final String value) {
         return Float.parseFloat(value);
     }
     
-    protected final static float parseFloat(final String value, final float def) {
+    public final static float parseFloat(final String value, final float def) {
         return Chartil.isEmpty(value) ? def : parseFloat(value);
     }
     
-    protected final static boolean parseBoolean(final String value) {
+    public final static boolean parseBoolean(final String value) {
         return Boolean.parseBoolean(value);
     }
     
-    protected final static boolean parseBoolean(final String value, final boolean def) {
+    public final static boolean parseBoolean(final String value, final boolean def) {
         return Chartil.isEmpty(value) ? def : parseBoolean(value);
     }
     

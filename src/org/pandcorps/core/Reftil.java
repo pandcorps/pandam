@@ -47,17 +47,34 @@ public final class Reftil {
 	    return newInstance(getConstructor(c));
 	}
 	
+	public final static <T> T newInstance(final Class<T> c, final Object... a) {
+		final int size = Coltil.size(a);
+		final Class<?>[] ca = new Class<?>[size];
+		for (int i = 0; i < size; i++) {
+			ca[i] = a[i].getClass();
+		}
+		return newInstance(getConstructor(c, ca), a);
+	}
+	
 	public final static <T> T newInstance(final Constructor<T> c) {
+		return newInstance(c, EMPTY_ARRAY_OBJECT);
+	}
+	
+	public final static <T> T newInstance(final Constructor<T> c, final Object... a) {
         try {
-            return c.newInstance(EMPTY_ARRAY_OBJECT);
+            return c.newInstance(a);
         } catch (final Exception e) {
             throw Pantil.toRuntimeException(e);
         }
     }
 	
 	public final static <T> Constructor<T> getConstructor(final Class<T> c) {
+		return getConstructor(c, EMPTY_ARRAY_CLASS);
+	}
+	
+	public final static <T> Constructor<T> getConstructor(final Class<T> c, final Class<?>... a) {
 		try {
-			final Constructor<T> constructor = c.getDeclaredConstructor(EMPTY_ARRAY_CLASS);
+			final Constructor<T> constructor = c.getDeclaredConstructor(a);
 			constructor.setAccessible(true);
 			return constructor;
 		} catch (final Exception e) {
