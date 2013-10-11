@@ -56,7 +56,6 @@ public class PlatformGame extends BaseGame {
 	Replace bush with Rise.png for some levels; rise will be higher than 1 tile; separate build method.
 	Taller bushes.
 	Map landmarks: Mountain, garden.
-	Save Map (possibly separate from profile, with only cleared levels in profile, so only save whole Map when created).
 	Bubble when map-traveling.
 	Portal near castle, source of monsters, must enter to close, another plane/dimension.
 	Train-riding levels.
