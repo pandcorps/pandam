@@ -24,6 +24,7 @@ package org.pandcorps.platform;
 
 import java.io.*;
 import java.util.*;
+import java.util.Map.*;
 
 import org.pandcorps.core.*;
 import org.pandcorps.core.io.*;
@@ -84,6 +85,10 @@ public class Profile extends PlayerData implements Segmented, Savable {
     protected void loadLocation(final Segment seg) {
         Map.column = seg.intValue(0);
         Map.row = seg.intValue(1);
+        Map.open.clear();
+        for (final Field f : Coltil.unnull(seg.getRepetitions(2))) {
+        	Map.open.put(Pair.get(f.getInteger(0), f.getInteger(1)), f.getBoolean(2));
+        }
     }
     
     private void addAll(final Collection<Integer> values, final Segment seg, final int i) {
@@ -101,7 +106,16 @@ public class Profile extends PlayerData implements Segmented, Savable {
         seg.setName(PlatformGame.SEG_LOC);
         seg.setInt(0, Map.column);
         seg.setInt(1, Map.row);
-        //TODO Cleared markers
+        final ArrayList<Field> list = new ArrayList<Field>(Map.open.size());
+        for (final Entry<Pair<Integer, Integer>, Boolean> entry : Map.open.entrySet()) {
+        	final Field f = new Field();
+        	final Pair<Integer, Integer> key = entry.getKey();
+        	f.setInteger(0, key.get1());
+        	f.setInteger(1, key.get2());
+        	f.setBoolean(2, entry.getValue());
+        	list.add(f);
+        }
+        seg.setRepetitions(2, list);
     }
     
     private void addAll(final Segment seg, final int i, final Collection<Integer> values) {
