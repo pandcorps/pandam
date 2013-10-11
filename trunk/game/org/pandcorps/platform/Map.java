@@ -53,6 +53,7 @@ public class Map {
 	private final static int DEPTH_PLAYER = 2;
 	
 	private final static String SEG_MAP = "MAP";
+	private final static String SEG_MRK = "MRK";
 	
 	private final static String[] EXT_LANDMARKS = { "Forest", "Crater" };
 	private final static int MAX_LANDMARK = 3;
@@ -510,6 +511,7 @@ public class Map {
 	private final static Tile loadMap2() {
 		final String mapFile = getMapFile();
 		final Mapper b;
+		final Segment mrk;
 		if (Iotil.exists(mapFile)) {
 			final SegmentStream in = SegmentStream.openLocation(mapFile);
 			try {
@@ -518,6 +520,7 @@ public class Map {
 	            //bgTexture, bgColor already handled in loadImages
 	            endColumn = seg.intValue(3);
 	            endRow = seg.intValue(4);
+	            mrk = in.readRequire(SEG_MRK);
 				tm = TileMap.load(DynamicTileMap.class, in, timg);
 				roomW = tm.getWidth() * tm.getTileWidth();
 				roomH = tm.getHeight() * tm.getTileHeight();
@@ -532,6 +535,7 @@ public class Map {
 			b = new RandomMapper();
 			roomW = b.getW();
 			roomH = b.getH();
+			mrk = null;
 		}
 		initRoom();
 		mtl = new MapTileListener(6);
@@ -545,6 +549,9 @@ public class Map {
         ladder = imgMap[0][6];
         if (b == null) {
         	//column, row handled in Profile
+        	for (final Field f : mrk.getRepetitions(0)) {
+				addMarker(tm.getTile(f.intValue(0), f.intValue(1)));
+			}
         	return getStartTile();
         } else {
 			tm.fillBackground(water, true);
@@ -1028,6 +1035,10 @@ public class Map {
 			tile.setBackground(imgMap[3][0]);
 		}
 		tile.setBehavior(TILE_MARKER);
+		addMarker(tile);
+	}
+	
+	private final static void addMarker(final Tile tile) {
 		final Marker m = new Marker(isOpen(tile));
 		markers.add(m);
 		//m.setPosition(tile);
@@ -1103,8 +1114,18 @@ public class Map {
 	        seg.setInt(4, endRow);
 	        seg.setInt(5, lm1);
             seg.setInt(6, lm2);
-	        seg.save(w);
-	        Iotil.println(w);
+	        seg.saveln(w);
+	        final Segment mrk = new Segment(SEG_MRK);
+	        final ArrayList<Field> list = new ArrayList<Field>(markers.size());
+	        for (final Marker m : markers) {
+	        	final Field f = new Field();
+	        	final Tile tile = tm.getContainer(m);
+	        	f.setInt(0, tile.getColumn());
+	        	f.setInt(1, tile.getRow());
+				list.add(f);
+			}
+	        mrk.setRepetitions(0, list);
+	        mrk.saveln(w);
 	        tm.save(w);
 	    } catch (final IOException e) {
 	        throw new RuntimeException(e);
