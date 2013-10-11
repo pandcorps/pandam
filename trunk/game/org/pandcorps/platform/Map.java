@@ -106,6 +106,8 @@ public class Map {
 	
 	protected static int bgTexture = 0;
 	protected static int bgColor = 1;
+	private static int lm1 = -1;
+	private static int lm2 = -1;
 	
 	private final static HashMap<Pair<Integer, Integer>, Boolean> open = new HashMap<Pair<Integer, Integer>, Boolean>();
 	protected static boolean victory = false;
@@ -447,6 +449,8 @@ public class Map {
                 final Segment seg = in.readRequire(SEG_MAP);
                 bgTexture = seg.intValue(1);
                 bgColor = seg.intValue(2);
+                lm1 = seg.intValue(5);
+                lm2 = seg.intValue(6);
             } catch (final IOException e) {
                 throw new RuntimeException(e);
             } finally {
@@ -455,17 +459,17 @@ public class Map {
 	    } else {
     	    bgTexture = Mathtil.randi(0, PlatformGame.dirts.length - 1);
     	    bgColor = Mathtil.randi(0, 2);
+			lm1 = Mathtil.randi(0, MAX_LANDMARK);
+			do {
+			    lm2 = Mathtil.randi(0, MAX_LANDMARK);
+			} while (lm2 == lm1);
+			if (lm1 == 1 || (lm2 != 1 && lm2 < lm1)) {
+			    final int t = lm1;
+			    lm1 = lm2;
+			    lm2 = t;
+			}
 	    }
 		BufferedImage tileImg = ImtilX.loadImage("org/pandcorps/platform/res/bg/Map.png", 128, null);
-		int lm1 = Mathtil.randi(0, MAX_LANDMARK), lm2;
-		do {
-		    lm2 = Mathtil.randi(0, MAX_LANDMARK);
-		} while (lm2 == lm1);
-		if (lm1 == 1 || (lm2 != 1 && lm2 < lm1)) {
-		    final int t = lm1;
-		    lm1 = lm2;
-		    lm2 = t;
-		}
 		applyLandmark(tileImg, 0, lm1, 0);
 		applyLandmark(tileImg, 48, lm2, 1);
 		Level.applyDirtTexture(tileImg, 48, 0, 96, 16);
@@ -1097,6 +1101,8 @@ public class Map {
 	        seg.setInt(2, bgColor);
 	        seg.setInt(3, endColumn);
 	        seg.setInt(4, endRow);
+	        seg.setInt(5, lm1);
+            seg.setInt(6, lm2);
 	        seg.save(w);
 	        Iotil.println(w);
 	        tm.save(w);
