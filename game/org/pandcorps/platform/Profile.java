@@ -122,7 +122,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
         Iotil.println(out);
         final Segment loc = new Segment();
         saveLocation(loc);
-        ach.save(out);
+        loc.save(out);
         for (final Avatar avatar : avatars) {
         	Iotil.println(out);
             Segtil.save(avatar, out);
