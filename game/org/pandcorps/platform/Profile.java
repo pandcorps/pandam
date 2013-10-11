@@ -112,14 +112,11 @@ public class Profile extends PlayerData implements Segmented, Savable {
     
     @Override
     public void save(final Writer out) throws IOException {
-        Segtil.save(this, out);
-        Iotil.println(out);
-        Segtil.save(stats, out);
-        Iotil.println(out);
+        Segtil.saveln(this, out);
+        Segtil.saveln(stats, out);
         final Segment ach = new Segment();
         saveAchievements(ach);
-        ach.save(out);
-        Iotil.println(out);
+        ach.saveln(out);
         final Segment loc = new Segment();
         saveLocation(loc);
         loc.save(out);
