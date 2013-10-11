@@ -54,4 +54,12 @@ public class Pair<T1, T2> {
     public String toString() {
         return "[" + Chartil.toString(o1) + ", " + Chartil.toString(o2) + "]";
     }
+    
+    public final T1 get1() {
+    	return o1;
+    }
+    
+    public final T2 get2() {
+    	return o2;
+    }
 }
