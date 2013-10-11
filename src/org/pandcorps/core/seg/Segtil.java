@@ -50,4 +50,9 @@ public final class Segtil {
             seg.save(w);
         }
     }
+    
+    public final static void saveln(final Segmented s, final Writer w) throws IOException {
+    	save(s, w);
+    	Iotil.println(w);
+    }
 }
