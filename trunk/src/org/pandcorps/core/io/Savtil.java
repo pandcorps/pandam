@@ -26,7 +26,11 @@ import java.io.*;
 
 import org.pandcorps.core.*;
 
-public class Savtil {
+public final class Savtil {
+	private Savtil() {
+        throw new Error();
+    }
+	
 	public final static void save(final Savable s, final String loc) {
     	final Writer out = Iotil.getBufferedWriter(loc);
     	try {

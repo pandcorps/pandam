@@ -94,6 +94,11 @@ public class Segment extends Record {
         }
     }
     
+    public final void saveln(final Writer w) throws IOException {
+    	save(w);
+    	Iotil.println(w);
+    }
+    
     public final String getName() {
         return name;
     }
