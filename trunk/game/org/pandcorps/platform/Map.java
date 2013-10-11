@@ -110,7 +110,7 @@ public class Map {
 	private static int lm1 = -1;
 	private static int lm2 = -1;
 	
-	private final static HashMap<Pair<Integer, Integer>, Boolean> open = new HashMap<Pair<Integer, Integer>, Boolean>();
+	protected final static HashMap<Pair<Integer, Integer>, Boolean> open = new HashMap<Pair<Integer, Integer>, Boolean>();
 	protected static boolean victory = false;
 	private static int roomW = -1;
 	private static int roomH = -1;
@@ -490,7 +490,6 @@ public class Map {
 	}
 	
 	private final static Tile loadMap() {
-		open.clear();
 		Panctor.destroy(markers);
 	    Tile t;
 		//for (int i = 0; i < 100; i++) { // For testing rarely randomly generating errors
@@ -517,7 +516,7 @@ public class Map {
 			try {
 			    final Segment seg = in.readRequire(SEG_MAP);
 	            name = seg.getValue(0);
-	            //bgTexture, bgColor already handled in loadImages
+	            //bgTexture, bgColor already handled in loadImages; open in Profile
 	            endColumn = seg.intValue(3);
 	            endRow = seg.intValue(4);
 	            mrk = in.readRequire(SEG_MRK);
@@ -531,6 +530,7 @@ public class Map {
 			}
 			b = null;
 		} else {
+			open.clear();
 		    name = generateName();
 			b = new RandomMapper();
 			roomW = b.getW();
