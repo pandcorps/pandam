@@ -750,7 +750,7 @@ public class Map {
 				        vert(c2, nr + dir);
 				        marker(c2, nr + dir * 2); // Level that could be skipped
 				        vert(c2, nr + dir * 3);
-				        marker(c2, nr + dir * 4); // Bonus unlocked by playing optional Level
+				        tm.initTile(c2, nr + dir * 4).setBackground(imgMap[7][7], TILE_MARKER); // Bonus unlocked by playing optional Level
 				    } else {
 				        horiz(c2, nr);
 				    }
