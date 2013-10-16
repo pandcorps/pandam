@@ -23,6 +23,7 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.pandax.tile;
 
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandax.tile.Tile.*;
 
 public class TileActor extends Panctor {
     private TileMap map = null;
@@ -41,6 +42,11 @@ public class TileActor extends Panctor {
     public void setView(final TileActor actor) {
     	map = actor.map;
     	view = actor.view;
+    }
+    
+    public void setView(final TileMap map, final TileMapImage view) {
+        this.map = map;
+        this.view = view;
     }
     
     @Override
