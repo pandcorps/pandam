@@ -45,6 +45,8 @@ public class TileMap extends Panctor implements Savable {
     /*package*/ final int th;
     
     /*package*/ Object occupantDepth = null;
+    private Float foregroundDepth = null;
+    private Float occupantBaseDepth = null;
     
     /*package*/ Panmage imgMap = null;
     private TileMapImage[][] imgs = null;
@@ -263,9 +265,27 @@ public class TileMap extends Panctor implements Savable {
     }
     
     public float getForegroundDepth() {
+    	if (foregroundDepth != null) {
+    		return foregroundDepth.floatValue();
+    	}
         //return Float.MAX_VALUE;
         //return z + 1;
         return getPosition().getZ() + (h * th) + 1;
+    }
+    
+    public final void setForegroundDepth(final float foregroundDepth) {
+    	this.foregroundDepth = Float.valueOf(foregroundDepth);
+    }
+    
+    public float getOccupantBaseDepth() {
+    	if (occupantBaseDepth != null) {
+    		return occupantBaseDepth.floatValue();
+    	}
+    	return getForegroundDepth() - 1;
+    }
+    
+    public final void setOccupantBaseDepth(final float occupantBaseDepth) {
+    	this.occupantBaseDepth = Float.valueOf(occupantBaseDepth);
     }
     
     public final int getWidth() {

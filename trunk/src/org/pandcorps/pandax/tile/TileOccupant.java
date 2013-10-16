@@ -58,16 +58,19 @@ public class TileOccupant extends Panctor {
     }
     
     /*package*/ final void setZ() {
-        final TileMap map = tile.map;
+        setZ(this, tile.map);
+    }
+    
+    public final static void setZ(final Panctor actor, final TileMap map) {
         final Object depth = map.occupantDepth;
         if (depth == null) {
             return;
         } else {
-            final Panple pos = getPosition();
+            final Panple pos = actor.getPosition();
             if (depth.getClass() == Float.class) {
                 pos.setZ(((Float) depth).floatValue());
             } else {
-                pos.setZ(map.getForegroundDepth() - pos.getY() - 1);
+                pos.setZ(map.getOccupantBaseDepth() - pos.getY());
             }
         }
     }
