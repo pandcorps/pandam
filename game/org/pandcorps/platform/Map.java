@@ -750,7 +750,14 @@ public class Map {
 				        vert(c2, nr + dir);
 				        marker(c2, nr + dir * 2); // Level that could be skipped
 				        vert(c2, nr + dir * 3);
-				        tm.initTile(c2, nr + dir * 4).setBackground(imgMap[7][7], TILE_MARKER); // Bonus unlocked by playing optional Level
+				        final Tile houseTile = tm.initTile(c2, nr + dir * 4);
+				        final TileActor house = new TileActor();
+				        house.setView(tm, imgMap[7][7]);
+				        final Panple housePos = house.getPosition(), houseTilePos = houseTile.getPosition();
+				        housePos.set(houseTilePos.getX(), houseTilePos.getY() + 8);
+				        setZ(housePos, DEPTH_MARKER);
+				        room.addActor(house);
+				        houseTile.setBackground(imgMap[3][0], TILE_MARKER); // Bonus unlocked by playing optional Level
 				    } else {
 				        horiz(c2, nr);
 				    }
