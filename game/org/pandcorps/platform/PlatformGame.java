@@ -134,7 +134,10 @@ public class PlatformGame extends BaseGame {
 	protected static Panmage block8 = null;
 	protected static Panmage[] gem = null;
 	protected static Panimation gemAnm = null;
+	protected static Panimation gemBlueAnm = null;
 	protected static Panimation gemCyanAnm = null;
+	protected static Panimation gemGreenAnm = null;
+	protected static Panimation gemLevelAnm = null;
 	protected static Panmage gemShatter = null;
 	protected static Panimation spark = null;
 	protected static final TileActor bump = new TileActor();
@@ -443,15 +446,12 @@ public class PlatformGame extends BaseGame {
 	    
 	    final BufferedImage[] gemStrip = ImtilX.loadStrip("org/pandcorps/platform/res/misc/Gem.png");
 	    gem = createSheet("gem", null, gemStrip);
-	    gemAnm = createGemAnimation("gem", gem);
+	    gemAnm = createGemAnm("gem", gem);
 	    gemShatter = createImage("gem.shatter", "org/pandcorps/platform/res/misc/GemShatter.png", 8);
-	    
-	    final SwapPixelFilter gemFilter = new SwapPixelFilter(Channel.Green, Channel.Red, Channel.Blue);
-	    for (int i = 0; i < 3; i++) {
-	    	gemStrip[i] = Imtil.filter(gemStrip[i], gemFilter);
-	    }
-	    final Panmage[] gemCyan = createSheet("gem.cyan", null, gemStrip);
-	    gemCyanAnm = createGemAnimation("gem.cyan", gemCyan);
+	    gemCyanAnm = createGemAnm("cyan", gemStrip, Channel.Green, Channel.Red, Channel.Blue);
+	    gemBlueAnm = createGemAnm("cyan", gemStrip, Channel.Red, Channel.Red, Channel.Blue);
+	    gemGreenAnm = createGemAnm("cyan", gemStrip, Channel.Red, Channel.Blue, Channel.Red);
+	    gemLevelAnm = createGemAnm("gem.level", createSheet("gem.level", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/Gem4.png")));
 	    
 	    final Panframe[] sa = createFrames("spark", "org/pandcorps/platform/res/misc/Spark.png", 8, 1);
 	    spark = engine.createAnimation(PRE_ANM + "spark", sa[0], sa[1], sa[2], sa[3], sa[2], sa[1], sa[0]);
@@ -472,9 +472,19 @@ public class PlatformGame extends BaseGame {
 		engine.getMusic().ensureCapacity(5);
 	}
 	
-	private final static Panimation createGemAnimation(final String name, final Panmage[] gem) {
+	private final static Panimation createGemAnm(final String name, final Panmage[] gem) {
 		final Pangine engine = Pangine.getEngine();
 		return engine.createAnimation(PRE_ANM + name, engine.createFrame(PRE_FRM + name + ".0", gem[0], 3), engine.createFrame(PRE_FRM + name + ".1", gem[1], 1), engine.createFrame(PRE_FRM + name + ".2", gem[2], 1));
+	}
+	
+	private final static Panimation createGemAnm(final String col, final BufferedImage[] strip, final Channel r, final Channel g, final Channel b) {
+	    final SwapPixelFilter gemFilter = new SwapPixelFilter(r, g, b);
+        for (int i = 0; i < 3; i++) {
+            strip[i] = Imtil.filter(strip[i], gemFilter);
+        }
+        final String name = "gem." + col;
+        final Panmage[] gemCyan = createSheet(name, null, strip);
+        return createGemAnm(name, gemCyan);
 	}
 	
 	private final static void loadLevel() {

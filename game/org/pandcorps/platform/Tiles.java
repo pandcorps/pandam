@@ -55,9 +55,10 @@ public class Tiles {
     		player.pc.profile.stats.brokenBlocks++;
     	} else if (b == PlatformGame.TILE_BUMP) {
     	    new Bump(chr, t); // Copy image before changing
-    	    final boolean normal = Level.isFlash(t);
-    	    new GemBumped(player, t, normal ? PlatformGame.gemAnm : PlatformGame.gemCyanAnm);
-    	    if (!normal) {
+    	    if (Level.isFlash(t)) {
+    	        new GemBumped(player, t);
+    	    } else {
+    	        GemBumped.newLevelEnd(player, t);
     	        PlatformGame.levelVictory();
     	    }
     		t.setForeground(null, true);

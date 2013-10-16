@@ -46,12 +46,12 @@ public class Gem extends TileOccupant implements StepListener {
 		if (isDestroyed()) {
 			return;
 		}
-		collect(player);
+		collect(player, GemBumped.AWARD_DEF);
 		spark();
 	}
 	
-	protected final static void collect(final Player player) {
-		player.addGem();
+	protected final static void collect(final Player player, final int gems) {
+		player.addGems(gems);
 	}
 	
 	protected final void spark() {

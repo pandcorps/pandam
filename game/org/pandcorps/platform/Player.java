@@ -397,8 +397,8 @@ public class Player extends Character implements CollisionListener {
         return levelGems;
     }
 	
-	public final void addGem() {
-        levelGems++;
+	public final void addGems(final int gems) {
+        levelGems += gems;
     }
 	
 	@Override
