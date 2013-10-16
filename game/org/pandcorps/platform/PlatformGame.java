@@ -449,8 +449,8 @@ public class PlatformGame extends BaseGame {
 	    gemAnm = createGemAnm("gem", gem);
 	    gemShatter = createImage("gem.shatter", "org/pandcorps/platform/res/misc/GemShatter.png", 8);
 	    gemCyanAnm = createGemAnm("cyan", gemStrip, Channel.Green, Channel.Red, Channel.Blue);
-	    gemBlueAnm = createGemAnm("cyan", gemStrip, Channel.Red, Channel.Red, Channel.Blue);
-	    gemGreenAnm = createGemAnm("cyan", gemStrip, Channel.Red, Channel.Blue, Channel.Red);
+	    gemBlueAnm = createGemAnm("blue", gemStrip, Channel.Red, Channel.Red, Channel.Blue);
+	    gemGreenAnm = createGemAnm("green", gemStrip, Channel.Red, Channel.Blue, Channel.Red);
 	    gemLevelAnm = createGemAnm("gem.level", createSheet("gem.level", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/Gem4.png")));
 	    
 	    final Panframe[] sa = createFrames("spark", "org/pandcorps/platform/res/misc/Spark.png", 8, 1);
