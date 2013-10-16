@@ -49,8 +49,8 @@ public class Map {
 	private final static byte TILE_MARKER = 8;
 	private final static byte TILE_SPECIAL = 9;
 	
-	private final static int DEPTH_MARKER = 1;
-	private final static int DEPTH_PLAYER = 2;
+	private final static int DEPTH_FOREGROUND = 1;
+	private final static int DEPTH_MARKER = 2;
 	
 	private final static String SEG_MAP = "MAP";
 	private final static String SEG_MRK = "MRK";
@@ -299,7 +299,6 @@ public class Map {
 		
 		private void setPos(final Tile t) {
 			setPosition(t);
-			setZ(getPosition(), DEPTH_PLAYER);
 		}
 		
 		protected boolean go(final Direction d0) {
@@ -572,6 +571,9 @@ public class Map {
 	    room = PlatformGame.createRoom(roomW, roomH);
         if (tm == null) {
             tm = new DynamicTileMap("act.tilemap", room, ImtilX.DIM, ImtilX.DIM);
+            tm.setOccupantDepth(DepthMode.Y);
+            tm.setOccupantBaseDepth(tm.getOccupantBaseDepth());
+            tm.setForegroundDepth(DEPTH_FOREGROUND);
         } else {
             for (final Marker m : markers) {
                 room.addActor(m);
@@ -753,9 +755,9 @@ public class Map {
 				        final Tile houseTile = tm.initTile(c2, nr + dir * 4);
 				        final TileActor house = new TileActor();
 				        house.setView(tm, imgMap[7][7]);
-				        final Panple housePos = house.getPosition(), houseTilePos = houseTile.getPosition();
-				        housePos.set(houseTilePos.getX(), houseTilePos.getY() + 8);
-				        setZ(housePos, DEPTH_MARKER);
+				        final Panple houseTilePos = houseTile.getPosition();
+				        house.getPosition().set(houseTilePos.getX(), houseTilePos.getY() + 7);
+				        TileOccupant.setZ(house, tm);
 				        room.addActor(house);
 				        houseTile.setBackground(imgMap[3][0], TILE_MARKER); // Bonus unlocked by playing optional Level
 				    } else {
