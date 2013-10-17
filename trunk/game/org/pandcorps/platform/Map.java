@@ -54,6 +54,7 @@ public class Map {
 	
 	private final static String SEG_MAP = "MAP";
 	private final static String SEG_MRK = "MRK";
+	private final static String SEG_BLD = "BLD";
 	
 	private final static String[] EXT_LANDMARKS = { "Forest", "Crater" };
 	private final static int MAX_LANDMARK = 3;
@@ -126,6 +127,7 @@ public class Map {
 	private static Panmage timg = null;
 	private static DynamicTileMap tm = null;
 	private final static ArrayList<Marker> markers = new ArrayList<Marker>();
+	private final static ArrayList<Building> buildings = new ArrayList<Building>();
 	private static MapTileListener mtl = null;
 	private static TileMapImage[][] imgMap = null;
 	private static TileMapImage water = null;
@@ -192,9 +194,8 @@ public class Map {
 		@Override
 	    protected final void destroy() {
 	        //Panmage.destroy(timg);
-		    for (final Marker m : markers) {
-		        m.detach();
-		    }
+			Panctor.detach(markers);
+			Panctor.detach(buildings);
 	    }
 	}
 	
@@ -209,6 +210,16 @@ public class Map {
 		    } else {
 		        setView(PlatformGame.marker);
 		    }
+		}
+	}
+	
+	protected final static class Building extends TileActor {
+		private final int ij;
+		private final int ii;
+		
+		private Building(final int ij, final int ii) {
+			this.ij = ij;
+			this.ii = ii;
 		}
 	}
 	
@@ -490,6 +501,7 @@ public class Map {
 	
 	private final static Tile loadMap() {
 		Panctor.destroy(markers);
+		Panctor.destroy(buildings);
 	    Tile t;
 		//for (int i = 0; i < 100; i++) { // For testing rarely randomly generating errors
 	        //tm.destroy(); tm = null; destroy/clear markers
@@ -509,7 +521,7 @@ public class Map {
 	private final static Tile loadMap2() {
 		final String mapFile = getMapFile();
 		final Mapper b;
-		final Segment mrk;
+		final Segment mrk, bld;
 		if (Iotil.exists(mapFile)) {
 			final SegmentStream in = SegmentStream.openLocation(mapFile);
 			try {
@@ -519,6 +531,7 @@ public class Map {
 	            endColumn = seg.intValue(3);
 	            endRow = seg.intValue(4);
 	            mrk = in.readRequire(SEG_MRK);
+	            bld = in.readRequire(SEG_BLD);
 				tm = TileMap.load(DynamicTileMap.class, in, timg);
 				roomW = tm.getWidth() * tm.getTileWidth();
 				roomH = tm.getHeight() * tm.getTileHeight();
@@ -535,6 +548,7 @@ public class Map {
 			roomW = b.getW();
 			roomH = b.getH();
 			mrk = null;
+			bld = null;
 		}
 		initRoom();
 		mtl = new MapTileListener(6);
@@ -551,6 +565,9 @@ public class Map {
         	for (final Field f : mrk.getRepetitions(0)) {
 				addMarker(tm.getTile(f.intValue(0), f.intValue(1)));
 			}
+        	for (final Field f : bld.getRepetitions(0)) {
+        		addBuilding(tm.getTile(f.intValue(0), f.intValue(1)), f.intValue(2), f.intValue(3));
+        	}
         	return getStartTile();
         } else {
 			tm.fillBackground(water, true);
@@ -578,6 +595,10 @@ public class Map {
             for (final Marker m : markers) {
                 room.addActor(m);
                 m.setView(isOpen(tm.getContainer(m)));
+            }
+            for (final Building b : buildings) {
+            	room.addActor(b);
+            	b.setView(tm, imgMap[b.ij][b.ii]);
             }
         }
 	    room.addActor(tm);
@@ -752,14 +773,7 @@ public class Map {
 				        vert(c2, nr + dir);
 				        marker(c2, nr + dir * 2); // Level that could be skipped
 				        vert(c2, nr + dir * 3);
-				        final Tile houseTile = tm.initTile(c2, nr + dir * 4);
-				        final TileActor house = new TileActor();
-				        house.setView(tm, imgMap[7][7]);
-				        final Panple houseTilePos = houseTile.getPosition();
-				        house.getPosition().set(houseTilePos.getX(), houseTilePos.getY() + 7);
-				        TileOccupant.setZ(house, tm);
-				        room.addActor(house);
-				        houseTile.setBackground(imgMap[3][0], TILE_MARKER); // Bonus unlocked by playing optional Level
+				        building(c2, nr + dir * 4, 7, 7); // Bonus unlocked by playing optional Level
 				    } else {
 				        horiz(c2, nr);
 				    }
@@ -1057,6 +1071,22 @@ public class Map {
 		room.addActor(m);
 	}
 	
+	private final static void building(final int i, final int j, final int ij, final int ii) {
+		final Tile tile = tm.initTile(i, j);
+		tile.setBackground(imgMap[3][0], TILE_MARKER);
+		addBuilding(tile, ij, ii);
+	}
+	
+	private final static void addBuilding(final Tile tile, final int ij, final int ii) {
+        final Building b = new Building(ij, ii);
+        buildings.add(b);
+        b.setView(tm, imgMap[ij][ii]);
+        final Panple tilePos = tile.getPosition();
+        b.getPosition().set(tilePos.getX(), tilePos.getY() + 7);
+        TileOccupant.setZ(b, tm);
+        room.addActor(b);
+	}
+	
 	private final static void setZ(final Panple pos, final int depth) {
 	    pos.setZ(tm.getForegroundDepth() + depth);
 	}
@@ -1125,16 +1155,29 @@ public class Map {
             seg.setInt(6, lm2);
 	        seg.saveln(w);
 	        final Segment mrk = new Segment(SEG_MRK);
-	        final ArrayList<Field> list = new ArrayList<Field>(markers.size());
+	        final ArrayList<Field> mlist = new ArrayList<Field>(markers.size());
 	        for (final Marker m : markers) {
 	        	final Field f = new Field();
 	        	final Tile tile = tm.getContainer(m);
 	        	f.setInt(0, tile.getColumn());
 	        	f.setInt(1, tile.getRow());
-				list.add(f);
+				mlist.add(f);
 			}
-	        mrk.setRepetitions(0, list);
+	        mrk.setRepetitions(0, mlist);
 	        mrk.saveln(w);
+	        final Segment bld = new Segment(SEG_BLD);
+	        final ArrayList<Field> alist = new ArrayList<Field>(buildings.size());
+	        for (final Building b : buildings) {
+	        	final Field f = new Field();
+	        	final Tile tile = tm.getContainer(b);
+	        	f.setInt(0, tile.getColumn());
+	        	f.setInt(1, tile.getRow());
+	        	f.setInt(2, b.ij);
+	        	f.setInt(3, b.ii);
+				alist.add(f);
+			}
+	        bld.setRepetitions(0, alist);
+	        bld.saveln(w);
 	        tm.save(w);
 	    } catch (final IOException e) {
 	        throw new RuntimeException(e);
