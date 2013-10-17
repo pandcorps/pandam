@@ -58,6 +58,7 @@ public class Map {
 	
 	private final static String[] EXT_LANDMARKS = { "Forest", "Crater" };
 	private final static int MAX_LANDMARK = 3;
+	private final static int MAX_CASTLE = 3;
 	
 	/*private final static String[] ADJECTIVES =
 		{ "Bright", "Bubbly", "Cheery", "Emerald", "Enchanted", "Fragrant", "Green", "Fun", "Happy", "Incredible", "Merry",
@@ -110,6 +111,7 @@ public class Map {
 	protected static int bgColor = 1;
 	private static int lm1 = -1;
 	private static int lm2 = -1;
+	private static int cstl = -1;
 	
 	protected final static HashMap<Pair<Integer, Integer>, Boolean> open = new HashMap<Pair<Integer, Integer>, Boolean>();
 	protected static boolean victory = false;
@@ -462,6 +464,7 @@ public class Map {
                 bgColor = seg.intValue(2);
                 lm1 = seg.intValue(5);
                 lm2 = seg.intValue(6);
+                cstl = seg.intValue(7);
             } catch (final IOException e) {
                 throw new RuntimeException(e);
             } finally {
@@ -479,10 +482,15 @@ public class Map {
 			    lm1 = lm2;
 			    lm2 = t;
 			}
+			cstl = Mathtil.randi(0, MAX_CASTLE);
 	    }
 		BufferedImage tileImg = ImtilX.loadImage("org/pandcorps/platform/res/bg/Map.png", 128, null);
 		applyLandmark(tileImg, 0, lm1, 0);
 		applyLandmark(tileImg, 48, lm2, 1);
+		if (cstl > 0) {
+		    final BufferedImage lmImg = ImtilX.loadStrip("org/pandcorps/platform/res/bg/Castles.png")[cstl - 1];
+	        Imtil.copy(lmImg, tileImg, 0, 0, ImtilX.DIM, ImtilX.DIM, 112, 96);
+		}
 		Level.applyDirtTexture(tileImg, 48, 0, 96, 16);
 		final BufferedImage terrain = Level.getDarkenedTerrain(Level.getTerrainTexture());
 		Level.applyTerrainTexture(tileImg, 48, 32, 96, 48, terrain, Level.getTerrainMask(1));
@@ -1157,6 +1165,7 @@ public class Map {
 	        seg.setInt(4, endRow);
 	        seg.setInt(5, lm1);
             seg.setInt(6, lm2);
+            seg.setInt(7, cstl);
 	        seg.saveln(w);
 	        final Segment mrk = new Segment(SEG_MRK);
 	        final ArrayList<Field> mlist = new ArrayList<Field>(markers.size());
