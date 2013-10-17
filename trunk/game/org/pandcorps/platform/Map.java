@@ -124,6 +124,7 @@ public class Map {
 	private static String name = null;
 	
 	protected static boolean started = false;
+	private static boolean oldMap = true;
 	
 	private static Panroom room = null;
 	private static Panmage timg = null;
@@ -180,7 +181,7 @@ public class Map {
 			    t = loadMap();
 			    PlatformGame.saveGame();
 			} else {
-				t = getStartTile();
+			    t = getStartTile();
 				if (victory) {
 				    victory = false;
 				    open.put(getKey(t), Boolean.TRUE);
@@ -188,7 +189,13 @@ public class Map {
 				}
 			    initRoom();
 			}
-		    addPlayer(t);
+			if (oldMap) {
+			    addPlayer(t);
+			} else {
+			    new FloatPlayer(t.getNeighbor(Direction.West));
+			    oldMap = true;
+			}
+			addBorder();
             addHud();
 			PlatformGame.fadeIn(room);
 		}
@@ -223,6 +230,22 @@ public class Map {
 			this.ij = ij;
 			this.ii = ii;
 		}
+	}
+	
+	protected final static class FloatPlayer extends TileWalker {
+	    private FloatPlayer(final Tile tile) {
+	        setView(getPlayerContext().mapSouth);
+	        setPosition(tile);
+	        walk(Direction.East);
+	        room.addActor(this);
+	        Pangine.getEngine().track(this);
+	    }
+	    
+	    @Override
+        protected void onStill() {
+	        addPlayer(getTile());
+	        destroy();
+	    }
 	}
 	
 	protected final static class MapPlayer extends TileWalker {
@@ -456,7 +479,8 @@ public class Map {
 	
 	private final static void loadImages() {
 	    final String mapFile = getMapFile();
-	    if (Iotil.exists(mapFile)) {
+	    oldMap = Iotil.exists(mapFile);
+	    if (oldMap) {
 	        final SegmentStream in = SegmentStream.openLocation(mapFile);
             try {
                 final Segment seg = in.readRequire(SEG_MAP);
@@ -970,6 +994,10 @@ public class Map {
 		final MapPlayer player = new MapPlayer(getPlayerContext());
 		player.setPos(t);
 		room.addActor(player);
+		Pangine.getEngine().track(player);
+	}
+	
+	private final static void addBorder() {
 		final Pangine engine = Pangine.getEngine();
 		if (room.center()) {
 		    final int maxW = engine.getEffectiveWidth(), maxH = engine.getEffectiveHeight();
@@ -989,7 +1017,6 @@ public class Map {
                 addBorder("bottom", tilesX, tilesY, 0, oy);
 		    }
 		}
-		engine.track(player);
 	}
 	
 	private final static DynamicTileMap addBorder(final String name, final int tx, final int ty, final float px, final float py) {
