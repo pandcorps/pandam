@@ -588,9 +588,6 @@ public class Map {
 	    room = PlatformGame.createRoom(roomW, roomH);
         if (tm == null) {
             tm = new DynamicTileMap("act.tilemap", room, ImtilX.DIM, ImtilX.DIM);
-            tm.setOccupantDepth(DepthMode.Y);
-            tm.setOccupantBaseDepth(tm.getOccupantBaseDepth());
-            tm.setForegroundDepth(DEPTH_FOREGROUND);
         } else {
             for (final Marker m : markers) {
                 room.addActor(m);
@@ -600,6 +597,11 @@ public class Map {
             	room.addActor(b);
             	b.setView(tm, imgMap[b.ij][b.ii]);
             }
+        }
+        if (tm.getForegroundDepth() != DEPTH_FOREGROUND) {
+        	tm.setOccupantDepth(DepthMode.Y);
+            tm.setOccupantBaseDepth(tm.getOccupantBaseDepth());
+            tm.setForegroundDepth(DEPTH_FOREGROUND);
         }
 	    room.addActor(tm);
 	}
@@ -773,6 +775,7 @@ public class Map {
 				        vert(c2, nr + dir);
 				        marker(c2, nr + dir * 2); // Level that could be skipped
 				        vert(c2, nr + dir * 3);
+				        //TODO Set open to true when walk to Building to allow it to be skipped
 				        building(c2, nr + dir * 4, 7, 7); // Bonus unlocked by playing optional Level
 				    } else {
 				        horiz(c2, nr);
@@ -1088,7 +1091,8 @@ public class Map {
 	}
 	
 	private final static void setZ(final Panple pos, final int depth) {
-	    pos.setZ(tm.getForegroundDepth() + depth);
+	    //pos.setZ(tm.getForegroundDepth() + depth);
+		pos.setZ(depth);
 	}
 	
 	private static void horiz(final int i, final int j) {
