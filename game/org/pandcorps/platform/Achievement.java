@@ -42,6 +42,9 @@ public abstract class Achievement implements Named {
 		// Beyond Belief, Finish Level as a flying pig
 		// Babe, Finish Level as a blue bull/ox
 		// Menagerie (Zoologist), Use each animal to finish a Level
+		// Collect a green gem
+		// Play a bonus level
+		// Defeat all Levels within a World (including optional one)
 	};
 	
 	private final String name;
