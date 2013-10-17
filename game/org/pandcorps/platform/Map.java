@@ -790,7 +790,7 @@ public class Map {
 			}
 			endColumn = c - 2;
 			endRow = r;
-			marker(endColumn, endRow);
+			building(endColumn, endRow, 6, 7);
 			cliff(fc);
 			int bc = 0, br = 0, bl = 0;
 			for (r = 6; r <= 12; r++) {
