@@ -409,4 +409,13 @@ public class Panctor extends BasePantity implements SpecPanctor {
             actor.detach();
         }
     }
+	
+	public final static void detach(final Collection<? extends Panctor> actors) {
+		if (actors == null) {
+			return;
+		}
+		for (final Panctor actor : actors) {
+			detach(actor);
+		}
+	}
 }
