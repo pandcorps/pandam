@@ -56,7 +56,7 @@ public class PlatformGame extends BaseGame {
 	Replace bush with Rise.png for some levels; rise will be higher than 1 tile; separate build method.
 	Taller bushes.
 	Map landmarks: Mountain, garden.
-	Bubble when map-traveling.
+	Bubble when leaving map.
 	Portal near castle, source of monsters, must enter to close, another plane/dimension.
 	Train-riding levels.
 	Ridable dragons.
