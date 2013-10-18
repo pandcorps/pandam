@@ -22,19 +22,15 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandax.tile;
 
-import org.pandcorps.pandam.Panple;
-import org.pandcorps.pandam.event.StepEvent;
-import org.pandcorps.pandam.event.StepListener;
+import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.event.*;
 
 public class TileWalker extends TileOccupant implements StepListener {
-
     private float dx = 0;
-    
     private float dy = 0;
-    
     private Direction dir = null;
-    
     /*package*/ float speed = 1;
+    private boolean solid = true;
     
     public TileWalker() {
     	super();
@@ -46,7 +42,7 @@ public class TileWalker extends TileOccupant implements StepListener {
     
     protected final Tile getDestination(final Direction dir) {
         final Tile dst = tile.getNeighbor(dir);
-        return (dst == null || dst.isSolid() || dst.occupant != null) ? null : dst;
+        return (dst == null || (solid && dst.isSolid()) || dst.occupant != null) ? null : dst;
     }
     
     // Would it ever be useful to call this
@@ -143,5 +139,9 @@ public class TileWalker extends TileOccupant implements StepListener {
     
     public final void setSpeed(final float speed) {
         this.speed = speed;
+    }
+    
+    public final void setSolid(final boolean solid) {
+    	this.solid = solid;
     }
 }
