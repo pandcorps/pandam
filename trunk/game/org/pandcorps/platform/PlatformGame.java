@@ -75,6 +75,7 @@ public class PlatformGame extends BaseGame {
 	Spike/fire floor tile.
 	Spike/fire enemy.
 	Collect fruit from trees.
+	Owl in bonus game house.
 	Level to-do notes.
 	Goals: Collect n gems, defeat n enemies.
 	Random music per map.
