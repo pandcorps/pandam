@@ -192,7 +192,7 @@ public class Map {
 			if (oldMap) {
 			    addPlayer(t);
 			} else {
-			    new FloatPlayer(t.getNeighbor(Direction.West));
+			    new FloatPlayer(t);
 			    oldMap = true;
 			}
 			addBorder();
@@ -233,18 +233,29 @@ public class Map {
 	}
 	
 	protected final static class FloatPlayer extends TileWalker {
-	    private FloatPlayer(final Tile tile) {
-	        setView(getPlayerContext().mapSouth);
+		int steps = 2;
+		
+	    private FloatPlayer(Tile tile) {
+	        setView(getPlayerContext().mapSouth.getFrames()[0].getImage());
+	        for (int i = 0; i < steps; i++) {
+	        	tile = tile.getNeighbor(Direction.West);
+	        }
 	        setPosition(tile);
-	        walk(Direction.East);
 	        room.addActor(this);
 	        Pangine.getEngine().track(this);
+	        setSpeed(0.5f);
+	        setSolid(false);
 	    }
 	    
 	    @Override
         protected void onStill() {
-	        addPlayer(getTile());
-	        destroy();
+	    	if (steps > 0) {
+	    		walk(Direction.East);
+	    		steps--;
+	    	} else {
+		        addPlayer(getTile());
+		        destroy();
+	    	}
 	    }
 	}
 	
