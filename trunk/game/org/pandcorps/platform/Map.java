@@ -233,6 +233,7 @@ public class Map {
 	}
 	
 	protected final static class FloatPlayer extends TileWalker {
+		private final Bubble bubble = new Bubble();
 		int steps = 2;
 		
 	    private FloatPlayer(Tile tile) {
@@ -245,6 +246,10 @@ public class Map {
 	        Pangine.getEngine().track(this);
 	        setSpeed(0.5f);
 	        setSolid(false);
+	        room.addActor(bubble);
+	        final Panple pos = getPosition();
+	        bubble.getPosition().set(0, pos.getY() + 2, pos.getZ() + 1);
+	        onWalking();
 	    }
 	    
 	    @Override
@@ -257,6 +262,17 @@ public class Map {
 		        destroy();
 	    	}
 	    }
+	    
+	    @Override
+	    protected void onWalking() {
+	    	bubble.onStepEnd(true);
+	    	bubble.getPosition().setX(getPosition().getX() + 8);
+	    }
+	    
+	    @Override
+		protected final void onDestroy() {
+			bubble.destroy();
+		}
 	}
 	
 	protected final static class MapPlayer extends TileWalker {

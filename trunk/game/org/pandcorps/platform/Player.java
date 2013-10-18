@@ -434,7 +434,7 @@ public class Player extends Character implements CollisionListener {
 		hv = 0;
 		final Panple pos = getPosition();
 		PlatformGame.setPosition(bubble, pos.getX(), pos.getY() - 1, PlatformGame.DEPTH_BUBBLE);
-		bubble.setVisible(isInvincible() && Pangine.getEngine().isOn(4));
+		bubble.onStepEnd(isInvincible());
 		acc.onStepEnd(this);
 	}
 	
@@ -520,9 +520,13 @@ public class Player extends Character implements CollisionListener {
 		acc.destroy();
 	}
 	
-	private final static class Bubble extends Panctor {
+	protected final static class Bubble extends Panctor {
 		{
 			setView(PlatformGame.bubble);
+		}
+		
+		protected void onStepEnd(final boolean visible) {
+			setVisible(visible && Pangine.getEngine().isOn(4));
 		}
 	}
 	
