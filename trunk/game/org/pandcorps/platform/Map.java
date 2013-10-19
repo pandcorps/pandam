@@ -254,9 +254,11 @@ public class Map {
 	    
 	    @Override
         protected void onStill() {
-	    	if (steps > 0) {
+	    	steps--;
+	    	if (steps >= 0) {
 	    		walk(Direction.East);
-	    		steps--;
+	    	} else if (steps >= -30) {
+	    		bubble.onStepEnd(true);
 	    	} else {
 		        addPlayer(getTile());
 		        destroy();
