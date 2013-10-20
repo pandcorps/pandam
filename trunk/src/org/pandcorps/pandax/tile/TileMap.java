@@ -323,6 +323,11 @@ public class TileMap extends Panctor implements Savable {
     	return t;
     }
     
+    public TileMapImage[][] splitImageMap(final Panmage imgMap) {
+    	setImageMap(imgMap);
+    	return splitImageMap();
+    }
+    
     public final static <T extends TileMap> T load(final Class<T> c, final SegmentStream in, final Panmage timg) throws IOException {
     	final Segment tmp = in.readRequire(SEG_TMP);
     	final int w = tmp.intValue(0), h = tmp.intValue(1);
