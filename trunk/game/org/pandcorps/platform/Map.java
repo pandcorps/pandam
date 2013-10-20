@@ -343,7 +343,16 @@ public class Map {
 	            }
 	            changeView(pc.mapPose);
 	            setPlayerPosition(t);
-	        	fadeOut(new PlatformGame.PlatformScreen());
+	            Panscreen screen = null;
+	            for (final Building b : buildings) {
+	            	if (t == tm.getContainer(b)) {
+	            		if (b.ij == 7) {
+	            			screen = new Cabin.CabinScreen();
+	            		}
+	            		break;
+	            	}
+	            }
+	        	fadeOut(screen == null ? new PlatformGame.PlatformScreen() : screen);
 			} else if (interaction.KEY_TAB.isActive()) {
 				interaction.KEY_TAB.inactivate();
 				modeMove = (short) ((modeMove + 1) % 3);
