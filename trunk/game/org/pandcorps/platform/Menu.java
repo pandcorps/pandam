@@ -75,8 +75,7 @@ public class Menu {
 			tm = new TileMap(Pantil.vmid(), room, ImtilX.DIM, ImtilX.DIM);
 			Level.tm = tm;
 			timg = Level.getTileImage();
-			tm.setImageMap(timg);
-			final TileMapImage[][] imgMap = tm.splitImageMap();
+			final TileMapImage[][] imgMap = tm.splitImageMap(timg);
 			tm.fillBackground(imgMap[1][1], 0, 1);
 			room.addActor(tm);
 			

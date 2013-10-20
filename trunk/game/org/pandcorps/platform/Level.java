@@ -140,8 +140,7 @@ public class Level {
         room.addActor(tm);
         
         timg = getTileImage();
-        tm.setImageMap(timg);
-        imgMap = tm.splitImageMap();
+        imgMap = tm.splitImageMap(timg);
         dtm.setTileListener(new BlockTileListener(imgMap));
         
         final Panlayer bg1 = PlatformGame.createParallax(room, 2);
@@ -158,8 +157,7 @@ public class Level {
         }
         backImg = getColoredTerrain(backImg, 0, 0, 96, 96);
         bgimg = Pangine.getEngine().createImage("img.bg", backImg);
-        bgtm1.setImageMap(bgimg);
-        bgMap = bgtm1.splitImageMap();
+        bgMap = bgtm1.splitImageMap(bgimg);
         
         /*
         It would look strange if layers 1 and 3 moved without 2.
