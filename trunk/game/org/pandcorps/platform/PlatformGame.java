@@ -75,7 +75,6 @@ public class PlatformGame extends BaseGame {
 	Spike/fire floor tile.
 	Spike/fire enemy.
 	Collect fruit from trees.
-	Owl in bonus game house.
 	Level to-do notes.
 	Goals: Collect n gems, defeat n enemies.
 	Random music per map.
@@ -105,6 +104,7 @@ public class PlatformGame extends BaseGame {
 	private final static FinPanple ORIG_MAP = new FinPanple(8, -6, 0);
 	private final static int DUR_MAP = 6;
 	protected final static int DUR_BLINK = 120;
+	protected final static int DUR_CLOSED = DUR_BLINK / 30;
 	
 	protected final static short SPEED_FADE = 6;
 	
@@ -131,6 +131,7 @@ public class PlatformGame extends BaseGame {
 	protected final static FinPanple ow = new FinPanple(17, 1, 0);
 	protected final static FinPanple owf = new FinPanple(17, 2, 0);
 	protected static Panmage bubble = null;
+	protected static Panimation owl = null;
 	protected final static ArrayList<EnemyDefinition> enemies = new ArrayList<EnemyDefinition>();
 	protected static Panmage block8 = null;
 	protected static Panmage[] gem = null;
@@ -268,8 +269,7 @@ public class PlatformGame extends BaseGame {
 		final Panmage guyB = engine.createImage(ipre + "blink", og, ng, xg, guyBlink);
 		final String fpre = PRE_FRM + pre + ".";
 		final String spre = fpre + "still.";
-		final int durClosed = DUR_BLINK / 30;
-		final Panframe gfs1 = engine.createFrame(spre + "1", guy, DUR_BLINK - durClosed), gfs2 = engine.createFrame(spre + "2", guyB, durClosed);
+		final Panframe gfs1 = engine.createFrame(spre + "1", guy, DUR_BLINK - DUR_CLOSED), gfs2 = engine.createFrame(spre + "2", guyB, DUR_CLOSED);
 		pc.guy = engine.createAnimation(PRE_ANM + pre + ".still", gfs1, gfs2);
 		final Panmage guy2 = engine.createImage(ipre + "2", og, ng, xg, guys[1]);
 		final Panmage guy3 = engine.createImage(ipre + "3", og, ng, xg, guys[2]);
@@ -437,6 +437,12 @@ public class PlatformGame extends BaseGame {
 		replace(f, (short) 64, (short) 80, (short) 112);
 		replace(f, (short) 48, (short) 56, (short) 80);
 		enemies.add(new EnemyDefinition("Obglin", 2, f, false));
+		
+		final Panmage[] owls = createSheet("owl", "org/pandcorps/platform/res/chr/Owl.png", 32);
+		final int owlBlink = DUR_BLINK + 30;
+		final Panframe owl1 = engine.createFrame(PRE_FRM + "owl.1", owls[0], owlBlink - DUR_CLOSED);
+		final Panframe owl2 = engine.createFrame(PRE_FRM + "owl.2", owls[1], DUR_CLOSED);
+		owl = engine.createAnimation(PRE_ANM + "owl", owl1, owl2);
 		
 		bubble = createImage("bubble", "org/pandcorps/platform/res/chr/Bubble.png", 32, og);
 	    
