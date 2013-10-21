@@ -26,6 +26,8 @@ import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
 import org.pandcorps.game.core.*;
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.event.*;
+import org.pandcorps.pandax.text.*;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.tile.Tile.*;
 
@@ -112,6 +114,37 @@ public class Cabin {
 				}
 				tm.initTile(15, j).setBackground(imgMap[2 + i][4]);
 			}
+			
+			for (int i = 1; i <= 14; i++) {
+				tm.initTile(i, 1).setSolid(true);
+				tm.initTile(i, 8).setSolid(true);
+			}
+			for (int j = 2; j <= 7; j++) {
+				tm.initTile(1, j).setSolid(true);
+				tm.initTile(14, j).setSolid(true);
+			}
+			
+			final Panctor owl = new Panctor("act.owl");
+			owl.setView(PlatformGame.owl);
+			room.addActor(owl);
+			owl.getPosition().set(112, 128, 1);
+			
+			//TODO All players?
+			final Player player = new Player(PlatformGame.pcs.get(0));
+			room.addActor(player);
+			PlatformGame.setPosition(player, 74, 32, PlatformGame.DEPTH_PLAYER);
+			
+			final Pantext instr = new Pantext("act.instr", PlatformGame.font, "Hoo! Hoo! Pick one!");
+			room.addActor(instr);
+			instr.getPosition().set(128, 112, 1);
+			instr.centerX();
+			engine.addTimer(instr, 80, new TimerListener() {
+				@Override public void onTimer(final TimerEvent event) {
+					instr.destroy();
+					for (int i = 0; i < 4; i++) {
+						tm.initTile(3 + (i * 3), 5).setForeground(imgMap[0][0], PlatformGame.TILE_BUMP);
+					}
+				}});
 		}
 	}
 }
