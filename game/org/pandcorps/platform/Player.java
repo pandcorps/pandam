@@ -40,6 +40,7 @@ public class Player extends Character implements CollisionListener {
 	protected final static int VEL_BUMP = 4;
 	protected final static byte MODE_NORMAL = 0;
 	private final static byte MODE_RETURN = 1;
+	protected final static byte MODE_DISABLED = 2;
 	private final static byte JUMP_HIGH = 1;
 	//private final static byte JUMP_DOUBLE = 2;
 	//private final static byte JUMP_INFINITE = 3;
@@ -206,7 +207,7 @@ public class Player extends Character implements CollisionListener {
 	}
 	
 	protected final PlayerContext pc;
-	private byte mode = MODE_NORMAL;
+	protected byte mode = MODE_NORMAL;
 	private byte jumpMode = MODE_NORMAL;
 	private boolean flying = false;
 	private final Panple safe = new ImplPanple(0, 0, 0);
@@ -260,7 +261,9 @@ public class Player extends Character implements CollisionListener {
 	}
 	
 	private final void jump() {
-	    if (jumpMode == JUMP_FLY) {
+		if (mode == MODE_DISABLED) {
+			return;
+		} else if (jumpMode == JUMP_FLY) {
 	        flying = true;
 	        addV(-g);
 	        return;
@@ -281,10 +284,16 @@ public class Player extends Character implements CollisionListener {
 	}
 	
 	private final void right() {
+		if (mode == MODE_DISABLED) {
+			return;
+		}
 		hv = VEL_WALK;
 	}
 	
 	private final void left() {
+		if (mode == MODE_DISABLED) {
+			return;
+		}
 		hv = -VEL_WALK;
 	}
 	
@@ -372,6 +381,8 @@ public class Player extends Character implements CollisionListener {
 	    }
 		if (mode == MODE_RETURN) {
 			onStepReturn();
+			return true;
+		} else if (mode == MODE_DISABLED) {
 			return true;
 		}
 		if (hv == 0) {

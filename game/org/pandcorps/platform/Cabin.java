@@ -22,6 +22,8 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.platform;
 
+import java.awt.image.*;
+
 import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
 import org.pandcorps.game.core.*;
@@ -30,11 +32,13 @@ import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandax.text.*;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.tile.Tile.*;
+import org.pandcorps.platform.Tiles.*;
 
 public class Cabin {
 	private static Panroom room = null;
 	private static TileMap tm = null;
 	private static Panmage timg = null;
+	private static TileMapImage[][] imgMap = null;
 	
 	protected final static class CabinScreen extends Panscreen {
 		@Override
@@ -46,8 +50,11 @@ public class Cabin {
 			
 			tm = new TileMap(Pantil.vmid(), room, ImtilX.DIM, ImtilX.DIM);
 			Level.tm = tm;
-			timg = engine.createImage("img.cabin", ImtilX.loadImage("org/pandcorps/platform/res/bg/Cabin.png", 128, null));
-			final TileMapImage[][] imgMap = tm.splitImageMap(timg);
+			final BufferedImage tbuf = ImtilX.loadImage("org/pandcorps/platform/res/bg/Tiles.png", 128, null);
+			final BufferedImage buf = ImtilX.loadImage("org/pandcorps/platform/res/bg/Cabin.png", 128, null);
+			Imtil.copy(tbuf, buf, 64, 0, 16, 16, 32, 64);
+			timg = engine.createImage("img.cabin", buf);
+			imgMap = tm.splitImageMap(timg);
 			room.addActor(tm);
 			
 			tm.fillBackground(imgMap[4][1], 1, 1, 14, 1);
@@ -130,7 +137,9 @@ public class Cabin {
 			owl.getPosition().set(112, 128, 1);
 			
 			//TODO All players?
+			PlatformGame.addHud(room, true);
 			final Player player = new Player(PlatformGame.pcs.get(0));
+			player.mode = Player.MODE_DISABLED;
 			room.addActor(player);
 			PlatformGame.setPosition(player, 74, 32, PlatformGame.DEPTH_PLAYER);
 			
@@ -144,7 +153,44 @@ public class Cabin {
 					for (int i = 0; i < 4; i++) {
 						tm.initTile(3 + (i * 3), 5).setForeground(imgMap[0][0], PlatformGame.TILE_BUMP);
 					}
+					//TODO Show 4 possible colors shuffling
+					player.mode = Player.MODE_NORMAL;
 				}});
+		}
+	}
+	
+	protected final static CabinTileHandler cabinTileHandler = new CabinTileHandler();
+	
+	protected final static class CabinTileHandler extends TileHandler {
+		@Override
+		protected boolean isNormalAward(final Tile t) {
+			return true;
+		}
+		
+		@Override
+		protected boolean isSpecialBump(final Tile t) {
+			return false;
+		}
+		
+		@Override
+		protected final int rndAward() {
+			final int r = Mathtil.randi(0, 9999);
+			// Looks like bonus Gems are pre-sorted, so 25% chance of getting 1000,
+			// but decide after Player picks, so 50% chance of 1000, then 35/14.5/0.5
+			if (r < 5000) {
+				return GemBumped.AWARD_4;
+			} else if (r < 8500) {
+				return GemBumped.AWARD_3;
+			} else if (r < 9950) {
+				return GemBumped.AWARD_2;
+			}
+			//TODO Show contents of other 3, add levelGems to total, return to Map
+			return GemBumped.AWARD_DEF;
+		}
+		
+		@Override
+		protected final TileMapImage getBumpedImage() {
+			return imgMap[4][2];
 		}
 	}
 }
