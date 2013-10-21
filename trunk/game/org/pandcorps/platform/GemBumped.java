@@ -31,21 +31,17 @@ import org.pandcorps.pandax.tile.Tile;
 
 public class GemBumped extends Pandy {
     protected final static int AWARD_DEF = 1;
-    private final static int AWARD_2 = AWARD_DEF * 10;
-    private final static int AWARD_3 = AWARD_2 * 10;
-    private final static int AWARD_4 = AWARD_3 * 10;
+    protected final static int AWARD_2 = AWARD_DEF * 10;
+    protected final static int AWARD_3 = AWARD_2 * 10;
+    protected final static int AWARD_4 = AWARD_3 * 10;
     private final static int AWARD_LEVEL = AWARD_2 * 5;
     //private final static int AWARD_WORLD = AWARD_LEVEL * 10;
     private final int award;
 	private final boolean end;
 	int age = 0;
 	
-	public GemBumped(final Player player, final Tile tile) {
-		this(player, tile, rndAward());
-	}
-	
-	private final static int rndAward() {
-	    final int r = Mathtil.randi(0, 9999);
+	protected final static int rndAward() {
+		final int r = Mathtil.randi(0, 9999);
 	    if (r < 1000) {
 	        return AWARD_2;
 	    } else if (r < 1100) {
@@ -56,7 +52,7 @@ public class GemBumped extends Pandy {
 	    return AWARD_DEF;
 	}
 	
-	private GemBumped(final Player player, final Tile tile, final int award) {
+	public GemBumped(final Player player, final Tile tile, final int award) {
 	    this(player, tile, award, false, getAnm(award));
 	}
 	
