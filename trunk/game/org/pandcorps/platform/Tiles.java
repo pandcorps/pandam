@@ -31,9 +31,40 @@ import org.pandcorps.pandam.event.boundary.*;
 import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.*;
 import org.pandcorps.pandax.tile.*;
+import org.pandcorps.pandax.tile.Tile.*;
 
 public class Tiles {
     protected final static FinPanple g = new FinPanple(0, Player.g, 0);
+    private final static TileHandler defHandler = new TileHandler();
+    
+    protected static class TileHandler {
+    	protected boolean isNormalAward(final Tile t) {
+    		return Level.isFlash(t);
+    	}
+    	
+    	protected boolean isSpecialBump(final Tile t) {
+    		return Level.isFlash(t);
+    	}
+    	
+    	protected int rndAward() {
+    		return GemBumped.rndAward();
+    	}
+    	
+    	protected TileMapImage getBumpedImage() {
+    		return Level.imgMap[0][4];
+    	}
+    }
+    
+    protected final static TileHandler getHandler() {
+    	if (Panscreen.get().getClass() == Cabin.CabinScreen.class) {
+    		return Cabin.cabinTileHandler;
+    	}
+    	return defHandler;
+    }
+    
+    private final static GemBumped newGemBumped(final Player player, final Tile tile) {
+		return new GemBumped(player, tile, getHandler().rndAward());
+	}
     
     protected final static void bump(final Character chr, final Tile t) {
     	if (chr.getClass() != Player.class) {
@@ -46,7 +77,7 @@ public class Tiles {
     		t.setForeground(null, false);
     		shatter(PlatformGame.block8, t.getPosition(), false);
     		if (Mathtil.rand()) {
-    		    new GemBumped(player, t); // Plays a sound
+    		    newGemBumped(player, t); // Plays a sound
     		    seq = null;
     		} else {
     			seq = Music.crumble;
@@ -55,8 +86,8 @@ public class Tiles {
     		player.pc.profile.stats.brokenBlocks++;
     	} else if (b == PlatformGame.TILE_BUMP) {
     	    new Bump(chr, t); // Copy image before changing
-    	    if (Level.isFlash(t)) {
-    	        new GemBumped(player, t);
+    	    if (getHandler().isNormalAward(t)) {
+    	        newGemBumped(player, t);
     	    } else {
     	        GemBumped.newLevelEnd(player, t);
     	        PlatformGame.levelVictory();
@@ -107,7 +138,7 @@ public class Tiles {
         private Bump(final Character bumper, final Tile t) {
         	this.bumper = bumper;
         	this.t = t;
-        	if (Level.isFlash(t)) {
+        	if (getHandler().isSpecialBump(t)) {
         		setView(PlatformGame.bump);
         	} else {
         		setViewFromForeground(t);
@@ -126,7 +157,7 @@ public class Tiles {
             } else {
                 destroy();
                 if (isVisible()) {
-                	t.setForeground(Level.imgMap[0][4]);
+                	t.setForeground(getHandler().getBumpedImage());
                 }
                 return;
             }
