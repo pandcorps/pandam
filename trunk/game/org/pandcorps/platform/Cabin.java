@@ -32,6 +32,7 @@ import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandax.text.*;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.tile.Tile.*;
+import org.pandcorps.platform.Player.*;
 import org.pandcorps.platform.Tiles.*;
 
 public class Cabin {
@@ -39,6 +40,7 @@ public class Cabin {
 	private static TileMap tm = null;
 	private static Panmage timg = null;
 	private static TileMapImage[][] imgMap = null;
+	private static PlayerContext pc = null;
 	
 	protected final static class CabinScreen extends Panscreen {
 		@Override
@@ -138,7 +140,8 @@ public class Cabin {
 			
 			//TODO All players?
 			PlatformGame.addHud(room, true);
-			final Player player = new Player(PlatformGame.pcs.get(0));
+			pc = PlatformGame.pcs.get(0);
+			final Player player = new Player(pc);
 			player.mode = Player.MODE_DISABLED;
 			room.addActor(player);
 			PlatformGame.setPosition(player, 74, 32, PlatformGame.DEPTH_PLAYER);
@@ -174,6 +177,18 @@ public class Cabin {
 		
 		@Override
 		protected final int rndAward() {
+		    pc.player.mode = Player.MODE_DISABLED;
+            Pangine.getEngine().addTimer(pc.player, 60, new TimerListener() {
+                @Override public void onTimer(final TimerEvent event) {
+                    for (int i = 0; i < 4; i++) {
+                        final int x = 3 + (i * 3); // Skip chosen one
+                        tm.initTile(x, 5).setForeground(imgMap[4][2]);
+                        final Panctor gem = new Panctor();
+                        gem.setView(PlatformGame.gemAnm.getFrames()[0].getImage()); // Blink?
+                        PlatformGame.setPosition(gem, x * 16, 97, PlatformGame.DEPTH_SPARK);
+                        room.addActor(gem);
+                    }
+                }});
 			final int r = Mathtil.randi(0, 9999);
 			// Looks like bonus Gems are pre-sorted, so 25% chance of getting 1000,
 			// but decide after Player picks, so 50% chance of 1000, then 35/14.5/0.5

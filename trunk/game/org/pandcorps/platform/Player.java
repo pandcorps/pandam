@@ -382,8 +382,8 @@ public class Player extends Character implements CollisionListener {
 		if (mode == MODE_RETURN) {
 			onStepReturn();
 			return true;
-		} else if (mode == MODE_DISABLED) {
-			return true;
+		//} else if (mode == MODE_DISABLED) {
+		//	return true; // Let falling Player keep falling; just don't allow new input
 		}
 		if (hv == 0) {
 			if (activeTimer > 0) {
