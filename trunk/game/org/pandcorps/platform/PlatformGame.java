@@ -139,6 +139,7 @@ public class PlatformGame extends BaseGame {
 	protected static Panimation gemBlueAnm = null;
 	protected static Panimation gemCyanAnm = null;
 	protected static Panimation gemGreenAnm = null;
+	protected static Panmage gemWhite = null;
 	protected static Panimation gemLevelAnm = null;
 	protected static Panmage gemShatter = null;
 	protected static Panimation spark = null;
@@ -452,12 +453,14 @@ public class PlatformGame extends BaseGame {
 	    block8 = createImage("block8", "org/pandcorps/platform/res/misc/Block8.png", 8);
 	    
 	    final BufferedImage[] gemStrip = ImtilX.loadStrip("org/pandcorps/platform/res/misc/Gem.png");
+	    final BufferedImage gem1 = Imtil.copy(gemStrip[0]);
 	    gem = createSheet("gem", null, gemStrip);
 	    gemAnm = createGemAnm("gem", gem);
 	    gemShatter = createImage("gem.shatter", "org/pandcorps/platform/res/misc/GemShatter.png", 8);
 	    gemCyanAnm = createGemAnm("cyan", gemStrip, Channel.Green, Channel.Red, Channel.Blue);
 	    gemBlueAnm = createGemAnm("blue", gemStrip, Channel.Red, Channel.Red, Channel.Blue);
 	    gemGreenAnm = createGemAnm("green", gemStrip, Channel.Red, Channel.Blue, Channel.Red);
+	    gemWhite = engine.createImage(PRE_IMG + "gem.white", Imtil.filter(gem1, new SwapPixelFilter(Channel.Red, Channel.Red, Channel.Red)));
 	    gemLevelAnm = createGemAnm("gem.level", createSheet("gem.level", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/Gem4.png")));
 	    
 	    final Panframe[] sa = createFrames("spark", "org/pandcorps/platform/res/misc/Spark.png", 8, 1);
