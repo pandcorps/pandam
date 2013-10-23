@@ -155,7 +155,7 @@ public class Cabin {
 			
 			instr = new Pantext("act.instr", PlatformGame.font, "Hoo! Hoo! Pick one!");
 			room.addActor(instr);
-			instr.getPosition().set(128, 113, 1);
+			instr.getPosition().set(128, 114, 1);
 			instr.centerX();
 			for (int i = 0; i < 4; i++) {
 				tm.initTile(3 + (i * 3), 5).setForeground(imgMap[0][0], PlatformGame.TILE_BUMP);
@@ -190,7 +190,7 @@ public class Cabin {
             } else if (r < 9950) {
                 awd = GemBumped.AWARD_2;
             } else {
-                //TODO add levelGems to total, clear gem Blinks, return to Map
+                //TODO add levelGems to total, return to Map
                 awd = GemBumped.AWARD_DEF;
             }
 		    pc.player.mode = Player.MODE_DISABLED;
@@ -205,6 +205,10 @@ public class Cabin {
 	}
 	
 	private final static void shuffle(final int time, final int awd) {
+		shuffle(time, awd, 10);
+	}
+	
+	private final static void shuffle(final int time, final int awd, final int whiteTime) {
         Pangine.getEngine().addTimer(pc.player, time, new TimerListener() {
             @Override public void onTimer(final TimerEvent event) {
                 final boolean end = awd > 0;
@@ -214,6 +218,7 @@ public class Cabin {
                 add(awds, awd, GemBumped.AWARD_2);
                 add(awds, awd, GemBumped.AWARD_DEF);
                 Collections.shuffle(awds);
+                final boolean white = whiteTime <= 0;
                 for (int i = 0; i < 4; i++) {
                     final int x = 3 + (i * 3);
                     if (end) {
@@ -223,7 +228,6 @@ public class Cabin {
                         }
                         tile.setForeground(bumpedImage);
                     }
-                    //TODO End with all white gems for a little longer
                     Panctor gem = gems[i];
                     if (gem == null) {
                         gem = end ? new Blink(15) : new Panctor();
@@ -231,15 +235,25 @@ public class Cabin {
                         room.addActor(gem);
                         gems[i] = gem;
                     }
-                    gem.setView(GemBumped.getAnm(awds.remove(awds.size() - 1).intValue()).getFrames()[0].getImage());
+                    gem.setView(white ? PlatformGame.gemWhite : GemBumped.getAnm(awds.remove(awds.size() - 1).intValue()).getFrames()[0].getImage());
                 }
-                if (!end) {
+                if (end) {
+                	Pangine.getEngine().addTimer(gems[0], 105, new TimerListener() {
+						@Override public final void onTimer(final TimerEvent event) {
+	                        clear();
+						}});
+                } else {
                     final int newTime = time - ((time > 10) ? 2 : 1);
-                    if (newTime > 1) {
+                    if (white) {
+                    	Pangine.getEngine().addTimer(gems[0], 45, new TimerListener() {
+							@Override public final void onTimer(final TimerEvent event) {
+		                    	pc.player.mode = Player.MODE_NORMAL;
+		                        clear();
+							}});
+                    } else if (newTime > 1) {
                         shuffle(newTime, awd);
                     } else {
-                        pc.player.mode = Player.MODE_NORMAL;
-                        clear();
+                        shuffle(1, awd, whiteTime - 1);
                     }
                 }
             }});
