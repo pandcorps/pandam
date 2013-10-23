@@ -42,12 +42,15 @@ public class Cabin {
 	private static TileMap tm = null;
 	private static Panmage timg = null;
 	private static TileMapImage[][] imgMap = null;
+	private static TileMapImage bumpedImage = null;
 	private static PlayerContext pc = null;
 	private static Pantext instr = null;
+	private static Panctor[] gems = new Panctor[4];
 	
 	protected final static class CabinScreen extends Panscreen {
 		@Override
 		protected final void load() throws Exception {
+		    clear();
 			final Pangine engine = Pangine.getEngine();
 			engine.setBgColor(Pancolor.BLACK);
 			room = PlatformGame.createRoom(256, 192);
@@ -60,6 +63,7 @@ public class Cabin {
 			Imtil.copy(tbuf, buf, 64, 0, 16, 16, 32, 64);
 			timg = engine.createImage("img.cabin", buf);
 			imgMap = tm.splitImageMap(timg);
+			bumpedImage = imgMap[4][2];
 			room.addActor(tm);
 			
 			tm.fillBackground(imgMap[4][1], 1, 1, 14, 1);
@@ -151,16 +155,12 @@ public class Cabin {
 			
 			instr = new Pantext("act.instr", PlatformGame.font, "Hoo! Hoo! Pick one!");
 			room.addActor(instr);
-			instr.getPosition().set(128, 112, 1);
+			instr.getPosition().set(128, 113, 1);
 			instr.centerX();
-			engine.addTimer(instr, 80, new TimerListener() {
-				@Override public void onTimer(final TimerEvent event) {
-					for (int i = 0; i < 4; i++) {
-						tm.initTile(3 + (i * 3), 5).setForeground(imgMap[0][0], PlatformGame.TILE_BUMP);
-					}
-					//TODO Show 4 possible colors shuffling
-					player.mode = Player.MODE_NORMAL;
-				}});
+			for (int i = 0; i < 4; i++) {
+				tm.initTile(3 + (i * 3), 5).setForeground(imgMap[0][0], PlatformGame.TILE_BUMP);
+			}
+			shuffle(30, 0);
 		}
 	}
 	
@@ -190,42 +190,68 @@ public class Cabin {
             } else if (r < 9950) {
                 awd = GemBumped.AWARD_2;
             } else {
-                //TODO Show contents of other 3, add levelGems to total, return to Map
+                //TODO add levelGems to total, clear gem Blinks, return to Map
                 awd = GemBumped.AWARD_DEF;
             }
 		    pc.player.mode = Player.MODE_DISABLED;
-            Pangine.getEngine().addTimer(pc.player, 60, new TimerListener() {
-                @Override public void onTimer(final TimerEvent event) {
-                    final List<Integer> awds = new ArrayList<Integer>(3);
-                    add(awds, awd, GemBumped.AWARD_4);
-                    add(awds, awd, GemBumped.AWARD_3);
-                    add(awds, awd, GemBumped.AWARD_2);
-                    add(awds, awd, GemBumped.AWARD_DEF);
-                    Collections.shuffle(awds);
-                    for (int i = 0; i < 4; i++) {
-                        final int x = 3 + (i * 3);
-                        final Tile tile = tm.initTile(x, 5);
-                        if (DynamicTileMap.getRawForeground(tile) == getBumpedImage()) {
-                            continue;
-                        }
-                        tile.setForeground(imgMap[4][2]);
-                        final Panctor gem = new Blink(GemBumped.getAnm(awds.remove(awds.size() - 1).intValue()).getFrames()[0].getImage(), 15);
-                        PlatformGame.setPosition(gem, x * 16, 97, PlatformGame.DEPTH_SPARK);
-                        room.addActor(gem);
-                    }
-                }});
+            shuffle(45, awd);
             return awd;
-		}
-		
-		private final static void add(final List<Integer> awds, final int usedAwd, final int currAwd) {
-		    if (usedAwd != currAwd) {
-		        awds.add(Integer.valueOf(currAwd));
-		    }
 		}
 		
 		@Override
 		protected final TileMapImage getBumpedImage() {
-			return imgMap[4][2];
+			return bumpedImage;
 		}
+	}
+	
+	private final static void shuffle(final int time, final int awd) {
+        Pangine.getEngine().addTimer(pc.player, time, new TimerListener() {
+            @Override public void onTimer(final TimerEvent event) {
+                final boolean end = awd > 0;
+                final List<Integer> awds = new ArrayList<Integer>(end ? 3 : 4);
+                add(awds, awd, GemBumped.AWARD_4);
+                add(awds, awd, GemBumped.AWARD_3);
+                add(awds, awd, GemBumped.AWARD_2);
+                add(awds, awd, GemBumped.AWARD_DEF);
+                Collections.shuffle(awds);
+                for (int i = 0; i < 4; i++) {
+                    final int x = 3 + (i * 3);
+                    if (end) {
+                        final Tile tile = tm.initTile(x, 5);
+                        if (DynamicTileMap.getRawForeground(tile) == bumpedImage) {
+                            continue;
+                        }
+                        tile.setForeground(bumpedImage);
+                    }
+                    //TODO End with all white gems for a little longer
+                    Panctor gem = gems[i];
+                    if (gem == null) {
+                        gem = end ? new Blink(15) : new Panctor();
+                        PlatformGame.setPosition(gem, x * 16, 97, PlatformGame.DEPTH_SPARK);
+                        room.addActor(gem);
+                        gems[i] = gem;
+                    }
+                    gem.setView(GemBumped.getAnm(awds.remove(awds.size() - 1).intValue()).getFrames()[0].getImage());
+                }
+                if (!end) {
+                    final int newTime = time - ((time > 10) ? 2 : 1);
+                    if (newTime > 1) {
+                        shuffle(newTime, awd);
+                    } else {
+                        pc.player.mode = Player.MODE_NORMAL;
+                        clear();
+                    }
+                }
+            }});
+    }
+	
+	private final static void add(final List<Integer> awds, final int usedAwd, final int currAwd) {
+        if (usedAwd != currAwd) {
+            awds.add(Integer.valueOf(currAwd));
+        }
+    }
+	
+	private final static void clear() {
+	    Panctor.destroy(gems);
 	}
 }
