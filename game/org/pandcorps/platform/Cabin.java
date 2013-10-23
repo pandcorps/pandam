@@ -27,6 +27,7 @@ import java.util.*;
 
 import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
+import org.pandcorps.game.actor.*;
 import org.pandcorps.game.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
@@ -42,6 +43,7 @@ public class Cabin {
 	private static Panmage timg = null;
 	private static TileMapImage[][] imgMap = null;
 	private static PlayerContext pc = null;
+	private static Pantext instr = null;
 	
 	protected final static class CabinScreen extends Panscreen {
 		@Override
@@ -147,13 +149,12 @@ public class Cabin {
 			room.addActor(player);
 			PlatformGame.setPosition(player, 74, 32, PlatformGame.DEPTH_PLAYER);
 			
-			final Pantext instr = new Pantext("act.instr", PlatformGame.font, "Hoo! Hoo! Pick one!");
+			instr = new Pantext("act.instr", PlatformGame.font, "Hoo! Hoo! Pick one!");
 			room.addActor(instr);
 			instr.getPosition().set(128, 112, 1);
 			instr.centerX();
 			engine.addTimer(instr, 80, new TimerListener() {
 				@Override public void onTimer(final TimerEvent event) {
-					instr.destroy();
 					for (int i = 0; i < 4; i++) {
 						tm.initTile(3 + (i * 3), 5).setForeground(imgMap[0][0], PlatformGame.TILE_BUMP);
 					}
@@ -178,12 +179,13 @@ public class Cabin {
 		
 		@Override
 		protected final int rndAward() {
+		    instr.destroy();
 		    final int r = Mathtil.randi(0, 9999), awd;
             // Looks like bonus Gems are pre-sorted, so 25% chance of getting 1000,
-            // but decide after Player picks, so 52% chance of 1000, then 37.5/10/0.5
-            if (r < 5200) {
+            // but decide after Player picks, so 55% chance of 1000, then 35/9.5/0.5
+            if (r < 5500) {
                 awd = GemBumped.AWARD_4;
-            } else if (r < 8950) {
+            } else if (r < 9000) {
                 awd = GemBumped.AWARD_3;
             } else if (r < 9950) {
                 awd = GemBumped.AWARD_2;
@@ -207,8 +209,7 @@ public class Cabin {
                             continue;
                         }
                         tile.setForeground(imgMap[4][2]);
-                        final Panctor gem = new Panctor();
-                        gem.setView(GemBumped.getAnm(awds.remove(awds.size() - 1).intValue()).getFrames()[0].getImage()); // Blink?
+                        final Panctor gem = new Blink(GemBumped.getAnm(awds.remove(awds.size() - 1).intValue()).getFrames()[0].getImage(), 15);
                         PlatformGame.setPosition(gem, x * 16, 97, PlatformGame.DEPTH_SPARK);
                         room.addActor(gem);
                     }
@@ -218,7 +219,7 @@ public class Cabin {
 		
 		private final static void add(final List<Integer> awds, final int usedAwd, final int currAwd) {
 		    if (usedAwd != currAwd) {
-		        awds.add(currAwd);
+		        awds.add(Integer.valueOf(currAwd));
 		    }
 		}
 		
