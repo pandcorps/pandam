@@ -23,12 +23,32 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.game.actor;
 
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.event.*;
 
-public class Decoration extends Panctor {
-    public Decoration() {
+public class Blink extends Panctor implements StepListener {
+    private final int visTime;
+    private final int invisTime;
+    private int time;
+    
+    public Blink(final Panmage img, final int time) {
+        this(img, time, time);
     }
     
-    public Decoration(final String id) {
-        super(id);
+    public Blink(final Panmage img, final int visTime, final int invisTime) {
+        setView(img);
+        this.visTime = visTime;
+        this.invisTime = invisTime;
+        time = visTime;
+    }
+    
+    @Override
+    public final void onStep(final StepEvent event) {
+        if (time == 0) {
+            final boolean vis = !isVisible();
+            setVisible(vis);
+            time = vis ? visTime : invisTime;
+            return;
+        }
+        time--;
     }
 }

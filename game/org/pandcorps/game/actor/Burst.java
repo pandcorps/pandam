@@ -22,13 +22,11 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.game.actor;
 
-import org.pandcorps.core.Pantil;
-import org.pandcorps.pandam.Panimation;
+import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 
 public class Burst extends Decoration implements AnimationEndListener {
     public Burst(final Panimation anim) {
-        super(Pantil.vmid());
         setView(anim);
     }
 
