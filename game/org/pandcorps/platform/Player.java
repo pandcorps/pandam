@@ -176,11 +176,19 @@ public class Player extends Character implements CollisionListener {
 	        return ctrl.get1().getDevice();
 	    }
 	    
-	    public final void onFinishLevel() {
+	    private final void commitGems() {
 			profile.gems += player.levelGems;
+	    }
+	    
+	    public final void onFinishLevel() {
+	    	commitGems();
 			profile.stats.defeatedEnemies += player.levelDefeatedEnemies;
 			profile.stats.defeatedLevels++;
 		}
+	    
+	    public final void onFinishBonus() {
+	    	commitGems();
+	    }
 		
 		public final void onFinishWorld() {
 			profile.stats.defeatedWorlds++;
