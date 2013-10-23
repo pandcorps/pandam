@@ -65,6 +65,13 @@ public final class Coltil {
 	    }
 	}
 	
+	public final static void wipe(final Object[] a) {
+	    final int size = size(a);
+	    for (int i = 0; i < size; i++) {
+	        a[i] = null;
+	    }
+	}
+	
 	public final static <E> Iterator<E> iterator(final Iterable<E> able) {
 		return able == null ? null : able.iterator();
 	}
