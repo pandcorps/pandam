@@ -190,7 +190,6 @@ public class Cabin {
             } else if (r < 9950) {
                 awd = GemBumped.AWARD_2;
             } else {
-                //TODO add levelGems to total, return to Map
                 awd = GemBumped.AWARD_DEF;
             }
 		    pc.player.mode = Player.MODE_DISABLED;
@@ -241,6 +240,8 @@ public class Cabin {
                 	Pangine.getEngine().addTimer(gems[0], 105, new TimerListener() {
 						@Override public final void onTimer(final TimerEvent event) {
 	                        clear();
+	                        pc.onFinishBonus();
+	                        PlatformGame.markerClose();
 						}});
                 } else {
                     final int newTime = time - ((time > 10) ? 2 : 1);

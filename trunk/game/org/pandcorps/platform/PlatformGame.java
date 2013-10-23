@@ -565,6 +565,10 @@ public class PlatformGame extends BaseGame {
 	    for (final PlayerContext pc : pcs) {
 	        pc.onFinishLevel();
 	    }
+	    markerClose();
+	}
+	
+	protected final static void markerClose() {
 	    Achievement.evaluate();
 	    Map.victory = true;
 	    goMap();
