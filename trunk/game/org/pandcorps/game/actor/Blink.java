@@ -30,6 +30,10 @@ public class Blink extends Panctor implements StepListener {
     private final int invisTime;
     private int time;
     
+    public Blink(final int time) {
+        this(null, time);
+    }
+    
     public Blink(final Panmage img, final int time) {
         this(img, time, time);
     }
