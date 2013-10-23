@@ -56,7 +56,7 @@ public class GemBumped extends Pandy {
 	    this(player, tile, award, false, getAnm(award));
 	}
 	
-	private final static Panimation getAnm(final int award) {
+	protected final static Panimation getAnm(final int award) {
         switch (award) {
             case AWARD_DEF : return PlatformGame.gemAnm;
             case AWARD_2 : return PlatformGame.gemBlueAnm;
