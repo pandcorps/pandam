@@ -151,6 +151,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
     	protected long bumpedBlocks = 0;
     	protected long brokenBlocks = 0;
     	protected long jumps = 0;
+    	protected int playedBonuses = 0;
     	//totalGems?
     	
     	public void load(final Segment seg) {
@@ -160,6 +161,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
         	bumpedBlocks = seg.initLong(3);
         	brokenBlocks = seg.initLong(4);
         	jumps = seg.initLong(5);
+        	playedBonuses = seg.initInt(6);
         }
     	
 		@Override
@@ -171,6 +173,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
 	        seg.setLong(3, bumpedBlocks);
 	        seg.setLong(4, brokenBlocks);
 	        seg.setLong(5, jumps);
+	        seg.setInt(6, playedBonuses);
 		}
 		
 		public List<String> toList() {
@@ -181,6 +184,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
 			list.add("Blocks bumped: " + bumpedBlocks);
 			list.add("Blocks broken: " + brokenBlocks);
 			list.add("Jumps: " + jumps);
+			list.add("Bonus games played: " + playedBonuses);
 			return list;
 		}
     }

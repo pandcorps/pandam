@@ -38,6 +38,8 @@ import org.pandcorps.platform.Player.*;
 import org.pandcorps.platform.Tiles.*;
 
 public class Cabin {
+	private final static int NUM_BLOCKS = 4;
+	
 	private static Panroom room = null;
 	private static TileMap tm = null;
 	private static Panmage timg = null;
@@ -45,7 +47,7 @@ public class Cabin {
 	private static TileMapImage bumpedImage = null;
 	private static PlayerContext pc = null;
 	private static Pantext instr = null;
-	private static Panctor[] gems = new Panctor[4];
+	private static Panctor[] gems = new Panctor[NUM_BLOCKS];
 	
 	protected final static class CabinScreen extends Panscreen {
 		@Override
@@ -157,7 +159,7 @@ public class Cabin {
 			room.addActor(instr);
 			instr.getPosition().set(128, 114, 1);
 			instr.centerX();
-			for (int i = 0; i < 4; i++) {
+			for (int i = 0; i < NUM_BLOCKS; i++) {
 				tm.initTile(3 + (i * 3), 5).setForeground(imgMap[0][0], PlatformGame.TILE_BUMP);
 			}
 			shuffle(30, 0);
@@ -179,7 +181,6 @@ public class Cabin {
 		
 		@Override
 		protected final int rndAward() {
-		    instr.destroy();
 		    final int r = Mathtil.randi(0, 9999), awd;
             // Looks like bonus Gems are pre-sorted, so 25% chance of getting 1000,
             // but decide after Player picks, so 55% chance of 1000, then 35/9.5/0.5
@@ -211,14 +212,27 @@ public class Cabin {
         Pangine.getEngine().addTimer(pc.player, time, new TimerListener() {
             @Override public void onTimer(final TimerEvent event) {
                 final boolean end = awd > 0;
-                final List<Integer> awds = new ArrayList<Integer>(end ? 3 : 4);
+                final List<Integer> awds = new ArrayList<Integer>(NUM_BLOCKS - (end ? 1 : 0));
                 add(awds, awd, GemBumped.AWARD_4);
                 add(awds, awd, GemBumped.AWARD_3);
                 add(awds, awd, GemBumped.AWARD_2);
                 add(awds, awd, GemBumped.AWARD_DEF);
-                Collections.shuffle(awds);
+                boolean shuffling = true;
+                while (shuffling) {
+	                Collections.shuffle(awds);
+	                shuffling = false;
+	                if (!end) {
+	                	for (int i = 0; i < NUM_BLOCKS; i++) {
+	                		final Panctor gem = gems[NUM_BLOCKS - i - 1];
+	                		if (gem != null && gem.getView() == getGemImg(awds.get(i))) {
+	                			shuffling = true;
+	                			break;
+	                		}
+	                	}
+	                }
+                }
                 final boolean white = whiteTime <= 0;
-                for (int i = 0; i < 4; i++) {
+                for (int i = 0; i < NUM_BLOCKS; i++) {
                     final int x = 3 + (i * 3);
                     if (end) {
                         final Tile tile = tm.initTile(x, 5);
@@ -234,7 +248,7 @@ public class Cabin {
                         room.addActor(gem);
                         gems[i] = gem;
                     }
-                    gem.setView(white ? PlatformGame.gemWhite : GemBumped.getAnm(awds.remove(awds.size() - 1).intValue()).getFrames()[0].getImage());
+                    gem.setView(white ? PlatformGame.gemWhite : getGemImg(awds.remove(awds.size() - 1)));
                 }
                 if (end) {
                 	Pangine.getEngine().addTimer(gems[0], 105, new TimerListener() {
@@ -250,6 +264,7 @@ public class Cabin {
 							@Override public final void onTimer(final TimerEvent event) {
 		                    	pc.player.mode = Player.MODE_NORMAL;
 		                        clear();
+		                        instr.destroy();
 							}});
                     } else if (newTime > 1) {
                         shuffle(newTime, awd);
@@ -259,6 +274,10 @@ public class Cabin {
                 }
             }});
     }
+	
+	private final static Panmage getGemImg(final Integer key) {
+		return GemBumped.getAnm(key.intValue()).getFrames()[0].getImage();
+	}
 	
 	private final static void add(final List<Integer> awds, final int usedAwd, final int currAwd) {
         if (usedAwd != currAwd) {

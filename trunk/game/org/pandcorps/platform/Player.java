@@ -188,6 +188,7 @@ public class Player extends Character implements CollisionListener {
 	    
 	    public final void onFinishBonus() {
 	    	commitGems();
+	    	profile.stats.playedBonuses++;
 	    }
 		
 		public final void onFinishWorld() {
