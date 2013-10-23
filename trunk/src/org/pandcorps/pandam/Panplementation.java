@@ -60,8 +60,7 @@ public abstract class Panplementation {
 		    currFlip = false;
 		    currOrigin = null;
 			updateView((Panmage) view);
-		}
-		else if (view != null) {
+		} else if (view != null) {
 		    /*
 		     * Might want to be able to disable this.
 		     * If switching from a walking animation to a walking/shooting animation,
