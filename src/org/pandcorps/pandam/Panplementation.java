@@ -54,13 +54,14 @@ public abstract class Panplementation {
 	/*package*/ final void setView(final Panview view) {
 		this.view = view;
 
-		if (view instanceof Panmage) {
+		if (view instanceof Panmage || view == null) {
+		    // Went a long time without allowing a null view; any reason not to treat that as invisible?
 		    currRot = 0;
 		    currMirror = false;
 		    currFlip = false;
 		    currOrigin = null;
 			updateView((Panmage) view);
-		} else if (view != null) {
+		} else {
 		    /*
 		     * Might want to be able to disable this.
 		     * If switching from a walking animation to a walking/shooting animation,
@@ -152,6 +153,9 @@ public abstract class Panplementation {
 	protected abstract void renderView();
 	
 	protected final void render(final Panmage image, final float x, final float y, final float z, final int rot, final boolean mirror, final boolean flip, final Panple o) {
+	    if (image == null) {
+	        return; // Went a long time without this check; is there a reason not to let a null image signal invisibility?
+	    }
 	    image.render(actor.getLayer(), x, y, z, rot, mirror, flip, o);
 	}
 }
