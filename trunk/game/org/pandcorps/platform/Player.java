@@ -23,11 +23,11 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.platform;
 
 import org.pandcorps.pandam.*;
-import org.pandcorps.pandam.Panteraction.Device;
+import org.pandcorps.pandam.Panteraction.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.action.*;
-import org.pandcorps.pandam.impl.ImplPanple;
-import org.pandcorps.pandax.in.ControlScheme;
+import org.pandcorps.pandam.impl.*;
+import org.pandcorps.pandax.in.*;
 import org.pandcorps.pandax.tile.*;
 
 public class Player extends Character implements CollisionListener {
@@ -41,7 +41,7 @@ public class Player extends Character implements CollisionListener {
 	protected final static byte MODE_NORMAL = 0;
 	private final static byte MODE_RETURN = 1;
 	protected final static byte MODE_DISABLED = 2;
-	private final static byte JUMP_HIGH = 1;
+	protected final static byte JUMP_HIGH = 1;
 	//private final static byte JUMP_DOUBLE = 2;
 	//private final static byte JUMP_INFINITE = 3;
 	protected final static byte JUMP_FLY = 4;
@@ -210,8 +210,11 @@ public class Player extends Character implements CollisionListener {
 	    	mapLadder.destroyAll();
 	    	mapPose.destroy();
 	    	Panmage.destroy(back);
+	    	back = null;
 	    	Panmage.destroyAll(backJump);
+	    	backJump = null;
 	    	Panmage.destroyAll(backFall);
+	    	backFall = null;
 	    }
 	}
 	
@@ -277,7 +280,12 @@ public class Player extends Character implements CollisionListener {
 	        addV(-g);
 	        return;
 	    } else if (isGrounded()) {
-			v = jumpMode == JUMP_HIGH ? MAX_V : VEL_JUMP;
+	        if (jumpMode == JUMP_HIGH) {
+	            v = MAX_V;
+	            acc.back.setView(pc.backJump);
+	        } else {
+	            v = VEL_JUMP;
+	        }
 			pc.profile.stats.jumps++;
 			Pangine.getEngine().getMusic().playSound(Music.jump);
 		}
@@ -475,7 +483,7 @@ public class Player extends Character implements CollisionListener {
 	@Override
 	protected final boolean onAir() {
 		changeView(v > 0 ? pc.guyJump : pc.guyFall);
-		if (acc.back != null) {
+		if (acc.back != null && jumpMode == JUMP_FLY) {
 			acc.back.changeView((flying || getPosition().getY() <= MIN_Y) ? pc.backJump : pc.backFall);
 			// v > 0 doesn't flap as soon as jump is pressed
 		}
@@ -554,8 +562,9 @@ public class Player extends Character implements CollisionListener {
 		private Panctor back = null;
 		
 		protected Accessories(final PlayerContext pc) {
-			if (pc.profile.currentAvatar.jumpMode == JUMP_FLY) {
-			    back = new Panctor();
+			final byte jm = pc.profile.currentAvatar.jumpMode;
+			if (jm == JUMP_FLY || jm == JUMP_HIGH) {
+			    back = jm == JUMP_HIGH ? new Back() : new Panctor();
 			    back.setView(pc.back);
 			    PlatformGame.room.addActor(back);
 			}
@@ -572,5 +581,12 @@ public class Player extends Character implements CollisionListener {
 		protected void destroy() {
 			Panctor.destroy(back);
 		}
+	}
+	
+	private final static class Back extends Panctor implements AnimationEndListener {
+	    @Override
+        public final void onAnimationEnd(final AnimationEndEvent event) {
+            setView((Panmage) null);
+        }
 	}
 }
