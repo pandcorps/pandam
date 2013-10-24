@@ -22,26 +22,26 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.platform;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
+import java.awt.image.*;
+import java.io.*;
 import java.util.*;
 
 import org.pandcorps.core.*;
-import org.pandcorps.core.chr.CallSequence;
+import org.pandcorps.core.chr.*;
 import org.pandcorps.core.img.*;
-import org.pandcorps.core.img.Pancolor.Channel;
+import org.pandcorps.core.img.Pancolor.*;
 import org.pandcorps.core.seg.*;
 import org.pandcorps.game.*;
 import org.pandcorps.game.core.*;
 import org.pandcorps.pandam.*;
-import org.pandcorps.pandam.impl.FinPanple;
-import org.pandcorps.pandax.in.ControlScheme;
+import org.pandcorps.pandam.impl.*;
+import org.pandcorps.pandax.in.*;
 import org.pandcorps.pandax.text.*;
 import org.pandcorps.pandax.text.Fonts.*;
 import org.pandcorps.pandax.tile.*;
-import org.pandcorps.pandax.visual.FadeController;
+import org.pandcorps.pandax.visual.*;
 import org.pandcorps.platform.Avatar.*;
-import org.pandcorps.platform.Enemy.EnemyDefinition;
+import org.pandcorps.platform.Enemy.*;
 import org.pandcorps.platform.Player.*;
 
 public class PlatformGame extends BaseGame {
@@ -349,6 +349,8 @@ public class PlatformGame extends BaseGame {
 		    }
 		    pc.backJump = engine.createAnimation(PRE_ANM + wpre + ".fly", frames[1], frames[2], frames[3], frames[0]);
 		    pc.backFall = engine.createAnimation(PRE_ANM + wpre + ".fall", frames[4], frames[5]);
+		} else if (avatar.jumpMode == Player.JUMP_HIGH) {
+		    pc.backJump = createAnm(pre + ".spring", "org/pandcorps/platform/res/chr/Springs.png", 32, 6);
 		}
 	}
 	
