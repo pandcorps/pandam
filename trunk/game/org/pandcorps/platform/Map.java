@@ -185,6 +185,12 @@ public class Map {
 				if (victory) {
 				    victory = false;
 				    open.put(getKey(t), Boolean.TRUE);
+				    final Building b = getBuilding(t);
+				    if (isCabin(b)) {
+				    	b.ij = 5;
+				    	b.setView();
+				    	saveMap();
+				    }
 				    PlatformGame.saveGame();
 				}
 			    initRoom();
@@ -223,12 +229,17 @@ public class Map {
 	}
 	
 	protected final static class Building extends TileActor {
-		private final int ij;
+		private int ij;
 		private final int ii;
 		
 		private Building(final int ij, final int ii) {
 			this.ij = ij;
 			this.ii = ii;
+			setView();
+		}
+		
+		private void setView() {
+			setView(tm, imgMap[ij][ii]);
 		}
 	}
 	
@@ -343,16 +354,14 @@ public class Map {
 	            }
 	            changeView(pc.mapPose);
 	            setPlayerPosition(t);
-	            Panscreen screen = null;
-	            for (final Building b : buildings) {
-	            	if (t == tm.getContainer(b)) {
-	            		if (b.ij == 7) {
-	            			screen = new Cabin.CabinScreen();
-	            		}
-	            		break;
-	            	}
+	            final Panscreen screen;
+	            final Building b = getBuilding(t);
+	            if (isCabin(b)) {
+	            	screen = new Cabin.CabinScreen();
+	            } else {
+	            	screen = new PlatformGame.PlatformScreen();
 	            }
-	        	fadeOut(screen == null ? new PlatformGame.PlatformScreen() : screen);
+	        	fadeOut(screen);
 			} else if (interaction.KEY_TAB.isActive()) {
 				interaction.KEY_TAB.inactivate();
 				modeMove = (short) ((modeMove + 1) % 3);
@@ -1149,18 +1158,30 @@ public class Map {
 	
 	private final static void building(final int i, final int j, final int ij, final int ii) {
 		final Tile tile = tm.initTile(i, j);
-		tile.setBackground(imgMap[3][0], TILE_MARKER);
+		tile.setBackground(imgMap[3][7], TILE_MARKER);
 		addBuilding(tile, ij, ii);
 	}
 	
 	private final static void addBuilding(final Tile tile, final int ij, final int ii) {
         final Building b = new Building(ij, ii);
         buildings.add(b);
-        b.setView(tm, imgMap[ij][ii]);
         final Panple tilePos = tile.getPosition();
         b.getPosition().set(tilePos.getX(), tilePos.getY() + 7);
         TileOccupant.setZ(b, tm);
         room.addActor(b);
+	}
+	
+	private final static Building getBuilding(final Tile t) {
+		for (final Building b : buildings) {
+        	if (t == tm.getContainer(b)) {
+        		return b;
+        	}
+        }
+		return null;
+	}
+	
+	private final static boolean isCabin(final Building b) {
+		return b != null && b.ij == 7;
 	}
 	
 	private final static void setZ(final Panple pos, final int depth) {
