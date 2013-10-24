@@ -639,6 +639,7 @@ public class Map {
         water = imgMap[5][6];
         base = imgMap[1][1];
         ladder = imgMap[0][6];
+        final Tile t;
         if (b == null) {
         	//column, row handled in Profile
         	for (final Field f : mrk.getRepetitions(0)) {
@@ -647,15 +648,18 @@ public class Map {
         	for (final Field f : bld.getRepetitions(0)) {
         		addBuilding(tm.getTile(f.intValue(0), f.intValue(1)), f.intValue(2), f.intValue(3));
         	}
-        	return getStartTile();
+        	t = getStartTile();
         } else {
 			tm.fillBackground(water, true);
 			b.init();
-			final Tile t = getStartTile();
+			t = getStartTile();
 			b.build();
 			saveMap();
-			return t;
         }
+        final Panctor portal = new Panctor();
+        portal.setView(PlatformGame.portal);
+        addBuilding(tm.getTile(endColumn, endRow <= 8 ? endRow + 2 : endRow - 2), portal);
+        return t;
 	}
 	
 	private final static void initTileMap(final DynamicTileMap tm) {
@@ -1165,6 +1169,10 @@ public class Map {
 	private final static void addBuilding(final Tile tile, final int ij, final int ii) {
         final Building b = new Building(ij, ii);
         buildings.add(b);
+        addBuilding(tile, b);
+	}
+	
+	private final static void addBuilding(final Tile tile, final Panctor b) {
         final Panple tilePos = tile.getPosition();
         b.getPosition().set(tilePos.getX(), tilePos.getY() + 7);
         TileOccupant.setZ(b, tm);
