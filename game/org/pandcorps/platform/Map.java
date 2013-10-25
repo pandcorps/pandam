@@ -658,8 +658,12 @@ public class Map {
         }
         final Panctor portal = new Panctor();
         portal.setView(PlatformGame.portal);
-        addBuilding(tm.getTile(endColumn, endRow <= 8 ? endRow + 2 : endRow - 2), portal);
+        addBuilding(tm.getTile(endColumn, getPortalRow()), portal);
         return t;
+	}
+	
+	private final static int getPortalRow() {
+	    return endRow + ((endRow <= 8) ? 2 : -2);
 	}
 	
 	private final static void initTileMap(final DynamicTileMap tm) {
@@ -874,6 +878,9 @@ public class Map {
 			endColumn = c - 2;
 			endRow = r;
 			building(endColumn, endRow, 6, 7);
+			final int portalRow = getPortalRow(), midRow = (endRow + portalRow) / 2;
+			tm.initTile(endColumn, midRow).setBackground(base, TILE_SPECIAL);
+			tm.initTile(endColumn, portalRow).setBackground(getBuildingBackground(), TILE_SPECIAL);
 			cliff(fc);
 			int bc = 0, br = 0, bl = 0;
 			for (r = 6; r <= 12; r++) {
@@ -1162,8 +1169,12 @@ public class Map {
 	
 	private final static void building(final int i, final int j, final int ij, final int ii) {
 		final Tile tile = tm.initTile(i, j);
-		tile.setBackground(imgMap[3][7], TILE_MARKER);
+		tile.setBackground(getBuildingBackground(), TILE_MARKER);
 		addBuilding(tile, ij, ii);
+	}
+	
+	private final static TileMapImage getBuildingBackground() {
+	    return imgMap[3][7];
 	}
 	
 	private final static void addBuilding(final Tile tile, final int ij, final int ii) {
