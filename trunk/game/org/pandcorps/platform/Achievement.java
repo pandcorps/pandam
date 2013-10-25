@@ -44,6 +44,8 @@ public abstract class Achievement extends FinName {
 		// Menagerie (Zoologist), Use each animal to finish a Level
 		// Collect a green gem
 		// Play a bonus level
+		// Buy a JumpMode
+		// Buy an Assist
 		// Defeat all Levels within a World (including optional one)
 	};
 	
