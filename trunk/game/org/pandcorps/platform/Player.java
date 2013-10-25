@@ -46,7 +46,7 @@ public class Player extends Character implements CollisionListener {
 	//private final static byte JUMP_INFINITE = 3;
 	protected final static byte JUMP_FLY = 4;
 	
-	public static enum JumpMode implements Named {
+	public static enum JumpMode implements Named { // enum can't extend FinName
 	    Normal(MODE_NORMAL, "Normal", 0),
 	    High(JUMP_HIGH, "Spring Heels", 250),
 	    Fly(JUMP_FLY, "Wings", 1000);
@@ -88,6 +88,19 @@ public class Player extends Character implements CollisionListener {
 	
 	public static interface Named {
 	    public String getName();
+	}
+	
+	public static class FinName implements Named {
+	    private final String name;
+	    
+	    protected FinName(final String name) {
+	        this.name = name;
+	    }
+	    
+	    @Override
+	    public final String getName() {
+	        return name;
+	    }
 	}
 	
 	public static class PlayerData implements Named {

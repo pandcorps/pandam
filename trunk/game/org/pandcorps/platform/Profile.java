@@ -37,6 +37,8 @@ public class Profile extends PlayerData implements Segmented, Savable {
     protected int gems = 0;
     protected final TreeSet<Integer> availableJumpModes = new TreeSet<Integer>(); // Index stored as byte in JumpMode
     protected final TreeSet<Integer> triedJumpModes = new TreeSet<Integer>();
+    protected final TreeSet<Integer> availableAssists = new TreeSet<Integer>();
+    private final TreeSet<Integer> activeAssists = new TreeSet<Integer>();
     protected final Statistics stats = new Statistics();
     protected final TreeSet<Integer> achievements = new TreeSet<Integer>();
     //protected int ctrl = -1; // Should store a preferred scheme for gamepads plus a preferred one for keyboards; don't know which device player will have
@@ -64,6 +66,8 @@ public class Profile extends PlayerData implements Segmented, Savable {
     	gems = seg.intValue(2);
     	addAll(availableJumpModes, seg, 3);
     	addAll(triedJumpModes, seg, 4);
+    	addAll(availableAssists, seg, 5);
+    	addAll(activeAssists, seg, 6);
     	//ctrl = seg.intValue(3);
     }
     
@@ -75,6 +79,8 @@ public class Profile extends PlayerData implements Segmented, Savable {
         seg.setInt(2, gems);
         addAll(seg, 3, availableJumpModes);
         addAll(seg, 4, triedJumpModes);
+        addAll(seg, 5, availableAssists);
+        addAll(seg, 6, activeAssists);
         //seg.setInt(3, ctrl);
     }
     
@@ -195,5 +201,52 @@ public class Profile extends PlayerData implements Segmented, Savable {
     
     public final boolean isJumpModeTryable(final byte index) {
     	return !triedJumpModes.contains(Integer.valueOf(index));
+    }
+    
+    private final static Integer ASSIST_INVINCIBILITY = Integer.valueOf(4);
+    
+    protected final static Assist[] ASSISTS = new Assist[] {
+        new GemAssist(2),
+        new GemAssist(4),
+        new GemAssist(8),
+        new GemAssist(16), // Combine for a max 1024 multiplier
+        new Assist("Invincibility", 1000000)
+    };
+    
+    public static class Assist extends FinName {
+        private final int cost;
+        
+        private Assist(final String name, final int cost) {
+            super(name);
+            this.cost = cost;
+        }
+        
+        public final int getCost() {
+            return cost;
+        }
+    }
+    
+    private final static class GemAssist extends Assist {
+        private final int n;
+        
+        private GemAssist(final int n) {
+            super("Gems x " + n, n * 50000);
+            this.n = n;
+        }
+    }
+    
+    public final int getGemMultiplier() {
+        int m = 1;
+        for (final Integer key : activeAssists) {
+            final Assist a = ASSISTS[key.intValue()];
+            if (a.getClass() == GemAssist.class) {
+                m *= ((GemAssist) a).n;
+            }
+        }
+        return m;
+    }
+    
+    public final boolean isInvincible() {
+        return activeAssists.contains(ASSIST_INVINCIBILITY);
     }
 }

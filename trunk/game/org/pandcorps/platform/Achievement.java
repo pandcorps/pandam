@@ -22,12 +22,12 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.platform;
 
-import java.util.Set;
+import java.util.*;
 
 import org.pandcorps.platform.Player.*;
-import org.pandcorps.platform.Profile.Statistics;
+import org.pandcorps.platform.Profile.*;
 
-public abstract class Achievement implements Named {
+public abstract class Achievement extends FinName {
 	protected final static Achievement[] ALL = {
 		new LevelFeat("Level 1", 1), new LevelFeat("Level Champ", 50),
 		new WorldFeat("World 1", 1), new WorldFeat("World Tour", 10),
@@ -47,18 +47,11 @@ public abstract class Achievement implements Named {
 		// Defeat all Levels within a World (including optional one)
 	};
 	
-	private final String name;
-	
 	private final String desc;
 	
 	protected Achievement(final String name, final String desc) {
-		this.name = name;
+		super(name);
 		this.desc = desc;
-	}
-	
-	@Override
-	public final String getName() {
-		return name;
 	}
 	
 	public final String getDescription() {
