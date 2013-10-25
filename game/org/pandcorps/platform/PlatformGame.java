@@ -60,7 +60,7 @@ public class PlatformGame extends BaseGame {
 	Portal near castle, source of monsters, must enter to close, another plane/dimension.
 	Train-riding levels.
 	Ridable dragons.
-	Mage Enemy w/ pointy hat.
+	Mage Enemy w/ pointy hat, Wisp, Elementals, Trolls, Ogres.
 	Gargoyles catch/carry Player, like moving platforms, one can jump to/from them, but not run on them.
 	Cannons on ground that Player enters to be launched.
 	Cannons in air that auto-fire, others that wait for jump input.
@@ -130,6 +130,7 @@ public class PlatformGame extends BaseGame {
 	protected final static FinPanple og = new FinPanple(16, 1, 0);
 	protected final static FinPanple ow = new FinPanple(17, 1, 0);
 	protected final static FinPanple owf = new FinPanple(17, 2, 0);
+	protected final static FinPanple os = new FinPanple(16, 9, 0);
 	protected static Panmage bubble = null;
 	protected static Panimation owl = null;
 	protected final static ArrayList<EnemyDefinition> enemies = new ArrayList<EnemyDefinition>();
@@ -351,7 +352,7 @@ public class PlatformGame extends BaseGame {
 		    pc.backJump = engine.createAnimation(PRE_ANM + wpre + ".fly", frames[1], frames[2], frames[3], frames[0]);
 		    pc.backFall = engine.createAnimation(PRE_ANM + wpre + ".fall", frames[4], frames[5]);
 		} else if (avatar.jumpMode == Player.JUMP_HIGH) {
-		    pc.backJump = createAnm(pre + ".spring", "org/pandcorps/platform/res/chr/Springs.png", 32, 6);
+		    pc.backJump = createAnm(pre + ".spring", "org/pandcorps/platform/res/chr/Springs.png", 32, 6, os, ng, xg);
 		}
 	}
 	
