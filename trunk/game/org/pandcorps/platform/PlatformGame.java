@@ -479,7 +479,7 @@ public class PlatformGame extends BaseGame {
 		}
 		marker = engine.createAnimation(PRE_ANM + "marker", fa);
 		markerDefeated = engine.createImage(PRE_IMG + "Marker.def", mo, null, null, ImtilX.loadStrip("org/pandcorps/platform/res/bg/MarkerDefeated.png", 8)[3]);
-		portal = createAnm("portal", "org/pandcorps/platform/res/bg/Portal.png", 5);
+		portal = createAnm("portal", "org/pandcorps/platform/res/bg/Portal.png", 6);
 		
 		dirts = Imtil.loadStrip("org/pandcorps/platform/res/bg/Dirt.png", ImtilX.DIM);
 		terrains = Imtil.loadStrip("org/pandcorps/platform/res/bg/Terrain.png", ImtilX.DIM);
