@@ -50,7 +50,6 @@ public class PlatformGame extends BaseGame {
 	Player shirts.
 	Ghost trail, particle trail.
 	Spring heels, spin-float when hold jump while falling, 2xjump, inf flip-jump.
-	Gem multipliers, invincibility.
 	Player sliding image.
 	Warp Map marker for entry/exit point.
 	Replace bush with Rise.png for some levels; rise will be higher than 1 tile; separate build method.
