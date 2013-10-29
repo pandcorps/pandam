@@ -235,6 +235,21 @@ public class Profile extends PlayerData implements Segmented, Savable {
         }
     }
     
+    public final boolean isAssistAvailable(final int i) {
+        return availableAssists.contains(Integer.valueOf(i));
+    }
+    
+    public final boolean isAssistActive(final int i) {
+        return activeAssists.contains(Integer.valueOf(i));
+    }
+    
+    public final void toggleAssist(final int i) {
+        final Integer key = Integer.valueOf(i);
+        if (!activeAssists.remove(key)) {
+            activeAssists.add(key);
+        }
+    }
+    
     public final int getGemMultiplier() {
         int m = 1;
         for (final Integer key : activeAssists) {
