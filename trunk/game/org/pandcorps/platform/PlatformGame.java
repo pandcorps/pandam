@@ -49,7 +49,7 @@ public class PlatformGame extends BaseGame {
 	Horse/hippo/elephant/squirrel/gator/pig/walrus/beaver/stag/bull/ram player face.
 	Player shirts.
 	Ghost trail, particle trail.
-	Spring heels, spin-float when hold jump while falling, 2xjump, inf flip-jump.
+	Spin-float when hold jump while falling, 2xjump, inf flip-jump.
 	Player sliding image.
 	Warp Map marker for entry/exit point.
 	Replace bush with Rise.png for some levels; rise will be higher than 1 tile; separate build method.
@@ -131,7 +131,7 @@ public class PlatformGame extends BaseGame {
 	protected final static FinPanple og = new FinPanple(16, 1, 0);
 	protected final static FinPanple ow = new FinPanple(17, 1, 0);
 	protected final static FinPanple owf = new FinPanple(17, 2, 0);
-	protected final static FinPanple os = new FinPanple(16, 9, 0);
+	protected final static FinPanple os = new FinPanple(16, 11, 0);
 	protected static Panmage bubble = null;
 	protected static Panimation owl = null;
 	protected final static ArrayList<EnemyDefinition> enemies = new ArrayList<EnemyDefinition>();
@@ -353,7 +353,7 @@ public class PlatformGame extends BaseGame {
 		    pc.backJump = engine.createAnimation(PRE_ANM + wpre + ".fly", frames[1], frames[2], frames[3], frames[0]);
 		    pc.backFall = engine.createAnimation(PRE_ANM + wpre + ".fall", frames[4], frames[5]);
 		} else if (avatar.jumpMode == Player.JUMP_HIGH) {
-		    pc.backJump = createAnm(pre + ".spring", "org/pandcorps/platform/res/chr/Springs.png", 32, 6, os, ng, xg);
+		    pc.backJump = createAnm(pre + ".spring", "org/pandcorps/platform/res/chr/Springs.png", 32, 5, os, ng, xg);
 		}
 	}
 	
