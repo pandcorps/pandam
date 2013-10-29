@@ -34,6 +34,7 @@ import org.pandcorps.pandax.in.*;
 import org.pandcorps.pandax.text.*;
 import org.pandcorps.pandax.tile.Tile.*;
 import org.pandcorps.pandax.tile.*;
+import org.pandcorps.platform.Profile.*;
 import org.pandcorps.platform.Avatar.*;
 import org.pandcorps.platform.Player.*;
 
@@ -163,6 +164,12 @@ public class Menu {
 			}
 			
 			protected abstract void update(final float value);
+		}
+		
+		protected final void addHudGems() {
+		    final int gemX = center + 16, gemY = 20;
+            PlatformGame.addHudGem(room, gemX, gemY);
+            PlatformGame.addHud(room, pc, gemX + PlatformGame.OFF_GEM, gemY, false, false);
 		}
 		
 		protected final ControllerInput addNameInput(final PlayerData pd, final InputSubmitListener subLsn, final int max, final int x, final int y) {
@@ -752,9 +759,7 @@ public class Menu {
         
         @Override
         protected final void menu() throws Exception {
-        	final int gemX = center + 16, gemY = 20;
-        	PlatformGame.addHudGem(room, gemX, gemY);
-        	PlatformGame.addHud(room, pc, gemX + PlatformGame.OFF_GEM, gemY, false, false);
+            addHudGems();
             final int left = getLeft();
             int y = getTop();
             final JumpMode[] jumpModes = JumpMode.values();
@@ -832,6 +837,84 @@ public class Menu {
             Panscreen.set(new AvatarScreen(pc, old, avt));
         }
 	}
+	
+	protected final static class AssistScreen extends PlayerScreen {
+        private RadioGroup aRadio = null;
+        
+        protected AssistScreen(final PlayerContext pc) {
+            super(pc, false);
+        }
+        
+        @Override
+        protected final void menu() throws Exception {
+            addHudGems();
+            final int left = getLeft();
+            int y = getTop();
+            final Assist[] assists = Profile.ASSISTS;
+            final List<String> as = new ArrayList<String>(assists.length);
+            for (final Assist a : assists) {
+                as.add(a.getName());
+            }
+            final RadioSubmitListener aLsn = new RadioSubmitListener() {
+                @Override public final void onSubmit(final RadioSubmitEvent event) {
+                    final JumpMode jm = Player.get(jumpModes, value);
+                    final byte index = jm.getIndex();
+                    if (pc.profile.isAssistAvailable(index)) {
+                        clearInfo();
+                        toggleAssist(index);
+                    } else {
+                        setInfo("Buy for " + jm.getCost() + "?");
+                    }
+                }};
+            final RadioSubmitListener aSubLsn = new RadioSubmitListener() {
+                @Override public final void onSubmit(final RadioSubmitEvent event) {
+                    final JumpMode jm = Player.get(jumpModes, value);
+                    final byte index = jm.getIndex();
+                    if (!pc.profile.isJumpModeAvailable(index)) {
+                        final int cost = jm.getCost();
+                        if (Chartil.charAt(inf, 0) == 'F') {
+                            setJumpMode(index);
+                            setInfo("Equipped! Buy for " + jm.getCost() + "?");
+                        } else if (pc.profile.gems > cost) {
+                            pc.profile.gems -= cost;
+                            pc.profile.availableJumpModes.add(Integer.valueOf(index));
+                            setJumpMode(index);
+                            setInfo("Purchased!");
+                        } else {
+                            setInfo("You need more Gems");
+                        }
+                    }
+                }};
+            aRadio = addRadio("Assists", as, aSubLsn, aLsn, left, y);
+            initAssists();
+            y -= 64;
+            addExit("Back", left, y);
+        }
+        
+        private final void toggleAssist(final int index) {
+            pc.profile.toggleAssist(index);
+            initAssists();
+        }
+        
+        private final void initAssists() {
+            pc.profile.get
+            jmpRadio.setSelected(JumpMode.get(avt.jumpMode).getName());
+        }
+        
+        @Override
+        protected boolean allow(final TextItem focused) {
+            final boolean a = super.allow(focused);
+            if (a) {
+                initJumpMode();
+            }
+            return a;
+        }
+        
+        @Override
+        protected void onExit() {
+            goProfile();
+        }
+    }
 	
 	protected final static class InfoScreen extends PlayerScreen {
 	    private RadioGroup achRadio = null;

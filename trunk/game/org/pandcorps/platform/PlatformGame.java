@@ -79,6 +79,7 @@ public class PlatformGame extends BaseGame {
 	Goals: Collect n gems, defeat n enemies.
 	Random music per map.
 	Sound effects for jump, bump, stomp, hurt, etc.
+	Real game clock.
 	*/
 	
 	protected final static byte TILE_BREAK = 2;
@@ -544,7 +545,7 @@ public class PlatformGame extends BaseGame {
         if (mult) {
             final int m = pc.profile.getGemMultiplier();
             if (m > 1) { // If multiplier only changes in Menu, can pre-store value
-                final Pantext hudMult = new Pantext("hud.mult." + i, fontTiny, String.valueOf(m));
+                final Pantext hudMult = new Pantext("hud.mult." + i, fontTiny, "x" + m);
                 hudMult.getPosition().set(x, y - 7);
                 hud.addActor(hudMult);
             }
