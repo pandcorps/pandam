@@ -310,6 +310,9 @@ public class Player extends Character implements CollisionListener {
             return;
         } else if (v > 0) {
 			v = 0;
+			if (jumpMode == JUMP_HIGH) {
+				acc.back.setView((Panmage) null);
+			}
 		}
 	}
 	
