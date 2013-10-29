@@ -513,7 +513,7 @@ public class PlatformGame extends BaseGame {
 		addHudGem(hud, 0, h);
         final int size = pcs.size();
         for (int i = 0; i < size; i++) {
-        	addHud(hud, pcs.get(i), OFF_GEM + (i * 56), h, level);
+        	addHud(hud, pcs.get(i), OFF_GEM + (i * 56), h, level, true);
         }
         addNotifications(hud);
         return hud;
@@ -525,7 +525,7 @@ public class PlatformGame extends BaseGame {
         hud.addActor(hudGem);
 	}
 	
-	protected final static void addHud(final Panlayer hud, final PlayerContext pc, final int x, final int y, final boolean level) {
+	protected final static void addHud(final Panlayer hud, final PlayerContext pc, final int x, final int y, final boolean level, final boolean mult) {
         final CallSequence gemSeq;
         if (level) {
             gemSeq = new CallSequence() {@Override protected String call() {
@@ -541,6 +541,14 @@ public class PlatformGame extends BaseGame {
         final Pantext hudGems = new Pantext("hud.gems." + i, font, gemSeq);
         hudGems.getPosition().set(x, y);
         hud.addActor(hudGems);
+        if (mult) {
+            final int m = pc.profile.getGemMultiplier();
+            if (m > 1) { // If multiplier only changes in Menu, can pre-store value
+                final Pantext hudMult = new Pantext("hud.mult." + i, fontTiny, String.valueOf(m));
+                hudMult.getPosition().set(x, y - 7);
+                hud.addActor(hudMult);
+            }
+        }
 	}
 	
 	protected final static void addNotifications(final Panlayer layer) {

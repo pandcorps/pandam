@@ -26,11 +26,11 @@ import java.util.*;
 
 import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
-import org.pandcorps.game.core.ImtilX;
+import org.pandcorps.game.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.action.*;
-import org.pandcorps.pandax.in.ControlScheme;
+import org.pandcorps.pandax.in.*;
 import org.pandcorps.pandax.text.*;
 import org.pandcorps.pandax.tile.Tile.*;
 import org.pandcorps.pandax.tile.*;
@@ -754,7 +754,7 @@ public class Menu {
         protected final void menu() throws Exception {
         	final int gemX = center + 16, gemY = 20;
         	PlatformGame.addHudGem(room, gemX, gemY);
-        	PlatformGame.addHud(room, pc, gemX + PlatformGame.OFF_GEM, gemY, false);
+        	PlatformGame.addHud(room, pc, gemX + PlatformGame.OFF_GEM, gemY, false, false);
             final int left = getLeft();
             int y = getTop();
             final JumpMode[] jumpModes = JumpMode.values();
