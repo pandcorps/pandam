@@ -46,6 +46,7 @@ public class Menu {
     private final static String WARN_EMPTY = "Must have a name";
     private final static String WARN_DUPLICATE = "Name already used";
     private final static String INFO_SAVED = "Saved images";
+    private final static char CHAR_ON = 2;
     
 	protected abstract static class PlayerScreen extends Panscreen {
 		protected Panroom room;
@@ -119,7 +120,7 @@ public class Menu {
 			return addRadio(title, list, null, lsn, x, y);
 		}
 		
-		protected final RadioGroup addRadio(final String title, final List<String> list, final RadioSubmitListener subLsn, final RadioSubmitListener chgLsn, final int x, final int y) {
+		protected final RadioGroup addRadio(final String title, final List<? extends CharSequence> list, final RadioSubmitListener subLsn, final RadioSubmitListener chgLsn, final int x, final int y) {
 			final RadioGroup grp = new RadioGroup(PlatformGame.font, list, subLsn);
 			grp.setChangeListener(chgLsn);
 			addItem(grp, x, y - 16);
@@ -521,6 +522,14 @@ public class Menu {
 	                    goProfile(); }};
 	            x = addPipe(x, y);
 	            x = addLink("Erase", delLsn, x, y);
+	            final MessageCloseListener astLsn = new MessageCloseListener() {
+	                @Override public final void onClose(final MessageCloseEvent event) {
+	                    if (disabled) {
+	                        return;
+	                    }
+	                    Panscreen.set(new AssistScreen(pc)); }};
+	            x = addPipe(x, y);
+	            x = addLink("Perks", astLsn, x, y);
             }
 			final MessageCloseListener prfLsn = new MessageCloseListener() {
                 @Override public final void onClose(final MessageCloseEvent event) {
@@ -839,7 +848,7 @@ public class Menu {
 	}
 	
 	protected final static class AssistScreen extends PlayerScreen {
-        private RadioGroup aRadio = null;
+		private List<StringBuilder> as = null;
         
         protected AssistScreen(final PlayerContext pc) {
             super(pc, false);
@@ -851,44 +860,49 @@ public class Menu {
             final int left = getLeft();
             int y = getTop();
             final Assist[] assists = Profile.ASSISTS;
-            final List<String> as = new ArrayList<String>(assists.length);
+            as = new ArrayList<StringBuilder>(assists.length);
             for (final Assist a : assists) {
-                as.add(a.getName());
+                as.add(new StringBuilder("  " + a.getName()));
             }
             final RadioSubmitListener aLsn = new RadioSubmitListener() {
                 @Override public final void onSubmit(final RadioSubmitEvent event) {
-                    final JumpMode jm = Player.get(jumpModes, value);
-                    final byte index = jm.getIndex();
-                    if (pc.profile.isAssistAvailable(index)) {
-                        clearInfo();
-                        toggleAssist(index);
-                    } else {
-                        setInfo("Buy for " + jm.getCost() + "?");
-                    }
+                    highlightAssist(event.getIndex(), getAssist(event));
                 }};
             final RadioSubmitListener aSubLsn = new RadioSubmitListener() {
                 @Override public final void onSubmit(final RadioSubmitEvent event) {
-                    final JumpMode jm = Player.get(jumpModes, value);
-                    final byte index = jm.getIndex();
-                    if (!pc.profile.isJumpModeAvailable(index)) {
-                        final int cost = jm.getCost();
-                        if (Chartil.charAt(inf, 0) == 'F') {
-                            setJumpMode(index);
-                            setInfo("Equipped! Buy for " + jm.getCost() + "?");
-                        } else if (pc.profile.gems > cost) {
+                    final Assist a = getAssist(event);
+                    final int index = event.getIndex();
+                    if (pc.profile.isAssistAvailable(index)) {
+                    	toggleAssist(index);
+                    } else {
+                        final int cost = a.getCost();
+                        if (pc.profile.gems > cost) {
                             pc.profile.gems -= cost;
-                            pc.profile.availableJumpModes.add(Integer.valueOf(index));
-                            setJumpMode(index);
+                            pc.profile.availableAssists.add(Integer.valueOf(index));
+                            toggleAssist(index);
                             setInfo("Purchased!");
                         } else {
                             setInfo("You need more Gems");
                         }
                     }
                 }};
-            aRadio = addRadio("Assists", as, aSubLsn, aLsn, left, y);
+            addRadio("Assists", as, aSubLsn, aLsn, left, y);
             initAssists();
             y -= 64;
             addExit("Back", left, y);
+            highlightAssist(0, Profile.ASSISTS[0]);
+        }
+        
+        private final Assist getAssist(final RadioSubmitEvent event) {
+        	return Player.get(Profile.ASSISTS, event.toString().substring(2));
+        }
+        
+        private final void highlightAssist(final int index, final Assist a) {
+        	if (pc.profile.isAssistAvailable(index)) {
+                clearInfo();
+            } else {
+                setInfo("Buy for " + a.getCost() + "?");
+            }
         }
         
         private final void toggleAssist(final int index) {
@@ -897,17 +911,10 @@ public class Menu {
         }
         
         private final void initAssists() {
-            pc.profile.get
-            jmpRadio.setSelected(JumpMode.get(avt.jumpMode).getName());
-        }
-        
-        @Override
-        protected boolean allow(final TextItem focused) {
-            final boolean a = super.allow(focused);
-            if (a) {
-                initJumpMode();
-            }
-            return a;
+        	final int size = as.size();
+        	for (int i = 0; i < size; i++) {
+        		as.get(i).setCharAt(0, getFlag(pc.profile.isAssistActive(i)));
+        	}
         }
         
         @Override
@@ -931,7 +938,7 @@ public class Menu {
             final List<String> ach = new ArrayList<String>(total);
             for (int i = 0; i < total; i++) {
                 Chartil.clear(b);
-                b.append(pc.profile.achievements.contains(Integer.valueOf(i)) ? (char) 2 : ' ').append(' ');
+                b.append(getFlag(pc.profile.achievements.contains(Integer.valueOf(i)))).append(' ');
                 b.append(Achievement.ALL[i].getName());
                 ach.add(b.toString());
             }
@@ -984,6 +991,10 @@ public class Menu {
         protected void onExit() {
             goProfile();
         }
+	}
+	
+	private final static char getFlag(final boolean b) {
+		return b ? CHAR_ON : ' ';
 	}
 	
 	private final static int getLineColor(final float c) {
