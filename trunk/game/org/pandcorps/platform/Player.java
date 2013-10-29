@@ -48,8 +48,8 @@ public class Player extends Character implements CollisionListener {
 	
 	public static enum JumpMode implements Named { // enum can't extend FinName
 	    Normal(MODE_NORMAL, "Normal", 0),
-	    High(JUMP_HIGH, "Spring Heels", 250),
-	    Fly(JUMP_FLY, "Wings", 1000);
+	    High(JUMP_HIGH, "Spring Heels", 10000),
+	    Fly(JUMP_FLY, "Wings", 50000);
 	    
 	    private final byte index;
 	    
@@ -439,7 +439,7 @@ public class Player extends Character implements CollisionListener {
     }
 	
 	public final void addGems(final int gems) {
-        levelGems += gems;
+        levelGems += (gems * pc.profile.getGemMultiplier());
     }
 	
 	@Override
@@ -523,7 +523,7 @@ public class Player extends Character implements CollisionListener {
 		        But don't fall through to call onHurt below.
 		        Just ignore the second Enemy, so this case is a no-op.
 		        */
-			} else if (!isInvincible()) {
+			} else if (!(isInvincible() || pc.profile.isInvincible())) {
 				onHurt();
 				hurtTimer = 60; // Enable temporary invincibility
 			}
@@ -531,7 +531,7 @@ public class Player extends Character implements CollisionListener {
 	}
 	
 	public final void onHurt() {
-        if (levelGems == 0) {
+        if (levelGems == 0 || pc.profile.isInvincible()) {
             return;
         }
         levelGems -= (Math.max(1, levelGems / 10));
