@@ -687,7 +687,9 @@ public class Map {
             	room.addActor(b);
             	b.setView(tm, imgMap[b.ij][b.ii]);
             }
-            room.addActor(portal);
+            if (portal != null) {
+                room.addActor(portal);
+            }
         }
         if (tm.getForegroundDepth() != DEPTH_FOREGROUND) {
         	tm.setOccupantDepth(DepthMode.Y);

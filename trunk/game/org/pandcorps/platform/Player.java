@@ -283,6 +283,8 @@ public class Player extends Character implements CollisionListener {
             @Override public final void onActionStart(final ActionStartEvent event) { jumpMode = JUMP_HIGH; }});
         register(interaction.KEY_E, new ActionStartListener() {
             @Override public final void onActionStart(final ActionStartEvent event) { jumpMode = JUMP_FLY; }});
+        register(interaction.KEY_F1, new ActionStartListener() {
+            @Override public final void onActionStart(final ActionStartEvent event) { engine.captureScreen(); }});
 	}
 	
 	private final void jump() {
