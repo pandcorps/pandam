@@ -22,20 +22,13 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandam.lwjgl;
 
-import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
+import java.awt.image.*;
 import java.nio.*;
 import java.util.*;
 
-import org.lwjgl.input.Controller;
-import org.lwjgl.input.Controllers;
-import org.lwjgl.input.Cursor;
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.DisplayMode;
-import org.lwjgl.opengl.GL11;
-//import org.lwjgl.util.glu.GLU;
+import org.lwjgl.input.*;
+import org.lwjgl.opengl.*;
+//import org.lwjgl.util.glu.*;
 import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
 import org.pandcorps.pandam.*;
@@ -112,7 +105,6 @@ public final class LwjglPangine extends Pangine {
     private boolean fullScreen = false;
 	private boolean initialized = false;
 	private float clr = 0.0f, clg = 0.0f, clb = 0.0f, cla = 0.0f;
-	//private ByteBuffer buf;
 	
 	@Override
 	public final void setDisplaySize(final int w, final int h) {
@@ -121,7 +113,6 @@ public final class LwjglPangine extends Pangine {
 	    }
 	    this.w = w;
 	    this.h = h;
-	    //buf = Pantil.allocateDirectByteBuffer(w * h * 3);
 	}
 	
 	@Override
@@ -544,8 +535,13 @@ public final class LwjglPangine extends Pangine {
 		for (Panlayer layer = room.getBase(); layer != null; layer = layer.getAbove()) {
 		    draw(layer);
 		}
-		//buf.rewind();
-		//GL11.glReadPixels(0, 0, w, h, GL11.GL_RGB, GL11.GL_BYTE, buf); // Could read and filter, but very slow
+		if (screenShotDst != null) {
+		    final ByteBuffer buf = Pantil.allocateDirectByteBuffer(w * h * 3);
+		    //buf.rewind();
+		    GL11.glReadPixels(0, 0, w, h, GL11.GL_RGB, GL11.GL_BYTE, buf); // Could read each frame and filter, but very slow
+		    Imtil.save(Imtil.create(buf, w, h, BufferedImage.TYPE_INT_RGB), screenShotDst);
+		    screenShotDst = null;
+		}
 		Display.update();
 	}
 	
