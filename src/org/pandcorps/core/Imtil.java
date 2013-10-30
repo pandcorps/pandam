@@ -24,6 +24,8 @@ package org.pandcorps.core;
 
 import java.awt.image.*;
 import java.io.*;
+import java.nio.*;
+
 import javax.imageio.*;
 
 import org.pandcorps.core.img.*;
@@ -52,6 +54,37 @@ public final class Imtil {
         }
     }
     
+    public final static BufferedImage create(final ByteBuffer buf, final int w, final int h, final int type) {
+        if (type != BufferedImage.TYPE_INT_RGB) {
+            throw new UnsupportedOperationException("Currently only support INT_RGB");
+        }
+        //final BufferedImage img = new BufferedImage(w, h, type);
+        final BufferedImage img = newImage(w, h); // type only needed to interpret ByteBuffer, we can choose any type for output
+        final ColorModel cm = getColorModel();
+        final int[] rgba = new int[4];
+        rgba[3] = 255;
+        int min = 255, max = 0;
+        for (int y = 0; y < h; y++) {
+            final int wy = w * y;
+            for (int x = 0; x < w; x++) {
+                final int i = (wy + x) * 3;
+                //final int r = buf.get(i) & 0xFF, g = buf.get(i + 1) & 0xFF, b = buf.get(i + 2) & 0xFF;
+                /*rgba[0] = buf.get(i) & 0xFF;
+                rgba[1] = buf.get(i + 1) & 0xFF;
+                rgba[2] = buf.get(i + 2) & 0xFF;*/
+                min = Math.min(min, buf.get(i));
+                max = Math.max(max, buf.get(i));
+                rgba[0] = buf.get(i);
+                rgba[1] = buf.get(i + 1);
+                rgba[2] = buf.get(i + 2);
+                //img.setRGB(x, h - (y + 1), (0xFF << 24) | (r << 16) | (g << 8) | b);
+                img.setRGB(x, h - (y + 1), cm.getDataElement(rgba, 0));
+            }
+        }
+        System.out.println(min + " - " + max);
+        return img;
+    }
+    
     public final static void save(final BufferedImage img, final String location) {
         try {
             ImageIO.write(img, "png", new File(location));
@@ -65,7 +98,7 @@ public final class Imtil {
     }
     
     //public final static BufferedImage sub(final BufferedImage img, final int x, final int y, final int w, final int h) {
-        //final BufferedImage out = new BufferedImage(w, h, TYPE);
+        //final BufferedImage out = newImage(w, h);
     //    return img.getSubimage(x, y, w, h);
     //}
     
@@ -89,7 +122,7 @@ public final class Imtil {
     
     public final static BufferedImage copy(final BufferedImage img) {
     	final int iw = img.getWidth(), ih = img.getHeight();
-        final BufferedImage out = new BufferedImage(iw, ih, TYPE);
+        final BufferedImage out = newImage(iw, ih);
         copy(img, out, 0, 0, iw, ih, 0, 0);
         return out;
     }
@@ -201,7 +234,7 @@ public final class Imtil {
         //final ColorModel cm = img.getColorModel();
         //cm.getRGB(inData)
     	final int iw = img.getWidth(), ih = img.getHeight();
-        final BufferedImage out = new BufferedImage(iw, ih, TYPE);
+        final BufferedImage out = newImage(iw, ih);
         final int sx = ox + w, sy = oy + h;
         for (int x = 0; x < iw; x++) {
             for (int y = 0; y < ih; y++) {
@@ -270,7 +303,7 @@ public final class Imtil {
         //ColorModel model = img.getColorModel();
 
         final int w = in.getWidth(), h = in.getHeight();
-        final BufferedImage out = new BufferedImage(w, h, TYPE);
+        final BufferedImage out = newImage(w, h);
 
         for (int y = 0; y < h; y++) {
             for (int x = 0; x < w; x++) {
@@ -323,5 +356,9 @@ public final class Imtil {
     		}
     	}
     	return in;
+    }
+    
+    private final static BufferedImage newImage(final int w, final int h) {
+        return new BufferedImage(w, h, TYPE);
     }
 }
