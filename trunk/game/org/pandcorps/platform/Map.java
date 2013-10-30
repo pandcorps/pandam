@@ -131,6 +131,7 @@ public class Map {
 	private static DynamicTileMap tm = null;
 	private final static ArrayList<Marker> markers = new ArrayList<Marker>();
 	private final static ArrayList<Building> buildings = new ArrayList<Building>();
+	private static Panctor portal = null;
 	private static MapTileListener mtl = null;
 	private static TileMapImage[][] imgMap = null;
 	private static TileMapImage water = null;
@@ -211,6 +212,7 @@ public class Map {
 	        //Panmage.destroy(timg);
 			Panctor.detach(markers);
 			Panctor.detach(buildings);
+			Panctor.detach(portal);
 	    }
 	}
 	
@@ -581,6 +583,7 @@ public class Map {
 	private final static Tile loadMap() {
 		Panctor.destroy(markers);
 		Panctor.destroy(buildings);
+		Panctor.destroy(portal);
 	    Tile t;
 		//for (int i = 0; i < 100; i++) { // For testing rarely randomly generating errors
 	        //tm.destroy(); tm = null; destroy/clear markers
@@ -656,7 +659,7 @@ public class Map {
 			b.build();
 			saveMap();
         }
-        final Panctor portal = new Panctor();
+        portal = new Panctor();
         portal.setView(PlatformGame.portal);
         addBuilding(tm.getTile(endColumn, getPortalRow()), portal);
         return t;
@@ -684,6 +687,7 @@ public class Map {
             	room.addActor(b);
             	b.setView(tm, imgMap[b.ij][b.ii]);
             }
+            room.addActor(portal);
         }
         if (tm.getForegroundDepth() != DEPTH_FOREGROUND) {
         	tm.setOccupantDepth(DepthMode.Y);
