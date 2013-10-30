@@ -22,15 +22,15 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandam;
 
-import java.awt.image.BufferedImage;
+import java.awt.image.*;
 import java.util.*;
-import java.util.concurrent.Callable;
+import java.util.concurrent.*;
 
 import org.pandcorps.core.*;
 import org.pandcorps.core.col.*;
 import org.pandcorps.core.img.*;
-import org.pandcorps.core.img.scale.Scaler;
-import org.pandcorps.pandam.Panput.Button;
+import org.pandcorps.core.img.scale.*;
+import org.pandcorps.pandam.Panput.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.action.*;
 import org.pandcorps.pandam.event.boundary.*;
@@ -68,6 +68,7 @@ public abstract class Pangine {
 	private long clock = 0;
 	
 	private boolean imageSavingEnabled = false;
+	protected String screenShotDst = null;
 
 	static {
 		int i = 0;
@@ -855,6 +856,14 @@ public abstract class Pangine {
 	
 	public final void setImageSavingEnabled(final boolean imageSavingEnabled) {
 		this.imageSavingEnabled = imageSavingEnabled;
+	}
+	
+	public final void captureScreen() {
+	    captureScreen("Pandam" + System.currentTimeMillis() + ".png");
+	}
+	
+	public final void captureScreen(final String screenShotDst) {
+	    this.screenShotDst = screenShotDst;
 	}
 	
 	public abstract void setTitle(final String title);
