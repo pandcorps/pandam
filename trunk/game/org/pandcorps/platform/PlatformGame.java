@@ -79,7 +79,6 @@ public class PlatformGame extends BaseGame {
 	Random music per map.
 	Sound effects for jump, bump, stomp, hurt, etc.
 	Real game clock.
-	Screen shot.
 	*/
 	
 	protected final static byte TILE_BREAK = 2;
