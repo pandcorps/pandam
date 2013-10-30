@@ -63,25 +63,16 @@ public final class Imtil {
         final ColorModel cm = getColorModel();
         final int[] rgba = new int[4];
         rgba[3] = 255;
-        int min = 255, max = 0;
         for (int y = 0; y < h; y++) {
             final int wy = w * y;
             for (int x = 0; x < w; x++) {
                 final int i = (wy + x) * 3;
-                //final int r = buf.get(i) & 0xFF, g = buf.get(i + 1) & 0xFF, b = buf.get(i + 2) & 0xFF;
-                /*rgba[0] = buf.get(i) & 0xFF;
-                rgba[1] = buf.get(i + 1) & 0xFF;
-                rgba[2] = buf.get(i + 2) & 0xFF;*/
-                min = Math.min(min, buf.get(i));
-                max = Math.max(max, buf.get(i));
-                rgba[0] = buf.get(i);
-                rgba[1] = buf.get(i + 1);
-                rgba[2] = buf.get(i + 2);
-                //img.setRGB(x, h - (y + 1), (0xFF << 24) | (r << 16) | (g << 8) | b);
+                for (int j = 0; j < 3; j++) {
+                    rgba[j] = buf.get(i + j);
+                }
                 img.setRGB(x, h - (y + 1), cm.getDataElement(rgba, 0));
             }
         }
-        System.out.println(min + " - " + max);
         return img;
     }
     
