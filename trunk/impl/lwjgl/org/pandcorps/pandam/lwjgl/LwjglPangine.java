@@ -348,8 +348,8 @@ public final class LwjglPangine extends Pangine {
 			step();
 			draw();
 			try {
-			    final long sleepTime = 30 - System.currentTimeMillis() + frameStart;
-			    System.out.println(sleepTime);
+			    final long sleepTime = frameLength - System.currentTimeMillis() + frameStart;
+			    //System.out.println(sleepTime);
 			    if (sleepTime > 0) {
 			        Thread.sleep(sleepTime);
 			    }
