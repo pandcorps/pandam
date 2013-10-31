@@ -159,7 +159,8 @@ public class PlatformGame extends BaseGame {
 	
 	@Override
 	protected final void init(final Panroom room) throws Exception {
-		Pangine.getEngine().setTitle("Platformer");
+	    Pangine.getEngine().setTitle("Platformer");
+		//engine.setFrameRate(60);
 		PlatformGame.room = room;
 		loadConstants();
 		Panscreen.set(new LogoScreen(Menu.TitleScreen.class));
