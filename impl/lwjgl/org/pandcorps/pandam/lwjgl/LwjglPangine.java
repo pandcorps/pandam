@@ -224,7 +224,8 @@ public final class LwjglPangine extends Pangine {
 	@Override
 	protected final void start() throws Exception {
 		while (running) {
-			final long frameStart = System.currentTimeMillis();
+			//final long frameStart = System.currentTimeMillis();
+		    final long frameStartNano = System.nanoTime();
 			//System.out.println(System.currentTimeMillis());
 			Keyboard.poll();
 			Keyboard.enableRepeatEvents(false);
@@ -348,10 +349,13 @@ public final class LwjglPangine extends Pangine {
 			step();
 			draw();
 			try {
-			    final long sleepTime = frameLength - System.currentTimeMillis() + frameStart;
+			    //final long sleepTime = frameLength - System.currentTimeMillis() + frameStart;
+			    final long sleepTime = frameLengthNano - System.nanoTime() + frameStartNano;
 			    //System.out.println(sleepTime);
 			    if (sleepTime > 0) {
-			        Thread.sleep(sleepTime);
+			        //Thread.sleep(sleepTime);
+			        final long sleepTimeMillis = sleepTime / 1000000;
+			        Thread.sleep(sleepTimeMillis, (int) (sleepTime - sleepTimeMillis * 1000000));
 			    }
             } catch (final InterruptedException e) {
                 throw new RuntimeException(e);
