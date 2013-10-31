@@ -221,21 +221,13 @@ public final class LwjglPangine extends Pangine {
 	    return actor == null ? true : actor.isActive();
 	}
 	
-	//private final void play() {
 	@Override
 	protected final void start() throws Exception {
-		//int f = 0;
 		while (running) {
-			try {
-				Thread.sleep(30);
-			} catch (final InterruptedException e) {
-				throw new RuntimeException(e);
-			}
+			final long frameStart = System.currentTimeMillis();
 			//System.out.println(System.currentTimeMillis());
 			Keyboard.poll();
-			//Keyboard.enableRepeatEvents(true);
 			Keyboard.enableRepeatEvents(false);
-			//org.lwjgl.input.
 			/*
 			System.out.println("REE " + Keyboard.areRepeatEventsEnabled());
 			System.out.println("EK  " + Keyboard.getEventKey());
@@ -244,7 +236,6 @@ public final class LwjglPangine extends Pangine {
 				System.out.println("N " + i + " " + Keyboard.next());
 			}
 			*/
-			//f++;
 			/*
 			while (Keyboard.next()) {
 				System.out.println("EK " + f + " " + Keyboard.getEventKey() + Keyboard.getEventKeyState());
@@ -356,6 +347,15 @@ public final class LwjglPangine extends Pangine {
 			newActive.clear();
 			step();
 			draw();
+			try {
+			    final long sleepTime = 30 - System.currentTimeMillis() + frameStart;
+			    System.out.println(sleepTime);
+			    if (sleepTime > 0) {
+			        Thread.sleep(sleepTime);
+			    }
+            } catch (final InterruptedException e) {
+                throw new RuntimeException(e);
+            }
 		}
 		Display.destroy();
 		Controllers.destroy();
