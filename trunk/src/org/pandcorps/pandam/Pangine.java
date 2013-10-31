@@ -64,7 +64,8 @@ public abstract class Pangine {
 	private float zoomMag = 1;
 	private Scaler scaler = null;
 	
-	protected int frameLength = 30;
+	//protected int frameLength = 30;
+	protected int frameLengthNano = 30000000;
 	private long clock = 0;
 	
 	private boolean imageSavingEnabled = false;
@@ -823,14 +824,16 @@ public abstract class Pangine {
 		return (int) (getDisplayHeight() / getZoom());
 	}
 	
-	public final void setFrameLength(final int frameLengthMillis) {
-	    this.frameLength = frameLengthMillis;
+	public final void setFrameLengthMilli(final int frameLengthMilli) {
+	    setFrameLengthNano(frameLengthMilli * 1000000);
+	}
+	
+	public final void setFrameLengthNano(final int frameLengthNano) {
+	    this.frameLengthNano = frameLengthNano;
 	}
 	
 	public final void setFrameRate(final int framesPerSecond) {
-	    // Could store frameLengthMillis and frameLengthNanos, use Thread.sleep(millis, nanos)
-	    // Can we capture frame work time in nanos though?
-	    setFrameLength(Math.round(1000f / framesPerSecond));
+	    setFrameLengthNano((int) Math.round(1000000000.0 / framesPerSecond));
 	}
 	
 	public final long getClock() {
