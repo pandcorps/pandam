@@ -81,7 +81,7 @@ public class PlatformGame extends BaseGame {
 	Move timers out of Pangine layer step?
 	Pangine pause, disable step/timers.
 	Shouldn't get Dove achievement after bonus house
-	Looks like you return to wrong map marker after 2nd player uses Menu
+	Switching the 1st Player's Profile should reload Map (regenerating if needed)
 	*/
 	
 	protected final static byte TILE_BREAK = 2;
