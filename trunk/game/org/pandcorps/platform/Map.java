@@ -113,12 +113,9 @@ public class Map {
 	private static int lm2 = -1;
 	private static int cstl = -1;
 	
-	protected final static HashMap<Pair<Integer, Integer>, Boolean> open = new HashMap<Pair<Integer, Integer>, Boolean>();
 	protected static boolean victory = false;
 	private static int roomW = -1;
 	private static int roomH = -1;
-	protected static int column = -1;
-	protected static int row = -1;
 	private static int endColumn = -1;
 	private static int endRow = -1;
 	private static String name = null;
@@ -166,7 +163,8 @@ public class Map {
 						PlatformGame.reloadAnimalStrip(pc);
 					}
 				}
-				if (tm != null && row == endRow && column == endColumn) {
+				final Profile prf = getProfile();
+				if (tm != null && prf.row == endRow && prf.column == endColumn) {
 					PlatformGame.worldClose();
 				    victory = false;
 					tm.destroy(); // Trigger generation of new Map
@@ -185,7 +183,7 @@ public class Map {
 			    t = getStartTile();
 				if (victory) {
 				    victory = false;
-				    open.put(getKey(t), Boolean.TRUE);
+				    getOpen().put(getKey(t), Boolean.TRUE);
 				    final Building b = getBuilding(t);
 				    if (isCabin(b)) {
 				    	b.ij = 5;
@@ -523,7 +521,7 @@ public class Map {
 	}
 	
 	private final static boolean isOpen(final Tile t) {
-	    return open.get(getKey(t)) != null;
+	    return getOpen().get(getKey(t)) != null;
     }
 	
 	private final static void loadImages() {
@@ -624,7 +622,7 @@ public class Map {
 			}
 			b = null;
 		} else {
-			open.clear();
+			getOpen().clear();
 		    name = generateName();
 			b = new RandomMapper();
 			roomW = b.getW();
@@ -806,6 +804,8 @@ public class Map {
 			landmark(3 + Mathtil.randi(0, (mid / 2) - 5) * 2, newLandmarkY(), il, used);
 			//landmark(3, newLandmarkY(), il, used);
 			landmark(mid + 1 + (Mathtil.randi(0, ((stop - mid) / 2) - 3) * 2), newLandmarkY(), (il + 3) % 6, used);
+			final Profile prf = getProfile();
+			final int column = prf.column, row = prf.row;
 			marker(column, row);
 			final int cs = column + 2;
 			int c, r = row, fc = -1;
@@ -1047,11 +1047,20 @@ public class Map {
 	}
 	
 	private final static Tile getStartTile() {
-		return tm.getTile(column, row);
+		final Profile prf = getProfile();
+		return tm.getTile(prf.column, prf.row);
 	}
 	
 	private final static PlayerContext getPlayerContext() {
 		return PlatformGame.pcs.get(0);
+	}
+	
+	private final static Profile getProfile() {
+		return getPlayerContext().profile;
+	}
+	
+	private final static HashMap<Pair<Integer, Integer>, Boolean> getOpen() {
+		return getProfile().open;
 	}
 	
 	private final static void addPlayer(final Tile t) {
@@ -1257,8 +1266,9 @@ public class Map {
 	}
 	
 	private final static void setPlayerPosition(final int column, final int row) {
-		Map.column = column;
-		Map.row = row;
+		final Profile prf = getProfile();
+		prf.column = column;
+		prf.row = row;
 	}
 	
 	private final static String getMapFile() {

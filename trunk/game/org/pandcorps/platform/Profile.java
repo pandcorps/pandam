@@ -41,6 +41,9 @@ public class Profile extends PlayerData implements Segmented, Savable {
     private final TreeSet<Integer> activeAssists = new TreeSet<Integer>();
     protected final Statistics stats = new Statistics();
     protected final TreeSet<Integer> achievements = new TreeSet<Integer>();
+    protected int column = -1;
+	protected int row = -1;
+	protected final HashMap<Pair<Integer, Integer>, Boolean> open = new HashMap<Pair<Integer, Integer>, Boolean>();
     //protected int ctrl = -1; // Should store a preferred scheme for gamepads plus a preferred one for keyboards; don't know which device player will have
     
     {
@@ -89,11 +92,11 @@ public class Profile extends PlayerData implements Segmented, Savable {
     }
     
     protected void loadLocation(final Segment seg) {
-        Map.column = seg.intValue(0);
-        Map.row = seg.intValue(1);
-        Map.open.clear();
+        column = seg.intValue(0);
+        row = seg.intValue(1);
+        open.clear();
         for (final Field f : Coltil.unnull(seg.getRepetitions(2))) {
-        	Map.open.put(Pair.get(f.getInteger(0), f.getInteger(1)), f.getBoolean(2));
+        	open.put(Pair.get(f.getInteger(0), f.getInteger(1)), f.getBoolean(2));
         }
     }
     
@@ -110,10 +113,10 @@ public class Profile extends PlayerData implements Segmented, Savable {
     
     private void saveLocation(final Segment seg) {
         seg.setName(PlatformGame.SEG_LOC);
-        seg.setInt(0, Map.column);
-        seg.setInt(1, Map.row);
-        final ArrayList<Field> list = new ArrayList<Field>(Map.open.size());
-        for (final Entry<Pair<Integer, Integer>, Boolean> entry : Map.open.entrySet()) {
+        seg.setInt(0, column);
+        seg.setInt(1, row);
+        final ArrayList<Field> list = new ArrayList<Field>(open.size());
+        for (final Entry<Pair<Integer, Integer>, Boolean> entry : open.entrySet()) {
         	final Field f = new Field();
         	final Pair<Integer, Integer> key = entry.getKey();
         	f.setInteger(0, key.get1());
