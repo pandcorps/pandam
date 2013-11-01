@@ -80,6 +80,8 @@ public class PlatformGame extends BaseGame {
 	Sound effects for jump, bump, stomp, hurt, etc.
 	Move timers out of Pangine layer step?
 	Pangine pause, disable step/timers.
+	Shouldn't get Dove achievement after bonus house
+	Looks like you return to wrong map marker after 2nd player uses Menu
 	*/
 	
 	protected final static byte TILE_BREAK = 2;
@@ -531,7 +533,8 @@ public class PlatformGame extends BaseGame {
         final CallSequence gemSeq;
         if (level) {
             gemSeq = new CallSequence() {@Override protected String call() {
-                return String.valueOf(pc.player.getCurrentLevelGems());}};
+            	// pc.player can be null when one player is in a bonus level while other players wait
+                return pc.player == null ? "0" : String.valueOf(pc.player.getCurrentLevelGems());}};
         } else {
             gemSeq = new CallSequence() {@Override protected String call() {
                 return String.valueOf(pc.getGems());}};
