@@ -269,6 +269,8 @@ public class Player extends Character implements CollisionListener {
 			@Override public final void onAction(final ActionEvent event) { right(); }});
 		register(ctrl.getLeft(), new ActionListener() {
 			@Override public final void onAction(final ActionEvent event) { left(); }});
+		register(ctrl.getSubmit(), new ActionStartListener() {
+            @Override public final void onActionStart(final ActionStartEvent event) { engine.togglePause(); }});
 		
 		// Debug
 		register(interaction.KEY_1, new ActionStartListener() {
