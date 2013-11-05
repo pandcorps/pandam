@@ -22,13 +22,13 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.platform;
 
-import java.awt.image.BufferedImage;
+import java.awt.image.*;
 
-import org.pandcorps.core.Imtil;
-import org.pandcorps.core.img.PixelFilter;
-import org.pandcorps.game.core.ImtilX;
+import org.pandcorps.core.*;
+import org.pandcorps.core.img.*;
+import org.pandcorps.game.core.*;
 import org.pandcorps.pandam.*;
-import org.pandcorps.pandam.impl.FinPanple;
+import org.pandcorps.pandam.impl.*;
 
 public final class Enemy extends Character {
 	protected final static int ENEMY_X = 5;
