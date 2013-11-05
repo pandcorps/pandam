@@ -110,7 +110,7 @@ public abstract class Achievement extends FinName {
         
         @Override
         public final boolean isMet(final PlayerContext pc) {
-            return pc.player == null ? false : isMet(pc.player);
+            return pc.player != null && pc.player.level && isMet(pc.player);
         }
         
         public abstract boolean isMet(final Player player);

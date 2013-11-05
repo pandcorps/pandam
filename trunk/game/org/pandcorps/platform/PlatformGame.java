@@ -80,7 +80,7 @@ public class PlatformGame extends BaseGame {
 	Sound effects for jump, bump, stomp, hurt, etc.
 	Move timers out of Pangine layer step?
 	Pangine pause, disable step/timers.
-	Shouldn't get Dove achievement after bonus house
+	* Shouldn't get Dove achievement after bonus house; fixed, need to test bonus and regular
 	Switching the 1st Player's Profile should reload Map (regenerating if needed)
 	*/
 	
