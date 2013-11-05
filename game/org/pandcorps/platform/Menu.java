@@ -534,15 +534,15 @@ public class Menu {
 	                    goProfile(); }};
 	            x = addPipe(x, y);
 	            x = addLink("Erase", delLsn, x, y);
-	            final MessageCloseListener astLsn = new MessageCloseListener() {
-	                @Override public final void onClose(final MessageCloseEvent event) {
-	                    if (disabled) {
-	                        return;
-	                    }
-	                    Panscreen.set(new AssistScreen(pc)); }};
-	            x = addPipe(x, y);
-	            x = addLink("Perks", astLsn, x, y);
             }
+            final MessageCloseListener astLsn = new MessageCloseListener() {
+                @Override public final void onClose(final MessageCloseEvent event) {
+                    if (disabled) {
+                        return;
+                    }
+                    Panscreen.set(new AssistScreen(pc)); }};
+            x = addPipe(x, y);
+            x = addLink("Perks", astLsn, x, y);
 			final MessageCloseListener prfLsn = new MessageCloseListener() {
                 @Override public final void onClose(final MessageCloseEvent event) {
                     if (disabled) {
