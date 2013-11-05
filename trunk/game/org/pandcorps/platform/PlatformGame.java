@@ -79,7 +79,7 @@ public class PlatformGame extends BaseGame {
 	Random music per map.
 	Sound effects for jump, bump, stomp, hurt, etc.
 	Pangine pause, disable step/timers.
-	Switching the 1st Player's Profile should reload Map (regenerating if needed)
+	Switching the 1st Player's Profile creates 2nd portal when reloading Map
 	*/
 	
 	protected final static byte TILE_BREAK = 2;
