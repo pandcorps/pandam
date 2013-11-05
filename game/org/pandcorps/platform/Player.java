@@ -242,6 +242,7 @@ public class Player extends Character implements CollisionListener {
 	private Player returnPlayer = null;
 	private int levelGems = 0;
 	protected int levelDefeatedEnemies = 0;
+	protected final boolean level;
 	private int hurtTimer = 0;
 	private int stompTimer = 0;
 	private int activeTimer = 0;
@@ -252,6 +253,7 @@ public class Player extends Character implements CollisionListener {
 		super(PLAYER_X, PLAYER_H);
 	    this.pc = pc;
 	    pc.player = this;
+	    level = Panscreen.get() instanceof PlatformGame.PlatformScreen;
 	    jumpMode = pc.profile.currentAvatar.jumpMode;
 		final Pangine engine = Pangine.getEngine();
 		setView(pc.guy);
