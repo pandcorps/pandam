@@ -435,7 +435,7 @@ public class PlatformGame extends BaseGame {
 		// CFG|Andrew
 		Config.defaultProfileName = cfg.getValue(0);
 		
-		enemies.add(new EnemyDefinition("", 1, null, true));
+		enemies.add(new EnemyDefinition("Drowid", 1, null, true));
 		enemies.add(new EnemyDefinition("Troblin", 2, null, false));
 		final ReplacePixelFilter f = new ReplacePixelFilter();
 		replace(f, (short) 104, (short) 120, (short) 172);
