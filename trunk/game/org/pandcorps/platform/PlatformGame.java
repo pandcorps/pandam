@@ -78,7 +78,8 @@ public class PlatformGame extends BaseGame {
 	Goals: Collect n gems, defeat n enemies.
 	Random music per map.
 	Sound effects for jump, bump, stomp, hurt, etc.
-	Pangine pause, disable step/timers.
+	FightGame/ShootGame melee stopped working.
+	FightGame story paging doesn't seem to inactivate input.
 	*/
 	
 	protected final static byte TILE_BREAK = 2;

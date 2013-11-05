@@ -62,6 +62,7 @@ public abstract class Pangine {
 	//protected int frameLength = 30;
 	protected int frameLengthNano = 30000000;
 	private long clock = 0;
+	private boolean paused = false;
 	
 	private boolean imageSavingEnabled = false;
 	protected String screenShotDst = null;
@@ -391,6 +392,9 @@ public abstract class Pangine {
 	}
 
 	protected void step() {
+	    if (paused) {
+	        return;
+	    }
 	    clock++;
 	    final Pangame game = Pangame.getGame();
 	    game.step();
@@ -837,6 +841,10 @@ public abstract class Pangine {
 	
 	public final boolean isOn(final int half) {
 		return (clock % (half * 2)) < half;
+	}
+	
+	public final void togglePause() {
+	    paused = !paused;
 	}
 	
 	public final void addTimer(final Panctor actor, final long duration, final TimerListener listener) {
