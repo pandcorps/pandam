@@ -166,12 +166,9 @@ public class Map {
 				final Profile prf = getProfile();
 				if (tm != null && prf.row == endRow && prf.column == endColumn) {
 					PlatformGame.worldClose();
-				    victory = false;
-					tm.destroy(); // Trigger generation of new Map
 					Iotil.delete(getMapFile());
-					tm = null;
-					Panmage.destroy(timg);
-					timg = null;
+				    victory = false;
+					triggerLoad();
 					loadImages();
 				}
 			}
@@ -212,6 +209,13 @@ public class Map {
 			Panctor.detach(buildings);
 			Panctor.detach(portal);
 	    }
+	}
+	
+	protected final static void triggerLoad() {
+	    Panctor.destroy(tm); // Trigger generation of new Map
+        tm = null;
+        Panmage.destroy(timg);
+        timg = null;
 	}
 	
 	protected final static class Marker extends Panctor {
@@ -1272,7 +1276,7 @@ public class Map {
 	}
 	
 	private final static String getMapFile() {
-		return getPlayerContext().profile.getName() + PlatformGame.EXT_MAP;
+		return getProfile().getName() + PlatformGame.EXT_MAP;
 	}
 	
 	private final static void saveMap() {

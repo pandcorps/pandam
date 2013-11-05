@@ -244,6 +244,16 @@ public class Menu {
 		    pc.profile.save();
 		}
 		
+		protected final boolean isPlayer1() {
+		    return pc.index == 0;
+		}
+		
+		protected final void triggerMapLoad() {
+		    if (isPlayer1()) {
+		        Map.triggerLoad();
+		    }
+		}
+		
 		protected abstract void onExit();
 		
 		protected final void setInfo(final String val) {
@@ -382,6 +392,7 @@ public class Menu {
 							throw Pantil.toRuntimeException(e);
 						}
 						pc = PlatformGame.pcs.get(index);
+						triggerMapLoad();
 						goProfile();
 				}};
 				addRadio("Pick Profile", list, prfLsn, null, x, y);
@@ -404,10 +415,11 @@ public class Menu {
                     //prf.ctrl = 0;
                     pc = PlatformGame.newPlayerContext(prf, ctrl, curr == null ? PlatformGame.pcs.size() : curr.index);
                     PlatformGame.reloadAnimalStrip(pc);
+                    triggerMapLoad();
                     Panscreen.set(new NewScreen(pc, false)); }};
             y -= 64;
 			x = addLink("New", newLsn, left, y);
-			if (curr != null) {
+			if (curr != null) { //TODO also allow if this isn't player 1, but might need extra handling to remove newly added player
 				x = addPipe(x, y);
 				addExit("Cancel", x, y);
 			}
@@ -536,6 +548,7 @@ public class Menu {
                     if (disabled) {
                         return;
                     }
+                    save();
                     Panscreen.set(new SelectScreen(pc, false)); }};
             y -= 16;
             x = left;
@@ -551,7 +564,7 @@ public class Menu {
                     Panscreen.set(new InfoScreen(pc)); }};
             x = addPipe(x, y);
             x = addLink("Info", infLsn, x, y);
-            if (pc.index == 0) {
+            if (isPlayer1()) {
             	x = addPipe(x, y);
                 addTitle("Default", x, y);
             	final StringBuilder defStr = new StringBuilder();
@@ -577,7 +590,7 @@ public class Menu {
             y -= 16;
             x = left + 8;
             x = addExit(Map.started ? "Back" : "Play", x, y);
-            if (pc.index == 0) {
+            if (isPlayer1()) {
                 final MessageCloseListener qutLsn = new MessageCloseListener() {
                     @Override public final void onClose(final MessageCloseEvent event) {
                         if (disabled) {
