@@ -586,6 +586,7 @@ public class Map {
 		Panctor.destroy(markers);
 		Panctor.destroy(buildings);
 		Panctor.destroy(portal);
+		portal = null;
 	    Tile t;
 		//for (int i = 0; i < 100; i++) { // For testing rarely randomly generating errors
 	        //tm.destroy(); tm = null; destroy/clear markers
@@ -661,6 +662,7 @@ public class Map {
 			b.build();
 			saveMap();
         }
+        Panctor.destroy(portal);
         portal = new Panctor();
         portal.setView(PlatformGame.portal);
         addBuilding(tm.getTile(endColumn, getPortalRow()), portal);
