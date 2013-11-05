@@ -136,7 +136,11 @@ public abstract class Panplementation {
 				currFrame = 0;
 				if (actor instanceof AnimationEndListener) {
 					//((AnimationEndListener) actor).onAnimationEnd(AnimationEndEvent.INSTANCE);
-					engine.animationEndListeners.add((AnimationEndListener) actor);
+					Panlayer layer = actor.getLayer();
+					if (layer == null) {
+					    layer = Pangame.getGame().getCurrentRoom();
+					}
+					layer.animationEndListeners.add((AnimationEndListener) actor);
 				}
 			}
 			setFrame(frames[currFrame]);

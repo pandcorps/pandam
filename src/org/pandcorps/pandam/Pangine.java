@@ -54,11 +54,6 @@ public abstract class Pangine {
 	private final Panderer renderer = new Panderer();
 	private final Pansic music = new Pansic();
 	
-	private final ArrayList<Object> timers = new ArrayList<Object>();
-
-	/*package*/ final ArrayList<AnimationEndListener> animationEndListeners =
-		new ArrayList<AnimationEndListener>();
-
 	/*package*/ Map<Object, Set<Object>> collisionGroups = null;
 	
 	private float zoomMag = 1;
@@ -521,7 +516,7 @@ public abstract class Pangine {
 		}
 		
 		// List will change here and maybe in onTimer, so copy
-		final ArrayList<Object> _timers = new ArrayList<Object>(timers);
+		final ArrayList<Object> timers = room.timers, _timers = new ArrayList<Object>(timers);
 		final int timerSize = timers.size();
 		for (int i = 0; i < timerSize; i += 2) {
 		    final TimerEvent timerEvent = (TimerEvent) _timers.get(i);
@@ -637,10 +632,10 @@ public abstract class Pangine {
 		for (final Panctor actor : actors) {
 			actor.updateView();
 		}
-		for (final AnimationEndListener listener : animationEndListeners) {
+		for (final AnimationEndListener listener : room.animationEndListeners) {
 			listener.onAnimationEnd(AnimationEndEvent.INSTANCE);
 		}
-		animationEndListeners.clear();
+		room.animationEndListeners.clear();
 		
 		room.applyActorChanges();
 	}
@@ -845,19 +840,27 @@ public abstract class Pangine {
 	}
 	
 	public final void addTimer(final Panctor actor, final long duration, final TimerListener listener) {
-	    timers.add(new TimerEvent(clock + duration));
-	    timers.add(listener);
+	    Panlayer layer = null;
 	    if (actor != null) {
-	    	getInteraction().get(actor).add(listener);
+            getInteraction().get(actor).add(listener);
+            layer = actor.getLayer();
+        }
+	    if (layer == null) {
+	        layer = Pangame.getGame().getCurrentRoom();
 	    }
+	    layer.timers.add(new TimerEvent(clock + duration));
+	    layer.timers.add(listener);
 	}
 	
 	public final void removeTimer(final TimerListener listener) {
-	    for (int i = timers.size() - 1; i > 0; i -= 2) {
-	        if (timers.get(i) == listener) {
-	            timers.remove(i);
-	            timers.remove(i - 1);
-	        }
+	    for (Panlayer layer = Pangame.getGame().getCurrentRoom().base; layer != null; layer = layer.getAbove()) {
+	        final List<Object> timers = layer.timers;
+    	    for (int i = timers.size() - 1; i > 0; i -= 2) {
+    	        if (timers.get(i) == listener) {
+    	            timers.remove(i);
+    	            timers.remove(i - 1);
+    	        }
+    	    }
 	    }
 	}
 	
