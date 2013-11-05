@@ -26,7 +26,7 @@ import java.util.*;
 import java.util.Map.*;
 import org.pandcorps.core.*;
 import org.pandcorps.core.col.*;
-import org.pandcorps.core.img.Pancolor;
+import org.pandcorps.core.img.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.impl.*;
 
@@ -45,7 +45,9 @@ public class Panlayer extends BasePantity {
         = new ArrayList<FinPantry<Object, ArrayList<CollisionListener>>>();
     /*package*/ final ArrayList<FinPantry<Object, ArrayList<Collidable>>> collidables
         = new ArrayList<FinPantry<Object, ArrayList<Collidable>>>();
-    //private final ArrayList<Panctor> actors = new ArrayList<Panctor>();
+    /*package*/ final ArrayList<Object> timers = new ArrayList<Object>();
+    /*package*/ final ArrayList<AnimationEndListener> animationEndListeners =
+        new ArrayList<AnimationEndListener>();
     /*package*/ Panctor tracked = null;
     private final Panple origin = new ImplPanple(0, 0, 0);
     /*package*/ final Panple rawViewMin = new ImplPanple(0, 0, 0);
@@ -146,8 +148,7 @@ public class Panlayer extends BasePantity {
     private final void applyAddActor(final Panctor actor) {
         if (actors.put(actor, "") != null) {
             return;
-        }
-        if (actor instanceof RoomAddListener) {
+        } else if (actor instanceof RoomAddListener) {
             ((RoomAddListener) actor).onRoomAdd(room.addEvent);
         }
         addCol(actor);
@@ -198,10 +199,8 @@ public class Panlayer extends BasePantity {
     /*package*/ final void addCol(final Panctor actor) {
         if (actor instanceof CollisionListener) {
             getCols(colliders, actor).add((CollisionListener) actor);
-        }
-        // Every CollisionListener is also Collidable,
-        // but they should not be put in collidables.
-        else if (actor instanceof Collidable) {
+        } else if (actor instanceof Collidable) {
+            // Every CollisionListener is also Collidable, but they should not be put in collidables
             getCols(collidables, actor).add((Collidable) actor);
         }
     }
@@ -209,8 +208,7 @@ public class Panlayer extends BasePantity {
     /*package*/ final boolean removeCol(final Panctor actor) {
         if (actor instanceof CollisionListener) {
             return getCols(colliders, actor).remove(actor);
-        }
-        else if (actor instanceof Collidable) {
+        } else if (actor instanceof Collidable) {
             return getCols(collidables, actor).remove(actor);
         }
         return false;

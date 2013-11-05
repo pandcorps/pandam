@@ -78,7 +78,7 @@ public class PlatformGame extends BaseGame {
 	Goals: Collect n gems, defeat n enemies.
 	Random music per map.
 	Sound effects for jump, bump, stomp, hurt, etc.
-	Move timers out of Pangine layer step?
+	* Move timers out of Pangine layer step; fixed, test bonus
 	Pangine pause, disable step/timers.
 	* Shouldn't get Dove achievement after bonus house; fixed, need to test bonus and regular
 	Switching the 1st Player's Profile should reload Map (regenerating if needed)
