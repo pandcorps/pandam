@@ -66,6 +66,14 @@ public class Castle {
             window(8);
             window(11);
             pillar(14);
+            
+            tm.rectangleBackground(5, 2, 8, 2, 2, 2);
+            tm.initTile(10, 2).setBackground(imgMap[2][7]);
+            for (int i = 11; i < 15; i += 2) {
+                tm.rectangleBackground(6, 2, i, 2, 2, 1);
+            }
+            tm.initTile(15, 2).setBackground(imgMap[2][6]);
+            tm.fillBackground(imgMap[1][6], 10, 3, 6, 1);
         }
     }
     
