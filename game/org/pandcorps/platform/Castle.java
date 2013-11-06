@@ -74,6 +74,7 @@ public class Castle {
             }
             tm.initTile(15, 2).setBackground(imgMap[2][6]);
             tm.fillBackground(imgMap[1][6], 10, 3, 6, 1);
+            tm.rectangleBackground(0, 7, 12, 3, 2, 4);
         }
     }
     
