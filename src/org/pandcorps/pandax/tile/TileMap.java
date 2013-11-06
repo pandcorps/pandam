@@ -166,6 +166,17 @@ public class TileMap extends Panctor implements Savable {
         }
     }
     
+    public final void rectangleBackground(final int imX, final int imY, final int tlX, final int tlY, final int w, final int h) {
+        final TileMapImage[][] imgMap = splitImageMap();
+        for (int j = 0; j < h; j++) {
+            final int tlJ = tlY + j;
+            final TileMapImage[] imgRow = imgMap[imY - j];
+            for (int i = 0; i < w; i++) {
+                initTile(tlX + i, tlJ).setBackground(imgRow[imX + i]);
+            }
+        }
+    }
+    
     public final void randBackground(final TileMapImage img, final int y, final int h, final int n) {
         for (int i = 0; i < n; i++) {
             getTile(Mathtil.randi(0, w - 1), Mathtil.randi(y, y + h - 1)).setBackground(img);
