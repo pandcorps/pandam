@@ -362,6 +362,8 @@ public class Map {
 	            final Building b = getBuilding(t);
 	            if (isCabin(b)) {
 	            	screen = new Cabin.CabinScreen();
+	            } else if (isCastle(b)) {
+	                screen = new Castle.ThroneScreen();
 	            } else {
 	            	screen = new PlatformGame.PlatformScreen();
 	            }
@@ -1223,6 +1225,10 @@ public class Map {
 	private final static boolean isCabin(final Building b) {
 		return b != null && b.ij == 7;
 	}
+	
+	private final static boolean isCastle(final Building b) {
+        return b != null && b.ij == 6;
+    }
 	
 	private final static void setZ(final Panple pos, final int depth) {
 	    //pos.setZ(tm.getForegroundDepth() + depth);
