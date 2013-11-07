@@ -50,6 +50,14 @@ public class DynamicTileMap extends TileMap implements StepListener {
 	    this.tileListener = tileListener;
 	}
 	
+	@Override
+	public void setImageMap(final TileMap src) {
+		super.setImageMap(src);
+		if (src instanceof DynamicTileMap) {
+			tileListener = ((DynamicTileMap) src).tileListener;
+		}
+	}
+	
 	public static Object getRawBackground(final Tile tile) {
 		return tile == null ? null : tile.background;
 	}
