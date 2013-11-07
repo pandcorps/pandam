@@ -33,7 +33,7 @@ import org.pandcorps.pandax.tile.*;
 public class Player extends Character implements CollisionListener {
 	protected final static int PLAYER_X = 7;
 	protected final static int PLAYER_H = 23; // 15
-    private final static int VEL_WALK = 3;
+    protected final static int VEL_WALK = 3;
 	private final static int VEL_RETURN = 2;
 	private final static int VEL_CATCH_UP = 8;
 	private final static int VEL_JUMP = 8;
@@ -231,6 +231,10 @@ public class Player extends Character implements CollisionListener {
 	    }
 	}
 	
+	protected static interface Ai {
+		public void onStep(final Player player);
+	}
+	
 	protected final PlayerContext pc;
 	protected byte mode = MODE_NORMAL;
 	private byte jumpMode = MODE_NORMAL;
@@ -248,6 +252,7 @@ public class Player extends Character implements CollisionListener {
 	private int activeTimer = 0;
 	private final Bubble bubble = new Bubble();
 	private final Accessories acc;
+	protected Ai ai = null;
 	
 	public Player(final PlayerContext pc) {
 		super(PLAYER_X, PLAYER_H);
@@ -421,8 +426,11 @@ public class Player extends Character implements CollisionListener {
 		if (mode == MODE_RETURN) {
 			onStepReturn();
 			return true;
-		//} else if (mode == MODE_DISABLED) {
-		//	return true; // Let falling Player keep falling; just don't allow new input
+		} else if (mode == MODE_DISABLED) {
+			if (ai != null) {
+				ai.onStep(this);
+			}
+			//return true; // Let falling Player keep falling; just don't allow new input
 		}
 		if (hv == 0) {
 			if (activeTimer > 0) {
