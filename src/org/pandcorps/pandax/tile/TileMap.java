@@ -299,6 +299,11 @@ public class TileMap extends Panctor implements Savable {
     	this.imgMap = imgMap;
     }
     
+    public void setImageMap(final TileMap src) {
+    	this.imgMap = src.imgMap;
+    	this.imgs = src.imgs;
+    }
+    
     public float getForegroundDepth() {
     	if (foregroundDepth != null) {
     		return foregroundDepth.floatValue();
