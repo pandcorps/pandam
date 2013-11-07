@@ -164,6 +164,12 @@ public class Cabin {
 			}
 			shuffle(30, 0);
 		}
+		
+		@Override
+        protected void destroy() {
+            Level.tm = null;
+            timg.destroy();
+        }
 	}
 	
 	protected final static CabinTileHandler cabinTileHandler = new CabinTileHandler();
