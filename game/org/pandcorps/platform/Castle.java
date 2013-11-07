@@ -172,11 +172,17 @@ public class Castle {
             tm.fillBackground(imgMap[4][0], 13, 1, 1, 7); //TODO Dynamic animate
             tm.rectangleForeground(4, 1, 12, 7, 2, 2);
             
-            //TODO Separate TileMap in front of Player
-            tm.setForeground(6, 3, 15, 1);
-            tm.fillBackground(imgMap[4][0], 14, 1, 2, 7);
-            tm.rectangleForeground(6, 1, 15, 7, 1, 2);
-            tm.setForeground(7, 2, 14, 8);
+            tm.setForegroundDepth(1);
+            final TileMap tm2 = new TileMap(Pantil.vmid(), 2, 8, ImtilX.DIM, ImtilX.DIM);
+            tm2.setImageMap(tm);
+            room.addActor(tm2);
+            tm2.getPosition().set(224, 16, 3);
+            tm2.setForegroundDepth(4);
+            
+            tm2.setForeground(6, 3, 1, 0);
+            tm2.fillBackground(imgMap[4][0], 0, 0, 2, 7);
+            tm2.rectangleForeground(6, 1, 1, 6, 1, 2);
+            tm2.setForeground(7, 2, 0, 7);
         }
     }
     

@@ -167,12 +167,12 @@ public class Level {
         final Panlayer bg2 = PlatformGame.createParallax(bg1, 2);
         bgtm2 = new TileMap("act.bgmap2", bg2, ImtilX.DIM, ImtilX.DIM);
         bg2.addActor(bgtm2);
-        bgtm2.setImageMap(bgimg);
+        bgtm2.setImageMap(bgtm1);
         
         final Panlayer bg3 = PlatformGame.createParallax(bg2, 2);
         bgtm3 = new TileMap("act.bgmap3", bg3, ImtilX.DIM, ImtilX.DIM);
         bg3.addActor(bgtm3);
-        bgtm3.setImageMap(bgimg);
+        bgtm3.setImageMap(bgtm1);
         bgtm3.fillBackground(bgMap[0][6], 9, bgtm3.getHeight() - 9);
         bgtm3.fillBackground(bgMap[1][6], 8, 1);
         bgtm3.fillBackground(bgMap[2][6], 0, 8);
