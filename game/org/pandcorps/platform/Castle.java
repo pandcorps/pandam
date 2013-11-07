@@ -32,6 +32,7 @@ import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.action.*;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.tile.Tile.*;
+import org.pandcorps.platform.Player.*;
 
 public class Castle {
     private static Panroom room = null;
@@ -131,6 +132,16 @@ public class Castle {
         tm.initTile(i, 9).setBackground(imgMap[0][1]);
     }
     
+    private final static class PortalAi implements Ai {
+		@Override
+		public final void onStep(final Player player) {
+			if (player.getPosition().getX() >= 232) {
+				player.destroy();
+			}
+			player.hv = 2;
+		}
+    }
+    
     protected final static class PortalScreen extends CastleScreen {
         protected PortalScreen() {
             super("CastleExterior");
@@ -149,7 +160,7 @@ public class Castle {
         	}
         	((DynamicTileMap) tm).setTileListener(mtl);
         	
-            tm.fillBackground(imgMap[3][2], 0, 0, 16, 1);
+            tm.fillBackground(imgMap[3][2], 0, 0, 16, 1, true);
             
             tm.rectangleBackground(2, 2, 1, 1, 2, 3);
             
@@ -189,16 +200,24 @@ public class Castle {
             tm.rectangleForeground(4, 1, 12, 7, 2, 2);
             
             tm.setForegroundDepth(1);
-            final TileMap tm2 = new DynamicTileMap(Pantil.vmid(), 2, 8, ImtilX.DIM, ImtilX.DIM);
+            final TileMap tm2 = new DynamicTileMap(Pantil.vmid(), 2, 9, ImtilX.DIM, ImtilX.DIM);
             tm2.setImageMap(tm);
             room.addActor(tm2);
-            tm2.getPosition().set(224, 16, 3);
+            tm2.getPosition().set(224, 0, 3);
             tm2.setForegroundDepth(4);
             
-            tm2.setForeground(6, 3, 1, 0);
-            tm2.fillBackground(imgMap[4][0], 0, 0, 2, 7);
-            tm2.rectangleForeground(6, 1, 1, 6, 1, 2);
-            tm2.setForeground(7, 2, 0, 7);
+            tm2.fillBackground(imgMap[3][2], 0, 0, 2, 1, true);
+            tm2.setForeground(6, 3, 1, 1);
+            tm2.fillBackground(imgMap[4][0], 0, 1, 2, 7);
+            tm2.rectangleForeground(6, 1, 1, 7, 1, 2);
+            tm2.setForeground(7, 2, 0, 8);
+            
+            //TODO All Players
+            final Player player = new Player(PlatformGame.pcs.get(0));
+			player.mode = Player.MODE_DISABLED;
+			room.addActor(player);
+			player.getPosition().set(64, 16, 2);
+			player.ai = new PortalAi();
         }
     }
     
