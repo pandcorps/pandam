@@ -26,6 +26,7 @@ import java.awt.image.*;
 
 import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
+import org.pandcorps.game.*;
 import org.pandcorps.game.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.action.*;
@@ -52,7 +53,7 @@ public class Castle {
             room = PlatformGame.createRoom(256, 192);
             room.center();
             
-            tm = new TileMap(Pantil.vmid(), room, ImtilX.DIM, ImtilX.DIM);
+            tm = newTileMap();
             Level.tm = tm;
             final BufferedImage buf = ImtilX.loadImage("org/pandcorps/platform/res/bg/" + imgName + ".png", 128, null);
             timg = engine.createImage("img.castle", buf);
@@ -61,6 +62,10 @@ public class Castle {
             
             draw();
             PlatformGame.fadeIn(room);
+        }
+        
+        protected TileMap newTileMap() {
+        	return new TileMap(Pantil.vmid(), room, ImtilX.DIM, ImtilX.DIM);
         }
         
         protected abstract void draw() throws Exception;
@@ -132,7 +137,18 @@ public class Castle {
         }
         
         @Override
+        protected TileMap newTileMap() {
+        	return new DynamicTileMap(Pantil.vmid(), room, ImtilX.DIM, ImtilX.DIM);
+        }
+        
+        @Override
         protected final void draw() throws Exception {
+        	final MapTileListener mtl = new MapTileListener(5);
+        	for (int i = 0; i < 3; i++) {
+        		mtl.put(imgMap[4][i], imgMap[4][(i + 1) % 3]);
+        	}
+        	((DynamicTileMap) tm).setTileListener(mtl);
+        	
             tm.fillBackground(imgMap[3][2], 0, 0, 16, 1);
             
             tm.rectangleBackground(2, 2, 1, 1, 2, 3);
@@ -169,11 +185,11 @@ public class Castle {
             
             tm.rectangleForeground(4, 3, 12, 1, 2, 1);
             tm.fillBackground(imgMap[2][4], 12, 2, 1, 5);
-            tm.fillBackground(imgMap[4][0], 13, 1, 1, 7); //TODO Dynamic animate
+            tm.fillBackground(imgMap[4][0], 13, 1, 1, 7);
             tm.rectangleForeground(4, 1, 12, 7, 2, 2);
             
             tm.setForegroundDepth(1);
-            final TileMap tm2 = new TileMap(Pantil.vmid(), 2, 8, ImtilX.DIM, ImtilX.DIM);
+            final TileMap tm2 = new DynamicTileMap(Pantil.vmid(), 2, 8, ImtilX.DIM, ImtilX.DIM);
             tm2.setImageMap(tm);
             room.addActor(tm2);
             tm2.getPosition().set(224, 16, 3);
