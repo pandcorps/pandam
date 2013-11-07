@@ -28,6 +28,7 @@ import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
 import org.pandcorps.game.core.*;
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.event.action.*;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.tile.Tile.*;
 
@@ -59,6 +60,7 @@ public class Castle {
             room.addActor(tm);
             
             draw();
+            PlatformGame.fadeIn(room);
         }
         
         protected abstract void draw() throws Exception;
@@ -100,6 +102,11 @@ public class Castle {
             tm.initTile(15, 2).setBackground(imgMap[2][6]);
             tm.fillBackground(imgMap[1][6], 10, 3, 6, 1);
             tm.rectangleBackground(0, 7, 12, 3, 2, 4);
+            
+            tm.register(new ActionStartListener() {
+				@Override public final void onActionStart(final ActionStartEvent event) {
+					PlatformGame.fadeOut(room, new PortalScreen());
+				}});
         }
     }
     
@@ -130,13 +137,13 @@ public class Castle {
             
             tm.rectangleBackground(2, 2, 1, 1, 2, 3);
             
-            block(0, 1, 1, 1);
+            block(0, 1, 3, 5);
             brick(3, 1, 5);
-            block(5, 1, 3, 5);
-            block(0, 2);
+            block(5, 1, 2, 5);
+            blockEdge(0, 2);
             block(3, 2);
             brickEdge(4, 2);
-            block(0, 3, 1, 1);
+            block(0, 3, 3, 4);
             brick(3, 3);
             blockEdge(5, 3);
             carvedLine(4);
