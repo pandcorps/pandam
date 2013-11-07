@@ -22,8 +22,8 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.platform;
 
-import org.pandcorps.core.Mathtil;
-import org.pandcorps.game.actor.Burst;
+import org.pandcorps.core.*;
+import org.pandcorps.game.actor.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 
@@ -32,7 +32,11 @@ public final class Spark extends Burst implements StepListener {
 	private final boolean end; // Could replace with handler
 	private int age = 0;
 	
-	public Spark(final int count, final float x, final float y, final boolean end) {
+	public Spark(final float x, final float y, final boolean end) {
+		this(3, x, y, end);
+	}
+	
+	private Spark(final int count, final float x, final float y, final boolean end) {
 		super(PlatformGame.spark);
 		this.count = count;
 		this.end = end;
