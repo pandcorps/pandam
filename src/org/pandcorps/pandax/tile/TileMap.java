@@ -166,15 +166,39 @@ public class TileMap extends Panctor implements Savable {
         }
     }
     
-    public final void rectangleBackground(final int imX, final int imY, final int tlX, final int tlY, final int w, final int h) {
-        final TileMapImage[][] imgMap = splitImageMap();
+    private final void rectangle(final boolean bg, final int imX, final int imY, final int tlX, final int tlY, final int w, final int h) {
         for (int j = 0; j < h; j++) {
-            final int tlJ = tlY + j;
-            final TileMapImage[] imgRow = imgMap[imY - j];
+            final int tlJ = tlY + j, imJ = imY - j;
             for (int i = 0; i < w; i++) {
-                initTile(tlX + i, tlJ).setBackground(imgRow[imX + i]);
+                setImage(bg, imX + i, imJ, tlX + i, tlJ);
             }
         }
+    }
+    
+    public final void rectangleBackground(final int imX, final int imY, final int tlX, final int tlY, final int w, final int h) {
+        rectangle(true, imX, imY, tlX, tlY, w, h);
+    }
+    
+    public final void rectangleForeground(final int imX, final int imY, final int tlX, final int tlY, final int w, final int h) {
+        rectangle(false, imX, imY, tlX, tlY, w, h);
+    }
+    
+    private final void setImage(final boolean bg, final int imX, final int imY, final int tlX, final int tlY) {
+        final Tile t = initTile(tlX, tlY);
+        final TileMapImage im = splitImageMap()[imY][imX];
+        if (bg) {
+            t.setBackground(im);
+        } else {
+            t.setForeground(im);
+        }
+    }
+    
+    public final void setBackground(final int imX, final int imY, final int tlX, final int tlY) {
+        setImage(true, imX, imY, tlX, tlY);
+    }
+    
+    public final void setForeground(final int imX, final int imY, final int tlX, final int tlY) {
+        setImage(false, imX, imY, tlX, tlY);
     }
     
     public final void randBackground(final TileMapImage img, final int y, final int h, final int n) {
