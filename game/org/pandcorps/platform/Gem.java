@@ -24,7 +24,7 @@ package org.pandcorps.platform;
 
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
-import org.pandcorps.pandax.tile.TileOccupant;
+import org.pandcorps.pandax.tile.*;
 
 public class Gem extends TileOccupant implements StepListener {
 	private static long lastSound = -1;
@@ -61,7 +61,7 @@ public class Gem extends TileOccupant implements StepListener {
 	
 	protected final static void spark(final Panctor gem, final boolean end) {
 		final Panple pos = gem.getPosition();
-		new Spark(3, pos.getX() + 8, pos.getY() + 8, end);
+		new Spark(pos.getX() + 8, pos.getY() + 8, end);
 		gem.destroy();
 	}
 	

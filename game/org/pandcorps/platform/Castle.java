@@ -132,10 +132,18 @@ public class Castle {
         tm.initTile(i, 9).setBackground(imgMap[0][1]);
     }
     
+    private static int playerCount = 0;
+    
     private final static class PortalAi implements Ai {
 		@Override
 		public final void onStep(final Player player) {
-			if (player.getPosition().getX() >= 232) {
+			final Panple pos = player.getPosition();
+			if (pos.getX() >= 232) {
+				new Spark(224, pos.getY() + 8, false);
+				playerCount--;
+				if (playerCount <= 0) {
+					PlatformGame.fadeOut(room, new PlatformGame.PlatformScreen());
+				}
 				player.destroy();
 			}
 			player.hv = 2;
@@ -212,12 +220,15 @@ public class Castle {
             tm2.rectangleForeground(6, 1, 1, 7, 1, 2);
             tm2.setForeground(7, 2, 0, 8);
             
-            //TODO All Players
-            final Player player = new Player(PlatformGame.pcs.get(0));
-			player.mode = Player.MODE_DISABLED;
-			room.addActor(player);
-			player.getPosition().set(64, 16, 2);
-			player.ai = new PortalAi();
+            playerCount = PlatformGame.pcs.size();
+            final Ai ai = new PortalAi();
+            for (int i = 0; i < playerCount; i++) {
+	            final Player player = new Player(PlatformGame.pcs.get(i));
+				player.mode = Player.MODE_DISABLED;
+				room.addActor(player);
+				player.getPosition().set(64, 16, 2);
+				player.ai = ai;
+            }
         }
     }
     
