@@ -159,6 +159,17 @@ public class Castle {
                     tm.fillBackground(imgMap[j][i], 6, y++, 10, 1);
                 }
             }
+            
+            tm.rectangleForeground(4, 3, 12, 1, 2, 1);
+            tm.fillBackground(imgMap[2][4], 12, 2, 1, 5);
+            tm.fillBackground(imgMap[4][0], 13, 1, 1, 7); //TODO Dynamic animate
+            tm.rectangleForeground(4, 1, 12, 7, 2, 2);
+            
+            //TODO Separate TileMap in front of Player
+            tm.setForeground(6, 3, 15, 1);
+            tm.fillBackground(imgMap[4][0], 14, 1, 2, 7);
+            tm.rectangleForeground(6, 1, 15, 7, 1, 2);
+            tm.setForeground(7, 2, 14, 8);
         }
     }
     
