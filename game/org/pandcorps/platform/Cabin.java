@@ -163,6 +163,7 @@ public class Cabin {
 				tm.initTile(3 + (i * 3), 5).setForeground(imgMap[0][0], PlatformGame.TILE_BUMP);
 			}
 			shuffle(30, 0);
+			PlatformGame.fadeIn(room);
 		}
 		
 		@Override
