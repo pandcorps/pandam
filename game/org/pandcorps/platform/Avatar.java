@@ -22,9 +22,9 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.platform;
 
-import org.pandcorps.core.Mathtil;
+import org.pandcorps.core.*;
 import org.pandcorps.core.seg.*;
-import org.pandcorps.platform.Player.PlayerData;
+import org.pandcorps.platform.Player.*;
 
 public class Avatar extends PlayerData implements Segmented {
 	private final static float DEF_JUMP_COL = 1;

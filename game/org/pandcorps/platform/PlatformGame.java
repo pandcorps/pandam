@@ -151,6 +151,7 @@ public class PlatformGame extends BaseGame {
 	protected static Panimation portal = null;
 	protected static BufferedImage[] dirts = null;
 	protected static BufferedImage[] terrains = null;
+	protected static BufferedImage[] crowns = null;
 	
 	@Override
 	protected final boolean isFullScreen() {
@@ -501,6 +502,7 @@ public class PlatformGame extends BaseGame {
 		
 		dirts = Imtil.loadStrip("org/pandcorps/platform/res/bg/Dirt.png", ImtilX.DIM);
 		terrains = Imtil.loadStrip("org/pandcorps/platform/res/bg/Terrain.png", ImtilX.DIM);
+		crowns = ImtilX.loadStrip("org/pandcorps/platform/res/chr/Crowns.png", 14, false);
 		
 		engine.getMusic().ensureCapacity(5);
 	}
