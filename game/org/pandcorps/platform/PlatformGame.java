@@ -248,30 +248,46 @@ public class PlatformGame extends BaseGame {
 	    return new MultiplyPixelFilter(Channel.Blue, r, Channel.Blue, g, Channel.Blue, b);
 	}
 	
+	protected final static class PlayerImages {
+		protected final PixelFilter f;
+		protected final BufferedImage[] guys;
+		protected final BufferedImage guyBlink;
+		protected final BufferedImage face;
+		protected final BufferedImage[] tails;
+		protected final BufferedImage eyes;
+		protected final BufferedImage eyesBlink;
+	
+		protected PlayerImages(final Avatar avatar) {
+		    f = getFilter(avatar.col);
+			guys = loadChrStrip("Bear.png", 32, f);
+			guyBlink = Imtil.copy(guys[0]);
+			final String anm = avatar.anm;
+			face = Imtil.filter(ImtilX.loadImage("org/pandcorps/platform/res/chr/Face" + anm + ".png", false), f);
+			tails = loadChrStrip("Tail" + anm + ".png", 12, f, false);
+			eyes = ImtilX.loadImage("org/pandcorps/platform/res/chr/Eyes0" + avatar.eye + ".png", false);
+			eyesBlink = ImtilX.loadImage("org/pandcorps/platform/res/chr/EyesBlink.png", false);
+			final int size = guys.length;
+			for (int i = 0; i < size; i++) {
+				buildGuy(guys[i], face, tails, eyes, (i == 3) ? -1 : 0, (i < 3) ? i : 1);
+			}
+			buildGuy(guyBlink, face, tails, eyesBlink, 0, 0);
+		}
+	}
+	
 	protected final static void reloadAnimalStrip(final PlayerContext pc) {
 		pc.destroy();
 		final Profile profile = pc.profile;
 	    final Avatar avatar = profile.currentAvatar;
-	    final PixelFilter f = getFilter(avatar.col);
-		final BufferedImage[] guys = loadChrStrip("Bear.png", 32, f);
-		final BufferedImage guyBlink = Imtil.copy(guys[0]);
-		final String anm = avatar.anm;
-		final BufferedImage face = Imtil.filter(ImtilX.loadImage("org/pandcorps/platform/res/chr/Face" + anm + ".png", false), f);
-		final BufferedImage[] tails = loadChrStrip("Tail" + anm + ".png", 12, f, false);
-		final BufferedImage eyes = ImtilX.loadImage("org/pandcorps/platform/res/chr/Eyes0" + avatar.eye + ".png", false);
-		final BufferedImage eyesBlink = ImtilX.loadImage("org/pandcorps/platform/res/chr/EyesBlink.png", false);
-		final int size = guys.length;
-		for (int i = 0; i < size; i++) {
-			buildGuy(guys[i], face, tails, eyes, (i == 3) ? -1 : 0, (i < 3) ? i : 1);
-		}
-		buildGuy(guyBlink, face, tails, eyesBlink, 0, 0);
+	    final String anm = avatar.anm;
+	    final PlayerImages pi = new PlayerImages(avatar);
+	    final BufferedImage guys[] = pi.guys, tails[] = pi.tails, eyes = pi.eyes;
 		final String pre = "guy." + pc.index;
 		
 		final Pangine engine = Pangine.getEngine();
 		final FinPanple ng = new FinPanple(-Player.PLAYER_X, 0, 0), xg = new FinPanple(Player.PLAYER_X, Player.PLAYER_H, 0);
 		final String ipre = PRE_IMG + pre + ".";
 		final Panmage guy = engine.createImage(ipre + "1", og, ng, xg, guys[0]);
-		final Panmage guyB = engine.createImage(ipre + "blink", og, ng, xg, guyBlink);
+		final Panmage guyB = engine.createImage(ipre + "blink", og, ng, xg, pi.guyBlink);
 		final String fpre = PRE_FRM + pre + ".";
 		final String spre = fpre + "still.";
 		final Panframe gfs1 = engine.createFrame(spre + "1", guy, DUR_BLINK - DUR_CLOSED), gfs2 = engine.createFrame(spre + "2", guyB, DUR_CLOSED);
@@ -285,7 +301,7 @@ public class PlatformGame extends BaseGame {
 		pc.guyFall = engine.createImage(ipre + "fall", og, ng, xg, guys[4]);
 	    //guy = engine.createImage(pre, new FinPanple(8, 0, 0), null, null, ImtilX.loadImage("org/pandcorps/platform/res/chr/Player.png"));
 	    
-		final BufferedImage[] maps = loadChrStrip("BearMap.png", 32, f);
+		final BufferedImage[] maps = loadChrStrip("BearMap.png", 32, pi.f);
 		final boolean needWing = avatar.jumpMode == Player.JUMP_FLY;
 		final PixelFilter pf;
 		final BufferedImage[] wingMap;
@@ -296,7 +312,7 @@ public class PlatformGame extends BaseGame {
 			pf = null;
 			wingMap = null;
 		}
-		final BufferedImage[] faceMap = loadChrStrip("FaceMap" + anm + ".png", 18, f);
+		final BufferedImage[] faceMap = loadChrStrip("FaceMap" + anm + ".png", 18, pi.f);
 		final BufferedImage south1 = maps[0], southPose = maps[5], faceSouth = faceMap[0];
 		if (needWing) {
 			for (final BufferedImage south : new BufferedImage[] {south1, southPose}) {

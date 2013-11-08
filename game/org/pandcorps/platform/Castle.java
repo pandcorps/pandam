@@ -32,6 +32,7 @@ import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.action.*;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.tile.Tile.*;
+import org.pandcorps.platform.PlatformGame.*;
 import org.pandcorps.platform.Player.*;
 
 public class Castle {
@@ -76,10 +77,16 @@ public class Castle {
         protected final void destroy() {
             Level.tm = null;
             timg.destroy();
+            onDestroy();
+        }
+        
+        protected void onDestroy() {
         }
     }
     
     protected final static class ThroneScreen extends CastleScreen {
+    	private Panimation kingAnm = null;
+    	
         protected ThroneScreen() {
             super("ThroneRoom");
         }
@@ -113,10 +120,28 @@ public class Castle {
             
             addPlayers(48, 32, null);
             
+            final Avatar kingAvt = new Avatar();
+            kingAvt.randomize(); //TODO Save
+            final PlayerImages pi = new PlayerImages(kingAvt);
+            final Pangine en = Pangine.getEngine();
+            kingAnm = en.createAnimation(PlatformGame.PRE_ANM + "king",
+            	en.createFrame(PlatformGame.PRE_FRM + "king.1", en.createImage(PlatformGame.PRE_IMG + "king.1", pi.guys[0]), PlatformGame.DUR_BLINK + 20),
+            	en.createFrame(PlatformGame.PRE_FRM + "king.2", en.createImage(PlatformGame.PRE_IMG + "king.2", pi.guyBlink), PlatformGame.DUR_CLOSED));
+            final Panctor king = new Panctor();
+            king.setView(kingAnm);
+            room.addActor(king);
+            king.setMirror(true);
+            king.getPosition().set(184, 60, 2);
+            
             tm.register(new ActionStartListener() {
 				@Override public final void onActionStart(final ActionStartEvent event) {
 					PlatformGame.fadeOut(room, new PortalScreen());
 				}});
+        }
+        
+        @Override
+        protected final void onDestroy() {
+        	Panmage.destroyAll(kingAnm);
         }
     }
     
