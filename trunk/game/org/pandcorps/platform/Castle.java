@@ -120,13 +120,11 @@ public class Castle {
             
             addPlayers(48, 32, null);
             
-            final Avatar kingAvt = new Avatar();
-            kingAvt.randomize(); //TODO Save
-            final PlayerImages pi = new PlayerImages(kingAvt);
+            final PlayerImages pi = new PlayerImages(Map.kingAvt);
             final BufferedImage k1 = pi.guys[0], k2 = pi.guyBlink;
-            final BufferedImage crownImg = ImtilX.loadStrip("org/pandcorps/platform/res/chr/Crowns.png", 14, false)[0];
+            final BufferedImage crownImg = PlatformGame.crowns[Map.kingCrown];
             for (final BufferedImage k : new BufferedImage[] {k1, k2}) {
-                Imtil.copy(crownImg, k, 0, 0, 14, 9, 9, 0, Imtil.COPY_FOREGROUND);
+                Imtil.copy(crownImg, k, 0, 0, 14, 9, 10, 1, Imtil.COPY_FOREGROUND);
             }
             final Pangine en = Pangine.getEngine();
             kingAnm = en.createAnimation(PlatformGame.PRE_ANM + "king",
