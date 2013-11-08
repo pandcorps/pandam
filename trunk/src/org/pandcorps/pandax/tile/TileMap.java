@@ -147,9 +147,14 @@ public class TileMap extends Panctor implements Savable {
     
     public final void fillBackground(final TileMapImage background, final int x, final int y, final int w, final int h, final boolean solid) {
     	fillBackground(background, x, y, w, h);
-    	for (int i = x; i < w; i++) {
-            for (int j = y; j < h; j++) {
-                getTile(i, j).setSolid(solid);
+    	fillBackground(x, y, w, h, solid);
+    }
+    
+    public final void fillBackground(final int x, final int y, final int w, final int h, final boolean solid) {
+    	final int right = x + w, top = y + h;
+    	for (int i = x; i < right; i++) {
+            for (int j = y; j < top; j++) {
+                initTile(i, j).setSolid(solid);
             }
         }
     }
