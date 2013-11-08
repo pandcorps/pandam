@@ -23,6 +23,7 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.platform;
 
 import java.awt.image.*;
+import java.util.*;
 
 import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
@@ -30,6 +31,7 @@ import org.pandcorps.game.*;
 import org.pandcorps.game.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.action.*;
+import org.pandcorps.pandax.text.*;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.tile.Tile.*;
 import org.pandcorps.platform.PlatformGame.*;
@@ -84,11 +86,29 @@ public class Castle {
         }
     }
     
-    protected final static class ThroneScreen extends CastleScreen {
+    protected final static class ThroneIntroScreen extends ThroneScreen {
+    	protected ThroneIntroScreen() {
+    		super(Arrays.asList(
+	            "A portal has appeared outside",
+	            "the castle. Monsters from the",
+	            "Realm of Chaos have invaded",
+	            "the kingdom! Please close the",
+	            "portal from the inside."));
+    	}
+    	
+    	@Override
+    	protected final Panscreen getNextScreen() {
+    		return new PortalScreen();
+    	}
+    }
+    
+    private abstract static class ThroneScreen extends CastleScreen {
+    	private final List<String> msg;
     	private Panimation kingAnm = null;
     	
-        protected ThroneScreen() {
+        protected ThroneScreen(final List<String> msg) {
             super("ThroneRoom");
+            this.msg = msg;
         }
         
         @Override
@@ -136,11 +156,17 @@ public class Castle {
             king.setMirror(true);
             king.getPosition().set(184, 60, 2);
             
+            final Pantext text = new Pantext(Pantil.vmid(), PlatformGame.font, msg);
+            text.getPosition().set(8, 160, 10);
+            room.addActor(text);
+            
             tm.register(new ActionStartListener() {
 				@Override public final void onActionStart(final ActionStartEvent event) {
-					PlatformGame.fadeOut(room, new PortalScreen());
+					PlatformGame.fadeOut(room, getNextScreen());
 				}});
         }
+        
+        protected abstract Panscreen getNextScreen();
         
         @Override
         protected final void onDestroy() {
