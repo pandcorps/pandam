@@ -365,7 +365,7 @@ public class Map {
 	            if (isCabin(b)) {
 	            	screen = new Cabin.CabinScreen();
 	            } else if (isCastle(b)) {
-	                screen = new Castle.ThroneScreen();
+	                screen = new Castle.ThroneIntroScreen();
 	            } else {
 	            	screen = new PlatformGame.PlatformScreen();
 	            }
