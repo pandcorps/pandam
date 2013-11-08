@@ -59,6 +59,7 @@ public class Castle {
             final BufferedImage buf = ImtilX.loadImage("org/pandcorps/platform/res/bg/" + imgName + ".png", 128, null);
             timg = engine.createImage("img.castle", buf);
             imgMap = tm.splitImageMap(timg);
+            tm.setForegroundDepth(1);
             room.addActor(tm);
             
             draw();
@@ -89,6 +90,7 @@ public class Castle {
             for (int i = 0; i < 16; i += 2) {
                 tm.rectangleBackground(3, 2, i, 1, 2, 2);
             }
+            tm.fillBackground(0, 1, 16, 1, true);
             tm.fillBackground(imgMap[1][0], 0, 3, 16, 7);
             tm.fillBackground(imgMap[3][1], 0, 10, 16, 1);
             tm.fillBackground(imgMap[0][3], 0, 11, 16, 1);
@@ -108,6 +110,8 @@ public class Castle {
             tm.initTile(15, 2).setBackground(imgMap[2][6]);
             tm.fillBackground(imgMap[1][6], 10, 3, 6, 1);
             tm.rectangleBackground(0, 7, 12, 3, 2, 4);
+            
+            addPlayers(48, 32, null);
             
             tm.register(new ActionStartListener() {
 				@Override public final void onActionStart(final ActionStartEvent event) {
@@ -207,7 +211,6 @@ public class Castle {
             tm.fillBackground(imgMap[4][0], 13, 1, 1, 7);
             tm.rectangleForeground(4, 1, 12, 7, 2, 2);
             
-            tm.setForegroundDepth(1);
             final TileMap tm2 = new DynamicTileMap(Pantil.vmid(), 2, 9, ImtilX.DIM, ImtilX.DIM);
             tm2.setImageMap(tm);
             room.addActor(tm2);
@@ -220,15 +223,18 @@ public class Castle {
             tm2.rectangleForeground(6, 1, 1, 7, 1, 2);
             tm2.setForeground(7, 2, 0, 8);
             
-            playerCount = PlatformGame.pcs.size();
-            final Ai ai = new PortalAi();
-            for (int i = 0; i < playerCount; i++) {
-	            final Player player = new Player(PlatformGame.pcs.get(i));
-				player.mode = Player.MODE_DISABLED;
-				room.addActor(player);
-				player.getPosition().set(64, 16, 2);
-				player.ai = ai;
-            }
+            addPlayers(64, 16, new PortalAi());
+        }
+    }
+    
+    private final static void addPlayers(final int x, final int y, final Ai ai) {
+        playerCount = PlatformGame.pcs.size();
+        for (int i = 0; i < playerCount; i++) {
+            final Player player = new Player(PlatformGame.pcs.get(i));
+			player.mode = Player.MODE_DISABLED;
+			room.addActor(player);
+			player.getPosition().set(x + (24 * i), y, 2);
+			player.ai = ai;
         }
     }
     
