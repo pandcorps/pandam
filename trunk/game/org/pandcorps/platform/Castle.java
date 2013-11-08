@@ -123,10 +123,15 @@ public class Castle {
             final Avatar kingAvt = new Avatar();
             kingAvt.randomize(); //TODO Save
             final PlayerImages pi = new PlayerImages(kingAvt);
+            final BufferedImage k1 = pi.guys[0], k2 = pi.guyBlink;
+            final BufferedImage crownImg = ImtilX.loadStrip("org/pandcorps/platform/res/chr/Crowns.png", 14, false)[0];
+            for (final BufferedImage k : new BufferedImage[] {k1, k2}) {
+                Imtil.copy(crownImg, k, 0, 0, 14, 9, 9, 0, Imtil.COPY_FOREGROUND);
+            }
             final Pangine en = Pangine.getEngine();
             kingAnm = en.createAnimation(PlatformGame.PRE_ANM + "king",
-            	en.createFrame(PlatformGame.PRE_FRM + "king.1", en.createImage(PlatformGame.PRE_IMG + "king.1", pi.guys[0]), PlatformGame.DUR_BLINK + 20),
-            	en.createFrame(PlatformGame.PRE_FRM + "king.2", en.createImage(PlatformGame.PRE_IMG + "king.2", pi.guyBlink), PlatformGame.DUR_CLOSED));
+            	en.createFrame(PlatformGame.PRE_FRM + "king.1", en.createImage(PlatformGame.PRE_IMG + "king.1", k1), PlatformGame.DUR_BLINK + 20),
+            	en.createFrame(PlatformGame.PRE_FRM + "king.2", en.createImage(PlatformGame.PRE_IMG + "king.2", k2), PlatformGame.DUR_CLOSED));
             final Panctor king = new Panctor();
             king.setView(kingAnm);
             room.addActor(king);
