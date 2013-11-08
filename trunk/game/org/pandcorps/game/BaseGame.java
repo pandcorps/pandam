@@ -49,9 +49,9 @@ public abstract class BaseGame extends Pangame {
 	protected final static FinPanple CENTER_16 = new FinPanple(8, 8, 0);
 	protected final static FinPanple CENTER_8 = new FinPanple(4, 4, 0);
 	protected final static FinPanple CENTER_4 = new FinPanple(2, 2, 0);
-	protected final static String PRE_IMG = "img.";
-	protected final static String PRE_FRM = "frm.";
-	protected final static String PRE_ANM = "anm.";
+	public final static String PRE_IMG = "img.";
+	public final static String PRE_FRM = "frm.";
+	public final static String PRE_ANM = "anm.";
 	
 	protected boolean isFullScreen() {
 	    return false;
