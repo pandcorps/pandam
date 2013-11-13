@@ -102,6 +102,22 @@ public class Castle {
     	}
     }
     
+    protected final static class ThroneWinScreen extends ThroneScreen {
+        protected ThroneWinScreen() {
+            super(Arrays.asList(
+                "You destroyed the Havoc Stone,",
+                "sending everything that passed",
+                "through the Chaos Gate back to",
+                "the original side! I am ",
+                "forever in your debt."));
+        }
+        
+        @Override
+        protected final Panscreen getNextScreen() {
+            return new Map.MapScreen();
+        }
+    }
+    
     private abstract static class ThroneScreen extends CastleScreen {
     	private final List<String> msg;
     	private Panimation kingAnm = null;

@@ -605,7 +605,11 @@ public class PlatformGame extends BaseGame {
 	protected final static void markerClose() {
 	    Achievement.evaluate();
 	    Map.victory = true;
-	    goMap();
+	    if (Map.isOnLastLevel()) {
+	        fadeOut(room, new Castle.ThroneWinScreen());
+	    } else {
+	        goMap();
+	    }
 	}
 	
 	protected final static void worldClose() {
