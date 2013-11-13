@@ -165,8 +165,7 @@ public class Map {
 						PlatformGame.reloadAnimalStrip(pc);
 					}
 				}
-				final Profile prf = getProfile();
-				if (tm != null && prf.row == endRow && prf.column == endColumn) {
+				if (tm != null && isOnLastLevel()) {
 					PlatformGame.worldClose();
 					Iotil.delete(getMapFile());
 				    victory = false;
@@ -211,6 +210,11 @@ public class Map {
 			Panctor.detach(buildings);
 			Panctor.detach(portal);
 	    }
+	}
+	
+	protected final static boolean isOnLastLevel() {
+	    final Profile prf = getProfile();
+	    return prf.row == endRow && prf.column == endColumn;
 	}
 	
 	protected final static void triggerLoad() {
