@@ -93,7 +93,7 @@ public class Castle {
 	            "the castle. Monsters from the",
 	            "Realm of Chaos have invaded",
 	            "the kingdom! Please close the",
-	            "portal from the inside."));
+	            "gateway from the other side."));
     	}
     	
     	@Override

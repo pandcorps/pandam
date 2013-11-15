@@ -40,6 +40,10 @@ import org.pandcorps.pandax.tile.Tile.*;
 import org.pandcorps.platform.Player.*;
 
 public class Map {
+	protected final static byte VICTORY_NONE = 0;
+	protected final static byte VICTORY_LEVEL = 1;
+	protected final static byte VICTORY_WORLD = 2;
+	
 	private final static byte TILE_HORIZ = 2;
 	private final static byte TILE_VERT = 3;
 	private final static byte TILE_LEFTUP = 4;
@@ -113,7 +117,7 @@ public class Map {
 	private static int lm2 = -1;
 	private static int cstl = -1;
 	
-	protected static boolean victory = false;
+	protected static byte victory = VICTORY_NONE;
 	private static int roomW = -1;
 	private static int roomH = -1;
 	private static int endColumn = -1;
@@ -150,7 +154,7 @@ public class Map {
 		        loadImages();
 		    }
 			clear();
-			if (!victory) {
+			if (victory != VICTORY_LEVEL) {
 				Achievement.evaluate();
 			} else {
 				for (final PlayerContext pc : PlatformGame.pcs) {
@@ -168,7 +172,7 @@ public class Map {
 				if (tm != null && isOnLastLevel()) {
 					PlatformGame.worldClose();
 					Iotil.delete(getMapFile());
-				    victory = false;
+				    victory = VICTORY_NONE;
 					triggerLoad();
 					loadImages();
 				}
@@ -179,8 +183,8 @@ public class Map {
 			    PlatformGame.saveGame();
 			} else {
 			    t = getStartTile();
-				if (victory) {
-				    victory = false;
+				if (victory == VICTORY_LEVEL) {
+				    victory = VICTORY_NONE;
 				    getOpen().put(getKey(t), Boolean.TRUE);
 				    final Building b = getBuilding(t);
 				    if (isCabin(b)) {
@@ -192,7 +196,10 @@ public class Map {
 				}
 			    initRoom();
 			}
-			if (oldMap) {
+			if (victory == VICTORY_WORLD) {
+				new FloatPlayer(t);
+				victory = VICTORY_LEVEL;
+			} else if (oldMap) {
 			    addPlayer(t);
 			} else {
 			    new FloatPlayer(t);
@@ -255,12 +262,17 @@ public class Map {
 	
 	protected final static class FloatPlayer extends TileWalker {
 		private final Bubble bubble = new Bubble();
-		int steps = 2;
+		int steps;
 		
 	    private FloatPlayer(Tile tile) {
 	        setView(getPlayerContext().mapSouth.getFrames()[0].getImage());
-	        for (int i = 0; i < steps; i++) {
-	        	tile = tile.getNeighbor(Direction.West);
+	        if (victory == VICTORY_NONE) {
+	        	steps = 2;
+		        for (int i = 0; i < steps; i++) {
+		        	tile = tile.getNeighbor(Direction.West);
+		        }
+	        } else {
+	        	steps = 0;
 	        }
 	        setPosition(tile);
 	        room.addActor(this);
@@ -277,12 +289,17 @@ public class Map {
         protected void onStill() {
 	    	steps--;
 	    	if (steps >= 0) {
+	    		if (steps == 0 && victory != VICTORY_NONE) {
+	    			PlatformGame.goMap();
+	    		}
 	    		walk(Direction.East);
 	    	} else if (steps >= -30) {
 	    		bubble.onStepEnd(true);
-	    	} else {
+	    	} else if (victory == VICTORY_NONE) {
 		        addPlayer(getTile());
 		        destroy();
+	    	} else {
+	    		steps = 2;
 	    	}
 	    }
 	    
