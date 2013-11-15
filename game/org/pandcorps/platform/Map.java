@@ -199,6 +199,7 @@ public class Map {
 			if (victory == VICTORY_WORLD) {
 				new FloatPlayer(t);
 				victory = VICTORY_LEVEL;
+				portal.setView(PlatformGame.portalClosed);
 			} else if (oldMap) {
 			    addPlayer(t);
 			} else {
