@@ -55,8 +55,7 @@ public class PlatformGame extends BaseGame {
 	Replace bush with Rise.png for some levels; rise will be higher than 1 tile; separate build method.
 	Taller bushes.
 	Map landmarks: Mountain, garden.
-	Bubble when leaving map.
-	Portal near castle, source of monsters, must enter to close, another plane/dimension.
+	Another plane/dimension for last level.
 	Train-riding levels.
 	Ridable dragons.
 	Mage Enemy w/ pointy hat, Wisp, Elementals, Trolls, Ogres.
@@ -79,7 +78,7 @@ public class PlatformGame extends BaseGame {
 	Random music per map.
 	Sound effects for jump, bump, stomp, hurt, etc.
 	FightGame/ShootGame melee stopped working.
-	FightGame story paging doesn't seem to inactivate input.
+	ShootGame story paging doesn't seem to inactivate input.
 	*/
 	
 	protected final static byte TILE_BREAK = 2;
@@ -149,6 +148,7 @@ public class PlatformGame extends BaseGame {
 	protected static Panimation marker = null;
 	protected static Panmage markerDefeated = null;
 	protected static Panimation portal = null;
+	protected static Panimation portalClosed = null;
 	protected static BufferedImage[] dirts = null;
 	protected static BufferedImage[] terrains = null;
 	protected static BufferedImage[] crowns = null;
@@ -499,6 +499,7 @@ public class PlatformGame extends BaseGame {
 		marker = engine.createAnimation(PRE_ANM + "marker", fa);
 		markerDefeated = engine.createImage(PRE_IMG + "Marker.def", mo, null, null, ImtilX.loadStrip("org/pandcorps/platform/res/bg/MarkerDefeated.png", 8)[3]);
 		portal = createAnm("portal", "org/pandcorps/platform/res/bg/Portal.png", 6);
+		portalClosed = createAnm("portal.closed", "org/pandcorps/platform/res/bg/PortalClosed.png", 15);
 		
 		dirts = Imtil.loadStrip("org/pandcorps/platform/res/bg/Dirt.png", ImtilX.DIM);
 		terrains = Imtil.loadStrip("org/pandcorps/platform/res/bg/Terrain.png", ImtilX.DIM);
