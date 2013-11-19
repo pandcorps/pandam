@@ -26,6 +26,7 @@ import java.awt.image.*;
 
 import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
+import org.pandcorps.game.actor.*;
 import org.pandcorps.game.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.impl.*;
@@ -41,17 +42,25 @@ public final class Enemy extends Character {
 	protected final static class EnemyDefinition {
 		private final Panimation walk;
 		private final boolean ledgeTurn;
+		private final Panimation splat;
 		
 		protected EnemyDefinition(final String name, final int ind, final PixelFilter f, final boolean ledgeTurn) {
-			final BufferedImage[] strip = ImtilX.loadStrip("org/pandcorps/platform/res/enemy/Enemy0" + ind + ".png");
+		    this(name, ind, f, ledgeTurn, false);
+		}
+		
+		protected EnemyDefinition(final String name, final int ind, final PixelFilter f, final boolean ledgeTurn, final boolean splat) {
+			final BufferedImage[] strip = ImtilX.loadStrip("org/pandcorps/platform/res/enemy/Enemy0" + ind + ".png"), walk;
 			if (f != null) {
 				final int size = strip.length;
 				for (int i = 0; i < size; i++) {
 					strip[i] = Imtil.filter(strip[i], f);
 				}
 			}
-			this.walk = PlatformGame.createAnm("enemy." + name, 6, O, MIN, MAX, strip);
+			walk = splat ? new BufferedImage[] {strip[0], strip[1]} : strip;
+			final String id = "enemy." + name;
+			this.walk = PlatformGame.createAnm(id, 6, O, MIN, MAX, walk);
 			this.ledgeTurn = ledgeTurn;
+			this.splat = splat ? PlatformGame.createAnm(id + ".splat", 15, O, MIN, MAX, strip[2]) : null;
 		}
 	}
 	
@@ -82,9 +91,15 @@ public final class Enemy extends Character {
 			player.levelDefeatedEnemies++;
 		}
 		final Panple pos = getPosition();
-		final Tiles.Faller f = new Tiles.Faller((Panmage) getCurrentDisplay(), pos.getX(), pos.getY() + H, 0, v);
-		f.setMirror(isMirror());
-		f.setFlip(true);
+		if (v == 0 && def.splat != null) {
+		    final Burst b = new Burst(def.splat);
+		    PlatformGame.setPosition(b, pos.getX(), pos.getY(), PlatformGame.DEPTH_SHATTER);
+		    PlatformGame.room.addActor(b);
+		} else {
+    		final Tiles.Faller f = new Tiles.Faller((Panmage) getCurrentDisplay(), pos.getX(), pos.getY() + H, 0, v);
+    		f.setMirror(isMirror());
+    		f.setFlip(true);
+		}
 		destroy();
 	}
 	
