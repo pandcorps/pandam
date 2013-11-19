@@ -454,6 +454,7 @@ public class PlatformGame extends BaseGame {
 		Config.defaultProfileName = cfg.getValue(0);
 		
 		enemies.add(new EnemyDefinition("Drowid", 1, null, true));
+		enemies.add(new EnemyDefinition("Drolock", 4, null, false));
 		enemies.add(new EnemyDefinition("Troblin", 2, null, false));
 		final ReplacePixelFilter f = new ReplacePixelFilter();
 		replace(f, (short) 104, (short) 120, (short) 172);
@@ -461,6 +462,7 @@ public class PlatformGame extends BaseGame {
 		replace(f, (short) 64, (short) 80, (short) 112);
 		replace(f, (short) 48, (short) 56, (short) 80);
 		enemies.add(new EnemyDefinition("Obglin", 2, f, false));
+		enemies.add(new EnemyDefinition("Imp", 3, null, false, true));
 		
 		final Panmage[] owls = createSheet("owl", "org/pandcorps/platform/res/chr/Owl.png", 32);
 		final int owlBlink = DUR_BLINK + 30;
