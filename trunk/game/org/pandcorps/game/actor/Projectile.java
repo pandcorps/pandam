@@ -26,7 +26,7 @@ import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.boundary.*;
 
-public abstract class Projectile extends Panctor implements StepListener, AllOobListener, Collidable /*Or CollisionListener if we want two Projectiles to collide with each other*/ {
+public abstract class Projectile extends Panctor implements StepListener, StepEndListener, AllOobListener, Collidable /*Or CollisionListener if we want two Projectiles to collide with each other*/ {
     
     /*package*/ Emitter emitter = null;
     protected Panple vel = null;
@@ -63,11 +63,15 @@ public abstract class Projectile extends Panctor implements StepListener, AllOob
         if (time > 0) {
             time--;
         }
-        if (time == 0) {
-            die();
-        }
         if (vel != null) {
             getPosition().add(vel);
+        }
+    }
+    
+    @Override
+    public void onStepEnd(final StepEndEvent event) {
+        if (time == 0) {
+            die();
         }
     }
     
