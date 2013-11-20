@@ -60,7 +60,7 @@ public final class Enemy extends Character {
 			final String id = "enemy." + name;
 			this.walk = PlatformGame.createAnm(id, 6, O, MIN, MAX, walk);
 			this.ledgeTurn = ledgeTurn;
-			this.splat = splat ? PlatformGame.createAnm(id + ".splat", 15, O, MIN, MAX, strip[2]) : null;
+			this.splat = splat ? PlatformGame.createAnm(id + ".splat", 20, O, MIN, MAX, strip[2]) : null;
 		}
 	}
 	
