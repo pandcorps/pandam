@@ -641,6 +641,12 @@ public abstract class Pangine {
 		}
 		room.animationEndListeners.clear();
 		
+		for (final Panctor actor : actors) {
+            if (actor instanceof StepEndListener) {
+                ((StepEndListener) actor).onStepEnd(StepEndEvent.INSTANCE);
+            }
+        }
+		
 		room.applyActorChanges();
 	}
 
