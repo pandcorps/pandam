@@ -58,7 +58,7 @@ public class PlatformGame extends BaseGame {
 	Another plane/dimension for last level.
 	Train-riding levels.
 	Ridable dragons.
-	Mage Enemy w/ pointy hat, Wisp, Elementals, Trolls, Ogres.
+	Mage Enemy w/ pointy hat, Wisp, Elementals, Trolls, Ogres, Impix (winged Imp).
 	Gargoyles catch/carry Player, like moving platforms, one can jump to/from them, but not run on them.
 	Cannons on ground that Player enters to be launched.
 	Cannons in air that auto-fire, others that wait for jump input.
@@ -77,7 +77,6 @@ public class PlatformGame extends BaseGame {
 	Goals: Collect n gems, defeat n enemies.
 	Random music per map.
 	Sound effects for jump, bump, stomp, hurt, etc.
-	ShootGame story paging doesn't seem to inactivate input.
 	*/
 	
 	protected final static byte TILE_BREAK = 2;
