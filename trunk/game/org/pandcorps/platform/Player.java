@@ -529,9 +529,10 @@ public class Player extends Character implements CollisionListener {
 		    }*/
 		    final boolean aboveEnemy = getPosition().getY() > other.getPosition().getY();
 		    if (aboveEnemy && v < 0) {
-				((Enemy) other).onStomp(this);
-				v = VEL_BUMP;
-				stompTimer = 2;
+				if (((Enemy) other).onStomp(this)) {
+    				v = VEL_BUMP;
+    				stompTimer = 2;
+				}
 		    } else if (aboveEnemy && stompTimer > 0) {
 		        /*
 		        This Player just stomped two Enemies at the same time.
