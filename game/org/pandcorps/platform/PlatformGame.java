@@ -142,6 +142,7 @@ public class PlatformGame extends BaseGame {
 	protected static Panimation gemLevelAnm = null;
 	protected static Panmage gemShatter = null;
 	protected static Panimation spark = null;
+	protected static Panimation teleport = null;
 	protected static final TileActor bump = new TileActor();
 	protected static Panimation marker = null;
 	protected static Panmage markerDefeated = null;
@@ -489,6 +490,8 @@ public class PlatformGame extends BaseGame {
 	    final Panframe[] sa = createFrames("spark", "org/pandcorps/platform/res/misc/Spark.png", 8, 1);
 	    spark = engine.createAnimation(PRE_ANM + "spark", sa[0], sa[1], sa[2], sa[3], sa[2], sa[1], sa[0]);
 	    Spark.class.getClass(); // Force class load? Save time later?
+	    
+	    teleport = createAnm("teleport", "org/pandcorps/platform/res/enemy/Teleport.png", 5);
 	    
 	    final FinPanple mo = new FinPanple(-4, -4, 0);
 	    final Panmage[] ma = createSheet("Marker", "org/pandcorps/platform/res/bg/Marker.png", 8, mo);

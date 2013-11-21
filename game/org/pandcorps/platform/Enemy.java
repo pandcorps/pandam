@@ -65,6 +65,7 @@ public final class Enemy extends Character {
 	}
 	
 	private final EnemyDefinition def;
+	private int avoidCount = 0;
 	
 	protected Enemy(final EnemyDefinition def, final float x, final float y) {
 		super(ENEMY_X, ENEMY_H);
@@ -75,8 +76,8 @@ public final class Enemy extends Character {
 		PlatformGame.setPosition(this, x, y, PlatformGame.DEPTH_ENEMY);
 	}
 	
-	protected final void onStomp(final Player stomper) {
-		defeat(stomper, 0);
+	protected final boolean onStomp(final Player stomper) {
+		return defeat(stomper, 0);
 	}
 	
 	@Override
@@ -84,23 +85,35 @@ public final class Enemy extends Character {
 		defeat(bumper, Player.VEL_BUMP);
 	}
 	
-	private final void defeat(final Character defeater, final int v) {
+	private final boolean defeat(final Character defeater, final int v) {
+	    if (avoidCount > 0) {
+	        avoidCount--;
+	        burst(PlatformGame.teleport);
+	        getPosition().addY(64); //TODO smarter
+	        return false;
+	    }
 		if (defeater != null && defeater.getClass() == Player.class) {
 		    final Player player = (Player) defeater;
 			new GemBumped(player, this);
 			player.levelDefeatedEnemies++;
 		}
-		final Panple pos = getPosition();
 		if (v == 0 && def.splat != null) {
-		    final Burst b = new Burst(def.splat);
-		    PlatformGame.setPosition(b, pos.getX(), pos.getY(), PlatformGame.DEPTH_SHATTER);
-		    PlatformGame.room.addActor(b);
+		    burst(def.splat);
 		} else {
+		    final Panple pos = getPosition();
     		final Tiles.Faller f = new Tiles.Faller((Panmage) getCurrentDisplay(), pos.getX(), pos.getY() + H, 0, v);
     		f.setMirror(isMirror());
     		f.setFlip(true);
 		}
 		destroy();
+		return true;
+	}
+	
+	private void burst(final Panimation anm) {
+	    final Burst b = new Burst(anm);
+	    final Panple pos = getPosition();
+        PlatformGame.setPosition(b, pos.getX(), pos.getY(), PlatformGame.DEPTH_SHATTER);
+        PlatformGame.room.addActor(b);
 	}
 	
 	@Override
