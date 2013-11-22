@@ -32,23 +32,37 @@ import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.impl.*;
 
 public final class Enemy extends Character {
-	protected final static int ENEMY_X = 5;
-	protected final static int ENEMY_H = 15;
+	private final static int DEFAULT_X = 5;
+	private final static int DEFAULT_H = 15;
 	
 	private final static FinPanple O = new FinPanple(8, 1, 0);
-	private final static FinPanple MIN = new FinPanple(-ENEMY_X, 0, 0);
-	private final static FinPanple MAX = new FinPanple(ENEMY_X, ENEMY_H, 0);
+	private final static FinPanple DEFAULT_MIN = new FinPanple(-DEFAULT_X, 0, 0);
+	private final static FinPanple DEFAULT_MAX = new FinPanple(DEFAULT_X, DEFAULT_H, 0);
 	
 	protected final static class EnemyDefinition {
 		private final Panimation walk;
 		private final boolean ledgeTurn;
 		private final Panimation splat;
+		private final int avoidCount;
+		private final int offX;
+		private final int h;
 		
 		protected EnemyDefinition(final String name, final int ind, final PixelFilter f, final boolean ledgeTurn) {
-		    this(name, ind, f, ledgeTurn, false);
+		    this(name, ind, f, ledgeTurn, false, 0, DEFAULT_X, DEFAULT_H);
 		}
 		
-		protected EnemyDefinition(final String name, final int ind, final PixelFilter f, final boolean ledgeTurn, final boolean splat) {
+		protected EnemyDefinition(final String name, final int ind, final PixelFilter f, final boolean ledgeTurn,
+                                  final boolean splat, final int offX, final int h) {
+		    this(name, ind, f, ledgeTurn, splat, 0, offX, h);
+		}
+		
+		protected EnemyDefinition(final String name, final int ind, final PixelFilter f, final boolean ledgeTurn,
+                                  final int avoidCount) {
+		    this(name, ind, f, ledgeTurn, false, avoidCount, DEFAULT_X, DEFAULT_H);
+		}
+		
+		protected EnemyDefinition(final String name, final int ind, final PixelFilter f, final boolean ledgeTurn,
+		                          final boolean splat, final int avoidCount, final int offX, final int h) {
 			final BufferedImage[] strip = ImtilX.loadStrip("org/pandcorps/platform/res/enemy/Enemy0" + ind + ".png"), walk;
 			if (f != null) {
 				final int size = strip.length;
@@ -58,9 +72,20 @@ public final class Enemy extends Character {
 			}
 			walk = splat ? new BufferedImage[] {strip[0], strip[1]} : strip;
 			final String id = "enemy." + name;
-			this.walk = PlatformGame.createAnm(id, 6, O, MIN, MAX, walk);
+			final Panple n, x;
+			if (offX == DEFAULT_X && h == DEFAULT_H) {
+			    n = DEFAULT_MIN;
+			    x = DEFAULT_MAX;
+			} else {
+			    n = new FinPanple(-offX, 0, 0);
+			    x = new FinPanple(offX, h, 0);
+			}
+			this.walk = PlatformGame.createAnm(id, 6, O, n, x, walk);
 			this.ledgeTurn = ledgeTurn;
-			this.splat = splat ? PlatformGame.createAnm(id + ".splat", 20, O, MIN, MAX, strip[2]) : null;
+			this.splat = splat ? PlatformGame.createAnm(id + ".splat", 20, O, n, x, strip[2]) : null;
+			this.avoidCount = avoidCount;
+			this.offX = offX;
+			this.h = h;
 		}
 	}
 	
@@ -68,12 +93,13 @@ public final class Enemy extends Character {
 	private int avoidCount = 0;
 	
 	protected Enemy(final EnemyDefinition def, final float x, final float y) {
-		super(ENEMY_X, ENEMY_H);
+		super(def.offX, def.h);
 		this.def = def;
 		setView(def.walk);
 		hv = -1;
 		PlatformGame.room.addActor(this);
 		PlatformGame.setPosition(this, x, y, PlatformGame.DEPTH_ENEMY);
+		avoidCount = def.avoidCount;
 	}
 	
 	protected final boolean onStomp(final Player stomper) {
