@@ -452,7 +452,7 @@ public class PlatformGame extends BaseGame {
 		// CFG|Andrew
 		Config.defaultProfileName = cfg.getValue(0);
 		
-		enemies.add(new EnemyDefinition("Drowid", 1, null, true)); // Teleport when stomped
+		enemies.add(new EnemyDefinition("Drowid", 1, null, true, 1)); // Teleport when stomped
 		enemies.add(new EnemyDefinition("Drolock", 4, null, false)); // Teleport/shoot periodically
 		enemies.add(new EnemyDefinition("Troblin", 2, null, true));
 		final ReplacePixelFilter f = new ReplacePixelFilter();
@@ -461,7 +461,7 @@ public class PlatformGame extends BaseGame {
 		replace(f, (short) 64, (short) 80, (short) 112);
 		replace(f, (short) 48, (short) 56, (short) 80);
 		enemies.add(new EnemyDefinition("Obglin", 2, f, false));
-		enemies.add(new EnemyDefinition("Imp", 3, null, true, true));
+		enemies.add(new EnemyDefinition("Imp", 3, null, true, true, 4, 14));
 		
 		final Panmage[] owls = createSheet("owl", "org/pandcorps/platform/res/chr/Owl.png", 32);
 		final int owlBlink = DUR_BLINK + 30;
