@@ -35,7 +35,7 @@ public final class Enemy extends Character {
 	private final static int DEFAULT_X = 5;
 	private final static int DEFAULT_H = 15;
 	
-	private final static FinPanple O = new FinPanple(8, 1, 0);
+	protected final static FinPanple DEFAULT_O = new FinPanple(8, 1, 0);
 	private final static FinPanple DEFAULT_MIN = new FinPanple(-DEFAULT_X, 0, 0);
 	private final static FinPanple DEFAULT_MAX = new FinPanple(DEFAULT_X, DEFAULT_H, 0);
 	
@@ -72,7 +72,7 @@ public final class Enemy extends Character {
 			}
 			walk = splat ? new BufferedImage[] {strip[0], strip[1]} : strip;
 			final String id = "enemy." + name;
-			final Panple n, x;
+			final Panple n, x, o = DEFAULT_O;
 			if (offX == DEFAULT_X && h == DEFAULT_H) {
 			    n = DEFAULT_MIN;
 			    x = DEFAULT_MAX;
@@ -80,9 +80,9 @@ public final class Enemy extends Character {
 			    n = new FinPanple(-offX, 0, 0);
 			    x = new FinPanple(offX, h, 0);
 			}
-			this.walk = PlatformGame.createAnm(id, 6, O, n, x, walk);
+			this.walk = PlatformGame.createAnm(id, 6, o, n, x, walk);
 			this.ledgeTurn = ledgeTurn;
-			this.splat = splat ? PlatformGame.createAnm(id + ".splat", 20, O, n, x, strip[2]) : null;
+			this.splat = splat ? PlatformGame.createAnm(id + ".splat", 20, o, n, x, strip[2]) : null;
 			this.avoidCount = avoidCount;
 			this.offX = offX;
 			this.h = h;
@@ -116,6 +116,7 @@ public final class Enemy extends Character {
 	        avoidCount--;
 	        burst(PlatformGame.teleport);
 	        getPosition().addY(64); //TODO smarter
+	        burst(PlatformGame.teleport);
 	        return false;
 	    }
 		if (defeater != null && defeater.getClass() == Player.class) {

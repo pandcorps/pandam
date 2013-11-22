@@ -491,7 +491,7 @@ public class PlatformGame extends BaseGame {
 	    spark = engine.createAnimation(PRE_ANM + "spark", sa[0], sa[1], sa[2], sa[3], sa[2], sa[1], sa[0]);
 	    Spark.class.getClass(); // Force class load? Save time later?
 	    
-	    teleport = createAnm("teleport", "org/pandcorps/platform/res/enemy/Teleport.png", 5);
+	    teleport = createAnm("teleport", "org/pandcorps/platform/res/enemy/Teleport.png", ImtilX.DIM, 5, Enemy.DEFAULT_O);
 	    
 	    final FinPanple mo = new FinPanple(-4, -4, 0);
 	    final Panmage[] ma = createSheet("Marker", "org/pandcorps/platform/res/bg/Marker.png", 8, mo);
