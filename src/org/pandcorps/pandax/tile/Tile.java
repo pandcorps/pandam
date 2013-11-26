@@ -22,14 +22,11 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandax.tile;
 
-import org.pandcorps.pandam.Panmage;
-import org.pandcorps.pandam.Panple;
-import org.pandcorps.pandam.impl.FinPanple;
+import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.impl.*;
 
 public final class Tile {
-    
-	private final static byte BEHAVIOR_OPEN = 0;
-	
+	public final static byte BEHAVIOR_OPEN = 0;
 	public final static byte BEHAVIOR_SOLID = 1;
 	
     /*package*/ final TileMap map;
