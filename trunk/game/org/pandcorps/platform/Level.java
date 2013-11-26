@@ -36,6 +36,8 @@ import org.pandcorps.pandax.tile.Tile.*;
 import org.pandcorps.platform.Enemy.EnemyDefinition;
 
 public class Level {
+    protected final static int ROOM_H = 256;
+    
     protected final static PixelFilter terrainDarkener = new BrightnessPixelFilter((short) -40, (short) -24, (short) -32);
     
     protected static TileMapImage[] flashBlock;
@@ -134,7 +136,7 @@ public class Level {
     }
     
     protected final static void loadLayers() {
-        room = PlatformGame.createRoom(w, 256);
+        room = PlatformGame.createRoom(w, ROOM_H);
         final DynamicTileMap dtm = new DynamicTileMap("act.tilemap", room, ImtilX.DIM, ImtilX.DIM);
         tm = dtm;
         room.addActor(tm);

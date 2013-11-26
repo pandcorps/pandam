@@ -30,6 +30,7 @@ import org.pandcorps.game.actor.*;
 import org.pandcorps.game.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.impl.*;
+import org.pandcorps.pandax.tile.*;
 
 public final class Enemy extends Character {
 	private final static int DEFAULT_X = 5;
@@ -111,13 +112,34 @@ public final class Enemy extends Character {
 		defeat(bumper, Player.VEL_BUMP);
 	}
 	
+	private final static boolean isFree(final Tile t) {
+	    return t == null || t.getBehavior() == Tile.BEHAVIOR_OPEN;
+	}
+	
 	private final boolean defeat(final Character defeater, final int v) {
 	    if (avoidCount > 0) {
 	        avoidCount--;
-	        burst(PlatformGame.teleport);
-	        getPosition().addY(64); //TODO smarter
-	        burst(PlatformGame.teleport);
-	        return false;
+	        final Panple pos = getPosition();
+	        final int d = ImtilX.DIM;
+	        final int bx = (int) pos.getX() + ((isMirror() ? -1 : 1) * 48);
+	        final float x = ((bx / d) * d) + 8;
+	        float y = Level.ROOM_H - d, fy = -1;
+	        boolean prevFree = isFree(Level.tm.getContainer(x, y));
+	        while (y > d) {
+	            y -= d;
+	            final boolean free = isFree(Level.tm.getContainer(x, y));
+	            if (prevFree && !free) {
+	                fy = y + d;
+	                break;
+	            }
+	            prevFree = free;
+	        }
+	        if (fy != -1) {
+    	        burst(PlatformGame.teleport);
+    	        pos.set(x, fy);
+    	        burst(PlatformGame.teleport);
+    	        return false;
+	        }
 	    }
 		if (defeater != null && defeater.getClass() == Player.class) {
 		    final Player player = (Player) defeater;
