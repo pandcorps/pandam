@@ -35,6 +35,8 @@ import org.pandcorps.pandax.tile.*;
 public final class Enemy extends Character {
 	private final static int DEFAULT_X = 5;
 	private final static int DEFAULT_H = 15;
+	private final static int DEFAULT_HV = 1;
+	private final static int MAX_TIMER = 60;
 	
 	protected final static FinPanple DEFAULT_O = new FinPanple(8, 1, 0);
 	private final static FinPanple DEFAULT_MIN = new FinPanple(-DEFAULT_X, 0, 0);
@@ -47,23 +49,29 @@ public final class Enemy extends Character {
 		private final int avoidCount;
 		private final int offX;
 		private final int h;
+		private final int hv;
 		
 		protected EnemyDefinition(final String name, final int ind, final PixelFilter f, final boolean ledgeTurn) {
-		    this(name, ind, f, ledgeTurn, false, 0, DEFAULT_X, DEFAULT_H);
+		    this(name, ind, f, ledgeTurn, false, 0, DEFAULT_X, DEFAULT_H, DEFAULT_HV);
 		}
 		
 		protected EnemyDefinition(final String name, final int ind, final PixelFilter f, final boolean ledgeTurn,
                                   final boolean splat, final int offX, final int h) {
-		    this(name, ind, f, ledgeTurn, splat, 0, offX, h);
+		    this(name, ind, f, ledgeTurn, splat, 0, offX, h, DEFAULT_HV);
 		}
 		
 		protected EnemyDefinition(final String name, final int ind, final PixelFilter f, final boolean ledgeTurn,
                                   final int avoidCount) {
-		    this(name, ind, f, ledgeTurn, false, avoidCount, DEFAULT_X, DEFAULT_H);
+		    this(name, ind, f, ledgeTurn, avoidCount, DEFAULT_HV);
 		}
 		
 		protected EnemyDefinition(final String name, final int ind, final PixelFilter f, final boolean ledgeTurn,
-		                          final boolean splat, final int avoidCount, final int offX, final int h) {
+                                  final int avoidCount, final int hv) {
+            this(name, ind, f, ledgeTurn, false, avoidCount, DEFAULT_X, DEFAULT_H, hv);
+        }
+		
+		protected EnemyDefinition(final String name, final int ind, final PixelFilter f, final boolean ledgeTurn,
+		                          final boolean splat, final int avoidCount, final int offX, final int h, final int hv) {
 			final BufferedImage[] strip = ImtilX.loadStrip("org/pandcorps/platform/res/enemy/Enemy0" + ind + ".png"), walk;
 			if (f != null) {
 				final int size = strip.length;
@@ -71,7 +79,13 @@ public final class Enemy extends Character {
 					strip[i] = Imtil.filter(strip[i], f);
 				}
 			}
-			walk = splat ? new BufferedImage[] {strip[0], strip[1]} : strip;
+			if (splat) {
+			    walk = new BufferedImage[] {strip[0], strip[1]};
+			} else if (hv == 0) {
+			    walk = new BufferedImage[] {strip[0]};
+			} else {
+			    walk = strip;
+			}
 			final String id = "enemy." + name;
 			final Panple n, x, o = DEFAULT_O;
 			if (offX == DEFAULT_X && h == DEFAULT_H) {
@@ -87,20 +101,34 @@ public final class Enemy extends Character {
 			this.avoidCount = avoidCount;
 			this.offX = offX;
 			this.h = h;
+			this.hv = hv;
 		}
 	}
 	
 	private final EnemyDefinition def;
 	private int avoidCount = 0;
+	private int timer = MAX_TIMER;
 	
 	protected Enemy(final EnemyDefinition def, final float x, final float y) {
 		super(def.offX, def.h);
 		this.def = def;
 		setView(def.walk);
-		hv = -1;
+		hv = -def.hv;
 		PlatformGame.room.addActor(this);
 		PlatformGame.setPosition(this, x, y, PlatformGame.DEPTH_ENEMY);
 		avoidCount = def.avoidCount;
+	}
+	
+	@Override
+	protected final boolean onStepCustom() {
+	    if (def.hv == 0) {
+	        timer--;
+	        if (timer < 0) {
+	            timer = MAX_TIMER;
+	            teleport();
+	        }
+	    }
+	    return false;
 	}
 	
 	protected final boolean onStomp(final Player stomper) {
@@ -116,29 +144,36 @@ public final class Enemy extends Character {
 	    return t == null || t.getBehavior() == Tile.BEHAVIOR_OPEN;
 	}
 	
+	private final boolean teleport() {
+	    final Panple pos = getPosition();
+        final int d = ImtilX.DIM;
+        final int bx = (int) pos.getX() + ((isMirror() ? -1 : 1) * 48);
+        final float x = ((bx / d) * d) + 8;
+        float y = Level.ROOM_H - d, fy = -1;
+        boolean prevFree = isFree(Level.tm.getContainer(x, y));
+        while (y > d) {
+            y -= d;
+            final boolean free = isFree(Level.tm.getContainer(x, y));
+            if (prevFree && !free) {
+                fy = y + d;
+                break;
+            }
+            prevFree = free;
+        }
+        if (fy != -1) {
+            burst(PlatformGame.teleport);
+            pos.set(x, fy);
+            burst(PlatformGame.teleport);
+            return true;
+        }
+        return false;
+	}
+	
 	private final boolean defeat(final Character defeater, final int v) {
 	    if (avoidCount > 0) {
 	        avoidCount--;
-	        final Panple pos = getPosition();
-	        final int d = ImtilX.DIM;
-	        final int bx = (int) pos.getX() + ((isMirror() ? -1 : 1) * 48);
-	        final float x = ((bx / d) * d) + 8;
-	        float y = Level.ROOM_H - d, fy = -1;
-	        boolean prevFree = isFree(Level.tm.getContainer(x, y));
-	        while (y > d) {
-	            y -= d;
-	            final boolean free = isFree(Level.tm.getContainer(x, y));
-	            if (prevFree && !free) {
-	                fy = y + d;
-	                break;
-	            }
-	            prevFree = free;
-	        }
-	        if (fy != -1) {
-    	        burst(PlatformGame.teleport);
-    	        pos.set(x, fy);
-    	        burst(PlatformGame.teleport);
-    	        return false;
+	        if (teleport()) {
+	            return false;
 	        }
 	    }
 		if (defeater != null && defeater.getClass() == Player.class) {
