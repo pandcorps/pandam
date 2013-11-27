@@ -143,6 +143,7 @@ public class PlatformGame extends BaseGame {
 	protected static Panmage gemShatter = null;
 	protected static Panimation spark = null;
 	protected static Panimation teleport = null;
+	protected static Panimation projectile1 = null;
 	protected static final TileActor bump = new TileActor();
 	protected static Panimation marker = null;
 	protected static Panmage markerDefeated = null;
@@ -453,7 +454,7 @@ public class PlatformGame extends BaseGame {
 		Config.defaultProfileName = cfg.getValue(0);
 		
 		enemies.add(new EnemyDefinition("Drowid", 1, null, true, 1)); // Teleport when stomped
-		enemies.add(new EnemyDefinition("Drolock", 4, null, false)); // Teleport/shoot periodically
+		enemies.add(new EnemyDefinition("Drolock", 4, null, false, 0, 0)); // Teleport/shoot periodically
 		enemies.add(new EnemyDefinition("Troblin", 2, null, true));
 		final ReplacePixelFilter f = new ReplacePixelFilter();
 		replace(f, (short) 104, (short) 120, (short) 172);
@@ -492,6 +493,13 @@ public class PlatformGame extends BaseGame {
 	    Spark.class.getClass(); // Force class load? Save time later?
 	    
 	    teleport = createAnm("teleport", "org/pandcorps/platform/res/enemy/Teleport.png", ImtilX.DIM, 5, Enemy.DEFAULT_O);
+	    
+	    final Panmage pimg1 = createImage("projectile1", "org/pandcorps/platform/res/enemy/Projectile1.png", 8, PlatformGame.CENTER_8, new FinPanple(-3, -3, 0), new FinPanple(2, 2, 0));
+	    final Panframe[] pfrms = new Panframe[4];
+	    for (int i = 0; i < 4; i++) {
+	        pfrms[i] = engine.createFrame(PRE_FRM + "projectile1." + i, pimg1, 4, i, false, false);
+	    }
+	    projectile1 = engine.createAnimation(PRE_ANM + "projectile1", pfrms);
 	    
 	    final FinPanple mo = new FinPanple(-4, -4, 0);
 	    final Panmage[] ma = createSheet("Marker", "org/pandcorps/platform/res/bg/Marker.png", 8, mo);
