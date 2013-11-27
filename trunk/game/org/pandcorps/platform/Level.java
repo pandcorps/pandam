@@ -33,7 +33,7 @@ import org.pandcorps.pandam.*;
 import org.pandcorps.pandax.*;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.tile.Tile.*;
-import org.pandcorps.platform.Enemy.EnemyDefinition;
+import org.pandcorps.platform.Enemy.*;
 
 public class Level {
     protected final static int ROOM_H = 256;
@@ -43,6 +43,7 @@ public class Level {
     protected static TileMapImage[] flashBlock;
     
     protected static Panroom room = null;
+    protected static String theme = null;
     protected static Panmage timg = null;
     protected static Panmage bgimg = null;
     protected static TileMap tm = null;
@@ -129,9 +130,20 @@ public class Level {
         return Imtil.filter(backImg, x, y, w, h, getHillFilter(Map.bgColor));
     }
     
-    protected final static Panmage getTileImage() {
+    private final static BufferedImage loadTileImage() {
     	final BufferedImage tileImg = ImtilX.loadImage("org/pandcorps/platform/res/bg/Tiles.png", 128, null);
-        applyDirtTexture(tileImg, 0, 16, 80, 128);
+    	if (theme != null) {
+    		final BufferedImage ext = ImtilX.loadImage("org/pandcorps/platform/res/bg/Tiles" + theme + ".png", false);
+    		Imtil.copy(ext, tileImg, 0, 0, 128, 112, 0, 16);
+    	}
+    	return tileImg;
+    }
+    
+    protected final static Panmage getTileImage() {
+    	final BufferedImage tileImg = loadTileImage();
+    	if (theme == null) {
+    		applyDirtTexture(tileImg, 0, 16, 80, 128);
+    	}
         return Pangine.getEngine().createImage("img.tiles", tileImg);
     }
     
@@ -148,7 +160,7 @@ public class Level {
         final Panlayer bg1 = PlatformGame.createParallax(room, 2);
         bgtm1 = new TileMap("act.bgmap1", bg1, ImtilX.DIM, ImtilX.DIM);
         bg1.addActor(bgtm1);
-        BufferedImage backImg = ImtilX.loadImage("org/pandcorps/platform/res/bg/Hills.png", 128, null);
+        BufferedImage backImg = ImtilX.loadImage("org/pandcorps/platform/res/bg/Hills" + Chartil.unnull(theme) + ".png", 128, null);
         BufferedImage terrain = getTerrainTexture();
         for (int z = 0; z < 3; z++) {
             if (z > 0) {
