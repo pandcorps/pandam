@@ -31,6 +31,7 @@ import org.pandcorps.game.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.tile.*;
+import org.pandcorps.platform.Player.*;
 
 public final class Enemy extends Character {
 	private final static int DEFAULT_X = 5;
@@ -125,7 +126,23 @@ public final class Enemy extends Character {
 	        timer--;
 	        if (timer < 0) {
 	            timer = MAX_TIMER;
-	            teleport();
+	            teleport(Mathtil.randi(1, 8) * ImtilX.DIM);
+	            Boolean mirror = null;
+	            final float x = getPosition().getX();
+	            for (final PlayerContext pc : PlatformGame.pcs) {
+	                final Boolean currMirror = Boolean.valueOf(pc.player.getPosition().getX() < x);
+	                if (mirror != currMirror) {
+	                    if (mirror == null) {
+	                        mirror = currMirror;
+	                    } else {
+                            mirror = null;
+                            break;
+	                    }
+                    }
+	            }
+	            if (mirror != null) {
+	                setMirror(mirror.booleanValue());
+	            }
 	        }
 	    }
 	    return false;
@@ -144,10 +161,10 @@ public final class Enemy extends Character {
 	    return t == null || t.getBehavior() == Tile.BEHAVIOR_OPEN;
 	}
 	
-	private final boolean teleport() {
+	private final boolean teleport(final int off) {
 	    final Panple pos = getPosition();
         final int d = ImtilX.DIM;
-        final int bx = (int) pos.getX() + ((isMirror() ? -1 : 1) * 48);
+        final int bx = (int) pos.getX() + ((isMirror() ? -1 : 1) * off);
         final float x = ((bx / d) * d) + 8;
         float y = Level.ROOM_H - d, fy = -1;
         boolean prevFree = isFree(Level.tm.getContainer(x, y));
@@ -172,7 +189,7 @@ public final class Enemy extends Character {
 	private final boolean defeat(final Character defeater, final int v) {
 	    if (avoidCount > 0) {
 	        avoidCount--;
-	        if (teleport()) {
+	        if (teleport(48)) {
 	            return false;
 	        }
 	    }
