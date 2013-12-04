@@ -384,10 +384,12 @@ public class Map {
 	            setPlayerPosition(t);
 	            final Panscreen screen;
 	            final Building b = getBuilding(t);
+	            Level.theme = null;
 	            if (isCabin(b)) {
 	            	screen = new Cabin.CabinScreen();
 	            } else if (isCastle(b)) {
 	                screen = new Castle.ThroneIntroScreen();
+	                Level.theme = "Chaos";
 	            } else {
 	            	screen = new PlatformGame.PlatformScreen();
 	            }

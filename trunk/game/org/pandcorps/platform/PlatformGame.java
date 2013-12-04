@@ -615,6 +615,7 @@ public class PlatformGame extends BaseGame {
 	}
 	
 	protected final static void markerClose() {
+		Level.theme = null;
 	    Achievement.evaluate();
 	    if (Map.isOnLastLevel()) {
 	    	Map.victory = Map.VICTORY_WORLD;
