@@ -114,6 +114,7 @@ public final class Enemy extends Character {
 		super(def.offX, def.h);
 		this.def = def;
 		setView(def.walk);
+		setMirror(true);
 		hv = -def.hv;
 		PlatformGame.room.addActor(this);
 		PlatformGame.setPosition(this, x, y, PlatformGame.DEPTH_ENEMY);
@@ -180,6 +181,13 @@ public final class Enemy extends Character {
         if (fy != -1) {
             burst(PlatformGame.teleport);
             pos.set(x, fy);
+            final Pangine engine = Pangine.getEngine();
+            for (final PlayerContext pc : PlatformGame.pcs) {
+                if (engine.isCollision(this, pc.player)) {
+                    destroy();
+                    return true;
+                }
+            }
             burst(PlatformGame.teleport);
             return true;
         }
