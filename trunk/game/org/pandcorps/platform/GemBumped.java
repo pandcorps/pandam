@@ -73,7 +73,7 @@ public class GemBumped extends Pandy {
 	public static GemBumped newLevelEnd(final Player player, final Tile tile) {
 		final int award;
 		final Panimation anm;
-		if (Level.theme == null) {
+		if (Level.isNormalTheme()) {
 			award = AWARD_LEVEL;
 			anm = PlatformGame.gemLevelAnm;
 		} else {

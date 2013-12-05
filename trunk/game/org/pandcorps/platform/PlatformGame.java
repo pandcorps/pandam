@@ -42,6 +42,7 @@ import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.visual.*;
 import org.pandcorps.platform.Avatar.*;
 import org.pandcorps.platform.Enemy.*;
+import org.pandcorps.platform.Level.Theme;
 import org.pandcorps.platform.Player.*;
 
 public class PlatformGame extends BaseGame {
@@ -131,7 +132,8 @@ public class PlatformGame extends BaseGame {
 	protected final static FinPanple os = new FinPanple(16, 11, 0);
 	protected static Panmage bubble = null;
 	protected static Panimation owl = null;
-	protected final static ArrayList<EnemyDefinition> enemies = new ArrayList<EnemyDefinition>();
+	protected final static List<EnemyDefinition> allEnemies = new ArrayList<EnemyDefinition>();
+	protected static List<EnemyDefinition> enemies = null;
 	protected static Panmage block8 = null;
 	protected static Panmage[] gem = null;
 	protected static Panimation gemAnm = null;
@@ -454,16 +456,17 @@ public class PlatformGame extends BaseGame {
 		// CFG|Andrew
 		Config.defaultProfileName = cfg.getValue(0);
 		
-		enemies.add(new EnemyDefinition("Drowid", 1, null, true, 1)); // Teleport when stomped
-		enemies.add(new EnemyDefinition("Drolock", 4, null, false, 0, 0)); // Teleport/shoot periodically
-		enemies.add(new EnemyDefinition("Troblin", 2, null, true));
+		allEnemies.add(new EnemyDefinition("Drowid", 1, null, true, 1)); // Teleport when stomped
+		allEnemies.add(new EnemyDefinition("Drolock", 4, null, false, 0, 0)); // Teleport/shoot periodically
+		allEnemies.add(new EnemyDefinition("Troblin", 2, null, true));
 		final ReplacePixelFilter f = new ReplacePixelFilter();
 		replace(f, (short) 104, (short) 120, (short) 172);
 		replace(f, (short) 80, (short) 96, (short) 144);
 		replace(f, (short) 64, (short) 80, (short) 112);
 		replace(f, (short) 48, (short) 56, (short) 80);
-		enemies.add(new EnemyDefinition("Obglin", 2, f, false));
-		enemies.add(new EnemyDefinition("Imp", 3, null, true, true, 4, 14));
+		allEnemies.add(new EnemyDefinition("Obglin", 2, f, false));
+		allEnemies.add(new EnemyDefinition("Imp", 3, null, true, true, 4, 14));
+		Level.setTheme(Theme.Normal);
 		
 		final Panmage[] owls = createSheet("owl", "org/pandcorps/platform/res/chr/Owl.png", 32);
 		final int owlBlink = DUR_BLINK + 30;
@@ -617,7 +620,7 @@ public class PlatformGame extends BaseGame {
 	}
 	
 	protected final static void markerClose() {
-		Level.theme = null;
+		Level.setTheme(Theme.Normal);
 	    Achievement.evaluate();
 	    if (Map.isOnLastLevel()) {
 	    	Map.victory = Map.VICTORY_WORLD;

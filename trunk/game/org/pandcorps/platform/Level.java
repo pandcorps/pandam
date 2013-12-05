@@ -43,7 +43,7 @@ public class Level {
     protected static TileMapImage[] flashBlock;
     
     protected static Panroom room = null;
-    protected static String theme = null;
+    private static Theme theme = null;
     protected static Panmage timg = null;
     protected static Panmage bgimg = null;
     protected static TileMap tm = null;
@@ -57,6 +57,31 @@ public class Level {
     private static int nt = 0;
     private static int floor = 0;
     protected static int numEnemies = 0;
+    
+    protected static enum Theme {
+    	Normal(null, 2, 3, 4),
+    	Chaos("Chaos", 0, 1, 4);
+    	
+    	protected final String img;
+    	protected final List<EnemyDefinition> enemies;
+    	
+    	private Theme(final String img, final int... enemies) {
+    		this.img = img;
+    		this.enemies = new ArrayList<EnemyDefinition>(enemies.length);
+    		for (final int enemy : enemies) {
+    			this.enemies.add(PlatformGame.allEnemies.get(enemy));
+    		}
+    	}
+    }
+    
+    protected static void setTheme(final Theme theme) {
+    	Level.theme = theme;
+    	PlatformGame.enemies = theme.enemies;
+    }
+    
+    protected static boolean isNormalTheme() {
+    	return theme == Theme.Normal;
+    }
     
     private final static class BlockTileListener implements TileListener {
         private int tick = 0;
@@ -132,8 +157,8 @@ public class Level {
     
     private final static BufferedImage loadTileImage() {
     	final BufferedImage tileImg = ImtilX.loadImage("org/pandcorps/platform/res/bg/Tiles.png", 128, null);
-    	if (theme != null) {
-    		final BufferedImage ext = ImtilX.loadImage("org/pandcorps/platform/res/bg/Tiles" + theme + ".png", false);
+    	if (!isNormalTheme()) {
+    		final BufferedImage ext = ImtilX.loadImage("org/pandcorps/platform/res/bg/Tiles" + theme.img + ".png", false);
     		Imtil.copy(ext, tileImg, 0, 0, 128, 112, 0, 16);
     	}
     	return tileImg;
@@ -141,7 +166,7 @@ public class Level {
     
     protected final static Panmage getTileImage() {
     	final BufferedImage tileImg = loadTileImage();
-    	if (theme == null) {
+    	if (isNormalTheme()) {
     		applyDirtTexture(tileImg, 0, 16, 80, 128);
     	}
         return Pangine.getEngine().createImage("img.tiles", tileImg);
@@ -160,8 +185,8 @@ public class Level {
         final Panlayer bg1 = PlatformGame.createParallax(room, 2);
         bgtm1 = new TileMap("act.bgmap1", bg1, ImtilX.DIM, ImtilX.DIM);
         bg1.addActor(bgtm1);
-        BufferedImage backImg = ImtilX.loadImage("org/pandcorps/platform/res/bg/Hills" + Chartil.unnull(theme) + ".png", 128, null);
-        if (theme == null) {
+        BufferedImage backImg = ImtilX.loadImage("org/pandcorps/platform/res/bg/Hills" + Chartil.unnull(theme.img) + ".png", 128, null);
+        if (isNormalTheme()) {
 	        BufferedImage terrain = getTerrainTexture();
 	        for (int z = 0; z < 3; z++) {
 	            if (z > 0) {
