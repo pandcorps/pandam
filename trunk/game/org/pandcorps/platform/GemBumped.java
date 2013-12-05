@@ -35,7 +35,7 @@ public class GemBumped extends Pandy {
     protected final static int AWARD_3 = AWARD_2 * 10;
     protected final static int AWARD_4 = AWARD_3 * 10;
     private final static int AWARD_LEVEL = AWARD_2 * 5;
-    //private final static int AWARD_WORLD = AWARD_LEVEL * 10;
+    private final static int AWARD_WORLD = AWARD_LEVEL * 10;
     private final int award;
 	private final boolean end;
 	int age = 0;
@@ -71,7 +71,16 @@ public class GemBumped extends Pandy {
 	}
 	
 	public static GemBumped newLevelEnd(final Player player, final Tile tile) {
-	    return new GemBumped(player, tile, AWARD_LEVEL, true, PlatformGame.gemLevelAnm);
+		final int award;
+		final Panimation anm;
+		if (Level.theme == null) {
+			award = AWARD_LEVEL;
+			anm = PlatformGame.gemLevelAnm;
+		} else {
+			award = AWARD_WORLD;
+			anm = PlatformGame.gemWorldAnm;
+		}
+	    return new GemBumped(player, tile, award, true, anm);
 	}
 	
 	public static GemBumped newShatter(final Player player) {
