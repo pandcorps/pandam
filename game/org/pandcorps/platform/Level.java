@@ -161,15 +161,17 @@ public class Level {
         bgtm1 = new TileMap("act.bgmap1", bg1, ImtilX.DIM, ImtilX.DIM);
         bg1.addActor(bgtm1);
         BufferedImage backImg = ImtilX.loadImage("org/pandcorps/platform/res/bg/Hills" + Chartil.unnull(theme) + ".png", 128, null);
-        BufferedImage terrain = getTerrainTexture();
-        for (int z = 0; z < 3; z++) {
-            if (z > 0) {
-                terrain = getDarkenedTerrain(terrain);
-            }
-            final int yoff = z * 32;
-            applyTerrainTexture(backImg, 0, yoff, 64, yoff + 32, terrain, getTerrainMask(z));
+        if (theme == null) {
+	        BufferedImage terrain = getTerrainTexture();
+	        for (int z = 0; z < 3; z++) {
+	            if (z > 0) {
+	                terrain = getDarkenedTerrain(terrain);
+	            }
+	            final int yoff = z * 32;
+	            applyTerrainTexture(backImg, 0, yoff, 64, yoff + 32, terrain, getTerrainMask(z));
+	        }
+	        backImg = getColoredTerrain(backImg, 0, 0, 96, 96);
         }
-        backImg = getColoredTerrain(backImg, 0, 0, 96, 96);
         bgimg = Pangine.getEngine().createImage("img.bg", backImg);
         bgMap = bgtm1.splitImageMap(bgimg);
         
