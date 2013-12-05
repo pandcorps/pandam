@@ -37,6 +37,7 @@ import org.pandcorps.pandax.in.*;
 import org.pandcorps.pandax.text.*;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.tile.Tile.*;
+import org.pandcorps.platform.Level.Theme;
 import org.pandcorps.platform.Player.*;
 
 public class Map {
@@ -384,12 +385,12 @@ public class Map {
 	            setPlayerPosition(t);
 	            final Panscreen screen;
 	            final Building b = getBuilding(t);
-	            Level.theme = null;
+	            Level.setTheme(Theme.Normal);
 	            if (isCabin(b)) {
 	            	screen = new Cabin.CabinScreen();
 	            } else if (isCastle(b)) {
 	                screen = new Castle.ThroneIntroScreen();
-	                Level.theme = "Chaos";
+	                Level.setTheme(Theme.Chaos);
 	            } else {
 	            	screen = new PlatformGame.PlatformScreen();
 	            }
