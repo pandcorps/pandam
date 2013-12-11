@@ -541,11 +541,19 @@ public class Player extends Character implements CollisionListener {
 		        But don't fall through to call onHurt below.
 		        Just ignore the second Enemy, so this case is a no-op.
 		        */
-			} else if (!(isInvincible() || pc.profile.isInvincible())) {
-				onHurt();
-				hurtTimer = 60; // Enable temporary invincibility
+			} else {
+			    startHurt();
 			}
+		} else if (other instanceof Projectile) {
+		    startHurt();
 		}
+	}
+	
+	private final void startHurt() {
+	    if (!(isInvincible() || pc.profile.isInvincible())) {
+            onHurt();
+            hurtTimer = 60; // Enable temporary invincibility
+        }
 	}
 	
 	public final void onHurt() {
