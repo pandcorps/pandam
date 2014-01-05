@@ -352,7 +352,13 @@ public class Player extends Character implements CollisionListener {
 	private final static Player getActive() {
 		Player a = null;
 		for (final PlayerContext pc : PlatformGame.pcs) {
+			if (pc == null) {
+				continue;
+			}
 			final Player c = pc.player;
+			if (c == null) {
+				continue;
+			}
 			// Tie breaker?
 			if (!c.isReturningFromScroll() && (a == null || a.activeTimer < c.activeTimer)) {
 				a = c;
@@ -478,7 +484,7 @@ public class Player extends Character implements CollisionListener {
 		} else if (this == active) {
 			for (final PlayerContext pc : PlatformGame.pcs) {
 				final Player other = pc.player;
-				if (other != this) {
+				if (other != null && other != this) {
 					other.startCatchUp(this);
 				}
 			}
