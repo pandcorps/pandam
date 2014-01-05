@@ -543,8 +543,15 @@ public final class LwjglPangine extends Pangine {
 		    final ByteBuffer buf = Pantil.allocateDirectByteBuffer(w * h * 3);
 		    //buf.rewind();
 		    GL11.glReadPixels(0, 0, w, h, GL11.GL_RGB, GL11.GL_UNSIGNED_BYTE, buf); // Could read each frame and filter, but very slow
-		    Imtil.save(Imtil.create(buf, w, h, BufferedImage.TYPE_INT_RGB), screenShotDst);
-		    screenShotDst = null;
+		    final String dst;
+		    if (screenShotInd >= 0) {
+		    	dst = screenShotDst + screenShotInd + ".png";
+		    	screenShotInd++;
+		    } else {
+		    	dst = screenShotDst;
+		    	screenShotDst = null;
+		    }
+		    Imtil.save(Imtil.create(buf, w, h, BufferedImage.TYPE_INT_RGB), dst);
 		}
 		Display.update();
 	}

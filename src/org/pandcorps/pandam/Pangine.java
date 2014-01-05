@@ -66,6 +66,7 @@ public abstract class Pangine {
 	
 	private boolean imageSavingEnabled = false;
 	protected String screenShotDst = null;
+	protected int screenShotInd = -1;
 
 	static {
 		int i = 0;
@@ -894,6 +895,16 @@ public abstract class Pangine {
 	
 	public final void captureScreen(final String screenShotDst) {
 	    this.screenShotDst = screenShotDst;
+	}
+	
+	public final void startCaptureFrames() {
+		screenShotInd = 0;
+		screenShotDst = "Pandam" + System.currentTimeMillis() + ".";
+	}
+	
+	public final void stopCaptureFrames() {
+		screenShotInd = -1;
+		screenShotDst = null;
 	}
 	
 	public abstract void setTitle(final String title);
