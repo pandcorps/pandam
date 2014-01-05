@@ -349,6 +349,18 @@ public final class Imtil {
     	return in;
     }
     
+    public final static BufferedImage shrink(final BufferedImage in, final int f) {
+    	final int w = in.getWidth() / f, h = in.getHeight() / f;
+        final BufferedImage out = newImage(w, h);
+        for (int j = 0; j < h; j++) {
+        	final int jf = j * f;
+        	for (int i = 0; i < w; i++) {
+        		out.setRGB(i, j, in.getRGB(i * f, jf));
+        	}
+        }
+        return out;
+    }
+    
     private final static BufferedImage newImage(final int w, final int h) {
         return new BufferedImage(w, h, TYPE);
     }
