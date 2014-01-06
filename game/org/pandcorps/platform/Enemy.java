@@ -37,7 +37,8 @@ public final class Enemy extends Character {
 	private final static int DEFAULT_X = 5;
 	private final static int DEFAULT_H = 15;
 	private final static int DEFAULT_HV = 1;
-	private final static int MAX_TIMER = 60;
+	private final static int MIN_TIMER = 60;
+	private final static int MAX_TIMER = 90;
 	
 	protected final static FinPanple DEFAULT_O = new FinPanple(8, 1, 0);
 	private final static FinPanple DEFAULT_MIN = new FinPanple(-DEFAULT_X, 0, 0);
@@ -47,6 +48,7 @@ public final class Enemy extends Character {
 		private final Panimation walk;
 		private final boolean ledgeTurn;
 		private final Panimation splat;
+		private final Panimation attack;
 		private final int avoidCount;
 		private final int offX;
 		private final int h;
@@ -99,6 +101,7 @@ public final class Enemy extends Character {
 			this.walk = PlatformGame.createAnm(id, 6, o, n, x, walk);
 			this.ledgeTurn = ledgeTurn;
 			this.splat = splat ? PlatformGame.createAnm(id + ".splat", 20, o, n, x, strip[2]) : null;
+			this.attack = hv == 0 ? PlatformGame.createAnm(id + ".attack", 20, o, n, x, strip[2]) : null;
 			this.avoidCount = avoidCount;
 			this.offX = offX;
 			this.h = h;
@@ -108,7 +111,8 @@ public final class Enemy extends Character {
 	
 	private final EnemyDefinition def;
 	private int avoidCount = 0;
-	private int timer = MAX_TIMER;
+	private int timer = 0;
+	private int timerMode = 0;
 	
 	protected Enemy(final EnemyDefinition def, final float x, final float y) {
 		super(def.offX, def.h);
@@ -119,34 +123,60 @@ public final class Enemy extends Character {
 		PlatformGame.room.addActor(this);
 		PlatformGame.setPosition(this, x, y, PlatformGame.DEPTH_ENEMY);
 		avoidCount = def.avoidCount;
+		if (hv == 0) {
+		    initTimer(0);
+		}
+	}
+	
+	private final void initTimer(final int timerMode) {
+	    timer = Mathtil.randi(MIN_TIMER, MAX_TIMER);
+	    this.timerMode = timerMode;
 	}
 	
 	@Override
 	protected final boolean onStepCustom() {
-	    if (def.hv == 0) {
+	    if (hv == 0) {
 	        timer--;
 	        if (timer < 0) {
-	            timer = MAX_TIMER;
-	            teleport(Mathtil.randi(1, 8) * ImtilX.DIM);
-	            Boolean mirror = null;
-	            final float x = getPosition().getX();
-	            for (final PlayerContext pc : PlatformGame.pcs) {
-	                final Boolean currMirror = Boolean.valueOf(pc.player.getPosition().getX() < x);
-	                if (mirror != currMirror) {
-	                    if (mirror == null) {
-	                        mirror = currMirror;
-	                    } else {
-                            mirror = null;
-                            break;
-	                    }
-                    }
-	            }
-	            if (mirror != null) {
-	                setMirror(mirror.booleanValue());
+	            switch (timerMode) {
+	                case 0 :
+	                    setView(def.attack);
+	                    timer = 15;
+	                    timerMode = 1;
+	                    break;
+	                case 1 :
+	                    initTimer(2);
+	                    PlatformGame.room.addActor(new Projectile(PlatformGame.projectile1, this, Mathtil.rand(PlatformGame.pcs).player));
+	                    break;
+	                case 2 :
+	                    stepTeleport();
+	                    break;
 	            }
 	        }
 	    }
 	    return false;
+	}
+	
+	private final void stepTeleport() {
+	    setView(def.walk);
+	    initTimer(0);
+        teleport(Mathtil.randi(1, 8) * ImtilX.DIM);
+        Boolean mirror = null;
+        final float x = getPosition().getX();
+        for (final PlayerContext pc : PlatformGame.pcs) {
+            final Boolean currMirror = Boolean.valueOf(pc.player.getPosition().getX() < x);
+            if (mirror != currMirror) {
+                if (mirror == null) {
+                    mirror = currMirror;
+                } else {
+                    mirror = null;
+                    break;
+                }
+            }
+        }
+        if (mirror != null) {
+            setMirror(mirror.booleanValue());
+        }
 	}
 	
 	protected final boolean onStomp(final Player stomper) {
