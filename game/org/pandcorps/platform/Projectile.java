@@ -24,9 +24,10 @@ package org.pandcorps.platform;
 
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
+import org.pandcorps.pandam.event.boundary.*;
 import org.pandcorps.pandax.*;
 
-public final class Projectile extends Pandy implements Collidable {
+public final class Projectile extends Pandy implements Collidable, AllOobListener {
     public Projectile(final Panimation anm, final Panctor src, final Panctor dst) {
         setView(anm);
         final Panple spos = src.getPosition(), dpos = dst.getPosition(), vel = getVelocity();
@@ -34,5 +35,10 @@ public final class Projectile extends Pandy implements Collidable {
         PlatformGame.setPosition(this, x, y, PlatformGame.DEPTH_SPARK);
         vel.set(dpos.getX() - x, dpos.getY() + 6 - y, 0);
         vel.multiply(2f / ((float) vel.getMagnitude2()));
+    }
+    
+    @Override
+    public final void onAllOob(final AllOobEvent event) {
+        destroy();
     }
 }
