@@ -48,6 +48,7 @@ public final class LwjglPangine extends Pangine {
 
 	private LwjglPangine() {
 		engine = this;
+		GL = new LwjglPangl();
 	}
 
 	public final static LwjglPangine getEngine() {

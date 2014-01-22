@@ -39,6 +39,8 @@ import org.pandcorps.pandam.impl.*;
 // Pandam Engine
 public abstract class Pangine {
 	public final static String PROP_IMPL = "org.pandcorps.pandam.engineImpl";
+	
+	public static Pangl GL = null;
 
 	protected static Pangine engine = null;
 
