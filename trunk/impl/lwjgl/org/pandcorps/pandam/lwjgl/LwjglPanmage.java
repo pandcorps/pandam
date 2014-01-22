@@ -22,21 +22,14 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandam.lwjgl;
 
-import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
-//import java.awt.image.DataBufferByte;
-//import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
-import java.util.IdentityHashMap;
+import java.awt.image.*;
+import java.nio.*;
+import java.util.*;
 
-//import javax.imageio.ImageIO;
-import org.lwjgl.opengl.GL11;
 import org.pandcorps.core.*;
 import org.pandcorps.core.img.scale.*;
 import org.pandcorps.pandam.*;
-import org.pandcorps.pandam.impl.UnmodPanple;
+import org.pandcorps.pandam.impl.*;
 
 public final class LwjglPanmage extends Panmage {
 	private final static int NULL_TID = 0;
@@ -175,14 +168,15 @@ public final class LwjglPanmage extends Panmage {
 
 		// Create A IntBuffer For Image Address In Memory
 		final IntBuffer buf = Pantil.allocateDirectIntBuffer(1);
-		GL11.glGenTextures(buf); // Create Texture In OpenGL
+		final Pangl gl = Pangine.GL;
+		gl.glGenTextures(buf); // Create Texture In OpenGL
 		// Create Nearest Filtered Texture
 		final int tid = buf.get(0);
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, tid);
-		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
-		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
-		GL11.glTexImage2D(
-			GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, w, h, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE,
+		gl.glBindTexture(gl.GL_TEXTURE_2D, tid);
+		gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_NEAREST);
+		gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MIN_FILTER, gl.GL_NEAREST);
+		gl.glTexImage2D(
+			gl.GL_TEXTURE_2D, 0, gl.GL_RGBA, w, h, 0, gl.GL_RGBA, gl.GL_UNSIGNED_BYTE,
 			scratch);
 		
 		return new Texture(_img.getWidth(), _img.getHeight(), padded.getWidth(), tid);
@@ -278,17 +272,18 @@ public final class LwjglPanmage extends Panmage {
 	    final FloatChain t = l.t;
 	    final int numTexCoords = t.getSize();
 	    if (numTexCoords > 0) {
-    	    GL11.glLoadIdentity();
-    	    GL11.glBindTexture(GL11.GL_TEXTURE_2D, tid);
-    	    //GL11.glColor3b((byte) 0, (byte) 0, Byte.MAX_VALUE); // Kind of works to make everything blue
+	    	final Pangl gl = Pangine.GL;
+    	    gl.glLoadIdentity();
+    	    gl.glBindTexture(gl.GL_TEXTURE_2D, tid);
+    	    //gl.glColor3b((byte) 0, (byte) 0, Byte.MAX_VALUE); // Kind of works to make everything blue
     	    final FloatBuffer tb = t.getBuffer();
     	    tb.rewind();
-    	    GL11.glTexCoordPointer(2, 0, tb);
+    	    gl.glTexCoordPointer(2, 0, tb);
     	    final FloatBuffer vb = l.v.getBuffer();
     	    vb.rewind();
-            GL11.glVertexPointer(3, 0, vb);
-            //GL11.glDrawElements(GL11.GL_QUADS, wrap(i)); // Allows you to specify the index of a single vertex multiple times, less total vertices required
-            GL11.glDrawArrays(GL11.GL_QUADS, 0, numTexCoords / 2); // Number of vertices
+            gl.glVertexPointer(3, 0, vb);
+            //gl.glDrawElements(gl.GL_QUADS, wrap(i)); // Allows you to specify the index of a single vertex multiple times, less total vertices required
+            gl.glDrawArrays(gl.GL_QUADS, 0, numTexCoords / 2); // Number of vertices
 	    }
 	}
 
@@ -297,33 +292,33 @@ public final class LwjglPanmage extends Panmage {
 		//final float ix, final float iy, final float iw, final float ih) {
         final float ix, final float iy, final float iw, final float ih, final int rot, final boolean mirror, final boolean flip) {
 		//final boolean mirror = true;
-		//GL11.glLoadIdentity();
-		//GL11.glTranslatef(x, y, z);
+		//gl.glLoadIdentity();
+		//gl.glTranslatef(x, y, z);
 		// Might be better to store rounded values whenever they are changed
-		//GL11.glTranslatef(Math.round(x), Math.round(y), z);
-		//GL11.glRotatef(rotation, 0f, 0f, 1f);
+		//gl.glTranslatef(Math.round(x), Math.round(y), z);
+		//gl.glRotatef(rotation, 0f, 0f, 1f);
 
-		//GL11.glBindTexture(GL11.GL_TEXTURE_2D, tid);
+		//gl.glBindTexture(gl.GL_TEXTURE_2D, tid);
 		
 		/*
-		GL11.glBegin(GL11.GL_QUADS); {
+		gl.glBegin(gl.GL_QUADS); {
 			final float left = ix / w;
 			final float right = (ix + iw) / w;
 			final float down = iy / h;
 			final float up = (iy + ih) / h;
-			GL11.glTexCoord2f(right, up);
-			GL11.glVertex2f(iw, 0);
+			gl.glTexCoord2f(right, up);
+			gl.glVertex2f(iw, 0);
 
-			GL11.glTexCoord2f(left, up);
-			GL11.glVertex2f(0, 0);
+			gl.glTexCoord2f(left, up);
+			gl.glVertex2f(0, 0);
 
-			GL11.glTexCoord2f(left, down);
-			GL11.glVertex2f(0, ih);
+			gl.glTexCoord2f(left, down);
+			gl.glVertex2f(0, ih);
 
-			GL11.glTexCoord2f(right, down);
-			GL11.glVertex2f(iw, ih);
+			gl.glTexCoord2f(right, down);
+			gl.glVertex2f(iw, ih);
 		}
-	   	GL11.glEnd();
+	   	gl.glEnd();
 	   	*/
 	   	
 	   	/*
@@ -347,10 +342,10 @@ public final class LwjglPanmage extends Panmage {
         t[6] = tright; t[7] = tdown;
         //v[6] = iw; v[7] = ih;
         v[6] = vright; v[7] = vdown;
-        GL11.glTexCoordPointer(2, 0, wrap(t));
-        GL11.glVertexPointer(2, 0, wrap(v));
-        //GL11.glDrawElements(GL11.GL_QUADS, wrap(i)); // Allows you to specify the index of a single vertex multiple times, less total vertices required
-        GL11.glDrawArrays(GL11.GL_QUADS, 0, 4); // Number of vertices
+        gl.glTexCoordPointer(2, 0, wrap(t));
+        gl.glVertexPointer(2, 0, wrap(v));
+        //gl.glDrawElements(gl.GL_QUADS, wrap(i)); // Allows you to specify the index of a single vertex multiple times, less total vertices required
+        gl.glDrawArrays(gl.GL_QUADS, 0, 4); // Number of vertices
         */
 	    
 	    final float tbleft = offx + ix / tw, tbright = offx + (ix + iw) / tw;
@@ -539,9 +534,9 @@ public final class LwjglPanmage extends Panmage {
 		if (tid == NULL_TID) {
 			return;
 		}
-	    //System.out.println("Closing " + tid + "; isTexture: " + GL11.glIsTexture(tid)); // true
-	    GL11.glDeleteTextures(tid);
-	    //System.out.println("Closed " + tid + "; isTexture: " + GL11.glIsTexture(tid)); // false, and no longer displayed
+	    //System.out.println("Closing " + tid + "; isTexture: " + gl.glIsTexture(tid)); // true
+	    Pangine.GL.glDeleteTextures(tid);
+	    //System.out.println("Closed " + tid + "; isTexture: " + gl.glIsTexture(tid)); // false, and no longer displayed
 	    tid = NULL_TID;
     }
 }
