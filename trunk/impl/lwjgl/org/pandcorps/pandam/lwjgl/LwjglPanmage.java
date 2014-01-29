@@ -31,6 +31,7 @@ import org.pandcorps.core.img.scale.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.impl.*;
 
+//TODO Rename to GlPanmage, move to src/pandam/impl
 public final class LwjglPanmage extends Panmage {
 	private final static int NULL_TID = 0;
 	private final int w;
@@ -168,7 +169,7 @@ public final class LwjglPanmage extends Panmage {
 
 		// Create A IntBuffer For Image Address In Memory
 		final IntBuffer buf = Pantil.allocateDirectIntBuffer(1);
-		final Pangl gl = Pangine.GL;
+		final Pangl gl = Pangine.gl;
 		gl.glGenTextures(buf); // Create Texture In OpenGL
 		// Create Nearest Filtered Texture
 		final int tid = buf.get(0);
@@ -272,7 +273,7 @@ public final class LwjglPanmage extends Panmage {
 	    final FloatChain t = l.t;
 	    final int numTexCoords = t.getSize();
 	    if (numTexCoords > 0) {
-	    	final Pangl gl = Pangine.GL;
+	    	final Pangl gl = Pangine.gl;
     	    gl.glLoadIdentity();
     	    gl.glBindTexture(gl.GL_TEXTURE_2D, tid);
     	    //gl.glColor3b((byte) 0, (byte) 0, Byte.MAX_VALUE); // Kind of works to make everything blue
@@ -535,7 +536,7 @@ public final class LwjglPanmage extends Panmage {
 			return;
 		}
 	    //System.out.println("Closing " + tid + "; isTexture: " + gl.glIsTexture(tid)); // true
-	    Pangine.GL.glDeleteTextures(tid);
+	    Pangine.gl.glDeleteTextures(tid);
 	    //System.out.println("Closed " + tid + "; isTexture: " + gl.glIsTexture(tid)); // false, and no longer displayed
 	    tid = NULL_TID;
     }

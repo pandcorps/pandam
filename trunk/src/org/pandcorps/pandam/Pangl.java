@@ -26,33 +26,93 @@ import java.nio.*;
 
 // Pandam OpenGL interface
 public abstract class Pangl {
+	public final int GL_ALPHA_TEST;
+	public final int GL_BLEND;
+	public final int GL_COLOR_BUFFER_BIT;
+	public final int GL_DEPTH_BUFFER_BIT;
+	public final int GL_DEPTH_TEST;
+	public final int GL_GREATER;
+	public final int GL_LESS;
+	public final int GL_MODELVIEW;
 	public final int GL_NEAREST;
+	public final int GL_ONE_MINUS_SRC_ALPHA;
+	public final int GL_PROJECTION;
 	public final int GL_QUADS;
+	public final int GL_RGB;
 	public final int GL_RGBA;
+	public final int GL_SRC_ALPHA;
 	public final int GL_TEXTURE_2D;
+	public final int GL_TEXTURE_COORD_ARRAY;
 	public final int GL_TEXTURE_MAG_FILTER;
 	public final int GL_TEXTURE_MIN_FILTER;
 	public final int GL_UNSIGNED_BYTE;
+	public final int GL_VERTEX_ARRAY;
 	
-	protected Pangl(final int GL_NEAREST, final int GL_QUADS, final int GL_RGBA, final int GL_TEXTURE_2D, final int GL_TEXTURE_MAG_FILTER, final int GL_TEXTURE_MIN_FILTER, final int GL_UNSIGNED_BYTE) {
+	protected Pangl(final int GL_ALPHA_TEST, final int GL_BLEND, final int GL_COLOR_BUFFER_BIT, final int GL_DEPTH_BUFFER_BIT, final int GL_DEPTH_TEST, final int GL_GREATER, final int GL_LESS, final int GL_MODELVIEW, final int GL_NEAREST, final int GL_ONE_MINUS_SRC_ALPHA, final int GL_PROJECTION, final int GL_QUADS, final int GL_RGB, final int GL_RGBA, final int GL_SRC_ALPHA, final int GL_TEXTURE_2D, final int GL_TEXTURE_COORD_ARRAY, final int GL_TEXTURE_MAG_FILTER, final int GL_TEXTURE_MIN_FILTER, final int GL_UNSIGNED_BYTE, final int GL_VERTEX_ARRAY) {
+		this.GL_ALPHA_TEST = GL_ALPHA_TEST;
+		this.GL_BLEND = GL_BLEND;
+		this.GL_COLOR_BUFFER_BIT = GL_COLOR_BUFFER_BIT;
+		this.GL_DEPTH_BUFFER_BIT = GL_DEPTH_BUFFER_BIT;
+		this.GL_DEPTH_TEST = GL_DEPTH_TEST;
+		this.GL_GREATER = GL_GREATER;
+		this.GL_LESS = GL_LESS;
+		this.GL_MODELVIEW = GL_MODELVIEW;
 		this.GL_NEAREST = GL_NEAREST;
+		this.GL_ONE_MINUS_SRC_ALPHA = GL_ONE_MINUS_SRC_ALPHA;
+		this.GL_PROJECTION = GL_PROJECTION;
 		this.GL_QUADS = GL_QUADS;
+		this.GL_RGB = GL_RGB;
 		this.GL_RGBA = GL_RGBA;
+		this.GL_SRC_ALPHA = GL_SRC_ALPHA;
 		this.GL_TEXTURE_2D = GL_TEXTURE_2D;
+		this.GL_TEXTURE_COORD_ARRAY = GL_TEXTURE_COORD_ARRAY;
 		this.GL_TEXTURE_MAG_FILTER = GL_TEXTURE_MAG_FILTER;
 		this.GL_TEXTURE_MIN_FILTER = GL_TEXTURE_MIN_FILTER;
 		this.GL_UNSIGNED_BYTE = GL_UNSIGNED_BYTE;
+		this.GL_VERTEX_ARRAY = GL_VERTEX_ARRAY;
 	}
+	
+	public abstract void glAlphaFunc(final int func, final float ref);
 	
 	public abstract void glBindTexture(final int target, final int texture);
 	
+	public abstract void glBlendFunc(final int sfactor, final int dfactor);
+	
+	public abstract void glClear(final int mask);
+	
+	public abstract void glClearColor(final float red, final float green, final float blue, final float alpha);
+	
+	public abstract void glClearDepth(final double depth);
+	
+	public abstract void glColor4b(final byte red, final byte green, final byte blue, final byte alpha);
+	
 	public abstract void glDeleteTextures(final int texture);
 	
+	public abstract void glDepthFunc(final int func);
+	
+	public abstract void glDepthMask(final boolean flag);
+	
+	public abstract void glDisable(final int cap);
+	
+	public abstract void glDisableClientState(final int cap);
+	
 	public abstract void glDrawArrays(final int mode, final int first, final int count);
+	
+	public abstract void glEnable(final int cap);
+	
+	public abstract void glEnableClientState(final int cap);
 	
 	public abstract void glGenTextures(final IntBuffer textures);
 	
 	public abstract void glLoadIdentity();
+	
+	public abstract void glMatrixMode(final int mode);
+	
+	public abstract void glOrtho(final double left, final double right, final double bottom, final double top,
+			final double zNear, final double zFar);
+	
+	public abstract void glReadPixels(final int x, final int y, final int width, final int height,
+			final int format, final int type, final ByteBuffer pixels);
 	
 	public abstract void glTexCoordPointer(final int size, final int stride, final FloatBuffer pointer);
 	

@@ -28,7 +28,6 @@ import java.util.*;
 
 import org.lwjgl.input.*;
 import org.lwjgl.opengl.*;
-//import org.lwjgl.util.glu.*;
 import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
 import org.pandcorps.pandam.*;
@@ -48,7 +47,7 @@ public final class LwjglPangine extends Pangine {
 
 	private LwjglPangine() {
 		engine = this;
-		GL = new LwjglPangl();
+		gl = new LwjglPangl();
 	}
 
 	public final static LwjglPangine getEngine() {
@@ -181,24 +180,24 @@ public final class LwjglPangine extends Pangine {
 	        Mouse.setCursorPosition(0, 0);
 	    }
 
-		GL11.glEnable(GL11.GL_TEXTURE_2D); // Enable Texture Mapping
+		gl.glEnable(gl.GL_TEXTURE_2D); // Enable Texture Mapping
 		setBgColor();
 		
-		GL11.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
-		GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
+		gl.glEnableClientState(gl.GL_TEXTURE_COORD_ARRAY);
+		gl.glEnableClientState(gl.GL_VERTEX_ARRAY);
 		
-		//GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
+		//gl.glPolygonMode(gl.GL_FRONT_AND_BACK, gl.GL_FILL);
 
-		//GL11.glClearDepth(Double.NEGATIVE_INFINITY); // Depth Buffer Setup
-		GL11.glClearDepth(Double.MAX_VALUE);
-		GL11.glEnable(GL11.GL_DEPTH_TEST); // Enables Depth Testing
-		GL11.glDepthFunc(GL11.GL_LESS);
-		//GL11.glDepthFunc(GL11.GL_GREATER);
-		GL11.glDepthMask(true);
+		//gl.glClearDepth(Double.NEGATIVE_INFINITY); // Depth Buffer Setup
+		gl.glClearDepth(Double.MAX_VALUE);
+		gl.glEnable(gl.GL_DEPTH_TEST); // Enables Depth Testing
+		gl.glDepthFunc(gl.GL_LESS);
+		//gl.glDepthFunc(gl.GL_GREATER);
+		gl.glDepthMask(true);
 
-		//GL11.glEnable(GL11.GL_BLEND); // Needed?
-		GL11.glEnable(GL11.GL_ALPHA_TEST);
-		GL11.glAlphaFunc(GL11.GL_GREATER, 0);
+		//gl.glEnable(gl.GL_BLEND); // Needed?
+		gl.glEnable(gl.GL_ALPHA_TEST);
+		gl.glAlphaFunc(gl.GL_GREATER, 0);
 		
 		Controllers.create();
 		final int cs = Controllers.getControllerCount();
@@ -472,7 +471,7 @@ public final class LwjglPangine extends Pangine {
 			//final int w2 = w / 4, h2 = h / 4;
 			//final float w2 = wz / 2, h2 = hz / 2;
 			// Does this work if w or h is odd?
-			//GL11.glOrtho(x - w2, x + w2, y - h2, y + h2, near, far);
+			//gl.glOrtho(x - w2, x + w2, y - h2, y + h2, near, far);
 			final Panple lsize = layer.getSize();
 			checkCamRange(x, ox, wz, lsize.getX());
 			final float xc1 = cr[0], xc2 = cr[1];
@@ -484,13 +483,13 @@ public final class LwjglPangine extends Pangine {
 	
 	private final void camera(final Panlayer layer) {
 //if (layer.getClass() != Panroom.class) return;
-		GL11.glMatrixMode(GL11.GL_PROJECTION); // Select The Projection Matrix
-		GL11.glLoadIdentity(); // Reset The Projection Matrix
+		gl.glMatrixMode(gl.GL_PROJECTION); // Select The Projection Matrix
+		gl.glLoadIdentity(); // Reset The Projection Matrix
 		//GLU.gluOrtho2D(-w / 2, w / 2, -h / 2, h / 2);
 		//GLU.gluOrtho2D(0, w, 0, h);
 		cam(layer);
-		//GL11.glOrtho(0, w, 0, h, -maxDimension, maxDimension);
-		GL11.glMatrixMode(GL11.GL_MODELVIEW);		
+		//gl.glOrtho(0, w, 0, h, -maxDimension, maxDimension);
+		gl.glMatrixMode(gl.GL_MODELVIEW);		
 	}
 	
 	private final static int formatCam(final float c) {
@@ -500,10 +499,10 @@ public final class LwjglPangine extends Pangine {
 	private void cam(final Panlayer layer) {
 		final Camera c = cams.get(layer);
 		final float xi = c.xi, xa = c.xa, yi = c.yi, ya = c.ya, zi = c.zi, za = c.za;
-		GL11.glOrtho(xi, xa, yi, ya, zi, za);
-		//GL11.glOrtho((int) xi, (int) xa, (int) yi, (int) ya, zi, za);
+		gl.glOrtho(xi, xa, yi, ya, zi, za);
+		//gl.glOrtho((int) xi, (int) xa, (int) yi, (int) ya, zi, za);
 		// Formatted in Camera constructor
-		//GL11.glOrtho(formatCam(xi), formatCam(xa), formatCam(yi), formatCam(ya), zi, za);
+		//gl.glOrtho(formatCam(xi), formatCam(xa), formatCam(yi), formatCam(ya), zi, za);
 		getRawViewMinimum(layer).set(xi, yi, zi);
 		getRawViewMaximum(layer).set(xa, ya, za);
 	}
@@ -531,7 +530,7 @@ public final class LwjglPangine extends Pangine {
 	}
 
 	private final void draw() {
-		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
+		gl.glClear(gl.GL_COLOR_BUFFER_BIT);
 		final Panroom room = Pangame.getGame().getCurrentRoom();
 		cams.clear();
 		for (Panlayer layer = room.getBase(); layer != null; layer = layer.getAbove()) {
@@ -543,7 +542,7 @@ public final class LwjglPangine extends Pangine {
 		if (screenShotDst != null) {
 		    final ByteBuffer buf = Pantil.allocateDirectByteBuffer(w * h * 3);
 		    //buf.rewind();
-		    GL11.glReadPixels(0, 0, w, h, GL11.GL_RGB, GL11.GL_UNSIGNED_BYTE, buf); // Could read each frame and filter, but very slow
+		    gl.glReadPixels(0, 0, w, h, gl.GL_RGB, gl.GL_UNSIGNED_BYTE, buf); // Could read each frame and filter, but very slow
 		    final String dst;
 		    if (screenShotInd >= 0) {
 		    	dst = screenShotDst + screenShotInd + ".png";
@@ -564,7 +563,7 @@ public final class LwjglPangine extends Pangine {
 	            throw new UnsupportedOperationException("Don't clear depth if not visible");
 	        }
 //if (room instanceof Panroom) {
-	        GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
+	        gl.glClear(gl.GL_DEPTH_BUFFER_BIT);
 //}
 	    }
 	    if (!visible) {
@@ -605,13 +604,13 @@ public final class LwjglPangine extends Pangine {
 	    if (a == 0) {
 	        return;
 	    }
-	    GL11.glLoadIdentity();
-	    GL11.glDisable(GL11.GL_DEPTH_TEST);
-	    GL11.glDisable(GL11.GL_TEXTURE_2D);
-	    GL11.glDisableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
-	    GL11.glEnable(GL11.GL_BLEND);
-	    GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GL11.glColor4b(toByte(color.getR()), toByte(color.getG()), toByte(color.getB()), toByte(a));
+	    gl.glLoadIdentity();
+	    gl.glDisable(gl.GL_DEPTH_TEST);
+	    gl.glDisable(gl.GL_TEXTURE_2D);
+	    gl.glDisableClientState(gl.GL_TEXTURE_COORD_ARRAY);
+	    gl.glEnable(gl.GL_BLEND);
+	    gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA);
+        gl.glColor4b(toByte(color.getR()), toByte(color.getG()), toByte(color.getB()), toByte(a));
         //final int maxx = 256, maxy = 192;
         final Camera c = cams.get(room);
 		final float minx = c.xi, maxx = c.xa, miny = c.yi, maxy = c.ya, z = c.za;
@@ -629,14 +628,14 @@ public final class LwjglPangine extends Pangine {
         blendRectangle.put(miny);
         blendRectangle.put(z);
         blendRectangle.rewind();
-        //GL11.glDrawElements(GL11.GL_QUADS, blendRectangle); array of indices into other arrays
-        GL11.glVertexPointer(3, 0, blendRectangle);
-        GL11.glDrawArrays(GL11.GL_QUADS, 0, 4); // Number of vertices
-        GL11.glColor4b(Byte.MAX_VALUE, Byte.MAX_VALUE, Byte.MAX_VALUE, Byte.MAX_VALUE);
-        GL11.glDisable(GL11.GL_BLEND);
-        GL11.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
+        //gl.glDrawElements(gl.GL_QUADS, blendRectangle); array of indices into other arrays
+        gl.glVertexPointer(3, 0, blendRectangle);
+        gl.glDrawArrays(gl.GL_QUADS, 0, 4); // Number of vertices
+        gl.glColor4b(Byte.MAX_VALUE, Byte.MAX_VALUE, Byte.MAX_VALUE, Byte.MAX_VALUE);
+        gl.glDisable(gl.GL_BLEND);
+        gl.glEnableClientState(gl.GL_TEXTURE_COORD_ARRAY);
+        gl.glEnable(gl.GL_TEXTURE_2D);
+        gl.glEnable(gl.GL_DEPTH_TEST);
 	}
 
 	private final void onAction(final Panput input) {
@@ -695,14 +694,14 @@ public final class LwjglPangine extends Pangine {
 	}
 	
 	private final void setBgColor() {
-	    GL11.glClearColor(clr, clg, clb, cla);
+	    gl.glClearColor(clr, clg, clb, cla);
 	}
 
 	@Override
 	public final void exit() {
 		running = false;
-		GL11.glDisableClientState(GL11.GL_VERTEX_ARRAY);
-        GL11.glDisableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
+		gl.glDisableClientState(gl.GL_VERTEX_ARRAY);
+        gl.glDisableClientState(gl.GL_TEXTURE_COORD_ARRAY);
         getMusic().close();
 	}
 }
