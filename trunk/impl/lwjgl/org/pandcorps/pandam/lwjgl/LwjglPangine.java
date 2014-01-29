@@ -138,10 +138,7 @@ public final class LwjglPangine extends Pangine {
 	    return fullScreen;
 	}
 
-	@Override
-	//protected final void start() throws Exception {
-	protected final void init() throws Exception {
-	    initialized = true;
+	protected final void initDisplay() throws Exception {
 	    if (fullScreen) {
 	        Display.setFullscreen(fullScreen);
 	        Mouse.setGrabbed(true); // Some games might use cursor; might also want to disable in Window; might expose in Pangine
@@ -179,7 +176,14 @@ public final class LwjglPangine extends Pangine {
 	        Mouse.setGrabbed(true);
 	        Mouse.setCursorPosition(0, 0);
 	    }
-
+	}
+	
+	@Override
+	//protected final void start() throws Exception {
+	protected final void init() throws Exception {
+	    initialized = true;
+	    initDisplay();
+	    
 		gl.glEnable(gl.GL_TEXTURE_2D); // Enable Texture Mapping
 		setBgColor();
 		
@@ -199,6 +203,10 @@ public final class LwjglPangine extends Pangine {
 		gl.glEnable(gl.GL_ALPHA_TEST);
 		gl.glAlphaFunc(gl.GL_GREATER, 0);
 		
+		initInput();
+	}
+	
+	protected void initInput() throws Exception {
 		Controllers.create();
 		final int cs = Controllers.getControllerCount();
 		for (int i = 0; i < cs; i++) {
@@ -210,8 +218,6 @@ public final class LwjglPangine extends Pangine {
 			}
 			addController(c.getName(), newButton("Left"), newButton("Right"), newButton("Up"), newButton("Down"), blist);
 		}
-
-		//new Thread(new Runnable() {public void run() {play();}}).start();
 	}
 
 	private boolean running = true;
@@ -221,126 +227,130 @@ public final class LwjglPangine extends Pangine {
 	    return actor == null ? true : actor.isActive();
 	}
 	
+	protected void stepControl() throws Exception {
+		Keyboard.poll();
+		Keyboard.enableRepeatEvents(false);
+		/*
+		System.out.println("REE " + Keyboard.areRepeatEventsEnabled());
+		System.out.println("EK  " + Keyboard.getEventKey());
+		System.out.println("EKS " + Keyboard.getEventKeyState());
+		for (int i = 0; i < 10; i++) {
+			System.out.println("N " + i + " " + Keyboard.next());
+		}
+		*/
+		/*
+		while (Keyboard.next()) {
+			System.out.println("EK " + f + " " + Keyboard.getEventKey() + Keyboard.getEventKeyState());
+		}
+		*/
+		if (/*Keyboard.isKeyDown(Keyboard.KEY_ESCAPE) ||*/ Display.isCloseRequested()) {
+			exit();
+		}
+		
+		// We can tell when caps lock pressed, but not whether it was enabled before app started
+		//Keyboard.isCapsLock() // can't see anything like this
+		//org.lwjgl.input.Controller/Contrllers/Cursor/Mouse // can't find anything else
+		//javax.swing.KeyStroke // can't find anything in this area
+
+		while (Keyboard.next()) {
+			final Key key = interaction.getKey(Keyboard.getEventKey());
+			//System.out.println(key.getIndex());
+			//System.out.println(Keyboard.getEventCharacter());
+			//System.out.println(Keyboard.getKeyName(key.getIndex()));
+			//System.out.println(java.awt.AWTKeyStroke.getAWTKeyStroke(key.getIndex(), 0).getKeyChar()); // Always '?'
+			//System.out.println(java.awt.AWTKeyStroke.getAWTKeyStroke(key.getIndex(), java.awt.event.InputEvent.BUTTON1_DOWN_MASK).getKeyChar()); // Always '?'
+			//System.out.println(javax.swing.KeyStroke.getKeyStroke(key.getIndex(), java.awt.event.InputEvent.BUTTON1_DOWN_MASK).getKeyChar()); // Always '?'
+			final boolean active = Keyboard.getEventKeyState();
+			if (active) {
+			    if (key == interaction.KEY_CAPS_LOCK) {
+			        capsLock = !capsLock;
+			    } else if (key == interaction.KEY_INS) {
+			        /*
+			         * Insert isn't a system setting like caps lock.
+			         * You can enable Insert in one app,
+			         * then go to another app,
+			         * and it won't be enabled there.
+			         */
+			        ins = !ins;
+			    } else if (key.isLetter()) {
+			        // Using Keyboard methods instead of Pandam methods
+			        // to prevent circular calls
+			        capsLock = Character.isUpperCase(Keyboard.getEventCharacter());
+			        if (Keyboard.isKeyDown(interaction.IND_SHIFT_LEFT) || Keyboard.isKeyDown(interaction.IND_SHIFT_RIGHT)) {
+			            capsLock = !capsLock;
+			        }
+			    }
+			}
+			activate(key, active);
+			//System.out.println("EK " + f + " " + Keyboard.getEventKey() + Keyboard.getEventKeyState());
+		}
+		
+		Controllers.poll();
+		while (Controllers.next()) {
+			final Button button;
+			final boolean a;
+			final Controller src = Controllers.getEventSource();
+			final Panteraction.Controller pc = interaction.CONTROLLERS.get(src.getIndex());
+			/*System.out.println("Name: " + src.getName()
+					+ "; AxisCount: " + src.getAxisCount() + "; ButtonCount: " + src.getButtonCount());
+			System.out.println("Axis: " + Controllers.isEventAxis()
+					+ "; X: " + Controllers.isEventXAxis() + "; Y: " + Controllers.isEventYAxis()
+					+ "; PX: " + Controllers.isEventPovX() + "; PY: " + Controllers.isEventPovY()
+					+ "; Btn: " + Controllers.isEventButton() + "; Ind: " + Controllers.getEventControlIndex());*/
+			if (Controllers.isEventButton()) {
+				final int ind = Controllers.getEventControlIndex();
+				button = pc.BUTTONS.get(ind);
+				a = src.isButtonPressed(ind);
+			} else {
+				final float val;
+				final Button pos, neg;
+				final boolean simple = src.getAxisCount() <= 2;
+				if (simple && Controllers.isEventXAxis()) {
+					val = src.getXAxisValue();
+					pos = pc.RIGHT;
+					neg = pc.LEFT;
+				} else if (simple && Controllers.isEventYAxis()) {
+					val = src.getYAxisValue();
+					pos = pc.DOWN;
+					neg = pc.UP;
+				} else if (Controllers.isEventPovX()) {
+					val = src.getPovX();
+					pos = pc.RIGHT;
+					neg = pc.LEFT;
+				} else if (Controllers.isEventPovY()) {
+					val = src.getPovY();
+					pos = pc.DOWN;
+					neg = pc.UP;
+				} else {
+					continue;
+				}
+				if (val > 0) {
+					button = pos;
+					// Check for immediate direction change without releasing axis
+					activate(Pantil.nvl(Coltil.has(active, neg), Coltil.has(newActive, neg)), false);
+					a = true;
+				} else if (val < 0) {
+					button = neg;
+					activate(Pantil.nvl(Coltil.has(active, pos), Coltil.has(newActive, pos)), false);
+					a = true;
+				} else {
+					button = Pantil.nvl(Coltil.has(active, pos), Coltil.has(active, neg), Coltil.has(newActive, pos), Coltil.has(newActive, neg));
+					a = false;
+				}
+			}
+			activate(button, a);
+		}
+		Controllers.clearEvents();
+	}
+	
 	@Override
 	protected final void start() throws Exception {
 		while (running) {
 			//final long frameStart = System.currentTimeMillis();
 		    final long frameStartNano = System.nanoTime();
 			//System.out.println(System.currentTimeMillis());
-			Keyboard.poll();
-			Keyboard.enableRepeatEvents(false);
-			/*
-			System.out.println("REE " + Keyboard.areRepeatEventsEnabled());
-			System.out.println("EK  " + Keyboard.getEventKey());
-			System.out.println("EKS " + Keyboard.getEventKeyState());
-			for (int i = 0; i < 10; i++) {
-				System.out.println("N " + i + " " + Keyboard.next());
-			}
-			*/
-			/*
-			while (Keyboard.next()) {
-				System.out.println("EK " + f + " " + Keyboard.getEventKey() + Keyboard.getEventKeyState());
-			}
-			*/
-			if (/*Keyboard.isKeyDown(Keyboard.KEY_ESCAPE) ||*/ Display.isCloseRequested()) {
-				exit();
-			}
-			
-			// We can tell when caps lock pressed, but not whether it was enabled before app started
-			//Keyboard.isCapsLock() // can't see anything like this
-			//org.lwjgl.input.Controller/Contrllers/Cursor/Mouse // can't find anything else
-			//javax.swing.KeyStroke // can't find anything in this area
-
-			while (Keyboard.next()) {
-				final Key key = interaction.getKey(Keyboard.getEventKey());
-				//System.out.println(key.getIndex());
-				//System.out.println(Keyboard.getEventCharacter());
-				//System.out.println(Keyboard.getKeyName(key.getIndex()));
-				//System.out.println(java.awt.AWTKeyStroke.getAWTKeyStroke(key.getIndex(), 0).getKeyChar()); // Always '?'
-				//System.out.println(java.awt.AWTKeyStroke.getAWTKeyStroke(key.getIndex(), java.awt.event.InputEvent.BUTTON1_DOWN_MASK).getKeyChar()); // Always '?'
-				//System.out.println(javax.swing.KeyStroke.getKeyStroke(key.getIndex(), java.awt.event.InputEvent.BUTTON1_DOWN_MASK).getKeyChar()); // Always '?'
-				final boolean active = Keyboard.getEventKeyState();
-				if (active) {
-				    if (key == interaction.KEY_CAPS_LOCK) {
-				        capsLock = !capsLock;
-				    } else if (key == interaction.KEY_INS) {
-				        /*
-				         * Insert isn't a system setting like caps lock.
-				         * You can enable Insert in one app,
-				         * then go to another app,
-				         * and it won't be enabled there.
-				         */
-				        ins = !ins;
-				    } else if (key.isLetter()) {
-				        // Using Keyboard methods instead of Pandam methods
-				        // to prevent circular calls
-				        capsLock = Character.isUpperCase(Keyboard.getEventCharacter());
-				        if (Keyboard.isKeyDown(interaction.IND_SHIFT_LEFT) || Keyboard.isKeyDown(interaction.IND_SHIFT_RIGHT)) {
-				            capsLock = !capsLock;
-				        }
-				    }
-				}
-				activate(key, active);
-				//System.out.println("EK " + f + " " + Keyboard.getEventKey() + Keyboard.getEventKeyState());
-			}
-			
-			Controllers.poll();
-			while (Controllers.next()) {
-				final Button button;
-				final boolean a;
-				final Controller src = Controllers.getEventSource();
-				final Panteraction.Controller pc = interaction.CONTROLLERS.get(src.getIndex());
-				/*System.out.println("Name: " + src.getName()
-						+ "; AxisCount: " + src.getAxisCount() + "; ButtonCount: " + src.getButtonCount());
-				System.out.println("Axis: " + Controllers.isEventAxis()
-						+ "; X: " + Controllers.isEventXAxis() + "; Y: " + Controllers.isEventYAxis()
-						+ "; PX: " + Controllers.isEventPovX() + "; PY: " + Controllers.isEventPovY()
-						+ "; Btn: " + Controllers.isEventButton() + "; Ind: " + Controllers.getEventControlIndex());*/
-				if (Controllers.isEventButton()) {
-					final int ind = Controllers.getEventControlIndex();
-					button = pc.BUTTONS.get(ind);
-					a = src.isButtonPressed(ind);
-				} else {
-					final float val;
-					final Button pos, neg;
-					final boolean simple = src.getAxisCount() <= 2;
-					if (simple && Controllers.isEventXAxis()) {
-						val = src.getXAxisValue();
-						pos = pc.RIGHT;
-						neg = pc.LEFT;
-					} else if (simple && Controllers.isEventYAxis()) {
-						val = src.getYAxisValue();
-						pos = pc.DOWN;
-						neg = pc.UP;
-					} else if (Controllers.isEventPovX()) {
-						val = src.getPovX();
-						pos = pc.RIGHT;
-						neg = pc.LEFT;
-					} else if (Controllers.isEventPovY()) {
-						val = src.getPovY();
-						pos = pc.DOWN;
-						neg = pc.UP;
-					} else {
-						continue;
-					}
-					if (val > 0) {
-						button = pos;
-						// Check for immediate direction change without releasing axis
-						activate(Pantil.nvl(Coltil.has(active, neg), Coltil.has(newActive, neg)), false);
-						a = true;
-					} else if (val < 0) {
-						button = neg;
-						activate(Pantil.nvl(Coltil.has(active, pos), Coltil.has(newActive, pos)), false);
-						a = true;
-					} else {
-						button = Pantil.nvl(Coltil.has(active, pos), Coltil.has(active, neg), Coltil.has(newActive, pos), Coltil.has(newActive, neg));
-						a = false;
-					}
-				}
-				activate(button, a);
-			}
-			Controllers.clearEvents();
-			
+		    
+		    stepControl();
 			for (final Panput input : active) {
 				onAction(input);
 			}
@@ -361,6 +371,10 @@ public final class LwjglPangine extends Pangine {
                 throw new RuntimeException(e);
             }
 		}
+		destroy();
+	}
+	
+	protected void destroy() {
 		Display.destroy();
 		Controllers.destroy();
 	}
@@ -553,6 +567,10 @@ public final class LwjglPangine extends Pangine {
 		    }
 		    Imtil.save(Imtil.create(buf, w, h, BufferedImage.TYPE_INT_RGB), dst);
 		}
+		update();
+	}
+	
+	protected void update() {
 		Display.update();
 	}
 	
