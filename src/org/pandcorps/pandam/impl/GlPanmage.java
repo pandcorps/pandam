@@ -20,7 +20,7 @@ PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY
 TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 */
-package org.pandcorps.pandam.lwjgl;
+package org.pandcorps.pandam.impl;
 
 import java.awt.image.*;
 import java.nio.*;
@@ -29,10 +29,8 @@ import java.util.*;
 import org.pandcorps.core.*;
 import org.pandcorps.core.img.scale.*;
 import org.pandcorps.pandam.*;
-import org.pandcorps.pandam.impl.*;
 
-//TODO Rename to GlPanmage, move to src/pandam/impl
-public final class LwjglPanmage extends Panmage {
+public final class GlPanmage extends Panmage {
 	private final static int NULL_TID = 0;
 	private final int w;
 	private final int h;
@@ -184,7 +182,7 @@ public final class LwjglPanmage extends Panmage {
 ////
 	}
 	
-	private LwjglPanmage(final String id, final Panple origin,
+	private GlPanmage(final String id, final Panple origin,
 	                    final Panple boundMin, final Panple boundMax, final Texture tex) {
 	    super(id, origin, boundMin, boundMax);
 	    w = tex.usableWidth;
@@ -201,17 +199,17 @@ public final class LwjglPanmage extends Panmage {
 		th = tex.paddedSize;
 	}
 	
-	public LwjglPanmage(final String id, final Panple origin,
+	public GlPanmage(final String id, final Panple origin,
                         final Panple boundMin, final Panple boundMax, final String location) {
 	    this(id, origin, boundMin, boundMax, getTexture(location));
 	}
 	
-	public LwjglPanmage(final String id, final Panple origin,
+	public GlPanmage(final String id, final Panple origin,
                         final Panple boundMin, final Panple boundMax, final BufferedImage img) {
         this(id, origin, boundMin, boundMax, getTexture(img));
     }
 	
-	private LwjglPanmage(final String id, final Panple origin,
+	private GlPanmage(final String id, final Panple origin,
 	                     final Panple boundMin, final Panple boundMax,
 	                     final int tid, final int w, final int h,
 	                     final float offx, final float offy,
@@ -227,7 +225,7 @@ public final class LwjglPanmage extends Panmage {
         this.th = th;
 	}
 	
-	public final static LwjglPanmage[][] createSheet(final String prefix, final Panple origin,
+	public final static GlPanmage[][] createSheet(final String prefix, final Panple origin,
 	                                                 final Panple boundMin, final Panple boundMax,
 	                                                 final String location,
 	                                                 final int iw, final int ih) {
@@ -242,11 +240,11 @@ public final class LwjglPanmage extends Panmage {
         }
         final int tid = tex.tid;
         final int rows = th / ih, cols = tw / iw;
-        final LwjglPanmage[][] sheet = new LwjglPanmage[rows][cols];
+        final GlPanmage[][] sheet = new GlPanmage[rows][cols];
         for (int oy = 0; oy < rows; oy++) {
-            final LwjglPanmage[] row = sheet[oy];
+            final GlPanmage[] row = sheet[oy];
             for (int ox = 0; ox < cols; ox++) {
-                row[ox] = new LwjglPanmage(prefix + "-" + oy + "-" + ox, origin, boundMin, boundMax, tid, iw, ih, ((float) ox * iw) / tw, ((float) oy * ih) / th, tw, th);
+                row[ox] = new GlPanmage(prefix + "-" + oy + "-" + ox, origin, boundMin, boundMax, tid, iw, ih, ((float) ox * iw) / tw, ((float) oy * ih) / th, tw, th);
             }
         }
         //TODO group layers by texture if multiple images can use same texture
@@ -258,14 +256,14 @@ public final class LwjglPanmage extends Panmage {
 		return size;
 	}
 
-	/*package*/ final void clearAll() {
+	public final void clearAll() {
 	    for (final ImageLayer l : layers.values()) {
 	        l.t.clear();
 	        l.v.clear();
 	    }
 	}
 	
-	/*package*/ final void renderAll(final Panlayer layer) {
+	public final void renderAll(final Panlayer layer) {
 	    final ImageLayer l = layers.get(layer);
 	    if (l == null) {
 	        return;

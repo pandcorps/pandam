@@ -33,11 +33,12 @@ import org.pandcorps.core.img.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.Panput.*;
 import org.pandcorps.pandam.event.action.*;
+import org.pandcorps.pandam.impl.*;
 
 public final class LwjglPangine extends Pangine {
 	private static LwjglPangine engine = null;
 	private final static LwjglPanteraction interaction = new LwjglPanteraction();
-	private final static ArrayList<LwjglPanmage> images = new ArrayList<LwjglPanmage>();
+	private final static ArrayList<GlPanmage> images = new ArrayList<GlPanmage>();
 	private final HashSet<Panput> active = new HashSet<Panput>();
 	private final HashSet<Panput> newActive = new HashSet<Panput>();
 	private final FloatBuffer blendRectangle = Pantil.allocateDirectFloatBuffer(12);
@@ -56,14 +57,14 @@ public final class LwjglPangine extends Pangine {
 
 	@Override
 	protected final Panmage newImage(final String id, final Panple origin, final Panple boundMin, final Panple boundMax, final String location) throws Panception {
-		final LwjglPanmage image = new LwjglPanmage(id, origin, boundMin, boundMax, location);
+		final GlPanmage image = new GlPanmage(id, origin, boundMin, boundMax, location);
 		images.add(image);
 		return image;
 	}
 	
 	@Override
     protected final Panmage newImage(final String id, final Panple origin, final Panple boundMin, final Panple boundMax, final BufferedImage img) throws Panception {
-	    final LwjglPanmage image = new LwjglPanmage(id, origin, boundMin, boundMax, img);
+	    final GlPanmage image = new GlPanmage(id, origin, boundMin, boundMax, img);
         images.add(image);
         return image;
 	}
@@ -71,10 +72,10 @@ public final class LwjglPangine extends Pangine {
 	@Override
 	protected Panmage[][] newSheet(final String prefix, final Panple origin, final Panple boundMin, final Panple boundMax, final String location,
                                    final int iw, final int ih) throws Panception {
-	    final LwjglPanmage[][] sheet = LwjglPanmage.createSheet(prefix, origin, boundMin, boundMax, location, iw, ih);
+	    final GlPanmage[][] sheet = GlPanmage.createSheet(prefix, origin, boundMin, boundMax, location, iw, ih);
 	    //TODO should we keep track of textures, not images?
-	    for (final LwjglPanmage[] row : sheet) {
-	        for (final LwjglPanmage image : row) {
+	    for (final GlPanmage[] row : sheet) {
+	        for (final GlPanmage image : row) {
 	            images.add(image);
 	        }
 	    }
@@ -588,7 +589,7 @@ public final class LwjglPangine extends Pangine {
 	        return;
 	    }
 		camera(room); // Must be after step() for tracking to work right
-		for (final LwjglPanmage image : images) {
+		for (final GlPanmage image : images) {
             image.clearAll();
         }
 		if (room != null) {
@@ -599,7 +600,7 @@ public final class LwjglPangine extends Pangine {
 				}
 			}
 		}
-		for (final LwjglPanmage image : images) {
+		for (final GlPanmage image : images) {
 		    /*try { // Try to see if double buffering is enabled
                 Thread.sleep(30);
             } catch (final InterruptedException e) {
