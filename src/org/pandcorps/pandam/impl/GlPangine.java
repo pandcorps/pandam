@@ -51,6 +51,11 @@ public abstract class GlPangine extends Pangine {
 	}
 	
 	@Override
+	protected final Panplementation newImplementation(final Panctor actor) throws Panception {
+		return new ImplPanplementation(actor);
+	}
+	
+	@Override
 	protected final Panmage newImage(final String id, final Panple origin, final Panple boundMin, final Panple boundMax, final String location) throws Panception {
 		final GlPanmage image = new GlPanmage(id, origin, boundMin, boundMax, location);
 		images.add(image);

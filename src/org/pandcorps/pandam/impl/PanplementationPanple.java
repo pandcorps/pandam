@@ -20,14 +20,14 @@ PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY
 TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 */
-package org.pandcorps.pandam.lwjgl;
+package org.pandcorps.pandam.impl;
 
 import org.pandcorps.pandam.*;
 
-public final class LwjglPanple extends Panple {
-	private final LwjglPanplementation impl;
+public final class PanplementationPanple extends Panple {
+	private final ImplPanplementation impl;
 
-	/*package*/ LwjglPanple(final LwjglPanplementation impl) {
+	/*package*/ PanplementationPanple(final ImplPanplementation impl) {
 		this.impl = impl;
 	}
 
