@@ -47,11 +47,6 @@ public final class LwjglPangine extends GlPangine {
 	}
 
 	@Override
-	protected final Panplementation newImplementation(final Panctor actor) throws Panception {
-		return new LwjglPanplementation(actor);
-	}
-
-	@Override
     public final int getDesktopWidth() {
         return Display.getDesktopDisplayMode().getWidth();
     }

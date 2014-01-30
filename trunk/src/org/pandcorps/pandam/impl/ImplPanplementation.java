@@ -20,22 +20,22 @@ PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY
 TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 */
-package org.pandcorps.pandam.lwjgl;
+package org.pandcorps.pandam.impl;
 
 import org.pandcorps.pandam.*;
 
-public final class LwjglPanplementation extends Panplementation {
+public final class ImplPanplementation extends Panplementation {
 	/*package*/ float x = 0;
 	/*package*/ float y = 0;
 	/*package*/ float z = 0;
-	private final LwjglPanple pos = new LwjglPanple(this);
+	private final PanplementationPanple pos = new PanplementationPanple(this);
 	private boolean vis;
 	private int rot;
 	private boolean mirror;
 	private boolean flip;
 	private Panmage image = null;
 
-	public LwjglPanplementation(final Panctor actor) {
+	public ImplPanplementation(final Panctor actor) {
 		super(actor);
 
 		// Default values should probably be maintained in super class;
