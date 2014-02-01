@@ -282,7 +282,7 @@ public final class GlPanmage extends Panmage {
     	    vb.rewind();
             gl.glVertexPointer(3, 0, vb);
             //gl.glDrawElements(gl.GL_QUADS, wrap(i)); // Allows you to specify the index of a single vertex multiple times, less total vertices required
-            gl.glDrawArrays(gl.GL_QUADS, 0, numTexCoords / 2); // Number of vertices
+            gl.glDrawArrays(gl.isQuadSupported() ? gl.GL_QUADS : gl.GL_TRIANGLES, 0, numTexCoords / 2); // Number of vertices
 	    }
 	}
 
@@ -502,6 +502,12 @@ public final class GlPanmage extends Panmage {
         v.append(vleft); v.append(vdown); v.append(z);
         t.append(tdrx); t.append(tdry);
         v.append(vright); v.append(vdown); v.append(z);
+        if (!Pangine.gl.isQuadSupported()) {
+        	t.append(turx); t.append(tury);
+            v.append(vright); v.append(vup); v.append(z);
+            t.append(tdlx); t.append(tdly);
+            v.append(vleft); v.append(vdown); v.append(z);
+        }
         
         /*
         TODO
