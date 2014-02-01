@@ -45,10 +45,11 @@ public abstract class Pangl {
 	public final int GL_TEXTURE_COORD_ARRAY;
 	public final int GL_TEXTURE_MAG_FILTER;
 	public final int GL_TEXTURE_MIN_FILTER;
+	public final int GL_TRIANGLES;
 	public final int GL_UNSIGNED_BYTE;
 	public final int GL_VERTEX_ARRAY;
 	
-	protected Pangl(final int GL_ALPHA_TEST, final int GL_BLEND, final int GL_COLOR_BUFFER_BIT, final int GL_DEPTH_BUFFER_BIT, final int GL_DEPTH_TEST, final int GL_GREATER, final int GL_LESS, final int GL_MODELVIEW, final int GL_NEAREST, final int GL_ONE_MINUS_SRC_ALPHA, final int GL_PROJECTION, final int GL_QUADS, final int GL_RGB, final int GL_RGBA, final int GL_SRC_ALPHA, final int GL_TEXTURE_2D, final int GL_TEXTURE_COORD_ARRAY, final int GL_TEXTURE_MAG_FILTER, final int GL_TEXTURE_MIN_FILTER, final int GL_UNSIGNED_BYTE, final int GL_VERTEX_ARRAY) {
+	protected Pangl(final int GL_ALPHA_TEST, final int GL_BLEND, final int GL_COLOR_BUFFER_BIT, final int GL_DEPTH_BUFFER_BIT, final int GL_DEPTH_TEST, final int GL_GREATER, final int GL_LESS, final int GL_MODELVIEW, final int GL_NEAREST, final int GL_ONE_MINUS_SRC_ALPHA, final int GL_PROJECTION, final int GL_QUADS, final int GL_RGB, final int GL_RGBA, final int GL_SRC_ALPHA, final int GL_TEXTURE_2D, final int GL_TEXTURE_COORD_ARRAY, final int GL_TEXTURE_MAG_FILTER, final int GL_TEXTURE_MIN_FILTER, final int GL_TRIANGLES, final int GL_UNSIGNED_BYTE, final int GL_VERTEX_ARRAY) {
 		this.GL_ALPHA_TEST = GL_ALPHA_TEST;
 		this.GL_BLEND = GL_BLEND;
 		this.GL_COLOR_BUFFER_BIT = GL_COLOR_BUFFER_BIT;
@@ -68,6 +69,7 @@ public abstract class Pangl {
 		this.GL_TEXTURE_COORD_ARRAY = GL_TEXTURE_COORD_ARRAY;
 		this.GL_TEXTURE_MAG_FILTER = GL_TEXTURE_MAG_FILTER;
 		this.GL_TEXTURE_MIN_FILTER = GL_TEXTURE_MIN_FILTER;
+		this.GL_TRIANGLES = GL_TRIANGLES;
 		this.GL_UNSIGNED_BYTE = GL_UNSIGNED_BYTE;
 		this.GL_VERTEX_ARRAY = GL_VERTEX_ARRAY;
 	}
@@ -122,4 +124,6 @@ public abstract class Pangl {
 	public abstract void glTexParameteri(final int target, final int pname, final int param);
 	
 	public abstract void glVertexPointer(final int size, final int stride, final FloatBuffer pointer);
+	
+	public abstract boolean isQuadSupported();
 }
