@@ -36,7 +36,7 @@ public abstract class GlPangine extends Pangine {
 	protected final Panteraction interaction;
 	protected final HashSet<Panput> active = new HashSet<Panput>();
 	protected final HashSet<Panput> newActive = new HashSet<Panput>();
-	private final FloatBuffer blendRectangle = Pantil.allocateDirectFloatBuffer(12);
+	private FloatBuffer blendRectangle = null;
 	public boolean capsLock = false;
 	public boolean ins = false;
 	//private Panctor tracked = null;
@@ -444,6 +444,10 @@ public abstract class GlPangine extends Pangine {
         //final int maxx = 256, maxy = 192;
         final Camera c = cams.get(room);
 		final float minx = c.xi, maxx = c.xa, miny = c.yi, maxy = c.ya, z = c.za;
+		final boolean quad = gl.isQuadSupported();
+		if (blendRectangle == null) {
+			blendRectangle = Pantil.allocateDirectFloatBuffer(quad ? 12 : 18);
+		}
         blendRectangle.rewind();
         blendRectangle.put(maxx);
         blendRectangle.put(maxy);
@@ -457,10 +461,18 @@ public abstract class GlPangine extends Pangine {
         blendRectangle.put(maxx);
         blendRectangle.put(miny);
         blendRectangle.put(z);
+        if (!quad) {
+        	blendRectangle.put(maxx);
+            blendRectangle.put(maxy);
+            blendRectangle.put(z);
+            blendRectangle.put(minx);
+            blendRectangle.put(miny);
+            blendRectangle.put(z);
+        }
         blendRectangle.rewind();
         //gl.glDrawElements(gl.GL_QUADS, blendRectangle); array of indices into other arrays
         gl.glVertexPointer(3, 0, blendRectangle);
-        gl.glDrawArrays(gl.GL_QUADS, 0, 4); // Number of vertices
+        gl.glDrawArrays(quad ? gl.GL_QUADS : gl.GL_TRIANGLES, 0, quad ? 4 : 6); // Number of vertices
         gl.glColor4b(Byte.MAX_VALUE, Byte.MAX_VALUE, Byte.MAX_VALUE, Byte.MAX_VALUE);
         gl.glDisable(gl.GL_BLEND);
         gl.glEnableClientState(gl.GL_TEXTURE_COORD_ARRAY);
