@@ -32,6 +32,7 @@ import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.action.*;
 
 public abstract class GlPangine extends Pangine {
+	public static Pangl gl = null;
 	private final static ArrayList<GlPanmage> images = new ArrayList<GlPanmage>();
 	protected final Panteraction interaction;
 	protected final HashSet<Panput> active = new HashSet<Panput>();
