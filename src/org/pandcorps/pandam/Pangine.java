@@ -40,8 +40,6 @@ import org.pandcorps.pandam.impl.*;
 public abstract class Pangine {
 	public final static String PROP_IMPL = "org.pandcorps.pandam.engineImpl";
 	
-	public static Pangl gl = null;
-
 	protected static Pangine engine = null;
 
 	private final HashMap<String, Pantity> entities = new HashMap<String, Pantity>();
