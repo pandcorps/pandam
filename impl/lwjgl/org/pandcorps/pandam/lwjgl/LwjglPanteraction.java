@@ -22,7 +22,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandam.lwjgl;
 
-import org.pandcorps.core.Chartil;
+import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
 
 public final class LwjglPanteraction extends Panteraction {
