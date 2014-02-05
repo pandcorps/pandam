@@ -73,6 +73,6 @@ public final class AwtImg extends Img {
 	
 	@Override
 	public final void close() {
-		//raw.flush(); ?
+		raw.flush();
 	}
 }
