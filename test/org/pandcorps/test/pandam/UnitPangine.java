@@ -22,8 +22,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.test.pandam;
 
-import java.awt.image.BufferedImage;
-
+import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
 import org.pandcorps.pandam.*;
 
@@ -44,7 +43,7 @@ public final class UnitPangine extends Pangine {
 	}
 	
 	@Override
-    protected final Panmage newImage(final String id, final Panple origin, final Panple boundMin, final Panple boundMax, BufferedImage location) throws Panception {
+    protected final Panmage newImage(final String id, final Panple origin, final Panple boundMin, final Panple boundMax, Img location) throws Panception {
 	    return null;
 	}
 	
