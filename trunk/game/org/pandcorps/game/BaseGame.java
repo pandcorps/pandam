@@ -22,14 +22,13 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.game;
 
-import java.awt.image.BufferedImage;
-import java.util.ArrayList;
+import java.util.*;
 
 import org.pandcorps.core.*;
-import org.pandcorps.core.img.scale.Scaler;
-import org.pandcorps.game.core.ImtilX;
+import org.pandcorps.core.img.scale.*;
+import org.pandcorps.game.core.*;
 import org.pandcorps.pandam.*;
-import org.pandcorps.pandam.impl.FinPanple;
+import org.pandcorps.pandam.impl.*;
 
 public abstract class BaseGame extends Pangame {
     /*
@@ -122,11 +121,11 @@ public abstract class BaseGame extends Pangame {
 	    return createSheet(name, o, n, x, ImtilX.loadStrip(path, dim));
 	}
 	
-	public final static Panmage[] createSheet(final String name, final Panple o, final BufferedImage... b) {
+	public final static Panmage[] createSheet(final String name, final Panple o, final Img... b) {
 		return createSheet(name, o, null, null, b);
 	}
 	
-	public final static Panmage[] createSheet(final String name, final Panple o, final Panple n, final Panple x, final BufferedImage... b) {
+	public final static Panmage[] createSheet(final String name, final Panple o, final Panple n, final Panple x, final Img... b) {
 		final Pangine engine = Pangine.getEngine();
 	    final int size = b.length;
 	    final Panmage[] p = new Panmage[size];
@@ -175,11 +174,11 @@ public abstract class BaseGame extends Pangame {
 	    return Pangine.getEngine().createAnimation(PRE_ANM + name, createFrames(name, path, dim, dur, o, n, x));
 	}
 	
-	public final static Panimation createAnm(final String name, final int dur, final Panple o, final BufferedImage... a) {
+	public final static Panimation createAnm(final String name, final int dur, final Panple o, final Img... a) {
 		return Pangine.getEngine().createAnimation(PRE_ANM + name, createFrames(name, dur, createSheet(name, o, a)));
 	}
 	
-	public final static Panimation createAnm(final String name, final int dur, final Panple o, final Panple n, final Panple x, final BufferedImage... a) {
+	public final static Panimation createAnm(final String name, final int dur, final Panple o, final Panple n, final Panple x, final Img... a) {
 		return Pangine.getEngine().createAnimation(PRE_ANM + name, createFrames(name, dur, createSheet(name, o, n, x, a)));
 	}
 	

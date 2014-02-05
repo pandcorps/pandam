@@ -22,12 +22,8 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.game.core;
 
-import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
-
-import org.pandcorps.core.Imtil;
-import org.pandcorps.core.img.Pancolor;
-import org.pandcorps.core.img.ReplacePixelFilter;
+import org.pandcorps.core.*;
+import org.pandcorps.core.img.*;
 
 public final class ImtilX {
 	public final static int DIM = 16;
@@ -38,24 +34,24 @@ public final class ImtilX {
 		throw new Error();
 	}
 	
-    public final static BufferedImage loadImage(final String path) {
+    public final static Img loadImage(final String path) {
     	return loadImage(path, null);
     }
     
-    public final static BufferedImage loadImage(final String path, final boolean validate) {
+    public final static Img loadImage(final String path, final boolean validate) {
     	return loadImage(path, DIM, null, validate);
     }
     
-    public final static BufferedImage loadImage(final String path, final ReplacePixelFilter filter) {
+    public final static Img loadImage(final String path, final ReplacePixelFilter filter) {
     	return loadImage(path, DIM, filter);
     }
     
-    public final static BufferedImage loadImage(final String path, final int dim, ReplacePixelFilter filter) {
+    public final static Img loadImage(final String path, final int dim, ReplacePixelFilter filter) {
         return loadImage(path, dim, filter, true);
     }
     
-    public final static BufferedImage loadImage(final String path, int dim, ReplacePixelFilter filter, final boolean validate) {
-        BufferedImage img = Imtil.load(path);
+    public final static Img loadImage(final String path, int dim, ReplacePixelFilter filter, final boolean validate) {
+        Img img = Imtil.load(path);
         final int h = img.getHeight();
         if (validate) {
             if (h == dim + 1) {
@@ -67,7 +63,7 @@ public final class ImtilX {
         } else {
             dim = h;
         }
-        final ColorModel cm = img.getColorModel();
+        final ImgFactory cm = ImgFactory.getFactory();
         boolean transparency = false;
         for (int x = 0; x < dim; x++) {
             for (int y = 0; y < dim; y++) {
@@ -85,15 +81,15 @@ public final class ImtilX {
         return Imtil.filter(img, filter);
     }
     
-    public final static BufferedImage[] loadStrip(final String path) {
+    public final static Img[] loadStrip(final String path) {
     	return loadStrip(path, DIM);
     }
     
-    public final static BufferedImage[] loadStrip(final String path, final int dim) {
+    public final static Img[] loadStrip(final String path, final int dim) {
     	return Imtil.toStrip(loadImage(path, dim, null), dim);
     }
     
-    public final static BufferedImage[] loadStrip(final String path, final int w, final boolean validate) {
+    public final static Img[] loadStrip(final String path, final int w, final boolean validate) {
         return Imtil.toStrip(loadImage(path, w, null, validate), w);
     }
 }

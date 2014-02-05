@@ -22,13 +22,12 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandax.text;
 
-import java.awt.image.BufferedImage;
 import java.util.*;
 
 import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
 import org.pandcorps.pandam.*;
-import org.pandcorps.pandam.impl.FinPanple;
+import org.pandcorps.pandam.impl.*;
 
 public final class Fonts {
     public static enum FontType {
@@ -163,7 +162,7 @@ public final class Fonts {
         final Pangine engine = Pangine.getEngine();
         Panmage image = engine.getImage(id);
         if (image == null) {
-            BufferedImage img = Imtil.load("org/pandcorps/res/img/Font" + name + ".png");
+            Img img = Imtil.load("org/pandcorps/res/img/Font" + name + ".png");
             if (transparent != null) {
             	final int src = img.getRGB(0, 0), dst = PixelFilter.getRgba(transparent);
             	if (filter == null) {
@@ -175,7 +174,7 @@ public final class Fonts {
             final int w = req.width, h = req.height;
             if (type == FontType.Number) {
                 //Imtil.save(img, "c:\\raw.png");
-                final BufferedImage out = new BufferedImage(w * NumberFont.NUM, h * NumberFont.NUM, Imtil.TYPE);
+                final Img out = Imtil.newImage(w * NumberFont.NUM, h * NumberFont.NUM);
                 Imtil.copy(img, out, 10 * w, 2 * h, 4 * w, h, 0, 0);
                 Imtil.copy(img, out, 14 * w, 2 * h, 2 * w, h, 0, h);
                 Imtil.copy(img, out, 0, 3 * h, 2 * w, h, w * 2, h);
@@ -184,7 +183,7 @@ public final class Fonts {
                 //Imtil.save(out, "c:\\num.png");
                 img = out;
             } else if (type == FontType.Upper) {
-                final BufferedImage out = new BufferedImage(w * UpperFont.NUM, h * UpperFont.NUM, Imtil.TYPE);
+                final Img out = Imtil.newImage(w * UpperFont.NUM, h * UpperFont.NUM);
                 Imtil.copy(img, out, 0, 2 * h, 8 * w, h, 0, 0);
                 Imtil.copy(img, out, 8 * w, 2 * h, 8 * w, h, 0, h);
                 Imtil.copy(img, out, 0, 3 * h, 8 * w, h, 0, h * 2);
