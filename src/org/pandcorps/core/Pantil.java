@@ -23,7 +23,7 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.core;
 
 import java.nio.*;
-import java.rmi.dgc.*;
+//import java.rmi.dgc.*;
 
 // Pancorps Utility
 public final class Pantil {
@@ -43,8 +43,11 @@ public final class Pantil {
 	    return Chartil.isValued(val) ? Boolean.parseBoolean(val) : def;
 	}
 
+	private static long nextId = 0;
+	
 	public final static String vmid() {
-		return new VMID().toString();
+		//return new VMID().toString(); // Not on Android
+		return Long.toString(nextId++);
 	}
 
 	public final static RuntimeException toRuntimeException(final Throwable e) {
