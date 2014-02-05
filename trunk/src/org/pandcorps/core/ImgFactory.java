@@ -20,23 +20,35 @@ PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY
 TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 */
-package org.pandcorps.core.img;
+package org.pandcorps.core;
 
-import org.pandcorps.core.*;
+import java.io.*;
 
-public abstract class ColorPixelFilter extends PixelFilter {
-	// Can't be used by multiple threads simultaneously
-	protected final Pancolor c = new Pancolor(Mathtil.SHORT_0, Mathtil.SHORT_0, Mathtil.SHORT_0, Mathtil.SHORT_0);
+public abstract class ImgFactory {
+	private static ImgFactory f = null;
 	
-	@Override
-	public final int filter(final int p) {
-		c.setR((short) cm.getRed(p));
-		c.setG((short) cm.getGreen(p));
-		c.setB((short) cm.getBlue(p));
-		c.setA((short) cm.getAlpha(p));
-		filter();
-		return getRgba(c.getR(), c.getG(), c.getB(), c.getA());
+	public final static ImgFactory getFactory() {
+		if (f == null) {
+			f = (ImgFactory) Reftil.newInstance("org.pandcorps.core.img.AwtImgFactory");
+		}
+		return f;
 	}
 	
-	protected abstract void filter();
+	public final static void setFactory(final ImgFactory f) {
+		ImgFactory.f = f;
+	}
+	
+	public abstract Img load(final InputStream in) throws Exception;
+	
+	public abstract Img create(final int w, final int h);
+	
+	public abstract int getDataElement(final int[] rgb, final int i);
+	
+	public abstract int getRed(final int rgb);
+	
+	public abstract int getGreen(final int rgb);
+	
+	public abstract int getBlue(final int rgb);
+	
+	public abstract int getAlpha(final int rgb);
 }

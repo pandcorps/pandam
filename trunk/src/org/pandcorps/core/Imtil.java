@@ -22,45 +22,40 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.core;
 
-import java.awt.image.*;
 import java.io.*;
 import java.nio.*;
-
-import javax.imageio.*;
 
 import org.pandcorps.core.img.*;
 import org.pandcorps.pandam.*;
 
 // Image Utility
 public final class Imtil {
-	public final static int TYPE = BufferedImage.TYPE_INT_ARGB;
+	public final static int TYPE = 2; // BufferedImage.TYPE_INT_ARGB = 2; BufferedImage not always available
+	public final static int TYPE_INT_RGB = 1; // BufferedImage.TYPE_INT_RGB = 1
+	
+	private final static ImgFactory cm = ImgFactory.getFactory();
 	
     private Imtil() {
         throw new Error();
     }
     
-    public final static BufferedImage load(final String location) {
+    public final static Img load(final String location) {
         InputStream in = null;
         try {
-            //return ImageIO.read(getClass().getResource(location));
-            //return ImageIO.read(getClass().getClassLoader().getResource(location));
-            //return ImageIO.read(Imtil.class.getClassLoader().getResource(location));
             in = Iotil.getInputStream(location);
-            return ImageIO.read(in);
-        } catch (final IOException e) {
-            throw new Panception(e);
+            return cm.load(in);
+        } catch (final Exception e) {
+            throw Panception.get(e);
         } finally {
             Iotil.close(in);
         }
     }
     
-    public final static BufferedImage create(final ByteBuffer buf, final int w, final int h, final int type) {
-        if (type != BufferedImage.TYPE_INT_RGB) {
+    public final static Img create(final ByteBuffer buf, final int w, final int h, final int type) {
+        if (type != TYPE_INT_RGB) {
             throw new UnsupportedOperationException("Currently only support INT_RGB");
         }
-        //final BufferedImage img = new BufferedImage(w, h, type);
-        final BufferedImage img = newImage(w, h); // type only needed to interpret ByteBuffer, we can choose any type for output
-        final ColorModel cm = getColorModel();
+        final Img img = newImage(w, h); // type only needed to interpret ByteBuffer, we can choose any type for output
         final int[] rgba = new int[4];
         rgba[3] = 255;
         for (int y = 0; y < h; y++) {
@@ -76,30 +71,21 @@ public final class Imtil {
         return img;
     }
     
-    public final static void save(final BufferedImage img, final String location) {
+    public final static void save(final Img img, final String location) {
         try {
-            ImageIO.write(img, "png", new File(location));
-        } catch (final IOException e) {
-            throw new Panception(e);
+            img.save(location);
+        } catch (final Exception e) {
+            throw Panception.get(e);
         }
     }
     
-    public final static ColorModel getColorModel() {
-    	return ColorModel.getRGBdefault();
-    }
-    
-    //public final static BufferedImage sub(final BufferedImage img, final int x, final int y, final int w, final int h) {
-        //final BufferedImage out = newImage(w, h);
-    //    return img.getSubimage(x, y, w, h);
-    //}
-    
-    public final static BufferedImage[] loadStrip(final String location, final int w) {
+    public final static Img[] loadStrip(final String location, final int w) {
         return toStrip(load(location), w);
     }
     
-    public final static BufferedImage[] toStrip(final BufferedImage img, final int w) {
+    public final static Img[] toStrip(final Img img, final int w) {
         final int tw = img.getWidth();
-        final BufferedImage[] strip = new BufferedImage[tw / w];
+        final Img[] strip = new Img[tw / w];
         final int h = img.getHeight();
         for (int x = 0, i = 0; x < tw; x += w, i++) {
             strip[i] = img.getSubimage(x, 0, w, h);
@@ -107,18 +93,18 @@ public final class Imtil {
         return strip;
     }
     
-    public final static BufferedImage toTransparent(final BufferedImage img, final int rgb) {
+    public final static Img toTransparent(final Img img, final int rgb) {
     	return filter(img, new ReplacePixelFilter(rgb));
     }
     
-    public final static BufferedImage copy(final BufferedImage img) {
+    public final static Img copy(final Img img) {
     	final int iw = img.getWidth(), ih = img.getHeight();
-        final BufferedImage out = newImage(iw, ih);
+        final Img out = newImage(iw, ih);
         copy(img, out, 0, 0, iw, ih, 0, 0);
         return out;
     }
     
-    public final static void copy(final BufferedImage src, final BufferedImage dst, final int srcX, final int srcY, final int w, final int h, final int dstX, final int dstY) {
+    public final static void copy(final Img src, final Img dst, final int srcX, final int srcY, final int w, final int h, final int dstX, final int dstY) {
     	copy(src, dst, srcX, srcY, w, h, dstX, dstY, COPY_REPLACE);
     }
     
@@ -126,11 +112,11 @@ public final class Imtil {
     public final static byte COPY_FOREGROUND = 1;
     public final static byte COPY_BACKGROUND = 2;
     
-    public final static void copy(final BufferedImage src, final BufferedImage dst, final int srcX, final int srcY, final int w, final int h, final int dstX, final int dstY, final byte mode) {
+    public final static void copy(final Img src, final Img dst, final int srcX, final int srcY, final int w, final int h, final int dstX, final int dstY, final byte mode) {
         copy(src, dst, srcX, srcY, w, h, dstX, dstY, mode == COPY_FOREGROUND ? TransparentPixelMask.getInstance() : null, mode == COPY_BACKGROUND ? VisiblePixelMask.getInstance() : null);
     }
     
-    public final static void copy(final BufferedImage src, final BufferedImage dst, final int srcX, final int srcY, final int w, final int h, final int dstX, final int dstY,
+    public final static void copy(final Img src, final Img dst, final int srcX, final int srcY, final int w, final int h, final int dstX, final int dstY,
                                   final PixelMask srcMask, final PixelMask dstMask) {
     	for (int x = 0; x < w; x++) {
             final int srcCol = srcX + x, dstCol = dstX + x;
@@ -159,7 +145,7 @@ public final class Imtil {
         }
     }
     
-    private final static Panception err(final BufferedImage src, final BufferedImage dst, final int srcX, final int srcY, final int w, final int h, final int dstX, final int dstY, final String op, final int errX, final int errY, final Exception e) {
+    private final static Panception err(final Img src, final Img dst, final int srcX, final int srcY, final int w, final int h, final int dstX, final int dstY, final String op, final int errX, final int errY, final Exception e) {
         final StringBuilder b = new StringBuilder();
         b.append("Copying from src whose dimensions are");
         appendDim(b, src);
@@ -177,7 +163,7 @@ public final class Imtil {
         throw new Panception(b, e);
     }
     
-    private final static StringBuilder appendDim(final StringBuilder b, final BufferedImage img) {
+    private final static StringBuilder appendDim(final StringBuilder b, final Img img) {
         return appendDim(b, img.getWidth(), img.getHeight());
     }
     
@@ -194,7 +180,7 @@ public final class Imtil {
         return b;
     }
     
-    public final static void mirror(final BufferedImage img) {
+    public final static void mirror(final Img img) {
         final int w = img.getWidth(), w2 = w / 2, h = img.getHeight();
         for (int x = 0; x < w2; x++) {
             for (int y = 0; y < h; y++) {
@@ -206,26 +192,26 @@ public final class Imtil {
         }
     }
     
-    public final static BufferedImage filter(final BufferedImage img, final PixelFilter... fs) {
+    public final static Img filter(final Img img, final PixelFilter... fs) {
     	return filter(img, Coltil.asList(fs));
     }
     
-    public final static BufferedImage filter(final BufferedImage img, final int ox, final int oy, final int w, final int h, final PixelFilter... fs) {
+    public final static Img filter(final Img img, final int ox, final int oy, final int w, final int h, final PixelFilter... fs) {
     	return filter(img, ox, oy, w, h, Coltil.asList(fs));
     }
     
-    public final static BufferedImage filter(final BufferedImage img, final Iterable<PixelFilter> fs) {
+    public final static Img filter(final Img img, final Iterable<PixelFilter> fs) {
     	return filter(img, 0, 0, img.getWidth(), img.getHeight(), fs);
     }
     
-    public final static BufferedImage filter(final BufferedImage img, final int ox, final int oy, final int w, final int h, final Iterable<PixelFilter> fs) {
+    public final static Img filter(final Img img, final int ox, final int oy, final int w, final int h, final Iterable<PixelFilter> fs) {
     	if (Coltil.isEmpty(fs)) {
     		return img;
     	}
         //final ColorModel cm = img.getColorModel();
         //cm.getRGB(inData)
     	final int iw = img.getWidth(), ih = img.getHeight();
-        final BufferedImage out = newImage(iw, ih);
+        final Img out = newImage(iw, ih);
         final int sx = ox + w, sy = oy + h;
         for (int x = 0; x < iw; x++) {
             for (int y = 0; y < ih; y++) {
@@ -241,9 +227,8 @@ public final class Imtil {
         return out;
     }
     
-    public final static short[] getArithmeticMeanColor(final BufferedImage img) {
+    public final static short[] getArithmeticMeanColor(final Img img) {
         final int w = img.getWidth(), h = img.getHeight();
-        final ColorModel cm = getColorModel();
         long imgR = 0, imgG = 0, imgB = 0;
         int total = 0;
         for (int y = 0; y < h; y++) {
@@ -277,24 +262,23 @@ public final class Imtil {
         return b / 255.0;
     }
     
-    public final static BufferedImage recolor(final BufferedImage in, final short[] base) {
+    public final static Img recolor(final Img in, final short[] base) {
         return recolor(in, colorToDouble(base[0]), colorToDouble(base[1]), colorToDouble(base[2]));
     }
     
-    public final static BufferedImage recolor(final BufferedImage in, final double baseRed, final double baseGreen, final double baseBlue) {
+    public final static Img recolor(final Img in, final double baseRed, final double baseGreen, final double baseBlue) {
         final double exponentRed = getExponent(baseRed);
         final double exponentGreen = getExponent(baseGreen);
         final double exponentBlue = getExponent(baseBlue);
         
         final int rgba[] = new int[4];
-        final ColorModel cm = getColorModel();
         // img.getColorModel might be indexed, and our recolored version might not work very well with the limited palette.
         // So, we always use the more flexible model.
         // That's also why the output is always a .png regardless of the input.
         //ColorModel model = img.getColorModel();
 
         final int w = in.getWidth(), h = in.getHeight();
-        final BufferedImage out = newImage(w, h);
+        final Img out = newImage(w, h);
 
         for (int y = 0; y < h; y++) {
             for (int x = 0; x < w; x++) {
@@ -334,11 +318,10 @@ public final class Imtil {
         return Math.min(255, Math.max(0, (int) (Math.pow(avg, exponent) * 255.0)));
     }
     
-    public final static BufferedImage drawRectangle(final BufferedImage in,
+    public final static Img drawRectangle(final Img in,
     		final int x, final int y, final int w, final int h,
     		final short r, final short g, final short b, final short a) {
     	//TODO copy if not already right ColorModel
-    	final ColorModel cm = getColorModel();
     	final int[] rgba = {r, g, b, a};
     	final int c = cm.getDataElement(rgba, 0);
     	for (int j = y + h - 1; j >= y; j--) {
@@ -349,9 +332,9 @@ public final class Imtil {
     	return in;
     }
     
-    public final static BufferedImage shrink(final BufferedImage in, final int f) {
+    public final static Img shrink(final Img in, final int f) {
     	final int w = in.getWidth() / f, h = in.getHeight() / f;
-        final BufferedImage out = newImage(w, h);
+        final Img out = newImage(w, h);
         for (int j = 0; j < h; j++) {
         	final int jf = j * f;
         	for (int i = 0; i < w; i++) {
@@ -361,7 +344,7 @@ public final class Imtil {
         return out;
     }
     
-    private final static BufferedImage newImage(final int w, final int h) {
-        return new BufferedImage(w, h, TYPE);
+    public final static Img newImage(final int w, final int h) {
+        return cm.create(w, h);
     }
 }

@@ -22,8 +22,8 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.core.img.scale;
 
-import java.awt.image.BufferedImage;
+import org.pandcorps.core.*;
 
 public abstract class Scaler {
-	public abstract BufferedImage scale(final BufferedImage in);
+	public abstract Img scale(final Img in);
 }

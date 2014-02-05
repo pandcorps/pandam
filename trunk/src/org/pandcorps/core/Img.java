@@ -20,23 +20,28 @@ PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY
 TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 */
-package org.pandcorps.core.img;
+package org.pandcorps.core;
 
-import org.pandcorps.core.*;
-
-public abstract class ColorPixelFilter extends PixelFilter {
-	// Can't be used by multiple threads simultaneously
-	protected final Pancolor c = new Pancolor(Mathtil.SHORT_0, Mathtil.SHORT_0, Mathtil.SHORT_0, Mathtil.SHORT_0);
+public abstract class Img {
+	public abstract Object getRaw();
+	
+	public abstract int getWidth();
+	
+	public abstract int getHeight();
+	
+	public abstract int getRGB(final int x, final int y);
+	
+	public abstract void setRGB(final int x, final int y, final int rgb);
+	
+	public abstract Img getSubimage(final int x, final int y, final int w, final int h);
+	
+	public abstract void save(final String location) throws Exception;
+	
+	public abstract void close();
 	
 	@Override
-	public final int filter(final int p) {
-		c.setR((short) cm.getRed(p));
-		c.setG((short) cm.getGreen(p));
-		c.setB((short) cm.getBlue(p));
-		c.setA((short) cm.getAlpha(p));
-		filter();
-		return getRgba(c.getR(), c.getG(), c.getB(), c.getA());
+	protected final void finalize() throws Throwable {
+		close();
+		super.finalize();
 	}
-	
-	protected abstract void filter();
 }
