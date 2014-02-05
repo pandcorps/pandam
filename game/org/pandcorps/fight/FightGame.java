@@ -22,18 +22,17 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.fight;
 
-import java.awt.image.*;
 import java.io.*;
 import java.util.*;
 import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
 import org.pandcorps.core.seg.*;
-import org.pandcorps.fight.Background.BackgroundDefinition;
-import org.pandcorps.fight.Fighter.FighterDefinition;
+import org.pandcorps.fight.Background.*;
+import org.pandcorps.fight.Fighter.*;
 import org.pandcorps.game.*;
 import org.pandcorps.game.actor.*;
-import org.pandcorps.game.actor.Guy2.Guy2Type;
-import org.pandcorps.game.core.ImtilX;
+import org.pandcorps.game.actor.Guy2.*;
+import org.pandcorps.game.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.action.*;
@@ -73,13 +72,13 @@ public class FightGame extends Guy2Game {
     private static Panmage bamImage1 = null;
     /*package*/ static Panimation bamAnim = null;
     private final static FinPanple explodeOrigin = CENTER_16;
-    private static BufferedImage[] explodeImgs = null;
+    private static Img[] explodeImgs = null;
     private final static FinPanple bloodOrigin = CENTER_16;
     private final static int bloodDuration = 3;
-    private static BufferedImage[] bloodImgs = null;
+    private static Img[] bloodImgs = null;
     private static Panimation bloodAnim = null;
     private final static FinPanple burnOrigin = new FinPanple(9, yb, 0);
-    private static BufferedImage[] burnImgs = null;
+    private static Img[] burnImgs = null;
     /*package*/ static Panimation puffAnim = null;
     /*package*/ static Font fontDamage = null;
     /*package*/ static Font fontSpecial = null;
@@ -100,22 +99,22 @@ public class FightGame extends Guy2Game {
     
     private final static void loadConstants() {
         final Pangine engine = Pangine.getEngine();
-        final BufferedImage[] menuImgs = ImtilX.loadStrip("org/pandcorps/fight/res/misc/Menu.png");
+        final Img[] menuImgs = ImtilX.loadStrip("org/pandcorps/fight/res/misc/Menu.png");
         cursorImage = engine.createImage("Cursor", new FinPanple(8, 1, 0), null, null, menuImgs[0]);
         menuBackground = engine.createImage("MenuBgImage", "org/pandcorps/fight/res/misc/MenuBackground.png");
         title = engine.createImage("TitleImg", "org/pandcorps/fight/res/misc/Title.png");
-        final BufferedImage[] constantImgs = loadConstantImgs();
+        final Img[] constantImgs = loadConstantImgs();
         shadowImage = engine.createImage("Shadow", new FinPanple(8, 4, 0), null, null, constantImgs[0]);
         type = new Guy2Type(shadowImage, Fighter.DEPTH_SHADOW);
         bamAnim = createBamAnm(constantImgs, 3);
         bamImage1 = bamAnim.getFrames()[0].getImage();
-        explodeImgs = new BufferedImage[] { constantImgs[3], constantImgs[4], constantImgs[5] };
+        explodeImgs = new Img[] { constantImgs[3], constantImgs[4], constantImgs[5] };
         /*final Panmage explode1 = engine.createImage("Explode0", new FinPanple(8, 8, 0), null, null, constantImgs[3]);
         final Panmage explode2 = engine.createImage("Explode1", new FinPanple(8, 8, 0), null, null, constantImgs[4]);
         final Panmage explode3 = engine.createImage("Explode2", new FinPanple(8, 8, 0), null, null, constantImgs[5]);
         explodeAnim = engine.createAnimation("Explode", engine.createFrame("ExplodeF1", explode1, 3), engine.createFrame("ExplodeF2", explode2, 3), engine.createFrame("ExplodeF3", explode3, 3));*/
         bloodAnim = createBloodAnm(constantImgs, bloodDuration);
-        bloodImgs = new BufferedImage[] { constantImgs[6], constantImgs[7] };
+        bloodImgs = new Img[] { constantImgs[6], constantImgs[7] };
         puffAnim = createPuffAnm(constantImgs, 3);
         
         burnImgs = ImtilX.loadStrip("org/pandcorps/fight/res/misc/Burn.png");
@@ -436,12 +435,12 @@ public class FightGame extends Guy2Game {
         return getAnimation(baseColor, bloodOrigin, bloodDuration, bloodImgs);
     }
     
-    private final static Panimation getAnimation(final short[] baseColor, final Panple o, final int dur, final BufferedImage... imgs) {
+    private final static Panimation getAnimation(final short[] baseColor, final Panple o, final int dur, final Img... imgs) {
         final Pangine engine = Pangine.getEngine();
         final int size = imgs.length;
         final Panframe[] frames = new Panframe[size];
         for (int i = 0; i < size; i++) {
-            final BufferedImage recolored = Imtil.recolor(imgs[i], baseColor);
+            final Img recolored = Imtil.recolor(imgs[i], baseColor);
             final Panmage imageI = engine.createImage(Pantil.vmid(), o, null, null, recolored);
             frames[i] = engine.createFrame(Pantil.vmid(), imageI, dur);
         }
@@ -453,10 +452,10 @@ public class FightGame extends Guy2Game {
     }
     
     private final static class LoadImage {
-        private final BufferedImage buffered;
+        private final Img buffered;
         private final Panmage pan;
         
-        private LoadImage(final BufferedImage buffered, final Panmage pan) {
+        private LoadImage(final Img buffered, final Panmage pan) {
             this.buffered = buffered;
             this.pan = pan;
         }
@@ -489,17 +488,17 @@ public class FightGame extends Guy2Game {
         	}
         }
         final String name = ftr.getValue(0);
-        final BufferedImage sheet = ImtilX.loadImage(PATH_CHR + name + ".png", filter);
-        final BufferedImage[] frms = Imtil.toStrip(sheet, DIM);
+        final Img sheet = ImtilX.loadImage(PATH_CHR + name + ".png", filter);
+        final Img[] frms = Imtil.toStrip(sheet, DIM);
         Segment img;
         final HashMap<String, LoadImage> imgMap = new HashMap<String, LoadImage>();
-        final IdentityHashMap<Panmage, BufferedImage> imgUnmap = new IdentityHashMap<Panmage, BufferedImage>();
+        final IdentityHashMap<Panmage, Img> imgUnmap = new IdentityHashMap<Panmage, Img>();
         final Pangine engine = Pangine.getEngine();
         while ((img = in.readIf("IMG")) != null) {
             final String id = img.getValue(0);
             final int index = img.intValue(1);
             final FinPanple origin = FinPanple.getFinPanple(img, 2);
-            final BufferedImage buffered = frms[index];
+            final Img buffered = frms[index];
             final Panmage pan = engine.createImage(getId("IMG", name, id), origin, null, null, buffered);
             imgMap.put(id, new LoadImage(buffered, pan));
             imgUnmap.put(pan, buffered);
@@ -647,7 +646,7 @@ public class FightGame extends Guy2Game {
                     final String trlId = src.getId() + ".trail";
                     final Panmage cached = genMap.get(trlId);
                     if (cached == null) {
-                        final BufferedImage buf = Imtil.recolor(imgUnmap.get(src), trailBase);
+                        final Img buf = Imtil.recolor(imgUnmap.get(src), trailBase);
                         final Panple o = src.getOrigin(), min = src.getBoundingMinimum(), max = src.getBoundingMaximum();
                         // Could end up with duplicates (error from id collision); store in a Map and check there first
                         tImg = engine.createImage(trlId, o, min, max, buf);
@@ -720,9 +719,9 @@ public class FightGame extends Guy2Game {
         return type + '.' + name + '.' + id;
     }
     
-    private final static int getRightEdge(final BufferedImage img) {
+    private final static int getRightEdge(final Img img) {
         final int w = img.getWidth() - 1, h = img.getHeight();
-        final ColorModel cm = ColorModel.getRGBdefault();
+        final ImgFactory cm = ImgFactory.getFactory();
         for (int x = w; x >= 0; x--) {
             boolean edge = false;
             for (int y = 0; y < h; y++) {

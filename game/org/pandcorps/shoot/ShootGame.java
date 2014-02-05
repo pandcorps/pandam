@@ -22,26 +22,23 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.shoot;
 
-import java.awt.image.BufferedImage;
-
 import org.pandcorps.core.*;
-import org.pandcorps.core.chr.CallSequence;
+import org.pandcorps.core.chr.*;
 import org.pandcorps.core.img.*;
-import org.pandcorps.core.img.scale.PandScaler;
+import org.pandcorps.core.img.scale.*;
 import org.pandcorps.game.*;
 import org.pandcorps.game.actor.Guy2.*;
-import org.pandcorps.game.core.ImtilX;
+import org.pandcorps.game.core.*;
 import org.pandcorps.pandam.*;
-import org.pandcorps.pandam.event.TimerEvent;
-import org.pandcorps.pandam.event.TimerListener;
-import org.pandcorps.pandam.impl.FinPanple;
+import org.pandcorps.pandam.event.*;
+import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.text.*;
-import org.pandcorps.pandax.text.Fonts.FontRequest;
+import org.pandcorps.pandax.text.Fonts.*;
 import org.pandcorps.pandax.tile.*;
-import org.pandcorps.pandax.visual.FadeScreen;
+import org.pandcorps.pandax.visual.*;
 import org.pandcorps.shoot.Projectile.*;
-import org.pandcorps.shoot.Shooter.ShooterDefinition;
-import org.pandcorps.shoot.Weapon.WeaponDefinition;
+import org.pandcorps.shoot.Shooter.*;
+import org.pandcorps.shoot.Weapon.*;
 
 public class ShootGame extends Guy2Game {
     /*
@@ -101,7 +98,7 @@ public class ShootGame extends Guy2Game {
 		final Pangine engine = Pangine.getEngine();
 		engine.setTitle("Will Killem");
 		title = createImage("misc/Title", 128);
-        final BufferedImage[] constantImgs = loadConstantImgs();
+        final Img[] constantImgs = loadConstantImgs();
 		final Panmage shadowImg = engine.createImage("img.shadow", new FinPanple(8, 4, 0), null, null, constantImgs[0]);
         type = new Guy2Type(shadowImg, -480);
         blood = createBloodAnm(constantImgs, 2);
@@ -114,7 +111,7 @@ public class ShootGame extends Guy2Game {
         interact = engine.createEmptyImage("img.interact", new FinPanple(1, 1, 1), new FinPanple(0, 0, 0), new FinPanple(2, 2, 2));
         font = Fonts.getSimple(new FontRequest(8), Pancolor.BLUE, Pancolor.CYAN, Pancolor.CYAN, Pancolor.BLACK);
         hudFont = Fonts.getOutline(new FontRequest(8), Pancolor.BLUE, Pancolor.BLUE, Pancolor.BLUE, new FinPancolor(Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, (short) 128, Pancolor.MAX_VALUE));
-        final BufferedImage[] powerUps = loadStrip("misc/PowerUps", 16);
+        final Img[] powerUps = loadStrip("misc/PowerUps", 16);
         final FinPanple opu = new FinPanple(8, 5, 0);
         final FinPanple npu = new FinPanple(-4, 1, 0);
         final FinPanple xpu = new FinPanple(4, 9, 0);
@@ -148,9 +145,9 @@ public class ShootGame extends Guy2Game {
 	
 	private final static void loadWeapons() {
 		final Pangine engine = Pangine.getEngine();
-		final BufferedImage[] strip = loadStrip("misc/Weapons");
-		final BufferedImage[] strip4 = loadStrip("misc/Weapons4", 4);
-		final BufferedImage[] strip8 = loadStrip("misc/Weapons8", 8);
+		final Img[] strip = loadStrip("misc/Weapons");
+		final Img[] strip4 = loadStrip("misc/Weapons4", 4);
+		final Img[] strip8 = loadStrip("misc/Weapons8", 8);
 		final Panmage smoke1Img = engine.createImage("img.smoke.1", CENTER_4, null, null, strip4[4]);
 		final Panmage smoke2Img = engine.createImage("img.smoke.2", CENTER_4, null, null, strip4[5]);
 		final Panmage smoke3Img = engine.createImage("img.smoke.3", CENTER_4, null, null, strip4[6]);
@@ -229,7 +226,7 @@ public class ShootGame extends Guy2Game {
 	}
 	
 	private final static WeaponDefinition loadWeapon(final int wpnIdx, final String name,
-			final int x, final int y, final BufferedImage[] strip, final int imgIdx,
+			final int x, final int y, final Img[] strip, final int imgIdx,
 			final Panimation flash, final Panimation casing, final Panimation smoke, final int imgIdx2,
 			final Panmage ammo, final Emitter[] attackEmitters, final Emitter[] attackingEmitters,
 			final int minPower, final int maxPower,
@@ -260,15 +257,15 @@ public class ShootGame extends Guy2Game {
 		return d;
 	}
 	
-	protected final static BufferedImage[] loadStrip(final String loc) {
+	protected final static Img[] loadStrip(final String loc) {
 		return loadStrip(loc, ImtilX.DIM);
 	}
 	
-	protected final static BufferedImage[] loadStrip(final String loc, final int dim) {
+	protected final static Img[] loadStrip(final String loc, final int dim) {
 		return ImtilX.loadStrip("org/pandcorps/shoot/res/" + loc + ".png", dim);
 	}
 	
-	protected final static BufferedImage loadImage(final String loc, final int dim) {
+	protected final static Img loadImage(final String loc, final int dim) {
 		return ImtilX.loadImage("org/pandcorps/shoot/res/" + loc + ".png", dim, null);
 	}
 	
@@ -276,12 +273,12 @@ public class ShootGame extends Guy2Game {
 		return Pangine.getEngine().createImage("img." + loc, loadImage(loc, dim));
 	}
 	
-	protected final static BufferedImage[] loadChrStrip(final String name) {
+	protected final static Img[] loadChrStrip(final String name) {
 		return loadStrip("chr/" + name);
 	}
 	
-	private final static BufferedImage getTrpImg(final BufferedImage[] strip, final int i, final BufferedImage head, final int h, final boolean cape) {
-		final BufferedImage body = strip[i];
+	private final static Img getTrpImg(final Img[] strip, final int i, final Img head, final int h, final boolean cape) {
+		final Img body = strip[i];
 		if (cape) {
 			Imtil.copy(strip[3], body, 0, h, ImtilX.DIM, ImtilX.DIM - h, 0, 0, Imtil.COPY_BACKGROUND);
 		}
@@ -292,11 +289,11 @@ public class ShootGame extends Guy2Game {
 	}
 	
 	protected final static ShooterDefinition getTrp(final int headIndex, final int constitution, final int melee, final WeaponDefinition weapon, final boolean cape) {
-		final BufferedImage[] strip = loadChrStrip("Blitztrooper");
-		final BufferedImage head = strip[headIndex];
-		final BufferedImage still = getTrpImg(strip, 0, head, 0, cape);
-		final BufferedImage left = getTrpImg(strip, 1, head, 1, cape);
-		final BufferedImage right = getTrpImg(strip, 2, head, 1, cape);
+		final Img[] strip = loadChrStrip("Blitztrooper");
+		final Img head = strip[headIndex];
+		final Img still = getTrpImg(strip, 0, head, 0, cape);
+		final Img left = getTrpImg(strip, 1, head, 1, cape);
+		final Img right = getTrpImg(strip, 2, head, 1, cape);
 		return ShooterDefinition.create("Blitztrooper." + headIndex + "." + (weapon == null ? "Unarmed" : weapon.name), constitution, melee, weapon, still, left, right);
 	}
 	
@@ -319,7 +316,7 @@ public class ShootGame extends Guy2Game {
             act.setView(title);
             act.getPosition().set(64, 60);
             room.addActor(act);
-            final BufferedImage willImg = new PandScaler().scale(loadImage("misc/WillBig", 64));
+            final Img willImg = new PandScaler().scale(loadImage("misc/WillBig", 64));
             will = engine.createImage("img.title.will", willImg);
             final Panctor guy = new Panctor("GuyAct");
             guy.setView(will);

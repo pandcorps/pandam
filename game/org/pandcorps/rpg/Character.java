@@ -22,8 +22,6 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.rpg;
 
-import java.awt.image.BufferedImage;
-
 import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
 import org.pandcorps.game.actor.*;
@@ -83,19 +81,19 @@ public class Character extends Guy4 {
     }
     
     private final static Panmage[] getSheet(final CharacterDefinition def) {
-        final BufferedImage[] body = ImtilX.loadStrip("org/pandcorps/rpg/res/chr/MBody.png");
-        final BufferedImage[] face = ImtilX.loadStrip(fname("MFace", def.face.i), 8, false);
-        final BufferedImage[] eyes = ImtilX.loadStrip(fname("Eyes", def.eyes), 8, false);
-        final BufferedImage[] hair = ImtilX.loadStrip(fname("MHair", def.hair.i), 16, false);
-        final BufferedImage[] legs = ImtilX.loadStrip(fname("MLegs", def.legs.i), 16, false);
-        final BufferedImage[] feet = ImtilX.loadStrip(fname("MFeet", def.feet.i), 16, false);
-        final BufferedImage[] torso = ImtilX.loadStrip(fname("MTorso", def.torso.i), 16, false);
+        final Img[] body = ImtilX.loadStrip("org/pandcorps/rpg/res/chr/MBody.png");
+        final Img[] face = ImtilX.loadStrip(fname("MFace", def.face.i), 8, false);
+        final Img[] eyes = ImtilX.loadStrip(fname("Eyes", def.eyes), 8, false);
+        final Img[] hair = ImtilX.loadStrip(fname("MHair", def.hair.i), 16, false);
+        final Img[] legs = ImtilX.loadStrip(fname("MLegs", def.legs.i), 16, false);
+        final Img[] feet = ImtilX.loadStrip(fname("MFeet", def.feet.i), 16, false);
+        final Img[] torso = ImtilX.loadStrip(fname("MTorso", def.torso.i), 16, false);
         filter(hair, def.hair);
         filter(legs, def.legs);
         filter(feet, def.feet);
         filter(torso, def.torso);
         final PixelFilter skinFilter = getFilter(def.face);
-        final BufferedImage eyeSide = eyes.length < 2 ? eyes[0] : eyes[1];
+        final Img eyeSide = eyes.length < 2 ? eyes[0] : eyes[1];
         for (int i = 0; i < 5; i += 4) {
             Imtil.copy(face[0], body[i], 0, 0, 8, 8, 4, 1, Imtil.COPY_FOREGROUND);
             body[i] = Imtil.filter(body[i], skinFilter);
@@ -146,7 +144,7 @@ public class Character extends Guy4 {
         return filter;
     }
     
-    private final static void filter(final BufferedImage[] a, final CharacterLayer layer) {
+    private final static void filter(final Img[] a, final CharacterLayer layer) {
     	final PixelFilter filter = getFilter(layer);
     	final int size = a.length;
         for (int i = 0; i < size; i++) {

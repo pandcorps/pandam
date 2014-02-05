@@ -22,7 +22,6 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.platform;
 
-import java.awt.image.*;
 import java.util.*;
 
 import org.pandcorps.core.*;
@@ -60,8 +59,8 @@ public class Cabin {
 			
 			tm = new TileMap(Pantil.vmid(), room, ImtilX.DIM, ImtilX.DIM);
 			Level.tm = tm;
-			final BufferedImage tbuf = ImtilX.loadImage("org/pandcorps/platform/res/bg/Tiles.png", 128, null);
-			final BufferedImage buf = ImtilX.loadImage("org/pandcorps/platform/res/bg/Cabin.png", 128, null);
+			final Img tbuf = ImtilX.loadImage("org/pandcorps/platform/res/bg/Tiles.png", 128, null);
+			final Img buf = ImtilX.loadImage("org/pandcorps/platform/res/bg/Cabin.png", 128, null);
 			Imtil.copy(tbuf, buf, 64, 0, 16, 16, 32, 64);
 			timg = engine.createImage("img.cabin", buf);
 			imgMap = tm.splitImageMap(timg);
