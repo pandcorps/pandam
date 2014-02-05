@@ -22,7 +22,6 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandam;
 
-import java.awt.image.*;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -133,13 +132,13 @@ public abstract class Pangine {
 		return image;
 	}
 	
-	protected abstract Panmage newImage(String id, final Panple origin, final Panple boundMin, final Panple boundMax, BufferedImage img) throws Panception;
+	protected abstract Panmage newImage(String id, final Panple origin, final Panple boundMin, final Panple boundMax, Img img) throws Panception;
 	
-	public final Panmage createImage(final String id, final BufferedImage img) throws Panception {
+	public final Panmage createImage(final String id, final Img img) throws Panception {
         return createImage(id, null, null, null, img);
 	}
 	
-	public final Panmage createImage(final String id, final Panple origin, final Panple boundMin, final Panple boundMax, final BufferedImage img) throws Panception {
+	public final Panmage createImage(final String id, final Panple origin, final Panple boundMin, final Panple boundMax, final Img img) throws Panception {
 		if (imageSavingEnabled) {
 			Imtil.save(img, id + ".png");
 		}

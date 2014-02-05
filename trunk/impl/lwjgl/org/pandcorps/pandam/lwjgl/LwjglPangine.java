@@ -22,7 +22,6 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandam.lwjgl;
 
-import java.awt.image.*;
 import java.nio.*;
 import java.util.*;
 
@@ -250,9 +249,9 @@ public final class LwjglPangine extends GlPangine {
 		final int size = locations.length;
 		final ByteBuffer[] buffers = new ByteBuffer[size];
 		for (int i = 0; i < size; i++) {
-			final BufferedImage image = Imtil.load(locations[i]);
+			final Img image = Imtil.load(locations[i]);
 			//final ColorModel m = image.getColorModel(); // getRed throws Exception
-			final ColorModel m = ColorModel.getRGBdefault();
+			final ImgFactory m = ImgFactory.getFactory();
 			final int w = image.getWidth();
 			final int h = image.getHeight();
 			final ByteBuffer buffer = ByteBuffer.allocateDirect(w * h * 4);

@@ -22,7 +22,6 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandam.impl;
 
-import java.awt.image.*;
 import java.nio.*;
 import java.util.*;
 
@@ -64,7 +63,7 @@ public abstract class GlPangine extends Pangine {
 	}
 	
 	@Override
-    protected final Panmage newImage(final String id, final Panple origin, final Panple boundMin, final Panple boundMax, final BufferedImage img) throws Panception {
+    protected final Panmage newImage(final String id, final Panple origin, final Panple boundMin, final Panple boundMax, final Img img) throws Panception {
 	    final GlPanmage image = new GlPanmage(id, origin, boundMin, boundMax, img);
         images.add(image);
         return image;
@@ -380,7 +379,7 @@ public abstract class GlPangine extends Pangine {
 		    	dst = screenShotDst;
 		    	screenShotDst = null;
 		    }
-		    Imtil.save(Imtil.create(buf, w, h, BufferedImage.TYPE_INT_RGB), dst);
+		    Imtil.save(Imtil.create(buf, w, h, Imtil.TYPE_INT_RGB), dst);
 		}
 		update();
 	}
