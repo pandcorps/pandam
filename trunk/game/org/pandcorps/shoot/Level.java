@@ -22,13 +22,12 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.shoot;
 
-import java.awt.image.*;
 import java.util.*;
-import java.util.concurrent.Callable;
+import java.util.concurrent.*;
 
 import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
-import org.pandcorps.game.actor.Burst;
+import org.pandcorps.game.actor.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandax.tile.*;
@@ -43,8 +42,8 @@ public abstract class Level {
 		this.next = next;
 	}
 	
-    private final static BufferedImage createBlueCityImage() {
-        final BufferedImage raw = Imtil.load("org/pandcorps/shoot/res/bg/TileCity.png");
+    private final static Img createBlueCityImage() {
+        final Img raw = Imtil.load("org/pandcorps/shoot/res/bg/TileCity.png");
         final HashMap<Pancolor, Pancolor> map = new HashMap<Pancolor, Pancolor>();
         putBlue(map, 40, 40, 24);
         putBlue(map, 56, 64, 0);

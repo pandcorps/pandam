@@ -22,7 +22,6 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.platform;
 
-import java.awt.image.*;
 import java.io.*;
 import java.util.*;
 
@@ -588,26 +587,26 @@ public class Map {
 			}
 			cstl = Mathtil.randi(0, MAX_CASTLE);
 	    }
-		BufferedImage tileImg = ImtilX.loadImage("org/pandcorps/platform/res/bg/Map.png", 128, null);
+		Img tileImg = ImtilX.loadImage("org/pandcorps/platform/res/bg/Map.png", 128, null);
 		applyLandmark(tileImg, 0, lm1, 0);
 		applyLandmark(tileImg, 48, lm2, 1);
 		if (cstl > 0) {
-		    final BufferedImage lmImg = ImtilX.loadStrip("org/pandcorps/platform/res/bg/Castles.png")[cstl - 1];
+		    final Img lmImg = ImtilX.loadStrip("org/pandcorps/platform/res/bg/Castles.png")[cstl - 1];
 	        Imtil.copy(lmImg, tileImg, 0, 0, ImtilX.DIM, ImtilX.DIM, 112, 96);
 		}
 		Level.applyDirtTexture(tileImg, 48, 0, 96, 16);
-		final BufferedImage terrain = Level.getDarkenedTerrain(Level.getTerrainTexture());
+		final Img terrain = Level.getDarkenedTerrain(Level.getTerrainTexture());
 		Level.applyTerrainTexture(tileImg, 48, 32, 96, 48, terrain, Level.getTerrainMask(1));
 		tileImg = Level.getColoredTerrain(tileImg, 48, 32, 48, 16);
 		timg = Pangine.getEngine().createImage("img.map", tileImg);
 	}
 	
-	private final static void applyLandmark(final BufferedImage tileImg, final int x, final int lm, final int max) {
+	private final static void applyLandmark(final Img tileImg, final int x, final int lm, final int max) {
 	    if (lm == max) {
 	        return;
 	    }
 	    final int lmd = 48;
-	    final BufferedImage lmImg = ImtilX.loadImage("org/pandcorps/platform/res/bg/Landmark" + EXT_LANDMARKS[lm - 2] + ".png", lmd, null);
+	    final Img lmImg = ImtilX.loadImage("org/pandcorps/platform/res/bg/Landmark" + EXT_LANDMARKS[lm - 2] + ".png", lmd, null);
 	    Imtil.copy(lmImg, tileImg, 0, 0, lmd, lmd, x, 80);
 	}
 	

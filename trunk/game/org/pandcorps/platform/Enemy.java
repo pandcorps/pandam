@@ -22,8 +22,6 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.platform;
 
-import java.awt.image.*;
-
 import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
 import org.pandcorps.game.actor.*;
@@ -75,7 +73,7 @@ public final class Enemy extends Character {
 		
 		protected EnemyDefinition(final String name, final int ind, final PixelFilter f, final boolean ledgeTurn,
 		                          final boolean splat, final int avoidCount, final int offX, final int h, final int hv) {
-			final BufferedImage[] strip = ImtilX.loadStrip("org/pandcorps/platform/res/enemy/Enemy0" + ind + ".png"), walk;
+			final Img[] strip = ImtilX.loadStrip("org/pandcorps/platform/res/enemy/Enemy0" + ind + ".png"), walk;
 			if (f != null) {
 				final int size = strip.length;
 				for (int i = 0; i < size; i++) {
@@ -83,9 +81,9 @@ public final class Enemy extends Character {
 				}
 			}
 			if (splat) {
-			    walk = new BufferedImage[] {strip[0], strip[1]};
+			    walk = new Img[] {strip[0], strip[1]};
 			} else if (hv == 0) {
-			    walk = new BufferedImage[] {strip[0]};
+			    walk = new Img[] {strip[0]};
 			} else {
 			    walk = strip;
 			}

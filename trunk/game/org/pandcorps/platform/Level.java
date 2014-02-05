@@ -22,7 +22,6 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.platform;
 
-import java.awt.image.*;
 import java.util.*;
 
 import org.pandcorps.core.*;
@@ -121,8 +120,8 @@ public class Level {
         return false;
     }
     
-    protected final static void applyDirtTexture(final BufferedImage tileImg, final int ix, final int iy, final int fx, final int fy) {
-        final BufferedImage dirt = PlatformGame.dirts[Map.bgTexture];
+    protected final static void applyDirtTexture(final Img tileImg, final int ix, final int iy, final int fx, final int fy) {
+        final Img dirt = PlatformGame.dirts[Map.bgTexture];
         final PixelMask tileMask = new AntiPixelMask(new ColorPixelMask(224, 112, 0, Pancolor.MAX_VALUE));
         for (int x = ix; x < fx; x += 16) {
             for (int y = iy; y < fy; y += 16) {
@@ -131,7 +130,7 @@ public class Level {
         }
     }
     
-    protected final static BufferedImage getTerrainTexture() {
+    protected final static Img getTerrainTexture() {
         return PlatformGame.terrains[Map.bgTexture];
     }
     
@@ -139,11 +138,11 @@ public class Level {
         return new AntiPixelMask(new ColorPixelMask(196 - 40 * z, 220 - 24 * z, 208 - 32 * z, Pancolor.MAX_VALUE));
     }
     
-    protected final static BufferedImage getDarkenedTerrain(final BufferedImage terrain) {
+    protected final static Img getDarkenedTerrain(final Img terrain) {
         return Imtil.filter(terrain, terrainDarkener);
     }
     
-    protected final static void applyTerrainTexture(final BufferedImage backImg, final int ix, final int iy, final int fx, final int fy, final BufferedImage terrain, final PixelMask backMask) {
+    protected final static void applyTerrainTexture(final Img backImg, final int ix, final int iy, final int fx, final int fy, final Img terrain, final PixelMask backMask) {
         for (int x = ix; x < fx; x += 16) {
             for (int y = iy; y < fy; y += 16) {
                 Imtil.copy(terrain, backImg, 0, 0, 16, 16, x, y, null, backMask);
@@ -151,21 +150,21 @@ public class Level {
         }
     }
     
-    protected final static BufferedImage getColoredTerrain(final BufferedImage backImg, final int x, final int y, final int w, final int h) {
+    protected final static Img getColoredTerrain(final Img backImg, final int x, final int y, final int w, final int h) {
         return Imtil.filter(backImg, x, y, w, h, getHillFilter(Map.bgColor));
     }
     
-    private final static BufferedImage loadTileImage() {
-    	final BufferedImage tileImg = ImtilX.loadImage("org/pandcorps/platform/res/bg/Tiles.png", 128, null);
+    private final static Img loadTileImage() {
+    	final Img tileImg = ImtilX.loadImage("org/pandcorps/platform/res/bg/Tiles.png", 128, null);
     	if (!isNormalTheme()) {
-    		final BufferedImage ext = ImtilX.loadImage("org/pandcorps/platform/res/bg/Tiles" + theme.img + ".png", false);
+    		final Img ext = ImtilX.loadImage("org/pandcorps/platform/res/bg/Tiles" + theme.img + ".png", false);
     		Imtil.copy(ext, tileImg, 0, 0, 128, 112, 0, 16);
     	}
     	return tileImg;
     }
     
     protected final static Panmage getTileImage() {
-    	final BufferedImage tileImg = loadTileImage();
+    	final Img tileImg = loadTileImage();
     	if (isNormalTheme()) {
     		applyDirtTexture(tileImg, 0, 16, 80, 128);
     	}
@@ -185,9 +184,9 @@ public class Level {
         final Panlayer bg1 = PlatformGame.createParallax(room, 2);
         bgtm1 = new TileMap("act.bgmap1", bg1, ImtilX.DIM, ImtilX.DIM);
         bg1.addActor(bgtm1);
-        BufferedImage backImg = ImtilX.loadImage("org/pandcorps/platform/res/bg/Hills" + Chartil.unnull(theme.img) + ".png", 128, null);
+        Img backImg = ImtilX.loadImage("org/pandcorps/platform/res/bg/Hills" + Chartil.unnull(theme.img) + ".png", 128, null);
         if (isNormalTheme()) {
-	        BufferedImage terrain = getTerrainTexture();
+	        Img terrain = getTerrainTexture();
 	        for (int z = 0; z < 3; z++) {
 	            if (z > 0) {
 	                terrain = getDarkenedTerrain(terrain);

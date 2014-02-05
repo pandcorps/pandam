@@ -22,7 +22,6 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.platform;
 
-import java.awt.image.*;
 import java.util.*;
 
 import org.pandcorps.core.*;
@@ -59,7 +58,7 @@ public class Castle {
             
             tm = newTileMap();
             Level.tm = tm;
-            final BufferedImage buf = ImtilX.loadImage("org/pandcorps/platform/res/bg/" + imgName + ".png", 128, null);
+            final Img buf = ImtilX.loadImage("org/pandcorps/platform/res/bg/" + imgName + ".png", 128, null);
             timg = engine.createImage("img.castle", buf);
             imgMap = tm.splitImageMap(timg);
             tm.setForegroundDepth(1);
@@ -157,9 +156,9 @@ public class Castle {
             addPlayers(48, 32, null);
             
             final PlayerImages pi = new PlayerImages(Map.kingAvt);
-            final BufferedImage k1 = pi.guys[0], k2 = pi.guyBlink;
-            final BufferedImage crownImg = PlatformGame.crowns[Map.kingCrown];
-            for (final BufferedImage k : new BufferedImage[] {k1, k2}) {
+            final Img k1 = pi.guys[0], k2 = pi.guyBlink;
+            final Img crownImg = PlatformGame.crowns[Map.kingCrown];
+            for (final Img k : new Img[] {k1, k2}) {
                 Imtil.copy(crownImg, k, 0, 0, 14, 9, 10, 1, Imtil.COPY_FOREGROUND);
             }
             final Pangine en = Pangine.getEngine();

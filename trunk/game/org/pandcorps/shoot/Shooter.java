@@ -22,15 +22,14 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.shoot;
 
-import java.awt.image.BufferedImage;
-import java.util.ArrayList;
+import java.util.*;
 
 import org.pandcorps.core.*;
 import org.pandcorps.game.actor.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
-import org.pandcorps.pandam.impl.FinPanple;
-import org.pandcorps.shoot.Weapon.WeaponDefinition;
+import org.pandcorps.pandam.impl.*;
+import org.pandcorps.shoot.Weapon.*;
 
 public class Shooter extends Guy2 implements CollisionListener {
 	/*
@@ -50,11 +49,11 @@ public class Shooter extends Guy2 implements CollisionListener {
 		private final Panimation still;
 		protected final Panimation walk;
 		
-		public final static ShooterDefinition create(final String name, final int constitution, final BufferedImage... imgs) {
+		public final static ShooterDefinition create(final String name, final int constitution, final Img... imgs) {
 			return create(name, constitution, 0, null, imgs);
 		}
 		
-		public final static ShooterDefinition create(final String name, final int constitution, final int melee, final WeaponDefinition weapon, final BufferedImage... imgs) {
+		public final static ShooterDefinition create(final String name, final int constitution, final int melee, final WeaponDefinition weapon, final Img... imgs) {
 			final Pangine engine = Pangine.getEngine();
 			final String pre = name + '.';
 			final String ipre = pre + "img.", fpre = pre + "frm.", apre = pre + "anm.";

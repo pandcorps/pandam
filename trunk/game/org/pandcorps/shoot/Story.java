@@ -22,16 +22,14 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.shoot;
 
-import java.awt.image.BufferedImage;
-
 import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
-import org.pandcorps.game.actor.Decoration;
+import org.pandcorps.game.actor.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandax.text.*;
-import org.pandcorps.pandax.visual.Pantexture;
-import org.pandcorps.shoot.ShootGame.ShootScreen;
+import org.pandcorps.pandax.visual.*;
+import org.pandcorps.shoot.ShootGame.*;
 
 public class Story {
 	private static IntroSequence intro = new IntroSequence();
@@ -231,7 +229,7 @@ public class Story {
 		return getImg("story", name);
 	}
 	
-	private final static BufferedImage getChrBi(final String name) {
+	private final static Img getChrBi(final String name) {
 		return ShootGame.loadChrStrip(name)[0];
 	}
 	
@@ -240,7 +238,7 @@ public class Story {
 	}
 	
 	private final static Panmage getChr(final String name, int h) {
-		BufferedImage bi = getChrBi(name);
+		Img bi = getChrBi(name);
 		if (h >= 0) {
 			//bi = bi.getSubimage(0, 0, 16, h);
 			final short m = Pancolor.MIN_VALUE;
@@ -249,7 +247,7 @@ public class Story {
 		return getChr(name, bi);
 	}
 	
-	private final static Panmage getChr(final String name, final BufferedImage bi) {
+	private final static Panmage getChr(final String name, final Img bi) {
 		return Pangine.getEngine().createImage("img.chr." + name, bi);
 	}
 	
@@ -275,7 +273,7 @@ public class Story {
 	
 	private final static Panmage getBlack() {
 		final int d = 16;
-		BufferedImage bi = new BufferedImage(d, d, Imtil.TYPE);
+		Img bi = Imtil.newImage(d, d);
 		final short m = Pancolor.MIN_VALUE;
 		bi = Imtil.drawRectangle(bi, 0, 0, d, d, m, m, m, Pancolor.MAX_VALUE);
 		return Pangine.getEngine().createImage("img.black", bi);

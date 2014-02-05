@@ -22,7 +22,6 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.platform;
 
-import java.awt.image.*;
 import java.io.*;
 import java.util.*;
 
@@ -152,9 +151,9 @@ public class PlatformGame extends BaseGame {
 	protected static Panmage markerDefeated = null;
 	protected static Panimation portal = null;
 	protected static Panimation portalClosed = null;
-	protected static BufferedImage[] dirts = null;
-	protected static BufferedImage[] terrains = null;
-	protected static BufferedImage[] crowns = null;
+	protected static Img[] dirts = null;
+	protected static Img[] terrains = null;
+	protected static Img[] crowns = null;
 	
 	@Override
 	protected final boolean isFullScreen() {
@@ -206,16 +205,16 @@ public class PlatformGame extends BaseGame {
 	    }
 	}
 	
-	private final static BufferedImage[] loadChrStrip(final String name, final int dim, final PixelFilter f) {
+	private final static Img[] loadChrStrip(final String name, final int dim, final PixelFilter f) {
 		return loadChrStrip(name, dim, f, true);
 	}
 	
-	private final static BufferedImage[] loadChrStrip(final String name, final int dim, final PixelFilter f, final boolean req) {
+	private final static Img[] loadChrStrip(final String name, final int dim, final PixelFilter f, final boolean req) {
 		final String fileName = "org/pandcorps/platform/res/chr/" + name;
 		if (!(req || Iotil.exists(fileName))) {
 			return null;
 		}
-		final BufferedImage[] strip = ImtilX.loadStrip(fileName, dim);
+		final Img[] strip = ImtilX.loadStrip(fileName, dim);
 		if (f != null) {
 			final int size = strip.length;
 			for (int i = 0; i < size; i++) {
@@ -236,7 +235,7 @@ public class PlatformGame extends BaseGame {
 		reloadAnimalStrip(pc);
 	}
 	
-	private final static void buildGuy(final BufferedImage guy, final BufferedImage face, final BufferedImage[] tails, final BufferedImage eyes, final int y, final int t) {
+	private final static void buildGuy(final Img guy, final Img face, final Img[] tails, final Img eyes, final int y, final int t) {
 	    Imtil.copy(face, guy, 0, 0, 18, 18, 8, 1 + y, Imtil.COPY_FOREGROUND);
         Imtil.copy(eyes, guy, 0, 0, 8, 4, 15, 10 + y, Imtil.COPY_FOREGROUND);
         if (tails != null) {
@@ -254,12 +253,12 @@ public class PlatformGame extends BaseGame {
 	
 	protected final static class PlayerImages {
 		protected final PixelFilter f;
-		protected final BufferedImage[] guys;
-		protected final BufferedImage guyBlink;
-		protected final BufferedImage face;
-		protected final BufferedImage[] tails;
-		protected final BufferedImage eyes;
-		protected final BufferedImage eyesBlink;
+		protected final Img[] guys;
+		protected final Img guyBlink;
+		protected final Img face;
+		protected final Img[] tails;
+		protected final Img eyes;
+		protected final Img eyesBlink;
 	
 		protected PlayerImages(final Avatar avatar) {
 		    f = getFilter(avatar.col);
@@ -284,7 +283,7 @@ public class PlatformGame extends BaseGame {
 	    final Avatar avatar = profile.currentAvatar;
 	    final String anm = avatar.anm;
 	    final PlayerImages pi = new PlayerImages(avatar);
-	    final BufferedImage guys[] = pi.guys, tails[] = pi.tails, eyes = pi.eyes;
+	    final Img guys[] = pi.guys, tails[] = pi.tails, eyes = pi.eyes;
 		final String pre = "guy." + pc.index;
 		
 		final Pangine engine = Pangine.getEngine();
@@ -305,10 +304,10 @@ public class PlatformGame extends BaseGame {
 		pc.guyFall = engine.createImage(ipre + "fall", og, ng, xg, guys[4]);
 	    //guy = engine.createImage(pre, new FinPanple(8, 0, 0), null, null, ImtilX.loadImage("org/pandcorps/platform/res/chr/Player.png"));
 	    
-		final BufferedImage[] maps = loadChrStrip("BearMap.png", 32, pi.f);
+		final Img[] maps = loadChrStrip("BearMap.png", 32, pi.f);
 		final boolean needWing = avatar.jumpMode == Player.JUMP_FLY;
 		final PixelFilter pf;
-		final BufferedImage[] wingMap;
+		final Img[] wingMap;
 		if (needWing) {
 			pf = getFilter(avatar.jumpCol);
 			wingMap = loadChrStrip("WingsMap.png", 32, pf);
@@ -316,24 +315,24 @@ public class PlatformGame extends BaseGame {
 			pf = null;
 			wingMap = null;
 		}
-		final BufferedImage[] faceMap = loadChrStrip("FaceMap" + anm + ".png", 18, pi.f);
-		final BufferedImage south1 = maps[0], southPose = maps[5], faceSouth = faceMap[0];
+		final Img[] faceMap = loadChrStrip("FaceMap" + anm + ".png", 18, pi.f);
+		final Img south1 = maps[0], southPose = maps[5], faceSouth = faceMap[0];
 		if (needWing) {
-			for (final BufferedImage south : new BufferedImage[] {south1, southPose}) {
+			for (final Img south : new Img[] {south1, southPose}) {
 				Imtil.copy(wingMap[0], south, 0, 0, 32, 32, 0, 0, Imtil.COPY_BACKGROUND);
 			}
 		}
-		final BufferedImage south2 = Imtil.copy(south1);
+		final Img south2 = Imtil.copy(south1);
 		Imtil.mirror(south2);
-		for (final BufferedImage south : new BufferedImage[] {south1, south2, southPose}) {
+		for (final Img south : new Img[] {south1, south2, southPose}) {
 			Imtil.copy(faceSouth, south, 0, 0, 18, 18, 7, 5, Imtil.COPY_FOREGROUND);
 			Imtil.copy(eyes, south, 0, 0, 8, 4, 12, 14, Imtil.COPY_FOREGROUND);
 		}
 		pc.mapSouth = createAnmMap(pre, "south", south1, south2);
         pc.mapPose = engine.createImage(ipre + "map.pose", ORIG_MAP, null, null, southPose);
-		final BufferedImage east1 = maps[1], east2 = maps[2], faceEast = faceMap[1];
-		final BufferedImage[] easts = {east1, east2};
-		for (final BufferedImage east : easts) {
+		final Img east1 = maps[1], east2 = maps[2], faceEast = faceMap[1];
+		final Img[] easts = {east1, east2};
+		for (final Img east : easts) {
 			if (needWing) {
 				Imtil.copy(wingMap[1], east, 0, 0, 32, 32, 0, 0, Imtil.COPY_BACKGROUND);
 			}
@@ -342,28 +341,28 @@ public class PlatformGame extends BaseGame {
 				Imtil.copy(tails[1], east, 0, 0, 12, 12, 1, 20, Imtil.COPY_BACKGROUND);
 			}
 		}
-		final BufferedImage west1 = Imtil.copy(east1), west2 = Imtil.copy(east2);
-		final BufferedImage eyesEast = eyes.getSubimage(0, 0, 4, 4);
-		for (final BufferedImage east : easts) {
+		final Img west1 = Imtil.copy(east1), west2 = Imtil.copy(east2);
+		final Img eyesEast = eyes.getSubimage(0, 0, 4, 4);
+		for (final Img east : easts) {
 			Imtil.copy(eyesEast, east, 0, 0, 4, 4, 18, 14, Imtil.COPY_FOREGROUND);
 		}
 		pc.mapEast = createAnmMap(pre, "east", east1, east2);
 		Imtil.mirror(west1);
 		Imtil.mirror(west2);
-		final BufferedImage eyesWest = eyes.getSubimage(4, 0, 4, 4);
-		for (final BufferedImage west : new BufferedImage[] {west1, west2}) {
+		final Img eyesWest = eyes.getSubimage(4, 0, 4, 4);
+		for (final Img west : new Img[] {west1, west2}) {
 			Imtil.copy(eyesWest, west, 0, 0, 4, 4, 10, 14, Imtil.COPY_FOREGROUND);
 		}
 		pc.mapWest = createAnmMap(pre, "west", west1, west2);
-		final BufferedImage tailNorth = Coltil.get(tails, 2), faceNorth = faceMap[2];
-		final BufferedImage wing = needWing ? wingMap[0] : null;
+		final Img tailNorth = Coltil.get(tails, 2), faceNorth = faceMap[2];
+		final Img wing = needWing ? wingMap[0] : null;
 		pc.mapNorth = createNorth(maps, 3, wing, tailNorth, faceNorth, pre, "North");
 		pc.mapLadder = createNorth(maps, 4, wing, tailNorth, faceNorth, pre, "Ladder");
 		
 		if (needWing) {
 		    final String wpre = pre + ".wing.";
 		    final String iwpre = PRE_IMG + wpre;
-		    final BufferedImage[] wings = loadChrStrip("Wings.png", 32, pf);
+		    final Img[] wings = loadChrStrip("Wings.png", 32, pf);
 		    pc.back = engine.createImage(iwpre + "still", ow, ng, xg, wings[0]);
 		    final String fwpre = PRE_FRM + wpre;
 		    final Panframe[] frames = new Panframe[6];
@@ -378,24 +377,24 @@ public class PlatformGame extends BaseGame {
 		}
 	}
 	
-	private final static Panimation createNorth(final BufferedImage[] maps, final int mi, final BufferedImage wing, final BufferedImage tailNorth, final BufferedImage faceNorth,
+	private final static Panimation createNorth(final Img[] maps, final int mi, final Img wing, final Img tailNorth, final Img faceNorth,
 	                                            final String pre, final String suf) {
-		final BufferedImage north1 = maps[mi];
+		final Img north1 = maps[mi];
 		if (tailNorth != null) {
 			Imtil.copy(tailNorth, north1, 0, 0, 12, 12, 10, 20, Imtil.COPY_FOREGROUND);
 		}
 		if (wing != null) {
 			Imtil.copy(wing, north1, 0, 0, 32, 32, 0, 0, Imtil.COPY_FOREGROUND);
 		}
-		final BufferedImage north2 = Imtil.copy(north1);
+		final Img north2 = Imtil.copy(north1);
 		Imtil.mirror(north2);
-		for (final BufferedImage north : new BufferedImage[] {north1, north2}) {
+		for (final Img north : new Img[] {north1, north2}) {
 			Imtil.copy(faceNorth, north, 0, 0, 18, 18, 7, 5, Imtil.COPY_FOREGROUND);
 		}
 		return createAnmMap(pre, suf, north1, north2);
 	}
 	
-	private final static Panimation createAnmMap(final String pre, final String suf, final BufferedImage... a) {
+	private final static Panimation createAnmMap(final String pre, final String suf, final Img... a) {
 		return createAnm(pre + ".map." + suf.toLowerCase(), DUR_MAP, ORIG_MAP, a);
 	}
 	
@@ -481,8 +480,8 @@ public class PlatformGame extends BaseGame {
 	    
 	    block8 = createImage("block8", "org/pandcorps/platform/res/misc/Block8.png", 8);
 	    
-	    final BufferedImage[] gemStrip = ImtilX.loadStrip("org/pandcorps/platform/res/misc/Gem.png");
-	    final BufferedImage gem1 = Imtil.copy(gemStrip[0]);
+	    final Img[] gemStrip = ImtilX.loadStrip("org/pandcorps/platform/res/misc/Gem.png");
+	    final Img gem1 = Imtil.copy(gemStrip[0]);
 	    gem = createSheet("gem", null, gemStrip);
 	    gemAnm = createGemAnm("gem", gem);
 	    gemShatter = createImage("gem.shatter", "org/pandcorps/platform/res/misc/GemShatter.png", 8);
@@ -529,7 +528,7 @@ public class PlatformGame extends BaseGame {
 		return engine.createAnimation(PRE_ANM + name, engine.createFrame(PRE_FRM + name + ".0", gem[0], 3), engine.createFrame(PRE_FRM + name + ".1", gem[1], 1), engine.createFrame(PRE_FRM + name + ".2", gem[2], 1));
 	}
 	
-	private final static Panimation createGemAnm(final String col, final BufferedImage[] strip, final Channel r, final Channel g, final Channel b) {
+	private final static Panimation createGemAnm(final String col, final Img[] strip, final Channel r, final Channel g, final Channel b) {
 	    final SwapPixelFilter gemFilter = new SwapPixelFilter(r, g, b);
         for (int i = 0; i < 3; i++) {
             strip[i] = Imtil.filter(strip[i], gemFilter);
