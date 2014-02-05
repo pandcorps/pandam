@@ -22,8 +22,8 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandam;
 
-import org.pandcorps.core.Pantil;
-import org.pandcorps.pandam.impl.FinPanple;
+import org.pandcorps.core.*;
+import org.pandcorps.pandam.impl.*;
 
 public abstract class Pangame {
 	private static Pangame game = null;
