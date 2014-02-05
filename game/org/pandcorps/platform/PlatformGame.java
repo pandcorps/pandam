@@ -194,12 +194,18 @@ public class PlatformGame extends BaseGame {
         protected final void load() throws Exception {
 			loadLevel();
 			fadeIn(room);
-			Pangine.getEngine().getMusic().playMusic(Music.newSongCreepy());
+			final Pangine engine = Pangine.getEngine();
+			if (engine.isMusicSupported()) {
+				engine.getMusic().playMusic(Music.newSongCreepy());
+			}
 		}
 		
 		@Override
 	    protected final void destroy() {
-			Pangine.getEngine().getMusic().stop();
+			final Pangine engine = Pangine.getEngine();
+			if (engine.isMusicSupported()) {
+				engine.getMusic().stop();
+			}
 	        Panmage.destroy(Level.timg);
 	        Panmage.destroy(Level.bgimg);
 	    }

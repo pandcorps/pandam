@@ -513,6 +513,8 @@ public abstract class GlPangine extends Pangine {
 		running = false;
 		gl.glDisableClientState(gl.GL_VERTEX_ARRAY);
         gl.glDisableClientState(gl.GL_TEXTURE_COORD_ARRAY);
-        getMusic().close();
+        if (isMusicSupported()) {
+        	getMusic().close();
+        }
 	}
 }
