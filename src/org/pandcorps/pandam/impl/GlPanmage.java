@@ -22,7 +22,6 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandam.impl;
 
-import java.awt.image.*;
 import java.nio.*;
 import java.util.*;
 
@@ -99,20 +98,20 @@ public final class GlPanmage extends Panmage {
 	    }
 	}
 	
-	private final static BufferedImage pad(final BufferedImage _img) {
+	private final static Img pad(final Img _img) {
 	    final int usableWidth = _img.getWidth(), usableHeight = _img.getHeight();
 	    final int d = Math.max(toPow2(usableWidth), toPow2(usableHeight));
-	    final BufferedImage padded = new BufferedImage(d, d, Imtil.TYPE);
+	    final Img padded = Imtil.newImage(d, d);
 	    Imtil.copy(_img, padded, 0, 0, usableWidth, usableHeight, 0, 0);
 	    return padded;
 	}
 	
-	private final static Texture getTexture(final BufferedImage _img) {
+	private final static Texture getTexture(final Img _img) {
 		final Pangine engine = Pangine.getEngine();
 		final Scaler scaler = engine.getImageScaler();
 		final float zoom = engine.getZoom();
-		final BufferedImage padded = pad(_img);
-		BufferedImage img = padded;
+		final Img padded = pad(_img);
+		Img img = padded;
 		if (scaler != null) {
 			for (int i = 1; i < zoom; i *= 2) {
 				img = scaler.scale(img);
@@ -147,7 +146,7 @@ public final class GlPanmage extends Panmage {
 		*/
 		final int capacity = w * h * 4;
 		final byte[] raster = new byte[capacity];
-		final ColorModel model = ColorModel.getRGBdefault();
+		final ImgFactory model = ImgFactory.getFactory();
 		for (int y = 0; y < h; y++) {
 			final int row = y * h * 4;
 			for (int x = 0; x < w; x++) {
@@ -205,7 +204,7 @@ public final class GlPanmage extends Panmage {
 	}
 	
 	public GlPanmage(final String id, final Panple origin,
-                        final Panple boundMin, final Panple boundMax, final BufferedImage img) {
+                        final Panple boundMin, final Panple boundMax, final Img img) {
         this(id, origin, boundMin, boundMax, getTexture(img));
     }
 	
