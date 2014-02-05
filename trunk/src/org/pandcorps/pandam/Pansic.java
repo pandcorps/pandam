@@ -26,7 +26,7 @@ import java.util.*;
 
 import javax.sound.midi.*;
 
-import org.pandcorps.core.Pantil;
+import org.pandcorps.core.*;
 
 // Pandam Music
 public final class Pansic {
