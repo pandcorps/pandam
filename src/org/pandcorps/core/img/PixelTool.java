@@ -22,13 +22,11 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.core.img;
 
-import java.awt.image.ColorModel;
-
-import org.pandcorps.core.Imtil;
+import org.pandcorps.core.*;
 
 public abstract class PixelTool {
-    protected final static ColorModel cm = Imtil.getColorModel();
-    
+	protected final static ImgFactory cm = ImgFactory.getFactory();
+	
     public final static int getRgba(final int r, final int g, final int b, final int a) {
         return cm.getDataElement(new int[] {r, g, b, a}, 0);
     }

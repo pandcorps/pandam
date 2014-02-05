@@ -22,21 +22,57 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.core.img;
 
+import java.awt.image.*;
+import java.io.*;
+
+import javax.imageio.*;
+
 import org.pandcorps.core.*;
 
-public abstract class ColorPixelFilter extends PixelFilter {
-	// Can't be used by multiple threads simultaneously
-	protected final Pancolor c = new Pancolor(Mathtil.SHORT_0, Mathtil.SHORT_0, Mathtil.SHORT_0, Mathtil.SHORT_0);
+public final class AwtImg extends Img {
+	private final BufferedImage raw;
 	
-	@Override
-	public final int filter(final int p) {
-		c.setR((short) cm.getRed(p));
-		c.setG((short) cm.getGreen(p));
-		c.setB((short) cm.getBlue(p));
-		c.setA((short) cm.getAlpha(p));
-		filter();
-		return getRgba(c.getR(), c.getG(), c.getB(), c.getA());
+	public AwtImg(final BufferedImage raw) {
+		this.raw = raw;
 	}
 	
-	protected abstract void filter();
+	@Override
+	public final Object getRaw() {
+		return raw;
+	}
+	
+	@Override
+	public final int getWidth() {
+		return raw.getWidth();
+	}
+	
+	@Override
+	public final int getHeight() {
+		return raw.getHeight();
+	}
+	
+	@Override
+	public final int getRGB(final int x, final int y) {
+		return raw.getRGB(x, y);
+	}
+	
+	@Override
+	public final void setRGB(final int x, final int y, final int rgb) {
+		raw.setRGB(x, y, rgb);
+	}
+	
+	@Override
+	public final Img getSubimage(final int x, final int y, final int w, final int h) {
+		return new AwtImg(raw.getSubimage(x, y, w, h));
+	}
+	
+	@Override
+	public final void save(final String location) throws Exception {
+		ImageIO.write(raw, "png", new File(location));
+	}
+	
+	@Override
+	public final void close() {
+		//raw.flush(); ?
+	}
 }

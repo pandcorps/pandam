@@ -22,10 +22,9 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.core.img.scale;
 
-import java.awt.image.*;
-import java.util.HashSet;
+import java.util.*;
 
-import org.pandcorps.core.Imtil;
+import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
 
 public class BiasScaler extends Scaler {
@@ -40,10 +39,10 @@ public class BiasScaler extends Scaler {
     }
     
     @Override
-    public BufferedImage scale(final BufferedImage in) {
+    public Img scale(final Img in) {
         final int w = in.getWidth(), h = in.getHeight();
         final int w1 = w - 1, h1 = h - 1;
-        final BufferedImage out = new BufferedImage(w * 2, h * 2, Imtil.TYPE);
+        final Img out = Imtil.newImage(w * 2, h * 2);
         for (int x = 0; x < w; x++) {
             for (int y = 0; y < h; y++) {
                 final int ine = in.getRGB(x, y);

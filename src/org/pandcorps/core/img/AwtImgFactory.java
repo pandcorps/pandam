@@ -22,21 +22,48 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.core.img;
 
+import java.awt.image.*;
+import java.io.*;
+
+import javax.imageio.*;
+
 import org.pandcorps.core.*;
 
-public abstract class ColorPixelFilter extends PixelFilter {
-	// Can't be used by multiple threads simultaneously
-	protected final Pancolor c = new Pancolor(Mathtil.SHORT_0, Mathtil.SHORT_0, Mathtil.SHORT_0, Mathtil.SHORT_0);
+public final class AwtImgFactory extends ImgFactory {
+	private final static ColorModel cm = ColorModel.getRGBdefault();
 	
 	@Override
-	public final int filter(final int p) {
-		c.setR((short) cm.getRed(p));
-		c.setG((short) cm.getGreen(p));
-		c.setB((short) cm.getBlue(p));
-		c.setA((short) cm.getAlpha(p));
-		filter();
-		return getRgba(c.getR(), c.getG(), c.getB(), c.getA());
+	public final Img load(final InputStream in) throws Exception {
+		return new AwtImg(ImageIO.read(in));
 	}
 	
-	protected abstract void filter();
+	@Override
+	public final Img create(final int w, final int h) {
+		return new AwtImg(new BufferedImage(w, h, Imtil.TYPE));
+	}
+	
+	@Override
+	public final int getDataElement(final int[] rgb, final int i) {
+		return cm.getDataElement(rgb, i);
+	}
+	
+	@Override
+	public final int getRed(final int rgb) {
+		return cm.getRed(rgb);
+	}
+	
+	@Override
+	public final int getGreen(final int rgb) {
+		return cm.getGreen(rgb);
+	}
+	
+	@Override
+	public final int getBlue(final int rgb) {
+		return cm.getBlue(rgb);
+	}
+	
+	@Override
+	public final int getAlpha(final int rgb) {
+		return cm.getAlpha(rgb);
+	}
 }
