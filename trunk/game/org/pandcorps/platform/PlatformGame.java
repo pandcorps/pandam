@@ -41,7 +41,7 @@ import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.visual.*;
 import org.pandcorps.platform.Avatar.*;
 import org.pandcorps.platform.Enemy.*;
-import org.pandcorps.platform.Level.Theme;
+import org.pandcorps.platform.Level.*;
 import org.pandcorps.platform.Player.*;
 
 public class PlatformGame extends BaseGame {
@@ -526,7 +526,9 @@ public class PlatformGame extends BaseGame {
 		terrains = Imtil.loadStrip("org/pandcorps/platform/res/bg/Terrain.png", ImtilX.DIM);
 		crowns = ImtilX.loadStrip("org/pandcorps/platform/res/chr/Crowns.png", 14, false);
 		
-		engine.getMusic().ensureCapacity(5);
+		if (engine.isMusicSupported()) {
+			engine.getMusic().ensureCapacity(5);
+		}
 	}
 	
 	private final static Panimation createGemAnm(final String name, final Panmage[] gem) {

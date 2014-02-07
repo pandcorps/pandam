@@ -104,7 +104,7 @@ public class GemBumped extends Pandy {
 		getVelocity().set(0, 6);
         PlatformGame.room.addActor(this);
         if (end) {
-        	Pangine.getEngine().getMusic().playSound(Music.gemLevel);
+        	//if isMusicSupported Pangine.getEngine().getMusic().playSound(Music.gemLevel);
         } else if (good) {
         	Gem.playSound();
         } else {
