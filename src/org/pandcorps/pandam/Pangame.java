@@ -78,15 +78,20 @@ public abstract class Pangame {
 		this.currentRoom = currentRoom;
 	}
 
+	public final void beforeLoop() throws Exception {
+		final Pangine engine = Pangine.getEngine();
+		initBeforeEngine();
+		engine.init();
+		engine.setIcon("org/pandcorps/res/img/PandcorpsIcon32.png", "org/pandcorps/res/img/PandcorpsIcon16.png");
+		init(); // Don't know why this happens after engine.init; can't set window size here; don't know what steps should happen here; adding initBeforeEngine
+	}
+	
 	public final void start() throws Panception {
 		final Pangine engine = Pangine.getEngine();
 		try {
-			//engine.start();
-			initBeforeEngine();
-			engine.init();
-			engine.setIcon("org/pandcorps/res/img/PandcorpsIcon32.png", "org/pandcorps/res/img/PandcorpsIcon16.png");
-			init(); // Don't know why this happens after engine.init; can't set window size here; don't know what steps should happen here; adding initBeforeEngine
-			engine.start();
+			beforeLoop();
+			engine.loop();
+			engine.destroy();
 		} catch (final Exception e) {
 			fatal(engine);
 			throw new Panception(e);
