@@ -161,37 +161,38 @@ public abstract class GlPangine extends Pangine {
 	protected abstract void stepControl() throws Exception;
 	
 	@Override
-	protected final void start() throws Exception {
+	protected final void loop() throws Exception {
 		while (running) {
-			//final long frameStart = System.currentTimeMillis();
-		    final long frameStartNano = System.nanoTime();
-			//System.out.println(System.currentTimeMillis());
-		    
-		    stepControl();
-			for (final Panput input : active) {
-				onAction(input);
-			}
-			active.addAll(newActive);
-			newActive.clear();
-			step();
-			draw();
-			try {
-			    //final long sleepTime = frameLength - System.currentTimeMillis() + frameStart;
-			    final long sleepTime = frameLengthNano - System.nanoTime() + frameStartNano;
-			    //System.out.println(sleepTime);
-			    if (sleepTime > 0) {
-			        //Thread.sleep(sleepTime);
-			        final long sleepTimeMillis = sleepTime / 1000000;
-			        Thread.sleep(sleepTimeMillis, (int) (sleepTime - sleepTimeMillis * 1000000));
-			    }
-            } catch (final InterruptedException e) {
-                throw new RuntimeException(e);
-            }
+			frame();
 		}
-		destroy();
 	}
 	
-	protected abstract void destroy();
+	public final void frame() throws Exception {
+		//final long frameStart = System.currentTimeMillis();
+	    final long frameStartNano = System.nanoTime();
+		//System.out.println(System.currentTimeMillis());
+	    
+	    stepControl();
+		for (final Panput input : active) {
+			onAction(input);
+		}
+		active.addAll(newActive);
+		newActive.clear();
+		step();
+		draw();
+		try {
+		    //final long sleepTime = frameLength - System.currentTimeMillis() + frameStart;
+		    final long sleepTime = frameLengthNano - System.nanoTime() + frameStartNano;
+		    //System.out.println(sleepTime);
+		    if (sleepTime > 0) {
+		        //Thread.sleep(sleepTime);
+		        final long sleepTimeMillis = sleepTime / 1000000;
+		        Thread.sleep(sleepTimeMillis, (int) (sleepTime - sleepTimeMillis * 1000000));
+		    }
+        } catch (final InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+	}
 	
 	protected final void activate(final Panput input, final boolean active) {
 		if (input == null) {

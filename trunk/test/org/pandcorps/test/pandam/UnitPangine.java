@@ -104,7 +104,11 @@ public final class UnitPangine extends Pangine {
 	}
 
 	@Override
-	protected final void start() throws Exception {
+	protected final void loop() throws Exception {
+	}
+	
+	@Override
+	protected final void destroy() throws Exception {
 	}
 
 	//@Override
