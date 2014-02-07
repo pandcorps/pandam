@@ -22,7 +22,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.platform;
 
-import javax.sound.midi.Sequence;
+//import javax.sound.midi.*;
 
 import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
@@ -72,15 +72,15 @@ public class Tiles {
     	}
     	final Player player = (Player) chr;
     	final byte b = t.getBehavior();
-    	final Sequence seq;
+    	//if isMusicSupported final Sequence seq;
     	if (b == PlatformGame.TILE_BREAK) {
     		t.setForeground(null, false);
     		shatter(PlatformGame.block8, t.getPosition(), false);
     		if (Mathtil.rand()) {
     		    newGemBumped(player, t); // Plays a sound
-    		    seq = null;
+    		    //if isMusicSupported seq = null;
     		} else {
-    			seq = Music.crumble;
+    			//if isMusicSupported seq = Music.crumble;
     		}
     		new Bump(chr, t).setVisible(false); // To bump Characters above
     		player.pc.profile.stats.brokenBlocks++;
@@ -94,11 +94,11 @@ public class Tiles {
     	    }
     		t.setForeground(null, true);
     		player.pc.profile.stats.bumpedBlocks++;
-    		seq = null;
+    		//if isMusicSupported seq = null;
     	} else {
-    		seq = Music.thud;
+    		//if isMusicSupported seq = Music.thud;
     	}
-    	Pangine.getEngine().getMusic().playSound(seq);
+    	//if isMusicSupported Pangine.getEngine().getMusic().playSound(seq);
     }
     
     public static class Faller extends Pandy implements AllOobListener {
