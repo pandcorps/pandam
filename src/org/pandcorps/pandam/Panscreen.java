@@ -35,19 +35,11 @@ public abstract class Panscreen {
         }
         Panscreen.screen = screen;
         try {
-            screen.start();
+            Pangame.getGame().getCurrentRoom().clear(); // Clear listeners?
+            screen.load();
         } catch (final Exception e) {
             throw Panception.get(e);
         }
-    }
-    
-    private final void start() throws Exception {
-        init();
-        load();
-    }
-    
-    private final void init() {
-        Pangame.getGame().getCurrentRoom().clear(); // Clear listeners?
     }
     
     protected abstract void load() throws Exception;
