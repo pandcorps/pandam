@@ -22,6 +22,8 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandax.visual;
 
+import java.util.*;
+
 import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
 import org.pandcorps.pandam.*;
@@ -36,6 +38,8 @@ public abstract class FadeScreen extends TempScreen {
     private final short oldAlpha;
     private final int time;
     private TimerListener timer = null;
+    private Queue<Runnable> tasks = null;
+    private boolean finished = false;
     
     protected FadeScreen(final Pancolor color, final int time) {
         room = Pangame.getGame().getCurrentRoom();
@@ -59,6 +63,18 @@ public abstract class FadeScreen extends TempScreen {
         c.register(anyKey);
     }
     
+    @Override
+    protected final void step() {
+    	FadeController.run(tasks);
+    	if (finished) {
+    		fadeFinished();
+    	}
+    }
+    
+    public void setTasks(final Queue<Runnable> tasks) {
+        this.tasks = tasks;
+    }
+    
     private final class FadeScreenController extends FadeController {
         private FadeScreenController() {
             super(Pantil.vmid());
@@ -72,10 +88,19 @@ public abstract class FadeScreen extends TempScreen {
                 }};
                 c.register(time, timer);
             } else {
-                color.setA(oldAlpha);
-                // Might open a new FadeScreen, so revert alpha first
-                finish(this);
+            	finished = true;
+            	fadeFinished();
             }
         }
+    }
+    
+    private final void fadeFinished() {
+    	if (Coltil.isValued(tasks)) {
+    		return;
+    	}
+    	color.setA(oldAlpha);
+        // Might open a new FadeScreen, so revert alpha first
+        finish(c);
+        finished = false; // Make sure we don't run this method again
     }
 }

@@ -46,16 +46,22 @@ public class FadeController extends Panctor implements StepListener {
     public final void onStep(final StepEvent event) {
         if (velocity == 0 || isDestroyed()) {
             return;
-        } else if (Coltil.isValued(tasks)) {
-            // Could run multiple tasks until some time threshold is met
-            tasks.remove().run();
         }
+        run(tasks);
         final Pancolor color = getLayer().getBlendColor();
         if (!color.addA(velocity)) {
             //TODO Optionally check for remaining tasks before ending
             onFadeEnd();
             velocity = 0;
         }
+    }
+    
+    protected final static void run(final Queue<Runnable> tasks) {
+    	if (Coltil.isEmpty(tasks)) {
+    		return;
+    	}
+        // Could run multiple tasks until some time threshold is met
+    	tasks.remove().run();
     }
     
     protected void onFadeEnd() {
