@@ -22,11 +22,11 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.game;
 
-import org.pandcorps.core.Reftil;
-import org.pandcorps.core.img.Pancolor;
+import org.pandcorps.core.*;
+import org.pandcorps.core.img.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandax.text.*;
-import org.pandcorps.pandax.visual.FadeScreen;
+import org.pandcorps.pandax.visual.*;
 
 public final class LogoScreen extends FadeScreen {
     private Panmage font = null;
