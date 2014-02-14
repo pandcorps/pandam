@@ -154,6 +154,7 @@ public class PlatformGame extends BaseGame {
 	protected static Img[] dirts = null;
 	protected static Img[] terrains = null;
 	protected static Img[] crowns = null;
+	private static Queue<Runnable> loaders = new LinkedList<Runnable>();
 	
 	@Override
 	protected final boolean isFullScreen() {
@@ -166,7 +167,7 @@ public class PlatformGame extends BaseGame {
 		//engine.setFrameRate(60);
 		PlatformGame.room = room;
 		loadConstants();
-		Panscreen.set(new LogoScreen(Menu.TitleScreen.class));
+		Panscreen.set(new LogoScreen(Menu.TitleScreen.class, loaders));
 	}
 	
 	protected final static void fadeIn(final Panlayer layer) {
@@ -461,70 +462,87 @@ public class PlatformGame extends BaseGame {
 		// CFG|Andrew
 		Config.defaultProfileName = cfg.getValue(0);
 		
-		allEnemies.add(new EnemyDefinition("Drowid", 1, null, true, 1)); // Teleport when stomped
-		allEnemies.add(new EnemyDefinition("Drolock", 4, null, false, 0, 0)); // Teleport/shoot periodically
-		allEnemies.add(new EnemyDefinition("Troblin", 2, null, true));
-		final ReplacePixelFilter f = new ReplacePixelFilter();
-		replace(f, (short) 104, (short) 120, (short) 172);
-		replace(f, (short) 80, (short) 96, (short) 144);
-		replace(f, (short) 64, (short) 80, (short) 112);
-		replace(f, (short) 48, (short) 56, (short) 80);
-		allEnemies.add(new EnemyDefinition("Obglin", 2, f, false));
-		allEnemies.add(new EnemyDefinition("Imp", 3, null, true, true, 4, 14));
-		Level.setTheme(Theme.Normal);
+		loaders.add(new Runnable() { @Override public final void run() {
+			allEnemies.add(new EnemyDefinition("Drowid", 1, null, true, 1)); }}); // Teleport when stomped
+		loaders.add(new Runnable() { @Override public final void run() {
+			allEnemies.add(new EnemyDefinition("Drolock", 4, null, false, 0, 0)); }}); // Teleport/shoot periodically
+		loaders.add(new Runnable() { @Override public final void run() {
+			allEnemies.add(new EnemyDefinition("Troblin", 2, null, true)); }});
+		loaders.add(new Runnable() { @Override public final void run() {
+			final ReplacePixelFilter f = new ReplacePixelFilter();
+			replace(f, (short) 104, (short) 120, (short) 172);
+			replace(f, (short) 80, (short) 96, (short) 144);
+			replace(f, (short) 64, (short) 80, (short) 112);
+			replace(f, (short) 48, (short) 56, (short) 80);
+			allEnemies.add(new EnemyDefinition("Obglin", 2, f, false)); }});
+		loaders.add(new Runnable() { @Override public final void run() {
+			allEnemies.add(new EnemyDefinition("Imp", 3, null, true, true, 4, 14));
+			Level.setTheme(Theme.Normal); }});
 		
-		final Panmage[] owls = createSheet("owl", "org/pandcorps/platform/res/chr/Owl.png", 32);
-		final int owlBlink = DUR_BLINK + 30;
-		final Panframe owl1 = engine.createFrame(PRE_FRM + "owl.1", owls[0], owlBlink - DUR_CLOSED);
-		final Panframe owl2 = engine.createFrame(PRE_FRM + "owl.2", owls[1], DUR_CLOSED);
-		owl = engine.createAnimation(PRE_ANM + "owl", owl1, owl2);
+		loaders.add(new Runnable() { @Override public final void run() {
+			final Panmage[] owls = createSheet("owl", "org/pandcorps/platform/res/chr/Owl.png", 32);
+			final int owlBlink = DUR_BLINK + 30;
+			final Panframe owl1 = engine.createFrame(PRE_FRM + "owl.1", owls[0], owlBlink - DUR_CLOSED);
+			final Panframe owl2 = engine.createFrame(PRE_FRM + "owl.2", owls[1], DUR_CLOSED);
+			owl = engine.createAnimation(PRE_ANM + "owl", owl1, owl2); }});
 		
-		bubble = createImage("bubble", "org/pandcorps/platform/res/chr/Bubble.png", 32, og);
+		loaders.add(new Runnable() { @Override public final void run() {
+			bubble = createImage("bubble", "org/pandcorps/platform/res/chr/Bubble.png", 32, og); }});
 	    
-	    font = Fonts.getClassics(new FontRequest(8), Pancolor.WHITE, Pancolor.BLACK);
-	    fontTiny = Fonts.getTiny(FontType.Upper, Pancolor.WHITE);
+		loaders.add(new Runnable() { @Override public final void run() {
+			font = Fonts.getClassics(new FontRequest(8), Pancolor.WHITE, Pancolor.BLACK); }});
+		loaders.add(new Runnable() { @Override public final void run() {
+			fontTiny = Fonts.getTiny(FontType.Upper, Pancolor.WHITE); }});
 	    
-	    block8 = createImage("block8", "org/pandcorps/platform/res/misc/Block8.png", 8);
+		loaders.add(new Runnable() { @Override public final void run() {
+			block8 = createImage("block8", "org/pandcorps/platform/res/misc/Block8.png", 8); }});
 	    
-	    final Img[] gemStrip = ImtilX.loadStrip("org/pandcorps/platform/res/misc/Gem.png");
-	    final Img gem1 = Imtil.copy(gemStrip[0]);
-	    gem = createSheet("gem", null, gemStrip);
-	    gemAnm = createGemAnm("gem", gem);
-	    gemShatter = createImage("gem.shatter", "org/pandcorps/platform/res/misc/GemShatter.png", 8);
-	    gemCyanAnm = createGemAnm("cyan", gemStrip, Channel.Green, Channel.Red, Channel.Blue);
-	    gemBlueAnm = createGemAnm("blue", gemStrip, Channel.Red, Channel.Red, Channel.Blue);
-	    gemGreenAnm = createGemAnm("green", gemStrip, Channel.Red, Channel.Blue, Channel.Red);
-	    gemWhite = engine.createImage(PRE_IMG + "gem.white", Imtil.filter(gem1, new SwapPixelFilter(Channel.Red, Channel.Red, Channel.Blue)));
-	    gemLevelAnm = createGemAnm("gem.level", createSheet("gem.level", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/Gem5.png")));
-	    gemWorldAnm = createGemAnm("gem.world", createSheet("gem.world", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/Gem6.png")));
+		//TODO Some of these can be split more
+		loaders.add(new Runnable() { @Override public final void run() {
+		    final Img[] gemStrip = ImtilX.loadStrip("org/pandcorps/platform/res/misc/Gem.png");
+		    final Img gem1 = Imtil.copy(gemStrip[0]);
+		    gem = createSheet("gem", null, gemStrip);
+		    gemAnm = createGemAnm("gem", gem);
+		    gemShatter = createImage("gem.shatter", "org/pandcorps/platform/res/misc/GemShatter.png", 8);
+		    gemCyanAnm = createGemAnm("cyan", gemStrip, Channel.Green, Channel.Red, Channel.Blue);
+		    gemBlueAnm = createGemAnm("blue", gemStrip, Channel.Red, Channel.Red, Channel.Blue);
+		    gemGreenAnm = createGemAnm("green", gemStrip, Channel.Red, Channel.Blue, Channel.Red);
+		    gemWhite = engine.createImage(PRE_IMG + "gem.white", Imtil.filter(gem1, new SwapPixelFilter(Channel.Red, Channel.Red, Channel.Blue)));
+		    gemLevelAnm = createGemAnm("gem.level", createSheet("gem.level", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/Gem5.png")));
+		    gemWorldAnm = createGemAnm("gem.world", createSheet("gem.world", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/Gem6.png"))); }});
 	    
-	    final Panframe[] sa = createFrames("spark", "org/pandcorps/platform/res/misc/Spark.png", 8, 1);
-	    spark = engine.createAnimation(PRE_ANM + "spark", sa[0], sa[1], sa[2], sa[3], sa[2], sa[1], sa[0]);
-	    Spark.class.getClass(); // Force class load? Save time later?
+		loaders.add(new Runnable() { @Override public final void run() {
+		    final Panframe[] sa = createFrames("spark", "org/pandcorps/platform/res/misc/Spark.png", 8, 1);
+		    spark = engine.createAnimation(PRE_ANM + "spark", sa[0], sa[1], sa[2], sa[3], sa[2], sa[1], sa[0]);
+		    Spark.class.getClass(); }}); // Force class load? Save time later?
 	    
-	    teleport = createAnm("teleport", "org/pandcorps/platform/res/enemy/Teleport.png", ImtilX.DIM, 5, Enemy.DEFAULT_O);
+		loaders.add(new Runnable() { @Override public final void run() {
+			teleport = createAnm("teleport", "org/pandcorps/platform/res/enemy/Teleport.png", ImtilX.DIM, 5, Enemy.DEFAULT_O); }});
 	    
-	    final Panmage pimg1 = createImage("projectile1", "org/pandcorps/platform/res/enemy/Projectile1.png", 8, PlatformGame.CENTER_8, new FinPanple(-3, -3, 0), new FinPanple(2, 2, 0));
-	    final Panframe[] pfrms = new Panframe[4];
-	    for (int i = 0; i < 4; i++) {
-	        pfrms[i] = engine.createFrame(PRE_FRM + "projectile1." + i, pimg1, 4, i, false, false);
-	    }
-	    projectile1 = engine.createAnimation(PRE_ANM + "projectile1", pfrms);
+		loaders.add(new Runnable() { @Override public final void run() {
+			final Panmage pimg1 = createImage("projectile1", "org/pandcorps/platform/res/enemy/Projectile1.png", 8, PlatformGame.CENTER_8, new FinPanple(-3, -3, 0), new FinPanple(2, 2, 0));
+		    final Panframe[] pfrms = new Panframe[4];
+		    for (int i = 0; i < 4; i++) {
+		        pfrms[i] = engine.createFrame(PRE_FRM + "projectile1." + i, pimg1, 4, i, false, false);
+		    }
+		    projectile1 = engine.createAnimation(PRE_ANM + "projectile1", pfrms); }});
 	    
-	    final FinPanple mo = new FinPanple(-4, -4, 0);
-	    final Panmage[] ma = createSheet("Marker", "org/pandcorps/platform/res/bg/Marker.png", 8, mo);
-		final Panframe[] fa = new Panframe[ma.length];
-		for (int i = 0; i < ma.length; i++) {
-			fa[i] = engine.createFrame(PRE_FRM + "marker." + i, ma[i], 2 * (2 - i % 2));
-		}
-		marker = engine.createAnimation(PRE_ANM + "marker", fa);
-		markerDefeated = engine.createImage(PRE_IMG + "Marker.def", mo, null, null, ImtilX.loadStrip("org/pandcorps/platform/res/bg/MarkerDefeated.png", 8)[3]);
-		portal = createAnm("portal", "org/pandcorps/platform/res/bg/Portal.png", 6);
-		portalClosed = createAnm("portal.closed", "org/pandcorps/platform/res/bg/PortalClosed.png", 15);
+		loaders.add(new Runnable() { @Override public final void run() {
+			final FinPanple mo = new FinPanple(-4, -4, 0);
+		    final Panmage[] ma = createSheet("Marker", "org/pandcorps/platform/res/bg/Marker.png", 8, mo);
+			final Panframe[] fa = new Panframe[ma.length];
+			for (int i = 0; i < ma.length; i++) {
+				fa[i] = engine.createFrame(PRE_FRM + "marker." + i, ma[i], 2 * (2 - i % 2));
+			}
+			marker = engine.createAnimation(PRE_ANM + "marker", fa);
+			markerDefeated = engine.createImage(PRE_IMG + "Marker.def", mo, null, null, ImtilX.loadStrip("org/pandcorps/platform/res/bg/MarkerDefeated.png", 8)[3]);
+			portal = createAnm("portal", "org/pandcorps/platform/res/bg/Portal.png", 6);
+			portalClosed = createAnm("portal.closed", "org/pandcorps/platform/res/bg/PortalClosed.png", 15); }});
 		
-		dirts = Imtil.loadStrip("org/pandcorps/platform/res/bg/Dirt.png", ImtilX.DIM);
-		terrains = Imtil.loadStrip("org/pandcorps/platform/res/bg/Terrain.png", ImtilX.DIM);
-		crowns = ImtilX.loadStrip("org/pandcorps/platform/res/chr/Crowns.png", 14, false);
+		loaders.add(new Runnable() { @Override public final void run() {
+			dirts = Imtil.loadStrip("org/pandcorps/platform/res/bg/Dirt.png", ImtilX.DIM);
+			terrains = Imtil.loadStrip("org/pandcorps/platform/res/bg/Terrain.png", ImtilX.DIM);
+			crowns = ImtilX.loadStrip("org/pandcorps/platform/res/chr/Crowns.png", 14, false); }});
 		
 		if (engine.isMusicSupported()) {
 			engine.getMusic().ensureCapacity(5);

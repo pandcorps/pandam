@@ -22,6 +22,8 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.game;
 
+import java.util.*;
+
 import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
 import org.pandcorps.pandam.*;
@@ -36,6 +38,11 @@ public final class LogoScreen extends FadeScreen {
     public LogoScreen(final Class<? extends Panscreen> titleClass) {
         super(Pancolor.WHITE, 30);
         this.titleClass = titleClass;
+    }
+    
+    public LogoScreen(final Class<? extends Panscreen> titleClass, final Queue<Runnable> tasks) {
+    	this(titleClass);
+    	setTasks(tasks);
     }
     
     @Override
