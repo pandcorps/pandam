@@ -22,12 +22,16 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandax.visual;
 
-import org.pandcorps.core.img.Pancolor;
+import java.util.*;
+
+import org.pandcorps.core.*;
+import org.pandcorps.core.img.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 
 public class FadeController extends Panctor implements StepListener {
     private short velocity = 0;
+    private Queue<Runnable> tasks = null;
     
     public FadeController() {
         setVisible(false);
@@ -42,9 +46,13 @@ public class FadeController extends Panctor implements StepListener {
     public final void onStep(final StepEvent event) {
         if (velocity == 0 || isDestroyed()) {
             return;
+        } else if (Coltil.isValued(tasks)) {
+            // Could run multiple tasks until some time threshold is met
+            tasks.remove().run();
         }
         final Pancolor color = getLayer().getBlendColor();
         if (!color.addA(velocity)) {
+            //TODO Optionally check for remaining tasks before ending
             onFadeEnd();
             velocity = 0;
         }
@@ -55,6 +63,11 @@ public class FadeController extends Panctor implements StepListener {
     
     public void setVelocity(final short velocity) {
         this.velocity = velocity;
+    }
+    
+    // If using FadeScreen, then use its setTasks, so that it can run tasks during pause between fade-in and fade-out
+    public void setTasks(final Queue<Runnable> tasks) {
+        this.tasks = tasks;
     }
     
     public final static void fadeIn(final Panlayer layer, final short r, final short g, final short b, final short speed) {

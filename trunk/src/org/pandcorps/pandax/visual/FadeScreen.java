@@ -22,8 +22,8 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandax.visual;
 
-import org.pandcorps.core.Pantil;
-import org.pandcorps.core.img.Pancolor;
+import org.pandcorps.core.*;
+import org.pandcorps.core.img.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.action.*;
