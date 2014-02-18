@@ -304,6 +304,7 @@ public class Menu {
 	    
 	    @Override
         protected final void menu() {
+	        PlatformGame.loaders = null;
 	        final Pantext text = addTitle("Press anything", center, getBottom());
 	        text.centerX();
 	        text.register(new ActionStartListener() {@Override public void onActionStart(final ActionStartEvent event) {

@@ -154,7 +154,7 @@ public class PlatformGame extends BaseGame {
 	protected static Img[] dirts = null;
 	protected static Img[] terrains = null;
 	protected static Img[] crowns = null;
-	private static Queue<Runnable> loaders = new LinkedList<Runnable>();
+	protected static Queue<Runnable> loaders = new LinkedList<Runnable>();
 	
 	@Override
 	protected final boolean isFullScreen() {
@@ -497,7 +497,6 @@ public class PlatformGame extends BaseGame {
 		loaders.add(new Runnable() { @Override public final void run() {
 			block8 = createImage("block8", "org/pandcorps/platform/res/misc/Block8.png", 8); }});
 	    
-		//TODO Some of these can be split more
 		loaders.add(new Runnable() { @Override public final void run() {
 		    final Img[] gemStrip = ImtilX.loadStrip("org/pandcorps/platform/res/misc/Gem.png");
 		    final Img gem1 = Imtil.copy(gemStrip[0]);
@@ -507,8 +506,10 @@ public class PlatformGame extends BaseGame {
 		    gemCyanAnm = createGemAnm("cyan", gemStrip, Channel.Green, Channel.Red, Channel.Blue);
 		    gemBlueAnm = createGemAnm("blue", gemStrip, Channel.Red, Channel.Red, Channel.Blue);
 		    gemGreenAnm = createGemAnm("green", gemStrip, Channel.Red, Channel.Blue, Channel.Red);
-		    gemWhite = engine.createImage(PRE_IMG + "gem.white", Imtil.filter(gem1, new SwapPixelFilter(Channel.Red, Channel.Red, Channel.Blue)));
-		    gemLevelAnm = createGemAnm("gem.level", createSheet("gem.level", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/Gem5.png")));
+		    gemWhite = engine.createImage(PRE_IMG + "gem.white", Imtil.filter(gem1, new SwapPixelFilter(Channel.Red, Channel.Red, Channel.Blue))); }});
+		loaders.add(new Runnable() { @Override public final void run() {
+		    gemLevelAnm = createGemAnm("gem.level", createSheet("gem.level", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/Gem5.png"))); }});
+		loaders.add(new Runnable() { @Override public final void run() {
 		    gemWorldAnm = createGemAnm("gem.world", createSheet("gem.world", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/Gem6.png"))); }});
 	    
 		loaders.add(new Runnable() { @Override public final void run() {
@@ -535,17 +536,22 @@ public class PlatformGame extends BaseGame {
 				fa[i] = engine.createFrame(PRE_FRM + "marker." + i, ma[i], 2 * (2 - i % 2));
 			}
 			marker = engine.createAnimation(PRE_ANM + "marker", fa);
-			markerDefeated = engine.createImage(PRE_IMG + "Marker.def", mo, null, null, ImtilX.loadStrip("org/pandcorps/platform/res/bg/MarkerDefeated.png", 8)[3]);
-			portal = createAnm("portal", "org/pandcorps/platform/res/bg/Portal.png", 6);
+			markerDefeated = engine.createImage(PRE_IMG + "Marker.def", mo, null, null, ImtilX.loadStrip("org/pandcorps/platform/res/bg/MarkerDefeated.png", 8)[3]); }});
+		loaders.add(new Runnable() { @Override public final void run() {
+			portal = createAnm("portal", "org/pandcorps/platform/res/bg/Portal.png", 6); }});
+		loaders.add(new Runnable() { @Override public final void run() {
 			portalClosed = createAnm("portal.closed", "org/pandcorps/platform/res/bg/PortalClosed.png", 15); }});
 		
 		loaders.add(new Runnable() { @Override public final void run() {
-			dirts = Imtil.loadStrip("org/pandcorps/platform/res/bg/Dirt.png", ImtilX.DIM);
-			terrains = Imtil.loadStrip("org/pandcorps/platform/res/bg/Terrain.png", ImtilX.DIM);
+			dirts = Imtil.loadStrip("org/pandcorps/platform/res/bg/Dirt.png", ImtilX.DIM); }});
+		loaders.add(new Runnable() { @Override public final void run() {
+			terrains = Imtil.loadStrip("org/pandcorps/platform/res/bg/Terrain.png", ImtilX.DIM); }});
+		loaders.add(new Runnable() { @Override public final void run() {
 			crowns = ImtilX.loadStrip("org/pandcorps/platform/res/chr/Crowns.png", 14, false); }});
 		
 		if (engine.isMusicSupported()) {
-			engine.getMusic().ensureCapacity(5);
+		    loaders.add(new Runnable() { @Override public final void run() {
+		        engine.getMusic().ensureCapacity(5); }});
 		}
 	}
 	
