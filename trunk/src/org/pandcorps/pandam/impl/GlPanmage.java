@@ -35,6 +35,7 @@ public final class GlPanmage extends Panmage {
 	private final int h;
 	/*package*/ final SizePanple size;
 	private int tid;
+	private Texture tex = null;
 	private final float offx;
 	private final float offy;
 	private final int tw;
@@ -69,25 +70,31 @@ public final class GlPanmage extends Panmage {
 	}
 	
 	private final static class Texture {
-	    private final int usableWidth;
+	    private final int usableWidth; // raw
 	    
 	    private final int usableHeight;
 	    
 	    private final int paddedSize;
 	    
-	    private final int tid;
+	    private final int scaledWidth;
 	    
-	    private Texture(final int usableWidth, final int usableHeight, final int paddedSize, final int tid) {
+	    private final int scaledHeight;
+	    
+	    private final ByteBuffer scratch;
+	    
+	    private Texture(final int usableWidth, final int usableHeight, final int paddedSize, final int scaledWidth, final int scaledHeight, final ByteBuffer scratch) {
 	        this.usableWidth = usableWidth;
 	        this.usableHeight = usableHeight;
 	        this.paddedSize = paddedSize;
-	        this.tid = tid;
+	        this.scaledWidth = scaledWidth;
+	        this.scaledHeight = scaledHeight;
+	        this.scratch = scratch;
 	    }
 	}
 
-	private final static Texture getTexture(final String location) {
+	private final static Texture prepareTexture(final String location) {
 ////
-	    return getTexture(Imtil.load(location));
+	    return prepareTexture(Imtil.load(location));
 	}
 	
 	private final static int toPow2(final int d) {
@@ -106,7 +113,7 @@ public final class GlPanmage extends Panmage {
 	    return padded;
 	}
 	
-	private final static Texture getTexture(final Img _img) {
+	private final static Texture prepareTexture(final Img _img) {
 		final Pangine engine = Pangine.getEngine();
 		final Scaler scaler = engine.getImageScaler();
 		final float zoom = engine.getZoom();
@@ -163,21 +170,31 @@ public final class GlPanmage extends Panmage {
 		final ByteBuffer scratch = ByteBuffer.allocateDirect(capacity);
 		scratch.put(raster);
 		scratch.rewind();
-
+		return new Texture(_img.getWidth(), _img.getHeight(), padded.getWidth(), w, h, scratch);
+	}
+	
+	/*
+	TODO
+	Make Pangine's image map thread-safe.
+	Give FadeScreen option to run tasks in background thread (and wait for it to finish).
+	Pangine's main loop should start binding any unbound images during frames with extra time.
+	*/
+	private final void bindTexture() {
 		// Create A IntBuffer For Image Address In Memory
 		final IntBuffer buf = Pantil.allocateDirectIntBuffer(1);
 		final Pangl gl = GlPangine.gl;
 		gl.glGenTextures(buf); // Create Texture In OpenGL
 		// Create Nearest Filtered Texture
-		final int tid = buf.get(0);
+		tid = buf.get(0);
+		if (tid == NULL_TID) {
+            throw new IllegalStateException("New texture id was unexpectedly " + tid);
+        }
 		gl.glBindTexture(gl.GL_TEXTURE_2D, tid);
 		gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_NEAREST);
 		gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MIN_FILTER, gl.GL_NEAREST);
 		gl.glTexImage2D(
-			gl.GL_TEXTURE_2D, 0, gl.GL_RGBA, w, h, 0, gl.GL_RGBA, gl.GL_UNSIGNED_BYTE,
-			scratch);
-		
-		return new Texture(_img.getWidth(), _img.getHeight(), padded.getWidth(), tid);
+			gl.GL_TEXTURE_2D, 0, gl.GL_RGBA, tex.scaledWidth, tex.scaledHeight, 0, gl.GL_RGBA, gl.GL_UNSIGNED_BYTE,
+			tex.scratch);
 ////
 	}
 	
@@ -186,37 +203,34 @@ public final class GlPanmage extends Panmage {
 	    super(id, origin, boundMin, boundMax);
 	    w = tex.usableWidth;
 	    h = tex.usableHeight;
-	    tid = tex.tid;
-	    if (tid == NULL_TID) {
-	    	throw new IllegalStateException("New texture id was unexpectedly " + tid);
-	    }
 		//size = new FinPanple(w, h, 0);
 		size = new SizePanple();
 		offx = 0;
 		offy = 0;
 		tw = tex.paddedSize;
 		th = tex.paddedSize;
+		this.tex = tex;
 	}
 	
 	public GlPanmage(final String id, final Panple origin,
                         final Panple boundMin, final Panple boundMax, final String location) {
-	    this(id, origin, boundMin, boundMax, getTexture(location));
+	    this(id, origin, boundMin, boundMax, prepareTexture(location));
 	}
 	
 	public GlPanmage(final String id, final Panple origin,
                         final Panple boundMin, final Panple boundMax, final Img img) {
-        this(id, origin, boundMin, boundMax, getTexture(img));
+        this(id, origin, boundMin, boundMax, prepareTexture(img));
     }
 	
 	private GlPanmage(final String id, final Panple origin,
 	                     final Panple boundMin, final Panple boundMax,
-	                     final int tid, final int w, final int h,
+	                     final Texture tex, final int w, final int h,
 	                     final float offx, final float offy,
 	                     final int tw, final int th) {
 	    super(id, origin, boundMin, boundMax);
         this.w = w;
         this.h = h;
-        this.tid = tid;
+        this.tex = tex;
         size = new SizePanple();
         this.offx = offx;
         this.offy = offy;
@@ -228,7 +242,7 @@ public final class GlPanmage extends Panmage {
 	                                                 final Panple boundMin, final Panple boundMax,
 	                                                 final String location,
 	                                                 final int iw, final int ih) {
-	    final Texture tex = getTexture(location);
+	    final Texture tex = prepareTexture(location);
 	    final int tw = tex.usableWidth;
 	    if (tw % iw != 0) {
 	        throw new IllegalArgumentException("Texture width " + tw + " not divisible by image width " + iw);
@@ -237,13 +251,12 @@ public final class GlPanmage extends Panmage {
         if (th % ih != 0) {
             throw new IllegalArgumentException("Texture height " + th + " not divisible by image height " + ih);
         }
-        final int tid = tex.tid;
         final int rows = th / ih, cols = tw / iw;
         final GlPanmage[][] sheet = new GlPanmage[rows][cols];
         for (int oy = 0; oy < rows; oy++) {
             final GlPanmage[] row = sheet[oy];
             for (int ox = 0; ox < cols; ox++) {
-                row[ox] = new GlPanmage(prefix + "-" + oy + "-" + ox, origin, boundMin, boundMax, tid, iw, ih, ((float) ox * iw) / tw, ((float) oy * ih) / th, tw, th);
+                row[ox] = new GlPanmage(prefix + "-" + oy + "-" + ox, origin, boundMin, boundMax, tex, iw, ih, ((float) ox * iw) / tw, ((float) oy * ih) / th, tw, th);
             }
         }
         //TODO group layers by texture if multiple images can use same texture
@@ -271,6 +284,11 @@ public final class GlPanmage extends Panmage {
 	    final int numTexCoords = t.getSize();
 	    if (numTexCoords > 0) {
 	    	final Pangl gl = GlPangine.gl;
+	    	if (tex != null) {
+	    	    bindTexture();
+	    	    tex.scratch.clear();
+	    	    tex = null;
+	    	}
     	    gl.glLoadIdentity();
     	    gl.glBindTexture(gl.GL_TEXTURE_2D, tid);
     	    //gl.glColor3b((byte) 0, (byte) 0, Byte.MAX_VALUE); // Kind of works to make everything blue
