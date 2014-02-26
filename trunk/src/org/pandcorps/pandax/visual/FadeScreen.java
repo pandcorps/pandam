@@ -39,6 +39,7 @@ public abstract class FadeScreen extends TempScreen {
     private final int time;
     private TimerListener timer = null;
     private Queue<Runnable> tasks = null;
+    private Thread bg = null;
     private boolean finished = false;
     
     protected FadeScreen(final Pancolor color, final int time) {
@@ -75,6 +76,16 @@ public abstract class FadeScreen extends TempScreen {
         this.tasks = tasks;
     }
     
+    public void setBackgroundTasks(final Queue<Runnable> tasks) {
+        bg = new Thread(new Runnable() {
+            @Override public final void run() {
+                for (final Runnable task : tasks) {
+                    task.run();
+                }
+            }});
+        bg.start();
+    }
+    
     private final class FadeScreenController extends FadeController {
         private FadeScreenController() {
             super(Pantil.vmid());
@@ -95,7 +106,7 @@ public abstract class FadeScreen extends TempScreen {
     }
     
     private final void fadeFinished() {
-    	if (Coltil.isValued(tasks)) {
+    	if (Coltil.isValued(tasks) || (bg != null && bg.isAlive())) {
     		return;
     	}
     	color.setA(oldAlpha);
