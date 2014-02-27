@@ -42,7 +42,7 @@ public final class LogoScreen extends FadeScreen {
     
     public LogoScreen(final Class<? extends Panscreen> titleClass, final Queue<Runnable> tasks) {
     	this(titleClass);
-    	setTasks(tasks);
+    	setBackgroundTasks(tasks);
     }
     
     @Override
