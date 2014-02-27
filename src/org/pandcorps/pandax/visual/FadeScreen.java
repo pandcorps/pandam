@@ -40,6 +40,7 @@ public abstract class FadeScreen extends TempScreen {
     private TimerListener timer = null;
     private Queue<Runnable> tasks = null;
     private Thread bg = null;
+    private boolean bgWaiting = true;
     private boolean finished = false;
     
     protected FadeScreen(final Pancolor color, final int time) {
@@ -66,6 +67,10 @@ public abstract class FadeScreen extends TempScreen {
     
     @Override
     protected final void step() {
+    	if (bgWaiting && bg != null) {
+        	bg.start();
+        	bgWaiting = false;
+        }
     	FadeController.run(tasks);
     	if (finished) {
     		fadeFinished();
@@ -77,13 +82,17 @@ public abstract class FadeScreen extends TempScreen {
     }
     
     public void setBackgroundTasks(final Queue<Runnable> tasks) {
+    	if (bg != null) {
+    		throw new IllegalStateException("Cannot call setBackgroundTasks twice");
+    	}
         bg = new Thread(new Runnable() {
             @Override public final void run() {
                 for (final Runnable task : tasks) {
                     task.run();
                 }
             }});
-        bg.start();
+        bg.setPriority(Math.max(Thread.MIN_PRIORITY, Thread.currentThread().getPriority() - 2));
+        bg.setDaemon(true);
     }
     
     private final class FadeScreenController extends FadeController {
