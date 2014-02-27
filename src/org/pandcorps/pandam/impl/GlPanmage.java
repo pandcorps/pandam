@@ -175,8 +175,6 @@ public final class GlPanmage extends Panmage {
 	
 	/*
 	TODO
-	Make Pangine's image map thread-safe.
-	Give FadeScreen option to run tasks in background thread (and wait for it to finish).
 	Pangine's main loop should start binding any unbound images during frames with extra time.
 	*/
 	private final void bindTexture() {

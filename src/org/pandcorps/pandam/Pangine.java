@@ -41,7 +41,7 @@ public abstract class Pangine {
 	
 	protected static Pangine engine = null;
 
-	private final HashMap<String, Pantity> entities = new HashMap<String, Pantity>();
+	private final Map<String, Pantity> entities = new ConcurrentHashMap<String, Pantity>();
 	private final HashMap<Class<? extends Panctor>, Pantype> types =
 		new HashMap<Class<? extends Panctor>, Pantype>();
 	//private final ArrayList<Panmage> images = new ArrayList<Panmage>();
@@ -383,12 +383,10 @@ public abstract class Pangine {
 		if (id == null) {
 			throw new NullPointerException("Id is null");
 		}
-		//if (entities.containsKey(id)) {
 		final Pantity prev = entities.put(id, entity);
 		if (prev != null) {
 			throw new Panception("Id " + id + " already registered to " + prev);
 		}
-		//entities.put(id, entity);
 	}
 
 	public void unregister(final Pantity entity) {

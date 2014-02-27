@@ -33,6 +33,7 @@ import org.pandcorps.pandam.event.action.*;
 public abstract class GlPangine extends Pangine {
 	public static Pangl gl = null;
 	private final static ArrayList<GlPanmage> images = new ArrayList<GlPanmage>();
+	private final static List<GlPanmage> newImages = new Vector<GlPanmage>();
 	protected final Panteraction interaction;
 	protected final HashSet<Panput> active = new HashSet<Panput>();
 	protected final HashSet<Panput> newActive = new HashSet<Panput>();
@@ -58,14 +59,14 @@ public abstract class GlPangine extends Pangine {
 	@Override
 	protected final Panmage newImage(final String id, final Panple origin, final Panple boundMin, final Panple boundMax, final String location) throws Panception {
 		final GlPanmage image = new GlPanmage(id, origin, boundMin, boundMax, location);
-		images.add(image);
+		newImages.add(image); // Don't add directly to images; might create images in one thread and rendering in another
 		return image;
 	}
 	
 	@Override
     protected final Panmage newImage(final String id, final Panple origin, final Panple boundMin, final Panple boundMax, final Img img) throws Panception {
 	    final GlPanmage image = new GlPanmage(id, origin, boundMin, boundMax, img);
-        images.add(image);
+	    newImages.add(image);
         return image;
 	}
 	
@@ -76,7 +77,7 @@ public abstract class GlPangine extends Pangine {
 	    //TODO should we keep track of textures, not images?
 	    for (final GlPanmage[] row : sheet) {
 	        for (final GlPanmage image : row) {
-	            images.add(image);
+	            newImages.add(image);
 	        }
 	    }
 	    return sheet;
@@ -401,8 +402,13 @@ public abstract class GlPangine extends Pangine {
 	        return;
 	    }
 		camera(room); // Must be after step() for tracking to work right
-		for (final GlPanmage image : images) {
-            image.clearAll();
+		while (!newImages.isEmpty()) {
+		    images.add(newImages.remove(newImages.size() - 1));
+		}
+		//for (final GlPanmage image : images) { // ConcurrentModificationException if bg Thread loads images at same time
+		final int size = images.size();
+		for (int i = 0; i < size; i++) { // If size has grown, we shouldn't be drawing new images yet anyway
+            images.get(i).clearAll();
         }
 		if (room != null) {
 			final Collection<Panctor> actors = room.getActors();
@@ -412,13 +418,14 @@ public abstract class GlPangine extends Pangine {
 				}
 			}
 		}
-		for (final GlPanmage image : images) {
+		//for (final GlPanmage image : images) { // See above
+		for (int i = 0; i < size; i++) {
 		    /*try { // Try to see if double buffering is enabled
                 Thread.sleep(30);
             } catch (final InterruptedException e) {
                 throw new RuntimeException(e);
             }*/
-		    image.renderAll(room);
+		    images.get(i).renderAll(room);
 		}
 		blend(room);
 		//Display.update();
