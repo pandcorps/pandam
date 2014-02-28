@@ -314,7 +314,6 @@ public class Menu {
 	            ctrl = ControlScheme.getDefault(event.getInput().getDevice());
 	            exit();
 	        }});
-	        generateTitleCharacters();
 	        for (int i = 0; i < NUM_CHRS; i++) {
 	        	final PlayerContext tc = tcs.get(i);
 		        final Panctor actor = addActor(tc, PlatformGame.SCREEN_W * (i + 1) / (NUM_CHRS + 1));
