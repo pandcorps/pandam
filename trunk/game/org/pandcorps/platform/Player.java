@@ -213,15 +213,15 @@ public class Player extends Character implements CollisionListener {
 	    		return;
 	    	}
 	    	guy.destroyAll();
-	    	guyRun.destroyAll();
-	    	guyJump.destroy();
-	    	guyFall.destroy();
-	    	mapSouth.destroyAll();
-	    	mapEast.destroyAll();
-	    	mapWest.destroyAll();
-	    	mapNorth.destroyAll();
-	    	mapLadder.destroyAll();
-	    	mapPose.destroy();
+	    	Panmage.destroyAll(guyRun);
+	    	Panmage.destroy(guyJump);
+	    	Panmage.destroy(guyFall);
+	    	Panmage.destroyAll(mapSouth);
+	    	Panmage.destroyAll(mapEast);
+	    	Panmage.destroyAll(mapWest);
+	    	Panmage.destroyAll(mapNorth);
+	    	Panmage.destroyAll(mapLadder);
+	    	Panmage.destroy(mapPose);
 	    	Panmage.destroy(back);
 	    	back = null;
 	    	Panmage.destroyAll(backJump);

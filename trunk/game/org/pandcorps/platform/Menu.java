@@ -296,7 +296,7 @@ public class Menu {
 	
 	protected final static class TitleScreen extends PlayerScreen {
 		private final static int NUM_CHRS = 4;
-		private final ArrayList<PlayerContext> tcs = new ArrayList<PlayerContext>(NUM_CHRS);
+		private static ArrayList<PlayerContext> tcs = new ArrayList<PlayerContext>(NUM_CHRS);
 		
 	    protected TitleScreen() {
             super(null, true);
@@ -314,6 +314,17 @@ public class Menu {
 	            ctrl = ControlScheme.getDefault(event.getInput().getDevice());
 	            exit();
 	        }});
+	        generateTitleCharacters();
+	        for (int i = 0; i < NUM_CHRS; i++) {
+	        	final PlayerContext tc = tcs.get(i);
+		        final Panctor actor = addActor(tc, PlatformGame.SCREEN_W * (i + 1) / (NUM_CHRS + 1));
+	        	if (i >= NUM_CHRS / 2) {
+	        		actor.setMirror(true);
+	        	}
+	        }
+	    }
+	    
+	    protected final static void generateTitleCharacters() {
 	        for (int i = 0; i < NUM_CHRS; i++) {
 	        	final Profile prf = new Profile();
 	        	final Avatar avt = new Avatar();
@@ -321,19 +332,10 @@ public class Menu {
 	        	prf.currentAvatar = avt;
 	        	prf.avatars.add(avt);
 	        	final PlayerContext tc = new PlayerContext(prf, null, Integer.MAX_VALUE - i);
+	        	tcs.add(tc);
 	        	//TODO Menu screens which show player can probably use full=false, but will need full load when done
 	        	PlatformGame.reloadAnimalStrip(tc, false);
-	        	final Panctor actor = addActor(tc, PlatformGame.SCREEN_W * (i + 1) / (NUM_CHRS + 1));
-	        	if (i >= NUM_CHRS / 2) {
-	        		actor.setMirror(true);
-	        	}
 	        }
-	        /*final Panmage tmpImg = Pangine.getEngine().createImage("img.tmp", "Tall.png"); // Must destroy
-	        final Panctor tmp = new Panctor();
-	        tmp.setView(tmpImg);
-	        System.out.println(tmpImg.getSize());
-	        tmp.getPosition().set(8, 24);
-	        room.addActor(tmp);*/
 	    }
 	    
 	    @Override
@@ -358,6 +360,8 @@ public class Menu {
 	    	for (final PlayerContext tc : tcs) {
 				tc.destroy();
 			}
+	    	tcs.clear();
+	    	tcs = null;
 	    }
 	}
 	
