@@ -552,6 +552,9 @@ public class PlatformGame extends BaseGame {
 		loaders.add(new Runnable() { @Override public final void run() {
 			crowns = ImtilX.loadStrip("org/pandcorps/platform/res/chr/Crowns.png", 14, false); }});
 		
+		loaders.add(new Runnable() { @Override public final void run() {
+			Menu.TitleScreen.generateTitleCharacters(); }});
+		
 		if (engine.isMusicSupported()) {
 		    loaders.add(new Runnable() { @Override public final void run() {
 		        engine.getMusic().ensureCapacity(5); }});
