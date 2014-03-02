@@ -282,6 +282,12 @@ public class PlatformGame extends BaseGame {
 			}
 			buildGuy(guyBlink, face, tails, eyesBlink, 0, 0);
 		}
+		
+		protected final void close() {
+			Img.close(guys);
+			Img.close(tails);
+			Img.close(guyBlink, face, eyes, eyesBlink);
+		}
 	}
 	
 	protected final static void reloadAnimalStrip(final PlayerContext pc) {
@@ -353,6 +359,7 @@ public class PlatformGame extends BaseGame {
 			for (final Img east : easts) {
 				Imtil.copy(eyesEast, east, 0, 0, 4, 4, 18, 14, Imtil.COPY_FOREGROUND);
 			}
+			eyesEast.close();
 			pc.mapEast = createAnmMap(pre, "east", east1, east2);
 			Imtil.mirror(west1);
 			Imtil.mirror(west2);
@@ -360,11 +367,16 @@ public class PlatformGame extends BaseGame {
 			for (final Img west : new Img[] {west1, west2}) {
 				Imtil.copy(eyesWest, west, 0, 0, 4, 4, 10, 14, Imtil.COPY_FOREGROUND);
 			}
+			eyesWest.close();
 			pc.mapWest = createAnmMap(pre, "west", west1, west2);
 			final Img tailNorth = Coltil.get(tails, 2), faceNorth = faceMap[2];
 			final Img wing = needWing ? wingMap[0] : null;
 			pc.mapNorth = createNorth(maps, 3, wing, tailNorth, faceNorth, pre, "North");
 			pc.mapLadder = createNorth(maps, 4, wing, tailNorth, faceNorth, pre, "Ladder");
+			
+			Img.close(maps);
+			Img.close(wingMap);
+			Img.close(faceMap);
 		}
 		
 		if (needWing) {
@@ -385,6 +397,8 @@ public class PlatformGame extends BaseGame {
 		} else if (full && avatar.jumpMode == Player.JUMP_HIGH) {
 		    pc.backJump = createAnm(pre + ".spring", "org/pandcorps/platform/res/chr/Springs.png", 32, 5, os, ng, xg);
 		}
+		
+		pi.close();
 	}
 	
 	private final static Panimation createNorth(final Img[] maps, final int mi, final Img wing, final Img tailNorth, final Img faceNorth,
@@ -541,18 +555,23 @@ public class PlatformGame extends BaseGame {
 				fa[i] = engine.createFrame(PRE_FRM + "marker." + i, ma[i], 2 * (2 - i % 2));
 			}
 			marker = engine.createAnimation(PRE_ANM + "marker", fa);
-			markerDefeated = engine.createImage(PRE_IMG + "Marker.def", mo, null, null, ImtilX.loadStrip("org/pandcorps/platform/res/bg/MarkerDefeated.png", 8)[3]); }});
+			final Img[] defStrip = ImtilX.loadStrip("org/pandcorps/platform/res/bg/MarkerDefeated.png", 8);
+			markerDefeated = engine.createImage(PRE_IMG + "Marker.def", mo, null, null, defStrip[3]);
+			Img.close(defStrip); }});
 		loaders.add(new Runnable() { @Override public final void run() {
 			portal = createAnm("portal", "org/pandcorps/platform/res/bg/Portal.png", 6); }});
 		loaders.add(new Runnable() { @Override public final void run() {
 			portalClosed = createAnm("portal.closed", "org/pandcorps/platform/res/bg/PortalClosed.png", 15); }});
 		
 		loaders.add(new Runnable() { @Override public final void run() {
-			dirts = Imtil.loadStrip("org/pandcorps/platform/res/bg/Dirt.png", ImtilX.DIM); }});
+			dirts = Imtil.loadStrip("org/pandcorps/platform/res/bg/Dirt.png", ImtilX.DIM);
+			Img.setTemporary(false, dirts); }});
 		loaders.add(new Runnable() { @Override public final void run() {
-			terrains = Imtil.loadStrip("org/pandcorps/platform/res/bg/Terrain.png", ImtilX.DIM); }});
+			terrains = Imtil.loadStrip("org/pandcorps/platform/res/bg/Terrain.png", ImtilX.DIM);
+			Img.setTemporary(false, terrains); }});
 		loaders.add(new Runnable() { @Override public final void run() {
-			crowns = ImtilX.loadStrip("org/pandcorps/platform/res/chr/Crowns.png", 14, false); }});
+			crowns = ImtilX.loadStrip("org/pandcorps/platform/res/chr/Crowns.png", 14, false);
+			Img.setTemporary(false, crowns); }});
 		
 		loaders.add(new Runnable() { @Override public final void run() {
 			Menu.TitleScreen.generateTitleCharacters(); }});

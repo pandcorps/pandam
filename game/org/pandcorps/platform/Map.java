@@ -591,12 +591,16 @@ public class Map {
 		applyLandmark(tileImg, 0, lm1, 0);
 		applyLandmark(tileImg, 48, lm2, 1);
 		if (cstl > 0) {
-		    final Img lmImg = ImtilX.loadStrip("org/pandcorps/platform/res/bg/Castles.png")[cstl - 1];
+			// Load castles and landmarks in loadConstants?
+			final Img[] castles = ImtilX.loadStrip("org/pandcorps/platform/res/bg/Castles.png");
+		    final Img lmImg = castles[cstl - 1];
 	        Imtil.copy(lmImg, tileImg, 0, 0, ImtilX.DIM, ImtilX.DIM, 112, 96);
+	        Img.close(castles);
 		}
 		Level.applyDirtTexture(tileImg, 48, 0, 96, 16);
 		final Img terrain = Level.getDarkenedTerrain(Level.getTerrainTexture());
 		Level.applyTerrainTexture(tileImg, 48, 32, 96, 48, terrain, Level.getTerrainMask(1));
+		terrain.close();
 		tileImg = Level.getColoredTerrain(tileImg, 48, 32, 48, 16);
 		timg = Pangine.getEngine().createImage("img.map", tileImg);
 	}
@@ -608,6 +612,7 @@ public class Map {
 	    final int lmd = 48;
 	    final Img lmImg = ImtilX.loadImage("org/pandcorps/platform/res/bg/Landmark" + EXT_LANDMARKS[lm - 2] + ".png", lmd, null);
 	    Imtil.copy(lmImg, tileImg, 0, 0, lmd, lmd, x, 80);
+	    lmImg.close();
 	}
 	
 	private final static Tile loadMap() {

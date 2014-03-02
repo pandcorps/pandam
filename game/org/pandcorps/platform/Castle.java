@@ -165,6 +165,7 @@ public class Castle {
             kingAnm = en.createAnimation(PlatformGame.PRE_ANM + "king",
             	en.createFrame(PlatformGame.PRE_FRM + "king.1", en.createImage(PlatformGame.PRE_IMG + "king.1", k1), PlatformGame.DUR_BLINK + 20),
             	en.createFrame(PlatformGame.PRE_FRM + "king.2", en.createImage(PlatformGame.PRE_IMG + "king.2", k2), PlatformGame.DUR_CLOSED));
+            pi.close();
             final Panctor king = new Panctor();
             king.setView(kingAnm);
             room.addActor(king);
