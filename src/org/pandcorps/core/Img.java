@@ -26,6 +26,7 @@ import java.io.*;
 
 public abstract class Img implements Closeable {
 	private boolean temp = true;
+	//private final Exception openState = new Exception();
 	
 	public abstract Object getRaw();
 	
@@ -60,6 +61,7 @@ public abstract class Img implements Closeable {
 	protected final void finalize() throws Throwable {
 		if (!isClosed()) {
 			System.err.println("Finalized unclosed Img " + getRaw());
+			//openState.printStackTrace();
 		}
 		//close(); // Should do before gc
 		super.finalize();
@@ -72,6 +74,9 @@ public abstract class Img implements Closeable {
 	}
 	
 	public final static void close(final Img... imgs) {
+		if (imgs == null) {
+			return;
+		}
 		for (final Img img : imgs) {
 			img.close();
 		}

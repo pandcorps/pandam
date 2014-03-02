@@ -90,6 +90,7 @@ public final class Imtil {
         for (int x = 0, i = 0; x < tw; x += w, i++) {
             strip[i] = img.getSubimage(x, 0, w, h);
         }
+        img.closeIfTemporary();
         return strip;
     }
     
@@ -224,6 +225,7 @@ public final class Imtil {
                 out.setRGB(x, y, p);
             }
         }
+        img.closeIfTemporary();
         return out;
     }
     
@@ -291,6 +293,7 @@ public final class Imtil {
                 out.setRGB(x, y, cm.getDataElement(rgba, 0));
             }
         }
+        in.closeIfTemporary();
 
         return out;
     }
@@ -341,6 +344,7 @@ public final class Imtil {
         		out.setRGB(i, j, in.getRGB(i * f, jf));
         	}
         }
+        in.closeIfTemporary();
         return out;
     }
     
