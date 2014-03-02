@@ -56,7 +56,9 @@ public final class ImtilX {
         if (validate) {
             if (h == dim + 1) {
                 // During drawing/debugging, there's an extra row at the bottom
+            	final Img old = img;
                 img = img.getSubimage(0, 0, img.getWidth(), dim);
+                old.close();
             } else if (h != dim) {
                 throw new UnsupportedOperationException("Expected image to have height=" + dim);
             }
@@ -86,10 +88,20 @@ public final class ImtilX {
     }
     
     public final static Img[] loadStrip(final String path, final int dim) {
-    	return Imtil.toStrip(loadImage(path, dim, null), dim);
+    	final Img img = loadImage(path, dim, null);
+    	try {
+    		return Imtil.toStrip(img, dim);
+    	} finally {
+    		img.close();
+    	}
     }
     
     public final static Img[] loadStrip(final String path, final int w, final boolean validate) {
-        return Imtil.toStrip(loadImage(path, w, null, validate), w);
+    	final Img img = loadImage(path, w, null, validate);
+    	try {
+    		return Imtil.toStrip(img, w);
+    	} finally {
+    		img.close();
+    	}
     }
 }
