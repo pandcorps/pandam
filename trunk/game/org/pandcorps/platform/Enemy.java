@@ -100,6 +100,7 @@ public final class Enemy extends Character {
 			this.ledgeTurn = ledgeTurn;
 			this.splat = splat ? PlatformGame.createAnm(id + ".splat", 20, o, n, x, strip[2]) : null;
 			this.attack = hv == 0 ? PlatformGame.createAnm(id + ".attack", 20, o, n, x, strip[2]) : null;
+			Img.close(strip);
 			this.avoidCount = avoidCount;
 			this.offX = offX;
 			this.h = h;

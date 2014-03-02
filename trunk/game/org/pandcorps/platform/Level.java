@@ -194,6 +194,7 @@ public class Level {
 	            final int yoff = z * 32;
 	            applyTerrainTexture(backImg, 0, yoff, 64, yoff + 32, terrain, getTerrainMask(z));
 	        }
+	        terrain.close();
 	        backImg = getColoredTerrain(backImg, 0, 0, 96, 96);
         }
         bgimg = Pangine.getEngine().createImage("img.bg", backImg);
