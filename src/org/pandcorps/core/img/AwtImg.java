@@ -30,7 +30,7 @@ import javax.imageio.*;
 import org.pandcorps.core.*;
 
 public final class AwtImg extends Img {
-	private final BufferedImage raw;
+	private BufferedImage raw;
 	
 	public AwtImg(final BufferedImage raw) {
 		this.raw = raw;
@@ -73,6 +73,15 @@ public final class AwtImg extends Img {
 	
 	@Override
 	public final void close() {
+		if (raw == null) {
+			return;
+		}
 		raw.flush();
+		raw = null;
+	}
+	
+	@Override
+	public final boolean isClosed() {
+		return raw == null;
 	}
 }
