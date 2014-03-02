@@ -41,6 +41,7 @@ public abstract class FadeScreen extends TempScreen {
     private Queue<Runnable> tasks = null;
     private Thread bg = null;
     private boolean bgWaiting = true;
+    private volatile RuntimeException bgException = null;
     private boolean finished = false;
     
     protected FadeScreen(final Pancolor color, final int time) {
@@ -87,9 +88,14 @@ public abstract class FadeScreen extends TempScreen {
     	}
         bg = new Thread(new Runnable() {
             @Override public final void run() {
-                for (final Runnable task : tasks) {
-                    task.run();
-                }
+            	try {
+	                for (final Runnable task : tasks) {
+	                    task.run();
+	                }
+            	} catch (final RuntimeException e) {
+            		bgException = e;
+            		throw e;
+            	}
             }});
         bg.setPriority(Math.max(Thread.MIN_PRIORITY, Thread.currentThread().getPriority() - 2));
         bg.setDaemon(true);
@@ -117,6 +123,9 @@ public abstract class FadeScreen extends TempScreen {
     private final void fadeFinished() {
     	if (Coltil.isValued(tasks) || (bg != null && bg.isAlive())) {
     		return;
+    	}
+    	if (bgException != null) {
+    		throw bgException;
     	}
     	color.setA(oldAlpha);
         // Might open a new FadeScreen, so revert alpha first
