@@ -181,6 +181,7 @@ public final class Fonts {
                 Imtil.copy(img, out, 2 * w, 3 * h, 4 * w, h, 0, h * 2);
                 Imtil.copy(img, out, 6 * w, 3 * h, 4 * w, h, 0, h * 3);
                 //Imtil.save(out, "c:\\num.png");
+                img.close();
                 img = out;
             } else if (type == FontType.Upper) {
                 final Img out = Imtil.newImage(w * UpperFont.NUM, h * UpperFont.NUM);
@@ -193,6 +194,7 @@ public final class Fonts {
                 Imtil.copy(img, out, 0, 5 * h, 8 * w, h, 0, h * 6);
                 Imtil.copy(img, out, 8 * w, 5 * h, 8 * w, h, 0, h * 7);
                 //Imtil.save(out, "c:\\up.png");
+                img.close();
                 img = out;
             }
             image = engine.createImage(id, Imtil.filter(img, filter));
