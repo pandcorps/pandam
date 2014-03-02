@@ -22,7 +22,11 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.core;
 
-public abstract class Img {
+import java.io.*;
+
+public abstract class Img implements Closeable {
+	private boolean temp = true;
+	
 	public abstract Object getRaw();
 	
 	public abstract int getWidth();
@@ -37,11 +41,39 @@ public abstract class Img {
 	
 	public abstract void save(final String location) throws Exception;
 	
+	@Override
 	public abstract void close();
+	
+	public abstract boolean isClosed();
+	
+	public final void setTemporary(final boolean temp) {
+		this.temp = temp;
+	}
+	
+	public final void closeIfTemporary() {
+		if (temp) {
+			close();
+		}
+	}
 	
 	@Override
 	protected final void finalize() throws Throwable {
-		close();
+		if (!isClosed()) {
+			System.err.println("Finalized unclosed Img " + getRaw());
+		}
+		//close(); // Should do before gc
 		super.finalize();
+	}
+	
+	public final static void setTemporary(final boolean temp, final Img... imgs) {
+		for (final Img img : imgs) {
+			img.setTemporary(temp);
+		}
+	}
+	
+	public final static void close(final Img... imgs) {
+		for (final Img img : imgs) {
+			img.close();
+		}
 	}
 }
