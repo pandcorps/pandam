@@ -121,7 +121,9 @@ public final class GlPanmage extends Panmage {
 		Img img = padded;
 		if (scaler != null) {
 			for (int i = 1; i < zoom; i *= 2) {
-				img = scaler.scale(img);
+				final Img tmp = scaler.scale(img);
+				img.closeIfTemporary();
+				img = tmp;
 			}
 		}
 		final int w = img.getWidth();
@@ -170,7 +172,13 @@ public final class GlPanmage extends Panmage {
 		final ByteBuffer scratch = ByteBuffer.allocateDirect(capacity);
 		scratch.put(raster);
 		scratch.rewind();
-		return new Texture(_img.getWidth(), _img.getHeight(), padded.getWidth(), w, h, scratch);
+		try {
+			return new Texture(_img.getWidth(), _img.getHeight(), padded.getWidth(), w, h, scratch);
+		} finally {
+			_img.closeIfTemporary();
+			padded.closeIfTemporary();
+			img.closeIfTemporary();
+		}
 	}
 	
 	/*

@@ -502,6 +502,7 @@ public class PlatformGame extends BaseGame {
 	    
 		loaders.add(new Runnable() { @Override public final void run() {
 		    final Img[] gemStrip = ImtilX.loadStrip("org/pandcorps/platform/res/misc/Gem.png");
+		    Img.setTemporary(false, gemStrip);
 		    final Img gem1 = Imtil.copy(gemStrip[0]);
 		    gem = createSheet("gem", null, gemStrip);
 		    gemAnm = createGemAnm("gem", gem);
@@ -509,7 +510,8 @@ public class PlatformGame extends BaseGame {
 		    gemCyanAnm = createGemAnm("cyan", gemStrip, Channel.Green, Channel.Red, Channel.Blue);
 		    gemBlueAnm = createGemAnm("blue", gemStrip, Channel.Red, Channel.Red, Channel.Blue);
 		    gemGreenAnm = createGemAnm("green", gemStrip, Channel.Red, Channel.Blue, Channel.Red);
-		    gemWhite = engine.createImage(PRE_IMG + "gem.white", Imtil.filter(gem1, new SwapPixelFilter(Channel.Red, Channel.Red, Channel.Blue))); }});
+		    gemWhite = engine.createImage(PRE_IMG + "gem.white", Imtil.filter(gem1, new SwapPixelFilter(Channel.Red, Channel.Red, Channel.Blue)));
+		    Img.close(gemStrip); }});
 		loaders.add(new Runnable() { @Override public final void run() {
 		    gemLevelAnm = createGemAnm("gem.level", createSheet("gem.level", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/Gem5.png"))); }});
 		loaders.add(new Runnable() { @Override public final void run() {
@@ -569,7 +571,10 @@ public class PlatformGame extends BaseGame {
 	private final static Panimation createGemAnm(final String col, final Img[] strip, final Channel r, final Channel g, final Channel b) {
 	    final SwapPixelFilter gemFilter = new SwapPixelFilter(r, g, b);
         for (int i = 0; i < 3; i++) {
-            strip[i] = Imtil.filter(strip[i], gemFilter);
+        	final Img oldImg = strip[i], newImg = Imtil.filter(oldImg, gemFilter);
+            oldImg.close();
+            newImg.setTemporary(false);
+            strip[i] = newImg;
         }
         final String name = "gem." + col;
         final Panmage[] gemCyan = createSheet(name, null, strip);
