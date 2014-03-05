@@ -130,4 +130,8 @@ public final class UnitPangine extends Pangine {
 	@Override
 	public final void exit() {
 	}
+	
+	@Override
+	public final void exit(final Throwable cause) {
+	}
 }
