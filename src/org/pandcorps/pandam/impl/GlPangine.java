@@ -40,6 +40,8 @@ public abstract class GlPangine extends Pangine {
 	private FloatBuffer blendRectangle = null;
 	public boolean capsLock = false;
 	public boolean ins = false;
+	//private long frameStartNano = System.nanoTime();
+	private long frameStartNano = -frameLengthNano;
 	//private Panctor tracked = null;
 	
 	protected GlPangine(final Panteraction interaction) {
@@ -172,8 +174,9 @@ public abstract class GlPangine extends Pangine {
 	
 	public final void frame() throws Exception {
 		//final long frameStart = System.currentTimeMillis();
-	    final long frameStartNano = System.nanoTime();
+	    //final long frameStartNano = System.nanoTime();
 		//System.out.println(System.currentTimeMillis());
+		sleep();
 	    
 	    if (exitCause != null) {
 	        exitCause.printStackTrace();
@@ -189,6 +192,9 @@ public abstract class GlPangine extends Pangine {
 		newActive.clear();
 		step();
 		draw();
+	}
+	
+	private final void sleep() {
 		try {
 		    //final long sleepTime = frameLength - System.currentTimeMillis() + frameStart;
 		    final long sleepTime = frameLengthNano - System.nanoTime() + frameStartNano;
@@ -198,6 +204,7 @@ public abstract class GlPangine extends Pangine {
 		        final long sleepTimeMillis = sleepTime / 1000000;
 		        Thread.sleep(sleepTimeMillis, (int) (sleepTime - sleepTimeMillis * 1000000));
 		    }
+		    frameStartNano = System.nanoTime();
         } catch (final InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -532,7 +539,7 @@ public abstract class GlPangine extends Pangine {
 	
 	@Override
 	public final void exit(final Throwable cause) {
-	    // If a fatal Exception occurs in another Thread, it can call this method to trigger an exit from the main Thread
+	    // If a fatal problem occurs in another Thread, it can call this method to trigger an exit from the main Thread
 	    exitCause = cause;
 	}
 	
