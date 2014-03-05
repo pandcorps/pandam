@@ -152,7 +152,9 @@ public abstract class GlPangine extends Pangine {
 	
 	protected abstract void initInput() throws Exception;
 	
-	protected boolean running = true;
+	protected volatile boolean running = true;
+	
+	protected volatile Throwable exitCause = null;
 	
 	private final static boolean isActive(final Panctor actor) {
 	    // Listeners that aren't bound to an actor are always active
@@ -172,6 +174,12 @@ public abstract class GlPangine extends Pangine {
 		//final long frameStart = System.currentTimeMillis();
 	    final long frameStartNano = System.nanoTime();
 		//System.out.println(System.currentTimeMillis());
+	    
+	    if (exitCause != null) {
+	        exitCause.printStackTrace();
+	        exit();
+	        throw Pantil.toException(exitCause);
+	    }
 	    
 	    stepControl();
 		for (final Panput input : active) {
@@ -518,11 +526,25 @@ public abstract class GlPangine extends Pangine {
 
 	@Override
 	public final void exit() {
+	    // Should allow exit to be called from any Thread, so do gl stuff in destroy which is called by main Thread
 		running = false;
-		gl.glDisableClientState(gl.GL_VERTEX_ARRAY);
+	}
+	
+	@Override
+	public final void exit(final Throwable cause) {
+	    // If a fatal Exception occurs in another Thread, it can call this method to trigger an exit from the main Thread
+	    exitCause = cause;
+	}
+	
+	@Override
+    protected final void destroy() throws Exception {
+	    gl.glDisableClientState(gl.GL_VERTEX_ARRAY);
         gl.glDisableClientState(gl.GL_TEXTURE_COORD_ARRAY);
         if (isMusicSupported()) {
-        	getMusic().close();
+            getMusic().close();
         }
-	}
+        onDestroy();
+    }
+    
+    protected abstract void onDestroy() throws Exception;
 }

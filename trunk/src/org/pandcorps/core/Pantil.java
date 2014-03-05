@@ -49,6 +49,10 @@ public final class Pantil {
 		//return new VMID().toString(); // Not on Android
 		return Long.toString(nextId++);
 	}
+	
+	public final static Exception toException(final Throwable e) {
+        return e instanceof Exception ? (Exception) e : new Exception(e);
+    }
 
 	public final static RuntimeException toRuntimeException(final Throwable e) {
 		return e instanceof RuntimeException ? (RuntimeException) e : new RuntimeException(e);
