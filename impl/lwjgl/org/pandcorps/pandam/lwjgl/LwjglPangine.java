@@ -229,7 +229,7 @@ public final class LwjglPangine extends GlPangine {
 	}
 	
     @Override
-	protected void destroy() {
+	protected void onDestroy() {
 		Display.destroy();
 		Controllers.destroy();
 	}
