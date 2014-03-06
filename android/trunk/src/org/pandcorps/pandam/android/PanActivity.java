@@ -36,11 +36,11 @@ public class PanActivity extends Activity {
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		ImgFactory.setFactory(new AndroidImgFactory());
-		new AndroidPangine(/*this*/);
+		new AndroidPangine();
 		super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        view = new GLSurfaceView(this);
+        view = new PanSurfaceView(this);
         view.setRenderer(new PanRenderer());
         view.setRenderMode(PanSurfaceView.RENDERMODE_CONTINUOUSLY);
         

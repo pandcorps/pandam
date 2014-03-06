@@ -33,6 +33,20 @@ public class PanSurfaceView extends GLSurfaceView {
 	
 	@Override
 	public final boolean onTouchEvent(final MotionEvent event) {
+		final int action = event.getAction();
+		if (action == MotionEvent.ACTION_DOWN) {
+			System.out.println("PanInput DOWN");
+		} else if (action == MotionEvent.ACTION_UP) {
+			System.out.println("PanInput UP");
+		} else if (action == MotionEvent.ACTION_MOVE) {
+			System.out.println("PanInput MOVE");
+		} else {
+			System.out.println("PanInput " + action);
+		}
+		System.out.println("PanInput " + event.getX() + ", " + event.getY());
+		// bottom-left ~ 45.0, 446.0 (would be top-left if device hadn't been rotated)
+		// top-right ~ 775.0, 50.0 (would be bottom-right if device hadn't been rotated)
+		// Looks like coordinates are based on the landscape orientation, but origin is top-left instead of bottom-left
 		return true;
 	}
 }
