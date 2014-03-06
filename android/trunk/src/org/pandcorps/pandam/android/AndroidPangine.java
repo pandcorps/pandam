@@ -22,13 +22,17 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandam.android;
 
+import java.util.*;
+
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.android.PanSurfaceView.*;
 import org.pandcorps.pandam.impl.*;
 
 public class AndroidPangine extends GlPangine {
 	protected static AndroidPangine engine = null;
 	protected static int desktopWidth = 0;
 	protected static int desktopHeight = 0;
+	/*package*/ final static Vector<TouchEvent> touchEvents = new Vector<TouchEvent>();
 	
 	protected AndroidPangine() {
 		super(new AndroidPanteraction());
@@ -62,6 +66,10 @@ public class AndroidPangine extends GlPangine {
 		/*if (isCloseRequested()) {
 			exit();
 		}*/
+    	int size;
+    	while ((size = touchEvents.size()) > 0) {
+    		activate(interaction.TOUCH, touchEvents.remove(size - 1).active);
+    	}
 	}
 	
     @Override
