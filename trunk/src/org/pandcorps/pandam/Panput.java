@@ -22,7 +22,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandam;
 
-import org.pandcorps.core.Chartil;
+import org.pandcorps.core.*;
 import org.pandcorps.pandam.Panteraction.*;
 
 // Pandam Input
@@ -111,6 +111,12 @@ public abstract class Panput {
 	public final static class Button extends Panput {
 		/*package*/ Button(final String name) {
 			super(null, name); // Buttons are created before Controller and passed to Controller constructor which assigns device
+		}
+	}
+	
+	public final static class Touch extends Panput {
+		public Touch(final Panteraction interaction) {
+			super(interaction.TOUCHSCREEN, "Touch");
 		}
 	}
 	
