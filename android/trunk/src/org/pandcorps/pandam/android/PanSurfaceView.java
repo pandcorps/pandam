@@ -22,6 +22,8 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandam.android;
 
+import org.pandcorps.pandam.*;
+
 import android.content.*;
 import android.opengl.*;
 import android.view.*;
@@ -36,8 +38,14 @@ public class PanSurfaceView extends GLSurfaceView {
 		final int action = event.getAction();
 		if (action == MotionEvent.ACTION_DOWN) {
 			System.out.println("PanInput DOWN");
+			final Pangine engine = Pangine.getEngine();
+			final float zoom = engine.getZoom();
+			AndroidPangine.touchEvents.add(
+				new TouchEvent(true, Math.round(event.getX() / zoom), Math.round((engine.getDisplayHeight() - event.getY()) / zoom)));
 		} else if (action == MotionEvent.ACTION_UP) {
 			System.out.println("PanInput UP");
+			//TODO Should link this to original DOWN position
+			AndroidPangine.touchEvents.add(new TouchEvent(false, 0, 0));
 		} else if (action == MotionEvent.ACTION_MOVE) {
 			System.out.println("PanInput MOVE");
 		} else {
@@ -48,5 +56,17 @@ public class PanSurfaceView extends GLSurfaceView {
 		// top-right ~ 775.0, 50.0 (would be bottom-right if device hadn't been rotated)
 		// Looks like coordinates are based on the landscape orientation, but origin is top-left instead of bottom-left
 		return true;
+	}
+	
+	/*package*/ final static class TouchEvent {
+		/*package*/ final boolean active;
+		/*package*/ final int x;
+		/*package*/ final int y;
+		
+		private TouchEvent(final boolean active, final int x, final int y) {
+			this.active = active;
+			this.x = x;
+			this.y = y;
+		}
 	}
 }
