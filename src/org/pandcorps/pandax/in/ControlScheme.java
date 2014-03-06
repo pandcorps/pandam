@@ -68,6 +68,10 @@ public class ControlScheme {
             }
         } else if (d instanceof Keyboard) {
             setDefaultKeyboard();
+        } else if (d instanceof Touchscreen) {
+        	//TODO
+        	final Panteraction in = Pangine.getEngine().getInteraction();
+        	set(in.TOUCH, in.KEY_UP, in.KEY_LEFT, in.KEY_RIGHT, in.KEY_SPACE, in.KEY_ESCAPE, in.KEY_ENTER);
         } else if (d == null) {
             throw new NullPointerException("Requested ControlScheme for null Device");
         } else {

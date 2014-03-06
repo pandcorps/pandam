@@ -95,6 +95,8 @@ public abstract class Panteraction {
 	public final Key KEY_INS;
 	public final Key KEY_DEL;
 	
+	public final Touch TOUCH;
+	
 	public abstract static class Device {
 		private final String name;
 		
@@ -113,7 +115,7 @@ public abstract class Panteraction {
 		}
 	}
 	
-	public final Keyboard KEYBOARD = new Keyboard();
+	public final Keyboard KEYBOARD = new Keyboard(); //TODO Should device constants be null when absent?
 	
 	public final static class Controller extends Device {
 		public final Button LEFT;
@@ -145,6 +147,14 @@ public abstract class Panteraction {
 	
 	protected final List<Controller> _controllers = new ArrayList<Controller>();
 	public final List<Controller> CONTROLLERS = Collections.unmodifiableList(_controllers);
+	
+	public final static class Touchscreen extends Device {
+		private Touchscreen() {
+			super("Touchscreen");
+		}
+	}
+	
+	public final Touchscreen TOUCHSCREEN = new Touchscreen();
 	
 	public final int IND_ESCAPE = 1;
 	public final int IND_1 = 2;
@@ -286,6 +296,8 @@ public abstract class Panteraction {
 		KEY_PG_DN = keys[IND_PG_DN];
 		KEY_INS = keys[IND_INS];
 		KEY_DEL = keys[IND_DEL];
+		
+		TOUCH = new Touch(this);
 	}
 	
 	private final String getName(final int i) {
