@@ -335,6 +335,34 @@ public final class Imtil {
     	return in;
     }
     
+    public final static Img drawCircle(final Img in,
+            final short r, final short g, final short b, final short a) {
+        // x ^ 2 + y ^ 2 = r ^ 2
+        // y = sqrt(r ^ 2 - x ^ 2)
+        final int d = in.getHeight();
+        if (d != in.getWidth()) {
+            throw new UnsupportedOperationException();
+        }
+        final int cmax = d / 2, rad = cmax - 1, cmin = (d % 2) == 0 ? rad : cmax, r2 = rad * rad;
+        final int[] rgba = {r, g, b, a};
+        final int c = cm.getDataElement(rgba, 0);
+        for (int i = 0; ; i++) {
+            final int j = (int) Math.round(Math.sqrt(r2 - (i * i)));
+            in.setRGB(cmax + i, cmax + j, c); // Bottom-right
+            in.setRGB(cmax + j, cmax + i, c);
+            in.setRGB(cmin - i, cmax + j, c); // Bottom-left
+            in.setRGB(cmin - j, cmax + i, c);
+            in.setRGB(cmin - i, cmin - j, c); // Top-left
+            in.setRGB(cmin - j, cmin - i, c);
+            in.setRGB(cmax + i, cmin - j, c); // Top-right
+            in.setRGB(cmax + j, cmin - i, c);
+            if (i > j) {
+                break;
+            }
+        }
+        return in;
+    }
+    
     public final static Img shrink(final Img in, final int f) {
     	final int w = in.getWidth() / f, h = in.getHeight() / f;
         final Img out = newImage(w, h);
