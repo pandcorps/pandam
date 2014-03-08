@@ -36,37 +36,27 @@ public class PanSurfaceView extends GLSurfaceView {
 	@Override
 	public final boolean onTouchEvent(final MotionEvent event) {
 		final int action = event.getAction();
+		final byte type;
 		if (action == MotionEvent.ACTION_DOWN) {
-			System.out.println("PanInput DOWN");
-			final Pangine engine = Pangine.getEngine();
-			final float zoom = engine.getZoom();
-			AndroidPangine.touchEvents.add(
-				new TouchEvent(true, Math.round(event.getX() / zoom), Math.round((engine.getDisplayHeight() - event.getY()) / zoom)));
+			//System.out.println("PanInput DOWN");
+			type = Panput.TOUCH_DOWN;
 		} else if (action == MotionEvent.ACTION_UP) {
-			System.out.println("PanInput UP");
+			//System.out.println("PanInput UP");
 			//TODO Should link this to original DOWN position
-			AndroidPangine.touchEvents.add(new TouchEvent(false, 0, 0));
+			//AndroidPangine.touchEvents.add(new TouchEvent(false, 0, 0));
+			type = Panput.TOUCH_UP;
 		} else if (action == MotionEvent.ACTION_MOVE) {
-			System.out.println("PanInput MOVE");
+			//System.out.println("PanInput MOVE");
+			type = Panput.TOUCH_MOVE;
 		} else {
 			System.out.println("PanInput " + action);
+			return true;
 		}
-		System.out.println("PanInput " + event.getX() + ", " + event.getY());
+		//System.out.println("PanInput " + event.getX() + ", " + event.getY());
 		// bottom-left ~ 45.0, 446.0 (would be top-left if device hadn't been rotated)
 		// top-right ~ 775.0, 50.0 (would be bottom-right if device hadn't been rotated)
 		// Looks like coordinates are based on the landscape orientation, but origin is top-left instead of bottom-left
+		AndroidPangine.engine.addTouchEvent(type, event.getX(), event.getY());
 		return true;
-	}
-	
-	/*package*/ final static class TouchEvent {
-		/*package*/ final boolean active;
-		/*package*/ final int x;
-		/*package*/ final int y;
-		
-		private TouchEvent(final boolean active, final int x, final int y) {
-			this.active = active;
-			this.x = x;
-			this.y = y;
-		}
 	}
 }
