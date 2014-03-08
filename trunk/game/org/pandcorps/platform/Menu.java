@@ -87,7 +87,7 @@ public class Menu {
 				actor = addActor(pc, center);
 			    ctrl = pc.ctrl;
 			}
-			initTouchButtons();
+			initTouchButtons(room, ctrl);
 			form = new Panform(ctrl);
 			infLbl = addTitle(inf, center, getBottom());
 			form.setTabListener(new FormTabListener() {@Override public void onTab(final FormTabEvent event) {
@@ -119,41 +119,69 @@ public class Menu {
 			return (Pangine.getEngine().getEffectiveWidth() / 2) - 120;
 		}
 		
-		protected final void initTouchButtons() {
-			System.out.println("initTouch for " + getClass().getName());
+		protected final static void initTouchButtons(final Panlayer room, final ControlScheme ctrl) {
+			initTouchButtons(room, ctrl, true, true, true);
+		}
+		
+		protected final static void initTouchButtons(final Panlayer room, final ControlScheme ctrl,
+				final boolean full, final boolean input, final boolean act) {
+			//System.out.println("initTouch for " + getClass().getName());
 			if (ctrl == null) {
 				return;
 			}
-			System.out.println("Found ControlScheme");
+			//System.out.println("Found ControlScheme");
 			final Panput temp = ctrl.get1();
 			if (temp != null && !(temp.getDevice() instanceof Touchscreen)) {
         		return;
         	}
-			System.out.println("Found touch scheme");
+			//System.out.println("Found touch scheme");
 			final Pangine engine = Pangine.getEngine();
-			engine.clearTouchButtons();
-			final int d = 60;
-			final TouchButton left = addButton("Left", 0, d);
-			final TouchButton down = addButton("Down", d, 0);
-			final TouchButton up = addButton("Up", d, d * 2);
-			final TouchButton right = addButton("Right", d * 2, d);
-			final int r = engine.getEffectiveWidth();
-			final TouchButton act2 = addButton("Act2", r - d, 0);
-			final TouchButton act1 = addButton("Act1", r - d * 2, 0);
-			final TouchButton sub = addButton("Sub", r - d, engine.getEffectiveHeight() - d);
-			ctrl.set(down, up, left, right, act1, act2, sub);
+			if (input) {
+				engine.clearTouchButtons();
+			}
+			final int d = 60, rx, r = engine.getEffectiveWidth(), y;
+			final TouchButton down, up, act2, sub;
+			if (full) {
+				y = d;
+				down = addButton(room, "Down", d, 0, input, act);
+				up = addButton(room, "Up", d, d * 2, input, act);
+				rx = d * 2;
+				act2 = addButton(room, "Act2", r - d, 0, input, act);
+				sub = addButton(room, "Sub", r - d, engine.getEffectiveHeight() - d, input, act);
+			} else {
+				y = 0;
+				down = null;
+				up = null;
+				rx = (int) (d * 1.25f);
+				act2 = null;
+				sub = null;
+			}
+			final TouchButton left = addButton(room, "Left", 0, y, input, act);
+			final TouchButton right = addButton(room, "Right", rx, y, input, act);
+			final TouchButton act1 = addButton(room, "Act1", r - rx, 0, input, act);
+			if (input) {
+				ctrl.set(down, up, left, right, act1, act2, sub);
+			}
 		}
 		
-		private final TouchButton addButton(final String name, final int x, final int y) {
-			final Pangine engine = Pangine.getEngine();
-			final Panteraction in = engine.getInteraction();
-			final int d = 60;
-			final TouchButton button = new TouchButton(in, name, x, y, d, d);
-			engine.registerTouchButton(button);
-			final Panctor actor = new Panctor();
-			actor.setView(PlatformGame.button);
-			actor.getPosition().set(x, y, 500);
-			room.addActor(actor);
+		private final static TouchButton addButton(final Panlayer room, final String name, final int x, final int y,
+				final boolean input, final boolean act) {
+			final TouchButton button;
+			if (input) {
+				final Pangine engine = Pangine.getEngine();
+				final Panteraction in = engine.getInteraction();
+				final int d = 60;
+				button = new TouchButton(in, name, x, y, d, d);
+				engine.registerTouchButton(button);
+			} else {
+				button = null;
+			}
+			if (act) {
+				final Panctor actor = new Panctor();
+				actor.setView(PlatformGame.button);
+				actor.getPosition().set(x, y, 500);
+				room.addActor(actor);
+			}
 			return button;
 		}
 		

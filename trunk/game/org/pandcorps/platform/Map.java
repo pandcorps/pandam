@@ -1156,6 +1156,7 @@ public class Map {
 		name.centerX();
 		final Panlayer hud = PlatformGame.addHud(room, false);
 		hud.addActor(name);
+		Menu.PlayerScreen.initTouchButtons(hud, getPlayerContext().ctrl);
 	}
 	
 	private static void mountain(final int x, final int y, final int w) {

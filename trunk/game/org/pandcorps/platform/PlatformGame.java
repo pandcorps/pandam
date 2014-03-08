@@ -609,6 +609,7 @@ public class PlatformGame extends BaseGame {
 	}
 	
 	private final static void loadLevel() {
+		initTouchButtons(null, true); // Must define inputs before creating Player
 	    Level.loadLevel();
 	    addHud(room, true);
 	}
@@ -622,7 +623,14 @@ public class PlatformGame extends BaseGame {
         	addHud(hud, pcs.get(i), OFF_GEM + (i * 56), h, level, true);
         }
         addNotifications(hud);
+        if (level) {
+        	initTouchButtons(hud, false); // Must define actors after creating layer
+        }
         return hud;
+	}
+	
+	protected final static void initTouchButtons(final Panlayer layer, final boolean input) {
+		Menu.PlayerScreen.initTouchButtons(layer, pcs.get(0).ctrl, false, input, !input);
 	}
 	
 	protected final static void addHudGem(final Panlayer hud, final int x, final int y) {
