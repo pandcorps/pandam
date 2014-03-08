@@ -28,6 +28,8 @@ import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
 import org.pandcorps.game.core.*;
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.Panput.*;
+import org.pandcorps.pandam.Panteraction.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.action.*;
 import org.pandcorps.pandax.in.*;
@@ -85,6 +87,7 @@ public class Menu {
 				actor = addActor(pc, center);
 			    ctrl = pc.ctrl;
 			}
+			initTouchButtons();
 			form = new Panform(ctrl);
 			infLbl = addTitle(inf, center, getBottom());
 			form.setTabListener(new FormTabListener() {@Override public void onTab(final FormTabEvent event) {
@@ -114,6 +117,44 @@ public class Menu {
 		
 		protected final int getLeft() {
 			return (Pangine.getEngine().getEffectiveWidth() / 2) - 120;
+		}
+		
+		protected final void initTouchButtons() {
+			System.out.println("initTouch for " + getClass().getName());
+			if (ctrl == null) {
+				return;
+			}
+			System.out.println("Found ControlScheme");
+			final Panput temp = ctrl.get1();
+			if (temp != null && !(temp.getDevice() instanceof Touchscreen)) {
+        		return;
+        	}
+			System.out.println("Found touch scheme");
+			final Pangine engine = Pangine.getEngine();
+			engine.clearTouchButtons();
+			final int d = 60;
+			final TouchButton left = addButton("Left", 0, d);
+			final TouchButton down = addButton("Down", d, 0);
+			final TouchButton up = addButton("Up", d, d * 2);
+			final TouchButton right = addButton("Right", d * 2, d);
+			final int r = engine.getEffectiveWidth();
+			final TouchButton act2 = addButton("Act2", r - d, 0);
+			final TouchButton act1 = addButton("Act1", r - d * 2, 0);
+			final TouchButton sub = addButton("Sub", r - d, engine.getEffectiveHeight() - d);
+			ctrl.set(down, up, left, right, act1, act2, sub);
+		}
+		
+		private final TouchButton addButton(final String name, final int x, final int y) {
+			final Pangine engine = Pangine.getEngine();
+			final Panteraction in = engine.getInteraction();
+			final int d = 60;
+			final TouchButton button = new TouchButton(in, name, x, y, d, d);
+			engine.registerTouchButton(button);
+			final Panctor actor = new Panctor();
+			actor.setView(PlatformGame.button);
+			actor.getPosition().set(x, y, 500);
+			room.addActor(actor);
+			return button;
 		}
 		
 		protected final RadioGroup addRadio(final String title, final List<String> list, final RadioSubmitListener lsn, final int x, final int y) {
@@ -311,7 +352,13 @@ public class Menu {
 	        	if (disabled) {
 	        		return;
 	        	}
-	            ctrl = ControlScheme.getDefault(event.getInput().getDevice());
+	        	final Device device = event.getInput().getDevice();
+	        	if (device instanceof Touchscreen) {
+	        		final Touch touch = Pangine.getEngine().getInteraction().TOUCH;
+	        		ctrl = new ControlScheme(null, null, null, null, touch, touch, touch);
+	        	} else {
+	        		ctrl = ControlScheme.getDefault(device);
+	        	}
 	            exit();
 	        }});
 	        for (int i = 0; i < NUM_CHRS; i++) {
