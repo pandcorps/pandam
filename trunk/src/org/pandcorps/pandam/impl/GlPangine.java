@@ -28,6 +28,7 @@ import java.util.*;
 import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.Panput.*;
 import org.pandcorps.pandam.event.action.*;
 
 public abstract class GlPangine extends Pangine {
@@ -37,6 +38,8 @@ public abstract class GlPangine extends Pangine {
 	protected final Panteraction interaction;
 	protected final HashSet<Panput> active = new HashSet<Panput>();
 	protected final HashSet<Panput> newActive = new HashSet<Panput>();
+	protected final static Vector<TouchEvent> touchEvents = new Vector<TouchEvent>();
+	protected final static Vector<TouchButton> touchButtons = new Vector<TouchButton>();
 	private FloatBuffer blendRectangle = null;
 	public boolean capsLock = false;
 	public boolean ins = false;
@@ -164,6 +167,42 @@ public abstract class GlPangine extends Pangine {
 	}
 	
 	protected abstract void stepControl() throws Exception;
+	
+	protected final void stepTouch() {
+		int size;
+    	while ((size = touchEvents.size()) > 0) {
+    		final TouchEvent event = touchEvents.remove(size - 1);
+    		final int x = event.getX(), y = event.getY();
+    		Panput input = interaction.TOUCH;
+    		for (final TouchButton button : touchButtons) {
+    			if (button.contains(x, y)) {
+    				input = button;
+    				break;
+    			}
+    		}
+    		final byte type = event.getType();
+    		if (type == Panput.TOUCH_MOVE) {
+    			//TODO
+    		} else {
+    			activate(input, type == Panput.TOUCH_DOWN);
+    		}
+    	}
+	}
+	
+	public final void addTouchEvent(final byte type, final float x, final float y) {
+		final float zoom = getZoom();
+		touchEvents.add(new TouchEvent(type, Math.round(x / zoom), Math.round((getDisplayHeight() - y) / zoom)));
+	}
+	
+	@Override
+	public final void registerTouchButton(final TouchButton button) {
+		touchButtons.add(button);
+	}
+	
+	@Override
+	public final void clearTouchButtons() {
+		touchButtons.clear();
+	}
 	
 	@Override
 	protected final void loop() throws Exception {

@@ -376,6 +376,12 @@ public abstract class Pangine {
 	protected final void addController(final String name, final Button l, final Button r, final Button u, final Button d, final List<Button> bs) {
 		getInteraction()._controllers.add(new Panteraction.Controller(name, l, r, u, d, bs));
 	}
+	
+	public abstract void registerTouchButton(final TouchButton button);
+	
+	public abstract void clearTouchButtons();
+	
+	public abstract boolean isTouchSupported();
 
 	private void register(final Pantity entity) throws Panception {
 		String id = entity.getId();

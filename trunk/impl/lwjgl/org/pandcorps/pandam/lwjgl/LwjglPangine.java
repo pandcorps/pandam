@@ -227,6 +227,11 @@ public final class LwjglPangine extends GlPangine {
 		}
 		Controllers.clearEvents();
 	}
+    
+    @Override
+    public final boolean isTouchSupported() {
+    	return false;
+    }
 	
     @Override
 	protected void onDestroy() {
