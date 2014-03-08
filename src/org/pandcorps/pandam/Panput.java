@@ -27,6 +27,10 @@ import org.pandcorps.pandam.Panteraction.*;
 
 // Pandam Input
 public abstract class Panput {
+	public final static byte TOUCH_DOWN = 0;
+	public final static byte TOUCH_UP = 1;
+	public final static byte TOUCH_MOVE = 2;
+	
     /*package*/ final static Any any = new Any();
     /*package*/ Device device;
     private final String name;
@@ -117,6 +121,49 @@ public abstract class Panput {
 	public final static class Touch extends Panput {
 		public Touch(final Panteraction interaction) {
 			super(interaction.TOUCHSCREEN, "Touch");
+		}
+	}
+	
+	public static class TouchButton extends Panput {
+		private final int xMin;
+		private final int yMin;
+		private final int xMax;
+		private final int yMax;
+		
+		public TouchButton(final Panteraction interaction, final String name, final int x, final int y, final int w, final int h) {
+			super(interaction.TOUCHSCREEN, name);
+			xMin = x;
+			yMin = y;
+			xMax = x + w;
+			yMax = y + h;
+		}
+		
+		public boolean contains(final int x, final int y) {
+			return x >= xMin && x < xMax && y >= yMin && y < yMax;
+		}
+	}
+	
+	public final static class TouchEvent {
+		protected final byte type;
+		protected final int x;
+		protected final int y;
+		
+		public TouchEvent(final byte type, final int x, final int y) {
+			this.type = type;
+			this.x = x;
+			this.y = y;
+		}
+		
+		public final byte getType() {
+			return type;
+		}
+		
+		public final int getX() {
+			return x;
+		}
+		
+		public final int getY() {
+			return y;
 		}
 	}
 	
