@@ -25,6 +25,7 @@ package org.pandcorps.test.pandam;
 import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.Panput.*;
 
 public final class UnitPangine extends Pangine {
     private int w, h;
@@ -98,6 +99,19 @@ public final class UnitPangine extends Pangine {
 	public final Panteraction getInteraction() {
 		return null;
 	}
+	
+	@Override
+	public final void registerTouchButton(final TouchButton button) {
+	}
+	
+	@Override
+	public final void clearTouchButtons() {
+	}
+	
+	@Override
+    public final boolean isTouchSupported() {
+    	return false;
+    }
 
 	@Override
 	protected final void init() throws Exception {
