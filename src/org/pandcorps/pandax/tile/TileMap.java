@@ -244,11 +244,14 @@ public class TileMap extends Panctor implements Savable {
     protected void renderView(final Panderer renderer) {
     	/*
     	TODO
-    	Only render tiles visible by current camera.
-    	Allow some wiggle room if camera can move between call to this and actual rendering.
     	DynamicTileMap could call TileListener only for visible tiles too.
     	But listener implementations would not be able to rely on previous image.
     	They would need to be based on the clock so tiles don't get out of synch.
+    	*/
+    	/*
+    	GlPangine.draw(Panlayer) calls camera(Panlayer) which sets the layer's view min/max.
+    	Then it calls renderView for each Panctor in the Panlayer.
+    	So this can trust the view window.
     	*/
         final Panple pos = getPosition();
         final float x = pos.getX();
@@ -256,10 +259,15 @@ public class TileMap extends Panctor implements Savable {
         final float z = pos.getZ();
         final float foregroundDepth = getForegroundDepth();
         final Panlayer layer = getLayer();
-        for (int j = 0; j < h; j++) {
+        final Panple min = layer.getViewMinimum(), max = layer.getViewMaximum();
+        final int j0 = Math.max(0, (int) ((min.getY() - y) / th));
+        final int i0 = Math.max(0, (int) ((min.getX() - x) / tw));
+        final int jh = Math.min(h, 1 + (int) ((max.getY() - y) / th));
+        final int iw = Math.min(w, 1 + (int) ((max.getX() - x) / tw));
+        for (int j = j0; j < jh; j++) {
             final int off = j * w;
             final float yjth = y + j * th;
-            for (int i = 0; i < w; i++) {
+            for (int i = i0; i < iw; i++) {
                 final Tile tile = tiles[off + i];
                 if (tile == null) {
                     continue;
