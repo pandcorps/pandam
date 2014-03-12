@@ -343,7 +343,9 @@ public final class Imtil {
         if (d != in.getWidth()) {
             throw new UnsupportedOperationException();
         }
-        final int cmax = d / 2, rad = cmax - 1, cmin = (d % 2) == 0 ? rad : cmax, r2 = rad * rad;
+        final int cmax = d / 2, cmin = (d % 2) == 0 ? (cmax - 1) : cmax, r2 = cmin * cmin;
+        // If diameter is 99, center is 49, radius of 49 puts top at 49 + 49 = 98 (top pixel, since they run 0-98)
+        // If d is 100, r is 49, cmax runs 50-99, cmin runs 0-49
         final int[] rgba = {r, g, b, a};
         final int c = cm.getDataElement(rgba, 0);
         for (int i = 0; ; i++) {
