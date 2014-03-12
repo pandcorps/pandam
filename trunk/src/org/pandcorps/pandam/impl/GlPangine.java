@@ -40,6 +40,7 @@ public abstract class GlPangine extends Pangine {
 	protected final HashSet<Panput> newActive = new HashSet<Panput>();
 	protected final static Vector<TouchEvent> touchEvents = new Vector<TouchEvent>();
 	protected final static Vector<TouchButton> touchButtons = new Vector<TouchButton>();
+	private final static Map<Integer, Panput> touchMap = new HashMap<Integer, Panput>();
 	private FloatBuffer blendRectangle = null;
 	public boolean capsLock = false;
 	public boolean ins = false;
@@ -169,9 +170,13 @@ public abstract class GlPangine extends Pangine {
 	protected abstract void stepControl() throws Exception;
 	
 	protected final void stepTouch() {
-		int size;
-    	while ((size = touchEvents.size()) > 0) {
-    		final TouchEvent event = touchEvents.remove(size - 1);
+		final int size = touchEvents.size();
+		//int size;
+    	//while ((size = touchEvents.size()) > 0) {
+		for (int i = 0; i < size; i++) {
+    		//final TouchEvent event = touchEvents.remove(size - 1);
+			final TouchEvent event = touchEvents.get(i);
+    		final Integer key = Integer.valueOf(event.getId());
     		final int x = event.getX(), y = event.getY();
     		Panput input = interaction.TOUCH;
     		for (final TouchButton button : touchButtons) {
@@ -182,16 +187,29 @@ public abstract class GlPangine extends Pangine {
     		}
     		final byte type = event.getType();
     		if (type == Panput.TOUCH_MOVE) {
-    			//TODO
+    			final Panput old = touchMap.put(key, input);
+    			if (input != old) {
+    				deactivate(old);
+    				activate(input);
+    			}
     		} else {
-    			activate(input, type == Panput.TOUCH_DOWN);
+    			if (type == Panput.TOUCH_DOWN) {
+    				activate(input);
+    				touchMap.put(key, input);
+    			} else {
+    				deactivate(input);
+    				touchMap.remove(key);
+    			}
     		}
     	}
+		for (int i = size - 1; i >= 0; i--) {
+			touchEvents.remove(i);
+		}
 	}
 	
-	public final void addTouchEvent(final byte type, final float x, final float y) {
+	public final void addTouchEvent(final int id, final byte type, final float x, final float y) {
 		final float zoom = getZoom();
-		touchEvents.add(new TouchEvent(type, Math.round(x / zoom), Math.round((getDisplayHeight() - y) / zoom)));
+		touchEvents.add(new TouchEvent(id, type, Math.round(x / zoom), Math.round((getDisplayHeight() - y) / zoom)));
 	}
 	
 	@Override
