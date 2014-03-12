@@ -144,14 +144,20 @@ public abstract class Panput {
 	}
 	
 	public final static class TouchEvent {
+		protected final int id;
 		protected final byte type;
 		protected final int x;
 		protected final int y;
 		
-		public TouchEvent(final byte type, final int x, final int y) {
+		public TouchEvent(final int id, final byte type, final int x, final int y) {
+			this.id = id;
 			this.type = type;
 			this.x = x;
 			this.y = y;
+		}
+		
+		public final int getId() {
+			return id;
 		}
 		
 		public final byte getType() {
