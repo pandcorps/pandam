@@ -48,8 +48,11 @@ public class PanSurfaceView extends GLSurfaceView {
 				type = Panput.TOUCH_UP;
 				break;
 			case MotionEvent.ACTION_MOVE:
-				type = Panput.TOUCH_MOVE;
-				break;
+				final int size = event.getPointerCount();
+				for (int index = 0; index < size; index++) {
+					addTouchEvent(Panput.TOUCH_MOVE, event, index);
+				}
+				return true;
 			default:
 				System.out.println("PanInput " + action);
 				return true;
@@ -57,8 +60,11 @@ public class PanSurfaceView extends GLSurfaceView {
 		// bottom-left ~ 45.0, 446.0 (would be top-left if device hadn't been rotated)
 		// top-right ~ 775.0, 50.0 (would be bottom-right if device hadn't been rotated)
 		// Looks like coordinates are based on the landscape orientation, but origin is top-left instead of bottom-left
-		final int index = event.getActionIndex();
-		AndroidPangine.engine.addTouchEvent(type, event.getX(index), event.getY(index));
+		addTouchEvent(type, event, event.getActionIndex());
 		return true;
+	}
+	
+	private final void addTouchEvent(final byte type, final MotionEvent event, final int index) {
+		AndroidPangine.engine.addTouchEvent(type, event.getX(index), event.getY(index));
 	}
 }
