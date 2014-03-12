@@ -65,6 +65,6 @@ public class PanSurfaceView extends GLSurfaceView {
 	}
 	
 	private final void addTouchEvent(final byte type, final MotionEvent event, final int index) {
-		AndroidPangine.engine.addTouchEvent(type, event.getX(index), event.getY(index));
+		AndroidPangine.engine.addTouchEvent(event.getPointerId(index), type, event.getX(index), event.getY(index));
 	}
 }
