@@ -55,7 +55,6 @@ public class PlatformGame extends BaseGame {
 	Replace bush with Rise.png for some levels; rise will be higher than 1 tile; separate build method.
 	Taller bushes.
 	Map landmarks: Mountain, garden.
-	Another plane/dimension for last level.
 	Train-riding levels.
 	Ridable dragons.
 	Mage Enemy w/ pointy hat, Wisp, Elementals, Trolls, Ogres, Impix (winged Imp).
@@ -77,6 +76,9 @@ public class PlatformGame extends BaseGame {
 	Goals: Collect n gems, defeat n enemies.
 	Random music per map.
 	Sound effects for jump, bump, stomp, hurt, etc.
+	Automatically advance on Map if standing on defeated Level and there is only one adjacent undefeated Level.
+	Option to auto-run, only one button for jumping.
+	Flags to simplify menu in some environments (one Profile, maybe one Avatar).
 	*/
 	
 	protected final static byte TILE_BREAK = 2;
