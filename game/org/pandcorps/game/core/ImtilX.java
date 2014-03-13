@@ -104,4 +104,31 @@ public final class ImtilX {
     		img.close();
     	}
     }
+    
+    public final static Img indent(final Img raw) {
+        final int w = raw.getWidth(), h = raw.getHeight();
+        final Img img = Imtil.newImage(w, h);
+        final ImgFactory cm = ImgFactory.getFactory();
+        final int b = cm.getDataElement(new int[] {Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, Pancolor.MAX_VALUE}, 0);
+        final int indent = Math.round(h / 10.0f);
+        for (int y = h - 1; y >= 0; y--) {
+            for (int x = 0; x < w; x++) {
+                final int rgb = raw.getRGB(x, y);
+                if (cm.getAlpha(rgb) == 0) {
+                    continue;
+                }
+                int ref;
+                if (y < indent) {
+                    ref = b;
+                } else {
+                    ref = raw.getRGB(x, y - indent);
+                    if (cm.getAlpha(ref) == 0) {
+                        ref = b;
+                    }
+                }
+                img.setRGB(x, y, ref);
+            }
+        }
+        return img;
+    }
 }
