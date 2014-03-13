@@ -337,6 +337,12 @@ public final class Imtil {
     
     public final static Img drawCircle(final Img in,
             final short r, final short g, final short b, final short a) {
+        final Pancolor c = new FinPancolor(r, g, b, a);
+        return drawCircle(in, c, c, null);
+    }
+    
+    public final static Img drawCircle(final Img in,
+            final Pancolor top, final Pancolor bottom, final Pancolor fill) {
         // x ^ 2 + y ^ 2 = r ^ 2
         // y = sqrt(r ^ 2 - x ^ 2)
         final int d = in.getHeight();
@@ -346,23 +352,32 @@ public final class Imtil {
         final int cmax = d / 2, cmin = (d % 2) == 0 ? (cmax - 1) : cmax, r2 = cmin * cmin;
         // If diameter is 99, center is 49, radius of 49 puts top at 49 + 49 = 98 (top pixel, since they run 0-98)
         // If d is 100, r is 49, cmax runs 50-99, cmin runs 0-49
-        final int[] rgba = {r, g, b, a};
-        final int c = cm.getDataElement(rgba, 0);
+        final int t = getDataElement(top), b = getDataElement(bottom), f = fill == null ? 0 : getDataElement(fill);
         for (int i = 0; ; i++) {
             final int j = (int) Math.round(Math.sqrt(r2 - (i * i)));
-            in.setRGB(cmax + i, cmax + j, c); // Bottom-right
-            in.setRGB(cmax + j, cmax + i, c);
-            in.setRGB(cmin - i, cmax + j, c); // Bottom-left
-            in.setRGB(cmin - j, cmax + i, c);
-            in.setRGB(cmin - i, cmin - j, c); // Top-left
-            in.setRGB(cmin - j, cmin - i, c);
-            in.setRGB(cmax + i, cmin - j, c); // Top-right
-            in.setRGB(cmax + j, cmin - i, c);
+            final int cmaxi = cmax + i, cmini = cmin - i;
+            drawCircle8(in, cmaxi, cmini, cmax + j, cmin - j, b, t);
             if (i > j) {
                 break;
             }
+            if (fill != null) {
+                for (int j2 = i; j2 < j; j2++) {
+                    drawCircle8(in, cmaxi, cmini, cmax + j2, cmin - j2, f, f);
+                }
+            }
         }
         return in;
+    }
+    
+    private final static void drawCircle8(final Img in, final int cmaxi, final int cmini, final int cmaxj, final int cminj, final int b, final int t) {
+        in.setRGB(cmaxi, cmaxj, b); // Bottom-right
+        in.setRGB(cmaxj, cmaxi, b);
+        in.setRGB(cmini, cmaxj, b); // Bottom-left
+        in.setRGB(cminj, cmaxi, b);
+        in.setRGB(cmini, cminj, t); // Top-left
+        in.setRGB(cminj, cmini, t);
+        in.setRGB(cmaxi, cminj, t); // Top-right
+        in.setRGB(cmaxj, cmini, t);
     }
     
     public final static Img shrink(final Img in, final int f) {
@@ -380,5 +395,9 @@ public final class Imtil {
     
     public final static Img newImage(final int w, final int h) {
         return cm.create(w, h);
+    }
+    
+    private final static int getDataElement(final Pancolor c) {
+        return cm.getDataElement(new int[] {c.getR(), c.getG(), c.getB(), c.getA()}, 0);
     }
 }
