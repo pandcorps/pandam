@@ -321,6 +321,21 @@ public final class Imtil {
         return Math.min(255, Math.max(0, (int) (Math.pow(avg, exponent) * 255.0)));
     }
     
+    public final static void setPseudoTranslucent(final Img in) {
+    	final int w = in.getWidth(), h = in.getHeight();
+    	final int rgba[] = new int[4];
+    	rgba[3] = Pancolor.MIN_VALUE;
+    	for (int j = 0; j < h; j++) {
+    		for (int i = j % 2; i < w; i += 2) {
+    			final int p = in.getRGB(i, j);
+    			rgba[0] = cm.getRed(p);
+    			rgba[1] = cm.getGreen(p);
+    			rgba[2] = cm.getBlue(p);
+    			in.setRGB(i, j, cm.getDataElement(rgba, 0));
+    		}
+    	}
+    }
+    
     public final static Img drawRectangle(final Img in,
     		final int x, final int y, final int w, final int h,
     		final short r, final short g, final short b, final short a) {

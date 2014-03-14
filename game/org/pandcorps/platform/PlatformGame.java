@@ -157,6 +157,7 @@ public class PlatformGame extends BaseGame {
 	protected static Img[] terrains = null;
 	protected static Img[] crowns = null;
 	protected static Panmage button = null;
+	protected static Panmage buttonIn = null;
 	protected static Queue<Runnable> loaders = new LinkedList<Runnable>();
 	
 	@Override
@@ -581,9 +582,15 @@ public class PlatformGame extends BaseGame {
 		
 		if (engine.isTouchSupported()) {
 			loaders.add(new Runnable() { @Override public final void run() {
-				final Img circle = Imtil.newImage(60, 60);
-				Imtil.drawCircle(circle, Pancolor.MAX_VALUE, (short) 0, Pancolor.MAX_VALUE, Pancolor.MAX_VALUE);
-				button = engine.createImage(Pantil.vmid(), circle); }});
+				// 400 x 240
+				final int d = Math.min(60 * engine.getEffectiveWidth() / 400, 60 * engine.getEffectiveHeight() / 240);
+				final Img circle = Imtil.newImage(d, d);
+				Imtil.drawCircle(circle, Pancolor.WHITE, Pancolor.BLACK, Pancolor.MAGENTA);
+				final Img circleIn = ImtilX.indent(circle);
+				Imtil.setPseudoTranslucent(circle);
+				Imtil.setPseudoTranslucent(circleIn);
+				button = engine.createImage(Pantil.vmid(), circle);
+				buttonIn = engine.createImage(Pantil.vmid(), circleIn); }});
 		}
 		
 		if (engine.isMusicSupported()) {
