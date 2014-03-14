@@ -141,6 +141,7 @@ public class Menu {
 			}
 			final int d = 60, rx, r = engine.getEffectiveWidth(), y;
 			final TouchButton down, up, act2, sub;
+			final Panmage rt, rtIn, lt, ltIn;
 			if (full) {
 				y = d;
 				down = addButton(room, "Down", d, 0, input, act, ctrl.getDown());
@@ -148,6 +149,8 @@ public class Menu {
 				rx = d * 2;
 				act2 = addButton(room, "Act2", r - d, 0, input, act, ctrl.get2());
 				sub = addButton(room, "Sub", r - d, engine.getEffectiveHeight() - d, input, act, ctrl.getSubmit());
+				rt = lt = PlatformGame.button;
+				rtIn = ltIn = PlatformGame.buttonIn;
 			} else {
 				y = 0;
 				down = null;
@@ -155,9 +158,13 @@ public class Menu {
 				rx = (int) (d * 1.25f);
 				act2 = null;
 				sub = null;
+				rt = PlatformGame.right2;
+				rtIn = PlatformGame.right2In;
+				lt = PlatformGame.left2;
+				ltIn = PlatformGame.left2In;
 			}
-			final TouchButton left = addButton(room, "Left", 0, y, input, act, ctrl.getLeft());
-			final TouchButton right = addButton(room, "Right", rx, y, input, act, ctrl.getRight());
+			final TouchButton left = addButton(room, "Left", 0, y, input, act, ctrl.getLeft(), lt, ltIn);
+			final TouchButton right = addButton(room, "Right", rx, y, input, act, ctrl.getRight(), rt, rtIn);
 			final TouchButton act1 = addButton(room, "Act1", r - rx, 0, input, act, ctrl.get1());
 			if (input) {
 				ctrl.set(down, up, left, right, act1, act2, sub);
@@ -166,6 +173,11 @@ public class Menu {
 		
 		private final static TouchButton addButton(final Panlayer room, final String name, final int x, final int y,
 				final boolean input, final boolean act, final Panput old) {
+			return addButton(room, name, x, y, input, act, old, PlatformGame.button, PlatformGame.buttonIn);
+		}
+		
+		private final static TouchButton addButton(final Panlayer room, final String name, final int x, final int y,
+				final boolean input, final boolean act, final Panput old, final Panmage img, final Panmage imgIn) {
 			final TouchButton button;
 			if (input) {
 				final Pangine engine = Pangine.getEngine();
@@ -178,8 +190,8 @@ public class Menu {
 			}
 			if (act) {
 				final Panctor actor = new Panctor();
-				actor.setView(PlatformGame.button);
-				(button == null ? (TouchButton) old : button).setActor(actor, PlatformGame.buttonIn);
+				actor.setView(img);
+				(button == null ? (TouchButton) old : button).setActor(actor, imgIn);
 				actor.getPosition().set(x, y, 500);
 				room.addActor(actor);
 			}
