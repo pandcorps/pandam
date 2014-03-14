@@ -110,7 +110,7 @@ public final class ImtilX {
         final Img img = Imtil.newImage(w, h);
         final ImgFactory cm = ImgFactory.getFactory();
         final int b = cm.getDataElement(new int[] {Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, Pancolor.MAX_VALUE}, 0);
-        final int indent = Math.round(h / 10.0f);
+        final int indent = Math.max(1, Math.round(h / 10.0f));
         for (int y = h - 1; y >= 0; y--) {
             for (int x = 0; x < w; x++) {
                 final int rgb = raw.getRGB(x, y);
@@ -124,6 +124,12 @@ public final class ImtilX {
                     ref = raw.getRGB(x, y - indent);
                     if (cm.getAlpha(ref) == 0) {
                         ref = b;
+                    } else if (y == h - 1 || cm.getAlpha(raw.getRGB(x, y + 1)) == 0) {
+                    	ref = b;
+                    } else if (x == 0 || cm.getAlpha(raw.getRGB(x - 1, y)) == 0) {
+                    	ref = b;
+                    } else if (x == w - 1 || cm.getAlpha(raw.getRGB(x + 1, y)) == 0) {
+                    	ref = b;
                     }
                 }
                 img.setRGB(x, y, ref);
