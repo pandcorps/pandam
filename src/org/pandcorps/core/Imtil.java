@@ -412,7 +412,7 @@ public final class Imtil {
         return cm.create(w, h);
     }
     
-    private final static int getDataElement(final Pancolor c) {
+    public final static int getDataElement(final Pancolor c) {
         return cm.getDataElement(new int[] {c.getR(), c.getG(), c.getB(), c.getA()}, 0);
     }
 }
