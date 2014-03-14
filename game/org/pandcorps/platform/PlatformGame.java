@@ -158,6 +158,10 @@ public class PlatformGame extends BaseGame {
 	protected static Img[] crowns = null;
 	protected static Panmage button = null;
 	protected static Panmage buttonIn = null;
+	protected static Panmage right2 = null;
+	protected static Panmage right2In = null;
+	protected static Panmage left2 = null;
+	protected static Panmage left2In = null;
 	protected static Queue<Runnable> loaders = new LinkedList<Runnable>();
 	
 	@Override
@@ -590,7 +594,22 @@ public class PlatformGame extends BaseGame {
 				Imtil.setPseudoTranslucent(circle);
 				Imtil.setPseudoTranslucent(circleIn);
 				button = engine.createImage(Pantil.vmid(), circle);
-				buttonIn = engine.createImage(Pantil.vmid(), circleIn); }});
+				buttonIn = engine.createImage(Pantil.vmid(), circleIn);
+				final Img r2 = ImtilX.newRight2(d, Pancolor.MAGENTA);
+				final Img r2In = ImtilX.indent(r2);
+				Imtil.setPseudoTranslucent(r2);
+				Imtil.setPseudoTranslucent(r2In);
+				r2.setTemporary(false);
+				r2In.setTemporary(false);
+				right2 = engine.createImage(Pantil.vmid(), r2);
+				right2In = engine.createImage(Pantil.vmid(), r2In);
+				Imtil.mirror(r2);
+				Imtil.mirror(r2In);
+				left2 = engine.createImage(Pantil.vmid(), r2);
+				left2In = engine.createImage(Pantil.vmid(), r2In);
+				r2.close();
+				r2In.close();
+				}});
 		}
 		
 		if (engine.isMusicSupported()) {
