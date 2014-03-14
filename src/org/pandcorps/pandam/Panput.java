@@ -129,6 +129,9 @@ public abstract class Panput {
 		private final int yMin;
 		private final int xMax;
 		private final int yMax;
+		private Panctor actor = null;
+		private Panmage imgActive = null;
+		private Panmage imgInactive = null;
 		
 		public TouchButton(final Panteraction interaction, final String name, final int x, final int y, final int w, final int h) {
 			super(interaction.TOUCHSCREEN, name);
@@ -138,8 +141,20 @@ public abstract class Panput {
 			yMax = y + h;
 		}
 		
+		public final void setActor(final Panctor actor, final Panmage imgActive) {
+			this.actor = actor;
+			this.imgActive = imgActive;
+			this.imgInactive = (Panmage) actor.getView();
+		}
+		
 		public boolean contains(final int x, final int y) {
 			return x >= xMin && x < xMax && y >= yMin && y < yMax;
+		}
+		
+		public void activate(final boolean active) {
+			if (actor != null && imgActive != null) {
+				actor.setView(active ? imgActive : imgInactive);
+			}
 		}
 	}
 	
