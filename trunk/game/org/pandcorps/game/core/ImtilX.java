@@ -137,4 +137,23 @@ public final class ImtilX {
         }
         return img;
     }
+    
+    public final static Img newRight2(final int d, final Pancolor fill) {
+    	final Img img = Imtil.newImage(d, d);
+    	final int t = Imtil.getDataElement(Pancolor.WHITE), b = Imtil.getDataElement(Pancolor.BLACK), f = Imtil.getDataElement(fill);
+    	for (int j = d - 2; j >= 0; j--) {
+    		img.setRGB(0, j, t);
+    	}
+    	img.setRGB(0, d - 1, b);
+    	for (int i = 1; i < d; i++) {
+    		final int i2 = i / 2, di2 = d - 1 - i2;
+    		img.setRGB(i, i2, t);
+    		img.setRGB(i, di2, b);
+    		for (int j = i2 + 1; j < di2; j++) {
+    			img.setRGB(i, j, f);
+    		}
+    	}
+    	//Imtil.setPseudoTranslucent(img); // Must indent first
+    	return img;
+    }
 }
