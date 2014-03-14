@@ -277,6 +277,12 @@ public abstract class GlPangine extends Pangine {
 		}
 	}
 	
+	private final void activateTouch(final Panput input, final boolean active) {
+		if (input.getClass() == Panput.TouchButton.class) {
+			((TouchButton) input).activate(active);
+		}
+	}
+	
 	private final void activate(final Panput input) {
 		// copy to prevent ConcurrentModificationException
 		for (final ActionStartListener startListener : Coltil.copy(interaction.getStartListeners(input))) {
@@ -294,6 +300,7 @@ public abstract class GlPangine extends Pangine {
 		onAction(input);
 		newActive.add(input);
 		setActive(input, true);
+		activateTouch(input, true);
 	}
 	
 	private final void deactivate(final Panput input) {
@@ -318,6 +325,7 @@ public abstract class GlPangine extends Pangine {
 		active.remove(input);
 		newActive.remove(input);
 		setActive(input, false);
+		activateTouch(input, false);
 	}
 	
 	private final static int near = -1000, far = 1000;
