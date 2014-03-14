@@ -143,11 +143,11 @@ public class Menu {
 			final TouchButton down, up, act2, sub;
 			if (full) {
 				y = d;
-				down = addButton(room, "Down", d, 0, input, act);
-				up = addButton(room, "Up", d, d * 2, input, act);
+				down = addButton(room, "Down", d, 0, input, act, ctrl.getDown());
+				up = addButton(room, "Up", d, d * 2, input, act, ctrl.getUp());
 				rx = d * 2;
-				act2 = addButton(room, "Act2", r - d, 0, input, act);
-				sub = addButton(room, "Sub", r - d, engine.getEffectiveHeight() - d, input, act);
+				act2 = addButton(room, "Act2", r - d, 0, input, act, ctrl.get2());
+				sub = addButton(room, "Sub", r - d, engine.getEffectiveHeight() - d, input, act, ctrl.getSubmit());
 			} else {
 				y = 0;
 				down = null;
@@ -156,16 +156,16 @@ public class Menu {
 				act2 = null;
 				sub = null;
 			}
-			final TouchButton left = addButton(room, "Left", 0, y, input, act);
-			final TouchButton right = addButton(room, "Right", rx, y, input, act);
-			final TouchButton act1 = addButton(room, "Act1", r - rx, 0, input, act);
+			final TouchButton left = addButton(room, "Left", 0, y, input, act, ctrl.getLeft());
+			final TouchButton right = addButton(room, "Right", rx, y, input, act, ctrl.getRight());
+			final TouchButton act1 = addButton(room, "Act1", r - rx, 0, input, act, ctrl.get1());
 			if (input) {
 				ctrl.set(down, up, left, right, act1, act2, sub);
 			}
 		}
 		
 		private final static TouchButton addButton(final Panlayer room, final String name, final int x, final int y,
-				final boolean input, final boolean act) {
+				final boolean input, final boolean act, final Panput old) {
 			final TouchButton button;
 			if (input) {
 				final Pangine engine = Pangine.getEngine();
@@ -179,6 +179,7 @@ public class Menu {
 			if (act) {
 				final Panctor actor = new Panctor();
 				actor.setView(PlatformGame.button);
+				(button == null ? (TouchButton) old : button).setActor(actor, PlatformGame.buttonIn);
 				actor.getPosition().set(x, y, 500);
 				room.addActor(actor);
 			}
