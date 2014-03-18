@@ -79,6 +79,7 @@ public class PlatformGame extends BaseGame {
 	Automatically advance on Map if standing on defeated Level and there is only one adjacent undefeated Level.
 	Option to auto-run, only one button for jumping.
 	Flags to simplify menu in some environments (one Profile, maybe one Avatar).
+	New choice box bug.
 	*/
 	
 	protected final static byte TILE_BREAK = 2;
