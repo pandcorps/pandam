@@ -218,8 +218,17 @@ public abstract class GlPangine extends Pangine {
 	}
 	
 	@Override
+	public final void unregisterTouchButton(final TouchButton button) {
+	    touchButtons.remove(button);
+	    //for (final Map.Entry<Integer, Panput> entry : touchMap.entrySet()) {
+	        // Remove this button, but are there thread-safety issues?
+	    //}
+	}
+	
+	@Override
 	public final void clearTouchButtons() {
 		touchButtons.clear();
+		//touchMap.clear(); // Thread-safety?
 	}
 	
 	@Override
