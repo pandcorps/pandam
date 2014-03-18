@@ -132,6 +132,7 @@ public abstract class Panput {
 		private Panctor actor = null;
 		private Panmage imgActive = null;
 		private Panmage imgInactive = null;
+		private Panlayer layer = null;
 		
 		public TouchButton(final Panteraction interaction, final String name, final int x, final int y, final int w, final int h) {
 			super(interaction.TOUCHSCREEN, name);
@@ -145,6 +146,11 @@ public abstract class Panput {
 			this.actor = actor;
 			this.imgActive = imgActive;
 			this.imgInactive = (Panmage) actor.getView();
+			layer = actor.getLayer();
+		}
+		
+		public final Panctor getActor() {
+		    return actor;
 		}
 		
 		public boolean contains(final int x, final int y) {
@@ -155,6 +161,18 @@ public abstract class Panput {
 			if (actor != null && imgActive != null) {
 				actor.setView(active ? imgActive : imgInactive);
 			}
+		}
+		
+		public final void detach() {
+		    Pangine.getEngine().unregisterTouchButton(this);
+		    Panctor.detach(actor);
+		}
+		
+		public final void reattach() {
+		    Pangine.getEngine().registerTouchButton(this);
+		    if (layer != null) {
+		        layer.addActor(actor);
+		    }
 		}
 	}
 	
