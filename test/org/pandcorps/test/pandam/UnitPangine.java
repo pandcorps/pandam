@@ -105,6 +105,10 @@ public final class UnitPangine extends Pangine {
 	}
 	
 	@Override
+    public final void unregisterTouchButton(final TouchButton button) {
+	}
+	
+	@Override
 	public final void clearTouchButtons() {
 	}
 	
