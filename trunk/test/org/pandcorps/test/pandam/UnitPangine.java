@@ -109,6 +109,11 @@ public final class UnitPangine extends Pangine {
 	}
 	
 	@Override
+	public final boolean isTouchButtonRegistered(final TouchButton button) {
+	    return false;
+	}
+	
+	@Override
 	public final void clearTouchButtons() {
 	}
 	
