@@ -381,6 +381,8 @@ public abstract class Pangine {
 	
 	public abstract void unregisterTouchButton(final TouchButton button);
 	
+	public abstract boolean isTouchButtonRegistered(final TouchButton button);
+	
 	public abstract void clearTouchButtons();
 	
 	public abstract boolean isTouchSupported();

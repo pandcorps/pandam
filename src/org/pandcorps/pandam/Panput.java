@@ -125,10 +125,10 @@ public abstract class Panput {
 	}
 	
 	public static class TouchButton extends Panput {
-		private final int xMin;
-		private final int yMin;
-		private final int xMax;
-		private final int yMax;
+		private int xMin;
+		private int yMin;
+		private int xMax;
+		private int yMax;
 		private Panctor actor = null;
 		private Panmage imgActive = null;
 		private Panmage imgInactive = null;
@@ -145,6 +145,17 @@ public abstract class Panput {
 		public TouchButton(final Panteraction interaction, final Panlayer layer, final String name, final int x, final int y, final float z, final Panmage img, final Panmage imgActive) {
 		    this(interaction, name, x, y, (int) img.getSize().getX(), (int) img.getSize().getY());
 		    initActor(layer, z, img, imgActive);
+		}
+		
+		public final void setPosition(final int x, final int y) {
+		    if (actor != null) {
+		        final Panple pos = actor.getPosition();
+		        pos.set(x + pos.getX() - xMin, y + pos.getY() - yMin);
+		    }
+		    xMax = x + xMax - xMin;
+		    yMax = y + yMax - yMin;
+		    xMin = x;
+		    yMin = y;
 		}
 		
 		public final void initActor(final Panlayer layer, final float z, final Panmage img, final Panmage imgActive) {

@@ -226,6 +226,11 @@ public abstract class GlPangine extends Pangine {
 	}
 	
 	@Override
+	public final boolean isTouchButtonRegistered(final TouchButton button) {
+	    return touchButtons.contains(button);
+	}
+	
+	@Override
 	public final void clearTouchButtons() {
 		touchButtons.clear();
 		//touchMap.clear(); // Thread-safety?
