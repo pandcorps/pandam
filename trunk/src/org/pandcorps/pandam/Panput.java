@@ -198,6 +198,17 @@ public abstract class Panput {
 		        layer.addActor(actor);
 		    }
 		}
+		
+		public final void destroy() {
+		    detach();
+		    Panctor.destroy(actor);
+		}
+		
+		public final static void destroy(final TouchButton button) {
+		    if (button != null) {
+		        button.destroy();
+		    }
+		}
 	}
 	
 	public final static class TouchEvent {

@@ -25,8 +25,12 @@ package org.pandcorps.pandax.touch;
 import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.Panput.*;
+import org.pandcorps.pandam.event.action.*;
 
 public class TouchTabs {
+    private final int x;
+    private final int y;
+    private final int z;
     private final int buttonWidth;
     private final int numButtonsDisplayed;
     private final TouchButton leftButton;
@@ -34,42 +38,86 @@ public class TouchTabs {
     private final TouchButton[] buttons;
     private int currentFirstButton = 0;
     
-    public TouchTabs(final int y, final int z, final Panmage left, final Panmage leftAct, final Panmage right, final Panmage rightAct, final TouchButton... buttons) {
+    public TouchTabs(final int z, final Panmage left, final Panmage leftAct, final Panmage right, final Panmage rightAct, final TouchButton... buttons) {
+        final Pangine engine = Pangine.getEngine();
         final Panple buttonSize = left.getSize();
+        this.y = engine.getEffectiveHeight() - (int) buttonSize.getY();
+        this.z = z;
         buttonWidth = (int) buttonSize.getX();
         this.buttons = buttons;
-        final Pangine engine = Pangine.getEngine();
-        final int max = engine.getEffectiveWidth() / buttonWidth, total = buttons.length;
+        final int screenWidth = engine.getEffectiveWidth();
+        final int max = screenWidth / buttonWidth, total = buttons.length;
+        final int totalDisplayed = max > total ? max : total;
+        final int totalWidth = totalDisplayed * buttonWidth;
+        x = (screenWidth - totalWidth) / 2;
         if (max > total) {
             numButtonsDisplayed = max - 2;
-            final int buttonHeight = (int) buttonSize.getY();
             final Panlayer layer = buttons[0].getActor().getLayer();
             final String id = Pantil.vmid();
             leftButton = new TouchButton(engine.getInteraction(), layer, "left." + id, x, y, z, left, leftAct);
-            rightButton = new TouchButton(engine.getInteraction(), layer, "right." + id, x, y, z, right, rightAct);
+            rightButton = new TouchButton(engine.getInteraction(), layer, "right." + id, x + (max - 1) * buttonWidth, y, z, right, rightAct);
             engine.registerTouchButton(leftButton);
             engine.registerTouchButton(rightButton);
+            leftButton.getActor().register(leftButton, new ActionStartListener() {
+                @Override public final void onActionStart(final ActionStartEvent event) {
+                    left(); }});
+            rightButton.getActor().register(rightButton, new ActionStartListener() {
+                @Override public final void onActionStart(final ActionStartEvent event) {
+                    right(); }});
         } else {
             numButtonsDisplayed = total;
+            leftButton = null;
+            rightButton = null;
         }
+        initButtons();
     }
     
-    public final static TouchButton newButton(final Panlayer layer, final String name, final Panmage img, final Panmage imgAct) {
+    public final static TouchButton newButton(final Panlayer layer, final String name, final Panmage img, final Panmage imgAct, final ActionStartListener listener) {
         final TouchButton button = new TouchButton(Pangine.getEngine().getInteraction(), layer, name, 0, 0, 0, img, imgAct);
-        button.getActor().detach();
+        final Panctor actor = button.getActor();
+        actor.detach();
+        actor.register(button, listener);
         return button;
     }
     
     private final void initButtons() {
         final Pangine engine = Pangine.getEngine();
+        int x = this.x + ((leftButton == null) ? 0 : buttonWidth);
         for (int i = 0; i < numButtonsDisplayed; i++) {
             final int buttonIndex = (currentFirstButton + i) % buttons.length;
             final TouchButton button = buttons[buttonIndex];
             if (!engine.isTouchButtonRegistered(button)) {
                 button.reattach();
-                button.setPosition(x, y);
+            }
+            button.setPosition(x, y);
+            x += buttonWidth;
+            final Panctor actor = button.getActor();
+            if (actor != null) {
+                actor.getPosition().setZ(z);
             }
         }
         // detach
+    }
+    
+    private final void left() {
+        currentFirstButton--;
+        if (currentFirstButton < 0) {
+            currentFirstButton = buttons.length - 1;
+        }
+    }
+    
+    private final void right() {
+        currentFirstButton++;
+        if (currentFirstButton >= buttons.length) {
+            currentFirstButton = 0;
+        }
+    }
+    
+    public final void destroy() {
+        TouchButton.destroy(leftButton);
+        TouchButton.destroy(rightButton);
+        for (final TouchButton button : buttons) {
+            TouchButton.destroy(button);
+        }
     }
 }
