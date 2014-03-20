@@ -104,6 +104,7 @@ public class TouchTabs {
         if (currentFirstButton < 0) {
             currentFirstButton = buttons.length - 1;
         }
+        initButtons();
     }
     
     private final void right() {
@@ -111,6 +112,7 @@ public class TouchTabs {
         if (currentFirstButton >= buttons.length) {
             currentFirstButton = 0;
         }
+        initButtons();
     }
     
     public final void destroy() {
