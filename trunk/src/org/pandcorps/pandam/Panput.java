@@ -133,17 +133,28 @@ public abstract class Panput {
 		private Panmage imgActive = null;
 		private Panmage imgInactive = null;
 		private Panlayer layer = null;
+		private final boolean moveCancel;
 		
 		public TouchButton(final Panteraction interaction, final String name, final int x, final int y, final int w, final int h) {
+		    this(interaction, name, x, y, w, h, false);
+		}
+		
+		public TouchButton(final Panteraction interaction, final String name, final int x, final int y, final int w, final int h, final boolean moveCancel) {
 			super(interaction.TOUCHSCREEN, name);
 			xMin = x;
 			yMin = y;
 			xMax = x + w;
 			yMax = y + h;
+			this.moveCancel = moveCancel;
 		}
 		
 		public TouchButton(final Panteraction interaction, final Panlayer layer, final String name, final int x, final int y, final float z, final Panmage img, final Panmage imgActive) {
-		    this(interaction, name, x, y, (int) img.getSize().getX(), (int) img.getSize().getY());
+		    this(interaction, layer, name, x, y, z, img, imgActive, false);
+		}
+		
+		public TouchButton(final Panteraction interaction, final Panlayer layer, final String name, final int x, final int y, final float z,
+		                   final Panmage img, final Panmage imgActive, final boolean moveCancel) {
+		    this(interaction, name, x, y, (int) img.getSize().getX(), (int) img.getSize().getY(), moveCancel);
 		    initActor(layer, z, img, imgActive);
 		}
 		
@@ -175,6 +186,21 @@ public abstract class Panput {
 		
 		public final Panctor getActor() {
 		    return actor;
+		}
+		
+		public final boolean isMoveInterpretedAsCancel() {
+		    /*
+		    If true, then touching a button and then moving elsewhere on the screen cancels the button touch.
+		    There would have been an ActionStartEvent with no ActionEndEvent for the button.
+		    If the touch is lifted on the second button, it would have an ActionEndEvent with no ActionStartEvent.
+		    This is useful for menus where the user might see that the wrong button has been touched.
+		    The user could then move to the correct button.
+		    If the button responds to ActionEndEvent, then the first button would be canceled, ignored.
+		    If false, then moving from one button to the other will conclude the first with an ActionEndEvent
+		    and activate the second with an ActionStartEvent.
+		    This is useful for movement arrow buttons where the user can change direction without lifting the touch.
+		    */
+		    return moveCancel;
 		}
 		
 		public boolean contains(final int x, final int y) {

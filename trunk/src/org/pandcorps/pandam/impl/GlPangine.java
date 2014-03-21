@@ -189,8 +189,8 @@ public abstract class GlPangine extends Pangine {
     		if (type == Panput.TOUCH_MOVE) {
     			final Panput old = touchMap.put(key, input);
     			if (input != old) {
-    				deactivate(old);
-    				activate(input);
+    			    activateMove(old, false);
+    				activateMove(input, true);
     			}
     		} else {
     			if (type == Panput.TOUCH_DOWN) {
@@ -205,6 +205,21 @@ public abstract class GlPangine extends Pangine {
 		for (int i = size - 1; i >= 0; i--) {
 			touchEvents.remove(i);
 		}
+	}
+	
+	private final void activateMove(final Panput input, final boolean active) {
+	    if (input == null) {
+	        return;
+	    } else if (input.getClass() == TouchButton.class) {
+	        final TouchButton button = (TouchButton) input;
+	        if (button.isMoveInterpretedAsCancel()) {
+	            button.activate(active);
+	        } else {
+	            activate(input, active);
+	        }
+        } else {
+            activate(input, active);
+        }
 	}
 	
 	public final void addTouchEvent(final int id, final byte type, final float x, final float y) {
@@ -292,7 +307,7 @@ public abstract class GlPangine extends Pangine {
 	}
 	
 	private final void activateTouch(final Panput input, final boolean active) {
-		if (input.getClass() == Panput.TouchButton.class) {
+		if (input.getClass() == TouchButton.class) {
 			((TouchButton) input).activate(active);
 		}
 	}
