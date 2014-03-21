@@ -54,16 +54,11 @@ public class TouchTabs {
             numButtonsDisplayed = max - 2;
             final Panlayer layer = buttons[0].getActor().getLayer();
             final String id = Pantil.vmid();
-            leftButton = new TouchButton(engine.getInteraction(), layer, "left." + id, x, y, z, left, leftAct);
-            rightButton = new TouchButton(engine.getInteraction(), layer, "right." + id, x + (max - 1) * buttonWidth, y, z, right, rightAct);
-            engine.registerTouchButton(leftButton);
-            engine.registerTouchButton(rightButton);
-            //TODO use ActionEnd or call newButton (w/out detach)
-            leftButton.getActor().register(leftButton, new ActionStartListener() {
-                @Override public final void onActionStart(final ActionStartEvent event) {
+            leftButton = newButton(layer, "left." + id, x, y, z, left, leftAct, true, new Runnable() {
+                @Override public final void run() {
                     left(); }});
-            rightButton.getActor().register(rightButton, new ActionStartListener() {
-                @Override public final void onActionStart(final ActionStartEvent event) {
+            rightButton = newButton(layer, "right." + id, x + (max - 1) * buttonWidth, y, z, right, rightAct, true, new Runnable() {
+                @Override public final void run() {
                     right(); }});
         } else {
             numButtonsDisplayed = total;
@@ -74,9 +69,19 @@ public class TouchTabs {
     }
     
     public final static TouchButton newButton(final Panlayer layer, final String name, final Panmage img, final Panmage imgAct, final Runnable listener) {
-        final TouchButton button = new TouchButton(Pangine.getEngine().getInteraction(), layer, name, 0, 0, 0, img, imgAct, true);
+        return newButton(layer, name, 0, 0, 0, img, imgAct, false, listener);
+    }
+    
+    private final static TouchButton newButton(final Panlayer layer, final String name, final int x, final int y, final float z,
+                                               final Panmage img, final Panmage imgAct, final boolean active, final Runnable listener) {
+        final Pangine engine = Pangine.getEngine();
+        final TouchButton button = new TouchButton(engine.getInteraction(), layer, name, x, y, z, img, imgAct, true);
         final Panctor actor = button.getActor();
-        actor.detach();
+        if (active) {
+            engine.registerTouchButton(button);
+        } else {
+            actor.detach();
+        }
         actor.register(button, Actions.newEndListener(listener));
         return button;
     }
