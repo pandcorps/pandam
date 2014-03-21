@@ -89,9 +89,14 @@ public class TouchTabs {
     private final void initButtons() {
         final Pangine engine = Pangine.getEngine();
         int x = this.x + ((leftButton == null) ? 0 : buttonWidth);
-        for (int i = 0; i < numButtonsDisplayed; i++) {
-            final int buttonIndex = (currentFirstButton + i) % buttons.length;
+        final int size = buttons.length;
+        for (int i = 0; i < size; i++) {
+            final int buttonIndex = (currentFirstButton + i) % size;
             final TouchButton button = buttons[buttonIndex];
+            if (i >= numButtonsDisplayed) {
+                button.detach();
+                continue;
+            }
             if (!engine.isTouchButtonRegistered(button)) {
                 button.reattach();
             }
@@ -102,7 +107,6 @@ public class TouchTabs {
                 actor.getPosition().setZ(z);
             }
         }
-        // detach
     }
     
     private final void left() {
