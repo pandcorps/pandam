@@ -58,6 +58,7 @@ public class TouchTabs {
             rightButton = new TouchButton(engine.getInteraction(), layer, "right." + id, x + (max - 1) * buttonWidth, y, z, right, rightAct);
             engine.registerTouchButton(leftButton);
             engine.registerTouchButton(rightButton);
+            //TODO use ActionEnd or call newButton (w/out detach)
             leftButton.getActor().register(leftButton, new ActionStartListener() {
                 @Override public final void onActionStart(final ActionStartEvent event) {
                     left(); }});
@@ -72,11 +73,11 @@ public class TouchTabs {
         initButtons();
     }
     
-    public final static TouchButton newButton(final Panlayer layer, final String name, final Panmage img, final Panmage imgAct, final ActionStartListener listener) {
-        final TouchButton button = new TouchButton(Pangine.getEngine().getInteraction(), layer, name, 0, 0, 0, img, imgAct);
+    public final static TouchButton newButton(final Panlayer layer, final String name, final Panmage img, final Panmage imgAct, final Runnable listener) {
+        final TouchButton button = new TouchButton(Pangine.getEngine().getInteraction(), layer, name, 0, 0, 0, img, imgAct, true);
         final Panctor actor = button.getActor();
         actor.detach();
-        actor.register(button, listener);
+        actor.register(button, Actions.newEndListener(listener));
         return button;
     }
     
