@@ -156,4 +156,24 @@ public final class ImtilX {
     	//Imtil.setPseudoTranslucent(img); // Must indent first
     	return img;
     }
+    
+    public final static Img newRectangle(final int w, final int h, final Pancolor fill) {
+        final Img img = Imtil.newImage(w, h);
+        final int t = Imtil.getDataElement(Pancolor.WHITE), b = Imtil.getDataElement(Pancolor.BLACK), f = Imtil.getDataElement(fill);
+        final int w1 = w - 1, h1 = h - 1;
+        for (int j = 1; j < h; j++) {
+            img.setRGB(0, j, t);
+            img.setRGB(w1, h1 - j, b);
+        }
+        for (int i = 0; i < w; i++) {
+            img.setRGB(i, 0, t);
+            img.setRGB(w1 - i, h1, b);
+        }
+        for (int j = 1; j < h1; j++) {
+            for (int i = 1; i < w1; i++) {
+                img.setRGB(i, j, f);
+            }
+        }
+        return img;
+    }
 }
