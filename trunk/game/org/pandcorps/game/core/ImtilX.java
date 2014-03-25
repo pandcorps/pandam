@@ -145,13 +145,18 @@ public final class ImtilX {
     }
     
     public final static void drawRight2(final Img img, final int x, final int y, final int d, final Pancolor fill) {
+        drawArrow2(img, x, y, d, fill, true);
+    }
+    
+    public final static void drawArrow2(final Img img, final int x, final int y, final int d, final Pancolor fill, final boolean right) {
     	final int t = Imtil.getDataElement(Pancolor.WHITE), b = Imtil.getDataElement(Pancolor.BLACK), f = Imtil.getDataElement(fill);
+    	final int s = right ? x : (x + d - 1);
     	for (int j = d - 2; j >= 0; j--) {
-    		img.setRGB(x, y + j, t);
+    		img.setRGB(s, y + j, t);
     	}
-    	img.setRGB(x, y + d - 1, b);
+    	img.setRGB(s, y + d - 1, b);
     	for (int i = 1; i < d; i++) {
-    		final int i2 = i / 2, di2 = d - 1 - i2, xi = x + i;
+    		final int i2 = i / 2, di2 = d - 1 - i2, xi = (right ? (x + i) : (x + d - i - 1));
     		img.setRGB(xi, y + i2, t);
     		img.setRGB(xi, y + di2, b);
     		for (int j = i2 + 1; j < di2; j++) {
