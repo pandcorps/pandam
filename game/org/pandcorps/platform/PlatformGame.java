@@ -163,6 +163,9 @@ public class PlatformGame extends BaseGame {
 	protected static Panmage right2In = null;
 	protected static Panmage left2 = null;
 	protected static Panmage left2In = null;
+	protected static Panmage menuIn = null;
+	protected static Panmage menuLeft = null;
+	protected static Panmage menuRight = null;
 	protected static Queue<Runnable> loaders = new LinkedList<Runnable>();
 	
 	@Override
@@ -611,6 +614,18 @@ public class PlatformGame extends BaseGame {
 				r2.close();
 				r2In.close();
 				}});
+			loaders.add(new Runnable() { @Override public final void run() {
+			    final int w = 48, h = 32;
+			    final Img left = ImtilX.newRectangle(w, h, Pancolor.GRAY);
+			    left.setTemporary(false);
+			    final Img right = Imtil.copy(left);
+			    menuIn = engine.createImage(Pantil.vmid(), ImtilX.indent(left));
+			    ImtilX.drawArrow2(left, 10, 2, 28, Pancolor.BLUE, false);
+			    menuLeft = engine.createImage(Pantil.vmid(), left);
+			    left.close();
+			    ImtilX.drawArrow2(right, 10, 2, 28, Pancolor.BLUE, true);
+			    menuRight = engine.createImage(Pantil.vmid(), right);
+			    }});
 		}
 		
 		if (engine.isMusicSupported()) {
