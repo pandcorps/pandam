@@ -36,6 +36,7 @@ public class Pancolor {
 	public final static FinPancolor YELLOW = new FinPancolor(MAX_VALUE, MAX_VALUE, MIN_VALUE);
 	public final static FinPancolor CYAN = new FinPancolor(MIN_VALUE, MAX_VALUE, MAX_VALUE);
 	public final static FinPancolor MAGENTA = new FinPancolor(MAX_VALUE, MIN_VALUE, MAX_VALUE);
+	public final static FinPancolor GRAY = new FinPancolor((short) 192, (short) 192, (short) 192);
     private short r;
     private short g;
     private short b;
