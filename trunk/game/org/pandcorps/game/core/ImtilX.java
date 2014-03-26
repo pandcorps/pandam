@@ -138,6 +138,11 @@ public final class ImtilX {
         return img;
     }
     
+    public final static void copyCenter(final Img src, final Img dst) {
+        final int sw = src.getWidth(), sh = src.getHeight();
+        Imtil.copy(src, dst, 0, 0, sw, sh, (dst.getWidth() - sw) / 2, (dst.getHeight() - sh) / 2, Imtil.COPY_FOREGROUND);
+    }
+    
     public final static Img newRight2(final int d, final Pancolor fill) {
     	final Img img = Imtil.newImage(d, d);
     	drawRight2(img, 0, 0, d, fill);
