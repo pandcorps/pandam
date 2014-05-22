@@ -248,6 +248,7 @@ public abstract class GlPangine extends Pangine {
 	@Override
 	public final void clearTouchButtons() {
 		touchButtons.clear();
+		interaction.unregister(interaction.TOUCH);
 		//touchMap.clear(); // Thread-safety?
 	}
 	
