@@ -52,4 +52,9 @@ public abstract class BasePantity implements Pantity {
 	        animation.destroyAll();
 	    }
 	}
+	
+	@Override
+	public String toString() {
+		return getClass().getSimpleName() + "(" + id + ")";
+	}
 }
