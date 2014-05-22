@@ -161,7 +161,9 @@ public abstract class Panput {
 		public final void setPosition(final int x, final int y) {
 		    if (actor != null) {
 		        final Panple pos = actor.getPosition();
-		        pos.set(x + pos.getX() - xMin, y + pos.getY() - yMin);
+		        // Trying to handle images offset from touch box; this isn't right, though
+		        //pos.set(x + pos.getX() - xMin, y + pos.getY() - yMin);
+		        pos.set(x, y);
 		    }
 		    xMax = x + xMax - xMin;
 		    yMax = y + yMax - yMin;
@@ -186,6 +188,10 @@ public abstract class Panput {
 		
 		public final Panctor getActor() {
 		    return actor;
+		}
+		
+		public final Panlayer getLayer() {
+			return layer;
 		}
 		
 		public final boolean isMoveInterpretedAsCancel() {
@@ -223,6 +229,11 @@ public abstract class Panput {
 		    if (layer != null) {
 		        layer.addActor(actor);
 		    }
+		}
+		
+		@Override
+		public final String toString() {
+			return getName() + " (" + xMin + ", " + yMin + ") - (" + xMax + ", " + yMax + ")";
 		}
 		
 		public final void destroy() {
