@@ -22,6 +22,8 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandax.touch;
 
+import java.util.*;
+
 import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.Panput.*;
@@ -38,21 +40,25 @@ public class TouchTabs {
     private final TouchButton[] buttons;
     private int currentFirstButton = 0;
     
+    public TouchTabs(final int z, final Panmage left, final Panmage leftAct, final Panmage right, final Panmage rightAct, final List<TouchButton> buttons) {
+    	this(z, left, leftAct, right, rightAct, buttons.toArray(new TouchButton[buttons.size()]));
+    }
+    
     public TouchTabs(final int z, final Panmage left, final Panmage leftAct, final Panmage right, final Panmage rightAct, final TouchButton... buttons) {
         final Pangine engine = Pangine.getEngine();
         final Panple buttonSize = left.getSize();
-        this.y = engine.getEffectiveHeight() - (int) buttonSize.getY();
+        y = engine.getEffectiveHeight() - (int) buttonSize.getY();
         this.z = z;
         buttonWidth = (int) buttonSize.getX();
         this.buttons = buttons;
         final int screenWidth = engine.getEffectiveWidth();
         final int max = screenWidth / buttonWidth, total = buttons.length;
-        final int totalDisplayed = max > total ? max : total;
+        final int totalDisplayed = Math.min(max, total);
         final int totalWidth = totalDisplayed * buttonWidth;
         x = (screenWidth - totalWidth) / 2;
-        if (max > total) {
+        if (total > max) {
             numButtonsDisplayed = max - 2;
-            final Panlayer layer = buttons[0].getActor().getLayer();
+            final Panlayer layer = buttons[0].getLayer();
             final String id = Pantil.vmid();
             leftButton = newButton(layer, "left." + id, x, y, z, left, leftAct, true, new Runnable() {
                 @Override public final void run() {
