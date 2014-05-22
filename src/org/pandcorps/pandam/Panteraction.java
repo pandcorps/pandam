@@ -23,9 +23,9 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.pandam;
 
 import java.util.*;
-import java.util.Map.Entry;
+import java.util.Map.*;
 
-import org.pandcorps.core.Coltil;
+import org.pandcorps.core.*;
 import org.pandcorps.core.col.*;
 import org.pandcorps.pandam.Panput.*;
 import org.pandcorps.pandam.event.action.*;
@@ -494,6 +494,12 @@ public abstract class Panteraction {
 	public final void unregisterAllEnd(final Iterable<ActionEndListener> list) {
         unregister(endListeners, list);
     }
+	
+	public final void unregister(final Panput input) {
+		unregisterAllStart(startListeners.get(input));
+		unregisterAll(listeners.get(input));
+		unregisterAllEnd(endListeners.get(input));
+	}
 	
 	public final void unregisterAll() {
 	    startListeners.clear();
