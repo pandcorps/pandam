@@ -166,6 +166,14 @@ public class PlatformGame extends BaseGame {
 	protected static Panmage menuIn = null;
 	protected static Panmage menuLeft = null;
 	protected static Panmage menuRight = null;
+	protected static Panmage menuUp = null;
+	protected static Panmage menuDown = null;
+	protected static Panmage menuCheck = null;
+	protected static Panmage menuX = null;
+	protected static Panmage menuPlus = null;
+	protected static Panmage menuColor = null;
+	protected static Panmage menuAnimal = null;
+	protected static Panmage menuEyes = null;
 	protected static Queue<Runnable> loaders = new LinkedList<Runnable>();
 	
 	@Override
@@ -619,12 +627,20 @@ public class PlatformGame extends BaseGame {
 			    final Img left = ImtilX.newRectangle(w, h, Pancolor.GRAY);
 			    left.setTemporary(false);
 			    final Img right = Imtil.copy(left);
+			    menuCheck = createMenuImg(left, "Check");
+			    menuX = createMenuImg(left, "X");
+			    menuPlus = createMenuImg(left, "Plus");
+			    menuColor = createMenuImg(left, "Color");
+			    menuAnimal = createMenuImg(left, "Animal");
+			    menuEyes = createMenuImg(left, "Eyes");
 			    menuIn = engine.createImage(Pantil.vmid(), ImtilX.indent(left));
 			    ImtilX.drawArrow2(left, 10, 2, 28, Pancolor.BLUE, false);
 			    menuLeft = engine.createImage(Pantil.vmid(), left);
 			    left.close();
 			    ImtilX.drawArrow2(right, 10, 2, 28, Pancolor.BLUE, true);
 			    menuRight = engine.createImage(Pantil.vmid(), right);
+			    menuUp = menuLeft;
+			    menuDown = menuRight;
 			    }});
 		}
 		
@@ -632,6 +648,16 @@ public class PlatformGame extends BaseGame {
 		    loaders.add(new Runnable() { @Override public final void run() {
 		        engine.getMusic().ensureCapacity(5); }});
 		}
+	}
+	
+	private final static Panmage createMenuImg(final Img src, final String name) {
+		final Img btn = Imtil.copy(src);
+		final Img icn = ImtilX.loadImage("org/pandcorps/platform/res/menu/" + name + ".png", false);
+		ImtilX.copyCenter(icn, btn);
+		icn.close();
+		final Panmage img = Pangine.getEngine().createImage(Pantil.vmid(), btn);
+		btn.close();
+		return img;
 	}
 	
 	private final static Panimation createGemAnm(final String name, final Panmage[] gem) {

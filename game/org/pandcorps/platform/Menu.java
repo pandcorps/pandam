@@ -36,6 +36,7 @@ import org.pandcorps.pandax.in.*;
 import org.pandcorps.pandax.text.*;
 import org.pandcorps.pandax.tile.Tile.*;
 import org.pandcorps.pandax.tile.*;
+import org.pandcorps.pandax.touch.*;
 import org.pandcorps.platform.Profile.*;
 import org.pandcorps.platform.Avatar.*;
 import org.pandcorps.platform.Player.*;
@@ -63,10 +64,13 @@ public class Menu {
 		protected boolean disabled = false;
 		protected Panform form = null;
 		protected int center = -1;
+		protected final List<TouchButton> tabs;
+		protected boolean tabsSupported = false;
 		
 		protected PlayerScreen(final PlayerContext pc, final boolean fadeIn) {
 			this.pc = pc;
 			this.fadeIn = fadeIn;
+			tabs = isTabEnabled() ? new ArrayList<TouchButton>() : null;
 		}
 		
 		@Override
@@ -74,7 +78,8 @@ public class Menu {
 			final int w = PlatformGame.SCREEN_W;
 			center = w / 2;
 			room = PlatformGame.createRoom(w, PlatformGame.SCREEN_H);
-			Pangine.getEngine().setBgColor(new FinPancolor((short) 128, (short) 192, Pancolor.MAX_VALUE));
+			final Pangine engine = Pangine.getEngine();
+			engine.setBgColor(new FinPancolor((short) 128, (short) 192, Pancolor.MAX_VALUE));
 			
 			tm = new TileMap(Pantil.vmid(), room, ImtilX.DIM, ImtilX.DIM);
 			Level.tm = tm;
@@ -87,7 +92,12 @@ public class Menu {
 				actor = addActor(pc, center);
 			    ctrl = pc.ctrl;
 			}
-			initTouchButtons(room, ctrl);
+			if (tabsSupported && isTabEnabled()) {
+				engine.clearTouchButtons();
+				engine.getInteraction().unregisterAll();
+			} else {
+				initTouchButtons(room, ctrl);
+			}
 			form = new Panform(ctrl);
 			infLbl = addTitle(inf, center, getBottom());
 			form.setTabListener(new FormTabListener() {@Override public void onTab(final FormTabEvent event) {
@@ -198,11 +208,44 @@ public class Menu {
 			return button;
 		}
 		
+		protected final TouchButton newTab(final Panmage img, final Runnable listener) {
+			final TouchButton tab = TouchTabs.newButton(getLayer(), Pantil.vmid(), img, PlatformGame.menuIn, listener);
+			tabs.add(tab);
+			return tab;
+		}
+		
+		protected final boolean isTabEnabled() {
+			return Pangine.getEngine().isTouchSupported();
+			//return false;
+		}
+		
+		protected final Panlayer getLayer() {
+			Panlayer layer = form.getLayer();
+			if (layer == null) {
+				layer = Pangame.getGame().getCurrentRoom();
+				if (layer == null) {
+					throw new IllegalStateException("Cannot find current layer");
+				}
+			}
+			return layer;
+		}
+		
 		protected final RadioGroup addRadio(final String title, final List<String> list, final RadioSubmitListener lsn, final int x, final int y) {
 			return addRadio(title, list, null, lsn, x, y);
 		}
 		
 		protected final RadioGroup addRadio(final String title, final List<? extends CharSequence> list, final RadioSubmitListener subLsn, final RadioSubmitListener chgLsn, final int x, final int y) {
+			if (isTabEnabled()) {
+				final int yt = y - 100;
+				final String id = Pantil.vmid();
+				ctrl.setUp(newFormButton(id + ".radio.up", x + 100, yt + 100, PlatformGame.menuUp));
+				ctrl.setDown(newFormButton(id + ".radio.down", x + 100, yt, PlatformGame.menuDown));
+				if (subLsn != null) {
+					final TouchButton sub = newFormButton(id + ".radio.submit", x + 200, yt, PlatformGame.menuCheck);
+					ctrl.setSubmit(sub);
+					ctrl.set1(sub);
+				}
+			}
 			final RadioGroup grp = new RadioGroup(PlatformGame.font, list, subLsn);
 			grp.setChangeListener(chgLsn);
 			addItem(grp, x, y - 16);
@@ -211,6 +254,13 @@ public class Menu {
 			label.setLinesPerPage(5);
 			label.stretchCharactersPerLineToFit();
 			return grp;
+		}
+		
+		private final TouchButton newFormButton(final String name, final int x, final int y, final Panmage img) {
+			final Pangine engine = Pangine.getEngine();
+			final TouchButton btn = new TouchButton(engine.getInteraction(), getLayer(), name, x, y, 0, img, PlatformGame.menuIn, true);
+			engine.registerTouchButton(btn);
+			return btn;
 		}
 		
 		protected final List<RadioGroup> addColor(final SimpleColor col, int x, int y) {
@@ -318,6 +368,9 @@ public class Menu {
 		}
 		
 		protected final void exit() {
+			if (disabled) {
+                return;
+            }
 		    disabled = true;
 		    onExit();
 		}
@@ -465,13 +518,52 @@ public class Menu {
 				ctrl = pc.ctrl;
 			}
 			curr = pc;
+			tabsSupported = true;
 		}
 		
 		@Override
 		protected final void menu() {
-			final List<String> list = PlatformGame.getAvailableProfiles();
+			if (isTabEnabled()) {
+				menuTouch();
+			} else {
+				menuClassic();
+			}
+		}
+		
+		protected final void menuTouch() {
+			createProfileList(40, 140);
+			newTab(PlatformGame.menuPlus, new Runnable() {@Override public final void run() {newProfile();}});
+			if (curr != null) {
+				newTab(PlatformGame.menuX, new Runnable() {@Override public final void run() {exit();}});
+			}
+			new TouchTabs(0, PlatformGame.menuLeft, PlatformGame.menuIn, PlatformGame.menuRight, PlatformGame.menuIn, tabs);
+		}
+		
+		protected final void menuClassic() {
 			final int left = getLeft();
 			int x = left, y = getTop();
+			createProfileList(x, y);
+			final MessageCloseListener newLsn = new MessageCloseListener() {
+                @Override public final void onClose(final MessageCloseEvent event) {
+                    newProfile(); }};
+            y -= 64;
+			x = addLink("New", newLsn, left, y);
+			if (curr != null) { //TODO also allow if this isn't player 1, but might need extra handling to remove newly added player
+				x = addPipe(x, y);
+				addExit("Cancel", x, y);
+			}
+		}
+
+		@Override
+		protected final void onExit() {
+			if (pc == null) {
+				pc = curr;
+			}
+			goProfile();
+		}
+		
+		private final void createProfileList(final int x, final int y) {
+			final List<String> list = PlatformGame.getAvailableProfiles();
 			if (Coltil.isValued(list)) {
 				final RadioSubmitListener prfLsn = new RadioSubmitListener() {
 					@Override public final void onSubmit(final RadioSubmitEvent event) {
@@ -490,40 +582,27 @@ public class Menu {
 				}};
 				addRadio("Pick Profile", list, prfLsn, null, x, y);
 			}
-			final MessageCloseListener newLsn = new MessageCloseListener() {
-                @Override public final void onClose(final MessageCloseEvent event) {
-                    if (disabled) {
-                        return;
-                    }
-                    if (curr != null) {
-                        curr.destroy();
-                    }
-                    final Profile prf = new Profile();
-                    final Avatar avt = new Avatar();
-                    prf.setName("New");
-                    avt.randomize();
-                    avt.setName("New");
-                    prf.currentAvatar = avt;
-                    prf.avatars.add(avt);
-                    //prf.ctrl = 0;
-                    pc = PlatformGame.newPlayerContext(prf, ctrl, curr == null ? PlatformGame.pcs.size() : curr.index);
-                    PlatformGame.reloadAnimalStrip(pc);
-                    triggerMapLoad();
-                    Panscreen.set(new NewScreen(pc, false)); }};
-            y -= 64;
-			x = addLink("New", newLsn, left, y);
-			if (curr != null) { //TODO also allow if this isn't player 1, but might need extra handling to remove newly added player
-				x = addPipe(x, y);
-				addExit("Cancel", x, y);
-			}
 		}
-
-		@Override
-		protected final void onExit() {
-			if (pc == null) {
-				pc = curr;
-			}
-			goProfile();
+		
+		private final void newProfile() {
+			if (disabled) {
+                return;
+            }
+            if (curr != null) {
+                curr.destroy();
+            }
+            final Profile prf = new Profile();
+            final Avatar avt = new Avatar();
+            prf.setName("New");
+            avt.randomize();
+            avt.setName("New");
+            prf.currentAvatar = avt;
+            prf.avatars.add(avt);
+            //prf.ctrl = 0;
+            pc = PlatformGame.newPlayerContext(prf, ctrl, curr == null ? PlatformGame.pcs.size() : curr.index);
+            PlatformGame.reloadAnimalStrip(pc);
+            triggerMapLoad();
+            Panscreen.set(new NewScreen(pc, false));
 		}
 	}
 	
