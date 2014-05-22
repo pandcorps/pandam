@@ -141,6 +141,11 @@ public class Panlayer extends BasePantity {
     }
 
     public final void addActor(final Panctor actor) {
+    	/*
+    	If we remove an actor and add it back in the same frame, removedActors gets handled first.
+    	So we must remove the actor from removedActors so that applyActorChanges won't remove it from the layer.
+    	*/
+    	removedActors.remove(actor);
         addedActors.add(actor);
         actor.layer = this;
     }
@@ -155,6 +160,7 @@ public class Panlayer extends BasePantity {
     }
 
     public final void removeActor(final Panctor actor) {
+    	addedActors.remove(actor);
         removedActors.add(actor);
     }
     
