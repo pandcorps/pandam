@@ -66,6 +66,8 @@ public class Menu {
 		protected int center = -1;
 		protected final List<TouchButton> tabs;
 		protected boolean tabsSupported = false;
+		protected int touchRadioX = 40;
+		protected int touchRadioY = 140;
 		
 		protected PlayerScreen(final PlayerContext pc, final boolean fadeIn) {
 			this.pc = pc;
@@ -209,7 +211,12 @@ public class Menu {
 		}
 		
 		protected final TouchButton newTab(final Panmage img, final Runnable listener) {
-			final TouchButton tab = TouchTabs.newButton(getLayer(), Pantil.vmid(), img, PlatformGame.menuIn, listener);
+			final TouchButton tab = TouchTabs.newButton(getLayer(), Pantil.vmid(), img, PlatformGame.menuIn,
+					new Runnable() { @Override public void run() {
+						if (disabled) {
+							return;
+						}
+						listener.run(); }});
 			tabs.add(tab);
 			return tab;
 		}
@@ -235,7 +242,7 @@ public class Menu {
 		}
 		
 		protected final RadioGroup addRadio(final String title, final List<? extends CharSequence> list, final RadioSubmitListener subLsn, final RadioSubmitListener chgLsn, final int x, final int y) {
-			if (isTabEnabled()) {
+			if (tabsSupported && isTabEnabled()) {
 				final int yt = y - 100;
 				final String id = Pantil.vmid();
 				ctrl.setUp(newFormButton(id + ".radio.up", x + 100, yt + 100, PlatformGame.menuUp));
@@ -402,11 +409,8 @@ public class Menu {
 		}
 		
 		protected final int addExit(final String title, final int x, final int y) {
-			final MessageCloseListener savLsn = new MessageCloseListener() {
-				@Override public final void onClose(final MessageCloseEvent event) {
-				    if (disabled) {
-	                    return;
-	                }
+			final MsgCloseListener savLsn = new MsgCloseListener() {
+				@Override public final void onClose() {
 					exit(); }};
 			return addLink(title, savLsn, x, y);
 		}
@@ -426,6 +430,17 @@ public class Menu {
 			}
 			
 			protected abstract void update(final String value);
+		}
+		
+		protected abstract class MsgCloseListener implements MessageCloseListener {
+			@Override
+			public final void onClose(final MessageCloseEvent event) {
+                if (disabled) {
+                    return;
+                }
+			}
+			
+			protected abstract void onClose();
 		}
 	}
 	
@@ -531,7 +546,7 @@ public class Menu {
 		}
 		
 		protected final void menuTouch() {
-			createProfileList(40, 140);
+			createProfileList(touchRadioX, touchRadioY);
 			newTab(PlatformGame.menuPlus, new Runnable() {@Override public final void run() {newProfile();}});
 			if (curr != null) {
 				newTab(PlatformGame.menuX, new Runnable() {@Override public final void run() {exit();}});
@@ -543,8 +558,8 @@ public class Menu {
 			final int left = getLeft();
 			int x = left, y = getTop();
 			createProfileList(x, y);
-			final MessageCloseListener newLsn = new MessageCloseListener() {
-                @Override public final void onClose(final MessageCloseEvent event) {
+			final MsgCloseListener newLsn = new MsgCloseListener() {
+                @Override public final void onClose() {
                     newProfile(); }};
             y -= 64;
 			x = addLink("New", newLsn, left, y);
@@ -585,9 +600,6 @@ public class Menu {
 		}
 		
 		private final void newProfile() {
-			if (disabled) {
-                return;
-            }
             if (curr != null) {
                 curr.destroy();
             }
@@ -647,10 +659,31 @@ public class Menu {
 		protected ProfileScreen(final PlayerContext pc, final boolean fadeIn) {
 			super(pc, fadeIn);
 			originalAvatar = pc.profile.currentAvatar;
+			tabsSupported = true;
 		}
 		
 		@Override
 		protected final void menu() {
+			if (isTabEnabled()) {
+				menuTouch();
+			} else {
+				menuClassic();
+			}
+		}
+		
+		protected final void menuTouch() {
+			createAvatarList(touchRadioX, touchRadioY);
+			newTab(PlatformGame.menuCheck, new Runnable() {@Override public final void run() {exit();}});
+			newTab(PlatformGame.menuAvatar, new Runnable() {@Override public final void run() {goAvatar();}});
+			newTab(PlatformGame.menuPlus, new Runnable() {@Override public final void run() {newAvatar();}});
+			if (isPlayer1()) {
+				newTab(PlatformGame.menuOff, new Runnable() {@Override public final void run() {quit();}});
+			}
+			//TODO The other stuff from menuClassic
+			new TouchTabs(0, PlatformGame.menuLeft, PlatformGame.menuIn, PlatformGame.menuRight, PlatformGame.menuIn, tabs);
+		}
+		
+		private final void createAvatarList(final int x, final int y) {
 			final List<String> avatars = new ArrayList<String>(pc.profile.avatars.size());
             for (final Avatar a : pc.profile.avatars) {
             	avatars.add(a.getName());
@@ -658,39 +691,28 @@ public class Menu {
 			final AvtListener avtLsn = new AvtListener() {
 				@Override public final void update(final String value) {
 					pc.profile.currentAvatar = pc.profile.getAvatar(value); }};
-			final int left = getLeft();
-			int x = left, y = getTop();
 			final RadioGroup avtGrp = addRadio("Pick Avatar", avatars, avtLsn, x, y);
 			avtGrp.setSelected(avatars.indexOf(pc.profile.currentAvatar.getName()));
-			final MessageCloseListener edtLsn = new MessageCloseListener() {
-                @Override public final void onClose(final MessageCloseEvent event) {
-                    if (disabled) {
-                        return;
-                    }
+		}
+		
+		protected final void menuClassic() {
+			final int left = getLeft();
+			int x = left, y = getTop();
+			createAvatarList(x, y);
+			final MsgCloseListener edtLsn = new MsgCloseListener() {
+                @Override public final void onClose() {
                     goAvatar(); }};
             y -= 64;
             x = addLink("Edit", edtLsn, left, y);
-            final MessageCloseListener newLsn = new MessageCloseListener() {
-                @Override public final void onClose(final MessageCloseEvent event) {
-                    if (disabled) {
-                        return;
-                    }
-                    final Avatar avt = new Avatar();
-                    avt.randomize();
-                    avt.setName(NAME_NEW);
-                    pc.profile.avatars.add(avt);
-                    pc.profile.currentAvatar = avt;
-                    PlatformGame.reloadAnimalStrip(pc);
-                    actor.load(pc);
-                    goAvatar(); }};
+            final MsgCloseListener newLsn = new MsgCloseListener() {
+                @Override public final void onClose() {
+                    newAvatar(); }};
             x = addPipe(x, y);
             x = addLink("New", newLsn, x, y);
             if (pc.profile.avatars.size() > 1) {
-	            final MessageCloseListener delLsn = new MessageCloseListener() {
-	                @Override public final void onClose(final MessageCloseEvent event) {
-	                    if (disabled) {
-	                        return;
-	                    } else if (pc.profile.avatars.size() == 1) {
+	            final MsgCloseListener delLsn = new MsgCloseListener() {
+	                @Override public final void onClose() {
+	                    if (pc.profile.avatars.size() == 1) {
 	                    	return;
 	                    }
 	                    if (!inf.toString().equals(WARN_DELETE)) {
@@ -707,19 +729,13 @@ public class Menu {
 	            x = addPipe(x, y);
 	            x = addLink("Erase", delLsn, x, y);
             }
-            final MessageCloseListener astLsn = new MessageCloseListener() {
-                @Override public final void onClose(final MessageCloseEvent event) {
-                    if (disabled) {
-                        return;
-                    }
+            final MsgCloseListener astLsn = new MsgCloseListener() {
+                @Override public final void onClose() {
                     Panscreen.set(new AssistScreen(pc)); }};
             x = addPipe(x, y);
             x = addLink("Perks", astLsn, x, y);
-			final MessageCloseListener prfLsn = new MessageCloseListener() {
-                @Override public final void onClose(final MessageCloseEvent event) {
-                    if (disabled) {
-                        return;
-                    }
+			final MsgCloseListener prfLsn = new MsgCloseListener() {
+                @Override public final void onClose() {
                     save();
                     Panscreen.set(new SelectScreen(pc, false)); }};
             y -= 16;
@@ -728,11 +744,8 @@ public class Menu {
             y -= 16;
             x = left + 8;
             x = addLink("Pick", prfLsn, x, y);
-            final MessageCloseListener infLsn = new MessageCloseListener() {
-                @Override public final void onClose(final MessageCloseEvent event) {
-                    if (disabled) {
-                        return;
-                    }
+            final MsgCloseListener infLsn = new MsgCloseListener() {
+                @Override public final void onClose() {
                     Panscreen.set(new InfoScreen(pc)); }};
             x = addPipe(x, y);
             x = addLink("Info", infLsn, x, y);
@@ -741,11 +754,8 @@ public class Menu {
                 addTitle("Default", x, y);
             	final StringBuilder defStr = new StringBuilder();
             	defStr.append(getDefaultProfileText());
-                final MessageCloseListener defLsn = new MessageCloseListener() {
-                    @Override public final void onClose(final MessageCloseEvent event) {
-                        if (disabled) {
-                            return;
-                        }
+                final MsgCloseListener defLsn = new MsgCloseListener() {
+                    @Override public final void onClose() {
                         if (isDefaultProfile()) {
                         	Config.defaultProfileName = null;
                         } else {
@@ -763,13 +773,9 @@ public class Menu {
             x = left + 8;
             x = addExit(Map.started ? "Back" : "Play", x, y);
             if (isPlayer1()) {
-                final MessageCloseListener qutLsn = new MessageCloseListener() {
-                    @Override public final void onClose(final MessageCloseEvent event) {
-                        if (disabled) {
-                            return;
-                        }
-                        save();
-                        Pangine.getEngine().exit(); }}; // Exit to TitleScreen instead? Quit game from there? Or separate Reset link?
+                final MsgCloseListener qutLsn = new MsgCloseListener() {
+                    @Override public final void onClose() {
+                        quit(); }};
                 x = addPipe(x, y);
                 addLink("Quit", qutLsn, x, y);
             }
@@ -789,6 +795,22 @@ public class Menu {
 		
 		private final void goAvatar() {
 		    Panscreen.set(new AvatarScreen(pc));
+		}
+		
+		private final void newAvatar() {
+			final Avatar avt = new Avatar();
+            avt.randomize();
+            avt.setName(NAME_NEW);
+            pc.profile.avatars.add(avt);
+            pc.profile.currentAvatar = avt;
+            PlatformGame.reloadAnimalStrip(pc);
+            actor.load(pc);
+            goAvatar();
+		}
+		
+		private final void quit() {
+			save();
+            Pangine.getEngine().exit(); // Exit to TitleScreen instead? Quit game from there? Or separate Reset link?
 		}
 		
 		@Override
@@ -869,22 +891,17 @@ public class Menu {
 			addColor(avt.col, x, y);
 			y -= 64;
 			x = left;
-			final MessageCloseListener gearLsn = new MessageCloseListener() {
-                @Override public final void onClose(final MessageCloseEvent event) {
-                    if (disabled) {
-                        return;
-                    }
+			final MsgCloseListener gearLsn = new MsgCloseListener() {
+                @Override public final void onClose() {
                     Panscreen.set(new GearScreen(pc, old, avt)); }};
 			addLink("Gear", gearLsn, x, y);
 			y -= 16;
 			final ControllerInput namIn = addNameInput(avt, null, PlatformGame.MAX_NAME_AVATAR, x, y);
 			y -= 16;
 			x = addExit("Save", left, y);
-			final MessageCloseListener canLsn = new MessageCloseListener() {
-                @Override public final void onClose(final MessageCloseEvent event) {
-                    if (disabled) {
-                        return;
-                    } else if (NAME_NEW.equals(old.getName())) {
+			final MsgCloseListener canLsn = new MsgCloseListener() {
+                @Override public final void onClose() {
+                    if (NAME_NEW.equals(old.getName())) {
                         pc.profile.avatars.remove(pc.profile.currentAvatar);
                         pc.profile.currentAvatar = pc.profile.avatars.get(0);
                     } else {
@@ -896,11 +913,8 @@ public class Menu {
                     exit(); }};
             x = addPipe(x, y);
             x = addLink("Cancel", canLsn, x, y);
-            final MessageCloseListener expLsn = new MessageCloseListener() {
-                @Override public final void onClose(final MessageCloseEvent event) {
-                    if (disabled) {
-                        return;
-                    }
+            final MsgCloseListener expLsn = new MsgCloseListener() {
+                @Override public final void onClose() {
                     final Pangine engine = Pangine.getEngine();
                     engine.setImageSavingEnabled(true);
                     PlatformGame.reloadAnimalStrip(pc);
