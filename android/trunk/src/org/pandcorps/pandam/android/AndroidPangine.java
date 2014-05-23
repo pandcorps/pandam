@@ -85,4 +85,12 @@ public class AndroidPangine extends GlPangine {
 	@Override
 	public final void setIcon(final String... locations) {
 	}
+	
+	protected final boolean isRunning() {
+		return running;
+	}
+	
+	protected final void runDestroy() throws Exception {
+		destroy();
+	}
 }

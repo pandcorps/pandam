@@ -37,6 +37,11 @@ public final class PanRenderer implements Renderer {
 	@Override
 	public final void onDrawFrame(final GL10 gl) {
 		try {
+			if (!AndroidPangine.engine.isRunning()) {
+				AndroidPangine.engine.runDestroy();
+				System.exit(0);
+				return;
+			}
 			AndroidPangine.engine.frame();
 		} catch (final Exception e) {
 			e.printStackTrace();
