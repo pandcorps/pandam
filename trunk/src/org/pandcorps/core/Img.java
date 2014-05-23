@@ -23,6 +23,7 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.core;
 
 import java.io.*;
+import java.nio.*;
 
 public abstract class Img implements Closeable {
 	private boolean temp = true;
@@ -41,6 +42,31 @@ public abstract class Img implements Closeable {
 	public abstract Img getSubimage(final int x, final int y, final int w, final int h);
 	
 	public abstract void save(final String location) throws Exception;
+	
+	public ByteBuffer toByteBuffer() {
+		final int w = getWidth(), h = getHeight();
+		//final ByteBuffer scratch = ByteBuffer.wrap(data.getData());
+		final int capacity = w * h * 4;
+		final byte[] raster = new byte[capacity];
+		final ImgFactory model = ImgFactory.getFactory();
+		for (int y = 0; y < h; y++) {
+			final int row = y * h * 4;
+			for (int x = 0; x < w; x++) {
+				final int pixel = getRGB(x, y);
+				int i = row + (x * 4);
+				raster[i++] = (byte) model.getRed(pixel);
+				raster[i++] = (byte) model.getGreen(pixel);
+				raster[i++] = (byte) model.getBlue(pixel);
+				raster[i] = (byte) model.getAlpha(pixel);
+			}
+		}
+		
+		//final ByteBuffer scratch = ByteBuffer.wrap(raster);
+		final ByteBuffer scratch = ByteBuffer.allocateDirect(capacity);
+		scratch.put(raster);
+		scratch.rewind();
+		return scratch;
+	}
 	
 	@Override
 	public abstract void close();
