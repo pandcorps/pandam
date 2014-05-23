@@ -133,47 +133,8 @@ public final class GlPanmage extends Panmage {
 		    throw new UnsupportedOperationException("I think images need to be squares; I think their dimensions must be powers of two also");
 		}
 
-		//final DataBufferByte data = ((DataBufferByte) img.getRaster().getDataBuffer());
-		/*
-		final int bytesPerPixel = img.getColorModel().getPixelSize() / 8;
-		final ByteBuffer scratch = ByteBuffer.allocateDirect(w * h * bytesPerPixel).order(ByteOrder.nativeOrder());
-		for (int i = 0 ; i < h ; i++) {
-			scratch.put(data.getData(), (x + (y + i) * img.getWidth()) * bytesPerPixel, w * bytesPerPixel);
-		}
-		scratch.rewind();
-		*/
-		//final ByteBuffer scratch = ByteBuffer.wrap(data.getData());
-		/*
-		final int[] raster = new int[w * h];
-		for (int y = 0; y < h; y++) {
-			final int row = y * h;
-			for (int x = 0; x < w; x++) {
-				raster[row + x] = img.getRGB(x, y);
-			}
-		}
-		final IntBuffer scratch = IntBuffer.wrap(raster);
-		*/
-		final int capacity = w * h * 4;
-		final byte[] raster = new byte[capacity];
-		final ImgFactory model = ImgFactory.getFactory();
-		for (int y = 0; y < h; y++) {
-			final int row = y * h * 4;
-			for (int x = 0; x < w; x++) {
-				final int pixel = img.getRGB(x, y);
-				int i = row + (x * 4);
-				raster[i++] = (byte) model.getRed(pixel);
-				raster[i++] = (byte) model.getGreen(pixel);
-				raster[i++] = (byte) model.getBlue(pixel);
-				raster[i] = (byte) model.getAlpha(pixel);
-			}
-		}
-		
-		//final ByteBuffer scratch = ByteBuffer.wrap(raster);
-		final ByteBuffer scratch = ByteBuffer.allocateDirect(capacity);
-		scratch.put(raster);
-		scratch.rewind();
 		try {
-			return new Texture(_img.getWidth(), _img.getHeight(), padded.getWidth(), w, h, scratch);
+			return new Texture(_img.getWidth(), _img.getHeight(), padded.getWidth(), w, h, img.toByteBuffer());
 		} finally {
 			_img.closeIfTemporary();
 			padded.closeIfTemporary();
