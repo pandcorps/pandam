@@ -171,6 +171,9 @@ public class PlatformGame extends BaseGame {
 	protected static Panmage menuCheck = null;
 	protected static Panmage menuX = null;
 	protected static Panmage menuPlus = null;
+	protected static Panmage menuOff = null;
+	protected static Panmage menuMenu = null;
+	protected static Panmage menuAvatar = null;
 	protected static Panmage menuColor = null;
 	protected static Panmage menuAnimal = null;
 	protected static Panmage menuEyes = null;
@@ -500,6 +503,7 @@ public class PlatformGame extends BaseGame {
 		Config.defaultProfileName = cfg.getValue(0);
 		
 		loaders.add(new Runnable() { @Override public final void run() {
+System.out.println("loadConstants start " + System.currentTimeMillis());
 			allEnemies.add(new EnemyDefinition("Drowid", 1, null, true, 1)); }}); // Teleport when stomped
 		loaders.add(new Runnable() { @Override public final void run() {
 			allEnemies.add(new EnemyDefinition("Drolock", 4, null, false, 0, 0)); }}); // Teleport/shoot periodically
@@ -630,6 +634,9 @@ public class PlatformGame extends BaseGame {
 			    menuCheck = createMenuImg(left, "Check");
 			    menuX = createMenuImg(left, "X");
 			    menuPlus = createMenuImg(left, "Plus");
+			    menuOff = createMenuImg(left, "Off");
+			    menuMenu = createMenuImg(left, "Menu");
+			    menuAvatar = createMenuImg(left, "Avatar");
 			    menuColor = createMenuImg(left, "Color");
 			    menuAnimal = createMenuImg(left, "Animal");
 			    menuEyes = createMenuImg(left, "Eyes");
@@ -641,6 +648,7 @@ public class PlatformGame extends BaseGame {
 			    menuRight = engine.createImage(Pantil.vmid(), right);
 			    menuUp = menuLeft;
 			    menuDown = menuRight;
+System.out.println("loadConstants end " + System.currentTimeMillis());
 			    }});
 		}
 		
