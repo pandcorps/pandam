@@ -22,6 +22,8 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandam.android;
 
+import java.nio.*;
+
 import android.graphics.*;
 import android.graphics.Bitmap.*;
 
@@ -83,6 +85,14 @@ public final class AndroidImg extends Img {
 	@Override
 	public final void save(final String location) throws Exception {
 		//TODO
+	}
+	
+	@Override
+	public ByteBuffer toByteBuffer() {
+		final ByteBuffer scratch = ByteBuffer.allocateDirect(getWidth() * getHeight() * 4);
+		raw.copyPixelsToBuffer(scratch);
+		scratch.rewind();
+		return scratch;
 	}
 	
 	@Override
