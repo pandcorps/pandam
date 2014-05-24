@@ -80,6 +80,7 @@ public class PlatformGame extends BaseGame {
 	Option to auto-run, only one button for jumping.
 	Flags to simplify menu in some environments (one Profile, maybe one Avatar).
 	New choice box bug.
+	Up/down arrows.
 	*/
 	
 	protected final static byte TILE_BREAK = 2;
@@ -628,7 +629,7 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 				}});
 			loaders.add(new Runnable() { @Override public final void run() {
 			    final int w = 48, h = 32;
-			    final Img left = ImtilX.newRectangle(w, h, Pancolor.GRAY);
+			    final Img left = ImtilX.newButton(w, h, new FinPancolor((short) 184, (short) 192, (short) 200));
 			    left.setTemporary(false);
 			    final Img right = Imtil.copy(left);
 			    menuCheck = createMenuImg(left, "Check");
