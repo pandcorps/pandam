@@ -840,6 +840,10 @@ public class Menu {
 	}
 	
 	protected final static class AvatarScreen extends PlayerScreen {
+		private final static byte TAB_ANIMAL = 0;
+		private final static byte TAB_EYES = 1;
+		private final static byte TAB_COLOR = 2;
+		private static byte currentTab = TAB_ANIMAL;
 	    private boolean save = true;
 		private Avatar old = null;
 		private Avatar avt = null;
@@ -847,6 +851,7 @@ public class Menu {
 		
 		protected AvatarScreen(final PlayerContext pc) {
 			super(pc, false);
+			tabsSupported = true;
 		}
 		
 		protected AvatarScreen(final PlayerContext pc, final Avatar old, final Avatar avt) {
@@ -865,19 +870,60 @@ public class Menu {
 		}
 		
 		@Override
-		protected final void menu() throws Exception {
+		protected final void menu() {
 			initAvatar();
 			if (NAME_NEW.equals(old.getName())) {
 			    //newAvt = true;
 			    avt.setName(getNewName(pc.profile)); // If old keeps NAME_NEW, then cancel can rely on that
 			}
+			if (isTabEnabled()) {
+				menuTouch();
+			} else {
+				menuClassic();
+			}
+		}
+		
+		protected final void menuTouch() {
+			switch (currentTab) {
+				case TAB_ANIMAL :
+					createAnimalList(touchRadioX, touchRadioY);
+					break;
+				case TAB_EYES :
+					createEyeList(touchRadioX, touchRadioY);
+					break;
+				case TAB_COLOR :
+					
+					break;
+			}
+			newTab(PlatformGame.menuCheck, new Runnable() {@Override public final void run() {exit();}});
+			newTab(PlatformGame.menuX, new Runnable() {@Override public final void run() {cancel();}});
+			newTab(PlatformGame.menuAnimal, TAB_ANIMAL);
+			newTab(PlatformGame.menuEyes, TAB_EYES);
+			newTab(PlatformGame.menuColor, TAB_COLOR);
+			new TouchTabs(0, PlatformGame.menuLeft, PlatformGame.menuIn, PlatformGame.menuRight, PlatformGame.menuIn, tabs);
+		}
+		
+		private final void newTab(final Panmage img, final byte tab) {
+			if (currentTab != tab) {
+				newTab(img, new Runnable() {@Override public final void run() {reload(tab);}});
+			}
+		}
+		
+		private void reload(final byte tab) {
+			currentTab = tab;
+			Panscreen.set(new AvatarScreen(pc, old, avt));
+		}
+		
+		private final void createAnimalList(final int x, final int y) {
 			final List<String> animals = PlatformGame.getAnimals();
 			final AvtListener anmLsn = new AvtListener() {
 				@Override public final void update(final String value) {
 					avt.anm = value; }};
-			final int left = getLeft();
-			int x = left, y = getTop();
 			final RadioGroup anmGrp = addRadio("Animal", animals, anmLsn, x, y);
+			anmGrp.setSelected(animals.indexOf(avt.anm));
+		}
+		
+		private final void createEyeList(final int x, final int y) {
 			final int numEyes = PlatformGame.getNumEyes();
 			final ArrayList<String> eyes = new ArrayList<String>(numEyes);
 			for (int i = 1; i <= numEyes; i++) {
@@ -886,8 +932,16 @@ public class Menu {
 			final AvtListener eyeLsn = new AvtListener() {
 				@Override public final void update(final String value) {
 					avt.eye = Integer.parseInt(value); }};
-			x += 72;
 			final RadioGroup eyeGrp = addRadio("Eye", eyes, eyeLsn, x, y);
+			eyeGrp.setSelected(avt.eye - 1);
+		}
+		
+		protected final void menuClassic() {
+			final int left = getLeft();
+			int x = left, y = getTop();
+			createAnimalList(x, y);
+			x += 72;
+			createEyeList(x, y);
 			addColor(avt.col, x, y);
 			y -= 64;
 			x = left;
@@ -901,16 +955,7 @@ public class Menu {
 			x = addExit("Save", left, y);
 			final MsgCloseListener canLsn = new MsgCloseListener() {
                 @Override public final void onClose() {
-                    if (NAME_NEW.equals(old.getName())) {
-                        pc.profile.avatars.remove(pc.profile.currentAvatar);
-                        pc.profile.currentAvatar = pc.profile.avatars.get(0);
-                    } else {
-                        pc.profile.replaceAvatar(old);
-                    }
-                    PlatformGame.reloadAnimalStrip(pc);
-                    actor.load(pc);
-                    save = false;
-                    exit(); }};
+                	cancel(); }};
             x = addPipe(x, y);
             x = addLink("Cancel", canLsn, x, y);
             final MsgCloseListener expLsn = new MsgCloseListener() {
@@ -923,9 +968,20 @@ public class Menu {
                     actor.load(pc); }};
             x = addPipe(x, y);
             x = addLink("Export", expLsn, x, y);
-			anmGrp.setSelected(animals.indexOf(avt.anm));
-			eyeGrp.setSelected(avt.eye - 1);
 			namIn.append(avt.getName());
+		}
+		
+		private final void cancel() {
+			if (NAME_NEW.equals(old.getName())) {
+                pc.profile.avatars.remove(pc.profile.currentAvatar);
+                pc.profile.currentAvatar = pc.profile.avatars.get(0);
+            } else {
+                pc.profile.replaceAvatar(old);
+            }
+            PlatformGame.reloadAnimalStrip(pc);
+            actor.load(pc);
+            save = false;
+            exit();
 		}
 		
 		@Override
