@@ -191,4 +191,31 @@ public final class ImtilX {
         }
         return img;
     }
+    
+    public final static Img newButton(final int w, final int h, final Pancolor fill) {
+        final Img img = Imtil.newImage(w, h);
+        final int t = Imtil.getDataElement(Pancolor.WHITE), b = Imtil.getDataElement(Pancolor.BLACK);
+        final int f = Imtil.getDataElement(fill), c = Imtil.getDataElement(Pancolor.CLEAR);
+        final int w1 = w - 1, h1 = h - 1;
+        img.setRGB(0, 0, c);
+        img.setRGB(0, h1, c);
+        img.setRGB(w1, 0, c);
+        img.setRGB(w1, h1, c);
+        for (int j = 1; j < h1; j++) {
+            img.setRGB(0, j, b);
+            img.setRGB(1, j, t);
+            img.setRGB(w1, h1 - j, b);
+        }
+        for (int i = 1; i < w1; i++) {
+            img.setRGB(i, 0, b);
+            img.setRGB(i, 1, t);
+            img.setRGB(w1 - i, h1, b);
+        }
+        for (int j = 2; j < h1; j++) {
+            for (int i = 2; i < w1; i++) {
+                img.setRGB(i, j, f);
+            }
+        }
+        return img;
+    }
 }
