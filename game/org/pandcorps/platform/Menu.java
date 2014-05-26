@@ -274,7 +274,46 @@ public class Menu {
 			return btn;
 		}
 		
+		private final TouchButton newFormButton(final String name, final int x, final int y, final Panmage img, final Runnable r) {
+			final TouchButton btn = newFormButton(name, x, y, img);
+			btn.getActor().register(btn, Actions.newEndListener(r));
+			return btn;
+		}
+		
 		protected final List<RadioGroup> addColor(final SimpleColor col, int x, int y) {
+			if (tabsSupported && isTabEnabled()) {
+				addColorTouch(col);
+				return null;
+			} else {
+				return addColorClassic(col, x, y);
+			}
+		}
+		
+		protected final void addColorTouch(final SimpleColor col) {
+			final String id = Pantil.vmid();
+			newFormButton(id + ".red.up", 32, 152, PlatformGame.redUp, new AvtRunnable() {@Override public final void go() {
+				col.r = incCol(col.r); }});
+			newFormButton(id + ".green.up", 120, 152, PlatformGame.greenUp, new AvtRunnable() {@Override public final void go() {
+				col.g = incCol(col.g); }});
+			newFormButton(id + ".blue.up", 208, 152, PlatformGame.menuUp, new AvtRunnable() {@Override public final void go() {
+				col.b = incCol(col.b); }});
+			newFormButton(id + ".red.down", 32, 112, PlatformGame.redDown, new AvtRunnable() {@Override public final void go() {
+				col.r = decCol(col.r); }});
+			newFormButton(id + ".green.down", 120, 112, PlatformGame.greenDown, new AvtRunnable() {@Override public final void go() {
+				col.g = decCol(col.g); }});
+			newFormButton(id + ".blue.down", 208, 112, PlatformGame.menuDown, new AvtRunnable() {@Override public final void go() {
+				col.b = decCol(col.b); }});
+		}
+		
+		private final float incCol(final float c) {
+			return c >= 1 ? 0 : (c + 0.25f);
+		}
+		
+		private final float decCol(final float c) {
+			return c <= 0 ? 1 : (c - 0.25f);
+		}
+		
+		protected final List<RadioGroup> addColorClassic(final SimpleColor col, int x, int y) {
 			final List<String> colors = Arrays.asList("0", "1", "2", "3", "4");
 			final AvtListener redLsn = new ColorListener() {
 				@Override public final void update(final float value) {
@@ -434,6 +473,19 @@ public class Menu {
 			}
 			
 			protected abstract void update(final String value);
+		}
+		
+		protected abstract class AvtRunnable implements Runnable {
+			@Override public final void run() {
+			    if (disabled) {
+			        return;
+			    }
+				go();
+				PlatformGame.reloadAnimalStrip(pc);
+				actor.load(pc);
+			}
+			
+			protected abstract void go();
 		}
 		
 		protected abstract class MsgCloseListener implements MessageCloseListener {
@@ -896,7 +948,7 @@ public class Menu {
 					createEyeList(touchRadioX, touchRadioY);
 					break;
 				case TAB_COLOR :
-					
+					addColor(avt.col, 0, 0);
 					break;
 			}
 			newTab(PlatformGame.menuCheck, new Runnable() {@Override public final void run() {exit();}});
@@ -1082,7 +1134,7 @@ public class Menu {
         
         private final void initJumpColors() {
         	final boolean vis = avt.jumpMode == Player.JUMP_FLY;
-        	for (final RadioGroup jmpColor : jmpColors) {
+        	for (final RadioGroup jmpColor : Coltil.unnull(jmpColors)) {
         		jmpColor.setVisible(vis);
         	}
         }
