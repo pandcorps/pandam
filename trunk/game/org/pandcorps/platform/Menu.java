@@ -248,12 +248,16 @@ public class Menu {
 				ctrl.setUp(newFormButton(id + ".radio.up", x + 100, yt + 100, PlatformGame.menuUp));
 				ctrl.setDown(newFormButton(id + ".radio.down", x + 100, yt, PlatformGame.menuDown));
 				if (subLsn != null) {
-					final TouchButton sub = newFormButton(id + ".radio.submit", x + 200, yt, PlatformGame.menuCheck);
+					//final TouchButton sub = newFormButton(id + ".radio.submit", x + 200, yt, PlatformGame.menuCheck);
+					final TouchButton sub = null; // Will use tab bar to simulate submit button below
 					ctrl.setSubmit(sub);
 					ctrl.set1(sub);
 				}
 			}
 			final RadioGroup grp = new RadioGroup(PlatformGame.font, list, subLsn);
+			if (subLsn != null && tabsSupported && isTabEnabled()) {
+				newTab(PlatformGame.menuCheck, new Runnable() {@Override public final void run() {grp.submit();}});
+			}
 			grp.setChangeListener(chgLsn);
 			addItem(grp, x, y - 16);
 			grp.addChild(addTitle(title, x, y));
