@@ -629,9 +629,9 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 				}});
 			loaders.add(new Runnable() { @Override public final void run() {
 			    final int w = 48, h = 32;
-			    final Img left = ImtilX.newButton(w, h, new FinPancolor((short) 184, (short) 192, (short) 200));
+			    final Img left = ImtilX.newButton(w, h, new FinPancolor((short) 160, (short) 192, (short) 224));
 			    left.setTemporary(false);
-			    final Img right = Imtil.copy(left);
+			    final Img right = Imtil.copy(left), up = Imtil.copy(left), down = Imtil.copy(left);
 			    menuCheck = createMenuImg(left, "Check");
 			    menuX = createMenuImg(left, "X");
 			    menuPlus = createMenuImg(left, "Plus");
@@ -647,8 +647,10 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 			    left.close();
 			    ImtilX.drawArrow2(right, 10, 2, 28, Pancolor.BLUE, true);
 			    menuRight = engine.createImage(Pantil.vmid(), right);
-			    menuUp = menuLeft;
-			    menuDown = menuRight;
+			    ImtilX.drawArrow2(up, 10, 2, 28, Pancolor.BLUE, true, false);
+			    menuUp = engine.createImage(Pantil.vmid(), up);
+			    ImtilX.drawArrow2(down, 10, 2, 28, Pancolor.BLUE, false, false);
+			    menuDown = engine.createImage(Pantil.vmid(), down);
 System.out.println("loadConstants end " + System.currentTimeMillis());
 			    }});
 		}
