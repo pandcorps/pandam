@@ -155,18 +155,51 @@ public final class ImtilX {
     }
     
     public final static void drawArrow2(final Img img, final int x, final int y, final int d, final Pancolor fill, final boolean right) {
+    	drawArrow2(img, x, y, d, fill, right, true);
+    }
+    
+    public final static void drawArrow2(final Img img, final int _x, final int _y, final int d, final Pancolor fill,
+    		final boolean _pos, final boolean horiz) {
     	final int t = Imtil.getDataElement(Pancolor.WHITE), b = Imtil.getDataElement(Pancolor.BLACK), f = Imtil.getDataElement(fill);
-    	final int s = right ? x : (x + d - 1);
-    	for (int j = d - 2; j >= 0; j--) {
-    		img.setRGB(s, y + j, t);
+    	final int x, y;
+    	final boolean pos;
+    	if (horiz) {
+    		x = _x;
+    		y = _y;
+    		pos = _pos;
+    	} else {
+    		x = _y;
+    		y = _x;
+    		pos = !_pos; // Image coordinates treat down as positive, but usually we think of up as positive, so switch
     	}
-    	img.setRGB(s, y + d - 1, b);
+    	final int s = pos ? x : (x + d - 1);
+    	for (int j = d - 2; j >= 0; j--) {
+    		if (horiz) {
+    			img.setRGB(s, y + j, t);
+    		} else {
+    			img.setRGB(y + j, s, t);
+    		}
+    	}
+    	if (horiz) {
+    		img.setRGB(s, y + d - 1, b);
+    	} else {
+    		img.setRGB(y + d - 1, s, b);
+    	}
     	for (int i = 1; i < d; i++) {
-    		final int i2 = i / 2, di2 = d - 1 - i2, xi = (right ? (x + i) : (x + d - i - 1));
-    		img.setRGB(xi, y + i2, t);
-    		img.setRGB(xi, y + di2, b);
+    		final int i2 = i / 2, di2 = d - 1 - i2, xi = (pos ? (x + i) : (x + d - i - 1));
+    		if (horiz) {
+	    		img.setRGB(xi, y + i2, t);
+	    		img.setRGB(xi, y + di2, b);
+    		} else {
+    			img.setRGB(y + i2, xi, t);
+	    		img.setRGB(y + di2, xi, b);
+    		}
     		for (int j = i2 + 1; j < di2; j++) {
-    			img.setRGB(xi, y + j, f);
+    			if (horiz) {
+    				img.setRGB(xi, y + j, f);
+    			} else {
+    				img.setRGB(y + j, xi, f);
+    			}
     		}
     	}
     	//Imtil.setPseudoTranslucent(img); // Must indent first
