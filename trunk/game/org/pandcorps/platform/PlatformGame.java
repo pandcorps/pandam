@@ -178,6 +178,10 @@ public class PlatformGame extends BaseGame {
 	protected static Panmage menuColor = null;
 	protected static Panmage menuAnimal = null;
 	protected static Panmage menuEyes = null;
+	protected static Panmage redUp = null;
+	protected static Panmage redDown = null;
+	protected static Panmage greenUp = null;
+	protected static Panmage greenDown = null;
 	protected static Queue<Runnable> loaders = new LinkedList<Runnable>();
 	
 	@Override
@@ -632,6 +636,7 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 			    final Img left = ImtilX.newButton(w, h, new FinPancolor((short) 160, (short) 192, (short) 224));
 			    left.setTemporary(false);
 			    final Img right = Imtil.copy(left), up = Imtil.copy(left), down = Imtil.copy(left);
+			    final Img rup = Imtil.copy(left), rdown = Imtil.copy(left), gup = Imtil.copy(left), gdown = Imtil.copy(left);
 			    menuCheck = createMenuImg(left, "Check");
 			    menuX = createMenuImg(left, "X");
 			    menuPlus = createMenuImg(left, "Plus");
@@ -651,6 +656,14 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 			    menuUp = engine.createImage(Pantil.vmid(), up);
 			    ImtilX.drawArrow2(down, 10, 2, 28, Pancolor.BLUE, false, false);
 			    menuDown = engine.createImage(Pantil.vmid(), down);
+			    ImtilX.drawArrow2(rup, 10, 2, 28, Pancolor.RED, true, false);
+			    redUp = engine.createImage(Pantil.vmid(), rup);
+			    ImtilX.drawArrow2(rdown, 10, 2, 28, Pancolor.RED, false, false);
+			    redDown = engine.createImage(Pantil.vmid(), rdown);
+			    ImtilX.drawArrow2(gup, 10, 2, 28, Pancolor.GREEN, true, false);
+			    greenUp = engine.createImage(Pantil.vmid(), gup);
+			    ImtilX.drawArrow2(gdown, 10, 2, 28, Pancolor.GREEN, false, false);
+			    greenDown = engine.createImage(Pantil.vmid(), gdown);
 System.out.println("loadConstants end " + System.currentTimeMillis());
 			    }});
 		}
