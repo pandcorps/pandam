@@ -22,9 +22,9 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandax.text;
 
-import java.util.List;
+import java.util.*;
 
-import org.pandcorps.core.Pantil;
+import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.action.*;
 
@@ -33,6 +33,8 @@ public class RadioGroup extends TextItem {
     private final RadioSubmitListener listener;
     private RadioSubmitListener changeListener = null;
     private Panput submit = Pangine.getEngine().getInteraction().KEY_SPACE;
+    private Panput up = null;
+    private Panput down = null;
     
     public RadioGroup(final Font font, final List<? extends CharSequence> options, final RadioSubmitListener listener) {
     	this(new Pantext(Pantil.vmid(), font, options), options, listener);
@@ -56,7 +58,6 @@ public class RadioGroup extends TextItem {
     protected final void focus() {
         //TODO Some todo notes in message apply here
         final Pangine engine = Pangine.getEngine();
-        final Panput up, down;
         if (ctrl == null) {
             final Panteraction interaction = engine.getInteraction();
             up = interaction.KEY_UP;
@@ -82,16 +83,20 @@ public class RadioGroup extends TextItem {
         final ActionStartListener submitListener = new ActionStartListener() {
             @Override
             public void onActionStart(final ActionStartEvent event) {
-            	close();
-                // inactivate should only apply for the current press (and not at all if the key isn't currently pressed).
-                // This disableed the next up/down press if they weren't currently pressed before adding the active check to inactivate
-                Panput.inactivate(submit, up, down);
-                // onSubmit might create a new TextItem with same parent (deactivating it); activate first so we don't undo onSubmit
-                submit(listener);
+            	submit();
             }};
         label.register(submit, submitListener);
         label.register(up, upListener);
         label.register(down, downListener);
+    }
+    
+    public final void submit() {
+    	close();
+        // inactivate should only apply for the current press (and not at all if the key isn't currently pressed).
+        // This disableed the next up/down press if they weren't currently pressed before adding the active check to inactivate
+        Panput.inactivate(submit, up, down);
+        // onSubmit might create a new TextItem with same parent (deactivating it); activate first so we don't undo onSubmit
+        submit(listener);
     }
     
     private void submit(final RadioSubmitListener listener) {
