@@ -68,7 +68,9 @@ public abstract class Panput {
     
     public final static void inactivate(final Panput... inputs) {
         for (final Panput input : inputs) {
-            input.inactivate();
+        	if (input != null) {
+        		input.inactivate();
+        	}
         }
     }
     
