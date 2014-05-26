@@ -22,11 +22,11 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandax.text;
 
-import java.util.ArrayList;
+import java.util.*;
 
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.action.*;
-import org.pandcorps.pandax.in.ControlScheme;
+import org.pandcorps.pandax.in.*;
 
 public class Panform extends MenuItem {
     // Might move layer-managing code from TextItem into MenuItem
@@ -51,6 +51,9 @@ public class Panform extends MenuItem {
     }
     
     public final void init() {
+    	if (items.isEmpty()) {
+    		return;
+    	}
     	for (final TextItem item : items) {
     	    item.setControlScheme(ctrl);
     		item.setLayer(layer);
