@@ -22,7 +22,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandax.text;
 
-import org.pandcorps.core.Chartil;
+import org.pandcorps.core.*;
 
 public final class RadioSubmitEvent {
     
