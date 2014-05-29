@@ -134,6 +134,7 @@ public abstract class Panput {
 		private Panctor actor = null;
 		private Panmage imgActive = null;
 		private Panmage imgInactive = null;
+		private Panctor actorOverlay = null;
 		private Panlayer layer = null;
 		private final boolean moveCancel;
 		
@@ -174,11 +175,22 @@ public abstract class Panput {
 		}
 		
 		public final void initActor(final Panlayer layer, final float z, final Panmage img, final Panmage imgActive) {
+		    initActor(layer, z, img, imgActive, null, null);
+		}
+		
+		public final void initActor(final Panlayer layer, final float z, final Panmage img, final Panmage imgActive, final Panmage imgOverlay, final String text) {
+		    setActor(addActor(layer, xMin, yMin, z, img), imgActive);
+		    if (imgOverlay != null) {
+		        actorOverlay = addActor(layer, xMin, yMin, z + 1, imgOverlay); //TODO Change x,y
+		    }
+		}
+		
+		private final static Panctor addActor(final Panlayer layer, final float x, final float y, final float z, final Panmage img) {
 		    final Panctor actor = new Panctor();
-		    actor.setView(img);
-		    actor.getPosition().set(xMin, yMin, z);
-		    layer.addActor(actor);
-		    setActor(actor, imgActive);
+            actor.setView(img);
+            actor.getPosition().set(x, y, z);
+            layer.addActor(actor);
+            return actor;
 		}
 		
 		public final void setActor(final Panctor actor, final Panmage imgActive) {
@@ -224,12 +236,16 @@ public abstract class Panput {
 		public final void detach() {
 		    Pangine.getEngine().unregisterTouchButton(this);
 		    Panctor.detach(actor);
+		    Panctor.detach(actorOverlay);
 		}
 		
 		public final void reattach() {
 		    Pangine.getEngine().registerTouchButton(this);
 		    if (layer != null) {
 		        layer.addActor(actor);
+		        if (actorOverlay != null) {
+		            layer.addActor(actorOverlay);
+		        }
 		    }
 		}
 		
@@ -241,6 +257,7 @@ public abstract class Panput {
 		public final void destroy() {
 		    detach();
 		    Panctor.destroy(actor);
+		    Panctor.destroy(actorOverlay);
 		}
 		
 		public final static void destroy(final TouchButton button) {
