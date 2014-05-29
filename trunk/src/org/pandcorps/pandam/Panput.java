@@ -175,11 +175,19 @@ public abstract class Panput {
 		        // Trying to handle images offset from touch box; this isn't right, though
 		        //pos.set(x + pos.getX() - xMin, y + pos.getY() - yMin);
 		        pos.set(x, y);
+		        setPosition(actorOverlay, x, y);
+		        setPosition(text, x, y);
 		    }
 		    xMax = x + xMax - xMin;
 		    yMax = y + yMax - yMin;
 		    xMin = x;
 		    yMin = y;
+		}
+		
+		private final void setPosition(final Panctor a, final float x, final float y) {
+		    if (a != null) {
+		        a.getPosition().set(x, y);
+		    }
 		}
 		
 		public final void initActor(final Panlayer layer, final float z, final Panmage img, final Panmage imgActive) {
@@ -189,7 +197,7 @@ public abstract class Panput {
 		public final void initActor(final Panlayer layer, final float z, final Panmage img, final Panmage imgActive, final Panmage imgOverlay, final MultiFont fonts, final CharSequence txt) {
 		    setActor(addActor(layer, xMin, yMin, z, img), imgActive);
 		    if (imgOverlay != null) {
-		        actorOverlay = addActor(layer, xMin, yMin, z + 1, imgOverlay); //TODO Change x,y here and text
+		        actorOverlay = addActor(layer, xMin, yMin, z + 1, imgOverlay); //TODO Change x,y here and text and setPosition
 		    }
 		    if (txt != null) {
 		        text = new Pantext(Pantil.vmid(), fonts, txt);
