@@ -24,6 +24,7 @@ package org.pandcorps.pandam;
 
 import org.pandcorps.core.*;
 import org.pandcorps.pandam.Panteraction.*;
+import org.pandcorps.pandax.text.*;
 
 // Pandam Input
 public abstract class Panput {
@@ -135,6 +136,7 @@ public abstract class Panput {
 		private Panmage imgActive = null;
 		private Panmage imgInactive = null;
 		private Panctor actorOverlay = null;
+		private Pantext text = null;
 		private Panlayer layer = null;
 		private final boolean moveCancel;
 		
@@ -175,13 +177,18 @@ public abstract class Panput {
 		}
 		
 		public final void initActor(final Panlayer layer, final float z, final Panmage img, final Panmage imgActive) {
-		    initActor(layer, z, img, imgActive, null, null);
+		    initActor(layer, z, img, imgActive, null, null, null);
 		}
 		
-		public final void initActor(final Panlayer layer, final float z, final Panmage img, final Panmage imgActive, final Panmage imgOverlay, final String text) {
+		public final void initActor(final Panlayer layer, final float z, final Panmage img, final Panmage imgActive, final Panmage imgOverlay, final MultiFont fonts, final CharSequence txt) {
 		    setActor(addActor(layer, xMin, yMin, z, img), imgActive);
 		    if (imgOverlay != null) {
-		        actorOverlay = addActor(layer, xMin, yMin, z + 1, imgOverlay); //TODO Change x,y
+		        actorOverlay = addActor(layer, xMin, yMin, z + 1, imgOverlay); //TODO Change x,y here and text
+		    }
+		    if (txt != null) {
+		        text = new Pantext(Pantil.vmid(), fonts, txt);
+		        text.getPosition().set(xMin, yMin, z + 2);
+		        layer.addActor(text);
 		    }
 		}
 		
@@ -237,6 +244,7 @@ public abstract class Panput {
 		    Pangine.getEngine().unregisterTouchButton(this);
 		    Panctor.detach(actor);
 		    Panctor.detach(actorOverlay);
+		    Panctor.detach(text);
 		}
 		
 		public final void reattach() {
@@ -245,6 +253,9 @@ public abstract class Panput {
 		        layer.addActor(actor);
 		        if (actorOverlay != null) {
 		            layer.addActor(actorOverlay);
+		        }
+		        if (text != null) {
+		            layer.addActor(text);
 		        }
 		    }
 		}
@@ -258,6 +269,7 @@ public abstract class Panput {
 		    detach();
 		    Panctor.destroy(actor);
 		    Panctor.destroy(actorOverlay);
+		    Panctor.destroy(text);
 		}
 		
 		public final static void destroy(final TouchButton button) {
