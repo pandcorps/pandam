@@ -80,7 +80,6 @@ public class PlatformGame extends BaseGame {
 	Option to auto-run, only one button for jumping.
 	Flags to simplify menu in some environments (one Profile, maybe one Avatar).
 	New choice box bug.
-	Up/down arrows.
 	*/
 	
 	protected final static byte TILE_BREAK = 2;
