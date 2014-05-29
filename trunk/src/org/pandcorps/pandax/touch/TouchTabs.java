@@ -28,6 +28,7 @@ import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.Panput.*;
 import org.pandcorps.pandam.event.action.*;
+import org.pandcorps.pandax.text.*;
 
 public class TouchTabs {
     private final int x;
@@ -40,11 +41,28 @@ public class TouchTabs {
     private final TouchButton[] buttons;
     private int currentFirstButton = 0;
     
+    public static TouchTabs createWithOverlays(final int z, final Panmage btn, final Panmage btnAct, final Panmage left, final Panmage right, final List<TouchButton> buttons) {
+        final Panple btnSize = btn.getSize(), overlaySize = left.getSize();
+        return new TouchTabs(z, btn, btnAct, left, btn, btnAct, right, off(btnSize.getX(), overlaySize.getX()), off(btnSize.getY(), overlaySize.getY()), toArray(buttons));
+    }
+    
+    private final static int off(final float btn, final float overlay) {
+        return Math.round((btn - overlay) / 2f);
+    }
+    
     public TouchTabs(final int z, final Panmage left, final Panmage leftAct, final Panmage right, final Panmage rightAct, final List<TouchButton> buttons) {
-    	this(z, left, leftAct, right, rightAct, buttons.toArray(new TouchButton[buttons.size()]));
+    	this(z, left, leftAct, right, rightAct, toArray(buttons));
+    }
+    
+    private final static TouchButton[] toArray(final List<TouchButton> buttons) {
+        return buttons.toArray(new TouchButton[buttons.size()]);
     }
     
     public TouchTabs(final int z, final Panmage left, final Panmage leftAct, final Panmage right, final Panmage rightAct, final TouchButton... buttons) {
+        this(z, left, leftAct, null, right, rightAct, null, 0, 0, buttons);
+    }
+    
+    private TouchTabs(final int z, final Panmage left, final Panmage leftAct, final Panmage leftOverlay, final Panmage right, final Panmage rightAct, final Panmage rightOverlay, final int xOverlay, final int yOverlay, final TouchButton... buttons) {
         final Pangine engine = Pangine.getEngine();
         final Panple buttonSize = left.getSize();
         y = engine.getEffectiveHeight() - (int) buttonSize.getY();
@@ -60,10 +78,10 @@ public class TouchTabs {
             numButtonsDisplayed = max - 2;
             final Panlayer layer = buttons[0].getLayer();
             final String id = Pantil.vmid();
-            leftButton = newButton(layer, "left." + id, x, y, z, left, leftAct, true, new Runnable() {
+            leftButton = newButton(layer, "left." + id, x, y, z, left, leftAct, leftOverlay, xOverlay, yOverlay, null, null, 0, 0, true, new Runnable() {
                 @Override public final void run() {
                     left(); }});
-            rightButton = newButton(layer, "right." + id, x + (max - 1) * buttonWidth, y, z, right, rightAct, true, new Runnable() {
+            rightButton = newButton(layer, "right." + id, x + (max - 1) * buttonWidth, y, z, right, rightAct, rightOverlay, xOverlay, yOverlay, null, null, 0, 0, true, new Runnable() {
                 @Override public final void run() {
                     right(); }});
         } else {
@@ -75,11 +93,13 @@ public class TouchTabs {
     }
     
     public final static TouchButton newButton(final Panlayer layer, final String name, final Panmage img, final Panmage imgAct, final Runnable listener) {
-        return newButton(layer, name, 0, 0, 0, img, imgAct, false, listener);
+        return newButton(layer, name, 0, 0, 0, img, imgAct, null, 0, 0, null, null, 0, 0, false, listener);
     }
     
     private final static TouchButton newButton(final Panlayer layer, final String name, final int x, final int y, final float z,
-                                               final Panmage img, final Panmage imgAct, final boolean active, final Runnable listener) {
+                                               final Panmage img, final Panmage imgAct, final Panmage imgOverlay, final int xOverlay, final int yOverlay,
+                                               final MultiFont fonts, final CharSequence txt, final int xText, final int yText,
+                                               final boolean active, final Runnable listener) {
         final Pangine engine = Pangine.getEngine();
         final TouchButton button = new TouchButton(engine.getInteraction(), layer, name, x, y, z, img, imgAct, true);
         final Panctor actor = button.getActor();
