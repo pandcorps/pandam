@@ -159,14 +159,14 @@ public abstract class Panput {
 		
 		public TouchButton(final Panteraction interaction, final Panlayer layer, final String name, final int x, final int y, final float z,
 		                   final Panmage img, final Panmage imgActive, final boolean moveCancel) {
-		    this(interaction, layer, name, x, y, z, img, imgActive, null, null, null, moveCancel);
+		    this(interaction, layer, name, x, y, z, img, imgActive, null, 0, 0, null, null, 0, 0, moveCancel);
 		}
 		
 		public TouchButton(final Panteraction interaction, final Panlayer layer, final String name, final int x, final int y, final float z,
-                           final Panmage img, final Panmage imgActive, final Panmage imgOverlay, final MultiFont fonts, final CharSequence txt,
-                           final boolean moveCancel) {
+                           final Panmage img, final Panmage imgActive, final Panmage imgOverlay, final int xOverlay, final int yOverlay,
+                           final MultiFont fonts, final CharSequence txt, final int xText, final int yText, final boolean moveCancel) {
 		    this(interaction, name, x, y, (int) img.getSize().getX(), (int) img.getSize().getY(), moveCancel);
-		    initActor(layer, z, img, imgActive, imgOverlay, fonts, txt);
+		    initActor(layer, z, img, imgActive, imgOverlay, xOverlay, yOverlay, fonts, txt, xText, yText);
 		}
 		
 		public final void setPosition(final int x, final int y) {
@@ -191,17 +191,19 @@ public abstract class Panput {
 		}
 		
 		public final void initActor(final Panlayer layer, final float z, final Panmage img, final Panmage imgActive) {
-		    initActor(layer, z, img, imgActive, null, null, null);
+		    initActor(layer, z, img, imgActive, null, 0, 0, null, null, 0, 0);
 		}
 		
-		public final void initActor(final Panlayer layer, final float z, final Panmage img, final Panmage imgActive, final Panmage imgOverlay, final MultiFont fonts, final CharSequence txt) {
+		public final void initActor(final Panlayer layer, final float z, final Panmage img, final Panmage imgActive,
+		                            final Panmage imgOverlay, final int xOverlay, final int yOverlay,
+		                            final MultiFont fonts, final CharSequence txt, final int xText, final int yText) {
 		    setActor(addActor(layer, xMin, yMin, z, img), imgActive);
 		    if (imgOverlay != null) {
-		        actorOverlay = addActor(layer, xMin, yMin, z + 1, imgOverlay); //TODO Change x,y here and text and setPosition
+		        actorOverlay = addActor(layer, xMin + xOverlay, yMin + yOverlay, z + 1, imgOverlay); //TODO Change x,y setPosition
 		    }
 		    if (txt != null) {
 		        text = new Pantext(Pantil.vmid(), fonts, txt);
-		        text.getPosition().set(xMin, yMin, z + 2);
+		        text.getPosition().set(xMin + xText, yMin + yText, z + 2);
 		        layer.addActor(text);
 		    }
 		}
