@@ -186,7 +186,9 @@ public abstract class Panput {
 		
 		private final void setPosition(final Panctor a, final float x, final float y) {
 		    if (a != null) {
-		        a.getPosition().set(x, y);
+		        //a.getPosition().set(x, y);
+		        final Panple pos = a.getPosition();
+		        pos.set(x + pos.getX() - xMin, y + pos.getY() - yMin);
 		    }
 		}
 		
@@ -199,7 +201,7 @@ public abstract class Panput {
 		                            final MultiFont fonts, final CharSequence txt, final int xText, final int yText) {
 		    setActor(addActor(layer, xMin, yMin, z, img), imgActive);
 		    if (imgOverlay != null) {
-		        actorOverlay = addActor(layer, xMin + xOverlay, yMin + yOverlay, z + 1, imgOverlay); //TODO Change x,y setPosition
+		        actorOverlay = addActor(layer, xMin + xOverlay, yMin + yOverlay, z + 1, imgOverlay);
 		    }
 		    if (txt != null) {
 		        text = new Pantext(Pantil.vmid(), fonts, txt);
