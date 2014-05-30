@@ -163,6 +163,7 @@ public class PlatformGame extends BaseGame {
 	protected static Panmage right2In = null;
 	protected static Panmage left2 = null;
 	protected static Panmage left2In = null;
+	protected static Panmage menu = null;
 	protected static Panmage menuIn = null;
 	protected static Panmage menuLeft = null;
 	protected static Panmage menuRight = null;
@@ -636,15 +637,15 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 			    left.setTemporary(false);
 			    final Img right = Imtil.copy(left), up = Imtil.copy(left), down = Imtil.copy(left);
 			    final Img rup = Imtil.copy(left), rdown = Imtil.copy(left), gup = Imtil.copy(left), gdown = Imtil.copy(left);
-			    menuCheck = createMenuImg(left, "Check");
-			    menuX = createMenuImg(left, "X");
-			    menuPlus = createMenuImg(left, "Plus");
-			    menuOff = createMenuImg(left, "Off");
-			    menuMenu = createMenuImg(left, "Menu");
-			    menuAvatar = createMenuImg(left, "Avatar");
-			    menuColor = createMenuImg(left, "Color");
-			    menuAnimal = createMenuImg(left, "Animal");
-			    menuEyes = createMenuImg(left, "Eyes");
+			    menuCheck = createMenuImg("Check");
+			    menuX = createMenuImg("X");
+			    menuPlus = createMenuImg("Plus");
+			    menuOff = createMenuImg("Off");
+			    menuMenu = createMenuImg("Menu");
+			    menuAvatar = createMenuImg("Avatar");
+			    menuColor = createMenuImg("Color");
+			    menuAnimal = createMenuImg("Animal");
+			    menuEyes = createMenuImg("Eyes");
 			    menuIn = engine.createImage(Pantil.vmid(), ImtilX.indent(left));
 			    ImtilX.drawArrow2(left, 10, 2, 28, Pancolor.BLUE, false);
 			    menuLeft = engine.createImage(Pantil.vmid(), left);
@@ -673,13 +674,10 @@ System.out.println("loadConstants end " + System.currentTimeMillis());
 		}
 	}
 	
-	private final static Panmage createMenuImg(final Img src, final String name) {
-		final Img btn = Imtil.copy(src);
+	private final static Panmage createMenuImg(final String name) {
 		final Img icn = ImtilX.loadImage("org/pandcorps/platform/res/menu/" + name + ".png", false);
-		ImtilX.copyCenter(icn, btn);
+		final Panmage img = Pangine.getEngine().createImage(Pantil.vmid(), icn);
 		icn.close();
-		final Panmage img = Pangine.getEngine().createImage(Pantil.vmid(), btn);
-		btn.close();
 		return img;
 	}
 	
