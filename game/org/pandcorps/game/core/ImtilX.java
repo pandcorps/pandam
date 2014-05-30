@@ -144,10 +144,26 @@ public final class ImtilX {
         src.closeIfTemporary();
     }
     
+    public final static Img newLeft2(final int d, final Pancolor fill) {
+        return newArrow2(d, fill, false, true);
+    }
+    
     public final static Img newRight2(final int d, final Pancolor fill) {
-    	final Img img = Imtil.newImage(d, d);
-    	drawRight2(img, 0, 0, d, fill);
-    	return img;
+    	return newArrow2(d, fill, true, true);
+    }
+    
+    public final static Img newUp2(final int d, final Pancolor fill) {
+        return newArrow2(d, fill, true, false);
+    }
+    
+    public final static Img newDown2(final int d, final Pancolor fill) {
+        return newArrow2(d, fill, false, false);
+    }
+    
+    public final static Img newArrow2(final int d, final Pancolor fill, final boolean pos, final boolean horiz) {
+        final Img img = Imtil.newImage(d, d);
+        drawArrow2(img, 0, 0, d, fill, pos, horiz);
+        return img;
     }
     
     public final static void drawRight2(final Img img, final int x, final int y, final int d, final Pancolor fill) {
