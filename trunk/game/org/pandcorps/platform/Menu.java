@@ -211,7 +211,7 @@ public class Menu {
 		}
 		
 		protected final TouchButton newTab(final Panmage img, final Runnable listener) {
-			final TouchButton tab = TouchTabs.newButton(getLayer(), Pantil.vmid(), img, PlatformGame.menuIn,
+			final TouchButton tab = TouchTabs.newButton(getLayer(), Pantil.vmid(), PlatformGame.menu, PlatformGame.menuIn, img, x, 10, PlatformGame.font, "", x, 2,
 					new Runnable() { @Override public void run() {
 						if (disabled) {
 							return;

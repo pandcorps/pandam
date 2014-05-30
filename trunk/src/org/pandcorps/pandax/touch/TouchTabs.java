@@ -96,6 +96,12 @@ public class TouchTabs {
         return newButton(layer, name, 0, 0, 0, img, imgAct, null, 0, 0, null, null, 0, 0, false, listener);
     }
     
+    public final static TouchButton newButton(final Panlayer layer, final String name, final Panmage img, final Panmage imgAct,
+                                              final Panmage imgOverlay, final int xOverlay, final int yOverlay,
+                                              final MultiFont fonts, final CharSequence txt, final int xText, final int yText, final Runnable listener) {
+        return newButton(layer, name, 0, 0, 0, img, imgAct, imgOverlay, xOverlay, yOverlay, fonts, txt, xText, yText, false, listener);
+    }
+    
     private final static TouchButton newButton(final Panlayer layer, final String name, final int x, final int y, final float z,
                                                final Panmage img, final Panmage imgAct, final Panmage imgOverlay, final int xOverlay, final int yOverlay,
                                                final MultiFont fonts, final CharSequence txt, final int xText, final int yText,
