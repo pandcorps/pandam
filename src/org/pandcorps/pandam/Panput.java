@@ -163,7 +163,7 @@ public abstract class Panput {
 		}
 		
 		public TouchButton(final Panteraction interaction, final Panlayer layer, final String name, final int x, final int y, final float z,
-                           final Panmage img, final Panmage imgActive, final Panmage imgOverlay, final int xOverlay, final int yOverlay,
+                           final Panmage img, final Panmage imgActive, final Panmage imgOverlay, final Panple offOverlay,
                            final MultiFont fonts, final CharSequence txt, final int xText, final int yText, final boolean moveCancel) {
 		    this(interaction, name, x, y, (int) img.getSize().getX(), (int) img.getSize().getY(), moveCancel);
 		    initActor(layer, z, img, imgActive, imgOverlay, xOverlay, yOverlay, fonts, txt, xText, yText);
@@ -197,7 +197,7 @@ public abstract class Panput {
 		}
 		
 		public final void initActor(final Panlayer layer, final float z, final Panmage img, final Panmage imgActive,
-		                            final Panmage imgOverlay, final int xOverlay, final int yOverlay,
+		                            final Panmage imgOverlay, final Panple offOverlay,
 		                            final MultiFont fonts, final CharSequence txt, final int xText, final int yText) {
 		    setActor(addActor(layer, xMin, yMin, z, img), imgActive);
 		    if (imgOverlay != null) {
