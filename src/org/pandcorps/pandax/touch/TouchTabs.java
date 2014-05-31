@@ -46,7 +46,7 @@ public class TouchTabs {
         return new TouchTabs(z, btn, btnAct, left, btn, btnAct, right, off(btnSize.getX(), overlaySize.getX()), off(btnSize.getY(), overlaySize.getY()), toArray(buttons));
     }
     
-    private final static int off(final float btn, final float overlay) {
+    public final static int off(final float btn, final float overlay) {
         return Math.round((btn - overlay) / 2f);
     }
     
