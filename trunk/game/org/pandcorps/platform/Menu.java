@@ -229,6 +229,10 @@ public class Menu {
 			return tab;
 		}
 		
+		protected final void newTabs() {
+			TouchTabs.createWithOverlays(0, PlatformGame.menu, PlatformGame.menuIn, PlatformGame.menuLeft, PlatformGame.menuRight, tabs);
+		}
+		
 		protected final boolean isTabEnabled() {
 			return Pangine.getEngine().isTouchSupported();
 			//return false;
@@ -615,7 +619,7 @@ public class Menu {
 			if (curr != null) {
 				newTab(PlatformGame.menuX, "Cancel", new Runnable() {@Override public final void run() {exit();}});
 			}
-			new TouchTabs(0, PlatformGame.menuLeft, PlatformGame.menuIn, PlatformGame.menuRight, PlatformGame.menuIn, tabs);
+			newTabs();
 		}
 		
 		protected final void menuClassic() {
@@ -743,8 +747,8 @@ public class Menu {
 			if (isPlayer1()) {
 				newTab(PlatformGame.menuOff, "Exit", new Runnable() {@Override public final void run() {quit();}});
 			}
-			//TODO The other stuff from menuClassic
-			new TouchTabs(0, PlatformGame.menuLeft, PlatformGame.menuIn, PlatformGame.menuRight, PlatformGame.menuIn, tabs);
+			//TODO The other stuff from menuClassic, move newTabs() into super class
+			newTabs();
 		}
 		
 		private final void createAvatarList(final int x, final int y) {
@@ -964,7 +968,7 @@ public class Menu {
 			newTab(PlatformGame.menuAnimal, "Animal", TAB_ANIMAL);
 			newTab(PlatformGame.menuEyes, "Eyes", TAB_EYES);
 			newTab(PlatformGame.menuColor, "Color", TAB_COLOR);
-			new TouchTabs(0, PlatformGame.menuLeft, PlatformGame.menuIn, PlatformGame.menuRight, PlatformGame.menuIn, tabs);
+			newTabs();
 		}
 		
 		private final void newTab(final Panmage img, final CharSequence txt, final byte tab) {
