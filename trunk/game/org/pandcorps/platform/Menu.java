@@ -210,8 +210,9 @@ public class Menu {
 			return button;
 		}
 		
-		protected final TouchButton newTab(final Panmage img, final Runnable listener) {
-			final TouchButton tab = TouchTabs.newButton(getLayer(), Pantil.vmid(), PlatformGame.menu, PlatformGame.menuIn, img, x, 10, PlatformGame.font, "", x, 2,
+		protected final TouchButton newTab(final Panmage img, final CharSequence txt, final Runnable listener) {
+			final int x = TouchTabs.off(PlatformGame.menu.getSize().getX(), img.getSize().getX());
+			final TouchButton tab = TouchTabs.newButton(getLayer(), Pantil.vmid(), PlatformGame.menu, PlatformGame.menuIn, img, x, 10, PlatformGame.font, txt, 4, 2,
 					new Runnable() { @Override public void run() {
 						if (disabled) {
 							return;
@@ -256,7 +257,7 @@ public class Menu {
 			}
 			final RadioGroup grp = new RadioGroup(PlatformGame.font, list, subLsn);
 			if (subLsn != null && tabsSupported && isTabEnabled()) {
-				newTab(PlatformGame.menuCheck, new Runnable() {@Override public final void run() {grp.submit();}});
+				newTab(PlatformGame.menuCheck, "Done", new Runnable() {@Override public final void run() {grp.submit();}});
 			}
 			grp.setChangeListener(chgLsn);
 			addItem(grp, x, y - 16);
@@ -603,9 +604,9 @@ public class Menu {
 		
 		protected final void menuTouch() {
 			createProfileList(touchRadioX, touchRadioY);
-			newTab(PlatformGame.menuPlus, new Runnable() {@Override public final void run() {newProfile();}});
+			newTab(PlatformGame.menuPlus, "New", new Runnable() {@Override public final void run() {newProfile();}});
 			if (curr != null) {
-				newTab(PlatformGame.menuX, new Runnable() {@Override public final void run() {exit();}});
+				newTab(PlatformGame.menuX, "Cancel", new Runnable() {@Override public final void run() {exit();}});
 			}
 			new TouchTabs(0, PlatformGame.menuLeft, PlatformGame.menuIn, PlatformGame.menuRight, PlatformGame.menuIn, tabs);
 		}
@@ -729,11 +730,11 @@ public class Menu {
 		
 		protected final void menuTouch() {
 			createAvatarList(touchRadioX, touchRadioY);
-			newTab(PlatformGame.menuCheck, new Runnable() {@Override public final void run() {exit();}});
-			newTab(PlatformGame.menuAvatar, new Runnable() {@Override public final void run() {goAvatar();}});
-			newTab(PlatformGame.menuPlus, new Runnable() {@Override public final void run() {newAvatar();}});
+			newTab(PlatformGame.menuCheck, "Done", new Runnable() {@Override public final void run() {exit();}});
+			newTab(PlatformGame.menuAvatar, "Edit", new Runnable() {@Override public final void run() {goAvatar();}});
+			newTab(PlatformGame.menuPlus, "New", new Runnable() {@Override public final void run() {newAvatar();}});
 			if (isPlayer1()) {
-				newTab(PlatformGame.menuOff, new Runnable() {@Override public final void run() {quit();}});
+				newTab(PlatformGame.menuOff, "Exit", new Runnable() {@Override public final void run() {quit();}});
 			}
 			//TODO The other stuff from menuClassic
 			new TouchTabs(0, PlatformGame.menuLeft, PlatformGame.menuIn, PlatformGame.menuRight, PlatformGame.menuIn, tabs);
@@ -951,17 +952,17 @@ public class Menu {
 					addColor(avt.col, 0, 0);
 					break;
 			}
-			newTab(PlatformGame.menuCheck, new Runnable() {@Override public final void run() {exit();}});
-			newTab(PlatformGame.menuX, new Runnable() {@Override public final void run() {cancel();}});
-			newTab(PlatformGame.menuAnimal, TAB_ANIMAL);
-			newTab(PlatformGame.menuEyes, TAB_EYES);
-			newTab(PlatformGame.menuColor, TAB_COLOR);
+			newTab(PlatformGame.menuCheck, "Done", new Runnable() {@Override public final void run() {exit();}});
+			newTab(PlatformGame.menuX, "Cancel", new Runnable() {@Override public final void run() {cancel();}});
+			newTab(PlatformGame.menuAnimal, "Animal", TAB_ANIMAL);
+			newTab(PlatformGame.menuEyes, "Eyes", TAB_EYES);
+			newTab(PlatformGame.menuColor, "Color", TAB_COLOR);
 			new TouchTabs(0, PlatformGame.menuLeft, PlatformGame.menuIn, PlatformGame.menuRight, PlatformGame.menuIn, tabs);
 		}
 		
-		private final void newTab(final Panmage img, final byte tab) {
+		private final void newTab(final Panmage img, final CharSequence txt, final byte tab) {
 			if (currentTab != tab) {
-				newTab(img, new Runnable() {@Override public final void run() {reload(tab);}});
+				newTab(img, txt, new Runnable() {@Override public final void run() {reload(tab);}});
 			}
 		}
 		
