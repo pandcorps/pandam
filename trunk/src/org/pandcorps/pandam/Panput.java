@@ -51,6 +51,11 @@ public abstract class Panput {
     	return name;
     }
     
+    @Override
+	public String toString() {
+		return name;
+	}
+    
     // We allow event-based input and polling
     //TODO Do we need this and Panction?
     public final boolean isActive() {
