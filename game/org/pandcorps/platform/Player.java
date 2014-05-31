@@ -214,6 +214,7 @@ public class Player extends Character implements CollisionListener {
 	    	}
 	    	guy.destroyAll();
 	    	Panmage.destroyAll(guyRun);
+	    	guyRun = null;
 	    	Panmage.destroy(guyJump);
 	    	Panmage.destroy(guyFall);
 	    	Panmage.destroyAll(mapSouth);

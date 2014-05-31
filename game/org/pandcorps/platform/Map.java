@@ -149,6 +149,11 @@ public class Map {
 	protected final static class MapScreen extends Panscreen {
 		@Override
         protected final void load() throws Exception {
+			for (final PlayerContext pc : PlatformGame.pcs) {
+				if (pc.guyRun == null) {
+		    		PlatformGame.reloadAnimalStrip(pc);
+		    	}
+			}
 		    started = true;
 		    if (timg == null) {
 		        loadImages();

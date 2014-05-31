@@ -474,13 +474,17 @@ public class Menu {
 			Panscreen.set(new ProfileScreen(pc, false));
 		}
 		
+		protected final void reloadAnimalStrip() {
+			PlatformGame.reloadAnimalStrip(pc, false);
+		}
+		
 		protected abstract class AvtListener implements RadioSubmitListener {
 			@Override public final void onSubmit(final RadioSubmitEvent event) {
 			    if (disabled) {
 			        return;
 			    }
 				update(event.toString());
-				PlatformGame.reloadAnimalStrip(pc);
+				reloadAnimalStrip();
 				actor.load(pc);
 			}
 			
@@ -493,7 +497,7 @@ public class Menu {
 			        return;
 			    }
 				go();
-				PlatformGame.reloadAnimalStrip(pc);
+				reloadAnimalStrip();
 				actor.load(pc);
 			}
 			
@@ -506,6 +510,7 @@ public class Menu {
                 if (disabled) {
                     return;
                 }
+                onClose();
 			}
 			
 			protected abstract void onClose();
@@ -680,7 +685,7 @@ public class Menu {
             prf.avatars.add(avt);
             //prf.ctrl = 0;
             pc = PlatformGame.newPlayerContext(prf, ctrl, curr == null ? PlatformGame.pcs.size() : curr.index);
-            PlatformGame.reloadAnimalStrip(pc);
+            reloadAnimalStrip();
             triggerMapLoad();
             Panscreen.set(new NewScreen(pc, false));
 		}
@@ -790,7 +795,7 @@ public class Menu {
 	                    clearInfo();
 	                    pc.profile.avatars.remove(pc.profile.currentAvatar);
 	                    pc.profile.currentAvatar = pc.profile.avatars.get(0);
-	                    PlatformGame.reloadAnimalStrip(pc);
+	                    reloadAnimalStrip();
 	                    actor.load(pc);
 	                    save = true;
 	                    goProfile(); }};
@@ -871,7 +876,7 @@ public class Menu {
             avt.setName(NAME_NEW);
             pc.profile.avatars.add(avt);
             pc.profile.currentAvatar = avt;
-            PlatformGame.reloadAnimalStrip(pc);
+            reloadAnimalStrip();
             actor.load(pc);
             goAvatar();
 		}
@@ -1030,7 +1035,7 @@ public class Menu {
                 @Override public final void onClose() {
                     final Pangine engine = Pangine.getEngine();
                     engine.setImageSavingEnabled(true);
-                    PlatformGame.reloadAnimalStrip(pc);
+                    reloadAnimalStrip();
                     engine.setImageSavingEnabled(false);
                     setInfo(INFO_SAVED);
                     actor.load(pc); }};
@@ -1046,7 +1051,7 @@ public class Menu {
             } else {
                 pc.profile.replaceAvatar(old);
             }
-            PlatformGame.reloadAnimalStrip(pc);
+            reloadAnimalStrip();
             actor.load(pc);
             save = false;
             exit();
