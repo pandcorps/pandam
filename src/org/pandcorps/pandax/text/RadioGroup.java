@@ -26,6 +26,7 @@ import java.util.*;
 
 import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.Panteraction.*;
 import org.pandcorps.pandam.event.action.*;
 
 public class RadioGroup extends TextItem {
@@ -68,6 +69,14 @@ public class RadioGroup extends TextItem {
             down = ctrl.getDown();
         }
         Panput.inactivate(submit, up, down);
+        if (up.getDevice() instanceof Touchscreen) {
+        	registerEnd();
+        } else {
+        	registerStart();
+        }
+    }
+    
+    private final void registerStart() {
         final ActionStartListener upListener = new ActionStartListener() {
             @Override
             public void onActionStart(final ActionStartEvent event) {
@@ -83,6 +92,29 @@ public class RadioGroup extends TextItem {
         final ActionStartListener submitListener = new ActionStartListener() {
             @Override
             public void onActionStart(final ActionStartEvent event) {
+            	submit();
+            }};
+        label.register(submit, submitListener);
+        label.register(up, upListener);
+        label.register(down, downListener);
+    }
+    
+    private final void registerEnd() {
+        final ActionEndListener upListener = new ActionEndListener() {
+            @Override
+            public void onActionEnd(final ActionEndEvent event) {
+                label.decRadioLine();
+                submit(changeListener);
+            }};
+        final ActionEndListener downListener = new ActionEndListener() {
+            @Override
+            public void onActionEnd(final ActionEndEvent event) {
+                label.incRadioLine();
+                submit(changeListener);
+            }};
+        final ActionEndListener submitListener = new ActionEndListener() {
+            @Override
+            public void onActionEnd(final ActionEndEvent event) {
             	submit();
             }};
         label.register(submit, submitListener);
