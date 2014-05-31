@@ -210,9 +210,16 @@ public class Menu {
 			return button;
 		}
 		
+		private final static int offx(final Panmage img) {
+			return TouchTabs.off(PlatformGame.menu.getSize().getX(), img.getSize().getX());
+		}
+		
+		private final static int offy(final Panmage img) {
+			return TouchTabs.off(PlatformGame.menu.getSize().getY(), img.getSize().getY());
+		}
+		
 		protected final TouchButton newTab(final Panmage img, final CharSequence txt, final Runnable listener) {
-			final int x = TouchTabs.off(PlatformGame.menu.getSize().getX(), img.getSize().getX());
-			final TouchButton tab = TouchTabs.newButton(getLayer(), Pantil.vmid(), PlatformGame.menu, PlatformGame.menuIn, img, x, 10, PlatformGame.font, txt, 4, 2,
+			final TouchButton tab = TouchTabs.newButton(getLayer(), Pantil.vmid(), PlatformGame.menu, PlatformGame.menuIn, img, offx(img), 10, PlatformGame.font, txt, 4, 2,
 					new Runnable() { @Override public void run() {
 						if (disabled) {
 							return;
@@ -270,7 +277,7 @@ public class Menu {
 		
 		private final TouchButton newFormButton(final String name, final int x, final int y, final Panmage img) {
 			final Pangine engine = Pangine.getEngine();
-			final TouchButton btn = new TouchButton(engine.getInteraction(), getLayer(), name, x, y, 0, img, PlatformGame.menuIn, true);
+			final TouchButton btn = new TouchButton(engine.getInteraction(), getLayer(), name, x, y, 0, PlatformGame.menu, PlatformGame.menuIn, img, offx(img), offy(img), null, null, 0, 0, true);
 			engine.registerTouchButton(btn);
 			return btn;
 		}
