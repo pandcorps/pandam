@@ -617,7 +617,7 @@ public class Menu {
 			createProfileList(touchRadioX, touchRadioY);
 			newTab(PlatformGame.menuPlus, "New", new Runnable() {@Override public final void run() {newProfile();}});
 			if (curr != null) {
-				newTab(PlatformGame.menuX, "Cancel", new Runnable() {@Override public final void run() {exit();}});
+				newTab(PlatformGame.menuX, "Back", new Runnable() {@Override public final void run() {exit();}});
 			}
 			newTabs();
 		}
@@ -964,7 +964,7 @@ public class Menu {
 					break;
 			}
 			newTab(PlatformGame.menuCheck, "Done", new Runnable() {@Override public final void run() {exit();}});
-			newTab(PlatformGame.menuX, "Cancel", new Runnable() {@Override public final void run() {cancel();}});
+			newTab(PlatformGame.menuX, "Undo", new Runnable() {@Override public final void run() {cancel();}});
 			newTab(PlatformGame.menuAnimal, "Animal", TAB_ANIMAL);
 			newTab(PlatformGame.menuEyes, "Eyes", TAB_EYES);
 			newTab(PlatformGame.menuColor, "Color", TAB_COLOR);

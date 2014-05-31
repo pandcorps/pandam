@@ -107,7 +107,7 @@ public class TouchTabs {
                                                final MultiFont fonts, final CharSequence txt, final int xText, final int yText,
                                                final boolean active, final Runnable listener) {
         final Pangine engine = Pangine.getEngine();
-        final TouchButton button = new TouchButton(engine.getInteraction(), layer, name, x, y, z, img, imgAct, true);
+        final TouchButton button = new TouchButton(engine.getInteraction(), layer, name, x, y, z, img, imgAct, imgOverlay, xOverlay, yOverlay, fonts, txt, xText, yText, true);
         final Panctor actor = button.getActor();
         if (active) {
             engine.registerTouchButton(button);
