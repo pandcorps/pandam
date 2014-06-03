@@ -350,6 +350,30 @@ public final class Imtil {
     	return in;
     }
     
+    public final static Img drawDiamond(final Img in,
+                                        final Pancolor top, final Pancolor bottom, final Pancolor fill) {
+        final int d = in.getHeight();
+        if (d != in.getWidth()) {
+            throw new UnsupportedOperationException();
+        }
+        final int d2 = d / 2;
+        final int t = getDataElement(top), b = getDataElement(bottom), f = fill == null ? 0 : getDataElement(fill);
+        for (int i = 0; i < d2; i++) {
+            final int d2i = d2 + i;
+            for (int temp = 0; temp < 2; temp++) {
+                final int x = (temp == 0) ? i : (d - i - 1);
+                in.setRGB(x, d2i, b);
+                in.setRGB(x, d2 - i, t);
+                if (fill != null) {
+                    for (int j = d2 - i + 1; j < d2i; j++) {
+                        in.setRGB(x, j, f);
+                    }
+                }
+            }
+        }
+        return in;
+    }
+    
     public final static Img drawCircle(final Img in,
             final short r, final short g, final short b, final short a) {
         final Pancolor c = new FinPancolor(r, g, b, a);
