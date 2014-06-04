@@ -356,16 +356,16 @@ public final class Imtil {
         if (d != in.getWidth()) {
             throw new UnsupportedOperationException();
         }
-        final int d2 = d / 2;
+        final int cmax = d / 2, cmin = (d % 2) == 0 ? (cmax - 1) : cmax;
         final int t = getDataElement(top), b = getDataElement(bottom), f = fill == null ? 0 : getDataElement(fill);
-        for (int i = 0; i < d2; i++) {
-            final int d2i = d2 + i;
+        for (int i = 0; i <= cmin; i++) {
+            final int d2i = cmax + i;
             for (int temp = 0; temp < 2; temp++) {
                 final int x = (temp == 0) ? i : (d - i - 1);
                 in.setRGB(x, d2i, b);
-                in.setRGB(x, d2 - i, t);
+                in.setRGB(x, cmin - i, t);
                 if (fill != null) {
-                    for (int j = d2 - i + 1; j < d2i; j++) {
+                    for (int j = cmin - i + 1; j < d2i; j++) {
                         in.setRGB(x, j, f);
                     }
                 }
