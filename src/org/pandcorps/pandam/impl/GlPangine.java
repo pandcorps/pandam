@@ -179,10 +179,19 @@ public abstract class GlPangine extends Pangine {
     		final Integer key = Integer.valueOf(event.getId());
     		final int x = event.getX(), y = event.getY();
     		Panput input = interaction.TOUCH;
+    		float bestDist = Float.MAX_VALUE;
     		for (final TouchButton button : touchButtons) {
     			if (button.contains(x, y)) {
-    				input = button;
-    				break;
+    				if (button.getOverlapMode() == TouchButton.OVERLAP_ANY) {
+    				    input = button;
+    				    break;
+    				}
+    				final float diffX = button.getCenterX() - x, diffY = button.getCenterY() - y;
+    				final float currDist = (diffX * diffX) + (diffY * diffY);
+    				if (currDist < bestDist) {
+    				    input = button;
+    				    bestDist = currDist;
+    				}
     			}
     		}
     		final byte type = event.getType();

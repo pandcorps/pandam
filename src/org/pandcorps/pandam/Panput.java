@@ -133,6 +133,10 @@ public abstract class Panput {
 	}
 	
 	public static class TouchButton extends Panput {
+	    // If user touches area overlapped by multiple TouchButtons...
+	    public final static byte OVERLAP_ANY = 0; // Choose any TouchButton
+	    public final static byte OVERLAP_BEST = 1; // Choose closest TouchButton
+	    //public final static byte OVERLAP_ALL = 2; // Activate all TouchButtons
 		private int xMin;
 		private int yMin;
 		private int xMax;
@@ -143,6 +147,7 @@ public abstract class Panput {
 		private Panctor actorOverlay = null;
 		private Pantext text = null;
 		private Panlayer layer = null;
+		private byte overlapMode = OVERLAP_ANY;
 		private final boolean moveCancel;
 		
 		public TouchButton(final Panteraction interaction, final String name, final int x, final int y, final int w, final int h) {
@@ -255,6 +260,22 @@ public abstract class Panput {
 		
 		public boolean contains(final int x, final int y) {
 			return x >= xMin && x < xMax && y >= yMin && y < yMax;
+		}
+		
+		public float getCenterX() {
+		    return (xMin + xMax) / 2f;
+		}
+		
+		public float getCenterY() {
+		    return (yMin + yMax) / 2f;
+        }
+		
+		public byte getOverlapMode() {
+		    return overlapMode;
+		}
+		
+		public void setOverlapMode(final byte overlapMode) {
+		    this.overlapMode = overlapMode;
 		}
 		
 		public void activate(final boolean active) {
