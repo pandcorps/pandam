@@ -181,7 +181,7 @@ public abstract class GlPangine extends Pangine {
     		Panput input = interaction.TOUCH;
     		float bestDist = Float.MAX_VALUE;
     		for (final TouchButton button : touchButtons) {
-    			if (button.contains(x, y)) {
+    			if (button.isEnabled() && button.contains(x, y)) {
     				if (button.getOverlapMode() == TouchButton.OVERLAP_ANY) {
     				    input = button;
     				    break;
