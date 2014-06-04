@@ -224,7 +224,7 @@ public class Level {
     	w = b.getW();
     	nt = w / ImtilX.DIM;
     	ng = nt;
-    	floor = 0;
+    	floor = b.getFloor();
     	loadLayers();
     	addPlayers(); // Add Players while floor has initial value before build() changes it
     	b.build();
@@ -233,6 +233,8 @@ public class Level {
     private static interface Builder {
     	public int getW();
     	
+    	public int getFloor();
+    	
     	public void build();
     }
     
@@ -240,6 +242,11 @@ public class Level {
     	@Override
     	public int getW() {
     		return 768;
+    	}
+    	
+    	@Override
+    	public int getFloor() {
+    		return 0;
     	}
     	
     	@Override
@@ -304,6 +311,11 @@ public class Level {
     	@Override
     	public int getW() {
     		return 3200;
+    	}
+    	
+    	@Override
+    	public int getFloor() {
+    		return Mathtil.randi(3, 5);
     	}
     	
     	@Override
