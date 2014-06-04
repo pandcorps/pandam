@@ -152,15 +152,17 @@ public class Menu {
 				engine.clearTouchButtons();
 			}
 			final int d = 60, rx, r = engine.getEffectiveWidth(), y;
-			final TouchButton down, up, act2, sub;
+			final TouchButton down, up, act2;
 			final Panmage rt, rtIn, lt, ltIn;
 			if (full) {
 				y = d;
 				down = addDiamondButton(room, "Down", d, 0, input, act, ctrl.getDown());
 				up = addDiamondButton(room, "Up", d, d * 2, input, act, ctrl.getUp());
 				rx = d * 2;
-				act2 = addCircleButton(room, "Act2", r - d, 0, input, act, ctrl.get2());
-				sub = addCircleButton(room, "Sub", r - d, engine.getEffectiveHeight() - d, input, act, ctrl.getSubmit());
+				//act2 = addCircleButton(room, "Act2", r - d, 0, input, act, ctrl.get2());
+				//sub = addCircleButton(room, "Sub", r - d, engine.getEffectiveHeight() - d, input, act, ctrl.getSubmit());
+				final Panple ts = PlatformGame.menu.getSize();
+				act2 = newFormButton(room, "Act2", r - (int) ts.getX(), engine.getEffectiveHeight() - (int) ts.getY(), PlatformGame.menuMenu);
 				rt = lt = PlatformGame.diamond;
 				rtIn = ltIn = PlatformGame.diamondIn;
 			} else {
@@ -169,7 +171,7 @@ public class Menu {
 				up = null;
 				rx = (int) (d * 1.25f);
 				act2 = null;
-				sub = null;
+				//sub = null;
 				rt = PlatformGame.right2;
 				rtIn = PlatformGame.right2In;
 				lt = PlatformGame.left2;
@@ -185,7 +187,7 @@ public class Menu {
 			}
 			final TouchButton act1 = addCircleButton(room, "Act1", r - rx, 0, input, act, ctrl.get1());
 			if (input) {
-				ctrl.set(down, up, left, right, act1, act2, sub);
+				ctrl.set(down, up, left, right, act1, act2, act2);
 			}
 		}
 		
@@ -290,17 +292,25 @@ public class Menu {
 			return grp;
 		}
 		
-		private final TouchButton newFormButton(final String name, final int x, final int y, final Panmage img) {
+		private final static TouchButton newFormButton(final Panlayer layer, final String name, final int x, final int y, final Panmage img) {
 			final Pangine engine = Pangine.getEngine();
-			final TouchButton btn = new TouchButton(engine.getInteraction(), getLayer(), name, x, y, 0, PlatformGame.menu, PlatformGame.menuIn, img, offx(img), offy(img), null, null, 0, 0, true);
+			final TouchButton btn = new TouchButton(engine.getInteraction(), layer, name, x, y, 0, PlatformGame.menu, PlatformGame.menuIn, img, offx(img), offy(img), null, null, 0, 0, true);
 			engine.registerTouchButton(btn);
 			return btn;
 		}
 		
-		private final TouchButton newFormButton(final String name, final int x, final int y, final Panmage img, final Runnable r) {
-			final TouchButton btn = newFormButton(name, x, y, img);
+		private final static TouchButton newFormButton(final Panlayer layer, final String name, final int x, final int y, final Panmage img, final Runnable r) {
+			final TouchButton btn = newFormButton(layer, name, x, y, img);
 			btn.getActor().register(btn, Actions.newEndListener(r));
 			return btn;
+		}
+		
+		private final TouchButton newFormButton(final String name, final int x, final int y, final Panmage img) {
+		    return newFormButton(getLayer(), name, x, y, img);
+		}
+		
+		private final TouchButton newFormButton(final String name, final int x, final int y, final Panmage img, final Runnable r) {
+		    return newFormButton(getLayer(), name, x, y, img, r);
 		}
 		
 		protected final List<RadioGroup> addColor(final SimpleColor col, int x, int y) {
