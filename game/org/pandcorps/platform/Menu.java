@@ -239,6 +239,7 @@ public class Menu {
 							return;
 						}
 						listener.run(); }});
+			tab.setImageDisabled(PlatformGame.menuDisabled);
 			tabs.add(tab);
 			return tab;
 		}
@@ -992,15 +993,16 @@ public class Menu {
 			}
 			newTab(PlatformGame.menuCheck, "Done", new Runnable() {@Override public final void run() {exit();}});
 			newTab(PlatformGame.menuX, "Undo", new Runnable() {@Override public final void run() {cancel();}});
-			newTab(PlatformGame.menuAnimal, "Animal", TAB_ANIMAL);
+			newTab(PlatformGame.menuAnimal, "Kind", TAB_ANIMAL);
 			newTab(PlatformGame.menuEyes, "Eyes", TAB_EYES);
 			newTab(PlatformGame.menuColor, "Color", TAB_COLOR);
 			newTabs();
 		}
 		
 		private final void newTab(final Panmage img, final CharSequence txt, final byte tab) {
-			if (currentTab != tab) {
-				newTab(img, txt, new Runnable() {@Override public final void run() {reload(tab);}});
+			final TouchButton btn = newTab(img, txt, new Runnable() {@Override public final void run() {reload(tab);}});
+			if (currentTab == tab) {
+				btn.setEnabled(false);
 			}
 		}
 		

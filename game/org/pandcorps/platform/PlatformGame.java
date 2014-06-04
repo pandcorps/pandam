@@ -167,6 +167,7 @@ public class PlatformGame extends BaseGame {
     protected static Panmage diamondIn = null;
 	protected static Panmage menu = null;
 	protected static Panmage menuIn = null;
+	protected static Panmage menuDisabled = null;
 	protected static Panmage menuLeft = null;
 	protected static Panmage menuRight = null;
 	protected static Panmage menuUp = null;
@@ -655,6 +656,7 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 			    menuEyes = createMenuImg("Eyes");
 			    //menuIn = engine.createImage(Pantil.vmid(), ImtilX.indent(left));
 			    menuIn = engine.createImage(Pantil.vmid(), ImtilX.newButton(w, h, new FinPancolor((short) 128, (short) 224, (short) 255)));
+			    menuDisabled = engine.createImage(Pantil.vmid(), ImtilX.newButton(w, h, new FinPancolor((short) 128, (short) 96, (short) 160)));
 			    menuLeft = engine.createImage(Pantil.vmid(), ImtilX.newLeft2(d, Pancolor.BLUE));
 			    menuRight = engine.createImage(Pantil.vmid(), ImtilX.newRight2(d, Pancolor.BLUE));
 			    menuUp = engine.createImage(Pantil.vmid(), ImtilX.newUp2(d, Pancolor.BLUE));
