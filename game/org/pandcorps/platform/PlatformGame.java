@@ -610,7 +610,7 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 		if (engine.isTouchSupported()) {
 			loaders.add(new Runnable() { @Override public final void run() {
 				// 400 x 240
-				final int d = Math.min(60 * engine.getEffectiveWidth() / 400, 60 * engine.getEffectiveHeight() / 240);
+				final int d = (Math.min(60 * engine.getEffectiveWidth() / 400, 60 * engine.getEffectiveHeight() / 240) / 2) * 2;
 				final Pancolor f = new FinPancolor((short) 160, Mathtil.SHORT_0, Pancolor.MAX_VALUE);
 				final Img circle = Imtil.newImage(d, d);
 				Imtil.drawCircle(circle, Pancolor.WHITE, Pancolor.BLACK, f);
