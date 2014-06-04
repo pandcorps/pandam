@@ -163,6 +163,8 @@ public class PlatformGame extends BaseGame {
 	protected static Panmage right2In = null;
 	protected static Panmage left2 = null;
 	protected static Panmage left2In = null;
+	protected static Panmage diamond = null;
+    protected static Panmage diamondIn = null;
 	protected static Panmage menu = null;
 	protected static Panmage menuIn = null;
 	protected static Panmage menuLeft = null;
@@ -609,14 +611,15 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 			loaders.add(new Runnable() { @Override public final void run() {
 				// 400 x 240
 				final int d = Math.min(60 * engine.getEffectiveWidth() / 400, 60 * engine.getEffectiveHeight() / 240);
+				final Pancolor f = new FinPancolor((short) 160, Mathtil.SHORT_0, Pancolor.MAX_VALUE);
 				final Img circle = Imtil.newImage(d, d);
-				Imtil.drawCircle(circle, Pancolor.WHITE, Pancolor.BLACK, Pancolor.MAGENTA);
+				Imtil.drawCircle(circle, Pancolor.WHITE, Pancolor.BLACK, f);
 				final Img circleIn = ImtilX.indent(circle);
 				Imtil.setPseudoTranslucent(circle);
 				Imtil.setPseudoTranslucent(circleIn);
 				button = engine.createImage(Pantil.vmid(), circle);
 				buttonIn = engine.createImage(Pantil.vmid(), circleIn);
-				final Img r2 = ImtilX.newRight2(d, Pancolor.MAGENTA);
+				final Img r2 = ImtilX.newRight2(d, f);
 				final Img r2In = ImtilX.indent(r2);
 				Imtil.setPseudoTranslucent(r2);
 				Imtil.setPseudoTranslucent(r2In);
@@ -630,6 +633,13 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 				left2In = engine.createImage(Pantil.vmid(), r2In);
 				r2.close();
 				r2In.close();
+				final Img dia = Imtil.newImage(d, d);
+                Imtil.drawDiamond(dia, Pancolor.WHITE, Pancolor.BLACK, f);
+                final Img diaIn = ImtilX.indent(dia);
+                Imtil.setPseudoTranslucent(dia);
+                Imtil.setPseudoTranslucent(diaIn);
+                diamond = engine.createImage(Pantil.vmid(), dia);
+                diamondIn = engine.createImage(Pantil.vmid(), diaIn);
 				}});
 			loaders.add(new Runnable() { @Override public final void run() {
 			    final int w = 48, h = 40, d = 28;
