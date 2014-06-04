@@ -156,13 +156,13 @@ public class Menu {
 			final Panmage rt, rtIn, lt, ltIn;
 			if (full) {
 				y = d;
-				down = addButton(room, "Down", d, 0, input, act, ctrl.getDown());
-				up = addButton(room, "Up", d, d * 2, input, act, ctrl.getUp());
+				down = addDiamondButton(room, "Down", d, 0, input, act, ctrl.getDown());
+				up = addDiamondButton(room, "Up", d, d * 2, input, act, ctrl.getUp());
 				rx = d * 2;
-				act2 = addButton(room, "Act2", r - d, 0, input, act, ctrl.get2());
-				sub = addButton(room, "Sub", r - d, engine.getEffectiveHeight() - d, input, act, ctrl.getSubmit());
-				rt = lt = PlatformGame.button;
-				rtIn = ltIn = PlatformGame.buttonIn;
+				act2 = addCircleButton(room, "Act2", r - d, 0, input, act, ctrl.get2());
+				sub = addCircleButton(room, "Sub", r - d, engine.getEffectiveHeight() - d, input, act, ctrl.getSubmit());
+				rt = lt = PlatformGame.diamond;
+				rtIn = ltIn = PlatformGame.diamondIn;
 			} else {
 				y = 0;
 				down = null;
@@ -177,16 +177,27 @@ public class Menu {
 			}
 			final TouchButton left = addButton(room, "Left", 0, y, input, act, ctrl.getLeft(), lt, ltIn);
 			final TouchButton right = addButton(room, "Right", rx, y, input, act, ctrl.getRight(), rt, rtIn);
-			final TouchButton act1 = addButton(room, "Act1", r - rx, 0, input, act, ctrl.get1());
+			if (full) {
+			    up.setOverlapMode(TouchButton.OVERLAP_BEST);
+			    down.setOverlapMode(TouchButton.OVERLAP_BEST);
+			    left.setOverlapMode(TouchButton.OVERLAP_BEST);
+			    right.setOverlapMode(TouchButton.OVERLAP_BEST);
+			}
+			final TouchButton act1 = addCircleButton(room, "Act1", r - rx, 0, input, act, ctrl.get1());
 			if (input) {
 				ctrl.set(down, up, left, right, act1, act2, sub);
 			}
 		}
 		
-		private final static TouchButton addButton(final Panlayer room, final String name, final int x, final int y,
+		private final static TouchButton addCircleButton(final Panlayer room, final String name, final int x, final int y,
 				final boolean input, final boolean act, final Panput old) {
 			return addButton(room, name, x, y, input, act, old, PlatformGame.button, PlatformGame.buttonIn);
 		}
+		
+		private final static TouchButton addDiamondButton(final Panlayer room, final String name, final int x, final int y,
+                final boolean input, final boolean act, final Panput old) {
+            return addButton(room, name, x, y, input, act, old, PlatformGame.diamond, PlatformGame.diamondIn);
+        }
 		
 		private final static TouchButton addButton(final Panlayer room, final String name, final int x, final int y,
 				final boolean input, final boolean act, final Panput old, final Panmage img, final Panmage imgIn) {
