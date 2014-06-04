@@ -144,10 +144,12 @@ public abstract class Panput {
 		private Panctor actor = null;
 		private Panmage imgActive = null;
 		private Panmage imgInactive = null;
+		private Panmage imgDisabled = null;
 		private Panctor actorOverlay = null;
 		private Pantext text = null;
 		private Panlayer layer = null;
 		private byte overlapMode = OVERLAP_ANY;
+		private boolean enabled = true;
 		private final boolean moveCancel;
 		
 		public TouchButton(final Panteraction interaction, final String name, final int x, final int y, final int w, final int h) {
@@ -235,6 +237,10 @@ public abstract class Panput {
 			layer = actor.getLayer();
 		}
 		
+		public final void setImageDisabled(final Panmage imgDisabled) {
+			this.imgDisabled = imgDisabled;
+		}
+		
 		public final Panctor getActor() {
 		    return actor;
 		}
@@ -278,8 +284,19 @@ public abstract class Panput {
 		    this.overlapMode = overlapMode;
 		}
 		
+		public boolean isEnabled() {
+			return enabled;
+		}
+		
+		public void setEnabled(final boolean enabled) {
+			this.enabled = enabled;
+			if (imgDisabled != null) {
+				actor.setView(enabled ? imgInactive : imgDisabled);
+			}
+		}
+		
 		public void activate(final boolean active) {
-			if (actor != null && imgActive != null) {
+			if (enabled && actor != null && imgActive != null) {
 				actor.setView(active ? imgActive : imgInactive);
 			}
 		}
