@@ -155,10 +155,11 @@ public class Menu {
 			final TouchButton down, up, act2;
 			final Panmage rt, rtIn, lt, ltIn;
 			if (full) {
-				y = d;
-				down = addDiamondButton(room, "Down", d, 0, input, act, ctrl.getDown());
-				up = addDiamondButton(room, "Up", d, d * 2, input, act, ctrl.getUp());
-				rx = d * 2;
+			    final int d2 = d / 2;
+				y = d2;
+				down = addDiamondButton(room, "Down", d2, 0, input, act, ctrl.getDown());
+				up = addDiamondButton(room, "Up", d2, d, input, act, ctrl.getUp());
+				rx = d;
 				//act2 = addCircleButton(room, "Act2", r - d, 0, input, act, ctrl.get2());
 				//sub = addCircleButton(room, "Sub", r - d, engine.getEffectiveHeight() - d, input, act, ctrl.getSubmit());
 				final Panple ts = PlatformGame.menu.getSize();
