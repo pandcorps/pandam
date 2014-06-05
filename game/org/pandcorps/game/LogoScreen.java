@@ -32,7 +32,10 @@ import org.pandcorps.pandax.visual.*;
 
 public final class LogoScreen extends FadeScreen {
     private Panmage font = null;
+    private StringBuilder name = new StringBuilder("PANDCORPS");
     private Panmage icon = null;
+    private Pantext text = null;
+    private Panctor img = null;
     private final Class<? extends Panscreen> titleClass;
     
     public LogoScreen(final Class<? extends Panscreen> titleClass) {
@@ -50,16 +53,24 @@ public final class LogoScreen extends FadeScreen {
         final Pangine engine = Pangine.getEngine();
         engine.setBgColor(Pancolor.WHITE);
         font = engine.createImage("PandcorpsFont", "org/pandcorps/res/img/FontGradient16.png");
-        final Pantext text = new Pantext("PandcorpsLogo", new ByteFont(font), "PANDCORPS");
+        text = new Pantext("PandcorpsLogo", new ByteFont(font), name);
         final int x = engine.getEffectiveWidth() / 2, y = engine.getEffectiveHeight() / 2 - 8;
         text.getPosition().set(x - 80, y);
         final Panroom room = Pangame.getGame().getCurrentRoom();
         room.addActor(text);
         icon = engine.createImage("PandcorpsIcon", "org/pandcorps/res/img/PandcorpsIcon16.png");
-        final Panctor img = new Panctor("PandcorpsImage");
+        img = new Panctor("PandcorpsImage");
         img.setView(icon);
         img.getPosition().set(x + 64, y);
         room.addActor(img);
+    }
+    
+    @Override
+    protected final void onLoading() {
+        text.getPosition().set(0, 0);
+        Chartil.set(name, "LOADING");
+        img.destroy();
+        c.getLayer().getBlendColor().setA(Mathtil.SHORT_0);
     }
     
     @Override
