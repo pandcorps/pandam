@@ -38,6 +38,7 @@ public abstract class GlPangine extends Pangine {
 	protected final Panteraction interaction;
 	protected final HashSet<Panput> active = new HashSet<Panput>();
 	protected final HashSet<Panput> newActive = new HashSet<Panput>();
+	protected final HashSet<Panput> ended = new HashSet<Panput>();
 	protected final static Vector<TouchEvent> touchEvents = new Vector<TouchEvent>();
 	protected final static Vector<TouchButton> touchButtons = new Vector<TouchButton>();
 	private final static Map<Integer, Panput> touchMap = new HashMap<Integer, Panput>();
@@ -280,6 +281,7 @@ public abstract class GlPangine extends Pangine {
 	        throw Pantil.toException(exitCause);
 	    }
 	    
+	    ended.clear();
 	    stepControl();
 		for (final Panput input : active) {
 			onAction(input);
@@ -364,7 +366,13 @@ public abstract class GlPangine extends Pangine {
 		active.remove(input);
 		newActive.remove(input);
 		setActive(input, false);
+		ended.add(input);
 		activateTouch(input, false);
+	}
+	
+	@Override
+	protected final boolean isEnded(final Panput input) {
+	    return ended.contains(input);
 	}
 	
 	private final static int near = -1000, far = 1000;
