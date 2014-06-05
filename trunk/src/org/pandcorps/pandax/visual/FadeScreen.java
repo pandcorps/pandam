@@ -32,7 +32,7 @@ import org.pandcorps.pandam.event.action.*;
 
 public abstract class FadeScreen extends TempScreen {
     private final static int SPEED = 4;
-    private final FadeController c = new FadeScreenController();
+    protected final FadeController c = new FadeScreenController();
     private final Panroom room;
     private final Pancolor color;
     private final short oldAlpha;
@@ -43,6 +43,7 @@ public abstract class FadeScreen extends TempScreen {
     private boolean bgWaiting = true;
     private volatile RuntimeException bgException = null;
     private boolean finished = false;
+    private boolean loading = false;
     
     protected FadeScreen(final Pancolor color, final int time) {
         room = Pangame.getGame().getCurrentRoom();
@@ -129,14 +130,21 @@ public abstract class FadeScreen extends TempScreen {
     
     private final void fadeFinished() {
         if (isBusy()) {
+            if (!loading) {
+                loading = true;
+                onLoading();
+            }
     		return;
-    	}
-    	if (bgException != null) {
+    	} else if (bgException != null) {
     		throw bgException;
     	}
     	color.setA(oldAlpha);
         // Might open a new FadeScreen, so revert alpha first
         finish(c);
         finished = false; // Make sure we don't run this method again
+    }
+    
+    //@OverrideMe
+    protected void onLoading() {
     }
 }
