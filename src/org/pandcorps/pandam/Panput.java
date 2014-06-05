@@ -62,6 +62,14 @@ public abstract class Panput {
         return active && !inactivated;
     }
     
+    public final boolean isEnded() {
+        return Pangine.getEngine().isEnded(this);
+    }
+    
+    public final boolean isActive(final boolean endListener) {
+        return endListener ? isEnded() : isActive();
+    }
+    
     //TODO Support inactivate in Listeners and Panction
     public final void inactivate() {
         // I think inactivated is cleared during the key release event;
