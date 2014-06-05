@@ -60,6 +60,9 @@ public abstract class FadeScreen extends TempScreen {
         final Pangine engine = Pangine.getEngine();
         final ActionStartListener anyKey;
         anyKey = new ActionStartListener() { @Override public final void onActionStart(final ActionStartEvent event) {
+            if (isBusy()) {
+                return;
+            }
             c.setVelocity((short) SPEED);
             engine.removeTimer(timer);
         }};
@@ -120,8 +123,12 @@ public abstract class FadeScreen extends TempScreen {
         }
     }
     
+    private final boolean isBusy() {
+    	return Coltil.isValued(tasks) || (bg != null && bg.isAlive());
+    }
+    
     private final void fadeFinished() {
-    	if (Coltil.isValued(tasks) || (bg != null && bg.isAlive())) {
+        if (isBusy()) {
     		return;
     	}
     	if (bgException != null) {
