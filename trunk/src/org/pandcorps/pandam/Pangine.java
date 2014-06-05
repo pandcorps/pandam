@@ -369,6 +369,8 @@ public abstract class Pangine {
 	    }
 	}
 	
+	protected abstract boolean isEnded(final Panput input);
+	
 	protected final Button newButton(final String name) {
 		return new Panput.Button(name);
 	}
