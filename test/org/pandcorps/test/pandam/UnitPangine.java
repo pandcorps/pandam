@@ -101,6 +101,11 @@ public final class UnitPangine extends Pangine {
 	}
 	
 	@Override
+	public final boolean isEnded(final Panput input) {
+	    return false;
+	}
+	
+	@Override
 	public final void registerTouchButton(final TouchButton button) {
 	}
 	
