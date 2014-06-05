@@ -178,38 +178,39 @@ public class Menu {
 				lt = PlatformGame.left2;
 				ltIn = PlatformGame.left2In;
 			}
-			final TouchButton left = addButton(room, "Left", 0, y, input, act, ctrl.getLeft(), lt, ltIn);
-			final TouchButton right = addButton(room, "Right", rx, y, input, act, ctrl.getRight(), rt, rtIn);
+			final TouchButton left = addButton(room, "Left", 0, y, input, act, ctrl.getLeft(), lt, ltIn, full);
+			final TouchButton right = addButton(room, "Right", rx, y, input, act, ctrl.getRight(), rt, rtIn, full);
 			if (full) {
 			    up.setOverlapMode(TouchButton.OVERLAP_BEST);
 			    down.setOverlapMode(TouchButton.OVERLAP_BEST);
 			    left.setOverlapMode(TouchButton.OVERLAP_BEST);
 			    right.setOverlapMode(TouchButton.OVERLAP_BEST);
 			}
-			final TouchButton act1 = addCircleButton(room, "Act1", r - rx, 0, input, act, ctrl.get1());
+			final TouchButton act1 = addCircleButton(room, "Act1", r - rx, 0, input, act, ctrl.get1(), full);
 			if (input) {
 				ctrl.set(down, up, left, right, act1, act2, act2);
 			}
 		}
 		
 		private final static TouchButton addCircleButton(final Panlayer room, final String name, final int x, final int y,
-				final boolean input, final boolean act, final Panput old) {
-			return addButton(room, name, x, y, input, act, old, PlatformGame.button, PlatformGame.buttonIn);
+				final boolean input, final boolean act, final Panput old, final boolean moveCancel) {
+			return addButton(room, name, x, y, input, act, old, PlatformGame.button, PlatformGame.buttonIn, moveCancel);
 		}
 		
 		private final static TouchButton addDiamondButton(final Panlayer room, final String name, final int x, final int y,
                 final boolean input, final boolean act, final Panput old) {
-            return addButton(room, name, x, y, input, act, old, PlatformGame.diamond, PlatformGame.diamondIn);
+            return addButton(room, name, x, y, input, act, old, PlatformGame.diamond, PlatformGame.diamondIn, true);
         }
 		
 		private final static TouchButton addButton(final Panlayer room, final String name, final int x, final int y,
-				final boolean input, final boolean act, final Panput old, final Panmage img, final Panmage imgIn) {
+				final boolean input, final boolean act, final Panput old, final Panmage img, final Panmage imgIn,
+				final boolean moveCancel) {
 			final TouchButton button;
 			if (input) {
 				final Pangine engine = Pangine.getEngine();
 				final Panteraction in = engine.getInteraction();
 				final int d = 60;
-				button = new TouchButton(in, name, x, y, d, d);
+				button = new TouchButton(in, name, x, y, d, d, moveCancel);
 				engine.registerTouchButton(button);
 			} else {
 				button = null;
