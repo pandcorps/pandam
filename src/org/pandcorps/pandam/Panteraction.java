@@ -363,6 +363,16 @@ public abstract class Panteraction {
 		return keys[index];
 	}
 	
+	public final Key getKey(final char c) {
+	    for (final Key key : keys) {
+	        final Character base = key.getBaseCharacter();
+	        if (base != null && base.charValue() == c) {
+	            return key;
+	        }
+	    }
+	    return null;
+	}
+	
 	public final void inactivateAll() {
         Panput.inactivate(keys);
     }
