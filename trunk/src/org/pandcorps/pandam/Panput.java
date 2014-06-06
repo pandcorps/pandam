@@ -158,6 +158,7 @@ public abstract class Panput {
 		private Panlayer layer = null;
 		private byte overlapMode = OVERLAP_ANY;
 		private boolean enabled = true;
+		private Panput mappedInput = null;
 		private final boolean moveCancel;
 		
 		public TouchButton(final Panteraction interaction, final String name, final int x, final int y, final int w, final int h) {
@@ -301,6 +302,14 @@ public abstract class Panput {
 			if (imgDisabled != null) {
 				actor.setView(enabled ? imgInactive : imgDisabled);
 			}
+		}
+		
+		public Panput getMappedInput() {
+		    return mappedInput;
+		}
+		
+		public void setMappedInput(final Panput mappedInput) {
+		    this.mappedInput = mappedInput;
 		}
 		
 		public void activate(final boolean active) {

@@ -320,7 +320,9 @@ public abstract class GlPangine extends Pangine {
 	
 	private final void activateTouch(final Panput input, final boolean active) {
 		if (input.getClass() == TouchButton.class) {
-			((TouchButton) input).activate(active);
+		    final TouchButton btn = (TouchButton) input;
+			btn.activate(active);
+			activate(btn.getMappedInput(), active);
 		}
 	}
 	
