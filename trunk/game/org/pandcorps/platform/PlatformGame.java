@@ -38,6 +38,7 @@ import org.pandcorps.pandax.in.*;
 import org.pandcorps.pandax.text.*;
 import org.pandcorps.pandax.text.Fonts.*;
 import org.pandcorps.pandax.tile.*;
+import org.pandcorps.pandax.touch.*;
 import org.pandcorps.pandax.visual.*;
 import org.pandcorps.platform.Avatar.*;
 import org.pandcorps.platform.Enemy.*;
@@ -185,6 +186,8 @@ public class PlatformGame extends BaseGame {
 	protected static Panmage redDown = null;
 	protected static Panmage greenUp = null;
 	protected static Panmage greenDown = null;
+	protected static Panmage key = null;
+	protected static Panmage keyIn = null;
 	protected static Queue<Runnable> loaders = new LinkedList<Runnable>();
 	
 	@Override
@@ -644,7 +647,9 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 				}});
 			loaders.add(new Runnable() { @Override public final void run() {
 			    final int w = 48, h = 40, d = 28;
-			    menu = engine.createImage(Pantil.vmid(), ImtilX.newButton(w, h, new FinPancolor((short) 160, (short) 192, (short) 224)));
+			    final Pancolor clrBtn = new FinPancolor((short) 160, (short) 192, (short) 224);
+			    final Pancolor clrIn = new FinPancolor((short) 128, (short) 224, (short) 255);
+			    menu = engine.createImage(Pantil.vmid(), ImtilX.newButton(w, h, clrBtn));
 			    menuCheck = createMenuImg("Check");
 			    menuX = createMenuImg("X");
 			    menuPlus = createMenuImg("Plus");
@@ -655,7 +660,7 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 			    menuAnimal = createMenuImg("Animal");
 			    menuEyes = createMenuImg("Eyes");
 			    //menuIn = engine.createImage(Pantil.vmid(), ImtilX.indent(left));
-			    menuIn = engine.createImage(Pantil.vmid(), ImtilX.newButton(w, h, new FinPancolor((short) 128, (short) 224, (short) 255)));
+			    menuIn = engine.createImage(Pantil.vmid(), ImtilX.newButton(w, h, clrIn));
 			    menuDisabled = engine.createImage(Pantil.vmid(), ImtilX.newButton(w, h, new FinPancolor((short) 128, (short) 96, (short) 160)));
 			    menuLeft = engine.createImage(Pantil.vmid(), ImtilX.newLeft2(d, Pancolor.BLUE));
 			    menuRight = engine.createImage(Pantil.vmid(), ImtilX.newRight2(d, Pancolor.BLUE));
@@ -665,6 +670,9 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 			    redDown = engine.createImage(Pantil.vmid(), ImtilX.newDown2(d, Pancolor.RED));
 			    greenUp = engine.createImage(Pantil.vmid(), ImtilX.newUp2(d, Pancolor.GREEN));
 			    greenDown = engine.createImage(Pantil.vmid(), ImtilX.newDown2(d, Pancolor.GREEN));
+			    final int keyW = TouchKeyboard.getMaxKeyWidth();
+			    key = engine.createImage(Pantil.vmid(), ImtilX.newButton(keyW, keyW, clrBtn));
+			    keyIn = engine.createImage(Pantil.vmid(), ImtilX.newButton(keyW, keyW, clrIn));
 System.out.println("loadConstants end " + System.currentTimeMillis());
 			    }});
 		}
