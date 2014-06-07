@@ -22,11 +22,11 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandam.event.action;
 
-import org.pandcorps.pandam.Panput;
-import org.pandcorps.pandam.Panput.Key;
-import org.pandcorps.pandam.event.Panvent;
+import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.Panput.*;
+import org.pandcorps.pandam.event.*;
 
-/*package*/ class InputEvent extends Panvent {
+public class InputEvent extends Panvent {
     private final Panput input;
 
     ///*package*/ InputEvent() {

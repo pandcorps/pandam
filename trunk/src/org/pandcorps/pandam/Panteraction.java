@@ -485,6 +485,10 @@ public abstract class Panteraction {
 	public final void unregisterAll(final Iterable<ActionListener> list) {
         unregister(listeners, list);
     }
+	
+	public final void register(final Panctor actor, final ActionEndListener listener) {
+	    register(actor, Panput.any, listener);
+	}
 
 	public final void register(final Panctor actor, final Panput input, final ActionEndListener listener) {
 		endListeners.add(input, listener);
@@ -494,7 +498,8 @@ public abstract class Panteraction {
 	}
 
 	public final Iterable<ActionEndListener> getEndListeners(final Panput input) {
-		return endListeners.get(input);
+		//return endListeners.get(input);
+		return input == Panput.any ? endListeners.get(input) : SequenceIterable.create(endListeners.get(input), endListeners.get(Panput.any));
 	}
 	
 	public final void unregister(final ActionEndListener listener) {
