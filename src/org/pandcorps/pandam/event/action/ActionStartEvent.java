@@ -22,7 +22,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandam.event.action;
 
-import org.pandcorps.pandam.Panput;
+import org.pandcorps.pandam.*;
 
 public final class ActionStartEvent extends InputEvent {
 	//public final static ActionStartEvent INSTANCE = new ActionStartEvent();

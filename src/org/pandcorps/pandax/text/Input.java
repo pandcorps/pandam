@@ -71,13 +71,26 @@ public abstract class Input extends TextItem {
         final Panteraction interaction = engine.getInteraction();
         interaction.inactivateAll();
         label.setCursorEnabled(true);
-        final ActionStartListener startListener = new ActionStartListener() {
-            @Override
-            public void onActionStart(final ActionStartEvent event) {
+        if (engine.isTouchSupported()) {
+        	final ActionEndListener endListener = new ActionEndListener() {
+	            @Override public void onActionEnd(final ActionEndEvent event) {
+	            	onAction(null, this, event); }};
+	        label.register(endListener);
+        } else {
+	        final ActionStartListener startListener = new ActionStartListener() {
+	            @Override public void onActionStart(final ActionStartEvent event) {
+	            	onAction(this, null, event); }};
+	        label.register(startListener);
+        }
+    }
+    
+    	public void onAction(final ActionStartListener startListener, final ActionEndListener endListener, final InputEvent event) {
+    			final Panteraction interaction = Pangine.getEngine().getInteraction();
                 final Panput input = event.getInput();
                 if (interaction.KEY_ENTER == input) {
                 	close();
-                    interaction.unregister(this);
+                    interaction.unregister(startListener);
+                    interaction.unregister(endListener);
                     interaction.inactivateAll();
                     submit();
                 } else if (interaction.KEY_BACKSPACE == input) {
@@ -125,9 +138,6 @@ public abstract class Input extends TextItem {
                     }
                 }
             }
-        };
-        label.register(startListener);
-    }
     }
     
     @Override

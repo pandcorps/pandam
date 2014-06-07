@@ -296,6 +296,10 @@ public class Panctor extends BasePantity implements SpecPanctor {
 		Pangine.getEngine().getInteraction().register(this, input, listener);
 	}
 	
+	public final void register(final ActionEndListener listener) {
+		Pangine.getEngine().getInteraction().register(this, listener);
+	}
+	
 	public final void register(final Panput input, final ActionEndListener listener) {
 		Pangine.getEngine().getInteraction().register(this, input, listener);
 	}
