@@ -59,6 +59,10 @@ public abstract class Input extends TextItem {
     		super(font, listener);
     	}
     	
+    	public KeyInput(final MultiFont fonts, final InputSubmitListener listener) {
+    		super(fonts, listener);
+    	}
+    	
     @Override
     protected final void focus() {
         //TODO Some todo notes in message apply here

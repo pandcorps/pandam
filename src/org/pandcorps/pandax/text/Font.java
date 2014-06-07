@@ -22,7 +22,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandax.text;
 
-import org.pandcorps.pandam.Panmage;
+import org.pandcorps.pandam.*;
 
 public interface Font {
     public final static int INDEX_EMPTY = -1;
@@ -42,4 +42,8 @@ public interface Font {
     public int getColumn(final char c);
     
     public int getIndex(final char c);
+    
+    public int getWidth();
+    
+    public int getHeight();
 }

@@ -22,7 +22,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandax.text;
 
-import org.pandcorps.pandam.Panmage;
+import org.pandcorps.pandam.*;
 
 public abstract class BaseFont implements Font {
     private final Panmage image;
@@ -50,6 +50,16 @@ public abstract class BaseFont implements Font {
     @Override
     public final int getColumn(final char c) {
         return getColumn(getIndex(c), getRowAmount());
+    }
+    
+    @Override
+    public int getWidth() {
+    	return (int) image.getSize().getX() / getRowAmount();
+    }
+    
+    @Override
+    public int getHeight() {
+    	return (int) image.getSize().getY() / getRowAmount();
     }
     
     protected final static int getRow(final int index, final int rowAmount) {

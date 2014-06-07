@@ -34,6 +34,7 @@ import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.action.*;
 import org.pandcorps.pandax.in.*;
 import org.pandcorps.pandax.text.*;
+import org.pandcorps.pandax.text.Input.*;
 import org.pandcorps.pandax.tile.Tile.*;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.touch.*;
@@ -226,11 +227,11 @@ public class Menu {
 		}
 		
 		private final static int offx(final Panmage img) {
-			return TouchTabs.off(PlatformGame.menu.getSize().getX(), img.getSize().getX());
+			return img == null ? 0 : TouchTabs.off(PlatformGame.menu.getSize().getX(), img.getSize().getX());
 		}
 		
 		private final static int offy(final Panmage img) {
-			return TouchTabs.off(PlatformGame.menu.getSize().getY(), img.getSize().getY());
+			return img == null ? 0 : TouchTabs.off(PlatformGame.menu.getSize().getY(), img.getSize().getY());
 		}
 		
 		protected final TouchButton newTab(final Panmage img, final CharSequence txt, final Runnable listener) {
@@ -391,16 +392,23 @@ public class Menu {
             PlatformGame.addHud(room, pc, gemX + PlatformGame.OFF_GEM, gemY, false, false);
 		}
 		
-		protected final ControllerInput addNameInput(final PlayerData pd, final InputSubmitListener subLsn, final int max, final int x, final int y) {
+		protected final Input addNameInput(final PlayerData pd, final InputSubmitListener subLsn, final int max, final int x, final int y) {
 		    final InputSubmitListener chgLsn = new InputSubmitListener() {
 	            @Override public final void onSubmit(final InputSubmitEvent event) {
 	                pd.setName(event.toString()); }};
-	        final ControllerInput in = new ControllerInput(PlatformGame.font, subLsn);
+	        final Input in;
+	        if (isTabEnabled()) {
+	        	in = new KeyInput(PlatformGame.font, subLsn);
+	        	new TouchKeyboard(PlatformGame.key, PlatformGame.keyIn, PlatformGame.font, y - (int) PlatformGame.key.getSize().getY() - 16);
+	        } else {
+		        final ControllerInput cin = new ControllerInput(PlatformGame.font, subLsn);
+		        cin.setLetter();
+		        in = cin;
+	        }
 	        in.setChangeListener(chgLsn);
 	        in.setMax(max);
 	        addItem(in, x + 40, y);
 	        addTitle("Name", x, y);
-	        in.setLetter();
 	        return in;
 		}
 		
@@ -940,6 +948,7 @@ public class Menu {
 		private final static byte TAB_ANIMAL = 0;
 		private final static byte TAB_EYES = 1;
 		private final static byte TAB_COLOR = 2;
+		private final static byte TAB_NAME = 3;
 		private static byte currentTab = TAB_ANIMAL;
 	    private boolean save = true;
 		private Avatar old = null;
@@ -991,12 +1000,16 @@ public class Menu {
 				case TAB_COLOR :
 					addColor(avt.col, 0, 0);
 					break;
+				case TAB_NAME :
+					createNameInput(8, (int) (Pangine.getEngine().getEffectiveHeight() - PlatformGame.menu.getSize().getY() - 16));
+					break;
 			}
 			newTab(PlatformGame.menuCheck, "Done", new Runnable() {@Override public final void run() {exit();}});
 			newTab(PlatformGame.menuX, "Undo", new Runnable() {@Override public final void run() {cancel();}});
 			newTab(PlatformGame.menuAnimal, "Kind", TAB_ANIMAL);
 			newTab(PlatformGame.menuEyes, "Eyes", TAB_EYES);
 			newTab(PlatformGame.menuColor, "Color", TAB_COLOR);
+			newTab(null, "Name", TAB_NAME);
 			newTabs();
 		}
 		
@@ -1034,6 +1047,11 @@ public class Menu {
 			eyeGrp.setSelected(avt.eye - 1);
 		}
 		
+		private final void createNameInput(final int x, final int y) {
+			final Input namIn = addNameInput(avt, null, PlatformGame.MAX_NAME_AVATAR, x, y);
+			namIn.append(avt.getName());
+		}
+		
 		protected final void menuClassic() {
 			final int left = getLeft();
 			int x = left, y = getTop();
@@ -1048,7 +1066,7 @@ public class Menu {
                     Panscreen.set(new GearScreen(pc, old, avt)); }};
 			addLink("Gear", gearLsn, x, y);
 			y -= 16;
-			final ControllerInput namIn = addNameInput(avt, null, PlatformGame.MAX_NAME_AVATAR, x, y);
+			createNameInput(x, y);
 			y -= 16;
 			x = addExit("Save", left, y);
 			final MsgCloseListener canLsn = new MsgCloseListener() {
@@ -1066,7 +1084,6 @@ public class Menu {
                     actor.load(pc); }};
             x = addPipe(x, y);
             x = addLink("Export", expLsn, x, y);
-			namIn.append(avt.getName());
 		}
 		
 		private final void cancel() {
