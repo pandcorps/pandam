@@ -28,4 +28,23 @@ public final class MultiFont {
 	public MultiFont(final FontLayer... layers) {
 		this.layers = layers;
 	}
+	
+	public int getWidth() {
+		// Doesn't handle Fonts with different widths or negative offsets
+		int maxWidth = 0, maxOff = 0;
+		for (final FontLayer layer : layers) {
+			maxWidth = Math.max(maxWidth, layer.font.getWidth());
+			maxOff = Math.max(maxOff, (int) layer.off.getX());
+		}
+		return maxWidth + maxOff;
+	}
+    
+    public int getHeight() {
+    	int maxHeight = 0, maxOff = 0;
+		for (final FontLayer layer : layers) {
+			maxHeight = Math.max(maxHeight, layer.font.getHeight());
+			maxOff = Math.max(maxOff, (int) layer.off.getY());
+		}
+		return maxHeight + maxOff;
+    }
 }

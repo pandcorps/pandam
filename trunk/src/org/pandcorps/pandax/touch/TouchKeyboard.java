@@ -27,24 +27,61 @@ import org.pandcorps.pandam.Panput.*;
 import org.pandcorps.pandax.text.*;
 
 public class TouchKeyboard {
+	private final static char CHAR_BACKSPACE = '<';
+	private final Panmage img;
+	private final Panmage imgAct;
+	private final MultiFont fonts;
+	private final Panlayer layer;
+	private final int offX;
+	private final int offY;
+	private final static int z = 0;
+	
     public TouchKeyboard(final Panmage img, final Panmage imgAct, final MultiFont fonts) {
+    	this(img, imgAct, fonts, getCenteredY(img));
+    }
+    
+    public TouchKeyboard(final Panmage img, final Panmage imgAct, final MultiFont fonts, int y) {
+    	this.img = img;
+    	this.imgAct = imgAct;
+    	this.fonts = fonts;
+    	layer = Pangame.getGame().getCurrentRoom();
         final char[][] layout = {
                 {'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'},
                 {'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'},
-                {'z', 'x', 'c', 'v', 'b', 'n', 'm'}
+                {'z', 'x', 'c', 'v', 'b', 'n', 'm', CHAR_BACKSPACE}
         };
-        final int w = 12, h = 12;
-        int y = 80;
+        final Panple size = img.getSize();
+        final int w = (int) size.getX(), h = (int) size.getY();
+        final Pangine engine = Pangine.getEngine();
+        int minX = (engine.getEffectiveWidth() - (w * 10)) / 2;
+        offX = (w - fonts.getWidth()) / 2;
+        offY = (h - fonts.getHeight()) / 2;
         for (final char[] row : layout) {
-            int x = 0;
+            int x = minX;
             for (final char c : row) {
-                newTouchKey(img, imgAct, fonts, c, x, y);
+                newTouchKey(c, x, y);
                 x += w;
             }
             y -= h;
+            minX += (w / 2);
         }
     }
     
-    private final TouchButton newTouchKey(final Panmage img, final Panmage imgAct, final MultiFont fonts, final char c, final int x, final int y) {
+    private final TouchButton newTouchKey(final char c, final int x, final int y) {
+    	final Panteraction inter = Pangine.getEngine().getInteraction();
+    	final String txt = String.valueOf(Character.toUpperCase(c));
+    	final TouchButton btn = new TouchButton(inter, layer, txt, x, y, z, img, imgAct, null, 0, 0, fonts, txt, offX, offY, true);
+    	btn.setMappedInput(c == CHAR_BACKSPACE ? inter.KEY_BACKSPACE : inter.getKey(c));
+    	Pangine.getEngine().registerTouchButton(btn);
+    	return btn;
+    }
+    
+    public final static int getMaxKeyWidth() {
+    	return Pangine.getEngine().getEffectiveWidth() / 10;
+    }
+    
+    private final static int getCenteredY(final Panmage img) {
+    	final int h = (int) img.getSize().getY();
+    	return ((Pangine.getEngine().getEffectiveHeight() - (h * 3)) / 2) + (h * 2);
     }
 }
