@@ -404,9 +404,9 @@ public class Pantext extends Panctor {
 	    // TextScreen will scroll by numLines, but it allows blank lines on the last page.
 	    // So we should allow the scroll as long as there's at least one more line, even if there's not a whole page.
 	    //} else if (firstLine + numLines + linesPerPage - 1 >= text.size()) {
-	    } else if (firstLine + 1 + linesPerPage - 1 >= text.size()) {
+	    } else if ((numLines > 0) && ((firstLine + 1 + linesPerPage - 1) >= text.size())) {
             return false;
-        } else if (firstLine + numLines < 0) {
+        } else if ((firstLine + numLines) < 0) {
             return false;
         }
         firstLine += numLines;
