@@ -24,7 +24,7 @@ package org.pandcorps.pandax.text;
 
 import java.util.*;
 
-import org.pandcorps.core.Pantil;
+import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.action.*;
 
@@ -33,6 +33,7 @@ public abstract class Input extends TextItem {
     protected final InputSubmitListener listener;
     protected InputSubmitListener changeListener = null;
     protected int max = 0;
+    protected boolean properName = false;
     
     public Input(final Font font, final InputSubmitListener listener) {
     	this(new Pantext(Pantil.vmid(), font, newText()), listener);
@@ -125,10 +126,11 @@ public abstract class Input extends TextItem {
                         //Character.getType(ch)
                         if (!Character.isISOControl(ch)) {
                             final int ind = label.cursorChar, size = buf.length();
+                            final char f = format(ind, ch);
                             if (interaction.isInsEnabled() && ind < size) {
-                                buf.setCharAt(ind, ch);
+                                buf.setCharAt(ind, f);
                             } else if (max <= 0 || max > size) {
-                                buf.insert(ind, ch);
+                                buf.insert(ind, f);
                             } else {
                             	return;
                             }
@@ -138,6 +140,14 @@ public abstract class Input extends TextItem {
                     }
                 }
             }
+    }
+    
+    protected final char format(final int ind, final char ch) {
+    	if (properName) {
+    		return (ind == 0) ? Character.toUpperCase(ch) : Character.toLowerCase(ch);
+    	} else {
+    		return ch;
+    	}
     }
     
     @Override
@@ -170,6 +180,10 @@ public abstract class Input extends TextItem {
     
     public void setMax(final int max) {
     	this.max = max;
+    }
+    
+    public void setProperName(final boolean properName) {
+    	this.properName = properName;
     }
     
     public void append(final String v) {
