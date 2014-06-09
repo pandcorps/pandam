@@ -400,6 +400,7 @@ public class Menu {
 	        if (isTabEnabled()) {
 	        	in = new KeyInput(PlatformGame.font, subLsn);
 	        	new TouchKeyboard(PlatformGame.key, PlatformGame.keyIn, PlatformGame.font, y - (int) PlatformGame.key.getSize().getY() - 16);
+	        	in.setProperName(true); // Might make sense for ControllerInput, but probably doesn't work right yet
 	        } else {
 		        final ControllerInput cin = new ControllerInput(PlatformGame.font, subLsn);
 		        cin.setLetter();
