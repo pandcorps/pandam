@@ -23,7 +23,7 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.pandax.text;
 
 import java.util.*;
-import java.util.regex.Pattern;
+import java.util.regex.*;
 
 import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
@@ -524,6 +524,11 @@ public class Pantext extends Panctor {
 	public final void centerX() {
 		final Panple pos = getPosition();
 		pos.setX(pos.getX() - (size.getX() / 2));
+	}
+	
+	public final void uncenterX() {
+		final Panple pos = getPosition();
+		pos.setX(pos.getX() + (size.getX() / 2));
 	}
 	
 	// Justifies relative to the current position, not the screen/layer/etc.

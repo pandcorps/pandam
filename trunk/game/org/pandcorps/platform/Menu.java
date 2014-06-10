@@ -335,40 +335,40 @@ public class Menu {
 			final int btnH = (int) btnSize.getY(), difH = btnH + 16;
 			final int minY = (engine.getEffectiveHeight() - (btnH + difH)) / 2;
 			int x = minX, y = minY + difH;
-			final int txtX = 12, txtY = y - 12;
-			final StringBuilder sbR = initCol(col.r), sbG = initCol(col.g), sbB = initCol(col.b);
-			addTitle(sbR, x + txtX, txtY);
+			final int txtX = btnW / 2, txtY = y - 12;
+			final StringBuilder sbR = new StringBuilder(), sbG = new StringBuilder(), sbB = new StringBuilder();
+			final Pantext txtR = initCol(col.r, sbR, x + txtX, txtY);
 			newFormButton(id + ".red.up", x, y, PlatformGame.redUp, new AvtRunnable() {@Override public final void go() {
-				col.r = incCol(col.r, sbR); }});
+				col.r = incCol(col.r, sbR, txtR); }});
 			x += difW;
-			addTitle(sbG, x + txtX, txtY);
+			final Pantext txtG = initCol(col.g, sbG, x + txtX, txtY);
 			newFormButton(id + ".green.up", x, y, PlatformGame.greenUp, new AvtRunnable() {@Override public final void go() {
-				col.g = incCol(col.g, sbG); }});
+				col.g = incCol(col.g, sbG, txtG); }});
 			x += difW;
-			addTitle(sbB, x + txtX, txtY);
+			final Pantext txtB = initCol(col.b, sbB, x + txtX, txtY);
 			newFormButton(id + ".blue.up", x, y, PlatformGame.menuUp, new AvtRunnable() {@Override public final void go() {
-				col.b = incCol(col.b, sbB); }});
+				col.b = incCol(col.b, sbB, txtB); }});
 			x = minX;
 			y = minY;
 			newFormButton(id + ".red.down", x, y, PlatformGame.redDown, new AvtRunnable() {@Override public final void go() {
-				col.r = decCol(col.r, sbR); }});
+				col.r = decCol(col.r, sbR, txtR); }});
 			x += difW;
 			newFormButton(id + ".green.down", x, y, PlatformGame.greenDown, new AvtRunnable() {@Override public final void go() {
-				col.g = decCol(col.g, sbG); }});
+				col.g = decCol(col.g, sbG, txtG); }});
 			x += difW;
 			newFormButton(id + ".blue.down", x, y, PlatformGame.menuDown, new AvtRunnable() {@Override public final void go() {
-				col.b = decCol(col.b, sbB); }});
+				col.b = decCol(col.b, sbB, txtB); }});
 		}
 		
-		private final float incCol(float c, final StringBuilder sb) {
+		private final float incCol(float c, final StringBuilder sb, final Pantext text) {
 			c = (c >= 1) ? 0 : (c + 0.25f);
-			setCol(c, sb);
+			setCol(c, sb, text);
 			return c;
 		}
 		
-		private final float decCol(float c, final StringBuilder sb) {
+		private final float decCol(float c, final StringBuilder sb, final Pantext text) {
 			c = (c <= 0) ? 1 : (c - 0.25f);
-			setCol(c, sb);
+			setCol(c, sb, text);
 			return c;
 		}
 		
@@ -376,10 +376,17 @@ public class Menu {
 			Chartil.set(sb, String.valueOf((int) (c * 100)) + '%');
 		}
 		
-		private final StringBuilder initCol(final float c) {
-			final StringBuilder sb = new StringBuilder();
+		private final void setCol(final float c, final StringBuilder sb, final Pantext text) {
+			text.uncenterX();
 			setCol(c, sb);
-			return sb;
+			text.centerX();
+		}
+		
+		private final Pantext initCol(final float c, final StringBuilder sb, final int x, final int y) {
+			setCol(c, sb);
+			final Pantext text = addTitle(sb, x, y);
+			text.centerX();
+			return text;
 		}
 		
 		protected final List<RadioGroup> addColorClassic(final SimpleColor col, int x, int y) {
