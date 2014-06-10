@@ -86,6 +86,10 @@ public abstract class Pangame {
 		init(); // Don't know why this happens after engine.init; can't set window size here; don't know what steps should happen here; adding initBeforeEngine
 	}
 	
+	public final void recreate() throws Exception {
+		Pangine.getEngine().recreate();
+	}
+	
 	public final void start() throws Panception {
 		final Pangine engine = Pangine.getEngine();
 		try {
