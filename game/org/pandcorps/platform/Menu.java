@@ -328,17 +328,30 @@ public class Menu {
 		
 		protected final void addColorTouch(final SimpleColor col) {
 			final String id = Pantil.vmid();
-			newFormButton(id + ".red.up", 32, 152, PlatformGame.redUp, new AvtRunnable() {@Override public final void go() {
+			final Pangine engine = Pangine.getEngine();
+			final Panple btnSize = PlatformGame.menu.getSize();
+			final int btnW = (int) btnSize.getX(), gapW = (btnW * 5) / 6, difW = btnW + gapW;
+			final int minX = (engine.getEffectiveWidth() - (btnW * 3 + gapW * 2)) / 2;
+			final int btnH = (int) btnSize.getY(), difH = btnH + 16;
+			final int minY = (engine.getEffectiveHeight() - (btnH + difH)) / 2;
+			int x = minX, y = minY + difH;
+			newFormButton(id + ".red.up", x, y, PlatformGame.redUp, new AvtRunnable() {@Override public final void go() {
 				col.r = incCol(col.r); }});
-			newFormButton(id + ".green.up", 120, 152, PlatformGame.greenUp, new AvtRunnable() {@Override public final void go() {
+			x += difW;
+			newFormButton(id + ".green.up", x, y, PlatformGame.greenUp, new AvtRunnable() {@Override public final void go() {
 				col.g = incCol(col.g); }});
-			newFormButton(id + ".blue.up", 208, 152, PlatformGame.menuUp, new AvtRunnable() {@Override public final void go() {
+			x += difW;
+			newFormButton(id + ".blue.up", x, y, PlatformGame.menuUp, new AvtRunnable() {@Override public final void go() {
 				col.b = incCol(col.b); }});
-			newFormButton(id + ".red.down", 32, 112, PlatformGame.redDown, new AvtRunnable() {@Override public final void go() {
+			x = minX;
+			y = minY;
+			newFormButton(id + ".red.down", x, y, PlatformGame.redDown, new AvtRunnable() {@Override public final void go() {
 				col.r = decCol(col.r); }});
-			newFormButton(id + ".green.down", 120, 112, PlatformGame.greenDown, new AvtRunnable() {@Override public final void go() {
+			x += difW;
+			newFormButton(id + ".green.down", x, y, PlatformGame.greenDown, new AvtRunnable() {@Override public final void go() {
 				col.g = decCol(col.g); }});
-			newFormButton(id + ".blue.down", 208, 112, PlatformGame.menuDown, new AvtRunnable() {@Override public final void go() {
+			x += difW;
+			newFormButton(id + ".blue.down", x, y, PlatformGame.menuDown, new AvtRunnable() {@Override public final void go() {
 				col.b = decCol(col.b); }});
 		}
 		
