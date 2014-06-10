@@ -31,11 +31,12 @@ import org.pandcorps.pandam.*;
 
 public final class GlPanmage extends Panmage {
 	private final static int NULL_TID = 0;
+	public static boolean saveTextures = false;
 	private final int w;
 	private final int h;
 	/*package*/ final SizePanple size;
 	private int tid;
-	private Texture tex = null;
+	protected Texture tex = null;
 	private final float offx;
 	private final float offy;
 	private final int tw;
@@ -69,7 +70,7 @@ public final class GlPanmage extends Panmage {
 		}
 	}
 	
-	private final static class Texture {
+	protected final static class Texture {
 	    private final int usableWidth; // raw
 	    
 	    private final int usableHeight;
@@ -80,7 +81,9 @@ public final class GlPanmage extends Panmage {
 	    
 	    private final int scaledHeight;
 	    
-	    private final ByteBuffer scratch;
+	    protected ByteBuffer scratch;
+	    
+	    private int tid = NULL_TID; // Multiple GLPanmages can share same Texture
 	    
 	    private Texture(final int usableWidth, final int usableHeight, final int paddedSize, final int scaledWidth, final int scaledHeight, final ByteBuffer scratch) {
 	        this.usableWidth = usableWidth;
@@ -89,6 +92,11 @@ public final class GlPanmage extends Panmage {
 	        this.scaledWidth = scaledWidth;
 	        this.scaledHeight = scaledHeight;
 	        this.scratch = scratch;
+	    }
+	    
+	    private final void close() {
+	    	scratch.clear();
+			scratch = null;
 	    }
 	}
 
@@ -147,22 +155,36 @@ public final class GlPanmage extends Panmage {
 	Pangine's main loop should start binding any unbound images during frames with extra time.
 	*/
 	private final void bindTexture() {
+		if (tex.tid != NULL_TID) {
+			tid = tex.tid;
+			/*if (tid == NULL_TID) {
+	            throw new IllegalStateException("Previously handled texture id was unexpectedly " + tid);
+	        }*/
+			return; // Must have been handled by a different GlPanmage with same Texture
+		}
 		// Create A IntBuffer For Image Address In Memory
 		final IntBuffer buf = Pantil.allocateDirectIntBuffer(1);
-		final Pangl gl = GlPangine.gl;
-		gl.glGenTextures(buf); // Create Texture In OpenGL
+		GlPangine.gl.glGenTextures(buf); // Create Texture In OpenGL
 		// Create Nearest Filtered Texture
 		tid = buf.get(0);
 		if (tid == NULL_TID) {
             throw new IllegalStateException("New texture id was unexpectedly " + tid);
         }
+		tex.tid = tid;
+		rebindTexture();
+		if (!saveTextures) {
+			tex.close();
+		}
+	}
+	
+	protected final void rebindTexture() {
+		final Pangl gl = GlPangine.gl;
 		gl.glBindTexture(gl.GL_TEXTURE_2D, tid);
 		gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_NEAREST);
 		gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MIN_FILTER, gl.GL_NEAREST);
 		gl.glTexImage2D(
 			gl.GL_TEXTURE_2D, 0, gl.GL_RGBA, tex.scaledWidth, tex.scaledHeight, 0, gl.GL_RGBA, gl.GL_UNSIGNED_BYTE,
 			tex.scratch);
-////
 	}
 	
 	private GlPanmage(final String id, final Panple origin,
@@ -251,10 +273,11 @@ public final class GlPanmage extends Panmage {
 	    final int numTexCoords = t.getSize();
 	    if (numTexCoords > 0) {
 	    	final Pangl gl = GlPangine.gl;
-	    	if (tex != null) {
+	    	if (tid == NULL_TID) {
 	    	    bindTexture();
-	    	    tex.scratch.clear();
-	    	    tex = null;
+	    	    if (!saveTextures) {
+	    	    	tex = null;
+	    	    }
 	    	}
     	    gl.glLoadIdentity();
     	    gl.glBindTexture(gl.GL_TEXTURE_2D, tid);
@@ -522,7 +545,10 @@ public final class GlPanmage extends Panmage {
     protected final void close() {
 		if (tid == NULL_TID) {
 			return;
+		} else if (saveTextures && tex != null && tex.scratch != null) {
+			tex.close();
 		}
+		GlPangine.images.remove(this);
 	    //System.out.println("Closing " + tid + "; isTexture: " + gl.glIsTexture(tid)); // true
 		GlPangine.gl.glDeleteTextures(tid);
 	    //System.out.println("Closed " + tid + "; isTexture: " + gl.glIsTexture(tid)); // false, and no longer displayed

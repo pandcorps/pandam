@@ -26,14 +26,16 @@ import java.nio.*;
 import java.util.*;
 
 import org.pandcorps.core.*;
+import org.pandcorps.core.col.*;
 import org.pandcorps.core.img.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.Panput.*;
 import org.pandcorps.pandam.event.action.*;
+import org.pandcorps.pandam.impl.GlPanmage.*;
 
 public abstract class GlPangine extends Pangine {
 	public static Pangl gl = null;
-	private final static ArrayList<GlPanmage> images = new ArrayList<GlPanmage>();
+	protected final static ArrayList<GlPanmage> images = new ArrayList<GlPanmage>();
 	private final static List<GlPanmage> newImages = new Vector<GlPanmage>();
 	protected final Panteraction interaction;
 	protected final HashSet<Panput> active = new HashSet<Panput>();
@@ -155,6 +157,18 @@ public abstract class GlPangine extends Pangine {
 		gl.glAlphaFunc(gl.GL_GREATER, 0);
 		
 		initInput();
+	}
+	
+	@Override
+	protected final void recreate() throws Exception {
+		init();
+		final IdentityHashSet<Texture> textures = new IdentityHashSet<Texture>();
+		for (final GlPanmage image : images) {
+			if (textures.add(image.tex)) { // A sheet of images can share same Texture
+				image.tex.scratch.rewind();
+				image.rebindTexture();
+			}
+		}
 	}
 	
 	protected abstract void initInput() throws Exception;
