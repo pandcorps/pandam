@@ -169,6 +169,11 @@ public final class AndroidPangl extends Pangl {
 	}
 	
 	@Override
+	public final void glViewport(final int x, final int y, final int width, final int height) {
+		gl.glViewport(x, y, width, height);
+	}
+	
+	@Override
 	public final boolean isQuadSupported() {
 		return false;
 	}

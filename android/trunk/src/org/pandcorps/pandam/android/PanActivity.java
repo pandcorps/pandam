@@ -46,6 +46,14 @@ public class PanActivity extends Activity {
         
         System.setProperty("user.dir", getFilesDir().getAbsolutePath());
         
+        setSize();
+        setContentView(view);
+	}
+	
+	private final void setSize() {
+		if (AndroidPangine.desktopWidth > 0) {
+			return;
+		}
         final int w = view.getWidth();
         if (w > 0) {
         	AndroidPangine.desktopWidth = w;
@@ -62,8 +70,6 @@ public class PanActivity extends Activity {
         		}
         	}
         }
-        
-        setContentView(view);
 	}
 
 	@Override
