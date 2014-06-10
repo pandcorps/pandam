@@ -335,32 +335,51 @@ public class Menu {
 			final int btnH = (int) btnSize.getY(), difH = btnH + 16;
 			final int minY = (engine.getEffectiveHeight() - (btnH + difH)) / 2;
 			int x = minX, y = minY + difH;
+			final int txtX = 12, txtY = y - 12;
+			final StringBuilder sbR = initCol(col.r), sbG = initCol(col.g), sbB = initCol(col.b);
+			addTitle(sbR, x + txtX, txtY);
 			newFormButton(id + ".red.up", x, y, PlatformGame.redUp, new AvtRunnable() {@Override public final void go() {
-				col.r = incCol(col.r); }});
+				col.r = incCol(col.r, sbR); }});
 			x += difW;
+			addTitle(sbG, x + txtX, txtY);
 			newFormButton(id + ".green.up", x, y, PlatformGame.greenUp, new AvtRunnable() {@Override public final void go() {
-				col.g = incCol(col.g); }});
+				col.g = incCol(col.g, sbG); }});
 			x += difW;
+			addTitle(sbB, x + txtX, txtY);
 			newFormButton(id + ".blue.up", x, y, PlatformGame.menuUp, new AvtRunnable() {@Override public final void go() {
-				col.b = incCol(col.b); }});
+				col.b = incCol(col.b, sbB); }});
 			x = minX;
 			y = minY;
 			newFormButton(id + ".red.down", x, y, PlatformGame.redDown, new AvtRunnable() {@Override public final void go() {
-				col.r = decCol(col.r); }});
+				col.r = decCol(col.r, sbR); }});
 			x += difW;
 			newFormButton(id + ".green.down", x, y, PlatformGame.greenDown, new AvtRunnable() {@Override public final void go() {
-				col.g = decCol(col.g); }});
+				col.g = decCol(col.g, sbG); }});
 			x += difW;
 			newFormButton(id + ".blue.down", x, y, PlatformGame.menuDown, new AvtRunnable() {@Override public final void go() {
-				col.b = decCol(col.b); }});
+				col.b = decCol(col.b, sbB); }});
 		}
 		
-		private final float incCol(final float c) {
-			return c >= 1 ? 0 : (c + 0.25f);
+		private final float incCol(float c, final StringBuilder sb) {
+			c = (c >= 1) ? 0 : (c + 0.25f);
+			setCol(c, sb);
+			return c;
 		}
 		
-		private final float decCol(final float c) {
-			return c <= 0 ? 1 : (c - 0.25f);
+		private final float decCol(float c, final StringBuilder sb) {
+			c = (c <= 0) ? 1 : (c - 0.25f);
+			setCol(c, sb);
+			return c;
+		}
+		
+		private final void setCol(final float c, final StringBuilder sb) {
+			Chartil.set(sb, String.valueOf((int) (c * 100)) + '%');
+		}
+		
+		private final StringBuilder initCol(final float c) {
+			final StringBuilder sb = new StringBuilder();
+			setCol(c, sb);
+			return sb;
 		}
 		
 		protected final List<RadioGroup> addColorClassic(final SimpleColor col, int x, int y) {
