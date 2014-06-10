@@ -772,6 +772,9 @@ public abstract class Pangine {
 	protected abstract void loop() throws Exception;
 	
 	protected abstract void destroy() throws Exception;
+	
+	protected void recreate() throws Exception {
+	}
 
 	public final void track(final Panctor actor) {
 	    actor.layer.tracked = actor;
