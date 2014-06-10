@@ -156,6 +156,11 @@ public final class LwjglPangl extends Pangl {
 	}
 	
 	@Override
+	public final void glViewport(final int x, final int y, final int width, final int height) {
+		GL11.glViewport(x, y, width, height);
+	}
+	
+	@Override
 	public final boolean isQuadSupported() {
 		return true;
 	}
