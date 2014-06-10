@@ -26,11 +26,15 @@ import javax.microedition.khronos.egl.*;
 import javax.microedition.khronos.opengles.*;
 
 import org.pandcorps.core.*;
+import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.impl.*;
 import org.pandcorps.platform.*;
 
 import android.opengl.GLSurfaceView.*;
 
 public final class PanRenderer implements Renderer {
+	private Pangame game = null;
+	
 	protected PanRenderer() {
 	}
 
@@ -51,15 +55,26 @@ public final class PanRenderer implements Renderer {
 
 	@Override
 	public final void onSurfaceChanged(final GL10 gl, final int width, int height) {
-		//TODO
+		//TODO... Or maybe nothing needs to be done
 	}
 
 	@Override
 	public final void onSurfaceCreated(final GL10 gl, final EGLConfig config) {
+		/*
+		Also called when surface is recreated.
+		(After waking up from sleep.)
+		Need to reload textures after 1st time.
+		*/
 		AndroidPangine.gl = new AndroidPangl(gl);
 		
 		try {
-			new PlatformGame().beforeLoop();
+			if (game == null) {
+				GlPanmage.saveTextures = true;
+				game = new PlatformGame();
+				game.beforeLoop();
+			} else {
+				game.recreate();
+			}
 		} catch (final Exception e) {
 			e.printStackTrace();
 			throw Pantil.toRuntimeException(e);
