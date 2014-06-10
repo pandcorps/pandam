@@ -162,6 +162,7 @@ public abstract class GlPangine extends Pangine {
 	@Override
 	protected final void recreate() throws Exception {
 		init();
+		gl.glViewport(0, 0, getDesktopWidth(), getDesktopHeight());
 		final IdentityHashSet<Texture> textures = new IdentityHashSet<Texture>();
 		for (final GlPanmage image : images) {
 			if (textures.add(image.tex)) { // A sheet of images can share same Texture
@@ -462,7 +463,7 @@ public abstract class GlPangine extends Pangine {
 		//GLU.gluOrtho2D(0, w, 0, h);
 		cam(layer);
 		//gl.glOrtho(0, w, 0, h, -maxDimension, maxDimension);
-		gl.glMatrixMode(gl.GL_MODELVIEW);		
+		gl.glMatrixMode(gl.GL_MODELVIEW);
 	}
 	
 	private final static int formatCam(final float c) {

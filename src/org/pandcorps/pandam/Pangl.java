@@ -125,5 +125,7 @@ public abstract class Pangl {
 	
 	public abstract void glVertexPointer(final int size, final int stride, final FloatBuffer pointer);
 	
+	public abstract void glViewport(final int x, final int y, final int width, final int height);
+	
 	public abstract boolean isQuadSupported();
 }
