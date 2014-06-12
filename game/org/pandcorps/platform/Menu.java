@@ -988,7 +988,8 @@ public class Menu {
 		private final static byte TAB_ANIMAL = 0;
 		private final static byte TAB_EYES = 1;
 		private final static byte TAB_COLOR = 2;
-		private final static byte TAB_NAME = 3;
+		private final static byte TAB_GEAR = 3;
+		private final static byte TAB_NAME = 4;
 		private static byte currentTab = TAB_ANIMAL;
 	    private boolean save = true;
 		private Avatar old = null;
@@ -1040,6 +1041,14 @@ public class Menu {
 				case TAB_COLOR :
 					addColor(avt.col, 0, 0);
 					break;
+				case TAB_GEAR :
+				    /*
+				    Can show here for now.
+				    If we add projectiles or other upgrades,
+				    this should go to a separate gear tab-list with its own jump/projectile/etc. tabs.
+				    */
+				    newGearScreen().createJumpList(touchRadioX, touchRadioY);
+				    break;
 				case TAB_NAME :
 					createNameInput(8, (int) (Pangine.getEngine().getEffectiveHeight() - PlatformGame.menu.getSize().getY() - 16));
 					break;
@@ -1049,6 +1058,7 @@ public class Menu {
 			newTab(PlatformGame.menuAnimal, "Kind", TAB_ANIMAL);
 			newTab(PlatformGame.menuEyes, "Eyes", TAB_EYES);
 			newTab(PlatformGame.menuColor, "Color", TAB_COLOR);
+			newTab(PlatformGame.menuGear, "Gear", TAB_GEAR);
 			newTab(null, "Name", TAB_NAME);
 			newTabs();
 		}
@@ -1092,6 +1102,10 @@ public class Menu {
 			namIn.append(avt.getName());
 		}
 		
+		private final GearScreen newGearScreen() {
+		    return new GearScreen(pc, old, avt);
+		}
+		
 		protected final void menuClassic() {
 			final int left = getLeft();
 			int x = left, y = getTop();
@@ -1103,7 +1117,7 @@ public class Menu {
 			x = left;
 			final MsgCloseListener gearLsn = new MsgCloseListener() {
                 @Override public final void onClose() {
-                    Panscreen.set(new GearScreen(pc, old, avt)); }};
+                    Panscreen.set(newGearScreen()); }};
 			addLink("Gear", gearLsn, x, y);
 			y -= 16;
 			createNameInput(x, y);
@@ -1176,11 +1190,8 @@ public class Menu {
             this.avt = avt;
         }
         
-        @Override
-        protected final void menu() throws Exception {
+        protected final void createJumpList(final int x, final int y) {
             addHudGems();
-            final int left = getLeft();
-            int y = getTop();
             final JumpMode[] jumpModes = JumpMode.values();
             final List<String> jmps = new ArrayList<String>(jumpModes.length);
             for (final JumpMode jm : jumpModes) {
@@ -1218,8 +1229,15 @@ public class Menu {
                         }
                     }
                 }};
-            jmpRadio = addRadio("Jump Mode", jmps, jmpSubLsn, jmpLsn, left, y);
+            jmpRadio = addRadio("Jump Mode", jmps, jmpSubLsn, jmpLsn, x, y);
             initJumpMode();
+        }
+        
+        @Override
+        protected final void menu() throws Exception {
+            final int left = getLeft();
+            int y = getTop();
+            createJumpList(left, y);
             jmpColors = addColor(avt.jumpCol, left + 88, y);
             initJumpColors();
             y -= 64;
