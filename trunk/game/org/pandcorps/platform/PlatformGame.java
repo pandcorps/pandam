@@ -659,7 +659,7 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 			    menuColor = createMenuImg("Color");
 			    menuAnimal = createMenuImg("Animal");
 			    menuEyes = createMenuImg("Eyes");
-			    //menuGear = createMenuImg("Gear");
+			    menuGear = createMenuImg("Gear");
 			    //menuIn = engine.createImage(Pantil.vmid(), ImtilX.indent(left));
 			    menuIn = engine.createImage(Pantil.vmid(), ImtilX.newButton(w, h, clrIn));
 			    menuDisabled = engine.createImage(Pantil.vmid(), ImtilX.newButton(w, h, new FinPancolor((short) 128, (short) 96, (short) 160)));
