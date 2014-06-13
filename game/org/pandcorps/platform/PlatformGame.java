@@ -182,6 +182,7 @@ public class PlatformGame extends BaseGame {
 	protected static Panmage menuAnimal = null;
 	protected static Panmage menuEyes = null;
 	protected static Panmage menuGear = null;
+	protected static Panmage menuKeyboard = null;
 	protected static Panmage redUp = null;
 	protected static Panmage redDown = null;
 	protected static Panmage greenUp = null;
@@ -660,6 +661,7 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 			    menuAnimal = createMenuImg("Animal");
 			    menuEyes = createMenuImg("Eyes");
 			    menuGear = createMenuImg("Gear");
+			    menuKeyboard = createMenuImg("Keyboard");
 			    //menuIn = engine.createImage(Pantil.vmid(), ImtilX.indent(left));
 			    menuIn = engine.createImage(Pantil.vmid(), ImtilX.newButton(w, h, clrIn));
 			    menuDisabled = engine.createImage(Pantil.vmid(), ImtilX.newButton(w, h, new FinPancolor((short) 128, (short) 96, (short) 160)));

@@ -226,7 +226,7 @@ public class Menu {
 			return button;
 		}
 		
-		private final static int offx(final Panmage img) {
+		protected final static int offx(final Panmage img) {
 			return img == null ? 0 : TouchTabs.off(PlatformGame.menu.getSize().getX(), img.getSize().getX());
 		}
 		
@@ -234,8 +234,12 @@ public class Menu {
 			return img == null ? 0 : TouchTabs.off(PlatformGame.menu.getSize().getY(), img.getSize().getY());
 		}
 		
+		protected final static int OFF_OVERLAY_Y = 10;
+		protected final static int OFF_TEXT_X = 4;
+		protected final static int OFF_TEXT_Y = 2;
+		
 		protected final TouchButton newTab(final Panmage img, final CharSequence txt, final Runnable listener) {
-			final TouchButton tab = TouchTabs.newButton(getLayer(), Pantil.vmid(), PlatformGame.menu, PlatformGame.menuIn, img, offx(img), 10, PlatformGame.font, txt, 4, 2,
+			final TouchButton tab = TouchTabs.newButton(getLayer(), Pantil.vmid(), PlatformGame.menu, PlatformGame.menuIn, img, offx(img), OFF_OVERLAY_Y, PlatformGame.font, txt, OFF_TEXT_X, OFF_TEXT_Y,
 					new Runnable() { @Override public void run() {
 						if (disabled) {
 							return;
@@ -1060,7 +1064,7 @@ public class Menu {
 			newTab(PlatformGame.menuEyes, "Eyes", TAB_EYES);
 			newTab(PlatformGame.menuColor, "Color", TAB_COLOR);
 			newTab(PlatformGame.menuGear, "Gear", new Runnable() {@Override public final void run() {goGear();}});
-			newTab(null, "Name", TAB_NAME);
+			newTab(PlatformGame.menuKeyboard, "Name", TAB_NAME);
 			newTabs();
 		}
 		
@@ -1192,6 +1196,20 @@ public class Menu {
             tabsSupported = true;
         }
         
+        private final void reattach(final String info, final TouchButton sub, final Panmage img, final String txt) {
+        	setInfo(info);
+        	if (sub == null) {
+        		return;
+        	}
+        	sub.setOverlay(img, offx(img), OFF_OVERLAY_Y + 6);
+        	sub.setText(PlatformGame.font, txt, OFF_TEXT_X, OFF_TEXT_Y);
+        	TouchButton.reattach(sub);
+        }
+        
+        private final void reattachBuy(final String info, final TouchButton sub) {
+        	reattach(info, sub, PlatformGame.gem[0], "Buy");
+        }
+        
         protected final void createJumpList(final int x, final int y) {
             addHudGems();
             final JumpMode[] jumpModes = JumpMode.values();
@@ -1210,11 +1228,9 @@ public class Menu {
                         TouchButton.detach(sub);
                         setJumpMode(index);
                     } else if (pc.profile.isJumpModeTryable(index) && avt.jumpMode != index) {
-                    	setInfo("Free trial for 1 Level?");
-                    	TouchButton.reattach(sub);
+                    	reattach("Free trial for 1 Level?", sub, PlatformGame.gemWhite, "Try");
                     } else {
-                    	setInfo("Buy for " + jm.getCost() + "?");
-                    	TouchButton.reattach(sub);
+                    	reattachBuy("Buy for " + jm.getCost() + "?", sub);
                     }
                 }};
             final RadioSubmitListener jmpSubLsn = new AvtListener() {
@@ -1225,7 +1241,7 @@ public class Menu {
                         final int cost = jm.getCost();
                         if (Chartil.charAt(inf, 0) == 'F') {
                         	setJumpMode(index);
-                        	setInfo("Equipped! Buy for " + jm.getCost() + "?");
+                        	reattachBuy("Equipped! Buy for " + jm.getCost() + "?", sub);
                         } else if (pc.profile.gems > cost) {
                             pc.profile.gems -= cost;
                             pc.profile.availableJumpModes.add(Integer.valueOf(index));
@@ -1252,7 +1268,7 @@ public class Menu {
 		}
 		
 		protected final void menuTouch() {
-			newTab(PlatformGame.greenUp, "Back", new Runnable() {@Override public final void run() {exit();}});
+			newTab(PlatformGame.menuCheck, "Back", new Runnable() {@Override public final void run() {exit();}});
 			createJumpList(touchRadioX, touchRadioY);
 			newTabs();
 		}
