@@ -31,6 +31,9 @@ import android.view.*;
 public class PanSurfaceView extends GLSurfaceView {
 	public PanSurfaceView(final Context context) {
 		super(context);
+		setClickable(true);
+		setFocusable(true);
+		setFocusableInTouchMode(true);
 	}
 	
 	@Override
@@ -66,5 +69,26 @@ public class PanSurfaceView extends GLSurfaceView {
 	
 	private final void addTouchEvent(final byte type, final MotionEvent event, final int index) {
 		AndroidPangine.engine.addTouchEvent(event.getPointerId(index), type, event.getX(index), event.getY(index));
+	}
+	
+	// Input events can also be handled in activity
+	@Override
+	public final boolean onKeyDown(final int keyCode, final KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			if (event.getRepeatCount() == 0) {
+				AndroidPangine.engine.addInputEvent(AndroidPangine.engine.getInteraction().BACK, true);
+			}
+			return true;
+		}
+		return super.onKeyDown(keyCode, event);
+	}
+	
+	@Override
+	public final boolean onKeyUp(final int keyCode, final KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			AndroidPangine.engine.addInputEvent(AndroidPangine.engine.getInteraction().BACK, false);
+			return true;
+		}
+		return super.onKeyUp(keyCode, event);
 	}
 }
