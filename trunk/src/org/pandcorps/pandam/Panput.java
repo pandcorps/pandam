@@ -221,12 +221,22 @@ public abstract class Panput {
 		                            final Panmage imgOverlay, final int xOverlay, final int yOverlay,
 		                            final MultiFont fonts, final CharSequence txt, final int xText, final int yText) {
 		    setActor(addActor(layer, xMin, yMin, z, img), imgActive);
-		    if (imgOverlay != null) {
-		        actorOverlay = addActor(layer, xMin + xOverlay, yMin + yOverlay, z + 1, imgOverlay);
+		    setOverlay(imgOverlay, xOverlay, yOverlay);
+		    setText(fonts, txt, xText, yText);
+		}
+		
+		public final void setOverlay(final Panmage imgOverlay, final int xOverlay, final int yOverlay) {
+			Panctor.destroy(actorOverlay);
+			if (imgOverlay != null) {
+		        actorOverlay = addActor(layer, xMin + xOverlay, yMin + yOverlay, actor.getPosition().getZ() + 1, imgOverlay);
 		    }
+		}
+		
+		public final void setText(final MultiFont fonts, final CharSequence txt, final int xText, final int yText) {
+			Panctor.destroy(text);
 		    if (txt != null) {
 		        text = new Pantext(Pantil.vmid(), fonts, txt);
-		        text.getPosition().set(xMin + xText, yMin + yText, z + 2);
+		        text.getPosition().set(xMin + xText, yMin + yText, actor.getPosition().getZ() + 2);
 		        layer.addActor(text);
 		    }
 		}
