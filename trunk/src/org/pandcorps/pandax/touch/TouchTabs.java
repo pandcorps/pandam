@@ -119,7 +119,6 @@ public class TouchTabs {
     }
     
     private final void initButtons() {
-        final Pangine engine = Pangine.getEngine();
         int x = this.x + ((leftButton == null) ? 0 : buttonWidth);
         final int size = buttons.length;
         for (int i = 0; i < size; i++) {
@@ -129,9 +128,7 @@ public class TouchTabs {
                 button.detach();
                 continue;
             }
-            if (!engine.isTouchButtonRegistered(button)) {
-                button.reattach();
-            }
+            button.reattach();
             button.setPosition(x, y);
             x += buttonWidth;
             final Panctor actor = button.getActor();
