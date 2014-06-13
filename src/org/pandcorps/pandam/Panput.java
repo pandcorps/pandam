@@ -325,8 +325,18 @@ public abstract class Panput {
 		    Panctor.detach(text);
 		}
 		
+		public final static void detach(final TouchButton button) {
+			if (button != null) {
+				button.detach();
+			}
+		}
+		
 		public final void reattach() {
-		    Pangine.getEngine().registerTouchButton(this);
+			final Pangine engine = Pangine.getEngine();
+			if (engine.isTouchButtonRegistered(this)) {
+				return;
+			}
+		    engine.registerTouchButton(this);
 		    if (layer != null) {
 		        layer.addActor(actor);
 		        if (actorOverlay != null) {
@@ -336,6 +346,12 @@ public abstract class Panput {
 		            layer.addActor(text);
 		        }
 		    }
+		}
+		
+		public final static void reattach(final TouchButton button) {
+			if (button != null) {
+				button.reattach();
+			}
 		}
 		
 		@Override
