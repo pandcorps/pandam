@@ -44,6 +44,7 @@ public abstract class GlPangine extends Pangine {
 	protected final static Vector<TouchEvent> touchEvents = new Vector<TouchEvent>();
 	protected final static Vector<TouchButton> touchButtons = new Vector<TouchButton>();
 	private final static Map<Integer, Panput> touchMap = new HashMap<Integer, Panput>();
+	protected final static Vector<InputEvent> inputEvents = new Vector<InputEvent>();
 	private FloatBuffer blendRectangle = null;
 	public boolean capsLock = false;
 	public boolean ins = false;
@@ -227,9 +228,24 @@ public abstract class GlPangine extends Pangine {
     			}
     		}
     	}
+		clear(touchEvents, size);
+		
+		stepInputs();
+	}
+	
+	private final static void clear(final Vector<?> v, final int size) {
 		for (int i = size - 1; i >= 0; i--) {
-			touchEvents.remove(i);
+			v.remove(i);
 		}
+	}
+	
+	private final void stepInputs() {
+		final int size = inputEvents.size();
+		for (int i = 0; i < size; i++) {
+			final InputEvent event = inputEvents.get(i);
+			activate(event.input, event.active);
+		}
+		clear(inputEvents, size);
 	}
 	
 	private final void activateMove(final Panput input, final boolean active) {
@@ -250,6 +266,10 @@ public abstract class GlPangine extends Pangine {
 	public final void addTouchEvent(final int id, final byte type, final float x, final float y) {
 		final float zoom = getZoom();
 		touchEvents.add(new TouchEvent(id, type, Math.round(x / zoom), Math.round((getDisplayHeight() - y) / zoom)));
+	}
+	
+	public final void addInputEvent(final Panput input, final boolean active) {
+		inputEvents.add(new InputEvent(input, active));
 	}
 	
 	@Override
@@ -362,12 +382,22 @@ public abstract class GlPangine extends Pangine {
 	}
 	
 	private final void deactivate(final Panput input) {
+		boolean uncaught = true;
 		for (final ActionEndListener endListener : Coltil.unnull(interaction.getEndListeners(input))) {
 			//endListener.onActionEnd(ActionEndEvent.INSTANCE);
 		    if (!isActive(getActor(endListener))) {
                 continue;
             }
 		    endListener.onActionEnd(ActionEndEvent.getEvent(input));
+		    uncaught = false;
+		}
+		if (uncaught && input == interaction.BACK) {
+			if (uncaughtBackHandler == null) {
+				System.out.println("UNCAUGHT BACK, EXITING");
+				exit();
+			} else {
+				uncaughtBackHandler.run();
+			}
 		}
 		/*
 		TODO
@@ -683,4 +713,14 @@ public abstract class GlPangine extends Pangine {
     }
     
     protected abstract void onDestroy() throws Exception;
+    
+    private final static class InputEvent {
+    	private final Panput input;
+    	private final boolean active;
+    	
+    	private InputEvent(final Panput input, final boolean active) {
+    		this.input = input;
+    		this.active = active;
+    	}
+    }
 }

@@ -97,6 +97,12 @@ public abstract class Panteraction {
 	
 	public final Touch TOUCH;
 	
+	private final static class ImplPanput extends Panput {
+		private ImplPanput(final Device device, final String name) {
+			super(device, name);
+		}
+	}
+	
 	public abstract static class Device {
 		private final String name;
 		
@@ -155,6 +161,7 @@ public abstract class Panteraction {
 	}
 	
 	public final Touchscreen TOUCHSCREEN = new Touchscreen();
+	public final Panput BACK = new ImplPanput(TOUCHSCREEN, "Back");
 	
 	public final int IND_ESCAPE = 1;
 	public final int IND_1 = 2;
