@@ -271,29 +271,39 @@ public class Menu {
 		}
 		
 		protected final RadioGroup addRadio(final String title, final List<? extends CharSequence> list, final RadioSubmitListener subLsn, final RadioSubmitListener chgLsn, final int x, final int y) {
+			return addRadio(title, list, subLsn, chgLsn, x, y, null);
+		}
+		
+		protected final RadioGroup addRadio(final String title, final List<? extends CharSequence> list, final RadioSubmitListener subLsn, final RadioSubmitListener chgLsn, final int xb, final int y, final TouchButton sub) {
 			if (tabsSupported && isTabEnabled()) {
 				final int yt = y - 100;
 				final String id = Pantil.vmid();
-				ctrl.setUp(newFormButton(id + ".radio.up", x + 100, yt + 100, PlatformGame.menuUp));
-				ctrl.setDown(newFormButton(id + ".radio.down", x + 100, yt, PlatformGame.menuDown));
+				ctrl.setUp(newFormButton(id + ".radio.up", xb, yt + 100, PlatformGame.menuUp));
+				ctrl.setDown(newFormButton(id + ".radio.down", xb, yt, PlatformGame.menuDown));
 				if (subLsn != null) {
 					//final TouchButton sub = newFormButton(id + ".radio.submit", x + 200, yt, PlatformGame.menuCheck);
-					final TouchButton sub = null; // Will use tab bar to simulate submit button below
+					//final TouchButton sub = null; // Will use tab bar to simulate submit button below
 					ctrl.setSubmit(sub);
 					ctrl.set1(sub);
 				}
 			}
 			final RadioGroup grp = new RadioGroup(PlatformGame.font, list, subLsn);
-			if (subLsn != null && tabsSupported && isTabEnabled()) {
+			if (sub == null && subLsn != null && tabsSupported && isTabEnabled()) {
 				newTab(PlatformGame.menuCheck, "Done", new Runnable() {@Override public final void run() {grp.submit();}});
 			}
 			grp.setChangeListener(chgLsn);
+			final int x = xb + 100;
 			addItem(grp, x, y - 16);
 			grp.addChild(addTitle(title, x, y));
 			final Pantext label = grp.getLabel();
 			label.setLinesPerPage(5);
 			label.stretchCharactersPerLineToFit();
 			return grp;
+		}
+		
+		protected final TouchButton newRadioSubmitButton(final int x, final int y) {
+			final int xr = Pangine.getEngine().getEffectiveWidth() - x - (int) PlatformGame.menu.getSize().getX();
+			return newFormButton(Pantil.vmid() + ".radio.submit", xr, y - 100, PlatformGame.menuCheck);
 		}
 		
 		private final static TouchButton newFormButton(final Panlayer layer, final String name, final int x, final int y, final Panmage img) {
@@ -988,8 +998,7 @@ public class Menu {
 		private final static byte TAB_ANIMAL = 0;
 		private final static byte TAB_EYES = 1;
 		private final static byte TAB_COLOR = 2;
-		private final static byte TAB_GEAR = 3;
-		private final static byte TAB_NAME = 4;
+		private final static byte TAB_NAME = 3;
 		private static byte currentTab = TAB_ANIMAL;
 	    private boolean save = true;
 		private Avatar old = null;
@@ -1041,14 +1050,6 @@ public class Menu {
 				case TAB_COLOR :
 					addColor(avt.col, 0, 0);
 					break;
-				case TAB_GEAR :
-				    /*
-				    Can show here for now.
-				    If we add projectiles or other upgrades,
-				    this should go to a separate gear tab-list with its own jump/projectile/etc. tabs.
-				    */
-				    newGearScreen().createJumpList(touchRadioX, touchRadioY);
-				    break;
 				case TAB_NAME :
 					createNameInput(8, (int) (Pangine.getEngine().getEffectiveHeight() - PlatformGame.menu.getSize().getY() - 16));
 					break;
@@ -1058,7 +1059,7 @@ public class Menu {
 			newTab(PlatformGame.menuAnimal, "Kind", TAB_ANIMAL);
 			newTab(PlatformGame.menuEyes, "Eyes", TAB_EYES);
 			newTab(PlatformGame.menuColor, "Color", TAB_COLOR);
-			newTab(PlatformGame.menuGear, "Gear", TAB_GEAR);
+			newTab(PlatformGame.menuGear, "Gear", new Runnable() {@Override public final void run() {goGear();}});
 			newTab(null, "Name", TAB_NAME);
 			newTabs();
 		}
@@ -1102,8 +1103,8 @@ public class Menu {
 			namIn.append(avt.getName());
 		}
 		
-		private final GearScreen newGearScreen() {
-		    return new GearScreen(pc, old, avt);
+		private final void goGear() {
+			Panscreen.set(new GearScreen(pc, old, avt));
 		}
 		
 		protected final void menuClassic() {
@@ -1117,7 +1118,7 @@ public class Menu {
 			x = left;
 			final MsgCloseListener gearLsn = new MsgCloseListener() {
                 @Override public final void onClose() {
-                    Panscreen.set(newGearScreen()); }};
+                    goGear(); }};
 			addLink("Gear", gearLsn, x, y);
 			y -= 16;
 			createNameInput(x, y);
@@ -1188,6 +1189,7 @@ public class Menu {
             super(pc, false);
             this.old = old;
             this.avt = avt;
+            tabsSupported = true;
         }
         
         protected final void createJumpList(final int x, final int y) {
@@ -1197,17 +1199,22 @@ public class Menu {
             for (final JumpMode jm : jumpModes) {
                 jmps.add(jm.getName());
             }
+            final TouchButton sub = Pangine.getEngine().isTouchSupported() ? newRadioSubmitButton(x, y) : null;
+            TouchButton.detach(sub);
             final AvtListener jmpLsn = new AvtListener() {
                 @Override public final void update(final String value) {
                     final JumpMode jm = Player.get(jumpModes, value);
                     final byte index = jm.getIndex();
                     if (pc.profile.isJumpModeAvailable(index)) {
                         clearInfo();
+                        TouchButton.detach(sub);
                         setJumpMode(index);
                     } else if (pc.profile.isJumpModeTryable(index) && avt.jumpMode != index) {
                     	setInfo("Free trial for 1 Level?");
+                    	TouchButton.reattach(sub);
                     } else {
                     	setInfo("Buy for " + jm.getCost() + "?");
+                    	TouchButton.reattach(sub);
                     }
                 }};
             final RadioSubmitListener jmpSubLsn = new AvtListener() {
@@ -1224,17 +1231,33 @@ public class Menu {
                             pc.profile.availableJumpModes.add(Integer.valueOf(index));
                             setJumpMode(index);
                             setInfo("Purchased!");
+                            TouchButton.detach(sub);
                         } else {
                             setInfo("You need more Gems");
+                            TouchButton.detach(sub);
                         }
                     }
                 }};
-            jmpRadio = addRadio("Jump Mode", jmps, jmpSubLsn, jmpLsn, x, y);
+            jmpRadio = addRadio("Jump Mode", jmps, jmpSubLsn, jmpLsn, x, y, sub);
             initJumpMode();
         }
         
         @Override
-        protected final void menu() throws Exception {
+		protected final void menu() {
+			if (isTabEnabled()) {
+				menuTouch();
+			} else {
+				menuClassic();
+			}
+		}
+		
+		protected final void menuTouch() {
+			newTab(PlatformGame.greenUp, "Back", new Runnable() {@Override public final void run() {exit();}});
+			createJumpList(touchRadioX, touchRadioY);
+			newTabs();
+		}
+        
+        protected final void menuClassic() {
             final int left = getLeft();
             int y = getTop();
             createJumpList(left, y);
