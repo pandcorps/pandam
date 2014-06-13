@@ -66,6 +66,8 @@ public abstract class Pangine {
 	private boolean imageSavingEnabled = false;
 	protected String screenShotDst = null;
 	protected int screenShotInd = -1;
+	
+	protected Runnable uncaughtBackHandler = null;
 
 	static {
 		int i = 0;
@@ -930,6 +932,10 @@ public abstract class Pangine {
 	public abstract void setIcon(final String... locations);
 	
 	public abstract void setBgColor(final Pancolor color);
+	
+	public final void setUncaughtBackHandler(final Runnable uncaughtBackHandler) {
+		this.uncaughtBackHandler = uncaughtBackHandler;
+	}
 
 	public abstract void exit();
 	
