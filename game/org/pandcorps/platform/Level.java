@@ -173,6 +173,7 @@ public class Level {
     
     protected final static void loadLayers() {
         room = PlatformGame.createRoom(w, ROOM_H);
+        room.setClearDepthEnabled(false);
         final DynamicTileMap dtm = new DynamicTileMap("act.tilemap", room, ImtilX.DIM, ImtilX.DIM);
         tm = dtm;
         room.addActor(tm);
@@ -182,8 +183,8 @@ public class Level {
         dtm.setTileListener(new BlockTileListener(imgMap));
         
         final Panlayer bg1 = PlatformGame.createParallax(room, 2);
-        bgtm1 = new TileMap("act.bgmap1", bg1, ImtilX.DIM, ImtilX.DIM);
-        bg1.addActor(bgtm1);
+        bg1.setClearDepthEnabled(false);
+        bgtm1 = newBackgroundTileMap(1, bg1);
         Img backImg = ImtilX.loadImage("org/pandcorps/platform/res/bg/Hills" + Chartil.unnull(theme.img) + ".png", 128, null);
         if (isNormalTheme()) {
 	        Img terrain = getTerrainTexture();
@@ -206,17 +207,25 @@ public class Level {
         instead of basing all on the foreground with different divisors.
         */
         final Panlayer bg2 = PlatformGame.createParallax(bg1, 2);
-        bgtm2 = new TileMap("act.bgmap2", bg2, ImtilX.DIM, ImtilX.DIM);
-        bg2.addActor(bgtm2);
+        bg2.setClearDepthEnabled(false);
+        bgtm2 = newBackgroundTileMap(2, bg2);
         bgtm2.setImageMap(bgtm1);
         
         final Panlayer bg3 = PlatformGame.createParallax(bg2, 2);
-        bgtm3 = new TileMap("act.bgmap3", bg3, ImtilX.DIM, ImtilX.DIM);
-        bg3.addActor(bgtm3);
+        bgtm3 = newBackgroundTileMap(3, bg3);
         bgtm3.setImageMap(bgtm1);
         bgtm3.fillBackground(bgMap[0][6], 9, bgtm3.getHeight() - 9);
         bgtm3.fillBackground(bgMap[1][6], 8, 1);
         bgtm3.fillBackground(bgMap[2][6], 0, 8);
+    }
+    
+    private final static TileMap newBackgroundTileMap(final int i, final Panlayer bg) {
+    	final TileMap bgtm = new TileMap("act.bgmap" + i, bg, ImtilX.DIM, ImtilX.DIM);
+    	final float d = -10 * i;
+    	bgtm.getPosition().setZ(d);
+    	bgtm.setForegroundDepth(d + 5);
+    	bg.addActor(bgtm);
+    	return bgtm;
     }
     
     protected final static void loadLevel() {
