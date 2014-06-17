@@ -51,6 +51,8 @@ public class Menu {
     private final static String WARN_DUPLICATE = "Name already used";
     private final static String INFO_SAVED = "Saved images";
     private final static char CHAR_ON = 2;
+    private final static String NEW_AVATAR_NAME = "New";
+    private static boolean newProfile = false;
     
 	protected abstract static class PlayerScreen extends Panscreen {
 		protected Panroom room;
@@ -621,19 +623,15 @@ public class Menu {
 	        PlatformGame.loaders = null;
 	        final Pantext text = addTitle("Press anything", center, getBottom());
 	        text.centerX();
-	        text.register(new ActionStartListener() {@Override public void onActionStart(final ActionStartEvent event) {
-	        	if (disabled) {
-	        		return;
-	        	}
-	        	final Device device = event.getInput().getDevice();
-	        	if (device instanceof Touchscreen) {
-	        		final Touch touch = Pangine.getEngine().getInteraction().TOUCH;
-	        		ctrl = new ControlScheme(null, null, null, null, touch, touch, touch);
-	        	} else {
-	        		ctrl = ControlScheme.getDefault(device);
-	        	}
-	            exit();
-	        }});
+	        if (Pangine.getEngine().isTouchSupported()) {
+	        	text.register(new ActionEndListener() {@Override public void onActionEnd(final ActionEndEvent event) {
+		        	onAnything(event);
+		        }});
+	        } else {
+		        text.register(new ActionStartListener() {@Override public void onActionStart(final ActionStartEvent event) {
+		        	onAnything(event);
+		        }});
+	        }
 	        for (int i = 0; i < NUM_CHRS; i++) {
 	        	final PlayerContext tc = tcs.get(i);
 		        final Panctor actor = addActor(tc, PlatformGame.SCREEN_W * (i + 1) / (NUM_CHRS + 1));
@@ -641,6 +639,20 @@ public class Menu {
 	        		actor.setMirror(true);
 	        	}
 	        }
+	    }
+	    
+	    private final void onAnything(final InputEvent event) {
+	    	if (disabled) {
+        		return;
+        	}
+        	final Device device = event.getInput().getDevice();
+        	if (device instanceof Touchscreen) {
+        		final Touch touch = Pangine.getEngine().getInteraction().TOUCH;
+        		ctrl = new ControlScheme(null, null, null, null, touch, touch, touch);
+        	} else {
+        		ctrl = ControlScheme.getDefault(device);
+        	}
+            exit();
 	    }
 	    
 	    protected final static void generateTitleCharacters() {
@@ -779,7 +791,7 @@ public class Menu {
             final Avatar avt = new Avatar();
             prf.setName("New");
             avt.randomize();
-            avt.setName("New");
+            avt.setName(NEW_AVATAR_NAME);
             prf.currentAvatar = avt;
             prf.avatars.add(avt);
             //prf.ctrl = 0;
@@ -838,11 +850,18 @@ public class Menu {
             if (pc == null) {
                 pc = curr;
             }
+            if (Coltil.size(pc.profile.avatars) == 1) {
+            	final Avatar avt = pc.profile.avatars.get(0);
+            	if (NEW_AVATAR_NAME.equals(avt.getName())) {
+            		avt.setName(pc.profile.getName());
+            	}
+            }
             if (Pangine.getEngine().isTouchSupported() && Config.defaultProfileName == null) {
             	Config.defaultProfileName = pc.profile.getName();
             	Config.serialize();
             }
             save();
+            newProfile = true;
             goProfile();
         }
 	}
@@ -870,10 +889,13 @@ public class Menu {
 			createAvatarList(touchRadioX, touchRadioY);
 			newTab(PlatformGame.menuCheck, "Done", new Runnable() {@Override public final void run() {exit();}});
 			newTab(PlatformGame.menuAvatar, "Edit", new Runnable() {@Override public final void run() {goAvatar();}});
-			newTab(PlatformGame.menuPlus, "New", new Runnable() {@Override public final void run() {newAvatar();}});
-			if (isPlayer1()) {
-				newTab(PlatformGame.menuOff, "Exit", new Runnable() {@Override public final void run() {quit();}});
+			if (!newProfile) {
+				newTab(PlatformGame.menuPlus, "New", new Runnable() {@Override public final void run() {newAvatar();}});
+				if (isPlayer1()) {
+					newTab(PlatformGame.menuOff, "Exit", new Runnable() {@Override public final void run() {quit();}});
+				}
 			}
+			newProfile = false;
 			//TODO The other stuff from menuClassic, move newTabs() into super class
 			newTabs();
 		}
@@ -1019,19 +1041,21 @@ public class Menu {
 	
 	private final static String getNewName(final Profile profile) {
 	    for (char c = 'A' - 1; c <= 'Z'; c++) {
-	        final String name = "New" + (c >= 'A' ? String.valueOf(c) : "");
-	        boolean missing = true;
-	        for (final Avatar avt : profile.avatars) {
-	            if (name.equals(avt.getName())) {
-	                missing = false;
-	                break;
-	            }
-	        }
-	        if (missing) {
+	        final String name = NEW_AVATAR_NAME + (c >= 'A' ? String.valueOf(c) : "");
+	        if (isNameFree(profile, name)) {
 	            return name;
 	        }
 	    }
 	    return "RenameUs";
+	}
+	
+	private final static boolean isNameFree(final Profile profile, final String name) {
+        for (final Avatar avt : profile.avatars) {
+            if (name.equals(avt.getName())) {
+                return false;
+            }
+        }
+        return true;
 	}
 	
 	protected final static class AvatarScreen extends PlayerScreen {
