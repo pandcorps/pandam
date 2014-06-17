@@ -67,6 +67,10 @@ public class FadeController extends Panctor implements StepListener {
     protected void onFadeEnd() {
     }
     
+    public short getVelocity() {
+    	return velocity;
+    }
+    
     public void setVelocity(final short velocity) {
         this.velocity = velocity;
     }

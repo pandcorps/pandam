@@ -61,7 +61,7 @@ public abstract class FadeScreen extends TempScreen {
         final Pangine engine = Pangine.getEngine();
         final ActionStartListener anyKey;
         anyKey = new ActionStartListener() { @Override public final void onActionStart(final ActionStartEvent event) {
-            if (isBusy()) {
+            if (isBusy() || (c.getVelocity() < 0 && c.getLayer().getBlendColor().getA() > (Pancolor.MAX_VALUE - (SPEED * 2)))) {
                 return;
             }
             c.setVelocity((short) SPEED);
