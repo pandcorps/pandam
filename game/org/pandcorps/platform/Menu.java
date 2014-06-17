@@ -286,6 +286,7 @@ public class Menu {
 		}
 		
 		protected final RadioGroup addRadio(final String title, final List<? extends CharSequence> list, final RadioSubmitListener subLsn, final RadioSubmitListener chgLsn, final int xb, final int y, final TouchButton sub) {
+			final int x;
 			if (tabsSupported && isTabEnabled()) {
 				final int yt = y - 100;
 				final String id = Pantil.vmid();
@@ -297,13 +298,15 @@ public class Menu {
 					ctrl.setSubmit(sub);
 					ctrl.set1(sub);
 				}
+				x = xb + 100;
+			} else {
+				x = xb;
 			}
 			final RadioGroup grp = new RadioGroup(PlatformGame.font, list, subLsn);
 			if (sub == null && subLsn != null && tabsSupported && isTabEnabled()) {
 				newTab(PlatformGame.menuCheck, "Done", new Runnable() {@Override public final void run() {grp.submit();}});
 			}
 			grp.setChangeListener(chgLsn);
-			final int x = xb + 100;
 			addItem(grp, x, y - 16);
 			grp.addChild(addTitle(title, x, y));
 			final Pantext label = grp.getLabel();

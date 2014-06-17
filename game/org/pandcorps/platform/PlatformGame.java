@@ -133,7 +133,8 @@ public class PlatformGame extends BaseGame {
 	protected final static FinPanple owf = new FinPanple(17, 2, 0);
 	protected final static FinPanple os = new FinPanple(16, 11, 0);
 	protected static Img[] guysBlank = null;
-	protected static Img[] eyesAll = new Img[getNumEyes()];
+	protected final static HashMap<String, Img> facesAll = new HashMap<String, Img>();
+	protected final static Img[] eyesAll = new Img[getNumEyes()];
 	protected static Img eyesBlink = null;
 	protected static Panmage bubble = null;
 	protected static Panimation owl = null;
@@ -265,6 +266,9 @@ public class PlatformGame extends BaseGame {
 	
 	private final static Img[] loadChrStrip(final String name, final int dim, final PixelFilter f, final boolean req) {
 	    final Img[] strip = loadChrStrip(name, dim, req);
+	    if (strip == null) {
+	    	return null;
+	    }
 	    filterStrip(strip, strip, f);
 		return strip;
 	}
@@ -319,7 +323,13 @@ public class PlatformGame extends BaseGame {
 			filterStrip(guysBlank, guys, f);
 			guyBlink = Imtil.copy(guys[0]);
 			final String anm = avatar.anm;
-			face = Imtil.filter(ImtilX.loadImage("org/pandcorps/platform/res/chr/Face" + anm + ".png", false), f);
+			Img faceRaw = facesAll.get(anm);
+			if (faceRaw == null) {
+				faceRaw = ImtilX.loadImage("org/pandcorps/platform/res/chr/Face" + anm + ".png", false);
+				faceRaw.setTemporary(false);
+				facesAll.put(anm, faceRaw);
+			}
+			face = Imtil.filter(faceRaw, f);
 			tails = loadChrStrip("Tail" + anm + ".png", 12, f, false);
 			Img e = eyesAll[avatar.eye - 1];
 			if (e == null) {
