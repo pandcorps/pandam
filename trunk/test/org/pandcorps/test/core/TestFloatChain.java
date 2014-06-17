@@ -20,48 +20,25 @@ PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY
 TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 */
-package org.pandcorps.core;
+package org.pandcorps.test.core;
 
 import java.nio.*;
 
-public final class FloatChain {
-    
-    private final static int DEFAULT_CAPACITY = 16;
-    
-    private FloatBuffer buf;
-    
-    private int size = 0;
-    
-    public FloatChain() {
-        this(DEFAULT_CAPACITY);
-    }
-    
-    public FloatChain(final int initialCapacity) {
-        buf = Pantil.allocateDirectFloatBuffer(initialCapacity);
-    }
-    
-    public final FloatChain append(final float f) {
-        size++;
-        if (size > buf.limit()) {
-            final FloatBuffer t = Pantil.allocateDirectFloatBuffer((int) (size * 1.5));
-            buf.rewind();
-            t.put(buf);
-            buf = t;
-        }
-        buf.put(f);
-        return this;
-    }
-    
-    public final FloatBuffer getBuffer() {
-        return buf;
-    }
-    
-    public final int getSize() {
-        return size;
-    }
-    
-    public final void clear() {
-        buf.rewind();
-        size = 0;
-    }
+import org.pandcorps.core.*;
+import org.pandcorps.test.*;
+
+public class TestFloatChain extends Pantest {
+	public final void testChain() {
+		final FloatChain chain = new FloatChain(2);
+		chain.append(1);
+		chain.append(1);
+		chain.append(2);
+		chain.append(3);
+		final FloatBuffer buf = chain.getBuffer();
+		buf.rewind();
+		assertEquals(1f, buf.get());
+		assertEquals(1f, buf.get());
+		assertEquals(2f, buf.get());
+		assertEquals(3f, buf.get());
+	}
 }
