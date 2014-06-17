@@ -104,6 +104,7 @@ public class FightGame extends Guy2Game {
         menuBackground = engine.createImage("MenuBgImage", "org/pandcorps/fight/res/misc/MenuBackground.png");
         title = engine.createImage("TitleImg", "org/pandcorps/fight/res/misc/Title.png");
         final Img[] constantImgs = loadConstantImgs();
+        Img.setTemporary(false, constantImgs);
         shadowImage = engine.createImage("Shadow", new FinPanple(8, 4, 0), null, null, constantImgs[0]);
         type = new Guy2Type(shadowImage, Fighter.DEPTH_SHADOW);
         bamAnim = createBamAnm(constantImgs, 3);
@@ -118,6 +119,7 @@ public class FightGame extends Guy2Game {
         puffAnim = createPuffAnm(constantImgs, 3);
         
         burnImgs = ImtilX.loadStrip("org/pandcorps/fight/res/misc/Burn.png");
+        Img.setTemporary(false, burnImgs);
         
         //font = engine.createImage("font", "org/pandcorps/res/img/FontOutline8.png");
         fontDamage = Fonts.getOutline(new FontRequest(FontType.Number, 8), Pancolor.RED);
@@ -490,6 +492,7 @@ public class FightGame extends Guy2Game {
         final String name = ftr.getValue(0);
         final Img sheet = ImtilX.loadImage(PATH_CHR + name + ".png", filter);
         final Img[] frms = Imtil.toStrip(sheet, DIM);
+        Img.setTemporary(false, frms);
         Segment img;
         final HashMap<String, LoadImage> imgMap = new HashMap<String, LoadImage>();
         final IdentityHashMap<Panmage, Img> imgUnmap = new IdentityHashMap<Panmage, Img>();
