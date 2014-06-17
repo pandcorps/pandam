@@ -856,6 +856,13 @@ System.out.println("loadConstants end " + System.currentTimeMillis());
 		final int extLen = EXT_PRF.length();
 		for (final String f : new File(".").list()) {
 			if (f.endsWith(EXT_PRF)) {
+				/*
+				// PRUNE PROFILES MADE DURING DEBUGGING; TEMPORARY
+				if (EXT_PRF.equals(f) || ("null" + EXT_PRF).equals(f)) {
+					new File(f).delete();
+					continue;
+				}
+				*/
 				final String prf = f.substring(0, f.length() - extLen);
 				if (getPlayerContext(prf) == null) {
 					list.add(prf);
