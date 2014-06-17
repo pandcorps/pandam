@@ -141,6 +141,8 @@ public class Map {
 	private static TileMapImage base = null;
 	private static TileMapImage ladder = null;
 	
+	private static MapPlayer player = null;
+	
 	private final static short MOVE_NORMAL = 0;
 	private final static short MOVE_ANY_PATH = 1;
 	private final static short MOVE_ANY_TILE = 2;
@@ -1120,7 +1122,7 @@ public class Map {
 	}
 	
 	private final static void addPlayer(final Tile t) {
-		final MapPlayer player = new MapPlayer(getPlayerContext());
+		player = new MapPlayer(getPlayerContext());
 		player.setPos(t);
 		room.addActor(player);
 		Pangine.getEngine().track(player);
@@ -1164,6 +1166,18 @@ public class Map {
 		final Panlayer hud = PlatformGame.addHud(room, false);
 		hud.addActor(name);
 		Menu.PlayerScreen.initTouchButtons(hud, getPlayerContext().ctrl);
+		final Pangine engine = Pangine.getEngine();
+		if (engine.isTouchSupported()) {
+			final Panteraction interaction = engine.getInteraction();
+			final ActionEndListener lsn = new ActionEndListener() {
+				@Override public final void onActionEnd(final ActionEndEvent event) {
+					if (player != null) {
+						player.goMenu(event.getInput(), getPlayerContext());
+					}
+				}};
+			name.register(interaction.MENU, lsn);
+			name.register(interaction.BACK, lsn);
+		}
 	}
 	
 	private static void mountain(final int x, final int y, final int w) {
