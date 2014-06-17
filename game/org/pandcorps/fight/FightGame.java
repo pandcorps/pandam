@@ -104,7 +104,7 @@ public class FightGame extends Guy2Game {
         menuBackground = engine.createImage("MenuBgImage", "org/pandcorps/fight/res/misc/MenuBackground.png");
         title = engine.createImage("TitleImg", "org/pandcorps/fight/res/misc/Title.png");
         final Img[] constantImgs = loadConstantImgs();
-        Img.setTemporary(false, constantImgs);
+        Img.setTemporary(false, constantImgs); //TODO Some of these need to be closed; check all setTemporary calls
         shadowImage = engine.createImage("Shadow", new FinPanple(8, 4, 0), null, null, constantImgs[0]);
         type = new Guy2Type(shadowImage, Fighter.DEPTH_SHADOW);
         bamAnim = createBamAnm(constantImgs, 3);
