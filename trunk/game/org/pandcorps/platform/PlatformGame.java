@@ -134,6 +134,7 @@ public class PlatformGame extends BaseGame {
 	protected final static FinPanple os = new FinPanple(16, 11, 0);
 	protected static Img[] guysBlank = null;
 	protected final static HashMap<String, Img> facesAll = new HashMap<String, Img>();
+	protected final static HashMap<String, Img[]> tailsAll = new HashMap<String, Img[]>();
 	protected final static Img[] eyesAll = new Img[getNumEyes()];
 	protected static Img eyesBlink = null;
 	protected static Panmage bubble = null;
@@ -330,7 +331,18 @@ public class PlatformGame extends BaseGame {
 				facesAll.put(anm, faceRaw);
 			}
 			face = Imtil.filter(faceRaw, f);
-			tails = loadChrStrip("Tail" + anm + ".png", 12, f, false);
+			Img[] tailsRaw = tailsAll.get(anm);
+			if (tailsRaw == null && !tailsAll.containsKey(anm)) {
+				tailsRaw = loadChrStrip("Tail" + anm + ".png", 12, false);
+				Img.setTemporary(false, tailsRaw);
+				tailsAll.put(anm, tailsRaw);
+			}
+			if (tailsRaw == null) {
+				tails = null;
+			} else {
+				tails = new Img[tailsRaw.length];
+				filterStrip(tailsRaw, tails, f);
+			}
 			Img e = eyesAll[avatar.eye - 1];
 			if (e == null) {
 			    e = ImtilX.loadImage("org/pandcorps/platform/res/chr/Eyes0" + avatar.eye + ".png", false);
@@ -542,9 +554,7 @@ public class PlatformGame extends BaseGame {
 		
 		loaders.add(new Runnable() { @Override public final void run() {
 		    guysBlank = loadChrStrip("Bear.png", 32, true);
-		    for (final Img gb : guysBlank) {
-		        gb.setTemporary(false);
-		    }
+		    Img.setTemporary(false, guysBlank);
 		    eyesBlink = ImtilX.loadImage("org/pandcorps/platform/res/chr/EyesBlink.png", false); }});
 		
 		loaders.add(new Runnable() { @Override public final void run() {
