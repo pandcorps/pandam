@@ -94,6 +94,9 @@ public abstract class Img implements Closeable {
 	}
 	
 	public final static void setTemporary(final boolean temp, final Img... imgs) {
+		if (imgs == null) {
+			return;
+		}
 		for (final Img img : imgs) {
 			img.setTemporary(temp);
 		}
