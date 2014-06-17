@@ -74,20 +74,38 @@ public class PanSurfaceView extends GLSurfaceView {
 	// Input events can also be handled in activity
 	@Override
 	public final boolean onKeyDown(final int keyCode, final KeyEvent event) {
-		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			if (event.getRepeatCount() == 0) {
-				AndroidPangine.engine.addInputEvent(AndroidPangine.engine.getInteraction().BACK, true);
-			}
-			return true;
+		switch (keyCode) {
+			case KeyEvent.KEYCODE_BACK :
+				keyDown(event, AndroidPangine.engine.getInteraction().BACK);
+				return true;
+			case KeyEvent.KEYCODE_MENU : // Thought this would be KEYCODE_SETTINGS; that's something else
+				keyDown(event, AndroidPangine.engine.getInteraction().MENU);
+				return true;
+			case KeyEvent.KEYCODE_SEARCH :
+				keyDown(event, AndroidPangine.engine.getInteraction().SEARCH);
+				return true;
 		}
 		return super.onKeyDown(keyCode, event);
 	}
 	
+	private final void keyDown(final KeyEvent event, final Panput input) {
+		if (event.getRepeatCount() == 0) {
+			AndroidPangine.engine.addInputEvent(input, true);
+		}
+	}
+	
 	@Override
 	public final boolean onKeyUp(final int keyCode, final KeyEvent event) {
-		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			AndroidPangine.engine.addInputEvent(AndroidPangine.engine.getInteraction().BACK, false);
-			return true;
+		switch (keyCode) {
+			case KeyEvent.KEYCODE_BACK :
+				AndroidPangine.engine.addInputEvent(AndroidPangine.engine.getInteraction().BACK, false);
+				return true;
+			case KeyEvent.KEYCODE_MENU :
+				AndroidPangine.engine.addInputEvent(AndroidPangine.engine.getInteraction().MENU, false);
+				return true;
+			case KeyEvent.KEYCODE_SEARCH :
+				AndroidPangine.engine.addInputEvent(AndroidPangine.engine.getInteraction().SEARCH, false);
+				return true;
 		}
 		return super.onKeyUp(keyCode, event);
 	}
