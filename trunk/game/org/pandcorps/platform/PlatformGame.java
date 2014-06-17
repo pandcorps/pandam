@@ -132,6 +132,7 @@ public class PlatformGame extends BaseGame {
 	protected final static FinPanple ow = new FinPanple(17, 1, 0);
 	protected final static FinPanple owf = new FinPanple(17, 2, 0);
 	protected final static FinPanple os = new FinPanple(16, 11, 0);
+	protected static Img[] eyesAll = new Img[getNumEyes()];
 	protected static Img eyesBlink = null;
 	protected static Panmage bubble = null;
 	protected static Panimation owl = null;
@@ -309,7 +310,12 @@ public class PlatformGame extends BaseGame {
 			final String anm = avatar.anm;
 			face = Imtil.filter(ImtilX.loadImage("org/pandcorps/platform/res/chr/Face" + anm + ".png", false), f);
 			tails = loadChrStrip("Tail" + anm + ".png", 12, f, false);
-			eyes = ImtilX.loadImage("org/pandcorps/platform/res/chr/Eyes0" + avatar.eye + ".png", false);
+			Img e = eyesAll[avatar.eye - 1];
+			if (e == null) {
+			    e = ImtilX.loadImage("org/pandcorps/platform/res/chr/Eyes0" + avatar.eye + ".png", false);
+			    eyesAll[avatar.eye - 1] = e;
+			}
+			eyes = e;
 			final int size = guys.length;
 			for (int i = 0; i < size; i++) {
 				buildGuy(guys[i], face, tails, eyes, (i == 3) ? -1 : 0, (i < 3) ? i : 1);
@@ -320,7 +326,7 @@ public class PlatformGame extends BaseGame {
 		protected final void close() {
 			Img.close(guys);
 			Img.close(tails);
-			Img.close(guyBlink, face, eyes);
+			Img.close(guyBlink, face);
 		}
 	}
 	
