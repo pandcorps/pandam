@@ -132,6 +132,7 @@ public class PlatformGame extends BaseGame {
 	protected final static FinPanple ow = new FinPanple(17, 1, 0);
 	protected final static FinPanple owf = new FinPanple(17, 2, 0);
 	protected final static FinPanple os = new FinPanple(16, 11, 0);
+	protected static Img eyesBlink = null;
 	protected static Panmage bubble = null;
 	protected static Panimation owl = null;
 	protected final static List<EnemyDefinition> allEnemies = new ArrayList<EnemyDefinition>();
@@ -300,7 +301,6 @@ public class PlatformGame extends BaseGame {
 		protected final Img face;
 		protected final Img[] tails;
 		protected final Img eyes;
-		protected final Img eyesBlink;
 	
 		protected PlayerImages(final Avatar avatar) {
 		    f = getFilter(avatar.col);
@@ -310,7 +310,6 @@ public class PlatformGame extends BaseGame {
 			face = Imtil.filter(ImtilX.loadImage("org/pandcorps/platform/res/chr/Face" + anm + ".png", false), f);
 			tails = loadChrStrip("Tail" + anm + ".png", 12, f, false);
 			eyes = ImtilX.loadImage("org/pandcorps/platform/res/chr/Eyes0" + avatar.eye + ".png", false);
-			eyesBlink = ImtilX.loadImage("org/pandcorps/platform/res/chr/EyesBlink.png", false);
 			final int size = guys.length;
 			for (int i = 0; i < size; i++) {
 				buildGuy(guys[i], face, tails, eyes, (i == 3) ? -1 : 0, (i < 3) ? i : 1);
@@ -321,7 +320,7 @@ public class PlatformGame extends BaseGame {
 		protected final void close() {
 			Img.close(guys);
 			Img.close(tails);
-			Img.close(guyBlink, face, eyes, eyesBlink);
+			Img.close(guyBlink, face, eyes);
 		}
 	}
 	
@@ -513,6 +512,9 @@ public class PlatformGame extends BaseGame {
 		final Segment cfg = SegmentStream.readLocation(FILE_CFG, "CFG|").get(0);
 		// CFG|Andrew
 		Config.defaultProfileName = cfg.getValue(0);
+		
+		loaders.add(new Runnable() { @Override public final void run() {
+		    eyesBlink = ImtilX.loadImage("org/pandcorps/platform/res/chr/EyesBlink.png", false); }});
 		
 		loaders.add(new Runnable() { @Override public final void run() {
 System.out.println("loadConstants start " + System.currentTimeMillis());
