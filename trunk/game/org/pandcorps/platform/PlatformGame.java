@@ -132,6 +132,7 @@ public class PlatformGame extends BaseGame {
 	protected final static FinPanple ow = new FinPanple(17, 1, 0);
 	protected final static FinPanple owf = new FinPanple(17, 2, 0);
 	protected final static FinPanple os = new FinPanple(16, 11, 0);
+	protected static Img[] guysBlank = null;
 	protected static Img[] eyesAll = new Img[getNumEyes()];
 	protected static Img eyesBlink = null;
 	protected static Panmage bubble = null;
@@ -253,19 +254,28 @@ public class PlatformGame extends BaseGame {
 		return loadChrStrip(name, dim, f, true);
 	}
 	
-	private final static Img[] loadChrStrip(final String name, final int dim, final PixelFilter f, final boolean req) {
+	private final static Img[] loadChrStrip(final String name, final int dim, final boolean req) {
 		final String fileName = "org/pandcorps/platform/res/chr/" + name;
 		if (!(req || Iotil.exists(fileName))) {
 			return null;
 		}
 		final Img[] strip = ImtilX.loadStrip(fileName, dim);
+		return strip;
+	}
+	
+	private final static Img[] loadChrStrip(final String name, final int dim, final PixelFilter f, final boolean req) {
+	    final Img[] strip = loadChrStrip(name, dim, req);
+	    filterStrip(strip, strip, f);
+		return strip;
+	}
+	
+	private final static void filterStrip(final Img[] in, final Img[] out, final PixelFilter f) {
 		if (f != null) {
-			final int size = strip.length;
+			final int size = in.length;
 			for (int i = 0; i < size; i++) {
-				strip[i] = Imtil.filter(strip[i], f);
+				out[i] = Imtil.filter(in[i], f);
 			}
 		}
-		return strip;
 	}
 	
 	protected final static PlayerContext newPlayerContext(final Profile profile, final ControlScheme ctrl, final int index) {
@@ -305,7 +315,8 @@ public class PlatformGame extends BaseGame {
 	
 		protected PlayerImages(final Avatar avatar) {
 		    f = getFilter(avatar.col);
-			guys = loadChrStrip("Bear.png", 32, f);
+			guys = new Img[guysBlank.length];
+			filterStrip(guysBlank, guys, f);
 			guyBlink = Imtil.copy(guys[0]);
 			final String anm = avatar.anm;
 			face = Imtil.filter(ImtilX.loadImage("org/pandcorps/platform/res/chr/Face" + anm + ".png", false), f);
@@ -520,6 +531,10 @@ public class PlatformGame extends BaseGame {
 		Config.defaultProfileName = cfg.getValue(0);
 		
 		loaders.add(new Runnable() { @Override public final void run() {
+		    guysBlank = loadChrStrip("Bear.png", 32, true);
+		    for (final Img gb : guysBlank) {
+		        gb.setTemporary(false);
+		    }
 		    eyesBlink = ImtilX.loadImage("org/pandcorps/platform/res/chr/EyesBlink.png", false); }});
 		
 		loaders.add(new Runnable() { @Override public final void run() {
