@@ -44,6 +44,7 @@ public final class FloatChain {
         size++;
         if (size > buf.limit()) {
             final FloatBuffer t = Pantil.allocateDirectFloatBuffer((int) (size * 1.5));
+            buf.rewind();
             t.put(buf);
             buf = t;
         }
