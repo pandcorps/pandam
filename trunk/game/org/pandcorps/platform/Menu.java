@@ -69,6 +69,7 @@ public class Menu {
 		protected boolean tabsSupported = false;
 		protected int touchRadioX = 40;
 		protected int touchRadioY = 140;
+		protected int touchKeyboardX = 8;
 		
 		protected PlayerScreen(final PlayerContext pc, final boolean fadeIn) {
 			this.pc = pc;
@@ -130,6 +131,10 @@ public class Menu {
 		
 		protected final int getLeft() {
 			return (Pangine.getEngine().getEffectiveWidth() / 2) - 120;
+		}
+		
+		protected final int getTouchKeyboardY() {
+			return (int) (Pangine.getEngine().getEffectiveHeight() - PlatformGame.menu.getSize().getY() - 16);
 		}
 		
 		protected final static void initTouchButtons(final Panlayer room, final ControlScheme ctrl) {
@@ -705,7 +710,9 @@ public class Menu {
 		}
 		
 		protected final void menuTouch() {
-			createProfileList(touchRadioX, touchRadioY);
+			if (!createProfileList(touchRadioX, touchRadioY)) {
+				return;
+			}
 			newTab(PlatformGame.menuPlus, "New", new Runnable() {@Override public final void run() {newProfile();}});
 			if (curr != null) {
 				newTab(PlatformGame.menuX, "Back", new Runnable() {@Override public final void run() {exit();}});
@@ -716,7 +723,9 @@ public class Menu {
 		protected final void menuClassic() {
 			final int left = getLeft();
 			int x = left, y = getTop();
-			createProfileList(x, y);
+			if (!createProfileList(x, y)) {
+				return;
+			}
 			final MsgCloseListener newLsn = new MsgCloseListener() {
                 @Override public final void onClose() {
                     newProfile(); }};
@@ -736,7 +745,7 @@ public class Menu {
 			goProfile();
 		}
 		
-		private final void createProfileList(final int x, final int y) {
+		private final boolean createProfileList(final int x, final int y) {
 			final List<String> list = PlatformGame.getAvailableProfiles();
 			if (Coltil.isValued(list)) {
 				final RadioSubmitListener prfLsn = new RadioSubmitListener() {
@@ -755,6 +764,10 @@ public class Menu {
 						goProfile();
 				}};
 				addRadio("Pick Profile", list, prfLsn, null, x, y);
+				return true;
+			} else {
+				newProfile();
+				return false;
 			}
 		}
 		
@@ -786,18 +799,37 @@ public class Menu {
 				ctrl = pc.ctrl;
 			}
             curr = pc;
+            tabsSupported = true;
         }
 
         @Override
-        protected final void menu() {
+		protected final void menu() {
+			if (isTabEnabled()) {
+				menuTouch();
+			} else {
+				menuClassic();
+			}
+		}
+		
+		protected final void menuTouch() {
+			createNameInput(touchKeyboardX, getTouchKeyboardY());
+			newTab(PlatformGame.menuCheck, "Done", new Runnable() {@Override public final void run() {exit();}});
+			newTabs();
+		}
+		
+		protected final void menuClassic() {
 	        /*final Profile prf = new Profile();
 	        final Avatar avt = new Avatar();
 	        avt.randomize();
 	        avt.setName("New");*/
-	        final InputSubmitListener namLsn = new InputSubmitListener() {
+            int x = getLeft(), y = getTop() - 72;
+            createNameInput(x, y);
+		}
+		
+		private final void createNameInput(final int x, final int y) {
+			final InputSubmitListener namLsn = new InputSubmitListener() {
                 @Override public final void onSubmit(final InputSubmitEvent event) {
                     exit(); }};
-            int x = getLeft(), y = getTop() - 72;
 	        addNameInput(curr.profile, namLsn, PlatformGame.MAX_NAME_PROFILE, x, y); //TODO validation unique, submit link
 	    }
 
@@ -805,6 +837,10 @@ public class Menu {
         protected final void onExit() {
             if (pc == null) {
                 pc = curr;
+            }
+            if (Pangine.getEngine().isTouchSupported() && Config.defaultProfileName == null) {
+            	Config.defaultProfileName = pc.profile.getName();
+            	Config.serialize();
             }
             save();
             goProfile();
@@ -1055,7 +1091,7 @@ public class Menu {
 					addColor(avt.col, 0, 0);
 					break;
 				case TAB_NAME :
-					createNameInput(8, (int) (Pangine.getEngine().getEffectiveHeight() - PlatformGame.menu.getSize().getY() - 16));
+					createNameInput(touchKeyboardX, getTouchKeyboardY());
 					break;
 			}
 			newTab(PlatformGame.menuCheck, "Done", new Runnable() {@Override public final void run() {exit();}});
