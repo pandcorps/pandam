@@ -533,6 +533,17 @@ public class Menu {
 		    onExit();
 		}
 		
+		protected final void registerBackExit() {
+		    tm.register(Pangine.getEngine().getInteraction().BACK, new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) {
+                    exit(); }});
+		}
+		
+		protected final void registerBackNop() {
+            tm.register(Pangine.getEngine().getInteraction().BACK, new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) { }});
+        }
+		
 		protected final void save() {
 		    pc.profile.save();
 		}
@@ -1129,6 +1140,7 @@ public class Menu {
 			newTab(PlatformGame.menuGear, "Gear", new Runnable() {@Override public final void run() {goGear();}});
 			newTab(PlatformGame.menuKeyboard, "Name", TAB_NAME);
 			newTabs();
+			registerBackNop();
 		}
 		
 		private final void newTab(final Panmage img, final CharSequence txt, final byte tab) {
@@ -1334,6 +1346,7 @@ public class Menu {
 			newTab(PlatformGame.menuCheck, "Back", new Runnable() {@Override public final void run() {exit();}});
 			createJumpList(touchRadioX, touchRadioY);
 			newTabs();
+			registerBackExit();
 		}
         
         protected final void menuClassic() {
