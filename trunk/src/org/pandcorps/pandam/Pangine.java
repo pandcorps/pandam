@@ -61,7 +61,10 @@ public abstract class Pangine {
 	//protected int frameLength = 30;
 	protected int frameLengthNano = 30000000;
 	private long clock = 0;
-	private boolean paused = false;
+	private final static byte PAUSED_NO = 0;
+	private final static byte PAUSED_NEW = 1;
+	private final static byte PAUSED_YES = 2;
+	private byte paused = PAUSED_NO;
 	
 	private boolean imageSavingEnabled = false;
 	protected String screenShotDst = null;
@@ -408,11 +411,14 @@ public abstract class Pangine {
 	}
 
 	protected void step() {
-	    if (paused) {
-	        return;
-	    }
-	    clock++;
-	    final Pangame game = Pangame.getGame();
+		// Input might add a button and then pause; want button displayed; finish current frame
+		if (paused == PAUSED_NEW) {
+			paused = PAUSED_YES;
+		} else if (paused == PAUSED_YES) {
+			return;
+		}
+		clock++;
+		final Pangame game = Pangame.getGame();
 	    game.step();
 	    final Panscreen screen = Panscreen.get();
 	    if (screen != null) {
@@ -423,7 +429,7 @@ public abstract class Pangine {
 			return;
 		}
 		for (Panlayer layer = room.base; layer != null; layer = layer.getAbove()) {
-		    step(layer);
+			step(layer);
 		}
 	}
 	
@@ -870,8 +876,26 @@ public abstract class Pangine {
 		return (clock % (half * 2)) < half;
 	}
 	
+	public final boolean isPaused() {
+		return paused != PAUSED_NO;
+	}
+	
+	public final void setPaused(final boolean paused) {
+		if (paused) {
+			if (this.paused == PAUSED_NO) {
+				this.paused = PAUSED_NEW;
+			}
+		} else {
+			this.paused = PAUSED_NO;
+		}
+	}
+	
 	public final void togglePause() {
-	    paused = !paused;
+		if (paused == PAUSED_NO) {
+			paused = PAUSED_NEW;
+		} else {
+			paused = PAUSED_NO;
+		}
 	}
 	
 	public final void addTimer(final Panctor actor, final long duration, final TimerListener listener) {
