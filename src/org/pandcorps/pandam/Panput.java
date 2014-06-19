@@ -145,6 +145,8 @@ public abstract class Panput {
 	    public final static byte OVERLAP_ANY = 0; // Choose any TouchButton
 	    public final static byte OVERLAP_BEST = 1; // Choose closest TouchButton
 	    //public final static byte OVERLAP_ALL = 2; // Activate all TouchButtons
+	    private final static byte Z_OVERLAY = 1;
+	    private final static byte Z_TEXT = 2;
 		private int xMin;
 		private int yMin;
 		private int xMax;
@@ -213,6 +215,18 @@ public abstract class Panput {
 		    }
 		}
 		
+		public final void setZ(final float z) {
+			setZ(actor, z);
+			setZ(actorOverlay, z + Z_OVERLAY);
+			setZ(text, z + Z_TEXT);
+		}
+		
+		private final void setZ(final Panctor a, final float z) {
+			if (a != null) {
+				a.getPosition().setZ(z);
+			}
+		}
+		
 		public final void initActor(final Panlayer layer, final float z, final Panmage img, final Panmage imgActive) {
 		    initActor(layer, z, img, imgActive, null, 0, 0, null, null, 0, 0);
 		}
@@ -228,7 +242,7 @@ public abstract class Panput {
 		public final void setOverlay(final Panmage imgOverlay, final int xOverlay, final int yOverlay) {
 			Panctor.destroy(actorOverlay);
 			if (imgOverlay != null) {
-		        actorOverlay = addActor(layer, xMin + xOverlay, yMin + yOverlay, actor.getPosition().getZ() + 1, imgOverlay);
+		        actorOverlay = addActor(layer, xMin + xOverlay, yMin + yOverlay, actor.getPosition().getZ() + Z_OVERLAY, imgOverlay);
 		    }
 		}
 		
@@ -236,7 +250,7 @@ public abstract class Panput {
 			Panctor.destroy(text);
 		    if (txt != null) {
 		        text = new Pantext(Pantil.vmid(), fonts, txt);
-		        text.getPosition().set(xMin + xText, yMin + yText, actor.getPosition().getZ() + 2);
+		        text.getPosition().set(xMin + xText, yMin + yText, actor.getPosition().getZ() + Z_TEXT);
 		        layer.addActor(text);
 		    }
 		}
