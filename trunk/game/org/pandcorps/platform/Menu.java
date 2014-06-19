@@ -225,10 +225,10 @@ public class Menu {
 		    final Panple btnSize = PlatformGame.menu.getSize();
             final int btnY = TouchTabs.off(engine.getEffectiveHeight(), btnSize.getY());
             final int btnW = (int) btnSize.getX(), btnX = TouchTabs.off(engine.getEffectiveWidth(), btnW * 2);
-            quitYes = newFormButton(room, "Quit", btnX, btnY, PlatformGame.menuCheck, new Runnable() {
+            quitYes = newFormButton(room, "Quit", btnX, btnY, PlatformGame.menuCheck, "Quit", new Runnable() {
                 @Override public final void run() { engine.exit(); }});
             quitYes.setZ(15);
-            quitNo = newFormButton(room, "No", btnX + btnW, btnY, PlatformGame.menuX, new Runnable() {
+            quitNo = newFormButton(room, "No", btnX + btnW, btnY, PlatformGame.menuX, "No", new Runnable() {
                 @Override public final void run() { destroyPromptQuit(); }});
             quitNo.setZ(15);
             engine.setPaused(true);
@@ -363,14 +363,22 @@ public class Menu {
 		}
 		
 		private final static TouchButton newFormButton(final Panlayer layer, final String name, final int x, final int y, final Panmage img) {
+			return newFormButton(layer, name, x, y, img, (String) null);
+		}
+		
+		private final static TouchButton newFormButton(final Panlayer layer, final String name, final int x, final int y, final Panmage img, final String txt) {
 			final Pangine engine = Pangine.getEngine();
-			final TouchButton btn = new TouchButton(engine.getInteraction(), layer, name, x, y, 0, PlatformGame.menu, PlatformGame.menuIn, img, offx(img), offy(img), null, null, 0, 0, true);
+			final TouchButton btn = new TouchButton(engine.getInteraction(), layer, name, x, y, 0, PlatformGame.menu, PlatformGame.menuIn, img, offx(img), txt == null ? offy(img) : OFF_OVERLAY_Y, PlatformGame.font, txt, OFF_TEXT_X, OFF_TEXT_Y, true);
 			engine.registerTouchButton(btn);
 			return btn;
 		}
 		
 		private final static TouchButton newFormButton(final Panlayer layer, final String name, final int x, final int y, final Panmage img, final Runnable r) {
-			final TouchButton btn = newFormButton(layer, name, x, y, img);
+			return newFormButton(layer, name, x, y, img, null, r);
+		}
+		
+		private final static TouchButton newFormButton(final Panlayer layer, final String name, final int x, final int y, final Panmage img, final String txt, final Runnable r) {
+			final TouchButton btn = newFormButton(layer, name, x, y, img, txt);
 			btn.getActor().register(btn, Actions.newEndListener(r));
 			return btn;
 		}
