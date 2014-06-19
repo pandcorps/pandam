@@ -197,9 +197,9 @@ public class Menu {
 			final TouchButton act1 = addCircleButton(room, "Act1", r - rx, 0, input, act, ctrl.get1(), full);
 			if (input) {
 				ctrl.set(down, up, left, right, act1, act2, act2);
-				if (!full) {
-				    registerBackPromptQuit(act1.getActor());
-				}
+			}
+			if (!full && act1 != null && act1.getActor() != null) {
+			    registerBackPromptQuit(act1.getActor());
 			}
 		}
 		
@@ -207,6 +207,7 @@ public class Menu {
         private static TouchButton quitNo = null;
 		
 		protected final static void registerBackPromptQuit(final Panctor bound) {
+			destroyPromptQuit();
 		    bound.register(Pangine.getEngine().getInteraction().BACK, new ActionEndListener() {
                 @Override
                 public final void onActionEnd(final ActionEndEvent event) {
@@ -219,23 +220,26 @@ public class Menu {
 		}
 		
 		protected final static void promptQuit(final Panlayer room) {
-		    //TODO pause if relevant
+			destroyPromptQuit();
 		    final Pangine engine = Pangine.getEngine();
 		    final Panple btnSize = PlatformGame.menu.getSize();
             final int btnY = TouchTabs.off(engine.getEffectiveHeight(), btnSize.getY());
             final int btnW = (int) btnSize.getX(), btnX = TouchTabs.off(engine.getEffectiveWidth(), btnW * 2);
             quitYes = newFormButton(room, "Quit", btnX, btnY, PlatformGame.menuCheck, new Runnable() {
                 @Override public final void run() { engine.exit(); }});
+            quitYes.setZ(15);
             quitNo = newFormButton(room, "No", btnX + btnW, btnY, PlatformGame.menuX, new Runnable() {
                 @Override public final void run() { destroyPromptQuit(); }});
+            quitNo.setZ(15);
+            engine.setPaused(true);
 		}
 		
 		protected final static void destroyPromptQuit() {
+			Pangine.getEngine().setPaused(false);
 		    TouchButton.destroy(quitYes);
             quitYes = null;
             TouchButton.destroy(quitNo);
             quitNo = null;
-            //TODO unpause if relevant
 		}
 		
 		private final static TouchButton addCircleButton(final Panlayer room, final String name, final int x, final int y,
@@ -259,12 +263,12 @@ public class Menu {
 				button = new TouchButton(in, name, x, y, d, d, moveCancel);
 				engine.registerTouchButton(button);
 			} else {
-				button = null;
+				button = (TouchButton) old;
 			}
 			if (act) {
 				final Panctor actor = new Panctor();
 				actor.setView(img);
-				(button == null ? (TouchButton) old : button).setActor(actor, imgIn);
+				button.setActor(actor, imgIn);
 				actor.getPosition().set(x, y, 500);
 				room.addActor(actor);
 			}

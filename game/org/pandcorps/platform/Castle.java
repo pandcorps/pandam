@@ -64,6 +64,7 @@ public class Castle {
             tm.setForegroundDepth(1);
             room.addActor(tm);
             
+            Menu.PlayerScreen.registerBackPromptQuit(tm);
             draw();
             PlatformGame.fadeIn(room);
         }
