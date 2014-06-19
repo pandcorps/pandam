@@ -151,8 +151,8 @@ public final class Tile {
     }
     
     public static class TileMapImage {
-    	/*package*/ final float ix; // These could probably be int
-    	/*package*/ final float iy;
+    	/*package*/ float ix; // These could probably be int
+    	/*package*/ float iy;
     	
     	/*package*/ TileMapImage(final float ix, final float iy) {
     		this.ix = ix;
@@ -175,5 +175,17 @@ public final class Tile {
     
     public final static byte getBehavior(final Tile t) {
     	return t == null ? BEHAVIOR_OPEN : t.behavior;
+    }
+    
+    public final static void animate(final TileMapImage... imgs) {
+        TileMapImage cur = imgs[0];
+        final TileMapImage tmp = new TileMapImage(cur.ix, cur.iy);
+        final int stop = imgs.length;
+        for (int i = 1; i <= stop; i++) {
+            final TileMapImage nxt = (i < stop) ? imgs[i] : tmp;
+            cur.ix = nxt.ix;
+            cur.iy = nxt.iy;
+            cur = nxt;
+        }
     }
 }
