@@ -182,11 +182,6 @@ public class Cabin {
 		}
 		
 		@Override
-		protected boolean isSpecialBump(final Tile t) {
-			return false;
-		}
-		
-		@Override
 		protected final int rndAward() {
 		    final int r = Mathtil.randi(0, 9999), awd;
             // Looks like bonus Gems are pre-sorted, so 25% chance of getting 1000,

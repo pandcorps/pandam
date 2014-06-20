@@ -154,7 +154,6 @@ public class PlatformGame extends BaseGame {
 	protected static Panimation spark = null;
 	protected static Panimation teleport = null;
 	protected static Panimation projectile1 = null;
-	protected static final TileActor bump = new TileActor();
 	protected static Panimation marker = null;
 	protected static Panmage markerDefeated = null;
 	protected static Panimation portal = null;
@@ -239,6 +238,13 @@ public class PlatformGame extends BaseGame {
 			if (engine.isMusicSupported()) {
 				engine.getMusic().playMusic(Music.newSongCreepy());
 			}
+		}
+		
+		@Override
+        protected final void step() {
+            if ((Pangine.getEngine().getClock() % PlatformGame.TIME_FLASH) < 4) {
+                Tile.animate(Level.flashBlock);
+            }
 		}
 		
 		@Override

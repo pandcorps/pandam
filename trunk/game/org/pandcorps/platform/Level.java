@@ -39,7 +39,7 @@ public class Level {
     
     protected final static PixelFilter terrainDarkener = new BrightnessPixelFilter((short) -40, (short) -24, (short) -32);
     
-    protected static TileMapImage[] flashBlock;
+    protected static TileMapImage[] flashBlock = null;
     
     protected static Panroom room = null;
     private static Theme theme = null;
@@ -80,34 +80,6 @@ public class Level {
     
     protected static boolean isNormalTheme() {
     	return theme == Theme.Normal;
-    }
-    
-    private final static class BlockTileListener implements TileListener {
-        private int tick = 0;
-        
-        private BlockTileListener(final TileMapImage[][] imgMap) {
-            flashBlock = imgMap[0];
-        }
-        
-        @Override
-        public boolean isActive() {
-            tick = (int) Pangine.getEngine().getClock() % PlatformGame.TIME_FLASH;
-            if (tick < 4) {
-                tick = (tick + 1) % 4;
-                return true;
-            }
-            return false;
-        }
-        
-        @Override
-        public final void onStep(final Tile tile) {
-            if (tile == null || tile.getBehavior() != PlatformGame.TILE_BUMP) {
-                return;
-            } else if (!isFlash(tile)) {
-                return;
-            }
-            tile.setForeground(flashBlock[tick]);
-        }
     }
     
     protected final static boolean isFlash(final Tile tile) {
@@ -174,13 +146,13 @@ public class Level {
     protected final static void loadLayers() {
         room = PlatformGame.createRoom(w, ROOM_H);
         room.setClearDepthEnabled(false);
-        final DynamicTileMap dtm = new DynamicTileMap("act.tilemap", room, ImtilX.DIM, ImtilX.DIM);
-        tm = dtm;
+        tm = new TileMap("act.tilemap", room, ImtilX.DIM, ImtilX.DIM);
         room.addActor(tm);
         
         timg = getTileImage();
         imgMap = tm.splitImageMap(timg);
-        dtm.setTileListener(new BlockTileListener(imgMap));
+        final TileMapImage[] row = imgMap[0];
+        flashBlock = new TileMapImage[] {row[0], row[1], row[2], row[3]};
         
         final Panlayer bg1 = PlatformGame.createParallax(room, 2);
         bg1.setClearDepthEnabled(false);
@@ -995,7 +967,6 @@ public class Level {
     private static void bumpableBlock(final int x, final int y) {
         final Tile block = tm.initTile(x, y);
         block.setForeground(imgMap[0][0], PlatformGame.TILE_BUMP);
-        PlatformGame.bump.setViewFromForeground(block);
     }
     
     private static void breakableBlock(final int x, final int y) {

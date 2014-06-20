@@ -42,10 +42,6 @@ public class Tiles {
     		return Level.isFlash(t);
     	}
     	
-    	protected boolean isSpecialBump(final Tile t) {
-    		return Level.isFlash(t);
-    	}
-    	
     	protected int rndAward() {
     		return GemBumped.rndAward();
     	}
@@ -138,11 +134,7 @@ public class Tiles {
         private Bump(final Character bumper, final Tile t) {
         	this.bumper = bumper;
         	this.t = t;
-        	if (getHandler().isSpecialBump(t)) {
-        		setView(PlatformGame.bump);
-        	} else {
-        		setViewFromForeground(t);
-        	}
+        	setViewFromForeground(t);
             final Panple pos = t.getPosition();
             PlatformGame.setPosition(this, pos.getX(), pos.getY() + 2, PlatformGame.DEPTH_SHATTER);
             PlatformGame.room.addActor(this);
