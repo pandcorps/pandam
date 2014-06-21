@@ -438,6 +438,7 @@ public class Level {
     		final int x = getSlantStart(ng, w, h, true);
     		slantUp(x, floor + 1, stop, h);
             goalBlock(x, floor + 8);
+            solidBlock(x - 2, floor + 1);
     	}
     }
     
