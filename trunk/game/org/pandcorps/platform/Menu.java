@@ -687,7 +687,10 @@ public class Menu {
 	        PlatformGame.loaders = null;
 	        final Pantext text = addTitle("Press anything", center, getBottom());
 	        text.centerX();
-	        if (Pangine.getEngine().isTouchSupported()) {
+	        final Pangine engine = Pangine.getEngine();
+	        final Pantext title = addTitle("Andrew Martin's Untitled Game", center, engine.getEffectiveHeight() / 2);
+	        title.centerX();
+	        if (engine.isTouchSupported()) {
 	        	text.register(new ActionEndListener() {@Override public void onActionEnd(final ActionEndEvent event) {
 		        	onAnything(event);
 		        }});
@@ -955,6 +958,9 @@ public class Menu {
 			newTab(PlatformGame.menuAvatar, "Edit", new Runnable() {@Override public final void run() {goAvatar();}});
 			if (!newProfile) {
 				newTab(PlatformGame.menuPlus, "New", new Runnable() {@Override public final void run() {newAvatar();}});
+				if (getAvatarsSize() > 1) {
+					newTab(PlatformGame.menuMinus, "Erase", new Runnable() {@Override public final void run() {delete();}});
+				}
 				if (isPlayer1()) {
 					newTab(PlatformGame.menuOff, "Exit", new Runnable() {@Override public final void run() {quit();}});
 				}
@@ -964,8 +970,16 @@ public class Menu {
 			newTabs();
 		}
 		
+		private final int getAvatarsSize() {
+			return pc.profile.avatars.size();
+		}
+		
 		private final void createAvatarList(final int x, final int y) {
-			final List<String> avatars = new ArrayList<String>(pc.profile.avatars.size());
+			final int size = getAvatarsSize();
+			if (size <= 1) {
+				return;
+			}
+			final List<String> avatars = new ArrayList<String>(size);
             for (final Avatar a : pc.profile.avatars) {
             	avatars.add(a.getName());
             }
@@ -990,23 +1004,10 @@ public class Menu {
                     newAvatar(); }};
             x = addPipe(x, y);
             x = addLink("New", newLsn, x, y);
-            if (pc.profile.avatars.size() > 1) {
+            if (getAvatarsSize() > 1) {
 	            final MsgCloseListener delLsn = new MsgCloseListener() {
 	                @Override public final void onClose() {
-	                    if (pc.profile.avatars.size() == 1) {
-	                    	return;
-	                    }
-	                    if (!inf.toString().equals(WARN_DELETE)) {
-	                    	setInfo(WARN_DELETE);
-	                    	return;
-	                    }
-	                    clearInfo();
-	                    pc.profile.avatars.remove(pc.profile.currentAvatar);
-	                    pc.profile.currentAvatar = pc.profile.avatars.get(0);
-	                    reloadAnimalStrip();
-	                    actor.load(pc);
-	                    save = true;
-	                    goProfile(); }};
+	                    delete(); }};
 	            x = addPipe(x, y);
 	            x = addLink("Erase", delLsn, x, y);
             }
@@ -1066,6 +1067,22 @@ public class Menu {
             // Delete Profile (if player 1)
 		}
 		
+		private final void delete() {
+			if (getAvatarsSize() <= 1) {
+            	return;
+            } else if (!inf.toString().equals(WARN_DELETE)) {
+            	setInfo(WARN_DELETE);
+            	return;
+            }
+            clearInfo();
+            pc.profile.avatars.remove(pc.profile.currentAvatar);
+            pc.profile.currentAvatar = pc.profile.avatars.get(0);
+            reloadAnimalStrip();
+            actor.load(pc);
+            save = true;
+            goProfile();
+		}
+		
 		private final boolean isDefaultProfile() {
 			return pc.profile.getName().equals(Config.defaultProfileName);
 		}
@@ -1086,6 +1103,7 @@ public class Menu {
             pc.profile.currentAvatar = avt;
             reloadAnimalStrip();
             actor.load(pc);
+            AvatarScreen.currentTab = AvatarScreen.TAB_NAME;
             goAvatar();
 		}
 		
