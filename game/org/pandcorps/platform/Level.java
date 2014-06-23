@@ -43,6 +43,7 @@ public class Level {
     
     protected static Panroom room = null;
     private static Theme theme = null;
+    protected static BackgroundBuilder backgroundBuilder = null;
     protected static Panmage timg = null;
     protected static Panmage bgimg = null;
     protected static TileMap tm = null;
@@ -57,9 +58,17 @@ public class Level {
     private static int floor = 0;
     protected static int numEnemies = 0;
     
-    protected static enum Theme {
-    	Normal(null, 2, 3, 4),
-    	Chaos("Chaos", 0, 1, 4);
+    protected abstract static class Theme {
+    	public static Theme Normal = new Theme(null, 2, 3, 4) {
+    		@Override protected final BackgroundBuilder getRandomBackground() {
+    			return Mathtil.rand() ? new HillBackgroundBuilder() : new ForestBackgroundBuilder();
+    		}
+    	};
+    	public static Theme Chaos = new Theme("Chaos", 0, 1, 4) {
+    		@Override protected final BackgroundBuilder getRandomBackground() {
+    			return new HillBackgroundBuilder();
+    		}
+    	};
     	
     	protected final String img;
     	protected final List<EnemyDefinition> enemies;
@@ -71,6 +80,8 @@ public class Level {
     			this.enemies.add(PlatformGame.allEnemies.get(enemy));
     		}
     	}
+    	
+    	protected abstract BackgroundBuilder getRandomBackground();
     }
     
     protected static void setTheme(final Theme theme) {
@@ -106,7 +117,8 @@ public class Level {
         return PlatformGame.terrains[Map.bgTexture];
     }
     
-    protected final static PixelMask getTerrainMask(final int z) {
+    protected final static PixelMask getTerrainMask(final int _z) {
+    	final int z = _z + backgroundBuilder.getPreDarken();
         return new AntiPixelMask(new ColorPixelMask(196 - 40 * z, 220 - 24 * z, 208 - 32 * z, Pancolor.MAX_VALUE));
     }
     
@@ -157,19 +169,8 @@ public class Level {
         final Panlayer bg1 = PlatformGame.createParallax(room, 2);
         bg1.setClearDepthEnabled(false);
         bgtm1 = newBackgroundTileMap(1, bg1);
-        Img backImg = ImtilX.loadImage("org/pandcorps/platform/res/bg/Hills" + Chartil.unnull(theme.img) + ".png", 128, null);
-        if (isNormalTheme()) {
-	        Img terrain = getTerrainTexture();
-	        for (int z = 0; z < 3; z++) {
-	            if (z > 0) {
-	                terrain = getDarkenedTerrain(terrain);
-	            }
-	            final int yoff = z * 32;
-	            applyTerrainTexture(backImg, 0, yoff, 64, yoff + 32, terrain, getTerrainMask(z));
-	        }
-	        terrain.close();
-	        backImg = getColoredTerrain(backImg, 0, 0, 96, 96);
-        }
+        backgroundBuilder = theme.getRandomBackground();
+        Img backImg = backgroundBuilder.getImage();
         bgimg = Pangine.getEngine().createImage("img.bg", backImg);
         bgMap = bgtm1.splitImageMap(bgimg);
         
@@ -303,9 +304,7 @@ public class Level {
     	public void build() {
     	    loadTemplates();
     	    
-    		buildBg(bgtm1, 4, 6, 0, false); // Nearest
-    		buildBg(bgtm2, 7, 9, 2, false);
-    		buildBg(bgtm3, 10, 12, 4, true); // Farthest
+    		backgroundBuilder.build();
     		
     		final Goal goal = Mathtil.rand(goals);
     		ng = nt - goal.getWidth();
@@ -357,6 +356,74 @@ public class Level {
     		ground();
     		goal.build();
     	}
+    }
+    
+    private static interface BackgroundBuilder {
+    	public Img getImage();
+    	
+    	public int getPreDarken();
+    	
+    	public void build();
+    }
+    
+    protected final static class HillBackgroundBuilder implements BackgroundBuilder {
+    	@Override
+    	public final Img getImage() {
+    		Img backImg = ImtilX.loadImage("org/pandcorps/platform/res/bg/Hills" + Chartil.unnull(theme.img) + ".png", 128, null);
+            if (isNormalTheme()) {
+            	applyTerrainTexture(backImg, 0, 0, 48, 32);
+            	backImg = getColoredTerrain(backImg, 0, 0, 96, 96);
+            }
+            return backImg;
+    	}
+    	
+    	@Override
+    	public final int getPreDarken() {
+    		return 0;
+    	}
+    	
+    	@Override
+    	public final void build() {
+    		buildHills(bgtm1, 4, 6, 0, false); // Nearest
+    		buildHills(bgtm2, 7, 9, 2, false);
+    		buildHills(bgtm3, 10, 12, 4, true); // Farthest
+    	}
+    }
+    
+    private final static class ForestBackgroundBuilder implements BackgroundBuilder {
+    	@Override
+    	public final Img getImage() {
+    		final Img backImg = Imtil.load("org/pandcorps/platform/res/bg/Forest.png");
+    		applyTerrainTexture(backImg, 32, 16, 48, 32);
+    		return backImg;
+    	}
+    	
+    	@Override
+    	public final int getPreDarken() {
+    		return 2;
+    	}
+    	
+    	@Override
+    	public final void build() {
+    		buildForest(bgtm1, 0, false);
+    		buildForest(bgtm2, 1, false);
+    		buildForest(bgtm3, 2, true);
+    	}
+    }
+    
+    private static void applyTerrainTexture(Img backImg, final int ix, final int iy, final int fx, final int fy) {
+    	Img terrain = getTerrainTexture();
+    	for (int i = backgroundBuilder.getPreDarken(); i > 0; i--) {
+    		terrain = getDarkenedTerrain(terrain);
+    	}
+        for (int z = 0; z < 3; z++) {
+            if (z > 0) {
+                terrain = getDarkenedTerrain(terrain);
+            }
+            final int yoff = z * 32;
+            applyTerrainTexture(backImg, ix, iy + yoff, fx, fy + yoff, terrain, getTerrainMask(z));
+        }
+        terrain.close();
     }
     
     private static void ground() {
@@ -866,7 +933,7 @@ public class Level {
         }
     }
     
-    private static void buildBg(final TileMap tm, final int miny, final int maxy, final int iy, final boolean cloud) {
+    private static void buildHills(final TileMap tm, final int miny, final int maxy, final int iy, final boolean cloud) {
     	final int maxx = tm.getWidth() + 1;
     	int x = Mathtil.randi(-1, 4);
     	boolean c = Mathtil.rand();
@@ -902,6 +969,30 @@ public class Level {
     			cloud(tm, cx, cy, cw);
     		}
     		x += (w + g);
+    	}
+    }
+    
+    private static void buildForest(final TileMap tm, final int off, final boolean sky) {
+    	final int iy = off * 2;
+    	tm.fillBackground(bgMap[iy + 1][2], 0, off + 1);
+    	tm.fillBackground(bgMap[iy][2], off + 1, 1);
+    	final int tmw = tm.getWidth(), tmh = tm.getHeight();
+    	if (sky) {
+    		tm.fillBackground(bgMap[0][6], tmh - 4, 4);
+    		tm.fillBackground(bgMap[1][6], tmh - 5, 1);
+    		tm.fillBackground(bgMap[2][6], off + 2, tmh - off - 8);
+    	}
+    	int i = Mathtil.randi(-1, 2);
+    	while (i < tmw) {
+    		if (i >= 0) {
+    			tm.fillBackground(bgMap[iy + 1][0], i, off + 2, 1, tmh - (off * 2) - 3);
+    			tm.setBackground(0, iy, i, tmh - off - 2);
+    		}
+    		if (i < (tmw - 1)) {
+    			tm.fillBackground(bgMap[iy + 1][1], i + 1, off + 2, 1, tmh - (off * 2) - 3);
+    			tm.setBackground(1, iy, i + 1, tmh - off - 2);
+    		}
+    		i += Mathtil.randi(3, 6);
     	}
     }
     

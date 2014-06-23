@@ -608,6 +608,7 @@ public class Map {
 		}
 		Level.applyDirtTexture(tileImg, 48, 0, 96, 16);
 		final Img terrain = Level.getDarkenedTerrain(Level.getTerrainTexture());
+		Level.backgroundBuilder = new Level.HillBackgroundBuilder();
 		Level.applyTerrainTexture(tileImg, 48, 32, 96, 48, terrain, Level.getTerrainMask(1));
 		terrain.close();
 		tileImg = Level.getColoredTerrain(tileImg, 48, 32, 48, 16);

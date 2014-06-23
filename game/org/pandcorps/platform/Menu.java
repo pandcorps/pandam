@@ -962,7 +962,7 @@ public class Menu {
 					newTab(PlatformGame.menuMinus, "Erase", new Runnable() {@Override public final void run() {delete();}});
 				}
 				if (isPlayer1()) {
-					newTab(PlatformGame.menuOff, "Exit", new Runnable() {@Override public final void run() {quit();}});
+					newTab(PlatformGame.menuOff, "Quit", new Runnable() {@Override public final void run() {quit();}});
 				}
 			}
 			newProfile = false;
