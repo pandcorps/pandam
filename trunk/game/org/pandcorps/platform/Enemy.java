@@ -73,7 +73,12 @@ public final class Enemy extends Character {
 		
 		protected EnemyDefinition(final String name, final int ind, final PixelFilter f, final boolean ledgeTurn,
 		                          final boolean splat, final int avoidCount, final int offX, final int h, final int hv) {
-			final Img[] strip = ImtilX.loadStrip("org/pandcorps/platform/res/enemy/Enemy0" + ind + ".png"), walk;
+			this(name, ind, f, ledgeTurn, splat, avoidCount, offX, h, hv, ImtilX.DIM);
+		}
+		
+		protected EnemyDefinition(final String name, final int ind, final PixelFilter f, final boolean ledgeTurn,
+                final boolean splat, final int avoidCount, final int offX, final int h, final int hv, final int d) {
+			final Img[] strip = ImtilX.loadStrip("org/pandcorps/platform/res/enemy/Enemy0" + ind + ".png", d), walk;
 			if (f != null) {
 				final int size = strip.length;
 				for (int i = 0; i < size; i++) {
@@ -88,7 +93,7 @@ public final class Enemy extends Character {
 			    walk = strip;
 			}
 			final String id = "enemy." + name;
-			final Panple n, x, o = DEFAULT_O;
+			final Panple n, x, o = (d == ImtilX.DIM) ? DEFAULT_O : new FinPanple(d / 2, 1, 0);
 			if (offX == DEFAULT_X && h == DEFAULT_H) {
 			    n = DEFAULT_MIN;
 			    x = DEFAULT_MAX;

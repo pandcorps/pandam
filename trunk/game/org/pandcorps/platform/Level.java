@@ -60,7 +60,7 @@ public class Level {
     protected static int numEnemies = 0;
     
     protected abstract static class Theme {
-    	public static Theme Normal = new Theme(null, 2, 3, 4) {
+    	public static Theme Normal = new Theme(null, 2, 3, 4, 5, 6) {
     		@Override protected final BackgroundBuilder getRandomBackground() {
     			return Mathtil.rand() ? new HillBackgroundBuilder() : new ForestBackgroundBuilder();
     		}

@@ -58,7 +58,7 @@ public class PlatformGame extends BaseGame {
 	Map landmarks: Mountain, garden.
 	Train-riding levels.
 	Ridable dragons.
-	Mage Enemy w/ pointy hat, Wisp, Elementals, Trolls, Ogres, Impix (winged Imp).
+	Mage Enemy w/ pointy hat, Wisp, Elementals, Impix (winged Imp).
 	Gargoyles catch/carry Player, like moving platforms, one can jump to/from them, but not run on them.
 	Cannons on ground that Player enters to be launched.
 	Cannons in air that auto-fire, others that wait for jump input.
@@ -581,9 +581,10 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 			replace(f, (short) 80, (short) 96, (short) 144);
 			replace(f, (short) 64, (short) 80, (short) 112);
 			replace(f, (short) 48, (short) 56, (short) 80);
-			allEnemies.add(new EnemyDefinition("Obglin", 2, f, false)); }});
-		loaders.add(new Runnable() { @Override public final void run() {
+			allEnemies.add(new EnemyDefinition("Obglin", 2, f, false));
 			allEnemies.add(new EnemyDefinition("Imp", 3, null, true, true, 4, 14));
+			allEnemies.add(new EnemyDefinition("Troll", 5, null, true, false, 0, 8, 30, 1, 32));
+			allEnemies.add(new EnemyDefinition("Ogre", 5, f, false, false, 0, 8, 30, 1, 32));
 			Level.setTheme(Theme.Normal); }});
 		
 		loaders.add(new Runnable() { @Override public final void run() {
