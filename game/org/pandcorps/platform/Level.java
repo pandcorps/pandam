@@ -530,7 +530,7 @@ public class Level {
 	        addTemplate(new UpBlockStepTemplate(), new DownBlockStepTemplate(), new BlockWallTemplate(), new BlockGroupTemplate());
 	        addTemplate(new BlockBonusTemplate());
 	        addTemplate(new GemTemplate(), new GemMsgTemplate());
-	        goals.add(new SlantGoal());
+	        goals.add(new UpBlockGoal());
 	    }
     	
     	@Override
@@ -572,6 +572,19 @@ public class Level {
     		slantUp(x, floor + 1, stop, h);
             goalBlock(x, floor + 8);
             solidBlock(x - 2, floor + 1);
+    	}
+    }
+    
+    private static class UpBlockGoal extends Goal {
+    	@Override
+    	protected final int getWidth() {
+    		return 5;
+    	}
+    	
+    	@Override
+    	protected final void build() {
+    		upBlockStep(ng, floor + 1, 3, Mathtil.rand());
+            goalBlock(ng + 3, floor + 7);
     	}
     }
     
