@@ -80,6 +80,9 @@ public class PlatformGame extends BaseGame {
 	Automatically advance on Map if standing on defeated Level and there is only one adjacent undefeated Level.
 	Option to auto-run, only one button for jumping.
 	Flags to simplify menu in some environments (one Profile, maybe one Avatar).
+	Let LogoScreen finish after a specified Runnable finishes.
+	Let Thread keep loading through title screen.
+	Give images a real transparent background, disable ImtilX preprocessing.
 	*/
 	
 	protected final static byte TILE_BREAK = 2;
@@ -555,6 +558,7 @@ public class PlatformGame extends BaseGame {
 	
 	private final static void loadConstants() throws Exception {
 		final Pangine engine = Pangine.getEngine();
+		// SegmentStream.readLocation creates a file containing "CFG|" if it doesn't exist
 		final Segment cfg = SegmentStream.readLocation(FILE_CFG, "CFG|").get(0);
 		// CFG|Andrew
 		Config.defaultProfileName = cfg.getValue(0);
