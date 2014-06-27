@@ -56,6 +56,7 @@ public class Level {
     private static int ng = 0;
     private static int nt = 0;
     private static int floor = 0;
+    private static boolean grassy = true;
     protected static int numEnemies = 0;
     
     protected abstract static class Theme {
@@ -63,10 +64,18 @@ public class Level {
     		@Override protected final BackgroundBuilder getRandomBackground() {
     			return Mathtil.rand() ? new HillBackgroundBuilder() : new ForestBackgroundBuilder();
     		}
+    		
+    		@Override protected final Builder getRandomBuilder() {
+    			return Mathtil.rand() ? new GrassyBuilder() : new PlatformBuilder();
+    		}
     	};
     	public static Theme Chaos = new Theme("Chaos", 0, 1, 4) {
     		@Override protected final BackgroundBuilder getRandomBackground() {
     			return new HillBackgroundBuilder();
+    		}
+    		
+    		@Override protected final Builder getRandomBuilder() {
+    			return new GrassyBuilder();
     		}
     	};
     	
@@ -82,6 +91,8 @@ public class Level {
     	}
     	
     	protected abstract BackgroundBuilder getRandomBackground();
+    	
+    	protected abstract Builder getRandomBuilder();
     }
     
     protected static void setTheme(final Theme theme) {
@@ -202,7 +213,8 @@ public class Level {
     }
     
     protected final static void loadLevel() {
-    	final Builder b = new RandomBuilder();
+    	grassy = true;
+    	final Builder b = theme.getRandomBuilder();
     	w = b.getW();
     	nt = w / ImtilX.DIM;
     	ng = nt;
@@ -289,7 +301,16 @@ public class Level {
     private static int bx;
     private static int px;
     
-    protected final static class RandomBuilder implements Builder {
+    protected abstract static class RandomBuilder implements Builder {
+    	protected final ArrayList<Template> templates = new ArrayList<Template>();
+        protected final ArrayList<Goal> goals = new ArrayList<Goal>();
+        
+        protected abstract void loadTemplates();
+        
+        protected final void addTemplate(final Template... a) {
+        	templates.add(a.length == 1 ? a[0] : new ChoiceTemplate(a));
+        }
+        
     	@Override
     	public int getW() {
     		return 3200;
@@ -356,6 +377,18 @@ public class Level {
     		ground();
     		goal.build();
     	}
+    	
+    	protected final void ground() {
+    		final int stop = Math.min(bx + 1, nt - 1);
+        	ground(px, stop);
+        	px = bx + 2;
+    	}
+    	
+    	protected abstract void ground(final int start, final int stop);
+    	
+    	protected abstract void upStep(final int x, final int y, final int h);
+    	
+    	protected abstract void downStep(final int x, final int y, final int h);
     }
     
     private static interface BackgroundBuilder {
@@ -426,15 +459,13 @@ public class Level {
         terrain.close();
     }
     
-    private static void ground() {
-    	final int stop = Math.min(bx + 1, nt - 1);
+    private static void ground(final int px, final int stop) {
     	for (int i = px; i <= stop; i++) {
             tm.initTile(i, floor).setForeground(imgMap[1][1], true);
             for (int j = 0; j < floor; j++) {
             	tm.initTile(i, j).setForeground(getDirtImage(), true);
             }
         }
-    	px = bx + 2;
     }
     
     private static void enemy(final int x, final int y, final int w) {
@@ -445,8 +476,6 @@ public class Level {
     	numEnemies++;
     }
     
-    private final static ArrayList<Template> templates = new ArrayList<Template>();
-    private final static ArrayList<Goal> goals = new ArrayList<Goal>();
     private final static int[] scratch = new int[128];
     
     private final static void swapScratch(final int i, final int j) {
@@ -459,26 +488,63 @@ public class Level {
         a[j] = t;
     }
     
-    private final static void loadTemplates() {
-        if (templates.size() > 0) {
-            return;
-        }
-        addTemplate(new NaturalRiseTemplate());
-        addTemplate(new ColorRiseTemplate());
-        addTemplate(new WallTemplate());
-        addTemplate(new StepTemplate());
-        addTemplate(new RampTemplate());
-        addTemplate(new BushTemplate(), new TreeTemplate());
-        addTemplate(new PitTemplate(), new BridgePitTemplate(), new BlockPitTemplate());
-        addTemplate(new UpBlockStepTemplate(), new DownBlockStepTemplate(), new BlockWallTemplate(), new BlockGroupTemplate());
-        addTemplate(new BlockBonusTemplate());
-        addTemplate(new GemTemplate(), new GemMsgTemplate());
-        addTemplate(new SlantTemplate(true), new SlantTemplate(false));
-        goals.add(new SlantGoal());
+    private final static class GrassyBuilder extends RandomBuilder {
+    	@Override
+	    protected final void loadTemplates() {
+	        addTemplate(new NaturalRiseTemplate());
+	        addTemplate(new ColorRiseTemplate());
+	        addTemplate(new WallTemplate());
+	        addTemplate(new StepTemplate());
+	        addTemplate(new RampTemplate());
+	        addTemplate(new BushTemplate(), new TreeTemplate());
+	        addTemplate(new PitTemplate(), new BridgePitTemplate(), new BlockPitTemplate());
+	        addTemplate(new UpBlockStepTemplate(), new DownBlockStepTemplate(), new BlockWallTemplate(), new BlockGroupTemplate());
+	        addTemplate(new BlockBonusTemplate());
+	        addTemplate(new GemTemplate(), new GemMsgTemplate());
+	        addTemplate(new SlantTemplate(true), new SlantTemplate(false));
+	        goals.add(new SlantGoal());
+	    }
+    	
+    	@Override
+    	protected final void ground(final int start, final int stop) {
+    		Level.ground(start, stop);
+    	}
+    	
+    	@Override
+    	protected final void upStep(final int x, final int y, final int h) {
+    		Level.upStep(x, y, h);
+    	}
+    	
+    	@Override
+    	protected final void downStep(final int x, final int y, final int h) {
+    		Level.downStep(x, y, h);
+    	}
     }
     
-    private final static void addTemplate(final Template... a) {
-    	templates.add(a.length == 1 ? a[0] : new ChoiceTemplate(a));
+    private final static class PlatformBuilder extends RandomBuilder {
+    	@Override
+	    protected final void loadTemplates() {
+    		grassy = false;
+	        addTemplate(new WallTemplate());
+	        addTemplate(new PitTemplate(), new BridgePitTemplate(), new BlockPitTemplate());
+	        addTemplate(new UpBlockStepTemplate(), new DownBlockStepTemplate(), new BlockWallTemplate(), new BlockGroupTemplate());
+	        addTemplate(new BlockBonusTemplate());
+	        addTemplate(new GemTemplate(), new GemMsgTemplate());
+	        goals.add(new SlantGoal());
+	    }
+    	
+    	@Override
+    	protected final void ground(final int start, final int stop) {
+    		Level.blockWall(start, floor, stop - start + 1, 1);
+    	}
+    	
+    	@Override
+    	protected final void upStep(final int x, final int y, final int h) {
+    	}
+    	
+    	@Override
+    	protected final void downStep(final int x, final int y, final int h) {
+    	}
     }
     
     private abstract static class Goal {
@@ -1274,12 +1340,17 @@ public class Level {
     private static void pit(final int x, final int y, final int w) {
     	final int stop = x + w + 1;
     	for (int j = 0; j <= y; j++) {
-    		final int iy = (j == y) ? 1 : 2;
-	    	tm.initTile(x, j).setForeground(imgMap[iy][2], true);
+    		if (grassy) {
+	    		final int iy = (j == y) ? 1 : 2;
+		    	tm.initTile(x, j).setForeground(imgMap[iy][2], true);
+		    	tm.initTile(stop, j).setForeground(imgMap[iy][0], true);
+    		} else if (j == y) {
+    			solidBlock(x, j);
+    			solidBlock(stop, j);
+    		}
 	    	for (int i = x + 1; i < stop; i++) {
 	    		tm.removeTile(i, j);
 	    	}
-	        tm.initTile(stop, j).setForeground(imgMap[iy][0], true);
     	}
     }
     
