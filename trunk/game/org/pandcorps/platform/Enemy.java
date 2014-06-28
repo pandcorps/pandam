@@ -49,7 +49,7 @@ public final class Enemy extends Character {
 	protected final static class EnemyDefinition {
 		private final Panimation walk;
 		private final boolean ledgeTurn;
-		private final Panimation splat;
+		protected final Panimation splat;
 		private final Panimation attack;
 		private final int avoidCount;
 		private final int offX;
@@ -57,6 +57,7 @@ public final class Enemy extends Character {
 		private final int hv;
 		protected Panimation projectile = null;
 		protected BurstHandler splatHandler = null;
+		protected InteractionHandler stepHandler = null;
 		protected InteractionHandler stompHandler = null;
 		protected InteractionHandler rewardHandler = null;
 		
@@ -124,8 +125,8 @@ public final class Enemy extends Character {
 	
 	private final EnemyDefinition def;
 	private int avoidCount = 0;
-	private int timer = 0;
-	private int timerMode = 0;
+	protected int timer = 0;
+	protected int timerMode = 0;
 	protected boolean full = false;
 	
 	protected Enemy(final EnemyDefinition def, final Panctor ref) {
@@ -140,8 +141,7 @@ public final class Enemy extends Character {
 		super(def.offX, def.h);
 		this.def = def;
 		setView(def.walk);
-		setMirror(true);
-		hv = -def.hv;
+		setEnemyMirror(true);
 		PlatformGame.room.addActor(this);
 		PlatformGame.setPosition(this, x, y, PlatformGame.DEPTH_ENEMY);
 		avoidCount = def.avoidCount;
@@ -157,7 +157,9 @@ public final class Enemy extends Character {
 	
 	@Override
 	protected final boolean onStepCustom() {
-	    if (hv == 0 && def.projectile != null) {
+		if (def.stepHandler != null) {
+			return def.stepHandler.onInteract(this, null);
+		} else if (hv == 0 && def.projectile != null) {
 	        timer--;
 	        if (timer < 0) {
 	            switch (timerMode) {
@@ -280,7 +282,7 @@ public final class Enemy extends Character {
 		burst(anm, null);
 	}
 	
-	private void burst(final Panimation anm, final BurstHandler burstHandler) {
+	protected void burst(final Panimation anm, final BurstHandler burstHandler) {
 	    final Burst b = CustomBurst.createBurst(anm, burstHandler);
 	    final Panple pos = getPosition();
         PlatformGame.setPosition(b, pos.getX(), pos.getY(), PlatformGame.DEPTH_SHATTER);
@@ -326,6 +328,11 @@ public final class Enemy extends Character {
 	protected final boolean onFell() {
 		destroy();
 		return true;
+	}
+	
+	protected final void setEnemyMirror(final boolean mirror) {
+		setMirror(mirror);
+		hv = (mirror ? -1 : 1) * def.hv;
 	}
 	
 	protected static interface InteractionHandler {
