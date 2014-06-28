@@ -248,7 +248,7 @@ public class PlatformGame extends BaseGame {
 		
 		@Override
         protected final void step() {
-            if ((Pangine.getEngine().getClock() % PlatformGame.TIME_FLASH) < 4) {
+            if ((Pangine.getEngine().getClock() % TIME_FLASH) < 4) {
                 Tile.animate(Level.flashBlock);
             }
 		}
@@ -575,7 +575,7 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 			allEnemies.add(new EnemyDefinition("Drowid", 1, null, true, 1)); }}); // Teleport when stomped
 		loaders.add(new Runnable() { @Override public final void run() {
 			final EnemyDefinition drolock = new EnemyDefinition("Drolock", 4, null, false, 0, 0);
-			drolock.projectile = PlatformGame.projectile1;
+			drolock.projectile = projectile1;
 			allEnemies.add(drolock); }}); // Teleport/shoot periodically
 		loaders.add(new Runnable() { @Override public final void run() {
 			allEnemies.add(new EnemyDefinition("Troblin", 2, null, true)); }});
@@ -586,16 +586,31 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 			replace(f, (short) 64, (short) 80, (short) 112);
 			replace(f, (short) 48, (short) 56, (short) 80);
 			allEnemies.add(new EnemyDefinition("Obglin", 2, f, false));
-			allEnemies.add(new EnemyDefinition("Imp", 3, null, true, true, 4, 14));
+			final EnemyDefinition imp = new EnemyDefinition("Imp", 3, null, true, true, 4, 14);
+			allEnemies.add(imp);
 			allEnemies.add(new EnemyDefinition("Troll", 5, null, true, false, 0, 8, 30, 1, 32));
 			allEnemies.add(new EnemyDefinition("Ogre", 5, f, false, false, 0, 8, 30, 1, 32));
 			final EnemyDefinition armorBall, armoredImp;
 			armorBall = new EnemyDefinition("Armor Ball", 7, null, false, 0, 0);
+			armorBall.stompHandler = new InteractionHandler() {
+				@Override public boolean onInteract(final Enemy enemy, final Player player) {
+					if (enemy.full) {
+						enemy.full = false;
+						new Enemy(imp, enemy);
+					}
+					enemy.v = 2;
+					return true;
+				}};
+			armorBall.rewardHandler = new InteractionHandler() {
+				@Override public boolean onInteract(final Enemy enemy, final Player player) {
+					return enemy.full;
+				}};
 			Enemy.currentSplat = 8;
 			armoredImp = new EnemyDefinition("Armored Imp", 6, null, true, true, Enemy.DEFAULT_X, Enemy.DEFAULT_H);
 			armoredImp.splatHandler = new BurstHandler() {@Override public final void onBurst(final CustomBurst burst) {
-				final Panple pos = burst.getPosition();
-				new Enemy(armorBall, pos.getX(), pos.getY()).setMirror(burst.isMirror()); }};
+				final Enemy ball = new Enemy(armorBall, burst);
+				ball.full = true;
+				ball.setMirror(burst.isMirror()); }};
 			allEnemies.add(armoredImp);
 			Level.setTheme(Theme.Normal); }});
 		
@@ -643,7 +658,7 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 			teleport = createAnm("teleport", "org/pandcorps/platform/res/enemy/Teleport.png", ImtilX.DIM, 5, Enemy.DEFAULT_O); }});
 	    
 		loaders.add(new Runnable() { @Override public final void run() {
-			final Panmage pimg1 = createImage("projectile1", "org/pandcorps/platform/res/enemy/Projectile1.png", 8, PlatformGame.CENTER_8, new FinPanple(-3, -3, 0), new FinPanple(2, 2, 0));
+			final Panmage pimg1 = createImage("projectile1", "org/pandcorps/platform/res/enemy/Projectile1.png", 8, CENTER_8, new FinPanple(-3, -3, 0), new FinPanple(2, 2, 0));
 		    final Panframe[] pfrms = new Panframe[4];
 		    for (int i = 0; i < 4; i++) {
 		        pfrms[i] = engine.createFrame(PRE_FRM + "projectile1." + i, pimg1, 4, i, false, false);
@@ -880,7 +895,7 @@ System.out.println("loadConstants end " + System.currentTimeMillis());
 	}
 	
 	protected final static void worldClose() {
-		for (final PlayerContext pc : PlatformGame.pcs) {
+		for (final PlayerContext pc : pcs) {
 			pc.onFinishWorld();
 		}
 		Achievement.evaluate();
