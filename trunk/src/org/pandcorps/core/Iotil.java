@@ -75,7 +75,7 @@ public final class Iotil {
 	
 	public final static Writer getWriter(final String location) {
 		try {
-			return new FileWriter(location);
+			return new FileWriter(new File(location));
 		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}

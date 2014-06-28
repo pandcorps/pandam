@@ -1530,6 +1530,7 @@ public class Menu {
         
         @Override
         protected void onExit() {
+        	save();
             goProfile();
         }
     }

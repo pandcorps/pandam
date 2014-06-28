@@ -31,6 +31,8 @@ import org.pandcorps.core.img.*;
 import org.pandcorps.core.img.Pancolor.*;
 import org.pandcorps.core.seg.*;
 import org.pandcorps.game.*;
+import org.pandcorps.game.actor.*;
+import org.pandcorps.game.actor.CustomBurst.*;
 import org.pandcorps.game.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.impl.*;
@@ -572,7 +574,9 @@ public class PlatformGame extends BaseGame {
 System.out.println("loadConstants start " + System.currentTimeMillis());
 			allEnemies.add(new EnemyDefinition("Drowid", 1, null, true, 1)); }}); // Teleport when stomped
 		loaders.add(new Runnable() { @Override public final void run() {
-			allEnemies.add(new EnemyDefinition("Drolock", 4, null, false, 0, 0)); }}); // Teleport/shoot periodically
+			final EnemyDefinition drolock = new EnemyDefinition("Drolock", 4, null, false, 0, 0);
+			drolock.projectile = PlatformGame.projectile1;
+			allEnemies.add(drolock); }}); // Teleport/shoot periodically
 		loaders.add(new Runnable() { @Override public final void run() {
 			allEnemies.add(new EnemyDefinition("Troblin", 2, null, true)); }});
 		loaders.add(new Runnable() { @Override public final void run() {
@@ -585,6 +589,14 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 			allEnemies.add(new EnemyDefinition("Imp", 3, null, true, true, 4, 14));
 			allEnemies.add(new EnemyDefinition("Troll", 5, null, true, false, 0, 8, 30, 1, 32));
 			allEnemies.add(new EnemyDefinition("Ogre", 5, f, false, false, 0, 8, 30, 1, 32));
+			final EnemyDefinition armorBall, armoredImp;
+			armorBall = new EnemyDefinition("Armor Ball", 7, null, false, 0, 0);
+			Enemy.currentSplat = 8;
+			armoredImp = new EnemyDefinition("Armored Imp", 6, null, true, true, Enemy.DEFAULT_X, Enemy.DEFAULT_H);
+			armoredImp.splatHandler = new BurstHandler() {@Override public final void onBurst(final CustomBurst burst) {
+				final Panple pos = burst.getPosition();
+				new Enemy(armorBall, pos.getX(), pos.getY()).setMirror(burst.isMirror()); }};
+			allEnemies.add(armoredImp);
 			Level.setTheme(Theme.Normal); }});
 		
 		loaders.add(new Runnable() { @Override public final void run() {

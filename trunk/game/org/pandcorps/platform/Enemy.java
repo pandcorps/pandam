@@ -25,6 +25,7 @@ package org.pandcorps.platform;
 import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
 import org.pandcorps.game.actor.*;
+import org.pandcorps.game.actor.CustomBurst.*;
 import org.pandcorps.game.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.impl.*;
@@ -32,8 +33,9 @@ import org.pandcorps.pandax.tile.*;
 import org.pandcorps.platform.Player.*;
 
 public final class Enemy extends Character {
-	private final static int DEFAULT_X = 5;
-	private final static int DEFAULT_H = 15;
+	protected final static int DEFAULT_X = 5;
+	protected final static int DEFAULT_H = 15;
+	protected final static int DEFAULT_SPLAT = 20;
 	private final static int DEFAULT_HV = 1;
 	private final static int MIN_TIMER = 60;
 	private final static int MAX_TIMER = 90;
@@ -41,6 +43,8 @@ public final class Enemy extends Character {
 	protected final static FinPanple DEFAULT_O = new FinPanple(8, 1, 0);
 	private final static FinPanple DEFAULT_MIN = new FinPanple(-DEFAULT_X, 0, 0);
 	private final static FinPanple DEFAULT_MAX = new FinPanple(DEFAULT_X, DEFAULT_H, 0);
+	
+	protected static int currentSplat = DEFAULT_SPLAT;
 	
 	protected final static class EnemyDefinition {
 		private final Panimation walk;
@@ -51,6 +55,8 @@ public final class Enemy extends Character {
 		private final int offX;
 		private final int h;
 		private final int hv;
+		protected Panimation projectile = null;
+		protected BurstHandler splatHandler = null;
 		
 		protected EnemyDefinition(final String name, final int ind, final PixelFilter f, final boolean ledgeTurn) {
 		    this(name, ind, f, ledgeTurn, false, 0, DEFAULT_X, DEFAULT_H, DEFAULT_HV);
@@ -103,8 +109,9 @@ public final class Enemy extends Character {
 			}
 			this.walk = PlatformGame.createAnm(id, 6, o, n, x, walk);
 			this.ledgeTurn = ledgeTurn;
-			this.splat = splat ? PlatformGame.createAnm(id + ".splat", 20, o, n, x, strip[2]) : null;
-			this.attack = hv == 0 ? PlatformGame.createAnm(id + ".attack", 20, o, n, x, strip[2]) : null;
+			this.splat = splat ? PlatformGame.createAnm(id + ".splat", currentSplat, o, n, x, strip[2]) : null;
+			currentSplat = DEFAULT_SPLAT;
+			this.attack = (hv == 0 && strip.length > 2) ? PlatformGame.createAnm(id + ".attack", 20, o, n, x, strip[2]) : null;
 			Img.close(strip);
 			this.avoidCount = avoidCount;
 			this.offX = offX;
@@ -139,7 +146,7 @@ public final class Enemy extends Character {
 	
 	@Override
 	protected final boolean onStepCustom() {
-	    if (hv == 0) {
+	    if (hv == 0 && def.projectile != null) {
 	        timer--;
 	        if (timer < 0) {
 	            switch (timerMode) {
@@ -150,7 +157,7 @@ public final class Enemy extends Character {
 	                    break;
 	                case 1 :
 	                    initTimer(2);
-	                    PlatformGame.room.addActor(new Projectile(PlatformGame.projectile1, this, Mathtil.rand(PlatformGame.pcs).player));
+	                    PlatformGame.room.addActor(new Projectile(def.projectile, this, Mathtil.rand(PlatformGame.pcs).player));
 	                    break;
 	                case 2 :
 	                    stepTeleport();
@@ -235,13 +242,13 @@ public final class Enemy extends Character {
 	            return false;
 	        }
 	    }
-		if (defeater != null && defeater.getClass() == Player.class) {
+		if (defeater != null && defeater.getClass() == Player.class && def.splatHandler == null) {
 		    final Player player = (Player) defeater;
 			new GemBumped(player, this);
 			player.levelDefeatedEnemies++;
 		}
 		if (v == 0 && def.splat != null) {
-		    burst(def.splat);
+		    burst(def.splat, def.splatHandler);
 		} else {
 		    final Panple pos = getPosition();
     		final Tiles.Faller f = new Tiles.Faller((Panmage) getCurrentDisplay(), pos.getX(), pos.getY() + H, 0, v);
@@ -253,9 +260,14 @@ public final class Enemy extends Character {
 	}
 	
 	private void burst(final Panimation anm) {
-	    final Burst b = new Burst(anm);
+		burst(anm, null);
+	}
+	
+	private void burst(final Panimation anm, final BurstHandler burstHandler) {
+	    final Burst b = CustomBurst.createBurst(anm, burstHandler);
 	    final Panple pos = getPosition();
         PlatformGame.setPosition(b, pos.getX(), pos.getY(), PlatformGame.DEPTH_SHATTER);
+        b.setMirror(isMirror());
         PlatformGame.room.addActor(b);
 	}
 	
