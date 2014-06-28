@@ -57,6 +57,8 @@ public final class Enemy extends Character {
 		private final int hv;
 		protected Panimation projectile = null;
 		protected BurstHandler splatHandler = null;
+		protected InteractionHandler stompHandler = null;
+		protected InteractionHandler rewardHandler = null;
 		
 		protected EnemyDefinition(final String name, final int ind, final PixelFilter f, final boolean ledgeTurn) {
 		    this(name, ind, f, ledgeTurn, false, 0, DEFAULT_X, DEFAULT_H, DEFAULT_HV);
@@ -124,6 +126,15 @@ public final class Enemy extends Character {
 	private int avoidCount = 0;
 	private int timer = 0;
 	private int timerMode = 0;
+	protected boolean full = false;
+	
+	protected Enemy(final EnemyDefinition def, final Panctor ref) {
+		this(def, ref.getPosition());
+	}
+	
+	protected Enemy(final EnemyDefinition def, final Panple pos) {
+		this(def, pos.getX(), pos.getY());
+	}
 	
 	protected Enemy(final EnemyDefinition def, final float x, final float y) {
 		super(def.offX, def.h);
@@ -191,7 +202,11 @@ public final class Enemy extends Character {
 	}
 	
 	protected final boolean onStomp(final Player stomper) {
-		return defeat(stomper, 0);
+		if (def.stompHandler == null) {
+			return defeat(stomper, 0);
+		} else {
+			return def.stompHandler.onInteract(this, stomper);
+		}
 	}
 	
 	@Override
@@ -242,10 +257,12 @@ public final class Enemy extends Character {
 	            return false;
 	        }
 	    }
-		if (defeater != null && defeater.getClass() == Player.class && def.splatHandler == null) {
+		if (defeater != null && defeater.getClass() == Player.class && (v > 0 || def.splatHandler == null)) {
 		    final Player player = (Player) defeater;
-			new GemBumped(player, this);
-			player.levelDefeatedEnemies++;
+		    if (def.rewardHandler == null || def.rewardHandler.onInteract(this, player)) {
+				new GemBumped(player, this);
+				player.levelDefeatedEnemies++;
+		    }
 		}
 		if (v == 0 && def.splat != null) {
 		    burst(def.splat, def.splatHandler);
@@ -309,5 +326,9 @@ public final class Enemy extends Character {
 	protected final boolean onFell() {
 		destroy();
 		return true;
+	}
+	
+	protected static interface InteractionHandler {
+		public boolean onInteract(final Enemy enemy, final Player player);
 	}
 }
