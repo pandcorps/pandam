@@ -85,6 +85,10 @@ public class PlatformGame extends BaseGame {
 	Let LogoScreen finish after a specified Runnable finishes.
 	Let Thread keep loading through title screen.
 	Give images a real transparent background, disable ImtilX preprocessing.
+	Walking into an ArmorBall kicks it.
+	Stomping a moving ArmorBall stops it.
+	An Imp walking into an empty ArmorBall will merge into it.
+	Stomping a still ArmorBall must use new Imp art and send him flying.
 	*/
 	
 	protected final static byte TILE_BREAK = 2;
@@ -592,8 +596,30 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 			allEnemies.add(new EnemyDefinition("Ogre", 5, f, false, false, 0, 8, 30, 1, 32));
 			final EnemyDefinition armorBall, armoredImp;
 			armorBall = new EnemyDefinition("Armor Ball", 7, null, false, 0, 0);
+			Enemy.currentSplat = 8;
+			armoredImp = new EnemyDefinition("Armored Imp", 6, null, true, true, Enemy.DEFAULT_X, Enemy.DEFAULT_H);
+			armorBall.stepHandler = new InteractionHandler() {
+				@Override public final boolean onInteract(final Enemy enemy, final Player player) {
+					if (!enemy.full){
+						return false;
+					} else if (enemy.timer == 0) {
+						if (enemy.timerMode == 5) {
+							enemy.burst(armoredImp.splat, new BurstHandler() {
+								@Override public final void onBurst(final CustomBurst burst) {
+									new Enemy(armoredImp, burst).setEnemyMirror(enemy.isMirror()); }});
+							enemy.destroy();
+							return false;
+						}
+						enemy.v = 2;
+						enemy.timerMode++;
+						enemy.timer = (6 - enemy.timerMode) * 10;
+					} else {
+						enemy.timer--;
+					}
+					return false;
+				}};
 			armorBall.stompHandler = new InteractionHandler() {
-				@Override public boolean onInteract(final Enemy enemy, final Player player) {
+				@Override public final boolean onInteract(final Enemy enemy, final Player player) {
 					if (enemy.full) {
 						enemy.full = false;
 						new Enemy(imp, enemy);
@@ -602,11 +628,9 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 					return true;
 				}};
 			armorBall.rewardHandler = new InteractionHandler() {
-				@Override public boolean onInteract(final Enemy enemy, final Player player) {
+				@Override public final boolean onInteract(final Enemy enemy, final Player player) {
 					return enemy.full;
 				}};
-			Enemy.currentSplat = 8;
-			armoredImp = new EnemyDefinition("Armored Imp", 6, null, true, true, Enemy.DEFAULT_X, Enemy.DEFAULT_H);
 			armoredImp.splatHandler = new BurstHandler() {@Override public final void onBurst(final CustomBurst burst) {
 				final Enemy ball = new Enemy(armorBall, burst);
 				ball.full = true;
