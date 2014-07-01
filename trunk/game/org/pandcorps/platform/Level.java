@@ -526,7 +526,9 @@ public class Level {
 	    protected final void loadTemplates() {
     		grassy = false;
 	        addTemplate(new WallTemplate());
-	        addTemplate(new PitTemplate(), new BridgePitTemplate(), new BlockPitTemplate());
+	        addTemplate(new PitTemplate());
+	        addTemplate(new BridgePitTemplate());
+	        addTemplate(new BlockPitTemplate());
 	        addTemplate(new UpBlockStepTemplate(), new DownBlockStepTemplate(), new BlockWallTemplate(), new BlockGroupTemplate());
 	        addTemplate(new BlockBonusTemplate());
 	        addTemplate(new GemTemplate(), new GemMsgTemplate());

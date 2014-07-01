@@ -88,7 +88,6 @@ public class PlatformGame extends BaseGame {
 	Walking into an ArmorBall kicks it.
 	Stomping a moving ArmorBall stops it.
 	An Imp walking into an empty ArmorBall will merge into it.
-	Stomping a still ArmorBall must use new Imp art and send him flying.
 	*/
 	
 	protected final static byte TILE_BREAK = 2;
@@ -590,14 +589,16 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 			replace(f, (short) 64, (short) 80, (short) 112);
 			replace(f, (short) 48, (short) 56, (short) 80);
 			allEnemies.add(new EnemyDefinition("Obglin", 2, f, false));
-			final EnemyDefinition imp = new EnemyDefinition("Imp", 3, null, true, true, 4, 14);
+			final int impX = 4, impH = 14;
+			final EnemyDefinition imp = new EnemyDefinition("Imp", 3, null, true, true, impX, impH);
 			allEnemies.add(imp);
 			allEnemies.add(new EnemyDefinition("Troll", 5, null, true, false, 0, 8, 30, 1, 32));
 			allEnemies.add(new EnemyDefinition("Ogre", 5, f, false, false, 0, 8, 30, 1, 32));
-			final EnemyDefinition armorBall, armoredImp;
+			final EnemyDefinition armorBall, thrownImp, armoredImp;
 			armorBall = new EnemyDefinition("Armor Ball", 7, null, false, 0, 0);
 			Enemy.currentSplat = 8;
 			armoredImp = new EnemyDefinition("Armored Imp", 6, null, true, true, Enemy.DEFAULT_X, Enemy.DEFAULT_H);
+			thrownImp = new EnemyDefinition("Thrown Imp", 8, null, false, false, 0, impX, impH, 4);
 			armorBall.stepHandler = new InteractionHandler() {
 				@Override public final boolean onInteract(final Enemy enemy, final Player player) {
 					if (!enemy.full){
@@ -622,7 +623,9 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 				@Override public final boolean onInteract(final Enemy enemy, final Player player) {
 					if (enemy.full) {
 						enemy.full = false;
-						new Enemy(imp, enemy);
+						final Enemy imp = new Enemy(thrownImp, enemy);
+						imp.setEnemyMirror(enemy.isMirror());
+						imp.v = 3;
 					}
 					enemy.v = 2;
 					return true;
@@ -635,6 +638,18 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 				final Enemy ball = new Enemy(armorBall, burst);
 				ball.full = true;
 				ball.setMirror(burst.isMirror()); }};
+				thrownImp.stepHandler = new InteractionHandler() {
+	                @Override public final boolean onInteract(final Enemy enemy, final Player player) {
+	                    final int hv = enemy.hv;
+	                    if (hv == 0) {
+	                        new Enemy(imp, enemy).setEnemyMirror(!enemy.isMirror());
+	                    } else if (hv > 0) {
+	                        enemy.hv--;
+	                    } else {
+	                        enemy.hv++;
+	                    }
+	                    return false;
+	                }};
 			allEnemies.add(armoredImp);
 			Level.setTheme(Theme.Normal); }});
 		

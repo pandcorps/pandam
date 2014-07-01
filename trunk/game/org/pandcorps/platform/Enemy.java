@@ -94,7 +94,7 @@ public final class Enemy extends Character {
 					strip[i] = Imtil.filter(strip[i], f);
 				}
 			}
-			if (splat) {
+			if (splat && strip.length > 1) {
 			    walk = new Img[] {strip[0], strip[1]};
 			} else if (hv == 0) {
 			    walk = new Img[] {strip[0]};
