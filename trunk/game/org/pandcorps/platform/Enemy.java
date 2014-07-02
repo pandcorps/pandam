@@ -59,6 +59,7 @@ public final class Enemy extends Character {
 		protected BurstHandler splatHandler = null;
 		protected InteractionHandler stepHandler = null;
 		protected InteractionHandler landedHandler = null;
+		protected InteractionHandler hurtHandler = null;
 		protected InteractionHandler stompHandler = null;
 		protected InteractionHandler rewardHandler = null;
 		protected InteractionHandler defeatHandler = null;
@@ -292,6 +293,13 @@ public final class Enemy extends Character {
         PlatformGame.setPosition(b, pos.getX(), pos.getY(), PlatformGame.DEPTH_SHATTER);
         b.setMirror(isMirror());
         PlatformGame.room.addActor(b);
+	}
+	
+	protected final boolean onHurtPlayer(final Player player) {
+	    if (def.hurtHandler != null) {
+	        return def.hurtHandler.onInteract(this, player);
+	    }
+	    return true;
 	}
 	
 	@Override
