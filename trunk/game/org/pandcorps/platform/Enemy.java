@@ -58,6 +58,7 @@ public final class Enemy extends Character {
 		protected Panimation projectile = null;
 		protected BurstHandler splatHandler = null;
 		protected InteractionHandler stepHandler = null;
+		protected InteractionHandler landedHandler = null;
 		protected InteractionHandler stompHandler = null;
 		protected InteractionHandler rewardHandler = null;
 		protected InteractionHandler defeatHandler = null;
@@ -322,6 +323,13 @@ public final class Enemy extends Character {
 			pos.set(x, y);
 		}
 		return false;
+	}
+	
+	@Override
+    protected final void onLanded() {
+	    if (def.landedHandler == null || !def.landedHandler.onInteract(this, null)) {
+	        super.onLanded();
+	    }
 	}
 	
 	@Override
