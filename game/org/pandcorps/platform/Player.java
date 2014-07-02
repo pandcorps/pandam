@@ -560,7 +560,7 @@ public class Player extends Character implements CollisionListener {
 		        But don't fall through to call onHurt below.
 		        Just ignore the second Enemy, so this case is a no-op.
 		        */
-			} else {
+			} else if (((Enemy) other).onHurtPlayer(this)) {
 			    startHurt();
 			}
 		} else if (other instanceof Projectile) {

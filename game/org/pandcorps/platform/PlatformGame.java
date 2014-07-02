@@ -85,7 +85,6 @@ public class PlatformGame extends BaseGame {
 	Let LogoScreen finish after a specified Runnable finishes.
 	Let Thread keep loading through title screen.
 	Give images a real transparent background, disable ImtilX preprocessing.
-	Walking into an ArmorBall kicks it.
 	Stomping a moving ArmorBall stops it.
 	An Imp walking into an empty ArmorBall will merge into it.
 	*/
@@ -635,6 +634,14 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 				@Override public final boolean onInteract(final Enemy enemy, final Player player) {
 					return enemy.full;
 				}};
+			armorBall.hurtHandler = new InteractionHandler() {
+                @Override public final boolean onInteract(final Enemy enemy, final Player player) {
+                    final Enemy e = new Enemy(bounceBall, enemy);
+                    e.setEnemyMirror(player.isMirror());
+                    e.v = 6;
+                    enemy.destroy();
+                    return false;
+                }};
 			armoredImp.splatHandler = new BurstHandler() {@Override public final void onBurst(final CustomBurst burst) {
 				final Enemy ball = new Enemy(armorBall, burst);
 				ball.full = true;
@@ -652,8 +659,7 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
                     	if (enemy.timer < 38) {
                     		enemy.timer++;
                     	} else if (enemy.isGrounded()) {
-	                        final Enemy e = new Enemy(imp, enemy);
-	                        e.setEnemyMirror(!enemy.isMirror());
+	                        new Enemy(imp, enemy).setEnemyMirror(!enemy.isMirror());
 	                        enemy.destroy();
                     	}
                     } else if (enemy.timer < 8 && Math.abs(hv) == 1) {
