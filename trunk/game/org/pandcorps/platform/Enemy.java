@@ -49,7 +49,7 @@ public final class Enemy extends Character {
 	protected final static class EnemyDefinition {
 		private final Panimation walk;
 		private final boolean ledgeTurn;
-		protected final Panimation splat;
+		protected Panimation splat;
 		private final Panimation attack;
 		private final int avoidCount;
 		private final int offX;
@@ -300,6 +300,8 @@ public final class Enemy extends Character {
 	@Override
 	protected final boolean onHorizontal(final int off) {
 		if (!def.ledgeTurn) {
+			return false;
+		} else if (!isGrounded()) { // Don't change direction if already in air
 			return false;
 		}
 		final Panple pos = getPosition();

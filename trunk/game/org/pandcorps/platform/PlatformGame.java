@@ -598,7 +598,7 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 			armorBall = new EnemyDefinition("Armor Ball", 7, null, false, 0, 0);
 			Enemy.currentSplat = 8;
 			armoredImp = new EnemyDefinition("Armored Imp", 6, null, true, true, Enemy.DEFAULT_X, Enemy.DEFAULT_H);
-			thrownImp = new EnemyDefinition("Thrown Imp", 8, null, false, false, 0, impX, impH, 4);
+			thrownImp = new EnemyDefinition("Thrown Imp", 8, null, false, false, 0, impX, impH, 10);
 			armorBall.stepHandler = new InteractionHandler() {
 				@Override public final boolean onInteract(final Enemy enemy, final Player player) {
 					if (!enemy.full){
@@ -625,7 +625,7 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 						enemy.full = false;
 						final Enemy imp = new Enemy(thrownImp, enemy);
 						imp.setEnemyMirror(enemy.isMirror());
-						imp.v = 3;
+						imp.v = 2;
 					}
 					enemy.v = 2;
 					return true;
@@ -638,18 +638,27 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 				final Enemy ball = new Enemy(armorBall, burst);
 				ball.full = true;
 				ball.setMirror(burst.isMirror()); }};
-				thrownImp.stepHandler = new InteractionHandler() {
-	                @Override public final boolean onInteract(final Enemy enemy, final Player player) {
-	                    final int hv = enemy.hv;
-	                    if (hv == 0) {
-	                        new Enemy(imp, enemy).setEnemyMirror(!enemy.isMirror());
-	                    } else if (hv > 0) {
-	                        enemy.hv--;
-	                    } else {
-	                        enemy.hv++;
-	                    }
-	                    return false;
-	                }};
+			thrownImp.splat = imp.splat;
+			thrownImp.stepHandler = new InteractionHandler() {
+                @Override public final boolean onInteract(final Enemy enemy, final Player player) {
+                    final int hv = enemy.hv;
+                    if (hv == 0) {
+                    	if (enemy.timer < 38) {
+                    		enemy.timer++;
+                    	} else if (enemy.isGrounded()) {
+	                        final Enemy e = new Enemy(imp, enemy);
+	                        e.setEnemyMirror(!enemy.isMirror());
+	                        enemy.destroy();
+                    	}
+                    } else if (enemy.timer < 8 && Math.abs(hv) == 1) {
+                    	enemy.timer++;
+                    } else if (hv > 0) {
+                        enemy.hv--;
+                    } else {
+                        enemy.hv++;
+                    }
+                    return false;
+                }};
 			allEnemies.add(armoredImp);
 			Level.setTheme(Theme.Normal); }});
 		
