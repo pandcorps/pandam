@@ -332,7 +332,7 @@ public class Player extends Character implements CollisionListener {
 	    if (jumpMode == JUMP_FLY) {
             flying = false;
             return;
-        } else if (v > 0) {
+        } else if (v > 0 && stompTimer == 0) {
 			v = 0;
 			if (jumpMode == JUMP_HIGH) {
 				acc.back.setView((Panmage) null);
@@ -547,7 +547,7 @@ public class Player extends Character implements CollisionListener {
 		        return; // But this is handled in Pangine
 		    }*/
 		    final boolean aboveEnemy = getPosition().getY() > other.getPosition().getY();
-		    if (aboveEnemy && v < 0) {
+		    if (aboveEnemy && v < 4 && !isGrounded()) {
 				if (((Enemy) other).onStomp(this)) {
     				v = VEL_BUMP;
     				stompTimer = 2;

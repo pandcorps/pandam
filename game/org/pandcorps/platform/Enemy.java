@@ -60,6 +60,7 @@ public final class Enemy extends Character {
 		protected InteractionHandler stepHandler = null;
 		protected InteractionHandler stompHandler = null;
 		protected InteractionHandler rewardHandler = null;
+		protected InteractionHandler defeatHandler = null;
 		
 		protected EnemyDefinition(final String name, final int ind, final PixelFilter f, final boolean ledgeTurn) {
 		    this(name, ind, f, ledgeTurn, false, 0, DEFAULT_X, DEFAULT_H, DEFAULT_HV);
@@ -253,7 +254,9 @@ public final class Enemy extends Character {
 	}
 	
 	private final boolean defeat(final Character defeater, final int v) {
-	    if (avoidCount > 0) {
+		if (def.defeatHandler != null && !def.defeatHandler.onInteract(this, null)) {
+			return false;
+		} else if (avoidCount > 0) {
 	        avoidCount--;
 	        if (teleport(48)) {
 	            return false;

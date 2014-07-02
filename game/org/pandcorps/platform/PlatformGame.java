@@ -659,6 +659,10 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
                     }
                     return false;
                 }};
+            thrownImp.defeatHandler = new InteractionHandler() {
+                @Override public final boolean onInteract(final Enemy enemy, final Player player) {
+                	return Math.abs(enemy.hv) < 4;
+                }};
 			allEnemies.add(armoredImp);
 			Level.setTheme(Theme.Normal); }});
 		
