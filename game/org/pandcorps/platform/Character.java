@@ -115,8 +115,10 @@ public abstract class Character extends Panctor implements StepListener, Collida
 			if (t != null) {
 			    if (v > 0) {
 			        Tiles.bump(this, t);
+			        v = 0;
+			    } else {
+			        onLanded();
 			    }
-				v = 0;
 				break;
 			}
 			pos.addY(mult);
@@ -378,6 +380,10 @@ public abstract class Character extends Panctor implements StepListener, Collida
 	
 	//@OverrideMe
 	protected void onGrounded() {
+	}
+	
+	protected void onLanded() {
+	    v = 0;
 	}
 	
 	//@OverrideMe
