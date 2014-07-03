@@ -385,9 +385,12 @@ public class Enemy extends Character {
 
         @Override
         public final void onCollision(final Enemy collider) {
-            if (collider.def == PlatformGame.imp) {
-                new Enemy(PlatformGame.armoredImp, this).setEnemyMirror(collider.isMirror());
-                destroy();
+            if (full) {
+                return;
+            } else if (v < 0 && getPosition().getY() > collider.getPosition().getY()) {
+                collider.onBump(this);
+            } else if (collider.def == PlatformGame.imp) {
+                PlatformGame.openArmoredImp(this, collider);
                 collider.destroy();
             }
         }
