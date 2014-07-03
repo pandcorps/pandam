@@ -85,7 +85,6 @@ public class PlatformGame extends BaseGame {
 	Let LogoScreen finish after a specified Runnable finishes.
 	Let Thread keep loading through title screen.
 	Give images a real transparent background, disable ImtilX preprocessing.
-	Stomping a moving ArmorBall stops it.
 	*/
 	
 	protected final static byte TILE_BREAK = 2;
@@ -635,6 +634,7 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 			armorBall.hurtHandler = new InteractionHandler() {
                 @Override public final boolean onInteract(final Enemy enemy, final Player player) {
                     final Enemy e = new BounceBall(bounceBall, enemy);
+                    e.full = enemy.full;
                     e.setEnemyMirror(player.isMirror());
                     e.v = 6;
                     enemy.destroy();
@@ -649,6 +649,15 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
                     enemy.v = Math.abs(enemy.v) * 0.8f;
                     return true;
                 }};
+            bounceBall.stompHandler = new InteractionHandler() {
+                @Override public final boolean onInteract(final Enemy enemy, final Player player) {
+                    final Enemy ball = new ArmorBall(armorBall, enemy);
+                    ball.full = enemy.full;
+                    ball.setMirror(enemy.isMirror());
+                    enemy.destroy();
+                    return true;
+                }};
+            bounceBall.rewardHandler = armorBall.rewardHandler;
 			thrownImp.splat = imp.splat;
 			thrownImp.stepHandler = new InteractionHandler() {
                 @Override public final boolean onInteract(final Enemy enemy, final Player player) {
