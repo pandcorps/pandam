@@ -86,7 +86,6 @@ public class PlatformGame extends BaseGame {
 	Let Thread keep loading through title screen.
 	Give images a real transparent background, disable ImtilX preprocessing.
 	Stomping a moving ArmorBall stops it.
-	An Imp walking into an empty ArmorBall will merge into it.
 	*/
 	
 	protected final static byte TILE_BREAK = 2;
@@ -148,6 +147,8 @@ public class PlatformGame extends BaseGame {
 	protected static Panimation owl = null;
 	protected final static List<EnemyDefinition> allEnemies = new ArrayList<EnemyDefinition>();
 	protected static List<EnemyDefinition> enemies = null;
+	protected static EnemyDefinition imp = null;
+	protected static EnemyDefinition armoredImp = null;
 	protected static Panmage block8 = null;
 	protected static Panmage[] gem = null;
 	protected static Panimation gemAnm = null;
@@ -589,11 +590,11 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 			replace(f, (short) 48, (short) 56, (short) 80);
 			allEnemies.add(new EnemyDefinition("Obglin", 2, f, false));
 			final int impX = 4, impH = 14;
-			final EnemyDefinition imp = new EnemyDefinition("Imp", 3, null, true, true, impX, impH);
+			imp = new EnemyDefinition("Imp", 3, null, true, true, impX, impH);
 			allEnemies.add(imp);
 			allEnemies.add(new EnemyDefinition("Troll", 5, null, true, false, 0, 8, 30, 1, 32));
 			allEnemies.add(new EnemyDefinition("Ogre", 5, f, false, false, 0, 8, 30, 1, 32));
-			final EnemyDefinition armorBall, bounceBall, thrownImp, armoredImp;
+			final EnemyDefinition armorBall, bounceBall, thrownImp;
 			armorBall = new EnemyDefinition("Armor Ball", 7, null, false, 0, 0);
 			bounceBall = new EnemyDefinition("Bounce Ball", 7, null, false, 0, 4);
 			Enemy.currentSplat = 8;
@@ -636,14 +637,14 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 				}};
 			armorBall.hurtHandler = new InteractionHandler() {
                 @Override public final boolean onInteract(final Enemy enemy, final Player player) {
-                    final Enemy e = new Enemy(bounceBall, enemy);
+                    final Enemy e = new BounceBall(bounceBall, enemy);
                     e.setEnemyMirror(player.isMirror());
                     e.v = 6;
                     enemy.destroy();
                     return false;
                 }};
 			armoredImp.splatHandler = new BurstHandler() {@Override public final void onBurst(final CustomBurst burst) {
-				final Enemy ball = new Enemy(armorBall, burst);
+				final Enemy ball = new ArmorBall(armorBall, burst);
 				ball.full = true;
 				ball.setMirror(burst.isMirror()); }};
 			bounceBall.landedHandler = new InteractionHandler() {

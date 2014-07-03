@@ -28,11 +28,12 @@ import org.pandcorps.game.actor.*;
 import org.pandcorps.game.actor.CustomBurst.*;
 import org.pandcorps.game.core.*;
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.platform.Player.*;
 
-public final class Enemy extends Character {
+public class Enemy extends Character {
 	protected final static int DEFAULT_X = 5;
 	protected final static int DEFAULT_H = 15;
 	protected final static int DEFAULT_SPLAT = 20;
@@ -359,4 +360,47 @@ public final class Enemy extends Character {
 	protected static interface InteractionHandler {
 		public boolean onInteract(final Enemy enemy, final Player player);
 	}
+	
+	private abstract static class ColliderEnemy extends Enemy implements CollisionListener {
+        protected ColliderEnemy(final EnemyDefinition def, final Panctor ref) {
+            super(def, ref);
+        }
+
+        @Override
+        public final void onCollision(final CollisionEvent event) {
+            final Collidable collider = event.getCollider();
+            // Player handles its own collisions, so only check for Enemy
+            if (collider.getClass() == Enemy.class) {
+                onCollision((Enemy) collider);
+            }
+        }
+        
+        protected abstract void onCollision(final Enemy collider);
+	}
+	
+	public final static class ArmorBall extends ColliderEnemy {
+        protected ArmorBall(final EnemyDefinition def, final Panctor ref) {
+            super(def, ref);
+        }
+
+        @Override
+        public final void onCollision(final Enemy collider) {
+            if (collider.def == PlatformGame.imp) {
+                new Enemy(PlatformGame.armoredImp, this).setEnemyMirror(collider.isMirror());
+                destroy();
+                collider.destroy();
+            }
+        }
+    }
+	
+	public final static class BounceBall extends ColliderEnemy {
+        protected BounceBall(final EnemyDefinition def, final Panctor ref) {
+            super(def, ref);
+        }
+
+        @Override
+        public final void onCollision(final Enemy collider) {
+            collider.onBump(this);
+        }
+    }
 }
