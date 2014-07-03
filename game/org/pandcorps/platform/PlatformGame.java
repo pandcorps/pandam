@@ -606,10 +606,7 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 						return false;
 					} else if (enemy.timer == 0) {
 						if (enemy.timerMode == 5) {
-							enemy.burst(armoredImp.splat, new BurstHandler() {
-								@Override public final void onBurst(final CustomBurst burst) {
-									new Enemy(armoredImp, burst).setEnemyMirror(enemy.isMirror()); }});
-							enemy.destroy();
+							openArmoredImp(enemy, enemy);
 							return false;
 						}
 						enemy.v = 2;
@@ -832,6 +829,13 @@ System.out.println("loadConstants end " + System.currentTimeMillis());
 		    loaders.add(new Runnable() { @Override public final void run() {
 		        engine.getMusic().ensureCapacity(5); }});
 		}
+	}
+	
+	protected final static void openArmoredImp(final Enemy enemyPos, final Enemy enemyDir) {
+	    enemyPos.burst(armoredImp.splat, new BurstHandler() {
+            @Override public final void onBurst(final CustomBurst burst) {
+                new Enemy(armoredImp, burst).setEnemyMirror(enemyDir.isMirror()); }});
+	    enemyPos.destroy();
 	}
 	
 	private final static Panmage createMenuImg(final String name) {
