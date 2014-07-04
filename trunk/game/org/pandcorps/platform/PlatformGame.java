@@ -618,7 +618,7 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 				}};
 			armorBall.stompHandler = new InteractionHandler() {
 				@Override public final boolean onInteract(final Enemy enemy, final Player player) {
-					if (!enemy.isGrounded()) {
+					if (enemy.timerMode == 0 && enemy.timer > 57) {
 						return true;
 					} else if (enemy.full) {
 						enemy.full = false;
