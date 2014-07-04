@@ -618,7 +618,9 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 				}};
 			armorBall.stompHandler = new InteractionHandler() {
 				@Override public final boolean onInteract(final Enemy enemy, final Player player) {
-					if (enemy.full) {
+					if (!enemy.isGrounded()) {
+						return true;
+					} else if (enemy.full) {
 						enemy.full = false;
 						final Enemy imp = new Enemy(thrownImp, enemy);
 						imp.setEnemyMirror(enemy.isMirror());
@@ -644,6 +646,13 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 				final Enemy ball = new ArmorBall(armorBall, burst);
 				ball.full = true;
 				ball.setMirror(burst.isMirror()); }};
+			bounceBall.stepHandler = new InteractionHandler() {
+                @Override public final boolean onInteract(final Enemy enemy, final Player player) {
+                    if (enemy.timer < 3) {
+                    	enemy.timer++;
+                    }
+                    return false;
+                }};
 			bounceBall.landedHandler = new InteractionHandler() {
                 @Override public final boolean onInteract(final Enemy enemy, final Player player) {
                     enemy.v = Math.abs(enemy.v) * 0.8f;
@@ -658,6 +667,10 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
                     return true;
                 }};
             bounceBall.rewardHandler = armorBall.rewardHandler;
+            bounceBall.hurtHandler = new InteractionHandler() {
+                @Override public final boolean onInteract(final Enemy enemy, final Player player) {
+                    return enemy.timer >= 3;
+                }};
 			thrownImp.splat = imp.splat;
 			thrownImp.stepHandler = new InteractionHandler() {
                 @Override public final boolean onInteract(final Enemy enemy, final Player player) {
