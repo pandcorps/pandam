@@ -370,7 +370,7 @@ public class Enemy extends Character {
         public final void onCollision(final CollisionEvent event) {
             final Collidable collider = event.getCollider();
             // Player handles its own collisions, so only check for Enemy
-            if (collider.getClass() == Enemy.class) {
+            if (collider instanceof Enemy) {
                 onCollision((Enemy) collider);
             }
         }
