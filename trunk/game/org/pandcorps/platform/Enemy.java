@@ -289,10 +289,14 @@ public class Enemy extends Character {
 	}
 	
 	protected void burst(final Panimation anm, final BurstHandler burstHandler) {
+		burst(anm, this, burstHandler);
+	}
+	
+	protected void burst(final Panimation anm, final Panctor dir, final BurstHandler burstHandler) {
 	    final Burst b = CustomBurst.createBurst(anm, burstHandler);
 	    final Panple pos = getPosition();
         PlatformGame.setPosition(b, pos.getX(), pos.getY(), PlatformGame.DEPTH_SHATTER);
-        b.setMirror(isMirror());
+        b.setMirror(dir.isMirror());
         PlatformGame.room.addActor(b);
 	}
 	
