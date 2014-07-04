@@ -854,7 +854,7 @@ System.out.println("loadConstants end " + System.currentTimeMillis());
 	}
 	
 	protected final static void openArmoredImp(final Enemy enemyPos, final Enemy enemyDir) {
-	    enemyPos.burst(armoredImp.splat, new BurstHandler() {
+	    enemyPos.burst(armoredImp.splat, enemyDir, new BurstHandler() {
             @Override public final void onBurst(final CustomBurst burst) {
                 new Enemy(armoredImp, burst).setEnemyMirror(enemyDir.isMirror()); }});
 	    enemyPos.destroy();
