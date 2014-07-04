@@ -154,7 +154,7 @@ public class Enemy extends Character {
 		}
 	}
 	
-	private final void initTimer(final int timerMode) {
+	protected void initTimer(final int timerMode) {
 	    timer = Mathtil.randi(MIN_TIMER, MAX_TIMER);
 	    this.timerMode = timerMode;
 	}
@@ -400,6 +400,12 @@ public class Enemy extends Character {
                 collider.destroy();
             }
         }
+        
+        @Override
+        protected final void initTimer(final int timerMode) {
+    	    timer = 60;
+    	    this.timerMode = timerMode;
+    	}
     }
 	
 	public final static class BounceBall extends ColliderEnemy {
