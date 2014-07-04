@@ -60,7 +60,7 @@ public class PlatformGame extends BaseGame {
 	Map landmarks: Mountain, garden.
 	Train-riding levels.
 	Ridable dragons.
-	Mage Enemy w/ pointy hat, Wisp, Elementals, Impix (winged Imp).
+	Enemy Wisp, Elementals, Impix (winged Imp).
 	Gargoyles catch/carry Player, like moving platforms, one can jump to/from them, but not run on them.
 	Cannons on ground that Player enters to be launched.
 	Cannons in air that auto-fire, others that wait for jump input.
