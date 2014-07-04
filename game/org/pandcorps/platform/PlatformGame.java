@@ -601,10 +601,10 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 			thrownImp = new EnemyDefinition("Thrown Imp", 8, null, false, false, 0, impX, impH, 10);
 			armorBall.stepHandler = new InteractionHandler() {
 				@Override public final boolean onInteract(final Enemy enemy, final Player player) {
-					if (!enemy.full){
-						return false;
-					} else if (enemy.timer == 0) {
-						if (enemy.timerMode == 5) {
+					if (enemy.timer == 0) {
+						if (!enemy.full){
+							return false;
+						} else if (enemy.timerMode == 5) {
 							openArmoredImp(enemy, enemy);
 							return false;
 						}
