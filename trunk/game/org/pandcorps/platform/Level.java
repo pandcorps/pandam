@@ -1061,7 +1061,7 @@ public class Level {
     	if (sky) {
     		tm.fillBackground(bgMap[0][6], tmh - 4, 4);
     		tm.fillBackground(bgMap[1][6], tmh - 5, 1);
-    		tm.fillBackground(bgMap[2][6], off + 2, tmh - off - 8);
+    		tm.fillBackground(bgMap[2][6], off + 2, tmh - off - 7);
     	}
     	int i = Mathtil.randi(-1, 2);
     	while (i < tmw) {
