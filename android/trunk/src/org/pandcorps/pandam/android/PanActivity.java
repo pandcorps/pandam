@@ -30,6 +30,10 @@ import android.util.*;
 import android.view.*;
 import org.pandcorps.core.*;
 
+/*
+Title - res/values/strings.xml/app_name
+*/
+
 public class PanActivity extends Activity {
 	protected static GLSurfaceView view = null;
 	

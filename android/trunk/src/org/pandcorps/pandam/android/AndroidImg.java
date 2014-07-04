@@ -30,7 +30,7 @@ import android.graphics.Bitmap.*;
 import org.pandcorps.core.*;
 
 public final class AndroidImg extends Img {
-	private final Bitmap raw;
+	private Bitmap raw;
 	
 	public AndroidImg(final Bitmap raw) {
 		this.raw = Config.ARGB_8888 == raw.getConfig() ? raw : getSubbitmap(raw, 0, 0, raw.getWidth(), raw.getHeight());
@@ -62,7 +62,12 @@ public final class AndroidImg extends Img {
 	
 	@Override
 	public final void setRGB(final int x, final int y, final int rgb) {
-		raw.setPixel(x, y, rgb);
+		try {
+			raw.setPixel(x, y, rgb);
+		} catch (final IllegalStateException e) { // raw loaded from file, immutable, see factory
+			raw = getSubbitmap(raw, 0, 0, getWidth(), getHeight());
+			raw.setPixel(x, y, rgb);
+		}
 	}
 	
 	@Override

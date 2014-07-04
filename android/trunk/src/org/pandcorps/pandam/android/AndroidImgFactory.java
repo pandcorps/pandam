@@ -35,6 +35,7 @@ public final class AndroidImgFactory extends ImgFactory {
 	public final Img load(final InputStream in) throws Exception {
 		final Options opts = new Options();
 		opts.inPreferredConfig = Config.ARGB_8888;
+		//opts.inMutable = true; // NoSuchFieldError, should maybe attempt with reflection
 		return new AndroidImg(BitmapFactory.decodeStream(in, null, opts));
 		//return new AndroidImg(BitmapFactory.decodeStream(in));
 	}
