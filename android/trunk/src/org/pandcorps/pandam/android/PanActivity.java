@@ -22,13 +22,17 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandam.android;
 
+import java.io.*;
+
 import android.opengl.*;
 import android.os.*;
 import android.app.*;
+import android.content.*;
 import android.content.res.*;
 import android.util.*;
 import android.view.*;
 import org.pandcorps.core.*;
+import org.pandcorps.core.Iotil.*;
 
 /*
 Title - res/values/strings.xml/app_name
@@ -49,6 +53,10 @@ public class PanActivity extends Activity {
         view.setRenderMode(PanSurfaceView.RENDERMODE_CONTINUOUSLY);
         
         System.setProperty("user.dir", getFilesDir().getAbsolutePath());
+        Iotil.setWriterFactory(new AndroidWriterFactory());
+        Iotil.setInputStreamFactory(new AndroidInputStreamFactory());
+        Iotil.setResourceChecker(new AndroidResourceChecker());
+        Iotil.setResourceDeleter(new AndroidResourceDeleter());
         
         setSize();
         setContentView(view);
@@ -92,5 +100,38 @@ public class PanActivity extends Activity {
 	protected final void onPause() {
 		super.onPause();
 		view.onPause();
+	}
+	
+	private final class AndroidWriterFactory implements WriterFactory {
+		@Override
+		public final Writer newWriter(final String location) throws Exception {
+			return new OutputStreamWriter(openFileOutput(location, Context.MODE_PRIVATE));
+		}
+	}
+	
+	private final class AndroidInputStreamFactory implements InputStreamFactory {
+		@Override
+		public final InputStream newInputStream(final String location) throws Exception {
+			return openFileInput(location);
+		}
+	}
+	
+	private final class AndroidResourceChecker implements ResourceChecker {
+		@Override
+		public final boolean exists(final String location) {
+			for (final String f : fileList()) {
+				if (f.equals(location)) {
+					return true;
+				}
+			}
+			return false;
+		}
+	}
+	
+	private final class AndroidResourceDeleter implements ResourceDeleter {
+		@Override
+		public final void delete(final String location) {
+			deleteFile(location);
+		}
 	}
 }
