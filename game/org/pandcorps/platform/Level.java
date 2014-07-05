@@ -62,7 +62,8 @@ public class Level {
     protected abstract static class Theme {
     	public static Theme Normal = new Theme(null, 2, 3, 4, 5, 6, 7) {
     		@Override protected final BackgroundBuilder getRandomBackground() {
-    			return Mathtil.rand() ? new HillBackgroundBuilder() : new ForestBackgroundBuilder();
+    			//return Mathtil.rand(new HillBackgroundBuilder(), new ForestBackgroundBuilder(), new TownBackgroundBuilder());
+    			return Mathtil.rand(new TownBackgroundBuilder());
     		}
     		
     		@Override protected final Builder getRandomBuilder() {
@@ -418,8 +419,39 @@ public class Level {
     	@Override
     	public final void build() {
     		buildHills(bgtm1, 4, 6, 0, false); // Nearest
-    		buildHills(bgtm2, 7, 9, 2, false);
-    		buildHills(bgtm3, 10, 12, 4, true); // Farthest
+    		buildBackHills();
+    	}
+    }
+    
+    private final static void buildBackHills() {
+    	buildHills(bgtm2, 7, 9, 2, false);
+		buildHills(bgtm3, 10, 12, 4, true); // Farthest
+    }
+    
+    protected final static class TownBackgroundBuilder implements BackgroundBuilder {
+    	@Override
+    	public final Img getImage() {
+    		Img backImg = ImtilX.loadImage("org/pandcorps/platform/res/bg/Town.png", 128, null);
+        	applyTerrainTexture(backImg, 0, 0, 48, 32, 1);
+        	backImg = getColoredTerrain(backImg, 0, 32, 96, 64);
+            return backImg;
+    	}
+    	
+    	@Override
+    	public final int getPreDarken() {
+    		return 0;
+    	}
+    	
+    	@Override
+    	public final void build() {
+    		bgtm1.fillBackground(bgMap[7][7], 0, 2);
+    		bgtm1.fillBackground(bgMap[6][7], 2, 1);
+    		for (int i = 1; i < 64; i+= 18) {
+    			house(bgtm1, i, 1, 1, 1);
+    			//final int win = Mathtil.randi(1, 3), winLeft = Mathtil.randi(0, win);
+    			//house(bgtm1, i, Mathtil.randi(0, 1), winLeft, win - winLeft);
+    		}
+    		buildBackHills();
     	}
     }
     
@@ -444,7 +476,11 @@ public class Level {
     	}
     }
     
-    private static void applyTerrainTexture(Img backImg, final int ix, final int iy, final int fx, final int fy) {
+    private static void applyTerrainTexture(final Img backImg, final int ix, final int iy, final int fx, final int fy) {
+    	applyTerrainTexture(backImg, ix, iy, fx, fy, 0);
+    }
+    
+    private static void applyTerrainTexture(final Img backImg, final int ix, final int iy, final int fx, final int fy, int skip) {
     	Img terrain = getTerrainTexture();
     	for (int i = backgroundBuilder.getPreDarken(); i > 0; i--) {
     		terrain = getDarkenedTerrain(terrain);
@@ -454,7 +490,11 @@ public class Level {
                 terrain = getDarkenedTerrain(terrain);
             }
             final int yoff = z * 32;
-            applyTerrainTexture(backImg, ix, iy + yoff, fx, fy + yoff, terrain, getTerrainMask(z));
+            if (skip <= 0) {
+            	applyTerrainTexture(backImg, ix, iy + yoff, fx, fy + yoff, terrain, getTerrainMask(z));
+            } else {
+            	skip--;
+            }
         }
         terrain.close();
     }
@@ -1103,6 +1143,72 @@ public class Level {
     		return;
     	}
     	tm.initTile(i, j).setForeground(imgMap[iy][ix]);
+    }
+    
+    private static void house(final TileMap tm, final int x, final int border, final int winLeft, final int winRight) {
+    	final int y = 2;
+    	tm.rectangleBackground(4, 7, x + 1, y, 3, 2);
+    	tm.rectangleBackground(1, 1, x + 1, y + 2, 3, 1);
+    	tm.rectangleBackground(4, 7, x + 1, y + 3, 3, 1);
+    	tm.rectangleBackground(0, 0, x, y + 4, 2, 1);
+    	setBg(tm, x + 2, y + 4, bgMap, 6, 5);
+    	tm.rectangleForeground(3, 0, x + 3, y + 4, 2, 1);
+    	setBg(tm, x + 1, y + 5, bgMap, 5, 6);
+    	tm.rectangleBackground(5, 1, x + 2, y + 5, 1, 2);
+    	setFg(tm, x + 3, y + 5, bgMap, 5, 7);
+    	int xb = x + 4;
+    	for (int i = 0; i < border; i++) {
+    		houseMid(tm, xb + i, y);
+    	}
+    	final int sectionSize = 3, winLeftMult = winLeft * sectionSize, winRightMult = winRight * sectionSize;
+    	for (int i = 0; i < winLeft; i++) {
+    		houseSection(tm, xb + border + (i * sectionSize), y, false);
+    	}
+    	houseSection(tm, xb + border + winLeftMult, y, true);
+    	xb += sectionSize;
+    	for (int i = 0; i < winRight; i++) {
+    		houseSection(tm, xb + border + winLeftMult + (i * sectionSize), y, false);
+    	}
+    	for (int i = 0; i < border; i++) {
+    		houseMid(tm, xb + border + winLeftMult + winRightMult + i, y);
+    	}
+    	houseRight(tm, xb + border + winLeftMult + winRightMult + border, y);
+    	tm.fillBackground(bgMap[1][4], x + 4, y + 4, 1 + border + winLeftMult + sectionSize + winRightMult + border, 1);
+    	setBg(tm, x + 5 + border + winLeftMult + sectionSize + winRightMult + border, y + 4, bgMap, 0, 4);
+    	tm.fillBackground(bgMap[1][0], x + 3, y + 5, 1 + border + winLeftMult + sectionSize + winRightMult + border, 1);
+    	setBg(tm, x + 4 + border + winLeftMult + sectionSize + winRightMult + border, y + 5, bgMap, 5, 7);
+    	tm.fillBackground(bgMap[4][6], x + 3, y + 6, border + winLeftMult + sectionSize + winRightMult + border, 1);
+    	setBg(tm, x + 3 + border + winLeftMult + sectionSize + winRightMult + border, y + 6, bgMap, 4, 7);
+    	tm.fillBackground(bgMap[6][7], x + 1, y - 1, 4 + border + winLeftMult + sectionSize + winRightMult + border, 1);
+    }
+    
+    private static void houseSection(final TileMap tm, final int x, final int y, final boolean door) {
+    	houseRight(tm, x, y);
+    	houseMid(tm, x + 1, y);
+    	if (door) {
+    		tm.rectangleBackground(3, 7, x + 1, y, 1, 2);
+    	} else {
+    		setBg(tm, x + 1, y + 2, bgMap, 0, 2); // Window
+    	}
+    	houseLeft(tm, x + 2, y);
+    }
+    
+    private static void houseLeft(final TileMap tm, final int x, final int y) {
+    	houseCol(tm, x, y, -1);
+    }
+    
+    private static void houseMid(final TileMap tm, final int x, final int y) {
+    	houseCol(tm, x, y, 0);
+    }
+    
+    private static void houseRight(final TileMap tm, final int x, final int y) {
+    	houseCol(tm, x, y, 1);
+    }
+    
+    private static void houseCol(final TileMap tm, final int x, final int y, final int off) {
+    	tm.rectangleBackground(5 + off, 7, x, y, 1, 2);
+		setBg(tm, x, y + 2, bgMap, 1, 2 + off);
+		setBg(tm, x, y + 3, bgMap, 7, 5 + off);
     }
     
     private static void hill(final TileMap tm, final int x, final int y, final int w, final int ix, final int iy) {
