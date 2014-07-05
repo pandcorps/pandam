@@ -31,18 +31,26 @@ public final class Iotil {
 	
 	private final static BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 	
+	private static WriterFactory writerFactory = new FileWriterFactory();
+	
+	private static InputStreamFactory inputStreamFactory = new FileInputStreamFactory();
+	
+	private static ResourceChecker resourceChecker = new FileResourceChecker();
+	
+	private static ResourceDeleter resourceDeleter = new FileResourceDeleter();
+	
 	private Iotil() {
 		throw new Error();
 	}
 
 	public final static InputStream getInputStream(final String location) {
-		final File f = new File(location);
-		if (f.exists()) {
-			try {
-				return new FileInputStream(f);
-			} catch (final FileNotFoundException e) {
-				throw new Error(e);
+		try {
+			final InputStream fin = inputStreamFactory.newInputStream(location);
+			if (fin != null) {
+				return fin;
 			}
+		} catch (final Exception e) {
+			// Just try URL
 		}
 
 		//return Iotil.class.getResourceAsStream(location);
@@ -58,15 +66,11 @@ public final class Iotil {
 	}
 	
 	public final static boolean exists(final String location) {
-		final File f = new File(location);
-		if (f.exists()) {
-			return true;
-		}
-		return Iotil.class.getClassLoader().getResource(location) != null;
+		return resourceChecker.exists(location) || Iotil.class.getClassLoader().getResource(location) != null;
 	}
 	
 	public final static void delete(final String location) {
-	    new File(location).delete();
+	    resourceDeleter.delete(location);
 	}
 	
 	public final static Reader getReader(final String location) {
@@ -75,9 +79,9 @@ public final class Iotil {
 	
 	public final static Writer getWriter(final String location) {
 		try {
-			return new FileWriter(new File(location));
-		} catch (final IOException e) {
-			throw new RuntimeException(e);
+			return writerFactory.newWriter(location);
+		} catch (final Exception e) {
+			throw Pantil.toRuntimeException(e);
 		}
 	}
 	
@@ -85,6 +89,7 @@ public final class Iotil {
 		final Writer out = getWriter(location);
 		try {
 			out.write(content);
+			out.flush();
 		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		} finally {
@@ -155,6 +160,81 @@ public final class Iotil {
 			return in.readLine();
 		} catch (final IOException e) {
 			throw new RuntimeException(e);
+		}
+	}
+	
+	public final static void setWriterFactory(final WriterFactory writerFactory) {
+		Iotil.writerFactory = writerFactory;
+	}
+	
+	public final static void setInputStreamFactory(final InputStreamFactory inputStreamFactory) {
+		Iotil.inputStreamFactory = inputStreamFactory;
+	}
+	
+	public final static void setResourceChecker(final ResourceChecker resourceChecker) {
+		Iotil.resourceChecker = resourceChecker;
+	}
+	
+	public final static void setResourceDeleter(final ResourceDeleter resourceDeleter) {
+		Iotil.resourceDeleter = resourceDeleter;
+	}
+	
+	public static interface WriterFactory {
+		public Writer newWriter(final String location) throws Exception;
+	}
+	
+	public static interface InputStreamFactory {
+		public InputStream newInputStream(final String location) throws Exception;
+	}
+	
+	public static interface ResourceChecker {
+		public boolean exists(final String location);
+	}
+	
+	public static interface ResourceDeleter {
+		public void delete(final String location);
+	}
+	
+	private final static class FileWriterFactory implements WriterFactory {
+		@Override
+		public final Writer newWriter(final String location) throws Exception {
+			final File f = new File(location);
+			if (!f.exists()) {
+				f.createNewFile();
+			}
+			if (!f.canWrite()) {
+				f.setWritable(true);
+			}
+			return new FileWriter(f);
+		}
+	}
+	
+	private final static class FileInputStreamFactory implements InputStreamFactory {
+		@Override
+		public final InputStream newInputStream(final String location) throws Exception {
+			final File f = new File(location);
+			if (f.exists()) {
+				try {
+					return inputStreamFactory.newInputStream(location);
+				} catch (final FileNotFoundException e) {
+					throw new Error(e);
+				}
+			}
+			return null;
+		}
+	}
+	
+	private final static class FileResourceChecker implements ResourceChecker {
+		@Override
+		public final boolean exists(final String location) {
+			return new File(location).exists();
+		}
+	}
+	
+	private final static class FileResourceDeleter implements ResourceDeleter {
+		@Override
+		public final void delete(final String location) {
+			new File(location).delete();
 		}
 	}
 }
