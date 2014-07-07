@@ -131,7 +131,7 @@ public abstract class Character extends Panctor implements StepListener, Collida
 				}
 				break;
 			} else {
-			    final float max = PlatformGame.room.getSize().getY() + 4 - H;
+			    final float max = getCeiling();
 			    if (y >= max) {
     			    pos.setY(max - 1);
     			    v = 0;
@@ -153,9 +153,7 @@ public abstract class Character extends Panctor implements StepListener, Collida
 			}
 		}
 		
-		if (!isInView()) {
-			onScrolled();
-		}
+		checkScrolled();
 		
 		onStepEnd();
 		/*
@@ -189,6 +187,16 @@ public abstract class Character extends Panctor implements StepListener, Collida
 		        }
 		    }
 		}*/
+	}
+	
+	protected final void checkScrolled() {
+		if (!isInView()) {
+			onScrolled();
+		}
+	}
+	
+	protected final float getCeiling() {
+		return PlatformGame.room.getSize().getY() + 4 - H;
 	}
 	
 	protected boolean isGrounded() {
