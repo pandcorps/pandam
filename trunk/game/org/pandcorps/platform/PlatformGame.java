@@ -85,6 +85,8 @@ public class PlatformGame extends BaseGame {
 	Let LogoScreen finish after a specified Runnable finishes.
 	Let Thread keep loading through title screen.
 	Give images a real transparent background, disable ImtilX preprocessing.
+	Assist: Berserker? (Defeat Enemy by touching it)
+	Assist: Teleport (After fall, teleport to target immediately instead of slow bubble, no gem loss)
 	*/
 	
 	protected final static byte TILE_BREAK = 2;
@@ -591,8 +593,20 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 			final int impX = 4, impH = 14;
 			imp = new EnemyDefinition("Imp", 3, null, true, true, impX, impH);
 			allEnemies.add(imp);
-			allEnemies.add(new EnemyDefinition("Troll", 5, null, true, false, 0, 8, 30, 1, 32));
-			allEnemies.add(new EnemyDefinition("Ogre", 5, f, false, false, 0, 8, 30, 1, 32));
+			final EnemyDefinition troll, ogre;
+			troll = new EnemyDefinition("Troll", 5, null, true, false, 0, 8, 30, 1, 32);
+			troll.stompHandler = new InteractionHandler() {
+                @Override public final boolean onInteract(final Enemy enemy, final Player player) {
+                	if (Math.abs(enemy.hv) <= 1) {
+                		enemy.hv *= 2;
+                		return true;
+                	}
+                    return false;
+                }};
+			allEnemies.add(troll);
+			ogre = new EnemyDefinition("Ogre", 5, f, false, false, 0, 8, 30, 1, 32);
+			ogre.stompHandler = troll.stompHandler;
+			allEnemies.add(ogre);
 			final EnemyDefinition armorBall, bounceBall, thrownImp;
 			armorBall = new EnemyDefinition("Armor Ball", 7, null, false, 0, 0);
 			bounceBall = new EnemyDefinition("Bounce Ball", 7, null, false, 0, 4);

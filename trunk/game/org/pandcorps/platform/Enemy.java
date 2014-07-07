@@ -162,7 +162,11 @@ public class Enemy extends Character {
 	@Override
 	protected final boolean onStepCustom() {
 		if (def.stepHandler != null) {
-			return def.stepHandler.onInteract(this, null);
+			final boolean ret = def.stepHandler.onInteract(this, null);
+			if (ret) {
+				checkScrolled();
+			}
+			return ret;
 		} else if (hv == 0 && def.projectile != null) {
 	        timer--;
 	        if (timer < 0) {
@@ -208,10 +212,10 @@ public class Enemy extends Character {
 	}
 	
 	protected final boolean onStomp(final Player stomper) {
-		if (def.stompHandler == null) {
+		if (def.stompHandler == null || !def.stompHandler.onInteract(this, stomper)) {
 			return defeat(stomper, 0);
 		} else {
-			return def.stompHandler.onInteract(this, stomper);
+			return true;
 		}
 	}
 	
@@ -227,8 +231,9 @@ public class Enemy extends Character {
 	private final boolean teleport(final int off) {
 	    final Panple pos = getPosition();
         final int d = ImtilX.DIM;
-        final int bx = (int) pos.getX() + ((isMirror() ? -1 : 1) * off);
-        final float x = ((bx / d) * d) + 8;
+        final float cx = pos.getX();
+        final int bx = (int) cx + ((isMirror() ? -1 : 1) * off);
+        float x = ((bx / d) * d) + 8;
         float y = Level.ROOM_H - d, fy = -1;
         boolean prevFree = isFree(Level.tm.getContainer(x, y));
         while (y > d) {
@@ -239,6 +244,10 @@ public class Enemy extends Character {
                 break;
             }
             prevFree = free;
+        }
+        if (fy == -1) { // Skip this section if we want to cancel teleport when target is a pit
+        	x = cx;
+        	fy = getCeiling() - 1;
         }
         if (fy != -1) {
             burst(PlatformGame.teleport);
