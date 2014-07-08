@@ -215,7 +215,7 @@ public final class Iotil {
 			final File f = new File(location);
 			if (f.exists()) {
 				try {
-					return inputStreamFactory.newInputStream(location);
+					return new FileInputStream(location);
 				} catch (final FileNotFoundException e) {
 					throw new Error(e);
 				}

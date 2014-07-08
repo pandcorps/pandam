@@ -184,7 +184,7 @@ public class Map {
 					loadImages();
 				}
 			}
-			final Tile t;
+			final int t;
 			if (tm == null) {
 			    t = loadMap();
 			    PlatformGame.saveGame();
@@ -272,17 +272,17 @@ public class Map {
 		private final Bubble bubble = new Bubble();
 		int steps;
 		
-	    private FloatPlayer(Tile tile) {
+	    private FloatPlayer(int index) {
 	        setView(getPlayerContext().mapSouth.getFrames()[0].getImage());
 	        if (victory == VICTORY_NONE) {
 	        	steps = 2;
 		        for (int i = 0; i < steps; i++) {
-		        	tile = tile.getNeighbor(Direction.West);
+		            index = tm.getNeighbor(index, Direction.West);
 		        }
 	        } else {
 	        	steps = 0;
 	        }
-	        setPosition(tile);
+	        setPosition(tm, index);
 	        room.addActor(this);
 	        Pangine.getEngine().track(this);
 	        setSpeed(0.5f);
@@ -304,7 +304,7 @@ public class Map {
 	    	} else if (steps >= -30) {
 	    		bubble.onStepEnd(true);
 	    	} else if (victory == VICTORY_NONE) {
-		        addPlayer(getTile());
+		        addPlayer(getIndex());
 		        destroy();
 	    	} else {
 	    		steps = 2;
@@ -385,7 +385,7 @@ public class Map {
 	        	/*if (room.getBlendColor().getA() > Pancolor.MIN_VALUE) {
 	        		return;
 	        	}*/
-	        	final Tile t = getTile();
+	        	final int t = getIndex();
 	            if (isOpen(t)) {
 	                return;
 	            }
@@ -421,34 +421,35 @@ public class Map {
 		    PlatformGame.fadeOut(room, screen);
 		}
 		
-		private void setPos(final Tile t) {
-			setPosition(t);
+		private void setPos(final int t) {
+			setPosition(tm, t);
 		}
 		
 		protected boolean go(final Direction d0) {
-		    final Tile t0 = getTile();
+		    final int t0 = getIndex();
 			if (modeMove == MOVE_ANY_TILE) {
-				final Tile tmp = t0.getNeighbor(d0);
-				if (tmp != null) {
+				final int tmp = tm.getNeighbor(t0, d0);
+				if (tm.getTile(tmp) != null) {
 					setPos(tmp);
 				}
 				return true;
 			}
-			Tile t = t0;
+			int t = t0;
             Direction d = d0, d1 = null;
             boolean first = true;
 		    while (true) {
-    		    t = t.getNeighbor(d);
-    		    if (t == null || t.isSolid()) {
+    		    t = tm.getNeighbor(t, d);
+    		    final Tile tile = tm.getTile(t);
+    		    if (tile == null || tile.isSolid()) {
     		        return false;
     		    }
-    		    final byte b = t.getBehavior();
+    		    final byte b = tile.getBehavior();
     		    switch (b) {
     		        case TILE_MARKER :
         		        if (modeMove == MOVE_ANY_PATH || isOpen(t0) || isOpen(t)) {
         		            if (d1 == null) {
         		                walk(d0);
-        		                setLadder(getTile());
+        		                setLadder(getIndex());
         		            } else {
         		                walk(d1, d0);
         		            }
@@ -502,8 +503,8 @@ public class Map {
 			}
 	    }
 		
-		private final void setLadder(final Tile t) {
-		    onLadder = isLadder(t);
+		private final void setLadder(final int index) {
+		    onLadder = isLadder(index);
             if (onLadder) {
                 changeView(pc.mapLadder);
             }
@@ -511,10 +512,10 @@ public class Map {
 		
 		@Override
 		protected void onWalked() {
-		    final Tile t = getTile();
+		    final int t = getIndex();
 		    final boolean oldLadder = onLadder;
 		    setLadder(t);
-			final byte b = t.getBehavior();
+			final byte b = tm.getTile(t).getBehavior();
 			switch (b) {
 				case TILE_MARKER :
 					setPlayerPosition(t);
@@ -522,8 +523,8 @@ public class Map {
 					return;
 				case TILE_VERT : {
 					final Direction d1 = getDirection();
-					final Tile t2 = getDestination(d1);
-					final byte b2 = t2.getBehavior();
+					final int t2 = getDestination(d1);
+					final byte b2 = tm.getTile(t2).getBehavior();
 					if (b2 == TILE_LEFTUP || b2 == TILE_LEFTDOWN) {
 						walk(Direction.West, d1);
 					} else if (b2 == TILE_RIGHTUP || b2 == TILE_RIGHTDOWN) {
@@ -539,7 +540,7 @@ public class Map {
 				}
 				case TILE_HORIZ : {
 					final Direction d1 = getDirection();
-					final byte b2 = getDestination(d1).getBehavior();
+					final byte b2 = tm.getTile(getDestination(d1)).getBehavior();
 					if (b2 == TILE_LEFTUP || b2 == TILE_RIGHTUP) {
 						walk(Direction.North, d1);
 					} else if (b2 == TILE_LEFTDOWN || b2 == TILE_RIGHTDOWN) {
@@ -557,12 +558,12 @@ public class Map {
 		return Mathtil.rand(75) ? base : imgMap[4][Mathtil.randi(0, 6)];
 	}
 	
-	private final static Pair<Integer, Integer> getKey(final Tile t) {
-	    return Pair.get(Integer.valueOf(t.getRow()), Integer.valueOf(t.getColumn()));
+	private final static Pair<Integer, Integer> getKey(final int index) {
+	    return Pair.get(Integer.valueOf(tm.getRow(index)), Integer.valueOf(tm.getColumn(index)));
 	}
 	
-	private final static boolean isOpen(final Tile t) {
-	    return getOpen().get(getKey(t)) != null;
+	private final static boolean isOpen(final int index) {
+	    return getOpen().get(getKey(index)) != null;
     }
 	
 	private final static void loadImages() {
@@ -625,12 +626,12 @@ public class Map {
 	    lmImg.close();
 	}
 	
-	private final static Tile loadMap() {
+	private final static int loadMap() {
 		Panctor.destroy(markers);
 		Panctor.destroy(buildings);
 		Panctor.destroy(portal);
 		portal = null;
-	    Tile t;
+	    int t;
 		//for (int i = 0; i < 100; i++) { // For testing rarely randomly generating errors
 	        //tm.destroy(); tm = null; destroy/clear markers
 			t = loadMap2();
@@ -646,7 +647,7 @@ public class Map {
 		Level.numEnemies = 0;
 	}
 	
-	private final static Tile loadMap2() {
+	private final static int loadMap2() {
 		final String mapFile = getMapFile();
 		final Mapper b;
 		final Segment mrk, bld;
@@ -698,14 +699,14 @@ public class Map {
         water = imgMap[5][6];
         base = imgMap[1][1];
         ladder = imgMap[0][6];
-        final Tile t;
+        final int t;
         if (b == null) {
         	//column, row handled in Profile
         	for (final Field f : mrk.getRepetitions(0)) {
-				addMarker(tm.getTile(f.intValue(0), f.intValue(1)));
+				addMarker(tm.getIndex(f.intValue(0), f.intValue(1)));
 			}
         	for (final Field f : bld.getRepetitions(0)) {
-        		addBuilding(tm.getTile(f.intValue(0), f.intValue(1)), f.intValue(2), f.intValue(3));
+        		addBuilding(tm.getIndex(f.intValue(0), f.intValue(1)), f.intValue(2), f.intValue(3));
         	}
         	t = getStartTile();
         } else {
@@ -718,7 +719,7 @@ public class Map {
         Panctor.destroy(portal);
         portal = new Panctor();
         portal.setView(PlatformGame.portal);
-        addBuilding(tm.getTile(endColumn, getPortalRow()), portal);
+        addBuilding(tm.getIndex(endColumn, getPortalRow()), portal);
         return t;
 	}
 	
@@ -1105,9 +1106,9 @@ public class Map {
 		tm.initTile(x, y + 1).setForeground(imgMap[0][2]);
 	}
 	
-	private final static Tile getStartTile() {
+	private final static int getStartTile() {
 		final Profile prf = getProfile();
-		return tm.getTile(prf.column, prf.row);
+		return tm.getIndex(prf.column, prf.row);
 	}
 	
 	private final static PlayerContext getPlayerContext() {
@@ -1122,9 +1123,9 @@ public class Map {
 		return getProfile().open;
 	}
 	
-	private final static void addPlayer(final Tile t) {
+	private final static void addPlayer(final int index) {
 		player = new MapPlayer(getPlayerContext());
-		player.setPos(t);
+		player.setPos(index);
 		room.addActor(player);
 		Pangine.getEngine().track(player);
 	}
@@ -1227,8 +1228,8 @@ public class Map {
 		return DynamicTileMap.getRawBackground(t) == water;
 	}
 	
-	private static boolean isLadder(final Tile t) {
-	    return DynamicTileMap.getRawForeground(t) == ladder;
+	private static boolean isLadder(final int index) {
+	    return DynamicTileMap.getRawForeground(tm.getTile(index)) == ladder;
 	}
 	
 	private static void marker(final int i, final int j) {
@@ -1241,15 +1242,15 @@ public class Map {
 			tile.setBackground(imgMap[3][0]);
 		}
 		tile.setBehavior(TILE_MARKER);
-		addMarker(tile);
+		addMarker(tm.getIndex(i, j));
 	}
 	
-	private final static void addMarker(final Tile tile) {
-		final Marker m = new Marker(isOpen(tile));
+	private final static void addMarker(final int index) {
+		final Marker m = new Marker(isOpen(index));
 		markers.add(m);
 		//m.setPosition(tile);
 		final Panple pos = m.getPosition();
-		pos.set(tile.getPosition());
+		pos.set(tm.getPosition(index));
 		setZ(pos, DEPTH_MARKER);
 		room.addActor(m);
 	}
@@ -1257,29 +1258,29 @@ public class Map {
 	private final static void building(final int i, final int j, final int ij, final int ii) {
 		final Tile tile = tm.initTile(i, j);
 		tile.setBackground(getBuildingBackground(), TILE_MARKER);
-		addBuilding(tile, ij, ii);
+		addBuilding(tm.getIndex(i, j), ij, ii);
 	}
 	
 	private final static TileMapImage getBuildingBackground() {
 	    return imgMap[3][7];
 	}
 	
-	private final static void addBuilding(final Tile tile, final int ij, final int ii) {
+	private final static void addBuilding(final int index, final int ij, final int ii) {
         final Building b = new Building(ij, ii);
         buildings.add(b);
-        addBuilding(tile, b);
+        addBuilding(index, b);
 	}
 	
-	private final static void addBuilding(final Tile tile, final Panctor b) {
-        final Panple tilePos = tile.getPosition();
+	private final static void addBuilding(final int index, final Panctor b) {
+        final Panple tilePos = tm.getPosition(index);
         b.getPosition().set(tilePos.getX(), tilePos.getY() + 7);
         TileOccupant.setZ(b, tm);
         room.addActor(b);
 	}
 	
-	private final static Building getBuilding(final Tile t) {
+	private final static Building getBuilding(final int index) {
 		for (final Building b : buildings) {
-        	if (t == tm.getContainer(b)) {
+        	if (index == tm.getContainer(b)) {
         		return b;
         	}
         }
@@ -1337,8 +1338,8 @@ public class Map {
 	    return nmr.get();
 	}
 	
-	private final static void setPlayerPosition(final Tile t) {
-		setPlayerPosition(t.getColumn(), t.getRow());
+	private final static void setPlayerPosition(final int index) {
+		setPlayerPosition(tm.getColumn(index), tm.getRow(index));
 	}
 	
 	private final static void setPlayerPosition(final int column, final int row) {
@@ -1369,9 +1370,9 @@ public class Map {
 	        final ArrayList<Field> mlist = new ArrayList<Field>(markers.size());
 	        for (final Marker m : markers) {
 	        	final Field f = new Field();
-	        	final Tile tile = tm.getContainer(m);
-	        	f.setInt(0, tile.getColumn());
-	        	f.setInt(1, tile.getRow());
+	        	final int tile = tm.getContainer(m);
+	        	f.setInt(0, tm.getColumn(tile));
+	        	f.setInt(1, tm.getRow(tile));
 				mlist.add(f);
 			}
 	        mrk.setRepetitions(0, mlist);
@@ -1380,9 +1381,9 @@ public class Map {
 	        final ArrayList<Field> alist = new ArrayList<Field>(buildings.size());
 	        for (final Building b : buildings) {
 	        	final Field f = new Field();
-	        	final Tile tile = tm.getContainer(b);
-	        	f.setInt(0, tile.getColumn());
-	        	f.setInt(1, tile.getRow());
+	        	final int tile = tm.getContainer(b);
+	        	f.setInt(0, tm.getColumn(tile));
+	        	f.setInt(1, tm.getRow(tile));
 	        	f.setInt(2, b.ij);
 	        	f.setInt(3, b.ii);
 				alist.add(f);

@@ -27,7 +27,6 @@ import org.pandcorps.game.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandax.*;
-import org.pandcorps.pandax.tile.Tile;
 
 public class GemBumped extends Pandy {
     protected final static int AWARD_DEF = 1;
@@ -52,8 +51,8 @@ public class GemBumped extends Pandy {
 	    return AWARD_DEF;
 	}
 	
-	public GemBumped(final Player player, final Tile tile, final int award) {
-	    this(player, tile, award, false, getAnm(award));
+	public GemBumped(final Player player, final int index, final int award) {
+	    this(player, index, award, false, getAnm(award));
 	}
 	
 	protected final static Panimation getAnm(final int award) {
@@ -70,7 +69,7 @@ public class GemBumped extends Pandy {
 		this(player, defeated.getBoundingMinimum(), AWARD_DEF, false, PlatformGame.gemAnm);
 	}
 	
-	public static GemBumped newLevelEnd(final Player player, final Tile tile) {
+	public static GemBumped newLevelEnd(final Player player, final int index) {
 		final int award;
 		final Panimation anm;
 		if (Level.isNormalTheme()) {
@@ -80,15 +79,15 @@ public class GemBumped extends Pandy {
 			award = AWARD_WORLD;
 			anm = PlatformGame.gemWorldAnm;
 		}
-	    return new GemBumped(player, tile, award, true, anm);
+	    return new GemBumped(player, index, award, true, anm);
 	}
 	
 	public static GemBumped newShatter(final Player player) {
 	    return new GemBumped(player, player.getBoundingMinimum(), -1, false, PlatformGame.gemAnm);
 	}
 	
-	private GemBumped(final Player player, final Tile tile, final int award, final boolean end, final Panimation anm) {
-	    this(player, tile.getPosition(), award, end, anm);
+	private GemBumped(final Player player, final int index, final int award, final boolean end, final Panimation anm) {
+	    this(player, Level.tm.getPosition(index), award, end, anm);
 	}
 	
 	private GemBumped(final Player player, final Panple pos, final int award, final boolean end, final Panimation anm) {
