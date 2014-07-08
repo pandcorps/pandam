@@ -40,9 +40,10 @@ public class TileWalker extends TileOccupant implements StepListener {
         super(id);
     }
     
-    protected final Tile getDestination(final Direction dir) {
-        final Tile dst = tile.getNeighbor(dir);
-        return (dst == null || (solid && dst.isSolid()) || dst.occupant != null) ? null : dst;
+    protected final int getDestination(final Direction dir) {
+        final int dstIndex = tm.getNeighbor(index, dir);
+        final Tile dst = tm.getTile(dstIndex);
+        return (dst == null || (solid && dst.isSolid()) || tm.getOccupant(dstIndex) != null) ? -1 : dstIndex;
     }
     
     // Would it ever be useful to call this
@@ -60,25 +61,25 @@ public class TileWalker extends TileOccupant implements StepListener {
     }
     
     protected final boolean walk(final Direction dir, final Direction dir2) {
-        Tile dst = dir2 == null ? getDestination(dir) : tile.getNeighbor(dir);
+        int dst = dir2 == null ? getDestination(dir) : tm.getNeighbor(index, dir);
         face(dir);
-        if (dst == null) {
+        if (dst == -1) {
             return false;
         } else {
-        	final Tile prev = tile;
-            setTile(dst);
+        	final int prev = index;
+            setTile(tm, dst);
             if (dir2 != null) {
             	dst = getDestination(dir2);
-            	if (dst == null) {
-            		setTile(prev);
+            	if (dst == -1) {
+            		setTile(tm, prev);
             		return false;
             	} else {
-            		setTile(dst);
+            		setTile(tm, dst);
             	}
             }
             //TODO Update Z?
             final Panple pos = getPosition();
-            final Panple dstPos = dst.position;
+            final Panple dstPos = tm.getPosition(dst);
             //pos.set(dstPos.getX(), dstPos.getY(), pos.getZ());
             dx = dstPos.getX() - pos.getX();
             dy = dstPos.getY() - pos.getY();

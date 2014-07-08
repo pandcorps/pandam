@@ -462,8 +462,8 @@ public class Player extends Character implements CollisionListener {
 	}
 
 	@Override
-	protected final void onCollide(final Tile tile) {
-		final TileOccupant o = Tile.getOccupant(tile);
+	protected final void onCollide(final int index) {
+		final TileOccupant o = Level.tm.getOccupant(index);
 		if (o == null) {
 			return;
 		}

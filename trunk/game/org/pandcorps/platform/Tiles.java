@@ -58,34 +58,35 @@ public class Tiles {
     	return defHandler;
     }
     
-    private final static GemBumped newGemBumped(final Player player, final Tile tile) {
-		return new GemBumped(player, tile, getHandler().rndAward());
+    private final static GemBumped newGemBumped(final Player player, final int index) {
+		return new GemBumped(player, index, getHandler().rndAward());
 	}
     
-    protected final static void bump(final Character chr, final Tile t) {
+    protected final static void bump(final Character chr, final int index) {
     	if (chr.getClass() != Player.class) {
     		return;
     	}
     	final Player player = (Player) chr;
+    	final Tile t = Level.tm.getTile(index);
     	final byte b = t.getBehavior();
     	//if isMusicSupported final Sequence seq;
     	if (b == PlatformGame.TILE_BREAK) {
     		t.setForeground(null, false);
-    		shatter(PlatformGame.block8, t.getPosition(), false);
+    		shatter(PlatformGame.block8, Level.tm.getPosition(index), false);
     		if (Mathtil.rand()) {
-    		    newGemBumped(player, t); // Plays a sound
+    		    newGemBumped(player, index); // Plays a sound
     		    //if isMusicSupported seq = null;
     		} else {
     			//if isMusicSupported seq = Music.crumble;
     		}
-    		new Bump(chr, t).setVisible(false); // To bump Characters above
+    		new Bump(chr, index).setVisible(false); // To bump Characters above
     		player.pc.profile.stats.brokenBlocks++;
     	} else if (b == PlatformGame.TILE_BUMP) {
-    	    new Bump(chr, t); // Copy image before changing
+    	    new Bump(chr, index); // Copy image before changing
     	    if (getHandler().isNormalAward(t)) {
-    	        newGemBumped(player, t);
+    	        newGemBumped(player, index);
     	    } else {
-    	        GemBumped.newLevelEnd(player, t);
+    	        GemBumped.newLevelEnd(player, index);
     	        PlatformGame.levelVictory();
     	    }
     		t.setForeground(null, true);
@@ -128,14 +129,14 @@ public class Tiles {
     
     private final static class Bump extends TileActor implements StepListener, CollisionListener {
     	private final Character bumper;
-    	private final Tile t;
+    	private final int index;
         private int age = 0;
         
-        private Bump(final Character bumper, final Tile t) {
+        private Bump(final Character bumper, final int index) {
         	this.bumper = bumper;
-        	this.t = t;
-        	setViewFromForeground(t);
-            final Panple pos = t.getPosition();
+        	this.index = index;
+        	setViewFromForeground(Level.tm.getTile(index));
+            final Panple pos = Level.tm.getPosition(index);
             PlatformGame.setPosition(this, pos.getX(), pos.getY() + 2, PlatformGame.DEPTH_SHATTER);
             PlatformGame.room.addActor(this);
         }
@@ -149,7 +150,7 @@ public class Tiles {
             } else {
                 destroy();
                 if (isVisible()) {
-                	t.setForeground(getHandler().getBumpedImage());
+                	Level.tm.getTile(index).setForeground(getHandler().getBumpedImage());
                 }
                 return;
             }

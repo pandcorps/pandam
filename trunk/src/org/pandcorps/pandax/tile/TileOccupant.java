@@ -27,7 +27,8 @@ import org.pandcorps.pandam.Panple;
 
 public class TileOccupant extends Panctor {
     
-    /*package*/ Tile tile = null;
+    /*package*/ TileMap tm = null;
+    /*package*/ int index = -1;
     
     public TileOccupant() {
     }
@@ -36,29 +37,30 @@ public class TileOccupant extends Panctor {
         super(id);
     }
     
-    /*package*/ final void setTile(final Tile dst) {
-        if (tile != null) {
-            tile.occupant = null;
+    /*package*/ final void setTile(final TileMap tm, final int index) {
+        if (this.tm != null) {
+            this.tm.setOccupant(this.index, null); //TODO TileMap.removeOccupant?
         }
-        if (dst != null) {
-            dst.occupant = this;
+        if (tm != null) {
+            tm.setOccupant(index, this);
         }
-        tile = dst;
+        this.tm = tm;
+        this.index = index;
     }
     
-    public void init(final TileMap tm, final int i, final int j) {
-    	setPosition(tm.getTile(i, j));
+    public void init(final TileMap tm, final int index) {
+    	setPosition(tm, index);
     	tm.getLayer().addActor(this);
     }
     
-    public final void setPosition(final Tile dst) {
-        setTile(dst);
-        getPosition().set(dst.position);
+    public final void setPosition(final TileMap tm, final int index) {
+        setTile(tm, index);
+        tm.savePosition(getPosition(), index);
         setZ();
     }
     
     /*package*/ final void setZ() {
-        setZ(this, tile.map);
+        setZ(this, tm);
     }
     
     public final static void setZ(final Panctor actor, final TileMap map) {
@@ -80,16 +82,22 @@ public class TileOccupant extends Panctor {
     //    Pangine.getEngine.getRoom.add(this);
     //}
 
-    public Tile getTile() {
-    	return tile;
+    public TileMap getTileMap() {
+    	return tm;
+    }
+    
+    public int getIndex() {
+        return index;
     }
     
     public TileOccupant getNeighbor(final Direction dir) {
-        return Tile.getOccupant(tile.getNeighbor(dir));
+        return tm.getOccupant(tm.getNeighbor(index, dir));
     }
     
     public TileOccupant getOpposite(final TileWalker src) {
-    	return Tile.getOccupant(tile.map.getTile(tile.i * 2 - src.tile.i, tile.j * 2 - src.tile.j));
+        final int i = tm.getColumn(index), j = tm.getRow(index);
+        final int si = src.tm.getColumn(src.index), sj = src.tm.getRow(src.index);
+    	return tm.getOccupant(tm.getIndex(i * 2 - si, j * 2 - sj));
     }
     
     //@OverrideMe

@@ -224,7 +224,8 @@ public class Enemy extends Character {
 		defeat(bumper, Player.VEL_BUMP);
 	}
 	
-	private final static boolean isFree(final Tile t) {
+	private final static boolean isFree(final int index) {
+	    final Tile t = Level.tm.getTile(index);
 	    return t == null || t.getBehavior() == Tile.BEHAVIOR_OPEN;
 	}
 	

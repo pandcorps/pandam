@@ -37,6 +37,7 @@ public class TileMap extends Panctor implements Savable {
     private final static String SEG_ROW = "ROW";
     
     /*package*/ final Tile[] tiles;
+    /*package*/ final Map<Integer, TileOccupant> occupants = new HashMap<Integer, TileOccupant>();
     
     private final int w;
     private final int h;
@@ -71,8 +72,20 @@ public class TileMap extends Panctor implements Savable {
         return i < 0 || j < 0 || i >= w || j >= h;
     }
     
-    private final int getIndex(final int i, final int j) {
+    public final boolean isBad(final int index) {
+        return index < 0 || index >= tiles.length;
+    }
+    
+    public final int getIndex(final int i, final int j) {
         return j * w + i;
+    }
+    
+    public final int getRow(final int index) {
+        return index / w;
+    }
+    
+    public final int getColumn(final int index) {
+        return index % w;
     }
     
     public final Tile getTile(final int i, final int j) {
@@ -82,20 +95,72 @@ public class TileMap extends Panctor implements Savable {
         return tiles[getIndex(i, j)];
     }
     
+    public final Tile getTile(final int index) {
+        if (isBad(index)) {
+            return null;
+        }
+        return tiles[index];
+    }
+    
     public final void removeTile(final int i, final int j) {
         tiles[getIndex(i, j)] = null;
     }
     
-    public final Tile getContainer(final Panctor act) {
+    public final int getContainer(final Panctor act) {
     	return getContainer(act.getPosition());
     }
     
-    public final Tile getContainer(final Panple pos) {
+    public final int getContainer(final Panple pos) {
     	return getContainer(pos.getX(), pos.getY());
     }
     
-    public final Tile getContainer(final float x, final float y) {
-    	return (x < 0 || y < 0) ? null : getTile((int) x / tw, (int) y / th);
+    public final int getContainer(final float x, final float y) {
+    	return (x < 0 || y < 0) ? -1 : getIndex((int) x / tw, (int) y / th);
+    }
+    
+    public final int getNeighbor(final int i, final int j, final Direction dir) {
+        final int ni = i + (dir == Direction.East ? 1 : dir == Direction.West ? -1 : 0);
+        final int nj = j + (dir == Direction.North ? 1 : dir == Direction.South ? -1 : 0);
+        return getIndex(ni, nj);
+    }
+    
+    public final int getNeighbor(final int index, final Direction dir) {
+        return getNeighbor(getColumn(index), getRow(index), dir);
+    }
+    
+    public final int getRelative(final int i, final int j, final int offX, final int offY) {
+        return getIndex(i + offX, j + offY);
+    }
+    
+    public final Panple getPosition(final int i, final int j) {
+        final Panple mapPos = getPosition();
+        return new FinPanple(mapPos.getX() + i * tw, mapPos.getY() + j * th, mapPos.getZ());
+    }
+    
+    public final Panple getPosition(final int index) {
+        return getPosition(getColumn(index), getRow(index));
+    }
+    
+    public final void savePosition(final Panple pos, final int i, final int j) {
+        final Panple mapPos = getPosition();
+        pos.set(mapPos.getX() + i * tw, mapPos.getY() + j * th, mapPos.getZ());
+    }
+    
+    public final void savePosition(final Panple pos, final int index) {
+        savePosition(pos, getColumn(index), getRow(index));
+    }
+    
+    public final TileOccupant getOccupant(final int index) {
+        return occupants.get(Integer.valueOf(index));
+    }
+    
+    /*package*/ final void setOccupant(final int index, final TileOccupant occupant) {
+        final Integer key = Integer.valueOf(index);
+        if (occupant == null) {
+            occupants.remove(key);
+        } else {
+            occupants.put(key, occupant);
+        }
     }
     
     public final void fillBehavior(final byte behavior) {
@@ -226,7 +291,7 @@ public class TileMap extends Panctor implements Savable {
             //throw new IllegalArgumentException(i + ", " + j + " is already initialized");
             return old;
         }
-        final Tile tile = new Tile(this, i, j);
+        final Tile tile = new Tile(this);
         tiles[index] = tile;
         return tile;
     }

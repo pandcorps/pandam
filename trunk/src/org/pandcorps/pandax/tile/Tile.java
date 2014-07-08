@@ -23,59 +23,28 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.pandax.tile;
 
 import org.pandcorps.pandam.*;
-import org.pandcorps.pandam.impl.*;
 
 public final class Tile {
 	public final static byte BEHAVIOR_OPEN = 0;
 	public final static byte BEHAVIOR_SOLID = 1;
 	
     /*package*/ final TileMap map;
-    /*package*/ final int i;
-    /*package*/ final int j;
-    /*package*/ final FinPanple position;
     
     // bg/fg/solid behavior could likely be moved into a TileDefinition; many Tiles would likely share the same definition
     
     // Panimation?
     /*package*/ Object background = null;
     /*package*/ Object foreground = null;
-    /*package*/ TileOccupant occupant = null;
     /*package*/ byte behavior = BEHAVIOR_OPEN;
     
     //int brightness
     
-    /*package*/ Tile(final TileMap map, final int i, final int j) {
+    /*package*/ Tile(final TileMap map) {
         this.map = map;
-        this.i = i;
-        this.j = j;
-        final Panple mapPos = map.getPosition();
-        position = new FinPanple(mapPos.getX() + i * map.tw, mapPos.getY() + j * map.th, mapPos.getZ());
     }
     
     public final TileMap getMap() {
     	return map;
-    }
-    
-    public final int getRow() {
-        return j;
-    }
-    
-    public final int getColumn() {
-        return i;
-    }
-    
-    public final Panple getPosition() {
-        return position;
-    }
-    
-    public final Tile getNeighbor(final Direction dir) {
-        final int ni = i + (dir == Direction.East ? 1 : dir == Direction.West ? -1 : 0);
-        final int nj = j + (dir == Direction.North ? 1 : dir == Direction.South ? -1 : 0);
-        return map.getTile(ni, nj);
-    }
-    
-    public final Tile getRelative(final int offX, final int offY) {
-    	return map.getTile(i + offX, j + offY);
     }
     
     public final void setBackground(final Panmage background) {
@@ -167,10 +136,6 @@ public final class Tile {
     		super(ix, iy);
     		this.img = img;
     	}
-    }
-    
-    public final static TileOccupant getOccupant(final Tile t) {
-    	return t == null ? null : t.occupant;
     }
     
     public final static byte getBehavior(final Tile t) {

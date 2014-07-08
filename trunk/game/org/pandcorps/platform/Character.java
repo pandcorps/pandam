@@ -111,8 +111,8 @@ public abstract class Character extends Panctor implements StepListener, Collida
 		}
 		n = Math.round(v * mult);
 		for (int i = 0; i < n; i++) {
-		    final Tile t = getSolid(offSol);
-			if (t != null) {
+		    final int t = getSolid(offSol);
+			if (t != -1) {
 			    if (v > 0) {
 			        Tiles.bump(this, t);
 			        v = 0;
@@ -209,7 +209,7 @@ public abstract class Character extends Panctor implements StepListener, Collida
 	}*/
 	
 	private boolean isSolid(final int off) {
-	    return getSolid(off) != null;
+	    return getSolid(off) != -1;
 	}
 	
 	private final int getOffLeft() {
@@ -220,13 +220,13 @@ public abstract class Character extends Panctor implements StepListener, Collida
 		return isMirror() ? (OFF_X + 1) : OFF_X;
 	}
 	
-	private Tile getSolid(final int off) {
+	private int getSolid(final int off) {
 		final Panple pos = getPosition();
 		final float x = pos.getX(), y = pos.getY() + off, x1 = x + getOffLeft(), x2 = x + getOffRight();
 		// Interesting glitch if breakpoint here
-		Tile t1 = Level.tm.getContainer(x1, y), t2 = Level.tm.getContainer(x2, y);
+		int t1 = Level.tm.getContainer(x1, y), t2 = Level.tm.getContainer(x2, y);
 		if (t2 == Level.tm.getContainer(x, y)) {
-		    final Tile t = t1;
+		    final int t = t1;
 		    t1 = t2;
 		    t2 = t;
 		}
@@ -238,7 +238,7 @@ public abstract class Character extends Panctor implements StepListener, Collida
 		} else if (isSolid(t2, floor, x1, x2, y)) {
 		    return t2;
 		}
-		return null;
+		return -1;
 	}
 	
 	private boolean isWall(final int off, final int yoff) {
@@ -255,14 +255,14 @@ public abstract class Character extends Panctor implements StepListener, Collida
         	b = right;
         }
         boolean sol = false;
-        Tile t = null;
+        int t = -1;
         for (int i = 0; true; i += 16) {
         	float yi = y + i;
         	final boolean done = yi >= top;
         	if (done) {
         		yi = top;
         	}
-	        final Tile temp = Level.tm.getContainer(f, yi);
+	        final int temp = Level.tm.getContainer(f, yi);
 	        if (temp != t) {
 	        	t = temp;
 		        onCollide(t);
@@ -282,26 +282,28 @@ public abstract class Character extends Panctor implements StepListener, Collida
         if (sol) {
         	return true;
         } else if (yoff < 0) {
-        	final Tile t3 = Level.tm.getContainer(b, y), t4 = Level.tm.getContainer(b, top);
+        	final int t3 = Level.tm.getContainer(b, y), t4 = Level.tm.getContainer(b, top);
         	return isSlope(t3, left, right, y) || isSlope(t4, left, right, y);
         }
         return false;
     }
 	
-	private boolean isSlope(final Tile tile, final float left, final float right, final float y) {
+	private boolean isSlope(final int index, final float left, final float right, final float y) {
 		// isSolid will check for non-slopes, could cut straight to slope logic
+	    final Tile tile = Level.tm.getTile(index);
 		if (tile == null) {
 		    return false;
 		}
 		final int b = tile.getBehavior();
-		return (b == PlatformGame.TILE_UPSLOPE || b == PlatformGame.TILE_DOWNSLOPE || b == PlatformGame.TILE_UPSLOPE_FLOOR || b == PlatformGame.TILE_DOWNSLOPE_FLOOR) && isSolid(tile, left, right, y);
+		return (b == PlatformGame.TILE_UPSLOPE || b == PlatformGame.TILE_DOWNSLOPE || b == PlatformGame.TILE_UPSLOPE_FLOOR || b == PlatformGame.TILE_DOWNSLOPE_FLOOR) && isSolid(index, left, right, y);
 	}
 	
-	private boolean isSolid(final Tile tile, final float left, final float right, final float y) {
-		return isSolid(tile, false, left, right, y);
+	private boolean isSolid(final int index, final float left, final float right, final float y) {
+		return isSolid(index, false, left, right, y);
 	}
 	
-	private boolean isSolid(final Tile tile, final boolean floor, final float left, final float right, final float y) {
+	private boolean isSolid(final int index, final boolean floor, final float left, final float right, final float y) {
+	    final Tile tile = Level.tm.getTile(index);
 		if (tile == null) {
 			return false;
 		} else if (tile.isSolid()) {
@@ -321,11 +323,12 @@ public abstract class Character extends Panctor implements StepListener, Collida
 			//if (right > tile.getPosition().getX() + tile.getMap().getTileWidth()) {
 			//	return false;
 			//}
-			if (map.getContainer(right, y) != tile) {
+			if (map.getContainer(right, y) != index) {
 				if (b == PlatformGame.TILE_UPSLOPE_FLOOR && curHeight != 15) {
 					return false;
-				} else if (map.getContainer(left, y) == tile) {
-					return b != PlatformGame.TILE_UPSLOPE_FLOOR || Tile.getBehavior(tile.getRelative(1, 1)) != PlatformGame.TILE_UPSLOPE_FLOOR;
+				} else if (map.getContainer(left, y) == index) {
+				    final int i = Level.tm.getColumn(index), j = Level.tm.getRow(index);
+					return b != PlatformGame.TILE_UPSLOPE_FLOOR || Tile.getBehavior(Level.tm.getTile(Level.tm.getRelative(i, j, 1, 1))) != PlatformGame.TILE_UPSLOPE_FLOOR;
 				} else if (b == PlatformGame.TILE_UPSLOPE_FLOOR) {
 					return false;
 				}
@@ -333,7 +336,7 @@ public abstract class Character extends Panctor implements StepListener, Collida
 					final float t = top - i;
 					if (t <= y) {
 						return false;
-					} else if (map.getContainer(left, t) == tile || map.getContainer(right, t) == tile) {
+					} else if (map.getContainer(left, t) == index || map.getContainer(right, t) == index) {
 						return true;
 					}
 				}
@@ -342,11 +345,12 @@ public abstract class Character extends Panctor implements StepListener, Collida
             return (b == PlatformGame.TILE_UPSLOPE_FLOOR) ? (curHeight == minHeight) : (curHeight <= minHeight);
 			//}
 		} else if (b == PlatformGame.TILE_DOWNSLOPE || (yoff <= 0 && b == PlatformGame.TILE_DOWNSLOPE_FLOOR)) {
-            if (map.getContainer(left, y) != tile) {
+            if (map.getContainer(left, y) != index) {
             	if (b == PlatformGame.TILE_DOWNSLOPE_FLOOR && curHeight != 15) {
 					return false;
-				} else if (map.getContainer(right, y) == tile) {
-					return b != PlatformGame.TILE_DOWNSLOPE_FLOOR || Tile.getBehavior(tile.getRelative(-1, 1)) != PlatformGame.TILE_DOWNSLOPE_FLOOR;
+				} else if (map.getContainer(right, y) == index) {
+				    final int i = Level.tm.getColumn(index), j = Level.tm.getRow(index);
+					return b != PlatformGame.TILE_DOWNSLOPE_FLOOR || Tile.getBehavior(Level.tm.getTile(Level.tm.getRelative(i, j, -1, 1))) != PlatformGame.TILE_DOWNSLOPE_FLOOR;
 				} else if (b == PlatformGame.TILE_DOWNSLOPE_FLOOR) {
 					return false;
 				}
@@ -354,7 +358,7 @@ public abstract class Character extends Panctor implements StepListener, Collida
 					final float t = top - i;
 					if (t <= y) {
 						return false;
-					} else if (map.getContainer(right, t) == tile || map.getContainer(left, t) == tile) {
+					} else if (map.getContainer(right, t) == index || map.getContainer(left, t) == index) {
 						return true;
 					}
 				}
@@ -371,7 +375,7 @@ public abstract class Character extends Panctor implements StepListener, Collida
 	}
 	
 	//@OverrideMe
-	protected void onCollide(final Tile tile) {
+	protected void onCollide(final int tile) {
 	}
 	
 	//@OverrideMe
