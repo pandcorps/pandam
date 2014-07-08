@@ -1250,7 +1250,7 @@ public class Map {
 		markers.add(m);
 		//m.setPosition(tile);
 		final Panple pos = m.getPosition();
-		pos.set(tm.getPosition(index));
+		tm.savePosition(pos, index);
 		setZ(pos, DEPTH_MARKER);
 		room.addActor(m);
 	}
