@@ -162,7 +162,7 @@ public class TileMap extends Panctor implements Savable {
     public final void fillBehavior(final byte behavior) {
     	for (int i = 0; i < w; i++) {
             for (int j = 0; j < h; j++) {
-                initTile(i, j).setBehavior(behavior);
+                setBehavior(i, j, behavior);
             }
         } 
     }
@@ -170,9 +170,10 @@ public class TileMap extends Panctor implements Savable {
     public final void replaceBehavior(final byte orig, final byte replace) {
     	for (int i = 0; i < w; i++) {
             for (int j = 0; j < h; j++) {
-                final Tile t = initTile(i, j);
-                if (t.getBehavior() == orig) {
-                	t.setBehavior(replace);
+            	final int index = getIndex(i, j);
+                final Tile t = getTile(index);
+                if (Tile.getBehavior(t) == orig) {
+                	setBehavior(index, replace);
                 }
             }
         } 
@@ -216,19 +217,26 @@ public class TileMap extends Panctor implements Savable {
     	final byte behavior = Tile.getSolidBehavior(solid);
     	for (int i = x; i < right; i++) {
             for (int j = y; j < top; j++) {
-                final int index = getIndex(i, j);
-                final Tile tile = getTile(index);
-                final Object background, foreground;
-                if (tile == null) {
-                    background = null;
-                    foreground = null;
-                } else {
-                    background = tile.background;
-                    foreground = tile.foreground;
-                }
-                setTile(index, getTile(background, foreground, behavior));
+                setBehavior(i, j, behavior);
             }
         }
+    }
+    
+    public final void setBehavior(final int i, final int j, final byte behavior) {
+    	setBehavior(getIndex(i, j), behavior);
+    }
+    
+    public final void setBehavior(final int index, final byte behavior) {
+        final Tile tile = getTile(index);
+        final Object background, foreground;
+        if (tile == null) {
+            background = null;
+            foreground = null;
+        } else {
+            background = tile.background;
+            foreground = tile.foreground;
+        }
+        setTile(index, getTile(background, foreground, behavior));
     }
     
     private final void fillBackgroundO(final Object background) {
@@ -242,20 +250,75 @@ public class TileMap extends Panctor implements Savable {
     private final void fillBackgroundO(final Object background, final int x, final int y, final int w, final int h) {
         for (int i = x + w - 1; i >= x; i--) {
             for (int j = y + h - 1; j >= y; j--) {
-                final int index = getIndex(i, j);
-                final Tile tile = getTile(index);
-                final Object foreground;
-                final byte behavior;
-                if (tile == null) {
-                    foreground = null;
-                    behavior = Tile.BEHAVIOR_DEFAULT;
-                } else {
-                    foreground = tile.foreground;
-                    behavior = tile.behavior;
-                }
-                setTile(index, getTile(background, foreground, behavior));
+                setBackground(i, j, background);
             }
         }
+    }
+    
+    public final void setBackground(final int i, final int j, final Object background) {
+    	setBackground(getIndex(i, j), background);
+    }
+    
+    public final void setBackground(final int index, final Object background) {
+        final Tile tile = getTile(index);
+        final Object foreground;
+        final byte behavior;
+        if (tile == null) {
+            foreground = null;
+            behavior = Tile.BEHAVIOR_DEFAULT;
+        } else {
+            foreground = tile.foreground;
+            behavior = tile.behavior;
+        }
+        setTile(index, getTile(background, foreground, behavior));
+    }
+    
+    public final void setBackground(final int i, final int j, final Object background, final byte behavior) {
+    	setBackground(getIndex(i, j), background, behavior);
+    }
+    
+    public final void setBackground(final int index, final Object background, final byte behavior) {
+        final Tile tile = getTile(index);
+        final Object foreground = tile == null ? null : tile.foreground;
+        setTile(index, getTile(background, foreground, behavior));
+    }
+    
+    public final void setForeground(final int i, final int j, final Object foreground) {
+    	setForeground(getIndex(i, j), foreground);
+    }
+    
+    public final void setForeground(final int index, final Object foreground) {
+        final Tile tile = getTile(index);
+        final Object background;
+        final byte behavior;
+        if (tile == null) {
+        	background = null;
+            behavior = Tile.BEHAVIOR_DEFAULT;
+        } else {
+        	background = tile.foreground;
+            behavior = tile.behavior;
+        }
+        setTile(index, getTile(background, foreground, behavior));
+    }
+    
+    public final void setForeground(final int i, final int j, final Object foreground, final byte behavior) {
+    	setForeground(getIndex(i, j), foreground, behavior);
+    }
+    
+    public final void setForeground(final int index, final Object foreground, final byte behavior) {
+        final Tile tile = getTile(index);
+        final Object background = tile == null ? null : tile.background;
+        setTile(index, getTile(background, foreground, behavior));
+    }
+    
+    public final void setImages(final int i, final int j, final Object background, final Object foreground) {
+    	setImages(getIndex(i, j), background, foreground);
+    }
+    
+    public final void setImages(final int index, final Object background, final Object foreground) {
+        final Tile tile = getTile(index);
+        final byte behavior = tile == null ? Tile.BEHAVIOR_DEFAULT : tile.behavior;
+        setTile(index, getTile(background, foreground, behavior));
     }
     
     private final void rectangle(final boolean bg, final int imX, final int imY, final int tlX, final int tlY, final int w, final int h) {
@@ -327,9 +390,17 @@ public class TileMap extends Panctor implements Savable {
         tiles[index] = tile;
     }
     
+    public final void setTile(final int x, final int y, final Object background, final Object foreground, final byte behavior) {
+        tiles[getIndex(x, y)] = getTile(background, foreground, behavior);
+    }
+    
+    public final void setTile(final int index, final Object background, final Object foreground, final byte behavior) {
+        tiles[index] = getTile(background, foreground, behavior);
+    }
+    
     public final void randBackground(final TileMapImage img, final int y, final int h, final int n) {
         for (int i = 0; i < n; i++) {
-            getTile(Mathtil.randi(0, w - 1), Mathtil.randi(y, y + h - 1)).setBackground(img);
+            setBackground(Mathtil.randi(0, w - 1), Mathtil.randi(y, y + h - 1), img);
         }
     }
     
@@ -518,7 +589,7 @@ public class TileMap extends Panctor implements Savable {
     			if (f == null) {
     				continue;
     			}
-    			tm.initTile(i, j).setImages(tm.getImage(imgMap, f, 0), tm.getImage(imgMap, f, 2), f.byteValue(4));
+    			tm.setTile(i, j, tm.getTile(tm.getImage(imgMap, f, 0), tm.getImage(imgMap, f, 2), f.byteValue(4)));
     		}
     	}
     	return tm;
