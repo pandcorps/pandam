@@ -729,7 +729,7 @@ public class Map {
 	
 	private final static void initTileMap(final DynamicTileMap tm) {
 	    tm.setImageMap(timg);
-        tm.setTileListener(mtl);
+        //tm.setTileListener(mtl); //TODO Change animation technique
 	}
 	
 	private final static void initRoom() {
@@ -792,31 +792,31 @@ public class Map {
 	private final static void buildDemo() {
 		for (int i = 2; i < 14; i++) {
 			for (int j = 1; j < 4; j++) {
-				tm.initTile(i, j).setBackground(imgMap[0][4]);
+				tm.setBackground(i, j, imgMap[0][4]);
 			}
-			tm.initTile(i, 1).setForeground(imgMap[1][4]);
-			tm.initTile(i, 3).setForeground(imgMap[2][1]);
+			tm.setForeground(i, 1, imgMap[1][4]);
+			tm.setForeground(i, 3, imgMap[2][1]);
 			for (int j = 4; j < 10; j++) {
-				tm.initTile(i, j).setBackground(getBaseImage());
+				tm.setBackground(i, j, getBaseImage());
 			}
-			tm.initTile(i, 10).setForeground(imgMap[0][1]);
+			tm.setForeground(i, 10, imgMap[0][1]);
 		}
 		mountain(5, 11, 3);
 		mountain(10, 9, 3);
 		for (int j = 1; j < 4; j++) {
-			tm.initTile(1, j).setBackground(imgMap[0][3]);
-			tm.initTile(14, j).setBackground(imgMap[0][5]);
+			tm.setBackground(1, j, imgMap[0][3]);
+			tm.setBackground(14, j, imgMap[0][5]);
 		}
-		tm.initTile(1, 1).setForeground(imgMap[1][3]);
-		tm.initTile(14, 1).setForeground(imgMap[1][5]);
+		tm.setForeground(1, 1, imgMap[1][3]);
+		tm.setForeground(14, 1, imgMap[1][5]);
 		for (int j = 4; j < 10; j++) {
-			tm.initTile(1, j).setForeground(imgMap[1][0]);
-			tm.initTile(14, j).setForeground(imgMap[1][2]);
+			tm.setForeground(1, j, imgMap[1][0]);
+			tm.setForeground(14, j, imgMap[1][2]);
 		}
-		tm.initTile(1, 3).setForeground(imgMap[2][0]);
-		tm.initTile(14, 3).setForeground(imgMap[2][2]);
-		tm.initTile(1, 10).setForeground(imgMap[0][0]);
-		tm.initTile(14, 10).setForeground(imgMap[0][2]);
+		tm.setForeground(1, 3, imgMap[2][0]);
+		tm.setForeground(14, 3, imgMap[2][2]);
+		tm.setForeground(1, 10, imgMap[0][0]);
+		tm.setForeground(14, 10, imgMap[0][2]);
 		
 		marker(2, 6);
 		vert(2, 7);
@@ -945,8 +945,8 @@ public class Map {
 			endRow = r;
 			building(endColumn, endRow, 6, 7);
 			final int portalRow = getPortalRow(), midRow = (endRow + portalRow) / 2;
-			tm.initTile(endColumn, midRow).setBackground(base, TILE_SPECIAL);
-			tm.initTile(endColumn, portalRow).setBackground(getBuildingBackground(), TILE_SPECIAL);
+			tm.setBackground(endColumn, midRow, base, TILE_SPECIAL);
+			tm.setBackground(endColumn, portalRow, getBuildingBackground(), TILE_SPECIAL);
 			cliff(fc);
 			int bc = 0, br = 0, bl = 0;
 			for (r = 6; r <= 12; r++) {
@@ -984,19 +984,19 @@ public class Map {
 	
 	private final static void cliff(final int m) {
 		final int n = m - 1, x = m + 1;
-		tm.getTile(n, 16).setForeground(imgMap[0][0]);
-		tm.getTile(m, 16).setForeground(imgMap[0][1]);
-		tm.getTile(x, 16).setForeground(imgMap[0][2]);
-		tm.getTile(n, 15).setForeground(imgMap[1][0]);
-		tm.getTile(m, 15).setForeground((Panmage) null);
+		tm.setForeground(n, 16, imgMap[0][0]);
+		tm.setForeground(m, 16, imgMap[0][1]);
+		tm.setForeground(x, 16, imgMap[0][2]);
+		tm.setForeground(n, 15, imgMap[1][0]);
+		tm.setForeground(m, 15, (Panmage) null);
 		marker(m, 15);
-		tm.getTile(x, 15).setForeground(imgMap[1][2]);
-		tm.getTile(n, 14).setImages(imgMap[0][3], imgMap[2][0]);
-		tm.getTile(m, 14).setImages(imgMap[0][4], imgMap[2][6], TILE_VERT);
-		tm.getTile(x, 14).setImages(imgMap[0][5], imgMap[2][2]);
-		tm.getTile(n, 13).setImages(imgMap[0][3], imgMap[0][2]);
-		tm.getTile(m, 13).setImages(imgMap[0][4], imgMap[0][6], TILE_VERT);
-		tm.getTile(x, 13).setImages(imgMap[0][5], imgMap[0][0]);
+		tm.setForeground(x, 15, imgMap[1][2]);
+		tm.setImages(n, 14, imgMap[0][3], imgMap[2][0]);
+		tm.setTile(m, 14, imgMap[0][4], imgMap[2][6], TILE_VERT);
+		tm.setImages(x, 14, imgMap[0][5], imgMap[2][2]);
+		tm.setImages(n, 13, imgMap[0][3], imgMap[0][2]);
+		tm.setTile(m, 13, imgMap[0][4], imgMap[0][6], TILE_VERT);
+		tm.setImages(x, 13, imgMap[0][5], imgMap[0][0]);
 		for (int y = 12; ; y--) {
 			final Tile tile = tm.getTile(m, y);
 			if (!tile.isSolid()) {
@@ -1038,7 +1038,7 @@ public class Map {
 				topUp(i, t);
 			} else {
 				ct = t;
-				tm.initTile(i, t + 1).setForeground(imgMap[0][1]);
+				tm.setForeground(i, t + 1, imgMap[0][1]);
 			}
 			mid(i, cb, ct);
 		}
@@ -1067,9 +1067,9 @@ public class Map {
 	
 	private final static void base(final int x, final int y, final int tx, final int wx) {
 		final TileMapImage terrain = imgMap[0][tx];
-		tm.initTile(x, y - 1).setImages(terrain, imgMap[2][wx - 3]);
-		tm.initTile(x, y - 2).setBackground(terrain);
-		tm.initTile(x, y - 3).setImages(terrain, imgMap[1][wx]);
+		tm.setImages(x, y - 1, terrain, imgMap[2][wx - 3]);
+		tm.setBackground(x, y - 2, terrain);
+		tm.setImages(x, y - 3, terrain, imgMap[1][wx]);
 	}
 	
 	private final static void baseLeft(final int x, final int y) {
@@ -1094,16 +1094,16 @@ public class Map {
 	
 	private final static void mid(final int x, final int b, final int t) {
 		for (int j = b; j <= t; j++) {
-			tm.initTile(x, j).setBackground(getBaseImage());
+			tm.setBackground(x, j, getBaseImage());
 		}
 	}
 	
 	private final static void topUp(final int x, final int y) {
-		tm.initTile(x, y + 1).setForeground(imgMap[0][0]);
+		tm.setForeground(x, y + 1, imgMap[0][0]);
 	}
 	
 	private final static void topDown(final int x, final int y) {
-		tm.initTile(x, y + 1).setForeground(imgMap[0][2]);
+		tm.setForeground(x, y + 1, imgMap[0][2]);
 	}
 	
 	private final static int getStartTile() {
@@ -1152,7 +1152,7 @@ public class Map {
 		}
 	}
 	
-	private final static DynamicTileMap addBorder(final String name, final int tx, final int ty, final float px, final float py) {
+	private final static TileMap addBorder(final String name, final int tx, final int ty, final float px, final float py) {
 	    final DynamicTileMap bord = new DynamicTileMap("act.border." + name, tx, ty, ImtilX.DIM, ImtilX.DIM);
         initTileMap(bord);
         bord.fillBackground(water, true);
@@ -1192,11 +1192,9 @@ public class Map {
 		setForeground(stop, y, 2, 5);
 		if (wtr) {
 			final int yshadow = y - 1;
+			final TileMapImage b = getBaseImage();
 			for (int i = x; i <= stop; i++) {
-				final Tile t = tm.initTile(i, yshadow);
-				final TileMapImage b = getBaseImage();
-				t.setBackground(b);
-				t.setForeground(b);
+				tm.setImages(i, yshadow, b, b);
 			}
 		}
 	}
@@ -1206,22 +1204,26 @@ public class Map {
 		for (int j = 0; j < 3; j++) {
 			final int yj = y + j, j7 = 7 - j;
 			for (int i = 0; i < 3; i++) {
-				setForeground(x + i, yj, j7, ix + i).setBehavior(TILE_SPECIAL);
+				final int xi = x + i;
+				setForeground(xi, yj, j7, ix + i);
+				tm.setBehavior(xi, yj, TILE_SPECIAL);
 			}
 		}
 	}
 	
 	private static Tile setForeground(final int x, final int y, final int ij, final int ii) {
-		final Tile t = tm.initTile(x, y);
-		t.setForeground(imgMap[ij][ii]);
-		if (!isWater(t)) {
-			t.setBackground(base);
+		final int index = tm.getIndex(x, y);
+		final Tile t = tm.getTile(index);
+		if (isWater(t)) {
+			tm.setForeground(index, imgMap[ij][ii]);
+		} else {
+			tm.setImages(index, base, imgMap[ij][ii]);
 		}
 		return t;
 	}
 	
 	private static boolean isWater(final int x, final int y) {
-		return isWater(tm.initTile(x, y));
+		return isWater(tm.getTile(x, y));
 	}
 	
 	private static boolean isWater(final Tile t) {
@@ -1237,12 +1239,13 @@ public class Map {
 	}
 	
 	private static void marker(final int i, final int j, final boolean bg) {
-		final Tile tile = tm.initTile(i, j);
+		final int index = tm.getIndex(i, j);
 		if (bg) {
-			tile.setBackground(imgMap[3][0]);
+			tm.setBackground(index, imgMap[3][0], TILE_MARKER);
+		} else {
+			tm.setBehavior(index, TILE_MARKER);
 		}
-		tile.setBehavior(TILE_MARKER);
-		addMarker(tm.getIndex(i, j));
+		addMarker(index);
 	}
 	
 	private final static void addMarker(final int index) {
@@ -1256,8 +1259,7 @@ public class Map {
 	}
 	
 	private final static void building(final int i, final int j, final int ij, final int ii) {
-		final Tile tile = tm.initTile(i, j);
-		tile.setBackground(getBuildingBackground(), TILE_MARKER);
+		tm.setBackground(i, j, getBuildingBackground(), TILE_MARKER);
 		addBuilding(tm.getIndex(i, j), ij, ii);
 	}
 	
@@ -1301,36 +1303,37 @@ public class Map {
 	}
 	
 	private static void horiz(final int i, final int j) {
-		final Tile t = tm.initTile(i, j);
+		final int index = tm.getIndex(i, j);
+		final Tile t = tm.getTile(index);
 		if (isWater(t)) {
-			t.setForeground(imgMap[0][7], TILE_HORIZ);
+			tm.setForeground(index, imgMap[0][7], TILE_HORIZ);
 		} else if (isWater(i - 1, j)) {
-			t.setBackground(imgMap[1][6], TILE_HORIZ);
+			tm.setBackground(index, imgMap[1][6], TILE_HORIZ);
 		} else if (isWater(i + 1, j)) {
-			t.setBackground(imgMap[1][7], TILE_HORIZ);
+			tm.setBackground(index, imgMap[1][7], TILE_HORIZ);
 		} else {
-			t.setBackground(imgMap[3][1], TILE_HORIZ);
+			tm.setBackground(index, imgMap[3][1], TILE_HORIZ);
 		}
 	}
 	
 	private static void vert(final int i, final int j) {
-		tm.initTile(i, j).setBackground(imgMap[3][2], TILE_VERT);
+		tm.setBackground(i, j, imgMap[3][2], TILE_VERT);
 	}
 	
 	private static void leftUp(final int i, final int j) {
-		tm.initTile(i, j).setBackground(imgMap[3][3], TILE_LEFTUP);
+		tm.setBackground(i, j, imgMap[3][3], TILE_LEFTUP);
 	}
 	
 	private static void rightUp(final int i, final int j) {
-		tm.initTile(i, j).setBackground(imgMap[3][4], TILE_RIGHTUP);
+		tm.setBackground(i, j, imgMap[3][4], TILE_RIGHTUP);
 	}
 	
 	private static void leftDown(final int i, final int j) {
-		tm.initTile(i, j).setBackground(imgMap[3][5], TILE_LEFTDOWN);
+		tm.setBackground(i, j, imgMap[3][5], TILE_LEFTDOWN);
 	}
 	
 	private static void rightDown(final int i, final int j) {
-		tm.initTile(i, j).setBackground(imgMap[3][6], TILE_RIGHTDOWN);
+		tm.setBackground(i, j, imgMap[3][6], TILE_RIGHTDOWN);
 	}
 	
 	private final static String generateName() {

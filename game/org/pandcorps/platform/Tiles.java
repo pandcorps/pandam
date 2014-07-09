@@ -71,7 +71,7 @@ public class Tiles {
     	final byte b = t.getBehavior();
     	//if isMusicSupported final Sequence seq;
     	if (b == PlatformGame.TILE_BREAK) {
-    		t.setForeground(null, false);
+    		Level.tm.setForeground(index, null, Tile.BEHAVIOR_OPEN);
     		shatter(PlatformGame.block8, Level.tm.getPosition(index), false);
     		if (Mathtil.rand()) {
     		    newGemBumped(player, index); // Plays a sound
@@ -89,7 +89,7 @@ public class Tiles {
     	        GemBumped.newLevelEnd(player, index);
     	        PlatformGame.levelVictory();
     	    }
-    		t.setForeground(null, true);
+    		Level.tm.setForeground(index, null, Tile.BEHAVIOR_SOLID);
     		player.pc.profile.stats.bumpedBlocks++;
     		//if isMusicSupported seq = null;
     	} else {
@@ -150,7 +150,7 @@ public class Tiles {
             } else {
                 destroy();
                 if (isVisible()) {
-                	Level.tm.getTile(index).setForeground(getHandler().getBumpedImage());
+                	Level.tm.setForeground(index, getHandler().getBumpedImage());
                 }
                 return;
             }
