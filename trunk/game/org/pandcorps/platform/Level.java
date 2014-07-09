@@ -226,6 +226,10 @@ public class Level {
     	loadLayers();
     	addPlayers(); // Add Players while floor has initial value before build() changes it
     	b.build();
+    	/*tm.info();
+    	bgtm1.info();
+    	bgtm2.info();
+    	bgtm3.info();*/
     }
     
     private static interface Builder {
@@ -1508,7 +1512,6 @@ public class Level {
     
     private static void gem(final int x, final int y) {
         final Gem gem = new Gem();
-        tm.initTile(x, y);
         gem.setPosition(tm, tm.getIndex(x, y));
         room.addActor(gem);
     }

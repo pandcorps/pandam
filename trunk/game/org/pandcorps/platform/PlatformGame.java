@@ -87,6 +87,10 @@ public class PlatformGame extends BaseGame {
 	Give images a real transparent background, disable ImtilX preprocessing.
 	Assist: Berserker? (Defeat Enemy by touching it)
 	Assist: Teleport (After fall, teleport to target immediately instead of slow bubble, no gem loss)
+	Fix Map water.
+	Remove Gem class? Just use Tile.foreground and Tile.animate?
+	Clear TileMap.map/imgs?
+	Flash block main image is wrong.
 	*/
 	
 	protected final static byte TILE_BREAK = 2;
@@ -599,13 +603,24 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
                 @Override public final boolean onInteract(final Enemy enemy, final Player player) {
                 	if (Math.abs(enemy.hv) <= 1) {
                 		enemy.hv *= 2;
+                		enemy.timer = 3;
                 		return true;
+                	} else if (enemy.timer > 0) {
+                		return true;
+                	}
+                    return false;
+                }};
+            troll.stepHandler = new InteractionHandler() {
+                @Override public final boolean onInteract(final Enemy enemy, final Player player) {
+                	if (enemy.timer > 0) {
+                		enemy.timer--;
                 	}
                     return false;
                 }};
 			allEnemies.add(troll);
 			ogre = new EnemyDefinition("Ogre", 5, f, false, false, 0, 8, 30, 1, 32);
 			ogre.stompHandler = troll.stompHandler;
+			ogre.stepHandler = troll.stepHandler;
 			allEnemies.add(ogre);
 			final EnemyDefinition armorBall, bounceBall, thrownImp;
 			armorBall = new EnemyDefinition("Armor Ball", 7, null, false, 0, 0);
