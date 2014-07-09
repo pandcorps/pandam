@@ -135,7 +135,7 @@ public class Tiles {
         private Bump(final Character bumper, final int index) {
         	this.bumper = bumper;
         	this.index = index;
-        	setViewFromForeground(Level.tm.getTile(index));
+        	setViewFromForeground(Level.tm, Level.tm.getTile(index));
             final Panple pos = Level.tm.getPosition(index);
             PlatformGame.setPosition(this, pos.getX(), pos.getY() + 2, PlatformGame.DEPTH_SHATTER);
             PlatformGame.room.addActor(this);
