@@ -267,11 +267,11 @@ public class Level {
         hill(bgtm3, 13, 10, 5, 3, 4);
         
         for (int i = 0; i < nt; i++) {
-            tm.initTile(i, 0).setForeground(imgMap[1][1], true);
+            tm.setForeground(i, 0, imgMap[1][1], Tile.BEHAVIOR_SOLID);
         }
         tm.removeTile(0, 0);
         tm.removeTile(1, 0);
-        tm.initTile(2, 0).setForeground(imgMap[1][0], true);
+        tm.setForeground(2, 0, imgMap[1][0], Tile.BEHAVIOR_SOLID);
         
         step(13, 0, 1, 1);
         bush(4, 1, 0);
@@ -509,9 +509,9 @@ public class Level {
     
     private static void ground(final int px, final int stop) {
     	for (int i = px; i <= stop; i++) {
-            tm.initTile(i, floor).setForeground(imgMap[1][1], true);
+            tm.setForeground(i, floor, imgMap[1][1], Tile.BEHAVIOR_SOLID);
             for (int j = 0; j < floor; j++) {
-            	tm.initTile(i, j).setForeground(getDirtImage(), true);
+            	tm.setForeground(i, j, getDirtImage(), Tile.BEHAVIOR_SOLID);
             }
         }
     }
@@ -1141,16 +1141,14 @@ public class Level {
     	if (tm.isBad(i, j)) {
     		return;
     	}
-        final Tile t = tm.initTile(i, j);
-        t.setBackground(imgMap[iy][ix]);
-        t.setForeground(null, false);
+        tm.setTile(i, j, imgMap[iy][ix], null, Tile.BEHAVIOR_OPEN);
     }
     
     private static void setFg(final TileMap tm, final int i, final int j, final TileMapImage[][] imgMap, final int iy, final int ix) {
     	if (tm.isBad(i, j)) {
     		return;
     	}
-    	tm.initTile(i, j).setForeground(imgMap[iy][ix]);
+    	tm.setForeground(i, j, imgMap[iy][ix]);
     }
     
     private static int house(final TileMap tm, final int x, final int y, final int border, final int winLeft, final int winRight) {
@@ -1252,28 +1250,27 @@ public class Level {
     }
     
     private static void solidBlock(final int x, final int y) {
-        tm.initTile(x, y).setForeground(imgMap[0][4], true);
+        tm.setForeground(x, y, imgMap[0][4], Tile.BEHAVIOR_SOLID);
     }
     
     private static void bumpableBlock(final int x, final int y) {
-        final Tile block = tm.initTile(x, y);
-        block.setForeground(imgMap[0][0], PlatformGame.TILE_BUMP);
+        tm.setForeground(x, y, imgMap[0][0], PlatformGame.TILE_BUMP);
     }
     
     private static void breakableBlock(final int x, final int y) {
-        tm.initTile(x, y).setForeground(imgMap[0][5], PlatformGame.TILE_BREAK);
+        tm.setForeground(x, y, imgMap[0][5], PlatformGame.TILE_BREAK);
     }
     
     private static void upBlock(final int x, final int y) {
-        tm.initTile(x, y).setForeground(imgMap[0][6], PlatformGame.TILE_UPSLOPE);
+        tm.setForeground(x, y, imgMap[0][6], PlatformGame.TILE_UPSLOPE);
     }
     
     private static void downBlock(final int x, final int y) {
-        tm.initTile(x, y).setForeground(imgMap[0][7], PlatformGame.TILE_DOWNSLOPE);
+        tm.setForeground(x, y, imgMap[0][7], PlatformGame.TILE_DOWNSLOPE);
     }
     
     private static void goalBlock(final int x, final int y) {
-        tm.initTile(x, y).setForeground(imgMap[7][0], PlatformGame.TILE_BUMP);
+        tm.setForeground(x, y, imgMap[7][0], PlatformGame.TILE_BUMP);
     }
     
     private static void step(final int x, final int y, final int w, final int h) {
@@ -1291,34 +1288,34 @@ public class Level {
     private static void step(final int x, final int y, final int w, final int h, final int mode) {
         // Will also want 1-way steps going up and 1-way down; same with ramps
     	if (mode != 2) {
-    		tm.initTile(x, y).setForeground(imgMap[3][0], true);
+    		tm.setForeground(x, y, imgMap[3][0], Tile.BEHAVIOR_SOLID);
     	}
         final int stop = x + w + 1, ystop = y + h + 1;
         for (int j = y + 1; j < ystop; j++) {
         	if (mode != 2) {
-        		tm.initTile(x, j).setForeground(imgMap[2][0], true);
+        		tm.setForeground(x, j, imgMap[2][0], Tile.BEHAVIOR_SOLID);
         	}
         	if (mode != 0) {
-        		tm.initTile(stop, j).setForeground(imgMap[2][2], true);
+        		tm.setForeground(stop, j, imgMap[2][2], Tile.BEHAVIOR_SOLID);
         	}
         	if (mode == 1) {
 	            for (int i = x + 1; i < stop; i++) {
-	                tm.initTile(i, j).setForeground(getDirtImage(), true);
+	                tm.setForeground(i, j, getDirtImage(), Tile.BEHAVIOR_SOLID);
 	            }
         	}
         }
         if (mode != 2) {
-        	tm.initTile(x, ystop).setForeground(imgMap[1][0], true);
+        	tm.setForeground(x, ystop, imgMap[1][0], Tile.BEHAVIOR_SOLID);
         }
         if (mode == 1) {
 	        for (int i = x + 1; i < stop; i++) {
-	            tm.initTile(i, ystop).setForeground(imgMap[1][1], true);
-	            tm.initTile(i, y).setForeground(getDirtImage(), true);
+	            tm.setForeground(i, ystop, imgMap[1][1], Tile.BEHAVIOR_SOLID);
+	            tm.setForeground(i, y, getDirtImage(), Tile.BEHAVIOR_SOLID);
 	        }
         }
         if (mode != 0) {
-	        tm.initTile(stop, ystop).setForeground(imgMap[1][2], true);
-	        tm.initTile(stop, y).setForeground(imgMap[3][2], true);
+	        tm.setForeground(stop, ystop, imgMap[1][2], Tile.BEHAVIOR_SOLID);
+	        tm.setForeground(stop, y, imgMap[3][2], Tile.BEHAVIOR_SOLID);
         }
     }
     
@@ -1327,19 +1324,19 @@ public class Level {
         for (int jo = y; jo <= ystop; jo++) {
             final int jb = jo - y, stop = fstop - jb;
             if (jb != 0) {
-                tm.initTile(x + jb, jo).setForeground(imgMap[3][3], PlatformGame.TILE_UPSLOPE);
-                tm.initTile(stop + 1, jo).setForeground(imgMap[3][4], PlatformGame.TILE_DOWNSLOPE);
+                tm.setForeground(x + jb, jo, imgMap[3][3], PlatformGame.TILE_UPSLOPE);
+                tm.setForeground(stop + 1, jo, imgMap[3][4], PlatformGame.TILE_DOWNSLOPE);
             }
             if (jo == ystop) {
                 for (int i = x + jb + 1; i <= stop; i++) {
-                    tm.initTile(i, jo).setForeground(imgMap[1][1], true);
+                    tm.setForeground(i, jo, imgMap[1][1], Tile.BEHAVIOR_SOLID);
                 }
             } else {
-                tm.initTile(x + jb + 1, jo).setForeground(imgMap[3][0], true);
+                tm.setForeground(x + jb + 1, jo, imgMap[3][0], Tile.BEHAVIOR_SOLID);
                 for (int i = x + jb + 2; i < stop; i++) {
-                    tm.initTile(i, jo).setForeground(getDirtImage(), true);
+                    tm.setForeground(i, jo, getDirtImage(), Tile.BEHAVIOR_SOLID);
                 }
-                tm.initTile(stop, jo).setForeground(imgMap[3][2], true);
+                tm.setForeground(stop, jo, imgMap[3][2], Tile.BEHAVIOR_SOLID);
             }
         }
     }
@@ -1382,45 +1379,45 @@ public class Level {
     private static void naturalRise(final int x, final int y, final int w, final int h) {
         final int ystop = y + h;
         for (int j = y; j < ystop; j++) {
-            tm.initTile(x, j).setBackground(imgMap[2][3]);
-            tm.initTile(x + w + 1, j).setBackground(imgMap[2][4]);
+            tm.setBackground(x, j, imgMap[2][3]);
+            tm.setBackground(x + w + 1, j, imgMap[2][4]);
         }
         final int stop = x + w;
         for (int i = x + 1; i <= stop; i++) {
-            tm.initTile(i, ystop).setBackground(imgMap[1][1], PlatformGame.TILE_FLOOR);
+            tm.setBackground(i, ystop, imgMap[1][1], PlatformGame.TILE_FLOOR);
             for (int j = y; j < ystop; j++) {
-                tm.initTile(i, j).setBackground(getDirtImage());
+                tm.setBackground(i, j, getDirtImage());
             }
         }
-        tm.initTile(x, ystop).setForeground(imgMap[1][3], PlatformGame.TILE_FLOOR);
-        tm.initTile(stop + 1, ystop).setForeground(imgMap[1][4], PlatformGame.TILE_FLOOR);
+        tm.setForeground(x, ystop, imgMap[1][3], PlatformGame.TILE_FLOOR);
+        tm.setForeground(stop + 1, ystop, imgMap[1][4], PlatformGame.TILE_FLOOR);
     }
     
     private static void colorRise(final int x, final int y, final int w, final int h, final int _o) {
         final int o = _o * 2 + 2, o1 = o + 1, ystop = y + h;
         for (int j = y; j < ystop; j++) {
-            tm.initTile(x, j).setBackground(imgMap[o1][5]);
-            tm.initTile(x + w + 1, j).setBackground(imgMap[o1][7]);
+            tm.setBackground(x, j, imgMap[o1][5]);
+            tm.setBackground(x + w + 1, j, imgMap[o1][7]);
         }
         final int stop = x + w;
         for (int i = x + 1; i <= stop; i++) {
-            tm.initTile(i, ystop).setBackground(imgMap[o][6], PlatformGame.TILE_FLOOR);
+            tm.setBackground(i, ystop, imgMap[o][6], PlatformGame.TILE_FLOOR);
             for (int j = y; j < ystop; j++) {
-                tm.initTile(i, j).setBackground(imgMap[o1][6]);
+                tm.setBackground(i, j, imgMap[o1][6]);
             }
         }
-        tm.initTile(x, ystop).setForeground(imgMap[o][5], PlatformGame.TILE_FLOOR);
-        tm.initTile(stop + 1, ystop).setForeground(imgMap[o][7], PlatformGame.TILE_FLOOR);
+        tm.setForeground(x, ystop, imgMap[o][5], PlatformGame.TILE_FLOOR);
+        tm.setForeground(stop + 1, ystop, imgMap[o][7], PlatformGame.TILE_FLOOR);
     }
     
     private static void wall(final int x, final int y, final int w, final int h) {
         final int ystop = y + h, xstop = x + w + 1;
         for (int j = y; j < ystop; j++) {
-            tm.initTile(x, j).setForeground(imgMap[4][0], true);
+            tm.setForeground(x, j, imgMap[4][0], Tile.BEHAVIOR_SOLID);
             for (int i = x + 1; i < xstop; i++) {
-                tm.initTile(i, j).setForeground(imgMap[4][1], true);
+                tm.setForeground(i, j, imgMap[4][1], Tile.BEHAVIOR_SOLID);
             }
-            tm.initTile(xstop, j).setForeground(imgMap[4][2], true);
+            tm.setForeground(xstop, j, imgMap[4][2], Tile.BEHAVIOR_SOLID);
         }
     }
     
@@ -1447,21 +1444,21 @@ public class Level {
         }
         for (int jo = y; jo < ystop; jo++) {
             final int jb = jo - y;
-            tm.initTile(x - m * jb, jo).setForeground(imgMap[jb == (h - 1) ? 7 : 5][c1]);
+            tm.setForeground(x - m * jb, jo, imgMap[jb == (h - 1) ? 7 : 5][c1]);
             for (int i = 1; i <= w; i++) {
-                tm.initTile(x + m * (i - jb), jo).setForeground(getDirtImage());
+                tm.setForeground(x + m * (i - jb), jo, getDirtImage());
             }
-            tm.initTile(x + m * (w + 1 - jb), jo).setForeground(imgMap[4][c2]);
+            tm.setForeground(x + m * (w + 1 - jb), jo, imgMap[4][c2]);
         }
         for (int jb = 0; jb <= stop; jb++) {
             final int jo = jb + ystop, off = jb + 3 - h;
-            tm.initTile(x + m * (off - 2), jo).setForeground(imgMap[3][c1], b);
-            tm.initTile(x + m * (off - 1), jo).setForeground(jb == stop ? imgMap[6][c2] : imgMap[3][c3]);
+            tm.setForeground(x + m * (off - 2), jo, imgMap[3][c1], b);
+            tm.setForeground(x + m * (off - 1), jo, jb == stop ? imgMap[6][c2] : imgMap[3][c3]);
             if (jb < stop) {
                 for (int i = jb; i <= w - 3 - jb; i++) {
-                    tm.initTile(x + m * (i + 3 - h), jo).setForeground(getDirtImage());
+                    tm.setForeground(x + m * (i + 3 - h), jo, getDirtImage());
                 }
-                tm.initTile(x + m * (w + 1 - h - jb), jo).setForeground(imgMap[4][c2]);
+                tm.setForeground(x + m * (w + 1 - h - jb), jo, imgMap[4][c2]);
             }
         }
     }
@@ -1475,8 +1472,8 @@ public class Level {
     	for (int j = 0; j <= y; j++) {
     		if (grassy) {
 	    		final int iy = (j == y) ? 1 : 2;
-		    	tm.initTile(x, j).setForeground(imgMap[iy][2], true);
-		    	tm.initTile(stop, j).setForeground(imgMap[iy][0], true);
+		    	tm.setForeground(x, j, imgMap[iy][2], Tile.BEHAVIOR_SOLID);
+		    	tm.setForeground(stop, j, imgMap[iy][0], Tile.BEHAVIOR_SOLID);
     		} else if (j == y) {
     			solidBlock(x, j);
     			solidBlock(stop, j);
@@ -1488,25 +1485,25 @@ public class Level {
     }
     
     private static void bush(final int x, final int y, final int w) {
-        tm.initTile(x, y).setForeground(imgMap[1][5]);
+        tm.setForeground(x, y, imgMap[1][5]);
         final int stop = x + w;
         for (int i = x + 1; i <= stop; i++) {
-            tm.initTile(i, y).setForeground(imgMap[1][6]);
+            tm.setForeground(i, y, imgMap[1][6]);
         }
-        tm.initTile(stop + 1, y).setForeground(imgMap[1][7]);
+        tm.setForeground(stop + 1, y, imgMap[1][7]);
     }
     
     private static void tree(final int x, final int y) {
     	for (int j = 0; j < 2; j++) {
-    		tm.initTile(x + 1, y + j).setForeground(imgMap[7][1]);
-    		tm.initTile(x + 2, y + j).setForeground(imgMap[7][2]);
-    		tm.initTile(x + 1 + j, y + 2).setForeground(imgMap[6][2]);
-    		tm.initTile(x + 1 + j, y + 3).setForeground(imgMap[5][2]);
-    		tm.initTile(x + j, y + 3 + j).setForeground(imgMap[5][0]);
-    		tm.initTile(x + 3 - j, y + 3 + j).setForeground(imgMap[5][1]);
+    		tm.setForeground(x + 1, y + j, imgMap[7][1]);
+    		tm.setForeground(x + 2, y + j, imgMap[7][2]);
+    		tm.setForeground(x + 1 + j, y + 2, imgMap[6][2]);
+    		tm.setForeground(x + 1 + j, y + 3, imgMap[5][2]);
+    		tm.setForeground(x + j, y + 3 + j, imgMap[5][0]);
+    		tm.setForeground(x + 3 - j, y + 3 + j, imgMap[5][1]);
     	}
-    	tm.initTile(x, y + 2).setForeground(imgMap[6][0]);
-		tm.initTile(x + 3, y + 2).setForeground(imgMap[6][1]);
+    	tm.setForeground(x, y + 2, imgMap[6][0]);
+		tm.setForeground(x + 3, y + 2, imgMap[6][1]);
     }
     
     private static void gem(final int x, final int y) {

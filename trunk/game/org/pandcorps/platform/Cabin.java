@@ -85,22 +85,22 @@ public class Cabin {
 						break;
 				}
 				final TileMapImage tml = imgMap[ij][1], tmi = imgMap[ij][2], tmr = imgMap[ij][3];
-				tm.initTile(2, j).setBackground(tml);
-				tm.initTile(3, j).setBackground(tmi);
-				tm.initTile(4, j).setBackground(tmr);
-				tm.initTile(5, j).setBackground(tmi);
-				tm.initTile(6, j).setBackground(tml);
+				tm.setBackground(2, j, tml);
+				tm.setBackground(3, j, tmi);
+				tm.setBackground(4, j, tmr);
+				tm.setBackground(5, j, tmi);
+				tm.setBackground(6, j, tml);
 				tm.fillBackground(tmi, 7, j, 2, 1);
-				tm.initTile(9, j).setBackground(tmr);
-				tm.initTile(10, j).setBackground(tmi);
-				tm.initTile(11, j).setBackground(tml);
-				tm.initTile(12, j).setBackground(tmi);
-				tm.initTile(13, j).setBackground(tmr);
+				tm.setBackground(9, j, tmr);
+				tm.setBackground(10, j, tmi);
+				tm.setBackground(11, j, tml);
+				tm.setBackground(12, j, tmi);
+				tm.setBackground(13, j, tmr);
 			}
 			for (int i = 5; i <= 10; i += 5) {
 				tm.fillBackground(imgMap[1][3], i - 1, 8, 1, 2);
 				tm.fillBackground(imgMap[1][2], i, 8, 1, 2);
-				tm.initTile(i, 5).setBackground(imgMap[1][4]);
+				tm.setBackground(i, 5, imgMap[1][4]);
 				tm.fillBackground(imgMap[1][1], i + 1, 8, 1, 2);
 			}
 			tm.fillBackground(imgMap[1][2], 7, 8, 2, 2);
@@ -109,36 +109,36 @@ public class Cabin {
 			tm.fillBackground(imgMap[3][4], 14, 4, 1, 4);
 			for (int t = 0; t <= 1; t++) {
 				final int j = 8 + t;
-				tm.initTile(1 + t, j).setBackground(imgMap[2][0]);
-				tm.initTile(2 + t, j).setBackground(imgMap[0][1]);
-				tm.initTile(13 - t, j).setBackground(imgMap[0][3]);
-				tm.initTile(14 - t, j).setBackground(imgMap[2][4]);
+				tm.setBackground(1 + t, j, imgMap[2][0]);
+				tm.setBackground(2 + t, j, imgMap[0][1]);
+				tm.setBackground(13 - t, j, imgMap[0][3]);
+				tm.setBackground(14 - t, j, imgMap[2][4]);
 			}
-			tm.initTile(3, 8).setBackground(imgMap[0][2]);
-			tm.initTile(4, 9).setBackground(imgMap[0][5]);
-			tm.initTile(11, 9).setBackground(imgMap[0][6]);
-			tm.initTile(12, 8).setBackground(imgMap[0][4]);
+			tm.setBackground(3, 8, imgMap[0][2]);
+			tm.setBackground(4, 9, imgMap[0][5]);
+			tm.setBackground(11, 9, imgMap[0][6]);
+			tm.setBackground(12, 8, imgMap[0][4]);
 			
-			tm.initTile(3, 10).setBackground(imgMap[2][0]);
-			tm.initTile(12, 10).setBackground(imgMap[2][4]);
+			tm.setBackground(3, 10, imgMap[2][0]);
+			tm.setBackground(12, 10, imgMap[2][4]);
 			
 			for (int i = 0; i < 3; i++) {
 				final int j = 3 - i;
-				tm.initTile(0, j).setBackground(imgMap[2 + i][0]);
+				tm.setBackground(0, j, imgMap[2 + i][0]);
 				if (i < 2) {
-					tm.initTile(1, j).setBackground(imgMap[1 + i][5]);
-					tm.initTile(14, j).setBackground(imgMap[1 + i][6]);
+					tm.setBackground(1, j, imgMap[1 + i][5]);
+					tm.setBackground(14, j, imgMap[1 + i][6]);
 				}
-				tm.initTile(15, j).setBackground(imgMap[2 + i][4]);
+				tm.setBackground(15, j, imgMap[2 + i][4]);
 			}
 			
 			for (int i = 1; i <= 14; i++) {
-				tm.initTile(i, 1).setSolid(true);
-				tm.initTile(i, 8).setSolid(true);
+				tm.setBehavior(i, 1, Tile.BEHAVIOR_SOLID);
+				tm.setBehavior(i, 8, Tile.BEHAVIOR_SOLID);
 			}
 			for (int j = 2; j <= 7; j++) {
-				tm.initTile(1, j).setSolid(true);
-				tm.initTile(14, j).setSolid(true);
+				tm.setBehavior(1, j, Tile.BEHAVIOR_SOLID);
+				tm.setBehavior(14, j, Tile.BEHAVIOR_SOLID);
 			}
 			
 			final Panctor owl = new Panctor("act.owl");
@@ -160,7 +160,7 @@ public class Cabin {
 			instr.getPosition().set(128, 114, 1);
 			instr.centerX();
 			for (int i = 0; i < NUM_BLOCKS; i++) {
-				tm.initTile(3 + (i * 3), 5).setForeground(imgMap[0][0], PlatformGame.TILE_BUMP);
+				tm.setForeground(3 + (i * 3), 5, imgMap[0][0], PlatformGame.TILE_BUMP);
 			}
 			shuffle(30, 0);
 			PlatformGame.fadeIn(room);
@@ -237,11 +237,11 @@ public class Cabin {
                 for (int i = 0; i < NUM_BLOCKS; i++) {
                     final int x = 3 + (i * 3);
                     if (end) {
-                        final Tile tile = tm.initTile(x, 5);
-                        if (DynamicTileMap.getRawForeground(tile) == bumpedImage) {
+                    	final int index = tm.getIndex(x, 5);
+                        if (DynamicTileMap.getRawForeground(tm.getTile(index)) == bumpedImage) {
                             continue;
                         }
-                        tile.setForeground(bumpedImage);
+                        tm.setForeground(index, bumpedImage);
                     }
                     Panctor gem = gems[i];
                     if (gem == null) {

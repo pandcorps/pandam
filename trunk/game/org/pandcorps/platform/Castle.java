@@ -146,11 +146,11 @@ public class Castle {
             pillar(14);
             
             tm.rectangleBackground(5, 2, 8, 2, 2, 2);
-            tm.initTile(10, 2).setBackground(imgMap[2][7]);
+            tm.setBackground(10, 2, imgMap[2][7]);
             for (int i = 11; i < 15; i += 2) {
                 tm.rectangleBackground(6, 2, i, 2, 2, 1);
             }
-            tm.initTile(15, 2).setBackground(imgMap[2][6]);
+            tm.setBackground(15, 2, imgMap[2][6]);
             tm.fillBackground(imgMap[1][6], 10, 3, 6, 1);
             tm.rectangleBackground(0, 7, 12, 3, 2, 4);
             
@@ -192,19 +192,19 @@ public class Castle {
     }
     
     private final static void pillar(final int i) {
-        tm.initTile(i, 2).setBackground(imgMap[3][2]);
-        tm.initTile(i, 3).setBackground(imgMap[2][2]);
+        tm.setBackground(i, 2, imgMap[3][2]);
+        tm.setBackground(i, 3, imgMap[2][2]);
         tm.fillBackground(imgMap[1][2], i, 4, 1, 6);
-        tm.initTile(i, 10).setBackground(imgMap[0][2]);
+        tm.setBackground(i, 10, imgMap[0][2]);
         
         tm.fillBackground(imgMap[3][0], i - 1, 3, 1, 7);
-        tm.initTile(i - 1, 10).setBackground(imgMap[2][0]);
+        tm.setBackground(i - 1, 10, imgMap[2][0]);
     }
     
     private final static void window(final int i) {
-        tm.initTile(i, 6).setBackground(imgMap[2][1]);
+        tm.setBackground(i, 6, imgMap[2][1]);
         tm.fillBackground(imgMap[1][1], i, 7, 1, 2);
-        tm.initTile(i, 9).setBackground(imgMap[0][1]);
+        tm.setBackground(i, 9, imgMap[0][1]);
     }
     
     private static int playerCount = 0;
@@ -331,7 +331,7 @@ public class Castle {
     }
     
     private final static void block(final int i, final int j, final int imX, final int imY) {
-        tm.initTile(i, j).setBackground(imgMap[imY][imX]);
+        tm.setBackground(i, j, imgMap[imY][imX]);
     }
     
     private final static void windowHalf(final int i, final int imX) {
