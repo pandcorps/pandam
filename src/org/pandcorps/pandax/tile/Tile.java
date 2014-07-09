@@ -22,29 +22,25 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandax.tile;
 
+import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
 
 public final class Tile {
 	public final static byte BEHAVIOR_OPEN = 0;
 	public final static byte BEHAVIOR_SOLID = 1;
+	/*package*/ final static byte BEHAVIOR_DEFAULT = BEHAVIOR_OPEN;
 	
-    /*package*/ final TileMap map;
-    
     // bg/fg/solid behavior could likely be moved into a TileDefinition; many Tiles would likely share the same definition
+	// Shouldn't need TileMap.initTile or setters in Tile; Tile should usually be immutable
     
     // Panimation?
     /*package*/ Object background = null;
     /*package*/ Object foreground = null;
-    /*package*/ byte behavior = BEHAVIOR_OPEN;
+    /*package*/ byte behavior = BEHAVIOR_DEFAULT;
     
     //int brightness
     
-    /*package*/ Tile(final TileMap map) {
-        this.map = map;
-    }
-    
-    public final TileMap getMap() {
-    	return map;
+    /*package*/ Tile() {
     }
     
     public final void setBackground(final Panmage background) {
@@ -104,7 +100,11 @@ public final class Tile {
     //}
     
     public final void setSolid(final boolean solid) {
-        behavior = solid ? BEHAVIOR_SOLID : BEHAVIOR_OPEN;
+        behavior = getSolidBehavior(solid);
+    }
+    
+    /*package*/ final static byte getSolidBehavior(final boolean solid) {
+        return solid ? BEHAVIOR_SOLID : BEHAVIOR_OPEN;
     }
     
     public final boolean isSolid() {
@@ -127,6 +127,22 @@ public final class Tile {
     		this.ix = ix;
     		this.iy = iy;
     	}
+    	
+    	@Override
+    	public int hashCode() {
+    	    return Float.floatToIntBits(ix) ^ Float.floatToIntBits(iy);
+    	}
+    	
+    	@Override
+    	public boolean equals(final Object o) {
+    	    if (this == o) {
+                return true;
+            } else if (o == null || o.getClass() != TileMapImage.class) {
+    	        return false;
+    	    }
+    	    final TileMapImage t = (TileMapImage) o;
+    	    return ix == t.ix && iy == t.iy;
+    	}
     }
     
     public final static class TileImage extends TileMapImage {
@@ -136,10 +152,42 @@ public final class Tile {
     		super(ix, iy);
     		this.img = img;
     	}
+    	
+    	@Override
+        public final int hashCode() {
+            return super.hashCode() ^ img.hashCode();
+        }
+    	
+    	@Override
+        public boolean equals(final Object o) {
+    	    if (this == o) {
+    	        return true;
+    	    } else if (o == null || o.getClass() != TileImage.class) {
+                return false;
+            }
+            final TileImage t = (TileImage) o;
+            return ix == t.ix && iy == t.iy && img == t.img;
+        }
+    }
+    
+    @Override
+    public final int hashCode() {
+        return Pantil.hashCode(background) ^ Pantil.hashCode(foreground) ^ behavior;
+    }
+    
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        } else if (o == null || o.getClass() != Tile.class) {
+            return false;
+        }
+        final Tile t = (Tile) o;
+        return Pantil.equals(background, t.background) && Pantil.equals(foreground, t.foreground) && behavior == t.behavior;
     }
     
     public final static byte getBehavior(final Tile t) {
-    	return t == null ? BEHAVIOR_OPEN : t.behavior;
+    	return t == null ? BEHAVIOR_DEFAULT : t.behavior;
     }
     
     public final static void animate(final TileMapImage... imgs) {

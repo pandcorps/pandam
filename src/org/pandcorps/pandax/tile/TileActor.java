@@ -29,13 +29,13 @@ public class TileActor extends Panctor {
     private TileMap map = null;
     private Object view = null;
     
-    public void setViewFromBackground(final Tile t) {
-        map = t.map;
+    public void setViewFromBackground(final TileMap map, final Tile t) {
+        this.map = map;
         view = t.background;
     }
     
-    public void setViewFromForeground(final Tile t) {
-        map = t.map;
+    public void setViewFromForeground(final TileMap map, final Tile t) {
+        this.map = map;
         view = t.foreground;
     }
     

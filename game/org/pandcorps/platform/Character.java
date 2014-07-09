@@ -303,7 +303,8 @@ public abstract class Character extends Panctor implements StepListener, Collida
 	}
 	
 	private boolean isSolid(final int index, final boolean floor, final float left, final float right, final float y) {
-	    final Tile tile = Level.tm.getTile(index);
+	    final TileMap map = Level.tm;
+	    final Tile tile = map.getTile(index);
 		if (tile == null) {
 			return false;
 		} else if (tile.isSolid()) {
@@ -314,7 +315,6 @@ public abstract class Character extends Panctor implements StepListener, Collida
 			return true;
 		}
 		final float top = y + H - 1, yoff = y - getPosition().getY();
-		final TileMap map = tile.getMap();
 		final int iy = (int) y, curHeight = iy % ImtilX.DIM;
 		if (b == PlatformGame.TILE_UPSLOPE || (yoff <= 0 && b == PlatformGame.TILE_UPSLOPE_FLOOR)) {
 			//if (v <= 0) {
@@ -327,8 +327,8 @@ public abstract class Character extends Panctor implements StepListener, Collida
 				if (b == PlatformGame.TILE_UPSLOPE_FLOOR && curHeight != 15) {
 					return false;
 				} else if (map.getContainer(left, y) == index) {
-				    final int i = Level.tm.getColumn(index), j = Level.tm.getRow(index);
-					return b != PlatformGame.TILE_UPSLOPE_FLOOR || Tile.getBehavior(Level.tm.getTile(Level.tm.getRelative(i, j, 1, 1))) != PlatformGame.TILE_UPSLOPE_FLOOR;
+				    final int i = map.getColumn(index), j = map.getRow(index);
+					return b != PlatformGame.TILE_UPSLOPE_FLOOR || Tile.getBehavior(map.getTile(map.getRelative(i, j, 1, 1))) != PlatformGame.TILE_UPSLOPE_FLOOR;
 				} else if (b == PlatformGame.TILE_UPSLOPE_FLOOR) {
 					return false;
 				}
@@ -349,8 +349,8 @@ public abstract class Character extends Panctor implements StepListener, Collida
             	if (b == PlatformGame.TILE_DOWNSLOPE_FLOOR && curHeight != 15) {
 					return false;
 				} else if (map.getContainer(right, y) == index) {
-				    final int i = Level.tm.getColumn(index), j = Level.tm.getRow(index);
-					return b != PlatformGame.TILE_DOWNSLOPE_FLOOR || Tile.getBehavior(Level.tm.getTile(Level.tm.getRelative(i, j, -1, 1))) != PlatformGame.TILE_DOWNSLOPE_FLOOR;
+				    final int i = map.getColumn(index), j = map.getRow(index);
+					return b != PlatformGame.TILE_DOWNSLOPE_FLOOR || Tile.getBehavior(map.getTile(map.getRelative(i, j, -1, 1))) != PlatformGame.TILE_DOWNSLOPE_FLOOR;
 				} else if (b == PlatformGame.TILE_DOWNSLOPE_FLOOR) {
 					return false;
 				}
