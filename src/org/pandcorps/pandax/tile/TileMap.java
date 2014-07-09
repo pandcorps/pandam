@@ -26,6 +26,7 @@ import java.io.*;
 import java.util.*;
 
 import org.pandcorps.core.*;
+import org.pandcorps.core.col.*;
 import org.pandcorps.core.io.*;
 import org.pandcorps.core.seg.*;
 import org.pandcorps.pandam.*;
@@ -295,7 +296,7 @@ public class TileMap extends Panctor implements Savable {
         	background = null;
             behavior = Tile.BEHAVIOR_DEFAULT;
         } else {
-        	background = tile.foreground;
+        	background = tile.background;
             behavior = tile.behavior;
         }
         setTile(index, getTile(background, foreground, behavior));
@@ -642,5 +643,21 @@ public class TileMap extends Panctor implements Savable {
     	final TileMapImage tmimg = (TileMapImage) img;
     	f.setInt(i, (int) tmimg.ix / tw);
     	f.setInt(i + 1, (int) tmimg.iy / th);
+    }
+    
+    public final void info() {
+    	System.out.println("TileMap " + getId());
+    	System.out.println("Number of cells: " + tiles.length);
+    	int valued = 0;
+    	final IdentityHashSet<Tile> set = new IdentityHashSet<Tile>();
+    	for (final Tile t : tiles) {
+    		if (t != null) {
+    			valued++;
+    			set.add(t);
+    		}
+    	}
+    	System.out.println("Number of valued cells: " + valued);
+    	System.out.println("Number of distinct Tiles: " + set.size());
+    	System.out.println("Tile cache size: " + map.size());
     }
 }
