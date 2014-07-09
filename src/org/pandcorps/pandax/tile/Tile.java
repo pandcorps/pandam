@@ -43,7 +43,7 @@ public final class Tile {
     /*package*/ Tile() {
     }
     
-    public final void setBackground(final Panmage background) {
+    /*public final void setBackground(final Panmage background) {
         this.background = background;
     }
     
@@ -56,16 +56,16 @@ public final class Tile {
         setSolid(solid);
     }
     
-    public final void setBackground(final TileMapImage foreground, final byte behavior) {
-        setBackground(foreground);
+    public final void setBackground(final TileMapImage background, final byte behavior) {
+        setBackground(background);
         setBehavior(behavior);
-    }
+    }*/
     
     /*package*/ final void setBackgroundO(final Object background) {
         this.background = background;
     }
     
-    public final void setForeground(final Panmage foreground) {
+    /*public final void setForeground(final Panmage foreground) {
         this.foreground = foreground;
     }
     
@@ -101,7 +101,7 @@ public final class Tile {
     
     public final void setSolid(final boolean solid) {
         behavior = getSolidBehavior(solid);
-    }
+    }*/
     
     /*package*/ final static byte getSolidBehavior(final boolean solid) {
         return solid ? BEHAVIOR_SOLID : BEHAVIOR_OPEN;
@@ -111,9 +111,9 @@ public final class Tile {
     	return behavior == BEHAVIOR_SOLID;
     }
     
-    public final void setBehavior(final byte behavior) {
+    /*public final void setBehavior(final byte behavior) {
         this.behavior = behavior;
-    }
+    }*/
     
     public final byte getBehavior() {
         return behavior;
