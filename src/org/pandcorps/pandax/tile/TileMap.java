@@ -405,7 +405,7 @@ public class TileMap extends Panctor implements Savable {
         }
     }
     
-    public final Tile initTile(final int i, final int j) {
+    /*public final Tile initTile(final int i, final int j) {
         final int index = getIndex(i, j);
         if (isBad(index)) {
             throw new IllegalArgumentException(i + ", " + j + " is out of bounds");
@@ -418,7 +418,7 @@ public class TileMap extends Panctor implements Savable {
         final Tile tile = new Tile();
         tiles[index] = tile;
         return tile;
-    }
+    }*/
     
     @Override
     protected void updateView() {       
