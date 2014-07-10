@@ -22,8 +22,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandax.tile;
 
-import org.pandcorps.pandam.Panctor;
-import org.pandcorps.pandam.Panple;
+import org.pandcorps.pandam.*;
 
 public class TileOccupant extends Panctor {
     
@@ -55,6 +54,10 @@ public class TileOccupant extends Panctor {
     public void init(final TileMap tm, final int index) {
     	setPosition(tm, index);
     	tm.getLayer().addActor(this);
+    }
+    
+    public final void setPosition(final TileMap tm, final int i, final int j) {
+        setPosition(tm, tm.getIndex(i, j));
     }
     
     public final void setPosition(final TileMap tm, final int index) {
