@@ -56,7 +56,7 @@ public final class TileController extends Panctor implements RoomAddListener {
 		    }
 		}
 		final SquareGuyActor actor = new SquareGuyActor(Pantil.vmid());
-		actor.setPosition(map, map.getIndex(5, 5));
+		actor.setPosition(map, 5, 5);
         room.addActor(actor);
 	}
 }
