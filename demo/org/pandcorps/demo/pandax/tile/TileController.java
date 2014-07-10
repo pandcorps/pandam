@@ -25,8 +25,7 @@ package org.pandcorps.demo.pandax.tile;
 import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
-import org.pandcorps.pandax.tile.Tile;
-import org.pandcorps.pandax.tile.TileMap;
+import org.pandcorps.pandax.tile.*;
 
 public final class TileController extends Panctor implements RoomAddListener {
 
@@ -46,21 +45,18 @@ public final class TileController extends Panctor implements RoomAddListener {
 		final Pangine engine = Pangine.getEngine();
 		for (int i = 1; i <= wlim; i++) {
 		    for (int j = 1; j <= hlim; j++) {
-		        final Tile tile = map.initTile(i, j);
+		        final int index = map.getIndex(i, j);
 		        if (i == 1 || j == 1 || i == wlim || j == hlim) {
-		            tile.setSolid(true);
-		            tile.setBackground(engine.getImage("WallImage"));
+		            map.setBackground(index, engine.getImage("WallImage"), Tile.BEHAVIOR_SOLID);
 		        } else if (i == 3 && j == 3) {
-		            tile.setSolid(false);
-		            tile.setForeground(engine.getImage("ForegroundImage"));
+		            map.setForeground(index, engine.getImage("ForegroundImage"), Tile.BEHAVIOR_OPEN);
 		        } else {
-		            tile.setSolid(false);
-		            tile.setBackground(engine.getImage("BackgroundImage"));
+		            map.setBackground(index, engine.getImage("BackgroundImage"), Tile.BEHAVIOR_OPEN);
 		        }
 		    }
 		}
 		final SquareGuyActor actor = new SquareGuyActor(Pantil.vmid());
-		actor.setPosition(map.getTile(5, 5));
+		actor.setPosition(map, map.getIndex(5, 5));
         room.addActor(actor);
 	}
 }
