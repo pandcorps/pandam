@@ -1512,7 +1512,7 @@ public class Level {
     
     private static void gem(final int x, final int y) {
         final Gem gem = new Gem();
-        gem.setPosition(tm, tm.getIndex(x, y));
+        gem.setPosition(tm, x, y);
         room.addActor(gem);
     }
     
