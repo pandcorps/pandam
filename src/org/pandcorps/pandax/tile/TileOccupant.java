@@ -48,6 +48,10 @@ public class TileOccupant extends Panctor {
         this.index = index;
     }
     
+    public void init(final TileMap tm, final int i, final int j) {
+        init(tm, tm.getIndex(i, j));
+    }
+    
     public void init(final TileMap tm, final int index) {
     	setPosition(tm, index);
     	tm.getLayer().addActor(this);
