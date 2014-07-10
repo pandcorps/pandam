@@ -49,7 +49,8 @@ public final class MapTileListener implements TileListener {
 	public final void onStep(final Tile tile) {
 		final TileMapImage next = map.get(DynamicTileMap.getRawBackground(tile));
 		if (next != null) {
-			tile.setBackground(next);
+			//tile.setBackground(next);
+		    throw new UnsupportedOperationException("Change how MapTileListener works to pass TileMap and index or use Tile.animate");
 		}
 	}
 }

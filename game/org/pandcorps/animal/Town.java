@@ -59,18 +59,18 @@ public class Town extends Panctor implements RoomAddListener {
         final int w = map.getWidth(), h = map.getHeight();
         for (int i = 0; i < w; i++) {
             for (int j = 0; j < h; j++) {
-                map.initTile(i, j).setBackground(Mathtil.rand(bg));
+                map.setBackground(i, j, Mathtil.rand(bg));
             }
         }
         final Tree tree = new Tree(Pantil.vmid(), Fruit.FruitType.Plum);
-        tree.setPosition(map.getTile(5, 5));
+        tree.setPosition(map, map.getIndex(5, 5));
         room.addActor(tree);
         final Player player = new Player(Pantil.vmid());
         //player.setView(rabbit[0][0]);
         //player.setView(rabbitSouth);
         //final Panmage[][] rabbit = engine.createSheet("Rabbit", null, null, null, "org/pandcorps/animal/res/rabbit.png", 16, 16);
         player.setView("org/pandcorps/animal/res/rabbit.png");
-        player.setPosition(map.getTile(7, 7));
+        player.setPosition(map, map.getIndex(7, 7));
         room.addActor(player);
         engine.track(player);
         engine.zoom(2);
@@ -78,7 +78,7 @@ public class Town extends Panctor implements RoomAddListener {
             final Neighbor neighbor = new Neighbor(Pantil.vmid());
             neighbor.setView("org/pandcorps/animal/res/rabbit.png");
             final int c = 9 + i * 2;
-            neighbor.setPosition(map.getTile(c, c));
+            neighbor.setPosition(map, map.getIndex(c, c));
             room.addActor(neighbor);
         }
     }

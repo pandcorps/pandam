@@ -109,67 +109,67 @@ public class RpgGame extends BaseGame {
 		}
 		tm.setTileListener(mtl);
 		tm.fillBackground(imgMap[5][0]);
-		tm.getTile(6, 5).setBackground(imgMap[4][1], true);
-		tm.getTile(6, 6).setBackground(imgMap[4][1], true);
-		tm.getTile(6, 7).setBackground(imgMap[3][1], true);
-		tm.getTile(6, 8).setBackground(imgMap[2][1], true);
-		tm.getTile(6, 9).setBackground(imgMap[1][1], true);
-		tm.getTile(6, 10).setForeground(imgMap[0][1]);
-		tm.getTile(7, 5).setBackground(imgMap[3][4], true); // Window
-		tm.getTile(7, 6).setBackground(imgMap[4][2], true);
-		tm.getTile(7, 7).setBackground(imgMap[3][2], true);
-		tm.getTile(7, 8).setBackground(imgMap[2][2], true);
-		tm.getTile(7, 9).setBackground(imgMap[1][2], true);
-		tm.getTile(7, 10).setForeground(imgMap[0][2]);
-		tm.getTile(8, 5).setBackground(imgMap[4][3], true);
-		tm.getTile(8, 6).setBackground(imgMap[4][3], true);
-		tm.getTile(8, 7).setBackground(imgMap[3][3], true);
-		tm.getTile(8, 8).setBackground(imgMap[2][3], true);
-		tm.getTile(8, 9).setBackground(imgMap[1][3], true);
-		tm.getTile(8, 10).setForeground(imgMap[0][1]);
+		tm.setBackground(6, 5, imgMap[4][1], Tile.BEHAVIOR_SOLID);
+		tm.setBackground(6, 6, imgMap[4][1], Tile.BEHAVIOR_SOLID);
+		tm.setBackground(6, 7, imgMap[3][1], Tile.BEHAVIOR_SOLID);
+		tm.setBackground(6, 8, imgMap[2][1], Tile.BEHAVIOR_SOLID);
+		tm.setBackground(6, 9, imgMap[1][1], Tile.BEHAVIOR_SOLID);
+		tm.setForeground(6, 10, imgMap[0][1]);
+		tm.setBackground(7, 5, imgMap[3][4], Tile.BEHAVIOR_SOLID); // Window
+		tm.setBackground(7, 6, imgMap[4][2], Tile.BEHAVIOR_SOLID);
+		tm.setBackground(7, 7, imgMap[3][2], Tile.BEHAVIOR_SOLID);
+		tm.setBackground(7, 8, imgMap[2][2], Tile.BEHAVIOR_SOLID);
+		tm.setBackground(7, 9, imgMap[1][2], Tile.BEHAVIOR_SOLID);
+		tm.setForeground(7, 10, imgMap[0][2]);
+		tm.setBackground(8, 5, imgMap[4][3], Tile.BEHAVIOR_SOLID);
+		tm.setBackground(8, 6, imgMap[4][3], Tile.BEHAVIOR_SOLID);
+		tm.setBackground(8, 7, imgMap[3][3], Tile.BEHAVIOR_SOLID);
+		tm.setBackground(8, 8, imgMap[2][3], Tile.BEHAVIOR_SOLID);
+		tm.setBackground(8, 9, imgMap[1][3], Tile.BEHAVIOR_SOLID);
+		tm.setForeground(8, 10, imgMap[0][1]);
 		for (int i = 9; i <= 13; i++) {
-    		tm.getTile(i, 7).setBackground(imgMap[4][2], true);
-            tm.getTile(i, 8).setBackground(imgMap[4][2], true);
-            tm.getTile(i, 9).setBackground(imgMap[2][4], true);
-            tm.getTile(i, 10).setForeground(imgMap[0][1]);
+    		tm.setBackground(i, 7, imgMap[4][2], Tile.BEHAVIOR_SOLID);
+            tm.setBackground(i, 8, imgMap[4][2], Tile.BEHAVIOR_SOLID);
+            tm.setBackground(i, 9, imgMap[2][4], Tile.BEHAVIOR_SOLID);
+            tm.setForeground(i, 10, imgMap[0][1]);
 		}
-		tm.getTile(12, 7).setBackground(imgMap[0][5]); // Sign
-		tm.getTile(14, 7).setBackground(imgMap[1][6]); // Shadow
-		tm.getTile(14, 8).setBackground(imgMap[0][6]);
-		tm.getTile(4, 8).setBackground(imgMap[1][0], true); // Tree
-		tm.getTile(4, 9).setForeground(imgMap[0][0]);
-		tm.getTile(7, 3).setBackground(imgMap[2][0]); // Many flowers
-		tm.getTile(9, 1).setBackground(imgMap[3][0]); // Some flowers
-		tm.getTile(11, 11).setBackground(imgMap[3][0]);
-		tm.getTile(12, 2).setBackground(imgMap[4][0]); // Dirt patch
-		tm.getTile(2, 5).setBackground(imgMap[2][6]);
-		tm.getTile(3, 5).setBackground(imgMap[2][6]);
-		tm.getTile(1, 4).setBackground(imgMap[5][1], true); // Water
-		tm.getTile(2, 4).setBackground(imgMap[5][5], true);
-		tm.getTile(3, 4).setBackground(imgMap[5][5], true);
-		tm.getTile(4, 4).setBackground(imgMap[5][2], true);
-		tm.getTile(0, 3).setBackground(imgMap[4][6]);
-		tm.getTile(1, 3).setBackground(imgMap[5][5], true);
-		tm.getTile(2, 3).setBackground(imgMap[5][5], true);
-		tm.getTile(3, 3).setBackground(imgMap[5][5], true);
-		tm.getTile(4, 3).setBackground(imgMap[5][5], true);
-		tm.getTile(5, 3).setBackground(imgMap[3][6]);
-		tm.getTile(0, 2).setBackground(imgMap[4][6]);
-		tm.getTile(1, 2).setBackground(imgMap[5][5], true);
-		tm.getTile(2, 2).setBackground(imgMap[5][5], true);
-		tm.getTile(3, 2).setBackground(imgMap[5][5], true);
-		tm.getTile(4, 2).setBackground(imgMap[5][4], true);
-		tm.getTile(1, 1).setBackground(imgMap[5][3], true);
-		tm.getTile(2, 1).setBackground(imgMap[5][5], true);
-		tm.getTile(3, 1).setBackground(imgMap[5][4], true);
-		tm.getTile(2, 0).setBackground(imgMap[5][6]);
-		tm.getTile(10, 6).setBackground(imgMap[3][7]); // Path
-		tm.getTile(10, 5).setBackground(imgMap[2][7]);
-		tm.getTile(10, 4).setBackground(imgMap[5][6]);
+		tm.setBackground(12, 7, imgMap[0][5]); // Sign
+		tm.setBackground(14, 7, imgMap[1][6]); // Shadow
+		tm.setBackground(14, 8, imgMap[0][6]);
+		tm.setBackground(4, 8, imgMap[1][0], Tile.BEHAVIOR_SOLID); // Tree
+		tm.setForeground(4, 9, imgMap[0][0]);
+		tm.setBackground(7, 3, imgMap[2][0]); // Many flowers
+		tm.setBackground(9, 1, imgMap[3][0]); // Some flowers
+		tm.setBackground(11, 11, imgMap[3][0]);
+		tm.setBackground(12, 2, imgMap[4][0]); // Dirt patch
+		tm.setBackground(2, 5, imgMap[2][6]);
+		tm.setBackground(3, 5, imgMap[2][6]);
+		tm.setBackground(1, 4, imgMap[5][1], Tile.BEHAVIOR_SOLID); // Water
+		tm.setBackground(2, 4, imgMap[5][5], Tile.BEHAVIOR_SOLID);
+		tm.setBackground(3, 4, imgMap[5][5], Tile.BEHAVIOR_SOLID);
+		tm.setBackground(4, 4, imgMap[5][2], Tile.BEHAVIOR_SOLID);
+		tm.setBackground(0, 3, imgMap[4][6]);
+		tm.setBackground(1, 3, imgMap[5][5], Tile.BEHAVIOR_SOLID);
+		tm.setBackground(2, 3, imgMap[5][5], Tile.BEHAVIOR_SOLID);
+		tm.setBackground(3, 3, imgMap[5][5], Tile.BEHAVIOR_SOLID);
+		tm.setBackground(4, 3, imgMap[5][5], Tile.BEHAVIOR_SOLID);
+		tm.setBackground(5, 3, imgMap[3][6]);
+		tm.setBackground(0, 2, imgMap[4][6]);
+		tm.setBackground(1, 2, imgMap[5][5], Tile.BEHAVIOR_SOLID);
+		tm.setBackground(2, 2, imgMap[5][5], Tile.BEHAVIOR_SOLID);
+		tm.setBackground(3, 2, imgMap[5][5], Tile.BEHAVIOR_SOLID);
+		tm.setBackground(4, 2, imgMap[5][4], Tile.BEHAVIOR_SOLID);
+		tm.setBackground(1, 1, imgMap[5][3], Tile.BEHAVIOR_SOLID);
+		tm.setBackground(2, 1, imgMap[5][5], Tile.BEHAVIOR_SOLID);
+		tm.setBackground(3, 1, imgMap[5][4], Tile.BEHAVIOR_SOLID);
+		tm.setBackground(2, 0, imgMap[5][6]);
+		tm.setBackground(10, 6, imgMap[3][7]); // Path
+		tm.setBackground(10, 5, imgMap[2][7]);
+		tm.setBackground(10, 4, imgMap[5][6]);
 		for (int i = 11; i < 16; i++) {
-			tm.getTile(i, 6).setBackground(imgMap[2][6]);
-			tm.getTile(i, 5).setBackground(imgMap[0][7]);
-			tm.getTile(i, 4).setBackground(imgMap[5][6]);
+			tm.setBackground(i, 6, imgMap[2][6]);
+			tm.setBackground(i, 5, imgMap[0][7]);
+			tm.setBackground(i, 4, imgMap[5][6]);
 		}
 		new Door("STORE", doors[0], doors[1], new Store(), 10, 1).init(tm, 10, 7);
 		new Container("BARREL", containers[2], null).init(tm, 6, 4);
@@ -207,25 +207,25 @@ public class RpgGame extends BaseGame {
 			tm.setImageMap(createImage("tile.inside", "org/pandcorps/rpg/res/bg/TileInside.png", 128));
 			final TileMapImage[][] imgMap = tm.splitImageMap();
 			tm.fillBackground(imgMap[2][3]);
-			tm.getTile(0, 0).setBackground(null, true);
-			tm.getTile(0, 1).setBackground(imgMap[2][0], true);
-			tm.getTile(0, 11).setBackground(imgMap[0][0], true);
+			tm.setBackground(0, 0, null, Tile.BEHAVIOR_SOLID);
+			tm.setBackground(0, 1, imgMap[2][0], Tile.BEHAVIOR_SOLID);
+			tm.setBackground(0, 11, imgMap[0][0], Tile.BEHAVIOR_SOLID);
 			for (int i = 1; i < 15; i++) {
-				tm.getTile(i, 0).setBackground(null, true);
-				tm.getTile(i, 1).setForeground(imgMap[2][1]);
-				tm.getTile(i, 11).setBackground(imgMap[0][1], true);
+				tm.setBackground(i, 0, null, Tile.BEHAVIOR_SOLID);
+				tm.setForeground(i, 1, imgMap[2][1]);
+				tm.setBackground(i, 11, imgMap[0][1], Tile.BEHAVIOR_SOLID);
 			}
-			tm.getTile(15, 0).setBackground(null, true);
-			tm.getTile(15, 1).setBackground(imgMap[2][2], true);
-			tm.getTile(15, 11).setBackground(imgMap[0][2], true);
+			tm.setBackground(15, 0, null, Tile.BEHAVIOR_SOLID);
+			tm.setBackground(15, 1, imgMap[2][2], Tile.BEHAVIOR_SOLID);
+			tm.setBackground(15, 11, imgMap[0][2], Tile.BEHAVIOR_SOLID);
 			for (int j = 2; j < 11; j++) {
-				tm.getTile(0, j).setBackground(imgMap[1][0], true);
-				tm.getTile(1, j).setBackground(imgMap[0][3]);
-				tm.getTile(15, j).setBackground(imgMap[1][2], true);
+				tm.setBackground(0, j, imgMap[1][0], Tile.BEHAVIOR_SOLID);
+				tm.setBackground(1, j, imgMap[0][3]);
+				tm.setBackground(15, j, imgMap[1][2], Tile.BEHAVIOR_SOLID);
 			}
-			tm.getTile(1, 2).setBackground(imgMap[1][3]);
-			tm.getTile(10, 1).setForeground(imgMap[1][1]);
-			tm.getTile(10, 1).setBackground(imgMap[1][3]);
+			tm.setBackground(1, 2, imgMap[1][3]);
+			tm.setForeground(10, 1, imgMap[1][1]);
+			tm.setBackground(10, 1, imgMap[1][3]);
 			for (int i = 1; i < 9; i++) {
 				new Counter(counters[i == 1 ? 0 : i == 8 ? 6 : 1]).init(tm, i, 8);
 			}
