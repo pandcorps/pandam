@@ -144,106 +144,106 @@ public abstract class Level {
             tm.randBackground(imgMap[3][4], 6, 6, s * 4); // Chipped brick
             tm.randBackground(imgMap[3][5], 6, 6, s * 5); // Cracked brick
             
-            tm.getTile(2, 6).setBackground(imgMap[3][2]); // Black storefront
-            tm.getTile(3, 6).setBackground(imgMap[1][4]);
-            tm.getTile(4, 6).setBackground(imgMap[1][5]);
-            tm.getTile(5, 6).setBackground(imgMap[1][3]);
-            tm.getTile(6, 6).setBackground(imgMap[0][6]);
-            tm.getTile(7, 6).setBackground(imgMap[1][4]);
-            tm.getTile(8, 6).setBackground(imgMap[0][3]);
-            tm.getTile(9, 6).setBackground(imgMap[0][4]);
-            tm.getTile(10, 6).setBackground(imgMap[0][5]);
-            tm.getTile(11, 6).setBackground(imgMap[3][0]);
+            tm.setBackground(2, 6, imgMap[3][2]); // Black storefront
+            tm.setBackground(3, 6, imgMap[1][4]);
+            tm.setBackground(4, 6, imgMap[1][5]);
+            tm.setBackground(5, 6, imgMap[1][3]);
+            tm.setBackground(6, 6, imgMap[0][6]);
+            tm.setBackground(7, 6, imgMap[1][4]);
+            tm.setBackground(8, 6, imgMap[0][3]);
+            tm.setBackground(9, 6, imgMap[0][4]);
+            tm.setBackground(10, 6, imgMap[0][5]);
+            tm.setBackground(11, 6, imgMap[3][0]);
             
-            tm.getTile(13, 6).setBackground(imgMap[2][6]); // Pipe
-            tm.getTile(13, 7).setBackground(imgMap[2][6]);
-            tm.getTile(13, 8).setBackground(imgMap[1][6]);
+            tm.setBackground(13, 6, imgMap[2][6]); // Pipe
+            tm.setBackground(13, 7, imgMap[2][6]);
+            tm.setBackground(13, 8, imgMap[1][6]);
             
-            tm.getTile(15, 6).setBackground(imgMap[3][2]); // Blue storefront
-            tm.getTile(16, 6).setBackground(imgMap[2][3]);
-            tm.getTile(17, 6).setBackground(imgMap[2][5]);
-            tm.getTile(18, 6).setBackground(imgMap[2][4]);
-            tm.getTile(19, 6).setBackground(imgMap[3][0]);
+            tm.setBackground(15, 6, imgMap[3][2]); // Blue storefront
+            tm.setBackground(16, 6, imgMap[2][3]);
+            tm.setBackground(17, 6, imgMap[2][5]);
+            tm.setBackground(18, 6, imgMap[2][4]);
+            tm.setBackground(19, 6, imgMap[3][0]);
             
             tm.randBackground(imgMap[7][3], 0, 2, s * 2); // Street crack
             tm.randBackground(imgMap[7][4], 3, 2, s * 2); // Sidewalk crack
             for (int i = 1; i < w; i += 3) { // Street paint
-                tm.getTile(i, 1).setBackground(imgMap[7][1]);
+                tm.setBackground(i, 1, imgMap[7][1]);
             }
             for (int i = 2; i < w; i += 9) { // Manhole
-                tm.getTile(i, 0).setBackground(imgMap[7][2]);
+                tm.setBackground(i, 0, imgMap[7][2]);
             }
             for (int i = 5; i < w; i += 9) { // Grate
-                tm.getTile(i, 2).setBackground(imgMap[6][2]);
+                tm.setBackground(i, 2, imgMap[6][2]);
             }
             for (int i = 8; i < w; i += 9) { // Vent
-                tm.getTile(i, 4).setBackground(imgMap[5][2]);
+                tm.setBackground(i, 4, imgMap[5][2]);
             }
             
-            tm.getTile(21, 2).setBackground(imgMap[6][3]);
-            tm.getTile(22, 2).setBackground(imgMap[7][0]);
-            tm.getTile(23, 2).setBackground(imgMap[7][0]);
-            tm.getTile(24, 2).setBackground(imgMap[7][0]);
-            tm.getTile(25, 2).setBackground(imgMap[6][4]);
-            tm.getTile(21, 3).setBackground(imgMap[5][3]);
-            tm.getTile(22, 3).setBackground(imgMap[6][3]);
-            tm.getTile(23, 3).setBackground(imgMap[7][0]);
-            tm.getTile(24, 3).setBackground(imgMap[7][0]);
-            tm.getTile(25, 3).setBackground(imgMap[5][4]);
-            tm.getTile(22, 4).setBackground(imgMap[5][3]);
-            tm.getTile(23, 4).setBackground(imgMap[6][3]);
-            tm.getTile(24, 4).setBackground(imgMap[7][0]);
-            tm.getTile(25, 4).setBackground(imgMap[7][0]);
-            tm.getTile(26, 4).setBackground(imgMap[5][4]);
-            tm.getTile(23, 5).setBackground(imgMap[4][2]);
-            tm.getTile(24, 5).setBackground(imgMap[4][3]);
-            tm.getTile(25, 5).setBackground(imgMap[4][3]);
-            tm.getTile(26, 5).setBackground(imgMap[4][3]);
-            tm.getTile(27, 5).setBackground(imgMap[4][4]);
-            tm.getTile(23, 6).setBackground(imgMap[3][2]);
-            tm.getTile(24, 6).setBackground(imgMap[3][3]);
-            tm.getTile(25, 6).setBackground(imgMap[3][3]);
-            tm.getTile(26, 6).setBackground(imgMap[3][3]);
-            tm.getTile(27, 6).setBackground(imgMap[3][3]);
-            tm.getTile(28, 6).setBackground(imgMap[3][0]);
-            tm.getTile(23, 7).setBackground(imgMap[3][2]);
-            tm.getTile(24, 7).setBackground(imgMap[3][3]);
-            tm.getTile(25, 7).setBackground(imgMap[3][3]);
-            tm.getTile(26, 7).setBackground(imgMap[3][3]);
-            tm.getTile(27, 7).setBackground(imgMap[3][3]);
-            tm.getTile(28, 7).setBackground(imgMap[3][0]);
-            tm.getTile(23, 8).setBackground(imgMap[3][2]);
-            tm.getTile(24, 8).setBackground(imgMap[3][3]);
-            tm.getTile(25, 8).setBackground(imgMap[3][3]);
-            tm.getTile(26, 8).setBackground(imgMap[3][3]);
-            tm.getTile(27, 8).setBackground(imgMap[3][3]);
-            tm.getTile(28, 8).setBackground(imgMap[3][0]);
+            tm.setBackground(21, 2, imgMap[6][3]);
+            tm.setBackground(22, 2, imgMap[7][0]);
+            tm.setBackground(23, 2, imgMap[7][0]);
+            tm.setBackground(24, 2, imgMap[7][0]);
+            tm.setBackground(25, 2, imgMap[6][4]);
+            tm.setBackground(21, 3, imgMap[5][3]);
+            tm.setBackground(22, 3, imgMap[6][3]);
+            tm.setBackground(23, 3, imgMap[7][0]);
+            tm.setBackground(24, 3, imgMap[7][0]);
+            tm.setBackground(25, 3, imgMap[5][4]);
+            tm.setBackground(22, 4, imgMap[5][3]);
+            tm.setBackground(23, 4, imgMap[6][3]);
+            tm.setBackground(24, 4, imgMap[7][0]);
+            tm.setBackground(25, 4, imgMap[7][0]);
+            tm.setBackground(26, 4, imgMap[5][4]);
+            tm.setBackground(23, 5, imgMap[4][2]);
+            tm.setBackground(24, 5, imgMap[4][3]);
+            tm.setBackground(25, 5, imgMap[4][3]);
+            tm.setBackground(26, 5, imgMap[4][3]);
+            tm.setBackground(27, 5, imgMap[4][4]);
+            tm.setBackground(23, 6, imgMap[3][2]);
+            tm.setBackground(24, 6, imgMap[3][3]);
+            tm.setBackground(25, 6, imgMap[3][3]);
+            tm.setBackground(26, 6, imgMap[3][3]);
+            tm.setBackground(27, 6, imgMap[3][3]);
+            tm.setBackground(28, 6, imgMap[3][0]);
+            tm.setBackground(23, 7, imgMap[3][2]);
+            tm.setBackground(24, 7, imgMap[3][3]);
+            tm.setBackground(25, 7, imgMap[3][3]);
+            tm.setBackground(26, 7, imgMap[3][3]);
+            tm.setBackground(27, 7, imgMap[3][3]);
+            tm.setBackground(28, 7, imgMap[3][0]);
+            tm.setBackground(23, 8, imgMap[3][2]);
+            tm.setBackground(24, 8, imgMap[3][3]);
+            tm.setBackground(25, 8, imgMap[3][3]);
+            tm.setBackground(26, 8, imgMap[3][3]);
+            tm.setBackground(27, 8, imgMap[3][3]);
+            tm.setBackground(28, 8, imgMap[3][0]);
             
             tm.fillBackground(imgMap[0][7], 0, 10, 21, 2); // Sky
             tm.fillBackground(imgMap[0][1], 0, 9, 20, 1); // Roof
-            tm.getTile(20, 9).setBackground(imgMap[0][2]);
+            tm.setBackground(20, 9, imgMap[0][2]);
             tm.fillBackground(imgMap[3][2], 20, 6, 1, 3);
             
             tm.fillBackground(imgMap[3][0], 21, 6, 1, 5);
-            tm.getTile(21, 11).setBackground(imgMap[0][0]);
+            tm.setBackground(21, 11, imgMap[0][0]);
             tm.fillBackground(imgMap[0][1], 22, 11, 9, 1);
             
-            tm.getTile(29, 8).setBackground(imgMap[1][1]); // Flag
-            tm.getTile(30, 8).setBackground(imgMap[1][2]);
-            tm.getTile(29, 7).setBackground(imgMap[2][1]);
-            tm.getTile(30, 7).setBackground(imgMap[2][2]);
+            tm.setBackground(29, 8, imgMap[1][1]); // Flag
+            tm.setBackground(30, 8, imgMap[1][2]);
+            tm.setBackground(29, 7, imgMap[2][1]);
+            tm.setBackground(30, 7, imgMap[2][2]);
             
-            tm.getTile(1, 8).setBackground(imgMap[1][0]); // Banner
-            tm.getTile(1, 7).setBackground(imgMap[2][0]);
+            tm.setBackground(1, 8, imgMap[1][0]); // Banner
+            tm.setBackground(1, 7, imgMap[2][0]);
             
-            tm.getTile(10, 8).setBackground(imgMap[1][0]);
-            tm.getTile(10, 7).setBackground(imgMap[2][0]);
+            tm.setBackground(10, 8, imgMap[1][0]);
+            tm.setBackground(10, 7, imgMap[2][0]);
             
-            tm.getTile(19, 8).setBackground(imgMap[1][0]);
-            tm.getTile(19, 7).setBackground(imgMap[2][0]);
+            tm.setBackground(19, 8, imgMap[1][0]);
+            tm.setBackground(19, 7, imgMap[2][0]);
             
             tm.fillBackground(imgMap[3][2], 31, 6, 1, 5);
-            tm.getTile(31, 11).setBackground(imgMap[0][2]);
+            tm.setBackground(31, 11, imgMap[0][2]);
             
             tm.fillBackground(imgMap[3][7], 32, 6, 8, 1); // Fence
             tm.fillBackground(imgMap[2][7], 32, 7, 8, 1);
@@ -293,11 +293,11 @@ public abstract class Level {
             
             tm.fillBackground(imgMap[3][2], 9, 6, 1, 2);
             tm.fillBackground(imgMap[7][7], 10, 6, 1, 2);
-            tm.getTile(11, 6).setBackground(imgMap[4][7]);
-            tm.getTile(11, 7).setBackground(imgMap[7][7]);
+            tm.setBackground(11, 6, imgMap[4][7]);
+            tm.setBackground(11, 7, imgMap[7][7]);
             tm.fillBackground(imgMap[7][7], 12, 6, 1, 2);
-            tm.getTile(13, 6).setBackground(imgMap[5][7]);
-            tm.getTile(13, 7).setBackground(imgMap[7][7]);
+            tm.setBackground(13, 6, imgMap[5][7]);
+            tm.setBackground(13, 7, imgMap[7][7]);
             tm.fillBackground(imgMap[7][7], 14, 6, 1, 2);
             tm.fillBackground(imgMap[3][0], 15, 6, 1, 2);
             
@@ -305,7 +305,7 @@ public abstract class Level {
             
             tm.fillBackground(imgMap[3][2], 21, 6, 1, 6);
             tm.fillBackground(imgMap[3][0], 22, 6, 1, 3);
-            tm.getTile(22, 9).setBackground(imgMap[0][0]);
+            tm.setBackground(22, 9, imgMap[0][0]);
             tm.fillBackground(imgMap[0][7], 22, 10, 18, 2);
             tm.fillBackground(imgMap[0][1], 23, 9, 17, 1);
             
@@ -330,18 +330,18 @@ public abstract class Level {
     }
     
     private static void base1(final TileMap tm, final TileMapImage[][] imgMap, final int x) {
-    	tm.getTile(x, 6).setBackground(imgMap[3][2]);
-        tm.getTile(x + 1, 6).setBackground(imgMap[7][7]);
-        tm.getTile(x + 2, 6).setBackground(imgMap[5][7]);
-        tm.getTile(x + 3, 6).setBackground(imgMap[7][7]);
-        tm.getTile(x + 4, 6).setBackground(imgMap[3][0]);
+    	tm.setBackground(x, 6, imgMap[3][2]);
+        tm.setBackground(x + 1, 6, imgMap[7][7]);
+        tm.setBackground(x + 2, 6, imgMap[5][7]);
+        tm.setBackground(x + 3, 6, imgMap[7][7]);
+        tm.setBackground(x + 4, 6, imgMap[3][0]);
     }
     
     private static void base2(final TileMap tm, final TileMapImage[][] imgMap, final int x) {
-    	tm.getTile(x, 6).setBackground(imgMap[3][2]);
-        tm.getTile(x + 1, 6).setBackground(imgMap[6][7]);
-        tm.getTile(x + 2, 6).setBackground(imgMap[5][7]);
-        tm.getTile(x + 3, 6).setBackground(imgMap[3][0]);
+    	tm.setBackground(x, 6, imgMap[3][2]);
+        tm.setBackground(x + 1, 6, imgMap[6][7]);
+        tm.setBackground(x + 2, 6, imgMap[5][7]);
+        tm.setBackground(x + 3, 6, imgMap[3][0]);
     }
     
     private final static class Splasher extends Panctor implements StepListener {
