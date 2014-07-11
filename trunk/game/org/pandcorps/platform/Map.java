@@ -36,7 +36,7 @@ import org.pandcorps.pandax.in.*;
 import org.pandcorps.pandax.text.*;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.tile.Tile.*;
-import org.pandcorps.platform.Level.Theme;
+import org.pandcorps.platform.Level.*;
 import org.pandcorps.platform.Player.*;
 
 public class Map {
@@ -131,13 +131,13 @@ public class Map {
 	
 	private static Panroom room = null;
 	private static Panmage timg = null;
-	private static DynamicTileMap tm = null;
+	private static TileMap tm = null;
 	private final static ArrayList<Marker> markers = new ArrayList<Marker>();
 	private final static ArrayList<Building> buildings = new ArrayList<Building>();
 	private static Panctor portal = null;
-	private static MapTileListener mtl = null;
 	private static TileMapImage[][] imgMap = null;
 	private static TileMapImage water = null;
+	private static TileMapImage[] waters = null;
 	private static TileMapImage base = null;
 	private static TileMapImage ladder = null;
 	
@@ -217,6 +217,13 @@ public class Map {
             addHud();
 			PlatformGame.fadeIn(room);
 		}
+		
+		@Override
+        protected final void step() {
+            if ((Pangine.getEngine().getClock() % 6) == 0) {
+                Tile.animate(waters);
+            }
+        }
 		
 		@Override
 	    protected final void destroy() {
@@ -669,7 +676,7 @@ public class Map {
 	            } else {
 	            	kingAvt.randomize(); // Change readIf to readRequire; remove condition/randomize
 	            }
-				tm = TileMap.load(DynamicTileMap.class, in, timg);
+				tm = TileMap.load(TileMap.class, in, timg);
 				roomW = tm.getWidth() * tm.getTileWidth();
 				roomH = tm.getHeight() * tm.getTileHeight();
 			} catch (final IOException e) {
@@ -690,13 +697,10 @@ public class Map {
            	kingCrown = Mathtil.randi(0, PlatformGame.crowns.length - 1);
 		}
 		initRoom();
-		mtl = new MapTileListener(6);
 		initTileMap(tm);
         imgMap = tm.splitImageMap();
-        for (int y = 0; y <= 2; y++) {
-            mtl.put(imgMap[5 + y][6], imgMap[5 + ((y + 1) % 3)][6]);
-        }
         water = imgMap[5][6];
+        waters = new TileMapImage[] {water, imgMap[6][6], imgMap[7][6]};
         base = imgMap[1][1];
         ladder = imgMap[0][6];
         final int t;
@@ -727,15 +731,15 @@ public class Map {
 	    return endRow + ((endRow <= 8) ? 2 : -2);
 	}
 	
-	private final static void initTileMap(final DynamicTileMap tm) {
+	private final static void initTileMap(final TileMap tm) {
 	    tm.setImageMap(timg);
-        //tm.setTileListener(mtl); //TODO Change animation technique
+        //tm.setTileListener(mtl);
 	}
 	
 	private final static void initRoom() {
 	    room = PlatformGame.createRoom(roomW, roomH);
         if (tm == null) {
-            tm = new DynamicTileMap("act.tilemap", room, ImtilX.DIM, ImtilX.DIM);
+            tm = new TileMap("act.tilemap", room, ImtilX.DIM, ImtilX.DIM);
         } else {
             for (final Marker m : markers) {
                 room.addActor(m);
@@ -1153,7 +1157,7 @@ public class Map {
 	}
 	
 	private final static TileMap addBorder(final String name, final int tx, final int ty, final float px, final float py) {
-	    final DynamicTileMap bord = new DynamicTileMap("act.border." + name, tx, ty, ImtilX.DIM, ImtilX.DIM);
+	    final TileMap bord = new TileMap("act.border." + name, tx, ty, ImtilX.DIM, ImtilX.DIM);
         initTileMap(bord);
         bord.fillBackground(water, true);
         room.addActor(bord);
