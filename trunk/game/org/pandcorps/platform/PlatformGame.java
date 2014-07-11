@@ -91,7 +91,7 @@ public class PlatformGame extends BaseGame {
 	Clear TileMap.map/imgs?
 	Flash block main image is wrong.
 	New Level generator for town background; nearly constant ground height so houses always look right.
-	Level generator should pick glClear background color and use null sky tiles.
+	Troll/Ogre should burst an angry image when stomped first time.
 	*/
 	
 	protected final static byte TILE_BREAK = 2;
