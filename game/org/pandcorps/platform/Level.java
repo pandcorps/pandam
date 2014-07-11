@@ -57,6 +57,8 @@ public class Level {
     private static int nt = 0;
     private static int floor = 0;
     private static boolean grassy = true;
+    private static Pancolor topSkyColor = null;
+    private static Pancolor bottomSkyColor = null;
     protected static int numEnemies = 0;
     
     protected abstract static class Theme {
@@ -491,6 +493,7 @@ public class Level {
     }
     
     private static void applyTerrainTexture(final Img backImg, final int ix, final int iy, final int fx, final int fy, int skip, final int size) {
+        extractSkyColors(backImg);
     	Img terrain = getTerrainTexture();
     	for (int i = backgroundBuilder.getPreDarken(); i > 0; i--) {
     		terrain = getDarkenedTerrain(terrain);
@@ -1064,10 +1067,21 @@ public class Level {
         }
     }
     
+    private final static void extractSkyColors(final Img img) {
+        topSkyColor = Imtil.getColor(img, 96, 0);
+        bottomSkyColor = Imtil.getColor(img, 96, 32);
+    }
+    
     private final static void buildSky(final TileMap tm, final int base, final int mid) {
-        tm.fillBackground(bgMap[0][6], mid + 1, tm.getHeight() - (mid + 1));
+        final int topHeight = tm.getHeight() - (mid + 1), bottomHeight = mid - base;
+        if (topHeight < bottomHeight) {
+            tm.fillBackground(bgMap[0][6], mid + 1, topHeight);
+            Pangine.getEngine().setBgColor(bottomSkyColor);
+        } else {
+            tm.fillBackground(bgMap[2][6], base, bottomHeight);
+            Pangine.getEngine().setBgColor(topSkyColor);
+        }
         tm.fillBackground(bgMap[1][6], mid, 1);
-        tm.fillBackground(bgMap[2][6], base, mid - base);
     }
     
     private final static void buildSky(final TileMap tm) {
