@@ -87,10 +87,11 @@ public class PlatformGame extends BaseGame {
 	Give images a real transparent background, disable ImtilX preprocessing.
 	Assist: Berserker? (Defeat Enemy by touching it)
 	Assist: Teleport (After fall, teleport to target immediately instead of slow bubble, no gem loss)
-	Fix Map water.
 	Remove Gem class? Just use Tile.foreground and Tile.animate?
 	Clear TileMap.map/imgs?
 	Flash block main image is wrong.
+	New Level generator for town background; nearly constant ground height so houses always look right.
+	Level generator should pick glClear background color and use null sky tiles.
 	*/
 	
 	protected final static byte TILE_BREAK = 2;
