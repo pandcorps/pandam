@@ -201,9 +201,6 @@ public class Level {
         final Panlayer bg3 = PlatformGame.createParallax(bg2, 2);
         bgtm3 = newBackgroundTileMap(3, bg3);
         bgtm3.setImageMap(bgtm1);
-        bgtm3.fillBackground(bgMap[0][6], 9, bgtm3.getHeight() - 9);
-        bgtm3.fillBackground(bgMap[1][6], 8, 1);
-        bgtm3.fillBackground(bgMap[2][6], 0, 8);
     }
     
     private final static TileMap newBackgroundTileMap(final int i, final Panlayer bg) {
@@ -265,6 +262,7 @@ public class Level {
         hill(bgtm2, 0, 6, 4, 3, 2);
         hill(bgtm2, 7, 8, 7, 0, 2);
         
+        buildSky(bgtm3);
         cloud(bgtm3, 10, 10, 7);
         hill(bgtm3, 2, 9, 4, 0, 4);
         cloud(bgtm3, 4, 6, 3);
@@ -1066,7 +1064,20 @@ public class Level {
         }
     }
     
-    private static void buildHills(final TileMap tm, final int miny, final int maxy, final int iy, final boolean cloud) {
+    private final static void buildSky(final TileMap tm, final int base, final int mid) {
+        tm.fillBackground(bgMap[0][6], mid + 1, tm.getHeight() - (mid + 1));
+        tm.fillBackground(bgMap[1][6], mid, 1);
+        tm.fillBackground(bgMap[2][6], base, mid - base);
+    }
+    
+    private final static void buildSky(final TileMap tm) {
+        buildSky(tm, 0, 8);
+    }
+    
+    private final static void buildHills(final TileMap tm, final int miny, final int maxy, final int iy, final boolean cloud) {
+        if (cloud) {
+            buildSky(tm);
+        }
     	final int maxx = tm.getWidth() + 1;
     	int x = Mathtil.randi(-1, 4);
     	boolean c = Mathtil.rand();
@@ -1105,15 +1116,13 @@ public class Level {
     	}
     }
     
-    private static void buildForest(final TileMap tm, final int off, final boolean sky) {
+    private final static void buildForest(final TileMap tm, final int off, final boolean sky) {
     	final int iy = off * 2;
     	tm.fillBackground(bgMap[iy + 1][2], 0, off + 1);
     	tm.fillBackground(bgMap[iy][2], off + 1, 1);
     	final int tmw = tm.getWidth(), tmh = tm.getHeight();
     	if (sky) {
-    		tm.fillBackground(bgMap[0][6], tmh - 4, 4);
-    		tm.fillBackground(bgMap[1][6], tmh - 5, 1);
-    		tm.fillBackground(bgMap[2][6], off + 2, tmh - off - 7);
+    	    buildSky(tm, off + 2, tmh - 5);
     	}
     	int i = Mathtil.randi(-1, 2);
     	while (i < tmw) {
@@ -1129,7 +1138,7 @@ public class Level {
     	}
     }
     
-    private static void addPlayers() {
+    private final static void addPlayers() {
     	final int size = PlatformGame.pcs.size();
         final ArrayList<Player> players = new ArrayList<Player>(size);
         for (int i = 0; i < size; i++) {
@@ -1141,21 +1150,21 @@ public class Level {
         Pangine.getEngine().track(Panverage.getArithmeticMean(players));
     }
     
-    private static void setBg(final TileMap tm, final int i, final int j, final TileMapImage[][] imgMap, final int iy, final int ix) {
+    private final static void setBg(final TileMap tm, final int i, final int j, final TileMapImage[][] imgMap, final int iy, final int ix) {
     	if (tm.isBad(i, j)) {
     		return;
     	}
         tm.setTile(i, j, imgMap[iy][ix], null, Tile.BEHAVIOR_OPEN);
     }
     
-    private static void setFg(final TileMap tm, final int i, final int j, final TileMapImage[][] imgMap, final int iy, final int ix) {
+    private final static void setFg(final TileMap tm, final int i, final int j, final TileMapImage[][] imgMap, final int iy, final int ix) {
     	if (tm.isBad(i, j)) {
     		return;
     	}
     	tm.setForeground(i, j, imgMap[iy][ix]);
     }
     
-    private static int house(final TileMap tm, final int x, final int y, final int border, final int winLeft, final int winRight) {
+    private final static int house(final TileMap tm, final int x, final int y, final int border, final int winLeft, final int winRight) {
     	final int sectionSize = 3, winLeftMult = winLeft * sectionSize, winRightMult = winRight * sectionSize;
     	final int last = x + 5 + border + winLeftMult + sectionSize + winRightMult + border;
     	if (last >= tm.getWidth()) {
@@ -1196,7 +1205,7 @@ public class Level {
     	return last;
     }
     
-    private static void houseSection(final TileMap tm, final int x, final int y, final boolean door) {
+    private final static void houseSection(final TileMap tm, final int x, final int y, final boolean door) {
     	houseRight(tm, x, y);
     	houseMid(tm, x + 1, y);
     	if (door) {
@@ -1207,25 +1216,25 @@ public class Level {
     	houseLeft(tm, x + 2, y);
     }
     
-    private static void houseLeft(final TileMap tm, final int x, final int y) {
+    private final static void houseLeft(final TileMap tm, final int x, final int y) {
     	houseCol(tm, x, y, -1);
     }
     
-    private static void houseMid(final TileMap tm, final int x, final int y) {
+    private final static void houseMid(final TileMap tm, final int x, final int y) {
     	houseCol(tm, x, y, 0);
     }
     
-    private static void houseRight(final TileMap tm, final int x, final int y) {
+    private final static void houseRight(final TileMap tm, final int x, final int y) {
     	houseCol(tm, x, y, 1);
     }
     
-    private static void houseCol(final TileMap tm, final int x, final int y, final int off) {
+    private final static void houseCol(final TileMap tm, final int x, final int y, final int off) {
     	tm.rectangleBackground(5 + off, 7, x, y, 1, 2);
 		setBg(tm, x, y + 2, bgMap, 1, 2 + off);
 		setBg(tm, x, y + 3, bgMap, 7, 5 + off);
     }
     
-    private static void hill(final TileMap tm, final int x, final int y, final int w, final int ix, final int iy) {
+    private final static void hill(final TileMap tm, final int x, final int y, final int w, final int ix, final int iy) {
         for (int j = 0; j < y; j++) {
             setBg(tm, x, j, bgMap, iy + 1, ix);
             setBg(tm, x + w + 1, j, bgMap, iy + 1, ix + 2);
@@ -1241,7 +1250,7 @@ public class Level {
         setFg(tm, stop + 1, y, bgMap, iy, ix + 2);
     }
     
-    private static void cloud(final TileMap tm, final int x, final int y, final int w) {
+    private final static void cloud(final TileMap tm, final int x, final int y, final int w) {
         final int stop = x + w;
         for (int i = x + 1; i <= stop; i++) {
             setBg(tm, i, y, bgMap, 7, 1);
@@ -1253,43 +1262,43 @@ public class Level {
         setFg(tm, stop + 1, y + 1, bgMap, 6, 2);
     }
     
-    private static void solidBlock(final int x, final int y) {
+    private final static void solidBlock(final int x, final int y) {
         tm.setForeground(x, y, imgMap[0][4], Tile.BEHAVIOR_SOLID);
     }
     
-    private static void bumpableBlock(final int x, final int y) {
+    private final static void bumpableBlock(final int x, final int y) {
         tm.setForeground(x, y, imgMap[0][0], PlatformGame.TILE_BUMP);
     }
     
-    private static void breakableBlock(final int x, final int y) {
+    private final static void breakableBlock(final int x, final int y) {
         tm.setForeground(x, y, imgMap[0][5], PlatformGame.TILE_BREAK);
     }
     
-    private static void upBlock(final int x, final int y) {
+    private final static void upBlock(final int x, final int y) {
         tm.setForeground(x, y, imgMap[0][6], PlatformGame.TILE_UPSLOPE);
     }
     
-    private static void downBlock(final int x, final int y) {
+    private final static void downBlock(final int x, final int y) {
         tm.setForeground(x, y, imgMap[0][7], PlatformGame.TILE_DOWNSLOPE);
     }
     
-    private static void goalBlock(final int x, final int y) {
+    private final static void goalBlock(final int x, final int y) {
         tm.setForeground(x, y, imgMap[7][0], PlatformGame.TILE_BUMP);
     }
     
-    private static void step(final int x, final int y, final int w, final int h) {
+    private final static void step(final int x, final int y, final int w, final int h) {
     	step(x, y, w, h, 1);
     }
     
-    private static void upStep(final int x, final int y, final int h) {
+    private final static void upStep(final int x, final int y, final int h) {
     	step(x, y, 0, h, 0);
     }
     
-    private static void downStep(final int x, final int y, final int h) {
+    private final static void downStep(final int x, final int y, final int h) {
     	step(x, y, -1, h, 2);
     }
     
-    private static void step(final int x, final int y, final int w, final int h, final int mode) {
+    private final static void step(final int x, final int y, final int w, final int h, final int mode) {
         // Will also want 1-way steps going up and 1-way down; same with ramps
     	if (mode != 2) {
     		tm.setForeground(x, y, imgMap[3][0], Tile.BEHAVIOR_SOLID);
@@ -1323,7 +1332,7 @@ public class Level {
         }
     }
     
-    private static void ramp(final int x, final int y, final int w, final int h) {
+    private final static void ramp(final int x, final int y, final int w, final int h) {
         final int fstop = x + w + h * 2, ystop = y + h;
         for (int jo = y; jo <= ystop; jo++) {
             final int jb = jo - y, stop = fstop - jb;
@@ -1345,7 +1354,7 @@ public class Level {
         }
     }
     
-    private static void blockWall(final int x, final int y, final int w, final int h) {
+    private final static void blockWall(final int x, final int y, final int w, final int h) {
     	for (int i = 0; i < w; i++) {
     		final int xi = x + i;
     		for (int j = 0; j < h; j++) {
@@ -1354,7 +1363,7 @@ public class Level {
     	}
     }
     
-    private static void upBlockStep(final int x, final int y, final int w, final boolean ramp) {
+    private final static void upBlockStep(final int x, final int y, final int w, final boolean ramp) {
     	for (int i = 0; i < w; i++) {
     		final int xi = x + i;
     		for (int j = 0; j <= i; j++) {
@@ -1367,7 +1376,7 @@ public class Level {
     	}
     }
     
-    private static void downBlockStep(final int x, final int y, final int w, final boolean ramp) {
+    private final static void downBlockStep(final int x, final int y, final int w, final boolean ramp) {
     	for (int i = 0; i < w; i++) {
     		final int xi = x + w - i - 1;
     		for (int j = 0; j <= i; j++) {
@@ -1380,7 +1389,7 @@ public class Level {
     	}
     }
     
-    private static void naturalRise(final int x, final int y, final int w, final int h) {
+    private final static void naturalRise(final int x, final int y, final int w, final int h) {
         final int ystop = y + h;
         for (int j = y; j < ystop; j++) {
             tm.setBackground(x, j, imgMap[2][3]);
@@ -1397,7 +1406,7 @@ public class Level {
         tm.setForeground(stop + 1, ystop, imgMap[1][4], PlatformGame.TILE_FLOOR);
     }
     
-    private static void colorRise(final int x, final int y, final int w, final int h, final int _o) {
+    private final static void colorRise(final int x, final int y, final int w, final int h, final int _o) {
         final int o = _o * 2 + 2, o1 = o + 1, ystop = y + h;
         for (int j = y; j < ystop; j++) {
             tm.setBackground(x, j, imgMap[o1][5]);
@@ -1414,7 +1423,7 @@ public class Level {
         tm.setForeground(stop + 1, ystop, imgMap[o][7], PlatformGame.TILE_FLOOR);
     }
     
-    private static void wall(final int x, final int y, final int w, final int h) {
+    private final static void wall(final int x, final int y, final int w, final int h) {
         final int ystop = y + h, xstop = x + w + 1;
         for (int j = y; j < ystop; j++) {
             tm.setForeground(x, j, imgMap[4][0], Tile.BEHAVIOR_SOLID);
@@ -1426,11 +1435,11 @@ public class Level {
     }
     
     // x - h + 2 to x + ((stop + 1) * 2 - 1) + 1
-    private static void slantUp(final int x, final int y, final int stop, final int h) {
+    private final static void slantUp(final int x, final int y, final int stop, final int h) {
         slant(x, y, stop, h, true);
     }
     
-    private static void slant(final int x, final int y, final int stop, final int h, final boolean up) {
+    private final static void slant(final int x, final int y, final int stop, final int h, final boolean up) {
         final int ystop = y + h, w = getSlantBase(stop), m, c1, c2, c3;
         final byte b;
         if (up) {
@@ -1467,11 +1476,11 @@ public class Level {
         }
     }
     
-    private static TileMapImage getDirtImage() {
+    private final static TileMapImage getDirtImage() {
         return imgMap[Mathtil.rand(90) ? 2 : 3][1];
     }
     
-    private static void pit(final int x, final int y, final int w) {
+    private final static void pit(final int x, final int y, final int w) {
     	final int stop = x + w + 1;
     	for (int j = 0; j <= y; j++) {
     		if (grassy) {
@@ -1488,7 +1497,7 @@ public class Level {
     	}
     }
     
-    private static void bush(final int x, final int y, final int w) {
+    private final static void bush(final int x, final int y, final int w) {
         tm.setForeground(x, y, imgMap[1][5]);
         final int stop = x + w;
         for (int i = x + 1; i <= stop; i++) {
@@ -1497,7 +1506,7 @@ public class Level {
         tm.setForeground(stop + 1, y, imgMap[1][7]);
     }
     
-    private static void tree(final int x, final int y) {
+    private final static void tree(final int x, final int y) {
     	for (int j = 0; j < 2; j++) {
     		tm.setForeground(x + 1, y + j, imgMap[7][1]);
     		tm.setForeground(x + 2, y + j, imgMap[7][2]);
@@ -1510,7 +1519,7 @@ public class Level {
 		tm.setForeground(x + 3, y + 2, imgMap[6][1]);
     }
     
-    private static void gem(final int x, final int y) {
+    private final static void gem(final int x, final int y) {
         final Gem gem = new Gem();
         gem.setPosition(tm, x, y);
         room.addActor(gem);
@@ -1674,7 +1683,7 @@ public class Level {
         "***"
     };
     
-    private static int gemMsg(final int x, final int y, final String msg, final boolean render) {
+    private final static int gemMsg(final int x, final int y, final String msg, final boolean render) {
     	final int size = msg.length();
     	int xc = x;
     	for (int i = 0; i < size; i++) {
@@ -1683,7 +1692,7 @@ public class Level {
     	return xc - x - 1;
     }
     
-    private static int gemChr(final int x, final int y, final char chr, final boolean render) {
+    private final static int gemChr(final int x, final int y, final char chr, final boolean render) {
     	final int c = java.lang.Character.toUpperCase(chr) - 'A';
     	if (c < 0 || c >= gemFont.length) {
     		return -1;
@@ -1706,7 +1715,7 @@ public class Level {
     	return Math.max(max, xc - x);
     }
     
-    private static PixelFilter getHillFilter(final int mode) {
+    private final static PixelFilter getHillFilter(final int mode) {
         switch (mode) {
             case 0 : return null;
             case 1 : return new SwapPixelFilter(Channel.Red, Channel.Blue, Channel.Green);
