@@ -35,7 +35,6 @@ public class TestFloatChain extends Pantest {
 		chain.append(2);
 		chain.append(3);
 		final FloatBuffer buf = chain.getBuffer();
-		buf.rewind();
 		assertEquals(1f, buf.get());
 		assertEquals(1f, buf.get());
 		assertEquals(2f, buf.get());
