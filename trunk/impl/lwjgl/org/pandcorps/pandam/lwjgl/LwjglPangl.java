@@ -78,6 +78,11 @@ public final class LwjglPangl extends Pangl {
 	}
 	
 	@Override
+	public final void glDeleteBuffers(final int buffer) {
+		GL15.glDeleteBuffers(buffer);
+	}
+	
+	@Override
 	public final void glDeleteTextures(final int texture) {
 		GL11.glDeleteTextures(texture);
 	}
