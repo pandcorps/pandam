@@ -576,15 +576,16 @@ public abstract class GlPangine extends Pangine {
 	        return;
 	    }
 		camera(room); // Must be after step() for tracking to work right
+		final boolean hasNew = !newImages.isEmpty();
 		while (!newImages.isEmpty()) {
 		    images.add(newImages.remove(newImages.size() - 1));
 		}
-		//for (final GlPanmage image : images) { // ConcurrentModificationException if bg Thread loads images at same time
 		final int size = images.size();
-		for (int i = 0; i < size; i++) { // If size has grown, we shouldn't be drawing new images yet anyway
-            images.get(i).clearAll();
-        }
-		if (room != null) {
+		//for (final GlPanmage image : images) { // ConcurrentModificationException if bg Thread loads images at same time
+		if (hasNew || !room.isBuffered() || !room.isBuilt()) {
+			for (int i = 0; i < size; i++) { // If size has grown, we shouldn't be drawing new images yet anyway
+	            images.get(i).clear(room);
+	        }
 			final Collection<Panctor> actors = room.getActors();
 			if (actors != null) {
 				for (final Panctor actor : actors) {
