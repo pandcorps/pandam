@@ -443,16 +443,22 @@ public class TileMap extends Panctor implements Savable {
     	So this can trust the view window.
     	*/
         final Panple pos = getPosition();
-        final float x = pos.getX();
-        final float y = pos.getY();
-        final float z = pos.getZ();
+        final float x = pos.getX(), y = pos.getY(), z = pos.getZ();
         final float foregroundDepth = getForegroundDepth();
         final Panlayer layer = getLayer();
         final Panple min = layer.getViewMinimum(), max = layer.getViewMaximum();
-        final int j0 = Math.max(0, (int) ((min.getY() - y) / th));
-        final int i0 = Math.max(0, (int) ((min.getX() - x) / tw));
-        final int jh = Math.min(h, 1 + (int) ((max.getY() - y) / th));
-        final int iw = Math.min(w, 1 + (int) ((max.getX() - x) / tw));
+        final int j0, i0, jh, iw;
+        if (layer.isBuffered()) {
+        	j0 = 0;
+        	i0 = 0;
+        	jh = h;
+        	iw = w;
+        } else {
+	        j0 = Math.max(0, (int) ((min.getY() - y) / th));
+	        i0 = Math.max(0, (int) ((min.getX() - x) / tw));
+	        jh = Math.min(h, 1 + (int) ((max.getY() - y) / th));
+	        iw = Math.min(w, 1 + (int) ((max.getX() - x) / tw));
+        }
         for (int j = j0; j < jh; j++) {
             final int off = j * w;
             final float yjth = y + j * th;

@@ -50,6 +50,8 @@ public final class GlPanmage extends Panmage {
 	private final static class ImageLayer {
 	    private final FloatChain t = new FloatChain();
 	    private final FloatChain v = new FloatChain();
+	    private int bufT = NULL_TID;
+	    private int bufV = NULL_TID;
 	}
 	private final IdentityHashMap<Panlayer, ImageLayer> layers = new IdentityHashMap<Panlayer, ImageLayer>();
 
@@ -257,8 +259,9 @@ public final class GlPanmage extends Panmage {
 		return size;
 	}
 
-	public final void clearAll() {
-	    for (final ImageLayer l : layers.values()) {
+	public final void clear(final Panlayer layer) {
+		final ImageLayer l = layers.get(layer);
+	    if (l != null) {
 	        l.t.clear();
 	        l.v.clear();
 	    }
@@ -273,26 +276,44 @@ public final class GlPanmage extends Panmage {
 	    final int numTexCoords = t.getSize();
 	    if (numTexCoords > 0) {
 	    	final Pangl gl = GlPangine.gl;
+	    	final boolean buffered = layer.isBuffered();
 	    	if (tid == NULL_TID) {
 	    	    bindTexture();
 	    	    if (!saveTextures) {
 	    	    	tex = null;
 	    	    }
 	    	}
+    	    if (buffered && l.bufT == NULL_TID) { //TODO Handle buffer recreate like texture recreate
+    	    	gl.glEnable(gl.GL_ARRAY_BUFFER_BINDING); //TODO Only call once
+    	    	final IntBuffer ids = Pantil.allocateDirectIntBuffer(2);
+    	    	gl.glGenBuffers(ids); //TODO delete buffers
+    	    	l.bufT = ids.get(0);
+    	    	l.bufV = ids.get(1);
+    	    	gl.glBindBuffer(gl.GL_ARRAY_BUFFER, l.bufT);
+    	    	gl.glBufferData(gl.GL_ARRAY_BUFFER, t.getBuffer(), gl.GL_STATIC_DRAW);
+    	    	gl.glBindBuffer(gl.GL_ARRAY_BUFFER, l.bufV);
+    	    	gl.glBufferData(gl.GL_ARRAY_BUFFER, l.v.getBuffer(), gl.GL_STATIC_DRAW);
+    	    }
     	    gl.glLoadIdentity();
     	    gl.glBindTexture(gl.GL_TEXTURE_2D, tid);
     	    //gl.glColor3b((byte) 0, (byte) 0, Byte.MAX_VALUE); // Kind of works to make everything blue
-    	    final FloatBuffer tb = t.getBuffer();
-    	    tb.rewind();
-    	    gl.glTexCoordPointer(2, 0, tb);
-    	    final FloatBuffer vb = l.v.getBuffer();
-    	    vb.rewind();
-            gl.glVertexPointer(3, 0, vb);
+    	    if (buffered) {
+    	    	gl.glBindBuffer(gl.GL_ARRAY_BUFFER, l.bufT);
+                gl.glTexCoordPointer(2, gl.GL_FLOAT, 0, 0);
+    	    	gl.glBindBuffer(gl.GL_ARRAY_BUFFER, l.bufV);
+                gl.glVertexPointer(3, gl.GL_FLOAT, 0, 0);
+    	    } else {
+	    	    gl.glTexCoordPointer(2, 0, t.getBuffer());
+	            gl.glVertexPointer(3, 0, l.v.getBuffer());
+    	    }
             //gl.glDrawElements(gl.GL_QUADS, wrap(i)); // Allows you to specify the index of a single vertex multiple times, less total vertices required
             gl.glDrawArrays(gl.isQuadSupported() ? gl.GL_QUADS : gl.GL_TRIANGLES, 0, numTexCoords / 2); // Number of vertices
+            if (buffered) {
+            	gl.glBindBuffer(gl.GL_ARRAY_BUFFER, NULL_TID);
+            }
 	    }
 	}
-
+	
 	@Override
 	protected final void render(final Panlayer layer, final float x, final float y, final float z,
 		//final float ix, final float iy, final float iw, final float ih) {

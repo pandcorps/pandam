@@ -62,6 +62,8 @@ public class Panlayer extends BasePantity {
     private boolean clearDepthEnabled = true;
     private boolean visible = true;
     private boolean active = true;
+    private boolean constant = false;
+    private boolean built = false;
     
     /*package*/ Panlayer(
         final String id,
@@ -184,11 +186,13 @@ public class Panlayer extends BasePantity {
     
     /*package*/ final void applyActorChanges() {
         IdentityHashSet<Panctor> buf;
+        built = true;
         
         buf = addedActors;
         addedActors = addedActorsBack;
         addedActorsBack = buf;
         for (final Panctor actor : buf) {
+        	built = false;
             applyAddActor(actor);
         }
         buf.clear();
@@ -197,6 +201,7 @@ public class Panlayer extends BasePantity {
         removedActors = removedActorsBack;
         removedActorsBack = buf;
         for (final Panctor actor : buf) {
+        	built = false;
             applyRemoveActor(actor);
         }
         buf.clear();
@@ -363,6 +368,22 @@ public class Panlayer extends BasePantity {
     
     public final boolean isActive() {
         return active;
+    }
+    
+    public final void setConstant(final boolean constant) {
+        this.constant = constant;
+    }
+    
+    public final boolean isConstant() {
+        return constant;
+    }
+    
+    public final boolean isBuffered() {
+    	return constant; //TODO and buffers supported
+    }
+    
+    public final boolean isBuilt() {
+    	return built;
     }
     
     public Panlayer getBase() {
