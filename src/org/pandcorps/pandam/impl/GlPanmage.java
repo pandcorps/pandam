@@ -52,6 +52,15 @@ public final class GlPanmage extends Panmage {
 	    private final FloatChain v = new FloatChain();
 	    private int bufT = NULL_TID;
 	    private int bufV = NULL_TID;
+	    private final void destroy() {
+	    	if (bufT != NULL_TID) {
+				final Pangl gl = GlPangine.gl;
+				gl.glDeleteBuffers(bufT);
+				gl.glDeleteBuffers(bufV);
+				bufT = NULL_TID;
+				bufV = NULL_TID;
+			}
+	    }
 	}
 	private final IdentityHashMap<Panlayer, ImageLayer> layers = new IdentityHashMap<Panlayer, ImageLayer>();
 
@@ -179,6 +188,13 @@ public final class GlPanmage extends Panmage {
 		}
 	}
 	
+	protected final void destroyLayer(final Panlayer layer) {
+		final ImageLayer l = layers.remove(layer);
+		if (l != null) {
+			l.destroy();
+		}
+	}
+	
 	protected final void rebindTexture() {
 		final Pangl gl = GlPangine.gl;
 		gl.glBindTexture(gl.GL_TEXTURE_2D, tid);
@@ -300,7 +316,7 @@ public final class GlPanmage extends Panmage {
     	    if (buffered && l.bufT == NULL_TID) {
     	    	gl.glEnable(gl.GL_ARRAY_BUFFER_BINDING); //TODO Only call once
     	    	final IntBuffer ids = Pantil.allocateDirectIntBuffer(2);
-    	    	gl.glGenBuffers(ids); //TODO delete buffers
+    	    	gl.glGenBuffers(ids);
     	    	l.bufT = ids.get(0);
     	    	l.bufV = ids.get(1);
     	    	rebindBuffer(l);
@@ -585,5 +601,9 @@ public final class GlPanmage extends Panmage {
 		GlPangine.gl.glDeleteTextures(tid);
 	    //System.out.println("Closed " + tid + "; isTexture: " + gl.glIsTexture(tid)); // false, and no longer displayed
 	    tid = NULL_TID;
+	    for (final ImageLayer l : layers.values()) {
+	    	l.destroy();
+	    }
+	    layers.clear();
     }
 }
