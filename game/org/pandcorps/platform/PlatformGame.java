@@ -93,6 +93,7 @@ public class PlatformGame extends BaseGame {
 	Flash block main image is wrong.
 	New Level generator for town background; nearly constant ground height so houses always look right.
 	Troll/Ogre should burst an angry image when stomped first time.
+	Enemy no longer throws Projectile.
 	*/
 	
 	protected final static byte TILE_BREAK = 2;
