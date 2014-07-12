@@ -187,6 +187,20 @@ public final class GlPanmage extends Panmage {
 		gl.glTexImage2D(
 			gl.GL_TEXTURE_2D, 0, gl.GL_RGBA, tex.scaledWidth, tex.scaledHeight, 0, gl.GL_RGBA, gl.GL_UNSIGNED_BYTE,
 			tex.scratch);
+		for (final ImageLayer l : layers.values()) {
+			rebindBuffer(l);
+		}
+	}
+	
+	private final void rebindBuffer(final ImageLayer l) {
+		if (l == null || l.bufT == NULL_TID) {
+			return;
+		}
+		final Pangl gl = GlPangine.gl;
+		gl.glBindBuffer(gl.GL_ARRAY_BUFFER, l.bufT);
+    	gl.glBufferData(gl.GL_ARRAY_BUFFER, l.t.getBuffer(), gl.GL_STATIC_DRAW);
+    	gl.glBindBuffer(gl.GL_ARRAY_BUFFER, l.bufV);
+    	gl.glBufferData(gl.GL_ARRAY_BUFFER, l.v.getBuffer(), gl.GL_STATIC_DRAW);
 	}
 	
 	private GlPanmage(final String id, final Panple origin,
@@ -283,16 +297,13 @@ public final class GlPanmage extends Panmage {
 	    	    	tex = null;
 	    	    }
 	    	}
-    	    if (buffered && l.bufT == NULL_TID) { //TODO Handle buffer recreate like texture recreate
+    	    if (buffered && l.bufT == NULL_TID) {
     	    	gl.glEnable(gl.GL_ARRAY_BUFFER_BINDING); //TODO Only call once
     	    	final IntBuffer ids = Pantil.allocateDirectIntBuffer(2);
     	    	gl.glGenBuffers(ids); //TODO delete buffers
     	    	l.bufT = ids.get(0);
     	    	l.bufV = ids.get(1);
-    	    	gl.glBindBuffer(gl.GL_ARRAY_BUFFER, l.bufT);
-    	    	gl.glBufferData(gl.GL_ARRAY_BUFFER, t.getBuffer(), gl.GL_STATIC_DRAW);
-    	    	gl.glBindBuffer(gl.GL_ARRAY_BUFFER, l.bufV);
-    	    	gl.glBufferData(gl.GL_ARRAY_BUFFER, l.v.getBuffer(), gl.GL_STATIC_DRAW);
+    	    	rebindBuffer(l);
     	    }
     	    gl.glLoadIdentity();
     	    gl.glBindTexture(gl.GL_TEXTURE_2D, tid);
