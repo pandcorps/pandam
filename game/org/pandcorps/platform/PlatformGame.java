@@ -89,6 +89,8 @@ public class PlatformGame extends BaseGame {
 	Assist: Teleport (After fall, teleport to target immediately instead of slow bubble, no gem loss)
 	Remove Gem class? Just use Tile.foreground and Tile.animate?
 	Clear TileMap.map/imgs?
+	Move static TileMaps into OpenGl once and reuse for multiple frames.
+	Static TileMaps should combine adjacent Tiles with adjacent TileMapImages into one larger Tile/TileMapImage.
 	Flash block main image is wrong.
 	New Level generator for town background; nearly constant ground height so houses always look right.
 	Troll/Ogre should burst an angry image when stomped first time.
