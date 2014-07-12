@@ -30,15 +30,22 @@ import org.pandcorps.pandam.*;
 
 public final class AndroidPangl extends Pangl {
 	private final GL10 gl;
+	private final GL11 gl11;
 	
 	protected AndroidPangl(final GL10 gl) {
-		super(GL10.GL_ALPHA_TEST, GL10.GL_BLEND, GL10.GL_COLOR_BUFFER_BIT, GL10.GL_DEPTH_BUFFER_BIT, GL10.GL_DEPTH_TEST, GL10.GL_GREATER, GL10.GL_LESS, GL10.GL_MODELVIEW, GL10.GL_NEAREST, GL10.GL_ONE_MINUS_SRC_ALPHA, GL10.GL_PROJECTION, -1, GL10.GL_RGB, GL10.GL_RGBA, GL10.GL_SRC_ALPHA, GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_COORD_ARRAY, GL10.GL_TEXTURE_MAG_FILTER, GL10.GL_TEXTURE_MIN_FILTER, GL10.GL_TRIANGLES, GL10.GL_UNSIGNED_BYTE, GL10.GL_VERTEX_ARRAY);
+		super(GL10.GL_ALPHA_TEST, GL11.GL_ARRAY_BUFFER, GL11.GL_ARRAY_BUFFER_BINDING, GL10.GL_BLEND, GL10.GL_COLOR_BUFFER_BIT, GL10.GL_DEPTH_BUFFER_BIT, GL10.GL_DEPTH_TEST, GL10.GL_FLOAT, GL10.GL_GREATER, GL10.GL_LESS, GL10.GL_MODELVIEW, GL10.GL_NEAREST, GL10.GL_ONE_MINUS_SRC_ALPHA, GL10.GL_PROJECTION, -1, GL10.GL_RGB, GL10.GL_RGBA, GL10.GL_SRC_ALPHA, GL11.GL_STATIC_DRAW, GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_COORD_ARRAY, GL10.GL_TEXTURE_MAG_FILTER, GL10.GL_TEXTURE_MIN_FILTER, GL10.GL_TRIANGLES, GL10.GL_UNSIGNED_BYTE, GL10.GL_VERTEX_ARRAY);
 		this.gl = gl;
+		gl11 = gl instanceof GL11 ? (GL11) gl : null;
 	}
 	
 	@Override
 	public final void glAlphaFunc(final int func, final float ref) {
 		gl.glAlphaFunc(func, ref);
+	}
+	
+	@Override
+	public final void glBindBuffer(final int target, final int buffer) {
+		gl11.glBindBuffer(target, buffer);
 	}
 	
 	@Override
@@ -49,6 +56,11 @@ public final class AndroidPangl extends Pangl {
 	@Override
 	public final void glBlendFunc(final int sfactor, final int dfactor) {
 		gl.glBlendFunc(sfactor, dfactor);
+	}
+	
+	@Override
+	public final void glBufferData(final int target, final FloatBuffer data, final int usage) {
+		gl11.glBufferData(target, data.capacity() * 4, data, usage);
 	}
 	
 	@Override
@@ -121,6 +133,11 @@ public final class AndroidPangl extends Pangl {
 	}
 	
 	@Override
+	public final void glGenBuffers(final IntBuffer buffers) {
+		gl11.glGenBuffers(buffers.limit(), buffers);
+	}
+	
+	@Override
 	public final void glGenTextures(final IntBuffer textures) {
 		gl.glGenTextures(textures.limit(), textures);
 	}
@@ -153,6 +170,11 @@ public final class AndroidPangl extends Pangl {
 	}
 	
 	@Override
+	public final void glTexCoordPointer(final int size, final int type, final int stride, final int offset) {
+		gl11.glTexCoordPointer(size, type, stride, offset);
+	}
+	
+	@Override
 	public final void glTexImage2D(final int target, final int level, final int internalFormat,
 			final int width, final int height, final int border, final int format, final int type, final ByteBuffer pixels) {
 		gl.glTexImage2D(target, level, internalFormat, width, height, border, format, type, pixels);
@@ -166,6 +188,11 @@ public final class AndroidPangl extends Pangl {
 	@Override
 	public final void glVertexPointer(final int size, final int stride, final FloatBuffer pointer) {
 		gl.glVertexPointer(size, GL10.GL_FLOAT, stride, pointer);
+	}
+	
+	@Override
+	public final void glVertexPointer(final int size, final int type, final int stride, final int offset) {
+		gl11.glVertexPointer(size, type, stride, offset);
 	}
 	
 	@Override
