@@ -781,6 +781,9 @@ public abstract class Pangine {
 	
 	protected abstract void destroy() throws Exception;
 	
+	protected void destroyLayer(final Panlayer layer) {
+	}
+	
 	protected void recreate() throws Exception {
 	}
 

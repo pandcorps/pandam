@@ -161,6 +161,13 @@ public abstract class GlPangine extends Pangine {
 	}
 	
 	@Override
+	protected final void destroyLayer(final Panlayer layer) {
+		for (final GlPanmage image : images) {
+			image.destroyLayer(layer);
+		}
+	}
+	
+	@Override
 	protected final void recreate() throws Exception {
 		init();
 		gl.glViewport(0, 0, getDesktopWidth(), getDesktopHeight());
