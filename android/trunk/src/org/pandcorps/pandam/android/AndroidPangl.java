@@ -90,11 +90,20 @@ public final class AndroidPangl extends Pangl {
 	}
 	
 	@Override
-	public final void glDeleteTextures(final int texture) {
+	public final void glDeleteBuffers(final int buffer) {
+		gl11.glDeleteBuffers(1, toBuffer(buffer));
+	}
+	
+	private final static IntBuffer toBuffer(final int texture) {
 		final IntBuffer textures = Pantil.allocateDirectIntBuffer(1);
 		textures.put(texture);
 		textures.rewind();
-		gl.glDeleteTextures(1, textures);
+		return textures;
+	}
+	
+	@Override
+	public final void glDeleteTextures(final int texture) {
+		gl.glDeleteTextures(1, toBuffer(texture));
 	}
 	
 	@Override
