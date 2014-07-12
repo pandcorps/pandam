@@ -53,6 +53,7 @@ public final class FloatChain {
     }
     
     public final FloatBuffer getBuffer() {
+    	buf.rewind();
         return buf;
     }
     
