@@ -201,6 +201,7 @@ public abstract class BaseGame extends Pangame {
 	    final Panlayer bg = engine.createLayer(Pantil.vmid(), w, h, 1, master.getRoom());
         above.addBeneath(bg);
         bg.setMaster(master);
+        bg.setConstant(true);
         return bg;
 	}
 }
