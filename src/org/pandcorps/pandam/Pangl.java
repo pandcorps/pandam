@@ -100,6 +100,8 @@ public abstract class Pangl {
 	
 	public abstract void glColor4b(final byte red, final byte green, final byte blue, final byte alpha);
 	
+	public abstract void glDeleteBuffers(final int buffer);
+	
 	public abstract void glDeleteTextures(final int texture);
 	
 	public abstract void glDepthFunc(final int func);
