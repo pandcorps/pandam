@@ -216,6 +216,8 @@ public class Level {
     
     protected final static void loadLevel() {
     	grassy = true;
+    	topSkyColor = null;
+	    bottomSkyColor = null;
     	backgroundBuilder = theme.getRandomBackground();
     	final Builder b = theme.getRandomBuilder();
     	w = b.getW();
@@ -414,6 +416,8 @@ public class Level {
             if (isNormalTheme()) {
             	applyTerrainTexture(backImg, 0, 0, 48, 32);
             	backImg = getColoredTerrain(backImg, 0, 0, 96, 96);
+            } else {
+            	extractSkyColors(backImg);
             }
             return backImg;
     	}
@@ -1068,8 +1072,10 @@ public class Level {
     }
     
     private final static void extractSkyColors(final Img img) {
-        topSkyColor = Imtil.getColor(img, 96, 0);
-        bottomSkyColor = Imtil.getColor(img, 96, 32);
+    	if (topSkyColor == null) {
+	        topSkyColor = Imtil.getColor(img, 96, 0);
+	        bottomSkyColor = Imtil.getColor(img, 96, 32);
+    	}
     }
     
     private final static void buildSky(final TileMap tm, final int base, final int mid) {

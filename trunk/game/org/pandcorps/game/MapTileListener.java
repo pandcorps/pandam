@@ -28,6 +28,7 @@ import org.pandcorps.pandam.*;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.tile.Tile.*;
 
+@Deprecated // Use Tile.animate
 public final class MapTileListener implements TileListener {
 	private final int dur;
 	private final IdentityHashMap<TileMapImage, TileMapImage> map = new IdentityHashMap<TileMapImage, TileMapImage>();

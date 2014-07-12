@@ -49,7 +49,8 @@ public class RpgGame extends BaseGame {
 	private static Font hudFont = null;
 	/*package*/ static Pantext hudInteract = null;
 	/*package*/ final static StringBuilder hudInteractText = new StringBuilder();
-	private static DynamicTileMap tm = null;
+	private static TileMap tm = null;
+	private static TileMapImage[][] animTiles = null;
 	private static Panmage[] containers = null;
 	/*package*/ static Player player = null;
 	
@@ -85,9 +86,15 @@ public class RpgGame extends BaseGame {
 	        this.j = j;
 	    }
 	    
+	    @Override
+        protected final void step() {
+	    	area.step();
+	    }
+	    
 		@Override
         protected final void load() throws Exception {
-			tm = new DynamicTileMap("act.tilemap", room, ImtilX.DIM, ImtilX.DIM);
+			animTiles = null;
+			tm = new TileMap("act.tilemap", room, ImtilX.DIM, ImtilX.DIM);
 			tm.setOccupantDepth(DepthMode.Y);
 			//tm.getPosition().setZ(-10);
 			room.addActor(tm);
@@ -101,13 +108,10 @@ public class RpgGame extends BaseGame {
 		final Panmage[] doors = createSheet("door", "org/pandcorps/rpg/res/misc/DoorQuaint.png");
 		tm.setImageMap(createImage("tile.quaint", "org/pandcorps/rpg/res/bg/TileQuaint.png", 128));
 		final TileMapImage[][] imgMap = tm.splitImageMap();
-		final MapTileListener mtl = new MapTileListener(8);
+		animTiles = new TileMapImage[5][];
 		for (int x = 1; x <= 5; x++) {
-			for (int y = 0; y <= 2; y++) {
-				mtl.put(imgMap[5 + y][x], imgMap[5 + ((y + 1) % 3)][x]);
-			}
+			animTiles[x - 1] = new TileMapImage[] {imgMap[5][x], imgMap[6][x], imgMap[7][x]};
 		}
-		tm.setTileListener(mtl);
 		tm.fillBackground(imgMap[5][0]);
 		tm.setBackground(6, 5, imgMap[4][1], Tile.BEHAVIOR_SOLID);
 		tm.setBackground(6, 6, imgMap[4][1], Tile.BEHAVIOR_SOLID);
@@ -191,12 +195,24 @@ public class RpgGame extends BaseGame {
 	    }
 		
 		protected abstract void init();
+		
+		protected void step() {
+		}
 	}
 	
 	private final static class Town extends Area {
 		@Override
 		protected final void init() {
 			loadTown();
+		}
+		
+		@Override
+		protected final void step() {
+			if ((Pangine.getEngine().getClock() % 8) == 0) {
+				for (final TileMapImage[] a : animTiles) {
+					Tile.animate(a);
+				}
+            }
 		}
 	}
 	

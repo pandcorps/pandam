@@ -26,7 +26,6 @@ import java.util.*;
 
 import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
-import org.pandcorps.game.*;
 import org.pandcorps.game.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.action.*;
@@ -226,22 +225,27 @@ public class Castle {
     }
     
     protected final static class PortalScreen extends CastleScreen {
+    	private TileMapImage[] portals = null;
+    	
         protected PortalScreen() {
             super("CastleExterior");
         }
         
         @Override
         protected TileMap newTileMap() {
-        	return new DynamicTileMap(Pantil.vmid(), room, ImtilX.DIM, ImtilX.DIM);
+        	return new TileMap(Pantil.vmid(), room, ImtilX.DIM, ImtilX.DIM);
+        }
+        
+        @Override
+        protected final void step() {
+        	if ((Pangine.getEngine().getClock() % 5) == 0) {
+        		Tile.animate(portals);
+        	}
         }
         
         @Override
         protected final void draw() throws Exception {
-        	final MapTileListener mtl = new MapTileListener(5);
-        	for (int i = 0; i < 3; i++) {
-        		mtl.put(imgMap[4][i], imgMap[4][(i + 1) % 3]);
-        	}
-        	((DynamicTileMap) tm).setTileListener(mtl);
+        	portals = new TileMapImage[] {imgMap[4][0], imgMap[4][1], imgMap[4][2]};
         	
             tm.fillBackground(imgMap[3][2], 0, 0, 16, 1, true);
             
@@ -282,7 +286,7 @@ public class Castle {
             tm.fillBackground(imgMap[4][0], 13, 1, 1, 7);
             tm.rectangleForeground(4, 1, 12, 7, 2, 2);
             
-            final TileMap tm2 = new DynamicTileMap(Pantil.vmid(), 2, 9, ImtilX.DIM, ImtilX.DIM);
+            final TileMap tm2 = new TileMap(Pantil.vmid(), 2, 9, ImtilX.DIM, ImtilX.DIM);
             tm2.setImageMap(tm);
             room.addActor(tm2);
             tm2.getPosition().set(224, 0, 3);
