@@ -92,8 +92,19 @@ public class PlatformGame extends BaseGame {
 	Static TileMaps should combine adjacent Tiles with adjacent TileMapImages into one larger Tile/TileMapImage.
 	Flash block main image is wrong.
 	New Level generator for town background; nearly constant ground height so houses always look right.
-	Troll/Ogre should burst an angry image when stomped first time.
 	Enemy no longer throws Projectile.
+	Stats for touch menu.
+	Wing color touch menu.
+	Frame rate menu.
+	Wing gravity tweak.
+	BounceBall vertical velocity and bounce multipler tweak.
+	Level builder should use setTile instead of forcing getTile Map lookups.
+	Add TM/C.
+	Improve World name generator.
+	Disable million gem bonus.
+	A kicked BounceBall should give Gems to Player that kicked it when it defeats an Enemy.
+	A BounceBall should be able to bump blocks (from below and side) and give Gem to Player that kicked.
+	Names? Hob-troll, Hob-ogre, Pixy-imp?
 	*/
 	
 	protected final static byte TILE_BREAK = 2;
@@ -157,6 +168,7 @@ public class PlatformGame extends BaseGame {
 	protected static List<EnemyDefinition> enemies = null;
 	protected static EnemyDefinition imp = null;
 	protected static EnemyDefinition armoredImp = null;
+	protected static Panimation anger = null;
 	protected static Panmage block8 = null;
 	protected static Panmage[] gem = null;
 	protected static Panimation gemAnm = null;
@@ -607,6 +619,7 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
                 	if (Math.abs(enemy.hv) <= 1) {
                 		enemy.hv *= 2;
                 		enemy.timer = 3;
+                		enemy.burst(anger, enemy, null, 36);
                 		return true;
                 	} else if (enemy.timer > 0) {
                 		return true;
@@ -728,6 +741,7 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
                 	return Math.abs(enemy.hv) < 4;
                 }};
 			allEnemies.add(armoredImp);
+			anger = createAnm("anger", 10, CENTER_16, Enemy.loadStrip(9, ImtilX.DIM));
 			Level.setTheme(Theme.Normal); }});
 		
 		loaders.add(new Runnable() { @Override public final void run() {
