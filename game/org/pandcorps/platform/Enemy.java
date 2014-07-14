@@ -91,7 +91,7 @@ public class Enemy extends Character {
 		
 		protected EnemyDefinition(final String name, final int ind, final PixelFilter f, final boolean ledgeTurn,
                 final boolean splat, final int avoidCount, final int offX, final int h, final int hv, final int d) {
-			final Img[] strip = ImtilX.loadStrip("org/pandcorps/platform/res/enemy/Enemy0" + ind + ".png", d), walk;
+			final Img[] strip = loadStrip(ind, d), walk;
 			if (f != null) {
 				final int size = strip.length;
 				for (int i = 0; i < size; i++) {
@@ -125,6 +125,10 @@ public class Enemy extends Character {
 			this.h = h;
 			this.hv = hv;
 		}
+	}
+	
+	protected final static Img[] loadStrip(final int ind, final int d) {
+		return ImtilX.loadStrip("org/pandcorps/platform/res/enemy/Enemy0" + ind + ".png", d);
 	}
 	
 	private final EnemyDefinition def;
@@ -294,18 +298,22 @@ public class Enemy extends Character {
 		return true;
 	}
 	
-	private void burst(final Panimation anm) {
+	protected final void burst(final Panimation anm) {
 		burst(anm, null);
 	}
 	
-	protected void burst(final Panimation anm, final BurstHandler burstHandler) {
+	protected final void burst(final Panimation anm, final BurstHandler burstHandler) {
 		burst(anm, this, burstHandler);
 	}
 	
-	protected void burst(final Panimation anm, final Panctor dir, final BurstHandler burstHandler) {
+	protected final void burst(final Panimation anm, final Panctor dir, final BurstHandler burstHandler) {
+		burst(anm, dir, burstHandler, 0);
+	}
+	
+	protected final void burst(final Panimation anm, final Panctor dir, final BurstHandler burstHandler, final int yoff) {
 	    final Burst b = CustomBurst.createBurst(anm, burstHandler);
 	    final Panple pos = getPosition();
-        PlatformGame.setPosition(b, pos.getX(), pos.getY(), PlatformGame.DEPTH_SHATTER);
+        PlatformGame.setPosition(b, pos.getX(), pos.getY() + yoff, PlatformGame.DEPTH_SHATTER);
         b.setMirror(dir.isMirror());
         PlatformGame.room.addActor(b);
 	}
