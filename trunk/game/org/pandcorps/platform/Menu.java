@@ -186,8 +186,15 @@ public class Menu {
 				lt = PlatformGame.left2;
 				ltIn = PlatformGame.left2In;
 			}
-			final TouchButton left = addButton(room, "Left", 0, y, input, act, ctrl.getLeft(), lt, ltIn, full);
-			final TouchButton right = addButton(room, "Right", rx, y, input, act, ctrl.getRight(), rt, rtIn, full);
+			final TouchButton left;
+			final TouchButton right;
+			if (full || !PlatformGame.pcs.get(0).profile.autoRun) {
+    			left = addButton(room, "Left", 0, y, input, act, ctrl.getLeft(), lt, ltIn, full);
+                right = addButton(room, "Right", rx, y, input, act, ctrl.getRight(), rt, rtIn, full);
+			} else {
+			    left = null;
+			    right = null;
+			}
 			if (full) {
 			    up.setOverlapMode(TouchButton.OVERLAP_BEST);
 			    down.setOverlapMode(TouchButton.OVERLAP_BEST);

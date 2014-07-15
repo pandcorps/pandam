@@ -52,7 +52,7 @@ public class PlatformGame extends BaseGame {
 	Horse/hippo/elephant/squirrel/gator/pig/walrus/beaver/stag/bull/ram player face.
 	Player shirts.
 	Ghost trail, particle trail.
-	Spin-float when hold jump while falling, 2xjump, inf flip-jump.
+	Spin-float when hold jump while falling, 2xjump, inf flip-jump, kite.
 	Player sliding image.
 	Warp Map marker for entry/exit point.
 	Replace bush with Rise.png for some levels; rise will be higher than 1 tile; separate build method.
@@ -96,6 +96,7 @@ public class PlatformGame extends BaseGame {
 	Stats for touch menu.
 	Wing color touch menu.
 	Frame rate menu.
+	Bestiary menu.
 	Wing gravity tweak.
 	BounceBall vertical velocity and bounce multipler tweak.
 	Level builder should use setTile instead of forcing getTile Map lookups.
