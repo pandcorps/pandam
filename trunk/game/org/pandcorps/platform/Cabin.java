@@ -147,13 +147,13 @@ public class Cabin {
 			owl.getPosition().set(112, 128, 1);
 			
 			//TODO All players?
-			PlatformGame.initTouchButtons(null, true);
+			PlatformGame.initTouchButtons(null, false, true, null);
 			pc = PlatformGame.pcs.get(0);
 			final Player player = new Player(pc);
 			player.mode = Player.MODE_DISABLED;
 			room.addActor(player);
 			PlatformGame.setPosition(player, 74, 32, PlatformGame.DEPTH_PLAYER);
-			PlatformGame.addHud(room, true);
+			PlatformGame.addHud(room, false, true);
 			
 			instr = new Pantext("act.instr", PlatformGame.font, "Hoo! Hoo! Pick one!");
 			room.addActor(instr);

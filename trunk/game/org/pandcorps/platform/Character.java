@@ -54,6 +54,7 @@ public abstract class Character extends Panctor implements StepListener, Collida
 	    if (v > 0) {
 	        mult = 1;
 	        if (pos.getX() > PlatformGame.room.getSize().getX()) {
+	            onEnd();
 	            return false;
 	        }
 	    } else {
@@ -411,6 +412,10 @@ public abstract class Character extends Panctor implements StepListener, Collida
 	//@OverrideMe
 	protected void onWall() {
 	}
+	
+	//@OverrideMe
+    protected void onEnd() {
+    }
 	
 	//@OverrideMe
 	protected void onBump(final Character c) {

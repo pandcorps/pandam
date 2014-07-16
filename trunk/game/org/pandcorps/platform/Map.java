@@ -1169,7 +1169,7 @@ public class Map {
 		final Pantext name = new Pantext("map.name", PlatformGame.font, Map.name);
 		name.getPosition().set(PlatformGame.SCREEN_W / 2, 1);
 		name.centerX();
-		final Panlayer hud = PlatformGame.addHud(room, false);
+		final Panlayer hud = PlatformGame.addHud(room, false, false);
 		hud.addActor(name);
 		Menu.PlayerScreen.initTouchButtons(hud, getPlayerContext().ctrl);
 		final Pangine engine = Pangine.getEngine();

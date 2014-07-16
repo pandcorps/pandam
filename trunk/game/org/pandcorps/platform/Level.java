@@ -56,6 +56,7 @@ public class Level {
     private static int ng = 0;
     private static int nt = 0;
     private static int floor = 0;
+    protected static int goalIndex = 0;
     private static boolean grassy = true;
     private static Pancolor topSkyColor = null;
     private static Pancolor bottomSkyColor = null;
@@ -1303,7 +1304,8 @@ public class Level {
     }
     
     private final static void goalBlock(final int x, final int y) {
-        tm.setForeground(x, y, imgMap[7][0], PlatformGame.TILE_BUMP);
+        goalIndex = tm.getIndex(x, y);
+        tm.setForeground(goalIndex, imgMap[7][0], PlatformGame.TILE_BUMP);
     }
     
     private final static void step(final int x, final int y, final int w, final int h) {

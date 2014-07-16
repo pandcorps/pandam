@@ -43,6 +43,9 @@ import org.pandcorps.platform.Avatar.*;
 import org.pandcorps.platform.Player.*;
 
 public class Menu {
+    protected final static byte TOUCH_FULL = 0;
+    protected final static byte TOUCH_HORIZONTAL = 1;
+    protected final static byte TOUCH_JUMP = 2;
     private final static short SPEED_MENU_FADE = 9;
     private final static int SIZE_FONT = 8;
     private final static String NAME_NEW = "org.pandcorps.new";
@@ -140,11 +143,11 @@ public class Menu {
 		}
 		
 		protected final static void initTouchButtons(final Panlayer room, final ControlScheme ctrl) {
-			initTouchButtons(room, ctrl, true, true, true);
+			initTouchButtons(room, ctrl, TOUCH_FULL, true, true, null);
 		}
 		
 		protected final static void initTouchButtons(final Panlayer room, final ControlScheme ctrl,
-				final boolean full, final boolean input, final boolean act) {
+				final byte mode, final boolean input, final boolean act, final Panctor bound) {
 			//System.out.println("initTouch for " + getClass().getName());
 			if (ctrl == null) {
 				return;
@@ -159,9 +162,11 @@ public class Menu {
 			if (input) {
 				engine.clearTouchButtons();
 			}
-			final int d = 60, rx, r = engine.getEffectiveWidth(), y;
-			final TouchButton down, up, act2;
-			final Panmage rt, rtIn, lt, ltIn;
+			final int d = 60, r = engine.getEffectiveWidth();
+			int rx = 0, y = 0;
+			TouchButton down = null, up = null, act2 = null;
+			Panmage rt = PlatformGame.right2, rtIn = PlatformGame.right2In, lt = PlatformGame.left2, ltIn = PlatformGame.left2In;
+			final boolean full = mode == TOUCH_FULL;
 			if (full) {
 			    final int rad = (d / 2) + 1, dmtr = rad * 2;
 				y = rad;
@@ -174,26 +179,20 @@ public class Menu {
 				act2 = newFormButton(room, "Act2", r - (int) ts.getX(), engine.getEffectiveHeight() - (int) ts.getY(), PlatformGame.menuMenu);
 				rt = lt = PlatformGame.diamond;
 				rtIn = ltIn = PlatformGame.diamondIn;
-			} else {
-				y = 0;
-				down = null;
-				up = null;
+			} else if (mode == TOUCH_HORIZONTAL) {
 				rx = (int) (d * 1.25f);
-				act2 = null;
 				//sub = null;
-				rt = PlatformGame.right2;
-				rtIn = PlatformGame.right2In;
-				lt = PlatformGame.left2;
-				ltIn = PlatformGame.left2In;
 			}
-			final TouchButton left;
-			final TouchButton right;
-			if (full || !PlatformGame.pcs.get(0).profile.autoRun) {
+			final TouchButton left, right;
+			final Panput act1;
+			if (mode != TOUCH_JUMP) {
     			left = addButton(room, "Left", 0, y, input, act, ctrl.getLeft(), lt, ltIn, full);
                 right = addButton(room, "Right", rx, y, input, act, ctrl.getRight(), rt, rtIn, full);
+                act1 = addCircleButton(room, "Act1", r - rx, 0, input, act, ctrl.get1(), full);
 			} else {
 			    left = null;
 			    right = null;
+			    act1 = engine.getInteraction().TOUCH;
 			}
 			if (full) {
 			    up.setOverlapMode(TouchButton.OVERLAP_BEST);
@@ -201,12 +200,15 @@ public class Menu {
 			    left.setOverlapMode(TouchButton.OVERLAP_BEST);
 			    right.setOverlapMode(TouchButton.OVERLAP_BEST);
 			}
-			final TouchButton act1 = addCircleButton(room, "Act1", r - rx, 0, input, act, ctrl.get1(), full);
 			if (input) {
 				ctrl.set(down, up, left, right, act1, act2, act2);
 			}
-			if (!full && act1 != null && act1.getActor() != null) {
-			    registerBackPromptQuit(act1.getActor());
+			Panctor actor = act1 instanceof TouchButton ? ((TouchButton) act1).getActor() : null;
+			if (actor == null) {
+			    actor = bound;
+			}
+			if (!full && actor != null) {
+			    registerBackPromptQuit(actor);
 			}
 		}
 		
