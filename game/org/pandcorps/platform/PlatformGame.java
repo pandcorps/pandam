@@ -933,34 +933,36 @@ System.out.println("loadConstants end " + System.currentTimeMillis());
 	}
 	
 	private final static void loadLevel() {
-		initTouchButtons(null, true); // Must define inputs before creating Player
+		initTouchButtons(null, true, true, null); // Must define inputs before creating Player
 	    Level.loadLevel();
-	    addHud(room, true);
+	    addHud(room, true, true);
 	}
 	
-	protected final static Panlayer addHud(final Panroom room, final boolean level) {
+	protected final static Panlayer addHud(final Panroom room, final boolean allowAuto, final boolean level) {
 		final Panlayer hud = createHud(room);
 		final int h = Pangine.getEngine().getEffectiveHeight() - 17;
-		addHudGem(hud, 0, h);
+		final Gem gem = addHudGem(hud, 0, h);
         final int size = pcs.size();
         for (int i = 0; i < size; i++) {
         	addHud(hud, pcs.get(i), OFF_GEM + (i * 56), h, level, true);
         }
         addNotifications(hud);
         if (level) {
-        	initTouchButtons(hud, false); // Must define actors after creating layer
+        	initTouchButtons(hud, allowAuto, false, gem); // Must define actors after creating layer
         }
         return hud;
 	}
 	
-	protected final static void initTouchButtons(final Panlayer layer, final boolean input) {
-		Menu.PlayerScreen.initTouchButtons(layer, pcs.get(0).ctrl, false, input, !input);
+	protected final static void initTouchButtons(final Panlayer layer, final boolean allowAuto, final boolean input, final Panctor bound) {
+	    final PlayerContext pc = pcs.get(0);
+		Menu.PlayerScreen.initTouchButtons(layer, pc.ctrl, allowAuto && pc.profile.autoRun ? Menu.TOUCH_JUMP : Menu.TOUCH_HORIZONTAL, input, !input, bound);
 	}
 	
-	protected final static void addHudGem(final Panlayer hud, final int x, final int y) {
+	protected final static Gem addHudGem(final Panlayer hud, final int x, final int y) {
 		final Gem hudGem = new Gem();
         hudGem.getPosition().set(x, y);
         hud.addActor(hudGem);
+        return hudGem;
 	}
 	
 	protected final static void addHud(final Panlayer hud, final PlayerContext pc, final int x, final int y, final boolean level, final boolean mult) {

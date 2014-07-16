@@ -312,7 +312,11 @@ public class Player extends Character implements CollisionListener {
 	private final void jump() {
 		if (mode == MODE_DISABLED) {
 			return;
-		} else if (jumpMode == JUMP_FLY) {
+		}
+		if (pc.profile.autoRun) {
+		    this.activeTimer += 8;
+		}
+		if (jumpMode == JUMP_FLY) {
 	        flying = true;
 	        addV(-g);
 	        return;
@@ -451,7 +455,11 @@ public class Player extends Character implements CollisionListener {
 			}
 			//return true; // Let falling Player keep falling; just don't allow new input
 		}
-		if (hv == 0) {
+		final boolean auto = pc.profile.autoRun;
+		if (auto) {
+		    hv = VEL_WALK;
+		}
+		if (auto || hv == 0) {
 			if (activeTimer > 0) {
 				activeTimer -= Math.max(1, activeTimer / 2);
 			}
@@ -584,6 +592,14 @@ public class Player extends Character implements CollisionListener {
     }
 	
 	@Override
+    protected final void onEnd() {
+	    //TODO stop hv after this
+	    if (pc.profile.autoRun) {
+	        Tiles.bump(this, Level.goalIndex);
+	    }
+    }
+	
+	@Override
 	protected final void onBump(final Character c) {
 		if (v <= 0) {
 			v = VEL_BUMP;
@@ -593,6 +609,10 @@ public class Player extends Character implements CollisionListener {
 	@Override
 	protected final boolean onFell() {
 		if (jumpMode != JUMP_FLY) {
+		    if (pc.profile.autoRun) {
+		        final Panple pos = getPosition();
+		        safe.set(pos.getX(), getCeiling() - 1, pos.getZ());
+		    }
 			onHurt();
 			startSafety();
 			return true;
