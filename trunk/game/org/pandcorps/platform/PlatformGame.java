@@ -96,12 +96,13 @@ public class PlatformGame extends BaseGame {
 	Wing color touch menu.
 	Bestiary menu.
 	Wing gravity tweak.
-	BounceBall vertical velocity and bounce multiplier tweak.
+	BounceBall animation duration.
 	Level builder should use setTile instead of forcing getTile Map lookups.
 	Improve World name generator.
 	Disable million gem bonus.
 	A kicked BounceBall should give Gems to Player that kicked it when it defeats an Enemy.
 	A BounceBall should be able to bump blocks (from below and side) and give Gem to Player that kicked.
+	Enemies should be scrolled off screen on either side (higher threshold on right; they start off screen on right).
 	Names? Hob-troll, Hob-ogre, Pixie-imp?
 	Flag to disable Pangine entity map.
 	Panmage.finalize.
@@ -686,7 +687,7 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
                     final Enemy e = new BounceBall(bounceBall, enemy);
                     e.full = enemy.full;
                     e.setEnemyMirror(player.isMirror());
-                    e.v = 6;
+                    e.v = 9;
                     enemy.destroy();
                     return false;
                 }};
@@ -703,7 +704,10 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
                 }};
 			bounceBall.landedHandler = new InteractionHandler() {
                 @Override public final boolean onInteract(final Enemy enemy, final Player player) {
-                    enemy.v = Math.abs(enemy.v) * 0.8f;
+                	if (enemy.v > 0) {
+                		return true;
+                	}
+                    enemy.v = -enemy.v * 0.9f;
                     return true;
                 }};
             bounceBall.stompHandler = new InteractionHandler() {
