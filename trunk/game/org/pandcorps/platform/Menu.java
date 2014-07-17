@@ -1620,6 +1620,7 @@ public class Menu {
 	}
 	
 	protected final static class OptionsScreen extends PlayerScreen {
+		final StringBuilder msgAuto = new StringBuilder();
 	    final StringBuilder msgSpeed = new StringBuilder();
 	    
         protected OptionsScreen(final PlayerContext pc) {
@@ -1639,12 +1640,16 @@ public class Menu {
         protected final void menuTouch() {
             final Pangine engine = Pangine.getEngine();
             final Panple btnSize = PlatformGame.menu.getSize();
-            final int btnW = (int) btnSize.getX();
-            int x = btnW / 2, y = engine.getEffectiveHeight() - (int) btnSize.getY() * 4 / 3;
-            newFormButton("SpeedDown", x, y, PlatformGame.menuDown, new Runnable() {@Override public final void run() {incSpeed(-1);}});
-            newFormButton("SpeedUp", engine.getEffectiveWidth() - x - btnW, y, PlatformGame.menuUp, new Runnable() {@Override public final void run() {incSpeed(1);}});
+            final int btnW = (int) btnSize.getX(), btnH = (int) btnSize.getY(), offY = btnH * 4 / 3;
+            int x = btnW / 2, y = engine.getEffectiveHeight() - btnH - offY;
+            newFormButton("AutoToggle", x, y, null, new Runnable() {@Override public final void run() {toggleAuto();}});
+            addTitle(msgAuto, x + btnW + 8, y);
+            setMessageAuto();
+            y -= offY;
+            newFormButton("SpeedDown", x, y, PlatformGame.menuLeft, new Runnable() {@Override public final void run() {incSpeed(-1);}});
+            newFormButton("SpeedUp", engine.getEffectiveWidth() - x - btnW, y, PlatformGame.menuRight, new Runnable() {@Override public final void run() {incSpeed(1);}});
             setMessageSpeed();
-            addTitle(msgSpeed, x + btnW, y);
+            addTitle(msgSpeed, x + btnW + 8, y);
             newTab(PlatformGame.menuCheck, "Done", new Runnable() {@Override public final void run() {exit();}});
             newTabs();
         }
@@ -1652,13 +1657,28 @@ public class Menu {
         protected final void menuClassic() {
         }
         
+        private final void toggleAuto() {
+        	pc.profile.autoRun = !pc.profile.autoRun;
+        	setMessageAuto();
+        }
+        
+        private final void setMessageAuto() {
+        	final String s;
+        	if (pc.profile.autoRun) {
+        		s = "Auto-run, tap to jump";
+        	} else {
+        		s = "On-screen buttons";
+        	}
+        	Chartil.set(msgAuto, s);
+        }
+        
         private final void incSpeed(final int dir) {
-            final int amt = 15 * dir;
+            final int amt = Profile.DEF_FRAME_RATE - Profile.MIN_FRAME_RATE;
             int frameRate = pc.profile.frameRate + amt;
-            if (frameRate > 60) {
-                frameRate = 30;
-            } else if (frameRate < 30) {
-                frameRate = 60;
+            if (frameRate > Profile.MAX_FRAME_RATE) {
+                frameRate = Profile.MIN_FRAME_RATE;
+            } else if (frameRate < Profile.MIN_FRAME_RATE) {
+                frameRate = Profile.MAX_FRAME_RATE;
             }
             pc.profile.frameRate = frameRate;
             setMessageSpeed();
@@ -1668,16 +1688,16 @@ public class Menu {
         private final void setMessageSpeed() {
             final String s;
             switch(pc.profile.frameRate) {
-                case 30 :
+                case Profile.MIN_FRAME_RATE :
                     s = "Slow";
                     break;
-                case 60 :
+                case Profile.MAX_FRAME_RATE :
                     s = "Fast";
                     break;
                 default :
                     s = "Medium";
             }
-            Chartil.set(msgSpeed, "Speed: " + s);
+            Chartil.set(msgSpeed, "Game Speed: " + s);
         }
         
         @Override

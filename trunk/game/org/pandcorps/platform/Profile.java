@@ -32,6 +32,9 @@ import org.pandcorps.core.seg.*;
 import org.pandcorps.platform.Player.*;
 
 public class Profile extends PlayerData implements Segmented, Savable {
+	/*package*/ final static int MIN_FRAME_RATE = 24;
+	/*package*/ final static int DEF_FRAME_RATE = 30;
+	/*package*/ final static int MAX_FRAME_RATE = (DEF_FRAME_RATE * 2) - MIN_FRAME_RATE;
     protected final ArrayList<Avatar> avatars = new ArrayList<Avatar>();
     protected Avatar currentAvatar = null;
     protected int gems = 0;
@@ -40,7 +43,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
     protected final TreeSet<Integer> availableAssists = new TreeSet<Integer>();
     private final TreeSet<Integer> activeAssists = new TreeSet<Integer>();
     protected boolean autoRun = false;
-    protected int frameRate = 60;
+    protected int frameRate = DEF_FRAME_RATE;
     protected final Statistics stats = new Statistics();
     protected final TreeSet<Integer> achievements = new TreeSet<Integer>();
     protected int column = -1;
@@ -78,7 +81,7 @@ gems = 1000000;
     	addAll(availableAssists, seg, 5);
     	addAll(activeAssists, seg, 6);
     	autoRun = seg.getBoolean(7, false);
-    	frameRate = seg.getInt(8, 60);
+    	frameRate = seg.getInt(8, DEF_FRAME_RATE);
     	//ctrl = seg.intValue(3);
     }
     

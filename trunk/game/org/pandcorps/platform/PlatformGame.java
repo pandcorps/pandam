@@ -80,7 +80,6 @@ public class PlatformGame extends BaseGame {
 	Random music per map.
 	Sound effects for jump, bump, stomp, hurt, etc.
 	Automatically advance on Map if standing on defeated Level and there is only one adjacent undefeated Level.
-	Menu option to auto-run, only one button for jumping.
 	Flags to simplify menu in some environments (one Profile, maybe one Avatar).
 	Let LogoScreen finish after a specified Runnable finishes.
 	Let Thread keep loading through title screen.
@@ -93,12 +92,12 @@ public class PlatformGame extends BaseGame {
 	Flash block main image is wrong.
 	New Level generator for town background; nearly constant ground height so houses always look right.
 	Enemy no longer throws Projectile.
+	Wings on CastleScreen appear on top of Player.
 	Stats for touch menu.
 	Wing color touch menu.
-	Frame rate menu.
 	Bestiary menu.
 	Wing gravity tweak.
-	BounceBall vertical velocity and bounce multipler tweak.
+	BounceBall vertical velocity and bounce multiplier tweak.
 	Level builder should use setTile instead of forcing getTile Map lookups.
 	Add TM/C.
 	Improve World name generator.
@@ -109,6 +108,7 @@ public class PlatformGame extends BaseGame {
 	10 Gems for 32.
 	Flag to disable Pangine entity map.
 	Panmage.finalize.
+	Move 4-way diamonds further apart.
 	*/
 	
 	protected final static byte TILE_BREAK = 2;
@@ -236,7 +236,6 @@ public class PlatformGame extends BaseGame {
 	@Override
 	protected final void init(final Panroom room) throws Exception {
 	    Pangine.getEngine().setTitle("Platformer");
-		//engine.setFrameRate(60);
 		PlatformGame.room = room;
 		loadConstants();
 		Panscreen.set(new LogoScreen(Menu.TitleScreen.class, loaders));
@@ -623,7 +622,7 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
                 @Override public final boolean onInteract(final Enemy enemy, final Player player) {
                 	if (Math.abs(enemy.hv) <= 1) {
                 		enemy.hv *= 2;
-                		enemy.timer = 3;
+                		enemy.timer = 5;
                 		enemy.burst(anger, enemy, null, 36);
                 		return true;
                 	} else if (enemy.timer > 0) {
@@ -959,7 +958,7 @@ System.out.println("loadConstants end " + System.currentTimeMillis());
 	
 	protected final static void initTouchButtons(final Panlayer layer, final boolean allowAuto, final boolean input, final Panctor bound) {
 	    final PlayerContext pc = pcs.get(0);
-		Menu.PlayerScreen.initTouchButtons(layer, pc.ctrl, allowAuto && pc.profile.autoRun ? Menu.TOUCH_JUMP : Menu.TOUCH_HORIZONTAL, input, !input, bound);
+		Menu.PlayerScreen.initTouchButtons(layer, pc.ctrl, (allowAuto && pc.profile.autoRun) ? Menu.TOUCH_JUMP : Menu.TOUCH_HORIZONTAL, input, !input, bound);
 	}
 	
 	protected final static Gem addHudGem(final Panlayer hud, final int x, final int y) {
