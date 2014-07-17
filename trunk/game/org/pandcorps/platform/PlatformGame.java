@@ -92,7 +92,6 @@ public class PlatformGame extends BaseGame {
 	Flash block main image is wrong.
 	New Level generator for town background; nearly constant ground height so houses always look right.
 	Enemy no longer throws Projectile.
-	Wings on CastleScreen appear on top of Player.
 	Stats for touch menu.
 	Wing color touch menu.
 	Bestiary menu.
