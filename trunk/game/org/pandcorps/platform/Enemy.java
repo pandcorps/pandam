@@ -36,6 +36,7 @@ import org.pandcorps.platform.Player.*;
 public class Enemy extends Character {
 	protected final static int DEFAULT_X = 5;
 	protected final static int DEFAULT_H = 15;
+	protected final static int DEFAULT_WALK = 6;
 	protected final static int DEFAULT_SPLAT = 20;
 	private final static int DEFAULT_HV = 1;
 	private final static int MIN_TIMER = 60;
@@ -46,6 +47,7 @@ public class Enemy extends Character {
 	private final static FinPanple DEFAULT_MAX = new FinPanple(DEFAULT_X, DEFAULT_H, 0);
 	
 	protected static int currentSplat = DEFAULT_SPLAT;
+	protected static int currentWalk = DEFAULT_WALK;
 	
 	protected final static class EnemyDefinition {
 		private final Panimation walk;
@@ -115,7 +117,8 @@ public class Enemy extends Character {
 			    n = new FinPanple(-offX, 0, 0);
 			    x = new FinPanple(offX, h, 0);
 			}
-			this.walk = PlatformGame.createAnm(id, 6, o, n, x, walk);
+			this.walk = PlatformGame.createAnm(id, currentWalk, o, n, x, walk);
+			currentWalk = DEFAULT_WALK;
 			this.ledgeTurn = ledgeTurn;
 			this.splat = splat ? PlatformGame.createAnm(id + ".splat", currentSplat, o, n, x, strip[2]) : null;
 			currentSplat = DEFAULT_SPLAT;
