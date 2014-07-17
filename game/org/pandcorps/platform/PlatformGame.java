@@ -99,7 +99,6 @@ public class PlatformGame extends BaseGame {
 	Level builder should use setTile instead of forcing getTile Map lookups.
 	Improve World name generator.
 	Disable million gem bonus.
-	A kicked BounceBall should give Gems to Player that kicked it when it defeats an Enemy.
 	A BounceBall should be able to bump blocks (from below and side) and give Gem to Player that kicked.
 	Enemies should be scrolled off screen on either side (higher threshold on right; they start off screen on right).
 	Names? Hob-troll, Hob-ogre, Pixie-imp?
@@ -684,7 +683,7 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 				}};
 			armorBall.hurtHandler = new InteractionHandler() {
                 @Override public final boolean onInteract(final Enemy enemy, final Player player) {
-                    final Enemy e = new BounceBall(bounceBall, enemy);
+                    final Enemy e = new BounceBall(bounceBall, enemy, player);
                     e.full = enemy.full;
                     e.setEnemyMirror(player.isMirror());
                     e.v = 9;
