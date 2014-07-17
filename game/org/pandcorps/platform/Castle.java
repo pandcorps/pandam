@@ -289,8 +289,8 @@ public class Castle {
             final TileMap tm2 = new TileMap(Pantil.vmid(), 2, 9, ImtilX.DIM, ImtilX.DIM);
             tm2.setImageMap(tm);
             room.addActor(tm2);
-            tm2.getPosition().set(224, 0, 3);
-            tm2.setForegroundDepth(4);
+            tm2.getPosition().set(224, 0, 7);
+            tm2.setForegroundDepth(8);
             
             tm2.fillBackground(imgMap[3][2], 0, 0, 2, 1, true);
             tm2.setForeground(6, 3, 1, 1);
@@ -308,7 +308,8 @@ public class Castle {
             final Player player = new Player(PlatformGame.pcs.get(i));
 			player.mode = Player.MODE_DISABLED;
 			room.addActor(player);
-			player.getPosition().set(x + (24 * i), y, 2);
+			// Use PlatformGame.setPosition; otherwise wings can appear in front of Player
+			PlatformGame.setPosition(player, x + (24 * i), y, PlatformGame.DEPTH_PLAYER);
 			player.ai = ai;
         }
     }
