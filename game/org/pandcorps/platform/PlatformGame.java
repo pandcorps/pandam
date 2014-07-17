@@ -60,7 +60,7 @@ public class PlatformGame extends BaseGame {
 	Map landmarks: Mountain, garden.
 	Train-riding levels.
 	Ridable dragons.
-	Enemy Wisp, Elementals, Impix (winged Imp).
+	Enemy Wisp, Elementals, Impix (winged Imp), Troll Colossus (64^2, 100 Gems, 3 hits), Ogre Behemoth.
 	Gargoyles catch/carry Player, like moving platforms, one can jump to/from them, but not run on them.
 	Cannons on ground that Player enters to be launched.
 	Cannons in air that auto-fire, others that wait for jump input.
@@ -80,7 +80,7 @@ public class PlatformGame extends BaseGame {
 	Random music per map.
 	Sound effects for jump, bump, stomp, hurt, etc.
 	Automatically advance on Map if standing on defeated Level and there is only one adjacent undefeated Level.
-	Option to auto-run, only one button for jumping.
+	Menu option to auto-run, only one button for jumping.
 	Flags to simplify menu in some environments (one Profile, maybe one Avatar).
 	Let LogoScreen finish after a specified Runnable finishes.
 	Let Thread keep loading through title screen.
@@ -105,7 +105,10 @@ public class PlatformGame extends BaseGame {
 	Disable million gem bonus.
 	A kicked BounceBall should give Gems to Player that kicked it when it defeats an Enemy.
 	A BounceBall should be able to bump blocks (from below and side) and give Gem to Player that kicked.
-	Names? Hob-troll, Hob-ogre, Pixy-imp?
+	Names? Hob-troll, Hob-ogre, Pixie-imp?
+	10 Gems for 32.
+	Flag to disable Pangine entity map.
+	Panmage.finalize.
 	*/
 	
 	protected final static byte TILE_BREAK = 2;
@@ -1013,6 +1016,7 @@ System.out.println("loadConstants end " + System.currentTimeMillis());
                 ((Gem) actor).spark();
             }
         }
+	    Level.victory = true;
 	}
 	
 	protected final static void levelClose() {

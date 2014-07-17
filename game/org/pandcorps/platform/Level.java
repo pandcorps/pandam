@@ -61,6 +61,7 @@ public class Level {
     private static Pancolor topSkyColor = null;
     private static Pancolor bottomSkyColor = null;
     protected static int numEnemies = 0;
+    protected static boolean victory = false;
     
     protected abstract static class Theme {
     	public static Theme Normal = new Theme(null, 2, 3, 4, 5, 6, 7) {
@@ -216,6 +217,7 @@ public class Level {
     }
     
     protected final static void loadLevel() {
+        victory = false;
     	grassy = true;
     	topSkyColor = null;
 	    bottomSkyColor = null;
