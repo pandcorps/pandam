@@ -96,7 +96,6 @@ public class PlatformGame extends BaseGame {
 	Wing color touch menu.
 	Bestiary menu.
 	Wing gravity tweak.
-	BounceBall animation duration.
 	Level builder should use setTile instead of forcing getTile Map lookups.
 	Improve World name generator.
 	Disable million gem bonus.
