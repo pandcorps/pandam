@@ -66,7 +66,7 @@ public class GemBumped extends Pandy {
     }
 	
 	public GemBumped(final Player player, final Enemy defeated) {
-		this(player, defeated.getBoundingMinimum(), AWARD_DEF, false, PlatformGame.gemAnm);
+		this(player, defeated.getBoundingMinimum(), defeated.def.award, false, getAnm(defeated.def.award));
 	}
 	
 	public static GemBumped newLevelEnd(final Player player, final int index) {
