@@ -105,7 +105,6 @@ public class PlatformGame extends BaseGame {
 	A kicked BounceBall should give Gems to Player that kicked it when it defeats an Enemy.
 	A BounceBall should be able to bump blocks (from below and side) and give Gem to Player that kicked.
 	Names? Hob-troll, Hob-ogre, Pixie-imp?
-	10 Gems for 32.
 	Flag to disable Pangine entity map.
 	Panmage.finalize.
 	Move 4-way diamonds further apart.
@@ -618,6 +617,7 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 			allEnemies.add(imp);
 			final EnemyDefinition troll, ogre;
 			troll = new EnemyDefinition("Troll", 5, null, true, false, 0, 8, 30, 1, 32);
+			troll.award = GemBumped.AWARD_2;
 			troll.stompHandler = new InteractionHandler() {
                 @Override public final boolean onInteract(final Enemy enemy, final Player player) {
                 	if (Math.abs(enemy.hv) <= 1) {
@@ -639,6 +639,7 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
                 }};
 			allEnemies.add(troll);
 			ogre = new EnemyDefinition("Ogre", 5, f, false, false, 0, 8, 30, 1, 32);
+			ogre.award = troll.award;
 			ogre.stompHandler = troll.stompHandler;
 			ogre.stepHandler = troll.stepHandler;
 			allEnemies.add(ogre);

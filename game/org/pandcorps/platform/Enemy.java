@@ -56,6 +56,7 @@ public class Enemy extends Character {
 		private final int offX;
 		private final int h;
 		private final int hv;
+		protected int award = GemBumped.AWARD_DEF;
 		protected Panimation projectile = null;
 		protected BurstHandler splatHandler = null;
 		protected InteractionHandler stepHandler = null;
@@ -131,7 +132,7 @@ public class Enemy extends Character {
 		return ImtilX.loadStrip("org/pandcorps/platform/res/enemy/Enemy0" + ind + ".png", d);
 	}
 	
-	private final EnemyDefinition def;
+	protected final EnemyDefinition def;
 	private int avoidCount = 0;
 	protected int timer = 0;
 	protected int timerMode = 0;
