@@ -593,7 +593,7 @@ public class Player extends Character implements CollisionListener {
 	
 	@Override
     protected final void onEnd() {
-	    if (pc.profile.autoRun) {
+	    if (!Level.victory && pc.profile.autoRun) {
 	        Tiles.bump(this, Level.goalIndex);
 	    }
     }
