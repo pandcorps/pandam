@@ -40,6 +40,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
     protected final TreeSet<Integer> availableAssists = new TreeSet<Integer>();
     private final TreeSet<Integer> activeAssists = new TreeSet<Integer>();
     protected boolean autoRun = false;
+    protected int frameRate = 60;
     protected final Statistics stats = new Statistics();
     protected final TreeSet<Integer> achievements = new TreeSet<Integer>();
     protected int column = -1;
@@ -77,6 +78,7 @@ gems = 1000000;
     	addAll(availableAssists, seg, 5);
     	addAll(activeAssists, seg, 6);
     	autoRun = seg.getBoolean(7, false);
+    	frameRate = seg.getInt(8, 60);
     	//ctrl = seg.intValue(3);
     }
     
@@ -91,6 +93,7 @@ gems = 1000000;
         addAll(seg, 5, availableAssists);
         addAll(seg, 6, activeAssists);
         seg.setBoolean(7, autoRun);
+        seg.setInt(8, frameRate);
         //seg.setInt(3, ctrl);
     }
     

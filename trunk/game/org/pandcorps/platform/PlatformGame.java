@@ -550,6 +550,7 @@ public class PlatformGame extends BaseGame {
         Segment seg = null;
         seg = plist.readRequire(SEG_PRF);
         profile.load(seg);
+        Pangine.getEngine().setFrameRate(profile.frameRate);
         final String curName = seg.getValue(1);
         seg = plist.readIf(SEG_STX);
         if (seg != null) {
