@@ -32,7 +32,7 @@ import org.pandcorps.pandax.visual.*;
 
 public final class LogoScreen extends FadeScreen {
     private Panmage font = null;
-    private StringBuilder name = new StringBuilder("PANDCORPS");
+    private StringBuilder name = new StringBuilder("PANDCORPS " + Pantext.CHAR_TRADEMARK);
     private Panmage icon = null;
     private Pantext text = null;
     private Panctor img = null;
@@ -61,7 +61,7 @@ public final class LogoScreen extends FadeScreen {
         icon = engine.createImage("PandcorpsIcon", "org/pandcorps/res/img/PandcorpsIcon16.png");
         img = new Panctor("PandcorpsImage");
         img.setView(icon);
-        img.getPosition().set(x + 64, y);
+        img.getPosition().set(x + 64, y, 16);
         room.addActor(img);
     }
     
