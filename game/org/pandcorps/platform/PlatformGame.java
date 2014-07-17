@@ -99,7 +99,6 @@ public class PlatformGame extends BaseGame {
 	Wing gravity tweak.
 	BounceBall vertical velocity and bounce multiplier tweak.
 	Level builder should use setTile instead of forcing getTile Map lookups.
-	Add TM/C.
 	Improve World name generator.
 	Disable million gem bonus.
 	A kicked BounceBall should give Gems to Player that kicked it when it defeats an Enemy.

@@ -53,6 +53,9 @@ public class Pantext extends Panctor {
     public final static char CHAR_DARK = 178;
     public final static char CHAR_SOLID = 219;
     
+    public final static char CHAR_COPYRIGHT = 166; // Really ordinal indicators
+    public final static char CHAR_TRADEMARK = 167; // Repurposed in Pandam font images
+    
     private final MultiFont fonts;
     /*package*/ Font f;
 	private Panmage font;

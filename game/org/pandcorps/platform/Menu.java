@@ -550,6 +550,12 @@ public class Menu {
 			form.addItem(item);
 		}
 		
+		protected final Pantext addTitleCentered(final CharSequence title, final int y) {
+			final Pantext text = addTitle(title, center, y);
+			text.centerX();
+			return text;
+		}
+		
 		protected final Pantext addTitle(final CharSequence title, final int x, final int y) {
 			return addTitle(new Pantext(Pantil.vmid(), PlatformGame.font, title), x, y);
 		}
@@ -694,11 +700,11 @@ public class Menu {
 	    @Override
         protected final void menu() {
 	        PlatformGame.loaders = null;
-	        final Pantext text = addTitle("Press anything", center, getBottom());
-	        text.centerX();
+	        final int bottom = getBottom();
+	        final Pantext text = addTitleCentered("Press anything", bottom);
 	        final Pangine engine = Pangine.getEngine();
-	        final Pantext title = addTitle("Andrew Martin's Untitled Game", center, engine.getEffectiveHeight() / 2);
-	        title.centerX();
+	        addTitleCentered("Andrew Martin's Untitled Game" + Pantext.CHAR_TRADEMARK, engine.getEffectiveHeight() / 2);
+	        addTitleCentered("Copyright " + Pantext.CHAR_COPYRIGHT + " 2014 Andrew M. Martin", bottom + 16);
 	        if (engine.isTouchSupported()) {
 	        	text.register(new ActionEndListener() {@Override public void onActionEnd(final ActionEndEvent event) {
 		        	onAnything(event);
