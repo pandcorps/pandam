@@ -456,7 +456,7 @@ public class Player extends Character implements CollisionListener {
 			//return true; // Let falling Player keep falling; just don't allow new input
 		}
 		final boolean auto = pc.profile.autoRun;
-		if (auto) {
+		if (auto && !Level.victory) {
 		    hv = VEL_WALK;
 		}
 		if (auto || hv == 0) {
@@ -593,7 +593,6 @@ public class Player extends Character implements CollisionListener {
 	
 	@Override
     protected final void onEnd() {
-	    //TODO stop hv after this
 	    if (pc.profile.autoRun) {
 	        Tiles.bump(this, Level.goalIndex);
 	    }
