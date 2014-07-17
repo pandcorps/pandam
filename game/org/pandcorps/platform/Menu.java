@@ -1673,7 +1673,7 @@ public class Menu {
         }
         
         private final void incSpeed(final int dir) {
-            final int amt = Profile.DEF_FRAME_RATE - Profile.MIN_FRAME_RATE;
+            final int amt = (Profile.DEF_FRAME_RATE - Profile.MIN_FRAME_RATE) * dir;
             int frameRate = pc.profile.frameRate + amt;
             if (frameRate > Profile.MAX_FRAME_RATE) {
                 frameRate = Profile.MIN_FRAME_RATE;
