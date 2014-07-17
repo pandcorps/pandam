@@ -644,6 +644,7 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 			allEnemies.add(ogre);
 			final EnemyDefinition armorBall, bounceBall, thrownImp;
 			armorBall = new EnemyDefinition("Armor Ball", 7, null, false, 0, 0);
+			Enemy.currentWalk = 3;
 			bounceBall = new EnemyDefinition("Bounce Ball", 7, null, false, 0, 4);
 			Enemy.currentSplat = 8;
 			armoredImp = new EnemyDefinition("Armored Imp", 6, null, true, true, Enemy.DEFAULT_X, Enemy.DEFAULT_H);
