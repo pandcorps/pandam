@@ -971,6 +971,7 @@ public class Menu {
 					newTab(PlatformGame.menuMinus, "Erase", new Runnable() {@Override public final void run() {delete();}});
 				}
 				if (isPlayer1()) {
+				    newTab(PlatformGame.menuMenu, "Menu", new Runnable() {@Override public final void run() {goOptions();}});
 					newTab(PlatformGame.menuOff, "Quit", new Runnable() {@Override public final void run() {quit();}});
 				}
 			}
@@ -1115,6 +1116,10 @@ public class Menu {
             AvatarScreen.currentTab = AvatarScreen.TAB_NAME;
             goAvatar();
 		}
+		
+		private final void goOptions() {
+            Panscreen.set(new OptionsScreen(pc));
+        }
 		
 		private final void quit() {
 			save();
@@ -1606,6 +1611,36 @@ public class Menu {
                 Chartil.clear(achDesc);
             }
             return super.allow(focused);
+        }
+        
+        @Override
+        protected void onExit() {
+            goProfile();
+        }
+	}
+	
+	protected final static class OptionsScreen extends PlayerScreen {
+        protected OptionsScreen(final PlayerContext pc) {
+            super(pc, false);
+            tabsSupported = true;
+        }
+        
+        @Override
+        protected final void menu() {
+            if (isTabEnabled()) {
+                menuTouch();
+            } else {
+                menuClassic();
+            }
+        }
+        
+        protected final void menuTouch() {
+            newTab(PlatformGame.menuCheck, "Done", new Runnable() {@Override public final void run() {exit();}});
+            //Pangine.getEngine().setFrameRate(pc.profile.frameRate);
+            newTabs();
+        }
+        
+        protected final void menuClassic() {
         }
         
         @Override
