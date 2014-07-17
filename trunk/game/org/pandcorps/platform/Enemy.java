@@ -431,13 +431,17 @@ public class Enemy extends Character {
     }
 	
 	public final static class BounceBall extends ColliderEnemy {
-        protected BounceBall(final EnemyDefinition def, final Panctor ref) {
+		private final Player bouncer;
+		
+        protected BounceBall(final EnemyDefinition def, final Panctor ref, final Player bouncer) {
             super(def, ref);
+            this.bouncer = bouncer;
         }
 
         @Override
         public final void onCollision(final Enemy collider) {
-            collider.onBump(this);
+            //collider.onBump(this); // Doesn't give Player Gem
+        	collider.onBump(bouncer);
         }
     }
 }
