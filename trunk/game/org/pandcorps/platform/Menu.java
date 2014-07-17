@@ -371,32 +371,32 @@ public class Menu {
 			return newFormButton(Pantil.vmid() + ".radio.submit", xr, y - 100, PlatformGame.menuCheck);
 		}
 		
-		private final static TouchButton newFormButton(final Panlayer layer, final String name, final int x, final int y, final Panmage img) {
+		protected final static TouchButton newFormButton(final Panlayer layer, final String name, final int x, final int y, final Panmage img) {
 			return newFormButton(layer, name, x, y, img, (String) null);
 		}
 		
-		private final static TouchButton newFormButton(final Panlayer layer, final String name, final int x, final int y, final Panmage img, final String txt) {
+		protected final static TouchButton newFormButton(final Panlayer layer, final String name, final int x, final int y, final Panmage img, final String txt) {
 			final Pangine engine = Pangine.getEngine();
 			final TouchButton btn = new TouchButton(engine.getInteraction(), layer, name, x, y, 0, PlatformGame.menu, PlatformGame.menuIn, img, offx(img), txt == null ? offy(img) : OFF_OVERLAY_Y, PlatformGame.font, txt, OFF_TEXT_X, OFF_TEXT_Y, true);
 			engine.registerTouchButton(btn);
 			return btn;
 		}
 		
-		private final static TouchButton newFormButton(final Panlayer layer, final String name, final int x, final int y, final Panmage img, final Runnable r) {
+		protected final static TouchButton newFormButton(final Panlayer layer, final String name, final int x, final int y, final Panmage img, final Runnable r) {
 			return newFormButton(layer, name, x, y, img, null, r);
 		}
 		
-		private final static TouchButton newFormButton(final Panlayer layer, final String name, final int x, final int y, final Panmage img, final String txt, final Runnable r) {
+		protected final static TouchButton newFormButton(final Panlayer layer, final String name, final int x, final int y, final Panmage img, final String txt, final Runnable r) {
 			final TouchButton btn = newFormButton(layer, name, x, y, img, txt);
 			btn.getActor().register(btn, Actions.newEndListener(r));
 			return btn;
 		}
 		
-		private final TouchButton newFormButton(final String name, final int x, final int y, final Panmage img) {
+		protected final TouchButton newFormButton(final String name, final int x, final int y, final Panmage img) {
 		    return newFormButton(getLayer(), name, x, y, img);
 		}
 		
-		private final TouchButton newFormButton(final String name, final int x, final int y, final Panmage img, final Runnable r) {
+		protected final TouchButton newFormButton(final String name, final int x, final int y, final Panmage img, final Runnable r) {
 		    return newFormButton(getLayer(), name, x, y, img, r);
 		}
 		
@@ -1620,6 +1620,8 @@ public class Menu {
 	}
 	
 	protected final static class OptionsScreen extends PlayerScreen {
+	    final StringBuilder msgSpeed = new StringBuilder();
+	    
         protected OptionsScreen(final PlayerContext pc) {
             super(pc, false);
             tabsSupported = true;
@@ -1635,12 +1637,47 @@ public class Menu {
         }
         
         protected final void menuTouch() {
+            final Pangine engine = Pangine.getEngine();
+            final Panple btnSize = PlatformGame.menu.getSize();
+            final int btnW = (int) btnSize.getX();
+            int x = btnW / 2, y = engine.getEffectiveHeight() - (int) btnSize.getY() * 4 / 3;
+            newFormButton("SpeedDown", x, y, PlatformGame.menuDown, new Runnable() {@Override public final void run() {incSpeed(-1);}});
+            newFormButton("SpeedUp", engine.getEffectiveWidth() - x - btnW, y, PlatformGame.menuUp, new Runnable() {@Override public final void run() {incSpeed(1);}});
+            setMessageSpeed();
+            addTitle(msgSpeed, x + btnW, y);
             newTab(PlatformGame.menuCheck, "Done", new Runnable() {@Override public final void run() {exit();}});
-            //Pangine.getEngine().setFrameRate(pc.profile.frameRate);
             newTabs();
         }
         
         protected final void menuClassic() {
+        }
+        
+        private final void incSpeed(final int dir) {
+            final int amt = 15 * dir;
+            int frameRate = pc.profile.frameRate + amt;
+            if (frameRate > 60) {
+                frameRate = 30;
+            } else if (frameRate < 30) {
+                frameRate = 60;
+            }
+            pc.profile.frameRate = frameRate;
+            setMessageSpeed();
+            Pangine.getEngine().setFrameRate(frameRate);
+        }
+        
+        private final void setMessageSpeed() {
+            final String s;
+            switch(pc.profile.frameRate) {
+                case 30 :
+                    s = "Slow";
+                    break;
+                case 60 :
+                    s = "Fast";
+                    break;
+                default :
+                    s = "Medium";
+            }
+            Chartil.set(msgSpeed, "Speed: " + s);
         }
         
         @Override
