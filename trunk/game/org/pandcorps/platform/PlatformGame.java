@@ -61,6 +61,7 @@ public class PlatformGame extends BaseGame {
 	Train-riding levels.
 	Ridable dragons.
 	Enemy Wisp, Elementals, Impix (winged Imp), Troll Colossus (64^2, 100 Gems, 3 hits), Ogre Behemoth.
+	Drolock should walk sometimes.
 	Introduce enemies gradually.
 	Enemy-specific Level templates (Imp walking into ArmorBall).
 	Gargoyles catch/carry Player, like moving platforms, one can jump to/from them, but not run on them.
@@ -99,7 +100,6 @@ public class PlatformGame extends BaseGame {
 	Improve World name generator.
 	Disable million gem bonus.
 	A BounceBall should be able to bump blocks (from below and side) and give Gem to Player that kicked.
-	Enemies should be scrolled off screen on either side (higher threshold on right; they start off screen on right).
 	Names? Hob-troll, Hob-ogre, Pixie-imp?
 	Flag to disable Pangine entity map.
 	Panmage.finalize.

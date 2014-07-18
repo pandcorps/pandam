@@ -332,7 +332,12 @@ public class Enemy extends Character {
 	
 	@Override
 	protected final void onScrolled() {
-		if (!isDestroyed() && getPosition().getX() + 80 < getLayer().getViewMinimum().getX()) {
+		if (isDestroyed()) {
+			return;
+		}
+		final float x = getPosition().getX();
+		final Panlayer layer = getLayer();
+		if ((x + 80) < layer.getViewMinimum().getX() || (x - 160) > layer.getViewMaximum().getX()) {
 			destroy();
 		}
 	}
