@@ -91,7 +91,6 @@ public class PlatformGame extends BaseGame {
 	Remove Gem class? Just use Tile.foreground and Tile.animate?
 	Clear TileMap.map/imgs?
 	Static TileMaps should combine adjacent Tiles with adjacent TileMapImages into one larger Tile/TileMapImage.
-	Flash block main image is wrong.
 	New Level generator for town background; nearly constant ground height so houses always look right.
 	Wing color touch menu.
 	Bestiary menu.
@@ -259,6 +258,8 @@ public class PlatformGame extends BaseGame {
 	}
 	
 	protected final static class PlatformScreen extends Panscreen {
+		private boolean waiting = true;
+		
 		@Override
         protected final void load() throws Exception {
 			loadLevel();
@@ -271,7 +272,15 @@ public class PlatformGame extends BaseGame {
 		
 		@Override
         protected final void step() {
-            if ((Pangine.getEngine().getClock() % TIME_FLASH) < 4) {
+			final long i = Pangine.getEngine().getClock() % TIME_FLASH;
+            if (i < 4) {
+            	if (waiting) {
+            		if (i == 0) {
+            			waiting = false;
+            		} else {
+            			return;
+            		}
+            	}
                 Tile.animate(Level.flashBlock);
             }
 		}
