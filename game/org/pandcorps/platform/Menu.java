@@ -162,7 +162,7 @@ public class Menu {
 			if (input) {
 				engine.clearTouchButtons();
 			}
-			final int d = 60, r = engine.getEffectiveWidth();
+			final int d = PlatformGame.DIM_BUTTON, r = engine.getEffectiveWidth();
 			int rx = 0, y = 0;
 			TouchButton down = null, up = null, act2 = null;
 			Panmage rt = PlatformGame.right2, rtIn = PlatformGame.right2In, lt = PlatformGame.left2, ltIn = PlatformGame.left2In;
@@ -268,7 +268,7 @@ public class Menu {
 			if (input) {
 				final Pangine engine = Pangine.getEngine();
 				final Panteraction in = engine.getInteraction();
-				final int d = 60;
+				final int d = PlatformGame.DIM_BUTTON;
 				button = new TouchButton(in, name, x, y, d, d, moveCancel);
 				engine.registerTouchButton(button);
 			} else {

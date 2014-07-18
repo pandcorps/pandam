@@ -102,7 +102,6 @@ public class PlatformGame extends BaseGame {
 	Names? Hob-troll, Hob-ogre, Pixie-imp?
 	Flag to disable Pangine entity map.
 	Panmage.finalize.
-	Move 4-way diamonds further apart.
 	*/
 	
 	protected final static byte TILE_BREAK = 2;
@@ -187,6 +186,7 @@ public class PlatformGame extends BaseGame {
 	protected static Img[] dirts = null;
 	protected static Img[] terrains = null;
 	protected static Img[] crowns = null;
+	protected static int DIM_BUTTON = 0;
 	protected static Panmage button = null;
 	protected static Panmage buttonIn = null;
 	protected static Panmage right2 = null;
@@ -840,7 +840,8 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 		if (engine.isTouchSupported()) {
 			loaders.add(new Runnable() { @Override public final void run() {
 				// 400 x 240
-				final int d = (Math.min(60 * engine.getEffectiveWidth() / 400, 60 * engine.getEffectiveHeight() / 240) / 2) * 2;
+				DIM_BUTTON = (Math.min(60 * engine.getEffectiveWidth() / 400, 60 * engine.getEffectiveHeight() / 240) / 2) * 2;
+				final int d = DIM_BUTTON;
 				final Pancolor f = new FinPancolor((short) 160, Mathtil.SHORT_0, Pancolor.MAX_VALUE);
 				final Img circle = Imtil.newImage(d, d);
 				Imtil.drawCircle(circle, Pancolor.WHITE, Pancolor.BLACK, f);
