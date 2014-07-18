@@ -92,7 +92,6 @@ public class PlatformGame extends BaseGame {
 	Flash block main image is wrong.
 	New Level generator for town background; nearly constant ground height so houses always look right.
 	Enemy no longer throws Projectile.
-	Stats for touch menu.
 	Wing color touch menu.
 	Bestiary menu.
 	Wing gravity tweak.
@@ -209,6 +208,7 @@ public class PlatformGame extends BaseGame {
 	protected static Panmage menuPlus = null;
 	protected static Panmage menuMinus = null;
 	protected static Panmage menuOff = null;
+	protected static Panmage menuTrophy = null;
 	protected static Panmage menuMenu = null;
 	protected static Panmage menuAvatar = null;
 	protected static Panmage menuColor = null;
@@ -874,6 +874,7 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 			    menuPlus = createMenuImg("Plus");
 			    menuMinus = createMenuImg("Minus");
 			    menuOff = createMenuImg("Off");
+			    menuTrophy = createMenuImg("Trophy");
 			    menuMenu = createMenuImg("Menu");
 			    menuAvatar = createMenuImg("Avatar");
 			    menuColor = createMenuImg("Color");
