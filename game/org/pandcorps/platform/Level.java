@@ -72,6 +72,8 @@ public class Level {
     		@Override protected final Builder getRandomBuilder() {
     			if (backgroundBuilder instanceof HillBackgroundBuilder) {
     				return Mathtil.rand() ? new GrassyBuilder() : new PlatformBuilder();
+    			} else if (backgroundBuilder instanceof TownBackgroundBuilder) {
+    				return new FlatBuilder();
     			} else {
     				return new GrassyBuilder();
     			}
@@ -334,6 +336,18 @@ public class Level {
     		return Mathtil.randi(3, 5);
     	}
     	
+    	protected int getMaxFloorChange() {
+    		return 3;
+    	}
+    	
+    	protected int getMaxFloor() {
+    		return 6;
+    	}
+    	
+    	protected boolean changeFloor() {
+    		return Mathtil.rand(33);
+    	}
+    	
     	@Override
     	public void build() {
     	    loadTemplates();
@@ -344,6 +358,7 @@ public class Level {
     		ng = nt - goal.getWidth();
     		
     		px = 0;
+    		final int floorLim = getMaxFloor();
     		for (bx = 8; bx < ng; ) {
     			/*
     			Raise/lower floor with 1-way ramps
@@ -365,12 +380,12 @@ public class Level {
     		    if (bx < ng) {
     		    	template.build();
     		    }
-    		    if (Mathtil.rand(33)) {
+    		    if (changeFloor()) {
     		    	if (bx + 3 < ng) {
     		    		boolean up = Mathtil.rand();
-    		    		final int h = Mathtil.randi(0, 2);
+    		    		final int h = Mathtil.randi(0, getMaxFloorChange() - 1);
     		    		if (up) {
-    		    			up = (floor + h) < 6;
+    		    			up = (floor + h) < floorLim;
     		    		} else {
     		    			up = (floor - h) < 1;
     		    		}
@@ -460,7 +475,7 @@ public class Level {
     	
     	@Override
     	public final void build() {
-    		final int y = 4;
+    		final int y = 2;
     		bgtm1.fillBackground(bgMap[7][7], 0, y);
     		bgtm1.fillBackground(bgMap[6][7], y, 1);
     		int i = Mathtil.randi(0, 2);
@@ -548,9 +563,9 @@ public class Level {
         a[j] = t;
     }
     
-    private final static class GrassyBuilder extends RandomBuilder {
+    private static class GrassyBuilder extends RandomBuilder {
     	@Override
-	    protected final void loadTemplates() {
+	    protected void loadTemplates() {
 	        addTemplate(new NaturalRiseTemplate());
 	        addTemplate(new ColorRiseTemplate());
 	        addTemplate(new WallTemplate());
@@ -578,6 +593,41 @@ public class Level {
     	@Override
     	protected final void downStep(final int x, final int y, final int h) {
     		Level.downStep(x, y, h);
+    	}
+    }
+    
+    private final static class FlatBuilder extends GrassyBuilder {
+    	@Override
+	    protected final void loadTemplates() {
+    		//TODO Multi-level block patterns
+	        addTemplate(new WallTemplate());
+	        addTemplate(new BushTemplate(), new TreeTemplate());
+	        addTemplate(new PitTemplate(), new BridgePitTemplate(), new BlockPitTemplate());
+	        addTemplate(new UpBlockStepTemplate(), new DownBlockStepTemplate(), new BlockWallTemplate(), new BlockGroupTemplate());
+	        addTemplate(new BlockBonusTemplate());
+	        addTemplate(new GemTemplate(), new GemMsgTemplate());
+	        addTemplate(new SlantTemplate(true), new SlantTemplate(false));
+	        goals.add(new SlantGoal());
+	    }
+    	
+    	@Override
+    	public int getFloor() {
+    		return 3;
+    	}
+    	
+    	@Override
+    	protected final int getMaxFloorChange() {
+    		return (floor) > 1 ? 2 : 1;
+    	}
+    	
+    	@Override
+    	protected final int getMaxFloor() {
+    		return 1;
+    	}
+    	
+    	@Override
+    	protected final boolean changeFloor() {
+    		return (floor > 1) || super.changeFloor();
     	}
     }
     

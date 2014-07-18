@@ -92,7 +92,6 @@ public class PlatformGame extends BaseGame {
 	Remove Gem class? Just use Tile.foreground and Tile.animate?
 	Clear TileMap.map/imgs?
 	Static TileMaps should combine adjacent Tiles with adjacent TileMapImages into one larger Tile/TileMapImage.
-	New Level generator for town background; nearly constant ground height so houses always look right.
 	Wing color touch menu.
 	Bestiary menu.
 	Wing gravity tweak.
