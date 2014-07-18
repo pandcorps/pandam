@@ -336,6 +336,8 @@ public class Menu {
 			return addRadio(title, list, subLsn, chgLsn, x, y, null);
 		}
 		
+		protected final static int OFF_RADIO_LIST = 100;
+		
 		protected final RadioGroup addRadio(final String title, final List<? extends CharSequence> list, final RadioSubmitListener subLsn, final RadioSubmitListener chgLsn, final int xb, final int y, final TouchButton sub) {
 			final int x;
 			if (tabsSupported && isTabEnabled()) {
@@ -349,7 +351,7 @@ public class Menu {
 					ctrl.setSubmit(sub);
 					ctrl.set1(sub);
 				}
-				x = xb + 100;
+				x = xb + OFF_RADIO_LIST;
 			} else {
 				x = xb;
 			}
@@ -976,6 +978,7 @@ public class Menu {
 				if (getAvatarsSize() > 1) {
 					newTab(PlatformGame.menuMinus, "Erase", new Runnable() {@Override public final void run() {delete();}});
 				}
+				newTab(PlatformGame.menuTrophy, "Info", new Runnable() {@Override public final void run() {goInfo();}});
 				if (isPlayer1()) {
 				    newTab(PlatformGame.menuMenu, "Menu", new Runnable() {@Override public final void run() {goOptions();}});
 					newTab(PlatformGame.menuOff, "Quit", new Runnable() {@Override public final void run() {quit();}});
@@ -1044,7 +1047,7 @@ public class Menu {
             x = addLink("Pick", prfLsn, x, y);
             final MsgCloseListener infLsn = new MsgCloseListener() {
                 @Override public final void onClose() {
-                    Panscreen.set(new InfoScreen(pc)); }};
+                    goInfo(); }};
             x = addPipe(x, y);
             x = addLink("Info", infLsn, x, y);
             if (isPlayer1()) {
@@ -1121,6 +1124,10 @@ public class Menu {
             actor.load(pc);
             AvatarScreen.currentTab = AvatarScreen.TAB_NAME;
             goAvatar();
+		}
+		
+		private final void goInfo() {
+			Panscreen.set(new InfoScreen(pc));
 		}
 		
 		private final void goOptions() {
@@ -1556,15 +1563,56 @@ public class Menu {
     }
 	
 	protected final static class InfoScreen extends PlayerScreen {
+		private final static byte TAB_AWARD = 0;
+		private final static byte TAB_STATS = 1;
+		private static byte currentTab = TAB_AWARD;
 	    private RadioGroup achRadio = null;
 	    private final StringBuilder achDesc = new StringBuilder();
 	    
         protected InfoScreen(final PlayerContext pc) {
             super(pc, false);
+            tabsSupported = true;
         }
-        
+
         @Override
-        protected final void menu() throws Exception {
+		protected final void menu() {
+			if (isTabEnabled()) {
+				menuTouch();
+			} else {
+				menuClassic();
+			}
+		}
+		
+		protected final void menuTouch() {
+			switch (currentTab) {
+				case TAB_AWARD :
+					createAchievementList(touchRadioX, touchRadioY);
+					break;
+				case TAB_STATS :
+					createStatsList(touchRadioX, touchRadioY);
+					break;
+			}
+			newTab(PlatformGame.menuCheck, "Done", new Runnable() {@Override public final void run() {exit();}});
+			newTab(PlatformGame.menuTrophy, "Award", TAB_AWARD);
+			newTab(null, "Stats", TAB_STATS);
+			newTabs();
+			registerBackExit();
+		}
+		
+		//TODO newTab/reload almost same as AvatarScreen
+		private final void newTab(final Panmage img, final CharSequence txt, final byte tab) {
+			final TouchButton btn = newTab(img, txt, new Runnable() {@Override public final void run() {reload(tab);}});
+			if (currentTab == tab) {
+				btn.setEnabled(false);
+			}
+		}
+		
+		private void reload(final byte tab) {
+			currentTab = tab;
+			Panscreen.set(new InfoScreen(pc));
+		}
+		
+		private final void createAchievementList(final int x, final int y) {
             final int total = Achievement.ALL.length;
             final StringBuilder b = new StringBuilder();
             final List<String> ach = new ArrayList<String>(total);
@@ -1578,16 +1626,23 @@ public class Menu {
                 @Override public final void onSubmit(final RadioSubmitEvent event) {
                     setAchDesc(event.toString());
             }};
+            achRadio = addRadio("Achievements", ach, achLsn, x, y);
+            addTitle(new Pantext(Pantil.vmid(), PlatformGame.fontTiny, achDesc), x + (isTabEnabled() ? OFF_RADIO_LIST : 0), y - 64);
+            initAchDesc();
+		}
+		
+		private final void createStatsList(final int x, final int y) {
+			addRadio("Statistics", pc.profile.stats.toList(), null, x, y);
+		}
+        
+        protected final void menuClassic() {
             final int left = getLeft();
             int y = getTop();
-            achRadio = addRadio("Achievements", ach, achLsn, left, y);
-            y -= 64;
-            addTitle(new Pantext(Pantil.vmid(), PlatformGame.fontTiny, achDesc), left, y);
-            y -= 16;
-            addRadio("Statistics", pc.profile.stats.toList(), null, left, y);
+            createAchievementList(left, y);
+            y -= 80;
+            createStatsList(left, y);
             y -= 64;
             addExit("Back", left, y);
-            initAchDesc();
         }
         
         private final void setAchDesc(String achName) {
@@ -1658,6 +1713,7 @@ public class Menu {
             addTitle(msgSpeed, x + btnW + 8, y);
             newTab(PlatformGame.menuCheck, "Done", new Runnable() {@Override public final void run() {exit();}});
             newTabs();
+            registerBackExit();
         }
         
         protected final void menuClassic() {
