@@ -611,7 +611,7 @@ public class Level {
 	    }
     	
     	@Override
-    	public int getFloor() {
+    	public final int getFloor() {
     		return 3;
     	}
     	
