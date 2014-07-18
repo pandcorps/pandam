@@ -61,6 +61,8 @@ public class PlatformGame extends BaseGame {
 	Train-riding levels.
 	Ridable dragons.
 	Enemy Wisp, Elementals, Impix (winged Imp), Troll Colossus (64^2, 100 Gems, 3 hits), Ogre Behemoth.
+	Introduce enemies gradually.
+	Enemy-specific Level templates (Imp walking into ArmorBall).
 	Gargoyles catch/carry Player, like moving platforms, one can jump to/from them, but not run on them.
 	Cannons on ground that Player enters to be launched.
 	Cannons in air that auto-fire, others that wait for jump input.
@@ -91,7 +93,6 @@ public class PlatformGame extends BaseGame {
 	Static TileMaps should combine adjacent Tiles with adjacent TileMapImages into one larger Tile/TileMapImage.
 	Flash block main image is wrong.
 	New Level generator for town background; nearly constant ground height so houses always look right.
-	Enemy no longer throws Projectile.
 	Wing color touch menu.
 	Bestiary menu.
 	Wing gravity tweak.
@@ -597,6 +598,12 @@ public class PlatformGame extends BaseGame {
 System.out.println("loadConstants start " + System.currentTimeMillis());
 			allEnemies.add(new EnemyDefinition("Drowid", 1, null, true, 1)); }}); // Teleport when stomped
 		loaders.add(new Runnable() { @Override public final void run() {
+			final Panmage pimg1 = createImage("projectile1", "org/pandcorps/platform/res/enemy/Projectile1.png", 8, CENTER_8, new FinPanple(-3, -3, 0), new FinPanple(2, 2, 0));
+		    final Panframe[] pfrms = new Panframe[4];
+		    for (int i = 0; i < 4; i++) {
+		        pfrms[i] = engine.createFrame(PRE_FRM + "projectile1." + i, pimg1, 4, i, false, false);
+		    }
+		    projectile1 = engine.createAnimation(PRE_ANM + "projectile1", pfrms);
 			final EnemyDefinition drolock = new EnemyDefinition("Drolock", 4, null, false, 0, 0);
 			drolock.projectile = projectile1;
 			allEnemies.add(drolock); }}); // Teleport/shoot periodically
@@ -792,14 +799,6 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 	    
 		loaders.add(new Runnable() { @Override public final void run() {
 			teleport = createAnm("teleport", "org/pandcorps/platform/res/enemy/Teleport.png", ImtilX.DIM, 5, Enemy.DEFAULT_O); }});
-	    
-		loaders.add(new Runnable() { @Override public final void run() {
-			final Panmage pimg1 = createImage("projectile1", "org/pandcorps/platform/res/enemy/Projectile1.png", 8, CENTER_8, new FinPanple(-3, -3, 0), new FinPanple(2, 2, 0));
-		    final Panframe[] pfrms = new Panframe[4];
-		    for (int i = 0; i < 4; i++) {
-		        pfrms[i] = engine.createFrame(PRE_FRM + "projectile1." + i, pimg1, 4, i, false, false);
-		    }
-		    projectile1 = engine.createAnimation(PRE_ANM + "projectile1", pfrms); }});
 	    
 		loaders.add(new Runnable() { @Override public final void run() {
 			final FinPanple mo = new FinPanple(-4, -4, 0);
