@@ -264,8 +264,9 @@ public class Enemy extends Character {
             final Pangine engine = Pangine.getEngine();
             for (final PlayerContext pc : PlatformGame.pcs) {
                 if (engine.isCollision(this, pc.player)) {
-                    destroy();
-                    return true;
+                    /*destroy();
+                    return true;*/
+                	pos.set(x, getCeiling() - 1);
                 }
             }
             burst(PlatformGame.teleport);
