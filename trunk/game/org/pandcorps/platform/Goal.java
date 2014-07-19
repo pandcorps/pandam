@@ -65,10 +65,15 @@ public abstract class Goal implements Named {
 				default: g = new WorldGoal(award, pc); break;
 			}
 			final Class<?> gc = g.getClass();
+			boolean skip = false;
 			for (final Goal c : goals) {
 				if (c != null && c.getClass() == gc) {
-					continue;
+					skip = true;
+					break;
 				}
+			}
+			if (skip) {
+				continue;
 			}
 			goals[index] = g;
 			return g;
@@ -96,6 +101,15 @@ public abstract class Goal implements Named {
 			return new WorldGoal(f);
 		}
 		throw new IllegalArgumentException(type);
+	}
+	
+	public final static boolean isAnyMet(final PlayerContext pc) {
+		for (final Goal g : pc.profile.currentGoals) {
+			if (g != null && g.isMet(pc)) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	protected abstract static class StatGoal extends Goal {
