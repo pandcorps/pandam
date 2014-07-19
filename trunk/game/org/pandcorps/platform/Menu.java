@@ -1583,7 +1583,9 @@ public class Menu {
 
         @Override
 		protected final void menu() {
-			if (isTabEnabled()) {
+        	if (Goal.isAnyMet(pc)) {
+				createGoalMet(touchRadioX, touchRadioY);
+			} else if (isTabEnabled()) {
 				menuTouch();
 			} else {
 				menuClassic();
@@ -1647,15 +1649,46 @@ public class Menu {
 		}
 		
 		private final void createGoalsList(final int x, int y) {
+			addTitle("Goals", x, y);
+			y -= 16;
 			Goal.initGoals(pc);
 			for (final Goal g : pc.profile.currentGoals) {
-				final byte award = g.award;
-				addTitle(award == 1 ? "*" : award == 2 ? "**" : "***", x, y);
-				y -= 8;
-				addTitle(g.getName(), x, y);
-				y -= 8;
-				addTitle(g.getProgress(pc), x, y);
-				y -= 8;
+				y = addGoal(g, x, y);
+			}
+		}
+		
+		private final int addGoal(final Goal g, final int x, int y) {
+			final byte award = g.award;
+			addTitle(g.getName(), x, y);
+			y -= 8;
+			addTitle(award == 1 ? "*" : award == 2 ? "**" : "***", x, y);
+			addTitle(g.getProgress(pc), x + 32, y);
+			y -= 8;
+			return y;
+		}
+		
+		private final void createGoalMet(final int x, int y) {
+			addTitle("Success!", x, y);
+			y -= 16;
+			final Goal[] goals = pc.profile.currentGoals;
+			for (int i = 0; i < 3; i++) {
+				final Goal g = goals[i];
+				if (g != null && g.isMet(pc)) {
+					y = addGoal(g, x, y);
+					goals[i] = Goal.newGoal(g.award, pc);
+					break;
+				}
+			}
+			if (isTabEnabled()) {
+				newFormButton("GoalContinue", x, y + (int) PlatformGame.menu.getSize().getY(), null, new Runnable() {
+					@Override public final void run() {
+						reload(TAB_GOALS);
+					}});
+			} else {
+				addLink("Continue", new MsgCloseListener() {
+					@Override protected final void onClose() {
+						reload(TAB_GOALS);
+					}}, x, y - 16);
 			}
 		}
         
@@ -1663,6 +1696,7 @@ public class Menu {
             final int left = getLeft();
             int y = getTop();
             createAchievementList(left, y);
+            createGoalsList(left + 120, y);
             y -= 80;
             createStatsList(left, y);
             y -= 64;
