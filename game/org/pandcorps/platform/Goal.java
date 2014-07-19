@@ -150,7 +150,8 @@ public abstract class Goal implements Named {
 
 		@Override
 		public final String getProgress(final PlayerContext pc) {
-			return (getCurrentAmount(pc.profile.stats) - start) + " of " + getAmount();
+			final long amount = getAmount();
+			return Math.min(amount, (getCurrentAmount(pc.profile.stats) - start)) + " of " + amount;
 		}
 		
 		@Override
