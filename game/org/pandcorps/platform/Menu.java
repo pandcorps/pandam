@@ -1700,7 +1700,7 @@ public class Menu {
 				}
 			}
 			if (isTabEnabled()) {
-				newFormButton("GoalContinue", x, y + (int) PlatformGame.menu.getSize().getY(), PlatformGame.menuCheck, new Runnable() {
+				newFormButton("GoalContinue", x, y - 8 - (int) PlatformGame.menu.getSize().getY(), PlatformGame.menuCheck, new Runnable() {
 					@Override public final void run() {
 						reload(TAB_GOALS);
 					}});
