@@ -105,6 +105,7 @@ public class PlatformGame extends BaseGame {
 	Panmage.finalize.
 	Pause if device gets a text/interruption.
 	Some rises allow an Enemy but Player hits ceiling.
+	Tall Enemy can appear behind a short enemy on a rise above it; lower Enemy should be in front.
 	*/
 	
 	protected final static byte TILE_BREAK = 2;
@@ -1066,7 +1067,18 @@ System.out.println("loadConstants end " + System.currentTimeMillis());
         }
 	}
 	
+	protected final static void goGoals(final PlayerContext pc) {
+		Menu.InfoScreen.currentTab = Menu.InfoScreen.TAB_GOALS;
+		fadeOut(room, new Menu.InfoScreen(pc, false));
+	}
+	
 	protected final static void goMap() {
+		for (final PlayerContext pc : pcs) {
+			if (Goal.isAnyMet(pc)) {
+				goGoals(pc);
+				return;
+			}
+		}
 		goMap(SPEED_FADE);
 	}
 	

@@ -611,6 +611,10 @@ public class Menu {
                 @Override public final void onActionEnd(final ActionEndEvent event) { }});
         }
 		
+		protected final void goMap() {
+			PlatformGame.goMap(SPEED_MENU_FADE);
+		}
+		
 		protected final void save() {
 		    pc.profile.save();
 		}
@@ -1127,7 +1131,7 @@ public class Menu {
 		}
 		
 		private final void goInfo() {
-			Panscreen.set(new InfoScreen(pc));
+			Panscreen.set(new InfoScreen(pc, false));
 		}
 		
 		private final void goOptions() {
@@ -1144,7 +1148,7 @@ public class Menu {
 		    if (save || pc.profile.currentAvatar != originalAvatar) {
 		        save();
 		    }
-		    PlatformGame.goMap(SPEED_MENU_FADE);
+		    goMap();
 		}
 	}
 	
@@ -1565,13 +1569,16 @@ public class Menu {
 	protected final static class InfoScreen extends PlayerScreen {
 		private final static byte TAB_AWARD = 0;
 		private final static byte TAB_STATS = 1;
-		private static byte currentTab = TAB_AWARD;
+		protected final static byte TAB_GOALS = 2;
+		protected static byte currentTab = TAB_AWARD;
 	    private RadioGroup achRadio = null;
 	    private final StringBuilder achDesc = new StringBuilder();
+	    final boolean exitToProfile;
 	    
-        protected InfoScreen(final PlayerContext pc) {
+        protected InfoScreen(final PlayerContext pc, final boolean exitToProfile) {
             super(pc, false);
             tabsSupported = true;
+            this.exitToProfile = exitToProfile;
         }
 
         @Override
@@ -1591,10 +1598,14 @@ public class Menu {
 				case TAB_STATS :
 					createStatsList(touchRadioX, touchRadioY);
 					break;
+				case TAB_GOALS :
+					createGoalsList(touchRadioX, touchRadioY);
+					break;
 			}
 			newTab(PlatformGame.menuCheck, "Done", new Runnable() {@Override public final void run() {exit();}});
 			newTab(PlatformGame.menuTrophy, "Award", TAB_AWARD);
 			newTab(null, "Stats", TAB_STATS);
+			newTab(null, "Goals", TAB_GOALS);
 			newTabs();
 			registerBackExit();
 		}
@@ -1609,7 +1620,7 @@ public class Menu {
 		
 		private void reload(final byte tab) {
 			currentTab = tab;
-			Panscreen.set(new InfoScreen(pc));
+			Panscreen.set(new InfoScreen(pc, exitToProfile));
 		}
 		
 		private final void createAchievementList(final int x, final int y) {
@@ -1633,6 +1644,19 @@ public class Menu {
 		
 		private final void createStatsList(final int x, final int y) {
 			addRadio("Statistics", pc.profile.stats.toList(), null, x, y);
+		}
+		
+		private final void createGoalsList(final int x, int y) {
+			Goal.initGoals(pc);
+			for (final Goal g : pc.profile.currentGoals) {
+				final byte award = g.award;
+				addTitle(award == 1 ? "*" : award == 2 ? "**" : "***", x, y);
+				y -= 8;
+				addTitle(g.getName(), x, y);
+				y -= 8;
+				addTitle(g.getProgress(pc), x, y);
+				y -= 8;
+			}
 		}
         
         protected final void menuClassic() {
@@ -1676,7 +1700,11 @@ public class Menu {
         
         @Override
         protected void onExit() {
-            goProfile();
+        	if (exitToProfile) {
+        		goProfile();
+        	} else {
+        		goMap();
+        	}
         }
 	}
 	
