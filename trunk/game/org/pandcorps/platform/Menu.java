@@ -1652,9 +1652,18 @@ public class Menu {
 			addTitle("Goals", x, y);
 			y -= 16;
 			Goal.initGoals(pc);
-			for (final Goal g : pc.profile.currentGoals) {
+			final Profile prf = pc.profile;
+			for (final Goal g : prf.currentGoals) {
 				y = addGoal(g, x, y);
 			}
+			y -= 8;
+			addTitle("Rank: " + prf.getRank(), x, y);
+			y -= 8;
+			final StringBuilder b = new StringBuilder();
+			final int currPoints = prf.goalPoints % Profile.POINTS_PER_LEVEL;
+			Chartil.appendMulti(b, '*', currPoints);
+			Chartil.appendMulti(b, '.', Profile.POINTS_PER_LEVEL - currPoints);
+			addTitle(b, x, y);
 		}
 		
 		private final int addGoal(final Goal g, final int x, int y) {
@@ -1670,17 +1679,28 @@ public class Menu {
 		private final void createGoalMet(final int x, int y) {
 			addTitle("Success!", x, y);
 			y -= 16;
-			final Goal[] goals = pc.profile.currentGoals;
+			final Profile prf = pc.profile;
+			final Goal[] goals = prf.currentGoals;
 			for (int i = 0; i < 3; i++) {
 				final Goal g = goals[i];
 				if (g != null && g.isMet(pc)) {
 					y = addGoal(g, x, y);
-					goals[i] = Goal.newGoal(g.award, pc);
+					final byte award = g.award;
+					final int rank = prf.getRank();
+					prf.goalPoints += award;
+					final int newRank = prf.getRank();
+					if (newRank > rank) {
+						prf.gems += 1000;
+						addTitle("Reached rank " + newRank + ", 1000 Gem bonus", x, y);
+						y -= 8;
+					}
+					goals[i] = Goal.newGoal(award, pc);
+					save();
 					break;
 				}
 			}
 			if (isTabEnabled()) {
-				newFormButton("GoalContinue", x, y + (int) PlatformGame.menu.getSize().getY(), null, new Runnable() {
+				newFormButton("GoalContinue", x, y + (int) PlatformGame.menu.getSize().getY(), PlatformGame.menuCheck, new Runnable() {
 					@Override public final void run() {
 						reload(TAB_GOALS);
 					}});
