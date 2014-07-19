@@ -33,6 +33,7 @@ import org.pandcorps.pandax.*;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.tile.Tile.*;
 import org.pandcorps.platform.Enemy.*;
+import org.pandcorps.platform.Player.*;
 
 public class Level {
     protected final static int ROOM_H = 256;
@@ -318,7 +319,7 @@ public class Level {
     
     protected abstract static class RandomBuilder implements Builder {
     	protected final ArrayList<Template> templates = new ArrayList<Template>();
-        protected final ArrayList<Goal> goals = new ArrayList<Goal>();
+        protected final ArrayList<GoalTemplate> goals = new ArrayList<GoalTemplate>();
         
         protected abstract void loadTemplates();
         
@@ -354,7 +355,7 @@ public class Level {
     	    
     		backgroundBuilder.build();
     		
-    		final Goal goal = Mathtil.rand(goals);
+    		final GoalTemplate goal = Mathtil.rand(goals);
     		ng = nt - goal.getWidth();
     		
     		px = 0;
@@ -659,13 +660,13 @@ public class Level {
     	}
     }
     
-    private abstract static class Goal {
+    private abstract static class GoalTemplate {
     	protected abstract int getWidth();
     	
     	protected abstract void build();
     }
     
-    private static class SlantGoal extends Goal {
+    private static class SlantGoal extends GoalTemplate {
     	private int stop;
     	private int h;
     	private int w;
@@ -687,7 +688,7 @@ public class Level {
     	}
     }
     
-    private static class UpBlockGoal extends Goal {
+    private static class UpBlockGoal extends GoalTemplate {
     	@Override
     	protected final int getWidth() {
     		return 5;
@@ -1215,7 +1216,9 @@ public class Level {
     	final int size = PlatformGame.pcs.size();
         final ArrayList<Player> players = new ArrayList<Player>(size);
         for (int i = 0; i < size; i++) {
-            final Player player = new Player(PlatformGame.pcs.get(i));
+        	final PlayerContext pc = PlatformGame.pcs.get(i);
+        	Goal.initGoals(pc);
+            final Player player = new Player(pc);
             room.addActor(player);
             PlatformGame.setPosition(player, 40 + (20 * i), (floor + 1) * 16, PlatformGame.DEPTH_PLAYER);
             players.add(player);

@@ -46,6 +46,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
     protected int frameRate = DEF_FRAME_RATE;
     protected final Statistics stats = new Statistics();
     protected final TreeSet<Integer> achievements = new TreeSet<Integer>();
+    protected final Goal[] currentGoals = new Goal[3];
     protected int column = -1;
 	protected int row = -1;
 	protected final HashMap<Pair<Integer, Integer>, Boolean> open = new HashMap<Pair<Integer, Integer>, Boolean>();
@@ -82,6 +83,11 @@ gems = 1000000;
     	addAll(activeAssists, seg, 6);
     	autoRun = seg.getBoolean(7, false);
     	frameRate = seg.getInt(8, DEF_FRAME_RATE);
+    	int i = 0;
+    	for (final Field f : Coltil.unnull(seg.getRepetitions(9))) {
+    		currentGoals[i] = Goal.parseField(f);
+    		i++;
+    	}
     	//ctrl = seg.intValue(3);
     }
     
@@ -97,6 +103,9 @@ gems = 1000000;
         addAll(seg, 6, activeAssists);
         seg.setBoolean(7, autoRun);
         seg.setInt(8, frameRate);
+        for (final Goal g : currentGoals) {
+        	seg.addField(9, g == null ? null : g.toField());
+        }
         //seg.setInt(3, ctrl);
     }
     

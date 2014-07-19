@@ -155,6 +155,7 @@ public class Map {
 				if (pc.guyRun == null) {
 		    		PlatformGame.reloadAnimalStrip(pc);
 		    	}
+				Goal.initGoals(pc);
 			}
 		    started = true;
 		    if (timg == null) {

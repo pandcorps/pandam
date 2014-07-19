@@ -77,6 +77,7 @@ public class PlatformGame extends BaseGame {
 	Bounce/blow floor.
 	Spike/fire floor tile.
 	Spike/fire enemy.
+	Jumping enemy.
 	Collect fruit from trees.
 	Level to-do notes.
 	Goals: Collect n gems, defeat n enemies.
@@ -102,6 +103,8 @@ public class PlatformGame extends BaseGame {
 	Names? Hob-troll, Hob-ogre, Pixie-imp?
 	Flag to disable Pangine entity map.
 	Panmage.finalize.
+	Pause if device gets a text/interruption.
+	Some rises allow an Enemy but Player hits ceiling.
 	*/
 	
 	protected final static byte TILE_BREAK = 2;
