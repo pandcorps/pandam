@@ -35,6 +35,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
 	/*package*/ final static int MIN_FRAME_RATE = 24;
 	/*package*/ final static int DEF_FRAME_RATE = 30;
 	/*package*/ final static int MAX_FRAME_RATE = (DEF_FRAME_RATE * 2) - MIN_FRAME_RATE;
+	/*package*/ final static int POINTS_PER_LEVEL = 10;
     protected final ArrayList<Avatar> avatars = new ArrayList<Avatar>();
     protected Avatar currentAvatar = null;
     protected int gems = 0;
@@ -47,6 +48,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
     protected final Statistics stats = new Statistics();
     protected final TreeSet<Integer> achievements = new TreeSet<Integer>();
     protected final Goal[] currentGoals = new Goal[3];
+    protected int goalPoints = 0;
     protected int column = -1;
 	protected int row = -1;
 	protected final HashMap<Pair<Integer, Integer>, Boolean> open = new HashMap<Pair<Integer, Integer>, Boolean>();
@@ -88,6 +90,7 @@ gems = 1000000;
     		currentGoals[i] = Goal.parseField(f);
     		i++;
     	}
+    	goalPoints = seg.getInt(10, 0);
     	//ctrl = seg.intValue(3);
     }
     
@@ -106,6 +109,7 @@ gems = 1000000;
         for (final Goal g : currentGoals) {
         	seg.addField(9, g == null ? null : g.toField());
         }
+        seg.setInt(10, goalPoints);
         //seg.setInt(3, ctrl);
     }
     
@@ -288,5 +292,9 @@ gems = 1000000;
     
     public final boolean isInvincible() {
         return activeAssists.contains(ASSIST_INVINCIBILITY);
+    }
+    
+    public final int getRank() {
+    	return (goalPoints / POINTS_PER_LEVEL) + 1;
     }
 }

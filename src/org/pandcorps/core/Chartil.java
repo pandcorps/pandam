@@ -125,6 +125,13 @@ public final class Chartil {
         return sb.toString();
     }
     
+    public final static void appendMulti(final StringBuilder b, final char c, final int n) {
+    	b.ensureCapacity(b.length() + n);
+    	for (int i = 0; i < n; i++) {
+    		b.append(c);
+    	}
+    }
+    
     public final static String remove(final String s, final char toRemove) {
     	StringBuilder b = null;
     	final int size = size(s);
