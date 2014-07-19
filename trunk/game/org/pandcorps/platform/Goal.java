@@ -255,7 +255,7 @@ public abstract class Goal implements Named {
 		
 		@Override
 		protected final long getAmount() {
-			return award * 15;
+			return award * 10;
 		}
 		
 		@Override
@@ -285,7 +285,7 @@ public abstract class Goal implements Named {
 		
 		@Override
 		protected final long getAmount() {
-			return award * 25;
+			return award * 20;
 		}
 		
 		@Override
@@ -320,7 +320,7 @@ public abstract class Goal implements Named {
 		
 		@Override
 		protected final long getAmount() {
-			return award * 25;
+			return award * 20;
 		}
 		
 		@Override

@@ -80,7 +80,7 @@ public class PlatformGame extends BaseGame {
 	Jumping enemy.
 	Collect fruit from trees.
 	Level to-do notes.
-	Goals: Collect n gems, defeat n enemies.
+	Goals: Collect n gems.
 	Random music per map.
 	Sound effects for jump, bump, stomp, hurt, etc.
 	Automatically advance on Map if standing on defeated Level and there is only one adjacent undefeated Level.
@@ -106,6 +106,9 @@ public class PlatformGame extends BaseGame {
 	Pause if device gets a text/interruption.
 	Some rises allow an Enemy but Player hits ceiling.
 	Tall Enemy can appear behind a short enemy on a rise above it; lower Enemy should be in front.
+	Show Gems on level-up screen.
+	Shortcut to Goals screen on Map.
+	Better * images for Goal points.
 	*/
 	
 	protected final static byte TILE_BREAK = 2;
@@ -253,6 +256,9 @@ public class PlatformGame extends BaseGame {
 	}
 	
 	protected final static void fadeOut(final Panlayer layer, final short speed, final Panscreen screen) {
+		if (screen instanceof Map.MapScreen && goGoalsIfNeeded()) {
+			return;
+		}
 		Notifications.fadeOut(notifications, layer, Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, speed, screen, true);
 	}
 	
@@ -1072,13 +1078,17 @@ System.out.println("loadConstants end " + System.currentTimeMillis());
 		fadeOut(room, new Menu.InfoScreen(pc, false));
 	}
 	
-	protected final static void goMap() {
+	protected final static boolean goGoalsIfNeeded() {
 		for (final PlayerContext pc : pcs) {
 			if (Goal.isAnyMet(pc)) {
 				goGoals(pc);
-				return;
+				return true;
 			}
 		}
+		return false;
+	}
+	
+	protected final static void goMap() {
 		goMap(SPEED_FADE);
 	}
 	
