@@ -91,6 +91,14 @@ public final class Mathtil {
 	    throw new RuntimeException("Internal logic error");
 	}
 	
+	public final static int pow(final int n, final int exp) {
+		int p = 1;
+		for (int i = 0; i < exp; i++) {
+			p *= n;
+		}
+		return p;
+	}
+	
 	public final static int ceil(final float f) {
 		final int i = (int) f;
 		final float fi = i;
