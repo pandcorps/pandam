@@ -1131,7 +1131,7 @@ public class Menu {
 		}
 		
 		private final void goInfo() {
-			Panscreen.set(new InfoScreen(pc, false));
+			Panscreen.set(new InfoScreen(pc, true));
 		}
 		
 		private final void goOptions() {
