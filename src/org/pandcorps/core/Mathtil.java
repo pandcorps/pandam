@@ -187,4 +187,21 @@ public final class Mathtil {
 	public final static Float toFloat(final String value) {
         return Chartil.isValued(value) ? Float.valueOf(value) : null;
     }
+	
+	public final static void main(final String[] args) {
+		try {
+			final int[] a = new int[6];
+			for (int i = 0; i < 6; i++) {
+				a[i] = 0;
+			}
+			for (int i = 0; i < 1000; i++) {
+				a[randi(0, 5)]++;
+			}
+			for (int i = 0; i < 6; i++) {
+				System.out.println(i + ": " + a[i]);
+			}
+		} catch (final Throwable e) {
+			e.printStackTrace();
+		}
+	}
 }
