@@ -1707,6 +1707,7 @@ public class Menu {
 					@Override public final void run() {
 						reload(TAB_GOALS);
 					}});
+				newTabs();
 				registerBackExit();
 			} else {
 				addLink("Continue", new MsgCloseListener() {
