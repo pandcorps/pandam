@@ -185,12 +185,12 @@ public class Cabin {
 		protected final int rndAward() {
 		    final int r = Mathtil.randi(0, 9999), awd;
             // Looks like bonus Gems are pre-sorted, so 25% chance of getting 1000,
-            // but decide after Player picks, so 55% chance of 1000, then 35/9.5/0.5
-            if (r < 5500) {
+            // but decide after Player picks, so 65% chance of 1000, then 30/4.8/0.2
+            if (r < 6500) {
                 awd = GemBumped.AWARD_4;
-            } else if (r < 9000) {
+            } else if (r < 9500) {
                 awd = GemBumped.AWARD_3;
-            } else if (r < 9950) {
+            } else if (r < 9980) {
                 awd = GemBumped.AWARD_2;
             } else {
                 awd = GemBumped.AWARD_DEF;

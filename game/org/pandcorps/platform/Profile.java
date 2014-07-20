@@ -38,7 +38,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
 	/*package*/ final static int POINTS_PER_LEVEL = 10;
     protected final ArrayList<Avatar> avatars = new ArrayList<Avatar>();
     protected Avatar currentAvatar = null;
-    protected int gems = 0;
+    private int gems = 0;
     protected final TreeSet<Integer> availableJumpModes = new TreeSet<Integer>(); // Index stored as byte in JumpMode
     protected final TreeSet<Integer> triedJumpModes = new TreeSet<Integer>();
     protected final TreeSet<Integer> availableAssists = new TreeSet<Integer>();
@@ -187,7 +187,7 @@ gems = 1000000;
     	protected long brokenBlocks = 0;
     	protected long jumps = 0;
     	protected int playedBonuses = 0;
-    	//totalGems?
+    	protected long totalGems = 0;
     	
     	public void load(final Segment seg) {
         	defeatedLevels = seg.initInt(0);
@@ -197,6 +197,7 @@ gems = 1000000;
         	brokenBlocks = seg.initLong(4);
         	jumps = seg.initLong(5);
         	playedBonuses = seg.initInt(6);
+        	totalGems = seg.initLong(7);
         }
     	
 		@Override
@@ -209,6 +210,7 @@ gems = 1000000;
 	        seg.setLong(4, brokenBlocks);
 	        seg.setLong(5, jumps);
 	        seg.setInt(6, playedBonuses);
+	        seg.setLong(7, totalGems);
 		}
 		
 		public List<String> toList() {
@@ -288,6 +290,23 @@ gems = 1000000;
             }
         }
         return m;
+    }
+    
+    public final void addGems(final int n) {
+    	gems += n;
+    	stats.totalGems += n;
+    }
+    
+    public final int getGems() {
+    	return gems;
+    }
+    
+    public final boolean spendGems(final int cost) {
+    	if (gems >= cost) {
+            gems -= cost;
+            return true;
+    	}
+    	return false;
     }
     
     public final boolean isInvincible() {

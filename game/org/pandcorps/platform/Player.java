@@ -182,7 +182,7 @@ public class Player extends Character implements CollisionListener {
 	    }
 	    
 	    public final int getGems() {
-	        return profile.gems;
+	        return profile.getGems();
 	    }
 	    
 	    public final Device getDevice() {
@@ -190,7 +190,7 @@ public class Player extends Character implements CollisionListener {
 	    }
 	    
 	    private final void commitGems() {
-			profile.gems += player.levelGems;
+			profile.addGems(player.levelGems);
 	    }
 	    
 	    public final void onFinishLevel() {
@@ -255,6 +255,8 @@ public class Player extends Character implements CollisionListener {
 	private Player returnPlayer = null;
 	private int levelGems = 0;
 	protected int levelDefeatedEnemies = 0;
+	protected int levelFalls = 0;
+	protected int levelHits = 0;
 	protected final boolean level;
 	private int hurtTimer = 0;
 	private int stompTimer = 0;
@@ -578,6 +580,7 @@ public class Player extends Character implements CollisionListener {
 	
 	private final void startHurt() {
 	    if (!(isInvincible() || pc.profile.isInvincible())) {
+	    	levelHits++;
             onHurt();
             hurtTimer = 60; // Enable temporary invincibility
         }
@@ -612,6 +615,7 @@ public class Player extends Character implements CollisionListener {
 		        final Panple pos = getPosition();
 		        safe.set(pos.getX(), getCeiling() - 1, pos.getZ());
 		    }
+		    levelFalls++;
 			onHurt();
 			startSafety();
 			return true;
