@@ -67,7 +67,7 @@ public abstract class Goal implements Named {
 	}
 	
 	public final static Goal newGoal(final byte award, final PlayerContext pc) {
-		final int max = award < 3 ? 7 : 8, index = award - 1;
+		final int max = award < 3 ? 7 : 9, index = award - 1;
 		final Goal[] goals = pc.profile.currentGoals;
 		//goals[index] = null; Don't reuse same Goal when assigning a new one; don't null out before checking
 		while (true) {
@@ -82,6 +82,7 @@ public abstract class Goal implements Named {
 				case 5: g = new GemGoal(award, pc); break;
 				case 6: g = new FallGoal(award); break;
 				case 7: g = new HitGoal(award); break;
+				case 8: g = new BonusGoal(award, pc); break;
 				default: g = new WorldGoal(award, pc); break;
 			}
 			final Class<?> gc = g.getClass();
@@ -123,6 +124,8 @@ public abstract class Goal implements Named {
 			return new FallGoal(f);
 		} else if ("HitGoal".equals(type)) {
 			return new HitGoal(f);
+		} else if ("BonusGoal".equals(type)) {
+			return new BonusGoal(f);
 		} else if ("WorldGoal".equals(type)) {
 			return new WorldGoal(f);
 		}
@@ -255,6 +258,41 @@ public abstract class Goal implements Named {
 		@Override
 		protected final String getLabelPlural() {
 			return "Worlds";
+		}
+	}
+	
+	public final static class BonusGoal extends StatGoal {
+		public BonusGoal(final byte award, final PlayerContext pc) {
+			super(award, pc);
+		}
+		
+		protected BonusGoal(final Field f) {
+			super(f);
+		}
+		
+		@Override
+		protected final long getAmount() {
+			return 1;
+		}
+		
+		@Override
+		protected final long getCurrentAmount(final Statistics stats) {
+			return stats.playedBonuses;
+		}
+		
+		@Override
+		protected String getAction() {
+			return "Play";
+		}
+		
+		@Override
+		protected final String getLabelSingular() {
+			return "Bonus Game";
+		}
+		
+		@Override
+		protected final String getLabelPlural() {
+			return "Bonus Games";
 		}
 	}
 	
