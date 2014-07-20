@@ -1416,8 +1416,7 @@ public class Menu {
                         if (Chartil.charAt(inf, 0) == 'F') {
                         	setJumpMode(index);
                         	reattachBuy("Equipped! Buy for " + jm.getCost() + "?", sub);
-                        } else if (pc.profile.gems > cost) {
-                            pc.profile.gems -= cost;
+                        } else if (pc.profile.spendGems(cost)) {
                             pc.profile.availableJumpModes.add(Integer.valueOf(index));
                             setJumpMode(index);
                             setInfo("Purchased!");
@@ -1518,8 +1517,7 @@ public class Menu {
                     	toggleAssist(index);
                     } else {
                         final int cost = a.getCost();
-                        if (pc.profile.gems > cost) {
-                            pc.profile.gems -= cost;
+                        if (pc.profile.spendGems(cost)) {
                             pc.profile.availableAssists.add(Integer.valueOf(index));
                             toggleAssist(index);
                             setInfo("Purchased!");
@@ -1573,12 +1571,12 @@ public class Menu {
 		protected static byte currentTab = TAB_AWARD;
 	    private RadioGroup achRadio = null;
 	    private final StringBuilder achDesc = new StringBuilder();
-	    final boolean exitToProfile;
+	    final boolean fullMenu;
 	    
-        protected InfoScreen(final PlayerContext pc, final boolean exitToProfile) {
+        protected InfoScreen(final PlayerContext pc, final boolean fullMenu) {
             super(pc, false);
             tabsSupported = true;
-            this.exitToProfile = exitToProfile;
+            this.fullMenu = fullMenu;
         }
 
         @Override
@@ -1593,6 +1591,9 @@ public class Menu {
 		}
 		
 		protected final void menuTouch() {
+			if (!fullMenu) {
+				currentTab = TAB_GOALS;
+			}
 			switch (currentTab) {
 				case TAB_AWARD :
 					createAchievementList(touchRadioX, touchRadioY);
@@ -1605,9 +1606,11 @@ public class Menu {
 					break;
 			}
 			newTab(PlatformGame.menuCheck, "Done", new Runnable() {@Override public final void run() {exit();}});
-			newTab(PlatformGame.menuTrophy, "Award", TAB_AWARD);
-			newTab(null, "Stats", TAB_STATS);
-			newTab(null, "Goals", TAB_GOALS);
+			if (fullMenu) {
+				newTab(PlatformGame.menuTrophy, "Award", TAB_AWARD);
+				newTab(PlatformGame.menuGraph, "Stats", TAB_STATS);
+				newTab(null, "Goals", TAB_GOALS);
+			}
 			newTabs();
 			registerBackExit();
 		}
@@ -1622,7 +1625,7 @@ public class Menu {
 		
 		private void reload(final byte tab) {
 			currentTab = tab;
-			Panscreen.set(new InfoScreen(pc, exitToProfile));
+			Panscreen.set(new InfoScreen(pc, fullMenu));
 		}
 		
 		private final void createAchievementList(final int x, final int y) {
@@ -1690,7 +1693,7 @@ public class Menu {
 					prf.goalPoints += award;
 					final int newRank = prf.getRank();
 					if (newRank > rank) {
-						prf.gems += 1000;
+						prf.addGems(1000);
 						addTitle("Reached rank " + newRank + ", 1000 Gem bonus", x, y);
 						y -= 8;
 					}
@@ -1700,10 +1703,11 @@ public class Menu {
 				}
 			}
 			if (isTabEnabled()) {
-				newFormButton("GoalContinue", x, y - 8 - (int) PlatformGame.menu.getSize().getY(), PlatformGame.menuCheck, new Runnable() {
+				newTab(PlatformGame.menuCheck, "Done", new Runnable() {
 					@Override public final void run() {
 						reload(TAB_GOALS);
 					}});
+				registerBackExit();
 			} else {
 				addLink("Continue", new MsgCloseListener() {
 					@Override protected final void onClose() {
@@ -1754,7 +1758,7 @@ public class Menu {
         
         @Override
         protected void onExit() {
-        	if (exitToProfile) {
+        	if (fullMenu) {
         		goProfile();
         	} else {
         		goMap();

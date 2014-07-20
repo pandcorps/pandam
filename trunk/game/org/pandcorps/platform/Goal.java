@@ -34,6 +34,23 @@ public abstract class Goal implements Named {
 		this.award = award;
 	}
 	
+	protected abstract long getAmount();
+	
+	protected abstract String getAction();
+	
+	protected abstract String getLabelSingular();
+	
+	protected abstract String getLabelPlural();
+	
+	protected final String getLabel() {
+		return (getAmount() == 1) ? getLabelSingular() : getLabelPlural();
+	}
+	
+	@Override
+	public String getName() {
+		return getAction() + " " + getAmount() + " " + getLabel();
+	}
+	
 	public abstract String getProgress(final PlayerContext pc);
 	
 	public abstract boolean isMet(final PlayerContext pc);
@@ -50,9 +67,9 @@ public abstract class Goal implements Named {
 	}
 	
 	public final static Goal newGoal(final byte award, final PlayerContext pc) {
-		final int max = award < 3 ? 4 : 5, index = award - 1;
+		final int max = award < 3 ? 7 : 8, index = award - 1;
 		final Goal[] goals = pc.profile.currentGoals;
-		goals[index] = null;
+		//goals[index] = null; Don't reuse same Goal when assigning a new one; don't null out before checking
 		while (true) {
 			final int r = Mathtil.randi(0, max);
 			final Goal g;
@@ -62,6 +79,9 @@ public abstract class Goal implements Named {
 				case 2: g = new BreakGoal(award, pc); break;
 				case 3: g = new BumpGoal(award, pc); break;
 				case 4: g = new JumpGoal(award, pc); break;
+				case 5: g = new GemGoal(award, pc); break;
+				case 6: g = new FallGoal(award); break;
+				case 7: g = new HitGoal(award); break;
 				default: g = new WorldGoal(award, pc); break;
 			}
 			final Class<?> gc = g.getClass();
@@ -97,6 +117,12 @@ public abstract class Goal implements Named {
 			return new BumpGoal(f);
 		} else if ("JumpGoal".equals(type)) {
 			return new JumpGoal(f);
+		} else if ("GemGoal".equals(type)) {
+			return new GemGoal(f);
+		} else if ("FallGoal".equals(type)) {
+			return new FallGoal(f);
+		} else if ("HitGoal".equals(type)) {
+			return new HitGoal(f);
 		} else if ("WorldGoal".equals(type)) {
 			return new WorldGoal(f);
 		}
@@ -125,29 +151,12 @@ public abstract class Goal implements Named {
 			this.start = f.longValue(2);
 		}
 		
-		protected abstract long getAmount();
-		
 		protected abstract long getCurrentAmount(final Statistics stats);
-		
-		protected abstract String getAction();
-		
-		protected abstract String getLabelSingular();
-		
-		protected abstract String getLabelPlural();
-		
-		protected final String getLabel() {
-			return (getAmount() == 1) ? getLabelSingular() : getLabelPlural();
-		}
 		
 		private final long getTarget() {
 			return start + getAmount();
 		}
 		
-		@Override
-		public final String getName() {
-			return getAction() + " " + getAmount() + " " + getLabel();
-		}
-
 		@Override
 		public final String getProgress(final PlayerContext pc) {
 			final long amount = getAmount();
@@ -165,6 +174,41 @@ public abstract class Goal implements Named {
 			f.setValue(0, getClass().getSimpleName());
 			f.setByte(1, award);
 			f.setLong(2, start);
+			return f;
+		}
+	}
+	
+	protected abstract static class RunGoal extends Goal {
+		protected RunGoal(final byte award) {
+			super(award);
+		}
+		
+		protected RunGoal(final Field f) {
+			super(f.byteValue(1));
+		}
+		
+		protected abstract long getCurrentAmount(final Player player);
+		
+		@Override
+		public final String getName() {
+			return super.getName() + " in 1 run";
+		}
+		
+		@Override
+		public final String getProgress(final PlayerContext pc) {
+			return "";
+		}
+		
+		@Override
+		public final boolean isMet(final PlayerContext pc) {
+			return getCurrentAmount(pc.player) >= getAmount();
+		}
+		
+		@Override
+		public final Field toField() {
+			final Field f = new Field();
+			f.setValue(0, getClass().getSimpleName());
+			f.setByte(1, award);
 			return f;
 		}
 	}
@@ -366,6 +410,111 @@ public abstract class Goal implements Named {
 		@Override
 		protected final String getAction() {
 			return "Jump";
+		}
+		
+		@Override
+		protected final String getLabelSingular() {
+			return "Time";
+		}
+		
+		@Override
+		protected final String getLabelPlural() {
+			return "Times";
+		}
+	}
+	
+	public final static class GemGoal extends StatGoal {
+		public GemGoal(final byte award, final PlayerContext pc) {
+			super(award, pc);
+		}
+		
+		protected GemGoal(final Field f) {
+			super(f);
+		}
+		
+		@Override
+		protected final long getAmount() {
+			return award == 1 ? 100 : award == 2 ? 250 : 500;
+		}
+		
+		@Override
+		protected final long getCurrentAmount(final Statistics stats) {
+			return stats.totalGems;
+		}
+		
+		@Override
+		protected final String getAction() {
+			return "Collect";
+		}
+		
+		@Override
+		protected final String getLabelSingular() {
+			return "Gem";
+		}
+		
+		@Override
+		protected final String getLabelPlural() {
+			return "Gems";
+		}
+	}
+	
+	public final static class FallGoal extends RunGoal {
+		public FallGoal(final byte award) {
+			super(award);
+		}
+		
+		protected FallGoal(final Field f) {
+			super(f);
+		}
+		
+		@Override
+		protected final long getAmount() {
+			return 3 * award;
+		}
+		
+		@Override
+		protected final long getCurrentAmount(final Player player) {
+			return player.levelFalls;
+		}
+		
+		@Override
+		protected final String getAction() {
+			return "Fall";
+		}
+		
+		@Override
+		protected final String getLabelSingular() {
+			return "Time";
+		}
+		
+		@Override
+		protected final String getLabelPlural() {
+			return "Times";
+		}
+	}
+	
+	public final static class HitGoal extends RunGoal {
+		public HitGoal(final byte award) {
+			super(award);
+		}
+		
+		protected HitGoal(final Field f) {
+			super(f);
+		}
+		
+		@Override
+		protected final long getAmount() {
+			return 2 * award;
+		}
+		
+		@Override
+		protected final long getCurrentAmount(final Player player) {
+			return player.levelHits;
+		}
+		
+		@Override
+		protected final String getAction() {
+			return "Get hit";
 		}
 		
 		@Override

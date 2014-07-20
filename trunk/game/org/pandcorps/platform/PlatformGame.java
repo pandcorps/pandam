@@ -79,8 +79,9 @@ public class PlatformGame extends BaseGame {
 	Spike/fire enemy.
 	Jumping enemy.
 	Collect fruit from trees.
+	Collect letters to spell word for bonus gems.
+	Display scarier Gem messages in Chaos Levels (Chaos/Havoc?).
 	Level to-do notes.
-	Goals: Collect n gems.
 	Random music per map.
 	Sound effects for jump, bump, stomp, hurt, etc.
 	Automatically advance on Map if standing on defeated Level and there is only one adjacent undefeated Level.
@@ -109,6 +110,10 @@ public class PlatformGame extends BaseGame {
 	Show Gems on level-up screen.
 	Shortcut to Goals screen on Map.
 	Better * images for Goal points.
+	World Goal evaluated too late.
+	User saw bumped gem-block fail to defeat empty ArmorBall on it.
+	User saw Enemy defeated by bumped block fail to give Player a Gem.
+	Once saw Player appear on wrong Marker after goal-met screen.
 	*/
 	
 	protected final static byte TILE_BREAK = 2;
@@ -215,6 +220,7 @@ public class PlatformGame extends BaseGame {
 	protected static Panmage menuMinus = null;
 	protected static Panmage menuOff = null;
 	protected static Panmage menuTrophy = null;
+	protected static Panmage menuGraph = null;
 	protected static Panmage menuMenu = null;
 	protected static Panmage menuAvatar = null;
 	protected static Panmage menuColor = null;
@@ -893,6 +899,7 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 			    menuMinus = createMenuImg("Minus");
 			    menuOff = createMenuImg("Off");
 			    menuTrophy = createMenuImg("Trophy");
+			    menuGraph = createMenuImg("Graph");
 			    menuMenu = createMenuImg("Menu");
 			    menuAvatar = createMenuImg("Avatar");
 			    menuColor = createMenuImg("Color");
