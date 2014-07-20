@@ -187,6 +187,7 @@ public class PlatformGame extends BaseGame {
 	protected static Panmage gemWhite = null;
 	protected static Panimation gemLevelAnm = null;
 	protected static Panimation gemWorldAnm = null;
+	protected static Panimation gemGoalAnm = null;
 	protected static Panmage gemShatter = null;
 	protected static Panimation spark = null;
 	protected static Panimation teleport = null;
@@ -812,9 +813,9 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 		    gemWhite = engine.createImage(PRE_IMG + "gem.white", Imtil.filter(gem1, new SwapPixelFilter(Channel.Red, Channel.Red, Channel.Blue)));
 		    Img.close(gemStrip); }});
 		loaders.add(new Runnable() { @Override public final void run() {
-		    gemLevelAnm = createGemAnm("gem.level", createSheet("gem.level", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/Gem5.png"))); }});
-		loaders.add(new Runnable() { @Override public final void run() {
-		    gemWorldAnm = createGemAnm("gem.world", createSheet("gem.world", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/Gem6.png"))); }});
+		    gemLevelAnm = createGemAnm("gem.level", createSheet("gem.level", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/Gem5.png")));
+		    gemWorldAnm = createGemAnm("gem.world", createSheet("gem.world", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/Gem6.png")));
+		    gemGoalAnm = createGemAnm("gem.goal", createSheet("gem.goal", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/GemStar.png"))); }});
 	    
 		loaders.add(new Runnable() { @Override public final void run() {
 		    final Panframe[] sa = createFrames("spark", "org/pandcorps/platform/res/misc/Spark.png", 8, 1);
