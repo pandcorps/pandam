@@ -80,7 +80,6 @@ public class PlatformGame extends BaseGame {
 	Jumping enemy.
 	Collect fruit from trees.
 	Collect letters to spell word for bonus gems.
-	Display scarier Gem messages in Chaos Levels (Chaos/Havoc?).
 	Level to-do notes.
 	Random music per map.
 	Sound effects for jump, bump, stomp, hurt, etc.
@@ -188,6 +187,7 @@ public class PlatformGame extends BaseGame {
 	protected static Panimation gemLevelAnm = null;
 	protected static Panimation gemWorldAnm = null;
 	protected static Panimation gemGoalAnm = null;
+	protected static Panmage emptyGoal = null;
 	protected static Panmage gemShatter = null;
 	protected static Panimation spark = null;
 	protected static Panimation teleport = null;
@@ -270,7 +270,14 @@ public class PlatformGame extends BaseGame {
 	}
 	
 	protected final static void notify(final Named n, final String msg) {
-		notifications.enqueue(n.getName() + ": " + msg);
+		final String name = n.getName(), s;
+		final int size = Coltil.size(pcs);
+		if (size > 1 || (size == 1 && !name.equals(pcs.get(0).getName()))) {
+			s = name + ": " + msg;
+		} else {
+			s = msg;
+		}
+		notifications.enqueue(s);
 	}
 	
 	protected final static class PlatformScreen extends Panscreen {
@@ -280,6 +287,11 @@ public class PlatformGame extends BaseGame {
         protected final void load() throws Exception {
 			loadLevel();
 			fadeIn(room);
+			for (final PlayerContext pc : pcs) {
+				for (final Goal g : pc.profile.currentGoals) {
+					PlatformGame.notify(pc, g.getName());
+				}
+			}
 			final Pangine engine = Pangine.getEngine();
 			if (engine.isMusicSupported()) {
 				engine.getMusic().playMusic(Music.newSongCreepy());
@@ -815,7 +827,8 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 		loaders.add(new Runnable() { @Override public final void run() {
 		    gemLevelAnm = createGemAnm("gem.level", createSheet("gem.level", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/Gem5.png")));
 		    gemWorldAnm = createGemAnm("gem.world", createSheet("gem.world", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/Gem6.png")));
-		    gemGoalAnm = createGemAnm("gem.goal", createSheet("gem.goal", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/GemStar.png"))); }});
+		    gemGoalAnm = createGemAnm("gem.goal", createSheet("gem.goal", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/GemStar.png")));
+		    emptyGoal = createImage("empty.goal", "org/pandcorps/platform/res/misc/EmptyStar.png", ImtilX.DIM); }});
 	    
 		loaders.add(new Runnable() { @Override public final void run() {
 		    final Panframe[] sa = createFrames("spark", "org/pandcorps/platform/res/misc/Spark.png", 8, 1);
