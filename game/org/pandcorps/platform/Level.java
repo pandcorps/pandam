@@ -65,7 +65,8 @@ public class Level {
     protected static boolean victory = false;
     
     protected abstract static class Theme {
-    	public static Theme Normal = new Theme(null, 2, 3, 4, 5, 6, 7) {
+    	private final static String[] MSG = {"PLAYER", "GEMS", "HURRAY", "GO", "YAY", "GREAT", "PERFECT"};
+    	public static Theme Normal = new Theme(null, MSG, 2, 3, 4, 5, 6, 7) {
     		@Override protected final BackgroundBuilder getRandomBackground() {
     			return Mathtil.rand(new HillBackgroundBuilder(), new ForestBackgroundBuilder(), new TownBackgroundBuilder());
     		}
@@ -80,7 +81,8 @@ public class Level {
     			}
     		}
     	};
-    	public static Theme Chaos = new Theme("Chaos", 0, 1, 4, 7) {
+    	private final static String[] MSG_CHAOS = {"CHAOS", "HAVOC", "BEWARE", "DANGER"};
+    	public static Theme Chaos = new Theme("Chaos", MSG_CHAOS, 0, 1, 4, 7) {
     		@Override protected final BackgroundBuilder getRandomBackground() {
     			return new HillBackgroundBuilder();
     		}
@@ -91,10 +93,12 @@ public class Level {
     	};
     	
     	protected final String img;
+    	protected final String[] gemMessages;
     	protected final List<EnemyDefinition> enemies;
     	
-    	private Theme(final String img, final int... enemies) {
+    	private Theme(final String img, final String[] gemMessages, final int... enemies) {
     		this.img = img;
+    		this.gemMessages = gemMessages;
     		this.enemies = new ArrayList<EnemyDefinition>(enemies.length);
     		for (final int enemy : enemies) {
     			this.enemies.add(PlatformGame.allEnemies.get(enemy));
@@ -1088,7 +1092,7 @@ public class Level {
 		@Override
 		protected final void plan() {
 			x = bx;
-			msg = Mathtil.rand("PLAYER", "GEMS", "HURRAY", "GO", "YAY", "GREAT", "PERFECT");
+			msg = Mathtil.rand(theme.gemMessages);
 			if ("PLAYER".equals(msg)) {
 				msg = Mathtil.rand(PlatformGame.pcs).getName();
 			}

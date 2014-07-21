@@ -31,7 +31,8 @@ public abstract class Achievement extends FinName {
 	protected final static Achievement[] ALL = {
 		new LevelFeat("Level 1", 1), new LevelFeat("Level Champ", 50),
 		new WorldFeat("World 1", 1), new WorldFeat("World Tour", 10),
-		new NoEnemyFeat(), new AllEnemyFeat()
+		new NoEnemyFeat(), new AllEnemyFeat(),
+		new RankFeat("Promoted", 2), new RankFeat("Knighted", 25)
 		// level w/ no damage
 		// Bear Market, Finish Level w/ no gems
 		// Bull Market, Collect all gems in a Level
@@ -141,6 +142,20 @@ public abstract class Achievement extends FinName {
 		@Override
 		public final boolean isMet(final Statistics stats) {
 			return stats.defeatedWorlds >= n;
+		}
+	}
+	
+	private final static class RankFeat extends Achievement {
+		private final int n;
+		
+		protected RankFeat(final String name, final int n) {
+			super(name, "Reach rank " + n);
+			this.n = n;
+		}
+		
+		@Override
+		public final boolean isMet(final PlayerContext pc) {
+			return pc.profile.getRank() >= n;
 		}
 	}
 	

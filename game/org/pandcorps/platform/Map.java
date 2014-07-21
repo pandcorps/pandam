@@ -162,9 +162,7 @@ public class Map {
 		        loadImages();
 		    }
 			clear();
-			if (victory != VICTORY_LEVEL) {
-				Achievement.evaluate();
-			} else {
+			if (victory == VICTORY_LEVEL) {
 				for (final PlayerContext pc : PlatformGame.pcs) {
 					final Profile profile = pc.profile;
 					final byte jmi = profile.currentAvatar.jumpMode;
@@ -216,6 +214,9 @@ public class Map {
 			}
 			addBorder();
             addHud();
+            if (victory != VICTORY_LEVEL) {
+				Achievement.evaluate(); // Evaluate after addHud
+			}
 			PlatformGame.fadeIn(room);
 		}
 		

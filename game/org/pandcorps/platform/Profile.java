@@ -222,6 +222,7 @@ gems = 1000000;
 			list.add("Blocks broken: " + brokenBlocks);
 			list.add("Jumps: " + jumps);
 			list.add("Bonus games played: " + playedBonuses);
+			list.add("Total gems: " + totalGems);
 			return list;
 		}
     }
