@@ -30,9 +30,15 @@ import org.pandcorps.pandax.tile.*;
 public class Gem extends TileOccupant implements StepListener {
 	private final static Panple sparkPos = new ImplPanple(0, 0, 0);
 	private static long lastSound = -1;
+	private final Panmage[] gem;
 	
-	{
-		setView(PlatformGame.gem[0]);
+	public Gem() {
+		this(PlatformGame.gem);
+	}
+	
+	public Gem(final Panmage[] gem) {
+		this.gem = gem;
+		setView(gem[0]);
 	}
 	
 	@Override
@@ -40,7 +46,7 @@ public class Gem extends TileOccupant implements StepListener {
 		// Panimation would allow flashes to be out of synch for gems created at different times
 		final long tick = Pangine.getEngine().getClock() % PlatformGame.TIME_FLASH;
 		if (tick < 3) {
-			setView(PlatformGame.gem[(((int) tick) + 1) % 3]);
+			setView(gem[(((int) tick) + 1) % 3]);
 		}
 	}
 	
