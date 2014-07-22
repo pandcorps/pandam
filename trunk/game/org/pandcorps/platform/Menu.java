@@ -586,9 +586,13 @@ public class Menu {
 		
 		protected final Panctor addActor(final int x, final int y) {
 			final Panctor actor = new Panctor();
+			addActor(actor, x, y);
+			return actor;
+		}
+		
+		protected final void addActor(final Panctor actor, final int x, final int y) {
 			actor.getPosition().set(x, y);
 			room.addActor(actor);
-			return actor;
 		}
 		
 		@Override
@@ -1677,14 +1681,7 @@ public class Menu {
 			final int currPoints = prf.goalPoints % Profile.POINTS_PER_LEVEL;
 			if (img) {
 				y -= 8;
-				for (int i = 0; i < Profile.POINTS_PER_LEVEL; i++) {
-					final Panctor star = addActor(x + 16 * i, y);
-					if (i < currPoints) {
-						star.setView(PlatformGame.gemGoalAnm);
-					} else {
-						star.setView(PlatformGame.emptyGoal);
-					}
-				}
+				addStars(x, y, currPoints, Profile.POINTS_PER_LEVEL);
 			} else {
 				final StringBuilder b = new StringBuilder();
 				Chartil.appendMulti(b, '*', currPoints);
@@ -1693,23 +1690,33 @@ public class Menu {
 			}
 		}
 		
+		private final void addStars(final int x, final int y, final int currPoints, final int max) {
+			int xc = x;
+			for (int i = 0; i < max; i++) {
+				if (i < currPoints) {
+					addActor(new Gem(PlatformGame.gemGoal), xc, y);
+				} else {
+					addActor(xc, y).setView(PlatformGame.emptyGoal);
+				}
+				xc += 17;
+			}
+		}
+		
 		private final int addGoal(final Goal g, final int x, int y, final boolean img) {
 			final byte award = g.award;
 			addTitle(g.getName(), x, y);
-			y -= 8;
 			final int off;
 			if (img) {
-				y -= 8;
-				for (int i = 0; i < award; i++) {
-					addActor(x + 16 * i, y).setView(PlatformGame.gemGoalAnm);
-				}
+				y -= 17;
+				addStars(x, y, award, 3);
 				off = 56;
 			} else {
+				y -= 8;
 				addTitle(award == 1 ? "*" : award == 2 ? "**" : "***", x, y);
 				off = 32;
 			}
 			addTitleTiny(g.getProgress(pc), x + off, y);
-			y -= 8;
+			y -= (img ? 9 : 8);
 			return y;
 		}
 		

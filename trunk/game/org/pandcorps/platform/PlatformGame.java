@@ -187,7 +187,7 @@ public class PlatformGame extends BaseGame {
 	protected static Panmage gemWhite = null;
 	protected static Panimation gemLevelAnm = null;
 	protected static Panimation gemWorldAnm = null;
-	protected static Panimation gemGoalAnm = null;
+	protected static Panmage[] gemGoal = null;
 	protected static Panmage emptyGoal = null;
 	protected static Panmage gemShatter = null;
 	protected static Panimation spark = null;
@@ -844,7 +844,7 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 		loaders.add(new Runnable() { @Override public final void run() {
 		    gemLevelAnm = createGemAnm("gem.level", createSheet("gem.level", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/Gem5.png")));
 		    gemWorldAnm = createGemAnm("gem.world", createSheet("gem.world", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/Gem6.png")));
-		    gemGoalAnm = createGemAnm("gem.goal", createSheet("gem.goal", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/GemStar.png")));
+		    gemGoal = createSheet("gem.goal", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/GemStar.png"));
 		    emptyGoal = createImage("empty.goal", "org/pandcorps/platform/res/misc/EmptyStar.png", ImtilX.DIM); }});
 	    
 		loaders.add(new Runnable() { @Override public final void run() {
