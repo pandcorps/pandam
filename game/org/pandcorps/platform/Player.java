@@ -486,7 +486,6 @@ public class Player extends Character implements CollisionListener {
 		((Gem) o).onCollide(this);*/
 		final TileMap tm = Level.tm;
 		if (PlatformGame.TILE_GEM == Tile.getBehavior(tm.getTile(index))) {
-			tm.getPosition(index);
 			Gem.onCollide(tm, index, this);
 		}
 	}

@@ -65,6 +65,11 @@ public final class Tile {
         this.background = background;
     }
     
+    // Changes foreground for all occurrences of this Tile
+    public final void setForeground(final Object foreground) {
+        this.foreground = foreground;
+    }
+    
     /*public final void setForeground(final Panmage foreground) {
         this.foreground = foreground;
     }
