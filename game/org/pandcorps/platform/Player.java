@@ -584,7 +584,7 @@ public class Player extends Character implements CollisionListener {
 		}
 	}
 	
-	private final void startHurt() {
+	protected final void startHurt() {
 	    if (!(isInvincible() || pc.profile.isInvincible())) {
 	    	levelHits++;
             onHurt();

@@ -119,7 +119,7 @@ public final class Chartil {
         }
         final StringBuilder sb = new StringBuilder(size);
         for (int j = 0; j < dif; j++) {
-            sb.append(' ');
+            sb.append('0');
         }
         sb.append(s);
         return sb.toString();

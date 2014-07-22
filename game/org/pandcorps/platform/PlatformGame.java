@@ -798,6 +798,13 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
                 	return Math.abs(enemy.hv) < 4;
                 }};
 			allEnemies.add(armoredImp);
+			final EnemyDefinition spikedImp = new EnemyDefinition("Spiked", 10, null, true);
+			spikedImp.stompHandler = new InteractionHandler() {
+                @Override public final boolean onInteract(final Enemy enemy, final Player player) {
+                    player.startHurt();
+                    return true;
+                }};
+			allEnemies.add(spikedImp);
 			anger = createAnm("anger", 10, CENTER_16, Enemy.loadStrip(9, ImtilX.DIM));
 			Level.setTheme(Theme.Normal); }});
 		
