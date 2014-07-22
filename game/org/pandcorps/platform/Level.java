@@ -61,6 +61,7 @@ public class Level {
     private static boolean grassy = true;
     private static Pancolor topSkyColor = null;
     private static Pancolor bottomSkyColor = null;
+    protected static Tile tileGem = null;
     protected static int numEnemies = 0;
     protected static boolean victory = false;
     
@@ -81,7 +82,7 @@ public class Level {
     			}
     		}
     	};
-    	private final static String[] MSG_CHAOS = {"CHAOS", "HAVOC", "BEWARE", "DANGER"};
+    	private final static String[] MSG_CHAOS = {"CHAOS", "HAVOC", "BEWARE", "FEAR", "DANGER"};
     	public static Theme Chaos = new Theme("Chaos", MSG_CHAOS, 0, 1, 4, 7, 8) {
     		@Override protected final BackgroundBuilder getRandomBackground() {
     			return new HillBackgroundBuilder();
@@ -228,6 +229,7 @@ public class Level {
     	grassy = true;
     	topSkyColor = null;
 	    bottomSkyColor = null;
+	    tileGem = null;
     	backgroundBuilder = theme.getRandomBackground();
     	final Builder b = theme.getRandomBuilder();
     	w = b.getW();
@@ -1601,9 +1603,10 @@ public class Level {
     }
     
     private final static void gem(final int x, final int y) {
-        final Gem gem = new Gem();
-        gem.setPosition(tm, x, y);
-        room.addActor(gem);
+        if (tileGem == null) {
+        	tileGem = tm.getTile(null, PlatformGame.gem[0], PlatformGame.TILE_GEM);
+        }
+        tm.setTile(x, y, tileGem);
     }
     
     private final static String[] gemFont = {

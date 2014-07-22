@@ -117,11 +117,11 @@ public class GemBumped extends Pandy {
 		age++;
 		if (age >= 12) {
 		    if (isGood()) {
-		        Gem.spark(this, end);
+		        Gem.spark(getPosition(), end);
 		    } else {
 		        Tiles.shatter(PlatformGame.gemShatter, getPosition(), true);
-		        destroy();
 		    }
+		    destroy();
 		}
 	}
 	

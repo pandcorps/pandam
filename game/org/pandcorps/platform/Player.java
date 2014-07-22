@@ -479,11 +479,16 @@ public class Player extends Character implements CollisionListener {
 
 	@Override
 	protected final void onCollide(final int index) {
-		final TileOccupant o = Level.tm.getOccupant(index);
+		/*final TileOccupant o = Level.tm.getOccupant(index);
 		if (o == null) {
 			return;
 		}
-		((Gem) o).onCollide(this);
+		((Gem) o).onCollide(this);*/
+		final TileMap tm = Level.tm;
+		if (PlatformGame.TILE_GEM == Tile.getBehavior(tm.getTile(index))) {
+			tm.getPosition(index);
+			Gem.onCollide(tm, index, this);
+		}
 	}
 	
 	public final int getCurrentLevelGems() {

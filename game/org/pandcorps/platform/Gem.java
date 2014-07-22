@@ -24,9 +24,11 @@ package org.pandcorps.platform;
 
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
+import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.tile.*;
 
 public class Gem extends TileOccupant implements StepListener {
+	private final static Panple sparkPos = new ImplPanple(0, 0, 0);
 	private static long lastSound = -1;
 	
 	{
@@ -42,27 +44,32 @@ public class Gem extends TileOccupant implements StepListener {
 		}
 	}
 	
-	protected final void onCollide(final Player player) {
+	/*protected final void onCollide(final Player player) {
 		if (isDestroyed()) {
 			return;
 		}
 		collect(player, GemBumped.AWARD_DEF);
 		spark();
+	}*/
+	
+	protected final static void onCollide(final TileMap tm, final int index, final Player player) {
+		collect(player, GemBumped.AWARD_DEF);
+		spark(tm, index);
 	}
 	
 	protected final static void collect(final Player player, final int gems) {
 		player.addGems(gems);
 	}
 	
-	protected final void spark() {
-	    spark(this, false);
+	protected final static void spark(final TileMap tm, final int index) {
+		tm.setTile(index, null);
+		tm.savePosition(sparkPos, index);
+	    spark(sparkPos, false);
 	    playSound();
 	}
 	
-	protected final static void spark(final Panctor gem, final boolean end) {
-		final Panple pos = gem.getPosition();
+	protected final static void spark(final Panple pos, final boolean end) {
 		new Spark(pos.getX() + 8, pos.getY() + 8, end);
-		gem.destroy();
 	}
 	
 	protected final static void playSound() {
