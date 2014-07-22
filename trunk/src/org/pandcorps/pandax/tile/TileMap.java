@@ -180,35 +180,11 @@ public class TileMap extends Panctor implements Savable {
         } 
     }
     
-    public final void fillBackground(final Panmage background) {
-    	fillBackgroundO(background);
-    }
-    
-    public final void fillBackground(final Panmage background, final int y, final int h) {
-    	fillBackgroundO(background, y, h);
-    }
-    
-    public final void fillBackground(final Panmage background, final int x, final int y, final int w, final int h) {
-    	fillBackgroundO(background, x, y, w, h);
-    }
-    
-    public final void fillBackground(final TileMapImage background) {
-    	fillBackgroundO(background);
-    }
-    
-    public final void fillBackground(final TileMapImage background, final boolean solid) {
+    public final void fillBackground(final Object background, final boolean solid) {
         fillBackground(background, 0, 0, w, h, solid);
     }
     
-    public final void fillBackground(final TileMapImage background, final int y, final int h) {
-    	fillBackgroundO(background, y, h);
-    }
-    
-    public final void fillBackground(final TileMapImage background, final int x, final int y, final int w, final int h) {
-    	fillBackgroundO(background, x, y, w, h);
-    }
-    
-    public final void fillBackground(final TileMapImage background, final int x, final int y, final int w, final int h, final boolean solid) {
+    public final void fillBackground(final Object background, final int x, final int y, final int w, final int h, final boolean solid) {
     	fillBackground(background, x, y, w, h);
     	fillBackground(x, y, w, h, solid);
     }
@@ -240,15 +216,15 @@ public class TileMap extends Panctor implements Savable {
         setTile(index, getTile(background, foreground, behavior));
     }
     
-    private final void fillBackgroundO(final Object background) {
-    	fillBackgroundO(background, 0, 0, w, h);
+    public final void fillBackground(final Object background) {
+    	fillBackground(background, 0, 0, w, h);
     }
     
-    private final void fillBackgroundO(final Object background, final int y, final int h) {
-    	fillBackgroundO(background, 0, y, w, h);
+    public final void fillBackground(final Object background, final int y, final int h) {
+    	fillBackground(background, 0, y, w, h);
     }
     
-    private final void fillBackgroundO(final Object background, final int x, final int y, final int w, final int h) {
+    public final void fillBackground(final Object background, final int x, final int y, final int w, final int h) {
         for (int i = x + w - 1; i >= x; i--) {
             for (int j = y + h - 1; j >= y; j--) {
                 setBackground(i, j, background);
@@ -399,7 +375,7 @@ public class TileMap extends Panctor implements Savable {
         tiles[index] = getTile(background, foreground, behavior);
     }
     
-    public final void randBackground(final TileMapImage img, final int y, final int h, final int n) {
+    public final void randBackground(final Object img, final int y, final int h, final int n) {
         for (int i = 0; i < n; i++) {
             setBackground(Mathtil.randi(0, w - 1), Mathtil.randi(y, y + h - 1), img);
         }

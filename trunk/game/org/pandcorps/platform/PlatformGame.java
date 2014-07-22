@@ -318,7 +318,7 @@ public class PlatformGame extends BaseGame {
                 Tile.animate(Level.flashBlock);
                 final Tile tileGem = Level.tileGem;
                 if (i < 3 && tileGem != null) {
-                	tileGem.setForeground(PlatformGame.gem[(((int) i) + 1) % 3]);
+                	tileGem.setForeground(gem[(((int) i) + 1) % 3]);
         		}
             }
 		}
