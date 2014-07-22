@@ -70,15 +70,7 @@ public final class Tile {
         this.foreground = foreground;
     }
     
-    /*public final void setForeground(final Panmage foreground) {
-        this.foreground = foreground;
-    }
-    
-    public final void setForeground(final TileMapImage foreground) {
-        this.foreground = foreground;
-    }
-    
-    public final void setForeground(final TileMapImage foreground, final boolean solid) {
+    /*public final void setForeground(final TileMapImage foreground, final boolean solid) {
         setForeground(foreground);
         setSolid(solid);
     }
