@@ -562,6 +562,10 @@ public class Menu {
 			return addTitle(new Pantext(Pantil.vmid(), PlatformGame.font, title), x, y);
 		}
 		
+		protected final Pantext addTitleTiny(final CharSequence title, final int x, final int y) {
+			return addTitle(new Pantext(Pantil.vmid(), PlatformGame.fontTiny, title), x, y);
+		}
+		
 		protected final Pantext addTitle(final Pantext tLbl, final int x, final int y) {
 			tLbl.getPosition().set(x, y);
 			form.getLayer().addActor(tLbl);
@@ -576,6 +580,13 @@ public class Menu {
 		protected final Model addActor(final PlayerContext pc, final int x) {
 			final Model actor = new Model(pc);
 			PlatformGame.setPosition(actor, x, 16, PlatformGame.DEPTH_PLAYER);
+			room.addActor(actor);
+			return actor;
+		}
+		
+		protected final Panctor addActor(final int x, final int y) {
+			final Panctor actor = new Panctor();
+			actor.getPosition().set(x, y);
 			room.addActor(actor);
 			return actor;
 		}
@@ -1643,7 +1654,7 @@ public class Menu {
                     setAchDesc(event.toString());
             }};
             achRadio = addRadio("Achievements", ach, achLsn, x, y);
-            addTitle(new Pantext(Pantil.vmid(), PlatformGame.fontTiny, achDesc), x + (isTabEnabled() ? OFF_RADIO_LIST : 0), y - 64);
+            addTitleTiny(achDesc, x + (isTabEnabled() ? OFF_RADIO_LIST : 0), y - 64);
             initAchDesc();
 		}
 		
@@ -1656,25 +1667,48 @@ public class Menu {
 			y -= 16;
 			Goal.initGoals(pc);
 			final Profile prf = pc.profile;
+			final boolean img = isTabEnabled();
 			for (final Goal g : prf.currentGoals) {
-				y = addGoal(g, x, y);
+				y = addGoal(g, x, y, img);
 			}
 			y -= 8;
 			addTitle("Rank: " + prf.getRank(), x, y);
 			y -= 8;
-			final StringBuilder b = new StringBuilder();
 			final int currPoints = prf.goalPoints % Profile.POINTS_PER_LEVEL;
-			Chartil.appendMulti(b, '*', currPoints);
-			Chartil.appendMulti(b, '.', Profile.POINTS_PER_LEVEL - currPoints);
-			addTitle(b, x, y);
+			if (img) {
+				y -= 8;
+				for (int i = 0; i < Profile.POINTS_PER_LEVEL; i++) {
+					final Panctor star = addActor(x + 16 * i, y);
+					if (i < currPoints) {
+						star.setView(PlatformGame.gemGoalAnm);
+					} else {
+						star.setView(PlatformGame.emptyGoal);
+					}
+				}
+			} else {
+				final StringBuilder b = new StringBuilder();
+				Chartil.appendMulti(b, '*', currPoints);
+				Chartil.appendMulti(b, '.', Profile.POINTS_PER_LEVEL - currPoints);
+				addTitle(b, x, y);
+			}
 		}
 		
-		private final int addGoal(final Goal g, final int x, int y) {
+		private final int addGoal(final Goal g, final int x, int y, final boolean img) {
 			final byte award = g.award;
 			addTitle(g.getName(), x, y);
 			y -= 8;
-			addTitle(award == 1 ? "*" : award == 2 ? "**" : "***", x, y);
-			addTitle(g.getProgress(pc), x + 32, y);
+			final int off;
+			if (img) {
+				y -= 8;
+				for (int i = 0; i < award; i++) {
+					addActor(x + 16 * i, y).setView(PlatformGame.gemGoalAnm);
+				}
+				off = 56;
+			} else {
+				addTitle(award == 1 ? "*" : award == 2 ? "**" : "***", x, y);
+				off = 32;
+			}
+			addTitleTiny(g.getProgress(pc), x + off, y);
 			y -= 8;
 			return y;
 		}
@@ -1687,7 +1721,7 @@ public class Menu {
 			for (int i = 0; i < 3; i++) {
 				final Goal g = goals[i];
 				if (g != null && g.isMet(pc)) {
-					y = addGoal(g, x, y);
+					y = addGoal(g, x, y, true);
 					final byte award = g.award;
 					final int rank = prf.getRank();
 					prf.goalPoints += award;
@@ -1702,6 +1736,7 @@ public class Menu {
 					break;
 				}
 			}
+			addHudGems();
 			if (isTabEnabled()) {
 				newTab(PlatformGame.menuCheck, "Done", new Runnable() {
 					@Override public final void run() {

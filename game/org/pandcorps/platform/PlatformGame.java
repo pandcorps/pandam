@@ -113,6 +113,8 @@ public class PlatformGame extends BaseGame {
 	User saw bumped gem-block fail to defeat empty ArmorBall on it.
 	User saw Enemy defeated by bumped block fail to give Player a Gem.
 	Once saw Player appear on wrong Marker after goal-met screen.
+	Always display Gems on Menu (and rank with orb icon).
+	Stat for ArmorBall kicks.
 	*/
 	
 	protected final static byte TILE_BREAK = 2;
@@ -289,7 +291,12 @@ public class PlatformGame extends BaseGame {
 			fadeIn(room);
 			for (final PlayerContext pc : pcs) {
 				for (final Goal g : pc.profile.currentGoals) {
-					PlatformGame.notify(pc, g.getName());
+					String msg = g.getName();
+					final String progress = g.getProgress(pc);
+					if (Chartil.isValued(progress)) {
+						msg = msg + ", " + progress;
+					}
+					PlatformGame.notify(pc, msg);
 				}
 			}
 			final Pangine engine = Pangine.getEngine();
