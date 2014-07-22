@@ -33,6 +33,7 @@ import org.pandcorps.pandam.impl.*;
 public class Panlayer extends BasePantity {
     /*package*/ final static Object defaultCollisionGroup = new Object();
 
+    private static Boolean buffersSupported = null;
     private final FinPanple size;
     private final IdentityHashMap<Panctor, Object> actors
         = new IdentityHashMap<Panctor, Object>();
@@ -380,7 +381,13 @@ public class Panlayer extends BasePantity {
     }
     
     public final boolean isBuffered() {
-    	return constant; //TODO and buffers supported
+    	if (constant) {
+    	    if (buffersSupported == null) {
+    	        buffersSupported = Boolean.valueOf(Pangine.getEngine().enableBuffers());
+    	    }
+    	    return buffersSupported.booleanValue();
+    	}
+    	return false;
     }
     
     public final boolean isBuilt() {

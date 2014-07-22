@@ -697,6 +697,16 @@ public abstract class GlPangine extends Pangine {
 	private final void setBgColor() {
 	    gl.glClearColor(clr, clg, clb, cla);
 	}
+	
+	@Override
+	public final boolean enableBuffers() {
+	    try {
+	        gl.glEnable(gl.GL_ARRAY_BUFFER_BINDING);
+	        return true;
+	    } catch (final Exception e) {
+	        return false;
+	    }
+    }
 
 	@Override
 	public final void exit() {

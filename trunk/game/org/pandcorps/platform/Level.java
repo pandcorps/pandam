@@ -82,7 +82,7 @@ public class Level {
     		}
     	};
     	private final static String[] MSG_CHAOS = {"CHAOS", "HAVOC", "BEWARE", "DANGER"};
-    	public static Theme Chaos = new Theme("Chaos", MSG_CHAOS, 0, 1, 4, 7) {
+    	public static Theme Chaos = new Theme("Chaos", MSG_CHAOS, 0, 1, 4, 7, 8) {
     		@Override protected final BackgroundBuilder getRandomBackground() {
     			return new HillBackgroundBuilder();
     		}

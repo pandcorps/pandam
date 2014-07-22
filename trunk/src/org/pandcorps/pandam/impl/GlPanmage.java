@@ -314,7 +314,6 @@ public final class GlPanmage extends Panmage {
 	    	    }
 	    	}
     	    if (buffered && l.bufT == NULL_TID) {
-    	    	gl.glEnable(gl.GL_ARRAY_BUFFER_BINDING); //TODO Only call once
     	    	final IntBuffer ids = Pantil.allocateDirectIntBuffer(2);
     	    	gl.glGenBuffers(ids);
     	    	l.bufT = ids.get(0);
