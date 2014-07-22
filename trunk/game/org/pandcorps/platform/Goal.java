@@ -204,7 +204,8 @@ public abstract class Goal implements Named {
 		
 		@Override
 		public final boolean isMet(final PlayerContext pc) {
-			return getCurrentAmount(pc.player) >= getAmount();
+			final Player player = pc.player;
+			return player != null && getCurrentAmount(player) >= getAmount();
 		}
 		
 		@Override

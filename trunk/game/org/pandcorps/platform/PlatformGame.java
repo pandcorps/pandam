@@ -90,7 +90,6 @@ public class PlatformGame extends BaseGame {
 	Give images a real transparent background, disable ImtilX preprocessing.
 	Assist: Berserker? (Defeat Enemy by touching it)
 	Assist: Teleport (After fall, teleport to target immediately instead of slow bubble, no gem loss)
-	Remove Gem class? Just use Tile.foreground and Tile.animate?
 	Clear TileMap.map/imgs?
 	Static TileMaps should combine adjacent Tiles with adjacent TileMapImages into one larger Tile/TileMapImage.
 	Wing color touch menu.
@@ -100,7 +99,6 @@ public class PlatformGame extends BaseGame {
 	Improve World name generator.
 	Disable million gem bonus.
 	A BounceBall should be able to bump blocks (from below and side) and give Gem to Player that kicked.
-	Names? Hob-troll, Hob-ogre, Pixie-imp?
 	Flag to disable Pangine entity map.
 	Panmage.finalize.
 	Pause if device gets a text/interruption.
@@ -124,6 +122,7 @@ public class PlatformGame extends BaseGame {
     protected final static byte TILE_DOWNSLOPE = 6;
     protected final static byte TILE_UPSLOPE_FLOOR = 7;
     protected final static byte TILE_DOWNSLOPE_FLOOR = 8;
+    protected final static byte TILE_GEM = 9;
 	
 	//protected final static int DEPTH_POWERUP = 0;
 	protected final static int DEPTH_ENEMY = 4;
@@ -317,6 +316,10 @@ public class PlatformGame extends BaseGame {
             		}
             	}
                 Tile.animate(Level.flashBlock);
+                final Tile tileGem = Level.tileGem;
+                if (i < 3 && tileGem != null) {
+                	tileGem.setForeground(PlatformGame.gem[(((int) i) + 1) % 3]);
+        		}
             }
 		}
 		
@@ -652,14 +655,14 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 			drolock.projectile = projectile1;
 			allEnemies.add(drolock); }}); // Teleport/shoot periodically
 		loaders.add(new Runnable() { @Override public final void run() {
-			allEnemies.add(new EnemyDefinition("Troblin", 2, null, true)); }});
+			allEnemies.add(new EnemyDefinition("Hob-troll", 2, null, true)); }}); // Was Troblin
 		loaders.add(new Runnable() { @Override public final void run() {
 			final ReplacePixelFilter f = new ReplacePixelFilter();
 			replace(f, (short) 104, (short) 120, (short) 172);
 			replace(f, (short) 80, (short) 96, (short) 144);
 			replace(f, (short) 64, (short) 80, (short) 112);
 			replace(f, (short) 48, (short) 56, (short) 80);
-			allEnemies.add(new EnemyDefinition("Obglin", 2, f, false));
+			allEnemies.add(new EnemyDefinition("Hob-ogre", 2, f, false)); // Was Obglin
 			final int impX = 4, impH = 14;
 			imp = new EnemyDefinition("Imp", 3, null, true, true, impX, impH);
 			allEnemies.add(imp);
@@ -1081,8 +1084,8 @@ System.out.println("loadConstants end " + System.currentTimeMillis());
 	    for (final Panctor actor : room.getActors()) {
             if (actor instanceof Enemy) {
                 ((Enemy) actor).onBump(null);
-            } else if (actor instanceof Gem) {
-                ((Gem) actor).spark();
+            //} else if (actor instanceof Gem) {
+            //    ((Gem) actor).spark(); // No longer objects
             }
         }
 	    Level.victory = true;
