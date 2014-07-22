@@ -1018,7 +1018,20 @@ System.out.println("loadConstants end " + System.currentTimeMillis());
                 return pc.player == null ? "0" : String.valueOf(pc.player.getCurrentLevelGems());}};
         } else {
             gemSeq = new CallSequence() {@Override protected String call() {
-                return String.valueOf(pc.getGems());}};
+            	int gems = pc.getGems(), temp = pc.tempGems;
+            	if (temp >= 0) {
+            		int off = (gems - temp) / 200;
+            		if (off == 0) {
+            			if (gems > temp) {
+            				off = 1;
+            			} else if (gems < temp) {
+            				off = -1;
+            			}
+            		}
+            		gems = temp + off;
+            		pc.tempGems = gems == temp ? -1 : gems;
+            	}
+                return String.valueOf(gems);}};
         }
         final int i = pc.index;
         final Pantext hudName = new Pantext("hud.name." + i, font, pc.getName());

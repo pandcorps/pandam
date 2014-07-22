@@ -134,6 +134,7 @@ public class Player extends Character implements CollisionListener {
 	    protected final Profile profile;
 	    protected final int index;
 	    protected Player player = null;
+	    protected int tempGems = -1;
 	    
 	    protected final ControlScheme ctrl;
 	    
@@ -190,7 +191,12 @@ public class Player extends Character implements CollisionListener {
 	    }
 	    
 	    private final void commitGems() {
-			profile.addGems(player.levelGems);
+	    	addGems(player.levelGems);
+	    }
+	    
+	    protected final void addGems(final int n) {
+	    	tempGems = profile.getGems();
+			profile.addGems(n);
 	    }
 	    
 	    public final void onFinishLevel() {

@@ -1693,7 +1693,7 @@ public class Menu {
 					prf.goalPoints += award;
 					final int newRank = prf.getRank();
 					if (newRank > rank) {
-						prf.addGems(1000);
+						pc.addGems(1000);
 						addTitle("Reached rank " + newRank + ", 1000 Gem bonus", x, y);
 						y -= 8;
 					}
