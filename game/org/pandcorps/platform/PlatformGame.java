@@ -76,7 +76,7 @@ public class PlatformGame extends BaseGame {
 	Bump w/o break ceiling block.
 	Bounce/blow floor.
 	Spike/fire floor tile.
-	Spike/fire enemy.
+	Fire enemy?
 	Jumping enemy.
 	Collect fruit from trees.
 	Collect letters to spell word for bonus gems.
