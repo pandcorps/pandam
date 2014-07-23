@@ -62,6 +62,7 @@ public class Cabin {
 			final Img tbuf = ImtilX.loadImage("org/pandcorps/platform/res/bg/Tiles.png", 128, null);
 			final Img buf = ImtilX.loadImage("org/pandcorps/platform/res/bg/Cabin.png", 128, null);
 			Imtil.copy(tbuf, buf, 64, 0, 16, 16, 32, 64);
+			tbuf.close();
 			timg = engine.createImage("img.cabin", buf);
 			imgMap = tm.splitImageMap(timg);
 			bumpedImage = imgMap[4][2];
@@ -185,12 +186,12 @@ public class Cabin {
 		protected final int rndAward() {
 		    final int r = Mathtil.randi(0, 9999), awd;
             // Looks like bonus Gems are pre-sorted, so 25% chance of getting 1000,
-            // but decide after Player picks, so 65% chance of 1000, then 30/4.8/0.2
-            if (r < 6500) {
+            // but decide after Player picks, so 73% chance of 1000, then 25/1.9/0.1
+            if (r < 7300) {
                 awd = GemBumped.AWARD_4;
-            } else if (r < 9500) {
+            } else if (r < 9800) {
                 awd = GemBumped.AWARD_3;
-            } else if (r < 9980) {
+            } else if (r < 9990) {
                 awd = GemBumped.AWARD_2;
             } else {
                 awd = GemBumped.AWARD_DEF;
