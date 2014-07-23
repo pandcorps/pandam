@@ -676,7 +676,9 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 			    }
 			    @Override public final boolean onInteract(final Enemy enemy, final Player player) {
 			        final int a = Math.abs(enemy.hv);
-                    if (a < n) {
+			        if (a > 1 && enemy.timer > 0) {
+                        return true;
+                    } else if (a < n) {
                         if (enemy.hv > 0) {
                             enemy.hv++;
                         } else {
@@ -686,8 +688,6 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
                         for (int i = 0; i < a; i++) {
                             enemy.burst(anger, enemy, null, 36 + (i * 8));
                         }
-                        return true;
-                    } else if (enemy.timer > 0) {
                         return true;
                     }
                     return false;
