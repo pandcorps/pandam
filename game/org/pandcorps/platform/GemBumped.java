@@ -26,9 +26,11 @@ import org.pandcorps.core.*;
 import org.pandcorps.game.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
+import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.*;
 
 public class GemBumped extends Pandy {
+	private final static Panple tilePos = new ImplPanple(0, 0, 0);
     protected final static int AWARD_DEF = 1;
     protected final static int AWARD_2 = AWARD_DEF * 10;
     protected final static int AWARD_3 = AWARD_2 * 10;
@@ -51,8 +53,8 @@ public class GemBumped extends Pandy {
 	    return AWARD_DEF;
 	}
 	
-	public GemBumped(final Player player, final int index, final int award) {
-	    this(player, index, award, false, getAnm(award));
+	public final static GemBumped create(final Player player, final int index, final int award) {
+	    return create(player, index, award, false, getAnm(award));
 	}
 	
 	protected final static Panimation getAnm(final int award) {
@@ -66,10 +68,10 @@ public class GemBumped extends Pandy {
     }
 	
 	public GemBumped(final Player player, final Enemy defeated) {
-		this(player, defeated.getBoundingMinimum(), defeated.def.award, false, getAnm(defeated.def.award));
+		this(player, defeated.getPosition().getX() - 8, defeated.getBoundingMaximum().getY() - Enemy.DEFAULT_H, defeated.def.award, false, getAnm(defeated.def.award));
 	}
 	
-	public static GemBumped newLevelEnd(final Player player, final int index) {
+	public final static GemBumped newLevelEnd(final Player player, final int index) {
 		final int award;
 		final Panimation anm;
 		if (Level.isNormalTheme()) {
@@ -79,18 +81,20 @@ public class GemBumped extends Pandy {
 			award = AWARD_WORLD;
 			anm = PlatformGame.gemWorldAnm;
 		}
-	    return new GemBumped(player, index, award, true, anm);
+	    return create(player, index, award, true, anm);
 	}
 	
-	public static GemBumped newShatter(final Player player) {
-	    return new GemBumped(player, player.getBoundingMinimum(), -1, false, PlatformGame.gemAnm);
+	public final static GemBumped newShatter(final Player player) {
+		final Panple pos = player.getPosition();
+	    return new GemBumped(player, pos.getX() - 8, pos.getY(), -1, false, PlatformGame.gemAnm);
 	}
 	
-	private GemBumped(final Player player, final int index, final int award, final boolean end, final Panimation anm) {
-	    this(player, Level.tm.getPosition(index), award, end, anm);
+	private final static GemBumped create(final Player player, final int index, final int award, final boolean end, final Panimation anm) {
+		Level.tm.savePosition(tilePos, index);
+	    return new GemBumped(player, tilePos.getX(), tilePos.getY(), award, end, anm);
 	}
 	
-	private GemBumped(final Player player, final Panple pos, final int award, final boolean end, final Panimation anm) {
+	private GemBumped(final Player player, final float x, final float y, final int award, final boolean end, final Panimation anm) {
 		super(Tiles.g);
 		this.award = award;
 		this.end = end;
@@ -99,7 +103,7 @@ public class GemBumped extends Pandy {
 		    Gem.collect(player, award);
 		}
 		setView(anm);
-		PlatformGame.setPosition(this, pos.getX(), pos.getY() + ImtilX.DIM, PlatformGame.DEPTH_SHATTER);
+		PlatformGame.setPosition(this, x, y + ImtilX.DIM, PlatformGame.DEPTH_SHATTER);
 		getVelocity().set(0, 6);
         PlatformGame.room.addActor(this);
         if (end) {

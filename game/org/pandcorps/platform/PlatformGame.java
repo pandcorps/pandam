@@ -60,7 +60,7 @@ public class PlatformGame extends BaseGame {
 	Map landmarks: Mountain, garden.
 	Train-riding levels.
 	Ridable dragons.
-	Enemy Wisp, Elementals, Impix (winged Imp), Troll Colossus (special template), Ogre Behemoth.
+	Enemy Wisp, Elementals, winged Imp.
 	Drolock should walk sometimes.
 	Introduce enemies gradually.
 	Enemy-specific Level templates (Imp walking into ArmorBall).
@@ -175,6 +175,8 @@ public class PlatformGame extends BaseGame {
 	protected static List<EnemyDefinition> enemies = null;
 	protected static EnemyDefinition imp = null;
 	protected static EnemyDefinition armoredImp = null;
+	protected static EnemyDefinition trollColossus = null;
+	protected static EnemyDefinition ogreBehemoth = null;
 	protected static Panimation anger = null;
 	protected static Panmage block8 = null;
 	protected static Panmage[] gem = null;
@@ -686,7 +688,7 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
                         }
                         enemy.timer = 5;
                         for (int i = 0; i < a; i++) {
-                            enemy.burst(anger, enemy, null, 36 + (i * 8));
+                            enemy.burst(anger, enemy, null, (32 * (n - 1)) + 4 + (i * 8));
                         }
                         return true;
                     }
@@ -705,12 +707,11 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 			ogre = new EnemyDefinition("Ogre", 5, f, false, false, 0, 8, 30, 1, 32);
 			ogre.init(troll);
 			allEnemies.add(ogre);
-			final EnemyDefinition trollColossus, ogreBehemoth;
-			trollColossus = new EnemyDefinition("Troll Colossus", 11, null, true, false, 0, 24, 62, 1, 64);
+			trollColossus = new EnemyDefinition("Troll Colossus", 11, null, true, false, 0, 26, 62, 1, 64);
 			trollColossus.award = GemBumped.AWARD_3;
 			trollColossus.stompHandler = new MultiStompHandler(3);
 			trollColossus.stepHandler = troll.stepHandler;
-			ogreBehemoth = new EnemyDefinition("Ogre Behemoth", 11, f, false, false, 0, 24, 62, 1, 64);
+			ogreBehemoth = new EnemyDefinition("Ogre Behemoth", 11, f, false, false, 0, 26, 62, 1, 64);
 			ogreBehemoth.init(trollColossus);
 			final EnemyDefinition armorBall, bounceBall, thrownImp;
 			armorBall = new EnemyDefinition("Armor Ball", 7, null, false, 0, 0);
