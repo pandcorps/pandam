@@ -60,7 +60,7 @@ public class PlatformGame extends BaseGame {
 	Map landmarks: Mountain, garden.
 	Train-riding levels.
 	Ridable dragons.
-	Enemy Wisp, Elementals, Impix (winged Imp), Troll Colossus (64^2, 100 Gems, 3 hits), Ogre Behemoth.
+	Enemy Wisp, Elementals, Impix (winged Imp), Troll Colossus (special template), Ogre Behemoth.
 	Drolock should walk sometimes.
 	Introduce enemies gradually.
 	Enemy-specific Level templates (Imp walking into ArmorBall).
@@ -669,18 +669,31 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 			final EnemyDefinition troll, ogre;
 			troll = new EnemyDefinition("Troll", 5, null, true, false, 0, 8, 30, 1, 32);
 			troll.award = GemBumped.AWARD_2;
-			troll.stompHandler = new InteractionHandler() {
-                @Override public final boolean onInteract(final Enemy enemy, final Player player) {
-                	if (Math.abs(enemy.hv) <= 1) {
-                		enemy.hv *= 2;
-                		enemy.timer = 5;
-                		enemy.burst(anger, enemy, null, 36);
-                		return true;
-                	} else if (enemy.timer > 0) {
-                		return true;
-                	}
+			final class MultiStompHandler implements InteractionHandler {
+			    private final int n;
+			    private MultiStompHandler(final int n) {
+			        this.n = n;
+			    }
+			    @Override public final boolean onInteract(final Enemy enemy, final Player player) {
+			        final int a = Math.abs(enemy.hv);
+                    if (a < n) {
+                        if (enemy.hv > 0) {
+                            enemy.hv++;
+                        } else {
+                            enemy.hv--;
+                        }
+                        enemy.timer = 5;
+                        for (int i = 0; i < a; i++) {
+                            enemy.burst(anger, enemy, null, 36 + (i * 8));
+                        }
+                        return true;
+                    } else if (enemy.timer > 0) {
+                        return true;
+                    }
                     return false;
-                }};
+                }
+			}
+			troll.stompHandler = new MultiStompHandler(2);
             troll.stepHandler = new InteractionHandler() {
                 @Override public final boolean onInteract(final Enemy enemy, final Player player) {
                 	if (enemy.timer > 0) {
@@ -695,7 +708,7 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 			final EnemyDefinition trollColossus, ogreBehemoth;
 			trollColossus = new EnemyDefinition("Troll Colossus", 11, null, true, false, 0, 24, 62, 1, 64);
 			trollColossus.award = GemBumped.AWARD_3;
-			trollColossus.stompHandler = null;
+			trollColossus.stompHandler = new MultiStompHandler(3);
 			trollColossus.stepHandler = troll.stepHandler;
 			ogreBehemoth = new EnemyDefinition("Ogre Behemoth", 11, f, false, false, 0, 24, 62, 1, 64);
 			ogreBehemoth.init(trollColossus);
