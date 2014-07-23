@@ -42,6 +42,7 @@ public abstract class Pangine {
 	protected static Pangine engine = null;
 
 	private final Map<String, Pantity> entities = new ConcurrentHashMap<String, Pantity>();
+	private boolean entityMapEnabled = true;
 	private final HashMap<Class<? extends Panctor>, Pantype> types =
 		new HashMap<Class<? extends Panctor>, Pantype>();
 	//private final ArrayList<Panmage> images = new ArrayList<Panmage>();
@@ -393,16 +394,24 @@ public abstract class Pangine {
 	public abstract void clearTouchButtons();
 	
 	public abstract boolean isTouchSupported();
+	
+	public void setEntityMapEnabled(final boolean entityMapEnabled) {
+		this.entityMapEnabled = entityMapEnabled;
+		if (!entityMapEnabled) {
+			entities.clear();
+		}
+	}
 
 	private void register(final Pantity entity) throws Panception {
-		String id = entity.getId();
-
-		if (id == null) {
-			throw new NullPointerException("Id is null");
-		}
-		final Pantity prev = entities.put(id, entity);
-		if (prev != null) {
-			throw new Panception("Id " + id + " already registered to " + prev);
+		if (entityMapEnabled) {
+			final String id = entity.getId();
+			if (id == null) {
+				throw new NullPointerException("Id is null");
+			}
+			final Pantity prev = entities.put(id, entity);
+			if (prev != null) {
+				throw new Panception("Id " + id + " already registered to " + prev);
+			}
 		}
 	}
 

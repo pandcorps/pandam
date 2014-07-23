@@ -45,4 +45,9 @@ public final class EmptyPanmage extends Panmage {
     @Override
     protected final void close() {
     }
+    
+    @Override
+    protected final boolean isClosed() {
+    	return true;
+    }
 }
