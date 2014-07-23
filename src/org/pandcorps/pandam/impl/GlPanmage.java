@@ -605,4 +605,9 @@ public final class GlPanmage extends Panmage {
 	    }
 	    layers.clear();
     }
+	
+	@Override
+	protected final boolean isClosed() {
+		return tid == NULL_TID;
+	}
 }

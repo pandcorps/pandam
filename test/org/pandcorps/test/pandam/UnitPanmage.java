@@ -47,4 +47,9 @@ public final class UnitPanmage extends Panmage {
 	@Override
     protected final void close() {
     }
+	
+	@Override
+    protected final boolean isClosed() {
+    	return true;
+    }
 }

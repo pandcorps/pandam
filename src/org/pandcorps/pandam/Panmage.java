@@ -121,10 +121,21 @@ public abstract class Panmage extends BasePantity implements Panview, Pansplay {
         final float ix, final float iy, final float iw, final float ih, final int rot, final boolean mirror, final boolean flip);
 	
 	@Override
+	protected final void finalize() {
+		if (!isClosed()) {
+			System.err.println("Finalizing unclosed Panmage " + getId());
+		}
+	}
+	
+	@Override
 	public final void destroy() {
+		//open = false;
 	    super.destroy();
 	    close();
 	}
 	
 	protected abstract void close();
+	
+	//private boolean open = true; // Only needed for debugging in finalize
+	protected abstract boolean isClosed();
 }
