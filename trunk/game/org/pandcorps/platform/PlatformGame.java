@@ -99,8 +99,6 @@ public class PlatformGame extends BaseGame {
 	Improve World name generator.
 	Disable million gem bonus.
 	A BounceBall should be able to bump blocks (from below and side) and give Gem to Player that kicked.
-	Flag to disable Pangine entity map.
-	Panmage.finalize.
 	Pause if device gets a text/interruption.
 	Some rises allow an Enemy but Player hits ceiling.
 	Tall Enemy can appear behind a short enemy on a rise above it; lower Enemy should be in front.
@@ -245,7 +243,9 @@ public class PlatformGame extends BaseGame {
 	
 	@Override
 	protected final void init(final Panroom room) throws Exception {
-	    Pangine.getEngine().setTitle("Platformer");
+	    final Pangine engine = Pangine.getEngine();
+	    engine.setTitle("Platformer");
+	    engine.setEntityMapEnabled(false);
 		PlatformGame.room = room;
 		loadConstants();
 		Panscreen.set(new LogoScreen(Menu.TitleScreen.class, loaders));
