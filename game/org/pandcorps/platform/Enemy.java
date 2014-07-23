@@ -129,6 +129,12 @@ public class Enemy extends Character {
 			this.h = h;
 			this.hv = hv;
 		}
+		
+		protected final void init(final EnemyDefinition ref) {
+		    award = ref.award;
+            stompHandler = ref.stompHandler;
+            stepHandler = ref.stepHandler;
+		}
 	}
 	
 	protected final static Img[] loadStrip(final int ind, final int d) {
