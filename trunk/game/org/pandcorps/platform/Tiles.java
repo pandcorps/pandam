@@ -59,7 +59,7 @@ public class Tiles {
     }
     
     private final static GemBumped newGemBumped(final Player player, final int index) {
-		return new GemBumped(player, index, getHandler().rndAward());
+		return GemBumped.create(player, index, getHandler().rndAward());
 	}
     
     protected final static void bump(final Character chr, final int index) {

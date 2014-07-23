@@ -25,6 +25,7 @@ package org.pandcorps.platform;
 import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
+import org.pandcorps.platform.Enemy.*;
 
 public class Spawner extends Panctor implements StepListener {
 	protected Spawner(final float x, final float y) {
@@ -37,9 +38,27 @@ public class Spawner extends Panctor implements StepListener {
 	public final void onStep(final StepEvent event) {
 		final Panple pos = getPosition();
 		final float x = pos.getX();
-		if (x <= getLayer().getViewMaximum().getX() + Player.MAX_V) {
-			new Enemy(Mathtil.rand(PlatformGame.enemies), x, pos.getY());
+		if (x - 32 <= getLayer().getViewMaximum().getX() + Player.MAX_V) {
+			new Enemy(getDef(), x, pos.getY());
 			destroy();
+		}
+	}
+	
+	protected EnemyDefinition getDef() {
+		return Mathtil.rand(PlatformGame.enemies);
+	}
+	
+	public final static class SpecificSpawner extends Spawner {
+		private final EnemyDefinition def;
+		
+		protected SpecificSpawner(final EnemyDefinition def, final float x, final float y) {
+			super(x, y);
+			this.def = def;
+		}
+		
+		@Override
+		protected final EnemyDefinition getDef() {
+			return def;
 		}
 	}
 }

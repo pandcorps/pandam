@@ -34,6 +34,7 @@ import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.tile.Tile.*;
 import org.pandcorps.platform.Enemy.*;
 import org.pandcorps.platform.Player.*;
+import org.pandcorps.platform.Spawner.*;
 
 public class Level {
     protected final static int ROOM_H = 256;
@@ -382,6 +383,9 @@ public class Level {
     			Checkered, diagonal stripe gem patterns
     			*/
     		    final Template template = Mathtil.rand(templates);
+    		    if (template.getClass() == GiantTemplate.class) {
+    		    	templates.remove(template);
+    		    }
     		    template.plan();
     		    ground();
     		    if (bx < ng) {
@@ -550,11 +554,16 @@ public class Level {
         }
     }
     
-    private static void enemy(final int x, final int y, final int w) {
+    private final static void enemy(final int x, final int y, final int w) {
     	if (w < 3 || Mathtil.rand(40)) {
     		return;
     	}
     	new Spawner(tm.getTileWidth() * (x + Mathtil.randi(1, w - 2)), tm.getTileHeight() * y);
+    	numEnemies++;
+    }
+    
+    private final static void enemy(final EnemyDefinition def, final int x, final int y) {
+    	new SpecificSpawner(def, tm.getTileWidth() * x, tm.getTileHeight() * y);
     	numEnemies++;
     }
     
@@ -584,6 +593,7 @@ public class Level {
 	        addTemplate(new BlockBonusTemplate());
 	        addTemplate(new GemTemplate(), new GemMsgTemplate());
 	        addTemplate(new SlantTemplate(true), new SlantTemplate(false));
+	        addTemplate(new GiantTemplate());
 	        goals.add(new SlantGoal());
 	    }
     	
@@ -614,6 +624,7 @@ public class Level {
 	        addTemplate(new BlockBonusTemplate());
 	        addTemplate(new GemTemplate(), new GemMsgTemplate());
 	        addTemplate(new SlantTemplate(true), new SlantTemplate(false));
+	        addTemplate(new GiantTemplate());
 	        goals.add(new SlantGoal());
 	    }
     	
@@ -649,6 +660,7 @@ public class Level {
 	        addTemplate(new UpBlockStepTemplate(), new DownBlockStepTemplate(), new BlockWallTemplate(), new BlockGroupTemplate());
 	        addTemplate(new BlockBonusTemplate());
 	        addTemplate(new GemTemplate(), new GemMsgTemplate());
+	        addTemplate(new GiantTemplate());
 	        goals.add(new UpBlockGoal());
 	    }
     	
@@ -1129,6 +1141,19 @@ public class Level {
         	tree(x, floor + 1);
         	enemy(x, floor + 1, w);
         }
+    }
+    
+    private final static class GiantTemplate extends SimpleTemplate {
+    	protected GiantTemplate() {
+    		super(12, 12, 0);
+    	}
+    	
+    	@Override
+        protected final void build() {
+    		blockWall(x, floor + 1, 1, 2);
+    		blockWall(x + 11, floor + 1, 1, 2);
+    		enemy(Mathtil.rand() ? PlatformGame.trollColossus : PlatformGame.ogreBehemoth, x + 5, floor + 1);
+    	}
     }
     
     private final static void extractSkyColors(final Img img) {
