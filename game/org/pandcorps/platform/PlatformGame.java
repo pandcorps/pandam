@@ -62,7 +62,6 @@ public class PlatformGame extends BaseGame {
 	Ridable dragons.
 	Enemy Wisp, Elementals, winged Imp.
 	Drolock should walk sometimes.
-	Introduce enemies gradually.
 	Enemy-specific Level templates (Imp walking into ArmorBall).
 	Gargoyles catch/carry Player, like moving platforms, one can jump to/from them, but not run on them.
 	Cannons on ground that Player enters to be launched.

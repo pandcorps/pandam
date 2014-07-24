@@ -69,8 +69,13 @@ public class Level {
     protected abstract static class Theme {
     	private final static String[] MSG = {"PLAYER", "GEMS", "HURRAY", "GO", "YAY", "GREAT", "PERFECT"};
     	public final static Theme Normal = new Theme(null, MSG) {
-    	    @Override protected final int[] getEnemyIndices() {
-    	        return new int[] {2, 3, 4, 5, 6, 7};
+    	    @Override protected final int[] getEnemyIndices(final int worlds) {
+    	        switch (worlds) {
+    	            case 0 : return new int[] {2, 3, 4};
+    	            case 1 : return new int[] {2, 3, 4, 7}; // Add armored imps after beating 1st world
+    	            default: return new int[] {2, 3, 4, 5, 6, 7}; // Regular trolls and ogres after 2nd
+    	            // troll colossus and ogre behemoth after 3rd (see addGiantTemplate)
+    	        }
     	    }
     	    
     		@Override protected final BackgroundBuilder getRandomBackground() {
@@ -89,8 +94,12 @@ public class Level {
     	};
     	private final static String[] MSG_CHAOS = {"CHAOS", "HAVOC", "BEWARE", "FEAR", "DANGER"};
     	public final static Theme Chaos = new Theme("Chaos", MSG_CHAOS) {
-    	    @Override protected final int[] getEnemyIndices() {
-                return new int[] {0, 1, 4, 7, 8};
+    	    @Override protected final int[] getEnemyIndices(final int worlds) {
+                switch (worlds) {
+                    case 0 : return new int[] {0, 1, 4};
+                    case 1 : return new int[] {0, 1, 4, 7};
+                    default: return new int[] {0, 1, 4, 7, 8};
+                }
             }
     	    
     		@Override protected final BackgroundBuilder getRandomBackground() {
@@ -111,7 +120,7 @@ public class Level {
     	}
     	
     	private final List<EnemyDefinition> getEnemies() {
-    	    final int[] enemies = getEnemyIndices();
+    	    final int[] enemies = getEnemyIndices(getDefeatedWorlds());
     		final List<EnemyDefinition> list = new ArrayList<EnemyDefinition>(enemies.length);
     		for (final int enemy : enemies) {
     		    list.add(PlatformGame.allEnemies.get(enemy));
@@ -119,7 +128,7 @@ public class Level {
     		return list;
     	}
     	
-    	protected abstract int[] getEnemyIndices();
+    	protected abstract int[] getEnemyIndices(final int worlds);
     	
     	protected abstract BackgroundBuilder getRandomBackground();
     	
@@ -133,6 +142,17 @@ public class Level {
     
     protected static boolean isNormalTheme() {
     	return theme == Theme.Normal;
+    }
+    
+    private final static int getDefeatedWorlds() {
+        if (Coltil.size(PlatformGame.pcs) > 0) {
+            final PlayerContext pc = PlatformGame.pcs.get(0);
+            final Profile prf = pc == null ? null : pc.profile;
+            if (pc != null) {
+                return prf.stats.defeatedWorlds;
+            }
+        }
+        return 0;
     }
     
     protected final static boolean isFlash(final Tile tile) {
@@ -346,6 +366,12 @@ public class Level {
         
         protected final void addTemplate(final Template... a) {
         	templates.add(a.length == 1 ? a[0] : new ChoiceTemplate(a));
+        }
+        
+        protected final void addGiantTemplate() {
+            if (isNormalTheme() && getDefeatedWorlds() >= 3) {
+                addTemplate(new GiantTemplate());
+            }
         }
         
     	@Override
@@ -607,9 +633,7 @@ public class Level {
 	        addTemplate(new BlockBonusTemplate());
 	        addTemplate(new GemTemplate(), new GemMsgTemplate());
 	        addTemplate(new SlantTemplate(true), new SlantTemplate(false));
-	        if (isNormalTheme()) {
-	            addTemplate(new GiantTemplate());
-	        }
+	        addGiantTemplate();
 	        goals.add(new SlantGoal());
 	    }
     	
@@ -640,7 +664,7 @@ public class Level {
 	        addTemplate(new BlockBonusTemplate());
 	        addTemplate(new GemTemplate(), new GemMsgTemplate());
 	        addTemplate(new SlantTemplate(true), new SlantTemplate(false));
-	        addTemplate(new GiantTemplate());
+	        addGiantTemplate();
 	        goals.add(new SlantGoal());
 	    }
     	
@@ -676,7 +700,7 @@ public class Level {
 	        addTemplate(new UpBlockStepTemplate(), new DownBlockStepTemplate(), new BlockWallTemplate(), new BlockGroupTemplate());
 	        addTemplate(new BlockBonusTemplate());
 	        addTemplate(new GemTemplate(), new GemMsgTemplate());
-	        addTemplate(new GiantTemplate());
+	        addGiantTemplate();
 	        goals.add(new UpBlockGoal());
 	    }
     	
