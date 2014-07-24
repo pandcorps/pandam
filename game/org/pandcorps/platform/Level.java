@@ -68,7 +68,11 @@ public class Level {
     
     protected abstract static class Theme {
     	private final static String[] MSG = {"PLAYER", "GEMS", "HURRAY", "GO", "YAY", "GREAT", "PERFECT"};
-    	public static Theme Normal = new Theme(null, MSG, 2, 3, 4, 5, 6, 7) {
+    	public final static Theme Normal = new Theme(null, MSG) {
+    	    @Override protected final int[] getEnemyIndices() {
+    	        return new int[] {2, 3, 4, 5, 6, 7};
+    	    }
+    	    
     		@Override protected final BackgroundBuilder getRandomBackground() {
     			return Mathtil.rand(new HillBackgroundBuilder(), new ForestBackgroundBuilder(), new TownBackgroundBuilder());
     		}
@@ -84,7 +88,11 @@ public class Level {
     		}
     	};
     	private final static String[] MSG_CHAOS = {"CHAOS", "HAVOC", "BEWARE", "FEAR", "DANGER"};
-    	public static Theme Chaos = new Theme("Chaos", MSG_CHAOS, 0, 1, 4, 7, 8) {
+    	public final static Theme Chaos = new Theme("Chaos", MSG_CHAOS) {
+    	    @Override protected final int[] getEnemyIndices() {
+                return new int[] {0, 1, 4, 7, 8};
+            }
+    	    
     		@Override protected final BackgroundBuilder getRandomBackground() {
     			return new HillBackgroundBuilder();
     		}
@@ -96,16 +104,22 @@ public class Level {
     	
     	protected final String img;
     	protected final String[] gemMessages;
-    	protected final List<EnemyDefinition> enemies;
     	
-    	private Theme(final String img, final String[] gemMessages, final int... enemies) {
+    	private Theme(final String img, final String[] gemMessages) {
     		this.img = img;
     		this.gemMessages = gemMessages;
-    		this.enemies = new ArrayList<EnemyDefinition>(enemies.length);
-    		for (final int enemy : enemies) {
-    			this.enemies.add(PlatformGame.allEnemies.get(enemy));
-    		}
     	}
+    	
+    	private final List<EnemyDefinition> getEnemies() {
+    	    final int[] enemies = getEnemyIndices();
+    		final List<EnemyDefinition> list = new ArrayList<EnemyDefinition>(enemies.length);
+    		for (final int enemy : enemies) {
+    		    list.add(PlatformGame.allEnemies.get(enemy));
+    		}
+    		return list;
+    	}
+    	
+    	protected abstract int[] getEnemyIndices();
     	
     	protected abstract BackgroundBuilder getRandomBackground();
     	
@@ -114,7 +128,7 @@ public class Level {
     
     protected static void setTheme(final Theme theme) {
     	Level.theme = theme;
-    	PlatformGame.enemies = theme.enemies;
+    	PlatformGame.enemies = theme.getEnemies();
     }
     
     protected static boolean isNormalTheme() {
@@ -593,7 +607,9 @@ public class Level {
 	        addTemplate(new BlockBonusTemplate());
 	        addTemplate(new GemTemplate(), new GemMsgTemplate());
 	        addTemplate(new SlantTemplate(true), new SlantTemplate(false));
-	        addTemplate(new GiantTemplate());
+	        if (isNormalTheme()) {
+	            addTemplate(new GiantTemplate());
+	        }
 	        goals.add(new SlantGoal());
 	    }
     	
