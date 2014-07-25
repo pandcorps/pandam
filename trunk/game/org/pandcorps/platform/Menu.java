@@ -615,14 +615,21 @@ public class Menu {
 		    onExit();
 		}
 		
+		protected final void registerBack(final ActionEndListener listener) {
+			final Panteraction interaction = Pangine.getEngine().getInteraction();
+			final Panput back = interaction.BACK;
+			interaction.unregister(back);
+		    tm.register(back, listener);
+		}
+		
 		protected final void registerBackExit() {
-		    tm.register(Pangine.getEngine().getInteraction().BACK, new ActionEndListener() {
+			registerBack(new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
                     exit(); }});
 		}
 		
 		protected final void registerBackNop() {
-            tm.register(Pangine.getEngine().getInteraction().BACK, new ActionEndListener() {
+			registerBack(new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) { }});
         }
 		
@@ -1754,6 +1761,9 @@ public class Menu {
 				}
 			}
 			addHudGems();
+			if (isTabEnabled()) {
+				registerBackNop();
+			}
 		}
 		
 		private final void addContinue(final int x, final int y) {
@@ -1773,7 +1783,7 @@ public class Menu {
 		}
 		
 		private final void addGoalTimer(final TimerListener listener) {
-			Pangine.getEngine().addTimer(rankStars.get(0), 30, listener);
+			Pangine.getEngine().addTimer(tm, 30, listener);
 		}
 		
 		private final void addGoalPoints(final int goalIndex, final int x, final int y) {
