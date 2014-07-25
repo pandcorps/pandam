@@ -1692,12 +1692,12 @@ public class Menu {
 			y -= 8;
 			Chartil.set(rankDesc, "Rank: " + prf.getRank());
 			addTitle(rankDesc, x, y);
-			y -= 8;
 			final int currPoints = prf.getCurrentGoalPoints();
 			if (img) {
-				y -= 8;
+				y -= 17;
 				addStars(x, y, currPoints, Profile.POINTS_PER_RANK, rankStars);
 			} else {
+				y -= 8;
 				final StringBuilder b = new StringBuilder();
 				Chartil.appendMulti(b, '*', currPoints);
 				Chartil.appendMulti(b, '.', Profile.POINTS_PER_RANK - currPoints);
@@ -1779,6 +1779,7 @@ public class Menu {
 					@Override protected final void onClose() {
 						reload(TAB_GOALS);
 					}}, x, y - 16);
+				//TODO Probably need to call form.init here; maybe skip that when screen is first created
 			}
 		}
 		
@@ -1800,21 +1801,24 @@ public class Menu {
 								final Panctor rankStar = rankStars.get(j);
 								if (rankStar.getClass() != Gem.class) {
 									goalStar.swapPositions(rankStar);
+									goalStars.set(i, rankStar);
+									rankStars.set(j, goalStar);
+									break;
 								}
 							}
-							if (newRank >= rank) {
+							if (newRank > rank) {
 								// Rank up
 								addGoalTimer(new TimerListener() {
 									@Override public final void onTimer(final TimerEvent event) {
 										pc.addGems(1000);
-										Chartil.set(rankDesc, "Reached rank " + prf.getRank() + ", 1000 Gem bonus");
-										addGoalPoints(goalIndex, x, y);
+										Chartil.set(rankDesc, "Reached rank " + newRank + ", 1000 Gem bonus");
 										for (int j = 0; j < Profile.POINTS_PER_RANK; j++) {
 											final Panctor rankStar = rankStars.get(j);
 											final Panple pos = rankStar.getPosition();
 											rankStars.set(j, addEmptyStar((int) pos.getX(), (int) pos.getY()));
 											rankStar.destroy();
 										}
+										addGoalPoints(goalIndex, x, y);
 									}});
 							} else {
 								// Add remaining points (if any)
