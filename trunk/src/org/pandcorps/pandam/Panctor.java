@@ -380,6 +380,13 @@ public class Panctor extends BasePantity implements SpecPanctor {
 		Pangame.getGame().getCurrentRoom().addActor(newActor);
 		return newActor;
 	}
+	
+	public final void swapPositions(final Panctor a2) {
+		final Panple p1 = getPosition(), p2 = a2.getPosition();
+		final float x = p1.getX(), y = p1.getY(), z = p1.getZ();
+		p1.set(p2);
+		p2.set(x, y, z);
+	}
 
 	/*
 	@Override
