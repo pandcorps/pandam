@@ -1586,6 +1586,9 @@ public class Menu {
 		protected static byte currentTab = TAB_AWARD;
 	    private RadioGroup achRadio = null;
 	    private final StringBuilder achDesc = new StringBuilder();
+	    private final StringBuilder rankDesc = new StringBuilder();
+	    private final List<Panctor> goalStars = new ArrayList<Panctor>(3);
+	    private final List<Panctor> rankStars = new ArrayList<Panctor>(Profile.POINTS_PER_RANK);
 	    final boolean fullMenu;
 	    
         protected InfoScreen(final PlayerContext pc, final boolean fullMenu) {
@@ -1670,36 +1673,52 @@ public class Menu {
 			addTitle("Goals", x, y);
 			y -= 16;
 			Goal.initGoals(pc);
-			final Profile prf = pc.profile;
 			final boolean img = isTabEnabled();
-			for (final Goal g : prf.currentGoals) {
+			for (final Goal g : pc.profile.currentGoals) {
 				y = addGoal(g, x, y, img);
 			}
+			addRankPoints(x, y, img);
+		}
+		
+		private final int addRankPoints(final int x, int y, final boolean img) {
+			final Profile prf = pc.profile;
 			y -= 8;
-			addTitle("Rank: " + prf.getRank(), x, y);
+			Chartil.set(rankDesc, "Rank: " + prf.getRank());
+			addTitle(rankDesc, x, y);
 			y -= 8;
-			final int currPoints = prf.goalPoints % Profile.POINTS_PER_LEVEL;
+			final int currPoints = prf.getCurrentGoalPoints();
 			if (img) {
 				y -= 8;
-				addStars(x, y, currPoints, Profile.POINTS_PER_LEVEL);
+				addStars(x, y, currPoints, Profile.POINTS_PER_RANK, rankStars);
 			} else {
 				final StringBuilder b = new StringBuilder();
 				Chartil.appendMulti(b, '*', currPoints);
-				Chartil.appendMulti(b, '.', Profile.POINTS_PER_LEVEL - currPoints);
+				Chartil.appendMulti(b, '.', Profile.POINTS_PER_RANK - currPoints);
 				addTitle(b, x, y);
+			}
+			return y;
+		}
+		
+		private final void addStars(final int x, final int y, final int currPoints, final int max, final List<Panctor> list) {
+			int xc = x;
+			list.clear();
+			for (int i = 0; i < max; i++) {
+				final Panctor star;
+				if (i < currPoints) {
+					star = new Gem(PlatformGame.gemGoal);
+					addActor(star, xc, y);
+				} else {
+					star = addEmptyStar(xc, y);
+				}
+				list.add(star);
+				xc += 17;
 			}
 		}
 		
-		private final void addStars(final int x, final int y, final int currPoints, final int max) {
-			int xc = x;
-			for (int i = 0; i < max; i++) {
-				if (i < currPoints) {
-					addActor(new Gem(PlatformGame.gemGoal), xc, y);
-				} else {
-					addActor(xc, y).setView(PlatformGame.emptyGoal);
-				}
-				xc += 17;
-			}
+		private final Panctor addEmptyStar(final int x, final int y) {
+			final Panctor star = addActor(x, y);
+			star.setView(PlatformGame.emptyGoal);
+			return star;
 		}
 		
 		private final int addGoal(final Goal g, final int x, int y, final boolean img) {
@@ -1708,7 +1727,7 @@ public class Menu {
 			final int off;
 			if (img) {
 				y -= 17;
-				addStars(x, y, award, 3);
+				addStars(x, y, award, award, goalStars);
 				off = 56;
 			} else {
 				y -= 8;
@@ -1729,21 +1748,15 @@ public class Menu {
 				final Goal g = goals[i];
 				if (g != null && g.isMet(pc)) {
 					y = addGoal(g, x, y, true);
-					final byte award = g.award;
-					final int rank = prf.getRank();
-					prf.goalPoints += award;
-					final int newRank = prf.getRank();
-					if (newRank > rank) {
-						pc.addGems(1000);
-						addTitle("Reached rank " + newRank + ", 1000 Gem bonus", x, y);
-						y -= 8;
-					}
-					goals[i] = Goal.newGoal(award, pc);
-					save();
+					y = addRankPoints(x, y, true);
+					addGoalPoints(i, x, y);
 					break;
 				}
 			}
 			addHudGems();
+		}
+		
+		private final void addContinue(final int x, final int y) {
 			if (isTabEnabled()) {
 				newTab(PlatformGame.menuCheck, "Done", new Runnable() {
 					@Override public final void run() {
@@ -1757,6 +1770,55 @@ public class Menu {
 						reload(TAB_GOALS);
 					}}, x, y - 16);
 			}
+		}
+		
+		private final void addGoalTimer(final TimerListener listener) {
+			Pangine.getEngine().addTimer(rankStars.get(0), 30, listener);
+		}
+		
+		private final void addGoalPoints(final int goalIndex, final int x, final int y) {
+			addGoalTimer(new TimerListener() {
+				@Override public final void onTimer(final TimerEvent event) {
+					final Profile prf = pc.profile;
+					for (int i = goalStars.size() - 1; i >= 0; i--) {
+						final Panctor goalStar = goalStars.get(i);
+						if (goalStar.getClass() == Gem.class) {
+							final int rank = prf.getRank();
+							prf.goalPoints++;
+							final int newRank = prf.getRank();
+							for (int j = 0; j < Profile.POINTS_PER_RANK; j++) {
+								final Panctor rankStar = rankStars.get(j);
+								if (rankStar.getClass() != Gem.class) {
+									goalStar.swapPositions(rankStar);
+								}
+							}
+							if (newRank >= rank) {
+								// Rank up
+								addGoalTimer(new TimerListener() {
+									@Override public final void onTimer(final TimerEvent event) {
+										pc.addGems(1000);
+										Chartil.set(rankDesc, "Reached rank " + prf.getRank() + ", 1000 Gem bonus");
+										addGoalPoints(goalIndex, x, y);
+										for (int j = 0; j < Profile.POINTS_PER_RANK; j++) {
+											final Panctor rankStar = rankStars.get(j);
+											final Panple pos = rankStar.getPosition();
+											rankStars.set(j, addEmptyStar((int) pos.getX(), (int) pos.getY()));
+											rankStar.destroy();
+										}
+									}});
+							} else {
+								// Add remaining points (if any)
+								addGoalPoints(goalIndex, x, y);
+							}
+							return;
+						}
+						// No more points to add, so finish
+						final Goal[] goals = prf.currentGoals;
+						goals[goalIndex] = Goal.newGoal(goals[goalIndex].award, pc);
+						save();
+						addContinue(x, y);
+					}
+				}});
 		}
         
         protected final void menuClassic() {
@@ -1801,6 +1863,8 @@ public class Menu {
         
         @Override
         protected void onExit() {
+        	goalStars.clear();
+        	rankStars.clear();
         	if (fullMenu) {
         		goProfile();
         	} else {
