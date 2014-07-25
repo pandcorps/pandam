@@ -97,6 +97,12 @@ public class PlatformGame extends BaseGame {
 	Level builder should use setTile instead of forcing getTile Map lookups.
 	Improve World name generator.
 	Disable million gem bonus.
+	Enter "Console" as name to enable Debug console Menu option.
+	Console: Add/give, sub/subtract/remove, set gems.
+	Console: Change zoom (requires restart).
+	Console: Filters, 8-bit, b/w (requires restart).
+	Mouse TouchEvents.
+	ImplPanple2 (x, y, 0) for Panmage origin/boundaries.
 	A BounceBall should be able to bump blocks (from below and side) and give Gem to Player that kicked.
 	Pause if device gets a text/interruption.
 	Some rises allow an Enemy but Player hits ceiling.
