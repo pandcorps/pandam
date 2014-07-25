@@ -35,7 +35,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
 	/*package*/ final static int MIN_FRAME_RATE = 24;
 	/*package*/ final static int DEF_FRAME_RATE = 30;
 	/*package*/ final static int MAX_FRAME_RATE = (DEF_FRAME_RATE * 2) - MIN_FRAME_RATE;
-	/*package*/ final static int POINTS_PER_LEVEL = 10;
+	/*package*/ final static int POINTS_PER_RANK = 10;
     protected final ArrayList<Avatar> avatars = new ArrayList<Avatar>();
     protected Avatar currentAvatar = null;
     private int gems = 0;
@@ -310,11 +310,15 @@ gems = 1000000;
     	return false;
     }
     
+    public final int getCurrentGoalPoints() {
+    	return goalPoints % POINTS_PER_RANK;
+    }
+    
     public final boolean isInvincible() {
         return activeAssists.contains(ASSIST_INVINCIBILITY);
     }
     
     public final int getRank() {
-    	return (goalPoints / POINTS_PER_LEVEL) + 1;
+    	return (goalPoints / POINTS_PER_RANK) + 1;
     }
 }
