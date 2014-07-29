@@ -98,11 +98,18 @@ public class PlatformGame extends BaseGame {
 	Improve World name generator.
 	Disable million gem bonus.
 	Enter "Console" as name to enable Debug console Menu option.
-	Console: Add/give, sub/subtract/remove, set gems.
+	Console: Add/give/gimme, sub/subtract/remove, set gems.
 	Console: Change zoom (requires restart).
 	Console: Filters, 8-bit, b/w (requires restart).
 	Mouse TouchEvents.
 	ImplPanple2 (x, y, 0) for Panmage origin/boundaries.
+	Pressing left/right should always work on Map markers without a fork.
+	Randomize with new seed for each Level, save if Player quits Level.
+	Flag new goals when first displaying them.
+	Star Menu image.
+	Bar graph Menu image?
+	Change shapes.
+	Don't try File API before opening something known to be a resource URL.
 	A BounceBall should be able to bump blocks (from below and side) and give Gem to Player that kicked.
 	Pause if device gets a text/interruption.
 	Some rises allow an Enemy but Player hits ceiling.
@@ -887,9 +894,8 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 				fa[i] = engine.createFrame(PRE_FRM + "marker." + i, ma[i], 2 * (2 - i % 2));
 			}
 			marker = engine.createAnimation(PRE_ANM + "marker", fa);
-			final Img[] defStrip = ImtilX.loadStrip("org/pandcorps/platform/res/bg/MarkerDefeated.png", 8);
-			markerDefeated = engine.createImage(PRE_IMG + "Marker.def", mo, null, null, defStrip[3]);
-			Img.close(defStrip); }});
+			final Img def = ImtilX.loadImage("org/pandcorps/platform/res/bg/MarkerDefeated.png", 8, null);
+			markerDefeated = engine.createImage(PRE_IMG + "Marker.def", mo, null, null, def); }});
 		loaders.add(new Runnable() { @Override public final void run() {
 			portal = createAnm("portal", "org/pandcorps/platform/res/bg/Portal.png", 6); }});
 		loaders.add(new Runnable() { @Override public final void run() {

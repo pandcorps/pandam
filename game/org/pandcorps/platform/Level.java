@@ -67,7 +67,7 @@ public class Level {
     protected static boolean victory = false;
     
     protected abstract static class Theme {
-    	private final static String[] MSG = {"PLAYER", "GEMS", "HURRAY", "GO", "YAY", "GREAT", "PERFECT"};
+    	private final static String[] MSG = {"PLAYER", "GEMS!!!", "HURRAY", "GO GO GO", "YAY", "GREAT", "PERFECT"};
     	public final static Theme Normal = new Theme(null, MSG) {
     	    @Override protected final int[] getEnemyIndices(final int worlds) {
     	        switch (worlds) {
@@ -1829,7 +1829,13 @@ public class Level {
         "  *\n" +
         " *\n" +
         "*\n" +
-        "***"
+        "***",
+        
+        "*\n" +
+        "*\n" +
+        "*\n" +
+        "\n" +
+        "*\n"
     };
     
     private final static int gemMsg(final int x, final int y, final String msg, final boolean render) {
@@ -1842,7 +1848,10 @@ public class Level {
     }
     
     private final static int gemChr(final int x, final int y, final char chr, final boolean render) {
-    	final int c = java.lang.Character.toUpperCase(chr) - 'A';
+        if (chr == ' ') {
+            return 1;
+        }
+    	final int c = (chr == '!') ? 26 : (java.lang.Character.toUpperCase(chr) - 'A');
     	if (c < 0 || c >= gemFont.length) {
     		return -1;
     	}
