@@ -34,7 +34,7 @@ import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.tile.Tile.*;
 
 public class Tiles {
-    protected final static FinPanple g = new FinPanple(0, Player.g, 0);
+    protected final static FinPanple2 g = new FinPanple2(0, Player.g);
     private final static TileHandler defHandler = new TileHandler();
     
     protected static class TileHandler {

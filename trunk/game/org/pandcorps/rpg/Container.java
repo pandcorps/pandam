@@ -23,11 +23,11 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.rpg;
 
 import org.pandcorps.pandam.*;
-import org.pandcorps.pandam.impl.FinPanple;
+import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.tile.*;
 
 public class Container extends Openable {
-	/*package*/ final static FinPanple o = new FinPanple(0, -3, 0);
+	/*package*/ final static FinPanple2 o = new FinPanple2(0, -3);
 	
 	public Container(final String name, final Panmage closed, final Panmage open) {
         super(name, closed, open);

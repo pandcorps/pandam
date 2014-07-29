@@ -73,7 +73,7 @@ public class ShootGame extends Guy2Game {
 	/*package*/ static Panlayer hud = null;
 	/*package*/ static Shooter shooter = null;
 	/*package*/ final static FinPanple min = FinPanple.ORIGIN;
-	/*package*/ static FinPanple max = null;
+	/*package*/ static FinPanple2 max = null;
 	/*package*/ static Panimation smokeBigAnm = null;
 	/*package*/ static Panimation flameLoopAnm = null;
 	/*package*/ static Panimation rocketFireAnm = null;
@@ -99,7 +99,7 @@ public class ShootGame extends Guy2Game {
 		engine.setTitle("Will Killem");
 		title = createImage("misc/Title", 128);
         final Img[] constantImgs = loadConstantImgs();
-		final Panmage shadowImg = engine.createImage("img.shadow", new FinPanple(8, 4, 0), null, null, constantImgs[0]);
+		final Panmage shadowImg = engine.createImage("img.shadow", new FinPanple2(8, 4), null, null, constantImgs[0]);
         type = new Guy2Type(shadowImg, -480);
         blood = createBloodAnm(constantImgs, 2);
         explosion = createExplosionAnm(constantImgs, 3);
@@ -108,13 +108,13 @@ public class ShootGame extends Guy2Game {
         Ai.bamDelay = bam.getDuration() + 2;
         rain = createSheet("rain", "org/pandcorps/game/res/misc/Rain.png");
         splash = createAnm("rain4", "org/pandcorps/game/res/misc/Rain4.png", 4, 3);
-        interact = engine.createEmptyImage("img.interact", new FinPanple(1, 1, 1), new FinPanple(0, 0, 0), new FinPanple(2, 2, 2));
+        interact = engine.createEmptyImage("img.interact", new FinPanple(1, 1, 1), new FinPanple2(0, 0), new FinPanple(2, 2, 2));
         font = Fonts.getSimple(new FontRequest(8), Pancolor.BLUE, Pancolor.CYAN, Pancolor.CYAN, Pancolor.BLACK);
         hudFont = Fonts.getOutline(new FontRequest(8), Pancolor.BLUE, Pancolor.BLUE, Pancolor.BLUE, new FinPancolor(Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, (short) 128, Pancolor.MAX_VALUE));
         final Img[] powerUps = loadStrip("misc/PowerUps", 16);
-        final FinPanple opu = new FinPanple(8, 5, 0);
-        final FinPanple npu = new FinPanple(-4, 1, 0);
-        final FinPanple xpu = new FinPanple(4, 9, 0);
+        final FinPanple2 opu = new FinPanple2(8, 5);
+        final FinPanple2 npu = new FinPanple2(-4, 1);
+        final FinPanple2 xpu = new FinPanple2(4, 9);
         money = engine.createImage("img.money", opu, npu, xpu, powerUps[0]);
         ammoShotgun = engine.createImage("img.ammo.shotgun", opu, npu, xpu, powerUps[1]);
         ammoMinigun = engine.createImage("img.ammo.minigun", opu, npu, xpu, powerUps[2]);
@@ -184,8 +184,8 @@ public class ShootGame extends Guy2Game {
         final Panframe casing6Frm = engine.createFrame("frm.casing.6", casing2Img, cd, 2, false, false);
 		final Panimation casingAnm = engine.createAnimation("anm.casing", casing1Frm, casing2Frm, casing3Frm, casing4Frm, casing5Frm, casing6Frm);
 		final Panmage projSawImg = engine.createEmptyImage("img.proj.saw", CENTER_4, null, null);
-		final Panmage projMagImg = engine.createImage("img.proj.mag", new FinPanple(2, 1, 0), null, null, strip4[0]);
-		final Panmage projShotImg = engine.createImage("img.proj.shot", new FinPanple(1, 2, 0), null, null, strip4[1]);
+		final Panmage projMagImg = engine.createImage("img.proj.mag", new FinPanple2(2, 1), null, null, strip4[0]);
+		final Panmage projShotImg = engine.createImage("img.proj.shot", new FinPanple2(1, 2), null, null, strip4[1]);
 		final Panmage projMiniImg = engine.createImage("img.proj.mini", CENTER_4, null, null, strip4[2]);
 		final Panmage projFlame1Img = engine.createImage("img.proj.flame.1", CENTER_4, null, null, strip4[3]);
 		final Panmage projFlame2Img = engine.createImage("img.proj.flame.2", CENTER_8, null, null, strip8[0]);
@@ -203,13 +203,13 @@ public class ShootGame extends Guy2Game {
 		final Panframe projRocketFire1Frm = engine.createFrame("frm.proj.rocket.fire.1", projRocketFire1Img, 3);
 		final Panframe projRocketFire2Frm = engine.createFrame("frm.proj.rocket.fire.2", projRocketFire2Img, 3);
 		rocketFireAnm = engine.createAnimation("anm.proj.rocket.fire.1", projRocketFire1Frm, projRocketFire2Frm);
-		final Panple velBullet = new FinPanple(3, 0, 0);
+		final Panple velBullet = new FinPanple2(3, 0);
 		final Emitter sawEmit = new Emitter(15, 1, FinPanple.ORIGIN, (byte) 1, projSawImg);
-		final Emitter magEmit1 = new Emitter(7, 5, new FinPanple(3, -0.125f, 0), (byte) -1, projMagImg);
-		final Emitter magEmit2 = new Emitter(16, 5, new FinPanple(3, 0.125f, 0), (byte) -1, projMagImg);
+		final Emitter magEmit1 = new Emitter(7, 5, new FinPanple2(3, -0.125f), (byte) -1, projMagImg);
+		final Emitter magEmit2 = new Emitter(16, 5, new FinPanple2(3, 0.125f), (byte) -1, projMagImg);
 		final float sx = 11, sy = 5;
-		final Emitter shotEmit = new Emitter(ShotProjectile.class, sx, sy, new FinPanple(3, 0, 0), (byte) -1, projShotImg);
-		final Emitter miniEmit = new Emitter(MiniProjectile.class, 15, 3, new FinPanple(4, 0, 0), (byte) -1, projMiniImg);
+		final Emitter shotEmit = new Emitter(ShotProjectile.class, sx, sy, new FinPanple2(3, 0), (byte) -1, projShotImg);
+		final Emitter miniEmit = new Emitter(MiniProjectile.class, 15, 3, new FinPanple2(4, 0), (byte) -1, projMiniImg);
 		final Emitter flameEmit = new Emitter(FlameProjectile.class, 11, 5, velBullet, (byte) -1, projFlame1Anm);
 		final Emitter rocketEmit = new Emitter(RocketProjectile.class, 13, 8, velBullet, (byte) -1, projRocketImg);
 		weaponDefs = new WeaponDefinition[6];
@@ -239,7 +239,7 @@ public class ShootGame extends Guy2Game {
 		final Pangine engine = Pangine.getEngine();
 		final String code = Chartil.remove(name, ' ');
 		final String imgName = "img.wpn." + code;
-		final FinPanple o = new FinPanple(x, y, 0);
+		final FinPanple2 o = new FinPanple2(x, y);
 		final Panmage img = engine.createImage(imgName, o, null, null, strip[imgIdx]);
 		final Panimation attack;
 		if (imgIdx2 < 0) {
@@ -348,7 +348,7 @@ public class ShootGame extends Guy2Game {
 			room.destroy();
 			final int w = 640;
 			room = engine.createRoom(Pantil.vmid(), new FinPanple(w, 192, 0));
-			max = new FinPanple(w, 93, 0);
+			max = new FinPanple2(w, 93);
 			Pangame.getGame().setCurrentRoom(room);
 			createHud();
 			level.start();

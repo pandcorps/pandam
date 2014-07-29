@@ -42,9 +42,9 @@ public class Enemy extends Character {
 	private final static int MIN_TIMER = 60;
 	private final static int MAX_TIMER = 90;
 	
-	protected final static FinPanple DEFAULT_O = new FinPanple(8, 1, 0);
-	private final static FinPanple DEFAULT_MIN = new FinPanple(-DEFAULT_X, 0, 0);
-	private final static FinPanple DEFAULT_MAX = new FinPanple(DEFAULT_X, DEFAULT_H, 0);
+	protected final static FinPanple2 DEFAULT_O = new FinPanple2(8, 1);
+	private final static FinPanple2 DEFAULT_MIN = new FinPanple2(-DEFAULT_X, 0);
+	private final static FinPanple2 DEFAULT_MAX = new FinPanple2(DEFAULT_X, DEFAULT_H);
 	
 	protected static int currentSplat = DEFAULT_SPLAT;
 	protected static int currentWalk = DEFAULT_WALK;
@@ -109,13 +109,13 @@ public class Enemy extends Character {
 			    walk = strip;
 			}
 			final String id = "enemy." + name;
-			final Panple n, x, o = (d == ImtilX.DIM) ? DEFAULT_O : new FinPanple(d / 2, 1, 0);
+			final Panple n, x, o = (d == ImtilX.DIM) ? DEFAULT_O : new FinPanple2(d / 2, 1);
 			if (offX == DEFAULT_X && h == DEFAULT_H) {
 			    n = DEFAULT_MIN;
 			    x = DEFAULT_MAX;
 			} else {
-			    n = new FinPanple(-offX, 0, 0);
-			    x = new FinPanple(offX, h, 0);
+			    n = new FinPanple2(-offX, 0);
+			    x = new FinPanple2(offX, h);
 			}
 			this.walk = PlatformGame.createAnm(id, currentWalk, o, n, x, walk);
 			currentWalk = DEFAULT_WALK;

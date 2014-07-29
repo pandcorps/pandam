@@ -71,13 +71,13 @@ public class FightGame extends Guy2Game {
     private final static ArrayList<ArrayList<FighterDefinition>> characterSelect = new ArrayList<ArrayList<FighterDefinition>>();
     private static Panmage bamImage1 = null;
     /*package*/ static Panimation bamAnim = null;
-    private final static FinPanple explodeOrigin = CENTER_16;
+    private final static FinPanple2 explodeOrigin = CENTER_16;
     private static Img[] explodeImgs = null;
-    private final static FinPanple bloodOrigin = CENTER_16;
+    private final static FinPanple2 bloodOrigin = CENTER_16;
     private final static int bloodDuration = 3;
     private static Img[] bloodImgs = null;
     private static Panimation bloodAnim = null;
-    private final static FinPanple burnOrigin = new FinPanple(9, yb, 0);
+    private final static FinPanple2 burnOrigin = new FinPanple2(9, yb);
     private static Img[] burnImgs = null;
     /*package*/ static Panimation puffAnim = null;
     /*package*/ static Font fontDamage = null;
@@ -100,19 +100,19 @@ public class FightGame extends Guy2Game {
     private final static void loadConstants() {
         final Pangine engine = Pangine.getEngine();
         final Img[] menuImgs = ImtilX.loadStrip("org/pandcorps/fight/res/misc/Menu.png");
-        cursorImage = engine.createImage("Cursor", new FinPanple(8, 1, 0), null, null, menuImgs[0]);
+        cursorImage = engine.createImage("Cursor", new FinPanple2(8, 1), null, null, menuImgs[0]);
         menuBackground = engine.createImage("MenuBgImage", "org/pandcorps/fight/res/misc/MenuBackground.png");
         title = engine.createImage("TitleImg", "org/pandcorps/fight/res/misc/Title.png");
         final Img[] constantImgs = loadConstantImgs();
         Img.setTemporary(false, constantImgs); //TODO Some of these need to be closed; check all setTemporary calls
-        shadowImage = engine.createImage("Shadow", new FinPanple(8, 4, 0), null, null, constantImgs[0]);
+        shadowImage = engine.createImage("Shadow", new FinPanple2(8, 4), null, null, constantImgs[0]);
         type = new Guy2Type(shadowImage, Fighter.DEPTH_SHADOW);
         bamAnim = createBamAnm(constantImgs, 3);
         bamImage1 = bamAnim.getFrames()[0].getImage();
         explodeImgs = new Img[] { constantImgs[3], constantImgs[4], constantImgs[5] };
-        /*final Panmage explode1 = engine.createImage("Explode0", new FinPanple(8, 8, 0), null, null, constantImgs[3]);
-        final Panmage explode2 = engine.createImage("Explode1", new FinPanple(8, 8, 0), null, null, constantImgs[4]);
-        final Panmage explode3 = engine.createImage("Explode2", new FinPanple(8, 8, 0), null, null, constantImgs[5]);
+        /*final Panmage explode1 = engine.createImage("Explode0", new FinPanple2(8, 8), null, null, constantImgs[3]);
+        final Panmage explode2 = engine.createImage("Explode1", new FinPanple2(8, 8), null, null, constantImgs[4]);
+        final Panmage explode3 = engine.createImage("Explode2", new FinPanple2(8, 8), null, null, constantImgs[5]);
         explodeAnim = engine.createAnimation("Explode", engine.createFrame("ExplodeF1", explode1, 3), engine.createFrame("ExplodeF2", explode2, 3), engine.createFrame("ExplodeF3", explode3, 3));*/
         bloodAnim = createBloodAnm(constantImgs, bloodDuration);
         bloodImgs = new Img[] { constantImgs[6], constantImgs[7] };
@@ -301,7 +301,7 @@ public class FightGame extends Guy2Game {
         private CharacterSelectGrid() {
             super("CharacterSelect", characterSelect, cursorImage, -2);
             final int midH = SCREEN_H / 2;
-            getPosition().set(new FinPanple(SCREEN_W / 2, midH, 0));
+            getPosition().set(new FinPanple2(SCREEN_W / 2, midH));
             room.addActor(selected);
             selected.getPosition().set(32, midH);
             change();
