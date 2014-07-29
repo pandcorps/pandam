@@ -57,7 +57,7 @@ public class Shooter extends Guy2 implements CollisionListener {
 			final Pangine engine = Pangine.getEngine();
 			final String pre = name + '.';
 			final String ipre = pre + "img.", fpre = pre + "frm.", apre = pre + "anm.";
-			final FinPanple o = new FinPanple(8, 1, 0);
+			final FinPanple2 o = new FinPanple2(8, 1);
 			final Panmage stillImg = engine.createImage(ipre + "still", o, null, null, imgs[0]);
 			final Panmage leftImg = engine.createImage(ipre + "left", o, null, null, imgs[1]);
 			final Panmage rightImg = engine.createImage(ipre + "right", o, null, null, imgs[2]);

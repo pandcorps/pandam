@@ -146,7 +146,7 @@ public class PlatformGame extends BaseGame {
 	
 	protected final static int TIME_FLASH = 60;
 	
-	private final static FinPanple ORIG_MAP = new FinPanple(8, -6, 0);
+	private final static FinPanple2 ORIG_MAP = new FinPanple2(8, -6);
 	private final static int DUR_MAP = 6;
 	protected final static int DUR_BLINK = 120;
 	protected final static int DUR_CLOSED = DUR_BLINK / 30;
@@ -172,10 +172,10 @@ public class PlatformGame extends BaseGame {
 	protected static MultiFont font = null;
 	protected static Font fontTiny = null;
 	protected static Notifications notifications = null;
-	protected final static FinPanple og = new FinPanple(16, 1, 0);
-	protected final static FinPanple ow = new FinPanple(17, 1, 0);
-	protected final static FinPanple owf = new FinPanple(17, 2, 0);
-	protected final static FinPanple os = new FinPanple(16, 11, 0);
+	protected final static FinPanple2 og = new FinPanple2(16, 1);
+	protected final static FinPanple2 ow = new FinPanple2(17, 1);
+	protected final static FinPanple2 owf = new FinPanple2(17, 2);
+	protected final static FinPanple2 os = new FinPanple2(16, 11);
 	protected static Img[] guysBlank = null;
 	protected final static HashMap<String, Img> facesAll = new HashMap<String, Img>();
 	protected final static HashMap<String, Img[]> tailsAll = new HashMap<String, Img[]>();
@@ -473,7 +473,7 @@ public class PlatformGame extends BaseGame {
 		final String pre = "guy." + pc.index;
 		
 		final Pangine engine = Pangine.getEngine();
-		final FinPanple ng = new FinPanple(-Player.PLAYER_X, 0, 0), xg = new FinPanple(Player.PLAYER_X, Player.PLAYER_H, 0);
+		final FinPanple2 ng = new FinPanple2(-Player.PLAYER_X, 0), xg = new FinPanple2(Player.PLAYER_X, Player.PLAYER_H);
 		final String ipre = PRE_IMG + pre + ".";
 		final Panmage guy = engine.createImage(ipre + "1", og, ng, xg, guys[0]);
 		final Panmage guyB = engine.createImage(ipre + "blink", og, ng, xg, pi.guyBlink);
@@ -493,7 +493,7 @@ public class PlatformGame extends BaseGame {
 			pc.guyRun = engine.createAnimation(PRE_ANM + pre + ".run", gfr2, gfr3, gfr1);
 			pc.guyJump = engine.createImage(ipre + "jump", og, ng, xg, guys[3]);
 			pc.guyFall = engine.createImage(ipre + "fall", og, ng, xg, guys[4]);
-		    //guy = engine.createImage(pre, new FinPanple(8, 0, 0), null, null, ImtilX.loadImage("org/pandcorps/platform/res/chr/Player.png"));
+		    //guy = engine.createImage(pre, new FinPanple2(8, 0), null, null, ImtilX.loadImage("org/pandcorps/platform/res/chr/Player.png"));
 		    
 			final Img[] maps = loadChrStrip("BearMap.png", 32, pi.f);
 			final Img[] wingMap = needWing ? loadChrStrip("WingsMap.png", 32, pf) : null;
@@ -659,7 +659,7 @@ public class PlatformGame extends BaseGame {
 System.out.println("loadConstants start " + System.currentTimeMillis());
 			allEnemies.add(new EnemyDefinition("Drowid", 1, null, true, 1)); }}); // Teleport when stomped
 		loaders.add(new Runnable() { @Override public final void run() {
-			final Panmage pimg1 = createImage("projectile1", "org/pandcorps/platform/res/enemy/Projectile1.png", 8, CENTER_8, new FinPanple(-3, -3, 0), new FinPanple(2, 2, 0));
+			final Panmage pimg1 = createImage("projectile1", "org/pandcorps/platform/res/enemy/Projectile1.png", 8, CENTER_8, new FinPanple2(-3, -3), new FinPanple2(2, 2));
 		    final Panframe[] pfrms = new Panframe[4];
 		    for (int i = 0; i < 4; i++) {
 		        pfrms[i] = engine.createFrame(PRE_FRM + "projectile1." + i, pimg1, 4, i, false, false);
@@ -887,7 +887,7 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 			teleport = createAnm("teleport", "org/pandcorps/platform/res/enemy/Teleport.png", ImtilX.DIM, 5, Enemy.DEFAULT_O); }});
 	    
 		loaders.add(new Runnable() { @Override public final void run() {
-			final FinPanple mo = new FinPanple(-4, -4, 0);
+			final FinPanple2 mo = new FinPanple2(-4, -4);
 		    final Panmage[] ma = createSheet("Marker", "org/pandcorps/platform/res/bg/Marker.png", 8, mo);
 			final Panframe[] fa = new Panframe[ma.length];
 			for (int i = 0; i < ma.length; i++) {

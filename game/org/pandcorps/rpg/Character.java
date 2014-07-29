@@ -30,7 +30,7 @@ import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.impl.*;
 
 public class Character extends Guy4 {
-    /*package*/ final static FinPanple o = new FinPanple(0, -5, 0);
+    /*package*/ final static FinPanple2 o = new FinPanple2(0, -5);
     private final static FinPancolor col1 = new FinPancolor((short) 140);
     private final static FinPancolor col2 = new FinPancolor((short) 160);
     private final static FinPancolor col3 = new FinPancolor((short) 180);
