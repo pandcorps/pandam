@@ -64,7 +64,7 @@ public class TileMap extends Panctor implements Savable {
         this.h = h;
         this.tw = tw;
         this.th = th;
-        tileDisplay = new ImplPansplay(FinPanple.ORIGIN, FinPanple.ORIGIN, new FinPanple(tw, th, 0));
+        tileDisplay = new ImplPansplay(FinPanple.ORIGIN, FinPanple.ORIGIN, new FinPanple2(tw, th));
     }
     
     public TileMap(final String id, final Panlayer room, final int tw, final int th) {

@@ -131,7 +131,7 @@ public class Pantext extends Panctor {
 		final Panple fontSize = this.font.getSize();
 		fontWidth = fontSize.getX() / fontNum;
 		fontHeight = fontSize.getY() / fontNum;
-		//size = new FinPanple(fontSize * text.length(), fontSize, 0);
+		//size = new FinPanple2(fontSize * text.length(), fontSize);
 	}
 	
 	/*package*/ final class SizePanple extends UnmodPanple {

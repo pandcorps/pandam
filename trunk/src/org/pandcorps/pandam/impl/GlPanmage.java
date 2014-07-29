@@ -224,7 +224,7 @@ public final class GlPanmage extends Panmage {
 	    super(id, origin, boundMin, boundMax);
 	    w = tex.usableWidth;
 	    h = tex.usableHeight;
-		//size = new FinPanple(w, h, 0);
+		//size = new FinPanple2(w, h);
 		size = new SizePanple();
 		offx = 0;
 		offy = 0;
