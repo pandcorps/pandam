@@ -26,12 +26,12 @@ import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.impl.*;
 
 public final class UnitPanmage extends Panmage {
-	private final FinPanple size;
+	private final FinPanple2 size;
 
 	public UnitPanmage(String id, float x, float y) {
 		super(id, null, null, null);
 
-		size = new FinPanple(x, y, 0);
+		size = new FinPanple2(x, y);
 	}
 
 	@Override

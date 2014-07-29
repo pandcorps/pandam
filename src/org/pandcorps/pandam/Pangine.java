@@ -47,7 +47,7 @@ public abstract class Pangine {
 		new HashMap<Class<? extends Panctor>, Pantype>();
 	//private final ArrayList<Panmage> images = new ArrayList<Panmage>();
 	protected final static int maxDimension;
-	private final static FinPanple maxRoomSize;
+	private final static FinPanple2 maxRoomSize;
 
 	private final static Class<?>[] CLASS_ARRAY_STRING = new Class<?>[] {String.class};
 
@@ -85,7 +85,7 @@ public abstract class Pangine {
 		}
 		
 		maxDimension = i;
-		maxRoomSize = new FinPanple(i, i, 0);
+		maxRoomSize = new FinPanple2(i, i);
 		/*
 		int low, high, guess;
 
@@ -100,7 +100,7 @@ public abstract class Pangine {
 			if ();
 		}
 
-		maxRoomSize = new FinPanple(low, low);
+		maxRoomSize = new FinPanple2(low, low);
 		*/
 	}
 
