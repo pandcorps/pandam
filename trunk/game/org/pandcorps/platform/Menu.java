@@ -1634,7 +1634,7 @@ public class Menu {
 			if (fullMenu) {
 				newTab(PlatformGame.menuTrophy, "Award", TAB_AWARD);
 				newTab(PlatformGame.menuGraph, "Stats", TAB_STATS);
-				newTab(null, "Goals", TAB_GOALS);
+				newTab(PlatformGame.menuStar, "Goals", TAB_GOALS);
 			}
 			newTabs();
 			registerBackExit();
