@@ -102,13 +102,11 @@ public class PlatformGame extends BaseGame {
 	Console: Change zoom (requires restart).
 	Console: Filters, 8-bit, b/w (requires restart).
 	Mouse TouchEvents.
-	ImplPanple2 (x, y, 0) for Panmage origin/boundaries.
 	Pressing left/right should always work on Map markers without a fork.
 	Randomize with new seed for each Level, save if Player quits Level.
 	Flag new goals when first displaying them.
 	Bar graph Menu image?
 	Change shapes.
-	Don't try File API before opening something known to be a resource URL.
 	A BounceBall should be able to bump blocks (from below and side) and give Gem to Player that kicked.
 	Pause if device gets a text/interruption.
 	Some rises allow an Enemy but Player hits ceiling.
@@ -260,6 +258,7 @@ public class PlatformGame extends BaseGame {
 	    final Pangine engine = Pangine.getEngine();
 	    engine.setTitle("Platformer");
 	    engine.setEntityMapEnabled(false);
+	    Imtil.onlyResources = true;
 		PlatformGame.room = room;
 		loadConstants();
 		Panscreen.set(new LogoScreen(Menu.TitleScreen.class, loaders));
