@@ -32,6 +32,7 @@ import org.pandcorps.pandam.*;
 public final class Imtil {
 	public final static int TYPE = 2; // BufferedImage.TYPE_INT_ARGB = 2; BufferedImage not always available
 	public final static int TYPE_INT_RGB = 1; // BufferedImage.TYPE_INT_RGB = 1
+	public static boolean onlyResources = false;
 	
 	private final static ImgFactory cm = ImgFactory.getFactory();
 	
@@ -42,7 +43,7 @@ public final class Imtil {
     public final static Img load(final String location) {
         InputStream in = null;
         try {
-            in = Iotil.getInputStream(location);
+            in = onlyResources ? Iotil.getResourceInputStream(location) : Iotil.getInputStream(location);
             return cm.load(in);
         } catch (final Exception e) {
             throw Panception.get(e);
