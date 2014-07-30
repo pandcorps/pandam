@@ -106,7 +106,6 @@ public class PlatformGame extends BaseGame {
 	Pressing left/right should always work on Map markers without a fork.
 	Randomize with new seed for each Level, save if Player quits Level.
 	Flag new goals when first displaying them.
-	Star Menu image.
 	Bar graph Menu image?
 	Change shapes.
 	Don't try File API before opening something known to be a resource URL.
@@ -234,6 +233,7 @@ public class PlatformGame extends BaseGame {
 	protected static Panmage menuMinus = null;
 	protected static Panmage menuOff = null;
 	protected static Panmage menuTrophy = null;
+	protected static Panmage menuStar = null;
 	protected static Panmage menuGraph = null;
 	protected static Panmage menuMenu = null;
 	protected static Panmage menuAvatar = null;
@@ -960,6 +960,7 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 			    menuMinus = createMenuImg("Minus");
 			    menuOff = createMenuImg("Off");
 			    menuTrophy = createMenuImg("Trophy");
+			    menuStar = createMenuImg("Star");
 			    menuGraph = createMenuImg("Graph");
 			    menuMenu = createMenuImg("Menu");
 			    menuAvatar = createMenuImg("Avatar");
