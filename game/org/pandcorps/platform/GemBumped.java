@@ -89,7 +89,7 @@ public class GemBumped extends Pandy {
 	    return new GemBumped(player, pos.getX() - 8, pos.getY(), -1, false, PlatformGame.gemAnm);
 	}
 	
-	private final static GemBumped create(final Player player, final int index, final int award, final boolean end, final Panimation anm) {
+	protected final static GemBumped create(final Player player, final int index, final int award, final boolean end, final Panimation anm) {
 		Level.tm.savePosition(tilePos, index);
 	    return new GemBumped(player, tilePos.getX(), tilePos.getY(), award, end, anm);
 	}
