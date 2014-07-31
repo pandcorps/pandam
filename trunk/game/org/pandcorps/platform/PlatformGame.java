@@ -111,7 +111,6 @@ public class PlatformGame extends BaseGame {
 	Tall Enemy can appear behind a short enemy on a rise above it; lower Enemy should be in front.
 	Show Gems on level-up screen.
 	Shortcut to Goals screen on Map.
-	Better * images for Goal points.
 	World Goal evaluated too late.
 	User saw bumped gem-block fail to defeat empty ArmorBall on it.
 	User saw Enemy defeated by bumped block fail to give Player a Gem.
