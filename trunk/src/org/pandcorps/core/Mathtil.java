@@ -31,9 +31,18 @@ public final class Mathtil {
     public final static double PI2 = 2.0 * Math.PI;
     
 	private final static Random rand = new Random();
+	private static long seedBase = 8682522807148012L;
 
 	private Mathtil() {
 		throw new Error();
+	}
+	
+	public final static long newSeed() {
+	    return ++seedBase + System.nanoTime(); // ^ System.currentTimeMillis()?
+	}
+	
+	public final static void setSeed(final long seed) {
+	    rand.setSeed(seed);
 	}
 	
 	public final static boolean rand() {

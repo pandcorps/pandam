@@ -116,6 +116,7 @@ public class Map {
 	private static int lm1 = -1;
 	private static int lm2 = -1;
 	private static int cstl = -1;
+	private static long seed = -1;
 	
 	protected static byte victory = VICTORY_NONE;
 	private static int roomW = -1;
@@ -403,6 +404,7 @@ public class Map {
 	            final Panscreen screen;
 	            final Building b = getBuilding(t);
 	            Level.setTheme(Theme.Normal);
+	            Level.seed = seed + t;
 	            if (isCabin(b)) {
 	            	screen = new Cabin.CabinScreen();
 	            } else if (isCastle(b)) {
@@ -587,6 +589,7 @@ public class Map {
                 lm1 = seg.intValue(5);
                 lm2 = seg.intValue(6);
                 cstl = seg.intValue(7);
+                seed = seg.getLong(9, 0);
             } catch (final IOException e) {
                 throw new RuntimeException(e);
             } finally {
@@ -605,6 +608,7 @@ public class Map {
 			    lm2 = t;
 			}
 			cstl = Mathtil.randi(0, MAX_CASTLE);
+			seed = Mathtil.newSeed();
 	    }
 		Img tileImg = ImtilX.loadImage("org/pandcorps/platform/res/bg/Map.png", 128, null);
 		applyLandmark(tileImg, 0, lm1, 0);
@@ -1374,6 +1378,7 @@ public class Map {
             seg.setInt(6, lm2);
             seg.setInt(7, cstl);
             seg.setInt(8, kingCrown);
+            seg.setLong(9, seed);
 	        seg.saveln(w);
 	        final Segment mrk = new Segment(SEG_MRK);
 	        final ArrayList<Field> mlist = new ArrayList<Field>(markers.size());

@@ -43,6 +43,7 @@ public class Level {
     
     protected static TileMapImage[] flashBlock = null;
     
+    protected static long seed = -1;
     protected static Panroom room = null;
     private static Theme theme = null;
     protected static BackgroundBuilder backgroundBuilder = null;
@@ -260,6 +261,8 @@ public class Level {
     }
     
     protected final static void loadLevel() {
+System.out.println("Setting Level seed: " + seed);
+        Mathtil.setSeed(seed);
         victory = false;
     	grassy = true;
     	topSkyColor = null;
