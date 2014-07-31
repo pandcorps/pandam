@@ -75,6 +75,7 @@ public class Menu {
 		protected int touchRadioX = 40;
 		protected int touchRadioY = 140;
 		protected int touchKeyboardX = 8;
+		protected boolean initForm = true;
 		
 		protected PlayerScreen(final PlayerContext pc, final boolean fadeIn) {
 			this.pc = pc;
@@ -117,7 +118,7 @@ public class Menu {
 				}
 			}});
 			menu();
-			if (ctrl != null) { // Null on TitleScreen
+			if (initForm && ctrl != null) { // Null on TitleScreen
 				form.init();
 			}
 			
@@ -1747,6 +1748,7 @@ public class Menu {
 		}
 		
 		private final void createGoalMet(final int x, int y) {
+			initForm = false;
 			addTitle("Success!", x, y);
 			y -= 16;
 			final Profile prf = pc.profile;
@@ -1779,8 +1781,8 @@ public class Menu {
 					@Override protected final void onClose() {
 						reload(TAB_GOALS);
 					}}, x, y - 16);
-				//TODO Probably need to call form.init here; maybe skip that when screen is first created
 			}
+			form.init();
 		}
 		
 		private final void addGoalTimer(final TimerListener listener) {
