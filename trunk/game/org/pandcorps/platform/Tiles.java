@@ -82,20 +82,37 @@ public class Tiles {
     		new Bump(chr, index).setVisible(false); // To bump Characters above
     		player.pc.profile.stats.brokenBlocks++;
     	} else if (b == PlatformGame.TILE_BUMP) {
-    	    new Bump(chr, index); // Copy image before changing
     	    if (getHandler().isNormalAward(t)) {
     	        newGemBumped(player, index);
     	    } else {
     	        GemBumped.newLevelEnd(player, index);
     	        PlatformGame.levelVictory();
     	    }
-    		Level.tm.setForeground(index, null, Tile.BEHAVIOR_SOLID);
-    		player.pc.profile.stats.bumpedBlocks++;
+    	    bump(player, chr, index);
     		//if isMusicSupported seq = null;
+    	} else if (b == PlatformGame.TILE_LETTER) {
+    	    final Panmage[] letters = PlatformGame.blockLetters;
+    	    final int size = letters.length;
+    	    final Object fg = DynamicTileMap.getRawForeground(t);
+    	    int i = 0;
+    	    for (; i < size; i++) {
+    	        if (fg == letters[i]) {
+    	            break;
+    	        }
+    	    }
+    	    GemBumped.create(player, index, 0, false, null).setView(PlatformGame.gemLetters[i]);
+    	    bump(player, chr, index);
+    	    //if isMusicSupported seq = null;
     	} else {
     		//if isMusicSupported seq = Music.thud;
     	}
     	//if isMusicSupported Pangine.getEngine().getMusic().playSound(seq);
+    }
+    
+    private final static void bump(final Player player, final Character chr, final int index) {
+        new Bump(chr, index); // Copy image before changing
+        Level.tm.setForeground(index, null, Tile.BEHAVIOR_SOLID);
+        player.pc.profile.stats.bumpedBlocks++;
     }
     
     public static class Faller extends Pandy implements AllOobListener {

@@ -131,6 +131,7 @@ public class PlatformGame extends BaseGame {
     protected final static byte TILE_UPSLOPE_FLOOR = 7;
     protected final static byte TILE_DOWNSLOPE_FLOOR = 8;
     protected final static byte TILE_GEM = 9;
+    protected final static byte TILE_LETTER = 10;
 	
 	//protected final static int DEPTH_POWERUP = 0;
 	protected final static int DEPTH_ENEMY = 4;
@@ -197,6 +198,8 @@ public class PlatformGame extends BaseGame {
 	protected static Panmage gemWhite = null;
 	protected static Panimation gemLevelAnm = null;
 	protected static Panimation gemWorldAnm = null;
+	protected static Panmage[] gemLetters = null;
+	protected static Panmage[] blockLetters = null;
 	protected static Panmage[] gemGoal = null;
 	protected static Panmage emptyGoal = null;
 	protected static Panmage gemShatter = null;
@@ -875,6 +878,8 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 		loaders.add(new Runnable() { @Override public final void run() {
 		    gemLevelAnm = createGemAnm("gem.level", createSheet("gem.level", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/Gem5.png")));
 		    gemWorldAnm = createGemAnm("gem.world", createSheet("gem.world", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/Gem6.png")));
+		    gemLetters = createSheet("gem.letter", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/GemGuard.png"));
+		    blockLetters = createSheet("block.letter", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/BlockGuard.png"));
 		    gemGoal = createSheet("gem.goal", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/GemStar.png"));
 		    emptyGoal = createImage("empty.goal", "org/pandcorps/platform/res/misc/EmptyStar.png", ImtilX.DIM); }});
 	    
