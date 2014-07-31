@@ -60,7 +60,7 @@ public class PlatformGame extends BaseGame {
 	Map landmarks: Mountain, garden.
 	Train-riding levels.
 	Ridable dragons.
-	Enemy Wisp, Elementals, winged Imp.
+	Enemy Wisp, Elementals, winged Imp, Banshee, Wraith, Shade, Orc.
 	Drolock should walk sometimes.
 	Enemy-specific Level templates (Imp walking into ArmorBall).
 	Gargoyles catch/carry Player, like moving platforms, one can jump to/from them, but not run on them.
@@ -111,6 +111,10 @@ public class PlatformGame extends BaseGame {
 	Tall Enemy can appear behind a short enemy on a rise above it; lower Enemy should be in front.
 	Show Gems on level-up screen.
 	Shortcut to Goals screen on Map.
+	Show Goals on in-Level pause screen.
+	Center the Goal Menu x-wise.
+	Show a Spark when removing a goal star to add to rank stars.
+	Clear rank stars 1 at a time with a Spark when promoting.
 	World Goal evaluated too late.
 	User saw bumped gem-block fail to defeat empty ArmorBall on it.
 	User saw Enemy defeated by bumped block fail to give Player a Gem.
