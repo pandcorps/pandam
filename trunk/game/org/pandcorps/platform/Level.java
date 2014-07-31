@@ -429,7 +429,7 @@ public class Level {
     			*/
     		    final int numLetters = PlatformGame.blockLetters.length;
     		    final Template template;
-    		    if (currLetter < numLetters && bx >= nt * (currLetter + 1) / (numLetters + 1)) {
+    		    if (currLetter < numLetters && bx >= ng * (currLetter + 1) / (numLetters + 1)) {
     		    	template = new BlockLetterTemplate();
     		    } else {
     		    	template = Mathtil.rand(templates);

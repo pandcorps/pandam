@@ -46,11 +46,11 @@ public class GemBumped extends Pandy {
 	
 	protected final static int rndAward() {
 		final int r = Mathtil.randi(0, 9999);
-	    if (r < 1000) {
+	    if (r < 1500) {
 	        return AWARD_2;
-	    } else if (r < 1100) {
+	    } else if (r < 1650) {
 	        return AWARD_3;
-	    } else if (r < 1110) {
+	    } else if (r < 1665) {
             return AWARD_4;
 	    }
 	    return AWARD_DEF;

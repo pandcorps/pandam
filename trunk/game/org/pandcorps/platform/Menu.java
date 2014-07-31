@@ -1828,12 +1828,12 @@ public class Menu {
 							}
 							return;
 						}
-						// No more points to add, so finish
-						final Goal[] goals = prf.currentGoals;
-						goals[goalIndex] = Goal.newGoal(goals[goalIndex].award, pc);
-						save();
-						addContinue(x, y);
 					}
+					// No more points to add, so finish
+					final Goal[] goals = prf.currentGoals;
+					goals[goalIndex] = Goal.newGoal(goals[goalIndex].award, pc);
+					save();
+					addContinue(x, y);
 				}});
 		}
         
