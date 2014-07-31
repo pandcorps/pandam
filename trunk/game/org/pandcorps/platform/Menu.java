@@ -1628,7 +1628,7 @@ public class Menu {
 					createStatsList(touchRadioX, touchRadioY);
 					break;
 				case TAB_GOALS :
-					createGoalsList(touchRadioX, touchRadioY);
+					createGoalsList(touchRadioX, (Pangine.getEngine().getEffectiveHeight() - 124) / 2 + 116);
 					break;
 			}
 			newTab(PlatformGame.menuCheck, "Done", new Runnable() {@Override public final void run() {exit();}});
