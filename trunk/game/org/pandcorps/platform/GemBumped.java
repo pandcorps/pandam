@@ -37,8 +37,11 @@ public class GemBumped extends Pandy {
     protected final static int AWARD_4 = AWARD_3 * 10;
     private final static int AWARD_LEVEL = AWARD_2 * 5;
     private final static int AWARD_WORLD = AWARD_LEVEL * 10;
+    protected final static byte TYPE_NORMAL = 0;
+    protected final static byte TYPE_END = 1;
+    protected final static byte TYPE_LETTER = 2;
     private final int award;
-	private final boolean end;
+	private final byte type;
 	int age = 0;
 	
 	protected final static int rndAward() {
@@ -54,7 +57,7 @@ public class GemBumped extends Pandy {
 	}
 	
 	public final static GemBumped create(final Player player, final int index, final int award) {
-	    return create(player, index, award, false, getAnm(award));
+	    return create(player, index, award, TYPE_NORMAL, getAnm(award));
 	}
 	
 	protected final static Panimation getAnm(final int award) {
@@ -68,7 +71,7 @@ public class GemBumped extends Pandy {
     }
 	
 	public GemBumped(final Player player, final Enemy defeated) {
-		this(player, defeated.getPosition().getX() - 8, defeated.getBoundingMaximum().getY() - Enemy.DEFAULT_H, defeated.def.award, false, getAnm(defeated.def.award));
+		this(player, defeated.getPosition().getX() - 8, defeated.getBoundingMaximum().getY() - Enemy.DEFAULT_H, defeated.def.award, TYPE_NORMAL, getAnm(defeated.def.award));
 	}
 	
 	public final static GemBumped newLevelEnd(final Player player, final int index) {
@@ -81,23 +84,23 @@ public class GemBumped extends Pandy {
 			award = AWARD_WORLD;
 			anm = PlatformGame.gemWorldAnm;
 		}
-	    return create(player, index, award, true, anm);
+	    return create(player, index, award, TYPE_END, anm);
 	}
 	
 	public final static GemBumped newShatter(final Player player) {
 		final Panple pos = player.getPosition();
-	    return new GemBumped(player, pos.getX() - 8, pos.getY(), -1, false, PlatformGame.gemAnm);
+	    return new GemBumped(player, pos.getX() - 8, pos.getY(), -1, TYPE_NORMAL, PlatformGame.gemAnm);
 	}
 	
-	protected final static GemBumped create(final Player player, final int index, final int award, final boolean end, final Panimation anm) {
+	protected final static GemBumped create(final Player player, final int index, final int award, final byte type, final Panimation anm) {
 		Level.tm.savePosition(tilePos, index);
-	    return new GemBumped(player, tilePos.getX(), tilePos.getY(), award, end, anm);
+	    return new GemBumped(player, tilePos.getX(), tilePos.getY(), award, type, anm);
 	}
 	
-	private GemBumped(final Player player, final float x, final float y, final int award, final boolean end, final Panimation anm) {
+	private GemBumped(final Player player, final float x, final float y, final int award, final byte type, final Panimation anm) {
 		super(Tiles.g);
 		this.award = award;
-		this.end = end;
+		this.type = type;
 		final boolean good = isGood();
 		if (good) {
 		    Gem.collect(player, award);
@@ -106,7 +109,7 @@ public class GemBumped extends Pandy {
 		PlatformGame.setPosition(this, x, y + ImtilX.DIM, PlatformGame.DEPTH_SHATTER);
 		getVelocity().set(0, 6);
         PlatformGame.room.addActor(this);
-        if (end) {
+        if (type == TYPE_END) {
         	//if isMusicSupported Pangine.getEngine().getMusic().playSound(Music.gemLevel);
         } else if (good) {
         	Gem.playSound();
@@ -120,8 +123,8 @@ public class GemBumped extends Pandy {
 		super.onStep(event);
 		age++;
 		if (age >= 12) {
-		    if (isGood()) {
-		        Gem.spark(getPosition(), end);
+		    if (type == TYPE_LETTER || isGood()) {
+		        Gem.spark(getPosition(), type == TYPE_END);
 		    } else {
 		        Tiles.shatter(PlatformGame.gemShatter, getPosition(), true);
 		    }

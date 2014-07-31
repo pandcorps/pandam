@@ -100,7 +100,7 @@ public class Tiles {
     	            break;
     	        }
     	    }
-    	    GemBumped.create(player, index, 0, false, null).setView(PlatformGame.gemLetters[i]);
+    	    GemBumped.create(player, index, 0, GemBumped.TYPE_LETTER, null).setView(PlatformGame.gemLetters[i]);
     	    bump(player, chr, index);
     	    //if isMusicSupported seq = null;
     	} else {
