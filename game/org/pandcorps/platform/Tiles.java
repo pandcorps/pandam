@@ -25,6 +25,7 @@ package org.pandcorps.platform;
 //import javax.sound.midi.*;
 
 import org.pandcorps.core.*;
+import org.pandcorps.game.core.ImtilX;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.boundary.*;
@@ -84,33 +85,45 @@ public class Tiles {
     	} else if (b == PlatformGame.TILE_BUMP) {
     	    if (getHandler().isNormalAward(t)) {
     	        newGemBumped(player, index);
-    	    } else {
+    	    } else if (!bumpLetter(player, index, t)) {
     	        GemBumped.newLevelEnd(player, index);
     	        PlatformGame.levelVictory();
     	    }
-    	    bump(player, chr, index);
+    	    bump(player, index);
     		//if isMusicSupported seq = null;
-    	} else if (b == PlatformGame.TILE_LETTER) {
-    	    final Panmage[] letters = PlatformGame.blockLetters;
-    	    final int size = letters.length;
-    	    final Object fg = DynamicTileMap.getRawForeground(t);
-    	    int i = 0;
-    	    for (; i < size; i++) {
-    	        if (fg == letters[i]) {
-    	            break;
-    	        }
-    	    }
-    	    GemBumped.create(player, index, 0, GemBumped.TYPE_LETTER, null).setView(PlatformGame.gemLetters[i]);
-    	    bump(player, chr, index);
-    	    //if isMusicSupported seq = null;
     	} else {
     		//if isMusicSupported seq = Music.thud;
     	}
     	//if isMusicSupported Pangine.getEngine().getMusic().playSound(seq);
     }
     
-    private final static void bump(final Player player, final Character chr, final int index) {
-        new Bump(chr, index); // Copy image before changing
+    private final static boolean bumpLetter(final Player player, final int index, final Tile t) {
+    	final Panmage[] letters = PlatformGame.blockLetters;
+	    final int size = letters.length;
+	    final Object fg = DynamicTileMap.getRawForeground(t);
+	    int i = 0;
+	    for (; i < size; i++) {
+	        if (fg == letters[i]) {
+	            break;
+	        }
+	    }
+	    if (i >= size) {
+	    	return false;
+	    }
+	    GemBumped.create(player, index, 0, GemBumped.TYPE_LETTER, null).setView(PlatformGame.gemLetters[i]);
+	    //final TileActor h = new TileActor();
+	    //h.setViewFromForeground(Level.tm, t);
+	    final Panctor h = new Panctor();
+	    h.setView(letters[i]);
+	    final Pangine engine = Pangine.getEngine();
+	    final int d = ImtilX.DIM;
+	    h.getPosition().set((engine.getEffectiveWidth() - d * size) / 2 + d * i, engine.getEffectiveHeight() - d - 1);
+	    PlatformGame.hud.addActor(h);
+	    return true;
+    }
+    
+    private final static void bump(final Player player, final int index) {
+        new Bump(player, index); // Copy image before changing
         Level.tm.setForeground(index, null, Tile.BEHAVIOR_SOLID);
         player.pc.profile.stats.bumpedBlocks++;
     }

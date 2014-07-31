@@ -65,6 +65,7 @@ public class Level {
     private static Pancolor bottomSkyColor = null;
     protected static Tile tileGem = null;
     protected static int numEnemies = 0;
+    private static int currLetter = 0;
     protected static boolean victory = false;
     
     protected abstract static class Theme {
@@ -263,6 +264,8 @@ public class Level {
     protected final static void loadLevel() {
 System.out.println("Setting Level seed: " + seed);
         Mathtil.setSeed(seed);
+        numEnemies = 0;
+        currLetter = 0;
         victory = false;
     	grassy = true;
     	topSkyColor = null;
@@ -425,7 +428,12 @@ System.out.println("Setting Level seed: " + seed);
     			Block letter patterns
     			Checkered, diagonal stripe gem patterns
     			*/
-    		    final Template template = Mathtil.rand(templates);
+    		    final Template template;
+    		    if (currLetter < PlatformGame.blockLetters.length) {
+    		    	template = new BlockLetterTemplate();
+    		    } else {
+    		    	template = Mathtil.rand(templates);
+    		    }
     		    if (template.getClass() == GiantTemplate.class) {
     		    	templates.remove(template);
     		    }
@@ -1122,6 +1130,17 @@ System.out.println("Setting Level seed: " + seed);
         }
     }
     
+    private final static class BlockLetterTemplate extends SimpleTemplate {
+    	protected BlockLetterTemplate() {
+    		super(1, 1, 0);
+    	}
+    	
+        @Override
+        protected final void build() {
+        	letterBlock(x, floor + 3);
+        }
+    }
+    
     private final static class GemTemplate extends SimpleTemplate {
     	protected GemTemplate() {
     		super(1, 10, 0);
@@ -1422,6 +1441,10 @@ System.out.println("Setting Level seed: " + seed);
     
     private final static void breakableBlock(final int x, final int y) {
         tm.setForeground(x, y, imgMap[0][5], PlatformGame.TILE_BREAK);
+    }
+    
+    private final static void letterBlock(final int x, final int y) {
+        tm.setForeground(x, y, PlatformGame.blockLetters[currLetter++], PlatformGame.TILE_BUMP);
     }
     
     private final static void upBlock(final int x, final int y) {
