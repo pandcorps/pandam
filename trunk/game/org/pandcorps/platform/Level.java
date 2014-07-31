@@ -262,7 +262,6 @@ public class Level {
     }
     
     protected final static void loadLevel() {
-System.out.println("Setting Level seed: " + seed);
         Mathtil.setSeed(seed);
         numEnemies = 0;
         currLetter = 0;
@@ -428,8 +427,9 @@ System.out.println("Setting Level seed: " + seed);
     			Block letter patterns
     			Checkered, diagonal stripe gem patterns
     			*/
+    		    final int numLetters = PlatformGame.blockLetters.length;
     		    final Template template;
-    		    if (currLetter < PlatformGame.blockLetters.length) {
+    		    if (currLetter < numLetters && bx >= nt * (currLetter + 1) / (numLetters + 1)) {
     		    	template = new BlockLetterTemplate();
     		    } else {
     		    	template = Mathtil.rand(templates);

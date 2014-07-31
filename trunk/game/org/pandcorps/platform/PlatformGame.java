@@ -103,7 +103,6 @@ public class PlatformGame extends BaseGame {
 	Console: Filters, 8-bit, b/w (requires restart).
 	Mouse TouchEvents.
 	Pressing left/right should always work on Map markers without a fork.
-	Randomize with new seed for each Level, save if Player quits Level.
 	Flag new goals when first displaying them.
 	A BounceBall should be able to bump blocks (from below and side) and give Gem to Player that kicked.
 	Pause if device gets a text/interruption.
