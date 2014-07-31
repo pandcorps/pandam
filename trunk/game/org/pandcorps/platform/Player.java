@@ -31,7 +31,7 @@ import org.pandcorps.pandax.in.*;
 import org.pandcorps.pandax.tile.*;
 
 public class Player extends Character implements CollisionListener {
-	protected final static int PLAYER_X = 7;
+	protected final static int PLAYER_X = 6;
 	protected final static int PLAYER_H = 23; // 15
     protected final static int VEL_WALK = 3;
 	private final static int VEL_RETURN = 2;

@@ -131,7 +131,6 @@ public class PlatformGame extends BaseGame {
     protected final static byte TILE_UPSLOPE_FLOOR = 7;
     protected final static byte TILE_DOWNSLOPE_FLOOR = 8;
     protected final static byte TILE_GEM = 9;
-    protected final static byte TILE_LETTER = 10;
 	
 	//protected final static int DEPTH_POWERUP = 0;
 	protected final static int DEPTH_ENEMY = 4;
@@ -167,14 +166,15 @@ public class PlatformGame extends BaseGame {
 	protected final static String SEG_AVT = "AVT";
 	
 	protected static Panroom room = null;
+	protected static Panlayer hud = null;
 	protected final static ArrayList<PlayerContext> pcs = new ArrayList<PlayerContext>();
 	protected static MultiFont font = null;
 	protected static Font fontTiny = null;
 	protected static Notifications notifications = null;
-	protected final static FinPanple2 og = new FinPanple2(16, 1);
-	protected final static FinPanple2 ow = new FinPanple2(17, 1);
-	protected final static FinPanple2 owf = new FinPanple2(17, 2);
-	protected final static FinPanple2 os = new FinPanple2(16, 11);
+	protected final static FinPanple2 og = new FinPanple2(17, 1);
+	protected final static FinPanple2 ow = new FinPanple2(18, 1);
+	protected final static FinPanple2 owf = new FinPanple2(18, 2);
+	protected final static FinPanple2 os = new FinPanple2(17, 11);
 	protected static Img[] guysBlank = null;
 	protected final static HashMap<String, Img> facesAll = new HashMap<String, Img>();
 	protected final static HashMap<String, Img[]> tailsAll = new HashMap<String, Img[]>();
@@ -1037,7 +1037,7 @@ System.out.println("loadConstants end " + System.currentTimeMillis());
 	}
 	
 	protected final static Panlayer addHud(final Panroom room, final boolean allowAuto, final boolean level) {
-		final Panlayer hud = createHud(room);
+		hud = createHud(room);
 		final int h = Pangine.getEngine().getEffectiveHeight() - 17;
 		final Gem gem = addHudGem(hud, 0, h);
         final int size = pcs.size();
