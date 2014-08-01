@@ -111,7 +111,6 @@ public class PlatformGame extends BaseGame {
 	Shortcut to Goals screen on Map.
 	Show Goals on in-Level pause screen.
 	Center touch radio menus.
-	Show a Spark when removing a goal star to add to rank stars.
 	Clear rank stars 1 at a time with a Spark when promoting.
 	World Goal evaluated too late.
 	User saw bumped gem-block fail to defeat empty ArmorBall on it.
