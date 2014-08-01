@@ -40,7 +40,9 @@ public abstract class Goal implements Named {
 	
 	protected abstract String getLabelSingular();
 	
-	protected abstract String getLabelPlural();
+	protected String getLabelPlural() {
+	    return getLabelSingular() + "s";
+	}
 	
 	protected final String getLabel() {
 		return (getAmount() == 1) ? getLabelSingular() : getLabelPlural();
@@ -258,11 +260,6 @@ public abstract class Goal implements Named {
 		protected final String getLabelSingular() {
 			return "World";
 		}
-		
-		@Override
-		protected final String getLabelPlural() {
-			return "Worlds";
-		}
 	}
 	
 	public final static class BonusGoal extends StatGoal {
@@ -293,11 +290,6 @@ public abstract class Goal implements Named {
 		protected final String getLabelSingular() {
 			return "Bonus Game";
 		}
-		
-		@Override
-		protected final String getLabelPlural() {
-			return "Bonus Games";
-		}
 	}
 	
 	public final static class LevelGoal extends DefeatGoal {
@@ -322,11 +314,6 @@ public abstract class Goal implements Named {
 		@Override
 		protected final String getLabelSingular() {
 			return "Level";
-		}
-		
-		@Override
-		protected final String getLabelPlural() {
-			return "Levels";
 		}
 	}
 	
@@ -388,11 +375,6 @@ public abstract class Goal implements Named {
 		protected final String getLabelSingular() {
 			return "Block";
 		}
-		
-		@Override
-		protected final String getLabelPlural() {
-			return "Blocks";
-		}
 	}
 	
 	public final static class BumpGoal extends StatGoal {
@@ -422,11 +404,6 @@ public abstract class Goal implements Named {
 		@Override
 		protected final String getLabelSingular() {
 			return "Block";
-		}
-		
-		@Override
-		protected final String getLabelPlural() {
-			return "Blocks";
 		}
 	}
 	
@@ -458,11 +435,6 @@ public abstract class Goal implements Named {
 		protected final String getLabelSingular() {
 			return "Time";
 		}
-		
-		@Override
-		protected final String getLabelPlural() {
-			return "Times";
-		}
 	}
 	
 	public final static class GemGoal extends StatGoal {
@@ -492,11 +464,6 @@ public abstract class Goal implements Named {
 		@Override
 		protected final String getLabelSingular() {
 			return "Gem";
-		}
-		
-		@Override
-		protected final String getLabelPlural() {
-			return "Gems";
 		}
 	}
 	
@@ -528,11 +495,6 @@ public abstract class Goal implements Named {
         protected final String getLabelSingular() {
             return "Bonus Word";
         }
-        
-        @Override
-        protected final String getLabelPlural() {
-            return "Bonus Words";
-        }
     }
 	
 	public final static class FallGoal extends RunGoal {
@@ -563,11 +525,6 @@ public abstract class Goal implements Named {
 		protected final String getLabelSingular() {
 			return "Time";
 		}
-		
-		@Override
-		protected final String getLabelPlural() {
-			return "Times";
-		}
 	}
 	
 	public final static class HitGoal extends RunGoal {
@@ -597,11 +554,6 @@ public abstract class Goal implements Named {
 		@Override
 		protected final String getLabelSingular() {
 			return "Time";
-		}
-		
-		@Override
-		protected final String getLabelPlural() {
-			return "Times";
 		}
 	}
 }
