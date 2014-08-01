@@ -79,7 +79,6 @@ public class PlatformGame extends BaseGame {
 	Fire enemy?
 	Jumping enemy.
 	Collect fruit from trees.
-	Collect letters to spell word for bonus gems.
 	Level to-do notes.
 	Random music per map.
 	Sound effects for jump, bump, stomp, hurt, etc.
@@ -109,7 +108,6 @@ public class PlatformGame extends BaseGame {
 	Pause if device gets a text/interruption.
 	Some rises allow an Enemy but Player hits ceiling.
 	Tall Enemy can appear behind a short enemy on a rise above it; lower Enemy should be in front.
-	Show Gems on level-up screen.
 	Shortcut to Goals screen on Map.
 	Show Goals on in-Level pause screen.
 	Center the Goal Menu x-wise.
@@ -190,6 +188,7 @@ public class PlatformGame extends BaseGame {
 	protected static EnemyDefinition ogreBehemoth = null;
 	protected static Panimation anger = null;
 	protected static Panmage block8 = null;
+	protected static Panmage blockLetter8 = null;
 	protected static Panmage[] gem = null;
 	protected static Panimation gemAnm = null;
 	protected static Panimation gemBlueAnm = null;
@@ -861,7 +860,8 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 			fontTiny = Fonts.getTiny(FontType.Upper, Pancolor.WHITE); }});
 	    
 		loaders.add(new Runnable() { @Override public final void run() {
-			block8 = createImage("block8", "org/pandcorps/platform/res/misc/Block8.png", 8); }});
+			block8 = createImage("block8", "org/pandcorps/platform/res/misc/Block8.png", 8);
+			blockLetter8 = createImage("block.letter8", "org/pandcorps/platform/res/misc/BlockLetter8.png", 8); }});
 	    
 		loaders.add(new Runnable() { @Override public final void run() {
 		    final Img[] gemStrip = ImtilX.loadStrip("org/pandcorps/platform/res/misc/Gem.png");
@@ -1134,7 +1134,9 @@ System.out.println("loadConstants end " + System.currentTimeMillis());
 	    Pangine.getEngine().addTimer(Level.tm, 8, new TimerListener() {
             @Override public final void onTimer(final TimerEvent event) {
                 final int i = Level.collectedLetters.size() - 1;
-                Level.collectedLetters.remove(i).destroy();
+                final Panctor letter = Level.collectedLetters.remove(i);
+                Tiles.shatter(hud, blockLetter8, letter.getPosition(), false);
+                letter.destroy();
                 Level.currLetter--;
                 if (i > 0) {
                     clearLetters();
