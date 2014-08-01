@@ -135,12 +135,16 @@ public class Tiles {
     }
     
     public static class Faller extends Pandy implements AllOobListener {
-        public Faller(final Panmage img, final float x, final float y, final float xv, final float yv) {
+        public Faller(final Panlayer layer, final Panmage img, final float x, final float y, final float xv, final float yv) {
             super(g);
             setView(img);
             PlatformGame.setPosition(this, x, y, PlatformGame.DEPTH_SHATTER);
             getVelocity().set(xv, yv);
-            PlatformGame.room.addActor(this);
+            layer.addActor(this);
+        }
+        
+        public Faller(final Panmage img, final float x, final float y, final float xv, final float yv) {
+        	this(PlatformGame.room, img, x, y, xv, yv);
         }
 
         @Override
@@ -149,17 +153,21 @@ public class Tiles {
         }
     }
     
-    protected final static void shatter(final Panmage img, final Panple pos, final boolean rot) {
+    protected final static void shatter(final Panlayer layer, final Panmage img, final Panple pos, final boolean rot) {
         final float x = pos.getX(), y = pos.getY();
-        new Shatter(img, x, y, -2, 2).setMirror(rot);
-        new Shatter(img, x + 8, y, 2, 2);
-        new Shatter(img, x, y + 8, -1, 3).setRot(rot ? 2 : 0);
-        new Shatter(img, x + 8, y + 8, 1, 3).setFlip(rot);
+        new Shatter(layer, img, x, y, -2, 2).setMirror(rot);
+        new Shatter(layer, img, x + 8, y, 2, 2);
+        new Shatter(layer, img, x, y + 8, -1, 3).setRot(rot ? 2 : 0);
+        new Shatter(layer, img, x + 8, y + 8, 1, 3).setFlip(rot);
+    }
+    
+    protected final static void shatter(final Panmage img, final Panple pos, final boolean rot) {
+    	shatter(PlatformGame.room, img, pos, rot);
     }
     
     private final static class Shatter extends Faller {
-    	private Shatter(final Panmage img, final float x, final float y, final int xm, final int ym) {
-    		super(img, x, y, xm * Mathtil.randf(0.7f, 1.3f), ym * Mathtil.randf(0.7f, 1.3f));
+    	private Shatter(final Panlayer layer, final Panmage img, final float x, final float y, final int xm, final int ym) {
+    		super(layer, img, x, y, xm * Mathtil.randf(0.7f, 1.3f), ym * Mathtil.randf(0.7f, 1.3f));
     	}
     }
     
