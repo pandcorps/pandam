@@ -32,7 +32,8 @@ public abstract class Achievement extends FinName {
 		new LevelFeat("Level 1", 1), new LevelFeat("Level Champ", 50),
 		new WorldFeat("World 1", 1), new WorldFeat("World Tour", 10),
 		new NoEnemyFeat(), new AllEnemyFeat(),
-		new RankFeat("Promoted", 2), new RankFeat("Knighted", 25)
+		new RankFeat("Promoted", 2), new RankFeat("Knighted", 25),
+		new WordFeat("Wordsmith", 5), new WordFeat("Lexicon", 30)
 		// level w/ no damage
 		// Bear Market, Finish Level w/ no gems
 		// Bull Market, Collect all gems in a Level
@@ -144,6 +145,20 @@ public abstract class Achievement extends FinName {
 			return stats.defeatedWorlds >= n;
 		}
 	}
+	
+	private final static class WordFeat extends StatFeat {
+        private final int n;
+        
+        protected WordFeat(final String name, final int n) {
+            super(name, "Collect " + n + " bonus word" + getS(n));
+            this.n = n;
+        }
+        
+        @Override
+        public final boolean isMet(final Statistics stats) {
+            return stats.collectedWords >= n;
+        }
+    }
 	
 	private final static class RankFeat extends Achievement {
 		private final int n;
