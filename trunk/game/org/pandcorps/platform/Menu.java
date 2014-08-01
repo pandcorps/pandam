@@ -1809,6 +1809,7 @@ public class Menu {
 							for (int j = 0; j < Profile.POINTS_PER_RANK; j++) {
 								final Panctor rankStar = rankStars.get(j);
 								if (rankStar.getClass() != Gem.class) {
+									Gem.spark(goalStar.getPosition(), false);
 									goalStar.swapPositions(rankStar);
 									goalStars.set(i, rankStar);
 									rankStars.set(j, goalStar);
