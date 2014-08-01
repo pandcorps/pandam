@@ -203,6 +203,9 @@ public class Player extends Character implements CollisionListener {
 	    	commitGems();
 			profile.stats.defeatedEnemies += player.levelDefeatedEnemies;
 			profile.stats.defeatedLevels++;
+			if (Level.currLetter <= 0) {
+			    profile.stats.collectedWords++;
+			}
 		}
 	    
 	    public final void onFinishBonus() {

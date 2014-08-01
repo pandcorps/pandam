@@ -413,6 +413,7 @@ public class Map {
 	            } else {
 	            	screen = new PlatformGame.PlatformScreen();
 	            }
+	            Level.clear(); // Called automatically for Level, but not for Cabin
 	        	fadeOut(screen);
 			} else if (interaction.KEY_TAB.isActive()) {
 				interaction.KEY_TAB.inactivate();

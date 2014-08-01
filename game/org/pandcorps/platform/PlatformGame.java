@@ -35,6 +35,7 @@ import org.pandcorps.game.actor.*;
 import org.pandcorps.game.actor.CustomBurst.*;
 import org.pandcorps.game.core.*;
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.in.*;
 import org.pandcorps.pandax.text.*;
@@ -877,8 +878,8 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 		loaders.add(new Runnable() { @Override public final void run() {
 		    gemLevelAnm = createGemAnm("gem.level", createSheet("gem.level", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/Gem5.png")));
 		    gemWorldAnm = createGemAnm("gem.world", createSheet("gem.world", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/Gem6.png")));
-		    gemLetters = createSheet("gem.letter", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/GemGuard.png"));
-		    blockLetters = createSheet("block.letter", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/BlockGuard.png"));
+		    gemLetters = createSheet("gem.letter", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/GemFur.png"));
+		    blockLetters = createSheet("block.letter", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/BlockFur.png"));
 		    gemGoal = createSheet("gem.goal", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/GemStar.png"));
 		    emptyGoal = createImage("empty.goal", "org/pandcorps/platform/res/misc/EmptyStar.png", ImtilX.DIM); }});
 	    
@@ -1123,7 +1124,26 @@ System.out.println("loadConstants end " + System.currentTimeMillis());
             //    ((Gem) actor).spark(); // No longer objects
             }
         }
+	    if (Coltil.size(Level.collectedLetters) == blockLetters.length) {
+	        clearLetters();
+	    }
 	    Level.victory = true;
+	}
+	
+	private final static void clearLetters() {
+	    Pangine.getEngine().addTimer(Level.tm, 8, new TimerListener() {
+            @Override public final void onTimer(final TimerEvent event) {
+                final int i = Level.collectedLetters.size() - 1;
+                Level.collectedLetters.remove(i).destroy();
+                Level.currLetter--;
+                if (i > 0) {
+                    clearLetters();
+                } else {
+                    for (final PlayerContext pc : pcs) {
+                        pc.player.addGems(50);
+                    }
+                }
+            }});
 	}
 	
 	protected final static void levelClose() {
