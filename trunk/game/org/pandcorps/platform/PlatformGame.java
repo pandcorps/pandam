@@ -110,7 +110,7 @@ public class PlatformGame extends BaseGame {
 	Tall Enemy can appear behind a short enemy on a rise above it; lower Enemy should be in front.
 	Shortcut to Goals screen on Map.
 	Show Goals on in-Level pause screen.
-	Center the Goal Menu x-wise.
+	Center touch radio menus.
 	Show a Spark when removing a goal star to add to rank stars.
 	Clear rank stars 1 at a time with a Spark when promoting.
 	World Goal evaluated too late.

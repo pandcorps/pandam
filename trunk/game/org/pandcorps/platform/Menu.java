@@ -72,15 +72,17 @@ public class Menu {
 		protected int center = -1;
 		protected final List<TouchButton> tabs;
 		protected boolean tabsSupported = false;
-		protected int touchRadioX = 40;
-		protected int touchRadioY = 140;
-		protected int touchKeyboardX = 8;
+		protected final static int touchRadioX = 40;
+		protected final static int touchRadioY = 140;
+		protected final static int touchKeyboardX = 8;
+		protected final int rankStarX;
 		protected boolean initForm = true;
 		
 		protected PlayerScreen(final PlayerContext pc, final boolean fadeIn) {
 			this.pc = pc;
 			this.fadeIn = fadeIn;
 			tabs = isTabEnabled() ? new ArrayList<TouchButton>() : null;
+			rankStarX = (Pangine.getEngine().getEffectiveWidth() - 170) / 2;
 		}
 		
 		@Override
@@ -1608,7 +1610,7 @@ public class Menu {
         @Override
 		protected final void menu() {
         	if (Goal.isAnyMet(pc)) {
-				createGoalMet(touchRadioX, touchRadioY);
+        		createGoalMet();
 			} else if (isTabEnabled()) {
 				menuTouch();
 			} else {
@@ -1628,7 +1630,7 @@ public class Menu {
 					createStatsList(touchRadioX, touchRadioY);
 					break;
 				case TAB_GOALS :
-					createGoalsList(touchRadioX, (Pangine.getEngine().getEffectiveHeight() - 124) / 2 + 116);
+					createGoalsList(rankStarX, (Pangine.getEngine().getEffectiveHeight() - 124) / 2 + 116);
 					break;
 			}
 			newTab(PlatformGame.menuCheck, "Done", new Runnable() {@Override public final void run() {exit();}});
@@ -1747,7 +1749,12 @@ public class Menu {
 			return y;
 		}
 		
-		private final void createGoalMet(final int x, int y) {
+		private final void createGoalMet() {
+			final Pangine engine = Pangine.getEngine();
+			final int x = rankStarX;
+			final boolean tab = isTabEnabled();
+			final int h = tab ? 74 : 90;
+			int y = (engine.getEffectiveHeight() - h) / 2 + h - 8;
 			initForm = false;
 			addTitle("Success!", x, y);
 			y -= 16;
@@ -1763,7 +1770,7 @@ public class Menu {
 				}
 			}
 			addHudGems();
-			if (isTabEnabled()) {
+			if (tab) {
 				registerBackNop();
 			}
 		}
