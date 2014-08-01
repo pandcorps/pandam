@@ -65,7 +65,8 @@ public class Level {
     private static Pancolor bottomSkyColor = null;
     protected static Tile tileGem = null;
     protected static int numEnemies = 0;
-    private static int currLetter = 0;
+    protected static int currLetter = 0;
+    protected static List<Panctor> collectedLetters = null;
     protected static boolean victory = false;
     
     protected abstract static class Theme {
@@ -261,10 +262,15 @@ public class Level {
     	return bgtm;
     }
     
-    protected final static void loadLevel() {
-        Mathtil.setSeed(seed);
+    protected final static void clear() {
         numEnemies = 0;
         currLetter = 0;
+        Coltil.clear(collectedLetters);
+    }
+    
+    protected final static void loadLevel() {
+        Mathtil.setSeed(seed);
+        clear();
         victory = false;
     	grassy = true;
     	topSkyColor = null;

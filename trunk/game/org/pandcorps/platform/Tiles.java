@@ -24,6 +24,8 @@ package org.pandcorps.platform;
 
 //import javax.sound.midi.*;
 
+import java.util.*;
+
 import org.pandcorps.core.*;
 import org.pandcorps.game.core.*;
 import org.pandcorps.pandam.*;
@@ -119,6 +121,10 @@ public class Tiles {
 	    final int d = ImtilX.DIM;
 	    h.getPosition().set((engine.getEffectiveWidth() - d * size) / 2 + d * i, engine.getEffectiveHeight() - d - 1);
 	    PlatformGame.hud.addActor(h);
+	    if (Level.collectedLetters == null) {
+	        Level.collectedLetters = new ArrayList<Panctor>(size);
+	    }
+	    Level.collectedLetters.add(h);
 	    return true;
     }
     
