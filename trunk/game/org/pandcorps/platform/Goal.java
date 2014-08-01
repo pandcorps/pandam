@@ -67,7 +67,7 @@ public abstract class Goal implements Named {
 	}
 	
 	public final static Goal newGoal(final byte award, final PlayerContext pc) {
-		final int max = award < 3 ? 7 : 9, index = award - 1;
+		final int max = award < 3 ? 8 : 10, index = award - 1;
 		final Goal[] goals = pc.profile.currentGoals;
 		//goals[index] = null; Don't reuse same Goal when assigning a new one; don't null out before checking
 		while (true) {
@@ -82,7 +82,8 @@ public abstract class Goal implements Named {
 				case 5: g = new GemGoal(award, pc); break;
 				case 6: g = new FallGoal(award); break;
 				case 7: g = new HitGoal(award); break;
-				case 8: g = new BonusGoal(award, pc); break;
+				case 8: g = new WordGoal(award, pc); break;
+				case 9: g = new BonusGoal(award, pc); break;
 				default: g = new WorldGoal(award, pc); break;
 			}
 			final Class<?> gc = g.getClass();
@@ -124,6 +125,8 @@ public abstract class Goal implements Named {
 			return new FallGoal(f);
 		} else if ("HitGoal".equals(type)) {
 			return new HitGoal(f);
+		} else if ("WordGoal".equals(type)) {
+            return new WordGoal(f);
 		} else if ("BonusGoal".equals(type)) {
 			return new BonusGoal(f);
 		} else if ("WorldGoal".equals(type)) {
@@ -496,6 +499,41 @@ public abstract class Goal implements Named {
 			return "Gems";
 		}
 	}
+	
+	public final static class WordGoal extends StatGoal {
+        public WordGoal(final byte award, final PlayerContext pc) {
+            super(award, pc);
+        }
+        
+        protected WordGoal(final Field f) {
+            super(f);
+        }
+        
+        @Override
+        protected final long getAmount() {
+            return award;
+        }
+        
+        @Override
+        protected final long getCurrentAmount(final Statistics stats) {
+            return stats.collectedWords;
+        }
+        
+        @Override
+        protected final String getAction() {
+            return "Collect";
+        }
+        
+        @Override
+        protected final String getLabelSingular() {
+            return "Bonus Word";
+        }
+        
+        @Override
+        protected final String getLabelPlural() {
+            return "Bonus Words";
+        }
+    }
 	
 	public final static class FallGoal extends RunGoal {
 		public FallGoal(final byte award) {
