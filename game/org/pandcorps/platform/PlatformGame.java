@@ -111,7 +111,6 @@ public class PlatformGame extends BaseGame {
 	Shortcut to Goals screen on Map.
 	Show Goals on in-Level pause screen.
 	Center touch radio menus.
-	Show Gem letter image when giving bonus word award at Level end.
 	Menu image for button mode.
 	Add arrow to diamonds, rotate.
 	Make diamonds consistent, edges always visible.
@@ -1141,7 +1140,12 @@ System.out.println("loadConstants end " + System.currentTimeMillis());
             @Override public final void onTimer(final TimerEvent event) {
                 final int i = Level.collectedLetters.size() - 1;
                 final Panctor letter = Level.collectedLetters.remove(i);
-                Tiles.shatter(hud, blockLetter8, letter.getPosition(), false);
+                final Panple pos = letter.getPosition();
+                final GemBumped gem;
+                gem = new GemBumped(hud, null, pos.getX(), pos.getY() - ImtilX.DIM, 0, GemBumped.TYPE_LETTER, null, FinPanple.ORIGIN);
+                gem.getVelocity().setY(0);
+                gem.setView(PlatformGame.getGemWordLetter(i));
+                Tiles.shatter(hud, blockLetter8, pos, false);
                 letter.destroy();
                 Level.currLetter--;
                 if (i > 0) {

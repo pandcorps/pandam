@@ -98,7 +98,12 @@ public class GemBumped extends Pandy {
 	}
 	
 	private GemBumped(final Player player, final float x, final float y, final int award, final byte type, final Panimation anm) {
-		super(Tiles.g);
+		this(PlatformGame.room, player, x, y, award, type, anm, Tiles.g);
+	}
+	
+	protected GemBumped(final Panlayer layer, final Player player, final float x, final float y, final int award, final byte type,
+			final Panimation anm, final Panple acc) {
+		super(acc);
 		this.award = award;
 		this.type = type;
 		final boolean good = isGood();
@@ -108,7 +113,7 @@ public class GemBumped extends Pandy {
 		setView(anm);
 		PlatformGame.setPosition(this, x, y + ImtilX.DIM, PlatformGame.DEPTH_SHATTER);
 		getVelocity().set(0, 6);
-        PlatformGame.room.addActor(this);
+        layer.addActor(this);
         if (type == TYPE_END) {
         	//if isMusicSupported Pangine.getEngine().getMusic().playSound(Music.gemLevel);
         } else if (good) {
@@ -124,7 +129,7 @@ public class GemBumped extends Pandy {
 		age++;
 		if (age >= 12) {
 		    if (type == TYPE_LETTER || isGood()) {
-		        Gem.spark(getPosition(), type == TYPE_END);
+		        Gem.spark(getLayer(), getPosition(), type == TYPE_END);
 		    } else {
 		        Tiles.shatter(PlatformGame.gemShatter, getPosition(), true);
 		    }

@@ -76,7 +76,7 @@ public class Tiles {
     	if (b == PlatformGame.TILE_BREAK) {
     		Level.tm.setForeground(index, null, Tile.BEHAVIOR_OPEN);
     		shatter(PlatformGame.block8, Level.tm.getPosition(index), false);
-    		if (Mathtil.rand()) {
+    		if (Mathtil.rand(65)) {
     		    newGemBumped(player, index); // Plays a sound
     		    //if isMusicSupported seq = null;
     		} else {

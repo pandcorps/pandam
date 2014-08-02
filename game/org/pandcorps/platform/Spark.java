@@ -28,20 +28,21 @@ import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 
 public final class Spark extends Burst implements StepListener {
+	public final static int DEF_COUNT = 3;
 	private final int count;
 	private final boolean end; // Could replace with handler
 	private int age = 0;
 	
 	public Spark(final float x, final float y, final boolean end) {
-		this(3, x, y, end);
+		this(PlatformGame.room, DEF_COUNT, x, y, end);
 	}
 	
-	private Spark(final int count, final float x, final float y, final boolean end) {
+	public Spark(final Panlayer layer, final int count, final float x, final float y, final boolean end) {
 		super(PlatformGame.spark);
 		this.count = count;
 		this.end = end;
 		PlatformGame.setPosition(this, x + Mathtil.randf(-7, 7), y + Mathtil.randf(-7, 7), PlatformGame.DEPTH_SPARK);
-		PlatformGame.room.addActor(this);
+		layer.addActor(this);
 	}
 
 	@Override
@@ -50,7 +51,7 @@ public final class Spark extends Burst implements StepListener {
 			return;
 		} else if (age == 2) {
 			final Panple pos = getPosition();
-			new Spark(count - 1, pos.getX(), pos.getY(), end);
+			new Spark(getLayer(), count - 1, pos.getX(), pos.getY(), end);
 		}
 		age++;
 	}
