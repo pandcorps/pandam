@@ -202,6 +202,7 @@ public class PlatformGame extends BaseGame {
 	protected static Panmage gemWhite = null;
 	protected static Panimation gemLevelAnm = null;
 	protected static Panimation gemWorldAnm = null;
+	protected final static String blockWord = "FUR";
 	protected static Panmage[] gemLetters = null;
 	protected static Panmage[] blockLetters = null;
 	protected static Panmage[] gemGoal = null;
@@ -883,8 +884,8 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 		loaders.add(new Runnable() { @Override public final void run() {
 		    gemLevelAnm = createGemAnm("gem.level", createSheet("gem.level", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/Gem5.png")));
 		    gemWorldAnm = createGemAnm("gem.world", createSheet("gem.world", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/Gem6.png")));
-		    gemLetters = createSheet("gem.letter", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/GemFur.png"));
-		    blockLetters = createSheet("block.letter", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/BlockFur.png"));
+		    gemLetters = createSheet("gem.letter", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/GemLetters.png"));
+		    blockLetters = createSheet("block.letter", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/BlockLetters.png"));
 		    gemGoal = createSheet("gem.goal", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/GemStar.png"));
 		    emptyGoal = createImage("empty.goal", "org/pandcorps/platform/res/misc/EmptyStar.png", ImtilX.DIM); }});
 	    
@@ -1129,7 +1130,7 @@ System.out.println("loadConstants end " + System.currentTimeMillis());
             //    ((Gem) actor).spark(); // No longer objects
             }
         }
-	    if (Coltil.size(Level.collectedLetters) == blockLetters.length) {
+	    if (Coltil.size(Level.collectedLetters) == blockWord.length()) {
 	        clearLetters();
 	    }
 	    Level.victory = true;
@@ -1225,6 +1226,26 @@ System.out.println("loadConstants end " + System.currentTimeMillis());
 			}
 		}
 		return null;
+	}
+	
+	protected final static Panmage getImageLetter(final Panmage[] letters, final char c) {
+		return letters[c - 'A'];
+	}
+	
+	protected final static Panmage getBlockLetter(final char c) {
+		return getImageLetter(blockLetters, c);
+	}
+	
+	protected final static Panmage getBlockWordLetter(final int i) {
+		return getBlockLetter(blockWord.charAt(i));
+	}
+	
+	protected final static Panmage getGemLetter(final char c) {
+		return getImageLetter(gemLetters, c);
+	}
+	
+	protected final static Panmage getGemWordLetter(final int i) {
+		return getGemLetter(blockWord.charAt(i));
 	}
 	
 	protected final static List<String> getAvailableProfiles() {

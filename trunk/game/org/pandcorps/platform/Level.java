@@ -433,7 +433,7 @@ public class Level {
     			Block letter patterns
     			Checkered, diagonal stripe gem patterns
     			*/
-    		    final int numLetters = PlatformGame.blockLetters.length;
+    		    final int numLetters = PlatformGame.blockWord.length();
     		    final Template template;
     		    if (currLetter < numLetters && bx >= ng * (currLetter + 1) / (numLetters + 1)) {
     		    	template = new BlockLetterTemplate();
@@ -1450,7 +1450,7 @@ public class Level {
     }
     
     private final static void letterBlock(final int x, final int y) {
-        tm.setForeground(x, y, PlatformGame.blockLetters[currLetter++], PlatformGame.TILE_BUMP);
+        tm.setForeground(x, y, PlatformGame.getBlockWordLetter(currLetter++), PlatformGame.TILE_BUMP);
     }
     
     private final static void upBlock(final int x, final int y) {

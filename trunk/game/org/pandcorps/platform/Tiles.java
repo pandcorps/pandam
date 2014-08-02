@@ -100,23 +100,24 @@ public class Tiles {
     }
     
     private final static boolean bumpLetter(final Player player, final int index, final Tile t) {
-    	final Panmage[] letters = PlatformGame.blockLetters;
-	    final int size = letters.length;
+    	Panmage letter = null;
+	    final int size = PlatformGame.blockWord.length();
 	    final Object fg = DynamicTileMap.getRawForeground(t);
 	    int i = 0;
 	    for (; i < size; i++) {
-	        if (fg == letters[i]) {
+	    	letter = PlatformGame.getBlockWordLetter(i);
+	        if (fg == letter) {
 	            break;
 	        }
 	    }
 	    if (i >= size) {
 	    	return false;
 	    }
-	    GemBumped.create(player, index, 0, GemBumped.TYPE_LETTER, null).setView(PlatformGame.gemLetters[i]);
+	    GemBumped.create(player, index, 0, GemBumped.TYPE_LETTER, null).setView(PlatformGame.getGemWordLetter(i));
 	    //final TileActor h = new TileActor();
 	    //h.setViewFromForeground(Level.tm, t);
 	    final Panctor h = new Panctor();
-	    h.setView(letters[i]);
+	    h.setView(letter);
 	    final Pangine engine = Pangine.getEngine();
 	    final int d = ImtilX.DIM;
 	    h.getPosition().set((engine.getEffectiveWidth() - d * size) / 2 + d * i, engine.getEffectiveHeight() - d - 1);
