@@ -1130,9 +1130,18 @@ System.out.println("loadConstants end " + System.currentTimeMillis());
             }
         }
 	    if (Coltil.size(Level.collectedLetters) == blockWord.length()) {
-	        clearLetters(null);
+	        clearLetters(gemBlueAnm, null);
 	    }
 	    Level.victory = true;
+	}
+	
+	protected final static void clearLetters(final Panimation anm, final Runnable finishHandler) {
+		final Pangine engine = Pangine.getEngine();
+		final int x = (engine.getEffectiveWidth() - ImtilX.DIM * 5) / 2, y = engine.getEffectiveHeight() - 80;
+		for (int i = 0; i < 5; i++) {
+			new GemBumped(hud, null, x + i * ImtilX.DIM, y + 8 * Math.abs(2 - i), 0, GemBumped.TYPE_LETTER, anm, Tiles.g);
+		}
+		clearLetters(finishHandler);
 	}
 	
 	protected final static void clearLetters(final Runnable finishHandler) {

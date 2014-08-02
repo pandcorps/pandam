@@ -242,7 +242,7 @@ public class Cabin {
 				pc.player.addGems(500);
 				Pangine.getEngine().addTimer(tm, 20, new TimerListener() {
 					@Override public final void onTimer(final TimerEvent event) {
-						PlatformGame.clearLetters(new Runnable() { @Override public final void run() {
+						PlatformGame.clearLetters(PlatformGame.gemCyanAnm, new Runnable() { @Override public final void run() {
 							finish();
 						}});
 					}});
