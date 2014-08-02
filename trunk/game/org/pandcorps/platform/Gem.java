@@ -75,7 +75,11 @@ public class Gem extends TileOccupant implements StepListener {
 	}
 	
 	protected final static void spark(final Panple pos, final boolean end) {
-		new Spark(pos.getX() + 8, pos.getY() + 8, end);
+		spark(PlatformGame.room, pos, end);
+	}
+	
+	protected final static void spark(final Panlayer layer, final Panple pos, final boolean end) {
+		new Spark(layer, Spark.DEF_COUNT, pos.getX() + 8, pos.getY() + 8, end);
 	}
 	
 	protected final static void playSound() {
