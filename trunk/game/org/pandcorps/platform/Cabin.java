@@ -151,32 +151,59 @@ public class Cabin {
 			PlatformGame.initTouchButtons(null, false, true, null);
 			pc = PlatformGame.pcs.get(0);
 			final Player player = new Player(pc);
-			player.mode = Player.MODE_DISABLED;
 			room.addActor(player);
 			PlatformGame.setPosition(player, 74, 32, PlatformGame.DEPTH_PLAYER);
 			PlatformGame.addHud(room, false, true);
 			
-			instr = new Pantext("act.instr", PlatformGame.font, "Hoo! Hoo! Pick one!");
+			final String txt = Mathtil.rand() ? loadName() : loadShuffle();
+			instr = new Pantext("act.instr", PlatformGame.font, txt);
 			room.addActor(instr);
 			instr.getPosition().set(128, 114, 1);
 			instr.centerX();
+			PlatformGame.fadeIn(room);
+		}
+		
+		private final String loadShuffle() {
+			cabinTileHandler = new ShuffleTileHandler();
+			pc.player.mode = Player.MODE_DISABLED;
 			for (int i = 0; i < NUM_BLOCKS; i++) {
 				tm.setForeground(3 + (i * 3), 5, imgMap[0][0], PlatformGame.TILE_BUMP);
 			}
 			shuffle(30, 0);
-			PlatformGame.fadeIn(room);
+			return "Hoo! Hoo! Pick one!";
+		}
+		
+		private final String loadName() {
+			cabinTileHandler = new NameTileHandler();
+			final String name = pc.getName().toUpperCase();
+			PlatformGame.blockWord = name;
+			final int size = name.length();
+			int x = 12 - size;
+			if (x % 2 == 1) {
+				x++;
+			}
+			x = (x / 2) + 2;
+			for (int i = 0; i < size; i++) {
+				tm.setForeground(x + i, 5, PlatformGame.getBlockWordLetter(i), PlatformGame.TILE_BUMP);
+			}
+			Pangine.getEngine().addTimer(tm, 60, new TimerListener() {
+				@Override public final void onTimer(final TimerEvent event) {
+                    instr.destroy();
+				}});
+			return "Hoo! Hoo! Hit them!";
 		}
 		
 		@Override
         protected void destroy() {
             Level.tm = null;
             timg.destroy();
+            PlatformGame.blockWord = PlatformGame.defaultBlockWord;
         }
 	}
 	
-	protected final static CabinTileHandler cabinTileHandler = new CabinTileHandler();
+	protected static TileHandler cabinTileHandler = new ShuffleTileHandler();
 	
-	protected final static class CabinTileHandler extends TileHandler {
+	protected final static class ShuffleTileHandler extends CabinTileHandler {
 		@Override
 		protected boolean isNormalAward(final Tile t) {
 			return true;
@@ -186,8 +213,8 @@ public class Cabin {
 		protected final int rndAward() {
 		    final int r = Mathtil.randi(0, 9999), awd;
             // Looks like bonus Gems are pre-sorted, so 25% chance of getting 1000,
-            // but decide after Player picks, so 73% chance of 1000, then 25/1.9/0.1
-            if (r < 7300) {
+            // but decide after Player picks, so 75% chance of 1000, then 23/1.9/0.1
+            if (r < 7500) {
                 awd = GemBumped.AWARD_4;
             } else if (r < 9800) {
                 awd = GemBumped.AWARD_3;
@@ -200,9 +227,30 @@ public class Cabin {
             shuffle(45, awd);
             return awd;
 		}
+	}
+	
+	protected final static class NameTileHandler extends CabinTileHandler {
+		@Override
+		protected boolean isNormalAward(final Tile t) {
+			return false;
+		}
 		
 		@Override
-		protected final TileMapImage getBumpedImage() {
+		protected TileMapImage getBumpedImage() {
+			if (Coltil.size(Level.collectedLetters) == PlatformGame.blockWord.length() && pc.player.mode == Player.MODE_NORMAL) {
+				pc.player.mode = Player.MODE_DISABLED;
+				pc.player.addGems(500);
+				PlatformGame.clearLetters(new Runnable() { @Override public final void run() {
+					finish();
+				}});
+			}
+			return super.getBumpedImage();
+		}
+	}
+	
+	protected abstract static class CabinTileHandler extends TileHandler {
+		@Override
+		protected TileMapImage getBumpedImage() {
 			return bumpedImage;
 		}
 	}
@@ -256,9 +304,7 @@ public class Cabin {
                 if (end) {
                 	Pangine.getEngine().addTimer(gems[0], 105, new TimerListener() {
 						@Override public final void onTimer(final TimerEvent event) {
-	                        clear();
-	                        pc.onFinishBonus();
-	                        PlatformGame.markerClose();
+	                        finish();
 						}});
                 } else {
                     final int newTime = time - ((time > 10) ? 2 : 1);
@@ -267,7 +313,6 @@ public class Cabin {
 							@Override public final void onTimer(final TimerEvent event) {
 		                    	pc.player.mode = Player.MODE_NORMAL;
 		                        clear();
-		                        instr.destroy();
 							}});
                     } else if (newTime > 1) {
                         shuffle(newTime, awd);
@@ -290,5 +335,12 @@ public class Cabin {
 	
 	private final static void clear() {
 	    Panctor.destroy(gems);
+	    Panctor.destroy(instr);
+	}
+	
+	private final static void finish() {
+		clear();
+        pc.onFinishBonus();
+        PlatformGame.markerClose();
 	}
 }

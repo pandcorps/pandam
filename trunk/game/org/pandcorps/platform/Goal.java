@@ -328,7 +328,7 @@ public abstract class Goal implements Named {
 		
 		@Override
 		protected final long getAmount() {
-			return award * 10;
+			return award * 5;
 		}
 		
 		@Override
@@ -358,7 +358,7 @@ public abstract class Goal implements Named {
 		
 		@Override
 		protected final long getAmount() {
-			return award * 20;
+			return award * 10;
 		}
 		
 		@Override
@@ -388,7 +388,7 @@ public abstract class Goal implements Named {
 		
 		@Override
 		protected final long getAmount() {
-			return award * 20;
+			return award * 10;
 		}
 		
 		@Override
@@ -418,7 +418,7 @@ public abstract class Goal implements Named {
 		
 		@Override
 		protected final long getAmount() {
-			return 50 * Mathtil.pow(2, award - 1);
+			return 25 * Mathtil.pow(2, award - 1);
 		}
 		
 		@Override
@@ -508,7 +508,7 @@ public abstract class Goal implements Named {
 		
 		@Override
 		protected final long getAmount() {
-			return 3 * award;
+			return 2 * award;
 		}
 		
 		@Override
@@ -538,7 +538,7 @@ public abstract class Goal implements Named {
 		
 		@Override
 		protected final long getAmount() {
-			return 2 * award;
+			return award;
 		}
 		
 		@Override

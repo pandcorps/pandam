@@ -116,7 +116,6 @@ public class PlatformGame extends BaseGame {
 	Add arrow to diamonds, rotate.
 	Make diamonds consistent, edges always visible.
 	Give Gems for Achievements.
-	Cabin game, blocks spell Player name, 500 gems after hitting all.
 	Clear rank stars 1 at a time with a Spark when promoting.
 	World Goal evaluated too late.
 	User saw bumped gem-block fail to defeat empty ArmorBall on it.
@@ -202,7 +201,8 @@ public class PlatformGame extends BaseGame {
 	protected static Panmage gemWhite = null;
 	protected static Panimation gemLevelAnm = null;
 	protected static Panimation gemWorldAnm = null;
-	protected final static String blockWord = "FUR";
+	protected final static String defaultBlockWord = "FUR";
+	protected static String blockWord = defaultBlockWord;
 	protected static Panmage[] gemLetters = null;
 	protected static Panmage[] blockLetters = null;
 	protected static Panmage[] gemGoal = null;
@@ -1131,12 +1131,12 @@ System.out.println("loadConstants end " + System.currentTimeMillis());
             }
         }
 	    if (Coltil.size(Level.collectedLetters) == blockWord.length()) {
-	        clearLetters();
+	        clearLetters(null);
 	    }
 	    Level.victory = true;
 	}
 	
-	private final static void clearLetters() {
+	protected final static void clearLetters(final Runnable finishHandler) {
 	    Pangine.getEngine().addTimer(Level.tm, 8, new TimerListener() {
             @Override public final void onTimer(final TimerEvent event) {
                 final int i = Level.collectedLetters.size() - 1;
@@ -1145,11 +1145,13 @@ System.out.println("loadConstants end " + System.currentTimeMillis());
                 letter.destroy();
                 Level.currLetter--;
                 if (i > 0) {
-                    clearLetters();
-                } else {
+                    clearLetters(finishHandler);
+                } else if (finishHandler == null) {
                     for (final PlayerContext pc : pcs) {
                         pc.player.addGems(50);
                     }
+                } else {
+                	finishHandler.run();
                 }
             }});
 	}
