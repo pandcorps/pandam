@@ -201,7 +201,7 @@ public class Cabin {
         }
 	}
 	
-	protected static TileHandler cabinTileHandler = new ShuffleTileHandler();
+	protected static TileHandler cabinTileHandler = null;
 	
 	protected final static class ShuffleTileHandler extends CabinTileHandler {
 		@Override
@@ -240,9 +240,12 @@ public class Cabin {
 			if (Coltil.size(Level.collectedLetters) == PlatformGame.blockWord.length() && pc.player.mode == Player.MODE_NORMAL) {
 				pc.player.mode = Player.MODE_DISABLED;
 				pc.player.addGems(500);
-				PlatformGame.clearLetters(new Runnable() { @Override public final void run() {
-					finish();
-				}});
+				Pangine.getEngine().addTimer(tm, 20, new TimerListener() {
+					@Override public final void onTimer(final TimerEvent event) {
+						PlatformGame.clearLetters(new Runnable() { @Override public final void run() {
+							finish();
+						}});
+					}});
 			}
 			return super.getBumpedImage();
 		}
