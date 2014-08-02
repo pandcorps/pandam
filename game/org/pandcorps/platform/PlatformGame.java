@@ -111,6 +111,12 @@ public class PlatformGame extends BaseGame {
 	Shortcut to Goals screen on Map.
 	Show Goals on in-Level pause screen.
 	Center touch radio menus.
+	Show Gem letter image when giving bonus word award at Level end.
+	Menu image for button mode.
+	Add arrow to diamonds, rotate.
+	Make diamonds consistent, edges always visible.
+	Give Gems for Achievements.
+	Cabin game, blocks spell Player name, 500 gems after hitting all.
 	Clear rank stars 1 at a time with a Spark when promoting.
 	World Goal evaluated too late.
 	User saw bumped gem-block fail to defeat empty ArmorBall on it.
