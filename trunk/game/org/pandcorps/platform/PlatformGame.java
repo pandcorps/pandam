@@ -111,7 +111,6 @@ public class PlatformGame extends BaseGame {
 	Shortcut to Goals screen on Map.
 	Show Goals on in-Level pause screen.
 	Center touch radio menus.
-	Menu image for button mode.
 	Add arrow to diamonds, rotate.
 	Give Gems for Achievements.
 	Clear rank stars 1 at a time with a Spark when promoting.
@@ -247,6 +246,7 @@ public class PlatformGame extends BaseGame {
 	protected static Panmage menuEyes = null;
 	protected static Panmage menuGear = null;
 	protected static Panmage menuKeyboard = null;
+	protected static Panmage menuButtons = null;
 	protected static Panmage redUp = null;
 	protected static Panmage redDown = null;
 	protected static Panmage greenUp = null;
@@ -978,6 +978,7 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 			    menuEyes = createMenuImg("Eyes");
 			    menuGear = createMenuImg("Gear");
 			    menuKeyboard = createMenuImg("Keyboard");
+			    menuButtons = createMenuImg("Buttons");
 			    //menuIn = engine.createImage(Pantil.vmid(), ImtilX.indent(left));
 			    menuIn = engine.createImage(Pantil.vmid(), ImtilX.newButton(w, h, clrIn));
 			    menuDisabled = engine.createImage(Pantil.vmid(), ImtilX.newButton(w, h, new FinPancolor((short) 128, (short) 96, (short) 160)));
