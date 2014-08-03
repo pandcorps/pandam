@@ -113,7 +113,6 @@ public class PlatformGame extends BaseGame {
 	Center touch radio menus.
 	Menu image for button mode.
 	Add arrow to diamonds, rotate.
-	Make diamonds consistent, edges always visible.
 	Give Gems for Achievements.
 	Clear rank stars 1 at a time with a Spark when promoting.
 	World Goal evaluated too late.
@@ -927,7 +926,7 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 		if (engine.isTouchSupported()) {
 			loaders.add(new Runnable() { @Override public final void run() {
 				// 400 x 240
-				DIM_BUTTON = (Math.min(60 * engine.getEffectiveWidth() / 400, 60 * engine.getEffectiveHeight() / 240) / 2) * 2;
+				DIM_BUTTON = (Math.min(60 * engine.getEffectiveWidth() / 400, 60 * engine.getEffectiveHeight() / 240) / 4) * 4 - 1;
 				final int d = DIM_BUTTON;
 				final Pancolor f = new FinPancolor((short) 160, Mathtil.SHORT_0, Pancolor.MAX_VALUE);
 				final Img circle = Imtil.newImage(d, d);
