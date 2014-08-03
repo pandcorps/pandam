@@ -1920,7 +1920,7 @@ public class Menu {
             final Panple btnSize = PlatformGame.menu.getSize();
             final int btnW = (int) btnSize.getX(), btnH = (int) btnSize.getY(), offY = btnH * 4 / 3;
             int x = btnW / 2, y = engine.getEffectiveHeight() - btnH - offY;
-            newFormButton("AutoToggle", x, y, null, new Runnable() {@Override public final void run() {toggleAuto();}});
+            newFormButton("AutoToggle", x, y, PlatformGame.menuButtons, new Runnable() {@Override public final void run() {toggleAuto();}});
             addTitle(msgAuto, x + btnW + 8, y);
             setMessageAuto();
             y -= offY;
