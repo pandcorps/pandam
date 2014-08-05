@@ -205,6 +205,7 @@ public class PlatformGame extends BaseGame {
 	protected static Panmage[] blockLetters = null;
 	protected static Panmage[] gemGoal = null;
 	protected static Panmage emptyGoal = null;
+	protected static Panmage[] gemRank = null;
 	protected static Panmage gemShatter = null;
 	protected static Panimation spark = null;
 	protected static Panimation teleport = null;
@@ -886,7 +887,8 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 		    gemLetters = createSheet("gem.letter", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/GemLetters.png"));
 		    blockLetters = createSheet("block.letter", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/BlockLetters.png"));
 		    gemGoal = createSheet("gem.goal", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/GemStar.png"));
-		    emptyGoal = createImage("empty.goal", "org/pandcorps/platform/res/misc/EmptyStar.png", ImtilX.DIM); }});
+		    emptyGoal = createImage("empty.goal", "org/pandcorps/platform/res/misc/EmptyStar.png", ImtilX.DIM);
+		    gemRank = createSheet("gem.rank", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/GemOrb.png")); }});
 	    
 		loaders.add(new Runnable() { @Override public final void run() {
 		    final Panframe[] sa = createFrames("spark", "org/pandcorps/platform/res/misc/Spark.png", 8, 1);

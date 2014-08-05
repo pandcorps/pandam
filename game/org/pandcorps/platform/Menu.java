@@ -25,6 +25,7 @@ package org.pandcorps.platform;
 import java.util.*;
 
 import org.pandcorps.core.*;
+import org.pandcorps.core.chr.*;
 import org.pandcorps.core.img.*;
 import org.pandcorps.game.core.*;
 import org.pandcorps.pandam.*;
@@ -517,6 +518,16 @@ public class Menu {
 		    final int gemX = center + 16, gemY = 20;
             PlatformGame.addHudGem(room, gemX, gemY);
             PlatformGame.addHud(room, pc, gemX + PlatformGame.OFF_GEM, gemY, false, false);
+		}
+		
+		protected final void addHudRank() {
+			final int gemX = center + 96, gemY = 20, textX = gemX + PlatformGame.OFF_GEM + 1;
+			addActor(new Gem(PlatformGame.gemRank), gemX, gemY);
+			addTitle("Rank", textX, gemY + 8);
+			final CharSequence seq = new CallSequence() {@Override protected String call() {
+				return String.valueOf(pc.profile.getRank());
+			}};
+			addTitle(seq, textX, gemY);
 		}
 		
 		protected final Input addNameInput(final PlayerData pd, final InputSubmitListener subLsn, final int max, final int x, final int y) {
@@ -1693,10 +1704,11 @@ public class Menu {
 		private final int addRankPoints(final int x, int y, final boolean img) {
 			final Profile prf = pc.profile;
 			y -= 8;
-			Chartil.set(rankDesc, "Rank: " + prf.getRank());
-			addTitle(rankDesc, x, y);
+			Chartil.set(rankDesc, "Rank " + prf.getRank());
+			addTitle(rankDesc, img ? (x + 17) : x, y);
 			final int currPoints = prf.getCurrentGoalPoints();
 			if (img) {
+				addActor(new Gem(PlatformGame.gemRank), x, y);
 				y -= 17;
 				addStars(x, y, currPoints, Profile.POINTS_PER_RANK, rankStars);
 			} else {
@@ -1770,6 +1782,7 @@ public class Menu {
 				}
 			}
 			addHudGems();
+			addHudRank();
 			if (tab) {
 				registerBackNop();
 			}
@@ -1827,7 +1840,7 @@ public class Menu {
 										pc.addGems(1000);
 										final String strRank = String.valueOf(newRank);
 										Chartil.set(rankDesc, "New Rank " + strRank + "   1000");
-										addActor(new Gem(), x + 1 + (10 + strRank.length()) * 8, y + 17);
+										addActor(new Gem(), x + 1 + (12 + strRank.length()) * 8, y + 17);
 										addRankPoints(goalIndex, x, y);
 									}});
 							} else {
