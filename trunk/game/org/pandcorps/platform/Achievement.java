@@ -89,7 +89,9 @@ public abstract class Achievement extends FinName {
 			final Achievement ach = ALL[i];
 			if (ach.isMet(pc)) {
 				achieved.add(key);
-				PlatformGame.notify(pc, ach.getName());
+				final int award = ach.award;
+				PlatformGame.notify(pc, "Achieved " + ach.getName() + ", " + award + " Gem bonus");
+				pc.addGems(award);
 				any = true;
 			}
 		}
