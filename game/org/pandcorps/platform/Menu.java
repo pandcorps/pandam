@@ -1793,7 +1793,11 @@ public class Menu {
 		}
 		
 		private final void addGoalTimer(final TimerListener listener) {
-			Pangine.getEngine().addTimer(tm, 30, listener);
+			addGoalTimer(30, listener);
+		}
+		
+		private final void addGoalTimer(final long duration, final TimerListener listener) {
+			Pangine.getEngine().addTimer(tm, duration, listener);
 		}
 		
 		private final void addGoalPoints(final int goalIndex, final int x, final int y) {
@@ -1821,14 +1825,10 @@ public class Menu {
 								addGoalTimer(new TimerListener() {
 									@Override public final void onTimer(final TimerEvent event) {
 										pc.addGems(1000);
-										Chartil.set(rankDesc, "Reached rank " + newRank + ", 1000 Gem bonus");
-										for (int j = 0; j < Profile.POINTS_PER_RANK; j++) {
-											final Panctor rankStar = rankStars.get(j);
-											final Panple pos = rankStar.getPosition();
-											rankStars.set(j, addEmptyStar((int) pos.getX(), (int) pos.getY()));
-											rankStar.destroy();
-										}
-										addGoalPoints(goalIndex, x, y);
+										final String strRank = String.valueOf(newRank);
+										Chartil.set(rankDesc, "New Rank " + strRank + "   1000");
+										addActor(new Gem(), x + 1 + (10 + strRank.length()) * 8, y + 17);
+										addRankPoints(goalIndex, x, y);
 									}});
 							} else {
 								// Add remaining points (if any)
@@ -1842,6 +1842,24 @@ public class Menu {
 					goals[goalIndex] = Goal.newGoal(goals[goalIndex].award, pc);
 					save();
 					addContinue(x, y);
+				}});
+		}
+		
+		private final void addRankPoints(final int goalIndex, final int x, final int y) {
+			addGoalTimer(15, new TimerListener() {
+				@Override public final void onTimer(final TimerEvent event) {
+					for (int j = Profile.POINTS_PER_RANK - 1; j >= 0; j--) {
+						final Panctor rankStar = rankStars.get(j);
+						if (rankStar.getClass() == Gem.class) {
+							final Panple pos = rankStar.getPosition();
+							Gem.spark(pos, false);
+							rankStars.set(j, addEmptyStar((int) pos.getX(), (int) pos.getY()));
+							rankStar.destroy();
+							addRankPoints(goalIndex, x, y);
+							return;
+						}
+					}
+					addGoalPoints(goalIndex, x, y);
 				}});
 		}
         

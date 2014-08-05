@@ -190,7 +190,7 @@ gems = 1000000;
     	protected long totalGems = 0;
     	protected int collectedWords = 0;
     	
-    	public void load(final Segment seg) {
+    	public void load(final Segment seg, final int currGems) {
         	defeatedLevels = seg.initInt(0);
         	defeatedWorlds = seg.initInt(1);
         	defeatedEnemies = seg.initLong(2);
@@ -198,7 +198,7 @@ gems = 1000000;
         	brokenBlocks = seg.initLong(4);
         	jumps = seg.initLong(5);
         	playedBonuses = seg.initInt(6);
-        	totalGems = seg.initLong(7);
+        	totalGems = seg.getLong(7, currGems);
         	collectedWords = seg.initInt(8);
         }
     	
