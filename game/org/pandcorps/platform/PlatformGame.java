@@ -120,7 +120,6 @@ public class PlatformGame extends BaseGame {
 	Always display Gems on Menu (and rank with orb icon).
 	Stat for ArmorBall kicks.
 	Black outline all around virtual buttons, white highlight inside
-	Highlight method for any button, width parameter
 	*/
 	
 	protected final static byte TILE_BREAK = 2;
