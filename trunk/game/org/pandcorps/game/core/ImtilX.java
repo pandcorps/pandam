@@ -195,8 +195,12 @@ public final class ImtilX {
     }
     
     public final static Img newArrow2(final int d, final Pancolor fill, final boolean pos, final boolean horiz) {
+        return newArrow2(d, Pancolor.WHITE, Pancolor.BLACK, fill, pos, horiz);
+    }
+    
+    public final static Img newArrow2(final int d, final Pancolor top, final Pancolor bottom, final Pancolor fill, final boolean pos, final boolean horiz) {
         final Img img = Imtil.newImage(d, d);
-        drawArrow2(img, 0, 0, d, fill, pos, horiz);
+        drawArrow2(img, 0, 0, d, top, bottom, fill, pos, horiz);
         return img;
     }
     
@@ -208,9 +212,15 @@ public final class ImtilX {
     	drawArrow2(img, x, y, d, fill, right, true);
     }
     
-    public final static void drawArrow2(final Img img, final int _x, final int _y, final int d, final Pancolor fill,
-    		final boolean _pos, final boolean horiz) {
-    	final int t = Imtil.getDataElement(Pancolor.WHITE), b = Imtil.getDataElement(Pancolor.BLACK), f = Imtil.getDataElement(fill);
+    public final static void drawArrow2(final Img img, final int x, final int y, final int d, final Pancolor fill,
+    		final boolean pos, final boolean horiz) {
+        drawArrow2(img, x, y, d, Pancolor.WHITE, Pancolor.BLACK, fill, pos, horiz);
+    }
+    
+    public final static void drawArrow2(final Img img, final int _x, final int _y, final int d,
+                                        final Pancolor top, final Pancolor bottom, final Pancolor fill,
+                                        final boolean _pos, final boolean horiz) {
+    	final int t = Imtil.getDataElement(top), b = Imtil.getDataElement(bottom), f = Imtil.getDataElement(fill);
     	final int x, y;
     	final boolean pos;
     	if (horiz) {
