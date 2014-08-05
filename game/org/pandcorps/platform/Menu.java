@@ -1897,7 +1897,7 @@ public class Menu {
                 if (ach == null) {
                     throw new IllegalArgumentException("Could not find Achievement " + achName);
                 }
-                newDesc = ach.getDescription();
+                newDesc = ach.getDescription() + " (" + ach.getAward() + ")";
             }
             Chartil.set(achDesc, newDesc);
         }
