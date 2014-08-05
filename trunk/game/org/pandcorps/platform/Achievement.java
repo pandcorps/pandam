@@ -52,14 +52,20 @@ public abstract class Achievement extends FinName {
 	};
 	
 	private final String desc;
+	private final int award;
 	
-	protected Achievement(final String name, final String desc) {
+	protected Achievement(final String name, final String desc, final int award) {
 		super(name);
 		this.desc = desc;
+		this.award = award;
 	}
 	
 	public final String getDescription() {
 		return desc;
+	}
+	
+	public final int getAward() {
+	    return award;
 	}
 	
 	public abstract boolean isMet(final PlayerContext pc);
@@ -93,8 +99,8 @@ public abstract class Achievement extends FinName {
 	}
 	
 	private abstract static class StatFeat extends Achievement {
-	    protected StatFeat(final String name, final String desc) {
-	        super(name, desc);
+	    protected StatFeat(final String name, final String desc, final int award) {
+	        super(name, desc, award);
 	    }
 	    
 	    @Override
@@ -106,8 +112,8 @@ public abstract class Achievement extends FinName {
 	}
 	
 	private abstract static class CurrentFeat extends Achievement {
-        protected CurrentFeat(final String name, final String desc) {
-            super(name, desc);
+        protected CurrentFeat(final String name, final String desc, final int award) {
+            super(name, desc, award);
         }
         
         @Override
@@ -122,7 +128,7 @@ public abstract class Achievement extends FinName {
 		private final int n;
 		
 		protected LevelFeat(final String name, final int n) {
-			super(name, "Defeat " + n + " level" + getS(n));
+			super(name, "Defeat " + n + " level" + getS(n), n * 25);
 			this.n = n;
 		}
 		
@@ -136,7 +142,7 @@ public abstract class Achievement extends FinName {
 		private final int n;
 		
 		protected WorldFeat(final String name, final int n) {
-			super(name, "Defeat " + n + " world" + getS(n));
+			super(name, "Defeat " + n + " world" + getS(n), n * 150);
 			this.n = n;
 		}
 		
@@ -150,7 +156,7 @@ public abstract class Achievement extends FinName {
         private final int n;
         
         protected WordFeat(final String name, final int n) {
-            super(name, "Collect " + n + " bonus word" + getS(n));
+            super(name, "Collect " + n + " bonus word" + getS(n), n * 30);
             this.n = n;
         }
         
@@ -164,7 +170,7 @@ public abstract class Achievement extends FinName {
 		private final int n;
 		
 		protected RankFeat(final String name, final int n) {
-			super(name, "Reach rank " + n);
+			super(name, "Reach rank " + n, n * 100);
 			this.n = n;
 		}
 		
@@ -176,7 +182,7 @@ public abstract class Achievement extends FinName {
 	
 	private final static class NoEnemyFeat extends CurrentFeat {
 	    protected NoEnemyFeat() {
-            super("Dove", "Finish a level without defeating any enemies");
+            super("Dove", "Finish a level without defeating any enemies", 200);
         }
         
         @Override
@@ -187,7 +193,7 @@ public abstract class Achievement extends FinName {
 	
 	private final static class AllEnemyFeat extends CurrentFeat {
         protected AllEnemyFeat() {
-            super("Hawk", "Defeat all enemies in a level");
+            super("Hawk", "Defeat all enemies in a level", 300);
         }
         
         @Override
