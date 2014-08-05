@@ -112,14 +112,12 @@ public class PlatformGame extends BaseGame {
 	Show Goals on in-Level pause screen.
 	Center touch radio menus.
 	Add arrow to diamonds, rotate.
-	Give Gems for Achievements.
 	World Goal evaluated too late.
 	User saw bumped gem-block fail to defeat empty ArmorBall on it.
 	User saw Enemy defeated by bumped block fail to give Player a Gem.
 	Once saw Player appear on wrong Marker after goal-met screen.
 	Always display Gems on Menu (and rank with orb icon).
 	Stat for ArmorBall kicks.
-	Black outline all around virtual buttons, white highlight inside
 	*/
 	
 	protected final static byte TILE_BREAK = 2;
@@ -933,7 +931,7 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 				final Pancolor f = new FinPancolor((short) 160, Mathtil.SHORT_0, Pancolor.MAX_VALUE);
 				final Img circle = Imtil.newImage(d, d);
 				Imtil.drawCircle(circle, Pancolor.BLACK, Pancolor.BLACK, f);
-				ImtilX.highlight(circle, 1);
+				ImtilX.highlight(circle, 2);
 				final Img circleIn = ImtilX.indent(circle);
 				Imtil.setPseudoTranslucent(circle);
 				Imtil.setPseudoTranslucent(circleIn);
