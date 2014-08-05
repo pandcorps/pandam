@@ -113,13 +113,14 @@ public class PlatformGame extends BaseGame {
 	Center touch radio menus.
 	Add arrow to diamonds, rotate.
 	Give Gems for Achievements.
-	Clear rank stars 1 at a time with a Spark when promoting.
 	World Goal evaluated too late.
 	User saw bumped gem-block fail to defeat empty ArmorBall on it.
 	User saw Enemy defeated by bumped block fail to give Player a Gem.
 	Once saw Player appear on wrong Marker after goal-met screen.
 	Always display Gems on Menu (and rank with orb icon).
 	Stat for ArmorBall kicks.
+	Black outline all around virtual buttons, white highlight inside
+	Highlight method for any button, width parameter
 	*/
 	
 	protected final static byte TILE_BREAK = 2;
@@ -617,7 +618,7 @@ public class PlatformGame extends BaseGame {
         final String curName = seg.getValue(1);
         seg = plist.readIf(SEG_STX);
         if (seg != null) {
-        	profile.stats.load(seg);
+        	profile.stats.load(seg, profile.getGems());
         }
         seg = plist.readIf(SEG_ACH);
         if (seg != null) {
@@ -1135,16 +1136,15 @@ System.out.println("loadConstants end " + System.currentTimeMillis());
 	    Level.victory = true;
 	}
 	
-	protected final static void clearLetters(final Panimation anm, final Runnable finishHandler) {
+	private final static void showLetterBonusGems(final Panimation anm) {
 		final Pangine engine = Pangine.getEngine();
 		final int x = (engine.getEffectiveWidth() - ImtilX.DIM * 5) / 2, y = engine.getEffectiveHeight() - 80;
 		for (int i = 0; i < 5; i++) {
 			new GemBumped(hud, null, x + i * ImtilX.DIM, y + 8 * Math.abs(2 - i), 0, GemBumped.TYPE_LETTER, anm, Tiles.g);
 		}
-		clearLetters(finishHandler);
 	}
 	
-	protected final static void clearLetters(final Runnable finishHandler) {
+	protected final static void clearLetters(final Panimation anm, final Runnable finishHandler) {
 	    Pangine.getEngine().addTimer(Level.tm, 8, new TimerListener() {
             @Override public final void onTimer(final TimerEvent event) {
                 final int i = Level.collectedLetters.size() - 1;
@@ -1158,13 +1158,19 @@ System.out.println("loadConstants end " + System.currentTimeMillis());
                 letter.destroy();
                 Level.currLetter--;
                 if (i > 0) {
-                    clearLetters(finishHandler);
-                } else if (finishHandler == null) {
-                    for (final PlayerContext pc : pcs) {
-                        pc.player.addGems(50);
-                    }
+                    clearLetters(anm, finishHandler);
                 } else {
-                	finishHandler.run();
+                	Pangine.getEngine().addTimer(Level.tm, 8, new TimerListener() {
+                		@Override public final void onTimer(final TimerEvent event) {
+                			showLetterBonusGems(anm);
+                		}});
+                	if (finishHandler == null) {
+	                    for (final PlayerContext pc : pcs) {
+	                        pc.player.addGems(50);
+	                    }
+	                } else {
+	                	finishHandler.run();
+	                }
                 }
             }});
 	}
