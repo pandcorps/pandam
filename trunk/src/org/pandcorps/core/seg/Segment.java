@@ -89,7 +89,9 @@ public class Segment extends Record {
                 } else {
                     w.write(DELIM_REP);
                 }
-                rep.save(w);
+                if (rep != null) {
+                	rep.save(w);
+                }
             }
         }
     }

@@ -49,7 +49,7 @@ public class Menu {
     protected final static byte TOUCH_JUMP = 2;
     private final static short SPEED_MENU_FADE = 9;
     private final static int SIZE_FONT = 8;
-    private final static String NAME_NEW = "org.pandcorps.new";
+    protected final static String NAME_NEW = "org.pandcorps.new";
     private final static String WARN_DELETE = "Press Erase again to confirm";
     private final static String WARN_EMPTY = "Must have a name";
     private final static String WARN_DUPLICATE = "Name already used";
@@ -78,6 +78,7 @@ public class Menu {
 		protected final static int touchKeyboardX = 8;
 		protected final int rankStarX;
 		protected boolean initForm = true;
+		protected boolean showGems = true;
 		
 		protected PlayerScreen(final PlayerContext pc, final boolean fadeIn) {
 			this.pc = pc;
@@ -120,6 +121,10 @@ public class Menu {
 					event.cancel();
 				}
 			}});
+			if (showGems && pc != null && pc.profile != null) {
+				addHudGems();
+				addHudRank();
+			}
 			menu();
 			if (initForm && ctrl != null) { // Null on TitleScreen
 				form.init();
@@ -530,6 +535,16 @@ public class Menu {
 			addTitle(seq, textX, gemY);
 		}
 		
+		protected final void addHudAchievement() {
+			final int gemX = center + 96, gemY = 37, textX = gemX + PlatformGame.OFF_GEM + 1;
+			addActor(new Gem(PlatformGame.gemAchieve), gemX, gemY);
+			addTitle("Trophies", textX, gemY + 8);
+			final CharSequence seq = new CallSequence() {@Override protected String call() {
+				return String.valueOf(pc.profile.achievements.size());
+			}};
+			addTitle(seq, textX, gemY);
+		}
+		
 		protected final Input addNameInput(final PlayerData pd, final InputSubmitListener subLsn, final int max, final int x, final int y) {
 		    final InputSubmitListener chgLsn = new InputSubmitListener() {
 	            @Override public final void onSubmit(final InputSubmitEvent event) {
@@ -737,6 +752,7 @@ public class Menu {
 		
 	    protected TitleScreen() {
             super(null, true);
+            showGems = false;
         }
 	    
 	    @Override
@@ -834,6 +850,7 @@ public class Menu {
 			}
 			curr = pc;
 			tabsSupported = true;
+			showGems = false;
 		}
 		
 		@Override
@@ -936,6 +953,7 @@ public class Menu {
 			}
             curr = pc;
             tabsSupported = true;
+            showGems = false;
         }
 
         @Override
@@ -1421,7 +1439,6 @@ public class Menu {
         }
         
         protected final void createJumpList(final int x, final int y) {
-            addHudGems();
             final JumpMode[] jumpModes = JumpMode.values();
             final List<String> jmps = new ArrayList<String>(jumpModes.length);
             for (final JumpMode jm : jumpModes) {
@@ -1533,7 +1550,6 @@ public class Menu {
         
         @Override
         protected final void menu() throws Exception {
-            addHudGems();
             final int left = getLeft();
             int y = getTop();
             final Assist[] assists = Profile.ASSISTS;
@@ -1636,6 +1652,7 @@ public class Menu {
 			switch (currentTab) {
 				case TAB_AWARD :
 					createAchievementList(touchRadioX, touchRadioY);
+					addHudAchievement();
 					break;
 				case TAB_STATS :
 					createStatsList(touchRadioX, touchRadioY);
@@ -1781,8 +1798,6 @@ public class Menu {
 					break;
 				}
 			}
-			addHudGems();
-			addHudRank();
 			if (tab) {
 				registerBackNop();
 			}

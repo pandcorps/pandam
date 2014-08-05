@@ -116,7 +116,6 @@ public class PlatformGame extends BaseGame {
 	User saw bumped gem-block fail to defeat empty ArmorBall on it.
 	User saw Enemy defeated by bumped block fail to give Player a Gem.
 	Once saw Player appear on wrong Marker after goal-met screen.
-	Always display Gems on Menu (and rank with orb icon).
 	Stat for ArmorBall kicks.
 	*/
 	
@@ -203,6 +202,7 @@ public class PlatformGame extends BaseGame {
 	protected static Panmage[] gemGoal = null;
 	protected static Panmage emptyGoal = null;
 	protected static Panmage[] gemRank = null;
+	protected static Panmage[] gemAchieve = null;
 	protected static Panmage gemShatter = null;
 	protected static Panimation spark = null;
 	protected static Panimation teleport = null;
@@ -885,7 +885,8 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 		    blockLetters = createSheet("block.letter", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/BlockLetters.png"));
 		    gemGoal = createSheet("gem.goal", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/GemStar.png"));
 		    emptyGoal = createImage("empty.goal", "org/pandcorps/platform/res/misc/EmptyStar.png", ImtilX.DIM);
-		    gemRank = createSheet("gem.rank", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/GemOrb.png")); }});
+		    gemRank = createSheet("gem.rank", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/GemOrb.png"));
+		    gemAchieve = createSheet("gem.achieve", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/GemTrophy.png")); }});
 	    
 		loaders.add(new Runnable() { @Override public final void run() {
 		    final Panframe[] sa = createFrames("spark", "org/pandcorps/platform/res/misc/Spark.png", 8, 1);
@@ -1095,9 +1096,12 @@ System.out.println("loadConstants end " + System.currentTimeMillis());
                 return String.valueOf(gems);}};
         }
         final int i = pc.index;
-        final Pantext hudName = new Pantext("hud.name." + i, font, pc.getName());
-        hudName.getPosition().set(x, y + 8);
-        hud.addActor(hudName);
+        final String name = pc.getName();
+        if (!Menu.NAME_NEW.equals(name)) {
+	        final Pantext hudName = new Pantext("hud.name." + i, font, name);
+	        hudName.getPosition().set(x, y + 8);
+	        hud.addActor(hudName);
+        }
         final Pantext hudGems = new Pantext("hud.gems." + i, font, gemSeq);
         hudGems.getPosition().set(x, y);
         hud.addActor(hudGems);
