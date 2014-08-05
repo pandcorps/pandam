@@ -138,6 +138,40 @@ public final class ImtilX {
         return img;
     }
     
+    public final static void highlight(final Img raw, final int amt) {
+        final int w = raw.getWidth(), h = raw.getHeight();
+        final ImgFactory cm = ImgFactory.getFactory();
+        final int wht = cm.getDataElement(new int[] {Pancolor.MAX_VALUE, Pancolor.MAX_VALUE, Pancolor.MAX_VALUE, Pancolor.MAX_VALUE}, 0);
+        for (int x = 0; x < w; x++) {
+            int mode = 0, edge = 0, currAmt = amt;
+            for (int y = 0; y < h; y++) {
+                final int rgb = raw.getRGB(x, y);
+                if (mode == 0) {
+                    if (cm.getAlpha(rgb) != 0) {
+                        edge = rgb;
+                        mode++;
+                    }
+                } else if (mode >= 1) {
+                    if (rgb == edge) {
+                        if (mode >= 2) {
+                            break;
+                        }
+                    } else {
+                        if (cm.getAlpha(rgb) == 0) {
+                            break; // Left or right edge, nothing to highlight
+                        }
+                        raw.setRGB(x, y, wht);
+                        currAmt--;
+                        if (currAmt == 0) {
+                            break;
+                        }
+                        mode = 2;
+                    }
+                }
+            }
+        }
+    }
+    
     public final static void copyCenter(final Img src, final Img dst) {
         final int sw = src.getWidth(), sh = src.getHeight();
         Imtil.copy(src, dst, 0, 0, sw, sh, (dst.getWidth() - sw) / 2, (dst.getHeight() - sh) / 2, Imtil.COPY_FOREGROUND);
