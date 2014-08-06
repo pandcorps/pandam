@@ -39,6 +39,7 @@ import org.pandcorps.pandax.text.Input.*;
 import org.pandcorps.pandax.tile.Tile.*;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.touch.*;
+import org.pandcorps.platform.Enemy.*;
 import org.pandcorps.platform.Profile.*;
 import org.pandcorps.platform.Avatar.*;
 import org.pandcorps.platform.Player.*;
@@ -1620,12 +1621,15 @@ public class Menu {
 		private final static byte TAB_AWARD = 0;
 		private final static byte TAB_STATS = 1;
 		protected final static byte TAB_GOALS = 2;
+		private final static byte TAB_FOES = 3;
 		protected static byte currentTab = TAB_AWARD;
 	    private RadioGroup achRadio = null;
 	    private final StringBuilder achDesc = new StringBuilder();
 	    private final StringBuilder rankDesc = new StringBuilder();
 	    private final List<Panctor> goalStars = new ArrayList<Panctor>(3);
 	    private final List<Panctor> rankStars = new ArrayList<Panctor>(Profile.POINTS_PER_RANK);
+	    private RadioGroup enemyRadio = null;
+	    private Panctor enemy = null;
 	    final boolean fullMenu;
 	    
         protected InfoScreen(final PlayerContext pc, final boolean fullMenu) {
@@ -1660,12 +1664,16 @@ public class Menu {
 				case TAB_GOALS :
 					createGoalsList(rankStarX, (Pangine.getEngine().getEffectiveHeight() - 124) / 2 + 116);
 					break;
+				case TAB_FOES :
+				    createFoesList(touchRadioX, touchRadioY);
+				    break;
 			}
 			newTab(PlatformGame.menuCheck, "Done", new Runnable() {@Override public final void run() {exit();}});
 			if (fullMenu) {
 				newTab(PlatformGame.menuTrophy, "Award", TAB_AWARD);
 				newTab(PlatformGame.menuGraph, "Stats", TAB_STATS);
 				newTab(PlatformGame.menuStar, "Goals", TAB_GOALS);
+				newTab(null, "Foes", TAB_FOES);
 			}
 			newTabs();
 			registerBackExit();
@@ -1706,6 +1714,20 @@ public class Menu {
 		private final void createStatsList(final int x, final int y) {
 			addRadio("Statistics", pc.profile.stats.toList(), null, x, y);
 		}
+		
+		private final void createFoesList(final int x, final int y) {
+		    final List<String> list = new ArrayList<String>();
+		    for (final EnemyDefinition def : PlatformGame.allEnemies) {
+		        list.add(def.getName());
+		    }
+		    enemy = addActor(200, 50);
+		    final RadioSubmitListener foeLsn = new RadioSubmitListener() {
+                @Override public final void onSubmit(final RadioSubmitEvent event) {
+                    setEnemy(event.toString());
+            }};
+            enemyRadio = addRadio("Bestiary", list, foeLsn, x, y);
+            initEnemy();
+        }
 		
 		private final void createGoalsList(final int x, int y) {
 			addTitle("Goals", x, y);
@@ -1919,6 +1941,14 @@ public class Menu {
         
         private final void initAchDesc() {
             setAchDesc((String) achRadio.getSelected());
+        }
+        
+        private final void setEnemy(final String name) {
+            enemy.setView(PlatformGame.getEnemy(name).walk.getFrames()[0].getImage());
+        }
+        
+        private final void initEnemy() {
+            setEnemy((String) enemyRadio.getSelected());
         }
         
         @Override

@@ -49,8 +49,8 @@ public class Enemy extends Character {
 	protected static int currentSplat = DEFAULT_SPLAT;
 	protected static int currentWalk = DEFAULT_WALK;
 	
-	protected final static class EnemyDefinition {
-		private final Panimation walk;
+	protected final static class EnemyDefinition extends FinName {
+		protected final Panimation walk;
 		private final boolean ledgeTurn;
 		protected Panimation splat;
 		private final Panimation attack;
@@ -94,6 +94,7 @@ public class Enemy extends Character {
 		
 		protected EnemyDefinition(final String name, final int ind, final PixelFilter f, final boolean ledgeTurn,
                 final boolean splat, final int avoidCount, final int offX, final int h, final int hv, final int d) {
+		    super(name);
 			final Img[] strip = loadStrip(ind, d), walk;
 			if (f != null) {
 				final int size = strip.length;

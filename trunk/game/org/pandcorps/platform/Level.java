@@ -39,6 +39,18 @@ import org.pandcorps.platform.Spawner.*;
 public class Level {
     protected final static int ROOM_H = 256;
     
+    protected final static int HOB_TROLL = 0;
+    protected final static int HOB_OGRE = 1;
+    protected final static int TROLL = 2;
+    protected final static int OGRE = 3;
+    protected final static int TROLL_COLOSSUS = 4;
+    protected final static int OGRE_BEHEMOTH = 5;
+    protected final static int IMP = 6;
+    protected final static int ARMORED_IMP = 7;
+    protected final static int SPIKED_IMP = 8;
+    protected final static int DROWID = 9;
+    protected final static int DROWLOCK = 10;
+    
     protected final static PixelFilter terrainDarkener = new BrightnessPixelFilter((short) -40, (short) -24, (short) -32);
     
     protected static TileMapImage[] flashBlock = null;
@@ -74,9 +86,9 @@ public class Level {
     	public final static Theme Normal = new Theme(null, MSG) {
     	    @Override protected final int[] getEnemyIndices(final int worlds) {
     	        switch (worlds) {
-    	            case 0 : return new int[] {2, 3, 4};
-    	            case 1 : return new int[] {2, 3, 4, 7}; // Add armored imps after beating 1st world
-    	            default: return new int[] {2, 3, 4, 5, 6, 7}; // Regular trolls and ogres after 2nd
+    	            case 0 : return new int[] {HOB_TROLL, HOB_OGRE, IMP};
+    	            case 1 : return new int[] {HOB_TROLL, HOB_OGRE, IMP, ARMORED_IMP}; // After 1st world
+    	            default: return new int[] {HOB_TROLL, HOB_OGRE, TROLL, OGRE, IMP, ARMORED_IMP}; // After 2nd
     	            // troll colossus and ogre behemoth after 3rd (see addGiantTemplate)
     	        }
     	    }
@@ -99,9 +111,9 @@ public class Level {
     	public final static Theme Chaos = new Theme("Chaos", MSG_CHAOS) {
     	    @Override protected final int[] getEnemyIndices(final int worlds) {
                 switch (worlds) {
-                    case 0 : return new int[] {0, 1, 4};
-                    case 1 : return new int[] {0, 1, 4, 7};
-                    default: return new int[] {0, 1, 4, 7, 8};
+                    case 0 : return new int[] {0, 1, IMP};
+                    case 1 : return new int[] {0, 1, IMP, ARMORED_IMP};
+                    default: return new int[] {0, 1, IMP, ARMORED_IMP, SPIKED_IMP};
                 }
             }
     	    

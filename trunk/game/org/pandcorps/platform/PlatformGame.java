@@ -662,7 +662,7 @@ public class PlatformGame extends BaseGame {
 		
 		loaders.add(new Runnable() { @Override public final void run() {
 System.out.println("loadConstants start " + System.currentTimeMillis());
-			allEnemies.add(new EnemyDefinition("Drowid", 1, null, true, 1)); }}); // Teleport when stomped
+			Coltil.set(allEnemies, Level.DROWID, new EnemyDefinition("Drowid", 1, null, true, 1)); }}); // Teleport when stomped
 		loaders.add(new Runnable() { @Override public final void run() {
 			final Panmage pimg1 = createImage("projectile1", "org/pandcorps/platform/res/enemy/Projectile1.png", 8, CENTER_8, new FinPanple2(-3, -3), new FinPanple2(2, 2));
 		    final Panframe[] pfrms = new Panframe[4];
@@ -672,19 +672,19 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 		    projectile1 = engine.createAnimation(PRE_ANM + "projectile1", pfrms);
 			final EnemyDefinition drolock = new EnemyDefinition("Drolock", 4, null, false, 0, 0);
 			drolock.projectile = projectile1;
-			allEnemies.add(drolock); }}); // Teleport/shoot periodically
+			Coltil.set(allEnemies, Level.DROWLOCK, drolock); }}); // Teleport/shoot periodically
 		loaders.add(new Runnable() { @Override public final void run() {
-			allEnemies.add(new EnemyDefinition("Hob-troll", 2, null, true)); }}); // Was Troblin
+		    Coltil.set(allEnemies, Level.HOB_TROLL, new EnemyDefinition("Hob-troll", 2, null, true)); }}); // Was Troblin
 		loaders.add(new Runnable() { @Override public final void run() {
 			final ReplacePixelFilter f = new ReplacePixelFilter();
 			replace(f, (short) 104, (short) 120, (short) 172);
 			replace(f, (short) 80, (short) 96, (short) 144);
 			replace(f, (short) 64, (short) 80, (short) 112);
 			replace(f, (short) 48, (short) 56, (short) 80);
-			allEnemies.add(new EnemyDefinition("Hob-ogre", 2, f, false)); // Was Obglin
+			Coltil.set(allEnemies, Level.HOB_OGRE, new EnemyDefinition("Hob-ogre", 2, f, false)); // Was Obglin
 			final int impX = 4, impH = 14;
 			imp = new EnemyDefinition("Imp", 3, null, true, true, impX, impH);
-			allEnemies.add(imp);
+			Coltil.set(allEnemies, Level.IMP, imp);
 			final EnemyDefinition troll, ogre;
 			troll = new EnemyDefinition("Troll", 5, null, true, false, 0, 8, 30, 1, 32);
 			troll.award = GemBumped.AWARD_2;
@@ -720,16 +720,18 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
                 	}
                     return false;
                 }};
-			allEnemies.add(troll);
+            Coltil.set(allEnemies, Level.TROLL, troll);
 			ogre = new EnemyDefinition("Ogre", 5, f, false, false, 0, 8, 30, 1, 32);
 			ogre.init(troll);
-			allEnemies.add(ogre);
+			Coltil.set(allEnemies, Level.OGRE, ogre);
 			trollColossus = new EnemyDefinition("Troll Colossus", 11, null, true, false, 0, 26, 62, 1, 64);
 			trollColossus.award = GemBumped.AWARD_3;
 			trollColossus.stompHandler = new MultiStompHandler(3);
 			trollColossus.stepHandler = troll.stepHandler;
+			Coltil.set(allEnemies, Level.TROLL_COLOSSUS, trollColossus);
 			ogreBehemoth = new EnemyDefinition("Ogre Behemoth", 11, f, false, false, 0, 26, 62, 1, 64);
 			ogreBehemoth.init(trollColossus);
+			Coltil.set(allEnemies, Level.OGRE_BEHEMOTH, ogreBehemoth);
 			final EnemyDefinition armorBall, bounceBall, thrownImp;
 			armorBall = new EnemyDefinition("Armor Ball", 7, null, false, 0, 0);
 			Enemy.currentWalk = 3;
@@ -837,14 +839,14 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
                 @Override public final boolean onInteract(final Enemy enemy, final Player player) {
                 	return Math.abs(enemy.hv) < 4;
                 }};
-			allEnemies.add(armoredImp);
+            Coltil.set(allEnemies, Level.ARMORED_IMP, armoredImp);
 			final EnemyDefinition spikedImp = new EnemyDefinition("Spiked", 10, null, true);
 			spikedImp.stompHandler = new InteractionHandler() {
                 @Override public final boolean onInteract(final Enemy enemy, final Player player) {
                     player.startHurt();
                     return true;
                 }};
-			allEnemies.add(spikedImp);
+            Coltil.set(allEnemies, Level.SPIKED_IMP, spikedImp);
 			anger = createAnm("anger", 10, CENTER_16, Enemy.loadStrip(9, ImtilX.DIM));
 			Level.setTheme(Theme.Normal); }});
 		
@@ -1303,6 +1305,15 @@ System.out.println("loadConstants end " + System.currentTimeMillis());
 	
 	protected final static int getNumEyes() {
 	    return 8;
+	}
+	
+	protected final static EnemyDefinition getEnemy(final String name) {
+	    for (final EnemyDefinition def : allEnemies) {
+	        if (def.getName().equals(name)) {
+	            return def;
+	        }
+	    }
+	    return null;
 	}
 	
 	public final static void main(final String[] args) {
