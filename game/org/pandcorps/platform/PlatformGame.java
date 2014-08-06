@@ -672,7 +672,7 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 		    projectile1 = engine.createAnimation(PRE_ANM + "projectile1", pfrms);
 			final EnemyDefinition drolock = new EnemyDefinition("Drolock", 4, null, false, 0, 0);
 			drolock.projectile = projectile1;
-			Coltil.set(allEnemies, Level.DROWLOCK, drolock); }}); // Teleport/shoot periodically
+			Coltil.set(allEnemies, Level.DROLOCK, drolock); }}); // Teleport/shoot periodically
 		loaders.add(new Runnable() { @Override public final void run() {
 		    Coltil.set(allEnemies, Level.HOB_TROLL, new EnemyDefinition("Hob-troll", 2, null, true)); }}); // Was Troblin
 		loaders.add(new Runnable() { @Override public final void run() {

@@ -49,7 +49,7 @@ public class Level {
     protected final static int ARMORED_IMP = 7;
     protected final static int SPIKED_IMP = 8;
     protected final static int DROWID = 9;
-    protected final static int DROWLOCK = 10;
+    protected final static int DROLOCK = 10;
     
     protected final static PixelFilter terrainDarkener = new BrightnessPixelFilter((short) -40, (short) -24, (short) -32);
     
@@ -111,9 +111,9 @@ public class Level {
     	public final static Theme Chaos = new Theme("Chaos", MSG_CHAOS) {
     	    @Override protected final int[] getEnemyIndices(final int worlds) {
                 switch (worlds) {
-                    case 0 : return new int[] {0, 1, IMP};
-                    case 1 : return new int[] {0, 1, IMP, ARMORED_IMP};
-                    default: return new int[] {0, 1, IMP, ARMORED_IMP, SPIKED_IMP};
+                    case 0 : return new int[] {DROWID, DROLOCK, IMP};
+                    case 1 : return new int[] {DROWID, DROLOCK, IMP, ARMORED_IMP};
+                    default: return new int[] {DROWID, DROLOCK, IMP, ARMORED_IMP, SPIKED_IMP};
                 }
             }
     	    
