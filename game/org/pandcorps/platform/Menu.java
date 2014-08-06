@@ -327,6 +327,57 @@ public class Menu {
 			//return false;
 		}
 		
+		protected final int displayGoals(final int x, int y, final List<Panctor> list) {
+            Goal.initGoals(pc);
+            final boolean img = isTabEnabled();
+            for (final Goal g : pc.profile.currentGoals) {
+                y = addGoal(g, x, y, img, list);
+            }
+            return y;
+        }
+        
+        protected final int addGoal(final Goal g, final int x, int y, final boolean img, final List<Panctor> list) {
+            final byte award = g.award;
+            addTitle(g.getName(), x, y);
+            final int off;
+            if (img) {
+                y -= 17;
+                addStars(x, y, award, award, list);
+                off = 56;
+            } else {
+                y -= 8;
+                addTitle(award == 1 ? "*" : award == 2 ? "**" : "***", x, y);
+                off = 32;
+            }
+            addTitleTiny(g.getProgress(pc), x + off, y);
+            y -= (img ? 9 : 8);
+            return y;
+        }
+        
+        protected final void addStars(final int x, final int y, final int currPoints, final int max, final List<Panctor> list) {
+            int xc = x;
+            Coltil.clear(list);
+            for (int i = 0; i < max; i++) {
+                final Panctor star;
+                if (i < currPoints) {
+                    star = new Gem(PlatformGame.gemGoal);
+                    addActor(star, xc, y);
+                } else {
+                    star = addEmptyStar(xc, y);
+                }
+                if (list != null) {
+                    list.add(star);
+                }
+                xc += 17;
+            }
+        }
+        
+        protected final Panctor addEmptyStar(final int x, final int y) {
+            final Panctor star = addActor(x, y);
+            star.setView(PlatformGame.emptyGoal);
+            return star;
+        }
+		
 		protected final Panlayer getLayer() {
 			Panlayer layer = form.getLayer();
 			if (layer == null) {
@@ -1732,12 +1783,8 @@ public class Menu {
 		private final void createGoalsList(final int x, int y) {
 			addTitle("Goals", x, y);
 			y -= 16;
-			Goal.initGoals(pc);
-			final boolean img = isTabEnabled();
-			for (final Goal g : pc.profile.currentGoals) {
-				y = addGoal(g, x, y, img);
-			}
-			addRankPoints(x, y, img);
+			y = displayGoals(x, y, goalStars);
+			addRankPoints(x, y, isTabEnabled());
 		}
 		
 		private final int addRankPoints(final int x, int y, final boolean img) {
@@ -1760,46 +1807,6 @@ public class Menu {
 			return y;
 		}
 		
-		private final void addStars(final int x, final int y, final int currPoints, final int max, final List<Panctor> list) {
-			int xc = x;
-			list.clear();
-			for (int i = 0; i < max; i++) {
-				final Panctor star;
-				if (i < currPoints) {
-					star = new Gem(PlatformGame.gemGoal);
-					addActor(star, xc, y);
-				} else {
-					star = addEmptyStar(xc, y);
-				}
-				list.add(star);
-				xc += 17;
-			}
-		}
-		
-		private final Panctor addEmptyStar(final int x, final int y) {
-			final Panctor star = addActor(x, y);
-			star.setView(PlatformGame.emptyGoal);
-			return star;
-		}
-		
-		private final int addGoal(final Goal g, final int x, int y, final boolean img) {
-			final byte award = g.award;
-			addTitle(g.getName(), x, y);
-			final int off;
-			if (img) {
-				y -= 17;
-				addStars(x, y, award, award, goalStars);
-				off = 56;
-			} else {
-				y -= 8;
-				addTitle(award == 1 ? "*" : award == 2 ? "**" : "***", x, y);
-				off = 32;
-			}
-			addTitleTiny(g.getProgress(pc), x + off, y);
-			y -= (img ? 9 : 8);
-			return y;
-		}
-		
 		private final void createGoalMet() {
 			final Pangine engine = Pangine.getEngine();
 			final int x = rankStarX;
@@ -1814,7 +1821,7 @@ public class Menu {
 			for (int i = 0; i < 3; i++) {
 				final Goal g = goals[i];
 				if (g != null && g.isMet(pc)) {
-					y = addGoal(g, x, y, true);
+					y = addGoal(g, x, y, true, goalStars);
 					y = addRankPoints(x, y, true);
 					addGoalPoints(i, x, y);
 					break;
