@@ -777,6 +777,7 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
                     e.full = enemy.full;
                     e.setEnemyMirror(player.isMirror());
                     e.v = 9;
+                    player.pc.profile.stats.kicks++;
                     enemy.destroy();
                     return false;
                 }};

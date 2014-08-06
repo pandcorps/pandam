@@ -189,6 +189,7 @@ gems = 1000000;
     	protected int playedBonuses = 0;
     	protected long totalGems = 0;
     	protected int collectedWords = 0;
+    	protected long kicks = 0;
     	
     	public void load(final Segment seg, final int currGems) {
         	defeatedLevels = seg.initInt(0);
@@ -200,6 +201,7 @@ gems = 1000000;
         	playedBonuses = seg.initInt(6);
         	totalGems = seg.getLong(7, currGems);
         	collectedWords = seg.initInt(8);
+        	kicks = seg.initLong(9);
         }
     	
 		@Override
@@ -214,6 +216,7 @@ gems = 1000000;
 	        seg.setInt(6, playedBonuses);
 	        seg.setLong(7, totalGems);
 	        seg.setInt(8, collectedWords);
+	        seg.setLong(9, kicks);
 		}
 		
 		public List<String> toList() {
@@ -227,6 +230,7 @@ gems = 1000000;
 			list.add("Bonus games played: " + playedBonuses);
 			list.add("Bonus words collected: " + collectedWords);
 			list.add("Total gems: " + totalGems);
+			list.add("Objects kicked: " + kicks);
 			return list;
 		}
     }
