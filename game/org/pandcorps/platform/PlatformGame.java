@@ -63,6 +63,8 @@ public class PlatformGame extends BaseGame {
 	Ridable dragons.
 	Enemy Wisp, Elementals, winged Imp, Banshee, Wraith, Shade, Orc.
 	Drolock should walk sometimes.
+	Stats for number of each Enemy defeated.
+	Add number defeated to Bestiary.
 	Enemy-specific Level templates (Imp walking into ArmorBall).
 	Gargoyles catch/carry Player, like moving platforms, one can jump to/from them, but not run on them.
 	Cannons on ground that Player enters to be launched.
