@@ -55,6 +55,7 @@ public class Menu {
     private final static String WARN_EMPTY = "Must have a name";
     private final static String WARN_DUPLICATE = "Name already used";
     private final static String INFO_SAVED = "Saved images";
+    private final static int Y_PLAYER = 16;
     private final static char CHAR_ON = 2;
     private final static String NEW_AVATAR_NAME = "New";
     private static boolean newProfile = false;
@@ -660,7 +661,7 @@ public class Menu {
 		
 		protected final Model addActor(final PlayerContext pc, final int x) {
 			final Model actor = new Model(pc);
-			PlatformGame.setPosition(actor, x, 16, PlatformGame.DEPTH_PLAYER);
+			PlatformGame.setPosition(actor, x, Y_PLAYER, PlatformGame.DEPTH_PLAYER);
 			room.addActor(actor);
 			return actor;
 		}
@@ -1687,6 +1688,7 @@ public class Menu {
             super(pc, false);
             tabsSupported = true;
             this.fullMenu = fullMenu;
+            showGems = currentTab != TAB_FOES;
         }
 
         @Override
@@ -1724,7 +1726,7 @@ public class Menu {
 				newTab(PlatformGame.menuTrophy, "Award", TAB_AWARD);
 				newTab(PlatformGame.menuGraph, "Stats", TAB_STATS);
 				newTab(PlatformGame.menuStar, "Goals", TAB_GOALS);
-				newTab(null, "Foes", TAB_FOES);
+				newTab(PlatformGame.menuFoes, "Foes", TAB_FOES);
 			}
 			newTabs();
 			registerBackExit();
@@ -1771,7 +1773,8 @@ public class Menu {
 		    for (final EnemyDefinition def : PlatformGame.allEnemies) {
 		        list.add(def.getName());
 		    }
-		    enemy = addActor(200, 50);
+		    enemy = addActor(center + 80, Y_PLAYER);
+		    enemy.setMirror(true);
 		    final RadioSubmitListener foeLsn = new RadioSubmitListener() {
                 @Override public final void onSubmit(final RadioSubmitEvent event) {
                     setEnemy(event.toString());

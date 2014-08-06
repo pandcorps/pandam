@@ -92,7 +92,6 @@ public class PlatformGame extends BaseGame {
 	Clear TileMap.map/imgs?
 	Static TileMaps should combine adjacent Tiles with adjacent TileMapImages into one larger Tile/TileMapImage.
 	Wing color touch menu.
-	Bestiary menu.
 	Wing gravity tweak.
 	Level builder should use setTile instead of forcing getTile Map lookups.
 	Improve World name generator.
@@ -116,7 +115,6 @@ public class PlatformGame extends BaseGame {
 	User saw bumped gem-block fail to defeat empty ArmorBall on it.
 	User saw Enemy defeated by bumped block fail to give Player a Gem.
 	Once saw Player appear on wrong Marker after goal-met screen.
-	Stat for ArmorBall kicks.
 	*/
 	
 	protected final static byte TILE_BREAK = 2;
@@ -238,6 +236,7 @@ public class PlatformGame extends BaseGame {
 	protected static Panmage menuTrophy = null;
 	protected static Panmage menuStar = null;
 	protected static Panmage menuGraph = null;
+	protected static Panmage menuFoes = null;
 	protected static Panmage menuMenu = null;
 	protected static Panmage menuAvatar = null;
 	protected static Panmage menuColor = null;
@@ -840,7 +839,7 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
                 	return Math.abs(enemy.hv) < 4;
                 }};
             Coltil.set(allEnemies, Level.ARMORED_IMP, armoredImp);
-			final EnemyDefinition spikedImp = new EnemyDefinition("Spiked", 10, null, true);
+			final EnemyDefinition spikedImp = new EnemyDefinition("Spiked Imp", 10, null, true);
 			spikedImp.stompHandler = new InteractionHandler() {
                 @Override public final boolean onInteract(final Enemy enemy, final Player player) {
                     player.startHurt();
@@ -966,7 +965,7 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
                 diamondIn = engine.createImage(Pantil.vmid(), diaIn);
 				}});
 			loaders.add(new Runnable() { @Override public final void run() {
-			    final int w = 48, h = 40, d = 28;
+			    final int w = 48, h = 40;
 			    final Pancolor clrBtn = new FinPancolor((short) 160, (short) 192, (short) 224);
 			    final Pancolor clrIn = new FinPancolor((short) 128, (short) 224, (short) 255);
 			    menu = engine.createImage(Pantil.vmid(), ImtilX.newButton(w, h, clrBtn));
@@ -975,9 +974,10 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 			    menuPlus = createMenuImg("Plus");
 			    menuMinus = createMenuImg("Minus");
 			    menuOff = createMenuImg("Off");
-			    menuTrophy = createMenuImg("Trophy");
-			    menuStar = createMenuImg("Star");
+			    menuTrophy = gemAchieve[0];
+			    menuStar = gemGoal[0];
 			    menuGraph = createMenuImg("Graph");
+			    menuFoes = createMenuImg("Foes");
 			    menuMenu = createMenuImg("Menu");
 			    menuAvatar = createMenuImg("Avatar");
 			    menuColor = createMenuImg("Color");
@@ -989,14 +989,14 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 			    //menuIn = engine.createImage(Pantil.vmid(), ImtilX.indent(left));
 			    menuIn = engine.createImage(Pantil.vmid(), ImtilX.newButton(w, h, clrIn));
 			    menuDisabled = engine.createImage(Pantil.vmid(), ImtilX.newButton(w, h, new FinPancolor((short) 128, (short) 96, (short) 160)));
-			    menuLeft = engine.createImage(Pantil.vmid(), ImtilX.newLeft2(d, Pancolor.BLUE));
-			    menuRight = engine.createImage(Pantil.vmid(), ImtilX.newRight2(d, Pancolor.BLUE));
-			    menuUp = engine.createImage(Pantil.vmid(), ImtilX.newUp2(d, Pancolor.BLUE));
-			    menuDown = engine.createImage(Pantil.vmid(), ImtilX.newDown2(d, Pancolor.BLUE));
-			    redUp = engine.createImage(Pantil.vmid(), ImtilX.newUp2(d, Pancolor.RED));
-			    redDown = engine.createImage(Pantil.vmid(), ImtilX.newDown2(d, Pancolor.RED));
-			    greenUp = engine.createImage(Pantil.vmid(), ImtilX.newUp2(d, Pancolor.GREEN));
-			    greenDown = engine.createImage(Pantil.vmid(), ImtilX.newDown2(d, Pancolor.GREEN));
+			    menuLeft = createMenuImg("Left");
+			    menuRight = createMenuImg("Right");
+			    menuUp = createMenuImg("Up");
+			    menuDown = createMenuImg("Down");
+			    redUp = createMenuImg("UpRed");
+			    redDown = createMenuImg("DownRed");
+			    greenUp = createMenuImg("UpGreen");
+			    greenDown = createMenuImg("DownGreen");
 			    final int keyW = TouchKeyboard.getMaxKeyWidth();
 			    key = engine.createImage(Pantil.vmid(), ImtilX.newButton(keyW, keyW, clrBtn));
 			    keyIn = engine.createImage(Pantil.vmid(), ImtilX.newButton(keyW, keyW, clrIn));
