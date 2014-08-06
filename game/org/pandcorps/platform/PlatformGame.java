@@ -95,6 +95,7 @@ public class PlatformGame extends BaseGame {
 	Static TileMaps should combine adjacent Tiles with adjacent TileMapImages into one larger Tile/TileMapImage.
 	Wing color touch menu.
 	Wing gravity tweak.
+	Hoard/Vault Menu to show amount of each type of Gem.
 	Level builder should use setTile instead of forcing getTile Map lookups.
 	Improve World name generator.
 	Disable million gem bonus.
