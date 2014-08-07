@@ -512,9 +512,9 @@ public class FightGame extends Guy2Game {
             final String id = frm.getValue(0);
             final Panmage image = imgMap.get(frm.getValue(1)).pan;
             final int dur = frm.intValue(2);
-            final int rot = Mathtil.intValue(frm.getInteger(3));
-            final boolean mirror = Pantil.booleanValue(frm.getBoolean(4));
-            final boolean flip = Pantil.booleanValue(frm.getBoolean(5));
+            final int rot = frm.initInt(3);
+            final boolean mirror = Pantil.booleanValue(frm.toBoolean(4));
+            final boolean flip = Pantil.booleanValue(frm.toBoolean(5));
             final FinPanple o = FinPanple.getFinPanple(frm, 6);
             final FinPanple min = FinPanple.getFinPanple(frm, 7, -7, BOUND_MIN, 0);
             final FinPanple max = FinPanple.getFinPanple(frm, 8, 7, BOUND_MAX, 0);
@@ -600,7 +600,7 @@ public class FightGame extends Guy2Game {
                     final byte impact = Projectile.parseImpact(emt.getValue(1));
                     final byte react = Projectile.parseReact(emt.getValue(2));
                     final FinPanple evel = FinPanple.getFinPanple(emt, 3);
-                    final byte time = Mathtil.byteValue(emt.getByte(4), (byte) -1);
+                    final byte time = emt.getByte(4, (byte) -1);
                     final Panimation anim = anmMap.get(emt.getValue(5));
                     final Panview view;
                     if (anim == null) {
@@ -666,8 +666,8 @@ public class FightGame extends Guy2Game {
                 }
                 mframes.add(mframe);
             }
-            final int loop = Mathtil.intValue(mvd.getInteger(1), 1);
-            final boolean stopAfterHit = Pantil.booleanValue(mvd.getBoolean(2));
+            final int loop = mvd.getInt(1, 1);
+            final boolean stopAfterHit = Pantil.booleanValue(mvd.toBoolean(2));
             final byte animType = Move.parseAnim(mvd.getValue(4));
             if (animType != Move.ANIM_NORMAL) {
                 final int size = mframes.size();
@@ -842,10 +842,10 @@ public class FightGame extends Guy2Game {
             final String name = bak.getValue(0);
             final Pangine engine = Pangine.getEngine();
             final Panmage bg = engine.createImage("Background." + name, "org/pandcorps/fight/res/bg/" + name + ".png");
-            final float bgMinX = Mathtil.floatValue(bak.getFloat(1), 0);
-            final float bgMinY = Mathtil.floatValue(bak.getFloat(2), 0);
-            final float bgMaxX = Mathtil.floatValue(bak.getFloat(3), 255);
-            final float bgMaxY = Mathtil.floatValue(bak.getFloat(4), 191);
+            final float bgMinX = bak.getFloat(1, 0);
+            final float bgMinY = bak.getFloat(2, 0);
+            final float bgMaxX = bak.getFloat(3, 255);
+            final float bgMaxY = bak.getFloat(4, 191);
             return new BackgroundDefinition(name, bg, bgMinX, bgMinY, bgMaxX, bgMaxY);
         }
     }
