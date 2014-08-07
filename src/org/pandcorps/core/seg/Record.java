@@ -115,23 +115,31 @@ public abstract class Record implements Savable {
         return parseBoolean(getValue(i), def);
     }
     
-    public final Byte getByte(final int i) {
+    public final Byte toByte(final int i) {
         return Mathtil.toByte(getValue(i));
     }
     
-    public final Short getShort(final int i) {
+    public final Short toShort(final int i) {
         return Mathtil.toShort(getValue(i));
     }
     
-    public final Integer getInteger(final int i) {
+    public final Integer toInteger(final int i) {
         return Mathtil.toInteger(getValue(i));
     }
     
-    public final Float getFloat(final int i) {
+    public final Long toLong(final int i) {
+        return Mathtil.toLong(getValue(i));
+    }
+    
+    public final Float toFloat(final int i) {
         return Mathtil.toFloat(getValue(i));
     }
     
-    public final Boolean getBoolean(final int i) {
+    public final Double toDouble(final int i) {
+        return Mathtil.toDouble(getValue(i));
+    }
+    
+    public final Boolean toBoolean(final int i) {
         return Pantil.toBoolean(getValue(i));
     }
     

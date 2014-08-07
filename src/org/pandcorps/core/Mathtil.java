@@ -172,6 +172,14 @@ public final class Mathtil {
     public final static int intValue(final Number n, final int def) {
         return n == null ? def : n.intValue();
     }
+    
+    public final static long longValue(final Number n) {
+        return longValue(n, 0);
+    }
+    
+    public final static long longValue(final Number n, final long def) {
+        return n == null ? def : n.longValue();
+    }
 	
 	public final static float floatValue(final Number n) {
 	    return floatValue(n, 0);
@@ -179,6 +187,14 @@ public final class Mathtil {
 	
 	public final static float floatValue(final Number n, final float def) {
 	    return n == null ? def : n.floatValue();
+	}
+	
+	public final static double doubleValue(final Number n) {
+	    return doubleValue(n, 0);
+	}
+	
+	public final static double doubleValue(final Number n, final double def) {
+	    return n == null ? def : n.doubleValue();
 	}
 	
 	public final static Byte toByte(final String value) {
@@ -192,9 +208,17 @@ public final class Mathtil {
 	public final static Integer toInteger(final String value) {
         return Chartil.isValued(value) ? Integer.valueOf(value) : null;
     }
+	
+	public final static Long toLong(final String value) {
+        return Chartil.isValued(value) ? Long.valueOf(value) : null;
+    }
     
 	public final static Float toFloat(final String value) {
         return Chartil.isValued(value) ? Float.valueOf(value) : null;
+    }
+	
+	public final static Double toDouble(final String value) {
+        return Chartil.isValued(value) ? Double.valueOf(value) : null;
     }
 	
 	public final static void main(final String[] args) {
