@@ -166,4 +166,16 @@ public final class Chartil {
     	}
     	return c;
     }
+    
+    public final static String toCode(final String s) {
+    	final int size = s.length();
+    	final StringBuilder b = new StringBuilder(size);
+    	for (int i = 0; i < size; i++) {
+    		final char c = s.charAt(i);
+    		if (Character.isLetterOrDigit(c)) {
+    			b.append(Character.toLowerCase(c));
+    		}
+    	}
+    	return b.toString();
+    }
 }

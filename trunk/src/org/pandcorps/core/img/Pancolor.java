@@ -245,10 +245,10 @@ public class Pancolor {
         if (fld == null) {
             return null;
         }
-        final Short r = fld.getShort(0);
-        final Short g = fld.getShort(1);
-        final Short b = fld.getShort(2);
-        final Short a = fld.getShort(3);
+        final Short r = fld.toShort(0);
+        final Short g = fld.toShort(1);
+        final Short b = fld.toShort(2);
+        final Short a = fld.toShort(3);
         if (r == null && g == null && b == null && a == null) {
             return null;
         }
