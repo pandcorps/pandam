@@ -187,7 +187,7 @@ public class Menu {
 				//act2 = addCircleButton(room, "Act2", r - d, 0, input, act, ctrl.get2());
 				//sub = addCircleButton(room, "Sub", r - d, engine.getEffectiveHeight() - d, input, act, ctrl.getSubmit());
 				final Panple ts = PlatformGame.menu.getSize();
-				act2 = newFormButton(room, "Act2", r - (int) ts.getX(), engine.getEffectiveHeight() - (int) ts.getY(), PlatformGame.menuMenu);
+				act2 = newFormButton(room, "Act2", r - (int) ts.getX(), engine.getEffectiveHeight() - (int) ts.getY(), PlatformGame.menuMenu, "Menu");
 				rt = lt = PlatformGame.diamond;
 				rtIn = ltIn = PlatformGame.diamondIn;
 			} else if (mode == TOUCH_HORIZONTAL) {
@@ -299,16 +299,27 @@ public class Menu {
 			return img == null ? 0 : TouchTabs.off(PlatformGame.menu.getSize().getX(), img.getSize().getX());
 		}
 		
-		private final static int offy(final Panmage img) {
-			return img == null ? 0 : TouchTabs.off(PlatformGame.menu.getSize().getY(), img.getSize().getY());
+		protected final static int offy(final Panmage img, final CharSequence txt) {
+			if (img == null) {
+				return 0;
+			}
+			float btnH = PlatformGame.menu.getSize().getY();
+			if (txt != null) {
+				btnH -= 10;
+			}
+			final float imgH = img.getSize().getY();
+			int off = TouchTabs.off(btnH, imgH);
+			if (txt != null) {
+				off += ((imgH < 18) ? 7 : 9);
+			}
+			return off;
 		}
 		
-		protected final static int OFF_OVERLAY_Y = 10;
 		protected final static int OFF_TEXT_X = 4;
 		protected final static int OFF_TEXT_Y = 2;
 		
 		protected final TouchButton newTab(final Panmage img, final CharSequence txt, final Runnable listener) {
-			final TouchButton tab = TouchTabs.newButton(getLayer(), Pantil.vmid(), PlatformGame.menu, PlatformGame.menuIn, img, offx(img), OFF_OVERLAY_Y, PlatformGame.font, txt, OFF_TEXT_X, OFF_TEXT_Y,
+			final TouchButton tab = TouchTabs.newButton(getLayer(), Pantil.vmid(), PlatformGame.menu, PlatformGame.menuIn, img, offx(img), offy(img, txt), PlatformGame.font, txt, OFF_TEXT_X, OFF_TEXT_Y,
 					new Runnable() { @Override public void run() {
 						if (disabled) {
 							return;
@@ -441,7 +452,7 @@ public class Menu {
 		
 		protected final static TouchButton newFormButton(final Panlayer layer, final String name, final int x, final int y, final Panmage img, final String txt) {
 			final Pangine engine = Pangine.getEngine();
-			final TouchButton btn = new TouchButton(engine.getInteraction(), layer, name, x, y, 0, PlatformGame.menu, PlatformGame.menuIn, img, offx(img), txt == null ? offy(img) : OFF_OVERLAY_Y, PlatformGame.font, txt, OFF_TEXT_X, OFF_TEXT_Y, true);
+			final TouchButton btn = new TouchButton(engine.getInteraction(), layer, name, x, y, 0, PlatformGame.menu, PlatformGame.menuIn, img, offx(img), offy(img, txt), PlatformGame.font, txt, OFF_TEXT_X, OFF_TEXT_Y, true);
 			engine.registerTouchButton(btn);
 			return btn;
 		}
@@ -1089,7 +1100,7 @@ public class Menu {
 				if (getAvatarsSize() > 1) {
 					newTab(PlatformGame.menuMinus, "Erase", new Runnable() {@Override public final void run() {delete();}});
 				}
-				newTab(PlatformGame.menuTrophy, "Info", new Runnable() {@Override public final void run() {goInfo();}});
+				newTab(PlatformGame.menuInfo, "Info", new Runnable() {@Override public final void run() {goInfo();}});
 				if (isPlayer1()) {
 				    newTab(PlatformGame.menuMenu, "Menu", new Runnable() {@Override public final void run() {goOptions();}});
 					newTab(PlatformGame.menuOff, "Quit", new Runnable() {@Override public final void run() {quit();}});
@@ -1482,7 +1493,7 @@ public class Menu {
         	if (sub == null) {
         		return;
         	}
-        	sub.setOverlay(img, offx(img), OFF_OVERLAY_Y + 6);
+        	sub.setOverlay(img, offx(img), offy(img, txt));
         	sub.setText(PlatformGame.font, txt, OFF_TEXT_X, OFF_TEXT_Y);
         	TouchButton.reattach(sub);
         }
