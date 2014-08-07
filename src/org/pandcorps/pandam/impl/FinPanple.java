@@ -70,9 +70,9 @@ public final class FinPanple extends UnmodPanple {
         if (fld == null) {
             return null;
         }
-        final Float x = fld.getFloat(0);
-        final Float y = fld.getFloat(1);
-        final Float z = fld.getFloat(2);
+        final Float x = fld.toFloat(0);
+        final Float y = fld.toFloat(1);
+        final Float z = fld.toFloat(2);
         if (x == null && y == null && z == null) {
             return null;
         }
