@@ -32,9 +32,10 @@ import org.pandcorps.pandax.visual.*;
 public class Notifications extends Panctor implements StepListener {
     protected final Pantext label;
     protected final StringBuilder seq;
-    private Queue<String> queue = new LinkedList<String>();
+    private Queue<Notification> queue = new LinkedList<Notification>();
     private ArrayList<Runnable> freeListeners = null;
     private int timer = 0;
+    private Panctor icon = null;
     
     private Notifications(final Panlayer layer, final Pantext label) {
         layer.addActor(label);
@@ -54,13 +55,17 @@ public class Notifications extends Panctor implements StepListener {
     }
     
     public void enqueue(final String msg) {
+        enqueue(new Notification(msg));
+    }
+    
+    public void enqueue(final Notification n) {
     	if (isDestroyed()) {
-    		throw new IllegalStateException("Added \"" + msg + "\" to a destroyed Notifications queue");
+    		throw new IllegalStateException("Added \"" + n.msg + "\" to a destroyed Notifications queue");
     	} else if (!label.isVisible()) {
-            init(msg);
+            init(n);
             label.setVisible(true);
         } else {
-            queue.offer(msg);
+            queue.offer(n);
         }
     }
     
@@ -97,6 +102,7 @@ public class Notifications extends Panctor implements StepListener {
         }
         timer--;
         if (timer <= 0) {
+            Panctor.destroy(icon);
             if (queue.isEmpty()) {
                 label.setVisible(false);
                 Chartil.clear(seq);
@@ -112,9 +118,13 @@ public class Notifications extends Panctor implements StepListener {
     	label.detach();
     }
     
-    private final void init(final String msg) {
-        Chartil.set(seq, msg);
+    private final void init(final Notification n) {
+        Chartil.set(seq, n.msg);
         timer = 90;
+        if (n.icon != null) {
+            icon = n.icon;
+            getLayer().addActor(icon);
+        }
     }
     
     private final void free() {
@@ -133,6 +143,20 @@ public class Notifications extends Panctor implements StepListener {
             FadeController.fadeOut(layer, r, g, b, speed, nextScreen);
         } else {
             q.fadeOut(layer, r, g, b, speed, nextScreen, detach);
+        }
+    }
+    
+    public final static class Notification {
+        private final String msg;
+        private final Panctor icon;
+        
+        public Notification(final String msg) {
+            this(msg, null);
+        }
+        
+        public Notification(final String msg, final Panctor icon) {
+            this.msg = msg;
+            this.icon = icon;
         }
     }
 }
