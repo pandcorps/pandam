@@ -33,6 +33,7 @@ import org.pandcorps.pandam.Panput.*;
 import org.pandcorps.pandam.Panteraction.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.action.*;
+import org.pandcorps.pandam.event.handler.*;
 import org.pandcorps.pandax.in.*;
 import org.pandcorps.pandax.text.*;
 import org.pandcorps.pandax.text.Input.*;
@@ -225,6 +226,7 @@ public class Menu {
 		
 		private static TouchButton quitYes = null;
         private static TouchButton quitNo = null;
+        private static ListActorHandler quitHandler = null;
 		
 		protected final static void registerBackPromptQuit(final Panctor bound) {
 			destroyPromptQuit();
@@ -242,6 +244,17 @@ public class Menu {
 		protected final static void promptQuit(final Panlayer room) {
 			destroyPromptQuit();
 		    final Pangine engine = Pangine.getEngine();
+		    if (Panscreen.get() instanceof PlatformGame.PlatformScreen) {
+		        final PlayerContext pc = Coltil.get(PlatformGame.pcs, 0);
+		        if (pc != null) {
+    		        quitHandler = new ListActorHandler();
+    		        room.setAddHandler(quitHandler);
+    		        final InfoScreen screen = new InfoScreen(pc, false);
+    		        screen.form = new Panform(room, pc.ctrl);
+    		        screen.displayGoals(0, 0, null);
+    		        room.setAddHandler(null);
+		        }
+		    }
 		    final Panple btnSize = PlatformGame.menu.getSize();
             final int btnY = TouchTabs.off(engine.getEffectiveHeight(), btnSize.getY());
             final int btnW = (int) btnSize.getX(), btnX = TouchTabs.off(engine.getEffectiveWidth(), btnW * 2);
@@ -260,6 +273,8 @@ public class Menu {
             quitYes = null;
             TouchButton.destroy(quitNo);
             quitNo = null;
+            ListActorHandler.destroy(quitHandler);
+            quitHandler = null;
 		}
 		
 		private final static TouchButton addCircleButton(final Panlayer room, final String name, final int x, final int y,

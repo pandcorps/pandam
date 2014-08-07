@@ -35,9 +35,13 @@ public class Panform extends MenuItem {
     private int curr = 0;
     
     public Panform(final ControlScheme ctrl) {
+        this(Pangame.getGame().getCurrentRoom(), ctrl);
+    }
+    
+    public Panform(final Panlayer layer, final ControlScheme ctrl) {
         super(new Panctor(), ctrl);
         bound.setVisible(false);
-        layer = Pangame.getGame().getCurrentRoom();
+        this.layer = layer;
         layer.addActor(bound);
     }
     
