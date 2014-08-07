@@ -64,7 +64,6 @@ public class PlatformGame extends BaseGame {
 	Ridable dragons.
 	Enemy Wisp, Elementals, winged Imp, Banshee, Wraith, Shade, Orc.
 	Drolock should walk sometimes.
-	Enemies bumped, stomped, hit stats.
 	Stats for number of each Enemy defeated.
 	Add number defeated to Bestiary.
 	Enemy-specific Level templates (Imp walking into ArmorBall).
