@@ -40,6 +40,7 @@ import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.in.*;
 import org.pandcorps.pandax.text.*;
 import org.pandcorps.pandax.text.Fonts.*;
+import org.pandcorps.pandax.text.Notifications.*;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.touch.*;
 import org.pandcorps.pandax.visual.*;
@@ -293,14 +294,29 @@ public class PlatformGame extends BaseGame {
 	}
 	
 	protected final static void notify(final Named n, final String msg) {
+	    notify(n, msg, null);
+	}
+	
+	protected final static void notify(final Named n, final String msg, final Panmage icon) {
+	    final Panctor a;
+	    final String indent;
+        if (icon == null) {
+            a = null;
+            indent = "";
+        } else {
+            a = new Panctor();
+            a.setView(icon);
+            a.getPosition().set(0, Pangine.getEngine().getEffectiveHeight() - 32);
+            indent = "  ";
+        }
 		final String name = n.getName(), s;
 		final int size = Coltil.size(pcs);
 		if (size > 1 || (size == 1 && !name.equals(pcs.get(0).getName()))) {
-			s = name + ": " + msg;
+			s = indent + name + ": " + msg;
 		} else {
-			s = msg;
+			s = indent + msg;
 		}
-		notifications.enqueue(s);
+		notifications.enqueue(new Notification(s, a));
 	}
 	
 	protected final static class PlatformScreen extends Panscreen {
