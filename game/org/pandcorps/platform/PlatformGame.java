@@ -239,6 +239,7 @@ public class PlatformGame extends BaseGame {
 	protected static Panmage menuTrophy = null;
 	protected static Panmage menuStar = null;
 	protected static Panmage menuGraph = null;
+	protected static Panmage menuInfo = null;
 	protected static Panmage menuFoes = null;
 	protected static Panmage menuMenu = null;
 	protected static Panmage menuAvatar = null;
@@ -980,6 +981,7 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 			    menuTrophy = gemAchieve[0];
 			    menuStar = gemGoal[0];
 			    menuGraph = createMenuImg("Graph");
+			    menuInfo = createMenuImg("Info");
 			    menuFoes = createMenuImg("Foes");
 			    menuMenu = createMenuImg("Menu");
 			    menuAvatar = createMenuImg("Avatar");
