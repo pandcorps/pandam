@@ -32,8 +32,12 @@ import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.platform.Player.*;
+import org.pandcorps.platform.Profile.*;
 
 public class Enemy extends Character {
+	private final static byte DEFEAT_STOMP = 0;
+	private final static byte DEFEAT_BUMP = 1;
+	private final static byte DEFEAT_HIT = 2;
 	protected final static int DEFAULT_X = 5;
 	protected final static int DEFAULT_H = 15;
 	protected final static int DEFAULT_WALK = 6;
@@ -228,7 +232,7 @@ public class Enemy extends Character {
 	
 	protected final boolean onStomp(final Player stomper) {
 		if (def.stompHandler == null || !def.stompHandler.onInteract(this, stomper)) {
-			return defeat(stomper, 0);
+			return defeat(stomper, 0, DEFEAT_STOMP);
 		} else {
 			return true;
 		}
@@ -236,7 +240,11 @@ public class Enemy extends Character {
 	
 	@Override
 	protected final void onBump(final Character bumper) {
-		defeat(bumper, Player.VEL_BUMP);
+		defeat(bumper, Player.VEL_BUMP, DEFEAT_BUMP);
+	}
+	
+	private final void onHit(final Character bouncer) {
+		defeat(bouncer, Player.VEL_BUMP, DEFEAT_HIT);
 	}
 	
 	private final static boolean isFree(final int index) {
@@ -282,7 +290,7 @@ public class Enemy extends Character {
         return false;
 	}
 	
-	private final boolean defeat(final Character defeater, final int v) {
+	private final boolean defeat(final Character defeater, final int v, final byte defeatMode) {
 		if (def.defeatHandler != null && !def.defeatHandler.onInteract(this, null)) {
 			return false;
 		} else if (avoidCount > 0) {
@@ -296,6 +304,20 @@ public class Enemy extends Character {
 		    if (def.rewardHandler == null || def.rewardHandler.onInteract(this, player)) {
 				new GemBumped(player, this);
 				player.levelDefeatedEnemies++;
+				final Statistics stats = player.pc.profile.stats;
+				switch (defeatMode) {
+					case DEFEAT_STOMP :
+						stats.stompedEnemies++;
+						break;
+					case DEFEAT_BUMP :
+						stats.bumpedEnemies++;
+						break;
+					case DEFEAT_HIT :
+						stats.hitEnemies++;
+						break;
+					default:
+						throw new IllegalStateException("Unexpected defeatMode " + defeatMode);
+				}
 		    }
 		}
 		if (v == 0 && def.splat != null) {
@@ -454,7 +476,7 @@ public class Enemy extends Character {
         @Override
         public final void onCollision(final Enemy collider) {
             //collider.onBump(this); // Doesn't give Player Gem
-        	collider.onBump(bouncer);
+        	collider.onHit(bouncer);
         }
     }
 }

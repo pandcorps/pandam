@@ -190,6 +190,9 @@ gems = 1000000;
     	protected long totalGems = 0;
     	protected int collectedWords = 0;
     	protected long kicks = 0;
+    	protected long stompedEnemies = 0;
+    	protected long bumpedEnemies = 0;
+    	protected long hitEnemies = 0;
     	
     	public void load(final Segment seg, final int currGems) {
         	defeatedLevels = seg.initInt(0);
@@ -202,6 +205,10 @@ gems = 1000000;
         	totalGems = seg.getLong(7, currGems);
         	collectedWords = seg.initInt(8);
         	kicks = seg.initLong(9);
+        	stompedEnemies = seg.initLong(10);
+        	bumpedEnemies = seg.initLong(11);
+        	hitEnemies = seg.initLong(12);
+        	defeatedEnemies = Math.max(defeatedEnemies, stompedEnemies + bumpedEnemies + hitEnemies);
         }
     	
 		@Override
@@ -217,6 +224,9 @@ gems = 1000000;
 	        seg.setLong(7, totalGems);
 	        seg.setInt(8, collectedWords);
 	        seg.setLong(9, kicks);
+	        seg.setLong(10, stompedEnemies);
+	        seg.setLong(11, bumpedEnemies);
+	        seg.setLong(12, hitEnemies);
 		}
 		
 		public List<String> toList() {
@@ -224,6 +234,9 @@ gems = 1000000;
 			list.add("Levels defeated: " + defeatedLevels);
 			list.add("Worlds defeated: " + defeatedWorlds);
 			list.add("Enemies defeated: " + defeatedEnemies);
+			list.add("Enemies stomped: " + stompedEnemies);
+			list.add("Enemies bumped: " + bumpedEnemies);
+			list.add("Enemies hit by object: " + hitEnemies);
 			list.add("Blocks bumped: " + bumpedBlocks);
 			list.add("Blocks broken: " + brokenBlocks);
 			list.add("Jumps: " + jumps);
