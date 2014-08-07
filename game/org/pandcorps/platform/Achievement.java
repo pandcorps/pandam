@@ -90,7 +90,7 @@ public abstract class Achievement extends FinName {
 			if (ach.isMet(pc)) {
 				achieved.add(key);
 				final int award = ach.award;
-				PlatformGame.notify(pc, ach.getName() + ", " + award + " Gem bonus");
+				PlatformGame.notify(pc, ach.getName() + ", " + award + " Gem bonus", PlatformGame.gemAchieve[0]);
 				pc.addGems(award);
 				any = true;
 			}
