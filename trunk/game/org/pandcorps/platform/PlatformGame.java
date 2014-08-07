@@ -64,6 +64,7 @@ public class PlatformGame extends BaseGame {
 	Ridable dragons.
 	Enemy Wisp, Elementals, winged Imp, Banshee, Wraith, Shade, Orc.
 	Drolock should walk sometimes.
+	Enemies bumped, stomped, hit stats.
 	Stats for number of each Enemy defeated.
 	Add number defeated to Bestiary.
 	Enemy-specific Level templates (Imp walking into ArmorBall).
@@ -119,6 +120,7 @@ public class PlatformGame extends BaseGame {
 	User saw bumped gem-block fail to defeat empty ArmorBall on it.
 	User saw Enemy defeated by bumped block fail to give Player a Gem.
 	Once saw Player appear on wrong Marker after goal-met screen.
+	Gem4 for word bonus.
 	*/
 	
 	protected final static byte TILE_BREAK = 2;
@@ -297,24 +299,23 @@ public class PlatformGame extends BaseGame {
 	    notify(n, msg, null);
 	}
 	
-	protected final static void notify(final Named n, final String msg, final Panmage icon) {
-	    final Panctor a;
-	    final String indent;
-        if (icon == null) {
-            a = null;
-            indent = "";
-        } else {
-            a = new Panctor();
-            a.setView(icon);
-            a.getPosition().set(0, Pangine.getEngine().getEffectiveHeight() - 32);
-            indent = "  ";
+	protected final static void notify(final Named n, final String msg, final Panctor a) {
+        if (a != null) {
+            int x = 16;
+            final PlayerContext pc = Coltil.get(pcs, 0);
+            if (pc != null) {
+            	final Player p = pc.player;
+            	final int gems = p == null ? pc.getGems() : p.getCurrentLevelGems();
+            	x += ((Math.max(String.valueOf(gems).length(), pc.getName().length()) * 8) + 1);
+            }
+            a.getPosition().set(x, Pangine.getEngine().getEffectiveHeight() - 17);
         }
 		final String name = n.getName(), s;
 		final int size = Coltil.size(pcs);
 		if (size > 1 || (size == 1 && !name.equals(pcs.get(0).getName()))) {
-			s = indent + name + ": " + msg;
+			s = name + ": " + msg;
 		} else {
-			s = indent + msg;
+			s = msg;
 		}
 		notifications.enqueue(new Notification(s, a));
 	}
