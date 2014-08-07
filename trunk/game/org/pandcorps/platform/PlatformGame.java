@@ -113,7 +113,6 @@ public class PlatformGame extends BaseGame {
 	Some rises allow an Enemy but Player hits ceiling.
 	Tall Enemy can appear behind a short enemy on a rise above it; lower Enemy should be in front.
 	Shortcut to Goals screen on Map.
-	Show Goals on in-Level pause screen.
 	Center touch radio menus.
 	Add arrow to diamonds, rotate.
 	World Goal evaluated too late.

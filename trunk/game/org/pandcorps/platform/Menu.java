@@ -62,7 +62,7 @@ public class Menu {
     private static boolean newProfile = false;
     
 	protected abstract static class PlayerScreen extends Panscreen {
-		protected Panroom room;
+		protected Panlayer room;
 		protected PlayerContext pc;
 		protected ControlScheme ctrl = null;
 		private final boolean fadeIn;
@@ -87,7 +87,11 @@ public class Menu {
 			this.pc = pc;
 			this.fadeIn = fadeIn;
 			tabs = isTabEnabled() ? new ArrayList<TouchButton>() : null;
-			rankStarX = (Pangine.getEngine().getEffectiveWidth() - 170) / 2;
+			rankStarX = getRankStarX();
+		}
+		
+		protected final static int getRankStarX() {
+			return (Pangine.getEngine().getEffectiveWidth() - 170) / 2;
 		}
 		
 		@Override
@@ -244,19 +248,21 @@ public class Menu {
 		protected final static void promptQuit(final Panlayer room) {
 			destroyPromptQuit();
 		    final Pangine engine = Pangine.getEngine();
+		    int h = engine.getEffectiveHeight();
 		    if (Panscreen.get() instanceof PlatformGame.PlatformScreen) {
 		        final PlayerContext pc = Coltil.get(PlatformGame.pcs, 0);
 		        if (pc != null) {
     		        quitHandler = new ListActorHandler();
     		        room.setAddHandler(quitHandler);
     		        final InfoScreen screen = new InfoScreen(pc, false);
+    		        screen.room = room;
     		        screen.form = new Panform(room, pc.ctrl);
-    		        screen.displayGoals(0, 0, null);
+    		        h = screen.displayGoals(getRankStarX(), h - 32, null);
     		        room.setAddHandler(null);
 		        }
 		    }
 		    final Panple btnSize = PlatformGame.menu.getSize();
-            final int btnY = TouchTabs.off(engine.getEffectiveHeight(), btnSize.getY());
+            final int btnY = TouchTabs.off(h, btnSize.getY());
             final int btnW = (int) btnSize.getX(), btnX = TouchTabs.off(engine.getEffectiveWidth(), btnW * 2);
             quitYes = newFormButton(room, "Quit", btnX, btnY, PlatformGame.menuCheck, "Quit", new Runnable() {
                 @Override public final void run() { engine.exit(); }});
