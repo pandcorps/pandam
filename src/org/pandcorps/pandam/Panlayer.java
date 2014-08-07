@@ -28,6 +28,7 @@ import org.pandcorps.core.*;
 import org.pandcorps.core.col.*;
 import org.pandcorps.core.img.*;
 import org.pandcorps.pandam.event.*;
+import org.pandcorps.pandam.event.handler.*;
 import org.pandcorps.pandam.impl.*;
 
 public class Panlayer extends BasePantity {
@@ -65,6 +66,7 @@ public class Panlayer extends BasePantity {
     private boolean active = true;
     private boolean constant = false;
     private boolean built = false;
+    private ActorHandler addHandler = null;
     
     /*package*/ Panlayer(
         final String id,
@@ -151,6 +153,9 @@ public class Panlayer extends BasePantity {
     	removedActors.remove(actor);
         addedActors.add(actor);
         actor.layer = this;
+        if (addHandler != null) {
+            addHandler.run(actor);
+        }
     }
     
     private final void applyAddActor(final Panctor actor) {
@@ -392,6 +397,10 @@ public class Panlayer extends BasePantity {
     
     public final boolean isBuilt() {
     	return built;
+    }
+    
+    public final void setAddHandler(final ActorHandler addHandler) {
+        this.addHandler = addHandler;
     }
     
     public Panlayer getBase() {
