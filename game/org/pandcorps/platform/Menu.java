@@ -1866,7 +1866,9 @@ public class Menu {
 				final Goal g = goals[i];
 				if (g != null && g.isMet(pc)) {
 					// If next Goal is a RunGoal, it could be met based on last level, so bypass it
-					pc.player.goalsMet[g.award - 1] = true;
+					if (pc.player != null) {
+						pc.player.goalsMet[g.award - 1] = true;
+					}
 					y = addGoal(g, x, y, true, goalStars);
 					y = addRankPoints(x, y, true);
 					addGoalPoints(i, x, y);
