@@ -59,6 +59,47 @@ public class Music {
 		return seq;
 	}
 	
+	private static int channel, key, vol, deltaTick;
+	private static long tick;
+	
+	protected final static Sequence newSongHappy() throws Exception {
+		channel = 0;
+		key = 48;
+		vol = 64;
+		final Sequence seq = new Sequence(Sequence.SMPTE_30, 1);
+		final Track track = seq.createTrack();
+		Mustil.setInstrument(track, channel, Mustil.PRG_ELECTRIC_GUITAR_CLEAN);
+		tick = 0;
+		key = 48;
+		deltaTick = 4;
+		tick = addIntroHappy(track);
+		tick = Mustil.addNotes(track, tick, channel, vol, 8,
+				key, key, key, key - 4, key + 4, key + 4, key + 8);
+		tick += 8;
+		tick = Mustil.addNotes(track, tick, channel, vol, 8,
+				key, key, key + 4, key + 8, key + 12);
+		tick += 24;
+		tick = Mustil.addNotes(track, tick, channel, vol, 8,
+				key, key, key, key - 4, key + 4, key + 4, key + 8);
+		tick += 8;
+		tick = Mustil.addNotes(track, tick, channel, vol, 8,
+				key, key, key + 8, key + 16, key + 24);
+		tick += 24;
+		addIntroHappy(track);
+		return seq;
+	}
+	
+	protected final static long addIntroHappy(final Track track) throws Exception {
+		tick = Mustil.addRise(track, tick, channel, key, vol, deltaTick, 4, 5);
+		tick += 12;
+		tick = Mustil.addRise(track, tick, channel, key + 8, vol, deltaTick, 4, 5);
+		tick += 12;
+		tick = Mustil.addRise(track, tick, channel, key + 4, vol, 8, 4, 2, 2);
+		Mustil.addNote(track, tick, 30, channel, key + 12, vol);
+		tick += 30;
+		return tick;
+	}
+	
 	private final static Sequence newFxGem(final int mag) throws Exception {
 		final int channel = 0, vol = 64;
 		final Sequence seq = new Sequence(Sequence.SMPTE_30, 1);
@@ -115,7 +156,7 @@ public class Music {
 	
 	private final static void run() throws Exception {
 		System.out.println("Starting");
-		final Sequence seq = newSongCreepy();
+		final Sequence seq = newSongHappy();
 		final Pansic music = Pangine.getEngine().getMusic();
 		music.ensureCapacity(4);
 		music.playMusic(seq);
