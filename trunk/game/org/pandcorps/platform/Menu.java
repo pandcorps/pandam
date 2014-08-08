@@ -368,10 +368,12 @@ public class Menu {
             }
             return y;
         }
+		
+		protected static boolean showNew = false;
         
         protected final int addGoal(final Goal g, final int x, int y, final boolean img, final List<Panctor> list) {
             final byte award = g.award;
-            addTitle(g.getName(), x, y);
+            addTitle(((showNew && g.brandNew) ? "NEW " : "") + g.getName(), x, y);
             final int off;
             if (img) {
                 y -= 17;
@@ -1820,8 +1822,13 @@ public class Menu {
 		private final void createGoalsList(final int x, int y) {
 			addTitle("Goals", x, y);
 			y -= 16;
+			showNew = true;
 			y = displayGoals(x, y, goalStars);
+			showNew = false;
 			addRankPoints(x, y, isTabEnabled());
+			for (final Goal goal : pc.profile.currentGoals) {
+				goal.brandNew = false;
+			}
 		}
 		
 		private final int addRankPoints(final int x, int y, final boolean img) {
@@ -1932,8 +1939,9 @@ public class Menu {
 						}
 					}
 					// No more points to add, so finish
-					final Goal[] goals = prf.currentGoals;
-					goals[goalIndex] = Goal.newGoal(goals[goalIndex].award, pc);
+					final Goal goals[] = prf.currentGoals, goal = Goal.newGoal(goals[goalIndex].award, pc);
+					goal.brandNew = true;
+					goals[goalIndex] = goal;
 					save();
 					addContinue(x, y);
 				}});

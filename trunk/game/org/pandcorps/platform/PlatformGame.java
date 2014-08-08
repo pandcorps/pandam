@@ -104,7 +104,6 @@ public class PlatformGame extends BaseGame {
 	Console: Filters, 8-bit, b/w (requires restart).
 	Mouse TouchEvents.
 	Pressing left/right should always work on Map markers without a fork.
-	Flag new goals when first displaying them.
 	A BounceBall should be able to bump blocks (from below and side) and give Gem to Player that kicked.
 	Pause if device gets a text/interruption.
 	Some rises allow an Enemy but Player hits ceiling.
@@ -113,7 +112,7 @@ public class PlatformGame extends BaseGame {
 	Center touch radio menus.
 	Add arrow to diamonds, rotate.
 	World Goal evaluated too late.
-	Brand-new Goal can sometimes be met without playing level (maybe only RunGoals).
+	After Goals are evaluated, level context is not immediately cleared.  RunGoals can be met on InfoScreen without playing Level.
 	User saw bumped gem-block fail to defeat empty ArmorBall on it.
 	User saw Enemy defeated by bumped block fail to give Player a Gem.
 	Once saw Player appear on wrong Marker after goal-met screen.
