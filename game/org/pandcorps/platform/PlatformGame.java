@@ -113,10 +113,10 @@ public class PlatformGame extends BaseGame {
 	Center touch radio menus.
 	Add arrow to diamonds, rotate.
 	World Goal evaluated too late.
+	Brand-new Goal can sometimes be met without playing level (maybe only RunGoals).
 	User saw bumped gem-block fail to defeat empty ArmorBall on it.
 	User saw Enemy defeated by bumped block fail to give Player a Gem.
 	Once saw Player appear on wrong Marker after goal-met screen.
-	Gem4 for word bonus.
 	*/
 	
 	protected final static byte TILE_BREAK = 2;
@@ -195,6 +195,7 @@ public class PlatformGame extends BaseGame {
 	protected static Panmage gemWhite = null;
 	protected static Panimation gemLevelAnm = null;
 	protected static Panimation gemWorldAnm = null;
+	protected static Panimation gemWordAnm = null;
 	protected final static String defaultBlockWord = "FUR";
 	protected static String blockWord = defaultBlockWord;
 	protected static Panmage[] gemLetters = null;
@@ -902,7 +903,8 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 		    Img.close(gemStrip); }});
 		loaders.add(new Runnable() { @Override public final void run() {
 		    gemLevelAnm = createGemAnm("gem.level", createSheet("gem.level", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/Gem5.png")));
-		    gemWorldAnm = createGemAnm("gem.world", createSheet("gem.world", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/Gem6.png")));
+		    gemWorldAnm = createGemAnm("gem.world", createSheet("gem.world", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/Gem4.png")));
+		    gemWordAnm = createGemAnm("gem.word", createSheet("gem.word", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/Gem6.png")));
 		    gemLetters = createSheet("gem.letter", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/GemLetters.png"));
 		    blockLetters = createSheet("block.letter", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/BlockLetters.png"));
 		    gemGoal = createSheet("gem.goal", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/GemStar.png"));
@@ -1168,9 +1170,13 @@ System.out.println("loadConstants end " + System.currentTimeMillis());
 	
 	private final static void showLetterBonusGems(final Panimation anm) {
 		final Pangine engine = Pangine.getEngine();
-		final int x = (engine.getEffectiveWidth() - ImtilX.DIM * 5) / 2, y = engine.getEffectiveHeight() - 80;
+		final int x = (engine.getEffectiveWidth() - ImtilX.DIM * 5) / 2, y = engine.getEffectiveHeight() - 96;
 		for (int i = 0; i < 5; i++) {
-			new GemBumped(hud, null, x + i * ImtilX.DIM, y + 8 * Math.abs(2 - i), 0, GemBumped.TYPE_LETTER, anm, Tiles.g);
+			final int xc = x + i * ImtilX.DIM, yc = y + 12 * Math.abs(2 - i);
+			new GemBumped(hud, null, xc, yc, 0, GemBumped.TYPE_LETTER, anm, Tiles.g);
+			if (i == 2 && anm == gemBlueAnm) {
+				new GemBumped(hud, null, xc, yc + 32, 0, GemBumped.TYPE_LETTER, gemWordAnm, Tiles.g);
+			}
 		}
 	}
 	
