@@ -29,6 +29,7 @@ import org.pandcorps.platform.Player.*;
 
 public abstract class Goal implements Named {
 	protected final byte award;
+	protected boolean brandNew = false;
 	
 	protected Goal(final byte award) {
 		this.award = award;
@@ -55,7 +56,11 @@ public abstract class Goal implements Named {
 	
 	public abstract String getProgress(final PlayerContext pc);
 	
-	public abstract boolean isMet(final PlayerContext pc);
+	public final boolean isMet(final PlayerContext pc) {
+		return !brandNew && met(pc);
+	}
+	
+	protected abstract boolean met(final PlayerContext pc);
 	
 	public abstract Field toField();
 	
@@ -172,7 +177,7 @@ public abstract class Goal implements Named {
 		}
 		
 		@Override
-		public final boolean isMet(final PlayerContext pc) {
+		protected final boolean met(final PlayerContext pc) {
 			return getCurrentAmount(pc.profile.stats) >= getTarget();
 		}
 		
@@ -208,7 +213,7 @@ public abstract class Goal implements Named {
 		}
 		
 		@Override
-		public final boolean isMet(final PlayerContext pc) {
+		protected final boolean met(final PlayerContext pc) {
 			final Player player = pc.player;
 			return player != null && getCurrentAmount(player) >= getAmount();
 		}
