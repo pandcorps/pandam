@@ -141,42 +141,82 @@ public class Music {
 	}
 	
 	protected final static Sequence newSongTechno() throws Exception {
-		channel = 0;
 		final Sequence seq = new Sequence(Sequence.SMPTE_30, 1);
 		final Track track = seq.createTrack();
+		//final int length = 2048;
+		int dur, keys[];
+		/*channel = 0;
 		Mustil.setInstrument(track, channel, Mustil.PRG_FRETLESS_BASS);
-		final int length = 512; //4096;
-		int dur = 2;
+		dur = 2;
 		Mustil.unspecifiedNoteDuration = dur;
-		int[] keys = {36, 44};
-		Mustil.addRepeatedNotes(track, 0, channel, 48, dur, length / keys.length / dur, keys);
-		channel = 1;
+		keys = {36, 44};
+		Mustil.addRepeatedNotes(track, 0, channel, 48, dur, length / keys.length / dur, keys);*/
+		/*channel = 1;
 		Mustil.setInstrument(track, channel, Mustil.PRG_HALO);
 		dur = 32;
 		Mustil.unspecifiedNoteDuration = dur;
 		keys = new int[] {-1, -1, 56, -1};
-		Mustil.addRepeatedNotes(track, 0, channel, 56, dur, length / keys.length / dur, keys);
-		channel = 2;
+		Mustil.addRepeatedNotes(track, 0, channel, 56, dur, length / keys.length / dur, keys);*/
+		/*channel = 2;
 		Mustil.setInstrument(track, channel, Mustil.PRG_WARM);
 		dur = 8;
 		Mustil.unspecifiedNoteDuration = 4;
 		keys = new int[] {-1, -1, -1, -1, 63, 65, -1, -1};
-		Mustil.addRepeatedNotes(track, 0, channel, 58, dur, length / keys.length / dur, keys);
+		Mustil.addRepeatedNotes(track, 0, channel, 58, dur, length / keys.length / dur, keys);*/
 		channel = 3;
 		vol = 64;
 		tick = 0; //128;
-		Mustil.setInstrument(track, channel, Mustil.PRG_CRYSTAL);
-		dur = 8;
-		Mustil.unspecifiedNoteDuration = dur;
-		key = 56;
-		tick = Mustil.addNotes(track, tick, channel, vol, dur, key, key, key + 4, key, key + 8, key + 8, key + 4);
-		tick += dur;
-		tick = Mustil.addNotes(track, tick, channel, vol, dur, key, key, key + 4, key + 4, key, -1, key);
-		tick += dur;
-		tick = Mustil.addNotes(track, tick, channel, vol, dur, key, key, key + 4, key, key + 8, key + 8, key + 4);
-		tick += dur;
-		tick = Mustil.addNotes(track, tick, channel, vol, dur, key, key, key + 4, key + 4, key, -1, key);
-		tick += dur;
+		// Underground = PRG_GLOCKENSPIEL, b=56?
+		Mustil.setInstrument(track, channel, Mustil.PRG_XYLOPHONE); // PRG_CRYSTAL
+		for (int k = 0; k < 2; k++) {
+			for (int j = 0; j < 4; j++) {
+				final int b = 56;
+				final int n = ((j % 2) == 0) ? b : ((j == 1) ? (b + 4) : (b - 4)), n4 = n + 4, n8 = n + 8;
+				if (k == 1) {
+					dur = 4;
+					Mustil.unspecifiedNoteDuration = 8;
+					keys = new int[] {n, -1, n, n, n4, -1, n, n, n8, -1, n8, -1, n4, -1, -1, -1,
+							n, -1, n, n, n4, -1, n4, n4, n, -1, -1, -1, n, -1, -1, -1};
+				} else {
+					dur = 8;
+					Mustil.unspecifiedNoteDuration = dur;
+					keys = new int[] {n, n, n4, n, n8, n8, n4, -1, n, n, n4, n4, n, -1, n, -1};
+				}
+				for (int i = 0; i < 2; i++) {
+					tick = Mustil.addNotes(track, tick, channel, vol, dur, keys);
+				}
+			}
+		}
+		return seq;
+	}
+	
+	protected final static Sequence newSongHappy2() throws Exception {
+		final Sequence seq = new Sequence(Sequence.SMPTE_30, 1);
+		final Track track = seq.createTrack();
+		int dur, keys[];
+		channel = 0;
+		vol = 64;
+		tick = 0;
+		Mustil.setInstrument(track, channel, Mustil.PRG_TRUMPET);
+		for (int k = 0; k < 2; k++) {
+			for (int j = 0; j < 4; j++) {
+				final int b = 60;
+				final int n = ((j % 2) == 0) ? b : ((j == 1) ? (b + 4) : (b - 4)), n4 = n + 4, n8 = n + 8;
+				if (k == 0) {
+					dur = 4;
+					Mustil.unspecifiedNoteDuration = 8;
+					keys = new int[] {n, -1, n, -1, n8, -1, n4, -1, n, n, -1, n8, -1, -1, -1, -1,
+							n, n, -1, n, -1, n, n, -1, n4, -1, -1, -1, -1, -1, -1, -1};
+				} else {
+					dur = 8;
+					Mustil.unspecifiedNoteDuration = dur;
+					keys = new int[] {n, n, n4, n, n8, n8, n4, -1, n, n, n4, n4, n, -1, n, -1};
+				}
+				for (int i = 0; i < 2; i++) {
+					tick = Mustil.addNotes(track, tick, channel, vol, dur, keys);
+				}
+			}
+		}
 		return seq;
 	}
 	
@@ -236,7 +276,7 @@ public class Music {
 	
 	private final static void run() throws Exception {
 		System.out.println("Starting");
-		final Sequence seq = newSongTechno();
+		final Sequence seq = newSongHappy2();
 		final Pansic music = Pangine.getEngine().getMusic();
 		music.ensureCapacity(4);
 		music.playMusic(seq);
