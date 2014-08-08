@@ -233,8 +233,18 @@ public final class Mustil {
 	public final static long addNotes(final Track track, final long firstTick, final int channel, final int vol, final int deltaTick, final int... keys) throws Exception {
 		long tick = firstTick;
 		for (final int key : keys) {
-			addNote(track, tick, channel, key, vol);
+			if (key != -1) {
+				addNote(track, tick, channel, key, vol);
+			}
 			tick += deltaTick;
+		}
+		return tick;
+	}
+	
+	public final static long addRepeatedNotes(final Track track, final long firstTick, final int channel, final int vol, final int deltaTick, final int numberOfRepetitions, final int... keys) throws Exception {
+		long tick = firstTick;
+		for (int i = 0; i < numberOfRepetitions; i++) {
+			tick = addNotes(track, tick, channel, vol, deltaTick, keys);
 		}
 		return tick;
 	}
