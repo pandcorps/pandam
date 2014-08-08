@@ -1713,6 +1713,7 @@ public class Menu {
 	    private final List<Panctor> goalStars = new ArrayList<Panctor>(3);
 	    private final List<Panctor> rankStars = new ArrayList<Panctor>(Profile.POINTS_PER_RANK);
 	    private RadioGroup enemyRadio = null;
+	    private final StringBuilder enemyDesc = new StringBuilder();
 	    private Panctor enemy = null;
 	    final boolean fullMenu;
 	    
@@ -1807,6 +1808,7 @@ public class Menu {
 		    }
 		    enemy = addActor(center + 80, Y_PLAYER);
 		    enemy.setMirror(true);
+		    addTitle(enemyDesc, x + OFF_RADIO_LIST, y - 72);
 		    final RadioSubmitListener foeLsn = new RadioSubmitListener() {
                 @Override public final void onSubmit(final RadioSubmitEvent event) {
                     setEnemy(event.toString());
@@ -1986,7 +1988,9 @@ public class Menu {
         }
         
         private final void setEnemy(final String name) {
-            enemy.setView(PlatformGame.getEnemy(name).walk.getFrames()[0].getImage());
+        	final EnemyDefinition def = PlatformGame.getEnemy(name);
+            enemy.setView(def.walk.getFrames()[0].getImage());
+            Chartil.set(enemyDesc, "Defeated " + pc.profile.stats.defeatedEnemyTypes.longValue(def.code));
         }
         
         private final void initEnemy() {

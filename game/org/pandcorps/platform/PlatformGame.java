@@ -64,8 +64,6 @@ public class PlatformGame extends BaseGame {
 	Ridable dragons.
 	Enemy Wisp, Elementals, winged Imp, Banshee, Wraith, Shade, Orc.
 	Drolock should walk sometimes.
-	Stats for number of each Enemy defeated.
-	Add number defeated to Bestiary.
 	Enemy-specific Level templates (Imp walking into ArmorBall).
 	Gargoyles catch/carry Player, like moving platforms, one can jump to/from them, but not run on them.
 	Cannons on ground that Player enters to be launched.
@@ -756,7 +754,10 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 			bounceBall = new EnemyDefinition("Bounce Ball", 7, null, false, 0, 4);
 			Enemy.currentSplat = 8;
 			armoredImp = new EnemyDefinition("Armored Imp", 6, null, true, true, Enemy.DEFAULT_X, Enemy.DEFAULT_H);
+			armorBall.code = armoredImp.code;
+			bounceBall.code = armoredImp.code;
 			thrownImp = new EnemyDefinition("Thrown Imp", 8, null, false, false, 0, impX, impH, 10);
+			thrownImp.code = imp.code;
 			armorBall.stepHandler = new InteractionHandler() {
 				@Override public final boolean onInteract(final Enemy enemy, final Player player) {
 					if (enemy.timer == 0) {
