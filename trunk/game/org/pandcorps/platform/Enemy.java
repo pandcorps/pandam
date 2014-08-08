@@ -54,6 +54,7 @@ public class Enemy extends Character {
 	protected static int currentWalk = DEFAULT_WALK;
 	
 	protected final static class EnemyDefinition extends FinName {
+		protected String code;
 		protected final Panimation walk;
 		private final boolean ledgeTurn;
 		protected Panimation splat;
@@ -99,6 +100,7 @@ public class Enemy extends Character {
 		protected EnemyDefinition(final String name, final int ind, final PixelFilter f, final boolean ledgeTurn,
                 final boolean splat, final int avoidCount, final int offX, final int h, final int hv, final int d) {
 		    super(name);
+		    code = Chartil.toCode(name); // If a name is changed, explicitly assign the old code to keep stats consistent
 			final Img[] strip = loadStrip(ind, d), walk;
 			if (f != null) {
 				final int size = strip.length;
@@ -318,6 +320,7 @@ public class Enemy extends Character {
 					default:
 						throw new IllegalStateException("Unexpected defeatMode " + defeatMode);
 				}
+				stats.defeatedEnemyTypes.inc(def.code);
 		    }
 		}
 		if (v == 0 && def.splat != null) {
