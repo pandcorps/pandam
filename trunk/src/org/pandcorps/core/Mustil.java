@@ -206,6 +206,9 @@ public final class Mustil {
     public final static int PRC_OPEN_CUICA = 79;
     public final static int PRC_MUTE_TRIANGLE = 80;
     public final static int PRC_OPEN_TRIANGLE = 81;
+    
+    public final static int DEF_NOTE_DURATION = 30;
+    public static int unspecifiedNoteDuration = DEF_NOTE_DURATION;
 	
 	private Mustil() {
         throw new Error();
@@ -218,13 +221,41 @@ public final class Mustil {
 	}
 	
 	public final static void addNote(final Track track, final long tick, final int channel, final int key, final int vol) throws Exception {
-		addNote(track, tick, 30, channel, key, vol);
+		addNote(track, tick, unspecifiedNoteDuration, channel, key, vol);
 	}
 	
 	public final static void addNote(final Track track, final long tick, final int dur, final int channel, final int key, final int vol) throws Exception {
 		//System.out.println(tick + " - " + key);
 		addShort(track, ShortMessage.NOTE_ON, tick, channel, key, vol);
 		addShort(track, ShortMessage.NOTE_OFF, tick + dur, channel, key, 0);
+	}
+	
+	public final static long addNotes(final Track track, final long firstTick, final int channel, final int vol, final int deltaTick, final int... keys) throws Exception {
+		long tick = firstTick;
+		for (final int key : keys) {
+			addNote(track, tick, channel, key, vol);
+			tick += deltaTick;
+		}
+		return tick;
+	}
+	
+	public final static long addRise(final Track track, final long firstTick, final int channel, final int firstKey, final int vol,
+			final int deltaTick, final int deltaKey, final int numberOfDeltas) throws Exception {
+		return addRise(track, firstTick, channel, firstKey, vol, deltaTick, deltaKey, numberOfDeltas, 1);
+	}
+	
+	public final static long addRise(final Track track, final long firstTick, final int channel, final int firstKey, final int vol,
+			final int deltaTick, final int deltaKey, final int numberOfDeltas, final int notesPerDelta) throws Exception {
+		long tick = firstTick;
+		int key = firstKey;
+		for (int i = 0; i < numberOfDeltas; i++) {
+			for (int j = 0; j < notesPerDelta; j++) {
+				addNote(track, tick, channel, key, vol);
+				tick += deltaTick;
+			}
+			key += deltaKey;
+		}
+		return tick;
 	}
 	
 	public final static void addPercussion(final Track track, final long tick, final int key) throws Exception {
