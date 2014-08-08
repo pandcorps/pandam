@@ -28,6 +28,7 @@ import org.pandcorps.platform.Profile.*;
 import org.pandcorps.platform.Player.*;
 
 public abstract class Goal implements Named {
+	protected final static int NUM_ACTIVE_GOALS = 3;
 	protected final byte award;
 	protected boolean brandNew = false;
 	
@@ -66,7 +67,7 @@ public abstract class Goal implements Named {
 	
 	public final static void initGoals(final PlayerContext pc) {
 		final Goal[] goals = pc.profile.currentGoals;
-		for (byte award = 1; award <= 3; award++) {
+		for (byte award = 1; award <= NUM_ACTIVE_GOALS; award++) {
 			if (goals[award - 1] == null) {
 				newGoal(award, pc);
 			}
@@ -215,7 +216,7 @@ public abstract class Goal implements Named {
 		@Override
 		protected final boolean met(final PlayerContext pc) {
 			final Player player = pc.player;
-			return player != null && getCurrentAmount(player) >= getAmount();
+			return player != null && !player.goalsMet[award - 1] && getCurrentAmount(player) >= getAmount();
 		}
 		
 		@Override
