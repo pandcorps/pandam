@@ -27,8 +27,10 @@ import java.util.*;
 import java.util.Map.*;
 
 import org.pandcorps.core.*;
+import org.pandcorps.core.col.*;
 import org.pandcorps.core.io.*;
 import org.pandcorps.core.seg.*;
+import org.pandcorps.platform.Enemy.*;
 import org.pandcorps.platform.Player.*;
 
 public class Profile extends PlayerData implements Segmented, Savable {
@@ -122,7 +124,7 @@ gems = 1000000;
         row = seg.intValue(1);
         open.clear();
         for (final Field f : Coltil.unnull(seg.getRepetitions(2))) {
-        	open.put(Pair.get(f.getInteger(0), f.getInteger(1)), f.getBoolean(2));
+        	open.put(Pair.get(f.toInteger(0), f.toInteger(1)), f.toBoolean(2));
         }
     }
     
@@ -193,6 +195,7 @@ gems = 1000000;
     	protected long stompedEnemies = 0;
     	protected long bumpedEnemies = 0;
     	protected long hitEnemies = 0;
+    	protected final CountMap<String> defeatedEnemyTypes = new CountMap<String>(PlatformGame.allEnemies.size());
     	
     	public void load(final Segment seg, final int currGems) {
         	defeatedLevels = seg.initInt(0);
@@ -209,6 +212,10 @@ gems = 1000000;
         	bumpedEnemies = seg.initLong(11);
         	hitEnemies = seg.initLong(12);
         	defeatedEnemies = Math.max(defeatedEnemies, stompedEnemies + bumpedEnemies + hitEnemies);
+        	defeatedEnemyTypes.clear();
+        	for (final Field f : Coltil.unnull(seg.getRepetitions(13))) {
+        		defeatedEnemyTypes.put(f.getValue(0), f.toLong(1));
+        	}
         }
     	
 		@Override
@@ -227,6 +234,14 @@ gems = 1000000;
 	        seg.setLong(10, stompedEnemies);
 	        seg.setLong(11, bumpedEnemies);
 	        seg.setLong(12, hitEnemies);
+	        final ArrayList<Field> enemyReps = new ArrayList<Field>(defeatedEnemyTypes.size());
+	        for (final Entry<String, Long> entry : defeatedEnemyTypes.entrySet()) {
+	        	final Field f = new Field();
+	        	f.setValue(0, entry.getKey());
+	        	f.setLong(1, entry.getValue());
+	        	enemyReps.add(f);
+	        }
+	        seg.setRepetitions(13, enemyReps);
 		}
 		
 		public List<String> toList() {
@@ -237,6 +252,9 @@ gems = 1000000;
 			list.add("Enemies stomped: " + stompedEnemies);
 			list.add("Enemies bumped: " + bumpedEnemies);
 			list.add("Enemies hit by object: " + hitEnemies);
+			for (final EnemyDefinition def : PlatformGame.allEnemies) {
+				list.add(def.getName() + " defeated: " + defeatedEnemyTypes.longValue(def.code));
+			}
 			list.add("Blocks bumped: " + bumpedBlocks);
 			list.add("Blocks broken: " + brokenBlocks);
 			list.add("Jumps: " + jumps);
