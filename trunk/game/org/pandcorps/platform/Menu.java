@@ -1862,12 +1862,12 @@ public class Menu {
 			y -= 16;
 			final Profile prf = pc.profile;
 			final Goal[] goals = prf.currentGoals;
-			for (int i = 0; i < 3; i++) {
+			for (int i = 0; i < Goal.NUM_ACTIVE_GOALS; i++) {
 				final Goal g = goals[i];
 				if (g != null && g.isMet(pc)) {
 					// If next Goal is a RunGoal, it could be met based on last level, so bypass it
 					if (pc.player != null) {
-						pc.player.goalsMet[g.award - 1] = true;
+						pc.player.goalsMet[i] = true;
 					}
 					y = addGoal(g, x, y, true, goalStars);
 					y = addRankPoints(x, y, true);
