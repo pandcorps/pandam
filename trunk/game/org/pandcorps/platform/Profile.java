@@ -49,7 +49,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
     protected int frameRate = DEF_FRAME_RATE;
     protected final Statistics stats = new Statistics();
     protected final TreeSet<Integer> achievements = new TreeSet<Integer>();
-    protected final Goal[] currentGoals = new Goal[3];
+    protected final Goal[] currentGoals = new Goal[Goal.NUM_ACTIVE_GOALS];
     protected int goalPoints = 0;
     protected int column = -1;
 	protected int row = -1;

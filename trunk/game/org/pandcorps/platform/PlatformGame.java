@@ -112,8 +112,7 @@ public class PlatformGame extends BaseGame {
 	Center touch radio menus.
 	Add arrow to diamonds, rotate.
 	World Goal evaluated too late.
-	After Goals are evaluated, level context is not immediately cleared.  RunGoals can be met on InfoScreen without playing Level.
-	User saw bumped gem-block fail to defeat empty ArmorBall on it.
+	User saw bumped gem-block fail to defeat empty ArmorBall (and other Enemies near edge at other times) on it.
 	User saw Enemy defeated by bumped block fail to give Player a Gem.
 	Once saw Player appear on wrong Marker after goal-met screen.
 	*/

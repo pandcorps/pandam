@@ -273,12 +273,16 @@ public class Player extends Character implements CollisionListener {
 	private final Bubble bubble = new Bubble();
 	private final Accessories acc;
 	protected Ai ai = null;
+	protected final boolean[] goalsMet = new boolean[Goal.NUM_ACTIVE_GOALS];
 	
 	public Player(final PlayerContext pc) {
 		super(PLAYER_X, PLAYER_H);
 	    this.pc = pc;
 	    pc.player = this;
 	    level = Panscreen.get() instanceof PlatformGame.PlatformScreen;
+	    for (int i = 0; i < Goal.NUM_ACTIVE_GOALS; i++) {
+	    	goalsMet[i] = false;
+	    }
 	    jumpMode = pc.profile.currentAvatar.jumpMode;
 		final Pangine engine = Pangine.getEngine();
 		setView(pc.guy);
