@@ -22,6 +22,8 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.core;
 
+import java.io.*;
+
 import javax.sound.midi.*;
 
 // Music Utility
@@ -318,4 +320,8 @@ public final class Mustil {
 	/*public final static void setVolume(final Track track, final long tick, final int channel, final int vol) throws Exception {
 		addShort(track, ShortMessage.CONTROL_CHANGE, tick, channel, 7, vol);
 	}*/
+	
+	public final static void save(final Sequence seq, final String loc) throws Exception {
+		MidiSystem.write(seq, 0, new FileOutputStream(loc));
+	}
 }
