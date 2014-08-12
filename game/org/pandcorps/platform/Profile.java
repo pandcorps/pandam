@@ -30,6 +30,7 @@ import org.pandcorps.core.*;
 import org.pandcorps.core.col.*;
 import org.pandcorps.core.io.*;
 import org.pandcorps.core.seg.*;
+import org.pandcorps.platform.Avatar.*;
 import org.pandcorps.platform.Enemy.*;
 import org.pandcorps.platform.Player.*;
 
@@ -51,6 +52,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
     protected final TreeSet<Integer> achievements = new TreeSet<Integer>();
     protected final Goal[] currentGoals = new Goal[Goal.NUM_ACTIVE_GOALS];
     protected int goalPoints = 0;
+    protected final Set<Clothing> availableClothings = new HashSet<Clothing>(); //TODO
     protected int column = -1;
 	protected int row = -1;
 	protected final HashMap<Pair<Integer, Integer>, Boolean> open = new HashMap<Pair<Integer, Integer>, Boolean>();

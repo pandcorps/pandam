@@ -372,7 +372,7 @@ public class PlatformGame extends BaseGame {
 		return loadChrStrip(name, dim, f, true);
 	}
 	
-	private final static Img[] loadChrStrip(final String name, final int dim, final boolean req) {
+	protected final static Img[] loadChrStrip(final String name, final int dim, final boolean req) {
 		final String fileName = "org/pandcorps/platform/res/chr/" + name;
 		if (!(req || Iotil.exists(fileName))) {
 			return null;
@@ -410,11 +410,14 @@ public class PlatformGame extends BaseGame {
 		reloadAnimalStrip(pc);
 	}
 	
-	private final static void buildGuy(final Img guy, final Img face, final Img[] tails, final Img eyes, final int y, final int t) {
+	private final static void buildGuy(final Img guy, final Img face, final Img[] tails, final Img eyes, final Img clothing, final int y, final int t) {
 	    Imtil.copy(face, guy, 0, 0, 18, 18, 8, 1 + y, Imtil.COPY_FOREGROUND);
         Imtil.copy(eyes, guy, 0, 0, 8, 4, 15, 10 + y, Imtil.COPY_FOREGROUND);
         if (tails != null) {
             Imtil.copy(tails[0], guy, 0, 0, 12, 12, t, 20 + y - t, Imtil.COPY_BACKGROUND);
+        }
+        if (clothing != null) {
+            Imtil.copy(clothing, guy, 0, 0, 32, 32, 0, 0, Imtil.COPY_FOREGROUND);
         }
 	}
 	
@@ -433,6 +436,7 @@ public class PlatformGame extends BaseGame {
 		protected final Img face;
 		protected final Img[] tails;
 		protected final Img eyes;
+		protected final PixelFilter clothingFilter;
 	
 		protected PlayerImages(final Avatar avatar) {
 		    f = getFilter(avatar.col);
@@ -465,11 +469,22 @@ public class PlatformGame extends BaseGame {
 			    eyesAll[avatar.eye - 1] = e;
 			}
 			eyes = e;
+			final Clothing c = avatar.clothing;
+			final Img[] clothings;
+			if (c == null) {
+			    clothingFilter = null;
+			    clothings = null;
+			} else {
+			    c.init();
+			    clothings = new Img[c.imgs.length];
+			    clothingFilter = getFilter(avatar.clothingCol);
+			    filterStrip(c.imgs, clothings, clothingFilter);
+			}
 			final int size = guys.length;
 			for (int i = 0; i < size; i++) {
-				buildGuy(guys[i], face, tails, eyes, (i == 3) ? -1 : 0, (i < 3) ? i : 1);
+				buildGuy(guys[i], face, tails, eyes, clothings == null ? null : clothings[i], (i == 3) ? -1 : 0, (i < 3) ? i : 1);
 			}
-			buildGuy(guyBlink, face, tails, eyesBlink, 0, 0);
+			buildGuy(guyBlink, face, tails, eyesBlink, clothings == null ? null : clothings[0], 0, 0);
 		}
 		
 		protected final void close() {
@@ -516,6 +531,14 @@ public class PlatformGame extends BaseGame {
 		    //guy = engine.createImage(pre, new FinPanple2(8, 0), null, null, ImtilX.loadImage("org/pandcorps/platform/res/chr/Player.png"));
 		    
 			final Img[] maps = loadChrStrip("BearMap.png", 32, pi.f);
+			final Img[] clothingMapRaw = avatar.clothing.mapImgs;
+			final Img[] clothingMap;
+			if (clothingMapRaw == null) {
+			    clothingMap = null;
+            } else {
+                clothingMap = new Img[clothingMapRaw.length];
+                filterStrip(clothingMapRaw, clothingMap, pi.clothingFilter);
+            }
 			final Img[] wingMap = needWing ? loadChrStrip("WingsMap.png", 32, pf) : null;
 			final Img[] faceMap = loadChrStrip("FaceMap" + anm + ".png", 18, pi.f);
 			final Img south1 = maps[0], southPose = maps[5], faceSouth = faceMap[0];
@@ -524,6 +547,10 @@ public class PlatformGame extends BaseGame {
 					Imtil.copy(wingMap[0], south, 0, 0, 32, 32, 0, 0, Imtil.COPY_BACKGROUND);
 				}
 			}
+			if (clothingMap != null) {
+                Imtil.copy(clothingMap[0], south1, 0, 0, 32, 32, 0, 0, Imtil.COPY_FOREGROUND);
+                Imtil.copy(clothingMap[5], southPose, 0, 0, 32, 32, 0, 0, Imtil.COPY_FOREGROUND);
+            }
 			final Img south2 = Imtil.copy(south1);
 			Imtil.mirror(south2);
 			for (final Img south : new Img[] {south1, south2, southPose}) {
@@ -538,6 +565,10 @@ public class PlatformGame extends BaseGame {
 				if (needWing) {
 					Imtil.copy(wingMap[1], east, 0, 0, 32, 32, 0, 0, Imtil.COPY_BACKGROUND);
 				}
+				if (clothingMap != null) {
+                    Imtil.copy(clothingMap[1], east1, 0, 0, 32, 32, 0, 0, Imtil.COPY_FOREGROUND);
+                    Imtil.copy(clothingMap[2], east2, 0, 0, 32, 32, 0, 0, Imtil.COPY_FOREGROUND);
+                }
 				Imtil.copy(faceEast, east, 0, 0, 18, 18, 7, 5, Imtil.COPY_FOREGROUND);
 				if (tails != null) {
 					Imtil.copy(tails[1], east, 0, 0, 12, 12, 1, 20, Imtil.COPY_BACKGROUND);
@@ -560,6 +591,7 @@ public class PlatformGame extends BaseGame {
 			pc.mapWest = createAnmMap(pre, "west", west1, west2);
 			final Img tailNorth = Coltil.get(tails, 2), faceNorth = faceMap[2];
 			final Img wing = needWing ? wingMap[0] : null;
+			// TODO North/ladder clothing
 			pc.mapNorth = createNorth(maps, 3, wing, tailNorth, faceNorth, pre, "North");
 			pc.mapLadder = createNorth(maps, 4, wing, tailNorth, faceNorth, pre, "Ladder");
 			
