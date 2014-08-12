@@ -220,6 +220,77 @@ public class Music {
 		return seq;
 	}
 	
+	protected final static Sequence newSongHappy3() throws Exception {
+		final Sequence seq = new Sequence(Sequence.SMPTE_30, 1);
+		final Track track = seq.createTrack();
+		int dur, keys[];
+		channel = Mustil.CHN_PERCUSSION;
+		vol = 64;
+		tick = 0;
+		dur = 4;
+		/*keys = new int[] {
+				Mustil.PRC_CLOSED_HI_HAT, -1, -1, Mustil.PRC_CLOSED_HI_HAT, Mustil.PRC_RIDE_CYMBAL_1, -1, -1, -1};
+		tick = Mustil.addPercussions(track, tick, dur, keys);*/
+		keys = new int[] {
+				Mustil.PRC_CLOSED_HI_HAT, -1, -1, Mustil.PRC_CLOSED_HI_HAT, Mustil.PRC_RIDE_CYMBAL_1, -1, -1, -1,
+				Mustil.PRC_CLOSED_HI_HAT, -1, -1, Mustil.PRC_CLOSED_HI_HAT, Mustil.PRC_RIDE_CYMBAL_1, -1, -1, -1,
+				Mustil.PRC_CLOSED_HI_HAT, -1, -1, Mustil.PRC_CLOSED_HI_HAT, Mustil.PRC_RIDE_CYMBAL_1, -1, -1, -1,
+				Mustil.PRC_CLOSED_HI_HAT, -1, -1, Mustil.PRC_CLOSED_HI_HAT, Mustil.PRC_RIDE_CYMBAL_1, -1, -1, -1,
+				Mustil.PRC_CLOSED_HI_HAT, -1, -1, -1, -1, -1, -1, -1};
+		tick = Mustil.addRepeatedPercussions(track, tick, dur, 8, keys);
+		channel = 0;
+		Mustil.setInstrument(track, channel, Mustil.PRG_HONKY_TONK_PIANO);
+		final int n = 60, n4 = n + 4, n8 = n + 8;
+		tick = 0; //128;
+		dur = 2;
+		Mustil.unspecifiedNoteDuration = 8;
+		/*
+		1010001101230000
+		
+		1010001102203000
+		1201201200102000
+		1012000110220300
+		2301202301020000
+		*/
+		keys = new int[] {n, -1, -1, -1, -1, -1, -1, -1, n, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+				n, -1, -1, n, -1, -1, -1, n, -1, -1, -1, n4, -1, -1, -1, n8, -1, -1, -1,
+				-1, -1, -1, -1, -1, -1, -1};
+		tick = Mustil.addNotes(track, tick, channel, vol, dur, keys);
+		return seq;
+	}
+	
+	protected final static Sequence newSongHappy4() throws Exception {
+		final Sequence seq = new Sequence(Sequence.SMPTE_30, 1);
+		final Track track = seq.createTrack();
+		int dur, keys[];
+		vol = 64;
+		channel = Mustil.CHN_PERCUSSION;
+		tick = 0;
+		dur = 4;
+		keys = new int[] {
+				Mustil.PRC_RIDE_CYMBAL_1, -1, Mustil.PRC_CLOSED_HI_HAT, Mustil.PRC_CLOSED_HI_HAT,
+				Mustil.PRC_RIDE_CYMBAL_1, -1, Mustil.PRC_CLOSED_HI_HAT, Mustil.PRC_CLOSED_HI_HAT,
+				Mustil.PRC_RIDE_CYMBAL_1, -1, Mustil.PRC_CLOSED_HI_HAT, Mustil.PRC_CLOSED_HI_HAT,
+				Mustil.PRC_RIDE_CYMBAL_1, -1, Mustil.PRC_CLOSED_HI_HAT, Mustil.PRC_CLOSED_HI_HAT,
+				Mustil.PRC_RIDE_CYMBAL_1, -1, Mustil.PRC_CLOSED_HI_HAT, Mustil.PRC_CLOSED_HI_HAT,
+				Mustil.PRC_RIDE_CYMBAL_1, -1, Mustil.PRC_CLOSED_HI_HAT, Mustil.PRC_CLOSED_HI_HAT,
+				Mustil.PRC_RIDE_CYMBAL_1, -1, -1, -1,
+				-1, -1, -1, -1};
+		tick = Mustil.addPercussions(track, tick, dur, keys);
+		channel = 0;
+		Mustil.setInstrument(track, channel, Mustil.PRG_TUBA);
+		final int d = 1;
+		final int n = 50, n1 = n + d, n2 = n1 + d, n3 = n2 + d, n4 = n3 + d;
+		tick = 0;
+		dur = 8;
+		Mustil.unspecifiedNoteDuration = 8;
+		keys = new int[] {n4, -1, n, -1, n4, -1, n, -1, n4, -1, n, -1, n4, n2, n, n2}; // n4, n, n, n4
+		tick = Mustil.addNotes(track, tick, channel, vol, dur, keys);
+		return seq;
+	}
+	
+	// Map/Menu - 2 0 2 0 2 2 2 0 3 00000 2 0 2 0 2 2 2 0 1 00000 2 0 2 0 2 2 2 0 3 0 0 0 2 2 2 0 3
+	
 	private final static Sequence newFxGem(final int mag) throws Exception {
 		final int channel = 0, vol = 64;
 		final Sequence seq = new Sequence(Sequence.SMPTE_30, 1);
@@ -276,7 +347,7 @@ public class Music {
 	
 	private final static void run() throws Exception {
 		System.out.println("Starting");
-		final Sequence seq = newSongHappy2();
+		final Sequence seq = newSongHappy4();
 		final Pansic music = Pangine.getEngine().getMusic();
 		music.ensureCapacity(4);
 		music.playMusic(seq);
