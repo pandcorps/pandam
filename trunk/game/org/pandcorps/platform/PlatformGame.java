@@ -115,6 +115,7 @@ public class PlatformGame extends BaseGame {
 	User saw bumped gem-block fail to defeat empty ArmorBall (and other Enemies near edge at other times) on it.
 	User saw Enemy defeated by bumped block fail to give Player a Gem.
 	Once saw Player appear on wrong Marker after goal-met screen.
+	Move music generation, preprocessing classes into a new folder to be excluded from jar.
 	*/
 	
 	protected final static byte TILE_BREAK = 2;

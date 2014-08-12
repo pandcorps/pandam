@@ -86,7 +86,7 @@ public class Avatar extends PlayerData implements Segmented {
     }
     
     protected final static Clothing[] clothings = {
-        //new Clothing("Sleeveless", "AShirt", 1000),
+        new Clothing("Sleeveless", "AShirt", 1000),
         new Clothing("Short Sleeves", "TShirt", 1500),
         new Clothing("Long Sleeves", "LongShirt", 2000)
     };
