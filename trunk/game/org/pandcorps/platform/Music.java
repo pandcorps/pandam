@@ -73,43 +73,24 @@ public class Music {
 		key = 48;
 		deltaTick = 4;
 		tick = addIntroHappy(track);
+		key = 56;
 		tick = addMainHappy(track);
 		key = 48;
-		tick = Mustil.addNotes(track, tick, channel, vol, 8,
-				key, key, key, key - 4, key + 4, key + 4, key + 8);
-		tick += 8;
-		tick = Mustil.addNotes(track, tick, channel, vol, 8,
-				key, key, key + 8, key + 16, key + 24);
-		tick += 24;
+		tick = addMainHappy(track, 2);
 		key = 56;
-		tick = Mustil.addNotes(track, tick, channel, vol, 4,
-				key, -1, key, key, -1, key, key, -1, key + 4, -1, key + 4);
-		tick += 20;
-		tick = Mustil.addNotes(track, tick, channel, vol, 4,
-				key, -1, key, key, -1, key, key, -1, key + 8);
-		tick += 28;
+		tick = addFastHappy(track);
 		key = 48;
-		tick = Mustil.addNotes(track, tick, channel, vol, 4,
-				key, -1, key, key, -1, key, key, -1, key + 4, -1, key + 4);
-		tick += 20;
-		tick = Mustil.addNotes(track, tick, channel, vol, 4,
-				key, -1, key + 8, key + 8, -1, key + 16, key + 16, -1, key + 24);
-		tick += 28;
+		tick = addFastHappy2(track);
 		/*key = 52;
 		tick = Mustil.addNotes(track, tick, channel, vol, 4,
 				key, key - 4, key, key + 4, key, key + 4, key + 8, key + 4, key + 8, key + 12, key + 8, key + 12,
 				key + 16, key + 12, key + 8, key + 12, key + 8, key + 4, key + 8, key + 12, key + 8, key + 12,
 				key + 8, key + 12, key + 16);
 		tick += 24;*/
-		addMainHappy(track);
+		key = 56;
+		tick = addMainHappy(track);
 		key = 60;
-		tick = Mustil.addNotes(track, tick, channel, vol, 8,
-				key, key, key, key - 4, key - 8, key - 4, key);
-		tick += 8;
-		tick = Mustil.addNotes(track, tick, channel, vol, 4,
-				key, -1, key - 4, key - 4, key, -1, key, -1);
-		Mustil.addNote(track, tick, 30, channel, key + 4, vol);
-		tick += 30;
+		tick = addEndHappy(track);
 		addIntroHappy(track);
 		return seq;
 	}
@@ -130,13 +111,47 @@ public class Music {
 	}
 	
 	protected final static long addMainHappy(final Track track) throws Exception {
-		key = 56;
+		return addMainHappy(track, 1);
+	}
+	
+	protected final static long addMainHappy(final Track track, final int multPeak) throws Exception {
 		tick = Mustil.addNotes(track, tick, channel, vol, 8,
 				key, key, key, key - 4, key + 4, key + 4, key + 8);
 		tick += 8;
 		tick = Mustil.addNotes(track, tick, channel, vol, 8,
-				key, key, key + 4, key + 8, key + 12);
+				key, key, key + (4 * multPeak), key + (8 * multPeak), key + (12 * multPeak));
 		tick += 24;
+		return tick;
+	}
+	
+	protected final static long addFastHappy(final Track track) throws Exception {
+		tick = Mustil.addNotes(track, tick, channel, vol, 4,
+				key, -1, key, key, -1, key, key, -1, key + 4, -1, key + 4);
+		tick += 20;
+		tick = Mustil.addNotes(track, tick, channel, vol, 4,
+				key, -1, key, key, -1, key, key, -1, key + 8);
+		tick += 28;
+		return tick;
+	}
+	
+	protected final static long addFastHappy2(final Track track) throws Exception {
+		tick = Mustil.addNotes(track, tick, channel, vol, 4,
+				key, -1, key, key, -1, key, key, -1, key + 4, -1, key + 4);
+		tick += 20;
+		tick = Mustil.addNotes(track, tick, channel, vol, 4,
+				key, -1, key + 8, key + 8, -1, key + 16, key + 16, -1, key + 24);
+		tick += 28;
+		return tick;
+	}
+	
+	protected final static long addEndHappy(final Track track) throws Exception {
+		tick = Mustil.addNotes(track, tick, channel, vol, 8,
+				key, key, key, key - 4, key - 8, key - 4, key);
+		tick += 8;
+		tick = Mustil.addNotes(track, tick, channel, vol, 4,
+				key, -1, key - 4, key - 4, key, -1, key, -1);
+		Mustil.addNote(track, tick, 32, channel, key - 4, vol);
+		tick += 32;
 		return tick;
 	}
 	
@@ -263,6 +278,7 @@ public class Music {
 		final Sequence seq = new Sequence(Sequence.SMPTE_30, 1);
 		final Track track = seq.createTrack();
 		int dur, keys[];
+		final int r = 7;
 		vol = 64;
 		channel = Mustil.CHN_PERCUSSION;
 		tick = 0;
@@ -276,16 +292,33 @@ public class Music {
 				Mustil.PRC_RIDE_CYMBAL_1, -1, Mustil.PRC_CLOSED_HI_HAT, Mustil.PRC_CLOSED_HI_HAT,
 				Mustil.PRC_RIDE_CYMBAL_1, -1, -1, -1,
 				-1, -1, -1, -1};
-		tick = Mustil.addPercussions(track, tick, dur, keys);
+		tick = Mustil.addRepeatedPercussions(track, tick, dur, r, keys);
 		channel = 0;
+		vol -= 8;
 		Mustil.setInstrument(track, channel, Mustil.PRG_TUBA);
 		final int d = 1;
-		final int n = 50, n1 = n + d, n2 = n1 + d, n3 = n2 + d, n4 = n3 + d;
+		final int n = 48, n1 = n + d, n2 = n1 + d, n3 = n2 + d, n4 = n3 + d;
 		tick = 0;
 		dur = 8;
 		Mustil.unspecifiedNoteDuration = 8;
 		keys = new int[] {n4, -1, n, -1, n4, -1, n, -1, n4, -1, n, -1, n4, n2, n, n2}; // n4, n, n, n4
-		tick = Mustil.addNotes(track, tick, channel, vol, dur, keys);
+		tick = Mustil.addRepeatedNotes(track, tick, channel, vol, dur, r, keys);
+		tick = 128;
+		vol += 24;
+		channel = 1;
+		Mustil.setInstrument(track, channel, Mustil.PRG_HONKY_TONK_PIANO);
+		key = 68;
+		tick = addMainHappy(track);
+		key = 56;
+		tick = addMainHappy(track, 2);
+		key = 68;
+		tick = addFastHappy(track);
+		key = 56;
+		tick = addFastHappy2(track);
+		key = 68;
+		tick = addMainHappy(track);
+		key = 72;
+		tick = addEndHappy(track);
 		return seq;
 	}
 	
