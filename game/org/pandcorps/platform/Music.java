@@ -304,7 +304,13 @@ public class Music {
 		keys = new int[] {n4, -1, n, -1, n4, -1, n, -1, n4, -1, n, -1, n4, n2, n, n2}; // n4, n, n, n4
 		tick = Mustil.addRepeatedNotes(track, tick, channel, vol, dur, r, keys);
 		tick = 128;
-		vol += 24;
+		vol += 32;
+		channel = 2;
+		Mustil.setInstrument(track, channel, Mustil.PRG_TUBULAR_BELLS);
+		keys = new int[] {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 96, -1};
+		tick = Mustil.addRepeatedNotes(track, tick, channel, vol, dur, r - 1, keys);
+		tick = 128;
+		vol -= 8;
 		channel = 1;
 		Mustil.setInstrument(track, channel, Mustil.PRG_HONKY_TONK_PIANO);
 		key = 68;
@@ -325,6 +331,7 @@ public class Music {
 	// Map/Menu - 2 0 2 0 2 2 2 0 3 00000 2 0 2 0 2 2 2 0 1 00000 2 0 2 0 2 2 2 0 3 0 0 0 2 2 2 0 3
 	
 	private final static Sequence newFxGem(final int mag) throws Exception {
+		//Mustil.PRG_MUSIC_BOX, key = 64, dur = 8
 		final int channel = 0, vol = 64;
 		final Sequence seq = new Sequence(Sequence.SMPTE_30, 1);
 		final Track track = seq.createTrack();
@@ -381,6 +388,7 @@ public class Music {
 	private final static void run() throws Exception {
 		System.out.println("Starting");
 		final Sequence seq = newSongHappy4();
+		Mustil.save(seq, "happy.mid");
 		final Pansic music = Pangine.getEngine().getMusic();
 		music.ensureCapacity(4);
 		music.playMusic(seq);
