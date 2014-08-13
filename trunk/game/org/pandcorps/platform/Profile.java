@@ -52,7 +52,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
     protected final TreeSet<Integer> achievements = new TreeSet<Integer>();
     protected final Goal[] currentGoals = new Goal[Goal.NUM_ACTIVE_GOALS];
     protected int goalPoints = 0;
-    protected final Set<Clothing> availableClothings = new HashSet<Clothing>(); //TODO
+    protected final Set<Clothing> availableClothings = new HashSet<Clothing>();
     protected int column = -1;
 	protected int row = -1;
 	protected final HashMap<Pair<Integer, Integer>, Boolean> open = new HashMap<Pair<Integer, Integer>, Boolean>();
@@ -95,6 +95,9 @@ gems = 1000000;
     		i++;
     	}
     	goalPoints = seg.getInt(10, 0);
+    	for (final Field f : Coltil.unnull(seg.getRepetitions(11))) {
+    	    availableClothings.add(Avatar.getClothing(f.getValue()));
+        }
     	//ctrl = seg.intValue(3);
     }
     
@@ -114,6 +117,9 @@ gems = 1000000;
         	seg.addField(9, g == null ? null : g.toField());
         }
         seg.setInt(10, goalPoints);
+        for (final Clothing c : Coltil.unnull(availableClothings)) {
+            seg.addValue(11, c.res);
+        }
         //seg.setInt(3, ctrl);
     }
     

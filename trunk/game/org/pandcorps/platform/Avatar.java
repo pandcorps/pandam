@@ -61,7 +61,7 @@ public class Avatar extends PlayerData implements Segmented {
     }
     
     protected final static class Clothing extends FinName {
-        private final String res;
+        protected final String res;
         private final int cost;
         protected Img[] imgs = null;
         protected Img[] mapImgs = null;
