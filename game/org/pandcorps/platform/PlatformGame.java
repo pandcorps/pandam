@@ -486,6 +486,7 @@ public class PlatformGame extends BaseGame {
 				buildGuy(guys[i], face, tails, eyes, clothings == null ? null : clothings[i], (i == 3) ? -1 : 0, (i < 3) ? i : 1);
 			}
 			buildGuy(guyBlink, face, tails, eyesBlink, clothings == null ? null : clothings[0], 0, 0);
+			Img.close(clothings);
 		}
 		
 		protected final void close() {
@@ -592,11 +593,11 @@ public class PlatformGame extends BaseGame {
 			pc.mapWest = createAnmMap(pre, "west", west1, west2);
 			final Img tailNorth = Coltil.get(tails, 2), faceNorth = faceMap[2];
 			final Img wing = needWing ? wingMap[0] : null;
-			// TODO North/ladder clothing
-			pc.mapNorth = createNorth(maps, 3, wing, tailNorth, faceNorth, pre, "North");
-			pc.mapLadder = createNorth(maps, 4, wing, tailNorth, faceNorth, pre, "Ladder");
+			pc.mapNorth = createNorth(maps, 3, wing, clothingMap, tailNorth, faceNorth, pre, "North");
+			pc.mapLadder = createNorth(maps, 4, wing, clothingMap, tailNorth, faceNorth, pre, "Ladder");
 			
 			Img.close(maps);
+			Img.close(clothingMap);
 			Img.close(wingMap);
 			Img.close(faceMap);
 		}
@@ -623,9 +624,13 @@ public class PlatformGame extends BaseGame {
 		pi.close();
 	}
 	
-	private final static Panimation createNorth(final Img[] maps, final int mi, final Img wing, final Img tailNorth, final Img faceNorth,
+	private final static Panimation createNorth(final Img[] maps, final int mi, final Img wing, final Img[] clothingMap,
+	                                            final Img tailNorth, final Img faceNorth,
 	                                            final String pre, final String suf) {
 		final Img north1 = maps[mi];
+		if (clothingMap != null) {
+		    Imtil.copy(clothingMap[mi], north1, 0, 0, 32, 32, 0, 0, Imtil.COPY_FOREGROUND);
+		}
 		if (tailNorth != null) {
 			Imtil.copy(tailNorth, north1, 0, 0, 12, 12, 10, 20, Imtil.COPY_FOREGROUND);
 		}
