@@ -1503,6 +1503,7 @@ public class Menu {
         private final Avatar avt;
         private RadioGroup jmpRadio = null;
         private List<RadioGroup> jmpColors = null;
+        private RadioGroup clthRadio = null;
         
         protected GearScreen(final PlayerContext pc, final Avatar old, final Avatar avt) {
             super(pc, false);
@@ -1525,12 +1526,17 @@ public class Menu {
         	reattach(info, sub, PlatformGame.gem[0], "Buy");
         }
         
+        private final static List<String> toNameList(final Named... a) {
+            final List<String> list = new ArrayList<String>(a.length);
+            for (final Named n : a) {
+                list.add(n.getName());
+            }
+            return list;
+        }
+        
         protected final void createJumpList(final int x, final int y) {
             final JumpMode[] jumpModes = JumpMode.values();
-            final List<String> jmps = new ArrayList<String>(jumpModes.length);
-            for (final JumpMode jm : jumpModes) {
-                jmps.add(jm.getName());
-            }
+            final List<String> jmps = toNameList(jumpModes);
             final TouchButton sub = Pangine.getEngine().isTouchSupported() ? newRadioSubmitButton(x, y) : null;
             TouchButton.detach(sub);
             final AvtListener jmpLsn = new AvtListener() {
@@ -1569,6 +1575,13 @@ public class Menu {
                 }};
             jmpRadio = addRadio("Jump Mode", jmps, jmpSubLsn, jmpLsn, x, y, sub);
             initJumpMode();
+        }
+        
+        protected final void createClothingList(final int x, final int y) {
+            final Clothing[] clothings = Avatar.clothings;
+            final List<String> clths = toNameList(clothings);
+            clthRadio = addRadio("Clothing", clths, null, null, x, y, null);
+            initClothing();
         }
         
         @Override
@@ -1611,6 +1624,10 @@ public class Menu {
         
         private final void initJumpMode() {
             jmpRadio.setSelected(JumpMode.get(avt.jumpMode).getName());
+        }
+        
+        private final void initClothing() {
+            jmpRadio.setSelected(avt.clothing.getName());
         }
         
         @Override
