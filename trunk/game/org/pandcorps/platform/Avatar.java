@@ -78,6 +78,8 @@ public class Avatar extends PlayerData implements Segmented {
             }
             imgs = PlatformGame.loadChrStrip("clothes/" + res + ".png", 32, true);
             mapImgs = PlatformGame.loadChrStrip("clothes/" + res + "Map.png", 32, true);
+            Img.setTemporary(false, imgs);
+            Img.setTemporary(false, mapImgs);
         }
         
         public final int getCost() {
@@ -137,9 +139,9 @@ public class Avatar extends PlayerData implements Segmented {
     	eye = seg.intValue(2);
     	col.load(seg, 3);
     	jumpMode = seg.getByte(6, Player.MODE_NORMAL);
-    	jumpCol.load(seg, 7);
-    	clothing = getClothing(seg.getValue(8));
-    	clothingCol.load(seg, 9);
+    	jumpCol.load(seg, 7); // 7-9
+    	clothing = getClothing(seg.getValue(10));
+    	clothingCol.load(seg, 11); // 11-13
     }
     
     @Override
@@ -151,8 +153,8 @@ public class Avatar extends PlayerData implements Segmented {
     	col.save(seg, 3);
     	seg.setInt(6, jumpMode);
     	jumpCol.save(seg, 7);
-    	seg.setValue(8, clothing.res);
-    	clothingCol.save(seg, 9);
+    	seg.setValue(10, clothing.res);
+    	clothingCol.save(seg, 11);
     }
     
     private final static float randColor() {

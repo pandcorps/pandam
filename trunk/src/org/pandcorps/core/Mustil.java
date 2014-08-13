@@ -322,6 +322,12 @@ public final class Mustil {
 	}*/
 	
 	public final static void save(final Sequence seq, final String loc) throws Exception {
-		MidiSystem.write(seq, 0, new FileOutputStream(loc));
+	    OutputStream out = null;
+	    try {
+    	    out = new FileOutputStream(loc);
+    		MidiSystem.write(seq, 0, out);
+	    } finally {
+	        Iotil.close(out);
+	    }
 	}
 }
