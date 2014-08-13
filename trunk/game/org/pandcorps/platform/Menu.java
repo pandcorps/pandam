@@ -1627,7 +1627,7 @@ public class Menu {
         }
         
         private final void initClothing() {
-            jmpRadio.setSelected(avt.clothing.getName());
+            clthRadio.setSelected(avt.clothing.getName());
         }
         
         @Override
