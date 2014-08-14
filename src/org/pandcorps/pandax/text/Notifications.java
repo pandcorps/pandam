@@ -33,7 +33,7 @@ public class Notifications extends Panctor implements StepListener {
     protected final Pantext label;
     protected final StringBuilder seq;
     private Queue<Notification> queue = new LinkedList<Notification>();
-    private ArrayList<Runnable> freeListeners = null;
+    private List<Runnable> freeListeners = null;
     private int timer = 0;
     private Panctor icon = null;
     

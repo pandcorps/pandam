@@ -32,7 +32,7 @@ public abstract class TextItem extends MenuItem {
     protected final Pantext label;
     protected boolean ownLayer = true;
     protected Panctor parent = null;
-    protected ArrayList<Panctor> children = null;
+    protected List<Panctor> children = null;
     protected Panform form = null;
     
     // Should we add ControlScheme to constructor?  Also Panlayer?

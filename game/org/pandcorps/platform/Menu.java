@@ -1504,6 +1504,7 @@ public class Menu {
         private final static byte TAB_JUMP = 2;
         private final static byte TAB_JUMP_COL = 3;
         private static byte currentTab = TAB_CLOTHES;
+        private final static String DEF_CLOTHES = "None";
 	    private final Avatar old;
         private final Avatar avt;
         private RadioGroup jmpRadio = null;
@@ -1535,7 +1536,12 @@ public class Menu {
         }
         
         private final static List<String> toNameList(final Named... a) {
-            final List<String> list = new ArrayList<String>(a.length);
+        	return toNameList(null, a);
+        }
+        
+        private final static List<String> toNameList(final String def, final Named... a) {
+            final List<String> list = new ArrayList<String>(a.length + ((def == null) ? 0 : 1));
+            Coltil.addIfValued(list, def);
             for (final Named n : a) {
                 list.add(n.getName());
             }
@@ -1609,7 +1615,7 @@ public class Menu {
         
         protected final void createClothingList(final int x, final int y) {
             final Clothing[] clothings = Avatar.clothings;
-            final List<String> clths = toNameList(clothings);
+            final List<String> clths = toNameList(DEF_CLOTHES, clothings);
             final TouchButton sub = newBuy(x, y);
             clthBtn = newColor(x, y, TAB_CLOTHES_COL);
             final AvtListener clthLsn = new AvtListener() {
@@ -1705,16 +1711,19 @@ public class Menu {
         	initJumpColors();
         }
         
-        private final void initJumpColors() {
-        	final boolean vis = avt.jumpMode == Player.JUMP_FLY;
-        	for (final RadioGroup jmpColor : Coltil.unnull(jmpColors)) {
+        private final void initColors(final List<RadioGroup> colors, final TouchButton btn, final boolean vis) {
+        	for (final RadioGroup jmpColor : Coltil.unnull(colors)) {
         		jmpColor.setVisible(vis);
         	}
         	if (vis) {
-        	    TouchButton.reattach(jmpBtn);
+        	    TouchButton.reattach(btn);
         	} else {
-        	    TouchButton.detach(jmpBtn);
+        	    TouchButton.detach(btn);
         	}
+        }
+        
+        private final void initJumpColors() {
+        	initColors(jmpColors, jmpBtn, avt.jumpMode == Player.JUMP_FLY);
         }
         
         private final void initJumpMode() {
@@ -1727,14 +1736,11 @@ public class Menu {
         }
         
         private final void initClothingColors() {
-            for (final RadioGroup clthColor : Coltil.unnull(clthColors)) {
-                clthColor.setVisible(true);
-            }
-            TouchButton.reattach(clthBtn);
+        	initColors(clthColors, clthBtn, avt.clothing != null);
         }
         
         private final void initClothing() {
-            clthRadio.setSelected(avt.clothing.getName());
+            clthRadio.setSelected((avt.clothing == null) ? DEF_CLOTHES : avt.clothing.getName());
         }
         
         @Override
@@ -1742,6 +1748,7 @@ public class Menu {
             final boolean a = super.allow(focused);
             if (a) {
                 initJumpMode();
+                initClothing();
             }
             return a;
         }

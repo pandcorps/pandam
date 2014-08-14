@@ -533,7 +533,7 @@ public class PlatformGame extends BaseGame {
 		    //guy = engine.createImage(pre, new FinPanple2(8, 0), null, null, ImtilX.loadImage("org/pandcorps/platform/res/chr/Player.png"));
 		    
 			final Img[] maps = loadChrStrip("BearMap.png", 32, pi.f);
-			final Img[] clothingMapRaw = avatar.clothing.mapImgs;
+			final Img[] clothingMapRaw = (avatar.clothing == null) ? null : avatar.clothing.mapImgs;
 			final Img[] clothingMap;
 			if (clothingMapRaw == null) {
 			    clothingMap = null;

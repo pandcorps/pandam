@@ -179,7 +179,7 @@ public final class Coltil {
     	}
 	}
 	
-	public final static <E, T extends E> ArrayList<E> add(ArrayList<E> list, final T elem) {
+	public final static <E, T extends E> List<E> add(List<E> list, final T elem) {
 	    if (list == null) {
 	        list = new ArrayList<E>();
 	    }
@@ -187,7 +187,7 @@ public final class Coltil {
 	    return list;
 	}
 	
-	public final static <E, T extends E> ArrayList<E> addIfValued(ArrayList<E> list, final T elem) {
+	public final static <E, T extends E> List<E> addIfValued(List<E> list, final T elem) {
 		return elem == null ? list : add(list, elem);
 	}
 	

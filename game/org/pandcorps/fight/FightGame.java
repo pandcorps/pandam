@@ -593,7 +593,7 @@ public class FightGame extends Guy2Game {
                     throw new Panception("Could not find frame " + fid + " for character " + name);
                 }
                 Segment emt;
-                ArrayList<Emitter> emitters = null;
+                List<Emitter> emitters = null;
                 while ((emt = in.readIf("EMT")) != null) {
                     final FinPanple off = FinPanple.getFinPanple(emt, 0);
                     final float xoff = off.getX(), yoff = off.getY();
