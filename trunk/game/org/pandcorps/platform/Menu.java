@@ -433,13 +433,14 @@ public class Menu {
 		}
 		
 		protected final static int OFF_RADIO_LIST = 100;
+		protected final static int OFF_RADIO_Y = 100;
 		
 		protected final RadioGroup addRadio(final String title, final List<? extends CharSequence> list, final RadioSubmitListener subLsn, final RadioSubmitListener chgLsn, final int xb, final int y, final TouchButton sub) {
 			final int x;
 			if (tabsSupported && isTabEnabled()) {
-				final int yt = y - 100;
+				final int yt = y - OFF_RADIO_Y;
 				final String id = Pantil.vmid();
-				ctrl.setUp(newFormButton(id + ".radio.up", xb, yt + 100, PlatformGame.menuUp));
+				ctrl.setUp(newFormButton(id + ".radio.up", xb, y, PlatformGame.menuUp));
 				ctrl.setDown(newFormButton(id + ".radio.down", xb, yt, PlatformGame.menuDown));
 				if (subLsn != null) {
 					//final TouchButton sub = newFormButton(id + ".radio.submit", x + 200, yt, PlatformGame.menuCheck);
@@ -1559,7 +1560,7 @@ public class Menu {
         }
         
         private final TouchButton newColor(final int x, final int y, final byte tab) {
-            final TouchButton sub = newSub(x, y + 100);
+            final TouchButton sub = newSub(x, y + OFF_RADIO_Y);
             if (sub == null) {
                 return null;
             }
@@ -1567,6 +1568,10 @@ public class Menu {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
                     reload(tab);
                 }});
+            final Panmage img = PlatformGame.menuRgb;
+            final String txt = "Color";
+            sub.setOverlay(img, offx(img), offy(img, txt));
+        	sub.setText(PlatformGame.font, txt, OFF_TEXT_X, OFF_TEXT_Y);
             return sub;
         }
         
@@ -1656,6 +1661,8 @@ public class Menu {
 			} else {
 				menuClassic();
 			}
+			initJumpColors();
+            initClothingColors();
 		}
 		
 		protected final void menuTouch() {
@@ -1697,11 +1704,9 @@ public class Menu {
             int y = getTop();
             createJumpList(left, y);
             jmpColors = addColor(avt.jumpCol, left + 88, y);
-            initJumpColors();
             y -= 64;
             createClothingList(left, y);
             clthColors = addColor(avt.clothingCol, left + 88, y);
-            initClothingColors();
             y -= 64;
             addExit("Back", left, y);
         }
@@ -1755,6 +1760,8 @@ public class Menu {
         
         @Override
         protected void onExit() {
+        	Coltil.clear(jmpColors);
+        	Coltil.clear(clthColors);
             Panscreen.set(new AvatarScreen(pc, old, avt));
         }
 	}

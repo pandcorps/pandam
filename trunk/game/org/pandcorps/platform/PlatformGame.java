@@ -247,6 +247,7 @@ public class PlatformGame extends BaseGame {
 	protected static Panmage menuEyes = null;
 	protected static Panmage menuGear = null;
 	protected static Panmage menuKeyboard = null;
+	protected static Panmage menuRgb = null;
 	protected static Panmage menuButtons = null;
 	protected static Panmage redUp = null;
 	protected static Panmage redDown = null;
@@ -333,10 +334,11 @@ public class PlatformGame extends BaseGame {
 					PlatformGame.notify(pc, msg);
 				}
 			}
-			final Pangine engine = Pangine.getEngine();
-			if (engine.isMusicSupported()) {
+			//final Pangine engine = Pangine.getEngine();
+			/*if (engine.isMusicSupported()) {
 				engine.getMusic().playMusic(Music.newSongCreepy());
-			}
+			}*/
+			//engine.playMusic("org/pandcorps/platform/res/music/happy.mid");
 		}
 		
 		@Override
@@ -360,10 +362,11 @@ public class PlatformGame extends BaseGame {
 		
 		@Override
 	    protected final void destroy() {
-			final Pangine engine = Pangine.getEngine();
-			if (engine.isMusicSupported()) {
+			//final Pangine engine = Pangine.getEngine();
+			/*if (engine.isMusicSupported()) {
 				engine.getMusic().stop();
-			}
+			}*/
+			//engine.stopMusic();
 	        Panmage.destroy(Level.timg);
 	        Panmage.destroy(Level.bgimg);
 	    }
@@ -1044,6 +1047,7 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 			    menuEyes = createMenuImg("Eyes");
 			    menuGear = createMenuImg("Gear");
 			    menuKeyboard = createMenuImg("Keyboard");
+			    menuRgb = createMenuImg("Rgb");
 			    menuButtons = createMenuImg("Buttons");
 			    //menuIn = engine.createImage(Pantil.vmid(), ImtilX.indent(left));
 			    menuIn = engine.createImage(Pantil.vmid(), ImtilX.newButton(w, h, clrIn));
