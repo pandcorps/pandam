@@ -32,7 +32,7 @@ public class Segment extends Record {
     private final static char DELIM_REP = '~';
     
     private String name = null;
-    private final ArrayList<ArrayList<Field>> fields = new ArrayList<ArrayList<Field>>();
+    private final ArrayList<List<Field>> fields = new ArrayList<List<Field>>();
     
     public Segment() {
     }
@@ -60,7 +60,7 @@ public class Segment extends Record {
                     final Field field = Field.parse(line, start, i);
                     // SEG|| should have no SEG.0 at all; SEG|~value| should have a null repetition before value
                     if (field != null || c == DELIM_REP) {
-                        ArrayList<Field> reps = Coltil.get(seg.fields, f);
+                        List<Field> reps = Coltil.get(seg.fields, f);
                         if (reps == null) {
                             reps = new ArrayList<Field>();
                             Coltil.set(seg.fields, f, reps);
@@ -122,7 +122,7 @@ public class Segment extends Record {
         this.name = name;
     }
     
-    public final void setRepetitions(final int i, final ArrayList<Field> repetitions) {
+    public final void setRepetitions(final int i, final List<Field> repetitions) {
     	Coltil.setIfNeeded(fields, i, repetitions);
     }
     

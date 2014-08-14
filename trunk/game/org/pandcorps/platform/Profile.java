@@ -283,7 +283,7 @@ gems = 1000000;
     }
     
     public final boolean isClothingAvailable(final Clothing c) {
-        return availableClothings.contains(c);
+        return c == null || availableClothings.contains(c);
     }
     
     private final static Integer ASSIST_INVINCIBILITY = Integer.valueOf(4);

@@ -153,7 +153,7 @@ public class Avatar extends PlayerData implements Segmented {
     	col.save(seg, 3);
     	seg.setInt(6, jumpMode);
     	jumpCol.save(seg, 7);
-    	seg.setValue(10, clothing.res);
+    	seg.setValue(10, (clothing == null) ? "" : clothing.res);
     	clothingCol.save(seg, 11);
     }
     

@@ -29,10 +29,10 @@ import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 
 public class ActionGroup {
-	private ArrayList<ActionListener> listeners = null;
-    private ArrayList<ActionStartListener> startListeners = null;
-    private ArrayList<ActionEndListener> endListeners = null;
-    private ArrayList<TimerListener> timerListeners = null;
+	private List<ActionListener> listeners = null;
+    private List<ActionStartListener> startListeners = null;
+    private List<ActionEndListener> endListeners = null;
+    private List<TimerListener> timerListeners = null;
     
     public void register(final Panput input, final ActionListener listener) {
         final Panteraction inter = Pangine.getEngine().getInteraction();
