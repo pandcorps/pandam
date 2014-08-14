@@ -330,4 +330,14 @@ public final class Mustil {
 	        Iotil.close(out);
 	    }
 	}
+	
+	public final static Sequence load(final String loc) throws Exception {
+		InputStream in = null;
+		try {
+			in = Iotil.getInputStream(loc);
+			return MidiSystem.getSequence(in);
+		} finally {
+			Iotil.close(in);
+		}
+	}
 }
