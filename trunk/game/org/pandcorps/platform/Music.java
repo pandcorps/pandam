@@ -274,16 +274,12 @@ public class Music {
 		return seq;
 	}
 	
-	protected final static Sequence newSongHappy4() throws Exception {
-		final Sequence seq = new Sequence(Sequence.SMPTE_30, 1);
-		final Track track = seq.createTrack();
-		int dur, keys[];
-		final int r = 7;
+	protected final static void addPercussionHappy(final Track track, final int r) throws Exception {
 		vol = 64;
 		channel = Mustil.CHN_PERCUSSION;
 		tick = 0;
-		dur = 4;
-		keys = new int[] {
+		final int dur = 4;
+		final int[] keys = new int[] {
 				Mustil.PRC_RIDE_CYMBAL_1, -1, Mustil.PRC_CLOSED_HI_HAT, Mustil.PRC_CLOSED_HI_HAT,
 				Mustil.PRC_RIDE_CYMBAL_1, -1, Mustil.PRC_CLOSED_HI_HAT, Mustil.PRC_CLOSED_HI_HAT,
 				Mustil.PRC_RIDE_CYMBAL_1, -1, Mustil.PRC_CLOSED_HI_HAT, Mustil.PRC_CLOSED_HI_HAT,
@@ -293,8 +289,25 @@ public class Music {
 				Mustil.PRC_RIDE_CYMBAL_1, -1, -1, -1,
 				-1, -1, -1, -1};
 		tick = Mustil.addRepeatedPercussions(track, tick, dur, r, keys);
+	}
+	
+	protected final static void addBell(final Track track, final int r) throws Exception {
+		vol = 88;
+		channel = 2;
+		Mustil.setInstrument(track, channel, Mustil.PRG_TUBULAR_BELLS);
+		final int dur = 8;
+		final int[] keys = new int[] {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 96, -1};
+		tick = Mustil.addRepeatedNotes(track, tick, channel, vol, dur, r, keys);
+	}
+	
+	protected final static Sequence newSongHappy4() throws Exception {
+		final Sequence seq = new Sequence(Sequence.SMPTE_30, 1);
+		final Track track = seq.createTrack();
+		int dur, keys[];
+		final int r = 7;
+		addPercussionHappy(track, r);
 		channel = 0;
-		vol -= 8;
+		vol = 56;
 		Mustil.setInstrument(track, channel, Mustil.PRG_TUBA);
 		final int d = 1;
 		final int n = 48, n1 = n + d, n2 = n1 + d, n3 = n2 + d, n4 = n3 + d;
@@ -304,13 +317,9 @@ public class Music {
 		keys = new int[] {n4, -1, n, -1, n4, -1, n, -1, n4, -1, n, -1, n4, n2, n, n2}; // n4, n, n, n4
 		tick = Mustil.addRepeatedNotes(track, tick, channel, vol, dur, r, keys);
 		tick = 128;
-		vol += 32;
-		channel = 2;
-		Mustil.setInstrument(track, channel, Mustil.PRG_TUBULAR_BELLS);
-		keys = new int[] {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 96, -1};
-		tick = Mustil.addRepeatedNotes(track, tick, channel, vol, dur, r - 1, keys);
+		addBell(track, r - 1);
 		tick = 128;
-		vol -= 8;
+		vol = 80;
 		channel = 1;
 		Mustil.setInstrument(track, channel, Mustil.PRG_HONKY_TONK_PIANO);
 		key = 68;
@@ -325,10 +334,43 @@ public class Music {
 		tick = addMainHappy(track);
 		key = 72;
 		tick = addEndHappy(track);
+		/*tick = 0;
+		dur = 32;
+		Mustil.unspecifiedNoteDuration = 16;
+		vol = 16;
+		channel = 3;
+		Mustil.setInstrument(track, channel, Mustil.PRG_TROMBONE);
+		keys = new int[] {60, 64, 68, 72};
+		tick = Mustil.addRepeatedNotes(track, tick, channel, vol, dur, r, keys);*/
 		return seq;
 	}
 	
 	// Map/Menu - 2 0 2 0 2 2 2 0 3 00000 2 0 2 0 2 2 2 0 1 00000 2 0 2 0 2 2 2 0 3 0 0 0 2 2 2 0 3
+	
+	protected final static Sequence newSongMenu() throws Exception {
+		final Sequence seq = new Sequence(Sequence.SMPTE_30, 1);
+		final Track track = seq.createTrack();
+		//int dur, keys[];
+		final int r = 1;
+		addPercussionHappy(track, r);
+		tick = 0;
+		Mustil.unspecifiedNoteDuration = 16;
+		addBell(track, r);
+		/*channel = 0;
+		vol = 40;
+		Mustil.setInstrument(track, channel, Mustil.PRG_HONKY_TONK_PIANO);
+		final int d = 4;
+		final int n = 64, n1 = n + d, n2 = n1 + d, n3 = n2 + d, n4 = n3 + d;
+		tick = 0;
+		dur = 8;
+		Mustil.unspecifiedNoteDuration = 8;
+		keys = new int[] {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, n, n2, n3, n4,
+				-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, n4, n3, n2, n,
+				-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, n, n2, n3, n4,
+				-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, n4, n3, n2, n};
+		tick = Mustil.addNotes(track, tick, channel, vol, dur, keys);*/
+		return seq;
+	}
 	
 	private final static Sequence newFxGem(final int mag) throws Exception {
 		//Mustil.PRG_MUSIC_BOX, key = 64, dur = 8
