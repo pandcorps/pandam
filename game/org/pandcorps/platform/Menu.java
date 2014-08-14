@@ -1554,6 +1554,9 @@ public class Menu {
         
         private final TouchButton newColor(final int x, final int y, final byte tab) {
             final TouchButton sub = newSub(x, y + 100);
+            if (sub == null) {
+                return null;
+            }
             sub.getActor().register(sub, new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
                     reload(tab);
