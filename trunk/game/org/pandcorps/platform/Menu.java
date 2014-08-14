@@ -1499,6 +1499,11 @@ public class Menu {
 	}
 	
 	protected final static class GearScreen extends PlayerScreen {
+	    private final static byte TAB_CLOTHES = 0;
+	    private final static byte TAB_CLOTHES_COL = 1;
+        private final static byte TAB_JUMP = 2;
+        private final static byte TAB_JUMP_COL = 3;
+        private static byte currentTab = TAB_CLOTHES;
 	    private final Avatar old;
         private final Avatar avt;
         private RadioGroup jmpRadio = null;
@@ -1534,11 +1539,16 @@ public class Menu {
             return list;
         }
         
+        private final TouchButton newSub(final int x, final int y) {
+            final TouchButton sub = Pangine.getEngine().isTouchSupported() ? newRadioSubmitButton(x, y) : null;
+            TouchButton.detach(sub);
+            return sub;
+        }
+        
         protected final void createJumpList(final int x, final int y) {
             final JumpMode[] jumpModes = JumpMode.values();
             final List<String> jmps = toNameList(jumpModes);
-            final TouchButton sub = Pangine.getEngine().isTouchSupported() ? newRadioSubmitButton(x, y) : null;
-            TouchButton.detach(sub);
+            final TouchButton sub = newSub(x, y);
             final AvtListener jmpLsn = new AvtListener() {
                 @Override public final void update(final String value) {
                     final JumpMode jm = Player.get(jumpModes, value);
@@ -1580,7 +1590,35 @@ public class Menu {
         protected final void createClothingList(final int x, final int y) {
             final Clothing[] clothings = Avatar.clothings;
             final List<String> clths = toNameList(clothings);
-            clthRadio = addRadio("Clothing", clths, null, null, x, y, null);
+            final TouchButton sub = newSub(x, y);
+            final AvtListener clthLsn = new AvtListener() {
+                @Override public final void update(final String value) {
+                    final Clothing c = Player.get(clothings, value);
+                    if (pc.profile.isClothingAvailable(c)) {
+                        clearInfo();
+                        TouchButton.detach(sub);
+                        setClothing(c);
+                    } else {
+                        reattachBuy("Buy for " + c.getCost() + "?", sub);
+                    }
+                }};
+            final RadioSubmitListener clthSubLsn = new AvtListener() {
+                @Override public final void update(final String value) {
+                    final Clothing c = Player.get(clothings, value);
+                    if (!pc.profile.isClothingAvailable(c)) {
+                        final int cost = c.getCost();
+                        if (pc.profile.spendGems(cost)) {
+                            pc.profile.availableClothings.add(c);
+                            setClothing(c);
+                            setInfo("Purchased!");
+                            TouchButton.detach(sub);
+                        } else {
+                            setInfo("You need more Gems");
+                            TouchButton.detach(sub);
+                        }
+                    }
+                }};
+            clthRadio = addRadio("Clothing", clths, clthSubLsn, clthLsn, x, y, sub);
             initClothing();
         }
         
@@ -1594,11 +1632,38 @@ public class Menu {
 		}
 		
 		protected final void menuTouch() {
+		    switch (currentTab) {
+                case TAB_CLOTHES :
+                    createClothingList(touchRadioX, touchRadioY);
+                    break;
+                case TAB_CLOTHES_COL :
+                    //TODO
+                    break;
+                case TAB_JUMP :
+                    createJumpList(touchRadioX, touchRadioY);
+                    break;
+                case TAB_JUMP_COL :
+                    //TODO
+                    break;
+            }
 			newTab(PlatformGame.menuCheck, "Back", new Runnable() {@Override public final void run() {exit();}});
-			createJumpList(touchRadioX, touchRadioY);
+			newTab(null, "Garb", TAB_CLOTHES);
+			newTab(PlatformGame.menuGear, "Jump", TAB_JUMP);
 			newTabs();
 			registerBackExit();
 		}
+		
+        private final void newTab(final Panmage img, final CharSequence txt, final byte tab) {
+            final TouchButton btn = newTab(img, txt, new Runnable() {@Override public final void run() {reload(tab);}});
+            if (currentTab == tab) {
+                btn.setEnabled(false);
+            }
+        }
+        
+        private void reload(final byte tab) {
+            currentTab = tab;
+            Panscreen.set(new GearScreen(pc, old, avt));
+        }
         
         protected final void menuClassic() {
             final int left = getLeft();
@@ -1624,6 +1689,15 @@ public class Menu {
         
         private final void initJumpMode() {
             jmpRadio.setSelected(JumpMode.get(avt.jumpMode).getName());
+        }
+        
+        private final void setClothing(final Clothing c) {
+            avt.clothing = c;
+            initClothingColors();
+        }
+        
+        private final void initClothingColors() {
+            //TODO
         }
         
         private final void initClothing() {
@@ -1784,7 +1858,7 @@ public class Menu {
 			registerBackExit();
 		}
 		
-		//TODO newTab/reload almost same as AvatarScreen
+		//TODO newTab/reload almost same as AvatarScreen/GearScreen
 		private final void newTab(final Panmage img, final CharSequence txt, final byte tab) {
 			final TouchButton btn = newTab(img, txt, new Runnable() {@Override public final void run() {reload(tab);}});
 			if (currentTab == tab) {

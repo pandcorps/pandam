@@ -282,6 +282,10 @@ gems = 1000000;
     	return !triedJumpModes.contains(Integer.valueOf(index));
     }
     
+    public final boolean isClothingAvailable(final Clothing c) {
+        return availableClothings.contains(c);
+    }
+    
     private final static Integer ASSIST_INVINCIBILITY = Integer.valueOf(4);
     
     protected final static Assist[] ASSISTS = new Assist[] {
