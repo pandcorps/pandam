@@ -1508,7 +1508,10 @@ public class Menu {
         private final Avatar avt;
         private RadioGroup jmpRadio = null;
         private List<RadioGroup> jmpColors = null;
+        private TouchButton jmpBtn = null;
         private RadioGroup clthRadio = null;
+        private List<RadioGroup> clthColors = null;
+        private TouchButton clthBtn = null;
         
         protected GearScreen(final PlayerContext pc, final Avatar old, final Avatar avt) {
             super(pc, false);
@@ -1540,15 +1543,29 @@ public class Menu {
         }
         
         private final TouchButton newSub(final int x, final int y) {
-            final TouchButton sub = Pangine.getEngine().isTouchSupported() ? newRadioSubmitButton(x, y) : null;
+            return Pangine.getEngine().isTouchSupported() ? newRadioSubmitButton(x, y) : null;
+        }
+        
+        private final TouchButton newBuy(final int x, final int y) {
+            final TouchButton sub = newSub(x, y);
             TouchButton.detach(sub);
+            return sub;
+        }
+        
+        private final TouchButton newColor(final int x, final int y, final byte tab) {
+            final TouchButton sub = newSub(x, y + 100);
+            sub.getActor().register(sub, new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) {
+                    reload(tab);
+                }});
             return sub;
         }
         
         protected final void createJumpList(final int x, final int y) {
             final JumpMode[] jumpModes = JumpMode.values();
             final List<String> jmps = toNameList(jumpModes);
-            final TouchButton sub = newSub(x, y);
+            final TouchButton sub = newBuy(x, y);
+            jmpBtn = newColor(x, y, TAB_JUMP_COL);
             final AvtListener jmpLsn = new AvtListener() {
                 @Override public final void update(final String value) {
                     final JumpMode jm = Player.get(jumpModes, value);
@@ -1590,7 +1607,8 @@ public class Menu {
         protected final void createClothingList(final int x, final int y) {
             final Clothing[] clothings = Avatar.clothings;
             final List<String> clths = toNameList(clothings);
-            final TouchButton sub = newSub(x, y);
+            final TouchButton sub = newBuy(x, y);
+            clthBtn = newColor(x, y, TAB_CLOTHES_COL);
             final AvtListener clthLsn = new AvtListener() {
                 @Override public final void update(final String value) {
                     final Clothing c = Player.get(clothings, value);
@@ -1637,13 +1655,13 @@ public class Menu {
                     createClothingList(touchRadioX, touchRadioY);
                     break;
                 case TAB_CLOTHES_COL :
-                    //TODO
+                    addColor(avt.clothingCol, 0, 0);
                     break;
                 case TAB_JUMP :
                     createJumpList(touchRadioX, touchRadioY);
                     break;
                 case TAB_JUMP_COL :
-                    //TODO
+                    addColor(avt.jumpCol, 0, 0);
                     break;
             }
 			newTab(PlatformGame.menuCheck, "Back", new Runnable() {@Override public final void run() {exit();}});
@@ -1672,6 +1690,10 @@ public class Menu {
             jmpColors = addColor(avt.jumpCol, left + 88, y);
             initJumpColors();
             y -= 64;
+            createClothingList(left, y);
+            clthColors = addColor(avt.clothingCol, left + 88, y);
+            initClothingColors();
+            y -= 64;
             addExit("Back", left, y);
         }
         
@@ -1685,6 +1707,11 @@ public class Menu {
         	for (final RadioGroup jmpColor : Coltil.unnull(jmpColors)) {
         		jmpColor.setVisible(vis);
         	}
+        	if (vis) {
+        	    TouchButton.reattach(jmpBtn);
+        	} else {
+        	    TouchButton.detach(jmpBtn);
+        	}
         }
         
         private final void initJumpMode() {
@@ -1697,7 +1724,10 @@ public class Menu {
         }
         
         private final void initClothingColors() {
-            //TODO
+            for (final RadioGroup clthColor : Coltil.unnull(clthColors)) {
+                clthColor.setVisible(true);
+            }
+            TouchButton.reattach(clthBtn);
         }
         
         private final void initClothing() {
