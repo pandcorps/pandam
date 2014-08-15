@@ -52,7 +52,7 @@ import org.pandcorps.platform.Player.*;
 public class PlatformGame extends BaseGame {
 	/*
 	Horse/hippo/elephant/squirrel/gator/pig/walrus/beaver/stag/bull/ram player face.
-	Player shirts.
+	Player armor, robe (also used by king), hats (ear depth/mask images).
 	Ghost trail, particle trail.
 	Spin-float when hold jump while falling, 2xjump, inf flip-jump, kite.
 	Player sliding image.
@@ -92,7 +92,6 @@ public class PlatformGame extends BaseGame {
 	Assist: Teleport (After fall, teleport to target immediately instead of slow bubble, no gem loss)
 	Clear TileMap.map/imgs?
 	Static TileMaps should combine adjacent Tiles with adjacent TileMapImages into one larger Tile/TileMapImage.
-	Wing color touch menu.
 	Wing gravity tweak.
 	Hoard/Vault Menu to show amount of each type of Gem.
 	Level builder should use setTile instead of forcing getTile Map lookups.

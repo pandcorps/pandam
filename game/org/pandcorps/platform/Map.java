@@ -209,6 +209,10 @@ public class Map {
 				portal.setView(PlatformGame.portalClosed);
 			} else if (oldMap) {
 			    addPlayer(t);
+                if (isOpen(t) && getNumberOfPaths(t) <= 2) {
+                    player.go(Direction.East);
+                    return;
+                }
 			} else {
 			    new FloatPlayer(t);
 			    oldMap = true;
@@ -453,7 +457,7 @@ public class Map {
     		    t = tm.getNeighbor(t, d);
     		    final Tile tile = tm.getTile(t);
     		    if (tile == null || tile.isSolid()) {
-    		        return false;
+    		        return goAdjusted(d0);
     		    }
     		    final byte b = tile.getBehavior();
     		    switch (b) {
@@ -467,7 +471,7 @@ public class Map {
         		            }
         		            return true;
         		        }
-        		        return false;
+        		        return goAdjusted(d0);
     		        case TILE_VERT :
     		        case TILE_HORIZ :
     		            // d stays the same
@@ -492,6 +496,33 @@ public class Map {
     		        first = false;
     		    }
 		    }
+		}
+		
+		protected boolean goAdjusted(final Direction d0) {
+		    if (d0 == Direction.North || d0 == Direction.South) {
+		        return false;
+		    }
+		    final int t0 = getIndex();
+		    for (int i = 0; i < 2; i++) {
+    		    final Direction d = (i == 0) ? Direction.North : Direction.South;
+    		    int t = t0;
+    		    final byte exBehavior;
+    		    if (d0 == Direction.East) {
+    		        exBehavior = (i == 0) ? TILE_RIGHTDOWN : TILE_RIGHTUP;
+    		    } else {
+    		        exBehavior = (i == 0) ? TILE_LEFTDOWN : TILE_LEFTUP;
+    		    }
+    		    while (true) {
+    		        t = tm.getNeighbor(t, d);
+    		        final int b = tm.getTile(t).getBehavior();
+    		        if (b == exBehavior) {
+    		            return go(d);
+    		        } else if (b != TILE_VERT) {
+    		            break;
+    		        }
+    		    }
+		    }
+		    return false;
 		}
 		
 		private final Direction getOther(final Direction c, final Direction o1, final Direction o2) {
@@ -577,6 +608,18 @@ public class Map {
 	private final static boolean isOpen(final int index) {
 	    return getOpen().get(getKey(index)) != null;
     }
+	
+	private final static int getNumberOfPaths(final int index) {
+	    int n = 0;
+	    for (final Direction dir : Direction.values()) {
+	        final int b = tm.getTile(tm.getNeighbor(index, dir)).getBehavior();
+	        if (b == Tile.BEHAVIOR_SOLID || b == TILE_SPECIAL || b == Tile.BEHAVIOR_OPEN) {
+	            continue;
+	        }
+	        n++;
+	    }
+	    return n;
+	}
 	
 	private final static void loadImages() {
 	    final String mapFile = getMapFile();
