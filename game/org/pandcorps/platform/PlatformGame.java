@@ -159,6 +159,8 @@ public class PlatformGame extends BaseGame {
 	protected final static String SEG_LOC = "LOC";
 	protected final static String SEG_AVT = "AVT";
 	
+	private final static PixelMask greyMask = new GreyScalePixelMask();
+	
 	protected static Panroom room = null;
 	protected static Panlayer hud = null;
 	protected final static ArrayList<PlayerContext> pcs = new ArrayList<PlayerContext>();
@@ -395,10 +397,14 @@ public class PlatformGame extends BaseGame {
 	}
 	
 	private final static void filterStrip(final Img[] in, final Img[] out, final PixelFilter f) {
+		filterStrip(in, out, null, f);
+	}
+	
+	private final static void filterStrip(final Img[] in, final Img[] out, final PixelMask m, final PixelFilter f) {
 		if (f != null) {
 			final int size = in.length;
 			for (int i = 0; i < size; i++) {
-				out[i] = Imtil.filter(in[i], f);
+				out[i] = Imtil.filter(in[i], m, f);
 			}
 		}
 	}
@@ -482,7 +488,7 @@ public class PlatformGame extends BaseGame {
 			    c.init();
 			    clothings = new Img[c.imgs.length];
 			    clothingFilter = getFilter(avatar.clothingCol);
-			    filterStrip(c.imgs, clothings, clothingFilter);
+			    filterStrip(c.imgs, clothings, greyMask, clothingFilter);
 			}
 			final int size = guys.length;
 			for (int i = 0; i < size; i++) {
@@ -542,7 +548,7 @@ public class PlatformGame extends BaseGame {
 			    clothingMap = null;
             } else {
                 clothingMap = new Img[clothingMapRaw.length];
-                filterStrip(clothingMapRaw, clothingMap, pi.clothingFilter);
+                filterStrip(clothingMapRaw, clothingMap, greyMask, pi.clothingFilter);
             }
 			final Img[] wingMap = needWing ? loadChrStrip("WingsMap.png", 32, pf) : null;
 			final Img[] faceMap = loadChrStrip("FaceMap" + anm + ".png", 18, pi.f);

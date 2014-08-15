@@ -198,6 +198,10 @@ public final class Imtil {
     	return filter(img, Coltil.asList(fs));
     }
     
+    public final static Img filter(final Img img, final PixelMask mask, final PixelFilter... fs) {
+    	return filter(img, 0, 0, img.getWidth(), img.getHeight(), mask, Coltil.asList(fs));
+    }
+    
     public final static Img filter(final Img img, final int ox, final int oy, final int w, final int h, final PixelFilter... fs) {
     	return filter(img, ox, oy, w, h, Coltil.asList(fs));
     }
@@ -207,6 +211,10 @@ public final class Imtil {
     }
     
     public final static Img filter(final Img img, final int ox, final int oy, final int w, final int h, final Iterable<PixelFilter> fs) {
+    	return filter(img, ox, oy, w, h, null, fs);
+    }
+    
+    public final static Img filter(final Img img, final int ox, final int oy, final int w, final int h, final PixelMask mask, final Iterable<PixelFilter> fs) {
     	if (Coltil.isEmpty(fs)) {
     		return img;
     	}
@@ -219,6 +227,9 @@ public final class Imtil {
             for (int y = 0; y < ih; y++) {
                 int p = img.getRGB(x, y);
                 if (x >= ox && x < sx && y >= oy && y < sy) {
+                	if (PixelMask.isMasked(mask, p)) {
+                		continue;
+                	}
 	                for (final PixelFilter f : fs) {
 	                	p = f.filter(p);
 	                }
