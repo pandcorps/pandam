@@ -28,6 +28,7 @@ import org.pandcorps.platform.Player.*;
 
 public class Avatar extends PlayerData implements Segmented {
 	private final static float DEF_JUMP_COL = 1;
+	private final static int MAX_COLOR_INDEX = 4;
     protected String anm = null;
     protected int eye = -1;
     protected final SimpleColor col = new SimpleColor();
@@ -35,11 +36,16 @@ public class Avatar extends PlayerData implements Segmented {
     protected final SimpleColor jumpCol = new SimpleColor();
     protected Clothing clothing = null;
     protected final SimpleColor clothingCol = new SimpleColor();
+    private final static int[] randomColorChannels = {0, 1, 2};
     
     protected final static class SimpleColor {
     	protected float r = -1; // These should probably be multiples of 0.25
         protected float g = -1;
         protected float b = -1;
+        
+        protected final void init() {
+        	r = g = b = DEF_JUMP_COL;
+        }
         
         protected final void load(final SimpleColor col) {
         	r = col.r;
@@ -47,16 +53,51 @@ public class Avatar extends PlayerData implements Segmented {
         	b = col.b;
         }
         
-        protected void load(final Segment seg, final int i) {
+        protected final void load(final Segment seg, final int i) {
         	r = seg.getFloat(i, DEF_JUMP_COL);
         	g = seg.getFloat(i + 1, DEF_JUMP_COL);
         	b = seg.getFloat(i + 2, DEF_JUMP_COL);
         }
         
-        protected void save(final Segment seg, final int i) {
+        protected final void save(final Segment seg, final int i) {
         	seg.setFloat(i, r);
         	seg.setFloat(i + 1, g);
         	seg.setFloat(i + 2, b);
+        }
+        
+        protected final void randomize() {
+        	do {
+                r = randColor();
+                g = randColor();
+                b = randColor();
+            } while (r == 0 && g == 0 && b == 0);
+        }
+        
+        protected final void randomizeColorful() {
+        	final int max = Mathtil.randi(MAX_COLOR_INDEX - 1, MAX_COLOR_INDEX);
+        	final int min = Mathtil.randi(0, 1);
+        	final int mid = Mathtil.randi(min, max);
+        	Mathtil.shuffle(randomColorChannels);
+        	setIndex(randomColorChannels[0], max);
+        	setIndex(randomColorChannels[1], mid);
+        	setIndex(randomColorChannels[2], min);
+        }
+        
+        protected final void negate() {
+        	r = 1f - r;
+        	g = 1f - g;
+        	b = 1f - b;
+        }
+        
+        protected final void setIndex(final int channel, final int i) {
+        	final float color = toColor(i);
+        	if (channel == 0) {
+        		r = color;
+        	} else if (channel == 1) {
+        		g = color;
+        	} else {
+        		b = color;
+        	}
         }
     }
     
@@ -77,7 +118,9 @@ public class Avatar extends PlayerData implements Segmented {
                 return;
             }
             imgs = PlatformGame.loadChrStrip("clothes/" + res + ".png", 32, true);
-            mapImgs = PlatformGame.loadChrStrip("clothes/" + res + "Map.png", 32, true);
+            if (!res.startsWith("Royal")) {
+            	mapImgs = PlatformGame.loadChrStrip("clothes/" + res + "Map.png", 32, true);
+            }
             Img.setTemporary(false, imgs);
             Img.setTemporary(false, mapImgs);
         }
@@ -93,8 +136,18 @@ public class Avatar extends PlayerData implements Segmented {
         new Clothing("Long Sleeves", "LongShirt", 2000)
     };
     
+    protected final static Clothing[] hiddenClothings = {
+        new Clothing("Royal Mantle", "RoyalMantle", 100000),
+        new Clothing("Royal Robe", "RoyalRobe", 100000),
+    };
+    
     protected final static Clothing getClothing(final String name) {
         for (final Clothing c : clothings) {
+            if (c.res.equals(name)) {
+                return c;
+            }
+        }
+        for (final Clothing c : hiddenClothings) {
             if (c.res.equals(name)) {
                 return c;
             }
@@ -112,14 +165,11 @@ public class Avatar extends PlayerData implements Segmented {
     public void randomize() {
         anm = Mathtil.rand(PlatformGame.getAnimals());
         eye = Mathtil.randi(1, PlatformGame.getNumEyes());
-        do {
-            col.r = randColor();
-            col.g = randColor();
-            col.b = randColor();
-        } while (col.r == 0 && col.g == 0 && col.b == 0);
+        col.randomize();
         jumpMode = Player.MODE_NORMAL;
-        jumpCol.r = jumpCol.g = jumpCol.b = DEF_JUMP_COL;
+        jumpCol.init();
         clothing = null;
+        clothingCol.init();
     }
     
     public void load(final Avatar src) {
@@ -158,10 +208,10 @@ public class Avatar extends PlayerData implements Segmented {
     }
     
     private final static float randColor() {
-        return toColor(Mathtil.randi(0, 4));
+        return toColor(Mathtil.randi(0, MAX_COLOR_INDEX));
     }
     
     protected final static float toColor(final int i) {
-        return i / 4f;
+        return i / 4f; // MAX_COLOR_INDEX
     }
 }
