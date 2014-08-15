@@ -83,7 +83,6 @@ public class PlatformGame extends BaseGame {
 	Level to-do notes.
 	Random music per map.
 	Sound effects for jump, bump, stomp, hurt, etc.
-	Automatically advance on Map if standing on defeated Level and there is only one adjacent undefeated Level.
 	Flags to simplify menu in some environments (one Profile, maybe one Avatar).
 	Let LogoScreen finish after a specified Runnable finishes.
 	Let Thread keep loading through title screen.
@@ -102,7 +101,6 @@ public class PlatformGame extends BaseGame {
 	Console: Change zoom (requires restart).
 	Console: Filters, 8-bit, b/w (requires restart).
 	Mouse TouchEvents.
-	Pressing left/right should always work on Map markers without a fork.
 	A BounceBall should be able to bump blocks (from below and side) and give Gem to Player that kicked.
 	Pause if device gets a text/interruption.
 	Some rises allow an Enemy but Player hits ceiling.
@@ -115,6 +113,8 @@ public class PlatformGame extends BaseGame {
 	User saw Enemy defeated by bumped block fail to give Player a Gem.
 	Once saw Player appear on wrong Marker after goal-met screen.
 	Move music generation, preprocessing classes into a new folder to be excluded from jar.
+	Map border water TileMaps for large screens missing; Map not even centered.
+	Add Map TouchButton hint labels (up/down/left/right/play) after time threshold without moving or before 1st Level.
 	*/
 	
 	protected final static byte TILE_BREAK = 2;
