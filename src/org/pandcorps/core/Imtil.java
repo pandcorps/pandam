@@ -46,7 +46,7 @@ public final class Imtil {
             in = onlyResources ? Iotil.getResourceInputStream(location) : Iotil.getInputStream(location);
             return cm.load(in);
         } catch (final Exception e) {
-            throw Panception.get(e);
+            throw new Panception("Could not load " + location, e);
         } finally {
             Iotil.close(in);
         }
@@ -227,12 +227,11 @@ public final class Imtil {
             for (int y = 0; y < ih; y++) {
                 int p = img.getRGB(x, y);
                 if (x >= ox && x < sx && y >= oy && y < sy) {
-                	if (PixelMask.isMasked(mask, p)) {
-                		continue;
+                	if (!PixelMask.isMasked(mask, p)) {
+		                for (final PixelFilter f : fs) {
+		                	p = f.filter(p);
+		                }
                 	}
-	                for (final PixelFilter f : fs) {
-	                	p = f.filter(p);
-	                }
                 }
                 out.setRGB(x, y, p);
             }

@@ -100,6 +100,17 @@ public final class Mathtil {
 	    throw new RuntimeException("Internal logic error");
 	}
 	
+	// Lists can already use Collections.shuffle
+	public final static void shuffle(final int[] a) {
+		final int last = a.length - 1;
+		for (int i = 0; i <= last; i++) {
+			final int o = randi(0, last);
+			final int t = a[i];
+			a[i] = a[o];
+			a[o] = t;
+		}
+	}
+	
 	public final static int pow(final int n, final int exp) {
 		int p = 1;
 		for (int i = 0; i < exp; i++) {
