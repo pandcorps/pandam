@@ -115,7 +115,6 @@ public class PlatformGame extends BaseGame {
 	Move music generation, preprocessing classes into a new folder to be excluded from jar.
 	Map border water TileMaps for large screens missing; Map not even centered.
 	Add Map TouchButton hint labels (up/down/left/right/play) after time threshold without moving or before 1st Level.
-	Projectiles should disappear when they leave the screen, but they might not disappear until they leave the room.
 	*/
 	
 	protected final static byte TILE_BREAK = 2;

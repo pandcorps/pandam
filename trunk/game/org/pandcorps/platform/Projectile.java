@@ -38,6 +38,12 @@ public final class Projectile extends Pandy implements Collidable, AllOobListene
     }
     
     @Override
+    public final void onStep(final StepEvent event) {
+    	super.onStep(event);
+    	Enemy.destroyIfOffScreen(this, 40);
+    }
+    
+    @Override
     public final void onAllOob(final AllOobEvent event) {
         destroy();
     }
