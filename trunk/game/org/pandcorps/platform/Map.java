@@ -746,8 +746,8 @@ public class Map {
            	kingAvt.randomize();
            	kingAvt.col.randomizeColorful();
            	kingAvt.clothing = Mathtil.rand(Avatar.hiddenClothings);
-           	kingAvt.clothingCol.load(kingAvt.col);
-           	kingAvt.clothingCol.negate();
+           	//kingAvt.clothingCol.load(kingAvt.col); //negate();
+           	kingAvt.clothingCol.randomizeColorfulDifferent(kingAvt.col);
            	kingCrown = Mathtil.randi(0, PlatformGame.crowns.length - 1);
 		}
 		initRoom();

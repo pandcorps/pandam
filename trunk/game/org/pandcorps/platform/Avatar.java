@@ -83,10 +83,37 @@ public class Avatar extends PlayerData implements Segmented {
         	setIndex(randomColorChannels[2], min);
         }
         
+        protected final void randomizeColorfulDifferent(final SimpleColor ref) {
+        	do {
+        		randomizeColorful();
+        	} while (getDistance(ref) < 6);
+        }
+        
         protected final void negate() {
         	r = 1f - r;
         	g = 1f - g;
         	b = 1f - b;
+        }
+        
+        protected final int getDistance(final SimpleColor c) {
+        	int d = 0;
+        	for (int i = 0; i < 3; i++) {
+        		final int dif = getIndex(i) - c.getIndex(i);
+        		d += (dif * dif);
+        	}
+        	return d;
+        }
+        
+        protected final int getIndex(final int channel) {
+        	final float color;
+        	if (channel == 0) {
+        		color = r;
+        	} else if (channel == 1) {
+        		color = g;
+        	} else {
+        		color = b;
+        	}
+        	return toIndex(color);
         }
         
         protected final void setIndex(final int channel, final int i) {
@@ -213,5 +240,9 @@ public class Avatar extends PlayerData implements Segmented {
     
     protected final static float toColor(final int i) {
         return i / 4f; // MAX_COLOR_INDEX
+    }
+    
+    private final static int toIndex(final float c) {
+    	return Math.round(c * MAX_COLOR_INDEX);
     }
 }
