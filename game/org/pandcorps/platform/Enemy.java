@@ -367,10 +367,14 @@ public class Enemy extends Character {
 		if (isDestroyed()) {
 			return;
 		}
-		final float x = getPosition().getX();
-		final Panlayer layer = getLayer();
-		if ((x + 80) < layer.getViewMinimum().getX() || (x - 160) > layer.getViewMaximum().getX()) {
-			destroy();
+		destroyIfOffScreen(this, 80);
+	}
+	
+	protected final static void destroyIfOffScreen(final Panctor a, final int off) {
+		final float x = a.getPosition().getX();
+		final Panlayer layer = a.getLayer();
+		if ((x + off) < layer.getViewMinimum().getX() || (x - (off * 2)) > layer.getViewMaximum().getX()) {
+			a.destroy();
 		}
 	}
 	
