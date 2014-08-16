@@ -476,7 +476,7 @@ public class PlatformGame extends BaseGame {
 			}
 			Img e = eyesAll[avatar.eye - 1];
 			if (e == null) {
-			    e = ImtilX.loadImage("org/pandcorps/platform/res/chr/Eyes0" + avatar.eye + ".png", false);
+			    e = ImtilX.loadImage("org/pandcorps/platform/res/chr/Eyes" + Chartil.padZero(avatar.eye, 2) + ".png", false);
 			    eyesAll[avatar.eye - 1] = e;
 			}
 			eyes = e;
@@ -1379,7 +1379,7 @@ System.out.println("loadConstants end " + System.currentTimeMillis());
 	}
 	
 	protected final static int getNumEyes() {
-	    return 8;
+	    return 16;
 	}
 	
 	protected final static EnemyDefinition getEnemy(final String name) {
