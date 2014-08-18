@@ -153,6 +153,7 @@ public class Enemy extends Character {
 	protected int timer = 0;
 	protected int timerMode = 0;
 	protected boolean full = false;
+	protected Player lastStomper = null; // If Enemy requires multiple stomps, keep track of last one
 	
 	protected Enemy(final EnemyDefinition def, final Panctor ref) {
 		this(def, ref.getPosition());
@@ -233,6 +234,7 @@ public class Enemy extends Character {
 	}
 	
 	protected final boolean onStomp(final Player stomper) {
+		lastStomper = stomper;
 		if (def.stompHandler == null || !def.stompHandler.onInteract(this, stomper)) {
 			return defeat(stomper, 0, DEFEAT_STOMP);
 		} else {
@@ -416,6 +418,13 @@ public class Enemy extends Character {
 
 	@Override
 	protected final boolean onFell() {
+		if (lastStomper != null) {
+			/*
+			It is annoying if Player stomps Ogre once, then Ogre falls before Player can finish the Ogre.
+			So reward the Player.
+			*/
+			new GemBumped(lastStomper, this);
+		}
 		destroy();
 		return true;
 	}
