@@ -265,6 +265,7 @@ public class Player extends Character implements CollisionListener {
 	private int levelGems = 0;
 	protected int levelDefeatedEnemies = 0;
 	protected int levelFalls = 0;
+	protected long lastFall = -1;
 	protected int levelHits = 0;
 	protected final boolean level;
 	private int hurtTimer = 0;
@@ -332,6 +333,9 @@ public class Player extends Character implements CollisionListener {
 		    this.activeTimer += 8;
 		}
 		if (jumpMode == JUMP_FLY) {
+			if (isGrounded()) {
+				pc.profile.stats.jumps++;
+			}
 	        flying = true;
 	        addV(-g);
 	        return;
@@ -627,7 +631,13 @@ public class Player extends Character implements CollisionListener {
 	
 	@Override
 	protected final boolean onFell() {
-		if (jumpMode != JUMP_FLY) {
+		if (jumpMode == JUMP_FLY) {
+			final long clock = Pangine.getEngine().getClock();
+			if (lastFall < 0 || clock > (lastFall + 1)) {
+				levelFalls++;
+			}
+			lastFall = clock;
+		} else {
 		    if (pc.profile.autoRun) {
 		        final Panple pos = getPosition();
 		        safe.set(pos.getX(), getCeiling() - 1, pos.getZ());
