@@ -117,7 +117,6 @@ public class PlatformGame extends BaseGame {
 	Add Map TouchButton hint labels (up/down/left/right/play) after time threshold without moving or before 1st Level.
 	Separate Model for clothes preview.
 	When last template is too big, try 3 times to find a smaller one.  Try single block.
-	Only use one gem word template per level.
 	Option to resize touch buttons.
 	Clipboard import/export.
 	*/

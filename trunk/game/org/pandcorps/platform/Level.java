@@ -53,6 +53,8 @@ public class Level {
     
     protected final static PixelFilter terrainDarkener = new BrightnessPixelFilter((short) -40, (short) -24, (short) -32);
     
+    private final static Set<Class<? extends Template>> oneUseTemplates = new HashSet<Class<? extends Template>>();
+    
     protected static TileMapImage[] flashBlock = null;
     
     protected static long seed = -1;
@@ -80,6 +82,11 @@ public class Level {
     protected static int currLetter = 0;
     protected static List<Panctor> collectedLetters = null;
     protected static boolean victory = false;
+    
+    static {
+    	oneUseTemplates.add(GemMsgTemplate.class);
+    	oneUseTemplates.add(GiantTemplate.class);
+    }
     
     protected abstract static class Theme {
     	private final static String[] MSG = {"PLAYER", "GEMS!!!", "HURRAY", "GO GO!", "YAY", "GREAT", "PERFECT"};
@@ -452,7 +459,7 @@ public class Level {
     		    } else {
     		    	template = Mathtil.rand(templates);
     		    }
-    		    if (template.getClass() == GiantTemplate.class) {
+    		    if (oneUseTemplates.contains(template.getClass())) {
     		    	templates.remove(template);
     		    }
     		    template.plan();
@@ -660,7 +667,8 @@ public class Level {
 	        addTemplate(new PitTemplate(), new BridgePitTemplate(), new BlockPitTemplate());
 	        addTemplate(new UpBlockStepTemplate(), new DownBlockStepTemplate(), new BlockWallTemplate(), new BlockGroupTemplate());
 	        addTemplate(new BlockBonusTemplate());
-	        addTemplate(new GemTemplate(), new GemMsgTemplate());
+	        addTemplate(new GemTemplate());
+	        addTemplate(new GemMsgTemplate());
 	        addTemplate(new SlantTemplate(true), new SlantTemplate(false));
 	        addGiantTemplate();
 	        goals.add(new SlantGoal());
@@ -692,7 +700,8 @@ public class Level {
 	        addTemplate(new PitTemplate(), new BridgePitTemplate(), new BlockPitTemplate());
 	        addTemplate(new UpBlockStepTemplate(), new DownBlockStepTemplate(), new BlockWallTemplate(), new BlockGroupTemplate());
 	        addTemplate(new BlockBonusTemplate());
-	        addTemplate(new GemTemplate(), new GemMsgTemplate());
+	        addTemplate(new GemTemplate());
+	        addTemplate(new GemMsgTemplate());
 	        addTemplate(new SlantTemplate(true), new SlantTemplate(false));
 	        addGiantTemplate();
 	        goals.add(new SlantGoal());
@@ -730,7 +739,8 @@ public class Level {
 	        addTemplate(new BlockPitTemplate());
 	        addTemplate(new UpBlockStepTemplate(), new DownBlockStepTemplate(), new BlockWallTemplate(), new BlockGroupTemplate());
 	        addTemplate(new BlockBonusTemplate());
-	        addTemplate(new GemTemplate(), new GemMsgTemplate());
+	        addTemplate(new GemTemplate());
+	        addTemplate(new GemMsgTemplate());
 	        addGiantTemplate();
 	        goals.add(new UpBlockGoal());
 	    }
