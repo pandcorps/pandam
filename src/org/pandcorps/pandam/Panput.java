@@ -70,6 +70,10 @@ public abstract class Panput {
         return endListener ? isEnded() : isActive();
     }
     
+    public final static boolean isActive(final Panput input, final boolean endListener) {
+    	return input != null && input.isActive(endListener);
+    }
+    
     //TODO Support inactivate in Listeners and Panction
     public final void inactivate() {
         // I think inactivated is cleared during the key release event;
