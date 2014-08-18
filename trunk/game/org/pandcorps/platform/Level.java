@@ -82,7 +82,7 @@ public class Level {
     protected static boolean victory = false;
     
     protected abstract static class Theme {
-    	private final static String[] MSG = {"PLAYER", "GEMS!!!", "HURRAY", "GO GO GO", "YAY", "GREAT", "PERFECT"};
+    	private final static String[] MSG = {"PLAYER", "GEMS!!!", "HURRAY", "GO GO!", "YAY", "GREAT", "PERFECT"};
     	public final static Theme Normal = new Theme(null, MSG) {
     	    @Override protected final int[] getEnemyIndices(final int worlds) {
     	        switch (worlds) {
@@ -664,6 +664,7 @@ public class Level {
 	        addTemplate(new SlantTemplate(true), new SlantTemplate(false));
 	        addGiantTemplate();
 	        goals.add(new SlantGoal());
+	        goals.add(new UpBlockGoal());
 	    }
     	
     	@Override
@@ -695,6 +696,7 @@ public class Level {
 	        addTemplate(new SlantTemplate(true), new SlantTemplate(false));
 	        addGiantTemplate();
 	        goals.add(new SlantGoal());
+	        goals.add(new UpBlockGoal());
 	    }
     	
     	@Override
