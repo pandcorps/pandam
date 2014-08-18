@@ -500,15 +500,19 @@ public class Menu {
 		}
 		
 		protected final List<RadioGroup> addColor(final SimpleColor col, int x, int y) {
+			return addColor(col, x, y, null);
+		}
+		
+		protected final List<RadioGroup> addColor(final SimpleColor col, int x, int y, final String label) {
 			if (tabsSupported && isTabEnabled()) {
-				addColorTouch(col);
+				addColorTouch(col, label);
 				return null;
 			} else {
 				return addColorClassic(col, x, y);
 			}
 		}
 		
-		protected final void addColorTouch(final SimpleColor col) {
+		protected final void addColorTouch(final SimpleColor col, final String label) {
 			final String id = Pantil.vmid();
 			final Pangine engine = Pangine.getEngine();
 			final Panple btnSize = PlatformGame.menu.getSize();
@@ -517,6 +521,9 @@ public class Menu {
 			final int btnH = (int) btnSize.getY(), difH = btnH + 16;
 			final int minY = (engine.getEffectiveHeight() - (btnH + difH)) / 2;
 			int x = minX, y = minY + difH;
+			if (label != null) {
+				addTitle(label + " Color", x, y + btnH + 1);
+			}
 			final int txtX = btnW / 2, txtY = y - 12;
 			final StringBuilder sbR = new StringBuilder(), sbG = new StringBuilder(), sbB = new StringBuilder();
 			final Pantext txtR = initCol(col.r, sbR, x + txtX, txtY);
@@ -1367,7 +1374,7 @@ public class Menu {
 					createEyeList(touchRadioX, touchRadioY);
 					break;
 				case TAB_COLOR :
-					addColor(avt.col, 0, 0);
+					addColor(avt.col, 0, 0, "Avatar");
 					break;
 				case TAB_NAME :
 					createNameInput(touchKeyboardX, getTouchKeyboardY());
@@ -1424,6 +1431,7 @@ public class Menu {
 		}
 		
 		private final void goGear() {
+			GearScreen.currentTab = GearScreen.TAB_DEFAULT;
 			Panscreen.set(new GearScreen(pc, old, avt));
 		}
 		
@@ -1504,7 +1512,8 @@ public class Menu {
 	    private final static byte TAB_CLOTHES_COL = 1;
         private final static byte TAB_JUMP = 2;
         private final static byte TAB_JUMP_COL = 3;
-        private static byte currentTab = TAB_CLOTHES;
+        private final static byte TAB_DEFAULT = TAB_CLOTHES;
+        private static byte currentTab = TAB_DEFAULT;
         private final static String DEF_CLOTHES = "None";
 	    private final Avatar old;
         private final Avatar avt;
@@ -1671,13 +1680,13 @@ public class Menu {
                     createClothingList(touchRadioX, touchRadioY);
                     break;
                 case TAB_CLOTHES_COL :
-                    addColor(avt.clothingCol, 0, 0);
+                    addColor(avt.clothingCol, 0, 0, "Clothing");
                     break;
                 case TAB_JUMP :
                     createJumpList(touchRadioX, touchRadioY);
                     break;
                 case TAB_JUMP_COL :
-                    addColor(avt.jumpCol, 0, 0);
+                    addColor(avt.jumpCol, 0, 0, "Wing");
                     break;
             }
 			newTab(PlatformGame.menuCheck, "Back", new Runnable() {@Override public final void run() {exit();}});
