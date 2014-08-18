@@ -211,7 +211,6 @@ public class Map {
 			    addPlayer(t);
                 if (isOpen(t) && getNumberOfPaths(t) <= 2) {
                     player.go(Direction.East);
-                    return;
                 }
 			} else {
 			    new FloatPlayer(t);
@@ -385,17 +384,20 @@ public class Map {
 			final Pangine engine = Pangine.getEngine();
 			final Panteraction interaction = engine.getInteraction();
 			final ControlScheme ctrl = pc.ctrl;
+			if (ctrl == null) {
+				return;
+			}
 			final boolean endListener = engine.isTouchSupported();
 			// Similar to Guy4Controller
-	        if (ctrl.getDown().isActive(endListener)) {
+	        if (Panput.isActive(ctrl.getDown(), endListener)) {
 	            go(Direction.South);
-	        } else if (ctrl.getUp().isActive(endListener)) {
+	        } else if (Panput.isActive(ctrl.getUp(), endListener)) {
 	            go(Direction.North);
-	        } else if (ctrl.getLeft().isActive(endListener)) {
+	        } else if (Panput.isActive(ctrl.getLeft(), endListener)) {
 	            go(Direction.West);
-	        } else if (ctrl.getRight().isActive(endListener)) {
+	        } else if (Panput.isActive(ctrl.getRight(), endListener)) {
 	            go(Direction.East);
-	        } else if (ctrl.get1().isActive(endListener)) {
+	        } else if (Panput.isActive(ctrl.get1(), endListener)) {
 	        	/*if (room.getBlendColor().getA() > Pancolor.MIN_VALUE) {
 	        		return;
 	        	}*/
@@ -422,7 +424,7 @@ public class Map {
 			} else if (interaction.KEY_TAB.isActive()) {
 				interaction.KEY_TAB.inactivate();
 				modeMove = (short) ((modeMove + 1) % 3);
-			} else if (getMenuInput(ctrl).isActive(endListener)) {
+			} else if (Panput.isActive(getMenuInput(ctrl), endListener)) {
 				goMenu(getMenuInput(ctrl), pc);
 			}
 		}
