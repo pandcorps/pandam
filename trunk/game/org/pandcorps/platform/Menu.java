@@ -1639,7 +1639,7 @@ public class Menu {
         	final Avatar avt = mc.profile.currentAvatar;
         	avt.anm = "Bear";
         	avt.col.init();
-        	avt.eye = 3;
+        	avt.eye = 4;
         	avt.clothingCol.r = 0;
         	avt.clothingCol.g = 0;
         	avt.clothingCol.b = Avatar.DEF_JUMP_COL;
