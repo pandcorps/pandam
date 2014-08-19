@@ -115,10 +115,10 @@ public class PlatformGame extends BaseGame {
 	Move music generation, preprocessing classes into a new folder to be excluded from jar.
 	Map border water TileMaps for large screens missing; Map not even centered.
 	Add Map TouchButton hint labels (up/down/left/right/play) after time threshold without moving or before 1st Level.
-	Separate Model for clothes preview.
 	When last template is too big, try 3 times to find a smaller one.  Try single block.
 	Option to resize touch buttons.
 	Clipboard import/export.
+	Fix unclosed Img warnings.
 	*/
 	
 	protected final static byte TILE_BREAK = 2;
