@@ -47,6 +47,15 @@ public abstract class BasePantity implements Pantity {
 	    }
 	}
 	
+	public final static void destroyAll(final Pantity... entities) {
+	    if (entities == null) {
+	        return;
+	    }
+	    for (final Pantity entity : entities) {
+	        destroy(entity);
+	    }
+	}
+	
 	public final static void destroyAll(final Panimation animation) {
 	    if (animation != null) {
 	        animation.destroyAll();
