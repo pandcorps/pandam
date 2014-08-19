@@ -113,7 +113,6 @@ public class PlatformGame extends BaseGame {
 	User saw Enemy defeated by bumped block fail to give Player a Gem.
 	Once saw Player appear on wrong Marker after goal-met screen.
 	Move music generation, preprocessing classes into a new folder to be excluded from jar.
-	Map border water TileMaps for large screens missing; Map not even centered.
 	Add Map TouchButton hint labels (up/down/left/right/play) after time threshold without moving or before 1st Level.
 	When last template is too big, try 3 times to find a smaller one.  Try single block.
 	Option to resize touch buttons.
@@ -262,6 +261,7 @@ public class PlatformGame extends BaseGame {
 	protected static Panmage key = null;
 	protected static Panmage keyIn = null;
 	protected static Queue<Runnable> loaders = new LinkedList<Runnable>();
+	protected static Runnable btnLoader = null;
 	
 	@Override
 	protected final boolean isFullScreen() {
@@ -720,6 +720,7 @@ public class PlatformGame extends BaseGame {
 		final Segment cfg = SegmentStream.readLocation(FILE_CFG, "CFG|").get(0);
 		// CFG|Andrew
 		Config.defaultProfileName = cfg.getValue(0);
+		Config.btnSize = cfg.getInt(1, 0);
 		
 		loaders.add(new Runnable() { @Override public final void run() {
 		    guysBlank = loadChrStrip("Bear.png", 32, true);
@@ -998,8 +999,9 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 			Menu.TitleScreen.generateTitleCharacters(); }});
 		
 		if (engine.isTouchSupported()) {
-			loaders.add(new Runnable() { @Override public final void run() {
+			btnLoader = new Runnable() { @Override public final void run() {
 				// 400 x 240
+			    //TODO Incorporate Config.btnSize
 				DIM_BUTTON = (Math.min(60 * engine.getEffectiveWidth() / 400, 60 * engine.getEffectiveHeight() / 240) / 4) * 4 - 1;
 				final int d = DIM_BUTTON;
 				final Pancolor f = new FinPancolor((short) 160, Mathtil.SHORT_0, Pancolor.MAX_VALUE);
@@ -1034,7 +1036,8 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
                 Imtil.setPseudoTranslucent(diaIn);
                 diamond = engine.createImage(Pantil.vmid(), dia);
                 diamondIn = engine.createImage(Pantil.vmid(), diaIn);
-				}});
+				}};
+			loaders.add(btnLoader);
 			loaders.add(new Runnable() { @Override public final void run() {
 			    final int w = 48, h = 40;
 			    final Pancolor clrBtn = new FinPancolor((short) 160, (short) 192, (short) 224);
@@ -1082,6 +1085,11 @@ System.out.println("loadConstants end " + System.currentTimeMillis());
 		    loaders.add(new Runnable() { @Override public final void run() {
 		        engine.getMusic().ensureCapacity(5); }});
 		}
+	}
+	
+	protected final static void reloadButtons() {
+	    Panmage.destroyAll(button, buttonIn, right2, right2In, left2, left2In, diamond, diamondIn);
+	    btnLoader.run();
 	}
 	
 	protected final static void openArmoredImp(final Enemy enemyPos, final Enemy enemyDir) {

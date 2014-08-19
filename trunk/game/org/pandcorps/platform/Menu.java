@@ -2206,8 +2206,10 @@ public class Menu {
 	}
 	
 	protected final static class OptionsScreen extends PlayerScreen {
-		final StringBuilder msgAuto = new StringBuilder();
-	    final StringBuilder msgSpeed = new StringBuilder();
+		private final StringBuilder msgAuto = new StringBuilder();
+		private final StringBuilder msgSpeed = new StringBuilder();
+		private final StringBuilder msgBtnSize = new StringBuilder();
+		private final int oldBtnSize = Config.btnSize;
 	    
         protected OptionsScreen(final PlayerContext pc) {
             super(pc, false);
@@ -2227,15 +2229,24 @@ public class Menu {
             final Pangine engine = Pangine.getEngine();
             final Panple btnSize = PlatformGame.menu.getSize();
             final int btnW = (int) btnSize.getX(), btnH = (int) btnSize.getY(), offY = btnH * 4 / 3;
-            int x = btnW / 2, y = engine.getEffectiveHeight() - btnH - offY;
+            int x = btnW / 2, y = engine.getEffectiveHeight() - btnH - offY; //TODO Doesn't handle btnSize
+            
             newFormButton("AutoToggle", x, y, PlatformGame.menuButtons, new Runnable() {@Override public final void run() {toggleAuto();}});
             addTitle(msgAuto, x + btnW + 8, y);
             setMessageAuto();
+            
             y -= offY;
             newFormButton("SpeedDown", x, y, PlatformGame.menuLeft, new Runnable() {@Override public final void run() {incSpeed(-1);}});
             newFormButton("SpeedUp", engine.getEffectiveWidth() - x - btnW, y, PlatformGame.menuRight, new Runnable() {@Override public final void run() {incSpeed(1);}});
             setMessageSpeed();
             addTitle(msgSpeed, x + btnW + 8, y);
+            
+            y -= offY;
+            newFormButton("BtnSizeDown", x, y, PlatformGame.menuLeft, new Runnable() {@Override public final void run() {incBtnSize(-1);}});
+            newFormButton("BtnSizeUp", engine.getEffectiveWidth() - x - btnW, y, PlatformGame.menuRight, new Runnable() {@Override public final void run() {incBtnSize(1);}});
+            setMessageBtnSize();
+            addTitle(msgBtnSize, x + btnW + 8, y);
+            
             newTab(PlatformGame.menuCheck, "Done", new Runnable() {@Override public final void run() {exit();}});
             newTabs();
             registerBackExit();
@@ -2287,8 +2298,46 @@ public class Menu {
             Chartil.set(msgSpeed, "Game Speed: " + s);
         }
         
+        private final void incBtnSize(final int dir) {
+            Config.btnSize += dir;
+            if (Config.btnSize > Config.MAX_BUTTON_SIZE) {
+                Config.btnSize = Config.MIN_BUTTON_SIZE;
+            } else if (Config.btnSize < Config.MIN_BUTTON_SIZE) {
+                Config.btnSize = Config.MAX_BUTTON_SIZE;
+            }
+            setMessageBtnSize();
+        }
+        
+        private final void setMessageBtnSize() {
+            final String s;
+            switch (Config.btnSize) {
+                case -2 :
+                    s = "Smallest";
+                    break;
+                case -1 :
+                    s = "Small";
+                    break;
+                case 0 :
+                    s = "Medium";
+                    break;
+                case 1 :
+                    s = "Large";
+                    break;
+                case 2 :
+                    s = "Largest";
+                    break;
+                default :
+                    throw new IllegalArgumentException("Unrecognized button size: " + Config.btnSize);
+            }
+            Chartil.set(msgAuto, s);
+        }
+        
         @Override
         protected void onExit() {
+            if (oldBtnSize != Config.btnSize) {
+                PlatformGame.reloadButtons();
+                Config.serialize();
+            }
         	save();
             goProfile();
         }
