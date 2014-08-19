@@ -701,6 +701,14 @@ public class Menu {
 			return x + (SIZE_FONT * 2);
 		}
 		
+		protected final static PlayerContext generatePlayerContext(final int i) {
+			final Profile prf = new Profile();
+        	final Avatar avt = new Avatar();
+        	prf.currentAvatar = avt;
+        	prf.avatars.add(avt);
+        	return new PlayerContext(prf, null, Integer.MAX_VALUE - i);
+		}
+		
 		protected final Model addActor(final PlayerContext pc, final int x) {
 			final Model actor = new Model(pc);
 			PlatformGame.setPosition(actor, x, Y_PLAYER, PlatformGame.DEPTH_PLAYER);
@@ -799,7 +807,14 @@ public class Menu {
 		}
 		
 		protected final void reloadAnimalStrip() {
+			reloadAnimalStrip(pc, actor);
+		}
+		
+		protected final static void reloadAnimalStrip(final PlayerContext pc, final Model actor) {
 			PlatformGame.reloadAnimalStrip(pc, false);
+			if (actor != null) {
+				actor.load(pc);
+			}
 		}
 		
 		protected abstract class AvtListener implements RadioSubmitListener {
@@ -809,7 +824,6 @@ public class Menu {
 			    }
 				update(event.toString());
 				reloadAnimalStrip();
-				actor.load(pc);
 			}
 			
 			protected abstract void update(final String value);
@@ -822,7 +836,6 @@ public class Menu {
 			    }
 				go();
 				reloadAnimalStrip();
-				actor.load(pc);
 			}
 			
 			protected abstract void go();
@@ -892,12 +905,8 @@ public class Menu {
 	    
 	    protected final static void generateTitleCharacters() {
 	        for (int i = 0; i < NUM_CHRS; i++) {
-	        	final Profile prf = new Profile();
-	        	final Avatar avt = new Avatar();
-	        	avt.randomize();
-	        	prf.currentAvatar = avt;
-	        	prf.avatars.add(avt);
-	        	final PlayerContext tc = new PlayerContext(prf, null, Integer.MAX_VALUE - i);
+	        	final PlayerContext tc = generatePlayerContext(i);
+	        	tc.profile.currentAvatar.randomize();
 	        	tcs.add(tc);
 	        	//TODO Menu screens which show player can probably use full=false, but will need full load when done
 	        	PlatformGame.reloadAnimalStrip(tc, false);
@@ -1250,7 +1259,6 @@ public class Menu {
             pc.profile.avatars.remove(pc.profile.currentAvatar);
             pc.profile.currentAvatar = pc.profile.avatars.get(0);
             reloadAnimalStrip();
-            actor.load(pc);
             save = true;
             goProfile();
 		}
@@ -1274,7 +1282,6 @@ public class Menu {
             pc.profile.avatars.add(avt);
             pc.profile.currentAvatar = avt;
             reloadAnimalStrip();
-            actor.load(pc);
             AvatarScreen.currentTab = AvatarScreen.TAB_NAME;
             goAvatar();
 		}
@@ -1463,8 +1470,7 @@ public class Menu {
                     engine.setImageSavingEnabled(true);
                     reloadAnimalStrip();
                     engine.setImageSavingEnabled(false);
-                    setInfo(INFO_SAVED);
-                    actor.load(pc); }};
+                    setInfo(INFO_SAVED); }};
             x = addPipe(x, y);
             x = addLink("Export", expLsn, x, y);
 		}
@@ -1477,7 +1483,6 @@ public class Menu {
                 pc.profile.replaceAvatar(old);
             }
             reloadAnimalStrip();
-            actor.load(pc);
             save = false;
             exit();
 		}
@@ -1523,6 +1528,8 @@ public class Menu {
         private RadioGroup clthRadio = null;
         private List<RadioGroup> clthColors = null;
         private TouchButton clthBtn = null;
+        private Model clthModel = null;
+        private PlayerContext mc = null;
         
         protected GearScreen(final PlayerContext pc, final Avatar old, final Avatar avt) {
             super(pc, false);
@@ -1627,7 +1634,21 @@ public class Menu {
             initJumpMode();
         }
         
+        private final void addClothingModel() {
+        	mc = generatePlayerContext(0);
+        	final Avatar avt = mc.profile.currentAvatar;
+        	avt.anm = "Bear";
+        	avt.col.init();
+        	avt.eye = 3;
+        	avt.clothingCol.r = 0;
+        	avt.clothingCol.g = 0;
+        	avt.clothingCol.b = Avatar.DEF_JUMP_COL;
+        	clthModel = addActor(mc, center - 32);
+        	clthModel.setVisible(false);
+        }
+        
         protected final void createClothingList(final int x, final int y) {
+        	addClothingModel();
             final Clothing[] clothings = Avatar.clothings;
             final List<String> clths = toNameList(DEF_CLOTHES, clothings);
             final TouchButton sub = newBuy(x, y);
@@ -1636,10 +1657,14 @@ public class Menu {
                 @Override public final void update(final String value) {
                     final Clothing c = Player.get(clothings, value);
                     if (pc.profile.isClothingAvailable(c)) {
+                    	clthModel.setVisible(false);
                         clearInfo();
                         TouchButton.detach(sub);
                         setClothing(c);
                     } else {
+                    	mc.profile.currentAvatar.clothing = c;
+                    	reloadAnimalStrip(mc, clthModel);
+                    	clthModel.setVisible(true);
                         reattachBuy("Buy for " + c.getCost() + "?", sub);
                     }
                 }};
@@ -1649,6 +1674,7 @@ public class Menu {
                     if (!pc.profile.isClothingAvailable(c)) {
                         final int cost = c.getCost();
                         if (pc.profile.spendGems(cost)) {
+                        	clthModel.setVisible(false);
                             pc.profile.availableClothings.add(c);
                             setClothing(c);
                             setInfo("Purchased!");
@@ -1755,6 +1781,7 @@ public class Menu {
         
         private final void initClothing() {
             clthRadio.setSelected((avt.clothing == null) ? DEF_CLOTHES : avt.clothing.getName());
+            clthModel.setVisible(false);
         }
         
         @Override

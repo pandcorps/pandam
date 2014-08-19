@@ -27,7 +27,7 @@ import org.pandcorps.core.seg.*;
 import org.pandcorps.platform.Player.*;
 
 public class Avatar extends PlayerData implements Segmented {
-	private final static float DEF_JUMP_COL = 1;
+	protected final static float DEF_JUMP_COL = 1;
 	private final static int MAX_COLOR_INDEX = 4;
     protected String anm = null;
     protected int eye = -1;
