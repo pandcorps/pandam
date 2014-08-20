@@ -1001,8 +1001,7 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 		if (engine.isTouchSupported()) {
 			btnLoader = new Runnable() { @Override public final void run() {
 				// 400 x 240
-			    //TODO Incorporate Config.btnSize
-				DIM_BUTTON = (Math.min(60 * engine.getEffectiveWidth() / 400, 60 * engine.getEffectiveHeight() / 240) / 4) * 4 - 1;
+				DIM_BUTTON = (Math.min(60 * engine.getEffectiveWidth() / 400, 60 * engine.getEffectiveHeight() / 240) / 4 + Config.btnSize) * 4 - 1;
 				final int d = DIM_BUTTON;
 				final Pancolor f = new FinPancolor((short) 160, Mathtil.SHORT_0, Pancolor.MAX_VALUE);
 				final Img circle = Imtil.newImage(d, d);
