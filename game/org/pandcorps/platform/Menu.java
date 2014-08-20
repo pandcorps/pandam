@@ -192,7 +192,11 @@ public class Menu {
 				//act2 = addCircleButton(room, "Act2", r - d, 0, input, act, ctrl.get2());
 				//sub = addCircleButton(room, "Sub", r - d, engine.getEffectiveHeight() - d, input, act, ctrl.getSubmit());
 				final Panple ts = PlatformGame.menu.getSize();
-				act2 = newFormButton(room, "Act2", r - (int) ts.getX(), engine.getEffectiveHeight() - (int) ts.getY(), PlatformGame.menuMenu, "Menu");
+				final int tw = (int) ts.getX(), t = engine.getEffectiveHeight();
+				act2 = newFormButton(room, "Act2", r - tw, t - (int) ts.getY(), PlatformGame.menuMenu, "Menu");
+				newFormButton(room, "Goals", r - (tw * 2), t - 20, PlatformGame.gemGoal[0], new Runnable() {
+                    @Override public final void run() {
+                        PlatformGame.goGoals(PlatformGame.pcs.get(0)); }}).getActorOverlay().getPosition().addY(12);
 				rt = lt = PlatformGame.diamond;
 				rtIn = ltIn = PlatformGame.diamondIn;
 			} else if (mode == TOUCH_HORIZONTAL) {

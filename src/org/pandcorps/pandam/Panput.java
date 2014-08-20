@@ -282,6 +282,10 @@ public abstract class Panput {
 		    return actor;
 		}
 		
+		public final Panctor getActorOverlay() {
+		    return actorOverlay;
+		}
+		
 		public final Panlayer getLayer() {
 			return layer;
 		}
