@@ -2228,8 +2228,8 @@ public class Menu {
         protected final void menuTouch() {
             final Pangine engine = Pangine.getEngine();
             final Panple btnSize = PlatformGame.menu.getSize();
-            final int btnW = (int) btnSize.getX(), btnH = (int) btnSize.getY(), offY = btnH * 4 / 3;
-            int x = btnW / 2, y = engine.getEffectiveHeight() - btnH - offY; //TODO Doesn't handle btnSize
+            final int btnW = (int) btnSize.getX(), btnH = (int) btnSize.getY(), offY = btnH * 5 / 4;
+            int x = btnW / 2, y = engine.getEffectiveHeight() - btnH - offY;
             
             newFormButton("AutoToggle", x, y, PlatformGame.menuButtons, new Runnable() {@Override public final void run() {toggleAuto();}});
             addTitle(msgAuto, x + btnW + 8, y);
