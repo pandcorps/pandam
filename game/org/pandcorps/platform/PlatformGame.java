@@ -470,7 +470,8 @@ public class PlatformGame extends BaseGame {
 		    }
 			guys = new Img[guysRaw.length];
 			filterStrip(guysRaw, guys, f);
-			guyBlink = Imtil.copy(getStill(guys, hasStill(guys)));
+			final boolean hasStill = hasStill(guys);
+			guyBlink = Imtil.copy(getStill(guys, hasStill));
 			final String anm = avatar.anm;
 			Img faceRaw = facesAll.get(anm);
 			if (faceRaw == null) {
@@ -511,7 +512,7 @@ public class PlatformGame extends BaseGame {
 			for (int i = 0; i < size; i++) {
 				buildGuy(guys[i], face, tails, eyes, clothings == null ? null : clothings[i], (i == 3) ? -1 : 0, (i < 3) ? i : 1);
 			}
-			buildGuy(guyBlink, face, tails, eyesBlink, clothings == null ? null : clothings[0], 0, 0);
+			buildGuy(guyBlink, face, tails, eyesBlink, clothings == null ? null : getStill(clothings, hasStill), 0, 0);
 			Img.close(clothings);
 		}
 		
