@@ -177,6 +177,7 @@ public class PlatformGame extends BaseGame {
 	protected static Img[] guysBlank = null;
 	protected final static HashMap<String, Img> facesAll = new HashMap<String, Img>();
 	protected final static HashMap<String, Img[]> tailsAll = new HashMap<String, Img[]>();
+	protected final static HashMap<String, Img[]> bodiesAll = new HashMap<String, Img[]>();
 	protected final static Img[] eyesAll = new Img[getNumEyes()];
 	protected static Img eyesBlink = null;
 	protected static Panmage bubble = null;
@@ -454,8 +455,21 @@ public class PlatformGame extends BaseGame {
 	
 		protected PlayerImages(final Avatar avatar) {
 		    f = getFilter(avatar.col);
-			guys = new Img[guysBlank.length];
-			filterStrip(guysBlank, guys, f);
+		    final Clothing c = avatar.clothing;
+		    Img[] guysRaw;
+		    final String body = c == null ? null : c.getBody();
+		    if (body == null) {
+		        guysRaw = guysBlank;
+		    } else {
+		        guysRaw = bodiesAll.get(body);
+		        if (guysRaw == null) {
+		            guysRaw = loadChrStrip("Bear" + body + ".png", 32, true);
+	                Img.setTemporary(false, guysRaw);
+	                bodiesAll.put(body, guysRaw);
+		        }
+		    }
+			guys = new Img[guysRaw.length];
+			filterStrip(guysRaw, guys, f);
 			guyBlink = Imtil.copy(getStill(guys, hasStill(guys)));
 			final String anm = avatar.anm;
 			Img faceRaw = facesAll.get(anm);
@@ -483,7 +497,6 @@ public class PlatformGame extends BaseGame {
 			    eyesAll[avatar.eye - 1] = e;
 			}
 			eyes = e;
-			final Clothing c = avatar.clothing;
 			final Img[] clothings;
 			if (c == null) {
 			    clothingFilter = null;
