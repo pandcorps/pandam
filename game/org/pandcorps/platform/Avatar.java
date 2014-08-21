@@ -131,13 +131,19 @@ public class Avatar extends PlayerData implements Segmented {
     protected final static class Clothing extends FinName {
         protected final String res;
         private final int cost;
+        private final String body;
         protected Img[] imgs = null;
         protected Img[] mapImgs = null;
         
         protected Clothing(final String name, final String res, final int cost) {
+            this(name, res, cost, null);
+        }
+        
+        protected Clothing(final String name, final String res, final int cost, final String body) {
             super(name);
             this.res = res;
             this.cost = cost;
+            this.body = body;
         }
         
         public final void init() {
@@ -154,6 +160,10 @@ public class Avatar extends PlayerData implements Segmented {
         
         public final int getCost() {
             return cost;
+        }
+        
+        public final String getBody() {
+            return body;
         }
     }
     
