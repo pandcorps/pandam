@@ -456,7 +456,7 @@ public class PlatformGame extends BaseGame {
 		    f = getFilter(avatar.col);
 			guys = new Img[guysBlank.length];
 			filterStrip(guysBlank, guys, f);
-			guyBlink = Imtil.copy(guys[0]);
+			guyBlink = Imtil.copy(getStill(guys, hasStill(guys)));
 			final String anm = avatar.anm;
 			Img faceRaw = facesAll.get(anm);
 			if (faceRaw == null) {
@@ -509,6 +509,14 @@ public class PlatformGame extends BaseGame {
 		}
 	}
 	
+	private final static boolean hasStill(final Img[] guys) {
+	    return guys.length > 5;
+	}
+	
+	private final static Img getStill(final Img[] guys, final boolean hasStill) {
+	    return guys[hasStill ? 5 : 0];
+	}
+	
 	protected final static void reloadAnimalStrip(final PlayerContext pc) {
 		reloadAnimalStrip(pc, true);
 	}
@@ -525,7 +533,8 @@ public class PlatformGame extends BaseGame {
 		final Pangine engine = Pangine.getEngine();
 		final FinPanple2 ng = new FinPanple2(-Player.PLAYER_X, 0), xg = new FinPanple2(Player.PLAYER_X, Player.PLAYER_H);
 		final String ipre = PRE_IMG + pre + ".";
-		final Panmage guy = engine.createImage(ipre + "1", og, ng, xg, guys[0]);
+		final boolean hasStill = hasStill(guys);
+		final Panmage guy = engine.createImage(ipre + "still", og, ng, xg, getStill(guys, hasStill));
 		final Panmage guyB = engine.createImage(ipre + "blink", og, ng, xg, pi.guyBlink);
 		final String fpre = PRE_FRM + pre + ".";
 		final String spre = fpre + "still.";
@@ -536,10 +545,11 @@ public class PlatformGame extends BaseGame {
 		final PixelFilter pf = needWing ? getFilter(avatar.jumpCol) : null;
 		
 		if (full) {
+		    final Panmage guy1 = hasStill ? engine.createImage(ipre + "1", og, ng, xg, guys[0]) : guy;
 			final Panmage guy2 = engine.createImage(ipre + "2", og, ng, xg, guys[1]);
 			final Panmage guy3 = engine.createImage(ipre + "3", og, ng, xg, guys[2]);
 			final String rpre = fpre + "run.";
-			final Panframe gfr1 = engine.createFrame(rpre + "1", guy, 2), gfr2 = engine.createFrame(rpre + "2", guy2, 2), gfr3 = engine.createFrame(rpre + "3", guy3, 2);
+			final Panframe gfr1 = engine.createFrame(rpre + "1", guy1, 2), gfr2 = engine.createFrame(rpre + "2", guy2, 2), gfr3 = engine.createFrame(rpre + "3", guy3, 2);
 			pc.guyRun = engine.createAnimation(PRE_ANM + pre + ".run", gfr2, gfr3, gfr1);
 			pc.guyJump = engine.createImage(ipre + "jump", og, ng, xg, guys[3]);
 			pc.guyFall = engine.createImage(ipre + "fall", og, ng, xg, guys[4]);
