@@ -114,7 +114,6 @@ public class PlatformGame extends BaseGame {
 	Once saw Player appear on wrong Marker after goal-met screen.
 	Move music generation, preprocessing classes into a new folder to be excluded from jar.
 	Add Map TouchButton hint labels (up/down/left/right/play) after time threshold without moving or before 1st Level.
-	When last template is too big, try 3 times to find a smaller one.  Try single block.
 	Option to resize touch buttons.
 	Clipboard import/export.
 	Fix unclosed Img warnings.
