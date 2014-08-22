@@ -116,7 +116,6 @@ public class PlatformGame extends BaseGame {
 	Add Map TouchButton hint labels (up/down/left/right/play) after time threshold without moving or before 1st Level.
 	Option to resize touch buttons.
 	Clipboard import/export.
-	Fix unclosed Img warnings.
 	*/
 	
 	protected final static byte TILE_BREAK = 2;
@@ -653,6 +652,7 @@ public class PlatformGame extends BaseGame {
 			    pc.backJump = engine.createAnimation(PRE_ANM + wpre + ".fly", frames[1], frames[2], frames[3], frames[0]);
 			    pc.backFall = engine.createAnimation(PRE_ANM + wpre + ".fall", frames[4], frames[5]);
 		    }
+		    Img.close(wings);
 		} else if (full && avatar.jumpMode == Player.JUMP_HIGH) {
 		    pc.backJump = createAnm(pre + ".spring", "org/pandcorps/platform/res/chr/Springs.png", 32, 5, os, ng, xg);
 		}

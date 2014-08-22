@@ -227,6 +227,7 @@ public class Level {
     	if (!isNormalTheme()) {
     		final Img ext = ImtilX.loadImage("org/pandcorps/platform/res/bg/Tiles" + theme.img + ".png", false);
     		Imtil.copy(ext, tileImg, 0, 0, 128, 112, 0, 16);
+    		ext.close();
     	}
     	return tileImg;
     }
