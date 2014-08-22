@@ -452,17 +452,25 @@ public class Level {
     			Block letter patterns
     			Checkered, diagonal stripe gem patterns
     			*/
-    		    final int numLetters = PlatformGame.blockWord.length();
-    		    final Template template;
-    		    if (currLetter < numLetters && bx >= ng * (currLetter + 1) / (numLetters + 1)) {
-    		    	template = new BlockLetterTemplate();
-    		    } else {
-    		    	template = Mathtil.rand(templates);
+    		    final int numLetters = PlatformGame.blockWord.length(), ibx = bx;
+    		    Template template = null;
+    		    for (int i = 0; i < 4; i++) {
+    		    	bx = ibx;
+	    		    if (currLetter < numLetters && bx >= ng * (currLetter + 1) / (numLetters + 1)) {
+	    		    	template = new BlockLetterTemplate();
+	    		    } else if (i == 3) {
+	    		    	template = Mathtil.rand() ? new BlockBonusTemplate(1) : new GemTemplate(1);
+	    		    } else {
+	    		    	template = Mathtil.rand(templates);
+	    		    }
+	    		    if (oneUseTemplates.contains(template.getClass())) {
+	    		    	templates.remove(template);
+	    		    }
+    		    	template.plan();
+    		    	if (bx < ng) {
+    		    		break;
+    		    	}
     		    }
-    		    if (oneUseTemplates.contains(template.getClass())) {
-    		    	templates.remove(template);
-    		    }
-    		    template.plan();
     		    ground();
     		    if (bx < ng) {
     		    	template.build();
@@ -1142,7 +1150,11 @@ public class Level {
     
     private final static class BlockBonusTemplate extends SimpleTemplate {
     	protected BlockBonusTemplate() {
-    		super(1, 8, 0);
+    		this(8);
+    	}
+    	
+    	protected BlockBonusTemplate(final int maxW) {
+    		super(1, maxW, 0);
     	}
     	
         @Override
@@ -1173,7 +1185,11 @@ public class Level {
     
     private final static class GemTemplate extends SimpleTemplate {
     	protected GemTemplate() {
-    		super(1, 10, 0);
+    		this(10);
+    	}
+    	
+    	protected GemTemplate(final int maxW) {
+    		super(1, maxW, 0);
     	}
     	
     	@Override
