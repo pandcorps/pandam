@@ -341,6 +341,8 @@ public class Map {
 		private boolean disabled = false;
 		private boolean onLadder = false;
 		private int stillTimer = -1;
+		private int waitTimer = 0;
+		private List<Pantext> helps = null;
 		
 		private MapPlayer(final PlayerContext pc) {
 		    this.pc = pc;
@@ -371,6 +373,15 @@ public class Map {
 			return ctrl.get2();
 		}
 		
+		private final void addHelp(final String s, final int x, final int y) {
+		    helps = Coltil.add(helps, addText(s, x, y));
+		}
+		
+		private final void clearHelp() {
+		    waitTimer = 0;
+		    Panctor.destroy(helps);
+		}
+		
 		@Override
 		protected void onStill() {
 			if (disabled) {
@@ -380,6 +391,17 @@ public class Map {
 			        changeView(pc.mapSouth);
 			    }
 			    stillTimer--;
+			}
+			waitTimer++;
+			if (waitTimer == 150) {
+			    if (isOpen(getIndex())) {
+			        // Standing on a defeated Level; show help to move
+			    } else {
+			        // Standing on an unplayed Level; show help to play
+			        addHelp("Play", 10, 100); //TODO Get action button location
+			    }
+			} else if (waitTimer == 300) {
+			    // Maybe Player doesn't want to play Level; show Menu help
 			}
 			final Pangine engine = Pangine.getEngine();
 			final Panteraction interaction = engine.getInteraction();
@@ -401,6 +423,7 @@ public class Map {
 	        	/*if (room.getBlendColor().getA() > Pancolor.MIN_VALUE) {
 	        		return;
 	        	}*/
+	            clearHelp();
 	        	final int t = getIndex();
 	            if (isOpen(t)) {
 	                return;
@@ -425,8 +448,14 @@ public class Map {
 				interaction.KEY_TAB.inactivate();
 				modeMove = (short) ((modeMove + 1) % 3);
 			} else if (Panput.isActive(getMenuInput(ctrl), endListener)) {
+			    clearHelp();
 				goMenu(getMenuInput(ctrl), pc);
 			}
+		}
+		
+		@Override
+		protected final void onWalking() {
+		    clearHelp();
 		}
 		
 		private final void goMenu(final Panput input, final PlayerContext pc) {
@@ -1222,11 +1251,8 @@ public class Map {
 	}
 	
 	private final static void addHud() {
-		final Pantext name = new Pantext("map.name", PlatformGame.font, Map.name);
-		name.getPosition().set(PlatformGame.SCREEN_W / 2, 1);
-		name.centerX();
-		final Panlayer hud = PlatformGame.addHud(room, false, false);
-		hud.addActor(name);
+	    final Panlayer hud = PlatformGame.addHud(room, false, false);
+	    final Pantext name = addText(Map.name, PlatformGame.SCREEN_W / 2, 1);
 		Menu.PlayerScreen.initTouchButtons(hud, getPlayerContext().ctrl);
 		final Pangine engine = Pangine.getEngine();
 		if (engine.isTouchSupported()) {
@@ -1240,6 +1266,14 @@ public class Map {
 			name.register(interaction.MENU, lsn);
 			name.register(interaction.BACK, lsn);
 		}
+	}
+	
+	private final static Pantext addText(final String s, final int x, final int y) {
+	    final Pantext name = new Pantext(Pantil.vmid(), PlatformGame.font, s);
+        name.getPosition().set(x, y);
+        name.centerX();
+        PlatformGame.hud.addActor(name);
+        return name;
 	}
 	
 	private static void mountain(final int x, final int y, final int w) {
