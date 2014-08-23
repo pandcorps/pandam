@@ -90,12 +90,13 @@ public class Level {
     
     protected abstract static class Theme {
     	private final static String[] MSG = {"PLAYER", "GEMS!!!", "HURRAY", "GO GO!", "YAY", "GREAT", "PERFECT"};
+    	private final static int[] NORMAL_ENEMIES = {HOB_TROLL, HOB_OGRE, TROLL, OGRE, IMP, ARMORED_IMP};
     	public final static Theme Normal = new Theme(null, MSG) {
     	    @Override protected final int[] getEnemyIndices(final int worlds) {
     	        switch (worlds) {
     	            case 0 : return new int[] {HOB_TROLL, HOB_OGRE, IMP};
     	            case 1 : return new int[] {HOB_TROLL, HOB_OGRE, IMP, ARMORED_IMP}; // After 1st world
-    	            default: return new int[] {HOB_TROLL, HOB_OGRE, TROLL, OGRE, IMP, ARMORED_IMP}; // After 2nd
+    	            default: return NORMAL_ENEMIES; // After 2nd
     	            // troll colossus and ogre behemoth after 3rd (see addGiantTemplate)
     	        }
     	    }
@@ -112,6 +113,19 @@ public class Level {
     			} else {
     				return new GrassyBuilder();
     			}
+    		}
+    	};
+    	public final static Theme Snow = new Theme("Snow", null, MSG) {
+    	    @Override protected final int[] getEnemyIndices(final int worlds) {
+    	        return NORMAL_ENEMIES;
+    	    }
+    	    
+    		@Override protected final BackgroundBuilder getRandomBackground() {
+    			return new HillBackgroundBuilder();
+    		}
+    		
+    		@Override protected final Builder getRandomBuilder() {
+    			return new GrassyBuilder();
     		}
     	};
     	private final static String[] MSG_CHAOS = {"CHAOS", "HAVOC", "BEWARE", "FEAR", "DANGER"};
@@ -134,10 +148,16 @@ public class Level {
     	};
     	
     	protected final String img;
+    	protected final String bgImg;
     	protected final String[] gemMessages;
     	
     	private Theme(final String img, final String[] gemMessages) {
+    		this(img, img, gemMessages);
+    	}
+    	
+    	private Theme(final String img, final String bgImg, final String[] gemMessages) {
     		this.img = img;
+    		this.bgImg = bgImg;
     		this.gemMessages = gemMessages;
     	}
     	
@@ -162,8 +182,12 @@ public class Level {
     	PlatformGame.enemies = theme.getEnemies();
     }
     
+    protected static void initTheme() {
+    	setTheme(Map.theme.levelTheme);
+    }
+    
     protected static boolean isNormalTheme() {
-    	return theme == Theme.Normal;
+    	return theme != Theme.Chaos;
     }
     
     private final static int getDefeatedWorlds() {
@@ -195,6 +219,9 @@ public class Level {
                 Imtil.copy(dirt, tileImg, 0, 0, 16, 16, x, y, null, tileMask);
             }
         }
+        if (Map.theme.dirtFilter != null) {
+        	Imtil.filterImg(tileImg, ix, iy, fx - ix, fy - iy, Map.theme.dirtMask, Map.theme.dirtFilter);
+        }
     }
     
     protected final static Img getTerrainTexture() {
@@ -224,7 +251,7 @@ public class Level {
     
     private final static Img loadTileImage() {
     	final Img tileImg = ImtilX.loadImage("org/pandcorps/platform/res/bg/Tiles.png", 128, null);
-    	if (!isNormalTheme()) {
+    	if (theme != Theme.Normal) {
     		final Img ext = ImtilX.loadImage("org/pandcorps/platform/res/bg/Tiles" + theme.img + ".png", false);
     		Imtil.copy(ext, tileImg, 0, 0, 128, 112, 0, 16);
     		ext.close();
@@ -526,7 +553,7 @@ public class Level {
     protected final static class HillBackgroundBuilder implements BackgroundBuilder {
     	@Override
     	public final Img getImage() {
-    		Img backImg = ImtilX.loadImage("org/pandcorps/platform/res/bg/Hills" + Chartil.unnull(theme.img) + ".png", 128, null);
+    		Img backImg = ImtilX.loadImage("org/pandcorps/platform/res/bg/Hills" + Chartil.unnull(theme.bgImg) + ".png", 128, null);
             if (isNormalTheme()) {
             	applyTerrainTexture(backImg, 0, 0, 48, 32);
             	backImg = getColoredTerrain(backImg, 0, 0, 96, 96);
@@ -672,7 +699,9 @@ public class Level {
 	        addTemplate(new WallTemplate());
 	        addTemplate(new StepTemplate());
 	        addTemplate(new RampTemplate());
-	        addTemplate(new BushTemplate(), new TreeTemplate());
+	        if (theme != Theme.Snow) {
+	        	addTemplate(new BushTemplate(), new TreeTemplate());
+	        }
 	        addTemplate(new PitTemplate(), new BridgePitTemplate(), new BlockPitTemplate());
 	        addTemplate(new UpBlockStepTemplate(), new DownBlockStepTemplate(), new BlockWallTemplate(), new BlockGroupTemplate());
 	        addTemplate(new BlockBonusTemplate());
