@@ -63,7 +63,6 @@ public class Map {
 	private final static String SEG_BLD = "BLD";
 	
 	private final static String[] EXT_LANDMARKS = { "Forest", "Crater" };
-	private final static int MAX_LANDMARK = 3;
 	private final static int MAX_CASTLE = 3;
 	
 	/*private final static String[] ADJECTIVES =
@@ -155,13 +154,13 @@ public class Map {
 	private static boolean waiting = true;
 	
 	protected abstract static class MapTheme {
-		public final static MapTheme Normal = new MapTheme("Normal", null, Theme.Normal, null, null) {
+		public final static MapTheme Normal = new MapTheme("Normal", null, Theme.Normal, 3, null, null) {
 			@Override protected final void step() {
 				if ((Pangine.getEngine().getClock() % 6) == 0) {
 	                Tile.animate(waters);
 	            }
 			}};
-		public final static MapTheme Snow = new MapTheme("Snow", Theme.Snow, new AntiPixelMask(new RangePixelMask(80, 80, 0, 255, 144, 32)), new SwapPixelFilter(Channel.Blue, Channel.Green, Channel.Red)) {
+		public final static MapTheme Snow = new MapTheme("Snow", Theme.Snow, 1, new AntiPixelMask(new RangePixelMask(80, 80, 0, 255, 144, 32)), new SwapPixelFilter(Channel.Blue, Channel.Green, Channel.Red)) {
 			@Override protected final void step() {
 				final long i = Pangine.getEngine().getClock() % 105;
 	            if (i < 3) {
@@ -181,15 +180,17 @@ public class Map {
 		protected final Theme levelTheme;
 		protected final PixelMask dirtMask;
 		protected final PixelFilter dirtFilter;
+		protected final int maxLandmark;
 		
-		private MapTheme(final String img, final Theme levelTheme, final PixelMask dirtMask, final PixelFilter dirtFilter) {
-			this(img, img, levelTheme, dirtMask, dirtFilter);
+		private MapTheme(final String img, final Theme levelTheme, final int maxLandmark, final PixelMask dirtMask, final PixelFilter dirtFilter) {
+			this(img, img, levelTheme, maxLandmark, dirtMask, dirtFilter);
 		}
 		
-		private MapTheme(final String name, final String img, final Theme levelTheme, final PixelMask dirtMask, final PixelFilter dirtFilter) {
+		private MapTheme(final String name, final String img, final Theme levelTheme, final int maxLandmark, final PixelMask dirtMask, final PixelFilter dirtFilter) {
 			this.name = name;
 			this.img = img;
 			this.levelTheme = levelTheme;
+			this.maxLandmark = maxLandmark;
 			this.dirtMask = dirtMask;
 			this.dirtFilter = dirtFilter;
 		}
@@ -747,9 +748,17 @@ public class Map {
 	    } else {
     	    bgTexture = Mathtil.randi(0, PlatformGame.dirts.length - 1);
     	    bgColor = Mathtil.randi(0, 2);
-			lm1 = Mathtil.randi(0, MAX_LANDMARK);
+    	    final int worlds = getProfile().stats.defeatedWorlds;
+			if (worlds == 1) {
+				theme = MapTheme.Snow;
+			} else if (worlds <= 4) {
+				theme = MapTheme.Normal;
+			} else {
+				theme = Mathtil.rand(themes);
+			}
+			lm1 = Mathtil.randi(0, theme.maxLandmark);
 			do {
-			    lm2 = Mathtil.randi(0, MAX_LANDMARK);
+			    lm2 = Mathtil.randi(0, theme.maxLandmark);
 			} while (lm2 == lm1);
 			if (lm1 == 1 || (lm2 != 1 && lm2 < lm1)) {
 			    final int t = lm1;
@@ -758,8 +767,8 @@ public class Map {
 			}
 			cstl = Mathtil.randi(0, MAX_CASTLE);
 			seed = Mathtil.newSeed();
-			theme = MapTheme.Normal;
 	    }
+	    Level.initTheme();
 		Img tileImg = ImtilX.loadImage("org/pandcorps/platform/res/bg/Map" + Chartil.unnull(theme.img) + ".png", 128, null);
 		applyLandmark(tileImg, 0, lm1, 0);
 		applyLandmark(tileImg, 48, lm2, 1);
