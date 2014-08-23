@@ -222,6 +222,15 @@ public final class Imtil {
         //cm.getRGB(inData)
     	final int iw = img.getWidth(), ih = img.getHeight();
         final Img out = newImage(iw, ih);
+        filter(img, out, ox, oy, w, h, mask, fs);
+        return out;
+    }
+    
+    private final static void filter(final Img img, final Img out, final int ox, final int oy, final int w, final int h, final PixelMask mask, final Iterable<PixelFilter> fs) {
+    	if (Coltil.isEmpty(fs)) {
+    		return;
+    	}
+    	final int iw = img.getWidth(), ih = img.getHeight();
         final int sx = ox + w, sy = oy + h;
         for (int x = 0; x < iw; x++) {
             for (int y = 0; y < ih; y++) {
@@ -236,8 +245,17 @@ public final class Imtil {
                 out.setRGB(x, y, p);
             }
         }
-        img.closeIfTemporary();
-        return out;
+        if (img != out) {
+        	img.closeIfTemporary();
+        }
+    }
+    
+    public final static void filterImg(final Img img, final int ox, final int oy, final int w, final int h, final PixelMask mask, PixelFilter... fs) {
+    	filterImg(img, ox, oy, w, h, mask, Coltil.asList(fs));
+    }
+    
+    public final static void filterImg(final Img img, final int ox, final int oy, final int w, final int h, final PixelMask mask, final Iterable<PixelFilter> fs) {
+    	filter(img, img, ox, oy, w, h, mask, fs);
     }
     
     public final static short[] getArithmeticMeanColor(final Img img) {
