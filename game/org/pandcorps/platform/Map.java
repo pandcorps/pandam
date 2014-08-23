@@ -154,13 +154,13 @@ public class Map {
 	private static boolean waiting = true;
 	
 	protected abstract static class MapTheme {
-		public final static MapTheme Normal = new MapTheme("Normal", null, Theme.Normal, 3, null, null) {
+		public final static MapTheme Normal = new MapTheme("Normal", null, Theme.Normal, 3, 3, 2, null, null) {
 			@Override protected final void step() {
 				if ((Pangine.getEngine().getClock() % 6) == 0) {
 	                Tile.animate(waters);
 	            }
 			}};
-		public final static MapTheme Snow = new MapTheme("Snow", Theme.Snow, 1, new AntiPixelMask(new RangePixelMask(80, 80, 0, 255, 144, 32)), new SwapPixelFilter(Channel.Blue, Channel.Green, Channel.Red)) {
+		public final static MapTheme Snow = new MapTheme("Snow", Theme.Snow, 1, 6, 2, new AntiPixelMask(new RangePixelMask(80, 80, 0, 255, 144, 32)), new SwapPixelFilter(Channel.Blue, Channel.Green, Channel.Red)) {
 			@Override protected final void step() {
 				final long i = Pangine.getEngine().getClock() % 105;
 	            if (i < 3) {
@@ -181,16 +181,24 @@ public class Map {
 		protected final PixelMask dirtMask;
 		protected final PixelFilter dirtFilter;
 		protected final int maxLandmark;
+		protected final int portalGroundRow;
+		protected final int portalGroundColumn;
 		
-		private MapTheme(final String img, final Theme levelTheme, final int maxLandmark, final PixelMask dirtMask, final PixelFilter dirtFilter) {
-			this(img, img, levelTheme, maxLandmark, dirtMask, dirtFilter);
+		private MapTheme(final String img, final Theme levelTheme, final int maxLandmark,
+				final int portalGroundRow, final int portalGroundColumn,
+				final PixelMask dirtMask, final PixelFilter dirtFilter) {
+			this(img, img, levelTheme, maxLandmark, portalGroundRow, portalGroundColumn, dirtMask, dirtFilter);
 		}
 		
-		private MapTheme(final String name, final String img, final Theme levelTheme, final int maxLandmark, final PixelMask dirtMask, final PixelFilter dirtFilter) {
+		private MapTheme(final String name, final String img, final Theme levelTheme, final int maxLandmark,
+				final int portalGroundRow, final int portalGroundColumn,
+				final PixelMask dirtMask, final PixelFilter dirtFilter) {
 			this.name = name;
 			this.img = img;
 			this.levelTheme = levelTheme;
 			this.maxLandmark = maxLandmark;
+			this.portalGroundRow = portalGroundRow;
+			this.portalGroundColumn = portalGroundColumn;
 			this.dirtMask = dirtMask;
 			this.dirtFilter = dirtFilter;
 		}
