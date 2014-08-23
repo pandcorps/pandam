@@ -40,6 +40,7 @@ public abstract class Achievement extends FinName {
 		// Juggernaut, Break all blocks in a Level
 		// block milestones
 		// Gem milestones
+		// Monarch, Finish Level in royal robe and crown
 		// Pegasus, Finish Level as a winged horse
 		// Beyond Belief, Finish Level as a flying pig
 		// Babe, Finish Level as a blue bull/ox

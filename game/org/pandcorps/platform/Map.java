@@ -397,7 +397,8 @@ public class Map {
 			waitTimer++;
 			final Pangine engine = Pangine.getEngine();
 			if (engine.isTouchSupported()) {
-				if (waitTimer == 150) {
+				final int lim = pc.profile.stats.defeatedLevels == 0 ? 60 : 240;
+				if (waitTimer == lim) {
 					final int r = Menu.PlayerScreen.getTouchButtonRadius();
 				    if (isOpen(getIndex())) {
 				        // Standing on a defeated Level; show help to move
@@ -409,11 +410,13 @@ public class Map {
 				        // Standing on an unplayed Level; show help to play
 				        addHelp("Play", engine.getEffectiveWidth() - r, r - 4);
 				    }
-				} else if (waitTimer == 300) {
+				} else if (waitTimer == (lim * 2)) {
 				    // Maybe Player doesn't want to play Level; show Menu help
-					final String s = "Change appearance, options";
-					final int mh = (int) PlatformGame.menu.getSize().getY();
-					addHelp(s, engine.getEffectiveWidth() - (s.length() * 4), engine.getEffectiveHeight() - mh - 9);
+					final String s = "Change appearance, options", s2 = "Goals";
+					final Panple menuSize = PlatformGame.menu.getSize();
+					final int w = engine.getEffectiveWidth(), h = engine.getEffectiveHeight(), mh = (int) menuSize.getY();
+					addHelp(s, w - (s.length() * 4), h - mh - 9);
+					addHelp(s2, w - (int) menuSize.getX() - (s2.length() * 4), h - 28);
 				}
 			}
 			final Panteraction interaction = engine.getInteraction();

@@ -2339,7 +2339,7 @@ public class Menu {
                 default :
                     throw new IllegalArgumentException("Unrecognized button size: " + Config.btnSize);
             }
-            Chartil.set(msgAuto, s);
+            Chartil.set(msgBtnSize, s);
         }
         
         @Override
