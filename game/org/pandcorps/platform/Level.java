@@ -94,10 +94,11 @@ public class Level {
     	public final static Theme Normal = new Theme(null, MSG) {
     	    @Override protected final int[] getEnemyIndices(final int worlds) {
     	        switch (worlds) {
-    	            case 0 : return new int[] {HOB_TROLL, HOB_OGRE, IMP};
-    	            case 1 : return new int[] {HOB_TROLL, HOB_OGRE, IMP, ARMORED_IMP}; // After 1st world
-    	            default: return NORMAL_ENEMIES; // After 2nd
-    	            // troll colossus and ogre behemoth after 3rd (see addGiantTemplate)
+    	            case 0 :
+    	            case 1 : return new int[] {HOB_TROLL, HOB_OGRE, IMP}; // 2nd world is Snow
+    	            case 2 : return new int[] {HOB_TROLL, HOB_OGRE, IMP, ARMORED_IMP}; // After 2nd world
+    	            default: return NORMAL_ENEMIES; // After 3rd
+    	            // troll colossus and ogre behemoth after 4th (see addGiantTemplate)
     	        }
     	    }
     	    
@@ -132,8 +133,9 @@ public class Level {
     	public final static Theme Chaos = new Theme("Chaos", MSG_CHAOS) {
     	    @Override protected final int[] getEnemyIndices(final int worlds) {
                 switch (worlds) {
-                    case 0 : return new int[] {DROWID, DROLOCK, IMP};
-                    case 1 : return new int[] {DROWID, DROLOCK, IMP, ARMORED_IMP};
+                    case 0 :
+                    case 1 : return new int[] {DROWID, DROLOCK, IMP};
+                    case 2 : return new int[] {DROWID, DROLOCK, IMP, ARMORED_IMP};
                     default: return new int[] {DROWID, DROLOCK, IMP, ARMORED_IMP, SPIKED_IMP};
                 }
             }
@@ -427,7 +429,7 @@ public class Level {
         }
         
         protected final void addGiantTemplate() {
-            if (isNormalTheme() && getDefeatedWorlds() >= 3) {
+            if (isNormalTheme() && getDefeatedWorlds() >= 4) {
                 addTemplate(new GiantTemplate());
             }
         }
