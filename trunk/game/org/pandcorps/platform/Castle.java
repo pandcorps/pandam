@@ -247,7 +247,8 @@ public class Castle {
         protected final void draw() throws Exception {
         	portals = new TileMapImage[] {imgMap[4][0], imgMap[4][1], imgMap[4][2]};
         	
-            tm.fillBackground(imgMap[3][2], 0, 0, 16, 1, true);
+        	final TileMapImage ground = imgMap[Map.theme.portalGroundRow][Map.theme.portalGroundColumn];
+            tm.fillBackground(ground, 0, 0, 16, 1, true);
             
             tm.rectangleBackground(2, 2, 1, 1, 2, 3);
             
@@ -292,7 +293,7 @@ public class Castle {
             tm2.getPosition().set(224, 0, 7);
             tm2.setForegroundDepth(8);
             
-            tm2.fillBackground(imgMap[3][2], 0, 0, 2, 1, true);
+            tm2.fillBackground(ground, 0, 0, 2, 1, true);
             tm2.setForeground(6, 3, 1, 1);
             tm2.fillBackground(imgMap[4][0], 0, 1, 2, 7);
             tm2.rectangleForeground(6, 1, 1, 7, 1, 2);
