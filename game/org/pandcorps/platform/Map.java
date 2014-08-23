@@ -113,7 +113,7 @@ public class Map {
     // burgh, field, heim, town
     // bloomingberg, blooming-gard
 	
-    protected static MapTheme theme = MapTheme.Snow;//Normal;
+    protected static MapTheme theme = MapTheme.Normal;
 	protected static int bgTexture = 0;
 	protected static int bgColor = 1;
 	private static int lm1 = -1;
@@ -155,7 +155,7 @@ public class Map {
 	private static boolean waiting = true;
 	
 	protected abstract static class MapTheme {
-		public final static MapTheme Normal = new MapTheme(null, Theme.Normal, null, null) {
+		public final static MapTheme Normal = new MapTheme("Normal", null, Theme.Normal, null, null) {
 			@Override protected final void step() {
 				if ((Pangine.getEngine().getClock() % 6) == 0) {
 	                Tile.animate(waters);
@@ -176,12 +176,18 @@ public class Map {
 	            }
 			}};
 		
+		protected final String name;
 		protected final String img;
 		protected final Theme levelTheme;
 		protected final PixelMask dirtMask;
 		protected final PixelFilter dirtFilter;
 		
 		private MapTheme(final String img, final Theme levelTheme, final PixelMask dirtMask, final PixelFilter dirtFilter) {
+			this(img, img, levelTheme, dirtMask, dirtFilter);
+		}
+		
+		private MapTheme(final String name, final String img, final Theme levelTheme, final PixelMask dirtMask, final PixelFilter dirtFilter) {
+			this.name = name;
 			this.img = img;
 			this.levelTheme = levelTheme;
 			this.dirtMask = dirtMask;
@@ -189,6 +195,17 @@ public class Map {
 		}
 		
 		protected abstract void step();
+	}
+	
+	protected final static MapTheme[] themes = {MapTheme.Normal, MapTheme.Snow};
+	
+	protected final static MapTheme getTheme(final String name) {
+		for (final MapTheme theme : themes) {
+			if (theme.name.equals(name)) {
+				return theme;
+			}
+		}
+		return MapTheme.Normal;
 	}
 	
 	protected final static class MapScreen extends Panscreen {
@@ -721,6 +738,7 @@ public class Map {
                 lm2 = seg.intValue(6);
                 cstl = seg.intValue(7);
                 seed = seg.getLong(9, 0);
+                theme = getTheme(seg.getValue(10));
             } catch (final IOException e) {
                 throw new RuntimeException(e);
             } finally {
@@ -740,6 +758,7 @@ public class Map {
 			}
 			cstl = Mathtil.randi(0, MAX_CASTLE);
 			seed = Mathtil.newSeed();
+			theme = MapTheme.Normal;
 	    }
 		Img tileImg = ImtilX.loadImage("org/pandcorps/platform/res/bg/Map" + Chartil.unnull(theme.img) + ".png", 128, null);
 		applyLandmark(tileImg, 0, lm1, 0);
@@ -1519,6 +1538,7 @@ public class Map {
             seg.setInt(7, cstl);
             seg.setInt(8, kingCrown);
             seg.setLong(9, seed);
+            seg.setValue(10, theme.name);
 	        seg.saveln(w);
 	        final Segment mrk = new Segment(SEG_MRK);
 	        final ArrayList<Field> mlist = new ArrayList<Field>(markers.size());
