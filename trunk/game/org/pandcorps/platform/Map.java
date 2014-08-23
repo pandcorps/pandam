@@ -373,8 +373,10 @@ public class Map {
 			return ctrl.get2();
 		}
 		
-		private final void addHelp(final String s, final int x, final int y) {
-		    helps = Coltil.add(helps, addText(s, x, y));
+		private final Pantext addHelp(final String s, final int x, final int y) {
+			final Pantext text = addText(s, x, y);
+		    helps = Coltil.add(helps, text);
+		    return text;
 		}
 		
 		private final void clearHelp() {
@@ -393,17 +395,27 @@ public class Map {
 			    stillTimer--;
 			}
 			waitTimer++;
-			if (waitTimer == 150) {
-			    if (isOpen(getIndex())) {
-			        // Standing on a defeated Level; show help to move
-			    } else {
-			        // Standing on an unplayed Level; show help to play
-			        addHelp("Play", 10, 100); //TODO Get action button location
-			    }
-			} else if (waitTimer == 300) {
-			    // Maybe Player doesn't want to play Level; show Menu help
-			}
 			final Pangine engine = Pangine.getEngine();
+			if (engine.isTouchSupported()) {
+				if (waitTimer == 150) {
+					final int r = Menu.PlayerScreen.getTouchButtonRadius();
+				    if (isOpen(getIndex())) {
+				        // Standing on a defeated Level; show help to move
+				    	addHelp("Left", r, r * 2 - 4);
+				    	addHelp("Down", r * 2, r - 4);
+				    	addHelp("Up", r * 2, r * 3 - 4);
+				    	addHelp("Right", r * 3, r * 2 - 4);
+				    } else {
+				        // Standing on an unplayed Level; show help to play
+				        addHelp("Play", engine.getEffectiveWidth() - r, r - 4);
+				    }
+				} else if (waitTimer == 300) {
+				    // Maybe Player doesn't want to play Level; show Menu help
+					final String s = "Change appearance, options";
+					final int mh = (int) PlatformGame.menu.getSize().getY();
+					addHelp(s, engine.getEffectiveWidth() - (s.length() * 4), engine.getEffectiveHeight() - mh - 9);
+				}
+			}
 			final Panteraction interaction = engine.getInteraction();
 			final ControlScheme ctrl = pc.ctrl;
 			if (ctrl == null) {
@@ -1270,7 +1282,7 @@ public class Map {
 	
 	private final static Pantext addText(final String s, final int x, final int y) {
 	    final Pantext name = new Pantext(Pantil.vmid(), PlatformGame.font, s);
-        name.getPosition().set(x, y);
+        name.getPosition().set(x, y, Menu.PlayerScreen.TOUCH_BUTTON_DEPTH + 10);
         name.centerX();
         PlatformGame.hud.addActor(name);
         return name;

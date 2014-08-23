@@ -162,6 +162,10 @@ public class Menu {
 			initTouchButtons(room, ctrl, TOUCH_FULL, true, true, null);
 		}
 		
+		protected final static int getTouchButtonRadius() {
+			return (PlatformGame.DIM_BUTTON / 2) + 1;
+		}
+		
 		protected final static void initTouchButtons(final Panlayer room, final ControlScheme ctrl,
 				final byte mode, final boolean input, final boolean act, final Panctor bound) {
 			//System.out.println("initTouch for " + getClass().getName());
@@ -178,13 +182,13 @@ public class Menu {
 			if (input) {
 				engine.clearTouchButtons();
 			}
-			final int d = PlatformGame.DIM_BUTTON, r = engine.getEffectiveWidth();
+			final int r = engine.getEffectiveWidth();
 			int rx = 0, y = 0;
 			TouchButton down = null, up = null, act2 = null;
 			Panmage rt = PlatformGame.right2, rtIn = PlatformGame.right2In, lt = PlatformGame.left2, ltIn = PlatformGame.left2In;
 			final boolean full = mode == TOUCH_FULL;
 			if (full) {
-			    final int rad = (d / 2) + 1, dmtr = rad * 2;
+			    final int rad = getTouchButtonRadius(), dmtr = rad * 2;
 				y = rad;
 				down = addDiamondButton(room, "Down", rad, 0, input, act, ctrl.getDown());
 				up = addDiamondButton(room, "Up", rad, dmtr, input, act, ctrl.getUp());
@@ -194,13 +198,13 @@ public class Menu {
 				final Panple ts = PlatformGame.menu.getSize();
 				final int tw = (int) ts.getX(), t = engine.getEffectiveHeight();
 				act2 = newFormButton(room, "Act2", r - tw, t - (int) ts.getY(), PlatformGame.menuMenu, "Menu");
-				newFormButton(room, "Goals", r - (tw * 2), t - 20, PlatformGame.gemGoal[0], new Runnable() {
+				newFormButton(room, "Goals", r - (tw * 2), t - 19, PlatformGame.gemGoal[0], new Runnable() {
                     @Override public final void run() {
-                        PlatformGame.goGoals(PlatformGame.pcs.get(0)); }}).getActorOverlay().getPosition().addY(12);
+                        PlatformGame.goGoals(PlatformGame.pcs.get(0)); }}).getActorOverlay().getPosition().addY(-10);
 				rt = lt = PlatformGame.diamond;
 				rtIn = ltIn = PlatformGame.diamondIn;
 			} else if (mode == TOUCH_HORIZONTAL) {
-				rx = (int) (d * 1.25f);
+				rx = (int) (PlatformGame.DIM_BUTTON * 1.25f);
 				//sub = null;
 			}
 			final TouchButton left, right;
@@ -314,11 +318,13 @@ public class Menu {
 				final Panctor actor = new Panctor();
 				actor.setView(img);
 				button.setActor(actor, imgIn);
-				actor.getPosition().set(x, y, 500);
+				actor.getPosition().set(x, y, TOUCH_BUTTON_DEPTH);
 				room.addActor(actor);
 			}
 			return button;
 		}
+		
+		protected final static int TOUCH_BUTTON_DEPTH = 500;
 		
 		protected final static int offx(final Panmage img) {
 			return img == null ? 0 : TouchTabs.off(PlatformGame.menu.getSize().getX(), img.getSize().getX());

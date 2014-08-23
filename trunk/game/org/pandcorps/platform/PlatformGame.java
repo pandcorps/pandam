@@ -105,7 +105,6 @@ public class PlatformGame extends BaseGame {
 	Pause if device gets a text/interruption.
 	Some rises allow an Enemy but Player hits ceiling.
 	Tall Enemy can appear behind a short enemy on a rise above it; lower Enemy should be in front.
-	Shortcut to Goals screen on Map.
 	Center touch radio menus.
 	Add arrow to diamonds, rotate.
 	World Goal evaluated too late.
@@ -113,7 +112,7 @@ public class PlatformGame extends BaseGame {
 	User saw Enemy defeated by bumped block fail to give Player a Gem.
 	Once saw Player appear on wrong Marker after goal-met screen.
 	Move music generation, preprocessing classes into a new folder to be excluded from jar.
-	Add Map TouchButton hint labels (up/down/left/right/play) after time threshold without moving or before 1st Level.
+	Add Map TouchButton hint labels before 1st Level.
 	Option to resize touch buttons.
 	Clipboard import/export.
 	*/
