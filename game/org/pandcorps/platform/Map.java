@@ -26,6 +26,8 @@ import java.io.*;
 import java.util.*;
 
 import org.pandcorps.core.*;
+import org.pandcorps.core.img.*;
+import org.pandcorps.core.img.Pancolor.*;
 import org.pandcorps.core.seg.*;
 import org.pandcorps.game.*;
 import org.pandcorps.game.core.*;
@@ -111,6 +113,7 @@ public class Map {
     // burgh, field, heim, town
     // bloomingberg, blooming-gard
 	
+    protected static MapTheme theme = MapTheme.Snow;//Normal;
 	protected static int bgTexture = 0;
 	protected static int bgColor = 1;
 	private static int lm1 = -1;
@@ -149,9 +152,49 @@ public class Map {
 	private final static short MOVE_ANY_TILE = 2;
 	private static short modeMove = MOVE_NORMAL;
 	
+	private static boolean waiting = true;
+	
+	protected abstract static class MapTheme {
+		public final static MapTheme Normal = new MapTheme(null, Theme.Normal, null, null) {
+			@Override protected final void step() {
+				if ((Pangine.getEngine().getClock() % 6) == 0) {
+	                Tile.animate(waters);
+	            }
+			}};
+		public final static MapTheme Snow = new MapTheme("Snow", Theme.Snow, new AntiPixelMask(new RangePixelMask(80, 80, 0, 255, 144, 32)), new SwapPixelFilter(Channel.Blue, Channel.Green, Channel.Red)) {
+			@Override protected final void step() {
+				final long i = Pangine.getEngine().getClock() % 105;
+	            if (i < 3) {
+	            	if (waiting) {
+	            		if (i == 0) {
+	            			waiting = false;
+	            		} else {
+	            			return;
+	            		}
+	            	}
+	                Tile.animate(waters);
+	            }
+			}};
+		
+		protected final String img;
+		protected final Theme levelTheme;
+		protected final PixelMask dirtMask;
+		protected final PixelFilter dirtFilter;
+		
+		private MapTheme(final String img, final Theme levelTheme, final PixelMask dirtMask, final PixelFilter dirtFilter) {
+			this.img = img;
+			this.levelTheme = levelTheme;
+			this.dirtMask = dirtMask;
+			this.dirtFilter = dirtFilter;
+		}
+		
+		protected abstract void step();
+	}
+	
 	protected final static class MapScreen extends Panscreen {
 		@Override
         protected final void load() throws Exception {
+			waiting = true;
 			for (final PlayerContext pc : PlatformGame.pcs) {
 				if (pc.guyRun == null) {
 		    		PlatformGame.reloadAnimalStrip(pc);
@@ -226,9 +269,7 @@ public class Map {
 		
 		@Override
         protected final void step() {
-            if ((Pangine.getEngine().getClock() % 6) == 0) {
-                Tile.animate(waters);
-            }
+			theme.step();
         }
 		
 		@Override
@@ -447,7 +488,7 @@ public class Map {
 	            setPlayerPosition(t);
 	            final Panscreen screen;
 	            final Building b = getBuilding(t);
-	            Level.setTheme(Theme.Normal);
+	            Level.initTheme();
 	            Level.seed = seed + t;
 	            if (isCabin(b)) {
 	            	screen = new Cabin.CabinScreen();
@@ -700,7 +741,7 @@ public class Map {
 			cstl = Mathtil.randi(0, MAX_CASTLE);
 			seed = Mathtil.newSeed();
 	    }
-		Img tileImg = ImtilX.loadImage("org/pandcorps/platform/res/bg/Map.png", 128, null);
+		Img tileImg = ImtilX.loadImage("org/pandcorps/platform/res/bg/Map" + Chartil.unnull(theme.img) + ".png", 128, null);
 		applyLandmark(tileImg, 0, lm1, 0);
 		applyLandmark(tileImg, 48, lm2, 1);
 		if (cstl > 0) {

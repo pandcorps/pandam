@@ -46,7 +46,6 @@ import org.pandcorps.pandax.touch.*;
 import org.pandcorps.pandax.visual.*;
 import org.pandcorps.platform.Avatar.*;
 import org.pandcorps.platform.Enemy.*;
-import org.pandcorps.platform.Level.*;
 import org.pandcorps.platform.Player.*;
 
 public class PlatformGame extends BaseGame {
@@ -939,7 +938,7 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
                 }};
             Coltil.set(allEnemies, Level.SPIKED_IMP, spikedImp);
 			anger = createAnm("anger", 10, CENTER_16, Enemy.loadStrip(9, ImtilX.DIM));
-			Level.setTheme(Theme.Normal); }});
+			Level.initTheme(); }});
 		
 		loaders.add(new Runnable() { @Override public final void run() {
 			final Panmage[] owls = createSheet("owl", "org/pandcorps/platform/res/chr/Owl.png", 32);
@@ -1298,7 +1297,7 @@ System.out.println("loadConstants end " + System.currentTimeMillis());
 	}
 	
 	protected final static void markerClose() {
-		Level.setTheme(Theme.Normal);
+		Level.initTheme();
 	    Achievement.evaluate();
 	    if (Map.isOnLastLevel()) {
 	    	Map.victory = Map.VICTORY_WORLD;
