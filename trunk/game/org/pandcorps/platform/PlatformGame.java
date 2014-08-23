@@ -112,9 +112,8 @@ public class PlatformGame extends BaseGame {
 	User saw Enemy defeated by bumped block fail to give Player a Gem.
 	Once saw Player appear on wrong Marker after goal-met screen.
 	Move music generation, preprocessing classes into a new folder to be excluded from jar.
-	Add Map TouchButton hint labels before 1st Level.
-	Option to resize touch buttons.
 	Clipboard import/export.
+	GoalTemplate: Rise steps, 2*2 block steps.
 	*/
 	
 	protected final static byte TILE_BREAK = 2;
