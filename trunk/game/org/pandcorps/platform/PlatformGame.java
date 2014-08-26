@@ -114,6 +114,7 @@ public class PlatformGame extends BaseGame {
 	Clipboard import/export.
 	GoalTemplate: Rise steps, 2*2 block steps.
 	Castle exterior needs to show correct ground tile.
+	Map name prefixes in MapTheme.
 	*/
 	
 	protected final static byte TILE_BREAK = 2;
