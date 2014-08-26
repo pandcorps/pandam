@@ -113,7 +113,6 @@ public class PlatformGame extends BaseGame {
 	Move music generation, preprocessing classes into a new folder to be excluded from jar.
 	Clipboard import/export.
 	GoalTemplate: Rise steps, 2*2 block steps.
-	Castle exterior needs to show correct ground tile.
 	Map name prefixes in MapTheme.
 	*/
 	
