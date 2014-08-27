@@ -26,7 +26,6 @@ import java.util.*;
 
 import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
-import org.pandcorps.core.img.Pancolor.*;
 import org.pandcorps.game.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandax.*;
@@ -122,8 +121,7 @@ public class Level {
     	    }
     	    
     		@Override protected final BackgroundBuilder getRandomBackground() {
-    			//return Mathtil.rand() ? new HillBackgroundBuilder() : new MountainBackgroundBuilder();
-    			return new MountainBackgroundBuilder();
+    			return Mathtil.rand() ? new HillBackgroundBuilder() : new MountainBackgroundBuilder();
     		}
     		
     		@Override protected final Builder getRandomBuilder() {
@@ -248,8 +246,8 @@ public class Level {
         }
     }
     
-    protected final static Img getColoredTerrain(final Img backImg, final int x, final int y, final int w, final int h) {
-        return Imtil.filter(backImg, x, y, w, h, getHillFilter(Map.bgColor));
+    protected final static void applyColoredTerrain(final Img backImg, final int x, final int y, final int w, final int h) {
+        Imtil.filterImg(backImg, x, y, w, h, getHillFilter(Map.bgColor));
     }
     
     private final static Img loadTileImage() {
@@ -556,10 +554,10 @@ public class Level {
     protected final static class HillBackgroundBuilder implements BackgroundBuilder {
     	@Override
     	public final Img getImage() {
-    		Img backImg = ImtilX.loadImage("org/pandcorps/platform/res/bg/Hills" + Chartil.unnull(theme.bgImg) + ".png", 128, null);
+    		final Img backImg = ImtilX.loadImage("org/pandcorps/platform/res/bg/Hills" + Chartil.unnull(theme.bgImg) + ".png", 128, null);
             if (isNormalTheme()) {
             	applyTerrainTexture(backImg, 0, 0, 48, 32);
-            	backImg = getColoredTerrain(backImg, 0, 0, 96, 96);
+            	applyColoredTerrain(backImg, 0, 0, 96, 96);
             } else {
             	extractSkyColors(backImg);
             }
@@ -586,11 +584,11 @@ public class Level {
     protected final static class TownBackgroundBuilder implements BackgroundBuilder {
     	@Override
     	public final Img getImage() {
-    		Img backImg = ImtilX.loadImage("org/pandcorps/platform/res/bg/Town.png", 128, null);
+    		final Img backImg = ImtilX.loadImage("org/pandcorps/platform/res/bg/Town.png", 128, null);
     		applyTerrainTexture(backImg, 112, 96, 128, 128, 0, 1);
         	applyTerrainTexture(backImg, 0, 0, 48, 32, 1, 3);
-        	backImg = getColoredTerrain(backImg, 0, 32, 96, 64);
-        	backImg = getColoredTerrain(backImg, 112, 96, 16, 32);
+        	applyColoredTerrain(backImg, 0, 32, 96, 64);
+        	applyColoredTerrain(backImg, 112, 96, 16, 32);
             return backImg;
     	}
     	
@@ -642,6 +640,8 @@ public class Level {
     		final Img backImg = ImtilX.loadImage("org/pandcorps/platform/res/bg/Mountains.png", 128, null);
     		applyTerrainTexture(backImg, 0, 0, 32, 32);
     		applyTerrainTexture(backImg, 112, 0, 128, 16);
+    		applyColoredTerrain(backImg, 0, 0, 64, 96);
+    		applyColoredTerrain(backImg, 112, 0, 16, 96);
     		return backImg;
     	}
     	
@@ -2061,9 +2061,9 @@ public class Level {
     
     private final static PixelFilter getHillFilter(final int mode) {
         switch (mode) {
-            case 0 : return null;
-            case 1 : return new SwapPixelFilter(Channel.Red, Channel.Blue, Channel.Green);
-            case 2 : return new SwapPixelFilter(Channel.Blue, Channel.Red, Channel.Green);
+            case 0 : return Map.theme.getHillFilter0();
+            case 1 : return Map.theme.getHillFilter1();
+            case 2 : return Map.theme.getHillFilter2();
         }
         throw new IllegalArgumentException(String.valueOf(mode));
     }
