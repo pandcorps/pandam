@@ -1570,6 +1570,11 @@ public class Level {
     				setFg(tm, i, j, bgMap, 7, v * 2);
     				setFg(tm, i + 1, j, bgMap, 7, v * 2 + 1);
     			}
+    		} else if (j == ys) {
+    			for (int i = xj + 1; i < xy2j; i += 2) {
+    				setFg(tm, i, j, bgMap, 6, v * 2 + 1);
+   					setFg(tm, i + 1, j, bgMap, 6, v * 2);
+    			}
     		}
     	}
     }
