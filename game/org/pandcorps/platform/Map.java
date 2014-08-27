@@ -161,7 +161,13 @@ public class Map {
 				if ((Pangine.getEngine().getClock() % 6) == 0) {
 	                Tile.animate(waters);
 	            }
-			}};
+			}
+			@Override protected final PixelFilter getHillFilter0() {
+				return null; }
+			@Override protected final PixelFilter getHillFilter1() {
+				return new SwapPixelFilter(Channel.Red, Channel.Blue, Channel.Green); }
+			@Override protected final PixelFilter getHillFilter2() {
+				return new SwapPixelFilter(Channel.Blue, Channel.Red, Channel.Green); }};
 		public final static MapTheme Snow = new MapTheme("Snow", Theme.Snow, 1, 6, 2, new AntiPixelMask(new RangePixelMask(80, 80, 0, 255, 144, 32)), new SwapPixelFilter(Channel.Blue, Channel.Green, Channel.Red)) {
 			@Override protected final void step() {
 				final long i = Pangine.getEngine().getClock() % 105;
@@ -175,7 +181,13 @@ public class Map {
 	            	}
 	                Tile.animate(waters);
 	            }
-			}};
+			}
+			@Override protected final PixelFilter getHillFilter0() {
+				return new SwapPixelFilter(Channel.Red, Channel.Red, Channel.Green); }
+			@Override protected final PixelFilter getHillFilter1() {
+				return new SwapPixelFilter(Channel.Red, Channel.Blue, Channel.Green); }
+			@Override protected final PixelFilter getHillFilter2() {
+				return new SwapPixelFilter(Channel.Red, Channel.Green, Channel.Green); }};
 		
 		protected final String name;
 		protected final String img;
@@ -206,6 +218,12 @@ public class Map {
 		}
 		
 		protected abstract void step();
+		
+		protected abstract PixelFilter getHillFilter0();
+		
+		protected abstract PixelFilter getHillFilter1();
+		
+		protected abstract PixelFilter getHillFilter2();
 	}
 	
 	protected final static MapTheme[] themes = {MapTheme.Normal, MapTheme.Snow};
@@ -813,7 +831,7 @@ public class Map {
 		Level.backgroundBuilder = new Level.HillBackgroundBuilder();
 		Level.applyTerrainTexture(tileImg, 48, 32, 96, 48, terrain, Level.getTerrainMask(1));
 		terrain.close();
-		tileImg = Level.getColoredTerrain(tileImg, 48, 32, 48, 16);
+		Level.applyColoredTerrain(tileImg, 48, 32, 48, 16);
 		timg = Pangine.getEngine().createImage("img.map", tileImg);
 	}
 	

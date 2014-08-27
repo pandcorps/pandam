@@ -250,6 +250,10 @@ public final class Imtil {
         }
     }
     
+    public final static void filterImg(final Img img, final int ox, final int oy, final int w, final int h, PixelFilter... fs) {
+    	filterImg(img, ox, oy, w, h, null, fs);
+    }
+    
     public final static void filterImg(final Img img, final int ox, final int oy, final int w, final int h, final PixelMask mask, PixelFilter... fs) {
     	filterImg(img, ox, oy, w, h, mask, Coltil.asList(fs));
     }
