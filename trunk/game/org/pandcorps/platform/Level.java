@@ -122,7 +122,8 @@ public class Level {
     	    }
     	    
     		@Override protected final BackgroundBuilder getRandomBackground() {
-    			return new HillBackgroundBuilder();
+    			//return Mathtil.rand() ? new HillBackgroundBuilder() : new MountainBackgroundBuilder();
+    			return new MountainBackgroundBuilder();
     		}
     		
     		@Override protected final Builder getRandomBuilder() {
@@ -635,6 +636,28 @@ public class Level {
     	}
     }
     
+    private final static class MountainBackgroundBuilder implements BackgroundBuilder {
+    	@Override
+    	public final Img getImage() {
+    		final Img backImg = ImtilX.loadImage("org/pandcorps/platform/res/bg/Mountains.png", 128, null);
+    		applyTerrainTexture(backImg, 0, 0, 32, 32);
+    		applyTerrainTexture(backImg, 112, 0, 128, 16);
+    		return backImg;
+    	}
+    	
+    	@Override
+    	public final int getPreDarken() {
+    		return 0;
+    	}
+    	
+    	@Override
+    	public final void build() {
+    		buildMountains(bgtm1, 6, 0, false);
+    		buildMountains(bgtm2, 9, 1, false);
+    		buildMountains(bgtm3, 12, 2, true);
+    	}
+    }
+    
     private static void applyTerrainTexture(final Img backImg, final int ix, final int iy, final int fx, final int fy) {
     	applyTerrainTexture(backImg, ix, iy, fx, fy, 0, 3);
     }
@@ -645,11 +668,12 @@ public class Level {
     	for (int i = backgroundBuilder.getPreDarken(); i > 0; i--) {
     		terrain = getDarkenedTerrain(terrain);
     	}
+    	final int h = fy - iy;
         for (int z = 0; z < size; z++) {
             if (z > 0) {
                 terrain = getDarkenedTerrain(terrain);
             }
-            final int yoff = z * 32;
+            final int yoff = z * h;
             if (skip <= 0) {
             	applyTerrainTexture(backImg, ix, iy + yoff, fx, fy + yoff, terrain, getTerrainMask(z));
             } else {
@@ -1383,6 +1407,20 @@ public class Level {
     	}
     }
     
+    private final static void buildMountains(final TileMap tm, final int maxy, final int v, final boolean sky) {
+    	final int miny = maxy - 3;
+    	final int tmw = tm.getWidth();
+    	if (sky) {
+    		buildSky(tm);
+    	}
+    	int i = Mathtil.randi(-2, 2);
+    	do {
+    		final int y = Mathtil.randi(miny, maxy);
+    		mountain(tm, i, y, v, Mathtil.rand());
+    		i = i + y * 2 + Mathtil.randi(2, 4);
+    	} while (i < tmw);
+    }
+    
     private final static void addPlayers() {
     	final int size = PlatformGame.pcs.size();
         final ArrayList<Player> players = new ArrayList<Player>(size);
@@ -1495,6 +1533,24 @@ public class Level {
         }
         setFg(tm, x, y, bgMap, iy, ix);
         setFg(tm, stop + 1, y, bgMap, iy, ix + 2);
+    }
+    
+    private final static void mountain(final TileMap tm, final int x, final int y, final int v, final boolean tex) {
+    	final int ix = tex ? 0 : 2, ix1 = ix + 1, iy = v * 2, iy1 = iy + 1;
+    	final int m = (tex ? 0 : 3) + v;
+    	for (int j = 0; j < y; j++) {
+    		final int xj = x + j, xy2j = x + y * 2 - j - 1;
+    		setFg(tm, xj, j, bgMap, iy, ix);
+    		if (j < y - 1) {
+    			final int xy2j1 = xy2j - 1;
+    			setBg(tm, xj + 1, j, bgMap, iy1, ix);
+    			for (int i = xj + 2; i < xy2j1; i++) {
+    				setBg(tm, i, j, bgMap, m, 7);
+    			}
+    			setBg(tm, xy2j1, j, bgMap, iy1, ix1);
+    		}
+    		setFg(tm, xy2j, j, bgMap, iy, ix1);
+    	}
     }
     
     private final static void cloud(final TileMap tm, final int x, final int y, final int w) {
