@@ -30,6 +30,7 @@ import org.pandcorps.core.img.*;
 import org.pandcorps.core.img.Pancolor.*;
 import org.pandcorps.core.seg.*;
 import org.pandcorps.game.*;
+import org.pandcorps.game.Concatenator.*;
 import org.pandcorps.game.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.Panteraction.*;
@@ -102,15 +103,15 @@ public class Map {
     /*private final static String[] LINK_ADJ = { "al", "em", "est", "ing" };
     private final static String[] LINK_NON = { "en", "ing", "ic", "y" }; // "ish"
     private final static String[] LINK_VRB = { "al", "em", "er", "ing" };*/
-    private final static String[] LINK = { "ing" };
     private final static String[] PLACES =
-    	{ "berg", "burgh", "by", "croft", "dom", "field", "fold", "gard", "ham", "heim", "holt", "march", "land", "nesse", "port", "shire", "stead", "strand",
-    	"thorp", "ton", "town" };
+    	{ "berg", "burgh", "by", "croft", "dom", "field", "fold", "gard", "ham", "heim", "holt", "island", "isle", "march",
+        "land", "nesse", "port", "shire", "stead", "strand", "thorp", "ton", "town" };
+    private final static Manipulator mpt = new MapManipulator();
+    private final static Concatenator cct = new MapConcatenator();
     private final static Namer nmr = Namer.get(
-        Namer.get(ADJECTIVES, LINK, PLACES),
-        Namer.get(NOUNS, LINK, PLACES),
-        Namer.get(VERBS, LINK, PLACES));
-    // bloomingberg, blooming-gard
+        Namer.get(mpt, cct, ADJECTIVES, PLACES),
+        Namer.get(mpt, cct, NOUNS, PLACES),
+        Namer.get(mpt, cct, VERBS, PLACES));
 	
     protected static MapTheme theme = MapTheme.Normal;
 	protected static int bgTexture = 0;
@@ -215,6 +216,23 @@ public class Map {
 			}
 		}
 		return MapTheme.Normal;
+	}
+	
+	protected final static class MapManipulator extends Manipulator {
+        @Override
+        public final String manipulate(final String s) {
+            return s.endsWith(" Isle") ? "Isle " + s.substring(0, s.length() - 5) : s;
+        }
+	}
+	
+	protected final static class MapConcatenator extends BaseConcatenator {
+        @Override
+        public final String getDelimValued(final String s1, final String s2) {
+            if ("island".equals(s2)) {
+                return "ia ";
+            }
+            return s2.charAt(0) == 'g' ? "en" : "ing";
+        }
 	}
 	
 	protected final static class MapScreen extends Panscreen {

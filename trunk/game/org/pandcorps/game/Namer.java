@@ -28,7 +28,11 @@ import org.pandcorps.core.*;
 
 public abstract class Namer {
     public final static Namer get(final String[]... components) {
-        return new SimpleNamer(components);
+        return get(null, null, components);
+    }
+    
+    public final static Namer get(final Manipulator manipulator, final Concatenator concatenator, final String[]... components) {
+        return new SimpleNamer(manipulator, concatenator, components);
     }
     
     public final static Namer get(final Namer... namers) {
@@ -59,27 +63,39 @@ public abstract class Namer {
     }
     
     private final static class SimpleNamer extends Namer {
+        private final Manipulator manipulator;
+        private final Concatenator concatenator;
         private final String[][] components;
         
-        public SimpleNamer(final String[]... components) {
+        public SimpleNamer(final Manipulator manipulator, final Concatenator concatenator, final String[]... components) {
+            this.manipulator = manipulator;
+            this.concatenator = concatenator;
             this.components = components;
         }
         
         @Override
         public final String get() {
+            String prev = null;
             final StringBuilder b = new StringBuilder();
             for (final String[] component : components) {
                 final String c = Mathtil.rand(component);
                 if (Chartil.isEmpty(c)) {
                     continue; // Likely if first component is usually a consonant but sometimes empty
-                } else if (b.length() == 0) {
+                }
+                if (concatenator != null) {
+                    b.append(concatenator.getDelim(prev, c));
+                }
+                final int size = b.length();
+                if (size == 0 || b.charAt(size - 1) == ' ') {
                     b.append(Character.toUpperCase(c.charAt(0)));
                     b.append(c, 1, c.length());
                 } else {
                     b.append(c);
                 }
+                prev = c;
             }
-            return b.toString();
+            final String s = b.toString();
+            return manipulator == null ? s : manipulator.manipulate(s);
         }
         
         @Override
