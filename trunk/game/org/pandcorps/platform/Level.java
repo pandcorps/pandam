@@ -1537,19 +1537,40 @@ public class Level {
     
     private final static void mountain(final TileMap tm, final int x, final int y, final int v, final boolean tex) {
     	final int ix = tex ? 0 : 2, ix1 = ix + 1, iy = v * 2, iy1 = iy + 1;
-    	final int m = (tex ? 0 : 3) + v;
+    	final int m = (tex ? 0 : 3) + v, mx = 7;
+    	final int is = 4, is1 = 5, ms = 3 + v, mxs = 6;
+    	final int ys = y * 3 / 4;
     	for (int j = 0; j < y; j++) {
     		final int xj = x + j, xy2j = x + y * 2 - j - 1;
-    		setFg(tm, xj, j, bgMap, iy, ix);
+    		final int ixc, ixc1;
+    		final int mc, mxc;
+    		if (j < ys) {
+	    		ixc = ix;
+	    		ixc1 = ix1;
+	    		mc = m;
+	    		mxc = mx;
+    		} else {
+    			ixc = is;
+	    		ixc1 = is1;
+	    		mc = ms;
+	    		mxc = mxs;
+    		}
+    		setFg(tm, xj, j, bgMap, iy, ixc);
     		if (j < y - 1) {
     			final int xy2j1 = xy2j - 1;
-    			setBg(tm, xj + 1, j, bgMap, iy1, ix);
+    			setBg(tm, xj + 1, j, bgMap, iy1, ixc);
     			for (int i = xj + 2; i < xy2j1; i++) {
-    				setBg(tm, i, j, bgMap, m, 7);
+    				setBg(tm, i, j, bgMap, mc, mxc);
     			}
-    			setBg(tm, xy2j1, j, bgMap, iy1, ix1);
+    			setBg(tm, xy2j1, j, bgMap, iy1, ixc1);
     		}
-    		setFg(tm, xy2j, j, bgMap, iy, ix1);
+    		setFg(tm, xy2j, j, bgMap, iy, ixc1);
+    		if (j == ys - 1) {
+    			for (int i = xj + 1; i < xy2j; i += 2) {
+    				setFg(tm, i, j, bgMap, 7, v * 2);
+    				setFg(tm, i + 1, j, bgMap, 7, v * 2 + 1);
+    			}
+    		}
     	}
     }
     
