@@ -562,7 +562,9 @@ public abstract class GlPangine extends Pangine {
 		    	dst = screenShotDst;
 		    	screenShotDst = null;
 		    }
-		    Imtil.save(Imtil.create(buf, w, h, Imtil.TYPE_INT_RGB), dst);
+		    final Img img = Imtil.create(buf, w, h, Imtil.TYPE_INT_RGB);
+		    Imtil.save(img, dst);
+		    img.close();
 		}
 		update();
 	}
