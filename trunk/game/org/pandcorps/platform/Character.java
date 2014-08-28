@@ -157,8 +157,9 @@ public abstract class Character extends Panctor implements StepListener, Collida
 		//TODO canSlip, true for Player, false for others
 		if (v == 0) {
 			final float px = pos.getX(), py = pos.getY() + OFF_GROUNDED;
-			if (Tile.getBehavior(Level.tm.getTile(Level.tm.getContainer(px + getOffLeft(), py))) == PlatformGame.TILE_BUMP ||
-					Tile.getBehavior(Level.tm.getTile(Level.tm.getContainer(px + getOffRight(), py))) == PlatformGame.TILE_BUMP) {
+			final byte belowLeft = Tile.getBehavior(Level.tm.getTile(Level.tm.getContainer(px + getOffLeft(), py)));
+			final byte belowRight = Tile.getBehavior(Level.tm.getTile(Level.tm.getContainer(px + getOffRight(), py)));
+			if (belowLeft == PlatformGame.TILE_ICE || belowRight == PlatformGame.TILE_ICE) {
 				final float dif = hv - chv;
 				if (dif > 0) {
 					chv += 0.125f;
@@ -166,6 +167,10 @@ public abstract class Character extends Panctor implements StepListener, Collida
 					chv -= 0.125f;
 				}
 				thv = Math.round(chv);
+			} else if (belowLeft == PlatformGame.TILE_SAND || belowRight == PlatformGame.TILE_SAND) {
+			    pos.addY(-1);
+			    thv = hv / Math.abs(hv); //TODO Shouldn't jump as high in sand; maybe y sinking will automatically handle that
+			    chv = thv; //TODO also need to check current tile if Player is at bottom to slow down
 			} else {
 				chv = hv;
 				thv = hv;
