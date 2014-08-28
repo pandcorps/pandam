@@ -37,6 +37,7 @@ public abstract class Character extends Panctor implements StepListener, Collida
 	private final int OFF_X;
 	protected float v = 0;
 	protected int hv = 0;
+	protected float chv = 0;
 	
 	protected Character(final int offX, final int h) {
 		OFF_X = offX;
@@ -44,11 +45,19 @@ public abstract class Character extends Panctor implements StepListener, Collida
 		OFF_BUTTING = H + 1;
 	}
 	
+	private final void setMirror(final int v) {
+		if (v != 0) {
+			setMirror(v < 0);
+		}
+	}
+	
 	protected final boolean addX(final int v) {
 		if (v == 0) {
+			setMirror(hv);
 			return true; // No movement, but request was successful
 		}
-	    setMirror(v < 0);
+	    //setMirror(v < 0);
+		setMirror((hv == 0) ? v : hv);
 	    final int mult;
 	    final Panple pos = getPosition();
 	    if (v > 0) {
@@ -141,8 +150,33 @@ public abstract class Character extends Panctor implements StepListener, Collida
 			}
 		}
 		
-		if (!addX(hv)) {
+		final int thv;
+		//TODO Print each thv; make sure same going left or right
+		//TODO If ice is in air, Player can change direction immediately by sliding to very edge
+		//TODO New TILE_ICE behavior
+		//TODO canSlip, true for Player, false for others
+		if (v == 0) {
+			final float px = pos.getX(), py = pos.getY() + OFF_GROUNDED;
+			if (Tile.getBehavior(Level.tm.getTile(Level.tm.getContainer(px + getOffLeft(), py))) == PlatformGame.TILE_BUMP ||
+					Tile.getBehavior(Level.tm.getTile(Level.tm.getContainer(px + getOffRight(), py))) == PlatformGame.TILE_BUMP) {
+				final float dif = hv - chv;
+				if (dif > 0) {
+					chv += 0.125f;
+				} else if (dif < 0) {
+					chv -= 0.125f;
+				}
+				thv = Math.round(chv);
+			} else {
+				chv = hv;
+				thv = hv;
+			}
+		} else {
+			chv = hv;
+			thv = hv;
+		}
+		if (!addX(thv)) {
 			onWall();
+			chv = 0;
 		}
 		
 		onStepping();
