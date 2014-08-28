@@ -103,6 +103,8 @@ public abstract class Character extends Panctor implements StepListener, Collida
 	    }
 	}
 	
+	protected boolean sanded = false;
+	
 	@Override
 	public final void onStep(final StepEvent event) {
 		if (onStepCustom()) {
@@ -153,13 +155,25 @@ public abstract class Character extends Panctor implements StepListener, Collida
 		final int thv;
 		//TODO Print each thv; make sure same going left or right
 		//TODO If ice is in air, Player can change direction immediately by sliding to very edge
-		//TODO New TILE_ICE behavior
-		//TODO canSlip, true for Player, false for others
+		//TODO canSlip, true for Player, false for others, sanded only needed for Player
+		sanded = false;
 		if (v == 0) {
-			final float px = pos.getX(), py = pos.getY() + OFF_GROUNDED;
-			final byte belowLeft = Tile.getBehavior(Level.tm.getTile(Level.tm.getContainer(px + getOffLeft(), py)));
-			final byte belowRight = Tile.getBehavior(Level.tm.getTile(Level.tm.getContainer(px + getOffRight(), py)));
-			if (belowLeft == PlatformGame.TILE_ICE || belowRight == PlatformGame.TILE_ICE) {
+			final float px = pos.getX(), py = pos.getY(), py1 = py + OFF_GROUNDED;
+			final float pl = px + getOffLeft(), pr = px + getOffRight();
+			final byte left = Tile.getBehavior(Level.tm.getTile(Level.tm.getContainer(pl, py)));
+			final byte right = Tile.getBehavior(Level.tm.getTile(Level.tm.getContainer(pr, py)));
+			final byte belowLeft = Tile.getBehavior(Level.tm.getTile(Level.tm.getContainer(pl, py1)));
+			final byte belowRight = Tile.getBehavior(Level.tm.getTile(Level.tm.getContainer(pr, py1)));
+			final boolean sand = left == PlatformGame.TILE_SAND || right == PlatformGame.TILE_SAND;
+			final boolean belowSand = belowLeft == PlatformGame.TILE_SAND || belowRight == PlatformGame.TILE_SAND;
+			if (sand || belowSand) {
+				if (belowSand) {
+					pos.addY(-1);
+				}
+			    thv = (hv == 0) ? 0 : (hv / Math.abs(hv));
+			    chv = thv;
+			    sanded = true;
+			} else if (belowLeft == PlatformGame.TILE_ICE || belowRight == PlatformGame.TILE_ICE) {
 				final float dif = hv - chv;
 				if (dif > 0) {
 					chv += 0.125f;
@@ -167,10 +181,6 @@ public abstract class Character extends Panctor implements StepListener, Collida
 					chv -= 0.125f;
 				}
 				thv = Math.round(chv);
-			} else if (belowLeft == PlatformGame.TILE_SAND || belowRight == PlatformGame.TILE_SAND) {
-			    pos.addY(-1);
-			    thv = hv / Math.abs(hv); //TODO Shouldn't jump as high in sand; maybe y sinking will automatically handle that
-			    chv = thv; //TODO also need to check current tile if Player is at bottom to slow down
 			} else {
 				chv = hv;
 				thv = hv;
@@ -306,9 +316,11 @@ public abstract class Character extends Panctor implements StepListener, Collida
 	        if (temp != t) {
 	        	t = temp;
 		        onCollide(t);
+		        sandSolid = false;
 		        if (!sol && isSolid(t, left, right, y)) {
 		        	sol = true;
 		        }
+		        sandSolid = true;
 		        
 		        /*if (!sol && yoff < 0) {
 		        	final Tile tb = PlatformGame.tm.getContainer(b, yi);
@@ -342,6 +354,8 @@ public abstract class Character extends Panctor implements StepListener, Collida
 		return isSolid(index, false, left, right, y);
 	}
 	
+	private static boolean sandSolid = true;
+	
 	private boolean isSolid(final int index, final boolean floor, final float left, final float right, final float y) {
 	    final TileMap map = Level.tm;
 	    final Tile tile = map.getTile(index);
@@ -351,7 +365,9 @@ public abstract class Character extends Panctor implements StepListener, Collida
 			return true;
 		}
 		final byte b = tile.getBehavior();
-		if (b == PlatformGame.TILE_BREAK || b == PlatformGame.TILE_BUMP || b == PlatformGame.TILE_ICE || (floor && b == PlatformGame.TILE_FLOOR)) {
+		if (b == PlatformGame.TILE_BREAK || b == PlatformGame.TILE_BUMP ||
+				b == PlatformGame.TILE_ICE || (sandSolid && b == PlatformGame.TILE_SAND) ||
+				(floor && b == PlatformGame.TILE_FLOOR)) {
 			return true;
 		}
 		final float top = y + H - 1, yoff = y - getPosition().getY();
