@@ -351,7 +351,7 @@ public abstract class Character extends Panctor implements StepListener, Collida
 			return true;
 		}
 		final byte b = tile.getBehavior();
-		if (b == PlatformGame.TILE_BREAK || b == PlatformGame.TILE_BUMP || (floor && b == PlatformGame.TILE_FLOOR)) {
+		if (b == PlatformGame.TILE_BREAK || b == PlatformGame.TILE_BUMP || b == PlatformGame.TILE_ICE || (floor && b == PlatformGame.TILE_FLOOR)) {
 			return true;
 		}
 		final float top = y + H - 1, yoff = y - getPosition().getY();

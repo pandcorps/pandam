@@ -725,7 +725,9 @@ public class Level {
 	        addTemplate(new WallTemplate());
 	        addTemplate(new StepTemplate());
 	        addTemplate(new RampTemplate());
-	        if (theme != Theme.Snow) {
+	        if (theme == Theme.Snow) {
+	        	addTemplate(new IceTemplate());
+	        } else {
 	        	addTemplate(new BushTemplate(), new TreeTemplate());
 	        }
 	        addTemplate(new PitTemplate(), new BridgePitTemplate(), new BlockPitTemplate());
@@ -1281,6 +1283,24 @@ public class Level {
 		protected final void build() {
 			gemMsg(x + 1, floor + 1, msg, true);
 		}
+    }
+    
+    private final static class IceTemplate extends SimpleTemplate {
+    	protected IceTemplate() {
+    		super(4, 10);
+    	}
+    	
+    	@Override
+        protected final void build() {
+    		final int stop = x + w + 1;
+    		for (int i = 1; i <= 2; i++) {
+    			solidBlock(x, floor + i);
+    			solidBlock(stop, floor + i);
+    		}
+    		for (int i = x + 1; i < stop; i++) {
+    			tm.setForeground(i, floor + 1, imgMap[1][5], PlatformGame.TILE_ICE);
+    		}
+    	}
     }
     
     private final static class BushTemplate extends SimpleTemplate {

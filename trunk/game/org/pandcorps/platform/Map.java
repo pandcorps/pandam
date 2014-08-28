@@ -107,8 +107,8 @@ public class Map {
     	{ "berg", "burgh", "by", "croft", "dom", "field", "fold", "fort", "gard", "ham", "heim", "holt", "island", "isle", "march", "mark",
         "land", "nesse", "port", "shire", "stead", "strand", "thorp", "ton", "town" };
     // andria, any, bury, hold, hurst, meade, wich; ndon
-    private final static String[] COLDS = { "blizz", "chill", "cold", "freez", "froz", "glac", "ic", "north", "snow", "tundr", "whit", "wintr" };
-    // concrete/adjective + abstract/noun: Greensong, Fairnest, Brighthope, Deardream, heart, love
+    private final static String[] COLDS = { "arct", "blizz", "chill", "cold", "freez", "froz", "glac", "ic", "north", "snow", "tundr", "whit", "wintr" };
+    // concrete/adjective + abstract/noun: Greensong, Fairnest, Brighthope, Deardream, heart, love, spell, tale
     private final static Manipulator mpt = new MapManipulator();
     private final static Concatenator cct = new MapConcatenator();
     private final static Namer nmr = Namer.get(
@@ -265,7 +265,7 @@ public class Map {
                 d = "ard";
             } else if ("glac".equals(s1)) {
                 d = "ial";
-            } else if ("tundr".equals(s1)) {
+            } else if ("arct".equals(s1) || "tundr".equals(s1)) {
                 d = "ic";
             } else {
                 d = s2.charAt(0) == 'g' ? "en" : "ing";
