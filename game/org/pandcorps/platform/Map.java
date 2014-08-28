@@ -108,6 +108,7 @@ public class Map {
         "land", "nesse", "port", "shire", "stead", "strand", "thorp", "ton", "town" };
     // andria, any, bury, hold, hurst, meade, wich; ndon
     private final static String[] COLDS = { "blizz", "chill", "cold", "freez", "froz", "glac", "ic", "north", "snow", "tundr", "whit", "wintr" };
+    // concrete/adjective + abstract/noun: Greensong, Fairnest, Brighthope, Deardream, heart, love
     private final static Manipulator mpt = new MapManipulator();
     private final static Concatenator cct = new MapConcatenator();
     private final static Namer nmr = Namer.get(

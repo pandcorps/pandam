@@ -123,6 +123,8 @@ public class PlatformGame extends BaseGame {
     protected final static byte TILE_UPSLOPE_FLOOR = 7;
     protected final static byte TILE_DOWNSLOPE_FLOOR = 8;
     protected final static byte TILE_GEM = 9;
+    protected final static byte TILE_ICE = 10;
+    protected final static byte TILE_SAND = 11;
 	
 	//protected final static int DEPTH_POWERUP = 0;
 	protected final static int DEPTH_ENEMY = 4;
