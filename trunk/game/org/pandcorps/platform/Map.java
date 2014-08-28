@@ -107,6 +107,7 @@ public class Map {
     	{ "berg", "burgh", "by", "croft", "dom", "field", "fold", "fort", "gard", "ham", "heim", "holt", "island", "isle", "march", "mark",
         "land", "nesse", "port", "shire", "stead", "strand", "thorp", "ton", "town" };
     // andria, any, bury, hold, hurst, meade, wich; ndon
+    private final static String[] COLDS = { "chill", "cold", "freez", "froz", "ic", "north", "snow", "whit", "wintr" };
     private final static Manipulator mpt = new MapManipulator();
     private final static Concatenator cct = new MapConcatenator();
     private final static Namer nmr = Namer.get(
@@ -156,7 +157,7 @@ public class Map {
 	private static boolean waiting = true;
 	
 	protected abstract static class MapTheme {
-		public final static MapTheme Normal = new MapTheme("Normal", null, Theme.Normal, 3, 3, 2, null, null) {
+		public final static MapTheme Normal = new MapTheme("Normal", null, Theme.Normal, 3, 3, 2, null, null, Map.nmr) {
 			@Override protected final void step() {
 				if ((Pangine.getEngine().getClock() % 6) == 0) {
 	                Tile.animate(waters);
@@ -168,7 +169,10 @@ public class Map {
 				return new SwapPixelFilter(Channel.Red, Channel.Blue, Channel.Green); }
 			@Override protected final PixelFilter getHillFilter2() {
 				return new SwapPixelFilter(Channel.Blue, Channel.Red, Channel.Green); }};
-		public final static MapTheme Snow = new MapTheme("Snow", Theme.Snow, 1, 6, 2, new AntiPixelMask(new RangePixelMask(80, 80, 0, 255, 144, 32)), new SwapPixelFilter(Channel.Blue, Channel.Green, Channel.Red)) {
+		public final static MapTheme Snow = new MapTheme("Snow", Theme.Snow, 1, 6, 2,
+		    new AntiPixelMask(new RangePixelMask(80, 80, 0, 255, 144, 32)),
+		    new SwapPixelFilter(Channel.Blue, Channel.Green, Channel.Red),
+		    Namer.get(mpt, cct, COLDS, PLACES)) {
 			@Override protected final void step() {
 				final long i = Pangine.getEngine().getClock() % 105;
 	            if (i < 3) {
@@ -197,16 +201,17 @@ public class Map {
 		protected final int maxLandmark;
 		protected final int portalGroundRow;
 		protected final int portalGroundColumn;
+		protected final Namer nmr;
 		
 		private MapTheme(final String img, final Theme levelTheme, final int maxLandmark,
 				final int portalGroundRow, final int portalGroundColumn,
-				final PixelMask dirtMask, final PixelFilter dirtFilter) {
-			this(img, img, levelTheme, maxLandmark, portalGroundRow, portalGroundColumn, dirtMask, dirtFilter);
+				final PixelMask dirtMask, final PixelFilter dirtFilter, final Namer nmr) {
+			this(img, img, levelTheme, maxLandmark, portalGroundRow, portalGroundColumn, dirtMask, dirtFilter, nmr);
 		}
 		
 		private MapTheme(final String name, final String img, final Theme levelTheme, final int maxLandmark,
 				final int portalGroundRow, final int portalGroundColumn,
-				final PixelMask dirtMask, final PixelFilter dirtFilter) {
+				final PixelMask dirtMask, final PixelFilter dirtFilter, final Namer nmr) {
 			this.name = name;
 			this.img = img;
 			this.levelTheme = levelTheme;
@@ -215,6 +220,7 @@ public class Map {
 			this.portalGroundColumn = portalGroundColumn;
 			this.dirtMask = dirtMask;
 			this.dirtFilter = dirtFilter;
+			this.nmr = nmr;
 		}
 		
 		protected abstract void step();
@@ -251,6 +257,8 @@ public class Map {
                 return "ia ";
             } else if ("town".equals(s2)) {
             	return "ing ";
+            } else if ("froz".equals(s1)) {
+                return "en";
             }
             return s2.charAt(0) == 'g' ? "en" : "ing";
         }
@@ -1563,7 +1571,7 @@ public class Map {
 	
 	private final static String generateName() {
 		//return Mathtil.rand(ADJECTIVES) + ' ' + Mathtil.rand(NATURES) + ' ' + Mathtil.rand(PLACES);
-	    return nmr.get();
+	    return theme.nmr.get();
 	}
 	
 	private final static void setPlayerPosition(final int index) {
@@ -1630,6 +1638,11 @@ public class Map {
 	}
 	
 	public final static void main(final String[] args) {
-	    nmr.printDemo();
+	    for (final MapTheme theme : themes) {
+	        System.out.println("Theme " + theme.name);
+	        System.out.println();
+	        theme.nmr.printDemo();
+	        System.out.println();
+	    }
 	}
 }
