@@ -107,7 +107,7 @@ public class Map {
     	{ "berg", "burgh", "by", "croft", "dom", "field", "fold", "fort", "gard", "ham", "heim", "holt", "island", "isle", "march", "mark",
         "land", "nesse", "port", "shire", "stead", "strand", "thorp", "ton", "town" };
     // andria, any, bury, hold, hurst, meade, wich; ndon
-    private final static String[] COLDS = { "chill", "cold", "freez", "froz", "ic", "north", "snow", "whit", "wintr" };
+    private final static String[] COLDS = { "blizz", "chill", "cold", "freez", "froz", "glac", "ic", "north", "snow", "tundr", "whit", "wintr" };
     private final static Manipulator mpt = new MapManipulator();
     private final static Concatenator cct = new MapConcatenator();
     private final static Namer nmr = Namer.get(
@@ -253,14 +253,23 @@ public class Map {
 	protected final static class MapConcatenator extends BaseConcatenator {
         @Override
         public final String getDelimValued(final String s1, final String s2) {
+            final String d;
             if ("island".equals(s2)) {
-                return "ia ";
+                d = "ia ";
             } else if ("town".equals(s2)) {
-            	return "ing ";
+                d = "ing ";
             } else if ("froz".equals(s1)) {
-                return "en";
+                d = "en";
+            } else if ("blizz".equals(s1)) {
+                d = "ard";
+            } else if ("glac".equals(s1)) {
+                d = "ial";
+            } else if ("tundr".equals(s1)) {
+                d = "ic";
+            } else {
+                d = s2.charAt(0) == 'g' ? "en" : "ing";
             }
-            return s2.charAt(0) == 'g' ? "en" : "ing";
+            return (d.charAt(d.length() - 1) == s2.charAt(0)) ? (d + "-") : d;
         }
 	}
 	
