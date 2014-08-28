@@ -32,7 +32,7 @@ public abstract class Character extends Panctor implements StepListener, Collida
 	protected final static int MIN_Y = -12;
 	protected static float g = -0.65f;
 	protected final int H;
-	private final int OFF_GROUNDED = -1;
+	protected final int OFF_GROUNDED = -1;
 	private final int OFF_BUTTING;
 	private final int OFF_X;
 	protected float v = 0;
@@ -103,7 +103,10 @@ public abstract class Character extends Panctor implements StepListener, Collida
 	    }
 	}
 	
-	protected boolean sanded = false;
+	protected int initCurrentHorizontalVelocity() {
+		chv = hv;
+		return hv;
+	}
 	
 	@Override
 	public final void onStep(final StepEvent event) {
@@ -152,44 +155,7 @@ public abstract class Character extends Panctor implements StepListener, Collida
 			}
 		}
 		
-		final int thv;
-		//TODO Print each thv; make sure same going left or right
-		//TODO If ice is in air, Player can change direction immediately by sliding to very edge
-		//TODO canSlip, true for Player, false for others, sanded only needed for Player
-		sanded = false;
-		if (v == 0) {
-			final float px = pos.getX(), py = pos.getY(), py1 = py + OFF_GROUNDED;
-			final float pl = px + getOffLeft(), pr = px + getOffRight();
-			final byte left = Tile.getBehavior(Level.tm.getTile(Level.tm.getContainer(pl, py)));
-			final byte right = Tile.getBehavior(Level.tm.getTile(Level.tm.getContainer(pr, py)));
-			final byte belowLeft = Tile.getBehavior(Level.tm.getTile(Level.tm.getContainer(pl, py1)));
-			final byte belowRight = Tile.getBehavior(Level.tm.getTile(Level.tm.getContainer(pr, py1)));
-			final boolean sand = left == PlatformGame.TILE_SAND || right == PlatformGame.TILE_SAND;
-			final boolean belowSand = belowLeft == PlatformGame.TILE_SAND || belowRight == PlatformGame.TILE_SAND;
-			if (sand || belowSand) {
-				if (belowSand) {
-					pos.addY(-1);
-				}
-			    thv = (hv == 0) ? 0 : (hv / Math.abs(hv));
-			    chv = thv;
-			    sanded = true;
-			} else if (belowLeft == PlatformGame.TILE_ICE || belowRight == PlatformGame.TILE_ICE) {
-				final float dif = hv - chv;
-				if (dif > 0) {
-					chv += 0.125f;
-				} else if (dif < 0) {
-					chv -= 0.125f;
-				}
-				thv = Math.round(chv);
-			} else {
-				chv = hv;
-				thv = hv;
-			}
-		} else {
-			chv = hv;
-			thv = hv;
-		}
-		if (!addX(thv)) {
+		if (!addX(initCurrentHorizontalVelocity())) {
 			onWall();
 			chv = 0;
 		}
@@ -262,11 +228,11 @@ public abstract class Character extends Panctor implements StepListener, Collida
 	    return getSolid(off) != -1;
 	}
 	
-	private final int getOffLeft() {
+	protected final int getOffLeft() {
 		return isMirror() ? -OFF_X : (-OFF_X - 1);
 	}
 	
-	private final int getOffRight() {
+	protected final int getOffRight() {
 		return isMirror() ? (OFF_X + 1) : OFF_X;
 	}
 	

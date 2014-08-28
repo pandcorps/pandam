@@ -512,6 +512,59 @@ public class Player extends Character implements CollisionListener {
         levelGems += (gems * pc.profile.getGemMultiplier());
     }
 	
+	private boolean sanded = false;
+	
+	@Override
+	protected final int initCurrentHorizontalVelocity() {
+		//TODO Print each thv; make sure same going left or right
+		//TODO If ice is in air, Player can change direction immediately by sliding to very edge
+		sanded = false;
+		final int thv;
+		final float fd = Level.tm.getForegroundDepth();
+		final Panple pos = getPosition(), backPos = acc.back == null ? null : acc.back.getPosition();
+		pos.setZ(fd + PlatformGame.DEPTH_PLAYER);
+		if (backPos != null) {
+			backPos.setZ(fd + PlatformGame.DEPTH_PLAYER_BACK);
+		}
+		if (v == 0) {
+			final float px = pos.getX(), py = pos.getY(), py1 = py + OFF_GROUNDED;
+			final float pl = px + getOffLeft(), pr = px + getOffRight();
+			final byte left = Tile.getBehavior(Level.tm.getTile(Level.tm.getContainer(pl, py)));
+			final byte right = Tile.getBehavior(Level.tm.getTile(Level.tm.getContainer(pr, py)));
+			final byte belowLeft = Tile.getBehavior(Level.tm.getTile(Level.tm.getContainer(pl, py1)));
+			final byte belowRight = Tile.getBehavior(Level.tm.getTile(Level.tm.getContainer(pr, py1)));
+			final boolean sand = left == PlatformGame.TILE_SAND || right == PlatformGame.TILE_SAND;
+			final boolean belowSand = belowLeft == PlatformGame.TILE_SAND || belowRight == PlatformGame.TILE_SAND;
+			if (sand || belowSand) {
+				if (belowSand) {
+					pos.addY(-1);
+				}
+			    thv = (hv == 0) ? 0 : (hv / Math.abs(hv));
+			    chv = thv;
+			    sanded = true;
+			    pos.setZ(PlatformGame.DEPTH_PLAYER);
+				if (backPos != null) {
+					backPos.setZ(PlatformGame.DEPTH_PLAYER_BACK);
+				}
+			} else if (belowLeft == PlatformGame.TILE_ICE || belowRight == PlatformGame.TILE_ICE) {
+				final float dif = hv - chv;
+				if (dif > 0) {
+					chv += 0.125f;
+				} else if (dif < 0) {
+					chv -= 0.125f;
+				}
+				thv = Math.round(chv);
+			} else {
+				chv = hv;
+				thv = hv;
+			}
+		} else {
+			chv = hv;
+			thv = hv;
+		}
+		return thv;
+	}
+	
 	@Override
 	protected final void onStepping() {
 		if (flying) {
