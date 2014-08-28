@@ -346,6 +346,9 @@ public class Player extends Character implements CollisionListener {
 	        } else {
 	            v = VEL_JUMP;
 	        }
+	        if (sanded) {
+	        	v -= 2;
+	        }
 			pc.profile.stats.jumps++;
 			//if isMusicSupported Pangine.getEngine().getMusic().playSound(Music.jump);
 		}
