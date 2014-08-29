@@ -108,7 +108,9 @@ public class Map {
         "land", "nesse", "port", "shire", "stead", "strand", "thorp", "ton", "town" };
     // andria, any, bury, hold, hurst, meade, wich; ndon
     private final static String[] COLDS = { "arct", "blizz", "chill", "cold", "freez", "froz", "glac", "ic", "north", "snow", "tundr", "whit", "wintr" };
-    // concrete/adjective + abstract/noun: Greensong, Fairnest, Brighthope, Deardream, heart, love, spell, tale
+    private final static String[] WARMS = { "ash", "burn", "blaz", "cindr", "embr", "fir", "flam", "heat", "hott", "sand", "scorch", "summer", "torch", "warm" };
+    // concrete/adjective + abstract/noun: Greensong, Fairnest, Brighthope, Deardream, ballad, heart, love, spell, story, tale, wish
+    // Add North/South/East/West before names?
     private final static Manipulator mpt = new MapManipulator();
     private final static Concatenator cct = new MapConcatenator();
     private final static Namer nmr = Namer.get(
@@ -193,6 +195,20 @@ public class Map {
 				return new SwapPixelFilter(Channel.Red, Channel.Blue, Channel.Green); }
 			@Override protected final PixelFilter getHillFilter2() {
 				return new SwapPixelFilter(Channel.Red, Channel.Green, Channel.Green); }};
+		public final static MapTheme Sand = new MapTheme("Sand", Theme.Sand, 1, 6, 3, null, null,
+		    Namer.get(mpt, cct, WARMS, PLACES)) {
+			@Override protected final void step() {
+				final long i = Pangine.getEngine().getClock() % 6;
+           		if (i == 0) {
+	                Tile.animate(waters);
+	            }
+			}
+			@Override protected final PixelFilter getHillFilter0() {
+				return new SwapPixelFilter(Channel.Green, Channel.Red, Channel.Red); }
+			@Override protected final PixelFilter getHillFilter1() {
+				return new SwapPixelFilter(Channel.Green, Channel.Blue, Channel.Red); }
+			@Override protected final PixelFilter getHillFilter2() {
+				return new SwapPixelFilter(Channel.Green, Channel.Green, Channel.Red); }};
 		
 		protected final String name;
 		protected final String img;
@@ -233,7 +249,7 @@ public class Map {
 		protected abstract PixelFilter getHillFilter2();
 	}
 	
-	protected final static MapTheme[] themes = {MapTheme.Normal, MapTheme.Snow};
+	protected final static MapTheme[] themes = {MapTheme.Normal, MapTheme.Snow, MapTheme.Sand};
 	
 	protected final static MapTheme getTheme(final String name) {
 		for (final MapTheme theme : themes) {
@@ -267,6 +283,8 @@ public class Map {
                 d = "ial";
             } else if ("arct".equals(s1) || "tundr".equals(s1)) {
                 d = "ic";
+            } else if ("summer".equals(s1)) {
+                d = "s";
             } else {
                 d = s2.charAt(0) == 'g' ? "en" : "ing";
             }
@@ -816,7 +834,9 @@ public class Map {
     	    final int worlds = getProfile().stats.defeatedWorlds;
 			if (worlds == 1) {
 				theme = MapTheme.Snow;
-			} else if (worlds <= 4) {
+			} else if (worlds == 3) {
+				theme = MapTheme.Sand;
+			} else if (worlds <= 5) {
 				theme = MapTheme.Normal;
 			} else {
 				theme = Mathtil.rand(themes);

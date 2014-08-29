@@ -96,9 +96,10 @@ public class Level {
     	        switch (worlds) {
     	            case 0 :
     	            case 1 : return new int[] {HOB_TROLL, HOB_OGRE, IMP}; // 2nd world is Snow
-    	            case 2 : return new int[] {HOB_TROLL, HOB_OGRE, IMP, ARMORED_IMP}; // After 2nd world
-    	            default: return NORMAL_ENEMIES; // After 3rd
-    	            // troll colossus and ogre behemoth after 4th (see addGiantTemplate)
+    	            case 2 : // After 2nd world
+    	            case 3 : return new int[] {HOB_TROLL, HOB_OGRE, IMP, ARMORED_IMP}; // 4th world is Sand
+    	            default: return NORMAL_ENEMIES; // After 4rd
+    	            // troll colossus and ogre behemoth after 5th (see addGiantTemplate)
     	        }
     	    }
     	    
@@ -116,9 +117,9 @@ public class Level {
     			}
     		}
     	};
-    	public final static Theme Snow = new Theme("Snow", null, MSG) {
+    	public final static Theme Snow = new Theme("Snow", null, MSG, PlatformGame.TILE_ICE) {
     	    @Override protected final int[] getEnemyIndices(final int worlds) {
-    	        return NORMAL_ENEMIES;
+    	        return worlds < 2 ? new int[] {HOB_TROLL, HOB_OGRE, IMP} : NORMAL_ENEMIES;
     	    }
     	    
     		@Override protected final BackgroundBuilder getRandomBackground() {
@@ -134,8 +135,32 @@ public class Level {
     	        return new TileMapImage[] {row[5], row[6], row[7]};
         	}
     		
-    		@Override protected final void step(final long i) {
+    		@Override protected final void flash(final long i) {
     			if (i < 3) {
+    				Tile.animate(extraAnimBlock);
+    			}
+        	}
+    	};
+    	public final static Theme Sand = new Theme("Sand", null, MSG, PlatformGame.TILE_SAND) {
+    	    @Override protected final int[] getEnemyIndices(final int worlds) {
+    	        return worlds < 4 ? new int[] {HOB_TROLL, HOB_OGRE, IMP, ARMORED_IMP} : NORMAL_ENEMIES;
+    	    }
+    	    
+    		@Override protected final BackgroundBuilder getRandomBackground() {
+    			return new HillBackgroundBuilder();
+    		}
+    		
+    		@Override protected final Builder getRandomBuilder() {
+    			return new GrassyBuilder();
+    		}
+    		
+    		@Override protected final TileMapImage[] getExtraAnimBlock() {
+    			final TileMapImage[] row = imgMap[1];
+    	        return new TileMapImage[] {row[5], row[6], row[7]};
+        	}
+    		
+    		@Override protected final void step(final long clock) {
+    			if (clock % 6 == 0) {
     				Tile.animate(extraAnimBlock);
     			}
         	}
@@ -163,15 +188,17 @@ public class Level {
     	protected final String img;
     	protected final String bgImg;
     	protected final String[] gemMessages;
+    	protected final byte specialGroundBehavior;
     	
     	private Theme(final String img, final String[] gemMessages) {
-    		this(img, img, gemMessages);
+    		this(img, img, gemMessages, Tile.BEHAVIOR_SOLID);
     	}
     	
-    	private Theme(final String img, final String bgImg, final String[] gemMessages) {
+    	private Theme(final String img, final String bgImg, final String[] gemMessages, final byte specialGroundBehavior) {
     		this.img = img;
     		this.bgImg = bgImg;
     		this.gemMessages = gemMessages;
+    		this.specialGroundBehavior = specialGroundBehavior;
     	}
     	
     	private final List<EnemyDefinition> getEnemies() {
@@ -193,7 +220,10 @@ public class Level {
     		return null;
     	}
     	
-    	protected void step(final long i) {
+    	protected void step(final long clock) {
+    	}
+    	
+    	protected void flash(final long i) {
     	}
     }
     
@@ -448,7 +478,7 @@ public class Level {
         }
         
         protected final void addGiantTemplate() {
-            if (isNormalTheme() && getDefeatedWorlds() >= 4) {
+            if (isNormalTheme() && getDefeatedWorlds() >= 5) {
                 addTemplate(new GiantTemplate());
             }
         }
@@ -745,8 +775,8 @@ public class Level {
 	        addTemplate(new WallTemplate());
 	        addTemplate(new StepTemplate());
 	        addTemplate(new RampTemplate());
-	        if (theme == Theme.Snow) {
-	        	addTemplate(new IceTemplate());
+	        if (theme == Theme.Snow || theme == Theme.Sand) {
+	        	addTemplate(new SpecialGroundTemplate());
 	        } else {
 	        	addTemplate(new BushTemplate(), new TreeTemplate());
 	        }
@@ -1305,8 +1335,8 @@ public class Level {
 		}
     }
     
-    private final static class IceTemplate extends SimpleTemplate {
-    	protected IceTemplate() {
+    private final static class SpecialGroundTemplate extends SimpleTemplate {
+    	protected SpecialGroundTemplate() {
     		super(4, 10);
     	}
     	
@@ -1318,7 +1348,7 @@ public class Level {
     			solidBlock(stop, floor + i);
     		}
     		for (int i = x + 1; i < stop; i++) {
-    			tm.setForeground(i, floor + 1, imgMap[1][5], PlatformGame.TILE_ICE);
+    			tm.setForeground(i, floor + 1, imgMap[1][5], theme.specialGroundBehavior);
     		}
     	}
     }
