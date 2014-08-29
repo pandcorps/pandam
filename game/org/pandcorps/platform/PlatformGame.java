@@ -113,6 +113,7 @@ public class PlatformGame extends BaseGame {
 	Move music generation, preprocessing classes into a new folder to be excluded from jar.
 	Clipboard import/export.
 	GoalTemplate: Rise steps, 2*2 block steps.
+	Sand level cactus, Snow level crystal/pine tree
 	*/
 	
 	protected final static byte TILE_BREAK = 2;
