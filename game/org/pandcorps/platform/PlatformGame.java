@@ -347,7 +347,9 @@ public class PlatformGame extends BaseGame {
 		
 		@Override
         protected final void step() {
-			final long i = Pangine.getEngine().getClock() % TIME_FLASH;
+			final long clock = Pangine.getEngine().getClock();
+			final long i = clock % TIME_FLASH;
+			Level.theme.step(clock);
             if (i < 4) {
             	if (waiting) {
             		if (i == 0) {
@@ -357,7 +359,7 @@ public class PlatformGame extends BaseGame {
             		}
             	}
                 Tile.animate(Level.flashBlock);
-                Level.theme.step(i);
+                Level.theme.flash(i);
                 final Tile tileGem = Level.tileGem;
                 if (i < 3 && tileGem != null) {
                 	tileGem.setForeground(gem[(((int) i) + 1) % 3]);
