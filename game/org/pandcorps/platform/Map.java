@@ -198,7 +198,7 @@ public class Map {
 		public final static MapTheme Sand = new MapTheme("Sand", Theme.Sand, 1, 6, 3, null, null,
 		    Namer.get(mpt, cct, WARMS, PLACES)) {
 			@Override protected final void step() {
-				final long i = Pangine.getEngine().getClock() % 6;
+				final long i = Pangine.getEngine().getClock() % 9;
            		if (i == 0) {
 	                Tile.animate(waters);
 	            }
