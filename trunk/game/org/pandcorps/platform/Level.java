@@ -55,10 +55,11 @@ public class Level {
     private final static Set<Class<? extends Template>> oneUseTemplates = new HashSet<Class<? extends Template>>();
     
     protected static TileMapImage[] flashBlock = null;
+    private static TileMapImage[] extraAnimBlock = null;
     
     protected static long seed = -1;
     protected static Panroom room = null;
-    private static Theme theme = null;
+    protected static Theme theme = null;
     protected static BackgroundBuilder backgroundBuilder = null;
     protected static Panmage timg = null;
     protected static Panmage bgimg = null;
@@ -127,6 +128,17 @@ public class Level {
     		@Override protected final Builder getRandomBuilder() {
     			return new GrassyBuilder();
     		}
+    		
+    		@Override protected final TileMapImage[] getExtraAnimBlock() {
+    			final TileMapImage[] row = imgMap[1];
+    	        return new TileMapImage[] {row[5], row[6], row[7]};
+        	}
+    		
+    		@Override protected final void step(final long i) {
+    			if (i < 3) {
+    				Tile.animate(extraAnimBlock);
+    			}
+        	}
     	};
     	private final static String[] MSG_CHAOS = {"CHAOS", "HAVOC", "BEWARE", "FEAR", "DANGER"};
     	public final static Theme Chaos = new Theme("Chaos", MSG_CHAOS) {
@@ -176,6 +188,13 @@ public class Level {
     	protected abstract BackgroundBuilder getRandomBackground();
     	
     	protected abstract Builder getRandomBuilder();
+    	
+    	protected TileMapImage[] getExtraAnimBlock() {
+    		return null;
+    	}
+    	
+    	protected void step(final long i) {
+    	}
     }
     
     protected static void setTheme(final Theme theme) {
@@ -278,6 +297,7 @@ public class Level {
         imgMap = tm.splitImageMap(timg);
         final TileMapImage[] row = imgMap[0];
         flashBlock = new TileMapImage[] {row[0], row[1], row[2], row[3]};
+        extraAnimBlock = theme.getExtraAnimBlock();
         
         final Panlayer bg1 = PlatformGame.createParallax(room, 2);
         bg1.setClearDepthEnabled(false);
