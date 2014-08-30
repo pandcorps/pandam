@@ -177,17 +177,7 @@ public class Map {
 		    new SwapPixelFilter(Channel.Blue, Channel.Green, Channel.Red),
 		    Namer.get(mpt, cct, COLDS, PLACES)) {
 			@Override protected final void step() {
-				final long i = Pangine.getEngine().getClock() % 105;
-	            if (i < 3) {
-	            	if (waiting) {
-	            		if (i == 0) {
-	            			waiting = false;
-	            		} else {
-	            			return;
-	            		}
-	            	}
-	                Tile.animate(waters);
-	            }
+				flash();
 			}
 			@Override protected final PixelFilter getHillFilter0() {
 				return new SwapPixelFilter(Channel.Red, Channel.Red, Channel.Green); }
@@ -198,10 +188,9 @@ public class Map {
 		public final static MapTheme Sand = new MapTheme("Sand", Theme.Sand, 1, 6, 3, null, null,
 		    Namer.get(mpt, cct, WARMS, PLACES)) {
 			@Override protected final void step() {
-				final long i = Pangine.getEngine().getClock() % 9;
-           		if (i == 0) {
-	                Tile.animate(waters);
-	            }
+				if (Pangine.getEngine().getClock() % 4 == 0) {
+					Tile.animate(waters);
+				}
 			}
 			@Override protected final PixelFilter getHillFilter0() {
 				return new SwapPixelFilter(Channel.Green, Channel.Red, Channel.Red); }
@@ -238,6 +227,20 @@ public class Map {
 			this.dirtMask = dirtMask;
 			this.dirtFilter = dirtFilter;
 			this.nmr = nmr;
+		}
+		
+		protected final void flash() {
+			final long i = Pangine.getEngine().getClock() % 105;
+            if (i < 3) {
+            	if (waiting) {
+            		if (i == 0) {
+            			waiting = false;
+            		} else {
+            			return;
+            		}
+            	}
+                Tile.animate(waters);
+            }
 		}
 		
 		protected abstract void step();
