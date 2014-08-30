@@ -323,6 +323,10 @@ public abstract class Pangine {
 		return types.get(actorClass);
 	}
 	
+	/*public abstract void playMusic(final String loc);
+	
+	public abstract void stopMusic();*/
+	
 	public final Pansic getMusic() {
 		return isMusicSupported() ? music : null;
 	}
@@ -837,7 +841,7 @@ public abstract class Pangine {
 	private final int getMaxDim(final int base, final int abs) {
 	    int zoom;
 	    if (scaler == null) {
-	    	for (zoom = 1; zoom * base < abs; zoom += 1);
+	    	for (zoom = 1; zoom * base < abs; zoom++);
 	    	return Math.max(1, zoom - 1);
 	    } else {
 	    	for (zoom = 1; zoom * base < abs; zoom *= 2);
@@ -847,17 +851,26 @@ public abstract class Pangine {
 	
 	// Will halve the display size until it can do so no longer without dropping below given dimensions
 	public final void setApproximateFullScreenZoomedDisplaySize(final int minWidth, final int minHeight) {
+		setApproximateFullScreenZoomedDisplaySize(minWidth, minHeight, true);
+	}
+	
+	public final void setApproximateFullScreenZoomedDisplaySize(final int minWidth, final int minHeight, final boolean pow2) {
 	    final int topWidth = getDesktopWidth(), topHeight = getDesktopHeight();
 	    setFullScreen(true);
 	    setDisplaySize(topWidth, topHeight);
-	    zoom(Math.min(getApproxDim(minWidth, topWidth), getApproxDim(minHeight, topHeight)));
+	    zoom(Math.min(getApproxDim(minWidth, topWidth, pow2), getApproxDim(minHeight, topHeight, pow2)));
     }
 	
-	private final int getApproxDim(final int min, final int top) {
+	private final int getApproxDim(final int min, final int top, final boolean pow2) {
 	    int zoom;
 	    // Check that top is a multiple of zoom?
-        for (zoom = 1; top / zoom >= min; zoom *= 2);
-        return Math.max(1, zoom / 2);
+	    if (pow2) {
+	        for (zoom = 1; top / zoom >= min; zoom *= 2);
+	        return Math.max(1, zoom / 2);
+	    } else {
+	    	for (zoom = 1; top / zoom >= min; zoom++);
+	        return Math.max(1, zoom - 1);
+	    }
 	}
 	
 	public final int getEffectiveWidth() {

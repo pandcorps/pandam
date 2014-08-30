@@ -135,6 +135,14 @@ public final class UnitPangine extends Pangine {
 	protected final void loop() throws Exception {
 	}
 	
+	/*@Override
+    public final void playMusic(final String loc) {
+	}
+	
+	@Override
+    public final void stopMusic() {
+	}*/
+	
 	@Override
 	protected final void destroy() throws Exception {
 	}

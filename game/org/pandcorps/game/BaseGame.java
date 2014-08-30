@@ -64,7 +64,7 @@ public abstract class BaseGame extends Pangame {
         	engine.setImageScaler((Scaler) Reftil.newInstance(scalerClassName));
         }
         if (isFullScreen()) {
-            engine.setApproximateFullScreenZoomedDisplaySize(SCREEN_W, SCREEN_H);
+            engine.setApproximateFullScreenZoomedDisplaySize(SCREEN_W, SCREEN_H, false);
             final float zoom = engine.getZoom();
             SCREEN_W = (int) (engine.getDesktopWidth() / zoom);
             SCREEN_H = (int) (engine.getDesktopHeight() / zoom);
