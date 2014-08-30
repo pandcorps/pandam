@@ -94,6 +94,7 @@ public abstract class GlPangine extends Pangine {
 	}
 	
 	protected int w = 640, h = 480;
+	protected int truncatedWidth = w, truncatedHeight = h;
     protected boolean fullScreen = false;
 	private boolean initialized = false;
 	private float clr = 0.0f, clg = 0.0f, clb = 0.0f, cla = 0.0f;
@@ -158,6 +159,7 @@ public abstract class GlPangine extends Pangine {
 		gl.glAlphaFunc(gl.GL_GREATER, 0);
 		
 		initInput();
+		initViewport();
 	}
 	
 	@Override
@@ -167,10 +169,23 @@ public abstract class GlPangine extends Pangine {
 		}
 	}
 	
+	private final void initViewport() {
+		int w = getDesktopWidth(), h = getDesktopHeight();
+		final float z1 = getZoom();
+		final int z = (int) z1;
+		final float z2 = z;
+		if (z1 == z2) {
+			w = (w / z) * z;
+			h = (h / z) * z;
+		}
+		truncatedWidth = w;
+		truncatedHeight = h;
+		gl.glViewport(0, 0, w, h);
+	}
+	
 	@Override
 	protected final void recreate() throws Exception {
 		init();
-		gl.glViewport(0, 0, getDesktopWidth(), getDesktopHeight());
 		final IdentityHashSet<Texture> textures = new IdentityHashSet<Texture>();
 		for (final GlPanmage image : images) {
 			if (textures.add(image.tex)) { // A sheet of images can share same Texture
@@ -550,6 +565,7 @@ public abstract class GlPangine extends Pangine {
 		for (Panlayer layer = room.getBase(); layer != null; layer = layer.getAbove()) {
 		    draw(layer);
 		}
+		edge();
 		if (screenShotDst != null) {
 		    final ByteBuffer buf = Pantil.allocateDirectByteBuffer(w * h * 3);
 		    //buf.rewind();
@@ -619,23 +635,41 @@ public abstract class GlPangine extends Pangine {
 	    return (byte) (c + Byte.MIN_VALUE);
 	}
 	
-	private void blend(final Panlayer room) {
+	private final void edge() {
+		final int w = getDisplayWidth(), h = getDisplayHeight();
+		if (truncatedWidth < w || truncatedHeight < h) {
+			gl.glViewport(truncatedWidth, 0, w, h);
+			quad(Pancolor.BLACK, 0, w, 0, h, 0);
+			gl.glViewport(0, truncatedHeight, w, h);
+			quad(Pancolor.BLACK, 0, w, 0, h, 0);
+			gl.glViewport(0, 0, truncatedWidth, truncatedHeight);
+		}
+	}
+	
+	private final void blend(final Panlayer room) {
 	    // opengl.org - the depth buffer is not updated if the depth test is disabled
 	    final Pancolor color = room.getBlendColor();
 	    final short a = color.getA();
 	    if (a == 0) {
 	        return;
 	    }
+	    final Camera c = cams.get(room);
+	    quad(color, c.xi, c.xa, c.yi, c.ya, c.za);
+	}
+	
+	private final void quad(final Pancolor color, final float minx, final float maxx, final float miny, final float maxy, final float z) {
 	    gl.glLoadIdentity();
 	    gl.glDisable(gl.GL_DEPTH_TEST);
 	    gl.glDisable(gl.GL_TEXTURE_2D);
 	    gl.glDisableClientState(gl.GL_TEXTURE_COORD_ARRAY);
-	    gl.glEnable(gl.GL_BLEND);
-	    gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA);
+	    final short a = color.getA();
+	    final boolean blending = a < Pancolor.MAX_VALUE;
+	    if (blending) {
+		    gl.glEnable(gl.GL_BLEND);
+		    gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA);
+	    }
         gl.glColor4b(toByte(color.getR()), toByte(color.getG()), toByte(color.getB()), toByte(a));
         //final int maxx = 256, maxy = 192;
-        final Camera c = cams.get(room);
-		final float minx = c.xi, maxx = c.xa, miny = c.yi, maxy = c.ya, z = c.za;
 		final boolean quad = gl.isQuadSupported();
 		if (blendRectangle == null) {
 			blendRectangle = Pantil.allocateDirectFloatBuffer(quad ? 12 : 18);
@@ -666,7 +700,9 @@ public abstract class GlPangine extends Pangine {
         gl.glVertexPointer(3, 0, blendRectangle);
         gl.glDrawArrays(quad ? gl.GL_QUADS : gl.GL_TRIANGLES, 0, quad ? 4 : 6); // Number of vertices
         gl.glColor4b(Byte.MAX_VALUE, Byte.MAX_VALUE, Byte.MAX_VALUE, Byte.MAX_VALUE);
-        gl.glDisable(gl.GL_BLEND);
+        if (blending) {
+        	gl.glDisable(gl.GL_BLEND);
+        }
         gl.glEnableClientState(gl.GL_TEXTURE_COORD_ARRAY);
         gl.glEnable(gl.GL_TEXTURE_2D);
         gl.glEnable(gl.GL_DEPTH_TEST);

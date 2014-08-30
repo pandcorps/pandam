@@ -232,6 +232,20 @@ public final class LwjglPangine extends GlPangine {
     public final boolean isTouchSupported() {
     	return false;
     }
+    
+    /*@Override
+    public final void playMusic(final String loc) {
+    	try {
+    		getMusic().playMusic(Mustil.load(loc));
+    	} catch (final Exception e) {
+    		throw Panception.get(e);
+    	}
+    }
+    
+    @Override
+    public final void stopMusic() {
+    	getMusic().stop();
+    }*/
 	
     @Override
 	protected void onDestroy() {
