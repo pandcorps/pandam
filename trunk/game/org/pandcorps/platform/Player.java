@@ -726,7 +726,7 @@ public class Player extends Character implements CollisionListener {
 	}
 	
 	protected final static class Accessories {
-		private Panctor back = null;
+		private final Panctor back;
 		
 		protected Accessories(final PlayerContext pc) {
 			final byte jm = pc.profile.currentAvatar.jumpMode;
@@ -734,13 +734,18 @@ public class Player extends Character implements CollisionListener {
 			    back = jm == JUMP_HIGH ? new Back() : new Panctor();
 			    back.setView(pc.back);
 			    PlatformGame.room.addActor(back);
+			    PlatformGame.setPosition(back, 0, 0, PlatformGame.DEPTH_PLAYER_BACK);
+			} else {
+				back = null;
 			}
 		}
 		
 		protected void onStepEnd(final Panctor act) {
 			if (back != null) {
 				final Panple pos = act.getPosition();
-			    PlatformGame.setPosition(back, pos.getX(), pos.getY(), PlatformGame.DEPTH_PLAYER_BACK);
+				// Sand can change z, so only set z once in constructor
+			    //PlatformGame.setPosition(back, pos.getX(), pos.getY(), PlatformGame.DEPTH_PLAYER_BACK);
+				back.getPosition().set(pos.getX(), pos.getY());
 			    back.setMirror(act.isMirror());
 			}
 		}

@@ -114,7 +114,6 @@ public class PlatformGame extends BaseGame {
 	Clipboard import/export.
 	GoalTemplate: Rise steps, 2*2 block steps.
 	Sand level cactus, Snow level crystal/pine tree
-	Wings appear in front of sand.
 	Embed ice and sand in ground if high enough
 	*/
 	
