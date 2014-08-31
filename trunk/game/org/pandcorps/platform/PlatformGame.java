@@ -114,6 +114,8 @@ public class PlatformGame extends BaseGame {
 	Clipboard import/export.
 	GoalTemplate: Rise steps, 2*2 block steps.
 	Sand level cactus, Snow level crystal/pine tree
+	Wings appear in front of sand.
+	Embed ice and sand in ground if high enough
 	*/
 	
 	protected final static byte TILE_BREAK = 2;
@@ -237,6 +239,7 @@ public class PlatformGame extends BaseGame {
 	protected static Panmage menuX = null;
 	protected static Panmage menuPlus = null;
 	protected static Panmage menuMinus = null;
+	protected static Panmage menuExclaim = null;
 	protected static Panmage menuOff = null;
 	protected static Panmage menuTrophy = null;
 	protected static Panmage menuStar = null;
@@ -944,6 +947,7 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
                 }};
             Coltil.set(allEnemies, Level.SPIKED_IMP, spikedImp);
 			anger = createAnm("anger", 10, CENTER_16, Enemy.loadStrip(9, ImtilX.DIM));
+			Coltil.set(allEnemies, Level.ICE_WRAITH, new EnemyDefinition("Ice Wraith", 12));
 			Level.initTheme(); }});
 		
 		loaders.add(new Runnable() { @Override public final void run() {
@@ -1072,6 +1076,7 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 			    menuX = createMenuImg("X");
 			    menuPlus = createMenuImg("Plus");
 			    menuMinus = createMenuImg("Minus");
+			    menuExclaim = createMenuImg("Exclaim");
 			    menuOff = createMenuImg("Off");
 			    menuTrophy = gemAchieve[0];
 			    menuStar = gemGoal[0];

@@ -30,11 +30,17 @@ import org.pandcorps.pandax.*;
 public final class Projectile extends Pandy implements Collidable, AllOobListener {
     public Projectile(final Panimation anm, final Panctor src, final Panctor dst) {
         setView(anm);
-        final Panple spos = src.getPosition(), dpos = dst.getPosition(), vel = getVelocity();
+        final Panple spos = src.getPosition();
         final float x = spos.getX() + (5 * (src.isMirror() ? -1 : 1)), y = spos.getY() + 6;
         PlatformGame.setPosition(this, x, y, PlatformGame.DEPTH_SPARK);
-        vel.set(dpos.getX() - x, dpos.getY() + 6 - y, 0);
-        vel.multiply(2f / ((float) vel.getMagnitude2()));
+        setVelocity(this, dst, getVelocity(), 2f);
+    }
+    
+    protected final static void setVelocity(final Panctor prj, final Panctor dst, final Panple vel, final float mag) {
+    	final Panple pos = prj.getPosition(), dpos = dst.getPosition();
+    	vel.set(dpos.getX() - pos.getX(), dpos.getY() + 6 - pos.getY(), 0);
+        vel.multiply(mag / ((float) vel.getMagnitude2()));
+        prj.setMirror(vel.getX() < 0);
     }
     
     @Override

@@ -49,6 +49,7 @@ public class Level {
     protected final static int SPIKED_IMP = 8;
     protected final static int DROWID = 9;
     protected final static int DROLOCK = 10;
+    protected final static int ICE_WRAITH = 11;
     
     protected final static PixelFilter terrainDarkener = new BrightnessPixelFilter((short) -40, (short) -24, (short) -32);
     
@@ -91,6 +92,13 @@ public class Level {
     protected abstract static class Theme {
     	private final static String[] MSG = {"PLAYER", "GEMS!!!", "HURRAY", "GO GO!", "YAY", "GREAT", "PERFECT"};
     	private final static int[] NORMAL_ENEMIES = {HOB_TROLL, HOB_OGRE, TROLL, OGRE, IMP, ARMORED_IMP};
+    	private final static int[] getNormalEnemies(final int... extra) {
+    		final int nlen = NORMAL_ENEMIES.length, elen = extra.length;
+    		final int[] a = new int[nlen + elen];
+    		System.arraycopy(NORMAL_ENEMIES, 0, a, 0, nlen);
+    		System.arraycopy(extra, 0, a, nlen, elen);
+    		return a;
+    	}
     	public final static Theme Normal = new Theme(null, MSG) {
     	    @Override protected final int[] getEnemyIndices(final int worlds) {
     	        switch (worlds) {
@@ -119,7 +127,7 @@ public class Level {
     	};
     	public final static Theme Snow = new Theme("Snow", null, MSG, PlatformGame.TILE_ICE) {
     	    @Override protected final int[] getEnemyIndices(final int worlds) {
-    	        return worlds < 2 ? new int[] {HOB_TROLL, HOB_OGRE, IMP} : NORMAL_ENEMIES;
+    	        return worlds < 2 ? new int[] {HOB_TROLL, HOB_OGRE, IMP, ICE_WRAITH} : getNormalEnemies(ICE_WRAITH);
     	    }
     	    
     		@Override protected final BackgroundBuilder getRandomBackground() {

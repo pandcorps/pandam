@@ -39,7 +39,8 @@ public class Spawner extends Panctor implements StepListener {
 		final Panple pos = getPosition();
 		final float x = pos.getX();
 		if (x - 32 <= getLayer().getViewMaximum().getX() + Player.MAX_V) {
-			new Enemy(getDef(), x, pos.getY());
+			final EnemyDefinition def = getDef();
+			def.factory.spawn(def, x, pos.getY());
 			destroy();
 		}
 	}
