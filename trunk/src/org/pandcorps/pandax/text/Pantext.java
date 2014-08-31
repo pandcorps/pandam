@@ -377,6 +377,10 @@ public class Pantext extends Panctor {
         renderer.render(layer, font, x + (i * fontWidth), y - ((j - firstLine) * fontHeight), z, xoff, yoff, fontWidth, fontHeight);
 	}
 	
+	public final List<? extends CharSequence> getText() {
+		return text;
+	}
+	
 	public final int getTotalLines() {
 		return text.size();
 	}

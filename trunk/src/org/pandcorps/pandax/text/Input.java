@@ -190,4 +190,8 @@ public abstract class Input extends TextItem {
     	buf.append(v);
     	label.setCursor(0, buf.length());
     }
+    
+    public String getText() {
+    	return buf.toString();
+    }
 }
