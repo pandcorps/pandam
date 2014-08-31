@@ -689,7 +689,6 @@ public class Player extends Character implements CollisionListener {
 	
 	private final void startFreeze() {
 		if (isHurtable()) {
-			levelHits++;
 			hurtTimer = 60;
 			flying = false;
 			mode = MODE_FROZEN;
