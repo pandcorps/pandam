@@ -29,6 +29,7 @@ import org.pandcorps.pandam.event.action.*;
 import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.in.*;
 import org.pandcorps.pandax.tile.*;
+import org.pandcorps.platform.Enemy.*;
 
 public class Player extends Character implements CollisionListener {
 	protected final static int PLAYER_X = 6;
@@ -651,6 +652,8 @@ public class Player extends Character implements CollisionListener {
 			    startHurt();
 			}
 		} else if (other instanceof Projectile) {
+		    startHurt();
+		} else if (other instanceof Wraith) {
 		    startHurt();
 		}
 	}

@@ -24,11 +24,13 @@ package org.pandcorps.platform;
 
 import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
+import org.pandcorps.game.*;
 import org.pandcorps.game.actor.*;
 import org.pandcorps.game.actor.CustomBurst.*;
 import org.pandcorps.game.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
+import org.pandcorps.pandam.event.boundary.*;
 import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.platform.Player.*;
@@ -72,6 +74,7 @@ public class Enemy extends Character {
 		protected InteractionHandler stompHandler = null;
 		protected InteractionHandler rewardHandler = null;
 		protected InteractionHandler defeatHandler = null;
+		protected final SpawnFactory factory;
 		
 		protected EnemyDefinition(final String name, final int ind, final PixelFilter f, final boolean ledgeTurn) {
 		    this(name, ind, f, ledgeTurn, false, 0, DEFAULT_X, DEFAULT_H, DEFAULT_HV);
@@ -135,6 +138,30 @@ public class Enemy extends Character {
 			this.offX = offX;
 			this.h = h;
 			this.hv = hv;
+			factory = enemyFactory;
+		}
+		
+		protected EnemyDefinition(final String name, final int ind) {
+			super(name);
+			code = Chartil.toCode(name);
+			final Img[] strip = loadStrip(ind, ImtilX.DIM);
+			final Panframe[] frames = new Panframe[3];
+			final Pangine engine = Pangine.getEngine();
+			for (int i = 0; i < 3; i++) {
+				final String id = name + "." + i;
+				frames[i] = engine.createFrame(BaseGame.PRE_FRM + id,
+						engine.createImage(BaseGame.PRE_IMG + id, DEFAULT_O, DEFAULT_MIN, DEFAULT_MAX, strip[i]),
+						i == 0 ? 18 : 6);
+			}
+			this.walk = engine.createAnimation(BaseGame.PRE_ANM + name, frames[0], frames[1], frames[2], frames[1]);
+			ledgeTurn = false;
+			splat = null;
+			attack = null;
+			avoidCount = 0;
+			offX = 0;
+			h = 0;
+			hv = 0;
+			factory = wraithFactory;
 		}
 		
 		protected final void init(final EnemyDefinition ref) {
@@ -495,4 +522,64 @@ public class Enemy extends Character {
         	collider.onHit(bouncer);
         }
     }
+	
+	public final static class Wraith extends Panctor implements Collidable, StepListener, AllOobListener {
+		protected final EnemyDefinition def;
+		private int timer = 0;
+		private final Panple vel = new ImplPanple(0, 0, 0);
+		
+		protected Wraith(final EnemyDefinition def, final float x, final float y) {
+			this.def = def;
+			setView(def.walk);
+			setMirror(true);
+			PlatformGame.room.addActor(this);
+			PlatformGame.setPosition(this, x, Mathtil.randf(y, Level.tm.getHeight() * Level.tm.getTileHeight()), PlatformGame.DEPTH_ENEMY);
+		}
+		
+		@Override
+	    public final void onStep(final StepEvent event) {
+			if (isDestroyed()) {
+				return;
+			} else if (timer <= 0) {
+				if (vel.getMagnitude2() < 0.2f) {
+					timer = Mathtil.randi(60, 90);
+					Projectile.setVelocity(this, Mathtil.rand(PlatformGame.pcs).player, vel, 1f);
+				} else {
+					timer = Mathtil.randi(60, 60);
+					vel.set(0, 0, 0);
+				}
+			} else {
+				getPosition().add(vel);
+				timer--;
+			}
+	    	Enemy.destroyIfOffScreen(this, 40);
+	    }
+	    
+	    @Override
+	    public final void onAllOob(final AllOobEvent event) {
+	        destroy();
+	    }
+	}
+	
+	protected final static SpawnFactory enemyFactory = new EnemyFactory();
+	
+	protected final static SpawnFactory wraithFactory = new WraithFactory();
+	
+	protected static interface SpawnFactory {
+		public Panctor spawn(final EnemyDefinition def, final float x, final float y);
+	}
+	
+	private final static class EnemyFactory implements SpawnFactory {
+		@Override
+		public final Enemy spawn(final EnemyDefinition def, final float x, final float y) {
+			return new Enemy(def, x, y);
+		}
+	}
+	
+	private final static class WraithFactory implements SpawnFactory {
+		@Override
+		public final Wraith spawn(final EnemyDefinition def, final float x, final float y) {
+			return new Wraith(def, x, y);
+		}
+	}
 }
