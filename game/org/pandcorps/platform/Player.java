@@ -42,6 +42,7 @@ public class Player extends Character implements CollisionListener {
 	protected final static byte MODE_NORMAL = 0;
 	private final static byte MODE_RETURN = 1;
 	protected final static byte MODE_DISABLED = 2;
+	protected final static byte MODE_FROZEN = 3;
 	protected final static byte JUMP_HIGH = 1;
 	//private final static byte JUMP_DOUBLE = 2;
 	//private final static byte JUMP_INFINITE = 3;
@@ -326,11 +327,14 @@ public class Player extends Character implements CollisionListener {
             @Override public final void onActionStart(final ActionStartEvent event) { engine.stopCaptureFrames(); }});
 	}
 	
+	private final boolean isInputDisabled() {
+		return mode == MODE_DISABLED || mode == MODE_FROZEN;
+	}
+	
 	private final void jump() {
-		if (mode == MODE_DISABLED) {
+		if (isInputDisabled()) {
 			return;
-		}
-		if (pc.profile.autoRun) {
+		} else if (pc.profile.autoRun) {
 		    this.activeTimer += 8;
 		}
 		if (jumpMode == JUMP_FLY) {
@@ -368,21 +372,21 @@ public class Player extends Character implements CollisionListener {
 	}
 	
 	private final void right() {
-		if (mode == MODE_DISABLED) {
+		if (isInputDisabled()) {
 			return;
 		}
 		hv = VEL_WALK;
 	}
 	
 	private final void left() {
-		if (mode == MODE_DISABLED) {
+		if (isInputDisabled()) {
 			return;
 		}
 		hv = -VEL_WALK;
 	}
 	
 	private boolean isInvincible() {
-		return hurtTimer > 0 || mode == MODE_RETURN;
+		return hurtTimer > 0 || mode == MODE_RETURN || mode == MODE_FROZEN;
 	}
 	
 	private boolean isReturningFromScroll() {
@@ -465,6 +469,15 @@ public class Player extends Character implements CollisionListener {
 	protected final boolean onStepCustom() {
 	    if (hurtTimer > 0) {
 	        hurtTimer--;
+	        if (hurtTimer == 0 && mode == MODE_FROZEN) {
+	        	mode = MODE_NORMAL;
+	        	setView(pc.guy);
+	        	if (acc.back != null) {
+					acc.back.setVisible(true);
+				}
+	        	Tiles.shatter(getLayer(), PlatformGame.blockIce8, getPosition(), false);
+	        	startHurt();
+	        }
 	    }
 	    if (stompTimer > 0) {
 	        stompTimer--;
@@ -479,7 +492,7 @@ public class Player extends Character implements CollisionListener {
 			//return true; // Let falling Player keep falling; just don't allow new input
 		}
 		final boolean auto = pc.profile.autoRun;
-		if (auto && !Level.victory) {
+		if (auto && !Level.victory && mode != MODE_FROZEN) {
 		    hv = VEL_WALK;
 		}
 		if (auto || hv == 0) {
@@ -599,7 +612,7 @@ public class Player extends Character implements CollisionListener {
 		hv = 0;
 		final Panple pos = getPosition();
 		PlatformGame.setPosition(bubble, pos.getX(), pos.getY() - 1, PlatformGame.DEPTH_BUBBLE);
-		bubble.onStepEnd(isInvincible());
+		bubble.onStepEnd(mode != MODE_FROZEN && isInvincible());
 		acc.onStepEnd(this);
 	}
 	
@@ -607,10 +620,12 @@ public class Player extends Character implements CollisionListener {
 	protected final void onGrounded() {
 		safe.set(getPosition());
 		safeMirror = isMirror();
-		if (hv != 0) {
-			changeView(pc.guyRun);
-		} else {
-			changeView(pc.guy);
+		if (mode != MODE_FROZEN) {
+			if (hv != 0) {
+				changeView(pc.guyRun);
+			} else {
+				changeView(pc.guy);
+			}
 		}
 		if (acc.back != null) {
 			acc.back.changeView(pc.back);
@@ -619,7 +634,9 @@ public class Player extends Character implements CollisionListener {
 	
 	@Override
 	protected final boolean onAir() {
-		changeView(v > 0 ? pc.guyJump : pc.guyFall);
+		if (mode != MODE_FROZEN) {
+			changeView(v > 0 ? pc.guyJump : pc.guyFall);
+		}
 		if (acc.back != null && jumpMode == JUMP_FLY) {
 			acc.back.changeView((flying || getPosition().getY() <= MIN_Y) ? pc.backJump : pc.backFall);
 			// v > 0 doesn't flap as soon as jump is pressed
@@ -654,16 +671,33 @@ public class Player extends Character implements CollisionListener {
 		} else if (other instanceof Projectile) {
 		    startHurt();
 		} else if (other instanceof Wraith) {
-		    startHurt();
+		    startFreeze();
 		}
 	}
 	
+	private final boolean isHurtable() {
+		return !(isInvincible() || pc.profile.isInvincible());
+	}
+	
 	protected final void startHurt() {
-	    if (!(isInvincible() || pc.profile.isInvincible())) {
+	    if (isHurtable()) {
 	    	levelHits++;
             onHurt();
             hurtTimer = 60; // Enable temporary invincibility
         }
+	}
+	
+	private final void startFreeze() {
+		if (isHurtable()) {
+			levelHits++;
+			hurtTimer = 60;
+			flying = false;
+			mode = MODE_FROZEN;
+			setView(PlatformGame.frozen);
+			if (acc.back != null) {
+				acc.back.setVisible(false);
+			}
+		}
 	}
 	
 	public final void onHurt() {
