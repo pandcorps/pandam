@@ -179,6 +179,7 @@ public class PlatformGame extends BaseGame {
 	protected final static HashMap<String, Img[]> bodiesAll = new HashMap<String, Img[]>();
 	protected final static Img[] eyesAll = new Img[getNumEyes()];
 	protected static Img eyesBlink = null;
+	protected static Panmage frozen = null;
 	protected static Panmage bubble = null;
 	protected static Panimation owl = null;
 	protected final static List<EnemyDefinition> allEnemies = new ArrayList<EnemyDefinition>();
@@ -190,6 +191,7 @@ public class PlatformGame extends BaseGame {
 	protected static Panimation anger = null;
 	protected static Panmage block8 = null;
 	protected static Panmage blockLetter8 = null;
+	protected static Panmage blockIce8 = null;
 	protected static Panmage[] gem = null;
 	protected static Panimation gemAnm = null;
 	protected static Panimation gemBlueAnm = null;
@@ -957,6 +959,7 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 			owl = engine.createAnimation(PRE_ANM + "owl", owl1, owl2); }});
 		
 		loaders.add(new Runnable() { @Override public final void run() {
+			frozen = createImage("frozen", "org/pandcorps/platform/res/chr/Frozen.png", 32, og);
 			bubble = createImage("bubble", "org/pandcorps/platform/res/chr/Bubble.png", 32, og); }});
 	    
 		loaders.add(new Runnable() { @Override public final void run() {
@@ -966,7 +969,8 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 	    
 		loaders.add(new Runnable() { @Override public final void run() {
 			block8 = createImage("block8", "org/pandcorps/platform/res/misc/Block8.png", 8);
-			blockLetter8 = createImage("block.letter8", "org/pandcorps/platform/res/misc/BlockLetter8.png", 8); }});
+			blockLetter8 = createImage("block.letter8", "org/pandcorps/platform/res/misc/BlockLetter8.png", 8);
+			blockIce8 = createImage("block.ice8", "org/pandcorps/platform/res/misc/BlockIce8.png", 8); }});
 	    
 		loaders.add(new Runnable() { @Override public final void run() {
 		    final Img[] gemStrip = ImtilX.loadStrip("org/pandcorps/platform/res/misc/Gem.png");
