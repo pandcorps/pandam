@@ -612,7 +612,7 @@ public class Player extends Character implements CollisionListener {
 		hv = 0;
 		final Panple pos = getPosition();
 		PlatformGame.setPosition(bubble, pos.getX(), pos.getY() - 1, PlatformGame.DEPTH_BUBBLE);
-		bubble.onStepEnd(mode != MODE_FROZEN && isInvincible());
+		bubble.onStepEnd(this);
 		acc.onStepEnd(this);
 	}
 	
@@ -755,6 +755,11 @@ public class Player extends Character implements CollisionListener {
 		
 		protected void onStepEnd(final boolean visible) {
 			setVisible(visible && Pangine.getEngine().isOn(4));
+		}
+		
+		protected void onStepEnd(final Player p) {
+			onStepEnd(p.mode != MODE_FROZEN && p.isInvincible());
+			setMirror(p.isMirror());
 		}
 	}
 	

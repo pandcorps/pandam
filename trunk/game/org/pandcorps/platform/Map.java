@@ -472,7 +472,7 @@ public class Map {
 	    @Override
 	    protected void onWalking() {
 	    	bubble.onStepEnd(true);
-	    	bubble.getPosition().setX(getPosition().getX() + 8);
+	    	bubble.getPosition().setX(getPosition().getX() + 9);
 	    }
 	    
 	    @Override
