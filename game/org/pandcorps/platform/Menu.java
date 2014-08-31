@@ -624,14 +624,16 @@ public class Menu {
 			protected abstract void update(final float value);
 		}
 		
+		protected final static int HUD_TEXT_Y = 20;
+		
 		protected final void addHudGems() {
-		    final int gemX = center + 16, gemY = 20;
+		    final int gemX = center + 16, gemY = HUD_TEXT_Y;
             PlatformGame.addHudGem(room, gemX, gemY);
             PlatformGame.addHud(room, pc, gemX + PlatformGame.OFF_GEM, gemY, false, false);
 		}
 		
 		protected final void addHudRank() {
-			final int gemX = center + 96, gemY = 20, textX = gemX + PlatformGame.OFF_GEM + 1;
+			final int gemX = center + 96, gemY = HUD_TEXT_Y, textX = gemX + PlatformGame.OFF_GEM + 1;
 			addActor(new Gem(PlatformGame.gemRank), gemX, gemY);
 			addTitle("Rank", textX, gemY + 8);
 			final CharSequence seq = new CallSequence() {@Override protected String call() {
@@ -654,6 +656,10 @@ public class Menu {
 		    final InputSubmitListener chgLsn = new InputSubmitListener() {
 	            @Override public final void onSubmit(final InputSubmitEvent event) {
 	                pd.setName(event.toString()); }};
+	        return addInput("Name", subLsn, chgLsn, max, x, y);
+		}
+		
+		protected final Input addInput(final String label, final InputSubmitListener subLsn, final InputSubmitListener chgLsn, final int max, final int x, final int y) {
 	        final Input in;
 	        if (isTabEnabled()) {
 	        	in = new KeyInput(PlatformGame.font, subLsn);
@@ -666,8 +672,8 @@ public class Menu {
 	        }
 	        in.setChangeListener(chgLsn);
 	        in.setMax(max);
-	        addItem(in, x + 40, y);
-	        addTitle("Name", x, y);
+	        addItem(in, x + ((label.length() + 1) * 8), y);
+	        addTitle(label, x, y);
 	        return in;
 		}
 		
@@ -2351,6 +2357,60 @@ public class Menu {
         	save();
             goProfile();
         }
+	}
+	
+	protected final static class ConsoleScreen extends PlayerScreen {
+		private Input input = null;
+		private final StringBuilder info = new StringBuilder();
+		
+		protected ConsoleScreen(final PlayerContext pc) {
+            super(pc, false);
+            tabsSupported = true;
+        }
+		
+		@Override
+		protected final void menu() {
+			if (isTabEnabled()) {
+				menuTouch();
+			} else {
+				menuClassic();
+			}
+		}
+		
+		protected final void menuTouch() {
+			createInput(touchKeyboardX, getTouchKeyboardY());
+			newTab(PlatformGame.menuCheck, "Done", new Runnable() {@Override public final void run() {exit();}});
+			newTab(PlatformGame.menuExclaim, "Run", new Runnable() {@Override public final void run() {run();}});
+			newTabs();
+			registerBackExit();
+		}
+		
+		protected final void menuClassic() {
+			throw new UnsupportedOperationException();
+		}
+		
+		private final void createInput(final int x, final int y) {
+			final InputSubmitListener subLsn = new InputSubmitListener() {
+                @Override public final void onSubmit(final InputSubmitEvent event) {
+                	run(); }};
+	        input = addInput(">", subLsn, null, PlatformGame.MAX_NAME_PROFILE, x, y);
+	        addTitle(info, 8, HUD_TEXT_Y);
+	    }
+		
+		private final void run() {
+			Chartil.clear(info);
+			final String cmd = input.getText();
+			if ("gems".equalsIgnoreCase(cmd)) {
+				pc.addGems(1000);
+			} else {
+				Chartil.set(info, "Unknown command");
+			}
+		}
+		
+		@Override
+        protected void onExit() {
+			goProfile();
+		}
 	}
 	
 	private final static char getFlag(final boolean b) {
