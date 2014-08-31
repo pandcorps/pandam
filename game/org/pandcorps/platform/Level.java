@@ -144,7 +144,7 @@ public class Level {
         	}
     		
     		@Override protected final void flash(final long i) {
-    			if (i < 3) {
+    			if (i < 3 && extraAnimBlock != null) {
     				Tile.animate(extraAnimBlock);
     			}
         	}
@@ -168,7 +168,7 @@ public class Level {
         	}
     		
     		@Override protected final void step(final long clock) {
-    			if (clock % 6 == 0) {
+    			if (clock % 6 == 0 && extraAnimBlock != null) {
     				Tile.animate(extraAnimBlock);
     			}
         	}
