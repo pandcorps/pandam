@@ -180,6 +180,7 @@ public class PlatformGame extends BaseGame {
 	protected final static Img[] eyesAll = new Img[getNumEyes()];
 	protected static Img eyesBlink = null;
 	protected static Panmage frozen = null;
+	protected static Panimation burn = null;
 	protected static Panmage bubble = null;
 	protected static Panimation owl = null;
 	protected final static List<EnemyDefinition> allEnemies = new ArrayList<EnemyDefinition>();
@@ -948,7 +949,20 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
                 }};
             Coltil.set(allEnemies, Level.SPIKED_IMP, spikedImp);
 			anger = createAnm("anger", 10, CENTER_16, Enemy.loadStrip(9, ImtilX.DIM));
-			Coltil.set(allEnemies, Level.ICE_WRAITH, new EnemyDefinition("Ice Wraith", 12));
+			final EnemyDefinition iceWisp = new EnemyDefinition("Ice Wisp", 12);
+			iceWisp.hurtHandler = new InteractionHandler() {
+                @Override public final boolean onInteract(final Enemy enemy, final Player player) {
+                	player.startFreeze();
+                	return false;
+                }}; 
+			Coltil.set(allEnemies, Level.ICE_WISP, iceWisp);
+			final EnemyDefinition fireWisp = new EnemyDefinition("Fire Wisp", 13);
+			fireWisp.hurtHandler = new InteractionHandler() {
+                @Override public final boolean onInteract(final Enemy enemy, final Player player) {
+                	player.startBurn();
+                	return false;
+                }};
+			Coltil.set(allEnemies, Level.FIRE_WISP, fireWisp);
 			Level.initTheme(); }});
 		
 		loaders.add(new Runnable() { @Override public final void run() {
@@ -960,6 +974,7 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 		
 		loaders.add(new Runnable() { @Override public final void run() {
 			frozen = createImage("frozen", "org/pandcorps/platform/res/chr/Frozen.png", 32, og);
+			burn = createAnm("burn", "org/pandcorps/platform/res/chr/Burn.png", 32, 6, og, null, null);
 			bubble = createImage("bubble", "org/pandcorps/platform/res/chr/Bubble.png", 32, og); }});
 	    
 		loaders.add(new Runnable() { @Override public final void run() {
