@@ -161,7 +161,7 @@ public class Enemy extends Character {
 			offX = 0;
 			h = 0;
 			hv = 0;
-			factory = wraithFactory;
+			factory = wispFactory;
 		}
 		
 		protected final void init(final EnemyDefinition ref) {
@@ -523,17 +523,18 @@ public class Enemy extends Character {
         }
     }
 	
-	public final static class Wraith extends Panctor implements Collidable, StepListener, AllOobListener {
+	public final static class Wisp extends Panctor implements Collidable, StepListener, AllOobListener {
 		protected final EnemyDefinition def;
 		private int timer = 0;
 		private final Panple vel = new ImplPanple(0, 0, 0);
 		
-		protected Wraith(final EnemyDefinition def, final float x, final float y) {
+		protected Wisp(final EnemyDefinition def, final float x, final float y) {
 			this.def = def;
 			setView(def.walk);
 			setMirror(true);
 			PlatformGame.room.addActor(this);
-			PlatformGame.setPosition(this, x, Mathtil.randf(y, Level.tm.getHeight() * Level.tm.getTileHeight()), PlatformGame.DEPTH_ENEMY);
+			final float maxy = Math.min(y + 80, Level.tm.getHeight() * Level.tm.getTileHeight());
+			PlatformGame.setPosition(this, x, Mathtil.randf(y, maxy), PlatformGame.DEPTH_ENEMY);
 		}
 		
 		@Override
@@ -563,7 +564,7 @@ public class Enemy extends Character {
 	
 	protected final static SpawnFactory enemyFactory = new EnemyFactory();
 	
-	protected final static SpawnFactory wraithFactory = new WraithFactory();
+	protected final static SpawnFactory wispFactory = new WispFactory();
 	
 	protected static interface SpawnFactory {
 		public Panctor spawn(final EnemyDefinition def, final float x, final float y);
@@ -576,10 +577,10 @@ public class Enemy extends Character {
 		}
 	}
 	
-	private final static class WraithFactory implements SpawnFactory {
+	private final static class WispFactory implements SpawnFactory {
 		@Override
-		public final Wraith spawn(final EnemyDefinition def, final float x, final float y) {
-			return new Wraith(def, x, y);
+		public final Wisp spawn(final EnemyDefinition def, final float x, final float y) {
+			return new Wisp(def, x, y);
 		}
 	}
 }

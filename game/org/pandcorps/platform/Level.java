@@ -49,7 +49,8 @@ public class Level {
     protected final static int SPIKED_IMP = 8;
     protected final static int DROWID = 9;
     protected final static int DROLOCK = 10;
-    protected final static int ICE_WRAITH = 11;
+    protected final static int ICE_WISP = 11;
+    protected final static int FIRE_WISP = 12;
     
     protected final static PixelFilter terrainDarkener = new BrightnessPixelFilter((short) -40, (short) -24, (short) -32);
     
@@ -127,7 +128,7 @@ public class Level {
     	};
     	public final static Theme Snow = new Theme("Snow", null, MSG, PlatformGame.TILE_ICE) {
     	    @Override protected final int[] getEnemyIndices(final int worlds) {
-    	        return worlds < 2 ? new int[] {HOB_TROLL, HOB_OGRE, IMP, ICE_WRAITH} : getNormalEnemies(ICE_WRAITH);
+    	        return worlds < 2 ? new int[] {HOB_TROLL, HOB_OGRE, IMP, ICE_WISP} : getNormalEnemies(ICE_WISP);
     	    }
     	    
     		@Override protected final BackgroundBuilder getRandomBackground() {
@@ -151,7 +152,7 @@ public class Level {
     	};
     	public final static Theme Sand = new Theme("Sand", null, MSG, PlatformGame.TILE_SAND) {
     	    @Override protected final int[] getEnemyIndices(final int worlds) {
-    	        return worlds < 4 ? new int[] {HOB_TROLL, HOB_OGRE, IMP, ARMORED_IMP} : NORMAL_ENEMIES;
+    	    	return worlds < 4 ? new int[] {HOB_TROLL, HOB_OGRE, IMP, ARMORED_IMP, FIRE_WISP} : getNormalEnemies(FIRE_WISP);
     	    }
     	    
     		@Override protected final BackgroundBuilder getRandomBackground() {

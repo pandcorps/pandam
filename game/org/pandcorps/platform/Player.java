@@ -471,11 +471,13 @@ public class Player extends Character implements CollisionListener {
 	        hurtTimer--;
 	        if (hurtTimer == 0 && mode == MODE_FROZEN) {
 	        	mode = MODE_NORMAL;
+	        	if (getView() != PlatformGame.burn) {
+	        		Tiles.shatter(getLayer(), PlatformGame.blockIce8, getPosition(), false);
+	        	}
 	        	setView(pc.guy);
 	        	if (acc.back != null) {
 					acc.back.setVisible(true);
 				}
-	        	Tiles.shatter(getLayer(), PlatformGame.blockIce8, getPosition(), false);
 	        	startHurt();
 	        }
 	    }
@@ -670,8 +672,8 @@ public class Player extends Character implements CollisionListener {
 			}
 		} else if (other instanceof Projectile) {
 		    startHurt();
-		} else if (other instanceof Wraith) {
-		    startFreeze();
+		} else if (other instanceof Wisp) {
+		    startFreeze((Wisp) other);
 		}
 	}
 	
@@ -687,16 +689,25 @@ public class Player extends Character implements CollisionListener {
         }
 	}
 	
-	private final void startFreeze() {
+	private final void startFreeze(final Wisp wisp) {
 		if (isHurtable()) {
-			hurtTimer = 60;
+			wisp.def.hurtHandler.onInteract(null, this);
 			flying = false;
 			mode = MODE_FROZEN;
-			setView(PlatformGame.frozen);
 			if (acc.back != null) {
 				acc.back.setVisible(false);
 			}
 		}
+	}
+	
+	protected final void startFreeze() {
+		hurtTimer = 60;
+		setView(PlatformGame.frozen);
+	}
+	
+	protected final void startBurn() {
+		hurtTimer = 20;
+		setView(PlatformGame.burn);
 	}
 	
 	public final void onHurt() {
