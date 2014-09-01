@@ -107,7 +107,16 @@ public class Tiles {
 	    for (; i < size; i++) {
 	    	letter = PlatformGame.getBlockWordLetter(i);
 	        if (fg == letter) {
-	            break;
+	        	boolean keep = true;
+	        	for (final Panctor h : Coltil.unnull(Level.collectedLetters)) {
+	        		if (/*h.getView() == letter &&*/ h.getPosition().getX() == getHudLetterX(i)) {
+	        			keep = false;
+	        			break;
+	        		}
+	        	}
+	        	if (keep) {
+	        		break;
+	        	}
 	        }
 	    }
 	    if (i >= size) {
@@ -118,15 +127,18 @@ public class Tiles {
 	    //h.setViewFromForeground(Level.tm, t);
 	    final Panctor h = new Panctor();
 	    h.setView(letter);
-	    final Pangine engine = Pangine.getEngine();
-	    final int d = ImtilX.DIM;
-	    h.getPosition().set((engine.getEffectiveWidth() - d * size) / 2 + d * i, engine.getEffectiveHeight() - d - 1);
+	    //final int d = ImtilX.DIM;
+	    h.getPosition().set(getHudLetterX(i), Pangine.getEngine().getEffectiveHeight() - ImtilX.DIM - 1);
 	    PlatformGame.hud.addActor(h);
 	    if (Level.collectedLetters == null) {
 	        Level.collectedLetters = new ArrayList<Panctor>(size);
 	    }
 	    Level.collectedLetters.add(h);
 	    return true;
+    }
+    
+    private final static int getHudLetterX(final int i) {
+    	return (Pangine.getEngine().getEffectiveWidth() - ImtilX.DIM * PlatformGame.blockWord.length()) / 2 + ImtilX.DIM * i;
     }
     
     private final static void bump(final Player player, final int index) {
