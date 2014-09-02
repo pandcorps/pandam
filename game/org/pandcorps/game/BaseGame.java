@@ -51,20 +51,30 @@ public abstract class BaseGame extends Pangame {
 	public final static String PRE_IMG = "img.";
 	public final static String PRE_FRM = "frm.";
 	public final static String PRE_ANM = "anm.";
+	protected static int zoomMag = -1;
 	
 	protected boolean isFullScreen() {
 	    return false;
 	}
 	
+	//@OverrideMe
+	protected void initEarliest() {
+	}
+	
 	@Override
     public void initBeforeEngine() {
+	    initEarliest();
         final Pangine engine = Pangine.getEngine();
         final String scalerClassName = Pantil.getProperty("org.pandcorps.game.scalerImpl");
         if (scalerClassName != null) {
         	engine.setImageScaler((Scaler) Reftil.newInstance(scalerClassName));
         }
         if (isFullScreen()) {
-            engine.setApproximateFullScreenZoomedDisplaySize(SCREEN_W, SCREEN_H, false);
+            if (zoomMag <= 0) {
+                engine.setApproximateFullScreenZoomedDisplaySize(SCREEN_W, SCREEN_H, false);
+            } else {
+                engine.setFullScreenZoomed(zoomMag);
+            }
             final float zoom = engine.getZoom();
             SCREEN_W = (int) (engine.getDesktopWidth() / zoom);
             SCREEN_H = (int) (engine.getDesktopHeight() / zoom);
