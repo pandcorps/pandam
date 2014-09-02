@@ -32,6 +32,9 @@ public class Config {
     protected static int zoomMag = -1;
     
     protected final static void serialize() {
-        Iotil.writeFile(PlatformGame.FILE_CFG, PlatformGame.SEG_CFG + "|" + Chartil.unnull(defaultProfileName) + "|" + btnSize);
+        Iotil.writeFile(PlatformGame.FILE_CFG, PlatformGame.SEG_CFG
+        		+ "|" + Chartil.unnull(defaultProfileName)
+        		+ "|" + btnSize
+        		+ "|" + zoomMag);
     }
 }

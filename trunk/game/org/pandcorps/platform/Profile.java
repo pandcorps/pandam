@@ -53,6 +53,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
     protected final Goal[] currentGoals = new Goal[Goal.NUM_ACTIVE_GOALS];
     protected int goalPoints = 0;
     protected final Set<Clothing> availableClothings = new HashSet<Clothing>();
+    protected boolean consoleEnabled = false;
     protected int column = -1;
 	protected int row = -1;
 	protected final HashMap<Pair<Integer, Integer>, Boolean> open = new HashMap<Pair<Integer, Integer>, Boolean>();
@@ -98,6 +99,7 @@ gems = 1000000;
     	for (final Field f : Coltil.unnull(seg.getRepetitions(11))) {
     	    availableClothings.add(Avatar.getClothing(f.getValue()));
         }
+    	consoleEnabled = seg.getBoolean(12, false);
     	//ctrl = seg.intValue(3);
     }
     
@@ -120,6 +122,7 @@ gems = 1000000;
         for (final Clothing c : Coltil.unnull(availableClothings)) {
             seg.addValue(11, c.res);
         }
+        seg.setBoolean(12, consoleEnabled);
         //seg.setInt(3, ctrl);
     }
     
