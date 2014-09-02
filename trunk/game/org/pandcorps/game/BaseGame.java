@@ -83,6 +83,10 @@ public abstract class BaseGame extends Pangame {
         }
     }
 	
+	public final static int getApproximateFullScreenZoomedDisplaySize() {
+		return Pangine.getEngine().getApproximateFullScreenZoomedDisplaySize(SCREEN_W, SCREEN_H, false);
+	}
+	
 	@Override
     protected final FinPanple getFirstRoomSize() {
         return new FinPanple(SCREEN_W, SCREEN_H, 0);
