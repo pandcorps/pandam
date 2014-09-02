@@ -756,7 +756,7 @@ public class PlatformGame extends BaseGame {
         // CFG|Andrew
         Config.defaultProfileName = cfg.getValue(0);
         Config.btnSize = cfg.getInt(1, 0);
-        Config.zoomMag = cfg.getInt(1, -1);
+        Config.zoomMag = cfg.getInt(2, -1);
         zoomMag = Config.zoomMag;
 	}
 	
