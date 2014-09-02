@@ -285,6 +285,7 @@ public final class LwjglPangine extends GlPangine {
 			}
 			buffer.rewind();
 			buffers[i] = buffer;
+			image.close();
 		}
 		Display.setIcon(buffers);
 	}
