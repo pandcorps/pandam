@@ -655,7 +655,12 @@ public class Menu {
 		protected final Input addNameInput(final PlayerData pd, final InputSubmitListener subLsn, final int max, final int x, final int y) {
 		    final InputSubmitListener chgLsn = new InputSubmitListener() {
 	            @Override public final void onSubmit(final InputSubmitEvent event) {
-	                pd.setName(event.toString()); }};
+	            	final String name = event.toString();
+	                pd.setName(name);
+	                if (pc != null && pc.profile != null && "Dconsole".equalsIgnoreCase(name)) {
+	                	pc.profile.consoleEnabled = true;
+	                	//save();
+	                }}};
 	        return addInput("Name", subLsn, chgLsn, max, x, y);
 		}
 		
@@ -821,6 +826,10 @@ public class Menu {
 		protected final void goProfile() {
 			Panscreen.set(new ProfileScreen(pc, false));
 		}
+		
+		protected final void goOptions() {
+            Panscreen.set(new OptionsScreen(pc));
+        }
 		
 		protected final void reloadAnimalStrip() {
 			reloadAnimalStrip(pc, actor);
@@ -1305,10 +1314,6 @@ public class Menu {
 		private final void goInfo() {
 			Panscreen.set(new InfoScreen(pc, true));
 		}
-		
-		private final void goOptions() {
-            Panscreen.set(new OptionsScreen(pc));
-        }
 		
 		private final void quit() {
 			save();
@@ -2264,11 +2269,18 @@ public class Menu {
             addTitle(msgBtnSize, x + btnW + 8, y);
             
             newTab(PlatformGame.menuCheck, "Done", new Runnable() {@Override public final void run() {exit();}});
+            if (pc.profile.consoleEnabled) {
+            	newTab(PlatformGame.menuKeyboard, "Debug", new Runnable() {@Override public final void run() {goConsole();}});
+            }
             newTabs();
             registerBackExit();
         }
         
         protected final void menuClassic() {
+        }
+        
+        private final void goConsole() {
+            Panscreen.set(new ConsoleScreen(pc));
         }
         
         private final void toggleAuto() {
@@ -2397,19 +2409,52 @@ public class Menu {
 	        addTitle(info, 8, HUD_TEXT_Y);
 	    }
 		
+		private final static String MSG_RESTART = "OK, need restart";
+		private final static String MSG_ERROR = "Error";
+		
 		private final void run() {
-			Chartil.clear(info);
-			final String cmd = input.getText();
+			//Chartil.clear(info);
+			final String cmd = input.getText(), msg;
 			if ("gems".equalsIgnoreCase(cmd)) {
 				pc.addGems(1000);
+				msg = "Added 1000 Gems";
+			} else if ("getzoom".equalsIgnoreCase(cmd)) {
+				if (Config.zoomMag <= 0) {
+					msg = "Default";
+				} else  {
+					msg = "Zoom: " + Config.zoomMag;
+				}
+			} else if ("zoomin".equalsIgnoreCase(cmd)) {
+				if (Config.zoomMag < PlatformGame.getApproximateFullScreenZoomedDisplaySize()) {
+					setZoom(Config.zoomMag + 1);
+					msg = MSG_RESTART;
+				} else {
+					msg = MSG_ERROR;
+				}
+			} else if ("zoomout".equalsIgnoreCase(cmd)) {
+				if (Config.zoomMag > 1) {
+					setZoom(Config.zoomMag - 1);
+					msg = MSG_RESTART;
+				} else {
+					msg = MSG_ERROR;
+				}
+			} else if ("zoomdef".equalsIgnoreCase(cmd)) {
+				setZoom(-1);
+				msg = MSG_RESTART;
 			} else {
-				Chartil.set(info, "Unknown command");
+				msg = "Unknown command";
 			}
+			Chartil.set(info, msg);
+		}
+		
+		private final static void setZoom(final int zoomMag) {
+			Config.zoomMag = zoomMag;
+			Config.serialize();
 		}
 		
 		@Override
         protected void onExit() {
-			goProfile();
+			goOptions();
 		}
 	}
 	
