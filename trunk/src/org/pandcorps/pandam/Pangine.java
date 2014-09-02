@@ -854,11 +854,14 @@ public abstract class Pangine {
 		setApproximateFullScreenZoomedDisplaySize(minWidth, minHeight, true);
 	}
 	
-	public final void setApproximateFullScreenZoomedDisplaySize(final int minWidth, final int minHeight, final boolean pow2) {
-	    final int topWidth = getDesktopWidth(), topHeight = getDesktopHeight();
+	public final void setFullScreenZoomed(final float mag) {
 	    setFullScreen(true);
-	    setDisplaySize(topWidth, topHeight);
-	    zoom(Math.min(getApproxDim(minWidth, topWidth, pow2), getApproxDim(minHeight, topHeight, pow2)));
+	    setDisplaySize(getDesktopWidth(), getDesktopHeight());
+	    zoom(mag);
+	}
+	
+	public final void setApproximateFullScreenZoomedDisplaySize(final int minWidth, final int minHeight, final boolean pow2) {
+	    setFullScreenZoomed(Math.min(getApproxDim(minWidth, getDesktopWidth(), pow2), getApproxDim(minHeight, getDesktopHeight(), pow2)));
     }
 	
 	private final int getApproxDim(final int min, final int top, final boolean pow2) {
