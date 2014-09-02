@@ -29,6 +29,7 @@ public class Config {
     protected final static int MAX_BUTTON_SIZE = 2;
     protected static String defaultProfileName = null;
     protected static int btnSize = 0;
+    protected static int zoomMag = -1;
     
     protected final static void serialize() {
         Iotil.writeFile(PlatformGame.FILE_CFG, PlatformGame.SEG_CFG + "|" + Chartil.unnull(defaultProfileName) + "|" + btnSize);

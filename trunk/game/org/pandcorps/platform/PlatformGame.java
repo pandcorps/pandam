@@ -273,6 +273,11 @@ public class PlatformGame extends BaseGame {
     }
 	
 	@Override
+    protected final void initEarliest() {
+	    loadConfig();
+	}
+	
+	@Override
 	protected final void init(final Panroom room) throws Exception {
 	    final Pangine engine = Pangine.getEngine();
 	    engine.setTitle("Platformer");
@@ -745,13 +750,18 @@ public class PlatformGame extends BaseGame {
 		return profile;
 	}
 	
+	private final static void loadConfig() {
+	    // SegmentStream.readLocation creates a file containing "CFG|" if it doesn't exist
+        final Segment cfg = SegmentStream.readLocation(FILE_CFG, "CFG|").get(0);
+        // CFG|Andrew
+        Config.defaultProfileName = cfg.getValue(0);
+        Config.btnSize = cfg.getInt(1, 0);
+        Config.zoomMag = cfg.getInt(1, -1);
+        zoomMag = Config.zoomMag;
+	}
+	
 	private final static void loadConstants() throws Exception {
 		final Pangine engine = Pangine.getEngine();
-		// SegmentStream.readLocation creates a file containing "CFG|" if it doesn't exist
-		final Segment cfg = SegmentStream.readLocation(FILE_CFG, "CFG|").get(0);
-		// CFG|Andrew
-		Config.defaultProfileName = cfg.getValue(0);
-		Config.btnSize = cfg.getInt(1, 0);
 		
 		loaders.add(new Runnable() { @Override public final void run() {
 		    guysBlank = loadChrStrip("Bear.png", 32, true);
