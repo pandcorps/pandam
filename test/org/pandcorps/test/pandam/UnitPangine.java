@@ -86,6 +86,16 @@ public final class UnitPangine extends Pangine {
     }
 	
 	@Override
+    public final int getTruncatedWidth() {
+        return w;
+    }
+    
+    @Override
+    public final int getTruncatedHeight() {
+        return h;
+    }
+	
+	@Override
 	public final void setFullScreen(final boolean full) {
 	    this.full = full;
 	}

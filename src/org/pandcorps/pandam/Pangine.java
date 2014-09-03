@@ -349,6 +349,9 @@ public abstract class Pangine {
         return getInteraction().getActor(listener);
     }
 	
+	/*
+    Size of device's screen.
+    */
 	public abstract int getDesktopWidth();
 	
 	public abstract int getDesktopHeight();
@@ -356,9 +359,23 @@ public abstract class Pangine {
 	//TODO Add to Panml
 	public abstract void setDisplaySize(final int w, final int h);
     
+	/*
+    Size of window.
+    Same as desktopWidth if game is in full-screen mode.
+    */
     public abstract int getDisplayWidth();
     
     public abstract int getDisplayHeight();
+    
+    /*
+    Size of viewport within window.
+    Portion of displayWidth that will be used for rendering.
+    Same as displayWidth if displayWidth is a multiple of zoomMag.
+    If zoom leaves partial effective pixels on edges, then the edges will be black.
+    */
+    public abstract int getTruncatedWidth();
+    
+    public abstract int getTruncatedHeight();
     
     public abstract void setFullScreen(final boolean fullScreen);
     
@@ -880,6 +897,12 @@ public abstract class Pangine {
 	    }
 	}
 	
+	/*
+    Effective size of the game.
+    If zooming, then "effective" pixels will be z*z squares,
+    and the effective size will be smaller.
+    Same as truncatedWidth when zooming is disabled.
+    */
 	public final int getEffectiveWidth() {
 		return (int) (getDisplayWidth() / getZoom());
 	}
