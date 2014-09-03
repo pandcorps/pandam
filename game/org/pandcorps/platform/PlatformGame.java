@@ -94,10 +94,7 @@ public class PlatformGame extends BaseGame {
 	Hoard/Vault Menu to show amount of each type of Gem.
 	Level builder should use setTile instead of forcing getTile Map lookups.
 	Improve World name generator.
-	Disable million gem bonus.
-	Enter "Console" as name to enable Debug console Menu option.
-	Console: Add/give/gimme, sub/subtract/remove, set gems.
-	Console: Change zoom (requires restart).
+	Console: sub/subtract/remove, set gems.
 	Console: Filters, 8-bit, b/w (requires restart).
 	Mouse TouchEvents.
 	A BounceBall should be able to bump blocks (from below and side) and give Gem to Player that kicked.

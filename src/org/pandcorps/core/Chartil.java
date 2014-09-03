@@ -106,6 +106,10 @@ public final class Chartil {
     	b.setLength(0);
     }
     
+    public final static void clear(final StringBuffer b) {
+    	b.setLength(0);
+    }
+    
     public final static void set(final StringBuilder b, final CharSequence value) {
     	clear(b);
     	b.append(value);

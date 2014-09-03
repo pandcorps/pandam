@@ -194,4 +194,10 @@ public abstract class Input extends TextItem {
     public String getText() {
     	return buf.toString();
     }
+    
+    public void clear() {
+    	label.cursorChar = 0;
+        Chartil.clear(buf);
+        change();
+    }
 }
