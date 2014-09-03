@@ -115,6 +115,9 @@ public class PlatformGame extends BaseGame {
 	GoalTemplate: Rise steps, 2*2 block steps.
 	Sand level cactus, Snow level crystal/pine tree
 	Embed ice and sand in ground if high enough
+	Ice always shatters to the right, should be centered and/or respect mirror
+	Need Pangine.getTruncatedHeight/Width; most things (even effectiveHeight/Width) should use that instead of displayHeight/Width
+	Rank-up bonus Gems can trigger immediate Gem goal success; that shouldn't happen
 	*/
 	
 	protected final static byte TILE_BREAK = 2;
