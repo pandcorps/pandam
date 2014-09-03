@@ -607,6 +607,8 @@ public class Map {
 			} else if (interaction.KEY_TAB.isActive()) {
 				interaction.KEY_TAB.inactivate();
 				modeMove = (short) ((modeMove + 1) % 3);
+			} else if (interaction.KEY_F1.isActive()) {
+				engine.captureScreen();
 			} else if (Panput.isActive(getMenuInput(ctrl), endListener)) {
 			    clearHelp();
 				goMenu(getMenuInput(ctrl), pc);

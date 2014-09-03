@@ -54,8 +54,8 @@ public abstract class TextItem extends MenuItem {
     private void setPos() {
     	final Pangine engine = Pangine.getEngine();
     	final float lx, ly;
-        lx = (engine.getGameWidth() - label.size.getX()) / 2 + label.fontWidth;
-        ly = (engine.getGameHeight() / 2) - label.fontHeight;
+        lx = (engine.getEffectiveWidth() - label.size.getX()) / 2 + label.fontWidth;
+        ly = (engine.getEffectiveHeight() / 2) - label.fontHeight;
         label.getPosition().set(lx, ly);
     }
     
