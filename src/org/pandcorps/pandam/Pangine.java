@@ -381,15 +381,7 @@ public abstract class Pangine {
     
     public abstract boolean isFullScreen();
     
-    public final float getGameWidth() {
-        return getDisplayWidth() / zoomMag;
-    }
-    
-    public final float getGameHeight() {
-        return getDisplayHeight() / zoomMag;
-    }
-	
-	protected final void setActive(final Panput input, final boolean active) {
+    protected final void setActive(final Panput input, final boolean active) {
 	    input.active = active;
 	    if (!active) {
 	        input.inactivated = false;
@@ -904,12 +896,23 @@ public abstract class Pangine {
     Same as truncatedWidth when zooming is disabled.
     */
 	public final int getEffectiveWidth() {
-		return (int) (getDisplayWidth() / getZoom());
+		return (int) (getTruncatedWidth() / getZoom());
 	}
 	
 	public final int getEffectiveHeight() {
-		return (int) (getDisplayHeight() / getZoom());
+		return (int) (getTruncatedHeight() / getZoom());
 	}
+	
+	/*
+	// Used to have these, but getEffectiveWidth/Height are better
+	public final float getGameWidth() {
+        return getDisplayWidth() / zoomMag;
+    }
+    
+    public final float getGameHeight() {
+        return getDisplayHeight() / zoomMag;
+    }
+    */
 	
 	public final void setFrameLengthMilli(final int frameLengthMilli) {
 	    setFrameLengthNano(frameLengthMilli * 1000000);

@@ -307,7 +307,7 @@ public abstract class GlPangine extends Pangine {
 	
 	public final void addTouchEvent(final int id, final byte type, final float x, final float y) {
 		final float zoom = getZoom();
-		touchEvents.add(new TouchEvent(id, type, Math.round(x / zoom), Math.round((getDisplayHeight() - y) / zoom)));
+		touchEvents.add(new TouchEvent(id, type, Math.round(x / zoom), Math.round((getTruncatedHeight() - y) / zoom)));
 	}
 	
 	public final void addInputEvent(final Panput input, final boolean active) {
@@ -492,7 +492,7 @@ public abstract class GlPangine extends Pangine {
 			return;
 		}
 		final float zoomMag = getZoom();
-		final float wz = w / zoomMag, hz = h / zoomMag;
+		final float wz = truncatedWidth / zoomMag, hz = truncatedHeight / zoomMag;
 		final Panlayer master = layer.getMaster();
 		if (master != null) {
 			initCamera(master);

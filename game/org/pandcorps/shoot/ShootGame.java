@@ -378,7 +378,7 @@ public class ShootGame extends Guy2Game {
 		}
 		
 		private static void createHud() {
-			final float h = Pangine.getEngine().getGameHeight();
+			final int h = Pangine.getEngine().getEffectiveHeight();
 			hud = BaseGame.createHud(room);
 			final Pantext hudHealth, hudAmmo, hudMoney;
 			hudHealth = new Pantext("hud.health", hudFont, new CallSequence() {@Override protected String call() {
