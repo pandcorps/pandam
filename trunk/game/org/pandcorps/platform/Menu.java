@@ -2409,13 +2409,14 @@ public class Menu {
 	        addTitle(info, 8, HUD_TEXT_Y);
 	    }
 		
+		private final static String MSG_OK = "OK";
 		private final static String MSG_RESTART = "OK, need restart";
-		private final static String MSG_ERROR = "Error";
+		private final static String MSG_LIMIT = "Error, limit";
 		
 		private final void run() {
 			//Chartil.clear(info);
 			final String cmd = input.getText(), msg;
-			if ("gems".equalsIgnoreCase(cmd)) {
+			if ("addgems".equalsIgnoreCase(cmd)) {
 				pc.addGems(1000);
 				msg = "Added 1000 Gems";
 			} else if ("getzoom".equalsIgnoreCase(cmd)) {
@@ -2429,18 +2430,39 @@ public class Menu {
 					setZoom(Config.zoomMag + 1);
 					msg = MSG_RESTART;
 				} else {
-					msg = MSG_ERROR;
+					msg = MSG_LIMIT;
 				}
 			} else if ("zoomout".equalsIgnoreCase(cmd)) {
 				if (Config.zoomMag > 1) {
 					setZoom(Config.zoomMag - 1);
 					msg = MSG_RESTART;
 				} else {
-					msg = MSG_ERROR;
+					msg = MSG_LIMIT;
 				}
 			} else if ("zoomdef".equalsIgnoreCase(cmd)) {
 				setZoom(-1);
 				msg = MSG_RESTART;
+			} else if ("addclothes".equalsIgnoreCase(cmd)) {
+			    boolean added = false;
+			    for (final Clothing c : Avatar.clothings) {
+			        if (pc.profile.availableClothings.add(c)) {
+			            added = true;
+			        }
+			    }
+			    msg = added ? MSG_OK : MSG_LIMIT;
+			} else if ("addjumps".equalsIgnoreCase(cmd)) {
+			    boolean added = false;
+                for (final JumpMode jm : JumpMode.values()) {
+                    if (pc.profile.availableJumpModes.add(Integer.valueOf(jm.getIndex()))) {
+                        added = true;
+                    }
+                }
+                msg = added ? MSG_OK : MSG_LIMIT;
+			} else if ("addwings".equalsIgnoreCase(cmd)) {
+			    msg = pc.profile.availableJumpModes.add(Integer.valueOf(Player.JUMP_FLY)) ? MSG_OK : MSG_LIMIT;
+			} else if ("save".equalsIgnoreCase(cmd)) {
+			    save();
+			    msg = MSG_OK;
 			} else {
 				msg = "Unknown command";
 			}
