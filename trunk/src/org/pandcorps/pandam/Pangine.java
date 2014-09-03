@@ -370,7 +370,7 @@ public abstract class Pangine {
     /*
     Size of viewport within window.
     Portion of displayWidth that will be used for rendering.
-    Same as displayWidth if displayWidth is a multiple of zoomMag.
+    Same as displayWidth if displayWidth is a multiple of zoomMag (or zooming is disabled).
     If zoom leaves partial effective pixels on edges, then the edges will be black.
     */
     public abstract int getTruncatedWidth();
@@ -900,7 +900,7 @@ public abstract class Pangine {
 	/*
     Effective size of the game.
     If zooming, then "effective" pixels will be z*z squares,
-    and the effective size will be smaller.
+    and the effective screen resolution dimensions will be smaller.
     Same as truncatedWidth when zooming is disabled.
     */
 	public final int getEffectiveWidth() {
