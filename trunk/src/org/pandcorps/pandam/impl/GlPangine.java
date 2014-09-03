@@ -110,7 +110,7 @@ public abstract class GlPangine extends Pangine {
 	
 	/*
 	Size of window.
-	Same as desktopWidth in full-screen mode.
+	Same as desktopWidth if game is in full-screen mode.
 	*/
 	@Override
 	public final int getDisplayWidth() {
@@ -125,12 +125,15 @@ public abstract class GlPangine extends Pangine {
 	/*
 	Size of viewport within window.
 	Portion of displayWidth that will be used for rendering.
-	Same as displayWidth if displayWidth is a multiple of zoomMag.
+	Same as displayWidth if displayWidth is a multiple of zoomMag (or zooming is disabled).
+	If zoom leaves partial effective pixels on edges, then the edges will be black.
 	*/
+	@Override
 	public final int getTruncatedWidth() {
 	    return truncatedWidth;
 	}
 	
+	@Override
 	public final int getTruncatedHeight() {
         return truncatedHeight;
     }
