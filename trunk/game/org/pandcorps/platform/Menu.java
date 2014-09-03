@@ -2392,7 +2392,8 @@ public class Menu {
 		protected final void menuTouch() {
 			createInput(touchKeyboardX, getTouchKeyboardY());
 			newTab(PlatformGame.menuCheck, "Done", new Runnable() {@Override public final void run() {exit();}});
-			newTab(PlatformGame.menuExclaim, "Run", new Runnable() {@Override public final void run() {run();}});
+			newTab(PlatformGame.menuExclaim, "Run", new Runnable() {@Override public final void run() {exec();}});
+			newTab(PlatformGame.menuMinus, "Clear", new Runnable() {@Override public final void run() {clear();}});
 			newTabs();
 			registerBackExit();
 		}
@@ -2404,16 +2405,17 @@ public class Menu {
 		private final void createInput(final int x, final int y) {
 			final InputSubmitListener subLsn = new InputSubmitListener() {
                 @Override public final void onSubmit(final InputSubmitEvent event) {
-                	run(); }};
-	        input = addInput(">", subLsn, null, PlatformGame.MAX_NAME_PROFILE, x, y);
+                	exec(); }};
+	        input = addInput(">", subLsn, null, MAX_COMMAND, x, y);
 	        addTitle(info, 8, HUD_TEXT_Y);
 	    }
 		
+		private final static int MAX_COMMAND = 16;
 		private final static String MSG_OK = "OK";
 		private final static String MSG_RESTART = "OK, need restart";
 		private final static String MSG_LIMIT = "Error, limit";
 		
-		private final void run() {
+		private final void exec() {
 			//Chartil.clear(info);
 			final String cmd = input.getText(), msg;
 			if ("addgems".equalsIgnoreCase(cmd)) {
@@ -2421,20 +2423,24 @@ public class Menu {
 				msg = "Added 1000 Gems";
 			} else if ("getzoom".equalsIgnoreCase(cmd)) {
 				if (Config.zoomMag <= 0) {
-					msg = "Default";
+					msg = "Default (" + PlatformGame.getApproximateFullScreenZoomedDisplaySize() + ")";
 				} else  {
 					msg = "Zoom: " + Config.zoomMag;
 				}
 			} else if ("zoomin".equalsIgnoreCase(cmd)) {
-				if (Config.zoomMag < PlatformGame.getApproximateFullScreenZoomedDisplaySize()) {
+				if (Config.zoomMag > 0 && Config.zoomMag < PlatformGame.getApproximateFullScreenZoomedDisplaySize()) {
 					setZoom(Config.zoomMag + 1);
 					msg = MSG_RESTART;
 				} else {
 					msg = MSG_LIMIT;
 				}
 			} else if ("zoomout".equalsIgnoreCase(cmd)) {
-				if (Config.zoomMag > 1) {
-					setZoom(Config.zoomMag - 1);
+				int z = Config.zoomMag;
+				if (z < 0) {
+					z = PlatformGame.getApproximateFullScreenZoomedDisplaySize();
+				}
+				if (z > 1) {
+					setZoom(z - 1);
 					msg = MSG_RESTART;
 				} else {
 					msg = MSG_LIMIT;
@@ -2460,6 +2466,8 @@ public class Menu {
                 msg = added ? MSG_OK : MSG_LIMIT;
 			} else if ("addwings".equalsIgnoreCase(cmd)) {
 			    msg = pc.profile.availableJumpModes.add(Integer.valueOf(Player.JUMP_FLY)) ? MSG_OK : MSG_LIMIT;
+			} else if ("addarmor".equalsIgnoreCase(cmd)) {
+				msg = pc.profile.availableClothings.add(Avatar.getClothing("Armor")) ? MSG_OK : MSG_LIMIT;
 			} else if ("save".equalsIgnoreCase(cmd)) {
 			    save();
 			    msg = MSG_OK;
@@ -2472,6 +2480,10 @@ public class Menu {
 		private final static void setZoom(final int zoomMag) {
 			Config.zoomMag = zoomMag;
 			Config.serialize();
+		}
+		
+		private final void clear() {
+			input.clear();
 		}
 		
 		@Override
