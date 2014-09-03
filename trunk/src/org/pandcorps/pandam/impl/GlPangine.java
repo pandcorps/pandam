@@ -108,6 +108,10 @@ public abstract class GlPangine extends Pangine {
 	    this.h = h;
 	}
 	
+	/*
+	Size of window.
+	Same as desktopWidth in full-screen mode.
+	*/
 	@Override
 	public final int getDisplayWidth() {
 	    return w;
@@ -117,6 +121,19 @@ public abstract class GlPangine extends Pangine {
 	public final int getDisplayHeight() {
 	    return h;
 	}
+	
+	/*
+	Size of viewport within window.
+	Portion of displayWidth that will be used for rendering.
+	Same as displayWidth if displayWidth is a multiple of zoomMag.
+	*/
+	public final int getTruncatedWidth() {
+	    return truncatedWidth;
+	}
+	
+	public final int getTruncatedHeight() {
+        return truncatedHeight;
+    }
 	
 	@Override
     public final void setFullScreen(final boolean fullScreen) {
