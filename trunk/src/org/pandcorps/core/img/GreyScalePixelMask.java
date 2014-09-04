@@ -24,7 +24,7 @@ package org.pandcorps.core.img;
 
 public class GreyScalePixelMask extends PixelMask {
 	@Override
-	public final boolean isMasked(final int p) {
+	public final boolean isMasked(final int x, final int y, final int p) {
 		final int r = cm.getRed(p);
 		return r == cm.getGreen(p) && r == cm.getBlue(p);
 	}

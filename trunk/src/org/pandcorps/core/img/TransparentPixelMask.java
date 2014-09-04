@@ -33,7 +33,7 @@ public class TransparentPixelMask extends PixelMask {
     }
     
     @Override
-    public final boolean isMasked(final int p) {
+    public final boolean isMasked(final int x, final int y, final int p) {
         return cm.getAlpha(p) == 0;
     }
 }

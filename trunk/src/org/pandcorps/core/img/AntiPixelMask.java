@@ -30,7 +30,7 @@ public class AntiPixelMask extends PixelMask {
     }
     
     @Override
-    public final boolean isMasked(final int p) {
-        return !m.isMasked(p);
+    public final boolean isMasked(final int x, final int y, final int p) {
+        return !m.isMasked(x, y, p);
     }
 }

@@ -36,7 +36,7 @@ public class RangePixelMask extends PixelMask {
 	}
 	
 	@Override
-	public final boolean isMasked(final int p) {
+	public final boolean isMasked(final int x, final int y, final int p) {
 		final int r = cm.getRed(p);
 		if (r < minR || r > maxR) {
 			return false;
