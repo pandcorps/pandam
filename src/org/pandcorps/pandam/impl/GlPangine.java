@@ -307,7 +307,15 @@ public abstract class GlPangine extends Pangine {
 	
 	public final void addTouchEvent(final int id, final byte type, final float x, final float y) {
 		final float zoom = getZoom();
-		touchEvents.add(new TouchEvent(id, type, Math.round(x / zoom), Math.round((getTruncatedHeight() - y) / zoom)));
+		//touchEvents.add(new TouchEvent(id, type, Math.round(x / zoom), Math.round((getTruncatedHeight() - y) / zoom)));
+		touchEvents.add(new TouchEvent(id, type, Math.round(x / zoom), Math.round((getDisplayHeight() - 1 - y) / zoom)));
+		/*
+		If bottom row is touched, incoming y will be displayHeight - 1.  We want to convert that to 0.
+		If top row is touched, incoming y will be 0.  We'd convert that to displayHeight - 1.
+		If top visible row after truncation is touched, incoming y will be [edgeSize].
+		We'd want to convert that to (truncatedHeight - 1) = (displayHeight - [edgeSize] - 1).
+		This appears to be one case where we still want to use displayHeight instead of truncatedHeight.
+		*/
 	}
 	
 	public final void addInputEvent(final Panput input, final boolean active) {
