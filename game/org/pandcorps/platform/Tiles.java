@@ -75,7 +75,7 @@ public class Tiles {
     	//if isMusicSupported final Sequence seq;
     	if (b == PlatformGame.TILE_BREAK) {
     		Level.tm.setForeground(index, null, Tile.BEHAVIOR_OPEN);
-    		shatter(PlatformGame.block8, Level.tm.getPosition(index), false);
+    		shatterTile(PlatformGame.block8, Level.tm.getPosition(index), false);
     		if (Mathtil.rand(65)) {
     		    newGemBumped(player, index); // Plays a sound
     		    //if isMusicSupported seq = null;
@@ -166,16 +166,24 @@ public class Tiles {
         }
     }
     
-    protected final static void shatter(final Panlayer layer, final Panmage img, final Panple pos, final boolean rot) {
-        final float x = pos.getX(), y = pos.getY();
+    private final static void shatter(final Panlayer layer, final Panmage img, final Panple pos, final boolean rot, final int xoff) {
+        final float x = pos.getX() + xoff, y = pos.getY();
         new Shatter(layer, img, x, y, -2, 2).setMirror(rot);
         new Shatter(layer, img, x + 8, y, 2, 2);
         new Shatter(layer, img, x, y + 8, -1, 3).setRot(rot ? 2 : 0);
         new Shatter(layer, img, x + 8, y + 8, 1, 3).setFlip(rot);
     }
     
-    protected final static void shatter(final Panmage img, final Panple pos, final boolean rot) {
-    	shatter(PlatformGame.room, img, pos, rot);
+    protected final static void shatterCenteredActor(final Panlayer layer, final Panmage img, final Panple pos, final boolean rot) {
+        shatter(layer, img, pos, rot, -8);
+    }
+    
+    protected final static void shatterTile(final Panlayer layer, final Panmage img, final Panple pos, final boolean rot) {
+        shatter(layer, img, pos, rot, 0); // 0 is good for tiles; -8 better for centered actors
+    }
+    
+    protected final static void shatterTile(final Panmage img, final Panple pos, final boolean rot) {
+    	shatterTile(PlatformGame.room, img, pos, rot);
     }
     
     private final static class Shatter extends Faller {

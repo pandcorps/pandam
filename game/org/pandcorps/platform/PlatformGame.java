@@ -1306,7 +1306,7 @@ System.out.println("loadConstants end " + System.currentTimeMillis());
                 gem = new GemBumped(hud, null, pos.getX(), pos.getY() - ImtilX.DIM, 0, GemBumped.TYPE_LETTER, null, FinPanple.ORIGIN);
                 gem.getVelocity().setY(0);
                 gem.setView(PlatformGame.getGemWordLetter(i));
-                Tiles.shatter(hud, blockLetter8, pos, false);
+                Tiles.shatterTile(hud, blockLetter8, pos, false);
                 letter.destroy();
                 Level.currLetter--;
                 if (i > 0) {
