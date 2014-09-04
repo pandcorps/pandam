@@ -131,11 +131,11 @@ public final class Imtil {
                 } catch (final Exception e) {
                     throw err(src, dst, srcX, srcY, w, h, dstX, dstY, "get", srcCol, srcRow, e);
                 }
-                if (PixelMask.isMasked(srcMask, srcP)) {
+                if (PixelMask.isMasked(srcMask, srcCol, srcRow, srcP)) {
                 	continue;
                 }
                 final int dstRow = dstY + y;
-                if (PixelMask.isMasked(dstMask, dst.getRGB(dstCol, dstRow))) {
+                if (PixelMask.isMasked(dstMask, dstCol, dstRow, dst.getRGB(dstCol, dstRow))) {
                 	continue;
                 }
                 try {
@@ -236,7 +236,7 @@ public final class Imtil {
             for (int y = 0; y < ih; y++) {
                 int p = img.getRGB(x, y);
                 if (x >= ox && x < sx && y >= oy && y < sy) {
-                	if (!PixelMask.isMasked(mask, p)) {
+                	if (!PixelMask.isMasked(mask, x, y, p)) {
 		                for (final PixelFilter f : fs) {
 		                	p = f.filter(p);
 		                }
