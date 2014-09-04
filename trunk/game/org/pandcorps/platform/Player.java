@@ -472,7 +472,7 @@ public class Player extends Character implements CollisionListener {
 	        if (hurtTimer == 0 && mode == MODE_FROZEN) {
 	        	mode = MODE_NORMAL;
 	        	if (getView() != PlatformGame.burn) {
-	        		Tiles.shatter(getLayer(), PlatformGame.blockIce8, getPosition(), false);
+	        		Tiles.shatterCenteredActor(getLayer(), PlatformGame.blockIce8, getPosition(), false);
 	        	}
 	        	setView(pc.guy);
 	        	if (acc.back != null) {

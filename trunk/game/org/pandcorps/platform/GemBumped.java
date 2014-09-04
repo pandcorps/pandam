@@ -131,7 +131,7 @@ public class GemBumped extends Pandy {
 		    if (type == TYPE_LETTER || isGood()) {
 		        Gem.spark(getLayer(), getPosition(), type == TYPE_END);
 		    } else {
-		        Tiles.shatter(PlatformGame.gemShatter, getPosition(), true);
+		        Tiles.shatterTile(PlatformGame.gemShatter, getPosition(), true);
 		    }
 		    destroy();
 		}
