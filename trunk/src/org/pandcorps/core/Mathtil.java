@@ -104,10 +104,7 @@ public final class Mathtil {
 	public final static void shuffle(final int[] a) {
 		final int last = a.length - 1;
 		for (int i = 0; i <= last; i++) {
-			final int o = randi(0, last);
-			final int t = a[i];
-			a[i] = a[o];
-			a[o] = t;
+			Coltil.swap(a, i, randi(0, last));
 		}
 	}
 	

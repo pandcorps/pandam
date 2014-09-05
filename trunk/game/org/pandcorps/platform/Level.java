@@ -492,6 +492,12 @@ public class Level {
             }
         }
         
+        protected final void addNormalGoals() {
+            goals.add(new SlantGoal());
+            goals.add(new UpBlockGoal());
+            goals.add(new RiseGoal());
+        }
+        
     	@Override
     	public int getW() {
     		return 3200;
@@ -767,13 +773,7 @@ public class Level {
     private final static int[] scratch = new int[128];
     
     private final static void swapScratch(final int i, final int j) {
-    	swap(scratch, i, j);
-    }
-    
-    private final static void swap(final int[] a, final int i, final int j) {
-        final int t = a[i];
-        a[i] = a[j];
-        a[j] = t;
+    	Coltil.swap(scratch, i, j);
     }
     
     private static class GrassyBuilder extends RandomBuilder {
@@ -796,8 +796,7 @@ public class Level {
 	        addTemplate(new GemMsgTemplate());
 	        addTemplate(new SlantTemplate(true), new SlantTemplate(false));
 	        addGiantTemplate();
-	        goals.add(new SlantGoal());
-	        goals.add(new UpBlockGoal());
+	        addNormalGoals();
 	    }
     	
     	@Override
@@ -829,8 +828,7 @@ public class Level {
 	        addTemplate(new GemMsgTemplate());
 	        addTemplate(new SlantTemplate(true), new SlantTemplate(false));
 	        addGiantTemplate();
-	        goals.add(new SlantGoal());
-	        goals.add(new UpBlockGoal());
+	        addNormalGoals();
 	    }
     	
     	@Override
@@ -923,6 +921,21 @@ public class Level {
     		upBlockStep(ng, floor + 1, 3, Mathtil.rand());
             goalBlock(ng + 3, floor + 7);
     	}
+    }
+    
+    private static class RiseGoal extends GoalTemplate {
+        @Override
+        protected final int getWidth() {
+            return 6; // 2 for 1st step + 1 for 2nd + 1 for 3rd + 1 for goal + 1 for gap
+        }
+        
+        @Override
+        protected final void build() {
+            for (int i = 2; i >= 0; i--) {
+                naturalRise(ng + i, floor + 1, 0, i);
+            }
+            goalBlock(ng + 4, floor + 7);
+        }
     }
     
     private abstract static class Template {
@@ -1023,9 +1036,7 @@ public class Level {
     			colors[i] = i;
     		}
     		colorIndex = 0;
-    		for (int i = 0; i < 3; i++) {
-    			swap(colors, i, Mathtil.randi(0, 2));
-    		}
+    		Mathtil.shuffle(colors);
     	}
     	
         @Override
