@@ -496,6 +496,7 @@ public class Level {
             goals.add(new SlantGoal());
             goals.add(new UpBlockGoal());
             goals.add(new RiseGoal());
+            goals.add(new ColorRiseGoal());
         }
         
     	@Override
@@ -888,7 +889,7 @@ public class Level {
     	protected abstract void build();
     }
     
-    private static class SlantGoal extends GoalTemplate {
+    private final static class SlantGoal extends GoalTemplate {
     	private int stop;
     	private int h;
     	private int w;
@@ -910,7 +911,7 @@ public class Level {
     	}
     }
     
-    private static class UpBlockGoal extends GoalTemplate {
+    private final static class UpBlockGoal extends GoalTemplate {
     	@Override
     	protected final int getWidth() {
     		return 5;
@@ -931,10 +932,30 @@ public class Level {
         
         @Override
         protected final void build() {
+            init();
             for (int i = 2; i >= 0; i--) {
-                naturalRise(ng + i, floor + 1, 0, i);
+                rise(ng + i, floor + 1, 0, i);
             }
             goalBlock(ng + 4, floor + 7);
+        }
+        
+        protected void init() {
+        }
+        
+        protected void rise(final int x, final int y, final int w, final int h) {
+            naturalRise(x, y, w, h);
+        }
+    }
+    
+    private final static class ColorRiseGoal extends RiseGoal {
+        @Override
+        protected final void init() {
+            ColorRiseTemplate.initStatic();
+        }
+        
+        @Override
+        protected final void rise(final int x, final int y, final int w, final int h) {
+            ColorRiseTemplate.riseStatic(x, y, w, h);
         }
     }
     
@@ -1032,6 +1053,10 @@ public class Level {
     private final static class ColorRiseTemplate extends RiseTemplate {
     	@Override
     	protected final void init() {
+    	    initStatic();
+    	}
+    	
+    	private final static void initStatic() {
     		for (int i = 0; i < 3; i++) {
     			colors[i] = i;
     		}
@@ -1041,6 +1066,10 @@ public class Level {
     	
         @Override
         protected final void rise(final int x, final int y, final int w, final int h) {
+            riseStatic(x, y, w, h);
+        }
+        
+        private final static void riseStatic(final int x, final int y, final int w, final int h) {
             colorRise(x, y, w, h, colors[colorIndex]);
             colorIndex = (colorIndex + 1) % 3;
         }

@@ -109,11 +109,12 @@ public class PlatformGame extends BaseGame {
 	Once saw Player appear on wrong Marker after goal-met screen.
 	Move music generation, preprocessing classes into a new folder to be excluded from jar.
 	Clipboard import/export.
-	GoalTemplate: Rise steps, 2*2 block steps.
+	GoalTemplate: 2*2 block steps.
 	Sand level cactus, Snow level crystal/pine tree
 	Embed ice and sand in ground if high enough
 	Ice always shatters to the right, should be centered and/or respect mirror
 	Rank-up bonus Gems can trigger immediate Gem goal success; that shouldn't happen
+	Unique level for bridge
 	*/
 	
 	protected final static byte TILE_BREAK = 2;
