@@ -72,6 +72,12 @@ public final class Coltil {
 	    }
 	}
 	
+	public final static void swap(final int[] a, final int i, final int j) {
+        final int t = a[i];
+        a[i] = a[j];
+        a[j] = t;
+    }
+	
 	public final static <E> Iterator<E> iterator(final Iterable<E> able) {
 		return able == null ? null : able.iterator();
 	}
