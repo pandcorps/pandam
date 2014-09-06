@@ -1656,18 +1656,26 @@ public class Menu {
             initJumpMode();
         }
         
-        private final void addClothingModel(final GarbMenu menu) {
+        private final void addClothingModel() {
+        	if (mc != null) {
+        		return;
+        	}
         	mc = generatePlayerContext(0);
         	final Avatar avt = mc.profile.currentAvatar;
         	avt.anm = "Bear";
         	avt.col.init();
         	avt.eye = 4;
-        	final SimpleColor col = menu.get(avt).col;
+        	init(avt.clothing);
+        	init(avt.hat);
+        	clthModel = addActor(mc, center - 32);
+        	clthModel.setVisible(false);
+        }
+        
+        private final void init(final Garb garb) {
+        	final SimpleColor col = garb.col;
         	col.r = 0;
         	col.g = 0;
         	col.b = Avatar.DEF_JUMP_COL;
-        	clthModel = addActor(mc, center - 32);
-        	clthModel.setVisible(false);
         }
         
         private abstract class GarbMenu {
@@ -1730,7 +1738,7 @@ public class Menu {
         }
         
         protected final void createClothingList(final int x, final int y, final GarbMenu menu) {
-        	addClothingModel(menu);
+        	addClothingModel();
         	final Clothing[] clothings = menu.all;
             final List<String> clths = toNameList(DEF_CLOTHES, clothings);
             final TouchButton sub = newBuy(x, y);
@@ -1744,7 +1752,10 @@ public class Menu {
                         TouchButton.detach(sub);
                         setClothing(menu, c);
                     } else {
-                    	menu.get(mc.profile.currentAvatar).clth = c;
+                    	final Avatar avt = mc.profile.currentAvatar;
+                    	avt.clothing.clth = null;
+                    	avt.hat.clth = null;
+                    	menu.get(avt).clth = c;
                     	reloadAnimalStrip(mc, clthModel);
                     	clthModel.setVisible(true);
                         reattachBuy("Buy for " + c.getCost() + "?", sub);

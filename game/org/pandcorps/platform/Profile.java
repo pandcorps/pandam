@@ -102,7 +102,7 @@ gems = 1000000;
         }
     	consoleEnabled = seg.getBoolean(12, false);
     	for (final Field f : Coltil.unnull(seg.getRepetitions(13))) {
-    	    availableHats.add(Avatar.getClothing(f.getValue()));
+    	    availableHats.add(Avatar.getHat(f.getValue()));
         }
     	//ctrl = seg.intValue(3);
     }
