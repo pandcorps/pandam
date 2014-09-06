@@ -607,7 +607,7 @@ public class PlatformGame extends BaseGame {
 		    //guy = engine.createImage(pre, new FinPanple2(8, 0), null, null, ImtilX.loadImage("org/pandcorps/platform/res/chr/Player.png"));
 		    
 			final Img[] maps = loadChrStrip("BearMap.png", 32, pi.f);
-			final Img[] clothingMapRaw = (avatar.clothing == null) ? null : avatar.clothing.clth.mapImgs;
+			final Img[] clothingMapRaw = (avatar.clothing.clth == null) ? null : avatar.clothing.clth.mapImgs;
 			final Img[] clothingMap;
 			if (clothingMapRaw == null) {
 			    clothingMap = null;
@@ -617,6 +617,19 @@ public class PlatformGame extends BaseGame {
             }
 			final Img[] wingMap = needWing ? loadChrStrip("WingsMap.png", 32, pf) : null;
 			final Img[] faceMap = loadChrStrip("FaceMap" + anm + ".png", 18, pi.f);
+			final Img[] hatMapRaw = (avatar.hat.clth == null) ? null : avatar.hat.clth.mapImgs;
+			if (hatMapRaw != null) {
+				final Img[] hatMap, maskMap;
+				hatMap = new Img[hatMapRaw.length];
+				filterStrip(hatMapRaw, hatMap, null, pi.hatFilter);
+				maskMap = loadChrStrip("mask/MaskMap" + anm + ".png", 18, null);
+				final PixelMask srcMask = TransparentPixelMask.getInstance();
+				for (int i = 0; i < 3; i++) {
+					Imtil.copy(hatMap[i], faceMap[i], 0, 0, 18, 18, 0, 0, srcMask, new ImgPixelMask(maskMap[i], Pancolor.BLACK));
+				}
+				Img.close(hatMap);
+				Img.close(maskMap);
+			}
 			final Img south1 = maps[0], southPose = maps[5], faceSouth = faceMap[0];
 			if (needWing) {
 				for (final Img south : new Img[] {south1, southPose}) {
