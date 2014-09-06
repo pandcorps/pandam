@@ -950,9 +950,9 @@ public class Map {
 			bld = null;
            	kingAvt.randomize();
            	kingAvt.col.randomizeColorful();
-           	kingAvt.clothing = Mathtil.rand(Avatar.hiddenClothings);
+           	kingAvt.clothing.clth = Mathtil.rand(Avatar.hiddenClothings);
            	//kingAvt.clothingCol.load(kingAvt.col); //negate();
-           	kingAvt.clothingCol.randomizeColorfulDifferent(kingAvt.col);
+           	kingAvt.clothing.col.randomizeColorfulDifferent(kingAvt.col);
            	kingCrown = Mathtil.randi(0, PlatformGame.crowns.length - 1);
 		}
 		initRoom();

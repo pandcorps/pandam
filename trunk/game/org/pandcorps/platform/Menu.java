@@ -1538,6 +1538,8 @@ public class Menu {
 	    private final static byte TAB_CLOTHES_COL = 1;
         private final static byte TAB_JUMP = 2;
         private final static byte TAB_JUMP_COL = 3;
+        private final static byte TAB_HAT = 4;
+	    private final static byte TAB_HAT_COL = 5;
         private final static byte TAB_DEFAULT = TAB_CLOTHES;
         private static byte currentTab = TAB_DEFAULT;
         private final static String DEF_CLOTHES = "None";
@@ -1546,9 +1548,8 @@ public class Menu {
         private RadioGroup jmpRadio = null;
         private List<RadioGroup> jmpColors = null;
         private TouchButton jmpBtn = null;
-        private RadioGroup clthRadio = null;
-        private List<RadioGroup> clthColors = null;
-        private TouchButton clthBtn = null;
+        private final ClothingMenu clthMenu = new ClothingMenu();
+        private final HatMenu hatMenu = new HatMenu();
         private Model clthModel = null;
         private PlayerContext mc = null;
         
@@ -1655,35 +1656,95 @@ public class Menu {
             initJumpMode();
         }
         
-        private final void addClothingModel() {
+        private final void addClothingModel(final GarbMenu menu) {
         	mc = generatePlayerContext(0);
         	final Avatar avt = mc.profile.currentAvatar;
         	avt.anm = "Bear";
         	avt.col.init();
         	avt.eye = 4;
-        	avt.clothingCol.r = 0;
-        	avt.clothingCol.g = 0;
-        	avt.clothingCol.b = Avatar.DEF_JUMP_COL;
+        	final SimpleColor col = menu.get(avt).col;
+        	col.r = 0;
+        	col.g = 0;
+        	col.b = Avatar.DEF_JUMP_COL;
         	clthModel = addActor(mc, center - 32);
         	clthModel.setVisible(false);
         }
         
+        private abstract class GarbMenu {
+        	protected final String name;
+        	protected final Clothing[] all;
+        	protected final byte tab;
+        	protected RadioGroup radio = null;
+        	protected List<RadioGroup> colors = null;
+        	protected TouchButton btn = null;
+        	
+        	protected GarbMenu(final String name, final Clothing[] all, final byte tab) {
+        		this.name = name;
+        		this.all = all;
+        		this.tab = tab;
+        	}
+            
+        	public abstract Set<Clothing> getAvailable();
+        	
+        	public abstract Garb get(final Avatar avt);
+        }
+        
+        private final class ClothingMenu extends GarbMenu {
+        	protected ClothingMenu() {
+        		super("Clothing", Avatar.clothings, TAB_CLOTHES_COL);
+        	}
+        	
+        	@Override
+        	public final Set<Clothing> getAvailable() {
+        		return pc.profile.availableClothings;
+        	}
+        	
+        	@Override
+        	public final Garb get(final Avatar avt) {
+        		return avt.clothing;
+        	}
+        }
+        
+        private final class HatMenu extends GarbMenu {
+        	protected HatMenu() {
+        		super("Headgear", Avatar.hats, TAB_HAT_COL);
+        	}
+        	
+        	@Override
+        	public final Set<Clothing> getAvailable() {
+        		return pc.profile.availableHats;
+        	}
+        	
+        	@Override
+        	public final Garb get(final Avatar avt) {
+        		return avt.hat;
+        	}
+        }
+        
         protected final void createClothingList(final int x, final int y) {
-        	addClothingModel();
-            final Clothing[] clothings = Avatar.clothings;
+        	createClothingList(x, y, clthMenu);
+        }
+        
+        protected final void createHatList(final int x, final int y) {
+        	createClothingList(x, y, hatMenu);
+        }
+        
+        protected final void createClothingList(final int x, final int y, final GarbMenu menu) {
+        	addClothingModel(menu);
+        	final Clothing[] clothings = menu.all;
             final List<String> clths = toNameList(DEF_CLOTHES, clothings);
             final TouchButton sub = newBuy(x, y);
-            clthBtn = newColor(x, y, TAB_CLOTHES_COL);
+            menu.btn = newColor(x, y, menu.tab);
             final AvtListener clthLsn = new AvtListener() {
                 @Override public final void update(final String value) {
                     final Clothing c = Player.get(clothings, value);
-                    if (pc.profile.isClothingAvailable(c)) {
+                    if (Profile.isAvailable(menu.getAvailable(), c)) {
                     	clthModel.setVisible(false);
                         clearInfo();
                         TouchButton.detach(sub);
-                        setClothing(c);
+                        setClothing(menu, c);
                     } else {
-                    	mc.profile.currentAvatar.clothing = c;
+                    	menu.get(mc.profile.currentAvatar).clth = c;
                     	reloadAnimalStrip(mc, clthModel);
                     	clthModel.setVisible(true);
                         reattachBuy("Buy for " + c.getCost() + "?", sub);
@@ -1692,12 +1753,12 @@ public class Menu {
             final RadioSubmitListener clthSubLsn = new AvtListener() {
                 @Override public final void update(final String value) {
                     final Clothing c = Player.get(clothings, value);
-                    if (!pc.profile.isClothingAvailable(c)) {
+                    if (!Profile.isAvailable(menu.getAvailable(), c)) {
                         final int cost = c.getCost();
                         if (pc.profile.spendGems(cost)) {
                         	clthModel.setVisible(false);
-                            pc.profile.availableClothings.add(c);
-                            setClothing(c);
+                        	menu.getAvailable().add(c);
+                            setClothing(menu, c);
                             setInfo("Purchased!");
                             TouchButton.detach(sub);
                         } else {
@@ -1706,8 +1767,8 @@ public class Menu {
                         }
                     }
                 }};
-            clthRadio = addRadio("Clothing", clths, clthSubLsn, clthLsn, x, y, sub);
-            initClothing();
+            menu.radio = addRadio(menu.name, clths, clthSubLsn, clthLsn, x, y, sub);
+            initClothing(menu);
         }
         
         @Override
@@ -1718,7 +1779,8 @@ public class Menu {
 				menuClassic();
 			}
 			initJumpColors();
-            initClothingColors();
+            initClothingColors(clthMenu);
+            initClothingColors(hatMenu);
 		}
 		
 		protected final void menuTouch() {
@@ -1727,7 +1789,13 @@ public class Menu {
                     createClothingList(touchRadioX, touchRadioY);
                     break;
                 case TAB_CLOTHES_COL :
-                    addColor(avt.clothingCol, 0, 0, "Clothing");
+                    addColor(avt.clothing.col, 0, 0, "Clothing");
+                    break;
+                case TAB_HAT :
+                    createHatList(touchRadioX, touchRadioY);
+                    break;
+                case TAB_HAT_COL :
+                    addColor(avt.hat.col, 0, 0, "Hat");
                     break;
                 case TAB_JUMP :
                     createJumpList(touchRadioX, touchRadioY);
@@ -1738,6 +1806,7 @@ public class Menu {
             }
 			newTab(PlatformGame.menuCheck, "Back", new Runnable() {@Override public final void run() {exit();}});
 			newTab(PlatformGame.menuClothing, "Garb", TAB_CLOTHES);
+			newTab(null, "Hat", TAB_HAT);
 			newTab(PlatformGame.menuGear, "Jump", TAB_JUMP);
 			newTabs();
 			registerBackExit();
@@ -1762,7 +1831,10 @@ public class Menu {
             jmpColors = addColor(avt.jumpCol, left + 88, y);
             y -= 64;
             createClothingList(left, y);
-            clthColors = addColor(avt.clothingCol, left + 88, y);
+            clthMenu.colors = addColor(avt.clothing.col, left + 88, y);
+            y -= 64;
+            createHatList(left, y);
+            hatMenu.colors = addColor(avt.hat.col, left + 88, y);
             y -= 64;
             addExit("Back", left, y);
         }
@@ -1791,17 +1863,18 @@ public class Menu {
             jmpRadio.setSelected(JumpMode.get(avt.jumpMode).getName());
         }
         
-        private final void setClothing(final Clothing c) {
-            avt.clothing = c;
-            initClothingColors();
+        private final void setClothing(final GarbMenu menu, final Clothing c) {
+            menu.get(avt).clth = c;
+            initClothingColors(menu);
         }
         
-        private final void initClothingColors() {
-        	initColors(clthColors, clthBtn, avt.clothing != null);
+        private final void initClothingColors(final GarbMenu menu) {
+        	initColors(menu.colors, menu.btn, menu.get(avt).clth != null);
         }
         
-        private final void initClothing() {
-            clthRadio.setSelected((avt.clothing == null) ? DEF_CLOTHES : avt.clothing.getName());
+        private final void initClothing(final GarbMenu menu) {
+        	final Clothing clothing = menu.get(avt).clth;
+            menu.radio.setSelected((clothing == null) ? DEF_CLOTHES : clothing.getName());
             clthModel.setVisible(false);
         }
         
@@ -1810,7 +1883,8 @@ public class Menu {
             final boolean a = super.allow(focused);
             if (a) {
                 initJumpMode();
-                initClothing();
+                initClothing(clthMenu);
+                initClothing(hatMenu);
             }
             return a;
         }
@@ -1818,7 +1892,8 @@ public class Menu {
         @Override
         protected void onExit() {
         	Coltil.clear(jmpColors);
-        	Coltil.clear(clthColors);
+        	Coltil.clear(clthMenu.colors);
+        	Coltil.clear(hatMenu.colors);
             Panscreen.set(new AvatarScreen(pc, old, avt));
         }
 	}
@@ -2452,6 +2527,14 @@ public class Menu {
 			    boolean added = false;
 			    for (final Clothing c : Avatar.clothings) {
 			        if (pc.profile.availableClothings.add(c)) {
+			            added = true;
+			        }
+			    }
+			    msg = added ? MSG_OK : MSG_LIMIT;
+			} else if ("addhats".equalsIgnoreCase(cmd)) {
+			    boolean added = false;
+			    for (final Clothing c : Avatar.hats) {
+			        if (pc.profile.availableHats.add(c)) {
 			            added = true;
 			        }
 			    }

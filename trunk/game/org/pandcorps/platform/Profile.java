@@ -54,6 +54,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
     protected int goalPoints = 0;
     protected final Set<Clothing> availableClothings = new HashSet<Clothing>();
     protected boolean consoleEnabled = false;
+    protected final Set<Clothing> availableHats = new HashSet<Clothing>();
     protected int column = -1;
 	protected int row = -1;
 	protected final HashMap<Pair<Integer, Integer>, Boolean> open = new HashMap<Pair<Integer, Integer>, Boolean>();
@@ -100,6 +101,9 @@ gems = 1000000;
     	    availableClothings.add(Avatar.getClothing(f.getValue()));
         }
     	consoleEnabled = seg.getBoolean(12, false);
+    	for (final Field f : Coltil.unnull(seg.getRepetitions(13))) {
+    	    availableHats.add(Avatar.getClothing(f.getValue()));
+        }
     	//ctrl = seg.intValue(3);
     }
     
@@ -123,6 +127,9 @@ gems = 1000000;
             seg.addValue(11, c.res);
         }
         seg.setBoolean(12, consoleEnabled);
+        for (final Clothing c : Coltil.unnull(availableHats)) {
+            seg.addValue(13, c.res);
+        }
         //seg.setInt(3, ctrl);
     }
     
@@ -285,8 +292,8 @@ gems = 1000000;
     	return !triedJumpModes.contains(Integer.valueOf(index));
     }
     
-    public final boolean isClothingAvailable(final Clothing c) {
-        return c == null || availableClothings.contains(c);
+    public final static boolean isAvailable(final Set<Clothing> available, final Clothing c) {
+        return c == null || available.contains(c);
     }
     
     private final static Integer ASSIST_INVINCIBILITY = Integer.valueOf(4);
