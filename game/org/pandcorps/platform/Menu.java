@@ -40,6 +40,7 @@ import org.pandcorps.pandax.text.Input.*;
 import org.pandcorps.pandax.tile.Tile.*;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.touch.*;
+import org.pandcorps.platform.Map.*;
 import org.pandcorps.platform.Enemy.*;
 import org.pandcorps.platform.Profile.*;
 import org.pandcorps.platform.Avatar.*;
@@ -2515,8 +2516,7 @@ public class Menu {
 				}
 			} else if ("zoomin".equalsIgnoreCase(cmd)) {
 				if (Config.zoomMag > 0 && Config.zoomMag < PlatformGame.getApproximateFullScreenZoomedDisplaySize()) {
-					setZoom(Config.zoomMag + 1);
-					msg = MSG_RESTART;
+					msg = setZoom(Config.zoomMag + 1);
 				} else {
 					msg = MSG_LIMIT;
 				}
@@ -2526,14 +2526,12 @@ public class Menu {
 					z = PlatformGame.getApproximateFullScreenZoomedDisplaySize();
 				}
 				if (z > 1) {
-					setZoom(z - 1);
-					msg = MSG_RESTART;
+					msg = setZoom(z - 1);
 				} else {
 					msg = MSG_LIMIT;
 				}
 			} else if ("zoomdef".equalsIgnoreCase(cmd)) {
-				setZoom(-1);
-				msg = MSG_RESTART;
+				msg = setZoom(-1);
 			} else if ("addclothes".equalsIgnoreCase(cmd)) {
 			    boolean added = false;
 			    for (final Clothing c : Avatar.clothings) {
@@ -2562,6 +2560,15 @@ public class Menu {
 			    msg = pc.profile.availableJumpModes.add(Integer.valueOf(Player.JUMP_FLY)) ? MSG_OK : MSG_LIMIT;
 			} else if ("addarmor".equalsIgnoreCase(cmd)) {
 				msg = pc.profile.availableClothings.add(Avatar.getClothing("Armor")) ? MSG_OK : MSG_LIMIT;
+			} else if ("setmapfree".equalsIgnoreCase(cmd)) {
+				Map.modeMove = Map.MOVE_ANY_PATH;
+				msg = MSG_OK;
+			} else if ("setsnow".equalsIgnoreCase(cmd)) {
+				msg = setMapTheme(MapTheme.Snow);
+			} else if ("setsand".equalsIgnoreCase(cmd)) {
+				msg = setMapTheme(MapTheme.Sand);
+			} else if ("setgrass".equalsIgnoreCase(cmd)) {
+				msg = setMapTheme(MapTheme.Normal);
 			} else if ("save".equalsIgnoreCase(cmd)) {
 			    save();
 			    msg = MSG_OK;
@@ -2571,9 +2578,16 @@ public class Menu {
 			Chartil.set(info, msg);
 		}
 		
-		private final static void setZoom(final int zoomMag) {
+		private final static String setZoom(final int zoomMag) {
 			Config.zoomMag = zoomMag;
 			Config.serialize();
+			return MSG_RESTART;
+		}
+		
+		private final static String setMapTheme(final MapTheme theme) {
+			Map.theme = theme;
+			Map.saveMap();
+			return MSG_RESTART;
 		}
 		
 		private final void clear() {

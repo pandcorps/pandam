@@ -112,7 +112,6 @@ public class PlatformGame extends BaseGame {
 	GoalTemplate: 2*2 block steps.
 	Sand level cactus, Snow level crystal/pine tree
 	Embed ice and sand in ground if high enough
-	Ice always shatters to the right, should be centered and/or respect mirror
 	Rank-up bonus Gems can trigger immediate Gem goal success; that shouldn't happen
 	Unique level for bridge
 	*/
