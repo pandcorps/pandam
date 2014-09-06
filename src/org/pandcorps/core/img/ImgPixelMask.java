@@ -26,13 +26,15 @@ import org.pandcorps.core.*;
 
 public class ImgPixelMask extends PixelMask {
     private final Img mask;
+    private final int rgb;
     
-    public ImgPixelMask(final Img mask) {
+    public ImgPixelMask(final Img mask, final Pancolor col) {
         this.mask = mask;
+        rgb = Imtil.getDataElement(col);
     }
     
     @Override
     public final boolean isMasked(final int x, final int y, final int p) {
-        return mask.getRGB(x, y) == 0; //TODO Change 0
+        return mask.getRGB(x, y) == rgb;
     }
 }
