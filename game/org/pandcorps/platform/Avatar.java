@@ -34,9 +34,29 @@ public class Avatar extends PlayerData implements Segmented {
     protected final SimpleColor col = new SimpleColor();
     protected byte jumpMode = -1;
     protected final SimpleColor jumpCol = new SimpleColor();
-    protected Clothing clothing = null;
-    protected final SimpleColor clothingCol = new SimpleColor();
+    protected final Garb clothing = new Garb();
+    protected final Garb hat = new Garb();
     private final static int[] randomColorChannels = {0, 1, 2};
+    
+    protected final static class Garb {
+    	protected Clothing clth = null;
+    	protected final SimpleColor col = new SimpleColor();
+    	
+    	protected final void init() {
+    		clth = null;
+    		col.init();
+    	}
+    	
+    	protected final void load(final Garb garb) {
+    		clth = garb.clth;
+    		col.load(garb.col);
+    	}
+    	
+    	protected final void save(final Segment seg, final int i) {
+    		seg.setValue(i, (clth == null) ? "" : clth.res);
+        	col.save(seg, i + 1);
+    	}
+    }
     
     protected final static class SimpleColor {
     	protected float r = -1; // These should probably be multiples of 0.25
@@ -128,7 +148,7 @@ public class Avatar extends PlayerData implements Segmented {
         }
     }
     
-    protected final static class Clothing extends FinName {
+    protected static class Clothing extends FinName {
         protected final String res;
         private final int cost;
         private final String body;
@@ -146,13 +166,23 @@ public class Avatar extends PlayerData implements Segmented {
             this.body = body;
         }
         
+        protected String getLoc() {
+        	return "clothes";
+        }
+        
+        protected int getDim() {
+        	return 32;
+        }
+        
         public final void init() {
             if (imgs != null) {
                 return;
             }
-            imgs = PlatformGame.loadChrStrip("clothes/" + res + ".png", 32, true);
+            final String loc = getLoc();
+            final int d = getDim();
+            imgs = PlatformGame.loadChrStrip(loc + "/" + res + ".png", d, true);
             if (!res.startsWith("Royal")) {
-            	mapImgs = PlatformGame.loadChrStrip("clothes/" + res + "Map.png", 32, true);
+            	mapImgs = PlatformGame.loadChrStrip(loc + "/" + res + "Map.png", d, true);
             }
             Img.setTemporary(false, imgs);
             Img.setTemporary(false, mapImgs);
@@ -193,6 +223,36 @@ public class Avatar extends PlayerData implements Segmented {
         return null;
     }
     
+    protected static class Hat extends Clothing {
+        protected Hat(final String name, final String res, final int cost) {
+            super(name, res, cost);
+        }
+        
+        @Override
+        protected final String getLoc() {
+        	return "headgear";
+        }
+        
+        @Override
+        protected final int getDim() {
+        	return 18;
+        }
+    }
+    
+    protected final static Hat[] hats = {
+        new Hat("Headband", "Headband", 1000),
+        new Hat("Bandana", "Bandana", 1500)
+    };
+    
+    protected final static Hat getHat(final String name) {
+        for (final Hat c : hats) {
+            if (c.res.equals(name)) {
+                return c;
+            }
+        }
+        return null;
+    }
+    
     public Avatar() {
     }
     
@@ -206,8 +266,8 @@ public class Avatar extends PlayerData implements Segmented {
         col.randomize();
         jumpMode = Player.MODE_NORMAL;
         jumpCol.init();
-        clothing = null;
-        clothingCol.init();
+        clothing.init();
+        hat.init();
     }
     
     public void load(final Avatar src) {
@@ -217,8 +277,8 @@ public class Avatar extends PlayerData implements Segmented {
         col.load(src.col);
         jumpMode = src.jumpMode;
         jumpCol.load(src.jumpCol);
-        clothing = src.clothing;
-        clothingCol.load(src.clothingCol);
+        clothing.load(src.clothing);
+        hat.load(src.hat);
     }
     
     public void load(final Segment seg) {
@@ -228,8 +288,10 @@ public class Avatar extends PlayerData implements Segmented {
     	col.load(seg, 3);
     	jumpMode = seg.getByte(6, Player.MODE_NORMAL);
     	jumpCol.load(seg, 7); // 7-9
-    	clothing = getClothing(seg.getValue(10));
-    	clothingCol.load(seg, 11); // 11-13
+    	clothing.clth = getClothing(seg.getValue(10));
+    	clothing.col.load(seg, 11); // 11-13
+    	hat.clth = getHat(seg.getValue(14));
+    	hat.col.load(seg, 15); // 15-17
     }
     
     @Override
@@ -241,8 +303,8 @@ public class Avatar extends PlayerData implements Segmented {
     	col.save(seg, 3);
     	seg.setInt(6, jumpMode);
     	jumpCol.save(seg, 7);
-    	seg.setValue(10, (clothing == null) ? "" : clothing.res);
-    	clothingCol.save(seg, 11);
+    	clothing.save(seg, 10); // 10 - 13
+    	hat.save(seg, 14); // 14 - 17
     }
     
     private final static float randColor() {
