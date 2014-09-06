@@ -153,9 +153,9 @@ public class Map {
 	private static MapPlayer player = null;
 	
 	private final static short MOVE_NORMAL = 0;
-	private final static short MOVE_ANY_PATH = 1;
+	protected final static short MOVE_ANY_PATH = 1;
 	private final static short MOVE_ANY_TILE = 2;
-	private static short modeMove = MOVE_NORMAL;
+	protected static short modeMove = MOVE_NORMAL;
 	
 	private static boolean waiting = true;
 	
@@ -1623,7 +1623,7 @@ public class Map {
 		return getProfile().getName() + PlatformGame.EXT_MAP;
 	}
 	
-	private final static void saveMap() {
+	protected final static void saveMap() {
 	    final Writer w = Iotil.getBufferedWriter(getMapFile());
 	    try {
 	        final Segment seg = new Segment(SEG_MAP);
