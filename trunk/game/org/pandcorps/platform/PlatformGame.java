@@ -111,7 +111,6 @@ public class PlatformGame extends BaseGame {
 	Clipboard import/export.
 	GoalTemplate: 2*2 block steps.
 	Sand level cactus, Snow level crystal/pine tree
-	Embed ice and sand in ground if high enough
 	Rank-up bonus Gems can trigger immediate Gem goal success; that shouldn't happen
 	Unique level for bridge
 	*/

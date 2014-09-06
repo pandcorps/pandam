@@ -1391,13 +1391,27 @@ public class Level {
     	
     	@Override
         protected final void build() {
-    		final int stop = x + w + 1;
-    		for (int i = 1; i <= 2; i++) {
-    			solidBlock(x, floor + i);
-    			solidBlock(stop, floor + i);
+    		final int stop = x + w + 1, y;
+    		final boolean sunken = floor >= 2;
+    		if (sunken) {
+    			y = floor - 1;
+    			for (int i = 0; i <= 2; i++) {
+	    			tm.setForeground(x, floor - i, imgMap[1 + i][2], Tile.BEHAVIOR_SOLID);
+	    			tm.setForeground(stop, floor - i, imgMap[1 + i][0], Tile.BEHAVIOR_SOLID);
+    			}
+    		} else {
+	    		for (int i = 1; i <= 2; i++) {
+	    			solidBlock(x, floor + i);
+	    			solidBlock(stop, floor + i);
+	    		}
+	    		y = floor + 1;
     		}
     		for (int i = x + 1; i < stop; i++) {
-    			tm.setForeground(i, floor + 1, imgMap[1][5], theme.specialGroundBehavior);
+    			if (sunken) {
+    				tm.removeTile(i, floor);
+    				tm.setForeground(i, y - 1, imgMap[1][1], Tile.BEHAVIOR_SOLID);
+    			}
+    			tm.setForeground(i, y, imgMap[1][5], theme.specialGroundBehavior);
     		}
     	}
     }
