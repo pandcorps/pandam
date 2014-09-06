@@ -107,7 +107,9 @@ public abstract class Img implements Closeable {
 			return;
 		}
 		for (final Img img : imgs) {
-			img.close();
+			if (img != null) {
+				img.close();
+			}
 		}
 	}
 }
