@@ -241,7 +241,8 @@ public class Avatar extends PlayerData implements Segmented {
     
     protected final static Hat[] hats = {
         new Hat("Headband", "Headband", 1000),
-        new Hat("Bandana", "Bandana", 1500)
+        new Hat("Bandana", "Bandana", 1500),
+        new Hat("Cap", "Cap", 2000)
     };
     
     protected final static Hat getHat(final String name) {
