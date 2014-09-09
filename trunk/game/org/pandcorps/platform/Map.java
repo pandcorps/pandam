@@ -149,6 +149,7 @@ public class Map {
 	private static TileMapImage[] waters = null;
 	private static TileMapImage base = null;
 	private static TileMapImage ladder = null;
+	private static TileMapImage bridge = null;
 	
 	private static MapPlayer player = null;
 	
@@ -600,6 +601,9 @@ public class Map {
 	                screen = new Castle.ThroneIntroScreen();
 	                Level.setTheme(Theme.Chaos);
 	            } else {
+	                if (isBridge(t)) {
+	                    Level.setTheme(Theme.Bridge);
+	                }
 	            	screen = new PlatformGame.PlatformScreen();
 	            }
 	            Level.clear(); // Called automatically for Level, but not for Cabin
@@ -962,6 +966,7 @@ public class Map {
         waters = new TileMapImage[] {water, imgMap[6][6], imgMap[7][6]};
         base = imgMap[1][1];
         ladder = imgMap[0][6];
+        bridge = imgMap[0][7];
         final int t;
         if (b == null) {
         	//column, row handled in Profile
@@ -1501,6 +1506,10 @@ public class Map {
 	private static boolean isLadder(final int index) {
 	    return DynamicTileMap.getRawForeground(tm.getTile(index)) == ladder;
 	}
+	
+	private static boolean isBridge(final int index) {
+        return DynamicTileMap.getRawForeground(tm.getTile(index)) == bridge;
+    }
 	
 	private static void marker(final int i, final int j) {
 		marker(i, j, true);
