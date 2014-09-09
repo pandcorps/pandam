@@ -174,6 +174,23 @@ public class Level {
     			}
         	}
     	};
+    	public final static Theme Bridge = new Theme("Bridge", MSG) {
+            @Override protected final int[] getEnemyIndices(final int worlds) {
+                return Map.theme.levelTheme.getEnemyIndices(worlds);
+            }
+            
+            @Override protected final BackgroundBuilder getRandomBackground() {
+                return new HillBackgroundBuilder();
+            }
+            
+            @Override protected final Builder getRandomBuilder() {
+                return new PlatformBuilder();
+            }
+            
+            @Override protected final String getBgImg() {
+                return Map.theme.levelTheme.bgImg;
+            }
+        };
     	private final static String[] MSG_CHAOS = {"CHAOS", "HAVOC", "BEWARE", "FEAR", "DANGER"};
     	public final static Theme Chaos = new Theme("Chaos", MSG_CHAOS) {
     	    @Override protected final int[] getEnemyIndices(final int worlds) {
@@ -224,6 +241,10 @@ public class Level {
     	protected abstract BackgroundBuilder getRandomBackground();
     	
     	protected abstract Builder getRandomBuilder();
+    	
+    	protected String getBgImg() {
+    	    return bgImg;
+    	}
     	
     	protected TileMapImage[] getExtraAnimBlock() {
     		return null;
@@ -620,7 +641,7 @@ public class Level {
     protected final static class HillBackgroundBuilder implements BackgroundBuilder {
     	@Override
     	public final Img getImage() {
-    		final Img backImg = ImtilX.loadImage("org/pandcorps/platform/res/bg/Hills" + Chartil.unnull(theme.bgImg) + ".png", 128, null);
+    		final Img backImg = ImtilX.loadImage("org/pandcorps/platform/res/bg/Hills" + Chartil.unnull(theme.getBgImg()) + ".png", 128, null);
             if (isNormalTheme()) {
             	applyTerrainTexture(backImg, 0, 0, 48, 32);
             	applyColoredTerrain(backImg, 0, 0, 96, 96);
