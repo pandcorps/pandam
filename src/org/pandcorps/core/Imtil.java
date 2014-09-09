@@ -194,6 +194,31 @@ public final class Imtil {
         }
     }
     
+    public final static void move(final Img img, final int x, final int y) {
+    	final int w = img.getWidth(), h = img.getHeight();
+    	final int mw = w - Math.abs(x), mh = h - Math.abs(y);
+    	for (int i = 0; i < mw; i++) {
+    		for (int j = 0; j < mh; j++) {
+    			final int srcX, dstX, srcY, dstY;
+    			if (x <= 0) {
+    				dstX = i;
+    				srcX = i - x;
+    			} else {
+    				dstX = w - i - 1;
+    				srcX = w - i - 1 - x;
+    			}
+    			if (y <= 0) {
+    				dstY = j;
+    				srcY = j - y;
+    			} else {
+    				dstY = h - j - 1;
+    				srcY = h - j - 1 - y;
+    			}
+    			img.setRGB(dstX, dstY, img.getRGB(srcX, srcY));
+    		}
+    	}
+    }
+    
     public final static Img filter(final Img img, final PixelFilter... fs) {
     	return filter(img, Coltil.asList(fs));
     }
