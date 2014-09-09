@@ -184,7 +184,7 @@ public class Level {
             }
             
             @Override protected final Builder getRandomBuilder() {
-                return new PlatformBuilder();
+                return new BridgeBuilder();
             }
             
             @Override protected final String getBgImg() {
@@ -874,7 +874,7 @@ public class Level {
     	}
     }
     
-    private final static class PlatformBuilder extends RandomBuilder {
+    private static class PlatformBuilder extends RandomBuilder {
     	@Override
 	    protected final void loadTemplates() {
     		grassy = false;
@@ -891,7 +891,7 @@ public class Level {
 	    }
     	
     	@Override
-    	protected final void ground(final int start, final int stop) {
+    	protected void ground(final int start, final int stop) {
     		Level.blockWall(start, floor, stop - start + 1, 1);
     	}
     	
@@ -902,6 +902,17 @@ public class Level {
     	@Override
     	protected final void downStep(final int x, final int y, final int h) {
     	}
+    }
+    
+    private final static class BridgeBuilder extends PlatformBuilder {
+        @Override
+        protected void ground(final int start, final int stop) {
+            for (int i = start; i <= stop; i++) {
+                final int imgCol = (i == start || i == stop) ? 0 : 1;
+                tm.setForeground(i, floor + 1, imgMap[1][imgCol], Tile.BEHAVIOR_OPEN);
+                tm.setForeground(i, floor, imgMap[2][imgCol], Tile.BEHAVIOR_SOLID);
+            }
+        }
     }
     
     private abstract static class GoalTemplate {
