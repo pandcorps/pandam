@@ -195,6 +195,7 @@ public final class Imtil {
     }
     
     public final static void move(final Img img, final int x, final int y) {
+    	final int clear = img.getRGB(0, 0);
     	final int w = img.getWidth(), h = img.getHeight();
     	final int mw = w - Math.abs(x), mh = h - Math.abs(y);
     	for (int i = 0; i < mw; i++) {
@@ -216,6 +217,12 @@ public final class Imtil {
     			}
     			img.setRGB(dstX, dstY, img.getRGB(srcX, srcY));
     		}
+    	}
+    	if (x != 0) {
+	    	drawRectangle(img, (x > 0) ? 0 : mw, 0, Math.abs(x), h, clear);
+    	}
+    	if (y != 0) {
+	    	drawRectangle(img, (x > 0) ? x : 0, (y > 0) ? 0 : mh, mw, Math.abs(y), clear);
     	}
     }
     
@@ -399,7 +406,11 @@ public final class Imtil {
     		final short r, final short g, final short b, final short a) {
     	//TODO copy if not already right ColorModel
     	final int[] rgba = {r, g, b, a};
-    	final int c = cm.getDataElement(rgba, 0);
+    	return drawRectangle(in, x, y, w, h, cm.getDataElement(rgba, 0));
+    }
+    
+    public final static Img drawRectangle(final Img in,
+    		final int x, final int y, final int w, final int h, final int c) {
     	for (int j = y + h - 1; j >= y; j--) {
     		for (int i = x + w - 1; i >= x; i--) {
     			in.setRGB(i, j, c);
