@@ -47,11 +47,13 @@ public class Player extends Character implements CollisionListener {
 	//private final static byte JUMP_DOUBLE = 2;
 	//private final static byte JUMP_INFINITE = 3;
 	protected final static byte JUMP_FLY = 4;
+	protected final static byte JUMP_DRAGON = 5;
 	
 	public static enum JumpMode implements Named { // enum can't extend FinName
 	    Normal(MODE_NORMAL, "Normal", 0),
 	    High(JUMP_HIGH, "Spring Heels", 10000),
-	    Fly(JUMP_FLY, "Wings", 50000);
+	    Fly(JUMP_FLY, "Wings", 50000),
+	    Dragon(JUMP_DRAGON, "Dragon", 100000);
 	    
 	    private final byte index;
 	    
@@ -151,6 +153,7 @@ public class Player extends Character implements CollisionListener {
 	    protected Panimation mapLadder = null;
 	    protected Panmage mapPose = null;
 	    protected Panmage back = null;
+	    protected Panimation backRun = null;
 	    protected Panimation backJump = null;
 	    protected Panimation backFall = null;
 	    
@@ -244,6 +247,8 @@ public class Player extends Character implements CollisionListener {
 	    	mapPose = null;
 	    	Panmage.destroy(back);
 	    	back = null;
+	    	Panmage.destroyAll(backRun);
+	    	backRun = null;
 	    	Panmage.destroyAll(backJump);
 	    	backJump = null;
 	    	Panmage.destroyAll(backFall);
@@ -630,7 +635,11 @@ public class Player extends Character implements CollisionListener {
 			}
 		}
 		if (acc.back != null) {
-			acc.back.changeView(pc.back);
+			if (hv == 0 || pc.backRun == null) {
+				acc.back.changeView(pc.back);
+			} else {
+				acc.back.changeView(pc.backRun);
+			}
 		}
 	}
 	
