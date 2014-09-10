@@ -699,7 +699,9 @@ public class PlatformGame extends BaseGame {
 					break;
 				}
 			}
-			Imtil.copy(dragonMap[2], east2, 0, 0, 32, 32, 0, 0, Imtil.COPY_BACKGROUND);
+			if (needDragon) {
+			    Imtil.copy(dragonMap[2], east2, 0, 0, 32, 32, 0, 0, Imtil.COPY_BACKGROUND);
+			}
 			final Img west1 = Imtil.copy(east1), west2 = Imtil.copy(east2);
 			final Img eyesEast = eyes.getSubimage(0, 0, 4, 4);
 			final int eyeDstY = needDragon ? 9 : 14;
