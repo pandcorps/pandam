@@ -659,6 +659,7 @@ public class PlatformGame extends BaseGame {
 				Imtil.copy(faceSouth, south, 0, 0, 18, 18, 7, 5, Imtil.COPY_FOREGROUND);
 				Imtil.copy(eyes, south, 0, 0, 8, 4, 12, 14, Imtil.COPY_FOREGROUND);
 			}
+			final int drgnY = 12;
 			if (needDragon) {
 				final Img drgnSth = dragonMap[0];
 				for (Img south : new Img[] {south1, southPose, null}) {
@@ -666,12 +667,13 @@ public class PlatformGame extends BaseGame {
 						south = south2;
 						Imtil.mirror(drgnSth);
 					} else {
-						Imtil.move(south, 5, -5);
+						//Imtil.move(south, 5, -5);
+						Imtil.addBordersImg(south, 0, 0, 0, drgnY);
 						if (south == south1) {
 							south2 = Imtil.copy(south1);
 						}
 					}
-					Imtil.copy(drgnSth, south, 0, 0, 32, 32, 0, 0, Imtil.COPY_FOREGROUND);
+					Imtil.copy(drgnSth, south, 0, 0, 32, 32, 0, drgnY, Imtil.COPY_FOREGROUND);
 				}
 			}
 			pc.mapSouth = createAnmMap(pre, "south", south1, south2);
