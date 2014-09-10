@@ -46,6 +46,14 @@ public final class AndroidImg extends Img {
 	}
 	
 	@Override
+	public final void swapRaw(final Img img) {
+		final AndroidImg o = (AndroidImg) img;
+		final Bitmap t = o.raw;
+		o.raw = this.raw;
+		this.raw = t;
+	}
+	
+	@Override
 	public final int getWidth() {
 		return raw.getWidth();
 	}
