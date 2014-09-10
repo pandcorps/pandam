@@ -921,7 +921,22 @@ public class Level {
         @Override
         protected final void ground(final int start, final int stop) {
             for (int i = start; i <= stop; i++) {
-                final int imgCol = (i == start || i == stop) ? 0 : 1;
+                final int imgCol;
+                if (i == start) {
+                    if (i == 0) {
+                        imgCol = 1;
+                    } else if (DynamicTileMap.getRawBackground(tm.getTile(i - 1, floor)) == imgMap[2][0]) {
+                        imgCol = 1;
+                        tm.setBackground(i - 1, floor + 1, imgMap[1][imgCol], Tile.BEHAVIOR_OPEN);
+                        tm.setBackground(i - 1, floor, imgMap[2][imgCol], Tile.BEHAVIOR_SOLID);
+                    } else {
+                        imgCol = 0;
+                    }
+                } else if (i == stop) {
+                    imgCol = 0;
+                } else {
+                    imgCol = 1;
+                }
                 tm.setBackground(i, floor + 1, imgMap[1][imgCol], Tile.BEHAVIOR_OPEN);
                 tm.setBackground(i, floor, imgMap[2][imgCol], Tile.BEHAVIOR_SOLID);
             }
@@ -2223,7 +2238,7 @@ public class Level {
     	return xc - x - 1;
     }
     
-    private final static int gemChr(final int x, final int y, final char chr, final boolean render) {
+    private final static int gemChr(final int x, int y, final char chr, final boolean render) {
         if (chr == ' ') {
             return 1;
         }
@@ -2233,6 +2248,9 @@ public class Level {
     	}
     	final String s = gemFont[c];
     	final int size = s.length();
+    	if (floorMode == FLOOR_BRIDGE) {
+    	    y++;
+    	}
     	int xc = x, yc = y + 4, max = 0;
     	for (int i = 0; i < size; i++) {
     		final char t = s.charAt(i);
