@@ -52,6 +52,10 @@ public class Level {
     protected final static int ICE_WISP = 11;
     protected final static int FIRE_WISP = 12;
     
+    private final static byte FLOOR_GRASSY = 0;
+    private final static byte FLOOR_BLOCK = 1;
+    private final static byte FLOOR_BRIDGE = 2;
+    
     protected final static PixelFilter terrainDarkener = new BrightnessPixelFilter((short) -40, (short) -24, (short) -32);
     
     private final static Set<Class<? extends Template>> oneUseTemplates = new HashSet<Class<? extends Template>>();
@@ -76,7 +80,7 @@ public class Level {
     private static int nt = 0;
     private static int floor = 0;
     protected static int goalIndex = 0;
-    private static boolean grassy = true;
+    private static byte floorMode = FLOOR_GRASSY;
     private static Pancolor topSkyColor = null;
     private static Pancolor bottomSkyColor = null;
     protected static Tile tileGem = null;
@@ -400,7 +404,7 @@ public class Level {
         Mathtil.setSeed(seed);
         clear();
         victory = false;
-    	grassy = true;
+    	floorMode = FLOOR_GRASSY;
     	topSkyColor = null;
 	    bottomSkyColor = null;
 	    tileGem = null;
@@ -877,7 +881,7 @@ public class Level {
     private static class PlatformBuilder extends RandomBuilder {
     	@Override
 	    protected final void loadTemplates() {
-    		grassy = false;
+    		floorMode = getFloorMode();
 	        addTemplate(new WallTemplate());
 	        addTemplate(new PitTemplate());
 	        addTemplate(new BridgePitTemplate());
@@ -889,6 +893,10 @@ public class Level {
 	        addGiantTemplate();
 	        goals.add(new UpBlockGoal());
 	    }
+    	
+    	protected byte getFloorMode() {
+    	    return FLOOR_BLOCK;
+    	}
     	
     	@Override
     	protected void ground(final int start, final int stop) {
@@ -906,11 +914,16 @@ public class Level {
     
     private final static class BridgeBuilder extends PlatformBuilder {
         @Override
-        protected void ground(final int start, final int stop) {
+        protected final byte getFloorMode() {
+            return FLOOR_BRIDGE;
+        }
+        
+        @Override
+        protected final void ground(final int start, final int stop) {
             for (int i = start; i <= stop; i++) {
                 final int imgCol = (i == start || i == stop) ? 0 : 1;
-                tm.setForeground(i, floor + 1, imgMap[1][imgCol], Tile.BEHAVIOR_OPEN);
-                tm.setForeground(i, floor, imgMap[2][imgCol], Tile.BEHAVIOR_SOLID);
+                tm.setBackground(i, floor + 1, imgMap[1][imgCol], Tile.BEHAVIOR_OPEN);
+                tm.setBackground(i, floor, imgMap[2][imgCol], Tile.BEHAVIOR_SOLID);
             }
         }
     }
@@ -1980,15 +1993,27 @@ public class Level {
     }
     
     private final static void pit(final int x, final int y, final int w) {
-    	final int stop = x + w + 1;
-    	for (int j = 0; j <= y; j++) {
-    		if (grassy) {
+    	final int stop = x + w + 1, ystop = (floorMode == FLOOR_BRIDGE) ? (y + 1) : y;
+    	for (int j = 0; j <= ystop; j++) {
+    		if (floorMode == FLOOR_GRASSY) {
 	    		final int iy = (j == y) ? 1 : 2;
 		    	tm.setForeground(x, j, imgMap[iy][2], Tile.BEHAVIOR_SOLID);
 		    	tm.setForeground(stop, j, imgMap[iy][0], Tile.BEHAVIOR_SOLID);
-    		} else if (j == y) {
-    			solidBlock(x, j);
-    			solidBlock(stop, j);
+    		} else if (floorMode == FLOOR_BLOCK) {
+    		    if (j == y) {
+        			solidBlock(x, j);
+        			solidBlock(stop, j);
+    		    }
+    		} else if (floorMode == FLOOR_BRIDGE) {
+    		    if (j == y) {
+                    tm.setBackground(x, j, imgMap[2][0], Tile.BEHAVIOR_SOLID);
+                    tm.setBackground(stop, j, imgMap[2][0], Tile.BEHAVIOR_SOLID);
+    		    } else if (j == ystop) {
+    		        tm.setBackground(x, j, imgMap[1][0]); // Might have a block at pit edge; don't make it open
+    		        tm.setBackground(stop, j, imgMap[1][0]);
+    		    }
+    		} else {
+    		    throw new IllegalStateException("Unexpected floorMode " + floorMode);
     		}
 	    	for (int i = x + 1; i < stop; i++) {
 	    		tm.removeTile(i, j);
