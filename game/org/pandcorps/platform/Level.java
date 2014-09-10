@@ -933,7 +933,7 @@ public class Level {
                         imgCol = 0;
                     }
                 } else if (i == stop) {
-                    imgCol = 0;
+                    imgCol = (i == nt - 1) ? 1 : 0;
                 } else {
                     imgCol = 1;
                 }
