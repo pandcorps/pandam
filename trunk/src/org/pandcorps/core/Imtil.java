@@ -226,6 +226,19 @@ public final class Imtil {
     	}
     }
     
+    public final static Img addBorders(final Img in, final int left, final int right, final int top, final int btm /*, final Pancolor c*/) {
+    	final int inw = in.getWidth(), inh = in.getHeight();
+    	final Img out = newImage(inw + left + right, inh + top + btm);
+    	copy(in, out, 0, 0, inw, inh, left, top);
+    	return out;
+    }
+    
+    public final static void addBordersImg(final Img in, final int left, final int right, final int top, final int btm) {
+    	final Img t = addBorders(in, left, right, top, btm);
+    	in.swapRaw(t);
+    	t.close();
+    }
+    
     public final static Img filter(final Img img, final PixelFilter... fs) {
     	return filter(img, Coltil.asList(fs));
     }

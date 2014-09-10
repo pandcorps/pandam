@@ -31,6 +31,8 @@ public abstract class Img implements Closeable {
 	
 	public abstract Object getRaw();
 	
+	public abstract void swapRaw(final Img img);
+	
 	public abstract int getWidth();
 	
 	public abstract int getHeight();

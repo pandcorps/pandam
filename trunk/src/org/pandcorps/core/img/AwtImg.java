@@ -42,6 +42,14 @@ public final class AwtImg extends Img {
 	}
 	
 	@Override
+	public final void swapRaw(final Img img) {
+		final AwtImg o = (AwtImg) img;
+		final BufferedImage t = o.raw;
+		o.raw = this.raw;
+		this.raw = t;
+	}
+	
+	@Override
 	public final int getWidth() {
 		return raw.getWidth();
 	}
