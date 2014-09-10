@@ -591,7 +591,15 @@ public class PlatformGame extends BaseGame {
 		pc.guy = engine.createAnimation(PRE_ANM + pre + ".still", gfs1, gfs2);
 		
 		final boolean needWing = avatar.jumpMode == Player.JUMP_FLY;
-		final PixelFilter pf = needWing ? getFilter(avatar.jumpCol) : null;
+		final boolean needDragon = avatar.jumpMode == Player.JUMP_DRAGON;
+		final PixelFilter pf;
+		if (needWing) {
+			pf = getFilter(avatar.jumpCol);
+		} else if (needDragon) {
+			pf = getFilter(avatar.dragonCol);
+		} else {
+			pf = null;
+		}
 		
 		if (full) {
 		    final Panmage guy1 = hasStill ? engine.createImage(ipre + "1", og, ng, xg, guys[0]) : guy;
@@ -614,6 +622,7 @@ public class PlatformGame extends BaseGame {
                 filterStrip(clothingMapRaw, clothingMap, greyMask, pi.clothingFilter);
             }
 			final Img[] wingMap = needWing ? loadChrStrip("WingsMap.png", 32, pf) : null;
+			final Img[] dragonMap = needDragon ? loadChrStrip("DragonMap.png", 32, pf) : null;
 			final Img[] faceMap = loadChrStrip("FaceMap" + anm + ".png", 18, pi.f);
 			final Img[] hatMapRaw = (avatar.hat.clth == null) ? null : avatar.hat.clth.mapImgs;
 			if (hatMapRaw != null) {
@@ -638,33 +647,64 @@ public class PlatformGame extends BaseGame {
                 Imtil.copy(clothingMap[0], south1, 0, 0, 32, 32, 0, 0, Imtil.COPY_FOREGROUND);
                 Imtil.copy(clothingMap[5], southPose, 0, 0, 32, 32, 0, 0, Imtil.COPY_FOREGROUND);
             }
-			final Img south2 = Imtil.copy(south1);
-			Imtil.mirror(south2);
+			Img south2 = null;
+			if (!needDragon) {
+				south2 = Imtil.copy(south1);
+				Imtil.mirror(south2);
+			}
 			for (final Img south : new Img[] {south1, south2, southPose}) {
+				if (south == null) {
+					continue;
+				}
 				Imtil.copy(faceSouth, south, 0, 0, 18, 18, 7, 5, Imtil.COPY_FOREGROUND);
 				Imtil.copy(eyes, south, 0, 0, 8, 4, 12, 14, Imtil.COPY_FOREGROUND);
 			}
+			if (needDragon) {
+				final Img drgnSth = dragonMap[0];
+				for (Img south : new Img[] {south1, southPose, null}) {
+					if (south == null) {
+						south = south2;
+						Imtil.mirror(drgnSth);
+					} else {
+						Imtil.move(south, 5, -5);
+						if (south == south1) {
+							south2 = Imtil.copy(south1);
+						}
+					}
+					Imtil.copy(drgnSth, south, 0, 0, 32, 32, 0, 0, Imtil.COPY_FOREGROUND);
+				}
+			}
 			pc.mapSouth = createAnmMap(pre, "south", south1, south2);
 	        pc.mapPose = engine.createImage(ipre + "map.pose", ORIG_MAP, null, null, southPose);
-			final Img east1 = maps[1], east2 = maps[2], faceEast = faceMap[1];
+			final Img east1 = maps[1], faceEast = faceMap[1];
+			Img east2 = needDragon ? null : maps[2];
 			final Img[] easts = {east1, east2};
 			for (final Img east : easts) {
 				if (needWing) {
 					Imtil.copy(wingMap[1], east, 0, 0, 32, 32, 0, 0, Imtil.COPY_BACKGROUND);
 				}
 				if (clothingMap != null) {
-                    Imtil.copy(clothingMap[1], east1, 0, 0, 32, 32, 0, 0, Imtil.COPY_FOREGROUND);
-                    Imtil.copy(clothingMap[2], east2, 0, 0, 32, 32, 0, 0, Imtil.COPY_FOREGROUND);
+                    Imtil.copy(clothingMap[east == east1 ? 1 : 2], east, 0, 0, 32, 32, 0, 0, Imtil.COPY_FOREGROUND);
+                    //Imtil.copy(clothingMap[2], east2, 0, 0, 32, 32, 0, 0, Imtil.COPY_FOREGROUND);
                 }
 				Imtil.copy(faceEast, east, 0, 0, 18, 18, 7, 5, Imtil.COPY_FOREGROUND);
 				if (tails != null) {
 					Imtil.copy(tails[1], east, 0, 0, 12, 12, 1, 20, Imtil.COPY_BACKGROUND);
 				}
+				if (needDragon) {
+					Imtil.move(east, -3, -5);
+					east2 = Imtil.copy(east);
+					easts[1] = east2;
+					Imtil.copy(dragonMap[1], east, 0, 0, 32, 32, 0, 0, Imtil.COPY_BACKGROUND);
+					break;
+				}
 			}
+			Imtil.copy(dragonMap[2], east2, 0, 0, 32, 32, 0, 0, Imtil.COPY_BACKGROUND);
 			final Img west1 = Imtil.copy(east1), west2 = Imtil.copy(east2);
 			final Img eyesEast = eyes.getSubimage(0, 0, 4, 4);
+			final int eyeDstY = needDragon ? 9 : 14;
 			for (final Img east : easts) {
-				Imtil.copy(eyesEast, east, 0, 0, 4, 4, 18, 14, Imtil.COPY_FOREGROUND);
+				Imtil.copy(eyesEast, east, 0, 0, 4, 4, 18, eyeDstY, Imtil.COPY_FOREGROUND);
 			}
 			eyesEast.close();
 			pc.mapEast = createAnmMap(pre, "east", east1, east2);
@@ -672,18 +712,20 @@ public class PlatformGame extends BaseGame {
 			Imtil.mirror(west2);
 			final Img eyesWest = eyes.getSubimage(4, 0, 4, 4);
 			for (final Img west : new Img[] {west1, west2}) {
-				Imtil.copy(eyesWest, west, 0, 0, 4, 4, 10, 14, Imtil.COPY_FOREGROUND);
+				Imtil.copy(eyesWest, west, 0, 0, 4, 4, 10, eyeDstY, Imtil.COPY_FOREGROUND);
 			}
 			eyesWest.close();
 			pc.mapWest = createAnmMap(pre, "west", west1, west2);
 			final Img tailNorth = Coltil.get(tails, 2), faceNorth = faceMap[2];
 			final Img wing = needWing ? wingMap[0] : null;
-			pc.mapNorth = createNorth(maps, 3, wing, clothingMap, tailNorth, faceNorth, pre, "North");
-			pc.mapLadder = createNorth(maps, 4, wing, clothingMap, tailNorth, faceNorth, pre, "Ladder");
+			final Img drgn = needDragon ? dragonMap[3] : null;
+			pc.mapNorth = createNorth(maps, 3, wing, drgn, clothingMap, tailNorth, faceNorth, pre, "North");
+			pc.mapLadder = needDragon ? pc.mapNorth : createNorth(maps, 4, wing, drgn, clothingMap, tailNorth, faceNorth, pre, "Ladder");
 			
 			Img.close(maps);
 			Img.close(clothingMap);
 			Img.close(wingMap);
+			Img.close(dragonMap);
 			Img.close(faceMap);
 		}
 		
@@ -705,12 +747,33 @@ public class PlatformGame extends BaseGame {
 		    Img.close(wings);
 		} else if (full && avatar.jumpMode == Player.JUMP_HIGH) {
 		    pc.backJump = createAnm(pre + ".spring", "org/pandcorps/platform/res/chr/Springs.png", 32, 5, os, ng, xg);
+		} else if (needDragon) {
+			final String wpre = pre + ".dragon.";
+		    final String iwpre = PRE_IMG + wpre;
+			final Img[] drgns = loadChrStrip("Dragon.png", 32, pf);
+			pc.back = engine.createImage(iwpre + "still", ow, ng, xg, drgns[3]);
+		    if (full) {
+			    final String fwpre = PRE_FRM + wpre;
+			    final Panframe[] frames = new Panframe[5];
+			    for (int i = 0, f = 0; i < 6; i++) {
+			    	if (i == 3) {
+			    		continue;
+			    	}
+				    final Panmage img = engine.createImage(iwpre + "move." + i, og, ng, xg, drgns[i]);
+					frames[f] = engine.createFrame(fwpre + "move." + i, img, 2);
+					f++;
+			    }
+			    pc.backRun = engine.createAnimation(PRE_ANM + wpre + ".run", frames[0], frames[1], frames[2]);
+			    pc.backJump = engine.createAnimation(PRE_ANM + wpre + ".jump", frames[3]);
+			    pc.backFall = engine.createAnimation(PRE_ANM + wpre + ".fall", frames[4]);
+		    }
+		    Img.close(drgns);
 		}
 		
 		pi.close();
 	}
 	
-	private final static Panimation createNorth(final Img[] maps, final int mi, final Img wing, final Img[] clothingMap,
+	private final static Panimation createNorth(final Img[] maps, final int mi, final Img wing, final Img drgn, final Img[] clothingMap,
 	                                            final Img tailNorth, final Img faceNorth,
 	                                            final String pre, final String suf) {
 		final Img north1 = maps[mi];
@@ -723,10 +786,28 @@ public class PlatformGame extends BaseGame {
 		if (wing != null) {
 			Imtil.copy(wing, north1, 0, 0, 32, 32, 0, 0, Imtil.COPY_FOREGROUND);
 		}
-		final Img north2 = Imtil.copy(north1);
-		Imtil.mirror(north2);
+		if (drgn != null) {
+			Imtil.move(north1, 0, -5);
+		}
+		Img north2 = null;
+		if (drgn == null) {
+			north2 = Imtil.copy(north1);
+			Imtil.mirror(north2);
+		}
 		for (final Img north : new Img[] {north1, north2}) {
-			Imtil.copy(faceNorth, north, 0, 0, 18, 18, 7, 5, Imtil.COPY_FOREGROUND);
+			if (north == null) {
+				continue;
+			}
+			Imtil.copy(faceNorth, north, 0, 0, 18, 18, 7, drgn == null ? 5 : 0, Imtil.COPY_FOREGROUND);
+		}
+		if (drgn != null) {
+			north2 = Imtil.copy(north1);
+			for (final Img north : new Img[] {north1, north2}) {
+				if (north == north2) {
+					Imtil.mirror(drgn);
+				}
+				Imtil.copy(drgn, north, 0, 0, 32, 32, 0, 0, Imtil.COPY_BACKGROUND);
+			}
 		}
 		return createAnmMap(pre, suf, north1, north2);
 	}
