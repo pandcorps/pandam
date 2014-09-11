@@ -681,6 +681,7 @@ public class PlatformGame extends BaseGame {
 			final Img east1 = maps[1], faceEast = faceMap[1];
 			Img east2 = needDragon ? null : maps[2];
 			final Img[] easts = {east1, east2};
+			final int drgnYh = 8, drgnX = 5;
 			for (final Img east : easts) {
 				if (needWing) {
 					Imtil.copy(wingMap[1], east, 0, 0, 32, 32, 0, 0, Imtil.COPY_BACKGROUND);
@@ -694,21 +695,23 @@ public class PlatformGame extends BaseGame {
 					Imtil.copy(tails[1], east, 0, 0, 12, 12, 1, 20, Imtil.COPY_BACKGROUND);
 				}
 				if (needDragon) {
-					Imtil.move(east, -3, -5);
+					//Imtil.move(east, -3, -5);
+				    Imtil.addBordersImg(east, drgnX, drgnX, 0, drgnYh);
+				    Imtil.move(east, -4, 0);
 					east2 = Imtil.copy(east);
 					easts[1] = east2;
-					Imtil.copy(dragonMap[1], east, 0, 0, 32, 32, 0, 0, Imtil.COPY_BACKGROUND);
+					Imtil.copy(dragonMap[1], east, 0, 0, 32, 32, drgnX, drgnYh, Imtil.COPY_BACKGROUND);
 					break;
 				}
 			}
 			if (needDragon) {
-			    Imtil.copy(dragonMap[2], east2, 0, 0, 32, 32, 0, 0, Imtil.COPY_BACKGROUND);
+			    Imtil.copy(dragonMap[2], east2, 0, 0, 32, 32, drgnX, drgnYh, Imtil.COPY_BACKGROUND);
 			}
 			final Img west1 = Imtil.copy(east1), west2 = Imtil.copy(east2);
 			final Img eyesEast = eyes.getSubimage(0, 0, 4, 4);
-			final int eyeDstY = needDragon ? 9 : 14;
+			final int eyeDstY = 14, eyeDstX = needDragon ? 1 : 0;
 			for (final Img east : easts) {
-				Imtil.copy(eyesEast, east, 0, 0, 4, 4, 18, eyeDstY, Imtil.COPY_FOREGROUND);
+				Imtil.copy(eyesEast, east, 0, 0, 4, 4, 18 + eyeDstX, eyeDstY, Imtil.COPY_FOREGROUND);
 			}
 			eyesEast.close();
 			pc.mapEast = createAnmMap(pre, "east", east1, east2);
@@ -716,7 +719,7 @@ public class PlatformGame extends BaseGame {
 			Imtil.mirror(west2);
 			final Img eyesWest = eyes.getSubimage(4, 0, 4, 4);
 			for (final Img west : new Img[] {west1, west2}) {
-				Imtil.copy(eyesWest, west, 0, 0, 4, 4, 10, eyeDstY, Imtil.COPY_FOREGROUND);
+				Imtil.copy(eyesWest, west, 0, 0, 4, 4, 10 + eyeDstX, eyeDstY, Imtil.COPY_FOREGROUND);
 			}
 			eyesWest.close();
 			pc.mapWest = createAnmMap(pre, "west", west1, west2);
