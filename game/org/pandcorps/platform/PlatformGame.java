@@ -139,6 +139,7 @@ public class PlatformGame extends BaseGame {
 	protected final static int TIME_FLASH = 60;
 	
 	private final static FinPanple2 ORIG_MAP = new FinPanple2(8, -6);
+	private final static FinPanple2 ORIG_MAP_DRAGON_EAST_WEST = new FinPanple2(15, -6);
 	private final static int DUR_MAP = 6;
 	protected final static int DUR_BLINK = 120;
 	protected final static int DUR_CLOSED = DUR_BLINK / 30;
@@ -544,7 +545,15 @@ public class PlatformGame extends BaseGame {
 			}
 			final int size = guys.length;
 			for (int i = 0; i < size; i++) {
-				buildGuy(guys[i], face, tails, eyes, clothings == null ? null : clothings[i], hat, mask, (i == 3) ? -1 : 0, (i < 3) ? i : 1);
+				final int tailH;
+				if (i < 3) {
+					tailH = i;
+				} else if (i == 5) {
+					tailH = 0;
+				} else {
+					tailH = 1;
+				}
+				buildGuy(guys[i], face, tails, eyes, clothings == null ? null : clothings[i], hat, mask, (i == 3) ? -1 : 0, tailH);
 			}
 			buildGuy(guyBlink, face, tails, eyesBlink, clothings == null ? null : getStill(clothings, hasStill), hat, mask, 0, 0);
 			Img.close(hat);
@@ -714,7 +723,7 @@ public class PlatformGame extends BaseGame {
 				Imtil.copy(eyesEast, east, 0, 0, 4, 4, needDragon ? 19 : 18, eyeDstY, Imtil.COPY_FOREGROUND);
 			}
 			eyesEast.close();
-			pc.mapEast = createAnmMap(pre, "east", east1, east2);
+			pc.mapEast = createAnmMap(pre, "east", ORIG_MAP_DRAGON_EAST_WEST, east1, east2);
 			Imtil.mirror(west1);
 			Imtil.mirror(west2);
 			final Img eyesWest = eyes.getSubimage(4, 0, 4, 4);
@@ -722,7 +731,7 @@ public class PlatformGame extends BaseGame {
 				Imtil.copy(eyesWest, west, 0, 0, 4, 4, needDragon ? 23 : 10, eyeDstY, Imtil.COPY_FOREGROUND);
 			}
 			eyesWest.close();
-			pc.mapWest = createAnmMap(pre, "west", west1, west2);
+			pc.mapWest = createAnmMap(pre, "west", ORIG_MAP_DRAGON_EAST_WEST, west1, west2);
 			final Img tailNorth = Coltil.get(tails, 2), faceNorth = faceMap[2];
 			final Img wing = needWing ? wingMap[0] : null;
 			final Img drgn = needDragon ? dragonMap[3] : null;
@@ -820,7 +829,11 @@ public class PlatformGame extends BaseGame {
 	}
 	
 	private final static Panimation createAnmMap(final String pre, final String suf, final Img... a) {
-		return createAnm(pre + ".map." + suf.toLowerCase(), DUR_MAP, ORIG_MAP, a);
+		return createAnmMap(pre, suf, ORIG_MAP, a);
+	}
+	
+	private final static Panimation createAnmMap(final String pre, final String suf, final Panple o, final Img... a) {
+		return createAnm(pre + ".map." + suf.toLowerCase(), DUR_MAP, o, a);
 	}
 	
 	private final static void replace(final ReplacePixelFilter f, final short r, final short g, final short b) {
