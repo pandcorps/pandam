@@ -1784,8 +1784,27 @@ public class Level {
         setFg(tm, stop + 1, y + 1, bgMap, 6, 2);
     }
     
+    private final static void addShadow(final int x, final int y) {
+        if (y == 0 || floorMode != FLOOR_BRIDGE) {
+            return;
+        }
+        final int y1 = y - 1;
+        final Object bg = DynamicTileMap.getRawBackground(tm.getTile(x, y1));
+        for (int col = 0; col < 2; col++) {
+            if (bg == imgMap[2][col]) {
+                tm.setBackground(x, y1, imgMap[3][col]);
+                break;
+            }
+        }
+    }
+    
+    private final static void setFgShadowed(final int x, final int y, final int iy, final int ix, final byte behavior) {
+        tm.setForeground(x, y, imgMap[iy][ix], behavior);
+        addShadow(x, y);
+    }
+    
     private final static void solidBlock(final int x, final int y) {
-        tm.setForeground(x, y, imgMap[0][4], Tile.BEHAVIOR_SOLID);
+        setFgShadowed(x, y, 0, 4, Tile.BEHAVIOR_SOLID);
     }
     
     private final static void bumpableBlock(final int x, final int y) {
@@ -1801,11 +1820,11 @@ public class Level {
     }
     
     private final static void upBlock(final int x, final int y) {
-        tm.setForeground(x, y, imgMap[0][6], PlatformGame.TILE_UPSLOPE);
+        setFgShadowed(x, y, 0, 6, PlatformGame.TILE_UPSLOPE);
     }
     
     private final static void downBlock(final int x, final int y) {
-        tm.setForeground(x, y, imgMap[0][7], PlatformGame.TILE_DOWNSLOPE);
+        setFgShadowed(x, y, 0, 7, PlatformGame.TILE_DOWNSLOPE);
     }
     
     private final static void goalBlock(final int x, final int y) {
@@ -1953,11 +1972,11 @@ public class Level {
     private final static void wall(final int x, final int y, final int w, final int h) {
         final int ystop = y + h, xstop = x + w + 1;
         for (int j = y; j < ystop; j++) {
-            tm.setForeground(x, j, imgMap[4][0], Tile.BEHAVIOR_SOLID);
+            setFgShadowed(x, j, 4, 0, Tile.BEHAVIOR_SOLID);
             for (int i = x + 1; i < xstop; i++) {
-                tm.setForeground(i, j, imgMap[4][1], Tile.BEHAVIOR_SOLID);
+                setFgShadowed(i, j, 4, 1, Tile.BEHAVIOR_SOLID);
             }
-            tm.setForeground(xstop, j, imgMap[4][2], Tile.BEHAVIOR_SOLID);
+            setFgShadowed(xstop, j, 4, 2, Tile.BEHAVIOR_SOLID);
         }
     }
     
@@ -2021,7 +2040,7 @@ public class Level {
     		    }
     		} else if (floorMode == FLOOR_BRIDGE) {
     		    if (j == y) {
-                    tm.setBackground(x, j, imgMap[2][0], Tile.BEHAVIOR_SOLID);
+                    tm.setBackground(x, j, imgMap[Tile.getBehavior(tm.getTile(x, j + 1)) != Tile.BEHAVIOR_OPEN ? 3 : 2][0], Tile.BEHAVIOR_SOLID);
                     tm.setBackground(stop, j, imgMap[2][0], Tile.BEHAVIOR_SOLID);
     		    } else if (j == ystop) {
     		        tm.setBackground(x, j, imgMap[1][0]); // Might have a block at pit edge; don't make it open
