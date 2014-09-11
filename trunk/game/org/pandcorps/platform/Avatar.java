@@ -37,6 +37,7 @@ public class Avatar extends PlayerData implements Segmented {
     protected final Garb clothing = new Garb();
     protected final Garb hat = new Garb();
     protected final SimpleColor dragonCol = new SimpleColor();
+    protected String dragonName = "Dragon";
     private final static int[] randomColorChannels = {0, 1, 2};
     
     protected final static class Garb {
@@ -283,6 +284,7 @@ public class Avatar extends PlayerData implements Segmented {
         clothing.load(src.clothing);
         hat.load(src.hat);
         dragonCol.load(src.dragonCol);
+        dragonName = src.dragonName;
     }
     
     public void load(final Segment seg) {
@@ -297,6 +299,7 @@ public class Avatar extends PlayerData implements Segmented {
     	hat.clth = getHat(seg.getValue(14));
     	hat.col.load(seg, 15); // 15-17
     	dragonCol.load(seg, 18); // 18-20
+    	dragonName = seg.getValue(21, "Dragon");
     }
     
     @Override
@@ -311,6 +314,7 @@ public class Avatar extends PlayerData implements Segmented {
     	clothing.save(seg, 10); // 10 - 13
     	hat.save(seg, 14); // 14 - 17
     	dragonCol.save(seg, 18);
+    	seg.setValue(21, dragonName);
     }
     
     private final static float randColor() {
