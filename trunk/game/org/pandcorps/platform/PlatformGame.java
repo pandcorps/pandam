@@ -179,6 +179,7 @@ public class PlatformGame extends BaseGame {
 	protected final static Img[] eyesAll = new Img[getNumEyes()];
 	protected final static HashMap<String, Img> masksAll = new HashMap<String, Img>();
 	protected static Img eyesBlink = null;
+	protected final static Img[] dragonEyesAll = new Img[getNumDragonEyes()];
 	protected static Panmage frozen = null;
 	protected static Panimation burn = null;
 	protected static Panmage bubble = null;
@@ -472,6 +473,15 @@ public class PlatformGame extends BaseGame {
 		return raw;
 	}
 	
+	private final static Img getEyes(final Img[] eyesAll, int i, final String loc) {
+		Img e = eyesAll[i - 1];
+		if (e == null) {
+		    e = ImtilX.loadImage("org/pandcorps/platform/res/chr/" + loc + "Eyes" + Chartil.padZero(i, 2) + ".png", false);
+		    eyesAll[i - 1] = e;
+		}
+		return e;
+	}
+	
 	protected final static class PlayerImages {
 		protected final PixelFilter f;
 		protected final Img[] guys;
@@ -516,12 +526,7 @@ public class PlatformGame extends BaseGame {
 				tails = new Img[tailsRaw.length];
 				filterStrip(tailsRaw, tails, f);
 			}
-			Img e = eyesAll[avatar.eye - 1];
-			if (e == null) {
-			    e = ImtilX.loadImage("org/pandcorps/platform/res/chr/Eyes" + Chartil.padZero(avatar.eye, 2) + ".png", false);
-			    eyesAll[avatar.eye - 1] = e;
-			}
-			eyes = e;
+			eyes = getEyes(eyesAll, avatar.eye, "");
 			final Img[] clothings;
 			if (c == null) {
 			    clothingFilter = null;
@@ -602,10 +607,12 @@ public class PlatformGame extends BaseGame {
 		final boolean needWing = avatar.jumpMode == Player.JUMP_FLY;
 		final boolean needDragon = avatar.jumpMode == Player.JUMP_DRAGON;
 		final PixelFilter pf;
+		Img drgnEye = null;
 		if (needWing) {
 			pf = getFilter(avatar.jumpCol);
 		} else if (needDragon) {
 			pf = getFilter(avatar.dragonCol);
+			drgnEye = getEyes(dragonEyesAll, avatar.dragonEye, "dragon/Dragon");
 		} else {
 			pf = null;
 		}
@@ -683,6 +690,7 @@ public class PlatformGame extends BaseGame {
 						}
 					}
 					Imtil.copy(drgnSth, south, 0, 0, 32, 32, 0, drgnY, Imtil.COPY_FOREGROUND);
+					Imtil.copy(drgnEye, south, 9, 0, 14, 7, 9, drgnY + 10, Imtil.COPY_FOREGROUND);
 				}
 			}
 			pc.mapSouth = createAnmMap(pre, "south", south1, south2);
@@ -709,12 +717,16 @@ public class PlatformGame extends BaseGame {
 				    Imtil.move(east, -6, 0);
 					east2 = Imtil.copy(east);
 					easts[1] = east2;
-					Imtil.copy(dragonMap[1], east, 0, 0, 32, 32, drgnX, drgnYh, Imtil.COPY_BACKGROUND);
+					final Img drgnEast = dragonMap[1];
+					Imtil.copy(drgnEye, drgnEast, 0, 0, 9, 7, 16, 10, Imtil.COPY_FOREGROUND);
+					Imtil.copy(drgnEast, east, 0, 0, 32, 32, drgnX, drgnYh, Imtil.COPY_BACKGROUND);
 					break;
 				}
 			}
 			if (needDragon) {
-			    Imtil.copy(dragonMap[2], east2, 0, 0, 32, 32, drgnX, drgnYh, Imtil.COPY_BACKGROUND);
+				final Img drgnEast = dragonMap[2];
+				Imtil.copy(drgnEye, drgnEast, 0, 0, 9, 7, 16, 10, Imtil.COPY_FOREGROUND);
+			    Imtil.copy(drgnEast, east2, 0, 0, 32, 32, drgnX, drgnYh, Imtil.COPY_BACKGROUND);
 			}
 			final Img west1 = Imtil.copy(east1), west2 = Imtil.copy(east2);
 			final Img eyesEast = eyes.getSubimage(0, 0, 4, 4);
@@ -1587,6 +1599,10 @@ System.out.println("loadConstants end " + System.currentTimeMillis());
 	
 	protected final static int getNumEyes() {
 	    return 16;
+	}
+	
+	protected final static int getNumDragonEyes() {
+	    return 2;
 	}
 	
 	protected final static EnemyDefinition getEnemy(final String name) {
