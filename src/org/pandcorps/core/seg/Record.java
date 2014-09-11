@@ -47,6 +47,11 @@ public abstract class Record implements Savable {
         }
     }
     
+    public final String getValue(final int i, final String def) {
+    	final String value = getValue(i);
+    	return Chartil.isEmpty(value) ? def : value;
+    }
+    
     public final byte byteValue(final int i) {
         return parseByte(getValue(i));
     }
