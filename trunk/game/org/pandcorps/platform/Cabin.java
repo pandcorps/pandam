@@ -175,7 +175,7 @@ public class Cabin {
 		
 		private final String loadName() {
 			cabinTileHandler = new NameTileHandler();
-			final String name = pc.getName().toUpperCase();
+			final String name = pc.getBonusName();
 			PlatformGame.blockWord = name;
 			final int size = name.length();
 			int x = 12 - size;
@@ -190,7 +190,7 @@ public class Cabin {
 				@Override public final void onTimer(final TimerEvent event) {
                     instr.destroy();
 				}});
-			return "Hoo! Hoo! Hit them!";
+			return "Hoo! Hoo! Hit " + ((size == 1) ? "the block" : "them") + "!";
 		}
 		
 		@Override
