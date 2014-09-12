@@ -1007,14 +1007,17 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 			        final int a = Math.abs(enemy.hv);
 			        if (a > 1 && enemy.timer > 0) {
                         return true;
-                    } else if (a < n) {
+                    }
+			        final int amt = (player != null && player.jumpMode == Player.JUMP_DRAGON) ? 2 : 1;
+			        if ((a + amt) <= n) {
                         if (enemy.hv > 0) {
-                            enemy.hv++;
+                            enemy.hv += amt;
                         } else {
-                            enemy.hv--;
+                            enemy.hv -= amt;
                         }
                         enemy.timer = 5;
-                        for (int i = 0; i < a; i++) {
+                        final int stop = Math.abs(enemy.hv) - 1;
+                        for (int i = 0; i < stop; i++) {
                             enemy.burst(anger, enemy, null, (32 * (n - 1)) + 4 + (i * 8));
                         }
                         return true;
