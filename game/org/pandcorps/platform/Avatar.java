@@ -157,6 +157,7 @@ public class Avatar extends PlayerData implements Segmented {
         private final String body;
         protected Img[] imgs = null;
         protected Img[] mapImgs = null;
+        protected Img[] rideImgs = null;
         
         protected Clothing(final String name, final String res, final int cost) {
             this(name, res, cost, null);
@@ -186,9 +187,13 @@ public class Avatar extends PlayerData implements Segmented {
             imgs = PlatformGame.loadChrStrip(loc + "/" + res + ".png", d, true);
             if (!res.startsWith("Royal")) {
             	mapImgs = PlatformGame.loadChrStrip(loc + "/" + res + "Map.png", d, true);
+            	if (getClass() == Clothing.class) {
+            		rideImgs = PlatformGame.loadChrStrip(loc + "/" + res + "Ride.png", d, true);
+            	}
             }
             Img.setTemporary(false, imgs);
             Img.setTemporary(false, mapImgs);
+            Img.setTemporary(false, rideImgs);
         }
         
         public final int getCost() {

@@ -459,6 +459,9 @@ public class PlatformGame extends BaseGame {
 	private final static void buildGuyRide(final Img guy, final Img face, final Img eyes, final Img clothing) {
 		Imtil.copy(face, guy, 0, 0, 18, 18, 8, 0, Imtil.COPY_FOREGROUND);
 		Imtil.copy(eyes, guy, 0, 0, 8, 4, 15, 9, Imtil.COPY_FOREGROUND);
+		if (clothing != null) {
+            Imtil.copy(clothing, guy, 0, 0, 32, 32, 0, 0, Imtil.COPY_FOREGROUND);
+        }
 	}
 	
 	private final static PixelFilter getFilter(final SimpleColor col) {
@@ -546,9 +549,10 @@ public class PlatformGame extends BaseGame {
 			    clothings = null;
 			} else {
 			    c.init();
-			    clothings = new Img[c.imgs.length];
+			    final Img[] imgs = needDragon ? c.rideImgs : c.imgs;
+			    clothings = new Img[imgs.length];
 			    clothingFilter = getFilter(avatar.clothing.col);
-			    filterStrip(c.imgs, clothings, greyMask, clothingFilter);
+			    filterStrip(imgs, clothings, greyMask, clothingFilter);
 			}
 			final Img hat, mask;
 			if (avatar.hat.clth == null) {
@@ -566,8 +570,12 @@ public class PlatformGame extends BaseGame {
 		    	hat.close();
 		    }
 			if (needDragon) {
-				buildGuyRide(guys[1], face, eyes, null);
-				buildGuyRide(guyBlink, face, eyesBlink, null);
+				final Img clth = clothings == null ? null : clothings[1];
+				buildGuyRide(guys[1], face, eyes, clth);
+				buildGuyRide(guyBlink, face, eyesBlink, clth);
+				if (clothings != null) {
+		            Imtil.copy(clothings[0], guys[0], 0, 0, 32, 32, 0, 0, Imtil.COPY_FOREGROUND);
+		        }
 			} else {
 				final int size = guys.length;
 				for (int i = 0; i < size; i++) {
