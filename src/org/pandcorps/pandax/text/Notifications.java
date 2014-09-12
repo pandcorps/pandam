@@ -98,7 +98,7 @@ public class Notifications extends Panctor implements StepListener {
         } else if (FadeController.isFadingIn()) {
         	return;
         } else if (label.getLayer() == null) {
-        	getLayer().addActor(label);
+        	initLayer().addActor(label);
         }
         timer--;
         if (timer <= 0) {
@@ -123,8 +123,17 @@ public class Notifications extends Panctor implements StepListener {
         timer = 90;
         if (n.icon != null) {
             icon = n.icon;
-            getLayer().addActor(icon);
+            initLayer().addActor(icon);
         }
+    }
+    
+    private final Panlayer initLayer() {
+    	Panlayer layer = getLayer();
+    	if (layer == null) {
+    		layer = Pangame.getGame().getCurrentRoom().getTop();
+    		layer.addActor(this);
+    	}
+    	return layer;
     }
     
     private final void free() {
