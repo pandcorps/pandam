@@ -68,6 +68,7 @@ public class Enemy extends Character {
 		protected int award = GemBumped.AWARD_DEF;
 		protected Panimation projectile = null;
 		protected BurstHandler splatHandler = null;
+		protected InteractionHandler splatDecider = null;
 		protected InteractionHandler stepHandler = null;
 		protected InteractionHandler landedHandler = null;
 		protected InteractionHandler hurtHandler = null;
@@ -330,8 +331,10 @@ public class Enemy extends Character {
 	            return false;
 	        }
 	    }
-		if (defeater != null && defeater.getClass() == Player.class && (v > 0 || def.splatHandler == null)) {
-		    final Player player = (Player) defeater;
+		final Player player = (defeater != null && defeater.getClass() == Player.class) ? (Player) defeater : null;
+		final boolean skipSplat = def.splatDecider != null && !def.splatDecider.onInteract(this, player);
+		final BurstHandler splatHandler = skipSplat ? null : def.splatHandler;
+		if (player != null && (v > 0 || splatHandler == null)) {
 		    if (def.rewardHandler == null || def.rewardHandler.onInteract(this, player)) {
 				new GemBumped(player, this);
 				player.levelDefeatedEnemies++;
@@ -352,8 +355,8 @@ public class Enemy extends Character {
 				stats.defeatedEnemyTypes.inc(def.code);
 		    }
 		}
-		if (v == 0 && def.splat != null) {
-		    burst(def.splat, def.splatHandler);
+		if (!skipSplat && v == 0 && def.splat != null) {
+		    burst(def.splat, splatHandler);
 		} else {
 		    final Panple pos = getPosition();
     		final Tiles.Faller f = new Tiles.Faller((Panmage) getCurrentDisplay(), pos.getX(), pos.getY() + H, 0, v);
