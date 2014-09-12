@@ -1433,7 +1433,7 @@ public class Level {
 			x = bx;
 			msg = Mathtil.rand(theme.gemMessages);
 			if ("PLAYER".equals(msg)) {
-				msg = Mathtil.rand(PlatformGame.pcs).getName();
+				msg = Mathtil.rand(PlatformGame.pcs).getBonusName();
 			}
 			bx += gemMsg(x, floor + 1, msg, false) + 2;
 		}
