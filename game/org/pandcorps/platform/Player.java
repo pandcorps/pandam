@@ -22,6 +22,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.platform;
 
+import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.Panteraction.*;
 import org.pandcorps.pandam.event.*;
@@ -185,6 +186,16 @@ public class Player extends Character implements CollisionListener {
 	    @Override
 	    public final String getName() {
 	        return profile.currentAvatar.getName();
+	    }
+	    
+	    public final String getBonusName() {
+	    	final String name;
+	    	if (profile.currentAvatar.jumpMode != JUMP_DRAGON) {
+	    		name = getName();
+	    	} else {
+	    		name = Mathtil.rand() ? getName() : profile.currentAvatar.dragonName;
+	    	}
+	    	return name.toUpperCase();
 	    }
 	    
 	    public final int getGems() {
