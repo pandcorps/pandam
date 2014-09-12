@@ -641,8 +641,8 @@ public class PlatformGame extends BaseGame {
 		if (needWing) {
 			pf = getFilter(avatar.jumpCol);
 		} else if (needDragon) {
-			pf = getFilter(avatar.dragonCol);
-			drgnEye = getEyes(dragonEyesAll, avatar.dragonEye, "dragon/Dragon");
+			pf = getFilter(avatar.dragon.col);
+			drgnEye = getEyes(dragonEyesAll, avatar.dragon.eye, "dragon/Dragon");
 		} else {
 			pf = null;
 		}
