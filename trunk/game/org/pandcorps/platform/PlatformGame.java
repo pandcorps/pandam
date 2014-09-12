@@ -816,7 +816,9 @@ public class PlatformGame extends BaseGame {
 			final String wpre = pre + ".dragon.";
 		    final String iwpre = PRE_IMG + wpre;
 			final Img[] drgns = loadChrStrip("Dragon.png", 32, pf);
-			pc.back = engine.createImage(iwpre + "still", od, ng, xg, drgns[3]);
+			final Img drgnStill = drgns[3];
+			Imtil.copy(drgnEye, drgnStill, 23, 0, 13, 7, 14, 6, Imtil.COPY_FOREGROUND);
+			pc.back = engine.createImage(iwpre + "still", od, ng, xg, drgnStill);
 		    if (full) {
 			    final String fwpre = PRE_FRM + wpre;
 			    final Panframe[] frames = new Panframe[5];
@@ -824,7 +826,9 @@ public class PlatformGame extends BaseGame {
 			    	if (i == 3) {
 			    		continue;
 			    	}
-				    final Panmage img = engine.createImage(iwpre + "move." + i, od, ng, xg, drgns[i]);
+			    	final Img drgni = drgns[i];
+			    	Imtil.copy(drgnEye, drgni, 0, 0, 9, 7, 16, (i < 3) ? (6 - i) : 6, Imtil.COPY_FOREGROUND);
+				    final Panmage img = engine.createImage(iwpre + "move." + i, od, ng, xg, drgni);
 					frames[f] = engine.createFrame(fwpre + "move." + i, img, 2);
 					f++;
 			    }
