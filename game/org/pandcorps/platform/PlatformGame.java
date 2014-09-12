@@ -172,6 +172,8 @@ public class PlatformGame extends BaseGame {
 	protected final static FinPanple2 ow = new FinPanple2(18, 1);
 	protected final static FinPanple2 owf = new FinPanple2(18, 2);
 	protected final static FinPanple2 os = new FinPanple2(17, 11);
+	protected final static FinPanple2 od = new FinPanple2(13, 1);
+	protected final static FinPanple2 or = new FinPanple2(21, -6);
 	protected static Img[] guysBlank = null;
 	protected static Img[] guysRide = null;
 	protected final static HashMap<String, Img> facesAll = new HashMap<String, Img>();
@@ -616,15 +618,16 @@ public class PlatformGame extends BaseGame {
 		final FinPanple2 ng = new FinPanple2(-Player.PLAYER_X, 0), xg = new FinPanple2(Player.PLAYER_X, Player.PLAYER_H);
 		final String ipre = PRE_IMG + pre + ".";
 		final boolean hasStill = hasStill(guys);
-		final Panmage guy = engine.createImage(ipre + "still", og, ng, xg, getStill(guys, hasStill));
-		final Panmage guyB = engine.createImage(ipre + "blink", og, ng, xg, pi.guyBlink);
+		final boolean needDragon = avatar.jumpMode == Player.JUMP_DRAGON;
+		final Panple oStill = needDragon ? or : og;
+		final Panmage guy = engine.createImage(ipre + "still", oStill, ng, xg, getStill(guys, hasStill));
+		final Panmage guyB = engine.createImage(ipre + "blink", oStill, ng, xg, pi.guyBlink);
 		final String fpre = PRE_FRM + pre + ".";
 		final String spre = fpre + "still.";
 		final Panframe gfs1 = engine.createFrame(spre + "1", guy, DUR_BLINK - DUR_CLOSED), gfs2 = engine.createFrame(spre + "2", guyB, DUR_CLOSED);
 		pc.guy = engine.createAnimation(PRE_ANM + pre + ".still", gfs1, gfs2);
 		
 		final boolean needWing = avatar.jumpMode == Player.JUMP_FLY;
-		final boolean needDragon = avatar.jumpMode == Player.JUMP_DRAGON;
 		final PixelFilter pf;
 		Img drgnEye = null;
 		if (needWing) {
@@ -660,7 +663,7 @@ public class PlatformGame extends BaseGame {
 				if (tails != null) {
 					Imtil.copy(tails[1], guy0, 0, 0, 12, 12, 0, 19, Imtil.COPY_BACKGROUND);
 				}
-				final Panmage guy1 = engine.createImage(ipre + "1", og, ng, xg, guy0);
+				final Panmage guy1 = engine.createImage(ipre + "1", or, ng, xg, guy0);
 				final Panframe gfr1 = engine.createFrame(rpre + "1", guy1, 2);
 				pc.guyRun = engine.createAnimation(PRE_ANM + pre + ".run", gfr1);
 				pc.guyJump = guy1;
@@ -813,7 +816,7 @@ public class PlatformGame extends BaseGame {
 			final String wpre = pre + ".dragon.";
 		    final String iwpre = PRE_IMG + wpre;
 			final Img[] drgns = loadChrStrip("Dragon.png", 32, pf);
-			pc.back = engine.createImage(iwpre + "still", ow, ng, xg, drgns[3]);
+			pc.back = engine.createImage(iwpre + "still", od, ng, xg, drgns[3]);
 		    if (full) {
 			    final String fwpre = PRE_FRM + wpre;
 			    final Panframe[] frames = new Panframe[5];
@@ -821,7 +824,7 @@ public class PlatformGame extends BaseGame {
 			    	if (i == 3) {
 			    		continue;
 			    	}
-				    final Panmage img = engine.createImage(iwpre + "move." + i, og, ng, xg, drgns[i]);
+				    final Panmage img = engine.createImage(iwpre + "move." + i, od, ng, xg, drgns[i]);
 					frames[f] = engine.createFrame(fwpre + "move." + i, img, 2);
 					f++;
 			    }
