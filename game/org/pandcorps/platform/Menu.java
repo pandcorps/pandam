@@ -61,6 +61,7 @@ public class Menu {
     private final static char CHAR_ON = 2;
     private final static String NEW_AVATAR_NAME = "New";
     private static boolean newProfile = false;
+    private static int radioLinesPerPage = 5;
     
 	protected abstract static class PlayerScreen extends Panscreen {
 		protected Panlayer room;
@@ -85,6 +86,7 @@ public class Menu {
 		protected boolean showGems = true;
 		
 		protected PlayerScreen(final PlayerContext pc, final boolean fadeIn) {
+			radioLinesPerPage = 5;
 			this.pc = pc;
 			this.fadeIn = fadeIn;
 			tabs = isTabEnabled() ? new ArrayList<TouchButton>() : null;
@@ -471,7 +473,7 @@ public class Menu {
 			addItem(grp, x, y - 16);
 			grp.addChild(addTitle(title, x, y));
 			final Pantext label = grp.getLabel();
-			label.setLinesPerPage(5);
+			label.setLinesPerPage(radioLinesPerPage);
 			label.stretchCharactersPerLineToFit();
 			return grp;
 		}
@@ -623,6 +625,18 @@ public class Menu {
 			}
 			
 			protected abstract void update(final float value);
+		}
+		
+		protected final void createEyeList(final EyeData avt, final int numEyes, final int x, final int y) {
+			final ArrayList<String> eyes = new ArrayList<String>(numEyes);
+			for (int i = 1; i <= numEyes; i++) {
+			    eyes.add(Integer.toString(i));
+			}
+			final AvtListener eyeLsn = new AvtListener() {
+				@Override public final void update(final String value) {
+					avt.eye = Integer.parseInt(value); }};
+			final RadioGroup eyeGrp = addRadio("Eye", eyes, eyeLsn, x, y);
+			eyeGrp.setSelected(avt.eye - 1);
 		}
 		
 		protected final static int HUD_TEXT_Y = 20;
@@ -1442,16 +1456,7 @@ public class Menu {
 		}
 		
 		private final void createEyeList(final int x, final int y) {
-			final int numEyes = PlatformGame.getNumEyes();
-			final ArrayList<String> eyes = new ArrayList<String>(numEyes);
-			for (int i = 1; i <= numEyes; i++) {
-			    eyes.add(Integer.toString(i));
-			}
-			final AvtListener eyeLsn = new AvtListener() {
-				@Override public final void update(final String value) {
-					avt.eye = Integer.parseInt(value); }};
-			final RadioGroup eyeGrp = addRadio("Eye", eyes, eyeLsn, x, y);
-			eyeGrp.setSelected(avt.eye - 1);
+			createEyeList(avt, PlatformGame.getNumEyes(), x, y);
 		}
 		
 		private final void createNameInput(final int x, final int y) {
@@ -1542,6 +1547,8 @@ public class Menu {
         private final static byte TAB_HAT = 4;
 	    private final static byte TAB_HAT_COL = 5;
 	    private final static byte TAB_DRAGON_COL = 6;
+	    private final static byte TAB_DRAGON_EYE = 7;
+	    private final static byte TAB_DRAGON_NAME = 8;
         private final static byte TAB_DEFAULT = TAB_CLOTHES;
         private static byte currentTab = TAB_DEFAULT;
         private final static String DEF_CLOTHES = "None";
@@ -1552,6 +1559,8 @@ public class Menu {
         private TouchButton jmpBtn = null;
         private List<RadioGroup> drgnColors = null;
         private TouchButton drgnBtn = null;
+        private TouchButton drgnEyeBtn = null;
+        private TouchButton drgnNameBtn = null;
         private final ClothingMenu clthMenu = new ClothingMenu();
         private final HatMenu hatMenu = new HatMenu();
         private Model clthModel = null;
@@ -1559,6 +1568,7 @@ public class Menu {
         
         protected GearScreen(final PlayerContext pc, final Avatar old, final Avatar avt) {
             super(pc, false);
+            radioLinesPerPage = isTabEnabled() ? 5 : 2;
             this.old = old;
             this.avt = avt;
             tabsSupported = true;
@@ -1601,7 +1611,7 @@ public class Menu {
             return sub;
         }
         
-        private final TouchButton newColor(final int x, final int y, final byte tab) {
+        private final TouchButton newTabSub(final int x, final int y, final Panmage img, final String txt, final byte tab) {
             final TouchButton sub = newSub(x, y + OFF_RADIO_Y);
             if (sub == null) {
                 return null;
@@ -1610,11 +1620,13 @@ public class Menu {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
                     reload(tab);
                 }});
-            final Panmage img = PlatformGame.menuRgb;
-            final String txt = "Color";
             sub.setOverlay(img, offx(img), offy(img, txt));
         	sub.setText(PlatformGame.font, txt, OFF_TEXT_X, OFF_TEXT_Y);
             return sub;
+        }
+        
+        private final TouchButton newColor(final int x, final int y, final byte tab) {
+        	return newTabSub(x, y, PlatformGame.menuRgb, "Color", tab);
         }
         
         protected final void createJumpList(final int x, final int y) {
@@ -1623,6 +1635,8 @@ public class Menu {
             final TouchButton sub = newBuy(x, y);
             jmpBtn = newColor(x, y, TAB_JUMP_COL);
             drgnBtn = newColor(x, y, TAB_DRAGON_COL);
+            drgnEyeBtn = newTabSub(x + PlatformGame.MENU_W, y, PlatformGame.menuEyesDragon, "Eyes", TAB_DRAGON_EYE);
+            drgnNameBtn = newTabSub(x, y - PlatformGame.MENU_H, PlatformGame.menuKeyboard, "Name", TAB_DRAGON_NAME);
             final AvtListener jmpLsn = new AvtListener() {
                 @Override public final void update(final String value) {
                     final JumpMode jm = Player.get(jumpModes, value);
@@ -1660,6 +1674,15 @@ public class Menu {
             jmpRadio = addRadio("Jump Mode", jmps, jmpSubLsn, jmpLsn, x, y, sub);
             initJumpMode();
         }
+        
+        private final void createDragonEyeList(final int x, final int y) {
+			createEyeList(avt.dragon, PlatformGame.getNumDragonEyes(), x, y);
+		}
+        
+        private final void createDragonNameInput(final int x, final int y) {
+			final Input namIn = addNameInput(avt.dragon, null, PlatformGame.MAX_NAME_AVATAR, x, y);
+			namIn.append(avt.dragon.getName());
+		}
         
         private final void addClothingModel() {
         	if (mc != null) {
@@ -1822,6 +1845,12 @@ public class Menu {
                 case TAB_DRAGON_COL :
                     addColor(avt.dragon.col, 0, 0, "Dragon");
                     break;
+                case TAB_DRAGON_EYE :
+                	createDragonEyeList(touchRadioX, touchRadioY);
+                    break;
+                case TAB_DRAGON_NAME :
+                	createDragonNameInput(touchKeyboardX, getTouchKeyboardY());
+                    break;
             }
 			newTab(PlatformGame.menuCheck, "Back", new Runnable() {@Override public final void run() {exit();}});
 			newTab(PlatformGame.menuClothing, "Garb", TAB_CLOTHES);
@@ -1849,13 +1878,16 @@ public class Menu {
             createJumpList(left, y);
             jmpColors = addColor(avt.jumpCol, left + 88, y);
             drgnColors = addColor(avt.dragon.col, left + 88, y);
-            y -= 64;
+            final int yoff = 24 + (8 * radioLinesPerPage);
+            y -= yoff;
+            //TODO Name, eyes
+            y -= 16;
             createClothingList(left, y);
             clthMenu.colors = addColor(avt.clothing.col, left + 88, y);
-            y -= 64;
+            y -= yoff;
             createHatList(left, y);
             hatMenu.colors = addColor(avt.hat.col, left + 88, y);
-            y -= 64;
+            y -= yoff;
             addExit("Back", left, y);
         }
         
@@ -1868,16 +1900,15 @@ public class Menu {
         	for (final RadioGroup jmpColor : Coltil.unnull(colors)) {
         		jmpColor.setVisible(vis);
         	}
-        	if (vis) {
-        	    TouchButton.reattach(btn);
-        	} else {
-        	    TouchButton.detach(btn);
-        	}
+        	TouchButton.reattach(btn, vis);
         }
         
         private final void initJumpColors() {
         	initColors(jmpColors, jmpBtn, avt.jumpMode == Player.JUMP_FLY);
-        	initColors(drgnColors, drgnBtn, avt.jumpMode == Player.JUMP_DRAGON);
+        	final boolean needDragon = avt.jumpMode == Player.JUMP_DRAGON;
+        	initColors(drgnColors, drgnBtn, needDragon);
+        	TouchButton.reattach(drgnEyeBtn, needDragon);
+        	TouchButton.reattach(drgnNameBtn, needDragon);
         }
         
         private final void initJumpMode() {

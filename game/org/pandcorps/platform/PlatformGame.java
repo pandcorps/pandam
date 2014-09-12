@@ -226,6 +226,7 @@ public class PlatformGame extends BaseGame {
 	protected static Img[] terrains = null;
 	protected static Img[] crowns = null;
 	protected static int DIM_BUTTON = 0;
+	protected final static int MENU_W = 48, MENU_H = 40;
 	protected static Panmage button = null;
 	protected static Panmage buttonIn = null;
 	protected static Panmage right2 = null;
@@ -262,6 +263,7 @@ public class PlatformGame extends BaseGame {
 	protected static Panmage menuHat = null;
 	protected static Panmage menuKeyboard = null;
 	protected static Panmage menuRgb = null;
+	protected static Panmage menuEyesDragon = null;
 	protected static Panmage menuButtons = null;
 	protected static Panmage redUp = null;
 	protected static Panmage redDown = null;
@@ -1303,10 +1305,9 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 				}};
 			loaders.add(btnLoader);
 			loaders.add(new Runnable() { @Override public final void run() {
-			    final int w = 48, h = 40;
 			    final Pancolor clrBtn = new FinPancolor((short) 160, (short) 192, (short) 224);
 			    final Pancolor clrIn = new FinPancolor((short) 128, (short) 224, (short) 255);
-			    menu = engine.createImage(Pantil.vmid(), ImtilX.newButton(w, h, clrBtn));
+			    menu = engine.createImage(Pantil.vmid(), ImtilX.newButton(MENU_W, MENU_H, clrBtn));
 			    menuCheck = createMenuImg("Check");
 			    menuX = createMenuImg("X");
 			    menuPlus = createMenuImg("Plus");
@@ -1328,10 +1329,11 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 			    menuHat = createMenuImg("Hats");
 			    menuKeyboard = createMenuImg("Keyboard");
 			    menuRgb = createMenuImg("Rgb");
+			    menuEyesDragon = createMenuImg("EyesDragon");
 			    menuButtons = createMenuImg("Buttons");
 			    //menuIn = engine.createImage(Pantil.vmid(), ImtilX.indent(left));
-			    menuIn = engine.createImage(Pantil.vmid(), ImtilX.newButton(w, h, clrIn));
-			    menuDisabled = engine.createImage(Pantil.vmid(), ImtilX.newButton(w, h, new FinPancolor((short) 128, (short) 96, (short) 160)));
+			    menuIn = engine.createImage(Pantil.vmid(), ImtilX.newButton(MENU_W, MENU_H, clrIn));
+			    menuDisabled = engine.createImage(Pantil.vmid(), ImtilX.newButton(MENU_W, MENU_H, new FinPancolor((short) 128, (short) 96, (short) 160)));
 			    menuLeft = createMenuImg("Left");
 			    menuRight = createMenuImg("Right");
 			    menuUp = createMenuImg("Up");
@@ -1660,7 +1662,7 @@ System.out.println("loadConstants end " + System.currentTimeMillis());
 	}
 	
 	protected final static int getNumDragonEyes() {
-	    return 2;
+	    return 3;
 	}
 	
 	protected final static EnemyDefinition getEnemy(final String name) {

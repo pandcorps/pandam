@@ -121,6 +121,10 @@ public class Player extends Character implements CollisionListener {
         }
 	}
 	
+	public static class EyeData extends PlayerData {
+		protected int eye = -1;
+	}
+	
 	public final static String getName(final Named data) {
         return data == null ? null : data.getName();
     }
