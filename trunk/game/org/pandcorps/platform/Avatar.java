@@ -36,9 +36,7 @@ public class Avatar extends PlayerData implements Segmented {
     protected final SimpleColor jumpCol = new SimpleColor();
     protected final Garb clothing = new Garb();
     protected final Garb hat = new Garb();
-    protected final SimpleColor dragonCol = new SimpleColor();
-    protected String dragonName = "Dragon";
-    protected int dragonEye = 1;
+    protected final Dragon dragon = new Dragon();
     private final static int[] randomColorChannels = {0, 1, 2};
     
     protected final static class Garb {
@@ -148,6 +146,15 @@ public class Avatar extends PlayerData implements Segmented {
         	} else {
         		b = color;
         	}
+        }
+    }
+    
+    protected static class Dragon extends PlayerData {
+    	protected final SimpleColor col = new SimpleColor();
+        protected int eye = 1;
+        
+        protected Dragon() {
+        	setName("Dragon");
         }
     }
     
@@ -277,7 +284,7 @@ public class Avatar extends PlayerData implements Segmented {
         jumpCol.init();
         clothing.init();
         hat.init();
-        dragonCol.init();
+        dragon.col.init();
     }
     
     public void load(final Avatar src) {
@@ -289,9 +296,9 @@ public class Avatar extends PlayerData implements Segmented {
         jumpCol.load(src.jumpCol);
         clothing.load(src.clothing);
         hat.load(src.hat);
-        dragonCol.load(src.dragonCol);
-        dragonName = src.dragonName;
-        dragonEye = src.dragonEye;
+        dragon.col.load(src.dragon.col);
+        dragon.setName(src.dragon.getName());
+        dragon.eye = src.dragon.eye;
     }
     
     public void load(final Segment seg) {
@@ -305,9 +312,9 @@ public class Avatar extends PlayerData implements Segmented {
     	clothing.col.load(seg, 11); // 11-13
     	hat.clth = getHat(seg.getValue(14));
     	hat.col.load(seg, 15); // 15-17
-    	dragonCol.load(seg, 18); // 18-20
-    	dragonName = seg.getValue(21, "Dragon");
-    	dragonEye = seg.getInt(22, 1);
+    	dragon.col.load(seg, 18); // 18-20
+    	dragon.setName(seg.getValue(21, "Dragon"));
+    	dragon.eye = seg.getInt(22, 1);
     }
     
     @Override
@@ -321,9 +328,9 @@ public class Avatar extends PlayerData implements Segmented {
     	jumpCol.save(seg, 7);
     	clothing.save(seg, 10); // 10 - 13
     	hat.save(seg, 14); // 14 - 17
-    	dragonCol.save(seg, 18);
-    	seg.setValue(21, dragonName);
-    	seg.setInt(22, dragonEye);
+    	dragon.col.save(seg, 18);
+    	seg.setValue(21, dragon.getName());
+    	seg.setInt(22, dragon.eye);
     }
     
     private final static float randColor() {

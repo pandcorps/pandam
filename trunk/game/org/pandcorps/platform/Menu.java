@@ -1541,6 +1541,7 @@ public class Menu {
         private final static byte TAB_JUMP_COL = 3;
         private final static byte TAB_HAT = 4;
 	    private final static byte TAB_HAT_COL = 5;
+	    private final static byte TAB_DRAGON_COL = 6;
         private final static byte TAB_DEFAULT = TAB_CLOTHES;
         private static byte currentTab = TAB_DEFAULT;
         private final static String DEF_CLOTHES = "None";
@@ -1549,6 +1550,8 @@ public class Menu {
         private RadioGroup jmpRadio = null;
         private List<RadioGroup> jmpColors = null;
         private TouchButton jmpBtn = null;
+        private List<RadioGroup> drgnColors = null;
+        private TouchButton drgnBtn = null;
         private final ClothingMenu clthMenu = new ClothingMenu();
         private final HatMenu hatMenu = new HatMenu();
         private Model clthModel = null;
@@ -1619,6 +1622,7 @@ public class Menu {
             final List<String> jmps = toNameList(jumpModes);
             final TouchButton sub = newBuy(x, y);
             jmpBtn = newColor(x, y, TAB_JUMP_COL);
+            drgnBtn = newColor(x, y, TAB_DRAGON_COL);
             final AvtListener jmpLsn = new AvtListener() {
                 @Override public final void update(final String value) {
                     final JumpMode jm = Player.get(jumpModes, value);
@@ -1815,6 +1819,9 @@ public class Menu {
                 case TAB_JUMP_COL :
                     addColor(avt.jumpCol, 0, 0, "Wing");
                     break;
+                case TAB_DRAGON_COL :
+                    addColor(avt.dragon.col, 0, 0, "Dragon");
+                    break;
             }
 			newTab(PlatformGame.menuCheck, "Back", new Runnable() {@Override public final void run() {exit();}});
 			newTab(PlatformGame.menuClothing, "Garb", TAB_CLOTHES);
@@ -1841,6 +1848,7 @@ public class Menu {
             int y = getTop();
             createJumpList(left, y);
             jmpColors = addColor(avt.jumpCol, left + 88, y);
+            drgnColors = addColor(avt.dragon.col, left + 88, y);
             y -= 64;
             createClothingList(left, y);
             clthMenu.colors = addColor(avt.clothing.col, left + 88, y);
@@ -1869,6 +1877,7 @@ public class Menu {
         
         private final void initJumpColors() {
         	initColors(jmpColors, jmpBtn, avt.jumpMode == Player.JUMP_FLY);
+        	initColors(drgnColors, drgnBtn, avt.jumpMode == Player.JUMP_DRAGON);
         }
         
         private final void initJumpMode() {
@@ -1904,6 +1913,7 @@ public class Menu {
         @Override
         protected void onExit() {
         	Coltil.clear(jmpColors);
+        	Coltil.clear(drgnColors);
         	Coltil.clear(clthMenu.colors);
         	Coltil.clear(hatMenu.colors);
             Panscreen.set(new AvatarScreen(pc, old, avt));

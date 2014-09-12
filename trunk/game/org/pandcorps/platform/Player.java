@@ -193,7 +193,7 @@ public class Player extends Character implements CollisionListener {
 	    	if (profile.currentAvatar.jumpMode != JUMP_DRAGON) {
 	    		name = getName();
 	    	} else {
-	    		name = Mathtil.rand() ? getName() : profile.currentAvatar.dragonName;
+	    		name = Mathtil.rand() ? getName() : profile.currentAvatar.dragon.getName();
 	    	}
 	    	return name.toUpperCase();
 	    }
