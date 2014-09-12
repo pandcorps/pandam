@@ -262,7 +262,7 @@ public class Player extends Character implements CollisionListener {
 	
 	protected final PlayerContext pc;
 	protected byte mode = MODE_NORMAL;
-	private byte jumpMode = MODE_NORMAL;
+	protected byte jumpMode = MODE_NORMAL;
 	private boolean flying = false;
 	private final Panple safe = new ImplPanple(0, 0, 0);
 	private boolean safeMirror = false;

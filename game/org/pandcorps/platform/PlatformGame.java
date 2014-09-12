@@ -60,7 +60,7 @@ public class PlatformGame extends BaseGame {
 	Taller bushes.
 	Map landmarks: Mountain, garden.
 	Train-riding levels.
-	Ridable dragons.
+	Ridable dragons - menu, use name in gem patterns and cabin.
 	Enemy Wisp, Elementals, winged Imp, Banshee, Wraith, Shade, Orc.
 	Drolock should walk sometimes.
 	Enemy-specific Level templates (Imp walking into ArmorBall).
@@ -76,7 +76,6 @@ public class PlatformGame extends BaseGame {
 	Bump w/o break ceiling block.
 	Bounce/blow floor.
 	Spike/fire floor tile.
-	Fire enemy?
 	Jumping enemy.
 	Collect fruit from trees.
 	Level to-do notes.
@@ -112,7 +111,6 @@ public class PlatformGame extends BaseGame {
 	GoalTemplate: 2*2 block steps.
 	Sand level cactus, Snow level crystal/pine tree
 	Rank-up bonus Gems can trigger immediate Gem goal success; that shouldn't happen
-	Unique level for bridge
 	*/
 	
 	protected final static byte TILE_BREAK = 2;
@@ -1087,6 +1085,10 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
                     enemy.destroy();
                     return false;
                 }};
+            armoredImp.splatDecider = new InteractionHandler() {
+                @Override public final boolean onInteract(final Enemy enemy, final Player player) {
+                    return player == null || player.jumpMode != Player.JUMP_DRAGON;
+                }};
 			armoredImp.splatHandler = new BurstHandler() {@Override public final void onBurst(final CustomBurst burst) {
 				final Enemy ball = new ArmorBall(armorBall, burst);
 				ball.full = true;
@@ -1147,6 +1149,9 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 			final EnemyDefinition spikedImp = new EnemyDefinition("Spiked Imp", 10, null, true);
 			spikedImp.stompHandler = new InteractionHandler() {
                 @Override public final boolean onInteract(final Enemy enemy, final Player player) {
+                	if (player.jumpMode == Player.JUMP_DRAGON) {
+                		return false;
+                	}
                     player.startHurt();
                     return true;
                 }};
