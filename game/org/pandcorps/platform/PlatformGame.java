@@ -127,12 +127,13 @@ public class PlatformGame extends BaseGame {
     protected final static byte TILE_SAND = 11;
 	
 	//protected final static int DEPTH_POWERUP = 0;
-	protected final static int DEPTH_ENEMY = 4;
+	protected final static int DEPTH_ENEMY = 5;
 	protected final static int DEPTH_PLAYER_BACK = 1;
 	protected final static int DEPTH_PLAYER = 2;
-	protected final static int DEPTH_BUBBLE = 3;
-	protected final static int DEPTH_SHATTER = 5;
-	protected final static int DEPTH_SPARK = 6;
+	protected final static int DEPTH_PLAYER_FRONT = 3;
+	protected final static int DEPTH_BUBBLE = 4;
+	protected final static int DEPTH_SHATTER = 6;
+	protected final static int DEPTH_SPARK = 7;
 	
 	protected final static int OFF_GEM = 16;
 	
@@ -173,6 +174,7 @@ public class PlatformGame extends BaseGame {
 	protected final static FinPanple2 owf = new FinPanple2(18, 2);
 	protected final static FinPanple2 os = new FinPanple2(17, 11);
 	protected final static FinPanple2 od = new FinPanple2(13, 1);
+	protected final static FinPanple odf = new FinPanple(13, 1, DEPTH_PLAYER_BACK - DEPTH_PLAYER_FRONT);
 	protected final static FinPanple2 or = new FinPanple2(21, -6);
 	protected static Img[] guysBlank = null;
 	protected static Img[] guysRide = null;
@@ -818,7 +820,7 @@ public class PlatformGame extends BaseGame {
 			final Img[] drgns = loadChrStrip("Dragon.png", 32, pf);
 			final Img drgnStill = drgns[3];
 			Imtil.copy(drgnEye, drgnStill, 23, 0, 13, 7, 14, 6, Imtil.COPY_FOREGROUND);
-			pc.back = engine.createImage(iwpre + "still", od, ng, xg, drgnStill);
+			pc.back = engine.createImage(iwpre + "still", odf, ng, xg, drgnStill);
 		    if (full) {
 			    final String fwpre = PRE_FRM + wpre;
 			    final Panframe[] frames = new Panframe[5];
