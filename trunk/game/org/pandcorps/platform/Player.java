@@ -648,9 +648,13 @@ public class Player extends Character implements CollisionListener {
 		if (mode != MODE_FROZEN) {
 			changeView(v > 0 ? pc.guyJump : pc.guyFall);
 		}
-		if (acc.back != null && jumpMode == JUMP_FLY) {
-			acc.back.changeView((flying || getPosition().getY() <= MIN_Y) ? pc.backJump : pc.backFall);
-			// v > 0 doesn't flap as soon as jump is pressed
+		if (acc.back != null) {
+			if (jumpMode == JUMP_FLY) {
+				acc.back.changeView((flying || getPosition().getY() <= MIN_Y) ? pc.backJump : pc.backFall);
+				// v > 0 doesn't flap as soon as jump is pressed
+			} else if (jumpMode == JUMP_DRAGON) {
+				acc.back.changeView((v > 0) ? pc.backJump : pc.backFall);
+			}
 		}
 		return flying;
 	}
@@ -788,7 +792,7 @@ public class Player extends Character implements CollisionListener {
 		
 		protected Accessories(final PlayerContext pc) {
 			final byte jm = pc.profile.currentAvatar.jumpMode;
-			if (jm == JUMP_FLY || jm == JUMP_HIGH) {
+			if (jm == JUMP_FLY || jm == JUMP_HIGH || jm == JUMP_DRAGON) {
 			    back = jm == JUMP_HIGH ? new Back() : new Panctor();
 			    back.setView(pc.back);
 			    PlatformGame.room.addActor(back);
