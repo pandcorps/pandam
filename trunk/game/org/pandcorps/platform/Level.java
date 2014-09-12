@@ -1970,13 +1970,14 @@ public class Level {
     }
     
     private final static void wall(final int x, final int y, final int w, final int h) {
-        final int ystop = y + h, xstop = x + w + 1;
-        for (int j = y; j < ystop; j++) {
-            setFgShadowed(x, j, 4, 0, Tile.BEHAVIOR_SOLID);
+        final int ystop = y + h - 1, xstop = x + w + 1;
+        for (int j = y; j <= ystop; j++) {
+        	final int iy = (floorMode == FLOOR_BRIDGE && j < ystop) ? 5 : 4;
+            setFgShadowed(x, j, iy, 0, Tile.BEHAVIOR_SOLID);
             for (int i = x + 1; i < xstop; i++) {
-                setFgShadowed(i, j, 4, 1, Tile.BEHAVIOR_SOLID);
+                setFgShadowed(i, j, iy, 1, Tile.BEHAVIOR_SOLID);
             }
-            setFgShadowed(xstop, j, 4, 2, Tile.BEHAVIOR_SOLID);
+            setFgShadowed(xstop, j, iy, 2, Tile.BEHAVIOR_SOLID);
         }
     }
     
