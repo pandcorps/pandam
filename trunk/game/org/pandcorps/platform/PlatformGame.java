@@ -60,7 +60,7 @@ public class PlatformGame extends BaseGame {
 	Taller bushes.
 	Map landmarks: Mountain, garden.
 	Train-riding levels.
-	Ridable dragons - menu, use name in gem patterns and cabin.
+	Ridable dragons - menu.
 	Enemy Wisp, Elementals, winged Imp, Banshee, Wraith, Shade, Orc.
 	Drolock should walk sometimes.
 	Enemy-specific Level templates (Imp walking into ArmorBall).
