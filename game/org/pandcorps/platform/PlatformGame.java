@@ -772,7 +772,8 @@ public class PlatformGame extends BaseGame {
 				Imtil.copy(eyesEast, east, 0, 0, 4, 4, needDragon ? 19 : 18, eyeDstY, Imtil.COPY_FOREGROUND);
 			}
 			eyesEast.close();
-			pc.mapEast = createAnmMap(pre, "east", ORIG_MAP_DRAGON_EAST_WEST, east1, east2);
+			final Panple origEastWest = needDragon ? ORIG_MAP_DRAGON_EAST_WEST : ORIG_MAP;
+			pc.mapEast = createAnmMap(pre, "east", origEastWest, east1, east2);
 			Imtil.mirror(west1);
 			Imtil.mirror(west2);
 			final Img eyesWest = eyes.getSubimage(4, 0, 4, 4);
@@ -780,7 +781,7 @@ public class PlatformGame extends BaseGame {
 				Imtil.copy(eyesWest, west, 0, 0, 4, 4, needDragon ? 23 : 10, eyeDstY, Imtil.COPY_FOREGROUND);
 			}
 			eyesWest.close();
-			pc.mapWest = createAnmMap(pre, "west", ORIG_MAP_DRAGON_EAST_WEST, west1, west2);
+			pc.mapWest = createAnmMap(pre, "west", origEastWest, west1, west2);
 			final Img tailNorth = Coltil.get(tails, 2), faceNorth = faceMap[2];
 			final Img wing = needWing ? wingMap[0] : null;
 			final Img drgn = needDragon ? dragonMap[3] : null;
