@@ -39,6 +39,7 @@ public class Player extends Character implements CollisionListener {
 	private final static int VEL_RETURN = 2;
 	private final static int VEL_CATCH_UP = 8;
 	private final static int VEL_JUMP = 8;
+	private final static int VEL_JUMP_DRAGON = (VEL_JUMP + MAX_V) / 2;
 	protected final static int VEL_BUMP = 4;
 	protected final static byte MODE_NORMAL = 0;
 	private final static byte MODE_RETURN = 1;
@@ -369,7 +370,7 @@ public class Player extends Character implements CollisionListener {
 	            v = MAX_V;
 	            acc.back.setView(pc.backJump);
 	        } else {
-	            v = VEL_JUMP;
+	            v = jumpMode == JUMP_DRAGON ? VEL_JUMP_DRAGON : VEL_JUMP;
 	        }
 	        if (sanded) {
 	        	v -= 2;
