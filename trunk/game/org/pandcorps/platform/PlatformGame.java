@@ -173,6 +173,7 @@ public class PlatformGame extends BaseGame {
 	protected final static FinPanple2 owf = new FinPanple2(18, 2);
 	protected final static FinPanple2 os = new FinPanple2(17, 11);
 	protected static Img[] guysBlank = null;
+	protected static Img[] guysRide = null;
 	protected final static HashMap<String, Img> facesAll = new HashMap<String, Img>();
 	protected final static HashMap<String, Img[]> tailsAll = new HashMap<String, Img[]>();
 	protected final static HashMap<String, Img[]> bodiesAll = new HashMap<String, Img[]>();
@@ -256,6 +257,7 @@ public class PlatformGame extends BaseGame {
 	protected static Panmage menuEyes = null;
 	protected static Panmage menuGear = null;
 	protected static Panmage menuClothing = null;
+	protected static Panmage menuHat = null;
 	protected static Panmage menuKeyboard = null;
 	protected static Panmage menuRgb = null;
 	protected static Panmage menuButtons = null;
@@ -438,10 +440,7 @@ public class PlatformGame extends BaseGame {
 	}
 	
 	private final static void buildGuy(final Img guy, final Img face, final Img[] tails, final Img eyes, final Img clothing,
-			final Img hat, final Img mask, final int y, final int t) {
-		if (hat != null) {
-	    	Imtil.copy(hat, face, 0, 0, 18, 18, 0, 0, TransparentPixelMask.getInstance(), new ImgPixelMask(mask, Pancolor.BLACK));
-	    }
+			final int y, final int t) {
 	    Imtil.copy(face, guy, 0, 0, 18, 18, 8, 1 + y, Imtil.COPY_FOREGROUND);
 	    /*if (hat != null) {
 	    	Imtil.copy(hat, guy, 0, 0, 18, 18, 8, 1 + y, Imtil.COPY_FOREGROUND);
@@ -453,6 +452,11 @@ public class PlatformGame extends BaseGame {
         if (clothing != null) {
             Imtil.copy(clothing, guy, 0, 0, 32, 32, 0, 0, Imtil.COPY_FOREGROUND);
         }
+	}
+	
+	private final static void buildGuyRide(final Img guy, final Img face, final Img eyes, final Img clothing) {
+		Imtil.copy(face, guy, 0, 0, 18, 18, 8, 0, Imtil.COPY_FOREGROUND);
+		Imtil.copy(eyes, guy, 0, 0, 8, 4, 15, 9, Imtil.COPY_FOREGROUND);
 	}
 	
 	private final static PixelFilter getFilter(final SimpleColor col) {
@@ -497,7 +501,14 @@ public class PlatformGame extends BaseGame {
 		    final Clothing c = avatar.clothing.clth;
 		    Img[] guysRaw;
 		    final String body = c == null ? null : c.getBody();
-		    if (body == null) {
+		    final boolean needDragon = avatar.jumpMode == Player.JUMP_DRAGON;
+		    if (needDragon) {
+		    	if (guysRide == null) {
+		    		guysRide = loadChrStrip("BearRide.png", 32, true);
+				    Img.setTemporary(false, guysRide);
+		    	}
+		    	guysRaw = guysRide;
+		    } else if (body == null) {
 		        guysRaw = guysBlank;
 		    } else {
 		        guysRaw = bodiesAll.get(body);
@@ -548,20 +559,28 @@ public class PlatformGame extends BaseGame {
 				hat = Imtil.filter(avatar.hat.clth.imgs[0], hatFilter);
 				mask = getImg(masksAll, "mask/Mask", anm);
 			}
-			final int size = guys.length;
-			for (int i = 0; i < size; i++) {
-				final int tailH;
-				if (i < 3) {
-					tailH = i;
-				} else if (i == 5) {
-					tailH = 0;
-				} else {
-					tailH = 1;
+			if (hat != null) {
+		    	Imtil.copy(hat, face, 0, 0, 18, 18, 0, 0, TransparentPixelMask.getInstance(), new ImgPixelMask(mask, Pancolor.BLACK));
+		    	hat.close();
+		    }
+			if (needDragon) {
+				buildGuyRide(guys[1], face, eyes, null);
+				buildGuyRide(guyBlink, face, eyesBlink, null);
+			} else {
+				final int size = guys.length;
+				for (int i = 0; i < size; i++) {
+					final int tailH;
+					if (i < 3) {
+						tailH = i;
+					} else if (i == 5) {
+						tailH = 0;
+					} else {
+						tailH = 1;
+					}
+					buildGuy(guys[i], face, tails, eyes, clothings == null ? null : clothings[i], (i == 3) ? -1 : 0, tailH);
 				}
-				buildGuy(guys[i], face, tails, eyes, clothings == null ? null : clothings[i], hat, mask, (i == 3) ? -1 : 0, tailH);
+				buildGuy(guyBlink, face, tails, eyesBlink, clothings == null ? null : getStill(clothings, hasStill), 0, 0);
 			}
-			buildGuy(guyBlink, face, tails, eyesBlink, clothings == null ? null : getStill(clothings, hasStill), hat, mask, 0, 0);
-			Img.close(hat);
 			Img.close(clothings);
 		}
 		
@@ -577,7 +596,7 @@ public class PlatformGame extends BaseGame {
 	}
 	
 	private final static Img getStill(final Img[] guys, final boolean hasStill) {
-	    return guys[hasStill ? 5 : 0];
+	    return guys[hasStill ? 5 : guys.length == 2 ? 1 : 0];
 	}
 	
 	protected final static void reloadAnimalStrip(final PlayerContext pc) {
@@ -618,27 +637,6 @@ public class PlatformGame extends BaseGame {
 		}
 		
 		if (full) {
-		    final Panmage guy1 = hasStill ? engine.createImage(ipre + "1", og, ng, xg, guys[0]) : guy;
-			final Panmage guy2 = engine.createImage(ipre + "2", og, ng, xg, guys[1]);
-			final Panmage guy3 = engine.createImage(ipre + "3", og, ng, xg, guys[2]);
-			final String rpre = fpre + "run.";
-			final Panframe gfr1 = engine.createFrame(rpre + "1", guy1, 2), gfr2 = engine.createFrame(rpre + "2", guy2, 2), gfr3 = engine.createFrame(rpre + "3", guy3, 2);
-			pc.guyRun = engine.createAnimation(PRE_ANM + pre + ".run", gfr2, gfr3, gfr1);
-			pc.guyJump = engine.createImage(ipre + "jump", og, ng, xg, guys[3]);
-			pc.guyFall = engine.createImage(ipre + "fall", og, ng, xg, guys[4]);
-		    //guy = engine.createImage(pre, new FinPanple2(8, 0), null, null, ImtilX.loadImage("org/pandcorps/platform/res/chr/Player.png"));
-		    
-			final Img[] maps = loadChrStrip("BearMap.png", 32, pi.f);
-			final Img[] clothingMapRaw = (avatar.clothing.clth == null) ? null : avatar.clothing.clth.mapImgs;
-			final Img[] clothingMap;
-			if (clothingMapRaw == null) {
-			    clothingMap = null;
-            } else {
-                clothingMap = new Img[clothingMapRaw.length];
-                filterStrip(clothingMapRaw, clothingMap, greyMask, pi.clothingFilter);
-            }
-			final Img[] wingMap = needWing ? loadChrStrip("WingsMap.png", 32, pf) : null;
-			final Img[] dragonMap = needDragon ? loadChrStrip("DragonMap.png", 32, pf) : null;
 			final Img[] faceMap = loadChrStrip("FaceMap" + anm + ".png", 18, pi.f);
 			final Img[] hatMapRaw = (avatar.hat.clth == null) ? null : avatar.hat.clth.mapImgs;
 			if (hatMapRaw != null) {
@@ -653,6 +651,42 @@ public class PlatformGame extends BaseGame {
 				Img.close(hatMap);
 				Img.close(maskMap);
 			}
+			
+			final String rpre = fpre + "run.";
+			if (needDragon) {
+				final Img guy0 = guys[0];
+				Imtil.copy(faceMap[1], guy0, 0, 0, 18, 18, 7, 0, Imtil.COPY_FOREGROUND);
+				Imtil.copy(eyes, guy0, 0, 0, 4, 4, 18, 9, Imtil.COPY_FOREGROUND);
+				if (tails != null) {
+					Imtil.copy(tails[1], guy0, 0, 0, 12, 12, 0, 19, Imtil.COPY_BACKGROUND);
+				}
+				final Panmage guy1 = engine.createImage(ipre + "1", og, ng, xg, guy0);
+				final Panframe gfr1 = engine.createFrame(rpre + "1", guy1, 2);
+				pc.guyRun = engine.createAnimation(PRE_ANM + pre + ".run", gfr1);
+				pc.guyJump = guy1;
+				pc.guyFall = guy1;
+			} else {
+			    final Panmage guy1 = hasStill ? engine.createImage(ipre + "1", og, ng, xg, guys[0]) : guy;
+				final Panmage guy2 = engine.createImage(ipre + "2", og, ng, xg, guys[1]);
+				final Panmage guy3 = engine.createImage(ipre + "3", og, ng, xg, guys[2]);
+				final Panframe gfr1 = engine.createFrame(rpre + "1", guy1, 2), gfr2 = engine.createFrame(rpre + "2", guy2, 2), gfr3 = engine.createFrame(rpre + "3", guy3, 2);
+				pc.guyRun = engine.createAnimation(PRE_ANM + pre + ".run", gfr2, gfr3, gfr1);
+				pc.guyJump = engine.createImage(ipre + "jump", og, ng, xg, guys[3]);
+				pc.guyFall = engine.createImage(ipre + "fall", og, ng, xg, guys[4]);
+			    //guy = engine.createImage(pre, new FinPanple2(8, 0), null, null, ImtilX.loadImage("org/pandcorps/platform/res/chr/Player.png"));
+			}
+		    
+			final Img[] maps = loadChrStrip("BearMap.png", 32, pi.f);
+			final Img[] clothingMapRaw = (avatar.clothing.clth == null) ? null : avatar.clothing.clth.mapImgs;
+			final Img[] clothingMap;
+			if (clothingMapRaw == null) {
+			    clothingMap = null;
+            } else {
+                clothingMap = new Img[clothingMapRaw.length];
+                filterStrip(clothingMapRaw, clothingMap, greyMask, pi.clothingFilter);
+            }
+			final Img[] wingMap = needWing ? loadChrStrip("WingsMap.png", 32, pf) : null;
+			final Img[] dragonMap = needDragon ? loadChrStrip("DragonMap.png", 32, pf) : null;
 			final Img south1 = maps[0], southPose = maps[5], faceSouth = faceMap[0];
 			if (needWing) {
 				for (final Img south : new Img[] {south1, southPose}) {
@@ -1268,6 +1302,7 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 			    menuEyes = createMenuImg("Eyes");
 			    menuGear = createMenuImg("Gear");
 			    menuClothing = createMenuImg("Clothing");
+			    menuHat = createMenuImg("Hats");
 			    menuKeyboard = createMenuImg("Keyboard");
 			    menuRgb = createMenuImg("Rgb");
 			    menuButtons = createMenuImg("Buttons");
