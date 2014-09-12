@@ -386,6 +386,14 @@ public abstract class Panput {
 			}
 		}
 		
+		public final static void reattach(final TouchButton button, final boolean attached) {
+			if (attached) {
+        	    reattach(button);
+        	} else {
+        	    detach(button);
+        	}
+		}
+		
 		@Override
 		public final String toString() {
 			return getName() + " (" + xMin + ", " + yMin + ") - (" + xMax + ", " + yMax + ")";
