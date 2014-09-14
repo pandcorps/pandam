@@ -345,7 +345,7 @@ public class Level {
     
     protected final static Panmage getTileImage() {
     	final Img tileImg = loadTileImage();
-    	if (isNormalTheme()) {
+    	if (isNormalTheme() && theme != Theme.Bridge) {
     		applyDirtTexture(tileImg, 0, 16, 80, 128);
     	}
         return Pangine.getEngine().createImage("img.tiles", tileImg);

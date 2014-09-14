@@ -2610,6 +2610,10 @@ public class Menu {
 				msg = setMapTheme(MapTheme.Sand);
 			} else if ("setgrass".equalsIgnoreCase(cmd)) {
 				msg = setMapTheme(MapTheme.Normal);
+			} else if ("noconsole".equalsIgnoreCase(cmd)) {
+				pc.profile.consoleEnabled = false;
+				save();
+				msg = MSG_OK;
 			} else if ("save".equalsIgnoreCase(cmd)) {
 			    save();
 			    msg = MSG_OK;
