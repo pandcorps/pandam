@@ -154,6 +154,10 @@ public class Avatar extends EyeData implements Segmented {
         protected Dragon() {
         	setName("Dragon");
         }
+        
+        protected final void init() {
+        	col.init();
+        }
     }
     
     protected static class Clothing extends FinName {
@@ -282,7 +286,8 @@ public class Avatar extends EyeData implements Segmented {
         jumpCol.init();
         clothing.init();
         hat.init();
-        dragon.col.init();
+        dragon.init();
+        dragon.eye = Mathtil.randi(1, PlatformGame.getNumDragonEyes());
     }
     
     public void load(final Avatar src) {
@@ -313,6 +318,9 @@ public class Avatar extends EyeData implements Segmented {
     	dragon.col.load(seg, 18); // 18-20
     	dragon.setName(seg.getValue(21, "Dragon"));
     	dragon.eye = seg.getInt(22, 1);
+    	if (dragon.eye < 1) {
+    		dragon.eye = 1;
+    	}
     }
     
     @Override

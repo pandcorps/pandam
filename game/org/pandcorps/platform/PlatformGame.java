@@ -485,6 +485,9 @@ public class PlatformGame extends BaseGame {
 	}
 	
 	private final static Img getEyes(final Img[] eyesAll, int i, final String loc) {
+		if (i < 1) {
+			i = 1;
+		}
 		Img e = eyesAll[i - 1];
 		if (e == null) {
 		    e = ImtilX.loadImage("org/pandcorps/platform/res/chr/" + loc + "Eyes" + Chartil.padZero(i, 2) + ".png", false);
