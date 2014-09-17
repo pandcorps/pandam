@@ -321,6 +321,21 @@ public final class Mustil {
 		addShort(track, ShortMessage.CONTROL_CHANGE, tick, channel, 7, vol);
 	}*/
 	
+	private final static void addMeta(final Track track, final int type, final String s) throws Exception {
+		final MetaMessage message = new MetaMessage();
+		final byte[] data = s.getBytes();
+		message.setMessage(type, data, data.length);
+		track.add(new MidiEvent(message, 0));
+	}
+	
+	public final static void setName(final Track track, final String s) throws Exception {
+		addMeta(track, 3, s);
+	}
+	
+	public final static void setCopyright(final Track track, final String s) throws Exception {
+		addMeta(track, 2, s);
+	}
+	
 	public final static void save(final Sequence seq, final String loc) throws Exception {
 	    OutputStream out = null;
 	    try {
@@ -338,6 +353,32 @@ public final class Mustil {
 			return MidiSystem.getSequence(in);
 		} finally {
 			Iotil.close(in);
+		}
+	}
+	
+	public final static void main(final String[] args) {
+		try {
+			for (final String loc : args) {
+				final Sequence seq = load(loc);
+				System.out.println();
+				System.out.println(loc);
+				System.out.println("MicrosecondLength: " + seq.getMicrosecondLength());
+				System.out.println("Resolution: " + seq.getResolution());
+				final Track track = seq.getTracks()[0];
+				for (int i = 0; i < 10; i++) {
+					final MidiMessage message = track.get(i).getMessage();
+					if (message instanceof MetaMessage) {
+						final MetaMessage mm = (MetaMessage) message;
+						System.out.println("Meta " + mm.getType() + "; " + new String(mm.getData()));
+					//} else if (message instanceof SysexMessage) {
+					//	((SysexMessage) message).
+					} else {
+						System.out.println(message.getClass());
+					}
+				}
+			}
+		} catch (final Throwable e) {
+			e.printStackTrace();
 		}
 	}
 }
