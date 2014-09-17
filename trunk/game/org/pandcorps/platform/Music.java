@@ -303,6 +303,8 @@ public class Music {
 	protected final static Sequence newSongHappy4() throws Exception {
 		final Sequence seq = new Sequence(Sequence.SMPTE_30, 1);
 		final Track track = seq.createTrack();
+		Mustil.setName(track, "Happy");
+		Mustil.setCopyright(track, "Copyright (c) 2014, Andrew M. Martin");
 		int dur, keys[];
 		final int r = 7;
 		addPercussionHappy(track, r);
