@@ -348,6 +348,14 @@ public class Player extends Character implements CollisionListener {
             @Override public final void onActionStart(final ActionStartEvent event) { engine.stopCaptureFrames(); }});
 	}
 	
+	protected final void loadState(final Player p) {
+	    if (p == null) {
+	        return;
+	    }
+	    this.levelFalls = p.levelFalls;
+	    this.levelHits = p.levelHits;
+	}
+	
 	private final boolean isInputDisabled() {
 		return mode == MODE_DISABLED || mode == MODE_FROZEN;
 	}

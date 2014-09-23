@@ -306,7 +306,9 @@ public class Castle {
     private final static void addPlayers(final int x, final int y, final Ai ai) {
         playerCount = PlatformGame.pcs.size();
         for (int i = 0; i < playerCount; i++) {
-            final Player player = new Player(PlatformGame.pcs.get(i));
+            final PlayerContext pc = PlatformGame.pcs.get(i);
+            final Player oldPlayer = pc.player, player = new Player(pc);
+            player.loadState(oldPlayer);
 			player.mode = Player.MODE_DISABLED;
 			room.addActor(player);
 			// Use PlatformGame.setPosition; otherwise wings can appear in front of Player
