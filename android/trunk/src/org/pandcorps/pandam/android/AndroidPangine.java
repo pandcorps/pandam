@@ -22,18 +22,26 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandam.android;
 
+import java.io.*;
+import java.util.*;
+
+import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.impl.*;
 
 public class AndroidPangine extends GlPangine {
 	protected static AndroidPangine engine = null;
+	protected static PanActivity context = null;
 	protected static int desktopWidth = 0;
 	protected static int desktopHeight = 0;
+	//private static MediaPlayer mediaPlayer = null;
+	private static Set<String> cacheFiles = null;
 	
 	protected AndroidPangine() {
 		super(new AndroidPanteraction());
 		Pangine.engine = this;
 		engine = this;
+		audio = new AndroidPanaudio();
 	}
 	
 	@Override
@@ -69,9 +77,227 @@ public class AndroidPangine extends GlPangine {
     public final boolean isTouchSupported() {
     	return true;
     }
+    
+    //public final void playMusic(/*final*/ String loc) {
+    	/*if (mediaPlayer == null) {
+    		mediaPlayer = new MediaPlayer(); // MediaPlayer.create(context, uri);
+    	} else {
+    		stopMusic();
+    	}
+    	FileInputStream in = null;
+    	try {
+    		final CopyResult cr = copyResourceToFile(loc);
+    		mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+    		//final String uri = Iotil.class.getClassLoader().getResource(loc).toURI().toString();
+    		//System.out.println(uri);
+    		//mediaPlayer.setDataSource(context, Uri.parse(uri));
+    		in = cr.openInputStream();
+    		mediaPlayer.setDataSource(in.getFD());
+    		in.close();
+    		mediaPlayer.prepare(); // prepareAsync()
+    		mediaPlayer.setLooping(true); // Has gap
+    		//mediaPlayer.setOnCompletionListener(new OnCompletionListener() {
+			//	@Override public final void onCompletion(final MediaPlayer mp) {
+			//		mediaPlayer.start();
+			//	}}); // Still has gap
+    		mediaPlayer.start();
+    	} catch (final Exception e) {
+    		throw Panception.get(e);
+    	} finally {
+    		Iotil.close(in);
+    	}*/
+    	
+    	/*InputStream in = null;
+    	Parcel parcel = null;
+    	ParcelFileDescriptor pfd = null;
+    	AssetFileDescriptor afd = null;
+    	try {
+    		parcel = Parcel.obtain();
+    		final int len = 1024;
+    		int ret;
+    		final byte[] buf = new byte[len];
+    		in = Iotil.getResourceInputStream(loc);
+    		while ((ret = in.read(buf)) >= 0) {
+    			parcel.writeByteArray(buf, 0, ret);
+    		}
+    		in.close();
+    		parcel.setDataPosition(0);
+    		System.out.println("parcel data size: " + parcel.dataSize());
+    		pfd = parcel.readFileDescriptor();
+    		System.out.println("pfd: " + pfd);
+	    	//final File f = new File(Iotil.class.getClassLoader().getResource(loc).toURI());
+	    	//pfd = ParcelFileDescriptor.open(f, ParcelFileDescriptor.MODE_READ_ONLY);
+	    	afd = new AssetFileDescriptor(pfd, 0, AssetFileDescriptor.UNKNOWN_LENGTH);
+	    	System.out.println("afd: " + afd);
+	    	final int soundId = soundPool.load(afd, 1);
+	    	musicStreamId = soundPool.play(soundId, 1, 1, 1, -1, 1);
+    	} catch (final Exception e) {
+    		throw Panception.get(e);
+    	} finally {
+    		Iotil.close(in);
+    		//Iotil.close(afd); // Compiles, but run-time error
+    		close(afd);
+    		Iotil.close(pfd);
+    		recycle(parcel);
+    	}*/
+    	
+    	/*InputStream in = null;
+    	ParcelFileDescriptor pfd = null, pfdOut = null;
+    	AssetFileDescriptor afd = null;
+    	OutputStream out = null;
+    	try {
+    		final ParcelFileDescriptor[] pfds = ParcelFileDescriptor.createPipe();
+    		pfd = pfds[0];
+    		pfdOut = pfds[1];
+    		out = new ParcelFileDescriptor.AutoCloseOutputStream(pfdOut);
+    		final int len = 1024;
+    		int ret;
+    		final byte[] buf = new byte[len];
+    		//in = Iotil.getResourceInputStream(loc);
+    		System.out.println("Getting resource input stream");
+    		in = Iotil.getResourceInputStream("org/pandcorps/platform/res/music/chimes.wav");
+    		long size = 0;
+    		while ((ret = in.read(buf)) >= 0) {
+    			out.write(buf, 0, ret);
+    			size += ret;
+    			System.out.println("Piping, size " + size);
+    		}
+    		in.close();
+    		out.close();
+    		System.out.println("Opening AssetFileDescriptor");
+	    	afd = new AssetFileDescriptor(new PanParcelFileDescriptor(pfd, size), 0, size);
+	    	System.out.println("afd: " + afd);
+	    	//final int soundId = soundPool.load(afd, 1);
+	    	soundPool.load(afd, 1);
+	    	soundPool.setOnLoadCompleteListener(new OnLoadCompleteListener() {
+				@Override
+				public final void onLoadComplete(final SoundPool soundPool, final int sampleId, final int status) {
+					System.out.println("Load complete, trying to play");
+					musicStreamId = soundPool.play(sampleId, 1, 1, 1, -1, 1);
+				}});
+	    	//soundPool.load(context, R.raw.chimes, 1); // Works
+	    	//soundPool.load(context, R.raw.happy, 1); // Unable to load sample: (null)|Load complete, trying to play|sample 1 not READY
+	    	//musicStreamId = soundPool.play(soundId, 1, 1, 1, -1, 1);
+    	} catch (final Exception e) {
+    		throw Panception.get(e);
+    	} finally {
+    		Iotil.close(in);
+    		Iotil.close(out);
+    		//Iotil.close(afd); // Compiles, but run-time error
+    		//Iotil.close(pfd);
+    		//Iotil.close(pfdOut);
+    		close(afd);
+    		close(pfd);
+    		close(pfdOut);
+    	}*/
+    //}
+    
+    //private FileInputStream fin = null;
+    
+    protected final static class CopyResult {
+    	protected final String fileName;
+    	protected final long size;
+    	
+    	private CopyResult(final String fileName, final long size) {
+    		this.fileName = fileName;
+    		this.size = size;
+    	}
+    	
+    	protected final FileInputStream openInputStream() throws Exception {
+    		return context.openFileInput(fileName);
+    	}
+    }
+    
+    protected final static CopyResult copyResourceToFile(final String loc) throws Exception {
+    	InputStream in = null;
+    	OutputStream out = null;
+    	try {
+    		String tmpFileName = loc.replace('/', '_');
+    		
+    		//out = context.openFileOutput(tmpFileName, Context.MODE_PRIVATE);
+    		String dir = context.getCacheDir().getAbsolutePath();
+    		if (!dir.endsWith("/")) {
+    			dir += "/";
+    		}
+    		tmpFileName = dir + tmpFileName;
+    		out = new FileOutputStream(tmpFileName);
+    		
+    		final int len = 1024;
+    		int ret;
+    		final byte[] buf = new byte[len];
+    		in = Iotil.getResourceInputStream(loc);
+    		System.out.println("Getting resource input stream");
+    		long size = 0;
+    		while ((ret = in.read(buf)) >= 0) {
+    			out.write(buf, 0, ret);
+    			size += ret;
+    			System.out.println("Piping, size " + size);
+    		}
+    		if (cacheFiles == null) {
+    			cacheFiles = new HashSet<String>();
+    		}
+    		cacheFiles.add(tmpFileName);
+    		return new CopyResult(tmpFileName, size);
+    	} finally {
+    		Iotil.close(in);
+    		Iotil.close(out);
+    	}
+    }
+    
+    /*private final static class PanParcelFileDescriptor extends ParcelFileDescriptor {
+    	private final long size;
+    	
+		public PanParcelFileDescriptor(final ParcelFileDescriptor wrapped, final long size) {
+			super(wrapped);
+			this.size = size;
+		}
+		
+		@Override
+		public final long getStatSize() {
+			return size;
+		}
+    }
+    
+    private final static void close(final AssetFileDescriptor fd) {
+    	if (fd != null) {
+    		try {
+    			fd.close();
+    		} catch (final Exception e) {
+    			//throw Pantil.toRuntimeException(e);
+    		}
+    	}
+    }
+    
+    private final static void close(final ParcelFileDescriptor fd) {
+    	if (fd != null) {
+    		try {
+    			fd.close();
+    		} catch (final Exception e) {
+    			//throw Pantil.toRuntimeException(e);
+    		}
+    	}
+    }*/
+    
+    /*private final static void recycle(final Parcel parcel) {
+    	if (parcel != null) {
+			parcel.recycle();
+    	}
+    }*/
+    
+    //public final void stopMusic() {
+    	/*mediaPlayer.stop();
+		mediaPlayer.reset();*/
+    	//soundPool.stop(musicStreamId); // Also releases sound from memory?
+    //}
 	
     @Override
 	protected void onDestroy() {
+    	for (final String cacheFile : Coltil.unnull(cacheFiles)) {
+    		new File(cacheFile).delete();
+    	}
+    	/*if (mediaPlayer != null) {
+    		mediaPlayer.release();
+    	}*/
 	}
 	
     @Override
