@@ -790,9 +790,7 @@ public abstract class GlPangine extends Pangine {
     protected final void destroy() throws Exception {
 	    gl.glDisableClientState(gl.GL_VERTEX_ARRAY);
         gl.glDisableClientState(gl.GL_TEXTURE_COORD_ARRAY);
-        if (isMusicSupported()) {
-            getMusic().close();
-        }
+        getAudio().close();
         onDestroy();
     }
     

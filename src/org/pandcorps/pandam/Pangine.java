@@ -52,7 +52,7 @@ public abstract class Pangine {
 	private final static Class<?>[] CLASS_ARRAY_STRING = new Class<?>[] {String.class};
 
 	private final Panderer renderer = new Panderer();
-	private final Pansic music = isMusicSupported() ? new Pansic() : null;
+	protected Panaudio audio = null;
 	
 	/*package*/ Map<Object, Set<Object>> collisionGroups = null;
 	
@@ -323,18 +323,10 @@ public abstract class Pangine {
 		return types.get(actorClass);
 	}
 	
-	/*public abstract void playMusic(final String loc);
-	
-	public abstract void stopMusic();*/
-	
-	public final Pansic getMusic() {
-		return isMusicSupported() ? music : null;
+	public final Panaudio getAudio() {
+		return audio;
 	}
 	
-	public boolean isMusicSupported() {
-		return false;
-	}
-
 	public abstract Panteraction getInteraction();
 	
 	protected Panctor getActor(final ActionListener listener) {
