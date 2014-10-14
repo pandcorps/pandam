@@ -301,10 +301,14 @@ public class Music {
 	}
 	
 	protected final static Sequence newSongHappy4() throws Exception {
-		final Sequence seq = new Sequence(Sequence.SMPTE_30, 1);
-		final Track track = seq.createTrack();
+		//final Sequence seq = new Sequence(Sequence.SMPTE_30, 1);
+		final Sequence seq = new Sequence(Sequence.PPQ, 96);
+		Track track = seq.createTrack();
 		Mustil.setName(track, "Happy");
 		Mustil.setCopyright(track, "Copyright (c) 2014, Andrew M. Martin");
+		//Mustil.setTimeSignature(track, 4, 2, 30, 8);
+		Mustil.setDefaultTempo(track);
+		//track = seq.createTrack();
 		int dur, keys[];
 		final int r = 7;
 		addPercussionHappy(track, r);
@@ -429,24 +433,37 @@ public class Music {
 		return seq;
 	}
 	
-	private final static void run() throws Exception {
+	private final static void run(final String[] args) throws Exception {
+		if ("load".equalsIgnoreCase(Coltil.get(args, 0))) {
+			runLoad();
+		} else {
+			runGen();
+		}
+	}
+	
+	private final static void runGen() throws Exception {
 		System.out.println("Starting");
 		final Sequence seq = newSongHappy4();
 		Mustil.save(seq, "happy.mid");
-		final Pansic music = Pangine.getEngine().getMusic();
-		music.ensureCapacity(4);
-		music.playMusic(seq);
+		final Panaudio music = Pangine.getEngine().getAudio();
+		//music.ensureCapacity(4);
+		//music.playMusic(seq);
+		new org.pandcorps.pandam.lwjgl.JavaxMidiPansound(seq).startMusic();
 		System.out.println("Started; press enter to play sound; press x and enter to stop");
 		while (!Iotil.readln().equals("x")) {
-			music.playSound(jump);
+			//music.playSound(jump);
 		}
 		music.close();
 		System.out.println("End");
 	}
 	
+	private final static void runLoad() throws Exception {
+		Pangine.getEngine().getAudio().createMusic("org/pandcorps/platform/res/music/happy.mid").startMusic();
+	}
+	
 	public final static void main(final String[] args) {
 		try {
-			run();
+			run(args);
 		} catch (final Throwable e) {
 			e.printStackTrace();
 		}

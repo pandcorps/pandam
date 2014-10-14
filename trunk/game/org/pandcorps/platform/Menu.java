@@ -927,6 +927,7 @@ public class Menu {
 	        		actor.setMirror(true);
 	        	}
 	        }
+	        PlatformGame.musicHappy.changeMusic();
 	    }
 	    
 	    private final void onAnything(final InputEvent event) {
@@ -977,6 +978,7 @@ public class Menu {
 			}
 	    	tcs.clear();
 	    	tcs = null;
+	    	Pangine.getEngine().getAudio().stopMusic();
 	    }
 	}
 	

@@ -271,6 +271,7 @@ public class PlatformGame extends BaseGame {
 	protected static Panmage greenDown = null;
 	protected static Panmage key = null;
 	protected static Panmage keyIn = null;
+	protected static Pansound musicHappy = null;
 	protected static Queue<Runnable> loaders = new LinkedList<Runnable>();
 	protected static Runnable btnLoader = null;
 	
@@ -356,11 +357,7 @@ public class PlatformGame extends BaseGame {
 					PlatformGame.notify(pc, msg);
 				}
 			}
-			//final Pangine engine = Pangine.getEngine();
-			/*if (engine.isMusicSupported()) {
-				engine.getMusic().playMusic(Music.newSongCreepy());
-			}*/
-			//engine.playMusic("org/pandcorps/platform/res/music/happy.mid");
+			musicHappy.changeMusic();
 		}
 		
 		@Override
@@ -387,11 +384,8 @@ public class PlatformGame extends BaseGame {
 		
 		@Override
 	    protected final void destroy() {
-			//final Pangine engine = Pangine.getEngine();
-			/*if (engine.isMusicSupported()) {
-				engine.getMusic().stop();
-			}*/
-			//engine.stopMusic();
+			final Pangine engine = Pangine.getEngine();
+			engine.getAudio().stopMusic();
 	        Panmage.destroy(Level.timg);
 	        Panmage.destroy(Level.bgimg);
 	    }
@@ -1355,10 +1349,10 @@ System.out.println("loadConstants end " + System.currentTimeMillis());
 			    }});
 		}
 		
-		if (engine.isMusicSupported()) {
-		    loaders.add(new Runnable() { @Override public final void run() {
-		        engine.getMusic().ensureCapacity(5); }});
-		}
+	    loaders.add(new Runnable() { @Override public final void run() {
+	        //engine.getMusic().ensureCapacity(5);
+	    	musicHappy = engine.getAudio().createMusic("org/pandcorps/platform/res/music/happy.mid");
+	    	}});
 	}
 	
 	protected final static void reloadButtons() {
