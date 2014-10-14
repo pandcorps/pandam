@@ -321,11 +321,25 @@ public final class Mustil {
 		addShort(track, ShortMessage.CONTROL_CHANGE, tick, channel, 7, vol);
 	}*/
 	
-	private final static void addMeta(final Track track, final int type, final String s) throws Exception {
+	private final static void addMeta(final Track track, final int type, final byte[] data) throws Exception {
 		final MetaMessage message = new MetaMessage();
-		final byte[] data = s.getBytes();
 		message.setMessage(type, data, data.length);
 		track.add(new MidiEvent(message, 0));
+	}
+	
+	public final static void setDefaultTempo(final Track track) throws Exception {
+		//final int microsecondsPerQuarterNote
+		//addMeta(track, 81, new byte[] {0x07, (byte) 0xA1, 0x20});
+		addMeta(track, 81, new byte[] {0x31, (byte) 0xA1, 0x20});
+	}
+	
+	public final static void setTimeSignature(final Track track,
+			final int numerator, final int denominator, final int midiClocksPerMetronomeClick, final int num32ndNotesPerBeat) throws Exception {
+		addMeta(track, 88, new byte[] {(byte) numerator, (byte) denominator, (byte) midiClocksPerMetronomeClick, (byte) num32ndNotesPerBeat});
+	}
+	
+	private final static void addMeta(final Track track, final int type, final String s) throws Exception {
+		addMeta(track, type, s.getBytes());
 	}
 	
 	public final static void setName(final Track track, final String s) throws Exception {
@@ -363,17 +377,25 @@ public final class Mustil {
 				System.out.println();
 				System.out.println(loc);
 				System.out.println("MicrosecondLength: " + seq.getMicrosecondLength());
+				System.out.println("DivisionType: " + seq.getDivisionType());
 				System.out.println("Resolution: " + seq.getResolution());
-				final Track track = seq.getTracks()[0];
-				for (int i = 0; i < 10; i++) {
-					final MidiMessage message = track.get(i).getMessage();
-					if (message instanceof MetaMessage) {
-						final MetaMessage mm = (MetaMessage) message;
-						System.out.println("Meta " + mm.getType() + "; " + new String(mm.getData()));
-					//} else if (message instanceof SysexMessage) {
-					//	((SysexMessage) message).
-					} else {
-						System.out.println(message.getClass());
+				final Track[] tracks = seq.getTracks();
+				final int tracksSize = Math.min(3, tracks.length);
+				for (int j = 0; j < tracksSize; j++) {
+					System.out.println("  Track " + j);
+					final Track track = tracks[j];
+					final int size = Math.min(20, track.size());
+					//final int size = track.size();
+					for (int i = 0; i < size; i++) {
+						final MidiMessage message = track.get(i).getMessage();
+						if (message instanceof MetaMessage) {
+							final MetaMessage mm = (MetaMessage) message;
+							System.out.println("Meta " + mm.getType() + "; " + new String(mm.getData()));
+						//} else if (message instanceof SysexMessage) {
+						//	((SysexMessage) message).
+						} else {
+							System.out.println(message.getClass());
+						}
 					}
 				}
 			}
