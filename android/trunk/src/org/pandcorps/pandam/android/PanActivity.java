@@ -134,4 +134,15 @@ public class PanActivity extends Activity {
 			deleteFile(location);
 		}
 	}
+	
+	/*protected final File getFile(final String name) {
+		for (final File f : getFilesDir().listFiles()) {
+			System.out.println("Looking for " + name + "; checking " + f.getName());
+			if (name.equals(f.getName())) {
+				return f;
+			}
+		}
+		System.out.println("Could not find " + name + "; returning null");
+		return null;
+	}*/
 }
