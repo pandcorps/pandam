@@ -27,7 +27,7 @@ import org.pandcorps.pandam.*;
 public final class AndroidPanaudio extends Panaudio {
 	@Override
 	public final Pansound createSound(final String location) {
-		return null;
+		return new SoundPoolPansound(location);
 	}
 	
 	@Override
@@ -58,6 +58,10 @@ public final class AndroidPanaudio extends Panaudio {
 	public final void close() {
 		if (JetPansound.jetPlayer != null) {
 			JetPansound.jetPlayer.release();
+    	}
+		if (SoundPoolPansound.soundPool != null) {
+			SoundPoolPansound.soundPool.release();
+			SoundPoolPansound.soundPool = null;
     	}
 	}
 }
