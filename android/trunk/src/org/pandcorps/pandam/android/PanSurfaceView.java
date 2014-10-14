@@ -24,13 +24,13 @@ package org.pandcorps.pandam.android;
 
 import org.pandcorps.pandam.*;
 
-import android.content.*;
 import android.opengl.*;
 import android.view.*;
 
 public class PanSurfaceView extends GLSurfaceView {
-	public PanSurfaceView(final Context context) {
+	public PanSurfaceView(final PanActivity context) {
 		super(context);
+		AndroidPangine.context = context;
 		setClickable(true);
 		setFocusable(true);
 		setFocusableInTouchMode(true);
