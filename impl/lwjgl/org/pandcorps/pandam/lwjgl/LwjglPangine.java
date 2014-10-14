@@ -39,6 +39,7 @@ public final class LwjglPangine extends GlPangine {
 		super(new LwjglPanteraction());
 		engine = this;
 		gl = new LwjglPangl();
+		audio = new JavaxMidiPanaudio();
 	}
 
 	public final static LwjglPangine getEngine() {
@@ -233,20 +234,6 @@ public final class LwjglPangine extends GlPangine {
     	return false;
     }
     
-    /*@Override
-    public final void playMusic(final String loc) {
-    	try {
-    		getMusic().playMusic(Mustil.load(loc));
-    	} catch (final Exception e) {
-    		throw Panception.get(e);
-    	}
-    }
-    
-    @Override
-    public final void stopMusic() {
-    	getMusic().stop();
-    }*/
-	
     @Override
 	protected void onDestroy() {
 		Display.destroy();
