@@ -28,6 +28,8 @@ import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
 
 public class Music {
+	private final static String COPYRIGHT = "Copyright (c) 2014, Andrew M. Martin";
+	
 	protected final static Sequence gem;
 	protected final static Sequence gemLevel;
 	protected final static Sequence crumble;
@@ -300,15 +302,34 @@ public class Music {
 		tick = Mustil.addRepeatedNotes(track, tick, channel, vol, dur, r, keys);
 	}
 	
-	protected final static Sequence newSongHappy4() throws Exception {
-		//final Sequence seq = new Sequence(Sequence.SMPTE_30, 1);
-		final Sequence seq = new Sequence(Sequence.PPQ, 96);
-		Track track = seq.createTrack();
-		Mustil.setName(track, "Happy");
-		Mustil.setCopyright(track, "Copyright (c) 2014, Andrew M. Martin");
+	protected final static Sequence newSequence() throws Exception {
+		return new Sequence(Sequence.PPQ, 96);
+	}
+	
+	protected final static Track newTrack(final Sequence seq, final String name) throws Exception {
+		final Track track = seq.createTrack();
+		Mustil.setName(track, name);
+		Mustil.setCopyright(track, COPYRIGHT);
 		//Mustil.setTimeSignature(track, 4, 2, 30, 8);
 		Mustil.setDefaultTempo(track);
-		//track = seq.createTrack();
+		return track;
+	}
+	
+	private final static class Song {
+		private final String name;
+		private final Sequence seq;
+		private final Track track;
+		
+		private Song(final String name) throws Exception {
+			this.name = name;
+			seq = newSequence();
+			track = newTrack(seq, name);
+		}
+	}
+	
+	protected final static Song newSongHappy4() throws Exception {
+		final Song song = new Song("Happy");
+		final Track track = song.track;
 		int dur, keys[];
 		final int r = 7;
 		addPercussionHappy(track, r);
@@ -348,7 +369,7 @@ public class Music {
 		Mustil.setInstrument(track, channel, Mustil.PRG_TROMBONE);
 		keys = new int[] {60, 64, 68, 72};
 		tick = Mustil.addRepeatedNotes(track, tick, channel, vol, dur, r, keys);*/
-		return seq;
+		return song;
 	}
 	
 	// Map/Menu - 2 0 2 0 2 2 2 0 3 00000 2 0 2 0 2 2 2 0 1 00000 2 0 2 0 2 2 2 0 3 0 0 0 2 2 2 0 3
@@ -376,6 +397,22 @@ public class Music {
 				-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, n4, n3, n2, n};
 		tick = Mustil.addNotes(track, tick, channel, vol, dur, keys);*/
 		return seq;
+	}
+	
+	protected final static Song newSongHeartbeat() throws Exception {
+		final Song song = new Song("Heartbeat");
+		final Track track = song.track;
+		Mustil.unspecifiedNoteDuration = 56;
+		channel = 0;
+		vol = Mustil.VOL_MAX;
+		deltaTick = 8;
+		Mustil.setInstrument(track, channel, Mustil.PRG_ELECTRIC_PIANO_1);
+		final int n = 32;
+		Mustil.addNotes(track, 0, channel, vol, deltaTick,
+				n, n, -1, -1, -1, -1, -1, -1);
+		Mustil.addPercussionsAtVolume(track, 0, 48, deltaTick,
+				-1, -1, -1, -1, -1, Mustil.PRC_HIGH_BONGO, -1, -1);
+		return song;
 	}
 	
 	private final static Sequence newFxGem(final int mag) throws Exception {
@@ -443,12 +480,12 @@ public class Music {
 	
 	private final static void runGen() throws Exception {
 		System.out.println("Starting");
-		final Sequence seq = newSongHappy4();
-		Mustil.save(seq, "happy.mid");
+		final Song song = newSongHeartbeat(); //newSongHappy4();
+		Mustil.save(song.seq, song.name.toLowerCase() + ".mid");
 		final Panaudio music = Pangine.getEngine().getAudio();
 		//music.ensureCapacity(4);
 		//music.playMusic(seq);
-		new org.pandcorps.pandam.lwjgl.JavaxMidiPansound(seq).startMusic();
+		new org.pandcorps.pandam.lwjgl.JavaxMidiPansound(song.seq).startMusic();
 		System.out.println("Started; press enter to play sound; press x and enter to stop");
 		while (!Iotil.readln().equals("x")) {
 			//music.playSound(jump);

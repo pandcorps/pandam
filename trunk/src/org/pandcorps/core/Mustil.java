@@ -275,10 +275,18 @@ public final class Mustil {
 	}
 	
 	public final static void addPercussion(final Track track, final long tick, final int dur, final int key) throws Exception {
-		addNote(track, tick, dur, CHN_PERCUSSION, key, VOL_MAX);
+		addPercussionAtVolume(track, tick, dur, key, VOL_MAX);
+	}
+	
+	public final static void addPercussionAtVolume(final Track track, final long tick, final int dur, final int key, final int vol) throws Exception {
+		addNote(track, tick, dur, CHN_PERCUSSION, key, vol);
 	}
 	
 	public final static long addPercussions(final Track track, final long firstTick, final int deltaTick, final int... keys) throws Exception {
+		return addPercussionsAtVolume(track, firstTick, VOL_MAX, deltaTick, keys);
+	}
+	
+	public final static long addPercussionsAtVolume(final Track track, final long firstTick, final int vol, final int deltaTick, final int... keys) throws Exception {
 		long tick = firstTick;
 		final int size = keys.length;
 		for (int i = 0; i < size; i++) {
@@ -286,7 +294,7 @@ public final class Mustil {
 			if (key != -1) {
 				int j = i + 1;
 				for (; j < size && keys[j] != -1; j++);
-				addPercussion(track, tick, deltaTick * (j - i), key);
+				addPercussionAtVolume(track, tick, deltaTick * (j - i), key, vol);
 			}
 			tick += deltaTick;
 		}
