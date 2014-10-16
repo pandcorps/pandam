@@ -1351,7 +1351,10 @@ System.out.println("loadConstants end " + System.currentTimeMillis());
 		
 	    loaders.add(new Runnable() { @Override public final void run() {
 	        //engine.getMusic().ensureCapacity(5);
-	    	musicHappy = engine.getAudio().createMusic("org/pandcorps/platform/res/music/happy.mid");
+	    	final Panaudio audio = engine.getAudio();
+	    	musicHappy = audio.createMusic("org/pandcorps/platform/res/music/happy.mid");
+	    	audio.setMusicEnabled(false);
+	    	audio.setSoundEnabled(false);
 	    	}});
 	}
 	
