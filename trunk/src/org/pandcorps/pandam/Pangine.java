@@ -1041,7 +1041,12 @@ public abstract class Pangine {
     }
 	
 	public final String getFatalLog() {
-	    return Iotil.read(LOG_FATAL);
+	    if (Iotil.exists(LOG_FATAL)) {
+	        final String log = Iotil.read(LOG_FATAL);
+	        Iotil.delete(LOG_FATAL);
+	        return log;
+	    }
+	    return null;
 	}
 
 	public abstract void exit();
