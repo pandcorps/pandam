@@ -922,7 +922,13 @@ public class Menu {
 	        }
 	        final String log = engine.getFatalLog();
             if (log != null) {
-                engine.setClipboard("Please send this to " + getEmail() + log);
+            	final String email = PlatformGame.getEmail();
+            	addTitleTiny("Oh no!", 4, bottom + 48);
+            	addTitleTiny("It looks like the game crashed the last time you played.", 4, bottom + 42);
+            	addTitleTiny("We've copied an error report into your clipboard.", 4, bottom + 36);
+            	addTitleTiny("Please paste it into an email & send it to " + email + ".", 4, bottom + 30);
+            	addTitleTiny("We'll try to fix it!", 4, bottom + 24);
+                engine.setClipboard("Please send this to " + email + Iotil.BR + log);
             }
 	        for (int i = 0; i < NUM_CHRS; i++) {
 	        	final PlayerContext tc = tcs.get(i);
