@@ -436,6 +436,30 @@ public class Music {
 		return song;
 	}
 	
+	protected final static Song newSongOcarina() throws Exception {
+		final Song song = new Song("Ocarina");
+		final Track track = song.track;
+		Mustil.unspecifiedNoteDuration = 16;
+		channel = 0;
+		vol = 64;
+		deltaTick = 8;
+		Mustil.setInstrument(track, channel, Mustil.PRG_OCARINA);
+		tick = 0;
+		final int n1 = 72, n2 = 76, n3 = 80;
+		tick = Mustil.addNotes(track, tick, channel, vol, deltaTick,
+				n1, -1, n2, -1, n1, n1, n2, -1,
+				n1, n1, n2, n2, n3, n3, n2, -1,
+				n1, -1, n2, -1, n1, n1, n2, -1,
+				n1, -1, n2, -1, n3, -1, -1, -1);
+		tick = 0;
+		deltaTick = 16;
+		final int p1 = Mustil.PRC_HAND_CLAP, p2 = Mustil.PRC_HIGH_BONGO;
+		tick = Mustil.addPercussionsAtVolume(track, tick, 28, deltaTick,
+				p1, p2, p1, p2, p1, p2, p1, p2,
+				p1, p2, p1, p2, p1, p2, p1, p2);
+		return song;
+	}
+	
 	private final static Sequence newFxGem(final int mag) throws Exception {
 		//Mustil.PRG_MUSIC_BOX, key = 64, dur = 8
 		final int channel = 0, vol = 64;
@@ -501,7 +525,7 @@ public class Music {
 	
 	private final static void runGen() throws Exception {
 		System.out.println("Starting");
-		final Song song = newSongChant(); //newSongHappy4();
+		final Song song = newSongOcarina(); //newSongHappy4();
 		Mustil.save(song.seq, song.name.toLowerCase() + ".mid");
 		final Panaudio music = Pangine.getEngine().getAudio();
 		//music.ensureCapacity(4);
