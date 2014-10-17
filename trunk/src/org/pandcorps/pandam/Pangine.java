@@ -1033,7 +1033,7 @@ public abstract class Pangine {
 	    }
 	    PrintWriter w = null;
 	    try {
-    	    Iotil.getPrintWriter(LOG_FATAL);
+    	    w = Iotil.getPrintWriter(LOG_FATAL);
     	    cause.printStackTrace(w);
 	    } finally {
 	        Iotil.close(w);
