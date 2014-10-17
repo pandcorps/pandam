@@ -256,6 +256,22 @@ public final class LwjglPangine extends GlPangine {
     private final LwjglOwner clipboardOwner = new LwjglOwner();
     
     @Override
+    public final String getClipboard() {
+        //return (String) Toolkit.getDefaultToolkit().getSystemClipboard().getData(DataFlavor.stringFlavor);
+        final Transferable value = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(clipboardOwner);
+        if (value == null) {
+            return null;
+        } else if (value.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+            try {
+                return (String) value.getTransferData(DataFlavor.stringFlavor);
+            } catch (final Exception e) {
+                throw Pantil.toRuntimeException(e);
+            }
+        }
+        return value.toString();
+    }
+    
+    @Override
     public final void setClipboard(final String value) {
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(value), clipboardOwner);
     }
