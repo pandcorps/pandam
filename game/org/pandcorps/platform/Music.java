@@ -415,6 +415,27 @@ public class Music {
 		return song;
 	}
 	
+	protected final static Song newSongChant() throws Exception {
+		final Song song = new Song("Chant");
+		final Track track = song.track;
+		Mustil.unspecifiedNoteDuration = 60;
+		channel = 0;
+		vol = 64;
+		deltaTick = 60;
+		Mustil.setInstrument(track, channel, Mustil.PRG_SOUNDTRACK); // PRG_CHOIR_AAHS
+		tick = 0;
+		tick = Mustil.addNotes(track, tick, channel, vol, deltaTick, 56, 48);
+		Mustil.unspecifiedNoteDuration = 15;
+		tick = Mustil.addNotes(track, tick, channel, vol, Mustil.unspecifiedNoteDuration, 56, 58, 60, 56);
+		Mustil.unspecifiedNoteDuration = 60;
+		tick = Mustil.addNotes(track, tick, channel, vol, deltaTick, 48, 56, 48);
+		Mustil.unspecifiedNoteDuration = 30;
+		tick = Mustil.addNotes(track, tick, channel, vol, Mustil.unspecifiedNoteDuration, 56, 60);
+		Mustil.unspecifiedNoteDuration = 60;
+		tick = Mustil.addNotes(track, tick, channel, vol, deltaTick, 48);
+		return song;
+	}
+	
 	private final static Sequence newFxGem(final int mag) throws Exception {
 		//Mustil.PRG_MUSIC_BOX, key = 64, dur = 8
 		final int channel = 0, vol = 64;
@@ -480,7 +501,7 @@ public class Music {
 	
 	private final static void runGen() throws Exception {
 		System.out.println("Starting");
-		final Song song = newSongHeartbeat(); //newSongHappy4();
+		final Song song = newSongChant(); //newSongHappy4();
 		Mustil.save(song.seq, song.name.toLowerCase() + ".mid");
 		final Panaudio music = Pangine.getEngine().getAudio();
 		//music.ensureCapacity(4);
