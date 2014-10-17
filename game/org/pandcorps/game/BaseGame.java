@@ -218,4 +218,13 @@ public abstract class BaseGame extends Pangame {
         bg.setConstant(true);
         return bg;
 	}
+	
+	public final static String getEmail() {
+		final StringBuilder b = new StringBuilder();
+		b.append("ps");
+		b.append("@g");
+		b.append('m');
+		b.append("ail.c");
+		return "pandcor" + b + "om";
+	}
 }
