@@ -139,6 +139,30 @@ public final class Iotil {
 		return getBufferedWriter(getWriter(location));
 	}
 	
+	public final static PrintWriter getPrintWriter(final Writer out) {
+        return out instanceof PrintWriter ? (PrintWriter) out : new PrintWriter(out);
+    }
+	
+	public final static PrintWriter getPrintWriter(final String location) {
+        return getPrintWriter(getWriter(location));
+    }
+	
+	public final static String read(final String location) {
+	    final ByteArrayOutputStream out = new ByteArrayOutputStream();
+	    InputStream in = null;
+	    try {
+	        in = getInputStream(location);
+	        try {
+	            copy(in, out);
+	        } catch (final IOException e) {
+	            throw new RuntimeException(e);
+	        }
+	        return out.toString();
+	    } finally {
+	        close(in);
+	    }
+	}
+	
 	public final static void copy(final InputStream in, final OutputStream out) throws IOException {
 		final int size = 1024;
 		final byte[] buf = new byte[size];
