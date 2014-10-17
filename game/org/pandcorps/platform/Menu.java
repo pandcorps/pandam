@@ -920,6 +920,10 @@ public class Menu {
 		        	onAnything(event);
 		        }});
 	        }
+	        final String log = engine.getFatalLog();
+            if (log != null) {
+                engine.setClipboard("Please send this to " + getEmail() + log);
+            }
 	        for (int i = 0; i < NUM_CHRS; i++) {
 	        	final PlayerContext tc = tcs.get(i);
 		        final Panctor actor = addActor(tc, PlatformGame.SCREEN_W * (i + 1) / (NUM_CHRS + 1));
