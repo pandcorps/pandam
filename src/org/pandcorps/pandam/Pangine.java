@@ -22,6 +22,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandam;
 
+import java.io.*;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -71,7 +72,10 @@ public abstract class Pangine {
 	protected String screenShotDst = null;
 	protected int screenShotInd = -1;
 	
+	private final static String LOG_FATAL = "log.fatal.txt";
+	
 	protected Runnable uncaughtBackHandler = null;
+	private boolean fatalLogged = false;
 
 	static {
 		int i = 0;
@@ -1001,6 +1005,8 @@ public abstract class Pangine {
 		screenShotDst = null;
 	}
 	
+	public abstract void setClipboard(final String value);
+	
 	public abstract void setTitle(final String title);
 	
 	public abstract void setIcon(final String... locations);
@@ -1014,11 +1020,32 @@ public abstract class Pangine {
 	public final void setUncaughtBackHandler(final Runnable uncaughtBackHandler) {
 		this.uncaughtBackHandler = uncaughtBackHandler;
 	}
+	
+	public final void setFatalLogged(final boolean fatalLogged) {
+	    this.fatalLogged = fatalLogged;
+	}
+	
+	public final void onFatal(final Throwable cause) {
+	    if (!fatalLogged) {
+	        return;
+	    }
+	    PrintWriter w = null;
+	    try {
+    	    Iotil.getPrintWriter(LOG_FATAL);
+    	    cause.printStackTrace(w);
+	    } finally {
+	        Iotil.close(w);
+	    }
+    }
+	
+	public final String getFatalLog() {
+	    return Iotil.read(LOG_FATAL);
+	}
 
 	public abstract void exit();
 	
 	public abstract void exit(final Throwable cause);
-
+	
 	public final Panple getMaxRoomSize() {
 		return maxRoomSize;
 	}
