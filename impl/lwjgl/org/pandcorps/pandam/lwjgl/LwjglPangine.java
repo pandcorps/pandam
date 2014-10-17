@@ -22,6 +22,8 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandam.lwjgl;
 
+import java.awt.Toolkit;
+import java.awt.datatransfer.*;
 import java.nio.*;
 import java.util.*;
 
@@ -244,6 +246,19 @@ public final class LwjglPangine extends GlPangine {
 	protected void update() {
 		Display.update();
 	}
+    
+    private final static class LwjglOwner implements ClipboardOwner {
+        @Override
+        public final void lostOwnership(final Clipboard clipboard, final Transferable contents) {
+        }
+    }
+    
+    private final LwjglOwner clipboardOwner = new LwjglOwner();
+    
+    @Override
+    public final void setClipboard(final String value) {
+        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(value), clipboardOwner);
+    }
 	
 	@Override
 	public final void setTitle(final String title) {
