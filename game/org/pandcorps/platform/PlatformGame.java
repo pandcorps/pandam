@@ -288,6 +288,9 @@ public class PlatformGame extends BaseGame {
 	@Override
 	protected final void init(final Panroom room) throws Exception {
 	    final Pangine engine = Pangine.getEngine();
+	    if (engine.isTouchSupported()) {
+	        engine.setFatalLogged(true);
+	    }
 	    engine.setTitle("Platformer");
 	    engine.setEntityMapEnabled(false);
 	    Imtil.onlyResources = true;
