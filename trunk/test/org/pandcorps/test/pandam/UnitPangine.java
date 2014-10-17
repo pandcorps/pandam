@@ -154,6 +154,15 @@ public final class UnitPangine extends Pangine {
 	//}
 	
 	@Override
+	public final String getClipboard() {
+	    return null;
+	}
+    
+	@Override
+    public final void setClipboard(final String value) {
+    }
+	
+	@Override
 	public final void setTitle(final String title) {
 	}
 	
