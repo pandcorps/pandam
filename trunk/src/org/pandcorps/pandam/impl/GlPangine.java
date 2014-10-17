@@ -355,6 +355,15 @@ public abstract class GlPangine extends Pangine {
 	}
 	
 	public final void frame() throws Exception {
+	    try {
+	        onFrame();
+	    } catch (final Exception e) {
+	        onFatal(e);
+	        throw e;
+	    }
+	}
+	
+	public final void onFrame() throws Exception {
 		//final long frameStart = System.currentTimeMillis();
 	    //final long frameStartNano = System.nanoTime();
 		//System.out.println(System.currentTimeMillis());
