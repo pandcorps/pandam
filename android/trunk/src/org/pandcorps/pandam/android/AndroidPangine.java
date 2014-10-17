@@ -29,6 +29,8 @@ import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.impl.*;
 
+import android.content.*;
+
 public class AndroidPangine extends GlPangine {
 	protected static AndroidPangine engine = null;
 	protected static PanActivity context = null;
@@ -302,6 +304,22 @@ public class AndroidPangine extends GlPangine {
 	
     @Override
 	protected void update() {
+	}
+    
+    private final ClipboardManager getClipboardManager() {
+    	return (ClipboardManager) context.getSystemService(PanActivity.CLIPBOARD_SERVICE);
+    }
+    
+    @SuppressWarnings("deprecation")
+    @Override
+    public final String getClipboard() {
+    	return Chartil.toString(getClipboardManager().getText());
+	}
+	
+    @SuppressWarnings("deprecation")
+	@Override
+	public final void setClipboard(final String value) {
+    	getClipboardManager().setText(value); // Deprecated in 11, but we're supporting 8
 	}
 	
 	@Override
