@@ -29,7 +29,7 @@ import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.impl.*;
 
-import android.content.*;
+import android.text.*;
 
 public class AndroidPangine extends GlPangine {
 	protected static AndroidPangine engine = null;
@@ -177,7 +177,8 @@ public class AndroidPangine extends GlPangine {
     	}
     	
     	protected final FileInputStream openInputStream() throws Exception {
-    		return context.openFileInput(fileName);
+    		//return context.openFileInput(fileName);
+    		return new FileInputStream(fileName); // We use cache directory, not app's private directory
     	}
     }
     
@@ -277,6 +278,7 @@ public class AndroidPangine extends GlPangine {
 	protected void update() {
 	}
     
+    @SuppressWarnings("deprecation")
     private final ClipboardManager getClipboardManager() {
     	return (ClipboardManager) context.getSystemService(PanActivity.CLIPBOARD_SERVICE);
     }
