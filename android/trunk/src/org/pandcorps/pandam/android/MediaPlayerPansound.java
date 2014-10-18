@@ -22,51 +22,51 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandam.android;
 
+import java.io.*;
+
+import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.android.AndroidPangine.*;
 
-public final class AndroidPanaudio extends Panaudio {
-	@Override
-	public final Pansound createSound(final String location) {
-		return new SoundPoolPansound(location);
-	}
-	
-	@Override
-	public final Pansound createMusic(final String location) {
-		return new JetPansound(location);
-	}
-	
-	@Override
-	public final Pansound createTransition(final String location) {
-		return new MediaPlayerPansound(location);
-	}
+import android.media.*;
 
-	@Override
-	protected final void setEnabled(final boolean music, final boolean enabled) {
-		if (enabled) {
-			return;
-		} else if (music && JetPansound.jetPlayer != null) {
-			JetPansound.jetPlayer.pause();
-			JetPansound.jetPlayer.clearQueue();
-			if (!JetPansound.jetPlayer.closeJetFile()) {
-				throw new Panception("Failed to close Jet file");
-			}
-		}
-	}
-
-	@Override
-	public final void stop() {
-		setEnabled(false, false);
-		setEnabled(true, false);
-	}
+public class MediaPlayerPansound extends Pansound {
+	private final MediaPlayer mediaPlayer = new MediaPlayer();
 	
-	@Override
-	public final void close() {
-		if (JetPansound.jetPlayer != null) {
-			JetPansound.jetPlayer.release();
+	protected MediaPlayerPansound(final String loc) {
+		FileInputStream in = null;
+    	try {
+    		final CopyResult cr = AndroidPangine.copyResourceToFile(loc);
+    		mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+    		//final String uri = Iotil.class.getClassLoader().getResource(loc).toURI().toString();
+    		//mediaPlayer.setDataSource(context, Uri.parse(uri));
+    		in = cr.openInputStream();
+    		mediaPlayer.setDataSource(in.getFD());
+    		in.close();
+    		mediaPlayer.prepare(); // prepareAsync()
+    	} catch (final Exception e) {
+    		throw Panception.get(e);
+    	} finally {
+    		Iotil.close(in);
     	}
-		if (SoundPoolPansound.soundPool != null) {
-			SoundPoolPansound.soundPool.release();
-			SoundPoolPansound.soundPool = null;
-    	}
+	}
+	
+	@Override
+	protected final void runMusic() throws Exception {
+		run(true);
+	}
+
+	@Override
+	protected final void runSound() throws Exception {
+		run(false);
+	}
+	
+	private final void run(final boolean looping) {
+		mediaPlayer.setLooping(looping); // Has gap
+		//mediaPlayer.setOnCompletionListener(new OnCompletionListener() {
+		//	@Override public final void onCompletion(final MediaPlayer mp) {
+		//		mediaPlayer.start();
+		//	}}); // Still has gap
+		mediaPlayer.start();
 	}
 }

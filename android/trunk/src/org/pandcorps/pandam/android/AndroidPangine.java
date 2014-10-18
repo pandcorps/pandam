@@ -36,7 +36,6 @@ public class AndroidPangine extends GlPangine {
 	protected static PanActivity context = null;
 	protected static int desktopWidth = 0;
 	protected static int desktopHeight = 0;
-	//private static MediaPlayer mediaPlayer = null;
 	private static Set<String> cacheFiles = null;
 	
 	protected AndroidPangine() {
@@ -81,34 +80,6 @@ public class AndroidPangine extends GlPangine {
     }
     
     //public final void playMusic(/*final*/ String loc) {
-    	/*if (mediaPlayer == null) {
-    		mediaPlayer = new MediaPlayer(); // MediaPlayer.create(context, uri);
-    	} else {
-    		stopMusic();
-    	}
-    	FileInputStream in = null;
-    	try {
-    		final CopyResult cr = copyResourceToFile(loc);
-    		mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-    		//final String uri = Iotil.class.getClassLoader().getResource(loc).toURI().toString();
-    		//System.out.println(uri);
-    		//mediaPlayer.setDataSource(context, Uri.parse(uri));
-    		in = cr.openInputStream();
-    		mediaPlayer.setDataSource(in.getFD());
-    		in.close();
-    		mediaPlayer.prepare(); // prepareAsync()
-    		mediaPlayer.setLooping(true); // Has gap
-    		//mediaPlayer.setOnCompletionListener(new OnCompletionListener() {
-			//	@Override public final void onCompletion(final MediaPlayer mp) {
-			//		mediaPlayer.start();
-			//	}}); // Still has gap
-    		mediaPlayer.start();
-    	} catch (final Exception e) {
-    		throw Panception.get(e);
-    	} finally {
-    		Iotil.close(in);
-    	}*/
-    	
     	/*InputStream in = null;
     	Parcel parcel = null;
     	ParcelFileDescriptor pfd = null;
