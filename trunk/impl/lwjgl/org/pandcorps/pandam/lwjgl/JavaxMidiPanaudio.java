@@ -47,6 +47,11 @@ public class JavaxMidiPanaudio extends Panaudio {
 	}
 	
 	@Override
+	public final Pansound createTransition(final String location) {
+		return createSound(location);
+	}
+	
+	@Override
 	protected final void setEnabled(final boolean music, final boolean enabled) {
 	    if (enabled) {
 	        return;
