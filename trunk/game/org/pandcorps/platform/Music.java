@@ -412,8 +412,8 @@ public class Music {
 		channel = 0;
 		vol = Mustil.VOL_MAX;
 		deltaTick = 8;
-		Mustil.setInstrument(track, channel, Mustil.PRG_ELECTRIC_PIANO_1);
-		final int n = 32;
+		Mustil.setInstrument(track, channel, Mustil.PRG_ACOUSTIC_BASS); // PRG_ELECTRIC_PIANO_1
+		final int n = 40; // 32
 		Mustil.addNotes(track, 0, channel, vol, deltaTick,
 				n, n, -1, -1, -1, -1, -1, -1);
 		Mustil.addPercussionsAtVolume(track, 0, 48, deltaTick,
@@ -641,7 +641,7 @@ public class Music {
 	
 	private final static void runGen() throws Exception {
 		System.out.println("Starting");
-		final Song song = newSongLevelEnd();
+		final Song song = newSongHeartbeat();
 		Mustil.save(song.seq, song.name.toLowerCase() + ".mid");
 		final Panaudio music = Pangine.getEngine().getAudio();
 		//music.ensureCapacity(4);
