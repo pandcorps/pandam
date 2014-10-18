@@ -278,7 +278,7 @@ public class Music {
 	}
 	
 	protected final static void addPercussionHappy(final Track track, final int r) throws Exception {
-		vol = 64;
+		vol = 56;
 		channel = Mustil.CHN_PERCUSSION;
 		tick = 0;
 		final int dur = 4;
@@ -296,7 +296,7 @@ public class Music {
 	}
 	
 	protected final static void addBell(final Track track, final int r) throws Exception {
-		vol = 88;
+		vol = 76;
 		channel = 2;
 		Mustil.setInstrument(track, channel, Mustil.PRG_TUBULAR_BELLS);
 		final int dur = 8;
@@ -348,11 +348,10 @@ public class Music {
 		Mustil.unspecifiedNoteDuration = 8;
 		/*tick = 128;
 		addBell(track, r - 1);*/
-		vol = 56;
 		tick = 0;
 		addBell(track, r);
 		tick = 128;
-		vol = 80;
+		vol = 60;
 		channel = 1;
 		Mustil.setInstrument(track, channel, Mustil.PRG_HONKY_TONK_PIANO);
 		key = 62; // 68
@@ -641,7 +640,7 @@ public class Music {
 	
 	private final static void runGen() throws Exception {
 		System.out.println("Starting");
-		final Song song = newSongHeartbeat();
+		final Song song = newSongMenu();
 		Mustil.save(song.seq, song.name.toLowerCase() + ".mid");
 		final Panaudio music = Pangine.getEngine().getAudio();
 		//music.ensureCapacity(4);

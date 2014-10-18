@@ -201,7 +201,7 @@ public class Menu {
 				//sub = addCircleButton(room, "Sub", r - d, engine.getEffectiveHeight() - d, input, act, ctrl.getSubmit());
 				final Panple ts = PlatformGame.menu.getSize();
 				final int tw = (int) ts.getX(), t = engine.getEffectiveHeight();
-				act2 = newFormButton(room, "Act2", r - tw, t - (int) ts.getY(), PlatformGame.menuMenu, "Menu");
+				act2 = newFormButton(room, "Act2", r - tw, t - (int) ts.getY(), PlatformGame.menuQuestion, "Menu");
 				newFormButton(room, "Goals", r - (tw * 2), t - 19, PlatformGame.gemGoal[0], new Runnable() {
                     @Override public final void run() {
                         PlatformGame.goGoals(PlatformGame.pcs.get(0)); }}).getActorOverlay().getPosition().addY(-10);
@@ -1193,7 +1193,7 @@ public class Menu {
 				}
 				newTab(PlatformGame.menuInfo, "Info", new Runnable() {@Override public final void run() {goInfo();}});
 				if (isPlayer1()) {
-				    newTab(PlatformGame.menuMenu, "Menu", new Runnable() {@Override public final void run() {goOptions();}});
+				    newTab(PlatformGame.menuMenu, "Setup", new Runnable() {@Override public final void run() {goOptions();}});
 					newTab(PlatformGame.menuOff, "Quit", new Runnable() {@Override public final void run() {quit();}});
 				}
 			}
@@ -2408,6 +2408,7 @@ public class Menu {
             addTitle(msgBtnSize, x + btnW + 8, y);
             
             newTab(PlatformGame.menuCheck, "Done", new Runnable() {@Override public final void run() {exit();}});
+            newTab(PlatformGame.menuMusic, "Music", new Runnable() {@Override public final void run() {goMusic();}});
             if (pc.profile.consoleEnabled) {
             	newTab(PlatformGame.menuKeyboard, "Debug", new Runnable() {@Override public final void run() {goConsole();}});
             }
@@ -2416,6 +2417,10 @@ public class Menu {
         }
         
         protected final void menuClassic() {
+        }
+        
+        private final void goMusic() {
+            Panscreen.set(new MusicScreen(pc));
         }
         
         private final void goConsole() {
@@ -2507,6 +2512,88 @@ public class Menu {
             }
         	save();
             goProfile();
+        }
+	}
+	
+	protected final static class MusicScreen extends PlayerScreen {
+		private final StringBuilder msgMusic = new StringBuilder();
+		private final StringBuilder msgSound = new StringBuilder();
+		private final boolean oldMusic = Config.musicEnabled;
+		private final boolean oldSound = Config.soundEnabled;
+	    
+        protected MusicScreen(final PlayerContext pc) {
+            super(pc, false);
+            tabsSupported = true;
+        }
+        
+        @Override
+        protected final void menu() {
+            if (isTabEnabled()) {
+                menuTouch();
+            } else {
+                menuClassic();
+            }
+        }
+        
+        protected final void menuTouch() {
+            final Pangine engine = Pangine.getEngine();
+            final Panple btnSize = PlatformGame.menu.getSize();
+            final int btnW = (int) btnSize.getX(), btnH = (int) btnSize.getY(), offY = btnH * 5 / 4;
+            int x = btnW / 2, y = engine.getEffectiveHeight() - btnH - offY;
+            
+            newFormButton("MusicToggle", x, y, PlatformGame.menuMusic, new Runnable() {@Override public final void run() {toggleMusic();}});
+            addTitle(msgMusic, x + btnW + 8, y);
+            setMessageMusic();
+            
+            y -= offY;
+            newFormButton("SoundToggle", x, y, PlatformGame.menuSound, new Runnable() {@Override public final void run() {toggleSound();}});
+            addTitle(msgSound, x + btnW + 8, y);
+            setMessageSound();
+            
+            newTab(PlatformGame.menuCheck, "Done", new Runnable() {@Override public final void run() {exit();}});
+            newTabs();
+            registerBackExit();
+        }
+        
+        protected final void menuClassic() {
+        }
+        
+        private final void toggleMusic() {
+        	Config.setMusicEnabled(!Config.musicEnabled);
+        	setMessageMusic();
+        }
+        
+        private final void setMessageMusic() {
+        	final String s;
+        	if (Config.musicEnabled) {
+        		s = "Music is on";
+        	} else {
+        		s = "Music is off";
+        	}
+        	Chartil.set(msgMusic, s);
+        }
+        
+        private final void toggleSound() {
+        	Config.setSoundEnabled(!Config.soundEnabled);
+        	setMessageSound();
+        }
+        
+        private final void setMessageSound() {
+        	final String s;
+        	if (Config.soundEnabled) {
+        		s = "Sound is on";
+        	} else {
+        		s = "Sound is off";
+        	}
+        	Chartil.set(msgSound, s);
+        }
+        
+        @Override
+        protected void onExit() {
+            if (oldMusic != Config.musicEnabled || oldSound != Config.soundEnabled) {
+                Config.serialize();
+            }
+            goOptions();
         }
 	}
 	
@@ -2627,19 +2714,19 @@ public class Menu {
 				msg = MSG_OK;
 			} else if ("addmusic".equalsIgnoreCase(cmd)) {
 				Config.setMusicEnabled(true);
-				save();
+				Config.serialize();
 				msg = MSG_OK;
 			} else if ("nomusic".equalsIgnoreCase(cmd)) {
 				Config.setMusicEnabled(false);
-				save();
+				Config.serialize();
 				msg = MSG_OK;
 			} else if ("addsound".equalsIgnoreCase(cmd)) {
 				Config.setSoundEnabled(true);
-				save();
+				Config.serialize();
 				msg = MSG_OK;
 			} else if ("nosound".equalsIgnoreCase(cmd)) {
 				Config.setSoundEnabled(false);
-				save();
+				Config.serialize();
 				msg = MSG_OK;
 			} else if ("save".equalsIgnoreCase(cmd)) {
 			    save();
