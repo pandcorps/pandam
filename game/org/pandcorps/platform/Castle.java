@@ -66,6 +66,11 @@ public class Castle {
             Menu.PlayerScreen.registerBackPromptQuit(tm);
             draw();
             PlatformGame.fadeIn(room);
+            getMusic().changeMusic();
+        }
+        
+        protected Pansound getMusic() {
+        	return PlatformGame.musicHeartbeat;
         }
         
         protected TileMap newTileMap() {
@@ -109,6 +114,11 @@ public class Castle {
                 "through the Chaos Gate back to",
                 "the original side! I am ",
                 "forever in your debt."));
+        }
+        
+        @Override
+        protected final Pansound getMusic() {
+        	return PlatformGame.musicChant;
         }
         
         @Override
