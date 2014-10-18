@@ -271,7 +271,13 @@ public class PlatformGame extends BaseGame {
 	protected static Panmage greenDown = null;
 	protected static Panmage key = null;
 	protected static Panmage keyIn = null;
+	protected static Pansound musicMenu = null;
 	protected static Pansound musicHappy = null;
+	protected static Pansound musicHeartbeat = null;
+	protected static Pansound musicOcarina = null;
+	protected static Pansound musicChant = null;
+	protected static Pansound musicLevelStart = null;
+	protected static Pansound musicLevelEnd = null;
 	protected static Queue<Runnable> loaders = new LinkedList<Runnable>();
 	protected static Runnable btnLoader = null;
 	
@@ -360,7 +366,7 @@ public class PlatformGame extends BaseGame {
 					PlatformGame.notify(pc, msg);
 				}
 			}
-			musicHappy.changeMusic();
+			Level.theme.getMusic().changeMusic();
 		}
 		
 		@Override
@@ -960,6 +966,8 @@ public class PlatformGame extends BaseGame {
         Config.btnSize = cfg.getInt(1, 0);
         Config.zoomMag = cfg.getInt(2, -1);
         zoomMag = Config.zoomMag;
+        Config.setMusicEnabled(cfg.getBoolean(3, true));
+        Config.setSoundEnabled(cfg.getBoolean(4, true));
 	}
 	
 	private final static void loadConstants() throws Exception {
@@ -1355,9 +1363,13 @@ System.out.println("loadConstants end " + System.currentTimeMillis());
 	    loaders.add(new Runnable() { @Override public final void run() {
 	        //engine.getMusic().ensureCapacity(5);
 	    	final Panaudio audio = engine.getAudio();
+	    	musicMenu = audio.createMusic("org/pandcorps/platform/res/music/menu.mid");
 	    	musicHappy = audio.createMusic("org/pandcorps/platform/res/music/happy.mid");
-	    	audio.setMusicEnabled(false);
-	    	audio.setSoundEnabled(false);
+	    	musicHeartbeat = audio.createMusic("org/pandcorps/platform/res/music/heartbeat.mid");
+	    	musicOcarina = audio.createMusic("org/pandcorps/platform/res/music/ocarina.mid");
+	    	musicChant = audio.createMusic("org/pandcorps/platform/res/music/chant.mid");
+	    	musicLevelStart = audio.createTransition("org/pandcorps/platform/res/music/levelstart.mid");
+	    	musicLevelEnd = audio.createTransition("org/pandcorps/platform/res/music/levelend.mid");
 	    	}});
 	}
 	
@@ -1678,6 +1690,18 @@ System.out.println("loadConstants end " + System.currentTimeMillis());
 	        }
 	    }
 	    return null;
+	}
+	
+	protected final static void playMenuMusic() {
+		if (Pangine.getEngine().getAudio().getMusic() == musicChant) {
+			return;
+		}
+		musicMenu.changeMusic();
+	}
+	
+	protected final static void playTransition(final Pansound music) {
+		Pangine.getEngine().getAudio().stopMusic();
+    	music.startSound();
 	}
 	
 	public final static void main(final String[] args) {

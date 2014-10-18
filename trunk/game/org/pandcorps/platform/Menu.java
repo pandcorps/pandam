@@ -143,6 +143,7 @@ public class Menu {
 			if (fadeIn) {
 			    PlatformGame.fadeIn(room, SPEED_MENU_FADE);
 			}
+			PlatformGame.playMenuMusic();
 		}
 		
 		protected final int getTop() {
@@ -937,7 +938,6 @@ public class Menu {
 	        		actor.setMirror(true);
 	        	}
 	        }
-	        PlatformGame.musicHappy.changeMusic();
 	    }
 	    
 	    private final void onAnything(final InputEvent event) {
@@ -988,7 +988,6 @@ public class Menu {
 			}
 	    	tcs.clear();
 	    	tcs = null;
-	    	Pangine.getEngine().getAudio().stopMusic();
 	    }
 	}
 	
@@ -2624,6 +2623,22 @@ public class Menu {
 				msg = setMapTheme(MapTheme.Normal);
 			} else if ("noconsole".equalsIgnoreCase(cmd)) {
 				pc.profile.consoleEnabled = false;
+				save();
+				msg = MSG_OK;
+			} else if ("addmusic".equalsIgnoreCase(cmd)) {
+				Config.setMusicEnabled(true);
+				save();
+				msg = MSG_OK;
+			} else if ("nomusic".equalsIgnoreCase(cmd)) {
+				Config.setMusicEnabled(false);
+				save();
+				msg = MSG_OK;
+			} else if ("addsound".equalsIgnoreCase(cmd)) {
+				Config.setSoundEnabled(true);
+				save();
+				msg = MSG_OK;
+			} else if ("nosound".equalsIgnoreCase(cmd)) {
+				Config.setSoundEnabled(false);
 				save();
 				msg = MSG_OK;
 			} else if ("save".equalsIgnoreCase(cmd)) {

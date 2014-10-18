@@ -90,6 +90,7 @@ public class Tiles {
     	    } else if (!bumpLetter(player, index, t)) {
     	        GemBumped.newLevelEnd(player, index);
     	        PlatformGame.levelVictory();
+    	        PlatformGame.playTransition(PlatformGame.musicLevelEnd);
     	    }
     	    bump(player, index);
     		//if isMusicSupported seq = null;

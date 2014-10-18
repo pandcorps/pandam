@@ -370,6 +370,7 @@ public class Map {
 				Achievement.evaluate(); // Evaluate after addHud
 			}
 			PlatformGame.fadeIn(room);
+			PlatformGame.playMenuMusic();
 		}
 		
 		@Override
@@ -608,6 +609,7 @@ public class Map {
 	            }
 	            Level.clear(); // Called automatically for Level, but not for Cabin
 	        	fadeOut(screen);
+	        	PlatformGame.playTransition(PlatformGame.musicLevelStart);
 			} else if (interaction.KEY_TAB.isActive()) {
 				interaction.KEY_TAB.inactivate();
 				modeMove = (short) ((modeMove + 1) % 3);
