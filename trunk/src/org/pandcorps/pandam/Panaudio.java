@@ -35,6 +35,8 @@ public abstract class Panaudio {
 	
 	public abstract Pansound createMusic(final String location);
 	
+	public abstract Pansound createTransition(final String location);
+	
 	public final boolean isMusicEnabled() {
 		return musicEnabled;
 	}
@@ -61,6 +63,10 @@ public abstract class Panaudio {
     }
 	
 	protected abstract void setEnabled(final boolean music, final boolean enabled);
+	
+	public final Pansound getMusic() {
+		return Pansound.currentMusic;
+	}
 	
 	public final void stopMusic() {
 		setEnabled(true, false);
