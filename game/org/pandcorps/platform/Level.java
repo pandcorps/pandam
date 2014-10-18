@@ -213,6 +213,10 @@ public class Level {
     		@Override protected final Builder getRandomBuilder() {
     			return new GrassyBuilder();
     		}
+    		
+    		@Override protected Pansound getMusic() {
+        		return PlatformGame.musicHeartbeat;
+        	}
     	};
     	
     	protected final String img;
@@ -252,6 +256,10 @@ public class Level {
     	
     	protected TileMapImage[] getExtraAnimBlock() {
     		return null;
+    	}
+    	
+    	protected Pansound getMusic() {
+    		return PlatformGame.musicHappy;
     	}
     	
     	protected void step(final long clock) {

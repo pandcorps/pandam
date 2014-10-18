@@ -282,14 +282,15 @@ public class Music {
 		channel = Mustil.CHN_PERCUSSION;
 		tick = 0;
 		final int dur = 4;
+		final int c = Mustil.PRC_RIDE_CYMBAL_1, d = Mustil.PRC_CLOSED_HI_HAT;
 		final int[] keys = new int[] {
-				Mustil.PRC_RIDE_CYMBAL_1, -1, Mustil.PRC_CLOSED_HI_HAT, Mustil.PRC_CLOSED_HI_HAT,
-				Mustil.PRC_RIDE_CYMBAL_1, -1, Mustil.PRC_CLOSED_HI_HAT, Mustil.PRC_CLOSED_HI_HAT,
-				Mustil.PRC_RIDE_CYMBAL_1, -1, Mustil.PRC_CLOSED_HI_HAT, Mustil.PRC_CLOSED_HI_HAT,
-				Mustil.PRC_RIDE_CYMBAL_1, -1, Mustil.PRC_CLOSED_HI_HAT, Mustil.PRC_CLOSED_HI_HAT,
-				Mustil.PRC_RIDE_CYMBAL_1, -1, Mustil.PRC_CLOSED_HI_HAT, Mustil.PRC_CLOSED_HI_HAT,
-				Mustil.PRC_RIDE_CYMBAL_1, -1, Mustil.PRC_CLOSED_HI_HAT, Mustil.PRC_CLOSED_HI_HAT,
-				Mustil.PRC_RIDE_CYMBAL_1, -1, -1, -1,
+				c, -1, d, d,
+				c, -1, d, d,
+				c, -1, d, d,
+				c, -1, d, d,
+				c, -1, d, d,
+				c, -1, d, d,
+				c, -1, -1, -1,
 				-1, -1, -1, -1};
 		tick = Mustil.addRepeatedPercussions(track, tick, dur, r, keys);
 	}
@@ -379,9 +380,9 @@ public class Music {
 	
 	// Map/Menu - 2 0 2 0 2 2 2 0 3 00000 2 0 2 0 2 2 2 0 1 00000 2 0 2 0 2 2 2 0 3 0 0 0 2 2 2 0 3
 	
-	protected final static Sequence newSongMenu() throws Exception {
-		final Sequence seq = new Sequence(Sequence.SMPTE_30, 1);
-		final Track track = seq.createTrack();
+	protected final static Song newSongMenu() throws Exception {
+		final Song song = new Song("Menu");
+		final Track track = song.track;
 		//int dur, keys[];
 		final int r = 1;
 		addPercussionHappy(track, r);
@@ -401,7 +402,7 @@ public class Music {
 				-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, n, n2, n3, n4,
 				-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, n4, n3, n2, n};
 		tick = Mustil.addNotes(track, tick, channel, vol, dur, keys);*/
-		return seq;
+		return song;
 	}
 	
 	protected final static Song newSongHeartbeat() throws Exception {
@@ -444,14 +445,14 @@ public class Music {
 	protected final static Song newSongOcarina() throws Exception {
 		final Song song = new Song("Ocarina");
 		final Track track = song.track;
-		Mustil.unspecifiedNoteDuration = 16;
+		Mustil.unspecifiedNoteDuration = 7;
 		channel = 0;
 		vol = 64;
 		deltaTick = 8;
 		Mustil.setInstrument(track, channel, Mustil.PRG_OCARINA);
 		tick = 0;
-		final int n1 = 72, n2 = 76, n3 = 80;
-		tick = Mustil.addNotes(track, tick, channel, vol, deltaTick,
+		final int n1 = 68, n2 = 71, n3 = 74;
+		tick = Mustil.addNotes(track, tick, channel, vol, deltaTick, true, 
 				n1, -1, n2, -1, n1, n1, n2, -1,
 				n1, n1, n2, n2, n3, n3, n2, -1,
 				n1, -1, n2, -1, n1, n1, n2, -1,
@@ -470,7 +471,7 @@ public class Music {
 		final Track track = song.track;
 		Mustil.unspecifiedNoteDuration = 2;
 		channel = 0;
-		vol = 64;
+		vol = 52;
 		deltaTick = 2;
 		Mustil.setInstrument(track, channel, Mustil.PRG_XYLOPHONE);
 		tick = 0;
@@ -478,11 +479,25 @@ public class Music {
 		tick = Mustil.addNotes(track, tick, channel, vol, deltaTick,
 				n1, n2, n3, n2,
 				n1, n2, n3, n2,
-				n1, n2, n3, n4, n5);
+				n1, n2, n3, n4);
+		Mustil.addNote(track, tick, 8, channel, n5, vol);
 		return song;
 	}
 	
 	protected final static Song newSongLevelEnd() throws Exception {
+		final Song song = new Song("LevelEnd");
+		final Track track = song.track;
+		Mustil.unspecifiedNoteDuration = 60;
+		channel = 0;
+		vol = 72;
+		deltaTick = 30;
+		Mustil.setInstrument(track, channel, Mustil.PRG_TUBULAR_BELLS);
+		tick = Mustil.addNotes(track, 0, channel, vol, deltaTick,
+				64, 72, 68);
+		return song;
+	}
+	
+	protected final static Song newSongLevelEnd3() throws Exception {
 		final Song song = new Song("LevelEnd");
 		final Track track = song.track;
 		Mustil.unspecifiedNoteDuration = 4;
@@ -496,7 +511,8 @@ public class Music {
 		tick = Mustil.addNotes(track, 30, channel, vol, deltaTick,
 				n1, n2, -1, n3,
 				n2, n3, -1, n4,
-				n1, n2, n3, n4, n5);
+				n1, n2, n3, n4);
+		Mustil.addNote(track, tick, 16, channel, n5, vol);
 		return song;
 	}
 	
@@ -625,7 +641,7 @@ public class Music {
 	
 	private final static void runGen() throws Exception {
 		System.out.println("Starting");
-		final Song song = newSongHappy4();
+		final Song song = newSongLevelEnd();
 		Mustil.save(song.seq, song.name.toLowerCase() + ".mid");
 		final Panaudio music = Pangine.getEngine().getAudio();
 		//music.ensureCapacity(4);

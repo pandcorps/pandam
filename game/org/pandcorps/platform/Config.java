@@ -23,6 +23,7 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.platform;
 
 import org.pandcorps.core.*;
+import org.pandcorps.pandam.*;
 
 public class Config {
     protected final static int MIN_BUTTON_SIZE = -2;
@@ -30,11 +31,25 @@ public class Config {
     protected static String defaultProfileName = null;
     protected static int btnSize = 0;
     protected static int zoomMag = -1;
+    protected static boolean musicEnabled = true;
+    protected static boolean soundEnabled = true;
     
     protected final static void serialize() {
         Iotil.writeFile(PlatformGame.FILE_CFG, PlatformGame.SEG_CFG
         		+ "|" + Chartil.unnull(defaultProfileName)
         		+ "|" + btnSize
-        		+ "|" + zoomMag);
+        		+ "|" + zoomMag
+        		+ "|" + musicEnabled
+        		+ "|" + soundEnabled);
+    }
+    
+    protected final static void setMusicEnabled(final boolean musicEnabled) {
+    	Config.musicEnabled = musicEnabled;
+    	Pangine.getEngine().getAudio().setMusicEnabled(musicEnabled);
+    }
+    
+    protected final static void setSoundEnabled(final boolean soundEnabled) {
+    	Config.soundEnabled = soundEnabled;
+    	Pangine.getEngine().getAudio().setSoundEnabled(soundEnabled);
     }
 }
