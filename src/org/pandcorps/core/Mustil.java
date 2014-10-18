@@ -28,6 +28,22 @@ import javax.sound.midi.*;
 
 // Music Utility
 public final class Mustil {
+	/*
+      4  5  (Octave)
+    C 60 72
+      61 73
+    D 62 74
+      63 75
+    E 64 76
+    F 65 77
+      66 78
+    G 67 79
+      68 80
+    A 69 81
+      70 82
+    B 71 83
+	*/
+	
 	public final static int CHN_PERCUSSION = 9;
 	
 	public final static int VOL_MAX = 127;
