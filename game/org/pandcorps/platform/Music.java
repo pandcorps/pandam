@@ -460,6 +460,23 @@ public class Music {
 		return song;
 	}
 	
+	protected final static Song newSongLevelStart() throws Exception {
+		final Song song = new Song("LevelStart");
+		final Track track = song.track;
+		Mustil.unspecifiedNoteDuration = 2;
+		channel = 0;
+		vol = 64;
+		deltaTick = 2;
+		Mustil.setInstrument(track, channel, Mustil.PRG_XYLOPHONE);
+		tick = 0;
+		final int n1 = 68, n2 = n1 + 4, n3 = n2 + 4, n4 = n3 + 4, n5 = n4 + 4;
+		tick = Mustil.addNotes(track, tick, channel, vol, deltaTick,
+				n1, n2, n3, n2,
+				n1, n2, n3, n2,
+				n1, n2, n3, n4, n5);
+		return song;
+	}
+	
 	private final static Sequence newFxGem(final int mag) throws Exception {
 		//Mustil.PRG_MUSIC_BOX, key = 64, dur = 8
 		final int channel = 0, vol = 64;
@@ -525,7 +542,7 @@ public class Music {
 	
 	private final static void runGen() throws Exception {
 		System.out.println("Starting");
-		final Song song = newSongOcarina(); //newSongHappy4();
+		final Song song = newSongLevelStart(); //newSongHappy4();
 		Mustil.save(song.seq, song.name.toLowerCase() + ".mid");
 		final Panaudio music = Pangine.getEngine().getAudio();
 		//music.ensureCapacity(4);
