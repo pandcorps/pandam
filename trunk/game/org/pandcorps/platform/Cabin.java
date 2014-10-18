@@ -161,6 +161,7 @@ public class Cabin {
 			instr.getPosition().set(128, 114, 1);
 			instr.centerX();
 			PlatformGame.fadeIn(room);
+			PlatformGame.musicOcarina.changeMusic();
 		}
 		
 		private final String loadShuffle() {
@@ -345,5 +346,6 @@ public class Cabin {
 		clear();
         pc.onFinishBonus();
         PlatformGame.markerClose();
+        PlatformGame.playTransition(PlatformGame.musicLevelEnd);
 	}
 }
