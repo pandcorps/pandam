@@ -249,10 +249,20 @@ public final class Mustil {
 	}
 	
 	public final static long addNotes(final Track track, final long firstTick, final int channel, final int vol, final int deltaTick, final int... keys) throws Exception {
+		return addNotes(track, firstTick, channel, vol, deltaTick, false, keys);
+	}
+	
+	public final static long addNotes(final Track track, final long firstTick, final int channel, final int vol, final int deltaTick, final boolean extend, final int... keys) throws Exception {
 		long tick = firstTick;
-		for (final int key : keys) {
+		final int size = keys.length;
+		for (int i = 0; i < size; i++) {
+			final int key = keys[i];
 			if (key != -1) {
-				addNote(track, tick, channel, key, vol);
+				if (extend && i < (size - 1) && keys[i + 1] == -1) {
+					addNote(track, tick, unspecifiedNoteDuration + deltaTick, channel, key, vol);
+				} else {
+					addNote(track, tick, channel, key, vol);
+				}
 			}
 			tick += deltaTick;
 		}
