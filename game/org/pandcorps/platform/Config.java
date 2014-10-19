@@ -28,11 +28,13 @@ import org.pandcorps.pandam.*;
 public class Config {
     protected final static int MIN_BUTTON_SIZE = -2;
     protected final static int MAX_BUTTON_SIZE = 2;
+    protected final static boolean DEF_MUSIC_ENABLED = false;
+    protected final static boolean DEF_SOUND_ENABLED = false;
     protected static String defaultProfileName = null;
     protected static int btnSize = 0;
     protected static int zoomMag = -1;
-    protected static boolean musicEnabled = true;
-    protected static boolean soundEnabled = true;
+    protected static boolean musicEnabled = DEF_MUSIC_ENABLED;
+    protected static boolean soundEnabled = DEF_SOUND_ENABLED;
     
     protected final static void serialize() {
         Iotil.writeFile(PlatformGame.FILE_CFG, PlatformGame.SEG_CFG
