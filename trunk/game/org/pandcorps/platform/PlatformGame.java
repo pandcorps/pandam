@@ -969,8 +969,8 @@ public class PlatformGame extends BaseGame {
         Config.btnSize = cfg.getInt(1, 0);
         Config.zoomMag = cfg.getInt(2, -1);
         zoomMag = Config.zoomMag;
-        Config.setMusicEnabled(cfg.getBoolean(3, true));
-        Config.setSoundEnabled(cfg.getBoolean(4, true));
+        Config.setMusicEnabled(cfg.getBoolean(3, Config.DEF_MUSIC_ENABLED));
+        Config.setSoundEnabled(cfg.getBoolean(4, Config.DEF_SOUND_ENABLED));
 	}
 	
 	private final static void loadConstants() throws Exception {
