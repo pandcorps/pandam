@@ -115,11 +115,13 @@ public class GemBumped extends Pandy {
 		getVelocity().set(0, 6);
         layer.addActor(this);
         if (type == TYPE_END) {
-        	//if isMusicSupported Pangine.getEngine().getMusic().playSound(Music.gemLevel);
-        } else if (good) {
+        	//PlatformGame.soundGemLevel.startSound();
+        	// Probably not needed; ending level plays bells
+        } else if (good || type == TYPE_LETTER) {
         	Gem.playSound();
         } else {
             // gemShatter
+        	PlatformGame.soundCrumble.startSound();
         }
 	}
 	

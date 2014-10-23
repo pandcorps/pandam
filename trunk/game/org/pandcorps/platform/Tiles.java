@@ -22,8 +22,6 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.platform;
 
-//import javax.sound.midi.*;
-
 import java.util.*;
 
 import org.pandcorps.core.*;
@@ -72,15 +70,13 @@ public class Tiles {
     	final Player player = (Player) chr;
     	final Tile t = Level.tm.getTile(index);
     	final byte b = t.getBehavior();
-    	//if isMusicSupported final Sequence seq;
     	if (b == PlatformGame.TILE_BREAK) {
     		Level.tm.setForeground(index, null, Tile.BEHAVIOR_OPEN);
     		shatterTile(PlatformGame.block8, Level.tm.getPosition(index), false);
     		if (Mathtil.rand(65)) {
     		    newGemBumped(player, index); // Plays a sound
-    		    //if isMusicSupported seq = null;
     		} else {
-    			//if isMusicSupported seq = Music.crumble;
+    			PlatformGame.soundCrumble.startSound();
     		}
     		new Bump(chr, index).setVisible(false); // To bump Characters above
     		player.pc.profile.stats.brokenBlocks++;
@@ -93,11 +89,9 @@ public class Tiles {
     	        PlatformGame.playTransition(PlatformGame.musicLevelEnd);
     	    }
     	    bump(player, index);
-    		//if isMusicSupported seq = null;
     	} else {
-    		//if isMusicSupported seq = Music.thud;
+    		PlatformGame.soundThud.startSound();
     	}
-    	//if isMusicSupported Pangine.getEngine().getMusic().playSound(seq);
     }
     
     private final static boolean bumpLetter(final Player player, final int index, final Tile t) {

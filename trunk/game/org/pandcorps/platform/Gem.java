@@ -86,7 +86,7 @@ public class Gem extends TileOccupant implements StepListener {
 		final Pangine engine = Pangine.getEngine();
 		final long clock = engine.getClock();
 		if (clock != lastSound) {
-			//if isMusicSupported engine.getMusic().playSound(Music.gem);
+			PlatformGame.soundGem.startSound();
 			lastSound = clock;
 		}
 	}
