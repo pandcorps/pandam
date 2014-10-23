@@ -281,6 +281,10 @@ public class PlatformGame extends BaseGame {
 	protected static Pansound musicChant = null;
 	protected static Pansound musicLevelStart = null;
 	protected static Pansound musicLevelEnd = null;
+	protected static Pansound soundGem = null;
+	protected static Pansound soundJump = null;
+	protected static Pansound soundThud = null;
+	protected static Pansound soundCrumble = null;
 	protected static Queue<Runnable> loaders = new LinkedList<Runnable>();
 	protected static Runnable btnLoader = null;
 	
@@ -1367,8 +1371,8 @@ System.out.println("loadConstants end " + System.currentTimeMillis());
 		}
 		
 	    loaders.add(new Runnable() { @Override public final void run() {
-	        //engine.getMusic().ensureCapacity(5);
 	    	final Panaudio audio = engine.getAudio();
+	    	audio.ensureCapacity(5);
 	    	musicMenu = audio.createMusic("org/pandcorps/platform/res/music/menu.mid");
 	    	musicHappy = audio.createMusic("org/pandcorps/platform/res/music/happy.mid");
 	    	musicHeartbeat = audio.createMusic("org/pandcorps/platform/res/music/heartbeat.mid");
@@ -1376,6 +1380,10 @@ System.out.println("loadConstants end " + System.currentTimeMillis());
 	    	musicChant = audio.createMusic("org/pandcorps/platform/res/music/chant.mid");
 	    	musicLevelStart = audio.createTransition("org/pandcorps/platform/res/music/levelstart.mid");
 	    	musicLevelEnd = audio.createTransition("org/pandcorps/platform/res/music/levelend.mid");
+	    	soundGem = audio.createTransition("org/pandcorps/platform/res/sound/gem.mid");
+	    	soundJump = audio.createTransition("org/pandcorps/platform/res/sound/jump.mid");
+	    	soundThud = audio.createTransition("org/pandcorps/platform/res/sound/thud.mid");
+	    	soundCrumble = audio.createTransition("org/pandcorps/platform/res/sound/crumble.mid");
 	    	}});
 	}
 	
