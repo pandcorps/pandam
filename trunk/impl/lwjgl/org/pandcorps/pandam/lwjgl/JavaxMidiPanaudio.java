@@ -113,9 +113,10 @@ public class JavaxMidiPanaudio extends Panaudio {
 		sequencer.start();
 	}
 	
-	/*public final void ensureCapacity(final int capacity) {
+	@Override
+	public final void ensureCapacity(final int capacity) {
 		while (sequencers.size() < capacity) {
 			newSequencer();
 		}
-	}*/
+	}
 }
