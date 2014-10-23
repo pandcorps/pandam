@@ -75,6 +75,8 @@ public class Enemy extends Character {
 		protected InteractionHandler stompHandler = null;
 		protected InteractionHandler rewardHandler = null;
 		protected InteractionHandler defeatHandler = null;
+		protected Pansound wallSound = null;
+		protected Pansound stompSound = null;
 		protected final SpawnFactory factory;
 		
 		protected EnemyDefinition(final String name, final int ind, final PixelFilter f, final boolean ledgeTurn) {
@@ -263,6 +265,7 @@ public class Enemy extends Character {
 	
 	protected final boolean onStomp(final Player stomper) {
 		lastStomper = stomper;
+		Pansound.startSound(def.stompSound);
 		if (def.stompHandler == null || !def.stompHandler.onInteract(this, stomper)) {
 			return defeat(stomper, 0, DEFEAT_STOMP);
 		} else {
@@ -444,6 +447,7 @@ public class Enemy extends Character {
 	@Override
 	protected final void onWall() {
 		hv *= -1;
+		Pansound.startSound(def.wallSound);
 	}
 
 	@Override
