@@ -1509,6 +1509,9 @@ System.out.println("loadConstants end " + System.currentTimeMillis());
 	    for (final Panctor actor : room.getActors()) {
             if (actor instanceof Enemy) {
                 ((Enemy) actor).onBump(null);
+            } else if (actor instanceof Wisp) {
+                Gem.spark(actor.getPosition(), false);
+                actor.destroy();
             //} else if (actor instanceof Gem) {
             //    ((Gem) actor).spark(); // No longer objects
             }
