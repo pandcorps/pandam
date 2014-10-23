@@ -191,6 +191,7 @@ public class PlatformGame extends BaseGame {
 	protected static List<EnemyDefinition> enemies = null;
 	protected static EnemyDefinition imp = null;
 	protected static EnemyDefinition armoredImp = null;
+	protected static EnemyDefinition bounceBall = null;
 	protected static EnemyDefinition trollColossus = null;
 	protected static EnemyDefinition ogreBehemoth = null;
 	protected static Panimation anger = null;
@@ -283,8 +284,10 @@ public class PlatformGame extends BaseGame {
 	protected static Pansound musicLevelEnd = null;
 	protected static Pansound soundGem = null;
 	protected static Pansound soundJump = null;
+	protected static Pansound soundBounce = null;
 	protected static Pansound soundThud = null;
 	protected static Pansound soundCrumble = null;
+	protected static Pansound soundArmor = null;
 	protected static Queue<Runnable> loaders = new LinkedList<Runnable>();
 	protected static Runnable btnLoader = null;
 	
@@ -1035,6 +1038,7 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
                         for (int i = 0; i < stop; i++) {
                             enemy.burst(anger, enemy, null, (32 * (n - 1)) + 4 + (i * 8));
                         }
+                        soundBounce.startSound();
                         return true;
                     }
                     return false;
@@ -1060,7 +1064,7 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 			ogreBehemoth = new EnemyDefinition("Ogre Behemoth", 11, f, false, false, 0, 26, 62, 1, 64);
 			ogreBehemoth.init(trollColossus);
 			Coltil.set(allEnemies, Level.OGRE_BEHEMOTH, ogreBehemoth);
-			final EnemyDefinition armorBall, bounceBall, thrownImp;
+			final EnemyDefinition armorBall, thrownImp;
 			armorBall = new EnemyDefinition("Armor Ball", 7, null, false, 0, 0);
 			Enemy.currentWalk = 3;
 			bounceBall = new EnemyDefinition("Bounce Ball", 7, null, false, 0, 4);
@@ -1098,6 +1102,7 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 						imp.v = 2;
 					}
 					enemy.v = 2;
+					soundArmor.startSound();
 					return true;
 				}};
 			armorBall.rewardHandler = new InteractionHandler() {
@@ -1112,6 +1117,7 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
                     e.v = 9;
                     player.pc.profile.stats.kicks++;
                     enemy.destroy();
+                    soundArmor.startSound();
                     return false;
                 }};
             armoredImp.splatDecider = new InteractionHandler() {
@@ -1135,6 +1141,9 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
                 		return true;
                 	}
                     enemy.v = -enemy.v * 0.9f;
+                    if (enemy.v >= 1) {
+                    	soundArmor.startSound();
+                    }
                     return true;
                 }};
             bounceBall.stompHandler = new InteractionHandler() {
@@ -1143,6 +1152,7 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
                     ball.full = enemy.full;
                     ball.setMirror(enemy.isMirror());
                     enemy.destroy();
+                    soundArmor.startSound();
                     return true;
                 }};
             bounceBall.rewardHandler = armorBall.rewardHandler;
@@ -1380,10 +1390,14 @@ System.out.println("loadConstants end " + System.currentTimeMillis());
 	    	musicChant = audio.createMusic("org/pandcorps/platform/res/music/chant.mid");
 	    	musicLevelStart = audio.createTransition("org/pandcorps/platform/res/music/levelstart.mid");
 	    	musicLevelEnd = audio.createTransition("org/pandcorps/platform/res/music/levelend.mid");
-	    	soundGem = audio.createTransition("org/pandcorps/platform/res/sound/gem.mid");
-	    	soundJump = audio.createTransition("org/pandcorps/platform/res/sound/jump.mid");
-	    	soundThud = audio.createTransition("org/pandcorps/platform/res/sound/thud.mid");
-	    	soundCrumble = audio.createTransition("org/pandcorps/platform/res/sound/crumble.mid");
+	    	soundGem = audio.createSound("org/pandcorps/platform/res/sound/gem.mid");
+	    	soundJump = audio.createSound("org/pandcorps/platform/res/sound/jump.mid");
+	    	soundBounce = audio.createSound("org/pandcorps/platform/res/sound/bounce.mid");
+	    	soundThud = audio.createSound("org/pandcorps/platform/res/sound/thud.mid");
+	    	soundCrumble = audio.createSound("org/pandcorps/platform/res/sound/crumble.mid");
+	    	soundArmor = audio.createSound("org/pandcorps/platform/res/sound/armor.mid");
+	    	bounceBall.wallSound = soundArmor;
+	    	armoredImp.stompSound = soundArmor;
 	    	}});
 	}
 	
