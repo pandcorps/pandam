@@ -298,6 +298,7 @@ public class Music {
 	protected final static void addBell(final Track track, final int r) throws Exception {
 		vol = 76;
 		channel = 2;
+		Mustil.unspecifiedNoteDuration = 16;
 		Mustil.setInstrument(track, channel, Mustil.PRG_TUBULAR_BELLS);
 		final int dur = 8;
 		final int[] keys = new int[] {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 96, -1};
@@ -345,11 +346,11 @@ public class Music {
 		Mustil.unspecifiedNoteDuration = 8;
 		keys = new int[] {n4, -1, n, -1, n4, -1, n, -1, n4, -1, n, -1, n4, n2, n, n2}; // n4, n, n, n4
 		tick = Mustil.addRepeatedNotes(track, tick, channel, vol, dur, r, keys);*/
-		Mustil.unspecifiedNoteDuration = 8;
 		/*tick = 128;
 		addBell(track, r - 1);*/
 		tick = 0;
 		addBell(track, r);
+		Mustil.unspecifiedNoteDuration = 8;
 		tick = 128;
 		vol = 60;
 		channel = 1;
@@ -377,17 +378,44 @@ public class Music {
 		return song;
 	}
 	
+	protected final static Song newSongHappy5() throws Exception {
+		final Song song = new Song("Happy");
+		final Track track = song.track;
+		final int r = 4;
+		addPercussionHappy(track, r);
+		tick = 384;
+		addBell(track, 1);
+		Mustil.unspecifiedNoteDuration = 16;
+		vol = 60;
+		deltaTick = 8;
+		channel = 1;
+		Mustil.setInstrument(track, channel, Mustil.PRG_HONKY_TONK_PIANO);
+		for (int i = 0; i < 3; i++) {
+			tick = i * 128;
+			final int o = (i == 1) ? 67 : 60;
+			final int a = o + 9, g = o + 7, f = o + 5;
+			tick = Mustil.addNotes(track, tick, channel, vol, 16, a, g, f);
+			tick = Mustil.addNotes(track, tick, channel, vol, 4, g, a);
+			tick = Mustil.addNotes(track, tick, channel, vol, 8, a, a);
+		}
+		final int a = 69, g = 67; // f = 65
+		for (int i = 0; i < 2; i++) {
+			tick = 368 + (64 * i);
+			tick = Mustil.addNotes(track, tick, channel, vol, 4, g, a);
+			tick = Mustil.addNotes(track, tick, channel, vol, 8, a, a);
+		}
+		return song;
+	}
+	
 	// Map/Menu - 2 0 2 0 2 2 2 0 3 00000 2 0 2 0 2 2 2 0 1 00000 2 0 2 0 2 2 2 0 3 0 0 0 2 2 2 0 3
 	
 	protected final static Song newSongMenu() throws Exception {
 		final Song song = new Song("Menu");
 		final Track track = song.track;
 		//int dur, keys[];
-		final int r = 1;
-		addPercussionHappy(track, r);
-		tick = 0;
-		Mustil.unspecifiedNoteDuration = 16;
-		addBell(track, r);
+		addPercussionHappy(track, 2);
+		tick = 128;
+		addBell(track, 1);
 		/*channel = 0;
 		vol = 40;
 		Mustil.setInstrument(track, channel, Mustil.PRG_HONKY_TONK_PIANO);
@@ -407,15 +435,30 @@ public class Music {
 	protected final static Song newSongHeartbeat() throws Exception {
 		final Song song = new Song("Heartbeat");
 		final Track track = song.track;
-		Mustil.unspecifiedNoteDuration = 56;
 		channel = 0;
 		vol = Mustil.VOL_MAX;
 		deltaTick = 8;
-		Mustil.setInstrument(track, channel, Mustil.PRG_ACOUSTIC_BASS); // PRG_ELECTRIC_PIANO_1
-		final int n = 40; // 32
-		Mustil.addNotes(track, 0, channel, vol, deltaTick,
-				n, n, -1, -1, -1, -1, -1, -1);
-		Mustil.addPercussionsAtVolume(track, 0, 48, deltaTick,
+		for (int i = 0; i < 2; i++) {
+			channel = i;
+			final int prg, n;
+			if (i == 0) {
+				prg = Mustil.PRG_ACOUSTIC_BASS; // PRG_ELECTRIC_PIANO_1
+				n = 32;
+				Mustil.unspecifiedNoteDuration = 56;
+			/*} else if (i == 1) {
+				prg = Mustil.PRG_ELECTRIC_BASS_FINGER;
+				n = 32;
+				Mustil.unspecifiedNoteDuration = 48;*/
+			} else {
+				prg = Mustil.PRG_ACOUSTIC_GRAND_PIANO;
+				n = 32;
+				Mustil.unspecifiedNoteDuration = 48;
+			}
+			Mustil.setInstrument(track, channel, prg);
+			Mustil.addNotes(track, 0, channel, vol, deltaTick,
+					n, n, -1, -1, -1, -1, -1, -1);
+		}
+		Mustil.addPercussionsAtVolume(track, 0, 64, deltaTick,
 				-1, -1, -1, -1, -1, Mustil.PRC_HIGH_BONGO, -1, -1);
 		return song;
 	}
@@ -435,7 +478,7 @@ public class Music {
 		Mustil.unspecifiedNoteDuration = 60;
 		tick = Mustil.addNotes(track, tick, channel, vol, deltaTick, 48, 56, 48);
 		Mustil.unspecifiedNoteDuration = 30;
-		tick = Mustil.addNotes(track, tick, channel, vol, Mustil.unspecifiedNoteDuration, 56, 60);
+		tick = Mustil.addNotes(track, tick, channel, vol, Mustil.unspecifiedNoteDuration, 56, 58);
 		Mustil.unspecifiedNoteDuration = 60;
 		tick = Mustil.addNotes(track, tick, channel, vol, deltaTick, 48);
 		return song;
@@ -491,8 +534,12 @@ public class Music {
 		vol = 72;
 		deltaTick = 30;
 		Mustil.setInstrument(track, channel, Mustil.PRG_TUBULAR_BELLS);
-		tick = Mustil.addNotes(track, 0, channel, vol, deltaTick,
-				64, 72, 68);
+		/*tick = Mustil.addNotes(track, 0, channel, vol, deltaTick,
+				64, 72, 68);*/
+		Mustil.addNote(track, 0, channel, 64, vol);
+		Mustil.addNote(track, 8, channel, 65, vol);
+		Mustil.addNote(track, 38, channel, 65, 52);
+		Mustil.addNote(track, 68, channel, 65, 32);
 		return song;
 	}
 	
