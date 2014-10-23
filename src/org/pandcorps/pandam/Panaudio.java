@@ -76,4 +76,8 @@ public abstract class Panaudio {
 	public abstract void stop();
 		
 	public abstract void close();
+	
+	//@OverrideMe
+	public void ensureCapacity(final int capacity) {
+	}
 }
