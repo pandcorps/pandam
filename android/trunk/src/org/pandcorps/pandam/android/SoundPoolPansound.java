@@ -30,9 +30,11 @@ import org.pandcorps.pandam.android.AndroidPangine.*;
 
 import android.media.*;
 import android.media.SoundPool.*;
+import android.util.*;
 
 public class SoundPoolPansound extends Pansound {
 	protected static SoundPool soundPool = null;
+	private final static SparseArray<SoundPoolPansound> map = new SparseArray<SoundPoolPansound>();
 	private FileInputStream fin = null;
 	private int sampleId = -1;
 	
@@ -42,19 +44,25 @@ public class SoundPoolPansound extends Pansound {
     	}
     	try {
     		final CopyResult cr = AndroidPangine.copyResourceToFile(loc);
-    		soundPool.setOnLoadCompleteListener(new OnLoadCompleteListener() {
-				@Override
-				public final void onLoadComplete(final SoundPool soundPool, final int sampleId, final int status) {
-					Iotil.close(fin);
-					fin = null;
-					SoundPoolPansound.this.sampleId = sampleId;
-				}});
+    		soundPool.setOnLoadCompleteListener(new PanOnLoadCompleteListener());
     		fin = cr.openInputStream();
-    		soundPool.load(fin.getFD(), 0, cr.size, 1);
+    		sampleId = soundPool.load(fin.getFD(), 0, cr.size, 1);
+    		map.put(sampleId, this);
     		//soundPool.load(context.getFilesDir().getAbsolutePath() + "/" + tmpFileName, 1);
     	} catch (final Exception e) {
     		throw Panception.get(e);
     	}
+	}
+	
+	private final static class PanOnLoadCompleteListener implements OnLoadCompleteListener {
+		@Override
+		public final void onLoadComplete(final SoundPool soundPool, final int sampleId, final int status) {
+			//TODO If not yet in map, flag this in a separate map
+			final SoundPoolPansound sound = map.get(sampleId);
+			map.remove(sampleId);
+			Iotil.close(sound.fin);
+			sound.fin = null;
+		}
 	}
 	
 	@Override
@@ -68,7 +76,7 @@ public class SoundPoolPansound extends Pansound {
 	}
 	
 	private final void run(final int repeatCount) {
-		if (sampleId == -1) {
+		if (fin != null) {
 			System.out.println("Tried to play sound before it was loaded");
 			return;
 		}
