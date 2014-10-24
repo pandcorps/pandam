@@ -1270,13 +1270,14 @@ public class Menu {
 						reload(TAB_SELECT_AVATAR);
 					}
 				}};
-			addRadio("New Avatar or Profile?", Arrays.asList("Avatar", "Profile", "Cancel"), subLsn, null, x, y);
-			final int bottom = getBottom();
-			addTitleTiny("A new Avatar lets one player try a different character.", 4, bottom + 48);
-			addTitleTiny("Your old character is kept, and you can switch back and forth.", 4, bottom + 42);
-			addTitleTiny("You keep your Gems and Goals when switching Avatars.", 4, bottom + 36);
-			addTitleTiny("A new Profile represents a different person using this device.", 4, bottom + 30);
-			addTitleTiny("Each Profile has its own set of Gems and Goals.", 4, bottom + 24);
+			final TouchButton sub = newRadioSubmitButton(x, y);
+			addRadio("New Avatar or Profile?", Arrays.asList("Avatar", "Profile", "Cancel"), subLsn, null, x, y, sub);
+			final int bottom = getBottom(), tx = 92;
+			addTitleTiny("A new Avatar lets one player try a different character.", tx, bottom + 23);
+			addTitleTiny("The old Avatar is kept.  You can switch back and forth.", tx, bottom + 17);
+			addTitleTiny("You keep your Gems and Goals when switching Avatars.", tx, bottom + 11);
+			addTitleTiny("A new Profile is for a new person using this device.", tx, bottom + 5);
+			addTitleTiny("Each Profile has its own set of Gems and Goals.", tx, bottom - 1);
 		}
 		
 		protected final void menuClassic() {
