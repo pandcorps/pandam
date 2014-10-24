@@ -23,6 +23,7 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.pandam.android;
 
 import java.io.*;
+import java.util.*;
 
 import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
@@ -35,6 +36,7 @@ import android.util.*;
 public class SoundPoolPansound extends Pansound {
 	protected static SoundPool soundPool = null;
 	private final static SparseArray<SoundPoolPansound> map = new SparseArray<SoundPoolPansound>();
+	private final static Set<Integer> loaded = new HashSet<Integer>();
 	private FileInputStream fin = null;
 	private int sampleId = -1;
 	
@@ -46,8 +48,10 @@ public class SoundPoolPansound extends Pansound {
     		final CopyResult cr = AndroidPangine.copyResourceToFile(loc);
     		soundPool.setOnLoadCompleteListener(new PanOnLoadCompleteListener());
     		fin = cr.openInputStream();
+    		// Can't close fin right after getting FD, sound won't open
     		sampleId = soundPool.load(fin.getFD(), 0, cr.size, 1);
     		map.put(sampleId, this);
+    		wasLoaded();
     		//soundPool.load(context.getFilesDir().getAbsolutePath() + "/" + tmpFileName, 1);
     	} catch (final Exception e) {
     		throw Panception.get(e);
@@ -57,12 +61,27 @@ public class SoundPoolPansound extends Pansound {
 	private final static class PanOnLoadCompleteListener implements OnLoadCompleteListener {
 		@Override
 		public final void onLoadComplete(final SoundPool soundPool, final int sampleId, final int status) {
-			//TODO If not yet in map, flag this in a separate map
 			final SoundPoolPansound sound = map.get(sampleId);
-			map.remove(sampleId);
-			Iotil.close(sound.fin);
-			sound.fin = null;
+			if (sound == null) {
+				loaded.add(Integer.valueOf(sampleId));
+				return;
+			}
+			sound.onLoaded();
 		}
+	}
+	
+	private final void onLoaded() {
+		map.remove(sampleId);
+		Iotil.close(fin);
+		fin = null;
+	}
+	
+	private final boolean wasLoaded() {
+		if (loaded.remove(Integer.valueOf(sampleId))) {
+			onLoaded();
+			return true;
+		}
+		return false;
 	}
 	
 	@Override
@@ -76,11 +95,11 @@ public class SoundPoolPansound extends Pansound {
 	}
 	
 	private final void run(final int repeatCount) {
-		if (fin != null) {
+		if (fin != null && !wasLoaded()) {
 			System.out.println("Tried to play sound before it was loaded");
 			return;
 		}
-		System.out.println("Load complete, trying to play");
+		//System.out.println("Load complete, trying to play");
 		//streamId = soundPool.play(sampleId, 1, 1, 1, -1, 1);
 		final int streamId = soundPool.play(sampleId, 1, 1, 1, 0, 1);
 		if (repeatCount != 0) {
