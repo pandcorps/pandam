@@ -40,6 +40,7 @@ import org.pandcorps.pandax.text.*;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.tile.Tile.*;
 import org.pandcorps.platform.Level.*;
+import org.pandcorps.platform.Menu.*;
 import org.pandcorps.platform.Player.*;
 
 public class Map {
@@ -628,7 +629,8 @@ public class Map {
 		
 		private final void goMenu(final Panput input, final PlayerContext pc) {
 			input.inactivate();
-		    fadeOut(new Menu.ProfileScreen(pc, true));
+			ProfileScreen.currentTab = ProfileScreen.TAB_SELECT_AVATAR;
+		    fadeOut(new ProfileScreen(pc, true));
 		}
 		
 		private final void fadeOut(final Panscreen screen) {
