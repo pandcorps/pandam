@@ -2256,7 +2256,7 @@ public class Menu {
 							for (int j = 0; j < Profile.POINTS_PER_RANK; j++) {
 								final Panctor rankStar = rankStars.get(j);
 								if (rankStar.getClass() != Gem.class) {
-									Gem.spark(goalStar.getPosition(), false);
+									spark(goalStar.getPosition());
 									goalStar.swapPositions(rankStar);
 									goalStars.set(i, rankStar);
 									rankStars.set(j, goalStar);
@@ -2272,6 +2272,7 @@ public class Menu {
 										Chartil.set(rankDesc, "New Rank " + strRank + "   1000");
 										addActor(new Gem(), x + 1 + (12 + strRank.length()) * 8, y + 17);
 										addRankPoints(goalIndex, x, y);
+										PlatformGame.musicLevelEnd.startSound();
 									}});
 							} else {
 								// Add remaining points (if any)
@@ -2296,7 +2297,7 @@ public class Menu {
 						final Panctor rankStar = rankStars.get(j);
 						if (rankStar.getClass() == Gem.class) {
 							final Panple pos = rankStar.getPosition();
-							Gem.spark(pos, false);
+							spark(pos);
 							rankStars.set(j, addEmptyStar((int) pos.getX(), (int) pos.getY()));
 							rankStar.destroy();
 							addRankPoints(goalIndex, x, y);
@@ -2305,6 +2306,11 @@ public class Menu {
 					}
 					addGoalPoints(goalIndex, x, y);
 				}});
+		}
+		
+		private final static void spark(final Panple pos) {
+			Gem.spark(pos, false);
+			PlatformGame.soundGem.startSound();
 		}
         
         protected final void menuClassic() {

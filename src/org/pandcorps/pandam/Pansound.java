@@ -36,10 +36,11 @@ public abstract class Pansound {
 	public final void startMusic() {
 		final Panaudio audio = Pangine.getEngine().getAudio();
 		if (!audio.isMusicEnabled()) {
+			currentMusic = this; // Change even if disabled; if sound is enabled later, it should play what was picked now
 			return;
 		}
 		audio.stopMusic();
-		currentMusic = this;
+		currentMusic = this; // Must set after stopping; stopMusic will null this
 		try {
 			runMusic();
 		} catch (final Exception e) {
