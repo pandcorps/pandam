@@ -201,7 +201,7 @@ public class Menu {
 				//sub = addCircleButton(room, "Sub", r - d, engine.getEffectiveHeight() - d, input, act, ctrl.getSubmit());
 				final Panple ts = PlatformGame.menu.getSize();
 				final int tw = (int) ts.getX(), t = engine.getEffectiveHeight();
-				act2 = newFormButton(room, "Act2", r - tw, t - (int) ts.getY(), PlatformGame.menuQuestion, "Menu");
+				act2 = newFormButton(room, "Act2", r - tw, t - (int) ts.getY(), PlatformGame.menuOptions, "Menu");
 				newFormButton(room, "Goals", r - (tw * 2), t - 19, PlatformGame.gemGoal[0], new Runnable() {
                     @Override public final void run() {
                         PlatformGame.goGoals(PlatformGame.pcs.get(0)); }}).getActorOverlay().getPosition().addY(-10);
