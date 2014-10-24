@@ -749,6 +749,7 @@ public class Player extends Character implements CollisionListener {
 	
 	public final void onHurt() {
         if (levelGems == 0 || pc.profile.isInvincible()) {
+        	PlatformGame.soundWhoosh.startSound(); // Skipping shatter, so play another sound
             return;
         }
         levelGems -= (Math.max(1, levelGems / 10));

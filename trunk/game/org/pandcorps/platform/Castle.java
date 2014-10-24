@@ -224,6 +224,7 @@ public class Castle {
 			final Panple pos = player.getPosition();
 			if (pos.getX() >= 232) {
 				new Spark(224, pos.getY() + 8, false);
+				PlatformGame.soundWhoosh.startSound();
 				playerCount--;
 				if (playerCount <= 0) {
 					PlatformGame.fadeOut(room, new PlatformGame.PlatformScreen());

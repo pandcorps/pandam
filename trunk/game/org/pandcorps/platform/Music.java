@@ -43,7 +43,7 @@ public class Music {
 		return seq;
 	}
 	
-	private static int channel, key, vol, deltaTick;
+	private static int channel = 0, key, vol, deltaTick;
 	private static long tick;
 	
 	protected final static Sequence newSongHappy() throws Exception {
@@ -682,6 +682,24 @@ public class Music {
 		return song;
 	}
 	
+	protected final static Song newFxWhoosh() throws Exception {
+		final Song song = new Song("Whoosh");
+		final Track track = song.track;
+		/*Mustil.setInstrument(track, channel, Mustil.PRG_BLOWN_BOTTLE);
+		Mustil.addNote(track, 0, 2, channel, 68, 60);
+		Mustil.addNote(track, 2, 2, channel, 64, 45);
+		Mustil.addNote(track, 4, 4, channel, 60, 30);
+		Mustil.setInstrument(track, 1, Mustil.PRG_PAN_FLUTE);
+		Mustil.addNote(track, 0, 8, 1, 64, 30);
+		Mustil.setInstrument(track, 2, Mustil.PRG_CHOIR_AAHS);
+		Mustil.addNote(track, 0, 8, 2, 64, 25);*/
+		Mustil.setInstrument(track, channel, Mustil.PRG_PAN_FLUTE);
+		Mustil.addNote(track, 0, 8, channel, 40, Mustil.VOL_MAX);
+		Mustil.setInstrument(track, 1, Mustil.PRG_CHOIR_AAHS);
+		Mustil.addNote(track, 0, 8, 1, 40, 112);
+		return song;
+	}
+	
 	private final static void run(final String[] args) throws Exception {
 		if ("load".equalsIgnoreCase(Coltil.get(args, 0))) {
 			runLoad();
@@ -692,7 +710,7 @@ public class Music {
 	
 	private final static void runGen() throws Exception {
 		System.out.println("Starting");
-		final Song song = newFxArmor();
+		final Song song = newFxWhoosh();
 		Mustil.save(song.seq, song.name.toLowerCase() + ".mid");
 		final Panaudio music = Pangine.getEngine().getAudio();
 		//music.ensureCapacity(4);

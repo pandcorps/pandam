@@ -231,6 +231,7 @@ public class Enemy extends Character {
 	                case 1 :
 	                    initTimer(2);
 	                    PlatformGame.room.addActor(new Projectile(def.projectile, this, Mathtil.rand(PlatformGame.pcs).player));
+	                    PlatformGame.soundWhoosh.startSound();
 	                    break;
 	                case 2 :
 	                    stepTeleport();
@@ -320,6 +321,7 @@ public class Enemy extends Character {
                 }
             }
             burst(PlatformGame.teleport);
+            PlatformGame.soundWhoosh.startSound();
             return true;
         }
         return false;
