@@ -288,6 +288,7 @@ public class PlatformGame extends BaseGame {
 	protected static Pansound soundThud = null;
 	protected static Pansound soundCrumble = null;
 	protected static Pansound soundArmor = null;
+	protected static Pansound soundWhoosh = null;
 	protected static Queue<Runnable> loaders = new LinkedList<Runnable>();
 	protected static Runnable btnLoader = null;
 	
@@ -1396,6 +1397,7 @@ System.out.println("loadConstants end " + System.currentTimeMillis());
 	    	soundThud = audio.createSound("org/pandcorps/platform/res/sound/thud.mid");
 	    	soundCrumble = audio.createSound("org/pandcorps/platform/res/sound/crumble.mid");
 	    	soundArmor = audio.createSound("org/pandcorps/platform/res/sound/armor.mid");
+	    	soundWhoosh = audio.createSound("org/pandcorps/platform/res/sound/whoosh.mid");
 	    	bounceBall.wallSound = soundArmor;
 	    	armoredImp.stompSound = soundArmor;
 	    	}});
