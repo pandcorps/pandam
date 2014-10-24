@@ -111,12 +111,10 @@ public class PlatformGame extends BaseGame {
 	GoalTemplate: 2*2 block steps.
 	Sand level cactus, Snow level crystal/pine tree
 	Rank-up bonus Gems can trigger immediate Gem goal success; that shouldn't happen
-	Sounds during Goal screen
-	Start music right away when toggling in Menu
 	Quicksand uses block edges higher than needed sometimes.
 	OutputStream that writes to tmp file then swaps on close, keeping original as bak.
 	InputStream that reads bak file if can't find main.
-	Add touch button should ask if adding new Profile or Avatar.
+	The "Add" touch button should ask if adding new Profile or Avatar.
 	*/
 	
 	protected final static byte TILE_BREAK = 2;
