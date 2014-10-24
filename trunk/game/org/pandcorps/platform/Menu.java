@@ -840,7 +840,26 @@ public class Menu {
 		}
 		
 		protected final void goProfile() {
+			ProfileScreen.currentTab = ProfileScreen.TAB_SELECT_AVATAR;
 			Panscreen.set(new ProfileScreen(pc, false));
+		}
+		
+		protected final void newProfile(final PlayerContext curr) {
+            if (curr != null) {
+                curr.destroy();
+            }
+            final Profile prf = new Profile();
+            final Avatar avt = new Avatar();
+            prf.setName("New");
+            avt.randomize();
+            avt.setName(NEW_AVATAR_NAME);
+            prf.currentAvatar = avt;
+            prf.avatars.add(avt);
+            //prf.ctrl = 0;
+            pc = PlatformGame.newPlayerContext(prf, ctrl, curr == null ? PlatformGame.pcs.size() : curr.index);
+            reloadAnimalStrip();
+            triggerMapLoad();
+            Panscreen.set(new NewScreen(pc, false));
 		}
 		
 		protected final void goOptions() {
@@ -1084,21 +1103,7 @@ public class Menu {
 		}
 		
 		private final void newProfile() {
-            if (curr != null) {
-                curr.destroy();
-            }
-            final Profile prf = new Profile();
-            final Avatar avt = new Avatar();
-            prf.setName("New");
-            avt.randomize();
-            avt.setName(NEW_AVATAR_NAME);
-            prf.currentAvatar = avt;
-            prf.avatars.add(avt);
-            //prf.ctrl = 0;
-            pc = PlatformGame.newPlayerContext(prf, ctrl, curr == null ? PlatformGame.pcs.size() : curr.index);
-            reloadAnimalStrip();
-            triggerMapLoad();
-            Panscreen.set(new NewScreen(pc, false));
+			newProfile(curr);
 		}
 	}
 	
@@ -1157,17 +1162,22 @@ public class Menu {
             		avt.setName(pc.profile.getName());
             	}
             }
-            if (Pangine.getEngine().isTouchSupported() && Config.defaultProfileName == null) {
+            if (Pangine.getEngine().isTouchSupported() && Config.defaultProfileName == null && newToDefault) {
             	Config.defaultProfileName = pc.profile.getName();
-            	Config.serialize();
             }
+            Config.serialize();
             save();
             newProfile = true;
             goProfile();
         }
 	}
 	
+	private static boolean newToDefault = true;
+	
 	protected final static class ProfileScreen extends PlayerScreen {
+		protected final static byte TAB_SELECT_AVATAR = 0;
+		private final static byte TAB_NEW = 1;
+		protected static byte currentTab = TAB_SELECT_AVATAR;
 	    private boolean save = false;
 	    private final Avatar originalAvatar;
 	    
@@ -1187,11 +1197,19 @@ public class Menu {
 		}
 		
 		protected final void menuTouch() {
-			createAvatarList(touchRadioX, touchRadioY);
+			switch (currentTab) {
+				case TAB_SELECT_AVATAR:
+					createAvatarList(touchRadioX, touchRadioY);
+					break;
+				case TAB_NEW:
+					createNewMenu(touchRadioX, touchRadioY);
+					break;
+			}
 			newTab(PlatformGame.menuCheck, "Done", new Runnable() {@Override public final void run() {exit();}});
 			newTab(PlatformGame.menuAvatar, "Edit", new Runnable() {@Override public final void run() {goAvatar();}});
 			if (!newProfile) {
-				newTab(PlatformGame.menuPlus, "New", new Runnable() {@Override public final void run() {newAvatar();}});
+				//newTab(PlatformGame.menuPlus, "New", new Runnable() {@Override public final void run() {newAvatar();}});
+				newTab(PlatformGame.menuPlus, "New", TAB_NEW);
 				if (getAvatarsSize() > 1) {
 					newTab(PlatformGame.menuMinus, "Erase", new Runnable() {@Override public final void run() {delete();}});
 				}
@@ -1204,6 +1222,18 @@ public class Menu {
 			newProfile = false;
 			//TODO The other stuff from menuClassic, move newTabs() into super class
 			newTabs();
+		}
+		
+		private final void newTab(final Panmage img, final CharSequence txt, final byte tab) {
+			final TouchButton btn = newTab(img, txt, new Runnable() {@Override public final void run() {reload(tab);}});
+			if (currentTab == tab) {
+				btn.setEnabled(false);
+			}
+		}
+		
+		private void reload(final byte tab) {
+			currentTab = tab;
+			Panscreen.set(new ProfileScreen(pc, false));
 		}
 		
 		private final int getAvatarsSize() {
@@ -1224,6 +1254,29 @@ public class Menu {
 					pc.profile.currentAvatar = pc.profile.getAvatar(value); }};
 			final RadioGroup avtGrp = addRadio("Pick Avatar", avatars, avtLsn, x, y);
 			avtGrp.setSelected(avatars.indexOf(pc.profile.currentAvatar.getName()));
+		}
+		
+		private final void createNewMenu(final int x, final int y) {
+			final RadioSubmitListener subLsn = new RadioSubmitListener() {
+				@Override public final void onSubmit(final RadioSubmitEvent event) {
+					final String label = event.toString();
+					if ("Avatar".equals(label)) {
+						newAvatar();
+					} else if ("Profile".equals(label)) {
+						newToDefault = false;
+						Config.defaultProfileName = null;
+						newProfile(pc);
+					} else {
+						reload(TAB_SELECT_AVATAR);
+					}
+				}};
+			addRadio("New Avatar or Profile?", Arrays.asList("Avatar", "Profile", "Cancel"), subLsn, null, x, y);
+			final int bottom = getBottom();
+			addTitleTiny("A new Avatar lets one player try a different character.", 4, bottom + 48);
+			addTitleTiny("Your old character is kept, and you can switch back and forth.", 4, bottom + 42);
+			addTitleTiny("You keep your Gems and Goals when switching Avatars.", 4, bottom + 36);
+			addTitleTiny("A new Profile represents a different person using this device.", 4, bottom + 30);
+			addTitleTiny("Each Profile has its own set of Gems and Goals.", 4, bottom + 24);
 		}
 		
 		protected final void menuClassic() {
