@@ -420,6 +420,20 @@ public class Music {
 		channel = 0;
 		vol = Mustil.VOL_MAX;
 		deltaTick = 8;
+		tick = 0;
+		for (int i = 0; i < 8; i++) {
+			addHeartbeat(track);
+			tick += 64;
+		}
+		channel = 2;
+		Mustil.setInstrument(track, channel, Mustil.PRG_STRING_ENSEMBLE_1);
+		Mustil.addNote(track, 264, 128, channel, 52, 104);
+		//Mustil.addNote(track, 264, 120, channel, 52, 104);
+		Mustil.addNote(track, 392, 120, channel, 50, 100);
+		return song;
+	}
+	
+	private final static void addHeartbeat(final Track track) throws Exception {
 		for (int i = 0; i < 2; i++) {
 			channel = i;
 			final int prg, n;
@@ -437,12 +451,11 @@ public class Music {
 				Mustil.unspecifiedNoteDuration = 48;
 			}
 			Mustil.setInstrument(track, channel, prg);
-			Mustil.addNotes(track, 0, channel, vol, deltaTick,
+			Mustil.addNotes(track, tick, channel, vol, deltaTick,
 					n, n, -1, -1, -1, -1, -1, -1);
 		}
-		Mustil.addPercussionsAtVolume(track, 0, 64, deltaTick,
+		Mustil.addPercussionsAtVolume(track, tick, 64, deltaTick,
 				-1, -1, -1, -1, -1, Mustil.PRC_HIGH_BONGO, -1, -1);
-		return song;
 	}
 	
 	protected final static Song newSongChant() throws Exception {
@@ -644,8 +657,10 @@ public class Music {
 	protected final static Song newFxThud() throws Exception {
 		final Song song = new Song("Thud");
 		final Track track = song.track;
-		//Mustil.addPercussion(track, 0, Mustil.PRC_HIGH_BONGO);
-		//Mustil.setInstrument(track, channel, Mustil.PRG_MUSIC_BOX);
+		Mustil.addPercussion(track, 0, Mustil.PRC_HIGH_BONGO);
+		Mustil.setInstrument(track, channel, Mustil.PRG_MUSIC_BOX);
+		Mustil.addNote(track, 0, 8, channel, 28, 56);
+		channel = 1;
 		Mustil.setInstrument(track, channel, Mustil.PRG_XYLOPHONE);
 		Mustil.addNote(track, 0, 8, channel, 28, Mustil.VOL_MAX);
 		return song;
@@ -710,7 +725,7 @@ public class Music {
 	
 	private final static void runGen() throws Exception {
 		System.out.println("Starting");
-		final Song song = newFxWhoosh();
+		final Song song = newSongHeartbeat();
 		Mustil.save(song.seq, song.name.toLowerCase() + ".mid");
 		final Panaudio music = Pangine.getEngine().getAudio();
 		//music.ensureCapacity(4);
