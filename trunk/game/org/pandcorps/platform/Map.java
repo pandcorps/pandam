@@ -852,7 +852,10 @@ public class Map {
 			} else if (worlds <= 5) {
 				theme = MapTheme.Normal;
 			} else {
-				theme = Mathtil.rand(themes);
+				final MapTheme old = theme;
+				do {
+					theme = Mathtil.rand(themes);
+				} while (old == theme);
 			}
 			lm1 = Mathtil.randi(0, theme.maxLandmark);
 			do {
