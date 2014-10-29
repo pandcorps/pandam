@@ -75,9 +75,9 @@ public class Tiles {
     		shatterTile(PlatformGame.block8, Level.tm.getPosition(index), false);
     		if (Mathtil.rand(65)) {
     		    newGemBumped(player, index); // Plays a sound
-    		} else {
-    			PlatformGame.soundCrumble.startSound();
-    		}
+    		} // else { // Players wanted to hear crumble even if Gem pops up with its own sound
+    		PlatformGame.soundCrumble.startSound();
+    		//}
     		new Bump(chr, index).setVisible(false); // To bump Characters above
     		player.pc.profile.stats.brokenBlocks++;
     	} else if (b == PlatformGame.TILE_BUMP) {
