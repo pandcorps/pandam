@@ -29,11 +29,10 @@ import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.impl.*;
 
-import android.text.*;
-
 public class AndroidPangine extends GlPangine {
 	protected static AndroidPangine engine = null;
 	protected static PanActivity context = null;
+	private static PanClipboard clip = null;
 	protected static int desktopWidth = 0;
 	protected static int desktopHeight = 0;
 	private static Set<String> cacheFiles = null;
@@ -278,21 +277,26 @@ public class AndroidPangine extends GlPangine {
 	protected void update() {
 	}
     
-    @SuppressWarnings("deprecation")
-    private final ClipboardManager getClipboardManager() {
-    	return (ClipboardManager) context.getSystemService(PanActivity.CLIPBOARD_SERVICE);
+    private final PanClipboard getClip() {
+    	if (clip == null) {
+    		try {
+    			Class.forName("android.content.ClipboardManager");
+    			clip = new ContentClipboard();
+    		} catch (final Throwable e) {
+    			clip = new TextClipboard();
+    		}
+    	}
+    	return clip;
     }
     
-    @SuppressWarnings("deprecation")
     @Override
     public final String getClipboard() {
-    	return Chartil.toString(getClipboardManager().getText());
+    	return getClip().getClipboard();
 	}
 	
-    @SuppressWarnings("deprecation")
 	@Override
 	public final void setClipboard(final String value) {
-    	getClipboardManager().setText(value); // Deprecated in 11, but we're supporting 8
+    	getClip().setClipboard(value);
 	}
 	
 	@Override

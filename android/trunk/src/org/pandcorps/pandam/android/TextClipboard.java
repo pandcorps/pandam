@@ -22,52 +22,25 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandam.android;
 
-import java.io.*;
-
 import org.pandcorps.core.*;
-import org.pandcorps.pandam.*;
-import org.pandcorps.pandam.android.AndroidPangine.*;
 
-import android.media.*;
+import android.text.*;
 
-public class MediaPlayerPansound extends Pansound {
-	private final MediaPlayer mediaPlayer = new MediaPlayer();
-	
-	protected MediaPlayerPansound(final String loc) {
-		FileInputStream in = null;
-    	try {
-    		final CopyResult cr = AndroidPangine.copyResourceToFile(loc);
-    		mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-    		//final String uri = Iotil.class.getClassLoader().getResource(loc).toURI().toString();
-    		//mediaPlayer.setDataSource(context, Uri.parse(uri));
-    		in = cr.openInputStream();
-    		mediaPlayer.setDataSource(in.getFD());
-    		in.close();
-    		mediaPlayer.prepare(); // prepareAsync()
-    	} catch (final Exception e) {
-    		throw Panception.get(e);
-    	} finally {
-    		Iotil.close(in);
-    	}
+public final class TextClipboard implements PanClipboard {
+	@SuppressWarnings("deprecation")
+    private final ClipboardManager getClipboardManager() {
+    	return (ClipboardManager) AndroidPangine.context.getSystemService(PanActivity.CLIPBOARD_SERVICE);
+    }
+    
+    @SuppressWarnings("deprecation")
+    @Override
+    public final String getClipboard() {
+    	return Chartil.toString(getClipboardManager().getText());
 	}
 	
+    @SuppressWarnings("deprecation")
 	@Override
-	protected final void runMusic() throws Exception {
-		run(true);
-	}
-
-	@Override
-	protected final void runSound() throws Exception {
-		run(false);
-	}
-	
-	private final void run(final boolean looping) {
-		mediaPlayer.setLooping(looping); // Has gap
-		//mediaPlayer.setOnCompletionListener(new OnCompletionListener() {
-		//	@Override public final void onCompletion(final MediaPlayer mp) {
-		//		mediaPlayer.start();
-		//	}}); // Still has gap
-		mediaPlayer.seekTo(0);
-		mediaPlayer.start();
+	public final void setClipboard(final String value) {
+    	getClipboardManager().setText(value); // Deprecated in 11, but we're supporting 8
 	}
 }

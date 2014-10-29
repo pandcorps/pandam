@@ -22,52 +22,8 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandam.android;
 
-import java.io.*;
-
-import org.pandcorps.core.*;
-import org.pandcorps.pandam.*;
-import org.pandcorps.pandam.android.AndroidPangine.*;
-
-import android.media.*;
-
-public class MediaPlayerPansound extends Pansound {
-	private final MediaPlayer mediaPlayer = new MediaPlayer();
+public interface PanClipboard {
+	public String getClipboard();
 	
-	protected MediaPlayerPansound(final String loc) {
-		FileInputStream in = null;
-    	try {
-    		final CopyResult cr = AndroidPangine.copyResourceToFile(loc);
-    		mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-    		//final String uri = Iotil.class.getClassLoader().getResource(loc).toURI().toString();
-    		//mediaPlayer.setDataSource(context, Uri.parse(uri));
-    		in = cr.openInputStream();
-    		mediaPlayer.setDataSource(in.getFD());
-    		in.close();
-    		mediaPlayer.prepare(); // prepareAsync()
-    	} catch (final Exception e) {
-    		throw Panception.get(e);
-    	} finally {
-    		Iotil.close(in);
-    	}
-	}
-	
-	@Override
-	protected final void runMusic() throws Exception {
-		run(true);
-	}
-
-	@Override
-	protected final void runSound() throws Exception {
-		run(false);
-	}
-	
-	private final void run(final boolean looping) {
-		mediaPlayer.setLooping(looping); // Has gap
-		//mediaPlayer.setOnCompletionListener(new OnCompletionListener() {
-		//	@Override public final void onCompletion(final MediaPlayer mp) {
-		//		mediaPlayer.start();
-		//	}}); // Still has gap
-		mediaPlayer.seekTo(0);
-		mediaPlayer.start();
-	}
+	public void setClipboard(final String value);
 }
