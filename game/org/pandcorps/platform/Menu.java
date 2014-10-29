@@ -27,6 +27,7 @@ import java.util.*;
 import org.pandcorps.core.*;
 import org.pandcorps.core.chr.*;
 import org.pandcorps.core.img.*;
+import org.pandcorps.core.io.*;
 import org.pandcorps.game.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.Panput.*;
@@ -944,12 +945,12 @@ public class Menu {
 	        	final String log = engine.getFatalLog();
 	            if (log != null) {
 	            	final String email = PlatformGame.getEmail();
+	            	engine.setClipboard("Please send this to " + email + Iotil.BR + log);
 	            	addTitleTiny("Oh no!", 4, bottom + 48);
 	            	addTitleTiny("It looks like the game crashed the last time you played.", 4, bottom + 42);
 	            	addTitleTiny("We've copied an error report into your clipboard.", 4, bottom + 36);
 	            	addTitleTiny("Please paste it into an email & send it to " + email + ".", 4, bottom + 30);
 	            	addTitleTiny("We'll try to fix it!", 4, bottom + 24);
-	                engine.setClipboard("Please send this to " + email + Iotil.BR + log);
 	            }
 	        } catch (final Exception e) {
 	        	// Just ignore; don't let error report generation cause another fatal error
@@ -2791,6 +2792,9 @@ public class Menu {
 			} else if ("nosound".equalsIgnoreCase(cmd)) {
 				Config.setSoundEnabled(false);
 				Config.serialize();
+				msg = MSG_OK;
+			} else if ("export".equalsIgnoreCase(cmd)) {
+				Pangine.getEngine().setClipboard(Savtil.toString(pc.profile));
 				msg = MSG_OK;
 			} else if ("save".equalsIgnoreCase(cmd)) {
 			    save();
