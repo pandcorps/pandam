@@ -44,7 +44,7 @@ public class Music {
 	}
 	
 	private static int channel = 0, key, vol, deltaTick;
-	private static long tick;
+	private static long tick = 0;
 	
 	protected final static Sequence newSongHappy() throws Exception {
 		channel = 0;
@@ -262,7 +262,6 @@ public class Music {
 	protected final static void addPercussionHappy(final Track track, final int r, final boolean full) throws Exception {
 		vol = 56;
 		channel = Mustil.CHN_PERCUSSION;
-		tick = 0;
 		final int dur = 4, c = Mustil.PRC_RIDE_CYMBAL_1, d = Mustil.PRC_CLOSED_HI_HAT, f = full ? d : -1, keys[];
 		keys = new int[] {
 				c, -1, d, d,
@@ -362,28 +361,42 @@ public class Music {
 	protected final static Song newSongHappy5() throws Exception {
 		final Song song = new Song("Happy");
 		final Track track = song.track;
-		final int r = 4;
-		addPercussionHappy(track, r, true);
-		tick = 384;
-		addBell(track, 1);
+		addPercussionHappy(track, 8, true);
+		//addPercussionHappy(track, 4, true);
+		//addPercussionHappy(track, 4, false);
+		final int len = 512;
+		for (int instr = 0; instr < 2; instr++) {
+			tick = instr * len + 384;
+			addBell(track, 1);
+		}
 		Mustil.unspecifiedNoteDuration = 16;
 		vol = 60;
 		deltaTick = 8;
-		channel = 1;
-		Mustil.setInstrument(track, channel, Mustil.PRG_HONKY_TONK_PIANO);
-		for (int i = 0; i < 3; i++) {
-			tick = i * 128;
-			final int o = (i == 1) ? 67 : 60;
-			final int a = o + 9, g = o + 7, f = o + 5;
-			tick = Mustil.addNotes(track, tick, channel, vol, 16, a, g, f);
-			tick = Mustil.addNotes(track, tick, channel, vol, 4, g, a);
-			tick = Mustil.addNotes(track, tick, channel, vol, 8, a, a);
-		}
-		final int a = 69, g = 67; // f = 65
-		for (int i = 0; i < 2; i++) {
-			tick = 368 + (64 * i);
-			tick = Mustil.addNotes(track, tick, channel, vol, 4, g, a);
-			tick = Mustil.addNotes(track, tick, channel, vol, 8, a, a);
+		for (int instr = 0; instr < 2; instr++) {
+			final int prg, start = instr * len;
+			if (instr == 0) {
+				channel = 1;
+				prg = Mustil.PRG_HONKY_TONK_PIANO;
+			} else {
+				//Mustil.unspecifiedNoteDuration = 4;
+				channel = 3;
+				prg = Mustil.PRG_XYLOPHONE;
+			}
+			Mustil.setInstrument(track, channel, prg);
+			for (int i = 0; i < 3; i++) {
+				tick = start + i * 128;
+				final int o = (i == 1) ? 67 : 60;
+				final int a = o + 9, g = o + 7, f = o + 5;
+				tick = Mustil.addNotes(track, tick, channel, vol, 16, a, g, f);
+				tick = Mustil.addNotes(track, tick, channel, vol, 4, g, a);
+				tick = Mustil.addNotes(track, tick, channel, vol, 8, a, a);
+			}
+			final int a = 69, g = 67; // f = 65
+			for (int i = 0; i < 2; i++) {
+				tick = start + 368 + (64 * i);
+				tick = Mustil.addNotes(track, tick, channel, vol, 4, g, a);
+				tick = Mustil.addNotes(track, tick, channel, vol, 8, a, a);
+			}
 		}
 		return song;
 	}
@@ -724,7 +737,7 @@ public class Music {
 	
 	private final static void runGen() throws Exception {
 		System.out.println("Starting");
-		final Song song = newSongHeartbeat();
+		final Song song = newSongHappy5();
 		Mustil.save(song.seq, song.name.toLowerCase() + ".mid");
 		final Panaudio music = Pangine.getEngine().getAudio();
 		//music.ensureCapacity(4);
