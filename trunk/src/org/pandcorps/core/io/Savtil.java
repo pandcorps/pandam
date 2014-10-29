@@ -41,4 +41,14 @@ public final class Savtil {
     		Iotil.close(out);
     	}
     }
+	
+	public final static String toString(final Savable s) {
+		final StringWriter out = new StringWriter();
+		try {
+    		s.save(out);
+    	} catch (final IOException e) {
+    		throw new RuntimeException(e);
+    	}
+		return out.toString();
+	}
 }
