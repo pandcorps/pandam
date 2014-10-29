@@ -693,11 +693,11 @@ public class Music {
 	}
 	
 	protected final static Song newFxBounce() throws Exception {
-		final int channel = 0, vol = 40;
+		final int channel = 0;
 		final Song song = new Song("Bounce");
 		final Track track = song.track;
 		Mustil.setInstrument(track, channel, Mustil.PRG_SLAP_BASS_2);
-		Mustil.addNote(track, 0, 8, channel, 48, vol);
+		Mustil.addNote(track, 0, 8, channel, 48, 56);
 		Mustil.setPitch(track, 4, channel, 88);
 		return song;
 	}
@@ -737,7 +737,7 @@ public class Music {
 	
 	private final static void runGen() throws Exception {
 		System.out.println("Starting");
-		final Song song = newSongHappy5();
+		final Song song = newFxBounce();
 		Mustil.save(song.seq, song.name.toLowerCase() + ".mid");
 		final Panaudio music = Pangine.getEngine().getAudio();
 		//music.ensureCapacity(4);
