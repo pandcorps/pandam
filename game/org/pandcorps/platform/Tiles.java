@@ -90,7 +90,11 @@ public class Tiles {
     	    }
     	    bump(player, index);
     	} else {
-    		PlatformGame.soundThud.startSound();
+    		final long clock = Pangine.getEngine().getClock();
+    		if (player.lastThud < (clock - 2)) {
+	    		player.lastThud = clock;
+	    		PlatformGame.soundThud.startSound();
+    		}
     	}
     }
     
