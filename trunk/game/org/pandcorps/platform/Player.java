@@ -298,6 +298,7 @@ public class Player extends Character implements CollisionListener {
 	private final Accessories acc;
 	protected Ai ai = null;
 	protected final boolean[] goalsMet = new boolean[Goal.NUM_ACTIVE_GOALS];
+	protected long lastThud = -30;
 	
 	public Player(final PlayerContext pc) {
 		super(PLAYER_X, PLAYER_H);
@@ -369,22 +370,26 @@ public class Player extends Character implements CollisionListener {
 		if (jumpMode == JUMP_FLY) {
 			if (isGrounded()) {
 				pc.profile.stats.jumps++;
+				PlatformGame.soundJump.startSound();
 			}
 	        flying = true;
 	        addV(-g);
 	        return;
 	    } else if (isGrounded()) {
+	    	final Pansound sound;
 	        if (jumpMode == JUMP_HIGH) {
 	            v = MAX_V;
 	            acc.back.setView(pc.backJump);
+	            sound = PlatformGame.soundBounce;
 	        } else {
 	            v = jumpMode == JUMP_DRAGON ? VEL_JUMP_DRAGON : VEL_JUMP;
+	            sound = PlatformGame.soundJump;
 	        }
 	        if (sanded) {
 	        	v -= 2;
 	        }
 			pc.profile.stats.jumps++;
-			PlatformGame.soundJump.startSound();
+			sound.startSound();
 		}
 	}
 	
@@ -740,11 +745,13 @@ public class Player extends Character implements CollisionListener {
 	protected final void startFreeze() {
 		hurtTimer = 60;
 		setView(PlatformGame.frozen);
+		PlatformGame.soundWhoosh.startSound();
 	}
 	
 	protected final void startBurn() {
 		hurtTimer = 20;
 		setView(PlatformGame.burn);
+		PlatformGame.soundWhoosh.startSound();
 	}
 	
 	public final void onHurt() {
