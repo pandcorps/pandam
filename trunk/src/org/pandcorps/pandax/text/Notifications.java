@@ -32,7 +32,7 @@ import org.pandcorps.pandax.visual.*;
 public class Notifications extends Panctor implements StepListener {
     protected final Pantext label;
     protected final StringBuilder seq;
-    private Queue<Notification> queue = new LinkedList<Notification>();
+    private LinkedList<Notification> queue = new LinkedList<Notification>();
     private List<Runnable> freeListeners = null;
     private int timer = 0;
     private Panctor icon = null;
@@ -65,7 +65,18 @@ public class Notifications extends Panctor implements StepListener {
             init(n);
             label.setVisible(true);
         } else {
-            queue.offer(n);
+        	if (n.priority == 0) {
+        		queue.offer(n);
+        	} else {
+        		int i = 0;
+        		for (final Notification o : queue) {
+        			if (n.priority > o.priority) {
+        				queue.add(i, n);
+        				break;
+        			}
+        			i++;
+        		}
+        	}
         }
     }
     
@@ -158,14 +169,20 @@ public class Notifications extends Panctor implements StepListener {
     public final static class Notification {
         private final String msg;
         private final Panctor icon;
+        private final int priority;
         
         public Notification(final String msg) {
             this(msg, null);
         }
         
         public Notification(final String msg, final Panctor icon) {
+        	this(msg, icon, 0);
+        }
+        
+        public Notification(final String msg, final Panctor icon, final int priority) {
             this.msg = msg;
             this.icon = icon;
+            this.priority = priority;
         }
     }
 }
