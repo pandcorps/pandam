@@ -697,7 +697,7 @@ public class Music {
 		final Song song = new Song("Bounce");
 		final Track track = song.track;
 		Mustil.setInstrument(track, channel, Mustil.PRG_SLAP_BASS_2);
-		Mustil.addNote(track, 0, 8, channel, 48, 56);
+		Mustil.addNote(track, 0, 8, channel, 48, 72);
 		Mustil.setPitch(track, 4, channel, 88);
 		return song;
 	}
