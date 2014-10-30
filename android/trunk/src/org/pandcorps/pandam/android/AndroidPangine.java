@@ -296,7 +296,10 @@ public class AndroidPangine extends GlPangine {
 	
 	@Override
 	public final void setClipboard(final String value) {
-    	getClip().setClipboard(value);
+		context.runOnUiThread(new Runnable() {
+			@Override public final void run() {
+				getClip().setClipboard(value);
+			}});
 	}
 	
 	@Override
