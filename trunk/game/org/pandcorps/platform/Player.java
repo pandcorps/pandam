@@ -315,9 +315,10 @@ public class Player extends Character implements CollisionListener {
 		acc = new Accessories(pc);
 		final Panteraction interaction = engine.getInteraction();
 		final ControlScheme ctrl = pc.ctrl;
-		register(ctrl.get1(), new ActionStartListener() {
+		final Panput jumpInput = getJumpInput();
+		register(jumpInput, new ActionStartListener() {
 			@Override public final void onActionStart(final ActionStartEvent event) { jump(); }});
-		register(ctrl.get1(), new ActionEndListener() {
+		register(jumpInput, new ActionEndListener() {
 			@Override public final void onActionEnd(final ActionEndEvent event) { releaseJump(); }});
 		register(ctrl.getRight(), new ActionListener() {
 			@Override public final void onAction(final ActionEvent event) { right(); }});
@@ -347,6 +348,10 @@ public class Player extends Character implements CollisionListener {
             @Override public final void onActionStart(final ActionStartEvent event) { engine.startCaptureFrames(); }});
         register(interaction.KEY_F3, new ActionStartListener() {
             @Override public final void onActionStart(final ActionStartEvent event) { engine.stopCaptureFrames(); }});
+	}
+	
+	private final Panput getJumpInput() {
+		return pc.ctrl.get1();
 	}
 	
 	protected final void loadState(final Player p) {
@@ -698,7 +703,7 @@ public class Player extends Character implements CollisionListener {
 		    final boolean aboveEnemy = getPosition().getY() > other.getPosition().getY();
 		    if (aboveEnemy && v < 4 && !isGrounded()) {
 				if (((Enemy) other).onStomp(this)) {
-    				v = VEL_BUMP;
+    				v = getJumpInput().isActive() ? MAX_V : VEL_BUMP;
     				stompTimer = 2;
 				}
 		    } else if (aboveEnemy && stompTimer > 0) {
