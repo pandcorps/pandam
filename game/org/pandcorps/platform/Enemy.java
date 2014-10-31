@@ -340,7 +340,7 @@ public class Enemy extends Character {
 		final boolean skipSplat = def.splatDecider != null && !def.splatDecider.onInteract(this, player);
 		final BurstHandler splatHandler = skipSplat ? null : def.splatHandler;
 		if (player != null && (v > 0 || splatHandler == null)) {
-		    if (def.rewardHandler == null || def.rewardHandler.onInteract(this, player)) {
+		    if (isRewarded(player)) {
 				new GemBumped(player, this);
 				player.levelDefeatedEnemies++;
 				final Statistics stats = player.pc.profile.stats;
@@ -370,6 +370,10 @@ public class Enemy extends Character {
 		}
 		destroy();
 		return true;
+	}
+	
+	private final boolean isRewarded(final Player player) {
+		return def.rewardHandler == null || def.rewardHandler.onInteract(this, player);
 	}
 	
 	protected final void burst(final Panimation anm) {
@@ -454,7 +458,7 @@ public class Enemy extends Character {
 
 	@Override
 	protected final boolean onFell() {
-		if (lastStomper != null) {
+		if (lastStomper != null && isRewarded(lastStomper)) {
 			/*
 			It is annoying if Player stomps Ogre once, then Ogre falls before Player can finish the Ogre.
 			So reward the Player.
@@ -518,17 +522,15 @@ public class Enemy extends Character {
     }
 	
 	public final static class BounceBall extends ColliderEnemy {
-		private final Player bouncer;
-		
         protected BounceBall(final EnemyDefinition def, final Panctor ref, final Player bouncer) {
             super(def, ref);
-            this.bouncer = bouncer;
+            lastStomper = bouncer;
         }
 
         @Override
         public final void onCollision(final Enemy collider) {
             //collider.onBump(this); // Doesn't give Player Gem
-        	collider.onHit(bouncer);
+        	collider.onHit(lastStomper);
         }
     }
 	
