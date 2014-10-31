@@ -114,7 +114,6 @@ public class PlatformGame extends BaseGame {
 	OutputStream that writes to tmp file then swaps on close, keeping original as bak.
 	InputStream that reads bak file if can't find main.
 	The "Add" touch button should ask if adding new Profile or Avatar.
-	If a full ArmorBall falls, it should award the kicker.
 	Icon.
 	Screen shots.
 	Title screen.
