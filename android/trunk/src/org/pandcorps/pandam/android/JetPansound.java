@@ -41,6 +41,7 @@ public final class JetPansound extends Pansound {
 	
 	@Override
 	protected final void runMusic() throws Exception {
+		AndroidPanaudio.pausedMusic = null;
 		run(-1);
 	}
 

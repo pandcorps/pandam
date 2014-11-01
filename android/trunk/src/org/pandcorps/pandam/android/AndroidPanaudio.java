@@ -52,6 +52,30 @@ public final class AndroidPanaudio extends Panaudio {
 			}
 		}
 	}
+	
+	protected static Pansound pausedMusic = null;
+	
+	@Override
+	public final void pauseMusic() {
+		if (JetPansound.jetPlayer == null) {
+			return;
+		}
+		pausedMusic = getMusic();
+		if (pausedMusic == null) {
+			return;
+		}
+		JetPansound.jetPlayer.pause();
+	}
+	
+	@Override
+	public final void resumeMusic() throws Exception {
+		final Pansound oldPaused = pausedMusic;
+		pausedMusic = null;
+		if (!isMusicEnabled() || JetPansound.jetPlayer == null || oldPaused == null || oldPaused != getMusic()) {
+			return;
+		}
+		JetPansound.jetPlayer.play();
+	}
 
 	@Override
 	public final void stop() {
