@@ -432,6 +432,7 @@ public abstract class Pangine {
 		// Input might add a button and then pause; want button displayed; finish current frame
 		if (paused == PAUSED_NEW) {
 			paused = PAUSED_YES;
+			getAudio().pauseMusic();
 		} else if (paused == PAUSED_YES) {
 			return;
 		}
@@ -940,7 +941,7 @@ public abstract class Pangine {
 				this.paused = PAUSED_NEW;
 			}
 		} else {
-			this.paused = PAUSED_NO;
+			unpause();
 		}
 	}
 	
@@ -948,8 +949,19 @@ public abstract class Pangine {
 		if (paused == PAUSED_NO) {
 			paused = PAUSED_NEW;
 		} else {
-			paused = PAUSED_NO;
+			unpause();
 		}
+	}
+	
+	private final void unpause() {
+		if (paused == PAUSED_YES) {
+			try {
+				getAudio().resumeMusic();
+			} catch (final Exception e) {
+				throw Panception.get(e);
+			}
+		}
+		paused = PAUSED_NO;
 	}
 	
 	public final void addTimer(final Panctor actor, final long duration, final TimerListener listener) {
