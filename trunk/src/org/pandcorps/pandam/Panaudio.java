@@ -73,6 +73,10 @@ public abstract class Panaudio {
 		Pansound.currentMusic = null;
 	}
 	
+	public abstract void pauseMusic();
+	
+	public abstract void resumeMusic() throws Exception;
+	
 	public abstract void stop();
 		
 	public abstract void close();

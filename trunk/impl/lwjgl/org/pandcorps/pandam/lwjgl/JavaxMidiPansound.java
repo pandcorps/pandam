@@ -35,9 +35,20 @@ public final class JavaxMidiPansound extends Pansound {
 	
 	@Override
 	protected final void runMusic() throws Exception {
-		JavaxMidiPanaudio.play(seq, Sequencer.LOOP_CONTINUOUSLY);
+		final long tickPosition, microsecondPosition;
+		if (JavaxMidiPanaudio.pausedSequence == seq) {
+			tickPosition = JavaxMidiPanaudio.tickPosition;
+			microsecondPosition = JavaxMidiPanaudio.microsecondPosition;
+		} else {
+			tickPosition = 0;
+			microsecondPosition = 0;
+		}
+		JavaxMidiPanaudio.play(seq, tickPosition, microsecondPosition, Sequencer.LOOP_CONTINUOUSLY);
+		JavaxMidiPanaudio.pausedSequence = null;
+		JavaxMidiPanaudio.tickPosition = 0;
+		JavaxMidiPanaudio.microsecondPosition = 0;
 	}
-
+	
 	@Override
 	protected final void runSound() throws Exception {
 		JavaxMidiPanaudio.play(seq, 0);

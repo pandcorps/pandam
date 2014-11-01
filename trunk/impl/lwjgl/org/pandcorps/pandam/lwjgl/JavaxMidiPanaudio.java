@@ -63,6 +63,30 @@ public class JavaxMidiPanaudio extends Panaudio {
 	    }
 	}
 	
+	protected static Sequence pausedSequence = null;
+	protected static long tickPosition = 0, microsecondPosition = 0;
+	
+	@Override
+	public final void pauseMusic() {
+		for (final Sequencer sequencer : sequencers) {
+	        if (sequencer.isRunning() && (sequencer.getLoopCount() == Sequencer.LOOP_CONTINUOUSLY)) {
+	        	pausedSequence = sequencer.getSequence();
+	        	tickPosition = sequencer.getTickPosition();
+	        	microsecondPosition = sequencer.getMicrosecondPosition();
+	            sequencer.stop();
+	            break;
+	        }
+	    }
+	}
+	
+	@Override
+	public final void resumeMusic() throws Exception {
+		if (!isMusicEnabled() || pausedSequence == null) {
+			return;
+		}
+		((JavaxMidiPansound) getMusic()).runMusic();
+	}
+	
 	@Override
 	public final void stop() {
 		for (final Sequencer sequencer : sequencers) {
@@ -92,6 +116,10 @@ public class JavaxMidiPanaudio extends Panaudio {
 	}
 	
 	protected final static void play(final Sequence seq, final int loopCount) {
+		play(seq, 0, 0, loopCount);
+	}
+	
+	protected final static void play(final Sequence seq, final long tickPosition, final long microsecondPosition, final int loopCount) {
 		Sequencer sequencer = null;
 		for (final Sequencer s : sequencers) {
 			if (!s.isRunning()) {
@@ -103,7 +131,8 @@ public class JavaxMidiPanaudio extends Panaudio {
 			// Could set absolute limit and ignore requests after that
 			sequencer = newSequencer();
 		}
-		sequencer.setTickPosition(0);
+		sequencer.setTickPosition(tickPosition);
+		sequencer.setMicrosecondPosition(microsecondPosition);
 		sequencer.setLoopCount(loopCount);
 		try {
 			sequencer.setSequence(seq);
