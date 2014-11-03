@@ -432,7 +432,7 @@ public abstract class Pangine {
 		// Input might add a button and then pause; want button displayed; finish current frame
 		if (paused == PAUSED_NEW) {
 			paused = PAUSED_YES;
-			getAudio().pauseMusic();
+			//getAudio().pauseMusic();
 		} else if (paused == PAUSED_YES) {
 			return;
 		}
@@ -938,7 +938,7 @@ public abstract class Pangine {
 	public final void setPaused(final boolean paused) {
 		if (paused) {
 			if (this.paused == PAUSED_NO) {
-				this.paused = PAUSED_NEW;
+				pause();
 			}
 		} else {
 			unpause();
@@ -947,20 +947,25 @@ public abstract class Pangine {
 	
 	public final void togglePause() {
 		if (paused == PAUSED_NO) {
-			paused = PAUSED_NEW;
+			pause();
 		} else {
 			unpause();
 		}
 	}
 	
+	private final void pause() {
+		paused = PAUSED_NEW;
+		getAudio().pauseMusic();
+	}
+	
 	private final void unpause() {
-		if (paused == PAUSED_YES) {
+		//if (paused == PAUSED_YES) {
 			try {
 				getAudio().resumeMusic();
 			} catch (final Exception e) {
 				throw Panception.get(e);
 			}
-		}
+		//}
 		paused = PAUSED_NO;
 	}
 	
