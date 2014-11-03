@@ -1745,6 +1745,17 @@ System.out.println("loadConstants end " + System.currentTimeMillis());
     	music.startSound();
 	}
 	
+	@Override
+	public boolean onPause() {
+		if (Pangine.getEngine().isPaused()) {
+			return true;
+		} else if (Panscreen.get() instanceof PlatformScreen && hud != null) {
+			Menu.PlayerScreen.promptQuit(hud);
+			return true;
+		}
+		return false;
+	}
+	
 	public final static void main(final String[] args) {
         try {
             new PlatformGame().start();

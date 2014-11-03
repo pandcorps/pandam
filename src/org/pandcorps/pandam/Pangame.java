@@ -119,4 +119,9 @@ public abstract class Pangame {
 	
 	public void step() {
 	}
+	
+	//@OverrideMe
+	public boolean onPause() {
+		return false;
+	}
 }
