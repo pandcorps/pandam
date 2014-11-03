@@ -109,4 +109,44 @@ public class PanSurfaceView extends GLSurfaceView {
 		}
 		return super.onKeyUp(keyCode, event);
 	}
+	
+	private boolean needResume = false;
+	
+	@Override
+	public final void onResume() {
+		super.onResume();
+		if (needResume) {
+			needResume = false;
+			AndroidPangine.engine.setPaused(false);
+		}
+	}
+
+	@Override
+	public final void onPause() {
+		super.onPause();
+		if (!AndroidPangine.engine.isPaused()) {
+			needResume = true;
+			AndroidPangine.engine.setPaused(true);
+		}
+	}
+	
+	/*@Override
+	public final void onFocusChanged(final boolean gainFocus, final int direction, final Rect previouslyFocusedRect) {
+		super.onFocusChanged(gainFocus, direction, previouslyFocusedRect);
+	}
+	
+	@Override
+	public final void onScreenStateChanged(final int screenState) {
+		super.onScreenStateChanged(screenState);
+	}
+	
+	@Override
+	public final void onWindowFocusChanged(final boolean hasWindowFocus) {
+		super.onWindowFocusChanged(hasWindowFocus);
+	}
+	
+	@Override
+	public final void onWindowVisibilityChanged(final int visibility) {
+		super.onWindowVisibilityChanged(visibility);
+	}*/
 }
