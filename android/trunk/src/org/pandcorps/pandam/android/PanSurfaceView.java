@@ -137,7 +137,7 @@ public class PanSurfaceView extends GLSurfaceView {
 	@Override
 	public final void onPause() {
 		super.onPause();
-		if (!AndroidPangine.engine.isPaused()) {
+		if (!AndroidPangine.engine.isPaused() && !Pangame.getGame().onPause()) {
 			needResume = true;
 			resumeOnFocus = false;
 			AndroidPangine.engine.setPaused(true);
