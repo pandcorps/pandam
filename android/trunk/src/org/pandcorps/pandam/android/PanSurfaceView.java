@@ -112,11 +112,24 @@ public class PanSurfaceView extends GLSurfaceView {
 	
 	private boolean needResume = false;
 	
+	private boolean resumeOnFocus = false;
+	
+	private boolean focused = true;
+	
 	@Override
 	public final void onResume() {
 		super.onResume();
+		if (focused) {
+			resume();
+		} else {
+			resumeOnFocus = true;
+		}
+	}
+	
+	private final void resume() {
 		if (needResume) {
 			needResume = false;
+			resumeOnFocus = false;
 			AndroidPangine.engine.setPaused(false);
 		}
 	}
@@ -126,6 +139,7 @@ public class PanSurfaceView extends GLSurfaceView {
 		super.onPause();
 		if (!AndroidPangine.engine.isPaused()) {
 			needResume = true;
+			resumeOnFocus = false;
 			AndroidPangine.engine.setPaused(true);
 		}
 	}
@@ -133,19 +147,27 @@ public class PanSurfaceView extends GLSurfaceView {
 	/*@Override
 	public final void onFocusChanged(final boolean gainFocus, final int direction, final Rect previouslyFocusedRect) {
 		super.onFocusChanged(gainFocus, direction, previouslyFocusedRect);
+		focused = gainFocus;
+		if (gainFocus && resumeOnFocus) {
+			resume();
+		}
 	}
 	
 	@Override
 	public final void onScreenStateChanged(final int screenState) {
 		super.onScreenStateChanged(screenState);
-	}
+	}*/
 	
 	@Override
 	public final void onWindowFocusChanged(final boolean hasWindowFocus) {
 		super.onWindowFocusChanged(hasWindowFocus);
+		focused = hasWindowFocus;
+		if (hasWindowFocus && resumeOnFocus) {
+			resume();
+		}
 	}
 	
-	@Override
+	/*@Override
 	public final void onWindowVisibilityChanged(final int visibility) {
 		super.onWindowVisibilityChanged(visibility);
 	}*/
