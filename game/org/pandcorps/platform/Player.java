@@ -483,6 +483,7 @@ public class Player extends Character implements CollisionListener {
 		            setMirror(returnPlayer.isMirror());
 		        }
 		    }
+		    enableTemporaryInvincibility();
 			pos.set(returnDestination);
 			startReturn(null, 0, null);
 			mode = MODE_NORMAL;
@@ -732,8 +733,12 @@ public class Player extends Character implements CollisionListener {
 	    if (isHurtable()) {
 	    	levelHits++;
             onHurt();
-            hurtTimer = 60; // Enable temporary invincibility
+            enableTemporaryInvincibility();
         }
+	}
+	
+	private final void enableTemporaryInvincibility() {
+		hurtTimer = 60;
 	}
 	
 	private final void startFreeze(final Wisp wisp) {
