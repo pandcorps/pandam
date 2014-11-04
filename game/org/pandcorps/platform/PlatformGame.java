@@ -1525,7 +1525,7 @@ System.out.println("loadConstants end " + System.currentTimeMillis());
 	}
 	
 	protected final static void addNotifications(final Panlayer layer) {
-		if (notifications == null) {
+		if (notifications == null || notifications.isDestroyed()) {
 			notifications = new Notifications(layer, font);
 			notifications.getLabel().getPosition().set(8, Pangine.getEngine().getEffectiveHeight() - 25);
 		} else {

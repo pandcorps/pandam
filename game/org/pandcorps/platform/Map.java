@@ -39,6 +39,7 @@ import org.pandcorps.pandax.in.*;
 import org.pandcorps.pandax.text.*;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.tile.Tile.*;
+import org.pandcorps.pandax.visual.*;
 import org.pandcorps.platform.Level.*;
 import org.pandcorps.platform.Menu.*;
 import org.pandcorps.platform.Player.*;
@@ -491,9 +492,11 @@ public class Map {
 		private int stillTimer = -1;
 		private int waitTimer = 0;
 		private List<Pantext> helps = null;
+		private final long startTime;
 		
 		private MapPlayer(final PlayerContext pc) {
 		    this.pc = pc;
+		    startTime = Pangine.getEngine().getClock() + 1;
 			setView(pc.mapSouth);
 			setSpeed(2);
 			register(new ActionStartListener() { @Override public final void onActionStart(final ActionStartEvent event) {
@@ -586,6 +589,10 @@ public class Map {
 	        	/*if (room.getBlendColor().getA() > Pancolor.MIN_VALUE) {
 	        		return;
 	        	}*/
+	        	if (engine.getClock() <= startTime || FadeController.isFadingIn()) {
+	        		ctrl.get1().inactivate();
+	        		return;
+	        	}
 	            clearHelp();
 	        	final int t = getIndex();
 	            if (isOpen(t)) {
@@ -1399,7 +1406,14 @@ public class Map {
 	}
 	
 	private final static void addPlayer(final int index) {
-		player = new MapPlayer(getPlayerContext());
+		final PlayerContext pc = getPlayerContext();
+		if (pc != null && pc.ctrl != null) {
+			final Panput act1 = pc.ctrl.get1();
+			if (act1 != null) {
+				act1.inactivate();
+			}
+		}
+		player = new MapPlayer(pc);
 		player.setPos(index);
 		room.addActor(player);
 		Pangine.getEngine().track(player);

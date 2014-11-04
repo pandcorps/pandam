@@ -703,7 +703,7 @@ public class Player extends Character implements CollisionListener {
 		    final boolean aboveEnemy = getPosition().getY() > other.getPosition().getY();
 		    if (aboveEnemy && v < 4 && !isGrounded()) {
 				if (((Enemy) other).onStomp(this)) {
-    				v = getJumpInput().isActive() ? MAX_V : VEL_BUMP;
+    				v = (jumpMode != JUMP_FLY && getJumpInput().isActive()) ? MAX_V : VEL_BUMP;
     				stompTimer = 2;
 				}
 		    } else if (aboveEnemy && stompTimer > 0) {
