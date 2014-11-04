@@ -57,6 +57,14 @@ public final class Pantil {
 	public final static RuntimeException toRuntimeException(final Throwable e) {
 		return e instanceof RuntimeException ? (RuntimeException) e : new RuntimeException(e);
 	}
+	
+	public final static Throwable getRootCause(final Throwable e) {
+		Throwable root = e, next;
+		while ((next = root.getCause()) != null) {
+			root = next;
+		}
+		return root;
+	}
 
 	public final static boolean equals(final Object o1, final Object o2) {
 		return o1 == null ? o2 == null : o1.equals(o2);
