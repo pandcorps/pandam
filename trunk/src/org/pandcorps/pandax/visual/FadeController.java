@@ -92,9 +92,15 @@ public class FadeController extends Panctor implements StepListener {
     	clearFadeControllers(layer);
     	// Will normally already be min; but if it's already partially faded, just use that as starting point
         //layer.getBlendColor().set(r, g, b, Pancolor.MIN_VALUE);
+    	final RuntimeException state = new RuntimeException("State when starting fadeOut");
         final FadeController c = new FadeController() {
             @Override protected final void onFadeEnd() {
-                Panscreen.set(nextScreen);
+            	try {
+            		Panscreen.set(nextScreen);
+            	} catch (final RuntimeException e) {
+            		Pantil.getRootCause(e).initCause(state);
+            		throw e;
+            	}
             }};
         c.setVelocity(speed);
         layer.addActor(c);
