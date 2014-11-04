@@ -26,9 +26,11 @@ import org.pandcorps.core.*;
 import org.pandcorps.pandam.impl.*;
 
 public abstract class Pangame {
+	/*package*/ static volatile boolean initializingRoom = true;
+	
 	private static Pangame game = null;
 
-	private Panroom currentRoom = null;
+	private volatile Panroom currentRoom = null;
 
 	// Could imagine a game with two different modes,
 	// like flying a ship and walking on a planet surface,
@@ -56,11 +58,15 @@ public abstract class Pangame {
 	    If it's overridden, the game will need to be careful about that.
 	    */
 	    final Panroom room = Pangine.getEngine().createRoom(Pantil.vmid(), getFirstRoomSize());
-	    if (currentRoom == null) {
-	        currentRoom = room;
-	    }
+	    setCurrentRoomIfNeeded(room);
         init(room);
         return room;
+	}
+	
+	/*package*/ final void setCurrentRoomIfNeeded(final Panroom room) {
+		if (currentRoom == null) {
+	        currentRoom = room;
+	    }
 	}
 
 	public Panroom getCurrentRoom() {
@@ -71,10 +77,14 @@ public abstract class Pangame {
 				throw Pantil.toRuntimeException(e);
 			}
 		}
+		initializingRoom = false;
 		return currentRoom;
 	}
 	
 	public void setCurrentRoom(final Panroom currentRoom) {
+		if (currentRoom == null) {
+			throw new NullPointerException("Attempted to assign a null Panroom");
+		}
 		this.currentRoom = currentRoom;
 	}
 

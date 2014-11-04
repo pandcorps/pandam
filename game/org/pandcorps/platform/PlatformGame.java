@@ -1391,7 +1391,7 @@ System.out.println("loadConstants end " + System.currentTimeMillis());
 		
 	    loaders.add(new Runnable() { @Override public final void run() {
 	    	final Panaudio audio = engine.getAudio();
-	    	audio.ensureCapacity(5);
+	    	audio.ensureCapacity(6);
 	    	musicMenu = audio.createMusic("org/pandcorps/platform/res/music/menu.mid");
 	    	musicHappy = audio.createMusic("org/pandcorps/platform/res/music/happy.mid");
 	    	musicHeartbeat = audio.createMusic("org/pandcorps/platform/res/music/heartbeat.mid");
