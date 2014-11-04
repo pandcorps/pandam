@@ -34,13 +34,21 @@ public final class Panroom extends Panlayer {
 		final String id,
 		final float width, final float height, final float depth) {
 	    super(id, width, height, depth, null);
+	    init();
 	    base = this;
 	}
 	
 	/*package*/ Panroom(final String id, final FinPanple size) {
         super(id, size, null);
+        init();
         base = this;
     }
+	
+	private final void init() {
+		if (Pangame.initializingRoom) {
+			Pangame.getGame().setCurrentRoomIfNeeded(this);
+		}
+	}
 
 	@Override
 	public final Panlayer getBase() {
