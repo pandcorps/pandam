@@ -105,16 +105,25 @@ public abstract class Pangame {
 		try {
 			beforeLoop();
 			engine.loop();
-			engine.destroy();
 		} catch (final Exception e) {
 			fatal(engine);
 			throw new Panception(e);
+		} finally {
+			destroy(engine);
 		}
 	}
 	
 	private final void fatal(final Pangine engine) {
 		try {
 			engine.exit();
+		} catch (final Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private final void destroy(final Pangine engine) {
+		try {
+			engine.destroy();
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
