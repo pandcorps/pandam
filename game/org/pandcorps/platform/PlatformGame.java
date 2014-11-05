@@ -1527,6 +1527,7 @@ System.out.println("loadConstants end " + System.currentTimeMillis());
 	protected final static void addNotifications(final Panlayer layer) {
 		if (notifications == null || notifications.isDestroyed()) {
 			notifications = new Notifications(layer, font);
+			notifications.setDestroyAllowed(false);
 			notifications.getLabel().getPosition().set(8, Pangine.getEngine().getEffectiveHeight() - 25);
 		} else {
 			layer.addActor(notifications);
@@ -1655,6 +1656,7 @@ System.out.println("loadConstants end " + System.currentTimeMillis());
 	
 	protected final static Panroom createRoom(final int w, final int h) {
 	    if (room != null) {
+	    	Panctor.detach(notifications);
 	        room.destroy();
 	    }
 	    room = Pangine.getEngine().createRoom(Pantil.vmid(), w, h, 0);

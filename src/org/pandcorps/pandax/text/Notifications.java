@@ -36,6 +36,7 @@ public class Notifications extends Panctor implements StepListener {
     private List<Runnable> freeListeners = null;
     private int timer = 0;
     private Panctor icon = null;
+    private boolean destroyAllowed = true;
     
     private Notifications(final Panlayer layer, final Pantext label) {
         layer.addActor(label);
@@ -124,9 +125,20 @@ public class Notifications extends Panctor implements StepListener {
         }
     }
     
+    public final void setDestroyAllowed(final boolean destroyAllowed) {
+    	this.destroyAllowed = destroyAllowed;
+    }
+    
     @Override
     protected void onDetach() {
     	label.detach();
+    }
+    
+    @Override
+    protected final void onDestroy() {
+    	if (!destroyAllowed) {
+    		throw new IllegalStateException("Attempted to destroy Notifications when not allowed");
+    	}
     }
     
     private final void init(final Notification n) {
