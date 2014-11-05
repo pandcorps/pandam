@@ -117,6 +117,7 @@ public class PlatformGame extends BaseGame {
 	Icon.
 	Screen shots.
 	Title screen.
+	Version #
 	*/
 	
 	protected final static byte TILE_BREAK = 2;
@@ -340,6 +341,11 @@ public class PlatformGame extends BaseGame {
 			return;
 		}
 		Notifications.fadeOut(notifications, layer, Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, speed, screen, true);
+	}
+	
+	protected final static void setScreen(final Panscreen screen) {
+		Panctor.detach(notifications);
+		Panscreen.set(screen);
 	}
 	
 	protected final static void notify(final Named n, final String msg) {
