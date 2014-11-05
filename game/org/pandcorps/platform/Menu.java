@@ -842,7 +842,7 @@ public class Menu {
 		
 		protected final void goProfile() {
 			ProfileScreen.currentTab = ProfileScreen.TAB_SELECT_AVATAR;
-			Panscreen.set(new ProfileScreen(pc, false));
+			PlatformGame.setScreen(new ProfileScreen(pc, false));
 		}
 		
 		protected final void newProfile(final PlayerContext curr) {
@@ -860,11 +860,11 @@ public class Menu {
             pc = PlatformGame.newPlayerContext(prf, ctrl, curr == null ? PlatformGame.pcs.size() : curr.index);
             reloadAnimalStrip();
             triggerMapLoad();
-            Panscreen.set(new NewScreen(pc, false));
+            PlatformGame.setScreen(new NewScreen(pc, false));
 		}
 		
 		protected final void goOptions() {
-            Panscreen.set(new OptionsScreen(pc));
+            PlatformGame.setScreen(new OptionsScreen(pc));
         }
 		
 		protected final void reloadAnimalStrip() {
@@ -993,7 +993,7 @@ public class Menu {
 			if (Config.defaultProfileName == null) {
 				final SelectScreen screen = new SelectScreen(null, false);
 		        screen.ctrl = ctrl;
-		        Panscreen.set(screen);
+		        PlatformGame.setScreen(screen);
 			} else {
 				try {
 					PlatformGame.loadProfile(Config.defaultProfileName, ctrl, PlatformGame.pcs.size());
@@ -1234,7 +1234,7 @@ public class Menu {
 		
 		private void reload(final byte tab) {
 			currentTab = tab;
-			Panscreen.set(new ProfileScreen(pc, false));
+			PlatformGame.setScreen(new ProfileScreen(pc, false));
 		}
 		
 		private final int getAvatarsSize() {
@@ -1304,13 +1304,13 @@ public class Menu {
             }
             final MsgCloseListener astLsn = new MsgCloseListener() {
                 @Override public final void onClose() {
-                    Panscreen.set(new AssistScreen(pc)); }};
+                    PlatformGame.setScreen(new AssistScreen(pc)); }};
             x = addPipe(x, y);
             x = addLink("Perks", astLsn, x, y);
 			final MsgCloseListener prfLsn = new MsgCloseListener() {
                 @Override public final void onClose() {
                     save();
-                    Panscreen.set(new SelectScreen(pc, false)); }};
+                    PlatformGame.setScreen(new SelectScreen(pc, false)); }};
             y -= 16;
             x = left;
             addTitle("Profile", x, y);
@@ -1382,7 +1382,7 @@ public class Menu {
 		}
 		
 		private final void goAvatar() {
-		    Panscreen.set(new AvatarScreen(pc));
+		    PlatformGame.setScreen(new AvatarScreen(pc));
 		}
 		
 		private final void newAvatar() {
@@ -1397,7 +1397,7 @@ public class Menu {
 		}
 		
 		private final void goInfo() {
-			Panscreen.set(new InfoScreen(pc, true));
+			PlatformGame.setScreen(new InfoScreen(pc, true));
 		}
 		
 		private final void quit() {
@@ -1513,7 +1513,7 @@ public class Menu {
 		
 		private void reload(final byte tab) {
 			currentTab = tab;
-			Panscreen.set(new AvatarScreen(pc, old, avt));
+			PlatformGame.setScreen(new AvatarScreen(pc, old, avt));
 		}
 		
 		private final void createAnimalList(final int x, final int y) {
@@ -1536,7 +1536,7 @@ public class Menu {
 		
 		private final void goGear() {
 			GearScreen.currentTab = GearScreen.TAB_DEFAULT;
-			Panscreen.set(new GearScreen(pc, old, avt));
+			PlatformGame.setScreen(new GearScreen(pc, old, avt));
 		}
 		
 		protected final void menuClassic() {
@@ -1939,7 +1939,7 @@ public class Menu {
         
         private void reload(final byte tab) {
             currentTab = tab;
-            Panscreen.set(new GearScreen(pc, old, avt));
+            PlatformGame.setScreen(new GearScreen(pc, old, avt));
         }
         
         protected final void menuClassic() {
@@ -2017,7 +2017,7 @@ public class Menu {
         	Coltil.clear(drgnColors);
         	Coltil.clear(clthMenu.colors);
         	Coltil.clear(hatMenu.colors);
-            Panscreen.set(new AvatarScreen(pc, old, avt));
+            PlatformGame.setScreen(new AvatarScreen(pc, old, avt));
         }
 	}
 	
@@ -2170,7 +2170,7 @@ public class Menu {
 		
 		private void reload(final byte tab) {
 			currentTab = tab;
-			Panscreen.set(new InfoScreen(pc, fullMenu));
+			PlatformGame.setScreen(new InfoScreen(pc, fullMenu));
 		}
 		
 		private final void createAchievementList(final int x, final int y) {
@@ -2485,11 +2485,11 @@ public class Menu {
         }
         
         private final void goMusic() {
-            Panscreen.set(new MusicScreen(pc));
+            PlatformGame.setScreen(new MusicScreen(pc));
         }
         
         private final void goConsole() {
-            Panscreen.set(new ConsoleScreen(pc));
+            PlatformGame.setScreen(new ConsoleScreen(pc));
         }
         
         private final void toggleAuto() {
