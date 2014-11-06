@@ -87,7 +87,7 @@ public abstract class Goal implements Named {
 				case 2: g = new BreakGoal(award, pc); break;
 				case 3: g = new BumpGoal(award, pc); break;
 				case 4: g = new JumpGoal(award, pc); break;
-				case 5: g = new GemGoal(award, pc); break;
+				case 5: g = new GemGoal(award); break;
 				case 6: g = new FallGoal(award); break;
 				case 7: g = new HitGoal(award); break;
 				case 8: g = new WordGoal(award, pc); break;
@@ -443,9 +443,9 @@ public abstract class Goal implements Named {
 		}
 	}
 	
-	public final static class GemGoal extends StatGoal {
-		public GemGoal(final byte award, final PlayerContext pc) {
-			super(award, pc);
+	public final static class GemGoal extends RunGoal {
+		public GemGoal(final byte award) {
+			super(award);
 		}
 		
 		protected GemGoal(final Field f) {
@@ -454,12 +454,12 @@ public abstract class Goal implements Named {
 		
 		@Override
 		protected final long getAmount() {
-			return award == 1 ? 100 : award == 2 ? 250 : 500;
+			return award * 100;
 		}
 		
 		@Override
-		protected final long getCurrentAmount(final Statistics stats) {
-			return stats.totalGems;
+		protected final long getCurrentAmount(final Player player) {
+			return PlatformGame.level ? player.levelGems : 0;
 		}
 		
 		@Override

@@ -285,7 +285,7 @@ public class Player extends Character implements CollisionListener {
 	private Panple returnDestination = null;
 	private int returnVelocity = 0;
 	private Player returnPlayer = null;
-	private int levelGems = 0;
+	protected int levelGems = 0;
 	protected int levelDefeatedEnemies = 0;
 	protected int levelFalls = 0;
 	protected long lastFall = -1;
@@ -358,6 +358,7 @@ public class Player extends Character implements CollisionListener {
 	    if (p == null) {
 	        return;
 	    }
+	    this.levelGems = p.levelGems;
 	    this.levelFalls = p.levelFalls;
 	    this.levelHits = p.levelHits;
 	}
