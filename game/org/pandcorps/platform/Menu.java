@@ -2706,10 +2706,20 @@ public class Menu {
 		private final static String MSG_RESTART = "OK, need restart";
 		private final static String MSG_LIMIT = "Error, limit";
 		
+		private interface ExecHandler {
+			public String run(final String cmd);
+		}
+		
+		private ExecHandler execHandler = null;
+		
 		private final void exec() {
 			//Chartil.clear(info);
 			final String cmd = input.getText(), msg;
-			if ("addgems".equalsIgnoreCase(cmd)) {
+			if (execHandler != null) {
+				final ExecHandler eh = execHandler;
+				execHandler = null;
+				msg = eh.run(cmd);
+			} else if ("addgems".equalsIgnoreCase(cmd)) {
 				pc.addGems(1000);
 				msg = "Added 1000 Gems";
 			} else if ("getzoom".equalsIgnoreCase(cmd)) {
@@ -2796,6 +2806,16 @@ public class Menu {
 			} else if ("export".equalsIgnoreCase(cmd)) {
 				Pangine.getEngine().setClipboard(Savtil.toString(pc.profile));
 				msg = MSG_OK;
+			} else if ("delete".equalsIgnoreCase(cmd)) {
+				execHandler = new ExecHandler() {
+					@Override public final String run(final String cmd) {
+						final Profile prf = pc.profile;
+						if (cmd.equalsIgnoreCase(prf.getName())) {
+							return "Cannot delete current";
+						}
+						return (Iotil.delete(prf.getFileName()) || Iotil.delete(prf.getMapFileName())) ? MSG_OK : "Not found";
+					}};
+				msg = "Which?";
 			} else if ("save".equalsIgnoreCase(cmd)) {
 			    save();
 			    msg = MSG_OK;
