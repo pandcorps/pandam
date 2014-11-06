@@ -1650,7 +1650,7 @@ public class Map {
 	}
 	
 	private final static String getMapFile() {
-		return getProfile().getName() + PlatformGame.EXT_MAP;
+		return getProfile().getMapFileName();
 	}
 	
 	protected final static void saveMap() {
