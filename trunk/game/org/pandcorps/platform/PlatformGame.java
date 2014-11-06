@@ -110,10 +110,8 @@ public class PlatformGame extends BaseGame {
 	Clipboard import/export.
 	GoalTemplate: 2*2 block steps.
 	Sand level cactus, Snow level crystal/pine tree
-	Rank-up bonus Gems can trigger immediate Gem goal success; that shouldn't happen
 	OutputStream that writes to tmp file then swaps on close, keeping original as bak.
 	InputStream that reads bak file if can't find main.
-	The "Add" touch button should ask if adding new Profile or Avatar.
 	Icon.
 	Screen shots.
 	Title screen.
@@ -937,7 +935,7 @@ public class PlatformGame extends BaseGame {
 	}
 	
 	protected final static Profile loadProfile(final String pname, final ControlScheme ctrl, final int index) throws Exception {
-		final SegmentStream plist = SegmentStream.openLocation(pname + EXT_PRF);
+		final SegmentStream plist = SegmentStream.openLocation(Profile.getFileName(pname));
 		/*
 		PRF|Andrew|Balue|1|0
 		AVT|Grabbit|Rabbit|2|0|1|0.25

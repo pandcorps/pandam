@@ -382,4 +382,16 @@ gems = 1000000;
     public final int getRank() {
     	return (goalPoints / POINTS_PER_RANK) + 1;
     }
+    
+    public final static String getFileName(final String pname) {
+    	return pname + PlatformGame.EXT_PRF;
+    }
+    
+    public final String getFileName() {
+    	return getFileName(getName());
+    }
+    
+    public final String getMapFileName() {
+    	return getName() + PlatformGame.EXT_MAP;
+    }
 }
