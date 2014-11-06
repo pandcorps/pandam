@@ -990,13 +990,23 @@ public class Menu {
 	    
 	    @Override
         protected final void onExit() {
-			if (Config.defaultProfileName == null) {
-				final SelectScreen screen = new SelectScreen(null, false);
+	        String defaultProfileName = Config.defaultProfileName;
+	        final List<String> availableProfiles;
+	        if (defaultProfileName == null) {
+	            availableProfiles = PlatformGame.getAvailableProfiles();
+	            if (Coltil.size(availableProfiles) == 1) {
+	                defaultProfileName = availableProfiles.get(0);
+	            }
+	        } else {
+	            availableProfiles = null;
+	        }
+			if (defaultProfileName == null) {
+				final SelectScreen screen = new SelectScreen(null, false, availableProfiles);
 		        screen.ctrl = ctrl;
 		        PlatformGame.setScreen(screen);
 			} else {
 				try {
-					PlatformGame.loadProfile(Config.defaultProfileName, ctrl, PlatformGame.pcs.size());
+					PlatformGame.loadProfile(defaultProfileName, ctrl, PlatformGame.pcs.size());
 				} catch (final Exception e) {
 					throw Pantil.toRuntimeException(e); //TODO handle missing profile
 				}
@@ -1017,17 +1027,15 @@ public class Menu {
 	
 	protected final static class SelectScreen extends PlayerScreen {
 		private final PlayerContext curr;
+		private List<String> availableProfiles = null;
 		
-		protected SelectScreen() {
-			this(null, true);
-		}
-		
-		protected SelectScreen(final PlayerContext pc, final boolean fadeIn) {
+		protected SelectScreen(final PlayerContext pc, final boolean fadeIn, final List<String> availableProfiles) {
 			super(null, fadeIn);
 			if (pc != null) {
 				ctrl = pc.ctrl;
 			}
 			curr = pc;
+			this.availableProfiles = availableProfiles;
 			tabsSupported = true;
 			showGems = false;
 		}
@@ -1078,8 +1086,10 @@ public class Menu {
 		}
 		
 		private final boolean createProfileList(final int x, final int y) {
-			final List<String> list = PlatformGame.getAvailableProfiles();
-			if (Coltil.isValued(list)) {
+			if (availableProfiles == null) {
+			    availableProfiles = PlatformGame.getAvailableProfiles();
+			}
+			if (Coltil.isValued(availableProfiles)) {
 				final RadioSubmitListener prfLsn = new RadioSubmitListener() {
 					@Override public final void onSubmit(final RadioSubmitEvent event) {
 						if (curr != null) {
@@ -1095,7 +1105,7 @@ public class Menu {
 						triggerMapLoad();
 						goProfile();
 				}};
-				addRadio("Pick Profile", list, prfLsn, null, x, y);
+				addRadio("Pick Profile", availableProfiles, prfLsn, null, x, y);
 				return true;
 			} else {
 				newProfile();
@@ -1310,7 +1320,7 @@ public class Menu {
 			final MsgCloseListener prfLsn = new MsgCloseListener() {
                 @Override public final void onClose() {
                     save();
-                    PlatformGame.setScreen(new SelectScreen(pc, false)); }};
+                    PlatformGame.setScreen(new SelectScreen(pc, false, null)); }};
             y -= 16;
             x = left;
             addTitle("Profile", x, y);
