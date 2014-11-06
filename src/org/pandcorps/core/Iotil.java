@@ -73,8 +73,8 @@ public final class Iotil {
 		return resourceChecker.exists(location) || Iotil.class.getClassLoader().getResource(location) != null;
 	}
 	
-	public final static void delete(final String location) {
-	    resourceDeleter.delete(location);
+	public final static boolean delete(final String location) {
+	    return resourceDeleter.delete(location);
 	}
 	
 	public final static Reader getReader(final String location) {
@@ -220,7 +220,7 @@ public final class Iotil {
 	}
 	
 	public static interface ResourceDeleter {
-		public void delete(final String location);
+		public boolean delete(final String location);
 	}
 	
 	private final static class FileWriterFactory implements WriterFactory {
@@ -261,8 +261,8 @@ public final class Iotil {
 	
 	private final static class FileResourceDeleter implements ResourceDeleter {
 		@Override
-		public final void delete(final String location) {
-			new File(location).delete();
+		public final boolean delete(final String location) {
+			return new File(location).delete();
 		}
 	}
 	
