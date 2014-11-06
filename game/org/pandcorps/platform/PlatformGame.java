@@ -168,6 +168,7 @@ public class PlatformGame extends BaseGame {
 	
 	private final static PixelMask greyMask = new GreyScalePixelMask();
 	
+	protected static boolean level = false;
 	protected static Panroom room = null;
 	protected static Panlayer hud = null;
 	protected final static ArrayList<PlayerContext> pcs = new ArrayList<PlayerContext>();
@@ -378,6 +379,7 @@ public class PlatformGame extends BaseGame {
 		
 		@Override
         protected final void load() throws Exception {
+			level = true;
 			loadLevel();
 			fadeIn(room);
 			for (final PlayerContext pc : pcs) {

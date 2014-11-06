@@ -51,6 +51,7 @@ public class Cabin {
 	protected final static class CabinScreen extends Panscreen {
 		@Override
 		protected final void load() throws Exception {
+			PlatformGame.level = false;
 		    clear();
 			final Pangine engine = Pangine.getEngine();
 			engine.setBgColor(Pancolor.BLACK);
