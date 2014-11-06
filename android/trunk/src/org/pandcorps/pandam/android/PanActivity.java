@@ -130,8 +130,8 @@ public class PanActivity extends Activity {
 	
 	private final class AndroidResourceDeleter implements ResourceDeleter {
 		@Override
-		public final void delete(final String location) {
-			deleteFile(location);
+		public final boolean delete(final String location) {
+			return deleteFile(location);
 		}
 	}
 	
