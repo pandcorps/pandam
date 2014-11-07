@@ -165,7 +165,18 @@ public class PlatformGame extends BaseGame {
 	protected final static String SEG_AVT = "AVT";
 	
 	protected final static List<String> tips = Arrays.asList(
-			"You can turn music and sounds on/off in Menu/Setup/Music");
+			"You can turn music and sounds on/off in Menu/Setup/Music",
+			"You can change your Avatar's appearance in Menu/Edit",
+			"You can spend Gems on clothing and powerups in Menu/Edit/Gear",
+			"You can try powerups for 1 Level without spending any Gems",
+			"You can change the color of clothing that you have purchased",
+			"You can switch between on-screen buttons and auto-run in Menu/Setup",
+			"You can add a Profile for a new user of this device in Menu/Add",
+			"Spending Gems in one Profile will not take Gems from other Profiles",
+			"Items purchased in one Profile are unavailable to other Profiles",
+			"You can create a new Avatar for yourself in Menu/Add",
+			"A single Profile can have multiple Avatars",
+			"Items purchased for one Avatar can be used by other Avatars of that Profile");
 	
 	private final static PixelMask greyMask = new GreyScalePixelMask();
 	

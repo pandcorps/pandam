@@ -42,9 +42,10 @@ public final class TextMover extends MoveController {
 		layer.addActor(this);
 	}
 	
-	public TextMover(final Panlayer layer, final MultiFont fonts, final List<String> messages, final float y, final float z) {
+	public TextMover(final Panlayer layer, final MultiFont fonts, final List<String> messages, final int firstIndex,
+			final float y, final float z) {
 		this(layer, fonts);
-		setMessages(messages);
+		setMessages(messages, firstIndex);
 		setYz(y, z);
 	}
 	
@@ -54,12 +55,17 @@ public final class TextMover extends MoveController {
 	}
 	
 	private final void changeMessage() {
+		correctIndex();
 		Chartil.set(buf, messages.get(index));
 		index++;
+		correctIndex();
+		text.getPosition().setX(Pangine.getEngine().getEffectiveWidth());
+	}
+	
+	private final void correctIndex() {
 		if (index >= messages.size()) {
 			index = 0;
 		}
-		text.getPosition().setX(Pangine.getEngine().getEffectiveWidth());
 	}
 	
 	public final void pickRandomMessage() {
@@ -71,13 +77,26 @@ public final class TextMover extends MoveController {
 	}
 	
 	public final void setMessages(final List<String> messages) {
+		setMessages(messages, 0);
+	}
+	
+	public final void setMessages(final List<String> messages, final int firstIndex) {
 		final boolean first = this.messages == null;
 		this.messages = messages;
-		index = 0;
+		index = firstIndex;
 		if (first) {
 			setToMove(text);
 			changeMessage();
 		}
+	}
+	
+	public final int getIndex() {
+		return index;
+	}
+	
+	public final void setIndex(final int index) {
+		this.index = index;
+		correctIndex();
 	}
 	
 	public final void setYz(final float y, final float z) {
