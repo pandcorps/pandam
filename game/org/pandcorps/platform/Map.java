@@ -136,6 +136,7 @@ public class Map {
 	protected static Avatar kingAvt = null;
 	protected static int kingCrown = -1;
 	private static String name = null;
+	private static TextMover tipMover = null;
 	
 	protected static boolean started = false;
 	private static boolean oldMap = true;
@@ -1454,7 +1455,8 @@ public class Map {
 	    final Panlayer hud = PlatformGame.addHud(room, false, false);
 	    final Pantext name = addText(Map.name, PlatformGame.SCREEN_W / 2, 1);
 	    final Pangine engine = Pangine.getEngine();
-	    new TextMover(hud, PlatformGame.font, PlatformGame.tips, engine.getEffectiveHeight() - 36, 0);
+	    tipMover = new TextMover(hud, PlatformGame.font, PlatformGame.tips, (tipMover == null) ? 0 : tipMover.getIndex(),
+	    		engine.getEffectiveHeight() - 36, 0);
 		PlayerScreen.initTouchButtons(hud, getPlayerContext().ctrl);
 		if (engine.isTouchSupported()) {
 			final Panteraction interaction = engine.getInteraction();
