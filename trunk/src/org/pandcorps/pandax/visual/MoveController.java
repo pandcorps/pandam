@@ -25,7 +25,7 @@ package org.pandcorps.pandax.visual;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 
-public final class MoveController extends Panctor implements StepListener {
+public class MoveController extends Panctor implements StepListener {
     private Panctor toMove = null;
     private Panple velocity = null;
     
@@ -36,8 +36,13 @@ public final class MoveController extends Panctor implements StepListener {
         }
         toMove.getPosition().add(velocity);
         if (!toMove.isInView()) {
-            
+            onOob();
         }
+    }
+    
+    protected void onOob() {
+    	toMove.destroy();
+    	destroy();
     }
     
     public final void setToMove(final Panctor toMove) {
