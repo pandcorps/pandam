@@ -30,7 +30,8 @@ import org.pandcorps.pandax.tile.*;
 public abstract class Character extends Panctor implements StepListener, Collidable {
 	protected final static int MAX_V = 10;
 	protected final static int MIN_Y = -12;
-	protected static float g = -0.65f;
+	protected final static float g = -0.65f;
+	protected final static float gFlying = -0.38f;
 	protected final int H;
 	protected final int OFF_GROUNDED = -1;
 	private final int OFF_BUTTING;
@@ -165,7 +166,7 @@ public abstract class Character extends Panctor implements StepListener, Collida
 			onGrounded();
 		} else {
 			if (!onAir()) {
-				addV(g);
+				addV(getG());
 			}
 		}
 		
@@ -209,6 +210,10 @@ public abstract class Character extends Panctor implements StepListener, Collida
 		if (!isInView()) {
 			onScrolled();
 		}
+	}
+	
+	protected float getG() {
+		return g;
 	}
 	
 	protected final float getCeiling() {

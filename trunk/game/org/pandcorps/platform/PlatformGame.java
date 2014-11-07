@@ -89,7 +89,6 @@ public class PlatformGame extends BaseGame {
 	Assist: Teleport (After fall, teleport to target immediately instead of slow bubble, no gem loss)
 	Clear TileMap.map/imgs?
 	Static TileMaps should combine adjacent Tiles with adjacent TileMapImages into one larger Tile/TileMapImage.
-	Wing gravity tweak.
 	Hoard/Vault Menu to show amount of each type of Gem.
 	Level builder should use setTile instead of forcing getTile Map lookups.
 	Improve World name generator.
@@ -101,13 +100,12 @@ public class PlatformGame extends BaseGame {
 	Some rises allow an Enemy but Player hits ceiling.
 	Tall Enemy can appear behind a short enemy on a rise above it; lower Enemy should be in front.
 	Center touch radio menus.
-	Add arrow to diamonds, rotate.
 	World Goal evaluated too late.
 	User saw bumped gem-block fail to defeat empty ArmorBall (and other Enemies near edge at other times) on it.
 	User saw Enemy defeated by bumped block fail to give Player a Gem.
 	Once saw Player appear on wrong Marker after goal-met screen.
 	Move music generation, preprocessing classes into a new folder to be excluded from jar.
-	Clipboard import/export.
+	Clipboard import.
 	GoalTemplate: 2*2 block steps.
 	Sand level cactus, Snow level crystal/pine tree
 	OutputStream that writes to tmp file then swaps on close, keeping original as bak.

@@ -379,7 +379,7 @@ public class Player extends Character implements CollisionListener {
 				PlatformGame.soundJump.startSound();
 			}
 	        flying = true;
-	        addV(-g);
+	        addV(-getG());
 	        return;
 	    } else if (isGrounded()) {
 	    	final Pansound sound;
@@ -628,7 +628,7 @@ public class Player extends Character implements CollisionListener {
 		    if (jumpMode != JUMP_FLY) {
 		        flying = false;
 		    } else {
-		        addV(-g);
+		        addV(-getG());
 		    }
 		}
 	}
@@ -807,6 +807,11 @@ public class Player extends Character implements CollisionListener {
 			return true;
 		}
 		return false;
+	}
+	
+	@Override
+	protected final float getG() {
+		return jumpMode == JUMP_FLY ? gFlying : g;
 	}
 	
 	@Override
