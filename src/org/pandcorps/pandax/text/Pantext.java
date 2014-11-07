@@ -66,6 +66,7 @@ public class Pantext extends Panctor {
 	/*package*/ float fontHeight;
 	//private final FinPanple size;
 	/*package*/ final SizePanple size = new SizePanple();
+	private final TextDisplay display = new TextDisplay();
 	/*
 	TODO
 	probably need to handle origin too
@@ -137,19 +138,37 @@ public class Pantext extends Panctor {
 	/*package*/ final class SizePanple extends UnmodPanple {
 
         @Override
-        public float getX() {
+        public final float getX() {
             return getNumColumns() * fontWidth;
         }
 
         @Override
-        public float getY() {
+        public final float getY() {
             return getNumRows() * fontHeight;
         }
 
         @Override
-        public float getZ() {
+        public final float getZ() {
             return 0;
         }
+	}
+	
+	// None of this is well-tested
+	private final class TextDisplay implements Pansplay {
+		@Override
+		public final Panple getOrigin() {
+			return FinPanple.ORIGIN;
+		}
+
+		@Override
+		public final Panple getBoundingMinimum() {
+			return FinPanple.ORIGIN;
+		}
+
+		@Override
+		public final Panple getBoundingMaximum() {
+			return size;
+		}
 	}
 	
 	// Number of columns on current page
@@ -195,7 +214,7 @@ public class Pantext extends Panctor {
 
 	@Override
 	public Pansplay getCurrentDisplay() {
-		throw new UnsupportedOperationException();
+		return display;
 	}
 
 	@Override
