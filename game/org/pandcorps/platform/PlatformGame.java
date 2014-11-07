@@ -164,6 +164,9 @@ public class PlatformGame extends BaseGame {
 	protected final static String SEG_LOC = "LOC";
 	protected final static String SEG_AVT = "AVT";
 	
+	protected final static List<String> tips = Arrays.asList(
+			"You can turn music and sounds on/off in Menu/Setup/Music");
+	
 	private final static PixelMask greyMask = new GreyScalePixelMask();
 	
 	protected static boolean level = false;
