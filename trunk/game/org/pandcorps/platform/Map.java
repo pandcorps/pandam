@@ -514,7 +514,7 @@ public class Map {
 			        }
 			    }
 			    input.inactivate();
-			    final Menu.SelectScreen screen = new Menu.SelectScreen(null, true);
+			    final SelectScreen screen = new SelectScreen(null, true, null);
                 screen.ctrl = ControlScheme.getDefault(device);
                 fadeOut(screen);
 			}});
@@ -550,7 +550,7 @@ public class Map {
 			if (engine.isTouchSupported()) {
 				final int lim = pc.profile.stats.defeatedLevels == 0 ? 60 : 240;
 				if (waitTimer == lim) {
-					final int r = Menu.PlayerScreen.getTouchButtonRadius();
+					final int r = PlayerScreen.getTouchButtonRadius();
 				    if (isOpen(getIndex())) {
 				        // Standing on a defeated Level; show help to move
 				    	addHelp("Left", r, r * 2 - 4);
@@ -1453,8 +1453,9 @@ public class Map {
 	private final static void addHud() {
 	    final Panlayer hud = PlatformGame.addHud(room, false, false);
 	    final Pantext name = addText(Map.name, PlatformGame.SCREEN_W / 2, 1);
-		Menu.PlayerScreen.initTouchButtons(hud, getPlayerContext().ctrl);
-		final Pangine engine = Pangine.getEngine();
+	    final Pangine engine = Pangine.getEngine();
+	    new TextMover(hud, PlatformGame.font, PlatformGame.tips, engine.getEffectiveHeight() - 36, 0);
+		PlayerScreen.initTouchButtons(hud, getPlayerContext().ctrl);
 		if (engine.isTouchSupported()) {
 			final Panteraction interaction = engine.getInteraction();
 			final ActionEndListener lsn = new ActionEndListener() {
@@ -1470,7 +1471,7 @@ public class Map {
 	
 	private final static Pantext addText(final String s, final int x, final int y) {
 	    final Pantext name = new Pantext(Pantil.vmid(), PlatformGame.font, s);
-        name.getPosition().set(x, y, Menu.PlayerScreen.TOUCH_BUTTON_DEPTH + 10);
+        name.getPosition().set(x, y, PlayerScreen.TOUCH_BUTTON_DEPTH + 10);
         name.centerX();
         PlatformGame.hud.addActor(name);
         return name;
