@@ -1485,7 +1485,7 @@ public class Map {
 	    final Pantext name = addText(Map.name, PlatformGame.SCREEN_W / 2, 1);
 	    final Pangine engine = Pangine.getEngine();
 	    tipMover = new TextMover(hud, PlatformGame.font, PlatformGame.tips, (tipMover == null) ? 0 : tipMover.getIndex(),
-	    		engine.getEffectiveHeight() - 36, 0);
+	    		engine.getEffectiveHeight() - 36, -10);
 		PlayerScreen.initTouchButtons(hud, getPlayerContext().ctrl);
 		if (engine.isTouchSupported()) {
 			final Panteraction interaction = engine.getInteraction();
