@@ -658,6 +658,10 @@ public class Level {
     	public final Img getImage() {
     		final Img backImg = ImtilX.loadImage("org/pandcorps/platform/res/bg/Hills" + Chartil.unnull(theme.getBgImg()) + ".png", 128, null);
             if (isNormalTheme()) {
+            	final PixelFilter skyFilter = Map.theme.getSkyFilter();
+            	if (skyFilter != null) {
+            		Imtil.filterImg(backImg, 96, 0, 16, 48, skyFilter);
+            	}
             	applyTerrainTexture(backImg, 0, 0, 48, 32);
             	applyColoredTerrain(backImg, 0, 0, 96, 96);
             } else {
