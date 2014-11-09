@@ -209,6 +209,8 @@ public class Map {
 					Tile.animate(waters);
 				}
 			}
+			@Override protected final PixelFilter getSkyFilter() {
+				return new SwapPixelFilter(Channel.Blue, Channel.Green, Channel.Red); }
 			@Override protected final PixelFilter getHillFilter0() {
 				return new SwapPixelFilter(Channel.Green, Channel.Red, Channel.Red); }
 			@Override protected final PixelFilter getHillFilter1() {
@@ -261,6 +263,9 @@ public class Map {
 		}
 		
 		protected abstract void step();
+		
+		protected PixelFilter getSkyFilter() {
+			return null; }
 		
 		protected abstract PixelFilter getHillFilter0();
 		
