@@ -564,8 +564,8 @@ public class Level {
     		ng = nt - goal.getWidth();
     		
     		px = 0;
-    		final int floorLim = getMaxFloor();
-    		for (bx = 8; bx < ng; ) {
+    		final int floorLim = getMaxFloor(), bxStart = 8;
+    		for (bx = bxStart; bx < ng; ) {
     			/*
     			Raise/lower floor with 1-way ramps
     			Some templates should allow any other template on top of it
@@ -584,7 +584,10 @@ public class Level {
     		    Template template = null;
     		    for (int i = 0; i < 4; i++) {
     		    	bx = ibx;
-	    		    if (currLetter < numLetters && bx >= ng * (currLetter + 1) / (numLetters + 1)) {
+    		    	if (bx == bxStart) {
+    		    		// Always start with pit to make fall goal easier
+    		    		template = new AnyPitTemplate();
+    		    	} else if (currLetter < numLetters && bx >= ng * (currLetter + 1) / (numLetters + 1)) {
 	    		    	template = new BlockLetterTemplate();
 	    		    } else if (i == 3) {
 	    		    	template = Mathtil.rand() ? new BlockBonusTemplate(1) : new GemTemplate(1);
@@ -792,7 +795,7 @@ public class Level {
     }
     
     private final static void enemy(final int x, final int y, final int w) {
-    	if (w < 3 || Mathtil.rand(40)) {
+    	if (w < 3 || (numEnemies > 0 && Mathtil.rand(40))) {
     		return;
     	}
     	new Spawner(tm.getTileWidth() * (x + Mathtil.randi(1, w - 2)), tm.getTileHeight() * y);
@@ -823,7 +826,7 @@ public class Level {
 	        } else {
 	        	addTemplate(new BushTemplate(), new TreeTemplate());
 	        }
-	        addTemplate(new PitTemplate(), new BridgePitTemplate(), new BlockPitTemplate());
+	        addTemplate(new AnyPitTemplate());
 	        addTemplate(new UpBlockStepTemplate(), new DownBlockStepTemplate(), new BlockWallTemplate(), new BlockGroupTemplate());
 	        addTemplate(new BlockBonusTemplate());
 	        addTemplate(new GemTemplate());
@@ -855,7 +858,7 @@ public class Level {
     		//TODO Multi-level block patterns
 	        addTemplate(new WallTemplate());
 	        addTemplate(new BushTemplate(), new TreeTemplate());
-	        addTemplate(new PitTemplate(), new BridgePitTemplate(), new BlockPitTemplate());
+	        addTemplate(new AnyPitTemplate());
 	        addTemplate(new UpBlockStepTemplate(), new DownBlockStepTemplate(), new BlockWallTemplate(), new BlockGroupTemplate());
 	        addTemplate(new BlockBonusTemplate());
 	        addTemplate(new GemTemplate());
@@ -1033,7 +1036,7 @@ public class Level {
         protected abstract void build();
     }
     
-    private final static class ChoiceTemplate extends Template {
+    private static class ChoiceTemplate extends Template {
     	private final Template[] choices;
     	private Template curr = null;
     	
@@ -1245,6 +1248,12 @@ public class Level {
     
     private final static int getSlantWidth(final int w, final int h) {
         return Math.max(h + w + 1, 2);
+    }
+    
+    private final static class AnyPitTemplate extends ChoiceTemplate {
+    	private AnyPitTemplate() {
+    		super(new PitTemplate(), new BridgePitTemplate(), new BlockPitTemplate());
+    	}
     }
     
     private final static class PitTemplate extends SimpleTemplate {
