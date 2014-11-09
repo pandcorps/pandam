@@ -187,7 +187,7 @@ public class Menu {
 			if (input) {
 				engine.clearTouchButtons();
 			}
-			final int r = engine.getEffectiveWidth();
+			final int r = engine.getEffectiveWidth(), t = engine.getEffectiveHeight();
 			int rx = 0, y = 0;
 			TouchButton down = null, up = null, act2 = null;
 			Panmage rt = PlatformGame.right2, rtIn = PlatformGame.right2In, lt = PlatformGame.left2, ltIn = PlatformGame.left2In;
@@ -201,7 +201,7 @@ public class Menu {
 				//act2 = addCircleButton(room, "Act2", r - d, 0, input, act, ctrl.get2());
 				//sub = addCircleButton(room, "Sub", r - d, engine.getEffectiveHeight() - d, input, act, ctrl.getSubmit());
 				final Panple ts = PlatformGame.menu.getSize();
-				final int tw = (int) ts.getX(), t = engine.getEffectiveHeight();
+				final int tw = (int) ts.getX();
 				act2 = newFormButton(room, "Act2", r - tw, t - (int) ts.getY(), PlatformGame.menuOptions, "Menu");
 				newFormButton(room, "Goals", r - (tw * 2), t - 19, PlatformGame.gemGoal[0], new Runnable() {
                     @Override public final void run() {
@@ -228,6 +228,11 @@ public class Menu {
 			    down.setOverlapMode(TouchButton.OVERLAP_BEST);
 			    left.setOverlapMode(TouchButton.OVERLAP_BEST);
 			    right.setOverlapMode(TouchButton.OVERLAP_BEST);
+			} else {
+				final TouchButton pause;
+				pause = new TouchButton(engine.getInteraction(), room, "Pause", r - 16, t - 16, 0, PlatformGame.menuPause, PlatformGame.menuPause, true);
+				engine.registerTouchButton(pause);
+				registerPromptQuit(pause.getActor(), pause);
 			}
 			if (input) {
 				ctrl.set(down, up, left, right, act1, act2, act2);
@@ -246,8 +251,12 @@ public class Menu {
         private static ListActorHandler quitHandler = null;
 		
 		protected final static void registerBackPromptQuit(final Panctor bound) {
+			registerPromptQuit(bound, Pangine.getEngine().getInteraction().BACK);
+		}
+		
+		protected final static void registerPromptQuit(final Panctor bound, final Panput input) {
 			destroyPromptQuit();
-		    bound.register(Pangine.getEngine().getInteraction().BACK, new ActionEndListener() {
+		    bound.register(input, new ActionEndListener() {
                 @Override
                 public final void onActionEnd(final ActionEndEvent event) {
                     if (quitYes == null) {

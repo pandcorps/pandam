@@ -272,6 +272,7 @@ public class PlatformGame extends BaseGame {
 	protected static Panmage menuGraph = null;
 	protected static Panmage menuInfo = null;
 	protected static Panmage menuFoes = null;
+	protected static Panmage menuPause = null;
 	protected static Panmage menuOptions = null;
 	protected static Panmage menuMenu = null;
 	protected static Panmage menuMusic = null;
@@ -1373,6 +1374,7 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 			    menuGraph = createMenuImg("Graph");
 			    menuInfo = createMenuImg("Info");
 			    menuFoes = createMenuImg("Foes");
+			    menuPause = createMenuImg("Pause");
 			    menuOptions = createMenuImg("Options");
 			    menuMenu = createMenuImg("Menu");
 			    menuMusic = createMenuImg("Music");
