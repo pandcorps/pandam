@@ -277,10 +277,19 @@ public class Menu {
 		    final Panple btnSize = PlatformGame.menu.getSize();
             final int btnY = TouchTabs.off(h, btnSize.getY());
             final int btnW = (int) btnSize.getX(), btnX = TouchTabs.off(engine.getEffectiveWidth(), btnW * 2);
-            quitYes = newFormButton(room, "Quit", btnX, btnY, PlatformGame.menuCheck, "Quit", new Runnable() {
+            quitYes = newFormButton(room, "Quit", btnX, btnY, PlatformGame.menuOff, "Quit", new Runnable() {
                 @Override public final void run() { engine.exit(); }});
             quitYes.setZ(15);
-            quitNo = newFormButton(room, "No", btnX + btnW, btnY, PlatformGame.menuX, "No", new Runnable() {
+            final String noLbl;
+            final Panmage noImg;
+            if (Panscreen.get() instanceof PlayerScreen) {
+            	noLbl = "Menu";
+            	noImg = PlatformGame.menuOptions;
+            } else {
+            	noLbl = "Play";
+            	noImg = PlatformGame.menuRight;
+            }
+            quitNo = newFormButton(room, noLbl, btnX + btnW, btnY, noImg, noLbl, new Runnable() {
                 @Override public final void run() { destroyPromptQuit(); }});
             quitNo.setZ(15);
             engine.setPaused(true);
@@ -1751,7 +1760,7 @@ public class Menu {
                         }
                     }
                 }};
-            jmpRadio = addRadio("Jump Mode", jmps, jmpSubLsn, jmpLsn, x, y, sub);
+            jmpRadio = addRadio("Power-up", jmps, jmpSubLsn, jmpLsn, x, y, sub);
             initJumpMode();
         }
         
@@ -1933,9 +1942,9 @@ public class Menu {
                     break;
             }
 			newTab(PlatformGame.menuCheck, "Back", new Runnable() {@Override public final void run() {exit();}});
-			newTab(PlatformGame.menuClothing, "Garb", TAB_CLOTHES);
+			newTab(PlatformGame.menuClothing, "Shirt", TAB_CLOTHES);
 			newTab(PlatformGame.menuHat, "Hat", TAB_HAT);
-			newTab(PlatformGame.menuGear, "Jump", TAB_JUMP);
+			newTab(PlatformGame.menuGear, "Power", TAB_JUMP);
 			newTabs();
 			registerBackExit();
 		}
