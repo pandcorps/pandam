@@ -384,18 +384,27 @@ public class Player extends Character implements CollisionListener {
 	    } else if (isGrounded()) {
 	    	final Pansound sound;
 	        if (jumpMode == JUMP_HIGH) {
-	            v = MAX_V;
 	            acc.back.setView(pc.backJump);
 	            sound = PlatformGame.soundBounce;
 	        } else {
-	            v = jumpMode == JUMP_DRAGON ? VEL_JUMP_DRAGON : VEL_JUMP;
 	            sound = PlatformGame.soundJump;
 	        }
+	        v = getVelocityJump();
 	        if (sanded) {
 	        	v -= 2;
 	        }
 			pc.profile.stats.jumps++;
 			sound.startSound();
+		}
+	}
+	
+	private final int getVelocityJump() {
+		switch (jumpMode) {
+			case MODE_NORMAL : return VEL_JUMP;
+			case JUMP_HIGH : return MAX_V;
+			case JUMP_DRAGON : return VEL_JUMP_DRAGON;
+			//case JUMP_FLY : return -getG();
+			default : throw new UnsupportedOperationException("Cannot determine velocity for jumpMode " + jumpMode);
 		}
 	}
 	
@@ -705,7 +714,7 @@ public class Player extends Character implements CollisionListener {
 		    final boolean aboveEnemy = getPosition().getY() > other.getPosition().getY();
 		    if (aboveEnemy && v < 4 && !isGrounded()) {
 				if (((Enemy) other).onStomp(this)) {
-    				v = (jumpMode != JUMP_FLY && getJumpInput().isActive()) ? MAX_V : VEL_BUMP;
+    				v = (jumpMode != JUMP_FLY && getJumpInput().isActive()) ? getVelocityJump() : VEL_BUMP;
     				stompTimer = 2;
 				}
 		    } else if (aboveEnemy && stompTimer > 0) {
