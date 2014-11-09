@@ -228,7 +228,7 @@ public class Menu {
 			    down.setOverlapMode(TouchButton.OVERLAP_BEST);
 			    left.setOverlapMode(TouchButton.OVERLAP_BEST);
 			    right.setOverlapMode(TouchButton.OVERLAP_BEST);
-			} else {
+			} else if (act) {
 				final TouchButton pause;
 				pause = new TouchButton(engine.getInteraction(), room, "Pause", r - 16, t - 16, 0, PlatformGame.menuPause, PlatformGame.menuPause, true);
 				engine.registerTouchButton(pause);
@@ -248,6 +248,8 @@ public class Menu {
 		
 		private static TouchButton quitYes = null;
         private static TouchButton quitNo = null;
+        private static TouchButton quitMenu = null;
+        private static Pantext quitMsg = null;
         private static ListActorHandler quitHandler = null;
 		
 		protected final static void registerBackPromptQuit(final Panctor bound) {
@@ -285,20 +287,30 @@ public class Menu {
 		    }
 		    final Panple btnSize = PlatformGame.menu.getSize();
             final int btnY = TouchTabs.off(h, btnSize.getY());
-            final int btnW = (int) btnSize.getX(), btnX = TouchTabs.off(engine.getEffectiveWidth(), btnW * 2);
-            quitYes = newFormButton(room, "Quit", btnX, btnY, PlatformGame.menuOff, "Quit", new Runnable() {
+            final boolean menuScreen = Panscreen.get() instanceof PlayerScreen;
+            final int numButtons = menuScreen ? 2 : 3, r = engine.getEffectiveWidth();
+            final int btnW = (int) btnSize.getX(), btnX = TouchTabs.off(r, btnW * numButtons);
+            quitYes = newFormButton(room, "Quit", btnX + btnW * (numButtons - 1), btnY, PlatformGame.menuOff, "Quit", new Runnable() {
                 @Override public final void run() { engine.exit(); }});
             quitYes.setZ(15);
             final String noLbl;
             final Panmage noImg;
-            if (Panscreen.get() instanceof PlayerScreen) {
+            if (menuScreen) {
             	noLbl = "Menu";
             	noImg = PlatformGame.menuOptions;
             } else {
             	noLbl = "Play";
             	noImg = PlatformGame.menuRight;
+            	quitMenu = newFormButton(room, "Menu", btnX + btnW, btnY, PlatformGame.menuOptions, "Menu", new Runnable() {
+                    @Override public final void run() {
+                    	destroyPromptQuit();
+                    	PlatformGame.fadeOut(PlatformGame.room, new ProfileScreen(PlatformGame.pcs.get(0), true)); }});
+                quitMenu.setZ(15);
+                quitMsg = new Pantext(Pantil.vmid(), PlatformGame.font, "You will lose your progress in this Level if you leave");
+                quitMsg.getPosition().set(r / 2, btnY - 9, 15);
+                quitMsg.centerX();
             }
-            quitNo = newFormButton(room, noLbl, btnX + btnW, btnY, noImg, noLbl, new Runnable() {
+            quitNo = newFormButton(room, noLbl, btnX, btnY, noImg, noLbl, new Runnable() {
                 @Override public final void run() { destroyPromptQuit(); }});
             quitNo.setZ(15);
             engine.setPaused(true);
@@ -310,6 +322,10 @@ public class Menu {
             quitYes = null;
             TouchButton.destroy(quitNo);
             quitNo = null;
+            TouchButton.destroy(quitMenu);
+            quitMenu = null;
+            Panctor.destroy(quitMsg);
+            quitMsg = null;
             ListActorHandler.destroy(quitHandler);
             quitHandler = null;
 		}
