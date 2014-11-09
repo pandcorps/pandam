@@ -94,7 +94,7 @@ public class Map {
 	private final static String[] NAME3 = { "eth", "ia", "ing", "ion", "ost" };
 	private final static Namer nmr = Namer.get(NAME0, NAME1, NAME2, NAME3);*/
     
-    private final static String[] ADJECTIVES =
+	/*private final static String[] ADJECTIVES =
     	{ "brav", "bright", "clear", "deep", "fair", "good", "grand", "green", "kind", "north", "old", "strong", "sweet", "verd", "warm", "wood" };
     private final static String[] NOUNS =
     	{ "beat", "bell", "bliss", "branch", "breez", "brush", "claw", "clov", "cross", "day", "flow", "furr",
@@ -102,9 +102,9 @@ public class Map {
     	"mound", "paw", "plain", "plant", "ring", "root", "shield", "soul", "spring", "stepp", "sunn", "vin", "well", "wheat" };
     private final static String[] VERBS =
     	{ "bloom", "bound", "dash", "grow", "leap", "paint", "ris", "runn", "rush", "shin", "thriv", "wind", "wish" };
-    /*private final static String[] LINK_ADJ = { "al", "em", "est", "ing" };
-    private final static String[] LINK_NON = { "en", "ing", "ic", "y" }; // "ish"
-    private final static String[] LINK_VRB = { "al", "em", "er", "ing" };*/
+    //private final static String[] LINK_ADJ = { "al", "em", "est", "ing" };
+    //private final static String[] LINK_NON = { "en", "ing", "ic", "y" }; // "ish"
+    //private final static String[] LINK_VRB = { "al", "em", "er", "ing" };
     private final static String[] PLACES =
     	{ "berg", "burgh", "by", "croft", "dom", "field", "fold", "fort", "gard", "ham", "heim", "holt", "island", "isle", "march", "mark",
         "land", "nesse", "port", "shire", "stead", "strand", "thorp", "ton", "town" };
@@ -113,12 +113,25 @@ public class Map {
     private final static String[] WARMS = { "ash", "burn", "blaz", "cindr", "embr", "fir", "flam", "heat", "hott", "sand", "scorch", "summer", "torch", "warm" };
     // concrete/adjective + abstract/noun: Greensong, Fairnest, Brighthope, Deardream, ballad, heart, love, spell, story, tale, wish
     // Add North/South/East/West before names?
-    private final static Manipulator mpt = new MapManipulator();
-    private final static Concatenator cct = new MapConcatenator();
     private final static Namer nmr = Namer.get(
         Namer.get(mpt, cct, ADJECTIVES, PLACES),
         Namer.get(mpt, cct, NOUNS, PLACES),
-        Namer.get(mpt, cct, VERBS, PLACES));
+        Namer.get(mpt, cct, VERBS, PLACES));*/
+    
+    private final static String[] GRASSES = {
+    	"bell", "bloom", "branch", "breeze", "bright", "brush", "claw", "clear", "clover", "day", "fair", "flower", "fur",
+        "grain", "grand", "grass", "green", "heather", "hill", "holly", "honey", "kind", "leaf", "love", "meadow", "mint", "new",
+        "old", "paw", "petal", "plain", "plant", "root", "shine", "soul", "spring", "sun", "sweet", "verdant", "vine", "thrive", "wheat", "wind", "wooden" };
+    private final static String[] COLDS = { "arctic", "blizzard", "chill", "cold", "freeze", "frozen", "glacier", "ice", "north", "snow", "tundra", "white", "winter" };
+    private final static String[] WARMS = { "ash", "burn", "blaze", "cinder", "ember", "fire", "flame", "heat", "hot", "sand", "scorch", "south", "summer", "torch", "warm" };
+    private final static String[] ENDINGS = {
+    	"ballad", "bliss", "dream", "grove", "heart", "home", "hope", "nest", "rise", "song", "spell", "story", "tale", "well", "wish" };
+    private final static String[] PLACES =
+    	{ "burgh", "fort", "gard", "heim", "holt", "home", "mark",
+        "land", "shield", "spell", "stead", "sword", "tale", };
+    private final static Manipulator mpt = new MapManipulator();
+    private final static Concatenator cct = new MapConcatenator();
+    private final static Namer nmr = Namer.get(mpt, cct, GRASSES, ENDINGS);
 	
     protected static MapTheme theme = MapTheme.Normal;
 	protected static int bgTexture = 0;
@@ -277,7 +290,7 @@ public class Map {
 	protected final static class MapConcatenator extends BaseConcatenator {
         @Override
         public final String getDelimValued(final String s1, final String s2) {
-            final String d;
+            /*final String d;
             if ("island".equals(s2)) {
                 d = "ia ";
             } else if ("town".equals(s2)) {
@@ -295,7 +308,8 @@ public class Map {
             } else {
                 d = s2.charAt(0) == 'g' ? "en" : "ing";
             }
-            return (d.charAt(d.length() - 1) == s2.charAt(0)) ? (d + "-") : d;
+            return (d.charAt(d.length() - 1) == s2.charAt(0)) ? (d + "-") : d;*/
+        	return (s1.charAt(s1.length() - 1) == s2.charAt(0)) ? "-" : "";
         }
 	}
 	
@@ -328,8 +342,8 @@ public class Map {
 					}
 				}
 				if (tm != null && isOnLastLevel()) {
-					PlatformGame.worldClose();
-					Iotil.delete(getMapFile());
+					//PlatformGame.worldClose(); // This point is on MapScreen for new World
+					//Iotil.delete(getMapFile()); // Want to evaluate WorldGoal sooner, now done below
 				    victory = VICTORY_NONE;
 					triggerLoad();
 					loadImages();
@@ -354,7 +368,12 @@ public class Map {
 				}
 			    initRoom();
 			}
-			if (victory == VICTORY_WORLD) {
+			if (victory == VICTORY_NONE && isOnLastLevel() && isOpen(t)) {
+				// If we exit the game after beating last level but before starting next world, we might reach this state
+				victory = VICTORY_WORLD;
+			}
+			final boolean victoryWorld = victory == VICTORY_WORLD;
+			if (victoryWorld) {
 				new FloatPlayer(t);
 				victory = VICTORY_LEVEL;
 				portal.setView(PlatformGame.portalClosed);
@@ -369,6 +388,11 @@ public class Map {
 			}
 			addBorder();
             addHud();
+            if (victoryWorld) {
+            	// Could beat World, achieve old goal, receive World goal, increment here, give credit for beating World before it was assigned
+	            PlatformGame.worldClose();
+				Iotil.delete(getMapFile());
+            }
             if (victory != VICTORY_LEVEL) {
 				Achievement.evaluate(); // Evaluate after addHud
 			}

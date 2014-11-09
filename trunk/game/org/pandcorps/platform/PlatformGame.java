@@ -96,7 +96,6 @@ public class PlatformGame extends BaseGame {
 	Console: Filters, 8-bit, b/w (requires restart).
 	Mouse TouchEvents.
 	A BounceBall should be able to bump blocks (from below and side) and give Gem to Player that kicked.
-	Pause if device gets a text/interruption.
 	Some rises allow an Enemy but Player hits ceiling.
 	Tall Enemy can appear behind a short enemy on a rise above it; lower Enemy should be in front.
 	Center touch radio menus.
@@ -1553,7 +1552,11 @@ System.out.println("loadConstants end " + System.currentTimeMillis());
 	}
 	
 	protected static void setPosition(final Panctor act, final float x, final float y, final float depth) {
-	    act.getPosition().set(x, y, Level.tm.getForegroundDepth() + depth);
+		//TODO If "- y" works, only use it in level
+		//still need to put in character/wing/spring/bubble/onStep as y changes
+		//onStep will need to know base depth
+	    //act.getPosition().set(x, y, Level.tm.getForegroundDepth() - y + depth);
+		act.getPosition().set(x, y, Level.tm.getForegroundDepth() + depth);
 	}
 	
 	protected final static void levelVictory() {
