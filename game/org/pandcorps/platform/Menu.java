@@ -2863,9 +2863,9 @@ public class Menu {
 						// Be careful if combining these calls into a boolean expression; still run 2nd if 1st returns true
 						final StringBuilder msg = new StringBuilder();
 						msg.append("Prf: ");
-						msg.append(Iotil.delete(Profile.getFileName(cmd)) ? "OK" : "No");
+						msg.append(Iotil.delete(Profile.getFileName(cmd)) ? MSG_OK : "No");
 						msg.append("Map: ");
-						msg.append(Iotil.delete(Profile.getMapFileName(cmd)) ? "OK" : "No");
+						msg.append(Iotil.delete(Profile.getMapFileName(cmd)) ? MSG_OK : "No");
 						return msg.toString();
 					}};
 				msg = "Which?";
