@@ -91,7 +91,6 @@ public class PlatformGame extends BaseGame {
 	Static TileMaps should combine adjacent Tiles with adjacent TileMapImages into one larger Tile/TileMapImage.
 	Hoard/Vault Menu to show amount of each type of Gem.
 	Level builder should use setTile instead of forcing getTile Map lookups.
-	Improve World name generator.
 	Console: sub/subtract/remove, set gems.
 	Console: Filters, 8-bit, b/w (requires restart).
 	Mouse TouchEvents.
