@@ -2864,7 +2864,7 @@ public class Menu {
 						final StringBuilder msg = new StringBuilder();
 						msg.append("Prf: ");
 						msg.append(Iotil.delete(Profile.getFileName(cmd)) ? MSG_OK : "No");
-						msg.append("Map: ");
+						msg.append("; Map: ");
 						msg.append(Iotil.delete(Profile.getMapFileName(cmd)) ? MSG_OK : "No");
 						return msg.toString();
 					}};
