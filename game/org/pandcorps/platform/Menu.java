@@ -308,8 +308,8 @@ public class Menu {
                     	PlatformGame.fadeOut(PlatformGame.room, new ProfileScreen(PlatformGame.pcs.get(0), true)); }});
                 quitMenu.setZ(15);
                 if (screen instanceof PlatformGame.PlatformScreen) {
-	                quitMsg = new Pantext(Pantil.vmid(), PlatformGame.font, "You will lose your progress in this Level if you leave");
-	                quitMsg.getPosition().set(r / 2, btnY - 9, 15);
+	                quitMsg = new Pantext(Pantil.vmid(), PlatformGame.fontTiny, "You will lose your progress in this Level if you leave");
+	                quitMsg.getPosition().set(r / 2, btnY - 6, 15);
 	                quitMsg.centerX();
 	                room.addActor(quitMsg);
                 }
