@@ -29,8 +29,6 @@ import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
 import org.pandcorps.core.img.Pancolor.*;
 import org.pandcorps.core.seg.*;
-import org.pandcorps.game.*;
-import org.pandcorps.game.Concatenator.*;
 import org.pandcorps.game.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.Panteraction.*;
@@ -118,7 +116,7 @@ public class Map {
         Namer.get(mpt, cct, NOUNS, PLACES),
         Namer.get(mpt, cct, VERBS, PLACES));*/
     
-    private final static String[] GRASSES = {
+    /*private final static String[] GRASSES = {
     	"bell", "bloom", "branch", "breeze", "bright", "brush", "claw", "clear", "clover", "day", "fair", "flower", "fur",
         "grain", "grand", "grass", "green", "heather", "hill", "holly", "honey", "kind", "leaf", "love", "meadow", "mint", "new",
         "old", "paw", "petal", "plain", "plant", "root", "shine", "soul", "spring", "sun", "sweet", "verdant", "vine", "thrive", "wheat", "wind", "wooden" };
@@ -131,7 +129,7 @@ public class Map {
         "land", "shield", "spell", "stead", "sword", "tale", };
     private final static Manipulator mpt = new MapManipulator();
     private final static Concatenator cct = new MapConcatenator();
-    private final static Namer nmr = Namer.get(mpt, cct, GRASSES, ENDINGS);
+    private final static Namer nmr = Namer.get(mpt, cct, GRASSES, ENDINGS);*/
 	
     protected static MapTheme theme = MapTheme.Normal;
 	protected static int bgTexture = 0;
@@ -177,7 +175,7 @@ public class Map {
 	private static boolean waiting = true;
 	
 	protected abstract static class MapTheme {
-		public final static MapTheme Normal = new MapTheme("Normal", null, Theme.Normal, 3, 3, 2, null, null, Map.nmr) {
+		public final static MapTheme Normal = new MapTheme("Normal", null, Theme.Normal, 3, 3, 2, null, null /*, Map.nmr*/ ) {
 			@Override protected final void step() {
 				if ((Pangine.getEngine().getClock() % 6) == 0) {
 	                Tile.animate(waters);
@@ -191,8 +189,8 @@ public class Map {
 				return new SwapPixelFilter(Channel.Blue, Channel.Red, Channel.Green); }};
 		public final static MapTheme Snow = new MapTheme("Snow", Theme.Snow, 1, 6, 2,
 		    new AntiPixelMask(new RangePixelMask(80, 80, 0, 255, 144, 32)),
-		    new SwapPixelFilter(Channel.Blue, Channel.Green, Channel.Red),
-		    Namer.get(mpt, cct, COLDS, PLACES)) {
+		    new SwapPixelFilter(Channel.Blue, Channel.Green, Channel.Red)
+		    /*, Namer.get(mpt, cct, COLDS, PLACES)*/ ) {
 			@Override protected final void step() {
 				flash();
 			}
@@ -202,8 +200,8 @@ public class Map {
 				return new SwapPixelFilter(Channel.Red, Channel.Blue, Channel.Green); }
 			@Override protected final PixelFilter getHillFilter2() {
 				return new SwapPixelFilter(Channel.Red, Channel.Green, Channel.Green); }};
-		public final static MapTheme Sand = new MapTheme("Sand", Theme.Sand, 1, 6, 3, null, null,
-		    Namer.get(mpt, cct, WARMS, PLACES)) {
+		public final static MapTheme Sand = new MapTheme("Sand", Theme.Sand, 1, 6, 3, null, null
+		    /*, Namer.get(mpt, cct, WARMS, PLACES)*/ ) {
 			@Override protected final void step() {
 				if (Pangine.getEngine().getClock() % 4 == 0) {
 					Tile.animate(waters);
@@ -226,17 +224,16 @@ public class Map {
 		protected final int maxLandmark;
 		protected final int portalGroundRow;
 		protected final int portalGroundColumn;
-		protected final Namer nmr;
 		
 		private MapTheme(final String img, final Theme levelTheme, final int maxLandmark,
 				final int portalGroundRow, final int portalGroundColumn,
-				final PixelMask dirtMask, final PixelFilter dirtFilter, final Namer nmr) {
-			this(img, img, levelTheme, maxLandmark, portalGroundRow, portalGroundColumn, dirtMask, dirtFilter, nmr);
+				final PixelMask dirtMask, final PixelFilter dirtFilter) {
+			this(img, img, levelTheme, maxLandmark, portalGroundRow, portalGroundColumn, dirtMask, dirtFilter);
 		}
 		
 		private MapTheme(final String name, final String img, final Theme levelTheme, final int maxLandmark,
 				final int portalGroundRow, final int portalGroundColumn,
-				final PixelMask dirtMask, final PixelFilter dirtFilter, final Namer nmr) {
+				final PixelMask dirtMask, final PixelFilter dirtFilter) {
 			this.name = name;
 			this.img = img;
 			this.levelTheme = levelTheme;
@@ -245,7 +242,6 @@ public class Map {
 			this.portalGroundColumn = portalGroundColumn;
 			this.dirtMask = dirtMask;
 			this.dirtFilter = dirtFilter;
-			this.nmr = nmr;
 		}
 		
 		protected final void flash() {
@@ -285,17 +281,17 @@ public class Map {
 		return MapTheme.Normal;
 	}
 	
-	protected final static class MapManipulator extends Manipulator {
+	/*protected final static class MapManipulator extends Manipulator {
         @Override
         public final String manipulate(final String s) {
             return s.endsWith("isle") ? "Isle " + s.substring(0, s.length() - 4) : s;
         }
-	}
+	}*/
 	
-	protected final static class MapConcatenator extends BaseConcatenator {
+	/*protected final static class MapConcatenator extends BaseConcatenator {
         @Override
         public final String getDelimValued(final String s1, final String s2) {
-            /*final String d;
+            final String d;
             if ("island".equals(s2)) {
                 d = "ia ";
             } else if ("town".equals(s2)) {
@@ -313,10 +309,10 @@ public class Map {
             } else {
                 d = s2.charAt(0) == 'g' ? "en" : "ing";
             }
-            return (d.charAt(d.length() - 1) == s2.charAt(0)) ? (d + "-") : d;*/
-        	return (s1.charAt(s1.length() - 1) == s2.charAt(0)) ? "-" : "";
+            return (d.charAt(d.length() - 1) == s2.charAt(0)) ? (d + "-") : d;
+        	//return (s1.charAt(s1.length() - 1) == s2.charAt(0)) ? "-" : "";
         }
-	}
+	}*/
 	
 	protected final static class MapScreen extends Panscreen {
 		@Override
@@ -1668,7 +1664,8 @@ public class Map {
 	
 	private final static String generateName() {
 		//return Mathtil.rand(ADJECTIVES) + ' ' + Mathtil.rand(NATURES) + ' ' + Mathtil.rand(PLACES);
-	    return theme.nmr.get();
+	    //return theme.nmr.get();
+		return "World " + (getProfile().stats.defeatedWorlds + 1);
 	}
 	
 	private final static void setPlayerPosition(final int index) {
@@ -1734,12 +1731,12 @@ public class Map {
 	    }
 	}
 	
-	public final static void main(final String[] args) {
+	/*public final static void main(final String[] args) {
 	    for (final MapTheme theme : themes) {
 	        System.out.println("Theme " + theme.name);
 	        System.out.println();
 	        theme.nmr.printDemo();
 	        System.out.println();
 	    }
-	}
+	}*/
 }
