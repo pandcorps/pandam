@@ -287,7 +287,8 @@ public class Menu {
 		    }
 		    final Panple btnSize = PlatformGame.menu.getSize();
             final int btnY = TouchTabs.off(h, btnSize.getY());
-            final boolean menuScreen = Panscreen.get() instanceof PlayerScreen;
+            final Panscreen screen = Panscreen.get();
+            final boolean menuScreen = screen instanceof PlayerScreen;
             final int numButtons = menuScreen ? 2 : 3, r = engine.getEffectiveWidth();
             final int btnW = (int) btnSize.getX(), btnX = TouchTabs.off(r, btnW * numButtons);
             quitYes = newFormButton(room, "Quit", btnX + btnW * (numButtons - 1), btnY, PlatformGame.menuOff, "Quit", new Runnable() {
@@ -306,9 +307,12 @@ public class Menu {
                     	destroyPromptQuit();
                     	PlatformGame.fadeOut(PlatformGame.room, new ProfileScreen(PlatformGame.pcs.get(0), true)); }});
                 quitMenu.setZ(15);
-                quitMsg = new Pantext(Pantil.vmid(), PlatformGame.font, "You will lose your progress in this Level if you leave");
-                quitMsg.getPosition().set(r / 2, btnY - 9, 15);
-                quitMsg.centerX();
+                if (screen instanceof PlatformGame.PlatformScreen) {
+	                quitMsg = new Pantext(Pantil.vmid(), PlatformGame.font, "You will lose your progress in this Level if you leave");
+	                quitMsg.getPosition().set(r / 2, btnY - 9, 15);
+	                quitMsg.centerX();
+	                room.addActor(quitMsg);
+                }
             }
             quitNo = newFormButton(room, noLbl, btnX, btnY, noImg, noLbl, new Runnable() {
                 @Override public final void run() { destroyPromptQuit(); }});
@@ -2853,11 +2857,16 @@ public class Menu {
 			} else if ("delete".equalsIgnoreCase(cmd)) {
 				execHandler = new ExecHandler() {
 					@Override public final String run(final String cmd) {
-						final Profile prf = pc.profile;
-						if (cmd.equalsIgnoreCase(prf.getName())) {
+						if (cmd.equalsIgnoreCase(pc.profile.getName())) {
 							return "Cannot delete current";
 						}
-						return (Iotil.delete(prf.getFileName()) || Iotil.delete(prf.getMapFileName())) ? MSG_OK : "Not found";
+						// Be careful if combining these calls into a boolean expression; still run 2nd if 1st returns true
+						final StringBuilder msg = new StringBuilder();
+						msg.append("Prf: ");
+						msg.append(Iotil.delete(Profile.getFileName(cmd)) ? "OK" : "No");
+						msg.append("Map: ");
+						msg.append(Iotil.delete(Profile.getMapFileName(cmd)) ? "OK" : "No");
+						return msg.toString();
 					}};
 				msg = "Which?";
 			} else if ("save".equalsIgnoreCase(cmd)) {

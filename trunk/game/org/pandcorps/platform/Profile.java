@@ -196,7 +196,7 @@ gems = 1000000;
     }
     
     public void save() {
-        Savtil.save(this, getName() + PlatformGame.EXT_PRF);
+        Savtil.save(this, getFileName());
     }
     
     public final static class Statistics implements Segmented {
@@ -391,7 +391,11 @@ gems = 1000000;
     	return getFileName(getName());
     }
     
+    public final static String getMapFileName(final String pname) {
+    	return pname + PlatformGame.EXT_MAP;
+    }
+    
     public final String getMapFileName() {
-    	return getName() + PlatformGame.EXT_MAP;
+    	return getMapFileName(getName());
     }
 }
