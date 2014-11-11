@@ -1069,7 +1069,7 @@ public class Level {
         	x = bx;
             amt = Mathtil.randi(1, 3);
             for (int i = 0; i < amt; i++) {
-                scratch[i] = ((i == 0) ? -1 : scratch[i - 1]) + Mathtil.randi(1, 3);
+                scratch[i] = ((i == 0) ? -1 : scratch[i - 1]) + Mathtil.randi(2, 3);
             }
             final int stop = amt * 3;
             int start = bx;
@@ -1643,7 +1643,7 @@ public class Level {
         	Goal.initGoals(pc);
             final Player player = new Player(pc);
             room.addActor(player);
-            PlatformGame.setPosition(player, 40 + (20 * i), (floor + 1) * 16, PlatformGame.DEPTH_PLAYER);
+            PlatformGame.setPosition(player, 40 + (20 * i), (floor + 1) * 16);
             players.add(player);
         }
         Pangine.getEngine().track(Panverage.getArithmeticMean(players));
