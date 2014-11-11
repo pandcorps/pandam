@@ -153,7 +153,7 @@ public class Cabin {
 			pc = PlatformGame.pcs.get(0);
 			final Player player = new Player(pc);
 			room.addActor(player);
-			PlatformGame.setPosition(player, 74, 32, PlatformGame.DEPTH_PLAYER);
+			PlatformGame.setPosition(player, 74, 32);
 			PlatformGame.addHud(room, false, true);
 			
 			final String txt = Mathtil.rand() ? loadName() : loadShuffle();
