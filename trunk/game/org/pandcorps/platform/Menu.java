@@ -230,7 +230,7 @@ public class Menu {
 			    right.setOverlapMode(TouchButton.OVERLAP_BEST);
 			} else if (act) {
 				final TouchButton pause;
-				pause = new TouchButton(engine.getInteraction(), room, "Pause", r - 16, t - 16, 0, PlatformGame.menuPause, PlatformGame.menuPause, true);
+				pause = new TouchButton(engine.getInteraction(), room, "Pause", r - 17, t - 17, 0, PlatformGame.menuPause, PlatformGame.menuPause, true);
 				engine.registerTouchButton(pause);
 				registerPromptQuit(pause.getActor(), pause);
 			}
