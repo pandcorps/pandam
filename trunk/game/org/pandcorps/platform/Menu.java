@@ -104,7 +104,8 @@ public class Menu {
 			center = w / 2;
 			room = PlatformGame.createRoom(w, PlatformGame.SCREEN_H);
 			final Pangine engine = Pangine.getEngine();
-			engine.setBgColor(new FinPancolor((short) 128, (short) 192, Pancolor.MAX_VALUE));
+			final Pancolor bgColor = new FinPancolor((short) 128, (short) 192, Pancolor.MAX_VALUE);
+			engine.setBgColor(PixelFilter.filterColor(Map.theme.getSkyFilter(), bgColor));
 			
 			tm = new TileMap(Pantil.vmid(), room, ImtilX.DIM, ImtilX.DIM);
 			Level.tm = tm;
