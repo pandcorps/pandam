@@ -103,7 +103,6 @@ public class PlatformGame extends BaseGame {
 	Sand level cactus, Snow level crystal/pine tree
 	OutputStream that writes to tmp file then swaps on close, keeping original as bak.
 	InputStream that reads bak file if can't find main.
-	Menu sky should be red for Sand World.
 	Icon.
 	Screen shots.
 	Title screen.
