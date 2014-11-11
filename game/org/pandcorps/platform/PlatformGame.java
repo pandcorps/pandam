@@ -68,7 +68,6 @@ public class PlatformGame extends BaseGame {
 	Cannons on ground that Player enters to be launched.
 	Cannons in air that auto-fire, others that wait for jump input.
 	Maximum effective (per tick) velocity & higher absolute max; set current to max effective before evaluating.
-	Horizontal acceleration.
 	Options (in/out game) - track active/p1
 	Exit game from within Level.
 	Font w/ custom chars for custom string/min square/case space if needed.
@@ -104,6 +103,7 @@ public class PlatformGame extends BaseGame {
 	Sand level cactus, Snow level crystal/pine tree
 	OutputStream that writes to tmp file then swaps on close, keeping original as bak.
 	InputStream that reads bak file if can't find main.
+	Menu sky should be red for Sand World.
 	Icon.
 	Screen shots.
 	Title screen.
