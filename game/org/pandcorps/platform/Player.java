@@ -588,9 +588,10 @@ public class Player extends Character implements CollisionListener {
 		final int thv;
 		final float fd = Level.tm.getForegroundDepth();
 		final Panple pos = getPosition(), backPos = acc.back == null ? null : acc.back.getPosition();
-		pos.setZ(fd + PlatformGame.DEPTH_PLAYER);
+		final int depth = PlatformGame.getDepthPlayer(jumpMode), depthBack = PlatformGame.getDepthPlayerBack(jumpMode);
+		pos.setZ(fd + depth);
 		if (backPos != null) {
-			backPos.setZ(fd + PlatformGame.DEPTH_PLAYER_BACK);
+			backPos.setZ(fd + depthBack);
 		}
 		if (v == 0) {
 			final float px = pos.getX(), py = pos.getY(), py1 = py + OFF_GROUNDED;
@@ -608,9 +609,9 @@ public class Player extends Character implements CollisionListener {
 			    thv = (hv == 0) ? 0 : (hv / Math.abs(hv));
 			    chv = thv;
 			    sanded = true;
-			    pos.setZ(PlatformGame.DEPTH_PLAYER);
+			    pos.setZ(depth);
 				if (backPos != null) {
-					backPos.setZ(PlatformGame.DEPTH_PLAYER_BACK);
+					backPos.setZ(depthBack);
 				}
 			} else if (belowLeft == PlatformGame.TILE_ICE || belowRight == PlatformGame.TILE_ICE) {
 				final float dif = hv - chv;
@@ -663,7 +664,7 @@ public class Player extends Character implements CollisionListener {
 	protected final void onStepEnd() {
 		hv = 0;
 		final Panple pos = getPosition();
-		PlatformGame.setPosition(bubble, pos.getX(), pos.getY() - 1, PlatformGame.DEPTH_BUBBLE);
+		PlatformGame.setPosition(bubble, pos.getX(), pos.getY() - 1, PlatformGame.getDepthBubble(jumpMode));
 		bubble.onStepEnd(this);
 		acc.onStepEnd(this);
 	}
@@ -853,7 +854,7 @@ public class Player extends Character implements CollisionListener {
 			    back = jm == JUMP_HIGH ? new Back() : new Panctor();
 			    back.setView(pc.back);
 			    PlatformGame.room.addActor(back);
-			    PlatformGame.setPosition(back, 0, 0, PlatformGame.DEPTH_PLAYER_BACK);
+			    PlatformGame.setPosition(back, 0, 0, PlatformGame.getDepthPlayerBack(jm));
 			} else {
 				back = null;
 			}

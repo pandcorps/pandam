@@ -60,7 +60,7 @@ public class PlatformGame extends BaseGame {
 	Taller bushes.
 	Map landmarks: Mountain, garden.
 	Train-riding levels.
-	Ridable dragons - classic menu.
+	Ridable dragons - classic menu eyes/name.
 	Enemy Wisp, Elementals, winged Imp, Banshee, Wraith, Shade, Orc.
 	Drolock should walk sometimes.
 	Enemy-specific Level templates (Imp walking into ArmorBall).
@@ -79,9 +79,6 @@ public class PlatformGame extends BaseGame {
 	Jumping enemy.
 	Collect fruit from trees.
 	Level to-do notes.
-	Random music per map.
-	Sound effects for jump, bump, stomp, hurt, etc.
-	Flags to simplify menu in some environments (one Profile, maybe one Avatar).
 	Let LogoScreen finish after a specified Runnable finishes.
 	Let Thread keep loading through title screen.
 	Give images a real transparent background, disable ImtilX preprocessing.
@@ -96,7 +93,6 @@ public class PlatformGame extends BaseGame {
 	Mouse TouchEvents.
 	A BounceBall should be able to bump blocks (from below and side) and give Gem to Player that kicked.
 	Some rises allow an Enemy but Player hits ceiling.
-	Tall Enemy can appear behind a short enemy on a rise above it; lower Enemy should be in front.
 	Center touch radio menus.
 	World Goal evaluated too late.
 	User saw bumped gem-block fail to defeat empty ArmorBall (and other Enemies near edge at other times) on it.
@@ -127,12 +123,14 @@ public class PlatformGame extends BaseGame {
 	
 	//protected final static int DEPTH_POWERUP = 0;
 	protected final static int DEPTH_ENEMY = 5;
-	protected final static int DEPTH_PLAYER_BACK = 1;
-	protected final static int DEPTH_PLAYER = 2;
-	protected final static int DEPTH_PLAYER_FRONT = 3;
-	protected final static int DEPTH_BUBBLE = 4;
-	protected final static int DEPTH_SHATTER = 6;
-	protected final static int DEPTH_SPARK = 7;
+	protected final static int _DEPTH_PLAYER_BACK = 1;
+	protected final static int _DEPTH_PLAYER = 2;
+	protected final static int _DEPTH_PLAYER_FRONT = 3;
+	protected final static int _DEPTH_BUBBLE = 4;
+	protected final static int DEPTH_SHATTER = 10;
+	protected final static int DEPTH_SPARK = 11;
+	protected final static int DEPTH_OFF_DRAGON = 5;
+	// DEPTH_PLAYER_DRAGON_BACK - BUBBLE = 6 - 9
 	
 	protected final static int OFF_GEM = 16;
 	
@@ -188,7 +186,7 @@ public class PlatformGame extends BaseGame {
 	protected final static FinPanple2 owf = new FinPanple2(18, 2);
 	protected final static FinPanple2 os = new FinPanple2(17, 11);
 	protected final static FinPanple2 od = new FinPanple2(13, 1);
-	protected final static FinPanple odf = new FinPanple(13, 1, DEPTH_PLAYER_BACK - DEPTH_PLAYER_FRONT);
+	protected final static FinPanple odf = new FinPanple(13, 1, _DEPTH_PLAYER_BACK - _DEPTH_PLAYER_FRONT);
 	protected final static FinPanple2 or = new FinPanple2(21, -6);
 	protected static Img[] guysBlank = null;
 	protected static Img[] guysRide = null;
@@ -1552,12 +1550,32 @@ System.out.println("loadConstants end " + System.currentTimeMillis());
 		}
 	}
 	
-	protected static void setPosition(final Panctor act, final float x, final float y, final float depth) {
+	protected final static void setPosition(final Panctor act, final float x, final float y, final float depth) {
 		//TODO If "- y" works, only use it in level
 		//still need to put in character/wing/spring/bubble/onStep as y changes
 		//onStep will need to know base depth
 	    //act.getPosition().set(x, y, Level.tm.getForegroundDepth() - y + depth);
 		act.getPosition().set(x, y, Level.tm.getForegroundDepth() + depth);
+	}
+	
+	protected final static void setPosition(final Player player, final float x, final float y) {
+		setPosition(player, x, y, getDepthPlayer(player.jumpMode));
+	}
+	
+	protected final static int getDepthPlayer(final byte jumpMode) {
+		return _DEPTH_PLAYER + getDepthPlayerOffset(jumpMode);
+	}
+	
+	protected final static int getDepthPlayerBack(final byte jumpMode) {
+		return _DEPTH_PLAYER_BACK + getDepthPlayerOffset(jumpMode);
+	}
+	
+	protected final static int getDepthBubble(final byte jumpMode) {
+		return _DEPTH_BUBBLE + getDepthPlayerOffset(jumpMode);
+	}
+	
+	private final static int getDepthPlayerOffset(final byte jumpMode) {
+		return (jumpMode == Player.JUMP_DRAGON) ? DEPTH_OFF_DRAGON : 0;
 	}
 	
 	protected final static void levelVictory() {

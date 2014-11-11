@@ -787,7 +787,7 @@ public class Menu {
 		
 		protected final Model addActor(final PlayerContext pc, final int x) {
 			final Model actor = new Model(pc);
-			PlatformGame.setPosition(actor, x, Y_PLAYER, PlatformGame.DEPTH_PLAYER);
+			PlatformGame.setPosition(actor, x, Y_PLAYER, PlatformGame.getDepthPlayer(pc.profile.currentAvatar.jumpMode));
 			room.addActor(actor);
 			return actor;
 		}
