@@ -75,7 +75,14 @@ public abstract class Goal implements Named {
 	}
 	
 	public final static Goal newGoal(final byte award, final PlayerContext pc) {
-		final int max = award < 3 ? 8 : 10, index = award - 1;
+		final int max, index = award - 1;
+		if (award < 3) {
+			max = 8;
+		} else if (Map.isOnLastLevel()) {
+			max = 9;
+		} else {
+			max = 10;
+		}
 		final Goal[] goals = pc.profile.currentGoals;
 		//goals[index] = null; Don't reuse same Goal when assigning a new one; don't null out before checking
 		while (true) {
