@@ -323,7 +323,7 @@ public class Castle {
 			player.mode = Player.MODE_DISABLED;
 			room.addActor(player);
 			// Use PlatformGame.setPosition; otherwise wings can appear in front of Player
-			PlatformGame.setPosition(player, x + (24 * i), y, PlatformGame.DEPTH_PLAYER);
+			PlatformGame.setPosition(player, x + (24 * i), y);
 			player.ai = ai;
         }
     }
