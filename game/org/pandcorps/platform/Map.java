@@ -388,7 +388,7 @@ public class Map {
 			    oldMap = true;
 			}
 			addBorder();
-            addHud();
+            addHud(victoryWorld);
             if (victoryWorld) {
             	// Could beat World, achieve old goal, receive World goal, increment here, give credit for beating World before it was assigned
 	            PlatformGame.worldClose();
@@ -1476,12 +1476,14 @@ public class Map {
         return bord;
 	}
 	
-	private final static void addHud() {
+	private final static void addHud(final boolean victoryWorld) {
 	    final Panlayer hud = PlatformGame.addHud(room, false, false);
 	    final Pantext name = addText(Map.name, PlatformGame.SCREEN_W / 2, 1);
 	    final Pangine engine = Pangine.getEngine();
-	    tipMover = new TextMover(hud, PlatformGame.font, PlatformGame.tips, (tipMover == null) ? 0 : tipMover.getIndex(),
-	    		engine.getEffectiveHeight() - 36, -10);
+	    if (!victoryWorld) {
+		    tipMover = new TextMover(hud, PlatformGame.font, PlatformGame.tips, (tipMover == null) ? 0 : tipMover.getIndex(),
+		    		engine.getEffectiveHeight() - 36, -10);
+	    }
 		PlayerScreen.initTouchButtons(hud, getPlayerContext().ctrl);
 		if (engine.isTouchSupported()) {
 			final Panteraction interaction = engine.getInteraction();
