@@ -1978,7 +1978,7 @@ public class Menu {
 			newTab(PlatformGame.menuCheck, "Back", new Runnable() {@Override public final void run() {exit();}});
 			newTab(PlatformGame.menuClothing, "Shirt", TAB_CLOTHES);
 			newTab(PlatformGame.menuHat, "Hat", TAB_HAT);
-			newTab(PlatformGame.menuGear, "Power", TAB_JUMP);
+			newTab(PlatformGame.menuJump, "Power", TAB_JUMP);
 			newTabs();
 			registerBackExit();
 		}
