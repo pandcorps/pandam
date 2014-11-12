@@ -273,22 +273,26 @@ public class Menu {
 		protected final static void promptQuit(final Panlayer room) {
 			destroyPromptQuit();
 		    final Pangine engine = Pangine.getEngine();
-		    int h = engine.getEffectiveHeight();
-		    if (Panscreen.get() instanceof PlatformGame.PlatformScreen) {
+		    final int h = engine.getEffectiveHeight();
+		    final Panscreen screen = Panscreen.get();
+		    final boolean platformScreen = screen instanceof PlatformGame.PlatformScreen;
+		    int btnY = 0;
+		    if (platformScreen) {
 		        final PlayerContext pc = Coltil.get(PlatformGame.pcs, 0);
 		        if (pc != null) {
     		        quitHandler = new ListActorHandler();
     		        room.setAddHandler(quitHandler);
-    		        final InfoScreen screen = new InfoScreen(pc, false);
-    		        screen.room = room;
-    		        screen.form = new Panform(room, pc.ctrl);
-    		        h = screen.displayGoals(getRankStarX(), h - 32, null);
+    		        final InfoScreen iscrn = new InfoScreen(pc, false);
+    		        iscrn.room = room;
+    		        iscrn.form = new Panform(room, pc.ctrl);
+    		        btnY = iscrn.displayGoals(getRankStarX(), h - 33, null) - PlatformGame.MENU_H - 8;
     		        room.setAddHandler(null);
 		        }
 		    }
 		    final Panple btnSize = PlatformGame.menu.getSize();
-            final int btnY = TouchTabs.off(h, btnSize.getY());
-            final Panscreen screen = Panscreen.get();
+		    if (btnY == 0) {
+		    	btnY = TouchTabs.off(h, btnSize.getY());
+		    }
             final boolean menuScreen = screen instanceof PlayerScreen;
             final int numButtons = menuScreen ? 2 : 3, r = engine.getEffectiveWidth();
             final int btnW = (int) btnSize.getX(), btnX = TouchTabs.off(r, btnW * numButtons);
@@ -308,7 +312,7 @@ public class Menu {
                     	destroyPromptQuit();
                     	PlatformGame.fadeOut(PlatformGame.room, new ProfileScreen(PlatformGame.pcs.get(0), true)); }});
                 quitMenu.setZ(15);
-                if (screen instanceof PlatformGame.PlatformScreen) {
+                if (platformScreen) {
 	                quitMsg = new Pantext(Pantil.vmid(), PlatformGame.fontTiny, "You will lose your progress in this Level if you leave");
 	                quitMsg.getPosition().set(r / 2, btnY - 6, 15);
 	                quitMsg.centerX();
