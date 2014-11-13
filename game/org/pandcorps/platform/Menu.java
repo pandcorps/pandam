@@ -985,9 +985,12 @@ public class Menu {
 		        }});
 	        }
 	        try {
-	        	final String log = engine.getFatalLog();
+	        	String log = engine.getFatalLog();
 	            if (log != null) {
 	            	final String email = PlatformGame.getEmail();
+	            	log = log.replace("org.pandcorps.platform.", "");
+	            	log = log.replace("org.pandcorps.", "");
+	            	log = log.replace(".java", "");
 	            	engine.setClipboard("Please send this to " + email + Iotil.BR + log);
 	            	addTitleTiny("Oh no!", 4, bottom + 48);
 	            	addTitleTiny("It looks like the game crashed the last time you played.", 4, bottom + 42);
