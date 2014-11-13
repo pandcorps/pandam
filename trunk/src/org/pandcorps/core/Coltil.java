@@ -26,6 +26,8 @@ import java.lang.reflect.*;
 import java.util.*;
 import java.util.concurrent.*;
 
+import org.pandcorps.core.col.*;
+
 // Collection Utility
 public final class Coltil {
 	private Coltil() {
@@ -210,6 +212,11 @@ public final class Coltil {
 	
 	public final static <E> List<E> newSafeList() {
         return new Vector<E>();
+    }
+	
+	public final static <E> Set<E> newSafeSet() {
+	    final Map<E, Object> map = newSafeMap();
+        return new MapSet<E>(map);
     }
     
     public final static <K, V> Map<K, V> newSafeMap() {
