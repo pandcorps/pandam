@@ -49,6 +49,7 @@ import org.pandcorps.platform.Enemy.*;
 import org.pandcorps.platform.Player.*;
 
 public class PlatformGame extends BaseGame {
+    protected final static String VERSION = "alpha";
 	/*
 	Horse/hippo/elephant/squirrel/gator/pig/walrus/beaver/stag/bull/ram player face.
 	Player armor, robe (also used by king), hats (ear depth/mask images).
