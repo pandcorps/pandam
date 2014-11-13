@@ -36,15 +36,15 @@ import org.pandcorps.pandam.impl.GlPanmage.*;
 public abstract class GlPangine extends Pangine {
 	public static Pangl gl = null;
 	protected final static ArrayList<GlPanmage> images = new ArrayList<GlPanmage>();
-	private final static List<GlPanmage> newImages = new Vector<GlPanmage>();
+	private final static List<GlPanmage> newImages = Coltil.newSafeList();
 	protected final Panteraction interaction;
 	protected final HashSet<Panput> active = new HashSet<Panput>();
 	protected final HashSet<Panput> newActive = new HashSet<Panput>();
 	protected final HashSet<Panput> ended = new HashSet<Panput>();
-	protected final static Vector<TouchEvent> touchEvents = new Vector<TouchEvent>();
-	protected final static Vector<TouchButton> touchButtons = new Vector<TouchButton>();
+	protected final static List<TouchEvent> touchEvents = Coltil.newSafeList();
+	protected final static List<TouchButton> touchButtons = Coltil.newSafeList();
 	private final static Map<Integer, Panput> touchMap = new HashMap<Integer, Panput>();
-	protected final static Vector<InputEvent> inputEvents = new Vector<InputEvent>();
+	protected final static List<InputEvent> inputEvents = Coltil.newSafeList();
 	private FloatBuffer blendRectangle = null;
 	public boolean capsLock = false;
 	public boolean ins = false;
@@ -275,7 +275,7 @@ public abstract class GlPangine extends Pangine {
 		stepInputs();
 	}
 	
-	private final static void clear(final Vector<?> v, final int size) {
+	private final static void clear(final List<?> v, final int size) {
 		for (int i = size - 1; i >= 0; i--) {
 			v.remove(i);
 		}

@@ -24,6 +24,7 @@ package org.pandcorps.core;
 
 import java.lang.reflect.*;
 import java.util.*;
+import java.util.concurrent.*;
 
 // Collection Utility
 public final class Coltil {
@@ -206,4 +207,12 @@ public final class Coltil {
 	public final static boolean hasNext(final Iterator<?> iter) {
 	    return iter == null ? false : iter.hasNext();
 	}
+	
+	public final static <E> List<E> newSafeList() {
+        return new Vector<E>();
+    }
+    
+    public final static <K, V> Map<K, V> newSafeMap() {
+        return new ConcurrentHashMap<K, V>();
+    }
 }

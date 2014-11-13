@@ -42,7 +42,7 @@ public abstract class Pangine {
 	
 	protected static Pangine engine = null;
 
-	private final Map<String, Pantity> entities = new ConcurrentHashMap<String, Pantity>();
+	private final Map<String, Pantity> entities = Coltil.newSafeMap();
 	private boolean entityMapEnabled = true;
 	private final HashMap<Class<? extends Panctor>, Pantype> types =
 		new HashMap<Class<? extends Panctor>, Pantype>();
