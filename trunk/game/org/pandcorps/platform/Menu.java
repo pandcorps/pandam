@@ -991,7 +991,7 @@ public class Menu {
 	            	log = log.replace("org.pandcorps.platform.", "");
 	            	log = log.replace("org.pandcorps.", "");
 	            	log = log.replace(".java", "");
-	            	engine.setClipboard("Please send this to " + email + Iotil.BR + log);
+	            	engine.setClipboard("Please send this to " + email + Iotil.BR + PlatformGame.VERSION + Iotil.BR + log);
 	            	addTitleTiny("Oh no!", 4, bottom + 48);
 	            	addTitleTiny("It looks like the game crashed the last time you played.", 4, bottom + 42);
 	            	addTitleTiny("We've copied an error report into your clipboard.", 4, bottom + 36);
