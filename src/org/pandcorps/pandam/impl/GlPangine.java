@@ -38,9 +38,9 @@ public abstract class GlPangine extends Pangine {
 	protected final static ArrayList<GlPanmage> images = new ArrayList<GlPanmage>();
 	private final static List<GlPanmage> newImages = Coltil.newSafeList();
 	protected final Panteraction interaction;
-	protected final HashSet<Panput> active = new HashSet<Panput>();
-	protected final HashSet<Panput> newActive = new HashSet<Panput>();
-	protected final HashSet<Panput> ended = new HashSet<Panput>();
+	protected final Set<Panput> active = Coltil.newSafeSet();
+	protected final Set<Panput> newActive = Coltil.newSafeSet();
+	protected final Set<Panput> ended = Coltil.newSafeSet();
 	protected final static List<TouchEvent> touchEvents = Coltil.newSafeList();
 	protected final static List<TouchButton> touchButtons = Coltil.newSafeList();
 	private final static Map<Integer, Panput> touchMap = new HashMap<Integer, Panput>();
