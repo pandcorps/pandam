@@ -961,6 +961,7 @@ public class Menu {
 	protected final static class TitleScreen extends PlayerScreen {
 		private final static int NUM_CHRS = 4;
 		private static ArrayList<PlayerContext> tcs = new ArrayList<PlayerContext>(NUM_CHRS);
+		private Pantext text = null;
 		
 	    protected TitleScreen() {
             super(null, true);
@@ -979,14 +980,26 @@ public class Menu {
 	        } else {
 	            prompt.append("Press anything");
 	        }
-	        final Pantext text = addTitleCentered(prompt, bottom);
-	        engine.addTimer(text, 210, new TimerListener() {@Override public final void onTimer(final TimerEvent event) {
+	        text = addTitleCentered(prompt, bottom);
+	        engine.addTimer(text, 360, new TimerListener() {@Override public final void onTimer(final TimerEvent event) {
+	            if (text == null) {
+	                return;
+	            }
                 Chartil.set(prompt, "Did you " + (touch ? "tap?" : "press something"));
                 engine.addTimer(text, 120, new TimerListener() {@Override public final void onTimer(final TimerEvent event) {
+                    if (text == null) {
+                        return;
+                    }
                     Chartil.set(prompt, "Maybe you're not ready");
                     engine.addTimer(text, 120, new TimerListener() {@Override public final void onTimer(final TimerEvent event) {
+                        if (text == null) {
+                            return;
+                        }
                         Chartil.set(prompt, "Exiting now, try again when you're ready");
                         engine.addTimer(text, 120, new TimerListener() {@Override public final void onTimer(final TimerEvent event) {
+                            if (text == null) {
+                                return;
+                            }
                             engine.exit();
                         }});
                     }});
@@ -1040,6 +1053,8 @@ public class Menu {
         	} else {
         		ctrl = ControlScheme.getDefault(device);
         	}
+        	Panctor.destroy(text);
+        	text = null;
             exit();
 	    }
 	    
