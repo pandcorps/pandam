@@ -971,11 +971,30 @@ public class Menu {
         protected final void menu() {
 	        PlatformGame.loaders = null;
 	        final int bottom = getBottom();
-	        final Pantext text = addTitleCentered("Press anything", bottom);
 	        final Pangine engine = Pangine.getEngine();
+	        final boolean touch = engine.isTouchSupported();
+	        final StringBuilder prompt = new StringBuilder();
+	        if (touch) {
+	            prompt.append("Tap to start");
+	        } else {
+	            prompt.append("Press anything");
+	        }
+	        final Pantext text = addTitleCentered(prompt, bottom);
+	        engine.addTimer(text, 210, new TimerListener() {@Override public final void onTimer(final TimerEvent event) {
+                Chartil.set(prompt, "Did you " + (touch ? "tap?" : "press something"));
+                engine.addTimer(text, 120, new TimerListener() {@Override public final void onTimer(final TimerEvent event) {
+                    Chartil.set(prompt, "Maybe you're not ready");
+                    engine.addTimer(text, 120, new TimerListener() {@Override public final void onTimer(final TimerEvent event) {
+                        Chartil.set(prompt, "Exiting now, try again when you're ready");
+                        engine.addTimer(text, 120, new TimerListener() {@Override public final void onTimer(final TimerEvent event) {
+                            engine.exit();
+                        }});
+                    }});
+                }});
+            }});
 	        addTitleCentered("Andrew Martin's Untitled Game" + Pantext.CHAR_TRADEMARK, engine.getEffectiveHeight() / 2);
 	        addTitleCentered("Copyright " + Pantext.CHAR_COPYRIGHT + " 2014 Andrew M. Martin", bottom + 16);
-	        if (engine.isTouchSupported()) {
+	        if (touch) {
 	        	text.register(new ActionEndListener() {@Override public void onActionEnd(final ActionEndEvent event) {
 		        	onAnything(event);
 		        }});
