@@ -55,7 +55,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
     protected final Set<Clothing> availableClothings = new HashSet<Clothing>();
     protected boolean consoleEnabled = false;
     protected final Set<Clothing> availableHats = new HashSet<Clothing>();
-    private String version = null;
+    //private String version = null; // Currently only write version to save file in case we want to read it later
     protected int column = -1;
 	protected int row = -1;
 	protected final HashMap<Pair<Integer, Integer>, Boolean> open = new HashMap<Pair<Integer, Integer>, Boolean>();
@@ -105,7 +105,7 @@ gems = 1000000;
     	for (final Field f : Coltil.unnull(seg.getRepetitions(13))) {
     	    availableHats.add(Avatar.getHat(f.getValue()));
         }
-    	version = seg.getValue(14);
+    	//version = seg.getValue(14); // Currently only write version to save file in case we want to read it later
     	//ctrl = seg.intValue(3);
     }
     
