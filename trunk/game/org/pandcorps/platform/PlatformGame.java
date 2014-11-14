@@ -46,6 +46,7 @@ import org.pandcorps.pandax.touch.*;
 import org.pandcorps.pandax.visual.*;
 import org.pandcorps.platform.Avatar.*;
 import org.pandcorps.platform.Enemy.*;
+import org.pandcorps.platform.Menu.*;
 import org.pandcorps.platform.Player.*;
 
 public class PlatformGame extends BaseGame {
@@ -329,7 +330,7 @@ public class PlatformGame extends BaseGame {
 	    Imtil.onlyResources = true;
 		PlatformGame.room = room;
 		loadConstants();
-		Panscreen.set(new LogoScreen(Menu.TitleScreen.class, loaders));
+		Panscreen.set(new LogoScreen(TitleScreen.class, loaders));
 	}
 	
 	protected final static void fadeIn(final Panlayer layer) {
@@ -1314,7 +1315,7 @@ System.out.println("loadConstants start " + System.currentTimeMillis());
 			Img.setTemporary(false, crowns); }});
 		
 		loaders.add(new Runnable() { @Override public final void run() {
-			Menu.TitleScreen.generateTitleCharacters(); }});
+			TitleScreen.generateTitleCharacters(); }});
 		
 		if (engine.isTouchSupported()) {
 			btnLoader = new Runnable() { @Override public final void run() {
@@ -1488,7 +1489,7 @@ System.out.println("loadConstants end " + System.currentTimeMillis());
 	
 	protected final static void initTouchButtons(final Panlayer layer, final boolean allowAuto, final boolean input, final Panctor bound) {
 	    final PlayerContext pc = pcs.get(0);
-		Menu.PlayerScreen.initTouchButtons(layer, pc.ctrl, (allowAuto && pc.profile.autoRun) ? Menu.TOUCH_JUMP : Menu.TOUCH_HORIZONTAL, input, !input, bound);
+		PlayerScreen.initTouchButtons(layer, pc.ctrl, (allowAuto && pc.profile.autoRun) ? Menu.TOUCH_JUMP : Menu.TOUCH_HORIZONTAL, input, !input, bound);
 	}
 	
 	protected final static Gem addHudGem(final Panlayer hud, final int x, final int y) {
@@ -1673,8 +1674,8 @@ System.out.println("loadConstants end " + System.currentTimeMillis());
 	}
 	
 	protected final static void goGoals(final PlayerContext pc) {
-		Menu.InfoScreen.currentTab = Menu.InfoScreen.TAB_GOALS;
-		fadeOut(room, new Menu.InfoScreen(pc, false));
+		InfoScreen.currentTab = InfoScreen.TAB_GOALS;
+		fadeOut(room, new InfoScreen(pc, false));
 	}
 	
 	protected final static boolean goGoalsIfNeeded() {
@@ -1793,7 +1794,7 @@ System.out.println("loadConstants end " + System.currentTimeMillis());
 		if (Pangine.getEngine().isPaused()) {
 			return true;
 		} else if (Panscreen.get() instanceof PlatformScreen && hud != null) {
-			Menu.PlayerScreen.promptQuit(hud);
+			PlayerScreen.promptQuit(hud);
 			return true;
 		}
 		return false;
