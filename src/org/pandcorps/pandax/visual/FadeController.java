@@ -89,7 +89,7 @@ public class FadeController extends Panctor implements StepListener {
     }
     
     public final static void fadeOut(final Panlayer layer, final short r, final short g, final short b, final short speed, final Panscreen nextScreen) {
-    	clearFadeControllers(layer);
+    	clearFadeControllers();
     	// Will normally already be min; but if it's already partially faded, just use that as starting point
         //layer.getBlendColor().set(r, g, b, Pancolor.MIN_VALUE);
     	final Trace state = new Trace("State when starting fadeOut");
@@ -135,6 +135,10 @@ public class FadeController extends Panctor implements StepListener {
     		}
     	}
     	return false;
+    }
+    
+    private final static void clearFadeControllers() {
+        throw new UnsupportedOperationException(); //TODO Clear all layers
     }
     
     private final static void clearFadeControllers(final Panlayer layer) {
