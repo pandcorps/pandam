@@ -32,6 +32,7 @@ import org.pandcorps.pandam.event.*;
 public class FadeController extends Panctor implements StepListener {
     private short velocity = 0;
     private Queue<Runnable> tasks = null;
+    private boolean firstStep = true;
     
     public FadeController() {
         setVisible(false);
@@ -49,7 +50,13 @@ public class FadeController extends Panctor implements StepListener {
         }
         run(tasks);
         final Pancolor color = getLayer().getBlendColor();
-        if (!color.addA(velocity)) {
+        if (color.addA(velocity)) {
+        	if (firstStep && fadingOut()) {
+        		// Clear fade-in controller added during same frame as this (see fadeOut clear comment)
+        		clearFadeInControllers(getLayer());
+        	}
+        	firstStep = false;
+        } else {
             //TODO Optionally check for remaining tasks before ending
             onFadeEnd();
             velocity = 0;
@@ -94,7 +101,7 @@ public class FadeController extends Panctor implements StepListener {
     }
     
     public final static void fadeIn(final Panlayer layer, final short r, final short g, final short b, final short speed) {
-    	clearFadeControllers(layer, true);
+    	clearFadeInControllers(layer);
         layer.getBlendColor().set(r, g, b, Pancolor.MAX_VALUE);
         final FadeController c = new FadeController() {
             @Override protected final void onFadeEnd() {
@@ -105,6 +112,7 @@ public class FadeController extends Panctor implements StepListener {
     }
     
     public final static void fadeOut(final Panlayer layer, final short r, final short g, final short b, final short speed, final Panscreen nextScreen) {
+    	// Won't find controllers added during same frame (still in layer.addedActors instead of actors)
     	clearFadeControllers();
     	// Will normally already be min; but if it's already partially faded, just use that as starting point
         //layer.getBlendColor().set(r, g, b, Pancolor.MIN_VALUE);
@@ -180,13 +188,20 @@ public class FadeController extends Panctor implements StepListener {
     	clearFadeControllers(layer, false);
     }
     
-    private final static void clearFadeControllers(final Panlayer layer, final boolean onlyClearFadeIn) {
+    private final static boolean clearFadeInControllers(final Panlayer layer) {
+    	return clearFadeControllers(layer, true);
+    }
+    
+    private final static boolean clearFadeControllers(final Panlayer layer, final boolean onlyClearFadeIn) {
+    	boolean cleared = false;
     	for (final Panctor actor : layer.getActors()) {
     		if (actor instanceof FadeController) {
     			if (!onlyClearFadeIn || ((FadeController) actor).fadingIn()) {
     				actor.destroy();
+    				cleared = true;
     			}
     		}
     	}
+    	return cleared;
     }
 }
