@@ -50,6 +50,11 @@ public final class Pantil {
 		return Long.toString(nextId++);
 	}
 	
+	public final static String getSimpleName(final Class<?> c) {
+		final String name = c.getSimpleName(); // Can be empty for inline classes
+		return Chartil.isValued(name) ? name : c.getName();
+	}
+	
 	public final static Exception toException(final Throwable e) {
         return e instanceof Exception ? (Exception) e : new Exception(e);
     }

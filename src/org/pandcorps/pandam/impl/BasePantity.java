@@ -22,6 +22,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandam.impl;
 
+import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
 
 public abstract class BasePantity implements Pantity {
@@ -64,6 +65,6 @@ public abstract class BasePantity implements Pantity {
 	
 	@Override
 	public String toString() {
-		return getClass().getSimpleName() + "(" + id + ")";
+		return Pantil.getSimpleName(getClass()) + "(" + id + ")";
 	}
 }
