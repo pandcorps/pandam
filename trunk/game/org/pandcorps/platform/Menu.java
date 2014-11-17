@@ -309,6 +309,7 @@ public class Menu {
             	noImg = PlatformGame.menuRight;
             	quitMenu = newFormButton(room, "Menu", btnX + btnW, btnY, PlatformGame.menuOptions, "Menu", new Runnable() {
                     @Override public final void run() {
+                    	PlatformGame.notifications.clear();
                     	destroyPromptQuit();
                     	PlatformGame.fadeOut(PlatformGame.room, new ProfileScreen(PlatformGame.pcs.get(0), true)); }});
                 quitMenu.setZ(15);
