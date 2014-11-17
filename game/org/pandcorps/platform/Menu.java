@@ -41,7 +41,6 @@ import org.pandcorps.pandax.text.Input.*;
 import org.pandcorps.pandax.tile.Tile.*;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.touch.*;
-import org.pandcorps.pandax.visual.*;
 import org.pandcorps.platform.Map.*;
 import org.pandcorps.platform.Enemy.*;
 import org.pandcorps.platform.Profile.*;
@@ -1046,9 +1045,15 @@ public class Menu {
 	    
 	    private final void onAnything(final InputEvent event) {
 	    	if (disabled) {
+	    		/*
+	    		Something like this might help work around some issues.
+	    		But onAnything is bound to text, which is destroyed here.
+	    		So this method isn't even invoked a second time.
+	    		Doing something like this would require binding onAnything to a different actor.
 	    		if (FadeController.isFadingIn() || !FadeController.isFadingOut()) {
 	    			disabled = false;
 	    		}
+	    		*/
         		return;
         	}
         	final Device device = event.getInput().getDevice();
