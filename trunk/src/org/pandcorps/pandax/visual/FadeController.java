@@ -106,26 +106,20 @@ public class FadeController extends Panctor implements StepListener {
         layer.addActor(c);
     }
     
+    private final static class FadingInIteration implements Iteration<Panlayer> {
+    	private boolean fadingIn = false;
+    	
+		@Override
+		public final boolean step(final Panlayer elem) {
+			fadingIn = isFadingIn(elem);
+			return !fadingIn;
+		}
+	}
+		
     public final static boolean isFadingIn() {
-    	final Panroom room = Pangame.getGame().getCurrentRoom();
-    	if (room == null) {
-    		return false;
-    	} else if (isFadingIn(room)) {
-    		return true;
-    	}
-    	Panlayer layer = room;
-    	while ((layer = layer.getAbove()) != null) {
-    		if (isFadingIn(layer)) {
-    			return true;
-    		}
-    	}
-    	layer = room;
-    	while ((layer = layer.getBeneath()) != null) {
-    		if (isFadingIn(layer)) {
-    			return true;
-    		}
-    	}
-    	return false;
+    	final FadingInIteration iteration = new FadingInIteration();
+    	Panlayer.iterateLayers(iteration);
+    	return iteration.fadingIn;
     }
     
     public final static boolean isFadingIn(final Panlayer layer) {
@@ -138,7 +132,11 @@ public class FadeController extends Panctor implements StepListener {
     }
     
     private final static void clearFadeControllers() {
-        throw new UnsupportedOperationException(); //TODO Clear all layers
+        Panlayer.iterateLayers(new Iteration<Panlayer>() {
+			@Override public final boolean step(final Panlayer elem) {
+				clearFadeControllers(elem);
+				return true;
+			}});
     }
     
     private final static void clearFadeControllers(final Panlayer layer) {
