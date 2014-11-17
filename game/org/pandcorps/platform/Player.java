@@ -384,7 +384,7 @@ public class Player extends Character implements CollisionListener {
 	    } else if (isGrounded()) {
 	    	final Pansound sound;
 	        if (jumpMode == JUMP_HIGH) {
-	            acc.back.setView(pc.backJump);
+	            showSprings();
 	            sound = PlatformGame.soundBounce;
 	        } else {
 	            sound = PlatformGame.soundJump;
@@ -396,6 +396,10 @@ public class Player extends Character implements CollisionListener {
 			pc.profile.stats.jumps++;
 			sound.startSound();
 		}
+	}
+	
+	private final void showSprings() {
+		acc.back.setView(pc.backJump);
 	}
 	
 	private final int getVelocityJump() {
@@ -544,7 +548,7 @@ public class Player extends Character implements CollisionListener {
 			//return true; // Let falling Player keep falling; just don't allow new input
 		}
 		final boolean auto = pc.profile.autoRun;
-		if (auto && !Level.victory && mode != MODE_FROZEN) {
+		if (auto && !Level.victory && mode != MODE_FROZEN && mode != MODE_DISABLED) { // Check disabled to prevent running on ThroneScreen
 		    hv = VEL_WALK;
 		}
 		if (auto || hv == 0) {
@@ -730,7 +734,14 @@ public class Player extends Character implements CollisionListener {
 		    final boolean aboveEnemy = getPosition().getY() > other.getPosition().getY();
 		    if (aboveEnemy && v < 4 && !isGrounded()) {
 				if (((Enemy) other).onStomp(this)) {
-    				v = (jumpMode != JUMP_FLY && getJumpInput().isActive()) ? getVelocityJump() : VEL_BUMP;
+					if ((jumpMode != JUMP_FLY && getJumpInput().isActive())) {
+						v = getVelocityJump();
+						if (jumpMode == JUMP_HIGH) {
+							showSprings();
+						}
+					} else {
+						v = VEL_BUMP;
+					}
     				stompTimer = 2;
 				}
 		    } else if (aboveEnemy && stompTimer > 0) {

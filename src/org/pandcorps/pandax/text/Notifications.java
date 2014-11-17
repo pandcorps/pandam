@@ -114,15 +114,30 @@ public class Notifications extends Panctor implements StepListener {
         }
         timer--;
         if (timer <= 0) {
-            Panctor.destroy(icon);
+            clearIcon();
             if (queue.isEmpty()) {
-                label.setVisible(false);
-                Chartil.clear(seq);
+                clearText();
                 free();
             } else {
                 init(queue.poll());
             }
         }
+    }
+    
+    private final void clearIcon() {
+    	Panctor.destroy(icon);
+    }
+    
+    private final void clearText() {
+    	label.setVisible(false);
+        Chartil.clear(seq);
+    }
+    
+    public final void clear() {
+    	Coltil.clear(queue);
+    	clearIcon();
+    	clearText();
+    	timer = 0;
     }
     
     public final void setDestroyAllowed(final boolean destroyAllowed) {
