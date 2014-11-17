@@ -429,4 +429,25 @@ public class Panlayer extends BasePantity {
     public final Panlayer getMaster() {
     	return master;
     }
+    
+    public final static void iterateLayers(final Iteration<Panlayer> iteration) {
+    	final Panroom room = Pangame.getGame().getCurrentRoom();
+    	if (room == null) {
+    		return;
+    	} else if (!iteration.step(room)) {
+    		return;
+    	}
+    	Panlayer layer = room;
+    	while ((layer = layer.getAbove()) != null) {
+    		if (!iteration.step(layer)) {
+    			return;
+    		}
+    	}
+    	layer = room;
+    	while ((layer = layer.getBeneath()) != null) {
+    		if (!iteration.step(layer)) {
+    			return;
+    		}
+    	}
+    }
 }
