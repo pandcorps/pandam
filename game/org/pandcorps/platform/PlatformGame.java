@@ -102,6 +102,7 @@ public class PlatformGame extends BaseGame {
 	Clipboard import.
 	GoalTemplate: 2*2 block steps.
 	Sand level cactus, Snow level crystal/pine tree
+	Chant Music - rise * 3 at end?
 	OutputStream that writes to tmp file then swaps on close, keeping original as bak.
 	InputStream that reads bak file if can't find main.
 	Icon.
