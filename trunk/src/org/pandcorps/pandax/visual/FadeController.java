@@ -64,6 +64,7 @@ public class FadeController extends Panctor implements StepListener {
     	tasks.remove().run();
     }
     
+    //@OverrideMe
     protected void onFadeEnd() {
     }
     
@@ -80,10 +81,25 @@ public class FadeController extends Panctor implements StepListener {
         this.tasks = tasks;
     }
     
+    public final boolean fadingIn() {
+    	return velocity < 0 && !isDestroyed(); // Blend rectangle opacity decreasing
+    }
+    
+    public final boolean fadingOut() {
+    	return velocity > 0 && !isDestroyed(); // Blend rectangle opacity increasing
+    }
+    
+    public final boolean fading(final boolean in) {
+    	return in ? fadingIn() : fadingOut();
+    }
+    
     public final static void fadeIn(final Panlayer layer, final short r, final short g, final short b, final short speed) {
-    	clearFadeControllers(layer);
+    	clearFadeControllers(layer, true);
         layer.getBlendColor().set(r, g, b, Pancolor.MAX_VALUE);
-        final FadeController c = new FadeController();
+        final FadeController c = new FadeController() {
+            @Override protected final void onFadeEnd() {
+            	destroy();
+            }};
         c.setVelocity((short) -speed);
         layer.addActor(c);
     }
@@ -106,25 +122,46 @@ public class FadeController extends Panctor implements StepListener {
         layer.addActor(c);
     }
     
-    private final static class FadingInIteration implements Iteration<Panlayer> {
-    	private boolean fadingIn = false;
+    private final static class FadingIteration implements Iteration<Panlayer> {
+    	private final boolean in;
+    	private boolean fading = false;
+    	
+    	private FadingIteration(final boolean in) {
+    		this.in = in;
+    	}
     	
 		@Override
 		public final boolean step(final Panlayer elem) {
-			fadingIn = isFadingIn(elem);
-			return !fadingIn;
+			fading = isFading(elem, in);
+			return !fading;
 		}
 	}
 		
     public final static boolean isFadingIn() {
-    	final FadingInIteration iteration = new FadingInIteration();
+    	return isFading(true);
+    }
+    
+    public final static boolean isFadingOut() {
+    	return isFading(false);
+    }
+    
+    public final static boolean isFading(final boolean in) {
+    	final FadingIteration iteration = new FadingIteration(in);
     	Panlayer.iterateLayers(iteration);
-    	return iteration.fadingIn;
+    	return iteration.fading;
     }
     
     public final static boolean isFadingIn(final Panlayer layer) {
+    	return isFading(layer, true);
+    }
+    
+    public final static boolean isFadingOut(final Panlayer layer) {
+    	return isFading(layer, false);
+    }
+    
+    public final static boolean isFading(final Panlayer layer, final boolean in) {
     	for (final Panctor actor : layer.getActors()) {
-    		if (actor instanceof FadeController && ((FadeController) actor).velocity < 0) {
+    		if (actor instanceof FadeController && ((FadeController) actor).fading(in)) {
     			return true;
     		}
     	}
@@ -140,9 +177,15 @@ public class FadeController extends Panctor implements StepListener {
     }
     
     private final static void clearFadeControllers(final Panlayer layer) {
+    	clearFadeControllers(layer, false);
+    }
+    
+    private final static void clearFadeControllers(final Panlayer layer, final boolean onlyClearFadeIn) {
     	for (final Panctor actor : layer.getActors()) {
     		if (actor instanceof FadeController) {
-    			actor.destroy();
+    			if (!onlyClearFadeIn || ((FadeController) actor).fadingIn()) {
+    				actor.destroy();
+    			}
     		}
     	}
     }
