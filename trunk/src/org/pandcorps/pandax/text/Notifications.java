@@ -129,7 +129,7 @@ public class Notifications extends Panctor implements StepListener {
     }
     
     private final void clearText() {
-    	label.setVisible(false);
+    	Panctor.setInvisible(label);
         Chartil.clear(seq);
     }
     

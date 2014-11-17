@@ -440,4 +440,10 @@ public class Panctor extends BasePantity implements SpecPanctor {
 			detach(actor);
 		}
 	}
+	
+	public final static void setInvisible(final Panctor actor) {
+		if (actor != null) {
+			actor.setVisible(false);
+		}
+	}
 }
