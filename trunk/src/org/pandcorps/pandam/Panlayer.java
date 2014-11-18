@@ -159,7 +159,7 @@ public class Panlayer extends BasePantity {
     }
     
     private final void applyAddActor(final Panctor actor) {
-        if (actors.put(actor, "") != null) {
+        if (actor.isDestroyed() || actors.put(actor, "") != null) {
             return;
         } else if (actor instanceof RoomAddListener) {
             ((RoomAddListener) actor).onRoomAdd(room.addEvent);
@@ -177,6 +177,23 @@ public class Panlayer extends BasePantity {
             removeActor(actor);
         }
     }*/
+    
+    public final boolean destroyActors(final Criterion<Panctor> c) {
+        final boolean d1 = destroyActors(actors.keySet(), c);
+        final boolean d2 = destroyActors(addedActors, c); // Either make a copy of addedActors or make a List of actors to destroy and the loop though it; otherwise removeActor will change this as we loop
+        return d1 || d2;
+    }
+    
+    private final boolean destroyActors(final Collection<Panctor> col, final Criterion<Panctor> c) {
+        boolean destroyed = false;
+        for (final Panctor actor : col) {
+            if (c.isMet(actor)) {
+                actor.destroy();
+                destroyed = true;
+            }
+        }
+        return destroyed;
+    }
     
     public final void destroyAllActors() {
     	tracked = null;
