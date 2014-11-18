@@ -285,7 +285,7 @@ public class Menu {
     		        final InfoScreen iscrn = new InfoScreen(pc, false);
     		        iscrn.room = room;
     		        iscrn.form = new Panform(room, pc.ctrl);
-    		        btnY = iscrn.displayGoals(getRankStarX(), h - 33, null) - PlatformGame.MENU_H - 8;
+    		        btnY = iscrn.displayGoals(getRankStarX(), h - 34, null) - PlatformGame.MENU_H - 8;
     		        room.setAddHandler(null);
 		        }
 		    }
@@ -315,7 +315,7 @@ public class Menu {
                 quitMenu.setZ(15);
                 if (platformScreen) {
 	                quitMsg = new Pantext(Pantil.vmid(), PlatformGame.fontTiny, "You will lose your progress in this Level if you leave");
-	                quitMsg.getPosition().set(r / 2, btnY - 6, 15);
+	                quitMsg.getPosition().set(r / 2, btnY - 7, 15);
 	                quitMsg.centerX();
 	                room.addActor(quitMsg);
                 }
