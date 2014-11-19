@@ -179,18 +179,26 @@ public class Panlayer extends BasePantity {
     }*/
     
     public final boolean destroyActors(final Criterion<Panctor> c) {
-        final boolean d1 = destroyActors(actors.keySet(), c);
-        final boolean d2 = destroyActors(addedActors, c); // Either make a copy of addedActors or make a List of actors to destroy and the loop though it; otherwise removeActor will change this as we loop
+        final boolean d1 = destroyActors(actors.keySet(), c, false);
+        final boolean d2 = destroyActors(addedActors, c, true);
         return d1 || d2;
     }
     
-    private final boolean destroyActors(final Collection<Panctor> col, final Criterion<Panctor> c) {
+    private final boolean destroyActors(final Collection<Panctor> col, final Criterion<Panctor> c, final boolean separateLoop) {
         boolean destroyed = false;
+        List<Panctor> toDestroy = null;
         for (final Panctor actor : col) {
             if (c.isMet(actor)) {
-                actor.destroy();
+                if (separateLoop) {
+                    toDestroy = Coltil.add(toDestroy, actor);
+                } else {
+                    actor.destroy();
+                }
                 destroyed = true;
             }
+        }
+        for (final Panctor actor : Coltil.unnull(toDestroy)) {
+            actor.destroy();
         }
         return destroyed;
     }
