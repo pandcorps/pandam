@@ -105,6 +105,8 @@ public class PlatformGame extends BaseGame {
 	Chant Music - rise * 3 at end?
 	OutputStream that writes to tmp file then swaps on close, keeping original as bak.
 	InputStream that reads bak file if can't find main.
+	Getting FUR out of order in Level causes gem letters to appear over wrong block letters.
+	Remove System.out/err/printStackTrace/etc.
 	Icon.
 	Screen shots.
 	Title screen.
@@ -226,6 +228,7 @@ public class PlatformGame extends BaseGame {
 	protected static String blockWord = defaultBlockWord;
 	protected static Panmage[] gemLetters = null;
 	protected static Panmage[] blockLetters = null;
+	protected static Panmage[] translucentBlockLetters = null;
 	protected static Panmage[] gemGoal = null;
 	protected static Panmage emptyGoal = null;
 	protected static Panmage[] gemRank = null;
@@ -1276,7 +1279,14 @@ public class PlatformGame extends BaseGame {
 		    gemWorldAnm = createGemAnm("gem.world", createSheet("gem.world", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/Gem4.png")));
 		    gemWordAnm = createGemAnm("gem.word", createSheet("gem.word", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/Gem6.png")));
 		    gemLetters = createSheet("gem.letter", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/GemLetters.png"));
-		    blockLetters = createSheet("block.letter", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/BlockLetters.png"));
+		    final Img[] blStrip = ImtilX.loadStrip("org/pandcorps/platform/res/misc/BlockLetters.png");
+		    Img.setTemporary(false, blStrip);
+		    blockLetters = createSheet("block.letter", null, blStrip);
+		    for (final Img bl : blStrip) {
+		    	Imtil.setPseudoTranslucent(bl);
+		    }
+		    translucentBlockLetters = createSheet("translucent.block.letter", null, blStrip);
+		    Img.close(blStrip);
 		    gemGoal = createSheet("gem.goal", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/GemStar.png"));
 		    emptyGoal = createImage("empty.goal", "org/pandcorps/platform/res/misc/EmptyStar.png", ImtilX.DIM);
 		    gemRank = createSheet("gem.rank", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/GemOrb.png"));
@@ -1471,6 +1481,7 @@ public class PlatformGame extends BaseGame {
 		initTouchButtons(null, true, true, null); // Must define inputs before creating Player
 	    Level.loadLevel();
 	    addHud(room, true, true);
+	    Tiles.initLetters();
 	}
 	
 	protected final static Panlayer addHud(final Panroom room, final boolean allowAuto, final boolean level) {
@@ -1734,6 +1745,10 @@ public class PlatformGame extends BaseGame {
 	
 	protected final static Panmage getGemWordLetter(final int i) {
 		return getGemLetter(blockWord.charAt(i));
+	}
+	
+	protected final static Panmage getTranslucentBlockWordLetter(final int i) {
+		return getImageLetter(translucentBlockLetters, blockWord.charAt(i));
 	}
 	
 	protected final static List<String> getAvailableProfiles() {
