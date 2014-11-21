@@ -192,6 +192,7 @@ public class Cabin {
 				@Override public final void onTimer(final TimerEvent event) {
                     instr.destroy();
 				}});
+			Tiles.initLetters();
 			return "Hoo! Hoo! Hit " + ((size == 1) ? "the block" : "them") + "!";
 		}
 		

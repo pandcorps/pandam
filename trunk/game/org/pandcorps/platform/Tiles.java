@@ -22,8 +22,6 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.platform;
 
-import java.util.*;
-
 import org.pandcorps.core.*;
 import org.pandcorps.game.core.*;
 import org.pandcorps.pandam.*;
@@ -124,20 +122,34 @@ public class Tiles {
 	    GemBumped.create(player, index, 0, GemBumped.TYPE_LETTER, null).setView(PlatformGame.getGemWordLetter(i));
 	    //final TileActor h = new TileActor();
 	    //h.setViewFromForeground(Level.tm, t);
-	    final Panctor h = new Panctor();
-	    h.setView(letter);
-	    //final int d = ImtilX.DIM;
-	    h.getPosition().set(getHudLetterX(i), Pangine.getEngine().getEffectiveHeight() - ImtilX.DIM - 1);
-	    PlatformGame.hud.addActor(h);
-	    if (Level.collectedLetters == null) {
-	        Level.collectedLetters = new ArrayList<Panctor>(size);
-	    }
-	    Level.collectedLetters.add(h);
+	    Level.collectedLetters = Coltil.add(Level.collectedLetters, addLetter(i, letter));
+	    Panctor.destroy(Coltil.get(Level.uncollectedLetters, i));
 	    return true;
     }
     
     private final static int getHudLetterX(final int i) {
     	return (Pangine.getEngine().getEffectiveWidth() - ImtilX.DIM * PlatformGame.blockWord.length()) / 2 + ImtilX.DIM * i;
+    }
+    
+    private final static int getHudLetterY() {
+    	return Pangine.getEngine().getEffectiveHeight() - ImtilX.DIM - 1;
+    }
+    
+    private final static Panctor addLetter(final int i, final Panmage letter) {
+    	final Panctor h = new Panctor();
+	    h.setView(letter);
+	    h.getPosition().set(getHudLetterX(i), getHudLetterY());
+	    PlatformGame.hud.addActor(h);
+	    return h;
+    }
+    
+    protected final static void initLetters() {
+    	final String word = PlatformGame.blockWord;
+    	final int size = word.length();
+    	for (int i = 0; i < size; i++) {
+    		final Panctor h = addLetter(i, PlatformGame.getTranslucentBlockWordLetter(i));
+    		Level.uncollectedLetters = Coltil.add(Level.uncollectedLetters, h);
+    	}
     }
     
     private final static void bump(final Player player, final int index) {

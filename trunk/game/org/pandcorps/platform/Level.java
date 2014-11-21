@@ -87,6 +87,7 @@ public class Level {
     protected static int numEnemies = 0;
     protected static int currLetter = 0;
     protected static List<Panctor> collectedLetters = null;
+    protected static List<Panctor> uncollectedLetters = null;
     protected static boolean victory = false;
     
     static {
