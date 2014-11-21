@@ -80,8 +80,9 @@ public class Menu {
 		protected final List<TouchButton> tabs;
 		protected boolean tabsSupported = false;
 		protected final static int touchRadioX = 40;
-		protected final static int touchRadioY = 140;
+		protected static int touchRadioY = 140;
 		protected final static int touchKeyboardX = 8;
+		protected static int OFF_RADIO_Y = 100;
 		protected final int rankStarX;
 		protected boolean initForm = true;
 		protected boolean showGems = true;
@@ -92,6 +93,14 @@ public class Menu {
 			this.fadeIn = fadeIn;
 			tabs = isTabEnabled() ? new ArrayList<TouchButton>() : null;
 			rankStarX = getRankStarX();
+			if (touchRadioY == 140) {
+				final int h = Pangine.getEngine().getEffectiveHeight();
+				// If h is 192, OFF_RADIO_Y should be 72; should increase with h, up to 100
+				OFF_RADIO_Y = Math.min(h - 120, 100);
+				final int menuHeight = OFF_RADIO_Y + PlatformGame.MENU_H; // 112
+				final int menuBottom = (h - menuHeight) / 2; // 40
+				touchRadioY = menuBottom + OFF_RADIO_Y; // 112
+			}
 		}
 		
 		protected final static int getRankStarX() {
@@ -498,9 +507,8 @@ public class Menu {
 		}
 		
 		protected final static int OFF_RADIO_LIST = 100;
-		protected final static int OFF_RADIO_Y = 100;
 		
-		protected final RadioGroup addRadio(final String title, final List<? extends CharSequence> list, final RadioSubmitListener subLsn, final RadioSubmitListener chgLsn, final int xb, final int y, final TouchButton sub) {
+		protected final RadioGroup addRadio(final String title, final List<? extends CharSequence> list, final RadioSubmitListener subLsn, final RadioSubmitListener chgLsn, final int xb, int y, final TouchButton sub) {
 			final int x;
 			if (tabsSupported && isTabEnabled()) {
 				final int yt = y - OFF_RADIO_Y;
@@ -514,6 +522,9 @@ public class Menu {
 					ctrl.set1(sub);
 				}
 				x = xb + OFF_RADIO_LIST;
+				if (OFF_RADIO_Y < 100) {
+					y += (100 - OFF_RADIO_Y);
+				}
 			} else {
 				x = xb;
 			}
