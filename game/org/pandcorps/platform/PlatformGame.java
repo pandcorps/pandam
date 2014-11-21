@@ -105,7 +105,6 @@ public class PlatformGame extends BaseGame {
 	Chant Music - rise * 3 at end?
 	OutputStream that writes to tmp file then swaps on close, keeping original as bak.
 	InputStream that reads bak file if can't find main.
-	Getting FUR out of order in Level causes gem letters to appear over wrong block letters.
 	Remove System.out/err/printStackTrace/etc.
 	Icon.
 	Screen shots.
@@ -1630,7 +1629,7 @@ public class PlatformGame extends BaseGame {
                 final GemBumped gem;
                 gem = new GemBumped(hud, null, pos.getX(), pos.getY() - ImtilX.DIM, 0, GemBumped.TYPE_LETTER, null, FinPanple.ORIGIN);
                 gem.getVelocity().setY(0);
-                gem.setView(PlatformGame.getGemWordLetter(i));
+                gem.setView(gemLetters[getLetterIndex(blockLetters, (Panmage) letter.getView())]);
                 Tiles.shatterTile(hud, blockLetter8, pos, false);
                 letter.destroy();
                 Level.currLetter--;
@@ -1729,6 +1728,16 @@ public class PlatformGame extends BaseGame {
 	
 	protected final static Panmage getImageLetter(final Panmage[] letters, final char c) {
 		return letters[c - 'A'];
+	}
+	
+	protected final static int getLetterIndex(final Panmage[] letters, final Panmage img) {
+		final int size = letters.length;
+		for (int i = 0; i < size; i++) {
+			if (img == letters[i]) {
+				return i;
+			}
+		}
+		throw new IllegalStateException("Could not find index for letter image " + img);
 	}
 	
 	protected final static Panmage getBlockLetter(final char c) {
