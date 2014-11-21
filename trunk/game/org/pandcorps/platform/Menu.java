@@ -2375,7 +2375,7 @@ public class Menu {
 			final int h = tab ? 74 : 90;
 			int y = (engine.getEffectiveHeight() - h) / 2 + h - 8;
 			initForm = false;
-			addTitle("Success!", x, y);
+			final Pantext success = addTitle("Success!", x, y);
 			y -= 16;
 			final Profile prf = pc.profile;
 			final Goal[] goals = prf.currentGoals;
@@ -2393,7 +2393,7 @@ public class Menu {
 				}
 			}
 			if (tab) {
-				registerBackNop();
+				registerBackPromptQuit(success);
 			}
 		}
 		
