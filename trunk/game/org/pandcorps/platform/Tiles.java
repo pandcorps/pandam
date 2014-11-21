@@ -144,6 +144,7 @@ public class Tiles {
     }
     
     protected final static void initLetters() {
+    	Coltil.clear(Level.uncollectedLetters);
     	final String word = PlatformGame.blockWord;
     	final int size = word.length();
     	for (int i = 0; i < size; i++) {
