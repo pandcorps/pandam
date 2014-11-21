@@ -1623,7 +1623,9 @@ public class Menu {
 			newTab(PlatformGame.menuGear, "Gear", new Runnable() {@Override public final void run() {goGear();}});
 			newTab(PlatformGame.menuKeyboard, "Name", TAB_NAME);
 			newTabs();
-			registerBackNop();
+			registerBack(new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) {
+                    cancel(); }});
 		}
 		
 		private final void newTab(final Panmage img, final CharSequence txt, final byte tab) {
