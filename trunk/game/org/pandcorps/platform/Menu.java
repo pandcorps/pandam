@@ -98,6 +98,10 @@ public class Menu {
 			return (Pangine.getEngine().getEffectiveWidth() - 170) / 2;
 		}
 		
+		protected boolean isPlayerDisplayed() {
+			return true;
+		}
+		
 		@Override
 		protected final void load() throws Exception {
 			final int w = PlatformGame.SCREEN_W;
@@ -115,7 +119,9 @@ public class Menu {
 			room.addActor(tm);
 			
 			if (pc != null) {
-				actor = addActor(pc, center);
+				if (isPlayerDisplayed()) {
+					actor = addActor(pc, center);
+				}
 			    ctrl = pc.ctrl;
 			}
 			if (tabsSupported && isTabEnabled()) {
@@ -1219,6 +1225,11 @@ public class Menu {
             curr = pc;
             tabsSupported = true;
             showGems = false;
+        }
+        
+        @Override
+        protected final boolean isPlayerDisplayed() {
+        	return false;
         }
 
         @Override
@@ -2530,13 +2541,8 @@ public class Menu {
         }
 	}
 	
-	protected final static class OptionsScreen extends PlayerScreen {
-		private final StringBuilder msgAuto = new StringBuilder();
-		private final StringBuilder msgSpeed = new StringBuilder();
-		private final StringBuilder msgBtnSize = new StringBuilder();
-		private final int oldBtnSize = Config.btnSize;
-	    
-        protected OptionsScreen(final PlayerContext pc) {
+	protected abstract static class BaseOptionsScreen extends PlayerScreen {
+		protected BaseOptionsScreen(final PlayerContext pc) {
             super(pc, false);
             tabsSupported = true;
         }
@@ -2550,11 +2556,35 @@ public class Menu {
             }
         }
         
+        protected abstract void menuTouch();
+        
+        protected final void menuClassic() {
+        }
+        
+        @Override
+        protected final boolean isPlayerDisplayed() {
+			return Pangine.getEngine().getEffectiveHeight() > 204;
+		}
+	}
+	
+	protected final static class OptionsScreen extends BaseOptionsScreen {
+		private final StringBuilder msgAuto = new StringBuilder();
+		private final StringBuilder msgSpeed = new StringBuilder();
+		private final StringBuilder msgBtnSize = new StringBuilder();
+		private final int oldBtnSize = Config.btnSize;
+		
+		protected OptionsScreen(final PlayerContext pc) {
+            super(pc);
+        }
+	    
+		@Override
         protected final void menuTouch() {
             final Pangine engine = Pangine.getEngine();
             final Panple btnSize = PlatformGame.menu.getSize();
-            final int btnW = (int) btnSize.getX(), btnH = (int) btnSize.getY(), offY = btnH * 5 / 4;
-            int x = btnW / 2, y = engine.getEffectiveHeight() - btnH - offY;
+            final int h = engine.getEffectiveHeight();
+            final int btnW = (int) btnSize.getX(), btnH = (int) btnSize.getY();
+            final int offY = (h >= 240) ? (btnH * 5 / 4) : btnH;
+            int x = btnW / 2, y = h - btnH - offY;
             
             newFormButton("AutoToggle", x, y, PlatformGame.menuButtons, new Runnable() {@Override public final void run() {toggleAuto();}});
             addTitle(msgAuto, x + btnW + 8, y);
@@ -2579,9 +2609,6 @@ public class Menu {
             }
             newTabs();
             registerBackExit();
-        }
-        
-        protected final void menuClassic() {
         }
         
         private final void goMusic() {
@@ -2680,26 +2707,17 @@ public class Menu {
         }
 	}
 	
-	protected final static class MusicScreen extends PlayerScreen {
+	protected final static class MusicScreen extends BaseOptionsScreen {
 		private final StringBuilder msgMusic = new StringBuilder();
 		private final StringBuilder msgSound = new StringBuilder();
 		private final boolean oldMusic = Config.musicEnabled;
 		private final boolean oldSound = Config.soundEnabled;
 	    
         protected MusicScreen(final PlayerContext pc) {
-            super(pc, false);
-            tabsSupported = true;
+            super(pc);
         }
         
         @Override
-        protected final void menu() {
-            if (isTabEnabled()) {
-                menuTouch();
-            } else {
-                menuClassic();
-            }
-        }
-        
         protected final void menuTouch() {
             final Pangine engine = Pangine.getEngine();
             final Panple btnSize = PlatformGame.menu.getSize();
@@ -2718,9 +2736,6 @@ public class Menu {
             newTab(PlatformGame.menuCheck, "Done", new Runnable() {@Override public final void run() {exit();}});
             newTabs();
             registerBackExit();
-        }
-        
-        protected final void menuClassic() {
         }
         
         private final void toggleMusic() {
