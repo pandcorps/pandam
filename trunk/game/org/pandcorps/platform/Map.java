@@ -409,6 +409,7 @@ public class Map {
 		@Override
 	    protected final void destroy() {
 	        //Panmage.destroy(timg);
+			Panctor.detach(tm);
 			Panctor.detach(markers);
 			Panctor.detach(buildings);
 			Panctor.detach(portal);
