@@ -55,14 +55,6 @@ public class Enemy extends Character {
 	protected static int currentSplat = DEFAULT_SPLAT;
 	protected static int currentWalk = DEFAULT_WALK;
 	
-	private final static FinPanple2 getMin(final int offX) {
-		return new FinPanple2(-offX - 1, 0);
-	}
-	
-	private final static FinPanple2 getMax(final int offX, final int h) {
-		return new FinPanple2(offX, h);
-	}
-	
 	protected final static class EnemyDefinition extends FinName {
 		protected String code;
 		protected final Panimation walk;
