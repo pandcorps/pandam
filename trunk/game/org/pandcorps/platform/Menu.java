@@ -983,6 +983,8 @@ public class Menu {
 		private final static int NUM_CHRS = 4;
 		private static ArrayList<PlayerContext> tcs = new ArrayList<PlayerContext>(NUM_CHRS);
 		private Pantext text = null;
+		private Pantext trademark = null;
+		int titleHeight = 0;
 		
 	    protected TitleScreen() {
             super(null, true);
@@ -1026,10 +1028,10 @@ public class Menu {
                     }});
                 }});
             }});
-	        final int titleHeight = Math.round(tm.getHeight() * 5f / 8f);
+	        titleHeight = Math.round(tm.getHeight() * 5f / 8f);
 	        final int titleEnd = Cabin.CabinScreen.displayName("ANDREWGAME", titleHeight);
 	        final Panple titlePos = tm.getPosition(titleEnd, titleHeight);
-	        addTitle("" + Pantext.CHAR_TRADEMARK, 1 + (int) titlePos.getX(), 8 + (int) titlePos.getY());
+	        trademark = addTitle("" + Pantext.CHAR_TRADEMARK, 1 + (int) titlePos.getX(), 8 + (int) titlePos.getY());
 	        //addTitleCentered("Andrew Martin's Untitled Game" + Pantext.CHAR_TRADEMARK, engine.getEffectiveHeight() / 2);
 	        addTitleCentered("Copyright " + Pantext.CHAR_COPYRIGHT + " 2014 Andrew M. Martin", bottom + 16);
 	        if (touch) {
@@ -1089,6 +1091,16 @@ public class Menu {
         	}
         	Panctor.destroy(text);
         	text = null;
+        	Panctor.destroy(trademark);
+        	trademark = null;
+        	final int w = tm.getWidth();
+        	for (int i = 0; i < w; i++) {
+        		if (tm.getTile(i, titleHeight) == null) {
+        			continue;
+        		}
+        		tm.setTile(i, titleHeight, null);
+        		PlatformGame.shatterLetter(tm.getPosition(i, titleHeight));
+        	}
             exit();
 	    }
 	    
