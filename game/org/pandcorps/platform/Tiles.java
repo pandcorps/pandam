@@ -119,12 +119,16 @@ public class Tiles {
 	    if (i >= size) {
 	    	return false;
 	    }
-	    GemBumped.create(player, index, 0, GemBumped.TYPE_LETTER, null).setView(PlatformGame.getGemWordLetter(i));
+	    newGemLetter(player, index, PlatformGame.getGemWordLetter(i));
 	    //final TileActor h = new TileActor();
 	    //h.setViewFromForeground(Level.tm, t);
 	    Level.collectedLetters = Coltil.add(Level.collectedLetters, addLetter(i, letter));
 	    Panctor.destroy(Coltil.get(Level.uncollectedLetters, i));
 	    return true;
+    }
+    
+    protected final static void newGemLetter(final Player player, final int index, final Panmage img) {
+    	GemBumped.create(player, index, 0, GemBumped.TYPE_LETTER, null).setView(img);
     }
     
     private final static int getHudLetterX(final int i) {

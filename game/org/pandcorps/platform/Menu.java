@@ -1095,11 +1095,14 @@ public class Menu {
         	trademark = null;
         	final int w = tm.getWidth();
         	for (int i = 0; i < w; i++) {
-        		if (tm.getTile(i, titleHeight) == null) {
+        		final int titleIndex = tm.getIndex(i, titleHeight);
+        		final Tile tile = tm.getTile(titleIndex);
+        		if (tile == null) {
         			continue;
         		}
-        		tm.setTile(i, titleHeight, null);
-        		PlatformGame.shatterLetter(tm.getPosition(i, titleHeight));
+        		Tiles.newGemLetter(null, titleIndex, PlatformGame.getGemLetter(DynamicTileMap.getRawForeground(tile)));
+        		tm.setTile(titleIndex, null);
+        		PlatformGame.shatterLetter(tm.getPosition(titleIndex));
         	}
             exit();
 	    }

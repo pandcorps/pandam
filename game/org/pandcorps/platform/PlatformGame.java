@@ -1623,6 +1623,10 @@ public class PlatformGame extends BaseGame {
 		Tiles.shatterTile(Pantil.nvl(hud, room), blockLetter8, pos, false);
 	}
 	
+	protected final static Panmage getGemLetter(final Object blockLetterImg) {
+		return gemLetters[getLetterIndex(blockLetters, (Panmage) blockLetterImg)];
+	}
+	
 	protected final static void clearLetters(final Panimation anm, final Runnable finishHandler) {
 	    Pangine.getEngine().addTimer(Level.tm, 8, new TimerListener() {
             @Override public final void onTimer(final TimerEvent event) {
@@ -1632,7 +1636,7 @@ public class PlatformGame extends BaseGame {
                 final GemBumped gem;
                 gem = new GemBumped(hud, null, pos.getX(), pos.getY() - ImtilX.DIM, 0, GemBumped.TYPE_LETTER, null, FinPanple.ORIGIN);
                 gem.getVelocity().setY(0);
-                gem.setView(gemLetters[getLetterIndex(blockLetters, (Panmage) letter.getView())]);
+                gem.setView(getGemLetter(letter.getView()));
                 shatterLetter(pos);
                 letter.destroy();
                 Level.currLetter--;
