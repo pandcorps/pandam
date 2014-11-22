@@ -1006,17 +1006,17 @@ public class Menu {
 	            if (text == null) {
 	                return;
 	            }
-                Chartil.set(prompt, "Did you " + (touch ? "tap?" : "press something"));
+                setCentered(text, prompt, "Did you " + (touch ? "tap?" : "press something?"));
                 engine.addTimer(text, 120, new TimerListener() {@Override public final void onTimer(final TimerEvent event) {
                     if (text == null) {
                         return;
                     }
-                    Chartil.set(prompt, "Maybe you're not ready");
+                    setCentered(text, prompt, "Maybe you're not ready");
                     engine.addTimer(text, 120, new TimerListener() {@Override public final void onTimer(final TimerEvent event) {
                         if (text == null) {
                             return;
                         }
-                        Chartil.set(prompt, "Exiting now, try again when you're ready");
+                        setCentered(text, prompt, "Exiting, retry when you're ready");
                         engine.addTimer(text, 120, new TimerListener() {@Override public final void onTimer(final TimerEvent event) {
                             if (text == null) {
                                 return;
@@ -1026,7 +1026,11 @@ public class Menu {
                     }});
                 }});
             }});
-	        addTitleCentered("Andrew Martin's Untitled Game" + Pantext.CHAR_TRADEMARK, engine.getEffectiveHeight() / 2);
+	        final int titleHeight = Math.round(tm.getHeight() * 5f / 8f);
+	        final int titleEnd = Cabin.CabinScreen.displayName("ANDREWGAME", titleHeight);
+	        final Panple titlePos = tm.getPosition(titleEnd, titleHeight);
+	        addTitle("" + Pantext.CHAR_TRADEMARK, 1 + (int) titlePos.getX(), 8 + (int) titlePos.getY());
+	        //addTitleCentered("Andrew Martin's Untitled Game" + Pantext.CHAR_TRADEMARK, engine.getEffectiveHeight() / 2);
 	        addTitleCentered("Copyright " + Pantext.CHAR_COPYRIGHT + " 2014 Andrew M. Martin", bottom + 16);
 	        if (touch) {
 	        	text.register(new ActionEndListener() {@Override public void onActionEnd(final ActionEndEvent event) {
@@ -1086,6 +1090,15 @@ public class Menu {
         	Panctor.destroy(text);
         	text = null;
             exit();
+	    }
+	    
+	    private final static void setCentered(final Pantext text, final StringBuilder b, final String value) {
+	    	if (text == null) {
+	    		return;
+	    	}
+	    	text.uncenterX();
+	    	Chartil.set(b, value);
+	    	text.centerX();
 	    }
 	    
 	    protected final static void generateTitleCharacters() {

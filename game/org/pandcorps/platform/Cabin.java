@@ -175,25 +175,30 @@ public class Cabin {
 			return "Hoo! Hoo! Pick one!";
 		}
 		
-		private final String loadName() {
-			cabinTileHandler = new NameTileHandler();
-			final String name = pc.getBonusName();
+		protected final static int displayName(final String name, final int y) {
 			PlatformGame.blockWord = name;
 			final int size = name.length();
-			int x = 12 - size;
+			int x = Level.tm.getWidth() - size;
 			if (x % 2 == 1) {
 				x++;
 			}
-			x = (x / 2) + 2;
+			x = x / 2;
 			for (int i = 0; i < size; i++) {
-				tm.setForeground(x + i, 5, PlatformGame.getBlockWordLetter(i), PlatformGame.TILE_BUMP);
+				Level.tm.setForeground(x + i, y, PlatformGame.getBlockWordLetter(i), PlatformGame.TILE_BUMP);
 			}
+			return x + size;
+		}
+		
+		private final String loadName() {
+			cabinTileHandler = new NameTileHandler();
+			final String name = pc.getBonusName();
+			displayName(name, 5);
 			Pangine.getEngine().addTimer(tm, 60, new TimerListener() {
 				@Override public final void onTimer(final TimerEvent event) {
                     instr.destroy();
 				}});
 			Tiles.initLetters();
-			return "Hoo! Hoo! Hit " + ((size == 1) ? "the block" : "them") + "!";
+			return "Hoo! Hoo! Hit " + ((name.length() == 1) ? "the block" : "them") + "!";
 		}
 		
 		@Override
