@@ -49,11 +49,19 @@ public class Enemy extends Character {
 	private final static int MAX_TIMER = 90;
 	
 	protected final static FinPanple2 DEFAULT_O = new FinPanple2(8, 1);
-	private final static FinPanple2 DEFAULT_MIN = new FinPanple2(-DEFAULT_X, 0);
-	private final static FinPanple2 DEFAULT_MAX = new FinPanple2(DEFAULT_X, DEFAULT_H);
+	private final static FinPanple2 DEFAULT_MIN = getMin(DEFAULT_X);
+	private final static FinPanple2 DEFAULT_MAX = getMax(DEFAULT_X, DEFAULT_H);
 	
 	protected static int currentSplat = DEFAULT_SPLAT;
 	protected static int currentWalk = DEFAULT_WALK;
+	
+	private final static FinPanple2 getMin(final int offX) {
+		return new FinPanple2(-offX - 1, 0);
+	}
+	
+	private final static FinPanple2 getMax(final int offX, final int h) {
+		return new FinPanple2(offX, h);
+	}
 	
 	protected final static class EnemyDefinition extends FinName {
 		protected String code;
@@ -127,8 +135,8 @@ public class Enemy extends Character {
 			    n = DEFAULT_MIN;
 			    x = DEFAULT_MAX;
 			} else {
-			    n = new FinPanple2(-offX, 0);
-			    x = new FinPanple2(offX, h);
+			    n = getMin(offX);
+			    x = getMax(offX, h);
 			}
 			this.walk = PlatformGame.createAnm(id, currentWalk, o, n, x, walk);
 			currentWalk = DEFAULT_WALK;
@@ -434,6 +442,8 @@ public class Enemy extends Character {
 				pos.addY(-1);
 				if (!isGrounded()) {
 					hv *= -1;
+					/*System.out.println("pos " + getPosition() + " bmin " + getBoundingMinimum() + " bmax " + getBoundingMaximum()
+							+ " ol " + getOffLeft() + " or " + getOffRight());*/
 					return true;
 				}
 			}
