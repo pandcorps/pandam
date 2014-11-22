@@ -25,6 +25,7 @@ package org.pandcorps.platform;
 import org.pandcorps.game.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
+import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.tile.*;
 
 public abstract class Character extends Panctor implements StepListener, Collidable {
@@ -44,6 +45,14 @@ public abstract class Character extends Panctor implements StepListener, Collida
 		OFF_X = offX;
 		H = h;
 		OFF_BUTTING = H + 1;
+	}
+	
+	protected final static FinPanple2 getMin(final int offX) {
+		return new FinPanple2(-offX - 1, 0);
+	}
+	
+	protected final static FinPanple2 getMax(final int offX, final int h) {
+		return new FinPanple2(offX, h);
 	}
 	
 	private final void setMirror(final int v) {

@@ -859,10 +859,13 @@ public class Menu {
                     exit(); }});
 		}
 		
+		/*
+		Back should always do something; this should not be used
 		protected final void registerBackNop() {
 			registerBack(new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) { }});
         }
+        */
 		
 		protected final void goMap() {
 			PlatformGame.goMap(SPEED_MENU_FADE);

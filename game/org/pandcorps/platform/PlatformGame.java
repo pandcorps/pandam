@@ -181,6 +181,8 @@ public class PlatformGame extends BaseGame {
 	protected static MultiFont font = null;
 	protected static Font fontTiny = null;
 	protected static Notifications notifications = null;
+	private final static FinPanple2 ng = Character.getMin(Player.PLAYER_X);
+	private final static FinPanple2 xg = Character.getMax(Player.PLAYER_X, Player.PLAYER_H);
 	protected final static FinPanple2 og = new FinPanple2(17, 1);
 	protected final static FinPanple2 ow = new FinPanple2(18, 1);
 	protected final static FinPanple2 owf = new FinPanple2(18, 2);
@@ -666,7 +668,6 @@ public class PlatformGame extends BaseGame {
 		final String pre = "guy." + pc.index;
 		
 		final Pangine engine = Pangine.getEngine();
-		final FinPanple2 ng = new FinPanple2(-Player.PLAYER_X, 0), xg = new FinPanple2(Player.PLAYER_X, Player.PLAYER_H);
 		final String ipre = PRE_IMG + pre + ".";
 		final boolean hasStill = hasStill(guys);
 		final boolean needDragon = avatar.jumpMode == Player.JUMP_DRAGON;
