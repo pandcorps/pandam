@@ -1734,7 +1734,7 @@ public class PlatformGame extends BaseGame {
 	}
 	
 	protected final static Panmage getImageLetter(final Panmage[] letters, final char c) {
-		return letters[c - 'A'];
+		return letters[(c == '-') ? 26 : (c - 'A')];
 	}
 	
 	protected final static int getLetterIndex(final Panmage[] letters, final Panmage img) {
