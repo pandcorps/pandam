@@ -175,12 +175,12 @@ public class Cabin {
 			return "Hoo! Hoo! Pick one!";
 		}
 		
-		protected final static int displayName(final String name, final int y) {
+		protected final static int displayName(final String name, final int y, final int oddOff) {
 			PlatformGame.blockWord = name;
 			final int size = name.length();
 			int x = Level.tm.getWidth() - size;
 			if (x % 2 == 1) {
-				x++;
+				x += oddOff;
 			}
 			x = x / 2;
 			for (int i = 0; i < size; i++) {
@@ -192,7 +192,7 @@ public class Cabin {
 		private final String loadName() {
 			cabinTileHandler = new NameTileHandler();
 			final String name = pc.getBonusName();
-			displayName(name, 5);
+			displayName(name, 5, 1);
 			Pangine.getEngine().addTimer(tm, 60, new TimerListener() {
 				@Override public final void onTimer(final TimerEvent event) {
                     instr.destroy();

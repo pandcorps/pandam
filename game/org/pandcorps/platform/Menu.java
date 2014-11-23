@@ -1029,7 +1029,7 @@ public class Menu {
                 }});
             }});
 	        titleHeight = Math.round(tm.getHeight() * 5f / 8f);
-	        final int titleEnd = Cabin.CabinScreen.displayName("ANDREWGAME", titleHeight);
+	        final int titleEnd = Cabin.CabinScreen.displayName("ANDREW-GAME", titleHeight, 0);
 	        final Panple titlePos = tm.getPosition(titleEnd, titleHeight);
 	        trademark = addTitle("" + Pantext.CHAR_TRADEMARK, 1 + (int) titlePos.getX(), 8 + (int) titlePos.getY());
 	        //addTitleCentered("Andrew Martin's Untitled Game" + Pantext.CHAR_TRADEMARK, engine.getEffectiveHeight() / 2);
