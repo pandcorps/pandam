@@ -1160,6 +1160,7 @@ public class Menu {
 			}
 	    	tcs.clear();
 	    	tcs = null;
+	    	PlatformGame.blockWord = PlatformGame.defaultBlockWord;
 	    }
 	}
 	
