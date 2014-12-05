@@ -386,6 +386,14 @@ public abstract class Pangine {
 	
 	protected abstract boolean isEnded(final Panput input);
 	
+	public abstract Set<Panput> getActiveInputs();
+	
+	public final void inactivateAllInputs() {
+	    for (final Panput input : Coltil.unnull(getActiveInputs())) {
+	        input.inactivate();
+	    }
+	}
+	
 	protected final Button newButton(final String name) {
 		return new Panput.Button(name);
 	}

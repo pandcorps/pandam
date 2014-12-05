@@ -22,6 +22,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.test.pandam;
 
+import java.util.*;
 import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
 import org.pandcorps.pandam.*;
@@ -113,6 +114,11 @@ public final class UnitPangine extends Pangine {
 	@Override
 	public final boolean isEnded(final Panput input) {
 	    return false;
+	}
+	
+	@Override
+    public final Set<Panput> getActiveInputs() {
+	    return Collections.emptySet();
 	}
 	
 	@Override
