@@ -481,6 +481,14 @@ public abstract class GlPangine extends Pangine {
 	    return ended.contains(input);
 	}
 	
+	@Override
+	public final Set<Panput> getActiveInputs() {
+	    final Set<Panput> set = new HashSet<Panput>();
+	    Coltil.addAll(set, Coltil.threadSafe(active));
+	    Coltil.addAll(set, Coltil.threadSafe(newActive));
+	    return set;
+	}
+	
 	private final static int near = -1000, far = 1000;
 	
 	private final float[] cr = new float[2];

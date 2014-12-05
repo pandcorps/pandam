@@ -113,8 +113,23 @@ public final class Coltil {
 	    return i;
 	}
 	
+	public final static <E> Iterable<E> threadSafe(final Iterable<E> i) {
+        if (i == null) {
+            return Collections.emptyList();
+        }
+        final List<E> copy = new ArrayList<E>();
+        while (true) {
+            try {
+                addAll(copy, i);
+                return copy;
+            } catch (final ConcurrentModificationException e) {
+                copy.clear(); // Try again
+            }
+        }
+    }
+	
 	public final static <E> Iterable<E> copy(final Iterable<E> i) {
-		final ArrayList<E> list = new ArrayList<E>();
+		final List<E> list = new ArrayList<E>();
 		addAll(list, i);
 		return list;
 	}
