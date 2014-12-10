@@ -802,6 +802,8 @@ public class Level {
     private final static void enemy(final int x, final int y, final int w) {
     	if (w < 3 || (numEnemies > 0 && Mathtil.rand(40))) {
     		return;
+    	} else if (y >= (tm.getHeight() - 1)) { // Player needs two tiles
+    	    return; // Don't drop Enemy with only one tile so Player can't reach
     	}
     	new Spawner(tm.getTileWidth() * (x + Mathtil.randi(1, w - 2)), tm.getTileHeight() * y);
     	numEnemies++;
