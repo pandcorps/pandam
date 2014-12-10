@@ -93,7 +93,6 @@ public class PlatformGame extends BaseGame {
 	Console: Filters, 8-bit, b/w (requires restart).
 	Mouse TouchEvents.
 	A BounceBall should be able to bump blocks (from below and side) and give Gem to Player that kicked.
-	Some rises allow an Enemy but Player hits ceiling.
 	User saw Enemy defeated by bumped block fail to give Player a Gem.
 	Once saw Player appear on wrong Marker after goal-met screen.
 	Move music generation, preprocessing classes into a new folder to be excluded from jar.
