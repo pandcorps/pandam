@@ -79,7 +79,7 @@ public class Menu {
 		protected int center = -1;
 		protected final List<TouchButton> tabs;
 		protected boolean tabsSupported = false;
-		protected final static int touchRadioX = 40;
+		protected static int touchRadioX = 40;
 		protected static int touchRadioY = 140;
 		protected final static int touchKeyboardX = 8;
 		protected static int OFF_RADIO_Y = 100;
@@ -94,12 +94,15 @@ public class Menu {
 			tabs = isTabEnabled() ? new ArrayList<TouchButton>() : null;
 			rankStarX = getRankStarX();
 			if (touchRadioY == 140) {
-				final int h = Pangine.getEngine().getEffectiveHeight();
+			    final Pangine engine = Pangine.getEngine();
+				final int h = engine.getEffectiveHeight();
 				// If h is 192, OFF_RADIO_Y should be 72; should increase with h, up to 100
 				OFF_RADIO_Y = Math.min(h - 120, 100);
 				final int menuHeight = OFF_RADIO_Y + PlatformGame.MENU_H; // 112
 				final int menuBottom = (h - menuHeight) / 2; // 40
 				touchRadioY = menuBottom + OFF_RADIO_Y; // 112
+				// If w is 344 or less, touchRadioX should be 0; should increase with w, up to 40
+				touchRadioX = Math.min(Math.max(engine.getEffectiveWidth() - 344, 0), 40);
 			}
 		}
 		
