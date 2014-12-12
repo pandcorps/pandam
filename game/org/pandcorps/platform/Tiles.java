@@ -58,7 +58,21 @@ public class Tiles {
     }
     
     private final static GemBumped newGemBumped(final Player player, final int index) {
-		return GemBumped.create(player, index, getHandler().rndAward());
+        final int award = getHandler().rndAward();
+        if (PlatformGame.level) {
+            switch (award) {
+                case GemBumped.AWARD_2 :
+                    player.pc.profile.stats.foundBlueGems++;
+                    break;
+                case GemBumped.AWARD_3 :
+                    player.pc.profile.stats.foundCyanGems++;
+                    break;
+                case GemBumped.AWARD_4 :
+                    player.pc.profile.stats.foundGreenGems++;
+                    break;
+            }
+        }
+		return GemBumped.create(player, index, award);
 	}
     
     protected final static void bump(final Character chr, final int index) {
@@ -71,7 +85,7 @@ public class Tiles {
     	if (b == PlatformGame.TILE_BREAK) {
     		Level.tm.setForeground(index, null, Tile.BEHAVIOR_OPEN);
     		shatterTile(PlatformGame.block8, Level.tm.getPosition(index), false);
-    		if (Mathtil.rand(65)) {
+    		if (Mathtil.rand(70)) {
     		    newGemBumped(player, index); // Plays a sound
     		} // else { // Players wanted to hear crumble even if Gem pops up with its own sound
     		PlatformGame.soundCrumble.startSound();
