@@ -217,6 +217,9 @@ gems = 1000000;
     	protected long bumpedEnemies = 0;
     	protected long hitEnemies = 0;
     	protected final CountMap<String> defeatedEnemyTypes = new CountMap<String>(PlatformGame.allEnemies.size());
+    	protected int foundBlueGems = 0;
+    	protected int foundCyanGems = 0;
+    	protected int foundGreenGems = 0;
     	
     	public void load(final Segment seg, final int currGems) {
         	defeatedLevels = seg.initInt(0);
@@ -237,6 +240,9 @@ gems = 1000000;
         	for (final Field f : Coltil.unnull(seg.getRepetitions(13))) {
         		defeatedEnemyTypes.put(f.getValue(0), f.toLong(1));
         	}
+        	foundBlueGems = seg.initInt(14);
+        	foundCyanGems = seg.initInt(15);
+        	foundGreenGems = seg.initInt(16);
         }
     	
 		@Override
@@ -263,6 +269,9 @@ gems = 1000000;
 	        	enemyReps.add(f);
 	        }
 	        seg.setRepetitions(13, enemyReps);
+	        seg.setInt(14, foundBlueGems);
+	        seg.setInt(15, foundCyanGems);
+	        seg.setInt(16, foundGreenGems);
 		}
 		
 		public List<String> toList() {
@@ -281,7 +290,10 @@ gems = 1000000;
 			list.add("Jumps: " + jumps);
 			list.add("Bonus games played: " + playedBonuses);
 			list.add("Bonus words collected: " + collectedWords);
-			list.add("Total gems: " + totalGems);
+			list.add("Blue Gems found: " + foundBlueGems);
+			list.add("Cyan Gems found: " + foundCyanGems);
+			list.add("Green Gems found: " + foundGreenGems);
+			list.add("Total Gems: " + totalGems);
 			list.add("Objects kicked: " + kicks);
 			return list;
 		}
