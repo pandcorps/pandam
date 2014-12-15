@@ -974,6 +974,7 @@ public abstract class Pangine {
 				throw Panception.get(e);
 			}
 		//}
+		inactivateAllInputs();
 		paused = PAUSED_NO;
 	}
 	
