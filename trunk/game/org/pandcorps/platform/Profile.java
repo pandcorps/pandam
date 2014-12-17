@@ -203,6 +203,7 @@ gems = 1000000;
     }
     
     public final static class Statistics implements Segmented {
+        private final static int BEST_RUN_SIZE = 5;
     	protected int defeatedLevels = 0;
     	protected int defeatedWorlds = 0;
     	protected long defeatedEnemies = 0;
@@ -220,6 +221,7 @@ gems = 1000000;
     	protected int foundBlueGems = 0;
     	protected int foundCyanGems = 0;
     	protected int foundGreenGems = 0;
+    	private final List<Integer> bestRuns = new ArrayList<Integer>(BEST_RUN_SIZE);
     	
     	public void load(final Segment seg, final int currGems) {
         	defeatedLevels = seg.initInt(0);
@@ -243,6 +245,13 @@ gems = 1000000;
         	foundBlueGems = seg.initInt(14);
         	foundCyanGems = seg.initInt(15);
         	foundGreenGems = seg.initInt(16);
+        	bestRuns.clear();
+        	for (final Field f : Coltil.unnull(seg.getRepetitions(17))) {
+        	    bestRuns.add(f.getInteger());
+        	    if (bestRuns.size() >= BEST_RUN_SIZE) {
+        	        break;
+        	    }
+        	}
         }
     	
 		@Override
@@ -261,7 +270,7 @@ gems = 1000000;
 	        seg.setLong(10, stompedEnemies);
 	        seg.setLong(11, bumpedEnemies);
 	        seg.setLong(12, hitEnemies);
-	        final ArrayList<Field> enemyReps = new ArrayList<Field>(defeatedEnemyTypes.size());
+	        final List<Field> enemyReps = new ArrayList<Field>(defeatedEnemyTypes.size());
 	        for (final Entry<String, Long> entry : defeatedEnemyTypes.entrySet()) {
 	        	final Field f = new Field();
 	        	f.setValue(0, entry.getKey());
@@ -272,6 +281,13 @@ gems = 1000000;
 	        seg.setInt(14, foundBlueGems);
 	        seg.setInt(15, foundCyanGems);
 	        seg.setInt(16, foundGreenGems);
+	        final List<Field> runReps = new ArrayList<Field>(bestRuns.size());
+	        for (final Integer run : bestRuns) {
+	            final Field f = new Field();
+	            f.setInteger(0, run);
+	            runReps.add(f);
+	        }
+	        seg.setRepetitions(17, runReps);
 		}
 		
 		public List<String> toList() {
@@ -293,9 +309,29 @@ gems = 1000000;
 			list.add("Blue Gems found: " + foundBlueGems);
 			list.add("Cyan Gems found: " + foundCyanGems);
 			list.add("Green Gems found: " + foundGreenGems);
+			final int runSize = Math.min(bestRuns.size(), BEST_RUN_SIZE);
+            for (int i = 0; i < runSize; i++) {
+                list.add("Best run " + (i + 1) + ": " + bestRuns.get(i));
+            }
 			list.add("Total Gems: " + totalGems);
 			list.add("Objects kicked: " + kicks);
 			return list;
+		}
+		
+		public void addRun(final int runGems) {
+		    final int size = bestRuns.size();
+		    int i = 0;
+		    for (; i < size; i++) {
+		        if (runGems > bestRuns.get(i).intValue()) {
+		            break;
+		        }
+		    }
+		    if (i < BEST_RUN_SIZE) {
+		        if (size >= BEST_RUN_SIZE) {
+		            bestRuns.remove(size - 1);
+		        }
+		        bestRuns.add(i, Integer.valueOf(runGems));
+		    }
 		}
     }
     
