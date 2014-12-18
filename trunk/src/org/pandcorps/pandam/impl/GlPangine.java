@@ -44,6 +44,7 @@ public abstract class GlPangine extends Pangine {
 	protected final static List<TouchEvent> touchEvents = Coltil.newSafeList();
 	protected final static List<TouchButton> touchButtons = Coltil.newSafeList();
 	private final static Map<Integer, Panput> touchMap = new HashMap<Integer, Panput>();
+	private static boolean clearTouchMap = false;
 	protected final static List<InputEvent> inputEvents = Coltil.newSafeList();
 	private FloatBuffer blendRectangle = null;
 	public boolean capsLock = false;
@@ -229,6 +230,12 @@ public abstract class GlPangine extends Pangine {
 	protected abstract void stepControl() throws Exception;
 	
 	protected final void stepTouch() {
+	    if (clearTouchMap) {
+	        for (final Panput input : touchMap.values()) {
+	            deactivate(input);
+	        }
+	        touchMap.clear();
+	    }
 		final int size = touchEvents.size();
 		//int size;
     	//while ((size = touchEvents.size()) > 0) {
@@ -344,7 +351,12 @@ public abstract class GlPangine extends Pangine {
 	public final void clearTouchButtons() {
 		touchButtons.clear();
 		interaction.unregister(interaction.TOUCH);
-		//touchMap.clear(); // Thread-safety?
+		//touchMap.clear(); // Thread-safety? call clearTouchEvents instead?
+	}
+	
+	@Override
+    public final void clearTouchEvents() {
+	    clearTouchMap = true;
 	}
 	
 	@Override

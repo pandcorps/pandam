@@ -410,6 +410,8 @@ public abstract class Pangine {
 	
 	public abstract void clearTouchButtons();
 	
+	public abstract void clearTouchEvents();
+	
 	public abstract boolean isTouchSupported();
 	
 	public void setEntityMapEnabled(final boolean entityMapEnabled) {
@@ -975,6 +977,7 @@ public abstract class Pangine {
 			}
 		//}
 		inactivateAllInputs();
+		clearTouchEvents();
 		paused = PAUSED_NO;
 	}
 	
