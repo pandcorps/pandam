@@ -139,6 +139,10 @@ public final class UnitPangine extends Pangine {
 	}
 	
 	@Override
+    public final void clearTouchEvents() {
+    }
+	
+	@Override
     public final boolean isTouchSupported() {
     	return false;
     }
