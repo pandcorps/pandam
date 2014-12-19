@@ -267,15 +267,12 @@ public abstract class GlPangine extends Pangine {
     			    activateMove(old, false);
     				activateMove(input, true);
     			}
-    		} else {
-    			if (type == Panput.TOUCH_DOWN) {
-    				activate(input);
-    				touchMap.put(key, input);
-    			} else {
-    				deactivate(input);
-    				touchMap.remove(key);
-    			}
-    		}
+    		} else if (type == Panput.TOUCH_DOWN) {
+				activate(input);
+				touchMap.put(key, input);
+			} else if (touchMap.remove(key) != null) { // Could reach TOUCH_UP without a TOUCH_DOWN, don't call end listeners then
+			    deactivate(input);
+			}
     	}
 		clear(touchEvents, size);
 		
