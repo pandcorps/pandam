@@ -196,12 +196,25 @@ public class Tiles {
         }
     }
     
+    protected static boolean shatterBottomLeft = true;
+    protected static boolean shatterBottomRight = true;
+    protected static boolean shatterTopLeft = true;
+    protected static boolean shatterTopRight = true;
+    
     private final static void shatter(final Panlayer layer, final Panmage img, final Panple pos, final boolean rot, final int xoff) {
         final float x = pos.getX() + xoff, y = pos.getY();
-        new Shatter(layer, img, x, y, -2, 2).setMirror(rot);
-        new Shatter(layer, img, x + 8, y, 2, 2);
-        new Shatter(layer, img, x, y + 8, -1, 3).setRot(rot ? 2 : 0);
-        new Shatter(layer, img, x + 8, y + 8, 1, 3).setFlip(rot);
+        if (shatterBottomLeft) {
+        	new Shatter(layer, img, x, y, -2, 2).setMirror(rot);
+        }
+        if (shatterBottomRight) {
+        	new Shatter(layer, img, x + 8, y, 2, 2);
+        }
+        if (shatterTopLeft) {
+        	new Shatter(layer, img, x, y + 8, -1, 3).setRot(rot ? 2 : 0);
+        }
+        if (shatterTopRight) {
+        	new Shatter(layer, img, x + 8, y + 8, 1, 3).setFlip(rot);
+        }
     }
     
     protected final static void shatterCenteredActor(final Panlayer layer, final Panmage img, final Panple pos, final boolean rot) {
