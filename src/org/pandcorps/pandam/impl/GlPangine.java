@@ -235,6 +235,7 @@ public abstract class GlPangine extends Pangine {
 	            deactivate(input);
 	        }
 	        touchMap.clear();
+	        clearTouchMap = false;
 	    }
 		final int size = touchEvents.size();
 		//int size;
