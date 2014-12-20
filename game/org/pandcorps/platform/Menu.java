@@ -984,6 +984,7 @@ public class Menu {
 	
 	protected final static class TitleScreen extends PlayerScreen {
 		private final static int NUM_CHRS = 4;
+		private final static String TITLE = "ANDREW-GAME";
 		private static ArrayList<PlayerContext> tcs = new ArrayList<PlayerContext>(NUM_CHRS);
 		private Pantext text = null;
 		private Pantext trademark = null;
@@ -1032,7 +1033,7 @@ public class Menu {
                 }});
             }});
 	        titleHeight = Math.round(tm.getHeight() * 5f / 8f);
-	        final int titleEnd = Cabin.CabinScreen.displayName("ANDREW-GAME", titleHeight, 0);
+	        final int titleEnd = Cabin.CabinScreen.displayName(TITLE, titleHeight, 0);
 	        final Panple titlePos = tm.getPosition(titleEnd, titleHeight);
 	        trademark = addTitle("" + Pantext.CHAR_TRADEMARK, 1 + (int) titlePos.getX(), 8 + (int) titlePos.getY());
 	        //addTitleCentered("Andrew Martin's Untitled Game" + Pantext.CHAR_TRADEMARK, engine.getEffectiveHeight() / 2);
@@ -1097,16 +1098,27 @@ public class Menu {
         	Panctor.destroy(trademark);
         	trademark = null;
         	final int w = tm.getWidth();
+        	Tiles.shatterBottomRight = Tiles.shatterTopRight = false;
+        	int count = 0;
         	for (int i = 0; i < w; i++) {
         		final int titleIndex = tm.getIndex(i, titleHeight);
         		final Tile tile = tm.getTile(titleIndex);
         		if (tile == null) {
         			continue;
         		}
+        		if (count == 1) {
+	        		Tiles.shatterTopRight = true;
+	        		Tiles.shatterBottomLeft = false;
+        		} else if (count == (TITLE.length() - 1)) {
+        			Tiles.shatterBottomRight = true;
+        			Tiles.shatterTopLeft = false;
+        		}
         		Tiles.newGemLetter(null, titleIndex, PlatformGame.getGemLetter(DynamicTileMap.getRawForeground(tile)));
         		tm.setTile(titleIndex, null);
         		PlatformGame.shatterLetter(tm.getPosition(titleIndex));
+        		count++;
         	}
+        	Tiles.shatterBottomLeft = Tiles.shatterBottomRight = Tiles.shatterTopLeft = Tiles.shatterTopRight = true;
             exit();
 	    }
 	    
