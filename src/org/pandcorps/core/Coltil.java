@@ -211,6 +211,14 @@ public final class Coltil {
 	    return list;
 	}
 	
+	public final static <E, T extends E> Set<E> addToSet(Set<E> set, final T elem) {
+	    if (set == null) {
+	    	set = new HashSet<E>();
+	    }
+	    set.add(elem);
+	    return set;
+	}
+	
 	public final static <E, T extends E> List<E> addIfValued(List<E> list, final T elem) {
 		return elem == null ? list : add(list, elem);
 	}

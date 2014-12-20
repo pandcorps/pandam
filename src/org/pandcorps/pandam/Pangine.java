@@ -947,9 +947,7 @@ public abstract class Pangine {
 	
 	public final void setPaused(final boolean paused) {
 		if (paused) {
-			if (this.paused == PAUSED_NO) {
-				pause();
-			}
+			pause();
 		} else {
 			unpause();
 		}
@@ -964,11 +962,17 @@ public abstract class Pangine {
 	}
 	
 	private final void pause() {
+		if (paused != PAUSED_NO) {
+			return;
+		}
 		paused = PAUSED_NEW;
 		getAudio().pauseMusic();
 	}
 	
 	private final void unpause() {
+		if (paused == PAUSED_NO) {
+			return;
+		}
 		//if (paused == PAUSED_YES) {
 			try {
 				getAudio().resumeMusic();
