@@ -229,12 +229,24 @@ public abstract class GlPangine extends Pangine {
 	
 	protected abstract void stepControl() throws Exception;
 	
+	private final Set<Panput> getTouches(final Set<Panput> in, Set<Panput> out) {
+		for (final Panput input : in) {
+        	if (input instanceof TouchButton || input instanceof Touch) {
+        		out = Coltil.addToSet(out, input);
+        	}
+        }
+		return out;
+	}
+	
 	protected final void stepTouch() {
 	    if (clearTouchMap) {
 	        for (final Panput input : touchMap.values()) {
 	            deactivate(input);
 	        }
 	        touchMap.clear();
+	        for (final Panput input : Coltil.unnull(getTouches(newActive, getTouches(active, null)))) {
+	        	deactivate(input);
+	        }
 	        clearTouchMap = false;
 	    }
 		final int size = touchEvents.size();
