@@ -1037,7 +1037,7 @@ public class Menu {
 	        final Panple titlePos = tm.getPosition(titleEnd, titleHeight);
 	        trademark = addTitle("" + Pantext.CHAR_TRADEMARK, 1 + (int) titlePos.getX(), 8 + (int) titlePos.getY());
 	        //addTitleCentered("Andrew Martin's Untitled Game" + Pantext.CHAR_TRADEMARK, engine.getEffectiveHeight() / 2);
-	        addTitleCentered("Copyright " + Pantext.CHAR_COPYRIGHT + " 2014 Andrew M. Martin", bottom + 16);
+	        addTitleCentered("Copyright " + Pantext.CHAR_COPYRIGHT + " " + PlatformGame.YEAR + " " + PlatformGame.AUTHOR, bottom + 16);
 	        if (touch) {
 	        	text.register(new ActionEndListener() {@Override public void onActionEnd(final ActionEndEvent event) {
 		        	onAnything(event);
