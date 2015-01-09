@@ -108,6 +108,7 @@ public class PlatformGame extends BaseGame {
 	Icon.
 	Screen shots.
 	Title screen.
+	Certificate
 	Version #
 	*/
 	
