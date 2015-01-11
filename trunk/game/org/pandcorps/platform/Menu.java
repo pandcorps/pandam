@@ -984,7 +984,7 @@ public class Menu {
 	
 	protected final static class TitleScreen extends PlayerScreen {
 		private final static int NUM_CHRS = 4;
-		private final static String TITLE = "ANDREW-GAME";
+		private final static String TITLE = PlatformGame.TITLE.toUpperCase();
 		private static ArrayList<PlayerContext> tcs = new ArrayList<PlayerContext>(NUM_CHRS);
 		private Pantext text = null;
 		private Pantext trademark = null;
