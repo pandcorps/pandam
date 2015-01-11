@@ -50,6 +50,7 @@ import org.pandcorps.platform.Menu.*;
 import org.pandcorps.platform.Player.*;
 
 public class PlatformGame extends BaseGame {
+	protected final static String TITLE = "Fur-Guardians";
     protected final static String VERSION = "1.0.0";
     protected final static String YEAR = "2014-2015";
     protected final static String AUTHOR = "Andrew M. Martin";
@@ -330,7 +331,7 @@ public class PlatformGame extends BaseGame {
 	    if (engine.isTouchSupported()) {
 	        engine.setFatalLogged(true);
 	    }
-	    engine.setTitle("Platformer");
+	    engine.setTitle(TITLE);
 	    engine.setEntityMapEnabled(false);
 	    Imtil.onlyResources = true;
 		PlatformGame.room = room;
