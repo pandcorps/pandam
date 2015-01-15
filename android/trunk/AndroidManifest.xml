@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.pandcorps.pandam.android"
     android:versionCode="1"
-    android:versionName="1.0" >
+    android:versionName="1.0.0" >
 
     <uses-sdk
         android:minSdkVersion="8"
@@ -10,6 +10,8 @@
     
     <!-- Added this. Is it right? -->
     <!--<uses-feature android:name="android.hardware.faketouch.multitouch.distinct" android:required="true" />-->
+    
+    <supports-screens android:largeScreens="true" android:xlargeScreens="true" />
 
     <application
         android:allowBackup="true"
