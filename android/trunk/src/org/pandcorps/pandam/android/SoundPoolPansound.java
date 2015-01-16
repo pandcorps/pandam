@@ -96,14 +96,14 @@ public class SoundPoolPansound extends Pansound {
 	
 	private final void run(final int repeatCount) {
 		if (fin != null && !wasLoaded()) {
-			System.out.println("Tried to play sound before it was loaded");
+			//info("Tried to play sound before it was loaded");
 			return;
 		}
-		//System.out.println("Load complete, trying to play");
+		//info("Load complete, trying to play");
 		//streamId = soundPool.play(sampleId, 1, 1, 1, -1, 1);
 		final int streamId = soundPool.play(sampleId, 1, 1, 1, 0, 1);
 		if (repeatCount != 0) {
-			System.out.println("Started playing, changing loop");
+			//info("Started playing, changing loop");
 			soundPool.setLoop(streamId, repeatCount);
 		}
 	}

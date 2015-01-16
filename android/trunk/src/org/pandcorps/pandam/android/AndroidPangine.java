@@ -94,13 +94,13 @@ public class AndroidPangine extends GlPangine {
     		}
     		in.close();
     		parcel.setDataPosition(0);
-    		System.out.println("parcel data size: " + parcel.dataSize());
+    		info("parcel data size: " + parcel.dataSize());
     		pfd = parcel.readFileDescriptor();
-    		System.out.println("pfd: " + pfd);
+    		info("pfd: " + pfd);
 	    	//final File f = new File(Iotil.class.getClassLoader().getResource(loc).toURI());
 	    	//pfd = ParcelFileDescriptor.open(f, ParcelFileDescriptor.MODE_READ_ONLY);
 	    	afd = new AssetFileDescriptor(pfd, 0, AssetFileDescriptor.UNKNOWN_LENGTH);
-	    	System.out.println("afd: " + afd);
+	    	info("afd: " + afd);
 	    	final int soundId = soundPool.load(afd, 1);
 	    	musicStreamId = soundPool.play(soundId, 1, 1, 1, -1, 1);
     	} catch (final Exception e) {
@@ -126,25 +126,25 @@ public class AndroidPangine extends GlPangine {
     		int ret;
     		final byte[] buf = new byte[len];
     		//in = Iotil.getResourceInputStream(loc);
-    		System.out.println("Getting resource input stream");
+    		info("Getting resource input stream");
     		in = Iotil.getResourceInputStream("org/pandcorps/platform/res/music/chimes.wav");
     		long size = 0;
     		while ((ret = in.read(buf)) >= 0) {
     			out.write(buf, 0, ret);
     			size += ret;
-    			System.out.println("Piping, size " + size);
+    			info("Piping, size " + size);
     		}
     		in.close();
     		out.close();
-    		System.out.println("Opening AssetFileDescriptor");
+    		info("Opening AssetFileDescriptor");
 	    	afd = new AssetFileDescriptor(new PanParcelFileDescriptor(pfd, size), 0, size);
-	    	System.out.println("afd: " + afd);
+	    	info("afd: " + afd);
 	    	//final int soundId = soundPool.load(afd, 1);
 	    	soundPool.load(afd, 1);
 	    	soundPool.setOnLoadCompleteListener(new OnLoadCompleteListener() {
 				@Override
 				public final void onLoadComplete(final SoundPool soundPool, final int sampleId, final int status) {
-					System.out.println("Load complete, trying to play");
+					info("Load complete, trying to play");
 					musicStreamId = soundPool.play(sampleId, 1, 1, 1, -1, 1);
 				}});
 	    	//soundPool.load(context, R.raw.chimes, 1); // Works
@@ -199,12 +199,12 @@ public class AndroidPangine extends GlPangine {
     		int ret;
     		final byte[] buf = new byte[len];
     		in = Iotil.getResourceInputStream(loc);
-    		System.out.println("Getting resource input stream");
+    		//info("Getting resource input stream");
     		long size = 0;
     		while ((ret = in.read(buf)) >= 0) {
     			out.write(buf, 0, ret);
     			size += ret;
-    			System.out.println("Piping, size " + size);
+    			//info("Piping, size " + size);
     		}
     		if (cacheFiles == null) {
     			cacheFiles = new HashSet<String>();

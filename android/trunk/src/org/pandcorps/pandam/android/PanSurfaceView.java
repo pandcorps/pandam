@@ -57,7 +57,7 @@ public class PanSurfaceView extends GLSurfaceView {
 				}
 				return true;
 			default:
-				System.out.println("PanInput " + action);
+				//info("PanInput " + action);
 				return true;
 		}
 		// bottom-left ~ 45.0, 446.0 (would be top-left if device hadn't been rotated)

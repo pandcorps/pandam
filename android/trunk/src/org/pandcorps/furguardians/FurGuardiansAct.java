@@ -20,63 +20,15 @@ PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY
 TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 */
-package org.pandcorps.pandam.android;
+package org.pandcorps.furguardians;
 
-import javax.microedition.khronos.egl.*;
-import javax.microedition.khronos.opengles.*;
-
-import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
-import org.pandcorps.pandam.impl.*;
+import org.pandcorps.pandam.android.*;
+import org.pandcorps.platform.*;
 
-import android.opengl.GLSurfaceView.*;
-
-public final class PanRenderer implements Renderer {
-	private Pangame game = null;
-	
-	protected PanRenderer() {
-	}
-
+public final class FurGuardiansAct extends PanActivity {
 	@Override
-	public final void onDrawFrame(final GL10 gl) {
-		try {
-			if (!AndroidPangine.engine.isRunning()) {
-				AndroidPangine.engine.runDestroy();
-				System.exit(0);
-				return;
-			}
-			AndroidPangine.engine.frame();
-		} catch (final Exception e) {
-			//e.printStackTrace();
-			throw Pantil.toRuntimeException(e);
-		}
-	}
-
-	@Override
-	public final void onSurfaceChanged(final GL10 gl, final int width, int height) {
-		//TODO... Or maybe nothing needs to be done
-	}
-
-	@Override
-	public final void onSurfaceCreated(final GL10 gl, final EGLConfig config) {
-		/*
-		Also called when surface is recreated.
-		(After waking up from sleep.)
-		Need to reload textures after 1st time.
-		*/
-		AndroidPangine.gl = new AndroidPangl(gl);
-		
-		try {
-			if (game == null) {
-				GlPanmage.saveTextures = true;
-				game = PanActivity.activity.newGame();
-				game.beforeLoop();
-			} else {
-				game.recreate();
-			}
-		} catch (final Exception e) {
-			//e.printStackTrace();
-			throw Pantil.toRuntimeException(e);
-		}
+	protected final Pangame newGame() {
+		return new PlatformGame();
 	}
 }

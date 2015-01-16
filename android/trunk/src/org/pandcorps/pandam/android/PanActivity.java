@@ -33,16 +33,21 @@ import android.util.*;
 import android.view.*;
 import org.pandcorps.core.*;
 import org.pandcorps.core.Iotil.*;
+import org.pandcorps.pandam.*;
 
 /*
 Title - res/values/strings.xml/app_name
 */
 
-public class PanActivity extends Activity {
+public abstract class PanActivity extends Activity {
+	protected static PanActivity activity = null;
 	protected static GLSurfaceView view = null;
+	
+	protected abstract Pangame newGame();
 	
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
+		activity = this;
 		ImgFactory.setFactory(new AndroidImgFactory());
 		new AndroidPangine();
 		super.onCreate(savedInstanceState);
@@ -86,7 +91,7 @@ public class PanActivity extends Activity {
 
 	@Override
 	public boolean onCreateOptionsMenu(final Menu menu) {
-		getMenuInflater().inflate(R.menu.pan, menu);
+		//getMenuInflater().inflate(R.menu.pan, menu);
 		return true;
 	}
 	
@@ -137,12 +142,12 @@ public class PanActivity extends Activity {
 	
 	/*protected final File getFile(final String name) {
 		for (final File f : getFilesDir().listFiles()) {
-			System.out.println("Looking for " + name + "; checking " + f.getName());
+			info("Looking for " + name + "; checking " + f.getName());
 			if (name.equals(f.getName())) {
 				return f;
 			}
 		}
-		System.out.println("Could not find " + name + "; returning null");
+		info("Could not find " + name + "; returning null");
 		return null;
 	}*/
 }
