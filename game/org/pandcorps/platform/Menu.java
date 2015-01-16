@@ -192,16 +192,16 @@ public class Menu {
 		
 		protected final static void initTouchButtons(final Panlayer room, final ControlScheme ctrl,
 				final byte mode, final boolean input, final boolean act, final Panctor bound) {
-			//System.out.println("initTouch for " + getClass().getName());
+			//info("initTouch for " + getClass().getName());
 			if (ctrl == null) {
 				return;
 			}
-			//System.out.println("Found ControlScheme");
+			//info("Found ControlScheme");
 			final Panput temp = ctrl.get1();
 			if (temp != null && !(temp.getDevice() instanceof Touchscreen)) {
         		return;
         	}
-			//System.out.println("Found touch scheme");
+			//info("Found touch scheme");
 			final Pangine engine = Pangine.getEngine();
 			if (input) {
 				engine.clearTouchButtons();

@@ -119,16 +119,16 @@ public final class LwjglPangine extends GlPangine {
 		Keyboard.poll();
 		Keyboard.enableRepeatEvents(false);
 		/*
-		System.out.println("REE " + Keyboard.areRepeatEventsEnabled());
-		System.out.println("EK  " + Keyboard.getEventKey());
-		System.out.println("EKS " + Keyboard.getEventKeyState());
+		info("REE " + Keyboard.areRepeatEventsEnabled());
+		info("EK  " + Keyboard.getEventKey());
+		info("EKS " + Keyboard.getEventKeyState());
 		for (int i = 0; i < 10; i++) {
-			System.out.println("N " + i + " " + Keyboard.next());
+			info("N " + i + " " + Keyboard.next());
 		}
 		*/
 		/*
 		while (Keyboard.next()) {
-			System.out.println("EK " + f + " " + Keyboard.getEventKey() + Keyboard.getEventKeyState());
+			info("EK " + f + " " + Keyboard.getEventKey() + Keyboard.getEventKeyState());
 		}
 		*/
 		if (/*Keyboard.isKeyDown(Keyboard.KEY_ESCAPE) ||*/ Display.isCloseRequested()) {
@@ -142,12 +142,12 @@ public final class LwjglPangine extends GlPangine {
 
 		while (Keyboard.next()) {
 			final Key key = interaction.getKey(Keyboard.getEventKey());
-			//System.out.println(key.getIndex());
-			//System.out.println(Keyboard.getEventCharacter());
-			//System.out.println(Keyboard.getKeyName(key.getIndex()));
-			//System.out.println(java.awt.AWTKeyStroke.getAWTKeyStroke(key.getIndex(), 0).getKeyChar()); // Always '?'
-			//System.out.println(java.awt.AWTKeyStroke.getAWTKeyStroke(key.getIndex(), java.awt.event.InputEvent.BUTTON1_DOWN_MASK).getKeyChar()); // Always '?'
-			//System.out.println(javax.swing.KeyStroke.getKeyStroke(key.getIndex(), java.awt.event.InputEvent.BUTTON1_DOWN_MASK).getKeyChar()); // Always '?'
+			//info(key.getIndex());
+			//info(Keyboard.getEventCharacter());
+			//info(Keyboard.getKeyName(key.getIndex()));
+			//info(java.awt.AWTKeyStroke.getAWTKeyStroke(key.getIndex(), 0).getKeyChar()); // Always '?'
+			//info(java.awt.AWTKeyStroke.getAWTKeyStroke(key.getIndex(), java.awt.event.InputEvent.BUTTON1_DOWN_MASK).getKeyChar()); // Always '?'
+			//info(javax.swing.KeyStroke.getKeyStroke(key.getIndex(), java.awt.event.InputEvent.BUTTON1_DOWN_MASK).getKeyChar()); // Always '?'
 			final boolean active = Keyboard.getEventKeyState();
 			if (active) {
 			    if (key == interaction.KEY_CAPS_LOCK) {
@@ -170,7 +170,7 @@ public final class LwjglPangine extends GlPangine {
 			    }
 			}
 			activate(key, active);
-			//System.out.println("EK " + f + " " + Keyboard.getEventKey() + Keyboard.getEventKeyState());
+			//info("EK " + f + " " + Keyboard.getEventKey() + Keyboard.getEventKeyState());
 		}
 		
 		Controllers.poll();
@@ -179,9 +179,9 @@ public final class LwjglPangine extends GlPangine {
 			final boolean a;
 			final Controller src = Controllers.getEventSource();
 			final Panteraction.Controller pc = interaction.CONTROLLERS.get(src.getIndex());
-			/*System.out.println("Name: " + src.getName()
+			/*info("Name: " + src.getName()
 					+ "; AxisCount: " + src.getAxisCount() + "; ButtonCount: " + src.getButtonCount());
-			System.out.println("Axis: " + Controllers.isEventAxis()
+			info("Axis: " + Controllers.isEventAxis()
 					+ "; X: " + Controllers.isEventXAxis() + "; Y: " + Controllers.isEventYAxis()
 					+ "; PX: " + Controllers.isEventPovX() + "; PY: " + Controllers.isEventPovY()
 					+ "; Btn: " + Controllers.isEventButton() + "; Ind: " + Controllers.getEventControlIndex());*/

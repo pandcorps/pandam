@@ -388,11 +388,11 @@ public abstract class GlPangine extends Pangine {
 	public final void onFrame() throws Exception {
 		//final long frameStart = System.currentTimeMillis();
 	    //final long frameStartNano = System.nanoTime();
-		//System.out.println(System.currentTimeMillis());
+		//info(System.currentTimeMillis());
 		sleep();
 	    
 	    if (exitCause != null) {
-	        exitCause.printStackTrace();
+	        //exitCause.printStackTrace();
 	        exit();
 	        throw Pantil.toException(exitCause);
 	    }
@@ -412,7 +412,7 @@ public abstract class GlPangine extends Pangine {
 		try {
 		    //final long sleepTime = frameLength - System.currentTimeMillis() + frameStart;
 		    final long sleepTime = frameLengthNano - System.nanoTime() + frameStartNano;
-		    //System.out.println(sleepTime);
+		    //info(sleepTime);
 		    if (sleepTime > 0) {
 		        //Thread.sleep(sleepTime);
 		        final long sleepTimeMillis = sleepTime / 1000000;
@@ -474,7 +474,7 @@ public abstract class GlPangine extends Pangine {
 		}
 		if (uncaught && input == interaction.BACK) {
 			if (uncaughtBackHandler == null) {
-				System.out.println("UNCAUGHT BACK, EXITING");
+				//info("UNCAUGHT BACK, EXITING");
 				exit();
 			} else {
 				uncaughtBackHandler.run();

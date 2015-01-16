@@ -88,7 +88,7 @@ public abstract class Img implements Closeable {
 	@Override
 	protected final void finalize() throws Throwable {
 		if (!isClosed()) {
-			System.err.println("Finalized unclosed Img " + getRaw());
+			//error("Finalized unclosed Img " + getRaw());
 			//openState.printStackTrace();
 		}
 		//close(); // Should do before gc
