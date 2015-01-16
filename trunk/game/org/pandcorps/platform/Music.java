@@ -496,7 +496,7 @@ public class Music {
 		final Track track = song.track;
 		Mustil.unspecifiedNoteDuration = 7;
 		channel = 0;
-		vol = 64;
+		vol = 96;
 		deltaTick = 8;
 		Mustil.setInstrument(track, channel, Mustil.PRG_OCARINA);
 		tick = 0;
@@ -509,7 +509,7 @@ public class Music {
 		tick = 0;
 		deltaTick = 16;
 		final int p1 = Mustil.PRC_HAND_CLAP, p2 = Mustil.PRC_HIGH_BONGO;
-		tick = Mustil.addPercussionsAtVolume(track, tick, 28, deltaTick,
+		tick = Mustil.addPercussionsAtVolume(track, tick, 64, deltaTick,
 				p1, p2, p1, p2, p1, p2, p1, p2,
 				p1, p2, p1, p2, p1, p2, p1, p2);
 		return song;
@@ -737,7 +737,7 @@ public class Music {
 	
 	private final static void runGen() throws Exception {
 		System.out.println("Starting");
-		final Song song = newFxBounce();
+		final Song song = newSongOcarina();
 		Mustil.save(song.seq, song.name.toLowerCase() + ".mid");
 		final Panaudio music = Pangine.getEngine().getAudio();
 		//music.ensureCapacity(4);

@@ -368,10 +368,15 @@ public class Player extends Character implements CollisionListener {
 		return mode == MODE_DISABLED || mode == MODE_FROZEN;
 	}
 	
+	private final boolean isAutoRunEnabled() {
+		// Check level to prevent auto-run in bonus Cabin
+		return PlatformGame.level && pc.profile.autoRun;
+	}
+	
 	private final void jump() {
 		if (isInputDisabled()) {
 			return;
-		} else if (pc.profile.autoRun) {
+		} else if (isAutoRunEnabled()) {
 		    this.activeTimer += 8;
 		}
 		if (jumpMode == JUMP_FLY) {
@@ -548,7 +553,7 @@ public class Player extends Character implements CollisionListener {
 			}
 			//return true; // Let falling Player keep falling; just don't allow new input
 		}
-		final boolean auto = pc.profile.autoRun;
+		final boolean auto = isAutoRunEnabled();
 		if (auto && !Level.victory && mode != MODE_FROZEN && mode != MODE_DISABLED) { // Check disabled to prevent running on ThroneScreen
 		    hv = VEL_WALK;
 		}
@@ -813,7 +818,7 @@ public class Player extends Character implements CollisionListener {
 	
 	@Override
     protected final void onEnd() {
-	    if (!Level.victory && pc.profile.autoRun) {
+	    if (!Level.victory && isAutoRunEnabled()) {
 	        Tiles.bump(this, Level.goalIndex);
 	    }
     }
@@ -834,7 +839,7 @@ public class Player extends Character implements CollisionListener {
 			}
 			lastFall = clock;
 		} else {
-		    if (pc.profile.autoRun) {
+		    if (isAutoRunEnabled()) {
 		        final Panple pos = getPosition();
 		        safe.set(pos.getX(), getCeiling() - 1, pos.getZ());
 		    }
