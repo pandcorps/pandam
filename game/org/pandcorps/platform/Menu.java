@@ -1207,6 +1207,7 @@ public class Menu {
 			if (!createProfileList(touchRadioX, touchRadioY)) {
 				return;
 			}
+			newToDefault = false;
 			newTab(PlatformGame.menuPlus, "New", new Runnable() {@Override public final void run() {newProfile();}});
 			if (curr != null) {
 				newTab(PlatformGame.menuX, "Back", new Runnable() {@Override public final void run() {exit();}});
