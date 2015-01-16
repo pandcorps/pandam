@@ -146,9 +146,9 @@ public class Panlayer extends BasePantity {
     }
 
     public final void addActor(final Panctor actor) {
-    	if (actor.isDestroyed()) {
+    	/*if (actor.isDestroyed()) {
     		new Exception("Added destroyed actor " + actor).printStackTrace();
-    	}
+    	}*/
     	/*
     	If we remove an actor and add it back in the same frame, removedActors gets handled first.
     	So we must remove the actor from removedActors so that applyActorChanges won't remove it from the layer.
@@ -335,7 +335,7 @@ public class Panlayer extends BasePantity {
     }
     
     public final void addAbove(final Panlayer layer) {
-        //System.out.println("Added layer - " + layer);
+        //info("Added layer - " + layer);
         layer.detach();
         /*final Panlayer t = above;
         above = layer;

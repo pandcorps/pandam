@@ -123,7 +123,7 @@ public abstract class Panmage extends BasePantity implements Panview, Pansplay {
 	@Override
 	protected final void finalize() {
 		if (!isClosed()) {
-			System.err.println("Finalizing unclosed Panmage " + getId());
+			//error("Finalizing unclosed Panmage " + getId());
 		}
 	}
 	

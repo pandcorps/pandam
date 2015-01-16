@@ -117,7 +117,7 @@ public abstract class Pangame {
 		try {
 			engine.exit();
 		} catch (final Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 	}
 	
@@ -125,7 +125,7 @@ public abstract class Pangame {
 		try {
 			engine.destroy();
 		} catch (final Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 	}
 	

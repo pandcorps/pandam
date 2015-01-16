@@ -1018,7 +1018,7 @@ public class PlatformGame extends BaseGame {
 		    eyesBlink = ImtilX.loadImage("org/pandcorps/platform/res/chr/EyesBlink.png", false); }});
 		
 		loaders.add(new Runnable() { @Override public final void run() {
-//System.out.println("loadConstants start " + System.currentTimeMillis());
+//info("loadConstants start " + System.currentTimeMillis());
 			Coltil.set(allEnemies, Level.DROWID, new EnemyDefinition("Drowid", 1, null, true, 1)); }}); // Teleport when stomped
 		loaders.add(new Runnable() { @Override public final void run() {
 			final Panmage pimg1 = createImage("projectile1", "org/pandcorps/platform/res/enemy/Projectile1.png", 8, CENTER_8, new FinPanple2(-3, -3), new FinPanple2(2, 2));
@@ -1415,7 +1415,7 @@ public class PlatformGame extends BaseGame {
 			    final int keyW = TouchKeyboard.getMaxKeyWidth();
 			    key = engine.createImage(Pantil.vmid(), ImtilX.newButton(keyW, keyW, clrBtn));
 			    keyIn = engine.createImage(Pantil.vmid(), ImtilX.newButton(keyW, keyW, clrIn));
-//System.out.println("loadConstants end " + System.currentTimeMillis());
+//info("loadConstants end " + System.currentTimeMillis());
 			    }});
 		}
 		

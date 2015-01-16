@@ -190,7 +190,7 @@ public final class Fighter extends Guy2 implements CollisionListener, AnimationE
             final Emitter emitter = projectile.emitter;
             final Fighter pfighter = projectile.fighter;
             if (pfighter != this && projectile.canHit()) {
-//System.out.println("Hit");
+//info("Hit");
                 switch (emitter.react) {
                     case Projectile.REACT_HURT :
                         mode = MODE_HURT;
@@ -221,7 +221,7 @@ public final class Fighter extends Guy2 implements CollisionListener, AnimationE
                         }
                         pfighter.lastHit = clock;
                     }
-//System.out.println("Hit - hits = " + pfighter.hits + "; lastHit = " + pfighter.lastHit);
+//info("Hit - hits = " + pfighter.hits + "; lastHit = " + pfighter.lastHit);
                 }
                 if (pfighter.mode == MODE_MOVE && pfighter.move.stopAfterHit) {
                     pfighter.moveLoop = 1;
@@ -274,7 +274,7 @@ public final class Fighter extends Guy2 implements CollisionListener, AnimationE
     
     protected final void attack() {
         if (canAttack()) {
-//System.out.println("Attack - hits = " + hits + "; clock = " + Pangine.getEngine().getClock() + "; lastHit = " + lastHit);
+//info("Attack - hits = " + hits + "; clock = " + Pangine.getEngine().getClock() + "; lastHit = " + lastHit);
             final Move move;
             if (hits < 2) {
                 move = def.quick;
@@ -287,7 +287,7 @@ public final class Fighter extends Guy2 implements CollisionListener, AnimationE
                     move = def.quick;
                 }
             }
-//System.out.println("Move = " + (move == quick ? "quick" : "strong"));
+//info("Move = " + (move == quick ? "quick" : "strong"));
             startMove(move);
             /*final Projectile projectile = new Projectile(Pantil.vmid(), this, Projectile.TYPE_QUICK, (byte) 1);
             projectile.setVisible(false);
@@ -375,16 +375,16 @@ public final class Fighter extends Guy2 implements CollisionListener, AnimationE
                 if (em.linked) {
                     linkedProjectiles.add(p);
                 }
-/*System.out.println("self pos: " + getPosition());
-System.out.println("self min: " + getBoundingMinimum());
-System.out.println("self max: " + getBoundingMaximum());*/
-/*System.out.println("proj pos: " + p.getPosition());
-System.out.println("proj min: " + p.getBoundingMinimum());
-System.out.println("proj max: " + p.getBoundingMaximum());*/
+/*info("self pos: " + getPosition());
+info("self min: " + getBoundingMinimum());
+info("self max: " + getBoundingMaximum());*/
+/*info("proj pos: " + p.getPosition());
+info("proj min: " + p.getBoundingMinimum());
+info("proj max: " + p.getBoundingMaximum());*/
 /*final Fighter t = Ai.getTarget(this);
-System.out.println("targ pos: " + t.getPosition());
-System.out.println("targ min: " + t.getBoundingMinimum());
-System.out.println("targ max: " + t.getBoundingMaximum());*/
+info("targ pos: " + t.getPosition());
+info("targ min: " + t.getBoundingMinimum());
+info("targ max: " + t.getBoundingMaximum());*/
             }
         }
     }

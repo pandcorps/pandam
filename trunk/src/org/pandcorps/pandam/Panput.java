@@ -101,7 +101,7 @@ public abstract class Panput {
 		/*package*/ Key(final Panteraction interaction, final int index, final Character base, final Character shift, final boolean letter, final String s) {
 			super(interaction.KEYBOARD, s == null ? Chartil.toString(base) : s);
 			/*if (getName() == null) {
-				System.err.println("No name for key " + index);
+				info("No name for key " + index);
 			}*/
 		    this.interaction = interaction;
 			this.index = index;

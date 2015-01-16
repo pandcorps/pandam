@@ -243,7 +243,7 @@ public final class Mustil {
 	}
 	
 	public final static void addNote(final Track track, final long tick, final int dur, final int channel, final int key, final int vol) throws Exception {
-		//System.out.println(tick + " - " + key);
+		//info(tick + " - " + key);
 		addShort(track, ShortMessage.NOTE_ON, tick, channel, key, vol);
 		addShort(track, ShortMessage.NOTE_OFF, tick + dur, channel, key, 0);
 	}

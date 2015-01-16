@@ -434,7 +434,7 @@ public class Enemy extends Character {
 				pos.addY(-1);
 				if (!isGrounded()) {
 					hv *= -1;
-					/*System.out.println("pos " + getPosition() + " bmin " + getBoundingMinimum() + " bmax " + getBoundingMaximum()
+					/*info("pos " + getPosition() + " bmin " + getBoundingMinimum() + " bmax " + getBoundingMaximum()
 							+ " ol " + getOffLeft() + " or " + getOffRight());*/
 					return true;
 				}

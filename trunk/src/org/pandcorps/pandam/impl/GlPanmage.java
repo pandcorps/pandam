@@ -546,7 +546,7 @@ public final class GlPanmage extends Panmage {
         }
         final FloatChain t = l.t, v = l.v;
 /*if (r == 1) {
-    System.out.println("Up: " + tup + "; Left: " + tleft + "; Down: " + tdown + "; Right: " + tright);
+    info("Up: " + tup + "; Left: " + tleft + "; Down: " + tdown + "; Right: " + tright);
 }*/
         t.append(turx); t.append(tury);
         v.append(vright); v.append(vup); v.append(z);
@@ -596,9 +596,9 @@ public final class GlPanmage extends Panmage {
 			tex.close();
 		}
 		GlPangine.images.remove(this);
-	    //System.out.println("Closing " + tid + "; isTexture: " + gl.glIsTexture(tid)); // true
+	    //info("Closing " + tid + "; isTexture: " + gl.glIsTexture(tid)); // true
 		GlPangine.gl.glDeleteTextures(tid);
-	    //System.out.println("Closed " + tid + "; isTexture: " + gl.glIsTexture(tid)); // false, and no longer displayed
+	    //info("Closed " + tid + "; isTexture: " + gl.glIsTexture(tid)); // false, and no longer displayed
 	    tid = NULL_TID;
 	    for (final ImageLayer l : layers.values()) {
 	    	l.destroy();

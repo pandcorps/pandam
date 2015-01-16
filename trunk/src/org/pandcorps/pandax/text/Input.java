@@ -67,7 +67,7 @@ public abstract class Input extends TextItem {
     @Override
     protected final void focus() {
         //TODO Some todo notes in message apply here
-        //System.out.println("Input");
+        //info("Input");
         final Pangine engine = Pangine.getEngine();
         final Panteraction interaction = engine.getInteraction();
         interaction.inactivateAll();
