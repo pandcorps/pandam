@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="impl/lwjgl"/>
+	<classpathentry kind="src" path="demo"/>
+	<classpathentry kind="src" path="game"/>
+	<classpathentry kind="src" path="res"/>
+	<classpathentry kind="src" path="test"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="var" path="PND_LIB/AppleJavaExtensions.jar"/>
+	<classpathentry kind="var" path="PND_LIB/jinput.jar"/>
+	<classpathentry kind="var" path="PND_LIB/junit.jar"/>
+	<classpathentry kind="var" path="PND_LIB/lwjgl_test.jar"/>
+	<classpathentry kind="var" path="PND_LIB/lwjgl_util_applet.jar"/>
+	<classpathentry kind="var" path="PND_LIB/lwjgl_util.jar"/>
+	<classpathentry kind="var" path="PND_LIB/lwjgl-debug.jar"/>
+	<classpathentry kind="var" path="PND_LIB/lwjgl.jar"/>
+	<classpathentry kind="var" path="PND_LIB/lzma.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
