@@ -51,7 +51,7 @@ import org.pandcorps.platform.Player.*;
 
 public class PlatformGame extends BaseGame {
 	protected final static String TITLE = "Fur-Guardians"; // res/values/strings.xml/app_name
-    protected final static String VERSION = "1.0.0"; // AndroidManifest.xml/versionName
+    protected final static String VERSION = "1.0.1"; // AndroidManifest.xml/versionName
     protected final static String YEAR = "2014-2015";
     protected final static String AUTHOR = "Andrew M. Martin";
 	/*
@@ -99,17 +99,14 @@ public class PlatformGame extends BaseGame {
 	User saw Enemy defeated by bumped block fail to give Player a Gem.
 	Once saw Player appear on wrong Marker after goal-met screen.
 	Move music generation, preprocessing classes into a new folder to be excluded from jar.
-	Clipboard import.
 	GoalTemplate: 2*2 block steps.
 	Sand level cactus, Snow level crystal/pine tree
 	Chant Music - rise * 3 at end?
 	OutputStream that writes to tmp file then swaps on close, keeping original as bak.
 	InputStream that reads bak file if can't find main.
+	
 	Remove System.out/err/printStackTrace/etc.
-	Icon.
 	Screen shots.
-	Title screen.
-	Certificate
 	Version #
 	*/
 	
