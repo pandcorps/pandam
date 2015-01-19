@@ -2982,6 +2982,18 @@ public class Menu {
 			} else if ("export".equalsIgnoreCase(cmd)) {
 				Pangine.getEngine().setClipboard(Savtil.toString(pc.profile));
 				msg = MSG_OK;
+			} else if ("import".equalsIgnoreCase(cmd)) {
+				final Pangine engine = Pangine.getEngine();
+				final String prf = engine.getClipboard();
+				if (Chartil.isEmpty(prf)) {
+					msg = "Missing";
+				} else if (!prf.startsWith(PlatformGame.SEG_PRF)) {
+					msg = "Invalid";
+				} else {
+					Iotil.writeFile(pc.profile.getFileName(), prf);
+					engine.exit();
+					msg = MSG_OK;
+				}
 			} else if ("delete".equalsIgnoreCase(cmd)) {
 				execHandler = new ExecHandler() {
 					@Override public final String run(final String cmd) {
