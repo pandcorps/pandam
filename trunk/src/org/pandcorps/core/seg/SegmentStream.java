@@ -26,7 +26,7 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-import org.pandcorps.core.Iotil;
+import org.pandcorps.core.*;
 
 public class SegmentStream implements Closeable {
     
@@ -46,8 +46,24 @@ public class SegmentStream implements Closeable {
         return new SegmentStream(Iotil.getInputStream(location));
     }
     
+    public final static SegmentStream openString(final String content) {
+        return new SegmentStream(new StringReader(content));
+    }
+    
     public final static List<Segment> readLocation(final String location) {
     	final SegmentStream in = openLocation(location);
+    	try {
+    	    return read(in);
+        } finally {
+            in.close();
+        }
+    }
+    
+    public final static List<Segment> readString(final String content) {
+        return read(openString(content));
+    }
+    
+    public final static List<Segment> read(final SegmentStream in) {
     	try {
     		final ArrayList<Segment> list = new ArrayList<Segment>();
     		Segment seg = null;
@@ -57,8 +73,6 @@ public class SegmentStream implements Closeable {
     		return list;
     	} catch (final IOException e) {
     		throw new RuntimeException(e);
-    	} finally {
-    		in.close();
     	}
     }
     
