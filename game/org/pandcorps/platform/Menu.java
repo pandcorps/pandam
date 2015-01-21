@@ -22,12 +22,14 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.platform;
 
+import java.io.*;
 import java.util.*;
 
 import org.pandcorps.core.*;
 import org.pandcorps.core.chr.*;
 import org.pandcorps.core.img.*;
 import org.pandcorps.core.io.*;
+import org.pandcorps.core.seg.*;
 import org.pandcorps.game.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.Panput.*;
@@ -2990,8 +2992,17 @@ public class Menu {
 				} else if (!prf.startsWith(PlatformGame.SEG_PRF)) {
 					msg = "Invalid";
 				} else {
-					Iotil.writeFile(pc.profile.getFileName(), prf);
-					engine.exit();
+				    final Profile tprf = new Profile();
+				    try {
+				        tprf.load(SegmentStream.openString(prf).readRequire(PlatformGame.SEG_PRF));
+				    } catch (final IOException e) {
+				        throw new RuntimeException(e);
+				    }
+				    final String importedName = tprf.getName();
+					Iotil.writeFile(Profile.getFileName(importedName), prf);
+					if (importedName.equals(pc.profile.getName())) {
+					    engine.exit();
+					}
 					msg = MSG_OK;
 				}
 			} else if ("delete".equalsIgnoreCase(cmd)) {
