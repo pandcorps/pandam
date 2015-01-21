@@ -1007,6 +1007,10 @@ public class PlatformGame extends BaseGame {
 	}
 	
 	private final static void loadConstants() throws Exception {
+	    if (loaders == null) {
+	        return;
+	    }
+	    
 		final Pangine engine = Pangine.getEngine();
 		
 		loaders.add(new Runnable() { @Override public final void run() {
