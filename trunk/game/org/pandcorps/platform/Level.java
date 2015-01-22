@@ -295,7 +295,7 @@ public class Level {
     
     private final static int getDefeatedLevels() {
         final Profile prf = getProfile();
-        return (prf == null) ? 0 : prf.stats.defeatedWorlds;
+        return (prf == null) ? 0 : prf.stats.defeatedLevels;
     }
     
     protected final static boolean isFlash(final Tile tile) {
