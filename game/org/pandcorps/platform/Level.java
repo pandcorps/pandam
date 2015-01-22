@@ -283,15 +283,19 @@ public class Level {
     	return theme != Theme.Chaos;
     }
     
+    private final static Profile getProfile() {
+        final PlayerContext pc = Coltil.get(PlatformGame.pcs, 0);
+        return (pc == null) ? null : pc.profile;
+    }
+    
     private final static int getDefeatedWorlds() {
-        if (Coltil.size(PlatformGame.pcs) > 0) {
-            final PlayerContext pc = PlatformGame.pcs.get(0);
-            final Profile prf = pc == null ? null : pc.profile;
-            if (pc != null) {
-                return prf.stats.defeatedWorlds;
-            }
-        }
-        return 0;
+        final Profile prf = getProfile();
+        return (prf == null) ? 0 : prf.stats.defeatedWorlds;
+    }
+    
+    private final static int getDefeatedLevels() {
+        final Profile prf = getProfile();
+        return (prf == null) ? 0 : prf.stats.defeatedWorlds;
     }
     
     protected final static boolean isFlash(final Tile tile) {
@@ -582,10 +586,14 @@ public class Level {
     			Checkered, diagonal stripe gem patterns
     			*/
     		    final int numLetters = PlatformGame.blockWord.length(), ibx = bx;
+    		    int levs = getDefeatedLevels();
     		    Template template = null;
     		    for (int i = 0; i < 4; i++) {
     		    	bx = ibx;
-    		    	if (bx == bxStart) {
+    		    	if (levs == 0) {
+    		    	    template = new GemMsgTemplate();
+    		    	    levs++;
+    		    	} else if (bx == bxStart) {
     		    		// Always start with pit to make fall goal easier
     		    		template = new AnyPitTemplate();
     		    	} else if (currLetter < numLetters && bx >= ng * (currLetter + 1) / (numLetters + 1)) {
@@ -1041,6 +1049,16 @@ public class Level {
     	protected abstract void plan();
     	
         protected abstract void build();
+        
+        @Override
+        public final boolean equals(final Object o) {
+            return (this == o) || ((o != null) && (getClass() == o.getClass()));
+        }
+        
+        @Override
+        public final int hashCode() {
+            return getClass().hashCode();
+        }
     }
     
     private static class ChoiceTemplate extends Template {
