@@ -1473,9 +1473,13 @@ public class Level {
 		@Override
 		protected final void plan() {
 			x = bx;
-			msg = Mathtil.rand(theme.gemMessages);
-			if ("PLAYER".equals(msg)) {
-				msg = Mathtil.rand(PlatformGame.pcs).getBonusName();
+			if (getDefeatedLevels() == 0) {
+			    msg = PlatformGame.pcs.get(0).getBonusName();
+			} else {
+    			msg = Mathtil.rand(theme.gemMessages);
+    			if ("PLAYER".equals(msg)) {
+    				msg = Mathtil.rand(PlatformGame.pcs).getBonusName();
+    			}
 			}
 			bx += gemMsg(x, floor + 1, msg, false) + 2;
 		}
