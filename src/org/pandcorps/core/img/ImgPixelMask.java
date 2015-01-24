@@ -33,6 +33,10 @@ public class ImgPixelMask extends PixelMask {
         rgb = Imtil.getDataElement(col);
     }
     
+    public final static ImgPixelMask getMask(final Img mask, final Pancolor col) {
+    	return (mask == null) ? null : new ImgPixelMask(mask, col);
+    }
+    
     @Override
     public final boolean isMasked(final int x, final int y, final int p) {
         return mask.getRGB(x, y) == rgb;
