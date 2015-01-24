@@ -605,13 +605,14 @@ public class PlatformGame extends BaseGame {
 				hat = null;
 				mask = null;
 			} else {
-				avatar.hat.clth.init();
+				final Hat h = (Hat) avatar.hat.clth;
+				h.init();
 				hatFilter = getFilter(avatar.hat.col);
-				hat = Imtil.filter(avatar.hat.clth.imgs[0], hatFilter);
-				mask = getImg(masksAll, "mask/Mask", anm);
+				hat = Imtil.filter(h.imgs[0], hatFilter);
+				mask = h.maskNeeded ? getImg(masksAll, "mask/Mask", anm) : null;
 			}
 			if (hat != null) {
-		    	Imtil.copy(hat, face, 0, 0, 18, 18, 0, 0, TransparentPixelMask.getInstance(), new ImgPixelMask(mask, Pancolor.BLACK));
+		    	Imtil.copy(hat, face, 0, 0, 18, 18, 0, 0, TransparentPixelMask.getInstance(), ImgPixelMask.getMask(mask, Pancolor.BLACK));
 		    	hat.close();
 		    }
 			if (needDragon) {
@@ -698,10 +699,11 @@ public class PlatformGame extends BaseGame {
 				final Img[] hatMap, maskMap;
 				hatMap = new Img[hatMapRaw.length];
 				filterStrip(hatMapRaw, hatMap, null, pi.hatFilter);
-				maskMap = loadChrStrip("mask/MaskMap" + anm + ".png", 18, null);
+				final boolean maskNeeded = ((Hat) avatar.hat.clth).maskNeeded;
+				maskMap = maskNeeded ? loadChrStrip("mask/MaskMap" + anm + ".png", 18, null) : null;
 				final PixelMask srcMask = TransparentPixelMask.getInstance();
 				for (int i = 0; i < 3; i++) {
-					Imtil.copy(hatMap[i], faceMap[i], 0, 0, 18, 18, 0, 0, srcMask, new ImgPixelMask(maskMap[i], Pancolor.BLACK));
+					Imtil.copy(hatMap[i], faceMap[i], 0, 0, 18, 18, 0, 0, srcMask, maskNeeded ? new ImgPixelMask(maskMap[i], Pancolor.BLACK) : null);
 				}
 				Img.close(hatMap);
 				Img.close(maskMap);
