@@ -194,7 +194,7 @@ public class Avatar extends EyeData implements Segmented {
             final String loc = getLoc();
             final int d = getDim();
             imgs = PlatformGame.loadChrStrip(loc + "/" + res + ".png", d, true);
-            if (!res.startsWith("Royal")) {
+            if (!res.equals("RoyalMantle")) {
             	mapImgs = PlatformGame.loadChrStrip(loc + "/" + res + "Map.png", d, true);
             	if (getClass() == Clothing.class) {
             		rideImgs = PlatformGame.loadChrStrip(loc + "/" + res + "Ride.png", d, true);
@@ -218,12 +218,13 @@ public class Avatar extends EyeData implements Segmented {
         new Clothing("Sleeveless", "AShirt", 1000),
         new Clothing("Short Sleeves", "TShirt", 1500),
         new Clothing("Long Sleeves", "LongShirt", 2000),
-        new Clothing("Armor", "Armor", 50000, "Tough")
+        new Clothing("Armor", "Armor", 50000, "Tough"),
+        new Clothing("Royal Robe", "RoyalRobe", 100000)
     };
     
     protected final static Clothing[] hiddenClothings = {
         new Clothing("Royal Mantle", "RoyalMantle", 100000),
-        new Clothing("Royal Robe", "RoyalRobe", 100000),
+        clothings[4]
     };
     
     protected final static Clothing getClothing(final String name) {
@@ -241,8 +242,15 @@ public class Avatar extends EyeData implements Segmented {
     }
     
     protected static class Hat extends Clothing {
+    	protected final boolean maskNeeded;
+    	
         protected Hat(final String name, final String res, final int cost) {
+        	this(name, res, cost, true);
+        }
+        
+        protected Hat(final String name, final String res, final int cost, final boolean maskNeeded) {
             super(name, res, cost);
+            this.maskNeeded = maskNeeded;
         }
         
         @Override
@@ -259,7 +267,8 @@ public class Avatar extends EyeData implements Segmented {
     protected final static Hat[] hats = {
         new Hat("Headband", "Headband", 1000),
         new Hat("Bandana", "Bandana", 1500),
-        new Hat("Cap", "Cap", 2000)
+        new Hat("Cap", "Cap", 2000),
+        new Hat("Crown", "Crown", 100000, false)
     };
     
     protected final static Hat getHat(final String name) {
