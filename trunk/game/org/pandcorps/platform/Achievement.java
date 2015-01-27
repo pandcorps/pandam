@@ -33,14 +33,14 @@ public abstract class Achievement extends FinName {
 		new WorldFeat("World 1", 1), new WorldFeat("World Tour", 10),
 		new NoEnemyFeat(), new AllEnemyFeat(),
 		new RankFeat("Promoted", 2), new RankFeat("Knighted", 25),
-		new WordFeat("Wordsmith", 5), new WordFeat("Lexicon", 30)
+		new WordFeat("Wordsmith", 5), new WordFeat("Lexicon", 30),
+		new MonarchFeat()
 		// level w/ no damage
 		// Bear Market, Finish Level w/ no gems
 		// Bull Market, Collect all gems in a Level
 		// Juggernaut, Break all blocks in a Level
 		// block milestones
 		// Gem milestones
-		// Monarch, Finish Level in royal robe and crown
 		// Pegasus, Finish Level as a winged horse
 		// Beyond Belief, Finish Level as a flying pig
 		// Babe, Finish Level as a blue bull/ox
@@ -182,6 +182,21 @@ public abstract class Achievement extends FinName {
 			return pc.profile.getRank() >= n;
 		}
 	}
+	
+	private final static class MonarchFeat extends Achievement {
+        protected MonarchFeat() {
+            super("Monarch", "Wear the Royal Robe and Crown", 5000);
+        }
+        
+        @Override
+        public final boolean isMet(final PlayerContext pc) {
+            final Avatar avt = pc.profile.currentAvatar;
+            if (avt == null || avt.clothing == null || avt.hat == null) {
+                return false;
+            }
+            return Avatar.CLOTHING_ROYAL_ROBE.equals(Player.getName(avt.clothing)) && Avatar.HAT_CROWN.equals(Player.getName(avt.hat));
+        }
+    }
 	
 	private final static class NoEnemyFeat extends CurrentFeat {
 	    protected NoEnemyFeat() {

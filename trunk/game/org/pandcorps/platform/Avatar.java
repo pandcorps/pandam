@@ -38,7 +38,7 @@ public class Avatar extends EyeData implements Segmented {
     protected final Dragon dragon = new Dragon();
     private final static int[] randomColorChannels = {0, 1, 2};
     
-    protected final static class Garb {
+    protected final static class Garb implements Named {
     	protected Clothing clth = null;
     	protected final SimpleColor col = new SimpleColor();
     	
@@ -56,6 +56,11 @@ public class Avatar extends EyeData implements Segmented {
     		seg.setValue(i, (clth == null) ? "" : clth.res);
         	col.save(seg, i + 1);
     	}
+
+        @Override
+        public final String getName() {
+            return Player.getName(clth);
+        }
     }
     
     protected final static class SimpleColor {
@@ -214,12 +219,14 @@ public class Avatar extends EyeData implements Segmented {
         }
     }
     
+    protected final static String CLOTHING_ROYAL_ROBE = "Royal Robe";
+    
     protected final static Clothing[] clothings = {
         new Clothing("Sleeveless", "AShirt", 1000),
         new Clothing("Short Sleeves", "TShirt", 1500),
         new Clothing("Long Sleeves", "LongShirt", 2000),
         new Clothing("Armor", "Armor", 50000, "Tough"),
-        new Clothing("Royal Robe", "RoyalRobe", 100000)
+        new Clothing(CLOTHING_ROYAL_ROBE, "RoyalRobe", 100000)
     };
     
     protected final static Clothing[] hiddenClothings = {
@@ -264,11 +271,13 @@ public class Avatar extends EyeData implements Segmented {
         }
     }
     
+    protected final static String HAT_CROWN = "Crown";
+    
     protected final static Hat[] hats = {
         new Hat("Headband", "Headband", 1000),
         new Hat("Bandana", "Bandana", 1500),
         new Hat("Cap", "Cap", 2000),
-        new Hat("Crown", "Crown", 100000, false)
+        new Hat(HAT_CROWN, "Crown", 100000, false)
     };
     
     protected final static Hat getHat(final String name) {
