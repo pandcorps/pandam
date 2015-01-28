@@ -639,6 +639,8 @@ public class Map {
 	            } else {
 	                if (isBridge(t)) {
 	                    Level.setTheme(Theme.Bridge);
+	                } else if (tm.getColumn(t) == (tm.getWidth() - 5)) {
+	                    // Night
 	                }
 	            	screen = new PlatformGame.PlatformScreen();
 	            }
