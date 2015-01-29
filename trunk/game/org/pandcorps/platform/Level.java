@@ -586,16 +586,17 @@ public class Level {
     			Checkered, diagonal stripe gem patterns
     			*/
     		    final int numLetters = PlatformGame.blockWord.length(), ibx = bx;
-    		    int levs = getDefeatedLevels();
     		    Template template = null;
     		    for (int i = 0; i < 4; i++) {
     		    	bx = ibx;
-    		    	if (levs == 0) {
-    		    	    template = new GemMsgTemplate();
-    		    	    levs++;
-    		    	} else if (bx == bxStart) {
-    		    		// Always start with pit to make fall goal easier
-    		    		template = new AnyPitTemplate();
+    		    	if (bx == bxStart) {
+    		    		if (getDefeatedLevels() == 0) {
+    		    			// Start first level with Player's name in Gems
+        		    	    template = new GemMsgTemplate();
+        		    	} else {
+	    		    		// Always start with pit to make fall goal easier
+	    		    		template = new AnyPitTemplate();
+        		    	}
     		    	} else if (currLetter < numLetters && bx >= ng * (currLetter + 1) / (numLetters + 1)) {
 	    		    	template = new BlockLetterTemplate();
 	    		    } else if (i == 3) {
