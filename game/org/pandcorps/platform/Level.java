@@ -106,9 +106,16 @@ public class Level {
     		return a;
     	}
     	public final static Theme Normal = new Theme(null, MSG) {
-    	    @Override protected final int[] getEnemyIndices(final int worlds) {
+    	    @Override protected final int[] getEnemyIndices(final int worlds, final int levels) {
     	        switch (worlds) {
     	            case 0 :
+    	            	if (levels == 0) {
+    	            		return new int[] {HOB_TROLL};
+    	            	} else if (levels == 1) {
+    	            		return new int[] {IMP};
+    	            	} else if (levels == 2) {
+    	            		return new int[] {HOB_TROLL, HOB_OGRE};
+    	            	}
     	            case 1 : return new int[] {HOB_TROLL, HOB_OGRE, IMP}; // 2nd world is Snow
     	            case 2 : // After 2nd world
     	            case 3 : return new int[] {HOB_TROLL, HOB_OGRE, IMP, ARMORED_IMP}; // 4th world is Sand
@@ -132,7 +139,7 @@ public class Level {
     		}
     	};
     	public final static Theme Snow = new Theme("Snow", null, MSG, PlatformGame.TILE_ICE) {
-    	    @Override protected final int[] getEnemyIndices(final int worlds) {
+    	    @Override protected final int[] getEnemyIndices(final int worlds, final int levels) {
     	        return worlds < 2 ? new int[] {HOB_TROLL, HOB_OGRE, IMP, ICE_WISP} : getNormalEnemies(ICE_WISP);
     	    }
     	    
@@ -156,7 +163,7 @@ public class Level {
         	}
     	};
     	public final static Theme Sand = new Theme("Sand", null, MSG, PlatformGame.TILE_SAND) {
-    	    @Override protected final int[] getEnemyIndices(final int worlds) {
+    	    @Override protected final int[] getEnemyIndices(final int worlds, final int levels) {
     	    	return worlds < 4 ? new int[] {HOB_TROLL, HOB_OGRE, IMP, ARMORED_IMP, FIRE_WISP} : getNormalEnemies(FIRE_WISP);
     	    }
     	    
@@ -180,8 +187,8 @@ public class Level {
         	}
     	};
     	public final static Theme Bridge = new Theme("Bridge", MSG) {
-            @Override protected final int[] getEnemyIndices(final int worlds) {
-                return Map.theme.levelTheme.getEnemyIndices(worlds);
+            @Override protected final int[] getEnemyIndices(final int worlds, final int levels) {
+                return Map.theme.levelTheme.getEnemyIndices(worlds, levels);
             }
             
             @Override protected final BackgroundBuilder getRandomBackground() {
@@ -198,7 +205,7 @@ public class Level {
         };
     	private final static String[] MSG_CHAOS = {"CHAOS", "HAVOC", "BEWARE", "FEAR", "DANGER"};
     	public final static Theme Chaos = new Theme("Chaos", MSG_CHAOS) {
-    	    @Override protected final int[] getEnemyIndices(final int worlds) {
+    	    @Override protected final int[] getEnemyIndices(final int worlds, final int levels) {
                 switch (worlds) {
                     case 0 :
                     case 1 : return new int[] {DROWID, DROLOCK, IMP};
@@ -237,7 +244,7 @@ public class Level {
     	}
     	
     	private final List<EnemyDefinition> getEnemies() {
-    	    final int[] enemies = getEnemyIndices(getDefeatedWorlds());
+    	    final int[] enemies = getEnemyIndices(getDefeatedWorlds(), getDefeatedLevels());
     		final List<EnemyDefinition> list = new ArrayList<EnemyDefinition>(enemies.length);
     		for (final int enemy : enemies) {
     		    list.add(PlatformGame.allEnemies.get(enemy));
@@ -245,7 +252,7 @@ public class Level {
     		return list;
     	}
     	
-    	protected abstract int[] getEnemyIndices(final int worlds);
+    	protected abstract int[] getEnemyIndices(final int worlds, final int levels);
     	
     	protected abstract BackgroundBuilder getRandomBackground();
     	
