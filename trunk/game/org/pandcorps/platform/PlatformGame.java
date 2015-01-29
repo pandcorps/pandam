@@ -104,6 +104,7 @@ public class PlatformGame extends BaseGame {
 	Chant Music - rise * 3 at end?
 	OutputStream that writes to tmp file then swaps on close, keeping original as bak.
 	InputStream that reads bak file if can't find main.
+	Breaking block with Imp at edge above it can miss the Imp.
 	
 	Remove System.out/err/printStackTrace/etc.
 	Screen shots.
