@@ -22,7 +22,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.core.img;
 
-import org.pandcorps.core.img.Pancolor.Channel;
+import org.pandcorps.core.img.Pancolor.*;
 
 public class SwapPixelFilter extends ColorPixelFilter {
     private final Channel rsrc;

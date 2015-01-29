@@ -203,6 +203,32 @@ public class Level {
                 return Map.theme.levelTheme.bgImg;
             }
         };
+        public final static Theme Night = new Theme("Night", MSG) {
+            @Override protected final int[] getEnemyIndices(final int worlds, final int levels) {
+                return Map.theme.levelTheme.getEnemyIndices(worlds, levels);
+            }
+            
+            @Override protected final BackgroundBuilder getRandomBackground() {
+                return new HillBackgroundBuilder();
+            }
+            
+            @Override protected final Builder getRandomBuilder() {
+                return new GrassyBuilder();
+            }
+            
+            @Override protected final String getBgImg() {
+                return Map.theme.levelTheme.bgImg;
+            }
+            
+            @Override protected final PixelFilter getSkyFilter() {
+                final ReplacePixelFilter f = new ReplacePixelFilter();
+                for (int i = 0; i < 5; i++) {
+                    final short grey = (short) (48 - (i * 8));
+                    f.put((short) (64 + (i * 16)), (short) (64 + (i * 32)), Pancolor.MAX_VALUE, grey, grey, grey);
+                }
+                return f;
+            }
+        };
     	private final static String[] MSG_CHAOS = {"CHAOS", "HAVOC", "BEWARE", "FEAR", "DANGER"};
     	public final static Theme Chaos = new Theme("Chaos", MSG_CHAOS) {
     	    @Override protected final int[] getEnemyIndices(final int worlds, final int levels) {
@@ -260,6 +286,10 @@ public class Level {
     	
     	protected String getBgImg() {
     	    return bgImg;
+    	}
+    	
+    	protected PixelFilter getSkyFilter() {
+    	    return Map.theme.getSkyFilter();
     	}
     	
     	protected TileMapImage[] getExtraAnimBlock() {
@@ -355,7 +385,7 @@ public class Level {
     
     private final static Img loadTileImage() {
     	final Img tileImg = ImtilX.loadImage("org/pandcorps/platform/res/bg/Tiles.png", 128, null);
-    	if (theme != Theme.Normal) {
+    	if (theme != Theme.Normal && theme != Theme.Night) {
     		final Img ext = ImtilX.loadImage("org/pandcorps/platform/res/bg/Tiles" + theme.img + ".png", false);
     		Imtil.copy(ext, tileImg, 0, 0, 128, 112, 0, 16);
     		ext.close();
@@ -675,7 +705,7 @@ public class Level {
     	public final Img getImage() {
     		final Img backImg = ImtilX.loadImage("org/pandcorps/platform/res/bg/Hills" + Chartil.unnull(theme.getBgImg()) + ".png", 128, null);
             if (isNormalTheme()) {
-            	final PixelFilter skyFilter = Map.theme.getSkyFilter();
+            	final PixelFilter skyFilter = theme.getSkyFilter();
             	if (skyFilter != null) {
             		Imtil.filterImg(backImg, 96, 0, 16, 48, skyFilter);
             	}
