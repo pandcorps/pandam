@@ -23,7 +23,7 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.core.img;
 
 import java.util.*;
-import java.util.Map.Entry;
+import java.util.Map.*;
 
 public final class ReplacePixelFilter extends PixelFilter {
 	private final HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
@@ -54,6 +54,10 @@ public final class ReplacePixelFilter extends PixelFilter {
 	
 	public final void put(final int src, final int dst) {
 		map.put(Integer.valueOf(src), Integer.valueOf(dst));
+	}
+	
+	public final void put(final short sr, final short sg, final short sb, final short dr, final short dg, final short db) {
+	    put(sr, sg, sb, Pancolor.MAX_VALUE, dr, dg, db, Pancolor.MAX_VALUE);
 	}
 	
 	public final void put(final short sr, final short sg, final short sb, final short sa, final short dr, final short dg, final short db, final short da) {
