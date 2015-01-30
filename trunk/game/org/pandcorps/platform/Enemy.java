@@ -61,6 +61,7 @@ public class Enemy extends Character {
 		private final boolean ledgeTurn;
 		protected Panimation splat;
 		private final Panimation attack;
+		protected Panimation extra;
 		private final int avoidCount;
 		private final int offX;
 		private final int h;
@@ -135,6 +136,9 @@ public class Enemy extends Character {
 			this.ledgeTurn = ledgeTurn;
 			this.splat = splat ? PlatformGame.createAnm(id + ".splat", currentSplat, o, n, x, strip[2]) : null;
 			currentSplat = DEFAULT_SPLAT;
+			if (strip.length > 3) {
+				extra = PlatformGame.createAnm(id + ".extra", 8, o, n, x, strip[3]);
+			}
 			this.attack = (hv == 0 && strip.length > 2) ? PlatformGame.createAnm(id + ".attack", 20, o, n, x, strip[2]) : null;
 			Img.close(strip);
 			this.avoidCount = avoidCount;
@@ -389,8 +393,12 @@ public class Enemy extends Character {
 	}
 	
 	protected final void burst(final Panimation anm, final Panctor dir, final BurstHandler burstHandler, final int yoff) {
+		burst(this, anm, dir, burstHandler, yoff);
+	}
+	
+	protected final static void burst(final Panctor ref, final Panimation anm, final Panctor dir, final BurstHandler burstHandler, final int yoff) {
 	    final Burst b = CustomBurst.createBurst(anm, burstHandler);
-	    final Panple pos = getPosition();
+	    final Panple pos = ref.getPosition();
         PlatformGame.setPosition(b, pos.getX(), pos.getY() + yoff, PlatformGame.DEPTH_SHATTER);
         b.setMirror(dir.isMirror());
         PlatformGame.room.addActor(b);
