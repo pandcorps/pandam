@@ -1227,6 +1227,7 @@ public class PlatformGame extends BaseGame {
                     player.startHurt();
                     return true;
                 }};
+            spikedImp.award = GemBumped.AWARD_2;
             Coltil.set(allEnemies, Level.SPIKED_IMP, spikedImp);
 			anger = createAnm("anger", 10, CENTER_16, Enemy.loadStrip(9, ImtilX.DIM));
 			final EnemyDefinition iceWisp = new EnemyDefinition("Ice Wisp", 12);
@@ -1243,6 +1244,16 @@ public class PlatformGame extends BaseGame {
                 	return false;
                 }};
 			Coltil.set(allEnemies, Level.FIRE_WISP, fireWisp);
+			Enemy.currentSplat = 45;
+			final EnemyDefinition blackBlob = new EnemyDefinition("Black Blob", 14, null, true, true, Enemy.DEFAULT_X, Enemy.DEFAULT_H); // Grim Blob
+			blackBlob.splatHandler = new BurstHandler() {@Override public final void onBurst(final CustomBurst burst) {
+				final BurstHandler h = new BurstHandler() {@Override public final void onBurst(final CustomBurst b) {
+					final Enemy blob = new Enemy(blackBlob, b);
+					blob.setEnemyMirror(b.isMirror()); }};
+				Enemy.burst(burst, blackBlob.extra, burst, h, 0); }};
+			blackBlob.splatDecider = armoredImp.splatDecider;
+			blackBlob.award = GemBumped.AWARD_2;
+			Coltil.set(allEnemies, Level.BLACK_BLOB, blackBlob);
 			Level.initTheme(); }});
 		
 		loaders.add(new Runnable() { @Override public final void run() {

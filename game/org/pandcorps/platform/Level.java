@@ -51,6 +51,7 @@ public class Level {
     protected final static int DROLOCK = 10;
     protected final static int ICE_WISP = 11;
     protected final static int FIRE_WISP = 12;
+    protected final static int BLACK_BLOB = 13;
     
     private final static byte FLOOR_GRASSY = 0;
     private final static byte FLOOR_BLOCK = 1;
@@ -205,7 +206,8 @@ public class Level {
         };
         public final static Theme Night = new Theme("Night", MSG) {
             @Override protected final int[] getEnemyIndices(final int worlds, final int levels) {
-                return Map.theme.levelTheme.getEnemyIndices(worlds, levels);
+                //return Map.theme.levelTheme.getEnemyIndices(worlds, levels);
+            	return new int[] {BLACK_BLOB};
             }
             
             @Override protected final BackgroundBuilder getRandomBackground() {
@@ -383,9 +385,14 @@ public class Level {
         Imtil.filterImg(backImg, x, y, w, h, getHillFilter(Map.bgColor));
     }
     
+    private final static Theme getDayTheme() {
+    	return (theme == Theme.Night) ? Map.theme.levelTheme : theme;
+    }
+    
     private final static Img loadTileImage() {
     	final Img tileImg = ImtilX.loadImage("org/pandcorps/platform/res/bg/Tiles.png", 128, null);
-    	if (theme != Theme.Normal && theme != Theme.Night) {
+    	final Theme theme = getDayTheme();
+    	if (theme != Theme.Normal) {
     		final Img ext = ImtilX.loadImage("org/pandcorps/platform/res/bg/Tiles" + theme.img + ".png", false);
     		Imtil.copy(ext, tileImg, 0, 0, 128, 112, 0, 16);
     		ext.close();
@@ -845,14 +852,22 @@ public class Level {
         }
     }
     
+    private final static int DEFAULT_ENEMY_PROBABILITY = 40;
+    
+    private static int enemyProbability = DEFAULT_ENEMY_PROBABILITY;
+    
     private final static void enemy(final int x, final int y, final int w) {
-    	if (w < 3 || (numEnemies > 0 && Mathtil.rand(40))) {
+    	if (w < 3 || (numEnemies > 0 && Mathtil.rand(enemyProbability))) {
+    		if (enemyProbability > 0) {
+    			enemyProbability -= 5;
+    		}
     		return;
     	} else if (y >= (tm.getHeight() - 1)) { // Player needs two tiles
     	    return; // Don't drop Enemy with only one tile so Player can't reach
     	}
     	new Spawner(tm.getTileWidth() * (x + Mathtil.randi(1, w - 2)), tm.getTileHeight() * y);
     	numEnemies++;
+    	enemyProbability = DEFAULT_ENEMY_PROBABILITY;
     }
     
     private final static void enemy(final EnemyDefinition def, final int x, final int y) {
@@ -874,6 +889,7 @@ public class Level {
 	        addTemplate(new WallTemplate());
 	        addTemplate(new StepTemplate());
 	        addTemplate(new RampTemplate());
+	        final Theme theme = getDayTheme();
 	        if (theme == Theme.Snow || theme == Theme.Sand) {
 	        	addTemplate(new SpecialGroundTemplate());
 	        } else {
@@ -1501,6 +1517,7 @@ public class Level {
     				gem(i, floor + 3);
     			}
     		}
+    		enemy(x, floor + 1, w);
     	}
     }
     
