@@ -28,7 +28,7 @@ import org.pandcorps.pandam.impl.*;
 public abstract class Pangame {
 	/*package*/ static volatile boolean initializingRoom = true;
 	
-	private static Pangame game = null;
+	private static volatile Pangame game = null;
 
 	private volatile Panroom currentRoom = null;
 
@@ -38,6 +38,9 @@ public abstract class Pangame {
 	// That could require a Pangame constructor
 	// which accepts a parent Pangame parameter.
 	public Pangame() {
+		if (game != null) {
+			throw new IllegalStateException("Creating instance of " + getClass() + " when already had instance of " + game.getClass());
+		}
 		game = this;
 	}
 
