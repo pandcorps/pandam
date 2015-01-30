@@ -32,7 +32,7 @@ import org.pandcorps.pandam.impl.*;
 import android.opengl.GLSurfaceView.*;
 
 public final class PanRenderer implements Renderer {
-	private Pangame game = null;
+	private static volatile Pangame game = null;
 	
 	protected PanRenderer() {
 	}
