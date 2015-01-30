@@ -1245,7 +1245,13 @@ public class PlatformGame extends BaseGame {
                 }};
 			Coltil.set(allEnemies, Level.FIRE_WISP, fireWisp);
 			Enemy.currentSplat = 45;
-			final EnemyDefinition blackBlob = new EnemyDefinition("Black Blob", 14, null, true, true, Enemy.DEFAULT_X, Enemy.DEFAULT_H); // Grim Blob
+			final ReplacePixelFilter bbf = new ReplacePixelFilter();
+			bbf.put(Pancolor.MIN_VALUE, (short) 96, (short) 96, (short) 24, (short) 24, (short) 24);
+			bbf.put(Pancolor.MIN_VALUE, (short) 136, (short) 136, (short) 48, (short) 48, (short) 48);
+			bbf.put((short) 32, (short) 168, (short) 200, (short) 72, (short) 72, (short) 72);
+			bbf.put((short) 64, (short) 192, Pancolor.MAX_VALUE, (short) 96, (short) 96, (short) 96);
+			bbf.put((short) 96, (short) 216, Pancolor.MAX_VALUE, (short) 120, (short) 120, (short) 120);
+			final EnemyDefinition blackBlob = new EnemyDefinition("Black Blob", 14, bbf, true, true, Enemy.DEFAULT_X, Enemy.DEFAULT_H); // Grim Blob
 			blackBlob.splatHandler = new BurstHandler() {@Override public final void onBurst(final CustomBurst burst) {
 				final BurstHandler h = new BurstHandler() {@Override public final void onBurst(final CustomBurst b) {
 					final Enemy blob = new Enemy(blackBlob, b);
