@@ -206,8 +206,21 @@ public class Level {
         };
         public final static Theme Night = new Theme("Night", MSG) {
             @Override protected final int[] getEnemyIndices(final int worlds, final int levels) {
-                //return Map.theme.levelTheme.getEnemyIndices(worlds, levels);
-            	return new int[] {BLACK_BLOB};
+            	if (worlds < 3) {
+	                if (Map.theme == Map.MapTheme.Snow) {
+	                	return new int[] {BLACK_BLOB, ICE_WISP};
+	                } else if (Map.theme == Map.MapTheme.Sand) {
+	                	return new int[] {BLACK_BLOB, FIRE_WISP};
+	                }
+	            	return new int[] {BLACK_BLOB};
+            	} else {
+            		if (Map.theme == Map.MapTheme.Snow) {
+	                	return new int[] {BLACK_BLOB, ICE_WISP, ARMORED_IMP};
+	                } else if (Map.theme == Map.MapTheme.Sand) {
+	                	return new int[] {BLACK_BLOB, FIRE_WISP, ARMORED_IMP};
+	                }
+	            	return new int[] {BLACK_BLOB, ARMORED_IMP};
+            	}
             }
             
             @Override protected final BackgroundBuilder getRandomBackground() {
