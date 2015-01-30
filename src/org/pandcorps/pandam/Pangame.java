@@ -30,7 +30,7 @@ public abstract class Pangame {
 	
 	private static volatile Pangame game = null;
 
-	private volatile Panroom currentRoom = null;
+	private static volatile Panroom currentRoom = null;
 
 	// Could imagine a game with two different modes,
 	// like flying a ship and walking on a planet surface,
