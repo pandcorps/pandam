@@ -84,11 +84,11 @@ public abstract class Pangame {
 		return currentRoom;
 	}
 	
-	public void setCurrentRoom(final Panroom currentRoom) {
-		if (currentRoom == null) {
+	public void setCurrentRoom(final Panroom room) {
+		if (room == null) {
 			throw new NullPointerException("Attempted to assign a null Panroom");
 		}
-		this.currentRoom = currentRoom;
+		currentRoom = room;
 	}
 
 	public final void beforeLoop() throws Exception {
