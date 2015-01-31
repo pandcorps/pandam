@@ -127,6 +127,9 @@ public final class GlPanmage extends Panmage {
 	private final static Img pad(final Img _img) {
 	    final int usableWidth = _img.getWidth(), usableHeight = _img.getHeight();
 	    final int d = Math.max(toPow2(usableWidth), toPow2(usableHeight));
+	    if (d == usableWidth && d == usableHeight) {
+	    	return _img;
+	    }
 	    final Img padded = Imtil.newImage(d, d);
 	    Imtil.copy(_img, padded, 0, 0, usableWidth, usableHeight, 0, 0);
 	    return padded;
