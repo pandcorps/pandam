@@ -38,6 +38,7 @@ public abstract class Pangl {
 	public final int GL_LESS;
 	public final int GL_MODELVIEW;
 	public final int GL_NEAREST;
+	public final int GL_NO_ERROR;
 	public final int GL_ONE_MINUS_SRC_ALPHA;
 	public final int GL_PROJECTION;
 	public final int GL_QUADS;
@@ -53,7 +54,7 @@ public abstract class Pangl {
 	public final int GL_UNSIGNED_BYTE;
 	public final int GL_VERTEX_ARRAY;
 	
-	protected Pangl(final int GL_ALPHA_TEST, final int GL_ARRAY_BUFFER, final int GL_ARRAY_BUFFER_BINDING, final int GL_BLEND, final int GL_COLOR_BUFFER_BIT, final int GL_DEPTH_BUFFER_BIT, final int GL_DEPTH_TEST, final int GL_FLOAT, final int GL_GREATER, final int GL_LESS, final int GL_MODELVIEW, final int GL_NEAREST, final int GL_ONE_MINUS_SRC_ALPHA, final int GL_PROJECTION, final int GL_QUADS, final int GL_RGB, final int GL_RGBA, final int GL_SRC_ALPHA, final int GL_STATIC_DRAW, final int GL_TEXTURE_2D, final int GL_TEXTURE_COORD_ARRAY, final int GL_TEXTURE_MAG_FILTER, final int GL_TEXTURE_MIN_FILTER, final int GL_TRIANGLES, final int GL_UNSIGNED_BYTE, final int GL_VERTEX_ARRAY) {
+	protected Pangl(final int GL_ALPHA_TEST, final int GL_ARRAY_BUFFER, final int GL_ARRAY_BUFFER_BINDING, final int GL_BLEND, final int GL_COLOR_BUFFER_BIT, final int GL_DEPTH_BUFFER_BIT, final int GL_DEPTH_TEST, final int GL_FLOAT, final int GL_GREATER, final int GL_LESS, final int GL_MODELVIEW, final int GL_NEAREST, final int GL_NO_ERROR, final int GL_ONE_MINUS_SRC_ALPHA, final int GL_PROJECTION, final int GL_QUADS, final int GL_RGB, final int GL_RGBA, final int GL_SRC_ALPHA, final int GL_STATIC_DRAW, final int GL_TEXTURE_2D, final int GL_TEXTURE_COORD_ARRAY, final int GL_TEXTURE_MAG_FILTER, final int GL_TEXTURE_MIN_FILTER, final int GL_TRIANGLES, final int GL_UNSIGNED_BYTE, final int GL_VERTEX_ARRAY) {
 		this.GL_ALPHA_TEST = GL_ALPHA_TEST;
 		this.GL_ARRAY_BUFFER = GL_ARRAY_BUFFER;
 		this.GL_ARRAY_BUFFER_BINDING = GL_ARRAY_BUFFER_BINDING;
@@ -66,6 +67,7 @@ public abstract class Pangl {
 		this.GL_LESS = GL_LESS;
 		this.GL_MODELVIEW = GL_MODELVIEW;
 		this.GL_NEAREST = GL_NEAREST;
+		this.GL_NO_ERROR = GL_NO_ERROR;
 		this.GL_ONE_MINUS_SRC_ALPHA = GL_ONE_MINUS_SRC_ALPHA;
 		this.GL_PROJECTION = GL_PROJECTION;
 		this.GL_QUADS = GL_QUADS;
@@ -121,6 +123,8 @@ public abstract class Pangl {
 	public abstract void glGenBuffers(final IntBuffer buffers);
 	
 	public abstract void glGenTextures(final IntBuffer textures);
+	
+	public abstract int glGetError();
 	
 	public abstract void glLoadIdentity();
 	
