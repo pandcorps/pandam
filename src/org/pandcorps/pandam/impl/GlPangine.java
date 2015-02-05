@@ -169,7 +169,8 @@ public abstract class GlPangine extends Pangine {
 		//gl.glPolygonMode(gl.GL_FRONT_AND_BACK, gl.GL_FILL);
 
 		//gl.glClearDepth(Double.NEGATIVE_INFINITY); // Depth Buffer Setup
-		gl.glClearDepth(Double.MAX_VALUE);
+		//gl.glClearDepth(Double.MAX_VALUE);
+		gl.glClearDepth(1); // Clamped to 0..1, so 1 is max; calculated depth values are scaled
 		gl.glEnable(gl.GL_DEPTH_TEST); // Enables Depth Testing
 		gl.glDepthFunc(gl.GL_LESS);
 		//gl.glDepthFunc(gl.GL_GREATER);
@@ -650,6 +651,10 @@ public abstract class GlPangine extends Pangine {
 		    img.close();
 		}
 		update();
+		/*int err;
+		while ((err = gl.glGetError()) != gl.GL_NO_ERROR) {
+			System.err.println("Error: " + err);
+		}*/
 	}
 	
 	protected abstract void update();
