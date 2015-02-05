@@ -1,3 +1,19 @@
+1.1.0
+
+Fixed a depth bug.
+Minor bug fixes.
+Added Royal Robe and Crown (plus an Achievement for wearing them).
+Added night-sky levels (plus a new Enemy for those levels).
+Added debug clipboard import and map movement mode commands.
+
+*****
+
+1.0.0
+
+Initial release.
+
+*****
+
 b-0001
 
 LwjglPanmage

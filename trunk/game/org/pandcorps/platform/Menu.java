@@ -2952,8 +2952,14 @@ public class Menu {
 			    msg = pc.profile.availableJumpModes.add(Integer.valueOf(Player.JUMP_FLY)) ? MSG_OK : MSG_LIMIT;
 			} else if ("addarmor".equalsIgnoreCase(cmd)) {
 				msg = pc.profile.availableClothings.add(Avatar.getClothing("Armor")) ? MSG_OK : MSG_LIMIT;
+			} else if ("setmapnorm".equalsIgnoreCase(cmd)) {
+				Map.modeMove = Map.MOVE_NORMAL;
+				msg = MSG_OK;
 			} else if ("setmapfree".equalsIgnoreCase(cmd)) {
 				Map.modeMove = Map.MOVE_ANY_PATH;
+				msg = MSG_OK;
+			} else if ("setmaptile".equalsIgnoreCase(cmd)) {
+				Map.modeMove = Map.MOVE_ANY_TILE;
 				msg = MSG_OK;
 			} else if ("setsnow".equalsIgnoreCase(cmd)) {
 				msg = setMapTheme(MapTheme.Snow);
