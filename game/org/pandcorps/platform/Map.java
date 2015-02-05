@@ -167,9 +167,9 @@ public class Map {
 	
 	private static MapPlayer player = null;
 	
-	private final static short MOVE_NORMAL = 0;
+	protected final static short MOVE_NORMAL = 0;
 	protected final static short MOVE_ANY_PATH = 1;
-	private final static short MOVE_ANY_TILE = 2;
+	protected final static short MOVE_ANY_TILE = 2;
 	protected static short modeMove = MOVE_NORMAL;
 	
 	private static boolean waiting = true;
