@@ -3006,6 +3006,7 @@ public class Menu {
 				    }
 				    final String importedName = tprf.getName();
 					Iotil.writeFile(Profile.getFileName(importedName), prf);
+					Iotil.delete(Profile.getMapFileName(importedName));
 					if (importedName.equals(pc.profile.getName())) {
 					    engine.exit();
 					}

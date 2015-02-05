@@ -1,4 +1,4 @@
-1.1.0
+1.1.0 (3)
 
 Fixed a depth bug.
 Minor bug fixes.
@@ -8,7 +8,7 @@ Added debug clipboard import and map movement mode commands.
 
 *****
 
-1.0.0
+1.0.0 (1)
 
 Initial release.
 
