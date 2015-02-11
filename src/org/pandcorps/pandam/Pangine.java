@@ -1038,7 +1038,7 @@ public abstract class Pangine {
 		screenShotDst = null;
 	}
 	
-	public abstract String getClipboard();
+	public abstract void getClipboard(final Handler<String> handler);
 	
 	public abstract void setClipboard(final String value);
 	

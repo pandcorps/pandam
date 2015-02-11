@@ -164,8 +164,8 @@ public final class UnitPangine extends Pangine {
 	//}
 	
 	@Override
-	public final String getClipboard() {
-	    return null;
+	public final void getClipboard(final Handler<String> handler) {
+		handler.handle(null);
 	}
     
 	@Override
