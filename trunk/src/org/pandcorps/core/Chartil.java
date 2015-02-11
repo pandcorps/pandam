@@ -115,6 +115,11 @@ public final class Chartil {
     	b.append(value);
     }
     
+    public final static void set(final StringBuffer b, final CharSequence value) {
+    	clear(b);
+    	b.append(value);
+    }
+    
     public final static String padZero(final int i, final int size) {
         final String s = Integer.toString(i);
         final int dif = size - s.length();
