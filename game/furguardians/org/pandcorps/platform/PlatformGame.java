@@ -486,17 +486,17 @@ public class PlatformGame extends BaseGame {
 	
 	private final static void buildGuy(final Img guy, final Img face, final Img[] tails, final Img eyes, final Img clothing,
 			final int y, final int t) {
-	    Imtil.copy(face, guy, 0, 0, face.getWidth(), face.getHeight(), 8, 1 + y, Imtil.COPY_FOREGROUND);
-	    /*if (hat != null) {
-	    	Imtil.copy(hat, guy, 0, 0, 18, 18, 8, 1 + y, Imtil.COPY_FOREGROUND);
-	    }*/
-        Imtil.copy(eyes, guy, 0, 0, 8, 4, 15, 10 + y, Imtil.COPY_FOREGROUND);
         if (tails != null) {
             Imtil.copy(tails[0], guy, 0, 0, 12, 12, t, 20 + y - t, Imtil.COPY_BACKGROUND);
         }
         if (clothing != null) {
             Imtil.copy(clothing, guy, 0, 0, 32, 32, 0, 0, Imtil.COPY_FOREGROUND);
         }
+        Imtil.copy(face, guy, 0, 0, face.getWidth(), face.getHeight(), 8, 1 + y, Imtil.COPY_FOREGROUND);
+        /*if (hat != null) {
+            Imtil.copy(hat, guy, 0, 0, 18, 18, 8, 1 + y, Imtil.COPY_FOREGROUND);
+        }*/
+        Imtil.copy(eyes, guy, 0, 0, 8, 4, 15, 10 + y, Imtil.COPY_FOREGROUND);
 	}
 	
 	private final static void buildGuyRide(final Img guy, final Img face, final Img eyes, final Img clothing) {
