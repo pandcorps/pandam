@@ -2842,7 +2842,7 @@ public class Menu {
 	
 	protected final static class ConsoleScreen extends PlayerScreen {
 		private Input input = null;
-		private final StringBuilder info = new StringBuilder();
+		private final StringBuffer info = new StringBuffer();
 		
 		protected ConsoleScreen(final PlayerContext pc) {
             super(pc, false);
@@ -2883,6 +2883,8 @@ public class Menu {
 		private final static String MSG_OK = "OK";
 		private final static String MSG_RESTART = "OK, need restart";
 		private final static String MSG_LIMIT = "Error, limit";
+		private final static String MSG_WAIT = "Waiting";
+		private final static String MSG_SKIP = "og.pandcorps.skip";
 		
 		private interface ExecHandler {
 			public String run(final String cmd);
@@ -2991,27 +2993,34 @@ public class Menu {
 				Pangine.getEngine().setClipboard(Savtil.toString(pc.profile));
 				msg = MSG_OK;
 			} else if ("import".equalsIgnoreCase(cmd)) {
+				setMsg(MSG_WAIT);
 				final Pangine engine = Pangine.getEngine();
-				final String prf = engine.getClipboard();
-				if (Chartil.isEmpty(prf)) {
-					msg = "Missing";
-				} else if (!prf.startsWith(PlatformGame.SEG_PRF)) {
-					msg = "Invalid";
-				} else {
-				    final Profile tprf = new Profile();
-				    try {
-				        tprf.load(SegmentStream.openString(prf).readRequire(PlatformGame.SEG_PRF));
-				    } catch (final IOException e) {
-				        throw new RuntimeException(e);
-				    }
-				    final String importedName = tprf.getName();
-					Iotil.writeFile(Profile.getFileName(importedName), prf);
-					Iotil.delete(Profile.getMapFileName(importedName));
-					if (importedName.equals(pc.profile.getName())) {
-					    engine.exit();
-					}
-					msg = MSG_OK;
-				}
+				engine.getClipboard(new Handler<String>() {
+					@Override
+					public void handle(final String prf) {
+						final String msg;
+						if (Chartil.isEmpty(prf)) {
+							msg = "Missing";
+						} else if (!prf.startsWith(PlatformGame.SEG_PRF)) {
+							msg = "Invalid";
+						} else {
+						    final Profile tprf = new Profile();
+						    try {
+						        tprf.load(SegmentStream.openString(prf).readRequire(PlatformGame.SEG_PRF));
+						    } catch (final IOException e) {
+						        throw new RuntimeException(e);
+						    }
+						    final String importedName = tprf.getName();
+							Iotil.writeFile(Profile.getFileName(importedName), prf);
+							Iotil.delete(Profile.getMapFileName(importedName));
+							if (importedName.equals(pc.profile.getName())) {
+							    engine.exit();
+							}
+							msg = MSG_OK;
+						}
+						setMsg(msg);
+					}});
+				msg = MSG_SKIP;
 			} else if ("delete".equalsIgnoreCase(cmd)) {
 				execHandler = new ExecHandler() {
 					@Override public final String run(final String cmd) {
@@ -3033,6 +3042,12 @@ public class Menu {
 			} else {
 				msg = "Unknown command";
 			}
+			if (!MSG_SKIP.equals(msg)) {
+				setMsg(msg);
+			}
+		}
+		
+		private final void setMsg(final String msg) {
 			Chartil.set(info, msg);
 		}
 		
