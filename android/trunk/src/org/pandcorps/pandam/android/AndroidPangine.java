@@ -290,8 +290,11 @@ public class AndroidPangine extends GlPangine {
     }
     
     @Override
-    public final String getClipboard() {
-    	return getClip().getClipboard();
+    public final void getClipboard(final Handler<String> handler) {
+    	context.runOnUiThread(new Runnable() {
+			@Override public final void run() {
+				handler.handle(getClip().getClipboard());
+			}});
 	}
 	
 	@Override
