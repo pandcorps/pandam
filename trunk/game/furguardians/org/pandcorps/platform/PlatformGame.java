@@ -1813,7 +1813,7 @@ public class PlatformGame extends BaseGame {
 	}
 	
 	protected final static List<String> getAnimals() {
-	    return Arrays.asList("Bear", "Cat", "Dog", "Koala", "Mouse", "Rabbit", "Rhino");
+	    return Arrays.asList("Bear", "Cat", "Dog", "Horse", "Koala", "Mouse", "Rabbit", "Rhino");
 	}
 	
 	protected final static int getNumEyes() {
