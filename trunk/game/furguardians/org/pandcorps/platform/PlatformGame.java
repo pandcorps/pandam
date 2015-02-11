@@ -486,7 +486,7 @@ public class PlatformGame extends BaseGame {
 	
 	private final static void buildGuy(final Img guy, final Img face, final Img[] tails, final Img eyes, final Img clothing,
 			final int y, final int t) {
-	    Imtil.copy(face, guy, 0, 0, 18, 18, 8, 1 + y, Imtil.COPY_FOREGROUND);
+	    Imtil.copy(face, guy, 0, 0, face.getWidth(), face.getHeight(), 8, 1 + y, Imtil.COPY_FOREGROUND);
 	    /*if (hat != null) {
 	    	Imtil.copy(hat, guy, 0, 0, 18, 18, 8, 1 + y, Imtil.COPY_FOREGROUND);
 	    }*/
@@ -500,7 +500,7 @@ public class PlatformGame extends BaseGame {
 	}
 	
 	private final static void buildGuyRide(final Img guy, final Img face, final Img eyes, final Img clothing) {
-		Imtil.copy(face, guy, 0, 0, 18, 18, 8, 0, Imtil.COPY_FOREGROUND);
+		Imtil.copy(face, guy, 0, 0, face.getWidth(), face.getHeight(), 8, 0, Imtil.COPY_FOREGROUND);
 		Imtil.copy(eyes, guy, 0, 0, 8, 4, 15, 9, Imtil.COPY_FOREGROUND);
 		if (clothing != null) {
             Imtil.copy(clothing, guy, 0, 0, 32, 32, 0, 0, Imtil.COPY_FOREGROUND);
@@ -694,7 +694,9 @@ public class PlatformGame extends BaseGame {
 		}
 		
 		if (full) {
+		    ImtilX.validateDefault = false;
 			final Img[] faceMap = loadChrStrip("FaceMap" + anm + ".png", 18, pi.f);
+			ImtilX.validateDefault = true;
 			final Img[] hatMapRaw = (avatar.hat.clth == null) ? null : avatar.hat.clth.mapImgs;
 			if (hatMapRaw != null) {
 				final Img[] hatMap, maskMap;
@@ -712,8 +714,8 @@ public class PlatformGame extends BaseGame {
 			
 			final String rpre = fpre + "run.";
 			if (needDragon) {
-				final Img guy0 = guys[0];
-				Imtil.copy(faceMap[1], guy0, 0, 0, 18, 18, 7, 0, Imtil.COPY_FOREGROUND);
+				final Img guy0 = guys[0], face1 = faceMap[1];
+				Imtil.copy(face1, guy0, 0, 0, face1.getWidth(), face1.getHeight(), 7, 0, Imtil.COPY_FOREGROUND);
 				Imtil.copy(eyes, guy0, 0, 0, 4, 4, 18, 9, Imtil.COPY_FOREGROUND);
 				if (tails != null) {
 					Imtil.copy(tails[1], guy0, 0, 0, 12, 12, 0, 19, Imtil.COPY_BACKGROUND);
@@ -764,7 +766,7 @@ public class PlatformGame extends BaseGame {
 				if (south == null) {
 					continue;
 				}
-				Imtil.copy(faceSouth, south, 0, 0, 18, 18, 7, 5, Imtil.COPY_FOREGROUND);
+				Imtil.copy(faceSouth, south, 0, 0, faceSouth.getWidth(), faceSouth.getHeight(), 7, 5, Imtil.COPY_FOREGROUND);
 				Imtil.copy(eyes, south, 0, 0, 8, 4, 12, 14, Imtil.COPY_FOREGROUND);
 			}
 			final int drgnY = 12;
@@ -799,7 +801,7 @@ public class PlatformGame extends BaseGame {
                     Imtil.copy(clothingMap[east == east1 ? 1 : 2], east, 0, 0, 32, 32, 0, 0, Imtil.COPY_FOREGROUND);
                     //Imtil.copy(clothingMap[2], east2, 0, 0, 32, 32, 0, 0, Imtil.COPY_FOREGROUND);
                 }
-				Imtil.copy(faceEast, east, 0, 0, 18, 18, 7, 5, Imtil.COPY_FOREGROUND);
+				Imtil.copy(faceEast, east, 0, 0, faceEast.getWidth(), faceEast.getHeight(), 7, 5, Imtil.COPY_FOREGROUND);
 				if (tails != null) {
 					Imtil.copy(tails[1], east, 0, 0, 12, 12, 1, 20, Imtil.COPY_BACKGROUND);
 				}
@@ -923,7 +925,7 @@ public class PlatformGame extends BaseGame {
 			if (north == null) {
 				continue;
 			}
-			Imtil.copy(faceNorth, north, 0, 0, 18, 18, 7, drgn == null ? 5 : 0, Imtil.COPY_FOREGROUND);
+			Imtil.copy(faceNorth, north, 0, 0, faceNorth.getWidth(), faceNorth.getHeight(), 7, drgn == null ? 5 : 0, Imtil.COPY_FOREGROUND);
 		}
 		if (drgn != null) {
 			north2 = Imtil.copy(north1);

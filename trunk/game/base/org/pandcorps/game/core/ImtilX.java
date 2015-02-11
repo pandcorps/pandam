@@ -29,6 +29,7 @@ public final class ImtilX {
 	public final static int DIM = 16;
 	public static Pancolor outlineSrc = null;
     public static Pancolor outlineDst = null;
+    public static boolean validateDefault = true;
     
 	private ImtilX() {
 		throw new Error();
@@ -47,7 +48,7 @@ public final class ImtilX {
     }
     
     public final static Img loadImage(final String path, final int dim, ReplacePixelFilter filter) {
-        return loadImage(path, dim, filter, true);
+        return loadImage(path, dim, filter, validateDefault);
     }
     
     public final static Img loadImage(final String path, int dim, ReplacePixelFilter filter, final boolean validate) {
