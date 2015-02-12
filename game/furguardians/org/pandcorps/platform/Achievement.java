@@ -34,14 +34,13 @@ public abstract class Achievement extends FinName {
 		new NoEnemyFeat(), new AllEnemyFeat(),
 		new RankFeat("Promoted", 2), new RankFeat("Knighted", 25),
 		new WordFeat("Wordsmith", 5), new WordFeat("Lexicon", 30),
-		new MonarchFeat()
+		new MonarchFeat(), new PegasusFeat()
 		// level w/ no damage
 		// Bear Market, Finish Level w/ no gems
 		// Bull Market, Collect all gems in a Level
 		// Juggernaut, Break all blocks in a Level
 		// block milestones
 		// Gem milestones
-		// Pegasus, Finish Level as a winged horse
 		// Beyond Belief, Finish Level as a flying pig
 		// Babe, Finish Level as a blue bull/ox
 		// Menagerie (Zoologist), Use each animal to finish a Level
@@ -114,6 +113,20 @@ public abstract class Achievement extends FinName {
 	    public abstract boolean isMet(final Statistics stats);
 	}
 	
+	private abstract static class AvatarFeat extends Achievement {
+        protected AvatarFeat(final String name, final String desc, final int award) {
+            super(name, desc, award);
+        }
+        
+        @Override
+        public final boolean isMet(final PlayerContext pc) {
+            final Avatar avt = pc.profile.currentAvatar;
+            return (avt != null) && isMet(avt);
+        }
+        
+        public abstract boolean isMet(final Avatar avt);
+    }
+	
 	private abstract static class CurrentFeat extends Achievement {
         protected CurrentFeat(final String name, final String desc, final int award) {
             super(name, desc, award);
@@ -183,18 +196,28 @@ public abstract class Achievement extends FinName {
 		}
 	}
 	
-	private final static class MonarchFeat extends Achievement {
+	private final static class MonarchFeat extends AvatarFeat {
         protected MonarchFeat() {
             super("Monarch", "Wear the Royal Robe and Crown", 5000);
         }
         
         @Override
-        public final boolean isMet(final PlayerContext pc) {
-            final Avatar avt = pc.profile.currentAvatar;
-            if (avt == null || avt.clothing == null || avt.hat == null) {
+        public final boolean isMet(final Avatar avt) {
+            if (avt.clothing == null || avt.hat == null) {
                 return false;
             }
             return Avatar.CLOTHING_ROYAL_ROBE.equals(Player.getName(avt.clothing)) && Avatar.HAT_CROWN.equals(Player.getName(avt.hat));
+        }
+    }
+	
+	private final static class PegasusFeat extends AvatarFeat {
+        protected PegasusFeat() {
+            super("Pegasus", "Add Wings to a Horse", 1250);
+        }
+        
+        @Override
+        public final boolean isMet(final Avatar avt) {
+            return "Horse".equals(avt.anm) && avt.jumpMode == Player.JUMP_FLY;
         }
     }
 	
