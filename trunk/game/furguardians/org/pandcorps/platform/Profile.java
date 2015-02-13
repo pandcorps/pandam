@@ -44,7 +44,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
     private int gems = 0;
     protected final TreeSet<Integer> availableJumpModes = new TreeSet<Integer>(); // Index stored as byte in JumpMode
     protected final TreeSet<Integer> triedJumpModes = new TreeSet<Integer>();
-    protected final TreeSet<Integer> availableAssists = new TreeSet<Integer>();
+    private final TreeSet<Integer> availableAssists = new TreeSet<Integer>();
     private final TreeSet<Integer> activeAssists = new TreeSet<Integer>();
     protected boolean autoRun = false;
     protected int frameRate = DEF_FRAME_RATE;
@@ -348,21 +348,37 @@ gems = 1000000;
     }
     
     private final static Integer ASSIST_INVINCIBILITY = Integer.valueOf(4);
+    private final static Integer ASSIST_DRAGON_STOMP = Integer.valueOf(5);
     
     protected final static Assist[] ASSISTS = new Assist[] {
-        new GemAssist(2),
-        new GemAssist(4),
-        new GemAssist(8),
-        new GemAssist(16), // Combine for a max 1024 multiplier
-        new Assist("Invincibility", 1000000)
+        new GemAssist(0, 2), // Don't change order; save file refers to these indices
+        new GemAssist(1, 4),
+        new GemAssist(2, 8),
+        new GemAssist(3, 16), // Combine for a max 1024 multiplier
+        new Assist("Invincibility", 4, 1000000),
+        new Assist("Dragon Stomp", 5, 150000)
+    };
+    
+    protected final static Assist[] PUBLIC_ASSISTS = new Assist[] {
+    	ASSISTS[5]
     };
     
     public static class Assist extends FinName {
+    	private final int index;
         private final int cost;
         
-        private Assist(final String name, final int cost) {
+        private Assist(final String name, final int index, final int cost) {
             super(name);
+            this.index = index;
             this.cost = cost;
+        }
+        
+        public final int getIndex() {
+            return index;
+        }
+        
+        private final Integer getKey() {
+        	return Integer.valueOf(index);
         }
         
         public final int getCost() {
@@ -373,22 +389,30 @@ gems = 1000000;
     private final static class GemAssist extends Assist {
         private final int n;
         
-        private GemAssist(final int n) {
-            super("Gems x " + n, n * 50000);
+        private GemAssist(final int index, final int n) {
+            super("Gems x " + n, index, n * 50000);
             this.n = n;
         }
     }
     
-    public final boolean isAssistAvailable(final int i) {
-        return availableAssists.contains(Integer.valueOf(i));
+    public final static Assist getAssist(final String name) {
+    	return Player.get(ASSISTS, name);
     }
     
-    public final boolean isAssistActive(final int i) {
-        return activeAssists.contains(Integer.valueOf(i));
+    public final boolean isAssistAvailable(final Assist a) {
+        return availableAssists.contains(a.getKey());
     }
     
-    public final void toggleAssist(final int i) {
-        final Integer key = Integer.valueOf(i);
+    public final void addAvailableAssist(final Assist a) {
+    	availableAssists.add(a.getKey());
+    }
+    
+    public final boolean isAssistActive(final Assist a) {
+        return activeAssists.contains(a.getKey());
+    }
+    
+    public final void toggleAssist(final Assist a) {
+        final Integer key = a.getKey();
         if (!activeAssists.remove(key)) {
             activeAssists.add(key);
         }
@@ -428,6 +452,10 @@ gems = 1000000;
     
     public final boolean isInvincible() {
         return activeAssists.contains(ASSIST_INVINCIBILITY);
+    }
+    
+    public final boolean isDragonStomping() {
+        return activeAssists.contains(ASSIST_DRAGON_STOMP);
     }
     
     public final int getRank() {
