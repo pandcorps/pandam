@@ -936,6 +936,10 @@ public class Menu {
             PlatformGame.setScreen(new OptionsScreen(pc));
         }
 		
+		protected final void goPerks() {
+            PlatformGame.setScreen(new AssistScreen(pc));
+        }
+		
 		protected final void reloadAnimalStrip() {
 			reloadAnimalStrip(pc, actor);
 		}
@@ -1476,7 +1480,7 @@ public class Menu {
             }
             final MsgCloseListener astLsn = new MsgCloseListener() {
                 @Override public final void onClose() {
-                    PlatformGame.setScreen(new AssistScreen(pc)); }};
+                    goPerks(); }};
             x = addPipe(x, y);
             x = addLink("Perks", astLsn, x, y);
 			final MsgCloseListener prfLsn = new MsgCloseListener() {
@@ -2200,12 +2204,26 @@ public class Menu {
         
         protected AssistScreen(final PlayerContext pc) {
             super(pc, false);
+            tabsSupported = true;
         }
         
         @Override
-        protected final void menu() throws Exception {
-            final int left = getLeft();
-            int y = getTop();
+		protected final void menu() {
+			if (isTabEnabled()) {
+				menuTouch();
+			} else {
+				menuClassic();
+			}
+		}
+		
+		protected final void menuTouch() {
+			createAssistList(touchRadioX, touchRadioY);
+			newTab(PlatformGame.menuCheck, "Done", new Runnable() {@Override public final void run() {exit();}});
+            newTabs();
+            registerBackExit();
+		}
+		
+		private final void createAssistList(final int x, final int y) {
             final Assist[] assists = Profile.PUBLIC_ASSISTS;
             as = new ArrayList<StringBuilder>(assists.length);
             for (final Assist a : assists) {
@@ -2231,12 +2249,18 @@ public class Menu {
                         }
                     }
                 }};
-            addRadio("Assists", as, aSubLsn, aLsn, left, y);
+            addRadio("Assists", as, aSubLsn, aLsn, x, y);
             initAssists();
-            y -= 64;
-            addExit("Back", left, y);
             highlightAssist(assists[0]);
         }
+		
+		protected final void menuClassic() {
+			final int left = getLeft();
+            int y = getTop();
+            createAssistList(left, y);
+            y -= 64;
+            addExit("Back", left, y);
+		}
         
         private final Assist getAssist(final Object event) {
         	return Profile.getAssist(event.toString().substring(2));
@@ -2264,7 +2288,11 @@ public class Menu {
         @Override
         protected void onExit() {
         	save();
-            goProfile();
+        	if (isTabEnabled()) {
+        		goOptions();
+        	} else {
+        		goProfile();
+        	}
         }
     }
 	
@@ -2665,6 +2693,7 @@ public class Menu {
             
             newTab(PlatformGame.menuCheck, "Done", new Runnable() {@Override public final void run() {exit();}});
             newTab(PlatformGame.menuMusic, "Music", new Runnable() {@Override public final void run() {goMusic();}});
+            newTab(PlatformGame.menuQuestion, "Perks", new Runnable() {@Override public final void run() {goPerks();}});
             if (pc.profile.consoleEnabled) {
             	newTab(PlatformGame.menuKeyboard, "Debug", new Runnable() {@Override public final void run() {goConsole();}});
             }
