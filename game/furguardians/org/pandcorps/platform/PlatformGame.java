@@ -235,6 +235,7 @@ public class PlatformGame extends BaseGame {
 	protected static Panmage[] gemAchieve = null;
 	protected static Panmage gemShatter = null;
 	protected static Panimation spark = null;
+	protected static Panimation puff = null;
 	protected static Panimation teleport = null;
 	protected static Panimation projectile1 = null;
 	protected static Panimation marker = null;
@@ -1061,7 +1062,7 @@ public class PlatformGame extends BaseGame {
 			        if (a > 1 && enemy.timer > 0) {
                         return true;
                     }
-			        final int amt = (player != null && player.jumpMode == Player.JUMP_DRAGON) ? 2 : 1;
+			        final int amt = (player != null && player.isDragonStomping()) ? 2 : 1;
 			        if ((a + amt) <= n) {
                         if (enemy.hv > 0) {
                             enemy.hv += amt;
@@ -1157,7 +1158,7 @@ public class PlatformGame extends BaseGame {
                 }};
             armoredImp.splatDecider = new InteractionHandler() {
                 @Override public final boolean onInteract(final Enemy enemy, final Player player) {
-                    return player == null || player.jumpMode != Player.JUMP_DRAGON;
+                    return player == null || !player.isDragonStomping();
                 }};
 			armoredImp.splatHandler = new BurstHandler() {@Override public final void onBurst(final CustomBurst burst) {
 				final Enemy ball = new ArmorBall(armorBall, burst);
@@ -1223,7 +1224,7 @@ public class PlatformGame extends BaseGame {
 			final EnemyDefinition spikedImp = new EnemyDefinition("Spiked Imp", 10, null, true);
 			spikedImp.stompHandler = new InteractionHandler() {
                 @Override public final boolean onInteract(final Enemy enemy, final Player player) {
-                	if (player.jumpMode == Player.JUMP_DRAGON) {
+                	if (player.isDragonStomping()) {
                 		return false;
                 	}
                     player.startHurt();
@@ -1319,7 +1320,8 @@ public class PlatformGame extends BaseGame {
 		loaders.add(new Runnable() { @Override public final void run() {
 		    final Panframe[] sa = createFrames("spark", "org/pandcorps/platform/res/misc/Spark.png", 8, 1);
 		    spark = engine.createAnimation(PRE_ANM + "spark", sa[0], sa[1], sa[2], sa[3], sa[2], sa[1], sa[0]);
-		    Spark.class.getClass(); }}); // Force class load? Save time later?
+		    Spark.class.getClass(); // Force class load? Save time later?
+		    puff = createAnm("puff", "org/pandcorps/platform/res/misc/Puff.png", 8, 3, CENTER_8); }});
 	    
 		loaders.add(new Runnable() { @Override public final void run() {
 			teleport = createAnm("teleport", "org/pandcorps/platform/res/enemy/Teleport.png", ImtilX.DIM, 5, Enemy.DEFAULT_O); }});
