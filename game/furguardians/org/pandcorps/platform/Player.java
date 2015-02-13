@@ -446,7 +446,7 @@ public class Player extends Character implements CollisionListener {
 	}
 	
 	protected boolean isDragonStomping() {
-		return jumpMode == JUMP_DRAGON;
+		return (jumpMode == JUMP_DRAGON) || pc.profile.isDragonStomping();
 	}
 	
 	private final void evaluateDragonStomp() {

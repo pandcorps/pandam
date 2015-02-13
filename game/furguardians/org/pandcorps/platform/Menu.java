@@ -2206,26 +2206,25 @@ public class Menu {
         protected final void menu() throws Exception {
             final int left = getLeft();
             int y = getTop();
-            final Assist[] assists = Profile.ASSISTS;
+            final Assist[] assists = Profile.PUBLIC_ASSISTS;
             as = new ArrayList<StringBuilder>(assists.length);
             for (final Assist a : assists) {
                 as.add(new StringBuilder("  " + a.getName()));
             }
             final RadioSubmitListener aLsn = new RadioSubmitListener() {
                 @Override public final void onSubmit(final RadioSubmitEvent event) {
-                    highlightAssist(event.getIndex(), getAssist(event));
+                    highlightAssist(getAssist(event));
                 }};
             final RadioSubmitListener aSubLsn = new RadioSubmitListener() {
                 @Override public final void onSubmit(final RadioSubmitEvent event) {
                     final Assist a = getAssist(event);
-                    final int index = event.getIndex();
-                    if (pc.profile.isAssistAvailable(index)) {
-                    	toggleAssist(index);
+                    if (pc.profile.isAssistAvailable(a)) {
+                    	toggleAssist(a);
                     } else {
                         final int cost = a.getCost();
                         if (pc.profile.spendGems(cost)) {
-                            pc.profile.availableAssists.add(Integer.valueOf(index));
-                            toggleAssist(index);
+                            pc.profile.addAvailableAssist(a);
+                            toggleAssist(a);
                             setInfo("Purchased!");
                         } else {
                             setInfo("You need more Gems");
@@ -2236,30 +2235,29 @@ public class Menu {
             initAssists();
             y -= 64;
             addExit("Back", left, y);
-            highlightAssist(0, Profile.ASSISTS[0]);
+            highlightAssist(assists[0]);
         }
         
-        private final Assist getAssist(final RadioSubmitEvent event) {
-        	return Player.get(Profile.ASSISTS, event.toString().substring(2));
+        private final Assist getAssist(final Object event) {
+        	return Profile.getAssist(event.toString().substring(2));
         }
         
-        private final void highlightAssist(final int index, final Assist a) {
-        	if (pc.profile.isAssistAvailable(index)) {
+        private final void highlightAssist(final Assist a) {
+        	if (pc.profile.isAssistAvailable(a)) {
                 clearInfo();
             } else {
                 setInfo("Buy for " + a.getCost() + "?");
             }
         }
         
-        private final void toggleAssist(final int index) {
-            pc.profile.toggleAssist(index);
+        private final void toggleAssist(final Assist a) {
+            pc.profile.toggleAssist(a);
             initAssists();
         }
         
         private final void initAssists() {
-        	final int size = as.size();
-        	for (int i = 0; i < size; i++) {
-        		as.get(i).setCharAt(0, getFlag(pc.profile.isAssistActive(i)));
+        	for (final StringBuilder a : as) {
+        		a.setCharAt(0, getFlag(pc.profile.isAssistActive(getAssist(a))));
         	}
         }
         
