@@ -350,7 +350,7 @@ gems = 1000000;
     private final static Integer ASSIST_INVINCIBILITY = Integer.valueOf(4);
     private final static Integer ASSIST_DRAGON_STOMP = Integer.valueOf(5);
     
-    protected final static Assist[] ASSISTS = new Assist[] {
+    private final static Assist[] ASSISTS = new Assist[] {
         new GemAssist(0, 2), // Don't change order; save file refers to these indices
         new GemAssist(1, 4),
         new GemAssist(2, 8),
