@@ -23,6 +23,7 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.platform;
 
 import org.pandcorps.core.*;
+import org.pandcorps.game.actor.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.Panteraction.*;
 import org.pandcorps.pandam.event.*;
@@ -444,6 +445,24 @@ public class Player extends Character implements CollisionListener {
 		hv = -VEL_WALK;
 	}
 	
+	protected boolean isDragonStomping() {
+		return jumpMode == JUMP_DRAGON;
+	}
+	
+	private final void evaluateDragonStomp() {
+		if (isDragonStomping()) {
+			final Panple pos = getPosition();
+			final int r = 6, d = r * 2;
+			for (int i = 0; i < 2; i++) {
+				final Burst b = new Burst(PlatformGame.puff);
+				PlatformGame.setPosition(b, pos.getX() - r + (i * d), pos.getY(), PlatformGame.DEPTH_SPARK);
+				b.setMirror(i > 0);
+		        PlatformGame.room.addActor(b);
+			}
+			PlatformGame.soundWhoosh.startSound();
+		}
+	}
+	
 	private boolean isInvincible() {
 		return hurtTimer > 0 || mode == MODE_RETURN || mode == MODE_FROZEN;
 	}
@@ -715,6 +734,12 @@ public class Player extends Character implements CollisionListener {
 	}
 	
 	@Override
+	protected void onLanded() {
+		super.onLanded();
+		evaluateDragonStomp();
+	}
+	
+	@Override
 	protected final boolean onAir() {
 		if (mode != MODE_FROZEN) {
 			changeView(v > 0 ? pc.guyJump : pc.guyFall);
@@ -749,6 +774,7 @@ public class Player extends Character implements CollisionListener {
 						v = VEL_BUMP;
 					}
     				stompTimer = 2;
+    				evaluateDragonStomp();
 				}
 		    } else if (aboveEnemy && stompTimer > 0) {
 		        /*
