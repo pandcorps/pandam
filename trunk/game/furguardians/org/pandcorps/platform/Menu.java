@@ -2925,33 +2925,19 @@ public class Menu {
 			} else if ("zoomdef".equalsIgnoreCase(cmd)) {
 				msg = setZoom(-1);
 			} else if ("addclothes".equalsIgnoreCase(cmd)) {
-			    boolean added = false;
-			    for (final Clothing c : Avatar.clothings) {
-			        if (pc.profile.availableClothings.add(c)) {
-			            added = true;
-			        }
-			    }
-			    msg = added ? MSG_OK : MSG_LIMIT;
+			    msg = getAddedMsg(addClothes());
 			} else if ("addhats".equalsIgnoreCase(cmd)) {
-			    boolean added = false;
-			    for (final Clothing c : Avatar.hats) {
-			        if (pc.profile.availableHats.add(c)) {
-			            added = true;
-			        }
-			    }
-			    msg = added ? MSG_OK : MSG_LIMIT;
+			    msg = getAddedMsg(addHats());
 			} else if ("addjumps".equalsIgnoreCase(cmd)) {
-			    boolean added = false;
-                for (final JumpMode jm : JumpMode.values()) {
-                    if (pc.profile.availableJumpModes.add(Integer.valueOf(jm.getIndex()))) {
-                        added = true;
-                    }
-                }
-                msg = added ? MSG_OK : MSG_LIMIT;
+                msg = getAddedMsg(addJumps());
 			} else if ("addwings".equalsIgnoreCase(cmd)) {
-			    msg = pc.profile.availableJumpModes.add(Integer.valueOf(Player.JUMP_FLY)) ? MSG_OK : MSG_LIMIT;
+			    msg = getAddedMsg(pc.profile.availableJumpModes.add(Integer.valueOf(Player.JUMP_FLY)));
 			} else if ("addarmor".equalsIgnoreCase(cmd)) {
-				msg = pc.profile.availableClothings.add(Avatar.getClothing("Armor")) ? MSG_OK : MSG_LIMIT;
+				msg = getAddedMsg(pc.profile.availableClothings.add(Avatar.getClothing("Armor")));
+			} else if ("addperks".equalsIgnoreCase(cmd)) {
+				msg = getAddedMsg(addPerks());
+			} else if ("addall".equalsIgnoreCase(cmd)) {
+				msg = getAddedMsg(addClothes() | addHats() | addJumps() | addPerks());
 			} else if ("setmapnorm".equalsIgnoreCase(cmd)) {
 				Map.modeMove = Map.MOVE_NORMAL;
 				msg = MSG_OK;
@@ -3053,6 +3039,52 @@ public class Menu {
 			Config.zoomMag = zoomMag;
 			Config.serialize();
 			return MSG_RESTART;
+		}
+		
+		private final static String getAddedMsg(final boolean added) {
+			return added ? MSG_OK : MSG_LIMIT;
+		}
+		
+		private final boolean addClothes() {
+			boolean added = false;
+		    for (final Clothing c : Avatar.clothings) {
+		        if (pc.profile.availableClothings.add(c)) {
+		            added = true;
+		        }
+		    }
+		    return added;
+		}
+		
+		private final boolean addHats() {
+			boolean added = false;
+		    for (final Clothing c : Avatar.hats) {
+		        if (pc.profile.availableHats.add(c)) {
+		            added = true;
+		        }
+		    }
+		    return added;
+		}
+		
+		private final boolean addJumps() {
+			boolean added = false;
+            for (final JumpMode jm : JumpMode.values()) {
+                if (pc.profile.availableJumpModes.add(Integer.valueOf(jm.getIndex()))) {
+                    added = true;
+                }
+            }
+            return added;
+		}
+		
+		private final boolean addPerks() {
+			boolean added = false;
+			final Profile prf = pc.profile;
+			for (final Assist a : Profile.PUBLIC_ASSISTS) {
+				if (!prf.isAssistAvailable(a)) {
+					prf.addAvailableAssist(a);
+					added = true;
+				}
+			}
+			return added;
 		}
 		
 		private final static String setMapTheme(final MapTheme theme) {
