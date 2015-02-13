@@ -267,7 +267,7 @@ public class PlatformGame extends BaseGame {
 	protected static Panmage menuPlus = null;
 	protected static Panmage menuMinus = null;
 	protected static Panmage menuExclaim = null;
-	//protected static Panmage menuQuestion = null;
+	protected static Panmage menuQuestion = null;
 	protected static Panmage menuOff = null;
 	protected static Panmage menuTrophy = null;
 	protected static Panmage menuStar = null;
@@ -1402,7 +1402,7 @@ public class PlatformGame extends BaseGame {
 			    menuPlus = createMenuImg("Plus");
 			    menuMinus = createMenuImg("Minus");
 			    menuExclaim = createMenuImg("Exclaim");
-			    //menuQuestion = createMenuImg("Question");
+			    menuQuestion = createMenuImg("Question");
 			    menuOff = createMenuImg("Off");
 			    menuTrophy = gemAchieve[0];
 			    menuStar = gemGoal[0];
