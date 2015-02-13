@@ -77,6 +77,9 @@ public abstract class Achievement extends FinName {
 	}
 	
 	public final static void evaluate(final PlayerContext pc) {
+		if (pc == null) {
+			return;
+		}
 		final Profile profile = pc.profile;
 		final Set<Integer> achieved = profile.achievements;
 		final int size = ALL.length;
@@ -100,27 +103,42 @@ public abstract class Achievement extends FinName {
 		}
 	}
 	
-	private abstract static class StatFeat extends Achievement {
-	    protected StatFeat(final String name, final String desc, final int award) {
+	private abstract static class ProfileFeat extends Achievement {
+	    protected ProfileFeat(final String name, final String desc, final int award) {
 	        super(name, desc, award);
 	    }
 	    
 	    @Override
         public final boolean isMet(final PlayerContext pc) {
-	        return isMet(pc.profile.stats);
+	    	final Profile prf = pc.profile;
+	        return (prf != null) && isMet(prf);
+	    }
+	    
+	    public abstract boolean isMet(final Profile prf);
+	}
+	
+	private abstract static class StatFeat extends ProfileFeat {
+	    protected StatFeat(final String name, final String desc, final int award) {
+	        super(name, desc, award);
+	    }
+	    
+	    @Override
+        public final boolean isMet(final Profile prf) {
+	    	final Statistics stats = prf.stats;
+	        return (stats != null) && isMet(stats);
 	    }
 	    
 	    public abstract boolean isMet(final Statistics stats);
 	}
 	
-	private abstract static class AvatarFeat extends Achievement {
+	private abstract static class AvatarFeat extends ProfileFeat {
         protected AvatarFeat(final String name, final String desc, final int award) {
             super(name, desc, award);
         }
         
         @Override
-        public final boolean isMet(final PlayerContext pc) {
-            final Avatar avt = pc.profile.currentAvatar;
+        public final boolean isMet(final Profile prf) {
+            final Avatar avt = prf.currentAvatar;
             return (avt != null) && isMet(avt);
         }
         
@@ -134,7 +152,8 @@ public abstract class Achievement extends FinName {
         
         @Override
         public final boolean isMet(final PlayerContext pc) {
-            return pc.player != null && pc.player.level && isMet(pc.player);
+        	final Player player = pc.player;
+            return (player != null) && player.level && isMet(player);
         }
         
         public abstract boolean isMet(final Player player);
@@ -182,7 +201,7 @@ public abstract class Achievement extends FinName {
         }
     }
 	
-	private final static class RankFeat extends Achievement {
+	private final static class RankFeat extends ProfileFeat {
 		private final int n;
 		
 		protected RankFeat(final String name, final int n) {
@@ -191,8 +210,8 @@ public abstract class Achievement extends FinName {
 		}
 		
 		@Override
-		public final boolean isMet(final PlayerContext pc) {
-			return pc.profile.getRank() >= n;
+		public final boolean isMet(final Profile prf) {
+			return prf.getRank() >= n;
 		}
 	}
 	
