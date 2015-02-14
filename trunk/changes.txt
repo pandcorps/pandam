@@ -1,5 +1,6 @@
 1.2.0 (5)
 
+Added horses.
 Added hair bow.
 Added Dragon Stomp perk.
 Fixed a clipboard import bug.
