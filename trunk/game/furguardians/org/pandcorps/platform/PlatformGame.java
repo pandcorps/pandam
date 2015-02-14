@@ -703,11 +703,20 @@ public class PlatformGame extends BaseGame {
 				final Img[] hatMap, maskMap;
 				hatMap = new Img[hatMapRaw.length];
 				filterStrip(hatMapRaw, hatMap, null, pi.hatFilter);
-				final boolean maskNeeded = ((Hat) avatar.hat.clth).maskNeeded;
+				final Hat hat = (Hat) avatar.hat.clth;
+				final boolean maskNeeded = hat.maskNeeded;
 				maskMap = maskNeeded ? loadChrStrip("mask/MaskMap" + anm + ".png", 18, null) : null;
 				final PixelMask srcMask = TransparentPixelMask.getInstance();
 				for (int i = 0; i < 3; i++) {
-					Imtil.copy(hatMap[i], faceMap[i], 0, 0, 18, 18, 0, 0, srcMask, maskNeeded ? new ImgPixelMask(maskMap[i], Pancolor.BLACK) : null);
+					final PixelMask dstMask;
+					if ((i == 2) && !hat.backNeeded) {
+						dstMask = VisiblePixelMask.getInstance();
+					} else if (maskNeeded) {
+						dstMask = new ImgPixelMask(maskMap[i], Pancolor.BLACK);
+					} else {
+						dstMask = null;
+					}
+					Imtil.copy(hatMap[i], faceMap[i], 0, 0, 18, 18, 0, 0, srcMask, dstMask);
 				}
 				Img.close(hatMap);
 				Img.close(maskMap);
