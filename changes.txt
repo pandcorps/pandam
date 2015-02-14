@@ -1,3 +1,11 @@
+1.2.0 (5)
+
+Added hair bow.
+Added Dragon Stomp perk.
+Fixed a clipboard import bug.
+
+*****
+
 1.1.0 (3)
 
 Fixed a depth bug.
