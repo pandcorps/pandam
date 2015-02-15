@@ -1781,6 +1781,15 @@ public class Menu {
 		@Override
 		protected void onExit() {
 		    if (save) {
+		    	if (pc != null) {
+		    		final Profile prf = pc.profile;
+		    		if (prf != null) {
+		    			final Avatar avt = prf.currentAvatar;
+		    			if (avt != null && Chartil.isEmpty(avt.getName())) {
+		    				avt.setName(getNewName(prf));
+		    			}
+		    		}
+		    	}
 		        save();
 		    }
 		    goProfile();
