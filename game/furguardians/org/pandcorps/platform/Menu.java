@@ -1602,7 +1602,7 @@ public class Menu {
 	
 	private final static boolean isNameFree(final Profile prf, final String name) {
         for (final Avatar avt : prf.avatars) {
-            if (Chartil.equals(name, avt.getName())) {
+            if (Pantil.equals(name, avt.getName())) {
                 return false;
             }
         }
