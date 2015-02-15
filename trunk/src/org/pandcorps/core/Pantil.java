@@ -72,11 +72,11 @@ public final class Pantil {
 	}
 
 	public final static boolean equals(final Object o1, final Object o2) {
-		return o1 == null ? o2 == null : o1.equals(o2);
+		return (o1 == null) ? (o2 == null) : o1.equals(o2);
 	}
 	
 	public final static <T> T nvl(final T t1, final T t2) {
-		return t1 == null ? t2 : t1;
+		return (t1 == null) ? t2 : t1;
 	}
 	
 	public final static <T> T nvl(final T t1, final T t2, final T t3) {
@@ -104,7 +104,7 @@ public final class Pantil {
     }
     
     public final static boolean booleanValue(final Boolean b, final boolean def) {
-        return b == null ? def : b.booleanValue();
+        return (b == null) ? def : b.booleanValue();
     }
 	
 	public final static Boolean toBoolean(final String value) {
@@ -112,7 +112,7 @@ public final class Pantil {
     }
 	
 	public final static int hashCode(final Object o) {
-	    return o == null ? 0 : o.hashCode();
+	    return (o == null) ? 0 : o.hashCode();
 	}
 	
 	public final static FloatBuffer allocateDirectFloatBuffer(final int capacity) {
