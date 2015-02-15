@@ -185,7 +185,7 @@ public class Pantext extends Panctor {
         //for (final String line : text) {
         for (int i = start; i < stop; i++) {
             final CharSequence line = text.get(i);
-            int lineLength = line.length();
+            int lineLength = Chartil.size(line);
             if (i == cursorLine) {
                 //lineLength = Math.max(lineLength, cursorChar + 1); // Moving cursor would change size?
                 lineLength++; // Only adding characters changes size?

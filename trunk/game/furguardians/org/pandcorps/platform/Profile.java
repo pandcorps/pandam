@@ -65,13 +65,36 @@ public class Profile extends PlayerData implements Segmented, Savable {
         availableJumpModes.add(Integer.valueOf(0));
     }
     
-    public Avatar getAvatar(final String name) {
-    	for (final Avatar avatar : avatars) {
-    		if (avatar.getName().equals(name)) {
-    			return avatar;
-    		}
+    private Avatar getAvatar(String name) {
+    	for (int i = 0; i < 2; i++) {
+	    	for (final Avatar avatar : avatars) {
+	    		if (Pantil.equals(avatar.getName(), name)) {
+	    			if (Chartil.isEmpty(name)) {
+	    				avatar.setName(Menu.getNewName(this));
+	    			}
+	    			return avatar;
+	    		}
+	    	}
+	    	if (name == null) {
+	    		name = Menu.NEW_AVATAR_NAME;
+	    	} else if (Menu.NEW_AVATAR_NAME.equals(name)) {
+	    		name = null;
+	    	} else {
+	    		break;
+	    	}
     	}
     	return null;
+    }
+    
+    public void setCurrentAvatar(final String name) {
+    	final Avatar avt = getAvatar(name);
+    	if (avt == null) {
+    		if (currentAvatar == null) {
+    			currentAvatar = Coltil.get(avatars, 0);
+    		}
+    		return;
+    	}
+    	currentAvatar = avt;
     }
     
     public void replaceAvatar(final Avatar avt) {
