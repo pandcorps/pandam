@@ -105,6 +105,7 @@ public class PlatformGame extends BaseGame {
 	OutputStream that writes to tmp file then swaps on close, keeping original as bak.
 	InputStream that reads bak file if can't find main.
 	Breaking block with Imp at edge above it can miss the Imp.
+	Menu.menuTouch - call allow method before processing a tab change or exit?
 	
 	Remove System.out/err/printStackTrace/etc.
 	Screen shots.
