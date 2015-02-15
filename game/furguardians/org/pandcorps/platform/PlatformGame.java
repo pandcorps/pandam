@@ -999,7 +999,7 @@ public class PlatformGame extends BaseGame {
         avatar.r = 0;
         avatar.g = 1;
         avatar.b = 1;*/
-        profile.currentAvatar = profile.getAvatar(curName);
+        profile.setCurrentAvatar(curName);
         //profile.ctrl = 0;
 		createAnimalStrip(profile, ctrl, index);
 		//profile.serialize("temptemp.txt");

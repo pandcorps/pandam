@@ -62,7 +62,7 @@ public class Menu {
     private final static String INFO_SAVED = "Saved images";
     private final static int Y_PLAYER = 16;
     private final static char CHAR_ON = 2;
-    private final static String NEW_AVATAR_NAME = "New";
+    protected final static String NEW_AVATAR_NAME = "New";
     private static boolean newProfile = false;
     private static int radioLinesPerPage = 5;
     
@@ -1428,7 +1428,7 @@ public class Menu {
             }
 			final AvtListener avtLsn = new AvtListener() {
 				@Override public final void update(final String value) {
-					pc.profile.currentAvatar = pc.profile.getAvatar(value); }};
+					pc.profile.setCurrentAvatar(value); }};
 			final RadioGroup avtGrp = addRadio("Pick Avatar", avatars, avtLsn, x, y);
 			avtGrp.setSelected(avatars.indexOf(pc.profile.currentAvatar.getName()));
 		}
@@ -1590,19 +1590,19 @@ public class Menu {
 		}
 	}
 	
-	private final static String getNewName(final Profile profile) {
-	    for (char c = 'A' - 1; c <= 'Z'; c++) {
-	        final String name = NEW_AVATAR_NAME + (c >= 'A' ? String.valueOf(c) : "");
-	        if (isNameFree(profile, name)) {
+	protected final static String getNewName(final Profile prf) {
+	    for (char c = ('A' - 1); c <= 'Z'; c++) {
+	        final String name = NEW_AVATAR_NAME + ((c >= 'A') ? String.valueOf(c) : "");
+	        if (isNameFree(prf, name)) {
 	            return name;
 	        }
 	    }
 	    return "RenameUs";
 	}
 	
-	private final static boolean isNameFree(final Profile profile, final String name) {
-        for (final Avatar avt : profile.avatars) {
-            if (name.equals(avt.getName())) {
+	private final static boolean isNameFree(final Profile prf, final String name) {
+        for (final Avatar avt : prf.avatars) {
+            if (Chartil.equals(name, avt.getName())) {
                 return false;
             }
         }
