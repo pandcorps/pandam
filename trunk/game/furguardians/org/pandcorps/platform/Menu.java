@@ -786,6 +786,12 @@ public class Menu {
 			return text;
 		}
 		
+		protected final Pantext addTitleCenteredTiny(final CharSequence title, final int y) {
+            final Pantext text = addTitleTiny(title, center, y);
+            text.centerX();
+            return text;
+        }
+		
 		protected final Pantext addTitle(final CharSequence title, final int x, final int y) {
 			return addTitle(new Pantext(Pantil.vmid(), PlatformGame.font, title), x, y);
 		}
@@ -1043,7 +1049,7 @@ public class Menu {
 	        final Panple titlePos = tm.getPosition(titleEnd, titleHeight);
 	        trademark = addTitle("" + Pantext.CHAR_TRADEMARK, 1 + (int) titlePos.getX(), 8 + (int) titlePos.getY());
 	        //addTitleCentered("Andrew Martin's Untitled Game" + Pantext.CHAR_TRADEMARK, engine.getEffectiveHeight() / 2);
-	        addTitleCentered("Copyright " + Pantext.CHAR_COPYRIGHT + " " + PlatformGame.YEAR + " " + PlatformGame.AUTHOR, bottom + 16);
+	        addTitleCenteredTiny("Copyright " + Pantext.CHAR_COPYRIGHT + " " + PlatformGame.YEAR + " " + PlatformGame.AUTHOR, bottom + 16);
 	        if (touch) {
 	        	text.register(new ActionEndListener() {@Override public void onActionEnd(final ActionEndEvent event) {
 		        	onAnything(event);
