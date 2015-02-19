@@ -309,6 +309,7 @@ public class Player extends Character implements CollisionListener {
 	protected Ai ai = null;
 	protected final boolean[] goalsMet = new boolean[Goal.NUM_ACTIVE_GOALS];
 	protected long lastThud = -30;
+	protected long lastDragonStomp = -30;
 	
 	public Player(final PlayerContext pc) {
 		super(PLAYER_X, PLAYER_H);
@@ -459,6 +460,11 @@ public class Player extends Character implements CollisionListener {
 	
 	private final void evaluateDragonStomp() {
 		if (isDragonStomping()) {
+			final long clock = Pangine.getEngine().getClock();
+			if (lastDragonStomp >= (clock - 3)) {
+				return;
+			}
+			lastDragonStomp = clock;
 			final Panple pos = getPosition();
 			final int r = 6, d = r * 2;
 			for (int i = 0; i < 2; i++) {
