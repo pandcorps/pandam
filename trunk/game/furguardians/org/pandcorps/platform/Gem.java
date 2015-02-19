@@ -118,6 +118,7 @@ public class Gem extends TileOccupant implements StepListener {
 				collect(dst, GemBumped.AWARD_DEF);
 				playSound();
 				destroy();
+				return;
 			}
 			vel.setMagnitude2(speed);
 			vel.setZ(0);
