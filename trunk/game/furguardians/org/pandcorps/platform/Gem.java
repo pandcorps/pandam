@@ -92,7 +92,7 @@ public class Gem extends TileOccupant implements StepListener {
 	}
 	
 	protected final static class GemAttracted extends Panctor implements StepListener {
-		private final static double speed = 4;
+		private final static double speed = 5;
 		private final Player dst;
 		private final Panple viewPos = new ImplPanple();
 		private final Panple vel = new ImplPanple();
