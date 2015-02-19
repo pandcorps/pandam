@@ -26,7 +26,7 @@ import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.impl.*;
 
 public class UnitPanplementation extends Panplementation {
-	private final Panple pos = new ImplPanple(0, 0, 0);
+	private final Panple pos = new ImplPanple();
 	private boolean vis = true;
 	private int rot = 0;
 	private boolean mirror = false;

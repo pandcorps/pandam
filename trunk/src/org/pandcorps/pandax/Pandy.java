@@ -28,11 +28,11 @@ import org.pandcorps.pandam.impl.*;
 
 // Pandam Body
 public class Pandy extends Panctor implements StepListener {
-	private final Panple vel = new ImplPanple(0, 0, 0);
+	private final Panple vel = new ImplPanple();
 	private final Panple acc;
 
 	public Pandy() {
-	    this(new ImplPanple(0, 0, 0));
+	    this(new ImplPanple());
 	}
 	
 	// Gravity will likely be a constant, so allow same Panple to be shared
@@ -42,7 +42,7 @@ public class Pandy extends Panctor implements StepListener {
 	
 	public Pandy(final String id) {
 		super(id);
-		acc = new ImplPanple(0, 0, 0);
+		acc = new ImplPanple();
 	}
 
 	@Override
