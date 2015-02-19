@@ -1949,7 +1949,7 @@ public class Menu {
             	label = "Power-up";
             }
             jmpRadio = addRadio(label, jmps, jmpSubLsn, jmpLsn, x, y, sub);
-            addDescription(x, y - 40);
+            addDescription(x, y - (24 + (radioLinesPerPage * 8)));
             initJumpMode();
         }
         
