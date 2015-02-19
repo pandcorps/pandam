@@ -53,20 +53,23 @@ public class Player extends Character implements CollisionListener {
 	protected final static byte JUMP_DRAGON = 5;
 	
 	public static enum JumpMode implements Named { // enum can't extend FinName
-	    Normal(MODE_NORMAL, "Normal", 0),
-	    High(JUMP_HIGH, "Spring Heels", 10000),
-	    Fly(JUMP_FLY, "Wings", 50000),
-	    Dragon(JUMP_DRAGON, "Dragon", 100000);
+	    Normal(MODE_NORMAL, "Normal", "Normal jumping", 0),
+	    High(JUMP_HIGH, "Spring Heels", "Jump higher", 10000),
+	    Fly(JUMP_FLY, "Wings", "Fly as high as you want", 50000),
+	    Dragon(JUMP_DRAGON, "Dragon", "Jump a bit higher, defeat armored/spiked enemies", 100000);
 	    
 	    private final byte index;
 	    
 	    private final String name;
 	    
+	    private final String desc;
+	    
 	    private final int cost;
 	    
-	    private JumpMode(final byte index, final String name, final int cost) {
+	    private JumpMode(final byte index, final String name, final String desc, final int cost) {
 	        this.index = index;
 	        this.name = name;
+	        this.desc = desc;
 	        this.cost = cost;
 	    }
 	    
@@ -77,6 +80,10 @@ public class Player extends Character implements CollisionListener {
 	    @Override
 	    public final String getName() {
 	        return name;
+	    }
+	    
+	    public final String getDescription() {
+	    	return desc;
 	    }
 	    
 	    public final int getCost() {
