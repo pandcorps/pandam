@@ -1608,6 +1608,10 @@ public class PlatformGame extends BaseGame {
 		act.getPosition().set(x, y, Level.tm.getForegroundDepth() + depth);
 	}
 	
+	protected final static void setDepth(final Panctor act, final float depth) {
+		act.getPosition().setZ(Level.tm.getForegroundDepth() + depth);
+	}
+	
 	protected final static void setPosition(final Player player, final float x, final float y) {
 		setPosition(player, x, y, getDepthPlayer(player.jumpMode));
 	}

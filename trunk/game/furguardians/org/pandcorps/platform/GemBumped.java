@@ -30,7 +30,7 @@ import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.*;
 
 public class GemBumped extends Pandy {
-	private final static Panple tilePos = new ImplPanple(0, 0, 0);
+	private final static Panple tilePos = new ImplPanple();
     protected final static int AWARD_DEF = 1;
     protected final static int AWARD_2 = AWARD_DEF * 10;
     protected final static int AWARD_3 = AWARD_2 * 10;

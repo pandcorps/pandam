@@ -547,7 +547,7 @@ public class Enemy extends Character {
 	public final static class Wisp extends Panctor implements Collidable, StepListener, AllOobListener {
 		protected final EnemyDefinition def;
 		private int timer = 0;
-		private final Panple vel = new ImplPanple(0, 0, 0);
+		private final Panple vel = new ImplPanple();
 		
 		protected Wisp(final EnemyDefinition def, final float x, final float y) {
 			this.def = def;
