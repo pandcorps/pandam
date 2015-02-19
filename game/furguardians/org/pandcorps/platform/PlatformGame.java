@@ -106,6 +106,7 @@ public class PlatformGame extends BaseGame {
 	InputStream that reads bak file if can't find main.
 	Breaking block with Imp at edge above it can miss the Imp.
 	Menu.menuTouch - call allow method before processing a tab change or exit?
+	MaskMap cache
 	
 	Remove System.out/err/printStackTrace/etc.
 	Screen shots.
@@ -706,7 +707,9 @@ public class PlatformGame extends BaseGame {
 				filterStrip(hatMapRaw, hatMap, null, pi.hatFilter);
 				final Hat hat = (Hat) avatar.hat.clth;
 				final boolean maskNeeded = hat.maskNeeded;
+				ImtilX.validateDefault = false;
 				maskMap = maskNeeded ? loadChrStrip("mask/MaskMap" + anm + ".png", 18, null) : null;
+				ImtilX.validateDefault = true;
 				final PixelMask srcMask = TransparentPixelMask.getInstance();
 				for (int i = 0; i < 3; i++) {
 					final PixelMask dstMask;
