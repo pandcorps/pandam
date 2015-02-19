@@ -1944,7 +1944,7 @@ public class Menu {
                 }};
             final String label;
             if (isTabEnabled()) {
-            	label = "Power-up (can only equip one at a time)";
+            	label = "Power-up (equip one at a time)";
             } else {
             	label = "Power-up";
             }
@@ -2281,7 +2281,8 @@ public class Menu {
                         }
                     }
                 }};
-            addRadio("Assists", as, aSubLsn, aLsn, x, y);
+            addRadio("Assists (can equip multiple)", as, aSubLsn, aLsn, x, y);
+            addDescription(x, y);
             initAssists();
             highlightAssist(assists[0]);
         }
@@ -2290,7 +2291,7 @@ public class Menu {
 			final int left = getLeft();
             int y = getTop();
             createAssistList(left, y);
-            y -= 64;
+            y -= 80;
             addExit("Back", left, y);
 		}
         
@@ -2304,6 +2305,7 @@ public class Menu {
             } else {
                 setInfo("Buy for " + a.getCost() + "?");
             }
+        	setDescription(a.getDescription());
         }
         
         private final void toggleAssist(final Assist a) {
