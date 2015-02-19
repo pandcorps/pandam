@@ -72,6 +72,7 @@ public class Menu {
 		protected ControlScheme ctrl = null;
 		private final boolean fadeIn;
 		protected final StringBuilder inf = new StringBuilder();
+		protected final StringBuilder desc = new StringBuilder();
 		protected TileMap tm = null;
 		protected Panmage timg = null;
 		protected Model actor = null;
@@ -899,7 +900,19 @@ public class Menu {
 		}
 		
 		protected final void clearInfo() {
-		    inf.setLength(0);
+			Chartil.clear(inf);
+		}
+		
+		protected final void addDescription(final int x, final int y) {
+			addTitleTiny(desc, x + (isTabEnabled() ? OFF_RADIO_LIST : 0), y);
+		}
+		
+		protected final void setDescription(final String val) {
+			Chartil.set(desc, val);
+		}
+		
+		protected final void clearDescription() {
+			Chartil.clear(desc);
 		}
 		
 		protected final int addExit(final String title, final int x, final int y) {
@@ -1897,6 +1910,7 @@ public class Menu {
             final AvtListener jmpLsn = new AvtListener() {
                 @Override public final void update(final String value) {
                     final JumpMode jm = Player.get(jumpModes, value);
+                    setDescription(jm.getDescription());
                     final byte index = jm.getIndex();
                     if (pc.profile.isJumpModeAvailable(index)) {
                         clearInfo();
@@ -1928,7 +1942,14 @@ public class Menu {
                         }
                     }
                 }};
-            jmpRadio = addRadio("Power-up", jmps, jmpSubLsn, jmpLsn, x, y, sub);
+            final String label;
+            if (isTabEnabled()) {
+            	label = "Power-up (can only equip one at a time)";
+            } else {
+            	label = "Power-up";
+            }
+            jmpRadio = addRadio(label, jmps, jmpSubLsn, jmpLsn, x, y, sub);
+            addDescription(x, y - 40);
             initJumpMode();
         }
         
@@ -2169,7 +2190,9 @@ public class Menu {
         }
         
         private final void initJumpMode() {
-            jmpRadio.setSelected(JumpMode.get(avt.jumpMode).getName());
+        	final JumpMode jm = JumpMode.get(avt.jumpMode);
+            jmpRadio.setSelected(jm.getName());
+            setDescription(jm.getDescription());
         }
         
         private final void setClothing(final GarbMenu menu, final Clothing c) {
@@ -2312,7 +2335,6 @@ public class Menu {
 		private final static byte TAB_FOES = 3;
 		protected static byte currentTab = TAB_AWARD;
 	    private RadioGroup achRadio = null;
-	    private final StringBuilder achDesc = new StringBuilder();
 	    private final StringBuilder rankDesc = new StringBuilder();
 	    private final List<Panctor> goalStars = new ArrayList<Panctor>(3);
 	    private final List<Panctor> rankStars = new ArrayList<Panctor>(Profile.POINTS_PER_RANK);
@@ -2397,7 +2419,7 @@ public class Menu {
                     setAchDesc(event.toString());
             }};
             achRadio = addRadio("Achievements", ach, achLsn, x, y);
-            addTitleTiny(achDesc, x + (isTabEnabled() ? OFF_RADIO_LIST : 0), y - 64);
+            addDescription(x, y - 64);
             initAchDesc();
 		}
 		
@@ -2600,7 +2622,7 @@ public class Menu {
                 }
                 newDesc = ach.getDescription() + " (" + ach.getAward() + ")";
             }
-            Chartil.set(achDesc, newDesc);
+            setDescription(newDesc);
         }
         
         private final void initAchDesc() {
@@ -2622,7 +2644,7 @@ public class Menu {
             if (focused == achRadio) {
                 initAchDesc();
             } else {
-                Chartil.clear(achDesc);
+                clearDescription();
             }
             return super.allow(focused);
         }
