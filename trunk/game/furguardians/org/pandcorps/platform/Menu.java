@@ -904,7 +904,7 @@ public class Menu {
 		}
 		
 		protected final void addDescription(final int x, final int y) {
-			addTitleTiny(desc, x + (isTabEnabled() ? OFF_RADIO_LIST : 0), y);
+			addTitleTiny(desc, x + (isTabEnabled() ? OFF_RADIO_LIST : 0), y - (24 + (radioLinesPerPage * 8)));
 		}
 		
 		protected final void setDescription(final String val) {
@@ -1949,7 +1949,7 @@ public class Menu {
             	label = "Power-up";
             }
             jmpRadio = addRadio(label, jmps, jmpSubLsn, jmpLsn, x, y, sub);
-            addDescription(x, y - (24 + (radioLinesPerPage * 8)));
+            addDescription(x, y);
             initJumpMode();
         }
         
@@ -2419,7 +2419,7 @@ public class Menu {
                     setAchDesc(event.toString());
             }};
             achRadio = addRadio("Achievements", ach, achLsn, x, y);
-            addDescription(x, y - 64);
+            addDescription(x, y);
             initAchDesc();
 		}
 		
