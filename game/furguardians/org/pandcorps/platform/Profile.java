@@ -372,6 +372,7 @@ gems = 1000000;
     
     private final static Integer ASSIST_INVINCIBILITY = Integer.valueOf(4);
     private final static Integer ASSIST_DRAGON_STOMP = Integer.valueOf(5);
+    private final static Integer ASSIST_GEM_MAGNET = Integer.valueOf(6);
     
     private final static Assist[] ASSISTS = new Assist[] {
         new GemAssist(0, 2), // Don't change order; save file refers to these indices
@@ -379,10 +380,12 @@ gems = 1000000;
         new GemAssist(2, 8),
         new GemAssist(3, 16), // Combine for a max 1024 multiplier
         new Assist("Invincibility", "Cannot be hurt, will not lose Gems", 4, 1000000),
-        new Assist("Dragon Stomp", "Defeat armored/spiked enemies without needing a Dragon", 5, 150000)
+        new Assist("Dragon Stomp", "Defeat armored/spiked enemies without needing a Dragon", 5, 150000),
+        new Assist("Gem Magnet", "Attract nearby Gems", 6, 15000)
     };
     
     protected final static Assist[] PUBLIC_ASSISTS = new Assist[] {
+    	ASSISTS[6],
     	ASSISTS[5]
     };
     
@@ -485,6 +488,10 @@ gems = 1000000;
     
     public final boolean isDragonStomping() {
         return activeAssists.contains(ASSIST_DRAGON_STOMP);
+    }
+    
+    public final boolean isGemMagnetActive() {
+        return activeAssists.contains(ASSIST_GEM_MAGNET);
     }
     
     public final int getRank() {

@@ -126,6 +126,16 @@ public abstract class Character extends Panctor implements StepListener, Collida
 		}
 		
 		final Panple pos = getPosition();
+		if (isNearCheckNeeded()) {
+			final TileMap tm = Level.tm;
+			final float x = pos.getX() + getOffLeft(), y = pos.getY();
+			for (int i = -1; i < 3; i++) {
+				final float xn = x + (16 * i);
+				for (int j = -1; j < 3; j++) {
+					onNear(tm.getContainer(xn, y + (16 * j)));
+				}
+			}
+		}
 		final int offSol, mult, n;
 		if (v > 0) {
 			offSol = OFF_BUTTING;
@@ -251,11 +261,12 @@ public abstract class Character extends Panctor implements StepListener, Collida
 	}
 	
 	private int getSolid(final int off) {
+		final TileMap tm = Level.tm;
 		final Panple pos = getPosition();
 		final float x = pos.getX(), y = pos.getY() + off, x1 = x + getOffLeft(), x2 = x + getOffRight();
 		// Interesting glitch if breakpoint here
-		int t1 = Level.tm.getContainer(x1, y), t2 = Level.tm.getContainer(x2, y);
-		if (t2 == Level.tm.getContainer(x, y)) {
+		int t1 = tm.getContainer(x1, y), t2 = tm.getContainer(x2, y);
+		if (t2 == tm.getContainer(x, y)) {
 		    final int t = t1;
 		    t1 = t2;
 		    t2 = t;
@@ -412,6 +423,15 @@ public abstract class Character extends Panctor implements StepListener, Collida
 	
 	//@OverrideMe
 	protected void onCollide(final int tile) {
+	}
+	
+	//@OverrideMe
+	protected boolean isNearCheckNeeded() {
+		return false;
+	}
+	
+	//@OverrideMe
+	protected void onNear(final int tile) {
 	}
 	
 	//@OverrideMe

@@ -31,6 +31,7 @@ import org.pandcorps.pandam.event.action.*;
 import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.in.*;
 import org.pandcorps.pandax.tile.*;
+import org.pandcorps.platform.Gem.GemAttracted;
 import org.pandcorps.platform.Enemy.*;
 
 public class Player extends Character implements CollisionListener {
@@ -289,7 +290,7 @@ public class Player extends Character implements CollisionListener {
 	protected byte mode = MODE_NORMAL;
 	protected byte jumpMode = MODE_NORMAL;
 	private boolean flying = false;
-	private final Panple safe = new ImplPanple(0, 0, 0);
+	private final Panple safe = new ImplPanple();
 	private boolean safeMirror = false;
 	private Panple returnDestination = null;
 	private int returnVelocity = 0;
@@ -600,9 +601,24 @@ public class Player extends Character implements CollisionListener {
 			return;
 		}
 		((Gem) o).onCollide(this);*/
-		final TileMap tm = Level.tm;
-		if (PlatformGame.TILE_GEM == Tile.getBehavior(tm.getTile(index))) {
-			Gem.onCollide(tm, index, this);
+		if (isGem(index)) {
+			Gem.onCollide(Level.tm, index, this);
+		}
+	}
+	
+	private final boolean isGem(final int index) {
+		return PlatformGame.TILE_GEM == Tile.getBehavior(Level.tm.getTile(index));
+	}
+	
+	@Override
+	protected final boolean isNearCheckNeeded() {
+		return pc.profile.isGemMagnetActive();
+	}
+	
+	@Override
+	protected final void onNear(final int index) {
+		if (isGem(index)) {
+			new GemAttracted(index, this);
 		}
 	}
 	

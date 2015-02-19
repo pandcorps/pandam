@@ -28,7 +28,7 @@ import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.tile.*;
 
 public class Gem extends TileOccupant implements StepListener {
-	private final static Panple sparkPos = new ImplPanple(0, 0, 0);
+	private final static Panple sparkPos = new ImplPanple();
 	private static long lastSound = -1;
 	private final Panmage[] gem;
 	
@@ -59,7 +59,7 @@ public class Gem extends TileOccupant implements StepListener {
 	}*/
 	
 	protected final static void onCollide(final TileMap tm, final int index, final Player player) {
-		collect(player, GemBumped.AWARD_DEF);
+		collect(player, GemBumped.AWARD_DEF); // Also see GemAttracted
 		spark(tm, index);
 	}
 	
@@ -88,6 +88,40 @@ public class Gem extends TileOccupant implements StepListener {
 		if (clock != lastSound) {
 			PlatformGame.soundGem.startSound();
 			lastSound = clock;
+		}
+	}
+	
+	protected final static class GemAttracted extends Panctor implements StepListener {
+		private final static double speed = 4;
+		private final Player dst;
+		private final Panple viewPos = new ImplPanple();
+		private final Panple vel = new ImplPanple();
+		
+		protected GemAttracted(final int index, final Player dst) {
+			this.dst = dst;
+			setView(PlatformGame.gemAnm.getFrames()[0].getImage());
+			Level.tm.savePosition(getPosition(), index);
+			PlatformGame.setDepth(this, PlatformGame.DEPTH_SHATTER);
+			Level.tm.setTile(index, null);
+			PlatformGame.room.addActor(this);
+		}
+
+		@Override
+		public final void onStep(final StepEvent event) {
+			final Panple rawPos = getPosition();
+			viewPos.set(rawPos);
+			viewPos.add(8, -4);
+			Panple.subtract(vel, dst.getPosition(), viewPos);
+			final float mag = (float) vel.getMagnitude2();
+			if (mag <= (speed + 0.5)) {
+				spark(viewPos, false);
+				collect(dst, GemBumped.AWARD_DEF);
+				playSound();
+				destroy();
+			}
+			vel.setMagnitude2(speed);
+			vel.setZ(0);
+			rawPos.add(vel);
 		}
 	}
 }
