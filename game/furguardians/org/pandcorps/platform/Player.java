@@ -31,8 +31,8 @@ import org.pandcorps.pandam.event.action.*;
 import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.in.*;
 import org.pandcorps.pandax.tile.*;
-import org.pandcorps.platform.Gem.GemAttracted;
 import org.pandcorps.platform.Enemy.*;
+import org.pandcorps.platform.Gem.*;
 
 public class Player extends Character implements CollisionListener {
 	protected final static int PLAYER_X = 6;
