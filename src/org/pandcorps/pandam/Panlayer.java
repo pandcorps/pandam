@@ -51,9 +51,9 @@ public class Panlayer extends BasePantity {
     /*package*/ final ArrayList<AnimationEndListener> animationEndListeners =
         new ArrayList<AnimationEndListener>();
     /*package*/ Panctor tracked = null;
-    private final Panple origin = new ImplPanple(0, 0, 0);
-    /*package*/ final Panple rawViewMin = new ImplPanple(0, 0, 0);
-    /*package*/ final Panple rawViewMax = new ImplPanple(0, 0, 0);
+    private final Panple origin = new ImplPanple();
+    /*package*/ final Panple rawViewMin = new ImplPanple();
+    /*package*/ final Panple rawViewMax = new ImplPanple();
     private final WrapPanple unmodViewMin = new WrapPanple(rawViewMin);
     private final WrapPanple unmodViewMax = new WrapPanple(rawViewMax);
     private final Panroom room;

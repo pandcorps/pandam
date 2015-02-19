@@ -58,7 +58,13 @@ public abstract class Panple {
 	}
 	
 	public final static Panple subtract(final Panple p1, final Panple p2) {
-		return new ImplPanple(p1.getX() - p2.getX(), p1.getY() - p2.getY(), p1.getZ() - p2.getZ());
+		final Panple dst = new ImplPanple();
+		subtract(dst, p1, p2);
+		return dst;
+	}
+	
+	public final static void subtract(final Panple dst, final Panple p1, final Panple p2) {
+		dst.set(p1.getX() - p2.getX(), p1.getY() - p2.getY(), p1.getZ() - p2.getZ());
 	}
 
 	public void set(final float x, final float y) {
@@ -69,6 +75,12 @@ public abstract class Panple {
 	public void set(final float x, final float y, final float z) {
 		set(x, y);
 		setZ(z);
+	}
+	
+	public void setMagnitude2(final double mag) {
+		final float m = (float) (mag / getMagnitude2());
+		setX(getX() * m);
+		setY(getY() * m);
 	}
 	
 	public void setMagnitudeDirection(final double mag, final double dir) {

@@ -185,7 +185,7 @@ public final class PanmlGame extends Pangame {
 	}
 	
 	private final Panple getTuple(final ChildElementIter iter, final String name) {
-	    final Panple tuple = new ImplPanple(0, 0, 0);
+	    final Panple tuple = new ImplPanple();
 	    setTuple(tuple, iter, name);
 	    return tuple;
 	}
