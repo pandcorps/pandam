@@ -786,12 +786,6 @@ public class Menu {
 			return text;
 		}
 		
-		protected final Pantext addTitleCenteredTiny(final CharSequence title, final int y) {
-            final Pantext text = addTitleTiny(title, center, y);
-            text.centerX();
-            return text;
-        }
-		
 		protected final Pantext addTitle(final CharSequence title, final int x, final int y) {
 			return addTitle(new Pantext(Pantil.vmid(), PlatformGame.font, title), x, y);
 		}
@@ -1019,7 +1013,7 @@ public class Menu {
 	        } else {
 	            prompt.append("Press anything");
 	        }
-	        text = addTitleCentered(prompt, bottom);
+	        text = addTitleCentered(prompt, bottom - 4);
 	        engine.addTimer(text, 360, new TimerListener() {@Override public final void onTimer(final TimerEvent event) {
 	            if (text == null) {
 	                return;
@@ -1048,8 +1042,8 @@ public class Menu {
 	        final int titleEnd = Cabin.CabinScreen.displayName(TITLE, titleHeight, 0);
 	        final Panple titlePos = tm.getPosition(titleEnd, titleHeight);
 	        trademark = addTitle("" + Pantext.CHAR_TRADEMARK, 1 + (int) titlePos.getX(), 8 + (int) titlePos.getY());
-	        //addTitleCentered("Andrew Martin's Untitled Game" + Pantext.CHAR_TRADEMARK, engine.getEffectiveHeight() / 2);
-	        addTitleCenteredTiny("Copyright " + Pantext.CHAR_COPYRIGHT + " " + PlatformGame.YEAR + " " + PlatformGame.AUTHOR, bottom + 16);
+	        addTitleCentered("Copyright " + Pantext.CHAR_COPYRIGHT + " " + PlatformGame.YEAR, bottom + 21);
+	        addTitleCentered(PlatformGame.AUTHOR, bottom + 11);
 	        if (touch) {
 	        	text.register(new ActionEndListener() {@Override public void onActionEnd(final ActionEndEvent event) {
 		        	onAnything(event);
