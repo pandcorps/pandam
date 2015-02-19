@@ -378,8 +378,8 @@ gems = 1000000;
         new GemAssist(1, 4),
         new GemAssist(2, 8),
         new GemAssist(3, 16), // Combine for a max 1024 multiplier
-        new Assist("Invincibility", 4, 1000000),
-        new Assist("Dragon Stomp", 5, 150000)
+        new Assist("Invincibility", "Cannot be hurt, will not lose Gems", 4, 1000000),
+        new Assist("Dragon Stomp", "Defeat armored/spiked enemies without needing a Dragon", 5, 150000)
     };
     
     protected final static Assist[] PUBLIC_ASSISTS = new Assist[] {
@@ -387,13 +387,19 @@ gems = 1000000;
     };
     
     public static class Assist extends FinName {
+    	private final String desc;
     	private final int index;
         private final int cost;
         
-        private Assist(final String name, final int index, final int cost) {
+        private Assist(final String name, final String desc, final int index, final int cost) {
             super(name);
+            this.desc = desc;
             this.index = index;
             this.cost = cost;
+        }
+        
+        public final String getDescription() {
+            return desc;
         }
         
         public final int getIndex() {
@@ -413,7 +419,7 @@ gems = 1000000;
         private final int n;
         
         private GemAssist(final int index, final int n) {
-            super("Gems x " + n, index, n * 50000);
+            super("Gems x " + n, "Earn " + n + "x as many Gems", index, n * 50000);
             this.n = n;
         }
     }
