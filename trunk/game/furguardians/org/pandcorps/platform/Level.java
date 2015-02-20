@@ -56,6 +56,7 @@ public class Level {
     private final static byte FLOOR_GRASSY = 0;
     private final static byte FLOOR_BLOCK = 1;
     private final static byte FLOOR_BRIDGE = 2;
+    private final static byte FLOOR_TRACK = 3;
     
     protected final static PixelFilter terrainDarkener = new BrightnessPixelFilter((short) -40, (short) -24, (short) -32);
     
@@ -198,6 +199,23 @@ public class Level {
             
             @Override protected final Builder getRandomBuilder() {
                 return new BridgeBuilder();
+            }
+            
+            @Override protected final String getBgImg() {
+                return Map.theme.levelTheme.bgImg;
+            }
+        };
+        public final static Theme Minecart = new Theme("Minecart", MSG) {
+            @Override protected final int[] getEnemyIndices(final int worlds, final int levels) {
+                return Map.theme.levelTheme.getEnemyIndices(worlds, levels);
+            }
+            
+            @Override protected final BackgroundBuilder getRandomBackground() {
+                return new HillBackgroundBuilder();
+            }
+            
+            @Override protected final Builder getRandomBuilder() {
+                return new MinecartBuilder();
             }
             
             @Override protected final String getBgImg() {
@@ -415,7 +433,7 @@ public class Level {
     
     protected final static Panmage getTileImage() {
     	final Img tileImg = loadTileImage();
-    	if (isNormalTheme() && theme != Theme.Bridge) {
+    	if (isNormalTheme() && theme != Theme.Bridge && theme != Theme.Minecart) {
     		applyDirtTexture(tileImg, 0, 16, 80, 128);
     	}
         return Pangine.getEngine().createImage("img.tiles", tileImg);
@@ -587,6 +605,10 @@ public class Level {
             }
         }
         
+        protected Template getPitTemplate() {
+        	return new AnyPitTemplate();
+        }
+        
         protected final void addNormalGoals() {
             goals.add(new SlantGoal());
             goals.add(new UpBlockGoal());
@@ -652,7 +674,7 @@ public class Level {
         		    	    template = new GemMsgTemplate();
         		    	} else {
 	    		    		// Always start with pit to make fall goal easier
-	    		    		template = new AnyPitTemplate();
+	    		    		template = getPitTemplate();
         		    	}
     		    	} else if (currLetter < numLetters && bx >= ng * (currLetter + 1) / (numLetters + 1)) {
 	    		    	template = new BlockLetterTemplate();
@@ -870,7 +892,9 @@ public class Level {
     private static int enemyProbability = DEFAULT_ENEMY_PROBABILITY;
     
     private final static void enemy(final int x, final int y, final int w) {
-    	if (w < 3 || (numEnemies > 0 && Mathtil.rand(enemyProbability))) {
+    	if (theme == Theme.Minecart) {
+    		return;
+    	} else if (w < 3 || (numEnemies > 0 && Mathtil.rand(enemyProbability))) {
     		if (enemyProbability > 0) {
     			enemyProbability -= 5;
     		}
@@ -973,7 +997,7 @@ public class Level {
     
     private static class PlatformBuilder extends RandomBuilder {
     	@Override
-	    protected final void loadTemplates() {
+	    protected void loadTemplates() {
     		floorMode = getFloorMode();
 	        addTemplate(new WallTemplate());
 	        addTemplate(new PitTemplate());
@@ -1005,9 +1029,9 @@ public class Level {
     	}
     }
     
-    private final static class BridgeBuilder extends PlatformBuilder {
+    private static class BridgeBuilder extends PlatformBuilder {
         @Override
-        protected final byte getFloorMode() {
+        protected byte getFloorMode() {
             return FLOOR_BRIDGE;
         }
         
@@ -1020,8 +1044,7 @@ public class Level {
                         imgCol = 1;
                     } else if (DynamicTileMap.getRawBackground(tm.getTile(i - 1, floor)) == imgMap[2][0]) {
                         imgCol = 1;
-                        tm.setBackground(i - 1, floor + 1, imgMap[1][imgCol], Tile.BEHAVIOR_OPEN);
-                        tm.setBackground(i - 1, floor, imgMap[2][imgCol], Tile.BEHAVIOR_SOLID);
+                        column(i - 1, imgCol);
                     } else {
                         imgCol = 0;
                     }
@@ -1030,9 +1053,48 @@ public class Level {
                 } else {
                     imgCol = 1;
                 }
-                tm.setBackground(i, floor + 1, imgMap[1][imgCol], Tile.BEHAVIOR_OPEN);
-                tm.setBackground(i, floor, imgMap[2][imgCol], Tile.BEHAVIOR_SOLID);
+                column(i, imgCol);
             }
+        }
+        
+        protected final void column(final int i, final int imgCol) {
+        	tm.setBackground(i, floor + 1, imgMap[1][imgCol], Tile.BEHAVIOR_OPEN);
+            tm.setBackground(i, floor, imgMap[2][imgCol], Tile.BEHAVIOR_SOLID);
+            if (floor > 0) {
+            	fill(i, imgCol);
+            }
+        }
+        
+        //@OverrideMe
+        protected void fill(final int i, final int imgCol) {
+        }
+    }
+    
+    private final static class MinecartBuilder extends BridgeBuilder {
+    	@Override
+	    protected final void loadTemplates() {
+    		floorMode = getFloorMode();
+	        addTemplate(new PitTemplate());
+	        addTemplate(new GemTemplate());
+	        addTemplate(new GemMsgTemplate());
+	        goals.add(new FlatGoal());
+	    }
+    	
+    	@Override
+    	protected final Template getPitTemplate() {
+        	return new PitTemplate();
+        }
+    	
+        @Override
+        protected final byte getFloorMode() {
+            return FLOOR_TRACK;
+        }
+        
+        @Override
+        protected final void fill(final int i, final int imgCol) {
+        	for (int j = floor - 1; j >= 0; j--) {
+        		tm.setBackground(i, j, imgMap[3][imgCol], Tile.BEHAVIOR_OPEN);
+        	}
         }
     }
     
@@ -1074,6 +1136,18 @@ public class Level {
     	protected final void build() {
     		upBlockStep(ng, floor + 1, 3, Mathtil.rand());
             goalBlock(ng + 3, floor + 7);
+    	}
+    }
+    
+    private final static class FlatGoal extends GoalTemplate {
+    	@Override
+    	protected final int getWidth() {
+    		return 3;
+    	}
+    	
+    	@Override
+    	protected final void build() {
+            goalBlock(ng + 1, floor + 4);
     	}
     }
     
@@ -1505,7 +1579,7 @@ public class Level {
     	
         @Override
         protected final void build() {
-        	letterBlock(x, floor + 3);
+        	letterBlock(x, floor + ((theme == Theme.Minecart) ? 4 : 3));
         }
     }
     
@@ -1521,7 +1595,7 @@ public class Level {
     	@Override
 		protected final void build() {
     		final int stop = x + w;
-    		final boolean block = Mathtil.rand();
+    		final boolean block = (theme != Theme.Minecart) && Mathtil.rand();
     		for (int i = x; i < stop; i++) {
     			if (block) {
     				solidBlock(i, floor + 3);
@@ -2142,7 +2216,7 @@ public class Level {
     }
     
     private final static void pit(final int x, final int y, final int w) {
-    	final int stop = x + w + 1, ystop = (floorMode == FLOOR_BRIDGE) ? (y + 1) : y;
+    	final int stop = x + w + 1, ystop = (floorMode == FLOOR_BRIDGE || floorMode == FLOOR_TRACK) ? (y + 1) : y;
     	for (int j = 0; j <= ystop; j++) {
     		if (floorMode == FLOOR_GRASSY) {
 	    		final int iy = (j == y) ? 1 : 2;
@@ -2153,13 +2227,16 @@ public class Level {
         			solidBlock(x, j);
         			solidBlock(stop, j);
     		    }
-    		} else if (floorMode == FLOOR_BRIDGE) {
+    		} else if (floorMode == FLOOR_BRIDGE || floorMode == FLOOR_TRACK) {
     		    if (j == y) {
                     tm.setBackground(x, j, imgMap[Tile.getBehavior(tm.getTile(x, j + 1)) != Tile.BEHAVIOR_OPEN ? 3 : 2][0], Tile.BEHAVIOR_SOLID);
                     tm.setBackground(stop, j, imgMap[2][0], Tile.BEHAVIOR_SOLID);
     		    } else if (j == ystop) {
     		        tm.setBackground(x, j, imgMap[1][0]); // Might have a block at pit edge; don't make it open
     		        tm.setBackground(stop, j, imgMap[1][0]);
+    		    } else if (floorMode == FLOOR_TRACK) {
+    		    	tm.setBackground(x, j, imgMap[3][0], Tile.BEHAVIOR_OPEN);
+    		    	tm.setBackground(stop, j, imgMap[3][0], Tile.BEHAVIOR_OPEN);
     		    }
     		} else {
     		    throw new IllegalStateException("Unexpected floorMode " + floorMode);
@@ -2382,7 +2459,7 @@ public class Level {
     	}
     	final String s = gemFont[c];
     	final int size = s.length();
-    	if (floorMode == FLOOR_BRIDGE) {
+    	if (floorMode == FLOOR_BRIDGE || floorMode == FLOOR_TRACK) {
     	    y++;
     	}
     	int xc = x, yc = y + 4, max = 0;

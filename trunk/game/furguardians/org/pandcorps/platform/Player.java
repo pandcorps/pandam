@@ -33,11 +33,12 @@ import org.pandcorps.pandax.in.*;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.platform.Enemy.*;
 import org.pandcorps.platform.Gem.*;
+import org.pandcorps.platform.Level.*;
 
 public class Player extends Character implements CollisionListener {
 	protected final static int PLAYER_X = 6;
 	protected final static int PLAYER_H = 23; // 15
-    protected final static int VEL_WALK = 3;
+    private final static int _VEL_WALK = 3;
 	private final static int VEL_RETURN = 2;
 	private final static int VEL_CATCH_UP = 8;
 	private final static int VEL_JUMP = 8;
@@ -305,6 +306,7 @@ public class Player extends Character implements CollisionListener {
 	private int stompTimer = 0;
 	private int activeTimer = 0;
 	private final Bubble bubble = new Bubble();
+	private final Panctor container;
 	private final Accessories acc;
 	protected Ai ai = null;
 	protected final boolean[] goalsMet = new boolean[Goal.NUM_ACTIVE_GOALS];
@@ -323,6 +325,13 @@ public class Player extends Character implements CollisionListener {
 		final Pangine engine = Pangine.getEngine();
 		setView(pc.guy);
 		PlatformGame.room.addActor(bubble);
+		if (Level.theme == Theme.Minecart) {
+			container = new Panctor();
+			container.setView(PlatformGame.minecart);
+			PlatformGame.room.addActor(container);
+		} else {
+			container = null;
+		}
 		acc = new Accessories(pc);
 		final Panteraction interaction = engine.getInteraction();
 		final ControlScheme ctrl = pc.ctrl;
@@ -444,14 +453,18 @@ public class Player extends Character implements CollisionListener {
 		if (isInputDisabled()) {
 			return;
 		}
-		hv = VEL_WALK;
+		hv = getVelWalk();
 	}
 	
 	private final void left() {
 		if (isInputDisabled()) {
 			return;
 		}
-		hv = -VEL_WALK;
+		hv = -getVelWalk();
+	}
+	
+	protected final int getVelWalk() {
+		return (Level.theme == Theme.Minecart) ? (_VEL_WALK + 1) : _VEL_WALK;
 	}
 	
 	protected boolean isDragonStomping() {
@@ -459,7 +472,7 @@ public class Player extends Character implements CollisionListener {
 	}
 	
 	private final void evaluateDragonStomp() {
-		if (isDragonStomping()) {
+		if (isDragonStomping() && Level.theme != Theme.Minecart) {
 			final long clock = Pangine.getEngine().getClock();
 			if (lastDragonStomp >= (clock - 3)) {
 				return;
@@ -588,7 +601,7 @@ public class Player extends Character implements CollisionListener {
 		}
 		final boolean auto = isAutoRunEnabled();
 		if (auto && !Level.victory && mode != MODE_FROZEN && mode != MODE_DISABLED) { // Check disabled to prevent running on ThroneScreen
-		    hv = VEL_WALK;
+		    hv = getVelWalk();
 		}
 		if (auto || hv == 0) {
 			if (activeTimer > 0) {
@@ -739,7 +752,13 @@ public class Player extends Character implements CollisionListener {
 		final Panple pos = getPosition();
 		PlatformGame.setPosition(bubble, pos.getX(), pos.getY() - 1, PlatformGame.getDepthBubble(jumpMode));
 		bubble.onStepEnd(this);
+		PlatformGame.setPosition(container, pos.getX(), pos.getY(), PlatformGame.getDepthContainer(jumpMode));
+		container.setMirror(isMirror());
 		acc.onStepEnd(this);
+	}
+	
+	private final boolean isAnimated() {
+		return container == null;
 	}
 	
 	@Override
@@ -747,7 +766,7 @@ public class Player extends Character implements CollisionListener {
 		safe.set(getPosition());
 		safeMirror = isMirror();
 		if (mode != MODE_FROZEN) {
-			if (hv != 0) {
+			if (hv != 0 && isAnimated()) {
 				changeView(pc.guyRun);
 			} else {
 				changeView(pc.guy);
@@ -770,7 +789,9 @@ public class Player extends Character implements CollisionListener {
 	
 	@Override
 	protected final boolean onAir() {
-		if (mode != MODE_FROZEN) {
+		if (!isAnimated()) {
+			return flying;
+		} else if (mode != MODE_FROZEN) {
 			changeView(v > 0 ? pc.guyJump : pc.guyFall);
 		}
 		if (acc.back != null) {
@@ -914,6 +935,7 @@ public class Player extends Character implements CollisionListener {
 	@Override
 	protected final void onDestroy() {
 		bubble.destroy();
+		Panctor.destroy(container);
 		acc.destroy();
 	}
 	

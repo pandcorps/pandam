@@ -92,12 +92,13 @@ public class Gem extends TileOccupant implements StepListener {
 	}
 	
 	protected final static class GemAttracted extends Panctor implements StepListener {
-		private final static double speed = 5;
+		private final double speed;
 		private final Player dst;
 		private final Panple viewPos = new ImplPanple();
 		private final Panple vel = new ImplPanple();
 		
 		protected GemAttracted(final int index, final Player dst) {
+			speed = dst.getVelWalk() + 2;
 			this.dst = dst;
 			setView(PlatformGame.gemAnm.getFrames()[0].getImage());
 			Level.tm.savePosition(getPosition(), index);
