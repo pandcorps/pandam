@@ -827,6 +827,9 @@ public class Menu {
 		}
 		
 		protected final void addNote(final CharSequence note) {
+			if (!isTabEnabled()) {
+				return;
+			}
 			addTitle(note, touchRadioX + PlatformGame.MENU_W + 2, Pangine.getEngine().getEffectiveHeight() - PlatformGame.MENU_H - 10);
 		}
 		
@@ -1211,7 +1214,7 @@ public class Menu {
 			if (defaultProfileName == null) {
 				final SelectScreen screen = new SelectScreen(null, false, availableProfiles);
 		        screen.ctrl = ctrl;
-		        PlatformGame.setScreen(screen);
+		        PlatformGame.fadeOut(PlatformGame.room, screen);
 			} else {
 				try {
 					PlatformGame.loadProfile(defaultProfileName, ctrl, PlatformGame.pcs.size());
@@ -1954,9 +1957,7 @@ public class Menu {
                         }
                     }
                 }};
-            if (isTabEnabled()) {
-            	addNote("Equip one at a time");
-            }
+            addNote("Equip one at a time");
             jmpRadio = addRadio("Power-up", jmps, jmpSubLsn, jmpLsn, x, y, sub);
             addDescription(x, y);
             initJumpMode();
@@ -2316,11 +2317,13 @@ public class Menu {
         	return Profile.getAssist(event.toString().substring(2));
         }
         
+        private final String getEquipped(final Assist a) {
+        	return pc.profile.isAssistActive(a) ? "Equipped" : "Unequipped";
+        }
+        
         private final void highlightAssist(final Assist a, final TouchButton sub) {
-        	final Profile prf = pc.profile;
-        	if (prf.isAssistAvailable(a)) {
-        		reattach((prf.isAssistActive(a) ? "Equipped" : "Unequipped"), sub, PlatformGame.menuExclaim, "Equip");
-                clearInfo();
+        	if (pc.profile.isAssistAvailable(a)) {
+        		reattach(getEquipped(a), sub, PlatformGame.menuExclaim, "Equip");
             } else {
                 reattachBuy("Buy for " + a.getCost() + "?", sub);
             }
@@ -2330,6 +2333,7 @@ public class Menu {
         private final void toggleAssist(final Assist a) {
             pc.profile.toggleAssist(a);
             initAssists();
+            setInfo(getEquipped(a));
         }
         
         private final void initAssists() {
