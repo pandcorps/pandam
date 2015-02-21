@@ -334,6 +334,7 @@ public class PlatformGame extends BaseGame {
 	    if (engine.isTouchSupported()) {
 	        engine.setFatalLogged(true);
 	    }
+	    Locale.setDefault(Locale.US); // toUpperCase can lead to characters outside of image fonts in other Locales
 	    engine.setTitle(TITLE);
 	    engine.setEntityMapEnabled(false);
 	    Imtil.onlyResources = true;
@@ -1786,7 +1787,7 @@ public class PlatformGame extends BaseGame {
 	}
 	
 	protected final static Panmage getImageLetter(final Panmage[] letters, final char c) {
-		return letters[(c == '-') ? 26 : (c - 'A')];
+		return letters[(c < 'A' || c > 'Z') ? 26 : (c - 'A')];
 	}
 	
 	protected final static int getLetterIndex(final Panmage[] letters, final Panmage img) {
