@@ -638,6 +638,10 @@ public class Level {
     		return Mathtil.rand(33);
     	}
     	
+    	protected int getFloorChangeWidth() {
+    		return 3;
+    	}
+    	
     	@Override
     	public void build() {
     	    loadTemplates();
@@ -648,7 +652,7 @@ public class Level {
     		ng = nt - goal.getWidth();
     		
     		px = 0;
-    		final int floorLim = getMaxFloor(), bxStart = 8;
+    		final int floorLim = getMaxFloor(), bxStart = 8, floorChangeWidth = getFloorChangeWidth();
     		for (bx = bxStart; bx < ng; ) {
     			/*
     			Raise/lower floor with 1-way ramps
@@ -679,7 +683,11 @@ public class Level {
     		    	} else if (currLetter < numLetters && bx >= ng * (currLetter + 1) / (numLetters + 1)) {
 	    		    	template = new BlockLetterTemplate();
 	    		    } else if (i == 3) {
-	    		    	template = Mathtil.rand() ? new BlockBonusTemplate(1) : new GemTemplate(1);
+	    		    	if (theme == Theme.Minecart) {
+	    		    		template = new GemTemplate(1);
+	    		    	} else {
+	    		    		template = Mathtil.rand() ? new BlockBonusTemplate(1) : new GemTemplate(1);
+	    		    	}
 	    		    } else {
 	    		    	template = Mathtil.rand(templates);
 	    		    }
@@ -696,7 +704,7 @@ public class Level {
     		    	template.build();
     		    }
     		    if (changeFloor()) {
-    		    	if (bx + 3 < ng) {
+    		    	if ((bx + floorChangeWidth) < ng) {
     		    		boolean up = Mathtil.rand();
     		    		final int h = Mathtil.randi(0, getMaxFloorChange() - 1);
     		    		if (up) {
@@ -712,7 +720,7 @@ public class Level {
 	    		    		downStep(bx + 1, floor, h);
 	    		    	}
     		    	}
-    		    	bx += 3;
+    		    	bx += floorChangeWidth;
     		    }
    		    	bx += Mathtil.randi(1, 4);
     		}
@@ -1036,7 +1044,8 @@ public class Level {
         }
         
         @Override
-        protected final void ground(final int start, final int stop) {
+        protected final void ground(int start, final int stop) {
+        	boolean first = true;
             for (int i = start; i <= stop; i++) {
                 final int imgCol;
                 if (i == start) {
@@ -1045,6 +1054,10 @@ public class Level {
                     } else if (DynamicTileMap.getRawBackground(tm.getTile(i - 1, floor)) == imgMap[2][0]) {
                         imgCol = 1;
                         column(i - 1, imgCol);
+                    } else if (first && isGapNeeded()) {
+                    	start++;
+                    	first = false;
+                    	continue;
                     } else {
                         imgCol = 0;
                     }
@@ -1054,6 +1067,7 @@ public class Level {
                     imgCol = 1;
                 }
                 column(i, imgCol);
+                first = false;
             }
         }
         
@@ -1067,6 +1081,11 @@ public class Level {
         
         //@OverrideMe
         protected void fill(final int i, final int imgCol) {
+        }
+        
+        //@OverrideMe
+        protected boolean isGapNeeded() {
+        	return false;
         }
     }
     
@@ -1091,10 +1110,20 @@ public class Level {
         }
         
         @Override
+        protected final int getFloorChangeWidth() {
+    		return 4;
+    	}
+        
+        @Override
         protected final void fill(final int i, final int imgCol) {
         	for (int j = floor - 1; j >= 0; j--) {
         		tm.setBackground(i, j, imgMap[3][imgCol], Tile.BEHAVIOR_OPEN);
         	}
+        }
+        
+        @Override
+        protected final boolean isGapNeeded() {
+        	return true;
         }
     }
     
