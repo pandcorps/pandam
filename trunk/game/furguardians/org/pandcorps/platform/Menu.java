@@ -72,11 +72,12 @@ public class Menu {
 		protected ControlScheme ctrl = null;
 		private final boolean fadeIn;
 		protected final StringBuilder inf = new StringBuilder();
-		protected final StringBuilder desc = new StringBuilder();
+		private final StringBuilder desc = new StringBuilder();
 		protected TileMap tm = null;
 		protected Panmage timg = null;
 		protected Model actor = null;
 		protected Pantext infLbl = null;
+		protected Pantext descLbl = null;
 		protected boolean disabled = false;
 		protected Panform form = null;
 		protected int center = -1;
@@ -581,6 +582,30 @@ public class Menu {
 		    return newFormButton(getLayer(), name, x, y, img, r);
 		}
 		
+		protected final TouchButton newSub(final int x, final int y) {
+            return Pangine.getEngine().isTouchSupported() ? newRadioSubmitButton(x, y) : null;
+        }
+        
+		protected final TouchButton newBuy(final int x, final int y) {
+            final TouchButton sub = newSub(x, y);
+            TouchButton.detach(sub);
+            return sub;
+        }
+		
+		protected final void reattach(final String info, final TouchButton sub, final Panmage img, final String txt) {
+        	setInfo(info);
+        	if (sub == null) {
+        		return;
+        	}
+        	sub.setOverlay(img, offx(img), offy(img, txt));
+        	sub.setText(PlatformGame.font, txt, OFF_TEXT_X, OFF_TEXT_Y);
+        	TouchButton.reattach(sub);
+        }
+        
+		protected final void reattachBuy(final String info, final TouchButton sub) {
+        	reattach(info, sub, PlatformGame.gem[0], "Buy");
+        }
+		
 		protected final List<RadioGroup> addColor(final SimpleColor col, int x, int y) {
 			return addColor(col, x, y, null);
 		}
@@ -801,6 +826,10 @@ public class Menu {
 			return tLbl;
 		}
 		
+		protected final void addNote(final CharSequence note) {
+			addTitle(note, touchRadioX + PlatformGame.MENU_W + 2, Pangine.getEngine().getEffectiveHeight() - PlatformGame.MENU_H - 10);
+		}
+		
 		protected final int addPipe(final int x, final int y) {
 			addTitle("|", x, y);
 			return x + (SIZE_FONT * 2);
@@ -895,8 +924,12 @@ public class Menu {
 		
 		protected final void setInfo(final String val) {
 			Chartil.set(inf, val);
-        	infLbl.getPosition().setX(center);
-        	infLbl.centerX();
+			center(infLbl);
+		}
+		
+		private final void center(final Pantext lbl) {
+			lbl.getPosition().setX(center);
+			lbl.centerX();
 		}
 		
 		protected final void clearInfo() {
@@ -904,11 +937,14 @@ public class Menu {
 		}
 		
 		protected final void addDescription(final int x, final int y) {
-			addTitleTiny(desc, x + (isTabEnabled() ? OFF_RADIO_LIST : 0), y - (24 + (radioLinesPerPage * 8)));
+			descLbl = addTitleTiny(desc, x + (isTabEnabled() ? OFF_RADIO_LIST : 0), y - (24 + (radioLinesPerPage * 8)));
 		}
 		
 		protected final void setDescription(final String val) {
 			Chartil.set(desc, val);
+			if (isTabEnabled()) {
+				center(descLbl);
+			}
 		}
 		
 		protected final void clearDescription() {
@@ -1844,20 +1880,6 @@ public class Menu {
             tabsSupported = true;
         }
         
-        private final void reattach(final String info, final TouchButton sub, final Panmage img, final String txt) {
-        	setInfo(info);
-        	if (sub == null) {
-        		return;
-        	}
-        	sub.setOverlay(img, offx(img), offy(img, txt));
-        	sub.setText(PlatformGame.font, txt, OFF_TEXT_X, OFF_TEXT_Y);
-        	TouchButton.reattach(sub);
-        }
-        
-        private final void reattachBuy(final String info, final TouchButton sub) {
-        	reattach(info, sub, PlatformGame.gem[0], "Buy");
-        }
-        
         private final static List<String> toNameList(final Named... a) {
         	return toNameList(null, a);
         }
@@ -1869,16 +1891,6 @@ public class Menu {
                 list.add(n.getName());
             }
             return list;
-        }
-        
-        private final TouchButton newSub(final int x, final int y) {
-            return Pangine.getEngine().isTouchSupported() ? newRadioSubmitButton(x, y) : null;
-        }
-        
-        private final TouchButton newBuy(final int x, final int y) {
-            final TouchButton sub = newSub(x, y);
-            TouchButton.detach(sub);
-            return sub;
         }
         
         private final TouchButton newTabSub(final int x, final int y, final Panmage img, final String txt, final byte tab) {
@@ -1942,13 +1954,10 @@ public class Menu {
                         }
                     }
                 }};
-            final String label;
             if (isTabEnabled()) {
-            	label = "Power-up (equip one at a time)";
-            } else {
-            	label = "Power-up";
+            	addNote("Equip one at a time");
             }
-            jmpRadio = addRadio(label, jmps, jmpSubLsn, jmpLsn, x, y, sub);
+            jmpRadio = addRadio("Power-up", jmps, jmpSubLsn, jmpLsn, x, y, sub);
             addDescription(x, y);
             initJumpMode();
         }
@@ -2256,6 +2265,7 @@ public class Menu {
 		}
 		
 		private final void createAssistList(final int x, final int y) {
+			final TouchButton sub = newBuy(x, y);
             final Assist[] assists = Profile.PUBLIC_ASSISTS;
             as = new ArrayList<StringBuilder>(assists.length);
             for (final Assist a : assists) {
@@ -2263,7 +2273,7 @@ public class Menu {
             }
             final RadioSubmitListener aLsn = new RadioSubmitListener() {
                 @Override public final void onSubmit(final RadioSubmitEvent event) {
-                    highlightAssist(getAssist(event));
+                    highlightAssist(getAssist(event), sub);
                 }};
             final RadioSubmitListener aSubLsn = new RadioSubmitListener() {
                 @Override public final void onSubmit(final RadioSubmitEvent event) {
@@ -2281,10 +2291,17 @@ public class Menu {
                         }
                     }
                 }};
-            addRadio("Assists (can equip multiple)", as, aSubLsn, aLsn, x, y);
+            final String label;
+            if (isTabEnabled()) {
+            	label = "Assists";
+            	addNote("Can equip multiple");
+            } else {
+            	label = "Assists (can equip multiple)";
+            }
+            addRadio(label, as, aSubLsn, aLsn, x, y, sub);
             addDescription(x, y);
             initAssists();
-            highlightAssist(assists[0]);
+            highlightAssist(assists[0], sub);
         }
 		
 		protected final void menuClassic() {
@@ -2299,11 +2316,13 @@ public class Menu {
         	return Profile.getAssist(event.toString().substring(2));
         }
         
-        private final void highlightAssist(final Assist a) {
-        	if (pc.profile.isAssistAvailable(a)) {
+        private final void highlightAssist(final Assist a, final TouchButton sub) {
+        	final Profile prf = pc.profile;
+        	if (prf.isAssistAvailable(a)) {
+        		reattach((prf.isAssistActive(a) ? "Equipped" : "Unequipped"), sub, PlatformGame.menuExclaim, "Equip");
                 clearInfo();
             } else {
-                setInfo("Buy for " + a.getCost() + "?");
+                reattachBuy("Buy for " + a.getCost() + "?", sub);
             }
         	setDescription(a.getDescription());
         }
