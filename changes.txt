@@ -3,7 +3,9 @@
 Fixed a crash that could result from an empty name.
 Added horses.
 Added hair bow.
+Added Gem Magnet perk.
 Added Dragon Stomp perk.
+Added minecart levels.
 Fixed a clipboard import bug.
 
 *****
