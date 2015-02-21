@@ -389,7 +389,11 @@ public class Player extends Character implements CollisionListener {
 	
 	private final boolean isAutoRunEnabled() {
 		// Check level to prevent auto-run in bonus Cabin
-		return PlatformGame.level && pc.profile.autoRun;
+		return PlatformGame.level && (pc.profile.autoRun || Level.theme == Theme.Minecart);
+	}
+	
+	private final byte getCurrentJumpMode() {
+		return (Level.theme == Theme.Minecart) ? MODE_NORMAL : jumpMode;
 	}
 	
 	private final void jump() {
@@ -398,6 +402,7 @@ public class Player extends Character implements CollisionListener {
 		} else if (isAutoRunEnabled()) {
 		    this.activeTimer += 8;
 		}
+		final byte jumpMode = getCurrentJumpMode();
 		if (jumpMode == JUMP_FLY) {
 			if (isGrounded()) {
 				pc.profile.stats.jumps++;
@@ -428,7 +433,7 @@ public class Player extends Character implements CollisionListener {
 	}
 	
 	private final int getVelocityJump() {
-		switch (jumpMode) {
+		switch (getCurrentJumpMode()) {
 			case MODE_NORMAL : return VEL_JUMP;
 			case JUMP_HIGH : return MAX_V;
 			case JUMP_DRAGON : return VEL_JUMP_DRAGON;
@@ -438,6 +443,7 @@ public class Player extends Character implements CollisionListener {
 	}
 	
 	private final void releaseJump() {
+		final byte jumpMode = getCurrentJumpMode();
 	    if (jumpMode == JUMP_FLY) {
             flying = false;
             return;
@@ -468,7 +474,7 @@ public class Player extends Character implements CollisionListener {
 	}
 	
 	protected boolean isDragonStomping() {
-		return (jumpMode == JUMP_DRAGON) || pc.profile.isDragonStomping();
+		return (jumpMode == JUMP_DRAGON) || pc.profile.isDragonStomping() || Level.theme == Theme.Minecart;
 	}
 	
 	private final void evaluateDragonStomp() {
@@ -773,7 +779,7 @@ public class Player extends Character implements CollisionListener {
 			}
 		}
 		if (acc.back != null) {
-			if (hv == 0 || pc.backRun == null) {
+			if (hv == 0 || pc.backRun == null || !isAnimated()) {
 				acc.back.changeView(pc.back);
 			} else {
 				acc.back.changeView(pc.backRun);
@@ -795,6 +801,7 @@ public class Player extends Character implements CollisionListener {
 			changeView(v > 0 ? pc.guyJump : pc.guyFall);
 		}
 		if (acc.back != null) {
+			final byte jumpMode = getCurrentJumpMode();
 			if (jumpMode == JUMP_FLY) {
 				acc.back.changeView((flying || getPosition().getY() <= MIN_Y) ? pc.backJump : pc.backFall);
 				// v > 0 doesn't flap as soon as jump is pressed
@@ -815,6 +822,7 @@ public class Player extends Character implements CollisionListener {
 		    final boolean aboveEnemy = getPosition().getY() > other.getPosition().getY();
 		    if (aboveEnemy && v < 4 && !isGrounded()) {
 				if (((Enemy) other).onStomp(this)) {
+					final byte jumpMode = getCurrentJumpMode();
 					if ((jumpMode != JUMP_FLY && getJumpInput().isActive())) {
 						v = getVelocityJump();
 						if (jumpMode == JUMP_HIGH) {
@@ -908,7 +916,7 @@ public class Player extends Character implements CollisionListener {
 	
 	@Override
 	protected final boolean onFell() {
-		if (jumpMode == JUMP_FLY) {
+		if (getCurrentJumpMode() == JUMP_FLY) {
 			final long clock = Pangine.getEngine().getClock();
 			if (lastFall < 0 || clock > (lastFall + 1)) {
 				levelFalls++;
@@ -929,7 +937,7 @@ public class Player extends Character implements CollisionListener {
 	
 	@Override
 	protected final float getG() {
-		return jumpMode == JUMP_FLY ? gFlying : g;
+		return (getCurrentJumpMode() == JUMP_FLY) ? gFlying : g;
 	}
 	
 	@Override

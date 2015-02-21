@@ -125,15 +125,16 @@ public class PlatformGame extends BaseGame {
     protected final static byte TILE_SAND = 11;
 	
 	//protected final static int DEPTH_POWERUP = 0;
-	protected final static int DEPTH_ENEMY = 5;
+	protected final static int DEPTH_ENEMY = 6;
 	protected final static int _DEPTH_PLAYER_BACK = 1;
 	protected final static int _DEPTH_PLAYER = 2;
 	protected final static int _DEPTH_PLAYER_FRONT = 3;
-	protected final static int _DEPTH_BUBBLE = 4;
-	protected final static int DEPTH_SHATTER = 10;
-	protected final static int DEPTH_SPARK = 11;
-	protected final static int DEPTH_OFF_DRAGON = 5;
-	// DEPTH_PLAYER_DRAGON_BACK - BUBBLE = 6 - 9
+	protected final static int _DEPTH_CONTAINER = 4;
+	protected final static int _DEPTH_BUBBLE = 5;
+	protected final static int DEPTH_SHATTER = 12;
+	protected final static int DEPTH_SPARK = 13;
+	protected final static int DEPTH_OFF_DRAGON = 6;
+	// DEPTH_PLAYER_DRAGON_BACK - BUBBLE = 7 - 11
 	
 	protected final static int OFF_GEM = 16;
 	
@@ -205,6 +206,7 @@ public class PlatformGame extends BaseGame {
 	protected static Panmage frozen = null;
 	protected static Panimation burn = null;
 	protected static Panmage bubble = null;
+	protected static Panimation minecart = null;
 	protected static Panimation owl = null;
 	protected final static List<EnemyDefinition> allEnemies = new ArrayList<EnemyDefinition>();
 	protected static List<EnemyDefinition> enemies = null;
@@ -1288,7 +1290,8 @@ public class PlatformGame extends BaseGame {
 		loaders.add(new Runnable() { @Override public final void run() {
 			frozen = createImage("frozen", "org/pandcorps/platform/res/chr/Frozen.png", 32, og);
 			burn = createAnm("burn", "org/pandcorps/platform/res/chr/Burn.png", 32, 6, og, null, null);
-			bubble = createImage("bubble", "org/pandcorps/platform/res/chr/Bubble.png", 32, og); }});
+			bubble = createImage("bubble", "org/pandcorps/platform/res/chr/Bubble.png", 32, og);
+			minecart = createAnm("minecart", "org/pandcorps/platform/res/misc/Minecart.png", 32, 2, new FinPanple2(16, 7), null, null); }});
 	    
 		loaders.add(new Runnable() { @Override public final void run() {
 			font = Fonts.getClassics(new FontRequest(8), Pancolor.WHITE, Pancolor.BLACK); }});
@@ -1629,6 +1632,10 @@ public class PlatformGame extends BaseGame {
 	
 	protected final static int getDepthBubble(final byte jumpMode) {
 		return _DEPTH_BUBBLE + getDepthPlayerOffset(jumpMode);
+	}
+	
+	protected final static int getDepthContainer(final byte jumpMode) {
+		return _DEPTH_CONTAINER + getDepthPlayerOffset(jumpMode);
 	}
 	
 	private final static int getDepthPlayerOffset(final byte jumpMode) {
