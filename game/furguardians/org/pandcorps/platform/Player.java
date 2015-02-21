@@ -238,6 +238,9 @@ public class Player extends Character implements CollisionListener {
 			if (Level.currLetter <= 0) {
 			    profile.stats.collectedWords++;
 			}
+			if (Level.theme == Theme.Minecart) {
+				profile.stats.playedMinecartLevels++;
+			}
 		}
 	    
 	    public final void onFinishBonus() {
