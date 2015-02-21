@@ -761,8 +761,10 @@ public class Player extends Character implements CollisionListener {
 		final Panple pos = getPosition();
 		PlatformGame.setPosition(bubble, pos.getX(), pos.getY() - 1, PlatformGame.getDepthBubble(jumpMode));
 		bubble.onStepEnd(this);
-		PlatformGame.setPosition(container, pos.getX(), pos.getY(), PlatformGame.getDepthContainer(jumpMode));
-		container.setMirror(isMirror());
+		if (container != null) {
+			PlatformGame.setPosition(container, pos.getX(), pos.getY(), PlatformGame.getDepthContainer(jumpMode));
+			container.setMirror(isMirror());
+		}
 		acc.onStepEnd(this);
 	}
 	

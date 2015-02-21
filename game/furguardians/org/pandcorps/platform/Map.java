@@ -639,6 +639,8 @@ public class Map {
 	            } else {
 	                if (isBridge(t)) {
 	                    Level.setTheme(Theme.Bridge);
+	                } else if (tm.getRow(t) == ROW_CLIFF_LEVEL) {
+	                	Level.setTheme(Theme.Minecart);
 	                } else if (tm.getColumn(t) == (tm.getWidth() - 5)) {
 	                    Level.setTheme(Theme.Night);
 	                }
@@ -1293,6 +1295,8 @@ public class Map {
 		return 7 + Mathtil.randi(0, 1) * 2;
 	}
 	
+	private final static int ROW_CLIFF_LEVEL = 15;
+	
 	private final static void cliff(final int m) {
 		final int n = m - 1, x = m + 1;
 		tm.setForeground(n, 16, imgMap[0][0]);
@@ -1300,7 +1304,7 @@ public class Map {
 		tm.setForeground(x, 16, imgMap[0][2]);
 		tm.setForeground(n, 15, imgMap[1][0]);
 		tm.setForeground(m, 15, (Panmage) null);
-		marker(m, 15);
+		marker(m, ROW_CLIFF_LEVEL);
 		tm.setForeground(x, 15, imgMap[1][2]);
 		tm.setImages(n, 14, imgMap[0][3], imgMap[2][0]);
 		tm.setTile(m, 14, imgMap[0][4], imgMap[2][6], TILE_VERT);
