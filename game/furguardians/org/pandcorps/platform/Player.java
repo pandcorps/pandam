@@ -611,6 +611,8 @@ public class Player extends Character implements CollisionListener {
 		final boolean auto = isAutoRunEnabled();
 		if (auto && !Level.victory && mode != MODE_FROZEN && mode != MODE_DISABLED) { // Check disabled to prevent running on ThroneScreen
 		    hv = getVelWalk();
+		} else if (container != null && Level.victory) {
+			container.setView(PlatformGame.minecart.getFrames()[0].getImage());
 		}
 		if (auto || hv == 0) {
 			if (activeTimer > 0) {
