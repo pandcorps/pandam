@@ -1066,7 +1066,7 @@ public class Menu {
 	            prompt.append("Press anything");
 	        }
 	        text = addTitleCentered(prompt, bottom - 4);
-	        engine.addTimer(text, 360, new TimerListener() {@Override public final void onTimer(final TimerEvent event) {
+	        /*engine.addTimer(text, 360, new TimerListener() {@Override public final void onTimer(final TimerEvent event) {
 	            if (text == null) {
 	                return;
 	            }
@@ -1089,7 +1089,7 @@ public class Menu {
                         }});
                     }});
                 }});
-            }});
+            }});*/
 	        titleHeight = Math.round(tm.getHeight() * 5f / 8f);
 	        final int titleEnd = Cabin.CabinScreen.displayName(TITLE, titleHeight, 0);
 	        final Panple titlePos = tm.getPosition(titleEnd, titleHeight);
@@ -1180,14 +1180,14 @@ public class Menu {
             exit();
 	    }
 	    
-	    private final static void setCentered(final Pantext text, final StringBuilder b, final String value) {
+	    /*private final static void setCentered(final Pantext text, final StringBuilder b, final String value) {
 	    	if (text == null) {
 	    		return;
 	    	}
 	    	text.uncenterX();
 	    	Chartil.set(b, value);
 	    	text.centerX();
-	    }
+	    }*/
 	    
 	    protected final static void generateTitleCharacters() {
 	        for (int i = 0; i < NUM_CHRS; i++) {
