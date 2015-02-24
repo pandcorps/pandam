@@ -1,3 +1,9 @@
+1.2.1 (6)
+
+Removed TitleScreen's auto-exit due to inactivity.
+
+*****
+
 1.2.0 (5)
 
 Fixed a crash that could result from an empty name.
