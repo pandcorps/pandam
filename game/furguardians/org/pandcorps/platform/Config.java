@@ -37,7 +37,7 @@ public class Config {
     protected static boolean soundEnabled = DEF_SOUND_ENABLED;
     
     protected final static void serialize() {
-        Iotil.writeFile(PlatformGame.FILE_CFG, PlatformGame.SEG_CFG
+        Iotil.writeFile(FurGuardiansGame.FILE_CFG, FurGuardiansGame.SEG_CFG
         		+ "|" + Chartil.unnull(defaultProfileName)
         		+ "|" + btnSize
         		+ "|" + zoomMag

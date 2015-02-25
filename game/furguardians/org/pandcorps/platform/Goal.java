@@ -466,7 +466,7 @@ public abstract class Goal implements Named {
 		
 		@Override
 		protected final long getCurrentAmount(final Player player) {
-			return PlatformGame.level ? player.levelGems : 0;
+			return FurGuardiansGame.level ? player.levelGems : 0;
 		}
 		
 		@Override

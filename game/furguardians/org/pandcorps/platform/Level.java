@@ -140,7 +140,7 @@ public class Level {
     			}
     		}
     	};
-    	public final static Theme Snow = new Theme("Snow", null, MSG, PlatformGame.TILE_ICE) {
+    	public final static Theme Snow = new Theme("Snow", null, MSG, FurGuardiansGame.TILE_ICE) {
     	    @Override protected final int[] getEnemyIndices(final int worlds, final int levels) {
     	        return worlds < 2 ? new int[] {HOB_TROLL, HOB_OGRE, IMP, ICE_WISP} : getNormalEnemies(ICE_WISP);
     	    }
@@ -164,7 +164,7 @@ public class Level {
     			}
         	}
     	};
-    	public final static Theme Sand = new Theme("Sand", null, MSG, PlatformGame.TILE_SAND) {
+    	public final static Theme Sand = new Theme("Sand", null, MSG, FurGuardiansGame.TILE_SAND) {
     	    @Override protected final int[] getEnemyIndices(final int worlds, final int levels) {
     	    	return worlds < 4 ? new int[] {HOB_TROLL, HOB_OGRE, IMP, ARMORED_IMP, FIRE_WISP} : getNormalEnemies(FIRE_WISP);
     	    }
@@ -282,7 +282,7 @@ public class Level {
     		}
     		
     		@Override protected Pansound getMusic() {
-        		return PlatformGame.musicHeartbeat;
+        		return FurGuardiansGame.musicHeartbeat;
         	}
     	};
     	
@@ -306,7 +306,7 @@ public class Level {
     	    final int[] enemies = getEnemyIndices(getDefeatedWorlds(), getDefeatedLevels());
     		final List<EnemyDefinition> list = new ArrayList<EnemyDefinition>(enemies.length);
     		for (final int enemy : enemies) {
-    		    list.add(PlatformGame.allEnemies.get(enemy));
+    		    list.add(FurGuardiansGame.allEnemies.get(enemy));
     		}
     		return list;
     	}
@@ -330,7 +330,7 @@ public class Level {
     	}
     	
     	protected Pansound getMusic() {
-    		return PlatformGame.musicHappy;
+    		return FurGuardiansGame.musicHappy;
     	}
     	
     	protected void step(final long clock) {
@@ -342,7 +342,7 @@ public class Level {
     
     protected static void setTheme(final Theme theme) {
     	Level.theme = theme;
-    	PlatformGame.enemies = theme.getEnemies();
+    	FurGuardiansGame.enemies = theme.getEnemies();
     }
     
     protected static void initTheme() {
@@ -354,7 +354,7 @@ public class Level {
     }
     
     private final static Profile getProfile() {
-        final PlayerContext pc = Coltil.get(PlatformGame.pcs, 0);
+        final PlayerContext pc = Coltil.get(FurGuardiansGame.pcs, 0);
         return (pc == null) ? null : pc.profile;
     }
     
@@ -379,7 +379,7 @@ public class Level {
     }
     
     protected final static void applyDirtTexture(final Img tileImg, final int ix, final int iy, final int fx, final int fy) {
-        final Img dirt = PlatformGame.dirts[Map.bgTexture];
+        final Img dirt = FurGuardiansGame.dirts[Map.bgTexture];
         final PixelMask tileMask = new AntiPixelMask(new ColorPixelMask(224, 112, 0, Pancolor.MAX_VALUE));
         for (int x = ix; x < fx; x += 16) {
             for (int y = iy; y < fy; y += 16) {
@@ -392,7 +392,7 @@ public class Level {
     }
     
     protected final static Img getTerrainTexture() {
-        return PlatformGame.terrains[Map.bgTexture];
+        return FurGuardiansGame.terrains[Map.bgTexture];
     }
     
     protected final static PixelMask getTerrainMask(final int _z) {
@@ -440,7 +440,7 @@ public class Level {
     }
     
     protected final static void loadLayers() {
-        room = PlatformGame.createRoom(w, ROOM_H);
+        room = FurGuardiansGame.createRoom(w, ROOM_H);
         room.setClearDepthEnabled(false);
         tm = new TileMap("act.tilemap", room, ImtilX.DIM, ImtilX.DIM);
         room.addActor(tm);
@@ -451,7 +451,7 @@ public class Level {
         flashBlock = new TileMapImage[] {row[0], row[1], row[2], row[3]};
         extraAnimBlock = theme.getExtraAnimBlock();
         
-        final Panlayer bg1 = PlatformGame.createParallax(room, 2);
+        final Panlayer bg1 = FurGuardiansGame.createParallax(room, 2);
         bg1.setClearDepthEnabled(false);
         bgtm1 = newBackgroundTileMap(1, bg1);
         Img backImg = backgroundBuilder.getImage();
@@ -463,12 +463,12 @@ public class Level {
         So it's probably best if each layer's master is the one directly above it
         instead of basing all on the foreground with different divisors.
         */
-        final Panlayer bg2 = PlatformGame.createParallax(bg1, 2);
+        final Panlayer bg2 = FurGuardiansGame.createParallax(bg1, 2);
         bg2.setClearDepthEnabled(false);
         bgtm2 = newBackgroundTileMap(2, bg2);
         bgtm2.setImageMap(bgtm1);
         
-        final Panlayer bg3 = PlatformGame.createParallax(bg2, 2);
+        final Panlayer bg3 = FurGuardiansGame.createParallax(bg2, 2);
         bgtm3 = newBackgroundTileMap(3, bg3);
         bgtm3.setImageMap(bgtm1);
     }
@@ -580,7 +580,7 @@ public class Level {
         slantUp(42, 1, 1, 3);
         goalBlock(42, 8);
         
-        final EnemyDefinition def = PlatformGame.enemies.get(0);
+        final EnemyDefinition def = FurGuardiansGame.enemies.get(0);
         new Enemy(def, 80, 64);
         new Enemy(def, 232, 48);
         new Enemy(def, 360, 16);
@@ -668,7 +668,7 @@ public class Level {
     			Block letter patterns
     			Checkered, diagonal stripe gem patterns
     			*/
-    		    final int numLetters = PlatformGame.blockWord.length(), ibx = bx;
+    		    final int numLetters = FurGuardiansGame.blockWord.length(), ibx = bx;
     		    Template template = null;
     		    for (int i = 0; i < 4; i++) {
     		    	bx = ibx;
@@ -1645,11 +1645,11 @@ public class Level {
 		protected final void plan() {
 			x = bx;
 			if (getDefeatedLevels() == 0) {
-			    msg = PlatformGame.pcs.get(0).getBonusName();
+			    msg = FurGuardiansGame.pcs.get(0).getBonusName();
 			} else {
     			msg = Mathtil.rand(theme.gemMessages);
     			if ("PLAYER".equals(msg)) {
-    				msg = Mathtil.rand(PlatformGame.pcs).getBonusName();
+    				msg = Mathtil.rand(FurGuardiansGame.pcs).getBonusName();
     			}
 			}
 			bx += gemMsg(x, floor + 1, msg, false) + 2;
@@ -1726,7 +1726,7 @@ public class Level {
         protected final void build() {
     		blockWall(x, floor + 1, 1, 2);
     		blockWall(x + 11, floor + 1, 1, 2);
-    		enemy(Mathtil.rand() ? PlatformGame.trollColossus : PlatformGame.ogreBehemoth, x + 5, floor + 1);
+    		enemy(Mathtil.rand() ? FurGuardiansGame.trollColossus : FurGuardiansGame.ogreBehemoth, x + 5, floor + 1);
     	}
     }
     
@@ -1832,14 +1832,14 @@ public class Level {
     }
     
     private final static void addPlayers() {
-    	final int size = PlatformGame.pcs.size();
+    	final int size = FurGuardiansGame.pcs.size();
         final ArrayList<Player> players = new ArrayList<Player>(size);
         for (int i = 0; i < size; i++) {
-        	final PlayerContext pc = PlatformGame.pcs.get(i);
+        	final PlayerContext pc = FurGuardiansGame.pcs.get(i);
         	Goal.initGoals(pc);
             final Player player = new Player(pc);
             room.addActor(player);
-            PlatformGame.setPosition(player, 40 + (20 * i), (floor + 1) * 16);
+            FurGuardiansGame.setPosition(player, 40 + (20 * i), (floor + 1) * 16);
             players.add(player);
         }
         Pangine.getEngine().track(Panverage.getArithmeticMean(players));
@@ -2025,28 +2025,28 @@ public class Level {
     }
     
     private final static void bumpableBlock(final int x, final int y) {
-        tm.setForeground(x, y, imgMap[0][0], PlatformGame.TILE_BUMP);
+        tm.setForeground(x, y, imgMap[0][0], FurGuardiansGame.TILE_BUMP);
     }
     
     private final static void breakableBlock(final int x, final int y) {
-        tm.setForeground(x, y, imgMap[0][5], PlatformGame.TILE_BREAK);
+        tm.setForeground(x, y, imgMap[0][5], FurGuardiansGame.TILE_BREAK);
     }
     
     private final static void letterBlock(final int x, final int y) {
-        tm.setForeground(x, y, PlatformGame.getBlockWordLetter(currLetter++), PlatformGame.TILE_BUMP);
+        tm.setForeground(x, y, FurGuardiansGame.getBlockWordLetter(currLetter++), FurGuardiansGame.TILE_BUMP);
     }
     
     private final static void upBlock(final int x, final int y) {
-        setFgShadowed(x, y, 0, 6, PlatformGame.TILE_UPSLOPE);
+        setFgShadowed(x, y, 0, 6, FurGuardiansGame.TILE_UPSLOPE);
     }
     
     private final static void downBlock(final int x, final int y) {
-        setFgShadowed(x, y, 0, 7, PlatformGame.TILE_DOWNSLOPE);
+        setFgShadowed(x, y, 0, 7, FurGuardiansGame.TILE_DOWNSLOPE);
     }
     
     private final static void goalBlock(final int x, final int y) {
         goalIndex = tm.getIndex(x, y);
-        tm.setForeground(goalIndex, imgMap[7][0], PlatformGame.TILE_BUMP);
+        tm.setForeground(goalIndex, imgMap[7][0], FurGuardiansGame.TILE_BUMP);
     }
     
     private final static void step(final int x, final int y, final int w, final int h) {
@@ -2100,8 +2100,8 @@ public class Level {
         for (int jo = y; jo <= ystop; jo++) {
             final int jb = jo - y, stop = fstop - jb;
             if (jb != 0) {
-                tm.setForeground(x + jb, jo, imgMap[3][3], PlatformGame.TILE_UPSLOPE);
-                tm.setForeground(stop + 1, jo, imgMap[3][4], PlatformGame.TILE_DOWNSLOPE);
+                tm.setForeground(x + jb, jo, imgMap[3][3], FurGuardiansGame.TILE_UPSLOPE);
+                tm.setForeground(stop + 1, jo, imgMap[3][4], FurGuardiansGame.TILE_DOWNSLOPE);
             }
             if (jo == ystop) {
                 for (int i = x + jb + 1; i <= stop; i++) {
@@ -2160,13 +2160,13 @@ public class Level {
         }
         final int stop = x + w;
         for (int i = x + 1; i <= stop; i++) {
-            tm.setBackground(i, ystop, imgMap[1][1], PlatformGame.TILE_FLOOR);
+            tm.setBackground(i, ystop, imgMap[1][1], FurGuardiansGame.TILE_FLOOR);
             for (int j = y; j < ystop; j++) {
                 tm.setBackground(i, j, getDirtImage());
             }
         }
-        tm.setForeground(x, ystop, imgMap[1][3], PlatformGame.TILE_FLOOR);
-        tm.setForeground(stop + 1, ystop, imgMap[1][4], PlatformGame.TILE_FLOOR);
+        tm.setForeground(x, ystop, imgMap[1][3], FurGuardiansGame.TILE_FLOOR);
+        tm.setForeground(stop + 1, ystop, imgMap[1][4], FurGuardiansGame.TILE_FLOOR);
     }
     
     private final static void colorRise(final int x, final int y, final int w, final int h, final int _o) {
@@ -2177,13 +2177,13 @@ public class Level {
         }
         final int stop = x + w;
         for (int i = x + 1; i <= stop; i++) {
-            tm.setBackground(i, ystop, imgMap[o][6], PlatformGame.TILE_FLOOR);
+            tm.setBackground(i, ystop, imgMap[o][6], FurGuardiansGame.TILE_FLOOR);
             for (int j = y; j < ystop; j++) {
                 tm.setBackground(i, j, imgMap[o1][6]);
             }
         }
-        tm.setForeground(x, ystop, imgMap[o][5], PlatformGame.TILE_FLOOR);
-        tm.setForeground(stop + 1, ystop, imgMap[o][7], PlatformGame.TILE_FLOOR);
+        tm.setForeground(x, ystop, imgMap[o][5], FurGuardiansGame.TILE_FLOOR);
+        tm.setForeground(stop + 1, ystop, imgMap[o][7], FurGuardiansGame.TILE_FLOOR);
     }
     
     private final static void wall(final int x, final int y, final int w, final int h) {
@@ -2211,13 +2211,13 @@ public class Level {
             c1 = 3;
             c2 = 4;
             c3 = 0;
-            b = PlatformGame.TILE_UPSLOPE_FLOOR;
+            b = FurGuardiansGame.TILE_UPSLOPE_FLOOR;
         } else {
             m = -1;
             c1 = 4;
             c2 = 3;
             c3 = 2;
-            b = PlatformGame.TILE_DOWNSLOPE_FLOOR;
+            b = FurGuardiansGame.TILE_DOWNSLOPE_FLOOR;
         }
         for (int jo = y; jo < ystop; jo++) {
             final int jb = jo - y;
@@ -2300,7 +2300,7 @@ public class Level {
     
     private final static void gem(final int x, final int y) {
         if (tileGem == null) {
-        	tileGem = tm.getTile(null, PlatformGame.gem[0], PlatformGame.TILE_GEM);
+        	tileGem = tm.getTile(null, FurGuardiansGame.gem[0], FurGuardiansGame.TILE_GEM);
         }
         tm.setTile(x, y, tileGem);
     }

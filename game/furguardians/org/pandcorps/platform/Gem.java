@@ -33,7 +33,7 @@ public class Gem extends TileOccupant implements StepListener {
 	private final Panmage[] gem;
 	
 	public Gem() {
-		this(PlatformGame.gem);
+		this(FurGuardiansGame.gem);
 	}
 	
 	public Gem(final Panmage[] gem) {
@@ -44,7 +44,7 @@ public class Gem extends TileOccupant implements StepListener {
 	@Override
 	public final void onStep(final StepEvent event) {
 		// Panimation would allow flashes to be out of synch for gems created at different times
-		final long tick = Pangine.getEngine().getClock() % PlatformGame.TIME_FLASH;
+		final long tick = Pangine.getEngine().getClock() % FurGuardiansGame.TIME_FLASH;
 		if (tick < 3) {
 			setView(gem[(((int) tick) + 1) % 3]);
 		}
@@ -75,7 +75,7 @@ public class Gem extends TileOccupant implements StepListener {
 	}
 	
 	protected final static void spark(final Panple pos, final boolean end) {
-		spark(PlatformGame.room, pos, end);
+		spark(FurGuardiansGame.room, pos, end);
 	}
 	
 	protected final static void spark(final Panlayer layer, final Panple pos, final boolean end) {
@@ -85,7 +85,7 @@ public class Gem extends TileOccupant implements StepListener {
 	protected final static void playSound() {
 		final long clock = Pangine.getEngine().getClock();
 		if (clock > lastSound) {
-			PlatformGame.soundGem.startSound();
+			FurGuardiansGame.soundGem.startSound();
 			lastSound = clock + 1;
 		}
 	}
@@ -99,11 +99,11 @@ public class Gem extends TileOccupant implements StepListener {
 		protected GemAttracted(final int index, final Player dst) {
 			speed = dst.getVelWalk() + 2;
 			this.dst = dst;
-			setView(PlatformGame.gemAnm.getFrames()[0].getImage());
+			setView(FurGuardiansGame.gemAnm.getFrames()[0].getImage());
 			Level.tm.savePosition(getPosition(), index);
-			PlatformGame.setDepth(this, PlatformGame.DEPTH_SHATTER);
+			FurGuardiansGame.setDepth(this, FurGuardiansGame.DEPTH_SHATTER);
 			Level.tm.setTile(index, null);
-			PlatformGame.room.addActor(this);
+			FurGuardiansGame.room.addActor(this);
 		}
 
 		@Override

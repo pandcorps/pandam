@@ -198,11 +198,11 @@ public class Avatar extends EyeData implements Segmented {
             }
             final String loc = getLoc();
             final int d = getDim();
-            imgs = PlatformGame.loadChrStrip(loc + "/" + res + ".png", d, true);
+            imgs = FurGuardiansGame.loadChrStrip(loc + "/" + res + ".png", d, true);
             if (!res.equals("RoyalMantle")) {
-            	mapImgs = PlatformGame.loadChrStrip(loc + "/" + res + "Map.png", d, true);
+            	mapImgs = FurGuardiansGame.loadChrStrip(loc + "/" + res + "Map.png", d, true);
             	if (getClass() == Clothing.class) {
-            		rideImgs = PlatformGame.loadChrStrip(loc + "/" + res + "Ride.png", d, true);
+            		rideImgs = FurGuardiansGame.loadChrStrip(loc + "/" + res + "Ride.png", d, true);
             	}
             }
             Img.setTemporary(false, imgs);
@@ -304,15 +304,15 @@ public class Avatar extends EyeData implements Segmented {
     }
     
     public void randomize() {
-        anm = Mathtil.rand(PlatformGame.getAnimals());
-        eye = Mathtil.randi(1, PlatformGame.getNumEyes());
+        anm = Mathtil.rand(FurGuardiansGame.getAnimals());
+        eye = Mathtil.randi(1, FurGuardiansGame.getNumEyes());
         col.randomize();
         jumpMode = Player.MODE_NORMAL;
         jumpCol.init();
         clothing.init();
         hat.init();
         dragon.init();
-        dragon.eye = Mathtil.randi(1, PlatformGame.getNumDragonEyes());
+        dragon.eye = Mathtil.randi(1, FurGuardiansGame.getNumDragonEyes());
     }
     
     public void load(final Avatar src) {
@@ -350,7 +350,7 @@ public class Avatar extends EyeData implements Segmented {
     
     @Override
     public void save(final Segment seg) {
-        seg.setName(PlatformGame.SEG_AVT);
+        seg.setName(FurGuardiansGame.SEG_AVT);
     	seg.setValue(0, getName());
     	seg.setValue(1, anm);
     	seg.setInt(2, eye);
