@@ -28,7 +28,7 @@ import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
 
 public class Music {
-	private final static String COPYRIGHT = "Copyright (c) " + PlatformGame.YEAR + ", " + PlatformGame.AUTHOR;
+	private final static String COPYRIGHT = "Copyright (c) " + FurGuardiansGame.YEAR + ", " + FurGuardiansGame.AUTHOR;
 	
 	protected final static Sequence newSongCreepy() throws Exception {
 		// channel 0 - 15; key/vol 0 - 127
