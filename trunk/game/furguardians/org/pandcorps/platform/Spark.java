@@ -34,14 +34,14 @@ public final class Spark extends Burst implements StepListener {
 	private int age = 0;
 	
 	public Spark(final float x, final float y, final boolean end) {
-		this(PlatformGame.room, DEF_COUNT, x, y, end);
+		this(FurGuardiansGame.room, DEF_COUNT, x, y, end);
 	}
 	
 	public Spark(final Panlayer layer, final int count, final float x, final float y, final boolean end) {
-		super(PlatformGame.spark);
+		super(FurGuardiansGame.spark);
 		this.count = count;
 		this.end = end;
-		PlatformGame.setPosition(this, x + Mathtil.randf(-7, 7), y + Mathtil.randf(-7, 7), PlatformGame.DEPTH_SPARK);
+		FurGuardiansGame.setPosition(this, x + Mathtil.randf(-7, 7), y + Mathtil.randf(-7, 7), FurGuardiansGame.DEPTH_SPARK);
 		layer.addActor(this);
 	}
 
@@ -60,7 +60,7 @@ public final class Spark extends Burst implements StepListener {
 	public void onDestroy() {
 		if (end && count == 0 && age != -1) {
 			age = -1;
-			PlatformGame.levelClose();
+			FurGuardiansGame.levelClose();
 		}
 	}
 }
