@@ -51,11 +51,11 @@ public class Cabin {
 	protected final static class CabinScreen extends Panscreen {
 		@Override
 		protected final void load() throws Exception {
-			PlatformGame.level = false;
+			FurGuardiansGame.level = false;
 		    clear();
 			final Pangine engine = Pangine.getEngine();
 			engine.setBgColor(Pancolor.BLACK);
-			room = PlatformGame.createRoom(256, 192);
+			room = FurGuardiansGame.createRoom(256, 192);
 			room.center();
 			
 			tm = new TileMap(Pantil.vmid(), room, ImtilX.DIM, ImtilX.DIM);
@@ -144,39 +144,39 @@ public class Cabin {
 			}
 			
 			final Panctor owl = new Panctor("act.owl");
-			owl.setView(PlatformGame.owl);
+			owl.setView(FurGuardiansGame.owl);
 			room.addActor(owl);
 			owl.getPosition().set(112, 128, 1);
 			
 			//TODO All players?
-			PlatformGame.initTouchButtons(null, false, true, null);
-			pc = PlatformGame.pcs.get(0);
+			FurGuardiansGame.initTouchButtons(null, false, true, null);
+			pc = FurGuardiansGame.pcs.get(0);
 			final Player player = new Player(pc);
 			room.addActor(player);
-			PlatformGame.setPosition(player, 74, 32);
-			PlatformGame.addHud(room, false, true);
+			FurGuardiansGame.setPosition(player, 74, 32);
+			FurGuardiansGame.addHud(room, false, true);
 			
 			final String txt = Mathtil.rand() ? loadName() : loadShuffle();
-			instr = new Pantext("act.instr", PlatformGame.font, txt);
+			instr = new Pantext("act.instr", FurGuardiansGame.font, txt);
 			room.addActor(instr);
 			instr.getPosition().set(128, 114, 1);
 			instr.centerX();
-			PlatformGame.fadeIn(room);
-			PlatformGame.musicOcarina.changeMusic();
+			FurGuardiansGame.fadeIn(room);
+			FurGuardiansGame.musicOcarina.changeMusic();
 		}
 		
 		private final String loadShuffle() {
 			cabinTileHandler = new ShuffleTileHandler();
 			pc.player.mode = Player.MODE_DISABLED;
 			for (int i = 0; i < NUM_BLOCKS; i++) {
-				tm.setForeground(3 + (i * 3), 5, imgMap[0][0], PlatformGame.TILE_BUMP);
+				tm.setForeground(3 + (i * 3), 5, imgMap[0][0], FurGuardiansGame.TILE_BUMP);
 			}
 			shuffle(30, 0);
 			return "Hoo! Hoo! Pick one!";
 		}
 		
 		protected final static int displayName(final String name, final int y, final int oddOff) {
-			PlatformGame.blockWord = name;
+			FurGuardiansGame.blockWord = name;
 			final int size = name.length();
 			int x = Level.tm.getWidth() - size;
 			if (x % 2 == 1) {
@@ -184,7 +184,7 @@ public class Cabin {
 			}
 			x = x / 2;
 			for (int i = 0; i < size; i++) {
-				Level.tm.setForeground(x + i, y, PlatformGame.getBlockWordLetter(i), PlatformGame.TILE_BUMP);
+				Level.tm.setForeground(x + i, y, FurGuardiansGame.getBlockWordLetter(i), FurGuardiansGame.TILE_BUMP);
 			}
 			return x + size;
 		}
@@ -205,7 +205,7 @@ public class Cabin {
         protected void destroy() {
             Level.tm = null;
             timg.destroy();
-            PlatformGame.blockWord = PlatformGame.defaultBlockWord;
+            FurGuardiansGame.blockWord = FurGuardiansGame.defaultBlockWord;
         }
 	}
 	
@@ -245,12 +245,12 @@ public class Cabin {
 		
 		@Override
 		protected TileMapImage getBumpedImage() {
-			if (Coltil.size(Level.collectedLetters) == PlatformGame.blockWord.length() && pc.player.mode == Player.MODE_NORMAL) {
+			if (Coltil.size(Level.collectedLetters) == FurGuardiansGame.blockWord.length() && pc.player.mode == Player.MODE_NORMAL) {
 				pc.player.mode = Player.MODE_DISABLED;
 				pc.player.addGems(500);
 				Pangine.getEngine().addTimer(tm, 20, new TimerListener() {
 					@Override public final void onTimer(final TimerEvent event) {
-						PlatformGame.clearLetters(PlatformGame.gemCyanAnm, new Runnable() { @Override public final void run() {
+						FurGuardiansGame.clearLetters(FurGuardiansGame.gemCyanAnm, new Runnable() { @Override public final void run() {
 							finish();
 						}});
 					}});
@@ -306,11 +306,11 @@ public class Cabin {
                     Panctor gem = gems[i];
                     if (gem == null) {
                         gem = end ? new Blink(15) : new Panctor();
-                        PlatformGame.setPosition(gem, x * 16, 97, PlatformGame.DEPTH_SPARK);
+                        FurGuardiansGame.setPosition(gem, x * 16, 97, FurGuardiansGame.DEPTH_SPARK);
                         room.addActor(gem);
                         gems[i] = gem;
                     }
-                    gem.setView(white ? PlatformGame.gemWhite : getGemImg(awds.remove(awds.size() - 1)));
+                    gem.setView(white ? FurGuardiansGame.gemWhite : getGemImg(awds.remove(awds.size() - 1)));
                 }
                 if (end) {
                 	Pangine.getEngine().addTimer(gems[0], 105, new TimerListener() {
@@ -352,7 +352,7 @@ public class Cabin {
 	private final static void finish() {
 		clear();
         pc.onFinishBonus();
-        PlatformGame.markerClose();
-        PlatformGame.playTransition(PlatformGame.musicLevelEnd);
+        FurGuardiansGame.markerClose();
+        FurGuardiansGame.playTransition(FurGuardiansGame.musicLevelEnd);
 	}
 }

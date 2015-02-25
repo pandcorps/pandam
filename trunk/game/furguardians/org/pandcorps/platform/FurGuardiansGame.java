@@ -49,7 +49,7 @@ import org.pandcorps.platform.Enemy.*;
 import org.pandcorps.platform.Menu.*;
 import org.pandcorps.platform.Player.*;
 
-public class PlatformGame extends BaseGame {
+public class FurGuardiansGame extends BaseGame {
 	protected final static String TITLE = "Fur-Guardians"; // res/values/strings.xml/app_name
     protected final static String VERSION = "1.2.1"; // AndroidManifest.xml/versionName
     protected final static String YEAR = "2014-2015";
@@ -338,7 +338,7 @@ public class PlatformGame extends BaseGame {
 	    engine.setTitle(TITLE);
 	    engine.setEntityMapEnabled(false);
 	    Imtil.onlyResources = true;
-		PlatformGame.room = room;
+		FurGuardiansGame.room = room;
 		loadConstants();
 		Panscreen.set(new LogoScreen(TitleScreen.class, loaders));
 	}
@@ -407,7 +407,7 @@ public class PlatformGame extends BaseGame {
 					if (Chartil.isValued(progress)) {
 						msg = msg + ", " + progress;
 					}
-					PlatformGame.notify(pc, msg);
+					FurGuardiansGame.notify(pc, msg);
 				}
 			}
 			Level.theme.getMusic().changeMusic();
@@ -1887,7 +1887,7 @@ public class PlatformGame extends BaseGame {
 	
 	public final static void main(final String[] args) {
         try {
-            new PlatformGame().start();
+            new FurGuardiansGame().start();
         } catch (final Throwable e) {
             e.printStackTrace();
         }

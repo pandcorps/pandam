@@ -72,7 +72,7 @@ public abstract class Character extends Panctor implements StepListener, Collida
 	    final Panple pos = getPosition();
 	    if (v > 0) {
 	        mult = 1;
-	        if (pos.getX() > PlatformGame.room.getSize().getX()) {
+	        if (pos.getX() > FurGuardiansGame.room.getSize().getX()) {
 	            onEnd();
 	            return false;
 	        }
@@ -209,10 +209,10 @@ public abstract class Character extends Panctor implements StepListener, Collida
 		Each pixel of h-move could also check for a slope one pixel below and lower by one pixel at that time.
 		*/
 		/*if (v <= 0) {
-		    final Tile t = PlatformGame.tm.getContainer(pos);
+		    final Tile t = FurGuardiansGame.tm.getContainer(pos);
 		    if (t != null) {
 		        final byte b = t.getBehavior();
-		        if (b == PlatformGame.TILE_UP) {
+		        if (b == FurGuardiansGame.TILE_UP) {
 		            // trunc/round should match getContainer
 		            final int minHeight = (int) pos.getX() % ImtilX.DIM;
 		            final int iy = (int) pos.getY();
@@ -236,7 +236,7 @@ public abstract class Character extends Panctor implements StepListener, Collida
 	}
 	
 	protected final float getCeiling() {
-		return PlatformGame.room.getSize().getY() + 4 - H;
+		return FurGuardiansGame.room.getSize().getY() + 4 - H;
 	}
 	
 	protected boolean isGrounded() {
@@ -314,7 +314,7 @@ public abstract class Character extends Panctor implements StepListener, Collida
 		        sandSolid = true;
 		        
 		        /*if (!sol && yoff < 0) {
-		        	final Tile tb = PlatformGame.tm.getContainer(b, yi);
+		        	final Tile tb = FurGuardiansGame.tm.getContainer(b, yi);
 		        	sol = isSlope(tb, left, right, y);
 		        }*/
 	        }
@@ -338,7 +338,7 @@ public abstract class Character extends Panctor implements StepListener, Collida
 		    return false;
 		}
 		final int b = tile.getBehavior();
-		return (b == PlatformGame.TILE_UPSLOPE || b == PlatformGame.TILE_DOWNSLOPE || b == PlatformGame.TILE_UPSLOPE_FLOOR || b == PlatformGame.TILE_DOWNSLOPE_FLOOR) && isSolid(index, left, right, y);
+		return (b == FurGuardiansGame.TILE_UPSLOPE || b == FurGuardiansGame.TILE_DOWNSLOPE || b == FurGuardiansGame.TILE_UPSLOPE_FLOOR || b == FurGuardiansGame.TILE_DOWNSLOPE_FLOOR) && isSolid(index, left, right, y);
 	}
 	
 	private boolean isSolid(final int index, final float left, final float right, final float y) {
@@ -356,14 +356,14 @@ public abstract class Character extends Panctor implements StepListener, Collida
 			return true;
 		}
 		final byte b = tile.getBehavior();
-		if (b == PlatformGame.TILE_BREAK || b == PlatformGame.TILE_BUMP ||
-				b == PlatformGame.TILE_ICE || (sandSolid && b == PlatformGame.TILE_SAND) ||
-				(floor && b == PlatformGame.TILE_FLOOR)) {
+		if (b == FurGuardiansGame.TILE_BREAK || b == FurGuardiansGame.TILE_BUMP ||
+				b == FurGuardiansGame.TILE_ICE || (sandSolid && b == FurGuardiansGame.TILE_SAND) ||
+				(floor && b == FurGuardiansGame.TILE_FLOOR)) {
 			return true;
 		}
 		final float top = y + H - 1, yoff = y - getPosition().getY();
 		final int iy = (int) y, curHeight = iy % ImtilX.DIM;
-		if (b == PlatformGame.TILE_UPSLOPE || (yoff <= 0 && b == PlatformGame.TILE_UPSLOPE_FLOOR)) {
+		if (b == FurGuardiansGame.TILE_UPSLOPE || (yoff <= 0 && b == FurGuardiansGame.TILE_UPSLOPE_FLOOR)) {
 			//if (v <= 0) {
 			//final Panple pos = getPosition();
             // trunc/round should match getContainer
@@ -371,12 +371,12 @@ public abstract class Character extends Panctor implements StepListener, Collida
 			//	return false;
 			//}
 			if (map.getContainer(right, y) != index) {
-				if (b == PlatformGame.TILE_UPSLOPE_FLOOR && curHeight != 15) {
+				if (b == FurGuardiansGame.TILE_UPSLOPE_FLOOR && curHeight != 15) {
 					return false;
 				} else if (map.getContainer(left, y) == index) {
 				    final int i = map.getColumn(index), j = map.getRow(index);
-					return b != PlatformGame.TILE_UPSLOPE_FLOOR || Tile.getBehavior(map.getTile(map.getRelative(i, j, 1, 1))) != PlatformGame.TILE_UPSLOPE_FLOOR;
-				} else if (b == PlatformGame.TILE_UPSLOPE_FLOOR) {
+					return b != FurGuardiansGame.TILE_UPSLOPE_FLOOR || Tile.getBehavior(map.getTile(map.getRelative(i, j, 1, 1))) != FurGuardiansGame.TILE_UPSLOPE_FLOOR;
+				} else if (b == FurGuardiansGame.TILE_UPSLOPE_FLOOR) {
 					return false;
 				}
 				for (int i = 0; true; i += 16) {
@@ -389,16 +389,16 @@ public abstract class Character extends Panctor implements StepListener, Collida
 				}
 			}
             final int minHeight = (int) right % ImtilX.DIM;
-            return (b == PlatformGame.TILE_UPSLOPE_FLOOR) ? (curHeight == minHeight) : (curHeight <= minHeight);
+            return (b == FurGuardiansGame.TILE_UPSLOPE_FLOOR) ? (curHeight == minHeight) : (curHeight <= minHeight);
 			//}
-		} else if (b == PlatformGame.TILE_DOWNSLOPE || (yoff <= 0 && b == PlatformGame.TILE_DOWNSLOPE_FLOOR)) {
+		} else if (b == FurGuardiansGame.TILE_DOWNSLOPE || (yoff <= 0 && b == FurGuardiansGame.TILE_DOWNSLOPE_FLOOR)) {
             if (map.getContainer(left, y) != index) {
-            	if (b == PlatformGame.TILE_DOWNSLOPE_FLOOR && curHeight != 15) {
+            	if (b == FurGuardiansGame.TILE_DOWNSLOPE_FLOOR && curHeight != 15) {
 					return false;
 				} else if (map.getContainer(right, y) == index) {
 				    final int i = map.getColumn(index), j = map.getRow(index);
-					return b != PlatformGame.TILE_DOWNSLOPE_FLOOR || Tile.getBehavior(map.getTile(map.getRelative(i, j, -1, 1))) != PlatformGame.TILE_DOWNSLOPE_FLOOR;
-				} else if (b == PlatformGame.TILE_DOWNSLOPE_FLOOR) {
+					return b != FurGuardiansGame.TILE_DOWNSLOPE_FLOOR || Tile.getBehavior(map.getTile(map.getRelative(i, j, -1, 1))) != FurGuardiansGame.TILE_DOWNSLOPE_FLOOR;
+				} else if (b == FurGuardiansGame.TILE_DOWNSLOPE_FLOOR) {
 					return false;
 				}
             	for (int i = 0; true; i += 16) {
@@ -411,7 +411,7 @@ public abstract class Character extends Panctor implements StepListener, Collida
 				}
             }
             final int minHeight = 15 - ((int) left % ImtilX.DIM);
-            return (b == PlatformGame.TILE_DOWNSLOPE_FLOOR) ? (curHeight == minHeight) : (curHeight <= minHeight);
+            return (b == FurGuardiansGame.TILE_DOWNSLOPE_FLOOR) ? (curHeight == minHeight) : (curHeight <= minHeight);
         }
 		return false;
 	}

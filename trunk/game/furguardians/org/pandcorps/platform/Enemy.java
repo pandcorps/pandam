@@ -131,15 +131,15 @@ public class Enemy extends Character {
 			    n = getMin(offX);
 			    x = getMax(offX, h);
 			}
-			this.walk = PlatformGame.createAnm(id, currentWalk, o, n, x, walk);
+			this.walk = FurGuardiansGame.createAnm(id, currentWalk, o, n, x, walk);
 			currentWalk = DEFAULT_WALK;
 			this.ledgeTurn = ledgeTurn;
-			this.splat = splat ? PlatformGame.createAnm(id + ".splat", currentSplat, o, n, x, strip[2]) : null;
+			this.splat = splat ? FurGuardiansGame.createAnm(id + ".splat", currentSplat, o, n, x, strip[2]) : null;
 			currentSplat = DEFAULT_SPLAT;
 			if (strip.length > 3) {
-				extra = PlatformGame.createAnm(id + ".extra", 8, o, n, x, strip[3]);
+				extra = FurGuardiansGame.createAnm(id + ".extra", 8, o, n, x, strip[3]);
 			}
-			this.attack = (hv == 0 && strip.length > 2) ? PlatformGame.createAnm(id + ".attack", 20, o, n, x, strip[2]) : null;
+			this.attack = (hv == 0 && strip.length > 2) ? FurGuardiansGame.createAnm(id + ".attack", 20, o, n, x, strip[2]) : null;
 			Img.close(strip);
 			this.avoidCount = avoidCount;
 			this.offX = offX;
@@ -202,8 +202,8 @@ public class Enemy extends Character {
 		this.def = def;
 		setView(def.walk);
 		setEnemyMirror(true);
-		PlatformGame.room.addActor(this);
-		PlatformGame.setPosition(this, x, y, PlatformGame.DEPTH_ENEMY);
+		FurGuardiansGame.room.addActor(this);
+		FurGuardiansGame.setPosition(this, x, y, FurGuardiansGame.DEPTH_ENEMY);
 		avoidCount = def.avoidCount;
 		if (hv == 0) {
 		    initTimer(0);
@@ -234,8 +234,8 @@ public class Enemy extends Character {
 	                    break;
 	                case 1 :
 	                    initTimer(2);
-	                    PlatformGame.room.addActor(new Projectile(def.projectile, this, Mathtil.rand(PlatformGame.pcs).player));
-	                    PlatformGame.soundWhoosh.startSound();
+	                    FurGuardiansGame.room.addActor(new Projectile(def.projectile, this, Mathtil.rand(FurGuardiansGame.pcs).player));
+	                    FurGuardiansGame.soundWhoosh.startSound();
 	                    break;
 	                case 2 :
 	                    stepTeleport();
@@ -252,7 +252,7 @@ public class Enemy extends Character {
         teleport(Mathtil.randi(1, 8) * ImtilX.DIM);
         Boolean mirror = null;
         final float x = getPosition().getX();
-        for (final PlayerContext pc : PlatformGame.pcs) {
+        for (final PlayerContext pc : FurGuardiansGame.pcs) {
             final Boolean currMirror = Boolean.valueOf(pc.player.getPosition().getX() < x);
             if (mirror != currMirror) {
                 if (mirror == null) {
@@ -314,18 +314,18 @@ public class Enemy extends Character {
         	fy = getCeiling() - 1;
         }
         if (fy != -1) {
-            burst(PlatformGame.teleport);
+            burst(FurGuardiansGame.teleport);
             pos.set(x, fy);
             final Pangine engine = Pangine.getEngine();
-            for (final PlayerContext pc : PlatformGame.pcs) {
+            for (final PlayerContext pc : FurGuardiansGame.pcs) {
                 if (engine.isCollision(this, pc.player)) {
                     /*destroy();
                     return true;*/
                 	pos.set(x, getCeiling() - 1);
                 }
             }
-            burst(PlatformGame.teleport);
-            PlatformGame.soundWhoosh.startSound();
+            burst(FurGuardiansGame.teleport);
+            FurGuardiansGame.soundWhoosh.startSound();
             return true;
         }
         return false;
@@ -399,9 +399,9 @@ public class Enemy extends Character {
 	protected final static void burst(final Panctor ref, final Panimation anm, final Panctor dir, final BurstHandler burstHandler, final int yoff) {
 	    final Burst b = CustomBurst.createBurst(anm, burstHandler);
 	    final Panple pos = ref.getPosition();
-        PlatformGame.setPosition(b, pos.getX(), pos.getY() + yoff, PlatformGame.DEPTH_SHATTER);
+        FurGuardiansGame.setPosition(b, pos.getX(), pos.getY() + yoff, FurGuardiansGame.DEPTH_SHATTER);
         b.setMirror(dir.isMirror());
-        PlatformGame.room.addActor(b);
+        FurGuardiansGame.room.addActor(b);
 	}
 	
 	protected final boolean onHurtPlayer(final Player player) {
@@ -518,8 +518,8 @@ public class Enemy extends Character {
                 if (getPosition().getY() > collider.getPosition().getY()) {
                     collider.onBump(this);
                 }
-            } else if (collider.def == PlatformGame.imp) {
-                PlatformGame.openArmoredImp(this, collider);
+            } else if (collider.def == FurGuardiansGame.imp) {
+                FurGuardiansGame.openArmoredImp(this, collider);
                 collider.destroy();
             }
         }
@@ -553,9 +553,9 @@ public class Enemy extends Character {
 			this.def = def;
 			setView(def.walk);
 			setMirror(true);
-			PlatformGame.room.addActor(this);
+			FurGuardiansGame.room.addActor(this);
 			final float maxy = Math.min(y + 80, Level.tm.getHeight() * Level.tm.getTileHeight());
-			PlatformGame.setPosition(this, x, Mathtil.randf(y, maxy), PlatformGame.DEPTH_ENEMY);
+			FurGuardiansGame.setPosition(this, x, Mathtil.randf(y, maxy), FurGuardiansGame.DEPTH_ENEMY);
 		}
 		
 		@Override
@@ -565,7 +565,7 @@ public class Enemy extends Character {
 			} else if (timer <= 0) {
 				if (vel.getMagnitude2() < 0.2f) {
 					timer = Mathtil.randi(60, 90);
-					Projectile.setVelocity(this, Mathtil.rand(PlatformGame.pcs).player, vel, 1f);
+					Projectile.setVelocity(this, Mathtil.rand(FurGuardiansGame.pcs).player, vel, 1f);
 				} else {
 					timer = Mathtil.randi(60, 60);
 					vel.set(0, 0, 0);

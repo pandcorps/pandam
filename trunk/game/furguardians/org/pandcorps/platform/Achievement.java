@@ -71,7 +71,7 @@ public abstract class Achievement extends FinName {
 	public abstract boolean isMet(final PlayerContext pc);
 	
 	public final static void evaluate() {
-		for (final PlayerContext pc : PlatformGame.pcs) {
+		for (final PlayerContext pc : FurGuardiansGame.pcs) {
 			evaluate(pc);
 		}
 	}
@@ -93,7 +93,7 @@ public abstract class Achievement extends FinName {
 			if (ach.isMet(pc)) {
 				achieved.add(key);
 				final int award = ach.award;
-				PlatformGame.notify(pc, ach.getName() + ", " + award + " Gem bonus", new Gem(PlatformGame.gemAchieve));
+				FurGuardiansGame.notify(pc, ach.getName() + ", " + award + " Gem bonus", new Gem(FurGuardiansGame.gemAchieve));
 				pc.addGems(award);
 				any = true;
 			}

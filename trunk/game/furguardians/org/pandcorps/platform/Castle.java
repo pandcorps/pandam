@@ -32,7 +32,7 @@ import org.pandcorps.pandam.event.action.*;
 import org.pandcorps.pandax.text.*;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.tile.Tile.*;
-import org.pandcorps.platform.PlatformGame.*;
+import org.pandcorps.platform.FurGuardiansGame.*;
 import org.pandcorps.platform.Player.*;
 
 public class Castle {
@@ -52,7 +52,7 @@ public class Castle {
         protected final void load() throws Exception {
             final Pangine engine = Pangine.getEngine();
             engine.setBgColor(Pancolor.BLACK);
-            room = PlatformGame.createRoom(256, 192);
+            room = FurGuardiansGame.createRoom(256, 192);
             room.center();
             
             tm = newTileMap();
@@ -65,12 +65,12 @@ public class Castle {
             
             Menu.PlayerScreen.registerBackPromptQuit(tm);
             draw();
-            PlatformGame.fadeIn(room);
+            FurGuardiansGame.fadeIn(room);
             getMusic().changeMusic();
         }
         
         protected Pansound getMusic() {
-        	return PlatformGame.musicHeartbeat;
+        	return FurGuardiansGame.musicHeartbeat;
         }
         
         protected TileMap newTileMap() {
@@ -118,7 +118,7 @@ public class Castle {
         
         @Override
         protected final Pansound getMusic() {
-        	return PlatformGame.musicChant;
+        	return FurGuardiansGame.musicChant;
         }
         
         @Override
@@ -167,14 +167,14 @@ public class Castle {
             
             final PlayerImages pi = new PlayerImages(Map.kingAvt);
             final Img k1 = pi.guys[0], k2 = pi.guyBlink;
-            final Img crownImg = PlatformGame.crowns[Map.kingCrown];
+            final Img crownImg = FurGuardiansGame.crowns[Map.kingCrown];
             for (final Img k : new Img[] {k1, k2}) {
                 Imtil.copy(crownImg, k, 0, 0, 14, 9, 10, 1, Imtil.COPY_FOREGROUND);
             }
             final Pangine en = Pangine.getEngine();
-            kingAnm = en.createAnimation(PlatformGame.PRE_ANM + "king",
-            	en.createFrame(PlatformGame.PRE_FRM + "king.1", en.createImage(PlatformGame.PRE_IMG + "king.1", k1), PlatformGame.DUR_BLINK + 20),
-            	en.createFrame(PlatformGame.PRE_FRM + "king.2", en.createImage(PlatformGame.PRE_IMG + "king.2", k2), PlatformGame.DUR_CLOSED));
+            kingAnm = en.createAnimation(FurGuardiansGame.PRE_ANM + "king",
+            	en.createFrame(FurGuardiansGame.PRE_FRM + "king.1", en.createImage(FurGuardiansGame.PRE_IMG + "king.1", k1), FurGuardiansGame.DUR_BLINK + 20),
+            	en.createFrame(FurGuardiansGame.PRE_FRM + "king.2", en.createImage(FurGuardiansGame.PRE_IMG + "king.2", k2), FurGuardiansGame.DUR_CLOSED));
             pi.close();
             final Panctor king = new Panctor();
             king.setView(kingAnm);
@@ -182,13 +182,13 @@ public class Castle {
             king.setMirror(true);
             king.getPosition().set(184, 60, 2);
             
-            final Pantext text = new Pantext(Pantil.vmid(), PlatformGame.font, msg);
+            final Pantext text = new Pantext(Pantil.vmid(), FurGuardiansGame.font, msg);
             text.getPosition().set(8, 160, 10);
             room.addActor(text);
             
             tm.register(new ActionStartListener() {
 				@Override public final void onActionStart(final ActionStartEvent event) {
-					PlatformGame.fadeOut(room, getNextScreen());
+					FurGuardiansGame.fadeOut(room, getNextScreen());
 				}});
         }
         
@@ -224,10 +224,10 @@ public class Castle {
 			final Panple pos = player.getPosition();
 			if (pos.getX() >= 232) {
 				new Spark(224, pos.getY() + 8, false);
-				PlatformGame.soundWhoosh.startSound();
+				FurGuardiansGame.soundWhoosh.startSound();
 				playerCount--;
 				if (playerCount <= 0) {
-					PlatformGame.fadeOut(room, new PlatformGame.PlatformScreen());
+					FurGuardiansGame.fadeOut(room, new FurGuardiansGame.PlatformScreen());
 				}
 				player.destroy();
 			}
@@ -315,15 +315,15 @@ public class Castle {
     }
     
     private final static void addPlayers(final int x, final int y, final Ai ai) {
-        playerCount = PlatformGame.pcs.size();
+        playerCount = FurGuardiansGame.pcs.size();
         for (int i = 0; i < playerCount; i++) {
-            final PlayerContext pc = PlatformGame.pcs.get(i);
+            final PlayerContext pc = FurGuardiansGame.pcs.get(i);
             final Player oldPlayer = pc.player, player = new Player(pc);
             player.loadState(oldPlayer);
 			player.mode = Player.MODE_DISABLED;
 			room.addActor(player);
-			// Use PlatformGame.setPosition; otherwise wings can appear in front of Player
-			PlatformGame.setPosition(player, x + (24 * i), y);
+			// Use FurGuardiansGame.setPosition; otherwise wings can appear in front of Player
+			FurGuardiansGame.setPosition(player, x + (24 * i), y);
 			player.ai = ai;
         }
     }

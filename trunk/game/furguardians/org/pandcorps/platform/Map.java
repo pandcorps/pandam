@@ -318,9 +318,9 @@ public class Map {
 		@Override
         protected final void load() throws Exception {
 			waiting = true;
-			for (final PlayerContext pc : PlatformGame.pcs) {
+			for (final PlayerContext pc : FurGuardiansGame.pcs) {
 				if (pc.guyRun == null) {
-		    		PlatformGame.reloadAnimalStrip(pc);
+		    		FurGuardiansGame.reloadAnimalStrip(pc);
 		    	}
 				Goal.initGoals(pc);
 			}
@@ -330,20 +330,20 @@ public class Map {
 		    }
 			clear();
 			if (victory == VICTORY_LEVEL) {
-				for (final PlayerContext pc : PlatformGame.pcs) {
+				for (final PlayerContext pc : FurGuardiansGame.pcs) {
 					final Profile profile = pc.profile;
 					final byte jmi = profile.currentAvatar.jumpMode;
 					if (!profile.isJumpModeAvailable(jmi)) {
 						final JumpMode jm = JumpMode.get(jmi);
-						PlatformGame.notify(pc, jm.getName() + " trial ended");
+						FurGuardiansGame.notify(pc, jm.getName() + " trial ended");
 						profile.triedJumpModes.add(Integer.valueOf(jmi));
 						profile.currentAvatar.jumpMode = Player.MODE_NORMAL;
 						profile.save();
-						PlatformGame.reloadAnimalStrip(pc);
+						FurGuardiansGame.reloadAnimalStrip(pc);
 					}
 				}
 				if (tm != null && isOnLastLevel()) {
-					//PlatformGame.worldClose(); // This point is on MapScreen for new World
+					//FurGuardiansGame.worldClose(); // This point is on MapScreen for new World
 					//Iotil.delete(getMapFile()); // Want to evaluate WorldGoal sooner, now done below
 				    victory = VICTORY_NONE;
 					triggerLoad();
@@ -353,7 +353,7 @@ public class Map {
 			final int t;
 			if (tm == null) {
 			    t = loadMap();
-			    PlatformGame.saveGame();
+			    FurGuardiansGame.saveGame();
 			} else {
 			    t = getStartTile();
 				if (victory == VICTORY_LEVEL) {
@@ -365,7 +365,7 @@ public class Map {
 				    	b.setView();
 				    	saveMap();
 				    }
-				    PlatformGame.saveGame();
+				    FurGuardiansGame.saveGame();
 				}
 			    initRoom();
 			}
@@ -377,7 +377,7 @@ public class Map {
 			if (victoryWorld) {
 				new FloatPlayer(t);
 				victory = VICTORY_LEVEL;
-				portal.setView(PlatformGame.portalClosed);
+				portal.setView(FurGuardiansGame.portalClosed);
 			} else if (oldMap) {
 			    addPlayer(t);
                 if (isOpen(t) && getNumberOfPaths(t) <= 2) {
@@ -391,14 +391,14 @@ public class Map {
             addHud(victoryWorld);
             if (victoryWorld) {
             	// Could beat World, achieve old goal, receive World goal, increment here, give credit for beating World before it was assigned
-	            PlatformGame.worldClose();
+	            FurGuardiansGame.worldClose();
 				Iotil.delete(getMapFile());
             }
             if (victory != VICTORY_LEVEL) {
 				Achievement.evaluate(); // Evaluate after addHud
 			}
-			PlatformGame.fadeIn(room);
-			PlatformGame.playMenuMusic();
+			FurGuardiansGame.fadeIn(room);
+			FurGuardiansGame.playMenuMusic();
 		}
 		
 		@Override
@@ -435,9 +435,9 @@ public class Map {
 		
 		private void setView(final boolean open) {
 		    if (open) {
-		        setView(PlatformGame.markerDefeated);
+		        setView(FurGuardiansGame.markerDefeated);
 		    } else {
-		        setView(PlatformGame.marker);
+		        setView(FurGuardiansGame.marker);
 		    }
 		}
 	}
@@ -487,7 +487,7 @@ public class Map {
 	    	steps--;
 	    	if (steps >= 0) {
 	    		if (steps == 0 && victory != VICTORY_NONE) {
-	    			PlatformGame.goMap();
+	    			FurGuardiansGame.goMap();
 	    		}
 	    		walk(Direction.East);
 	    	} else if (steps >= -30) {
@@ -532,7 +532,7 @@ public class Map {
 				}
 			    final Panput input = event.getInput();
 			    final Device device = input.getDevice();
-			    for (final PlayerContext oc : PlatformGame.pcs) {
+			    for (final PlayerContext oc : FurGuardiansGame.pcs) {
 			        if (oc.getDevice().equals(device)) {
 			        	if (oc.index > 0 && getMenuInput(oc.ctrl) == input) {
 			        		goMenu(input, oc);
@@ -591,7 +591,7 @@ public class Map {
 				} else if (waitTimer == (lim * 2)) {
 				    // Maybe Player doesn't want to play Level; show Menu help
 					final String s = "Change appearance, options", s2 = "Goals";
-					final Panple menuSize = PlatformGame.menu.getSize();
+					final Panple menuSize = FurGuardiansGame.menu.getSize();
 					final int w = engine.getEffectiveWidth(), h = engine.getEffectiveHeight(), mh = (int) menuSize.getY();
 					addHelp(s, w - (s.length() * 4), h - mh - 9);
 					addHelp(s2, w - (int) menuSize.getX() - (s2.length() * 4), h - 28);
@@ -644,11 +644,11 @@ public class Map {
 	                } else if (tm.getColumn(t) == (tm.getWidth() - 5)) {
 	                    Level.setTheme(Theme.Night);
 	                }
-	            	screen = new PlatformGame.PlatformScreen();
+	            	screen = new FurGuardiansGame.PlatformScreen();
 	            }
 	            Level.clear(); // Called automatically for Level, but not for Cabin
 	        	fadeOut(screen);
-	        	PlatformGame.playTransition(PlatformGame.musicLevelStart);
+	        	FurGuardiansGame.playTransition(FurGuardiansGame.musicLevelStart);
 			} else if (interaction.KEY_TAB.isActive()) {
 				interaction.KEY_TAB.inactivate();
 				modeMove = (short) ((modeMove + 1) % 3);
@@ -673,7 +673,7 @@ public class Map {
 		
 		private final void fadeOut(final Panscreen screen) {
 		    disabled = true;
-		    PlatformGame.fadeOut(room, screen);
+		    FurGuardiansGame.fadeOut(room, screen);
 		}
 		
 		private void setPos(final int t) {
@@ -880,7 +880,7 @@ public class Map {
                 in.close();
             }
 	    } else {
-    	    bgTexture = Mathtil.randi(0, PlatformGame.dirts.length - 1);
+    	    bgTexture = Mathtil.randi(0, FurGuardiansGame.dirts.length - 1);
     	    bgColor = Mathtil.randi(0, 2);
     	    final int worlds = getProfile().stats.defeatedWorlds;
 			if (worlds == 1) {
@@ -951,8 +951,8 @@ public class Map {
 	}
 	
 	private final static void clear() {
-		PlatformGame.room.destroy();
-		for (final PlayerContext pc : PlatformGame.pcs) {
+		FurGuardiansGame.room.destroy();
+		for (final PlayerContext pc : FurGuardiansGame.pcs) {
 		    pc.player = null;
 		}
 		Level.numEnemies = 0;
@@ -974,7 +974,7 @@ public class Map {
 	            kingCrown = seg.getInt(8, 0);
 	            mrk = in.readRequire(SEG_MRK);
 	            bld = in.readRequire(SEG_BLD);
-	            final Segment avt = in.readIf(PlatformGame.SEG_AVT);
+	            final Segment avt = in.readIf(FurGuardiansGame.SEG_AVT);
 	            if (avt != null) {
 	            	kingAvt.load(avt);
 	            } else {
@@ -1002,7 +1002,7 @@ public class Map {
            	kingAvt.clothing.clth = Mathtil.rand(Avatar.hiddenClothings);
            	//kingAvt.clothingCol.load(kingAvt.col); //negate();
            	kingAvt.clothing.col.randomizeColorfulDifferent(kingAvt.col);
-           	kingCrown = Mathtil.randi(0, PlatformGame.crowns.length - 1);
+           	kingCrown = Mathtil.randi(0, FurGuardiansGame.crowns.length - 1);
 		}
 		initRoom();
 		initTileMap(tm);
@@ -1031,7 +1031,7 @@ public class Map {
         }
         Panctor.destroy(portal);
         portal = new Panctor();
-        portal.setView(PlatformGame.portal);
+        portal.setView(FurGuardiansGame.portal);
         addBuilding(tm.getIndex(endColumn, getPortalRow()), portal);
         return t;
 	}
@@ -1046,7 +1046,7 @@ public class Map {
 	}
 	
 	private final static void initRoom() {
-	    room = PlatformGame.createRoom(roomW, roomH);
+	    room = FurGuardiansGame.createRoom(roomW, roomH);
         if (tm == null) {
             tm = new TileMap("act.tilemap", room, ImtilX.DIM, ImtilX.DIM);
         } else {
@@ -1427,7 +1427,7 @@ public class Map {
 	}
 	
 	private final static PlayerContext getPlayerContext() {
-		return PlatformGame.pcs.get(0);
+		return FurGuardiansGame.pcs.get(0);
 	}
 	
 	private final static Profile getProfile() {
@@ -1484,11 +1484,11 @@ public class Map {
 	}
 	
 	private final static void addHud(final boolean victoryWorld) {
-	    final Panlayer hud = PlatformGame.addHud(room, false, false);
-	    final Pantext name = addText(Map.name, PlatformGame.SCREEN_W / 2, 1);
+	    final Panlayer hud = FurGuardiansGame.addHud(room, false, false);
+	    final Pantext name = addText(Map.name, FurGuardiansGame.SCREEN_W / 2, 1);
 	    final Pangine engine = Pangine.getEngine();
 	    if (!victoryWorld) {
-		    tipMover = new TextMover(hud, PlatformGame.font, PlatformGame.tips, (tipMover == null) ? 0 : tipMover.getIndex(),
+		    tipMover = new TextMover(hud, FurGuardiansGame.font, FurGuardiansGame.tips, (tipMover == null) ? 0 : tipMover.getIndex(),
 		    		engine.getEffectiveHeight() - 36, -10);
 	    }
 		PlayerScreen.initTouchButtons(hud, getPlayerContext().ctrl);
@@ -1506,10 +1506,10 @@ public class Map {
 	}
 	
 	private final static Pantext addText(final String s, final int x, final int y) {
-	    final Pantext name = new Pantext(Pantil.vmid(), PlatformGame.font, s);
+	    final Pantext name = new Pantext(Pantil.vmid(), FurGuardiansGame.font, s);
         name.getPosition().set(x, y, PlayerScreen.TOUCH_BUTTON_DEPTH + 10);
         name.centerX();
-        PlatformGame.hud.addActor(name);
+        FurGuardiansGame.hud.addActor(name);
         return name;
 	}
 	

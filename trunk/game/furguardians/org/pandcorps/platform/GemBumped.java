@@ -62,10 +62,10 @@ public class GemBumped extends Pandy {
 	
 	protected final static Panimation getAnm(final int award) {
         switch (award) {
-            case AWARD_DEF : return PlatformGame.gemAnm;
-            case AWARD_2 : return PlatformGame.gemBlueAnm;
-            case AWARD_3 : return PlatformGame.gemCyanAnm;
-            case AWARD_4 : return PlatformGame.gemGreenAnm;
+            case AWARD_DEF : return FurGuardiansGame.gemAnm;
+            case AWARD_2 : return FurGuardiansGame.gemBlueAnm;
+            case AWARD_3 : return FurGuardiansGame.gemCyanAnm;
+            case AWARD_4 : return FurGuardiansGame.gemGreenAnm;
         }
         throw new IllegalArgumentException("Unexpected award amount " + award);
     }
@@ -79,17 +79,17 @@ public class GemBumped extends Pandy {
 		final Panimation anm;
 		if (Level.isNormalTheme()) {
 			award = AWARD_LEVEL;
-			anm = PlatformGame.gemLevelAnm;
+			anm = FurGuardiansGame.gemLevelAnm;
 		} else {
 			award = AWARD_WORLD;
-			anm = PlatformGame.gemWorldAnm;
+			anm = FurGuardiansGame.gemWorldAnm;
 		}
 	    return create(player, index, award, TYPE_END, anm);
 	}
 	
 	public final static GemBumped newShatter(final Player player) {
 		final Panple pos = player.getPosition();
-	    return new GemBumped(player, pos.getX() - 8, pos.getY(), -1, TYPE_NORMAL, PlatformGame.gemAnm);
+	    return new GemBumped(player, pos.getX() - 8, pos.getY(), -1, TYPE_NORMAL, FurGuardiansGame.gemAnm);
 	}
 	
 	protected final static GemBumped create(final Player player, final int index, final int award, final byte type, final Panimation anm) {
@@ -98,7 +98,7 @@ public class GemBumped extends Pandy {
 	}
 	
 	private GemBumped(final Player player, final float x, final float y, final int award, final byte type, final Panimation anm) {
-		this(PlatformGame.room, player, x, y, award, type, anm, Tiles.g);
+		this(FurGuardiansGame.room, player, x, y, award, type, anm, Tiles.g);
 	}
 	
 	protected GemBumped(final Panlayer layer, final Player player, final float x, final float y, final int award, final byte type,
@@ -111,17 +111,17 @@ public class GemBumped extends Pandy {
 		    Gem.collect(player, award);
 		}
 		setView(anm);
-		PlatformGame.setPosition(this, x, y + ImtilX.DIM, PlatformGame.DEPTH_SHATTER);
+		FurGuardiansGame.setPosition(this, x, y + ImtilX.DIM, FurGuardiansGame.DEPTH_SHATTER);
 		getVelocity().set(0, 6);
         layer.addActor(this);
         if (type == TYPE_END) {
-        	//PlatformGame.soundGemLevel.startSound();
+        	//FurGuardiansGame.soundGemLevel.startSound();
         	// Probably not needed; ending level plays bells
         } else if (good || type == TYPE_LETTER) {
         	Gem.playSound();
         } else {
             // gemShatter
-        	PlatformGame.soundCrumble.startSound();
+        	FurGuardiansGame.soundCrumble.startSound();
         }
 	}
 	
@@ -133,7 +133,7 @@ public class GemBumped extends Pandy {
 		    if (type == TYPE_LETTER || isGood()) {
 		        Gem.spark(getLayer(), getPosition(), type == TYPE_END);
 		    } else {
-		        Tiles.shatterTile(PlatformGame.gemShatter, getPosition(), true);
+		        Tiles.shatterTile(FurGuardiansGame.gemShatter, getPosition(), true);
 		    }
 		    destroy();
 		}

@@ -102,7 +102,7 @@ public class Menu {
 				final int h = engine.getEffectiveHeight();
 				// If h is 192, OFF_RADIO_Y should be 72; should increase with h, up to 100
 				OFF_RADIO_Y = Math.min(h - 120, 100);
-				final int menuHeight = OFF_RADIO_Y + PlatformGame.MENU_H; // 112
+				final int menuHeight = OFF_RADIO_Y + FurGuardiansGame.MENU_H; // 112
 				final int menuBottom = (h - menuHeight) / 2; // 40
 				touchRadioY = menuBottom + OFF_RADIO_Y; // 112
 				// If w is 344 or less, touchRadioX should be 0; should increase with w, up to 40
@@ -120,9 +120,9 @@ public class Menu {
 		
 		@Override
 		protected final void load() throws Exception {
-			final int w = PlatformGame.SCREEN_W;
+			final int w = FurGuardiansGame.SCREEN_W;
 			center = w / 2;
-			room = PlatformGame.createRoom(w, PlatformGame.SCREEN_H);
+			room = FurGuardiansGame.createRoom(w, FurGuardiansGame.SCREEN_H);
 			final Pangine engine = Pangine.getEngine();
 			final Pancolor bgColor = new FinPancolor((short) 128, (short) 192, Pancolor.MAX_VALUE);
 			engine.setBgColor(PixelFilter.filterColor(Map.theme.getSkyFilter(), bgColor));
@@ -165,9 +165,9 @@ public class Menu {
 			}
 			
 			if (fadeIn) {
-			    PlatformGame.fadeIn(room, SPEED_MENU_FADE);
+			    FurGuardiansGame.fadeIn(room, SPEED_MENU_FADE);
 			}
-			PlatformGame.playMenuMusic();
+			FurGuardiansGame.playMenuMusic();
 		}
 		
 		protected final int getTop() {
@@ -183,7 +183,7 @@ public class Menu {
 		}
 		
 		protected final int getTouchKeyboardY() {
-			return (int) (Pangine.getEngine().getEffectiveHeight() - PlatformGame.menu.getSize().getY() - 16);
+			return (int) (Pangine.getEngine().getEffectiveHeight() - FurGuardiansGame.menu.getSize().getY() - 16);
 		}
 		
 		protected final static void initTouchButtons(final Panlayer room, final ControlScheme ctrl) {
@@ -191,7 +191,7 @@ public class Menu {
 		}
 		
 		protected final static int getTouchButtonRadius() {
-			return (PlatformGame.DIM_BUTTON / 2) + 1;
+			return (FurGuardiansGame.DIM_BUTTON / 2) + 1;
 		}
 		
 		protected final static void initTouchButtons(final Panlayer room, final ControlScheme ctrl,
@@ -213,7 +213,7 @@ public class Menu {
 			final int r = engine.getEffectiveWidth(), t = engine.getEffectiveHeight();
 			int rx = 0, y = 0;
 			TouchButton down = null, up = null, act2 = null;
-			Panmage rt = PlatformGame.right2, rtIn = PlatformGame.right2In, lt = PlatformGame.left2, ltIn = PlatformGame.left2In;
+			Panmage rt = FurGuardiansGame.right2, rtIn = FurGuardiansGame.right2In, lt = FurGuardiansGame.left2, ltIn = FurGuardiansGame.left2In;
 			final boolean full = mode == TOUCH_FULL;
 			if (full) {
 			    final int rad = getTouchButtonRadius(), dmtr = rad * 2;
@@ -223,16 +223,16 @@ public class Menu {
 				rx = dmtr;
 				//act2 = addCircleButton(room, "Act2", r - d, 0, input, act, ctrl.get2());
 				//sub = addCircleButton(room, "Sub", r - d, engine.getEffectiveHeight() - d, input, act, ctrl.getSubmit());
-				final Panple ts = PlatformGame.menu.getSize();
+				final Panple ts = FurGuardiansGame.menu.getSize();
 				final int tw = (int) ts.getX();
-				act2 = newFormButton(room, "Act2", r - tw, t - (int) ts.getY(), PlatformGame.menuOptions, "Menu");
-				newFormButton(room, "Goals", r - (tw * 2), t - 19, PlatformGame.gemGoal[0], new Runnable() {
+				act2 = newFormButton(room, "Act2", r - tw, t - (int) ts.getY(), FurGuardiansGame.menuOptions, "Menu");
+				newFormButton(room, "Goals", r - (tw * 2), t - 19, FurGuardiansGame.gemGoal[0], new Runnable() {
                     @Override public final void run() {
-                        PlatformGame.goGoals(PlatformGame.pcs.get(0)); }}).getActorOverlay().getPosition().addY(-10);
-				rt = lt = PlatformGame.diamond;
-				rtIn = ltIn = PlatformGame.diamondIn;
+                        FurGuardiansGame.goGoals(FurGuardiansGame.pcs.get(0)); }}).getActorOverlay().getPosition().addY(-10);
+				rt = lt = FurGuardiansGame.diamond;
+				rtIn = ltIn = FurGuardiansGame.diamondIn;
 			} else if (mode == TOUCH_HORIZONTAL) {
-				rx = (int) (PlatformGame.DIM_BUTTON * 1.25f);
+				rx = (int) (FurGuardiansGame.DIM_BUTTON * 1.25f);
 				//sub = null;
 			}
 			final TouchButton left, right;
@@ -253,7 +253,7 @@ public class Menu {
 			    right.setOverlapMode(TouchButton.OVERLAP_BEST);
 			} else if (act) {
 				final TouchButton pause;
-				pause = new TouchButton(engine.getInteraction(), room, "Pause", r - 17, t - 17, 0, PlatformGame.menuPause, PlatformGame.menuPause, true);
+				pause = new TouchButton(engine.getInteraction(), room, "Pause", r - 17, t - 17, 0, FurGuardiansGame.menuPause, FurGuardiansGame.menuPause, true);
 				engine.registerTouchButton(pause);
 				registerPromptQuit(pause.getActor(), pause);
 			}
@@ -297,46 +297,46 @@ public class Menu {
 		    final Pangine engine = Pangine.getEngine();
 		    final int h = engine.getEffectiveHeight();
 		    final Panscreen screen = Panscreen.get();
-		    final boolean platformScreen = screen instanceof PlatformGame.PlatformScreen;
+		    final boolean platformScreen = screen instanceof FurGuardiansGame.PlatformScreen;
 		    int btnY = 0;
 		    if (platformScreen) {
-		        final PlayerContext pc = Coltil.get(PlatformGame.pcs, 0);
+		        final PlayerContext pc = Coltil.get(FurGuardiansGame.pcs, 0);
 		        if (pc != null) {
     		        quitHandler = new ListActorHandler();
     		        room.setAddHandler(quitHandler);
     		        final InfoScreen iscrn = new InfoScreen(pc, false);
     		        iscrn.room = room;
     		        iscrn.form = new Panform(room, pc.ctrl);
-    		        btnY = iscrn.displayGoals(getRankStarX(), h - 34, null) - PlatformGame.MENU_H - 8;
+    		        btnY = iscrn.displayGoals(getRankStarX(), h - 34, null) - FurGuardiansGame.MENU_H - 8;
     		        room.setAddHandler(null);
 		        }
 		    }
-		    final Panple btnSize = PlatformGame.menu.getSize();
+		    final Panple btnSize = FurGuardiansGame.menu.getSize();
 		    if (btnY == 0) {
 		    	btnY = TouchTabs.off(h, btnSize.getY());
 		    }
             final boolean menuScreen = screen instanceof PlayerScreen;
             final int numButtons = menuScreen ? 2 : 3, r = engine.getEffectiveWidth();
             final int btnW = (int) btnSize.getX(), btnX = TouchTabs.off(r, btnW * numButtons);
-            quitYes = newFormButton(room, "Quit", btnX + btnW * (numButtons - 1), btnY, PlatformGame.menuOff, "Quit", new Runnable() {
+            quitYes = newFormButton(room, "Quit", btnX + btnW * (numButtons - 1), btnY, FurGuardiansGame.menuOff, "Quit", new Runnable() {
                 @Override public final void run() { engine.exit(); }});
             quitYes.setZ(15);
             final String noLbl;
             final Panmage noImg;
             if (menuScreen) {
             	noLbl = "Menu";
-            	noImg = PlatformGame.menuOptions;
+            	noImg = FurGuardiansGame.menuOptions;
             } else {
             	noLbl = "Play";
-            	noImg = PlatformGame.menuRight;
-            	quitMenu = newFormButton(room, "Menu", btnX + btnW, btnY, PlatformGame.menuOptions, "Menu", new Runnable() {
+            	noImg = FurGuardiansGame.menuRight;
+            	quitMenu = newFormButton(room, "Menu", btnX + btnW, btnY, FurGuardiansGame.menuOptions, "Menu", new Runnable() {
                     @Override public final void run() {
-                    	PlatformGame.notifications.clear();
+                    	FurGuardiansGame.notifications.clear();
                     	destroyPromptQuit();
-                    	PlatformGame.fadeOut(PlatformGame.room, new ProfileScreen(PlatformGame.pcs.get(0), true)); }});
+                    	FurGuardiansGame.fadeOut(FurGuardiansGame.room, new ProfileScreen(FurGuardiansGame.pcs.get(0), true)); }});
                 quitMenu.setZ(15);
                 if (platformScreen) {
-	                quitMsg = new Pantext(Pantil.vmid(), PlatformGame.fontTiny, "You will lose your progress in this Level if you leave");
+	                quitMsg = new Pantext(Pantil.vmid(), FurGuardiansGame.fontTiny, "You will lose your progress in this Level if you leave");
 	                quitMsg.getPosition().set(r / 2, btnY - 7, 15);
 	                quitMsg.centerX();
 	                room.addActor(quitMsg);
@@ -364,12 +364,12 @@ public class Menu {
 		
 		private final static TouchButton addCircleButton(final Panlayer room, final String name, final int x, final int y,
 				final boolean input, final boolean act, final Panput old, final boolean moveCancel) {
-			return addButton(room, name, x, y, input, act, old, PlatformGame.button, PlatformGame.buttonIn, moveCancel);
+			return addButton(room, name, x, y, input, act, old, FurGuardiansGame.button, FurGuardiansGame.buttonIn, moveCancel);
 		}
 		
 		private final static TouchButton addDiamondButton(final Panlayer room, final String name, final int x, final int y,
                 final boolean input, final boolean act, final Panput old) {
-            return addButton(room, name, x, y, input, act, old, PlatformGame.diamond, PlatformGame.diamondIn, true);
+            return addButton(room, name, x, y, input, act, old, FurGuardiansGame.diamond, FurGuardiansGame.diamondIn, true);
         }
 		
 		private final static TouchButton addButton(final Panlayer room, final String name, final int x, final int y,
@@ -379,7 +379,7 @@ public class Menu {
 			if (input) {
 				final Pangine engine = Pangine.getEngine();
 				final Panteraction in = engine.getInteraction();
-				final int d = PlatformGame.DIM_BUTTON;
+				final int d = FurGuardiansGame.DIM_BUTTON;
 				button = new TouchButton(in, name, x, y, d, d, moveCancel);
 				engine.registerTouchButton(button);
 			} else {
@@ -398,14 +398,14 @@ public class Menu {
 		protected final static int TOUCH_BUTTON_DEPTH = 500;
 		
 		protected final static int offx(final Panmage img) {
-			return img == null ? 0 : TouchTabs.off(PlatformGame.menu.getSize().getX(), img.getSize().getX());
+			return img == null ? 0 : TouchTabs.off(FurGuardiansGame.menu.getSize().getX(), img.getSize().getX());
 		}
 		
 		protected final static int offy(final Panmage img, final CharSequence txt) {
 			if (img == null) {
 				return 0;
 			}
-			float btnH = PlatformGame.menu.getSize().getY();
+			float btnH = FurGuardiansGame.menu.getSize().getY();
 			if (txt != null) {
 				btnH -= 10;
 			}
@@ -421,19 +421,19 @@ public class Menu {
 		protected final static int OFF_TEXT_Y = 2;
 		
 		protected final TouchButton newTab(final Panmage img, final CharSequence txt, final Runnable listener) {
-			final TouchButton tab = TouchTabs.newButton(getLayer(), Pantil.vmid(), PlatformGame.menu, PlatformGame.menuIn, img, offx(img), offy(img, txt), PlatformGame.font, txt, OFF_TEXT_X, OFF_TEXT_Y,
+			final TouchButton tab = TouchTabs.newButton(getLayer(), Pantil.vmid(), FurGuardiansGame.menu, FurGuardiansGame.menuIn, img, offx(img), offy(img, txt), FurGuardiansGame.font, txt, OFF_TEXT_X, OFF_TEXT_Y,
 					new Runnable() { @Override public void run() {
 						if (disabled) {
 							return;
 						}
 						listener.run(); }});
-			tab.setImageDisabled(PlatformGame.menuDisabled);
+			tab.setImageDisabled(FurGuardiansGame.menuDisabled);
 			tabs.add(tab);
 			return tab;
 		}
 		
 		protected final void newTabs() {
-			TouchTabs.createWithOverlays(0, PlatformGame.menu, PlatformGame.menuIn, PlatformGame.menuLeft, PlatformGame.menuRight, tabs);
+			TouchTabs.createWithOverlays(0, FurGuardiansGame.menu, FurGuardiansGame.menuIn, FurGuardiansGame.menuLeft, FurGuardiansGame.menuRight, tabs);
 		}
 		
 		protected final boolean isTabEnabled() {
@@ -476,7 +476,7 @@ public class Menu {
             for (int i = 0; i < max; i++) {
                 final Panctor star;
                 if (i < currPoints) {
-                    star = new Gem(PlatformGame.gemGoal);
+                    star = new Gem(FurGuardiansGame.gemGoal);
                     addActor(star, xc, y);
                 } else {
                     star = addEmptyStar(xc, y);
@@ -490,7 +490,7 @@ public class Menu {
         
         protected final Panctor addEmptyStar(final int x, final int y) {
             final Panctor star = addActor(x, y);
-            star.setView(PlatformGame.emptyGoal);
+            star.setView(FurGuardiansGame.emptyGoal);
             return star;
         }
 		
@@ -520,10 +520,10 @@ public class Menu {
 			if (tabsSupported && isTabEnabled()) {
 				final int yt = y - OFF_RADIO_Y;
 				final String id = Pantil.vmid();
-				ctrl.setUp(newFormButton(id + ".radio.up", xb, y, PlatformGame.menuUp));
-				ctrl.setDown(newFormButton(id + ".radio.down", xb, yt, PlatformGame.menuDown));
+				ctrl.setUp(newFormButton(id + ".radio.up", xb, y, FurGuardiansGame.menuUp));
+				ctrl.setDown(newFormButton(id + ".radio.down", xb, yt, FurGuardiansGame.menuDown));
 				if (subLsn != null) {
-					//final TouchButton sub = newFormButton(id + ".radio.submit", x + 200, yt, PlatformGame.menuCheck);
+					//final TouchButton sub = newFormButton(id + ".radio.submit", x + 200, yt, FurGuardiansGame.menuCheck);
 					//final TouchButton sub = null; // Will use tab bar to simulate submit button below
 					ctrl.setSubmit(sub);
 					ctrl.set1(sub);
@@ -535,9 +535,9 @@ public class Menu {
 			} else {
 				x = xb;
 			}
-			final RadioGroup grp = new RadioGroup(PlatformGame.font, list, subLsn);
+			final RadioGroup grp = new RadioGroup(FurGuardiansGame.font, list, subLsn);
 			if (sub == null && subLsn != null && tabsSupported && isTabEnabled()) {
-				newTab(PlatformGame.menuCheck, "Done", new Runnable() {@Override public final void run() {grp.submit();}});
+				newTab(FurGuardiansGame.menuCheck, "Done", new Runnable() {@Override public final void run() {grp.submit();}});
 			}
 			grp.setChangeListener(chgLsn);
 			addItem(grp, x, y - 16);
@@ -549,8 +549,8 @@ public class Menu {
 		}
 		
 		protected final TouchButton newRadioSubmitButton(final int x, final int y) {
-			final int xr = Pangine.getEngine().getEffectiveWidth() - x - (int) PlatformGame.menu.getSize().getX();
-			return newFormButton(Pantil.vmid() + ".radio.submit", xr, y - 100, PlatformGame.menuCheck);
+			final int xr = Pangine.getEngine().getEffectiveWidth() - x - (int) FurGuardiansGame.menu.getSize().getX();
+			return newFormButton(Pantil.vmid() + ".radio.submit", xr, y - 100, FurGuardiansGame.menuCheck);
 		}
 		
 		protected final static TouchButton newFormButton(final Panlayer layer, final String name, final int x, final int y, final Panmage img) {
@@ -559,7 +559,7 @@ public class Menu {
 		
 		protected final static TouchButton newFormButton(final Panlayer layer, final String name, final int x, final int y, final Panmage img, final String txt) {
 			final Pangine engine = Pangine.getEngine();
-			final TouchButton btn = new TouchButton(engine.getInteraction(), layer, name, x, y, 0, PlatformGame.menu, PlatformGame.menuIn, img, offx(img), offy(img, txt), PlatformGame.font, txt, OFF_TEXT_X, OFF_TEXT_Y, true);
+			final TouchButton btn = new TouchButton(engine.getInteraction(), layer, name, x, y, 0, FurGuardiansGame.menu, FurGuardiansGame.menuIn, img, offx(img), offy(img, txt), FurGuardiansGame.font, txt, OFF_TEXT_X, OFF_TEXT_Y, true);
 			engine.registerTouchButton(btn);
 			return btn;
 		}
@@ -598,12 +598,12 @@ public class Menu {
         		return;
         	}
         	sub.setOverlay(img, offx(img), offy(img, txt));
-        	sub.setText(PlatformGame.font, txt, OFF_TEXT_X, OFF_TEXT_Y);
+        	sub.setText(FurGuardiansGame.font, txt, OFF_TEXT_X, OFF_TEXT_Y);
         	TouchButton.reattach(sub);
         }
         
 		protected final void reattachBuy(final String info, final TouchButton sub) {
-        	reattach(info, sub, PlatformGame.gem[0], "Buy");
+        	reattach(info, sub, FurGuardiansGame.gem[0], "Buy");
         }
 		
 		protected final List<RadioGroup> addColor(final SimpleColor col, int x, int y) {
@@ -622,7 +622,7 @@ public class Menu {
 		protected final void addColorTouch(final SimpleColor col, final String label) {
 			final String id = Pantil.vmid();
 			final Pangine engine = Pangine.getEngine();
-			final Panple btnSize = PlatformGame.menu.getSize();
+			final Panple btnSize = FurGuardiansGame.menu.getSize();
 			final int btnW = (int) btnSize.getX(), gapW = (btnW * 5) / 6, difW = btnW + gapW;
 			final int minX = (engine.getEffectiveWidth() - (btnW * 3 + gapW * 2)) / 2;
 			final int btnH = (int) btnSize.getY(), difH = btnH + 16;
@@ -634,25 +634,25 @@ public class Menu {
 			final int txtX = btnW / 2, txtY = y - 12;
 			final StringBuilder sbR = new StringBuilder(), sbG = new StringBuilder(), sbB = new StringBuilder();
 			final Pantext txtR = initCol(col.r, sbR, x + txtX, txtY);
-			newFormButton(id + ".red.up", x, y, PlatformGame.redUp, new AvtRunnable() {@Override public final void go() {
+			newFormButton(id + ".red.up", x, y, FurGuardiansGame.redUp, new AvtRunnable() {@Override public final void go() {
 				col.r = incCol(col.r, sbR, txtR); }});
 			x += difW;
 			final Pantext txtG = initCol(col.g, sbG, x + txtX, txtY);
-			newFormButton(id + ".green.up", x, y, PlatformGame.greenUp, new AvtRunnable() {@Override public final void go() {
+			newFormButton(id + ".green.up", x, y, FurGuardiansGame.greenUp, new AvtRunnable() {@Override public final void go() {
 				col.g = incCol(col.g, sbG, txtG); }});
 			x += difW;
 			final Pantext txtB = initCol(col.b, sbB, x + txtX, txtY);
-			newFormButton(id + ".blue.up", x, y, PlatformGame.menuUp, new AvtRunnable() {@Override public final void go() {
+			newFormButton(id + ".blue.up", x, y, FurGuardiansGame.menuUp, new AvtRunnable() {@Override public final void go() {
 				col.b = incCol(col.b, sbB, txtB); }});
 			x = minX;
 			y = minY;
-			newFormButton(id + ".red.down", x, y, PlatformGame.redDown, new AvtRunnable() {@Override public final void go() {
+			newFormButton(id + ".red.down", x, y, FurGuardiansGame.redDown, new AvtRunnable() {@Override public final void go() {
 				col.r = decCol(col.r, sbR, txtR); }});
 			x += difW;
-			newFormButton(id + ".green.down", x, y, PlatformGame.greenDown, new AvtRunnable() {@Override public final void go() {
+			newFormButton(id + ".green.down", x, y, FurGuardiansGame.greenDown, new AvtRunnable() {@Override public final void go() {
 				col.g = decCol(col.g, sbG, txtG); }});
 			x += difW;
-			newFormButton(id + ".blue.down", x, y, PlatformGame.menuDown, new AvtRunnable() {@Override public final void go() {
+			newFormButton(id + ".blue.down", x, y, FurGuardiansGame.menuDown, new AvtRunnable() {@Override public final void go() {
 				col.b = decCol(col.b, sbB, txtB); }});
 		}
 		
@@ -737,13 +737,13 @@ public class Menu {
 		
 		protected final void addHudGems() {
 		    final int gemX = center + 16, gemY = HUD_TEXT_Y;
-            PlatformGame.addHudGem(room, gemX, gemY);
-            PlatformGame.addHud(room, pc, gemX + PlatformGame.OFF_GEM, gemY, false, false);
+            FurGuardiansGame.addHudGem(room, gemX, gemY);
+            FurGuardiansGame.addHud(room, pc, gemX + FurGuardiansGame.OFF_GEM, gemY, false, false);
 		}
 		
 		protected final void addHudRank() {
-			final int gemX = center + 96, gemY = HUD_TEXT_Y, textX = gemX + PlatformGame.OFF_GEM + 1;
-			addActor(new Gem(PlatformGame.gemRank), gemX, gemY);
+			final int gemX = center + 96, gemY = HUD_TEXT_Y, textX = gemX + FurGuardiansGame.OFF_GEM + 1;
+			addActor(new Gem(FurGuardiansGame.gemRank), gemX, gemY);
 			addTitle("Rank", textX, gemY + 8);
 			final CharSequence seq = new CallSequence() {@Override protected String call() {
 				return String.valueOf(pc.profile.getRank());
@@ -752,8 +752,8 @@ public class Menu {
 		}
 		
 		protected final void addHudAchievement() {
-			final int gemX = center + 96, gemY = 37, textX = gemX + PlatformGame.OFF_GEM + 1;
-			addActor(new Gem(PlatformGame.gemAchieve), gemX, gemY);
+			final int gemX = center + 96, gemY = 37, textX = gemX + FurGuardiansGame.OFF_GEM + 1;
+			addActor(new Gem(FurGuardiansGame.gemAchieve), gemX, gemY);
 			addTitle("Trophies", textX, gemY + 8);
 			final CharSequence seq = new CallSequence() {@Override protected String call() {
 				return String.valueOf(pc.profile.achievements.size());
@@ -776,11 +776,11 @@ public class Menu {
 		protected final Input addInput(final String label, final InputSubmitListener subLsn, final InputSubmitListener chgLsn, final int max, final int x, final int y) {
 	        final Input in;
 	        if (isTabEnabled()) {
-	        	in = new KeyInput(PlatformGame.font, subLsn);
-	        	new TouchKeyboard(PlatformGame.key, PlatformGame.keyIn, PlatformGame.font, y - (int) PlatformGame.key.getSize().getY() - 16);
+	        	in = new KeyInput(FurGuardiansGame.font, subLsn);
+	        	new TouchKeyboard(FurGuardiansGame.key, FurGuardiansGame.keyIn, FurGuardiansGame.font, y - (int) FurGuardiansGame.key.getSize().getY() - 16);
 	        	in.setProperName(true); // Might make sense for ControllerInput, but probably doesn't work right yet
 	        } else {
-		        final ControllerInput cin = new ControllerInput(PlatformGame.font, subLsn);
+		        final ControllerInput cin = new ControllerInput(FurGuardiansGame.font, subLsn);
 		        cin.setLetter();
 		        in = cin;
 	        }
@@ -792,7 +792,7 @@ public class Menu {
 		}
 		
 		protected final int addLink(final CharSequence txt, final MessageCloseListener lsn, final int x, final int y) {
-		    final Message msg = new Message(PlatformGame.font, txt, lsn);
+		    final Message msg = new Message(FurGuardiansGame.font, txt, lsn);
 		    msg.getLabel().setUnderlineEnabled(true);
 	        addItem(msg, x, y);
 	        return x + (SIZE_FONT * (txt.length() + 1));
@@ -813,11 +813,11 @@ public class Menu {
 		}
 		
 		protected final Pantext addTitle(final CharSequence title, final int x, final int y) {
-			return addTitle(new Pantext(Pantil.vmid(), PlatformGame.font, title), x, y);
+			return addTitle(new Pantext(Pantil.vmid(), FurGuardiansGame.font, title), x, y);
 		}
 		
 		protected final Pantext addTitleTiny(final CharSequence title, final int x, final int y) {
-			return addTitle(new Pantext(Pantil.vmid(), PlatformGame.fontTiny, title), x, y);
+			return addTitle(new Pantext(Pantil.vmid(), FurGuardiansGame.fontTiny, title), x, y);
 		}
 		
 		protected final Pantext addTitle(final Pantext tLbl, final int x, final int y) {
@@ -830,7 +830,7 @@ public class Menu {
 			if (!isTabEnabled()) {
 				return;
 			}
-			addTitle(note, touchRadioX + PlatformGame.MENU_W + 2, Pangine.getEngine().getEffectiveHeight() - PlatformGame.MENU_H - 10);
+			addTitle(note, touchRadioX + FurGuardiansGame.MENU_W + 2, Pangine.getEngine().getEffectiveHeight() - FurGuardiansGame.MENU_H - 10);
 		}
 		
 		protected final int addPipe(final int x, final int y) {
@@ -848,7 +848,7 @@ public class Menu {
 		
 		protected final Model addActor(final PlayerContext pc, final int x) {
 			final Model actor = new Model(pc);
-			PlatformGame.setPosition(actor, x, Y_PLAYER, PlatformGame.getDepthPlayer(pc.profile.currentAvatar.jumpMode));
+			FurGuardiansGame.setPosition(actor, x, Y_PLAYER, FurGuardiansGame.getDepthPlayer(pc.profile.currentAvatar.jumpMode));
 			room.addActor(actor);
 			return actor;
 		}
@@ -906,7 +906,7 @@ public class Menu {
         */
 		
 		protected final void goMap() {
-			PlatformGame.goMap(SPEED_MENU_FADE);
+			FurGuardiansGame.goMap(SPEED_MENU_FADE);
 		}
 		
 		protected final void save() {
@@ -963,7 +963,7 @@ public class Menu {
 		
 		protected final void goProfile() {
 			ProfileScreen.currentTab = ProfileScreen.TAB_SELECT_AVATAR;
-			PlatformGame.setScreen(new ProfileScreen(pc, false));
+			FurGuardiansGame.setScreen(new ProfileScreen(pc, false));
 		}
 		
 		protected final void newProfile(final PlayerContext curr) {
@@ -978,18 +978,18 @@ public class Menu {
             prf.currentAvatar = avt;
             prf.avatars.add(avt);
             //prf.ctrl = 0;
-            pc = PlatformGame.newPlayerContext(prf, ctrl, curr == null ? PlatformGame.pcs.size() : curr.index);
+            pc = FurGuardiansGame.newPlayerContext(prf, ctrl, curr == null ? FurGuardiansGame.pcs.size() : curr.index);
             reloadAnimalStrip();
             triggerMapLoad();
-            PlatformGame.setScreen(new NewScreen(pc, false));
+            FurGuardiansGame.setScreen(new NewScreen(pc, false));
 		}
 		
 		protected final void goOptions() {
-            PlatformGame.setScreen(new OptionsScreen(pc));
+            FurGuardiansGame.setScreen(new OptionsScreen(pc));
         }
 		
 		protected final void goPerks() {
-            PlatformGame.setScreen(new AssistScreen(pc));
+            FurGuardiansGame.setScreen(new AssistScreen(pc));
         }
 		
 		protected final void reloadAnimalStrip() {
@@ -997,7 +997,7 @@ public class Menu {
 		}
 		
 		protected final static void reloadAnimalStrip(final PlayerContext pc, final Model actor) {
-			PlatformGame.reloadAnimalStrip(pc, false);
+			FurGuardiansGame.reloadAnimalStrip(pc, false);
 			if (actor != null) {
 				actor.load(pc);
 			}
@@ -1042,7 +1042,7 @@ public class Menu {
 	
 	protected final static class TitleScreen extends PlayerScreen {
 		private final static int NUM_CHRS = 4;
-		private final static String TITLE = PlatformGame.TITLE.toUpperCase();
+		private final static String TITLE = FurGuardiansGame.TITLE.toUpperCase();
 		private static ArrayList<PlayerContext> tcs = new ArrayList<PlayerContext>(NUM_CHRS);
 		private Pantext text = null;
 		private Pantext trademark = null;
@@ -1055,7 +1055,7 @@ public class Menu {
 	    
 	    @Override
         protected final void menu() {
-	        PlatformGame.loaders = null;
+	        FurGuardiansGame.loaders = null;
 	        final int bottom = getBottom();
 	        final Pangine engine = Pangine.getEngine();
 	        final boolean touch = engine.isTouchSupported();
@@ -1094,8 +1094,8 @@ public class Menu {
 	        final int titleEnd = Cabin.CabinScreen.displayName(TITLE, titleHeight, 0);
 	        final Panple titlePos = tm.getPosition(titleEnd, titleHeight);
 	        trademark = addTitle("" + Pantext.CHAR_TRADEMARK, 1 + (int) titlePos.getX(), 8 + (int) titlePos.getY());
-	        addTitleCentered("Copyright " + Pantext.CHAR_COPYRIGHT + " " + PlatformGame.YEAR, bottom + 21);
-	        addTitleCentered(PlatformGame.AUTHOR, bottom + 11);
+	        addTitleCentered("Copyright " + Pantext.CHAR_COPYRIGHT + " " + FurGuardiansGame.YEAR, bottom + 21);
+	        addTitleCentered(FurGuardiansGame.AUTHOR, bottom + 11);
 	        if (touch) {
 	        	text.register(new ActionEndListener() {@Override public void onActionEnd(final ActionEndEvent event) {
 		        	onAnything(event);
@@ -1108,11 +1108,11 @@ public class Menu {
 	        try {
 	        	String log = engine.getFatalLog();
 	            if (log != null) {
-	            	final String email = PlatformGame.getEmail();
+	            	final String email = FurGuardiansGame.getEmail();
 	            	log = log.replace("org.pandcorps.platform.", "");
 	            	log = log.replace("org.pandcorps.", "");
 	            	log = log.replace(".java", "");
-	            	engine.setClipboard("Please send this to " + email + Iotil.BR + PlatformGame.VERSION + Iotil.BR + log);
+	            	engine.setClipboard("Please send this to " + email + Iotil.BR + FurGuardiansGame.VERSION + Iotil.BR + log);
 	            	addTitleTiny("Oh no!", 4, bottom + 48);
 	            	addTitleTiny("It looks like the game crashed the last time you played.", 4, bottom + 42);
 	            	addTitleTiny("We've copied an error report into your clipboard.", 4, bottom + 36);
@@ -1124,7 +1124,7 @@ public class Menu {
 	        }
 	        for (int i = 0; i < NUM_CHRS; i++) {
 	        	final PlayerContext tc = tcs.get(i);
-		        final Panctor actor = addActor(tc, PlatformGame.SCREEN_W * (i + 1) / (NUM_CHRS + 1));
+		        final Panctor actor = addActor(tc, FurGuardiansGame.SCREEN_W * (i + 1) / (NUM_CHRS + 1));
 	        	if (i >= NUM_CHRS / 2) {
 	        		actor.setMirror(true);
 	        	}
@@ -1171,9 +1171,9 @@ public class Menu {
         			Tiles.shatterBottomRight = true;
         			Tiles.shatterTopLeft = false;
         		}
-        		Tiles.newGemLetter(null, titleIndex, PlatformGame.getGemLetter(DynamicTileMap.getRawForeground(tile)));
+        		Tiles.newGemLetter(null, titleIndex, FurGuardiansGame.getGemLetter(DynamicTileMap.getRawForeground(tile)));
         		tm.setTile(titleIndex, null);
-        		PlatformGame.shatterLetter(tm.getPosition(titleIndex));
+        		FurGuardiansGame.shatterLetter(tm.getPosition(titleIndex));
         		count++;
         	}
         	Tiles.shatterBottomLeft = Tiles.shatterBottomRight = Tiles.shatterTopLeft = Tiles.shatterTopRight = true;
@@ -1195,7 +1195,7 @@ public class Menu {
 	        	tc.profile.currentAvatar.randomize();
 	        	tcs.add(tc);
 	        	//TODO Menu screens which show player can probably use full=false, but will need full load when done
-	        	PlatformGame.reloadAnimalStrip(tc, false);
+	        	FurGuardiansGame.reloadAnimalStrip(tc, false);
 	        }
 	    }
 	    
@@ -1204,7 +1204,7 @@ public class Menu {
 	        String defaultProfileName = Config.defaultProfileName;
 	        final List<String> availableProfiles;
 	        if (defaultProfileName == null) {
-	            availableProfiles = PlatformGame.getAvailableProfiles();
+	            availableProfiles = FurGuardiansGame.getAvailableProfiles();
 	            if (Coltil.size(availableProfiles) == 1) {
 	                defaultProfileName = availableProfiles.get(0);
 	            }
@@ -1214,14 +1214,14 @@ public class Menu {
 			if (defaultProfileName == null) {
 				final SelectScreen screen = new SelectScreen(null, false, availableProfiles);
 		        screen.ctrl = ctrl;
-		        PlatformGame.fadeOut(PlatformGame.room, screen);
+		        FurGuardiansGame.fadeOut(FurGuardiansGame.room, screen);
 			} else {
 				try {
-					PlatformGame.loadProfile(defaultProfileName, ctrl, PlatformGame.pcs.size());
+					FurGuardiansGame.loadProfile(defaultProfileName, ctrl, FurGuardiansGame.pcs.size());
 				} catch (final Exception e) {
 					throw Pantil.toRuntimeException(e); //TODO handle missing profile
 				}
-				PlatformGame.goMap();
+				FurGuardiansGame.goMap();
 			}
 	    }
 	    
@@ -1233,7 +1233,7 @@ public class Menu {
 			}
 	    	tcs.clear();
 	    	tcs = null;
-	    	PlatformGame.blockWord = PlatformGame.defaultBlockWord;
+	    	FurGuardiansGame.blockWord = FurGuardiansGame.defaultBlockWord;
 	    }
 	}
 	
@@ -1266,9 +1266,9 @@ public class Menu {
 				return;
 			}
 			newToDefault = false;
-			newTab(PlatformGame.menuPlus, "New", new Runnable() {@Override public final void run() {newProfile();}});
+			newTab(FurGuardiansGame.menuPlus, "New", new Runnable() {@Override public final void run() {newProfile();}});
 			if (curr != null) {
-				newTab(PlatformGame.menuX, "Back", new Runnable() {@Override public final void run() {exit();}});
+				newTab(FurGuardiansGame.menuX, "Back", new Runnable() {@Override public final void run() {exit();}});
 			}
 			newTabs();
 		}
@@ -1300,7 +1300,7 @@ public class Menu {
 		
 		private final boolean createProfileList(final int x, final int y) {
 			if (availableProfiles == null) {
-			    availableProfiles = PlatformGame.getAvailableProfiles();
+			    availableProfiles = FurGuardiansGame.getAvailableProfiles();
 			}
 			if (Coltil.isValued(availableProfiles)) {
 				final RadioSubmitListener prfLsn = new RadioSubmitListener() {
@@ -1308,13 +1308,13 @@ public class Menu {
 						if (curr != null) {
 							curr.destroy();
 						}
-						final int index = curr == null ? PlatformGame.pcs.size() : curr.index;
+						final int index = curr == null ? FurGuardiansGame.pcs.size() : curr.index;
 						try {
-							PlatformGame.loadProfile(event.toString(), ctrl, index);
+							FurGuardiansGame.loadProfile(event.toString(), ctrl, index);
 						} catch (final Exception e) {
 							throw Pantil.toRuntimeException(e);
 						}
-						pc = PlatformGame.pcs.get(index);
+						pc = FurGuardiansGame.pcs.get(index);
 						triggerMapLoad();
 						goProfile();
 				}};
@@ -1360,7 +1360,7 @@ public class Menu {
 		
 		protected final void menuTouch() {
 			createNameInput(touchKeyboardX, getTouchKeyboardY());
-			newTab(PlatformGame.menuCheck, "Done", new Runnable() {@Override public final void run() {exit();}});
+			newTab(FurGuardiansGame.menuCheck, "Done", new Runnable() {@Override public final void run() {exit();}});
 			newTabs();
 		}
 		
@@ -1377,7 +1377,7 @@ public class Menu {
 			final InputSubmitListener namLsn = new InputSubmitListener() {
                 @Override public final void onSubmit(final InputSubmitEvent event) {
                     exit(); }};
-	        addNameInput(curr.profile, namLsn, PlatformGame.MAX_NAME_PROFILE, x, y); //TODO validation unique, submit link
+	        addNameInput(curr.profile, namLsn, FurGuardiansGame.MAX_NAME_PROFILE, x, y); //TODO validation unique, submit link
 	    }
 
         @Override
@@ -1434,18 +1434,18 @@ public class Menu {
 					createNewMenu(touchRadioX, touchRadioY);
 					break;
 			}
-			newTab(PlatformGame.menuCheck, "Done", new Runnable() {@Override public final void run() {exit();}});
-			newTab(PlatformGame.menuAvatar, "Edit", new Runnable() {@Override public final void run() {goAvatar();}});
+			newTab(FurGuardiansGame.menuCheck, "Done", new Runnable() {@Override public final void run() {exit();}});
+			newTab(FurGuardiansGame.menuAvatar, "Edit", new Runnable() {@Override public final void run() {goAvatar();}});
 			if (!newProfile) {
-				//newTab(PlatformGame.menuPlus, "New", new Runnable() {@Override public final void run() {newAvatar();}});
-				newTab(PlatformGame.menuPlus, "New", TAB_NEW);
+				//newTab(FurGuardiansGame.menuPlus, "New", new Runnable() {@Override public final void run() {newAvatar();}});
+				newTab(FurGuardiansGame.menuPlus, "New", TAB_NEW);
 				if (getAvatarsSize() > 1) {
-					newTab(PlatformGame.menuMinus, "Erase", new Runnable() {@Override public final void run() {delete();}});
+					newTab(FurGuardiansGame.menuMinus, "Erase", new Runnable() {@Override public final void run() {delete();}});
 				}
-				newTab(PlatformGame.menuInfo, "Info", new Runnable() {@Override public final void run() {goInfo();}});
+				newTab(FurGuardiansGame.menuInfo, "Info", new Runnable() {@Override public final void run() {goInfo();}});
 				if (isPlayer1()) {
-				    newTab(PlatformGame.menuMenu, "Setup", new Runnable() {@Override public final void run() {goOptions();}});
-					newTab(PlatformGame.menuOff, "Quit", new Runnable() {@Override public final void run() {quit();}});
+				    newTab(FurGuardiansGame.menuMenu, "Setup", new Runnable() {@Override public final void run() {goOptions();}});
+					newTab(FurGuardiansGame.menuOff, "Quit", new Runnable() {@Override public final void run() {quit();}});
 				}
 			}
 			newProfile = false;
@@ -1462,7 +1462,7 @@ public class Menu {
 		
 		private void reload(final byte tab) {
 			currentTab = tab;
-			PlatformGame.setScreen(new ProfileScreen(pc, false));
+			FurGuardiansGame.setScreen(new ProfileScreen(pc, false));
 		}
 		
 		private final int getAvatarsSize() {
@@ -1538,7 +1538,7 @@ public class Menu {
 			final MsgCloseListener prfLsn = new MsgCloseListener() {
                 @Override public final void onClose() {
                     save();
-                    PlatformGame.setScreen(new SelectScreen(pc, false, null)); }};
+                    FurGuardiansGame.setScreen(new SelectScreen(pc, false, null)); }};
             y -= 16;
             x = left;
             addTitle("Profile", x, y);
@@ -1610,7 +1610,7 @@ public class Menu {
 		}
 		
 		private final void goAvatar() {
-		    PlatformGame.setScreen(new AvatarScreen(pc));
+		    FurGuardiansGame.setScreen(new AvatarScreen(pc));
 		}
 		
 		private final void newAvatar() {
@@ -1625,7 +1625,7 @@ public class Menu {
 		}
 		
 		private final void goInfo() {
-			PlatformGame.setScreen(new InfoScreen(pc, true));
+			FurGuardiansGame.setScreen(new InfoScreen(pc, true));
 		}
 		
 		private final void quit() {
@@ -1721,13 +1721,13 @@ public class Menu {
 					createNameInput(touchKeyboardX, getTouchKeyboardY());
 					break;
 			}
-			newTab(PlatformGame.menuCheck, "Done", new Runnable() {@Override public final void run() {exit();}});
-			newTab(PlatformGame.menuX, "Undo", new Runnable() {@Override public final void run() {cancel();}});
-			newTab(PlatformGame.menuAnimal, "Kind", TAB_ANIMAL);
-			newTab(PlatformGame.menuEyes, "Eyes", TAB_EYES);
-			newTab(PlatformGame.menuColor, "Color", TAB_COLOR);
-			newTab(PlatformGame.menuGear, "Gear", new Runnable() {@Override public final void run() {goGear();}});
-			newTab(PlatformGame.menuKeyboard, "Name", TAB_NAME);
+			newTab(FurGuardiansGame.menuCheck, "Done", new Runnable() {@Override public final void run() {exit();}});
+			newTab(FurGuardiansGame.menuX, "Undo", new Runnable() {@Override public final void run() {cancel();}});
+			newTab(FurGuardiansGame.menuAnimal, "Kind", TAB_ANIMAL);
+			newTab(FurGuardiansGame.menuEyes, "Eyes", TAB_EYES);
+			newTab(FurGuardiansGame.menuColor, "Color", TAB_COLOR);
+			newTab(FurGuardiansGame.menuGear, "Gear", new Runnable() {@Override public final void run() {goGear();}});
+			newTab(FurGuardiansGame.menuKeyboard, "Name", TAB_NAME);
 			newTabs();
 			registerBack(new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
@@ -1743,11 +1743,11 @@ public class Menu {
 		
 		private void reload(final byte tab) {
 			currentTab = tab;
-			PlatformGame.setScreen(new AvatarScreen(pc, old, avt));
+			FurGuardiansGame.setScreen(new AvatarScreen(pc, old, avt));
 		}
 		
 		private final void createAnimalList(final int x, final int y) {
-			final List<String> animals = PlatformGame.getAnimals();
+			final List<String> animals = FurGuardiansGame.getAnimals();
 			final AvtListener anmLsn = new AvtListener() {
 				@Override public final void update(final String value) {
 					avt.anm = value; }};
@@ -1756,17 +1756,17 @@ public class Menu {
 		}
 		
 		private final void createEyeList(final int x, final int y) {
-			createEyeList(avt, PlatformGame.getNumEyes(), x, y);
+			createEyeList(avt, FurGuardiansGame.getNumEyes(), x, y);
 		}
 		
 		private final void createNameInput(final int x, final int y) {
-			final Input namIn = addNameInput(avt, null, PlatformGame.MAX_NAME_AVATAR, x, y);
+			final Input namIn = addNameInput(avt, null, FurGuardiansGame.MAX_NAME_AVATAR, x, y);
 			namIn.append(avt.getName());
 		}
 		
 		private final void goGear() {
 			GearScreen.currentTab = GearScreen.TAB_DEFAULT;
-			PlatformGame.setScreen(new GearScreen(pc, old, avt));
+			FurGuardiansGame.setScreen(new GearScreen(pc, old, avt));
 		}
 		
 		protected final void menuClassic() {
@@ -1906,12 +1906,12 @@ public class Menu {
                     reload(tab);
                 }});
             sub.setOverlay(img, offx(img), offy(img, txt));
-        	sub.setText(PlatformGame.font, txt, OFF_TEXT_X, OFF_TEXT_Y);
+        	sub.setText(FurGuardiansGame.font, txt, OFF_TEXT_X, OFF_TEXT_Y);
             return sub;
         }
         
         private final TouchButton newColor(final int x, final int y, final byte tab) {
-        	return newTabSub(x, y, PlatformGame.menuRgb, "Color", tab);
+        	return newTabSub(x, y, FurGuardiansGame.menuRgb, "Color", tab);
         }
         
         protected final void createJumpList(final int x, final int y) {
@@ -1920,8 +1920,8 @@ public class Menu {
             final TouchButton sub = newBuy(x, y);
             jmpBtn = newColor(x, y, TAB_JUMP_COL);
             drgnBtn = newColor(x, y, TAB_DRAGON_COL);
-            drgnEyeBtn = newTabSub(x + PlatformGame.MENU_W, y, PlatformGame.menuEyesDragon, "Eyes", TAB_DRAGON_EYE);
-            drgnNameBtn = newTabSub(x, y - PlatformGame.MENU_H, PlatformGame.menuKeyboard, "Name", TAB_DRAGON_NAME);
+            drgnEyeBtn = newTabSub(x + FurGuardiansGame.MENU_W, y, FurGuardiansGame.menuEyesDragon, "Eyes", TAB_DRAGON_EYE);
+            drgnNameBtn = newTabSub(x, y - FurGuardiansGame.MENU_H, FurGuardiansGame.menuKeyboard, "Name", TAB_DRAGON_NAME);
             final AvtListener jmpLsn = new AvtListener() {
                 @Override public final void update(final String value) {
                     final JumpMode jm = Player.get(jumpModes, value);
@@ -1932,7 +1932,7 @@ public class Menu {
                         TouchButton.detach(sub);
                         setJumpMode(index);
                     } else if (pc.profile.isJumpModeTryable(index) && avt.jumpMode != index) {
-                    	reattach("Free trial for 1 Level?", sub, PlatformGame.gemWhite, "Try");
+                    	reattach("Free trial for 1 Level?", sub, FurGuardiansGame.gemWhite, "Try");
                     } else {
                     	reattachBuy("Buy for " + jm.getCost() + "?", sub);
                     }
@@ -1964,11 +1964,11 @@ public class Menu {
         }
         
         private final void createDragonEyeList(final int x, final int y) {
-			createEyeList(avt.dragon, PlatformGame.getNumDragonEyes(), x, y);
+			createEyeList(avt.dragon, FurGuardiansGame.getNumDragonEyes(), x, y);
 		}
         
         private final void createDragonNameInput(final int x, final int y) {
-			final Input namIn = addNameInput(avt.dragon, null, PlatformGame.MAX_NAME_AVATAR, x, y);
+			final Input namIn = addNameInput(avt.dragon, null, FurGuardiansGame.MAX_NAME_AVATAR, x, y);
 			namIn.append(avt.dragon.getName());
 		}
         
@@ -2140,10 +2140,10 @@ public class Menu {
                 	createDragonNameInput(touchKeyboardX, getTouchKeyboardY());
                     break;
             }
-			newTab(PlatformGame.menuCheck, "Back", new Runnable() {@Override public final void run() {exit();}});
-			newTab(PlatformGame.menuClothing, "Shirt", TAB_CLOTHES);
-			newTab(PlatformGame.menuHat, "Hat", TAB_HAT);
-			newTab(PlatformGame.menuJump, "Power", TAB_JUMP);
+			newTab(FurGuardiansGame.menuCheck, "Back", new Runnable() {@Override public final void run() {exit();}});
+			newTab(FurGuardiansGame.menuClothing, "Shirt", TAB_CLOTHES);
+			newTab(FurGuardiansGame.menuHat, "Hat", TAB_HAT);
+			newTab(FurGuardiansGame.menuJump, "Power", TAB_JUMP);
 			newTabs();
 			registerBackExit();
 		}
@@ -2157,7 +2157,7 @@ public class Menu {
         
         private void reload(final byte tab) {
             currentTab = tab;
-            PlatformGame.setScreen(new GearScreen(pc, old, avt));
+            FurGuardiansGame.setScreen(new GearScreen(pc, old, avt));
         }
         
         protected final void menuClassic() {
@@ -2237,7 +2237,7 @@ public class Menu {
         	Coltil.clear(drgnColors);
         	Coltil.clear(clthMenu.colors);
         	Coltil.clear(hatMenu.colors);
-            PlatformGame.setScreen(new AvatarScreen(pc, old, avt));
+            FurGuardiansGame.setScreen(new AvatarScreen(pc, old, avt));
         }
 	}
 	
@@ -2260,7 +2260,7 @@ public class Menu {
 		
 		protected final void menuTouch() {
 			createAssistList(touchRadioX, touchRadioY);
-			newTab(PlatformGame.menuCheck, "Done", new Runnable() {@Override public final void run() {exit();}});
+			newTab(FurGuardiansGame.menuCheck, "Done", new Runnable() {@Override public final void run() {exit();}});
             newTabs();
             registerBackExit();
 		}
@@ -2323,7 +2323,7 @@ public class Menu {
         
         private final void highlightAssist(final Assist a, final TouchButton sub) {
         	if (pc.profile.isAssistAvailable(a)) {
-        		reattach(getEquipped(a), sub, PlatformGame.menuExclaim, "Equip");
+        		reattach(getEquipped(a), sub, FurGuardiansGame.menuExclaim, "Equip");
             } else {
                 reattachBuy("Buy for " + a.getCost() + "?", sub);
             }
@@ -2405,12 +2405,12 @@ public class Menu {
 				    createFoesList(touchRadioX, touchRadioY);
 				    break;
 			}
-			newTab(PlatformGame.menuCheck, "Done", new Runnable() {@Override public final void run() {exit();}});
+			newTab(FurGuardiansGame.menuCheck, "Done", new Runnable() {@Override public final void run() {exit();}});
 			if (fullMenu) {
-				newTab(PlatformGame.menuTrophy, "Award", TAB_AWARD);
-				newTab(PlatformGame.menuGraph, "Stats", TAB_STATS);
-				newTab(PlatformGame.menuStar, "Goals", TAB_GOALS);
-				newTab(PlatformGame.menuFoes, "Foes", TAB_FOES);
+				newTab(FurGuardiansGame.menuTrophy, "Award", TAB_AWARD);
+				newTab(FurGuardiansGame.menuGraph, "Stats", TAB_STATS);
+				newTab(FurGuardiansGame.menuStar, "Goals", TAB_GOALS);
+				newTab(FurGuardiansGame.menuFoes, "Foes", TAB_FOES);
 			}
 			newTabs();
 			registerBackExit();
@@ -2426,7 +2426,7 @@ public class Menu {
 		
 		private void reload(final byte tab) {
 			currentTab = tab;
-			PlatformGame.setScreen(new InfoScreen(pc, fullMenu));
+			FurGuardiansGame.setScreen(new InfoScreen(pc, fullMenu));
 		}
 		
 		private final void createAchievementList(final int x, final int y) {
@@ -2454,7 +2454,7 @@ public class Menu {
 		
 		private final void createFoesList(final int x, final int y) {
 		    final List<String> list = new ArrayList<String>();
-		    for (final EnemyDefinition def : PlatformGame.allEnemies) {
+		    for (final EnemyDefinition def : FurGuardiansGame.allEnemies) {
 		        list.add(def.getName());
 		    }
 		    enemy = addActor(center + 80, Y_PLAYER);
@@ -2487,7 +2487,7 @@ public class Menu {
 			addTitle(rankDesc, img ? (x + 17) : x, y);
 			final int currPoints = prf.getCurrentGoalPoints();
 			if (img) {
-				addActor(new Gem(PlatformGame.gemRank), x, y);
+				addActor(new Gem(FurGuardiansGame.gemRank), x, y);
 				y -= 17;
 				addStars(x, y, currPoints, Profile.POINTS_PER_RANK, rankStars);
 			} else {
@@ -2531,7 +2531,7 @@ public class Menu {
 		
 		private final void addContinue(final int x, final int y) {
 			if (isTabEnabled()) {
-				newTab(PlatformGame.menuCheck, "Done", new Runnable() {
+				newTab(FurGuardiansGame.menuCheck, "Done", new Runnable() {
 					@Override public final void run() {
 						reload(TAB_GOALS);
 					}});
@@ -2583,7 +2583,7 @@ public class Menu {
 										Chartil.set(rankDesc, "New Rank " + strRank + "   1000");
 										addActor(new Gem(), x + 1 + (12 + strRank.length()) * 8, y + 17);
 										addRankPoints(goalIndex, x, y);
-										PlatformGame.musicLevelEnd.startSound();
+										FurGuardiansGame.musicLevelEnd.startSound();
 									}});
 							} else {
 								// Add remaining points (if any)
@@ -2621,7 +2621,7 @@ public class Menu {
 		
 		private final static void spark(final Panple pos) {
 			Gem.spark(pos, false);
-			PlatformGame.soundGem.startSound();
+			FurGuardiansGame.soundGem.startSound();
 		}
         
         protected final void menuClassic() {
@@ -2655,7 +2655,7 @@ public class Menu {
         }
         
         private final void setEnemy(final String name) {
-        	final EnemyDefinition def = PlatformGame.getEnemy(name);
+        	final EnemyDefinition def = FurGuardiansGame.getEnemy(name);
             enemy.setView(def.walk.getFrames()[0].getImage());
             Chartil.set(enemyDesc, "Defeated " + pc.profile.stats.defeatedEnemyTypes.longValue(def.code));
         }
@@ -2725,44 +2725,44 @@ public class Menu {
 		@Override
         protected final void menuTouch() {
             final Pangine engine = Pangine.getEngine();
-            final Panple btnSize = PlatformGame.menu.getSize();
+            final Panple btnSize = FurGuardiansGame.menu.getSize();
             final int h = engine.getEffectiveHeight();
             final int btnW = (int) btnSize.getX(), btnH = (int) btnSize.getY();
             final int offY = (h >= 240) ? (btnH * 5 / 4) : btnH;
             int x = btnW / 2, y = h - btnH - offY;
             
-            newFormButton("AutoToggle", x, y, PlatformGame.menuButtons, new Runnable() {@Override public final void run() {toggleAuto();}});
+            newFormButton("AutoToggle", x, y, FurGuardiansGame.menuButtons, new Runnable() {@Override public final void run() {toggleAuto();}});
             addTitle(msgAuto, x + btnW + 8, y);
             setMessageAuto();
             
             y -= offY;
-            newFormButton("SpeedDown", x, y, PlatformGame.menuLeft, new Runnable() {@Override public final void run() {incSpeed(-1);}});
-            newFormButton("SpeedUp", engine.getEffectiveWidth() - x - btnW, y, PlatformGame.menuRight, new Runnable() {@Override public final void run() {incSpeed(1);}});
+            newFormButton("SpeedDown", x, y, FurGuardiansGame.menuLeft, new Runnable() {@Override public final void run() {incSpeed(-1);}});
+            newFormButton("SpeedUp", engine.getEffectiveWidth() - x - btnW, y, FurGuardiansGame.menuRight, new Runnable() {@Override public final void run() {incSpeed(1);}});
             setMessageSpeed();
             addTitle(msgSpeed, x + btnW + 8, y);
             
             y -= offY;
-            newFormButton("BtnSizeDown", x, y, PlatformGame.menuLeft, new Runnable() {@Override public final void run() {incBtnSize(-1);}});
-            newFormButton("BtnSizeUp", engine.getEffectiveWidth() - x - btnW, y, PlatformGame.menuRight, new Runnable() {@Override public final void run() {incBtnSize(1);}});
+            newFormButton("BtnSizeDown", x, y, FurGuardiansGame.menuLeft, new Runnable() {@Override public final void run() {incBtnSize(-1);}});
+            newFormButton("BtnSizeUp", engine.getEffectiveWidth() - x - btnW, y, FurGuardiansGame.menuRight, new Runnable() {@Override public final void run() {incBtnSize(1);}});
             setMessageBtnSize();
             addTitle(msgBtnSize, x + btnW + 8, y);
             
-            newTab(PlatformGame.menuCheck, "Done", new Runnable() {@Override public final void run() {exit();}});
-            newTab(PlatformGame.menuMusic, "Music", new Runnable() {@Override public final void run() {goMusic();}});
-            newTab(PlatformGame.menuQuestion, "Perks", new Runnable() {@Override public final void run() {goPerks();}});
+            newTab(FurGuardiansGame.menuCheck, "Done", new Runnable() {@Override public final void run() {exit();}});
+            newTab(FurGuardiansGame.menuMusic, "Music", new Runnable() {@Override public final void run() {goMusic();}});
+            newTab(FurGuardiansGame.menuQuestion, "Perks", new Runnable() {@Override public final void run() {goPerks();}});
             if (pc.profile.consoleEnabled) {
-            	newTab(PlatformGame.menuKeyboard, "Debug", new Runnable() {@Override public final void run() {goConsole();}});
+            	newTab(FurGuardiansGame.menuKeyboard, "Debug", new Runnable() {@Override public final void run() {goConsole();}});
             }
             newTabs();
             registerBackExit();
         }
         
         private final void goMusic() {
-            PlatformGame.setScreen(new MusicScreen(pc));
+            FurGuardiansGame.setScreen(new MusicScreen(pc));
         }
         
         private final void goConsole() {
-            PlatformGame.setScreen(new ConsoleScreen(pc));
+            FurGuardiansGame.setScreen(new ConsoleScreen(pc));
         }
         
         private final void toggleAuto() {
@@ -2845,7 +2845,7 @@ public class Menu {
         @Override
         protected void onExit() {
             if (oldBtnSize != Config.btnSize) {
-                PlatformGame.reloadButtons();
+                FurGuardiansGame.reloadButtons();
                 Config.serialize();
             }
         	save();
@@ -2866,20 +2866,20 @@ public class Menu {
         @Override
         protected final void menuTouch() {
             final Pangine engine = Pangine.getEngine();
-            final Panple btnSize = PlatformGame.menu.getSize();
+            final Panple btnSize = FurGuardiansGame.menu.getSize();
             final int btnW = (int) btnSize.getX(), btnH = (int) btnSize.getY(), offY = btnH * 5 / 4;
             int x = btnW / 2, y = engine.getEffectiveHeight() - btnH - offY;
             
-            newFormButton("MusicToggle", x, y, PlatformGame.menuMusic, new Runnable() {@Override public final void run() {toggleMusic();}});
+            newFormButton("MusicToggle", x, y, FurGuardiansGame.menuMusic, new Runnable() {@Override public final void run() {toggleMusic();}});
             addTitle(msgMusic, x + btnW + 8, y);
             setMessageMusic();
             
             y -= offY;
-            newFormButton("SoundToggle", x, y, PlatformGame.menuSound, new Runnable() {@Override public final void run() {toggleSound();}});
+            newFormButton("SoundToggle", x, y, FurGuardiansGame.menuSound, new Runnable() {@Override public final void run() {toggleSound();}});
             addTitle(msgSound, x + btnW + 8, y);
             setMessageSound();
             
-            newTab(PlatformGame.menuCheck, "Done", new Runnable() {@Override public final void run() {exit();}});
+            newTab(FurGuardiansGame.menuCheck, "Done", new Runnable() {@Override public final void run() {exit();}});
             newTabs();
             registerBackExit();
         }
@@ -2943,9 +2943,9 @@ public class Menu {
 		
 		protected final void menuTouch() {
 			createInput(touchKeyboardX, getTouchKeyboardY());
-			newTab(PlatformGame.menuCheck, "Done", new Runnable() {@Override public final void run() {exit();}});
-			newTab(PlatformGame.menuExclaim, "Run", new Runnable() {@Override public final void run() {exec();}});
-			newTab(PlatformGame.menuMinus, "Clear", new Runnable() {@Override public final void run() {clear();}});
+			newTab(FurGuardiansGame.menuCheck, "Done", new Runnable() {@Override public final void run() {exit();}});
+			newTab(FurGuardiansGame.menuExclaim, "Run", new Runnable() {@Override public final void run() {exec();}});
+			newTab(FurGuardiansGame.menuMinus, "Clear", new Runnable() {@Override public final void run() {clear();}});
 			newTabs();
 			registerBackExit();
 		}
@@ -2987,12 +2987,12 @@ public class Menu {
 				msg = "Added 1000 Gems";
 			} else if ("getzoom".equalsIgnoreCase(cmd)) {
 				if (Config.zoomMag <= 0) {
-					msg = "Default (" + PlatformGame.getApproximateFullScreenZoomedDisplaySize() + ")";
+					msg = "Default (" + FurGuardiansGame.getApproximateFullScreenZoomedDisplaySize() + ")";
 				} else  {
 					msg = "Zoom: " + Config.zoomMag;
 				}
 			} else if ("zoomin".equalsIgnoreCase(cmd)) {
-				if (Config.zoomMag > 0 && Config.zoomMag < PlatformGame.getApproximateFullScreenZoomedDisplaySize()) {
+				if (Config.zoomMag > 0 && Config.zoomMag < FurGuardiansGame.getApproximateFullScreenZoomedDisplaySize()) {
 					msg = setZoom(Config.zoomMag + 1);
 				} else {
 					msg = MSG_LIMIT;
@@ -3000,7 +3000,7 @@ public class Menu {
 			} else if ("zoomout".equalsIgnoreCase(cmd)) {
 				int z = Config.zoomMag;
 				if (z < 0) {
-					z = PlatformGame.getApproximateFullScreenZoomedDisplaySize();
+					z = FurGuardiansGame.getApproximateFullScreenZoomedDisplaySize();
 				}
 				if (z > 1) {
 					msg = setZoom(z - 1);
@@ -3070,12 +3070,12 @@ public class Menu {
 						final String msg;
 						if (Chartil.isEmpty(prf)) {
 							msg = "Missing";
-						} else if (!prf.startsWith(PlatformGame.SEG_PRF)) {
+						} else if (!prf.startsWith(FurGuardiansGame.SEG_PRF)) {
 							msg = "Invalid";
 						} else {
 						    final Profile tprf = new Profile();
 						    try {
-						        tprf.load(SegmentStream.openString(prf).readRequire(PlatformGame.SEG_PRF));
+						        tprf.load(SegmentStream.openString(prf).readRequire(FurGuardiansGame.SEG_PRF));
 						    } catch (final IOException e) {
 						        throw new RuntimeException(e);
 						    }
@@ -3197,7 +3197,7 @@ public class Menu {
 	}
 	
 	private final static class Model extends Panctor implements StepListener {
-	    private int blinkTimer = Mathtil.randi(PlatformGame.DUR_BLINK / 4, PlatformGame.DUR_BLINK * 3 / 4);
+	    private int blinkTimer = Mathtil.randi(FurGuardiansGame.DUR_BLINK / 4, FurGuardiansGame.DUR_BLINK * 3 / 4);
 	    private int mirrorTimer = Mathtil.randi(60, 240);
 	    private boolean origDir = true;
 	    private Accessories acc = null;
@@ -3220,7 +3220,7 @@ public class Menu {
             blinkTimer--;
             if (blinkTimer <= 0) {
                 setView((Panimation) getView());
-                blinkTimer = Mathtil.randi(PlatformGame.DUR_BLINK * 5 / 4, PlatformGame.DUR_BLINK * 7 / 4);
+                blinkTimer = Mathtil.randi(FurGuardiansGame.DUR_BLINK * 5 / 4, FurGuardiansGame.DUR_BLINK * 7 / 4);
             }
             mirrorTimer--;
             if (mirrorTimer <= 0) {
