@@ -993,11 +993,11 @@ public class Menu {
         }
 		
 		protected final void reloadAnimalStrip() {
-			reloadAnimalStrip(pc, actor);
+			reloadAnimalStrip(pc, actor, false);
 		}
 		
-		protected final static void reloadAnimalStrip(final PlayerContext pc, final Model actor) {
-			FurGuardiansGame.reloadAnimalStrip(pc, false);
+		protected final static void reloadAnimalStrip(final PlayerContext pc, final Model actor, final boolean full) {
+			FurGuardiansGame.reloadAnimalStrip(pc, full);
 			if (actor != null) {
 				actor.load(pc);
 			}
@@ -1795,7 +1795,7 @@ public class Menu {
                 @Override public final void onClose() {
                     final Pangine engine = Pangine.getEngine();
                     engine.setImageSavingEnabled(true);
-                    reloadAnimalStrip();
+                    reloadAnimalStrip(pc, actor, true);
                     engine.setImageSavingEnabled(false);
                     setInfo(INFO_SAVED); }};
             x = addPipe(x, y);
@@ -2072,7 +2072,7 @@ public class Menu {
                     	avt.clothing.clth = null;
                     	avt.hat.clth = null;
                     	menu.get(avt).clth = c;
-                    	reloadAnimalStrip(mc, clthModel);
+                    	reloadAnimalStrip(mc, clthModel, false);
                     	clthModel.setVisible(true);
                         reattachBuy("Buy for " + c.getCost() + "?", sub);
                     }
