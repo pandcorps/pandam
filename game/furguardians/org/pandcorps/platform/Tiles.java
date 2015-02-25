@@ -59,7 +59,7 @@ public class Tiles {
     
     private final static GemBumped newGemBumped(final Player player, final int index) {
         final int award = getHandler().rndAward();
-        if (PlatformGame.level) {
+        if (FurGuardiansGame.level) {
             switch (award) {
                 case GemBumped.AWARD_2 :
                     player.pc.profile.stats.foundBlueGems++;
@@ -82,41 +82,41 @@ public class Tiles {
     	final Player player = (Player) chr;
     	final Tile t = Level.tm.getTile(index);
     	final byte b = t.getBehavior();
-    	if (b == PlatformGame.TILE_BREAK) {
+    	if (b == FurGuardiansGame.TILE_BREAK) {
     		Level.tm.setForeground(index, null, Tile.BEHAVIOR_OPEN);
-    		shatterTile(PlatformGame.block8, Level.tm.getPosition(index), false);
+    		shatterTile(FurGuardiansGame.block8, Level.tm.getPosition(index), false);
     		if (Mathtil.rand(70)) {
     		    newGemBumped(player, index); // Plays a sound
     		} // else { // Players wanted to hear crumble even if Gem pops up with its own sound
-    		PlatformGame.soundCrumble.startSound();
+    		FurGuardiansGame.soundCrumble.startSound();
     		//}
     		new Bump(chr, index).setVisible(false); // To bump Characters above
     		player.pc.profile.stats.brokenBlocks++;
-    	} else if (b == PlatformGame.TILE_BUMP) {
+    	} else if (b == FurGuardiansGame.TILE_BUMP) {
     	    if (getHandler().isNormalAward(t)) {
     	        newGemBumped(player, index);
     	    } else if (!bumpLetter(player, index, t)) {
     	        GemBumped.newLevelEnd(player, index);
-    	        PlatformGame.levelVictory();
-    	        PlatformGame.playTransition(PlatformGame.musicLevelEnd);
+    	        FurGuardiansGame.levelVictory();
+    	        FurGuardiansGame.playTransition(FurGuardiansGame.musicLevelEnd);
     	    }
     	    bump(player, index);
     	} else {
     		final long clock = Pangine.getEngine().getClock();
     		if (player.lastThud < (clock - 2)) {
 	    		player.lastThud = clock;
-	    		PlatformGame.soundThud.startSound();
+	    		FurGuardiansGame.soundThud.startSound();
     		}
     	}
     }
     
     private final static boolean bumpLetter(final Player player, final int index, final Tile t) {
     	Panmage letter = null;
-	    final int size = PlatformGame.blockWord.length();
+	    final int size = FurGuardiansGame.blockWord.length();
 	    final Object fg = DynamicTileMap.getRawForeground(t);
 	    int i = 0;
 	    for (; i < size; i++) {
-	    	letter = PlatformGame.getBlockWordLetter(i);
+	    	letter = FurGuardiansGame.getBlockWordLetter(i);
 	        if (fg == letter) {
 	        	boolean keep = true;
 	        	for (final Panctor h : Coltil.unnull(Level.collectedLetters)) {
@@ -133,7 +133,7 @@ public class Tiles {
 	    if (i >= size) {
 	    	return false;
 	    }
-	    newGemLetter(player, index, PlatformGame.getGemWordLetter(i));
+	    newGemLetter(player, index, FurGuardiansGame.getGemWordLetter(i));
 	    //final TileActor h = new TileActor();
 	    //h.setViewFromForeground(Level.tm, t);
 	    Level.collectedLetters = Coltil.add(Level.collectedLetters, addLetter(i, letter));
@@ -146,7 +146,7 @@ public class Tiles {
     }
     
     private final static int getHudLetterX(final int i) {
-    	return (Pangine.getEngine().getEffectiveWidth() - ImtilX.DIM * PlatformGame.blockWord.length()) / 2 + ImtilX.DIM * i;
+    	return (Pangine.getEngine().getEffectiveWidth() - ImtilX.DIM * FurGuardiansGame.blockWord.length()) / 2 + ImtilX.DIM * i;
     }
     
     private final static int getHudLetterY() {
@@ -157,16 +157,16 @@ public class Tiles {
     	final Panctor h = new Panctor();
 	    h.setView(letter);
 	    h.getPosition().set(getHudLetterX(i), getHudLetterY());
-	    PlatformGame.hud.addActor(h);
+	    FurGuardiansGame.hud.addActor(h);
 	    return h;
     }
     
     protected final static void initLetters() {
     	Coltil.clear(Level.uncollectedLetters);
-    	final String word = PlatformGame.blockWord;
+    	final String word = FurGuardiansGame.blockWord;
     	final int size = word.length();
     	for (int i = 0; i < size; i++) {
-    		final Panctor h = addLetter(i, PlatformGame.getTranslucentBlockWordLetter(i));
+    		final Panctor h = addLetter(i, FurGuardiansGame.getTranslucentBlockWordLetter(i));
     		Level.uncollectedLetters = Coltil.add(Level.uncollectedLetters, h);
     	}
     }
@@ -181,13 +181,13 @@ public class Tiles {
         public Faller(final Panlayer layer, final Panmage img, final float x, final float y, final float xv, final float yv) {
             super(g);
             setView(img);
-            PlatformGame.setPosition(this, x, y, PlatformGame.DEPTH_SHATTER);
+            FurGuardiansGame.setPosition(this, x, y, FurGuardiansGame.DEPTH_SHATTER);
             getVelocity().set(xv, yv);
             layer.addActor(this);
         }
         
         public Faller(final Panmage img, final float x, final float y, final float xv, final float yv) {
-        	this(PlatformGame.room, img, x, y, xv, yv);
+        	this(FurGuardiansGame.room, img, x, y, xv, yv);
         }
 
         @Override
@@ -226,7 +226,7 @@ public class Tiles {
     }
     
     protected final static void shatterTile(final Panmage img, final Panple pos, final boolean rot) {
-    	shatterTile(PlatformGame.room, img, pos, rot);
+    	shatterTile(FurGuardiansGame.room, img, pos, rot);
     }
     
     private final static class Shatter extends Faller {
@@ -245,8 +245,8 @@ public class Tiles {
         	this.index = index;
         	setViewFromForeground(Level.tm, Level.tm.getTile(index));
             final Panple pos = Level.tm.getPosition(index);
-            PlatformGame.setPosition(this, pos.getX(), pos.getY() + 2, PlatformGame.DEPTH_SHATTER);
-            PlatformGame.room.addActor(this);
+            FurGuardiansGame.setPosition(this, pos.getX(), pos.getY() + 2, FurGuardiansGame.DEPTH_SHATTER);
+            FurGuardiansGame.room.addActor(this);
         }
 
         @Override

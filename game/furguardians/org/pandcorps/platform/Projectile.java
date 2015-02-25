@@ -32,7 +32,7 @@ public final class Projectile extends Pandy implements Collidable, AllOobListene
         setView(anm);
         final Panple spos = src.getPosition();
         final float x = spos.getX() + (5 * (src.isMirror() ? -1 : 1)), y = spos.getY() + 6;
-        PlatformGame.setPosition(this, x, y, PlatformGame.DEPTH_SPARK);
+        FurGuardiansGame.setPosition(this, x, y, FurGuardiansGame.DEPTH_SPARK);
         setVelocity(this, dst, getVelocity(), 2f);
     }
     

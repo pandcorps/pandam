@@ -30,8 +30,8 @@ import org.pandcorps.platform.Enemy.*;
 public class Spawner extends Panctor implements StepListener {
 	protected Spawner(final float x, final float y) {
 		setVisible(false);
-		PlatformGame.setPosition(this, x, y, PlatformGame.DEPTH_ENEMY);
-		PlatformGame.room.addActor(this);
+		FurGuardiansGame.setPosition(this, x, y, FurGuardiansGame.DEPTH_ENEMY);
+		FurGuardiansGame.room.addActor(this);
 	}
 
 	@Override
@@ -46,7 +46,7 @@ public class Spawner extends Panctor implements StepListener {
 	}
 	
 	protected EnemyDefinition getDef() {
-		return Mathtil.rand(PlatformGame.enemies);
+		return Mathtil.rand(FurGuardiansGame.enemies);
 	}
 	
 	public final static class SpecificSpawner extends Spawner {

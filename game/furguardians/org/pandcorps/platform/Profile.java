@@ -134,7 +134,7 @@ gems = 1000000;
     
     @Override
     public void save(final Segment seg) {
-        seg.setName(PlatformGame.SEG_PRF);
+        seg.setName(FurGuardiansGame.SEG_PRF);
         seg.setValue(0, getName());
         seg.setValue(1, Player.getName(currentAvatar));
         seg.setInt(2, gems);
@@ -155,7 +155,7 @@ gems = 1000000;
         for (final Clothing c : Coltil.unnull(availableHats)) {
             seg.addValue(13, c.res);
         }
-        seg.setValue(14, PlatformGame.VERSION);
+        seg.setValue(14, FurGuardiansGame.VERSION);
         //seg.setInt(3, ctrl);
     }
     
@@ -179,12 +179,12 @@ gems = 1000000;
     }
     
     private void saveAchievements(final Segment seg) {
-    	seg.setName(PlatformGame.SEG_ACH);
+    	seg.setName(FurGuardiansGame.SEG_ACH);
     	addAll(seg, 0, achievements);
     }
     
     private void saveLocation(final Segment seg) {
-        seg.setName(PlatformGame.SEG_LOC);
+        seg.setName(FurGuardiansGame.SEG_LOC);
         seg.setInt(0, column);
         seg.setInt(1, row);
         final ArrayList<Field> list = new ArrayList<Field>(open.size());
@@ -240,7 +240,7 @@ gems = 1000000;
     	protected long stompedEnemies = 0;
     	protected long bumpedEnemies = 0;
     	protected long hitEnemies = 0;
-    	protected final CountMap<String> defeatedEnemyTypes = new CountMap<String>(PlatformGame.allEnemies.size());
+    	protected final CountMap<String> defeatedEnemyTypes = new CountMap<String>(FurGuardiansGame.allEnemies.size());
     	protected int foundBlueGems = 0;
     	protected int foundCyanGems = 0;
     	protected int foundGreenGems = 0;
@@ -281,7 +281,7 @@ gems = 1000000;
     	
 		@Override
 		public void save(final Segment seg) {
-			seg.setName(PlatformGame.SEG_STX);
+			seg.setName(FurGuardiansGame.SEG_STX);
 	        seg.setInt(0, defeatedLevels);
 	        seg.setInt(1, defeatedWorlds);
 	        seg.setLong(2, defeatedEnemies);
@@ -324,7 +324,7 @@ gems = 1000000;
 			list.add("Enemies stomped: " + stompedEnemies);
 			list.add("Enemies bumped: " + bumpedEnemies);
 			list.add("Enemies hit by object: " + hitEnemies);
-			for (final EnemyDefinition def : PlatformGame.allEnemies) {
+			for (final EnemyDefinition def : FurGuardiansGame.allEnemies) {
 				list.add(def.getName() + " defeated: " + defeatedEnemyTypes.longValue(def.code));
 			}
 			list.add("Blocks bumped: " + bumpedBlocks);
@@ -503,7 +503,7 @@ gems = 1000000;
     }
     
     public final static String getFileName(final String pname) {
-    	return pname + PlatformGame.EXT_PRF;
+    	return pname + FurGuardiansGame.EXT_PRF;
     }
     
     public final String getFileName() {
@@ -511,7 +511,7 @@ gems = 1000000;
     }
     
     public final static String getMapFileName(final String pname) {
-    	return pname + PlatformGame.EXT_MAP;
+    	return pname + FurGuardiansGame.EXT_MAP;
     }
     
     public final String getMapFileName() {

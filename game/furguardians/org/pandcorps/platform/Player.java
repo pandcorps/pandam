@@ -320,18 +320,18 @@ public class Player extends Character implements CollisionListener {
 		super(PLAYER_X, PLAYER_H);
 	    this.pc = pc;
 	    pc.player = this;
-	    level = Panscreen.get() instanceof PlatformGame.PlatformScreen;
+	    level = Panscreen.get() instanceof FurGuardiansGame.PlatformScreen;
 	    for (int i = 0; i < Goal.NUM_ACTIVE_GOALS; i++) {
 	    	goalsMet[i] = false;
 	    }
 	    jumpMode = pc.profile.currentAvatar.jumpMode;
 		final Pangine engine = Pangine.getEngine();
 		setView(pc.guy);
-		PlatformGame.room.addActor(bubble);
+		FurGuardiansGame.room.addActor(bubble);
 		if (Level.theme == Theme.Minecart) {
 			container = new Panctor();
-			container.setView(PlatformGame.minecart);
-			PlatformGame.room.addActor(container);
+			container.setView(FurGuardiansGame.minecart);
+			FurGuardiansGame.room.addActor(container);
 		} else {
 			container = null;
 		}
@@ -392,7 +392,7 @@ public class Player extends Character implements CollisionListener {
 	
 	private final boolean isAutoRunEnabled() {
 		// Check level to prevent auto-run in bonus Cabin
-		return PlatformGame.level && (pc.profile.autoRun || Level.theme == Theme.Minecart);
+		return FurGuardiansGame.level && (pc.profile.autoRun || Level.theme == Theme.Minecart);
 	}
 	
 	private final byte getCurrentJumpMode() {
@@ -409,7 +409,7 @@ public class Player extends Character implements CollisionListener {
 		if (jumpMode == JUMP_FLY) {
 			if (isGrounded()) {
 				pc.profile.stats.jumps++;
-				PlatformGame.soundJump.startSound();
+				FurGuardiansGame.soundJump.startSound();
 			}
 	        flying = true;
 	        addV(-getG());
@@ -418,9 +418,9 @@ public class Player extends Character implements CollisionListener {
 	    	final Pansound sound;
 	        if (jumpMode == JUMP_HIGH) {
 	            showSprings();
-	            sound = PlatformGame.soundBounce;
+	            sound = FurGuardiansGame.soundBounce;
 	        } else {
-	            sound = PlatformGame.soundJump;
+	            sound = FurGuardiansGame.soundJump;
 	        }
 	        v = getVelocityJump();
 	        if (sanded) {
@@ -490,12 +490,12 @@ public class Player extends Character implements CollisionListener {
 			final Panple pos = getPosition();
 			final int r = 6, d = r * 2;
 			for (int i = 0; i < 2; i++) {
-				final Burst b = new Burst(PlatformGame.puff);
-				PlatformGame.setPosition(b, pos.getX() - r + (i * d), pos.getY(), PlatformGame.DEPTH_SPARK);
+				final Burst b = new Burst(FurGuardiansGame.puff);
+				FurGuardiansGame.setPosition(b, pos.getX() - r + (i * d), pos.getY(), FurGuardiansGame.DEPTH_SPARK);
 				b.setMirror(i > 0);
-		        PlatformGame.room.addActor(b);
+		        FurGuardiansGame.room.addActor(b);
 			}
-			PlatformGame.soundWhoosh.startSound();
+			FurGuardiansGame.soundWhoosh.startSound();
 		}
 	}
 	
@@ -509,7 +509,7 @@ public class Player extends Character implements CollisionListener {
 	
 	private final static Player getActive() {
 		Player a = null;
-		for (final PlayerContext pc : PlatformGame.pcs) {
+		for (final PlayerContext pc : FurGuardiansGame.pcs) {
 			if (pc == null) {
 				continue;
 			}
@@ -522,7 +522,7 @@ public class Player extends Character implements CollisionListener {
 				a = c;
 			}
 		}
-		return a == null ? PlatformGame.pcs.get(0).player : a;
+		return a == null ? FurGuardiansGame.pcs.get(0).player : a;
 	}
 	
 	private final void startReturn(final Panple dst, final int vel, final Player player) {
@@ -586,8 +586,8 @@ public class Player extends Character implements CollisionListener {
 	        hurtTimer--;
 	        if (hurtTimer == 0 && mode == MODE_FROZEN) {
 	        	mode = MODE_NORMAL;
-	        	if (getView() != PlatformGame.burn) {
-	        		Tiles.shatterCenteredActor(getLayer(), PlatformGame.blockIce8, getPosition(), false);
+	        	if (getView() != FurGuardiansGame.burn) {
+	        		Tiles.shatterCenteredActor(getLayer(), FurGuardiansGame.blockIce8, getPosition(), false);
 	        	}
 	        	setView(pc.guy);
 	        	if (acc.back != null) {
@@ -612,7 +612,7 @@ public class Player extends Character implements CollisionListener {
 		if (auto && !Level.victory && mode != MODE_FROZEN && mode != MODE_DISABLED) { // Check disabled to prevent running on ThroneScreen
 		    hv = getVelWalk();
 		} else if (container != null && Level.victory) {
-			container.setView(PlatformGame.minecart.getFrames()[0].getImage());
+			container.setView(FurGuardiansGame.minecart.getFrames()[0].getImage());
 		}
 		if (auto || hv == 0) {
 			if (activeTimer > 0) {
@@ -637,7 +637,7 @@ public class Player extends Character implements CollisionListener {
 	}
 	
 	private final boolean isGem(final int index) {
-		return PlatformGame.TILE_GEM == Tile.getBehavior(Level.tm.getTile(index));
+		return FurGuardiansGame.TILE_GEM == Tile.getBehavior(Level.tm.getTile(index));
 	}
 	
 	@Override
@@ -670,7 +670,7 @@ public class Player extends Character implements CollisionListener {
 		final int thv;
 		final float fd = Level.tm.getForegroundDepth();
 		final Panple pos = getPosition(), backPos = acc.back == null ? null : acc.back.getPosition();
-		final int depth = PlatformGame.getDepthPlayer(jumpMode), depthBack = PlatformGame.getDepthPlayerBack(jumpMode);
+		final int depth = FurGuardiansGame.getDepthPlayer(jumpMode), depthBack = FurGuardiansGame.getDepthPlayerBack(jumpMode);
 		pos.setZ(fd + depth);
 		if (backPos != null) {
 			backPos.setZ(fd + depthBack);
@@ -682,8 +682,8 @@ public class Player extends Character implements CollisionListener {
 			final byte right = Tile.getBehavior(Level.tm.getTile(Level.tm.getContainer(pr, py)));
 			final byte belowLeft = Tile.getBehavior(Level.tm.getTile(Level.tm.getContainer(pl, py1)));
 			final byte belowRight = Tile.getBehavior(Level.tm.getTile(Level.tm.getContainer(pr, py1)));
-			final boolean sand = left == PlatformGame.TILE_SAND || right == PlatformGame.TILE_SAND;
-			final boolean belowSand = belowLeft == PlatformGame.TILE_SAND || belowRight == PlatformGame.TILE_SAND;
+			final boolean sand = left == FurGuardiansGame.TILE_SAND || right == FurGuardiansGame.TILE_SAND;
+			final boolean belowSand = belowLeft == FurGuardiansGame.TILE_SAND || belowRight == FurGuardiansGame.TILE_SAND;
 			if (sand || belowSand) {
 				if (belowSand) {
 					pos.addY(-1);
@@ -695,7 +695,7 @@ public class Player extends Character implements CollisionListener {
 				if (backPos != null) {
 					backPos.setZ(depthBack);
 				}
-			} else if (belowLeft == PlatformGame.TILE_ICE || belowRight == PlatformGame.TILE_ICE) {
+			} else if (belowLeft == FurGuardiansGame.TILE_ICE || belowRight == FurGuardiansGame.TILE_ICE) {
 				final float dif = hv - chv;
 				if (dif > 0) {
 					chv += 0.125f;
@@ -746,7 +746,7 @@ public class Player extends Character implements CollisionListener {
 		if (active == null) {
 			return;
 		} else if (this == active) {
-			for (final PlayerContext pc : PlatformGame.pcs) {
+			for (final PlayerContext pc : FurGuardiansGame.pcs) {
 				final Player other = pc.player;
 				if (other != null && other != this) {
 					other.startCatchUp(this);
@@ -761,10 +761,10 @@ public class Player extends Character implements CollisionListener {
 	protected final void onStepEnd() {
 		hv = 0;
 		final Panple pos = getPosition();
-		PlatformGame.setPosition(bubble, pos.getX(), pos.getY() - 1, PlatformGame.getDepthBubble(jumpMode));
+		FurGuardiansGame.setPosition(bubble, pos.getX(), pos.getY() - 1, FurGuardiansGame.getDepthBubble(jumpMode));
 		bubble.onStepEnd(this);
 		if (container != null) {
-			PlatformGame.setPosition(container, pos.getX(), pos.getY(), PlatformGame.getDepthContainer(jumpMode));
+			FurGuardiansGame.setPosition(container, pos.getX(), pos.getY(), FurGuardiansGame.getDepthContainer(jumpMode));
 			container.setMirror(isMirror());
 		}
 		acc.onStepEnd(this);
@@ -888,19 +888,19 @@ public class Player extends Character implements CollisionListener {
 	
 	protected final void startFreeze() {
 		hurtTimer = 60;
-		setView(PlatformGame.frozen);
-		PlatformGame.soundWhoosh.startSound();
+		setView(FurGuardiansGame.frozen);
+		FurGuardiansGame.soundWhoosh.startSound();
 	}
 	
 	protected final void startBurn() {
 		hurtTimer = 20;
-		setView(PlatformGame.burn);
-		PlatformGame.soundWhoosh.startSound();
+		setView(FurGuardiansGame.burn);
+		FurGuardiansGame.soundWhoosh.startSound();
 	}
 	
 	public final void onHurt() {
         if (levelGems == 0 || pc.profile.isInvincible()) {
-        	PlatformGame.soundWhoosh.startSound(); // Skipping shatter, so play another sound
+        	FurGuardiansGame.soundWhoosh.startSound(); // Skipping shatter, so play another sound
             return;
         }
         levelGems -= (Math.max(1, levelGems / 10));
@@ -956,7 +956,7 @@ public class Player extends Character implements CollisionListener {
 	
 	protected final static class Bubble extends Panctor {
 		{
-			setView(PlatformGame.bubble);
+			setView(FurGuardiansGame.bubble);
 		}
 		
 		protected void onStepEnd(final boolean visible) {
@@ -977,8 +977,8 @@ public class Player extends Character implements CollisionListener {
 			if (jm == JUMP_FLY || jm == JUMP_HIGH || jm == JUMP_DRAGON) {
 			    back = jm == JUMP_HIGH ? new Back() : new Panctor();
 			    back.setView(pc.back);
-			    PlatformGame.room.addActor(back);
-			    PlatformGame.setPosition(back, 0, 0, PlatformGame.getDepthPlayerBack(jm));
+			    FurGuardiansGame.room.addActor(back);
+			    FurGuardiansGame.setPosition(back, 0, 0, FurGuardiansGame.getDepthPlayerBack(jm));
 			} else {
 				back = null;
 			}
@@ -988,7 +988,7 @@ public class Player extends Character implements CollisionListener {
 			if (back != null) {
 				final Panple pos = act.getPosition();
 				// Sand can change z, so only set z once in constructor
-			    //PlatformGame.setPosition(back, pos.getX(), pos.getY(), PlatformGame.DEPTH_PLAYER_BACK);
+			    //FurGuardiansGame.setPosition(back, pos.getX(), pos.getY(), FurGuardiansGame.DEPTH_PLAYER_BACK);
 				back.getPosition().set(pos.getX(), pos.getY());
 			    back.setMirror(act.isMirror());
 			}
