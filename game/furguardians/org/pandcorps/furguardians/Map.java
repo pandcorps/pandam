@@ -20,7 +20,7 @@ PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY
 TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 */
-package org.pandcorps.platform;
+package org.pandcorps.furguardians;
 
 import java.io.*;
 import java.util.*;
@@ -38,9 +38,9 @@ import org.pandcorps.pandax.text.*;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.tile.Tile.*;
 import org.pandcorps.pandax.visual.*;
-import org.pandcorps.platform.Level.*;
-import org.pandcorps.platform.Menu.*;
-import org.pandcorps.platform.Player.*;
+import org.pandcorps.furguardians.Level.*;
+import org.pandcorps.furguardians.Menu.*;
+import org.pandcorps.furguardians.Player.*;
 
 public class Map {
 	protected final static byte VICTORY_NONE = 0;

@@ -20,12 +20,12 @@ PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY
 TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 */
-package org.pandcorps.platform;
+package org.pandcorps.furguardians;
 
 import org.pandcorps.core.*;
 import org.pandcorps.core.seg.*;
-import org.pandcorps.platform.Profile.*;
-import org.pandcorps.platform.Player.*;
+import org.pandcorps.furguardians.Profile.*;
+import org.pandcorps.furguardians.Player.*;
 
 public abstract class Goal implements Named {
 	protected final static int NUM_ACTIVE_GOALS = 3;

@@ -20,12 +20,12 @@ PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY
 TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 */
-package org.pandcorps.platform;
+package org.pandcorps.furguardians;
 
 import java.util.*;
 
-import org.pandcorps.platform.Player.*;
-import org.pandcorps.platform.Profile.*;
+import org.pandcorps.furguardians.Player.*;
+import org.pandcorps.furguardians.Profile.*;
 
 public abstract class Achievement extends FinName {
 	protected final static Achievement[] ALL = {

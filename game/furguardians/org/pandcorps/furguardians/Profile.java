@@ -20,7 +20,7 @@ PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY
 TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 */
-package org.pandcorps.platform;
+package org.pandcorps.furguardians;
 
 import java.io.*;
 import java.util.*;
@@ -30,9 +30,9 @@ import org.pandcorps.core.*;
 import org.pandcorps.core.col.*;
 import org.pandcorps.core.io.*;
 import org.pandcorps.core.seg.*;
-import org.pandcorps.platform.Avatar.*;
-import org.pandcorps.platform.Enemy.*;
-import org.pandcorps.platform.Player.*;
+import org.pandcorps.furguardians.Avatar.*;
+import org.pandcorps.furguardians.Enemy.*;
+import org.pandcorps.furguardians.Player.*;
 
 public class Profile extends PlayerData implements Segmented, Savable {
 	/*package*/ final static int MIN_FRAME_RATE = 24;

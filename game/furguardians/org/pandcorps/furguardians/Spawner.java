@@ -20,12 +20,12 @@ PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY
 TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 */
-package org.pandcorps.platform;
+package org.pandcorps.furguardians;
 
 import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
-import org.pandcorps.platform.Enemy.*;
+import org.pandcorps.furguardians.Enemy.*;
 
 public class Spawner extends Panctor implements StepListener {
 	protected Spawner(final float x, final float y) {

@@ -20,7 +20,7 @@ PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY
 TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 */
-package org.pandcorps.platform;
+package org.pandcorps.furguardians;
 
 import java.util.*;
 
@@ -32,8 +32,8 @@ import org.pandcorps.pandam.event.action.*;
 import org.pandcorps.pandax.text.*;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.tile.Tile.*;
-import org.pandcorps.platform.FurGuardiansGame.*;
-import org.pandcorps.platform.Player.*;
+import org.pandcorps.furguardians.FurGuardiansGame.*;
+import org.pandcorps.furguardians.Player.*;
 
 public class Castle {
     private static Panroom room = null;

@@ -20,7 +20,7 @@ PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY
 TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 */
-package org.pandcorps.platform;
+package org.pandcorps.furguardians;
 
 import java.util.*;
 
@@ -31,9 +31,9 @@ import org.pandcorps.pandam.*;
 import org.pandcorps.pandax.*;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.tile.Tile.*;
-import org.pandcorps.platform.Enemy.*;
-import org.pandcorps.platform.Player.*;
-import org.pandcorps.platform.Spawner.*;
+import org.pandcorps.furguardians.Enemy.*;
+import org.pandcorps.furguardians.Player.*;
+import org.pandcorps.furguardians.Spawner.*;
 
 public class Level {
     protected final static int ROOM_H = 256;

@@ -20,7 +20,7 @@ PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY
 TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 */
-package org.pandcorps.platform;
+package org.pandcorps.furguardians;
 
 import org.pandcorps.core.*;
 import org.pandcorps.game.actor.*;
@@ -31,9 +31,9 @@ import org.pandcorps.pandam.event.action.*;
 import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.in.*;
 import org.pandcorps.pandax.tile.*;
-import org.pandcorps.platform.Enemy.*;
-import org.pandcorps.platform.Gem.*;
-import org.pandcorps.platform.Level.*;
+import org.pandcorps.furguardians.Enemy.*;
+import org.pandcorps.furguardians.Gem.*;
+import org.pandcorps.furguardians.Level.*;
 
 public class Player extends Character implements CollisionListener {
 	protected final static int PLAYER_X = 6;
