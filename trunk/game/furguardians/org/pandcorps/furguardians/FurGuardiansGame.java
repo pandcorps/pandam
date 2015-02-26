@@ -20,7 +20,7 @@ PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY
 TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 */
-package org.pandcorps.platform;
+package org.pandcorps.furguardians;
 
 import java.io.*;
 import java.util.*;
@@ -44,10 +44,10 @@ import org.pandcorps.pandax.text.Notifications.*;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.touch.*;
 import org.pandcorps.pandax.visual.*;
-import org.pandcorps.platform.Avatar.*;
-import org.pandcorps.platform.Enemy.*;
-import org.pandcorps.platform.Menu.*;
-import org.pandcorps.platform.Player.*;
+import org.pandcorps.furguardians.Avatar.*;
+import org.pandcorps.furguardians.Enemy.*;
+import org.pandcorps.furguardians.Menu.*;
+import org.pandcorps.furguardians.Player.*;
 
 public class FurGuardiansGame extends BaseGame {
 	protected final static String TITLE = "Fur-Guardians"; // res/values/strings.xml/app_name

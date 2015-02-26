@@ -20,7 +20,7 @@ PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY
 TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 */
-package org.pandcorps.platform;
+package org.pandcorps.furguardians;
 
 import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
@@ -33,8 +33,8 @@ import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.boundary.*;
 import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.tile.*;
-import org.pandcorps.platform.Player.*;
-import org.pandcorps.platform.Profile.*;
+import org.pandcorps.furguardians.Player.*;
+import org.pandcorps.furguardians.Profile.*;
 
 public class Enemy extends Character {
 	private final static byte DEFEAT_STOMP = 0;

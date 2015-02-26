@@ -20,7 +20,7 @@ PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY
 TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 */
-package org.pandcorps.platform;
+package org.pandcorps.furguardians;
 
 import java.io.*;
 import java.util.*;
@@ -43,11 +43,11 @@ import org.pandcorps.pandax.text.Input.*;
 import org.pandcorps.pandax.tile.Tile.*;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.touch.*;
-import org.pandcorps.platform.Map.*;
-import org.pandcorps.platform.Enemy.*;
-import org.pandcorps.platform.Profile.*;
-import org.pandcorps.platform.Avatar.*;
-import org.pandcorps.platform.Player.*;
+import org.pandcorps.furguardians.Map.*;
+import org.pandcorps.furguardians.Enemy.*;
+import org.pandcorps.furguardians.Profile.*;
+import org.pandcorps.furguardians.Avatar.*;
+import org.pandcorps.furguardians.Player.*;
 
 public class Menu {
     protected final static byte TOUCH_FULL = 0;
@@ -1109,7 +1109,7 @@ public class Menu {
 	        	String log = engine.getFatalLog();
 	            if (log != null) {
 	            	final String email = FurGuardiansGame.getEmail();
-	            	log = log.replace("org.pandcorps.platform.", "");
+	            	log = log.replace("org.pandcorps.furguardians.", "");
 	            	log = log.replace("org.pandcorps.", "");
 	            	log = log.replace(".java", "");
 	            	engine.setClipboard("Please send this to " + email + Iotil.BR + FurGuardiansGame.VERSION + Iotil.BR + log);
