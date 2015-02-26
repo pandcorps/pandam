@@ -57,7 +57,7 @@ public class Castle {
             
             tm = newTileMap();
             Level.tm = tm;
-            final Img buf = ImtilX.loadImage("org/pandcorps/platform/res/bg/" + imgName + ".png", 128, null);
+            final Img buf = ImtilX.loadImage("org/pandcorps/furguardians/res/bg/" + imgName + ".png", 128, null);
             timg = engine.createImage("img.castle", buf);
             imgMap = tm.splitImageMap(timg);
             tm.setForegroundDepth(1);

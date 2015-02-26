@@ -179,7 +179,7 @@ public class Enemy extends Character {
 	}
 	
 	protected final static Img[] loadStrip(final int ind, final int d) {
-		return ImtilX.loadStrip("org/pandcorps/platform/res/enemy/Enemy" + Chartil.padZero(ind, 2) + ".png", d);
+		return ImtilX.loadStrip("org/pandcorps/furguardians/res/enemy/Enemy" + Chartil.padZero(ind, 2) + ".png", d);
 	}
 	
 	protected final EnemyDefinition def;

@@ -449,7 +449,7 @@ public class FurGuardiansGame extends BaseGame {
 	}
 	
 	protected final static Img[] loadChrStrip(final String name, final int dim, final boolean req) {
-		final String fileName = "org/pandcorps/platform/res/chr/" + name;
+		final String fileName = "org/pandcorps/furguardians/res/chr/" + name;
 		if (!(req || Iotil.exists(fileName))) {
 			return null;
 		}
@@ -524,7 +524,7 @@ public class FurGuardiansGame extends BaseGame {
 	private final static Img getImg(final HashMap<String, Img> all, final String type, final String anm) {
 		Img raw = all.get(anm);
 		if (raw == null) {
-			raw = ImtilX.loadImage("org/pandcorps/platform/res/chr/" + type + anm + ".png", false);
+			raw = ImtilX.loadImage("org/pandcorps/furguardians/res/chr/" + type + anm + ".png", false);
 			raw.setTemporary(false);
 			all.put(anm, raw);
 		}
@@ -537,7 +537,7 @@ public class FurGuardiansGame extends BaseGame {
 		}
 		Img e = eyesAll[i - 1];
 		if (e == null) {
-		    e = ImtilX.loadImage("org/pandcorps/platform/res/chr/" + loc + "Eyes" + Chartil.padZero(i, 2) + ".png", false);
+		    e = ImtilX.loadImage("org/pandcorps/furguardians/res/chr/" + loc + "Eyes" + Chartil.padZero(i, 2) + ".png", false);
 		    eyesAll[i - 1] = e;
 		}
 		return e;
@@ -750,7 +750,7 @@ public class FurGuardiansGame extends BaseGame {
 				pc.guyRun = engine.createAnimation(PRE_ANM + pre + ".run", gfr2, gfr3, gfr1);
 				pc.guyJump = engine.createImage(ipre + "jump", og, ng, xg, guys[3]);
 				pc.guyFall = engine.createImage(ipre + "fall", og, ng, xg, guys[4]);
-			    //guy = engine.createImage(pre, new FinPanple2(8, 0), null, null, ImtilX.loadImage("org/pandcorps/platform/res/chr/Player.png"));
+			    //guy = engine.createImage(pre, new FinPanple2(8, 0), null, null, ImtilX.loadImage("org/pandcorps/furguardians/res/chr/Player.png"));
 			}
 		    
 			final Img[] maps = loadChrStrip("BearMap.png", 32, pi.f);
@@ -886,7 +886,7 @@ public class FurGuardiansGame extends BaseGame {
 		    }
 		    Img.close(wings);
 		} else if (full && avatar.jumpMode == Player.JUMP_HIGH) {
-		    pc.backJump = createAnm(pre + ".spring", "org/pandcorps/platform/res/chr/Springs.png", 32, 5, os, ng, xg);
+		    pc.backJump = createAnm(pre + ".spring", "org/pandcorps/furguardians/res/chr/Springs.png", 32, 5, os, ng, xg);
 		} else if (needDragon) {
 			final String wpre = pre + ".dragon.";
 		    final String iwpre = PRE_IMG + wpre;
@@ -1038,13 +1038,13 @@ public class FurGuardiansGame extends BaseGame {
 		loaders.add(new Runnable() { @Override public final void run() {
 		    guysBlank = loadChrStrip("Bear.png", 32, true);
 		    Img.setTemporary(false, guysBlank);
-		    eyesBlink = ImtilX.loadImage("org/pandcorps/platform/res/chr/EyesBlink.png", false); }});
+		    eyesBlink = ImtilX.loadImage("org/pandcorps/furguardians/res/chr/EyesBlink.png", false); }});
 		
 		loaders.add(new Runnable() { @Override public final void run() {
 //info("loadConstants start " + System.currentTimeMillis());
 			Coltil.set(allEnemies, Level.DROWID, new EnemyDefinition("Drowid", 1, null, true, 1)); }}); // Teleport when stomped
 		loaders.add(new Runnable() { @Override public final void run() {
-			final Panmage pimg1 = createImage("projectile1", "org/pandcorps/platform/res/enemy/Projectile1.png", 8, CENTER_8, new FinPanple2(-3, -3), new FinPanple2(2, 2));
+			final Panmage pimg1 = createImage("projectile1", "org/pandcorps/furguardians/res/enemy/Projectile1.png", 8, CENTER_8, new FinPanple2(-3, -3), new FinPanple2(2, 2));
 		    final Panframe[] pfrms = new Panframe[4];
 		    for (int i = 0; i < 4; i++) {
 		        pfrms[i] = engine.createFrame(PRE_FRM + "projectile1." + i, pimg1, 4, i, false, false);
@@ -1282,17 +1282,17 @@ public class FurGuardiansGame extends BaseGame {
 			Level.initTheme(); }});
 		
 		loaders.add(new Runnable() { @Override public final void run() {
-			final Panmage[] owls = createSheet("owl", "org/pandcorps/platform/res/chr/Owl.png", 32);
+			final Panmage[] owls = createSheet("owl", "org/pandcorps/furguardians/res/chr/Owl.png", 32);
 			final int owlBlink = DUR_BLINK + 30;
 			final Panframe owl1 = engine.createFrame(PRE_FRM + "owl.1", owls[0], owlBlink - DUR_CLOSED);
 			final Panframe owl2 = engine.createFrame(PRE_FRM + "owl.2", owls[1], DUR_CLOSED);
 			owl = engine.createAnimation(PRE_ANM + "owl", owl1, owl2); }});
 		
 		loaders.add(new Runnable() { @Override public final void run() {
-			frozen = createImage("frozen", "org/pandcorps/platform/res/chr/Frozen.png", 32, og);
-			burn = createAnm("burn", "org/pandcorps/platform/res/chr/Burn.png", 32, 6, og, null, null);
-			bubble = createImage("bubble", "org/pandcorps/platform/res/chr/Bubble.png", 32, og);
-			minecart = createAnm("minecart", "org/pandcorps/platform/res/misc/Minecart.png", 32, 2, new FinPanple2(16, 7), null, null); }});
+			frozen = createImage("frozen", "org/pandcorps/furguardians/res/chr/Frozen.png", 32, og);
+			burn = createAnm("burn", "org/pandcorps/furguardians/res/chr/Burn.png", 32, 6, og, null, null);
+			bubble = createImage("bubble", "org/pandcorps/furguardians/res/chr/Bubble.png", 32, og);
+			minecart = createAnm("minecart", "org/pandcorps/furguardians/res/misc/Minecart.png", 32, 2, new FinPanple2(16, 7), null, null); }});
 	    
 		loaders.add(new Runnable() { @Override public final void run() {
 			font = Fonts.getClassics(new FontRequest(8), Pancolor.WHITE, Pancolor.BLACK); }});
@@ -1300,28 +1300,28 @@ public class FurGuardiansGame extends BaseGame {
 			fontTiny = Fonts.getTiny(FontType.Upper, Pancolor.WHITE); }});
 	    
 		loaders.add(new Runnable() { @Override public final void run() {
-			block8 = createImage("block8", "org/pandcorps/platform/res/misc/Block8.png", 8);
-			blockLetter8 = createImage("block.letter8", "org/pandcorps/platform/res/misc/BlockLetter8.png", 8);
-			blockIce8 = createImage("block.ice8", "org/pandcorps/platform/res/misc/BlockIce8.png", 8); }});
+			block8 = createImage("block8", "org/pandcorps/furguardians/res/misc/Block8.png", 8);
+			blockLetter8 = createImage("block.letter8", "org/pandcorps/furguardians/res/misc/BlockLetter8.png", 8);
+			blockIce8 = createImage("block.ice8", "org/pandcorps/furguardians/res/misc/BlockIce8.png", 8); }});
 	    
 		loaders.add(new Runnable() { @Override public final void run() {
-		    final Img[] gemStrip = ImtilX.loadStrip("org/pandcorps/platform/res/misc/Gem.png");
+		    final Img[] gemStrip = ImtilX.loadStrip("org/pandcorps/furguardians/res/misc/Gem.png");
 		    Img.setTemporary(false, gemStrip);
 		    final Img gem1 = Imtil.copy(gemStrip[0]);
 		    gem = createSheet("gem", null, gemStrip);
 		    gemAnm = createGemAnm("gem", gem);
-		    gemShatter = createImage("gem.shatter", "org/pandcorps/platform/res/misc/GemShatter.png", 8);
+		    gemShatter = createImage("gem.shatter", "org/pandcorps/furguardians/res/misc/GemShatter.png", 8);
 		    gemCyanAnm = createGemAnm("cyan", gemStrip, Channel.Green, Channel.Red, Channel.Blue);
 		    gemBlueAnm = createGemAnm("blue", gemStrip, Channel.Red, Channel.Red, Channel.Blue);
 		    gemGreenAnm = createGemAnm("green", gemStrip, Channel.Red, Channel.Blue, Channel.Red);
 		    gemWhite = engine.createImage(PRE_IMG + "gem.white", Imtil.filter(gem1, new SwapPixelFilter(Channel.Red, Channel.Red, Channel.Blue)));
 		    Img.close(gemStrip); }});
 		loaders.add(new Runnable() { @Override public final void run() {
-		    gemLevelAnm = createGemAnm("gem.level", createSheet("gem.level", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/Gem5.png")));
-		    gemWorldAnm = createGemAnm("gem.world", createSheet("gem.world", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/Gem4.png")));
-		    gemWordAnm = createGemAnm("gem.word", createSheet("gem.word", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/Gem6.png")));
-		    gemLetters = createSheet("gem.letter", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/GemLetters.png"));
-		    final Img[] blStrip = ImtilX.loadStrip("org/pandcorps/platform/res/misc/BlockLetters.png");
+		    gemLevelAnm = createGemAnm("gem.level", createSheet("gem.level", null, ImtilX.loadStrip("org/pandcorps/furguardians/res/misc/Gem5.png")));
+		    gemWorldAnm = createGemAnm("gem.world", createSheet("gem.world", null, ImtilX.loadStrip("org/pandcorps/furguardians/res/misc/Gem4.png")));
+		    gemWordAnm = createGemAnm("gem.word", createSheet("gem.word", null, ImtilX.loadStrip("org/pandcorps/furguardians/res/misc/Gem6.png")));
+		    gemLetters = createSheet("gem.letter", null, ImtilX.loadStrip("org/pandcorps/furguardians/res/misc/GemLetters.png"));
+		    final Img[] blStrip = ImtilX.loadStrip("org/pandcorps/furguardians/res/misc/BlockLetters.png");
 		    Img.setTemporary(false, blStrip);
 		    blockLetters = createSheet("block.letter", null, blStrip);
 		    for (final Img bl : blStrip) {
@@ -1329,43 +1329,43 @@ public class FurGuardiansGame extends BaseGame {
 		    }
 		    translucentBlockLetters = createSheet("translucent.block.letter", null, blStrip);
 		    Img.close(blStrip);
-		    gemGoal = createSheet("gem.goal", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/GemStar.png"));
-		    emptyGoal = createImage("empty.goal", "org/pandcorps/platform/res/misc/EmptyStar.png", ImtilX.DIM);
-		    gemRank = createSheet("gem.rank", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/GemOrb.png"));
-		    gemAchieve = createSheet("gem.achieve", null, ImtilX.loadStrip("org/pandcorps/platform/res/misc/GemTrophy.png")); }});
+		    gemGoal = createSheet("gem.goal", null, ImtilX.loadStrip("org/pandcorps/furguardians/res/misc/GemStar.png"));
+		    emptyGoal = createImage("empty.goal", "org/pandcorps/furguardians/res/misc/EmptyStar.png", ImtilX.DIM);
+		    gemRank = createSheet("gem.rank", null, ImtilX.loadStrip("org/pandcorps/furguardians/res/misc/GemOrb.png"));
+		    gemAchieve = createSheet("gem.achieve", null, ImtilX.loadStrip("org/pandcorps/furguardians/res/misc/GemTrophy.png")); }});
 	    
 		loaders.add(new Runnable() { @Override public final void run() {
-		    final Panframe[] sa = createFrames("spark", "org/pandcorps/platform/res/misc/Spark.png", 8, 1);
+		    final Panframe[] sa = createFrames("spark", "org/pandcorps/furguardians/res/misc/Spark.png", 8, 1);
 		    spark = engine.createAnimation(PRE_ANM + "spark", sa[0], sa[1], sa[2], sa[3], sa[2], sa[1], sa[0]);
 		    Spark.class.getClass(); // Force class load? Save time later?
-		    puff = createAnm("puff", "org/pandcorps/platform/res/misc/Puff.png", 8, 3, CENTER_8); }});
+		    puff = createAnm("puff", "org/pandcorps/furguardians/res/misc/Puff.png", 8, 3, CENTER_8); }});
 	    
 		loaders.add(new Runnable() { @Override public final void run() {
-			teleport = createAnm("teleport", "org/pandcorps/platform/res/enemy/Teleport.png", ImtilX.DIM, 5, Enemy.DEFAULT_O); }});
+			teleport = createAnm("teleport", "org/pandcorps/furguardians/res/enemy/Teleport.png", ImtilX.DIM, 5, Enemy.DEFAULT_O); }});
 	    
 		loaders.add(new Runnable() { @Override public final void run() {
 			final FinPanple2 mo = new FinPanple2(-4, -4);
-		    final Panmage[] ma = createSheet("Marker", "org/pandcorps/platform/res/bg/Marker.png", 8, mo);
+		    final Panmage[] ma = createSheet("Marker", "org/pandcorps/furguardians/res/bg/Marker.png", 8, mo);
 			final Panframe[] fa = new Panframe[ma.length];
 			for (int i = 0; i < ma.length; i++) {
 				fa[i] = engine.createFrame(PRE_FRM + "marker." + i, ma[i], 2 * (2 - i % 2));
 			}
 			marker = engine.createAnimation(PRE_ANM + "marker", fa);
-			final Img def = ImtilX.loadImage("org/pandcorps/platform/res/bg/MarkerDefeated.png", 8, null);
+			final Img def = ImtilX.loadImage("org/pandcorps/furguardians/res/bg/MarkerDefeated.png", 8, null);
 			markerDefeated = engine.createImage(PRE_IMG + "Marker.def", mo, null, null, def); }});
 		loaders.add(new Runnable() { @Override public final void run() {
-			portal = createAnm("portal", "org/pandcorps/platform/res/bg/Portal.png", 6); }});
+			portal = createAnm("portal", "org/pandcorps/furguardians/res/bg/Portal.png", 6); }});
 		loaders.add(new Runnable() { @Override public final void run() {
-			portalClosed = createAnm("portal.closed", "org/pandcorps/platform/res/bg/PortalClosed.png", 15); }});
+			portalClosed = createAnm("portal.closed", "org/pandcorps/furguardians/res/bg/PortalClosed.png", 15); }});
 		
 		loaders.add(new Runnable() { @Override public final void run() {
-			dirts = Imtil.loadStrip("org/pandcorps/platform/res/bg/Dirt.png", ImtilX.DIM);
+			dirts = Imtil.loadStrip("org/pandcorps/furguardians/res/bg/Dirt.png", ImtilX.DIM);
 			Img.setTemporary(false, dirts); }});
 		loaders.add(new Runnable() { @Override public final void run() {
-			terrains = Imtil.loadStrip("org/pandcorps/platform/res/bg/Terrain.png", ImtilX.DIM);
+			terrains = Imtil.loadStrip("org/pandcorps/furguardians/res/bg/Terrain.png", ImtilX.DIM);
 			Img.setTemporary(false, terrains); }});
 		loaders.add(new Runnable() { @Override public final void run() {
-			crowns = ImtilX.loadStrip("org/pandcorps/platform/res/chr/Crowns.png", 14, false);
+			crowns = ImtilX.loadStrip("org/pandcorps/furguardians/res/chr/Crowns.png", 14, false);
 			Img.setTemporary(false, crowns); }});
 		
 		loaders.add(new Runnable() { @Override public final void run() {
@@ -1464,20 +1464,20 @@ public class FurGuardiansGame extends BaseGame {
 	    loaders.add(new Runnable() { @Override public final void run() {
 	    	final Panaudio audio = engine.getAudio();
 	    	audio.ensureCapacity(6);
-	    	musicMenu = audio.createMusic("org/pandcorps/platform/res/music/menu.mid");
-	    	musicHappy = audio.createMusic("org/pandcorps/platform/res/music/happy.mid");
-	    	musicHeartbeat = audio.createMusic("org/pandcorps/platform/res/music/heartbeat.mid");
-	    	musicOcarina = audio.createMusic("org/pandcorps/platform/res/music/ocarina.mid");
-	    	musicChant = audio.createMusic("org/pandcorps/platform/res/music/chant.mid");
-	    	musicLevelStart = audio.createTransition("org/pandcorps/platform/res/music/levelstart.mid");
-	    	musicLevelEnd = audio.createTransition("org/pandcorps/platform/res/music/levelend.mid");
-	    	soundGem = audio.createSound("org/pandcorps/platform/res/sound/gem.mid");
-	    	soundJump = audio.createSound("org/pandcorps/platform/res/sound/jump.mid");
-	    	soundBounce = audio.createSound("org/pandcorps/platform/res/sound/bounce.mid");
-	    	soundThud = audio.createSound("org/pandcorps/platform/res/sound/thud.mid");
-	    	soundCrumble = audio.createSound("org/pandcorps/platform/res/sound/crumble.mid");
-	    	soundArmor = audio.createSound("org/pandcorps/platform/res/sound/armor.mid");
-	    	soundWhoosh = audio.createSound("org/pandcorps/platform/res/sound/whoosh.mid");
+	    	musicMenu = audio.createMusic("org/pandcorps/furguardians/res/music/menu.mid");
+	    	musicHappy = audio.createMusic("org/pandcorps/furguardians/res/music/happy.mid");
+	    	musicHeartbeat = audio.createMusic("org/pandcorps/furguardians/res/music/heartbeat.mid");
+	    	musicOcarina = audio.createMusic("org/pandcorps/furguardians/res/music/ocarina.mid");
+	    	musicChant = audio.createMusic("org/pandcorps/furguardians/res/music/chant.mid");
+	    	musicLevelStart = audio.createTransition("org/pandcorps/furguardians/res/music/levelstart.mid");
+	    	musicLevelEnd = audio.createTransition("org/pandcorps/furguardians/res/music/levelend.mid");
+	    	soundGem = audio.createSound("org/pandcorps/furguardians/res/sound/gem.mid");
+	    	soundJump = audio.createSound("org/pandcorps/furguardians/res/sound/jump.mid");
+	    	soundBounce = audio.createSound("org/pandcorps/furguardians/res/sound/bounce.mid");
+	    	soundThud = audio.createSound("org/pandcorps/furguardians/res/sound/thud.mid");
+	    	soundCrumble = audio.createSound("org/pandcorps/furguardians/res/sound/crumble.mid");
+	    	soundArmor = audio.createSound("org/pandcorps/furguardians/res/sound/armor.mid");
+	    	soundWhoosh = audio.createSound("org/pandcorps/furguardians/res/sound/whoosh.mid");
 	    	bounceBall.wallSound = soundArmor;
 	    	armoredImp.stompSound = soundArmor;
 	    	}});
@@ -1496,7 +1496,7 @@ public class FurGuardiansGame extends BaseGame {
 	}
 	
 	private final static Panmage createMenuImg(final String name) {
-		final Img icn = ImtilX.loadImage("org/pandcorps/platform/res/menu/" + name + ".png", false);
+		final Img icn = ImtilX.loadImage("org/pandcorps/furguardians/res/menu/" + name + ".png", false);
 		final Panmage img = Pangine.getEngine().createImage(Pantil.vmid(), icn);
 		icn.close();
 		return img;
