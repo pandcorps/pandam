@@ -908,12 +908,12 @@ public class Map {
 			seed = Mathtil.newSeed();
 	    }
 	    Level.initTheme();
-		Img tileImg = ImtilX.loadImage("org/pandcorps/platform/res/bg/Map" + Chartil.unnull(theme.img) + ".png", 128, null);
+		Img tileImg = ImtilX.loadImage("org/pandcorps/furguardians/res/bg/Map" + Chartil.unnull(theme.img) + ".png", 128, null);
 		applyLandmark(tileImg, 0, lm1, 0);
 		applyLandmark(tileImg, 48, lm2, 1);
 		if (cstl > 0) {
 			// Load castles and landmarks in loadConstants?
-			final Img[] castles = ImtilX.loadStrip("org/pandcorps/platform/res/bg/Castles.png");
+			final Img[] castles = ImtilX.loadStrip("org/pandcorps/furguardians/res/bg/Castles.png");
 		    final Img lmImg = castles[cstl - 1];
 	        Imtil.copy(lmImg, tileImg, 0, 0, ImtilX.DIM, ImtilX.DIM, 112, 96);
 	        Img.close(castles);
@@ -932,7 +932,7 @@ public class Map {
 	        return;
 	    }
 	    final int lmd = 48;
-	    final Img lmImg = ImtilX.loadImage("org/pandcorps/platform/res/bg/Landmark" + EXT_LANDMARKS[lm - 2] + ".png", lmd, null);
+	    final Img lmImg = ImtilX.loadImage("org/pandcorps/furguardians/res/bg/Landmark" + EXT_LANDMARKS[lm - 2] + ".png", lmd, null);
 	    Imtil.copy(lmImg, tileImg, 0, 0, lmd, lmd, x, 80);
 	    lmImg.close();
 	}

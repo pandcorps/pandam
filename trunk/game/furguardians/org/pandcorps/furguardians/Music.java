@@ -752,7 +752,7 @@ public class Music {
 	}
 	
 	private final static void runLoad() throws Exception {
-		Pangine.getEngine().getAudio().createMusic("org/pandcorps/platform/res/music/happy.mid").startMusic();
+		Pangine.getEngine().getAudio().createMusic("org/pandcorps/furguardians/res/music/happy.mid").startMusic();
 	}
 	
 	public final static void main(final String[] args) {

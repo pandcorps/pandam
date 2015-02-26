@@ -421,10 +421,10 @@ public class Level {
     }
     
     private final static Img loadTileImage() {
-    	final Img tileImg = ImtilX.loadImage("org/pandcorps/platform/res/bg/Tiles.png", 128, null);
+    	final Img tileImg = ImtilX.loadImage("org/pandcorps/furguardians/res/bg/Tiles.png", 128, null);
     	final Theme theme = getDayTheme();
     	if (theme != Theme.Normal) {
-    		final Img ext = ImtilX.loadImage("org/pandcorps/platform/res/bg/Tiles" + theme.img + ".png", false);
+    		final Img ext = ImtilX.loadImage("org/pandcorps/furguardians/res/bg/Tiles" + theme.img + ".png", false);
     		Imtil.copy(ext, tileImg, 0, 0, 128, 112, 0, 16);
     		ext.close();
     	}
@@ -753,7 +753,7 @@ public class Level {
     protected final static class HillBackgroundBuilder implements BackgroundBuilder {
     	@Override
     	public final Img getImage() {
-    		final Img backImg = ImtilX.loadImage("org/pandcorps/platform/res/bg/Hills" + Chartil.unnull(theme.getBgImg()) + ".png", 128, null);
+    		final Img backImg = ImtilX.loadImage("org/pandcorps/furguardians/res/bg/Hills" + Chartil.unnull(theme.getBgImg()) + ".png", 128, null);
             if (isNormalTheme()) {
             	final PixelFilter skyFilter = theme.getSkyFilter();
             	if (skyFilter != null) {
@@ -787,7 +787,7 @@ public class Level {
     protected final static class TownBackgroundBuilder implements BackgroundBuilder {
     	@Override
     	public final Img getImage() {
-    		final Img backImg = ImtilX.loadImage("org/pandcorps/platform/res/bg/Town.png", 128, null);
+    		final Img backImg = ImtilX.loadImage("org/pandcorps/furguardians/res/bg/Town.png", 128, null);
     		applyTerrainTexture(backImg, 112, 96, 128, 128, 0, 1);
         	applyTerrainTexture(backImg, 0, 0, 48, 32, 1, 3);
         	applyColoredTerrain(backImg, 0, 32, 96, 64);
@@ -819,7 +819,7 @@ public class Level {
     private final static class ForestBackgroundBuilder implements BackgroundBuilder {
     	@Override
     	public final Img getImage() {
-    		final Img backImg = Imtil.load("org/pandcorps/platform/res/bg/Forest.png");
+    		final Img backImg = Imtil.load("org/pandcorps/furguardians/res/bg/Forest.png");
     		applyTerrainTexture(backImg, 32, 16, 48, 32);
     		return backImg;
     	}
@@ -840,7 +840,7 @@ public class Level {
     private final static class MountainBackgroundBuilder implements BackgroundBuilder {
     	@Override
     	public final Img getImage() {
-    		final Img backImg = ImtilX.loadImage("org/pandcorps/platform/res/bg/Mountains.png", 128, null);
+    		final Img backImg = ImtilX.loadImage("org/pandcorps/furguardians/res/bg/Mountains.png", 128, null);
     		applyTerrainTexture(backImg, 0, 0, 32, 32);
     		applyTerrainTexture(backImg, 112, 0, 128, 16);
     		applyColoredTerrain(backImg, 0, 0, 64, 96);
