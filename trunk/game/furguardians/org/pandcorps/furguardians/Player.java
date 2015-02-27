@@ -535,7 +535,7 @@ public class Player extends Character implements CollisionListener {
 	}
 	
 	private final void startSafety() {
-	    startReturn(safe, VEL_RETURN, null);
+	    startReturn(safe, isAutoRunEnabled() ? (VEL_RETURN * 5 / 2) : VEL_RETURN, null);
 	    setMirror(safeMirror);
 	}
 	
