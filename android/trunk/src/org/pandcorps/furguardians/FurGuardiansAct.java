@@ -24,11 +24,10 @@ package org.pandcorps.furguardians;
 
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.android.*;
-import org.pandcorps.platform.*;
 
 public final class FurGuardiansAct extends PanActivity {
 	@Override
 	protected final Pangame newGame() {
-		return new PlatformGame();
+		return new FurGuardiansGame();
 	}
 }
