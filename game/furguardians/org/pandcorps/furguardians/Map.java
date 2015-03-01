@@ -849,15 +849,29 @@ public class Map {
     }
 	
 	private final static int getNumberOfPaths(final int index) {
-	    int n = 0;
-	    for (final Direction dir : Direction.values()) {
-	        final int b = tm.getTile(tm.getNeighbor(index, dir)).getBehavior();
-	        if (b == Tile.BEHAVIOR_SOLID || b == TILE_SPECIAL || b == Tile.BEHAVIOR_OPEN) {
-	            continue;
-	        }
-	        n++;
-	    }
-	    return n;
+		try {
+		    int n = 0;
+		    for (final Direction dir : Direction.values()) {
+		    	final Tile tile = tm.getTile(tm.getNeighbor(index, dir));
+		    	if (tile == null) {
+		    		continue;
+		    	}
+		        final int b = tile.getBehavior();
+		        if (b == Tile.BEHAVIOR_SOLID || b == TILE_SPECIAL || b == Tile.BEHAVIOR_OPEN) {
+		            continue;
+		        }
+		        n++;
+		    }
+		    return n;
+		} catch (final Exception e) {
+			final String dims;
+			if (tm == null) {
+				dims = "?";
+			} else {
+				dims = tm.getWidth() + "*" + tm.getHeight();
+			}
+			throw new Panception("Error getNumberOfPaths ind=" + index + "; dims=" + dims, e);
+		}
 	}
 	
 	private final static void loadImages() {

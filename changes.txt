@@ -1,3 +1,9 @@
+1.2.2 (7)
+
+Fixed a NullPointerException.
+
+*****
+
 1.2.1 (6)
 
 Removed TitleScreen's auto-exit due to inactivity.
