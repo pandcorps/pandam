@@ -1546,7 +1546,7 @@ public class FurGuardiansGame extends BaseGame {
 	
 	protected final static void initTouchButtons(final Panlayer layer, final boolean allowAuto, final boolean input, final Panctor bound) {
 	    final PlayerContext pc = pcs.get(0);
-		PlayerScreen.initTouchButtons(layer, pc.ctrl, (allowAuto && pc.profile.autoRun) ? Menu.TOUCH_JUMP : Menu.TOUCH_HORIZONTAL, input, !input, bound);
+		PlayerScreen.initTouchButtons(layer, pc.ctrl, (allowAuto && pc.isAutoRunEnabled()) ? Menu.TOUCH_JUMP : Menu.TOUCH_HORIZONTAL, input, !input, bound);
 	}
 	
 	protected final static Gem addHudGem(final Panlayer hud, final int x, final int y) {

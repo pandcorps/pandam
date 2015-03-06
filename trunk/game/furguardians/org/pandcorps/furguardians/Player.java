@@ -251,6 +251,11 @@ public class Player extends Character implements CollisionListener {
 		public final void onFinishWorld() {
 			profile.stats.defeatedWorlds++;
 		}
+		
+		public final boolean isAutoRunEnabled() {
+		    // Check level to prevent auto-run in bonus Cabin
+	        return FurGuardiansGame.level && (profile.autoRun || Level.theme == Theme.Minecart);
+		}
 	    
 	    public final void destroy() {
 	    	if (guy == null) {
@@ -391,8 +396,7 @@ public class Player extends Character implements CollisionListener {
 	}
 	
 	private final boolean isAutoRunEnabled() {
-		// Check level to prevent auto-run in bonus Cabin
-		return FurGuardiansGame.level && (pc.profile.autoRun || Level.theme == Theme.Minecart);
+	    return pc.isAutoRunEnabled();
 	}
 	
 	private final byte getCurrentJumpMode() {
