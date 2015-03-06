@@ -284,6 +284,7 @@ public class Avatar extends EyeData implements Segmented {
         new Hat("Bandana", "Bandana", 1500),
         new Hat("Cap", "Cap", 2000),
         new Hat("Bow", "Bow", 2500, false, false),
+        new Hat("Helm", "Helm", 50000, false),
         new Hat(HAT_CROWN, "Crown", 100000, false)
     };
     
