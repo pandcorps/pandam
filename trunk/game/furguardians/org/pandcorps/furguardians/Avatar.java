@@ -225,6 +225,7 @@ public class Avatar extends EyeData implements Segmented {
         new Clothing("Sleeveless", "AShirt", 1000),
         new Clothing("Short Sleeves", "TShirt", 1500),
         new Clothing("Long Sleeves", "LongShirt", 2000),
+        new Clothing("Dress", "Dress", 2500),
         new Clothing("Armor", "Armor", 50000, "Tough"),
         new Clothing(CLOTHING_ROYAL_ROBE, "RoyalRobe", 100000)
     };
