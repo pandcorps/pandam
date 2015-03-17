@@ -1,4 +1,4 @@
-FTR|Nate
+FTR|Nate|Nate Jones|USA
 IMG|still|0|8^1
 IMG|quick|1|6^1
 IMG|strong|2|6^1

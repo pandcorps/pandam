@@ -1,4 +1,4 @@
-FTR|Bourei
+FTR|Bourei|Bourei|Japan
 IMG|still|0|8^1
 IMG|quick|1|6^1
 IMG|strong|2|9^1
