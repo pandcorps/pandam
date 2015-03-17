@@ -391,6 +391,12 @@ public class Player extends Character implements CollisionListener {
 	    this.levelHits = p.levelHits;
 	}
 	
+	protected final void clearState() {
+	    levelGems = 0;
+        levelFalls = 0;
+        levelHits = 0;
+	}
+	
 	private final boolean isInputDisabled() {
 		return mode == MODE_DISABLED || mode == MODE_FROZEN;
 	}

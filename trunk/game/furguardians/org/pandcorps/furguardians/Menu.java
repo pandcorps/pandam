@@ -333,7 +333,11 @@ public class Menu {
                     @Override public final void run() {
                     	FurGuardiansGame.notifications.clear();
                     	destroyPromptQuit();
-                    	FurGuardiansGame.fadeOut(FurGuardiansGame.room, new ProfileScreen(FurGuardiansGame.pcs.get(0), true)); }});
+                    	final PlayerContext pc = FurGuardiansGame.pcs.get(0);
+                    	if (pc != null && pc.player != null) {
+                    	    pc.player.clearState();
+                    	}
+                    	FurGuardiansGame.fadeOut(FurGuardiansGame.room, new ProfileScreen(pc, true)); }});
                 quitMenu.setZ(15);
                 if (platformScreen) {
 	                quitMsg = new Pantext(Pantil.vmid(), FurGuardiansGame.fontTiny, "You will lose your progress in this Level if you leave");
