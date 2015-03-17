@@ -83,6 +83,13 @@ public class TileMap extends Panctor implements Savable {
         return isBad(i, j) ? -1 : (j * w + i);
     }
     
+    public final int getIndexRequired(final int i, final int j) {
+        if (isBad(i, j)) {
+            throw new IllegalArgumentException("Invalid tile index (" + i + ", " + j + ")");
+        }
+        return j * w + i;
+    }
+    
     public final int getRow(final int index) {
         return index / w;
     }
@@ -100,7 +107,7 @@ public class TileMap extends Panctor implements Savable {
     }
     
     public final void removeTile(final int i, final int j) {
-        tiles[getIndex(i, j)] = null;
+        tiles[getIndexRequired(i, j)] = null;
     }
     
     public final int getContainer(final Panctor act) {
@@ -360,7 +367,7 @@ public class TileMap extends Panctor implements Savable {
     }
     
     public final void setTile(final int x, final int y, final Tile tile) {
-        tiles[getIndex(x, y)] = tile;
+        tiles[getIndexRequired(x, y)] = tile;
     }
     
     public final void setTile(final int index, final Tile tile) {
@@ -368,7 +375,7 @@ public class TileMap extends Panctor implements Savable {
     }
     
     public final void setTile(final int x, final int y, final Object background, final Object foreground, final byte behavior) {
-        tiles[getIndex(x, y)] = getTile(background, foreground, behavior);
+        tiles[getIndexRequired(x, y)] = getTile(background, foreground, behavior);
     }
     
     public final void setTile(final int index, final Object background, final Object foreground, final byte behavior) {
