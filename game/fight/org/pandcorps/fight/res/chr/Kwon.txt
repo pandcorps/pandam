@@ -1,4 +1,4 @@
-FTR|Kwon
+FTR|Kwon|Kwon Chol-Sul|South Korea
 COM|FTR|name
 COM|Internal id will be type.[name]
 # Lines starting with # will always be skipped in segment files.
