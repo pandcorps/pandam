@@ -119,7 +119,15 @@ public class TileMap extends Panctor implements Savable {
     }
     
     public final int getContainer(final float x, final float y) {
-    	return (x < 0 || y < 0) ? -1 : getIndex((int) x / tw, (int) y / th);
+    	return (x < 0 || y < 0) ? -1 : getIndex(getContainerColumn(x), getContainerRow(y));
+    }
+    
+    public final int getContainerRow(final float y) {
+    	return (int) y / th;
+    }
+    
+    public final int getContainerColumn(final float x) {
+    	return (int) x / tw;
     }
     
     public final int getNeighbor(final int i, final int j, final Direction dir) {
