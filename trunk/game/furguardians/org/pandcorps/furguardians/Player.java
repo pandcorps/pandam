@@ -942,11 +942,11 @@ public class Player extends Character implements CollisionListener {
 		} else {
 		    if (isAutoRunEnabled()) {
 		        final Panple pos = getPosition();
-		        safe.set(pos.getX(), getCeiling() - 1, pos.getZ());
+		        final float x = pos.getX();
+		        safe.set(x, getCeiling() - 1, pos.getZ());
 		        if (Level.theme == Theme.Minecart) {
 		            final TileMap tm = Level.tm;
-		            final int pcol = tm.getColumn(tm.getContainer(this));
-System.out.println(pcol); // -1, getContainer is probably -1, actor probably too low, out-of-bounds
+		            final int pcol = tm.getContainerColumn(x);
 		            final int lastCol = Math.min(pcol + 16, tm.getWidth() - 1);
 		            for (int col = pcol; col <= lastCol; col++) {
 		                if (getTrackRow(col) >= 0) {
@@ -956,7 +956,8 @@ System.out.println(pcol); // -1, getContainer is probably -1, actor probably too
 		                    final int trackRow = getTrackRow(nextCol);
 		                    if (trackRow >= 0) {
 		                        for (int fillCol = col; fillCol < nextCol; fillCol++) {
-		                            tm.setTile(fillCol, trackRow, Level.tileTrack);
+		                        	tm.setTile(fillCol, trackRow + 1, Level.tileTrackTop);
+		                            tm.setTile(fillCol, trackRow, Level.tileTrackBase);
 		                        }
 		                        col = nextCol + 1;
 		                        break;

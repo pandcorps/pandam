@@ -86,7 +86,8 @@ public class Level {
     private static Pancolor topSkyColor = null;
     private static Pancolor bottomSkyColor = null;
     protected static Tile tileGem = null;
-    protected static Tile tileTrack = null;
+    protected static Tile tileTrackTop = null;
+    protected static Tile tileTrackBase = null;
     protected static int numEnemies = 0;
     protected static int currLetter = 0;
     protected static List<Panctor> collectedLetters = null;
@@ -497,7 +498,8 @@ public class Level {
     	topSkyColor = null;
 	    bottomSkyColor = null;
 	    tileGem = null;
-	    tileTrack = null;
+	    tileTrackTop = null;
+	    tileTrackBase = null;
     	backgroundBuilder = theme.getRandomBackground();
     	final Builder b = theme.getRandomBuilder();
     	w = b.getW();
@@ -507,7 +509,8 @@ public class Level {
     	loadLayers();
     	addPlayers(); // Add Players while floor has initial value before build() changes it
     	if (theme == Theme.Minecart) {
-            tileTrack = tm.getTile(null, imgMap[1][1], Tile.BEHAVIOR_SOLID);
+    		tileTrackTop = tm.getTile(null, imgMap[1][2], Tile.BEHAVIOR_OPEN);
+            tileTrackBase = tm.getTile(null, imgMap[2][2], Tile.BEHAVIOR_SOLID);
         }
     	b.build();
     	/*tm.info();
