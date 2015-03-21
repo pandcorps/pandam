@@ -1,3 +1,8 @@
+1.4.0 (9)
+
+*****
+
+Added elephants.
 Fixed a bug which awarded certain goals for canceled levels.
 Tweaked minecart levels to avoid repeated falls.
 

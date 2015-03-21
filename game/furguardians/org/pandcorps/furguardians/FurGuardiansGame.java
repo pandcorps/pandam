@@ -51,12 +51,11 @@ import org.pandcorps.furguardians.Player.*;
 
 public class FurGuardiansGame extends BaseGame {
 	protected final static String TITLE = "Fur-Guardians"; // res/values/strings.xml/app_name
-    protected final static String VERSION = "1.3.0"; // AndroidManifest.xml/versionName
+    protected final static String VERSION = "1.4.0"; // AndroidManifest.xml/versionName
     protected final static String YEAR = "2014-2015";
     protected final static String AUTHOR = "Andrew M. Martin";
 	/*
-	Horse/hippo/elephant/squirrel/gator/pig/walrus/beaver/stag/bull/ram player face.
-	Player armor, robe (also used by king), hats (ear depth/mask images).
+	Hippo/squirrel/gator/pig/walrus/beaver/stag/bull/ram player face.
 	Ghost trail, particle trail.
 	Spin-float when hold jump while falling, 2xjump, inf flip-jump, kite.
 	Player sliding image.
@@ -66,7 +65,7 @@ public class FurGuardiansGame extends BaseGame {
 	Map landmarks: Mountain, garden.
 	Train-riding levels.
 	Ridable dragons - classic menu eyes/name.
-	Enemy Wisp, Elementals, winged Imp, Banshee, Wraith, Shade, Orc.
+	Enemy Elementals, winged Imp, Banshee, Wraith, Shade, Orc.
 	Drolock should walk sometimes.
 	Enemy-specific Level templates (Imp walking into ArmorBall).
 	Gargoyles catch/carry Player, like moving platforms, one can jump to/from them, but not run on them.
