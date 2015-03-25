@@ -753,7 +753,11 @@ public class Map {
     		    }
     		    while (true) {
     		        t = tm.getNeighbor(t, d);
-    		        final int b = tm.getTile(t).getBehavior();
+    		        final Tile tile = tm.getTile(t);
+    		        if (tile == null) {
+    		        	break;
+    		        }
+    		        final int b = tile.getBehavior();
     		        if (b == exBehavior) {
     		            return go(d);
     		        } else if (b != TILE_VERT) {
