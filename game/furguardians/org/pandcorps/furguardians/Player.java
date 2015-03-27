@@ -641,13 +641,16 @@ public class Player extends Character implements CollisionListener {
 			return;
 		}
 		((Gem) o).onCollide(this);*/
-		if (isGem(index)) {
+		final byte b = getBehavior(index);
+		if (FurGuardiansGame.TILE_GEM == b) {
 			Gem.onCollide(Level.tm, index, this);
+		} else if (FurGuardiansGame.TILE_HURT == b) {
+			startHurt();
 		}
 	}
 	
-	private final boolean isGem(final int index) {
-		return FurGuardiansGame.TILE_GEM == Tile.getBehavior(Level.tm.getTile(index));
+	private final static byte getBehavior(final int index) {
+		return Tile.getBehavior(Level.tm.getTile(index));
 	}
 	
 	@Override
@@ -657,7 +660,7 @@ public class Player extends Character implements CollisionListener {
 	
 	@Override
 	protected final void onNear(final int index) {
-		if (isGem(index)) {
+		if (FurGuardiansGame.TILE_GEM == getBehavior(index)) {
 			new GemAttracted(index, this);
 		}
 	}

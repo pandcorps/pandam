@@ -122,6 +122,7 @@ public class FurGuardiansGame extends BaseGame {
     protected final static byte TILE_GEM = 9;
     protected final static byte TILE_ICE = 10;
     protected final static byte TILE_SAND = 11;
+    protected final static byte TILE_HURT = 12;
 	
 	//protected final static int DEPTH_POWERUP = 0;
 	protected final static int DEPTH_ENEMY = 6;

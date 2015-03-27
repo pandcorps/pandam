@@ -1055,7 +1055,7 @@ public class Level {
     private final static class CaveBuilder extends FlatBuilder {
     	@Override
     	protected final void addNatureTemplate() {
-    		//TODO spikes
+    		//TODO floor spikes
     		addTemplate(new BushTemplate());
     	}
     	
@@ -1094,6 +1094,9 @@ public class Level {
     			}
     			tm.setForeground(i, j, imgMap[6][1], Tile.BEHAVIOR_SOLID);
     			fillCeiling(i, j, max);
+    			if (Mathtil.rand(15) && tm.getTile(i, j - 1) == null) {
+    				tm.setBackground(i, j - 1, imgMap[7][2], FurGuardiansGame.TILE_HURT);
+    			}
     		}
     	}
     	
