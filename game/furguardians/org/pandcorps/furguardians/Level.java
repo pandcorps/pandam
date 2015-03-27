@@ -1055,8 +1055,8 @@ public class Level {
     private final static class CaveBuilder extends FlatBuilder {
     	@Override
     	protected final void addNatureTemplate() {
-    		//TODO floor spikes
     		addTemplate(new BushTemplate());
+    		addTemplate(new SpikeTemplate());
     	}
     	
     	@Override
@@ -1819,6 +1819,21 @@ public class Level {
         	tree(x, floor + 1);
         	enemy(x, floor + 1, w);
         }
+    }
+    
+    private final static class SpikeTemplate extends SimpleTemplate {
+    	protected SpikeTemplate() {
+    		super(1, 3, 0);
+    	}
+    	
+    	@Override
+        protected final void build() {
+    		final int y = floor + 1, stop = x + w;
+    		final Tile tile = tm.getTile(imgMap[7][1], null, FurGuardiansGame.TILE_HURT);
+    		for (int i = x; i < stop; i++) {
+    			tm.setTile(i, y, tile);
+    		}
+    	}
     }
     
     private final static class GiantTemplate extends SimpleTemplate {
