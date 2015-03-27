@@ -767,6 +767,10 @@ public class Level {
     		bx = nt;
     		ground();
     		goal.build();
+    		buildCeiling();
+    	}
+    	
+    	protected void buildCeiling() {
     	}
     	
     	protected final void ground() {
@@ -1052,9 +1056,52 @@ public class Level {
     	@Override
     	protected final void addNatureTemplate() {
     		//TODO spikes
-    		//TODO ceiling
-    		addTemplate(new BushTemplate(), new TreeTemplate());
+    		addTemplate(new BushTemplate());
     	}
+    	
+    	@Override
+    	protected final void buildCeiling() {
+    		final int w = tm.getWidth(), max = tm.getHeight() - 1;
+    		int min = max - 2, j = max;
+    		for (int i = 0; i < w; i++) {
+    			if (Mathtil.rand(20)) {
+    				if (i > 10) {
+    					min = max - 4;
+    				}
+    				final boolean up;
+    				if (j >= max) {
+    					up = false;
+    				} else if (j <= min) {
+    					up = true;
+    				} else {
+    					up = Mathtil.rand();
+    				}
+    				if (up) {
+    					tm.setForeground(i, j, imgMap[6][2], Tile.BEHAVIOR_SOLID);
+    					j++;
+    					tm.setForeground(i, j, imgMap[5][2], Tile.BEHAVIOR_SOLID);
+    					fillCeiling(i, j, max);
+    				} else {
+    					tm.setForeground(i, j, imgMap[5][0], Tile.BEHAVIOR_SOLID);
+    					fillCeiling(i, j, max);
+    					j--;
+    					tm.setForeground(i, j, imgMap[6][0], Tile.BEHAVIOR_SOLID);
+    				}
+    				i++;
+    				if (i >= w) {
+    					break;
+    				}
+    			}
+    			tm.setForeground(i, j, imgMap[6][1], Tile.BEHAVIOR_SOLID);
+    			fillCeiling(i, j, max);
+    		}
+    	}
+    	
+    	private final void fillCeiling(final int i, final int j, final int max) {
+			for (int j2 = j + 1; j2 <= max; j2++) {
+				tm.setForeground(i, j2, getDirtImage(), Tile.BEHAVIOR_SOLID);
+			}
+		}
     }
     
     private static class PlatformBuilder extends RandomBuilder {
