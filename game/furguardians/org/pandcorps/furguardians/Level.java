@@ -109,6 +109,12 @@ public class Level {
     		System.arraycopy(extra, 0, a, nlen, elen);
     		return a;
     	}
+    	protected Pancolor getTopSkyColor(final Img img) {
+    		return Imtil.getColor(img, 96, 0);
+    	}
+    	protected Pancolor getBottomSkyColor(final Img img) {
+    		return Imtil.getColor(img, 96, 32);
+    	}
     	public final static Theme Normal = new Theme(null, MSG) {
     	    @Override protected final int[] getEnemyIndices(final int worlds, final int levels) {
     	        switch (worlds) {
@@ -206,6 +212,32 @@ public class Level {
             @Override protected final String getBgImg() {
                 return Map.theme.levelTheme.bgImg;
             }
+        };
+        public final static Theme Cave = new Theme("Cave", MSG) {
+            @Override protected final int[] getEnemyIndices(final int worlds, final int levels) {
+            	//TODO Blob
+                return Map.theme.levelTheme.getEnemyIndices(worlds, levels);
+            }
+            
+            @Override protected final BackgroundBuilder getRandomBackground() {
+                return new HillBackgroundBuilder();
+            }
+            
+            @Override protected final Builder getRandomBuilder() {
+                return new CaveBuilder();
+            }
+            
+            @Override protected final String getBgImg() {
+                return Map.theme.levelTheme.bgImg;
+            }
+            
+            @Override protected final Pancolor getTopSkyColor(final Img img) {
+        		return getBottomSkyColor(img);
+        	}
+            
+            @Override protected final Pancolor getBottomSkyColor(final Img img) {
+        		return Imtil.getColor(img, 50, 80);
+        	}
         };
         public final static Theme Minecart = new Theme("Minecart", MSG) {
             @Override protected final int[] getEnemyIndices(final int worlds, final int levels) {
@@ -789,7 +821,8 @@ public class Level {
     
     private final static void buildBackHills() {
     	buildHills(bgtm2, 7, 9, 2, false);
-		buildHills(bgtm3, 10, 12, 4, true); // Farthest
+    	buildSky(bgtm3);
+		buildHills(bgtm3, 10, 12, 4, theme != Theme.Cave); // Farthest
     }
     
     protected final static class TownBackgroundBuilder implements BackgroundBuilder {
@@ -974,12 +1007,12 @@ public class Level {
     	}
     }
     
-    private final static class FlatBuilder extends GrassyBuilder {
+    private static class FlatBuilder extends GrassyBuilder {
     	@Override
 	    protected final void loadTemplates() {
     		//TODO Multi-level block patterns
 	        addTemplate(new WallTemplate());
-	        addTemplate(new BushTemplate(), new TreeTemplate());
+	        addNatureTemplate();
 	        addTemplate(new AnyPitTemplate());
 	        addTemplate(new UpBlockStepTemplate(), new DownBlockStepTemplate(), new BlockWallTemplate(), new BlockGroupTemplate());
 	        addTemplate(new BlockBonusTemplate());
@@ -989,6 +1022,10 @@ public class Level {
 	        addGiantTemplate();
 	        addNormalGoals();
 	    }
+    	
+    	protected void addNatureTemplate() {
+    		addTemplate(new BushTemplate(), new TreeTemplate());
+    	}
     	
     	@Override
     	public final int getFloor() {
@@ -1008,6 +1045,15 @@ public class Level {
     	@Override
     	protected final boolean changeFloor() {
     		return (floor > 1) || super.changeFloor();
+    	}
+    }
+    
+    private final static class CaveBuilder extends FlatBuilder {
+    	@Override
+    	protected final void addNatureTemplate() {
+    		//TODO spikes
+    		//TODO ceiling
+    		addTemplate(new BushTemplate(), new TreeTemplate());
     	}
     }
     
@@ -1740,19 +1786,24 @@ public class Level {
     
     private final static void extractSkyColors(final Img img) {
     	if (topSkyColor == null) {
-	        topSkyColor = Imtil.getColor(img, 96, 0);
-	        bottomSkyColor = Imtil.getColor(img, 96, 32);
+	        topSkyColor = theme.getTopSkyColor(img);
+	        bottomSkyColor = theme.getBottomSkyColor(img);
     	}
     }
     
     private final static void buildSky(final TileMap tm, final int base, final int mid) {
+    	final Pangine engine = Pangine.getEngine();
+    	if (theme == Theme.Cave) {
+    		engine.setBgColor(bottomSkyColor);
+    		return;
+    	}
         final int topHeight = tm.getHeight() - (mid + 1), bottomHeight = mid - base;
         if (topHeight < bottomHeight) {
             tm.fillBackground(bgMap[0][6], mid + 1, topHeight);
-            Pangine.getEngine().setBgColor(bottomSkyColor);
+            engine.setBgColor(bottomSkyColor);
         } else {
             tm.fillBackground(bgMap[2][6], base, bottomHeight);
-            Pangine.getEngine().setBgColor(topSkyColor);
+            engine.setBgColor(topSkyColor);
         }
         tm.fillBackground(bgMap[1][6], mid, 1);
     }
@@ -1762,9 +1813,6 @@ public class Level {
     }
     
     private final static void buildHills(final TileMap tm, final int miny, final int maxy, final int iy, final boolean cloud) {
-        if (cloud) {
-            buildSky(tm);
-        }
     	final int maxx = tm.getWidth() + 1;
     	int x = Mathtil.randi(-1, 4);
     	boolean c = Mathtil.rand();
