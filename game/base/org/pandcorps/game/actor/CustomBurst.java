@@ -26,15 +26,21 @@ import org.pandcorps.pandam.*;
 
 public class CustomBurst extends Burst {
 	private final BurstHandler customDestroyHandler;
+	private final Object context;
 	
-	public final static Burst createBurst(final Panimation anim, final BurstHandler customDestroyHandler) {
-		return customDestroyHandler == null ? new Burst(anim) : new CustomBurst(anim, customDestroyHandler);
+	public final static Burst createBurst(final Panimation anim, final BurstHandler customDestroyHandler, final Object context) {
+		return customDestroyHandler == null ? new Burst(anim) : new CustomBurst(anim, customDestroyHandler, context);
 	}
 	
-	public CustomBurst(final Panimation anim, final BurstHandler customDestroyHandler) {
+	public CustomBurst(final Panimation anim, final BurstHandler customDestroyHandler, final Object context) {
         super(anim);
         this.customDestroyHandler = customDestroyHandler;
+        this.context = context;
     }
+	
+	public final Object getContext() {
+		return context;
+	}
 	
 	@Override
 	public final void onDestroy() {

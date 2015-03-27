@@ -1265,7 +1265,8 @@ public class FurGuardiansGame extends BaseGame {
                 	return false;
                 }};
 			Coltil.set(allEnemies, Level.FIRE_WISP, fireWisp);
-			Enemy.currentSplat = 45;
+			final int SPLAT_BLOB = 45;
+			Enemy.currentSplat = SPLAT_BLOB;
 			final ReplacePixelFilter bbf = new ReplacePixelFilter();
 			bbf.put(Pancolor.MIN_VALUE, (short) 96, (short) 96, (short) 24, (short) 24, (short) 24);
 			bbf.put(Pancolor.MIN_VALUE, (short) 136, (short) 136, (short) 48, (short) 48, (short) 48);
@@ -1274,13 +1275,27 @@ public class FurGuardiansGame extends BaseGame {
 			bbf.put((short) 96, (short) 216, Pancolor.MAX_VALUE, (short) 120, (short) 120, (short) 120);
 			final EnemyDefinition blackBlob = new EnemyDefinition("Black Blob", 14, bbf, true, true, Enemy.DEFAULT_X, Enemy.DEFAULT_H); // Grim Blob
 			blackBlob.splatHandler = new BurstHandler() {@Override public final void onBurst(final CustomBurst burst) {
+				final Enemy prev = (Enemy) burst.getContext();
 				final BurstHandler h = new BurstHandler() {@Override public final void onBurst(final CustomBurst b) {
-					final Enemy blob = new Enemy(blackBlob, b);
+					final Enemy blob = new Enemy(prev.def, b);
+					blob.timer = prev.timer;
 					blob.setEnemyMirror(b.isMirror()); }};
-				Enemy.burst(burst, blackBlob.extra, burst, h, 0); }};
+				Enemy.burst(burst, prev.def.extra, burst, h, 0); }};
 			blackBlob.splatDecider = armoredImp.splatDecider;
 			blackBlob.award = GemBumped.AWARD_2;
 			Coltil.set(allEnemies, Level.BLACK_BLOB, blackBlob);
+			Enemy.currentSplat = SPLAT_BLOB;
+			final EnemyDefinition blob = new EnemyDefinition("Blob", 14, null, true, true, Enemy.DEFAULT_X, Enemy.DEFAULT_H);
+			blob.splatHandler = blackBlob.splatHandler;
+			blob.splatDecider = new InteractionHandler() {
+                @Override public final boolean onInteract(final Enemy enemy, final Player player) {
+                	enemy.timer++;
+                	if (enemy.timer > 1) {
+                		return false;
+                	}
+                    return player == null || !player.isDragonStomping();
+                }};
+			Coltil.set(allEnemies, Level.BLOB, blob);
 			Level.initTheme(); }});
 		
 		loaders.add(new Runnable() { @Override public final void run() {

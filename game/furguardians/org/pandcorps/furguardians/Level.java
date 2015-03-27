@@ -51,7 +51,8 @@ public class Level {
     protected final static int DROLOCK = 10;
     protected final static int ICE_WISP = 11;
     protected final static int FIRE_WISP = 12;
-    protected final static int BLACK_BLOB = 13;
+    protected final static int BLOB = 13;
+    protected final static int BLACK_BLOB = 14;
     
     private final static byte FLOOR_GRASSY = 0;
     private final static byte FLOOR_BLOCK = 1;
@@ -103,9 +104,12 @@ public class Level {
     	private final static String[] MSG = {"PLAYER", "GEMS!!!", "HURRAY", "GO GO!", "YAY", "GREAT", "PERFECT"};
     	private final static int[] NORMAL_ENEMIES = {HOB_TROLL, HOB_OGRE, TROLL, OGRE, IMP, ARMORED_IMP};
     	private final static int[] getNormalEnemies(final int... extra) {
-    		final int nlen = NORMAL_ENEMIES.length, elen = extra.length;
+    		return getCombinedEnemies(NORMAL_ENEMIES, extra);
+    	}
+    	private final static int[] getCombinedEnemies(final int[] normal, final int... extra) {
+    		final int nlen = normal.length, elen = extra.length;
     		final int[] a = new int[nlen + elen];
-    		System.arraycopy(NORMAL_ENEMIES, 0, a, 0, nlen);
+    		System.arraycopy(normal, 0, a, 0, nlen);
     		System.arraycopy(extra, 0, a, nlen, elen);
     		return a;
     	}
@@ -215,8 +219,7 @@ public class Level {
         };
         public final static Theme Cave = new Theme("Cave", MSG) {
             @Override protected final int[] getEnemyIndices(final int worlds, final int levels) {
-            	//TODO Blob
-                return Map.theme.levelTheme.getEnemyIndices(worlds, levels);
+            	return getLimitedEnemies(worlds, levels, BLOB);
             }
             
             @Override protected final BackgroundBuilder getRandomBackground() {
@@ -256,25 +259,27 @@ public class Level {
                 return Map.theme.levelTheme.bgImg;
             }
         };
+        private final static int[] getLimitedEnemies(final int worlds, final int levels, final int special) {
+        	if (worlds < 3) {
+                if (Map.theme == Map.MapTheme.Snow) {
+                	return new int[] {special, ICE_WISP};
+                } else if (Map.theme == Map.MapTheme.Sand) {
+                	return new int[] {special, FIRE_WISP};
+                }
+            	return new int[] {special};
+        	} else {
+        		if (Map.theme == Map.MapTheme.Snow) {
+                	return new int[] {special, ICE_WISP, ARMORED_IMP};
+                } else if (Map.theme == Map.MapTheme.Sand) {
+                	return new int[] {special, FIRE_WISP, ARMORED_IMP};
+                }
+            	return new int[] {special, ARMORED_IMP};
+        	}
+        }
         public final static Theme Night = new Theme("Night", MSG) {
             @Override protected final int[] getEnemyIndices(final int worlds, final int levels) {
-            	if (worlds < 3) {
-	                if (Map.theme == Map.MapTheme.Snow) {
-	                	return new int[] {BLACK_BLOB, ICE_WISP};
-	                } else if (Map.theme == Map.MapTheme.Sand) {
-	                	return new int[] {BLACK_BLOB, FIRE_WISP};
-	                }
-	            	return new int[] {BLACK_BLOB};
-            	} else {
-            		if (Map.theme == Map.MapTheme.Snow) {
-	                	return new int[] {BLACK_BLOB, ICE_WISP, ARMORED_IMP};
-	                } else if (Map.theme == Map.MapTheme.Sand) {
-	                	return new int[] {BLACK_BLOB, FIRE_WISP, ARMORED_IMP};
-	                }
-	            	return new int[] {BLACK_BLOB, ARMORED_IMP};
-            	}
+            	return getLimitedEnemies(worlds, levels, BLACK_BLOB);
             }
-            
             @Override protected final BackgroundBuilder getRandomBackground() {
                 return new HillBackgroundBuilder();
             }

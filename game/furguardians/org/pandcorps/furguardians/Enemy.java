@@ -397,7 +397,7 @@ public class Enemy extends Character {
 	}
 	
 	protected final static void burst(final Panctor ref, final Panimation anm, final Panctor dir, final BurstHandler burstHandler, final int yoff) {
-	    final Burst b = CustomBurst.createBurst(anm, burstHandler);
+	    final Burst b = CustomBurst.createBurst(anm, burstHandler, (ref instanceof CustomBurst) ? ((CustomBurst) ref).getContext() : ref);
 	    final Panple pos = ref.getPosition();
         FurGuardiansGame.setPosition(b, pos.getX(), pos.getY() + yoff, FurGuardiansGame.DEPTH_SHATTER);
         b.setMirror(dir.isMirror());
