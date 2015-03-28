@@ -223,7 +223,7 @@ public class Level {
             }
             
             @Override protected final BackgroundBuilder getRandomBackground() {
-                return new HillBackgroundBuilder();
+                return new CaveBackgroundBuilder();
             }
             
             @Override protected final Builder getRandomBuilder() {
@@ -280,6 +280,7 @@ public class Level {
             @Override protected final int[] getEnemyIndices(final int worlds, final int levels) {
             	return getLimitedEnemies(worlds, levels, BLACK_BLOB);
             }
+            
             @Override protected final BackgroundBuilder getRandomBackground() {
                 return new HillBackgroundBuilder();
             }
@@ -799,9 +800,9 @@ public class Level {
     	public void build();
     }
     
-    protected final static class HillBackgroundBuilder implements BackgroundBuilder {
+    protected static class HillBackgroundBuilder implements BackgroundBuilder {
     	@Override
-    	public final Img getImage() {
+    	public Img getImage() {
     		final Img backImg = ImtilX.loadImage("org/pandcorps/furguardians/res/bg/Hills" + Chartil.unnull(theme.getBgImg()) + ".png", 128, null);
             if (isNormalTheme()) {
             	final PixelFilter skyFilter = theme.getSkyFilter();
@@ -825,6 +826,17 @@ public class Level {
     	public final void build() {
     		buildHills(bgtm1, 4, 6, 0, false); // Nearest
     		buildBackHills();
+    	}
+    }
+    
+    protected final static class CaveBackgroundBuilder extends HillBackgroundBuilder {
+    	@Override
+    	public final Img getImage() {
+    		final Img backImg = ImtilX.loadImage("org/pandcorps/furguardians/res/bg/Cave.png", 128, null);
+        	applyTerrainTexture(backImg, 0, 0, 48, 32);
+        	applyTerrainTexture(backImg, 48, 0, 96, 16);
+        	applyColoredTerrain(backImg, 0, 0, 96, 96);
+            return backImg;
     	}
     }
     
@@ -1828,7 +1840,7 @@ public class Level {
     
     private final static class SpikeTemplate extends SimpleTemplate {
     	protected SpikeTemplate() {
-    		super(1, 3, 0);
+    		super(1, 2, 0);
     	}
     	
     	@Override
@@ -2056,6 +2068,10 @@ public class Level {
     }
     
     private final static void hill(final TileMap tm, final int x, final int y, final int w, final int ix, final int iy) {
+    	if (ix > 0 && theme == Theme.Cave) {
+    		hillFlipped(tm, x, y, w, iy);
+    		return;
+    	}
         for (int j = 0; j < y; j++) {
             setBg(tm, x, j, bgMap, iy + 1, ix);
             setBg(tm, x + w + 1, j, bgMap, iy + 1, ix + 2);
@@ -2069,6 +2085,25 @@ public class Level {
         }
         setFg(tm, x, y, bgMap, iy, ix);
         setFg(tm, stop + 1, y, bgMap, iy, ix + 2);
+    }
+    
+    private final static void hillFlipped(final TileMap tm, final int x, final int y, final int w, final int _iy) {
+    	final int ixBase = 0, ixTip = 3;
+    	final int iyBase = _iy + 1, iyTip = _iy / 2;
+    	final int top = tm.getHeight() - 1;
+    	for (int j = 0; j < y; j++) {
+            setBg(tm, x, top - j, bgMap, iyBase, ixBase);
+            setBg(tm, x + w + 1, top - j, bgMap, iyBase, ixBase + 2);
+        }
+        final int stop = x + w;
+        for (int i = x + 1; i <= stop; i++) {
+            setBg(tm, i, top - y, bgMap, iyTip, ixTip + 1);
+            for (int j = 0; j < y; j++) {
+                setBg(tm, i, top - j, bgMap, iyBase, ixBase + 1);
+            }
+        }
+        setFg(tm, x, top - y, bgMap, iyTip, ixTip);
+        setFg(tm, stop + 1, top - y, bgMap, iyTip, ixTip + 2);
     }
     
     private final static void mountain(final TileMap tm, final int x, final int y, final int v, final boolean tex) {
