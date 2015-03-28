@@ -246,6 +246,7 @@ gems = 1000000;
     	protected int foundGreenGems = 0;
     	private final List<Integer> bestRuns = new ArrayList<Integer>(BEST_RUN_SIZE);
     	protected int playedMinecartLevels = 0;
+    	protected int playedCaveLevels = 0;
     	
     	public void load(final Segment seg, final int currGems) {
         	defeatedLevels = seg.initInt(0);
@@ -277,6 +278,7 @@ gems = 1000000;
         	    }
         	}
         	playedMinecartLevels = seg.initInt(18);
+        	playedCaveLevels = seg.initInt(19);
         }
     	
 		@Override
@@ -314,6 +316,7 @@ gems = 1000000;
 	        }
 	        seg.setRepetitions(17, runReps);
 	        seg.setInt(18, playedMinecartLevels);
+	        seg.setInt(19, playedCaveLevels);
 		}
 		
 		public List<String> toList() {
@@ -330,6 +333,7 @@ gems = 1000000;
 			list.add("Blocks bumped: " + bumpedBlocks);
 			list.add("Blocks broken: " + brokenBlocks);
 			list.add("Jumps: " + jumps);
+			list.add("Cave levels played: " + playedCaveLevels);
 			list.add("Minecart levels played: " + playedMinecartLevels);
 			list.add("Bonus games played: " + playedBonuses);
 			list.add("Bonus words collected: " + collectedWords);

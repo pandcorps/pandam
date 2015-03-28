@@ -240,6 +240,8 @@ public class Player extends Character implements CollisionListener {
 			}
 			if (Level.theme == Theme.Minecart) {
 				profile.stats.playedMinecartLevels++;
+			} else if (Level.theme == Theme.Cave) {
+				profile.stats.playedCaveLevels++;
 			}
 		}
 	    
