@@ -175,7 +175,7 @@ public class Map {
 	private static boolean waiting = true;
 	
 	protected abstract static class MapTheme {
-		public final static MapTheme Normal = new MapTheme("Normal", null, Theme.Normal, 3, 3, 2, null, null /*, Map.nmr*/ ) {
+		public final static MapTheme Normal = new MapTheme("Normal", null, Theme.Normal, 3, 3, 2, null /*, Map.nmr*/ ) {
 			@Override protected final void step() {
 				if ((Pangine.getEngine().getClock() % 6) == 0) {
 	                Tile.animate(waters);
@@ -188,7 +188,6 @@ public class Map {
 			@Override protected final PixelFilter getHillFilter2() {
 				return new SwapPixelFilter(Channel.Blue, Channel.Red, Channel.Green); }};
 		public final static MapTheme Snow = new MapTheme("Snow", Theme.Snow, 1, 6, 2,
-		    new AntiPixelMask(new RangePixelMask(80, 80, 0, 255, 144, 32)),
 		    new SwapPixelFilter(Channel.Blue, Channel.Green, Channel.Red)
 		    /*, Namer.get(mpt, cct, COLDS, PLACES)*/ ) {
 			@Override protected final void step() {
@@ -199,8 +198,17 @@ public class Map {
 			@Override protected final PixelFilter getHillFilter1() {
 				return new SwapPixelFilter(Channel.Red, Channel.Blue, Channel.Green); }
 			@Override protected final PixelFilter getHillFilter2() {
-				return new SwapPixelFilter(Channel.Red, Channel.Green, Channel.Green); }};
-		public final static MapTheme Sand = new MapTheme("Sand", Theme.Sand, 1, 6, 3, null, null
+				return new SwapPixelFilter(Channel.Red, Channel.Green, Channel.Green); }
+			@Override protected final PixelMask getDirtMask() {
+				final int minR, minG;
+				if (Level.theme == Theme.Cave) {
+					minR = 96;
+					minG = 48;
+				} else {
+					minR = minG = 80;
+				}
+				return new AntiPixelMask(new RangePixelMask(minR, minG, 0, 255, 144, 32)); }};
+		public final static MapTheme Sand = new MapTheme("Sand", Theme.Sand, 1, 6, 3, null
 		    /*, Namer.get(mpt, cct, WARMS, PLACES)*/ ) {
 			@Override protected final void step() {
 				if (Pangine.getEngine().getClock() % 4 == 0) {
@@ -219,7 +227,6 @@ public class Map {
 		protected final String name;
 		protected final String img;
 		protected final Theme levelTheme;
-		protected final PixelMask dirtMask;
 		protected final PixelFilter dirtFilter;
 		protected final int maxLandmark;
 		protected final int portalGroundRow;
@@ -227,20 +234,19 @@ public class Map {
 		
 		private MapTheme(final String img, final Theme levelTheme, final int maxLandmark,
 				final int portalGroundRow, final int portalGroundColumn,
-				final PixelMask dirtMask, final PixelFilter dirtFilter) {
-			this(img, img, levelTheme, maxLandmark, portalGroundRow, portalGroundColumn, dirtMask, dirtFilter);
+				final PixelFilter dirtFilter) {
+			this(img, img, levelTheme, maxLandmark, portalGroundRow, portalGroundColumn, dirtFilter);
 		}
 		
 		private MapTheme(final String name, final String img, final Theme levelTheme, final int maxLandmark,
 				final int portalGroundRow, final int portalGroundColumn,
-				final PixelMask dirtMask, final PixelFilter dirtFilter) {
+				final PixelFilter dirtFilter) {
 			this.name = name;
 			this.img = img;
 			this.levelTheme = levelTheme;
 			this.maxLandmark = maxLandmark;
 			this.portalGroundRow = portalGroundRow;
 			this.portalGroundColumn = portalGroundColumn;
-			this.dirtMask = dirtMask;
 			this.dirtFilter = dirtFilter;
 		}
 		
@@ -268,6 +274,10 @@ public class Map {
 		protected abstract PixelFilter getHillFilter1();
 		
 		protected abstract PixelFilter getHillFilter2();
+		
+		protected PixelMask getDirtMask() {
+			return null;
+		}
 	}
 	
 	protected final static MapTheme[] themes = {MapTheme.Normal, MapTheme.Snow, MapTheme.Sand};

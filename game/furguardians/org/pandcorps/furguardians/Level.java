@@ -427,7 +427,7 @@ public class Level {
             }
         }
         if (Map.theme.dirtFilter != null) {
-        	Imtil.filterImg(tileImg, ix, iy, fx - ix, fy - iy, Map.theme.dirtMask, Map.theme.dirtFilter);
+        	Imtil.filterImg(tileImg, ix, iy, ((theme == Theme.Cave) ? 128 : fx) - ix, fy - iy, Map.theme.getDirtMask(), Map.theme.dirtFilter);
         }
     }
     
@@ -836,6 +836,7 @@ public class Level {
         	applyTerrainTexture(backImg, 0, 0, 48, 32);
         	applyTerrainTexture(backImg, 48, 0, 96, 16);
         	applyColoredTerrain(backImg, 0, 0, 96, 96);
+        	reextractSkyColors(backImg);
             return backImg;
     	}
     }
@@ -1868,9 +1869,13 @@ public class Level {
     
     private final static void extractSkyColors(final Img img) {
     	if (topSkyColor == null) {
-	        topSkyColor = theme.getTopSkyColor(img);
-	        bottomSkyColor = theme.getBottomSkyColor(img);
+    		reextractSkyColors(img);
     	}
+    }
+    
+    private final static void reextractSkyColors(final Img img) {
+        topSkyColor = theme.getTopSkyColor(img);
+        bottomSkyColor = theme.getBottomSkyColor(img);
     }
     
     private final static void buildSky(final TileMap tm, final int base, final int mid) {
