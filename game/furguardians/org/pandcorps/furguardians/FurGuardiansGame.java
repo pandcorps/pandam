@@ -1279,6 +1279,7 @@ public class FurGuardiansGame extends BaseGame {
 				final BurstHandler h = new BurstHandler() {@Override public final void onBurst(final CustomBurst b) {
 					final Enemy blob = new Enemy(prev.def, b);
 					blob.timer = prev.timer;
+					blob.lastStomper = prev.lastStomper;
 					blob.setEnemyMirror(b.isMirror()); }};
 				Enemy.burst(burst, prev.def.extra, burst, h, 0); }};
 			blackBlob.splatDecider = armoredImp.splatDecider;

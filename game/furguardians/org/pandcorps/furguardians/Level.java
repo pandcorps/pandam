@@ -33,6 +33,7 @@ import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.tile.Tile.*;
 import org.pandcorps.furguardians.Enemy.*;
 import org.pandcorps.furguardians.Player.*;
+import org.pandcorps.furguardians.Profile.*;
 import org.pandcorps.furguardians.Spawner.*;
 
 public class Level {
@@ -58,6 +59,9 @@ public class Level {
     private final static byte FLOOR_BLOCK = 1;
     private final static byte FLOOR_BRIDGE = 2;
     private final static byte FLOOR_TRACK = 3;
+    
+    private final static int LAST_DEFEATED_LEVEL_COUNT_TO_FORCE_BACKGROUND = 1;
+    private final static int LAST_DEFEATED_LEVEL_COUNT_TO_FORCE_ENEMY = 2;
     
     protected final static PixelFilter terrainDarkener = new BrightnessPixelFilter((short) -40, (short) -24, (short) -32);
     
@@ -127,7 +131,7 @@ public class Level {
     	            		return new int[] {HOB_TROLL};
     	            	} else if (levels == 1) {
     	            		return new int[] {IMP};
-    	            	} else if (levels == 2) {
+    	            	} else if (levels == LAST_DEFEATED_LEVEL_COUNT_TO_FORCE_ENEMY) {
     	            		return new int[] {HOB_TROLL, HOB_OGRE};
     	            	}
     	            case 1 : return new int[] {HOB_TROLL, HOB_OGRE, IMP}; // 2nd world is Snow
@@ -139,11 +143,18 @@ public class Level {
     	    }
     	    
     		@Override protected final BackgroundBuilder getRandomBackground() {
+    			switch (getDefeatedLevels()) {
+	    			case 0 : return new HillBackgroundBuilder();
+	    			case LAST_DEFEATED_LEVEL_COUNT_TO_FORCE_BACKGROUND : return new ForestBackgroundBuilder();
+    			}
     			return Mathtil.rand(new HillBackgroundBuilder(), new ForestBackgroundBuilder(), new TownBackgroundBuilder());
     		}
     		
     		@Override protected final Builder getRandomBuilder() {
     			if (backgroundBuilder instanceof HillBackgroundBuilder) {
+    				if (getDefeatedLevels() <= getLastDefeatedLevelCountToForceNormal()) {
+    					return new GrassyBuilder();
+    				}
     				return Mathtil.rand() ? new GrassyBuilder() : new PlatformBuilder();
     			} else if (backgroundBuilder instanceof TownBackgroundBuilder) {
     				return new FlatBuilder();
@@ -385,8 +396,27 @@ public class Level {
     	FurGuardiansGame.enemies = theme.getEnemies();
     }
     
+    private final static int getLastDefeatedLevelCountToForceNormal() {
+    	return Math.max(LAST_DEFEATED_LEVEL_COUNT_TO_FORCE_BACKGROUND, LAST_DEFEATED_LEVEL_COUNT_TO_FORCE_ENEMY);
+    }
+    
     protected static void initTheme() {
-    	setTheme(Map.theme.levelTheme);
+    	final int levels = getDefeatedLevels();
+    	final Statistics stats = getStatistics();
+    	final Theme theme;
+    	if (levels <= getLastDefeatedLevelCountToForceNormal()) {
+    		theme = Map.theme.levelTheme;
+    	} else if (stats != null && stats.playedCaveLevels == 0) {
+    		theme = Theme.Cave;
+    	} else {
+    		final int r = Mathtil.randi(0, 99);
+    		if (r < 20) {
+    			theme = Theme.Cave;
+    		} else {
+    			theme = Map.theme.levelTheme;
+    		}
+    	}
+    	setTheme(theme);
     }
     
     protected static boolean isNormalTheme() {
@@ -398,14 +428,19 @@ public class Level {
         return (pc == null) ? null : pc.profile;
     }
     
+    private final static Statistics getStatistics() {
+    	final Profile prf = getProfile();
+        return (prf == null) ? null : prf.stats;
+    }
+    
     private final static int getDefeatedWorlds() {
-        final Profile prf = getProfile();
-        return (prf == null) ? 0 : prf.stats.defeatedWorlds;
+        final Statistics stats = getStatistics();
+        return (stats == null) ? 0 : stats.defeatedWorlds;
     }
     
     private final static int getDefeatedLevels() {
-        final Profile prf = getProfile();
-        return (prf == null) ? 0 : prf.stats.defeatedLevels;
+    	final Statistics stats = getStatistics();
+        return (stats == null) ? 0 : stats.defeatedLevels;
     }
     
     protected final static boolean isFlash(final Tile tile) {
