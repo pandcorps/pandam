@@ -1,6 +1,10 @@
-1.4.0 (9)
+1.5.0 (10)
+
+Added underground cave levels.
 
 *****
+
+1.4.0 (9)
 
 Added elephants.
 Fixed a bug which awarded certain goals for canceled levels.
