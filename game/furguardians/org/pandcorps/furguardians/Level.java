@@ -37,7 +37,8 @@ import org.pandcorps.furguardians.Profile.*;
 import org.pandcorps.furguardians.Spawner.*;
 
 public class Level {
-    protected final static int ROOM_H = 256;
+	private final static int DEF_ROOM_H = 256;
+    protected static int ROOM_H = DEF_ROOM_H;
     
     protected final static int HOB_TROLL = 0;
     protected final static int HOB_OGRE = 1;
@@ -515,6 +516,8 @@ public class Level {
     }
     
     protected final static void loadLayers() {
+    	final Pangine engine = Pangine.getEngine();
+    	ROOM_H = Math.max(DEF_ROOM_H, engine.getEffectiveHeight());
         room = FurGuardiansGame.createRoom(w, ROOM_H);
         room.setClearDepthEnabled(false);
         tm = new TileMap("act.tilemap", room, ImtilX.DIM, ImtilX.DIM);
@@ -530,7 +533,7 @@ public class Level {
         bg1.setClearDepthEnabled(false);
         bgtm1 = newBackgroundTileMap(1, bg1);
         Img backImg = backgroundBuilder.getImage();
-        bgimg = Pangine.getEngine().createImage("img.bg", backImg);
+        bgimg = engine.createImage("img.bg", backImg);
         bgMap = bgtm1.splitImageMap(bgimg);
         
         /*

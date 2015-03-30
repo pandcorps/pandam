@@ -334,7 +334,8 @@ public class FurGuardiansGame extends BaseGame {
 	
 	@Override
 	protected final int getDebugWindowHeight() {
-		return 600;
+		//return 600;
+		return 575; // This tablet has a menu bar that takes up part of the height
 	}
 	*/
 	
