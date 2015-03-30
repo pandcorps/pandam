@@ -107,6 +107,13 @@ public abstract class GlPangine extends Pangine {
 	    }
 	    this.w = w;
 	    this.h = h;
+	    initTruncatedSize();
+	}
+	
+	@Override
+	public final void zoom(final float mag) {
+	    super.zoom(mag);
+	    initTruncatedSize();
 	}
 	
 	/*
@@ -191,8 +198,8 @@ public abstract class GlPangine extends Pangine {
 		}
 	}
 	
-	private final void initViewport() {
-		int w = getDesktopWidth(), h = getDesktopHeight();
+	private final void initTruncatedSize() {
+		int w = getDisplayWidth(), h = getDisplayHeight();
 		final float z1 = getZoom();
 		final int z = (int) z1;
 		final float z2 = z;
@@ -202,6 +209,10 @@ public abstract class GlPangine extends Pangine {
 		}
 		truncatedWidth = w;
 		truncatedHeight = h;
+	}
+	
+	private final void initViewport() {
+		initTruncatedSize();
 		gl.glViewport(0, 0, w, h);
 	}
 	
