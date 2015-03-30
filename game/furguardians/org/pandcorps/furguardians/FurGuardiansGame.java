@@ -324,6 +324,19 @@ public class FurGuardiansGame extends BaseGame {
 	protected final boolean isFullScreen() {
         return true;
     }
+
+	/*
+	// Simulate a tablet
+	@Override
+	protected final int getDebugWindowWidth() {
+		return 1024;
+	}
+	
+	@Override
+	protected final int getDebugWindowHeight() {
+		return 600;
+	}
+	*/
 	
 	@Override
     protected final void initEarliest() {

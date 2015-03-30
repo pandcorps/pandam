@@ -58,6 +58,16 @@ public abstract class BaseGame extends Pangame {
 	}
 	
 	//@OverrideMe
+	protected int getDebugWindowWidth() {
+		return 0;
+	}
+	
+	//@OverrideMe
+	protected int getDebugWindowHeight() {
+		return 0;
+	}
+	
+	//@OverrideMe
 	protected void initEarliest() {
 	}
 	
@@ -69,7 +79,12 @@ public abstract class BaseGame extends Pangame {
         if (scalerClassName != null) {
         	engine.setImageScaler((Scaler) Reftil.newInstance(scalerClassName));
         }
-        if (isFullScreen()) {
+        final int debugWidth = getDebugWindowWidth();
+        if (debugWidth > 0) {
+        	engine.setApproximateZoomedDisplaySize(debugWidth, getDebugWindowHeight(), SCREEN_W, SCREEN_H, false);
+        	SCREEN_W = engine.getEffectiveWidth();
+        	SCREEN_H = engine.getEffectiveHeight();
+        } else if (isFullScreen()) {
             if (zoomMag <= 0) {
                 engine.setApproximateFullScreenZoomedDisplaySize(SCREEN_W, SCREEN_H, false);
             } else {
