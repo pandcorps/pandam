@@ -829,7 +829,7 @@ public abstract class Pangine {
 		return layer.rawViewMax;
 	}
 	
-	public final void zoom(final float mag) {
+	public void zoom(final float mag) {
 	    zoomMag = mag;
 	}
 	
@@ -880,8 +880,19 @@ public abstract class Pangine {
 	    setFullScreenZoomed(getApproximateFullScreenZoomedDisplaySize(minWidth, minHeight, pow2));
     }
 	
+	public final void setApproximateZoomedDisplaySize(final int dispWidth, final int dispHeight,
+			final int minWidth, final int minHeight, final boolean pow2) {
+		setDisplaySize(dispWidth, dispHeight);
+        zoom(getApproximateZoomedDisplaySize(dispWidth, dispHeight, minWidth, minHeight, pow2));
+	}
+	
 	public final int getApproximateFullScreenZoomedDisplaySize(final int minWidth, final int minHeight, final boolean pow2) {
-		return Math.min(getApproxDim(minWidth, getDesktopWidth(), pow2), getApproxDim(minHeight, getDesktopHeight(), pow2));
+		return getApproximateZoomedDisplaySize(getDesktopWidth(), getDesktopHeight(), minWidth, minHeight, pow2);
+	}
+	
+	public final int getApproximateZoomedDisplaySize(final int dispWidth, final int dispHeight,
+			final int minWidth, final int minHeight, final boolean pow2) {
+		return Math.min(getApproxDim(minWidth, dispWidth, pow2), getApproxDim(minHeight, dispHeight, pow2));
 	}
 	
 	private final int getApproxDim(final int min, final int top, final boolean pow2) {
