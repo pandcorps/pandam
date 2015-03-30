@@ -918,7 +918,7 @@ public class Level {
     	@Override
     	public final Img getImage() {
     		final Img backImg = Imtil.load("org/pandcorps/furguardians/res/bg/Forest.png");
-    		applyTerrainTexture(backImg, 32, 16, 48, 32);
+    		applyTerrainTexture(backImg, 32, 16, 48, 32, 0, 3, 32);
     		return backImg;
     	}
     	
@@ -964,17 +964,20 @@ public class Level {
     }
     
     private static void applyTerrainTexture(final Img backImg, final int ix, final int iy, final int fx, final int fy, int skip, final int size) {
+    	applyTerrainTexture(backImg, ix, iy, fx, fy, skip, size, fy - iy);
+    }
+    
+    private static void applyTerrainTexture(final Img backImg, final int ix, final int iy, final int fx, final int fy, int skip, final int size, final int dist) {
         extractSkyColors(backImg);
     	Img terrain = getTerrainTexture();
     	for (int i = backgroundBuilder.getPreDarken(); i > 0; i--) {
     		terrain = getDarkenedTerrain(terrain);
     	}
-    	final int h = fy - iy;
         for (int z = 0; z < size; z++) {
             if (z > 0) {
                 terrain = getDarkenedTerrain(terrain);
             }
-            final int yoff = z * h;
+            final int yoff = z * dist;
             if (skip <= 0) {
             	applyTerrainTexture(backImg, ix, iy + yoff, fx, fy + yoff, terrain, getTerrainMask(z));
             } else {
