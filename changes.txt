@@ -1,3 +1,7 @@
+Achievements for collecting Gems.
+
+*****
+
 1.5.1 (11)
 
 Fixed graphical bugs in level backgrounds.

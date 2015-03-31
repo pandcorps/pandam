@@ -34,7 +34,8 @@ public abstract class Achievement extends FinName {
 		new NoEnemyFeat(), new AllEnemyFeat(),
 		new RankFeat("Promoted", 2), new RankFeat("Knighted", 25),
 		new WordFeat("Wordsmith", 5), new WordFeat("Lexicon", 30),
-		new MonarchFeat(), new PegasusFeat()
+		new MonarchFeat(), new PegasusFeat(),
+		new GemFeat("Entrepreneur", 10000), new GemFeat("Tycoon", 100000), new GemFeat("Millionaire", 1000000)
 		// level w/ no damage
 		// Bear Market, Finish Level w/ no gems
 		// Bull Market, Collect all gems in a Level
@@ -198,6 +199,20 @@ public abstract class Achievement extends FinName {
         @Override
         public final boolean isMet(final Statistics stats) {
             return stats.collectedWords >= n;
+        }
+    }
+	
+	private final static class GemFeat extends StatFeat {
+        private final int n;
+        
+        protected GemFeat(final String name, final int n) {
+            super(name, "Get " + n + " Gems (can spend them)", n / 40);
+            this.n = n;
+        }
+        
+        @Override
+        public final boolean isMet(final Statistics stats) {
+            return stats.totalGems >= n;
         }
     }
 	
