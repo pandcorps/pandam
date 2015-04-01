@@ -66,6 +66,11 @@ public abstract class Achievement extends FinName {
 	}
 	
 	//@OverrideMe
+	public String getProgress() {
+	    return null;
+	}
+	
+	//@OverrideMe
 	public String getNote() {
 	    return null;
 	}
@@ -124,17 +129,25 @@ public abstract class Achievement extends FinName {
 	}
 	
 	private abstract static class StatFeat extends ProfileFeat {
-	    protected StatFeat(final String name, final String desc, final int award) {
+	    private final int n;
+	    
+	    protected StatFeat(final String name, final int n, final String desc, final int award) {
 	        super(name, desc, award);
+	        this.n = n;
 	    }
 	    
 	    @Override
         public final boolean isMet(final Profile prf) {
 	    	final Statistics stats = prf.stats;
-	        return (stats != null) && isMet(stats);
+	        return (stats != null) && (getCurrent(stats) >= n);
 	    }
 	    
-	    public abstract boolean isMet(final Statistics stats);
+	    /*@Override
+        public final String getProgress() {
+	        return getCurrent(stats) + " of " + n;
+	    }*/
+	    
+	    public abstract long getCurrent(final Statistics stats);
 	}
 	
 	private abstract static class AvatarFeat extends ProfileFeat {
@@ -166,58 +179,46 @@ public abstract class Achievement extends FinName {
     }
 	
 	private final static class LevelFeat extends StatFeat {
-		private final int n;
-		
 		protected LevelFeat(final String name, final int n) {
-			super(name, "Defeat " + n + " level" + getS(n), n * 25);
-			this.n = n;
+			super(name, n, "Defeat " + n + " level" + getS(n), n * 25);
 		}
 		
 		@Override
-		public final boolean isMet(final Statistics stats) {
-			return stats.defeatedLevels >= n;
+		public final long getCurrent(final Statistics stats) {
+			return stats.defeatedLevels;
 		}
 	}
 	
 	private final static class WorldFeat extends StatFeat {
-		private final int n;
-		
 		protected WorldFeat(final String name, final int n) {
-			super(name, "Defeat " + n + " world" + getS(n), n * 150);
-			this.n = n;
+			super(name, n, "Defeat " + n + " world" + getS(n), n * 150);
 		}
 		
 		@Override
-		public final boolean isMet(final Statistics stats) {
-			return stats.defeatedWorlds >= n;
+		public final long getCurrent(final Statistics stats) {
+			return stats.defeatedWorlds;
 		}
 	}
 	
 	private final static class WordFeat extends StatFeat {
-        private final int n;
-        
         protected WordFeat(final String name, final int n) {
-            super(name, "Collect " + n + " bonus word" + getS(n), n * 30);
-            this.n = n;
+            super(name, n, "Collect " + n + " bonus word" + getS(n), n * 30);
         }
         
         @Override
-        public final boolean isMet(final Statistics stats) {
-            return stats.collectedWords >= n;
+        public final long getCurrent(final Statistics stats) {
+            return stats.collectedWords;
         }
     }
 	
 	private final static class GemFeat extends StatFeat {
-        private final int n;
-        
         protected GemFeat(final String name, final int n) {
-            super(name, "Get " + n + " total Gems", n / 40);
-            this.n = n;
+            super(name, n, "Get " + n + " total Gems", n / 40);
         }
         
         @Override
-        public final boolean isMet(final Statistics stats) {
-            return stats.totalGems >= n;
+        public final long getCurrent(final Statistics stats) {
+            return stats.totalGems;
         }
         
         @Override
