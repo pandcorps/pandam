@@ -2641,9 +2641,10 @@ public class Menu {
         }
         
         private final void setAchDesc(String achName) {
-            final String newDesc;
+            final String newDesc, newInf;
             if (Chartil.isEmpty(achName)) {
                 newDesc = "";
+                newInf = "";
             } else {
                 achName = achName.substring(2);
                 final Achievement ach = Achievement.get(achName);
@@ -2651,8 +2652,10 @@ public class Menu {
                     throw new IllegalArgumentException("Could not find Achievement " + achName);
                 }
                 newDesc = ach.getDescription() + " (" + ach.getAward() + ")";
+                newInf = ach.getNote();
             }
             setDescription(newDesc);
+            setInfo(newInf);
         }
         
         private final void initAchDesc() {

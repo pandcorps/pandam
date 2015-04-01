@@ -112,12 +112,16 @@ public final class Chartil {
     
     public final static void set(final StringBuilder b, final CharSequence value) {
     	clear(b);
-    	b.append(value);
+    	if (value != null) {
+    	    b.append(value);
+    	}
     }
     
     public final static void set(final StringBuffer b, final CharSequence value) {
     	clear(b);
-    	b.append(value);
+    	if (value != null) {
+    	    b.append(value);
+    	}
     }
     
     public final static String padZero(final int i, final int size) {

@@ -65,6 +65,11 @@ public abstract class Achievement extends FinName {
 		return desc;
 	}
 	
+	//@OverrideMe
+	public String getNote() {
+	    return null;
+	}
+	
 	public final int getAward() {
 	    return award;
 	}
@@ -206,13 +211,18 @@ public abstract class Achievement extends FinName {
         private final int n;
         
         protected GemFeat(final String name, final int n) {
-            super(name, "Get " + n + " Gems (can spend them)", n / 40);
+            super(name, "Get " + n + " total Gems", n / 40);
             this.n = n;
         }
         
         @Override
         public final boolean isMet(final Statistics stats) {
             return stats.totalGems >= n;
+        }
+        
+        @Override
+        public final String getNote() {
+            return "Total Gems ever collected, spending won't lower total";
         }
     }
 	
