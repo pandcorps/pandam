@@ -73,11 +73,13 @@ public class Menu {
 		private final boolean fadeIn;
 		protected final StringBuilder inf = new StringBuilder();
 		private final StringBuilder desc = new StringBuilder();
+		private final StringBuilder desc2 = new StringBuilder();
 		protected TileMap tm = null;
 		protected Panmage timg = null;
 		protected Model actor = null;
 		protected Pantext infLbl = null;
 		protected Pantext descLbl = null;
+		protected Pantext desc2Lbl = null;
 		protected boolean disabled = false;
 		protected Panform form = null;
 		protected int center = -1;
@@ -958,6 +960,21 @@ public class Menu {
 		protected final void clearDescription() {
 			Chartil.clear(desc);
 		}
+		
+		protected final void addDescription2(final int x, final int y) {
+		    if (!isTabEnabled()) {
+		        return;
+		    }
+            desc2Lbl = addTitleTiny(desc2, x + OFF_RADIO_LIST, y - (30 + (radioLinesPerPage * 8)));
+        }
+        
+        protected final void setDescription2(final String val) {
+            if (desc2Lbl == null) {
+                return;
+            }
+            Chartil.set(desc2, val);
+            center(desc2Lbl);
+        }
 		
 		protected final int addExit(final String title, final int x, final int y) {
 			final MsgCloseListener savLsn = new MsgCloseListener() {
@@ -2450,6 +2467,7 @@ public class Menu {
             }};
             achRadio = addRadio("Achievements", ach, achLsn, x, y);
             addDescription(x, y);
+            addDescription2(x, y);
             initAchDesc();
 		}
 		
@@ -2641,9 +2659,10 @@ public class Menu {
         }
         
         private final void setAchDesc(String achName) {
-            final String newDesc, newInf;
+            final String newDesc, newProg, newInf;
             if (Chartil.isEmpty(achName)) {
                 newDesc = "";
+                newProg = "";
                 newInf = "";
             } else {
                 achName = achName.substring(2);
@@ -2652,9 +2671,11 @@ public class Menu {
                     throw new IllegalArgumentException("Could not find Achievement " + achName);
                 }
                 newDesc = ach.getDescription() + " (" + ach.getAward() + ")";
+                newProg = ach.getProgress(pc);
                 newInf = ach.getNote();
             }
             setDescription(newDesc);
+            setDescription2(newProg);
             setInfo(newInf);
         }
         
