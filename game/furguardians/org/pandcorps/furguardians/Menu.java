@@ -763,7 +763,7 @@ public class Menu {
 			addActor(new Gem(FurGuardiansGame.gemAchieve), gemX, gemY);
 			addTitle("Trophies", textX, gemY + 8);
 			final CharSequence seq = new CallSequence() {@Override protected String call() {
-				return String.valueOf(pc.profile.achievements.size());
+				return String.valueOf(pc.profile.achievements.size() + "/" + Achievement.ALL.length);
 			}};
 			addTitle(seq, textX, gemY);
 		}
