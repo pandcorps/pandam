@@ -241,17 +241,14 @@ public abstract class Achievement extends FinName {
         }
     }
 	
-	private final static class RankFeat extends ProfileFeat {
-		private final int n;
-		
+	private final static class RankFeat extends CountFeat {
 		protected RankFeat(final String name, final int n) {
-			super(name, "Reach rank " + n, n * 100);
-			this.n = n;
+			super(name, n, "Reach rank " + n, n * 100);
 		}
 		
 		@Override
-		public final boolean isMet(final Profile prf) {
-			return prf.getRank() >= n;
+		public final long getCurrent(final Profile prf) {
+			return prf.getRank();
 		}
 	}
 	
