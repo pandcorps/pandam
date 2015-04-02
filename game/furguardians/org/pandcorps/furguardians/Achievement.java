@@ -66,7 +66,7 @@ public abstract class Achievement extends FinName {
 	}
 	
 	//@OverrideMe
-	public String getProgress() {
+	public String getProgress(final PlayerContext pc) {
 	    return null;
 	}
 	
@@ -128,24 +128,38 @@ public abstract class Achievement extends FinName {
 	    public abstract boolean isMet(final Profile prf);
 	}
 	
-	private abstract static class StatFeat extends ProfileFeat {
+	private abstract static class CountFeat extends ProfileFeat {
 	    private final int n;
 	    
-	    protected StatFeat(final String name, final int n, final String desc, final int award) {
+	    protected CountFeat(final String name, final int n, final String desc, final int award) {
 	        super(name, desc, award);
 	        this.n = n;
 	    }
 	    
 	    @Override
         public final boolean isMet(final Profile prf) {
-	    	final Statistics stats = prf.stats;
-	        return (stats != null) && (getCurrent(stats) >= n);
+            return getCurrent(prf) >= n;
+        }
+	    
+	    @Override
+        public final String getProgress(final PlayerContext pc) {
+	        final Profile prf = pc.profile;
+            return (prf == null) ? null : (getCurrent(prf) + " of " + n);
+        }
+	    
+	    public abstract long getCurrent(final Profile prf);
+	}
+	
+	private abstract static class StatFeat extends CountFeat {
+	    protected StatFeat(final String name, final int n, final String desc, final int award) {
+	        super(name, n, desc, award);
 	    }
 	    
-	    /*@Override
-        public final String getProgress() {
-	        return getCurrent(stats) + " of " + n;
-	    }*/
+	    @Override
+	    public final long getCurrent(final Profile prf) {
+	        final Statistics stats = prf.stats;
+            return (stats == null) ? 0 : getCurrent(stats);
+	    }
 	    
 	    public abstract long getCurrent(final Statistics stats);
 	}
