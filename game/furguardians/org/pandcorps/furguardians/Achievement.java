@@ -36,12 +36,13 @@ public abstract class Achievement extends FinName {
 		new WordFeat("Wordsmith", 5), new WordFeat("Lexicon", 30),
 		new MonarchFeat(), new PegasusFeat(),
 		new GemFeat("Entrepreneur", 10000), new GemFeat("Tycoon", 100000), new GemFeat("Millionaire", 1000000),
-		new GreenGemFeat()
+		new GreenGemFeat(),
+		new BumpFeat("Thud", 1000), new BumpFeat("Thump", 5000),
+		new BreakFeat("Wreckage", 600), new BreakFeat("Devastation", 1500)
 		// level w/ no damage
 		// Bear Market, Finish Level w/ no gems
 		// Bull Market, Collect all gems in a Level
 		// Juggernaut, Break all blocks in a Level
-		// block milestones
 		// Beyond Belief, Finish Level as a flying pig
 		// Babe, Finish Level as a blue bull/ox
 		// Menagerie (Zoologist), Use each animal to finish a Level
@@ -250,6 +251,28 @@ public abstract class Achievement extends FinName {
             return stats.foundGreenGems;
         }
 	}
+	
+	private final static class BumpFeat extends StatFeat {
+        protected BumpFeat(final String name, final int n) {
+            super(name, n, "Bump " + n + " blocks", n / 4);
+        }
+        
+        @Override
+        public final long getCurrent(final Statistics stats) {
+            return stats.bumpedBlocks;
+        }
+	}
+	
+	private final static class BreakFeat extends StatFeat {
+        protected BreakFeat(final String name, final int n) {
+            super(name, n, "Break " + n + " blocks", n / 3);
+        }
+        
+        @Override
+        public final long getCurrent(final Statistics stats) {
+            return stats.brokenBlocks;
+        }
+    }
 	
 	private final static class RankFeat extends CountFeat {
 		protected RankFeat(final String name, final int n) {
