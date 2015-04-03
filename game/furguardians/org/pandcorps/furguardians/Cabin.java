@@ -218,7 +218,7 @@ public class Cabin {
 		}
 		
 		@Override
-		protected final int rndAward() {
+		protected final int rndAward(final Player player) {
 		    final int r = Mathtil.randi(0, 9999), awd;
             // Looks like bonus Gems are pre-sorted, so 25% chance of getting 1000,
             // but decide after Player picks, so 80% chance of 1000, then 18/1.9/0.1

@@ -41,8 +41,8 @@ public class Tiles {
     		return Level.isFlash(t);
     	}
     	
-    	protected int rndAward() {
-    		return GemBumped.rndAward();
+    	protected int rndAward(final Player player) {
+    		return GemBumped.rndAward(player);
     	}
     	
     	protected TileMapImage getBumpedImage() {
@@ -58,7 +58,7 @@ public class Tiles {
     }
     
     private final static GemBumped newGemBumped(final Player player, final int index) {
-        final int award = getHandler().rndAward();
+        final int award = getHandler().rndAward(player);
         if (FurGuardiansGame.level) {
             switch (award) {
                 case GemBumped.AWARD_2 :

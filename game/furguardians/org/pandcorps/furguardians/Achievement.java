@@ -35,17 +35,16 @@ public abstract class Achievement extends FinName {
 		new RankFeat("Promoted", 2), new RankFeat("Knighted", 25),
 		new WordFeat("Wordsmith", 5), new WordFeat("Lexicon", 30),
 		new MonarchFeat(), new PegasusFeat(),
-		new GemFeat("Entrepreneur", 10000), new GemFeat("Tycoon", 100000), new GemFeat("Millionaire", 1000000)
+		new GemFeat("Entrepreneur", 10000), new GemFeat("Tycoon", 100000), new GemFeat("Millionaire", 1000000),
+		new GreenGemFeat()
 		// level w/ no damage
 		// Bear Market, Finish Level w/ no gems
 		// Bull Market, Collect all gems in a Level
 		// Juggernaut, Break all blocks in a Level
 		// block milestones
-		// Gem milestones
 		// Beyond Belief, Finish Level as a flying pig
 		// Babe, Finish Level as a blue bull/ox
 		// Menagerie (Zoologist), Use each animal to finish a Level
-		// Collect a green gem
 		// Play a bonus level
 		// Buy a JumpMode
 		// Buy an Assist
@@ -240,6 +239,17 @@ public abstract class Achievement extends FinName {
             return "Total Gems ever collected, spending won't lower total";
         }
     }
+	
+	private final static class GreenGemFeat extends StatFeat {
+        protected GreenGemFeat() {
+            super("Serendipity", 1, "Find 1 green Gem in a level", 1000);
+        }
+        
+        @Override
+        public final long getCurrent(final Statistics stats) {
+            return stats.foundGreenGems;
+        }
+	}
 	
 	private final static class RankFeat extends CountFeat {
 		protected RankFeat(final String name, final int n) {

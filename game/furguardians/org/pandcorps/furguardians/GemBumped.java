@@ -44,13 +44,20 @@ public class GemBumped extends Pandy {
 	private final byte type;
 	int age = 0;
 	
-	protected final static int rndAward() {
+	protected final static int rndAward(final Player player) {
 		final int r = Mathtil.randi(0, 9999);
 	    if (r < 1500) {
 	        return AWARD_2;
 	    } else if (r < 1650) {
 	        return AWARD_3;
-	    } else if (r < 1665) {
+	    }
+	    final int greenThreshold;
+	    if (player != null && player.pc.profile.stats.foundGreenGems == 0) {
+	        greenThreshold = 1750; // First one is more likely
+	    } else {
+	        greenThreshold = 1665;
+	    }
+	    if (r < greenThreshold) {
             return AWARD_4;
 	    }
 	    return AWARD_DEF;
