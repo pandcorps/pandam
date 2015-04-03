@@ -144,8 +144,9 @@ public class Map {
 	private static int roomH = -1;
 	private static int endColumn = -1;
 	private static int endRow = -1;
-	protected static Avatar kingAvt = null;
-	protected static int kingCrown = -1;
+	private final static int[] EYES_ROY = {2, 4, 5, 6, 7, 8, 9, 10};
+	protected static Avatar royAvt = null;
+	protected static int royCrown = -1;
 	private static String name = null;
 	private static TextMover tipMover = null;
 	
@@ -990,7 +991,7 @@ public class Map {
 		final String mapFile = getMapFile();
 		final Mapper b;
 		final Segment mrk, bld;
-		kingAvt = new Avatar();
+		royAvt = new Avatar();
 		if (Iotil.exists(mapFile)) {
 			final SegmentStream in = SegmentStream.openLocation(mapFile);
 			try {
@@ -999,14 +1000,14 @@ public class Map {
 	            //bgTexture, bgColor already handled in loadImages; open in Profile
 	            endColumn = seg.intValue(3);
 	            endRow = seg.intValue(4);
-	            kingCrown = seg.getInt(8, 0);
+	            royCrown = seg.getInt(8, 0);
 	            mrk = in.readRequire(SEG_MRK);
 	            bld = in.readRequire(SEG_BLD);
 	            final Segment avt = in.readIf(FurGuardiansGame.SEG_AVT);
 	            if (avt != null) {
-	            	kingAvt.load(avt);
+	            	royAvt.load(avt);
 	            } else {
-	            	kingAvt.randomize(); // Change readIf to readRequire; remove condition/randomize
+	            	royAvt.randomize(); // Change readIf to readRequire; remove condition/randomize
 	            }
 				tm = TileMap.load(TileMap.class, in, timg);
 				roomW = tm.getWidth() * tm.getTileWidth();
@@ -1025,12 +1026,13 @@ public class Map {
 			roomH = b.getH();
 			mrk = null;
 			bld = null;
-           	kingAvt.randomize();
-           	kingAvt.col.randomizeColorful();
-           	kingAvt.clothing.clth = Mathtil.rand(Avatar.hiddenClothings);
-           	//kingAvt.clothingCol.load(kingAvt.col); //negate();
-           	kingAvt.clothing.col.randomizeColorfulDifferent(kingAvt.col);
-           	kingCrown = Mathtil.randi(0, FurGuardiansGame.crowns.length - 1);
+           	royAvt.randomize();
+           	royAvt.eye = Mathtil.randElemI(EYES_ROY);
+           	royAvt.col.randomizeColorful();
+           	royAvt.clothing.clth = Mathtil.rand(Avatar.hiddenClothings);
+           	//royAvt.clothingCol.load(royAvt.col); //negate();
+           	royAvt.clothing.col.randomizeColorfulDifferent(royAvt.col);
+           	royCrown = Mathtil.randi(0, FurGuardiansGame.crowns.length - 1);
 		}
 		initRoom();
 		initTileMap(tm);
@@ -1731,7 +1733,7 @@ public class Map {
 	        seg.setInt(5, lm1);
             seg.setInt(6, lm2);
             seg.setInt(7, cstl);
-            seg.setInt(8, kingCrown);
+            seg.setInt(8, royCrown);
             seg.setLong(9, seed);
             seg.setValue(10, theme.name);
 	        seg.saveln(w);
@@ -1759,7 +1761,7 @@ public class Map {
 			}
 	        bld.setRepetitions(0, alist);
 	        bld.saveln(w);
-	        Segtil.saveln(kingAvt, w);
+	        Segtil.saveln(royAvt, w);
 	        tm.save(w);
 	    } catch (final IOException e) {
 	        throw new RuntimeException(e);

@@ -129,7 +129,7 @@ public class Castle {
     
     private abstract static class ThroneScreen extends CastleScreen {
     	private final List<String> msg;
-    	private Panimation kingAnm = null;
+    	private Panimation royAnm = null;
     	
         protected ThroneScreen(final List<String> msg) {
             super("ThroneRoom");
@@ -165,22 +165,22 @@ public class Castle {
             
             addPlayers(48, 32, null);
             
-            final PlayerImages pi = new PlayerImages(Map.kingAvt);
+            final PlayerImages pi = new PlayerImages(Map.royAvt);
             final Img k1 = pi.guys[0], k2 = pi.guyBlink;
-            final Img crownImg = FurGuardiansGame.crowns[Map.kingCrown];
+            final Img crownImg = FurGuardiansGame.crowns[Map.royCrown];
             for (final Img k : new Img[] {k1, k2}) {
                 Imtil.copy(crownImg, k, 0, 0, 14, 9, 10, 1, Imtil.COPY_FOREGROUND);
             }
             final Pangine en = Pangine.getEngine();
-            kingAnm = en.createAnimation(FurGuardiansGame.PRE_ANM + "king",
-            	en.createFrame(FurGuardiansGame.PRE_FRM + "king.1", en.createImage(FurGuardiansGame.PRE_IMG + "king.1", k1), FurGuardiansGame.DUR_BLINK + 20),
-            	en.createFrame(FurGuardiansGame.PRE_FRM + "king.2", en.createImage(FurGuardiansGame.PRE_IMG + "king.2", k2), FurGuardiansGame.DUR_CLOSED));
+            royAnm = en.createAnimation(FurGuardiansGame.PRE_ANM + "roy",
+            	en.createFrame(FurGuardiansGame.PRE_FRM + "roy.1", en.createImage(FurGuardiansGame.PRE_IMG + "roy.1", k1), FurGuardiansGame.DUR_BLINK + 20),
+            	en.createFrame(FurGuardiansGame.PRE_FRM + "roy.2", en.createImage(FurGuardiansGame.PRE_IMG + "roy.2", k2), FurGuardiansGame.DUR_CLOSED));
             pi.close();
-            final Panctor king = new Panctor();
-            king.setView(kingAnm);
-            room.addActor(king);
-            king.setMirror(true);
-            king.getPosition().set(184, 60, 2);
+            final Panctor roy = new Panctor();
+            roy.setView(royAnm);
+            room.addActor(roy);
+            roy.setMirror(true);
+            roy.getPosition().set(184, 60, 2);
             
             final Pantext text = new Pantext(Pantil.vmid(), FurGuardiansGame.font, msg);
             text.getPosition().set(8, 160, 10);
@@ -196,7 +196,7 @@ public class Castle {
         
         @Override
         protected final void onDestroy() {
-        	Panmage.destroyAll(kingAnm);
+        	Panmage.destroyAll(royAnm);
         }
     }
     
