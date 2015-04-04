@@ -2671,7 +2671,7 @@ public class Menu {
                     throw new IllegalArgumentException("Could not find Achievement " + achName);
                 }
                 newDesc = ach.getDescription() + " (" + ach.getAward() + ")";
-                newProg = ach.getProgress(pc);
+                newProg = ach.isMet(pc) ? "Done!" : ach.getProgress(pc);
                 newInf = ach.getNote();
             }
             setDescription(newDesc);

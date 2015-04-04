@@ -22,7 +22,6 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.furguardians;
 
-import java.io.*;
 import java.util.*;
 
 import org.pandcorps.core.*;
@@ -1853,14 +1852,14 @@ public class FurGuardiansGame extends BaseGame {
 	}
 	
 	protected final static List<String> getAvailableProfiles() {
-		final ArrayList<String> list = new ArrayList<String>();
+		final List<String> list = new ArrayList<String>();
 		final int extLen = EXT_PRF.length();
-		for (final String f : new File(".").list()) {
+		for (final String f : Iotil.list()) {
 			if (f.endsWith(EXT_PRF)) {
 				/*
 				// PRUNE PROFILES MADE DURING DEBUGGING; TEMPORARY
 				if (EXT_PRF.equals(f) || ("null" + EXT_PRF).equals(f)) {
-					new File(f).delete();
+					Iotil.delete(f);
 					continue;
 				}
 				*/

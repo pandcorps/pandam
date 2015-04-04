@@ -39,6 +39,8 @@ public final class Iotil {
 	
 	private static ResourceDeleter resourceDeleter = new FileResourceDeleter();
 	
+	private static ResourceLister resourceLister = new FileResourceLister();
+	
 	private Iotil() {
 		throw new Error();
 	}
@@ -75,6 +77,10 @@ public final class Iotil {
 	
 	public final static boolean delete(final String location) {
 	    return resourceDeleter.delete(location);
+	}
+	
+	public final static String[] list() {
+		return resourceLister.list();
 	}
 	
 	public final static Reader getReader(final String location) {
@@ -207,6 +213,10 @@ public final class Iotil {
 		Iotil.resourceDeleter = resourceDeleter;
 	}
 	
+	public final static void setResourceLister(final ResourceLister resourceLister) {
+		Iotil.resourceLister = resourceLister;
+	}
+	
 	public static interface WriterFactory {
 		public Writer newWriter(final String location) throws Exception;
 	}
@@ -221,6 +231,10 @@ public final class Iotil {
 	
 	public static interface ResourceDeleter {
 		public boolean delete(final String location);
+	}
+	
+	public static interface ResourceLister {
+		public String[] list();
 	}
 	
 	private final static class FileWriterFactory implements WriterFactory {
@@ -263,6 +277,13 @@ public final class Iotil {
 		@Override
 		public final boolean delete(final String location) {
 			return new File(location).delete();
+		}
+	}
+	
+	private final static class FileResourceLister implements ResourceLister {
+		@Override
+		public final String[] list() {
+			return new File(".").list();
 		}
 	}
 	

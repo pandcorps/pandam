@@ -237,7 +237,7 @@ public abstract class Achievement extends FinName {
         
         @Override
         public final String getNote() {
-            return "Total Gems ever collected, spending won't lower total";
+            return "Total ever found, spending won't lower total";
         }
     }
 	
