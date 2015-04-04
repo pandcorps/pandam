@@ -74,12 +74,14 @@ public class Menu {
 		protected final StringBuilder inf = new StringBuilder();
 		private final StringBuilder desc = new StringBuilder();
 		private final StringBuilder desc2 = new StringBuilder();
+		private final StringBuilder desc3 = new StringBuilder();
 		protected TileMap tm = null;
 		protected Panmage timg = null;
 		protected Model actor = null;
 		protected Pantext infLbl = null;
 		protected Pantext descLbl = null;
 		protected Pantext desc2Lbl = null;
+		protected Pantext desc3Lbl = null;
 		protected boolean disabled = false;
 		protected Panform form = null;
 		protected int center = -1;
@@ -150,6 +152,7 @@ public class Menu {
 			}
 			form = new Panform(ctrl);
 			infLbl = addTitle(inf, center, getBottom());
+			infLbl.getPosition().addZ(2);
 			form.setTabListener(new FormTabListener() {@Override public void onTab(final FormTabEvent event) {
 				if (allow(event.getFocused())) {
 					clearInfo();
@@ -961,19 +964,35 @@ public class Menu {
 			Chartil.clear(desc);
 		}
 		
-		protected final void addDescription2(final int x, final int y) {
+		protected final Pantext newExtraDescription(final StringBuilder desc, final int x, final int y, final int off) {
 		    if (!isTabEnabled()) {
-		        return;
+		        return null;
 		    }
-            desc2Lbl = addTitleTiny(desc2, x + OFF_RADIO_LIST, y - (30 + (radioLinesPerPage * 8)));
+            return addTitleTiny(desc, x + OFF_RADIO_LIST, y - (24 + (off * 6) + (radioLinesPerPage * 8)));
+        }
+		
+		protected final void addDescription2(final int x, final int y) {
+			desc2Lbl = newExtraDescription(desc2, x, y, 1);
+		}
+        
+        protected final void setExtraDescription(final Pantext descLbl, final StringBuilder desc, final String val) {
+            if (descLbl == null) {
+                return;
+            }
+            Chartil.set(desc, val);
+            center(descLbl);
         }
         
         protected final void setDescription2(final String val) {
-            if (desc2Lbl == null) {
-                return;
-            }
-            Chartil.set(desc2, val);
-            center(desc2Lbl);
+        	setExtraDescription(desc2Lbl, desc2, val);
+        }
+        
+        protected final void addDescription3(final int x, final int y) {
+			desc3Lbl = newExtraDescription(desc3, x, y, 2);
+		}
+        
+        protected final void setDescription3(final String val) {
+        	setExtraDescription(desc3Lbl, desc3, val);
         }
 		
 		protected final int addExit(final String title, final int x, final int y) {
@@ -2468,6 +2487,7 @@ public class Menu {
             achRadio = addRadio("Achievements", ach, achLsn, x, y);
             addDescription(x, y);
             addDescription2(x, y);
+            addDescription3(x, y);
             initAchDesc();
 		}
 		
@@ -2671,12 +2691,12 @@ public class Menu {
                     throw new IllegalArgumentException("Could not find Achievement " + achName);
                 }
                 newDesc = ach.getDescription() + " (" + ach.getAward() + ")";
-                newProg = ach.isMet(pc) ? "Done!" : ach.getProgress(pc);
+                newProg = ach.isMet(pc) ? null : ach.getProgress(pc);
                 newInf = ach.getNote();
             }
             setDescription(newDesc);
             setDescription2(newProg);
-            setInfo(newInf);
+            setDescription3(newInf);
         }
         
         private final void initAchDesc() {
