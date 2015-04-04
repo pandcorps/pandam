@@ -1,4 +1,6 @@
-Achievements for collecting Gems.
+Fixed a bug which hid old Profile after creating new Profile on some devices.
+Added new Achievements for collecting Gems and hitting blocks.
+Added new Goals for blue Gems.
 
 *****
 
