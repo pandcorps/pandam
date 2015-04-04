@@ -402,6 +402,10 @@ public class Level {
     }
     
     protected static void initTheme() {
+    	setTheme(Map.theme.levelTheme);
+    }
+    
+    protected static void initThemeForNonSpecialMarker() {
     	final int levels = getDefeatedLevels();
     	final Statistics stats = getStatistics();
     	final Theme theme;

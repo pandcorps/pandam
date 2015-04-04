@@ -640,7 +640,7 @@ public class Map {
 	            setPlayerPosition(t);
 	            final Panscreen screen;
 	            final Building b = getBuilding(t);
-	            Level.initTheme();
+	            Level.initThemeForNonSpecialMarker();
 	            Level.seed = seed + t;
 	            if (isCabin(b)) {
 	            	screen = new Cabin.CabinScreen();
