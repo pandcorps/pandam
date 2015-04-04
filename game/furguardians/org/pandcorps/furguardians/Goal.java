@@ -77,11 +77,11 @@ public abstract class Goal implements Named {
 	public final static Goal newGoal(final byte award, final PlayerContext pc) {
 		final int max, index = award - 1;
 		if (award < 3) {
-			max = 8;
-		} else if (Map.isOnLastLevel()) {
 			max = 9;
-		} else {
+		} else if (Map.isOnLastLevel()) {
 			max = 10;
+		} else {
+			max = 11;
 		}
 		final Goal[] goals = pc.profile.currentGoals;
 		//goals[index] = null; Don't reuse same Goal when assigning a new one; don't null out before checking
@@ -98,7 +98,8 @@ public abstract class Goal implements Named {
 				case 6: g = new FallGoal(award); break;
 				case 7: g = new HitGoal(award); break;
 				case 8: g = new WordGoal(award, pc); break;
-				case 9: g = new BonusGoal(award, pc); break;
+				case 9: g = new BlueGemGoal(award, pc); break;
+				case 10: g = new BonusGoal(award, pc); break;
 				default: g = new WorldGoal(award, pc); break;
 			}
 			final Class<?> gc = g.getClass();
@@ -142,6 +143,8 @@ public abstract class Goal implements Named {
 			return new HitGoal(f);
 		} else if ("WordGoal".equals(type)) {
             return new WordGoal(f);
+		} else if ("BlueGemGoal".equals(type)) {
+            return new BlueGemGoal(f);
 		} else if ("BonusGoal".equals(type)) {
 			return new BonusGoal(f);
 		} else if ("WorldGoal".equals(type)) {
@@ -507,6 +510,36 @@ public abstract class Goal implements Named {
         @Override
         protected final String getLabelSingular() {
             return "Bonus Word";
+        }
+    }
+	
+	public final static class BlueGemGoal extends StatGoal {
+        public BlueGemGoal(final byte award, final PlayerContext pc) {
+            super(award, pc);
+        }
+        
+        protected BlueGemGoal(final Field f) {
+            super(f);
+        }
+        
+        @Override
+        protected final long getAmount() {
+            return Mathtil.pow(2, award);
+        }
+        
+        @Override
+        protected final long getCurrentAmount(final Statistics stats) {
+            return stats.foundBlueGems;
+        }
+        
+        @Override
+        protected final String getAction() {
+            return "Collect";
+        }
+        
+        @Override
+        protected final String getLabelSingular() {
+            return "Blue Gem";
         }
     }
 	
