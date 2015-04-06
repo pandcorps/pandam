@@ -39,7 +39,8 @@ public abstract class Achievement extends FinName {
 		new GreenGemFeat(),
 		new BumpFeat("Thud", 1000), new BumpFeat("Thump", 5000),
 		new BreakFeat("Wreckage", 600), new BreakFeat("Devastation", 1500),
-		new EnemyFeat("Monster Hunter", 500), new EnemyFeat("Monster Slayer", 3000)
+		new EnemyFeat("Monster Hunter", 500), new EnemyFeat("Monster Slayer", 3000),
+		new JumpFeat("Frog", 3000)
 		// level w/ no damage
 		// Bear Market, Finish Level w/ no gems
 		// Bull Market, Collect all gems in a Level
@@ -283,6 +284,17 @@ public abstract class Achievement extends FinName {
         @Override
         public final long getCurrent(final Statistics stats) {
             return stats.defeatedEnemies;
+        }
+    }
+	
+	private final static class JumpFeat extends StatFeat {
+        protected JumpFeat(final String name, final int n) {
+            super(name, n, "Jump " + n + " times", n / 10);
+        }
+        
+        @Override
+        public final long getCurrent(final Statistics stats) {
+            return stats.jumps;
         }
     }
 	
