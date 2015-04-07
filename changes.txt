@@ -1,3 +1,7 @@
+Added new Achievements.
+
+*****
+
 1.5.2 (12)
 
 Fixed a bug which hid old Profile after creating new Profile on some devices.
