@@ -23,6 +23,7 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.furguardians;
 
 import org.pandcorps.core.*;
+import org.pandcorps.furguardians.Goal.*;
 import org.pandcorps.game.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
@@ -59,6 +60,8 @@ public class GemBumped extends Pandy {
 	    }
 	    if (r < greenThreshold) {
             return AWARD_4;
+	    } else if (r < 2800 && Goal.hasCurrentGoal(player, BlueGemGoal.class)) {
+	        return AWARD_2;
 	    }
 	    return AWARD_DEF;
 	}

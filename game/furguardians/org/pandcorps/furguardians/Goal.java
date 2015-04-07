@@ -102,21 +102,34 @@ public abstract class Goal implements Named {
 				case 10: g = new BonusGoal(award, pc); break;
 				default: g = new WorldGoal(award, pc); break;
 			}
-			final Class<?> gc = g.getClass();
-			boolean skip = false;
-			for (final Goal c : goals) {
-				if (c != null && c.getClass() == gc) {
-					skip = true;
-					break;
-				}
-			}
-			if (skip) {
+			if (hasCurrentGoal(goals, g.getClass())) {
 				continue;
 			}
 			goals[index] = g;
 			return g;
 		}
 	}
+	
+	public final static boolean hasCurrentGoal(final Goal[] goals, final Class<? extends Goal> gc) {
+        for (final Goal c : goals) {
+            if (c != null && c.getClass() == gc) {
+                return true;
+            }
+        }
+        return false;
+    }
+	
+	public final static boolean hasCurrentGoal(final Profile prf, final Class<? extends Goal> gc) {
+        return prf != null && hasCurrentGoal(prf.currentGoals, gc);
+    }
+	
+    public final static boolean hasCurrentGoal(final PlayerContext pc, final Class<? extends Goal> gc) {
+        return pc != null && hasCurrentGoal(pc.profile, gc);
+    }
+    
+    public final static boolean hasCurrentGoal(final Player p, final Class<? extends Goal> gc) {
+        return p != null && hasCurrentGoal(p.pc, gc);
+    }
 	
 	public final static Goal parseField(final Field f) {
 		if (f == null) {
