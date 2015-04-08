@@ -50,9 +50,13 @@ public abstract class Goal implements Named {
 		return (getAmount() == 1) ? getLabelSingular() : getLabelPlural();
 	}
 	
+	protected String getExtra() {
+	    return "";
+	}
+	
 	@Override
 	public String getName() {
-		return getAction() + " " + getAmount() + " " + getLabel();
+		return getAction() + " " + getAmount() + " " + getLabel() + getExtra();
 	}
 	
 	public abstract String getProgress(final PlayerContext pc);
@@ -553,6 +557,11 @@ public abstract class Goal implements Named {
         @Override
         protected final String getLabelSingular() {
             return "Blue Gem";
+        }
+        
+        @Override
+        protected final String getExtra() {
+            return " from blocks";
         }
     }
 	
