@@ -132,6 +132,17 @@ public abstract class Panput {
 		//}
 	}
 	
+	public final static class MouseButton extends Panput {
+	    private final int index;
+        /*package*/ MouseButton(final Panteraction interaction, final String name, final int index) {
+            super(interaction.MOUSE, name);
+            this.index = index;
+        }
+        public final int getIndex() {
+            return index;
+        }
+	}
+	
 	public final static class Button extends Panput {
 		/*package*/ Button(final String name) {
 			super(null, name); // Buttons are created before Controller and passed to Controller constructor which assigns device

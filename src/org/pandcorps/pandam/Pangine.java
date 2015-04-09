@@ -394,6 +394,11 @@ public abstract class Pangine {
 	    }
 	}
 	
+	protected final void addMouseButton(final String name, final int i) {
+	    final Panteraction inter = getInteraction();
+	    inter.MOUSE._BUTTONS.add(new MouseButton(inter, name, i));
+	}
+	
 	protected final Button newButton(final String name) {
 		return new Panput.Button(name);
 	}

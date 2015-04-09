@@ -123,6 +123,16 @@ public abstract class Panteraction {
 	
 	public final Keyboard KEYBOARD = new Keyboard(); //TODO Should device constants be null when absent?
 	
+	public final static class Mouse extends Device {
+	    /*package*/ final List<MouseButton> _BUTTONS = new ArrayList<MouseButton>();
+	    public final List<MouseButton> BUTTONS = Collections.unmodifiableList(_BUTTONS);
+        private Mouse() {
+            super("Mouse");
+        }
+    }
+    
+    public final Mouse MOUSE = new Mouse();
+	
 	public final static class Controller extends Device {
 		public final Button LEFT;
 		public final Button RIGHT;

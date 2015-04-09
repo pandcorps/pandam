@@ -101,6 +101,12 @@ public final class LwjglPangine extends GlPangine {
 	
     @Override
 	protected void initInput() throws Exception {
+        Mouse.create();
+        final int ms = Mouse.getButtonCount();
+        for (int i = 0; i < ms; i++) {
+            addMouseButton(Mouse.getButtonName(i), i);
+        }
+        
 		Controllers.create();
 		final int cs = Controllers.getControllerCount();
 		for (int i = 0; i < cs; i++) {
@@ -229,6 +235,8 @@ public final class LwjglPangine extends GlPangine {
 			activate(button, a);
 		}
 		Controllers.clearEvents();
+		
+		//Mouse.
 	}
     
     @Override
@@ -239,6 +247,7 @@ public final class LwjglPangine extends GlPangine {
     @Override
 	protected void onDestroy() {
 		Display.destroy();
+		Mouse.destroy();
 		Controllers.destroy();
 	}
 	
