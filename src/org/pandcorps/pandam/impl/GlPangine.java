@@ -334,10 +334,13 @@ public abstract class GlPangine extends Pangine {
         }
 	}
 	
+	protected final int getEffectiveCoordinate(final float rawCoordinate) {
+		return Math.round(rawCoordinate / getZoom());
+	}
+	
 	public final void addTouchEvent(final int id, final byte type, final float x, final float y) {
-		final float zoom = getZoom();
 		//touchEvents.add(new TouchEvent(id, type, Math.round(x / zoom), Math.round((getTruncatedHeight() - y) / zoom)));
-		touchEvents.add(new TouchEvent(id, type, Math.round(x / zoom), Math.round((getDisplayHeight() - 1 - y) / zoom)));
+		touchEvents.add(new TouchEvent(id, type, getEffectiveCoordinate(x), getEffectiveCoordinate(getDisplayHeight() - 1 - y)));
 		/*
 		If bottom row is touched, incoming y will be displayHeight - 1.  We want to convert that to 0.
 		If top row is touched, incoming y will be 0.  We'd convert that to displayHeight - 1.

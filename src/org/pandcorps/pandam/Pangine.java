@@ -399,6 +399,18 @@ public abstract class Pangine {
 	    inter.MOUSE._BUTTONS.add(new MouseButton(inter, name, i));
 	}
 	
+	public int getMouseX() {
+    	return 0;
+    }
+    
+    public int getMouseY() {
+    	return 0;
+    }
+	
+	public boolean isMouseSupported() {
+		return false;
+	}
+	
 	protected final Button newButton(final String name) {
 		return new Panput.Button(name);
 	}

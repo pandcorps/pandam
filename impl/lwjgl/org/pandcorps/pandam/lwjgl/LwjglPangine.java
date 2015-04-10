@@ -95,7 +95,7 @@ public final class LwjglPangine extends GlPangine {
 	        buf.rewind();
 	        Mouse.setNativeCursor(new Cursor(1, 1, 0, 0, 1, buf, null));
 	        Mouse.setGrabbed(true);
-	        Mouse.setCursorPosition(0, 0);
+	        //Mouse.setCursorPosition(0, 0);
 	    }
 	}
 	
@@ -237,6 +237,21 @@ public final class LwjglPangine extends GlPangine {
 		Controllers.clearEvents();
 		
 		//Mouse.
+	}
+    
+    @Override
+    public final int getMouseX() {
+    	return getEffectiveCoordinate(Mouse.getX());
+    }
+    
+    @Override
+    public final int getMouseY() {
+    	return getEffectiveCoordinate(Mouse.getY());
+    }
+    
+    @Override
+    public final boolean isMouseSupported() {
+		return true;
 	}
     
     @Override
