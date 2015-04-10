@@ -118,6 +118,10 @@ public class Menu {
 			return (Pangine.getEngine().getEffectiveWidth() - 170) / 2;
 		}
 		
+		protected boolean isCursorDisplayed() {
+			return true;
+		}
+		
 		protected boolean isPlayerDisplayed() {
 			return true;
 		}
@@ -137,6 +141,13 @@ public class Menu {
 			final TileMapImage[][] imgMap = tm.splitImageMap(timg);
 			tm.fillBackground(imgMap[1][1], 0, 1);
 			room.addActor(tm);
+			
+			if (isCursorDisplayed()) {
+				final Cursor cursor = Cursor.addCursor(room, FurGuardiansGame.menuCursor);
+				if (cursor != null) {
+					FurGuardiansGame.setDepth(cursor, 20);
+				}
+			}
 			
 			if (pc != null) {
 				if (isPlayerDisplayed()) {
@@ -447,8 +458,8 @@ public class Menu {
 		}
 		
 		protected final boolean isTabEnabled() {
-			return Pangine.getEngine().isTouchSupported();
-			//return false;
+			final Pangine engine = Pangine.getEngine();
+			return engine.isTouchSupported() || engine.isMouseSupported();
 		}
 		
 		protected final int displayGoals(final int x, int y, final List<Panctor> list) {
@@ -593,7 +604,7 @@ public class Menu {
 		}
 		
 		protected final TouchButton newSub(final int x, final int y) {
-            return Pangine.getEngine().isTouchSupported() ? newRadioSubmitButton(x, y) : null;
+            return isTabEnabled() ? newRadioSubmitButton(x, y) : null;
         }
         
 		protected final TouchButton newBuy(final int x, final int y) {
@@ -1095,6 +1106,11 @@ public class Menu {
         }
 	    
 	    @Override
+	    protected final boolean isCursorDisplayed() {
+			return false;
+		}
+	    
+	    @Override
         protected final void menu() {
 	        FurGuardiansGame.loaders = null;
 	        final int bottom = getBottom();
@@ -1432,7 +1448,7 @@ public class Menu {
             		avt.setName(pc.profile.getName());
             	}
             }
-            if (Pangine.getEngine().isTouchSupported() && Config.defaultProfileName == null && newToDefault) {
+            if (isTabEnabled() && Config.defaultProfileName == null && newToDefault) {
             	Config.defaultProfileName = pc.profile.getName();
             }
             Config.serialize();

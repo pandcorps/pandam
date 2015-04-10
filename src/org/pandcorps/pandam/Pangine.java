@@ -411,6 +411,10 @@ public abstract class Pangine {
 		return false;
 	}
 	
+	//@OverrideMe
+	public void setMouseTouchEnabled(final boolean mouseTouchEnabled) {
+	}
+	
 	protected final Button newButton(final String name) {
 		return new Panput.Button(name);
 	}

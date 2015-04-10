@@ -36,6 +36,7 @@ import org.pandcorps.pandam.impl.*;
 
 public final class LwjglPangine extends GlPangine {
 	private static LwjglPangine engine = null;
+	private static boolean mouseTouchEnabled = false;
 
 	private LwjglPangine() {
 		super(new LwjglPanteraction());
@@ -236,7 +237,26 @@ public final class LwjglPangine extends GlPangine {
 		}
 		Controllers.clearEvents();
 		
-		//Mouse.
+		Mouse.poll();
+		while (Mouse.next()) {
+			if (!mouseTouchEnabled) {
+				continue;
+			}
+			final int btn = Mouse.getEventButton();
+			final byte type;
+			if (btn == -1) {
+				if (Mouse.isButtonDown(0)) {
+					type = Panput.TOUCH_MOVE;
+				} else {
+					continue;
+				}
+			} else if (btn == 0) {
+				type = Mouse.getEventButtonState() ? Panput.TOUCH_DOWN : Panput.TOUCH_UP;
+			} else {
+				continue;
+			}
+			addTouchEvent(0, type, Mouse.getEventX(), Mouse.getEventY());
+		}
 	}
     
     @Override
@@ -255,8 +275,13 @@ public final class LwjglPangine extends GlPangine {
 	}
     
     @Override
+    public final void setMouseTouchEnabled(final boolean mouseTouchEnabled) {
+    	LwjglPangine.mouseTouchEnabled = mouseTouchEnabled;
+    }
+    
+    @Override
     public final boolean isTouchSupported() {
-    	return false;
+    	return mouseTouchEnabled;
     }
     
     @Override

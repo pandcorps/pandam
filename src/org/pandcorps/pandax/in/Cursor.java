@@ -30,12 +30,14 @@ public class Cursor extends Panctor implements StepListener {
 	
 	public final static Cursor addCursor(final Panlayer layer, final Panmage img) {
 		Panctor.destroy(active);
-		if (!Pangine.getEngine().isMouseSupported()) {
+		final Pangine engine = Pangine.getEngine();
+		if (!engine.isMouseSupported()) {
 			return null;
 		}
 		active = new Cursor();
 		active.setView(img);
 		layer.addActor(active);
+		engine.setMouseTouchEnabled(true);
 		return active;
 	}
 	
@@ -51,8 +53,13 @@ public class Cursor extends Panctor implements StepListener {
 	}
 	
 	@Override
-	public void onStep(final StepEvent event) {
+	public final void onStep(final StepEvent event) {
 		final Pangine engine = Pangine.getEngine();
 		getPosition().set(engine.getMouseX(), engine.getMouseY());
+	}
+	
+	@Override
+	public final void onDestroy() {
+		Pangine.getEngine().setMouseTouchEnabled(false);
 	}
 }

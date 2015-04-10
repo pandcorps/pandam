@@ -41,6 +41,7 @@ public abstract class GlPangine extends Pangine {
 	protected final Set<Panput> active = Coltil.newSafeSet();
 	protected final Set<Panput> newActive = Coltil.newSafeSet();
 	protected final Set<Panput> ended = Coltil.newSafeSet();
+	protected boolean touchYInverted = false;
 	protected final static List<TouchEvent> touchEvents = Coltil.newSafeList();
 	protected final static List<TouchButton> touchButtons = Coltil.newSafeList();
 	private final static Map<Integer, Panput> touchMap = new HashMap<Integer, Panput>();
@@ -340,7 +341,7 @@ public abstract class GlPangine extends Pangine {
 	
 	public final void addTouchEvent(final int id, final byte type, final float x, final float y) {
 		//touchEvents.add(new TouchEvent(id, type, Math.round(x / zoom), Math.round((getTruncatedHeight() - y) / zoom)));
-		touchEvents.add(new TouchEvent(id, type, getEffectiveCoordinate(x), getEffectiveCoordinate(getDisplayHeight() - 1 - y)));
+		touchEvents.add(new TouchEvent(id, type, getEffectiveCoordinate(x), getEffectiveCoordinate(touchYInverted ? (getDisplayHeight() - 1 - y) : y)));
 		/*
 		If bottom row is touched, incoming y will be displayHeight - 1.  We want to convert that to 0.
 		If top row is touched, incoming y will be 0.  We'd convert that to displayHeight - 1.
@@ -414,6 +415,7 @@ public abstract class GlPangine extends Pangine {
 	    
 	    ended.clear();
 	    stepControl();
+	    stepTouch();
 		for (final Panput input : active) {
 			onAction(input);
 		}
@@ -479,7 +481,7 @@ public abstract class GlPangine extends Pangine {
 	
 	private final void deactivate(final Panput input) {
 		boolean uncaught = true;
-		for (final ActionEndListener endListener : Coltil.unnull(interaction.getEndListeners(input))) {
+		for (final ActionEndListener endListener : Coltil.copy(interaction.getEndListeners(input))) {
 			//endListener.onActionEnd(ActionEndEvent.INSTANCE);
 		    if (!isActive(getActor(endListener))) {
                 continue;

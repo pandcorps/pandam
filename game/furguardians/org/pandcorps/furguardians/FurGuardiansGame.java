@@ -296,6 +296,7 @@ public class FurGuardiansGame extends BaseGame {
 	protected static Panmage menuRgb = null;
 	protected static Panmage menuEyesDragon = null;
 	protected static Panmage menuButtons = null;
+	protected static Panmage menuCursor = null;
 	protected static Panmage redUp = null;
 	protected static Panmage redDown = null;
 	protected static Panmage greenUp = null;
@@ -1402,7 +1403,14 @@ public class FurGuardiansGame extends BaseGame {
 		loaders.add(new Runnable() { @Override public final void run() {
 			TitleScreen.generateTitleCharacters(); }});
 		
-		if (engine.isTouchSupported()) {
+		if (engine.isMouseSupported()) {
+			loaders.add(new Runnable() { @Override public final void run() {
+				final Img icn = ImtilX.loadImage(RES + "menu/Cursor.png", false);
+				menuCursor = Pangine.getEngine().createImage(Pantil.vmid(), new FinPanple2(0, 15), null, null, icn);
+				icn.close(); }});
+		}
+		
+		if (engine.isTouchSupported() || engine.isMouseSupported()) {
 			btnLoader = new Runnable() { @Override public final void run() {
 				// 400 x 240
 				DIM_BUTTON = (Math.min(60 * engine.getEffectiveWidth() / 400, 60 * engine.getEffectiveHeight() / 240) / 4 + Config.btnSize) * 4 - 1;
