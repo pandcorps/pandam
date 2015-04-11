@@ -134,6 +134,7 @@ public class Menu {
 			final Pangine engine = Pangine.getEngine();
 			final Pancolor bgColor = new FinPancolor((short) 128, (short) 192, Pancolor.MAX_VALUE);
 			engine.setBgColor(PixelFilter.filterColor(Map.theme.getSkyFilter(), bgColor));
+			Level.initTheme();
 			
 			tm = new TileMap(Pantil.vmid(), room, ImtilX.DIM, ImtilX.DIM);
 			Level.tm = tm;
