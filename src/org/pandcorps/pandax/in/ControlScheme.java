@@ -130,6 +130,7 @@ public class ControlScheme {
     
     public final void mapDown(final MappableInput down) {
     	MappableInput.setMappedInput(down, this.down);
+    	originalDown = down;
     }
     
     public final Panput getUp() {
@@ -146,6 +147,7 @@ public class ControlScheme {
     
     public final void mapUp(final MappableInput up) {
     	MappableInput.setMappedInput(up, this.up);
+    	originalUp = up;
     }
     
     public final Panput getLeft() {
@@ -162,6 +164,7 @@ public class ControlScheme {
     
     public final void mapLeft(final MappableInput left) {
     	MappableInput.setMappedInput(left, this.left);
+    	originalLeft = left;
     }
     
     public final Panput getRight() {
@@ -178,6 +181,7 @@ public class ControlScheme {
     
     public final void mapRight(final MappableInput right) {
     	MappableInput.setMappedInput(right, this.right);
+    	originalRight = right;
     }
     
     public final Panput get1() {
@@ -194,6 +198,7 @@ public class ControlScheme {
     
     public final void map1(final MappableInput act1) {
     	MappableInput.setMappedInput(act1, this.act1);
+    	original1 = act1;
     }
     
     public final Panput get2() {
@@ -210,6 +215,7 @@ public class ControlScheme {
     
     public final void map2(final MappableInput act2) {
     	MappableInput.setMappedInput(act2, this.act2);
+    	original2 = act2;
     }
     
     public final Panput getSubmit() {
@@ -226,5 +232,6 @@ public class ControlScheme {
     
     public final void mapSubmit(final MappableInput sub) {
     	MappableInput.setMappedInput(sub, this.sub);
+    	originalSub = sub;
     }
 }
