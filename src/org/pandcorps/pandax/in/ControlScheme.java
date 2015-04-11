@@ -30,12 +30,19 @@ public class ControlScheme {
 	// Each input below could be a key, but device could be a touch screen mapping buttons to keys
 	private Device device = null;
     private Panput down = null;
+    private MappableInput originalDown = null;
     private Panput up = null;
+    private MappableInput originalUp = null;
     private Panput left = null;
+    private MappableInput originalLeft = null;
     private Panput right = null;
+    private MappableInput originalRight = null;
     private Panput act1 = null;
+    private MappableInput original1 = null;
     private Panput act2 = null;
+    private MappableInput original2 = null;
     private Panput sub = null;
+    private MappableInput originalSub = null;
     
     public ControlScheme() {
     }
@@ -92,13 +99,13 @@ public class ControlScheme {
     }
     
     public void map(final MappableInput down, final MappableInput up, final MappableInput left, final MappableInput right, final MappableInput act1, final MappableInput act2, final MappableInput sub) {
-    	MappableInput.setMappedInput(down, this.down);
-    	MappableInput.setMappedInput(up, this.up);
-    	MappableInput.setMappedInput(left, this.left);
-    	MappableInput.setMappedInput(right, this.right);
-    	MappableInput.setMappedInput(act1, this.act1);
-    	MappableInput.setMappedInput(act2, this.act2);
-    	MappableInput.setMappedInput(sub, this.sub);
+    	mapDown(down);
+    	mapUp(up);
+    	mapLeft(left);
+    	mapRight(right);
+    	map1(act1);
+    	map2(act2);
+    	mapSubmit(sub);
     }
     
     public final Device getDevice() {
@@ -113,6 +120,10 @@ public class ControlScheme {
         return down;
     }
     
+    public final Panput getOriginalDown() {
+        return originalDown == null ? down : originalDown;
+    }
+    
     public final void setDown(final Panput down) {
         this.down = down;
     }
@@ -123,6 +134,10 @@ public class ControlScheme {
     
     public final Panput getUp() {
         return up;
+    }
+    
+    public final Panput getOriginalUp() {
+        return originalUp == null ? up : originalUp;
     }
     
     public final void setUp(final Panput up) {
@@ -137,6 +152,10 @@ public class ControlScheme {
         return left;
     }
     
+    public final Panput getOriginalLeft() {
+        return originalLeft == null ? left : originalLeft;
+    }
+    
     public final void setLeft(final Panput left) {
         this.left = left;
     }
@@ -147,6 +166,10 @@ public class ControlScheme {
     
     public final Panput getRight() {
         return right;
+    }
+    
+    public final Panput getOriginalRight() {
+        return originalRight == null ? right : originalRight;
     }
     
     public final void setRight(final Panput right) {
@@ -161,6 +184,10 @@ public class ControlScheme {
         return act1;
     }
     
+    public final Panput getOriginal1() {
+        return original1 == null ? act1 : original1;
+    }
+    
     public final void set1(final Panput act1) {
         this.act1 = act1;
     }
@@ -173,6 +200,10 @@ public class ControlScheme {
         return act2;
     }
     
+    public final Panput getOriginal2() {
+        return original2 == null ? act2 : original2;
+    }
+    
     public final void set2(final Panput act2) {
         this.act2 = act2;
     }
@@ -183,6 +214,10 @@ public class ControlScheme {
     
     public final Panput getSubmit() {
         return sub;
+    }
+    
+    public final Panput getOriginalSubmit() {
+        return originalSub == null ? sub : originalSub;
     }
     
     public final void setSubmit(final Panput sub) {

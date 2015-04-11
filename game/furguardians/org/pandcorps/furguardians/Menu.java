@@ -233,11 +233,11 @@ public class Menu {
 			if (full) {
 			    final int rad = getTouchButtonRadius(), dmtr = rad * 2;
 				y = rad;
-				down = addDiamondButton(room, "Down", rad, 0, input, act, ctrl.getDown());
-				up = addDiamondButton(room, "Up", rad, dmtr, input, act, ctrl.getUp());
+				down = addDiamondButton(room, "Down", rad, 0, input, act, ctrl.getOriginalDown());
+				up = addDiamondButton(room, "Up", rad, dmtr, input, act, ctrl.getOriginalUp());
 				rx = dmtr;
-				//act2 = addCircleButton(room, "Act2", r - d, 0, input, act, ctrl.get2());
-				//sub = addCircleButton(room, "Sub", r - d, engine.getEffectiveHeight() - d, input, act, ctrl.getSubmit());
+				//act2 = addCircleButton(room, "Act2", r - d, 0, input, act, ctrl.getOriginal2());
+				//sub = addCircleButton(room, "Sub", r - d, engine.getEffectiveHeight() - d, input, act, ctrl.getOriginalSubmit());
 				final Panple ts = FurGuardiansGame.menu.getSize();
 				final int tw = (int) ts.getX();
 				act2 = newFormButton(room, "Act2", r - tw, t - (int) ts.getY(), FurGuardiansGame.menuOptions, "Menu");
@@ -253,9 +253,9 @@ public class Menu {
 			final TouchButton left, right;
 			final MappableInput act1;
 			if (mode != TOUCH_JUMP) {
-    			left = addButton(room, "Left", 0, y, input, act, ctrl.getLeft(), lt, ltIn, full);
-                right = addButton(room, "Right", rx, y, input, act, ctrl.getRight(), rt, rtIn, full);
-                act1 = addCircleButton(room, "Act1", r - rx, 0, input, act, ctrl.get1(), full);
+    			left = addButton(room, "Left", 0, y, input, act, ctrl.getOriginalLeft(), lt, ltIn, full);
+                right = addButton(room, "Right", rx, y, input, act, ctrl.getOriginalRight(), rt, rtIn, full);
+                act1 = addCircleButton(room, "Act1", r - rx, 0, input, act, ctrl.getOriginal1(), full);
 			} else {
 			    left = null;
 			    right = null;
