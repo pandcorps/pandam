@@ -217,8 +217,7 @@ public class Menu {
 				return;
 			}
 			//info("Found ControlScheme");
-			final Panput temp = ctrl.get1();
-			if (temp != null && !(temp.getDevice() instanceof Touchscreen)) {
+			if (ctrl.getDevice() instanceof Touchscreen) {
         		return;
         	}
 			//info("Found touch scheme");
