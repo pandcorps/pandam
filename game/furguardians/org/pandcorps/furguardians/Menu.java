@@ -217,7 +217,7 @@ public class Menu {
 				return;
 			}
 			//info("Found ControlScheme");
-			if (ctrl.getDevice() instanceof Touchscreen) {
+			if (!(ctrl.getDevice() instanceof Touchscreen)) {
         		return;
         	}
 			//info("Found touch scheme");
