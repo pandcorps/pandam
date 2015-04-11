@@ -22,17 +22,17 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandam.event.action;
 
-import org.pandcorps.pandam.Panput;
+import org.pandcorps.pandam.*;
 
 public final class ActionEndEvent extends InputEvent {
 	//public final static ActionEndEvent INSTANCE = new ActionEndEvent();
 
-    public final static ActionEndEvent getEvent(final Panput input) {
-        return new ActionEndEvent(input); // Could cache these
+    public final static ActionEndEvent getEvent(final Panput input, final Panput originalInput) {
+        return new ActionEndEvent(input, originalInput); // Could cache these
     }
     
 	//private ActionEndEvent() {
-    private ActionEndEvent(final Panput input) {
-        super(input);
+    private ActionEndEvent(final Panput input, final Panput originalInput) {
+        super(input, originalInput);
 	}
 }

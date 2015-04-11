@@ -27,11 +27,11 @@ import org.pandcorps.pandam.*;
 public final class ActionStartEvent extends InputEvent {
 	//public final static ActionStartEvent INSTANCE = new ActionStartEvent();
     
-    public final static ActionStartEvent getEvent(final Panput input) {
-        return new ActionStartEvent(input); // Could cache these
+    public final static ActionStartEvent getEvent(final Panput input, final Panput originalInput) {
+        return new ActionStartEvent(input, originalInput); // Could cache these
     }
     
-    private ActionStartEvent(final Panput input) {
-        super(input);
+    private ActionStartEvent(final Panput input, final Panput originalInput) {
+        super(input, originalInput);
     }
 }

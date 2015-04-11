@@ -542,7 +542,7 @@ public class Map {
 					return;
 				}
 			    final Panput input = event.getInput();
-			    final Device device = input.getDevice();
+			    final Device device = event.getDevice();
 			    for (final PlayerContext oc : FurGuardiansGame.pcs) {
 			        if (oc.getDevice().equals(device)) {
 			        	if (oc.index > 0 && getMenuInput(oc.ctrl) == input) {

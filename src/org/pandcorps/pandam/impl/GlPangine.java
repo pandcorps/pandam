@@ -443,12 +443,16 @@ public abstract class GlPangine extends Pangine {
 	}
 	
 	protected final void activate(final Panput input, final boolean active) {
+		activate(input, active, null);
+	}
+	
+	private final void activate(final Panput input, final boolean active, final Panput originalInput) {
 		if (input == null) {
 			return;
 		} else if (active) {
-			activate(input);
+			activate(input, originalInput);
 		} else {
-			deactivate(input);
+			deactivate(input, originalInput);
 		}
 	}
 	
@@ -457,13 +461,17 @@ public abstract class GlPangine extends Pangine {
 		if (c == TouchButton.class) {
 		    final TouchButton btn = (TouchButton) input;
 			btn.activate(active);
-			activate(btn.getMappedInput(), active);
+			activate(btn.getMappedInput(), active, input);
 		} else if (c == Touch.class) {
-			activate(((Touch) input).getMappedInput(), active);
+			activate(((Touch) input).getMappedInput(), active, input);
 		}
 	}
 	
 	private final void activate(final Panput input) {
+		activate(input, null);
+	}
+	
+	private final void activate(final Panput input, final Panput originalInput) {
 		// copy to prevent ConcurrentModificationException
 		for (final ActionStartListener startListener : Coltil.copy(interaction.getStartListeners(input))) {
 			//startListener.onActionStart(ActionStartEvent.INSTANCE);
@@ -471,7 +479,7 @@ public abstract class GlPangine extends Pangine {
 		    if (!isActive(getActor(startListener))) {
 		    	continue;
 		    }
-			startListener.onActionStart(ActionStartEvent.getEvent(input));
+			startListener.onActionStart(ActionStartEvent.getEvent(input, originalInput));
 		}
 		/*final Panction action = interaction.getAction(input);
 		if (action != null) {
@@ -484,13 +492,17 @@ public abstract class GlPangine extends Pangine {
 	}
 	
 	private final void deactivate(final Panput input) {
+		deactivate(input, null);
+	}
+	
+	private final void deactivate(final Panput input, final Panput originalInput) {
 		boolean uncaught = true;
 		for (final ActionEndListener endListener : Coltil.copy(interaction.getEndListeners(input))) {
 			//endListener.onActionEnd(ActionEndEvent.INSTANCE);
 		    if (!isActive(getActor(endListener))) {
                 continue;
             }
-		    endListener.onActionEnd(ActionEndEvent.getEvent(input));
+		    endListener.onActionEnd(ActionEndEvent.getEvent(input, originalInput));
 		    uncaught = false;
 		}
 		if (uncaught && input == interaction.BACK) {

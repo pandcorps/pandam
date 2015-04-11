@@ -24,14 +24,17 @@ package org.pandcorps.pandam.event.action;
 
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.Panput.*;
+import org.pandcorps.pandam.Panteraction.*;
 import org.pandcorps.pandam.event.*;
 
 public class InputEvent extends Panvent {
     private final Panput input;
+    private final Panput originalInput;
 
     ///*package*/ InputEvent() {
-    /*package*/ InputEvent(final Panput input) {
+    /*package*/ InputEvent(final Panput input, final Panput originalInput) {
         this.input = input;
+        this.originalInput = originalInput;
     }
     
     /*private final Character character; // Won't be valued for non-key events or some key events
@@ -55,5 +58,13 @@ public class InputEvent extends Panvent {
     public final Character getCharacter() {
         //return character;
         return input.getClass() == Key.class ? ((Key) input).getCurrentCharacter() : null;
+    }
+    
+    public final Panput getOriginalInput() {
+        return originalInput == null ? input : originalInput;
+    }
+    
+    public final Device getDevice() {
+    	return getOriginalInput().getDevice();
     }
 }
