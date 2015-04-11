@@ -1209,7 +1209,9 @@ public class Menu {
         	if (device instanceof Touchscreen) {
         		//final Touch touch = Pangine.getEngine().getInteraction().TOUCH;
         		//ctrl = new ControlScheme(null, null, null, null, touch, touch, touch);
+        		// Will map touch buttons to keys instead of binding actions directly to touch buttons
         		ctrl = ControlScheme.getDefaultKeyboard();
+        		ctrl.setDefault(device);
         	} else {
         		ctrl = ControlScheme.getDefault(device);
         	}

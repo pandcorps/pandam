@@ -27,6 +27,8 @@ import org.pandcorps.pandam.Panput.*;
 import org.pandcorps.pandam.Panteraction.*;
 
 public class ControlScheme {
+	// Each input below could be a key, but device could be a touch screen mapping buttons to keys
+	private Device device = null;
     private Panput down = null;
     private Panput up = null;
     private Panput left = null;
@@ -97,6 +99,14 @@ public class ControlScheme {
     	MappableInput.setMappedInput(act1, this.act1);
     	MappableInput.setMappedInput(act2, this.act2);
     	MappableInput.setMappedInput(sub, this.sub);
+    }
+    
+    public final Device getDevice() {
+    	return device == null ? get1().getDevice() : device;
+    }
+    
+    public final void setDevice(final Device device) {
+    	this.device = device;
     }
     
     public final Panput getDown() {

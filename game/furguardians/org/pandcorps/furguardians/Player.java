@@ -218,7 +218,7 @@ public class Player extends Character implements CollisionListener {
 	    }
 	    
 	    public final Device getDevice() {
-	        return ctrl.get1().getDevice();
+	        return ctrl.getDevice();
 	    }
 	    
 	    private final void commitGems() {
