@@ -252,7 +252,7 @@ public class Menu {
 				//sub = null;
 			}
 			final TouchButton left, right;
-			final Panput act1;
+			final MappableInput act1;
 			if (mode != TOUCH_JUMP) {
     			left = addButton(room, "Left", 0, y, input, act, ctrl.getLeft(), lt, ltIn, full);
                 right = addButton(room, "Right", rx, y, input, act, ctrl.getRight(), rt, rtIn, full);
@@ -274,7 +274,7 @@ public class Menu {
 				registerPromptQuit(pause.getActor(), pause);
 			}
 			if (input) {
-				ctrl.set(down, up, left, right, act1, act2, act2);
+				ctrl.map(down, up, left, right, act1, act2, act2);
 			}
 			Panctor actor = act1 instanceof TouchButton ? ((TouchButton) act1).getActor() : null;
 			if (actor == null) {
@@ -538,16 +538,17 @@ public class Menu {
 		
 		protected final RadioGroup addRadio(final String title, final List<? extends CharSequence> list, final RadioSubmitListener subLsn, final RadioSubmitListener chgLsn, final int xb, int y, final TouchButton sub) {
 			final int x;
-			if (tabsSupported && isTabEnabled()) {
+			final boolean tab = tabsSupported && isTabEnabled();
+			if (tab) {
 				final int yt = y - OFF_RADIO_Y;
 				final String id = Pantil.vmid();
-				ctrl.setUp(newFormButton(id + ".radio.up", xb, y, FurGuardiansGame.menuUp));
-				ctrl.setDown(newFormButton(id + ".radio.down", xb, yt, FurGuardiansGame.menuDown));
+				ctrl.mapUp(newFormButton(id + ".radio.up", xb, y, FurGuardiansGame.menuUp));
+				ctrl.mapDown(newFormButton(id + ".radio.down", xb, yt, FurGuardiansGame.menuDown));
 				if (subLsn != null) {
 					//final TouchButton sub = newFormButton(id + ".radio.submit", x + 200, yt, FurGuardiansGame.menuCheck);
 					//final TouchButton sub = null; // Will use tab bar to simulate submit button below
-					ctrl.setSubmit(sub);
-					ctrl.set1(sub);
+					ctrl.mapSubmit(sub);
+					ctrl.map1(sub);
 				}
 				x = xb + OFF_RADIO_LIST;
 				if (OFF_RADIO_Y < 100) {
@@ -557,8 +558,11 @@ public class Menu {
 				x = xb;
 			}
 			final RadioGroup grp = new RadioGroup(FurGuardiansGame.font, list, subLsn);
-			if (sub == null && subLsn != null && tabsSupported && isTabEnabled()) {
-				newTab(FurGuardiansGame.menuCheck, "Done", new Runnable() {@Override public final void run() {grp.submit();}});
+			if (tab) {
+				if (sub == null && subLsn != null) {
+					newTab(FurGuardiansGame.menuCheck, "Done", new Runnable() {@Override public final void run() {grp.submit();}});
+				}
+				grp.setReactOnEnd(true);
 			}
 			grp.setChangeListener(chgLsn);
 			addItem(grp, x, y - 16);
@@ -1203,8 +1207,9 @@ public class Menu {
         	}
         	final Device device = event.getInput().getDevice();
         	if (device instanceof Touchscreen) {
-        		final Touch touch = Pangine.getEngine().getInteraction().TOUCH;
-        		ctrl = new ControlScheme(null, null, null, null, touch, touch, touch);
+        		//final Touch touch = Pangine.getEngine().getInteraction().TOUCH;
+        		//ctrl = new ControlScheme(null, null, null, null, touch, touch, touch);
+        		ctrl = ControlScheme.getDefaultKeyboard();
         	} else {
         		ctrl = ControlScheme.getDefault(device);
         	}

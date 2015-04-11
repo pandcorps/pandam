@@ -23,6 +23,7 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.pandax.in;
 
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.Panput.*;
 import org.pandcorps.pandam.Panteraction.*;
 
 public class ControlScheme {
@@ -88,12 +89,26 @@ public class ControlScheme {
         this.sub = sub;
     }
     
+    public void map(final MappableInput down, final MappableInput up, final MappableInput left, final MappableInput right, final MappableInput act1, final MappableInput act2, final MappableInput sub) {
+    	MappableInput.setMappedInput(down, this.down);
+    	MappableInput.setMappedInput(up, this.up);
+    	MappableInput.setMappedInput(left, this.left);
+    	MappableInput.setMappedInput(right, this.right);
+    	MappableInput.setMappedInput(act1, this.act1);
+    	MappableInput.setMappedInput(act2, this.act2);
+    	MappableInput.setMappedInput(sub, this.sub);
+    }
+    
     public final Panput getDown() {
         return down;
     }
     
     public final void setDown(final Panput down) {
         this.down = down;
+    }
+    
+    public final void mapDown(final MappableInput down) {
+    	MappableInput.setMappedInput(down, this.down);
     }
     
     public final Panput getUp() {
@@ -104,12 +119,20 @@ public class ControlScheme {
         this.up = up;
     }
     
+    public final void mapUp(final MappableInput up) {
+    	MappableInput.setMappedInput(up, this.up);
+    }
+    
     public final Panput getLeft() {
         return left;
     }
     
     public final void setLeft(final Panput left) {
         this.left = left;
+    }
+    
+    public final void mapLeft(final MappableInput left) {
+    	MappableInput.setMappedInput(left, this.left);
     }
     
     public final Panput getRight() {
@@ -120,12 +143,20 @@ public class ControlScheme {
         this.right = right;
     }
     
+    public final void mapRight(final MappableInput right) {
+    	MappableInput.setMappedInput(right, this.right);
+    }
+    
     public final Panput get1() {
         return act1;
     }
     
     public final void set1(final Panput act1) {
         this.act1 = act1;
+    }
+    
+    public final void map1(final MappableInput act1) {
+    	MappableInput.setMappedInput(act1, this.act1);
     }
     
     public final Panput get2() {
@@ -136,11 +167,19 @@ public class ControlScheme {
         this.act2 = act2;
     }
     
+    public final void map2(final MappableInput act2) {
+    	MappableInput.setMappedInput(act2, this.act2);
+    }
+    
     public final Panput getSubmit() {
         return sub;
     }
     
     public final void setSubmit(final Panput sub) {
         this.sub = sub;
+    }
+    
+    public final void mapSubmit(final MappableInput sub) {
+    	MappableInput.setMappedInput(sub, this.sub);
     }
 }

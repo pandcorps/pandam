@@ -1,4 +1,5 @@
 Added new Achievements.
+Added mouse support.
 
 *****
 

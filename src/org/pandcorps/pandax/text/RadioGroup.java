@@ -36,6 +36,7 @@ public class RadioGroup extends TextItem {
     private Panput submit = Pangine.getEngine().getInteraction().KEY_SPACE;
     private Panput up = null;
     private Panput down = null;
+    private Boolean reactOnEnd = null;
     
     public RadioGroup(final Font font, final List<? extends CharSequence> options, final RadioSubmitListener listener) {
     	this(new Pantext(Pantil.vmid(), font, options), options, listener);
@@ -69,7 +70,13 @@ public class RadioGroup extends TextItem {
             down = ctrl.getDown();
         }
         Panput.inactivate(submit, up, down);
-        if (up.getDevice() instanceof Touchscreen) {
+        final boolean end;
+        if (reactOnEnd == null) {
+        	end = up.getDevice() instanceof Touchscreen;
+        } else {
+        	end = reactOnEnd.booleanValue();
+        }
+        if (end) {
         	registerEnd();
         } else {
         	registerStart();
@@ -159,5 +166,9 @@ public class RadioGroup extends TextItem {
     
     public CharSequence getSelected() {
         return options.get(label.radioLine);
+    }
+    
+    public void setReactOnEnd(final boolean reactOnEnd) {
+    	this.reactOnEnd = Boolean.valueOf(reactOnEnd);
     }
 }

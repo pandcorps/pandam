@@ -376,6 +376,7 @@ public abstract class GlPangine extends Pangine {
 	@Override
 	public final void clearTouchButtons() {
 		touchButtons.clear();
+		interaction.TOUCH.setMappedInput(null);
 		interaction.unregister(interaction.TOUCH);
 		//touchMap.clear(); // Thread-safety? call clearTouchEvents instead?
 	}
@@ -452,10 +453,13 @@ public abstract class GlPangine extends Pangine {
 	}
 	
 	private final void activateTouch(final Panput input, final boolean active) {
-		if (input.getClass() == TouchButton.class) {
+		final Class<?> c = input.getClass();
+		if (c == TouchButton.class) {
 		    final TouchButton btn = (TouchButton) input;
 			btn.activate(active);
 			activate(btn.getMappedInput(), active);
+		} else if (c == Touch.class) {
+			activate(((Touch) input).getMappedInput(), active);
 		}
 	}
 	

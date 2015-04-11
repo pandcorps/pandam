@@ -149,13 +149,35 @@ public abstract class Panput {
 		}
 	}
 	
-	public final static class Touch extends Panput {
+	public abstract static class MappableInput extends Panput {
+		private Panput mappedInput = null;
+		
+		/*package*/ MappableInput(final Device device, final String name) {
+			super(device, name);
+		}
+		
+		public final Panput getMappedInput() {
+		    return mappedInput;
+		}
+		
+		public final void setMappedInput(final Panput mappedInput) {
+		    this.mappedInput = mappedInput;
+		}
+		
+		public final static void setMappedInput(final MappableInput mappable, final Panput mappedInput) {
+			if (mappable != null) {
+				mappable.setMappedInput(mappedInput);
+			}
+		}
+	}
+	
+	public final static class Touch extends MappableInput {
 		public Touch(final Panteraction interaction) {
 			super(interaction.TOUCHSCREEN, "Touch");
 		}
 	}
 	
-	public static class TouchButton extends Panput {
+	public static class TouchButton extends MappableInput {
 	    // If user touches area overlapped by multiple TouchButtons...
 	    public final static byte OVERLAP_ANY = 0; // Choose any TouchButton
 	    public final static byte OVERLAP_BEST = 1; // Choose closest TouchButton
@@ -175,7 +197,6 @@ public abstract class Panput {
 		private Panlayer layer = null;
 		private byte overlapMode = OVERLAP_ANY;
 		private boolean enabled = true;
-		private Panput mappedInput = null;
 		private final boolean moveCancel;
 		
 		public TouchButton(final Panteraction interaction, final String name, final int x, final int y, final int w, final int h) {
@@ -345,14 +366,6 @@ public abstract class Panput {
 			if (imgDisabled != null) {
 				actor.setView(enabled ? imgInactive : imgDisabled);
 			}
-		}
-		
-		public Panput getMappedInput() {
-		    return mappedInput;
-		}
-		
-		public void setMappedInput(final Panput mappedInput) {
-		    this.mappedInput = mappedInput;
 		}
 		
 		public void activate(final boolean active) {
