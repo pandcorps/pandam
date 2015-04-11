@@ -1211,7 +1211,7 @@ public class Menu {
         		//ctrl = new ControlScheme(null, null, null, null, touch, touch, touch);
         		// Will map touch buttons to keys instead of binding actions directly to touch buttons
         		ctrl = ControlScheme.getDefaultKeyboard();
-        		ctrl.setDefault(device);
+        		ctrl.setDevice(device);
         	} else {
         		ctrl = ControlScheme.getDefault(device);
         	}
