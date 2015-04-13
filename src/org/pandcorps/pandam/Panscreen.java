@@ -36,8 +36,10 @@ public abstract class Panscreen {
         Panscreen.screen = screen;
         try {
             Pangame.getGame().getCurrentRoom().clear(); // Clear listeners?
-            Pangine.getEngine().clearTouchButtons();
+            final Pangine engine = Pangine.getEngine();
+            engine.clearTouchButtons();
             screen.load();
+            engine.initScreen();
         } catch (final Exception e) {
             throw Panception.get(e);
         }

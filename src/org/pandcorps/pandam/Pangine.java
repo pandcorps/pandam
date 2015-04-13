@@ -928,6 +928,10 @@ public abstract class Pangine {
 	    }
 	}
 	
+	//@OverrideMe
+	protected void initScreen() {
+	}
+	
 	/*
     Effective size of the game.
     If zooming, then "effective" pixels will be z*z squares,
