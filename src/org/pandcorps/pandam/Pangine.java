@@ -435,6 +435,11 @@ public abstract class Pangine {
 	
 	public abstract boolean isTouchSupported();
 	
+	//@OverrideMe
+	public boolean isMultiTouchSupported() {
+	    return false;
+	}
+	
 	public void setEntityMapEnabled(final boolean entityMapEnabled) {
 		this.entityMapEnabled = entityMapEnabled;
 		if (!entityMapEnabled) {

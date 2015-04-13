@@ -2803,9 +2803,11 @@ public class Menu {
             final int offY = (h >= 240) ? (btnH * 5 / 4) : btnH;
             int x = btnW / 2, y = h - btnH - offY;
             
-            newFormButton("AutoToggle", x, y, FurGuardiansGame.menuButtons, new Runnable() {@Override public final void run() {toggleAuto();}});
-            addTitle(msgAuto, x + btnW + 8, y);
-            setMessageAuto();
+            if (FurGuardiansGame.isMultiTouchSupported()) {
+                newFormButton("AutoToggle", x, y, FurGuardiansGame.menuButtons, new Runnable() {@Override public final void run() {toggleAuto();}});
+                addTitle(msgAuto, x + btnW + 8, y);
+                setMessageAuto();
+            }
             
             y -= offY;
             newFormButton("SpeedDown", x, y, FurGuardiansGame.menuLeft, new Runnable() {@Override public final void run() {incSpeed(-1);}});

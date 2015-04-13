@@ -1924,6 +1924,11 @@ public class FurGuardiansGame extends BaseGame {
 		return false;
 	}
 	
+	protected final static boolean isMultiTouchSupported() {
+	    final Pangine engine = Pangine.getEngine();
+	    return engine.isMultiTouchSupported() || engine.isMouseSupported();
+	}
+	
 	public final static void main(final String[] args) {
         try {
             new FurGuardiansGame().start();

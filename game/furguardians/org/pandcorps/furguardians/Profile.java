@@ -113,7 +113,7 @@ gems = 1000000;
     	addAll(triedJumpModes, seg, 4);
     	addAll(availableAssists, seg, 5);
     	addAll(activeAssists, seg, 6);
-    	autoRun = seg.getBoolean(7, false);
+    	autoRun = !FurGuardiansGame.isMultiTouchSupported() || seg.getBoolean(7, false);
     	frameRate = seg.getInt(8, DEF_FRAME_RATE);
     	int i = 0;
     	for (final Field f : Coltil.unnull(seg.getRepetitions(9))) {
