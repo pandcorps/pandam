@@ -95,6 +95,7 @@ public class Level {
     protected static Tile tileTrackTop = null;
     protected static Tile tileTrackBase = null;
     protected static int numEnemies = 0;
+    protected static int numGems = 0;
     protected static int currLetter = 0;
     protected static List<Panctor> collectedLetters = null;
     protected static List<Panctor> uncollectedLetters = null;
@@ -566,6 +567,7 @@ public class Level {
     
     protected final static void clear() {
         numEnemies = 0;
+        numGems = 0;
         currLetter = 0;
         Coltil.clear(collectedLetters);
     }
@@ -2514,6 +2516,7 @@ public class Level {
         	tileGem = tm.getTile(null, FurGuardiansGame.gem[0], FurGuardiansGame.TILE_GEM);
         }
         tm.setTile(x, y, tileGem);
+        numGems++;
     }
     
     private final static String[] gemFont = {

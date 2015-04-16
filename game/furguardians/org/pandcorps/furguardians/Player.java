@@ -307,6 +307,7 @@ public class Player extends Character implements CollisionListener {
 	private int returnVelocity = 0;
 	private Player returnPlayer = null;
 	protected int levelGems = 0;
+	protected int levelFloatingGems = 0;
 	protected int levelDefeatedEnemies = 0;
 	protected int levelFalls = 0;
 	protected long lastFall = -1;
@@ -646,6 +647,7 @@ public class Player extends Character implements CollisionListener {
 		final byte b = getBehavior(index);
 		if (FurGuardiansGame.TILE_GEM == b) {
 			Gem.onCollide(Level.tm, index, this);
+			levelFloatingGems++;
 		} else if (FurGuardiansGame.TILE_HURT == b) {
 			startHurt();
 		}
@@ -664,6 +666,7 @@ public class Player extends Character implements CollisionListener {
 	protected final void onNear(final int index) {
 		if (FurGuardiansGame.TILE_GEM == getBehavior(index)) {
 			new GemAttracted(index, this);
+			levelFloatingGems++; // Only used for Achievement, OK to give credit before it reaches Player
 		}
 	}
 	
