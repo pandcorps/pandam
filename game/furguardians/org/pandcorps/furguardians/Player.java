@@ -390,12 +390,14 @@ public class Player extends Character implements CollisionListener {
 	        return;
 	    }
 	    this.levelGems = p.levelGems;
+	    this.levelFloatingGems = p.levelFloatingGems;
 	    this.levelFalls = p.levelFalls;
 	    this.levelHits = p.levelHits;
 	}
 	
 	protected final void clearState() {
 	    levelGems = 0;
+	    levelFloatingGems = 0;
         levelFalls = 0;
         levelHits = 0;
 	}
