@@ -41,20 +41,20 @@ public abstract class Achievement extends FinName {
 		new BreakFeat("Wreckage", 600), new BreakFeat("Devastation", 1500),
 		new EnemyFeat("Monster Hunter", 500), new EnemyFeat("Monster Slayer", 3000),
 		new JumpFeat("Leapfrog", 3000), new HitFeat("Eagle-eyed", 10), new MonsterBumpFeat("Sneak Attack", 50),
-		new BonusLevelFeat("Roll the Dice", 5), new KickFeat("TODO", 20)
+		new BonusLevelFeat("Roll the Dice", 5), new KickFeat("Kick the Ball", 20),
+		new AllGemsFeat()
 		// level w/ no damage
-		// Bear Market, Finish Level w/ no gems
-		// Bull Market, Collect all gems in a Level
+		// Bear Market, Finish level w/ no gems
 		// Lionheart
 		// Giant Slayer
-		// Juggernaut, Break all blocks in a Level
-		// Beyond Belief, Finish Level as a flying pig
-		// Babe, Finish Level as a blue bull/ox
-		// Menagerie (Zoologist), Use each animal to finish a Level
+		// Juggernaut, Break all blocks in a level
+		// Beyond Belief, Finish level as a flying pig
+		// Babe, Finish level as a blue bull/ox
+		// Menagerie (Zoologist), Use each animal to finish a level
 		// Play a bonus level
 		// Buy a JumpMode
 		// Buy an Assist
-		// Defeat all Levels within a World (including optional one)
+		// Defeat all levels within a World (including optional one)
 	};
 	
 	private final String desc;
@@ -388,7 +388,7 @@ public abstract class Achievement extends FinName {
         
         @Override
         public final boolean isMet(final Player player) {
-            return player.levelDefeatedEnemies == 0;
+            return Level.numEnemies > 0 && player.levelDefeatedEnemies == 0;
         }
 	}
 	
@@ -400,6 +400,17 @@ public abstract class Achievement extends FinName {
         @Override
         public final boolean isMet(final Player player) {
             return Level.numEnemies > 0 && player.levelDefeatedEnemies == Level.numEnemies;
+        }
+    }
+	
+	private final static class AllGemsFeat extends CurrentFeat {
+        protected AllGemsFeat() {
+            super("Bull Market", "Collect all gems in a level", 500);
+        }
+        
+        @Override
+        public final boolean isMet(final Player player) {
+            return Level.numGems > 0 && player.levelFloatingGems == Level.numGems;
         }
     }
 	
