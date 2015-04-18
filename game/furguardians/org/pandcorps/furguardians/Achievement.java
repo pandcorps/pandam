@@ -42,9 +42,8 @@ public abstract class Achievement extends FinName {
 		new EnemyFeat("Monster Hunter", 500), new EnemyFeat("Monster Slayer", 3000),
 		new JumpFeat("Leapfrog", 3000), new HitFeat("Eagle-eyed", 10), new MonsterBumpFeat("Sneak Attack", 50),
 		new BonusLevelFeat("Roll the Dice", 5), new KickFeat("Kick the Ball", 20),
-		new AllGemsFeat()
+		new NoGemsFeat(), new AllGemsFeat()
 		// level w/ no damage
-		// Bear Market, Finish level w/ no gems
 		// Lionheart
 		// Giant Slayer
 		// Juggernaut, Break all blocks in a level
@@ -400,6 +399,17 @@ public abstract class Achievement extends FinName {
         @Override
         public final boolean isMet(final Player player) {
             return Level.numEnemies > 0 && player.levelDefeatedEnemies == Level.numEnemies;
+        }
+    }
+	
+	private final static class NoGemsFeat extends CurrentFeat {
+        protected NoGemsFeat() {
+            super("Bear Market", "Finish a level with no gems", 250);
+        }
+        
+        @Override
+        public final boolean isMet(final Player player) {
+            return Level.numGems > 0 && player.levelGems == 0;
         }
     }
 	
