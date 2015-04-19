@@ -923,7 +923,7 @@ public class Player extends Character implements CollisionListener {
         	FurGuardiansGame.soundWhoosh.startSound(); // Skipping shatter, so play another sound
             return;
         }
-        levelGems -= (Math.max(1, levelGems / 10));
+        levelGems -= (Math.max(1, (int) (levelGems * pc.profile.getDamageMultiplier())));
         GemBumped.newShatter(this);
     }
 	

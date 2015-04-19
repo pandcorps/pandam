@@ -39,6 +39,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
 	/*package*/ final static int DEF_FRAME_RATE = 30;
 	/*package*/ final static int MAX_FRAME_RATE = (DEF_FRAME_RATE * 2) - MIN_FRAME_RATE;
 	/*package*/ final static int POINTS_PER_RANK = 10;
+	private final static int DEF_DAMAGE_PERCENTAGE = 10;
     protected final ArrayList<Avatar> avatars = new ArrayList<Avatar>();
     protected Avatar currentAvatar = null;
     private int gems = 0;
@@ -56,6 +57,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
     protected boolean consoleEnabled = false;
     protected final Set<Clothing> availableHats = new HashSet<Clothing>();
     //private String version = null; // Currently only write version to save file in case we want to read it later
+    private int damagePercentage = DEF_DAMAGE_PERCENTAGE;
     protected int column = -1;
 	protected int row = -1;
 	protected final HashMap<Pair<Integer, Integer>, Boolean> open = new HashMap<Pair<Integer, Integer>, Boolean>();
@@ -129,6 +131,7 @@ gems = 1000000;
     	    availableHats.add(Avatar.getHat(f.getValue()));
         }
     	//version = seg.getValue(14); // Currently only write version to save file in case we want to read it later
+    	damagePercentage = seg.getInt(15, DEF_DAMAGE_PERCENTAGE);
     	//ctrl = seg.intValue(3);
     }
     
@@ -156,6 +159,7 @@ gems = 1000000;
             seg.addValue(13, c.res);
         }
         seg.setValue(14, FurGuardiansGame.VERSION);
+        seg.setInt(15, damagePercentage);
         //seg.setInt(3, ctrl);
     }
     
@@ -492,6 +496,10 @@ gems = 1000000;
     
     public final boolean isInvincible() {
         return activeAssists.contains(ASSIST_INVINCIBILITY);
+    }
+    
+    public final float getDamageMultiplier() {
+    	return damagePercentage / 100f;
     }
     
     public final boolean isDragonStomping() {
