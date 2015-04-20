@@ -919,11 +919,19 @@ public class Player extends Character implements CollisionListener {
 	}
 	
 	public final void onHurt() {
-        if (levelGems == 0 || pc.profile.isInvincible()) {
+	    final Profile prf = pc.profile;
+	    final boolean noGems = levelGems == 0, inv = prf.isInvincible();
+	    if (noGems && prf.endLevelIfHurtWithNoGems && !inv) {
+	        flipAndFall();
+	        destroy();
+	        FurGuardiansGame.playTransition(FurGuardiansGame.soundWhoosh);
+	        FurGuardiansGame.goMap();
+	        return;
+	    } else if (noGems || inv) {
         	FurGuardiansGame.soundWhoosh.startSound(); // Skipping shatter, so play another sound
             return;
         }
-        levelGems -= (Math.max(1, (int) (levelGems * pc.profile.getDamageMultiplier())));
+        levelGems -= (Math.max(1, (int) (levelGems * prf.getDamageMultiplier())));
         GemBumped.newShatter(this);
     }
 	

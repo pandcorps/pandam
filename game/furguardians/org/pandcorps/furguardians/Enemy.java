@@ -367,10 +367,7 @@ public class Enemy extends Character {
 		if (!skipSplat && v == 0 && def.splat != null) {
 		    burst(def.splat, splatHandler);
 		} else {
-		    final Panple pos = getPosition();
-    		final Tiles.Faller f = new Tiles.Faller((Panmage) getCurrentDisplay(), pos.getX(), pos.getY() + H, 0, v);
-    		f.setMirror(isMirror());
-    		f.setFlip(true);
+		    flipAndFall();
 		}
 		destroy();
 		return true;
