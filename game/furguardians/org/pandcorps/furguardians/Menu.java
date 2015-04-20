@@ -156,7 +156,8 @@ public class Menu {
 				}
 			    ctrl = pc.ctrl;
 			}
-			if (tabsSupported && isTabEnabled()) {
+			final boolean tabs = tabsSupported && isTabEnabled();
+			if (tabs) {
 				engine.clearTouchButtons();
 				engine.getInteraction().unregisterAll();
 			} else {
@@ -165,13 +166,15 @@ public class Menu {
 			form = new Panform(ctrl);
 			infLbl = addTitle(inf, center, getBottom());
 			infLbl.getPosition().addZ(2);
-			form.setTabListener(new FormTabListener() {@Override public void onTab(final FormTabEvent event) {
-				if (allow(event.getFocused())) {
-					clearInfo();
-				} else {
-					event.cancel();
-				}
-			}});
+			if (!tabs) {
+    			form.setTabListener(new FormTabListener() {@Override public void onTab(final FormTabEvent event) {
+    				if (allow(event.getFocused())) {
+    					clearInfo();
+    				} else {
+    					event.cancel();
+    				}
+    			}});
+			}
 			if (showGems && pc != null && pc.profile != null) {
 				addHudGems();
 				addHudRank();
