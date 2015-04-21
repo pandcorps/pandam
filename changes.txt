@@ -1,3 +1,6 @@
+Added immersive mode.
+Added infrastructure for adjustable difficulty settings.
+Improved consistency of replaying levels.
 Added new Achievements.
 Added mouse support.
 

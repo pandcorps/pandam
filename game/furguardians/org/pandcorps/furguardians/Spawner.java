@@ -22,16 +22,24 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.furguardians;
 
+import java.util.*;
+
 import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.furguardians.Enemy.*;
 
 public class Spawner extends Panctor implements StepListener {
+    private final static Random rand = new Random();
+    
 	protected Spawner(final float x, final float y) {
 		setVisible(false);
 		FurGuardiansGame.setPosition(this, x, y, FurGuardiansGame.DEPTH_ENEMY);
 		FurGuardiansGame.room.addActor(this);
+	}
+	
+	protected final static void setSeed(final long seed) {
+	    rand.setSeed(seed);
 	}
 
 	@Override
@@ -46,7 +54,7 @@ public class Spawner extends Panctor implements StepListener {
 	}
 	
 	protected EnemyDefinition getDef() {
-		return Mathtil.rand(FurGuardiansGame.enemies);
+		return Mathtil.rand(rand, FurGuardiansGame.enemies);
 	}
 	
 	public final static class SpecificSpawner extends Spawner {

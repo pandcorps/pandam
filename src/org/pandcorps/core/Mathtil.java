@@ -58,8 +58,12 @@ public final class Mathtil {
 	}
 
 	public final static int randi(final int min, final int max) {
-		return rand.nextInt(max + 1 - min) + min;
+		return randi(rand, min, max);
 	}
+	
+	public final static int randi(final Random rand, final int min, final int max) {
+        return rand.nextInt(max + 1 - min) + min;
+    }
 
 	public final static float randf(final float min, final float max) {
 		return rand.nextFloat() * (max - min) + min;
@@ -81,7 +85,11 @@ public final class Mathtil {
     }
 	
 	public final static <E> E rand(final List<E> list) {
-        return list.get(randi(0, list.size() - 1));
+	    return rand(rand, list);
+	}
+	
+	public final static <E> E rand(final Random rand, final List<E> list) {
+        return list.get(randi(rand, 0, list.size() - 1));
     }
 	
 	public final static <E> E rand(final int[] weights, final E... array) {
