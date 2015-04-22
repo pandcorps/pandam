@@ -640,8 +640,8 @@ public class Map {
 	            setPlayerPosition(t);
 	            final Panscreen screen;
 	            final Building b = getBuilding(t);
-	            Level.initThemeForNonSpecialMarker();
 	            Level.seed = seed + t;
+	            Level.initThemeForNonSpecialMarker(); // Depends on seed, so run this after assigning it
 	            if (isCabin(b)) {
 	            	screen = new Cabin.CabinScreen();
 	            } else if (isCastle(b)) {

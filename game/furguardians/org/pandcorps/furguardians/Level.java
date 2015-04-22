@@ -415,7 +415,9 @@ public class Level {
     	} else if (stats != null && stats.playedCaveLevels == 0) {
     		theme = Theme.Cave;
     	} else {
-    		final int r = Mathtil.randi(0, 99);
+    		Mathtil.setSeed(seed); // Replaying a level should always use same theme
+    		final int r = Mathtil.randi(0, 99); // so always set seed and always use first value from it
+    		//final int r = (int) (seed % 100); // using seed itself doesn't give variety; all seeds from a map are similar
     		if (r < 20) {
     			theme = Theme.Cave;
     		} else {

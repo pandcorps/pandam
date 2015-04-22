@@ -551,7 +551,7 @@ public abstract class Goal implements Named {
         
         @Override
         protected final String getAction() {
-            return "Collect";
+            return "Find";
         }
         
         @Override
@@ -561,7 +561,7 @@ public abstract class Goal implements Named {
         
         @Override
         protected final String getExtra() {
-            return " from blocks";
+            return " in blocks";
         }
     }
 	
