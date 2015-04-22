@@ -126,6 +126,14 @@ public class Menu {
 			return true;
 		}
 		
+		protected final static Cursor addCursor(final Panlayer room) {
+			final Cursor cursor = Cursor.addCursor(room, FurGuardiansGame.menuCursor);
+			if (cursor != null) {
+				FurGuardiansGame.setDepth(cursor, 20);
+			}
+			return cursor;
+		}
+		
 		@Override
 		protected final void load() throws Exception {
 			final int w = FurGuardiansGame.SCREEN_W;
@@ -144,10 +152,7 @@ public class Menu {
 			room.addActor(tm);
 			
 			if (isCursorDisplayed()) {
-				final Cursor cursor = Cursor.addCursor(room, FurGuardiansGame.menuCursor);
-				if (cursor != null) {
-					FurGuardiansGame.setDepth(cursor, 20);
-				}
+				addCursor(room);
 			}
 			
 			if (pc != null) {
@@ -293,6 +298,7 @@ public class Menu {
         private static TouchButton quitMenu = null;
         private static Pantext quitMsg = null;
         private static ListActorHandler quitHandler = null;
+        private static Cursor quitCursor = null;
 		
 		protected final static void registerBackPromptQuit(final Panctor bound) {
 			registerPromptQuit(bound, Pangine.getEngine().getInteraction().BACK);
@@ -374,6 +380,7 @@ public class Menu {
                 @Override public final void run() { destroyPromptQuit(); }});
             quitNo.setZ(15);
             engine.setPaused(true);
+            quitCursor = addCursor(room);
 		}
 		
 		protected final static void destroyPromptQuit() {
@@ -388,6 +395,8 @@ public class Menu {
             quitMsg = null;
             ListActorHandler.destroy(quitHandler);
             quitHandler = null;
+            Panctor.destroy(quitCursor);
+            quitCursor = null;
 		}
 		
 		private final static TouchButton addCircleButton(final Panlayer room, final String name, final int x, final int y,
