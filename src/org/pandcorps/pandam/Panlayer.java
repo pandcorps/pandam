@@ -401,6 +401,12 @@ public class Panlayer extends BasePantity {
         this.active = active;
     }
     
+    public final static void setActive(final Panlayer layer, final boolean active) {
+    	if (layer != null) {
+    		layer.setActive(active);
+    	}
+    }
+    
     public final boolean isActive() {
         return active;
     }

@@ -379,12 +379,17 @@ public class Menu {
             quitNo = newFormButton(room, noLbl, btnX, btnY, noImg, noLbl, new Runnable() {
                 @Override public final void run() { destroyPromptQuit(); }});
             quitNo.setZ(15);
-            engine.setPaused(true);
-            quitCursor = addCursor(room);
+            if (engine.isMouseSupported()) {
+            	quitCursor = addCursor(room);
+            	Panlayer.setActive(Level.room, false);
+            } else {
+            	engine.setPaused(true);
+            }
 		}
 		
 		protected final static void destroyPromptQuit() {
 			Pangine.getEngine().setPaused(false);
+			Panlayer.setActive(Level.room, true);
 		    TouchButton.destroy(quitYes);
             quitYes = null;
             TouchButton.destroy(quitNo);
