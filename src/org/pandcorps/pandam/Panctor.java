@@ -400,6 +400,10 @@ public class Panctor extends BasePantity implements SpecPanctor {
 	}
 	*/
 	
+	public final static boolean isActive(final Panctor actor) {
+		return actor != null && actor.isActive();
+	}
+	
 	public final static void destroy(final Panctor actor) {
 		if (actor != null) {
 			actor.destroy();
