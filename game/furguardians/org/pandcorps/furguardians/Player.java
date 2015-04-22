@@ -356,7 +356,7 @@ public class Player extends Character implements CollisionListener {
 		register(ctrl.getLeft(), new ActionListener() {
 			@Override public final void onAction(final ActionEvent event) { left(); }});
 		register(ctrl.getSubmit(), new ActionStartListener() {
-            @Override public final void onActionStart(final ActionStartEvent event) { engine.togglePause(); }});
+            @Override public final void onActionStart(final ActionStartEvent event) { togglePause(); }});
 		
 		// Debug
 		register(interaction.KEY_1, new ActionStartListener() {
@@ -489,6 +489,15 @@ public class Player extends Character implements CollisionListener {
 	
 	protected final int getVelWalk() {
 		return (Level.theme == Theme.Minecart) ? (_VEL_WALK + 1) : _VEL_WALK;
+	}
+	
+	private final void togglePause() {
+		final Pangine engine = Pangine.getEngine();
+		if (engine.isMouseSupported()) {
+			Menu.PlayerScreen.togglePromptQuit(FurGuardiansGame.hud);
+		} else {
+			engine.togglePause();
+		}
 	}
 	
 	protected boolean isDragonStomping() {

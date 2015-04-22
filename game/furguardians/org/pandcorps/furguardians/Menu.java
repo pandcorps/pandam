@@ -303,12 +303,16 @@ public class Menu {
 		    bound.register(input, new ActionEndListener() {
                 @Override
                 public final void onActionEnd(final ActionEndEvent event) {
-                    if (quitYes == null) {
-                        promptQuit(bound.getLayer());
-                    } else {
-                        destroyPromptQuit();
-                    }
+                    togglePromptQuit(bound.getLayer());
                 }});
+		}
+		
+		protected final static void togglePromptQuit(final Panlayer layer) {
+			if (quitYes == null) {
+                promptQuit(layer);
+            } else {
+                destroyPromptQuit();
+            }
 		}
 		
 		protected final static void promptQuit(final Panlayer room) {
