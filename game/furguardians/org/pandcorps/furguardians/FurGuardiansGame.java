@@ -182,6 +182,7 @@ public class FurGuardiansGame extends BaseGame {
 	protected static boolean level = false;
 	protected static Panroom room = null;
 	protected static Panlayer hud = null;
+	protected static Gem hudGem = null;
 	protected final static ArrayList<PlayerContext> pcs = new ArrayList<PlayerContext>();
 	protected static MultiFont font = null;
 	protected static Font fontTiny = null;
@@ -1569,14 +1570,14 @@ public class FurGuardiansGame extends BaseGame {
 	protected final static Panlayer addHud(final Panroom room, final boolean allowAuto, final boolean level) {
 		hud = createHud(room);
 		final int h = Pangine.getEngine().getEffectiveHeight() - 17;
-		final Gem gem = addHudGem(hud, 0, h);
+		hudGem = addHudGem(hud, 0, h);
         final int size = pcs.size();
         for (int i = 0; i < size; i++) {
         	addHud(hud, pcs.get(i), OFF_GEM + (i * 56), h, level, true);
         }
         addNotifications(hud);
         if (level) {
-        	initTouchButtons(hud, allowAuto, false, gem); // Must define actors after creating layer
+        	initTouchButtons(hud, allowAuto, false, hudGem); // Must define actors after creating layer
         }
         return hud;
 	}

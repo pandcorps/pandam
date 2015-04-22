@@ -323,6 +323,7 @@ public class Player extends Character implements CollisionListener {
 	protected final boolean[] goalsMet = new boolean[Goal.NUM_ACTIVE_GOALS];
 	protected long lastThud = -30;
 	protected long lastDragonStomp = -30;
+	private boolean firstStep = true;
 	
 	public Player(final PlayerContext pc) {
 		super(PLAYER_X, PLAYER_H);
@@ -355,8 +356,6 @@ public class Player extends Character implements CollisionListener {
 			@Override public final void onAction(final ActionEvent event) { right(); }});
 		register(ctrl.getLeft(), new ActionListener() {
 			@Override public final void onAction(final ActionEvent event) { left(); }});
-		register(ctrl.getSubmit(), new ActionStartListener() {
-            @Override public final void onActionStart(final ActionStartEvent event) { togglePause(); }});
 		
 		// Debug
 		register(interaction.KEY_1, new ActionStartListener() {
@@ -379,6 +378,11 @@ public class Player extends Character implements CollisionListener {
             @Override public final void onActionStart(final ActionStartEvent event) { engine.startCaptureFrames(); }});
         register(interaction.KEY_F3, new ActionStartListener() {
             @Override public final void onActionStart(final ActionStartEvent event) { engine.stopCaptureFrames(); }});
+	}
+	
+	private final void registerPause() {
+		(Panctor.isActive(FurGuardiansGame.hudGem) ? FurGuardiansGame.hudGem : this).register(pc.ctrl.getSubmit(), new ActionStartListener() {
+            @Override public final void onActionStart(final ActionStartEvent event) { togglePause(); }});
 	}
 	
 	private final Panput getJumpInput() {
@@ -606,6 +610,10 @@ public class Player extends Character implements CollisionListener {
 	
 	@Override
 	protected final boolean onStepCustom() {
+		if (firstStep) {
+			registerPause();
+			firstStep = false;
+		}
 	    if (hurtTimer > 0) {
 	        hurtTimer--;
 	        if (hurtTimer == 0 && mode == MODE_FROZEN) {
