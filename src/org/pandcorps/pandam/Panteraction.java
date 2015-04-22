@@ -470,7 +470,7 @@ public abstract class Panteraction {
     }
 	
 	private final static <T> void unregister(final HashMultimap<?, T> map, final Iterable<T> list) {
-	    for (final T listener : Coltil.unnull(list)) {
+	    for (final T listener : Coltil.copy(list)) {
 	        unregister(map, listener);
 	    }
 	}
