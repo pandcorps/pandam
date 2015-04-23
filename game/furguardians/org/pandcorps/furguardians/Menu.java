@@ -2836,11 +2836,13 @@ public class Menu {
             setMessageSpeed();
             addTitle(msgSpeed, x + btnW + 8, y);
             
-            y -= offY;
-            newFormButton("BtnSizeDown", x, y, FurGuardiansGame.menuLeft, new Runnable() {@Override public final void run() {incBtnSize(-1);}});
-            newFormButton("BtnSizeUp", engine.getEffectiveWidth() - x - btnW, y, FurGuardiansGame.menuRight, new Runnable() {@Override public final void run() {incBtnSize(1);}});
-            setMessageBtnSize();
-            addTitle(msgBtnSize, x + btnW + 8, y);
+            if (!engine.isMouseSupported()) {
+	            y -= offY;
+	            newFormButton("BtnSizeDown", x, y, FurGuardiansGame.menuLeft, new Runnable() {@Override public final void run() {incBtnSize(-1);}});
+	            newFormButton("BtnSizeUp", engine.getEffectiveWidth() - x - btnW, y, FurGuardiansGame.menuRight, new Runnable() {@Override public final void run() {incBtnSize(1);}});
+	            setMessageBtnSize();
+	            addTitle(msgBtnSize, x + btnW + 8, y);
+            }
             
             newTab(FurGuardiansGame.menuCheck, "Done", new Runnable() {@Override public final void run() {exit();}});
             newTab(FurGuardiansGame.menuMusic, "Music", new Runnable() {@Override public final void run() {goMusic();}});
@@ -2870,7 +2872,7 @@ public class Menu {
         	if (pc.profile.autoRun) {
         		s = "Auto-run, tap to jump";
         	} else {
-        		s = "On-screen buttons";
+        		s = Pangine.getEngine().isMouseSupported() ? "Full control" : "On-screen buttons";
         	}
         	Chartil.set(msgAuto, s);
         }
