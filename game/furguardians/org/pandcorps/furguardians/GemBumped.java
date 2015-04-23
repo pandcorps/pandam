@@ -22,6 +22,8 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.furguardians;
 
+import java.util.*;
+
 import org.pandcorps.core.*;
 import org.pandcorps.furguardians.Goal.*;
 import org.pandcorps.game.core.*;
@@ -41,12 +43,13 @@ public class GemBumped extends Pandy {
     protected final static byte TYPE_NORMAL = 0;
     protected final static byte TYPE_END = 1;
     protected final static byte TYPE_LETTER = 2;
+    private final static Random rand = new Random();
     private final int award;
 	private final byte type;
 	int age = 0;
 	
 	protected final static int rndAward(final Player player) {
-		final int r = Mathtil.randi(0, 9999);
+		final int r = Mathtil.randi(rand, 0, 9999);
 	    if (r < 1500) {
 	        return AWARD_2;
 	    } else if (r < 1650) {
@@ -152,4 +155,8 @@ public class GemBumped extends Pandy {
 	private final boolean isGood() {
 	    return award > 0;
 	}
+	
+	protected final static void setSeed(final long seed) {
+        rand.setSeed(seed);
+    }
 }

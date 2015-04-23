@@ -577,6 +577,7 @@ public class Level {
     protected final static void loadLevel() {
         Mathtil.setSeed(seed);
         Spawner.setSeed(seed + 1);
+        GemBumped.setSeed(seed + 2);
         clear();
         victory = false;
     	floorMode = FLOOR_GRASSY;
