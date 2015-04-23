@@ -596,7 +596,7 @@ public class Menu {
 		
 		protected final TouchButton newRadioSubmitButton(final int x, final int y) {
 			final int xr = Pangine.getEngine().getEffectiveWidth() - x - (int) FurGuardiansGame.menu.getSize().getX();
-			return newFormButton(Pantil.vmid() + ".radio.submit", xr, y - 100, FurGuardiansGame.menuCheck);
+			return newFormButton(Pantil.vmid() + ".radio.submit", xr, y - OFF_RADIO_Y, FurGuardiansGame.menuCheck);
 		}
 		
 		protected final static TouchButton newFormButton(final Panlayer layer, final String name, final int x, final int y, final Panmage img) {
