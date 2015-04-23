@@ -380,9 +380,14 @@ public class Player extends Character implements CollisionListener {
             @Override public final void onActionStart(final ActionStartEvent event) { engine.stopCaptureFrames(); }});
 	}
 	
-	private final void registerPause() {
-		(Panctor.isActive(FurGuardiansGame.hudGem) ? FurGuardiansGame.hudGem : this).register(pc.ctrl.getSubmit(), new ActionStartListener() {
+	private final void registerPause(final Panput input) {
+		(Panctor.isActive(FurGuardiansGame.hudGem) ? FurGuardiansGame.hudGem : this).register(input, new ActionStartListener() {
             @Override public final void onActionStart(final ActionStartEvent event) { togglePause(); }});
+	}
+	
+	private final void registerPause() {
+		registerPause(pc.ctrl.getSubmit());
+		registerPause(pc.ctrl.get2());
 	}
 	
 	private final Panput getJumpInput() {
