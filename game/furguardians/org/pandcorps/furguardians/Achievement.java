@@ -42,11 +42,10 @@ public abstract class Achievement extends FinName {
 		new EnemyFeat("Monster Hunter", 500), new EnemyFeat("Monster Slayer", 3000),
 		new JumpFeat("Leapfrog", 3000), new HitFeat("Eagle-eyed", 10), new MonsterBumpFeat("Sneak Attack", 50),
 		new BonusLevelFeat("Roll the Dice", 5), new KickFeat("Kick the Ball", 20),
-		new NoGemsFeat(), new AllGemsFeat()
+		new NoGemsFeat(), new AllGemsFeat(), new AllBrokenFeat()
 		// level w/ no damage
 		// Lionheart
 		// Giant Slayer
-		// Juggernaut, Break all blocks in a level
 		// Beyond Belief, Finish level as a flying pig
 		// Babe, Finish level as a blue bull/ox
 		// Menagerie (Zoologist), Use each animal to finish a level
@@ -421,6 +420,17 @@ public abstract class Achievement extends FinName {
         @Override
         public final boolean isMet(final Player player) {
             return Level.numGems > 0 && player.levelFloatingGems == Level.numGems;
+        }
+    }
+	
+	private final static class AllBrokenFeat extends CurrentFeat {
+        protected AllBrokenFeat() {
+            super("Juggernaut", "Break all blocks in a level", 150);
+        }
+        
+        @Override
+        public final boolean isMet(final Player player) {
+            return Level.numBreakable > 0 && player.levelBrokenBlocks == Level.numBreakable;
         }
     }
 	

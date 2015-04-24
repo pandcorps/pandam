@@ -308,6 +308,7 @@ public class Player extends Character implements CollisionListener {
 	private Player returnPlayer = null;
 	protected int levelGems = 0;
 	protected int levelFloatingGems = 0;
+	protected int levelBrokenBlocks = 0;
 	protected int levelDefeatedEnemies = 0;
 	protected int levelFalls = 0;
 	protected long lastFall = -1;
@@ -400,6 +401,7 @@ public class Player extends Character implements CollisionListener {
 	    }
 	    this.levelGems = p.levelGems;
 	    this.levelFloatingGems = p.levelFloatingGems;
+	    this.levelBrokenBlocks = p.levelBrokenBlocks;
 	    this.levelFalls = p.levelFalls;
 	    this.levelHits = p.levelHits;
 	}
@@ -407,6 +409,7 @@ public class Player extends Character implements CollisionListener {
 	protected final void clearState() {
 	    levelGems = 0;
 	    levelFloatingGems = 0;
+	    levelBrokenBlocks = 0;
         levelFalls = 0;
         levelHits = 0;
 	}

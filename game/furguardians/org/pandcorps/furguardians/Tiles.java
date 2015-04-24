@@ -92,6 +92,7 @@ public class Tiles {
     		//}
     		new Bump(chr, index).setVisible(false); // To bump Characters above
     		player.pc.profile.stats.brokenBlocks++;
+    		player.levelBrokenBlocks++;
     	} else if (b == FurGuardiansGame.TILE_BUMP) {
     	    if (getHandler().isNormalAward(t)) {
     	        newGemBumped(player, index);

@@ -96,6 +96,7 @@ public class Level {
     protected static Tile tileTrackBase = null;
     protected static int numEnemies = 0;
     protected static int numGems = 0;
+    protected static int numBreakable = 0;
     protected static int currLetter = 0;
     protected static List<Panctor> collectedLetters = null;
     protected static List<Panctor> uncollectedLetters = null;
@@ -570,6 +571,7 @@ public class Level {
     protected final static void clear() {
         numEnemies = 0;
         numGems = 0;
+        numBreakable = 0;
         currLetter = 0;
         Coltil.clear(collectedLetters);
     }
@@ -2247,6 +2249,7 @@ public class Level {
     
     private final static void breakableBlock(final int x, final int y) {
         tm.setForeground(x, y, imgMap[0][5], FurGuardiansGame.TILE_BREAK);
+        numBreakable++;
     }
     
     private final static void letterBlock(final int x, final int y) {
