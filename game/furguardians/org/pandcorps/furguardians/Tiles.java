@@ -97,6 +97,7 @@ public class Tiles {
     	    if (getHandler().isNormalAward(t)) {
     	        newGemBumped(player, index);
     	    } else if (!bumpLetter(player, index, t)) {
+    	    	player.levelEndGems = player.levelGems; // Capture final total before level-end award, used by NoGemsFeat
     	        GemBumped.newLevelEnd(player, index);
     	        FurGuardiansGame.levelVictory();
     	        FurGuardiansGame.playTransition(FurGuardiansGame.musicLevelEnd);

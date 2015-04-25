@@ -1,8 +1,11 @@
+1.5.3 (13)
+
 Added immersive mode.
 Added infrastructure for adjustable difficulty settings.
 Improved consistency of replaying levels.
 Added new Achievements.
 Added mouse support.
+Fixed menu placement bugs.
 
 *****
 

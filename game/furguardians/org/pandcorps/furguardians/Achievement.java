@@ -408,7 +408,7 @@ public abstract class Achievement extends FinName {
         
         @Override
         public final boolean isMet(final Player player) {
-            return Level.numGems > 0 && player.levelGems == 0;
+            return Level.numGems > 0 && player.levelEndGems == 0;
         }
     }
 	
