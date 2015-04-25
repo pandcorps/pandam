@@ -90,6 +90,7 @@ public class Menu {
 		protected static int touchRadioX = 40;
 		protected static int touchRadioY = 140;
 		protected final static int touchKeyboardX = 8;
+		protected static int OFF_RADIO_LIST = 100;
 		protected static int OFF_RADIO_Y = 100;
 		protected final int rankStarX;
 		protected boolean initForm = true;
@@ -111,6 +112,8 @@ public class Menu {
 				touchRadioY = menuBottom + OFF_RADIO_Y; // 112
 				// If w is 344 or less, touchRadioX should be 0; should increase with w, up to 40
 				touchRadioX = Math.min(Math.max(engine.getEffectiveWidth() - 344, 0), 40);
+				// If w is 320 or less, OFF_RADIO_LIST should be 8 + MENU_W; should increase with w, up to 100
+				OFF_RADIO_LIST = Math.min(Math.max(engine.getEffectiveWidth() - 320, 0) + 8 + FurGuardiansGame.MENU_W, 100);
 			}
 		}
 		
@@ -554,8 +557,6 @@ public class Menu {
 		protected final RadioGroup addRadio(final String title, final List<? extends CharSequence> list, final RadioSubmitListener subLsn, final RadioSubmitListener chgLsn, final int x, final int y) {
 			return addRadio(title, list, subLsn, chgLsn, x, y, null);
 		}
-		
-		protected final static int OFF_RADIO_LIST = 100;
 		
 		protected final RadioGroup addRadio(final String title, final List<? extends CharSequence> list, final RadioSubmitListener subLsn, final RadioSubmitListener chgLsn, final int xb, int y, final TouchButton sub) {
 			final int x;
