@@ -573,9 +573,7 @@ public class Menu {
 					ctrl.map1(sub);
 				}
 				x = xb + OFF_RADIO_LIST;
-				if (OFF_RADIO_Y < 100) {
-					y += (100 - OFF_RADIO_Y);
-				}
+				y = adjustRadioY(y);
 			} else {
 				x = xb;
 			}
@@ -593,6 +591,13 @@ public class Menu {
 			label.setLinesPerPage(radioLinesPerPage);
 			label.stretchCharactersPerLineToFit();
 			return grp;
+		}
+		
+		private final int adjustRadioY(final int y) {
+			if (tabsSupported && isTabEnabled() && OFF_RADIO_Y < 100) {
+				return y + (100 - OFF_RADIO_Y);
+			}
+			return y;
 		}
 		
 		protected final TouchButton newRadioSubmitButton(final int x, final int y) {
@@ -987,7 +992,7 @@ public class Menu {
 		}
 		
 		protected final void addDescription(final int x, final int y) {
-			descLbl = addTitleTiny(desc, x + (isTabEnabled() ? OFF_RADIO_LIST : 0), y - (24 + (radioLinesPerPage * 8)));
+			descLbl = addTitleTiny(desc, x + (isTabEnabled() ? OFF_RADIO_LIST : 0), adjustRadioY(y) - (24 + (radioLinesPerPage * 8)));
 		}
 		
 		protected final void setDescription(final String val) {
@@ -1005,7 +1010,7 @@ public class Menu {
 		    if (!isTabEnabled()) {
 		        return null;
 		    }
-            return addTitleTiny(desc, x + OFF_RADIO_LIST, y - (24 + (off * 6) + (radioLinesPerPage * 8)));
+            return addTitleTiny(desc, x + OFF_RADIO_LIST, adjustRadioY(y) - (24 + (off * 6) + (radioLinesPerPage * 8)));
         }
 		
 		protected final void addDescription2(final int x, final int y) {
