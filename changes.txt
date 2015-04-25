@@ -1,6 +1,7 @@
 1.5.3 (13)
 
 Added immersive mode.
+Forced auto-run mode if multi-touch feature not detected.
 Added infrastructure for adjustable difficulty settings.
 Improved consistency of replaying levels.
 Added new Achievements.
