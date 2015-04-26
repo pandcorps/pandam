@@ -2756,7 +2756,7 @@ public class Menu {
         private final void setEnemy(final String name) {
         	final EnemyDefinition def = FurGuardiansGame.getEnemy(name);
             enemy.setView(def.walk.getFrames()[0].getImage());
-            Chartil.set(enemyDesc, "Defeated " + pc.profile.stats.defeatedEnemyTypes.longValue(def.code));
+            Chartil.set(enemyDesc, "Defeated " + pc.profile.stats.getDefeatedCount(def));
         }
         
         private final void initEnemy() {

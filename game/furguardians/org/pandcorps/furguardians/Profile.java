@@ -371,6 +371,14 @@ gems = 1000000;
 		        bestRuns.add(i, Integer.valueOf(runGems));
 		    }
 		}
+		
+		public final long getDefeatedCount(final EnemyDefinition def) {
+			return defeatedEnemyTypes.longValue(def.code);
+		}
+		
+		public final long getDefeatedGiants() {
+			return getDefeatedCount(FurGuardiansGame.trollColossus) + getDefeatedCount(FurGuardiansGame.ogreBehemoth);
+		}
     }
     
     public final boolean isJumpModeAvailable(final byte index) {
