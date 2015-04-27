@@ -2496,12 +2496,15 @@ public class Menu {
 				    createFoesList(touchRadioX, touchRadioY);
 				    break;
 			}
-			newTab(FurGuardiansGame.menuCheck, "Done", new Runnable() {@Override public final void run() {exit();}});
+			final Runnable r = new Runnable() {@Override public final void run() {exit();}};
 			if (fullMenu) {
+				newTab(FurGuardiansGame.menuCheck, "Done", r);
 				newTab(FurGuardiansGame.menuTrophy, "Award", TAB_AWARD);
 				newTab(FurGuardiansGame.menuGraph, "Stats", TAB_STATS);
 				newTab(FurGuardiansGame.menuStar, "Goals", TAB_GOALS);
 				newTab(FurGuardiansGame.menuFoes, "Foes", TAB_FOES);
+			} else {
+				registerDoneAll(r);
 			}
 			newTabs();
 			registerBackExit();
@@ -2622,9 +2625,19 @@ public class Menu {
 			}
 		}
 		
+		private final void registerDoneAll(final Runnable r) {
+			newTab(FurGuardiansGame.menuCheck, "Done", r);
+			for (final Panput input : new Panput[] {ctrl.getSubmit(), ctrl.get1(), ctrl.get2()}) {
+				tm.register(input, new ActionStartListener() {
+					@Override public final void onActionStart(final ActionStartEvent event) {
+						r.run();
+					}});
+			}
+		}
+		
 		private final void addContinue(final int x, final int y) {
 			if (isTabEnabled()) {
-				newTab(FurGuardiansGame.menuCheck, "Done", new Runnable() {
+				registerDoneAll(new Runnable() {
 					@Override public final void run() {
 						reload(TAB_GOALS);
 					}});
