@@ -191,6 +191,7 @@ public class Menu {
 			if (initForm && ctrl != null) { // Null on TitleScreen
 				form.init();
 			}
+			addTitleTiny(FurGuardiansGame.VERSION, 9, 8);
 			
 			if (fadeIn) {
 			    FurGuardiansGame.fadeIn(room, SPEED_MENU_FADE);
