@@ -42,10 +42,10 @@ public abstract class Achievement extends FinName {
 		new EnemyFeat("Monster Hunter", 500), new EnemyFeat("Monster Slayer", 3000),
 		new JumpFeat("Leapfrog", 3000), new HitFeat("Eagle-eyed", 10), new MonsterBumpFeat("Sneak Attack", 50),
 		new BonusLevelFeat("Roll the Dice", 5), new KickFeat("Kick the Ball", 20),
-		new NoGemsFeat(), new AllGemsFeat(), new AllBrokenFeat()
+		new NoGemsFeat(), new AllGemsFeat(), new AllBrokenFeat(),
+		new GiantFeat("Giant Slayer", 50)
 		// level w/ no damage
 		// Lionheart
-		// Giant Slayer
 		// Beyond Belief, Finish level as a flying pig
 		// Babe, Finish level as a blue bull/ox
 		// Menagerie (Zoologist), Use each animal to finish a level
@@ -285,6 +285,17 @@ public abstract class Achievement extends FinName {
         @Override
         public final long getCurrent(final Statistics stats) {
             return stats.defeatedEnemies;
+        }
+    }
+	
+	private final static class GiantFeat extends StatFeat {
+        protected GiantFeat(final String name, final int n) {
+            super(name, n, "Defeat " + n + " giant" + getS(n), n * 6);
+        }
+        
+        @Override
+        public final long getCurrent(final Statistics stats) {
+            return stats.getDefeatedGiants();
         }
     }
 	
