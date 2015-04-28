@@ -234,7 +234,7 @@ public class Map {
 			@Override protected final PixelFilter getHillFilter2() {
 				return new SwapPixelFilter(Channel.Green, Channel.Green, Channel.Red); }};
 		public final static MapTheme Rock = new MapTheme("Rock", Theme.Rock, 1, 6, 4,
-			new SwapPixelFilter(Channel.Blue, Channel.Green, Channel.Red)) {
+			new SwapPixelFilter(Channel.Green, Channel.Green, Channel.Green)) {
 			@Override protected final void step() {
 				stepWater();
 			}
