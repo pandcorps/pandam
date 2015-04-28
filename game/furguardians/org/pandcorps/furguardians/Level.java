@@ -214,6 +214,19 @@ public class Level {
     			}
         	}
     	};
+    	public final static Theme Rock = new Theme("Rock", null, MSG, (byte) -1) {
+    	    @Override protected final int[] getEnemyIndices(final int worlds, final int levels) {
+    	    	return getNormalEnemies(FIRE_WISP);
+    	    }
+    	    
+    		@Override protected final BackgroundBuilder getRandomBackground() {
+    			return new HillBackgroundBuilder();
+    		}
+    		
+    		@Override protected final Builder getRandomBuilder() {
+    			return new GrassyBuilder();
+    		}
+    	};
     	public final static Theme Bridge = new Theme("Bridge", MSG) {
             @Override protected final int[] getEnemyIndices(final int worlds, final int levels) {
                 return Map.theme.levelTheme.getEnemyIndices(worlds, levels);

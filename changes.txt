@@ -1,3 +1,7 @@
+Added Giant Slayer Achievement.
+
+*****
+
 1.5.3 (13)
 
 Added immersive mode.

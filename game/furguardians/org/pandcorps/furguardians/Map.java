@@ -176,11 +176,15 @@ public class Map {
 	private static boolean waiting = true;
 	
 	protected abstract static class MapTheme {
+		protected final void stepWater() {
+			if ((Pangine.getEngine().getClock() % 6) == 0) {
+                Tile.animate(waters);
+            }
+		}
+		
 		public final static MapTheme Normal = new MapTheme("Normal", null, Theme.Normal, 3, 3, 2, null /*, Map.nmr*/ ) {
 			@Override protected final void step() {
-				if ((Pangine.getEngine().getClock() % 6) == 0) {
-	                Tile.animate(waters);
-	            }
+				stepWater();
 			}
 			@Override protected final PixelFilter getHillFilter0() {
 				return null; }
@@ -201,14 +205,19 @@ public class Map {
 			@Override protected final PixelFilter getHillFilter2() {
 				return new SwapPixelFilter(Channel.Red, Channel.Green, Channel.Green); }
 			@Override protected final PixelMask getDirtMask() {
-				final int minR, minG;
-				if (Level.theme == Theme.Cave) {
-					minR = 96;
-					minG = 48;
-				} else {
-					minR = minG = 80;
-				}
-				return new AntiPixelMask(new RangePixelMask(minR, minG, 0, 255, 144, 32)); }};
+				return getBasicDirtMask(); }};
+		
+		protected final PixelMask getBasicDirtMask() {
+			final int minR, minG;
+			if (Level.theme == Theme.Cave) {
+				minR = 96;
+				minG = 48;
+			} else {
+				minR = minG = 80;
+			}
+			return new AntiPixelMask(new RangePixelMask(minR, minG, 0, 255, 144, 32));
+		}
+		
 		public final static MapTheme Sand = new MapTheme("Sand", Theme.Sand, 1, 6, 3, null
 		    /*, Namer.get(mpt, cct, WARMS, PLACES)*/ ) {
 			@Override protected final void step() {
@@ -224,6 +233,21 @@ public class Map {
 				return new SwapPixelFilter(Channel.Green, Channel.Blue, Channel.Red); }
 			@Override protected final PixelFilter getHillFilter2() {
 				return new SwapPixelFilter(Channel.Green, Channel.Green, Channel.Red); }};
+		public final static MapTheme Rock = new MapTheme("Rock", Theme.Rock, 1, 6, 4,
+			new SwapPixelFilter(Channel.Blue, Channel.Green, Channel.Red)) {
+			@Override protected final void step() {
+				stepWater();
+			}
+			@Override protected final PixelFilter getSkyFilter() {
+				return new SwapPixelFilter(Channel.Blue, Channel.Green, Channel.Red); }
+			@Override protected final PixelFilter getHillFilter0() {
+				return new SwapPixelFilter(Channel.Green, Channel.Red, Channel.Red); }
+			@Override protected final PixelFilter getHillFilter1() {
+				return new SwapPixelFilter(Channel.Green, Channel.Blue, Channel.Red); }
+			@Override protected final PixelFilter getHillFilter2() {
+				return new SwapPixelFilter(Channel.Green, Channel.Green, Channel.Red); }
+			@Override protected final PixelMask getDirtMask() {
+				return getBasicDirtMask(); }};
 		
 		protected final String name;
 		protected final String img;
@@ -281,7 +305,7 @@ public class Map {
 		}
 	}
 	
-	protected final static MapTheme[] themes = {MapTheme.Normal, MapTheme.Snow, MapTheme.Sand};
+	protected final static MapTheme[] themes = {MapTheme.Normal, MapTheme.Snow, MapTheme.Sand, MapTheme.Rock};
 	
 	protected final static MapTheme getTheme(final String name) {
 		for (final MapTheme theme : themes) {
