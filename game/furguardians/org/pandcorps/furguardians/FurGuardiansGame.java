@@ -179,6 +179,7 @@ public class FurGuardiansGame extends BaseGame {
 			"You can spend Gems on new abilities in Menu/Setup/Perks");
 	
 	protected final static String[][] ads = {
+		{ "Thank you", "for playing" },
 	    { "Like the game?", "Tell a friend" },
 	    { "Like the game?", "Rate it" },
 	    { "Like the game?", "Write a review" },
@@ -186,7 +187,8 @@ public class FurGuardiansGame extends BaseGame {
 	    { "Pandcorps has no", "marketing team" },
 	    { "The Pandcorps", "ad budget is 0" },
 	    { "You can follow", "@pandcorps" },
-	    { "You can contact", getEmail() }};
+	    { "You can contact", getEmail() },
+	    { "You can visit", "http://pandcorps.org" }};
 	
 	private final static PixelMask greyMask = new GreyScalePixelMask();
 	
