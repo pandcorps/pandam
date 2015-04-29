@@ -238,14 +238,12 @@ public class Map {
 			@Override protected final void step() {
 				stepWater();
 			}
-			@Override protected final PixelFilter getSkyFilter() {
-				return new SwapPixelFilter(Channel.Blue, Channel.Green, Channel.Red); }
 			@Override protected final PixelFilter getHillFilter0() {
-				return new SwapPixelFilter(Channel.Green, Channel.Red, Channel.Red); }
+				return new SwapPixelFilter(Channel.Blue, Channel.Green, Channel.Blue); }
 			@Override protected final PixelFilter getHillFilter1() {
-				return new SwapPixelFilter(Channel.Green, Channel.Blue, Channel.Red); }
+				return new SwapPixelFilter(Channel.Blue, Channel.Blue, Channel.Green); }
 			@Override protected final PixelFilter getHillFilter2() {
-				return new SwapPixelFilter(Channel.Green, Channel.Green, Channel.Red); }
+				return new SwapPixelFilter(Channel.Green, Channel.Blue, Channel.Green); }
 			@Override protected final PixelMask getDirtMask() {
 				return getBasicDirtMask(); }};
 		
