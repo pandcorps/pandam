@@ -1211,6 +1211,12 @@ public class Menu {
 	        } catch (final Exception e) {
 	        	// Just ignore; don't let error report generation cause another fatal error
 	        }
+	        final String[] ads = Mathtil.rand(FurGuardiansGame.ads);
+	        final int adSize = ads.length;
+	        for (int i = 0; i < adSize; i++) {
+	            final String ad = ads[i];
+	            addTitle(ad, engine.getEffectiveWidth() - (8 * ad.length()) - 1, engine.getEffectiveHeight() - (9 * (i + 1)));
+	        }
 	        for (int i = 0; i < NUM_CHRS; i++) {
 	        	final PlayerContext tc = tcs.get(i);
 		        final Panctor actor = addActor(tc, FurGuardiansGame.SCREEN_W * (i + 1) / (NUM_CHRS + 1));

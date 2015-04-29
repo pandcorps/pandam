@@ -169,13 +169,24 @@ public class FurGuardiansGame extends BaseGame {
 			"You can spend Gems on clothing and powerups in Menu/Edit/Gear",
 			"You can try powerups for 1 Level without spending any Gems",
 			"You can change the color of clothing that you have purchased",
-			"You can switch between on-screen buttons and auto-run in Menu/Setup",
+			"You can switch between full control and auto-run in Menu/Setup", // on-screen buttons
 			"You can add a Profile for a new user of this device in Menu/Add",
 			"Spending Gems in one Profile will not take Gems from other Profiles",
 			"Items purchased in one Profile are unavailable to other Profiles",
 			"You can create a new Avatar for yourself in Menu/Add",
 			"A single Profile can have multiple Avatars",
-			"Items purchased for one Avatar can be used by other Avatars of that Profile");
+			"Items purchased for one Avatar can be used by other Avatars of that Profile",
+			"You can spend Gems on new abilities in Menu/Setup/Perks");
+	
+	protected final static String[][] ads = {
+	    { "Like the game?", "Tell a friend" },
+	    { "Like the game?", "Rate it" },
+	    { "Like the game?", "Write a review" },
+	    { "Like the game?", "+1 it" },
+	    { "Pandcorps has no", "marketing team" },
+	    { "The Pandcorps", "ad budget is 0" },
+	    { "You can follow", "@pandcorps" },
+	    { "You can contact", getEmail() }};
 	
 	private final static PixelMask greyMask = new GreyScalePixelMask();
 	
