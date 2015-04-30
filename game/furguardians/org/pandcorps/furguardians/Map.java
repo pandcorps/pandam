@@ -234,17 +234,28 @@ public class Map {
 				return new SwapPixelFilter(Channel.Green, Channel.Blue, Channel.Red); }
 			@Override protected final PixelFilter getHillFilter2() {
 				return new SwapPixelFilter(Channel.Green, Channel.Green, Channel.Red); }};
+		
+		private final static ColorFunction funcLight = new ColorFunction() {
+            @Override public final short eval(final Pancolor c) {
+                return (short) ((c.getG() + c.getB()) / 2);
+            }};
+        
+        private final static ColorFunction funcDark = new ColorFunction() {
+            @Override public final short eval(final Pancolor c) {
+                return c.getB();
+            }};
+		
 		public final static MapTheme Rock = new MapTheme("Rock", Theme.Rock, 1, 6, 4,
 			new SwapPixelFilter(Channel.Green, Channel.Green, Channel.Green)) {
 			@Override protected final void step() {
 				stepWater();
 			}
 			@Override protected final PixelFilter getHillFilter0() {
-				return new SwapPixelFilter(Channel.Blue, Channel.Green, Channel.Blue); }
+				return new FunctionPixelFilter(funcDark, funcLight, funcDark); }
 			@Override protected final PixelFilter getHillFilter1() {
-				return new SwapPixelFilter(Channel.Blue, Channel.Blue, Channel.Green); }
+				return new FunctionPixelFilter(funcDark, funcDark, funcLight); }
 			@Override protected final PixelFilter getHillFilter2() {
-				return new SwapPixelFilter(Channel.Green, Channel.Blue, Channel.Green); }
+				return new FunctionPixelFilter(funcLight, funcDark, funcLight); }
 			@Override protected final PixelMask getDirtMask() {
 				return getBasicDirtMask(); }};
 		
