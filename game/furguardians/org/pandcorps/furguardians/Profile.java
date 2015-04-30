@@ -254,6 +254,7 @@ gems = 1000000;
     	private final List<Integer> bestRuns = new ArrayList<Integer>(BEST_RUN_SIZE);
     	protected int playedMinecartLevels = 0;
     	protected int playedCaveLevels = 0;
+    	protected int playedRockWorlds = 0;
     	
     	public void load(final Segment seg, final int currGems) {
         	defeatedLevels = seg.initInt(0);
@@ -286,6 +287,7 @@ gems = 1000000;
         	}
         	playedMinecartLevels = seg.initInt(18);
         	playedCaveLevels = seg.initInt(19);
+        	playedRockWorlds = seg.initInt(20);
         }
     	
 		@Override
@@ -324,6 +326,7 @@ gems = 1000000;
 	        seg.setRepetitions(17, runReps);
 	        seg.setInt(18, playedMinecartLevels);
 	        seg.setInt(19, playedCaveLevels);
+	        seg.setInt(20, playedRockWorlds);
 		}
 		
 		public List<String> toList() {

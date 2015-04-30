@@ -41,6 +41,7 @@ import org.pandcorps.pandax.visual.*;
 import org.pandcorps.furguardians.Level.*;
 import org.pandcorps.furguardians.Menu.*;
 import org.pandcorps.furguardians.Player.*;
+import org.pandcorps.furguardians.Profile.*;
 
 public class Map {
 	protected final static byte VICTORY_NONE = 0;
@@ -933,7 +934,11 @@ public class Map {
 	    } else {
     	    bgTexture = Mathtil.randi(0, FurGuardiansGame.dirts.length - 1);
     	    bgColor = Mathtil.randi(0, 2);
-    	    final int worlds = getProfile().stats.defeatedWorlds;
+    	    final Statistics stats = getProfile().stats;
+    	    final int worlds = stats.defeatedWorlds;
+    	    if (theme == MapTheme.Rock) {
+    	        stats.playedRockWorlds++;
+    	    }
 			if (worlds == 1) {
 				theme = MapTheme.Snow;
 			} else if (worlds == 3) {
