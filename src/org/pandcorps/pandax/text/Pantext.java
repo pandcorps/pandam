@@ -83,6 +83,7 @@ public class Pantext extends Panctor {
 	private boolean cursorEnabled = true;
 	private boolean underlineEnabled = false;
 	private boolean borderEnabled = false;
+	private boolean rightJustified = false;
 	private String title = null;
 	private char bg = CHAR_NULL;
 	private BorderStyle borderStyle = null;
@@ -223,7 +224,10 @@ public class Pantext extends Panctor {
 	        return;
 	    }
 		final Panple pos = getPosition();
-		final float x = pos.getX();
+		float x = pos.getX();
+		if (rightJustified) {
+		    x -= size.getX();
+		}
 		final float y = pos.getY();
 		final float z = pos.getZ();
 		for (final FontLayer layer : fonts.layers) {
@@ -559,9 +563,15 @@ public class Pantext extends Panctor {
 	
 	// Justifies relative to the current position, not the screen/layer/etc.
 	// Justifies the chunk, not each individual line
+	// One-time operation to move the position; does not dynamically account for changing the underlying CharSequence
     public final void rightJustify() {
         final Panple pos = getPosition();
         pos.setX(pos.getX() - size.getX());
+    }
+    
+    // Enables dynamic right justification; each frame will base position on current CharSequence
+    public final void setRightJustified(final boolean rightJustified) {
+        this.rightJustified = rightJustified;
     }
 	
 	public final Font getFont() {
