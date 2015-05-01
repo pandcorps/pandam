@@ -795,9 +795,9 @@ public class Menu {
 		}
 		
 		protected final void addHudRank() {
-			final int gemX = center + 96, gemY = HUD_TEXT_Y, textX = gemX + FurGuardiansGame.OFF_GEM + 1;
+			final int gemX = center - 16, gemY = HUD_TEXT_Y, textX = gemX + FurGuardiansGame.OFF_GEM + 1;
 			addActor(new Gem(FurGuardiansGame.gemRank), gemX, gemY);
-			addTitle("Rank", textX, gemY + 8);
+			addTitle("Rank", gemX - FurGuardiansGame.OFF_GEM - 32, gemY + 8);
 			final CharSequence seq = new CallSequence() {@Override protected String call() {
 				return String.valueOf(pc.profile.getRank());
 			}};
@@ -805,9 +805,9 @@ public class Menu {
 		}
 		
 		protected final void addHudAchievement() {
-			final int gemX = center + 96, gemY = 37, textX = gemX + FurGuardiansGame.OFF_GEM + 1;
+			final int gemX = center - 16, gemY = 37, textX = gemX + FurGuardiansGame.OFF_GEM + 1;
 			addActor(new Gem(FurGuardiansGame.gemAchieve), gemX, gemY);
-			addTitle("Trophies", textX, gemY + 8);
+			addTitle("Trophies", gemX - FurGuardiansGame.OFF_GEM - 64, gemY + 8);
 			final CharSequence seq = new CallSequence() {@Override protected String call() {
 				return String.valueOf(pc.profile.achievements.size() + "/" + Achievement.ALL.length);
 			}};
