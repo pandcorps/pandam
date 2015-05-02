@@ -148,13 +148,14 @@ public class Enemy extends Character {
 			factory = enemyFactory;
 		}
 		
-		protected EnemyDefinition(final String name, final int ind) {
+		protected EnemyDefinition(final String name, final int ind, final SpawnFactory spawnFactory) {
 			super(name);
 			code = Chartil.toCode(name);
 			final Img[] strip = loadStrip(ind, ImtilX.DIM);
-			final Panframe[] frames = new Panframe[3];
+			final int size = strip.length;
+			final Panframe[] frames = new Panframe[size];
 			final Pangine engine = Pangine.getEngine();
-			for (int i = 0; i < 3; i++) {
+			for (int i = 0; i < size; i++) {
 				final String id = name + "." + i;
 				frames[i] = engine.createFrame(BaseGame.PRE_FRM + id,
 						engine.createImage(BaseGame.PRE_IMG + id, DEFAULT_O, DEFAULT_MIN, DEFAULT_MAX, strip[i]),
@@ -168,7 +169,7 @@ public class Enemy extends Character {
 			offX = 0;
 			h = 0;
 			hv = 0;
-			factory = wispFactory;
+			factory = spawnFactory;
 		}
 		
 		protected final void init(final EnemyDefinition ref) {
@@ -479,6 +480,22 @@ public class Enemy extends Character {
 	protected final void setEnemyMirror(final boolean mirror) {
 		setMirror(mirror);
 		hv = (mirror ? -1 : 1) * def.hv;
+	}
+	
+	protected final void facePlayers() {
+		final boolean mirror = isMirror();
+		final float x = getPosition().getX();
+		for (final PlayerContext pc : Coltil.unnull(FurGuardiansGame.pcs)) {
+			final Player p = pc.player;
+			if (p == null) {
+				continue;
+			}
+			final boolean wantMirror = p.getPosition().getX() < x;
+			if (mirror == wantMirror) {
+				return;
+			}
+		}
+		setEnemyMirror(!mirror);
 	}
 	
 	protected static interface InteractionHandler {

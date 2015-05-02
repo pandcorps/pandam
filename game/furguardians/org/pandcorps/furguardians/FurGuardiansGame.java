@@ -1279,14 +1279,14 @@ public class FurGuardiansGame extends BaseGame {
             spikedImp.award = GemBumped.AWARD_2;
             Coltil.set(allEnemies, Level.SPIKED_IMP, spikedImp);
 			anger = createAnm("anger", 10, CENTER_16, Enemy.loadStrip(9, ImtilX.DIM));
-			final EnemyDefinition iceWisp = new EnemyDefinition("Ice Wisp", 12);
+			final EnemyDefinition iceWisp = new EnemyDefinition("Ice Wisp", 12, Enemy.wispFactory);
 			iceWisp.hurtHandler = new InteractionHandler() {
                 @Override public final boolean onInteract(final Enemy enemy, final Player player) {
                 	player.startFreeze();
                 	return false;
                 }}; 
 			Coltil.set(allEnemies, Level.ICE_WISP, iceWisp);
-			final EnemyDefinition fireWisp = new EnemyDefinition("Fire Wisp", 13);
+			final EnemyDefinition fireWisp = new EnemyDefinition("Fire Wisp", 13, Enemy.wispFactory);
 			fireWisp.hurtHandler = new InteractionHandler() {
                 @Override public final boolean onInteract(final Enemy enemy, final Player player) {
                 	player.startBurn();
@@ -1325,6 +1325,22 @@ public class FurGuardiansGame extends BaseGame {
                     return player == null || !player.isDragonStomping();
                 }};
 			Coltil.set(allEnemies, Level.BLOB, blob);
+			final EnemyDefinition rockSprite = new EnemyDefinition("Rock Sprite", 15, null, false, false, 0, Enemy.DEFAULT_X, Enemy.DEFAULT_H, 2);
+			rockSprite.stepHandler = new InteractionHandler() {
+                @Override public final boolean onInteract(final Enemy enemy, final Player player) {
+                	if (enemy.isGrounded()) {
+                		if (enemy.timer == 0) {
+                			enemy.facePlayers();
+                			enemy.initTimer(0);
+                			enemy.v = Mathtil.randi(6, 8);
+                			return false;
+                		}
+                		enemy.timer--;
+                		return true;
+                	}
+                	return false;
+                }};
+			Coltil.set(allEnemies, Level.ROCK_SPRITE, rockSprite);
 			Level.initTheme(); }});
 		
 		loaders.add(new Runnable() { @Override public final void run() {
