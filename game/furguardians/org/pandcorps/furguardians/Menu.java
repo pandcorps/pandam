@@ -3159,6 +3159,8 @@ public class Menu {
 				msg = setMapTheme(MapTheme.Snow);
 			} else if ("setsand".equalsIgnoreCase(cmd)) {
 				msg = setMapTheme(MapTheme.Sand);
+			} else if ("setrock".equalsIgnoreCase(cmd)) {
+				msg = setMapTheme(MapTheme.Rock);
 			} else if ("setgrass".equalsIgnoreCase(cmd)) {
 				msg = setMapTheme(MapTheme.Normal);
 			} else if ("noconsole".equalsIgnoreCase(cmd)) {

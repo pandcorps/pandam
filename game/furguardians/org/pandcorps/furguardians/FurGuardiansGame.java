@@ -188,7 +188,8 @@ public class FurGuardiansGame extends BaseGame {
 	    { "The Pandcorps", "ad budget is 0" },
 	    { "You can follow", "@pandcorps" },
 	    { "You can contact", getEmail() },
-	    { "You can visit", "http://pandcorps.org" }};
+	    { "You can visit", "http://pandcorps.org" },
+	    { "Find a bug?", "Let us know" }};
 	
 	private final static PixelMask greyMask = new GreyScalePixelMask();
 	
@@ -1333,6 +1334,7 @@ public class FurGuardiansGame extends BaseGame {
                 			enemy.facePlayers();
                 			enemy.initTimer(0);
                 			enemy.v = Mathtil.randi(6, 8);
+                			soundJump.startSound();
                 			return false;
                 		}
                 		enemy.timer--;

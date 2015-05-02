@@ -956,6 +956,8 @@ public class Map {
 				theme = MapTheme.Sand;
 			} else if (worlds <= 5) {
 				theme = MapTheme.Normal;
+			} else if (stats.playedRockWorlds == 0) {
+				theme = MapTheme.Rock;
 			} else {
 				final MapTheme old = theme;
 				do {
