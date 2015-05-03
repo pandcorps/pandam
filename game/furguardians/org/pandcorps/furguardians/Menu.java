@@ -2873,6 +2873,7 @@ public class Menu {
             newTab(FurGuardiansGame.menuCheck, "Done", new Runnable() {@Override public final void run() {exit();}});
             newTab(FurGuardiansGame.menuMusic, "Music", new Runnable() {@Override public final void run() {goMusic();}});
             newTab(FurGuardiansGame.menuQuestion, "Perks", new Runnable() {@Override public final void run() {goPerks();}});
+            newTab(FurGuardiansGame.menuExclaim, "TODO", new Runnable() {@Override public final void run() {goDifficulty();}});
             if (pc.profile.consoleEnabled) {
             	newTab(FurGuardiansGame.menuKeyboard, "Debug", new Runnable() {@Override public final void run() {goConsole();}});
             }
@@ -2882,6 +2883,10 @@ public class Menu {
         
         private final void goMusic() {
             FurGuardiansGame.setScreen(new MusicScreen(pc));
+        }
+        
+        private final void goDifficulty() {
+            FurGuardiansGame.setScreen(new DifficultyScreen(pc));
         }
         
         private final void goConsole() {
@@ -3043,6 +3048,64 @@ public class Menu {
                 Config.serialize();
             }
             goOptions();
+        }
+	}
+	
+	protected final static class DifficultyScreen extends BaseOptionsScreen {
+		private final StringBuilder msgLoss = new StringBuilder();
+		
+		protected DifficultyScreen(final PlayerContext pc) {
+            super(pc);
+        }
+        
+        @Override
+        protected final void menuTouch() {
+        	final Pangine engine = Pangine.getEngine();
+            final Panple btnSize = FurGuardiansGame.menu.getSize();
+            final int btnW = (int) btnSize.getX(), btnH = (int) btnSize.getY(), offY = btnH * 5 / 4;
+            int x = btnW / 2, y = engine.getEffectiveHeight() - btnH - offY;
+            
+        	newFormButton("LossDown", x, y, FurGuardiansGame.menuLeft, new Runnable() {@Override public final void run() {incLoss(-1);}});
+            newFormButton("LossUp", engine.getEffectiveWidth() - x - btnW, y, FurGuardiansGame.menuRight, new Runnable() {@Override public final void run() {incLoss(1);}});
+            setMessageLoss();
+            addTitle(msgLoss, x + btnW + 8, y);
+            
+            newTab(FurGuardiansGame.menuCheck, "Done", new Runnable() {@Override public final void run() {exit();}});
+            newTabs();
+            registerBackExit();
+        }
+        
+        private final void incLoss(final int dir) {
+        	final int curr = pc.profile.damagePercentage, next;
+        	if (dir < 0) {
+        		if (curr <= Profile.MIN_DAMAGE_PERCENTAGE) {
+        			next = Profile.MAX_DAMAGE_PERCENTAGE;
+        		} else if (curr >= Profile.MAX_DAMAGE_PERCENTAGE) {
+        			next = Profile.MID_DAMAGE_PERCENTAGE;
+        		} else {
+        			next = Profile.MIN_DAMAGE_PERCENTAGE;
+        		}
+        	} else {
+        		if (curr <= Profile.MIN_DAMAGE_PERCENTAGE) {
+        			next = Profile.MID_DAMAGE_PERCENTAGE;
+        		} else if (curr >= Profile.MAX_DAMAGE_PERCENTAGE) {
+        			next = Profile.MIN_DAMAGE_PERCENTAGE;
+        		} else {
+        			next = Profile.MAX_DAMAGE_PERCENTAGE;
+        		}
+        	}
+            pc.profile.damagePercentage = next;
+            setMessageLoss();
+        }
+        
+        private final void setMessageLoss() {
+            Chartil.set(msgLoss, "Damage rate: " + pc.profile.damagePercentage + "%");
+        }
+        
+        @Override
+        protected void onExit() {
+        	save();
+        	goOptions();
         }
 	}
 	

@@ -39,7 +39,10 @@ public class Profile extends PlayerData implements Segmented, Savable {
 	/*package*/ final static int DEF_FRAME_RATE = 30;
 	/*package*/ final static int MAX_FRAME_RATE = (DEF_FRAME_RATE * 2) - MIN_FRAME_RATE;
 	/*package*/ final static int POINTS_PER_RANK = 10;
-	private final static int DEF_DAMAGE_PERCENTAGE = 10;
+	/*package*/ final static int MIN_DAMAGE_PERCENTAGE = 10;
+	/*package*/ final static int MID_DAMAGE_PERCENTAGE = 50;
+	/*package*/ final static int MAX_DAMAGE_PERCENTAGE = 100;
+	private final static int DEF_DAMAGE_PERCENTAGE = MIN_DAMAGE_PERCENTAGE;
     protected final ArrayList<Avatar> avatars = new ArrayList<Avatar>();
     protected Avatar currentAvatar = null;
     private int gems = 0;
@@ -57,7 +60,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
     protected boolean consoleEnabled = false;
     protected final Set<Clothing> availableHats = new HashSet<Clothing>();
     //private String version = null; // Currently only write version to save file in case we want to read it later
-    private int damagePercentage = DEF_DAMAGE_PERCENTAGE;
+    protected int damagePercentage = DEF_DAMAGE_PERCENTAGE;
     protected boolean endLevelIfHurtWithNoGems = false;
     protected int column = -1;
 	protected int row = -1;
