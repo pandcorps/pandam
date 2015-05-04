@@ -2873,7 +2873,7 @@ public class Menu {
             newTab(FurGuardiansGame.menuCheck, "Done", new Runnable() {@Override public final void run() {exit();}});
             newTab(FurGuardiansGame.menuMusic, "Music", new Runnable() {@Override public final void run() {goMusic();}});
             newTab(FurGuardiansGame.menuQuestion, "Perks", new Runnable() {@Override public final void run() {goPerks();}});
-            newTab(FurGuardiansGame.menuExclaim, "TODO", new Runnable() {@Override public final void run() {goDifficulty();}});
+            newTab(FurGuardiansGame.menuExclaim, "Easy", new Runnable() {@Override public final void run() {goDifficulty();}});
             if (pc.profile.consoleEnabled) {
             	newTab(FurGuardiansGame.menuKeyboard, "Debug", new Runnable() {@Override public final void run() {goConsole();}});
             }
@@ -3053,6 +3053,7 @@ public class Menu {
 	
 	protected final static class DifficultyScreen extends BaseOptionsScreen {
 		private final StringBuilder msgLoss = new StringBuilder();
+		private final StringBuilder msgDeath = new StringBuilder();
 		
 		protected DifficultyScreen(final PlayerContext pc) {
             super(pc);
@@ -3069,6 +3070,11 @@ public class Menu {
             newFormButton("LossUp", engine.getEffectiveWidth() - x - btnW, y, FurGuardiansGame.menuRight, new Runnable() {@Override public final void run() {incLoss(1);}});
             setMessageLoss();
             addTitle(msgLoss, x + btnW + 8, y);
+            
+            y -= offY;
+            newFormButton("DeathToggle", x, y, FurGuardiansGame.menuButtons, new Runnable() {@Override public final void run() {toggleDeath();}});
+            addTitle(msgDeath, x + btnW + 8, y);
+            setMessageDeath();
             
             newTab(FurGuardiansGame.menuCheck, "Done", new Runnable() {@Override public final void run() {exit();}});
             newTabs();
@@ -3100,6 +3106,21 @@ public class Menu {
         
         private final void setMessageLoss() {
             Chartil.set(msgLoss, "Damage rate: " + pc.profile.damagePercentage + "%");
+        }
+        
+        private final void toggleDeath() {
+            pc.profile.endLevelIfHurtWithNoGems = !pc.profile.endLevelIfHurtWithNoGems;
+            setMessageDeath();
+        }
+        
+        private final void setMessageDeath() {
+            final String s;
+            if (pc.profile.endLevelIfHurtWithNoGems) {
+                s = "Can be defeated";
+            } else {
+                s = "Can't lose";
+            }
+            Chartil.set(msgDeath, s);
         }
         
         @Override

@@ -950,7 +950,7 @@ public class Player extends Character implements CollisionListener {
 	    final Profile prf = pc.profile;
 	    final boolean noGems = levelGems == 0, inv = prf.isInvincible();
 	    if (noGems && prf.endLevelIfHurtWithNoGems && !inv) {
-	        flipAndFall();
+	        flipAndFall(6);
 	        destroy();
 	        FurGuardiansGame.playTransition(FurGuardiansGame.soundWhoosh);
 	        FurGuardiansGame.goMap();

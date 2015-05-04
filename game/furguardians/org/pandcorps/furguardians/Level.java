@@ -217,8 +217,7 @@ public class Level {
     	};
     	public final static Theme Rock = new Theme("Rock", null, MSG, (byte) -1) {
     	    @Override protected final int[] getEnemyIndices(final int worlds, final int levels) {
-    	    	//return getNormalEnemies(ROCK_SPRITE);
-    	    	return new int[] {ROCK_SPRITE};
+    	    	return getNormalEnemies(ROCK_SPRITE);
     	    }
     	    
     		@Override protected final BackgroundBuilder getRandomBackground() {
