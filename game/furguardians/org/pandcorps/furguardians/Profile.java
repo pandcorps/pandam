@@ -387,6 +387,10 @@ gems = 1000000;
 		}
     }
     
+    public final boolean isHardMode() {
+    	return endLevelIfHurtWithNoGems && damagePercentage >= 100;
+    }
+    
     public final boolean isJumpModeAvailable(final byte index) {
         return availableJumpModes.contains(Integer.valueOf(index));
     }
