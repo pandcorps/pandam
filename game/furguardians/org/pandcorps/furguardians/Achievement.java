@@ -43,9 +43,8 @@ public abstract class Achievement extends FinName {
 		new JumpFeat("Leapfrog", 3000), new HitFeat("Eagle-eyed", 10), new MonsterBumpFeat("Sneak Attack", 50),
 		new BonusLevelFeat("Roll the Dice", 5), new KickFeat("Kick the Ball", 20),
 		new NoGemsFeat(), new AllGemsFeat(), new AllBrokenFeat(),
-		new GiantFeat("Giant Slayer", 50)
+		new GiantFeat("Giant Slayer", 50), new HardFeat()
 		// level w/ no damage
-		// Lionheart
 		// Beyond Belief, Finish level as a flying pig
 		// Babe, Finish level as a blue bull/ox
 		// Menagerie (Zoologist), Use each animal to finish a level
@@ -444,6 +443,17 @@ public abstract class Achievement extends FinName {
             return Level.numBreakable > 0 && player.levelBrokenBlocks == Level.numBreakable;
         }
     }
+	
+	private final static class HardFeat extends CurrentFeat {
+	    protected HardFeat() {
+	        super("Lionheart", "Play a level on highest difficulty", 2000);
+	    }
+	    
+	    @Override
+        public final boolean isMet(final Player player) {
+            return Level.numEnemies > 0 && player.pc != null && player.pc.profile != null && player.pc.profile.isHardMode();
+        }
+	}
 	
 	private final static String getS(final int n) {
 		return n == 1 ? "" : "s";

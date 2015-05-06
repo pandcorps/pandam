@@ -1,6 +1,6 @@
 Rock worlds.
 Added menu options for difficulty settings.
-Added Giant Slayer Achievement.
+Added Giant Slayer and Lionheart Achievements.
 
 *****
 
