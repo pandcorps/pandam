@@ -3072,7 +3072,7 @@ public class Menu {
             addTitle(msgLoss, x + btnW + 8, y);
             
             y -= offY;
-            newFormButton("DeathToggle", x, y, FurGuardiansGame.menuButtons, new Runnable() {@Override public final void run() {toggleDeath();}});
+            newFormButton("DeathToggle", x, y, FurGuardiansGame.menuDefeat, new Runnable() {@Override public final void run() {toggleDeath();}});
             addTitle(msgDeath, x + btnW + 8, y);
             setMessageDeath();
             
