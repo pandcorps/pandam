@@ -299,6 +299,7 @@ public class FurGuardiansGame extends BaseGame {
 	protected static Panmage menuMenu = null;
 	protected static Panmage menuMusic = null;
 	protected static Panmage menuSound = null;
+	protected static Panmage menuDifficulty = null;
 	protected static Panmage menuAvatar = null;
 	protected static Panmage menuColor = null;
 	protected static Panmage menuAnimal = null;
@@ -1502,6 +1503,7 @@ public class FurGuardiansGame extends BaseGame {
 			    menuMenu = createMenuImg("Menu");
 			    menuMusic = createMenuImg("Music");
 			    menuSound = createMenuImg("Sound");
+			    menuDifficulty = createMenuImg("Difficulty");
 			    menuAvatar = createMenuImg("Avatar");
 			    menuColor = createMenuImg("Color");
 			    menuAnimal = createMenuImg("Animal");
