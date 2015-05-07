@@ -22,8 +22,8 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandam;
 
-import org.pandcorps.core.Mathtil;
-import org.pandcorps.pandam.impl.ImplPanple;
+import org.pandcorps.core.*;
+import org.pandcorps.pandam.impl.*;
 
 // Pandam Tuple
 public abstract class Panple {
@@ -132,6 +132,20 @@ public abstract class Panple {
 	
 	public void multiply(final float s) {
 		set(getX() * s, getY() * s, getZ() * s);
+	}
+	
+	public final static void add(final Panple dst, final Panple p1, final Panple p2) {
+		dst.set(p1.getX() + p2.getX(), p1.getY() + p2.getY(), p1.getZ() + p2.getZ());
+	}
+	
+	public void average(final Panple oth) {
+		add(oth);
+		multiply(0.5f);
+	}
+	
+	public final static void average(final Panple dst, final Panple p1, final Panple p2) {
+		add(dst, p1, p2);
+		dst.multiply(0.5f);
 	}
 	
 	public double getMagnitude() {

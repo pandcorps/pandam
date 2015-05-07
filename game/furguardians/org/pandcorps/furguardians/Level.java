@@ -54,6 +54,7 @@ public class Level {
     protected final static int ICE_WISP = 11;
     protected final static int FIRE_WISP = 12;
     protected final static int ROCK_SPRITE = 13;
+    protected final static int ROCK_TRIO = 13;
     protected final static int BLOB = 14;
     protected final static int BLACK_BLOB = 15;
     
@@ -217,7 +218,8 @@ public class Level {
     	};
     	public final static Theme Rock = new Theme("Rock", null, MSG, (byte) -1) {
     	    @Override protected final int[] getEnemyIndices(final int worlds, final int levels) {
-    	    	return getNormalEnemies(ROCK_SPRITE);
+    	    	//return getNormalEnemies(ROCK_SPRITE);
+    	    	return new int[] {ROCK_TRIO};
     	    }
     	    
     		@Override protected final BackgroundBuilder getRandomBackground() {

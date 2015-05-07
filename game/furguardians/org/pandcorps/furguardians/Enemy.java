@@ -161,7 +161,11 @@ public class Enemy extends Character {
 						engine.createImage(BaseGame.PRE_IMG + id, DEFAULT_O, DEFAULT_MIN, DEFAULT_MAX, strip[i]),
 						i == 0 ? 18 : 6);
 			}
-			this.walk = engine.createAnimation(BaseGame.PRE_ANM + name, frames[0], frames[1], frames[2], frames[1]);
+			if (size == 1) {
+				this.walk = engine.createAnimation(BaseGame.PRE_ANM + name, frames[0]);
+			} else {
+				this.walk = engine.createAnimation(BaseGame.PRE_ANM + name, frames[0], frames[1], frames[2], frames[1]);
+			}
 			ledgeTurn = false;
 			splat = null;
 			attack = null;
@@ -217,7 +221,7 @@ public class Enemy extends Character {
 	}
 	
 	@Override
-	protected final boolean onStepCustom() {
+	protected boolean onStepCustom() {
 		if (def.stepHandler != null) {
 			final boolean ret = def.stepHandler.onInteract(this, null);
 			if (ret) {
@@ -558,6 +562,60 @@ public class Enemy extends Character {
         }
     }
 	
+	public final static class Trio extends Enemy {
+		private final Leg back;
+		private final Leg front;
+		
+		protected Trio(final EnemyDefinition def, final float x, final float y) {
+			super(def, x, y);
+			this.back = new Leg(x - 12, y, this);
+			this.front = new Leg(x + 12, y, this);
+			//TODO Handle stomp/defeat
+			//TODO Handle fall
+			//TODO Depth order
+		}
+		
+		@Override
+		public boolean onStepCustom() {
+			final Panple pos = getPosition(), backPos = back.getPosition(), frontPos = front.getPosition();
+			Panple.average(pos, backPos, frontPos);
+			pos.addY(6);
+			if (back.isGrounded() && front.isGrounded()) {
+				if (timer == 0) {
+					facePlayers();
+					timer = 30;
+					final boolean wantRight = isMirror();
+					final boolean backRight = backPos.getX() > frontPos.getX();
+					final Leg toMove = (wantRight == backRight) ? back : front;
+					toMove.jump();
+				} else {
+					timer--;
+				}
+			}
+			return true;
+		}
+	}
+	
+	public final static class Leg extends Enemy {
+		private final Trio head;
+		
+		protected Leg(final float x, final float y, final Trio head) {
+			super(FurGuardiansGame.rockSprite, x, y);
+			this.head = head;
+		}
+		
+		@Override
+		public boolean onStepCustom() {
+			return isGrounded();
+		}
+		
+		private final void jump() {
+			setEnemyMirror(head.isMirror());
+			v = 5;
+			FurGuardiansGame.soundJump.startSound();
+		}
+	}
+	
 	public final static class Wisp extends Panctor implements Collidable, StepListener, AllOobListener {
 		protected final EnemyDefinition def;
 		private int timer = 0;
@@ -599,6 +657,8 @@ public class Enemy extends Character {
 	
 	protected final static SpawnFactory enemyFactory = new EnemyFactory();
 	
+	protected final static SpawnFactory trioFactory = new TrioFactory();
+	
 	protected final static SpawnFactory wispFactory = new WispFactory();
 	
 	protected static interface SpawnFactory {
@@ -609,6 +669,13 @@ public class Enemy extends Character {
 		@Override
 		public final Enemy spawn(final EnemyDefinition def, final float x, final float y) {
 			return new Enemy(def, x, y);
+		}
+	}
+	
+	private final static class TrioFactory implements SpawnFactory {
+		@Override
+		public final Trio spawn(final EnemyDefinition def, final float x, final float y) {
+			return new Trio(def, x, y);
 		}
 	}
 	

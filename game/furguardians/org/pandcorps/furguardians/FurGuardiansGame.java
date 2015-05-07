@@ -176,7 +176,8 @@ public class FurGuardiansGame extends BaseGame {
 			"You can create a new Avatar for yourself in Menu/Add",
 			"A single Profile can have multiple Avatars",
 			"Items purchased for one Avatar can be used by other Avatars of that Profile",
-			"You can spend Gems on new abilities in Menu/Setup/Perks");
+			"You can spend Gems on new abilities in Menu/Setup/Perks",
+			"You can adjust the game's difficulty in Menu/Setup/Easy-Hard");
 	
 	protected final static String[][] ads = {
 		{ "Thank you", "for playing" },
@@ -189,7 +190,7 @@ public class FurGuardiansGame extends BaseGame {
 	    { "You can follow", "@pandcorps" },
 	    { "You can contact", getEmail() },
 	    { "You can visit", "http://pandcorps.org" },
-	    { "Find a bug?", "Let us know" }};
+	    { "Find a bug?", "Tell Pandcorps" }};
 	
 	private final static PixelMask greyMask = new GreyScalePixelMask();
 	
@@ -231,6 +232,7 @@ public class FurGuardiansGame extends BaseGame {
 	protected static EnemyDefinition bounceBall = null;
 	protected static EnemyDefinition trollColossus = null;
 	protected static EnemyDefinition ogreBehemoth = null;
+	protected static EnemyDefinition rockSprite = null;
 	protected static Panimation anger = null;
 	protected static Panmage block8 = null;
 	protected static Panmage blockLetter8 = null;
@@ -1328,7 +1330,7 @@ public class FurGuardiansGame extends BaseGame {
                     return player == null || !player.isDragonStomping();
                 }};
 			Coltil.set(allEnemies, Level.BLOB, blob);
-			final EnemyDefinition rockSprite = new EnemyDefinition("Rock Sprite", 15, null, false, false, 0, Enemy.DEFAULT_X, Enemy.DEFAULT_H, 2);
+			rockSprite = new EnemyDefinition("Rock Sprite", 15, null, false, false, 0, Enemy.DEFAULT_X, Enemy.DEFAULT_H, 2);
 			rockSprite.stepHandler = new InteractionHandler() {
                 @Override public final boolean onInteract(final Enemy enemy, final Player player) {
                 	if (enemy.isGrounded()) {
@@ -1345,6 +1347,7 @@ public class FurGuardiansGame extends BaseGame {
                 	return false;
                 }};
 			Coltil.set(allEnemies, Level.ROCK_SPRITE, rockSprite);
+			Coltil.set(allEnemies, Level.ROCK_TRIO, new EnemyDefinition("Rock Trio", 15, Enemy.trioFactory));
 			Level.initTheme(); }});
 		
 		loaders.add(new Runnable() { @Override public final void run() {
