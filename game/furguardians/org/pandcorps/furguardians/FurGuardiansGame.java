@@ -190,7 +190,8 @@ public class FurGuardiansGame extends BaseGame {
 	    { "You can follow", "@pandcorps" },
 	    { "You can contact", getEmail() },
 	    { "You can visit", "http://pandcorps.org" },
-	    { "Find a bug?", "Tell Pandcorps" }};
+	    { "Find a bug?", "Tell Pandcorps" },
+	    { "Have a suggesstion?", "Tell Pandcorps" }};
 	
 	private final static PixelMask greyMask = new GreyScalePixelMask();
 	
