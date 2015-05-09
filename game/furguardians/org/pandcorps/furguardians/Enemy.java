@@ -336,7 +336,7 @@ public class Enemy extends Character {
         return false;
 	}
 	
-	private final boolean defeat(final Character defeater, final int v, final byte defeatMode) {
+	protected boolean defeat(final Character defeater, final int v, final byte defeatMode) {
 		if (def.defeatHandler != null && !def.defeatHandler.onInteract(this, null)) {
 			return false;
 		} else if (avoidCount > 0) {
@@ -469,7 +469,7 @@ public class Enemy extends Character {
 	}
 
 	@Override
-	protected final boolean onFell() {
+	protected boolean onFell() {
 		if (lastStomper != null && isRewarded(lastStomper)) {
 			/*
 			It is annoying if Player stomps Ogre once, then Ogre falls before Player can finish the Ogre.
@@ -500,6 +500,19 @@ public class Enemy extends Character {
 			}
 		}
 		setEnemyMirror(!mirror);
+	}
+	
+	protected final Enemy spawn(final EnemyDefinition def) {
+	    final Enemy enemy = new Enemy(def, this);
+	    enemy.setEnemyMirror(isMirror());
+	    return enemy;
+	}
+	
+	protected final Enemy transform(final EnemyDefinition def) {
+	    final Enemy enemy = spawn(def);
+	    enemy.lastStomper = lastStomper;
+	    destroy();
+	    return enemy;
 	}
 	
 	protected static interface InteractionHandler {
@@ -570,8 +583,6 @@ public class Enemy extends Character {
 			super(def, x, y);
 			this.back = new Leg(x - 12, y, this);
 			this.front = new Leg(x + 12, y, this);
-			//TODO Handle stomp/defeat
-			//TODO Handle fall
 			//TODO Depth order
 		}
 		
@@ -594,19 +605,54 @@ public class Enemy extends Character {
 			}
 			return true;
 		}
+		
+		@Override
+		protected boolean defeat(final Character defeater, final int v, final byte defeatMode) {
+		    transform();
+		    return true;
+		}
+		
+		private final void transform() {
+		    if (isDestroyed()) {
+		        return;
+		    }
+		    transform(FurGuardiansGame.rockSprite).initTimer(0);
+		    back.transform();
+		    front.transform();
+		}
 	}
 	
 	public final static class Leg extends Enemy {
 		private final Trio head;
 		
 		protected Leg(final float x, final float y, final Trio head) {
-			super(FurGuardiansGame.rockSprite, x, y);
+			super(FurGuardiansGame.rockLeg, x, y);
 			this.head = head;
 		}
 		
 		@Override
-		public boolean onStepCustom() {
+		public final boolean onStepCustom() {
 			return isGrounded();
+		}
+		
+		@Override
+		protected final boolean onFell() {
+		    head.transform();
+		    return true;
+		}
+		
+		@Override
+        protected boolean defeat(final Character defeater, final int v, final byte defeatMode) {
+            head.transform();
+            return true;
+        }
+		
+		private final void transform() {
+            if (isDestroyed()) {
+                return;
+            }
+		    burst(FurGuardiansGame.puff);
+		    destroy();
 		}
 		
 		private final void jump() {

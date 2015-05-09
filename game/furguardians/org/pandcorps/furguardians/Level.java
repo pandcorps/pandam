@@ -1069,6 +1069,8 @@ public class Level {
 	        final Theme theme = getDayTheme();
 	        if (theme == Theme.Snow || theme == Theme.Sand) {
 	        	addTemplate(new SpecialGroundTemplate());
+	        } else if (theme == Theme.Rock) {
+	            addTemplate(new BushTemplate());
 	        } else {
 	        	addTemplate(new BushTemplate(), new TreeTemplate());
 	        }

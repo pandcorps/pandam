@@ -234,6 +234,7 @@ public class FurGuardiansGame extends BaseGame {
 	protected static EnemyDefinition trollColossus = null;
 	protected static EnemyDefinition ogreBehemoth = null;
 	protected static EnemyDefinition rockSprite = null;
+	protected static EnemyDefinition rockLeg = null;
 	protected static Panimation anger = null;
 	protected static Panmage block8 = null;
 	protected static Panmage blockLetter8 = null;
@@ -1348,7 +1349,14 @@ public class FurGuardiansGame extends BaseGame {
                 	return false;
                 }};
 			Coltil.set(allEnemies, Level.ROCK_SPRITE, rockSprite);
-			Coltil.set(allEnemies, Level.ROCK_TRIO, new EnemyDefinition("Rock Trio", 15, Enemy.trioFactory));
+			final EnemyDefinition rockTrio = new EnemyDefinition("Rock Trio", 15, Enemy.trioFactory);
+			rockTrio.rewardHandler = new InteractionHandler() {
+                @Override public final boolean onInteract(final Enemy enemy, final Player player) {
+                    return false;
+                }};
+			Coltil.set(allEnemies, Level.ROCK_TRIO, rockTrio);
+			rockLeg = new EnemyDefinition("Rock Leg", 15, null, false, false, 0, Enemy.DEFAULT_X, Enemy.DEFAULT_H, 2);
+			rockLeg.rewardHandler = rockTrio.rewardHandler;
 			Level.initTheme(); }});
 		
 		loaders.add(new Runnable() { @Override public final void run() {
