@@ -49,11 +49,13 @@ public class Enemy extends Character {
 	private final static int MAX_TIMER = 90;
 	
 	protected final static FinPanple2 DEFAULT_O = new FinPanple2(8, 1);
-	private final static FinPanple2 DEFAULT_MIN = getMin(DEFAULT_X);
-	private final static FinPanple2 DEFAULT_MAX = getMax(DEFAULT_X, DEFAULT_H);
+	protected final static FinPanple2 DEFAULT_MIN = getMin(DEFAULT_X);
+	protected final static FinPanple2 DEFAULT_MAX = getMax(DEFAULT_X, DEFAULT_H);
 	
 	protected static int currentSplat = DEFAULT_SPLAT;
 	protected static int currentWalk = DEFAULT_WALK;
+	protected static Panimation currentWalkAnm = null;
+	protected static Panple currentO = null;
 	
 	protected final static class EnemyDefinition extends FinName {
 		protected String code;
@@ -123,7 +125,13 @@ public class Enemy extends Character {
 			    walk = strip;
 			}
 			final String id = "enemy." + name;
-			final Panple n, x, o = (d == ImtilX.DIM) ? DEFAULT_O : new FinPanple2(d / 2, 1);
+			final Panple n, x, o;
+			if (currentO == null) {
+				o = (d == ImtilX.DIM) ? DEFAULT_O : new FinPanple2(d / 2, 1);
+			} else {
+				o = currentO;
+				currentO = null;
+			}
 			if (offX == DEFAULT_X && h == DEFAULT_H) {
 			    n = DEFAULT_MIN;
 			    x = DEFAULT_MAX;
@@ -131,7 +139,12 @@ public class Enemy extends Character {
 			    n = getMin(offX);
 			    x = getMax(offX, h);
 			}
-			this.walk = FurGuardiansGame.createAnm(id, currentWalk, o, n, x, walk);
+			if (currentWalkAnm == null) {
+				this.walk = FurGuardiansGame.createAnm(id, currentWalk, o, n, x, walk);
+			} else {
+				this.walk = currentWalkAnm;
+				currentWalkAnm = null;
+			}
 			currentWalk = DEFAULT_WALK;
 			this.ledgeTurn = ledgeTurn;
 			this.splat = splat ? FurGuardiansGame.createAnm(id + ".splat", currentSplat, o, n, x, strip[2]) : null;
@@ -165,14 +178,20 @@ public class Enemy extends Character {
 						engine.createImage(BaseGame.PRE_IMG + id, DEFAULT_O, DEFAULT_MIN, DEFAULT_MAX, strip[i]),
 						i == 0 ? 18 : 6);
 			}
-			if (size == 1) {
-				this.walk = engine.createAnimation(BaseGame.PRE_ANM + name, frames[0]);
+			if (currentWalkAnm == null) {
+				if (size == 1) {
+					walk = engine.createAnimation(BaseGame.PRE_ANM + name, frames[0]);
+				} else {
+					walk = engine.createAnimation(BaseGame.PRE_ANM + name, frames[0], frames[1], frames[2], frames[1]);
+				}
 			} else {
-				this.walk = engine.createAnimation(BaseGame.PRE_ANM + name, frames[0], frames[1], frames[2], frames[1]);
+				walk = currentWalkAnm;
+				currentWalkAnm = null;
 			}
 			ledgeTurn = false;
 			splat = null;
 			attack = null;
+			Img.close(strip);
 			avoidCount = 0;
 			offX = 0;
 			h = 0;
@@ -422,15 +441,22 @@ public class Enemy extends Character {
 		if (isDestroyed()) {
 			return;
 		}
-		destroyIfOffScreen(this, 80);
+		if (destroyIfOffScreen(this, 80)) {
+			onDestroyOffScreen();
+		}
 	}
 	
-	protected final static void destroyIfOffScreen(final Panctor a, final int off) {
+	protected void onDestroyOffScreen() {
+	}
+	
+	protected final static boolean destroyIfOffScreen(final Panctor a, final int off) {
 		final float x = a.getPosition().getX();
 		final Panlayer layer = a.getLayer();
 		if ((x + off) < layer.getViewMinimum().getX() || (x - (off * 2)) > layer.getViewMaximum().getX()) {
 			a.destroy();
+			return true;
 		}
+		return false;
 	}
 	
 	@Override
@@ -591,33 +617,54 @@ public class Enemy extends Character {
 			FurGuardiansGame.setDepth(back, FurGuardiansGame.DEPTH_ENEMY_BACK);
 			FurGuardiansGame.setDepth(front, FurGuardiansGame.DEPTH_ENEMY_FRONT);
 			//TODO Fall straight down
+			//TODO Prevent head getting stuck in block after destroying legs?
 			//TODO No instant defeats
+			//TODO Display legs on Foe screen
 		}
 		
 		@Override
 		public boolean onStepCustom() {
 			final Panple pos = getPosition(), backPos = back.getPosition(), frontPos = front.getPosition();
 			Panple.average(pos, backPos, frontPos);
-			pos.addY(6);
+			pos.addY(8);
+			boolean changedView = false;
 			if (back.isGrounded() && front.isGrounded()) {
 				if (timer == 0) {
 					facePlayers();
 					timer = 15;
 					final boolean wantRight = isMirror();
 					final boolean backRight = backPos.getX() > frontPos.getX();
+					changeView(wantRight, backRight);
+					changedView = true;
 					final Leg toMove = (wantRight == backRight) ? back : front;
 					toMove.jump();
 				} else {
 					timer--;
 				}
 			}
+			if (!changedView) {
+				changeView(isMirror(), backPos.getX() > frontPos.getX());
+			}
 			return true;
+		}
+		
+		private void changeView(final boolean wantRight, final boolean backRight) {
+			if (backRight == wantRight) {
+				changeView(FurGuardiansGame.rockBack);
+			} else {
+				changeView(def.walk);
+			}
 		}
 		
 		@Override
 		protected boolean defeat(final Character defeater, final int v, final byte defeatMode) {
 		    transform();
 		    return true;
+		}
+		
+		@Override
+		protected void onDestroyOffScreen() {
+			transform();
 		}
 		
 		private final void transform() {
@@ -654,6 +701,11 @@ public class Enemy extends Character {
             head.transform();
             return true;
         }
+		
+		@Override
+		protected void onDestroyOffScreen() {
+			head.transform();
+		}
 		
 		private final void transform() {
             if (isDestroyed()) {

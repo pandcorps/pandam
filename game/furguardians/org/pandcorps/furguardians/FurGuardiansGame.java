@@ -237,6 +237,7 @@ public class FurGuardiansGame extends BaseGame {
 	protected static EnemyDefinition ogreBehemoth = null;
 	protected static EnemyDefinition rockSprite = null;
 	protected static EnemyDefinition rockLeg = null;
+	protected static Panmage rockBack = null;
 	protected static Panimation anger = null;
 	protected static Panmage block8 = null;
 	protected static Panmage blockLetter8 = null;
@@ -1334,6 +1335,8 @@ public class FurGuardiansGame extends BaseGame {
                     return player == null || !player.isDragonStomping();
                 }};
 			Coltil.set(allEnemies, Level.BLOB, blob);
+			final Panple rockO = new FinPanple2(8, 2);
+			Enemy.currentO = rockO;
 			rockSprite = new EnemyDefinition("Rock Sprite", 15, null, false, false, 0, Enemy.DEFAULT_X, Enemy.DEFAULT_H, 2);
 			rockSprite.stepHandler = new InteractionHandler() {
                 @Override public final boolean onInteract(final Enemy enemy, final Player player) {
@@ -1351,14 +1354,16 @@ public class FurGuardiansGame extends BaseGame {
                 	return false;
                 }};
 			Coltil.set(allEnemies, Level.ROCK_SPRITE, rockSprite);
-			final EnemyDefinition rockTrio = new EnemyDefinition("Rock Trio", 15, 3, Enemy.trioFactory);
+			Enemy.currentWalkAnm = rockSprite.walk;
+			final EnemyDefinition rockTrio = new EnemyDefinition("Rock Walker", 15, 3, Enemy.trioFactory);
 			rockTrio.rewardHandler = new InteractionHandler() {
                 @Override public final boolean onInteract(final Enemy enemy, final Player player) {
                     return false;
                 }};
 			Coltil.set(allEnemies, Level.ROCK_TRIO, rockTrio);
-			rockLeg = new EnemyDefinition("Rock Leg", 15, null, false, false, 0, Enemy.DEFAULT_X, Enemy.DEFAULT_H, 3);
+			rockLeg = new EnemyDefinition("Rock Leg", 16, null, false, false, 0, Enemy.DEFAULT_X, Enemy.DEFAULT_H, 3);
 			rockLeg.rewardHandler = rockTrio.rewardHandler;
+			rockBack = createImage("rock.back", "org/pandcorps/furguardians/res/enemy/Enemy17.png", 16, rockO, Enemy.DEFAULT_MIN, Enemy.DEFAULT_MAX);
 			Level.initTheme(); }});
 		
 		loaders.add(new Runnable() { @Override public final void run() {
