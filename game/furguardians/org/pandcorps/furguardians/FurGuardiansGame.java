@@ -1355,7 +1355,7 @@ public class FurGuardiansGame extends BaseGame {
                     return false;
                 }};
 			Coltil.set(allEnemies, Level.ROCK_TRIO, rockTrio);
-			rockLeg = new EnemyDefinition("Rock Leg", 15, null, false, false, 0, Enemy.DEFAULT_X, Enemy.DEFAULT_H, 2);
+			rockLeg = new EnemyDefinition("Rock Leg", 15, null, false, false, 0, Enemy.DEFAULT_X, Enemy.DEFAULT_H, 3);
 			rockLeg.rewardHandler = rockTrio.rewardHandler;
 			Level.initTheme(); }});
 		

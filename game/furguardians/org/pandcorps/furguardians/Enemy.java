@@ -657,7 +657,7 @@ public class Enemy extends Character {
 		
 		private final void jump() {
 			setEnemyMirror(head.isMirror());
-			v = 5;
+			v = 4.5f;
 			FurGuardiansGame.soundJump.startSound();
 		}
 	}
