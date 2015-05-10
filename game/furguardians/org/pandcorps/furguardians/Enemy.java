@@ -149,6 +149,10 @@ public class Enemy extends Character {
 		}
 		
 		protected EnemyDefinition(final String name, final int ind, final SpawnFactory spawnFactory) {
+			this(name, ind, 0, spawnFactory);
+		}
+		
+		protected EnemyDefinition(final String name, final int ind, final int hv, final SpawnFactory spawnFactory) {
 			super(name);
 			code = Chartil.toCode(name);
 			final Img[] strip = loadStrip(ind, ImtilX.DIM);
@@ -172,7 +176,7 @@ public class Enemy extends Character {
 			avoidCount = 0;
 			offX = 0;
 			h = 0;
-			hv = 0;
+			this.hv = hv;
 			factory = spawnFactory;
 		}
 		
@@ -576,13 +580,14 @@ public class Enemy extends Character {
     }
 	
 	public final static class Trio extends Enemy {
+		private final static int OFF_LEG = 9;
 		private final Leg back;
 		private final Leg front;
 		
 		protected Trio(final EnemyDefinition def, final float x, final float y) {
 			super(def, x, y);
-			back = new Leg(x - 12, y, this);
-			front = new Leg(x + 12, y, this);
+			back = new Leg(x - OFF_LEG, y, this);
+			front = new Leg(x + OFF_LEG, y, this);
 			FurGuardiansGame.setDepth(back, FurGuardiansGame.DEPTH_ENEMY_BACK);
 			FurGuardiansGame.setDepth(front, FurGuardiansGame.DEPTH_ENEMY_FRONT);
 			//TODO Fall straight down
@@ -597,7 +602,7 @@ public class Enemy extends Character {
 			if (back.isGrounded() && front.isGrounded()) {
 				if (timer == 0) {
 					facePlayers();
-					timer = 30;
+					timer = 15;
 					final boolean wantRight = isMirror();
 					final boolean backRight = backPos.getX() > frontPos.getX();
 					final Leg toMove = (wantRight == backRight) ? back : front;
@@ -660,7 +665,7 @@ public class Enemy extends Character {
 		
 		private final void jump() {
 			setEnemyMirror(head.isMirror());
-			v = 4.5f;
+			v = 3.2f;
 			FurGuardiansGame.soundJump.startSound();
 		}
 	}

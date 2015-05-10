@@ -1351,7 +1351,7 @@ public class FurGuardiansGame extends BaseGame {
                 	return false;
                 }};
 			Coltil.set(allEnemies, Level.ROCK_SPRITE, rockSprite);
-			final EnemyDefinition rockTrio = new EnemyDefinition("Rock Trio", 15, Enemy.trioFactory);
+			final EnemyDefinition rockTrio = new EnemyDefinition("Rock Trio", 15, 3, Enemy.trioFactory);
 			rockTrio.rewardHandler = new InteractionHandler() {
                 @Override public final boolean onInteract(final Enemy enemy, final Player player) {
                     return false;
