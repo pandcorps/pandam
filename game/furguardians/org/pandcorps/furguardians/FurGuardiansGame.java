@@ -124,16 +124,18 @@ public class FurGuardiansGame extends BaseGame {
     protected final static byte TILE_HURT = 12;
 	
 	//protected final static int DEPTH_POWERUP = 0;
-	protected final static int DEPTH_ENEMY = 6;
+	protected final static int DEPTH_ENEMY_BACK = 6;
+	protected final static int DEPTH_ENEMY = 7;
+	protected final static int DEPTH_ENEMY_FRONT = 8;
 	protected final static int _DEPTH_PLAYER_BACK = 1;
 	protected final static int _DEPTH_PLAYER = 2;
 	protected final static int _DEPTH_PLAYER_FRONT = 3;
 	protected final static int _DEPTH_CONTAINER = 4;
 	protected final static int _DEPTH_BUBBLE = 5;
-	protected final static int DEPTH_SHATTER = 12;
-	protected final static int DEPTH_SPARK = 13;
-	protected final static int DEPTH_OFF_DRAGON = 6;
-	// DEPTH_PLAYER_DRAGON_BACK - BUBBLE = 7 - 11
+	protected final static int DEPTH_SHATTER = 14;
+	protected final static int DEPTH_SPARK = 15;
+	protected final static int DEPTH_OFF_DRAGON = 8;
+	// DEPTH_PLAYER_DRAGON_BACK - BUBBLE = 9 - 13
 	
 	protected final static int OFF_GEM = 16;
 	

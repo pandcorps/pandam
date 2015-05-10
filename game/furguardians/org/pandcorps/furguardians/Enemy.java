@@ -581,9 +581,12 @@ public class Enemy extends Character {
 		
 		protected Trio(final EnemyDefinition def, final float x, final float y) {
 			super(def, x, y);
-			this.back = new Leg(x - 12, y, this);
-			this.front = new Leg(x + 12, y, this);
-			//TODO Depth order
+			back = new Leg(x - 12, y, this);
+			front = new Leg(x + 12, y, this);
+			FurGuardiansGame.setDepth(back, FurGuardiansGame.DEPTH_ENEMY_BACK);
+			FurGuardiansGame.setDepth(front, FurGuardiansGame.DEPTH_ENEMY_FRONT);
+			//TODO Fall straight down
+			//TODO No instant defeats
 		}
 		
 		@Override
