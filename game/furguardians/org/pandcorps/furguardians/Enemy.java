@@ -625,7 +625,6 @@ public class Enemy extends Character {
 			FurGuardiansGame.setDepth(front, FurGuardiansGame.DEPTH_ENEMY_FRONT);
 			//TODO Fall straight down
 			//TODO Prevent head getting stuck in block after destroying legs?
-			//TODO No instant defeats
 			//TODO Include Rock Sprite in night/cave levels, full enemy list for normal rock levels
 		}
 		
@@ -678,7 +677,7 @@ public class Enemy extends Character {
 		    if (isDestroyed()) {
 		        return;
 		    }
-		    transform(FurGuardiansGame.rockSprite).initTimer(0);
+		    transform(FurGuardiansGame.rockSprite).timer = -1;
 		    back.transform();
 		    front.transform();
 		}

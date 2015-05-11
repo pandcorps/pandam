@@ -1341,7 +1341,10 @@ public class FurGuardiansGame extends BaseGame {
 			rockSprite.stepHandler = new InteractionHandler() {
                 @Override public final boolean onInteract(final Enemy enemy, final Player player) {
                 	if (enemy.isGrounded()) {
-                		if (enemy.timer == 0) {
+                	    if (enemy.timer < 0) {
+                	        enemy.initTimer(0);
+                	        return true;
+                	    } else if (enemy.timer == 0) {
                 			enemy.facePlayers();
                 			enemy.initTimer(0);
                 			enemy.v = Mathtil.randi(6, 8);
@@ -1352,6 +1355,10 @@ public class FurGuardiansGame extends BaseGame {
                 		return true;
                 	}
                 	return false;
+                }};
+            rockSprite.stompHandler = new InteractionHandler() {
+                @Override public final boolean onInteract(final Enemy enemy, final Player player) {
+                    return enemy.timer < 0;
                 }};
 			Coltil.set(allEnemies, Level.ROCK_SPRITE, rockSprite);
 			Enemy.currentWalkAnm = rockSprite.walk;
