@@ -519,7 +519,11 @@ public class Enemy extends Character {
 	
 	protected final void setEnemyMirror(final boolean mirror) {
 		setMirror(mirror);
-		hv = (mirror ? -1 : 1) * def.hv;
+		initHv();
+	}
+	
+	protected final void initHv() {
+		hv = (isMirror() ? -1 : 1) * def.hv;
 	}
 	
 	protected final void facePlayers() {
@@ -623,7 +627,6 @@ public class Enemy extends Character {
 			front = new Leg(x + OFF_LEG, y, this);
 			FurGuardiansGame.setDepth(back, FurGuardiansGame.DEPTH_ENEMY_BACK);
 			FurGuardiansGame.setDepth(front, FurGuardiansGame.DEPTH_ENEMY_FRONT);
-			//TODO Fall straight down
 			//TODO Prevent head getting stuck in block after destroying legs?
 			//TODO Include Rock Sprite in night/cave levels, full enemy list for normal rock levels
 		}
@@ -677,7 +680,9 @@ public class Enemy extends Character {
 		    if (isDestroyed()) {
 		        return;
 		    }
-		    transform(FurGuardiansGame.rockSprite).timer = -1;
+		    final Enemy sprite = transform(FurGuardiansGame.rockSprite);
+		    sprite.timer = -1;
+		    sprite.hv = 0;
 		    back.transform();
 		    front.transform();
 		}

@@ -1342,6 +1342,7 @@ public class FurGuardiansGame extends BaseGame {
                 @Override public final boolean onInteract(final Enemy enemy, final Player player) {
                 	if (enemy.isGrounded()) {
                 	    if (enemy.timer < 0) {
+                	        enemy.initHv();
                 	        enemy.initTimer(0);
                 	        return true;
                 	    } else if (enemy.timer == 0) {
