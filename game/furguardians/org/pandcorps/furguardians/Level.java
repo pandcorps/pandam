@@ -54,9 +54,9 @@ public class Level {
     protected final static int ICE_WISP = 11;
     protected final static int FIRE_WISP = 12;
     protected final static int ROCK_SPRITE = 13;
-    protected final static int ROCK_TRIO = 13;
-    protected final static int BLOB = 14;
-    protected final static int BLACK_BLOB = 15;
+    protected final static int ROCK_TRIO = 14;
+    protected final static int BLOB = 15;
+    protected final static int BLACK_BLOB = 16;
     
     private final static byte FLOOR_GRASSY = 0;
     private final static byte FLOOR_BLOCK = 1;

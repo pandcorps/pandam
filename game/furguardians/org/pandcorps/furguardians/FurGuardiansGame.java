@@ -1360,6 +1360,7 @@ public class FurGuardiansGame extends BaseGame {
                 @Override public final boolean onInteract(final Enemy enemy, final Player player) {
                     return false;
                 }};
+            rockTrio.menu = new TrioEnemyMenu();
 			Coltil.set(allEnemies, Level.ROCK_TRIO, rockTrio);
 			rockLeg = new EnemyDefinition("Rock Leg", 16, null, false, false, 0, Enemy.DEFAULT_X, Enemy.DEFAULT_H, 3);
 			rockLeg.rewardHandler = rockTrio.rewardHandler;

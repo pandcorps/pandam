@@ -51,6 +51,7 @@ public class Enemy extends Character {
 	protected final static FinPanple2 DEFAULT_O = new FinPanple2(8, 1);
 	protected final static FinPanple2 DEFAULT_MIN = getMin(DEFAULT_X);
 	protected final static FinPanple2 DEFAULT_MAX = getMax(DEFAULT_X, DEFAULT_H);
+	private final static EnemyMenu DEFAULT_MENU = new ImplEnemyMenu();
 	
 	protected static int currentSplat = DEFAULT_SPLAT;
 	protected static int currentWalk = DEFAULT_WALK;
@@ -81,6 +82,7 @@ public class Enemy extends Character {
 		protected Pansound wallSound = null;
 		protected Pansound stompSound = null;
 		protected final SpawnFactory factory;
+		protected EnemyMenu menu = DEFAULT_MENU;
 		
 		protected EnemyDefinition(final String name, final int ind, final PixelFilter f, final boolean ledgeTurn) {
 		    this(name, ind, f, ledgeTurn, false, 0, DEFAULT_X, DEFAULT_H, DEFAULT_HV);
@@ -203,6 +205,10 @@ public class Enemy extends Character {
 		    award = ref.award;
             stompHandler = ref.stompHandler;
             stepHandler = ref.stepHandler;
+		}
+		
+		private final Panmage getWalkImage() {
+		    return walk.getFrames()[0].getImage();
 		}
 	}
 	
@@ -606,6 +612,7 @@ public class Enemy extends Character {
     }
 	
 	public final static class Trio extends Enemy {
+	    private final static int OFF_HEAD = 8;
 		private final static int OFF_LEG = 9;
 		private final Leg back;
 		private final Leg front;
@@ -619,14 +626,14 @@ public class Enemy extends Character {
 			//TODO Fall straight down
 			//TODO Prevent head getting stuck in block after destroying legs?
 			//TODO No instant defeats
-			//TODO Display legs on Foe screen
+			//TODO Include Rock Sprite in night/cave levels, full enemy list for normal rock levels
 		}
 		
 		@Override
 		public boolean onStepCustom() {
 			final Panple pos = getPosition(), backPos = back.getPosition(), frontPos = front.getPosition();
 			Panple.average(pos, backPos, frontPos);
-			pos.addY(8);
+			pos.addY(OFF_HEAD);
 			boolean changedView = false;
 			if (back.isGrounded() && front.isGrounded()) {
 				if (timer == 0) {
@@ -791,4 +798,31 @@ public class Enemy extends Character {
 			return new Wisp(def, x, y);
 		}
 	}
+	
+	protected static interface EnemyMenu {
+	    public void draw(final Panctor enemyBack, final Panctor enemy, final Panctor enemyFront, final EnemyDefinition def, final int x);
+	}
+	
+	private final static class ImplEnemyMenu implements EnemyMenu {
+        @Override
+        public final void draw(final Panctor enemyBack, final Panctor enemy, final Panctor enemyFront, final EnemyDefinition def, final int x) {
+            enemyBack.setView((Panmage) null);
+            enemy.setView(def.getWalkImage());
+            enemy.getPosition().set(x, Menu.Y_PLAYER);
+            enemyFront.setView((Panmage) null);
+        }
+	}
+	
+	protected final static class TrioEnemyMenu implements EnemyMenu {
+        @Override
+        public final void draw(final Panctor enemyBack, final Panctor enemy, final Panctor enemyFront, final EnemyDefinition def, final int x) {
+            final Panmage legImg = FurGuardiansGame.rockLeg.getWalkImage();
+            enemyBack.setView(legImg);
+            enemyBack.getPosition().set(x - Trio.OFF_LEG, Menu.Y_PLAYER);
+            enemy.setView(def.getWalkImage());
+            enemy.getPosition().set(x, Menu.Y_PLAYER + Trio.OFF_HEAD);
+            enemyFront.setView(legImg);
+            enemyFront.getPosition().set(x + Trio.OFF_LEG, Menu.Y_PLAYER);
+        }
+    }
 }

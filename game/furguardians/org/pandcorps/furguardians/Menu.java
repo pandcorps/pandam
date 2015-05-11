@@ -60,7 +60,7 @@ public class Menu {
     private final static String WARN_EMPTY = "Must have a name";
     private final static String WARN_DUPLICATE = "Name already used";
     private final static String INFO_SAVED = "Saved images";
-    private final static int Y_PLAYER = 16;
+    protected final static int Y_PLAYER = 16;
     private final static char CHAR_ON = 2;
     protected final static String NEW_AVATAR_NAME = "New";
     private static boolean newProfile = false;
@@ -2463,7 +2463,9 @@ public class Menu {
 	    private final List<Panctor> rankStars = new ArrayList<Panctor>(Profile.POINTS_PER_RANK);
 	    private RadioGroup enemyRadio = null;
 	    private final StringBuilder enemyDesc = new StringBuilder();
+	    private Panctor enemyBack = null;
 	    private Panctor enemy = null;
+	    private Panctor enemyFront = null;
 	    final boolean fullMenu;
 	    
         protected InfoScreen(final PlayerContext pc, final boolean fullMenu) {
@@ -2560,8 +2562,9 @@ public class Menu {
 		    for (final EnemyDefinition def : FurGuardiansGame.allEnemies) {
 		        list.add(def.getName());
 		    }
-		    enemy = addActor(center + 80, Y_PLAYER);
-		    enemy.setMirror(true);
+		    enemyBack = addEnemy(0);
+		    enemy = addEnemy(1);
+		    enemyFront = addEnemy(2);
 		    addTitle(enemyDesc, x + OFF_RADIO_LIST, y - 72);
 		    final RadioSubmitListener foeLsn = new RadioSubmitListener() {
                 @Override public final void onSubmit(final RadioSubmitEvent event) {
@@ -2570,6 +2573,17 @@ public class Menu {
             enemyRadio = addRadio("Bestiary", list, foeLsn, x, y);
             initEnemy();
         }
+		
+		private final Panctor addEnemy(final int z) {
+		    final Panctor enemy = addActor(getEnemyX(), Y_PLAYER);
+            enemy.setMirror(true);
+            enemy.getPosition().addZ(z);
+            return enemy;
+		}
+		
+		private final int getEnemyX() {
+		    return center + 80;
+		}
 		
 		private final void createGoalsList(final int x, int y) {
 			addTitle("Goals", x, y);
@@ -2775,7 +2789,7 @@ public class Menu {
         
         private final void setEnemy(final String name) {
         	final EnemyDefinition def = FurGuardiansGame.getEnemy(name);
-            enemy.setView(def.walk.getFrames()[0].getImage());
+            def.menu.draw(enemyBack, enemy, enemyFront, def, getEnemyX());
             Chartil.set(enemyDesc, "Defeated " + pc.profile.stats.getDefeatedCount(def));
         }
         
