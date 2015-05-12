@@ -218,8 +218,7 @@ public class Level {
     	};
     	public final static Theme Rock = new Theme("Rock", null, MSG, (byte) -1) {
     	    @Override protected final int[] getEnemyIndices(final int worlds, final int levels) {
-    	    	//return getNormalEnemies(ROCK_SPRITE);
-    	    	return new int[] {ROCK_TRIO};
+    	    	return getNormalEnemies(ROCK_SPRITE, ROCK_TRIO);
     	    }
     	    
     		@Override protected final BackgroundBuilder getRandomBackground() {
@@ -295,6 +294,8 @@ public class Level {
                 	return new int[] {special, ICE_WISP};
                 } else if (Map.theme == Map.MapTheme.Sand) {
                 	return new int[] {special, FIRE_WISP};
+                } else if (Map.theme == Map.MapTheme.Rock) {
+                    return new int[] {special, ROCK_SPRITE};
                 }
             	return new int[] {special};
         	} else {
@@ -302,6 +303,8 @@ public class Level {
                 	return new int[] {special, ICE_WISP, ARMORED_IMP};
                 } else if (Map.theme == Map.MapTheme.Sand) {
                 	return new int[] {special, FIRE_WISP, ARMORED_IMP};
+                } else if (Map.theme == Map.MapTheme.Rock) {
+                    return new int[] {special, ROCK_SPRITE, ARMORED_IMP};
                 }
             	return new int[] {special, ARMORED_IMP};
         	}

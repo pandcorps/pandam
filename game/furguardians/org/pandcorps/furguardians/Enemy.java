@@ -628,7 +628,6 @@ public class Enemy extends Character {
 			FurGuardiansGame.setDepth(back, FurGuardiansGame.DEPTH_ENEMY_BACK);
 			FurGuardiansGame.setDepth(front, FurGuardiansGame.DEPTH_ENEMY_FRONT);
 			//TODO Prevent head getting stuck in block after destroying legs?
-			//TODO Include Rock Sprite in night/cave levels, full enemy list for normal rock levels
 		}
 		
 		@Override
