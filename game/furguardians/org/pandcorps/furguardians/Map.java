@@ -657,12 +657,12 @@ public class Map {
 	            go(Direction.West);
 	        } else if (Panput.isActive(ctrl.getRight(), endListener)) {
 	            go(Direction.East);
-	        } else if (Panput.isActive(ctrl.get1(), endListener)) {
+	        } else if (Panput.isActive(ctrl.get1(), endListener) || Panput.isActive(ctrl.getSubmit(), endListener)) {
 	        	/*if (room.getBlendColor().getA() > Pancolor.MIN_VALUE) {
 	        		return;
 	        	}*/
 	        	if (engine.getClock() <= startTime || FadeController.isFadingIn()) {
-	        		ctrl.get1().inactivate();
+	        		Panput.inactivate(ctrl.get1(), ctrl.getSubmit());
 	        		return;
 	        	}
 	            clearHelp();
