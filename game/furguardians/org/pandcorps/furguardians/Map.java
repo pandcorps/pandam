@@ -699,6 +699,8 @@ public class Map {
 				modeMove = (short) ((modeMove + 1) % 3);
 			} else if (interaction.KEY_F1.isActive()) {
 				engine.captureScreen();
+			} else if (interaction.KEY_G.isActive()) {
+			    FurGuardiansGame.goGoals(getPlayerContext());
 			} else if (Panput.isActive(getMenuInput(ctrl), endListener)) {
 			    clearHelp();
 				goMenu(getMenuInput(ctrl), pc);

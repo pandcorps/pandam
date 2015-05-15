@@ -66,6 +66,7 @@ public abstract class Panteraction {
 	public final Key KEY_S;
 	public final Key KEY_D;
 	public final Key KEY_F;
+	public final Key KEY_G;
 	public final Key KEY_SEMICOLON;
 	public final Key KEY_APOSTROPHE;
 	public final Key KEY_GRAVE; // tilde w/ shift
@@ -287,6 +288,7 @@ public abstract class Panteraction {
         KEY_S = keys[IND_A + 1];
         KEY_D = keys[IND_A + 2];
         KEY_F = keys[IND_A + 3];
+        KEY_G = keys[IND_A + 4];
         KEY_SEMICOLON = keys[39];
         KEY_APOSTROPHE = keys[40];
         KEY_GRAVE = keys[IND_GRAVE]; // tilde with shift
