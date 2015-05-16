@@ -694,7 +694,7 @@ public class Map {
 	            Level.clear(); // Called automatically for Level, but not for Cabin
 	        	fadeOut(screen);
 	        	FurGuardiansGame.playTransition(FurGuardiansGame.musicLevelStart);
-			} else if (interaction.KEY_TAB.isActive()) {
+			} else if (FurGuardiansGame.debugMode && interaction.KEY_TAB.isActive()) {
 				interaction.KEY_TAB.inactivate();
 				modeMove = (short) ((modeMove + 1) % 3);
 			} else if (interaction.KEY_F1.isActive()) {

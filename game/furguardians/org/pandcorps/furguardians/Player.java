@@ -359,7 +359,13 @@ public class Player extends Character implements CollisionListener {
 		register(ctrl.getLeft(), new ActionListener() {
 			@Override public final void onAction(final ActionEvent event) { left(); }});
 		
-		// Debug
+		register(interaction.KEY_F1, new ActionStartListener() {
+            @Override public final void onActionStart(final ActionStartEvent event) { engine.captureScreen(); }});
+		
+		if (!FurGuardiansGame.debugMode) {
+			return;
+		}
+		
 		register(interaction.KEY_1, new ActionStartListener() {
             @Override public final void onActionStart(final ActionStartEvent event) { left(); }});
 		register(interaction.KEY_2, new ActionStartListener() {
@@ -374,8 +380,6 @@ public class Player extends Character implements CollisionListener {
             @Override public final void onActionStart(final ActionStartEvent event) { jumpMode = JUMP_HIGH; }});
         register(interaction.KEY_E, new ActionStartListener() {
             @Override public final void onActionStart(final ActionStartEvent event) { jumpMode = JUMP_FLY; }});
-        register(interaction.KEY_F1, new ActionStartListener() {
-            @Override public final void onActionStart(final ActionStartEvent event) { engine.captureScreen(); }});
         register(interaction.KEY_F2, new ActionStartListener() {
             @Override public final void onActionStart(final ActionStartEvent event) { engine.startCaptureFrames(); }});
         register(interaction.KEY_F3, new ActionStartListener() {

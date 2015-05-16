@@ -111,10 +111,6 @@ public class Profile extends PlayerData implements Segmented, Savable {
     public void load(final Segment seg) {
     	setName(seg.getValue(0));
     	gems = seg.intValue(2);
-//DEBUG
-/*if (gems < 1000000) {
-gems = 1000000;
-}*/
     	addAll(availableJumpModes, seg, 3);
     	addAll(triedJumpModes, seg, 4);
     	addAll(availableAssists, seg, 5);

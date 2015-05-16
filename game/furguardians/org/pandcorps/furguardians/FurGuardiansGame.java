@@ -50,7 +50,7 @@ import org.pandcorps.furguardians.Player.*;
 
 public class FurGuardiansGame extends BaseGame {
 	protected final static String TITLE = "Fur-Guardians"; // res/values/strings.xml/app_name
-    protected final static String VERSION = "1.5.3"; // AndroidManifest.xml/versionName
+    protected final static String VERSION = "1.6.0"; // AndroidManifest.xml/versionName
     protected final static String YEAR = "2014-2015";
     protected final static String AUTHOR = "Andrew M. Martin";
 	/*
@@ -198,6 +198,7 @@ public class FurGuardiansGame extends BaseGame {
 	
 	private final static PixelMask greyMask = new GreyScalePixelMask();
 	
+	protected static boolean debugMode = false;
 	protected static boolean level = false;
 	protected static Panroom room = null;
 	protected static Panlayer hud = null;
@@ -376,6 +377,7 @@ public class FurGuardiansGame extends BaseGame {
 	        engine.setFatalLogged(true);
 	    }
 	    Locale.setDefault(Locale.US); // toUpperCase can lead to characters outside of image fonts in other Locales
+	    debugMode = Boolean.getBoolean("org.pandcorps.furguardians.debugMode");
 	    engine.setTitle(TITLE);
 	    engine.setEntityMapEnabled(false);
 	    Imtil.onlyResources = true;
