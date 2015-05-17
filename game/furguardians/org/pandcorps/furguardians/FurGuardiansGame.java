@@ -165,21 +165,29 @@ public class FurGuardiansGame extends BaseGame {
 	protected final static String SEG_LOC = "LOC";
 	protected final static String SEG_AVT = "AVT";
 	
-	protected final static List<String> tips = Arrays.asList(
-			"You can turn music and sounds on/off in Menu/Setup/Music",
-			"You can change your Avatar's appearance in Menu/Edit",
-			"You can spend Gems on clothing and powerups in Menu/Edit/Gear",
-			"You can try powerups for 1 Level without spending any Gems",
-			"You can change the color of clothing that you have purchased",
-			"You can switch between full control and auto-run in Menu/Setup", // on-screen buttons
-			"You can add a Profile for a new user of this device in Menu/Add",
-			"Spending Gems in one Profile will not take Gems from other Profiles",
-			"Items purchased in one Profile are unavailable to other Profiles",
-			"You can create a new Avatar for yourself in Menu/Add",
-			"A single Profile can have multiple Avatars",
-			"Items purchased for one Avatar can be used by other Avatars of that Profile",
-			"You can spend Gems on new abilities in Menu/Setup/Perks",
-			"You can adjust the game's difficulty in Menu/Setup/Easy-Hard");
+	protected static List<String> tips = null;
+	
+	private final static List<String> initTips() {
+		final List<String> list = new ArrayList<String>();
+		if (Pangine.getEngine().isMouseSupported()) {
+			list.add("You can enter the menu by pressing Esc on the map");
+		}
+		list.add("You can turn music and sounds on/off in Menu/Setup/Music");
+		list.add("You can change your Avatar's appearance in Menu/Edit");
+		list.add("You can spend Gems on clothing and powerups in Menu/Edit/Gear");
+		list.add("You can try powerups for 1 Level without spending any Gems");
+		list.add("You can change the color of clothing that you have purchased");
+		list.add("You can switch between full control and auto-run in Menu/Setup"); // on-screen buttons
+		list.add("You can add a Profile for a new user of this device in Menu/Add");
+		list.add("Spending Gems in one Profile will not take Gems from other Profiles");
+		list.add("Items purchased in one Profile are unavailable to other Profiles");
+		list.add("You can create a new Avatar for yourself in Menu/Add");
+		list.add("A single Profile can have multiple Avatars");
+		list.add("Items purchased for one Avatar can be used by other Avatars of that Profile");
+		list.add("You can spend Gems on new abilities in Menu/Setup/Perks");
+		list.add("You can adjust the game's difficulty in Menu/Setup/Easy-Hard");
+		return list;
+	}
 	
 	protected final static String[][] ads = {
 		{ "Thank you", "for playing" },
@@ -378,6 +386,7 @@ public class FurGuardiansGame extends BaseGame {
 	    }
 	    Locale.setDefault(Locale.US); // toUpperCase can lead to characters outside of image fonts in other Locales
 	    debugMode = Boolean.getBoolean("org.pandcorps.furguardians.debugMode");
+	    tips = initTips();
 	    engine.setTitle(TITLE);
 	    engine.setEntityMapEnabled(false);
 	    Imtil.onlyResources = true;

@@ -702,8 +702,10 @@ public class Map {
 			} else if (interaction.KEY_G.isActive()) {
 			    FurGuardiansGame.goGoals(getPlayerContext());
 			} else if (Panput.isActive(getMenuInput(ctrl), endListener)) {
-			    clearHelp();
 				goMenu(getMenuInput(ctrl), pc);
+			} else if (Coltil.size(FurGuardiansGame.pcs) == 1 && interaction.KEY_ESCAPE.isActive()) {
+				// If player is using gamepad but presses Esc, still go to menu
+				goMenu(interaction.KEY_ESCAPE, pc);
 			}
 		}
 		
@@ -713,6 +715,7 @@ public class Map {
 		}
 		
 		private final void goMenu(final Panput input, final PlayerContext pc) {
+			clearHelp();
 			input.inactivate();
 			ProfileScreen.currentTab = ProfileScreen.TAB_SELECT_AVATAR;
 		    fadeOut(new ProfileScreen(pc, true));
