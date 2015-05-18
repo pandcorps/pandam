@@ -171,6 +171,7 @@ public class FurGuardiansGame extends BaseGame {
 		final List<String> list = new ArrayList<String>();
 		if (Pangine.getEngine().isMouseSupported()) {
 			list.add("You can enter the menu by pressing Esc on the map");
+			list.add("You can view your current Goals by pressing G on the map");
 		}
 		list.add("You can turn music and sounds on/off in Menu/Setup/Music");
 		list.add("You can change your Avatar's appearance in Menu/Edit");
