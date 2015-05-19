@@ -1962,7 +1962,7 @@ public class FurGuardiansGame extends BaseGame {
 	}
 	
 	protected final static int getNumEyes() {
-	    return 16;
+	    return 17;
 	}
 	
 	protected final static int getNumDragonEyes() {
