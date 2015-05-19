@@ -1,3 +1,4 @@
+Added pandas.
 Added new eyes.
 Added Consumer Achievement.
 

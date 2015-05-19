@@ -22,11 +22,15 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.furguardians;
 
+import java.util.*;
+import java.util.Map;
+
 import org.pandcorps.core.*;
 import org.pandcorps.core.seg.*;
 import org.pandcorps.furguardians.Player.*;
 
 public class Avatar extends EyeData implements Segmented {
+	protected final static Map<String, Animal> SPECIAL_ANIMALS = new HashMap<String, Animal>();
 	protected final static float DEF_JUMP_COL = 1;
 	private final static int MAX_COLOR_INDEX = 4;
     protected String anm = null;
@@ -37,6 +41,14 @@ public class Avatar extends EyeData implements Segmented {
     protected final Garb hat = new Garb();
     protected final Dragon dragon = new Dragon();
     private final static int[] randomColorChannels = {0, 1, 2};
+    
+    static {
+    	putSpecialAnimal(new Animal("Panda", "Bear"));
+    }
+    
+    private final static void putSpecialAnimal(final Animal animal) {
+    	SPECIAL_ANIMALS.put(animal.getName(), animal);
+    }
     
     protected final static class Garb implements Named {
     	protected Clothing clth = null;
@@ -151,6 +163,15 @@ public class Avatar extends EyeData implements Segmented {
         		b = color;
         	}
         }
+    }
+    
+    protected static class Animal extends FinName {
+    	protected final String base;
+    	
+		protected Animal(final String name, final String base) {
+			super(name);
+			this.base = base;
+		}
     }
     
     protected static class Dragon extends EyeData {
@@ -365,6 +386,15 @@ public class Avatar extends EyeData implements Segmented {
     	dragon.col.save(seg, 18);
     	seg.setValue(21, dragon.getName());
     	seg.setInt(22, dragon.eye);
+    }
+    
+    protected final Animal getAnimal() {
+    	return SPECIAL_ANIMALS.get(anm);
+    }
+    
+    protected final String getBaseAnm() {
+    	final Animal animal = getAnimal();
+    	return animal == null ? anm : animal.base;
     }
     
     private final static float randColor() {

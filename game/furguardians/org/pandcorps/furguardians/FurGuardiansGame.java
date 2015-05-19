@@ -228,6 +228,7 @@ public class FurGuardiansGame extends BaseGame {
 	protected static Img[] guysBlank = null;
 	protected static Img[] guysRide = null;
 	protected final static HashMap<String, Img> facesAll = new HashMap<String, Img>();
+	protected final static HashMap<String, Img[]> faceMapsAll = new HashMap<String, Img[]>();
 	protected final static HashMap<String, Img[]> tailsAll = new HashMap<String, Img[]>();
 	protected final static HashMap<String, Img[]> bodiesAll = new HashMap<String, Img[]>();
 	protected final static Img[] eyesAll = new Img[getNumEyes()];
@@ -596,6 +597,16 @@ public class FurGuardiansGame extends BaseGame {
 		return e;
 	}
 	
+	private final static Img[] getBodies(final String body) {
+		Img[] guysRaw = bodiesAll.get(body);
+        if (guysRaw == null) {
+            guysRaw = loadChrStrip("Bear" + body + ".png", 32, true);
+            Img.setTemporary(false, guysRaw);
+            bodiesAll.put(body, guysRaw);
+        }
+        return guysRaw;
+	}
+	
 	protected final static class PlayerImages {
 		protected final PixelFilter f;
 		protected final Img[] guys;
@@ -608,38 +619,43 @@ public class FurGuardiansGame extends BaseGame {
 	
 		protected PlayerImages(final Avatar avatar) {
 		    f = getFilter(avatar.col);
+		    final String anm = avatar.anm;
+		    final Animal animal = avatar.getAnimal();
 		    final Clothing c = avatar.clothing.clth;
 		    Img[] guysRaw;
 		    final String body = c == null ? null : c.getBody();
 		    final boolean needDragon = avatar.jumpMode == Player.JUMP_DRAGON;
 		    if (needDragon) {
-		    	if (guysRide == null) {
-		    		guysRide = loadChrStrip("BearRide.png", 32, true);
-				    Img.setTemporary(false, guysRide);
+		    	if (animal == null) {
+			    	if (guysRide == null) {
+			    		guysRide = loadChrStrip("BearRide.png", 32, true);
+					    Img.setTemporary(false, guysRide);
+			    	}
+			    	guysRaw = guysRide;
+		    	} else {
+		    		guysRaw = getBodies(anm + "Ride");
 		    	}
-		    	guysRaw = guysRide;
 		    } else if (body == null) {
-		        guysRaw = guysBlank;
+		    	if (animal == null) {
+		    		guysRaw = guysBlank;
+		    	} else {
+		    		guysRaw = getBodies(anm);
+		    	}
 		    } else {
-		        guysRaw = bodiesAll.get(body);
-		        if (guysRaw == null) {
-		            guysRaw = loadChrStrip("Bear" + body + ".png", 32, true);
-	                Img.setTemporary(false, guysRaw);
-	                bodiesAll.put(body, guysRaw);
-		        }
+		    	guysRaw = getBodies(body);
 		    }
 			guys = new Img[guysRaw.length];
-			filterStrip(guysRaw, guys, f);
+			filterStrip(guysRaw, guys, greyMask, f);
 			final boolean hasStill = hasStill(guys);
 			guyBlink = Imtil.copy(getStill(guys, hasStill));
-			final String anm = avatar.anm;
 			final Img faceRaw = getImg(facesAll, "Face", anm);
-			face = Imtil.filter(faceRaw, f);
-			Img[] tailsRaw = tailsAll.get(anm);
-			if (tailsRaw == null && !tailsAll.containsKey(anm)) {
-				tailsRaw = loadChrStrip("Tail" + anm + ".png", 12, false);
+			face = Imtil.filter(faceRaw, greyMask, f);
+			final String baseAnm = avatar.getBaseAnm();
+			Img[] tailsRaw = tailsAll.get(baseAnm);
+			if (tailsRaw == null && !tailsAll.containsKey(baseAnm)) {
+				tailsRaw = loadChrStrip("Tail" + baseAnm + ".png", 12, false);
 				Img.setTemporary(false, tailsRaw);
-				tailsAll.put(anm, tailsRaw);
+				tailsAll.put(baseAnm, tailsRaw);
 			}
 			if (tailsRaw == null) {
 				tails = null;
@@ -669,7 +685,7 @@ public class FurGuardiansGame extends BaseGame {
 				h.init();
 				hatFilter = getFilter(avatar.hat.col);
 				hat = Imtil.filter(h.imgs[0], hatFilter);
-				mask = h.maskNeeded ? getImg(masksAll, "mask/Mask", anm) : null;
+				mask = h.maskNeeded ? getImg(masksAll, "mask/Mask", baseAnm) : null;
 			}
 			if (hat != null) {
 		    	Imtil.copy(hat, face, 0, 0, 18, 18, 0, 0, TransparentPixelMask.getInstance(), ImgPixelMask.getMask(mask, Pancolor.BLACK));
@@ -723,7 +739,7 @@ public class FurGuardiansGame extends BaseGame {
 		pc.destroy();
 		final Profile profile = pc.profile;
 	    final Avatar avatar = profile.currentAvatar;
-	    final String anm = avatar.anm;
+	    final String anm = avatar.anm, baseAnm = avatar.getBaseAnm();
 	    final PlayerImages pi = new PlayerImages(avatar);
 	    final Img guys[] = pi.guys, tails[] = pi.tails, eyes = pi.eyes;
 		final String pre = "guy." + pc.index;
@@ -754,7 +770,14 @@ public class FurGuardiansGame extends BaseGame {
 		
 		if (full) {
 		    ImtilX.validateDefault = false;
-			final Img[] faceMap = loadChrStrip("FaceMap" + anm + ".png", 18, pi.f);
+			Img[] faceMapRaw = faceMapsAll.get(anm);
+			if (faceMapRaw == null) {
+				faceMapRaw = ImtilX.loadStrip(RES + "chr/FaceMap" + anm + ".png", 18);
+				Img.setTemporary(false, faceMapRaw);
+				faceMapsAll.put(anm, faceMapRaw);
+			}
+			final Img[] faceMap = new Img[faceMapRaw.length];
+			filterStrip(faceMapRaw, faceMap, greyMask, pi.f);
 			ImtilX.validateDefault = true;
 			final Img[] hatMapRaw = (avatar.hat.clth == null) ? null : avatar.hat.clth.mapImgs;
 			if (hatMapRaw != null) {
@@ -764,7 +787,7 @@ public class FurGuardiansGame extends BaseGame {
 				final Hat hat = (Hat) avatar.hat.clth;
 				final boolean maskNeeded = hat.maskNeeded;
 				ImtilX.validateDefault = false;
-				maskMap = maskNeeded ? loadChrStrip("mask/MaskMap" + anm + ".png", 18, null) : null;
+				maskMap = maskNeeded ? loadChrStrip("mask/MaskMap" + baseAnm + ".png", 18, null) : null;
 				ImtilX.validateDefault = true;
 				final PixelMask srcMask = TransparentPixelMask.getInstance();
 				for (int i = 0; i < 3; i++) {
@@ -806,7 +829,11 @@ public class FurGuardiansGame extends BaseGame {
 			    //guy = engine.createImage(pre, new FinPanple2(8, 0), null, null, ImtilX.loadImage(RES + "chr/Player.png"));
 			}
 		    
-			final Img[] maps = loadChrStrip("BearMap.png", 32, pi.f);
+			//final Img[] maps = loadChrStrip("BearMap.png", 32, pi.f);
+			final Animal animal = avatar.getAnimal();
+			final Img[] mapsRaw = getBodies((animal == null) ? "Map" : (anm + "Map"));
+			final Img[] maps = new Img[mapsRaw.length];
+			filterStrip(mapsRaw, maps, greyMask, pi.f);
 			final Img[] clothingMapRaw = (avatar.clothing.clth == null) ? null : avatar.clothing.clth.mapImgs;
 			final Img[] clothingMap;
 			if (clothingMapRaw == null) {
@@ -1958,7 +1985,7 @@ public class FurGuardiansGame extends BaseGame {
 	}
 	
 	protected final static List<String> getAnimals() {
-	    return Arrays.asList("Bear", "Cat", "Dog", "Elephant", "Horse", "Koala", "Mouse", "Rabbit", "Rhino");
+	    return Arrays.asList("Bear", "Cat", "Dog", "Elephant", "Horse", "Koala", "Mouse", "Panda", "Rabbit", "Rhino");
 	}
 	
 	protected final static int getNumEyes() {
