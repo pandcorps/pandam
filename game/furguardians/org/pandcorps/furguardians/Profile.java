@@ -48,7 +48,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
     private int gems = 0;
     protected final TreeSet<Integer> availableJumpModes = new TreeSet<Integer>(); // Index stored as byte in JumpMode
     protected final TreeSet<Integer> triedJumpModes = new TreeSet<Integer>();
-    private final TreeSet<Integer> availableAssists = new TreeSet<Integer>();
+    protected final TreeSet<Integer> availableAssists = new TreeSet<Integer>();
     private final TreeSet<Integer> activeAssists = new TreeSet<Integer>();
     protected boolean autoRun = false;
     protected int frameRate = DEF_FRAME_RATE;

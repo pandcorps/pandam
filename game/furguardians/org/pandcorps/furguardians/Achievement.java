@@ -24,6 +24,7 @@ package org.pandcorps.furguardians;
 
 import java.util.*;
 
+import org.pandcorps.core.*;
 import org.pandcorps.furguardians.Player.*;
 import org.pandcorps.furguardians.Profile.*;
 
@@ -43,14 +44,12 @@ public abstract class Achievement extends FinName {
 		new JumpFeat("Leapfrog", 3000), new HitFeat("Eagle-eyed", 10), new MonsterBumpFeat("Sneak Attack", 50),
 		new BonusLevelFeat("Roll the Dice", 5), new KickFeat("Kick the Ball", 20),
 		new NoGemsFeat(), new AllGemsFeat(), new AllBrokenFeat(),
-		new GiantFeat("Giant Slayer", 50), new HardFeat()
+		new GiantFeat("Giant Slayer", 50), new HardFeat(), new BuyFeat("Consumer", 1)
 		// level w/ no damage
 		// Beyond Belief, Finish level as a flying pig
 		// Babe, Finish level as a blue bull/ox
 		// Menagerie (Zoologist), Use each animal to finish a level
 		// Play a bonus level
-		// Buy a JumpMode
-		// Buy an Assist
 		// Defeat all levels within a World (including optional one)
 	};
 	
@@ -363,6 +362,18 @@ public abstract class Achievement extends FinName {
 			return prf.getRank();
 		}
 	}
+	
+	private final static class BuyFeat extends CountFeat {
+        protected BuyFeat(final String name, final int n) {
+            super(name, n, "Buy " + n + " item" + getS(n), n * 1000);
+        }
+        
+        @Override
+        public final long getCurrent(final Profile prf) {
+            // Start with normal jump mode, so subtract one for that
+            return Coltil.size(prf.availableClothings) + Coltil.size(prf.availableHats) + Coltil.size(prf.availableJumpModes) + Coltil.size(prf.availableAssists) - 1;
+        }
+    }
 	
 	private final static class MonarchFeat extends AvatarFeat {
         protected MonarchFeat() {
