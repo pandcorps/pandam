@@ -43,7 +43,7 @@ public class Avatar extends EyeData implements Segmented {
     private final static int[] randomColorChannels = {0, 1, 2};
     
     static {
-    	putSpecialAnimal(new Animal("Panda", "Bear"));
+    	putSpecialAnimal(new Animal("Panda", "Bear", 50000));
     }
     
     private final static void putSpecialAnimal(final Animal animal) {
@@ -167,11 +167,17 @@ public class Avatar extends EyeData implements Segmented {
     
     protected static class Animal extends FinName {
     	protected final String base;
+    	private final int cost;
     	
-		protected Animal(final String name, final String base) {
+		protected Animal(final String name, final String base, final int cost) {
 			super(name);
 			this.base = base;
+			this.cost = cost;
 		}
+		
+		public final int getCost() {
+            return cost;
+        }
     }
     
     protected static class Dragon extends EyeData {
@@ -389,7 +395,11 @@ public class Avatar extends EyeData implements Segmented {
     }
     
     protected final Animal getAnimal() {
-    	return SPECIAL_ANIMALS.get(anm);
+    	return getSpecialAnimal(anm);
+    }
+    
+    protected final static Animal getSpecialAnimal(final String anm) {
+        return SPECIAL_ANIMALS.get(anm);
     }
     
     protected final String getBaseAnm() {

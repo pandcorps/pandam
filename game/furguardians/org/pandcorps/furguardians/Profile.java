@@ -62,6 +62,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
     //private String version = null; // Currently only write version to save file in case we want to read it later
     protected int damagePercentage = DEF_DAMAGE_PERCENTAGE;
     protected boolean endLevelIfHurtWithNoGems = false;
+    protected final Set<Animal> availableSpecialAnimals = new HashSet<Animal>();
     protected int column = -1;
 	protected int row = -1;
 	protected final HashMap<Pair<Integer, Integer>, Boolean> open = new HashMap<Pair<Integer, Integer>, Boolean>();
@@ -133,6 +134,9 @@ public class Profile extends PlayerData implements Segmented, Savable {
     	//version = seg.getValue(14); // Currently only write version to save file in case we want to read it later
     	damagePercentage = seg.getInt(15, DEF_DAMAGE_PERCENTAGE);
     	endLevelIfHurtWithNoGems = seg.getBoolean(16, false);
+    	for (final Field f : Coltil.unnull(seg.getRepetitions(17))) {
+            availableSpecialAnimals.add(Avatar.getSpecialAnimal(f.getValue()));
+        }
     	//ctrl = seg.intValue(3);
     }
     
@@ -162,6 +166,9 @@ public class Profile extends PlayerData implements Segmented, Savable {
         seg.setValue(14, FurGuardiansGame.VERSION);
         seg.setInt(15, damagePercentage);
         seg.setBoolean(16, endLevelIfHurtWithNoGems);
+        for (final Animal a : Coltil.unnull(availableSpecialAnimals)) {
+            seg.addValue(17, a.getName());
+        }
         //seg.setInt(3, ctrl);
     }
     
