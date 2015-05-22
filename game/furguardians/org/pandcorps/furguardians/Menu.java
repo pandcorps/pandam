@@ -3276,8 +3276,10 @@ public class Menu {
 				msg = getAddedMsg(pc.profile.availableClothings.add(Avatar.getClothing("Armor")));
 			} else if ("addperks".equalsIgnoreCase(cmd)) {
 				msg = getAddedMsg(addPerks());
+			} else if ("addanimals".equalsIgnoreCase(cmd)) {
+				msg = getAddedMsg(addAnimals());
 			} else if ("addall".equalsIgnoreCase(cmd)) {
-				msg = getAddedMsg(addClothes() | addHats() | addJumps() | addPerks());
+				msg = getAddedMsg(addClothes() | addHats() | addJumps() | addPerks() | addAnimals());
 			} else if ("setmapnorm".equalsIgnoreCase(cmd)) {
 				Map.modeMove = Map.MOVE_NORMAL;
 				msg = MSG_OK;
@@ -3423,6 +3425,18 @@ public class Menu {
 			for (final Assist a : Profile.PUBLIC_ASSISTS) {
 				if (!prf.isAssistAvailable(a)) {
 					prf.addAvailableAssist(a);
+					added = true;
+				}
+			}
+			return added;
+		}
+		
+		private final boolean addAnimals() {
+			boolean added = false;
+			final Profile prf = pc.profile;
+			for (final Animal a : Avatar.SPECIAL_ANIMALS.values()) {
+				if (!prf.isAnimalAvailable(a)) {
+					prf.availableSpecialAnimals.add(a);
 					added = true;
 				}
 			}
