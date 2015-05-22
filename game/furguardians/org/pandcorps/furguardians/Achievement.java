@@ -371,7 +371,9 @@ public abstract class Achievement extends FinName {
         @Override
         public final long getCurrent(final Profile prf) {
             // Start with normal jump mode, so subtract one for that
-            return Coltil.size(prf.availableClothings) + Coltil.size(prf.availableHats) + Coltil.size(prf.availableJumpModes) + Coltil.size(prf.availableAssists) - 1;
+            return Coltil.size(prf.availableClothings) + Coltil.size(prf.availableHats)
+            		+ Coltil.size(prf.availableJumpModes) + Coltil.size(prf.availableAssists)
+            		+ Coltil.size(prf.availableSpecialAnimals) - 1;
         }
     }
 	
