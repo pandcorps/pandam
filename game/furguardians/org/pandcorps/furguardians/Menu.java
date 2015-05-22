@@ -95,6 +95,7 @@ public class Menu {
 		protected final int rankStarX;
 		protected boolean initForm = true;
 		protected boolean showGems = true;
+		protected boolean showRank = true;
 		protected Model clthModel = null;
 		protected PlayerContext mc = null;
 		
@@ -187,7 +188,9 @@ public class Menu {
 			}
 			if (showGems && pc != null && pc.profile != null) {
 				addHudGems();
-				addHudRank();
+				if (showRank) {
+					addHudRank();
+				}
 			}
 			menu();
 			if (initForm && ctrl != null) { // Null on TitleScreen
@@ -1825,6 +1828,7 @@ public class Menu {
 		protected AvatarScreen(final PlayerContext pc) {
 			super(pc, false);
 			tabsSupported = true;
+			showRank = false;
 		}
 		
 		protected AvatarScreen(final PlayerContext pc, final Avatar old, final Avatar avt) {
@@ -2048,6 +2052,7 @@ public class Menu {
             this.old = old;
             this.avt = avt;
             tabsSupported = true;
+            showRank = false;
         }
         
         private final static List<String> toNameList(final Named... a) {
