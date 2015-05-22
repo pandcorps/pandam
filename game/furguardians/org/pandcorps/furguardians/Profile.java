@@ -486,6 +486,10 @@ public class Profile extends PlayerData implements Segmented, Savable {
         }
     }
     
+    public final boolean isAnimalAvailable(final Animal animal) {
+    	return animal == null || availableSpecialAnimals.contains(animal);
+    }
+    
     public final int getGemMultiplier() {
         int m = 1;
         for (final Integer key : activeAssists) {

@@ -1,4 +1,5 @@
 Added pandas.
+Added royal dress.
 Added new eyes.
 Added Consumer Achievement.
 

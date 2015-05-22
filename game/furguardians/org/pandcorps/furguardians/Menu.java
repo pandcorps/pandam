@@ -924,7 +924,10 @@ public class Menu {
         }
         
         private final void init(final Garb garb) {
-            final SimpleColor col = garb.col;
+        	init(garb.col);
+        }
+        
+        protected final void init(final SimpleColor col) {
             col.r = 0;
             col.g = 0;
             col.b = Avatar.DEF_JUMP_COL;
@@ -940,6 +943,19 @@ public class Menu {
             reloadAnimalStrip(mc, clthModel, false);
             clthModel.setVisible(true);
             reattachBuy("Buy for " + cost + "?", sub);
+        }
+        
+        protected final boolean purchase(final TouchButton sub, final int cost) {
+            if (pc.profile.spendGems(cost)) {
+            	clthModel.setVisible(false);
+                setInfo("Purchased!");
+                TouchButton.detach(sub);
+                return true;
+            } else {
+                setInfo("You need more Gems");
+                TouchButton.detach(sub);
+                return false;
+            }
         }
 		
 		protected final Panctor addActor(final int x, final int y) {
@@ -1882,21 +1898,27 @@ public class Menu {
 		
 		private final void createAnimalList(final int x, final int y) {
 		    addClothingModel();
+		    init(mc.profile.currentAvatar.col);
 			final List<String> animals = FurGuardiansGame.getAnimals();
 			final TouchButton sub = newBuy(x, y);
 			final AvtListener anmLsn = new AvtListener() {
 				@Override public final void update(final String value) {
 				    final Animal animal = Avatar.getSpecialAnimal(value);
-				    if (animal == null || pc.profile.availableSpecialAnimals.contains(animal)) {
+				    if (pc.profile.isAnimalAvailable(animal)) {
 				        avt.anm = value;
 				        clearClothingModel(sub);
 				    } else {
+				    	mc.profile.currentAvatar.anm = value;
 				        displayClothingModel(sub, animal.getCost());
 				    }
 				}};
 			final AvtListener anmSubLsn = new AvtListener() {
                 @Override public final void update(final String value) {
-                    //TODO
+                	final Animal animal = Avatar.getSpecialAnimal(value);
+                    if (!pc.profile.isAnimalAvailable(animal) && purchase(sub, animal.getCost())) {
+                    	pc.profile.availableSpecialAnimals.add(animal);
+                    	avt.anm = value;
+                    }
                 }};
 			final RadioGroup anmGrp = addRadio("Animal", animals, anmSubLsn, anmLsn, x, y, sub);
 			anmGrp.setSelected(animals.indexOf(avt.anm));
@@ -2199,18 +2221,9 @@ public class Menu {
             final AvtListener clthSubLsn = new AvtListener() {
                 @Override public final void update(final String value) {
                     final Clothing c = Player.get(clothings, value);
-                    if (!Profile.isAvailable(menu.getAvailable(), c)) {
-                        final int cost = c.getCost();
-                        if (pc.profile.spendGems(cost)) {
-                        	clthModel.setVisible(false);
-                        	menu.getAvailable().add(c);
-                            setClothing(menu, c);
-                            setInfo("Purchased!");
-                            TouchButton.detach(sub);
-                        } else {
-                            setInfo("You need more Gems");
-                            TouchButton.detach(sub);
-                        }
+                    if (!Profile.isAvailable(menu.getAvailable(), c) && purchase(sub, c.getCost())) {
+                        menu.getAvailable().add(c);
+                        setClothing(menu, c);
                     }
                 }};
             menu.radio = addRadio(menu.name, clths, clthSubLsn, clthLsn, x, y, sub);
