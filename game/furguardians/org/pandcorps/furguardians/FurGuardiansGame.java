@@ -1994,8 +1994,9 @@ public class FurGuardiansGame extends BaseGame {
 	
 	protected final static List<String> getBasicAnimals() {
 		if (basicAnimals == null) {
-			basicAnimals = new ArrayList<String>();
-			for (final String anm : getAnimals()) {
+			final List<String> allAnimals = getAnimals();
+			basicAnimals = new ArrayList<String>(allAnimals.size() - Avatar.SPECIAL_ANIMALS.size());
+			for (final String anm : allAnimals) {
 				if (!Avatar.SPECIAL_ANIMALS.containsKey(anm)) {
 					basicAnimals.add(anm);
 				}
