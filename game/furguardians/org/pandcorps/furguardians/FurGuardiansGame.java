@@ -165,6 +165,10 @@ public class FurGuardiansGame extends BaseGame {
 	protected final static String SEG_LOC = "LOC";
 	protected final static String SEG_AVT = "AVT";
 	
+	private final static List<String> animals =
+			Arrays.asList("Bear", "Cat", "Dog", "Elephant", "Horse", "Koala", "Mouse", "Panda", "Rabbit", "Rhino");
+	private static List<String> basicAnimals = null;
+	
 	protected static List<String> tips = null;
 	
 	private final static List<String> initTips() {
@@ -1985,7 +1989,19 @@ public class FurGuardiansGame extends BaseGame {
 	}
 	
 	protected final static List<String> getAnimals() {
-	    return Arrays.asList("Bear", "Cat", "Dog", "Elephant", "Horse", "Koala", "Mouse", "Panda", "Rabbit", "Rhino");
+		return animals;
+	}
+	
+	protected final static List<String> getBasicAnimals() {
+		if (basicAnimals == null) {
+			basicAnimals = new ArrayList<String>();
+			for (final String anm : getAnimals()) {
+				if (!Avatar.SPECIAL_ANIMALS.containsKey(anm)) {
+					basicAnimals.add(anm);
+				}
+			}
+		}
+		return basicAnimals;
 	}
 	
 	protected final static int getNumEyes() {

@@ -336,7 +336,7 @@ public class Avatar extends EyeData implements Segmented {
     }
     
     public void randomize() {
-        anm = Mathtil.rand(FurGuardiansGame.getAnimals());
+        anm = Mathtil.rand(FurGuardiansGame.getBasicAnimals());
         eye = Mathtil.randi(1, FurGuardiansGame.getNumEyes());
         col.randomize();
         jumpMode = Player.MODE_NORMAL;
