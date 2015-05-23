@@ -146,7 +146,8 @@ public class Map {
 	private static int endColumn = -1;
 	private static int endRow = -1;
 	private final static int[] EYES_ROY = {2, 4, 5, 6, 7, 8, 9, 10};
-	private final static int[] EYES_ROY2 = {15, 16, 17};
+	private final static int[] EYES_ROY2 = {2, 15, 16, 17};
+	protected final static int[] EYES_BASIC = {2, 4, 5, 6, 7, 8, 9, 10, 15, 16, 17, 22};
 	protected static Avatar royAvt = null;
 	protected static int royCrown = -1;
 	private static String name = null;

@@ -315,6 +315,7 @@ public class Avatar extends EyeData implements Segmented {
         new Hat("Bandana", "Bandana", 1500),
         new Hat("Cap", "Cap", 2000),
         new Hat("Bow", "Bow", 2500, false, false),
+        new Hat("Glasses", "Glasses", 3000, false),
         new Hat("Helm", "Helm", 50000, false),
         new Hat(HAT_CROWN, "Crown", 100000, false)
     };
@@ -337,7 +338,8 @@ public class Avatar extends EyeData implements Segmented {
     
     public void randomize() {
         anm = Mathtil.rand(FurGuardiansGame.getBasicAnimals());
-        eye = Mathtil.randi(1, FurGuardiansGame.getNumEyes());
+        //eye = Mathtil.randi(1, FurGuardiansGame.getNumEyes());
+        eye = Mathtil.randElemI(org.pandcorps.furguardians.Map.EYES_BASIC);
         col.randomize();
         jumpMode = Player.MODE_NORMAL;
         jumpCol.init();

@@ -1,3 +1,8 @@
+Added glasses.
+Added new eyes.
+
+*****
+
 1.7.0 (15)
 
 Added pandas.
