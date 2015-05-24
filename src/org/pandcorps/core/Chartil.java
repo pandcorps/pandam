@@ -73,6 +73,10 @@ public final class Chartil {
         return true;
     }
     
+    public final static boolean startsWith(final String s, final String sub) {
+    	return (s != null) && (sub != null) && s.startsWith(sub);
+    }
+    
     public final static boolean startsWithIgnoreCase(final CharSequence s, final CharSequence sub) {
         // String.startsWith(String) is true if sub is empty or equals s
         final int subSize = size(sub);

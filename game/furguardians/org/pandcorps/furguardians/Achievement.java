@@ -379,15 +379,12 @@ public abstract class Achievement extends FinName {
 	
 	private final static class MonarchFeat extends AvatarFeat {
         protected MonarchFeat() {
-            super("Monarch", "Wear the Royal Robe and Crown", 5000);
+            super("Monarch", "Wear Royal clothing and a Crown", 5000);
         }
         
         @Override
         public final boolean isMet(final Avatar avt) {
-            if (avt.clothing == null || avt.hat == null) {
-                return false;
-            }
-            return Avatar.CLOTHING_ROYAL_ROBE.equals(Player.getName(avt.clothing)) && Avatar.HAT_CROWN.equals(Player.getName(avt.hat));
+            return Chartil.startsWith(Player.getName(avt.clothing), "Royal ") && Avatar.HAT_CROWN.equals(Player.getName(avt.hat));
         }
     }
 	
