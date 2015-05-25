@@ -1,6 +1,7 @@
 Added glasses.
 Added new eyes.
 Fixed a Monarch Achievement bug; it can now be achieved with the Royal Dress.
+Added Demander Achievement.
 
 *****
 
