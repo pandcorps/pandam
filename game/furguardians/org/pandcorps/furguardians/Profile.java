@@ -335,7 +335,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
 	        seg.setInt(20, playedRockWorlds);
 		}
 		
-		public List<String> toList() {
+		public List<String> toList(final Profile prf) {
 			final List<String> list = new ArrayList<String>(6);
 			list.add("Levels defeated: " + defeatedLevels);
 			list.add("Worlds defeated: " + defeatedWorlds);
@@ -362,6 +362,11 @@ public class Profile extends PlayerData implements Segmented, Savable {
             }
 			list.add("Total Gems: " + totalGems);
 			list.add("Objects kicked: " + kicks);
+			list.add("Shirts bought: " + Coltil.size(prf.availableClothings) + " of " + Avatar.clothings.length);
+			list.add("Hats bought: " + Coltil.size(prf.availableHats) + " of " + Avatar.hats.length);
+			list.add("Powers bought: " + (Coltil.size(prf.availableJumpModes) - 1) + " of " + (JumpMode.values().length - 1));
+			list.add("Assists bought: " + Coltil.size(prf.availableAssists) + " of " + Profile.PUBLIC_ASSISTS.length);
+			list.add("Animals bought: " + Coltil.size(prf.availableSpecialAnimals) + " of " + Avatar.SPECIAL_ANIMALS.size());
 			return list;
 		}
 		

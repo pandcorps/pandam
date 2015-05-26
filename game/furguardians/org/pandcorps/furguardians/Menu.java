@@ -2593,7 +2593,7 @@ public class Menu {
 		}
 		
 		private final void createStatsList(final int x, final int y) {
-			addRadio("Statistics", pc.profile.stats.toList(), null, x, y);
+			addRadio("Statistics", pc.profile.stats.toList(pc.profile), null, x, y);
 		}
 		
 		private final void createFoesList(final int x, final int y) {
