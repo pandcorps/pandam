@@ -277,11 +277,22 @@ public final class Imtil {
     	}
     	final int iw = img.getWidth(), ih = img.getHeight();
         final int sx = ox + w, sy = oy + h;
+        PixelFilter maskedFilter = (mask == null) ? null : mask.getMaskedFilter();
+        for (final PixelFilter f : fs) {
+            if (maskedFilter != null) {
+                break;
+            }
+            maskedFilter = f.getMaskedFilter();
+        }
         for (int x = 0; x < iw; x++) {
             for (int y = 0; y < ih; y++) {
                 int p = img.getRGB(x, y);
                 if (x >= ox && x < sx && y >= oy && y < sy) {
-                	if (!PixelMask.isMasked(mask, x, y, p)) {
+                	if (PixelMask.isMasked(mask, x, y, p)) {
+                	    if (maskedFilter != null) {
+                	        p = maskedFilter.filter(p);
+                	    }
+                	} else {
 		                for (final PixelFilter f : fs) {
 		                	p = f.filter(p);
 		                }

@@ -25,6 +25,8 @@ package org.pandcorps.core.img;
 import org.pandcorps.core.*;
 
 public abstract class PixelFilter extends PixelTool {
+    private PixelFilter maskedFilter = null;
+    
 	public abstract int filter(final int p);
 	
 	public final Pancolor filterColor(final Pancolor c) {
@@ -34,4 +36,12 @@ public abstract class PixelFilter extends PixelTool {
 	public final static Pancolor filterColor(final PixelFilter f, final Pancolor c) {
 		return (f == null) ? c : f.filterColor(c);
 	}
+	
+	public final PixelFilter getMaskedFilter() {
+        return maskedFilter;
+    }
+    
+    public final void setMaskedFilter(final PixelFilter maskedFilter) {
+        this.maskedFilter = maskedFilter;
+    }
 }

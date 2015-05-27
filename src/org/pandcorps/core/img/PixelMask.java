@@ -23,9 +23,19 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.core.img;
 
 public abstract class PixelMask extends PixelTool {
+    private PixelFilter maskedFilter = null;
+    
     public abstract boolean isMasked(final int x, final int y, final int p);
     
     public final static boolean isMasked(final PixelMask m, final int x, final int y, final int p) {
         return m == null ? false : m.isMasked(x, y, p);
+    }
+    
+    public final PixelFilter getMaskedFilter() {
+        return maskedFilter;
+    }
+    
+    public final void setMaskedFilter(final PixelFilter maskedFilter) {
+        this.maskedFilter = maskedFilter;
     }
 }
