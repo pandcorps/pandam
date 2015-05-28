@@ -172,6 +172,7 @@ public class Player extends Character implements CollisionListener {
 	    protected Panimation backRun = null;
 	    protected Panimation backJump = null;
 	    protected Panimation backFall = null;
+	    protected Panimation bird = null;
 	    
 	    public PlayerContext(final Profile profile, final ControlScheme ctrl, final int index) {
 	        this.profile = profile;
@@ -290,6 +291,8 @@ public class Player extends Character implements CollisionListener {
 	    	backJump = null;
 	    	Panmage.destroyAll(backFall);
 	    	backFall = null;
+	    	Panmage.destroyAll(bird);
+	    	bird = null;
 	    }
 	}
 	
