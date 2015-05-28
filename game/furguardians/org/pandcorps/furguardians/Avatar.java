@@ -40,6 +40,7 @@ public class Avatar extends EyeData implements Segmented {
     protected final Garb clothing = new Garb();
     protected final Garb hat = new Garb();
     protected final Dragon dragon = new Dragon();
+    protected final SimpleColor col2 = new SimpleColor();
     private final static int[] randomColorChannels = {0, 1, 2};
     
     static {
@@ -84,16 +85,18 @@ public class Avatar extends EyeData implements Segmented {
         	r = g = b = DEF_JUMP_COL;
         }
         
+        protected final void set(final float r, final float g, final float b) {
+            this.r = r;
+            this.g = g;
+            this.b = b;
+        }
+        
         protected final void load(final SimpleColor col) {
-        	r = col.r;
-        	g = col.g;
-        	b = col.b;
+        	set(col.r, col.g, col.b);
         }
         
         protected final void load(final Segment seg, final int i) {
-        	r = seg.getFloat(i, DEF_JUMP_COL);
-        	g = seg.getFloat(i + 1, DEF_JUMP_COL);
-        	b = seg.getFloat(i + 2, DEF_JUMP_COL);
+        	set(seg.getFloat(i, DEF_JUMP_COL), seg.getFloat(i + 1, DEF_JUMP_COL), seg.getFloat(i + 2, DEF_JUMP_COL));
         }
         
         protected final void save(final Segment seg, final int i) {
@@ -104,9 +107,7 @@ public class Avatar extends EyeData implements Segmented {
         
         protected final void randomize() {
         	do {
-                r = randColor();
-                g = randColor();
-                b = randColor();
+                set(randColor(), randColor(), randColor());
             } while (r == 0 && g == 0 && b == 0);
         }
         
@@ -127,9 +128,7 @@ public class Avatar extends EyeData implements Segmented {
         }
         
         protected final void negate() {
-        	r = 1f - r;
-        	g = 1f - g;
-        	b = 1f - b;
+        	set(1f - r, 1f - g, 1f - b);
         }
         
         protected final int getDistance(final SimpleColor c) {
@@ -346,6 +345,7 @@ public class Avatar extends EyeData implements Segmented {
         hat.init();
         dragon.init();
         dragon.eye = Mathtil.randi(1, FurGuardiansGame.getNumDragonEyes());
+        col2.set(1, 1, 1);
     }
     
     public void load(final Avatar src) {
@@ -360,6 +360,7 @@ public class Avatar extends EyeData implements Segmented {
         dragon.col.load(src.dragon.col);
         dragon.setName(src.dragon.getName());
         dragon.eye = src.dragon.eye;
+        col2.load(src.col2);
     }
     
     public void load(final Segment seg) {
@@ -379,6 +380,7 @@ public class Avatar extends EyeData implements Segmented {
     	if (dragon.eye < 1) {
     		dragon.eye = 1;
     	}
+    	col2.load(seg, 23); // 23-25
     }
     
     @Override
@@ -395,6 +397,7 @@ public class Avatar extends EyeData implements Segmented {
     	dragon.col.save(seg, 18);
     	seg.setValue(21, dragon.getName());
     	seg.setInt(22, dragon.eye);
+    	col2.save(seg, 23); // 23-25
     }
     
     protected final Animal getAnimal() {

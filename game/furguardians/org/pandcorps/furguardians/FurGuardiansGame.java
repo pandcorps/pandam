@@ -625,6 +625,9 @@ public class FurGuardiansGame extends BaseGame {
 		    f = getFilter(avatar.col);
 		    final String anm = avatar.anm;
 		    final Animal animal = avatar.getAnimal();
+		    if (animal != null) {
+		        f.setMaskedFilter(getFilter(avatar.col2));
+		    }
 		    final Clothing c = avatar.clothing.clth;
 		    Img[] guysRaw;
 		    final String body = c == null ? null : c.getBody();
