@@ -1903,6 +1903,7 @@ public class Menu {
 		private final void createAnimalList(final int x, final int y) {
 		    addClothingModel();
 		    init(mc.profile.currentAvatar.col);
+		    mc.profile.currentAvatar.col2.set(1, 1, 1);
 			final List<String> animals = FurGuardiansGame.getAnimals();
 			final TouchButton sub = newBuy(x, y);
 			final AvtListener anmLsn = new AvtListener() {
