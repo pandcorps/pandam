@@ -791,15 +791,18 @@ public class FurGuardiansGame extends BaseGame {
 		if (avatar.bird.kind != null) {
 		    final Img[] birdRaw = getBirds(avatar.bird.kind);
 		    final int size = birdRaw.length;
-		    final Img[] bird = new Img[size];
+		    final Panframe[] bird = new Panframe[size];
 		    final Img eye = getEyes(avatar.bird.eye);
 		    final int eyeWidth = eye.getWidth(), eyeHeight = eye.getHeight();
+		    final String bpre = pre + ".bird";
+		    final String ibpre = PRE_IMG + bpre + ".";
+		    final String fbpre = PRE_FRM + bpre + ".";
 		    for (int i = 0; i < size; i++) {
 		        final Img img = Imtil.copy(birdRaw[i]);
 		        Imtil.copy(eye, img, 0, 0, eyeWidth, eyeHeight, 8, 5, Imtil.COPY_FOREGROUND);
-		        bird[i] = img;
+		        bird[i] = engine.createFrame(fbpre + i, engine.createImage(ibpre + i, Enemy.DEFAULT_O, null, null, img), (i == 1) ? 3 : 6);
 		    }
-		    pc.bird = null; //TODO
+		    pc.bird = engine.createAnimation(PRE_ANM + bpre, bird);
 		}
 		
 		if (full) {
