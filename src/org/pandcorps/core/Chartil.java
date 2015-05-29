@@ -185,12 +185,16 @@ public final class Chartil {
     }
     
     public final static String toCode(final String s) {
+        return toCode(s, true);
+    }
+    
+    public final static String toCode(final String s, final boolean lower) {
     	final int size = s.length();
     	final StringBuilder b = new StringBuilder(size);
     	for (int i = 0; i < size; i++) {
     		final char c = s.charAt(i);
     		if (Character.isLetterOrDigit(c)) {
-    			b.append(Character.toLowerCase(c));
+    			b.append(lower ? Character.toLowerCase(c) : c);
     		}
     	}
     	return b.toString();

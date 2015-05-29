@@ -324,6 +324,7 @@ public class Player extends Character implements CollisionListener {
 	private final Bubble bubble = new Bubble();
 	private final Panctor container;
 	private final Accessories acc;
+	private final Flyer flyer;
 	protected Ai ai = null;
 	protected final boolean[] goalsMet = new boolean[Goal.NUM_ACTIVE_GOALS];
 	protected long lastThud = -30;
@@ -350,6 +351,7 @@ public class Player extends Character implements CollisionListener {
 			container = null;
 		}
 		acc = new Accessories(pc);
+		flyer = (pc.bird == null) ? null : new Flyer(this);
 		final Panteraction interaction = engine.getInteraction();
 		final ControlScheme ctrl = pc.ctrl;
 		final Panput jumpInput = getJumpInput();
@@ -1049,6 +1051,7 @@ public class Player extends Character implements CollisionListener {
 		bubble.destroy();
 		Panctor.destroy(container);
 		acc.destroy();
+		Panctor.destroy(flyer);
 	}
 	
 	protected final static class Bubble extends Panctor {
@@ -1100,6 +1103,22 @@ public class Player extends Character implements CollisionListener {
 	    @Override
         public final void onAnimationEnd(final AnimationEndEvent event) {
             setView((Panmage) null);
+        }
+	}
+	
+	private final static class Flyer extends Panctor implements StepListener {
+	    private final Player player;
+	    
+	    private Flyer(final Player player) {
+	        this.player = player;
+	        setView(player.pc.bird);
+	        FurGuardiansGame.room.addActor(this);
+	    }
+	    
+        @Override
+        public final void onStep(final StepEvent event) {
+            final Panple ppos = player.getPosition();
+            FurGuardiansGame.setPosition(this, ppos.getX(), ppos.getY() + 32, FurGuardiansGame.getDepthBubble(player.jumpMode));
         }
 	}
 }

@@ -621,7 +621,7 @@ public class FurGuardiansGame extends BaseGame {
 	}
 	
 	private final static Img[] getBirds(final String kind) {
-	    return getImages(birdsAll, kind, "bird/" + kind + ".png", 16);
+	    return getImages(birdsAll, kind, "bird/" + Chartil.toCode(kind, false) + ".png", 16);
     }
 	
 	protected final static class PlayerImages {
