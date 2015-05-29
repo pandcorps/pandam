@@ -235,6 +235,7 @@ public class FurGuardiansGame extends BaseGame {
 	protected final static HashMap<String, Img[]> faceMapsAll = new HashMap<String, Img[]>();
 	protected final static HashMap<String, Img[]> tailsAll = new HashMap<String, Img[]>();
 	protected final static HashMap<String, Img[]> bodiesAll = new HashMap<String, Img[]>();
+	protected final static HashMap<String, Img[]> birdsAll = new HashMap<String, Img[]>();
 	protected final static Img[] eyesAll = new Img[getNumEyes()];
 	protected final static HashMap<String, Img> masksAll = new HashMap<String, Img>();
 	protected static Img eyesBlink = null;
@@ -601,15 +602,23 @@ public class FurGuardiansGame extends BaseGame {
 		return e;
 	}
 	
-	private final static Img[] getBodies(final String body) {
-		Img[] guysRaw = bodiesAll.get(body);
+	private final static Img[] getImages(final HashMap<String, Img[]> all, final String key, final String name, final int dim) {
+		Img[] guysRaw = all.get(key);
         if (guysRaw == null) {
-            guysRaw = loadChrStrip("Bear" + body + ".png", 32, true);
+            guysRaw = loadChrStrip(name, dim, true);
             Img.setTemporary(false, guysRaw);
-            bodiesAll.put(body, guysRaw);
+            all.put(key, guysRaw);
         }
         return guysRaw;
 	}
+	
+	private final static Img[] getBodies(final String body) {
+	    return getImages(bodiesAll, body, "Bear" + body + ".png", 32);
+	}
+	
+	private final static Img[] getBirds(final String kind) {
+	    return getImages(birdsAll, kind, "bird/" + kind + ".png", 16);
+    }
 	
 	protected final static class PlayerImages {
 		protected final PixelFilter f;
