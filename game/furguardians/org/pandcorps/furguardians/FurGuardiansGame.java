@@ -602,6 +602,10 @@ public class FurGuardiansGame extends BaseGame {
 		return e;
 	}
 	
+	private final static Img getEyes(final int i) {
+	    return getEyes(eyesAll, i, "");
+	}
+	
 	private final static Img[] getImages(final HashMap<String, Img[]> all, final String key, final String name, final int dim) {
 		Img[] guysRaw = all.get(key);
         if (guysRaw == null) {
@@ -679,7 +683,7 @@ public class FurGuardiansGame extends BaseGame {
 				tails = new Img[tailsRaw.length];
 				filterStrip(tailsRaw, tails, f);
 			}
-			eyes = getEyes(eyesAll, avatar.eye, "");
+			eyes = getEyes(avatar.eye);
 			final Img[] clothings;
 			if (c == null) {
 			    clothingFilter = null;
@@ -782,6 +786,20 @@ public class FurGuardiansGame extends BaseGame {
 			drgnEye = getEyes(dragonEyesAll, avatar.dragon.eye, "dragon/Dragon");
 		} else {
 			pf = null;
+		}
+		
+		if (avatar.bird.kind != null) {
+		    final Img[] birdRaw = getBirds(avatar.bird.kind);
+		    final int size = birdRaw.length;
+		    final Img[] bird = new Img[size];
+		    final Img eye = getEyes(avatar.bird.eye);
+		    final int eyeWidth = eye.getWidth(), eyeHeight = eye.getHeight();
+		    for (int i = 0; i < size; i++) {
+		        final Img img = Imtil.copy(birdRaw[i]);
+		        Imtil.copy(eye, img, 0, 0, eyeWidth, eyeHeight, 8, 5, Imtil.COPY_FOREGROUND);
+		        bird[i] = img;
+		    }
+		    pc.bird = null; //TODO
 		}
 		
 		if (full) {
