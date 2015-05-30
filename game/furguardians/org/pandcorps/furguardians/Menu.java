@@ -669,15 +669,19 @@ public class Menu {
 		}
 		
 		protected final List<RadioGroup> addColor(final SimpleColor col, int x, int y, final String label) {
+		    return addColor(col, x, y, label, null, null);
+		}
+		
+		protected final List<RadioGroup> addColor(final SimpleColor col, int x, int y, final String label, final Runnable otherReloader, final String otherLabel) {
 			if (tabsSupported && isTabEnabled()) {
-				addColorTouch(col, label);
+				addColorTouch(col, label, otherReloader, otherLabel);
 				return null;
 			} else {
 				return addColorClassic(col, x, y);
 			}
 		}
 		
-		protected final void addColorTouch(final SimpleColor col, final String label) {
+		protected final void addColorTouch(final SimpleColor col, final String label, final Runnable otherReloader, final String otherLabel) {
 			final String id = Pantil.vmid();
 			final Pangine engine = Pangine.getEngine();
 			final Panple btnSize = FurGuardiansGame.menu.getSize();
@@ -712,6 +716,9 @@ public class Menu {
 			x += difW;
 			newFormButton(id + ".blue.down", x, y, FurGuardiansGame.menuDown, new AvtRunnable() {@Override public final void go() {
 				col.b = decCol(col.b, sbB, txtB); }});
+			if (otherReloader != null) {
+			    newFormButton(getLayer(), id + ".other", minX, (y - FurGuardiansGame.MENU_H) / 2, FurGuardiansGame.menuRgb, otherLabel, otherReloader);
+			}
 		}
 		
 		private final float incCol(float c, final StringBuilder sb, final Pantext text) {
@@ -1819,6 +1826,7 @@ public class Menu {
 		private final static byte TAB_EYES = 1;
 		private final static byte TAB_COLOR = 2;
 		private final static byte TAB_NAME = 3;
+		private final static byte TAB_COLOR2 = 4;
 		private static byte currentTab = TAB_ANIMAL;
 	    private boolean save = true;
 		private Avatar old = null;
@@ -1869,8 +1877,20 @@ public class Menu {
 					createEyeList(touchRadioX, touchRadioY);
 					break;
 				case TAB_COLOR :
-					addColor(avt.col, 0, 0, "Avatar");
+				    final Runnable otherReloader;
+				    final String otherLabel;
+				    if (avt.getAnimal() == null) {
+                        otherReloader = null;
+                        otherLabel = null;
+				    } else {
+				        otherReloader = newReloader(TAB_COLOR2);
+                        otherLabel = "Other";
+				    }
+					addColor(avt.col, 0, 0, "Avatar", otherReloader, otherLabel);
 					break;
+				case TAB_COLOR2 :
+                    addColor(avt.col2, 0, 0, "Secondary");
+                    break;
 				case TAB_NAME :
 					createNameInput(touchKeyboardX, getTouchKeyboardY());
 					break;
@@ -1888,8 +1908,12 @@ public class Menu {
                     cancel(); }});
 		}
 		
+		private final Runnable newReloader(final byte tab) {
+		    return new Runnable() {@Override public final void run() {reload(tab);}};
+		}
+		
 		private final void newTab(final Panmage img, final CharSequence txt, final byte tab) {
-			final TouchButton btn = newTab(img, txt, new Runnable() {@Override public final void run() {reload(tab);}});
+			final TouchButton btn = newTab(img, txt, newReloader(tab));
 			if (currentTab == tab) {
 				btn.setEnabled(false);
 			}
