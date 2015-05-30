@@ -2057,6 +2057,9 @@ public class Menu {
 	    private final static byte TAB_DRAGON_COL = 6;
 	    private final static byte TAB_DRAGON_EYE = 7;
 	    private final static byte TAB_DRAGON_NAME = 8;
+	    private final static byte TAB_BIRD = 9;
+	    private final static byte TAB_BIRD_EYE = 10;
+	    private final static byte TAB_BIRD_NAME = 11;
         private final static byte TAB_DEFAULT = TAB_CLOTHES;
         private static byte currentTab = TAB_DEFAULT;
         private final static String DEF_CLOTHES = "None";
@@ -2159,6 +2162,9 @@ public class Menu {
             jmpRadio = addRadio("Power-up", jmps, jmpSubLsn, jmpLsn, x, y, sub);
             addDescription(x, y);
             initJumpMode();
+        }
+        
+        protected final void createBirdList(final int x, final int y) {
         }
         
         private final void createDragonEyeList(final int x, final int y) {
@@ -2302,11 +2308,21 @@ public class Menu {
                 case TAB_DRAGON_NAME :
                 	createDragonNameInput(touchKeyboardX, getTouchKeyboardY());
                     break;
+                case TAB_BIRD :
+                    createBirdList(touchRadioX, touchRadioY);
+                    break;
+                case TAB_BIRD_EYE :
+                    //createBirdEyeList(touchRadioX, touchRadioY);
+                    break;
+                case TAB_BIRD_NAME :
+                    //createBirdNameInput(touchKeyboardX, getTouchKeyboardY());
+                    break;
             }
 			newTab(FurGuardiansGame.menuCheck, "Back", new Runnable() {@Override public final void run() {exit();}});
 			newTab(FurGuardiansGame.menuClothing, "Shirt", TAB_CLOTHES);
 			newTab(FurGuardiansGame.menuHat, "Hat", TAB_HAT);
 			newTab(FurGuardiansGame.menuJump, "Power", TAB_JUMP);
+			newTab(FurGuardiansGame.menuBird, "Bird", TAB_BIRD);
 			newTabs();
 			registerBackExit();
 		}
@@ -3554,7 +3570,6 @@ public class Menu {
 	    private int mirrorTimer = Mathtil.randi(90, 180);
 	    
 	    private BirdModel(final PlayerContext pc) {
-	        setMirror(true);
 	        load(pc);
 	    }
 	    
