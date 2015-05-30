@@ -31,6 +31,7 @@ import org.pandcorps.furguardians.Player.*;
 
 public class Avatar extends EyeData implements Segmented {
 	protected final static Map<String, Animal> SPECIAL_ANIMALS = new HashMap<String, Animal>();
+	protected final static Map<String, BirdKind> BIRDS = new LinkedHashMap<String, BirdKind>();
 	protected final static float DEF_JUMP_COL = 1;
 	private final static int MAX_COLOR_INDEX = 4;
     protected String anm = null;
@@ -47,10 +48,24 @@ public class Avatar extends EyeData implements Segmented {
     
     static {
     	putSpecialAnimal(new Animal("Panda", "Bear", 50000));
+    	//putBird(new BirdKind("Robin", 30000)); // Expensive because this unlocks option to buy other birds
+    	//putBird(new BirdKind("Sparrow", 1000));
+    	putBird(new BirdKind("Blue Jay", 2000));
+    	putBird(new BirdKind("Canary", 2000));
+    	putBird(new BirdKind("Cardinal", 2000));
+    	//putBird(new BirdKind("Oriole", 3000));
+    	//putBird(new BirdKind("Parakeet", 3000));
+    	//putBird(new BirdKind("Purple Martin", 3000));
+    	putBird(new BirdKind("Crow", 5000));
+    	putBird(new BirdKind("Dove", 5000));
     }
     
     private final static void putSpecialAnimal(final Animal animal) {
     	SPECIAL_ANIMALS.put(animal.getName(), animal);
+    }
+    
+    private final static void putBird(final BirdKind bird) {
+        BIRDS.put(bird.getName(), bird);
     }
     
     protected final static class Garb implements Named {
@@ -178,6 +193,12 @@ public class Avatar extends EyeData implements Segmented {
 		
 		public final int getCost() {
             return cost;
+        }
+    }
+    
+    protected static class BirdKind extends Animal {
+        protected BirdKind(final String name, final int cost) {
+            super(name, null, cost);
         }
     }
     

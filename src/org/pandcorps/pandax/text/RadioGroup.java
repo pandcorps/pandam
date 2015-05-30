@@ -161,7 +161,11 @@ public class RadioGroup extends TextItem {
     }
     
     public void setSelected(final CharSequence s) {
-        label.setRadioLine(label.lineOf(s));
+        final int line = label.lineOf(s);
+        if (line < 0) {
+            throw new IllegalArgumentException("Invalid radio option " + s);
+        }
+        label.setRadioLine(line);
     }
     
     public CharSequence getSelected() {

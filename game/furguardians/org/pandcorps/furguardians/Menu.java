@@ -2068,6 +2068,7 @@ public class Menu {
         private RadioGroup jmpRadio = null;
         private List<RadioGroup> jmpColors = null;
         private TouchButton jmpBtn = null;
+        private RadioGroup brdRadio = null;
         private List<RadioGroup> drgnColors = null;
         private TouchButton drgnBtn = null;
         private TouchButton drgnEyeBtn = null;
@@ -2115,14 +2116,22 @@ public class Menu {
         	return newTabSub(x, y, FurGuardiansGame.menuRgb, "Color", tab);
         }
         
+        private final TouchButton newEye(final int x, final int y, final byte tab) {
+            return newTabSub(x + FurGuardiansGame.MENU_W, y, FurGuardiansGame.menuEyesDragon, "Eyes", tab);
+        }
+        
+        private final TouchButton newName(final int x, final int y, final byte tab) {
+            return newTabSub(x, y - FurGuardiansGame.MENU_H, FurGuardiansGame.menuKeyboard, "Name", tab);
+        }
+        
         protected final void createJumpList(final int x, final int y) {
             final JumpMode[] jumpModes = JumpMode.values();
             final List<String> jmps = toNameList(jumpModes);
             final TouchButton sub = newBuy(x, y);
             jmpBtn = newColor(x, y, TAB_JUMP_COL);
             drgnBtn = newColor(x, y, TAB_DRAGON_COL);
-            drgnEyeBtn = newTabSub(x + FurGuardiansGame.MENU_W, y, FurGuardiansGame.menuEyesDragon, "Eyes", TAB_DRAGON_EYE);
-            drgnNameBtn = newTabSub(x, y - FurGuardiansGame.MENU_H, FurGuardiansGame.menuKeyboard, "Name", TAB_DRAGON_NAME);
+            drgnEyeBtn = newEye(x, y, TAB_DRAGON_EYE);
+            drgnNameBtn = newName(x, y, TAB_DRAGON_NAME);
             final AvtListener jmpLsn = new AvtListener() {
                 @Override public final void update(final String value) {
                     final JumpMode jm = Player.get(jumpModes, value);
@@ -2138,7 +2147,7 @@ public class Menu {
                     	reattachBuy("Buy for " + jm.getCost() + "?", sub);
                     }
                 }};
-            final RadioSubmitListener jmpSubLsn = new AvtListener() {
+            final AvtListener jmpSubLsn = new AvtListener() {
                 @Override public final void update(final String value) {
                     final JumpMode jm = Player.get(jumpModes, value);
                     final byte index = jm.getIndex();
@@ -2165,6 +2174,22 @@ public class Menu {
         }
         
         protected final void createBirdList(final int x, final int y) {
+            final List<String> brds = new ArrayList<String>();
+            brds.add("None");
+            brds.addAll(Avatar.BIRDS.keySet());
+            final TouchButton sub = newBuy(x, y);
+            final AvtListener brdLsn = new AvtListener() {
+                @Override public final void update(final String value) {
+                    if ("None".equals(value)) {
+                        avt.bird.kind = null;
+                    } else {
+                        avt.bird.kind = value;
+                    }
+                }};
+            final AvtListener brdSubLsn = null;
+            addNote("Can collect Gems");
+            brdRadio = addRadio("Bird", brds, brdSubLsn, brdLsn, x, y, sub);
+            initBird();
         }
         
         private final void createDragonEyeList(final int x, final int y) {
@@ -2382,6 +2407,10 @@ public class Menu {
         	final JumpMode jm = JumpMode.get(avt.jumpMode);
             jmpRadio.setSelected(jm.getName());
             setDescription(jm.getDescription());
+        }
+        
+        private final void initBird() {
+            brdRadio.setSelected(Chartil.nvl(avt.bird.kind, "None"));
         }
         
         private final void setClothing(final GarbMenu menu, final Clothing c) {
