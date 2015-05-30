@@ -199,4 +199,8 @@ public final class Chartil {
     	}
     	return b.toString();
     }
+    
+    public final static String nvl(final String s1, final String s2) {
+        return (size(s1) == 0) ? s2 : s1;
+    }
 }

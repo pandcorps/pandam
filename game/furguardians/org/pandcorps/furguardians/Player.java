@@ -22,6 +22,8 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.furguardians;
 
+import java.util.*;
+
 import org.pandcorps.core.*;
 import org.pandcorps.game.actor.*;
 import org.pandcorps.pandam.*;
@@ -205,13 +207,16 @@ public class Player extends Character implements CollisionListener {
 	    }
 	    
 	    public final String getBonusName() {
-	    	final String name;
-	    	if (profile.currentAvatar.jumpMode != JUMP_DRAGON) {
-	    		name = getName();
-	    	} else {
-	    		name = Mathtil.rand() ? getName() : profile.currentAvatar.dragon.getName();
+	        List<String> list = new ArrayList<String>(3);
+	        list.add(getName());
+	        final Avatar avt = profile.currentAvatar;
+	    	if (avt.jumpMode == JUMP_DRAGON) {
+	    		list.add(avt.dragon.getName());
 	    	}
-	    	return name.toUpperCase();
+	    	if (avt.bird.kind != null) {
+	    	    list.add(avt.bird.getName());
+	    	}
+	    	return Chartil.nvl(Mathtil.rand(list), "FUR").toUpperCase();
 	    }
 	    
 	    public final int getGems() {
