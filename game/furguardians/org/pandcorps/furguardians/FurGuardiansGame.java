@@ -229,6 +229,7 @@ public class FurGuardiansGame extends BaseGame {
 	protected final static FinPanple2 od = new FinPanple2(13, 1);
 	protected final static FinPanple odf = new FinPanple(13, 1, _DEPTH_PLAYER_BACK - _DEPTH_PLAYER_FRONT);
 	protected final static FinPanple2 or = new FinPanple2(21, -6);
+	protected final static FinPanple2 oBird = new FinPanple2(7, 1);
 	protected static Img[] guysBlank = null;
 	protected static Img[] guysRide = null;
 	protected final static HashMap<String, Img> facesAll = new HashMap<String, Img>();
@@ -800,7 +801,7 @@ public class FurGuardiansGame extends BaseGame {
 		    for (int i = 0; i < size; i++) {
 		        final Img img = Imtil.copy(birdRaw[i]);
 		        Imtil.copy(eye, img, 0, 0, eyeWidth, eyeHeight, 8, 5, Imtil.COPY_FOREGROUND);
-		        bird[i] = engine.createFrame(fbpre + i, engine.createImage(ibpre + i, Enemy.DEFAULT_O, null, null, img), (i == 1) ? 3 : 6);
+		        bird[i] = engine.createFrame(fbpre + i, engine.createImage(ibpre + i, oBird, null, null, img), (i == 1) ? 3 : 6);
 		    }
 		    pc.bird = engine.createAnimation(PRE_ANM + bpre, bird);
 		}

@@ -915,6 +915,7 @@ public class Menu {
 			final Model actor = new Model(pc);
 			FurGuardiansGame.setPosition(actor, x, Y_PLAYER, FurGuardiansGame.getDepthPlayer(pc.profile.currentAvatar.jumpMode));
 			room.addActor(actor);
+			actor.init();
 			return actor;
 		}
 		
@@ -3502,8 +3503,10 @@ public class Menu {
 	    private int mirrorTimer = Mathtil.randi(60, 240);
 	    private boolean origDir = true;
 	    private Accessories acc = null;
+	    private final BirdModel bird;
 	    
 	    private Model(final PlayerContext pc) {
+	        bird = new BirdModel(pc);
 	    	load(pc);
 	    }
 	    
@@ -3514,7 +3517,14 @@ public class Menu {
 	    	acc = new Accessories(pc);
 	    	acc.onStepEnd(this);
 	    	setView(pc.guy);
+	    	bird.load(pc);
 	    }
+	    
+	    private final void init() {
+	        final Panple pos = getPosition();
+            bird.getPosition().set(pos.getX() + 15, pos.getY() + 22, pos.getZ() + 1);
+            getLayer().addActor(bird);
+        }
 	    
         @Override
         public final void onStep(final StepEvent event) {
@@ -3536,6 +3546,34 @@ public class Menu {
         @Override
     	protected final void onDestroy() {
     		acc.destroy();
+    		bird.destroy();
     	}
+	}
+	
+	private final static class BirdModel extends Panctor implements StepListener {
+	    private int mirrorTimer = Mathtil.randi(90, 180);
+	    
+	    private BirdModel(final PlayerContext pc) {
+	        setMirror(true);
+	        load(pc);
+	    }
+	    
+	    private void load(final PlayerContext pc) {
+	        if (pc.bird == null) {
+	            setVisible(false);
+	        } else {
+	            setVisible(true);
+	            changeView(pc.bird);
+	        }
+	    }
+	    
+	    @Override
+        public final void onStep(final StepEvent event) {
+	        mirrorTimer--;
+	        if (mirrorTimer <= 0) {
+	            mirrorTimer = Mathtil.randi(60, 180);
+	            setMirror(!isMirror());
+	        }
+	    }
 	}
 }
