@@ -2178,6 +2178,7 @@ public class Menu {
             brds.add("None");
             brds.addAll(Avatar.BIRDS.keySet());
             final TouchButton sub = newBuy(x, y);
+            newEye(x, y, TAB_BIRD_EYE);
             final AvtListener brdLsn = new AvtListener() {
                 @Override public final void update(final String value) {
                     if ("None".equals(value)) {
@@ -2190,6 +2191,10 @@ public class Menu {
             addNote("Can collect Gems");
             brdRadio = addRadio("Bird", brds, brdSubLsn, brdLsn, x, y, sub);
             initBird();
+        }
+        
+        private final void createBirdEyeList(final int x, final int y) {
+            createEyeList(avt.bird, FurGuardiansGame.getNumEyes(), x, y);
         }
         
         private final void createDragonEyeList(final int x, final int y) {
@@ -2337,7 +2342,7 @@ public class Menu {
                     createBirdList(touchRadioX, touchRadioY);
                     break;
                 case TAB_BIRD_EYE :
-                    //createBirdEyeList(touchRadioX, touchRadioY);
+                    createBirdEyeList(touchRadioX, touchRadioY);
                     break;
                 case TAB_BIRD_NAME :
                     //createBirdNameInput(touchKeyboardX, getTouchKeyboardY());
