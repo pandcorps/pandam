@@ -32,7 +32,9 @@ import org.pandcorps.core.seg.*;
 import org.pandcorps.game.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.Panteraction.*;
+import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.action.*;
+import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.in.*;
 import org.pandcorps.pandax.text.*;
 import org.pandcorps.pandax.tile.*;
@@ -892,6 +894,43 @@ public class Map {
 	    }
 	}
 	
+	private final static class MapBird extends Panctor implements StepListener {
+	    private final static float poff = 8;
+	    private final static float xoff = 20;
+	    private final static float yoff = 42;
+	    private final static float v = 1;
+	    private final Panple dst = new ImplPanple(-1, -1, -1);
+	    private final Panple dir = new ImplPanple();
+	    
+	    private MapBird(final PlayerContext pc) {
+	        setView(pc.bird);
+	        final Panple ppos = player.getPosition();
+	        getPosition().set(ppos.getX() + poff - xoff, ppos.getY() + yoff, tm.getForegroundDepth() + tm.getHeight() * tm.getTileHeight());
+	    }
+	    
+        @Override
+        public final void onStep(final StepEvent event) {
+            final Panple pos = getPosition();
+            if ((dst.getX() == -1 && dst.getY() == -1) || (pos.getDistance2(dst) < (v + 1))) {
+                final Panple ppos = player.getPosition();
+                final float px = ppos.getX();
+                final int mult;
+                if (pos.getX() < px) {
+                    setMirror(false);
+                    mult = 1;
+                } else {
+                    setMirror(true);
+                    mult = -1;
+                }
+                dst.set(px + poff + (mult * xoff), ppos.getY() + yoff);
+            } else {
+                Panple.subtract(dir, dst, pos);
+                dir.setMagnitude2(v);
+                pos.add2(dir);
+            }
+        }
+	}
+	
 	private final static TileMapImage getBaseImage() {
 		return Mathtil.rand(75) ? base : imgMap[4][Mathtil.randi(0, 6)];
 	}
@@ -1532,6 +1571,9 @@ public class Map {
 		player.setPos(index);
 		room.addActor(player);
 		Pangine.getEngine().track(player);
+		if (pc.bird != null) {
+		    room.addActor(new MapBird(pc));
+		}
 	}
 	
 	private final static void addBorder() {

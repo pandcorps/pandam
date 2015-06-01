@@ -130,6 +130,10 @@ public abstract class Panple {
 		add(src.getX(), src.getY(), src.getZ());
 	}
 	
+	public void add2(final Panple src) {
+        add(src.getX(), src.getY());
+    }
+	
 	public void multiply(final float s) {
 		set(getX() * s, getY() * s, getZ() * s);
 	}
@@ -149,13 +153,27 @@ public abstract class Panple {
 	}
 	
 	public double getMagnitude() {
-	    final float x = getX(), y = getY(), z = getZ();
+	    return getMagnitude(getX(), getY(), getZ());
+	}
+	
+	public static double getMagnitude(final float x, final float y, final float z) {
 	    return Math.sqrt(x * x + y * y + z * z);
 	}
 	
 	public double getMagnitude2() {
-        final float x = getX(), y = getY();
+        return getMagnitude2(getX(), getY());
+    }
+	
+	public static double getMagnitude2(final float x, final float y) {
         return Math.sqrt(x * x + y * y);
+    }
+	
+	public double getDistance(final Panple p) {
+	    return getMagnitude(getX() - p.getX(), getY() - p.getY(), getZ() - p.getZ());
+	}
+	
+	public double getDistance2(final Panple p) {
+        return getMagnitude2(getX() - p.getX(), getY() - p.getY());
     }
 	
 	public double getDirection2() {
