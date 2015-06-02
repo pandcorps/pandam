@@ -901,6 +901,7 @@ public class Map {
 	    private final static float v = 1;
 	    private final Panple dst = new ImplPanple(-1, -1, -1);
 	    private final Panple dir = new ImplPanple();
+	    private int timer = 0;
 	    
 	    private MapBird(final PlayerContext pc) {
 	        setView(pc.bird);
@@ -912,6 +913,11 @@ public class Map {
         public final void onStep(final StepEvent event) {
             final Panple pos = getPosition();
             if ((dst.getX() == -1 && dst.getY() == -1) || (pos.getDistance2(dst) < (v + 1))) {
+                if (timer > 0) {
+                    timer--;
+                    return;
+                }
+                timer = 30;
                 final Panple ppos = player.getPosition();
                 final float px = ppos.getX();
                 final int mult;
