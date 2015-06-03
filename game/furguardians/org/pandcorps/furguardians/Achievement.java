@@ -374,7 +374,7 @@ public abstract class Achievement extends FinName {
             // Start with normal jump mode, so subtract one for that
             return Coltil.size(prf.availableClothings) + Coltil.size(prf.availableHats)
             		+ Coltil.size(prf.availableJumpModes) + Coltil.size(prf.availableAssists)
-            		+ Coltil.size(prf.availableSpecialAnimals) - 1;
+            		+ Coltil.size(prf.availableSpecialAnimals) + Coltil.size(prf.availableBirds) - 1;
         }
     }
 	

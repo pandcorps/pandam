@@ -63,6 +63,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
     protected int damagePercentage = DEF_DAMAGE_PERCENTAGE;
     protected boolean endLevelIfHurtWithNoGems = false;
     protected final Set<Animal> availableSpecialAnimals = new HashSet<Animal>();
+    protected final Set<BirdKind> availableBirds = new HashSet<BirdKind>();
     protected int column = -1;
 	protected int row = -1;
 	protected final HashMap<Pair<Integer, Integer>, Boolean> open = new HashMap<Pair<Integer, Integer>, Boolean>();
@@ -137,6 +138,9 @@ public class Profile extends PlayerData implements Segmented, Savable {
     	for (final Field f : Coltil.unnull(seg.getRepetitions(17))) {
             availableSpecialAnimals.add(Avatar.getSpecialAnimal(f.getValue()));
         }
+    	for (final Field f : Coltil.unnull(seg.getRepetitions(18))) {
+            availableBirds.add(Avatar.getBird(f.getValue()));
+        }
     	//ctrl = seg.intValue(3);
     }
     
@@ -168,6 +172,9 @@ public class Profile extends PlayerData implements Segmented, Savable {
         seg.setBoolean(16, endLevelIfHurtWithNoGems);
         for (final Animal a : Coltil.unnull(availableSpecialAnimals)) {
             seg.addValue(17, a.getName());
+        }
+        for (final BirdKind b : Coltil.unnull(availableBirds)) {
+            seg.addValue(18, b.getName());
         }
         //seg.setInt(3, ctrl);
     }
@@ -367,6 +374,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
 			list.add("Powers bought: " + (Coltil.size(prf.availableJumpModes) - 1) + " of " + (JumpMode.values().length - 1));
 			list.add("Assists bought: " + Coltil.size(prf.availableAssists) + " of " + Profile.PUBLIC_ASSISTS.length);
 			list.add("Animals bought: " + Coltil.size(prf.availableSpecialAnimals) + " of " + Avatar.SPECIAL_ANIMALS.size());
+			list.add("Birds bought: " + Coltil.size(prf.availableBirds) + " of " + Avatar.BIRDS.size());
 			return list;
 		}
 		
@@ -493,6 +501,10 @@ public class Profile extends PlayerData implements Segmented, Savable {
     
     public final boolean isAnimalAvailable(final Animal animal) {
     	return animal == null || availableSpecialAnimals.contains(animal);
+    }
+    
+    public final boolean isBirdAvailable(final BirdKind bird) {
+        return bird == null || availableBirds.contains(bird);
     }
     
     public final int getGemMultiplier() {

@@ -453,6 +453,10 @@ public class Avatar extends EyeData implements Segmented {
     	return animal == null ? anm : animal.base;
     }
     
+    protected final static BirdKind getBird(final String brd) {
+        return BIRDS.get(brd);
+    }
+    
     private final static float randColor() {
         return toColor(Mathtil.randi(0, MAX_COLOR_INDEX));
     }
