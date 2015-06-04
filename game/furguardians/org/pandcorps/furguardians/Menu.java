@@ -3365,8 +3365,10 @@ public class Menu {
 				msg = getAddedMsg(addPerks());
 			} else if ("addanimals".equalsIgnoreCase(cmd)) {
 				msg = getAddedMsg(addAnimals());
+			} else if ("addbirds".equalsIgnoreCase(cmd)) {
+                msg = getAddedMsg(addBirds());
 			} else if ("addall".equalsIgnoreCase(cmd)) {
-				msg = getAddedMsg(addClothes() | addHats() | addJumps() | addPerks() | addAnimals());
+				msg = getAddedMsg(addClothes() | addHats() | addJumps() | addPerks() | addAnimals() | addBirds());
 			} else if ("setmapnorm".equalsIgnoreCase(cmd)) {
 				Map.modeMove = Map.MOVE_NORMAL;
 				msg = MSG_OK;
@@ -3529,6 +3531,18 @@ public class Menu {
 			}
 			return added;
 		}
+		
+		private final boolean addBirds() {
+            boolean added = false;
+            final Profile prf = pc.profile;
+            for (final BirdKind b : Avatar.BIRDS.values()) {
+                if (!prf.isBirdAvailable(b)) {
+                    prf.availableBirds.add(b);
+                    added = true;
+                }
+            }
+            return added;
+        }
 		
 		private final static String setMapTheme(final MapTheme theme) {
 			Map.theme = theme;
