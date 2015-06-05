@@ -410,6 +410,12 @@ public class Player extends Character implements CollisionListener {
 		return pc.ctrl.get1();
 	}
 	
+	protected void init() {
+	    if (flyer != null) {
+	        flyer.init();
+	    }
+	}
+	
 	protected final void loadState(final Player p) {
 	    if (p == null) {
 	        return;
@@ -1112,7 +1118,14 @@ public class Player extends Character implements CollisionListener {
 	}
 	
 	private final static class Flyer extends Panctor implements StepListener {
+	    private final static float dthresh = 52;
+	    private final static float amin = 0.35f;
+	    private final static float amax = 0.65f;
 	    private final Player player;
+	    private float vx = 0;
+	    private float vy = 0;
+	    private float ax = rndAcc();
+	    private float ay = rndAcc();
 	    
 	    private Flyer(final Player player) {
 	        this.player = player;
@@ -1120,10 +1133,50 @@ public class Player extends Character implements CollisionListener {
 	        FurGuardiansGame.room.addActor(this);
 	    }
 	    
+	    private void init() {
+	        final Panple ppos = player.getPosition();
+	        FurGuardiansGame.setPosition(this, ppos.getX() + 16, ppos.getY() + 32, FurGuardiansGame.getDepthBubble(player.jumpMode));
+	    }
+	    
         @Override
         public final void onStep(final StepEvent event) {
-            final Panple ppos = player.getPosition();
-            FurGuardiansGame.setPosition(this, ppos.getX(), ppos.getY() + 32, FurGuardiansGame.getDepthBubble(player.jumpMode));
+            final Panple pos = getPosition(), ppos = player.getPosition();
+            ax = fixAcc(ax, pos.getX(), ppos.getX());
+            ay = fixAcc(ay, pos.getY(), ppos.getY());
+            final int vw = player.getVelWalk();
+            vx = addAcc(vx, ax, vw + 1);
+            vy = addAcc(vy, ay, vw);
+            pos.addX(vx);
+            pos.addY(vy);
+            if (vx < 0) {
+                setMirror(true);
+            } else if (vx > 0) {
+                setMirror(false);
+            }
+        }
+        
+        private final static float fixAcc(final float a, final float p, final float pp) {
+            final float d = p - pp;
+            if (d > dthresh) {
+                return (a < 0) ? a : -rndAcc();
+            } else if (d < -dthresh) {
+                return (a > 0) ? a : rndAcc();
+            }
+            return a;
+        }
+        
+        private final static float addAcc(float v, final float a, final int vmax) {
+            v += a;
+            if (v > vmax) {
+                v = vmax;
+            } else if (v < -vmax) {
+                v = -vmax;
+            }
+            return v;
+        }
+        
+        private final static float rndAcc() {
+            return Mathtil.randf(amin, amax);
         }
 	}
 }

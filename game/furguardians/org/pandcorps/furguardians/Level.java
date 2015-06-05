@@ -2057,6 +2057,7 @@ public class Level {
             final Player player = new Player(pc);
             room.addActor(player);
             FurGuardiansGame.setPosition(player, 40 + (20 * i), (floor + 1) * 16);
+            player.init();
             players.add(player);
         }
         Pangine.getEngine().track(Panverage.getArithmeticMean(players));
