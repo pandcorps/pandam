@@ -946,6 +946,10 @@ public class Menu {
         
         protected final void clearClothingModel(final TouchButton sub) {
             clthModel.setVisible(false);
+            clearBuy(sub);
+        }
+        
+        protected final void clearBuy(final TouchButton sub) {
             clearInfo();
             TouchButton.detach(sub);
         }
@@ -953,12 +957,16 @@ public class Menu {
         protected final void displayClothingModel(final TouchButton sub, final int cost) {
             reloadAnimalStrip(mc, clthModel, false);
             clthModel.setVisible(true);
+            reattachBuy(sub, cost);
+        }
+        
+        protected final void reattachBuy(final TouchButton sub, final int cost) {
             reattachBuy("Buy for " + cost + "?", sub);
         }
         
         protected final boolean purchase(final TouchButton sub, final int cost) {
             if (pc.profile.spendGems(cost)) {
-            	clthModel.setVisible(false);
+            	Panctor.setInvisible(clthModel);
                 setInfo("Purchased!");
                 TouchButton.detach(sub);
                 return true;
@@ -2156,14 +2164,9 @@ public class Menu {
                         if (Chartil.charAt(inf, 0) == 'F') {
                         	setJumpMode(index);
                         	reattachBuy("Equipped! Buy for " + jm.getCost() + "?", sub);
-                        } else if (pc.profile.spendGems(cost)) {
+                        } else if (purchase(sub, cost)) {
                             pc.profile.availableJumpModes.add(Integer.valueOf(index));
                             setJumpMode(index);
-                            setInfo("Purchased!");
-                            TouchButton.detach(sub);
-                        } else {
-                            setInfo("You need more Gems");
-                            TouchButton.detach(sub);
                         }
                     }
                 }};
@@ -2182,13 +2185,22 @@ public class Menu {
             newName(x, y, TAB_BIRD_NAME);
             final AvtListener brdLsn = new AvtListener() {
                 @Override public final void update(final String value) {
-                    if ("None".equals(value)) {
-                        avt.bird.kind = null;
+                    final BirdKind bird = Avatar.getBird(value);
+                    if (pc.profile.isBirdAvailable(bird)) {
+                        avt.bird.kind = "None".equals(value) ? null : value;
+                        clearBuy(sub);
                     } else {
+                        reattachBuy(sub, bird.getCost());
+                    }
+                }};
+            final AvtListener brdSubLsn = new AvtListener() {
+                @Override public final void update(final String value) {
+                    final BirdKind bird = Avatar.getBird(value);
+                    if (!pc.profile.isBirdAvailable(bird) && purchase(sub, bird.getCost())) {
+                        pc.profile.availableBirds.add(bird);
                         avt.bird.kind = value;
                     }
                 }};
-            final AvtListener brdSubLsn = null;
             addNote("Can collect Gems");
             brdRadio = addRadio("Bird", brds, brdSubLsn, brdLsn, x, y, sub);
             initBird();
@@ -3592,7 +3604,7 @@ public class Menu {
 	    
 	    private final void init() {
 	        final Panple pos = getPosition();
-            bird.getPosition().set(pos.getX() + 15, pos.getY() + 22, pos.getZ() + 1);
+            bird.getPosition().set(pos.getX() + 20, pos.getY() + 22, pos.getZ() + 1);
             getLayer().addActor(bird);
         }
 	    
