@@ -241,6 +241,8 @@ public class FurGuardiansGame extends BaseGame {
 	protected final static HashMap<String, Img> masksAll = new HashMap<String, Img>();
 	protected static Img eyesBlink = null;
 	protected final static Img[] dragonEyesAll = new Img[getNumDragonEyes()];
+	protected static Panmage egg = null;
+	protected static Panmage egg8 = null;
 	protected static Panmage frozen = null;
 	protected static Panimation burn = null;
 	protected static Panmage bubble = null;
@@ -626,6 +628,41 @@ public class FurGuardiansGame extends BaseGame {
 	    return getImages(birdsAll, kind, "bird/" + Chartil.toCode(kind, false) + ".png", 16);
     }
 	
+	protected final static Panimation getBirdAnm(final String pre, final String kind, final int eyeIndex) {
+	    if (kind == null) {
+	        return null;
+	    }
+        final Img[] birdRaw = getBirds(kind);
+        final int size = birdRaw.length;
+        final Panframe[] bird = new Panframe[size];
+        final Img eye = getEyes(eyeIndex);
+        final int eyeWidth = eye.getWidth(), eyeHeight = eye.getHeight();
+        final String bpre = pre + ".bird";
+        final String ibpre = PRE_IMG + bpre + ".";
+        final String fbpre = PRE_FRM + bpre + ".";
+        final Pangine engine = Pangine.getEngine();
+        for (int i = 0; i < size; i++) {
+            final Img img = Imtil.copy(birdRaw[i]);
+            Imtil.copy(eye, img, 0, 0, eyeWidth, eyeHeight, 8, 5, Imtil.COPY_FOREGROUND);
+            bird[i] = engine.createFrame(fbpre + i, engine.createImage(ibpre + i, oBird, null, null, img), (i == 1) ? 3 : 6);
+        }
+        return engine.createAnimation(PRE_ANM + bpre, bird);
+	}
+	
+	protected final static Panmage getEgg() {
+	    if (egg == null) {
+	        egg = createImage(PRE_IMG + "egg", RES + "chr/bird/Egg.png", 16, oBird);
+	    }
+	    return egg;
+	}
+	
+	protected final static Panmage getEgg8() {
+        if (egg8 == null) {
+            egg8 = createImage(PRE_IMG + "egg8", RES + "chr/bird/Egg8.png", 8, oBird);
+        }
+        return egg8;
+    }
+	
 	protected final static class PlayerImages {
 		protected final PixelFilter f;
 		protected final Img[] guys;
@@ -790,22 +827,7 @@ public class FurGuardiansGame extends BaseGame {
 			pf = null;
 		}
 		
-		if (avatar.bird.kind != null) {
-		    final Img[] birdRaw = getBirds(avatar.bird.kind);
-		    final int size = birdRaw.length;
-		    final Panframe[] bird = new Panframe[size];
-		    final Img eye = getEyes(avatar.bird.eye);
-		    final int eyeWidth = eye.getWidth(), eyeHeight = eye.getHeight();
-		    final String bpre = pre + ".bird";
-		    final String ibpre = PRE_IMG + bpre + ".";
-		    final String fbpre = PRE_FRM + bpre + ".";
-		    for (int i = 0; i < size; i++) {
-		        final Img img = Imtil.copy(birdRaw[i]);
-		        Imtil.copy(eye, img, 0, 0, eyeWidth, eyeHeight, 8, 5, Imtil.COPY_FOREGROUND);
-		        bird[i] = engine.createFrame(fbpre + i, engine.createImage(ibpre + i, oBird, null, null, img), (i == 1) ? 3 : 6);
-		    }
-		    pc.bird = engine.createAnimation(PRE_ANM + bpre, bird);
-		}
+		pc.bird = getBirdAnm(pre, avatar.bird.kind, avatar.bird.eye);
 		
 		if (full) {
 		    ImtilX.validateDefault = false;
