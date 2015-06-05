@@ -1118,14 +1118,17 @@ public class Player extends Character implements CollisionListener {
 	}
 	
 	private final static class Flyer extends Panctor implements StepListener {
-	    private final static float dthresh = 52;
-	    private final static float amin = 0.35f;
-	    private final static float amax = 0.65f;
+	    private final static float dthresh = 44;
+	    private final static float abase = 0.5f;
+	    private final static float rmin = 0.05f;
+	    private final static float rmax = 0.15f;
 	    private final Player player;
 	    private float vx = 0;
 	    private float vy = 0;
-	    private float ax = rndAcc();
-	    private float ay = rndAcc();
+	    private float ax = abase;
+	    private float ay = abase;
+	    private float rx = rndR();
+        private float ry = rndR();
 	    
 	    private Flyer(final Player player) {
 	        this.player = player;
@@ -1142,8 +1145,10 @@ public class Player extends Character implements CollisionListener {
         public final void onStep(final StepEvent event) {
             final Panple pos = getPosition(), ppos = player.getPosition();
             final float px = pos.getX(), py = pos.getY();
-            ax = fixAcc(ax, px, ppos.getX());
-            ay = fixAcc(ay, py, ppos.getY());
+            rx = fixR(rx, px, ppos.getX());
+            ry = fixR(ry, py, ppos.getY());
+            ax = addAcc(ax, rx, abase);
+            ay = addAcc(ay, ry, abase);
             final int vw = player.getVelWalk();
             vx = addAcc(vx, ax, vw + 1);
             vy = addAcc(vy, ay, vw);
@@ -1166,17 +1171,17 @@ public class Player extends Character implements CollisionListener {
             }
         }
         
-        private final static float fixAcc(final float a, final float p, final float pp) {
+        private final static float fixR(final float r, final float p, final float pp) {
             final float d = p - pp;
             if (d > dthresh) {
-                return (a < 0) ? a : -rndAcc();
+                return (r < 0) ? r : -rndR();
             } else if (d < -dthresh) {
-                return (a > 0) ? a : rndAcc();
+                return (r > 0) ? r : rndR();
             }
-            return a;
+            return r;
         }
         
-        private final static float addAcc(float v, final float a, final int vmax) {
+        private final static float addAcc(float v, final float a, final float vmax) {
             v += a;
             if (v > vmax) {
                 v = vmax;
@@ -1186,8 +1191,8 @@ public class Player extends Character implements CollisionListener {
             return v;
         }
         
-        private final static float rndAcc() {
-            return Mathtil.randf(amin, amax);
+        private final static float rndR() {
+            return Mathtil.randf(rmin, rmax);
         }
 	}
 }
