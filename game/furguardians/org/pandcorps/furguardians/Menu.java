@@ -37,6 +37,7 @@ import org.pandcorps.pandam.Panteraction.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.action.*;
 import org.pandcorps.pandam.event.handler.*;
+import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.in.*;
 import org.pandcorps.pandax.text.*;
 import org.pandcorps.pandax.text.Input.*;
@@ -1165,9 +1166,13 @@ public class Menu {
 			    }
 				update(event.toString());
 				reloadAnimalStrip();
+				finish();
 			}
 			
 			protected abstract void update(final String value);
+			
+			protected void finish() {
+			}
 		}
 		
 		protected abstract class AvtRunnable implements Runnable {
@@ -2083,6 +2088,7 @@ public class Menu {
         private TouchButton drgnNameBtn = null;
         private final ClothingMenu clthMenu = new ClothingMenu();
         private final HatMenu hatMenu = new HatMenu();
+        private Panctor egg = null;
         
         protected GearScreen(final PlayerContext pc, final Avatar old, final Avatar avt) {
             super(pc, false);
@@ -2188,13 +2194,33 @@ public class Menu {
             newEye(x, y, TAB_BIRD_EYE);
             newName(x, y, TAB_BIRD_NAME);
             final AvtListener brdLsn = new AvtListener() {
+                private String tempKind = null;
                 @Override public final void update(final String value) {
+                    tempKind = null;
+                    Panctor.setInvisible(egg);
                     final BirdKind bird = Avatar.getBird(value);
                     if (pc.profile.isBirdAvailable(bird)) {
                         avt.bird.kind = "None".equals(value) ? null : value;
                         clearBuy(sub);
                     } else {
+                        tempKind = value;
                         reattachBuy(sub, bird.getCost());
+                    }
+                }
+                @Override public final void finish() {
+                    if (tempKind == null) {
+                        return;
+                    } else if (Coltil.isEmpty(pc.profile.availableBirds)) {
+                        if (egg == null) {
+                            egg = new Panctor();
+                            egg.setView(FurGuardiansGame.getEgg());
+                            egg.getPosition().set(actor.getPosition().getX() - 24, Y_PLAYER);
+                            room.addActor(egg);
+                        } else {
+                            egg.setVisible(true);
+                        }
+                    } else {
+                        actor.bird.load(FurGuardiansGame.getBirdAnm(PRE_TMP_BIRD, tempKind, avt.bird.eye));
                     }
                 }};
             final AvtListener brdSubLsn = new AvtListener() {
@@ -2203,6 +2229,15 @@ public class Menu {
                     if (!pc.profile.isBirdAvailable(bird) && purchase(sub, bird.getCost())) {
                         pc.profile.availableBirds.add(bird);
                         avt.bird.kind = value;
+                        if (egg != null) {
+                            final Panple pos = egg.getPosition(), bpos = actor.bird.getPosition();
+                            actor.bird.dst = new ImplPanple(bpos);
+                            bpos.set(pos);
+                            Tiles.shatterCenteredActor(room, FurGuardiansGame.getEgg8(), pos, true);
+                            FurGuardiansGame.soundCrumble.startSound();
+                            egg.destroy();
+                            egg = null;
+                        }
                     }
                 }};
             addNote("Can collect Gems");
@@ -3608,7 +3643,7 @@ public class Menu {
 	    
 	    private final void init() {
 	        final Panple pos = getPosition();
-            bird.getPosition().set(pos.getX() + 20, pos.getY() + 22, pos.getZ() + 1);
+            bird.getPosition().set(pos.getX() + 20, pos.getY() + 22, pos.getZ() + 10);
             getLayer().addActor(bird);
         }
 	    
@@ -3636,29 +3671,61 @@ public class Menu {
     	}
 	}
 	
+	private final static String PRE_TMP_BIRD = "img.tmp.bird.";
+	
 	private final static class BirdModel extends Panctor implements StepListener {
 	    private int mirrorTimer = Mathtil.randi(90, 180);
+	    private Panimation anm;
+	    private Panple dst = null;
 	    
 	    private BirdModel(final PlayerContext pc) {
 	        load(pc);
 	    }
 	    
 	    private void load(final PlayerContext pc) {
-	        if (pc.bird == null) {
+	        load(pc.bird);
+	    }
+	    
+	    private void load(final Panimation anm) {
+	        if (anm != this.anm) {
+    	        Panmage.destroyAll(this.anm);
+    	        this.anm = anm;
+	        }
+	        if (anm == null) {
 	            setVisible(false);
 	        } else {
 	            setVisible(true);
-	            changeView(pc.bird);
+	            changeView(anm);
 	        }
 	    }
 	    
 	    @Override
         public final void onStep(final StepEvent event) {
+	        if (dst != null) {
+	            final Panple pos = getPosition(), dif = Panple.subtract(dst, pos);
+	            if (dif.getMagnitude2() < 2) {
+	                pos.set(dst);
+	                dst = null;
+	                return;
+	            }
+	            dif.setMagnitude2(1);
+	            pos.add(dif);
+	            setMirror(dif.getX() < 0);
+	            return;
+	        }
 	        mirrorTimer--;
 	        if (mirrorTimer <= 0) {
 	            mirrorTimer = Mathtil.randi(60, 180);
 	            setMirror(!isMirror());
 	        }
+	    }
+	    
+	    @Override
+	    public final void onDestroy() {
+	        if (Chartil.startsWith(BasePantity.getId(this.anm), PRE_TMP_BIRD)) {
+	            Panmage.destroyAll(this.anm);
+	        }
+	        super.onDestroy();
 	    }
 	}
 }
