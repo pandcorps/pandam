@@ -268,6 +268,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
     	protected int playedMinecartLevels = 0;
     	protected int playedCaveLevels = 0;
     	protected int playedRockWorlds = 0;
+    	protected long birdGems = 0;
     	
     	public void load(final Segment seg, final int currGems) {
         	defeatedLevels = seg.initInt(0);
@@ -301,6 +302,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
         	playedMinecartLevels = seg.initInt(18);
         	playedCaveLevels = seg.initInt(19);
         	playedRockWorlds = seg.initInt(20);
+        	birdGems = seg.initLong(21);
         }
     	
 		@Override
@@ -340,6 +342,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
 	        seg.setInt(18, playedMinecartLevels);
 	        seg.setInt(19, playedCaveLevels);
 	        seg.setInt(20, playedRockWorlds);
+	        seg.setLong(21, birdGems);
 		}
 		
 		public List<String> toList(final Profile prf) {
@@ -363,6 +366,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
 			list.add("Blue Gems found: " + foundBlueGems);
 			list.add("Cyan Gems found: " + foundCyanGems);
 			list.add("Green Gems found: " + foundGreenGems);
+			list.add("Gems found by bird: " + birdGems);
 			final int runSize = Math.min(bestRuns.size(), BEST_RUN_SIZE);
             for (int i = 0; i < runSize; i++) {
                 list.add("Best run " + (i + 1) + ": " + bestRuns.get(i));

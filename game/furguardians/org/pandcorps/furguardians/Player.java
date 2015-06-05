@@ -420,12 +420,12 @@ public class Player extends Character implements CollisionListener {
 	    if (p == null) {
 	        return;
 	    }
-	    this.levelGems = p.levelGems;
-	    this.levelFloatingGems = p.levelFloatingGems;
-	    this.levelEndGems = p.levelEndGems;
-	    this.levelBrokenBlocks = p.levelBrokenBlocks;
-	    this.levelFalls = p.levelFalls;
-	    this.levelHits = p.levelHits;
+	    levelGems = p.levelGems;
+	    levelFloatingGems = p.levelFloatingGems;
+	    levelEndGems = p.levelEndGems;
+	    levelBrokenBlocks = p.levelBrokenBlocks;
+	    levelFalls = p.levelFalls;
+	    levelHits = p.levelHits;
 	}
 	
 	protected final void clearState() {
@@ -1141,8 +1141,9 @@ public class Player extends Character implements CollisionListener {
         @Override
         public final void onStep(final StepEvent event) {
             final Panple pos = getPosition(), ppos = player.getPosition();
-            ax = fixAcc(ax, pos.getX(), ppos.getX());
-            ay = fixAcc(ay, pos.getY(), ppos.getY());
+            final float px = pos.getX(), py = pos.getY();
+            ax = fixAcc(ax, px, ppos.getX());
+            ay = fixAcc(ay, py, ppos.getY());
             final int vw = player.getVelWalk();
             vx = addAcc(vx, ax, vw + 1);
             vy = addAcc(vy, ay, vw);
@@ -1152,6 +1153,16 @@ public class Player extends Character implements CollisionListener {
                 setMirror(true);
             } else if (vx > 0) {
                 setMirror(false);
+            }
+            for (int i = 0; i < 2; i++) {
+                final float pxi = px - 7 + (i * 14);
+                for (int j = 0; j < 2; j++) {
+                    final int index = Level.tm.getContainer(pxi, py + (j * 14));
+                    if (FurGuardiansGame.TILE_GEM == getBehavior(index)) {
+                        Gem.onCollide(Level.tm, index, player);
+                        player.pc.profile.stats.birdGems++;
+                    }
+                }
             }
         }
         
