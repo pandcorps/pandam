@@ -2179,7 +2179,11 @@ public class Menu {
         protected final void createBirdList(final int x, final int y) {
             final List<String> brds = new ArrayList<String>();
             brds.add("None");
-            brds.addAll(Avatar.BIRDS.keySet());
+            if (Coltil.isEmpty(pc.profile.availableBirds)) {
+                brds.add(Avatar.FIRST_BIRD.getName());
+            } else {
+                brds.addAll(Avatar.BIRDS.keySet());
+            }
             final TouchButton sub = newBuy(x, y);
             newEye(x, y, TAB_BIRD_EYE);
             newName(x, y, TAB_BIRD_NAME);

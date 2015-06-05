@@ -32,6 +32,7 @@ import org.pandcorps.furguardians.Player.*;
 public class Avatar extends EyeData implements Segmented {
 	protected final static Map<String, Animal> SPECIAL_ANIMALS = new HashMap<String, Animal>();
 	protected final static Map<String, BirdKind> BIRDS = new LinkedHashMap<String, BirdKind>();
+	protected final static BirdKind FIRST_BIRD;
 	protected final static float DEF_JUMP_COL = 1;
 	private final static int MAX_COLOR_INDEX = 4;
     protected String anm = null;
@@ -48,7 +49,8 @@ public class Avatar extends EyeData implements Segmented {
     
     static {
     	putSpecialAnimal(new Animal("Panda", "Bear", 50000));
-    	putBird(new BirdKind("Robin", 30000)); // Expensive because this unlocks option to buy other birds
+    	FIRST_BIRD = new BirdKind("Robin", 30000);
+    	putBird(FIRST_BIRD); // Expensive because this unlocks option to buy other birds
     	//putBird(new BirdKind("Sparrow", 1000));
     	putBird(new BirdKind("Blue Jay", 2000));
     	putBird(new BirdKind("Canary", 2000));
