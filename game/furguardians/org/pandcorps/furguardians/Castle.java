@@ -310,8 +310,8 @@ public class Castle {
             final TileMap tm2 = new TileMap(Pantil.vmid(), 2, 9, ImtilX.DIM, ImtilX.DIM);
             tm2.setImageMap(tm);
             room.addActor(tm2);
-            tm2.getPosition().set(224, 0, 10);
-            tm2.setForegroundDepth(11);
+            tm2.getPosition().set(224, 0, 20);
+            tm2.setForegroundDepth(21);
             
             tm2.fillBackground(ground, 0, 0, 2, 1, true);
             tm2.setForeground(6, 3, 1, 1);
