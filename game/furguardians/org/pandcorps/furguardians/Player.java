@@ -303,6 +303,16 @@ public class Player extends Character implements CollisionListener {
 	
 	protected static interface Ai {
 		public void onStep(final Player player);
+		
+		public FlyerAi getFlyerAi();
+	}
+	
+	protected static interface FlyerAi {
+        public void onStep(final Flyer flyer);
+    }
+	
+	private static FlyerAi getFlyerAi(final Ai ai) {
+	    return (ai == null) ? null : ai.getFlyerAi();
 	}
 	
 	protected final PlayerContext pc;
@@ -1117,7 +1127,7 @@ public class Player extends Character implements CollisionListener {
         }
 	}
 	
-	private final static class Flyer extends Panctor implements StepListener {
+	protected final static class Flyer extends Panctor implements StepListener {
 	    private final static float dthresh = 44;
 	    private final static float dmax = 120;
 	    private final static float abase = 0.5f;
@@ -1125,7 +1135,7 @@ public class Player extends Character implements CollisionListener {
 	    private final static float rmax = 0.15f;
 	    private final static float tthresh = 24;
 	    private final static float nonLevelThreshold = 32;
-	    private final Player player;
+	    protected final Player player;
 	    private float vx = 0;
 	    private float vy = 0;
 	    private float ax = abase;
@@ -1176,6 +1186,13 @@ public class Player extends Character implements CollisionListener {
 	    
         @Override
         public final void onStep(final StepEvent event) {
+            final FlyerAi ai = getFlyerAi(player.ai);
+            if (ai != null) {
+                ai.onStep(this);
+                return;
+            } else if (player.mode == MODE_DISABLED && player.ai == null) {
+                return;
+            }
             final Panple pos = getPosition(), ppos = getTarget();
             final float px = pos.getX(), py = pos.getY(), thresh = getDistanceThreshold();
             rx = fixR(rx, px, ppos.getX(), thresh);

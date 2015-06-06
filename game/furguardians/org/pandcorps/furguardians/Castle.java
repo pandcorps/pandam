@@ -233,6 +233,15 @@ public class Castle {
 			}
 			player.hv = 2;
 		}
+
+        @Override
+        public final FlyerAi getFlyerAi() {
+            return new FlyerAi() {
+                @Override public final void onStep(final Flyer flyer) {
+                    final Panple pos = flyer.getPosition(), ppos = flyer.player.getPosition();
+                    pos.set(ppos.getX(), ppos.getY() + 34, ppos.getZ());
+                }};
+        }
     }
     
     protected final static class PortalScreen extends CastleScreen {
