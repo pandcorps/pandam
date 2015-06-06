@@ -172,6 +172,7 @@ public class Map {
 	private static TileMapImage bridge = null;
 	
 	private static MapPlayer player = null;
+	private static MapBird bird = null;
 	
 	protected final static short MOVE_NORMAL = 0;
 	protected final static short MOVE_ANY_PATH = 1;
@@ -462,6 +463,7 @@ public class Map {
 			Panctor.detach(markers);
 			Panctor.detach(buildings);
 			Panctor.detach(portal);
+			destroyBird();
 	    }
 	}
 	
@@ -511,7 +513,8 @@ public class Map {
 		int steps;
 		
 	    private FloatPlayer(int index) {
-	        setView(getPlayerContext().mapSouth.getFrames()[0].getImage());
+	        final PlayerContext pc = getPlayerContext();
+	        setView(pc.mapSouth.getFrames()[0].getImage());
 	        if (victory == VICTORY_NONE) {
 	        	steps = 2;
 		        for (int i = 0; i < steps; i++) {
@@ -529,6 +532,7 @@ public class Map {
 	        final Panple pos = getPosition();
 	        bubble.getPosition().set(0, pos.getY() + 2, pos.getZ() + 1);
 	        onWalking();
+	        addBird(pc);
 	    }
 	    
 	    @Override
@@ -905,8 +909,13 @@ public class Map {
 	    
 	    private MapBird(final PlayerContext pc) {
 	        setView(pc.bird);
-	        final Panple ppos = player.getPosition();
+	        final Panple ppos = getTarget();
 	        getPosition().set(ppos.getX() + poff - xoff, ppos.getY() + yoff, tm.getForegroundDepth() + tm.getHeight() * tm.getTileHeight());
+	        dst.set(-1, -1, -1);
+	    }
+	    
+	    private Panple getTarget() {
+	        return (player == null || player.isDestroyed()) ? tm.getPosition(getStartTile()) : player.getPosition();
 	    }
 	    
         @Override
@@ -918,7 +927,7 @@ public class Map {
                     return;
                 }
                 timer = 30;
-                final Panple ppos = player.getPosition();
+                final Panple ppos = getTarget();
                 final float px = ppos.getX();
                 final int mult;
                 if (pos.getX() < px) {
@@ -1577,9 +1586,21 @@ public class Map {
 		player.setPos(index);
 		room.addActor(player);
 		Pangine.getEngine().track(player);
-		if (pc.bird != null) {
-		    room.addActor(new MapBird(pc));
+		addBird(pc);
+	}
+	
+	private final static void addBird(final PlayerContext pc) {
+		if (pc.bird == null) {
+		    destroyBird();
+		} else if (bird == null || bird.isDestroyed()) {
+		    bird = new MapBird(pc);
+		    room.addActor(bird);
 		}
+	}
+	
+	private final static void destroyBird() {
+	    Panctor.destroy(bird);
+        bird = null;
 	}
 	
 	private final static void addBorder() {
