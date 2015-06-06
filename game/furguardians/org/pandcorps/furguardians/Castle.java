@@ -318,12 +318,10 @@ public class Castle {
         playerCount = FurGuardiansGame.pcs.size();
         for (int i = 0; i < playerCount; i++) {
             final PlayerContext pc = FurGuardiansGame.pcs.get(i);
-            final Player oldPlayer = pc.player, player = new Player(pc);
+            final Player oldPlayer = pc.player, player = new Player(pc, x + (24 * i), y);
             player.loadState(oldPlayer);
 			player.mode = Player.MODE_DISABLED;
-			room.addActor(player);
 			// Use FurGuardiansGame.setPosition; otherwise wings can appear in front of Player
-			FurGuardiansGame.setPosition(player, x + (24 * i), y);
 			player.ai = ai;
         }
     }

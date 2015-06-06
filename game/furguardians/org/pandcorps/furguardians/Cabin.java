@@ -151,9 +151,7 @@ public class Cabin {
 			//TODO All players?
 			FurGuardiansGame.initTouchButtons(null, false, true, null);
 			pc = FurGuardiansGame.pcs.get(0);
-			final Player player = new Player(pc);
-			room.addActor(player);
-			FurGuardiansGame.setPosition(player, 74, 32);
+			new Player(pc, 74, 32);
 			FurGuardiansGame.addHud(room, false, true);
 			
 			final String txt = Mathtil.rand() ? loadName() : loadShuffle();

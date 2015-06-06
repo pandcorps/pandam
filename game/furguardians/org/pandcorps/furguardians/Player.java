@@ -336,7 +336,7 @@ public class Player extends Character implements CollisionListener {
 	protected long lastDragonStomp = -30;
 	private boolean firstStep = true;
 	
-	public Player(final PlayerContext pc) {
+	public Player(final PlayerContext pc, final float x, final float y) {
 		super(PLAYER_X, PLAYER_H);
 	    this.pc = pc;
 	    pc.player = this;
@@ -394,6 +394,12 @@ public class Player extends Character implements CollisionListener {
             @Override public final void onActionStart(final ActionStartEvent event) { engine.startCaptureFrames(); }});
         register(interaction.KEY_F3, new ActionStartListener() {
             @Override public final void onActionStart(final ActionStartEvent event) { engine.stopCaptureFrames(); }});
+        
+        FurGuardiansGame.setPosition(this, x, y);
+        FurGuardiansGame.room.addActor(this);
+        if (flyer != null) {
+            flyer.init();
+        }
 	}
 	
 	private final void registerPause(final Panput input) {
@@ -408,12 +414,6 @@ public class Player extends Character implements CollisionListener {
 	
 	private final Panput getJumpInput() {
 		return pc.ctrl.get1();
-	}
-	
-	protected void init() {
-	    if (flyer != null) {
-	        flyer.init();
-	    }
 	}
 	
 	protected final void loadState(final Player p) {
@@ -1124,6 +1124,7 @@ public class Player extends Character implements CollisionListener {
 	    private final static float rmin = 0.05f;
 	    private final static float rmax = 0.15f;
 	    private final static float tthresh = 24;
+	    private final static float nonLevelThreshold = 32;
 	    private final Player player;
 	    private float vx = 0;
 	    private float vy = 0;
@@ -1170,7 +1171,7 @@ public class Player extends Character implements CollisionListener {
 	    }
 	    
 	    private final float getDistanceThreshold() {
-	        return (targetIndex >= 0) ? tthresh : dthresh;
+	        return (targetIndex >= 0) ? tthresh : (FurGuardiansGame.level ? dthresh : nonLevelThreshold);
 	    }
 	    
         @Override
