@@ -915,7 +915,7 @@ public class Map {
 	    }
 	    
 	    private Panple getTarget() {
-	        return (player == null || player.isDestroyed()) ? tm.getPosition(getStartTile()) : player.getPosition();
+	        return Panctor.isDestroyed(player) ? tm.getPosition(getStartTile()) : player.getPosition();
 	    }
 	    
         @Override
@@ -1592,7 +1592,7 @@ public class Map {
 	private final static void addBird(final PlayerContext pc) {
 		if (pc.bird == null) {
 		    destroyBird();
-		} else if (bird == null || bird.isDestroyed()) {
+		} else if (Panctor.isDestroyed(bird)) {
 		    bird = new MapBird(pc);
 		    room.addActor(bird);
 		}

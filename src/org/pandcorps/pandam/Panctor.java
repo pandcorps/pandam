@@ -430,6 +430,10 @@ public class Panctor extends BasePantity implements SpecPanctor {
 	    Coltil.wipe(actors);
 	}
 	
+	public final static boolean isDestroyed(final Panctor actor) {
+	    return (actor == null) || actor.isDestroyed();
+	}
+	
 	public final static void detach(final Panctor actor) {
         if (actor != null) {
             actor.detach();

@@ -23,6 +23,7 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.furguardians;
 
 import org.pandcorps.core.*;
+import org.pandcorps.furguardians.Castle.*;
 import org.pandcorps.game.actor.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
@@ -41,8 +42,12 @@ public final class Spark extends Burst implements StepListener {
 		super(FurGuardiansGame.spark);
 		this.count = count;
 		this.end = end;
-		FurGuardiansGame.setPosition(this, x + Mathtil.randf(-7, 7), y + Mathtil.randf(-7, 7), FurGuardiansGame.DEPTH_SPARK);
+		FurGuardiansGame.setPosition(this, x + Mathtil.randf(-7, 7), y + Mathtil.randf(-7, 7), getDepth());
 		layer.addActor(this);
+	}
+	
+	private final static int getDepth() {
+	    return FurGuardiansGame.DEPTH_SPARK + ((Panscreen.get() instanceof PortalScreen) ? 20 : 0);
 	}
 
 	@Override
