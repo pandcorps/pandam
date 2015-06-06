@@ -1119,9 +1119,11 @@ public class Player extends Character implements CollisionListener {
 	
 	private final static class Flyer extends Panctor implements StepListener {
 	    private final static float dthresh = 44;
+	    private final static float dmax = 120;
 	    private final static float abase = 0.5f;
 	    private final static float rmin = 0.05f;
 	    private final static float rmax = 0.15f;
+	    private final static float tthresh = 24;
 	    private final Player player;
 	    private float vx = 0;
 	    private float vy = 0;
@@ -1129,6 +1131,8 @@ public class Player extends Character implements CollisionListener {
 	    private float ay = abase;
 	    private float rx = rndR();
         private float ry = rndR();
+        private int targetIndex = -1;
+        private final Panple target = new ImplPanple();
 	    
 	    private Flyer(final Player player) {
 	        this.player = player;
@@ -1141,12 +1145,40 @@ public class Player extends Character implements CollisionListener {
 	        FurGuardiansGame.setPosition(this, ppos.getX() + 16, ppos.getY() + 32, FurGuardiansGame.getDepthBubble(player.jumpMode));
 	    }
 	    
+	    private Panple getTarget() {
+	        final Panple pos = getPosition(), ppos = player.getPosition();
+	        if (Math.abs(pos.getX() - ppos.getX()) > dmax || Math.abs(pos.getY() - ppos.getY()) > dmax) {
+                targetIndex = -1;
+                return ppos;
+            } else if (targetIndex >= 0) {
+	            if (getBehavior(targetIndex) != FurGuardiansGame.TILE_GEM) {
+	                targetIndex = -1;
+	            } else {
+	                return target;
+	            }
+	        }
+	        for (int i = 1; i < 4; i++) {
+	            final int scope = 24 * i;
+    	        target.set(pos.getX() + Mathtil.randi(-scope, scope), pos.getY() + Mathtil.randi(-scope, scope));
+    	        final int scopeIndex = Level.tm.getContainer(target);
+    	        if (FurGuardiansGame.TILE_GEM == getBehavior(scopeIndex)) {
+    	            targetIndex = scopeIndex;
+                    return target;
+    	        }
+	        }
+	        return ppos;
+	    }
+	    
+	    private final float getDistanceThreshold() {
+	        return (targetIndex >= 0) ? tthresh : dthresh;
+	    }
+	    
         @Override
         public final void onStep(final StepEvent event) {
-            final Panple pos = getPosition(), ppos = player.getPosition();
-            final float px = pos.getX(), py = pos.getY();
-            rx = fixR(rx, px, ppos.getX());
-            ry = fixR(ry, py, ppos.getY());
+            final Panple pos = getPosition(), ppos = getTarget();
+            final float px = pos.getX(), py = pos.getY(), thresh = getDistanceThreshold();
+            rx = fixR(rx, px, ppos.getX(), thresh);
+            ry = fixR(ry, py, ppos.getY(), thresh);
             ax = addAcc(ax, rx, abase);
             ay = addAcc(ay, ry, abase);
             final int vw = player.getVelWalk();
@@ -1171,11 +1203,11 @@ public class Player extends Character implements CollisionListener {
             }
         }
         
-        private final static float fixR(final float r, final float p, final float pp) {
+        private final static float fixR(final float r, final float p, final float pp, final float thresh) {
             final float d = p - pp;
-            if (d > dthresh) {
+            if (d > thresh) {
                 return (r < 0) ? r : -rndR();
-            } else if (d < -dthresh) {
+            } else if (d < -thresh) {
                 return (r > 0) ? r : rndR();
             }
             return r;
