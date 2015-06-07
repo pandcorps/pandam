@@ -379,7 +379,13 @@ public class Profile extends PlayerData implements Segmented, Savable {
 			list.add("Assists bought: " + Coltil.size(prf.availableAssists) + " of " + Profile.PUBLIC_ASSISTS.length);
 			list.add("Animals bought: " + Coltil.size(prf.availableSpecialAnimals) + " of " + Avatar.SPECIAL_ANIMALS.size());
 			list.add("Birds bought: " + Coltil.size(prf.availableBirds) + " of " + Avatar.BIRDS.size());
+			list.add("Total purchases: " + Achievement.BuyFeat.getPurchases(prf) + " of " + getTotalItemsForSale());
 			return list;
+		}
+		
+		private final static int getTotalItemsForSale() {
+		    return Avatar.clothings.length + Avatar.hats.length + (JumpMode.values().length - 1) + Profile.PUBLIC_ASSISTS.length
+		            + Avatar.SPECIAL_ANIMALS.size() + Avatar.BIRDS.size();
 		}
 		
 		public void addRun(final int runGems) {

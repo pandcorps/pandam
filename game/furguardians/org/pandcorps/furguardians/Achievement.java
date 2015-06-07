@@ -364,13 +364,17 @@ public abstract class Achievement extends FinName {
 		}
 	}
 	
-	private final static class BuyFeat extends CountFeat {
+	protected final static class BuyFeat extends CountFeat {
         protected BuyFeat(final String name, final int n) {
             super(name, n, "Buy " + n + " item" + getS(n), n * 1000);
         }
         
         @Override
         public final long getCurrent(final Profile prf) {
+            return getPurchases(prf);
+        }
+        
+        protected final static int getPurchases(final Profile prf) {
             // Start with normal jump mode, so subtract one for that
             return Coltil.size(prf.availableClothings) + Coltil.size(prf.availableHats)
             		+ Coltil.size(prf.availableJumpModes) + Coltil.size(prf.availableAssists)
