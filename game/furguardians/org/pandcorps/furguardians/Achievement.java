@@ -45,7 +45,7 @@ public abstract class Achievement extends FinName {
 		new BonusLevelFeat("Roll the Dice", 5), new KickFeat("Kick the Ball", 20),
 		new NoGemsFeat(), new AllGemsFeat(), new AllBrokenFeat(),
 		new GiantFeat("Giant Slayer", 50), new HardFeat(),
-		new BuyFeat("Consumer", 1), new BuyFeat("Demander", 5)
+		new BuyFeat("Consumer", 1), new BuyFeat("Demander", 5), new BuyFeat("Collector", 15)
 		// level w/ no damage
 		// Beyond Belief, Finish level as a flying pig
 		// Babe, Finish level as a blue bull/ox
