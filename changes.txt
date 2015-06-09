@@ -5,7 +5,7 @@ Added glasses.
 Added new eyes.
 Added menu option to change secondary color of multi-color animals.
 Fixed a Monarch Achievement bug; it can now be achieved with the Royal Dress.
-Added Demander Achievement.
+Added Demander and Collector Achievements.
 
 *****
 
