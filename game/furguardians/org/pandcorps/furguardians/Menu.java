@@ -2086,6 +2086,8 @@ public class Menu {
         private TouchButton drgnBtn = null;
         private TouchButton drgnEyeBtn = null;
         private TouchButton drgnNameBtn = null;
+        private TouchButton birdEyeBtn = null;
+        private TouchButton birdNameBtn = null;
         private final ClothingMenu clthMenu = new ClothingMenu();
         private final HatMenu hatMenu = new HatMenu();
         private Panctor egg = null;
@@ -2191,8 +2193,8 @@ public class Menu {
                 brds.addAll(Avatar.BIRDS.keySet());
             }
             final TouchButton sub = newBuy(x, y);
-            newEye(x, y, TAB_BIRD_EYE);
-            newName(x, y, TAB_BIRD_NAME);
+            birdEyeBtn = newEye(x, y, TAB_BIRD_EYE);
+            birdNameBtn = newName(x, y, TAB_BIRD_NAME);
             final AvtListener brdLsn = new AvtListener() {
                 private String tempKind = null;
                 @Override public final void update(final String value) {
@@ -2200,7 +2202,7 @@ public class Menu {
                     Panctor.setInvisible(egg);
                     final BirdKind bird = Avatar.getBird(value);
                     if (pc.profile.isBirdAvailable(bird)) {
-                        avt.bird.kind = "None".equals(value) ? null : value;
+                        setBird("None".equals(value) ? null : value);
                         clearBuy(sub);
                     } else {
                         tempKind = value;
@@ -2228,7 +2230,7 @@ public class Menu {
                     final BirdKind bird = Avatar.getBird(value);
                     if (!pc.profile.isBirdAvailable(bird) && purchase(sub, bird.getCost())) {
                         pc.profile.availableBirds.add(bird);
-                        avt.bird.kind = value;
+                        setBird(value);
                         if (egg != null) {
                             final Panple pos = egg.getPosition(), bpos = actor.bird.getPosition();
                             actor.bird.dst = new ImplPanple(bpos);
@@ -2473,6 +2475,18 @@ public class Menu {
         
         private final void initBird() {
             brdRadio.setSelected(Chartil.nvl(avt.bird.kind, "None"));
+            prepareBird();
+        }
+        
+        private final void setBird(final String kind) {
+        	avt.bird.kind = kind;
+        	prepareBird();
+        }
+        
+        private final void prepareBird() {
+        	final boolean needBird = avt.bird.kind != null;
+        	TouchButton.reattach(birdEyeBtn, needBird);
+        	TouchButton.reattach(birdNameBtn, needBird);
         }
         
         private final void setClothing(final GarbMenu menu, final Clothing c) {

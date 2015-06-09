@@ -382,28 +382,26 @@ public class Player extends Character implements CollisionListener {
 		register(interaction.KEY_F1, new ActionStartListener() {
             @Override public final void onActionStart(final ActionStartEvent event) { engine.captureScreen(); }});
 		
-		if (!FurGuardiansGame.debugMode) {
-			return;
+		if (FurGuardiansGame.debugMode) {
+			register(interaction.KEY_1, new ActionStartListener() {
+	            @Override public final void onActionStart(final ActionStartEvent event) { left(); }});
+			register(interaction.KEY_2, new ActionStartListener() {
+	            @Override public final void onActionStart(final ActionStartEvent event) { right(); }});
+			register(interaction.KEY_9, new ActionStartListener() {
+	            @Override public final void onActionStart(final ActionStartEvent event) { addX(-1); }});
+	        register(interaction.KEY_0, new ActionStartListener() {
+	            @Override public final void onActionStart(final ActionStartEvent event) { addX(1); }});
+	        register(interaction.KEY_Q, new ActionStartListener() {
+	            @Override public final void onActionStart(final ActionStartEvent event) { jumpMode = MODE_NORMAL; }});
+	        register(interaction.KEY_W, new ActionStartListener() {
+	            @Override public final void onActionStart(final ActionStartEvent event) { jumpMode = JUMP_HIGH; }});
+	        register(interaction.KEY_E, new ActionStartListener() {
+	            @Override public final void onActionStart(final ActionStartEvent event) { jumpMode = JUMP_FLY; }});
+	        register(interaction.KEY_F2, new ActionStartListener() {
+	            @Override public final void onActionStart(final ActionStartEvent event) { engine.startCaptureFrames(); }});
+	        register(interaction.KEY_F3, new ActionStartListener() {
+	            @Override public final void onActionStart(final ActionStartEvent event) { engine.stopCaptureFrames(); }});
 		}
-		
-		register(interaction.KEY_1, new ActionStartListener() {
-            @Override public final void onActionStart(final ActionStartEvent event) { left(); }});
-		register(interaction.KEY_2, new ActionStartListener() {
-            @Override public final void onActionStart(final ActionStartEvent event) { right(); }});
-		register(interaction.KEY_9, new ActionStartListener() {
-            @Override public final void onActionStart(final ActionStartEvent event) { addX(-1); }});
-        register(interaction.KEY_0, new ActionStartListener() {
-            @Override public final void onActionStart(final ActionStartEvent event) { addX(1); }});
-        register(interaction.KEY_Q, new ActionStartListener() {
-            @Override public final void onActionStart(final ActionStartEvent event) { jumpMode = MODE_NORMAL; }});
-        register(interaction.KEY_W, new ActionStartListener() {
-            @Override public final void onActionStart(final ActionStartEvent event) { jumpMode = JUMP_HIGH; }});
-        register(interaction.KEY_E, new ActionStartListener() {
-            @Override public final void onActionStart(final ActionStartEvent event) { jumpMode = JUMP_FLY; }});
-        register(interaction.KEY_F2, new ActionStartListener() {
-            @Override public final void onActionStart(final ActionStartEvent event) { engine.startCaptureFrames(); }});
-        register(interaction.KEY_F3, new ActionStartListener() {
-            @Override public final void onActionStart(final ActionStartEvent event) { engine.stopCaptureFrames(); }});
         
         FurGuardiansGame.setPosition(this, x, y);
         FurGuardiansGame.room.addActor(this);
