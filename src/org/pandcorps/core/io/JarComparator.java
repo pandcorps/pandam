@@ -22,6 +22,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.core.io;
 
+import java.util.*;
 import java.util.jar.*;
 
 import org.pandcorps.core.*;
@@ -36,20 +37,38 @@ public class JarComparator {
     }
     
     private final static void run(final String[] args) throws Exception {
-        JarInputStream in1 = null, in2 = null;
+        final List<JarEntry> list1 = getEntries(args[0]), list2 = getEntries(args[1]);
+        for (final JarEntry en1 : list1) {
+            System.out.println(en1.getName());
+        }
+    }
+    
+    private final static List<JarEntry> getEntries(final String loc) throws Exception {
+        JarInputStream in = null;
+        final List<JarEntry> list = new ArrayList<JarEntry>();
         try {
-            in1 = getJar(args[0]);
-            in2 = getJar(args[1]);
+            in = getJar(loc);
             while (true) {
-                final JarEntry en1 = in1.getNextJarEntry();
-                if (en1 == null) {
+                final JarEntry en = in.getNextJarEntry();
+                if (en == null) {
                     break;
                 }
+                list.add(en);
                 //System.out.println(en1.getName() + " - " + en1.isDirectory()); // Name includes full path within jar
             }
         } finally {
-            Iotil.close(in1);
-            Iotil.close(in2);
+            Iotil.close(in);
+        }
+        Collections.sort(list, cmp);
+        return list;
+    }
+    
+    private final static JarEntryComparator cmp = new JarEntryComparator();
+    
+    private final static class JarEntryComparator implements Comparator<JarEntry> {
+        @Override
+        public final int compare(final JarEntry en1, final JarEntry en2) {
+            return en1.getName().compareTo(en2.getName());
         }
     }
     
