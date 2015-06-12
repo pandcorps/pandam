@@ -353,8 +353,13 @@ public class Profile extends PlayerData implements Segmented, Savable {
 			list.add("Enemies stomped: " + stompedEnemies);
 			list.add("Enemies bumped: " + bumpedEnemies);
 			list.add("Enemies hit by object: " + hitEnemies);
+			int enemyTypesDefeated = 0;
 			for (final EnemyDefinition def : FurGuardiansGame.allEnemies) {
-				list.add(def.getName() + " defeated: " + defeatedEnemyTypes.longValue(def.code));
+			    final long defeatedCount = defeatedEnemyTypes.longValue(def.code);
+				list.add(def.getName() + " defeated: " + defeatedCount);
+				if (defeatedCount > 0) {
+				    enemyTypesDefeated++;
+				}
 			}
 			list.add("Blocks bumped: " + bumpedBlocks);
 			list.add("Blocks broken: " + brokenBlocks);
@@ -380,7 +385,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
 			list.add("Animals bought: " + Coltil.size(prf.availableSpecialAnimals) + " of " + Avatar.SPECIAL_ANIMALS.size());
 			list.add("Birds bought: " + Coltil.size(prf.availableBirds) + " of " + Avatar.BIRDS.size());
 			list.add("Total purchases: " + Achievement.BuyFeat.getPurchases(prf) + " of " + getTotalItemsForSale());
-			// Enemy types defeated
+			list.add("Enemy types defeated: " + enemyTypesDefeated + " of " + (FurGuardiansGame.allEnemies.size() - 2)); // Can't defeat Wisps yet
 			// World types played
 			list.add("Achievements: " + prf.achievements.size() + " of " + Achievement.ALL.length);
 			// Total checklist
