@@ -378,18 +378,27 @@ public class Profile extends PlayerData implements Segmented, Savable {
             }
 			list.add("Total Gems: " + totalGems);
 			list.add("Objects kicked: " + kicks);
-			list.add("Shirts bought: " + Coltil.size(prf.availableClothings) + " of " + Avatar.clothings.length);
-			list.add("Hats bought: " + Coltil.size(prf.availableHats) + " of " + Avatar.hats.length);
-			list.add("Powers bought: " + (Coltil.size(prf.availableJumpModes) - 1) + " of " + (JumpMode.values().length - 1));
-			list.add("Assists bought: " + Coltil.size(prf.availableAssists) + " of " + Profile.PUBLIC_ASSISTS.length);
-			list.add("Animals bought: " + Coltil.size(prf.availableSpecialAnimals) + " of " + Avatar.SPECIAL_ANIMALS.size());
-			list.add("Birds bought: " + Coltil.size(prf.availableBirds) + " of " + Avatar.BIRDS.size());
-			list.add("Total purchases: " + Achievement.BuyFeat.getPurchases(prf) + " of " + getTotalItemsForSale());
-			list.add("Enemy types defeated: " + enemyTypesDefeated + " of " + (FurGuardiansGame.allEnemies.size() - 2)); // Can't defeat Wisps yet
+			add(list, "Shirts bought", Coltil.size(prf.availableClothings), Avatar.clothings.length);
+			add(list, "Hats bought", Coltil.size(prf.availableHats), Avatar.hats.length);
+			add(list, "Powers bought", (Coltil.size(prf.availableJumpModes) - 1), (JumpMode.values().length - 1));
+			add(list, "Assists bought", Coltil.size(prf.availableAssists), Profile.PUBLIC_ASSISTS.length);
+			add(list, "Animals bought", Coltil.size(prf.availableSpecialAnimals), Avatar.SPECIAL_ANIMALS.size());
+			add(list, "Birds bought", Coltil.size(prf.availableBirds), Avatar.BIRDS.size());
+			final int totalPurchases = Achievement.BuyFeat.getPurchases(prf), availablePurchases = getTotalItemsForSale();
+			add(list, "Total purchases", totalPurchases, availablePurchases);
+			final int availableEnemyTypes = FurGuardiansGame.allEnemies.size() - 2; // Can't defeat Wisps yet
+			add(list, "Total enemy types", enemyTypesDefeated, availableEnemyTypes);
 			// World types played
-			list.add("Achievements: " + prf.achievements.size() + " of " + Achievement.ALL.length);
-			// Total checklist
+			final int totalTrophies = prf.achievements.size(), availableTrophies = Achievement.ALL.length;
+			add(list, "Total trophies", totalTrophies, availableTrophies);
+			final int total = totalPurchases + enemyTypesDefeated + totalTrophies;
+			final int available = availablePurchases + availableEnemyTypes + availableTrophies;
+			add(list, "Total checklist", total, available);
 			return list;
+		}
+		
+		private final static void add(final List<String> list, final String label, final int total, final int available) {
+		    list.add(label + ": " + total + "/" + available);
 		}
 		
 		private final static int getTotalItemsForSale() {
