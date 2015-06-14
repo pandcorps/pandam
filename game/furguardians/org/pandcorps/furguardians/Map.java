@@ -66,6 +66,9 @@ public class Map {
 	private final static String SEG_MRK = "MRK";
 	private final static String SEG_BLD = "BLD";
 	
+	private final static int DEFEATED_WORLD_COUNT_TO_FORCE_SNOW = 1;
+	private final static int DEFEATED_WORLD_COUNT_TO_FORCE_SAND = 3;
+	
 	private final static String[] EXT_LANDMARKS = { "Forest", "Crater" };
 	private final static int MAX_CASTLE = 3;
 	
@@ -197,7 +200,9 @@ public class Map {
 			@Override protected final PixelFilter getHillFilter1() {
 				return new SwapPixelFilter(Channel.Red, Channel.Blue, Channel.Green); }
 			@Override protected final PixelFilter getHillFilter2() {
-				return new SwapPixelFilter(Channel.Blue, Channel.Red, Channel.Green); }};
+				return new SwapPixelFilter(Channel.Blue, Channel.Red, Channel.Green); }
+			@Override protected final boolean hasBeenDefeated(final Statistics stats) {
+			    return stats.defeatedWorlds > 0; }};
 		public final static MapTheme Snow = new MapTheme("Snow", Theme.Snow, 1, 6, 2,
 		    new SwapPixelFilter(Channel.Blue, Channel.Green, Channel.Red)
 		    /*, Namer.get(mpt, cct, COLDS, PLACES)*/ ) {
@@ -211,7 +216,9 @@ public class Map {
 			@Override protected final PixelFilter getHillFilter2() {
 				return new SwapPixelFilter(Channel.Red, Channel.Green, Channel.Green); }
 			@Override protected final PixelMask getDirtMask() {
-				return getBasicDirtMask(); }};
+				return getBasicDirtMask(); }
+            @Override protected final boolean hasBeenDefeated(final Statistics stats) {
+                return stats.defeatedWorlds > DEFEATED_WORLD_COUNT_TO_FORCE_SNOW; }};
 		
 		protected final PixelMask getBasicDirtMask() {
 			final int minR, minG;
@@ -238,7 +245,9 @@ public class Map {
 			@Override protected final PixelFilter getHillFilter1() {
 				return new SwapPixelFilter(Channel.Green, Channel.Blue, Channel.Red); }
 			@Override protected final PixelFilter getHillFilter2() {
-				return new SwapPixelFilter(Channel.Green, Channel.Green, Channel.Red); }};
+				return new SwapPixelFilter(Channel.Green, Channel.Green, Channel.Red); }
+            @Override protected final boolean hasBeenDefeated(final Statistics stats) {
+                return stats.defeatedWorlds > DEFEATED_WORLD_COUNT_TO_FORCE_SAND; }};
 		
 		private final static ColorFunction funcLight = new ColorFunction() {
             @Override public final short eval(final Pancolor c) {
@@ -262,7 +271,9 @@ public class Map {
 			@Override protected final PixelFilter getHillFilter2() {
 				return new FunctionPixelFilter(funcLight, funcDark, funcLight); }
 			@Override protected final PixelMask getDirtMask() {
-				return getBasicDirtMask(); }};
+				return getBasicDirtMask(); }
+            @Override protected final boolean hasBeenDefeated(final Statistics stats) {
+                return stats.playedRockWorlds > 0; }};
 		
 		protected final String name;
 		protected final String img;
@@ -318,6 +329,8 @@ public class Map {
 		protected PixelMask getDirtMask() {
 			return null;
 		}
+		
+		protected abstract boolean hasBeenDefeated(final Statistics stats);
 	}
 	
 	protected final static MapTheme[] themes = {MapTheme.Normal, MapTheme.Snow, MapTheme.Sand, MapTheme.Rock};
@@ -1011,9 +1024,9 @@ public class Map {
     	    if (theme == MapTheme.Rock) {
     	        stats.playedRockWorlds++;
     	    }
-			if (worlds == 1) {
+			if (worlds == DEFEATED_WORLD_COUNT_TO_FORCE_SNOW) {
 				theme = MapTheme.Snow;
-			} else if (worlds == 3) {
+			} else if (worlds == DEFEATED_WORLD_COUNT_TO_FORCE_SAND) {
 				theme = MapTheme.Sand;
 			} else if (worlds <= 5) {
 				theme = MapTheme.Normal;
