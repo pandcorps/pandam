@@ -30,6 +30,7 @@ import org.pandcorps.core.*;
 import org.pandcorps.core.col.*;
 import org.pandcorps.core.io.*;
 import org.pandcorps.core.seg.*;
+import org.pandcorps.furguardians.Map.*;
 import org.pandcorps.furguardians.Avatar.*;
 import org.pandcorps.furguardians.Enemy.*;
 import org.pandcorps.furguardians.Player.*;
@@ -388,11 +389,12 @@ public class Profile extends PlayerData implements Segmented, Savable {
 			add(list, "Total purchases", totalPurchases, availablePurchases);
 			final int availableEnemyTypes = FurGuardiansGame.allEnemies.size() - 2; // Can't defeat Wisps yet
 			add(list, "Total enemy types", enemyTypesDefeated, availableEnemyTypes);
-			// World types played
+			final int totalWorldTypes = getDefeatedWorldTypeCount(), availableWorldTypes = Map.themes.length;
+            add(list, "Total world types", totalWorldTypes, availableWorldTypes);
 			final int totalTrophies = prf.achievements.size(), availableTrophies = Achievement.ALL.length;
 			add(list, "Total trophies", totalTrophies, availableTrophies);
-			final int total = totalPurchases + enemyTypesDefeated + totalTrophies;
-			final int available = availablePurchases + availableEnemyTypes + availableTrophies;
+			final int total = totalPurchases + enemyTypesDefeated + totalWorldTypes + totalTrophies;
+			final int available = availablePurchases + availableEnemyTypes + availableWorldTypes + availableTrophies;
 			add(list, "Total checklist", total, available);
 			return list;
 		}
@@ -428,6 +430,16 @@ public class Profile extends PlayerData implements Segmented, Savable {
 		
 		public final long getDefeatedGiants() {
 			return getDefeatedCount(FurGuardiansGame.trollColossus) + getDefeatedCount(FurGuardiansGame.ogreBehemoth);
+		}
+		
+		public final int getDefeatedWorldTypeCount() {
+		    int count = 0;
+		    for (final MapTheme theme : Map.themes) {
+		        if (theme.hasBeenDefeated(this)) {
+		            count++;
+		        }
+		    }
+		    return count;
 		}
     }
     
