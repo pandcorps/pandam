@@ -1144,6 +1144,8 @@ public class Level {
     	}
     }
     
+    protected final static int MAX_CAVE_CEILING_SIZE = 5;
+    
     private final static class CaveBuilder extends FlatBuilder {
     	@Override
     	protected final void addNatureTemplate() {
@@ -1153,12 +1155,12 @@ public class Level {
     	
     	@Override
     	protected final void buildCeiling() {
-    		final int w = tm.getWidth(), max = tm.getHeight() - 1;
-    		int min = max - 2, j = max;
+    		final int w = tm.getWidth(), h = tm.getHeight(), max = h - 1;
+    		int min = h - 3, j = max;
     		for (int i = 0; i < w; i++) {
     			if (Mathtil.rand(20)) {
     				if (i > 10) {
-    					min = max - 4;
+    					min = h - MAX_CAVE_CEILING_SIZE;
     				}
     				final boolean up;
     				if (j >= max) {
