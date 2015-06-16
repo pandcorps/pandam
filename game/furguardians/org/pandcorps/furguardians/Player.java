@@ -1017,7 +1017,11 @@ public class Player extends Character implements CollisionListener {
 		    if (isAutoRunEnabled()) {
 		        final Panple pos = getPosition();
 		        final float x = pos.getX();
-		        safe.set(x, getCeiling() - 1, pos.getZ());
+		        float y = getCeiling() - 1;
+		        if (Level.theme == Level.Theme.Cave) {
+		            y = (Level.tm.getHeight() * Level.tm.getTileHeight()) - 1 - H - (Level.MAX_CAVE_CEILING_SIZE * 16);
+		        }
+		        safe.set(x, y, pos.getZ());
 		        if (Level.theme == Theme.Minecart) {
 		            final TileMap tm = Level.tm;
 		            final int pcol = tm.getContainerColumn(x);
