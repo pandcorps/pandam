@@ -233,6 +233,10 @@ public final class Coltil {
 	    return iter == null ? false : iter.hasNext();
 	}
 	
+	public final static <E> E next(final Iterator<E> iter) {
+	    return hasNext(iter) ? iter.next() : null;
+	}
+	
 	public final static <E> List<E> newSafeList() {
         return new Vector<E>();
     }
