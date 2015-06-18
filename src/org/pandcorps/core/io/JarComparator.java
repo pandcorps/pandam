@@ -37,9 +37,21 @@ public class JarComparator {
     }
     
     private final static void run(final String[] args) throws Exception {
-        final List<JarEntry> list1 = getEntries(args[0]), list2 = getEntries(args[1]);
-        for (final JarEntry en1 : list1) {
-            System.out.println(en1.getName());
+        final String name1 = args[0], name2 = args[1];
+        final List<JarEntry> list1 = getEntries(name1), list2 = getEntries(name2);
+        final Iterator<JarEntry> iter1 = list1.iterator(), iter2 = list2.iterator();
+        while (iter1.hasNext() || iter2.hasNext()) {
+            JarEntry en1 = Coltil.next(iter1), en2 = Coltil.next(iter2);
+            int c = cmp.compare(en1, en2);
+            while (c != 0) {
+                if (c < 0) {
+                    System.out.println(name2 + " was missing " + en1.getName());
+                    en1 = iter1.next();
+                } else {
+                    System.out.println(name1 + " was missing " + en2.getName());
+                    en2 = iter2.next();
+                }
+            }
         }
     }
     
