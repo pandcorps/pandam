@@ -796,7 +796,7 @@ public class Menu {
 				@Override public final void update(final String value) {
 					avt.eye = Integer.parseInt(value); }};
 			final RadioGroup eyeGrp = addRadio("Eye", eyes, eyeLsn, x, y);
-			eyeGrp.setSelected(avt.eye - 1);
+			eyeGrp.setSelected(FurGuardiansGame.fixEye(avt.eye) - 1);
 		}
 		
 		protected final static int HUD_TEXT_Y = 20;

@@ -594,10 +594,12 @@ public class FurGuardiansGame extends BaseGame {
 		return raw;
 	}
 	
+	protected final static int fixEye(final int i) {
+		return (i < 1) ? 1 : i;
+	}
+	
 	private final static Img getEyes(final Img[] eyesAll, int i, final String loc) {
-		if (i < 1) {
-			i = 1;
-		}
+		i = fixEye(i);
 		Img e = eyesAll[i - 1];
 		if (e == null) {
 		    e = ImtilX.loadImage(RES + "chr/" + loc + "Eyes" + Chartil.padZero(i, 2) + ".png", false);
