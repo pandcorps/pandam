@@ -1,3 +1,5 @@
+1.8.1 (17)
+
 Added statistics.
 Fixed a bug that trapped player in ceiling after falling in cave levels in auto-run mode.
 
