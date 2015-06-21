@@ -60,6 +60,7 @@ public class Avatar extends EyeData implements Segmented {
     	putBird(new BirdKind("Purple Martin", 3000));
     	putBird(new BirdKind("Crow", 5000));
     	putBird(new BirdKind("Dove", 5000));
+    	//Wyvern, colorable
     }
     
     private final static void putSpecialAnimal(final Animal animal) {
