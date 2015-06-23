@@ -2188,7 +2188,8 @@ public class Menu {
             final List<String> brds = new ArrayList<String>();
             brds.add("None");
             if (Coltil.isEmpty(pc.profile.availableBirds)) {
-                brds.add(Avatar.FIRST_BIRD.getName());
+                //brds.add(Avatar.FIRST_BIRD.getName());
+                brds.add(Avatar.FIRST_BIRD_NAME);
             } else {
                 brds.addAll(Avatar.BIRDS.keySet());
             }
@@ -2230,7 +2231,7 @@ public class Menu {
                     final BirdKind bird = Avatar.getBird(value);
                     if (!pc.profile.isBirdAvailable(bird) && purchase(sub, bird.getCost())) {
                         pc.profile.availableBirds.add(bird);
-                        setBird(value);
+                        setBird(bird.getName()); // value can be "Egg", so use bird.getName
                         if (egg != null) {
                             final Panple pos = egg.getPosition(), bpos = actor.bird.getPosition();
                             actor.bird.dst = new ImplPanple(bpos);

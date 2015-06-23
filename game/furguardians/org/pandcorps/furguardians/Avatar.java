@@ -32,7 +32,8 @@ import org.pandcorps.furguardians.Player.*;
 public class Avatar extends EyeData implements Segmented {
 	protected final static Map<String, Animal> SPECIAL_ANIMALS = new HashMap<String, Animal>();
 	protected final static Map<String, BirdKind> BIRDS = new LinkedHashMap<String, BirdKind>();
-	protected final static BirdKind FIRST_BIRD;
+	private final static BirdKind FIRST_BIRD;
+	protected final static String FIRST_BIRD_NAME = "Egg";
 	protected final static float DEF_JUMP_COL = 1;
 	private final static int MAX_COLOR_INDEX = 4;
     protected String anm = null;
@@ -457,7 +458,11 @@ public class Avatar extends EyeData implements Segmented {
     }
     
     protected final static BirdKind getBird(final String brd) {
-        return BIRDS.get(brd);
+        final BirdKind kind = BIRDS.get(brd);
+        if (kind != null) {
+            return kind;
+        }
+        return FIRST_BIRD_NAME.equals(brd) ? FIRST_BIRD : null;
     }
     
     private final static float randColor() {
