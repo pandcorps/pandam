@@ -1,6 +1,6 @@
 1.9.0 (18)
 
-Added parakeets and purple martins.
+Added orioles, parakeets, and purple martins.
 
 *****
 

@@ -56,7 +56,7 @@ public class Avatar extends EyeData implements Segmented {
     	putBird(new BirdKind("Blue Jay", 2000));
     	putBird(new BirdKind("Canary", 2000));
     	putBird(new BirdKind("Cardinal", 2000));
-    	//putBird(new BirdKind("Oriole", 3000));
+    	putBird(new BirdKind("Oriole", 3000));
     	putBird(new BirdKind("Parakeet", 3000));
     	putBird(new BirdKind("Purple Martin", 3000));
     	putBird(new BirdKind("Crow", 5000));
