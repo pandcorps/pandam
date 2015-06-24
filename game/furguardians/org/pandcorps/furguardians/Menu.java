@@ -2235,6 +2235,7 @@ public class Menu {
                         if (egg != null) {
                             final Panple pos = egg.getPosition(), bpos = actor.bird.getPosition();
                             actor.bird.dst = new ImplPanple(bpos);
+                            actor.bird.list = brds;
                             bpos.set(pos);
                             Tiles.shatterCenteredActor(room, FurGuardiansGame.getEgg8(), pos, true);
                             FurGuardiansGame.soundCrumble.startSound();
@@ -3692,6 +3693,7 @@ public class Menu {
 	    private int mirrorTimer = Mathtil.randi(90, 180);
 	    private Panimation anm;
 	    private Panple dst = null;
+	    private List<String> list = null;
 	    
 	    private BirdModel(final PlayerContext pc) {
 	        load(pc);
@@ -3721,6 +3723,9 @@ public class Menu {
 	            if (dif.getMagnitude2() < 2) {
 	                pos.set(dst);
 	                dst = null;
+	                if (Coltil.size(list) < 3 && list.remove(Avatar.FIRST_BIRD_NAME)) {
+	                    list.addAll(Avatar.BIRDS.keySet()); //TODO Resize width
+	                }
 	                return;
 	            }
 	            dif.setMagnitude2(1);
