@@ -2236,6 +2236,7 @@ public class Menu {
                             final Panple pos = egg.getPosition(), bpos = actor.bird.getPosition();
                             actor.bird.dst = new ImplPanple(bpos);
                             actor.bird.list = brds;
+                            actor.bird.radio = brdRadio;
                             bpos.set(pos);
                             Tiles.shatterCenteredActor(room, FurGuardiansGame.getEgg8(), pos, true);
                             FurGuardiansGame.soundCrumble.startSound();
@@ -3694,6 +3695,7 @@ public class Menu {
 	    private Panimation anm;
 	    private Panple dst = null;
 	    private List<String> list = null;
+	    private RadioGroup radio = null;
 	    
 	    private BirdModel(final PlayerContext pc) {
 	        load(pc);
@@ -3724,7 +3726,8 @@ public class Menu {
 	                pos.set(dst);
 	                dst = null;
 	                if (Coltil.size(list) < 3 && list.remove(Avatar.FIRST_BIRD_NAME)) {
-	                    list.addAll(Avatar.BIRDS.keySet()); //TODO Resize width
+	                    list.addAll(Avatar.BIRDS.keySet());
+	                    radio.getLabel().stretchCharactersPerLineToFit();
 	                }
 	                return;
 	            }
