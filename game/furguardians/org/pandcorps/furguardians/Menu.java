@@ -1916,6 +1916,9 @@ public class Menu {
 			newTab(FurGuardiansGame.menuColor, "Color", TAB_COLOR);
 			newTab(FurGuardiansGame.menuGear, "Gear", new Runnable() {@Override public final void run() {goGear();}});
 			newTab(FurGuardiansGame.menuKeyboard, "Name", TAB_NAME);
+			if (FurGuardiansGame.debugMode) {
+				newTab(FurGuardiansGame.menuRgb, "Dump", new Runnable() {@Override public final void run() {exportGraphics();}});
+			}
 			newTabs();
 			registerBack(new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
@@ -2005,13 +2008,17 @@ public class Menu {
             x = addLink("Cancel", canLsn, x, y);
             final MsgCloseListener expLsn = new MsgCloseListener() {
                 @Override public final void onClose() {
-                    final Pangine engine = Pangine.getEngine();
-                    engine.setImageSavingEnabled(true);
-                    reloadAnimalStrip(pc, actor, true);
-                    engine.setImageSavingEnabled(false);
-                    setInfo(INFO_SAVED); }};
+                    exportGraphics(); }};
             x = addPipe(x, y);
             x = addLink("Export", expLsn, x, y);
+		}
+		
+		private final void exportGraphics() {
+			final Pangine engine = Pangine.getEngine();
+            engine.setImageSavingEnabled(true);
+            reloadAnimalStrip(pc, actor, true);
+            engine.setImageSavingEnabled(false);
+            setInfo(INFO_SAVED);
 		}
 		
 		private final void cancel() {
