@@ -199,6 +199,14 @@ public class Cabin {
 			return "Hoo! Hoo! Hit " + ((name.length() == 1) ? "the block" : "them") + "!";
 		}
 		
+		private final String loadMatch() {
+		    //cabinTileHandler = new MatchTileHandler(); //TODO
+            for (int i = 0; i < 6; i++) {
+                tm.setForeground(5 + i, 5, imgMap[0][0], FurGuardiansGame.TILE_BUMP);
+            }
+		    return "Hoo! Hoo! Match them!";
+		}
+		
 		@Override
         protected void destroy() {
             Level.tm = null;
