@@ -75,6 +75,10 @@ public final class Pantil {
 		return (o1 == null) ? (o2 == null) : o1.equals(o2);
 	}
 	
+	public final static int compare(final int i1, final int i2) {
+        return (i1 < i2) ? -1 : ((i1 > i2) ? 1 : 0);
+    }
+	
 	public final static <T> T nvl(final T t1, final T t2) {
 		return (t1 == null) ? t2 : t1;
 	}

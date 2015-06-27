@@ -145,6 +145,10 @@ public final class Iotil {
 		return getBufferedWriter(getWriter(location));
 	}
 	
+	public final static PrintStream getPrintStream(final OutputStream out) {
+        return out instanceof PrintStream ? (PrintStream) out : new PrintStream(out);
+    }
+	
 	public final static PrintWriter getPrintWriter(final Writer out) {
         return out instanceof PrintWriter ? (PrintWriter) out : new PrintWriter(out);
     }
