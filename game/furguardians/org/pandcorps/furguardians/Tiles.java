@@ -37,7 +37,7 @@ public class Tiles {
     private final static TileHandler defHandler = new TileHandler();
     
     protected static class TileHandler {
-    	protected boolean isNormalAward(final Tile t) {
+    	protected boolean isNormalAward(final int index, final Tile t) {
     		return Level.isFlash(t);
     	}
     	
@@ -94,7 +94,7 @@ public class Tiles {
     		player.pc.profile.stats.brokenBlocks++;
     		player.levelBrokenBlocks++;
     	} else if (b == FurGuardiansGame.TILE_BUMP) {
-    	    if (getHandler().isNormalAward(t)) {
+    	    if (getHandler().isNormalAward(index, t)) {
     	        newGemBumped(player, index);
     	    } else if (!bumpLetter(player, index, t)) {
     	    	player.levelEndGems = player.levelGems; // Capture final total before level-end award, used by NoGemsFeat

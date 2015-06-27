@@ -219,7 +219,7 @@ public class Cabin {
 	
 	protected final static class ShuffleTileHandler extends CabinTileHandler {
 		@Override
-		protected boolean isNormalAward(final Tile t) {
+		protected boolean isNormalAward(final int index, final Tile t) {
 			return true;
 		}
 		
@@ -245,7 +245,7 @@ public class Cabin {
 	
 	protected final static class NameTileHandler extends CabinTileHandler {
 		@Override
-		protected boolean isNormalAward(final Tile t) {
+		protected boolean isNormalAward(final int index, final Tile t) {
 			return false;
 		}
 		
