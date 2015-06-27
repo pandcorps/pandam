@@ -166,7 +166,7 @@ public class FurGuardiansGame extends BaseGame {
 	protected final static String SEG_AVT = "AVT";
 	
 	private final static List<String> animals =
-			Arrays.asList("Bear", "Cat", "Dog", "Elephant", "Horse", "Koala", "Mouse", "Panda", "Rabbit", "Rhino");
+			Arrays.asList("Bear", "Cat", "Dog", "Elephant", "Horse", "Koala", "Mouse", "Panda", "Rabbit", "Rhino", "Zebra");
 	private static List<String> basicAnimals = null;
 	
 	protected static List<String> tips = null;
