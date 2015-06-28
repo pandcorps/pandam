@@ -235,7 +235,7 @@ public class Cabin {
 		    final HashMap<Integer, Panmage> map = matchTileHandler.map;
 		    final TileMapImage block = getBlockImg();
             for (int i = 0; i < size; i++) {
-                final int index = tm.getIndex(5 + i, ROW_BLOCK);
+                final int index = tm.getIndex(3 + (i * 2), ROW_BLOCK);
                 tm.setForeground(index, block, FurGuardiansGame.TILE_BUMP);
                 map.put(Integer.valueOf(index), rndImgs.get(i));
             }
