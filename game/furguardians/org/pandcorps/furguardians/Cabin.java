@@ -34,6 +34,7 @@ import org.pandcorps.pandax.text.*;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.tile.Tile.*;
 import org.pandcorps.furguardians.Player.*;
+import org.pandcorps.furguardians.Profile.*;
 import org.pandcorps.furguardians.Tiles.*;
 
 public class Cabin {
@@ -155,7 +156,25 @@ public class Cabin {
 			new Player(pc, 74, 32);
 			FurGuardiansGame.addHud(room, false, true);
 			
-			final String txt = Mathtil.rand() ? loadName() : loadShuffle();
+			final String txt;
+			final Statistics stats = pc.profile.stats;
+			final int pb = stats.playedBonuses;
+			if (pb < 1) {
+			    txt = loadName();
+			} else if (pb < 2) {
+			    txt = loadShuffle();
+			} else if (stats.playedMatchGames < 1) {
+			    txt = loadMatch();
+			} else {
+			    final int r = Mathtil.randi(0, 299);
+			    if (r < 100) {
+			        txt = loadName();
+			    } else if (r < 200) {
+			        txt = loadShuffle();
+			    } else {
+			        txt = loadMatch();
+			    }
+			}
 			instr = new Pantext("act.instr", FurGuardiansGame.font, txt);
 			room.addActor(instr);
 			instr.getPosition().set(128, 114, 1);

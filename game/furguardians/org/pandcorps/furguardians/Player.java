@@ -254,6 +254,9 @@ public class Player extends Character implements CollisionListener {
 	    public final void onFinishBonus() {
 	    	commitGems();
 	    	profile.stats.playedBonuses++;
+	    	if (Cabin.cabinTileHandler instanceof Cabin.MatchTileHandler) {
+	            profile.stats.playedMatchGames++;
+	        }
 	    }
 		
 		public final void onFinishWorld() {
