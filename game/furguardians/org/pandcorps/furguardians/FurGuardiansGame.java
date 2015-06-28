@@ -395,7 +395,6 @@ public class FurGuardiansGame extends BaseGame {
 	    if (engine.isTouchSupported()) {
 	        engine.setFatalLogged(true);
 	    }
-	    Locale.setDefault(Locale.US); // toUpperCase can lead to characters outside of image fonts in other Locales
 	    debugMode = Boolean.getBoolean("org.pandcorps.furguardians.debugMode");
 	    tips = initTips();
 	    engine.setTitle(TITLE);

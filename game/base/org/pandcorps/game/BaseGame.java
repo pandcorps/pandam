@@ -96,6 +96,7 @@ public abstract class BaseGame extends Pangame {
         } else {
             engine.setMaxZoomedDisplaySize(SCREEN_W, SCREEN_H);
         }
+        Locale.setDefault(Locale.US); // toUpperCase can lead to characters outside of image fonts in other Locales
     }
 	
 	public final static int getApproximateFullScreenZoomedDisplaySize() {
