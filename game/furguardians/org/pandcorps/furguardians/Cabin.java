@@ -38,6 +38,7 @@ import org.pandcorps.furguardians.Tiles.*;
 
 public class Cabin {
 	private final static int NUM_BLOCKS = 4;
+	private final static int ROW_BLOCK = 5;
 	
 	private static Panroom room = null;
 	private static TileMap tm = null;
@@ -166,8 +167,9 @@ public class Cabin {
 		private final String loadShuffle() {
 			cabinTileHandler = new ShuffleTileHandler();
 			pc.player.mode = Player.MODE_DISABLED;
+			final TileMapImage block = getBlockImg();
 			for (int i = 0; i < NUM_BLOCKS; i++) {
-				tm.setForeground(3 + (i * 3), 5, imgMap[0][0], FurGuardiansGame.TILE_BUMP);
+				tm.setForeground(3 + (i * 3), ROW_BLOCK, block, FurGuardiansGame.TILE_BUMP);
 			}
 			shuffle(30, 0);
 			return "Hoo! Hoo! Pick one!";
@@ -190,7 +192,7 @@ public class Cabin {
 		private final String loadName() {
 			cabinTileHandler = new NameTileHandler();
 			final String name = pc.getBonusName();
-			displayName(name, 5, 1);
+			displayName(name, ROW_BLOCK, 1);
 			Pangine.getEngine().addTimer(tm, 60, new TimerListener() {
 				@Override public final void onTimer(final TimerEvent event) {
                     instr.destroy();
@@ -200,9 +202,23 @@ public class Cabin {
 		}
 		
 		private final String loadMatch() {
-		    //cabinTileHandler = new MatchTileHandler(); //TODO
-            for (int i = 0; i < 6; i++) {
-                tm.setForeground(5 + i, 5, imgMap[0][0], FurGuardiansGame.TILE_BUMP);
+		    final MatchTileHandler matchTileHandler = new MatchTileHandler();
+		    cabinTileHandler = matchTileHandler;
+		    final int size = 6;
+		    final Panmage[] allImgs = {FurGuardiansGame.menuPlus, FurGuardiansGame.menuCheck, FurGuardiansGame.menuX};
+		    final List<Panmage> rndImgs = new ArrayList<Panmage>(size);
+		    for (final Panmage img : allImgs) {
+		        for (int i = 0; i < 2; i++) {
+		            rndImgs.add(img);
+		        }
+		    }
+		    Collections.shuffle(rndImgs);
+		    final HashMap<Integer, Panmage> map = matchTileHandler.map;
+		    final TileMapImage block = getBlockImg();
+            for (int i = 0; i < size; i++) {
+                final int index = tm.getIndex(5 + i, ROW_BLOCK);
+                tm.setForeground(index, block, FurGuardiansGame.TILE_BUMP);
+                map.put(Integer.valueOf(index), rndImgs.get(i));
             }
 		    return "Hoo! Hoo! Match them!";
 		}
@@ -265,11 +281,91 @@ public class Cabin {
 		}
 	}
 	
+	protected final static class MatchTileHandler extends CabinTileHandler {
+	    private final HashMap<Integer, Panmage> map = new HashMap<Integer, Panmage>();
+	    private Panmage lastImg = null;
+	    private int lastIndex = 0;
+	    private ImgBumped lastBumped = null;
+	    private int matches = 0;
+	    
+	    @Override
+        protected final boolean isNormalAward(final int index, final Tile t) {
+	        return false;
+	    }
+	    
+	    @Override
+        protected final boolean handle(final int index, final Tile t) {
+	        final Panmage img = map.get(Integer.valueOf(index));
+	        final ImgBumped bumped = new ImgBumped(index, img);
+	        if (lastImg == null) {
+	            // First block of pair
+	            lastImg = img;
+	            lastIndex = index;
+	            lastBumped = bumped;
+	        } else {
+	            pc.player.mode = Player.MODE_DISABLED;
+	            Pangine.getEngine().addTimer(tm, 30, new TimerListener() {
+                    @Override
+                    public final void onTimer(final TimerEvent event) {
+                        pc.player.mode = Player.MODE_NORMAL;
+                        if (lastImg == img) {
+                            // A match
+                            matches++;
+                            if (matches == 3) {
+                                pc.player.mode = Player.MODE_DISABLED;
+                                pc.player.addGems(500);
+                                finish();
+                            }
+                            bumped.spark();
+                            lastBumped.spark();
+                        } else {
+                            // A mismatch
+                            final TileMapImage block = getBlockImg();
+                            tm.setForeground(index, block, FurGuardiansGame.TILE_BUMP);
+                            tm.setForeground(lastIndex, block, FurGuardiansGame.TILE_BUMP);
+                        }
+                        bumped.destroy();
+                        lastBumped.destroy();
+                        lastImg = null;
+                        lastIndex = 0;
+                        lastBumped = null;
+                    }});
+	        }
+            return true;
+        }
+	}
+	
 	protected abstract static class CabinTileHandler extends TileHandler {
 		@Override
 		protected TileMapImage getBumpedImage() {
 			return bumpedImage;
 		}
+	}
+	
+	private final static class ImgBumped extends Panctor implements StepListener {
+	    private int vel = 5;
+	    
+	    private ImgBumped(final int index, final Panmage img) {
+	        setView(img);
+	        room.addActor(this);
+	        final Panple pos = getPosition();
+	        tm.savePosition(pos, index);
+	        pos.addY(2);
+	        FurGuardiansGame.setDepth(this, FurGuardiansGame.DEPTH_SHATTER);
+	    }
+
+        @Override
+        public final void onStep(final StepEvent event) {
+            if (vel > 0) {
+                getPosition().addY(vel);
+                vel--;
+            }
+        }
+        
+        private final void spark() {
+            final Panple pos = getPosition();
+            new Spark(pos.getX(), pos.getY(), false);
+        }
 	}
 	
 	private final static void shuffle(final int time, final int awd) {
@@ -342,6 +438,10 @@ public class Cabin {
 	
 	private final static Panmage getGemImg(final Integer key) {
 		return GemBumped.getAnm(key.intValue()).getFrames()[0].getImage();
+	}
+	
+	private final static TileMapImage getBlockImg() {
+	    return imgMap[0][0];
 	}
 	
 	private final static void add(final List<Integer> awds, final int usedAwd, final int currAwd) {

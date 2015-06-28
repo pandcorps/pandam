@@ -41,6 +41,10 @@ public class Tiles {
     		return Level.isFlash(t);
     	}
     	
+    	protected boolean handle(final int index, final Tile t) {
+    	    return false;
+    	}
+    	
     	protected int rndAward(final Player player) {
     		return GemBumped.rndAward(player);
     	}
@@ -94,9 +98,10 @@ public class Tiles {
     		player.pc.profile.stats.brokenBlocks++;
     		player.levelBrokenBlocks++;
     	} else if (b == FurGuardiansGame.TILE_BUMP) {
-    	    if (getHandler().isNormalAward(index, t)) {
+    	    final TileHandler handler = getHandler();
+    	    if (handler.isNormalAward(index, t)) {
     	        newGemBumped(player, index);
-    	    } else if (!bumpLetter(player, index, t)) {
+    	    } else if (!(handler.handle(index, t) || bumpLetter(player, index, t))) {
     	    	player.levelEndGems = player.levelGems; // Capture final total before level-end award, used by NoGemsFeat
     	        GemBumped.newLevelEnd(player, index);
     	        FurGuardiansGame.levelVictory();
