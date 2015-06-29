@@ -49,6 +49,7 @@ public class Cabin {
 	private static PlayerContext pc = null;
 	private static Pantext instr = null;
 	private static Panctor[] gems = new Panctor[NUM_BLOCKS];
+	private static Panmage[] shapes = null;
 	
 	protected final static class CabinScreen extends Panscreen {
 		@Override
@@ -224,9 +225,12 @@ public class Cabin {
 		    final MatchTileHandler matchTileHandler = new MatchTileHandler();
 		    cabinTileHandler = matchTileHandler;
 		    final int size = 6;
-		    final Panmage[] allImgs = {FurGuardiansGame.menuPlus, FurGuardiansGame.menuCheck, FurGuardiansGame.menuX};
+		    //final Panmage[] allImgs = {FurGuardiansGame.menuPlus, FurGuardiansGame.menuCheck, FurGuardiansGame.menuX};
+		    if (shapes == null) {
+		        shapes = FurGuardiansGame.createSheet("shape", FurGuardiansGame.RES + "misc/Shapes.png");
+		    }
 		    final List<Panmage> rndImgs = new ArrayList<Panmage>(size);
-		    for (final Panmage img : allImgs) {
+		    for (final Panmage img : shapes) {
 		        for (int i = 0; i < 2; i++) {
 		            rndImgs.add(img);
 		        }

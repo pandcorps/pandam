@@ -152,7 +152,7 @@ public class FurGuardiansGame extends BaseGame {
 	protected final static int MAX_NAME_PROFILE = 8;
 	protected final static int MAX_NAME_AVATAR = 8;
 	
-	private final static String RES = "org/pandcorps/furguardians/res/";
+	protected final static String RES = "org/pandcorps/furguardians/res/";
 	
 	protected final static String FILE_CFG = "Config.txt";
 	protected final static String EXT_PRF = ".prf.txt";
