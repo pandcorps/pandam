@@ -72,13 +72,12 @@ public class FurGuardiansGame extends BaseGame {
 	Cannons in air that auto-fire, others that wait for jump input.
 	Maximum effective (per tick) velocity & higher absolute max; set current to max effective before evaluating.
 	Options (in/out game) - track active/p1
-	Exit game from within Level.
 	Font w/ custom chars for custom string/min square/case space if needed.
 	Colored player names.
 	Bump w/o break ceiling block.
 	Bounce/blow floor.
 	Spike/fire floor tile.
-	Jumping enemy.
+	Jumping/walking enemy.
 	Collect fruit from trees.
 	Level to-do notes.
 	Let LogoScreen finish after a specified Runnable finishes.
