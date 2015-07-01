@@ -239,6 +239,7 @@ public class Player extends Character implements CollisionListener {
 	    public final void onFinishLevel() {
 	    	commitGems();
 	    	profile.stats.addRun(player.levelGems);
+	    	profile.stats.birdGems += player.levelBirdGems;
 			profile.stats.defeatedEnemies += player.levelDefeatedEnemies;
 			profile.stats.defeatedLevels++;
 			if (Level.currLetter <= 0) {
@@ -330,6 +331,7 @@ public class Player extends Character implements CollisionListener {
 	protected int levelGems = 0;
 	protected int levelFloatingGems = 0;
 	protected int levelEndGems = 0;
+	protected int levelBirdGems = 0;
 	protected int levelBrokenBlocks = 0;
 	protected int levelDefeatedEnemies = 0;
 	protected int levelFalls = 0;
@@ -434,6 +436,7 @@ public class Player extends Character implements CollisionListener {
 	    levelGems = p.levelGems;
 	    levelFloatingGems = p.levelFloatingGems;
 	    levelEndGems = p.levelEndGems;
+	    levelBirdGems = p.levelBirdGems;
 	    levelBrokenBlocks = p.levelBrokenBlocks;
 	    levelFalls = p.levelFalls;
 	    levelHits = p.levelHits;
@@ -443,6 +446,7 @@ public class Player extends Character implements CollisionListener {
 	    levelGems = 0;
 	    levelFloatingGems = 0;
 	    levelEndGems = 0;
+	    levelBirdGems = 0;
 	    levelBrokenBlocks = 0;
         levelFalls = 0;
         levelHits = 0;
@@ -1220,7 +1224,7 @@ public class Player extends Character implements CollisionListener {
                     final int index = Level.tm.getContainer(pxi, py + (j * 14));
                     if (FurGuardiansGame.TILE_GEM == getBehavior(index)) {
                         Gem.onCollide(Level.tm, index, player);
-                        player.pc.profile.stats.birdGems++;
+                        player.levelBirdGems++;
                     }
                 }
             }
