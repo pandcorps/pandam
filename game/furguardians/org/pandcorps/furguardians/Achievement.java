@@ -45,7 +45,8 @@ public abstract class Achievement extends FinName {
 		new BonusLevelFeat("Roll the Dice", 5), new KickFeat("Kick the Ball", 20),
 		new NoGemsFeat(), new AllGemsFeat(), new AllBrokenFeat(),
 		new GiantFeat("Giant Slayer", 50), new HardFeat(),
-		new BuyFeat("Consumer", 1), new BuyFeat("Demander", 5), new BuyFeat("Collector", 15)
+		new BuyFeat("Consumer", 1), new BuyFeat("Demander", 5), new BuyFeat("Collector", 15),
+		new NoBirdGemsFeat()
 		// level w/ no damage
 		// Beyond Belief, Finish level as a flying pig
 		// Babe, Finish level as a blue bull/ox
@@ -445,6 +446,17 @@ public abstract class Achievement extends FinName {
         @Override
         public final boolean isMet(final Player player) {
             return Level.numGems > 0 && player.levelFloatingGems == Level.numGems;
+        }
+    }
+	
+	private final static class NoBirdGemsFeat extends CurrentFeat {
+        protected NoBirdGemsFeat() {
+            super("Empty Nest", "Don't let your bird get any gems in a level", 2500);
+        }
+        
+        @Override
+        public final boolean isMet(final Player player) {
+            return Level.numGems > 0 && player.pc.bird != null && player.levelBirdGems == 0;
         }
     }
 	
