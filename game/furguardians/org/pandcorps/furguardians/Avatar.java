@@ -50,7 +50,7 @@ public class Avatar extends EyeData implements Segmented {
     
     static {
         putSpecialAnimal(new Animal("Zebra", "Horse", 25000));
-    	putSpecialAnimal(new Animal("Panda", "Bear", 50000));
+    	putSpecialAnimal(new Animal("Panda", "Bear", "Bear", 50000));
     	FIRST_BIRD = new BirdKind("Robin", 30000);
     	putBird(FIRST_BIRD); // Expensive because this unlocks option to buy other birds
     	//putBird(new BirdKind("Sparrow", 1000));
@@ -188,11 +188,17 @@ public class Avatar extends EyeData implements Segmented {
     
     protected static class Animal extends FinName {
     	protected final String base;
+    	protected final String tail;
     	private final int cost;
     	
-		protected Animal(final String name, final String base, final int cost) {
+    	protected Animal(final String name, final String base, final int cost) {
+    	    this(name, base, name, cost);
+    	}
+    	
+		protected Animal(final String name, final String base, final String tail, final int cost) {
 			super(name);
 			this.base = base;
+			this.tail = tail;
 			this.cost = cost;
 		}
 		
@@ -456,6 +462,11 @@ public class Avatar extends EyeData implements Segmented {
     protected final String getBaseAnm() {
     	final Animal animal = getAnimal();
     	return animal == null ? anm : animal.base;
+    }
+    
+    protected final String getTailAnm() {
+        final Animal animal = getAnimal();
+        return animal == null ? anm : animal.tail;
     }
     
     protected final static BirdKind getBird(final String brd) {

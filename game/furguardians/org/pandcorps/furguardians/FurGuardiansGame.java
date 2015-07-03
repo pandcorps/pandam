@@ -709,18 +709,18 @@ public class FurGuardiansGame extends BaseGame {
 			guyBlink = Imtil.copy(getStill(guys, hasStill));
 			final Img faceRaw = getImg(facesAll, "Face", anm);
 			face = Imtil.filter(faceRaw, greyMask, f);
-			final String baseAnm = avatar.getBaseAnm();
-			Img[] tailsRaw = tailsAll.get(baseAnm);
-			if (tailsRaw == null && !tailsAll.containsKey(baseAnm)) {
-				tailsRaw = loadChrStrip("Tail" + baseAnm + ".png", 12, false);
+			final String tailAnm = avatar.getTailAnm();
+			Img[] tailsRaw = tailsAll.get(tailAnm);
+			if (tailsRaw == null && !tailsAll.containsKey(tailAnm)) {
+				tailsRaw = loadChrStrip("Tail" + tailAnm + ".png", 12, false);
 				Img.setTemporary(false, tailsRaw);
-				tailsAll.put(baseAnm, tailsRaw);
+				tailsAll.put(tailAnm, tailsRaw);
 			}
 			if (tailsRaw == null) {
 				tails = null;
 			} else {
 				tails = new Img[tailsRaw.length];
-				filterStrip(tailsRaw, tails, f);
+				filterStrip(tailsRaw, tails, greyMask, f);
 			}
 			eyes = getEyes(avatar.eye);
 			final Img[] clothings;
@@ -744,7 +744,7 @@ public class FurGuardiansGame extends BaseGame {
 				h.init();
 				hatFilter = getFilter(avatar.hat.col);
 				hat = Imtil.filter(h.imgs[0], hatFilter);
-				mask = h.maskNeeded ? getImg(masksAll, "mask/Mask", baseAnm) : null;
+				mask = h.maskNeeded ? getImg(masksAll, "mask/Mask", avatar.getBaseAnm()) : null;
 			}
 			if (hat != null) {
 		    	Imtil.copy(hat, face, 0, 0, 18, 18, 0, 0, TransparentPixelMask.getInstance(), ImgPixelMask.getMask(mask, Pancolor.BLACK));

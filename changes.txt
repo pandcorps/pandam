@@ -1,5 +1,6 @@
 1.9.0 (18)
 
+Added zebras.
 Added orioles, parakeets, and purple martins.
 Added matching bonus game.
 Added Empty Nest Achievement.
