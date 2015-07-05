@@ -46,7 +46,7 @@ public abstract class Achievement extends FinName {
 		new NoGemsFeat(), new AllGemsFeat(), new AllBrokenFeat(),
 		new GiantFeat("Giant Slayer", 50), new HardFeat(),
 		new BuyFeat("Consumer", 1), new BuyFeat("Demander", 5), new BuyFeat("Collector", 15),
-		new NoBirdGemsFeat()
+		new NoBirdGemsFeat(), new BirdGemFeat("Nest Egg", 200)
 		// level w/ no damage
 		// Beyond Belief, Finish level as a flying pig
 		// Babe, Finish level as a blue bull/ox
@@ -241,6 +241,17 @@ public abstract class Achievement extends FinName {
         @Override
         public final String getNote() {
             return "Total ever found, spending won't hurt";
+        }
+    }
+	
+	private final static class BirdGemFeat extends StatFeat {
+        protected BirdGemFeat(final String name, final int n) {
+            super(name, n, "Let a bird get " + n + " total Gem" + getS(n), n * 15);
+        }
+        
+        @Override
+        public final long getCurrent(final Statistics stats) {
+            return stats.birdGems;
         }
     }
 	
