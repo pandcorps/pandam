@@ -63,7 +63,7 @@ public final class Iotil {
 			}
 			return url.openStream();
 		} catch (final IOException e) {
-			throw new RuntimeException(e);
+			throw new RuntimeException("Could not open " + location, e);
 		}
 	}
 	
@@ -199,6 +199,13 @@ public final class Iotil {
 		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}
+	}
+	
+	public final static String formatDirectory(final String loc) {
+	    if (loc.charAt(loc.length() - 1) == File.separatorChar) {
+	        return loc;
+	    }
+	    return loc + File.separatorChar;
 	}
 	
 	public final static void setWriterFactory(final WriterFactory writerFactory) {
