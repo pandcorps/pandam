@@ -910,19 +910,9 @@ public class Player extends Character implements CollisionListener {
 		        return; // But this is handled in Pangine
 		    }*/
 		    final boolean aboveEnemy = getPosition().getY() > other.getPosition().getY();
-		    if (aboveEnemy && v < 4 && !isGrounded()) {
+		    if (aboveEnemy && isBouncePossible()) {
 				if (((Enemy) other).onStomp(this)) {
-					final byte jumpMode = getCurrentJumpMode();
-					if ((jumpMode != JUMP_FLY && getJumpInput().isActive())) {
-						v = getVelocityJump();
-						if (jumpMode == JUMP_HIGH) {
-							showSprings();
-						}
-					} else {
-						v = VEL_BUMP;
-					}
-    				stompTimer = 2;
-    				evaluateDragonStomp();
+					bounce();
 				}
 		    } else if (aboveEnemy && stompTimer > 0) {
 		        /*
@@ -939,7 +929,29 @@ public class Player extends Character implements CollisionListener {
 		    startHurt();
 		} else if (other instanceof Wisp) {
 		    startFreeze((Wisp) other);
+		/*} else if (other instanceof Bouncer) {
+		    if (isBouncePossible()) {
+		        bounce();
+		    }*/
 		}
+	}
+	
+	private final boolean isBouncePossible() {
+	    return v < 4 && !isGrounded();
+	}
+	
+	private final void bounce() {
+	    final byte jumpMode = getCurrentJumpMode();
+        if ((jumpMode != JUMP_FLY && getJumpInput().isActive())) {
+            v = getVelocityJump();
+            if (jumpMode == JUMP_HIGH) {
+                showSprings();
+            }
+        } else {
+            v = VEL_BUMP;
+        }
+        stompTimer = 2;
+        evaluateDragonStomp();
 	}
 	
 	private final boolean isHurtable() {
