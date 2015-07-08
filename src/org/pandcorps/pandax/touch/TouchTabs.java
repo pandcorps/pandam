@@ -31,6 +31,7 @@ import org.pandcorps.pandam.event.action.*;
 import org.pandcorps.pandax.text.*;
 
 public class TouchTabs {
+    private static boolean fullScreen = false;
     private final int x;
     private final int y;
     private final int z;
@@ -65,14 +66,21 @@ public class TouchTabs {
     private TouchTabs(final int z, final Panmage left, final Panmage leftAct, final Panmage leftOverlay, final Panmage right, final Panmage rightAct, final Panmage rightOverlay, final int xOverlay, final int yOverlay, final TouchButton... buttons) {
         final Pangine engine = Pangine.getEngine();
         final Panple buttonSize = left.getSize();
-        y = engine.getEffectiveHeight() - (int) buttonSize.getY();
+        final int screenHeight = engine.getEffectiveHeight(), buttonHeight = (int) buttonSize.getY();
+        /*if (fullScreen) {
+            y = ;
+        } else*/ {
+            y = screenHeight - buttonHeight;
+        }
         this.z = z;
         buttonWidth = (int) buttonSize.getX();
         this.buttons = buttons;
         final int screenWidth = engine.getEffectiveWidth();
-        final int max = screenWidth / buttonWidth, total = buttons.length;
-        final int totalDisplayed = Math.min(max, total);
-        final int totalWidth = totalDisplayed * buttonWidth;
+        final int btnsPerRow = screenWidth / buttonWidth, total = buttons.length;
+        final int btnsPerCol = fullScreen ? (screenHeight / buttonHeight) : 1;
+        final int max = btnsPerRow * btnsPerCol;
+        final int totalDisplayedPerRow = Math.min(btnsPerRow, total);
+        final int totalWidth = totalDisplayedPerRow * buttonWidth;
         x = (screenWidth - totalWidth) / 2;
         if (total > max) {
             numButtonsDisplayed = max - 2;
@@ -160,5 +168,9 @@ public class TouchTabs {
         for (final TouchButton button : buttons) {
             TouchButton.destroy(button);
         }
+    }
+    
+    public final static void setFullScreen(final boolean fullScreen) {
+        TouchTabs.fullScreen = fullScreen;
     }
 }
