@@ -929,10 +929,10 @@ public class Player extends Character implements CollisionListener {
 		    startHurt();
 		} else if (other instanceof Wisp) {
 		    startFreeze((Wisp) other);
-		/*} else if (other instanceof Bouncer) {
+		} else if (other instanceof Bouncer) {
 		    if (isBouncePossible()) {
 		        bounce();
-		    }*/
+		    }
 		}
 	}
 	
@@ -1264,6 +1264,13 @@ public class Player extends Character implements CollisionListener {
         
         private final static float rndR() {
             return Mathtil.randf(rmin, rmax);
+        }
+	}
+	
+	protected final static class Bouncer extends Panctor implements Collidable {
+	    protected Bouncer() {
+            //setView();
+            FurGuardiansGame.room.addActor(this);
         }
 	}
 }
