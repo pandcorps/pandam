@@ -96,7 +96,7 @@ public class TouchTabs {
             leftButton = newButton(layer, "left." + id, x, y, z, left, leftAct, leftOverlay, xOverlay, yOverlay, null, null, 0, 0, true, new Runnable() {
                 @Override public final void run() {
                     left(); }});
-            rightButton = newButton(layer, "right." + id, x + (max - 1) * buttonWidth, bottom, z, right, rightAct, rightOverlay, xOverlay, yOverlay, null, null, 0, 0, true, new Runnable() {
+            rightButton = newButton(layer, "right." + id, x + (btnsPerRow - 1) * buttonWidth, bottom, z, right, rightAct, rightOverlay, xOverlay, yOverlay, null, null, 0, 0, true, new Runnable() {
                 @Override public final void run() {
                     right(); }});
         } else {
