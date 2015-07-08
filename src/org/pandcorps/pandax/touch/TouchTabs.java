@@ -67,11 +67,6 @@ public class TouchTabs {
         final Pangine engine = Pangine.getEngine();
         final Panple buttonSize = left.getSize();
         final int screenHeight = engine.getEffectiveHeight(), buttonHeight = (int) buttonSize.getY();
-        /*if (fullScreen) {
-            y = ;
-        } else*/ {
-            y = screenHeight - buttonHeight;
-        }
         this.z = z;
         buttonWidth = (int) buttonSize.getX();
         this.buttons = buttons;
@@ -82,6 +77,13 @@ public class TouchTabs {
         final int totalDisplayedPerRow = Math.min(btnsPerRow, total);
         final int totalWidth = totalDisplayedPerRow * buttonWidth;
         x = (screenWidth - totalWidth) / 2;
+        if (fullScreen) {
+            final int totalDisplayedPerCol = Math.min(btnsPerCol, (total / btnsPerRow) + (((total % btnsPerRow) == 0) ? 0 : 1));
+            final int totalHeight = totalDisplayedPerCol * buttonHeight;
+            y = ((screenHeight - totalHeight) / 2) + ((totalDisplayedPerCol - 1) * buttonHeight);
+        } else {
+            y = screenHeight - buttonHeight;
+        }
         if (total > max) {
             numButtonsDisplayed = max - 2;
             final Panlayer layer = buttons[0].getLayer();
