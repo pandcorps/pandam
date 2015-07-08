@@ -36,6 +36,7 @@ public class TouchTabs {
     private final int y;
     private final int z;
     private final int buttonWidth;
+    private final int buttonHeight;
     private final int numButtonsDisplayed;
     private final TouchButton leftButton;
     private final TouchButton rightButton;
@@ -66,7 +67,8 @@ public class TouchTabs {
     private TouchTabs(final int z, final Panmage left, final Panmage leftAct, final Panmage leftOverlay, final Panmage right, final Panmage rightAct, final Panmage rightOverlay, final int xOverlay, final int yOverlay, final TouchButton... buttons) {
         final Pangine engine = Pangine.getEngine();
         final Panple buttonSize = left.getSize();
-        final int screenHeight = engine.getEffectiveHeight(), buttonHeight = (int) buttonSize.getY();
+        final int screenHeight = engine.getEffectiveHeight();
+        buttonHeight = (int) buttonSize.getY();
         this.z = z;
         buttonWidth = (int) buttonSize.getX();
         this.buttons = buttons;
@@ -76,13 +78,16 @@ public class TouchTabs {
         final int max = btnsPerRow * btnsPerCol;
         final int totalDisplayedPerRow = Math.min(btnsPerRow, total);
         final int totalWidth = totalDisplayedPerRow * buttonWidth;
+        final int bottom;
         x = (screenWidth - totalWidth) / 2;
         if (fullScreen) {
             final int totalDisplayedPerCol = Math.min(btnsPerCol, (total / btnsPerRow) + (((total % btnsPerRow) == 0) ? 0 : 1));
             final int totalHeight = totalDisplayedPerCol * buttonHeight;
-            y = ((screenHeight - totalHeight) / 2) + ((totalDisplayedPerCol - 1) * buttonHeight);
+            bottom = ((screenHeight - totalHeight) / 2);
+            y = bottom + ((totalDisplayedPerCol - 1) * buttonHeight);
         } else {
             y = screenHeight - buttonHeight;
+            bottom = y;
         }
         if (total > max) {
             numButtonsDisplayed = max - 2;
@@ -91,7 +96,7 @@ public class TouchTabs {
             leftButton = newButton(layer, "left." + id, x, y, z, left, leftAct, leftOverlay, xOverlay, yOverlay, null, null, 0, 0, true, new Runnable() {
                 @Override public final void run() {
                     left(); }});
-            rightButton = newButton(layer, "right." + id, x + (max - 1) * buttonWidth, y, z, right, rightAct, rightOverlay, xOverlay, yOverlay, null, null, 0, 0, true, new Runnable() {
+            rightButton = newButton(layer, "right." + id, x + (max - 1) * buttonWidth, bottom, z, right, rightAct, rightOverlay, xOverlay, yOverlay, null, null, 0, 0, true, new Runnable() {
                 @Override public final void run() {
                     right(); }});
         } else {
@@ -129,14 +134,18 @@ public class TouchTabs {
     }
     
     private final void initButtons() {
-        int x = this.x + ((leftButton == null) ? 0 : buttonWidth);
+        int x = this.x + ((leftButton == null) ? 0 : buttonWidth), y = this.y;
         final int size = buttons.length;
+        final int screenWidth = Pangine.getEngine().getEffectiveWidth();
         for (int i = 0; i < size; i++) {
             final int buttonIndex = (currentFirstButton + i) % size;
             final TouchButton button = buttons[buttonIndex];
             if (i >= numButtonsDisplayed) {
                 button.detach();
                 continue;
+            } else if ((x + buttonWidth) > screenWidth) {
+                y -= buttonHeight;
+                x = this.x;
             }
             button.reattach();
             button.setPosition(x, y);
