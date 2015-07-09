@@ -67,6 +67,7 @@ public abstract class Pangine {
 	private final static byte PAUSED_NEW = 1;
 	private final static byte PAUSED_YES = 2;
 	private byte paused = PAUSED_NO;
+	private final Queue<Runnable> queuedJobs = new ConcurrentLinkedQueue<Runnable>();
 	
 	private boolean imageSavingEnabled = false;
 	protected String screenShotDst = null;
@@ -473,6 +474,7 @@ public abstract class Pangine {
 			return;
 		}
 		clock++;
+		executeJobs();
 		final Pangame game = Pangame.getGame();
 	    game.step();
 	    final Panscreen screen = Panscreen.get();
@@ -1055,6 +1057,17 @@ public abstract class Pangine {
 		for (final TimerListener listener : Coltil.unnull(listeners)) {
 			removeTimer(listener);
 		}
+	}
+	
+	public final void executeInGameThread(final Runnable r) {
+	    queuedJobs.offer(r);
+	}
+	
+	private final void executeJobs() {
+	    Runnable r;
+	    while ((r = queuedJobs.poll()) != null) {
+	        r.run();
+	    }
 	}
 	
 	public final void setImageSavingEnabled(final boolean imageSavingEnabled) {
