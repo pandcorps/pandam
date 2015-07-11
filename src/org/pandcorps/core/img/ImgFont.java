@@ -120,9 +120,12 @@ public final class ImgFont {
     
     public final static void main(final String[] args) {
         final Img fontImg = Imtil.load("org/pandcorps/res/img/FontClassic8.png");
+        final short colMax = Pancolor.MAX_VALUE, colMin = Pancolor.MIN_VALUE, colMed = 66;
+        final PixelFilter f = new ReplacePixelFilter(colMed, colMed, colMax, colMax, colMin, colMin, colMin, colMax);
+        Imtil.filterImg(fontImg, 0, 0, fontImg.getWidth(), fontImg.getHeight(), f);
         final ImgFont font = new ImgFont(fontImg);
         final String s = args[0].replaceAll("\\\\n", "\n"), loc = args[1];
-        final Img textImg = font.newImage(Pancolor.MAX_VALUE, Pancolor.MAX_VALUE, Pancolor.MAX_VALUE, Pancolor.MAX_VALUE, s);
+        final Img textImg = font.newImage(colMax, colMax, colMax, colMax, s);
         final Img magImg = new NearestNeighborScaler(3).scale(textImg);
         final Img framedImg = Imtil.addBorders(magImg, 5, 5, 5, 5, Pancolor.WHITE);
         final Img cornerImg = Imtil.load("org/pandcorps/res/img/BalloonCorner.png");
