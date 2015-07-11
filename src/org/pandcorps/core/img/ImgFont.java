@@ -25,6 +25,7 @@ package org.pandcorps.core.img;
 import java.util.*;
 
 import org.pandcorps.core.*;
+import org.pandcorps.core.img.scale.*;
 
 public final class ImgFont {
     private final Img img;
@@ -74,7 +75,7 @@ public final class ImgFont {
             cx += letter.letterWidth;
         }
         maxWidth = Math.max(maxWidth, cx);
-        return new int[] {maxWidth, y + letterHeight};
+        return new int[] {maxWidth, y + letterHeight - 1};
     }
     
     private final ImgLetter getLetter(final char c) {
@@ -122,6 +123,8 @@ public final class ImgFont {
         final ImgFont font = new ImgFont(fontImg);
         final String s = args[0].replaceAll("\\\\n", "\n"), loc = args[1];
         final Img textImg = font.newImage(Pancolor.MAX_VALUE, Pancolor.MAX_VALUE, Pancolor.MAX_VALUE, Pancolor.MAX_VALUE, s);
-        Imtil.save(textImg, loc);
+        final Img magImg = new NearestNeighborScaler(3).scale(textImg);
+        final Img framedImg = Imtil.addBorders(magImg, 5, 5, 5, 5, Pancolor.WHITE);
+        Imtil.save(framedImg, loc);
     }
 }

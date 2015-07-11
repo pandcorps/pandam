@@ -226,9 +226,21 @@ public final class Imtil {
     	}
     }
     
-    public final static Img addBorders(final Img in, final int left, final int right, final int top, final int btm /*, final Pancolor c*/) {
+    public final static Img addBorders(final Img in, final int left, final int right, final int top, final int btm) {
+        return addBorders(in, left, right, top, btm, null);
+    }
+    
+    public final static Img addBorders(final Img in, final int left, final int right, final int top, final int btm, final Pancolor c) {
     	final int inw = in.getWidth(), inh = in.getHeight();
-    	final Img out = newImage(inw + left + right, inh + top + btm);
+    	final int outw = inw + left + right, outh = inh + top + btm;
+    	final Img out = newImage(outw, outh);
+    	if (c != null) {
+    	    final int d = getDataElement(c);
+    	    drawRectangle(out, 0, 0, left, outh, d);
+    	    drawRectangle(out, outw - right, 0, right, outh, d);
+    	    drawRectangle(out, left, 0, inw, top, d);
+    	    drawRectangle(out, left, outh - btm, inw, btm, d);
+    	}
     	copy(in, out, 0, 0, inw, inh, left, top);
     	return out;
     }

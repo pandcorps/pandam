@@ -26,17 +26,29 @@ import org.pandcorps.core.*;
 
 public class NearestNeighborScaler extends Scaler {
     
+    private final int mag;
+    
+    public NearestNeighborScaler() {
+        this(2);
+    }
+    
+    public NearestNeighborScaler(final int mag) {
+        this.mag = mag;
+    }
+    
     @Override
     public Img scale(final Img in) {
         final int w = in.getWidth(), h = in.getHeight();
-        final Img out = Imtil.newImage(w * 2, h * 2);
+        final Img out = Imtil.newImage(w * mag, h * mag);
         for (int x = 0; x < w; x++) {
             for (int y = 0; y < h; y++) {
-                final int ine = in.getRGB(x, y);
-                out.setRGB(x * 2, y * 2, ine);
-                out.setRGB(x * 2 + 1, y * 2, ine);
-                out.setRGB(x * 2, y * 2 + 1, ine);
-                out.setRGB(x * 2 + 1, y * 2 + 1, ine);
+                final int ine = in.getRGB(x, y), xm = x * mag, ym = y * mag;
+                for (int j = 0; j < mag; j++) {
+                    final int ymj = ym + j;
+                    for (int i = 0; i < mag; i++) {
+                        out.setRGB(xm + i, ymj, ine);
+                    }
+                }
             }
         }
         return out;
