@@ -99,6 +99,11 @@ public final class ImgFont {
             offY = row * letterHeight;
             final int col = i - (row * 16);
             int _offX = col * maxLetterWidth;
+            if (c == ' ') {
+                offX = _offX;
+                letterWidth = 5;
+                return;
+            }
             int currOff = maxLetterWidth - 1, currWidth = 0;
             for (int y = 0; y < letterHeight; y++) {
                 final int r = offY + y;
@@ -124,7 +129,11 @@ public final class ImgFont {
         final PixelFilter f = new ReplacePixelFilter(colMed, colMed, colMax, colMax, colMin, colMin, colMin, colMax);
         Imtil.filterImg(fontImg, 0, 0, fontImg.getWidth(), fontImg.getHeight(), f);
         final ImgFont font = new ImgFont(fontImg);
-        final String s = args[0].replaceAll("\\\\n", "\n"), loc = args[1];
+        String s = args[0].replaceAll("\\\\n", "\n");
+        if (args.length > 2 && "upper".equalsIgnoreCase(args[2])) {
+            s = s.toUpperCase();
+        }
+        final String loc = args[1];
         final Img textImg = font.newImage(colMax, colMax, colMax, colMax, s);
         final Img magImg = new NearestNeighborScaler(3).scale(textImg);
         final Img framedImg = Imtil.addBorders(magImg, 5, 5, 5, 5, Pancolor.WHITE);
