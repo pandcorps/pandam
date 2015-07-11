@@ -61,7 +61,11 @@ public final class AwtImg extends Img {
 	
 	@Override
 	public final int getRGB(final int x, final int y) {
-		return raw.getRGB(x, y);
+	    try {
+	        return raw.getRGB(x, y);
+	    } catch (final Exception e) {
+	        throw new RuntimeException("Error in getRGB(" + x + ", " + y + ") for Img width=" + getWidth() + ", height=" + getHeight(), e);
+	    }
 	}
 	
 	@Override

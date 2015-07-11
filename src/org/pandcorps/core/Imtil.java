@@ -425,6 +425,10 @@ public final class Imtil {
     	}
     }
     
+    public final static Img clear(final Img in, final short r, final short g, final short b, final short a) {
+        return drawRectangle(in, 0, 0, in.getWidth(), in.getHeight(), r, g, b, a);
+    }
+    
     public final static Img drawRectangle(final Img in,
     		final int x, final int y, final int w, final int h,
     		final short r, final short g, final short b, final short a) {
