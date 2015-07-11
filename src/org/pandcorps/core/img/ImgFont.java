@@ -125,6 +125,22 @@ public final class ImgFont {
         final Img textImg = font.newImage(Pancolor.MAX_VALUE, Pancolor.MAX_VALUE, Pancolor.MAX_VALUE, Pancolor.MAX_VALUE, s);
         final Img magImg = new NearestNeighborScaler(3).scale(textImg);
         final Img framedImg = Imtil.addBorders(magImg, 5, 5, 5, 5, Pancolor.WHITE);
+        final Img cornerImg = Imtil.load("org/pandcorps/res/img/BalloonCorner.png");
+        final int cornerSize = cornerImg.getWidth();
+        Imtil.copy(cornerImg, framedImg, 0, 0, cornerSize, cornerSize, 0, 0, Imtil.COPY_FOREGROUND);
+        Imtil.mirror(cornerImg);
+        final int w = framedImg.getWidth(), r = w - cornerSize, h = framedImg.getHeight(), b = h - cornerSize;
+        Imtil.copy(cornerImg, framedImg, 0, 0, cornerSize, cornerSize, r, 0, Imtil.COPY_FOREGROUND);
+        Imtil.flip(cornerImg);
+        Imtil.copy(cornerImg, framedImg, 0, 0, cornerSize, cornerSize, r, b, Imtil.COPY_FOREGROUND);
+        Imtil.mirror(cornerImg);
+        Imtil.copy(cornerImg, framedImg, 0, 0, cornerSize, cornerSize, 0, b, Imtil.COPY_FOREGROUND);
+        final int c2 = cornerSize * 2, fw = w - c2, fh = h - c2, c = Imtil.getDataElement(Pancolor.BLACK);
+        final int borderSize = 2, br = w - borderSize, bb = h - borderSize;
+        Imtil.drawRectangle(framedImg, cornerSize, 0, fw, borderSize, c);
+        Imtil.drawRectangle(framedImg, cornerSize, bb, fw, borderSize, c);
+        Imtil.drawRectangle(framedImg, 0, cornerSize, borderSize, fh, c);
+        Imtil.drawRectangle(framedImg, br, cornerSize, borderSize, fh, c);
         Imtil.save(framedImg, loc);
     }
 }

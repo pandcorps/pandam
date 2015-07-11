@@ -185,11 +185,23 @@ public final class Imtil {
     public final static void mirror(final Img img) {
         final int w = img.getWidth(), w2 = w / 2, h = img.getHeight();
         for (int x = 0; x < w2; x++) {
+            final int wx = w - x - 1;
             for (int y = 0; y < h; y++) {
-                final int wx = w - x - 1;
                 final int l = img.getRGB(x, y), r = img.getRGB(wx, y);
                 img.setRGB(x, y, r);
                 img.setRGB(wx, y, l);
+            }
+        }
+    }
+    
+    public final static void flip(final Img img) {
+        final int w = img.getWidth(), h = img.getHeight(), h2 = h / 2;
+        for (int y = 0; y < h2; y++) {
+            final int hy = h - y - 1;
+            for (int x = 0; x < w; x++) {
+                final int t = img.getRGB(x, y), b = img.getRGB(x, hy);
+                img.setRGB(x, y, b);
+                img.setRGB(x, hy, t);
             }
         }
     }
