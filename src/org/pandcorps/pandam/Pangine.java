@@ -73,6 +73,8 @@ public abstract class Pangine {
 	protected String screenShotDst = null;
 	protected int screenShotInd = -1;
 	
+	protected SwipeListener swipeListener = null;
+	
 	private final static String LOG_FATAL = "log.fatal.txt";
 	
 	protected Runnable uncaughtBackHandler = null;
@@ -1104,6 +1106,10 @@ public abstract class Pangine {
 	
 	public boolean enableBuffers() {
 	    return false;
+	}
+	
+	public final void setSwipeListener(final SwipeListener swipeListener) {
+	    this.swipeListener = swipeListener;
 	}
 	
 	public final void setUncaughtBackHandler(final Runnable uncaughtBackHandler) {
