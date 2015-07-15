@@ -20,47 +20,50 @@ PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY
 TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 */
-package org.pandcorps.pandax.in;
+package org.pandcorps.pandax.touch;
 
 import org.pandcorps.pandam.*;
-import org.pandcorps.pandam.event.*;
+import org.pandcorps.pandam.event.action.*;
 
-public class Cursor extends Panctor implements StepListener {
-	private static Cursor active = null;
-	
-	public final static Cursor addCursor(final Panlayer layer, final Panmage img) {
-		Panctor.destroy(active);
-		final Pangine engine = Pangine.getEngine();
-		if (!engine.isMouseSupported()) {
-			return null;
-		}
-		active = new Cursor();
-		active.setView(img);
-		layer.addActor(active);
-		engine.setMouseTouchEnabled(true);
-		return active;
-	}
-	
-	public final static Cursor getActive() {
-		if (active != null && !active.isDestroyed() && active.getLayer() != null) {
-			return active;
-		}
-		return null;
-	}
-	
-	public final static boolean isEnabled() {
-		return getActive() != null;
-	}
-	
-	@Override
-	public final void onStep(final StepEvent event) {
-		final Pangine engine = Pangine.getEngine();
-		final Panple o = getLayer().getOrigin();
-		getPosition().set(o.getX() + engine.getMouseX(), o.getY() + engine.getMouseY());
-	}
-	
-	@Override
-	public final void onDestroy() {
-		Pangine.getEngine().setMouseTouchEnabled(false);
-	}
+public final class SwipeScroller implements SwipeListener {
+    private Panlayer layer = null;
+    private float minX = 0;
+    private float maxX = 0;
+    private float minY = 0;
+    private float maxY = 0;
+    
+    @Override
+    public final boolean onSwipe(final SwipeEvent event) {
+        //TODO Velocity/acceleration
+        final boolean xChange = add(0, -event.getDiffX(), minX, maxX);
+        final boolean yChange = add(1, -event.getDiffY(), minY, maxY);
+        return xChange || yChange;
+    }
+    
+    private final boolean add(final int i, final float off, final float min, final float max) {
+        final Panple o = layer.getOrigin();
+        final float val = o.getC(i);
+        if (off < 0 && val > min) {
+            o.setC(i, Math.max(val + off, min));
+            return true;
+        } else if (off > 0 && val < max) {
+            o.setC(i, Math.min(val + off, max));
+            return true;
+        }
+        return false;
+    }
+    
+    public final void setLayer(final Panlayer layer) {
+        this.layer = layer;
+        final Panple o = layer.getOrigin();
+        final float x = o.getX(), y = o.getY();
+        setRange(x, x, y, y);
+    }
+    
+    public final void setRange(final float minX, final float maxX, final float minY, final float maxY) {
+        this.minX = minX;
+        this.maxX = maxX;
+        this.minY = minY;
+        this.maxY = maxY;
+    }
 }

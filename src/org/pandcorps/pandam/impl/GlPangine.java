@@ -46,6 +46,8 @@ public abstract class GlPangine extends Pangine {
 	protected final static List<TouchButton> touchButtons = Coltil.newSafeList();
 	private final static Map<Integer, Panput> touchMap = new HashMap<Integer, Panput>();
 	private static boolean clearTouchMap = false;
+	private final static Map<Integer, Panple> swipeMap = new HashMap<Integer, Panple>();
+    private static boolean swiping = false;
 	protected final static List<InputEvent> inputEvents = Coltil.newSafeList();
 	private FloatBuffer blendRectangle = null;
 	public boolean capsLock = false;
@@ -258,13 +260,16 @@ public abstract class GlPangine extends Pangine {
 	        }
 	        touchMap.clear();
 	        for (final Panput input : Coltil.unnull(getTouches(newActive, getTouches(active, null)))) {
-	        	deactivate(input);
+	            deactivate(input);
 	        }
+	        swipeMap.clear();
 	        clearTouchMap = false;
+	        swiping = false;
 	    }
 		final int size = touchEvents.size();
 		//int size;
     	//while ((size = touchEvents.size()) > 0) {
+		boolean doneSwiping = false;
 		for (int i = 0; i < size; i++) {
     		//final TouchEvent event = touchEvents.remove(size - 1);
 			final TouchEvent event = touchEvents.get(i);
@@ -272,13 +277,24 @@ public abstract class GlPangine extends Pangine {
     		final int x = event.getX(), y = event.getY();
     		Panput input = interaction.TOUCH;
     		float bestDist = Float.MAX_VALUE;
+    		boolean cancel = false;
     		for (final TouchButton button : touchButtons) {
-    			if (button.isEnabled() && button.contains(x, y)) {
+    		    final int ax, ay;
+    		    final Panlayer layer = button.getLayer();
+    		    if (layer == null) {
+    		        ax = x;
+    		        ay = y;
+    		    } else {
+    		        final Panple o = layer.getOrigin();
+    		        ax = x + (int) o.getX();
+    		        ay = y + (int) o.getY();
+    		    }
+    			if (button.isEnabled() && button.contains(ax, ay)) {
     				if (button.getOverlapMode() == TouchButton.OVERLAP_ANY) {
     				    input = button;
     				    break;
     				}
-    				final float diffX = button.getCenterX() - x, diffY = button.getCenterY() - y;
+    				final float diffX = button.getCenterX() - ax, diffY = button.getCenterY() - ay;
     				final float currDist = (diffX * diffX) + (diffY * diffY);
     				if (currDist < bestDist) {
     				    input = button;
@@ -288,6 +304,14 @@ public abstract class GlPangine extends Pangine {
     		}
     		final byte type = event.getType();
     		if (type == Panput.TOUCH_MOVE) {
+    		    if (swipeListener != null) {
+    		        final Panple old = swipeMap.put(key, new FinPanple2(x, y));
+    		        if (old != null && swipeListener.onSwipe(new SwipeEvent((int) old.getX(), (int) old.getY(), x, y))) {
+        		        cancel = true;
+        		        swiping = true;
+        		        break;
+    		        }
+    		    }
     			final Panput old = touchMap.put(key, input);
     			if (input != old) {
     			    activateMove(old, false);
@@ -296,13 +320,27 @@ public abstract class GlPangine extends Pangine {
     		} else if (type == Panput.TOUCH_DOWN) {
 				activate(input);
 				touchMap.put(key, input);
-			} else if (touchMap.remove(key) != null) { // Could reach TOUCH_UP without a TOUCH_DOWN, don't call end listeners then
-			    deactivate(input);
+				if (swipeListener != null) {
+				    swipeMap.put(key, new FinPanple2(x, y));
+				}
+			} else {
+			    if (touchMap.remove(key) != null) { // Could reach TOUCH_UP without a TOUCH_DOWN, don't call end listeners then
+			        deactivate(input);
+			    }
+			    swipeMap.remove(key);
+			    doneSwiping = true;
 			}
+    		if (cancel) {
+    		    break;
+    		}
     	}
 		clear(touchEvents, size);
 		
 		stepInputs();
+		
+		if (doneSwiping) {
+		    swiping = false;
+		}
 	}
 	
 	private final static void clear(final List<?> v, final int size) {
@@ -501,8 +539,9 @@ public abstract class GlPangine extends Pangine {
 			//endListener.onActionEnd(ActionEndEvent.INSTANCE);
 		    if (!isActive(getActor(endListener))) {
                 continue;
+            } else if (!swiping) {
+                endListener.onActionEnd(ActionEndEvent.getEvent(input, originalInput));
             }
-		    endListener.onActionEnd(ActionEndEvent.getEvent(input, originalInput));
 		    uncaught = false;
 		}
 		if (uncaught && input == interaction.BACK) {
