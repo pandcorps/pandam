@@ -24,6 +24,7 @@ package org.pandcorps.pandax.in;
 
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
+import org.pandcorps.pandam.impl.*;
 
 public class Cursor extends Panctor implements StepListener {
 	private static Cursor active = null;
@@ -55,7 +56,8 @@ public class Cursor extends Panctor implements StepListener {
 	@Override
 	public final void onStep(final StepEvent event) {
 		final Pangine engine = Pangine.getEngine();
-		final Panple o = getLayer().getOrigin();
+		final Panlayer layer = getLayer();
+		final Panple o = (layer == null) ? FinPanple.ORIGIN : layer.getOrigin();
 		getPosition().set(o.getX() + engine.getMouseX(), o.getY() + engine.getMouseY());
 	}
 	
