@@ -52,7 +52,7 @@ public abstract class Handler {
         return true;
     }*/
     
-    public abstract Option handle(final Label label, final List<? extends Option> options);
+    public abstract Option handle(final Option caller, final Label label, final List<? extends Option> options);
     
     public abstract Driver getDriver();
 }

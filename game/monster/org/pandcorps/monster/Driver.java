@@ -24,6 +24,8 @@ package org.pandcorps.monster;
 
 import java.util.*;
 import java.util.Map.*;
+
+import org.pandcorps.core.*;
 import org.pandcorps.monster.Special.*;
 
 public class Driver implements Runnable {
@@ -41,7 +43,7 @@ public class Driver implements Runnable {
     
     private final static String SPECIAL_SPLIT = Specialty.Split.toString();
     
-	private final State state;
+	private static State state;
 	//private final Handler handler = Handler.get();
 	/*package*/ Handler handler = Handler.get();
 	protected final Stack<Option> stack = new Stack<Option>();
@@ -54,7 +56,7 @@ public class Driver implements Runnable {
 	}*/
 	
 	public Driver(final State state) {
-	    this.state = state;
+	    Driver.state = state;
 	}
 	
 	public final static Driver get() {
@@ -128,7 +130,7 @@ public class Driver implements Runnable {
         @Override
         public final void run() {
             final List<Option> options = menu();
-            final Option chosen = handle(goal, options);
+            final Option chosen = handle(this, goal, options);
             if (running) {
                 chosen.run();
             }
@@ -161,7 +163,7 @@ public class Driver implements Runnable {
 	    
         public TravelOption(final List<Location> available) {
             //TODO Standardize location as argument or from state
-            super(new Label(Driver.this.state.getLocation().getName() + " - Travel"));
+            super(new Label(state.getLocation().getName() + " - Travel"));
             this.available = available;
         }
 
@@ -223,14 +225,9 @@ public class Driver implements Runnable {
 			//boolean move = false;
 			//final LinkedHashSet<Item> specials = new LinkedHashSet<Item>();
 			final Map<Item, ArrayList<Species>> specials = location.getSpecials();
-			if (wild.size() > 0) {
-			    options.add(new MenuOption("Wild", new WildOption(new Label(location.getName() + " - " + "Wild"), wild)));
-                options.add(new MenuOption("Catch", new CatchOption(location, wild)));
-			}
-			if (fish.size() > 0) {
-			    //options.add(new MenuOption("Fish", new FishOption(location, fish)));
-			    options.add(new MenuOption(Specialty.Fish.toString(), new FishOption(location, fish)));
-			}
+			new WildOption(new Label(location.getName() + " - " + "Wild"), wild).addMenuOption(options, "Wild");
+            //options.add(new MenuOption("Catch", new CatchOption(location, wild)));
+			new FishOption(location, fish).addMenuOption(options, Specialty.Fish.toString());
 			/*if (move) {
                 options.add(new MenuOption("Special", null));
             }*/
@@ -296,8 +293,19 @@ public class Driver implements Runnable {
 			stack.push(option);
 		}
 	}
-
-	private abstract class OpponentOption extends RunOption {
+	
+	protected static Species getRandomOpponent(final List<Species> opponents) {
+        //this.opponents = opponents;
+        final List<Species> defeatableOpponents = new ArrayList<Species>();
+        for (final Species opponent : opponents) {
+            if (state.chooseIfNecessary(opponent) != null) {
+                defeatableOpponents.add(opponent);
+            }
+        }
+        return defeatableOpponents.size() > 0 ? Mathtil.rand(defeatableOpponents) : null;
+    }
+	
+	protected abstract class OpponentOption extends RunOption {
 		private final List<Species> opponents;
 		//private final Special special;
 
@@ -305,10 +313,16 @@ public class Driver implements Runnable {
 		    this(label, opponents, null);
 		}*/
 		
-		public OpponentOption(final Label label, final List<Species> opponents /*, final Special special*/) {
+		protected OpponentOption(final Label label, final List<Species> opponents /*, final Special special*/) {
 			super(label);
 			this.opponents = opponents;
-			//this.special = special;
+            //this.special = special;
+		}
+		
+		protected void addMenuOption(final List<Option> options, final String name) {
+		    if (opponents.size() > 0) {
+                options.add(new MenuOption(name, this));
+            }
 		}
 
 		@Override
@@ -316,9 +330,7 @@ public class Driver implements Runnable {
 		    final List<Species> opponents = getOpponents();
 			final ArrayList<Option> options = new ArrayList<Option>(opponents.size());
 			for (final Species species : opponents) {
-			    //final String speciesSpecial = species.getSpecial();
 			    final Special speciesSpecial = species.getSpecial();
-			    //if (Driver.startsWith(speciesSpecial, special)) {
 			    //if (Driver.matches(speciesSpecial, special)) { // Needed?
 			        options.add(createOption(choose(species), species, speciesSpecial));
 			    //}
@@ -336,10 +348,50 @@ public class Driver implements Runnable {
 		    return opponents;
 		}
 	}
+	
+	protected abstract class BattleOption extends RunOption {
+        private final boolean catchable;
+        protected final Species opponent;
+        protected final Species chosen;
+        
+        protected BattleOption(final Label label, final List<Species> opponents, final boolean catchable) {
+            super(label);
+            this.catchable = catchable;
+            opponent = getRandomOpponent(opponents);
+            if (opponent != null) {
+                chosen = choose(opponent);
+            } else {
+                chosen = null;
+            }
+        }
+        
+        protected void addMenuOption(final List<Option> options, final String name) {
+            if (opponent != null) {
+                options.add(new MenuOption(name, this));
+            }
+        }
 
-	private class WildOption extends OpponentOption {
+        @Override
+        public List<Option> menu() {
+            final List<Option> options = new ArrayList<Option>(catchable ? 2 : 1);
+            final Special special = opponent.getSpecial();
+            options.add(createOption(chosen, opponent, special));
+            if (catchable) {
+                options.add(Task.createCatchTask(chosen, opponent));
+            }
+            return options;
+        }
+        
+        protected Species choose(final Species opponent) {
+            return state.choose(opponent);
+        }
+
+        protected abstract Option createOption(final Species chosen, final Species opponent, final Special special);
+    }
+
+	private class WildOption extends BattleOption {
 		public WildOption(final Label label, final List<Species> opponents) {
-			super(label, opponents);
+			super(label, opponents, true);
 		}
 
 		@Override
@@ -359,6 +411,7 @@ public class Driver implements Runnable {
         }
     }
 
+	/*
 	private class CatchOption extends OpponentOption {
 		public CatchOption(final Location location, final List<Species> opponents) {
 			super(new Label(location.getName() + " - Catch"), opponents);
@@ -369,10 +422,11 @@ public class Driver implements Runnable {
 			return Task.createCatchTask(chosen, opponent);
 		}
 	}
+	*/
 	
-	private class FishOption extends OpponentOption {
+	private class FishOption extends BattleOption {
 	    public FishOption(final Location location, final List<Species> wild) {
-            super(new Label(location.getName() + " - Fishing"), wild /*, new Special(Specialty.Fish, null)*/ );
+            super(new Label(location.getName() + " - Fishing"), wild, true /*, new Special(Specialty.Fish, null)*/ );
         }
 
         @Override
@@ -828,7 +882,7 @@ public class Driver implements Runnable {
     }*/
 
 	//private Option handle(Option... options)
-    private Option handle(final Label label, final List<? extends Option> baseOptions) {
+    private Option handle(final Option caller, final Label label, final List<? extends Option> baseOptions) {
         final ArrayList<Option> options = new ArrayList<Option>(baseOptions.size() + 1);
         options.addAll(baseOptions);
         if (stack.size() > 1) {
@@ -836,7 +890,7 @@ public class Driver implements Runnable {
         } else {
             options.add(new ExitOption());
         }
-        return handler.handle(label, options);
+        return handler.handle(caller, label, options);
     }
     
     public class BackOption extends Option {

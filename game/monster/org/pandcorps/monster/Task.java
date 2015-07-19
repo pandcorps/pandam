@@ -41,11 +41,11 @@ public class Task extends Option {
 	}
 	
 	public final static Task createWildTask(final Species chosen, final Species opponent) {
-        return new Task(opponent, Arrays.asList(chosen), award(opponent, new Experience(opponent.getAwardedExperience())));
+        return new Task(new Label("Fight"), Arrays.asList(chosen), award(opponent, new Experience(opponent.getAwardedExperience())));
     }
 
 	public final static Task createCatchTask(final Species chosen, final Species opponent) {
-		return new Task(opponent, Arrays.asList(chosen, Container.getContainer(opponent)), award(opponent, opponent));
+		return new Task(new Label("Catch"), Arrays.asList(chosen, Container.getContainer(opponent)), award(opponent, opponent));
 	}
 
 	//TODO Option to fight when fishing/surfing instead of just catch?
