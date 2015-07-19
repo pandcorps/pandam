@@ -264,7 +264,6 @@ public class Driver implements Runnable {
             final List<Item> store = location.getStore();
             if (store.size() > 0) {
                 options.add(new MenuOption(Data.getStore(), new StoreOption(location)));
-                options.add(new MenuOption("Sell", new SellOption()));
             }
             options.add(new MenuOption(Data.getInventory(), new InventoryOption()));
             options.add(new MenuOption(Data.getDatabase(), new DatabaseOption()));
@@ -294,8 +293,7 @@ public class Driver implements Runnable {
 		}
 	}
 	
-	protected static Species getRandomOpponent(final List<Species> opponents) {
-        //this.opponents = opponents;
+	/*protected static Species getRandomOpponent(final List<Species> opponents) {
         final List<Species> defeatableOpponents = new ArrayList<Species>();
         for (final Species opponent : opponents) {
             if (state.chooseIfNecessary(opponent) != null) {
@@ -303,6 +301,55 @@ public class Driver implements Runnable {
             }
         }
         return defeatableOpponents.size() > 0 ? Mathtil.rand(defeatableOpponents) : null;
+    }*/
+	
+	/*protected static Task getRandomTask(final List<Task> tasks) {
+        final List<Task> possibleTasks = new ArrayList<Task>();
+        for (final Task task : tasks) {
+            if (task.isPossible()) {
+                possibleTasks.add(task);
+            }
+        }
+        return possibleTasks.size() > 0 ? Mathtil.rand(possibleTasks) : null;
+    }*/
+	
+	/*protected static Species getRandomOpponent(final BattleOption opt, final List<Species> opponents) {
+        final List<Species> defeatableOpponents = new ArrayList<Species>();
+        for (final Species opponent : opponents) {
+            if (state.chooseIfNecessary(opponent) != null) {
+                defeatableOpponents.add(opponent);
+            }
+        }
+        if (defeatableOpponents.size() > 0) {
+            final Species species = Mathtil.rand(defeatableOpponents);
+            opt.createOption(opt.choose(species), species, species.getSpecial());
+        }
+        return null;
+    }*/
+	
+	private final static class SpeciesOption {
+	    private final Option option;
+	    private final Species species;
+	    
+	    private SpeciesOption(final Option option, final Species species) {
+	        this.option = option;
+	        this.species = species;
+	    }
+	}
+	
+	protected static SpeciesOption getRandomOption(final BattleOption opt, final List<Species> opponents) {
+        final List<SpeciesOption> possibleOptions = new ArrayList<SpeciesOption>();
+        for (final Species species : opponents) {
+            final Species chosen = opt.choose(species);
+            if (chosen == null) {
+                continue;
+            }
+            final Option option = opt.createOption(chosen, species, species.getSpecial());
+            if (option.isPossible()) {
+                possibleOptions.add(new SpeciesOption(option, species));
+            }
+        }
+        return possibleOptions.size() > 0 ? Mathtil.rand(possibleOptions) : null;
     }
 	
 	protected abstract class OpponentOption extends RunOption {
@@ -350,18 +397,29 @@ public class Driver implements Runnable {
 	}
 	
 	protected abstract class BattleOption extends RunOption {
+        private final List<Species> opponents;
         private final boolean catchable;
-        protected final Species opponent;
-        protected final Species chosen;
+        private Option option = null;
+        protected Species opponent = null;
+        protected Species chosen = null;
         
         protected BattleOption(final Label label, final List<Species> opponents, final boolean catchable) {
             super(label);
+            this.opponents = opponents;
             this.catchable = catchable;
-            opponent = getRandomOpponent(opponents);
-            if (opponent != null) {
-                chosen = choose(opponent);
-            } else {
+            pickNextOpponent();
+        }
+        
+        private void pickNextOpponent() {
+            final SpeciesOption speciesOption = getRandomOption(this, opponents);
+            if (speciesOption == null) {
+                option = null;
+                opponent = null;
                 chosen = null;
+            } else {
+                option = speciesOption.option;
+                opponent = speciesOption.species;
+                chosen = choose(opponent);
             }
         }
         
@@ -373,9 +431,10 @@ public class Driver implements Runnable {
 
         @Override
         public List<Option> menu() {
+            pickNextOpponent();
             final List<Option> options = new ArrayList<Option>(catchable ? 2 : 1);
-            final Special special = opponent.getSpecial();
-            options.add(createOption(chosen, opponent, special));
+            //options.add(createOption(chosen, opponent, opponent.getSpecial()));
+            options.add(option);
             if (catchable) {
                 options.add(Task.createCatchTask(chosen, opponent));
             }
@@ -403,6 +462,17 @@ public class Driver implements Runnable {
 	private class TrainedOption extends OpponentOption {
         public TrainedOption(final Label label, final List<Species> opponents) {
             super(label, opponents);
+        }
+
+        @Override
+        protected Option createOption(final Species chosen, final Species opponent, final Special special) {
+            return new TrainedBattleOption(opponent, Collections.singletonList(opponent));
+        }
+    }
+	
+	private class TrainedBattleOption extends BattleOption {
+        public TrainedBattleOption(final Label label, final List<Species> opponents) {
+            super(label, opponents, false);
         }
 
         @Override
@@ -483,6 +553,11 @@ public class Driver implements Runnable {
         protected Species choose(final Species opponent) {
             return null;
         }
+        
+        @Override
+        protected List<Species> getOpponents() {
+            return getMorphable(); // Generate each time menu is displayed, because it will change as it is used
+        }
     }
 	
 	/*private class MorphTask extends Task {
@@ -518,7 +593,9 @@ public class Driver implements Runnable {
         for (final Species s : state.getPreferences()) {
             //TODO Option to display creatures currently in team
             final Species precursor = s.getPrecursor();
-            if (precursor != null && (!canSplit(precursor) || precursor.getMorphs().iterator().next().equals(s)) && s.getCatalyst() != null && !state.hasTeam(s)) {
+            if (precursor == null || !state.hasTeam(precursor)) {
+                continue;
+            } else if ((!canSplit(precursor) || precursor.getMorphs().iterator().next().equals(s)) && s.getCatalyst() != null && !state.hasTeam(s)) {
                 list.add(s);
             }
         }
@@ -777,10 +854,27 @@ public class Driver implements Runnable {
     }
     
     private class StoreOption extends RunOption {
-        private final List<Item> store;
+        private final Location location;
 
         public StoreOption(final Location location) {
             super(new Label(location.getName() + " - " + Data.getStore()));
+            this.location = location;
+        }
+
+        @Override
+        public List<Option> menu() {
+            final ArrayList<Option> options = new ArrayList<Option>(2);
+            options.add(new MenuOption("Buy", new BuyOption(location)));
+            options.add(new MenuOption("Sell", new SellOption()));
+            return options;
+        }
+    }
+    
+    private class BuyOption extends RunOption {
+        private final List<Item> store;
+
+        public BuyOption(final Location location) {
+            super(new Label("Buy"));
             this.store = location.getStore();
         }
 
