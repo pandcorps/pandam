@@ -444,6 +444,11 @@ public class Driver implements Runnable {
         protected Species choose(final Species opponent) {
             return state.choose(opponent);
         }
+        
+        @Override
+        public boolean isPossible() {
+            return super.isPossible() && option != null && option.isPossible();
+        }
 
         protected abstract Option createOption(final Species chosen, final Species opponent, final Special special);
     }

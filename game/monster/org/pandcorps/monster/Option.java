@@ -54,7 +54,7 @@ public abstract class Option implements Runnable {
 		return EMPTY;
 	}
 
-	public final boolean isPossible() {
+	public boolean isPossible() {
         for (final Entity requirement : required) {
             if (!requirement.isAvailable()) {
                 return false;
