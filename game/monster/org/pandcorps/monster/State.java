@@ -24,25 +24,27 @@ package org.pandcorps.monster;
 
 import java.io.*;
 import java.util.*;
+import java.util.Map.*;
 
 import org.pandcorps.core.*;
+import org.pandcorps.core.col.*;
 import org.pandcorps.monster.Special.*;
 
 // Data which must be saved
 public class State {
 	private final SpeciesComparator sc = new SpeciesComparator();
 	
-	//private final ArrayList<Species> preferences = new ArrayList<Species>(Species.getSpecies());
-	private final LinkedHashSet<Species> preferences = new LinkedHashSet<Species>(Species.getSpecies());
-	//private final ArrayList<Location> locations = new ArrayList<Location>();
-	private final LinkedHashSet<Location> locations = new LinkedHashSet<Location>();
+	//private final List<Species> preferences = new ArrayList<Species>(Species.getSpecies());
+	private final Set<Species> preferences = new LinkedHashSet<Species>(Species.getSpecies());
+	//private final List<Location> locations = new ArrayList<Location>();
+	private final Set<Location> locations = new LinkedHashSet<Location>();
 	//TODO LinkedHashSet to make hasTeam (contains) faster?
-	private final ArrayList<Species> team = new ArrayList<Species>(); // Creatures currently in team
-	private final HashSet<Species> owned = new HashSet<Species>(); // Creatures that have ever been in team
-	private final HashSet<Species> seen = new HashSet<Species>(); // Creatures that have ever been seen
-	private final ArrayList<Item> inventory = new ArrayList<Item>(); //TODO Map from Item to count
-	private final HashSet<Item> previousInventory = new HashSet<Item>();
-	private final ArrayList<Species> trader = new ArrayList<Species>();
+	private final List<Species> team = new ArrayList<Species>(); // Creatures currently in team
+	private final Set<Species> owned = new HashSet<Species>(); // Creatures that have ever been in team
+	private final Set<Species> seen = new HashSet<Species>(); // Creatures that have ever been seen
+	private final CountMap<Item> inventory = new CountMap<Item>(); //TODO Map from Item to count
+	private final Set<Item> previousInventory = new HashSet<Item>();
+	private final List<Species> trader = new ArrayList<Species>();
 	private Location location = null; // Current location
 	private int experience = 0; // Earned in any battle; can be used to morph a Creature to a Species of a higher rank
 	private int money = 0; // Earned in battles with other trainers; can be used to buy items
@@ -103,12 +105,12 @@ public class State {
 	    seen.add(creature);
 	}
 
-	public List<Item> getInventory() {
-	    return Collections.unmodifiableList(inventory);
+	public Collection<Item> getInventory() {
+	    return Collections.unmodifiableSet(inventory.keySet());
 	}
 	
 	public boolean hasInventory(final Item item) {
-	    return inventory.contains(item);
+	    return inventory.longValue(item) > 0;
 	}
 	
 	public boolean wasInventory(final Item item) {
@@ -117,14 +119,14 @@ public class State {
 
 	public void useInventory(final Item item) {
 		if (item.isExhaustible()) {
-			if (!inventory.remove(item)) {
+			if (!inventory.decIfPositive(item)) {
 			    throw new RuntimeException("Inventory does not contain " + item.getName());
 			}
 		}
 	}
 
 	public void addInventory(final Item item) {
-	    inventory.add(item);
+	    inventory.inc(item);
 	    previousInventory.add(item);
 	}
 
@@ -358,7 +360,7 @@ public class State {
 	    serializeSpecies(p, SECTION_TEAM, team);
 	    serializeSpecies(p, SECTION_OWNED, owned);
 	    serializeSpecies(p, SECTION_SEEN, seen);
-	    serializeCodes(p, SECTION_INVENTORY, inventory);
+	    serializeCodeCounts(p, SECTION_INVENTORY, inventory);
 	    serializeCodes(p, SECTION_PREVIOUS_INVENTORY, previousInventory);
 	    serializeSpecies(p, SECTION_TRADER, trader);
 	    p.println(SECTION_LOCATION);
@@ -401,7 +403,7 @@ public class State {
     	    parseSpecies(b, SECTION_OWNED, team);
     	    parseSpecies(b, SECTION_SEEN, owned);
     	    parseSpecies(b, SECTION_INVENTORY, seen);
-            parseItems(b, SECTION_PREVIOUS_INVENTORY, inventory);
+    	    parseItemCounts(b, SECTION_PREVIOUS_INVENTORY, inventory);
             parseItems(b, SECTION_TRADER, previousInventory);
     	    parseSpecies(b, SECTION_LOCATION, trader);
     	    location = Location.getLocation(parse(b, SECTION_EXPERIENCE));
@@ -424,6 +426,16 @@ public class State {
         p.println(label);
         for (final Code elem : col) {
             p.println(elem.getCode());
+        }
+        p.flush();
+    }
+	
+	private final static void serializeCodeCounts(final PrintStream p, final String label, final CountMap<? extends Code> map) {
+        p.println(label);
+        for (final Entry<? extends Code, Long> entry : map.entrySet()) {
+            p.print(entry.getKey().getCode());
+            p.print('^');
+            p.println(entry.getValue());
         }
         p.flush();
     }
@@ -454,6 +466,16 @@ public class State {
         String line;
         while (!(line = b.readLine()).equals(nextLabel)) {
             col.add(Item.getItem(line));
+        }
+    }
+	
+	private final static void parseItemCounts(final BufferedReader b, final String nextLabel, final CountMap<Item> map) throws IOException {
+	    map.clear();
+        String line;
+        while (!(line = b.readLine()).equals(nextLabel)) {
+            final int d = line.indexOf('^');
+            final String item = line.substring(0, d), count = line.substring(d + 1);
+            map.put(Item.getItem(item), Long.valueOf(count));
         }
     }
 	

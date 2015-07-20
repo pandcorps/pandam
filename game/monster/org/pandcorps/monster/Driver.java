@@ -915,8 +915,8 @@ public class Driver implements Runnable {
 
         @Override
         public List<Option> menu() {
-            final List<Item> inventory = state.getInventory();
-            final ArrayList<Option> options = new ArrayList<Option>(inventory.size());
+            final Collection<Item> inventory = state.getInventory();
+            final List<Option> options = new ArrayList<Option>(inventory.size());
             for (final Item product : inventory) {
                 if (product.getPrice() > 0 && !product.isUnique()) {
                     options.add(Task.createSellTask(product));
@@ -933,8 +933,8 @@ public class Driver implements Runnable {
 
         @Override
         public List<Option> menu() {
-            final List<Item> inventory = state.getInventory();
-            final ArrayList<Option> options = new ArrayList<Option>(inventory.size());
+            final Collection<Item> inventory = state.getInventory();
+            final List<Option> options = new ArrayList<Option>(inventory.size());
             final String money = Data.getMoney();
             for (final Item product : inventory) {
                 // product.isUnique() // Might display this and other information
