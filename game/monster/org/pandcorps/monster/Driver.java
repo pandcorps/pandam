@@ -214,7 +214,7 @@ public class Driver implements Runnable {
 
 		@Override
 		public List<Option> menu() {
-		    final ArrayList<Option> options = new ArrayList<Option>();
+		    final List<Option> options = new ArrayList<Option>();
 			//options.add(new Option(new Label("Battle")) {@Override public void run() {stack.push(new BattleOption(location));}});
 			//options.add(new Option(new Label("Catch")) {@Override public void run() {stack.push(new CatchOption(location));}});
 			//options.add(new BattleOption(location)); // Add directly, or push to stack in above commented-out code?
@@ -241,7 +241,7 @@ public class Driver implements Runnable {
     			    }
 			    }
 			}
-			options.add(new MenuOption(Data.getMorph(), new MorphOption()));
+			options.add(new MenuOption("Menu", new MainMenuOption()));
 			if (state.hasInventory(track)) {
 			    options.add(new MenuOption(track.getName(), new TrackOption(), state.choose(track), track));
 			}
@@ -265,14 +265,27 @@ public class Driver implements Runnable {
             if (store.size() > 0) {
                 options.add(new MenuOption(Data.getStore(), new StoreOption(location)));
             }
-            options.add(new MenuOption(Data.getInventory(), new InventoryOption()));
-            options.add(new MenuOption(Data.getDatabase(), new DatabaseOption()));
             final List<Location> available = Location.getAvailable();
             if (available.size() > 1) {
                 options.add(new MenuOption("Travel", new TravelOption(available)));
             }
             return options;
 		}
+	}
+	
+	public class MainMenuOption extends RunOption {
+        protected MainMenuOption() {
+            super(new Label("Menu"));
+        }
+
+        @Override
+        protected List<Option> menu() {
+            final List<Option> options = new ArrayList<Option>();
+            options.add(new MenuOption(Data.getMorph(), new MorphOption()));
+            options.add(new MenuOption(Data.getInventory(), new InventoryOption()));
+            options.add(new MenuOption(Data.getDatabase(), new DatabaseOption()));
+            return options;
+        }
 	}
 
 	public class MenuOption extends Option {
@@ -510,14 +523,16 @@ public class Driver implements Runnable {
         }
 	}
 	
-	private class SpecialOption extends OpponentOption {
+	//private class SpecialOption extends OpponentOption {
+	private class SpecialOption extends BattleOption { // Makes sense for surf, maybe not all special options
         public SpecialOption(final Location location, final Item requirement, final ArrayList<Species> wild) {
-            super(new Label(location.getName() + " - " + requirement), wild /*, new Special(Specialty.Move, requirement)*/ );
+            super(new Label(location.getName() + " - " + requirement), wild, true /*, new Special(Specialty.Move, requirement)*/ );
         }
 
         @Override
         protected Option createOption(final Species chosen, final Species opponent, final Special special) {
-            return Task.createCatchTask(chosen, opponent);
+            //return Task.createCatchTask(chosen, opponent); // Automatically avaiable for BattleOption
+            return Task.createWildTask(chosen, opponent); // Need a separate option? This might be ok for surf
         }
     }
 	
