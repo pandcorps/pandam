@@ -78,13 +78,20 @@ public final class MonsterGame extends BaseGame {
     }
     
     private final static Panmage getImage(final String name) {
-        Panmage img = imageCache.get(name);
-        final String loc = Parser.LOC + "img/" + name + ".png";
-        if (img == null && Iotil.exists(loc)) {
-            img = Pangine.getEngine().createImage(Pantil.vmid(), loc);
-            imageCache.put(name, img);
+        if (imageCache.containsKey(name)) {
+            return imageCache.get(name); // Can be null
         }
-        return img;
+        final String fileName = formatFile(name);
+        for (int i = 0; i < 2; i++) {
+            final String loc = Parser.LOC + ((i == 0) ? "img/" : "misc/") + fileName + ".png";
+            if (Iotil.exists(loc)) {
+                final Panmage img = Pangine.getEngine().createImage(Pantil.vmid(), loc);
+                imageCache.put(name, img);
+                return img;
+            }
+        }
+        imageCache.put(name, null);
+        return null;
     }
     
     private final static class Wrapper {
@@ -210,7 +217,7 @@ public final class MonsterGame extends BaseGame {
                 addImage(c.opponent, MENU_W * 2, y, false);
                 y -= MENU_H;
             } else {
-                final Pantext lbl = new Pantext(Pantil.vmid(), font, format(label.getName()));
+                final Pantext lbl = new Pantext(Pantil.vmid(), font, formatLabel(label.getName()));
                 lbl.getPosition().set(1, y + MENU_H + 1);
                 room.addActor(lbl);
             }
@@ -218,14 +225,15 @@ public final class MonsterGame extends BaseGame {
                 /*if (!option.isPossible()) {
                     continue;
                 }*/
-                final String name = format(option.getGoal().getName());
+                final String labelName = option.getGoal().getName();
+                final String name = formatLabel(labelName);
                 /*buttons.add(TouchTabs.newButton(room, name, menu, menuIn, null, 3, 10, font, name, 3, 2, new Runnable() {
                     @Override public final void run() {
                         // Check possible
                         choice.value = option;
                     }}));*/
                 final TouchButton btn = new TouchButton(interaction, room, name, x, y, 0, menu, menuIn,
-                    getImage(name), OVERLAY_X, OVERLAY_Y,
+                    getImage(labelName), OVERLAY_X, OVERLAY_Y,
                     (name.length() > 10) ? fontTiny : font, name, TEXT_X, TEXT_Y, true);
                 if (x == (MENU_W * 2)) {
                     x = 0;
@@ -262,8 +270,12 @@ public final class MonsterGame extends BaseGame {
         room.addActor(text);
     }
     
-    private static String format(final String name) {
-        return name.replace('é', (char) 130);
+    private static String formatLabel(final String name) {
+        return ImgFont.format(name);
+    }
+    
+    private static String formatFile(final String name) {
+        return Chartil.remove(Chartil.removeAccents(name), ' ');
     }
     
     public final static void main(final String[] args) {

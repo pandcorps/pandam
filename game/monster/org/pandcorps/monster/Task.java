@@ -45,7 +45,8 @@ public class Task extends Option {
     }
 
 	public final static Task createCatchTask(final Species chosen, final Species opponent) {
-		return new Task(new Label("Catch"), Arrays.asList(chosen, Container.getContainer(opponent)), award(opponent, opponent));
+	    final Container container = Container.getContainer(opponent);
+		return new Task(container, Arrays.asList(chosen, container), award(opponent, opponent));
 	}
 
 	//TODO Option to fight when fishing/surfing instead of just catch?

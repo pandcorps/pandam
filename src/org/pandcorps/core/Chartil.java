@@ -169,6 +169,19 @@ public final class Chartil {
     	return b.toString();
     }
     
+    public final static String removeAccents(String s) {
+        //TODO More characters could be replaced; could be more efficient
+        s = s.replace((char) 232, 'e'); // e grave
+        s = s.replace((char) 233, 'e'); // e acute
+        s = s.replace((char) 234, 'e'); // e circumflex
+        s = s.replace((char) 235, 'e'); // e umlaut
+        s = s.replace((char) 236, 'i'); // i grave
+        s = s.replace((char) 237, 'i'); // i acute
+        s = s.replace((char) 238, 'i'); // i circumflex
+        s = s.replace((char) 239, 'i'); // i umlaut
+        return s;
+    }
+    
     public final static char[] concat(final char[]... a) {
     	int size = 0;
     	for (final char[] e : a) {

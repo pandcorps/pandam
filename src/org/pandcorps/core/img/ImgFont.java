@@ -123,6 +123,19 @@ public final class ImgFont {
         }
     }
     
+    public final static String format(String s) {
+        //TODO More characters could be replaced; could automatically format Strings passed to ImgFont; could be more efficient
+        s = s.replace((char) 232, (char) 138); // e grave
+        s = s.replace((char) 233, (char) 130); // e acute
+        s = s.replace((char) 234, (char) 136); // e circumflex
+        s = s.replace((char) 235, (char) 137); // e umlaut
+        s = s.replace((char) 236, (char) 141); // i grave
+        s = s.replace((char) 237, (char) 161); // i acute
+        s = s.replace((char) 238, (char) 140); // i circumflex
+        s = s.replace((char) 239, (char) 139); // i umlaut
+        return s;
+    }
+    
     public final static void main(final String[] args) {
         final Img fontImg = Imtil.load("org/pandcorps/res/img/FontClassic8.png");
         final short colMax = Pancolor.MAX_VALUE, colMin = Pancolor.MIN_VALUE, colMed = 66;
