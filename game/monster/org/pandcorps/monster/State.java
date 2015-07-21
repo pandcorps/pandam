@@ -42,7 +42,7 @@ public class State {
 	private final List<Species> team = new ArrayList<Species>(); // Creatures currently in team
 	private final Set<Species> owned = new HashSet<Species>(); // Creatures that have ever been in team
 	private final Set<Species> seen = new HashSet<Species>(); // Creatures that have ever been seen
-	private final CountMap<Item> inventory = new CountMap<Item>(); //TODO Map from Item to count
+	private final CountMap<Item> inventory = new CountMap<Item>();
 	private final Set<Item> previousInventory = new HashSet<Item>();
 	private final List<Species> trader = new ArrayList<Species>();
 	private Location location = null; // Current location

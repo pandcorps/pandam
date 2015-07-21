@@ -44,6 +44,8 @@ public final class MonsterGame extends BaseGame {
     private static volatile MultiFont font = null;
     private static volatile MultiFont fontTiny = null;
     
+    private final static int IMG_W = 80;
+    private final static int IMG_H = 80;
     private final static int MENU_W = 85;
     private final static int MENU_H = 93;
     private final static int OVERLAY_X = 3;
@@ -232,8 +234,18 @@ public final class MonsterGame extends BaseGame {
                         // Check possible
                         choice.value = option;
                     }}));*/
+                final Panmage img = getImage(labelName);
+                final int imgOffX, imgOffY;
+                if (img == null) {
+                    imgOffX = 0;
+                    imgOffY = 0;
+                } else {
+                    final Panple size = img.getSize();
+                    imgOffX = (IMG_W - (int) size.getX()) / 2;
+                    imgOffY = (IMG_H - (int) size.getY()) / 2;
+                }
                 final TouchButton btn = new TouchButton(interaction, room, name, x, y, 0, menu, menuIn,
-                    getImage(labelName), OVERLAY_X, OVERLAY_Y,
+                    img, OVERLAY_X + imgOffX, OVERLAY_Y + imgOffY,
                     (name.length() > 10) ? fontTiny : font, name, TEXT_X, TEXT_Y, true);
                 if (x == (MENU_W * 2)) {
                     x = 0;
@@ -275,7 +287,7 @@ public final class MonsterGame extends BaseGame {
     }
     
     private static String formatFile(final String name) {
-        return Chartil.remove(Chartil.removeAccents(name), ' ');
+        return Chartil.remove(Chartil.remove(Chartil.removeAccents(name), ' '), '\'');
     }
     
     public final static void main(final String[] args) {
