@@ -352,14 +352,26 @@ public class Driver implements Runnable {
 	
 	protected static SpeciesOption getRandomOption(final BattleOption opt, final List<Species> opponents) {
         final List<SpeciesOption> possibleOptions = new ArrayList<SpeciesOption>();
-        for (final Species species : opponents) {
-            final Species chosen = opt.choose(species);
-            if (chosen == null) {
-                continue;
+        /*
+        First iteration tries to be helfpul, looking for a Species not on the player's team.
+        We have a 50% chance of using that iteration and a 50% chance of skipping it to be totally random.
+        */
+        final int start = Mathtil.rand() ? 0 : 1;
+        for (int i = start; i < 2; i++) {
+            for (final Species species : opponents) {
+                final Species chosen = opt.choose(species);
+                if (chosen == null) {
+                    continue;
+                } else if (i == 0 && state.hasTeam(species)) {
+                    continue;
+                }
+                final Option option = opt.createOption(chosen, species, species.getSpecial());
+                if (option.isPossible()) {
+                    possibleOptions.add(new SpeciesOption(option, species));
+                }
             }
-            final Option option = opt.createOption(chosen, species, species.getSpecial());
-            if (option.isPossible()) {
-                possibleOptions.add(new SpeciesOption(option, species));
+            if (possibleOptions.size() > 0) {
+                break;
             }
         }
         return possibleOptions.size() > 0 ? Mathtil.rand(possibleOptions) : null;
