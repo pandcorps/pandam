@@ -421,6 +421,25 @@ public class Driver implements Runnable {
 		}
 	}
 	
+	protected class AwardOption extends RunOption {
+	    private final Task task;
+	    
+        protected AwardOption(final Task task) {
+            super(new Label("Award"));
+            this.task = task;
+        }
+
+        @Override
+        protected List<Option> menu() {
+            final List<Entity> awarded = task.getAwarded();
+            final List<Option> options = new ArrayList<Option>(awarded.size());
+            for (final Entity award : awarded) {
+                options.add(new BackOption(award.getName()));
+            }
+            return options;
+        }
+	}
+	
 	protected abstract class BattleOption extends RunOption {
         private final List<Species> opponents;
         private final boolean catchable;

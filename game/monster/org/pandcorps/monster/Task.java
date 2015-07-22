@@ -95,6 +95,10 @@ public class Task extends Option {
 		if (goal instanceof Species) {
 		    State.get().see((Species) goal);
 		}
+		if (awarded.size() > 0) {
+		    final Driver driver = Driver.get();
+		    driver.stack.push(driver.new AwardOption(this));
+		}
 	}
 
 	/*private final int requiredExperience; // To morph a creature to a species of higher rank
