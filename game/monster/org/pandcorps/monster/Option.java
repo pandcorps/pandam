@@ -27,7 +27,8 @@ import java.util.*;
 public abstract class Option implements Runnable {
 	protected final static ArrayList<Entity> EMPTY = new ArrayList<Entity>(0);
 	protected final Label goal; // Same as awarded for a catch or buy task; for battle goal will be opponent creature, and awarded will be experience/money
-	protected final ArrayList<Entity> required;
+	protected final List<Entity> required;
+	private String info = null;
 
 	protected Option(final Label goal) {
 	    this(goal, null);
@@ -46,12 +47,20 @@ public abstract class Option implements Runnable {
 		return goal;
 	}
 
-	public final ArrayList<Entity> getRequired() {
+	public final List<Entity> getRequired() {
 		return required;
 	}
 
-	public ArrayList<Entity> getAwarded() {
+	public List<Entity> getAwarded() {
 		return EMPTY;
+	}
+	
+	public final String getInfo() {
+	    return info;
+	}
+	
+	public final void setInfo(final String info) {
+	    this.info = info;
 	}
 
 	public boolean isPossible() {

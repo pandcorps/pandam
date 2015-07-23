@@ -109,9 +109,17 @@ public class State {
 	    return Collections.unmodifiableSet(inventory.keySet());
 	}
 	
+	public Map<Item, Long> getInventoryMap() {
+        return Collections.unmodifiableMap(inventory);
+    }
+	
 	public boolean hasInventory(final Item item) {
 	    return inventory.longValue(item) > 0;
 	}
+	
+	public long getInventoryQuantity(final Item item) {
+        return inventory.longValue(item);
+    }
 	
 	public boolean wasInventory(final Item item) {
 	    return previousInventory.contains(item);

@@ -46,7 +46,7 @@ public class StdHandler extends Handler {
                 System.out.print(". ");
                 final Label goal = option.getGoal();
                 System.out.println(goal.getName());
-                final ArrayList<Entity> required = option.getRequired();
+                final List<Entity> required = option.getRequired();
                 final int requiredSize = required.size();
                 if (requiredSize > 0) {
                     System.out.print("\tNeed: ");
@@ -62,7 +62,7 @@ public class StdHandler extends Handler {
                     }
                     System.out.println();
                 }
-                final ArrayList<Entity> awarded = option.getAwarded();
+                final List<Entity> awarded = option.getAwarded();
                 final int awardedSize = awarded.size();
                 if (awardedSize > 0 && (awardedSize > 1 || !awarded.get(0).equals(goal))) {
                     System.out.print("\tEarn: ");

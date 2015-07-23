@@ -205,8 +205,16 @@ public final class MonsterGame extends BaseGame {
                 numRows++;
                 titleOffset = 0;
             }
-            final int menuHeight = numRows * MENU_H;
-            int x = 0, y = menuHeight - MENU_H;
+            int menuH = MENU_H, btnOffY = 0;
+            for (final Option option : options) {
+                if (Chartil.isValued(option.getInfo())) {
+                    btnOffY = 8;
+                    menuH += btnOffY;
+                    break;
+                }
+            }
+            final int menuHeight = numRows * menuH;
+            int x = 0, y = menuHeight - menuH;
             final int max = menuHeight + titleOffset - engine.getEffectiveHeight(); // Set range before changing y in loop below
             final SwipeScroller scroller = new SwipeScroller();
             scroller.setLayer(room);
@@ -217,10 +225,10 @@ public final class MonsterGame extends BaseGame {
                 final BattleOption c = (BattleOption) caller;
                 addImage(c.chosen, 0, y, true);
                 addImage(c.opponent, MENU_W * 2, y, false);
-                y -= MENU_H;
+                y -= menuH;
             } else {
                 final Pantext lbl = new Pantext(Pantil.vmid(), font, formatLabel(label.getName()));
-                lbl.getPosition().set(1, y + MENU_H + 1);
+                lbl.getPosition().set(1, y + menuH + 1);
                 room.addActor(lbl);
             }
             for (final Option option : options) {
@@ -244,12 +252,18 @@ public final class MonsterGame extends BaseGame {
                     imgOffX = (IMG_W - (int) size.getX()) / 2;
                     imgOffY = (IMG_H - (int) size.getY()) / 2;
                 }
-                final TouchButton btn = new TouchButton(interaction, room, name, x, y, 0, menu, menuIn,
+                final TouchButton btn = new TouchButton(interaction, room, name, x, y + btnOffY, 0, menu, menuIn,
                     img, OVERLAY_X + imgOffX, OVERLAY_Y + imgOffY,
                     (name.length() > 10) ? fontTiny : font, name, TEXT_X, TEXT_Y, true);
+                final String info = option.getInfo();
+                if (Chartil.isValued(info)) {
+                    final Pantext infoLabel = new Pantext(Pantil.vmid(), fontTiny, info);
+                    infoLabel.getPosition().set(x, y + 1);
+                    room.addActor(infoLabel);
+                }
                 if (x == (MENU_W * 2)) {
                     x = 0;
-                    y -= MENU_H;
+                    y -= menuH;
                 } else {
                     x += MENU_W;
                 }

@@ -946,11 +946,12 @@ public class Driver implements Runnable {
 
         @Override
         public List<Option> menu() {
-            final Collection<Item> inventory = state.getInventory();
+            final Map<Item, Long> inventory = state.getInventoryMap();
             final List<Option> options = new ArrayList<Option>(inventory.size());
-            for (final Item product : inventory) {
+            for (final Entry<Item, Long> entry : inventory.entrySet()) {
+                final Item product = entry.getKey();
                 if (product.getPrice() > 0 && !product.isUnique()) {
-                    options.add(Task.createSellTask(product));
+                    options.add(Task.createSellTask(product, entry.getValue().longValue()));
                 }
             }
             return options;

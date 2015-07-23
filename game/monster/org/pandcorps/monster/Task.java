@@ -25,7 +25,7 @@ package org.pandcorps.monster;
 import java.util.*;
 
 public class Task extends Option {
-	protected final ArrayList<Entity> awarded;
+	protected final List<Entity> awarded;
 
 	public Task(final Label goal, final Collection<? extends Entity> required, final Collection<? extends Entity> awarded) {
 		super(goal, required);
@@ -69,15 +69,21 @@ public class Task extends Option {
     //}
 
 	public final static Task createBuyTask(final Item item) {
-		return new Task(item, Arrays.asList(new Money(item.getPrice())), Arrays.asList(item));
+	    final int buyPrice = item.getPrice();
+		final Task task = new Task(item, Arrays.asList(new Money(buyPrice)), Arrays.asList(item));
+		task.setInfo("Qty: " + State.get().getInventoryQuantity(item) + "; " + buyPrice);
+		return task;
 	}
 	
-	public final static Task createSellTask(final Item item) {
-        return new Task(item, Arrays.asList(item), Arrays.asList(new Money(item.getPrice() / 2)));
+	public final static Task createSellTask(final Item item, final long qty) {
+	    final int sellPrice = item.getPrice() / 2;
+        final Task task = new Task(item, Arrays.asList(item), Arrays.asList(new Money(sellPrice)));
+        task.setInfo("Qty: " + qty + "; " + sellPrice);
+        return task;
     }
 
 	@Override
-	public ArrayList<Entity> getAwarded() {
+	public List<Entity> getAwarded() {
 		return awarded;
 	}
 
