@@ -131,6 +131,8 @@ public final class MonsterGame extends BaseGame {
         }
     }
     
+    private static Option lastCaller = null;
+    
     private final static class MonsterScreen extends Panscreen {
         private final Option caller;
         private final Label label;
@@ -220,7 +222,10 @@ public final class MonsterGame extends BaseGame {
             scroller.setLayer(room);
             scroller.setRange(0, 0, 0, max);
             engine.setSwipeListener(scroller);
-            room.getOrigin().set(0, max);
+            if (caller != lastCaller) {
+                room.getOrigin().set(0, max);
+                lastCaller = caller;
+            }
             if (chosenDisplayed) {
                 final BattleOption c = (BattleOption) caller;
                 addImage(c.chosen, 0, y, true);

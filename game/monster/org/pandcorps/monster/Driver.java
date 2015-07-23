@@ -425,7 +425,7 @@ public class Driver implements Runnable {
 	    private final Task task;
 	    
         protected AwardOption(final Task task) {
-            super(new Label("Award"));
+            super(new Label("You got:"));
             this.task = task;
         }
 
