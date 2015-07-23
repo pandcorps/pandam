@@ -26,6 +26,7 @@ import java.util.*;
 
 public class Task extends Option {
 	protected final List<Entity> awarded;
+	private boolean pushAwardOptionIfNeeded = true;
 
 	public Task(final Label goal, final Collection<? extends Entity> required, final Collection<? extends Entity> awarded) {
 		super(goal, required);
@@ -79,6 +80,7 @@ public class Task extends Option {
 	    final int sellPrice = item.getPrice() / 2;
         final Task task = new Task(item, Arrays.asList(item), Arrays.asList(new Money(sellPrice)));
         task.setInfo("Qty: " + qty + "; " + sellPrice);
+        task.pushAwardOptionIfNeeded = false;
         return task;
     }
 
@@ -102,9 +104,11 @@ public class Task extends Option {
 		    State.get().see((Species) goal);
 		}
 		final int awardedSize = awarded.size();
-		if ((awardedSize > 1) || ((awardedSize == 1) && (awarded.get(0) != goal))) {
-		    final Driver driver = Driver.get();
-		    driver.stack.push(driver.new AwardOption(this));
+		if (pushAwardOptionIfNeeded) {
+		    if ((awardedSize > 1) || ((awardedSize == 1) && (awarded.get(0) != goal))) {
+    		    final Driver driver = Driver.get();
+    		    driver.stack.push(driver.new AwardOption(this));
+		    }
 		}
 	}
 
