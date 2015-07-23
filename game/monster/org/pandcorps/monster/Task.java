@@ -101,7 +101,8 @@ public class Task extends Option {
 		if (goal instanceof Species) {
 		    State.get().see((Species) goal);
 		}
-		if (awarded.size() > 0) {
+		final int awardedSize = awarded.size();
+		if ((awardedSize > 1) || ((awardedSize == 1) && (awarded.get(0) != goal))) {
 		    final Driver driver = Driver.get();
 		    driver.stack.push(driver.new AwardOption(this));
 		}
