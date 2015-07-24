@@ -72,17 +72,21 @@ public class Task extends Option {
 	public final static Task createBuyTask(final Item item) {
 	    final int buyPrice = item.getPrice();
 		final Task task = new Task(item, Arrays.asList(new Money(buyPrice)), Arrays.asList(item));
-		task.setInfo("Qty: " + State.get().getInventoryQuantity(item) + "; " + buyPrice);
+		setItemInfo(task, State.get().getInventoryQuantity(item), buyPrice);
 		return task;
 	}
 	
 	public final static Task createSellTask(final Item item, final long qty) {
 	    final int sellPrice = item.getPrice() / 2;
         final Task task = new Task(item, Arrays.asList(item), Arrays.asList(new Money(sellPrice)));
-        task.setInfo("Qty: " + qty + "; " + sellPrice);
+        setItemInfo(task, qty, sellPrice);
         task.pushAwardOptionIfNeeded = false;
         return task;
     }
+	
+	protected final static void setItemInfo(final Option opt, final long qty, final int price) {
+	    opt.setInfo("Qty: " + qty + ((price > 0) ? ("; " + price) : ""));
+	}
 
 	@Override
 	public List<Entity> getAwarded() {

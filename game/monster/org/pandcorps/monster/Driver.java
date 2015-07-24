@@ -965,14 +965,16 @@ public class Driver implements Runnable {
 
         @Override
         public List<Option> menu() {
-            final Collection<Item> inventory = state.getInventory();
+            final Set<Entry<Item, Long>> inventory = state.getInventoryMap().entrySet();
             final List<Option> options = new ArrayList<Option>(inventory.size());
-            final String money = Data.getMoney();
-            for (final Item product : inventory) {
+            for (final Entry<Item, Long> entry : inventory) {
+                final Item product = entry.getKey();
                 // product.isUnique() // Might display this and other information
                 // If we had item descriptions, we could make an option to display them
                 // Maybe should allow multiple goals for multiple data fields
-                options.add(new BackOption(product.getName() + " - " + product.getPrice() + money));
+                final BackOption opt = new BackOption(product);
+                Task.setItemInfo(opt, entry.getValue().longValue(), product.getPrice());
+                options.add(opt);
             }
             return options;
         }
@@ -1045,7 +1047,11 @@ public class Driver implements Runnable {
         }
         
         private BackOption(final String text) {
-            super(new Label(text));
+            this(new Label(text));
+        }
+        
+        private BackOption(final Label label) {
+            super(label);
         }
             
         @Override
