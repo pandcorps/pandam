@@ -551,7 +551,7 @@ public class FurGuardiansGame extends BaseGame {
 		reloadAnimalStrip(pc);
 	}
 	
-	private final static void buildGuy(final Img guy, final Img face, final Img[] tails, final Img eyes, final Img clothing,
+	private final static void buildGuy(final Img guy, final Img face, final Img[] tails, final Img eyes, final Img clothing, final Img clothingOverlay,
 			final int y, final int t) {
         if (tails != null) {
             Imtil.copy(tails[0], guy, 0, 0, 12, 12, t, 20 + y - t, Imtil.COPY_BACKGROUND);
@@ -560,6 +560,9 @@ public class FurGuardiansGame extends BaseGame {
             Imtil.copy(clothing, guy, 0, 0, 32, 32, 0, 0, Imtil.COPY_FOREGROUND);
         }
         Imtil.copy(face, guy, 0, 0, face.getWidth(), face.getHeight(), 8, 1 + y, Imtil.COPY_FOREGROUND);
+        if (clothingOverlay != null) {
+            Imtil.copy(clothingOverlay, guy, 0, 0, 32, 32, 0, 0, Imtil.COPY_FOREGROUND);
+        }
         /*if (hat != null) {
             Imtil.copy(hat, guy, 0, 0, 18, 18, 8, 1 + y, Imtil.COPY_FOREGROUND);
         }*/
@@ -723,16 +726,28 @@ public class FurGuardiansGame extends BaseGame {
 				filterStrip(tailsRaw, tails, greyMask, f);
 			}
 			eyes = getEyes(avatar.eye);
-			final Img[] clothings;
+			final Img[] clothings, clothingOverlays;
 			if (c == null) {
 			    clothingFilter = null;
 			    clothings = null;
+			    clothingOverlays = null;
 			} else {
 			    c.init();
-			    final Img[] imgs = needDragon ? c.rideImgs : c.imgs;
+			    final Img[] imgs, imgOverlays;
+			    if (needDragon) {
+			        imgs = c.rideImgs;
+			        imgOverlays = null;
+			    } else {
+			        imgs = c.imgs;
+			        imgOverlays = c.imgOverlays;
+			    }
 			    clothings = new Img[imgs.length];
+			    clothingOverlays = imgOverlays == null ? null : new Img[imgOverlays.length];
 			    clothingFilter = getFilter(avatar.clothing.col);
 			    filterStrip(imgs, clothings, greyMask, clothingFilter);
+			    if (clothingOverlays != null) {
+			        filterStrip(imgOverlays, clothingOverlays, greyMask, clothingFilter);
+			    }
 			}
 			final Img hat, mask;
 			if (avatar.hat.clth == null) {
@@ -768,9 +783,9 @@ public class FurGuardiansGame extends BaseGame {
 					} else {
 						tailH = 1;
 					}
-					buildGuy(guys[i], face, tails, eyes, clothings == null ? null : clothings[i], (i == 3) ? -1 : 0, tailH);
+					buildGuy(guys[i], face, tails, eyes, clothings == null ? null : clothings[i], clothingOverlays == null ? null : clothingOverlays[i], (i == 3) ? -1 : 0, tailH);
 				}
-				buildGuy(guyBlink, face, tails, eyesBlink, clothings == null ? null : getStill(clothings, hasStill), 0, 0);
+				buildGuy(guyBlink, face, tails, eyesBlink, clothings == null ? null : getStill(clothings, hasStill), clothingOverlays == null ? null : getStill(clothingOverlays, hasStill), 0, 0);
 			}
 			Img.close(clothings);
 		}

@@ -238,6 +238,7 @@ public class Avatar extends EyeData implements Segmented {
         private final int cost;
         private final String body;
         protected Img[] imgs = null;
+        protected Img[] imgOverlays = null;
         protected Img[] mapImgs = null;
         protected Img[] rideImgs = null;
         
@@ -267,6 +268,7 @@ public class Avatar extends EyeData implements Segmented {
             final String loc = getLoc();
             final int d = getDim();
             imgs = FurGuardiansGame.loadChrStrip(loc + "/" + res + ".png", d, true);
+            imgOverlays = FurGuardiansGame.loadChrStrip(loc + "/" + res + "Overlay.png", d, false);
             if (!res.equals("RoyalMantle")) {
             	mapImgs = FurGuardiansGame.loadChrStrip(loc + "/" + res + "Map.png", d, true);
             	if (getClass() == Clothing.class) {
@@ -274,6 +276,7 @@ public class Avatar extends EyeData implements Segmented {
             	}
             }
             Img.setTemporary(false, imgs);
+            Img.setTemporary(false, imgOverlays);
             Img.setTemporary(false, mapImgs);
             Img.setTemporary(false, rideImgs);
         }
