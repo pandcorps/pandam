@@ -1,5 +1,6 @@
-Added coat.
-Added hair ribbons.
+1.10.0 (19)
+
+Added coat, hair ribbons, and bowler hat.
 Added Nest Egg Achievement.
 
 *****
