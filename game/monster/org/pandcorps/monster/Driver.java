@@ -434,7 +434,15 @@ public class Driver implements Runnable {
             final List<Entity> awarded = task.getAwarded();
             final List<Option> options = new ArrayList<Option>(awarded.size());
             for (final Entity award : awarded) {
-                options.add(new BackOption(award.getName()));
+                final BackOption opt;
+                if (award instanceof Amount) {
+                    final Amount amount = (Amount) award;
+                    opt = new BackOption(amount.getUnits());
+                    opt.setInfo(String.valueOf(amount.getValue()));
+                } else {
+                    opt = new BackOption(award.getName());
+                }
+                options.add(opt);
             }
             return options;
         }

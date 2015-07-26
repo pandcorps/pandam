@@ -24,14 +24,20 @@ package org.pandcorps.monster;
 
 public abstract class Amount extends Entity {
 	protected final int value;
+	private final String units;
 
 	protected Amount(final int value, final String label) {
 		super(value + " " + label);
 		this.value = value;
+		this.units = label;
 	}
 
 	public final int getValue() {
 	    return value;
+	}
+	
+	public final String getUnits() {
+	    return units;
 	}
 
 	@Override
