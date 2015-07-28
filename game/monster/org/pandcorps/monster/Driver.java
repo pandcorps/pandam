@@ -605,7 +605,7 @@ public class Driver implements Runnable {
         @Override
         protected Option createOption(final Species chosen, final Species opponent, final Special special) {
             //return new MorphTask(opponent);
-            return new RemoveTask(opponent, getMorphRequired(opponent), getMorphAwarded(opponent));
+            return new RemoveTask(opponent.getPrecursor(), getMorphRequired(opponent), getMorphAwarded(opponent));
         }
         
         @Override
