@@ -487,7 +487,7 @@ public class Driver implements Runnable {
             final List<Option> options = new ArrayList<Option>(catchable ? 2 : 1);
             //options.add(createOption(chosen, opponent, opponent.getSpecial()));
             options.add(option);
-            if (catchable) {
+            if (catchable && !state.hasTeam(opponent)) {
                 options.add(Task.createCatchTask(chosen, opponent));
             }
             return options;
