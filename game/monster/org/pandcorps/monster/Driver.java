@@ -975,16 +975,23 @@ public class Driver implements Runnable {
         public List<Option> menu() {
             final Set<Entry<Item, Long>> inventory = state.getInventoryMap().entrySet();
             final List<Option> options = new ArrayList<Option>(inventory.size());
+            addItem(options, new Label(Data.getMoney()), state.getMoney());
+            addItem(options, new Label(Data.getExperience()), state.getExperience());
             for (final Entry<Item, Long> entry : inventory) {
                 final Item product = entry.getKey();
                 // product.isUnique() // Might display this and other information
                 // If we had item descriptions, we could make an option to display them
                 // Maybe should allow multiple goals for multiple data fields
-                final BackOption opt = new BackOption(product);
-                Task.setItemInfo(opt, entry.getValue().longValue(), product.getPrice());
-                options.add(opt);
+                addItem(options, product, entry.getValue().longValue());
             }
             return options;
+        }
+        
+        private final void addItem(final List<Option> options, final Label product, final long amount) {
+            final BackOption opt = new BackOption(product);
+            //Task.setItemInfo(opt, entry.getValue().longValue(), product.getPrice());
+            opt.setInfo(String.valueOf(amount));
+            options.add(opt);
         }
     }
     
