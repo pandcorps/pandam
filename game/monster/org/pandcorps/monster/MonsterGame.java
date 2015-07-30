@@ -38,6 +38,13 @@ import org.pandcorps.pandax.text.Fonts.*;
 import org.pandcorps.pandax.touch.*;
 
 public final class MonsterGame extends BaseGame {
+    /*
+    Breed/lab don't show options already on team
+    Show disabled Catch if on team
+    Upgrade screen show requirements
+    Show player's money on buy/sell
+    Database screen
+    */
     private static volatile Driver driver = null;
     private static volatile Panroom room = null;
     
@@ -79,20 +86,25 @@ public final class MonsterGame extends BaseGame {
         //menuRight = engine.createImage(Pantil.vmid(), ImtilX.newRight2(80, Pancolor.BLUE));
     }
     
-    private final static Panmage getImage(final String name) {
-        if (imageCache.containsKey(name)) {
-            return imageCache.get(name); // Can be null
+    private final static Panmage getImage(final String name, final boolean possible) {
+        final String key = name + (possible ? "" : ".trans");
+        if (imageCache.containsKey(key)) {
+            return imageCache.get(key); // Can be null
         }
         final String fileName = formatFile(name);
         for (int i = 0; i < 2; i++) {
             final String loc = Parser.LOC + ((i == 0) ? "img/" : "misc/") + fileName + ".png";
             if (Iotil.exists(loc)) {
-                final Panmage img = Pangine.getEngine().createImage(Pantil.vmid(), loc);
-                imageCache.put(name, img);
+                final Img im = Imtil.load(loc);
+                if (!possible) {
+                    Imtil.setPseudoTranslucent(im);
+                }
+                final Panmage img = Pangine.getEngine().createImage(Pantil.vmid(), im);
+                imageCache.put(key, img);
                 return img;
             }
         }
-        imageCache.put(name, null);
+        imageCache.put(key, null);
         return null;
     }
     
@@ -247,7 +259,8 @@ public final class MonsterGame extends BaseGame {
                         // Check possible
                         choice.value = option;
                     }}));*/
-                final Panmage img = getImage(labelName);
+                final boolean possible = option.isPossible();
+                final Panmage img = getImage(labelName, possible);
                 final int imgOffX, imgOffY;
                 if (img == null) {
                     imgOffX = 0;
@@ -272,7 +285,7 @@ public final class MonsterGame extends BaseGame {
                 } else {
                     x += MENU_W;
                 }
-                if (!option.isPossible()) {
+                if (!possible) {
                     btn.setImageDisabled(menuOff);
                     btn.setEnabled(false);
                 }
@@ -290,7 +303,7 @@ public final class MonsterGame extends BaseGame {
     private static void addImage(final Species s, final int x, final int y, final boolean mirror) {
         final String name = s.getName();
         final Panctor actor = new Panctor();
-        final Panmage image = getImage(name);
+        final Panmage image = getImage(name, true);
         actor.setView(image);
         //actor.getPosition().set(x, y);
         actor.getPosition().set(x + OVERLAY_X + (mirror ? image.getSize().getX() + 1 : 0), y + OVERLAY_Y);
