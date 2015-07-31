@@ -396,7 +396,7 @@ public class Driver implements Runnable {
                 options.add(new MenuOption(name, this));
             }
 		}
-
+		
 		@Override
 		public List<Option> menu() {
 		    final List<Species> opponents = getOpponents();
@@ -608,7 +608,7 @@ public class Driver implements Runnable {
         public MorphOption() {
             super(new Label(Data.getMorph()), getMorphable());
         }
-
+        
         @Override
         protected Option createOption(final Species chosen, final Species opponent, final Special special) {
             //return new MorphTask(opponent);
@@ -635,6 +635,7 @@ public class Driver implements Runnable {
 
         @Override
         protected List<Option> menu() {
+            stack.push(this);
             final List<Option> options = new ArrayList<Option>();
             options.add(option);
             return options;
@@ -1093,7 +1094,9 @@ public class Driver implements Runnable {
             
         @Override
         public void run() {
-            stack.pop();
+            do {
+                stack.pop();
+            } while (!stack.peek().isPossible());
         }
     }
     

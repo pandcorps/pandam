@@ -41,8 +41,9 @@ public final class MonsterGame extends BaseGame {
     /*
     Breed/lab don't show options already on team
     Show disabled Catch if on team
-    Upgrade screen show requirements
     Show player's money on buy/sell
+    Show container quantity on Battle screen
+    Show total money/experience when earning it
     Database screen
     */
     private static volatile Driver driver = null;
