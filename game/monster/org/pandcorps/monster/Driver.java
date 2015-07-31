@@ -604,7 +604,7 @@ public class Driver implements Runnable {
         return list;
     }
 	
-	private class MorphOption extends OpponentOption {
+	protected class MorphOption extends OpponentOption {
         public MorphOption() {
             super(new Label(Data.getMorph()), getMorphable());
         }

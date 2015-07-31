@@ -249,8 +249,8 @@ public final class MonsterGame extends BaseGame {
             } else if (detailDisplayed) {
                 final Task task = (Task) ((MorphDetailOption) caller).option;
                 final Panmage delim = getImage("Plus", true), init = getImage("Equals", true);
-                x = addImages(task.getRequired(), 0, y, MENU_W, delim, null);
-                addImages(task.getAwarded(), x, y, MENU_W, delim, init);
+                x = addImages(task.getRequired(), 0, y, MENU_W, delim, null, true);
+                addImages(task.getAwarded(), x, y, MENU_W, delim, init, false);
                 y -= menuH;
                 x = 0;
             } else {
@@ -278,7 +278,9 @@ public final class MonsterGame extends BaseGame {
                 final boolean possible = option.isPossible();
                 final Panmage img = getImage(labelName, possible);
                 initImageOffsets(img);
-                final TouchButton btn = new TouchButton(interaction, room, name, x, y + btnOffY, 0, menu, menuIn,
+                //final Panmage menuCurr = possible ? menu : menuOff; // Will grey out impossible-yet-previewable options
+                final Panmage menuCurr = menu; // Impossible-yet-previewable buttons are normal color; reasonable if icon is translucent
+                final TouchButton btn = new TouchButton(interaction, room, name, x, y + btnOffY, 0, menuCurr, menuIn,
                     img, OVERLAY_X + imgOffX, OVERLAY_Y + imgOffY,
                     getFont(name), name, TEXT_X, TEXT_Y, true);
                 final String info = option.getInfo();
@@ -293,7 +295,7 @@ public final class MonsterGame extends BaseGame {
                 } else {
                     x += MENU_W;
                 }
-                if (!possible) {
+                if (!possible && !(caller instanceof MorphOption)) {
                     btn.setImageDisabled(menuOff);
                     btn.setEnabled(false);
                 }
@@ -319,7 +321,7 @@ public final class MonsterGame extends BaseGame {
         }
     }
     
-    private static int addImages(final List<Entity> list, int x, final int y, final int off, final Panmage delim, final Panmage init) {
+    private static int addImages(final List<Entity> list, int x, final int y, final int off, final Panmage delim, final Panmage init, final boolean checkPossible) {
         initImageOffsets(delim);
         final int delimOffX = (int) delim.getSize().getX() / 2, delimOffY = OVERLAY_Y + imgOffY;
         boolean first = true;
@@ -330,15 +332,19 @@ public final class MonsterGame extends BaseGame {
             } else {
                 addImage(delim, x - delimOffX, y + delimOffY, 10, false);
             }
-            addImage(s, x, y, false);
+            addImage(s, x, y, false, !checkPossible || s.isAvailable());
             x += off;
         }
         return x;
     }
     
     private static void addImage(final Entity s, final int x, final int y, final boolean mirror) {
+        addImage(s, x, y, mirror, true);
+    }
+    
+    private static void addImage(final Entity s, final int x, final int y, final boolean mirror, final boolean possible) {
         final String name = s.getName();
-        final Panmage image = getImage((s instanceof Amount) ? ((Amount) s).getUnits(): name, true);
+        final Panmage image = getImage((s instanceof Amount) ? ((Amount) s).getUnits(): name, possible);
         initImageOffsets(image);
         addImage(image, x + OVERLAY_X + imgOffX + (mirror ? image.getSize().getX() + 1 : 0), y + OVERLAY_Y + imgOffY, 0, mirror);
         final Pantext text = new Pantext(Pantil.vmid(), getFont(name), name);
