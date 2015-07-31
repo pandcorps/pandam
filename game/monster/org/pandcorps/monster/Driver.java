@@ -144,7 +144,7 @@ public class Driver implements Runnable {
 
         @Override
         public List<Option> menu() {
-            final ArrayList<Option> options = new ArrayList<Option>();
+            final List<Option> options = new ArrayList<Option>();
             for (final Species s : Species.getStart()) {
                 options.add(Task.createGiftTask(s));
             }
@@ -169,13 +169,13 @@ public class Driver implements Runnable {
 
         @Override
         public List<Option> menu() {
-            final ArrayList<Option> options = new ArrayList<Option>(available.size());
+            final List<Option> options = new ArrayList<Option>(available.size());
             final Location curr = state.getLocation();
             for (final Location l : available) {
                 if (curr.equals(l)) {
                     continue;
                 }
-                final ArrayList<Entity> requirements = new ArrayList<Entity>();
+                final List<Entity> requirements = new ArrayList<Entity>();
                 final Item access = l.getAccess();
                 if (access != null) {
                     final Species chosen = state.chooseIfNecessary(access); //TODO Harmonize with Location.getAvailable which uses isMove
@@ -400,7 +400,7 @@ public class Driver implements Runnable {
 		@Override
 		public List<Option> menu() {
 		    final List<Species> opponents = getOpponents();
-			final ArrayList<Option> options = new ArrayList<Option>(opponents.size());
+			final List<Option> options = new ArrayList<Option>(opponents.size());
 			for (final Species species : opponents) {
 			    final Special speciesSpecial = species.getSpecial();
 			    //if (Driver.matches(speciesSpecial, special)) { // Needed?
@@ -571,7 +571,7 @@ public class Driver implements Runnable {
 	
 	//private class SpecialOption extends OpponentOption {
 	private class SpecialOption extends BattleOption { // Makes sense for surf, maybe not all special options
-        public SpecialOption(final Location location, final Item requirement, final ArrayList<Species> wild) {
+        public SpecialOption(final Location location, final Item requirement, final List<Species> wild) {
             super(new Label(location.getName() + " - " + requirement), wild, true /*, new Special(Specialty.Move, requirement)*/ );
         }
 
@@ -593,8 +593,8 @@ public class Driver implements Runnable {
         }
     }
 	
-	private final ArrayList<Species> getTrackable() {
-        final ArrayList<Species> list = new ArrayList<Species>();
+	private final List<Species> getTrackable() {
+        final List<Species> list = new ArrayList<Species>();
         for (final Species s : state.getPreferences()) {
             //TODO Option to display creatures currently in team
             if (s.canTrack() && state.hasSeen(s) && !state.hasTeam(s)) {
@@ -670,8 +670,8 @@ public class Driver implements Runnable {
         }
     }
     
-    private final ArrayList<Species> getMorphable() {
-        final ArrayList<Species> list = new ArrayList<Species>();
+    private final List<Species> getMorphable() {
+        final List<Species> list = new ArrayList<Species>();
         for (final Species s : state.getPreferences()) {
             //TODO Option to display creatures currently in team
             final Species precursor = s.getPrecursor();
@@ -690,7 +690,7 @@ public class Driver implements Runnable {
             return Arrays.asList(precursor, goal.getCatalyst());
         }
         final Collection<Species> morphs = precursor.getMorphs();
-        final ArrayList<Entity> required = new ArrayList<Entity>(1 + morphs.size());
+        final List<Entity> required = new ArrayList<Entity>(1 + morphs.size());
         required.add(precursor);
         for (final Species morph : morphs) {
             required.add(morph.getCatalyst());
@@ -747,7 +747,7 @@ public class Driver implements Runnable {
                     give.add(s);
                 }
             }
-            final ArrayList<Species> receive = new ArrayList<Species>(), other = new ArrayList<Species>();
+            final List<Species> receive = new ArrayList<Species>(), other = new ArrayList<Species>();
             final List<Species> trader = state.getTrader();
             for (final Species s : trader) {
                 if (Special.getSpecialty(s.getSpecial()) == Specialty.Trader ||
@@ -780,7 +780,7 @@ public class Driver implements Runnable {
                 size = rsize;
                 last = null;
             }
-            final ArrayList<Option> options = new ArrayList<Option>(size);
+            final List<Option> options = new ArrayList<Option>(size);
             final Iterator<Species> giter = give.iterator();
             for (int i = 0; i < size; i++) {
                 final Species g = giter.hasNext() ? giter.next() : last;
@@ -836,8 +836,8 @@ public class Driver implements Runnable {
         }
     }
     
-    private final ArrayList<Species> getBreedable() {
-        final ArrayList<Species> list = new ArrayList<Species>();
+    private final List<Species> getBreedable() {
+        final List<Species> list = new ArrayList<Species>();
         for (final Species s : Species.getBreedable()) {
             //TODO Option to display creatures currently in team
             if (state.hasTeam(s)) {
@@ -875,8 +875,8 @@ public class Driver implements Runnable {
         }
     }
     
-    private final ArrayList<Species> getLab() {
-        final ArrayList<Species> list = new ArrayList<Species>();
+    private final List<Species> getLab() {
+        final List<Species> list = new ArrayList<Species>();
         for (final Species s : Species.getLab()) {
             // Usually show options even if don't have all requirements, but there should be some mystery here;
             // perhaps even the goal/award should be hidden
@@ -925,8 +925,8 @@ public class Driver implements Runnable {
         }
     }
     
-    private final ArrayList<Species> getLibrary() {
-        final ArrayList<Species> list = new ArrayList<Species>();
+    private final List<Species> getLibrary() {
+        final List<Species> list = new ArrayList<Species>();
         for (final Species s : Species.getLibrary()) {
             if (!state.hasSeen(s)) {
                 list.add(s);
@@ -945,7 +945,7 @@ public class Driver implements Runnable {
 
         @Override
         public List<Option> menu() {
-            final ArrayList<Option> options = new ArrayList<Option>(2);
+            final List<Option> options = new ArrayList<Option>(2);
             options.add(new MenuOption("Buy", new BuyOption(location)));
             options.add(new MenuOption("Sell", new SellOption()));
             return options;
@@ -962,7 +962,7 @@ public class Driver implements Runnable {
 
         @Override
         public List<Option> menu() {
-            final ArrayList<Option> options = new ArrayList<Option>(store.size());
+            final List<Option> options = new ArrayList<Option>(store.size());
             for (final Item product : store) {
                 options.add(Task.createBuyTask(product));
             }
@@ -1026,7 +1026,7 @@ public class Driver implements Runnable {
         @Override
         public List<Option> menu() {
             final Collection<Species> prefs = state.getPreferences();
-            final ArrayList<Option> options = new ArrayList<Option>(prefs.size());
+            final List<Option> options = new ArrayList<Option>(prefs.size());
             //for (final Species s : prefs) {
                 // See InventoryOption notes
                 // Status - unseen/seen/owned/on team
@@ -1050,7 +1050,7 @@ public class Driver implements Runnable {
         @Override
         public void run() {
             List<Species> locSpecies = location.getSpecies();
-            final ArrayList<Option> options = new ArrayList<Option>();
+            final List<Option> options = new ArrayList<Option>();
             if (locSpecies.size() > 0) {
                 final LinkedHashSet<Item> specials = new LinkedHashSet<Item>();
                 for (final Species s : locSpecies) {
@@ -1069,7 +1069,7 @@ public class Driver implements Runnable {
 
 	//private Option handle(Option... options)
     private Option handle(final Option caller, final Label label, final List<? extends Option> baseOptions) {
-        final ArrayList<Option> options = new ArrayList<Option>(baseOptions.size() + 1);
+        final List<Option> options = new ArrayList<Option>(baseOptions.size() + 1);
         options.addAll(baseOptions);
         if (stack.size() > 1) {
             options.add(new BackOption());
