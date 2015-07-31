@@ -59,6 +59,8 @@ public final class MonsterGame extends BaseGame {
     private final static int OVERLAY_Y = 10;
     private final static int TEXT_X = 3;
     private final static int TEXT_Y = 2;
+    private static int imgOffX = 0;
+    private static int imgOffY = 0;
     private static volatile Panmage menu = null;
     private static volatile Panmage menuIn = null;
     private static volatile Panmage menuOff = null;
@@ -215,7 +217,8 @@ public final class MonsterGame extends BaseGame {
             final Panteraction interaction = engine.getInteraction();
             int numRows = Mathtil.ceil(options.size() / 3f), titleOffset = 10;
             final boolean chosenDisplayed = caller instanceof BattleOption;
-            if (caller instanceof BattleOption) {
+            final boolean detailDisplayed = caller instanceof MorphDetailOption;
+            if (chosenDisplayed || detailDisplayed) {
                 numRows++;
                 titleOffset = 0;
             }
@@ -243,6 +246,13 @@ public final class MonsterGame extends BaseGame {
                 addImage(c.chosen, 0, y, true);
                 addImage(c.opponent, MENU_W * 2, y, false);
                 y -= menuH;
+            } else if (detailDisplayed) {
+                final Task task = (Task) ((MorphDetailOption) caller).option;
+                final Panmage delim = getImage("Plus", true), init = getImage("Equals", true);
+                x = addImages(task.getRequired(), 0, y, MENU_W, delim, null);
+                addImages(task.getAwarded(), x, y, MENU_W, delim, init);
+                y -= menuH;
+                x = 0;
             } else {
                 final Pantext lbl = new Pantext(Pantil.vmid(), font, formatLabel(label.getName()));
                 lbl.getPosition().set(1, y + menuH + 1);
@@ -252,8 +262,14 @@ public final class MonsterGame extends BaseGame {
                 /*if (!option.isPossible()) {
                     continue;
                 }*/
-                final String labelName = option.getGoal().getName();
-                final String name = formatLabel(labelName);
+                final String labelName, name;
+                if (detailDisplayed && option instanceof RemoveTask) {
+                    labelName = "Up";
+                    name = Data.getMorph();
+                } else {
+                    labelName = option.getGoal().getName();
+                    name = formatLabel(labelName);
+                }
                 /*buttons.add(TouchTabs.newButton(room, name, menu, menuIn, null, 3, 10, font, name, 3, 2, new Runnable() {
                     @Override public final void run() {
                         // Check possible
@@ -261,18 +277,10 @@ public final class MonsterGame extends BaseGame {
                     }}));*/
                 final boolean possible = option.isPossible();
                 final Panmage img = getImage(labelName, possible);
-                final int imgOffX, imgOffY;
-                if (img == null) {
-                    imgOffX = 0;
-                    imgOffY = 0;
-                } else {
-                    final Panple size = img.getSize();
-                    imgOffX = (IMG_W - (int) size.getX()) / 2;
-                    imgOffY = (IMG_H - (int) size.getY()) / 2;
-                }
+                initImageOffsets(img);
                 final TouchButton btn = new TouchButton(interaction, room, name, x, y + btnOffY, 0, menu, menuIn,
                     img, OVERLAY_X + imgOffX, OVERLAY_Y + imgOffY,
-                    (name.length() > 10) ? fontTiny : font, name, TEXT_X, TEXT_Y, true);
+                    getFont(name), name, TEXT_X, TEXT_Y, true);
                 final String info = option.getInfo();
                 if (Chartil.isValued(info)) {
                     final Pantext infoLabel = new Pantext(Pantil.vmid(), fontTiny, info);
@@ -300,18 +308,54 @@ public final class MonsterGame extends BaseGame {
         }
     }
     
-    private static void addImage(final Species s, final int x, final int y, final boolean mirror) {
+    private static void initImageOffsets(final Panmage img) {
+        if (img == null) {
+            imgOffX = 0;
+            imgOffY = 0;
+        } else {
+            final Panple size = img.getSize();
+            imgOffX = (IMG_W - (int) size.getX()) / 2;
+            imgOffY = (IMG_H - (int) size.getY()) / 2;
+        }
+    }
+    
+    private static int addImages(final List<Entity> list, int x, final int y, final int off, final Panmage delim, final Panmage init) {
+        initImageOffsets(delim);
+        final int delimOffX = (int) delim.getSize().getX() / 2, delimOffY = OVERLAY_Y + imgOffY;
+        boolean first = true;
+        for (final Entity s : list) {
+            if (first) {
+                first = false;
+                addImage(init, x - delimOffX, y + delimOffY, 10, false);
+            } else {
+                addImage(delim, x - delimOffX, y + delimOffY, 10, false);
+            }
+            addImage(s, x, y, false);
+            x += off;
+        }
+        return x;
+    }
+    
+    private static void addImage(final Entity s, final int x, final int y, final boolean mirror) {
         final String name = s.getName();
-        final Panctor actor = new Panctor();
-        final Panmage image = getImage(name, true);
-        actor.setView(image);
-        //actor.getPosition().set(x, y);
-        actor.getPosition().set(x + OVERLAY_X + (mirror ? image.getSize().getX() + 1 : 0), y + OVERLAY_Y);
-        actor.setMirror(mirror);
-        room.addActor(actor);
-        final Pantext text = new Pantext(Pantil.vmid(), font, name);
+        final Panmage image = getImage((s instanceof Amount) ? ((Amount) s).getUnits(): name, true);
+        initImageOffsets(image);
+        addImage(image, x + OVERLAY_X + imgOffX + (mirror ? image.getSize().getX() + 1 : 0), y + OVERLAY_Y + imgOffY, 0, mirror);
+        final Pantext text = new Pantext(Pantil.vmid(), getFont(name), name);
         text.getPosition().set(x + TEXT_X, y + TEXT_Y);
         room.addActor(text);
+    }
+    
+    private static void addImage(final Panmage image, final float x, final float y, final float z, final boolean mirror) {
+        final Panctor actor = new Panctor();
+        actor.setView(image);
+        actor.getPosition().set(x, y, z);
+        actor.setMirror(mirror);
+        room.addActor(actor);
+    }
+    
+    private static MultiFont getFont(final String name) {
+        return (name.length() > 10) ? fontTiny : font;
     }
     
     private static String formatLabel(final String name) {

@@ -448,10 +448,22 @@ public class Driver implements Runnable {
         }
 	}
 	
-	protected abstract class BattleOption extends RunOption {
+	protected abstract class WrapperOption extends RunOption {
+	    protected Option option = null;
+	    
+	    protected WrapperOption(final Label label) {
+            super(label);
+	    }
+	    
+	    @Override
+        public boolean isPossible() {
+            return super.isPossible() && option != null && option.isPossible();
+        }
+	}
+	
+	protected abstract class BattleOption extends WrapperOption {
         private final List<Species> opponents;
         private final boolean catchable;
-        private Option option = null;
         protected Species opponent = null;
         protected Species chosen = null;
         
@@ -497,11 +509,6 @@ public class Driver implements Runnable {
             return state.choose(opponent);
         }
         
-        @Override
-        public boolean isPossible() {
-            return super.isPossible() && option != null && option.isPossible();
-        }
-
         protected abstract Option createOption(final Species chosen, final Species opponent, final Special special);
     }
 
@@ -605,7 +612,8 @@ public class Driver implements Runnable {
         @Override
         protected Option createOption(final Species chosen, final Species opponent, final Special special) {
             //return new MorphTask(opponent);
-            return new RemoveTask(opponent.getPrecursor(), getMorphRequired(opponent), getMorphAwarded(opponent));
+            //return new RemoveTask(opponent.getPrecursor(), getMorphRequired(opponent), getMorphAwarded(opponent));
+            return new MorphDetailOption(new RemoveTask(opponent.getPrecursor(), getMorphRequired(opponent), getMorphAwarded(opponent)));
         }
         
         @Override
@@ -619,6 +627,20 @@ public class Driver implements Runnable {
         }
     }
 	
+	protected class MorphDetailOption extends WrapperOption {
+	    public MorphDetailOption(final RemoveTask task) {
+	        super(task.getGoal());
+	        option = task;
+	    }
+
+        @Override
+        protected List<Option> menu() {
+            final List<Option> options = new ArrayList<Option>();
+            options.add(option);
+            return options;
+        }
+	}
+	
 	/*private class MorphTask extends Task {
 	    public MorphTask(final Species goal) {
 	        super(goal, getMorphRequired(goal), getMorphAwarded(goal));
@@ -631,7 +653,7 @@ public class Driver implements Runnable {
 	    }
 	}*/
 	
-	private class RemoveTask extends Task {
+	protected class RemoveTask extends Task {
         public RemoveTask(final Entity goal, final Collection<? extends Entity> required, final Collection<? extends Entity> awarded) {
             super(goal, required, awarded);
         }
