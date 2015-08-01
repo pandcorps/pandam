@@ -861,7 +861,8 @@ public class Driver implements Runnable {
             //return new Task(opponent, Arrays.asList(opponent.getCatalyst()), Arrays.asList(opponent));
             //final String method = opponent.getSpecial();
             //return new Task(opponent, Arrays.asList(Item.getItem(method.substring(method.indexOf('.') + 1))), Arrays.asList(opponent));
-            return new Task(opponent, Arrays.asList(special.getRequirement()), Arrays.asList(opponent));
+            final Item req = special.getRequirement();
+            return new Task(req, Arrays.asList(req), Arrays.asList(opponent));
         }
         
         @Override
