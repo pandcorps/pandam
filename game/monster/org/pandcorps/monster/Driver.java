@@ -949,6 +949,9 @@ public class Driver implements Runnable {
             final List<Option> options = new ArrayList<Option>(2);
             options.add(new MenuOption("Buy", new BuyOption(location)));
             options.add(new MenuOption("Sell", new SellOption()));
+            final Option moneyOption = new NonOption(Data.getMoney());
+            moneyOption.setInfo(String.valueOf(state.getMoney()));
+            options.add(moneyOption);
             return options;
         }
     }
@@ -1103,6 +1106,17 @@ public class Driver implements Runnable {
             do {
                 stack.pop();
             } while (!stack.peek().isPossible());
+        }
+    }
+    
+    public class NonOption extends BackOption {
+        private NonOption(final String text) {
+            super(text);
+        }
+        
+        @Override
+        public boolean isPossible() {
+            return false;
         }
     }
     

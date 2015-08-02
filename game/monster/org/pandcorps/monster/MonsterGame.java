@@ -39,7 +39,7 @@ import org.pandcorps.pandax.touch.*;
 
 public final class MonsterGame extends BaseGame {
     /*
-    Breed/lab don't show options already on team
+    Breed/trade don't show options already on team
     Show disabled Catch if on team
     Show player's money on buy/sell
     Show container quantity on Battle screen
@@ -277,7 +277,7 @@ public final class MonsterGame extends BaseGame {
                         choice.value = option;
                     }}));*/
                 final boolean possible = option.isPossible();
-                final Panmage img = getImage(labelName, possible);
+                final Panmage img = getImage(labelName, possible || option instanceof NonOption);
                 initImageOffsets(img);
                 //final Panmage menuCurr = possible ? menu : menuOff; // Will grey out impossible-yet-previewable options
                 final Panmage menuCurr = menu; // Impossible-yet-previewable buttons are normal color; reasonable if icon is translucent
