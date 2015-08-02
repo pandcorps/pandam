@@ -234,7 +234,7 @@ public class Location extends Code {
     }*/
 	
 	public final static List<Location> getAvailable() {
-	    final ArrayList<Location> available = new ArrayList<Location>();
+	    final List<Location> available = new ArrayList<Location>();
 	    for (final Location loc : locations) {
 	        final Item access = loc.access;
 	        available.add(loc);

@@ -61,7 +61,7 @@ public class Species extends Entity {
 	    final String wild, final String trained, final Item award,
 	    final float height, final float mass,
 	    final boolean start, final boolean sire, final boolean track, final boolean unique,
-	    final Special special, final ArrayList<Integer> usableIndices) {
+	    final Special special, final List<Integer> usableIndices) {
 		super(name);
 		this.id = id;
 		this.rank = rank;
@@ -107,7 +107,7 @@ public class Species extends Entity {
 	
 	private final void initInstance() {
 	    if (this.morphs == null) {
-            final ArrayList<Species> morphs = new ArrayList<Species>();
+            final List<Species> morphs = new ArrayList<Species>();
             for (final Species morph : getSpecies()) {
                 if (morph.precursorId == id) {
                     morphs.add(morph);
@@ -305,7 +305,7 @@ public class Species extends Entity {
     }
 	
 	public final static List<Species> getStart() {
-	    final ArrayList<Species> start = new ArrayList<Species>();
+	    final List<Species> start = new ArrayList<Species>();
 	    for (final Species s : species) {
 	        if (s.canStart()) {
 	            start.add(s);

@@ -57,10 +57,10 @@ public class Parser {
 		final BufferedReader in = open("type");
 		String line;
 		int i = 0;
-		final ArrayList<Type> types = new ArrayList<Type>();
+		final List<Type> types = new ArrayList<Type>();
 		//for (int i = 0; i < typesSize; i++)
 		while ((line = in.readLine()) != null) {
-			final ArrayList<String> tokens = getTokens(line, "TYP");
+			final List<String> tokens = getTokens(line, "TYP");
 			if (tokens == null) {
 				continue;
 			}
@@ -68,7 +68,7 @@ public class Parser {
 			final String name = getString(tokens, 3);
 			final Type type = new Type(code, name);
 			types.add(type);
-			final ArrayList<String> multipliers = split(getString(tokens, 2), '~');
+			final List<String> multipliers = split(getString(tokens, 2), '~');
 			final int typesSize = multipliers.size();
 			if (tc == null) {
 				tc = new float[typesSize][];
@@ -100,14 +100,14 @@ public class Parser {
 	    
 	    public abstract String getSegmentName();
 	    
-	    public abstract T parse(final ArrayList<String> tokens);
+	    public abstract T parse(final List<String> tokens);
 	    
-	    public abstract void store(final ArrayList<T> list);
+	    public abstract void store(final List<T> list);
 	    
 	    public final void run() throws IOException {
 	        final BufferedReader in = open(getFileName());
 	        String line;
-	        final ArrayList<T> list = new ArrayList<T>();
+	        final List<T> list = new ArrayList<T>();
 	        final String seg = getSegmentName();
 	        while ((line = in.readLine()) != null) {
 	            try {
@@ -121,7 +121,7 @@ public class Parser {
 	                final int id = Integer.parseInt(t.nextToken());
 	                final String name = t.nextToken();
 	                final int rank = Integer.parseInt(t.nextToken());*/
-	                final ArrayList<String> tokens = getTokens(line, seg);
+	                final List<String> tokens = getTokens(line, seg);
 	                if (tokens == null) {
 	                    continue;
 	                }
@@ -138,11 +138,11 @@ public class Parser {
 	    return Iotil.getBufferedReader(LOC + fileName + ".txt");
 	}
 	
-	private final static ArrayList<String> getTokens(final String line, final String seg) {
+	private final static List<String> getTokens(final String line, final String seg) {
 	    if (line.length() == 0) {
             return null;
         }
-        final ArrayList<String> tokens = split(line, '|');
+        final List<String> tokens = split(line, '|');
         final String segment = getString(tokens, 0);
         if ("COM".equals(segment)) {
             return null;
@@ -156,7 +156,7 @@ public class Parser {
 	    final BufferedReader in = open("data");
 	    String line;
         while ((line = in.readLine()) != null) {
-            final ArrayList<String> tokens = getTokens(line, "DAT");
+            final List<String> tokens = getTokens(line, "DAT");
             if (tokens == null) {
                 continue;
             }
@@ -177,7 +177,7 @@ public class Parser {
         }
         
         @Override
-        public Item parse(final ArrayList<String> tokens) {
+        public Item parse(final List<String> tokens) {
             int i = 0;
             final String segment = getString(tokens, i++);
             final String code = getString(tokens, i++);
@@ -202,7 +202,7 @@ public class Parser {
         }
         
         @Override
-        public void store(final ArrayList<Item> list) {
+        public void store(final List<Item> list) {
             Item.setItems(list);
         }
     }
@@ -219,12 +219,12 @@ public class Parser {
         }
         
         @Override
-        public Location parse(final ArrayList<String> tokens) {
+        public Location parse(final List<String> tokens) {
             int i = 1;
             //final int id = getInt(tokens, i++);
             final String code = getString(tokens, i++);
             final String name = getString(tokens, i++);
-            final ArrayList<Item> store = new ArrayList<Item>();
+            final List<Item> store = new ArrayList<Item>();
             for (final String product : split(getString(tokens, i++), '~')) {
                 store.add(Item.getItem(product));
             }
@@ -235,7 +235,7 @@ public class Parser {
         }
         
         @Override
-        public void store(final ArrayList<Location> list) {
+        public void store(final List<Location> list) {
             Location.setLocations(list);
         }
     }
@@ -252,11 +252,11 @@ public class Parser {
         }
 	    
 	    @Override
-	    public Species parse(final ArrayList<String> tokens) {
+	    public Species parse(final List<String> tokens) {
 	        final int id = getInt(tokens, 1);
             final String name = getString(tokens, 2);
             final int rank = getInt(tokens, 3);
-            final ArrayList<String> typeTokens = split(getString(tokens, 4), '~');
+            final List<String> typeTokens = split(getString(tokens, 4), '~');
             final int typeSize = typeTokens.size();
             final Type[] types = new Type[typeSize];
             for (int i = 0; i < typeSize; i++) {
@@ -275,8 +275,8 @@ public class Parser {
             final boolean unique = getBoolean(tokens, 15);
             //final String special = getString(tokens, 16);
             final Special special = Special.getSpecial(getString(tokens, 16));
-            final ArrayList<Integer> usable = new ArrayList<Integer>();
-            final ArrayList<String> useTokens = split(getString(tokens, 17), '~');
+            final List<Integer> usable = new ArrayList<Integer>();
+            final List<String> useTokens = split(getString(tokens, 17), '~');
             final int useSize = useTokens.size();
             for (int i = 0; i < useSize; i++) {
                 if ("Y".equals(useTokens.get(i))) {
@@ -289,20 +289,20 @@ public class Parser {
 	    }
         
 	    @Override
-        public void store(final ArrayList<Species> list) {
+        public void store(final List<Species> list) {
 	        Species.setSpecies(list);
 	    }
 	}
 
-	private final static ArrayList<String> split(final String src, final char d) {
+	private final static List<String> split(final String src, final char d) {
 		//return src.split(d); // reg ex
 		/*final StringTokenizer t = new StringTokenizer(src, Character.toString(d)); // Seems to skip empty tokens
-		final ArrayList<String> list = new ArrayList<String>();
+		final List<String> list = new ArrayList<String>();
 		while (t.hasMoreTokens()) {
 			list.add(t.nextToken());
 		}
 		return list;*/
-	    final ArrayList<String> tokens = new ArrayList<String>();
+	    final List<String> tokens = new ArrayList<String>();
 	    if (src == null) {
 	        return tokens;
 	    }
@@ -322,7 +322,7 @@ public class Parser {
 	    return tokens;
 	}
 	
-	private final static String getString(final ArrayList<String> tokens, final int i) {
+	private final static String getString(final List<String> tokens, final int i) {
 	    if (i >= tokens.size()) {
 	        return null;
 	    }
@@ -330,17 +330,17 @@ public class Parser {
 	    return token.length() == 0 ? null : token;
 	}
 
-	private final static int getInt(final ArrayList<String> tokens, final int i) {
+	private final static int getInt(final List<String> tokens, final int i) {
 	    final String token = getString(tokens, i);
 	    return token == null ? -1 : Integer.parseInt(token);
     }
 	
-	private final static float getFloat(final ArrayList<String> tokens, final int i) {
+	private final static float getFloat(final List<String> tokens, final int i) {
         final String token = getString(tokens, i);
         return token == null ? -1 : Float.parseFloat(token);
     }
 
-	private final static boolean getBoolean(final ArrayList<String> tokens, final int i) {
+	private final static boolean getBoolean(final List<String> tokens, final int i) {
 	    final String token = getString(tokens, i);
 	    if ("Y".equals(token)) {
 	        return true;
