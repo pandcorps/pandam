@@ -982,8 +982,9 @@ public class Driver implements Runnable {
             final List<Option> options = new ArrayList<Option>(inventory.size());
             for (final Entry<Item, Long> entry : inventory.entrySet()) {
                 final Item product = entry.getKey();
-                if (product.getPrice() > 0 && !product.isUnique()) {
-                    options.add(Task.createSellTask(product, entry.getValue().longValue()));
+                final long amount = entry.getValue().longValue();
+                if (amount > 0 && product.getPrice() > 0 && !product.isUnique()) {
+                    options.add(Task.createSellTask(product, amount));
                 }
             }
             return options;
@@ -1006,7 +1007,11 @@ public class Driver implements Runnable {
                 // product.isUnique() // Might display this and other information
                 // If we had item descriptions, we could make an option to display them
                 // Maybe should allow multiple goals for multiple data fields
-                addItem(options, product, entry.getValue().longValue());
+                final long amount = entry.getValue().longValue();
+                if (amount <= 0) {
+                    continue;
+                }
+                addItem(options, product, amount);
             }
             return options;
         }
