@@ -39,6 +39,10 @@ public class Guy4 extends TileWalker {
         System.arraycopy(d, 0, directions, 0, size);
         directions[size] = null;
     }
+	
+	protected Guy4() {
+	    setSpeed(2);
+	}
     
     protected Guy4(final String id) {
         super(id);
@@ -68,6 +72,14 @@ public class Guy4 extends TileWalker {
                 id + "Animation-" + i,
                 engine.createFrame(id + "Frame-" + i + "-" + 0, still, 4),
                 engine.createFrame(id + "Frame-" + i + "-" + 1, sheet[1][i], 4));
+        }
+        face(Direction.South);
+    }
+    
+    protected final void setView(final Panimation[] walks) {
+        this.walks = walks;
+        for (int i = 0; i < 4; i++) {
+            stills[i] = walks[i].getFrames()[0].getImage();
         }
         face(Direction.South);
     }
