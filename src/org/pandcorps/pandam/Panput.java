@@ -70,6 +70,10 @@ public abstract class Panput {
         return endListener ? isEnded() : isActive();
     }
     
+    public final static boolean isActive(final Panput input) {
+        return input != null && input.isActive();
+    }
+    
     public final static boolean isActive(final Panput input, final boolean endListener) {
     	return input != null && input.isActive(endListener);
     }

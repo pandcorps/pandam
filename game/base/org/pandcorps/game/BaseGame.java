@@ -25,10 +25,13 @@ package org.pandcorps.game;
 import java.util.*;
 
 import org.pandcorps.core.*;
+import org.pandcorps.core.img.*;
 import org.pandcorps.core.img.scale.*;
 import org.pandcorps.game.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.impl.*;
+import org.pandcorps.pandax.in.*;
+import org.pandcorps.pandam.Panput.*;
 
 public abstract class BaseGame extends Pangame {
     /*
@@ -233,6 +236,47 @@ public abstract class BaseGame extends Pangame {
         bg.setMaster(master);
         bg.setConstant(true);
         return bg;
+	}
+	
+	public final static Panmage[] getDiamonds(final int d, final Pancolor f) {
+	    final Pangine engine = Pangine.getEngine();
+	    final Img dia = Imtil.newImage(d, d);
+        Imtil.drawDiamond(dia, Pancolor.BLACK, Pancolor.BLACK, f);
+        ImtilX.highlight(dia, 2);
+        final Img diaIn = ImtilX.indent(dia);
+        Imtil.setPseudoTranslucent(dia);
+        Imtil.setPseudoTranslucent(diaIn);
+        return new Panmage[] { engine.createImage(Pantil.vmid(), dia), engine.createImage(Pantil.vmid(), diaIn) };
+	}
+	
+	// btnSize: -2 = smallest, 0 = default, 2 = largest
+	public final static int getButtonSize(final int btnSize) {
+	    final Pangine engine = Pangine.getEngine();
+	    return (Math.min(60 * engine.getEffectiveWidth() / 400, 60 * engine.getEffectiveHeight() / 240) / 4 + btnSize) * 4 - 1;
+	}
+	
+	public final static void createControlDiamond(final Panlayer layer, final Panmage diamond, final Panmage diamondIn, final ControlScheme ctrl, final float z) {
+	    
+	    final int h = (int) diamond.getSize().getX() / 2 + 1, d = h * 2;
+	    ctrl.setLeft(createTouchButton(layer, "left", 0, h, z, diamond, diamondIn, TouchButton.OVERLAP_BEST));
+	    ctrl.setDown(createTouchButton(layer, "down", h, 0, z, diamond, diamondIn, TouchButton.OVERLAP_BEST));
+	    ctrl.setUp(createTouchButton(layer, "up", h, d, z, diamond, diamondIn, TouchButton.OVERLAP_BEST));
+	    ctrl.setRight(createTouchButton(layer, "right", d, h, z, diamond, diamondIn, TouchButton.OVERLAP_BEST));
+	}
+	
+	public final static TouchButton createTouchButton(final Panlayer layer, final String name, final int x, final int y, final float z,
+	                                                  final Panmage img, final Panmage imgActive) {
+	    return createTouchButton(layer, name, x, y, z, img, imgActive, TouchButton.OVERLAP_ANY);
+	}
+	
+	public final static TouchButton createTouchButton(final Panlayer layer, final String name, final int x, final int y, final float z,
+                                                      final Panmage img, final Panmage imgActive, final byte overlapMode) {
+	    final Pangine engine = Pangine.getEngine();
+        final Panteraction in = engine.getInteraction();
+	    final TouchButton btn = new TouchButton(in, layer, name, x, y, z, img, imgActive);
+	    btn.setOverlapMode(overlapMode);
+	    engine.registerTouchButton(btn);
+	    return btn;
 	}
 	
 	public final static String getEmail() {

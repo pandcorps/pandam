@@ -24,6 +24,7 @@ package org.pandcorps.game.actor;
 
 import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandax.in.*;
 import org.pandcorps.pandax.tile.*;
 
 public abstract class Guy4Controller {
@@ -31,16 +32,19 @@ public abstract class Guy4Controller {
     //public final static NpcController STILL = null;
     
 	public final static boolean onStillPlayer(final Guy4 guy) {
-		final Panteraction interaction = Pangine.getEngine().getInteraction();
-        if (interaction.KEY_DOWN.isActive()) {
+	    return onStillPlayer(ControlScheme.getDefaultKeyboard(), guy);
+	}
+	
+	public final static boolean onStillPlayer(final ControlScheme ctrl, final Guy4 guy) {
+        if (ctrl.getDown().isActive()) {
             guy.go(Direction.South);
-        } else if (interaction.KEY_UP.isActive()) {
+        } else if (ctrl.getUp().isActive()) {
         	guy.go(Direction.North);
-        } else if (interaction.KEY_LEFT.isActive()) {
+        } else if (ctrl.getLeft().isActive()) {
         	guy.go(Direction.West);
-        } else if (interaction.KEY_RIGHT.isActive()) {
+        } else if (ctrl.getRight().isActive()) {
         	guy.go(Direction.East);
-        } else if (interaction.KEY_SPACE.isActive()) {
+        } else if (Panput.isActive(ctrl.get1())) {
             final TileOccupant neighbor = guy.getFacing();
             if (neighbor != null) {
                 neighbor.onInteract(guy);
