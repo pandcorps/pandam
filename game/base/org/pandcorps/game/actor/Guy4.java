@@ -104,6 +104,13 @@ public class Guy4 extends TileWalker {
     }
     
     protected final boolean go(final Direction dir) {
-    	return walk(dir);
+    	if (walk(dir)) {
+    	    return true;
+    	}
+    	onBump();
+    	return false;
+    }
+    
+    protected void onBump() {
     }
 }

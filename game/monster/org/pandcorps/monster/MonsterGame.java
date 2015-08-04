@@ -27,14 +27,18 @@ import java.util.*;
 import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
 import org.pandcorps.game.*;
+import org.pandcorps.game.actor.*;
 import org.pandcorps.game.core.*;
 import org.pandcorps.monster.Driver.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.Panput.*;
 import org.pandcorps.pandam.event.action.*;
+import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.in.*;
 import org.pandcorps.pandax.text.*;
 import org.pandcorps.pandax.text.Fonts.*;
+import org.pandcorps.pandax.tile.*;
+import org.pandcorps.pandax.tile.Tile.*;
 import org.pandcorps.pandax.touch.*;
 
 public final class MonsterGame extends BaseGame {
@@ -60,6 +64,9 @@ public final class MonsterGame extends BaseGame {
     private final static int OVERLAY_Y = 10;
     private final static int TEXT_X = 3;
     private final static int TEXT_Y = 2;
+    private final static int TW = 16;
+    private final static int TH = 16;
+    private static int DIM_BUTTON = 0;
     private static int imgOffX = 0;
     private static int imgOffY = 0;
     private static volatile Panmage menu = null;
@@ -69,6 +76,15 @@ public final class MonsterGame extends BaseGame {
     //private static volatile Panmage menuLeft = null;
     //private static volatile Panmage menuRight = null;
     private final static Map<String, Panmage> imageCache = new HashMap<String, Panmage>();
+    private static Panimation playerSouth = null;
+    private static Panimation playerEast = null;
+    private static Panimation playerNorth = null;
+    private static Panimation playerWest = null;
+    private static Panimation[] playerWalks = null;
+    private static Panmage diamond = null;
+    private static Panmage diamondIn = null;
+    private static Panmage tiles = null;
+    private static ControlScheme ctrl = null;
     
     @Override
     protected final void init(final Panroom room) throws Exception {
@@ -87,6 +103,25 @@ public final class MonsterGame extends BaseGame {
         menuCursor = engine.createImage(Pantil.vmid(), ImtilX.newUp2(16, Pancolor.WHITE));
         //menuLeft = engine.createImage(Pantil.vmid(), ImtilX.newLeft2(80, Pancolor.BLUE));
         //menuRight = engine.createImage(Pantil.vmid(), ImtilX.newRight2(80, Pancolor.BLUE));
+        final Panmage[][] players = engine.createSheet("player", new FinPanple2(8, 0), null, null, Parser.LOC + "misc/Player.png", 32, 32);
+        playerSouth = createAnm(players[0]);
+        playerNorth = createAnm(players[1]);
+        playerEast = createAnm(players[2]);
+        playerWest = createAnm(players[3]);
+        playerWalks = new Panimation[] {playerSouth, playerEast, playerNorth, playerWest};
+        tiles = engine.createImage("tiles", Parser.LOC + "misc/Tiles.png");
+        DIM_BUTTON = getButtonSize(0);
+        final Panmage[] diamonds = getDiamonds(DIM_BUTTON, Pancolor.GREY);
+        diamond = diamonds[0];
+        diamondIn = diamonds[1];
+        ctrl = new ControlScheme();
+    }
+    
+    private final static Panimation createAnm(final Panmage[] row) {
+        final Panmage i0 = row[0];
+        final String baseId = i0.getId();
+        final Panmage[] ia = {i0, row[1], i0, row[2]};
+        return Pangine.getEngine().createAnimation(PRE_ANM + baseId, createFrames(PRE_FRM + baseId, 2, ia));
     }
     
     private final static Panmage getImage(final String name, final boolean possible) {
@@ -132,7 +167,11 @@ public final class MonsterGame extends BaseGame {
             final Wrapper choice = new Wrapper();
             Pangine.getEngine().executeInGameThread(new Runnable() {
                 @Override public final void run() {
-                    Panscreen.set(new MonsterScreen(caller, label, options, choice));
+                    if (caller instanceof LocationOption) {
+                        Panscreen.set(new CityScreen(options, choice));
+                    } else {
+                        Panscreen.set(new MonsterScreen(caller, label, options, choice));
+                    }
                 }});
             while (choice.value == null) {
                 Thread.yield();
@@ -147,18 +186,18 @@ public final class MonsterGame extends BaseGame {
     }
     
     private static Option lastCaller = null;
+    private static List<? extends Option> options = null;
+    private static Wrapper choice = null;
     
     private final static class MonsterScreen extends Panscreen {
         private final Option caller;
         private final Label label;
-        private final List<? extends Option> options;
-        private final Wrapper choice;
         
         private MonsterScreen(final Option caller, final Label label, final List<? extends Option> options, final Wrapper choice) {
             this.caller = caller;
             this.label = label;
-            this.options = options;
-            this.choice = choice;
+            MonsterGame.options = options;
+            MonsterGame.choice = choice;
         }
         
         @Override
@@ -207,10 +246,7 @@ public final class MonsterGame extends BaseGame {
             // Button width = left border + img + right border = 3 + 80 + 2 = 85
             // Button height = top border + img + space + text + bottom border = 3 + 80 + 1 + 7 + 2 = 93
             // 85 * 3 = 255, 93 * 2 = 186
-            final Cursor cursor = Cursor.addCursor(room, menuCursor);
-            if (cursor != null) {
-                cursor.getPosition().setZ(20);
-            }
+            addCursor();
             //TouchTabs.setFullScreen(true);
             //final List<TouchButton> buttons = new ArrayList<TouchButton>();
             final Pangine engine = Pangine.getEngine();
@@ -311,6 +347,79 @@ public final class MonsterGame extends BaseGame {
         }
     }
     
+    private static TileMap tm = null;
+    private static TileMapImage[][] imgMap = null;
+    private final static Map<Integer, Option> optMap = new HashMap<Integer, Option>();
+    
+    private final static class CityScreen extends Panscreen {
+        private CityScreen(final List<? extends Option> options, final Wrapper choice) {
+            MonsterGame.options = options;
+            MonsterGame.choice = choice;
+        }
+        
+        @Override
+        protected final void load() throws Exception {
+            final Pangine engine = Pangine.getEngine();
+            engine.setSwipeListener(null);
+            final TileMap tm = new TileMap("city.map", 32, 24, TW, TH);
+            if (MonsterGame.tm == null) {
+                imgMap = tm.splitImageMap(tiles);
+            } else {
+                tm.setImageMap(MonsterGame.tm);
+                imgMap = tm.splitImageMap();
+            }
+            MonsterGame.tm = tm;
+            tm.fillBackground(imgMap[13][0]);
+            tm.setForegroundDepth(5);
+            tm.setOccupantDepth(10);
+            
+            optMap.clear();
+            for (final Option option : options) {
+                if (option.getGoal().getName().equals(Data.getStore())) {
+                    building(0, 8, 3, 3, 4, 4, 2, option);
+                }
+            }
+            
+            room.addActor(tm);
+            
+            createControlDiamond(room, diamond, diamondIn, ctrl, 20);
+            addCursor();
+            
+            final Player player = new Player();
+            player.init(tm, 0, 0);
+            engine.track(player);
+        }
+    }
+    
+    private final static void building(final int imX, final int imY, final int tlX, final int tlY, final int w, final int h, final int drX, final Option option) {
+        for (int j = 0; j < h; j++) {
+            final int tlYj = tlY + j, imYj = imY - j;
+            for (int i = 0; i < w; i++) {
+                tm.setForeground(tlX + i, tlYj, imgMap[imYj][imX + i], Tile.BEHAVIOR_SOLID);
+            }
+        }
+        optMap.put(Integer.valueOf(tm.getIndex(tlX + drX, tlY - 1)), option);
+    }
+    
+    private final static class Player extends Guy4 {
+        private Player() {
+            setView(playerWalks);
+            setSpeed(2);
+        }
+        
+        @Override
+        protected final void onStill() {
+            Guy4Controller.onStillPlayer(ctrl, this);
+        }
+        
+        @Override
+        protected final void onBump() {
+            if (Direction.North == getDirection()) {
+                choice.value = optMap.get(Integer.valueOf(getIndex()));
+            }
+        }
+    }
+    
     private static void initImageOffsets(final Panmage img) {
         if (img == null) {
             imgOffX = 0;
@@ -359,6 +468,13 @@ public final class MonsterGame extends BaseGame {
         actor.getPosition().set(x, y, z);
         actor.setMirror(mirror);
         room.addActor(actor);
+    }
+    
+    private final static void addCursor() {
+        final Cursor cursor = Cursor.addCursor(room, menuCursor);
+        if (cursor != null) {
+            cursor.getPosition().setZ(30);
+        }
     }
     
     private static MultiFont getFont(final String name) {
