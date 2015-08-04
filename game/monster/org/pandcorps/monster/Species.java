@@ -51,7 +51,7 @@ public class Species extends Entity {
 	private final boolean unique;
 	//private final String special;
 	private final Special special;
-	private final HashSet<Technique> techniques = new HashSet<Technique>();
+	private final Set<Technique> techniques = new HashSet<Technique>();
 	private Collection<Species> morphs = null;
 
 	/*package*/ Species(

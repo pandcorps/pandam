@@ -67,7 +67,7 @@ public abstract class Entity extends Label {
     }
 	
 	protected static <T extends Entity> Map<String, T> map(Collection<T> collection) {
-	    final HashMap<String, T> m = new HashMap<String, T>();
+	    final Map<String, T> m = new HashMap<String, T>();
         for (final T element : collection) {
             m.put(format(element.name), element);
         }
