@@ -362,9 +362,14 @@ public final class MonsterGame extends BaseGame {
         @Override
         protected final void load() throws Exception {
             final Pangine engine = Pangine.getEngine();
+            /*
+            TODO one layer for TileMap; separate layer for sprites
+            synch with setMaster; clearDepth false; tile layer setConstant
+            */
             hud = createHud(room);
             hud.setClearDepthEnabled(false); // Cursor is in room and uses room's coordinates; don't put HUD above cursor
             engine.setSwipeListener(null);
+            room.getOrigin().set(0, 0);
             final TileMap tm = new TileMap("city.map", 32, 24, TW, TH);
             if (MonsterGame.tm == null) {
                 imgMap = tm.splitImageMap(tiles);
