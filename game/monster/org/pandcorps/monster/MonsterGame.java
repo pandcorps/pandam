@@ -363,6 +363,7 @@ public final class MonsterGame extends BaseGame {
         protected final void load() throws Exception {
             final Pangine engine = Pangine.getEngine();
             hud = createHud(room);
+            hud.setClearDepthEnabled(false); // Cursor is in room and uses room's coordinates; don't put HUD above cursor
             engine.setSwipeListener(null);
             final TileMap tm = new TileMap("city.map", 32, 24, TW, TH);
             if (MonsterGame.tm == null) {
@@ -490,6 +491,7 @@ public final class MonsterGame extends BaseGame {
         if (cursor != null) {
             cursor.getPosition().setZ(30);
         }
+        Pangine.getEngine().clearTouchEvents();
     }
     
     private static MultiFont getFont(final String name) {
