@@ -52,7 +52,7 @@ public final class MonsterGame extends BaseGame {
     */
     private static volatile Driver driver = null;
     private static volatile Panroom room = null;
-    private static Panlayer layer = null;
+    private static Panlayer hud = null;
     
     private static volatile MultiFont font = null;
     private static volatile MultiFont fontTiny = null;
@@ -386,9 +386,12 @@ public final class MonsterGame extends BaseGame {
                 	final Panple size = img.getSize();
                 	final int x = engine.getEffectiveWidth() - (int) size.getX();
                 	final int y = engine.getEffectiveHeight() - (int) size.getY();
-                	final TouchButton btn = new TouchButton(in, hud, "Menu", x, y, DEPTH_BUTTON, img, img, true);
+                	final TouchButton btn = new TouchButton(engine.getInteraction(), hud, "Menu", x, y, DEPTH_BUTTON, img, img, true);
                 	engine.registerTouchButton(btn);
-                	//TODO Register choice.value assignment when button pressed
+                	tm.register(btn, new ActionEndListener() {
+                        @Override public final void onActionEnd(final ActionEndEvent event) {
+                            choice.value = option;
+                        }});
                 }
             }
             
