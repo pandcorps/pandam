@@ -52,6 +52,7 @@ public final class MonsterGame extends BaseGame {
     */
     private static volatile Driver driver = null;
     private static volatile Panroom room = null;
+    private static Panlayer layer = null;
     
     private static volatile MultiFont font = null;
     private static volatile MultiFont fontTiny = null;
@@ -66,6 +67,7 @@ public final class MonsterGame extends BaseGame {
     private final static int TEXT_Y = 2;
     private final static int TW = 16;
     private final static int TH = 16;
+    private final static int DEPTH_BUTTON = 20;
     private static int DIM_BUTTON = 0;
     private static int imgOffX = 0;
     private static int imgOffY = 0;
@@ -360,6 +362,7 @@ public final class MonsterGame extends BaseGame {
         @Override
         protected final void load() throws Exception {
             final Pangine engine = Pangine.getEngine();
+            hud = createHud(room);
             engine.setSwipeListener(null);
             final TileMap tm = new TileMap("city.map", 32, 24, TW, TH);
             if (MonsterGame.tm == null) {
@@ -375,14 +378,23 @@ public final class MonsterGame extends BaseGame {
             
             optMap.clear();
             for (final Option option : options) {
-                if (option.getGoal().getName().equals(Data.getStore())) {
+            	final String name = option.getGoal().getName();
+                if (name.equals(Data.getStore())) {
                     building(0, 8, 3, 3, 4, 4, 2, option);
+                } else if (name.equals("Menu")) {
+                	final Panmage img = getImage("Menu", true);
+                	final Panple size = img.getSize();
+                	final int x = engine.getEffectiveWidth() - (int) size.getX();
+                	final int y = engine.getEffectiveHeight() - (int) size.getY();
+                	final TouchButton btn = new TouchButton(in, hud, "Menu", x, y, DEPTH_BUTTON, img, img, true);
+                	engine.registerTouchButton(btn);
+                	//TODO Register choice.value assignment when button pressed
                 }
             }
             
             room.addActor(tm);
             
-            createControlDiamond(room, diamond, diamondIn, ctrl, 20);
+            createControlDiamond(hud, diamond, diamondIn, ctrl, DEPTH_BUTTON);
             addCursor();
             
             final Player player = new Player();
