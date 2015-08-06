@@ -52,7 +52,8 @@ public final class MonsterGame extends BaseGame {
     */
     private static volatile Driver driver = null;
     private static volatile Panroom room = null;
-    private static Panlayer hud = null;
+    private static Panlayer layerTiles = null;
+    private static Panlayer layerHud = null;
     
     private static volatile MultiFont font = null;
     private static volatile MultiFont fontTiny = null;
@@ -248,6 +249,7 @@ public final class MonsterGame extends BaseGame {
             // Button width = left border + img + right border = 3 + 80 + 2 = 85
             // Button height = top border + img + space + text + bottom border = 3 + 80 + 1 + 7 + 2 = 93
             // 85 * 3 = 255, 93 * 2 = 186
+            room.setClearDepthEnabled(true);
             addCursor();
             //TouchTabs.setFullScreen(true);
             //final List<TouchButton> buttons = new ArrayList<TouchButton>();
@@ -366,11 +368,18 @@ public final class MonsterGame extends BaseGame {
             TODO one layer for TileMap; separate layer for sprites
             synch with setMaster; clearDepth false; tile layer setConstant
             */
-            hud = createHud(room);
-            hud.setClearDepthEnabled(false); // Cursor is in room and uses room's coordinates; don't put HUD above cursor
+            //layerHud = createHud(room); // HUD and room both have constant size; use room layer for the HUD
+            layerHud = room;
+            layerHud.setClearDepthEnabled(false); // Cursor is in room and uses room's coordinates; don't put HUD above cursor
+            //layerTiles = room;
+            final int cols = 32, rows = 24;
+            layerTiles = engine.createLayer("layer.tiles", cols * TW, rows * TH, 100, room);
+            //layerTiles.setClearDepthEnabled(false);
+            room.addBeneath(layerTiles);
             engine.setSwipeListener(null);
-            room.getOrigin().set(0, 0);
-            final TileMap tm = new TileMap("city.map", 32, 24, TW, TH);
+            layerHud.getOrigin().set(0, 0);
+            layerTiles.getOrigin().set(0, 0);
+            final TileMap tm = new TileMap("city.map", cols, rows, TW, TH);
             if (MonsterGame.tm == null) {
                 imgMap = tm.splitImageMap(tiles);
             } else {
@@ -392,7 +401,7 @@ public final class MonsterGame extends BaseGame {
                 	final Panple size = img.getSize();
                 	final int x = engine.getEffectiveWidth() - (int) size.getX();
                 	final int y = engine.getEffectiveHeight() - (int) size.getY();
-                	final TouchButton btn = new TouchButton(engine.getInteraction(), hud, "Menu", x, y, DEPTH_BUTTON, img, img, true);
+                	final TouchButton btn = new TouchButton(engine.getInteraction(), layerHud, "Menu", x, y, DEPTH_BUTTON, img, img, true);
                 	engine.registerTouchButton(btn);
                 	tm.register(btn, new ActionEndListener() {
                         @Override public final void onActionEnd(final ActionEndEvent event) {
@@ -401,9 +410,9 @@ public final class MonsterGame extends BaseGame {
                 }
             }
             
-            room.addActor(tm);
+            layerTiles.addActor(tm);
             
-            createControlDiamond(hud, diamond, diamondIn, ctrl, DEPTH_BUTTON);
+            createControlDiamond(layerHud, diamond, diamondIn, ctrl, DEPTH_BUTTON);
             addCursor();
             
             final Player player = new Player();

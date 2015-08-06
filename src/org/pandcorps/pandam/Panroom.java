@@ -22,8 +22,8 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandam;
 
-import org.pandcorps.pandam.event.RoomAddEvent;
-import org.pandcorps.pandam.impl.FinPanple;
+import org.pandcorps.pandam.event.*;
+import org.pandcorps.pandam.impl.*;
 
 public final class Panroom extends Panlayer {
     /*package*/ final RoomAddEvent addEvent = new RoomAddEvent(this);
@@ -56,22 +56,24 @@ public final class Panroom extends Panlayer {
 	}
 	
 	public void clear() {
-	    if (base == null) {
+	    /*if (base == null) {
 	        return;
-	    }
-		base.destroyAllActors();
+	    }*/
+		destroyAllActors();
 		Panlayer layer;
-		while ((layer = base.getAbove()) != null) {
+		while ((layer = getAbove()) != null) {
 			destroy(layer);
 		}
-		while ((layer = base.getBeneath()) != null) {
+		while ((layer = getBeneath()) != null) {
 			destroy(layer);
 		}
+		base = this;
 	}
 	
 	private final void destroy(final Panlayer layer) {
 		if (layer == this) {
-			superDestroy();
+			//superDestroy();
+		    destroyAllActors();
 		} else {
 			layer.destroy();
 		}
