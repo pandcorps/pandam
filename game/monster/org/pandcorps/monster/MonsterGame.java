@@ -399,8 +399,8 @@ public final class MonsterGame extends BaseGame {
                 } else if (name.equals("Menu")) {
                 	final Panmage img = getImage("Menu", true);
                 	final Panple size = img.getSize();
-                	final int x = engine.getEffectiveWidth() - (int) size.getX();
-                	final int y = engine.getEffectiveHeight() - (int) size.getY();
+                	final int x = engine.getEffectiveWidth() - (int) size.getX() - 1;
+                	final int y = engine.getEffectiveHeight() - (int) size.getY() - 1;
                 	final TouchButton btn = new TouchButton(engine.getInteraction(), layerHud, "Menu", x, y, DEPTH_BUTTON, img, img, true);
                 	engine.registerTouchButton(btn);
                 	tm.register(btn, new ActionEndListener() {
