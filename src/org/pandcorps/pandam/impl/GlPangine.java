@@ -312,6 +312,16 @@ public abstract class GlPangine extends Pangine {
         		        break;
     		        }
     		    }
+    		    /*
+    		    Could reach TOUCH_MOVE without TOUCH_DOWN.
+    		    This ignores those events.
+    		    If the menu changes and if the touch events are cleared while the screen is touched,
+    		    then we probably want to ignore touch movements until the screen is released and a new one starts.
+    		    If we ever want to pay attention to those events immediately, then there should be an option to skip this.
+    		    */
+    		    if (!touchMap.containsKey(key)) {
+    		        continue;
+    		    }
     			final Panput old = touchMap.put(key, input);
     			if (input != old) {
     			    activateMove(old, false);
