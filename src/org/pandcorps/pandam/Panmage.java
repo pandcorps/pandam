@@ -120,6 +120,11 @@ public abstract class Panmage extends BasePantity implements Panview, Pansplay {
 	protected abstract void render(final Panlayer layer, final float x, final float y, final float z,
         final float ix, final float iy, final float iw, final float ih, final int rot, final boolean mirror, final boolean flip);
 	
+	protected final static void render(final Panmage img, final Panlayer layer, final float x, final float y, final float z,
+	    final float ix, final float iy, final float iw, final float ih, final int rot, final boolean mirror, final boolean flip) {
+	    img.render(layer, x, y, z, ix, iy, iw, ih, rot, mirror, flip);
+	}
+	
 	@Override
 	protected final void finalize() {
 		if (!isClosed()) {
