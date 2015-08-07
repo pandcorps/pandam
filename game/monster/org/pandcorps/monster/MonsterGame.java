@@ -53,6 +53,7 @@ public final class MonsterGame extends BaseGame {
     private static volatile Driver driver = null;
     private static volatile Panroom room = null;
     private static Panlayer layerTiles = null;
+    private static Panlayer layerSprites = null;
     private static Panlayer layerHud = null;
     
     private static volatile MultiFont font = null;
@@ -364,18 +365,18 @@ public final class MonsterGame extends BaseGame {
         @Override
         protected final void load() throws Exception {
             final Pangine engine = Pangine.getEngine();
-            /*
-            TODO one layer for TileMap; separate layer for sprites
-            synch with setMaster; clearDepth false; tile layer setConstant
-            */
             //layerHud = createHud(room); // HUD and room both have constant size; use room layer for the HUD
             layerHud = room;
             layerHud.setClearDepthEnabled(false); // Cursor is in room and uses room's coordinates; don't put HUD above cursor
             //layerTiles = room;
-            final int cols = 32, rows = 24;
-            layerTiles = engine.createLayer("layer.tiles", cols * TW, rows * TH, 100, room);
+            final int cols = 32, rows = 24, w = cols * TW, h = rows * TH;
+            layerSprites = engine.createLayer("layer.sprites", w, h, 100, room);
+            layerSprites.setClearDepthEnabled(false);
+            room.addBeneath(layerSprites);
+            layerTiles = engine.createLayer("layer.tiles", w, h, 100, room);
             //layerTiles.setClearDepthEnabled(false);
-            room.addBeneath(layerTiles);
+            layerSprites.addBeneath(layerTiles);
+            layerTiles.setMaster(layerSprites);
             engine.setSwipeListener(null);
             layerHud.getOrigin().set(0, 0);
             layerTiles.getOrigin().set(0, 0);
@@ -411,12 +412,15 @@ public final class MonsterGame extends BaseGame {
             }
             
             layerTiles.addActor(tm);
+            layerTiles.setConstant(true);
             
             createControlDiamond(layerHud, diamond, diamondIn, ctrl, DEPTH_BUTTON);
             addCursor();
             
             final Player player = new Player();
-            player.init(tm, 0, 0);
+            //player.init(tm, 0, 0); // Sets player's layer to tm's, but we want it to be different
+            player.setPosition(tm, 0, 0);
+            layerSprites.addActor(player);
             engine.track(player);
         }
     }
