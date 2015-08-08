@@ -416,6 +416,11 @@ public final class MonsterGame extends BaseGame {
             tm.setForeground(cols1, rows1, imgMap[13][5], Tile.BEHAVIOR_SOLID);
             tm.setForeground(0, 0, imgMap[14][4], Tile.BEHAVIOR_SOLID);
             tm.setForeground(cols1, 0, imgMap[14][5], Tile.BEHAVIOR_SOLID);
+            tm.setForeground(11, 0, imgMap[13][3], Tile.BEHAVIOR_SOLID);
+            for (int i = 12; i < 15; i++) {
+                tm.setForeground(i, 0, null, Tile.BEHAVIOR_OPEN);
+            }
+            tm.setForeground(15, 0, imgMap[13][1], Tile.BEHAVIOR_SOLID);
             tm.setForegroundDepth(5);
             tm.setOccupantDepth(10);
             
@@ -424,16 +429,16 @@ public final class MonsterGame extends BaseGame {
             for (final Option option : options) {
             	final String name = option.getGoal().getName();
                 if (name.equals(Data.getStore())) {
-                    building(3, 3, 0, 8, 4, 4, 2, option);
+                    building(4, 4, 0, 8, 4, 4, 2, option);
                     needStore = false;
                 } else if (name.equals(Data.getMorph())) {
-                    building(10, 3, 0, 4, 5, 5, 2, option);
+                    building(11, 4, 0, 4, 5, 5, 2, option);
                     needMorph = false;
                 } else if (name.equals(Data.getTrainers())) {
-                    building(3, 10, 5, 4, 7, 5, 3, option);
+                    building(4, 11, 5, 4, 7, 5, 3, option);
                     needTrainers = false;
                 } else if (name.equals(Special.Specialty.Lab.toString())) {
-                    building(13, 10, 0, 12, 7, 4, 3, option);
+                    building(14, 11, 0, 12, 7, 4, 3, option);
                     needSpecial = false;
                 } else if (name.equals("Menu")) {
                 	final Panmage img = getImage("Menu", true);
@@ -449,16 +454,16 @@ public final class MonsterGame extends BaseGame {
                 }
             }
             if (needStore) {
-                unusedBuilding(3, 4);
+                unusedBuilding(4, 5);
             }
             if (needMorph) {
-                unusedBuilding(10, 4);
+                unusedBuilding(11, 5);
             }
             if (needTrainers) {
-                unusedBuilding(4, 11);
+                unusedBuilding(5, 12);
             }
             if (needSpecial) {
-                unusedBuilding(14, 11);
+                unusedBuilding(15, 12);
             }
             
             layerTiles.addActor(tm);
@@ -467,16 +472,27 @@ public final class MonsterGame extends BaseGame {
             createControlDiamond(layerHud, diamond, diamondIn, ctrl, DEPTH_BUTTON);
             addCursor();
             
-            final Player player = new Player();
+            final int startX, startY;
+            final Direction startDir;
+            if (lastCityX >= 0) {
+                startDir = Direction.South;
+                startX = lastCityX;
+                startY = lastCityY;
+            } else {
+                startDir = Direction.North;
+                startX = 13;
+                startY = 1;
+            }
+            final Player player = new Player(startDir);
             //player.init(tm, 0, 0); // Sets player's layer to tm's, but we want it to be different
-            player.setPosition(tm, 1, 1);
+            player.setPosition(tm, startX, startY);
             layerSprites.addActor(player);
             engine.track(player);
         }
     }
     
     private final static void unusedBuilding(final int tlX, final int tlY) {
-        building(12, 3, tlX, tlY, 4, 3, 0, null);
+        building(tlX, tlY, 12, 2, 4, 3, 0, null);
     }
     
     private final static void building(final int tlX, final int tlY, final int imX, final int imY, final int w, final int h, final int drX, final Option option) {
@@ -491,10 +507,14 @@ public final class MonsterGame extends BaseGame {
         }
     }
     
+    private static int lastCityX = -1;
+    private static int lastCityY = -1;
+    
     private final static class Player extends Guy4 {
-        private Player() {
+        private Player(final Direction dir) {
             setView(playerWalks);
             setSpeed(2);
+            face(dir);
         }
         
         @Override
@@ -504,7 +524,11 @@ public final class MonsterGame extends BaseGame {
         
         @Override
         protected final void onBump() {
-            if (Direction.North == getDirection()) {
+            final Direction dir = getDirection();
+            final int row = getRow();
+            if ((Direction.North == dir) || ((row == 0) && Direction.South == dir)) {
+                lastCityX = getColumn();
+                lastCityY = row;
                 choice.value = optMap.get(Integer.valueOf(getIndex()));
             }
         }
@@ -623,7 +647,7 @@ public final class MonsterGame extends BaseGame {
             for (final Item item : loc.getSpecials().keySet()) {
                 System.out.print(" " + item.getName());
             }
-            if (Coltil.isValued(loc.getWild())) {
+            if (Coltil.isValued(loc.getNormal())) {
                 System.out.print(" Wild");
             }
             System.out.println();

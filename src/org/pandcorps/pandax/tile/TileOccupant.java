@@ -97,6 +97,14 @@ public class TileOccupant extends Panctor {
         return index;
     }
     
+    public int getRow() {
+        return tm.getRow(index);
+    }
+    
+    public int getColumn() {
+        return tm.getColumn(index);
+    }
+    
     public TileOccupant getNeighbor(final Direction dir) {
         return tm.getOccupant(tm.getNeighbor(index, dir));
     }

@@ -170,6 +170,11 @@ public class Driver implements Runnable {
         @Override
         public List<Option> menu() {
             final List<Option> options = new ArrayList<Option>(available.size());
+            addOptions(options);
+            return options;
+        }
+        
+        public void addOptions(final List<Option> options) {
             final Location curr = state.getLocation();
             for (final Location l : available) {
                 if (curr.equals(l)) {
@@ -187,7 +192,6 @@ public class Driver implements Runnable {
                 //options.add(new Task(l, requirements, Arrays.asList(l)));
                 options.add(new TravelTask(l, requirements));
             }
-            return options;
         }
     }
 	
@@ -202,6 +206,22 @@ public class Driver implements Runnable {
 	        stack.pop(); // Pop the TravelOption; visit will pop the current location
 	        visit((Location) goal);
 	    }
+	}
+	
+	public class WorldOption extends RunOption {
+	    public WorldOption() {
+	        super(new Label("World"));
+	    }
+	    
+        @Override
+        protected List<Option> menu() {
+            final List<Option> options = new ArrayList<Option>();
+            for (final Location loc : Location.getLocations()) {
+                new WildOption(new Label(loc.getName() + " - " + "Wild"), loc.getNormal()).addMenuOption(options, "Wild");
+            }
+            new TravelOption(Location.getAvailable()).addOptions(options);
+            return options;
+        }
 	}
 
 	public class LocationOption extends RunOption {
@@ -220,12 +240,12 @@ public class Driver implements Runnable {
 			//options.add(new BattleOption(location)); // Add directly, or push to stack in above commented-out code?
 			//options.add(new CatchOption(location));
 			//boolean fish = false;
-			final List<Species> wild = location.getNormal();
+			//final List<Species> wild = location.getNormal();
 			final List<Species> fish = location.getFish();
 			//boolean move = false;
 			//final LinkedHashSet<Item> specials = new LinkedHashSet<Item>();
 			final Map<Item, ArrayList<Species>> specials = location.getSpecials();
-			new WildOption(new Label(location.getName() + " - " + "Wild"), wild).addMenuOption(options, "Wild");
+			//new WildOption(new Label(location.getName() + " - " + "Wild"), wild).addMenuOption(options, "Wild");
             //options.add(new MenuOption("Catch", new CatchOption(location, wild)));
 			new FishOption(location, fish).addMenuOption(options, Specialty.Fish.toString());
 			/*if (move) {
@@ -266,12 +286,16 @@ public class Driver implements Runnable {
             if (store.size() > 0) {
                 options.add(new MenuOption(Data.getStore(), new StoreOption(location)));
             }
-            final List<Location> available = Location.getAvailable();
-            if (available.size() > 1) {
-                options.add(new MenuOption("Travel", new TravelOption(available)));
-            }
+            //addTravelOption(options);
             return options;
 		}
+	}
+	
+	public void addTravelOption(final List<Option> options) {
+	    final List<Location> available = Location.getAvailable();
+        if (available.size() > 1) {
+            options.add(new MenuOption("Travel", new TravelOption(available)));
+        }
 	}
 	
 	public class MainMenuOption extends RunOption {
@@ -285,6 +309,7 @@ public class Driver implements Runnable {
             //options.add(new MenuOption(Data.getMorph(), new MorphOption()));
             options.add(new MenuOption(Data.getInventory(), new InventoryOption()));
             options.add(new MenuOption(Data.getDatabase(), new DatabaseOption()));
+            addTravelOption(options);
             //options.add(new ExitOption());
             return options;
         }
