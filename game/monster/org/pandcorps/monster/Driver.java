@@ -242,6 +242,7 @@ public class Driver implements Runnable {
 			    }
 			}
 			options.add(new MenuOption("Menu", new MainMenuOption()));
+			options.add(new MenuOption(Data.getMorph(), new MorphOption()));
 			if (state.hasInventory(track)) {
 			    options.add(new MenuOption(track.getName(), new TrackOption(), state.choose(track), track));
 			}
@@ -281,9 +282,10 @@ public class Driver implements Runnable {
         @Override
         protected List<Option> menu() {
             final List<Option> options = new ArrayList<Option>();
-            options.add(new MenuOption(Data.getMorph(), new MorphOption()));
+            //options.add(new MenuOption(Data.getMorph(), new MorphOption()));
             options.add(new MenuOption(Data.getInventory(), new InventoryOption()));
             options.add(new MenuOption(Data.getDatabase(), new DatabaseOption()));
+            //options.add(new ExitOption());
             return options;
         }
 	}
@@ -1082,7 +1084,9 @@ public class Driver implements Runnable {
         options.addAll(baseOptions);
         if (stack.size() > 1) {
             options.add(new BackOption());
-        } else {
+        }
+        //} else {
+        if (caller instanceof MainMenuOption) {
             options.add(new ExitOption());
         }
         return handler.handle(caller, label, options);

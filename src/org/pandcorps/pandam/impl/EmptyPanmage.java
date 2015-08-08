@@ -26,7 +26,6 @@ import org.pandcorps.pandam.*;
 
 // Usable as an invisible bounding box
 public final class EmptyPanmage extends Panmage {
-
     public EmptyPanmage(final String id, final Panple origin, final Panple boundMin, final Panple boundMax) {
         super(id, origin, boundMin, boundMax);
     }
