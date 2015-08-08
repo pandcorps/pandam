@@ -460,7 +460,7 @@ public final class MonsterGame extends BaseGame {
         
         @Override
         protected final void buildTileMap() throws Exception {
-            tm.fillBackground(imgMap[13][0]);
+            tm.fillBackground(imgMap[14][0]);
             
             for (final Option option : options) {
                 final Label goal = option.getGoal();
@@ -477,6 +477,9 @@ public final class MonsterGame extends BaseGame {
                     }
                 }
             }
+            tree(2, 4);
+            tree(2, 3);
+            tree(2, 2);
         }
     }
     
@@ -629,6 +632,11 @@ public final class MonsterGame extends BaseGame {
             lastCityX = getColumn();
             lastCityY = getRow();
         }
+    }
+    
+    private final static void tree(final int x, final int y) {
+        tm.setBackground(x, y, imgMap[14][6], Tile.BEHAVIOR_SOLID);
+        tm.setForeground(x, y + 1, imgMap[13][6], Tile.BEHAVIOR_SOLID);
     }
     
     private static void initImageOffsets(final Panmage img) {
