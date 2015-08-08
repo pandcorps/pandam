@@ -69,6 +69,7 @@ public final class MonsterGame extends BaseGame {
     private final static int TEXT_Y = 2;
     private final static int TW = 16;
     private final static int TH = 16;
+    private final static Panple SIZE_24 = new FinPanple2(24, 24);
     private final static int DEPTH_BUTTON = 20;
     private static int DIM_BUTTON = 0;
     private static int imgOffX = 0;
@@ -79,6 +80,8 @@ public final class MonsterGame extends BaseGame {
     private static volatile Panmage menuCursor = null;
     //private static volatile Panmage menuLeft = null;
     //private static volatile Panmage menuRight = null;
+    private static Panmage menuFull = null;
+    private static Panmage menuFullTranslucent = null;
     private final static Map<String, Panmage> imageCache = new HashMap<String, Panmage>();
     private static Panimation playerSouth = null;
     private static Panimation playerEast = null;
@@ -118,6 +121,12 @@ public final class MonsterGame extends BaseGame {
         final Panmage[] diamonds = getDiamonds(DIM_BUTTON, Pancolor.GREY);
         diamond = diamonds[0];
         diamondIn = diamonds[1];
+        final Img menuFullImg = Imtil.load(Parser.LOC + "misc/MenuFull.png");
+        menuFullImg.setTemporary(false);
+        menuFull = engine.createImage(PRE_IMG + "menu.full", menuFullImg);
+        Imtil.setPseudoTranslucent(menuFullImg);
+        menuFullTranslucent = engine.createImage(PRE_IMG + "menu.full.translucent", menuFullImg);
+        menuFullImg.close();
         ctrl = new ControlScheme();
     }
     
@@ -393,10 +402,21 @@ public final class MonsterGame extends BaseGame {
             tm.setOccupantDepth(10);
             
             optMap.clear();
+            boolean needStore = true, needMorph = true, needTrainers = true, needSpecial = true;
             for (final Option option : options) {
             	final String name = option.getGoal().getName();
                 if (name.equals(Data.getStore())) {
-                    building(0, 8, 3, 3, 4, 4, 2, option);
+                    building(3, 3, 0, 8, 4, 4, 2, option);
+                    needStore = false;
+                } else if (name.equals(Data.getMorph())) {
+                    building(10, 3, 0, 4, 5, 5, 2, option);
+                    needMorph = false;
+                } else if (name.equals(Data.getTrainers())) {
+                    building(3, 10, 5, 4, 7, 5, 3, option);
+                    needTrainers = false;
+                } else if (name.equals(Special.Specialty.Lab.toString())) {
+                    building(13, 10, 0, 12, 7, 4, 3, option);
+                    needSpecial = false;
                 } else if (name.equals("Menu")) {
                 	final Panmage img = getImage("Menu", true);
                 	final Panple size = img.getSize();
@@ -409,6 +429,18 @@ public final class MonsterGame extends BaseGame {
                             choice.value = option;
                         }});
                 }
+            }
+            if (needStore) {
+                unusedBuilding(3, 4);
+            }
+            if (needMorph) {
+                unusedBuilding(10, 4);
+            }
+            if (needTrainers) {
+                unusedBuilding(4, 11);
+            }
+            if (needSpecial) {
+                unusedBuilding(14, 11);
             }
             
             layerTiles.addActor(tm);
@@ -425,14 +457,20 @@ public final class MonsterGame extends BaseGame {
         }
     }
     
-    private final static void building(final int imX, final int imY, final int tlX, final int tlY, final int w, final int h, final int drX, final Option option) {
+    private final static void unusedBuilding(final int tlX, final int tlY) {
+        building(12, 3, tlX, tlY, 4, 3, 0, null);
+    }
+    
+    private final static void building(final int tlX, final int tlY, final int imX, final int imY, final int w, final int h, final int drX, final Option option) {
         for (int j = 0; j < h; j++) {
             final int tlYj = tlY + j, imYj = imY - j;
             for (int i = 0; i < w; i++) {
                 tm.setForeground(tlX + i, tlYj, imgMap[imYj][imX + i], Tile.BEHAVIOR_SOLID);
             }
         }
-        optMap.put(Integer.valueOf(tm.getIndex(tlX + drX, tlY - 1)), option);
+        if (option != null) {
+            optMap.put(Integer.valueOf(tm.getIndex(tlX + drX, tlY - 1)), option);
+        }
     }
     
     private final static class Player extends Guy4 {
@@ -523,6 +561,57 @@ public final class MonsterGame extends BaseGame {
     private static String formatFile(final String name) {
         return Chartil.remove(Chartil.remove(Chartil.removeAccents(name), ' '), '\'');
     }
+    
+    /*
+    private final static void buildSpeciesImage() throws Exception {
+        final int d = 2048, p = 80;
+        final Img img = Imtil.newImage(d, d);
+        int i = 1;
+        int x = 0, y = 0;
+        for (final Species s : Species.getSpecies()) {
+            if (i != s.getId()) {
+                throw new Exception("Array index " + i + " was species id " + s.getId());
+            }
+            System.out.println("Adding species " + i);
+            final Img sub = Imtil.load(Parser.LOC + "img/" + s.getName() + ".png");
+            Imtil.copy(sub, img, 0, 0, p, p, x, y);
+            sub.close();
+            x += p;
+            if ((x + p) > d) {
+                x = 0;
+                y += p;
+            }
+            i++;
+        }
+        Imtil.save(img, Parser.LOC + "misc/Species.png");
+    }
+    
+    private final static void dumpLocations() {
+        for (final Location loc : Location.getLocations()) {
+            System.out.print(loc.getName());
+            if (Coltil.isValued(loc.getStore())) {
+                System.out.print(" Store");
+            }
+            if (Coltil.isValued(loc.getTrained())) {
+                System.out.print(" Trained");
+            }
+            final String special = loc.getSpecial();
+            if (special != null) {
+                System.out.print(" " + special);
+            }
+            if (Coltil.isValued(loc.getFish())) {
+                System.out.print(" Fish");
+            }
+            for (final Item item : loc.getSpecials().keySet()) {
+                System.out.print(" " + item.getName());
+            }
+            if (Coltil.isValued(loc.getWild())) {
+                System.out.print(" Wild");
+            }
+            System.out.println();
+        }
+    }
+    */
     
     public final static void main(final String[] args) {
         try {
