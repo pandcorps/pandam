@@ -397,7 +397,25 @@ public final class MonsterGame extends BaseGame {
                 imgMap = tm.splitImageMap();
             }
             MonsterGame.tm = tm;
-            tm.fillBackground(imgMap[13][0]);
+            final TileMapImage grass = imgMap[13][0];
+            final Tile wallBottom = tm.getTile(grass, imgMap[13][2], Tile.BEHAVIOR_SOLID);
+            final Tile wallTop = tm.getTile(grass, imgMap[15][2], Tile.BEHAVIOR_SOLID);
+            final Tile wallLeft = tm.getTile(grass, imgMap[14][3], Tile.BEHAVIOR_SOLID);
+            final Tile wallRight = tm.getTile(grass, imgMap[14][1], Tile.BEHAVIOR_SOLID);
+            tm.fillBackground(grass);
+            final int cols1 = cols - 1, rows1 = rows - 1;
+            for (int i = 1; i < cols1; i++) {
+                tm.setTile(i, rows1, wallTop);
+                tm.setTile(i, 0, wallBottom);
+            }
+            for (int j = 1; j < rows1; j++) {
+                tm.setTile(0, j, wallLeft);
+                tm.setTile(cols1, j, wallRight);
+            }
+            tm.setForeground(0, rows1, imgMap[13][4], Tile.BEHAVIOR_SOLID);
+            tm.setForeground(cols1, rows1, imgMap[13][5], Tile.BEHAVIOR_SOLID);
+            tm.setForeground(0, 0, imgMap[14][4], Tile.BEHAVIOR_SOLID);
+            tm.setForeground(cols1, 0, imgMap[14][5], Tile.BEHAVIOR_SOLID);
             tm.setForegroundDepth(5);
             tm.setOccupantDepth(10);
             
@@ -451,7 +469,7 @@ public final class MonsterGame extends BaseGame {
             
             final Player player = new Player();
             //player.init(tm, 0, 0); // Sets player's layer to tm's, but we want it to be different
-            player.setPosition(tm, 0, 0);
+            player.setPosition(tm, 1, 1);
             layerSprites.addActor(player);
             engine.track(player);
         }
