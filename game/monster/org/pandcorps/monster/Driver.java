@@ -287,6 +287,7 @@ public class Driver implements Runnable {
                 options.add(new MenuOption(Data.getStore(), new StoreOption(location)));
             }
             //addTravelOption(options);
+            options.add(new MenuOption("World", new WorldOption()));
             return options;
 		}
 	}

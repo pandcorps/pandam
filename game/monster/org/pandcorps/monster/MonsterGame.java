@@ -182,6 +182,8 @@ public final class MonsterGame extends BaseGame {
                 @Override public final void run() {
                     if (caller instanceof LocationOption) {
                         Panscreen.set(new CityScreen(options, choice));
+                    } else if (caller instanceof WorldOption) {
+                        Panscreen.set(new WorldScreen(options, choice));
                     } else {
                         Panscreen.set(new MonsterScreen(caller, label, options, choice));
                     }
@@ -364,6 +366,7 @@ public final class MonsterGame extends BaseGame {
     private static TileMap tm = null;
     private static TileMapImage[][] imgMap = null;
     private final static Map<Integer, Option> optMap = new HashMap<Integer, Option>();
+    private static Option optWorld = null;
     private static Player player = null;
     
     private abstract static class TileScreen extends Panscreen {
@@ -402,8 +405,14 @@ public final class MonsterGame extends BaseGame {
                 tm.setImageMap(MonsterGame.tm);
                 imgMap = tm.splitImageMap();
             }
+            tm.setForegroundDepth(5);
+            tm.setOccupantDepth(10);
             MonsterGame.tm = tm;
             
+            optMap.clear();
+            optWorld = null;
+            lastCityX = -1;
+            lastCityY = -1;
             buildTileMap();
             layerTiles.addActor(tm);
             layerTiles.setConstant(true);
@@ -419,6 +428,23 @@ public final class MonsterGame extends BaseGame {
         protected abstract void buildTileMap() throws Exception;
         
         protected abstract void addPlayer() throws Exception;
+    }
+    
+    private final static class WorldScreen extends TileScreen {
+        private WorldScreen(final List<? extends Option> options, final Wrapper choice) {
+            super(options, choice, 96, 72);
+        }
+        
+        @Override
+        protected final void buildTileMap() throws Exception {
+            tm.fillBackground(imgMap[13][0]);
+        }
+        
+        @Override
+        protected final void addPlayer() {
+            player = new Player(Direction.South);
+            player.setPosition(tm, 5, 5);
+        }
     }
     
     private final static class CityScreen extends TileScreen {
@@ -453,10 +479,7 @@ public final class MonsterGame extends BaseGame {
                 tm.setForeground(i, 0, null, Tile.BEHAVIOR_OPEN);
             }
             tm.setForeground(15, 0, imgMap[13][1], Tile.BEHAVIOR_SOLID);
-            tm.setForegroundDepth(5);
-            tm.setOccupantDepth(10);
             
-            optMap.clear();
             boolean needStore = true, needMorph = true, needTrainers = true, needSpecial = true;
             for (final Option option : options) {
             	final String name = option.getGoal().getName();
@@ -472,6 +495,8 @@ public final class MonsterGame extends BaseGame {
                 } else if (name.equals(Special.Specialty.Lab.toString())) {
                     building(14, 11, 0, 12, 7, 4, 3, option);
                     needSpecial = false;
+                } else if (name.equals("World")) {
+                    optWorld = option;
                 } else if (name.equals("Menu")) {
                 	final Panmage img = getImage("Menu", true);
                 	final Panple size = img.getSize();
@@ -553,9 +578,17 @@ public final class MonsterGame extends BaseGame {
         @Override
         protected final void onBump() {
             final Direction dir = getDirection();
-            if ((Direction.North == dir) || ((getRow() == 0) && Direction.South == dir)) {
+            final Option chosen;
+            if (Direction.North == dir) {
+                chosen = optMap.get(Integer.valueOf(getIndex()));
+            } else if ((getRow() == 0) && Direction.South == dir) {
+                chosen = optWorld;
+            } else {
+                chosen = null;
+            }
+            if (chosen != null) {
                 updateLastCity();
-                choice.value = optMap.get(Integer.valueOf(getIndex()));
+                choice.value = chosen;
             }
         }
         
