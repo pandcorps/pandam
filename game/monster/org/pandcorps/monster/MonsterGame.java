@@ -366,10 +366,15 @@ public final class MonsterGame extends BaseGame {
     private final static Map<Integer, Option> optMap = new HashMap<Integer, Option>();
     private static Player player = null;
     
-    private final static class CityScreen extends Panscreen {
-        private CityScreen(final List<? extends Option> options, final Wrapper choice) {
+    private abstract static class TileScreen extends Panscreen {
+        protected final int cols;
+        protected final int rows;
+        
+        private TileScreen(final List<? extends Option> options, final Wrapper choice, final int cols, final int rows) {
             MonsterGame.options = options;
             MonsterGame.choice = choice;
+            this.cols = cols;
+            this.rows = rows;
         }
         
         @Override
@@ -379,7 +384,7 @@ public final class MonsterGame extends BaseGame {
             layerHud = room;
             layerHud.setClearDepthEnabled(false); // Cursor is in room and uses room's coordinates; don't put HUD above cursor
             //layerTiles = room;
-            final int cols = 32, rows = 24, w = cols * TW, h = rows * TH;
+            final int w = cols * TW, h = rows * TH;
             layerSprites = engine.createLayer("layer.sprites", w, h, 100, room);
             layerSprites.setClearDepthEnabled(false);
             room.addBeneath(layerSprites);
@@ -390,7 +395,7 @@ public final class MonsterGame extends BaseGame {
             engine.setSwipeListener(null);
             layerHud.getOrigin().set(0, 0);
             layerTiles.getOrigin().set(0, 0);
-            final TileMap tm = new TileMap("city.map", cols, rows, TW, TH);
+            final TileMap tm = new TileMap("tile.map", cols, rows, TW, TH);
             if (MonsterGame.tm == null) {
                 imgMap = tm.splitImageMap(tiles);
             } else {
@@ -398,6 +403,32 @@ public final class MonsterGame extends BaseGame {
                 imgMap = tm.splitImageMap();
             }
             MonsterGame.tm = tm;
+            
+            buildTileMap();
+            layerTiles.addActor(tm);
+            layerTiles.setConstant(true);
+            
+            createControlDiamond(layerHud, diamond, diamondIn, ctrl, DEPTH_BUTTON);
+            addCursor();
+            
+            addPlayer();
+            layerSprites.addActor(player);
+            engine.track(player);
+        }
+        
+        protected abstract void buildTileMap() throws Exception;
+        
+        protected abstract void addPlayer() throws Exception;
+    }
+    
+    private final static class CityScreen extends TileScreen {
+        private CityScreen(final List<? extends Option> options, final Wrapper choice) {
+            super(options, choice, 32, 24);
+        }
+        
+        @Override
+        protected final void buildTileMap() throws Exception {
+            final Pangine engine = Pangine.getEngine();
             final TileMapImage grass = imgMap[13][0];
             final Tile wallBottom = tm.getTile(grass, imgMap[13][2], Tile.BEHAVIOR_SOLID);
             final Tile wallTop = tm.getTile(grass, imgMap[15][2], Tile.BEHAVIOR_SOLID);
@@ -467,13 +498,10 @@ public final class MonsterGame extends BaseGame {
             if (needSpecial) {
                 unusedBuilding(15, 12);
             }
-            
-            layerTiles.addActor(tm);
-            layerTiles.setConstant(true);
-            
-            createControlDiamond(layerHud, diamond, diamondIn, ctrl, DEPTH_BUTTON);
-            addCursor();
-            
+        }
+        
+        @Override
+        protected final void addPlayer() {
             final int startX, startY;
             final Direction startDir;
             if (lastCityX >= 0) {
@@ -488,8 +516,6 @@ public final class MonsterGame extends BaseGame {
             player = new Player(startDir);
             //player.init(tm, 0, 0); // Sets player's layer to tm's, but we want it to be different
             player.setPosition(tm, startX, startY);
-            layerSprites.addActor(player);
-            engine.track(player);
         }
     }
     
