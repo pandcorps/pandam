@@ -364,6 +364,7 @@ public final class MonsterGame extends BaseGame {
     private static TileMap tm = null;
     private static TileMapImage[][] imgMap = null;
     private final static Map<Integer, Option> optMap = new HashMap<Integer, Option>();
+    private static Player player = null;
     
     private final static class CityScreen extends Panscreen {
         private CityScreen(final List<? extends Option> options, final Wrapper choice) {
@@ -449,6 +450,7 @@ public final class MonsterGame extends BaseGame {
                 	engine.registerTouchButton(btn);
                 	tm.register(btn, new ActionEndListener() {
                         @Override public final void onActionEnd(final ActionEndEvent event) {
+                            player.updateLastCity();
                             choice.value = option;
                         }});
                 }
@@ -483,7 +485,7 @@ public final class MonsterGame extends BaseGame {
                 startX = 13;
                 startY = 1;
             }
-            final Player player = new Player(startDir);
+            player = new Player(startDir);
             //player.init(tm, 0, 0); // Sets player's layer to tm's, but we want it to be different
             player.setPosition(tm, startX, startY);
             layerSprites.addActor(player);
@@ -525,12 +527,15 @@ public final class MonsterGame extends BaseGame {
         @Override
         protected final void onBump() {
             final Direction dir = getDirection();
-            final int row = getRow();
-            if ((Direction.North == dir) || ((row == 0) && Direction.South == dir)) {
-                lastCityX = getColumn();
-                lastCityY = row;
+            if ((Direction.North == dir) || ((getRow() == 0) && Direction.South == dir)) {
+                updateLastCity();
                 choice.value = optMap.get(Integer.valueOf(getIndex()));
             }
+        }
+        
+        protected final void updateLastCity() {
+            lastCityX = getColumn();
+            lastCityY = getRow();
         }
     }
     
