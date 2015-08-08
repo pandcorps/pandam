@@ -220,6 +220,7 @@ public class Driver implements Runnable {
                 new WildOption(new Label(loc.getName() + " - " + "Wild"), loc.getNormal()).addMenuOption(options, "Wild");
             }
             new TravelOption(Location.getAvailable()).addOptions(options);
+            addMenuOption(options);
             return options;
         }
 	}
@@ -261,7 +262,7 @@ public class Driver implements Runnable {
     			    }
 			    }
 			}
-			options.add(new MenuOption("Menu", new MainMenuOption()));
+			addMenuOption(options);
 			options.add(new MenuOption(Data.getMorph(), new MorphOption()));
 			if (state.hasInventory(track)) {
 			    options.add(new MenuOption(track.getName(), new TrackOption(), state.choose(track), track));
@@ -297,6 +298,10 @@ public class Driver implements Runnable {
         if (available.size() > 1) {
             options.add(new MenuOption("Travel", new TravelOption(available)));
         }
+	}
+	
+	public void addMenuOption(final List<Option> options) {
+	    options.add(new MenuOption("Menu", new MainMenuOption()));
 	}
 	
 	public class MainMenuOption extends RunOption {

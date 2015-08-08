@@ -372,12 +372,19 @@ public final class MonsterGame extends BaseGame {
     private abstract static class TileScreen extends Panscreen {
         protected final int cols;
         protected final int rows;
+        protected final int defaultX;
+        protected final int defaultY;
+        protected final Direction defaultDir;
         
-        private TileScreen(final List<? extends Option> options, final Wrapper choice, final int cols, final int rows) {
+        private TileScreen(final List<? extends Option> options, final Wrapper choice, final int cols, final int rows,
+                           final int defaultX, final int defaultY, final Direction defaultDir) {
             MonsterGame.options = options;
             MonsterGame.choice = choice;
             this.cols = cols;
             this.rows = rows;
+            this.defaultX = defaultX;
+            this.defaultY = defaultY;
+            this.defaultDir = defaultDir;
         }
         
         @Override
@@ -411,8 +418,6 @@ public final class MonsterGame extends BaseGame {
             
             optMap.clear();
             optWorld = null;
-            lastCityX = -1;
-            lastCityY = -1;
             buildTileMap();
             layerTiles.addActor(tm);
             layerTiles.setConstant(true);
@@ -423,38 +428,54 @@ public final class MonsterGame extends BaseGame {
             addPlayer();
             layerSprites.addActor(player);
             engine.track(player);
+            player.clearLastCity();
         }
         
         protected abstract void buildTileMap() throws Exception;
         
-        protected abstract void addPlayer() throws Exception;
+        protected final void addPlayer() {
+            final int startX, startY;
+            final Direction startDir;
+            if (lastCityX >= 0) {
+                startDir = Direction.South;
+                startX = lastCityX;
+                startY = lastCityY;
+            } else {
+                startDir = defaultDir;
+                startX = defaultX;
+                startY = defaultY;
+            }
+            player = new Player(startDir);
+            //player.init(tm, startX, startY); // Sets player's layer to tm's, but we want it to be different
+            player.setPosition(tm, startX, startY);
+        }
     }
     
     private final static class WorldScreen extends TileScreen {
         private WorldScreen(final List<? extends Option> options, final Wrapper choice) {
-            super(options, choice, 96, 72);
+            super(options, choice, 96, 72, 5, 5, Direction.South);
         }
         
         @Override
         protected final void buildTileMap() throws Exception {
             tm.fillBackground(imgMap[13][0]);
-        }
-        
-        @Override
-        protected final void addPlayer() {
-            player = new Player(Direction.South);
-            player.setPosition(tm, 5, 5);
+            
+            for (final Option option : options) {
+                final String name = option.getGoal().getName();
+                if (name.equals("Menu")) {
+                    addMenuButton(option);
+                }
+            }
         }
     }
     
     private final static class CityScreen extends TileScreen {
         private CityScreen(final List<? extends Option> options, final Wrapper choice) {
-            super(options, choice, 32, 24);
+            super(options, choice, 32, 24, 13, 1, Direction.North);
         }
         
         @Override
         protected final void buildTileMap() throws Exception {
-            final Pangine engine = Pangine.getEngine();
             final TileMapImage grass = imgMap[13][0];
             final Tile wallBottom = tm.getTile(grass, imgMap[13][2], Tile.BEHAVIOR_SOLID);
             final Tile wallTop = tm.getTile(grass, imgMap[15][2], Tile.BEHAVIOR_SOLID);
@@ -498,17 +519,7 @@ public final class MonsterGame extends BaseGame {
                 } else if (name.equals("World")) {
                     optWorld = option;
                 } else if (name.equals("Menu")) {
-                	final Panmage img = getImage("Menu", true);
-                	final Panple size = img.getSize();
-                	final int x = engine.getEffectiveWidth() - (int) size.getX() - 1;
-                	final int y = engine.getEffectiveHeight() - (int) size.getY() - 1;
-                	final TouchButton btn = new TouchButton(engine.getInteraction(), layerHud, "Menu", x, y, DEPTH_BUTTON, img, img, true);
-                	engine.registerTouchButton(btn);
-                	tm.register(btn, new ActionEndListener() {
-                        @Override public final void onActionEnd(final ActionEndEvent event) {
-                            player.updateLastCity();
-                            choice.value = option;
-                        }});
+                    addMenuButton(option);
                 }
             }
             if (needStore) {
@@ -524,24 +535,21 @@ public final class MonsterGame extends BaseGame {
                 unusedBuilding(15, 12);
             }
         }
-        
-        @Override
-        protected final void addPlayer() {
-            final int startX, startY;
-            final Direction startDir;
-            if (lastCityX >= 0) {
-                startDir = Direction.South;
-                startX = lastCityX;
-                startY = lastCityY;
-            } else {
-                startDir = Direction.North;
-                startX = 13;
-                startY = 1;
-            }
-            player = new Player(startDir);
-            //player.init(tm, 0, 0); // Sets player's layer to tm's, but we want it to be different
-            player.setPosition(tm, startX, startY);
-        }
+    }
+    
+    private final static void addMenuButton(final Option option) {
+        final Pangine engine = Pangine.getEngine();
+        final Panmage img = getImage("Menu", true);
+        final Panple size = img.getSize();
+        final int x = engine.getEffectiveWidth() - (int) size.getX() - 1;
+        final int y = engine.getEffectiveHeight() - (int) size.getY() - 1;
+        final TouchButton btn = new TouchButton(engine.getInteraction(), layerHud, "Menu", x, y, DEPTH_BUTTON, img, img, true);
+        engine.registerTouchButton(btn);
+        tm.register(btn, new ActionEndListener() {
+            @Override public final void onActionEnd(final ActionEndEvent event) {
+                player.updateLastCity();
+                choice.value = option;
+            }});
     }
     
     private final static void unusedBuilding(final int tlX, final int tlY) {
@@ -587,9 +595,18 @@ public final class MonsterGame extends BaseGame {
                 chosen = null;
             }
             if (chosen != null) {
-                updateLastCity();
+                if (chosen == optWorld) {
+                    clearLastCity();
+                } else {
+                    updateLastCity();
+                }
                 choice.value = chosen;
             }
+        }
+        
+        protected final void clearLastCity() {
+            lastCityX = -1;
+            lastCityY = -1;
         }
         
         protected final void updateLastCity() {
