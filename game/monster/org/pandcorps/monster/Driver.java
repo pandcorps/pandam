@@ -98,7 +98,9 @@ public class Driver implements Runnable {
 	}
 	
 	private void visit(final Location loc) {
-	    stack.pop();
+	    while (stack.size() > 0) {
+	        stack.pop();
+	    }
 	    state.visit(loc);
         state.setLocation(loc);
         stack.push(new LocationOption(loc));
@@ -170,14 +172,14 @@ public class Driver implements Runnable {
         @Override
         public List<Option> menu() {
             final List<Option> options = new ArrayList<Option>(available.size());
-            addOptions(options);
+            addOptions(options, true);
             return options;
         }
         
-        public void addOptions(final List<Option> options) {
+        public void addOptions(final List<Option> options, final boolean skipCurrent) {
             final Location curr = state.getLocation();
             for (final Location l : available) {
-                if (curr.equals(l)) {
+                if (skipCurrent && curr.equals(l)) {
                     continue;
                 }
                 final List<Entity> requirements = new ArrayList<Entity>();
@@ -219,7 +221,7 @@ public class Driver implements Runnable {
             for (final Location loc : Location.getLocations()) {
                 new WildOption(new Label(loc.getName() + " - " + "Wild"), loc.getNormal()).addMenuOption(options, "Wild");
             }
-            new TravelOption(Location.getAvailable()).addOptions(options);
+            new TravelOption(Location.getAvailable()).addOptions(options, false);
             addMenuOption(options);
             return options;
         }

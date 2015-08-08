@@ -231,7 +231,9 @@ public class Parser {
             //i++; // reward
             final Item access = Item.getItem(getString(tokens, i++)); // method
             final String special = getString(tokens, i++);
-            return new Location(/*id,*/ code, name, store, access, special);
+            final int x = getInt(tokens, i++);
+            final int y = getInt(tokens, i++);
+            return new Location(/*id,*/ code, name, store, access, special, x, y);
         }
         
         @Override

@@ -51,13 +51,18 @@ public class Location extends Code {
     private List<Species> normal = null;
     private List<Species> fish = null;
     private Map<Item, ArrayList<Species>> specials = null;
+    private int x = -1;
+    private int y = -1;
     
-    /*package*/ Location(/*final int id,*/ final String code, final String name, final List<Item> store, final Item access, final String special) {
+    /*package*/ Location(/*final int id,*/ final String code, final String name, final List<Item> store, final Item access, final String special,
+            final int x, final int y) {
         super(code, name);
         //this.id = id;
         this.store = unmod(store);
         this.access = access;
         this.special = special;
+        this.x = x;
+        this.y = y;
     }
     
     /*public int getId() {
@@ -74,6 +79,14 @@ public class Location extends Code {
     
     public String getSpecial() {
         return special;
+    }
+    
+    public final int getX() {
+        return x;
+    }
+    
+    public final int getY() {
+        return y;
     }
     
     public final List<Species> getWild() {

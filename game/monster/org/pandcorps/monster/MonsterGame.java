@@ -368,6 +368,7 @@ public final class MonsterGame extends BaseGame {
     private final static Map<Integer, Option> optMap = new HashMap<Integer, Option>();
     private static Option optWorld = null;
     private static Player player = null;
+    private final static Map<Integer, Option> locMap = new HashMap<Integer, Option>();
     
     private abstract static class TileScreen extends Panscreen {
         protected final int cols;
@@ -418,6 +419,7 @@ public final class MonsterGame extends BaseGame {
             
             optMap.clear();
             optWorld = null;
+            locMap.clear();
             buildTileMap();
             layerTiles.addActor(tm);
             layerTiles.setConstant(true);
@@ -461,9 +463,18 @@ public final class MonsterGame extends BaseGame {
             tm.fillBackground(imgMap[13][0]);
             
             for (final Option option : options) {
-                final String name = option.getGoal().getName();
+                final Label goal = option.getGoal();
+                final String name = goal.getName();
                 if (name.equals("Menu")) {
                     addMenuButton(option);
+                } else if (goal instanceof Location) {
+                    final Location loc = (Location) goal;
+                    final int x = loc.getX();
+                    if (x >= 0) {
+                        final int y = loc.getY();
+                        tm.setForeground(x, y, imgMap[15][4]);
+                        locMap.put(Integer.valueOf(tm.getIndex(x, y)), option);
+                    }
                 }
             }
         }
@@ -581,6 +592,11 @@ public final class MonsterGame extends BaseGame {
         @Override
         protected final void onStill() {
             Guy4Controller.onStillPlayer(ctrl, this);
+        }
+        
+        @Override
+        protected final void onStop() {
+            choice.value = locMap.get(Integer.valueOf(getIndex()));
         }
         
         @Override

@@ -97,6 +97,7 @@ public class Guy4 extends TileWalker {
     @Override
     protected void onWalked() {
         setImage(getDirection());
+        onStop();
     }
     
     private final void setImage(final Direction dir) {
@@ -111,6 +112,11 @@ public class Guy4 extends TileWalker {
     	return false;
     }
     
+    //@OverrideMe
+    protected void onStop() {
+    }
+    
+    //@OverrideMe
     protected void onBump() {
     }
 }
