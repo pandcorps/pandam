@@ -369,6 +369,7 @@ public final class MonsterGame extends BaseGame {
     private static Option optWorld = null;
     private static Player player = null;
     private final static Map<Integer, Option> locMap = new HashMap<Integer, Option>();
+    private final static Map<TileMapImage, Option> wildMap = new HashMap<TileMapImage, Option>();
     
     private abstract static class TileScreen extends Panscreen {
         protected final int cols;
@@ -420,6 +421,7 @@ public final class MonsterGame extends BaseGame {
             optMap.clear();
             optWorld = null;
             locMap.clear();
+            wildMap.clear();
             buildTileMap();
             layerTiles.addActor(tm);
             layerTiles.setConstant(true);
@@ -479,6 +481,15 @@ public final class MonsterGame extends BaseGame {
                         if (loc == currLoc && lastCityX < 0) {
                             lastCityX = x;
                             lastCityY = y - 1;
+                        }
+                    }
+                } else if (option instanceof MenuOption) {
+                    final Option wrappedOption = ((MenuOption) option).option;
+                    if (wrappedOption instanceof WildOption) {
+                        final Location loc = ((WildOption) wrappedOption).location;
+                        final int wildImgX = loc.getWildImgX();
+                        if (wildImgX >= 0) {
+                            wildMap.put(imgMap[loc.getWildImgY()][wildImgX], option);
                         }
                     }
                 }
@@ -605,7 +616,18 @@ public final class MonsterGame extends BaseGame {
         
         @Override
         protected final void onStop() {
-            choice.value = locMap.get(Integer.valueOf(getIndex()));
+            final Option locOpt = locMap.get(Integer.valueOf(getIndex()));
+            if (locOpt == null) {
+                final Tile tile = tm.getTile(getIndex());
+                final Object bg = DynamicTileMap.getRawBackground(tile);
+                if (Pangine.getEngine().getClock() >= 0) { //TODO only choose this x% of the time randomly
+                    updateLastCity();
+                    choice.value = wildMap.get(bg);
+                }
+            } else {
+                clearLastCity();
+                choice.value = locOpt;
+            }
         }
         
         @Override

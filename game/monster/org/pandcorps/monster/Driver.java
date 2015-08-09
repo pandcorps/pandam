@@ -219,7 +219,7 @@ public class Driver implements Runnable {
         protected List<Option> menu() {
             final List<Option> options = new ArrayList<Option>();
             for (final Location loc : Location.getLocations()) {
-                new WildOption(new Label(loc.getName() + " - " + "Wild"), loc.getNormal()).addMenuOption(options, "Wild");
+                new WildOption(loc, loc.getNormal()).addMenuOption(options, "Wild");
             }
             new TravelOption(Location.getAvailable()).addOptions(options, false);
             addMenuOption(options);
@@ -547,9 +547,13 @@ public class Driver implements Runnable {
         protected abstract Option createOption(final Species chosen, final Species opponent, final Special special);
     }
 
-	private class WildOption extends BattleOption {
-		public WildOption(final Label label, final List<Species> opponents) {
-			super(label, opponents, true);
+	protected class WildOption extends BattleOption {
+	    protected final Location location;
+	    
+		public WildOption(final Location loc, final List<Species> opponents) {
+			super(new Label(loc.getName() + " - " + "Wild"), opponents, true);
+			location = loc;
+			setAutoBackEnabled(true);
 		}
 
 		@Override
@@ -1115,7 +1119,7 @@ public class Driver implements Runnable {
     private Option handle(final Option caller, final Label label, final List<? extends Option> baseOptions) {
         final List<Option> options = new ArrayList<Option>(baseOptions.size() + 1);
         options.addAll(baseOptions);
-        if (stack.size() > 1) {
+        if (stack.size() > 1 && !caller.isAutoBackEnabled()) {
             options.add(new BackOption());
         }
         //} else {
@@ -1140,9 +1144,11 @@ public class Driver implements Runnable {
             
         @Override
         public void run() {
+            Option opt = null;
             do {
                 stack.pop();
-            } while (!stack.peek().isPossible());
+                opt = stack.peek();
+            } while (!opt.isPossible() || opt.isAutoBackEnabled());
         }
     }
     

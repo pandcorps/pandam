@@ -29,6 +29,7 @@ public abstract class Option implements Runnable {
 	protected final Label goal; // Same as awarded for a catch or buy task; for battle goal will be opponent creature, and awarded will be experience/money
 	protected final List<Entity> required;
 	private String info = null;
+	private boolean autoBackEnabled = false;
 
 	protected Option(final Label goal) {
 	    this(goal, null);
@@ -61,6 +62,14 @@ public abstract class Option implements Runnable {
 	
 	public final void setInfo(final String info) {
 	    this.info = info;
+	}
+	
+	public final boolean isAutoBackEnabled() {
+	    return autoBackEnabled;
+	}
+	
+	public final void setAutoBackEnabled(final boolean autoBackEnabled) {
+	    this.autoBackEnabled = autoBackEnabled;
 	}
 
 	public boolean isPossible() {

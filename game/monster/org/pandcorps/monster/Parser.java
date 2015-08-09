@@ -233,7 +233,9 @@ public class Parser {
             final String special = getString(tokens, i++);
             final int x = getInt(tokens, i++);
             final int y = getInt(tokens, i++);
-            return new Location(/*id,*/ code, name, store, access, special, x, y);
+            final int wildImgX = getInt(tokens, i++);
+            final int wildImgY = getInt(tokens, i++);
+            return new Location(/*id,*/ code, name, store, access, special, x, y, wildImgX, wildImgY);
         }
         
         @Override
