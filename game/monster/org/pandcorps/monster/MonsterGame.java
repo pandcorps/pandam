@@ -72,6 +72,7 @@ public final class MonsterGame extends BaseGame {
     private final static Panple SIZE_24 = new FinPanple2(24, 24);
     private final static int DEPTH_BUTTON = 20;
     private static int DIM_BUTTON = 0;
+    private final static int WILD_ENCOUNTER_RATE = 25;
     private static int imgOffX = 0;
     private static int imgOffY = 0;
     private static volatile Panmage menu = null;
@@ -620,7 +621,7 @@ public final class MonsterGame extends BaseGame {
             if (locOpt == null) {
                 final Tile tile = tm.getTile(getIndex());
                 final Object bg = DynamicTileMap.getRawBackground(tile);
-                if (Pangine.getEngine().getClock() >= 0) { //TODO only choose this x% of the time randomly
+                if (Mathtil.rand(WILD_ENCOUNTER_RATE)) {
                     updateLastCity();
                     choice.value = wildMap.get(bg);
                 }
