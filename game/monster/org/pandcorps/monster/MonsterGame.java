@@ -461,7 +461,9 @@ public final class MonsterGame extends BaseGame {
         @Override
         protected final void buildTileMap() throws Exception {
             tm.fillBackground(imgMap[14][0]);
+            tm.fillBackground(imgMap[15][0], 6, 6, 3, 3);
             
+            final Location currLoc = State.get().getLocation();
             for (final Option option : options) {
                 final Label goal = option.getGoal();
                 final String name = goal.getName();
@@ -474,6 +476,10 @@ public final class MonsterGame extends BaseGame {
                         final int y = loc.getY();
                         tm.setForeground(x, y, imgMap[15][4]);
                         locMap.put(Integer.valueOf(tm.getIndex(x, y)), option);
+                        if (loc == currLoc && lastCityX < 0) {
+                            lastCityX = x;
+                            lastCityY = y - 1;
+                        }
                     }
                 }
             }
