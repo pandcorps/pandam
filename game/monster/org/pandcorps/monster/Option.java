@@ -81,6 +81,10 @@ public abstract class Option implements Runnable {
         return true;
     }
 	
+	public final static boolean isPossible(final Option option) {
+	    return option != null && option.isPossible();
+	}
+	
 	@Override
 	public String toString() {
 	    return goal.toString();

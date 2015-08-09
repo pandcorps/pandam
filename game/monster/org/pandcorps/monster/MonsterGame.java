@@ -622,8 +622,7 @@ public final class MonsterGame extends BaseGame {
                 final Tile tile = tm.getTile(getIndex());
                 final Object bg = DynamicTileMap.getRawBackground(tile);
                 if (Mathtil.rand(WILD_ENCOUNTER_RATE)) {
-                    updateLastCity();
-                    choice.value = wildMap.get(bg);
+                    choose(wildMap.get(bg), true);
                 }
             } else {
                 clearLastCity();
@@ -650,6 +649,18 @@ public final class MonsterGame extends BaseGame {
                 }
                 choice.value = chosen;
             }
+        }
+        
+        private final boolean choose(final Option option, final boolean updateLocation) {
+            if (!Option.isPossible(option)) {
+                return false;
+            } else if (updateLocation) {
+                updateLastCity();
+            } else {
+                clearLastCity();
+            }
+            choice.value = option;
+            return true;
         }
         
         protected final void clearLastCity() {
