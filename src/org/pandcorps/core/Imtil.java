@@ -558,7 +558,11 @@ public final class Imtil {
     }
     
     public final static int getDataElement(final Pancolor c) {
-        return cm.getDataElement(new int[] {c.getR(), c.getG(), c.getB(), c.getA()}, 0);
+        return getDataElement(c.getR(), c.getG(), c.getB(), c.getA());
+    }
+    
+    public final static int getDataElement(final short r, final short g, final short b, final short a) {
+        return cm.getDataElement(new int[] {r, g, b, a}, 0);
     }
     
     public final static FinPancolor toColor(final int pixel) {

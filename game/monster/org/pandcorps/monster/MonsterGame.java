@@ -22,7 +22,9 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.monster;
 
+import java.io.*;
 import java.util.*;
+import java.util.regex.*;
 
 import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
@@ -672,6 +674,54 @@ public final class MonsterGame extends BaseGame {
             lastCityX = getColumn();
             lastCityY = getRow();
         }
+    }
+    
+    private static Map<Integer, Object> buildMap = null;
+    private final static Integer tileTree = Integer.valueOf(0);
+    
+    private final static void loadTileDefinitions() throws Exception {
+        BufferedReader in = null;
+        try {
+            final Pattern pat = Pattern.compile("\\|");
+            in = Iotil.getBufferedReader("TODO");
+            String line;
+            buildMap = new HashMap<Integer, Object>();
+            while ((line = in.readLine()) != null) {
+                final String[] tokens = pat.split(line);
+                final short r = Short.parseShort(tokens[0]);
+                final short g = Short.parseShort(tokens[1]);
+                final short b = Short.parseShort(tokens[2]);
+                final Integer color = Integer.valueOf(Imtil.getDataElement(r, g, b, Pancolor.MAX_VALUE));
+                final String token3 = tokens[3];
+                if ("tree".equalsIgnoreCase(token3)) {
+                    buildMap.put(color, tileTree);
+                }
+                final int bgX = Integer.parseInt(token3);
+                final int bgY = Integer.parseInt(tokens[4]);
+                final byte behavior = "Solid".equalsIgnoreCase(tokens[5]) ? Tile.BEHAVIOR_SOLID : Tile.BEHAVIOR_OPEN;
+                final Tile tile = tm.getTile(imgMap[bgY][bgX], null, behavior);
+                buildMap.put(color, tile);
+            }
+        } finally {
+            Iotil.close(in);
+        }
+    }
+    
+    private final static void buildMap(final Img src) {
+        final int w = src.getWidth(), h = src.getHeight();
+        for (int j = 0; j < h; j++) {
+            final int tj = h - j - 1;
+            for (int i = 0; i < w; i++) {
+                final Object t = buildMap.get(Integer.valueOf(src.getRGB(i, j)));
+                if (t == tileTree) {
+                    tree(i, tj);
+                } else {
+                //} else if (t.getClass() == Tile.class) {
+                    tm.setTile(i, tj, (Tile) t);
+                }
+            }
+        }
+        buildMap = null;
     }
     
     private final static void tree(final int x, final int y) {
