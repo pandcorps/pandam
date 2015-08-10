@@ -51,6 +51,8 @@ public final class MonsterGame extends BaseGame {
     Show container quantity on Battle screen
     Show total money/experience when earning it
     Database screen
+    Test that impossible options still appear as buildings handled gracefully
+    If device has back button, it should bring up the menu if on tile screen, or use back option if on sub-menu, or use exit option if on main menu
     */
     private static volatile Driver driver = null;
     private static volatile Panroom room = null;

@@ -1075,6 +1075,13 @@ public class Driver implements Runnable {
         public List<Option> menu() {
             final Collection<Species> prefs = state.getPreferences();
             final List<Option> options = new ArrayList<Option>(prefs.size());
+            final Set<Species> team = new HashSet<Species>(state.getTeam());
+            for (final Species s : prefs) {
+                if (!team.contains(s)) { //TODO Option to show owned and seen instead of team
+                    continue;
+                }
+                options.add(new BackOption(s)); //TODO Option to click on Species and move it to front of prefs list
+            }
             //for (final Species s : prefs) {
                 // See InventoryOption notes
                 // Status - unseen/seen/owned/on team
