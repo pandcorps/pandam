@@ -134,7 +134,6 @@ public final class MonsterGame extends BaseGame {
         menuFullTranslucent = engine.createImage(PRE_IMG + "menu.full.translucent", menuFullImg);
         menuFullImg.close();*/
         worldSrc = Imtil.load(Parser.LOC + "misc/WorldMap.png");
-        loadTileDefinitions();
         ctrl = new ControlScheme();
     }
     
@@ -738,6 +737,7 @@ public final class MonsterGame extends BaseGame {
                 final String token3 = tokens[3];
                 if ("tree".equalsIgnoreCase(token3)) {
                     buildMap.put(color, tileTree);
+                    continue;
                 }
                 final int bgX = Integer.parseInt(token3);
                 final int bgY = Integer.parseInt(tokens[4]);
@@ -750,7 +750,8 @@ public final class MonsterGame extends BaseGame {
         }
     }
     
-    private final static void buildWorldMap() {
+    private final static void buildWorldMap() throws Exception {
+        loadTileDefinitions();
         final int w = worldSrc.getWidth(), h = worldSrc.getHeight();
         for (int j = 0; j < h; j++) {
             final int tj = h - j - 1;
