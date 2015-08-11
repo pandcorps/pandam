@@ -96,6 +96,7 @@ public final class MonsterGame extends BaseGame {
     private static Panmage diamond = null;
     private static Panmage diamondIn = null;
     private static Panmage tiles = null;
+    private static Img worldSrc = null;
     private static ControlScheme ctrl = null;
     
     @Override
@@ -126,12 +127,14 @@ public final class MonsterGame extends BaseGame {
         final Panmage[] diamonds = getDiamonds(DIM_BUTTON, Pancolor.GREY);
         diamond = diamonds[0];
         diamondIn = diamonds[1];
-        final Img menuFullImg = Imtil.load(Parser.LOC + "misc/MenuFull.png");
+        /*final Img menuFullImg = Imtil.load(Parser.LOC + "misc/MenuFull.png");
         menuFullImg.setTemporary(false);
         menuFull = engine.createImage(PRE_IMG + "menu.full", menuFullImg);
         Imtil.setPseudoTranslucent(menuFullImg);
         menuFullTranslucent = engine.createImage(PRE_IMG + "menu.full.translucent", menuFullImg);
-        menuFullImg.close();
+        menuFullImg.close();*/
+        worldSrc = Imtil.load(Parser.LOC + "misc/WorldMap.png");
+        loadTileDefinitions();
         ctrl = new ControlScheme();
     }
     
@@ -412,16 +415,7 @@ public final class MonsterGame extends BaseGame {
             engine.setSwipeListener(null);
             layerHud.getOrigin().set(0, 0);
             layerTiles.getOrigin().set(0, 0);
-            final TileMap tm = new TileMap("tile.map", cols, rows, TW, TH);
-            if (MonsterGame.tm == null) {
-                imgMap = tm.splitImageMap(tiles);
-            } else {
-                tm.setImageMap(MonsterGame.tm);
-                imgMap = tm.splitImageMap();
-            }
-            tm.setForegroundDepth(5);
-            tm.setOccupantDepth(10);
-            MonsterGame.tm = tm;
+            initTileMap();
             
             optMap.clear();
             optWorld = null;
@@ -438,6 +432,19 @@ public final class MonsterGame extends BaseGame {
             layerSprites.addActor(player);
             engine.track(player);
             player.clearLastCity();
+        }
+        
+        protected void initTileMap() {
+            final TileMap tm = new TileMap("tile.map", cols, rows, TW, TH);
+            if (MonsterGame.tm == null) {
+                imgMap = tm.splitImageMap(tiles);
+            } else {
+                tm.setImageMap(MonsterGame.tm);
+                imgMap = tm.splitImageMap();
+            }
+            tm.setForegroundDepth(5);
+            tm.setOccupantDepth(10);
+            MonsterGame.tm = tm;
         }
         
         protected abstract void buildTileMap() throws Exception;
@@ -460,15 +467,44 @@ public final class MonsterGame extends BaseGame {
         }
     }
     
+    private static TileMap worldTm = null;
+    private static int worldCols = -1;
+    private static int worldRows = -1;
+    
+    private final static int getWorldCols() {
+        if (worldCols < 0) {
+            worldCols = worldSrc.getWidth();
+        }
+        return worldCols;
+    }
+    
+    private final static int getWorldRows() {
+        if (worldRows < 0) {
+            worldRows = worldSrc.getHeight();
+        }
+        return worldRows;
+    }
+    
     private final static class WorldScreen extends TileScreen {
         private WorldScreen(final List<? extends Option> options, final Wrapper choice) {
-            super(options, choice, 96, 72, 5, 5, Direction.South);
+            super(options, choice, getWorldCols(), getWorldRows(), 5, 5, Direction.South);
+        }
+        
+        @Override
+        protected final void initTileMap() {
+            if (worldTm == null) {
+                super.initTileMap();
+            }
         }
         
         @Override
         protected final void buildTileMap() throws Exception {
-            tm.fillBackground(imgMap[14][0]);
-            tm.fillBackground(imgMap[15][0], 6, 6, 3, 3);
+            if (worldTm == null) {
+                buildWorldMap();
+                worldTm = tm;
+            } else {
+                tm = worldTm;
+            }
             
             final Location currLoc = State.get().getLocation();
             for (final Option option : options) {
@@ -499,9 +535,11 @@ public final class MonsterGame extends BaseGame {
                     }
                 }
             }
-            tree(2, 4);
-            tree(2, 3);
-            tree(2, 2);
+        }
+        
+        @Override
+        protected final void destroy() {
+            worldTm.detach();
         }
     }
     
@@ -685,10 +723,13 @@ public final class MonsterGame extends BaseGame {
         BufferedReader in = null;
         try {
             final Pattern pat = Pattern.compile("\\|");
-            in = Iotil.getBufferedReader("TODO");
+            in = Iotil.getBufferedReader(Parser.LOC + "tiles.txt");
             String line;
             buildMap = new HashMap<Integer, Object>();
             while ((line = in.readLine()) != null) {
+                if (line.isEmpty() || line.startsWith("#")) {
+                    continue;
+                }
                 final String[] tokens = pat.split(line);
                 final short r = Short.parseShort(tokens[0]);
                 final short g = Short.parseShort(tokens[1]);
@@ -709,12 +750,12 @@ public final class MonsterGame extends BaseGame {
         }
     }
     
-    private final static void buildMap(final Img src) {
-        final int w = src.getWidth(), h = src.getHeight();
+    private final static void buildWorldMap() {
+        final int w = worldSrc.getWidth(), h = worldSrc.getHeight();
         for (int j = 0; j < h; j++) {
             final int tj = h - j - 1;
             for (int i = 0; i < w; i++) {
-                final Object t = buildMap.get(Integer.valueOf(src.getRGB(i, j)));
+                final Object t = buildMap.get(Integer.valueOf(worldSrc.getRGB(i, j)));
                 if (t == tileTree) {
                     tree(i, tj);
                 } else {
@@ -723,6 +764,8 @@ public final class MonsterGame extends BaseGame {
                 }
             }
         }
+        worldSrc.close();
+        worldSrc = null;
         buildMap = null;
     }
     
