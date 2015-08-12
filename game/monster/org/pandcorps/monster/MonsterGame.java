@@ -592,6 +592,9 @@ public final class MonsterGame extends BaseGame {
                 } else if (name.equals(Special.Specialty.Trader.toString())) {
                     building(16, 11, 9, 8, 4, 4, 2, option);
                     needSpecial = false;
+                } else if (name.equals(Special.Specialty.Breeder.toString())) {
+                    building(14, 11, 7, 12, 7, 4, 1, option);
+                    needSpecial = false;
                 } else if (name.equals("World")) {
                     optWorld = option;
                 } else if (name.equals("Menu")) {

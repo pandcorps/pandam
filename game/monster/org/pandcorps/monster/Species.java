@@ -25,6 +25,8 @@ package org.pandcorps.monster;
 //import java.io.*;
 //import java.nio.*;
 import java.util.*;
+
+import org.pandcorps.core.*;
 import org.pandcorps.monster.Special.*;
 
 public class Species extends Entity {
@@ -103,6 +105,21 @@ public class Species extends Entity {
 	public Collection<Species> getMorphs() {
 	    //initInstance();
 	    return this.morphs;
+	}
+	
+	public Collection<Species> getAllMorphs() {
+	    final Collection<Species> direct = getMorphs();
+	    Collection<Species> all = direct;
+	    for (final Species s : Coltil.unnull(direct)) {
+	        final Collection<Species> extra = s.getAllMorphs();
+	        if (Coltil.isValued(extra)) {
+	            if (all == direct) {
+	                all = new HashSet<Species>(direct);
+	            }
+	            all.addAll(extra);
+	        }
+	    }
+	    return all;
 	}
 	
 	private final void initInstance() {

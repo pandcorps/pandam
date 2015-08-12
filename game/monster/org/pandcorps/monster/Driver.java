@@ -860,7 +860,7 @@ public class Driver implements Runnable {
             if (canSire && state.hasTeam(opponent)) {
                 return opponent;
             }
-            for (final Species morph : opponent.getMorphs()) {
+            for (final Species morph : opponent.getAllMorphs()) {
                 final Species chosen = choose(morph);
                 if (chosen != null) {
                     return chosen;
@@ -884,7 +884,16 @@ public class Driver implements Runnable {
             } else if (s.getMorphs().size() == 0) {
                 continue;
             }
-            list.add(s);
+            boolean hasParent = false;
+            for (final Species p : s.getAllMorphs()) {
+                if (state.hasTeam(p)) {
+                    hasParent = true;
+                    break;
+                }
+            }
+            if (hasParent) {
+                list.add(s);
+            }
         }
         return list;
     }
