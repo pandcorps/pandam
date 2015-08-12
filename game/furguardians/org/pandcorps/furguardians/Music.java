@@ -140,12 +140,12 @@ public class Music {
 		return tick;
 	}
 	
-	protected final static Sequence newSongTechno() throws Exception {
-		final Sequence seq = new Sequence(Sequence.SMPTE_30, 1);
-		final Track track = seq.createTrack();
+	protected final static Song newSongCave() throws Exception {
+		final Song song = new Song("Cave");
+		final Track track = song.track;
 		//final int length = 2048;
 		int dur, keys[];
-		/*channel = 0;
+		/*channel = 3;
 		Mustil.setInstrument(track, channel, Mustil.PRG_FRETLESS_BASS);
 		dur = 2;
 		Mustil.unspecifiedNoteDuration = dur;
@@ -163,31 +163,43 @@ public class Music {
 		Mustil.unspecifiedNoteDuration = 4;
 		keys = new int[] {-1, -1, -1, -1, 63, 65, -1, -1};
 		Mustil.addRepeatedNotes(track, 0, channel, 58, dur, length / keys.length / dur, keys);*/
-		channel = 3;
-		vol = 64;
+		channel = 0;
+		vol = 72;
 		tick = 0; //128;
 		// Underground = PRG_GLOCKENSPIEL, b=56?
-		Mustil.setInstrument(track, channel, Mustil.PRG_XYLOPHONE); // PRG_CRYSTAL
-		for (int k = 0; k < 2; k++) {
-			for (int j = 0; j < 4; j++) {
-				final int b = 56;
-				final int n = ((j % 2) == 0) ? b : ((j == 1) ? (b + 4) : (b - 4)), n4 = n + 4, n8 = n + 8;
-				if (k == 1) {
+		Mustil.setInstrument(track, channel, Mustil.PRG_GLOCKENSPIEL);
+		//Mustil.setInstrument(track, channel, Mustil.PRG_XYLOPHONE); // PRG_CRYSTAL
+		//for (int k = 0; k < 2; k++) {
+			//for (int j = 0; j < 4; j++) {
+			for (int j = 0; j < 2; j++) {
+				//final int b = 56;
+				//final int n = ((j % 2) == 0) ? b : ((j == 1) ? (b + 4) : (b - 4)), n4 = n + 4, n8 = n + 8;
+				final int n = (j == 0) ? 55 : 53, n4 = n + 2, n8 = n + 4;
+				/*if (k == 1) {
 					dur = 4;
 					Mustil.unspecifiedNoteDuration = 8;
 					keys = new int[] {n, -1, n, n, n4, -1, n, n, n8, -1, n8, -1, n4, -1, -1, -1,
 							n, -1, n, n, n4, -1, n4, n4, n, -1, -1, -1, n, -1, -1, -1};
-				} else {
+				} else {*/
 					dur = 8;
 					Mustil.unspecifiedNoteDuration = dur;
 					keys = new int[] {n, n, n4, n, n8, n8, n4, -1, n, n, n4, n4, n, -1, n, -1};
-				}
+					//keys = new int[] {n, n, n4, n, n8, n8, n4, -1, n, n, n4, n4, n, -1};
+				//}
 				for (int i = 0; i < 2; i++) {
 					tick = Mustil.addNotes(track, tick, channel, vol, dur, keys);
+					//tick = Mustil.addNotes(track, tick, channel, vol, dur * 2, new int[] {n});
 				}
 			}
-		}
-		return seq;
+		//}
+		channel = 1;
+		Mustil.setInstrument(track, channel, Mustil.PRG_STRING_ENSEMBLE_1);
+		vol = 60;
+		Mustil.addNote(track, 0, 128, channel, 53, vol);
+		Mustil.addNote(track, 128, 128, channel, 52, vol);
+		Mustil.addNote(track, 256, 128, channel, 50, vol);
+		Mustil.addNote(track, 384, 128, channel, 48, vol);
+		return song;
 	}
 	
 	protected final static Sequence newSongHappy2() throws Exception {
@@ -737,7 +749,7 @@ public class Music {
 	
 	private final static void runGen() throws Exception {
 		System.out.println("Starting");
-		final Song song = newSongOcarina();
+		final Song song = newSongCave();
 		Mustil.save(song.seq, song.name.toLowerCase() + ".mid");
 		final Panaudio music = Pangine.getEngine().getAudio();
 		//music.ensureCapacity(4);
