@@ -127,4 +127,17 @@ public class TileOccupant extends Panctor {
     public final static String getInteractLabel(final TileOccupant o) {
     	return o == null ? null : o.getInteractLabel();
     }
+    
+    @Override
+    protected final void onDestroy() {
+        if (tm != null) {
+            tm.setOccupant(index, null);
+        }
+        onDestroyOccupant();
+        super.onDestroy();
+    }
+    
+    //@OverrideMe
+    protected void onDestroyOccupant() {
+    }
 }

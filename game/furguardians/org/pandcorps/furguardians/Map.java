@@ -573,7 +573,7 @@ public class Map {
 	    }
 	    
 	    @Override
-		protected final void onDestroy() {
+		protected final void onDestroyOccupant() {
 			bubble.destroy();
 		}
 	}

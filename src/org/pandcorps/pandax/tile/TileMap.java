@@ -170,8 +170,10 @@ public class TileMap extends Panctor implements Savable {
         final Integer key = Integer.valueOf(index);
         if (occupant == null) {
             occupants.remove(key);
-        } else {
+        } else if (!isBad(index)) {
             occupants.put(key, occupant);
+        } else {
+            throw new IllegalArgumentException("Invalid tile index (" + index + ")");
         }
     }
     
