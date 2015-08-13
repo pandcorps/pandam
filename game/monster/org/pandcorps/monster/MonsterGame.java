@@ -187,12 +187,16 @@ public final class MonsterGame extends BaseGame {
             final Wrapper choice = new Wrapper();
             Pangine.getEngine().executeInGameThread(new Runnable() {
                 @Override public final void run() {
+                    lastCaller = MonsterGame.caller;
+                    MonsterGame.caller = caller;
+                    MonsterGame.options = options;
+                    MonsterGame.choice = choice;
                     if (caller instanceof LocationOption) {
-                        Panscreen.set(new CityScreen(options, choice));
+                        Panscreen.set(new CityScreen());
                     } else if (caller instanceof WorldOption) {
-                        Panscreen.set(new WorldScreen(options, choice));
+                        Panscreen.set(new WorldScreen());
                     } else {
-                        Panscreen.set(new MonsterScreen(caller, label, options, choice));
+                        Panscreen.set(new MonsterScreen(label));
                     }
                 }});
             while (choice.value == null) {
@@ -207,19 +211,16 @@ public final class MonsterGame extends BaseGame {
         }
     }
     
+    private static Option caller = null;
     private static Option lastCaller = null;
     private static List<? extends Option> options = null;
     private static Wrapper choice = null;
     
     private final static class MonsterScreen extends Panscreen {
-        private final Option caller;
         private final Label label;
         
-        private MonsterScreen(final Option caller, final Label label, final List<? extends Option> options, final Wrapper choice) {
-            this.caller = caller;
+        private MonsterScreen(final Label label) {
             this.label = label;
-            MonsterGame.options = options;
-            MonsterGame.choice = choice;
         }
         
         @Override
@@ -299,7 +300,6 @@ public final class MonsterGame extends BaseGame {
             engine.setSwipeListener(scroller);
             if (caller != lastCaller) {
                 room.getOrigin().set(0, max);
-                lastCaller = caller;
             }
             if (chosenDisplayed) {
                 final BattleOption c = (BattleOption) caller;
@@ -385,10 +385,8 @@ public final class MonsterGame extends BaseGame {
         protected final int defaultY;
         protected final Direction defaultDir;
         
-        private TileScreen(final List<? extends Option> options, final Wrapper choice, final int cols, final int rows,
+        private TileScreen(final int cols, final int rows,
                            final int defaultX, final int defaultY, final Direction defaultDir) {
-            MonsterGame.options = options;
-            MonsterGame.choice = choice;
             this.cols = cols;
             this.rows = rows;
             this.defaultX = defaultX;
@@ -485,8 +483,8 @@ public final class MonsterGame extends BaseGame {
     }
     
     private final static class WorldScreen extends TileScreen {
-        private WorldScreen(final List<? extends Option> options, final Wrapper choice) {
-            super(options, choice, getWorldCols(), getWorldRows(), 5, 5, Direction.South);
+        private WorldScreen() {
+            super(getWorldCols(), getWorldRows(), 5, 5, Direction.South);
         }
         
         @Override
@@ -542,13 +540,25 @@ public final class MonsterGame extends BaseGame {
         }
     }
     
+    private static Location lastLocation = null;
+    
     private final static class CityScreen extends TileScreen {
-        private CityScreen(final List<? extends Option> options, final Wrapper choice) {
-            super(options, choice, 32, 24, 13, 1, Direction.North);
+        private CityScreen() {
+            super(32, 24, 13, 1, Direction.North);
         }
         
         @Override
         protected final void buildTileMap() throws Exception {
+            if (caller instanceof LocationOption) {
+                final Location location = ((LocationOption) caller).location;
+                if (location != lastLocation) {
+                    if (player != null) {
+                        player.clearLastCity();
+                    }
+                    lastLocation = location;
+                }
+            }
+            
             final TileMapImage grass = imgMap[13][0];
             final Tile wallBottom = tm.getTile(grass, imgMap[13][2], Tile.BEHAVIOR_SOLID);
             final Tile wallTop = tm.getTile(grass, imgMap[15][2], Tile.BEHAVIOR_SOLID);

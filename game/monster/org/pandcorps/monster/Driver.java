@@ -228,7 +228,7 @@ public class Driver implements Runnable {
 	}
 
 	public class LocationOption extends RunOption {
-		private final Location location;
+		protected final Location location;
 
 		public LocationOption(final Location location) {
 			super(location);
