@@ -397,10 +397,17 @@ public final class MonsterGame extends BaseGame {
                 lbl.getPosition().set(1, y + menuH + 1);
                 room.addActor(lbl);
             }
+            Option backOption = null;
+            Panctor lastActor = null;
             for (final Option option : options) {
                 /*if (!option.isPossible()) {
                     continue;
                 }*/
+                if (option instanceof ExitOption) {
+                    backOption = option;
+                } else if (backOption == null && option instanceof BackOption) {
+                    backOption = option;
+                }
                 final String labelName, name;
                 if (detailDisplayed && option instanceof RemoveTask) {
                     labelName = "Up";
@@ -438,14 +445,27 @@ public final class MonsterGame extends BaseGame {
                     btn.setImageDisabled(menuOff);
                     btn.setEnabled(false);
                 }
-                btn.getActor().register(btn, new ActionEndListener() {
-                    @Override public final void onActionEnd(final ActionEndEvent event) {
-                        // Check possible
-                        choice.value = option;
-                    }});
+                lastActor = btn.getActor();
+                lastActor.register(btn, new ChooseListener(option));
                 engine.registerTouchButton(btn);
             }
+            if (backOption != null) {
+                lastActor.register(interaction.BACK, new ChooseListener(backOption));
+            }
             //TouchTabs.createWithOverlays(0, menu, menuIn, menuLeft, menuRight, buttons);
+        }
+    }
+    
+    private final static class ChooseListener implements ActionEndListener {
+        private final Option option;
+        
+        private ChooseListener(final Option option) {
+            this.option = option;
+        }
+        
+        @Override public final void onActionEnd(final ActionEndEvent event) {
+            // Check possible
+            choice.value = option;
         }
     }
     
@@ -711,8 +731,14 @@ public final class MonsterGame extends BaseGame {
         final Panple size = img.getSize();
         final int x = engine.getEffectiveWidth() - (int) size.getX() - 1;
         final int y = engine.getEffectiveHeight() - (int) size.getY() - 1;
-        final TouchButton btn = new TouchButton(engine.getInteraction(), layerHud, "Menu", x, y, DEPTH_BUTTON, img, img, true);
+        final Panteraction inter = engine.getInteraction();
+        final TouchButton btn = new TouchButton(inter, layerHud, "Menu", x, y, DEPTH_BUTTON, img, img, true);
         engine.registerTouchButton(btn);
+        registerMenu(btn, option);
+        registerMenu(inter.BACK, option);
+    }
+    
+    private final static void registerMenu(final Panput btn, final Option option) {
         tm.register(btn, new ActionEndListener() {
             @Override public final void onActionEnd(final ActionEndEvent event) {
                 player.updateLastCity();
