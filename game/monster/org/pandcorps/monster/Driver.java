@@ -1089,7 +1089,8 @@ public class Driver implements Runnable {
                 if (!team.contains(s)) { //TODO Option to show owned and seen instead of team
                     continue;
                 }
-                options.add(new BackOption(s)); //TODO Option to click on Species and move it to front of prefs list
+                //options.add(new BackOption(s));
+                options.add(new PreferenceOption(s));
             }
             //for (final Species s : prefs) {
                 // See InventoryOption notes
@@ -1100,6 +1101,17 @@ public class Driver implements Runnable {
                 //options.add(new BackOption(s));
             //}
             return options;
+        }
+    }
+    
+    private class PreferenceOption extends Option {
+        protected PreferenceOption(final Label goal) {
+            super(goal);
+        }
+
+        @Override
+        public void run() {
+            state.setFavorite((Species) getGoal());
         }
     }
 	

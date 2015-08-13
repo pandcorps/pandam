@@ -42,6 +42,7 @@ import org.pandcorps.pandax.text.Fonts.*;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.tile.Tile.*;
 import org.pandcorps.pandax.touch.*;
+import org.pandcorps.pandax.visual.*;
 
 public final class MonsterGame extends BaseGame {
     /*
@@ -53,6 +54,7 @@ public final class MonsterGame extends BaseGame {
     Database screen
     Test that impossible options still appear as buildings handled gracefully
     If device has back button, it should bring up the menu if on tile screen, or use back option if on sub-menu, or use exit option if on main menu
+    Auto-save
     */
     private static volatile Driver driver = null;
     private static volatile Panroom room = null;
@@ -104,13 +106,54 @@ public final class MonsterGame extends BaseGame {
     @Override
     protected final void init(final Panroom room) throws Exception {
         MonsterGame.room = room;
-        loadConstants();
-        new Thread(driver).start();
+        //loadConstants();
+        //new Thread(driver).start();
+        Panscreen.set(new LoadScreen());
     }
     
-    private final static void loadConstants() throws Exception {
+    private final static class LoadScreen extends FadeScreen {
+        private final StringBuilder name = new StringBuilder("Monster Catching engine test");
+        
+        private LoadScreen() {
+            super(Pancolor.WHITE, 30);
+            final Queue<Runnable> loaders = new LinkedList<Runnable>();
+            loaders.add(new Runnable() {
+                @Override public final void run() {
+                    loadConstants();
+                }});
+            setBackgroundTasks(loaders);
+        }
+        
+        @Override
+        protected final void start() {
+            final Pangine engine = Pangine.getEngine();
+            engine.setBgColor(Pancolor.WHITE);
+            font = Fonts.getClassics(new FontRequest(8), Pancolor.WHITE, Pancolor.BLACK);
+            final Pantext text = new Pantext("PandcorpsLogo", font, name);
+            text.getPosition().set(8, engine.getEffectiveHeight() - 8);
+            Pangame.getGame().getCurrentRoom().addActor(text);
+        }
+        
+        @Override
+        protected final void onLoading() {
+            Chartil.set(name, "LOADING");
+            c.getLayer().getBlendColor().setA(Mathtil.SHORT_0);
+        }
+        
+        @Override
+        protected final void finish() {
+            new Thread(driver).start();
+        }
+        
+        @Override
+        protected final void destroy() {
+            //Panmage.destroy(font);
+        }
+    }
+    
+    private final static void loadConstants() {
         final Pangine engine = Pangine.getEngine();
-        font = Fonts.getClassics(new FontRequest(8), Pancolor.WHITE, Pancolor.BLACK);
+        //font = Fonts.getClassics(new FontRequest(8), Pancolor.WHITE, Pancolor.BLACK);
         fontTiny = Fonts.getTinies(FontType.Byte, Pancolor.WHITE, Pancolor.BLACK);
         menu = engine.createImage(Pantil.vmid(), ImtilX.newButton(MENU_W, MENU_H, Pancolor.GREY));
         menuIn = engine.createImage(Pantil.vmid(), ImtilX.newButton(MENU_W, MENU_H, Pancolor.CYAN));

@@ -162,6 +162,15 @@ public class State {
 	    return Collections.unmodifiableSet(preferences);
 	}
 	
+	public final void setFavorite(final Species fav) {
+	    final Collection<Species> copy = new ArrayList<Species>(preferences);
+	    preferences.clear();
+	    preferences.add(fav);
+	    for (final Species s : copy) {
+	        preferences.add(s); // This is a set, so won't add twice
+	    }
+	}
+	
 	public final List<Species> getTrader() {
 	    //synchronized(trader) { // Would only be needed for a static trader
     	    if (trader.size() == 0) {
