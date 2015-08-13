@@ -87,6 +87,8 @@ public final class MonsterGame extends BaseGame {
     //private static volatile Panmage menuRight = null;
     private static Panmage menuFull = null;
     private static Panmage menuFullTranslucent = null;
+    private static Panmage speciesAll = null;
+    private static Panmage speciesAllTranslucent = null;
     private final static Map<String, Panmage> imageCache = new HashMap<String, Panmage>();
     private static Panimation playerSouth = null;
     private static Panimation playerEast = null;
@@ -127,14 +129,27 @@ public final class MonsterGame extends BaseGame {
         final Panmage[] diamonds = getDiamonds(DIM_BUTTON, Pancolor.GREY);
         diamond = diamonds[0];
         diamondIn = diamonds[1];
-        /*final Img menuFullImg = Imtil.load(Parser.LOC + "misc/MenuFull.png");
-        menuFullImg.setTemporary(false);
-        menuFull = engine.createImage(PRE_IMG + "menu.full", menuFullImg);
-        Imtil.setPseudoTranslucent(menuFullImg);
-        menuFullTranslucent = engine.createImage(PRE_IMG + "menu.full.translucent", menuFullImg);
-        menuFullImg.close();*/
+        /*final Panmage[] menuFullPair = createImgPair(Parser.LOC + "misc/MenuFull.png", "menu.full");
+        menuFull = menuFullPair[0];
+        menuFullTranslucent = menuFullPair[1];*/
+        final Panmage[] speciesAllPair = createImgPair(Parser.LOC + "misc/species.png", "species.all");
+        speciesAll = speciesAllPair[0];
+        speciesAllTranslucent = speciesAllPair[1];
+        splitSpeciesImage();
         worldSrc = Imtil.load(Parser.LOC + "misc/WorldMap.png");
         ctrl = new ControlScheme();
+    }
+    
+    private final static Panmage[] createImgPair(final String loc, final String name) {
+        final Pangine engine = Pangine.getEngine();
+        final Img img = Imtil.load(loc);
+        img.setTemporary(false);
+        final Panmage[] pair = new Panmage[2];
+        pair[0] = engine.createImage(PRE_IMG + name, img);
+        Imtil.setPseudoTranslucent(img);
+        pair[1] = engine.createImage(PRE_IMG + name + ".translucent", img);
+        img.close();
+        return pair;
     }
     
     private final static Panimation createAnm(final Panmage[] row) {
@@ -144,14 +159,35 @@ public final class MonsterGame extends BaseGame {
         return Pangine.getEngine().createAnimation(PRE_ANM + baseId, createFrames(PRE_FRM + baseId, 2, ia));
     }
     
+    private final static void splitSpeciesImage() {
+        final int fullWidth = (int) speciesAll.getSize().getX();
+        final int cellsPerRow = fullWidth / IMG_W;
+        final Panple size = new FinPanple2(IMG_W, IMG_H);
+        for (final Species s : Species.getSpecies()) {
+            final int id = s.getId() - 1;
+            final int j = id / cellsPerRow, i = id - (j * cellsPerRow);
+            final int x = i * IMG_W, y = j * IMG_H;
+            final Panmage image = new SubPanmage(Pantil.vmid(), null, null, null, speciesAll, x, y, size);
+            final String name = s.getName();
+            imageCache.put(getKey(name, true), image);
+            final Panmage imageTrans = new SubPanmage(Pantil.vmid(), null, null, null, speciesAllTranslucent, x, y, size);
+            imageCache.put(getKey(name, false), imageTrans);
+        }
+    }
+    
+    private final static String getKey(final String name, final boolean possible) {
+        return name + (possible ? "" : ".trans");
+    }
+    
     private final static Panmage getImage(final String name, final boolean possible) {
-        final String key = name + (possible ? "" : ".trans");
+        final String key = getKey(name, possible);
         if (imageCache.containsKey(key)) {
             return imageCache.get(key); // Can be null
         }
         final String fileName = formatFile(name);
-        for (int i = 0; i < 2; i++) {
-            final String loc = Parser.LOC + ((i == 0) ? "img/" : "misc/") + fileName + ".png";
+        //for (int i = 0; i < 2; i++) {
+            //final String loc = Parser.LOC + ((i == 0) ? "img/" : "misc/") + fileName + ".png";
+            final String loc = Parser.LOC + "misc/" + fileName + ".png";
             if (Iotil.exists(loc)) {
                 final Img im = Imtil.load(loc);
                 if (!possible) {
@@ -161,7 +197,7 @@ public final class MonsterGame extends BaseGame {
                 imageCache.put(key, img);
                 return img;
             }
-        }
+        //}
         imageCache.put(key, null);
         return null;
     }
