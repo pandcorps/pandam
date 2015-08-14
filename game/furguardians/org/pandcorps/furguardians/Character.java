@@ -416,15 +416,16 @@ public abstract class Character extends Panctor implements StepListener, Collida
 		return false;
 	}
 	
-	protected final void flipAndFall() {
-	    flipAndFall(v);
+	protected final void flipAndFall(final float v) {
+	    flipAndFall(this, H, v);
 	}
 	
-	protected final void flipAndFall(final float v) {
-        final Panple pos = getPosition();
-        final Tiles.Faller f = new Tiles.Faller((Panmage) getCurrentDisplay(), pos.getX(), pos.getY() + H, 0, v);
-        f.setMirror(isMirror());
+	protected final static void flipAndFall(final Panctor actor, final int h, final float v) {
+        final Panple pos = actor.getPosition();
+        final Tiles.Faller f = new Tiles.Faller((Panmage) actor.getCurrentDisplay(), pos.getX(), pos.getY() + h, 0, v);
+        f.setMirror(actor.isMirror());
         f.setFlip(true);
+        actor.destroy();
     }
 	
 	//@OverrideMe

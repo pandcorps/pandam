@@ -462,6 +462,8 @@ public class FurGuardiansGame extends BaseGame {
 		@Override
         protected final void load() throws Exception {
 			level = true;
+			Player.powerMode = Player.MODE_NORMAL;
+			Player.powerTimer = 0;
 			loadLevel();
 			fadeIn(room);
 			for (final PlayerContext pc : pcs) {
@@ -1413,7 +1415,8 @@ public class FurGuardiansGame extends BaseGame {
                 @Override public final boolean onInteract(final Enemy enemy, final Player player) {
                 	player.startFreeze();
                 	return false;
-                }}; 
+                }};
+            iceWisp.award = GemBumped.AWARD_2;
 			Coltil.set(allEnemies, Level.ICE_WISP, iceWisp);
 			final EnemyDefinition fireWisp = new EnemyDefinition("Fire Wisp", 13, Enemy.wispFactory);
 			fireWisp.hurtHandler = new InteractionHandler() {
@@ -1421,6 +1424,7 @@ public class FurGuardiansGame extends BaseGame {
                 	player.startBurn();
                 	return false;
                 }};
+            fireWisp.award = GemBumped.AWARD_2;
 			Coltil.set(allEnemies, Level.FIRE_WISP, fireWisp);
 			final int SPLAT_BLOB = 45;
 			Enemy.currentSplat = SPLAT_BLOB;

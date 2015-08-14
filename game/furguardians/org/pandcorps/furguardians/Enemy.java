@@ -40,6 +40,7 @@ public class Enemy extends Character {
 	private final static byte DEFEAT_STOMP = 0;
 	private final static byte DEFEAT_BUMP = 1;
 	private final static byte DEFEAT_HIT = 2;
+	private final static byte DEFEAT_ELECTROCUTE = 3;
 	protected final static int DEFAULT_X = 5;
 	protected final static int DEFAULT_H = 15;
 	protected final static int DEFAULT_WALK = 6;
@@ -196,7 +197,7 @@ public class Enemy extends Character {
 			Img.close(strip);
 			avoidCount = 0;
 			offX = 0;
-			h = 0;
+			h = DEFAULT_H;
 			this.hv = hv;
 			factory = spawnFactory;
 		}
@@ -321,6 +322,10 @@ public class Enemy extends Character {
 		defeat(bouncer, Player.VEL_BUMP, DEFEAT_HIT);
 	}
 	
+	protected final void onElectrocute(final Character electrocutor) {
+	    defeat(electrocutor, Player.VEL_BUMP, DEFEAT_ELECTROCUTE);
+	}
+	
 	private final static boolean isFree(final int index) {
 	    final Tile t = Level.tm.getTile(index);
 	    return t == null || t.getBehavior() == Tile.BEHAVIOR_OPEN;
@@ -379,32 +384,39 @@ public class Enemy extends Character {
 		final BurstHandler splatHandler = skipSplat ? null : def.splatHandler;
 		if (player != null && (v > 0 || splatHandler == null)) {
 		    if (isRewarded(player)) {
-				new GemBumped(player, this);
-				player.levelDefeatedEnemies++;
-				final Statistics stats = player.pc.profile.stats;
-				switch (defeatMode) {
-					case DEFEAT_STOMP :
-						stats.stompedEnemies++;
-						break;
-					case DEFEAT_BUMP :
-						stats.bumpedEnemies++;
-						break;
-					case DEFEAT_HIT :
-						stats.hitEnemies++;
-						break;
-					default:
-						throw new IllegalStateException("Unexpected defeatMode " + defeatMode);
-				}
-				stats.defeatedEnemyTypes.inc(def.code);
+				reward(player, this, def, defeatMode);
 		    }
 		}
 		if (!skipSplat && v == 0 && def.splat != null) {
 		    burst(def.splat, splatHandler);
+		    destroy();
 		} else {
-		    flipAndFall();
+		    flipAndFall(v); // Calls destroy
 		}
-		destroy();
 		return true;
+	}
+	
+	private final static void reward(final Player player, final Panctor enemy, final EnemyDefinition def, final byte defeatMode) {
+	    new GemBumped(player, enemy, def);
+	    player.levelDefeatedEnemies++;
+        final Statistics stats = player.pc.profile.stats;
+        switch (defeatMode) {
+            case DEFEAT_STOMP :
+                stats.stompedEnemies++;
+                break;
+            case DEFEAT_BUMP :
+                stats.bumpedEnemies++;
+                break;
+            case DEFEAT_HIT :
+                stats.hitEnemies++;
+                break;
+            case DEFEAT_ELECTROCUTE :
+                stats.electrocutedEnemies++;
+                break;
+            default:
+                throw new IllegalStateException("Unexpected defeatMode " + defeatMode);
+        }
+        stats.defeatedEnemyTypes.inc(def.code);
 	}
 	
 	private final boolean isRewarded(final Player player) {
@@ -764,6 +776,11 @@ public class Enemy extends Character {
 			}
 	    	Enemy.destroyIfOffScreen(this, 40);
 	    }
+		
+		protected final void onElectrocute(final Player electrocutor) {
+		    reward(electrocutor, this, def, DEFEAT_ELECTROCUTE);
+		    Character.flipAndFall(this, def.h, Player.VEL_BUMP);
+		}
 	    
 	    @Override
 	    public final void onAllOob(final AllOobEvent event) {

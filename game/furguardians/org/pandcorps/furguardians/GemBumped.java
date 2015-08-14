@@ -25,6 +25,7 @@ package org.pandcorps.furguardians;
 import java.util.*;
 
 import org.pandcorps.core.*;
+import org.pandcorps.furguardians.Enemy.*;
 import org.pandcorps.furguardians.Goal.*;
 import org.pandcorps.game.core.*;
 import org.pandcorps.pandam.*;
@@ -84,7 +85,11 @@ public class GemBumped extends Pandy {
     }
 	
 	public GemBumped(final Player player, final Enemy defeated) {
-		this(player, defeated.getPosition().getX() - 8, defeated.getBoundingMaximum().getY() - Enemy.DEFAULT_H, defeated.def.award, TYPE_NORMAL, getAnm(defeated.def.award));
+	    this(player, defeated, defeated.def);
+	}
+	
+	public GemBumped(final Player player, final Panctor defeated, final EnemyDefinition def) {
+		this(player, defeated.getPosition().getX() - 8, defeated.getBoundingMaximum().getY() - Enemy.DEFAULT_H, def.award, TYPE_NORMAL, getAnm(def.award));
 	}
 	
 	public final static GemBumped newLevelEnd(final Player player, final int index) {
