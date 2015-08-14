@@ -101,6 +101,7 @@ public class Tiles {
     	    final TileHandler handler = getHandler();
     	    if (DynamicTileMap.getRawForeground(t) == FurGuardiansGame.blockPower) {
     	        newGemDecoration(player, index, FurGuardiansGame.lightningOrb);
+    	        player.pc.profile.stats.foundLightningOrbs++;
     	        Player.setPower(Player.POWER_LIGHTNING);
     	    } else if (handler.isNormalAward(index, t)) {
     	        newGemBumped(player, index);
