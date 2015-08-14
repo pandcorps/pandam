@@ -55,6 +55,14 @@ public class Player extends Character implements CollisionListener {
 	//private final static byte JUMP_INFINITE = 3;
 	protected final static byte JUMP_FLY = 4;
 	protected final static byte JUMP_DRAGON = 5;
+	protected final static byte POWER_LIGHTNING = 1;
+	protected static byte powerMode = MODE_NORMAL;
+	protected static int powerTimer = 0;
+	
+	protected final static void clearPower() {
+	    powerMode = Player.MODE_NORMAL;
+        powerTimer = 0;
+	}
 	
 	public static enum JumpMode implements Named { // enum can't extend FinName
 	    Normal(MODE_NORMAL, "Normal", "Normal jumping", 0),
@@ -573,11 +581,19 @@ public class Player extends Character implements CollisionListener {
 		}
 	}
 	
-	private boolean isInvincible() {
-		return hurtTimer > 0 || mode == MODE_RETURN || mode == MODE_FROZEN;
+	private final boolean isBubbleEnabled() {
+	    return hurtTimer > 0 || mode == MODE_RETURN;
 	}
 	
-	private boolean isReturningFromScroll() {
+	private final boolean isInvincible() {
+		return isBubbleEnabled() || mode == MODE_FROZEN || isElectric();
+	}
+	
+	private final boolean isElectric() {
+	    return powerMode == POWER_LIGHTNING;
+	}
+	
+	private final boolean isReturningFromScroll() {
 		return mode == MODE_RETURN && returnPlayer != null;
 	}
 	
@@ -909,9 +925,14 @@ public class Player extends Character implements CollisionListener {
 		    /*if (other.isDestroyed()) { // Might happen if two Players stomp same Enemy at same time
 		        return; // But this is handled in Pangine
 		    }*/
+		    final Enemy enemy = (Enemy) other;
+		    if (isElectric()) {
+		        enemy.onElectrocute(this);
+		        return;
+		    }
 		    final boolean aboveEnemy = getPosition().getY() > other.getPosition().getY();
 		    if (aboveEnemy && isBouncePossible()) {
-				if (((Enemy) other).onStomp(this)) {
+				if (enemy.onStomp(this)) {
 					bounce();
 				}
 		    } else if (aboveEnemy && stompTimer > 0) {
@@ -922,13 +943,18 @@ public class Player extends Character implements CollisionListener {
 		        But don't fall through to call onHurt below.
 		        Just ignore the second Enemy, so this case is a no-op.
 		        */
-			} else if (((Enemy) other).onHurtPlayer(this)) {
+			} else if (enemy.onHurtPlayer(this)) {
 			    startHurt();
 			}
 		} else if (other instanceof Projectile) {
 		    startHurt();
 		} else if (other instanceof Wisp) {
-		    startFreeze((Wisp) other);
+		    final Wisp wisp = (Wisp) other;
+		    if (isElectric()) {
+		        wisp.onElectrocute(this);
+		    } else {
+		        startFreeze(wisp);
+		    }
 		} else if (other instanceof Bouncer) {
 		    if (isBouncePossible()) {
 		        bounce();
@@ -998,7 +1024,6 @@ public class Player extends Character implements CollisionListener {
 	    final boolean noGems = levelGems == 0, inv = prf.isInvincible();
 	    if (noGems && prf.endLevelIfHurtWithNoGems && !inv) {
 	        flipAndFall(6);
-	        destroy();
 	        FurGuardiansGame.playTransition(FurGuardiansGame.soundWhoosh);
 	        FurGuardiansGame.goMap();
 	        return;
@@ -1106,7 +1131,7 @@ public class Player extends Character implements CollisionListener {
 		}
 		
 		protected void onStepEnd(final Player p) {
-			onStepEnd(p.mode != MODE_FROZEN && p.isInvincible());
+			onStepEnd(p.isBubbleEnabled());
 			setMirror(p.isMirror());
 		}
 	}

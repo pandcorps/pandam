@@ -1,6 +1,8 @@
+1.11.0 (20)
+
 Added new music track for cave levels.
 Fixed a bug that sometimes displayed Monarchs wearing the wrong clothing.
-Fixed bugs that prevented sound effects for stomping on some monsters
+Fixed bugs that prevented sound effects for stomping on some monsters.
 
 *****
 

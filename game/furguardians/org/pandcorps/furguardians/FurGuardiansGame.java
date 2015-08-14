@@ -420,6 +420,7 @@ public class FurGuardiansGame extends BaseGame {
 	}
 	
 	protected final static void fadeOut(final Panlayer layer, final short speed, final Panscreen screen) {
+	    Player.clearPower();
 		if (screen instanceof Map.MapScreen && goGoalsIfNeeded()) {
 			return;
 		}
@@ -427,6 +428,7 @@ public class FurGuardiansGame extends BaseGame {
 	}
 	
 	protected final static void setScreen(final Panscreen screen) {
+	    Player.clearPower();
 		Panctor.detach(notifications);
 		Panscreen.set(screen);
 	}
@@ -462,8 +464,7 @@ public class FurGuardiansGame extends BaseGame {
 		@Override
         protected final void load() throws Exception {
 			level = true;
-			Player.powerMode = Player.MODE_NORMAL;
-			Player.powerTimer = 0;
+			Player.clearPower();
 			loadLevel();
 			fadeIn(room);
 			for (final PlayerContext pc : pcs) {
