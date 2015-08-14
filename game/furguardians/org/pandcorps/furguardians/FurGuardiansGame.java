@@ -500,6 +500,7 @@ public class FurGuardiansGame extends BaseGame {
                 	tileGem.setForeground(gem[(((int) i) + 1) % 3]);
         		}
             }
+            Player.step();
 		}
 		
 		@Override

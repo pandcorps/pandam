@@ -60,8 +60,17 @@ public class Player extends Character implements CollisionListener {
 	protected static int powerTimer = 0;
 	
 	protected final static void clearPower() {
-	    powerMode = Player.MODE_NORMAL;
+	    powerMode = MODE_NORMAL;
         powerTimer = 0;
+	}
+	
+	protected final static void step() {
+	    if (powerTimer > 0) {
+	        powerTimer--;
+	        if (powerTimer == 0) {
+	            powerMode = MODE_NORMAL;
+	        }
+	    }
 	}
 	
 	public static enum JumpMode implements Named { // enum can't extend FinName
@@ -350,6 +359,7 @@ public class Player extends Character implements CollisionListener {
 	private int stompTimer = 0;
 	private int activeTimer = 0;
 	private final Bubble bubble = new Bubble();
+	private final PowerOverlay powerOverlay;
 	private final Panctor container;
 	private final Accessories acc;
 	private final Flyer flyer;
@@ -378,6 +388,8 @@ public class Player extends Character implements CollisionListener {
 		} else {
 			container = null;
 		}
+		powerOverlay = new PowerOverlay();
+		FurGuardiansGame.room.addActor(powerOverlay);
 		acc = new Accessories(pc);
 		flyer = (pc.bird == null) ? null : new Flyer(this);
 		final Panteraction interaction = engine.getInteraction();
@@ -860,10 +872,14 @@ public class Player extends Character implements CollisionListener {
 	protected final void onStepEnd() {
 		hv = 0;
 		final Panple pos = getPosition();
-		FurGuardiansGame.setPosition(bubble, pos.getX(), pos.getY() - 1, FurGuardiansGame.getDepthBubble(jumpMode));
+		final float x = pos.getX(), y = pos.getY();
+		final int depthBubble = FurGuardiansGame.getDepthBubble(jumpMode);
+		FurGuardiansGame.setPosition(bubble, x, y - 1, depthBubble);
 		bubble.onStepEnd(this);
+		FurGuardiansGame.setPosition(powerOverlay, x, y, depthBubble);
+		powerOverlay.onStepEnd(this);
 		if (container != null) {
-			FurGuardiansGame.setPosition(container, pos.getX(), pos.getY(), FurGuardiansGame.getDepthContainer(jumpMode));
+			FurGuardiansGame.setPosition(container, x, y, FurGuardiansGame.getDepthContainer(jumpMode));
 			container.setMirror(isMirror());
 		}
 		acc.onStepEnd(this);
@@ -1131,9 +1147,33 @@ public class Player extends Character implements CollisionListener {
 		}
 		
 		protected void onStepEnd(final Player p) {
-			onStepEnd(p.isBubbleEnabled());
+			onStepEnd(p.isBubbleEnabled() && p.mode != MODE_FROZEN);
 			setMirror(p.isMirror());
 		}
+	}
+	
+	protected final static class PowerOverlay extends Panctor {
+	    protected final void onStepEnd(final Player p) {
+	        if (powerMode != POWER_LIGHTNING) {
+	            setVisible(false);
+	            return;
+	        }
+	        setMirror(p.isMirror());
+	        changeView(FurGuardiansGame.electric);
+	        final boolean visible;
+	        if (powerTimer >= 90) {
+	            visible = true;
+	        } else if (powerTimer > 30) { // 31 - 89
+	            visible = (powerTimer % 30) < 15; // Off for 45-59 and 75-89
+	        } else if (powerTimer > 20) { // 21 - 30
+	            visible = false;
+	        } else if (powerTimer > 10) { // 11 - 20
+	            visible = true;
+	        } else {
+	            visible = false;
+	        }
+            setVisible(visible);
+        }
 	}
 	
 	protected final static class Accessories {
