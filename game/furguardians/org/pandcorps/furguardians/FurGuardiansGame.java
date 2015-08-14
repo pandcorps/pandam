@@ -245,6 +245,7 @@ public class FurGuardiansGame extends BaseGame {
 	protected static Panmage frozen = null;
 	protected static Panimation burn = null;
 	protected static Panimation electric = null;
+	protected static Panmage lightningOrb = null;
 	protected static Panmage bubble = null;
 	protected static Panimation minecart = null;
 	protected static Panimation owl = null;
@@ -1517,6 +1518,7 @@ public class FurGuardiansGame extends BaseGame {
 			frozen = createImage("frozen", RES + "chr/Frozen.png", 32, og);
 			burn = createAnm("burn", RES + "chr/Burn.png", 32, 6, og, null, null);
 			electric = createAnm("electric", RES + "chr/Electric.png", 32, 3, og, null, null);
+			lightningOrb = createImage("orb.lightning", RES + "misc/LightningOrb.png", 16);
 			bubble = createImage("bubble", RES + "chr/Bubble.png", 32, og);
 			minecart = createAnm("minecart", RES + "misc/Minecart.png", 32, 2, new FinPanple2(16, 7), null, null); }});
 	    
