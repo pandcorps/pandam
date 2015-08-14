@@ -130,7 +130,7 @@ public final class MonsterGame extends BaseGame {
             engine.setBgColor(Pancolor.WHITE);
             font = Fonts.getClassics(new FontRequest(8), Pancolor.WHITE, Pancolor.BLACK);
             final Pantext text = new Pantext("PandcorpsLogo", font, name);
-            text.getPosition().set(8, engine.getEffectiveHeight() - 8);
+            text.getPosition().set(8, engine.getEffectiveHeight() - 16);
             Pangame.getGame().getCurrentRoom().addActor(text);
         }
         
@@ -658,51 +658,57 @@ public final class MonsterGame extends BaseGame {
                 }
             }
             
-            final TileMapImage grass = imgMap[13][0];
+            final TileMapImage grass = imgMap[13][0], wallImg = imgMap[14][2], wallLeftImg = imgMap[14][3], wallRightImg = imgMap[14][1];
+            final Tile wall = tm.getTile(grass, wallImg, Tile.BEHAVIOR_SOLID);
             final Tile wallBottom = tm.getTile(grass, imgMap[13][2], Tile.BEHAVIOR_SOLID);
             final Tile wallTop = tm.getTile(grass, imgMap[15][2], Tile.BEHAVIOR_SOLID);
-            final Tile wallLeft = tm.getTile(grass, imgMap[14][3], Tile.BEHAVIOR_SOLID);
-            final Tile wallRight = tm.getTile(grass, imgMap[14][1], Tile.BEHAVIOR_SOLID);
+            final Tile wallLeft = tm.getTile(grass, wallLeftImg, Tile.BEHAVIOR_SOLID);
+            final Tile wallRight = tm.getTile(grass, wallRightImg, Tile.BEHAVIOR_SOLID);
             tm.fillBackground(grass);
-            final int cols1 = cols - 1, rows1 = rows - 1;
-            for (int i = 1; i < cols1; i++) {
-                tm.setTile(i, rows1, wallTop);
-                tm.setTile(i, 0, wallBottom);
+            final int wallWidth = 3, wallMax = wallWidth - 1;
+            for (int wallLayer = 0; wallLayer < wallWidth; wallLayer++) {
+                final int off = wallLayer + 1;
+                final int cols1 = cols - off, rows1 = rows - off;
+                for (int i = off; i < cols1; i++) {
+                    tm.setTile(i, rows1, wallLayer < wallMax ? wall : wallTop);
+                    tm.setTile(i, wallLayer, wallLayer < wallMax ? wall : wallBottom);
+                }
+                for (int j = off; j < rows1; j++) {
+                    tm.setTile(wallLayer, j, wallLayer < wallMax ? wall : wallLeft);
+                    tm.setTile(cols1, j, wallLayer < wallMax ? wall : wallRight);
+                }
+                tm.setForeground(wallLayer, rows1, wallLayer < wallMax ? wallImg : imgMap[13][4], Tile.BEHAVIOR_SOLID);
+                tm.setForeground(cols1, rows1, wallLayer < wallMax ? wallImg : imgMap[13][5], Tile.BEHAVIOR_SOLID);
+                tm.setForeground(wallLayer, wallLayer, wallLayer < wallMax ? wallImg : imgMap[14][4], Tile.BEHAVIOR_SOLID);
+                tm.setForeground(cols1, wallLayer, wallLayer < wallMax ? wallImg : imgMap[14][5], Tile.BEHAVIOR_SOLID);
+                tm.setForeground(11, wallLayer, wallLayer < wallMax ? wallLeftImg : imgMap[13][3], Tile.BEHAVIOR_SOLID);
+                for (int i = 12; i < 15; i++) {
+                    tm.setForeground(i, wallLayer, null, Tile.BEHAVIOR_OPEN);
+                }
+                tm.setForeground(15, wallLayer, wallLayer < wallMax ? wallRightImg : imgMap[13][1], Tile.BEHAVIOR_SOLID);
             }
-            for (int j = 1; j < rows1; j++) {
-                tm.setTile(0, j, wallLeft);
-                tm.setTile(cols1, j, wallRight);
-            }
-            tm.setForeground(0, rows1, imgMap[13][4], Tile.BEHAVIOR_SOLID);
-            tm.setForeground(cols1, rows1, imgMap[13][5], Tile.BEHAVIOR_SOLID);
-            tm.setForeground(0, 0, imgMap[14][4], Tile.BEHAVIOR_SOLID);
-            tm.setForeground(cols1, 0, imgMap[14][5], Tile.BEHAVIOR_SOLID);
-            tm.setForeground(11, 0, imgMap[13][3], Tile.BEHAVIOR_SOLID);
-            for (int i = 12; i < 15; i++) {
-                tm.setForeground(i, 0, null, Tile.BEHAVIOR_OPEN);
-            }
-            tm.setForeground(15, 0, imgMap[13][1], Tile.BEHAVIOR_SOLID);
             
             boolean needStore = true, needMorph = true, needTrainers = true, needSpecial = true;
+            final int buildingOffset = 3, buildingStart = wallWidth + buildingOffset, buildingMid = buildingStart + 7;
             for (final Option option : options) {
             	final String name = option.getGoal().getName();
                 if (name.equals(Data.getStore())) {
-                    building(4, 4, 0, 8, 4, 4, 2, option);
+                    building(buildingStart, buildingStart, 0, 8, 4, 4, 2, option);
                     needStore = false;
                 } else if (name.equals(Data.getMorph())) {
-                    building(11, 4, 0, 4, 5, 5, 2, option);
+                    building(buildingMid, buildingStart, 0, 4, 5, 5, 2, option);
                     needMorph = false;
                 } else if (name.equals(Data.getTrainers())) {
-                    building(4, 11, 5, 4, 7, 5, 3, option);
+                    building(buildingStart, buildingMid, 5, 4, 7, 5, 3, option);
                     needTrainers = false;
                 } else if (name.equals(Special.Specialty.Lab.toString())) {
-                    building(14, 11, 0, 12, 7, 4, 3, option);
+                    building(buildingMid + 6, buildingMid, 0, 12, 7, 4, 3, option);
                     needSpecial = false;
                 } else if (name.equals(Special.Specialty.Trader.toString())) {
-                    building(16, 11, 9, 8, 4, 4, 2, option);
+                    building(buildingMid + 8, buildingMid, 9, 8, 4, 4, 2, option);
                     needSpecial = false;
                 } else if (name.equals(Special.Specialty.Breeder.toString())) {
-                    building(14, 11, 7, 12, 7, 4, 1, option);
+                    building(buildingMid + 6, buildingMid, 7, 12, 7, 4, 1, option);
                     needSpecial = false;
                 } else if (name.equals("World")) {
                     optWorld = option;
@@ -711,16 +717,16 @@ public final class MonsterGame extends BaseGame {
                 }
             }
             if (needStore) {
-                unusedBuilding(4, 5);
+                unusedBuilding(buildingStart, buildingStart + 1);
             }
             if (needMorph) {
-                unusedBuilding(11, 5);
+                unusedBuilding(buildingMid, buildingStart + 1);
             }
             if (needTrainers) {
-                unusedBuilding(5, 12);
+                unusedBuilding(buildingStart + 1, buildingMid + 1);
             }
             if (needSpecial) {
-                unusedBuilding(15, 12);
+                unusedBuilding(buildingMid + 8, buildingMid + 1);
             }
         }
     }
