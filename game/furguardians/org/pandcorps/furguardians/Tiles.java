@@ -99,7 +99,10 @@ public class Tiles {
     		player.levelBrokenBlocks++;
     	} else if (b == FurGuardiansGame.TILE_BUMP) {
     	    final TileHandler handler = getHandler();
-    	    if (handler.isNormalAward(index, t)) {
+    	    if (DynamicTileMap.getRawForeground(t) == FurGuardiansGame.blockPower) {
+    	        newGemDecoration(player, index, FurGuardiansGame.lightningOrb);
+    	        Player.setPower(Player.POWER_LIGHTNING);
+    	    } else if (handler.isNormalAward(index, t)) {
     	        newGemBumped(player, index);
     	    } else if (!(handler.handle(index, t) || bumpLetter(player, index, t))) {
     	    	player.levelEndGems = player.levelGems; // Capture final total before level-end award, used by NoGemsFeat
@@ -140,7 +143,7 @@ public class Tiles {
 	    if (i >= size) {
 	    	return false;
 	    }
-	    newGemLetter(player, index, FurGuardiansGame.getGemWordLetter(i));
+	    newGemDecoration(player, index, FurGuardiansGame.getGemWordLetter(i));
 	    //final TileActor h = new TileActor();
 	    //h.setViewFromForeground(Level.tm, t);
 	    Level.collectedLetters = Coltil.add(Level.collectedLetters, addLetter(i, letter));
@@ -148,8 +151,8 @@ public class Tiles {
 	    return true;
     }
     
-    protected final static void newGemLetter(final Player player, final int index, final Panmage img) {
-    	GemBumped.create(player, index, 0, GemBumped.TYPE_LETTER, null).setView(img);
+    protected final static void newGemDecoration(final Player player, final int index, final Panmage img) {
+    	GemBumped.create(player, index, 0, GemBumped.TYPE_DECORATION, null).setView(img);
     }
     
     private final static int getHudLetterX(final int i) {

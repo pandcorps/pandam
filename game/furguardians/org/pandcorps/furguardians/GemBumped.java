@@ -43,7 +43,7 @@ public class GemBumped extends Pandy {
     private final static int AWARD_WORLD = AWARD_LEVEL * 10;
     protected final static byte TYPE_NORMAL = 0;
     protected final static byte TYPE_END = 1;
-    protected final static byte TYPE_LETTER = 2;
+    protected final static byte TYPE_DECORATION = 2;
     private final static Random rand = new Random();
     private final int award;
 	private final byte type;
@@ -135,7 +135,7 @@ public class GemBumped extends Pandy {
         if (type == TYPE_END) {
         	//FurGuardiansGame.soundGemLevel.startSound();
         	// Probably not needed; ending level plays bells
-        } else if (good || type == TYPE_LETTER) {
+        } else if (good || type == TYPE_DECORATION) {
         	Gem.playSound();
         } else {
             // gemShatter
@@ -148,7 +148,7 @@ public class GemBumped extends Pandy {
 		super.onStep(event);
 		age++;
 		if (age >= 12) {
-		    if (type == TYPE_LETTER || isGood()) {
+		    if (type == TYPE_DECORATION || isGood()) {
 		        Gem.spark(getLayer(), getPosition(), type == TYPE_END);
 		    } else {
 		        Tiles.shatterTile(FurGuardiansGame.gemShatter, getPosition(), true);

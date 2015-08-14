@@ -246,6 +246,7 @@ public class FurGuardiansGame extends BaseGame {
 	protected static Panimation burn = null;
 	protected static Panimation electric = null;
 	protected static Panmage lightningOrb = null;
+	protected static Panmage blockPower = null;
 	protected static Panmage bubble = null;
 	protected static Panimation minecart = null;
 	protected static Panimation owl = null;
@@ -1519,6 +1520,7 @@ public class FurGuardiansGame extends BaseGame {
 			burn = createAnm("burn", RES + "chr/Burn.png", 32, 6, og, null, null);
 			electric = createAnm("electric", RES + "chr/Electric.png", 32, 3, og, null, null);
 			lightningOrb = createImage("orb.lightning", RES + "misc/LightningOrb.png", 16);
+			blockPower = createImage("block.power", RES + "misc/BlockPower.png", 16);
 			bubble = createImage("bubble", RES + "chr/Bubble.png", 32, og);
 			minecart = createAnm("minecart", RES + "misc/Minecart.png", 32, 2, new FinPanple2(16, 7), null, null); }});
 	    
@@ -1902,9 +1904,9 @@ public class FurGuardiansGame extends BaseGame {
 		final int x = (engine.getEffectiveWidth() - ImtilX.DIM * 5) / 2, y = engine.getEffectiveHeight() - 96;
 		for (int i = 0; i < 5; i++) {
 			final int xc = x + i * ImtilX.DIM, yc = y + 12 * Math.abs(2 - i);
-			new GemBumped(hud, null, xc, yc, 0, GemBumped.TYPE_LETTER, anm, Tiles.g);
+			new GemBumped(hud, null, xc, yc, 0, GemBumped.TYPE_DECORATION, anm, Tiles.g);
 			if (i == 2 && anm == gemBlueAnm) {
-				new GemBumped(hud, null, xc, yc + 32, 0, GemBumped.TYPE_LETTER, gemWordAnm, Tiles.g);
+				new GemBumped(hud, null, xc, yc + 32, 0, GemBumped.TYPE_DECORATION, gemWordAnm, Tiles.g);
 			}
 		}
 	}
@@ -1924,7 +1926,7 @@ public class FurGuardiansGame extends BaseGame {
                 final Panctor letter = Level.collectedLetters.remove(i);
                 final Panple pos = letter.getPosition();
                 final GemBumped gem;
-                gem = new GemBumped(hud, null, pos.getX(), pos.getY() - ImtilX.DIM, 0, GemBumped.TYPE_LETTER, null, FinPanple.ORIGIN);
+                gem = new GemBumped(hud, null, pos.getX(), pos.getY() - ImtilX.DIM, 0, GemBumped.TYPE_DECORATION, null, FinPanple.ORIGIN);
                 gem.getVelocity().setY(0);
                 gem.setView(getGemLetter(letter.getView()));
                 shatterLetter(pos);

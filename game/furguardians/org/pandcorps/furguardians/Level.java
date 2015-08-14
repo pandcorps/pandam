@@ -99,6 +99,7 @@ public class Level {
     protected static int numEnemies = 0;
     protected static int numGems = 0;
     protected static int numBreakable = 0;
+    protected static int numPower = 0;
     protected static int currLetter = 0;
     protected static List<Panctor> collectedLetters = null;
     protected static List<Panctor> uncollectedLetters = null;
@@ -593,8 +594,10 @@ public class Level {
     
     protected final static void clear() {
         numEnemies = 0;
+        enemyProbability = DEFAULT_ENEMY_PROBABILITY;
         numGems = 0;
         numBreakable = 0;
+        numPower = 0;
         currLetter = 0;
         Coltil.clear(collectedLetters);
     }
@@ -2267,13 +2270,26 @@ public class Level {
         setFgShadowed(x, y, 0, 4, Tile.BEHAVIOR_SOLID);
     }
     
+    private final static boolean powerBlock(final int x, final int y) {
+        if (numPower == 0) { //TODO and random
+            numPower++;
+            tm.setForeground(x, y, FurGuardiansGame.blockPower, FurGuardiansGame.TILE_BUMP);
+            return true;
+        }
+        return false;
+    }
+    
     private final static void bumpableBlock(final int x, final int y) {
-        tm.setForeground(x, y, imgMap[0][0], FurGuardiansGame.TILE_BUMP);
+        if (!powerBlock(x, y)) {
+            tm.setForeground(x, y, imgMap[0][0], FurGuardiansGame.TILE_BUMP);
+        }
     }
     
     private final static void breakableBlock(final int x, final int y) {
-        tm.setForeground(x, y, imgMap[0][5], FurGuardiansGame.TILE_BREAK);
-        numBreakable++;
+        if (!powerBlock(x, y)) {
+            tm.setForeground(x, y, imgMap[0][5], FurGuardiansGame.TILE_BREAK);
+            numBreakable++;
+        }
     }
     
     private final static void letterBlock(final int x, final int y) {

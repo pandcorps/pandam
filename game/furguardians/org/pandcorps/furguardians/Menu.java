@@ -1345,7 +1345,7 @@ public class Menu {
         			Tiles.shatterBottomRight = true;
         			Tiles.shatterTopLeft = false;
         		}
-        		Tiles.newGemLetter(null, titleIndex, FurGuardiansGame.getGemLetter(DynamicTileMap.getRawForeground(tile)));
+        		Tiles.newGemDecoration(null, titleIndex, FurGuardiansGame.getGemLetter(DynamicTileMap.getRawForeground(tile)));
         		tm.setTile(titleIndex, null);
         		FurGuardiansGame.shatterLetter(tm.getPosition(titleIndex));
         		count++;

@@ -1,5 +1,6 @@
 1.11.0 (20)
 
+Added Lightning Orb invincibility power-up.
 Added new music track for cave levels.
 Fixed a bug that sometimes displayed Monarchs wearing the wrong clothing.
 Fixed bugs that prevented sound effects for stomping on some monsters.

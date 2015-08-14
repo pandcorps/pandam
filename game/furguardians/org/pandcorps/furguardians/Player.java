@@ -64,6 +64,11 @@ public class Player extends Character implements CollisionListener {
         powerTimer = 0;
 	}
 	
+	protected final static void setPower(final byte power) {
+	    powerMode = power;
+	    powerTimer = 450;
+	}
+	
 	protected final static void step() {
 	    if (powerTimer > 0) {
 	        powerTimer--;
