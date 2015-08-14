@@ -290,8 +290,8 @@ public class Avatar extends EyeData implements Segmented {
         }
     }
     
-    protected final static int INDEX_ROYAL_ROBE = 5;
-    protected final static int INDEX_ROYAL_DRESS = 6;
+    private final static Clothing royalRobe = new Clothing("Royal Robe", "RoyalRobe", 100000);
+    protected final static Clothing royalDress = new Clothing("Royal Dress", "RoyalDress", 100000);
     
     protected final static Clothing[] clothings = {
         new Clothing("Sleeveless", "AShirt", 1000),
@@ -300,13 +300,13 @@ public class Avatar extends EyeData implements Segmented {
         new Clothing("Dress", "Dress", 2500),
         new Clothing("Coat", "Coat", 5000),
         new Clothing("Armor", "Armor", 50000, "Tough"),
-        new Clothing("Royal Robe", "RoyalRobe", 100000), // Change INDEX_ROYAL_ROBE if adding clothes above here
-        new Clothing("Royal Dress", "RoyalDress", 100000)
+        royalRobe,
+        royalDress
     };
     
     protected final static Clothing[] hiddenClothings = {
         new Clothing("Royal Mantle", "RoyalMantle", 100000),
-        clothings[INDEX_ROYAL_ROBE]
+        royalRobe
     };
     
     protected final static Clothing getClothing(final String name) {

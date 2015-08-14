@@ -1,3 +1,8 @@
+Added new music track for cave levels.
+Fixed a bug that sometimes displayed Monarchs wearing the wrong clothing.
+
+*****
+
 1.10.0 (19)
 
 Added coat, hair ribbons, and bowler hat.

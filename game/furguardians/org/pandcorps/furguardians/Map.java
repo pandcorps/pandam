@@ -1147,7 +1147,7 @@ public class Map {
 	           	royAvt.clothing.clth = Mathtil.rand(Avatar.hiddenClothings);
            	} else {
            		royAvt.eye = Mathtil.randElemI(EYES_ROY2);
-	           	royAvt.clothing.clth = Avatar.clothings[Avatar.INDEX_ROYAL_DRESS];
+	           	royAvt.clothing.clth = Avatar.royalDress;
            	}
            	//royAvt.clothingCol.load(royAvt.col); //negate();
            	royAvt.clothing.col.randomizeColorfulDifferent(royAvt.col);
