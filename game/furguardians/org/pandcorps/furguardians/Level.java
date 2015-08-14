@@ -270,6 +270,10 @@ public class Level {
             @Override protected final Pancolor getBottomSkyColor(final Img img) {
         		return Imtil.getColor(img, 50, 80);
         	}
+            
+            @Override protected Pansound getMusic() {
+                return FurGuardiansGame.musicCave;
+            }
         };
         public final static Theme Minecart = new Theme("Minecart", MSG) {
             @Override protected final int[] getEnemyIndices(final int worlds, final int levels) {

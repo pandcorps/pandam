@@ -244,6 +244,7 @@ public class FurGuardiansGame extends BaseGame {
 	protected static Panmage egg8 = null;
 	protected static Panmage frozen = null;
 	protected static Panimation burn = null;
+	protected static Panimation electric = null;
 	protected static Panmage bubble = null;
 	protected static Panimation minecart = null;
 	protected static Panimation owl = null;
@@ -349,6 +350,7 @@ public class FurGuardiansGame extends BaseGame {
 	protected static Panmage keyIn = null;
 	protected static Pansound musicMenu = null;
 	protected static Pansound musicHappy = null;
+	protected static Pansound musicCave = null;
 	protected static Pansound musicHeartbeat = null;
 	protected static Pansound musicOcarina = null;
 	protected static Pansound musicChant = null;
@@ -1501,6 +1503,7 @@ public class FurGuardiansGame extends BaseGame {
 		loaders.add(new Runnable() { @Override public final void run() {
 			frozen = createImage("frozen", RES + "chr/Frozen.png", 32, og);
 			burn = createAnm("burn", RES + "chr/Burn.png", 32, 6, og, null, null);
+			electric = createAnm("electric", RES + "chr/Electric.png", 32, 3, og, null, null);
 			bubble = createImage("bubble", RES + "chr/Bubble.png", 32, og);
 			minecart = createAnm("minecart", RES + "misc/Minecart.png", 32, 2, new FinPanple2(16, 7), null, null); }});
 	    
@@ -1591,7 +1594,7 @@ public class FurGuardiansGame extends BaseGame {
 		if (engine.isTouchSupported() || engine.isMouseSupported()) {
 			btnLoader = new Runnable() { @Override public final void run() {
 				// 400 x 240
-				DIM_BUTTON = (Math.min(60 * engine.getEffectiveWidth() / 400, 60 * engine.getEffectiveHeight() / 240) / 4 + Config.btnSize) * 4 - 1;
+				DIM_BUTTON = getButtonSize(Config.btnSize);
 				final int d = DIM_BUTTON;
 				final Pancolor f = new FinPancolor((short) 160, Mathtil.SHORT_0, Pancolor.MAX_VALUE);
 				final Img circle = Imtil.newImage(d, d);
@@ -1617,14 +1620,9 @@ public class FurGuardiansGame extends BaseGame {
 				left2In = engine.createImage(Pantil.vmid(), r2In);
 				r2.close();
 				r2In.close();
-				final Img dia = Imtil.newImage(d, d);
-                Imtil.drawDiamond(dia, Pancolor.BLACK, Pancolor.BLACK, f);
-                ImtilX.highlight(dia, 2);
-                final Img diaIn = ImtilX.indent(dia);
-                Imtil.setPseudoTranslucent(dia);
-                Imtil.setPseudoTranslucent(diaIn);
-                diamond = engine.createImage(Pantil.vmid(), dia);
-                diamondIn = engine.createImage(Pantil.vmid(), diaIn);
+				final Panmage[] diamonds = getDiamonds(d, f);
+				diamond = diamonds[0];
+		        diamondIn = diamonds[1];
 				}};
 			loaders.add(btnLoader);
 			loaders.add(new Runnable() { @Override public final void run() {
@@ -1686,6 +1684,7 @@ public class FurGuardiansGame extends BaseGame {
 	    	audio.ensureCapacity(6);
 	    	musicMenu = audio.createMusic(RES + "music/menu.mid");
 	    	musicHappy = audio.createMusic(RES + "music/happy.mid");
+	    	musicCave = audio.createMusic(RES + "music/cave.mid");
 	    	musicHeartbeat = audio.createMusic(RES + "music/heartbeat.mid");
 	    	musicOcarina = audio.createMusic(RES + "music/ocarina.mid");
 	    	musicChant = audio.createMusic(RES + "music/chant.mid");
