@@ -304,7 +304,7 @@ public class Enemy extends Character {
 	
 	protected final boolean onStomp(final Player stomper) {
 		lastStomper = stomper;
-		Pansound.startSound(def.stompSound);
+		Pansound.startSound(def.stompSound); // Plays if not null; will be null for most
 		if (def.stompHandler == null || !def.stompHandler.onInteract(this, stomper)) {
 			return defeat(stomper, 0, DEFEAT_STOMP);
 		} else {

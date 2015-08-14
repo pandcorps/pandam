@@ -256,6 +256,7 @@ public class FurGuardiansGame extends BaseGame {
 	protected static EnemyDefinition trollColossus = null;
 	protected static EnemyDefinition ogreBehemoth = null;
 	protected static EnemyDefinition rockSprite = null;
+	protected static EnemyDefinition rockTrio = null;
 	protected static EnemyDefinition rockLeg = null;
 	protected static Panmage rockBack = null;
 	protected static Panimation anger = null;
@@ -1438,7 +1439,6 @@ public class FurGuardiansGame extends BaseGame {
 					blob.lastStomper = prev.lastStomper;
 					blob.setEnemyMirror(b.isMirror()); }};
 				Enemy.burst(burst, prev.def.extra, burst, h, 0); }};
-			blackBlob.splatDecider = armoredImp.splatDecider;
 			blackBlob.award = GemBumped.AWARD_2;
 			Coltil.set(allEnemies, Level.BLACK_BLOB, blackBlob);
 			Enemy.currentSplat = SPLAT_BLOB;
@@ -1447,11 +1447,18 @@ public class FurGuardiansGame extends BaseGame {
 			blob.splatDecider = new InteractionHandler() {
                 @Override public final boolean onInteract(final Enemy enemy, final Player player) {
                 	enemy.timer++;
-                	if (enemy.timer > 1) {
-                		return false;
+                	final boolean ret;
+                	if (enemy.timer > 1 && enemy.def == blob) {
+                		ret = false;
+                	} else {
+                	    ret = player == null || !player.isDragonStomping();
                 	}
-                    return player == null || !player.isDragonStomping();
+                	if (ret) {
+                	    soundBounce.startSound();
+                	}
+                    return ret;
                 }};
+            blackBlob.splatDecider = blob.splatDecider;
 			Coltil.set(allEnemies, Level.BLOB, blob);
 			final Panple rockO = new FinPanple2(8, 2);
 			Enemy.currentO = rockO;
@@ -1481,7 +1488,7 @@ public class FurGuardiansGame extends BaseGame {
                 }};
 			Coltil.set(allEnemies, Level.ROCK_SPRITE, rockSprite);
 			Enemy.currentWalkAnm = rockSprite.walk;
-			final EnemyDefinition rockTrio = new EnemyDefinition("Rock Walker", 15, 3, Enemy.trioFactory);
+			rockTrio = new EnemyDefinition("Rock Walker", 15, 3, Enemy.trioFactory);
 			rockTrio.rewardHandler = new InteractionHandler() {
                 @Override public final boolean onInteract(final Enemy enemy, final Player player) {
                     return false;
@@ -1699,6 +1706,9 @@ public class FurGuardiansGame extends BaseGame {
 	    	soundWhoosh = audio.createSound(RES + "sound/whoosh.mid");
 	    	bounceBall.wallSound = soundArmor;
 	    	armoredImp.stompSound = soundArmor;
+	    	rockSprite.stompSound = soundArmor;
+	    	rockTrio.stompSound = soundArmor;
+	    	rockLeg.stompSound = soundArmor;
 	    	}});
 	}
 	
