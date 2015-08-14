@@ -272,6 +272,8 @@ public class Profile extends PlayerData implements Segmented, Savable {
     	protected long birdGems = 0;
     	protected int playedMatchGames = 0;
     	protected long bounces = 0;
+    	protected int foundLightningOrbs = 0;
+    	protected long electrocutedEnemies = 0;
     	
     	public void load(final Segment seg, final int currGems) {
         	defeatedLevels = seg.initInt(0);
@@ -308,6 +310,8 @@ public class Profile extends PlayerData implements Segmented, Savable {
         	birdGems = seg.initLong(21);
         	playedMatchGames = seg.initInt(22);
         	bounces = seg.initLong(23);
+        	foundLightningOrbs = seg.initInt(24);
+        	electrocutedEnemies = seg.initLong(25);
         }
     	
 		@Override
@@ -350,6 +354,8 @@ public class Profile extends PlayerData implements Segmented, Savable {
 	        seg.setLong(21, birdGems);
 	        seg.setInt(22, playedMatchGames);
 	        seg.setLong(23, bounces);
+	        seg.setInt(24, foundLightningOrbs);
+	        seg.setLong(25, electrocutedEnemies);
 		}
 		
 		public List<String> toList(final Profile prf) {
@@ -360,6 +366,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
 			list.add("Enemies stomped: " + stompedEnemies);
 			list.add("Enemies bumped: " + bumpedEnemies);
 			list.add("Enemies hit by object: " + hitEnemies);
+			list.add("Enemies electrocuted: " + electrocutedEnemies);
 			int enemyTypesDefeated = 0;
 			for (final EnemyDefinition def : FurGuardiansGame.allEnemies) {
 			    final long defeatedCount = defeatedEnemyTypes.longValue(def.code);
@@ -384,6 +391,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
                 list.add("Best run " + (i + 1) + ": " + bestRuns.get(i));
             }
 			list.add("Total Gems: " + totalGems);
+			list.add("Lightning Orbs found: " + foundLightningOrbs);
 			list.add("Objects kicked: " + kicks);
 			add(list, "Shirts bought", Coltil.size(prf.availableClothings), Avatar.clothings.length);
 			add(list, "Hats bought", Coltil.size(prf.availableHats), Avatar.hats.length);
@@ -393,8 +401,9 @@ public class Profile extends PlayerData implements Segmented, Savable {
 			add(list, "Birds bought", Coltil.size(prf.availableBirds), Avatar.BIRDS.size());
 			final int totalPurchases = Achievement.BuyFeat.getPurchases(prf), availablePurchases = getTotalItemsForSale();
 			add(list, "Total purchases", totalPurchases, availablePurchases);
-			final int availableEnemyTypes = FurGuardiansGame.allEnemies.size() - 2; // Can't defeat Wisps yet
+			final int availableEnemyTypes = FurGuardiansGame.allEnemies.size();
 			add(list, "Total enemy types", enemyTypesDefeated, availableEnemyTypes);
+			// Total temporary power-up types? Total ways for defeating enemies?
 			final int totalWorldTypes = getDefeatedWorldTypeCount(), availableWorldTypes = Map.themes.length;
             add(list, "Total world types", totalWorldTypes, availableWorldTypes);
 			final int totalTrophies = prf.achievements.size(), availableTrophies = Achievement.ALL.length;

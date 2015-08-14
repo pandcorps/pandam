@@ -53,6 +53,8 @@ public abstract class Achievement extends FinName {
 		// Menagerie (Zoologist), Use each animal to finish a level
 		// Play a bonus level
 		// Defeat all levels within a World (including optional one)
+		// Collect n temporary power-ups
+		// Electrocute n enemies
 	};
 	
 	private final String desc;
