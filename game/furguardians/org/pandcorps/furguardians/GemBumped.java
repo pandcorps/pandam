@@ -47,7 +47,8 @@ public class GemBumped extends Pandy {
     private final static Random rand = new Random();
     private final int award;
 	private final byte type;
-	int age = 0;
+	private int age = 0;
+	protected int duration = 12;
 	
 	protected final static int rndAward(final Player player) {
 		final int r = Mathtil.randi(rand, 0, 9999);
@@ -147,7 +148,7 @@ public class GemBumped extends Pandy {
 	public final void onStep(final StepEvent event) {
 		super.onStep(event);
 		age++;
-		if (age >= 12) {
+		if (age >= duration) {
 		    if (type == TYPE_DECORATION || isGood()) {
 		        Gem.spark(getLayer(), getPosition(), type == TYPE_END);
 		    } else {

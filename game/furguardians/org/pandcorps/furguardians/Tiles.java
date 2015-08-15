@@ -100,7 +100,9 @@ public class Tiles {
     	} else if (b == FurGuardiansGame.TILE_BUMP) {
     	    final TileHandler handler = getHandler();
     	    if (DynamicTileMap.getRawForeground(t) == FurGuardiansGame.blockPower) {
-    	        newGemDecoration(player, index, FurGuardiansGame.lightningOrb);
+    	        final GemBumped orb =newGemDecoration(player, index, FurGuardiansGame.lightningOrb);
+    	        orb.duration += 12;
+    	        orb.getVelocity().addY(2);
     	        player.pc.profile.stats.foundLightningOrbs++;
     	        Player.setPower(Player.POWER_LIGHTNING);
     	    } else if (handler.isNormalAward(index, t)) {
@@ -152,8 +154,10 @@ public class Tiles {
 	    return true;
     }
     
-    protected final static void newGemDecoration(final Player player, final int index, final Panmage img) {
-    	GemBumped.create(player, index, 0, GemBumped.TYPE_DECORATION, null).setView(img);
+    protected final static GemBumped newGemDecoration(final Player player, final int index, final Panmage img) {
+    	final GemBumped gem = GemBumped.create(player, index, 0, GemBumped.TYPE_DECORATION, null);
+    	gem.setView(img);
+    	return gem;
     }
     
     private final static int getHudLetterX(final int i) {

@@ -50,7 +50,7 @@ import org.pandcorps.furguardians.Player.*;
 
 public class FurGuardiansGame extends BaseGame {
 	protected final static String TITLE = "Fur-Guardians"; // res/values/strings.xml/app_name
-    protected final static String VERSION = "1.10.0"; // AndroidManifest.xml/versionName
+    protected final static String VERSION = "1.11.0"; // AndroidManifest.xml/versionName
     protected final static String YEAR = "2014-2015";
     protected final static String AUTHOR = "Andrew M. Martin";
 	/*

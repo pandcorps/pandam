@@ -70,6 +70,9 @@ public class Player extends Character implements CollisionListener {
 	}
 	
 	protected final static void step() {
+	    if (Pangine.getEngine().isPaused() || !Panlayer.isActive(Level.room)) {
+	        return;
+	    }
 	    if (powerTimer > 0) {
 	        final int p, tock;
 	        if (powerTimer > 210) {
