@@ -598,6 +598,7 @@ public class Level {
         numGems = 0;
         numBreakable = 0;
         numPower = 0;
+        powerProbability = DEFAULT_POWER_PROBABILITY;
         currLetter = 0;
         Coltil.clear(collectedLetters);
     }
@@ -2270,11 +2271,19 @@ public class Level {
         setFgShadowed(x, y, 0, 4, Tile.BEHAVIOR_SOLID);
     }
     
+    private final static int DEFAULT_POWER_PROBABILITY = 40;
+    
+    private static int powerProbability = DEFAULT_POWER_PROBABILITY;
+    
     private final static boolean powerBlock(final int x, final int y) {
-        if (numPower == 0) { //TODO and random
-            numPower++;
-            tm.setForeground(x, y, FurGuardiansGame.blockPower, FurGuardiansGame.TILE_BUMP);
-            return true;
+        if (numPower == 0) {
+            if (Mathtil.rand(powerProbability)) {
+                numPower++;
+                tm.setForeground(x, y, FurGuardiansGame.blockPower, FurGuardiansGame.TILE_BUMP);
+                return true;
+            } else if (powerProbability < 100) {
+                powerProbability += 15;
+            }
         }
         return false;
     }

@@ -71,6 +71,20 @@ public class Player extends Character implements CollisionListener {
 	
 	protected final static void step() {
 	    if (powerTimer > 0) {
+	        final int p, tock;
+	        if (powerTimer > 90) {
+	            p = 30;
+	            tock = 15;
+	        } else {
+	            p = 15;
+	            tock = 7;
+	        }
+	        final int m = powerTimer % p;
+	        if (m == 0) {
+	            FurGuardiansGame.soundArmor.startSound();
+	        } else if (m == tock) {
+	            FurGuardiansGame.soundThud.startSound();
+	        }
 	        powerTimer--;
 	        if (powerTimer == 0) {
 	            powerMode = MODE_NORMAL;
