@@ -72,7 +72,10 @@ public class Player extends Character implements CollisionListener {
 	protected final static void step() {
 	    if (powerTimer > 0) {
 	        final int p, tock;
-	        if (powerTimer > 90) {
+	        if (powerTimer > 210) {
+	            p = 60;
+	            tock = 30;
+	        } else if (powerTimer > 90) {
 	            p = 30;
 	            tock = 15;
 	        } else {
