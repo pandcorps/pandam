@@ -181,6 +181,8 @@ public class Driver implements Runnable {
             for (final Location l : available) {
                 if (skipCurrent && curr.equals(l)) {
                     continue;
+                } else if (!l.isCity()) {
+                    continue;
                 }
                 final List<Entity> requirements = new ArrayList<Entity>();
                 final Item access = l.getAccess();

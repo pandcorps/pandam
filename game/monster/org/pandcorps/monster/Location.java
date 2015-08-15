@@ -126,6 +126,10 @@ public class Location extends Code {
         return specials;
     }
     
+    public final boolean isCity() {
+        return Coltil.isValued(store) || Coltil.isValued(trained);
+    }
+    
     protected final void initInstance() {
         if (wild != null) {
             return;

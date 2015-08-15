@@ -55,6 +55,8 @@ public final class MonsterGame extends BaseGame {
     Test that impossible options still appear as buildings handled gracefully
     If device has back button, it should bring up the menu if on tile screen, or use back option if on sub-menu, or use exit option if on main menu
     Auto-save
+    Fish (if in city, add to inCity)
+    Surf
     */
     private static volatile Driver driver = null;
     private static volatile Panroom room = null;
@@ -648,17 +650,28 @@ public final class MonsterGame extends BaseGame {
         
         @Override
         protected final void buildTileMap() throws Exception {
+            final Location location;
             if (caller instanceof LocationOption) {
-                final Location location = ((LocationOption) caller).location;
+                location = ((LocationOption) caller).location;
                 if (location != lastLocation) {
                     if (player != null) {
                         player.clearLastCity();
                     }
                     lastLocation = location;
                 }
+            } else {
+                location = null;
             }
             
-            final TileMapImage grass = imgMap[13][0], wallImg = imgMap[14][2], wallLeftImg = imgMap[14][3], wallRightImg = imgMap[14][1];
+            int grassY = 13, grassX = 0;
+            if (location != null) {
+                final int wx = location.getWildImgX();
+                if (wx >= 0) {
+                    grassX = wx;
+                    grassY = location.getWildImgY() - 1;
+                }
+            }
+            final TileMapImage grass = imgMap[grassY][grassX], wallImg = imgMap[14][2], wallLeftImg = imgMap[14][3], wallRightImg = imgMap[14][1];
             final Tile wall = tm.getTile(grass, wallImg, Tile.BEHAVIOR_SOLID);
             final Tile wallBottom = tm.getTile(grass, imgMap[13][2], Tile.BEHAVIOR_SOLID);
             final Tile wallTop = tm.getTile(grass, imgMap[15][2], Tile.BEHAVIOR_SOLID);
