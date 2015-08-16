@@ -788,6 +788,17 @@ public class Driver implements Runnable {
                     give.add(s);
                 }
             }
+            if (give.isEmpty()) {
+                Species last = null;
+                for (final Species pref : state.getPreferences()) {
+                    if (team.contains(pref)) {
+                        last = pref;
+                    }
+                }
+                if (last != null) {
+                    give.add(last);
+                }
+            }
             final List<Species> receive = new ArrayList<Species>(), other = new ArrayList<Species>();
             final List<Species> trader = state.getTrader();
             for (final Species s : trader) {
