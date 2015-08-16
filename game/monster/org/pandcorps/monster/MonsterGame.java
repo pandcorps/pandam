@@ -857,6 +857,8 @@ public final class MonsterGame extends BaseGame {
     
     private static Map<Integer, Object> buildMap = null;
     private final static Integer tileTree = Integer.valueOf(0);
+    private final static Integer tileRock = Integer.valueOf(1);
+    private static Tile tileDefault = null;
     
     private final static void loadTileDefinitions() throws Exception {
         BufferedReader in = null;
@@ -878,6 +880,12 @@ public final class MonsterGame extends BaseGame {
                 if ("tree".equalsIgnoreCase(token3)) {
                     buildMap.put(color, tileTree);
                     continue;
+                } else if ("rock".equalsIgnoreCase(token3)) {
+                    buildMap.put(color, tileRock);
+                    continue;
+                } else if ("default".equalsIgnoreCase(token3)) {
+                    tileDefault = (Tile) buildMap.get(color);
+                    continue;
                 }
                 final int bgX = Integer.parseInt(token3);
                 final int bgY = Integer.parseInt(tokens[4]);
@@ -896,9 +904,11 @@ public final class MonsterGame extends BaseGame {
         for (int j = 0; j < h; j++) {
             final int tj = h - j - 1;
             for (int i = 0; i < w; i++) {
-                final Object t = buildMap.get(Integer.valueOf(worldSrc.getRGB(i, j)));
+                final Object t = getWorldTile(i, j);
                 if (t == tileTree) {
                     tree(i, tj);
+                } else if (t == tileRock) {
+                    rock(i, tj, j);
                 } else {
                 //} else if (t.getClass() == Tile.class) {
                     tm.setTile(i, tj, (Tile) t);
@@ -910,9 +920,108 @@ public final class MonsterGame extends BaseGame {
         buildMap = null;
     }
     
+    private final static Object getWorldTile(final int i, final int j) {
+        return buildMap.get(Integer.valueOf(worldSrc.getRGB(i, j)));
+    }
+    
+    private final static Tile validateWorldTile(final int i, final int j) {
+        if (i < 0 || j < 0 || i >= worldSrc.getWidth() || j >= worldSrc.getHeight()) {
+            return null;
+        }
+        final Object tile = getWorldTile(i, j);
+        if (tile instanceof Tile) {
+            return (Tile) tile;
+        } else if (tile == tileTree) {
+            return tileDefault;
+        }
+        return null;
+    }
+    
     private final static void tree(final int x, final int y) {
         tm.setBackground(x, y, imgMap[14][6], Tile.BEHAVIOR_SOLID);
         tm.setForeground(x, y + 1, imgMap[13][6], Tile.BEHAVIOR_SOLID);
+    }
+    
+    private final static void rock(final int x, final int y, final int iy) {
+        final Tile rightTile = validateWorldTile(x + 1, iy);
+        final Tile upTile = validateWorldTile(x, iy - 1);
+        final Tile neighborTile;
+        final int j, i;
+        if (rightTile != null) {
+            neighborTile = rightTile;
+            i = 3;
+            if (upTile != null) {
+                j = 13;
+            } else {
+                final Tile downTile = validateWorldTile(x, iy + 1);
+                if (downTile != null) {
+                    j = 15;
+                } else {
+                    j = 14;
+                }
+            }
+        } else {
+            final Tile leftTile = validateWorldTile(x - 1, iy);
+            if (leftTile != null) {
+                neighborTile = leftTile;
+                i = 1;
+                if (upTile != null) {
+                    j = 13;
+                } else {
+                    final Tile downTile = validateWorldTile(x, iy + 1);
+                    if (downTile != null) {
+                        j = 15;
+                    } else {
+                        j = 14;
+                    }
+                }
+            } else if (upTile != null) {
+                neighborTile = upTile;
+                j = 13;
+                i = 2;
+            } else {
+                final Tile downTile = validateWorldTile(x, iy + 1);
+                if (downTile != null) {
+                    neighborTile = downTile;
+                    j = 15;
+                    i = 2;
+                } else {
+                    final Tile rightUpTile = validateWorldTile(x + 1, iy - 1);
+                    if (rightUpTile != null) {
+                        neighborTile = rightUpTile;
+                        j = 14;
+                        i = 4;
+                    } else {
+                        final Tile rightDownTile = validateWorldTile(x + 1, iy + 1);
+                        if (rightDownTile != null) {
+                            neighborTile = rightDownTile;
+                            j = 13;
+                            i = 4;
+                        } else {
+                            final Tile leftUpTile = validateWorldTile(x - 1, iy - 1);
+                            if (leftUpTile != null) {
+                                neighborTile = leftUpTile;
+                                j = 14;
+                                i = 5;
+                            } else {
+                                final Tile leftDownTile = validateWorldTile(x - 1, iy + 1);
+                                if (leftDownTile != null) {
+                                    neighborTile = leftDownTile;
+                                    j = 13;
+                                    i = 5;
+                                } else {
+                                    neighborTile = null;
+                                    j = 14;
+                                    i = 2;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        tm.setTile(x, y, neighborTile);
+        tm.setForeground(x, y, imgMap[j][i], Tile.BEHAVIOR_SOLID);
     }
     
     private static void initImageOffsets(final Panmage img) {
