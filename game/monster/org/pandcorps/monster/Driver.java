@@ -222,6 +222,7 @@ public class Driver implements Runnable {
             final List<Option> options = new ArrayList<Option>();
             for (final Location loc : Location.getLocations()) {
                 new WildOption(loc, loc.getNormal()).addMenuOption(options, "Wild");
+                new FishOption(loc, loc.getFish()).addMenuOption(options, Specialty.Fish.toString());
             }
             new TravelOption(Location.getAvailable()).addOptions(options, false);
             addMenuOption(options);
@@ -246,13 +247,13 @@ public class Driver implements Runnable {
 			//options.add(new CatchOption(location));
 			//boolean fish = false;
 			//final List<Species> wild = location.getNormal();
-			final List<Species> fish = location.getFish();
+			//final List<Species> fish = location.getFish();
 			//boolean move = false;
 			//final LinkedHashSet<Item> specials = new LinkedHashSet<Item>();
 			final Map<Item, ArrayList<Species>> specials = location.getSpecials();
 			//new WildOption(new Label(location.getName() + " - " + "Wild"), wild).addMenuOption(options, "Wild");
             //options.add(new MenuOption("Catch", new CatchOption(location, wild)));
-			new FishOption(location, fish).addMenuOption(options, Specialty.Fish.toString());
+			//new FishOption(location, fish).addMenuOption(options, Specialty.Fish.toString());
 			/*if (move) {
                 options.add(new MenuOption("Special", null));
             }*/
@@ -499,13 +500,15 @@ public class Driver implements Runnable {
 	}
 	
 	protected abstract class BattleOption extends WrapperOption {
+	    protected final Location location;
         private final List<Species> opponents;
         private final boolean catchable;
         protected Species opponent = null;
         protected Species chosen = null;
         
-        protected BattleOption(final Label label, final List<Species> opponents, final boolean catchable) {
+        protected BattleOption(final Label label, final Location loc, final List<Species> opponents, final boolean catchable) {
             super(label);
+            location = loc;
             this.opponents = opponents;
             this.catchable = catchable;
             pickNextOpponent();
@@ -550,11 +553,8 @@ public class Driver implements Runnable {
     }
 
 	protected class WildOption extends BattleOption {
-	    protected final Location location;
-	    
 		public WildOption(final Location loc, final List<Species> opponents) {
-			super(new Label(loc.getName() + " - " + "Wild"), opponents, true);
-			location = loc;
+			super(new Label(loc.getName() + " - " + "Wild"), loc, opponents, true);
 			setAutoBackEnabled(true);
 		}
 
@@ -577,7 +577,7 @@ public class Driver implements Runnable {
 	
 	private class TrainedBattleOption extends BattleOption {
         public TrainedBattleOption(final Label label, final List<Species> opponents) {
-            super(label, opponents, false);
+            super(label, null, opponents, false);
         }
 
         @Override
@@ -599,9 +599,9 @@ public class Driver implements Runnable {
 	}
 	*/
 	
-	private class FishOption extends BattleOption {
+	protected class FishOption extends BattleOption {
 	    public FishOption(final Location location, final List<Species> wild) {
-            super(new Label(location.getName() + " - Fishing"), wild, true /*, new Special(Specialty.Fish, null)*/ );
+            super(new Label(location.getName() + " - Fishing"), location, wild, true /*, new Special(Specialty.Fish, null)*/ );
         }
 
         @Override
@@ -611,9 +611,9 @@ public class Driver implements Runnable {
 	}
 	
 	//private class SpecialOption extends OpponentOption {
-	private class SpecialOption extends BattleOption { // Makes sense for surf, maybe not all special options
+	protected class SpecialOption extends BattleOption { // Makes sense for surf, maybe not all special options
         public SpecialOption(final Location location, final Item requirement, final List<Species> wild) {
-            super(new Label(location.getName() + " - " + requirement), wild, true /*, new Special(Specialty.Move, requirement)*/ );
+            super(new Label(location.getName() + " - " + requirement), location, wild, true /*, new Special(Specialty.Move, requirement)*/ );
         }
 
         @Override

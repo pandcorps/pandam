@@ -138,6 +138,14 @@ public class TileWalker extends TileOccupant implements StepListener {
         return getNeighbor(getDirection());
     }
     
+    public int getIndexFacing() {
+        return tm.getNeighbor(index, dir);
+    }
+    
+    public Tile getTileFacing() {
+        return tm.getTile(getIndexFacing());
+    }
+    
     public final void setSpeed(final float speed) {
         this.speed = speed;
     }

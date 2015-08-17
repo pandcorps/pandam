@@ -478,6 +478,8 @@ public final class MonsterGame extends BaseGame {
     private static Player player = null;
     private final static Map<Integer, Option> locMap = new HashMap<Integer, Option>();
     private final static Map<TileMapImage, Option> wildMap = new HashMap<TileMapImage, Option>();
+    private final static Map<TileMapImage, Option> surfMap = new HashMap<TileMapImage, Option>();
+    private final static Map<TileMapImage, Option> fishMap = new HashMap<TileMapImage, Option>();
     
     private abstract static class TileScreen extends Panscreen {
         protected final int cols;
@@ -519,6 +521,8 @@ public final class MonsterGame extends BaseGame {
             optWorld = null;
             locMap.clear();
             wildMap.clear();
+            surfMap.clear();
+            fishMap.clear();
             buildTileMap();
             layerTiles.addActor(tm);
             layerTiles.setConstant(true);
@@ -624,11 +628,28 @@ public final class MonsterGame extends BaseGame {
                     }
                 } else if (option instanceof MenuOption) {
                     final Option wrappedOption = ((MenuOption) option).option;
-                    if (wrappedOption instanceof WildOption) {
-                        final Location loc = ((WildOption) wrappedOption).location;
-                        final int wildImgX = loc.getWildImgX();
-                        if (wildImgX >= 0) {
-                            wildMap.put(imgMap[loc.getWildImgY()][wildImgX], option);
+                    if (wrappedOption instanceof BattleOption) {
+                        final Location loc = ((BattleOption) wrappedOption).location;
+                        final Map<TileMapImage, Option> map;
+                        final int imgX, imgY;
+                        if (wrappedOption instanceof WildOption) {
+                            map = wildMap;
+                            imgX = loc.getWildImgX();
+                            imgY = loc.getWildImgY();
+                        } else if (wrappedOption instanceof SpecialOption) {
+                            map = surfMap;
+                            imgX = loc.getWaterImgX();
+                            imgY = loc.getWaterImgY();
+                        } else if (wrappedOption instanceof FishOption) {
+                            map = fishMap;
+                            imgX = loc.getWaterImgX();
+                            imgY = loc.getWaterImgY();
+                        } else {
+                            map = null;
+                            imgX = imgY = -1;
+                        }
+                        if (imgX >= 0) {
+                            map.put(imgMap[imgY][imgX], option);
                         }
                     }
                 }
@@ -829,6 +850,16 @@ public final class MonsterGame extends BaseGame {
                     updateLastCity();
                 }
                 choice.value = chosen;
+                return;
+            }
+            final Tile tile = getTileFacing();
+            final Object bg = DynamicTileMap.getRawBackground(tile);
+            //TODO Check current tile; if dock, use fishMap; otherwise use surfMap
+            final Option fishOption = fishMap.get(bg);
+            if (fishOption != null) {
+                updateLastCity();
+                choice.value = fishOption;
+                return;
             }
         }
         

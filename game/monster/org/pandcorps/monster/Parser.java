@@ -235,7 +235,9 @@ public class Parser {
             final int y = getInt(tokens, i++);
             final int wildImgX = getInt(tokens, i++);
             final int wildImgY = getInt(tokens, i++);
-            return new Location(/*id,*/ code, name, store, access, special, x, y, wildImgX, wildImgY);
+            final int waterImgX = getInt(tokens, i++);
+            final int waterImgY = getInt(tokens, i++);
+            return new Location(/*id,*/ code, name, store, access, special, x, y, wildImgX, wildImgY, waterImgX, waterImgY);
         }
         
         @Override
