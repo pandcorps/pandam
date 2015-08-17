@@ -790,8 +790,9 @@ public class Driver implements Runnable {
             }
             if (give.isEmpty()) {
                 Species last = null;
+                //TODO is team sorted by preferences already? If not, should it be? Should this just take the last tradeable from the team list?
                 for (final Species pref : state.getPreferences()) {
-                    if (team.contains(pref)) {
+                    if (team.contains(pref) && isTradeable(pref)) {
                         last = pref;
                     }
                 }
@@ -799,48 +800,48 @@ public class Driver implements Runnable {
                     give.add(last);
                 }
             }
-            final List<Species> receive = new ArrayList<Species>(), other = new ArrayList<Species>();
+            final List<Option> options = new ArrayList<Option>(give.size());
+            for (final Species g : give) {
+                options.add(new OfferOption(g));
+            }
+            return options;
+        }
+    }
+    
+    public class OfferOption extends RunOption {
+        private final Species offered;
+        
+        protected OfferOption(final Species offered) {
+            super(offered);
+            this.offered = offered;
+        }
+
+        @Override
+        protected List<Option> menu() {
             final List<Species> trader = state.getTrader();
-            for (final Species s : trader) {
+            /*for (final Species s : trader) {
                 if (Special.getSpecialty(s.getSpecial()) == Specialty.Trader ||
                         s.getCatalyst() instanceof Entity.Trade) { //TODO singleton Trade instance?
                     receive.add(s);
                 } else {
                     other.add(s);
                 }
-            }
+            }*/
             //TODO Option to disable filtering
-            final int gsize = give.size(), rsize = receive.size();
-            final int size;
-            final Species last;
-            if (gsize < rsize) {
-                size = gsize;
-                Species s = null;
-                for (int i = team.size() - 1; i >= 0; i--) {
-                    s = team.get(i);
-                    if (s.isUnique()) {
-                        continue;
-                    }
-                    final Entity cat = s.getCatalyst();
-                    if (cat instanceof Item && ((Item) cat).isUnique()) {
-                        continue;
-                    }
-                    break;
-                }
-                last = s;
-            } else {
-                size = rsize;
-                last = null;
-            }
-            final List<Option> options = new ArrayList<Option>(size);
-            final Iterator<Species> giter = give.iterator();
-            for (int i = 0; i < size; i++) {
-                final Species g = giter.hasNext() ? giter.next() : last;
-                final Species r = i >= rsize ? other.get(i - rsize) : receive.get(i);
-                options.add(new TradeTask(g, r));
+            final List<Option> options = new ArrayList<Option>(trader.size());
+            for (final Species r : trader) {
+                options.add(new TradeTask(offered, r));
             }
             return options;
         }
+    }
+    
+    private final boolean isTradeable(final Species s) {
+        if (s.isUnique()) {
+            return false;
+        }
+        final Entity cat = s.getCatalyst();
+        return !(cat instanceof Item && ((Item) cat).isUnique());
     }
     
     public class TradeTask extends Task {
