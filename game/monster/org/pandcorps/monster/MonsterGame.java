@@ -854,11 +854,16 @@ public final class MonsterGame extends BaseGame {
             }
             final Tile tile = getTileFacing();
             final Object bg = DynamicTileMap.getRawBackground(tile);
-            //TODO Check current tile; if dock, use fishMap; otherwise use surfMap
-            final Option fishOption = fishMap.get(bg);
-            if (fishOption != null) {
+            final Map<TileMapImage, Option> waterMap;
+            if (getTile() == tileDock) {
+                waterMap = fishMap;
+            } else {
+                waterMap = surfMap;
+            }
+            final Option waterOption = waterMap.get(bg);
+            if (waterOption != null) {
                 updateLastCity();
-                choice.value = fishOption;
+                choice.value = waterOption;
                 return;
             }
         }
@@ -889,13 +894,13 @@ public final class MonsterGame extends BaseGame {
     private static Map<Integer, Object> buildMap = null;
     private final static Integer tileTree = Integer.valueOf(0);
     private final static Integer tileRock = Integer.valueOf(1);
+    private static Tile tileDock = null;
     private static Tile tileDefault = null;
     
     private final static void loadTileDefinitions() throws Exception {
-        BufferedReader in = null;
+        final BufferedReader in = Iotil.getBufferedReader(Parser.LOC + "tiles.txt");
         try {
             final Pattern pat = Pattern.compile("\\|");
-            in = Iotil.getBufferedReader(Parser.LOC + "tiles.txt");
             String line;
             buildMap = new HashMap<Integer, Object>();
             while ((line = in.readLine()) != null) {
@@ -914,15 +919,32 @@ public final class MonsterGame extends BaseGame {
                 } else if ("rock".equalsIgnoreCase(token3)) {
                     buildMap.put(color, tileRock);
                     continue;
-                } else if ("default".equalsIgnoreCase(token3)) {
-                    tileDefault = (Tile) buildMap.get(color);
-                    continue;
                 }
                 final int bgX = Integer.parseInt(token3);
                 final int bgY = Integer.parseInt(tokens[4]);
-                final byte behavior = "Solid".equalsIgnoreCase(tokens[5]) ? Tile.BEHAVIOR_SOLID : Tile.BEHAVIOR_OPEN;
+                final String token5 = tokens[5];
+                final byte behavior;
+                int special = 0;
+                if ("Dock".equalsIgnoreCase(token5)) {
+                    behavior = Tile.BEHAVIOR_OPEN;
+                    special = 1;
+                } else if ("Default".equalsIgnoreCase(token5)) {
+                    behavior = Tile.BEHAVIOR_OPEN;
+                    special = 2;
+                } else if ("Solid".equalsIgnoreCase(token5)) {
+                    behavior = Tile.BEHAVIOR_SOLID;
+                } else if ("Open".equalsIgnoreCase(token5)) {
+                    behavior = Tile.BEHAVIOR_OPEN;
+                } else {
+                    throw new IllegalArgumentException("Unexpected tile behavior " + token5);
+                }
                 final Tile tile = tm.getTile(imgMap[bgY][bgX], null, behavior);
                 buildMap.put(color, tile);
+                if (special == 1) {
+                    tileDock = tile;
+                } else if (special == 2) {
+                    tileDefault = tile;
+                }
             }
         } finally {
             Iotil.close(in);

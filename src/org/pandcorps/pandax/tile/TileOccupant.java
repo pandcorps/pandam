@@ -97,6 +97,10 @@ public class TileOccupant extends Panctor {
         return index;
     }
     
+    public Tile getTile() {
+        return tm.getTile(index);
+    }
+    
     public int getRow() {
         return tm.getRow(index);
     }
