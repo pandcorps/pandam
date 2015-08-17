@@ -602,6 +602,7 @@ public class Driver implements Runnable {
 	protected class FishOption extends BattleOption {
 	    public FishOption(final Location location, final List<Species> wild) {
             super(new Label(location.getName() + " - Fishing"), location, wild, true /*, new Special(Specialty.Fish, null)*/ );
+            setAutoBackEnabled(true);
         }
 
         @Override
