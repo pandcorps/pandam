@@ -55,8 +55,11 @@ public final class MonsterGame extends BaseGame {
     Test that impossible options still appear as buildings handled gracefully
     If device has back button, it should bring up the menu if on tile screen, or use back option if on sub-menu, or use exit option if on main menu
     Auto-save
-    Fish (if in city, add to inCity)
+    Validate using device-specific save game reading/writing
     Surf
+    Validate that upgrades always have higher rank
+    Validate that all items/locations/etc. have images
+    Validate that all starters are 2-3-4
     */
     private static volatile Driver driver = null;
     private static volatile Panroom room = null;
@@ -480,6 +483,8 @@ public final class MonsterGame extends BaseGame {
     private final static Map<TileMapImage, Option> wildMap = new HashMap<TileMapImage, Option>();
     private final static Map<TileMapImage, Option> surfMap = new HashMap<TileMapImage, Option>();
     private final static Map<TileMapImage, Option> fishMap = new HashMap<TileMapImage, Option>();
+    private static Class<? extends TileScreen> screenClass = null;
+    private static Class<? extends TileScreen> lastScreenClass = null;
     
     private abstract static class TileScreen extends Panscreen {
         protected final int cols;
@@ -490,6 +495,8 @@ public final class MonsterGame extends BaseGame {
         
         private TileScreen(final int cols, final int rows,
                            final int defaultX, final int defaultY, final Direction defaultDir) {
+            lastScreenClass = screenClass;
+            screenClass = getClass();
             this.cols = cols;
             this.rows = rows;
             this.defaultX = defaultX;
@@ -499,6 +506,10 @@ public final class MonsterGame extends BaseGame {
         
         @Override
         protected final void load() throws Exception {
+            if (lastScreenClass != null && lastScreenClass != screenClass) {
+                Player.clearLastCity();
+            }
+            
             final Pangine engine = Pangine.getEngine();
             //layerHud = createHud(room); // HUD and room both have constant size; use room layer for the HUD
             layerHud = room;
@@ -533,7 +544,7 @@ public final class MonsterGame extends BaseGame {
             addPlayer();
             layerSprites.addActor(player);
             engine.track(player);
-            player.clearLastCity();
+            Player.clearLastCity();
         }
         
         protected void initTileMap() {
@@ -676,7 +687,7 @@ public final class MonsterGame extends BaseGame {
                 location = ((LocationOption) caller).location;
                 if (location != lastLocation) {
                     if (player != null) {
-                        player.clearLastCity();
+                        Player.clearLastCity();
                     }
                     lastLocation = location;
                 }
@@ -880,7 +891,7 @@ public final class MonsterGame extends BaseGame {
             return true;
         }
         
-        protected final void clearLastCity() {
+        protected final static void clearLastCity() {
             lastCityX = -1;
             lastCityY = -1;
         }

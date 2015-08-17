@@ -162,21 +162,23 @@ public class Driver implements Runnable {
 	
 	public class TravelOption extends RunOption {
 	    private final List<Location> available;
+	    private final boolean skipCurrent;
 	    
-        public TravelOption(final List<Location> available) {
+        public TravelOption(final List<Location> available, final boolean skipCurrent) {
             //TODO Standardize location as argument or from state
             super(new Label(state.getLocation().getName() + " - Travel"));
             this.available = available;
+            this.skipCurrent = skipCurrent;
         }
 
         @Override
         public List<Option> menu() {
             final List<Option> options = new ArrayList<Option>(available.size());
-            addOptions(options, true);
+            addOptions(options);
             return options;
         }
         
-        public void addOptions(final List<Option> options, final boolean skipCurrent) {
+        public void addOptions(final List<Option> options) {
             final Location curr = state.getLocation();
             for (final Location l : available) {
                 if (skipCurrent && curr.equals(l)) {
@@ -224,8 +226,8 @@ public class Driver implements Runnable {
                 new WildOption(loc, loc.getNormal()).addMenuOption(options, "Wild");
                 new FishOption(loc, loc.getFish()).addMenuOption(options, Specialty.Fish.toString());
             }
-            new TravelOption(Location.getAvailable()).addOptions(options, false);
-            addMenuOption(options);
+            new TravelOption(Location.getAvailable(), false).addOptions(options); // For walking to cities, not menu fast travel
+            addMenuOption(options, false); // Includes fast travel option
             return options;
         }
 	}
@@ -267,7 +269,7 @@ public class Driver implements Runnable {
     			    }
 			    }
 			}
-			addMenuOption(options);
+			addMenuOption(options, true);
 			options.add(new MenuOption(Data.getMorph(), new MorphOption()));
 			if (state.hasInventory(track)) {
 			    options.add(new MenuOption(track.getName(), new TrackOption(), state.choose(track), track));
@@ -298,20 +300,23 @@ public class Driver implements Runnable {
 		}
 	}
 	
-	public void addTravelOption(final List<Option> options) {
+	public void addTravelOption(final List<Option> options, final boolean skipCurrentLocation) {
 	    final List<Location> available = Location.getAvailable();
         if (available.size() > 1) {
-            options.add(new MenuOption("Travel", new TravelOption(available)));
+            options.add(new MenuOption("Travel", new TravelOption(available, skipCurrentLocation)));
         }
 	}
 	
-	public void addMenuOption(final List<Option> options) {
-	    options.add(new MenuOption("Menu", new MainMenuOption()));
+	public void addMenuOption(final List<Option> options, final boolean skipCurrentLocation) {
+	    options.add(new MenuOption("Menu", new MainMenuOption(skipCurrentLocation)));
 	}
 	
 	public class MainMenuOption extends RunOption {
-        protected MainMenuOption() {
+	    private final boolean skipCurrentLocation;
+	    
+        protected MainMenuOption(final boolean skipCurrentLocation) {
             super(new Label("Menu"));
+            this.skipCurrentLocation = skipCurrentLocation;
         }
 
         @Override
@@ -320,7 +325,7 @@ public class Driver implements Runnable {
             //options.add(new MenuOption(Data.getMorph(), new MorphOption()));
             options.add(new MenuOption(Data.getInventory(), new InventoryOption()));
             options.add(new MenuOption(Data.getDatabase(), new DatabaseOption()));
-            addTravelOption(options);
+            addTravelOption(options, skipCurrentLocation);
             //options.add(new ExitOption());
             return options;
         }
