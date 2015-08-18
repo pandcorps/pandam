@@ -55,7 +55,6 @@ public final class MonsterGame extends BaseGame {
     Test that impossible options still appear as buildings handled gracefully
     If device has back button, it should bring up the menu if on tile screen, or use back option if on sub-menu, or use exit option if on main menu
     Auto-save
-    Validate using device-specific save game reading/writing
     Surf
     Track
     Validate that all items/locations/etc. have images

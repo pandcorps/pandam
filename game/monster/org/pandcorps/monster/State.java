@@ -51,12 +51,13 @@ public class State {
 	
 	// Fields about where to save; not fields which must be saved
 	//private final String trainerName;
-    private final File file;
+    private final String file;
     //private File file = new File("state.txt");
     
     public State(final String trainerName) {
         //this.trainerName = trainerName;
-        this.file = new File(trainerName + ".txt");
+        //this.file = new File(trainerName + ".txt");
+        file = trainerName + ".txt";
     }
 
 	public final static State get() {
@@ -356,20 +357,18 @@ public class State {
 	    serialize(file);
 	}
 	
-	public void serialize(final File f) {
-	    FileOutputStream out = null;
+	public void serialize(final String f) {
+	    Writer out = null;
 	    try {
-	        out = new FileOutputStream(f);
+	        out = Iotil.getWriter(f);
 	        serialize(out);
-	    } catch (final IOException e) {
-	        throw new RuntimeException(e);
 	    } finally {
 	        Iotil.close(out);
 	    }
 	}
 	
-	public void serialize(final OutputStream out) {
-	    final PrintStream p = Iotil.getPrintStream(out);
+	public void serialize(final Writer out) {
+	    final PrintWriter p = Iotil.getPrintWriter(out);
 	    //TODO File format version number?
 	    //TODO Namespace labels to prevent collisions with codes?
 	    serializeSpecies(p, SECTION_PREFERENCES, preferences);
@@ -391,18 +390,16 @@ public class State {
 	}
 	
 	public void parse() {
-    	if (file.exists()) {
+    	if (Iotil.exists(file)) {
             parse(file);
         }
 	}
 	
-	public void parse(final File f) {
-        FileInputStream in = null;
+	public void parse(final String f) {
+        InputStream in = null;
         try {
-            in = new FileInputStream(f);
+            in = Iotil.getInputStream(f);
             parse(in);
-        } catch (final IOException e) {
-            throw new RuntimeException(e);
         } finally {
             Iotil.close(in);
         }
@@ -431,7 +428,7 @@ public class State {
 	    }
 	}
 	
-	private final static void serializeSpecies(final PrintStream p, final String label, final Collection<? extends Species> col) {
+	private final static void serializeSpecies(final PrintWriter p, final String label, final Collection<? extends Species> col) {
 	    p.println(label);
         for (final Species elem : col) {
             p.println(elem.getId());
@@ -439,7 +436,7 @@ public class State {
         p.flush();
 	}
 	
-	private final static void serializeCodes(final PrintStream p, final String label, final Collection<? extends Code> col) {
+	private final static void serializeCodes(final PrintWriter p, final String label, final Collection<? extends Code> col) {
         p.println(label);
         for (final Code elem : col) {
             p.println(elem.getCode());
@@ -447,7 +444,7 @@ public class State {
         p.flush();
     }
 	
-	private final static void serializeCodeCounts(final PrintStream p, final String label, final CountMap<? extends Code> map) {
+	private final static void serializeCodeCounts(final PrintWriter p, final String label, final CountMap<? extends Code> map) {
         p.println(label);
         for (final Entry<? extends Code, Long> entry : map.entrySet()) {
             p.print(entry.getKey().getCode());
@@ -457,7 +454,7 @@ public class State {
         p.flush();
     }
 	
-	private final static void serialize(final PrintStream p, final String label, final int value) {
+	private final static void serialize(final PrintWriter p, final String label, final int value) {
         p.println(label);
         p.println(value);
     }
