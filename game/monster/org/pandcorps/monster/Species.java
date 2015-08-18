@@ -283,6 +283,10 @@ public class Species extends Entity {
 		}
 		return (float) (Math.pow(2, this.rank - s.rank) * adv / dis);
 	}
+	
+	public boolean isStart() {
+	    return getStart().contains(this);
+	}
 
 	@Override
 	public boolean isAvailable() {

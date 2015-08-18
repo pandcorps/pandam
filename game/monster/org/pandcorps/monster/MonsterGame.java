@@ -57,9 +57,8 @@ public final class MonsterGame extends BaseGame {
     Auto-save
     Validate using device-specific save game reading/writing
     Surf
-    Validate that upgrades always have higher rank
+    Track
     Validate that all items/locations/etc. have images
-    Validate that all starters are 2-3-4
     */
     private static volatile Driver driver = null;
     private static volatile Panroom room = null;
@@ -1206,6 +1205,51 @@ public final class MonsterGame extends BaseGame {
             }
             System.out.println();
         }
+    }
+    
+    private final static void validateSpecies() {
+        int start = 0, mid = 0, adv = 0;
+        for (final Species s : Species.getSpecies()) {
+            final Species p = s.getPrecursor();
+            final int sr = s.getRank();
+            if (s.isStart()) {
+                start++;
+                if (sr != 2) {
+                    err("Starter " + s + " had rank " + sr + " instead of 2");
+                }
+            }
+            if (p != null) {
+                final int pr = p.getRank();
+                if (pr >= sr) {
+                    err(s + " had rank " + sr + " but precursor " + p + " had rank " + pr);
+                } else if (p.isStart()) {
+                    mid++;
+                    if (sr != 3) {
+                        err("Middle starter " + s + " had rank " + sr + " instead of 3");
+                    }
+                } else {
+                    final Species b = p.getPrecursor();
+                    if (b != null && b.isStart()) {
+                        adv++;
+                        if (sr != 4) {
+                            err("Advanced starter " + s + " had rank " + sr + " instead of 4");
+                        }
+                    }
+                }
+            }
+        }
+        if (start != 12) {
+            err("Found " + start + " starters instead of 12");
+        } else if (mid != 12) {
+            err("Found " + mid + " starter middle forms instead of 12");
+        } else if (adv != 12) {
+            err("Found " + adv + " starter advanced forms instead of 12");
+        }
+    }
+    
+    private final static void err(final String s) {
+        //throw new IllegalStateException(s);
+        System.err.println(s);
     }
     */
     
