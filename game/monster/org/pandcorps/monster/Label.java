@@ -47,4 +47,8 @@ public class Label {
 	public final String toString() {
 	    return name;
 	}
+	
+	public final static String getName(final Label lbl) {
+	    return lbl == null ? null : lbl.getName();
+	}
 }

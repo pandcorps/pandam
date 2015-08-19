@@ -225,6 +225,7 @@ public class Driver implements Runnable {
             for (final Location loc : Location.getLocations()) {
                 new WildOption(loc, loc.getNormal()).addMenuOption(options, "Wild");
                 new FishOption(loc, loc.getFish()).addMenuOption(options, Specialty.Fish.toString());
+                addSpecialOptions(options, loc);
             }
             new TravelOption(Location.getAvailable(), false).addOptions(options); // For walking to cities, not menu fast travel
             addMenuOption(options, false); // Includes fast travel option
@@ -252,23 +253,14 @@ public class Driver implements Runnable {
 			//final List<Species> fish = location.getFish();
 			//boolean move = false;
 			//final LinkedHashSet<Item> specials = new LinkedHashSet<Item>();
-			final Map<Item, ArrayList<Species>> specials = location.getSpecials();
+			//final Map<Item, ArrayList<Species>> specials = location.getSpecials();
 			//new WildOption(new Label(location.getName() + " - " + "Wild"), wild).addMenuOption(options, "Wild");
             //options.add(new MenuOption("Catch", new CatchOption(location, wild)));
 			//new FishOption(location, fish).addMenuOption(options, Specialty.Fish.toString());
 			/*if (move) {
                 options.add(new MenuOption("Special", null));
             }*/
-			for (final Entry<Item, ArrayList<Species>> special : specials.entrySet()) {
-			    final Item item = special.getKey();
-			    if (canDisplay(item)) {
-    			    if (item.isTechnique()) {
-    			        options.add(new MenuOption(item.getName(), new SpecialOption(location, item, special.getValue()), state.choose(item), item)); // See TravelOption
-    			    } else {
-    			        options.add(new MenuOption(item.getName(), new SpecialOption(location, item, special.getValue()), item)); // See TravelOption
-    			    }
-			    }
-			}
+			//addSpecialOptions(options, location);
 			addMenuOption(options, true);
 			options.add(new MenuOption(Data.getMorph(), new MorphOption()));
 			if (state.hasInventory(track)) {
@@ -298,6 +290,19 @@ public class Driver implements Runnable {
             options.add(new MenuOption("World", new WorldOption()));
             return options;
 		}
+	}
+	
+	private void addSpecialOptions(final List<Option> options, final Location location) {
+	    for (final Entry<Item, ArrayList<Species>> special : location.getSpecials().entrySet()) {
+            final Item item = special.getKey();
+            if (canDisplay(item)) {
+                if (item.isTechnique()) {
+                    options.add(new MenuOption(item.getName(), new SpecialOption(location, item, special.getValue()), state.choose(item), item)); // See TravelOption
+                } else {
+                    options.add(new MenuOption(item.getName(), new SpecialOption(location, item, special.getValue()), item)); // See TravelOption
+                }
+            }
+        }
 	}
 	
 	public void addTravelOption(final List<Option> options, final boolean skipCurrentLocation) {
@@ -618,13 +623,16 @@ public class Driver implements Runnable {
 	
 	//private class SpecialOption extends OpponentOption {
 	protected class SpecialOption extends BattleOption { // Makes sense for surf, maybe not all special options
+	    protected final Item requirement;
+	    
         public SpecialOption(final Location location, final Item requirement, final List<Species> wild) {
             super(new Label(location.getName() + " - " + requirement), location, wild, true /*, new Special(Specialty.Move, requirement)*/ );
+            this.requirement = requirement;
         }
 
         @Override
         protected Option createOption(final Species chosen, final Species opponent, final Special special) {
-            //return Task.createCatchTask(chosen, opponent); // Automatically avaiable for BattleOption
+            //return Task.createCatchTask(chosen, opponent); // Automatically available for BattleOption
             return Task.createWildTask(chosen, opponent); // Need a separate option? This might be ok for surf
         }
     }

@@ -644,7 +644,7 @@ public final class MonsterGame extends BaseGame {
                             map = wildMap;
                             imgX = loc.getWildImgX();
                             imgY = loc.getWildImgY();
-                        } else if (wrappedOption instanceof SpecialOption) {
+                        } else if (wrappedOption instanceof SpecialOption && "Surf".equalsIgnoreCase(Label.getName(((SpecialOption) wrappedOption).requirement))) {
                             map = surfMap;
                             imgX = loc.getWaterImgX();
                             imgY = loc.getWaterImgY();
