@@ -53,7 +53,6 @@ public final class MonsterGame extends BaseGame {
     Show total money/experience when earning it
     Database screen
     Test that impossible options still appear as buildings handled gracefully
-    If device has back button, it should bring up the menu if on tile screen, or use back option if on sub-menu, or use exit option if on main menu
     Auto-save
     Surf
     Track
@@ -1249,6 +1248,31 @@ public final class MonsterGame extends BaseGame {
     private final static void err(final String s) {
         //throw new IllegalStateException(s);
         System.err.println(s);
+    }
+    
+    private final static void assertImage(final Label lbl) {
+        if (getImage(lbl.getName(), true) == null) {
+            err("No image for " + lbl);
+        }
+    }
+    
+    private final static void assertNoImage(final Label lbl) {
+        if (getImage(lbl.getName(), true) != null) {
+            err("Unnecessary image for " + lbl);
+        }
+    }
+    
+    private final static void validateImages() {
+        for (final Item item : Item.getItems()) {
+            assertImage(item);
+        }
+        for (final Location loc : Location.getLocations()) {
+            if (loc.isCity()) {
+                assertImage(loc);
+            } else {
+                assertNoImage(loc);
+            }
+        }
     }
     */
     
