@@ -170,6 +170,10 @@ public class State {
 	    for (final Species s : copy) {
 	        preferences.add(s); // This is a set, so won't add twice
 	    }
+	    // Re-sort team
+	    if (team.remove(fav)) {
+	        addTeam(fav);
+	    }
 	}
 	
 	public final List<Species> getTrader() {
