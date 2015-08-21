@@ -280,7 +280,15 @@ public class Driver implements Runnable {
 			}
 			final List<Species> locTrained = location.getTrained();
             if (locTrained.size() > 0) {
-                options.add(new MenuOption(Data.getTrainers(), new TrainedOption(new Label(location.getName() + " - " + Data.getTrainers()), location.getTrained())));
+                final String trainersName = location.getTrainersName();
+                final String wrapper, wrapped;
+                if (trainersName == null) {
+                    wrapper = Data.getTrainers();
+                    wrapped = location.getName() + " - " + wrapper;
+                } else {
+                    wrapper = wrapped = trainersName;
+                }
+                options.add(new MenuOption(wrapper, new TrainedOption(new Label(wrapped), location.getTrained())));
             }
             final List<Item> store = location.getStore();
             if (store.size() > 0) {

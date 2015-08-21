@@ -57,9 +57,10 @@ public class Location extends Code {
     private int wildImgY = -1;
     private int waterImgX = -1;
     private int waterImgY = -1;
+    private String trainersName = null;
     
     /*package*/ Location(/*final int id,*/ final String code, final String name, final List<Item> store, final Item access, final String special,
-            final int x, final int y, final int wildImgX, final int wildImgY, final int waterImgX, final int waterImgY) {
+            final int x, final int y, final int wildImgX, final int wildImgY, final int waterImgX, final int waterImgY, final String trainersName) {
         super(code, name);
         //this.id = id;
         this.store = unmod(store);
@@ -71,6 +72,7 @@ public class Location extends Code {
         this.wildImgY = wildImgY;
         this.waterImgX = waterImgX;
         this.waterImgY = waterImgY;
+        this.trainersName = trainersName;
     }
     
     /*public int getId() {
@@ -111,6 +113,10 @@ public class Location extends Code {
     
     public final int getWaterImgY() {
         return waterImgY;
+    }
+    
+    public final String getTrainersName() {
+        return trainersName;
     }
     
     public final List<Species> getWild() {
