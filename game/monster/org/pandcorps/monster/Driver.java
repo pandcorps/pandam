@@ -227,7 +227,7 @@ public class Driver implements Runnable {
                 new FishOption(loc, loc.getFish()).addMenuOption(options, Specialty.Fish.toString());
                 addSpecialOptions(options, loc);
             }
-            new TravelOption(Location.getAvailable(), false).addOptions(options); // For walking to cities, not menu fast travel
+            new TravelOption(Location.getLocations(), false).addOptions(options); // For walking to cities, not menu fast travel
             addMenuOption(options, false); // Includes fast travel option
             return options;
         }
@@ -306,8 +306,9 @@ public class Driver implements Runnable {
 	}
 	
 	public void addTravelOption(final List<Option> options, final boolean skipCurrentLocation) {
-	    final List<Location> available = Location.getAvailable();
-        if (available.size() > 1) {
+	    final List<Location> available = Location.getVisited(); // Location.getAvailable();
+	    final int min = skipCurrentLocation ? 1 : 0;
+        if (available.size() > min) {
             options.add(new MenuOption("Travel", new TravelOption(available, skipCurrentLocation)));
         }
 	}

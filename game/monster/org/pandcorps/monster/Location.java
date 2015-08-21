@@ -233,7 +233,7 @@ public class Location extends Code {
 
 	@Override
 	public boolean isAvailable() {
-		return State.get().canVisit(this);
+		return State.get().hasVisited(this);
 	}
 
 	@Override
@@ -241,6 +241,7 @@ public class Location extends Code {
 		State.get().visit(this);
 	}
 
+	// Retrieves all Locations; good for a visual world map (which may have obstacles independent of Location requirements)
 	public final static List<Location> getLocations() {
 		return locations;
 	}
@@ -274,6 +275,7 @@ public class Location extends Code {
         throw new IllegalArgumentException(loc);
     }*/
 	
+	// Retrieves accessible Locations and first inaccessible; good for a menu showing what's needed to reach next area
 	public final static List<Location> getAvailable() {
 	    final List<Location> available = new ArrayList<Location>();
 	    for (final Location loc : locations) {
@@ -285,4 +287,16 @@ public class Location extends Code {
 	    }
 	    return Collections.unmodifiableList(available);
     }
+	
+	// Retrieves previously visited Locations; good for fast travel to areas already reached manually
+	public final static List<Location> getVisited() {
+	    final List<Location> visited = new ArrayList<Location>();
+	    final State state = State.get();
+	    for (final Location loc : locations) {
+	        if (state.hasVisited(loc)) {
+	            visited.add(loc);
+	        }
+	    }
+	    return visited;
+	}
 }

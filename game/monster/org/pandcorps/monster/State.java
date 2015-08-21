@@ -64,7 +64,7 @@ public class State {
 	    return Driver.get().getState();
 	}
 
-	public boolean canVisit(final Location location) {
+	public boolean hasVisited(final Location location) {
 	    return locations.contains(location);
 	}
 
