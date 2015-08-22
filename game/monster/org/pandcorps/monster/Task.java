@@ -32,17 +32,32 @@ public class Task extends Option {
 		super(goal, required);
 		this.awarded = init(awarded);
 	}
+	
+	private final static class FightTask extends Task {
+	    private final Species opponent;
+	    
+	    public FightTask(final Species opponent, final Collection<? extends Entity> required, final Collection<? extends Entity> awarded) {
+	        super(new Label("Fight"), required, awarded);
+	        this.opponent = opponent;
+	    }
+	    
+	    @Override
+	    public final void run() {
+	        super.run();
+	        State.get().see(opponent);
+	    }
+	}
 
 	public final static Task createGiftTask(final Entity gift) {
         return new Task(gift, null, Arrays.asList(gift));
     }
 	
 	public final static Task createTrainedTask(final Species chosen, final Species opponent) {
-		return new Task(new Label("Fight"), Arrays.asList(chosen), award(opponent, new Experience(opponent.getAwardedExperience()), new Money(opponent.getAwardedMoney())));
+		return new FightTask(opponent, Arrays.asList(chosen), award(opponent, new Experience(opponent.getAwardedExperience()), new Money(opponent.getAwardedMoney())));
 	}
 	
 	public final static Task createWildTask(final Species chosen, final Species opponent) {
-        return new Task(new Label("Fight"), Arrays.asList(chosen), award(opponent, new Experience(opponent.getAwardedExperience())));
+        return new FightTask(opponent, Arrays.asList(chosen), award(opponent, new Experience(opponent.getAwardedExperience())));
     }
 
 	public final static Task createCatchTask(final Species chosen, final Species opponent) {
@@ -53,7 +68,7 @@ public class Task extends Option {
 	//TODO Option to fight when fishing/surfing instead of just catch?
 	public final static Task createFishTask(final Species chosen, final Species opponent, final Item rod) {
         //return new Task(new Label("Fight"), Arrays.asList(chosen, Container.getContainer(opponent), rod), award(opponent, opponent));
-	    return new Task(new Label("Fight"), Arrays.asList(chosen, rod), award(opponent, new Experience(opponent.getAwardedExperience())));
+	    return new FightTask(opponent, Arrays.asList(chosen, rod), award(opponent, new Experience(opponent.getAwardedExperience())));
     }
 	
 	private final static List<Entity> award(final Species opponent, final Entity... awarded) {

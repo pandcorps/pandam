@@ -698,7 +698,7 @@ public final class MonsterGame extends BaseGame {
                 location = null;
             }
             
-            int grassY = 13, grassX = 0;
+            int grassY = 14, grassX = 0;
             if (location != null) {
                 final int wx = location.getWildImgX();
                 if (wx >= 0) {

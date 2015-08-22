@@ -164,6 +164,9 @@ public class Location extends Code {
         trackable = new ArrayList<Species>();
         specials = new LinkedHashMap<Item, ArrayList<Species>>();
         for (final Species s : Species.getSpecies()) {
+            if (s.getTrained() == this) {
+                trained.add(s);
+            }
             if (s.getWild() == this) {
                 wild.add(s);
                 if (s.canTrack()) {
@@ -200,9 +203,6 @@ public class Location extends Code {
                 } else {
                     throw new IllegalArgumentException(s.toString());
                 }
-            }
-            if (s.getTrained() == this) {
-                trained.add(s);
             }
         }
         wild = Collections.unmodifiableList(wild);
