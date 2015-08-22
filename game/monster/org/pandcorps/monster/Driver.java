@@ -225,6 +225,7 @@ public class Driver implements Runnable {
             for (final Location loc : Location.getLocations()) {
                 new WildOption(loc, loc.getNormal()).addMenuOption(options, "Wild");
                 new FishOption(loc, loc.getFish()).addMenuOption(options, Specialty.Fish.toString());
+                new TrackOption(loc).addMenuOption(options);
                 addSpecialOptions(options, loc);
             }
             new TravelOption(Location.getLocations(), false).addOptions(options); // For walking to cities, not menu fast travel
@@ -263,9 +264,7 @@ public class Driver implements Runnable {
 			//addSpecialOptions(options, location);
 			addMenuOption(options, true);
 			options.add(new MenuOption(Data.getMorph(), new MorphOption()));
-			if (state.hasInventory(track)) {
-			    options.add(new MenuOption(track.getName(), new TrackOption(), state.choose(track), track));
-			}
+			//new TrackOption(location).addMenuOption(options);
 			final String special = location.getSpecial();
 			if (special != null) {
 				if (SPECIAL_TRADER.equals(special)) {
@@ -435,7 +434,7 @@ public class Driver implements Runnable {
     }
 	
 	protected abstract class OpponentOption extends RunOption {
-		private final List<Species> opponents;
+		protected final List<Species> opponents;
 		//private final Special special;
 
 		/*public OpponentOption(final Label label, final List<Species> opponents) {
@@ -520,7 +519,7 @@ public class Driver implements Runnable {
 	
 	protected abstract class BattleOption extends WrapperOption {
 	    protected final Location location;
-        private final List<Species> opponents;
+	    protected final List<Species> opponents;
         private final boolean catchable;
         protected Species opponent = null;
         protected Species chosen = null;
@@ -647,22 +646,39 @@ public class Driver implements Runnable {
         }
     }
 	
-	private class TrackOption extends OpponentOption {
-        public TrackOption() {
-            super(new Label("Track"), getTrackable());
+	protected class TrackOption extends BattleOption {
+	    protected final Location loc;
+	    
+        public TrackOption(final Location loc) {
+            super(new Label("Track"), loc, getTrackable(loc), true);
+            this.loc = loc;
+            setAutoBackEnabled(true);
         }
 
         @Override
         protected Option createOption(final Species chosen, final Species opponent, final Special special) {
-            return Task.createCatchTask(chosen, opponent);
+            return Task.createWildTask(chosen, opponent);
+        }
+        
+        protected void addMenuOption(final List<Option> options) {
+            if (Coltil.isEmpty(opponents)) {
+                return;
+            } else if (!state.hasInventory(track)) {
+                return;
+            }
+            final Species chosen = state.chooseIfNecessary(track);
+            if (chosen == null || !state.hasTeam(chosen)) {
+                return;
+            }
+            options.add(new MenuOption(track.getName(), this, chosen, track));
         }
     }
 	
-	private final List<Species> getTrackable() {
+	private final List<Species> getTrackable(final Location loc) {
         final List<Species> list = new ArrayList<Species>();
-        for (final Species s : state.getPreferences()) {
+        for (final Species s : loc.getTrackable()) {
             //TODO Option to display creatures currently in team
-            if (s.canTrack() && state.hasSeen(s) && !state.hasTeam(s)) {
+            if (state.hasSeen(s) && !state.hasTeam(s) && !(s.isUnique() && state.hasOwned(s))) {
                 list.add(s);
             }
         }

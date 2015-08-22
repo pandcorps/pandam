@@ -482,6 +482,7 @@ public final class MonsterGame extends BaseGame {
     private final static Map<TileMapImage, Option> wildMap = new HashMap<TileMapImage, Option>();
     private final static Map<TileMapImage, Option> surfMap = new HashMap<TileMapImage, Option>();
     private final static Map<TileMapImage, Option> fishMap = new HashMap<TileMapImage, Option>();
+    private final static Map<Location, Option> trackMap = new HashMap<Location, Option>();
     private static Class<? extends TileScreen> screenClass = null;
     private static Class<? extends TileScreen> lastScreenClass = null;
     
@@ -638,7 +639,9 @@ public final class MonsterGame extends BaseGame {
                     }
                 } else if (option instanceof MenuOption) {
                     final Option wrappedOption = ((MenuOption) option).option;
-                    if (wrappedOption instanceof BattleOption) {
+                    if (wrappedOption instanceof TrackOption) {
+                        trackMap.put(((TrackOption) wrappedOption).loc, option);
+                    } else if (wrappedOption instanceof BattleOption) {
                         final Location loc = ((BattleOption) wrappedOption).location;
                         final Map<TileMapImage, Option> map;
                         final int imgX, imgY;
@@ -832,9 +835,16 @@ public final class MonsterGame extends BaseGame {
         
         @Override
         protected final void onStop() {
-            final Option locOpt = locMap.get(Integer.valueOf(getIndex()));
+            final int index = getIndex();
+            final Option locOpt = locMap.get(Integer.valueOf(index));
             if (locOpt == null) {
-                final Tile tile = tm.getTile(getIndex());
+                final Tile tile = tm.getTile(index);
+                if (tile == tileTrack) {
+                    final Object bg = DynamicTileMap.getRawBackground(getTileFacing());
+                    final WildOption opt = (WildOption) ((MenuOption) wildMap.get(bg)).option;
+                    choose(trackMap.get(opt.location), true);
+                    return;
+                }
                 final Object bg = DynamicTileMap.getRawBackground(tile);
                 if (Mathtil.rand(WILD_ENCOUNTER_RATE)) {
                     choose(wildMap.get(bg), true);
@@ -908,6 +918,7 @@ public final class MonsterGame extends BaseGame {
     private final static Integer tileTree = Integer.valueOf(0);
     private final static Integer tileRock = Integer.valueOf(1);
     private static Tile tileDock = null;
+    private static Tile tileTrack = null;
     private static Tile tileDefault = null;
     
     private final static void loadTileDefinitions() throws Exception {
@@ -944,6 +955,9 @@ public final class MonsterGame extends BaseGame {
                 } else if ("Default".equalsIgnoreCase(token5)) {
                     behavior = Tile.BEHAVIOR_OPEN;
                     special = 2;
+                } else if ("Track".equalsIgnoreCase(token5)) {
+                    behavior = Tile.BEHAVIOR_OPEN;
+                    special = 3;
                 } else if ("Solid".equalsIgnoreCase(token5)) {
                     behavior = Tile.BEHAVIOR_SOLID;
                 } else if ("Open".equalsIgnoreCase(token5)) {
@@ -957,6 +971,8 @@ public final class MonsterGame extends BaseGame {
                     tileDock = tile;
                 } else if (special == 2) {
                     tileDefault = tile;
+                } else if (special == 3) {
+                    tileTrack = tile;
                 }
             }
         } finally {
@@ -1206,6 +1222,9 @@ public final class MonsterGame extends BaseGame {
             if (Coltil.isValued(loc.getNormal())) {
                 System.out.print(" Wild");
             }
+            if (Coltil.isValued(loc.getTrackable())) {
+            System.out.print(" Track");
+            }
             System.out.println();
         }
     }
@@ -1283,7 +1302,7 @@ public final class MonsterGame extends BaseGame {
     private final static void validateTrack() {
         for (final Species s : Species.getSpecies()) {
             if (s.canTrack()) {
-                System.out.println(s);
+                System.out.println(s + " - " + s.getWild());
             }
         }
     }

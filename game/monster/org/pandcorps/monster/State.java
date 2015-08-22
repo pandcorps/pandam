@@ -98,6 +98,10 @@ public class State {
 	    }
 	}
 	
+	public boolean hasOwned(final Species creature) {
+        return owned.contains(creature);
+    }
+	
 	public boolean hasSeen(final Species creature) {
 	    return seen.contains(creature);
 	}

@@ -50,6 +50,7 @@ public class Location extends Code {
     private List<Species> trained = null;
     private List<Species> normal = null;
     private List<Species> fish = null;
+    private List<Species> trackable = null;
     private Map<Item, ArrayList<Species>> specials = null;
     private int x = -1;
     private int y = -1;
@@ -139,6 +140,10 @@ public class Location extends Code {
         return fish;
     }
     
+    public final List<Species> getTrackable() {
+        return trackable;
+    }
+    
     public final Map<Item, ArrayList<Species>> getSpecials() {
         //initInstance();
         return specials;
@@ -156,10 +161,15 @@ public class Location extends Code {
         trained = new ArrayList<Species>();
         normal = new ArrayList<Species>();
         fish = new ArrayList<Species>();
+        trackable = new ArrayList<Species>();
         specials = new LinkedHashMap<Item, ArrayList<Species>>();
         for (final Species s : Species.getSpecies()) {
             if (s.getWild() == this) {
                 wild.add(s);
+                if (s.canTrack()) {
+                    trackable.add(s);
+                    continue;
+                }
                 //final String special = s.getSpecial();
                 final Special spec = s.getSpecial();
                 if (spec == null) {
