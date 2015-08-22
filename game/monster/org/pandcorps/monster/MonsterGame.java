@@ -57,6 +57,7 @@ public final class MonsterGame extends BaseGame {
     Surf
     Track
     Library
+    Breeder egg plus
     Validate that all items/locations/etc. have images
     Validate experience upgrades (or auto-derive)
     */
@@ -702,7 +703,7 @@ public final class MonsterGame extends BaseGame {
                 final int wx = location.getWildImgX();
                 if (wx >= 0) {
                     grassX = wx;
-                    grassY = location.getWildImgY() - 1;
+                    grassY = location.getWildImgY();
                 }
             }
             final TileMapImage grass = imgMap[grassY][grassX], wallImg = imgMap[14][2], wallLeftImg = imgMap[14][3], wallRightImg = imgMap[14][1];
@@ -917,6 +918,7 @@ public final class MonsterGame extends BaseGame {
     private static Map<Integer, Object> buildMap = null;
     private final static Integer tileTree = Integer.valueOf(0);
     private final static Integer tileRock = Integer.valueOf(1);
+    private final static Integer tileStone = Integer.valueOf(2);
     private static Tile tileDock = null;
     private static Tile tileTrack = null;
     private static Tile tileDefault = null;
@@ -942,6 +944,9 @@ public final class MonsterGame extends BaseGame {
                     continue;
                 } else if ("rock".equalsIgnoreCase(token3)) {
                     buildMap.put(color, tileRock);
+                    continue;
+                } else if ("stone".equalsIgnoreCase(token3)) {
+                    buildMap.put(color, tileStone);
                     continue;
                 }
                 final int bgX = Integer.parseInt(token3);
@@ -991,6 +996,8 @@ public final class MonsterGame extends BaseGame {
                     tree(i, tj);
                 } else if (t == tileRock) {
                     rock(i, tj, j);
+                } else if (t == tileStone) {
+                    stone(i, tj, j);
                 } else {
                 //} else if (t.getClass() == Tile.class) {
                     tm.setTile(i, tj, (Tile) t);
@@ -1011,7 +1018,9 @@ public final class MonsterGame extends BaseGame {
             return null;
         }
         final Object tile = getWorldTile(i, j);
-        if (tile instanceof Tile) {
+        if (tile == tileDock) {
+            return null;
+        } else if (tile instanceof Tile) {
             return (Tile) tile;
         } else if (tile == tileTree) {
             return tileDefault;
@@ -1022,6 +1031,23 @@ public final class MonsterGame extends BaseGame {
     private final static void tree(final int x, final int y) {
         tm.setBackground(x, y, imgMap[14][6], Tile.BEHAVIOR_SOLID);
         tm.setForeground(x, y + 1, imgMap[13][6], Tile.BEHAVIOR_SOLID);
+    }
+    
+    private final static void stone(final int x, final int y, final int iy) {
+        Tile neighborTile = validateWorldTile(x + 1, iy);
+        if (neighborTile == null) {
+            neighborTile = validateWorldTile(x - 1, iy);
+            if (neighborTile == null) {
+                neighborTile = validateWorldTile(x, iy + 1);
+                if (neighborTile == null) {
+                    neighborTile = validateWorldTile(x, iy - 1);
+                    if (neighborTile == null) {
+                        throw new IllegalStateException("Could not find stone neighbor");
+                    }
+                }
+            }
+        }
+        tm.setTile(x, y, DynamicTileMap.getRawBackground(neighborTile), imgMap[13][7], Tile.BEHAVIOR_SOLID);
     }
     
     private final static void rock(final int x, final int y, final int iy) {
@@ -1223,7 +1249,7 @@ public final class MonsterGame extends BaseGame {
                 System.out.print(" Wild");
             }
             if (Coltil.isValued(loc.getTrackable())) {
-            System.out.print(" Track");
+                System.out.print(" Track");
             }
             System.out.println();
         }
