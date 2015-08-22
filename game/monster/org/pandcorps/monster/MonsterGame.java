@@ -56,7 +56,9 @@ public final class MonsterGame extends BaseGame {
     Auto-save
     Surf
     Track
+    Library
     Validate that all items/locations/etc. have images
+    Validate experience upgrades (or auto-derive)
     */
     private static volatile Driver driver = null;
     private static volatile Panroom room = null;
@@ -740,6 +742,9 @@ public final class MonsterGame extends BaseGame {
                 } else if (name.equals(Data.getMorph())) {
                     building(buildingMid, buildingStart, 0, 4, 5, 5, 2, option);
                     needMorph = false;
+                } else if (name.equals(location.getTrainersName())) {
+                    building(buildingStart, buildingMid, 4, 8, 5, 4, 1, option);
+                    needTrainers = false;
                 } else if (name.equals(Data.getTrainers())) {
                     building(buildingStart, buildingMid, 5, 4, 7, 5, 3, option);
                     needTrainers = false;
@@ -1271,6 +1276,14 @@ public final class MonsterGame extends BaseGame {
                 assertImage(loc);
             } else {
                 assertNoImage(loc);
+            }
+        }
+    }
+    
+    private final static void validateTrack() {
+        for (final Species s : Species.getSpecies()) {
+            if (s.canTrack()) {
+                System.out.println(s);
             }
         }
     }

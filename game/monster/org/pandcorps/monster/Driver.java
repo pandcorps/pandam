@@ -637,6 +637,7 @@ public class Driver implements Runnable {
         public SpecialOption(final Location location, final Item requirement, final List<Species> wild) {
             super(new Label(location.getName() + " - " + requirement), location, wild, true /*, new Special(Specialty.Move, requirement)*/ );
             this.requirement = requirement;
+            setAutoBackEnabled(true);
         }
 
         @Override
