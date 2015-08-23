@@ -54,8 +54,6 @@ public final class MonsterGame extends BaseGame {
     Database screen
     Test that impossible options still appear as buildings handled gracefully
     Auto-save
-    Surf
-    Track
     Library
     Breeder egg plus
     Validate that all items/locations/etc. have images
@@ -767,18 +765,20 @@ public final class MonsterGame extends BaseGame {
                     addMenuButton(option);
                 }
             }
+            final int unusedRight = buildingMid + 8, unusedBottom = buildingStart + 1;
             if (needStore) {
-                unusedBuilding(buildingStart, buildingStart + 1);
+                unusedBuilding(buildingStart, unusedBottom);
             }
             if (needMorph) {
-                unusedBuilding(buildingMid, buildingStart + 1);
+                unusedBuilding(buildingMid, unusedBottom);
             }
             if (needTrainers) {
                 unusedBuilding(buildingStart + 1, buildingMid + 1);
             }
             if (needSpecial) {
-                unusedBuilding(buildingMid + 8, buildingMid + 1);
+                unusedBuilding(unusedRight, buildingMid + 1);
             }
+            unusedBuilding(unusedRight, unusedBottom);
         }
     }
     
