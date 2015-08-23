@@ -530,6 +530,7 @@ public class Driver implements Runnable {
             this.opponents = opponents;
             this.catchable = catchable;
             pickNextOpponent();
+            setAutoBackEnabled(true);
         }
         
         private void pickNextOpponent() {
@@ -573,7 +574,6 @@ public class Driver implements Runnable {
 	protected class WildOption extends BattleOption {
 		public WildOption(final Location loc, final List<Species> opponents) {
 			super(new Label(loc.getName() + " - " + "Wild"), loc, opponents, true);
-			setAutoBackEnabled(true);
 		}
 
 		@Override
@@ -620,7 +620,6 @@ public class Driver implements Runnable {
 	protected class FishOption extends BattleOption {
 	    public FishOption(final Location location, final List<Species> wild) {
             super(new Label(location.getName() + " - Fishing"), location, wild, true /*, new Special(Specialty.Fish, null)*/ );
-            setAutoBackEnabled(true);
         }
 
         @Override
@@ -636,7 +635,6 @@ public class Driver implements Runnable {
         public SpecialOption(final Location location, final Item requirement, final List<Species> wild) {
             super(new Label(location.getName() + " - " + requirement), location, wild, true /*, new Special(Specialty.Move, requirement)*/ );
             this.requirement = requirement;
-            setAutoBackEnabled(true);
         }
 
         @Override
@@ -652,7 +650,6 @@ public class Driver implements Runnable {
         public TrackOption(final Location loc) {
             super(new Label("Track"), loc, getTrackable(loc), true);
             this.loc = loc;
-            setAutoBackEnabled(true);
         }
 
         @Override
