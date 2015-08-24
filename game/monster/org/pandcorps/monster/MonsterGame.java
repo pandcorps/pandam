@@ -57,6 +57,7 @@ public final class MonsterGame extends BaseGame {
     Library
     Breeder egg plus
     Validate that all items/locations/etc. have images
+    Cache for 24*24 images
     Validate experience upgrades (or auto-derive)
     */
     private static volatile Driver driver = null;
@@ -745,7 +746,7 @@ public final class MonsterGame extends BaseGame {
                     building(buildingMid, buildingStart, 0, 4, 5, 5, 2, option);
                     needMorph = false;
                 } else if (name.equals(location.getTrainersName())) {
-                    building(buildingStart, buildingMid, 4, 8, 5, 4, 1, option);
+                    specialBuilding(buildingStart, buildingMid, option);
                     needTrainers = false;
                 } else if (name.equals(Data.getTrainers())) {
                     building(buildingStart, buildingMid, 5, 4, 7, 5, 3, option);
@@ -758,6 +759,9 @@ public final class MonsterGame extends BaseGame {
                     needSpecial = false;
                 } else if (name.equals(Special.Specialty.Breeder.toString())) {
                     building(buildingMid + 6, buildingMid, 7, 12, 7, 4, 1, option);
+                    needSpecial = false;
+                } else if (name.equals(Special.Specialty.Library.toString())) {
+                    specialBuilding(buildingMid + 7, buildingMid, option);
                     needSpecial = false;
                 } else if (name.equals("World")) {
                     optWorld = option;
@@ -805,6 +809,10 @@ public final class MonsterGame extends BaseGame {
     
     private final static void unusedBuilding(final int tlX, final int tlY) {
         building(tlX, tlY, 12, 2, 4, 3, 0, null);
+    }
+    
+    private final static void specialBuilding(final int tlX, final int tlY, final Option option) {
+        building(tlX, tlY, 4, 8, 5, 4, 1, option);
     }
     
     private final static void building(final int tlX, final int tlY, final int imX, final int imY, final int w, final int h, final int drX, final Option option) {
