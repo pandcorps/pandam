@@ -196,7 +196,7 @@ public class Species extends Entity {
 	}
 
 	public int getAwardedMoney() {
-		return getAwardedExperience() * 10;
+		return getAwardedExperience() * 25;
 	}
 
 	/*private final static int getIndex(final Type[] types) {
