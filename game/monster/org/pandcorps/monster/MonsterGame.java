@@ -55,10 +55,10 @@ public final class MonsterGame extends BaseGame {
     Test that impossible options still appear as buildings handled gracefully
     Auto-save
     Library
-    Breeder egg plus
     Validate that all items/locations/etc. have images
     Cache for 24*24 images
     Validate experience upgrades (or auto-derive)
+    Increase money from trainers
     */
     private static volatile Driver driver = null;
     private static volatile Panroom room = null;
@@ -361,7 +361,7 @@ public final class MonsterGame extends BaseGame {
             final Panteraction interaction = engine.getInteraction();
             int numRows = Mathtil.ceil(options.size() / 3f), titleOffset = 10;
             final boolean chosenDisplayed = caller instanceof BattleOption;
-            final boolean detailDisplayed = caller instanceof MorphDetailOption;
+            final boolean detailDisplayed = caller instanceof DetailOption;
             if (chosenDisplayed || detailDisplayed) {
                 numRows++;
                 titleOffset = 0;
@@ -390,10 +390,16 @@ public final class MonsterGame extends BaseGame {
                 addImage(c.opponent, MENU_W * 2, y, false);
                 y -= menuH;
             } else if (detailDisplayed) {
-                final Task task = (Task) ((MorphDetailOption) caller).option;
+                final Task task = (Task) ((DetailOption) caller).option;
                 final Panmage delim = getImage("Plus", true), init = getImage("Equals", true);
                 x = addImages(task.getRequired(), 0, y, MENU_W, delim, null, true);
-                addImages(task.getAwarded(), x, y, MENU_W, delim, init, false);
+                final List<? extends Label> awarded;
+                if (task instanceof BreedTask) {
+                    awarded = Collections.singletonList(new Label("Egg"));
+                } else {
+                    awarded = task.getAwarded();
+                }
+                addImages(awarded, x, y, MENU_W, delim, init, false);
                 y -= menuH;
                 x = 0;
             } else {
@@ -416,6 +422,9 @@ public final class MonsterGame extends BaseGame {
                 if (detailDisplayed && option instanceof RemoveTask) {
                     labelName = "Up";
                     name = Data.getMorph();
+                } else if (detailDisplayed && option instanceof BreedTask) {
+                    labelName = "Egg";
+                    name = "Breed";
                 } else {
                     labelName = option.getGoal().getName();
                     name = formatLabel(labelName);
@@ -445,7 +454,7 @@ public final class MonsterGame extends BaseGame {
                 } else {
                     x += MENU_W;
                 }
-                if (!possible && !(caller instanceof MorphOption)) {
+                if (!possible && !(option instanceof DetailOption)) { // caller instanceof MorphOption
                     btn.setImageDisabled(menuOff);
                     btn.setEnabled(false);
                 }
@@ -506,6 +515,7 @@ public final class MonsterGame extends BaseGame {
         
         @Override
         protected final void load() throws Exception {
+validateImages();
             if (lastScreenClass != null && lastScreenClass != screenClass) {
                 Player.clearLastCity();
             }
@@ -1151,18 +1161,18 @@ public final class MonsterGame extends BaseGame {
         }
     }
     
-    private static int addImages(final List<Entity> list, int x, final int y, final int off, final Panmage delim, final Panmage init, final boolean checkPossible) {
+    private static int addImages(final List<? extends Label> list, int x, final int y, final int off, final Panmage delim, final Panmage init, final boolean checkPossible) {
         initImageOffsets(delim);
         final int delimOffX = (int) delim.getSize().getX() / 2, delimOffY = OVERLAY_Y + imgOffY;
         boolean first = true;
-        for (final Entity s : list) {
+        for (final Label s : list) {
             if (first) {
                 first = false;
                 addImage(init, x - delimOffX, y + delimOffY, 10, false);
             } else {
                 addImage(delim, x - delimOffX, y + delimOffY, 10, false);
             }
-            addImage(s, x, y, false, !checkPossible || s.isAvailable());
+            addImage(s, x, y, false, !checkPossible || ((Entity) s).isAvailable());
             x += off;
         }
         return x;
@@ -1172,7 +1182,7 @@ public final class MonsterGame extends BaseGame {
         addImage(s, x, y, mirror, true);
     }
     
-    private static void addImage(final Entity s, final int x, final int y, final boolean mirror, final boolean possible) {
+    private static void addImage(final Label s, final int x, final int y, final boolean mirror, final boolean possible) {
         final String name = s.getName();
         final Panmage image = getImage((s instanceof Amount) ? ((Amount) s).getUnits(): name, possible);
         initImageOffsets(image);
@@ -1302,7 +1312,7 @@ public final class MonsterGame extends BaseGame {
             err("Found " + adv + " starter advanced forms instead of 12");
         }
     }
-    
+    */
     private final static void err(final String s) {
         //throw new IllegalStateException(s);
         System.err.println(s);
@@ -1340,7 +1350,6 @@ public final class MonsterGame extends BaseGame {
             }
         }
     }
-    */
     
     public final static void main(final String[] args) {
         try {

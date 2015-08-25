@@ -691,7 +691,7 @@ public class Driver implements Runnable {
         protected Option createOption(final Species chosen, final Species opponent, final Special special) {
             //return new MorphTask(opponent);
             //return new RemoveTask(opponent.getPrecursor(), getMorphRequired(opponent), getMorphAwarded(opponent));
-            return new MorphDetailOption(new RemoveTask(opponent.getPrecursor(), getMorphRequired(opponent), getMorphAwarded(opponent)));
+            return new DetailOption(new RemoveTask(opponent.getPrecursor(), getMorphRequired(opponent), getMorphAwarded(opponent)));
         }
         
         @Override
@@ -705,10 +705,11 @@ public class Driver implements Runnable {
         }
     }
 	
-	protected class MorphDetailOption extends WrapperOption {
-	    public MorphDetailOption(final RemoveTask task) {
+	protected class DetailOption extends WrapperOption {
+	    public DetailOption(final Task task) {
 	        super(task.getGoal());
 	        option = task;
+	        setAutoBackEnabled(true);
 	    }
 
         @Override
@@ -901,7 +902,7 @@ public class Driver implements Runnable {
 
         @Override
         protected Option createOption(final Species chosen, final Species opponent, final Special special) {
-            return new Task(opponent, Arrays.asList(chosen, Data.getShapeShifter()), Arrays.asList(opponent));
+            return new DetailOption(new BreedTask(chosen, Arrays.asList(chosen, Data.getShapeShifter()), Arrays.asList(opponent)));
             //return new BreederTask(opponent);
         }
         
@@ -923,6 +924,12 @@ public class Driver implements Runnable {
         @Override
         protected List<Species> getOpponents() {
             return getBreedable(); // Generate each time menu is displayed, because it will shrink as it is used
+        }
+    }
+    
+    protected final static class BreedTask extends Task {
+        public BreedTask(final Label goal, final Collection<? extends Entity> required, final Collection<? extends Entity> awarded) {
+            super(goal, required, awarded);
         }
     }
     
