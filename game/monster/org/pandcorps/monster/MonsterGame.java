@@ -58,7 +58,6 @@ public final class MonsterGame extends BaseGame {
     Validate that all items/locations/etc. have images
     Cache for 24*24 images
     Validate experience upgrades (or auto-derive)
-    Increase money from trainers
     */
     private static volatile Driver driver = null;
     private static volatile Panroom room = null;
@@ -162,7 +161,9 @@ public final class MonsterGame extends BaseGame {
         menu = engine.createImage(Pantil.vmid(), ImtilX.newButton(MENU_W, MENU_H, Pancolor.GREY));
         menuIn = engine.createImage(Pantil.vmid(), ImtilX.newButton(MENU_W, MENU_H, Pancolor.CYAN));
         menuOff = engine.createImage(Pantil.vmid(), ImtilX.newButton(MENU_W, MENU_H, Pancolor.DARK_GREY));
-        menuCursor = engine.createImage(Pantil.vmid(), ImtilX.newUp2(16, Pancolor.WHITE));
+        if (engine.isMouseSupported()) {
+            menuCursor = engine.createImage(Pantil.vmid(), ImtilX.newUp2(16, Pancolor.WHITE));
+        }
         //menuLeft = engine.createImage(Pantil.vmid(), ImtilX.newLeft2(80, Pancolor.BLUE));
         //menuRight = engine.createImage(Pantil.vmid(), ImtilX.newRight2(80, Pancolor.BLUE));
         final Panmage[][] players = engine.createSheet("player", new FinPanple2(8, 0), null, null, Parser.LOC + "misc/Player.png", 32, 32);
@@ -179,7 +180,7 @@ public final class MonsterGame extends BaseGame {
         /*final Panmage[] menuFullPair = createImgPair(Parser.LOC + "misc/MenuFull.png", "menu.full");
         menuFull = menuFullPair[0];
         menuFullTranslucent = menuFullPair[1];*/
-        final Panmage[] speciesAllPair = createImgPair(Parser.LOC + "misc/species.png", "species.all");
+        final Panmage[] speciesAllPair = createImgPair(Parser.LOC + "misc/Species.png", "species.all");
         speciesAll = speciesAllPair[0];
         speciesAllTranslucent = speciesAllPair[1];
         splitSpeciesImage();
@@ -1314,13 +1315,24 @@ validateImages();
     }
     */
     private final static void err(final String s) {
-        //throw new IllegalStateException(s);
-        System.err.println(s);
+        throw new IllegalStateException(s);
+        //System.err.println(s);
     }
     
+    private static Set<String> imgNames = new LinkedHashSet<String>();
+    
     private final static void assertImage(final Label lbl) {
-        if (getImage(lbl.getName(), true) == null) {
-            err("No image for " + lbl);
+        assertImage(lbl.getName());
+    }
+    
+    private final static void assertImage(final String name) {
+        if (getImage(name, true) == null) {
+            err("No image for " + name);
+        } else {
+            System.out.println(name);
+            if (!imgNames.add(name)) {
+                throw new IllegalStateException("Adding image " + name + " twice");
+            }
         }
     }
     
@@ -1341,6 +1353,41 @@ validateImages();
                 assertNoImage(loc);
             }
         }
+        final String[] menu = { "Egg", "Travel", "Experience", "Money", "Fight", "Buy", "Sell", "Menu", "Plus", "Equals", "Up", "Back", "Exit" };
+        // Items/database bigger
+        for (final String m : menu) {
+            assertImage(m);
+        }
+        final int d1 = 24, numImgs = imgNames.size(), totalArea = numImgs * d1 * d1;
+        final double approx = Math.sqrt(totalArea);
+        int da = 2;
+        while (da < approx) {
+            da *= 2;
+        }
+        System.out.println("Number of images: " + numImgs + "; area: " + totalArea + "; approx: " + approx + "; dim: " + da);
+        final Img cache24 = Imtil.newImage(da, da);
+        int x = 0, y = 0;
+        for (final String name : imgNames) {
+            final Img src = Imtil.load(Parser.LOC + "misc/" + formatFile(name) + ".png");
+            if (src.getWidth() != d1) {
+                throw new RuntimeException(name + " had width " + src.getWidth() + " instead of " + d1);
+            } else if (src.getHeight() != d1) {
+                throw new RuntimeException(name + " had height " + src.getHeight() + " instead of " + d1);
+            }
+            try {
+                Imtil.copy(src, cache24, 0, 0, d1, d1, x, y);
+            } catch (final Exception e) {
+                throw new RuntimeException("Error copying " + name, e);
+            }
+            x += d1;
+            if ((x + d1) > da) {
+                x = 0;
+                y += d1;
+            }
+            src.close();
+        }
+        Imtil.save(cache24, Parser.LOC + "misc/MenuFull.png");
+        cache24.close();
     }
     
     private final static void validateTrack() {

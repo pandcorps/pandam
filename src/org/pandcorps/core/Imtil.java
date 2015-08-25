@@ -159,7 +159,7 @@ public final class Imtil {
         appendDim(b, dst);
         b.append("\nStarting at");
         appendCoord(b, dstX, dstY);
-        b.append("\nCould not").append(op);
+        b.append("\nCould not ").append(op);
         b.append("\nAt");
         appendCoord(b, errX, errY);
         throw new Panception(b, e);
