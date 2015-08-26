@@ -410,9 +410,9 @@ public class Driver implements Runnable {
         final List<SpeciesOption> possibleOptions = new ArrayList<SpeciesOption>();
         /*
         First iteration tries to be helfpul, looking for a Species not on the player's team.
-        We have a 50% chance of using that iteration and a 50% chance of skipping it to be totally random.
+        We have a 75% chance of using that iteration and a 25% chance of skipping it to be totally random.
         */
-        final int start = Mathtil.rand() ? 0 : 1;
+        final int start = (Mathtil.randi(0, 10000) < 7500) ? 0 : 1;
         for (int i = start; i < 2; i++) {
             for (final Species species : opponents) {
                 final Species chosen = opt.choose(species);
