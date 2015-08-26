@@ -54,6 +54,7 @@ public final class MonsterGame extends BaseGame {
     Database screen
     Test that impossible options still appear as buildings handled gracefully
     Auto-save
+    Full screen, menu centering
     Library
     Validate that all items/locations/etc. have images
     Cache for 24*24 images
@@ -78,7 +79,6 @@ public final class MonsterGame extends BaseGame {
     private final static int TEXT_Y = 2;
     private final static int TW = 16;
     private final static int TH = 16;
-    private final static Panple SIZE_24 = new FinPanple2(24, 24);
     private final static int DEPTH_BUTTON = 20;
     private static int DIM_BUTTON = 0;
     private final static int WILD_ENCOUNTER_RATE = 25;
@@ -177,9 +177,10 @@ public final class MonsterGame extends BaseGame {
         final Panmage[] diamonds = getDiamonds(DIM_BUTTON, Pancolor.GREY);
         diamond = diamonds[0];
         diamondIn = diamonds[1];
-        /*final Panmage[] menuFullPair = createImgPair(Parser.LOC + "misc/MenuFull.png", "menu.full");
+        final Panmage[] menuFullPair = createImgPair(Parser.LOC + "misc/MenuFull.png", "menu.full");
         menuFull = menuFullPair[0];
-        menuFullTranslucent = menuFullPair[1];*/
+        menuFullTranslucent = menuFullPair[1];
+        splitMenuImage();
         final Panmage[] speciesAllPair = createImgPair(Parser.LOC + "misc/Species.png", "species.all");
         speciesAll = speciesAllPair[0];
         speciesAllTranslucent = speciesAllPair[1];
@@ -213,14 +214,36 @@ public final class MonsterGame extends BaseGame {
         final Panple size = new FinPanple2(IMG_W, IMG_H);
         for (final Species s : Species.getSpecies()) {
             final int id = s.getId() - 1;
-            final int j = id / cellsPerRow, i = id - (j * cellsPerRow);
-            final int x = i * IMG_W, y = j * IMG_H;
-            final Panmage image = new SubPanmage(Pantil.vmid(), null, null, null, speciesAll, x, y, size);
-            final String name = s.getName();
-            imageCache.put(getKey(name, true), image);
-            final Panmage imageTrans = new SubPanmage(Pantil.vmid(), null, null, null, speciesAllTranslucent, x, y, size);
-            imageCache.put(getKey(name, false), imageTrans);
+            split(s.getName(), speciesAll, speciesAllTranslucent, id, IMG_W, IMG_H, size, cellsPerRow);
         }
+    }
+    
+    private final static void splitMenuImage() {
+        final int fullWidth = (int) menuFull.getSize().getX(), d = 24;
+        final int cellsPerRow = fullWidth / d;
+        final Panple size = new FinPanple2(d, d);
+        final BufferedReader in = Iotil.getBufferedReader(Parser.LOC + "menu.txt");
+        try {
+            String line;
+            int id = 0;
+            while ((line = in.readLine()) != null) {
+                split(line, menuFull, menuFullTranslucent, id, d, d, size, cellsPerRow);
+                id++;
+            }
+        } catch (final Exception e) {
+            throw Pantil.toRuntimeException(e);
+        } finally {
+            Iotil.close(in);
+        }
+    }
+    
+    private final static void split(final String name, final Panmage all, final Panmage trans, final int id, final int iw, final int ih, final Panple size, final int cellsPerRow) {
+        final int j = id / cellsPerRow, i = id - (j * cellsPerRow);
+        final int x = i * iw, y = j * ih;
+        final Panmage image = new SubPanmage(Pantil.vmid(), null, null, null, all, x, y, size);
+        imageCache.put(getKey(name, true), image);
+        final Panmage imageTrans = new SubPanmage(Pantil.vmid(), null, null, null, trans, x, y, size);
+        imageCache.put(getKey(name, false), imageTrans);
     }
     
     private final static String getKey(final String name, final boolean possible) {
@@ -516,7 +539,6 @@ public final class MonsterGame extends BaseGame {
         
         @Override
         protected final void load() throws Exception {
-validateImages();
             if (lastScreenClass != null && lastScreenClass != screenClass) {
                 Player.clearLastCity();
             }
@@ -1313,7 +1335,7 @@ validateImages();
             err("Found " + adv + " starter advanced forms instead of 12");
         }
     }
-    */
+    
     private final static void err(final String s) {
         throw new IllegalStateException(s);
         //System.err.println(s);
@@ -1358,6 +1380,9 @@ validateImages();
         for (final String m : menu) {
             assertImage(m);
         }
+        if (Pangine.getEngine() != null) {
+            return;
+        }
         final int d1 = 24, numImgs = imgNames.size(), totalArea = numImgs * d1 * d1;
         final double approx = Math.sqrt(totalArea);
         int da = 2;
@@ -1397,6 +1422,7 @@ validateImages();
             }
         }
     }
+    */
     
     public final static void main(final String[] args) {
         try {
