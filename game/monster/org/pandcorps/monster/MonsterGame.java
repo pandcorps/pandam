@@ -444,12 +444,8 @@ public final class MonsterGame extends BaseGame {
                     backOption = option;
                 }
                 final String labelName, name;
-                if (detailDisplayed && option instanceof RemoveTask) {
-                    labelName = "Up";
-                    name = Data.getMorph();
-                } else if (detailDisplayed && option instanceof BreedTask) {
-                    labelName = "Egg";
-                    name = "Breed";
+                if (detailDisplayed && (option instanceof RemoveTask || option instanceof BreedTask)) {
+                    labelName = name = "Finish";
                 } else {
                     labelName = option.getGoal().getName();
                     name = formatLabel(labelName);
