@@ -51,10 +51,11 @@ public final class MonsterGame extends BaseGame {
     Show player's money on buy/sell
     Show container quantity on Battle screen
     Show total money/experience when earning it
-    Database screen
+    Database screen move to front after selecting favorite (or back after selecting least)
     Test that impossible options still appear as buildings handled gracefully
     Auto-save
     Full screen, menu centering
+    Swipe velocity/acceleration
     Library
     Validate that all items/locations/etc. have images
     Cache for 24*24 images

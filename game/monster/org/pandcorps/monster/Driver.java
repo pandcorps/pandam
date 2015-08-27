@@ -717,6 +717,7 @@ public class Driver implements Runnable {
             stack.push(this);
             final List<Option> options = new ArrayList<Option>();
             options.add(option);
+            options.add(new BackOption("Cancel"));
             return options;
         }
 	}
