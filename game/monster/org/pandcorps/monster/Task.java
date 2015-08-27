@@ -123,13 +123,21 @@ public class Task extends Option {
 		if (goal instanceof Species) {
 		    State.get().see((Species) goal);
 		}
-		final int awardedSize = awarded.size();
+		pushAwardIfNeeded();
+	}
+	
+	protected void pushAwardIfNeeded() {
 		if (pushAwardOptionIfNeeded) {
-		    if ((awardedSize > 1) || ((awardedSize == 1) && (awarded.get(0) != goal))) {
-    		    final Driver driver = Driver.get();
-    		    driver.stack.push(driver.new AwardOption(this));
-		    }
+		    final int awardedSize = awarded.size();
+	        if ((awardedSize > 1) || ((awardedSize == 1) && (awarded.get(0) != goal))) {
+	            pushAwardForce();
+	        }
 		}
+	}
+	
+	protected void pushAwardForce() {
+	    final Driver driver = Driver.get();
+        driver.stack.push(driver.new AwardOption(this));
 	}
 
 	/*private final int requiredExperience; // To morph a creature to a species of higher rank

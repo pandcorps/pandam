@@ -59,7 +59,6 @@ public final class MonsterGame extends BaseGame {
     Library
     Externalize Breeder name
     Validate that all items/locations/etc. have images
-    Cache for 24*24 images
     Validate experience upgrades (or auto-derive)
     */
     private static volatile Driver driver = null;
@@ -445,7 +444,7 @@ public final class MonsterGame extends BaseGame {
                     backOption = option;
                 }
                 final String labelName, name;
-                if (detailDisplayed && (option instanceof RemoveTask || option instanceof BreedTask)) {
+                if (detailDisplayed && (option instanceof RemoveTask || option instanceof BreedTask || option instanceof TradeTask)) {
                     labelName = name = "Finish";
                 } else {
                     labelName = option.getGoal().getName();

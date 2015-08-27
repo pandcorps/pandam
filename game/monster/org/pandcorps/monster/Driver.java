@@ -869,7 +869,7 @@ public class Driver implements Runnable {
             //TODO Option to disable filtering
             final List<Option> options = new ArrayList<Option>(trader.size());
             for (final Species r : trader) {
-                options.add(new TradeTask(offered, r));
+                options.add(new DetailOption(new TradeTask(offered, r)));
             }
             return options;
         }
@@ -886,11 +886,13 @@ public class Driver implements Runnable {
     public class TradeTask extends Task {
         public TradeTask(final Species give, final Species receive) {
             super(receive, Arrays.asList(give), Arrays.asList(receive));
+            setAutoBackEnabled(true);
         }
         
         @Override
         public void run() {
             state.trade((Species) required.get(0), (Species) awarded.get(0));
+            pushAwardForce();
         }
     }
     
