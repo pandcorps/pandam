@@ -387,7 +387,8 @@ public final class MonsterGame extends BaseGame {
             int numRows = Mathtil.ceil(options.size() / 3f), titleOffset = 10;
             final boolean chosenDisplayed = caller instanceof BattleOption;
             final boolean detailDisplayed = caller instanceof DetailOption;
-            if (chosenDisplayed || detailDisplayed) {
+            final boolean viewDisplayed = caller instanceof ViewOption;
+            if (chosenDisplayed || detailDisplayed || viewDisplayed) {
                 numRows++;
                 titleOffset = 0;
             }
@@ -427,6 +428,9 @@ public final class MonsterGame extends BaseGame {
                 addImages(awarded, x, y, MENU_W, delim, init, false);
                 y -= menuH;
                 x = 0;
+            } else if (viewDisplayed) {
+                addImage(((ViewOption) caller).species, 0, y, false);
+                y -= menuH;
             } else {
                 final Pantext lbl = new Pantext(Pantil.vmid(), font, formatLabel(label.getName()));
                 lbl.getPosition().set(1, y + menuH + 1);

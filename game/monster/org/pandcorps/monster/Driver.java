@@ -1031,7 +1031,24 @@ public class Driver implements Runnable {
         
         @Override
         public void run() {
-            state.see((Species) goal);
+            final Species species = (Species) goal;
+            state.see(species);
+            stack.push(new ViewOption(species));
+        }
+    }
+    
+    protected class ViewOption extends RunOption {
+        protected final Species species;
+        
+        protected ViewOption(final Species species) {
+            super(new Label("Library: " + species));
+            this.species = species;
+        }
+
+        @Override
+        protected List<Option> menu() {
+            final List<Option> options = new ArrayList<Option>();
+            return options;
         }
     }
     
