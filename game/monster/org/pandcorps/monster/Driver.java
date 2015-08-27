@@ -828,9 +828,9 @@ public class Driver implements Runnable {
             }
             if (give.isEmpty()) {
                 Species last = null;
-                //TODO is team sorted by preferences already? If not, should it be? Should this just take the last tradeable from the team list?
-                for (final Species pref : state.getPreferences()) {
-                    if (team.contains(pref) && isTradeable(pref)) {
+                //TODO Add last four as options?
+                for (final Species pref : team) {
+                    if (isTradeable(pref)) {
                         last = pref;
                     }
                 }
