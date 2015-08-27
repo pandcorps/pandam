@@ -416,7 +416,7 @@ public final class MonsterGame extends BaseGame {
                 y -= menuH;
             } else if (detailDisplayed) {
                 final Task task = (Task) ((DetailOption) caller).option;
-                final Panmage delim = getImage("Plus", true), init = getImage("Equals", true);
+                final Panmage delim = getImage("Plus", true), init = getImage(options.get(0) instanceof TradeTask ? "Trade" : "Equals", true);
                 x = addImages(task.getRequired(), 0, y, MENU_W, delim, null, true);
                 final List<? extends Label> awarded;
                 if (task instanceof BreedTask) {
