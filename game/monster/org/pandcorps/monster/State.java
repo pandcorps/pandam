@@ -167,12 +167,33 @@ public class State {
 	    return Collections.unmodifiableSet(preferences);
 	}
 	
+	public final Species getFavoriteOnTeam() {
+	    return team.get(0);
+	}
+	
+	public final Species getFavoritePreference() {
+	    return preferences.iterator().next();
+	}
+	
 	public final void setFavorite(final Species fav) {
-	    final Collection<Species> copy = new ArrayList<Species>(preferences);
-	    preferences.clear();
-	    preferences.add(fav);
-	    for (final Species s : copy) {
-	        preferences.add(s); // This is a set, so won't add twice
+	    setExtremePreference(fav, true);
+	}
+	
+	public final void setLeastFavorite(final Species fav) {
+	    setExtremePreference(fav, false);
+    }
+	
+	public final void setExtremePreference(final Species fav, final boolean best) {
+	    if (best) {
+	        final Collection<Species> copy = new ArrayList<Species>(preferences);
+	        preferences.clear();
+	        preferences.add(fav);
+	        for (final Species s : copy) {
+	            preferences.add(s); // This is a set, so won't add twice
+	        }
+	    } else {
+	        preferences.remove(fav);
+	        preferences.add(fav);
 	    }
 	    // Re-sort team
 	    if (team.remove(fav)) {

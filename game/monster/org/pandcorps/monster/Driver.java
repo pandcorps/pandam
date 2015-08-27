@@ -1169,7 +1169,9 @@ public class Driver implements Runnable {
 
         @Override
         public void run() {
-            state.setFavorite((Species) getGoal());
+            final Species goal = (Species) getGoal();
+            // If first, then move to last; otherwise move to first
+            state.setExtremePreference(goal, goal != state.getFavoritePreference());
         }
     }
 	
