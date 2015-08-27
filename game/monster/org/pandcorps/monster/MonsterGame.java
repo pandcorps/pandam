@@ -57,6 +57,7 @@ public final class MonsterGame extends BaseGame {
     Full screen, menu centering
     Swipe velocity/acceleration
     Library
+    Externalize Breeder name
     Validate that all items/locations/etc. have images
     Cache for 24*24 images
     Validate experience upgrades (or auto-derive)

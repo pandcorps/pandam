@@ -828,15 +828,15 @@ public class Driver implements Runnable {
                 }
             }
             if (give.isEmpty()) {
-                Species last = null;
-                //TODO Add last four as options?
-                for (final Species pref : team) {
+                final ListIterator<Species> iter = team.listIterator(team.size());
+                while (iter.hasPrevious()) {
+                    final Species pref = iter.previous();
                     if (isTradeable(pref)) {
-                        last = pref;
+                        give.add(pref);
+                        if (give.size() >= 5) {
+                            break;
+                        }
                     }
-                }
-                if (last != null) {
-                    give.add(last);
                 }
             }
             final List<Option> options = new ArrayList<Option>(give.size());
