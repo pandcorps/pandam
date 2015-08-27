@@ -88,8 +88,12 @@ public abstract class Entity extends Label {
 	public final static Entity getEntity(final String value) {
 	    if (value == null || value.length() == 0) {
 	        return null;
-	    } else if (value.startsWith("Experience.")) {
-	        return new Experience(Integer.parseInt(value.substring(11)));
+	    } else if (value.startsWith("Experience")) {
+	        if (value.length() == 10) {
+	            return Experience.ZERO;
+	        } else if (value.charAt(10) == '.') {
+	            return new Experience(Integer.parseInt(value.substring(11)));
+	        }
 	    } else if (value.startsWith("Money.")) {
             return new Money(Integer.parseInt(value.substring(6)));
         } else if (value.equals("Trade") || value.equals("trad")) {

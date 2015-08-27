@@ -135,6 +135,9 @@ public class Species extends Entity {
 	}
 	
 	public Entity getCatalyst() {
+	    if (catalyst instanceof Experience && ((Experience) catalyst).value == 0) {
+	        return new Experience(getCatalystExperience());
+	    }
 	    return catalyst;
 	}
 	
@@ -188,7 +191,8 @@ public class Species extends Entity {
 	}
 
 	public final static int getAwardedExperience(final int rank) {
-	    return (int) Math.pow(2, rank - 1); // Similar to getAdvantage
+	    // 1-1; 2-2; 3-4; 4-8; 5-16
+	    return (int) Math.pow(2, rank - 1); // Similar to getAdvantage/CatalystExperience
 	}
 	
 	public int getAwardedExperience() {
@@ -197,6 +201,15 @@ public class Species extends Entity {
 
 	public int getAwardedMoney() {
 		return getAwardedExperience() * 25;
+	}
+	
+	public int getCatalystExperience() {
+	    // 1-2=10; 2-3=20; 3-4=40; 4-5=80; 2-4=2-3+3-4=20+40=60; 3-5=3-4+4-5=40+80=120
+	    int total = 0;
+	    for (int i = getPrecursor().getRank(); i < rank; i++) {
+	        total = total + (10 * getAwardedExperience(i));
+	    }
+	    return total;
 	}
 
 	/*private final static int getIndex(final Type[] types) {

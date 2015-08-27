@@ -539,6 +539,7 @@ public final class MonsterGame extends BaseGame {
         
         @Override
         protected final void load() throws Exception {
+validateCatalystExperience();
             if (lastScreenClass != null && lastScreenClass != screenClass) {
                 Player.clearLastCity();
             }
@@ -1423,6 +1424,17 @@ public final class MonsterGame extends BaseGame {
         }
     }
     */
+    private final static void validateCatalystExperience() {
+        for (final Species s : Species.getSpecies()) {
+            final Entity c = s.getCatalyst();
+            if (c instanceof Experience) {
+                final int ex = s.getCatalystExperience(), ac = ((Experience) c).value;
+                if (ex != ac) {
+                    System.err.println(s.getName() + " expected " + ex + "; actual " + ac);
+                }
+            }
+        }
+    }
     
     public final static void main(final String[] args) {
         try {

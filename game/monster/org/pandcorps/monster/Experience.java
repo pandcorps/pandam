@@ -23,6 +23,8 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.monster;
 
 public class Experience extends Amount {
+    protected final static Experience ZERO = new Experience(0);
+    
 	public Experience(final int value) {
 	    super(value, Data.getExperience());
 	}
