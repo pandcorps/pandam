@@ -1176,6 +1176,7 @@ public final class MonsterGame extends BaseGame {
         initImageOffsets(delim);
         final int overlap = Math.max(0, MENU_W - off);
         final int delimOffX = ((int) delim.getSize().getX() - overlap) / 2, delimOffY = OVERLAY_Y + imgOffY;
+        final boolean includeText = off >= MENU_W;
         boolean first = true;
         for (final Label s : list) {
             if (first) {
@@ -1184,7 +1185,7 @@ public final class MonsterGame extends BaseGame {
             } else {
                 addImage(delim, x - delimOffX, y + delimOffY, 10, false);
             }
-            addImage(s, x, y, false, !checkPossible || ((Entity) s).isAvailable());
+            addImage(s, x, y, false, !checkPossible || ((Entity) s).isAvailable(), includeText);
             x += off;
         }
         return x;
@@ -1195,11 +1196,17 @@ public final class MonsterGame extends BaseGame {
     }
     
     private static void addImage(final Label s, final int x, final int y, final boolean mirror, final boolean possible) {
+        addImage(s, x, y, mirror, possible, true);
+    }
+    
+    private static void addImage(final Label s, final int x, final int y, final boolean mirror, final boolean possible, final boolean includeText) {
         final String name = s.getName();
         final Panmage image = getImage((s instanceof Amount) ? ((Amount) s).getUnits(): name, possible);
         initImageOffsets(image);
         addImage(image, x + OVERLAY_X + imgOffX + (mirror ? image.getSize().getX() + 1 : 0), y + OVERLAY_Y + imgOffY, 0, mirror);
-        addText(name, getFont(name), x + TEXT_X, y + TEXT_Y);
+        if (includeText) {
+            addText(name, getFont(name), x + TEXT_X, y + TEXT_Y);
+        }
     }
     
     private static void addImage(final Panmage image, final float x, final float y, final float z, final boolean mirror) {
