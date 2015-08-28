@@ -77,6 +77,14 @@ public class Driver implements Runnable {
 
 	@Override
 	public void run() {
+	    try {
+	        loop();
+	    } catch (final Exception e) {
+	        handler.fatal(e);
+	    }
+	}
+	
+	private void loop() {
 	    state.parse();
 	    final Location loc = state.getLocation();
 	    if (loc == null) {

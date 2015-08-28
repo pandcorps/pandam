@@ -48,6 +48,10 @@ public abstract class Handler {
     public void exit() {
     }
     
+    public void fatal(final Throwable cause) {
+        throw Pantil.toRuntimeException(cause);
+    }
+    
     /*public boolean isReady() {
         return true;
     }*/

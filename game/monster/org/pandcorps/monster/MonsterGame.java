@@ -285,6 +285,11 @@ public final class MonsterGame extends BaseGame {
         }
         
         @Override
+        public final void fatal(final Throwable cause) {
+            Pangine.getEngine().exit(cause);
+        }
+        
+        @Override
         public final Option handle(final Option caller, final Label label, final List<? extends Option> options) {
             //while (Pangine.getEngine().getClock() < 1) {
             /*while (!isRoomInitialized()) {
@@ -429,12 +434,19 @@ public final class MonsterGame extends BaseGame {
                 y -= menuH;
                 x = 0;
             } else if (viewDisplayed) {
-                addImage(((ViewOption) caller).species, 0, y, false);
+                final Species species = ((ViewOption) caller).species;
+                addImage(species, 0, y, false);
+                final Type[] types = species.getTypes();
+                final int size = types.length;
+                for (int i = 0; i < size; i++) {
+                    addText("Type: " + types[size - 1 - i], MENU_W, y + 2 + (8 * (i + 5)));
+                }
+                addText("Height: " + species.getHeight(), MENU_W, y + 26);
+                addText("Mass: " + species.getMass(), MENU_W, y + 18);
+                addText("Area: " + species.getWild(), MENU_W, y + 2);
                 y -= menuH;
             } else {
-                final Pantext lbl = new Pantext(Pantil.vmid(), font, formatLabel(label.getName()));
-                lbl.getPosition().set(1, y + menuH + 1);
-                room.addActor(lbl);
+                addText(label.getName(), 1, y + menuH + 1);
             }
             Option backOption = null;
             Panctor lastActor = null;
@@ -1235,6 +1247,12 @@ validateCatalystExperience();
     
     private static MultiFont getFont(final String name) {
         return (name.length() > 10) ? fontTiny : font;
+    }
+    
+    private static void addText(final String s, final int x, final int y) {
+        final Pantext lbl = new Pantext(Pantil.vmid(), font, formatLabel(s));
+        lbl.getPosition().set(x, y);
+        room.addActor(lbl);
     }
     
     private static String formatLabel(final String name) {
