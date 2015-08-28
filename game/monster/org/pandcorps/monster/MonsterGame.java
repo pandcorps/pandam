@@ -405,7 +405,7 @@ public final class MonsterGame extends BaseGame {
                 }
                 final int numImages = required.size() + awarded.size();
                 // 1st always starts at 0; last always starts at MENU_W * BUTTONS_PER_ROW - MENU_W
-                final int off = (MENU_W * (BUTTONS_PER_ROW - 1)) / (numImages - 1);
+                final int off = Math.min(MENU_W, (MENU_W * (BUTTONS_PER_ROW - 1)) / (numImages - 1));
                 x = addImages(required, 0, y, off, delim, null, true);
                 addImages(awarded, x, y, off, delim, init, false);
                 y -= menuH;
