@@ -30,6 +30,7 @@ public abstract class Option implements Runnable {
 	protected final List<Entity> required;
 	private String info = null;
 	private boolean autoBackEnabled = false;
+	private boolean autoBackPlusButton = false;
 
 	protected Option(final Label goal) {
 	    this(goal, null);
@@ -71,6 +72,14 @@ public abstract class Option implements Runnable {
 	public final void setAutoBackEnabled(final boolean autoBackEnabled) {
 	    this.autoBackEnabled = autoBackEnabled;
 	}
+	
+	public final boolean isBackButtonNeeded() {
+	    return autoBackPlusButton || !autoBackEnabled;
+	}
+	
+	public final void setAutoBackPlusButton(final boolean autoBackPlusButton) {
+        this.autoBackPlusButton = autoBackPlusButton;
+    }
 
 	public boolean isPossible() {
         for (final Entity requirement : required) {

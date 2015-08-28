@@ -27,6 +27,7 @@ import java.util.*;
 public class Task extends Option {
 	protected final List<Entity> awarded;
 	private boolean pushAwardOptionIfNeeded = true;
+	protected boolean pushAwardOptionAlways = false;
 
 	public Task(final Label goal, final Collection<? extends Entity> required, final Collection<? extends Entity> awarded) {
 		super(goal, required);
@@ -144,7 +145,7 @@ public class Task extends Option {
 	protected void pushAwardIfNeeded() {
 		if (pushAwardOptionIfNeeded) {
 		    final int awardedSize = awarded.size();
-	        if ((awardedSize > 1) || ((awardedSize == 1) && (awarded.get(0) != goal))) {
+	        if (pushAwardOptionAlways || (awardedSize > 1) || ((awardedSize == 1) && (awarded.get(0) != goal))) {
 	            pushAwardForce();
 	        }
 		}

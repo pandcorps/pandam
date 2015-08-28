@@ -448,14 +448,14 @@ public class Driver implements Runnable {
     }
 	
 	protected abstract class OpponentOption extends RunOption {
-		protected final List<Species> opponents;
+		protected final Collection<Species> opponents;
 		//private final Special special;
 
 		/*public OpponentOption(final Label label, final List<Species> opponents) {
 		    this(label, opponents, null);
 		}*/
 		
-		protected OpponentOption(final Label label, final List<Species> opponents /*, final Special special*/) {
+		protected OpponentOption(final Label label, final Collection<Species> opponents /*, final Special special*/) {
 			super(label);
 			this.opponents = opponents;
             //this.special = special;
@@ -469,7 +469,7 @@ public class Driver implements Runnable {
 		
 		@Override
 		public List<Option> menu() {
-		    final List<Species> opponents = getOpponents();
+		    final Collection<Species> opponents = getOpponents();
 			final List<Option> options = new ArrayList<Option>(opponents.size());
 			for (final Species species : opponents) {
 			    final Special speciesSpecial = species.getSpecial();
@@ -486,7 +486,7 @@ public class Driver implements Runnable {
 
 		protected abstract Option createOption(final Species chosen, final Species opponent, final Special special);
 		
-		protected List<Species> getOpponents() {
+		protected Collection<Species> getOpponents() {
 		    return opponents;
 		}
 	}
@@ -715,9 +715,14 @@ public class Driver implements Runnable {
         
         @Override
         protected Option createOption(final Species chosen, final Species opponent, final Special special) {
-            //return new MorphTask(opponent);
-            //return new RemoveTask(opponent.getPrecursor(), getMorphRequired(opponent), getMorphAwarded(opponent));
-            return new DetailOption(new RemoveTask(opponent.getPrecursor(), getMorphRequired(opponent), getMorphAwarded(opponent)));
+            final Species precursor = opponent.getPrecursor();
+            if (!canSplit(precursor)) {
+                final Collection<Species> morphs = precursor.getMorphs();
+                if (Coltil.size(morphs) > 1) {
+                    return new MenuOption(precursor.getName(), new MorphChoiceOption(morphs));
+                }
+            }
+            return createMorphDetailOption(precursor, opponent);
         }
         
         @Override
@@ -730,6 +735,28 @@ public class Driver implements Runnable {
             return getMorphable(); // Generate each time menu is displayed, because it will change as it is used
         }
     }
+	
+	private final DetailOption createMorphDetailOption(final Entity goal, final Species opponent) {
+	    return new DetailOption(new RemoveTask(goal, getMorphRequired(opponent), getMorphAwarded(opponent)));
+	}
+	
+	protected class MorphChoiceOption extends OpponentOption {
+	    public MorphChoiceOption(final Collection<Species> morphs) {
+	        super(morphs.iterator().next().getPrecursor(), morphs);
+	        setAutoBackEnabled(true);
+	        setAutoBackPlusButton(true);
+	    }
+
+        @Override
+        protected Option createOption(final Species chosen, final Species opponent, final Special special) {
+            return createMorphDetailOption(opponent, opponent);
+        }
+        
+        @Override
+        protected Species choose(final Species opponent) {
+            return null;
+        }
+	}
 	
 	protected class DetailOption extends WrapperOption {
 	    public DetailOption(final Task task) {
@@ -763,6 +790,7 @@ public class Driver implements Runnable {
 	protected class RemoveTask extends Task {
         public RemoveTask(final Entity goal, final Collection<? extends Entity> required, final Collection<? extends Entity> awarded) {
             super(goal, required, awarded);
+            pushAwardOptionAlways = true;
         }
         
         @Override
@@ -1254,7 +1282,7 @@ public class Driver implements Runnable {
     private Option handle(final Option caller, final Label label, final List<? extends Option> baseOptions) {
         final List<Option> options = new ArrayList<Option>(baseOptions.size() + 1);
         options.addAll(baseOptions);
-        if (stack.size() > 1 && !caller.isAutoBackEnabled()) {
+        if (stack.size() > 1 && caller.isBackButtonNeeded()) {
             options.add(new BackOption());
         }
         //} else {
