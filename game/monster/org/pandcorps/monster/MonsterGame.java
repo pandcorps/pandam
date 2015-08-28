@@ -396,14 +396,18 @@ public final class MonsterGame extends BaseGame {
             } else if (detailDisplayed) {
                 final Task task = (Task) ((DetailOption) caller).option;
                 final Panmage delim = getImage("Plus", true), init = getImage(options.get(0) instanceof TradeTask ? "Trade" : "Equals", true);
-                x = addImages(task.getRequired(), 0, y, MENU_W, delim, null, true);
+                final List<Entity> required = task.getRequired();
                 final List<? extends Label> awarded;
                 if (task instanceof BreedTask) {
                     awarded = Collections.singletonList(new Label("Egg"));
                 } else {
                     awarded = task.getAwarded();
                 }
-                addImages(awarded, x, y, MENU_W, delim, init, false);
+                final int numImages = required.size() + awarded.size();
+                // 1st always starts at 0; last always starts at MENU_W * BUTTONS_PER_ROW - MENU_W
+                final int off = (MENU_W * (BUTTONS_PER_ROW - 1)) / (numImages - 1);
+                x = addImages(required, 0, y, off, delim, null, true);
+                addImages(awarded, x, y, off, delim, init, false);
                 y -= menuH;
                 x = 0;
             } else if (viewDisplayed) {
@@ -1170,7 +1174,8 @@ public final class MonsterGame extends BaseGame {
     
     private static int addImages(final List<? extends Label> list, int x, final int y, final int off, final Panmage delim, final Panmage init, final boolean checkPossible) {
         initImageOffsets(delim);
-        final int delimOffX = (int) delim.getSize().getX() / 2, delimOffY = OVERLAY_Y + imgOffY;
+        final int overlap = Math.max(0, MENU_W - off);
+        final int delimOffX = ((int) delim.getSize().getX() - overlap) / 2, delimOffY = OVERLAY_Y + imgOffY;
         boolean first = true;
         for (final Label s : list) {
             if (first) {
