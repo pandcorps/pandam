@@ -29,19 +29,10 @@ import org.pandcorps.core.*;
 import org.pandcorps.monster.Special.*;
 
 public class Driver implements Runnable {
-    ///*package*/ final static String SPECIAL_TRADER = "Trader";
-    //private final static String SPECIAL_BREEDER = "Breeder";
-    //private final static String SPECIAL_LAB = "Lab";
-    //private final static String SPECIAL_LIBRARY = "Library";
-    
-    //private final static String SPECIAL_SPLIT = "Split";
-    
     private final static String SPECIAL_TRADER = Specialty.Trader.toString();
     private final static String SPECIAL_BREEDER = Specialty.Breeder.toString();
     private final static String SPECIAL_LAB = Specialty.Lab.toString();
     private final static String SPECIAL_LIBRARY = Specialty.Library.toString();
-    
-    private final static String SPECIAL_SPLIT = Specialty.Split.toString();
     
 	private static State state;
 	//private final Handler handler = Handler.get();
@@ -819,7 +810,8 @@ public class Driver implements Runnable {
     }
     
     private final boolean canSplit(final Species s) {
-        return SPECIAL_SPLIT.equals(s.getSpecial());
+        final Special special = s.getSpecial();
+        return (special != null) && special.getSpecialty() == Specialty.Split;
     }
     
     /*public class TraderOption extends OpponentOption {
