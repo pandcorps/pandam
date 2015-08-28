@@ -56,7 +56,6 @@ public final class MonsterGame extends BaseGame {
     Auto-save
     Full screen, menu centering
     Swipe velocity/acceleration
-    Library
     Externalize Breeder name
     Validate that all items/locations/etc. have images
     Validate experience upgrades (or auto-derive)
@@ -106,6 +105,11 @@ public final class MonsterGame extends BaseGame {
     private static Panmage tiles = null;
     private static Img worldSrc = null;
     private static ControlScheme ctrl = null;
+    
+    @Override
+    protected final boolean isFullScreen() {
+        return true;
+    }
     
     @Override
     protected final void init(final Panroom room) throws Exception {
@@ -343,44 +347,6 @@ public final class MonsterGame extends BaseGame {
         
         @Override
         protected final void load() throws Exception {
-            /*
-            final Pangine engine = Pangine.getEngine();
-            final Pantext lbl = new Pantext(Pantil.vmid(), font, label.getName());
-            final int h = engine.getEffectiveHeight();
-            lbl.getPosition().set(1, h - 9);
-            room.addActor(lbl);
-            final List<String> list = new ArrayList<String>();
-            for (final Option option : options) {
-                if (!option.isPossible()) {
-                    continue;
-                }
-                list.add(option.getGoal().getName());
-            }
-            final RadioSubmitListener sub = new RadioSubmitListener() {
-                @Override
-                public final void onSubmit(final RadioSubmitEvent event) {
-                    final String c = event.toString();
-                    for (final Option option : options) {
-                        if (option.getGoal().getName().equals(c)) {
-                            // Check possible
-                            choice.value = option;
-                            return;
-                        }
-                    }
-                }};
-            final RadioGroup grp = new RadioGroup(font, list, sub);
-            grp.setLayer(room); // Call before init
-            //grp.init(lbl); // Disable's lbl's layer, which is same layer
-            grp.init();
-            grp.getLabel().getPosition().set(17, h - 17); // Call after init
-            //grp.getLabel().setBackground(Pantext.CHAR_SPACE);
-            grp.getLabel().setBackground(Pantext.CHAR_NULL);
-            //grp.getLabel().setBorderEnabled(borderEnabled);
-            //grp.getLabel().setBorderStyle(borderStyle);
-            //room.addActor(grp.getLabel()); // Done by init
-            //grp.init(lbl);
-            */
-            
             // Img size = 80
             // Max name = 10
             // Name size = name length * letter size = 10 * 8 = 80
@@ -486,9 +452,7 @@ public final class MonsterGame extends BaseGame {
                     getFont(name), name, TEXT_X, TEXT_Y, true);
                 final String info = option.getInfo();
                 if (Chartil.isValued(info)) {
-                    final Pantext infoLabel = new Pantext(Pantil.vmid(), fontTiny, info);
-                    infoLabel.getPosition().set(x, y + 1);
-                    room.addActor(infoLabel);
+                    addText(info, fontTiny, x, y + 1);
                 }
                 if (x == (MENU_W * 2)) {
                     x = 0;
@@ -1229,9 +1193,7 @@ validateCatalystExperience();
         final Panmage image = getImage((s instanceof Amount) ? ((Amount) s).getUnits(): name, possible);
         initImageOffsets(image);
         addImage(image, x + OVERLAY_X + imgOffX + (mirror ? image.getSize().getX() + 1 : 0), y + OVERLAY_Y + imgOffY, 0, mirror);
-        final Pantext text = new Pantext(Pantil.vmid(), getFont(name), name);
-        text.getPosition().set(x + TEXT_X, y + TEXT_Y);
-        room.addActor(text);
+        addText(name, getFont(name), x + TEXT_X, y + TEXT_Y);
     }
     
     private static void addImage(final Panmage image, final float x, final float y, final float z, final boolean mirror) {
@@ -1255,6 +1217,10 @@ validateCatalystExperience();
     }
     
     private static void addText(final String s, final int x, final int y) {
+        addText(s, font, x, y);
+    }
+    
+    private static void addText(final String s, final MultiFont font, final int x, final int y) {
         final Pantext lbl = new Pantext(Pantil.vmid(), font, formatLabel(s));
         lbl.getPosition().set(x, y);
         room.addActor(lbl);
