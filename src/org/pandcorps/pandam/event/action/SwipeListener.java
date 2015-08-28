@@ -26,4 +26,6 @@ import org.pandcorps.pandam.event.*;
 
 public interface SwipeListener extends Panstener {
     public boolean onSwipe(final SwipeEvent event);
+    
+    public void onSwipeEnd(final SwipeEvent event);
 }

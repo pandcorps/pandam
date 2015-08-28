@@ -22,11 +22,17 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandam.event.action;
 
+import org.pandcorps.pandam.*;
+
 public class SwipeEvent {
     private final int oldX;
     private final int oldY;
     private final int newX;
     private final int newY;
+    
+    public SwipeEvent(final Panple old, final int newX, final int newY) {
+        this((int) old.getX(), (int) old.getY(), newX, newY);
+    }
     
     public SwipeEvent(final int oldX, final int oldY, final int newX, final int newY) {
         this.oldX = oldX;

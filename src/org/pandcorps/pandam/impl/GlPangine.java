@@ -306,7 +306,7 @@ public abstract class GlPangine extends Pangine {
     		if (type == Panput.TOUCH_MOVE) {
     		    if (swipeListener != null) {
     		        final Panple old = swipeMap.put(key, new FinPanple2(x, y));
-    		        if (old != null && swipeListener.onSwipe(new SwipeEvent((int) old.getX(), (int) old.getY(), x, y))) {
+    		        if (old != null && swipeListener.onSwipe(new SwipeEvent(old, x, y))) {
         		        cancel = true;
         		        swiping = true;
         		        break;
@@ -337,7 +337,10 @@ public abstract class GlPangine extends Pangine {
 			    if (touchMap.remove(key) != null) { // Could reach TOUCH_UP without a TOUCH_DOWN, don't call end listeners then
 			        deactivate(input);
 			    }
-			    swipeMap.remove(key);
+			    final Panple old = swipeMap.remove(key);
+			    if (swipeListener != null) {
+			        swipeListener.onSwipeEnd(new SwipeEvent(old, x, y));
+			    }
 			    doneSwiping = true;
 			}
     		if (cancel) {

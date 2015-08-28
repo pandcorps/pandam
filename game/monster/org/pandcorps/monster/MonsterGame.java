@@ -54,7 +54,6 @@ public final class MonsterGame extends BaseGame {
     Database screen move to front after selecting favorite (or back after selecting least)
     Test that impossible options still appear as buildings handled gracefully
     Auto-save
-    Swipe velocity/acceleration
     Externalize Breeder name
     Validate that all items/locations/etc. have images
     Validate experience upgrades (or auto-derive)
@@ -384,6 +383,7 @@ public final class MonsterGame extends BaseGame {
             final SwipeScroller scroller = new SwipeScroller();
             scroller.setLayer(room);
             scroller.setRange(0, 0, 0, max);
+            scroller.setAcceleration(-1);
             engine.setSwipeListener(scroller);
             if (caller != lastCaller) {
                 room.getOrigin().set(0, max);
