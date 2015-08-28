@@ -805,13 +805,15 @@ public class Driver implements Runnable {
     }
     
     private final List<Species> getMorphable() {
+        final Set<Species> precursors = new HashSet<Species>();
         final List<Species> list = new ArrayList<Species>();
         for (final Species s : state.getPreferences()) {
             //TODO Option to display creatures currently in team
             final Species precursor = s.getPrecursor();
-            if (precursor == null || !state.hasTeam(precursor)) {
+            if (precursor == null || !state.hasTeam(precursor) || precursors.contains(precursor)) {
                 continue;
             } else if ((!canSplit(precursor) || precursor.getMorphs().iterator().next().equals(s)) && s.getCatalyst() != null && !state.hasTeam(s)) {
+                precursors.add(precursor);
                 list.add(s);
             }
         }
