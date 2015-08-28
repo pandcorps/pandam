@@ -54,7 +54,6 @@ public final class MonsterGame extends BaseGame {
     Database screen move to front after selecting favorite (or back after selecting least)
     Test that impossible options still appear as buildings handled gracefully
     Auto-save
-    Full screen, menu centering
     Swipe velocity/acceleration
     Externalize Breeder name
     Validate that all items/locations/etc. have images
@@ -71,8 +70,10 @@ public final class MonsterGame extends BaseGame {
     
     private final static int IMG_W = 80;
     private final static int IMG_H = 80;
+    private final static int BUTTONS_PER_ROW = 3;
     private final static int MENU_W = 85;
     private final static int MENU_H = 93;
+    private static int menuOffX = 0;
     private final static int OVERLAY_X = 3;
     private final static int OVERLAY_Y = 10;
     private final static int TEXT_X = 3;
@@ -358,6 +359,7 @@ public final class MonsterGame extends BaseGame {
             //TouchTabs.setFullScreen(true);
             //final List<TouchButton> buttons = new ArrayList<TouchButton>();
             final Pangine engine = Pangine.getEngine();
+            menuOffX = Math.max(0, (engine.getEffectiveWidth() - (MENU_W * BUTTONS_PER_ROW)) / 2);
             engine.setBgColor(new Pancolor((short) 160));
             final Panteraction interaction = engine.getInteraction();
             int numRows = Mathtil.ceil(options.size() / 3f), titleOffset = 10;
@@ -447,14 +449,14 @@ public final class MonsterGame extends BaseGame {
                 initImageOffsets(img);
                 //final Panmage menuCurr = possible ? menu : menuOff; // Will grey out impossible-yet-previewable options
                 final Panmage menuCurr = menu; // Impossible-yet-previewable buttons are normal color; reasonable if icon is translucent
-                final TouchButton btn = new TouchButton(interaction, room, name, x, y + btnOffY, 0, menuCurr, menuIn,
+                final TouchButton btn = new TouchButton(interaction, room, name, menuOffX + x, y + btnOffY, 0, menuCurr, menuIn,
                     img, OVERLAY_X + imgOffX, OVERLAY_Y + imgOffY,
                     getFont(name), name, TEXT_X, TEXT_Y, true);
                 final String info = option.getInfo();
                 if (Chartil.isValued(info)) {
                     addText(info, fontTiny, x, y + 1);
                 }
-                if (x == (MENU_W * 2)) {
+                if (x == (MENU_W * (BUTTONS_PER_ROW - 1))) {
                     x = 0;
                     y -= menuH;
                 } else {
@@ -521,7 +523,6 @@ public final class MonsterGame extends BaseGame {
         
         @Override
         protected final void load() throws Exception {
-validateCatalystExperience();
             if (lastScreenClass != null && lastScreenClass != screenClass) {
                 Player.clearLastCity();
             }
@@ -1199,7 +1200,7 @@ validateCatalystExperience();
     private static void addImage(final Panmage image, final float x, final float y, final float z, final boolean mirror) {
         final Panctor actor = new Panctor();
         actor.setView(image);
-        actor.getPosition().set(x, y, z);
+        actor.getPosition().set(menuOffX + x, y, z);
         actor.setMirror(mirror);
         room.addActor(actor);
     }
@@ -1222,7 +1223,7 @@ validateCatalystExperience();
     
     private static void addText(final String s, final MultiFont font, final int x, final int y) {
         final Pantext lbl = new Pantext(Pantil.vmid(), font, formatLabel(s));
-        lbl.getPosition().set(x, y);
+        lbl.getPosition().set(menuOffX + x, y);
         room.addActor(lbl);
     }
     
@@ -1413,7 +1414,7 @@ validateCatalystExperience();
             }
         }
     }
-    */
+    
     private final static void validateCatalystExperience() {
         for (final Species s : Species.getSpecies()) {
             final Entity c = s.getCatalyst();
@@ -1425,6 +1426,7 @@ validateCatalystExperience();
             }
         }
     }
+    */
     
     public final static void main(final String[] args) {
         try {
