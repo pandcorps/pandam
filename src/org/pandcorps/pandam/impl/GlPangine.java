@@ -898,6 +898,12 @@ public abstract class GlPangine extends Pangine {
 	        return false;
 	    }
     }
+	
+	// Designed to be called by a Thread outside of the engine
+	@Override
+	public final boolean isRunning() {
+	    return running;
+	}
 
 	@Override
 	public final void exit() {

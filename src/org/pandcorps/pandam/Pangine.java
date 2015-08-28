@@ -1141,6 +1141,8 @@ public abstract class Pangine {
 	    }
 	    return null;
 	}
+	
+	public abstract boolean isRunning();
 
 	public abstract void exit();
 	

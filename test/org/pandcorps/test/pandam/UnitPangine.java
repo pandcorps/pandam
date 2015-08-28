@@ -183,6 +183,11 @@ public final class UnitPangine extends Pangine {
 	@Override
 	public final void setBgColor(final Pancolor color) {
 	}
+	
+	@Override
+    public final boolean isRunning() {
+	    return true;
+    }
 
 	@Override
 	public final void exit() {

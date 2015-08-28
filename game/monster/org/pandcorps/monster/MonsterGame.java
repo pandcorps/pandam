@@ -298,7 +298,8 @@ public final class MonsterGame extends BaseGame {
             }
             System.out.println("Handling");*/
             final Wrapper choice = new Wrapper();
-            Pangine.getEngine().executeInGameThread(new Runnable() {
+            final Pangine engine = Pangine.getEngine();
+            engine.executeInGameThread(new Runnable() {
                 @Override public final void run() {
                     lastCaller = MonsterGame.caller;
                     MonsterGame.caller = caller;
@@ -313,6 +314,10 @@ public final class MonsterGame extends BaseGame {
                     }
                 }});
             while (choice.value == null) {
+                if (!engine.isRunning()) {
+                    driver.fatal();
+                    return null;
+                }
                 Thread.yield();
             }
             return choice.value;

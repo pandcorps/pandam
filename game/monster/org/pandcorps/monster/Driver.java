@@ -370,6 +370,21 @@ public class Driver implements Runnable {
 		}
 	}
 	
+	private class ValidatorMenuOption extends MenuOption {
+	    public ValidatorMenuOption(final String name, final Option option) {
+	        super(name, option);
+        }
+        
+        public ValidatorMenuOption(final String name, final Option option, final Entity... requirements) {
+            super(name, option, requirements);
+        }
+        
+        @Override
+        public boolean isPossible() {
+            return super.isPossible() && Option.isPossible(option);
+        }
+	}
+	
 	/*protected static Species getRandomOpponent(final List<Species> opponents) {
         final List<Species> defeatableOpponents = new ArrayList<Species>();
         for (final Species opponent : opponents) {
@@ -422,7 +437,7 @@ public class Driver implements Runnable {
         */
         final int start = (Mathtil.randi(0, 10000) < 7500) ? 0 : 1;
         for (int i = start; i < 2; i++) {
-            for (final Species species : opponents) {
+            for (final Species species : Coltil.unnull(opponents)) {
                 final Species chosen = opt.choose(species);
                 if (chosen == null) {
                     continue;
@@ -521,7 +536,7 @@ public class Driver implements Runnable {
 	    
 	    @Override
         public boolean isPossible() {
-            return super.isPossible() && option != null && option.isPossible();
+            return super.isPossible() && Option.isPossible(option);
         }
 	}
 	
@@ -539,6 +554,11 @@ public class Driver implements Runnable {
             this.catchable = catchable;
             pickNextOpponent();
             setAutoBackEnabled(true);
+        }
+        
+        @Override
+        public boolean isPossible() {
+            return (getRandomOption(this, opponents) != null) && super.isPossible();
         }
         
         private void pickNextOpponent() {
@@ -564,6 +584,9 @@ public class Driver implements Runnable {
         public List<Option> menu() {
             pickNextOpponent();
             final List<Option> options = new ArrayList<Option>(catchable ? 2 : 1);
+            if (option == null) {
+                return options;
+            }
             //options.add(createOption(chosen, opponent, opponent.getSpecial()));
             options.add(option);
             if (catchable && !state.hasTeam(opponent)) {
@@ -675,7 +698,7 @@ public class Driver implements Runnable {
             if (chosen == null || !state.hasTeam(chosen)) {
                 return;
             }
-            options.add(new MenuOption(track.getName(), this, chosen, track));
+            options.add(new ValidatorMenuOption(track.getName(), this, chosen, track));
         }
     }
 	
@@ -1291,9 +1314,13 @@ public class Driver implements Runnable {
     }
     
     public void exit() {
-        this.running = false;
+        running = false;
         state.serialize();
         handler.exit();
+    }
+    
+    public void fatal() {
+        running = false;
     }
 	
 	/*public final static boolean startsWith(final String s, final String prefix) {
