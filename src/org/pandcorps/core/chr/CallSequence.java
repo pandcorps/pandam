@@ -22,9 +22,9 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.core.chr;
 
-import java.util.concurrent.Callable;
+import java.util.concurrent.*;
 
-import org.pandcorps.core.Pantil;
+import org.pandcorps.core.*;
 
 public class CallSequence implements CharSequence {
 	private final Callable<? extends CharSequence> c;

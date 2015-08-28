@@ -30,7 +30,6 @@ import org.pandcorps.monster.Special.*;
 
 public class Driver implements Runnable {
     private final static String SPECIAL_TRADER = Specialty.Trader.toString();
-    private final static String SPECIAL_BREEDER = Specialty.Breeder.toString();
     private final static String SPECIAL_LAB = Specialty.Lab.toString();
     private final static String SPECIAL_LIBRARY = Specialty.Library.toString();
     
@@ -266,14 +265,17 @@ public class Driver implements Runnable {
 			//new TrackOption(location).addMenuOption(options);
 			final String special = location.getSpecial();
 			if (special != null) {
-				if (SPECIAL_TRADER.equals(special)) {
-				    options.add(new MenuOption(SPECIAL_TRADER, new TraderOption()));
-				} else if (SPECIAL_BREEDER.equals(special)) {
-				    options.add(new MenuOption(SPECIAL_BREEDER, new BreederOption()));
-				} else if (special.startsWith(SPECIAL_LAB)) {
+			    final String specialBreeder = Data.getBreeder();
+				if (specialBreeder.equals(special) || "Breeder".equals(special)) {
+				    options.add(new MenuOption(specialBreeder, new BreederOption()));
+				} else if (SPECIAL_TRADER.equals(special)) {
+                    options.add(new MenuOption(SPECIAL_TRADER, new TraderOption()));
+                } else if (special.startsWith(SPECIAL_LAB)) {
                     options.add(new MenuOption(SPECIAL_LAB, new LabOption()));
                 } else if (SPECIAL_LIBRARY.equals(special)) {
 				    options.add(new MenuOption(SPECIAL_LIBRARY, new LibraryOption()));
+				} else {
+				    throw new IllegalStateException("Unrecognized location special: " + special);
 				}
 			}
 			final List<Species> locTrained = location.getTrained();
@@ -957,7 +959,7 @@ public class Driver implements Runnable {
         public BreederOption() {
             //This is called when option is displayed, not chosen; getBreedable() called too many times; see LibraryOption for alternative
             //super(new Label(SPECIAL_BREEDER), getBreedable());
-            super(new Label(SPECIAL_BREEDER), null);
+            super(new Label(Data.getBreeder()), null);
         }
 
         @Override

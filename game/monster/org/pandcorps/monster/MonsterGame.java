@@ -54,7 +54,6 @@ public final class MonsterGame extends BaseGame {
     Database screen move to front after selecting favorite (or back after selecting least)
     Test that impossible options still appear as buildings handled gracefully
     Auto-save
-    Externalize Breeder name
     Validate that all items/locations/etc. have images
     Validate experience upgrades (or auto-derive)
     */
@@ -778,7 +777,7 @@ public final class MonsterGame extends BaseGame {
                 } else if (name.equals(Special.Specialty.Trader.toString())) {
                     building(buildingMid + 8, buildingMid, 9, 8, 4, 4, 2, option);
                     needSpecial = false;
-                } else if (name.equals(Special.Specialty.Breeder.toString())) {
+                } else if (name.equals(Data.getBreeder())) {
                     building(buildingMid + 6, buildingMid, 7, 12, 7, 4, 1, option);
                     needSpecial = false;
                 } else if (name.equals(Special.Specialty.Library.toString())) {
@@ -788,6 +787,8 @@ public final class MonsterGame extends BaseGame {
                     optWorld = option;
                 } else if (name.equals("Menu")) {
                     addMenuButton(option);
+                } else {
+                    throw new Exception("Unrecognized option: " + name);
                 }
             }
             final int unusedRight = buildingMid + 8, unusedBottom = buildingStart + 1;

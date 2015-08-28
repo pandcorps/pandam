@@ -22,11 +22,41 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.monster;
 
+import java.util.concurrent.*;
+
 import org.pandcorps.core.*;
 
 public class Special {
     public static enum Specialty {
-        Library, Lab, Fish, Condition, Breeder, Trader, Split
+        Library,
+        Lab,
+        Fish,
+        Condition,
+        Breeder(new Callable<String>() {
+            @Override public final String call() {
+                return Data.getBreeder();
+            }}),
+        Trader,
+        Split;
+        
+        private final Callable<String> namer;
+        
+        private Specialty(final Callable<String> namer) {
+            this.namer = namer;
+        }
+        
+        private Specialty() {
+            this(null);
+        }
+        
+        @Override
+        public final String toString() {
+            try {
+                return (namer == null) ? super.toString() : namer.call();
+            } catch (final Exception e) {
+                throw Pantil.toRuntimeException(e);
+            }
+        }
     }
     
     public final static Special LIBRARY = new Special(Specialty.Library, null);

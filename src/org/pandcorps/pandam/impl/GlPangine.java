@@ -344,7 +344,7 @@ public abstract class GlPangine extends Pangine {
 			        deactivate(input);
 			    }
 			    final Panple old = swipeMap.remove(key);
-			    if (swipeListener != null) {
+			    if ((swipeListener != null) && (old != null)) {
 			        swipeListener.onSwipeEnd(new SwipeEvent(old, x, y));
 			    }
 			    doneSwiping = true;
