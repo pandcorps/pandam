@@ -42,7 +42,6 @@ public final class SwipeScroller implements SwipeListener {
     
     @Override
     public final boolean onSwipe(final SwipeEvent event) {
-        //TODO Velocity/acceleration
         oldX = event.getOldX();
         oldY = event.getOldY();
         final boolean xChange = add(0, -event.getDiffX(), minX, maxX);
@@ -58,7 +57,7 @@ public final class SwipeScroller implements SwipeListener {
     public final void onSwipeEnd(final SwipeEvent event) {
         if ((acc > 0) || ((Pangine.getEngine().getClock() - last) > 5)) {
             return;
-        } else if (continuer == null) {
+        } else if (continuer == null || continuer.isDestroyed() || (continuer.getLayer() == null)) {
             continuer = new ScrollContinuer();
             layer.addActor(continuer);
         }

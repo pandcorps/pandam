@@ -372,6 +372,7 @@ public abstract class Panput {
 			}
 		}
 		
+		// If this ever does more than change the view, then we might need to change swiping
 		public void activate(final boolean active) {
 			if (enabled && actor != null && imgActive != null) {
 				actor.setView(active ? imgActive : imgInactive);

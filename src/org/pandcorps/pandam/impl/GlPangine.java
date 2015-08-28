@@ -309,6 +309,12 @@ public abstract class GlPangine extends Pangine {
     		        if (old != null && swipeListener.onSwipe(new SwipeEvent(old, x, y))) {
         		        cancel = true;
         		        swiping = true;
+        		        for (final Panput btn : touchMap.values()) {
+        		            if (btn.getClass() != TouchButton.class) {
+        		                continue;
+        		            }
+        		            ((TouchButton) btn).activate(false);
+        		        }
         		        break;
     		        }
     		    }
@@ -319,7 +325,7 @@ public abstract class GlPangine extends Pangine {
     		    then we probably want to ignore touch movements until the screen is released and a new one starts.
     		    If we ever want to pay attention to those events immediately, then there should be an option to skip this.
     		    */
-    		    if (!touchMap.containsKey(key)) {
+    		    if (swiping || !touchMap.containsKey(key)) {
     		        continue;
     		    }
     			final Panput old = touchMap.put(key, input);
