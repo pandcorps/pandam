@@ -685,7 +685,7 @@ public class Driver implements Runnable {
 
         @Override
         protected Option createOption(final Species chosen, final Species opponent, final Special special) {
-            return Task.createWildTask(chosen, opponent);
+            return Task.createTrackTask(chosen, opponent);
         }
         
         protected void addMenuOption(final List<Option> options) {
@@ -705,13 +705,17 @@ public class Driver implements Runnable {
 	private final List<Species> getTrackable(final Location loc) {
         final List<Species> list = new ArrayList<Species>();
         for (final Species s : loc.getTrackable()) {
-            //TODO Option to display creatures currently in team
-            if (state.hasSeen(s) && !state.hasTeam(s) && !(s.isUnique() && state.hasOwned(s))) {
+            if (isTrackable(s)) {
                 list.add(s);
             }
         }
         return list;
     }
+	
+	protected final static boolean isTrackable(final Species s) {
+	    //TODO Option to display creatures currently in team
+	    return state.hasSeen(s) && !state.hasTeam(s) && !(s.isUnique() && state.hasOwned(s));
+	}
 	
 	protected class MorphOption extends OpponentOption {
         public MorphOption() {

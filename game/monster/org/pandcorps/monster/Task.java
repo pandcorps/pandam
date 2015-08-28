@@ -33,8 +33,8 @@ public class Task extends Option {
 		this.awarded = init(awarded);
 	}
 	
-	private final static class FightTask extends Task {
-	    private final Species opponent;
+	private static class FightTask extends Task {
+	    protected final Species opponent;
 	    
 	    public FightTask(final Species opponent, final Collection<? extends Entity> required, final Collection<? extends Entity> awarded) {
 	        super(new Label("Fight"), required, awarded);
@@ -45,6 +45,17 @@ public class Task extends Option {
 	    public final void run() {
 	        super.run();
 	        State.get().see(opponent);
+	    }
+	}
+	
+	private final static class TrackTask extends FightTask {
+	    public TrackTask(final Species opponent, final Collection<? extends Entity> required, final Collection<? extends Entity> awarded) {
+	        super(opponent, required, awarded);
+	    }
+	    
+	    @Override
+	    public boolean isPossible() {
+	        return super.isPossible() && Driver.isTrackable(opponent);
 	    }
 	}
 
@@ -58,6 +69,10 @@ public class Task extends Option {
 	
 	public final static Task createWildTask(final Species chosen, final Species opponent) {
         return new FightTask(opponent, Arrays.asList(chosen), award(opponent, new Experience(opponent.getAwardedExperience())));
+    }
+	
+	public final static Task createTrackTask(final Species chosen, final Species opponent) {
+        return new TrackTask(opponent, Arrays.asList(chosen), award(opponent, new Experience(opponent.getAwardedExperience())));
     }
 
 	public final static Task createCatchTask(final Species chosen, final Species opponent) {
