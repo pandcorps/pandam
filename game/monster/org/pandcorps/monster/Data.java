@@ -31,6 +31,7 @@ public class Data {
     private static String database;
     private static String inventory;
     private static String breeder;
+    private static String championship;
     private static Species shapeShifter;
     
     static {
@@ -46,6 +47,7 @@ public class Data {
         database = "Database";
         inventory = "Inventory";
         breeder = "Breeder";
+        championship = "Championship";
         shapeShifter = null;
     }
     
@@ -81,6 +83,10 @@ public class Data {
         return breeder;
     }
 	
+	public final static String getChampionship() {
+        return championship;
+    }
+	
 	public final static Species getShapeShifter() {
         return shapeShifter;
     }
@@ -102,6 +108,8 @@ public class Data {
             inventory = value;
         } else if ("breed".equals(key)) {
             breeder = value;
+        } else if ("champ".equals(key)) {
+            championship = value;
         } else if ("shift".equals(key)) {
             shapeShifter = Species.getSpecies(value);
         }

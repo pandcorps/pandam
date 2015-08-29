@@ -221,10 +221,19 @@ public class Driver implements Runnable {
         protected List<Option> menu() {
             final List<Option> options = new ArrayList<Option>();
             for (final Location loc : Location.getLocations()) {
-                new WildOption(loc, loc.getNormal()).addMenuOption(options, "Wild");
+                final List<Species> special = addSpecialOptions(options, loc);
+                List<Species> normal = loc.getNormal();
+                if (Coltil.isValued(special)) {
+                    if (Coltil.isValued(normal)) {
+                        normal = new ArrayList<Species>(normal);
+                        normal.addAll(special);
+                    } else {
+                        normal = special;
+                    }
+                }
+                new WildOption(loc, normal).addMenuOption(options, "Wild");
                 new FishOption(loc, loc.getFish()).addMenuOption(options, Specialty.Fish.toString());
                 new TrackOption(loc).addMenuOption(options);
-                addSpecialOptions(options, loc);
             }
             new TravelOption(Location.getLocations(), false).addOptions(options); // For walking to cities, not menu fast travel
             addMenuOption(options, false); // Includes fast travel option
@@ -300,17 +309,21 @@ public class Driver implements Runnable {
 		}
 	}
 	
-	private void addSpecialOptions(final List<Option> options, final Location location) {
+	private List<Species> addSpecialOptions(final List<Option> options, final Location location) {
+	    List<Species> ret = null;
 	    for (final Entry<Item, ArrayList<Species>> special : location.getSpecials().entrySet()) {
             final Item item = special.getKey();
             if (canDisplay(item)) {
-                if (item.isTechnique()) {
+                if (Data.getChampionship().equalsIgnoreCase(item.getName())) {
+                    ret = special.getValue();
+                } else if (item.isTechnique()) {
                     options.add(new MenuOption(item.getName(), new SpecialOption(location, item, special.getValue()), state.choose(item), item)); // See TravelOption
                 } else {
                     options.add(new MenuOption(item.getName(), new SpecialOption(location, item, special.getValue()), item)); // See TravelOption
                 }
             }
         }
+	    return ret;
 	}
 	
 	public void addTravelOption(final List<Option> options, final boolean skipCurrentLocation) {
