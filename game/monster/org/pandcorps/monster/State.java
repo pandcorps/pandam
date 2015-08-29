@@ -235,6 +235,7 @@ public class State {
 
 	public void setLocation(final Location location) {
 	    this.location = location;
+	    serialize();
 	}
 
 	public int getExperience() {

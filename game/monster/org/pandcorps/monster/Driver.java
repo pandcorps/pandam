@@ -1228,6 +1228,7 @@ public class Driver implements Runnable {
     public class DatabaseOption extends RunOption {
         public DatabaseOption() {
             super(new Label(Data.getDatabase()));
+            setSaveOnPopEnabled(true);
         }
 
         @Override
@@ -1325,8 +1326,13 @@ public class Driver implements Runnable {
         @Override
         public void run() {
             Option opt = null;
+            boolean canSave = true;
             do {
-                stack.pop();
+                final Option popped = stack.pop();
+                if (canSave && popped.isSaveOnPopEnabled()) {
+                    state.serialize();
+                    canSave = false;
+                }
                 opt = stack.peek();
             } while (!opt.isPossible() || opt.isAutoBackEnabled());
         }

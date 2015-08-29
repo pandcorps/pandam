@@ -31,6 +31,7 @@ public abstract class Option implements Runnable {
 	private String info = null;
 	private boolean autoBackEnabled = false;
 	private boolean autoBackPlusButton = false;
+	private boolean saveOnPopEnabled = false;
 
 	protected Option(final Label goal) {
 	    this(goal, null);
@@ -80,6 +81,14 @@ public abstract class Option implements Runnable {
 	public final void setAutoBackPlusButton(final boolean autoBackPlusButton) {
         this.autoBackPlusButton = autoBackPlusButton;
     }
+	
+	public final boolean isSaveOnPopEnabled() {
+	    return saveOnPopEnabled;
+	}
+	
+	public final void setSaveOnPopEnabled(final boolean saveOnPopEnabled) {
+	    this.saveOnPopEnabled = saveOnPopEnabled;
+	}
 
 	public boolean isPossible() {
         for (final Entity requirement : required) {

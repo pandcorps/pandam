@@ -143,8 +143,11 @@ public class Task extends Option {
 	}
 	
 	protected void pushAwardIfNeeded() {
+	    final int awardedSize = awarded.size();
+	    if (awardedSize > 0) {
+	        State.get().serialize();
+	    }
 		if (pushAwardOptionIfNeeded) {
-		    final int awardedSize = awarded.size();
 	        if (pushAwardOptionAlways || (awardedSize > 1) || ((awardedSize == 1) && (awarded.get(0) != goal))) {
 	            pushAwardForce();
 	        }
