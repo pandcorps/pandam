@@ -53,9 +53,6 @@ public final class MonsterGame extends BaseGame {
     Show total money/experience when earning it
     Database screen move to front after selecting favorite (or back after selecting least)
     Test that impossible options still appear as buildings handled gracefully
-    Auto-save
-    Validate that all items/locations/etc. have images
-    Validate experience upgrades (or auto-derive)
     */
     private static volatile Driver driver = null;
     private static volatile Panroom room = null;
@@ -1312,6 +1309,11 @@ public final class MonsterGame extends BaseGame {
         }
     }
     
+    private final static void validateAll() {
+        validateSpecies();
+        validateImages(true);
+    }
+    
     private final static void validateSpecies() {
         int start = 0, mid = 0, adv = 0;
         for (final Species s : Species.getSpecies()) {
@@ -1380,7 +1382,7 @@ public final class MonsterGame extends BaseGame {
         }
     }
     
-    private final static void validateImages() {
+    private final static void validateImages(final boolean validateOnly) {
         for (final Item item : Item.getItems()) {
             assertImage(item);
         }
@@ -1391,12 +1393,12 @@ public final class MonsterGame extends BaseGame {
                 assertNoImage(loc);
             }
         }
-        final String[] menu = { "Egg", "Travel", "Experience", "Money", "Fight", "Buy", "Sell", "Menu", "Plus", "Equals", "Up", "Back", "Exit" };
+        final String[] menu = { "Egg", "Travel", "Experience", "Money", "Fight", "Buy", "Sell", "Trade", "Menu", "Plus", "Equals", "Finish", "Back", "Cancel", "Exit" };
         // Items/database bigger
         for (final String m : menu) {
             assertImage(m);
         }
-        if (Pangine.getEngine() != null) {
+        if (validateOnly) {
             return;
         }
         final int d1 = 24, numImgs = imgNames.size(), totalArea = numImgs * d1 * d1;
