@@ -28,7 +28,8 @@ import java.util.*;
 import org.pandcorps.core.*;
 
 public class Parser {
-    protected static String LOC = null;
+    protected static String IMG = null;
+    protected static String DEF = null;
     
     public final static synchronized void parse() {
         if (Coltil.isValued(Species.getSpecies())) {
@@ -38,7 +39,10 @@ public class Parser {
     }
     
 	private final void run() {
-	    LOC = Iotil.formatDirectory(System.getProperty("org.pandcorps.monster.def"));
+	    final String prop = System.getProperty("org.pandcorps.monster.def");
+	    final String res = Chartil.isValued(prop) ? Iotil.formatDirectory(prop) : "org/pandcorps/monster/res/";
+	    IMG = res + "img/";
+	    DEF = res + "def/";
 		try {
 			runType();
 			new ItemRunner().run();
@@ -135,7 +139,7 @@ public class Parser {
 	}
 	
 	private final static BufferedReader open(final String fileName) {
-	    return Iotil.getBufferedReader(LOC + fileName + ".txt");
+	    return Iotil.getBufferedReader(DEF + fileName + ".txt");
 	}
 	
 	private final static List<String> getTokens(final String line, final String seg) {

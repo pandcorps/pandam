@@ -170,26 +170,26 @@ public final class MonsterGame extends BaseGame {
         }
         //menuLeft = engine.createImage(Pantil.vmid(), ImtilX.newLeft2(80, Pancolor.BLUE));
         //menuRight = engine.createImage(Pantil.vmid(), ImtilX.newRight2(80, Pancolor.BLUE));
-        final Panmage[][] players = engine.createSheet("player", new FinPanple2(8, 0), null, null, Parser.LOC + "misc/Player.png", 32, 32);
+        final Panmage[][] players = engine.createSheet("player", new FinPanple2(8, 0), null, null, Parser.IMG + "Player.png", 32, 32);
         playerSouth = createAnm(players[0]);
         playerNorth = createAnm(players[1]);
         playerEast = createAnm(players[2]);
         playerWest = createAnm(players[3]);
         playerWalks = new Panimation[] {playerSouth, playerEast, playerNorth, playerWest};
-        tiles = engine.createImage("tiles", Parser.LOC + "misc/Tiles.png");
+        tiles = engine.createImage("tiles", Parser.IMG + "Tiles.png");
         DIM_BUTTON = getButtonSize(0);
         final Panmage[] diamonds = getDiamonds(DIM_BUTTON, Pancolor.GREY);
         diamond = diamonds[0];
         diamondIn = diamonds[1];
-        final Panmage[] menuFullPair = createImgPair(Parser.LOC + "misc/MenuFull.png", "menu.full");
+        final Panmage[] menuFullPair = createImgPair(Parser.IMG + "MenuFull.png", "menu.full");
         menuFull = menuFullPair[0];
         menuFullTranslucent = menuFullPair[1];
         splitMenuImage();
-        final Panmage[] speciesAllPair = createImgPair(Parser.LOC + "misc/Species.png", "species.all");
+        final Panmage[] speciesAllPair = createImgPair(Parser.IMG + "Species.png", "species.all");
         speciesAll = speciesAllPair[0];
         speciesAllTranslucent = speciesAllPair[1];
         splitSpeciesImage();
-        worldSrc = Imtil.load(Parser.LOC + "misc/WorldMap.png");
+        worldSrc = Imtil.load(Parser.IMG + "WorldMap.png");
         ctrl = new ControlScheme();
     }
     
@@ -226,7 +226,7 @@ public final class MonsterGame extends BaseGame {
         final int fullWidth = (int) menuFull.getSize().getX(), d = 24;
         final int cellsPerRow = fullWidth / d;
         final Panple size = new FinPanple2(d, d);
-        final BufferedReader in = Iotil.getBufferedReader(Parser.LOC + "menu.txt");
+        final BufferedReader in = Iotil.getBufferedReader(Parser.DEF + "menu.txt");
         try {
             String line;
             int id = 0;
@@ -261,8 +261,7 @@ public final class MonsterGame extends BaseGame {
         }
         final String fileName = formatFile(name);
         //for (int i = 0; i < 2; i++) {
-            //final String loc = Parser.LOC + ((i == 0) ? "img/" : "misc/") + fileName + ".png";
-            final String loc = Parser.LOC + "misc/" + fileName + ".png";
+            final String loc = Parser.IMG + fileName + ".png";
             if (Iotil.exists(loc)) {
                 final Img im = Imtil.load(loc);
                 if (!possible) {
@@ -966,7 +965,7 @@ public final class MonsterGame extends BaseGame {
     private static Tile tileDefault = null;
     
     private final static void loadTileDefinitions() throws Exception {
-        final BufferedReader in = Iotil.getBufferedReader(Parser.LOC + "tiles.txt");
+        final BufferedReader in = Iotil.getBufferedReader(Parser.DEF + "tiles.txt");
         try {
             final Pattern pat = Pattern.compile("\\|");
             String line;
@@ -1281,7 +1280,7 @@ public final class MonsterGame extends BaseGame {
             }
             i++;
         }
-        Imtil.save(img, Parser.LOC + "misc/Species.png");
+        Imtil.save(img, Parser.IMG + "Species.png");
     }
     
     private final static void dumpLocations() {
@@ -1410,7 +1409,7 @@ public final class MonsterGame extends BaseGame {
         final Img cache24 = Imtil.newImage(da, da);
         int x = 0, y = 0;
         for (final String name : imgNames) {
-            final Img src = Imtil.load(Parser.LOC + "misc/" + formatFile(name) + ".png");
+            final Img src = Imtil.load(Parser.IMG + formatFile(name) + ".png");
             if (src.getWidth() != d1) {
                 throw new RuntimeException(name + " had width " + src.getWidth() + " instead of " + d1);
             } else if (src.getHeight() != d1) {
@@ -1428,7 +1427,7 @@ public final class MonsterGame extends BaseGame {
             }
             src.close();
         }
-        Imtil.save(cache24, Parser.LOC + "misc/MenuFull.png");
+        Imtil.save(cache24, Parser.IMG + "MenuFull.png");
         cache24.close();
     }
     
