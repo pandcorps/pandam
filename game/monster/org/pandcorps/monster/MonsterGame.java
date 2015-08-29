@@ -89,7 +89,7 @@ public final class MonsterGame extends BaseGame {
     private static Panmage menuFull = null;
     private static Panmage menuFullTranslucent = null;
     private static Panmage speciesAll = null;
-    private static Panmage speciesAllTranslucent = null;
+    //private static Panmage speciesAllTranslucent = null;
     private final static Map<String, Panmage> imageCache = new HashMap<String, Panmage>();
     private static Panimation playerSouth = null;
     private static Panimation playerEast = null;
@@ -185,9 +185,10 @@ public final class MonsterGame extends BaseGame {
         menuFull = menuFullPair[0];
         menuFullTranslucent = menuFullPair[1];
         splitMenuImage();
-        final Panmage[] speciesAllPair = createImgPair(Parser.IMG + "Species.png", "species.all");
-        speciesAll = speciesAllPair[0];
-        speciesAllTranslucent = speciesAllPair[1];
+        //final Panmage[] speciesAllPair = createImgPair(Parser.IMG + "Species.png", "species.all");
+        //speciesAll = speciesAllPair[0];
+        //speciesAllTranslucent = speciesAllPair[1];
+        speciesAll = engine.createImage(PRE_IMG + "species.all", Parser.IMG + "Species.png");
         splitSpeciesImage();
         worldSrc = Imtil.load(Parser.IMG + "WorldMap.png");
         ctrl = new ControlScheme();
@@ -218,7 +219,8 @@ public final class MonsterGame extends BaseGame {
         final Panple size = new FinPanple2(IMG_W, IMG_H);
         for (final Species s : Species.getSpecies()) {
             final int id = s.getId() - 1;
-            split(s.getName(), speciesAll, speciesAllTranslucent, id, IMG_W, IMG_H, size, cellsPerRow);
+            //split(s.getName(), speciesAll, speciesAllTranslucent, id, IMG_W, IMG_H, size, cellsPerRow);
+            split(s.getName(), speciesAll, null, id, IMG_W, IMG_H, size, cellsPerRow);
         }
     }
     
@@ -246,7 +248,7 @@ public final class MonsterGame extends BaseGame {
         final int x = i * iw, y = j * ih;
         final Panmage image = new SubPanmage(Pantil.vmid(), null, null, null, all, x, y, size);
         imageCache.put(getKey(name, true), image);
-        final Panmage imageTrans = new SubPanmage(Pantil.vmid(), null, null, null, trans, x, y, size);
+        final Panmage imageTrans = trans == null ? image : new SubPanmage(Pantil.vmid(), null, null, null, trans, x, y, size);
         imageCache.put(getKey(name, false), imageTrans);
     }
     

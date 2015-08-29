@@ -24,6 +24,7 @@ package org.pandcorps.core;
 
 import java.io.*;
 import java.net.*;
+import java.nio.charset.*;
 
 // Input/Output Utility
 public final class Iotil {
@@ -84,7 +85,7 @@ public final class Iotil {
 	}
 	
 	public final static Reader getReader(final String location) {
-		return new InputStreamReader(getInputStream(location));
+		return new InputStreamReader(getInputStream(location), Charset.forName("ISO-8859-1"));
 	}
 	
 	public final static Writer getWriter(final String location) {
