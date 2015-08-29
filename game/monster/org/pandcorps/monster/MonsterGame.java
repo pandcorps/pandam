@@ -669,22 +669,34 @@ public final class MonsterGame extends BaseGame {
                             map = wildMap;
                             imgX = loc.getWildImgX();
                             imgY = loc.getWildImgY();
-                        } else if (wrappedOption instanceof SpecialOption && "Surf".equalsIgnoreCase(Label.getName(((SpecialOption) wrappedOption).requirement))) {
-                            map = surfMap;
-                            imgX = loc.getWaterImgX();
-                            imgY = loc.getWaterImgY();
+                        } else if (wrappedOption instanceof SpecialOption) {
+                            final String req = Label.getName(((SpecialOption) wrappedOption).requirement);
+                            if ("Surf".equalsIgnoreCase(req)) {
+                                map = surfMap;
+                                imgX = loc.getWaterImgX();
+                                imgY = loc.getWaterImgY();
+                            } else {
+                                throw new Exception("Unrecognized SpecialOption for " + loc + ": " + req);
+                            }
                         } else if (wrappedOption instanceof FishOption) {
                             map = fishMap;
                             imgX = loc.getWaterImgX();
                             imgY = loc.getWaterImgY();
                         } else {
-                            map = null;
-                            imgX = imgY = -1;
+                            throw new Exception("Unrecognized BattleOption for " + loc + ": " + wrappedOption);
+                            //map = null;
+                            //imgX = imgY = -1;
                         }
                         if (imgX >= 0) {
                             map.put(imgMap[imgY][imgX], option);
                         }
+                    } else {
+                        throw new Exception("Unrecognized MenuOption: " + wrappedOption);
                     }
+                } else if (option instanceof BackOption) {
+                    // Handled by main menu
+                } else {
+                    throw new Exception("Unrecognized Option: " + option);
                 }
             }
         }
