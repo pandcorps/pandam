@@ -927,12 +927,7 @@ public final class MonsterGame extends BaseGame {
             } else {
                 waterMap = surfMap;
             }
-            final Option waterOption = waterMap.get(bg);
-            if (waterOption != null) {
-                updateLastCity();
-                choice.value = waterOption;
-                return;
-            }
+            choose(waterMap.get(bg), true);
         }
         
         private final boolean choose(final Option option, final boolean updateLocation) {
