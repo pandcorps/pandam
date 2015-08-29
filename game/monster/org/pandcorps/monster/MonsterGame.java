@@ -109,6 +109,9 @@ public final class MonsterGame extends BaseGame {
     
     @Override
     protected final void init(final Panroom room) throws Exception {
+    	Handler.implClass = PndHandler.class;
+        Handler.get(); // Must instantiate Handler to call Parser.run
+        driver = new Driver(new State("Trainer"));
         MonsterGame.room = room;
         //loadConstants();
         //new Thread(driver).start();
@@ -1456,10 +1459,6 @@ public final class MonsterGame extends BaseGame {
     
     public final static void main(final String[] args) {
         try {
-            Handler.implClass = PndHandler.class;
-            Handler.get(); // Must instantiate Handler to call Parser.run
-            driver = new Driver(new State("Trainer"));
-            //driver.run();
             new MonsterGame().start();
         } catch (final Throwable e) {
             e.printStackTrace();
