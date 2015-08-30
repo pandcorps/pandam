@@ -1201,6 +1201,8 @@ public class Driver implements Runnable {
         public List<Option> menu() {
             final Set<Entry<Item, Long>> inventory = state.getInventoryMap().entrySet();
             final List<Option> options = new ArrayList<Option>(inventory.size());
+            final int team = state.getTeam().size(), max = Species.getSpecies().size();
+            addItem(options, new Label("Team"), (team >= max) ? "ALL!" : String.valueOf(team));
             addItem(options, new Label(Data.getMoney()), state.getMoney());
             addItem(options, new Label(Data.getExperience()), state.getExperience());
             for (final Entry<Item, Long> entry : inventory) {
@@ -1218,9 +1220,13 @@ public class Driver implements Runnable {
         }
         
         private final void addItem(final List<Option> options, final Label product, final long amount) {
+        	addItem(options, product, String.valueOf(amount));
+        }
+        
+        private final void addItem(final List<Option> options, final Label product, final String amount) {
             final BackOption opt = new BackOption(product);
             //Task.setItemInfo(opt, entry.getValue().longValue(), product.getPrice());
-            opt.setInfo(String.valueOf(amount));
+            opt.setInfo(amount);
             options.add(opt);
         }
     }
