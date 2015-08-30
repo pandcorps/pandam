@@ -170,11 +170,13 @@ public final class MonsterGame extends BaseGame {
         }
         //menuLeft = engine.createImage(Pantil.vmid(), ImtilX.newLeft2(80, Pancolor.BLUE));
         //menuRight = engine.createImage(Pantil.vmid(), ImtilX.newRight2(80, Pancolor.BLUE));
-        final Panmage[][] players = engine.createSheet("player", new FinPanple2(8, 0), null, null, Parser.IMG + "Player.png", 32, 32);
-        playerSouth = createAnm(players[0]);
-        playerNorth = createAnm(players[1]);
-        playerEast = createAnm(players[2]);
-        playerWest = createAnm(players[3]);
+        //final Panmage[][] players = engine.createSheet("player", new FinPanple2(8, 0), null, null, Parser.IMG + "Player.png", 32, 32);
+        final Panmage players = engine.createImage(PRE_IMG + "player", Parser.IMG + "Player.png");
+        final Panple po = new FinPanple2(8, 0), ps = new FinPanple2(32, 32);
+        playerSouth = createAnm(players, 0, po, ps);
+        playerNorth = createAnm(players, 1, po, ps);
+        playerEast = createAnm(players, 2, po, ps);
+        playerWest = createAnm(players, 3, po, ps);
         playerWalks = new Panimation[] {playerSouth, playerEast, playerNorth, playerWest};
         tiles = engine.createImage("tiles", Parser.IMG + "Tiles.png");
         DIM_BUTTON = getButtonSize(0);
@@ -206,10 +208,14 @@ public final class MonsterGame extends BaseGame {
         return pair;
     }
     
-    private final static Panimation createAnm(final Panmage[] row) {
-        final Panmage i0 = row[0];
-        final String baseId = i0.getId();
-        final Panmage[] ia = {i0, row[1], i0, row[2]};
+    private final static Panimation createAnm(final Panmage players, final int row, final Panple o, final Panple s) {
+        final String baseId = "player." + row, pre = PRE_IMG + baseId + ".";
+        final Panmage[] ia = new Panmage[4];
+        final int y = 32 * row;
+        for (int i = 0; i < 3; i++) {
+            ia[(i < 2) ? i : 3] = new SubPanmage(pre + i, o, null, null, players, 32 * i, y, s);
+        }
+        ia[2] = ia[0];
         return Pangine.getEngine().createAnimation(PRE_ANM + baseId, createFrames(PRE_FRM + baseId, 2, ia));
     }
     
