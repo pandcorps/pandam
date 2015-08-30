@@ -447,6 +447,10 @@ public class Profile extends PlayerData implements Segmented, Savable {
 			return getDefeatedCount(FurGuardiansGame.trollColossus) + getDefeatedCount(FurGuardiansGame.ogreBehemoth);
 		}
 		
+		public final long getDefeatedWisps() {
+            return getDefeatedCount(FurGuardiansGame.iceWisp) + getDefeatedCount(FurGuardiansGame.fireWisp);
+        }
+		
 		public final int getDefeatedWorldTypeCount() {
 		    int count = 0;
 		    for (final MapTheme theme : Map.themes) {

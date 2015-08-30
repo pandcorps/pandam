@@ -46,7 +46,8 @@ public abstract class Achievement extends FinName {
 		new NoGemsFeat(), new AllGemsFeat(), new AllBrokenFeat(),
 		new GiantFeat("Giant Slayer", 50), new HardFeat(),
 		new BuyFeat("Consumer", 1), new BuyFeat("Demander", 5), new BuyFeat("Collector", 15),
-		new NoBirdGemsFeat(), new BirdGemFeat("Nest Egg", 200)
+		new NoBirdGemsFeat(), new BirdGemFeat("Nest Egg", 200),
+		new WispFeat("Wisp Slayer", 10)
 		// level w/ no damage
 		// Beyond Belief, Finish level as a flying pig
 		// Babe, Finish level as a blue bull/ox
@@ -309,6 +310,17 @@ public abstract class Achievement extends FinName {
         @Override
         public final long getCurrent(final Statistics stats) {
             return stats.getDefeatedGiants();
+        }
+    }
+	
+	private final static class WispFeat extends StatFeat {
+        protected WispFeat(final String name, final int n) {
+            super(name, n, "Defeat " + n + " wisp" + getS(n), n * 200);
+        }
+        
+        @Override
+        public final long getCurrent(final Statistics stats) {
+            return stats.getDefeatedWisps();
         }
     }
 	

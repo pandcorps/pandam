@@ -257,6 +257,8 @@ public class FurGuardiansGame extends BaseGame {
 	protected static EnemyDefinition bounceBall = null;
 	protected static EnemyDefinition trollColossus = null;
 	protected static EnemyDefinition ogreBehemoth = null;
+	protected static EnemyDefinition iceWisp = null;
+	protected static EnemyDefinition fireWisp = null;
 	protected static EnemyDefinition rockSprite = null;
 	protected static EnemyDefinition rockTrio = null;
 	protected static EnemyDefinition rockLeg = null;
@@ -1414,7 +1416,7 @@ public class FurGuardiansGame extends BaseGame {
             spikedImp.award = GemBumped.AWARD_2;
             Coltil.set(allEnemies, Level.SPIKED_IMP, spikedImp);
 			anger = createAnm("anger", 10, CENTER_16, Enemy.loadStrip(9, ImtilX.DIM));
-			final EnemyDefinition iceWisp = new EnemyDefinition("Ice Wisp", 12, Enemy.wispFactory);
+			iceWisp = new EnemyDefinition("Ice Wisp", 12, Enemy.wispFactory);
 			iceWisp.hurtHandler = new InteractionHandler() {
                 @Override public final boolean onInteract(final Enemy enemy, final Player player) {
                 	player.startFreeze();
@@ -1422,7 +1424,7 @@ public class FurGuardiansGame extends BaseGame {
                 }};
             iceWisp.award = GemBumped.AWARD_2;
 			Coltil.set(allEnemies, Level.ICE_WISP, iceWisp);
-			final EnemyDefinition fireWisp = new EnemyDefinition("Fire Wisp", 13, Enemy.wispFactory);
+			fireWisp = new EnemyDefinition("Fire Wisp", 13, Enemy.wispFactory);
 			fireWisp.hurtHandler = new InteractionHandler() {
                 @Override public final boolean onInteract(final Enemy enemy, final Player player) {
                 	player.startBurn();
