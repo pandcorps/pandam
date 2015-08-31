@@ -1,3 +1,7 @@
+Added Wisp Slayer Achievement.
+
+*****
+
 1.11.0 (20)
 
 Added Lightning Orb invincibility power-up.

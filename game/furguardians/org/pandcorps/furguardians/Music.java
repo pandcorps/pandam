@@ -202,6 +202,33 @@ public class Music {
 		return song;
 	}
 	
+	protected final static Song newSongSnow() throws Exception {
+        final Song song = new Song("Snow");
+        final Track track = song.track;
+        channel = 0;
+        vol = 64;
+        tick = 0;
+        final int dur = 12;
+        Mustil.setInstrument(track, channel, Mustil.PRG_TINKLE_BELL);
+        for (int i = 0; i < 1; i++) {
+            for (int k = 0; k < 4; k++) {
+                if (k == 1) {
+                    key = 79;
+                } else if (k == 3) {
+                    key = 83;
+                } else {
+                    key = 81;
+                }
+                for (int v = 0; v < 5; v++) {
+                    final int d = (v < 4) ? dur : (dur * 4);
+                    Mustil.addNote(track, tick, d, channel, key, vol - (v * 4));
+                    tick += d;
+                }
+            }
+        }
+        return song;
+	}
+	
 	protected final static Sequence newSongHappy2() throws Exception {
 		final Sequence seq = new Sequence(Sequence.SMPTE_30, 1);
 		final Track track = seq.createTrack();
@@ -749,7 +776,7 @@ public class Music {
 	
 	private final static void runGen() throws Exception {
 		System.out.println("Starting");
-		final Song song = newSongCave();
+		final Song song = newSongSnow();
 		Mustil.save(song.seq, song.name.toLowerCase() + ".mid");
 		final Panaudio music = Pangine.getEngine().getAudio();
 		//music.ensureCapacity(4);
