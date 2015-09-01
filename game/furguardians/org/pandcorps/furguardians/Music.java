@@ -206,11 +206,14 @@ public class Music {
         final Song song = new Song("Snow");
         final Track track = song.track;
         channel = 0;
+        final int channel2 = 1;
         vol = 64;
+        final int vol2 = 48;
         tick = 0;
         final int dur = 12;
         Mustil.setInstrument(track, channel, Mustil.PRG_TINKLE_BELL);
-        for (int i = 0; i < 1; i++) {
+        Mustil.setInstrument(track, channel2, Mustil.PRG_BRIGHT_ACOUSTIC_PIANO);
+        for (int i = 0; i < 4; i++) {
             for (int k = 0; k < 4; k++) {
                 if (k == 1) {
                     key = 79;
@@ -218,6 +221,13 @@ public class Music {
                     key = 83;
                 } else {
                     key = 81;
+                }
+                if (i > 1) {
+                    for (int j = 0; j < 4; j++) {
+                        final long tj2 = tick + (j * 2 * dur);
+                        Mustil.addNote(track, tj2, dur, channel2, 83, vol2);
+                        Mustil.addNote(track, tj2 + dur, dur, channel2, 81, vol2);
+                    }
                 }
                 for (int v = 0; v < 5; v++) {
                     final int d = (v < 4) ? dur : (dur * 4);
