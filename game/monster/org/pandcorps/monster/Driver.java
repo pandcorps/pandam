@@ -723,6 +723,21 @@ public class Driver implements Runnable {
 	    return state.hasSeen(s) && !state.hasTeam(s) && !(s.isUnique() && state.hasOwned(s));
 	}
 	
+	private Collection<Species> getMorphs(final Species precursor) {
+		final Collection<Species> all = precursor.getMorphs();
+		final int size = Coltil.size(all);
+		if (size < 2) {
+			return all;
+		}
+		final Collection<Species> needed = new ArrayList<Species>(size);
+		for (final Species s : all) {
+			if (!state.hasTeam(s)) {
+				needed.add(s);
+			}
+		}
+		return needed;
+	}
+	
 	protected class MorphOption extends OpponentOption {
         public MorphOption() {
             super(new Label(Data.getMorph()), getMorphable());
@@ -732,7 +747,7 @@ public class Driver implements Runnable {
         protected Option createOption(final Species chosen, final Species opponent, final Special special) {
             final Species precursor = opponent.getPrecursor();
             if (!canSplit(precursor)) {
-                final Collection<Species> morphs = precursor.getMorphs();
+                final Collection<Species> morphs = getMorphs(precursor);
                 if (Coltil.size(morphs) > 1) {
                     return new MenuOption(precursor.getName(), new MorphChoiceOption(morphs));
                 }
@@ -824,10 +839,13 @@ public class Driver implements Runnable {
         final List<Species> list = new ArrayList<Species>();
         for (final Species s : state.getPreferences()) {
             //TODO Option to display creatures currently in team
+            if (s.getCatalyst() == null || state.hasTeam(s)) {
+            	continue;
+            }
             final Species precursor = s.getPrecursor();
             if (precursor == null || !state.hasTeam(precursor) || precursors.contains(precursor)) {
                 continue;
-            } else if ((!canSplit(precursor) || precursor.getMorphs().iterator().next().equals(s)) && s.getCatalyst() != null && !state.hasTeam(s)) {
+            } else if (!canSplit(precursor) || precursor.getMorphs().iterator().next().equals(s)) {
                 precursors.add(precursor);
                 list.add(s);
             }
