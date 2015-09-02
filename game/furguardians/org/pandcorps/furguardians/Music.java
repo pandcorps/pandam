@@ -239,6 +239,18 @@ public class Music {
         return song;
 	}
 	
+	protected final static Song newSongSand() throws Exception {
+        final Song song = new Song("Sand");
+        final Track track = song.track;
+        return song;
+	}
+	
+	protected final static Song newSongRock() throws Exception {
+        final Song song = new Song("Rock");
+        final Track track = song.track;
+        return song;
+    }
+	
 	protected final static Sequence newSongHappy2() throws Exception {
 		final Sequence seq = new Sequence(Sequence.SMPTE_30, 1);
 		final Track track = seq.createTrack();
