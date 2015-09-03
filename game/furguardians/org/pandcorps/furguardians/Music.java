@@ -247,6 +247,10 @@ public class Music {
         Mustil.addPercussionsAtVolume(track, 0, 64, 8, p1, p2, p2, p1);
         channel = 0;
         Mustil.setInstrument(track, channel, Mustil.PRG_FLUTE);
+        vol = 64;
+        Mustil.addNote(track, 0, 48, channel, 76, vol);
+        Mustil.addNote(track, 48, 8, channel, 74, vol);
+        Mustil.addNote(track, 56, 8, channel, 72, vol);
         return song;
 	}
 	
