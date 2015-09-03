@@ -383,9 +383,7 @@ public class Enemy extends Character {
 		final boolean skipSplat = def.splatDecider != null && !def.splatDecider.onInteract(this, player);
 		final BurstHandler splatHandler = skipSplat ? null : def.splatHandler;
 		if (player != null && (v > 0 || splatHandler == null)) {
-		    if (isRewarded(player)) {
-				reward(player, this, def, defeatMode);
-		    }
+		    reward(player, defeatMode);
 		}
 		if (!skipSplat && v == 0 && def.splat != null) {
 		    burst(def.splat, splatHandler);
@@ -394,6 +392,12 @@ public class Enemy extends Character {
 		    flipAndFall(v); // Calls destroy
 		}
 		return true;
+	}
+	
+	private final void reward(final Player player, final byte defeatMode) {
+	    if (isRewarded(player)) {
+            reward(player, this, def, defeatMode);
+        }
 	}
 	
 	private final static void reward(final Player player, final Panctor enemy, final EnemyDefinition def, final byte defeatMode) {
