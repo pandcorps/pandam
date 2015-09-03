@@ -242,6 +242,11 @@ public class Music {
 	protected final static Song newSongSand() throws Exception {
         final Song song = new Song("Sand");
         final Track track = song.track;
+        channel = Mustil.CHN_PERCUSSION;
+        final int p1 = Mustil.PRC_BASS_DRUM_1, p2 = Mustil.PRC_MID_TOM_1;
+        Mustil.addPercussionsAtVolume(track, 0, 64, 8, p1, p2, p2, p1);
+        channel = 0;
+        Mustil.setInstrument(track, channel, Mustil.PRG_FLUTE);
         return song;
 	}
 	
