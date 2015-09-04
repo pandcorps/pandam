@@ -682,6 +682,17 @@ public class Enemy extends Character {
 		
 		@Override
 		protected boolean defeat(final Character defeater, final int v, final byte defeatMode) {
+		    /*
+		    Don't usually reward until an Enemy is totally defeated.
+		    Here a Rock Walker simply becomes a Rock Sprite.
+		    But if we don't reward here, then the Player never receives credit for defeating a Rock Walker.
+		    And the Player receives 2 Gems this way, 1 for defeating the Walker and another for the Sprite.
+		    Previously the Player only received 1, and most enemies that require 2 stomps give 10.
+		    So 2 is an improvement.
+		    */
+		    if (defeater instanceof Player) {
+		        reward((Player) defeater, this, def, defeatMode);
+		    }
 		    transform();
 		    return true;
 		}
@@ -724,7 +735,7 @@ public class Enemy extends Character {
 		
 		@Override
         protected boolean defeat(final Character defeater, final int v, final byte defeatMode) {
-            head.transform();
+            head.defeat(defeater, v, defeatMode);
             return true;
         }
 		
