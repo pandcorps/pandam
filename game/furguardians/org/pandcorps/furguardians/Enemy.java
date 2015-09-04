@@ -690,7 +690,7 @@ public class Enemy extends Character {
 		    Previously the Player only received 1, and most enemies that require 2 stomps give 10.
 		    So 2 is an improvement.
 		    */
-		    if (defeater instanceof Player) {
+		    if ((defeater instanceof Player) && !isDestroyed()) {
 		        reward((Player) defeater, this, def, defeatMode);
 		    }
 		    transform();
