@@ -2126,7 +2126,7 @@ public class FurGuardiansGame extends BaseGame {
 		if (Pangine.getEngine().getAudio().getMusic() == musicChant) {
 			return;
 		}
-		musicMenu.changeMusic();
+		(Map.theme == null ? musicMenu : Map.theme.getMenuMusic()).changeMusic();
 	}
 	
 	protected final static void playTransition(final Pansound music) {

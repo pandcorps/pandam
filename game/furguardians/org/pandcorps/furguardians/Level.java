@@ -258,6 +258,10 @@ public class Level {
             @Override protected final String getBgImg() {
                 return Map.theme.levelTheme.bgImg;
             }
+            
+            @Override protected Pansound getMusic() {
+                return Map.theme.levelTheme.getMusic();
+            }
         };
         public final static Theme Cave = new Theme("Cave", MSG) {
             @Override protected final int[] getEnemyIndices(final int worlds, final int levels) {
@@ -303,6 +307,10 @@ public class Level {
             
             @Override protected final String getBgImg() {
                 return Map.theme.levelTheme.bgImg;
+            }
+            
+            @Override protected Pansound getMusic() {
+                return Map.theme.levelTheme.getMusic();
             }
         };
         private final static int[] getLimitedEnemies(final int worlds, final int levels, final int special) {
@@ -350,6 +358,10 @@ public class Level {
                     f.put((short) (64 + (i * 16)), (short) (64 + (i * 32)), Pancolor.MAX_VALUE, grey, grey, grey);
                 }
                 return f;
+            }
+            
+            @Override protected Pansound getMusic() {
+                return Map.theme.levelTheme.getMusic();
             }
         };
     	private final static String[] MSG_CHAOS = {"CHAOS", "HAVOC", "BEWARE", "FEAR", "DANGER"};

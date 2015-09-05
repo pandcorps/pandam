@@ -218,7 +218,9 @@ public class Map {
 			@Override protected final PixelMask getDirtMask() {
 				return getBasicDirtMask(); }
             @Override protected final boolean hasBeenDefeated(final Statistics stats) {
-                return stats.defeatedWorlds > DEFEATED_WORLD_COUNT_TO_FORCE_SNOW; }};
+                return stats.defeatedWorlds > DEFEATED_WORLD_COUNT_TO_FORCE_SNOW; }
+            @Override protected final Pansound getMenuMusic() {
+                return FurGuardiansGame.musicSnow; }};
 		
 		protected final PixelMask getBasicDirtMask() {
 			final int minR, minG;
@@ -247,7 +249,9 @@ public class Map {
 			@Override protected final PixelFilter getHillFilter2() {
 				return new SwapPixelFilter(Channel.Green, Channel.Green, Channel.Red); }
             @Override protected final boolean hasBeenDefeated(final Statistics stats) {
-                return stats.defeatedWorlds > DEFEATED_WORLD_COUNT_TO_FORCE_SAND; }};
+                return stats.defeatedWorlds > DEFEATED_WORLD_COUNT_TO_FORCE_SAND; }
+            @Override protected final Pansound getMenuMusic() {
+                return FurGuardiansGame.musicSand; }};
 		
 		private final static ColorFunction funcLight = new ColorFunction() {
             @Override public final short eval(final Pancolor c) {
@@ -273,7 +277,9 @@ public class Map {
 			@Override protected final PixelMask getDirtMask() {
 				return getBasicDirtMask(); }
             @Override protected final boolean hasBeenDefeated(final Statistics stats) {
-                return stats.playedRockWorlds > 0; }};
+                return stats.playedRockWorlds > 0; }
+            @Override protected final Pansound getMenuMusic() {
+                return FurGuardiansGame.musicRock; }};
 		
 		protected final String name;
 		protected final String img;
@@ -331,6 +337,10 @@ public class Map {
 		}
 		
 		protected abstract boolean hasBeenDefeated(final Statistics stats);
+		
+		protected Pansound getMenuMusic() {
+		    return FurGuardiansGame.musicMenu;
+		}
 	}
 	
 	protected final static MapTheme[] themes = {MapTheme.Normal, MapTheme.Snow, MapTheme.Sand, MapTheme.Rock};
