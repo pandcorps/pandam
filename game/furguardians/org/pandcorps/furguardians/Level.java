@@ -187,6 +187,10 @@ public class Level {
     	        return new TileMapImage[] {row[5], row[6], row[7]};
         	}
     		
+    		@Override protected Pansound getMusic() {
+                return FurGuardiansGame.musicSnow;
+            }
+    		
     		@Override protected final void flash(final long i) {
     			if (i < 3 && extraAnimBlock != null) {
     				Tile.animate(extraAnimBlock);
