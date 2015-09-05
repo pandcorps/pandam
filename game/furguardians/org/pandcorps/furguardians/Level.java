@@ -215,6 +215,10 @@ public class Level {
     	        return new TileMapImage[] {row[5], row[6], row[7]};
         	}
     		
+    		@Override protected Pansound getMusic() {
+                return FurGuardiansGame.musicSand;
+            }
+    		
     		@Override protected final void step(final long clock) {
     			if (clock % 6 == 0 && extraAnimBlock != null) {
     				Tile.animate(extraAnimBlock);
