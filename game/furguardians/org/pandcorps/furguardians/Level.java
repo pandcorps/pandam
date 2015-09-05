@@ -237,6 +237,10 @@ public class Level {
     		@Override protected final Builder getRandomBuilder() {
     			return new GrassyBuilder();
     		}
+    		
+    		@Override protected Pansound getMusic() {
+                return FurGuardiansGame.musicRock;
+            }
     	};
     	public final static Theme Bridge = new Theme("Bridge", MSG) {
             @Override protected final int[] getEnemyIndices(final int worlds, final int levels) {

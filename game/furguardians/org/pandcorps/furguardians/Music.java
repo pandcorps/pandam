@@ -281,6 +281,34 @@ public class Music {
 	protected final static Song newSongRock() throws Exception {
         final Song song = new Song("Rock");
         final Track track = song.track;
+        channel = Mustil.CHN_PERCUSSION;
+        vol = 64;
+        final int cl = Mustil.PRC_HAND_CLAP, lt = Mustil.PRC_LOW_TOM_1, ht = Mustil.PRC_HIGH_TOM_1;
+        final int n = 9;
+        for (int i = 0; i < n; i++) {
+            Mustil.addPercussionsAtVolume(track, 128 * i, vol, 8,
+                lt, -1, ht, ht, cl, ht, ht, -1,
+                lt, -1, ht, ht, -1, lt, -1, -1);
+        }
+        
+        channel = 0;
+        vol = 64;
+        final int dur = 48;
+        Mustil.setInstrument(track, channel, Mustil.PRG_ACOUSTIC_GRAND_PIANO);
+        Mustil.addNote(track, 128, dur, channel, 60, vol);
+        Mustil.addNote(track, 256, dur, channel, 64, vol);
+        Mustil.addNote(track, 384, dur, channel, 67, vol);
+        Mustil.addNote(track, 504, 8, channel, 64, vol);
+        Mustil.addNote(track, 512, dur, channel, 62, vol);
+        
+        Mustil.addNote(track, 640, dur, channel, 65, vol);
+        Mustil.addNote(track, 760, 8, channel, 65, vol);
+        Mustil.addNote(track, 768, dur, channel, 67, vol);
+        Mustil.addNote(track, 896, dur, channel, 69, vol);
+        Mustil.addNote(track, 1008, 8, channel, 64, vol);
+        Mustil.addNote(track, 1016, 8, channel, 64, vol);
+        Mustil.addNote(track, 1024, dur, channel, 62, vol);
+        Mustil.addNote(track, (128 * n - 8), 8, channel, 48, 1);
         return song;
     }
 	
@@ -831,7 +859,7 @@ public class Music {
 	
 	private final static void runGen() throws Exception {
 		System.out.println("Starting");
-		final Song song = newSongSand();
+		final Song song = newSongRock();
 		Mustil.save(song.seq, song.name.toLowerCase() + ".mid");
 		final Panaudio music = Pangine.getEngine().getAudio();
 		//music.ensureCapacity(4);

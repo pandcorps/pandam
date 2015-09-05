@@ -1,6 +1,6 @@
 1.12.0 (21)
 
-Added new music track for snow and sand levels.
+Added new music track for snow, sand, and rock levels.
 Added Wisp Slayer Achievement.
 Fixed a bug that never gave credit for defeating Rock Walkers.
 
