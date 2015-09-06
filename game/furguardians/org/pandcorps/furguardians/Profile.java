@@ -289,7 +289,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
         	stompedEnemies = seg.initLong(10);
         	bumpedEnemies = seg.initLong(11);
         	hitEnemies = seg.initLong(12);
-        	defeatedEnemies = Math.max(defeatedEnemies, stompedEnemies + bumpedEnemies + hitEnemies);
+        	defeatedEnemies = Math.max(defeatedEnemies, stompedEnemies + bumpedEnemies + hitEnemies + electrocutedEnemies);
         	defeatedEnemyTypes.clear();
         	for (final Field f : Coltil.unnull(seg.getRepetitions(13))) {
         		defeatedEnemyTypes.put(f.getValue(0), f.toLong(1));
@@ -403,13 +403,15 @@ public class Profile extends PlayerData implements Segmented, Savable {
 			add(list, "Total purchases", totalPurchases, availablePurchases);
 			final int availableEnemyTypes = FurGuardiansGame.allEnemies.size();
 			add(list, "Total enemy types", enemyTypesDefeated, availableEnemyTypes);
-			// Total temporary power-up types? Total ways for defeating enemies?
+			final int totalDefeatTechniques = getDefeatTechniques(), availableDefeatTechniques = getAvailableDefeatTechniques();
+			add(list, "Total defeat styles", totalDefeatTechniques, availableDefeatTechniques);
+			// Total temporary power-up types?
 			final int totalWorldTypes = getDefeatedWorldTypeCount(), availableWorldTypes = Map.themes.length;
             add(list, "Total world types", totalWorldTypes, availableWorldTypes);
 			final int totalTrophies = prf.achievements.size(), availableTrophies = Achievement.ALL.length;
 			add(list, "Total trophies", totalTrophies, availableTrophies);
 			final int total = totalPurchases + enemyTypesDefeated + totalWorldTypes + totalTrophies;
-			final int available = availablePurchases + availableEnemyTypes + availableWorldTypes + availableTrophies;
+			final int available = availablePurchases + availableEnemyTypes + availableDefeatTechniques + availableWorldTypes + availableTrophies;
 			add(list, "Total checklist", total, available);
 			return list;
 		}
@@ -459,6 +461,23 @@ public class Profile extends PlayerData implements Segmented, Savable {
 		        }
 		    }
 		    return count;
+		}
+		
+		public final int getDefeatTechniques() {
+		    int n = 0;
+		    n += toFlag(stompedEnemies);
+		    n += toFlag(bumpedEnemies);
+		    n += toFlag(hitEnemies);
+		    n += toFlag(electrocutedEnemies);
+		    return n; // Must be consistent with getAvailableDefeatTechniques()
+		}
+		
+		public final static int getAvailableDefeatTechniques() {
+		    return 4; // Must be consistent with getDefeatTechniques()
+		}
+		
+		protected final static int toFlag(final long n) {
+		    return (n > 0) ? 1 : 0;
 		}
     }
     

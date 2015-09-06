@@ -2,6 +2,7 @@
 
 Added new music track for snow, sand, and rock levels.
 Added Wisp Slayer Achievement.
+Added defeat style statistics.
 Fixed a bug that never gave credit for defeating Rock Walkers.
 
 *****
