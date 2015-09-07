@@ -99,9 +99,11 @@ public abstract class GlPangine extends Pangine {
 	
 	protected int w = 640, h = 480;
 	protected int truncatedWidth = w, truncatedHeight = h;
-    protected boolean fullScreen = false;
+    protected boolean fullScreen = getDefaultFullScreeen();
 	private boolean initialized = false;
 	private float clr = 0.0f, clg = 0.0f, clb = 0.0f, cla = 0.0f;
+	
+	protected abstract boolean getDefaultFullScreeen();
 	
 	@Override
 	public final void setDisplaySize(final int w, final int h) {

@@ -58,6 +58,11 @@ public final class LwjglPangine extends GlPangine {
     public final int getDesktopHeight() {
         return Display.getDesktopDisplayMode().getHeight();
     }
+    
+    @Override
+    protected final boolean getDefaultFullScreeen() {
+    	return false;
+    }
 
     @Override
     protected final void initDisplay() throws Exception {
