@@ -476,6 +476,10 @@ public class Profile extends PlayerData implements Segmented, Savable {
 		    return 4; // Must be consistent with getDefeatTechniques()
 		}
 		
+		public final static int getAvailableOrbTypes() {
+		    return 1;
+		}
+		
 		protected final static int toFlag(final long n) {
 		    return (n > 0) ? 1 : 0;
 		}
