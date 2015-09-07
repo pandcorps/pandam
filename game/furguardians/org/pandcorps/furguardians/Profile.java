@@ -410,7 +410,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
             add(list, "Total world types", totalWorldTypes, availableWorldTypes);
 			final int totalTrophies = prf.achievements.size(), availableTrophies = Achievement.ALL.length;
 			add(list, "Total trophies", totalTrophies, availableTrophies);
-			final int total = totalPurchases + enemyTypesDefeated + totalWorldTypes + totalTrophies;
+			final int total = totalPurchases + enemyTypesDefeated + totalDefeatTechniques + totalWorldTypes + totalTrophies;
 			final int available = availablePurchases + availableEnemyTypes + availableDefeatTechniques + availableWorldTypes + availableTrophies;
 			add(list, "Total checklist", total, available);
 			return list;

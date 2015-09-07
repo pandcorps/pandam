@@ -244,7 +244,7 @@ public class Music {
         final Track track = song.track;
         
         channel = Mustil.CHN_PERCUSSION;
-        vol = 80;
+        vol = 96; // 80 for old mid; 96 for new jet
         final int p = 72;
         final int p1 = Mustil.PRC_LOW_BONGO, p2 = Mustil.PRC_MID_TOM_1;
         for (int i = 0; i < 8; i++) {
@@ -254,7 +254,7 @@ public class Music {
         
         channel = 0;
         Mustil.setInstrument(track, channel, Mustil.PRG_BLOWN_BOTTLE);
-        vol = 64;
+        vol = 112; // 64 for old mid; 112 for new jet
         for (int i = 0; i < 2; i++) {
             final int b = i * p * 4;
             Mustil.addNote(track, b, 56, channel, 76, vol);
@@ -282,8 +282,9 @@ public class Music {
         final Song song = new Song("Rock");
         final Track track = song.track;
         channel = Mustil.CHN_PERCUSSION;
-        vol = 64;
-        final int cl = Mustil.PRC_HAND_CLAP, lt = Mustil.PRC_LOW_TOM_1, ht = Mustil.PRC_HIGH_TOM_1;
+        vol = 120; // 64 for old mid
+        final int cl = Mustil.PRC_MID_TOM_1; // HAND_CLAP for old mid
+        final int lt = Mustil.PRC_LOW_TOM_1, ht = Mustil.PRC_HIGH_TOM_1;
         final int n = 9;
         for (int i = 0; i < n; i++) {
             Mustil.addPercussionsAtVolume(track, 128 * i, vol, 8,
@@ -292,7 +293,7 @@ public class Music {
         }
         
         channel = 0;
-        vol = 64;
+        vol = 76; // 64 for old mid
         final int dur = 48;
         Mustil.setInstrument(track, channel, Mustil.PRG_ACOUSTIC_GRAND_PIANO);
         Mustil.addNote(track, 128, dur, channel, 60, vol);
