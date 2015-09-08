@@ -53,6 +53,7 @@ public final class MonsterGame extends BaseGame {
     Show total money/experience when earning it
     Database screen move to front after selecting favorite (or back after selecting least)
     Test that impossible options still appear as buildings handled gracefully
+    Normal upgrade screen incorrectly shows trade upgrades (and runs them without even doing a trade)
     */
     private static volatile Driver driver = null;
     private static volatile Panroom room = null;
