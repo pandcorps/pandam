@@ -405,13 +405,14 @@ public class Profile extends PlayerData implements Segmented, Savable {
 			add(list, "Total enemy types", enemyTypesDefeated, availableEnemyTypes);
 			final int totalDefeatTechniques = getDefeatTechniques(), availableDefeatTechniques = getAvailableDefeatTechniques();
 			add(list, "Total defeat styles", totalDefeatTechniques, availableDefeatTechniques);
-			// Total temporary power-up types?
+			final int totalOrbTypes = getDiscoveredOrbTypes(), availableOrbTypes = getAvailableOrbTypes();
+			add(list, "Total Orb types", totalOrbTypes, availableOrbTypes);
 			final int totalWorldTypes = getDefeatedWorldTypeCount(), availableWorldTypes = Map.themes.length;
             add(list, "Total world types", totalWorldTypes, availableWorldTypes);
 			final int totalTrophies = prf.achievements.size(), availableTrophies = Achievement.ALL.length;
 			add(list, "Total trophies", totalTrophies, availableTrophies);
-			final int total = totalPurchases + enemyTypesDefeated + totalDefeatTechniques + totalWorldTypes + totalTrophies;
-			final int available = availablePurchases + availableEnemyTypes + availableDefeatTechniques + availableWorldTypes + availableTrophies;
+			final int total = totalPurchases + enemyTypesDefeated + totalDefeatTechniques + totalOrbTypes + totalWorldTypes + totalTrophies;
+			final int available = availablePurchases + availableEnemyTypes + availableDefeatTechniques + availableOrbTypes + availableWorldTypes + availableTrophies;
 			add(list, "Total checklist", total, available);
 			return list;
 		}
