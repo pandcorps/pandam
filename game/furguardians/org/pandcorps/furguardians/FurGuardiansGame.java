@@ -104,7 +104,6 @@ public class FurGuardiansGame extends BaseGame {
 	Breaking block with Imp at edge above it can miss the Imp.
 	Menu.menuTouch - call allow method before processing a tab change or exit?
 	MaskMap cache
-	Rock Walker doesn't disappear on level-end; changed to Sprite instead
 	
 	Remove System.out/err/printStackTrace/etc.
 	Screen shots.
@@ -1893,11 +1892,13 @@ public class FurGuardiansGame extends BaseGame {
 	
 	protected final static void levelVictory() {
 	    for (final Panctor actor : room.getActors()) {
-            if (actor instanceof Enemy) {
-                ((Enemy) actor).onBump(null);
-            } else if (actor instanceof Wisp) {
+	        // Trio is sub-class of Enemy, so check for it first
+	        // Wisp can't be bumped; Trio turns into Sprite when bumped
+	        if (actor instanceof Wisp || actor instanceof Trio) {
                 Gem.spark(actor.getPosition(), false);
                 actor.destroy();
+            } else if (actor instanceof Enemy) {
+                ((Enemy) actor).onBump(null);
             //} else if (actor instanceof Gem) {
             //    ((Gem) actor).spark(); // No longer objects
             }
