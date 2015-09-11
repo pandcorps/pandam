@@ -242,6 +242,7 @@ public class Level {
                 return FurGuardiansGame.musicRock;
             }
     	};
+    	public final static Theme Hive = null;
     	public final static Theme Bridge = new Theme("Bridge", MSG) {
             @Override protected final int[] getEnemyIndices(final int worlds, final int levels) {
                 return Map.theme.levelTheme.getEnemyIndices(worlds, levels);

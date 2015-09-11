@@ -280,6 +280,21 @@ public class Map {
                 return stats.playedRockWorlds > 0; }
             @Override protected final Pansound getMenuMusic() {
                 return FurGuardiansGame.musicRock; }};
+        
+        public final static MapTheme Hive = new MapTheme("Hive", Theme.Hive, 1, 7, 3, null) {
+            @Override protected final void step() {
+                stepWater();
+            }
+            @Override protected final PixelFilter getHillFilter0() {
+                return new SwapPixelFilter(Channel.Green, Channel.Red, Channel.Red); }
+            @Override protected final PixelFilter getHillFilter1() {
+                return new SwapPixelFilter(Channel.Green, Channel.Blue, Channel.Red); }
+            @Override protected final PixelFilter getHillFilter2() {
+                return new SwapPixelFilter(Channel.Green, Channel.Green, Channel.Red); }
+            @Override protected final boolean hasBeenDefeated(final Statistics stats) {
+                return stats.playedHiveWorlds > 0; }
+            @Override protected final Pansound getMenuMusic() {
+                return FurGuardiansGame.musicHive; }};
 		
 		protected final String name;
 		protected final String img;
@@ -343,7 +358,7 @@ public class Map {
 		}
 	}
 	
-	protected final static MapTheme[] themes = {MapTheme.Normal, MapTheme.Snow, MapTheme.Sand, MapTheme.Rock};
+	protected final static MapTheme[] themes = {MapTheme.Normal, MapTheme.Snow, MapTheme.Sand, MapTheme.Rock}; //TODO HIVE MapTheme.Hive
 	
 	protected final static MapTheme getTheme(final String name) {
 		for (final MapTheme theme : themes) {
@@ -1033,6 +1048,8 @@ public class Map {
     	    final int worlds = stats.defeatedWorlds;
     	    if (theme == MapTheme.Rock) {
     	        stats.playedRockWorlds++;
+    	    } else if (theme == MapTheme.Hive) {
+    	        stats.playedHiveWorlds++;
     	    }
 			if (worlds == DEFEATED_WORLD_COUNT_TO_FORCE_SNOW) {
 				theme = MapTheme.Snow;
@@ -1042,6 +1059,8 @@ public class Map {
 				theme = MapTheme.Normal;
 			} else if (stats.playedRockWorlds == 0) {
 				theme = MapTheme.Rock;
+			//} else if (stats.playedHiveWorlds == 0) { //TODO HIVE
+            //    theme = MapTheme.Hive;
 			} else {
 				final MapTheme old = theme;
 				do {

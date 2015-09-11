@@ -274,6 +274,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
     	protected long bounces = 0;
     	protected int foundLightningOrbs = 0;
     	protected long electrocutedEnemies = 0;
+    	protected int playedHiveWorlds = 0;
     	
     	public void load(final Segment seg, final int currGems) {
         	defeatedLevels = seg.initInt(0);
@@ -312,6 +313,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
         	bounces = seg.initLong(23);
         	foundLightningOrbs = seg.initInt(24);
         	electrocutedEnemies = seg.initLong(25);
+        	playedHiveWorlds = seg.initInt(26);
         }
     	
 		@Override
@@ -356,6 +358,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
 	        seg.setLong(23, bounces);
 	        seg.setInt(24, foundLightningOrbs);
 	        seg.setLong(25, electrocutedEnemies);
+	        seg.setInt(26, playedHiveWorlds);
 		}
 		
 		public List<String> toList(final Profile prf) {
