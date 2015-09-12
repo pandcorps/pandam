@@ -70,6 +70,7 @@ public class FurGuardiansGame extends BaseGame {
 	Gargoyles catch/carry Player, like moving platforms, one can jump to/from them, but not run on them.
 	Cannons on ground that Player enters to be launched.
 	Cannons in air that auto-fire, others that wait for jump input.
+	Item/costume/vehicle/power-up found in Level that Player or certain monster(s) can use
 	Maximum effective (per tick) velocity & higher absolute max; set current to max effective before evaluating.
 	Options (in/out game) - track active/p1
 	Font w/ custom chars for custom string/min square/case space if needed.

@@ -242,7 +242,23 @@ public class Level {
                 return FurGuardiansGame.musicRock;
             }
     	};
-    	public final static Theme Hive = null;
+    	public final static Theme Hive = new Theme("Hive", null, MSG, (byte) -1) {
+            @Override protected final int[] getEnemyIndices(final int worlds, final int levels) {
+                return NORMAL_ENEMIES;
+            }
+            
+            @Override protected final BackgroundBuilder getRandomBackground() {
+                return new HillBackgroundBuilder();
+            }
+            
+            @Override protected final Builder getRandomBuilder() {
+                return new HexBuilder();
+            }
+            
+            @Override protected Pansound getMusic() {
+                return FurGuardiansGame.musicHive;
+            }
+        };
     	public final static Theme Bridge = new Theme("Bridge", MSG) {
             @Override protected final int[] getEnemyIndices(final int worlds, final int levels) {
                 return Map.theme.levelTheme.getEnemyIndices(worlds, levels);
@@ -1317,6 +1333,24 @@ public class Level {
         //@OverrideMe
         protected boolean isGapNeeded() {
         	return false;
+        }
+    }
+    
+    private final static class HexBuilder extends RandomBuilder {
+        @Override
+        protected final void loadTemplates() {
+        }
+
+        @Override
+        protected final void ground(final int start, final int stop) {
+        }
+
+        @Override
+        protected final void upStep(final int x, final int y, final int h) {
+        }
+
+        @Override
+        protected final void downStep(final int x, final int y, final int h) {
         }
     }
     
