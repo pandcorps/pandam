@@ -2626,6 +2626,11 @@ public class Level {
 		tm.setForeground(x + 3, y + 2, imgMap[6][1]);
     }
     
+    private final static void hexagon(final int x, final int y) {
+        final int index = tm.getIndex(x, y);
+        tm.setForeground(index, imgMap[1][0], (tm.getTile(index).getBehavior() == Tile.BEHAVIOR_SOLID) ? Tile.BEHAVIOR_SOLID : FurGuardiansGame.TILE_UPSLOPE);
+    }
+    
     private final static void gem(final int x, final int y) {
         if (tileGem == null) {
         	tileGem = tm.getTile(null, FurGuardiansGame.gem[0], FurGuardiansGame.TILE_GEM);
