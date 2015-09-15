@@ -71,6 +71,14 @@ public class TileMap extends Panctor implements Savable {
         this(id, Mathtil.ceil(room.getSize().getX() / tw), Mathtil.ceil(room.getSize().getY() / th), tw, th);
     }
     
+    public final boolean isBadRow(final int j) {
+        return j < 0 || j >= h;
+    }
+    
+    public final boolean isBadColumn(final int i) {
+        return i < 0 || i >= w;
+    }
+    
     public final boolean isBad(final int i, final int j) {
         return i < 0 || j < 0 || i >= w || j >= h;
     }
