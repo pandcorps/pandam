@@ -1343,6 +1343,16 @@ public class Level {
 
         @Override
         protected final void ground(final int start, final int stop) {
+            final int f = floor + 1;
+            for (int i = start - 1; i < stop; i += 3) {
+                for (int j = 0; j <= f; j += 2) {
+                    hexagon(i, j); // (i, j - 1) to (i + 2, j)
+                }
+                final int i2 = i + 2;
+                for (int j = 1; j <= f; j += 2) {
+                    hexagon(i2, j);
+                }
+            }
         }
 
         @Override
