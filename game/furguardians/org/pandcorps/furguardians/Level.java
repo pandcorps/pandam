@@ -1362,6 +1362,11 @@ public class Level {
         @Override
         protected final void downStep(final int x, final int y, final int h) {
         }
+        
+        @Override
+        protected final int getMaxFloorChange() {
+            return 1;
+        }
     }
     
     private final static class MinecartBuilder extends BridgeBuilder {
