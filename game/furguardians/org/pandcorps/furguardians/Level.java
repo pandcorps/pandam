@@ -1340,11 +1340,25 @@ public class Level {
         @Override
         protected final void loadTemplates() {
         }
-
+        
+        @Override
+        protected final boolean changeFloor() {
+            if (!super.changeFloor()) {
+                return false;
+            }
+            final int m = px % 4;
+            if (m == 0) {
+                return true;
+            }
+            bx = px + (4 - m) - 1;
+            ground();
+            return true;
+        }
+        
         @Override
         protected final void ground(final int start, final int stop) {
             final int f = floor + 1;
-            for (int i = start - 1; i < stop; i += 3) {
+            for (int i = start - 1; i <= stop; i += 4) {
                 for (int j = 0; j <= f; j += 2) {
                     hexagon(i, j); // (i, j - 1) to (i + 2, j)
                 }
