@@ -1339,6 +1339,7 @@ public class Level {
     private final static class HexBuilder extends RandomBuilder {
         @Override
         protected final void loadTemplates() {
+            addTemplate(new BeeTemplate());
         }
         
         @Override
@@ -1985,6 +1986,17 @@ public class Level {
     			tm.setForeground(i, y, imgMap[1][5], theme.specialGroundBehavior);
     		}
     	}
+    }
+    
+    private final static class BeeTemplate extends SimpleTemplate {
+        protected BeeTemplate() {
+            super(1, 1, 0);
+        }
+        
+        @Override
+        protected void build() {
+            
+        }
     }
     
     private final static class BushTemplate extends SimpleTemplate {
