@@ -105,6 +105,7 @@ public class FurGuardiansGame extends BaseGame {
 	Breaking block with Imp at edge above it can miss the Imp.
 	Menu.menuTouch - call allow method before processing a tab change or exit?
 	MaskMap cache
+	Can get stuck under bridges in auto-run mode
 	
 	Remove System.out/err/printStackTrace/etc.
 	Screen shots.

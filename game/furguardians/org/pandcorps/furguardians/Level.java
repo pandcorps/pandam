@@ -1340,6 +1340,7 @@ public class Level {
         @Override
         protected final void loadTemplates() {
             addTemplate(new BeeTemplate());
+            goals.add(new BeeGoal());
         }
         
         @Override
@@ -1507,6 +1508,18 @@ public class Level {
         @Override
         protected final void rise(final int x, final int y, final int w, final int h) {
             ColorRiseTemplate.riseStatic(x, y, w, h);
+        }
+    }
+    
+    private final static class BeeGoal extends GoalTemplate {
+        @Override
+        protected int getWidth() {
+            return 3; // 1 for bee + 1 for goal + 1 for gap
+        }
+
+        @Override
+        protected void build() {
+            
         }
     }
     
