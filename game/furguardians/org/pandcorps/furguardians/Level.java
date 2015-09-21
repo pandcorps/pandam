@@ -1104,6 +1104,10 @@ public class Level {
     	numEnemies++;
     }
     
+    private final static void bee(final int x, final int y) {
+        
+    }
+    
     private final static int[] scratch = new int[128];
     
     private final static void swapScratch(final int i, final int j) {
@@ -1519,7 +1523,8 @@ public class Level {
 
         @Override
         protected void build() {
-            
+            bee(ng, floor + 3);
+            goalBlock(ng + 1, floor + 7);
         }
     }
     
@@ -2008,7 +2013,7 @@ public class Level {
         
         @Override
         protected void build() {
-            
+            bee(x, floor + 3);
         }
     }
     
