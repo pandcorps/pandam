@@ -373,7 +373,7 @@ public class Enemy extends Character {
 	protected boolean defeat(final Character defeater, final int v, final byte defeatMode) {
 		if (def.defeatHandler != null && !def.defeatHandler.onInteract(this, null)) {
 			return false;
-		} else if (avoidCount > 0) {
+		} else if (avoidCount > 0 && defeatMode != DEFEAT_ELECTROCUTE) {
 	        avoidCount--;
 	        if (teleport(48)) {
 	            return false;
