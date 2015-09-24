@@ -381,14 +381,14 @@ public class Profile extends PlayerData implements Segmented, Savable {
 			list.add("Blocks bumped: " + bumpedBlocks);
 			list.add("Blocks broken: " + brokenBlocks);
 			list.add("Jumps: " + jumps);
-			list.add("Cave levels played: " + playedCaveLevels);
-			list.add("Minecart levels played: " + playedMinecartLevels);
-			list.add("Bonus games played: " + playedBonuses);
-			list.add("Bonus words collected: " + collectedWords);
+			list.add("Cave Levels played: " + playedCaveLevels);
+			list.add("Minecart Levels played: " + playedMinecartLevels);
+			list.add("Bonus Games played: " + playedBonuses);
+			list.add("Bonus Words collected: " + collectedWords);
 			list.add("Blue Gems found: " + foundBlueGems);
 			list.add("Cyan Gems found: " + foundCyanGems);
 			list.add("Green Gems found: " + foundGreenGems);
-			list.add("Gems found by bird: " + birdGems);
+			list.add("Gems found by Bird: " + birdGems);
 			final int runSize = Math.min(bestRuns.size(), BEST_RUN_SIZE);
             for (int i = 0; i < runSize; i++) {
                 list.add("Best run " + (i + 1) + ": " + bestRuns.get(i));
@@ -405,15 +405,15 @@ public class Profile extends PlayerData implements Segmented, Savable {
 			final int totalPurchases = Achievement.BuyFeat.getPurchases(prf), availablePurchases = getTotalItemsForSale();
 			add(list, "Total purchases", totalPurchases, availablePurchases);
 			final int availableEnemyTypes = FurGuardiansGame.allEnemies.size();
-			add(list, "Total enemy types", enemyTypesDefeated, availableEnemyTypes);
+			add(list, "Total Enemy types", enemyTypesDefeated, availableEnemyTypes);
 			final int totalDefeatTechniques = getDefeatTechniques(), availableDefeatTechniques = getAvailableDefeatTechniques();
 			add(list, "Total defeat styles", totalDefeatTechniques, availableDefeatTechniques);
 			final int totalOrbTypes = getDiscoveredOrbTypes(), availableOrbTypes = getAvailableOrbTypes();
 			add(list, "Total Orb types", totalOrbTypes, availableOrbTypes);
 			final int totalWorldTypes = getDefeatedWorldTypeCount(), availableWorldTypes = Map.themes.length;
-            add(list, "Total world types", totalWorldTypes, availableWorldTypes);
+            add(list, "Total World types", totalWorldTypes, availableWorldTypes);
 			final int totalTrophies = prf.achievements.size(), availableTrophies = Achievement.ALL.length;
-			add(list, "Total trophies", totalTrophies, availableTrophies);
+			add(list, "Total Trophies", totalTrophies, availableTrophies);
 			final int total = totalPurchases + enemyTypesDefeated + totalDefeatTechniques + totalOrbTypes + totalWorldTypes + totalTrophies;
 			final int available = availablePurchases + availableEnemyTypes + availableDefeatTechniques + availableOrbTypes + availableWorldTypes + availableTrophies;
 			add(list, "Total checklist", total, available);

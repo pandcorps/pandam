@@ -549,6 +549,10 @@ public abstract class Goal implements Named {
         
         @Override
         protected final long getAmount() {
+            return getAmount(award);
+        }
+        
+        protected final static long getAmount(final byte award) {
             return award;
         }
         
@@ -599,7 +603,7 @@ public abstract class Goal implements Named {
         
         @Override
         protected final String getExtra() {
-            return " in blocks";
+            return " in Blocks";
         }
     }
 	
