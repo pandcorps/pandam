@@ -399,7 +399,7 @@ public abstract class Goal implements Named {
         
         @Override
         protected final long getAmount() {
-            return LevelGoal.getAmount(award); // Typically will have one Orb per Level, so this amount should be the same
+            return WordGoal.getAmount(award); // Typically will have one Orb per Level (like Bonus Word); amount can be same
         }
         
         @Override

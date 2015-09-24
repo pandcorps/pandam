@@ -48,14 +48,14 @@ public abstract class Achievement extends FinName {
 		new BuyFeat("Consumer", 1), new BuyFeat("Demander", 5), new BuyFeat("Collector", 15),
 		new NoBirdGemsFeat(), new BirdGemFeat("Nest Egg", 200),
 		new WispFeat("Wisp Slayer", 10)
-		// level w/ no damage
-		// Beyond Belief, Finish level as a flying pig
-		// Babe, Finish level as a blue bull/ox
-		// Menagerie (Zoologist), Use each animal to finish a level
-		// Play a bonus level
-		// Defeat all levels within a World (including optional one)
-		// Collect n temporary power-ups
-		// Electrocute n enemies
+		// Level w/ no damage
+		// Beyond Belief, Finish Level as a flying Pig
+		// Babe, Finish Level as a blue Bull/Ox
+		// Menagerie (Zoologist), Use each Animal to finish a Level
+		// Defeat all Levels within a World (including optional one)
+		// Collect n temporary Power Orbs
+		// Electrocute n Enemies
+		// Bee-line
 	};
 	
 	private final String desc;
@@ -228,6 +228,17 @@ public abstract class Achievement extends FinName {
         @Override
         public final long getCurrent(final Statistics stats) {
             return stats.collectedWords;
+        }
+    }
+	
+	private final static class OrbFeat extends StatFeat {
+        protected OrbFeat(final String name, final int n) {
+            super(name, n, "Collect " + n + " Power Orb" + getS(n), n * 40);
+        }
+        
+        @Override
+        public final long getCurrent(final Statistics stats) {
+            return stats.getFoundOrbs();
         }
     }
 	
