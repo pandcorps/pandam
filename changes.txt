@@ -1,3 +1,6 @@
+1.13.0 (22)
+
+Added OrbGoal.
 Added power-up Orb type statistics.
 Fixed a bug that prevented the Lightning Orb from defeating Drowids.
 Fixed a bug that didn't destroy Rock Walkers at level end.

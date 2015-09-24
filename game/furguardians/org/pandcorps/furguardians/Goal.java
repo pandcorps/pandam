@@ -79,13 +79,14 @@ public abstract class Goal implements Named {
 	}
 	
 	public final static Goal newGoal(final byte award, final PlayerContext pc) {
+	    final int lastNormalGoal = 10;
 		final int max, index = award - 1;
 		if (award < 3) {
-			max = 9;
+			max = lastNormalGoal;
 		} else if (Map.isOnLastLevel()) {
-			max = 10;
+			max = lastNormalGoal + 1;
 		} else {
-			max = 11;
+			max = lastNormalGoal + 2;
 		}
 		final Goal[] goals = pc.profile.currentGoals;
 		//goals[index] = null; Don't reuse same Goal when assigning a new one; don't null out before checking
@@ -103,7 +104,8 @@ public abstract class Goal implements Named {
 				case 7: g = new HitGoal(award); break;
 				case 8: g = new WordGoal(award, pc); break;
 				case 9: g = new BlueGemGoal(award, pc); break;
-				case 10: g = new BonusGoal(award, pc); break;
+				case 10: g = new OrbGoal(award, pc); break;
+				case 11: g = new BonusGoal(award, pc); break;
 				default: g = new WorldGoal(award, pc); break;
 			}
 			if (hasCurrentGoal(goals, g.getClass())) {
@@ -162,6 +164,8 @@ public abstract class Goal implements Named {
             return new WordGoal(f);
 		} else if ("BlueGemGoal".equals(type)) {
             return new BlueGemGoal(f);
+		} else if ("OrbGoal".equals(type)) {
+            return new OrbGoal(f);
 		} else if ("BonusGoal".equals(type)) {
 			return new BonusGoal(f);
 		} else if ("WorldGoal".equals(type)) {
@@ -336,6 +340,10 @@ public abstract class Goal implements Named {
 		
 		@Override
 		protected final long getAmount() {
+		    return getAmount(award);
+		}
+		
+		protected final static long getAmount(final byte award) {
 			return ((award - 1) * 2) + 1;
 		}
 		
@@ -378,6 +386,36 @@ public abstract class Goal implements Named {
 		protected final String getLabelPlural() {
 			return "Enemies";
 		}
+	}
+	
+	public final static class OrbGoal extends StatGoal {
+	    public OrbGoal(final byte award, final PlayerContext pc) {
+            super(award, pc);
+        }
+        
+        protected OrbGoal(final Field f) {
+            super(f);
+        }
+        
+        @Override
+        protected final long getAmount() {
+            return LevelGoal.getAmount(award); // Typically will have one Orb per Level, so this amount should be the same
+        }
+        
+        @Override
+        protected final long getCurrentAmount(final Statistics stats) {
+            return stats.getFoundOrbs();
+        }
+        
+        @Override
+        protected final String getAction() {
+            return "Collect";
+        }
+        
+        @Override
+        protected final String getLabelSingular() {
+            return "Power Orb";
+        }
 	}
 	
 	public final static class BreakGoal extends StatGoal {
