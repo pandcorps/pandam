@@ -47,13 +47,12 @@ public abstract class Achievement extends FinName {
 		new GiantFeat("Giant Slayer", 50), new HardFeat(),
 		new BuyFeat("Consumer", 1), new BuyFeat("Demander", 5), new BuyFeat("Collector", 15),
 		new NoBirdGemsFeat(), new BirdGemFeat("Nest Egg", 200),
-		new WispFeat("Wisp Slayer", 10)
+		new WispFeat("Wisp Slayer", 10), new OrbFeat("Orb Wielder", 25)
 		// Level w/ no damage
 		// Beyond Belief, Finish Level as a flying Pig
 		// Babe, Finish Level as a blue Bull/Ox
 		// Menagerie (Zoologist), Use each Animal to finish a Level
 		// Defeat all Levels within a World (including optional one)
-		// Collect n temporary Power Orbs
 		// Electrocute n Enemies
 		// Bee-line
 	};
