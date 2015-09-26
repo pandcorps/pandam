@@ -47,13 +47,12 @@ public abstract class Achievement extends FinName {
 		new GiantFeat("Giant Slayer", 50), new HardFeat(),
 		new BuyFeat("Consumer", 1), new BuyFeat("Demander", 5), new BuyFeat("Collector", 15),
 		new NoBirdGemsFeat(), new BirdGemFeat("Nest Egg", 200),
-		new WispFeat("Wisp Slayer", 10), new OrbFeat("Orb Wielder", 25)
+		new WispFeat("Wisp Slayer", 10), new OrbFeat("Orb Wielder", 25), new MonsterElectrocuteFeat("Lightning Storm", 150)
 		// Level w/ no damage
 		// Beyond Belief, Finish Level as a flying Pig
 		// Babe, Finish Level as a blue Bull/Ox
 		// Menagerie (Zoologist), Use each Animal to finish a Level
 		// Defeat all Levels within a World (including optional one)
-		// Electrocute n Enemies
 		// Bee-line
 	};
 	
@@ -364,6 +363,17 @@ public abstract class Achievement extends FinName {
         @Override
         public final long getCurrent(final Statistics stats) {
             return stats.bumpedEnemies;
+        }
+    }
+	
+	private final static class MonsterElectrocuteFeat extends StatFeat {
+        protected MonsterElectrocuteFeat(final String name, final int n) {
+            super(name, n, "Defeat " + n + " Enemies with a Lightning Orb", n * 20);
+        }
+        
+        @Override
+        public final long getCurrent(final Statistics stats) {
+            return stats.electrocutedEnemies;
         }
     }
 	
