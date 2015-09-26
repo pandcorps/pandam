@@ -50,7 +50,7 @@ import org.pandcorps.furguardians.Player.*;
 
 public class FurGuardiansGame extends BaseGame {
 	protected final static String TITLE = "Fur-Guardians"; // res/values/strings.xml/app_name
-    protected final static String VERSION = "1.12.0"; // AndroidManifest.xml/versionName
+    protected final static String VERSION = "1.13.0"; // AndroidManifest.xml/versionName
     protected final static String YEAR = "2014-2015";
     protected final static String AUTHOR = "Andrew M. Martin";
 	/*
@@ -1900,7 +1900,7 @@ public class FurGuardiansGame extends BaseGame {
 	    for (final Panctor actor : room.getActors()) {
 	        // Trio is sub-class of Enemy, so check for it first
 	        // Wisp can't be bumped; Trio turns into Sprite when bumped
-	        if (actor instanceof Wisp || actor instanceof Trio) {
+	        if (actor instanceof Wisp || actor instanceof Trio || actor instanceof Leg) {
                 Gem.spark(actor.getPosition(), false);
                 actor.destroy();
             } else if (actor instanceof Enemy) {
