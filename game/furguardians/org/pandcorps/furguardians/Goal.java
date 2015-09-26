@@ -646,7 +646,7 @@ public abstract class Goal implements Named {
 		
 		@Override
 		protected final long getAmount() {
-			return 2 * award;
+			return award;
 		}
 		
 		@Override

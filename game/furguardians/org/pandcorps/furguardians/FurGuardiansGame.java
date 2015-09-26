@@ -106,7 +106,6 @@ public class FurGuardiansGame extends BaseGame {
 	Menu.menuTouch - call allow method before processing a tab change or exit?
 	MaskMap cache
 	Can get stuck under bridges in auto-run mode
-	Decrease required amount for FallGoal and HitGoal
 	Don't allow FallGoal and HitGoal at same time
 	
 	Remove System.out/err/printStackTrace/etc.
