@@ -457,6 +457,12 @@ public class Profile extends PlayerData implements Segmented, Savable {
             return getDefeatedCount(FurGuardiansGame.iceWisp) + getDefeatedCount(FurGuardiansGame.fireWisp);
         }
 		
+		public final long getDefeatedImps() {
+            return getDefeatedCount(FurGuardiansGame.imp)
+                    + getDefeatedCount(FurGuardiansGame.armoredImp)
+                    + getDefeatedCount(FurGuardiansGame.spikedImp);
+        }
+		
 		public final int getFoundOrbs() {
 		    return foundLightningOrbs; // + other orbs
 		}

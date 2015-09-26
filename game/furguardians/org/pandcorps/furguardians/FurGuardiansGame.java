@@ -106,6 +106,8 @@ public class FurGuardiansGame extends BaseGame {
 	Menu.menuTouch - call allow method before processing a tab change or exit?
 	MaskMap cache
 	Can get stuck under bridges in auto-run mode
+	Decrease required amount for FallGoal and HitGoal
+	Don't allow FallGoal and HitGoal at same time
 	
 	Remove System.out/err/printStackTrace/etc.
 	Screen shots.
@@ -256,6 +258,7 @@ public class FurGuardiansGame extends BaseGame {
 	protected static List<EnemyDefinition> enemies = null;
 	protected static EnemyDefinition imp = null;
 	protected static EnemyDefinition armoredImp = null;
+	protected static EnemyDefinition spikedImp = null;
 	protected static EnemyDefinition bounceBall = null;
 	protected static EnemyDefinition trollColossus = null;
 	protected static EnemyDefinition ogreBehemoth = null;
@@ -1410,7 +1413,7 @@ public class FurGuardiansGame extends BaseGame {
                 	return Math.abs(enemy.hv) < 4;
                 }};
             Coltil.set(allEnemies, Level.ARMORED_IMP, armoredImp);
-			final EnemyDefinition spikedImp = new EnemyDefinition("Spiked Imp", 10, null, true);
+			spikedImp = new EnemyDefinition("Spiked Imp", 10, null, true);
 			spikedImp.stompHandler = new InteractionHandler() {
                 @Override public final boolean onInteract(final Enemy enemy, final Player player) {
                 	if (player.isDragonStomping()) {

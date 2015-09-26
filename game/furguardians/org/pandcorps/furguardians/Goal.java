@@ -79,7 +79,7 @@ public abstract class Goal implements Named {
 	}
 	
 	public final static Goal newGoal(final byte award, final PlayerContext pc) {
-	    final int lastNormalGoal = 10;
+	    final int lastNormalGoal = 11;
 		final int max, index = award - 1;
 		if (award < 3) {
 			max = lastNormalGoal;
@@ -105,7 +105,8 @@ public abstract class Goal implements Named {
 				case 8: g = new WordGoal(award, pc); break;
 				case 9: g = new BlueGemGoal(award, pc); break;
 				case 10: g = new OrbGoal(award, pc); break;
-				case 11: g = new BonusGoal(award, pc); break;
+				case 11: g = new ImpGoal(award, pc); break;
+				case 12: g = new BonusGoal(award, pc); break;
 				default: g = new WorldGoal(award, pc); break;
 			}
 			if (hasCurrentGoal(goals, g.getClass())) {
@@ -166,6 +167,8 @@ public abstract class Goal implements Named {
             return new BlueGemGoal(f);
 		} else if ("OrbGoal".equals(type)) {
             return new OrbGoal(f);
+		} else if ("ImpGoal".equals(type)) {
+            return new ImpGoal(f);
 		} else if ("BonusGoal".equals(type)) {
 			return new BonusGoal(f);
 		} else if ("WorldGoal".equals(type)) {
@@ -387,6 +390,31 @@ public abstract class Goal implements Named {
 			return "Enemies";
 		}
 	}
+	
+	public final static class ImpGoal extends DefeatGoal {
+        public ImpGoal(final byte award, final PlayerContext pc) {
+            super(award, pc);
+        }
+        
+        protected ImpGoal(final Field f) {
+            super(f);
+        }
+        
+        @Override
+        protected final long getAmount() {
+            return award * 2;
+        }
+        
+        @Override
+        protected final long getCurrentAmount(final Statistics stats) {
+            return stats.getDefeatedImps();
+        }
+        
+        @Override
+        protected final String getLabelSingular() {
+            return "Imp";
+        }
+    }
 	
 	public final static class OrbGoal extends StatGoal {
 	    public OrbGoal(final byte award, final PlayerContext pc) {
