@@ -80,7 +80,12 @@ public abstract class Goal implements Named {
 	
 	public final static Goal newGoal(final byte award, final PlayerContext pc) {
 	    final int lastNormalGoal = 11;
-		final int max, index = award - 1;
+		final int min, max, index = award - 1;
+		if (award == 1) {
+		    min = 0;
+		} else {
+		    min = 2;
+		}
 		if (award < 3) {
 			max = lastNormalGoal;
 		} else if (Map.isOnLastLevel()) {
@@ -91,17 +96,17 @@ public abstract class Goal implements Named {
 		final Goal[] goals = pc.profile.currentGoals;
 		//goals[index] = null; Don't reuse same Goal when assigning a new one; don't null out before checking
 		while (true) {
-			final int r = Mathtil.randi(0, max);
+			final int r = Mathtil.randi(min, max);
 			final Goal g;
 			switch(r) {
-				case 0: g = new LevelGoal(award, pc); break;
-				case 1: g = new EnemyGoal(award, pc); break;
-				case 2: g = new BreakGoal(award, pc); break;
-				case 3: g = new BumpGoal(award, pc); break;
-				case 4: g = new JumpGoal(award, pc); break;
-				case 5: g = new GemGoal(award); break;
-				case 6: g = new FallGoal(award); break;
-				case 7: g = new HitGoal(award); break;
+			    case 0: g = new FallGoal(award); break;
+                case 1: g = new HitGoal(award); break;
+				case 2: g = new LevelGoal(award, pc); break;
+				case 3: g = new EnemyGoal(award, pc); break;
+				case 4: g = new BreakGoal(award, pc); break;
+				case 5: g = new BumpGoal(award, pc); break;
+				case 6: g = new JumpGoal(award, pc); break;
+				case 7: g = new GemGoal(award); break;
 				case 8: g = new WordGoal(award, pc); break;
 				case 9: g = new BlueGemGoal(award, pc); break;
 				case 10: g = new OrbGoal(award, pc); break;

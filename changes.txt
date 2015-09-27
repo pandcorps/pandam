@@ -1,3 +1,7 @@
+Only allow HitGoal or FallGoal for 1-star goals.
+
+*****
+
 1.13.0 (22)
 
 Added OrbGoal and ImpGoal.
