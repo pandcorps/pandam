@@ -287,6 +287,9 @@ public class FurGuardiansGame extends BaseGame {
 	protected static Panmage[] gemGoal = null;
 	protected static Panmage emptyGoal = null;
 	protected static Panmage[] gemRank = null;
+	protected static Panmage[] gemBlueRank = null;
+	protected static Panmage[] gemCyanRank = null;
+	protected static Panmage[] gemGreenRank = null;
 	protected static Panmage[] gemAchieve = null;
 	protected static Panmage gemShatter = null;
 	protected static Panimation spark = null;
@@ -1570,8 +1573,14 @@ public class FurGuardiansGame extends BaseGame {
 		    Img.close(blStrip);
 		    gemGoal = createSheet("gem.goal", null, ImtilX.loadStrip(RES + "misc/GemStar.png"));
 		    emptyGoal = createImage("empty.goal", RES + "misc/EmptyStar.png", ImtilX.DIM);
-		    gemRank = createSheet("gem.rank", null, ImtilX.loadStrip(RES + "misc/GemOrb.png"));
-		    gemAchieve = createSheet("gem.achieve", null, ImtilX.loadStrip(RES + "misc/GemTrophy.png")); }});
+		    final Img[] orbStrip = ImtilX.loadStrip(RES + "misc/GemOrb.png");
+		    Img.setTemporary(false, orbStrip);
+		    gemRank = createSheet("gem.rank", null, orbStrip);
+		    gemCyanRank = createGemSheet("cyan.rank", orbStrip, Channel.Green, Channel.Red, Channel.Blue);
+            gemBlueRank = createGemSheet("blue.rank", orbStrip, Channel.Red, Channel.Red, Channel.Blue);
+            gemGreenRank = createGemSheet("green.rank", orbStrip, Channel.Red, Channel.Blue, Channel.Red);
+		    gemAchieve = createSheet("gem.achieve", null, ImtilX.loadStrip(RES + "misc/GemTrophy.png"));
+		    Img.close(orbStrip); }});
 	    
 		loaders.add(new Runnable() { @Override public final void run() {
 		    final Panframe[] sa = createFrames("spark", RES + "misc/Spark.png", 8, 1);
@@ -1759,7 +1768,7 @@ public class FurGuardiansGame extends BaseGame {
 		return engine.createAnimation(PRE_ANM + name, engine.createFrame(PRE_FRM + name + ".0", gem[0], 3), engine.createFrame(PRE_FRM + name + ".1", gem[1], 1), engine.createFrame(PRE_FRM + name + ".2", gem[2], 1));
 	}
 	
-	private final static Panimation createGemAnm(final String col, final Img[] strip, final Channel r, final Channel g, final Channel b) {
+	private final static Panmage[] createGemSheet(final String col, final Img[] strip, final Channel r, final Channel g, final Channel b) {
 	    final SwapPixelFilter gemFilter = new SwapPixelFilter(r, g, b);
         for (int i = 0; i < 3; i++) {
         	final Img oldImg = strip[i], newImg = Imtil.filter(oldImg, gemFilter);
@@ -1767,9 +1776,11 @@ public class FurGuardiansGame extends BaseGame {
             newImg.setTemporary(false);
             strip[i] = newImg;
         }
-        final String name = "gem." + col;
-        final Panmage[] gemCyan = createSheet(name, null, strip);
-        return createGemAnm(name, gemCyan);
+        return createSheet("gem." + col, null, strip);
+	}
+	
+	private final static Panimation createGemAnm(final String col, final Img[] strip, final Channel r, final Channel g, final Channel b) {
+        return createGemAnm("gem." + col, createGemSheet(col, strip, r, g, b));
 	}
 	
 	private final static void loadLevel() {
