@@ -81,7 +81,7 @@ public abstract class Goal implements Named {
 	public final static Goal newGoal(final byte award, final PlayerContext pc) {
 	    final int lastNormalGoal = 11;
 		final int min, max, index = award - 1;
-		if (award == 1) {
+		if (award == 1 && Mathtil.rand()) {
 		    min = 0;
 		} else {
 		    min = 2;
