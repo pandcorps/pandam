@@ -2901,9 +2901,10 @@ public class Menu {
 								// Rank up
 								addGoalTimer(new TimerListener() {
 									@Override public final void onTimer(final TimerEvent event) {
-										pc.addGems(1000);
+									    final int gemBonus = getRankPromotionGemBonus(newRank);
+										pc.addGems(gemBonus);
 										final String strRank = String.valueOf(newRank);
-										Chartil.set(rankDesc, "New Rank " + strRank + "   1000");
+										Chartil.set(rankDesc, "New Rank " + strRank + "   " + gemBonus);
 										addActor(new Gem(), x + 1 + (12 + strRank.length()) * 8, y + 17);
 										addRankPoints(goalIndex, x, y);
 										FurGuardiansGame.musicLevelEnd.startSound();
@@ -2922,6 +2923,19 @@ public class Menu {
 					save();
 					addContinue(x, y);
 				}});
+		}
+		
+		private final int getRankPromotionGemBonus(final int newRank) {
+		    if (newRank % 10000 == 0) {
+		        return 5000;
+		    } else if (newRank % 1000 == 0) {
+                return 4000;
+		    } else if (newRank % 100 == 0) {
+                return 3000;
+		    } else if (newRank % 10 == 0) {
+		        return 2000;
+		    }
+		    return 1000;
 		}
 		
 		private final void addRankPoints(final int goalIndex, final int x, final int y) {

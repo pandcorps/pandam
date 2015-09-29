@@ -1,4 +1,5 @@
 Only allow HitGoal or FallGoal for 1-star goals.
+Extra Gem bonus for reaching ranks that are multiples of 10.
 
 *****
 
