@@ -2662,6 +2662,7 @@ public class Menu {
 	    private Panctor enemyBack = null;
 	    private Panctor enemy = null;
 	    private Panctor enemyFront = null;
+	    private Gem rankOrb = null;
 	    final boolean fullMenu;
 	    
         protected InfoScreen(final PlayerContext pc, final boolean fullMenu) {
@@ -2800,7 +2801,8 @@ public class Menu {
 			addTitle(rankDesc, img ? (x + 17) : x, y);
 			final int currPoints = prf.getCurrentGoalPoints();
 			if (img) {
-				addActor(new Gem(FurGuardiansGame.gemRank), x, y);
+				rankOrb = new Gem(FurGuardiansGame.gemRank);
+				addActor(rankOrb, x, y);
 				y -= 17;
 				addStars(x, y, currPoints, Profile.POINTS_PER_RANK, rankStars);
 			} else {
@@ -2902,6 +2904,15 @@ public class Menu {
 								addGoalTimer(new TimerListener() {
 									@Override public final void onTimer(final TimerEvent event) {
 									    final int gemBonus = getRankPromotionGemBonus(newRank);
+									    if (rankOrb != null) {
+    									    if (gemBonus == RANK_BONUS_10) {
+    									        rankOrb.setGem(FurGuardiansGame.gemBlueRank);
+    									    } else if (gemBonus == RANK_BONUS_100) {
+                                                rankOrb.setGem(FurGuardiansGame.gemCyanRank);
+    									    } else if (gemBonus >= RANK_BONUS_1000) {
+                                                rankOrb.setGem(FurGuardiansGame.gemGreenRank);
+                                            }
+									    }
 										pc.addGems(gemBonus);
 										final String strRank = String.valueOf(newRank);
 										Chartil.set(rankDesc, "New Rank " + strRank + "   " + gemBonus);
@@ -2925,15 +2936,20 @@ public class Menu {
 				}});
 		}
 		
+		private final static int RANK_BONUS_10 = 2000;
+		private final static int RANK_BONUS_100 = 3000;
+		private final static int RANK_BONUS_1000 = 4000;
+		private final static int RANK_BONUS_10000 = 5000;
+		
 		private final int getRankPromotionGemBonus(final int newRank) {
 		    if (newRank % 10000 == 0) {
-		        return 5000;
+		        return RANK_BONUS_10000;
 		    } else if (newRank % 1000 == 0) {
-                return 4000;
+                return RANK_BONUS_1000;
 		    } else if (newRank % 100 == 0) {
-                return 3000;
+                return RANK_BONUS_100;
 		    } else if (newRank % 10 == 0) {
-		        return 2000;
+		        return RANK_BONUS_10;
 		    }
 		    return 1000;
 		}

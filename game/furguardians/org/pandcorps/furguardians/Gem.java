@@ -30,7 +30,7 @@ import org.pandcorps.pandax.tile.*;
 public class Gem extends TileOccupant implements StepListener {
 	private final static Panple sparkPos = new ImplPanple();
 	private static long lastSound = -1;
-	private final Panmage[] gem;
+	private Panmage[] gem = null;
 	
 	public Gem() {
 		this(FurGuardiansGame.gem);
@@ -39,6 +39,21 @@ public class Gem extends TileOccupant implements StepListener {
 	public Gem(final Panmage[] gem) {
 		this.gem = gem;
 		setView(gem[0]);
+	}
+	
+	public void setGem(final Panmage[] gem) {
+	    final Pansplay curr = getCurrentDisplay();
+	    final int size = gem.length;
+	    int index = 0;
+	    for (int i = 0; i < size; i++) {
+	        final Panmage img = this.gem[i];
+	        if (img == curr) {
+	            index = i;
+	            break;
+	        }
+	    }
+	    this.gem = gem;
+	    setView(gem[index]);
 	}
 	
 	@Override
