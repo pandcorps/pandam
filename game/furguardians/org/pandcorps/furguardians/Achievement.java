@@ -29,6 +29,7 @@ import org.pandcorps.furguardians.Player.*;
 import org.pandcorps.furguardians.Profile.*;
 
 public abstract class Achievement extends FinName {
+    // Profile/save file refer to these by index, so can't move them or add new ones to middle
 	protected final static Achievement[] ALL = {
 		new LevelFeat("Level 1", 1), new LevelFeat("Level Champ", 50),
 		new WorldFeat("World 1", 1), new WorldFeat("World Tour", 10),
