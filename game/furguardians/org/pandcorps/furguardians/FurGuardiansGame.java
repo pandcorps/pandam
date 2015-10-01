@@ -1851,12 +1851,12 @@ public class FurGuardiansGame extends BaseGame {
         hudGems.getPosition().set(x, y);
         hud.addActor(hudGems);
         if (mult) {
-            final int m = pc.profile.getGemMultiplier();
-            if (m > 1) { // If multiplier only changes in Menu, can pre-store value
-                final Pantext hudMult = new Pantext("hud.mult." + i, fontTiny, "x" + m);
-                hudMult.getPosition().set(x, y - 7);
-                hud.addActor(hudMult);
-            }
+            final CallSequence multSeq = new CallSequence() {@Override protected String call() {
+                final int m = pc.getGemMultiplier();
+                return (m > 1) ? ("x" + m) : "";}};
+            final Pantext hudMult = new Pantext("hud.mult." + i, fontTiny, multSeq);
+            hudMult.getPosition().set(x, y - 7);
+            hud.addActor(hudMult);
         }
 	}
 	

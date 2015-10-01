@@ -56,6 +56,7 @@ public class Player extends Character implements CollisionListener {
 	protected final static byte JUMP_FLY = 4;
 	protected final static byte JUMP_DRAGON = 5;
 	protected final static byte POWER_LIGHTNING = 1;
+	protected final static byte POWER_DOUBLE = 2;
 	protected static byte powerMode = MODE_NORMAL;
 	protected static int powerTimer = 0;
 	
@@ -276,6 +277,14 @@ public class Player extends Character implements CollisionListener {
 	    protected final void addGems(final int n) {
 	    	tempGems = profile.getGems();
 			profile.addGems(n);
+	    }
+	    
+	    public final int getGemMultiplier() {
+	        int m = profile.getGemMultiplier();
+	        if (player != null && powerMode == POWER_DOUBLE) {
+	            m *= 2;
+	        }
+	        return m;
 	    }
 	    
 	    public final void onFinishLevel() {
@@ -793,7 +802,7 @@ public class Player extends Character implements CollisionListener {
     }
 	
 	public final void addGems(final int gems) {
-        levelGems += (gems * pc.profile.getGemMultiplier());
+        levelGems += (gems * pc.getGemMultiplier());
     }
 	
 	private boolean sanded = false;
