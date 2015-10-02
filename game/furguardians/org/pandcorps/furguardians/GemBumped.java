@@ -27,6 +27,8 @@ import java.util.*;
 import org.pandcorps.core.*;
 import org.pandcorps.furguardians.Enemy.*;
 import org.pandcorps.furguardians.Goal.*;
+import org.pandcorps.furguardians.Player.*;
+import org.pandcorps.furguardians.Profile.*;
 import org.pandcorps.game.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
@@ -100,8 +102,30 @@ public class GemBumped extends Pandy {
 			award = AWARD_LEVEL;
 			anm = FurGuardiansGame.gemLevelAnm;
 		} else {
-			award = AWARD_WORLD;
-			anm = FurGuardiansGame.gemWorldAnm;
+		    // Reward is based on number of worlds defeated; should be based on primary player
+		    PlayerContext pc = Coltil.get(FurGuardiansGame.pcs, 0);
+		    if (pc == null && player != null) {
+		        pc = player.pc;
+		    }
+		    final Profile prf = (pc == null) ? null : pc.profile;
+		    final Statistics stats = (prf == null) ? null : prf.stats;
+		    final int world = (stats == null) ? 0 : (stats.defeatedWorlds + 1); // 0 defeated Worlds means now in World 1
+		    if (world % 10000 == 0) {
+		        award = AWARD_WORLD * 5;
+                anm = FurGuardiansGame.gemWhiteWorldAnm;
+		    } else if (world % 1000 == 0) {
+                award = AWARD_WORLD * 4;
+                anm = FurGuardiansGame.gemGreenWorldAnm;
+		    } else if (world % 100 == 0) {
+                award = AWARD_WORLD * 3;
+                anm = FurGuardiansGame.gemCyanWorldAnm;
+		    } else if (world % 10 == 0) {
+                award = AWARD_WORLD * 2;
+                anm = FurGuardiansGame.gemBlueWorldAnm;
+		    } else {
+    			award = AWARD_WORLD;
+    			anm = FurGuardiansGame.gemWorldAnm;
+		    }
 		}
 	    return create(player, index, award, TYPE_END, anm);
 	}

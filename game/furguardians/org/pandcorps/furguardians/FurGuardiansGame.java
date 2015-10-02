@@ -1996,6 +1996,7 @@ public class FurGuardiansGame extends BaseGame {
 	}
 	
 	protected final static void worldClose() {
+	    // Should possibly only call this for first Player; other Players could skip worlds when they play solo
 		for (final PlayerContext pc : pcs) {
 			pc.onFinishWorld();
 		}
