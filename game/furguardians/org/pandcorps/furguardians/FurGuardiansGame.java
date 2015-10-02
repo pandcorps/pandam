@@ -278,6 +278,10 @@ public class FurGuardiansGame extends BaseGame {
 	protected static Panmage gemWhite = null;
 	protected static Panimation gemLevelAnm = null;
 	protected static Panimation gemWorldAnm = null;
+	protected static Panimation gemBlueWorldAnm = null;
+	protected static Panimation gemCyanWorldAnm = null;
+	protected static Panimation gemGreenWorldAnm = null;
+	protected static Panimation gemWhiteWorldAnm = null;
 	protected static Panimation gemWordAnm = null;
 	protected final static String defaultBlockWord = "FUR";
 	protected static String blockWord = defaultBlockWord;
@@ -1560,7 +1564,13 @@ public class FurGuardiansGame extends BaseGame {
 		    Img.close(gemStrip); }});
 		loaders.add(new Runnable() { @Override public final void run() {
 		    gemLevelAnm = createGemAnm("gem.level", createSheet("gem.level", null, ImtilX.loadStrip(RES + "misc/Gem5.png")));
-		    gemWorldAnm = createGemAnm("gem.world", createSheet("gem.world", null, ImtilX.loadStrip(RES + "misc/Gem4.png")));
+		    final Img[] worldStrip = ImtilX.loadStrip(RES + "misc/Gem4.png");
+		    Img.setTemporary(false, worldStrip);
+		    gemWorldAnm = createGemAnm("gem.world", createSheet("gem.world", null, worldStrip));
+		    gemCyanAnm = createGemAnm("cyan.world", worldStrip, Channel.Green, Channel.Red, Channel.Blue);
+            gemBlueAnm = createGemAnm("blue.world", worldStrip, Channel.Red, Channel.Red, Channel.Blue);
+            gemGreenAnm = createGemAnm("green.world", worldStrip, Channel.Red, Channel.Blue, Channel.Red);
+		    Img.close(worldStrip);
 		    gemWordAnm = createGemAnm("gem.word", createSheet("gem.word", null, ImtilX.loadStrip(RES + "misc/Gem6.png")));
 		    gemLetters = createSheet("gem.letter", null, ImtilX.loadStrip(RES + "misc/GemLetters.png"));
 		    final Img[] blStrip = ImtilX.loadStrip(RES + "misc/BlockLetters.png");
