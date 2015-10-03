@@ -106,6 +106,15 @@ public final class Imtil {
         return out;
     }
     
+    public final static Img[] copy(final Img[] imgs) {
+        final int size = imgs.length;
+        final Img[] outs = new Img[size];
+        for (int i = 0; i < size; i++) {
+            outs[i] = copy(imgs[i]);
+        }
+        return outs;
+    }
+    
     public final static void copy(final Img src, final Img dst, final int srcX, final int srcY, final int w, final int h, final int dstX, final int dstY) {
     	copy(src, dst, srcX, srcY, w, h, dstX, dstY, COPY_REPLACE);
     }
