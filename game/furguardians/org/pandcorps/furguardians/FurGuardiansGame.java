@@ -1552,25 +1552,30 @@ public class FurGuardiansGame extends BaseGame {
 			blockIce8 = createImage("block.ice8", RES + "misc/BlockIce8.png", 8); }});
 	    
 		loaders.add(new Runnable() { @Override public final void run() {
+		    final PixelFilter gemCyanFilter = new SwapPixelFilter(Channel.Green, Channel.Red, Channel.Blue);
+		    final PixelFilter gemBlueFilter = new SwapPixelFilter(Channel.Red, Channel.Red, Channel.Blue);
+		    final PixelFilter gemGreenFilter = new SwapPixelFilter(Channel.Red, Channel.Blue, Channel.Red);
+		    final PixelFilter gemWhiteFilter = new SwapPixelFilter(Channel.Red, Channel.Red, Channel.Blue);
 		    final Img[] gemStrip = ImtilX.loadStrip(RES + "misc/Gem.png");
 		    Img.setTemporary(false, gemStrip);
 		    final Img gem1 = Imtil.copy(gemStrip[0]);
 		    gem = createSheet("gem", null, gemStrip);
 		    gemAnm = createGemAnm("gem", gem);
 		    gemShatter = createImage("gem.shatter", RES + "misc/GemShatter.png", 8);
-		    gemCyanAnm = createGemAnm("cyan", gemStrip, Channel.Green, Channel.Red, Channel.Blue);
-		    gemBlueAnm = createGemAnm("blue", gemStrip, Channel.Red, Channel.Red, Channel.Blue);
-		    gemGreenAnm = createGemAnm("green", gemStrip, Channel.Red, Channel.Blue, Channel.Red);
-		    gemWhite = engine.createImage(PRE_IMG + "gem.white", Imtil.filter(gem1, new SwapPixelFilter(Channel.Red, Channel.Red, Channel.Blue)));
-		    Img.close(gemStrip); }});
-		loaders.add(new Runnable() { @Override public final void run() {
+		    gemCyanAnm = createGemAnm("cyan", gemStrip, gemCyanFilter);
+		    gemBlueAnm = createGemAnm("blue", gemStrip, gemBlueFilter);
+		    gemGreenAnm = createGemAnm("green", gemStrip, gemGreenFilter);
+		    gemWhite = engine.createImage(PRE_IMG + "gem.white", Imtil.filter(gem1, gemWhiteFilter));
+		    Img.close(gemStrip);
 		    gemLevelAnm = createGemAnm("gem.level", createSheet("gem.level", null, ImtilX.loadStrip(RES + "misc/Gem5.png")));
 		    final Img[] worldStrip = ImtilX.loadStrip(RES + "misc/Gem4.png");
 		    Img.setTemporary(false, worldStrip);
+		    final Img[] worldCopy = Imtil.copy(worldStrip);
 		    gemWorldAnm = createGemAnm("gem.world", createSheet("gem.world", null, worldStrip));
-		    gemCyanAnm = createGemAnm("cyan.world", worldStrip, Channel.Green, Channel.Red, Channel.Blue);
-            gemBlueAnm = createGemAnm("blue.world", worldStrip, Channel.Red, Channel.Red, Channel.Blue);
-            gemGreenAnm = createGemAnm("green.world", worldStrip, Channel.Red, Channel.Blue, Channel.Red);
+		    gemCyanWorldAnm = createGemAnm("cyan.world", worldStrip, gemCyanFilter);
+            gemBlueWorldAnm = createGemAnm("blue.world", worldStrip, gemBlueFilter);
+            gemGreenWorldAnm = createGemAnm("green.world", worldStrip, gemGreenFilter);
+            gemWhiteWorldAnm = createGemAnm("white.world", worldCopy, gemWhiteFilter);
 		    Img.close(worldStrip);
 		    gemWordAnm = createGemAnm("gem.word", createSheet("gem.word", null, ImtilX.loadStrip(RES + "misc/Gem6.png")));
 		    gemLetters = createSheet("gem.letter", null, ImtilX.loadStrip(RES + "misc/GemLetters.png"));
@@ -1586,10 +1591,12 @@ public class FurGuardiansGame extends BaseGame {
 		    emptyGoal = createImage("empty.goal", RES + "misc/EmptyStar.png", ImtilX.DIM);
 		    final Img[] orbStrip = ImtilX.loadStrip(RES + "misc/GemOrb.png");
 		    Img.setTemporary(false, orbStrip);
+		    final Img[] orbCopy = Imtil.copy(orbStrip);
 		    gemRank = createSheet("gem.rank", null, orbStrip);
-		    gemCyanRank = createGemSheet("cyan.rank", orbStrip, Channel.Green, Channel.Red, Channel.Blue);
-            gemBlueRank = createGemSheet("blue.rank", orbStrip, Channel.Red, Channel.Red, Channel.Blue);
-            gemGreenRank = createGemSheet("green.rank", orbStrip, Channel.Red, Channel.Blue, Channel.Red);
+		    gemCyanRank = createGemSheet("cyan.rank", orbStrip, gemCyanFilter);
+            gemBlueRank = createGemSheet("blue.rank", orbStrip, gemBlueFilter);
+            gemGreenRank = createGemSheet("green.rank", orbStrip, gemGreenFilter);
+            gemWhiteRank = createGemSheet("white.rank", orbCopy, gemWhiteFilter);
 		    gemAchieve = createSheet("gem.achieve", null, ImtilX.loadStrip(RES + "misc/GemTrophy.png"));
 		    Img.close(orbStrip); }});
 	    
@@ -1779,8 +1786,7 @@ public class FurGuardiansGame extends BaseGame {
 		return engine.createAnimation(PRE_ANM + name, engine.createFrame(PRE_FRM + name + ".0", gem[0], 3), engine.createFrame(PRE_FRM + name + ".1", gem[1], 1), engine.createFrame(PRE_FRM + name + ".2", gem[2], 1));
 	}
 	
-	private final static Panmage[] createGemSheet(final String col, final Img[] strip, final Channel r, final Channel g, final Channel b) {
-	    final SwapPixelFilter gemFilter = new SwapPixelFilter(r, g, b);
+	private final static Panmage[] createGemSheet(final String col, final Img[] strip, final PixelFilter gemFilter) {
         for (int i = 0; i < 3; i++) {
         	final Img oldImg = strip[i], newImg = Imtil.filter(oldImg, gemFilter);
             oldImg.close();
@@ -1790,8 +1796,8 @@ public class FurGuardiansGame extends BaseGame {
         return createSheet("gem." + col, null, strip);
 	}
 	
-	private final static Panimation createGemAnm(final String col, final Img[] strip, final Channel r, final Channel g, final Channel b) {
-        return createGemAnm("gem." + col, createGemSheet(col, strip, r, g, b));
+	private final static Panimation createGemAnm(final String col, final Img[] strip, final PixelFilter gemFilter) {
+        return createGemAnm("gem." + col, createGemSheet(col, strip, gemFilter));
 	}
 	
 	private final static void loadLevel() {
