@@ -2911,6 +2911,8 @@ public class Menu {
                                                 rankOrb.setGem(FurGuardiansGame.gemCyanRank);
     									    } else if (gemBonus >= RANK_BONUS_1000) {
                                                 rankOrb.setGem(FurGuardiansGame.gemGreenRank);
+    									    } else if (gemBonus >= RANK_BONUS_10000) {
+                                                rankOrb.setGem(FurGuardiansGame.gemWhiteRank);
                                             }
 									    }
 										pc.addGems(gemBonus);

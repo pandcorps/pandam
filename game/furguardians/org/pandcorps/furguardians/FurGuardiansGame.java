@@ -294,6 +294,7 @@ public class FurGuardiansGame extends BaseGame {
 	protected static Panmage[] gemBlueRank = null;
 	protected static Panmage[] gemCyanRank = null;
 	protected static Panmage[] gemGreenRank = null;
+	protected static Panmage[] gemWhiteRank = null;
 	protected static Panmage[] gemAchieve = null;
 	protected static Panmage gemShatter = null;
 	protected static Panimation spark = null;
