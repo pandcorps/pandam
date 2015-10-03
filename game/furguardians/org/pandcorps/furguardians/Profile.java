@@ -275,6 +275,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
     	protected int foundLightningOrbs = 0;
     	protected long electrocutedEnemies = 0;
     	protected int playedHiveWorlds = 0;
+    	protected int foundDoubleOrbs = 0;
     	
     	public void load(final Segment seg, final int currGems) {
         	defeatedLevels = seg.initInt(0);
@@ -314,6 +315,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
         	foundLightningOrbs = seg.initInt(24);
         	electrocutedEnemies = seg.initLong(25);
         	playedHiveWorlds = seg.initInt(26);
+        	foundDoubleOrbs = seg.initInt(27);
         }
     	
 		@Override
@@ -359,6 +361,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
 	        seg.setInt(24, foundLightningOrbs);
 	        seg.setLong(25, electrocutedEnemies);
 	        seg.setInt(26, playedHiveWorlds);
+	        seg.setInt(27, foundDoubleOrbs);
 		}
 		
 		public List<String> toList(final Profile prf) {
@@ -395,6 +398,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
             }
 			list.add("Total Gems: " + totalGems);
 			list.add("Lightning Orbs found: " + foundLightningOrbs);
+			list.add("Double Gem Orbs found: " + foundDoubleOrbs);
 			list.add("Objects kicked: " + kicks);
 			add(list, "Shirts bought", Coltil.size(prf.availableClothings), Avatar.clothings.length);
 			add(list, "Hats bought", Coltil.size(prf.availableHats), Avatar.hats.length);
@@ -464,7 +468,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
         }
 		
 		public final int getFoundOrbs() {
-		    return foundLightningOrbs; // + other orbs
+		    return foundLightningOrbs + foundDoubleOrbs;
 		}
 		
 		public final int getDefeatedWorldTypeCount() {
@@ -493,6 +497,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
 		public final int getDiscoveredOrbTypes() {
 		    int n = 0;
 		    n += toFlag(foundLightningOrbs);
+		    n += toFlag(foundDoubleOrbs);
 		    return n;
 		}
 		

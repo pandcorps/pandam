@@ -100,11 +100,22 @@ public class Tiles {
     	} else if (b == FurGuardiansGame.TILE_BUMP) {
     	    final TileHandler handler = getHandler();
     	    if (DynamicTileMap.getRawForeground(t) == FurGuardiansGame.blockPower) {
-    	        final GemBumped orb =newGemDecoration(player, index, FurGuardiansGame.lightningOrb);
+    	        final Panmage orbImg;
+    	        final byte power;
+    	        final int r = Mathtil.randi(0, 999); //TODO 1999
+    	        if (r < 1000) {
+    	            orbImg = FurGuardiansGame.lightningOrb;
+    	            power = Player.POWER_LIGHTNING;
+    	            player.pc.profile.stats.foundLightningOrbs++;
+    	        } else {
+                    orbImg = FurGuardiansGame.doubleOrb;
+                    power = Player.POWER_DOUBLE;
+                    player.pc.profile.stats.foundDoubleOrbs++;
+                }
+    	        final GemBumped orb = newGemDecoration(player, index, orbImg);
     	        orb.duration += 12;
     	        orb.getVelocity().addY(2);
-    	        player.pc.profile.stats.foundLightningOrbs++;
-    	        Player.setPower(Player.POWER_LIGHTNING);
+    	        Player.setPower(power);
     	    } else if (handler.isNormalAward(index, t)) {
     	        newGemBumped(player, index);
     	    } else if (!(handler.handle(index, t) || bumpLetter(player, index, t))) {
