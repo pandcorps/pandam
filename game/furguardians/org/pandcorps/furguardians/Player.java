@@ -36,6 +36,7 @@ import org.pandcorps.pandax.tile.*;
 import org.pandcorps.furguardians.Enemy.*;
 import org.pandcorps.furguardians.Gem.*;
 import org.pandcorps.furguardians.Level.*;
+import org.pandcorps.furguardians.Profile.*;
 
 public class Player extends Character implements CollisionListener {
 	protected final static int PLAYER_X = 6;
@@ -615,16 +616,21 @@ public class Player extends Character implements CollisionListener {
 				return;
 			}
 			lastDragonStomp = clock;
-			final Panple pos = getPosition();
 			final int r = 6, d = r * 2;
 			for (int i = 0; i < 2; i++) {
-				final Burst b = new Burst(FurGuardiansGame.puff);
-				FurGuardiansGame.setPosition(b, pos.getX() - r + (i * d), pos.getY(), FurGuardiansGame.DEPTH_SPARK);
-				b.setMirror(i > 0);
-		        FurGuardiansGame.room.addActor(b);
+				burst(FurGuardiansGame.puff, (i * d) - r, 0, i > 0);
 			}
 			FurGuardiansGame.soundWhoosh.startSound();
 		}
+	}
+	
+	private final Burst burst(final Panimation anm, final float xoff, final float yoff, final boolean mirror) {
+	    final Burst b = new Burst(anm);
+	    final Panple pos = getPosition();
+        FurGuardiansGame.setPosition(b, pos.getX() + xoff, pos.getY() + yoff, FurGuardiansGame.DEPTH_SPARK);
+        b.setMirror(mirror);
+        FurGuardiansGame.room.addActor(b);
+        return b;
 	}
 	
 	private final boolean isBubbleEnabled() {
@@ -722,6 +728,7 @@ public class Player extends Character implements CollisionListener {
 			registerPause();
 			firstStep = false;
 		}
+		onStepPower();
 	    if (hurtTimer > 0) {
 	        hurtTimer--;
 	        if (hurtTimer == 0 && mode == MODE_FROZEN) {
@@ -763,6 +770,26 @@ public class Player extends Character implements CollisionListener {
 		}
 		return false;
 	}
+	
+	private final void onStepPower() {
+	    if (powerTimer <= 0 || powerMode == MODE_NORMAL) {
+	        return;
+	    } else if (powerMode == POWER_DOUBLE) {
+	        final boolean spark;
+	        if (powerTimer > 210) {
+	            spark = (powerTimer % 3) == 0;
+	        } else if (powerTimer > 90) {
+	            spark = (powerTimer % 5) == 0;
+	        } else if (powerTimer > 30) {
+	            spark = (powerTimer % 10) == 0;
+	        } else {
+	            spark = false;
+	        }
+	        if (spark) {
+	            burst(FurGuardiansGame.doubleFx, Mathtil.randi(-10, 10), Mathtil.randi(0, 24), isMirror());
+	        }
+	    }
+	}
 
 	@Override
 	protected final void onCollide(final int index) {
@@ -802,7 +829,17 @@ public class Player extends Character implements CollisionListener {
     }
 	
 	public final void addGems(final int gems) {
-        levelGems += (gems * pc.getGemMultiplier());
+	    final int addedGems = (gems * pc.getGemMultiplier());
+        levelGems += addedGems;
+        if (powerMode == POWER_DOUBLE) {
+            final Profile prf = pc.profile;
+            if (prf != null) {
+                final Statistics stats = prf.stats;
+                if (stats != null) {
+                    stats.doubledGems += addedGems;
+                }
+            }
+        }
     }
 	
 	private boolean sanded = false;

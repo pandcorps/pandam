@@ -1,3 +1,6 @@
+1.14.0 (23)
+
+Added Double Gem Orb multiplier power-up.
 Only allow HitGoal or FallGoal for 1-star goals.
 Extra Gem bonus for reaching ranks that are multiples of 10.
 Extra Gem bonus for defeating worlds that are multiples of 10.

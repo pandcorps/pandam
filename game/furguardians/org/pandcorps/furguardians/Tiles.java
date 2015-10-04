@@ -102,7 +102,7 @@ public class Tiles {
     	    if (DynamicTileMap.getRawForeground(t) == FurGuardiansGame.blockPower) {
     	        final Panmage orbImg;
     	        final byte power;
-    	        final int r = Mathtil.randi(0, 999); //TODO 1999
+    	        final int r = Mathtil.randi(0, 1999);
     	        if (r < 1000) {
     	            orbImg = FurGuardiansGame.lightningOrb;
     	            power = Player.POWER_LIGHTNING;
