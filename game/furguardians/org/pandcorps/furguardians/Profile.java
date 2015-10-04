@@ -276,6 +276,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
     	protected long electrocutedEnemies = 0;
     	protected int playedHiveWorlds = 0;
     	protected int foundDoubleOrbs = 0;
+    	protected long doubledGems = 0;
     	
     	public void load(final Segment seg, final int currGems) {
         	defeatedLevels = seg.initInt(0);
@@ -316,6 +317,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
         	electrocutedEnemies = seg.initLong(25);
         	playedHiveWorlds = seg.initInt(26);
         	foundDoubleOrbs = seg.initInt(27);
+        	doubledGems = seg.initLong(28);
         }
     	
 		@Override
@@ -362,6 +364,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
 	        seg.setLong(25, electrocutedEnemies);
 	        seg.setInt(26, playedHiveWorlds);
 	        seg.setInt(27, foundDoubleOrbs);
+	        seg.setLong(28, doubledGems);
 		}
 		
 		public List<String> toList(final Profile prf) {
@@ -399,6 +402,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
 			list.add("Total Gems: " + totalGems);
 			list.add("Lightning Orbs found: " + foundLightningOrbs);
 			list.add("Double Gem Orbs found: " + foundDoubleOrbs);
+			list.add("Doubled Gems found: " + doubledGems);
 			list.add("Objects kicked: " + kicks);
 			add(list, "Shirts bought", Coltil.size(prf.availableClothings), Avatar.clothings.length);
 			add(list, "Hats bought", Coltil.size(prf.availableHats), Avatar.hats.length);
@@ -498,11 +502,11 @@ public class Profile extends PlayerData implements Segmented, Savable {
 		    int n = 0;
 		    n += toFlag(foundLightningOrbs);
 		    n += toFlag(foundDoubleOrbs);
-		    return n;
+		    return n; // Must be consistent with getAvailableOrbTypes()
 		}
 		
 		public final static int getAvailableOrbTypes() {
-		    return 1;
+		    return 2; // Must be consistent with getDiscoveredOrbTypes()
 		}
 		
 		protected final static int toFlag(final long n) {
