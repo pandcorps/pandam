@@ -48,7 +48,8 @@ public abstract class Achievement extends FinName {
 		new GiantFeat("Giant Slayer", 50), new HardFeat(),
 		new BuyFeat("Consumer", 1), new BuyFeat("Demander", 5), new BuyFeat("Collector", 15),
 		new NoBirdGemsFeat(), new BirdGemFeat("Nest Egg", 200),
-		new WispFeat("Wisp Slayer", 10), new OrbFeat("Orb Wielder", 25), new MonsterElectrocuteFeat("Lightning Storm", 150)
+		new WispFeat("Wisp Slayer", 10), new OrbFeat("Orb Wielder", 25), new MonsterElectrocuteFeat("Lightning Storm", 150),
+		new DoubledGemFeat(, 7500)
 		// Level w/ no damage
 		// Beyond Belief, Finish Level as a flying Pig
 		// Babe, Finish Level as a blue Bull/Ox
@@ -278,6 +279,17 @@ public abstract class Achievement extends FinName {
             return stats.foundGreenGems;
         }
 	}
+	
+	private final static class DoubledGemFeat extends StatFeat {
+        protected DoubledGemFeat(final String name, final int n) {
+            super(name, n, "Find " + n + " Gem" + getS(n) + " using Double Gem Orbs", (n * 2) / 3);
+        }
+        
+        @Override
+        public final long getCurrent(final Statistics stats) {
+            return stats.doubledGems;
+        }
+    }
 	
 	private final static class BumpFeat extends StatFeat {
         protected BumpFeat(final String name, final int n) {
