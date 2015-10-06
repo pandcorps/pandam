@@ -50,7 +50,7 @@ import org.pandcorps.furguardians.Player.*;
 
 public class FurGuardiansGame extends BaseGame {
 	protected final static String TITLE = "Fur-Guardians"; // res/values/strings.xml/app_name
-    protected final static String VERSION = "1.13.0"; // AndroidManifest.xml/versionName
+    protected final static String VERSION = "1.14.0"; // AndroidManifest.xml/versionName
     protected final static String YEAR = "2014-2015";
     protected final static String AUTHOR = "Andrew M. Martin";
 	/*
@@ -106,6 +106,7 @@ public class FurGuardiansGame extends BaseGame {
 	Menu.menuTouch - call allow method before processing a tab change or exit?
 	MaskMap cache
 	Can get stuck under bridges in auto-run mode
+	Quick sand doesn't always work. Night levels? Also ice?
 	
 	Remove System.out/err/printStackTrace/etc.
 	Screen shots.
