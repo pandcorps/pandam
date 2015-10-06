@@ -832,12 +832,9 @@ public class Player extends Character implements CollisionListener {
 	    final int addedGems = (gems * pc.getGemMultiplier());
         levelGems += addedGems;
         if (powerMode == POWER_DOUBLE) {
-            final Profile prf = pc.profile;
-            if (prf != null) {
-                final Statistics stats = prf.stats;
-                if (stats != null) {
-                    stats.doubledGems += addedGems;
-                }
+            final Statistics stats = Profile.getStatistics(pc.profile);
+            if (stats != null) {
+                stats.doubledGems += addedGems;
             }
         }
     }

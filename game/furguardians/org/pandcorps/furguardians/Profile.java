@@ -685,4 +685,8 @@ public class Profile extends PlayerData implements Segmented, Savable {
     public final String getMapFileName() {
     	return getMapFileName(getName());
     }
+    
+    public final static Statistics getStatistics(final Profile prf) {
+        return (prf == null) ? null : prf.stats;
+    }
 }

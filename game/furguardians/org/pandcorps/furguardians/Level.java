@@ -503,8 +503,7 @@ public class Level {
     }
     
     private final static Statistics getStatistics() {
-    	final Profile prf = getProfile();
-        return (prf == null) ? null : prf.stats;
+    	return Profile.getStatistics(getProfile());
     }
     
     private final static int getDefeatedWorlds() {
