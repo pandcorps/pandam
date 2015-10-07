@@ -377,8 +377,20 @@ public class Level {
                 return f;
             }
             
+            @Override protected final TileMapImage[] getExtraAnimBlock() {
+                return Map.theme.levelTheme.getExtraAnimBlock();
+            }
+            
             @Override protected Pansound getMusic() {
                 return Map.theme.levelTheme.getMusic();
+            }
+            
+            @Override protected final void step(final long clock) {
+                Map.theme.levelTheme.step(clock);
+            }
+            
+            @Override protected final void flash(final long i) {
+                Map.theme.levelTheme.flash(i);
             }
         };
     	private final static String[] MSG_CHAOS = {"CHAOS", "HAVOC", "BEWARE", "FEAR", "DANGER"};
