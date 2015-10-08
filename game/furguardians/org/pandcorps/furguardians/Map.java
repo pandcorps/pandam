@@ -62,6 +62,8 @@ public class Map {
 	private final static int DEPTH_FOREGROUND = 1;
 	private final static int DEPTH_MARKER = 2;
 	
+	private final static int COL_PLAYER_START = 2;
+	
 	private final static String SEG_MAP = "MAP";
 	private final static String SEG_MRK = "MRK";
 	private final static String SEG_BLD = "BLD";
@@ -1190,7 +1192,7 @@ public class Map {
         base = imgMap[1][1];
         ladder = imgMap[0][6];
         bridge = imgMap[0][7];
-        final int t;
+        int t;
         if (b == null) {
         	//column, row handled in Profile
         	for (final Field f : mrk.getRepetitions(0)) {
@@ -1207,11 +1209,35 @@ public class Map {
 			b.build();
 			saveMap();
         }
+        if (isBad(t)) {
+            t = getSafeTile();
+        }
         Panctor.destroy(portal);
         portal = new Panctor();
         portal.setView(FurGuardiansGame.portal);
         addBuilding(tm.getIndex(endColumn, getPortalRow()), portal);
         return t;
+	}
+	
+	private final static boolean isBad(final int index) {
+	    if (tm == null) {
+	        return index < 0;
+	    }
+	    return tm.isBad(index);
+	}
+	
+	private final static int getSafeTile() {
+	    if (tm == null) {
+	        return -1;
+	    }
+	    final int h = tm.getHeight();
+	    for (int j = 0; j < h; j++) {
+	        final int index = tm.getIndex(COL_PLAYER_START, j);
+	        if (Tile.getBehavior(tm.getTile(index)) == TILE_MARKER) {
+	            return index;
+	        }
+	    }
+	    return -1;
 	}
 	
 	private final static int getPortalRow() {
@@ -1333,7 +1359,7 @@ public class Map {
 		
 		@Override
     	public final void init() {
-    		setPlayerPosition(2, newMarkerRow());
+    		setPlayerPosition(COL_PLAYER_START, newMarkerRow());
     		//row = Mathtil.rand() ? 8 : 10;
     		//row = Mathtil.rand() ? 6 : 12;
     	}
@@ -1601,7 +1627,8 @@ public class Map {
 	
 	private final static int getStartTile() {
 		final Profile prf = getProfile();
-		return tm.getIndex(prf.column, prf.row);
+		final int index = tm.getIndex(prf.column, prf.row);
+		return isBad(index) ? getSafeTile() : index;
 	}
 	
 	private final static PlayerContext getPlayerContext() {
