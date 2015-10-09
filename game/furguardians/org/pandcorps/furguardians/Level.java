@@ -169,7 +169,7 @@ public class Level {
     			}
     		}
     	};
-    	public final static Theme Snow = new Theme("Snow", null, MSG, FurGuardiansGame.TILE_ICE) {
+    	public final static Theme Snow = new Theme("Snow", null, MSG) {
     	    @Override protected final int[] getEnemyIndices(final int worlds, final int levels) {
     	        return worlds < 2 ? new int[] {HOB_TROLL, HOB_OGRE, IMP, ICE_WISP} : getNormalEnemies(ICE_WISP);
     	    }
@@ -196,8 +196,12 @@ public class Level {
     				Tile.animate(extraAnimBlock);
     			}
         	}
+    		
+    		@Override protected final byte getSpecialGroundBehavior() {
+                return FurGuardiansGame.TILE_ICE;
+            }
     	};
-    	public final static Theme Sand = new Theme("Sand", null, MSG, FurGuardiansGame.TILE_SAND) {
+    	public final static Theme Sand = new Theme("Sand", null, MSG) {
     	    @Override protected final int[] getEnemyIndices(final int worlds, final int levels) {
     	    	return worlds < 4 ? new int[] {HOB_TROLL, HOB_OGRE, IMP, ARMORED_IMP, FIRE_WISP} : getNormalEnemies(FIRE_WISP);
     	    }
@@ -224,8 +228,12 @@ public class Level {
     				Tile.animate(extraAnimBlock);
     			}
         	}
+    		
+    		@Override protected final byte getSpecialGroundBehavior() {
+                return FurGuardiansGame.TILE_SAND;
+            }
     	};
-    	public final static Theme Rock = new Theme("Rock", null, MSG, (byte) -1) {
+    	public final static Theme Rock = new Theme("Rock", null, MSG) {
     	    @Override protected final int[] getEnemyIndices(final int worlds, final int levels) {
     	    	return getNormalEnemies(ROCK_SPRITE, ROCK_TRIO);
     	    }
@@ -242,7 +250,7 @@ public class Level {
                 return FurGuardiansGame.musicRock;
             }
     	};
-    	public final static Theme Hive = new Theme("Hive", null, MSG, (byte) -1) {
+    	public final static Theme Hive = new Theme("Hive", null, MSG) {
             @Override protected final int[] getEnemyIndices(final int worlds, final int levels) {
                 return NORMAL_ENEMIES;
             }
@@ -392,6 +400,10 @@ public class Level {
             @Override protected final void flash(final long i) {
                 Map.theme.levelTheme.flash(i);
             }
+            
+            @Override protected final byte getSpecialGroundBehavior() {
+                return Map.theme.levelTheme.getSpecialGroundBehavior();
+            }
         };
     	private final static String[] MSG_CHAOS = {"CHAOS", "HAVOC", "BEWARE", "FEAR", "DANGER"};
     	public final static Theme Chaos = new Theme("Chaos", MSG_CHAOS) {
@@ -420,17 +432,15 @@ public class Level {
     	protected final String img;
     	protected final String bgImg;
     	protected final String[] gemMessages;
-    	protected final byte specialGroundBehavior;
     	
     	private Theme(final String img, final String[] gemMessages) {
-    		this(img, img, gemMessages, Tile.BEHAVIOR_SOLID);
+    		this(img, img, gemMessages);
     	}
     	
-    	private Theme(final String img, final String bgImg, final String[] gemMessages, final byte specialGroundBehavior) {
+    	private Theme(final String img, final String bgImg, final String[] gemMessages) {
     		this.img = img;
     		this.bgImg = bgImg;
     		this.gemMessages = gemMessages;
-    		this.specialGroundBehavior = specialGroundBehavior;
     	}
     	
     	private final List<EnemyDefinition> getEnemies() {
@@ -468,6 +478,10 @@ public class Level {
     	}
     	
     	protected void flash(final long i) {
+    	}
+    	
+    	protected byte getSpecialGroundBehavior() {
+    	    return Tile.BEHAVIOR_SOLID;
     	}
     }
     
@@ -2012,7 +2026,7 @@ public class Level {
     				tm.removeTile(i, floor);
     				tm.setForeground(i, y - 1, imgMap[1][1], Tile.BEHAVIOR_SOLID);
     			}
-    			tm.setForeground(i, y, imgMap[1][5], theme.specialGroundBehavior);
+    			tm.setForeground(i, y, imgMap[1][5], theme.getSpecialGroundBehavior());
     		}
     	}
     }
