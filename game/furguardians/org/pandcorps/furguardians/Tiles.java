@@ -23,6 +23,7 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.furguardians;
 
 import org.pandcorps.core.*;
+import org.pandcorps.furguardians.Profile.*;
 import org.pandcorps.game.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
@@ -102,15 +103,27 @@ public class Tiles {
     	    if (DynamicTileMap.getRawForeground(t) == FurGuardiansGame.blockPower) {
     	        final Panmage orbImg;
     	        final byte power;
-    	        final int r = Mathtil.randi(0, 1999);
+    	        final Statistics stats = player.pc.profile.stats;
+    	        final int r;
+    	        if (stats.foundLightningOrbs == 0) {
+    	            r = 500;
+    	        } else if (stats.foundDoubleOrbs == 0) {
+    	            r = 1500;
+    	        } else if (stats.electrocutedEnemies == 0) {
+    	            r = 500;
+    	        } else if (stats.doubledGems == 0) {
+    	            r = 1500;
+    	        } else {
+    	            r = Mathtil.randi(0, 1999);
+    	        }
     	        if (r < 1000) {
     	            orbImg = FurGuardiansGame.lightningOrb;
     	            power = Player.POWER_LIGHTNING;
-    	            player.pc.profile.stats.foundLightningOrbs++;
+    	            stats.foundLightningOrbs++;
     	        } else {
                     orbImg = FurGuardiansGame.doubleOrb;
                     power = Player.POWER_DOUBLE;
-                    player.pc.profile.stats.foundDoubleOrbs++;
+                    stats.foundDoubleOrbs++;
                 }
     	        final GemBumped orb = newGemDecoration(player, index, orbImg);
     	        orb.duration += 12;

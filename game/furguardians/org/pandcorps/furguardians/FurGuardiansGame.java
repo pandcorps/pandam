@@ -106,7 +106,6 @@ public class FurGuardiansGame extends BaseGame {
 	Menu.menuTouch - call allow method before processing a tab change or exit?
 	MaskMap cache
 	Can get stuck under bridges in auto-run mode
-	Quick sand doesn't always work. Night levels? Also ice?
 	
 	Remove System.out/err/printStackTrace/etc.
 	Screen shots.
