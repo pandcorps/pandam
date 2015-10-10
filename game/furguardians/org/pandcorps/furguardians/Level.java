@@ -2021,12 +2021,13 @@ public class Level {
 	    		}
 	    		y = floor + 1;
     		}
+    		final byte behavior = theme.getSpecialGroundBehavior();
     		for (int i = x + 1; i < stop; i++) {
     			if (sunken) {
     				tm.removeTile(i, floor);
     				tm.setForeground(i, y - 1, imgMap[1][1], Tile.BEHAVIOR_SOLID);
     			}
-    			tm.setForeground(i, y, imgMap[1][5], theme.getSpecialGroundBehavior());
+    			tm.setForeground(i, y, imgMap[1][5], behavior);
     		}
     	}
     }

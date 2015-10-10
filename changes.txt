@@ -5,6 +5,7 @@ Only allow HitGoal or FallGoal for 1-star goals.
 Extra Gem bonus for reaching ranks that are multiples of 10.
 Extra Gem bonus for defeating worlds that are multiples of 10.
 Fixed a bug that prevented ice and quick sand from working in night levels.
+Fixed a crash apparently caused by finding a map file with no profile file.
 
 *****
 
