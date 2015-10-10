@@ -1539,7 +1539,7 @@ public class FurGuardiansGame extends BaseGame {
 			frozen = createImage("frozen", RES + "chr/Frozen.png", 32, og);
 			burn = createAnm("burn", RES + "chr/Burn.png", 32, 6, og, null, null);
 			electric = createAnm("electric", RES + "chr/Electric.png", 32, 3, og, null, null);
-			doubleFx = createAnm("fx.double", RES + "misc/DoubleFx.png", 8, 3, CENTER_8, null, null);
+			doubleFx = createSparkAnm("fx.double", "misc/DoubleFx.png");
 			lightningOrb = createImage("orb.lightning", RES + "misc/LightningOrb.png", 16);
 			doubleOrb = createImage("orb.double", RES + "misc/DoubleOrb.png", 16);
 			blockPower = createImage("block.power", RES + "misc/BlockPower.png", 16);
@@ -1606,8 +1606,7 @@ public class FurGuardiansGame extends BaseGame {
 		    Img.close(orbStrip); }});
 	    
 		loaders.add(new Runnable() { @Override public final void run() {
-		    final Panframe[] sa = createFrames("spark", RES + "misc/Spark.png", 8, 1);
-		    spark = engine.createAnimation(PRE_ANM + "spark", sa[0], sa[1], sa[2], sa[3], sa[2], sa[1], sa[0]);
+		    spark = createSparkAnm("spark", "misc/Spark.png");
 		    Spark.class.getClass(); // Force class load? Save time later?
 		    puff = createAnm("puff", RES + "misc/Puff.png", 8, 3, CENTER_8); }});
 	    
@@ -1784,6 +1783,11 @@ public class FurGuardiansGame extends BaseGame {
 		final Panmage img = Pangine.getEngine().createImage(Pantil.vmid(), icn);
 		icn.close();
 		return img;
+	}
+	
+	private final static Panimation createSparkAnm(final String name, final String loc) {
+	    final Panframe[] sa = createFrames(name, RES + loc, 8, 1, CENTER_8);
+        return Pangine.getEngine().createAnimation(PRE_ANM + name, sa[0], sa[1], sa[2], sa[3], sa[2], sa[1], sa[0]);
 	}
 	
 	private final static Panimation createGemAnm(final String name, final Panmage[] gem) {

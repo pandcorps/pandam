@@ -1026,7 +1026,7 @@ public class Map {
 	
 	private final static void loadImages() {
 	    final String mapFile = getMapFile();
-	    oldMap = Iotil.exists(mapFile);
+	    oldMap = hasMapFile(mapFile);
 	    if (oldMap) {
 	        final SegmentStream in = SegmentStream.openLocation(mapFile);
             try {
@@ -1137,7 +1137,7 @@ public class Map {
 		final Mapper b;
 		final Segment mrk, bld;
 		royAvt = new Avatar();
-		if (Iotil.exists(mapFile)) {
+		if (hasMapFile(mapFile)) {
 			final SegmentStream in = SegmentStream.openLocation(mapFile);
 			try {
 			    final Segment seg = in.readRequire(SEG_MAP);
@@ -1909,6 +1909,20 @@ public class Map {
 	
 	private final static String getMapFile() {
 		return getProfile().getMapFileName();
+	}
+	
+	private final static boolean hasMapFile(final String mapFile) {
+	    /*
+	    Can run into problems if we load a map file when no profile file is found.
+	    Player's map position is stored in profile.
+	    So it can crash trying to put Player on the map.
+	    The getSafeTile work-around should handle that.
+	    Maybe we should just check for profile existence when checking map existence.
+	    We check map existence in two separate places.
+	    Should we check for profile existence in both of those places?
+	    Or depending on the order that operations occur, is a missing profile expected in one place?
+	    */
+	    return Iotil.exists(mapFile);
 	}
 	
 	protected final static void saveMap() {
