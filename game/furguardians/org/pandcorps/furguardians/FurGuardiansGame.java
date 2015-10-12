@@ -106,6 +106,8 @@ public class FurGuardiansGame extends BaseGame {
 	Menu.menuTouch - call allow method before processing a tab change or exit?
 	MaskMap cache
 	Can get stuck under bridges in auto-run mode
+	DoubleOrb looks like an invincibility effect; maybe slow down spark frequency would look less like that
+	Creating a new profile should maybe check for a delete map file matching the new name
 	
 	Remove System.out/err/printStackTrace/etc.
 	Screen shots.
@@ -197,6 +199,7 @@ public class FurGuardiansGame extends BaseGame {
 	
 	protected final static String[][] ads = {
 		{ "Thank you", "for playing" },
+		{ "You're", "awesome!" },
 	    { "Like the game?", "Tell a friend" },
 	    { "Like the game?", "Rate it" },
 	    { "Like the game?", "Write a review" },
