@@ -2732,7 +2732,7 @@ public class Level {
         if (index < 0) {
             return;
         }
-        tm.setForeground(index, imgMap[1][imX], (tm.getTile(index).getBehavior() == Tile.BEHAVIOR_SOLID) ? Tile.BEHAVIOR_SOLID : b);
+        tm.setForeground(index, imgMap[1][imX], (Tile.getBehavior(tm.getTile(index)) == Tile.BEHAVIOR_SOLID) ? Tile.BEHAVIOR_SOLID : b);
     }
     
     private final static void gem(final int x, final int y) {

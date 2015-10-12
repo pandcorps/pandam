@@ -1402,7 +1402,7 @@ public class Player extends Character implements CollisionListener {
 	
 	protected final static class Bouncer extends Panctor implements Collidable {
 	    protected Bouncer() {
-            //setView();
+            setView(FurGuardiansGame.bee);
             FurGuardiansGame.room.addActor(this);
         }
 	}

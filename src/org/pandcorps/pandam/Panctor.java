@@ -138,6 +138,9 @@ public class Panctor extends BasePantity implements SpecPanctor {
         }
         boundMirror = isMirror() ^ fmir;
         final Pansplay boundDisplay = getCurrentDisplay();
+        if (boundDisplay == null) {
+            throw new NullPointerException(getClass() + " boundary needed, but no display found");
+        }
         boundMin = fmin == null ? boundDisplay.getBoundingMinimum() : fmin;
         boundMax = fmax == null ? boundDisplay.getBoundingMaximum() : fmax;
     }

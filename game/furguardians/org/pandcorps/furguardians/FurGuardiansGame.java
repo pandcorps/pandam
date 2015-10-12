@@ -247,6 +247,7 @@ public class FurGuardiansGame extends BaseGame {
 	protected final static Img[] dragonEyesAll = new Img[getNumDragonEyes()];
 	protected static Panmage egg = null;
 	protected static Panmage egg8 = null;
+	protected static Panimation bee = null;
 	protected static Panmage frozen = null;
 	protected static Panimation burn = null;
 	protected static Panimation electric = null;
@@ -1538,6 +1539,7 @@ public class FurGuardiansGame extends BaseGame {
 			owl = engine.createAnimation(PRE_ANM + "owl", owl1, owl2); }});
 		
 		loaders.add(new Runnable() { @Override public final void run() {
+		    bee = createAnm("bee", RES + "chr/misc/Bee.png", 16, 4);
 			frozen = createImage("frozen", RES + "chr/Frozen.png", 32, og);
 			burn = createAnm("burn", RES + "chr/Burn.png", 32, 6, og, null, null);
 			electric = createAnm("electric", RES + "chr/Electric.png", 32, 3, og, null, null);
