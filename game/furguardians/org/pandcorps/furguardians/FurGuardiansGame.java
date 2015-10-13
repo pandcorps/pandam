@@ -199,6 +199,7 @@ public class FurGuardiansGame extends BaseGame {
 	
 	protected final static String[][] ads = {
 		{ "Thank you", "for playing" },
+		{ "You're", "a superstar!" },
 		{ "You're", "awesome!" },
 	    { "Like the game?", "Tell a friend" },
 	    { "Like the game?", "Rate it" },
