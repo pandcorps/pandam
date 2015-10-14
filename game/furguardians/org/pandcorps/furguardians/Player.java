@@ -776,12 +776,12 @@ public class Player extends Character implements CollisionListener {
 	        return;
 	    } else if (powerMode == POWER_DOUBLE) {
 	        final boolean spark;
-	        if (powerTimer > 210) {
-	            spark = (powerTimer % 3) == 0;
-	        } else if (powerTimer > 90) {
-	            spark = (powerTimer % 5) == 0;
-	        } else if (powerTimer > 30) {
+	        if (powerTimer > 240) {
 	            spark = (powerTimer % 10) == 0;
+	        } else if (powerTimer > 120) {
+	            spark = (powerTimer % 20) == 0;
+	        } else if (powerTimer > 60) {
+	            spark = (powerTimer % 30) == 0;
 	        } else {
 	            spark = false;
 	        }
