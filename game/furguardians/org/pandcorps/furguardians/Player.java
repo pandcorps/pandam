@@ -355,6 +355,14 @@ public class Player extends Character implements CollisionListener {
 	    	Panmage.destroyAll(bird);
 	    	bird = null;
 	    }
+	    
+	    public final static Profile getProfile(final PlayerContext pc) {
+	        return (pc == null) ? null : pc.profile;
+	    }
+	    
+	    public final static Statistics getStatistics(final PlayerContext pc) {
+	        return Profile.getStatistics(getProfile(pc));
+	    }
 	}
 	
 	protected static interface Ai {

@@ -107,8 +107,7 @@ public class GemBumped extends Pandy {
 		    if (pc == null && player != null) {
 		        pc = player.pc;
 		    }
-		    final Profile prf = (pc == null) ? null : pc.profile;
-		    final Statistics stats = (prf == null) ? null : prf.stats;
+		    final Statistics stats = PlayerContext.getStatistics(pc);
 		    final int world = (stats == null) ? 0 : (stats.defeatedWorlds + 1); // 0 defeated Worlds means now in World 1
 		    if (world % 10000 == 0) {
 		        award = AWARD_WORLD * 5;
