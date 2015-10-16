@@ -1387,7 +1387,14 @@ public class Level {
         }
         
         @Override
-        protected final void ground(final int start, final int stop) {
+        protected final void ground(int start, final int stop) {
+            final int m = start % 4;
+            if (m != 0) {
+                start = start + (4 - m);
+                if (start > stop) {
+                    return;
+                }
+            }
             final int f = floor + 1;
             for (int i = start - 1; i <= stop; i += 4) {
                 for (int j = 0; j <= f; j += 2) {
@@ -2658,9 +2665,21 @@ public class Level {
     }
     
     private final static void pit(final int x, final int y, final int w) {
-    	final int stop = x + w + 1, ystop = (floorMode == FLOOR_BRIDGE || floorMode == FLOOR_TRACK) ? (y + 1) : y;
+    	final int stop = x + w + 1, ystop = (floorMode == FLOOR_BRIDGE || floorMode == FLOOR_TRACK || theme == Theme.Hive) ? (y + 1) : y;
     	for (int j = 0; j <= ystop; j++) {
-    		if (floorMode == FLOOR_GRASSY) {
+    	    if (theme == Theme.Hive) {
+    	        final Tile left = tm.getTile(x, j), right = tm.getTile(stop, j);
+    	        if (DynamicTileMap.getRawForeground(left) == imgMap[1][1]) {
+    	            tm.setForeground(x, j, imgMap[1][4], Tile.BEHAVIOR_SOLID);
+    	        } else if (DynamicTileMap.getRawBackground(left) == imgMap[2][1]) {
+                    tm.setForeground(x, j, imgMap[2][4], Tile.BEHAVIOR_SOLID);
+                }
+    	        if (DynamicTileMap.getRawForeground(right) == imgMap[1][1]) {
+                    tm.setForeground(stop, j, imgMap[1][3], Tile.BEHAVIOR_SOLID);
+                } else if (DynamicTileMap.getRawBackground(right) == imgMap[2][1]) {
+                    tm.setForeground(stop, j, imgMap[2][3], Tile.BEHAVIOR_SOLID);
+                }
+    	    } else if (floorMode == FLOOR_GRASSY) {
 	    		final int iy = (j == y) ? 1 : 2;
 		    	tm.setForeground(x, j, imgMap[iy][2], Tile.BEHAVIOR_SOLID);
 		    	tm.setForeground(stop, j, imgMap[iy][0], Tile.BEHAVIOR_SOLID);
@@ -2713,7 +2732,10 @@ public class Level {
     
     private final static void hexagon(final int x, final int y) {
         hexTopCorner(x, y, 0, FurGuardiansGame.TILE_UPSLOPE);
-        tm.setForeground(x + 1, y, imgMap[1][1], Tile.BEHAVIOR_SOLID);
+        final int x1 = x + 1;
+        if (!tm.isBadColumn(x1)) {
+            tm.setForeground(x1, y, imgMap[1][1], Tile.BEHAVIOR_SOLID);
+        }
         hexTopCorner(x + 2, y, 2, FurGuardiansGame.TILE_DOWNSLOPE);
         final int y1 = y - 1;
         if (y1 < 0) {
