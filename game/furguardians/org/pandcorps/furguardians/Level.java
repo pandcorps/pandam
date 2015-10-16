@@ -263,6 +263,10 @@ public class Level {
                 return new HexBuilder();
             }
             
+            @Override protected final int getGroundWidthOffset() {
+                return 1;
+            }
+            
             @Override protected Pansound getMusic() {
                 return FurGuardiansGame.musicHive;
             }
@@ -457,6 +461,10 @@ public class Level {
     	protected abstract BackgroundBuilder getRandomBackground();
     	
     	protected abstract Builder getRandomBuilder();
+    	
+    	protected int getGroundWidthOffset() {
+    	    return 0;
+    	}
     	
     	protected String getBgImg() {
     	    return bgImg;
@@ -923,7 +931,7 @@ public class Level {
     	}
     	
     	protected final void ground() {
-    		final int stop = Math.min(bx + 1, nt - 1);
+    		final int stop = Math.min(bx + 1, nt - 1 + theme.getGroundWidthOffset());
         	ground(px, stop);
         	px = bx + 2;
     	}
