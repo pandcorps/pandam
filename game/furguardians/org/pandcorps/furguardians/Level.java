@@ -2669,15 +2669,25 @@ public class Level {
     	for (int j = 0; j <= ystop; j++) {
     	    if (theme == Theme.Hive) {
     	        final Tile left = tm.getTile(x, j), right = tm.getTile(stop, j);
-    	        if (DynamicTileMap.getRawForeground(left) == imgMap[1][1]) {
+    	        final Object leftFore = DynamicTileMap.getRawForeground(left), leftBack = DynamicTileMap.getRawBackground(left);
+    	        if (leftFore == imgMap[1][1]) {
     	            tm.setForeground(x, j, imgMap[1][4], Tile.BEHAVIOR_SOLID);
-    	        } else if (DynamicTileMap.getRawBackground(left) == imgMap[2][1]) {
-                    tm.setForeground(x, j, imgMap[2][4], Tile.BEHAVIOR_SOLID);
+    	        } else if (leftBack == imgMap[2][1]) {
+                    tm.setBackground(x, j, imgMap[2][4], Tile.BEHAVIOR_SOLID);
+                } else if (leftFore == imgMap[1][0]) {
+                    tm.setForeground(x, j, null, Tile.BEHAVIOR_SOLID);
+                } else if (leftBack == imgMap[2][0]) {
+                    tm.setBackground(x, j, null, Tile.BEHAVIOR_SOLID);
                 }
-    	        if (DynamicTileMap.getRawForeground(right) == imgMap[1][1]) {
+    	        final Object rightFore = DynamicTileMap.getRawForeground(right), rightBack = DynamicTileMap.getRawBackground(right);
+    	        if (rightFore == imgMap[1][1]) {
                     tm.setForeground(stop, j, imgMap[1][3], Tile.BEHAVIOR_SOLID);
-                } else if (DynamicTileMap.getRawBackground(right) == imgMap[2][1]) {
-                    tm.setForeground(stop, j, imgMap[2][3], Tile.BEHAVIOR_SOLID);
+                } else if (rightBack == imgMap[2][1]) {
+                    tm.setBackground(stop, j, imgMap[2][3], Tile.BEHAVIOR_SOLID);
+                } else if (rightFore == imgMap[1][2]) {
+                    tm.setForeground(stop, j, null, Tile.BEHAVIOR_SOLID);
+                } else if (rightBack == imgMap[2][2]) {
+                    tm.setBackground(stop, j, null, Tile.BEHAVIOR_SOLID);
                 }
     	    } else if (floorMode == FLOOR_GRASSY) {
 	    		final int iy = (j == y) ? 1 : 2;
