@@ -2233,9 +2233,14 @@ public class Level {
         for (int i = 0; i < size; i++) {
         	final PlayerContext pc = FurGuardiansGame.pcs.get(i);
         	Goal.initGoals(pc);
-        	players.add(new Player(pc, 40 + (20 * i), (floor + 1) * 16));
+        	final int x = 40 + (20 * i);
+        	players.add(new Player(pc, x, getFloor(x)));
         }
         Pangine.getEngine().track(Panverage.getArithmeticMean(players));
+    }
+    
+    private final static int getFloor(final int x) {
+        return (floor + 1) * 16;
     }
     
     private final static void setBg(final TileMap tm, final int i, final int j, final TileMapImage[][] imgMap, final int iy, final int ix) {
