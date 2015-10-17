@@ -1127,14 +1127,22 @@ public class Level {
     	} else if (y >= (tm.getHeight() - 1)) { // Player needs two tiles
     	    return; // Don't drop Enemy with only one tile so Player can't reach
     	}
-    	new Spawner(tm.getTileWidth() * (x + Mathtil.randi(1, w - 2)), tm.getTileHeight() * y);
+    	final int i = x + Mathtil.randi(1, w - 2);
+    	new Spawner(tm.getTileWidth() * i, tm.getTileHeight() * fixEnemyIndexY(i, y));
     	numEnemies++;
     	enemyProbability = DEFAULT_ENEMY_PROBABILITY;
     }
     
     private final static void enemy(final EnemyDefinition def, final int x, final int y) {
-    	new SpecificSpawner(def, tm.getTileWidth() * x, tm.getTileHeight() * y);
+    	new SpecificSpawner(def, tm.getTileWidth() * x, tm.getTileHeight() * fixEnemyIndexY(x, y));
     	numEnemies++;
+    }
+    
+    private final static int fixEnemyIndexY(final int indexX, final int indexY) {
+        if (indexY == floor + 1) {
+            return getFloorIndexForIndex(indexX);
+        }
+        return indexY;
     }
     
     private final static void bee(final int x, final int y) {
@@ -2230,19 +2238,23 @@ public class Level {
     private final static void addPlayers() {
     	final int size = FurGuardiansGame.pcs.size();
         final ArrayList<Player> players = new ArrayList<Player>(size);
+        final int th = tm.getTileHeight();
         for (int i = 0; i < size; i++) {
         	final PlayerContext pc = FurGuardiansGame.pcs.get(i);
         	Goal.initGoals(pc);
         	final int x = 40 + (20 * i);
-        	players.add(new Player(pc, x, getFloor(x)));
+        	players.add(new Player(pc, x, getFloorIndexForPosition(x) * th));
         }
         Pangine.getEngine().track(Panverage.getArithmeticMean(players));
     }
     
-    private final static int getFloor(final int x) {
+    private final static int getFloorIndexForPosition(final int x) {
+        return getFloorIndexForIndex(x / 16);
+    }
+    
+    private final static int getFloorIndexForIndex(final int i) {
         int base = floor + 1;
         if (theme == Theme.Hive) {
-            final int i = x / 16;
             final int im = i % 4, ib = base % 2;
             if (im == 0) { // Always odd number of tiles, bottom is half hexagon
                 if (ib == 0) {
@@ -2256,7 +2268,7 @@ public class Level {
                 base++;
             }
         }
-        return base * 16;
+        return base;
     }
     
     private final static void setBg(final TileMap tm, final int i, final int j, final TileMapImage[][] imgMap, final int iy, final int ix) {
