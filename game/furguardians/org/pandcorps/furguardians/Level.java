@@ -1381,6 +1381,11 @@ public class Level {
         }
         
         @Override
+        protected final Template getPitTemplate() {
+            return new PitTemplate();
+        }
+        
+        @Override
         protected final boolean changeFloor() {
             if (!super.changeFloor()) {
                 return false;
@@ -1392,6 +1397,11 @@ public class Level {
             bx = px + (4 - m) - 1;
             ground();
             return true;
+        }
+        
+        @Override
+        protected final int getFloorChangeWidth() {
+            return 5;
         }
         
         @Override
