@@ -2240,7 +2240,23 @@ public class Level {
     }
     
     private final static int getFloor(final int x) {
-        return (floor + 1) * 16;
+        int base = floor + 1;
+        if (theme == Theme.Hive) {
+            final int i = x / 16;
+            final int im = i % 4, ib = base % 2;
+            if (im == 0) { // Always odd number of tiles, bottom is half hexagon
+                if (ib == 0) {
+                    base++;
+                }
+            } else if (im == 2) { // Always even, bottom is full hexagon
+                if (ib == 1) {
+                    base++;
+                }
+            } else { // Diagonals always go up from base floor
+                base++;
+            }
+        }
+        return base * 16;
     }
     
     private final static void setBg(final TileMap tm, final int i, final int j, final TileMapImage[][] imgMap, final int iy, final int ix) {
