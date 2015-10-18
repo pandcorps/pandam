@@ -89,6 +89,7 @@ public class Level {
     private static int ng = 0;
     private static int nt = 0;
     private static int floor = 0;
+    private static int floatOffset = 0;
     protected static int goalIndex = 0;
     private static byte floorMode = FLOOR_GRASSY;
     private static Pancolor topSkyColor = null;
