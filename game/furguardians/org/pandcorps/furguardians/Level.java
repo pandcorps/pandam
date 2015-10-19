@@ -696,6 +696,7 @@ public class Level {
     	nt = w / ImtilX.DIM;
     	ng = nt;
     	floor = b.getFloor();
+    	floatOffset = b.getFloatOffset();
     	loadLayers();
     	addPlayers(); // Add Players while floor has initial value before build() changes it
     	if (theme == Theme.Minecart) {
@@ -714,6 +715,8 @@ public class Level {
     	
     	public int getFloor();
     	
+    	public int getFloatOffset();
+    	
     	public void build();
     }
     
@@ -727,6 +730,11 @@ public class Level {
     	public int getFloor() {
     		return 0;
     	}
+    	
+    	@Override
+        public int getFloatOffset() {
+            return 0;
+        }
     	
     	@Override
     	public void build() {
@@ -822,6 +830,11 @@ public class Level {
     	@Override
     	public int getFloor() {
     		return Mathtil.randi(3, 5);
+    	}
+    	
+    	@Override
+    	public int getFloatOffset() {
+    	    return 0;
     	}
     	
     	protected int getMaxFloorChange() {
@@ -1411,6 +1424,11 @@ public class Level {
         @Override
         protected final int getFloorChangeWidth() {
             return 5;
+        }
+        
+        @Override
+        public final int getFloatOffset() {
+            return 1;
         }
         
         @Override
