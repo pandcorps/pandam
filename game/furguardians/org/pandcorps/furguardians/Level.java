@@ -1492,6 +1492,11 @@ public class Level {
     	}
         
         @Override
+        public final int getFloatOffset() {
+            return 1;
+        }
+        
+        @Override
         protected final void fill(final int i, final int imgCol) {
         	for (int j = floor - 1; j >= 0; j--) {
         		tm.setBackground(i, j, imgMap[3][imgCol], Tile.BEHAVIOR_OPEN);
@@ -1998,7 +2003,7 @@ public class Level {
     	
         @Override
         protected final void build() {
-        	letterBlock(x, floor + ((theme == Theme.Minecart) ? 4 : 3));
+        	letterBlock(x, floor + 3 + floatOffset);
         }
     }
     
