@@ -815,6 +815,12 @@ public class Level {
         	return new AnyPitTemplate();
         }
         
+        protected final void addFloatTemplates() {
+            addTemplate(new BlockBonusTemplate());
+            addTemplate(new GemTemplate());
+            addTemplate(new GemMsgTemplate());
+        }
+        
         protected final void addNormalGoals() {
             goals.add(new SlantGoal());
             goals.add(new UpBlockGoal());
@@ -1187,9 +1193,7 @@ public class Level {
 	        }
 	        addTemplate(new AnyPitTemplate());
 	        addTemplate(new UpBlockStepTemplate(), new DownBlockStepTemplate(), new BlockWallTemplate(), new BlockGroupTemplate());
-	        addTemplate(new BlockBonusTemplate());
-	        addTemplate(new GemTemplate());
-	        addTemplate(new GemMsgTemplate());
+	        addFloatTemplates();
 	        addTemplate(new SlantTemplate(true), new SlantTemplate(false));
 	        addGiantTemplate();
 	        addNormalGoals();
@@ -1398,6 +1402,7 @@ public class Level {
     private final static class HexBuilder extends RandomBuilder {
         @Override
         protected final void loadTemplates() {
+            addFloatTemplates();
             addTemplate(new BeeTemplate());
             goals.add(new BeeGoal());
         }
@@ -1985,14 +1990,15 @@ public class Level {
         protected final void build() {
         	final int stop = x + w;
         	final boolean flag = Mathtil.rand();
+        	final int y = floor + 3 + floatOffset;
         	for (int i = x; i < stop; i++) {
         		if (flag) {
-        			bumpableBlock(i, floor + 3);
+        			bumpableBlock(i, y);
         		} else {
-        			breakableBlock(i, floor + 3);
+        			breakableBlock(i, y);
         		}
         	}
-        	enemy(x, floor + 4, w);
+        	enemy(x, y + 1, w);
         }
     }
     
@@ -2020,12 +2026,13 @@ public class Level {
 		protected final void build() {
     		final int stop = x + w;
     		final boolean block = (theme != Theme.Minecart) && Mathtil.rand();
+    		final int y = floor + 3 + floatOffset;
     		for (int i = x; i < stop; i++) {
     			if (block) {
-    				solidBlock(i, floor + 3);
-    				gem(i, floor + 4);
+    				solidBlock(i, y);
+    				gem(i, y + 1);
     			} else {
-    				gem(i, floor + 3);
+    				gem(i, y);
     			}
     		}
     		enemy(x, floor + 1, w);
@@ -2047,12 +2054,12 @@ public class Level {
     				msg = Mathtil.rand(FurGuardiansGame.pcs).getBonusName();
     			}
 			}
-			bx += gemMsg(x, floor + 1, msg, false) + 2;
+			bx += gemMsg(x, floor + 1 + floatOffset, msg, false) + 2;
 		}
 
 		@Override
 		protected final void build() {
-			gemMsg(x + 1, floor + 1, msg, true);
+			gemMsg(x + 1, floor + 1 + floatOffset, msg, true);
 		}
     }
     
