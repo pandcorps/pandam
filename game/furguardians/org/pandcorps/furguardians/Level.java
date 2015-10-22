@@ -1402,6 +1402,7 @@ public class Level {
     private final static class HexBuilder extends RandomBuilder {
         @Override
         protected final void loadTemplates() {
+            addTemplate(new AnyPitTemplate());
             addFloatTemplates();
             addTemplate(new BeeTemplate());
             goals.add(new BeeGoal());
