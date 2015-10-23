@@ -2850,6 +2850,10 @@ public class Level {
         tm.setForeground(index, imgMap[1][imX], (Tile.getBehavior(tm.getTile(index)) == Tile.BEHAVIOR_SOLID) ? Tile.BEHAVIOR_SOLID : b);
     }
     
+    private final static void fillHexagonGaps(final int x, final int w) {
+        
+    }
+    
     private final static void gem(final int x, final int y) {
         if (tileGem == null) {
         	tileGem = tm.getTile(null, FurGuardiansGame.gem[0], FurGuardiansGame.TILE_GEM);
