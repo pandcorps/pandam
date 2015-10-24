@@ -1402,7 +1402,7 @@ public class Level {
     private final static class HexBuilder extends RandomBuilder {
         @Override
         protected final void loadTemplates() {
-            addTemplate(new AnyPitTemplate());
+            addTemplate(getPitTemplate());
             addFloatTemplates();
             addTemplate(new BeeTemplate());
             goals.add(new BeeGoal());
@@ -1410,7 +1410,7 @@ public class Level {
         
         @Override
         protected final Template getPitTemplate() {
-            return new PitTemplate();
+            return new ChoiceTemplate(new PitTemplate(), new BridgePitTemplate());
         }
         
         @Override
@@ -1476,7 +1476,7 @@ public class Level {
     	@Override
 	    protected final void loadTemplates() {
     		floorMode = getFloorMode();
-	        addTemplate(new PitTemplate());
+	        addTemplate(getPitTemplate());
 	        addTemplate(new GemTemplate());
 	        addTemplate(new GemMsgTemplate());
 	        goals.add(new FlatGoal());
@@ -2749,33 +2749,51 @@ public class Level {
     
     private final static void pit(final int x, final int y, final int w) {
     	final int stop = x + w + 1, ystop = (floorMode == FLOOR_BRIDGE || floorMode == FLOOR_TRACK || theme == Theme.Hive) ? (y + 1) : y;
+    	final byte OPEN = Tile.BEHAVIOR_OPEN, SOLID = Tile.BEHAVIOR_SOLID;
     	for (int j = 0; j <= ystop; j++) {
     	    if (theme == Theme.Hive) {
     	        final Tile left = tm.getTile(x, j), right = tm.getTile(stop, j);
+    	        final Tile aboveLeft = tm.getTile(x, j + 1), aboveRight = tm.getTile(stop, j + 1);
     	        final Object leftFore = DynamicTileMap.getRawForeground(left), leftBack = DynamicTileMap.getRawBackground(left);
     	        if (leftFore == imgMap[1][1]) {
-    	            tm.setForeground(x, j, imgMap[1][4], Tile.BEHAVIOR_SOLID);
+    	            tm.setForeground(x, j, imgMap[1][4], SOLID);
     	        } else if (leftBack == imgMap[2][1]) {
-                    tm.setBackground(x, j, imgMap[2][4], Tile.BEHAVIOR_SOLID);
+                    tm.setBackground(x, j, imgMap[2][4], SOLID);
                 } else if (leftFore == imgMap[1][0]) {
-                    tm.setForeground(x, j, null, Tile.BEHAVIOR_SOLID);
+                    tm.setForeground(x, j, null, (leftBack == null) ? OPEN : SOLID);
                 } else if (leftBack == imgMap[2][0]) {
-                    tm.setBackground(x, j, null, Tile.BEHAVIOR_SOLID);
+                    final byte b;
+                    if (leftFore == null) {
+                        b = OPEN;
+                    } else if (leftFore == imgMap[1][2] && Tile.getBehavior(aboveLeft) != SOLID) {
+                        b = FurGuardiansGame.TILE_DOWNSLOPE;
+                    } else {
+                        b = SOLID;
+                    }
+                    tm.setBackground(x, j, null, b);
                 }
     	        final Object rightFore = DynamicTileMap.getRawForeground(right), rightBack = DynamicTileMap.getRawBackground(right);
     	        if (rightFore == imgMap[1][1]) {
-                    tm.setForeground(stop, j, imgMap[1][3], Tile.BEHAVIOR_SOLID);
+                    tm.setForeground(stop, j, imgMap[1][3], SOLID);
                 } else if (rightBack == imgMap[2][1]) {
-                    tm.setBackground(stop, j, imgMap[2][3], Tile.BEHAVIOR_SOLID);
+                    tm.setBackground(stop, j, imgMap[2][3], SOLID);
                 } else if (rightFore == imgMap[1][2]) {
-                    tm.setForeground(stop, j, null, Tile.BEHAVIOR_SOLID);
+                    tm.setForeground(stop, j, null, (rightBack == null) ? OPEN : SOLID);
                 } else if (rightBack == imgMap[2][2]) {
-                    tm.setBackground(stop, j, null, Tile.BEHAVIOR_SOLID);
+                    final byte b;
+                    if (rightFore == null) {
+                        b = OPEN;
+                    } else if (rightFore == imgMap[1][0] && Tile.getBehavior(aboveRight) != SOLID) {
+                        b = FurGuardiansGame.TILE_UPSLOPE;
+                    } else {
+                        b = SOLID;
+                    }
+                    tm.setBackground(stop, j, null, b);
                 }
     	    } else if (floorMode == FLOOR_GRASSY) {
 	    		final int iy = (j == y) ? 1 : 2;
-		    	tm.setForeground(x, j, imgMap[iy][2], Tile.BEHAVIOR_SOLID);
-		    	tm.setForeground(stop, j, imgMap[iy][0], Tile.BEHAVIOR_SOLID);
+		    	tm.setForeground(x, j, imgMap[iy][2], SOLID);
+		    	tm.setForeground(stop, j, imgMap[iy][0], SOLID);
     		} else if (floorMode == FLOOR_BLOCK) {
     		    if (j == y) {
         			solidBlock(x, j);
@@ -2783,14 +2801,14 @@ public class Level {
     		    }
     		} else if (floorMode == FLOOR_BRIDGE || floorMode == FLOOR_TRACK) {
     		    if (j == y) {
-                    tm.setBackground(x, j, imgMap[Tile.getBehavior(tm.getTile(x, j + 1)) != Tile.BEHAVIOR_OPEN ? 3 : 2][0], Tile.BEHAVIOR_SOLID);
-                    tm.setBackground(stop, j, imgMap[2][0], Tile.BEHAVIOR_SOLID);
+                    tm.setBackground(x, j, imgMap[Tile.getBehavior(tm.getTile(x, j + 1)) != OPEN ? 3 : 2][0], SOLID);
+                    tm.setBackground(stop, j, imgMap[2][0], SOLID);
     		    } else if (j == ystop) {
     		        tm.setBackground(x, j, imgMap[1][0]); // Might have a block at pit edge; don't make it open
     		        tm.setBackground(stop, j, imgMap[1][0]);
     		    } else if (floorMode == FLOOR_TRACK) {
-    		    	tm.setBackground(x, j, imgMap[3][0], Tile.BEHAVIOR_OPEN);
-    		    	tm.setBackground(stop, j, imgMap[3][0], Tile.BEHAVIOR_OPEN);
+    		    	tm.setBackground(x, j, imgMap[3][0], OPEN);
+    		    	tm.setBackground(stop, j, imgMap[3][0], OPEN);
     		    }
     		} else {
     		    throw new IllegalStateException("Unexpected floorMode " + floorMode);
