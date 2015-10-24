@@ -2104,7 +2104,7 @@ public class Level {
         
         @Override
         protected void build() {
-            bee(x, floor + 3);
+            bee(x, floor + 3 + floatOffset);
         }
     }
     

@@ -288,7 +288,7 @@ public class Map {
                 stepWater();
             }
             @Override protected final PixelFilter getHillFilter0() {
-                return new SwapPixelFilter(Channel.Green, Channel.Red, Channel.Red); }
+                return new SwapPixelFilter(Channel.Blue, Channel.Green, Channel.Red); }
             @Override protected final PixelFilter getHillFilter1() {
                 return new SwapPixelFilter(Channel.Green, Channel.Blue, Channel.Red); }
             @Override protected final PixelFilter getHillFilter2() {
