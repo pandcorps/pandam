@@ -148,14 +148,15 @@ public class Menu {
 			room = FurGuardiansGame.createRoom(w, FurGuardiansGame.SCREEN_H);
 			final Pangine engine = Pangine.getEngine();
 			final Pancolor bgColor = new FinPancolor((short) 128, (short) 192, Pancolor.MAX_VALUE);
-			engine.setBgColor(PixelFilter.filterColor(Map.theme.getSkyFilter(), bgColor));
+			final MapTheme theme = Map.theme;
+			engine.setBgColor(PixelFilter.filterColor(theme.getSkyFilter(), bgColor));
 			Level.initTheme();
 			
 			tm = new TileMap(Pantil.vmid(), room, ImtilX.DIM, ImtilX.DIM);
 			Level.tm = tm;
 			timg = Level.getTileImage();
 			final TileMapImage[][] imgMap = tm.splitImageMap(timg);
-			tm.fillBackground(imgMap[1][1], 0, 1);
+			tm.fillBackground(imgMap[theme.getMenuTileRow()][theme.getMenuTileColumn()], 0, 1);
 			room.addActor(tm);
 			
 			if (isCursorDisplayed()) {

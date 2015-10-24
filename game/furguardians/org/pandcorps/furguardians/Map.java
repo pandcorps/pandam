@@ -293,6 +293,10 @@ public class Map {
                 return new SwapPixelFilter(Channel.Green, Channel.Blue, Channel.Red); }
             @Override protected final PixelFilter getHillFilter2() {
                 return new SwapPixelFilter(Channel.Green, Channel.Green, Channel.Red); }
+            @Override protected final int getMenuTileRow() {
+                return 3; }
+            @Override protected final int getMenuTileColumn() {
+                return 1; }
             @Override protected final boolean hasBeenDefeated(final Statistics stats) {
                 return stats.playedHiveWorlds > 0; }
             @Override protected final Pansound getMenuMusic() {
@@ -352,6 +356,14 @@ public class Map {
 		protected PixelMask getDirtMask() {
 			return null;
 		}
+		
+		protected int getMenuTileRow() {
+		    return 1;
+		}
+		
+		protected int getMenuTileColumn() {
+            return 1;
+        }
 		
 		protected abstract boolean hasBeenDefeated(final Statistics stats);
 		
