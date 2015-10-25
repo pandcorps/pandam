@@ -77,6 +77,7 @@ public class Level {
     protected static Panroom room = null;
     protected static Theme theme = null;
     protected static BackgroundBuilder backgroundBuilder = null;
+    protected static Builder builder = null;
     protected static Panmage timg = null;
     protected static Panmage bgimg = null;
     protected static TileMap tm = null;
@@ -691,36 +692,41 @@ public class Level {
 	    tileTrackTop = null;
 	    tileTrackBase = null;
     	backgroundBuilder = theme.getRandomBackground();
-    	final Builder b = theme.getRandomBuilder();
-    	w = b.getW();
+    	builder = theme.getRandomBuilder();
+    	w = builder.getW();
     	nt = w / ImtilX.DIM;
     	ng = nt;
-    	floor = b.getFloor();
-    	floatOffset = b.getFloatOffset();
+    	floor = builder.getFloor();
+    	floatOffset = builder.getFloatOffset();
     	loadLayers();
     	addPlayers(); // Add Players while floor has initial value before build() changes it
     	if (theme == Theme.Minecart) {
     		tileTrackTop = tm.getTile(null, imgMap[1][2], Tile.BEHAVIOR_OPEN);
             tileTrackBase = tm.getTile(null, imgMap[2][2], Tile.BEHAVIOR_SOLID);
         }
-    	b.build();
+    	builder.build();
     	/*tm.info();
     	bgtm1.info();
     	bgtm2.info();
     	bgtm3.info();*/
     }
     
-    private static interface Builder {
-    	public int getW();
+    private static abstract class Builder {
+    	public abstract int getW();
     	
-    	public int getFloor();
+    	public abstract int getFloor();
     	
-    	public int getFloatOffset();
+    	public int getFloatOffset() {
+            return 0;
+        }
     	
-    	public void build();
+    	public abstract void build();
+    	
+    	protected void flatten(final int x, final int w) {
+        }
     }
     
-    protected final static class DemoBuilder implements Builder {
+    protected final static class DemoBuilder extends Builder {
     	@Override
     	public int getW() {
     		return 768;
@@ -730,11 +736,6 @@ public class Level {
     	public int getFloor() {
     		return 0;
     	}
-    	
-    	@Override
-        public int getFloatOffset() {
-            return 0;
-        }
     	
     	@Override
     	public void build() {
@@ -795,7 +796,7 @@ public class Level {
     private static int bx;
     private static int px;
     
-    protected abstract static class RandomBuilder implements Builder {
+    protected abstract static class RandomBuilder extends Builder {
     	protected final ArrayList<Template> templates = new ArrayList<Template>();
         protected final ArrayList<GoalTemplate> goals = new ArrayList<GoalTemplate>();
         
@@ -836,11 +837,6 @@ public class Level {
     	@Override
     	public int getFloor() {
     		return Mathtil.randi(3, 5);
-    	}
-    	
-    	@Override
-    	public int getFloatOffset() {
-    	    return 0;
     	}
     	
     	protected int getMaxFloorChange() {
@@ -1404,6 +1400,7 @@ public class Level {
         protected final void loadTemplates() {
             addTemplate(getPitTemplate());
             addFloatTemplates();
+            addGiantTemplate();
             addTemplate(new BeeTemplate());
             goals.add(new BeeGoal());
         }
@@ -1469,6 +1466,11 @@ public class Level {
         @Override
         protected final int getMaxFloorChange() {
             return 1;
+        }
+        
+        @Override
+        protected final void flatten(final int x, final int w) {
+            fillHexagonGaps(x, w);
         }
     }
     
@@ -2154,9 +2156,11 @@ public class Level {
     	
     	@Override
         protected final void build() {
-    		blockWall(x, floor + 1, 1, 2);
-    		blockWall(x + 11, floor + 1, 1, 2);
-    		enemy(Mathtil.rand() ? FurGuardiansGame.trollColossus : FurGuardiansGame.ogreBehemoth, x + 5, floor + 1);
+    	    builder.flatten(x, w);
+    	    final int base = floor + 1 + floatOffset;
+    		blockWall(x, base, 1, 2);
+    		blockWall(x + w - 1, base, 1, 2);
+    		enemy(Mathtil.rand() ? FurGuardiansGame.trollColossus : FurGuardiansGame.ogreBehemoth, x + 5, base);
     	}
     }
     
