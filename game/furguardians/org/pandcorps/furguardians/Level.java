@@ -2873,7 +2873,9 @@ public class Level {
     }
     
     private final static void fillHexagonGaps(final int x, final int w) {
-        
+        final int xw = x + w;
+        for (int i = x; i < xw; i++) {
+        }
     }
     
     private final static void gem(final int x, final int y) {
