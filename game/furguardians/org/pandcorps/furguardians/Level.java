@@ -63,6 +63,11 @@ public class Level {
     private final static byte FLOOR_BRIDGE = 2;
     private final static byte FLOOR_TRACK = 3;
     
+    private final static byte HEX_RISE = 0;
+    private final static byte HEX_UP = 1;
+    private final static byte HEX_FALL = 2;
+    private final static byte HEX_DOWN = 3;
+    
     private final static int LAST_DEFEATED_LEVEL_COUNT_TO_FORCE_BACKGROUND = 1;
     private final static int LAST_DEFEATED_LEVEL_COUNT_TO_FORCE_ENEMY = 2;
     
@@ -2291,20 +2296,30 @@ public class Level {
     private final static int getFloorIndexForIndex(final int i) {
         int base = floor + 1;
         if (theme == Theme.Hive) {
-            final int im = i % 4, ib = base % 2;
-            if (im == 0) { // Always odd number of tiles, bottom is half hexagon
-                if (ib == 0) {
-                    base++;
-                }
-            } else if (im == 2) { // Always even, bottom is full hexagon
-                if (ib == 1) {
-                    base++;
-                }
-            } else { // Diagonals always go up from base floor
+            if (getHexagonFloorType(i) != HEX_DOWN) {
                 base++;
             }
         }
         return base;
+    }
+    
+    private final static byte getHexagonFloorType(final int i) {
+        final int base = floor + 1;
+        final int im = i % 4, ib = base % 2;
+        if (im == 0) { // Always odd number of tiles, bottom is half hexagon
+            if (ib == 0) {
+                return HEX_UP;
+            }
+        } else if (im == 2) { // Always even, bottom is full hexagon
+            if (ib == 1) {
+                return HEX_UP;
+            }
+        } else if (im == 1) { // Diagonals always go up from base floor
+            return (ib == 0) ? HEX_FALL : HEX_RISE;
+        } else { // im == 3
+            return (ib == 1) ? HEX_FALL : HEX_RISE;
+        }
+        return HEX_DOWN;
     }
     
     private final static void setBg(final TileMap tm, final int i, final int j, final TileMapImage[][] imgMap, final int iy, final int ix) {
