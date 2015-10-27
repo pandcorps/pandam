@@ -2888,8 +2888,22 @@ public class Level {
     }
     
     private final static void fillHexagonGaps(final int x, final int w) {
-        final int xw = x + w;
+        final int xw = x + w, j = floor + 1;
         for (int i = x; i < xw; i++) {
+            final byte ft = getHexagonFloorType(i);
+            final int imX;
+            if (ft == HEX_RISE) {
+                imX = 2;
+            } else if (ft == HEX_DOWN) {
+                imX = 1;
+            } else if (ft == HEX_FALL) {
+                imX = 0;
+            } else {
+                imX = -1;
+            }
+            if (imX != -1) {
+                tm.setBackground(i, j, imgMap[3][imX], Tile.BEHAVIOR_SOLID);
+            }
         }
     }
     
