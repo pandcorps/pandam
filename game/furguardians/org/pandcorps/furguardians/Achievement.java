@@ -49,7 +49,7 @@ public abstract class Achievement extends FinName {
 		new BuyFeat("Consumer", 1), new BuyFeat("Demander", 5), new BuyFeat("Collector", 15),
 		new NoBirdGemsFeat(), new BirdGemFeat("Nest Egg", 200),
 		new WispFeat("Wisp Slayer", 10), new OrbFeat("Orb Wielder", 25), new MonsterElectrocuteFeat("Lightning Storm", 150),
-		new DoubledGemFeat("Double Down", 7500)
+		new DoubledGemFeat("Double Down", 7500), new BounceFeat("Busy Bee", 400)
 		// Level w/ no damage
 		// Beyond Belief, Finish Level as a flying Pig
 		// Babe, Finish Level as a blue Bull/Ox
@@ -409,6 +409,17 @@ public abstract class Achievement extends FinName {
         @Override
         public final long getCurrent(final Statistics stats) {
             return stats.kicks;
+        }
+    }
+	
+	private final static class BounceFeat extends StatFeat {
+        protected BounceFeat(final String name, final int n) {
+            super(name, n, "Bounce on a Bee " + n + " times", (n * 5) / 2);
+        }
+        
+        @Override
+        public final long getCurrent(final Statistics stats) {
+            return stats.bounces;
         }
     }
 	
