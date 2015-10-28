@@ -3098,7 +3098,7 @@ public class Level {
     	}
     	final String s = gemFont[c];
     	final int size = s.length();
-    	if (floorMode == FLOOR_BRIDGE || floorMode == FLOOR_TRACK) {
+    	if (floorMode == FLOOR_BRIDGE) {
     	    y++;
     	}
     	int xc = x, yc = y + 4, max = 0;

@@ -414,7 +414,7 @@ public abstract class Achievement extends FinName {
 	
 	private final static class BounceFeat extends StatFeat {
         protected BounceFeat(final String name, final int n) {
-            super(name, n, "Bounce on a Bee " + n + " times", (n * 5) / 2);
+            super(name, n, "Bounce on a Bee " + n + " time" + getS(n), (n * 5) / 2);
         }
         
         @Override
