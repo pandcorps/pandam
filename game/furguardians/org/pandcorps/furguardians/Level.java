@@ -2861,30 +2861,32 @@ public class Level {
     }
     
     private final static void hexagon(final int x, final int y) {
-        hexTopCorner(x, y, 0, FurGuardiansGame.TILE_UPSLOPE);
+        final int imY = Mathtil.rand() ? 1 : 5;
+        hexTopCorner(x, y, 0, imY, FurGuardiansGame.TILE_UPSLOPE);
         final int x1 = x + 1;
         if (!tm.isBadColumn(x1)) {
-            tm.setForeground(x1, y, imgMap[1][1], Tile.BEHAVIOR_SOLID);
+            tm.setForeground(x1, y, imgMap[imY][1], Tile.BEHAVIOR_SOLID);
         }
-        hexTopCorner(x + 2, y, 2, FurGuardiansGame.TILE_DOWNSLOPE);
+        hexTopCorner(x + 2, y, 2, imY, FurGuardiansGame.TILE_DOWNSLOPE);
         final int y1 = y - 1;
         if (y1 < 0) {
             return;
         }
+        final TileMapImage[] row = imgMap[imY + 1];
         for (int i = 0; i < 3; i++) {
             final int xi = x + i;
             if (!tm.isBadColumn(xi)) {
-                tm.setBackground(xi, y1, imgMap[2][i], Tile.BEHAVIOR_SOLID);
+                tm.setBackground(xi, y1, row[i], Tile.BEHAVIOR_SOLID);
             }
         }
     }
     
-    private final static void hexTopCorner(final int x, final int y, final int imX, final byte b) {
+    private final static void hexTopCorner(final int x, final int y, final int imX, final int imY, final byte b) {
         final int index = tm.getIndex(x, y);
         if (index < 0) {
             return;
         }
-        tm.setForeground(index, imgMap[1][imX], (Tile.getBehavior(tm.getTile(index)) == Tile.BEHAVIOR_SOLID) ? Tile.BEHAVIOR_SOLID : b);
+        tm.setForeground(index, imgMap[imY][imX], (Tile.getBehavior(tm.getTile(index)) == Tile.BEHAVIOR_SOLID) ? Tile.BEHAVIOR_SOLID : b);
     }
     
     private final static void fillHexagonGaps(final int x, final int w) {
