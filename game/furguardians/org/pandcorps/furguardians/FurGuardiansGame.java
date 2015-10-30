@@ -244,6 +244,7 @@ public class FurGuardiansGame extends BaseGame {
 	protected final static HashMap<String, Img[]> tailsAll = new HashMap<String, Img[]>();
 	protected final static HashMap<String, Img[]> bodiesAll = new HashMap<String, Img[]>();
 	protected final static HashMap<String, Img[]> birdsAll = new HashMap<String, Img[]>();
+	protected static Img[] bees = null;
 	protected final static Img[] eyesAll = new Img[getNumEyes()];
 	protected final static HashMap<String, Img> masksAll = new HashMap<String, Img>();
 	protected static Img eyesBlink = null;
@@ -663,6 +664,9 @@ public class FurGuardiansGame extends BaseGame {
 	}
 	
 	private final static Img[] getBirds(final String kind) {
+	    if ("bee".equalsIgnoreCase(kind)) {
+	        return bees;
+	    }
 	    return getImages(birdsAll, kind, "bird/" + Chartil.toCode(kind, false) + ".png", 16);
     }
 	
@@ -1542,7 +1546,8 @@ public class FurGuardiansGame extends BaseGame {
 			owl = engine.createAnimation(PRE_ANM + "owl", owl1, owl2); }});
 		
 		loaders.add(new Runnable() { @Override public final void run() {
-		    bee = createAnm("bee", RES + "chr/misc/Bee.png", 16, 4);
+		    bees = ImtilX.loadStrip(RES + "chr/misc/Bee.png");
+		    bee = getBirdAnm("bee", "Bee", 2);
 			frozen = createImage("frozen", RES + "chr/Frozen.png", 32, og);
 			burn = createAnm("burn", RES + "chr/Burn.png", 32, 6, og, null, null);
 			electric = createAnm("electric", RES + "chr/Electric.png", 32, 3, og, null, null);
