@@ -168,6 +168,8 @@ public class FurGuardiansGame extends BaseGame {
 	protected final static String SEG_LOC = "LOC";
 	protected final static String SEG_AVT = "AVT";
 	
+	protected final static String KIND_BEE = "Bee";
+	
 	private final static List<String> animals =
 			Arrays.asList("Bear", "Cat", "Dog", "Elephant", "Horse", "Koala", "Mouse", "Panda", "Rabbit", "Rhino", "Zebra");
 	private static List<String> basicAnimals = null;
@@ -664,7 +666,7 @@ public class FurGuardiansGame extends BaseGame {
 	}
 	
 	private final static Img[] getBirds(final String kind) {
-	    if ("bee".equalsIgnoreCase(kind)) {
+	    if (KIND_BEE.equalsIgnoreCase(kind)) {
 	        return bees;
 	    }
 	    return getImages(birdsAll, kind, "bird/" + Chartil.toCode(kind, false) + ".png", 16);
@@ -1547,7 +1549,7 @@ public class FurGuardiansGame extends BaseGame {
 		
 		loaders.add(new Runnable() { @Override public final void run() {
 		    bees = ImtilX.loadStrip(RES + "chr/misc/Bee.png");
-		    bee = getBirdAnm("bee", "Bee", 2);
+		    bee = getBirdAnm("bee", KIND_BEE, 2);
 			frozen = createImage("frozen", RES + "chr/Frozen.png", 32, og);
 			burn = createAnm("burn", RES + "chr/Burn.png", 32, 6, og, null, null);
 			electric = createAnm("electric", RES + "chr/Electric.png", 32, 3, og, null, null);

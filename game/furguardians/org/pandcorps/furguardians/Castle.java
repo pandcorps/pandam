@@ -165,22 +165,29 @@ public class Castle {
             
             addPlayers(48, 32, null);
             
-            final PlayerImages pi = new PlayerImages(Map.royAvt);
-            final Img k1 = pi.guys[0], k2 = pi.guyBlink;
-            final Img crownImg = FurGuardiansGame.crowns[Map.royCrown];
-            for (final Img k : new Img[] {k1, k2}) {
-                Imtil.copy(crownImg, k, 0, 0, 14, 9, 10, 1, Imtil.COPY_FOREGROUND);
+            final int offY;
+            if (Map.theme == org.pandcorps.furguardians.Map.MapTheme.Hive) {
+                royAnm = FurGuardiansGame.getBirdAnm("roy", FurGuardiansGame.KIND_BEE, Map.royAvt.eye);
+                offY = Player.OFF_BIRD;
+            } else {
+                final PlayerImages pi = new PlayerImages(Map.royAvt);
+                final Img k1 = pi.guys[0], k2 = pi.guyBlink;
+                final Img crownImg = FurGuardiansGame.crowns[Map.royCrown];
+                for (final Img k : new Img[] {k1, k2}) {
+                    Imtil.copy(crownImg, k, 0, 0, 14, 9, 10, 1, Imtil.COPY_FOREGROUND);
+                }
+                final Pangine en = Pangine.getEngine();
+                royAnm = en.createAnimation(FurGuardiansGame.PRE_ANM + "roy",
+                	en.createFrame(FurGuardiansGame.PRE_FRM + "roy.1", en.createImage(FurGuardiansGame.PRE_IMG + "roy.1", k1), FurGuardiansGame.DUR_BLINK + 20),
+                	en.createFrame(FurGuardiansGame.PRE_FRM + "roy.2", en.createImage(FurGuardiansGame.PRE_IMG + "roy.2", k2), FurGuardiansGame.DUR_CLOSED));
+                pi.close();
+                offY = 0;
             }
-            final Pangine en = Pangine.getEngine();
-            royAnm = en.createAnimation(FurGuardiansGame.PRE_ANM + "roy",
-            	en.createFrame(FurGuardiansGame.PRE_FRM + "roy.1", en.createImage(FurGuardiansGame.PRE_IMG + "roy.1", k1), FurGuardiansGame.DUR_BLINK + 20),
-            	en.createFrame(FurGuardiansGame.PRE_FRM + "roy.2", en.createImage(FurGuardiansGame.PRE_IMG + "roy.2", k2), FurGuardiansGame.DUR_CLOSED));
-            pi.close();
             final Panctor roy = new Panctor();
             roy.setView(royAnm);
             room.addActor(roy);
             roy.setMirror(true);
-            roy.getPosition().set(184, 60, 2);
+            roy.getPosition().set(184, 60 + offY, 2);
             
             final Pantext text = new Pantext(Pantil.vmid(), FurGuardiansGame.font, msg);
             text.getPosition().set(8, 160, 10);

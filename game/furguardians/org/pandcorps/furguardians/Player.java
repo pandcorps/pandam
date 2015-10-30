@@ -47,6 +47,7 @@ public class Player extends Character implements CollisionListener {
 	private final static int VEL_JUMP = 8;
 	private final static int VEL_JUMP_DRAGON = (VEL_JUMP + MAX_V) / 2;
 	protected final static int VEL_BUMP = 4;
+	protected final static int OFF_BIRD = 32;
 	protected final static byte MODE_NORMAL = 0;
 	private final static byte MODE_RETURN = 1;
 	protected final static byte MODE_DISABLED = 2;
@@ -1315,7 +1316,7 @@ public class Player extends Character implements CollisionListener {
 	    
 	    private void init() {
 	        final Panple ppos = player.getPosition();
-	        FurGuardiansGame.setPosition(this, ppos.getX() + 16, ppos.getY() + 32, FurGuardiansGame.getDepthBubble(player.jumpMode));
+	        FurGuardiansGame.setPosition(this, ppos.getX() + 16, ppos.getY() + OFF_BIRD, FurGuardiansGame.getDepthBubble(player.jumpMode));
 	    }
 	    
 	    private Panple getTarget() {
