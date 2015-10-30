@@ -1185,7 +1185,7 @@ public class Map {
 			bld = null;
            	royAvt.randomize();
            	royAvt.col.randomizeColorful();
-           	if (Mathtil.rand()) {
+           	if ((theme != MapTheme.Hive) && Mathtil.rand()) {
 	           	royAvt.eye = Mathtil.randElemI(EYES_ROY);
 	           	royAvt.clothing.clth = Mathtil.rand(Avatar.hiddenClothings);
            	} else {
