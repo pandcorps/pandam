@@ -2774,40 +2774,52 @@ public class Level {
     	        final Tile left = tm.getTile(x, j), right = tm.getTile(stop, j);
     	        final Tile aboveLeft = tm.getTile(x, j + 1), aboveRight = tm.getTile(stop, j + 1);
     	        final Object leftFore = DynamicTileMap.getRawForeground(left), leftBack = DynamicTileMap.getRawBackground(left);
-    	        if (leftFore == imgMap[1][1]) {
-    	            tm.setForeground(x, j, imgMap[1][4], SOLID);
-    	        } else if (leftBack == imgMap[2][1]) {
-                    tm.setBackground(x, j, imgMap[2][4], SOLID);
-                } else if (leftFore == imgMap[1][0]) {
-                    tm.setForeground(x, j, null, (leftBack == null) ? OPEN : SOLID);
-                } else if (leftBack == imgMap[2][0]) {
-                    final byte b;
-                    if (leftFore == null) {
-                        b = OPEN;
-                    } else if (leftFore == imgMap[1][2] && Tile.getBehavior(aboveLeft) != SOLID) {
-                        b = FurGuardiansGame.TILE_DOWNSLOPE;
+    	        for (int imY = 1; imY < 6; imY += 4) {
+    	            final TileMapImage[] row = imgMap[imY], row2 = imgMap[imY + 1];
+        	        if (leftFore == row[1]) {
+        	            tm.setForeground(x, j, row[4], SOLID);
+        	        } else if (leftBack == row2[1]) {
+                        tm.setBackground(x, j, row2[4], SOLID);
+                    } else if (leftFore == row[0]) {
+                        tm.setForeground(x, j, null, (leftBack == null) ? OPEN : SOLID);
+                    } else if (leftBack == row2[0]) {
+                        final byte b;
+                        if (leftFore == null) {
+                            b = OPEN;
+                        } else if (leftFore == row[2] && Tile.getBehavior(aboveLeft) != SOLID) {
+                            b = FurGuardiansGame.TILE_DOWNSLOPE;
+                        } else {
+                            b = SOLID;
+                        }
+                        tm.setBackground(x, j, null, b);
                     } else {
-                        b = SOLID;
+                        continue;
                     }
-                    tm.setBackground(x, j, null, b);
-                }
-    	        final Object rightFore = DynamicTileMap.getRawForeground(right), rightBack = DynamicTileMap.getRawBackground(right);
-    	        if (rightFore == imgMap[1][1]) {
-                    tm.setForeground(stop, j, imgMap[1][3], SOLID);
-                } else if (rightBack == imgMap[2][1]) {
-                    tm.setBackground(stop, j, imgMap[2][3], SOLID);
-                } else if (rightFore == imgMap[1][2]) {
-                    tm.setForeground(stop, j, null, (rightBack == null) ? OPEN : SOLID);
-                } else if (rightBack == imgMap[2][2]) {
-                    final byte b;
-                    if (rightFore == null) {
-                        b = OPEN;
-                    } else if (rightFore == imgMap[1][0] && Tile.getBehavior(aboveRight) != SOLID) {
-                        b = FurGuardiansGame.TILE_UPSLOPE;
+        	        break;
+    	        }
+    	        for (int imY = 1; imY < 6; imY += 4) {
+    	            final TileMapImage[] row = imgMap[imY], row2 = imgMap[imY + 1];
+        	        final Object rightFore = DynamicTileMap.getRawForeground(right), rightBack = DynamicTileMap.getRawBackground(right);
+        	        if (rightFore == row[1]) {
+                        tm.setForeground(stop, j, row[3], SOLID);
+                    } else if (rightBack == row2[1]) {
+                        tm.setBackground(stop, j, row2[3], SOLID);
+                    } else if (rightFore == row[2]) {
+                        tm.setForeground(stop, j, null, (rightBack == null) ? OPEN : SOLID);
+                    } else if (rightBack == row2[2]) {
+                        final byte b;
+                        if (rightFore == null) {
+                            b = OPEN;
+                        } else if (rightFore == row[0] && Tile.getBehavior(aboveRight) != SOLID) {
+                            b = FurGuardiansGame.TILE_UPSLOPE;
+                        } else {
+                            b = SOLID;
+                        }
+                        tm.setBackground(stop, j, null, b);
                     } else {
-                        b = SOLID;
+                        continue;
                     }
-                    tm.setBackground(stop, j, null, b);
+                    break;
                 }
     	    } else if (floorMode == FLOOR_GRASSY) {
 	    		final int iy = (j == y) ? 1 : 2;
