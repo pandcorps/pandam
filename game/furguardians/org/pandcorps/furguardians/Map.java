@@ -154,6 +154,7 @@ public class Map {
 	private static int endRow = -1;
 	private final static int[] EYES_ROY = {2, 4, 5, 6, 7, 8, 9, 10};
 	private final static int[] EYES_ROY2 = {2, 15, 16, 17};
+	private final static int[] EYES_ROY_BEE = {15, 16};
 	protected final static int[] EYES_BASIC = {2, 4, 5, 6, 7, 8, 9, 10, 15, 16, 17, 22};
 	protected static Avatar royAvt = null;
 	protected static int royCrown = -1;
@@ -1191,16 +1192,17 @@ public class Map {
 			bld = null;
            	royAvt.randomize();
            	royAvt.col.randomizeColorful();
-           	if ((theme != MapTheme.Hive) && Mathtil.rand()) {
+           	final boolean hive = (theme == MapTheme.Hive);
+           	if (!hive && Mathtil.rand()) {
 	           	royAvt.eye = Mathtil.randElemI(EYES_ROY);
 	           	royAvt.clothing.clth = Mathtil.rand(Avatar.hiddenClothings);
            	} else {
-           		royAvt.eye = Mathtil.randElemI(EYES_ROY2);
+           		royAvt.eye = Mathtil.randElemI(hive ? EYES_ROY_BEE : EYES_ROY2);
 	           	royAvt.clothing.clth = Avatar.royalDress;
            	}
            	//royAvt.clothingCol.load(royAvt.col); //negate();
            	royAvt.clothing.col.randomizeColorfulDifferent(royAvt.col);
-           	if (theme == MapTheme.Hive) {
+           	if (hive) {
            	    royCrown = 0;
            	} else {
            	    royCrown = Mathtil.randi(0, FurGuardiansGame.crowns.length - 1);
