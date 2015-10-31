@@ -238,7 +238,9 @@ public class FurGuardiansGame extends BaseGame {
 	protected final static FinPanple2 od = new FinPanple2(13, 1);
 	protected final static FinPanple odf = new FinPanple(13, 1, _DEPTH_PLAYER_BACK - _DEPTH_PLAYER_FRONT);
 	protected final static FinPanple2 or = new FinPanple2(21, -6);
-	protected final static FinPanple2 oBird = new FinPanple2(7, 1);
+	protected final static int BIRD_X = 7;
+	protected final static int BIRD_Y = 1;
+	protected final static FinPanple2 oBird = new FinPanple2(BIRD_X, BIRD_Y);
 	protected static Img[] guysBlank = null;
 	protected static Img[] guysRide = null;
 	protected final static HashMap<String, Img> facesAll = new HashMap<String, Img>();

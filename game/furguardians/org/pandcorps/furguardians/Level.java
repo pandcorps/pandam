@@ -1167,7 +1167,8 @@ public class Level {
     }
     
     private final static void bee(final int x, final int y) {
-        FurGuardiansGame.setPosition(new Bouncer(), tm.getTileWidth() * x, tm.getTileHeight() * y, FurGuardiansGame.DEPTH_BACK);
+        FurGuardiansGame.setPosition(new Bouncer(),
+            (tm.getTileWidth() * x) + FurGuardiansGame.BIRD_X, (tm.getTileHeight() * y) + FurGuardiansGame.BIRD_Y, FurGuardiansGame.DEPTH_BACK);
     }
     
     private final static int[] scratch = new int[128];
