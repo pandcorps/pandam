@@ -1051,6 +1051,7 @@ public class Player extends Character implements CollisionListener {
 		} else if (other instanceof Bouncer) {
 		    if (isBouncePossible()) {
 		        bounce();
+		        FurGuardiansGame.soundBounce.startSound();
 		    }
 		}
 	}
@@ -1069,7 +1070,6 @@ public class Player extends Character implements CollisionListener {
         } else {
             v = VEL_BUMP;
         }
-        FurGuardiansGame.soundBounce.startSound();
         stompTimer = 2;
         evaluateDragonStomp();
 	}
