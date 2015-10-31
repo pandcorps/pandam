@@ -253,6 +253,7 @@ public class FurGuardiansGame extends BaseGame {
 	protected final static Img[] dragonEyesAll = new Img[getNumDragonEyes()];
 	protected static Panmage egg = null;
 	protected static Panmage egg8 = null;
+	protected static Panmage[] crownPanmages = null;
 	protected static Panimation bee = null;
 	protected static Panmage frozen = null;
 	protected static Panimation burn = null;
@@ -706,6 +707,18 @@ public class FurGuardiansGame extends BaseGame {
         }
         return egg8;
     }
+	
+	protected final static Panmage getCrown(final int i) {
+	    if (crownPanmages == null) {
+	        crownPanmages = new Panmage[crowns.length];
+	    }
+	    Panmage crown = crownPanmages[i];
+	    if (crown == null) {
+	        crown = Pangine.getEngine().createImage(PRE_IMG + "crown." + i, crowns[i]);
+	        crownPanmages[i] = crown;
+	    }
+	    return crown;
+	}
 	
 	protected final static class PlayerImages {
 		protected final PixelFilter f;

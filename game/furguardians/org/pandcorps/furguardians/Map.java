@@ -1194,7 +1194,11 @@ public class Map {
            	}
            	//royAvt.clothingCol.load(royAvt.col); //negate();
            	royAvt.clothing.col.randomizeColorfulDifferent(royAvt.col);
-           	royCrown = Mathtil.randi(0, FurGuardiansGame.crowns.length - 1);
+           	if (theme == MapTheme.Hive) {
+           	    royCrown = 0;
+           	} else {
+           	    royCrown = Mathtil.randi(0, FurGuardiansGame.crowns.length - 1);
+           	}
 		}
 		initRoom();
 		initTileMap(tm);

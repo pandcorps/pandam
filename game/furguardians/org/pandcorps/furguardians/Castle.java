@@ -169,6 +169,11 @@ public class Castle {
             if (Map.theme == org.pandcorps.furguardians.Map.MapTheme.Hive) {
                 royAnm = FurGuardiansGame.getBirdAnm("roy", FurGuardiansGame.KIND_BEE, Map.royAvt.eye);
                 offY = Player.OFF_BIRD;
+                final Panctor crown = new Panctor();
+                crown.setView(FurGuardiansGame.getCrown(Map.royCrown));
+                room.addActor(crown);
+                crown.setMirror(true);
+                crown.getPosition().set(187, 102, 3);
             } else {
                 final PlayerImages pi = new PlayerImages(Map.royAvt);
                 final Img k1 = pi.guys[0], k2 = pi.guyBlink;
