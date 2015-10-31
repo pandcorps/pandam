@@ -1052,6 +1052,10 @@ public class Player extends Character implements CollisionListener {
 		    if (isBouncePossible()) {
 		        bounce();
 		        FurGuardiansGame.soundBounce.startSound();
+		        final Statistics stats = PlayerContext.getStatistics(pc);
+		        if (stats != null) {
+		            stats.bounces++;
+		        }
 		    }
 		}
 	}
