@@ -2111,7 +2111,9 @@ public class Level {
         
         @Override
         protected void build() {
-            bee(x, floor + 3 + floatOffset);
+            final int base = floor + floatOffset;
+            bee(x, base + 3);
+            bonus(x, base + 7);
         }
     }
     
@@ -2927,6 +2929,17 @@ public class Level {
         }
         tm.setTile(x, y, tileGem);
         numGems++;
+    }
+    
+    private final static void bonus(final int x, final int y) {
+        final int r = Mathtil.randi(0, 299);
+        if (r < 100) {
+            gem(x, y);
+        } else if (r < 200) {
+            bumpableBlock(x, y);
+        } else {
+            breakableBlock(x, y);
+        }
     }
     
     private final static String[] gemFont = {
