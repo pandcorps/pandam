@@ -1413,6 +1413,7 @@ public class Player extends Character implements CollisionListener {
 	    protected Bouncer() {
             setView(FurGuardiansGame.bee);
             FurGuardiansGame.room.addActor(this);
+            setMirror(true);
         }
 	}
 }
