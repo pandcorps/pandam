@@ -2789,7 +2789,7 @@ public class Level {
                         final byte b;
                         if (leftFore == null) {
                             b = OPEN;
-                        } else if (leftFore == row[2] && Tile.getBehavior(aboveLeft) != SOLID) {
+                        } else if ((leftFore == imgMap[1][2] || leftFore == imgMap[5][2]) && Tile.getBehavior(aboveLeft) != SOLID) {
                             b = FurGuardiansGame.TILE_DOWNSLOPE;
                         } else {
                             b = SOLID;
@@ -2813,7 +2813,7 @@ public class Level {
                         final byte b;
                         if (rightFore == null) {
                             b = OPEN;
-                        } else if (rightFore == row[0] && Tile.getBehavior(aboveRight) != SOLID) {
+                        } else if ((rightFore == imgMap[1][0] || rightFore == imgMap[5][0]) && Tile.getBehavior(aboveRight) != SOLID) {
                             b = FurGuardiansGame.TILE_UPSLOPE;
                         } else {
                             b = SOLID;

@@ -1069,6 +1069,7 @@ public class Player extends Character implements CollisionListener {
         } else {
             v = VEL_BUMP;
         }
+        FurGuardiansGame.soundBounce.startSound();
         stompTimer = 2;
         evaluateDragonStomp();
 	}
