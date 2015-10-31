@@ -166,13 +166,13 @@ public class Level {
     		@Override protected final Builder getRandomBuilder() {
     			if (backgroundBuilder instanceof HillBackgroundBuilder) {
     				if (getDefeatedLevels() <= getLastDefeatedLevelCountToForceNormal()) {
-    					return new GrassyBuilder();
+    					return getBasicBuilder();
     				}
     				return Mathtil.rand() ? new GrassyBuilder() : new PlatformBuilder();
     			} else if (backgroundBuilder instanceof TownBackgroundBuilder) {
     				return new FlatBuilder();
     			} else {
-    				return new GrassyBuilder();
+    				return getBasicBuilder();
     			}
     		}
     	};
@@ -183,10 +183,6 @@ public class Level {
     	    
     		@Override protected final BackgroundBuilder getRandomBackground() {
     			return Mathtil.rand() ? new HillBackgroundBuilder() : new MountainBackgroundBuilder();
-    		}
-    		
-    		@Override protected final Builder getRandomBuilder() {
-    			return new GrassyBuilder();
     		}
     		
     		@Override protected final TileMapImage[] getExtraAnimBlock() {
@@ -217,10 +213,6 @@ public class Level {
     			return new HillBackgroundBuilder();
     		}
     		
-    		@Override protected final Builder getRandomBuilder() {
-    			return new GrassyBuilder();
-    		}
-    		
     		@Override protected final TileMapImage[] getExtraAnimBlock() {
     			final TileMapImage[] row = imgMap[1];
     	        return new TileMapImage[] {row[5], row[6], row[7]};
@@ -249,10 +241,6 @@ public class Level {
     			return new HillBackgroundBuilder();
     		}
     		
-    		@Override protected final Builder getRandomBuilder() {
-    			return new GrassyBuilder();
-    		}
-    		
     		@Override protected Pansound getMusic() {
                 return FurGuardiansGame.musicRock;
             }
@@ -266,7 +254,7 @@ public class Level {
                 return new HillBackgroundBuilder();
             }
             
-            @Override protected final Builder getRandomBuilder() {
+            @Override protected final Builder getBasicBuilder() {
                 return new HexBuilder();
             }
             
@@ -287,7 +275,7 @@ public class Level {
                 return new HillBackgroundBuilder();
             }
             
-            @Override protected final Builder getRandomBuilder() {
+            @Override protected final Builder getBasicBuilder() {
                 return new BridgeBuilder();
             }
             
@@ -308,7 +296,7 @@ public class Level {
                 return new CaveBackgroundBuilder();
             }
             
-            @Override protected final Builder getRandomBuilder() {
+            @Override protected final Builder getBasicBuilder() {
                 return new CaveBuilder();
             }
             
@@ -337,7 +325,7 @@ public class Level {
                 return new HillBackgroundBuilder();
             }
             
-            @Override protected final Builder getRandomBuilder() {
+            @Override protected final Builder getBasicBuilder() {
                 return new MinecartBuilder();
             }
             
@@ -379,8 +367,8 @@ public class Level {
                 return new HillBackgroundBuilder();
             }
             
-            @Override protected final Builder getRandomBuilder() {
-                return new GrassyBuilder();
+            @Override protected final Builder getBasicBuilder() {
+                return Map.theme.levelTheme.getBasicBuilder();
             }
             
             @Override protected final String getBgImg() {
@@ -431,10 +419,6 @@ public class Level {
     			return new HillBackgroundBuilder();
     		}
     		
-    		@Override protected final Builder getRandomBuilder() {
-    			return new GrassyBuilder();
-    		}
-    		
     		@Override protected Pansound getMusic() {
         		return FurGuardiansGame.musicHeartbeat;
         	}
@@ -467,7 +451,13 @@ public class Level {
     	
     	protected abstract BackgroundBuilder getRandomBackground();
     	
-    	protected abstract Builder getRandomBuilder();
+    	protected Builder getBasicBuilder() {
+            return new GrassyBuilder();
+        }
+    	
+    	protected Builder getRandomBuilder() {
+    	    return getBasicBuilder();
+    	}
     	
     	protected int getGroundWidthOffset() {
     	    return 0;
@@ -2770,10 +2760,11 @@ public class Level {
     }
     
     private final static void pit(final int x, final int y, final int w) {
-    	final int stop = x + w + 1, ystop = (floorMode == FLOOR_BRIDGE || floorMode == FLOOR_TRACK || theme == Theme.Hive) ? (y + 1) : y;
+        final boolean hive = builder instanceof HexBuilder;
+    	final int stop = x + w + 1, ystop = (floorMode == FLOOR_BRIDGE || floorMode == FLOOR_TRACK || hive) ? (y + 1) : y;
     	final byte OPEN = Tile.BEHAVIOR_OPEN, SOLID = Tile.BEHAVIOR_SOLID;
     	for (int j = 0; j <= ystop; j++) {
-    	    if (theme == Theme.Hive) {
+    	    if (hive) {
     	        final Tile left = tm.getTile(x, j), right = tm.getTile(stop, j);
     	        final Tile aboveLeft = tm.getTile(x, j + 1), aboveRight = tm.getTile(stop, j + 1);
     	        final Object leftFore = DynamicTileMap.getRawForeground(left), leftBack = DynamicTileMap.getRawBackground(left);
