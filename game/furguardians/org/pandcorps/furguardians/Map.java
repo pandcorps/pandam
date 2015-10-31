@@ -297,6 +297,8 @@ public class Map {
                 return 3; }
             @Override protected final int getMenuTileColumn() {
                 return 1; }
+            @Override protected final int getBaseProbability() {
+                return 36; }
             @Override protected final boolean hasBeenDefeated(final Statistics stats) {
                 return stats.playedHiveWorlds > 0; }
             @Override protected final Pansound getMenuMusic() {
@@ -365,6 +367,10 @@ public class Map {
             return 1;
         }
 		
+		protected int getBaseProbability() {
+		    return 75;
+		}
+		
 		protected abstract boolean hasBeenDefeated(final Statistics stats);
 		
 		protected Pansound getMenuMusic() {
@@ -372,7 +378,7 @@ public class Map {
 		}
 	}
 	
-	protected final static MapTheme[] themes = {MapTheme.Normal, MapTheme.Snow, MapTheme.Sand, MapTheme.Rock}; //TODO HIVE MapTheme.Hive
+	protected final static MapTheme[] themes = {MapTheme.Normal, MapTheme.Snow, MapTheme.Sand, MapTheme.Rock, MapTheme.Hive};
 	
 	protected final static MapTheme getTheme(final String name) {
 		for (final MapTheme theme : themes) {
@@ -999,7 +1005,7 @@ public class Map {
 	}
 	
 	private final static TileMapImage getBaseImage() {
-		return Mathtil.rand(75) ? base : imgMap[4][Mathtil.randi(0, 6)];
+		return Mathtil.rand(theme.getBaseProbability()) ? base : imgMap[4][Mathtil.randi(0, 6)];
 	}
 	
 	private final static Pair<Integer, Integer> getKey(final int index) {
@@ -1073,8 +1079,8 @@ public class Map {
 				theme = MapTheme.Normal;
 			} else if (stats.playedRockWorlds == 0) {
 				theme = MapTheme.Rock;
-			//} else if (stats.playedHiveWorlds == 0) { //TODO HIVE
-            //    theme = MapTheme.Hive;
+			} else if (stats.playedHiveWorlds == 0) {
+                theme = MapTheme.Hive;
 			} else {
 				final MapTheme old = theme;
 				do {
