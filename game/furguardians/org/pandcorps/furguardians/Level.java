@@ -371,6 +371,10 @@ public class Level {
                 return Map.theme.levelTheme.getBasicBuilder();
             }
             
+            @Override protected final int getGroundWidthOffset() {
+                return Map.theme.levelTheme.getGroundWidthOffset();
+            }
+            
             @Override protected final String getBgImg() {
                 return Map.theme.levelTheme.bgImg;
             }
@@ -2288,7 +2292,7 @@ public class Level {
     
     private final static int getFloorIndexForIndex(final int i) {
         int base = floor + 1;
-        if (theme == Theme.Hive) {
+        if (builder instanceof HexBuilder) {
             if (getHexagonFloorType(i) != HEX_DOWN) {
                 base++;
             }
