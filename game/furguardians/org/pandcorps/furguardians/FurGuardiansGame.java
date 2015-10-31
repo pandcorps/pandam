@@ -681,7 +681,8 @@ public class FurGuardiansGame extends BaseGame {
 	    }
         final Img[] birdRaw = getBirds(kind);
         final int size = birdRaw.length;
-        final Panframe[] bird = new Panframe[size];
+        final boolean bee = KIND_BEE.equalsIgnoreCase(kind);
+        final Panframe[] bird = new Panframe[bee ? 4 : size];
         final Img eye = getEyes(eyeIndex);
         final int eyeWidth = eye.getWidth(), eyeHeight = eye.getHeight();
         final String bpre = pre + ".bird";
@@ -691,7 +692,17 @@ public class FurGuardiansGame extends BaseGame {
         for (int i = 0; i < size; i++) {
             final Img img = Imtil.copy(birdRaw[i]);
             Imtil.copy(eye, img, 0, 0, eyeWidth, eyeHeight, 8, 5, Imtil.COPY_FOREGROUND);
-            bird[i] = engine.createFrame(fbpre + i, engine.createImage(ibpre + i, oBird, null, null, img), (i == 1) ? 3 : 6);
+            final int dur;
+            if (bee) {
+                dur = 2;
+            } else {
+                dur = (i == 1) ? 3 : 6;
+            }
+            final Panframe f = engine.createFrame(fbpre + i, engine.createImage(ibpre + i, oBird, null, null, img), dur);
+            bird[i] = f;
+            if (bee && (i == 1)) {
+                bird[3] = f;
+            }
         }
         return engine.createAnimation(PRE_ANM + bpre, bird);
 	}
