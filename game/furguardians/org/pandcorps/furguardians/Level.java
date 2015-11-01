@@ -1881,6 +1881,17 @@ public class Level {
         }
     }
     
+    private final static class BeePitTemplate extends SimpleTemplate {
+        protected BeePitTemplate() {
+            super();
+        }
+        
+        @Override
+        protected final void build() {
+            pit(x, floor, w);
+        }
+    }
+    
     private final static class UpBlockStepTemplate extends SimpleTemplate {
     	protected UpBlockStepTemplate() {
     		super(1, 3, 0);
