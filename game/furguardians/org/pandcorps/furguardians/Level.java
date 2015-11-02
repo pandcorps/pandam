@@ -1889,6 +1889,8 @@ public class Level {
         @Override
         protected final void build() {
             pit(x, floor, w);
+            for (int i = 1; i < w; i += 3) {
+            }
         }
     }
     
