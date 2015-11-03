@@ -1767,9 +1767,13 @@ public class Level {
     	
         @Override
         protected final void plan() {
-        	w = Mathtil.randi(minW, maxW);
+        	w = newWidth(minW, maxW);
         	x = bx;
         	bx += (w + ext);
+        }
+        
+        protected int newWidth(final int minW, final int maxW) {
+            return Mathtil.randi(minW, maxW);
         }
     }
     
@@ -1883,7 +1887,7 @@ public class Level {
     
     private final static class BeePitTemplate extends SimpleTemplate {
         protected BeePitTemplate() {
-            super();
+            super(3, 9);
         }
         
         @Override
@@ -1891,6 +1895,16 @@ public class Level {
             pit(x, floor, w);
             for (int i = 1; i < w; i += 3) {
             }
+        }
+        
+        @Override
+        protected final int newWidth(final int minW, final int maxW) {
+            int b = super.newWidth(minW, maxW);
+            final int m = b % 3;
+            if (m != 0) {
+                b += (3 - m);
+            }
+            return b;
         }
     }
     
