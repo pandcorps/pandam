@@ -1407,7 +1407,7 @@ public class Level {
         
         @Override
         protected final Template getPitTemplate() {
-            return new ChoiceTemplate(new PitTemplate(), new BridgePitTemplate());
+            return new ChoiceTemplate(new PitTemplate(), new BridgePitTemplate(), new BeePitTemplate());
         }
         
         @Override
@@ -1894,6 +1894,7 @@ public class Level {
         protected final void build() {
             pit(x, floor, w);
             for (int i = 1; i < w; i += 3) {
+                bee(i, floor + 3);
             }
         }
         
