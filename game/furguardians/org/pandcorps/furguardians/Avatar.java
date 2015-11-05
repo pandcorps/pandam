@@ -54,6 +54,7 @@ public class Avatar extends EyeData implements Segmented {
     	FIRST_BIRD = new BirdKind("Robin", 30000);
     	putBird(FIRST_BIRD); // Expensive because this unlocks option to buy other birds
     	//putBird(new BirdKind("Sparrow", 1000));
+    	putBird(new BirdKind("Bee", 1500));
     	putBird(new BirdKind("Blue Jay", 2000));
     	putBird(new BirdKind("Canary", 2000));
     	putBird(new BirdKind("Cardinal", 2000));
