@@ -1893,8 +1893,9 @@ public class Level {
         @Override
         protected final void build() {
             pit(x, floor, w);
+            final int xb = x + 1, yb = floor + 3;
             for (int i = 1; i < w; i += 3) {
-                bee(i, floor + 3);
+                bee(xb + i, yb);
             }
         }
         
