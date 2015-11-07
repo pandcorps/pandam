@@ -32,15 +32,19 @@ public class Music {
 	
 	protected final static Sequence newSongCreepy() throws Exception {
 		// channel 0 - 15; key/vol 0 - 127
-		final int channel = 0, key = 64, vol = 64;
+		final int channel = 0, vol = 64;
 		final Sequence seq = new Sequence(Sequence.SMPTE_30, 1);
 		final Track track = seq.createTrack();
 		// Track has 16 channels for different instruments; they can be changed to 128 possible instruments
 		//Mustil.setInstrument(track, channel, Mustil.PRG_BIRD_TWEET); // PRG_CRYSTAL
-		Mustil.addNote(track, 0, channel, key, vol);
-		Mustil.addNote(track, 15, channel, 68, vol);
-		Mustil.addNote(track, 30, channel, 72, vol);
+		addCreepy(track, 0, channel, vol);
 		return seq;
+	}
+	
+	private final static void addCreepy(final Track track, final int tick, final int channel, final int vol) throws Exception {
+		Mustil.addNote(track, tick, channel, 65, vol);
+		Mustil.addNote(track, tick + 15, channel, 69, vol);
+		Mustil.addNote(track, tick + 30, channel, 72, vol);
 	}
 	
 	private static int channel = 0, key, vol, deltaTick;
@@ -192,14 +196,34 @@ public class Music {
 				}
 			}
 		//}
-		channel = 1;
-		Mustil.setInstrument(track, channel, Mustil.PRG_STRING_ENSEMBLE_1);
-		vol = 60;
-		Mustil.addNote(track, 0, 128, channel, 53, vol);
-		Mustil.addNote(track, 128, 128, channel, 52, vol);
-		Mustil.addNote(track, 256, 128, channel, 50, vol);
-		Mustil.addNote(track, 384, 128, channel, 48, vol);
+		addCaveStrings(track, 0, 1);
 		return song;
+	}
+	
+	private final static void addCaveStrings(final Track track, final int tick, final int channel) throws Exception {
+		Mustil.setInstrument(track, channel, Mustil.PRG_STRING_ENSEMBLE_1);
+		final int vol = 60;
+		Mustil.addNote(track, tick, 128, channel, 53, vol);
+		Mustil.addNote(track, tick + 128, 128, channel, 52, vol);
+		Mustil.addNote(track, tick + 256, 128, channel, 50, vol);
+		Mustil.addNote(track, tick + 384, 128, channel, 48, vol);
+	}
+	
+	protected final static Song newSongNight() throws Exception {
+	    final Song song = new Song("Night");
+        final Track track = song.track;
+        channel = 0;
+        vol = 64;
+        deltaTick = 64;
+        final int n1 = 64, n2 = 69, n3 = 72, n4 = 76;
+        Mustil.unspecifiedNoteDuration = 32;
+        Mustil.setInstrument(track, channel, Mustil.PRG_ACOUSTIC_GRAND_PIANO);
+        Mustil.addNotes(track, 32, channel, vol, deltaTick,
+            n2, n3, n2, n1, n2, n3, n4, n3);
+        /*Mustil.unspecifiedNoteDuration = Mustil.DEF_NOTE_DURATION;
+        addCreepy(track, 544, channel, vol);*/
+        addCaveStrings(track, 0, 1); // 512
+        return song;
 	}
 	
 	protected final static Song newSongSnow() throws Exception {
@@ -354,7 +378,7 @@ public class Music {
         vol = 62;
         final int first = len, b = 59, amt = 2;
         Mustil.setInstrument(track, channel, Mustil.PRG_SLAP_BASS_2);
-        spring(track, first + 0, 64, channel, b, amt, vol);
+        spring(track, first, 64, channel, b, amt, vol);
         spring(track, first + 80, 64, channel, b, amt, vol);
         spring(track, first + 160, 32, channel, b, amt, vol);
         spring(track, first + 200, 32, channel, b, amt, vol);
@@ -548,7 +572,7 @@ public class Music {
 		return song;
 	}
 	
-	protected final static Song newSongHappy5() throws Exception {
+	protected final static Song newSongGrass() throws Exception {
 		final Song song = new Song("Happy");
 		final Track track = song.track;
 		addPercussionHappy(track, 8, true);
@@ -927,7 +951,7 @@ public class Music {
 	
 	private final static void runGen() throws Exception {
 		System.out.println("Starting");
-		final Song song = newSongHive();
+		final Song song = newSongNight();
 		Mustil.save(song.seq, song.name.toLowerCase() + ".mid");
 		final Panaudio music = Pangine.getEngine().getAudio();
 		//music.ensureCapacity(4);
