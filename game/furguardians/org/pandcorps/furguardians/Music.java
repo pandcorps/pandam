@@ -226,6 +226,14 @@ public class Music {
         return song;
 	}
 	
+	protected final static Song newSongBridge() throws Exception {
+        final Song song = new Song("Bridge");
+        final Track track = song.track;
+        channel = 0;
+        
+        return song;
+	}
+	
 	protected final static Song newSongSnow() throws Exception {
         final Song song = new Song("Snow");
         final Track track = song.track;
