@@ -230,7 +230,39 @@ public class Music {
         final Song song = new Song("Bridge");
         final Track track = song.track;
         channel = 0;
-        
+        vol = 62;
+        final int d = 4, line = d * 16, section = 4 * line, volDrum = 64, channelWind = 1, volWind = 44;
+        final int db = Mustil.PRC_BASS_DRUM_1, dm = Mustil.PRC_MID_TOM_1;
+        Mustil.setInstrument(track, channel, Mustil.PRG_PICCOLO);
+        Mustil.setInstrument(track, channelWind, Mustil.PRG_FLUTE);
+        Mustil.unspecifiedNoteDuration = d;
+        for (int j = 0; j < 4; j++) {
+            final int b = j * section;
+            for (int i = 0; i < 4; i++) {
+                final int f = b + (i * line), b1;
+                if (i == 1) {
+                    b1 = 69;
+                } else if (i == 3) {
+                    b1 = 65;
+                } else {
+                    b1 = 67;
+                }
+                final int b2 = b1 + 2;
+                Mustil.addNotes(track, f, channel, vol, d,
+                    b1, b2, b1, b2, b1, -1, b2, -1, b1);
+                if ((i % 2) == 0) {
+                    Mustil.addNotes(track, f + (d * 10), channel, vol, d,
+                        b2, -1, b1);
+                }
+                if ((j == 1) || (j == 2)) {
+                    Mustil.addPercussionsAtVolume(track, f, volDrum, d,
+                        db, -1, -1, -1, dm, -1, -1, -1, db, db, -1, db, dm);
+                }
+                if (j > 1) {
+                    Mustil.addNote(track, f, line, channelWind, b1, volWind);
+                }
+            }
+        }
         return song;
 	}
 	
@@ -986,7 +1018,7 @@ public class Music {
 	
 	private final static void runGen() throws Exception {
 		System.out.println("Starting");
-		final Song song = newSongSand();
+		final Song song = newSongBridge();
 		Mustil.save(song.seq, song.name.toLowerCase() + ".mid");
 		final Panaudio music = Pangine.getEngine().getAudio();
 		//music.ensureCapacity(4);
