@@ -524,30 +524,31 @@ public class Music {
 		}
 	}
 	
-	protected final static Song newSongHappy4() throws Exception {
-		final Song song = new Song("Happy");
+	protected final static Song newSongMinecart() throws Exception {
+		final Song song = new Song("Minecart");
 		final Track track = song.track;
-		//int dur, keys[];
-		final int r = 7;
+		int dur, keys[];
+		final int r = 6;
 		addPercussionHappy(track, r, true);
-		/*channel = 0;
-		vol = 64;
+		
+		channel = 0;
+		vol = 60;
 		Mustil.setInstrument(track, channel, Mustil.PRG_TUBA);
-		final int d = 1;
-		final int n = 32, n1 = n + d, n2 = n1 + d, n3 = n2 + d, n4 = n3 + d;
+		final int n = 36, n2 = 38, n4 = 40;
 		tick = 0;
 		dur = 8;
 		Mustil.unspecifiedNoteDuration = 8;
 		keys = new int[] {n4, -1, n, -1, n4, -1, n, -1, n4, -1, n, -1, n4, n2, n, n2}; // n4, n, n, n4
-		tick = Mustil.addRepeatedNotes(track, tick, channel, vol, dur, r, keys);*/
-		/*tick = 128;
-		addBell(track, r - 1);*/
+		tick = Mustil.addRepeatedNotes(track, tick, channel, vol, dur, r, keys);
 		tick = 0;
+		addBell(track, r); // channel 2
+		
+		/*tick = 0;
 		addBell(track, r);
 		Mustil.unspecifiedNoteDuration = 8;
 		tick = 128;
 		vol = 60;
-		channel = 1;
+		channel = 3;
 		Mustil.setInstrument(track, channel, Mustil.PRG_HONKY_TONK_PIANO);
 		key = 62; // 68
 		tick = addMainHappy(track);
@@ -560,15 +561,18 @@ public class Music {
 		key = 62; // 68
 		tick = addMainHappy(track);
 		key = 62; // 68
-		tick = addEndHappy(track);
-		/*tick = 0;
+		tick = addEndHappy(track);*/
+		
+		tick = 256;
 		dur = 32;
 		Mustil.unspecifiedNoteDuration = 16;
-		vol = 16;
-		channel = 3;
+		vol = 48;
+		channel = 1;
 		Mustil.setInstrument(track, channel, Mustil.PRG_TROMBONE);
-		keys = new int[] {60, 64, 68, 72};
-		tick = Mustil.addRepeatedNotes(track, tick, channel, vol, dur, r, keys);*/
+		keys = new int[] {65, 67, 69, 71};
+		tick = Mustil.addRepeatedNotes(track, tick, channel, vol, dur, 3, keys);
+		keys = new int[] {74, 69, 67, 65};
+		tick = Mustil.addNotes(track, tick, channel, vol, dur, keys);
 		return song;
 	}
 	
@@ -951,7 +955,7 @@ public class Music {
 	
 	private final static void runGen() throws Exception {
 		System.out.println("Starting");
-		final Song song = newSongNight();
+		final Song song = newSongMinecart();
 		Mustil.save(song.seq, song.name.toLowerCase() + ".mid");
 		final Panaudio music = Pangine.getEngine().getAudio();
 		//music.ensureCapacity(4);
