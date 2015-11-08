@@ -1403,6 +1403,7 @@ public class Level {
             addGiantTemplate();
             addTemplate(new BeeTemplate());
             goals.add(new BeeGoal());
+            goals.add(new PlatformGoal());
         }
         
         @Override
@@ -1615,6 +1616,22 @@ public class Level {
         protected void build() {
             bee(ng, floor + 3);
             goalBlock(ng + 1, floor + 7);
+        }
+    }
+    
+    private final static class PlatformGoal extends GoalTemplate {
+        @Override
+        protected int getWidth() {
+            return 6; // 2 for jump room + 3 for platform + 1 for gap
+        }
+        
+        @Override
+        protected void build() {
+            final int x = ng + 2, y = floor + 3 + floatOffset;
+            for (int i = 0; i < 3; i++) {
+                solidBlock(x + i, y);
+            }
+            goalBlock(x + 2, y + 3);
         }
     }
     
