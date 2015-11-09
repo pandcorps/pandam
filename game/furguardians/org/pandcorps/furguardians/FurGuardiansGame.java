@@ -50,7 +50,7 @@ import org.pandcorps.furguardians.Player.*;
 
 public class FurGuardiansGame extends BaseGame {
 	protected final static String TITLE = "Fur-Guardians"; // res/values/strings.xml/app_name
-    protected final static String VERSION = "1.15.0"; // AndroidManifest.xml/versionName
+    protected final static String VERSION = "1.16.0"; // AndroidManifest.xml/versionName
     protected final static String YEAR = "2014-2015";
     protected final static String AUTHOR = "Andrew M. Martin";
 	/*
@@ -385,9 +385,12 @@ public class FurGuardiansGame extends BaseGame {
 	protected static Pansound musicSand = null;
 	protected static Pansound musicRock = null;
 	protected static Pansound musicHive = null;
+	protected static Pansound musicBridge = null;
 	protected static Pansound musicCave = null;
+	protected static Pansound musicNight = null;
 	protected static Pansound musicHeartbeat = null;
 	protected static Pansound musicOcarina = null;
+	protected static Pansound musicMinecart = null;
 	protected static Pansound musicChant = null;
 	protected static Pansound musicLevelStart = null;
 	protected static Pansound musicLevelEnd = null;
@@ -1784,10 +1787,13 @@ public class FurGuardiansGame extends BaseGame {
 	    	musicSnow = audio.createMusic(RES + "music/snow.mid");
 	    	musicSand = audio.createMusic(RES + "music/sand.mid");
 	    	musicRock = audio.createMusic(RES + "music/rock.mid");
-	    	musicHive = audio.createMusic(RES + "music/happy.mid"); //TODO HIVE
+	    	musicHive = audio.createMusic(RES + "music/hive.mid");
+	    	musicBridge = audio.createMusic(RES + "music/bridge.mid");
 	    	musicCave = audio.createMusic(RES + "music/cave.mid");
+	    	musicNight = audio.createMusic(RES + "music/night.mid");
 	    	musicHeartbeat = audio.createMusic(RES + "music/heartbeat.mid");
 	    	musicOcarina = audio.createMusic(RES + "music/ocarina.mid");
+	    	musicMinecart = audio.createMusic(RES + "music/minecart.mid");
 	    	musicChant = audio.createMusic(RES + "music/chant.mid");
 	    	musicLevelStart = audio.createTransition(RES + "music/levelstart.mid");
 	    	musicLevelEnd = audio.createTransition(RES + "music/levelend.mid");

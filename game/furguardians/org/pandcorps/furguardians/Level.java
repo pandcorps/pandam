@@ -284,7 +284,7 @@ public class Level {
             }
             
             @Override protected Pansound getMusic() {
-                return Map.theme.levelTheme.getMusic();
+                return FurGuardiansGame.musicBridge;
             }
         };
         public final static Theme Cave = new Theme("Cave", MSG) {
@@ -334,7 +334,7 @@ public class Level {
             }
             
             @Override protected Pansound getMusic() {
-                return Map.theme.levelTheme.getMusic();
+                return FurGuardiansGame.musicMinecart;
             }
         };
         private final static int[] getLimitedEnemies(final int worlds, final int levels, final int special) {
@@ -393,7 +393,7 @@ public class Level {
             }
             
             @Override protected Pansound getMusic() {
-                return Map.theme.levelTheme.getMusic();
+                return FurGuardiansGame.musicNight;
             }
             
             @Override protected final void step(final long clock) {
