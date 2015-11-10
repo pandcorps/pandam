@@ -1609,13 +1609,14 @@ public class Level {
     private final static class BeeGoal extends GoalTemplate {
         @Override
         protected int getWidth() {
-            return 3; // 1 for bee + 1 for goal + 1 for gap
+            return 4; // 1 for jump room + 1 for bee + 1 for goal + 1 for gap
         }
 
         @Override
         protected void build() {
-            bee(ng, floor + 3);
-            goalBlock(ng + 1, floor + 7);
+            final int x = ng + 1, y = floor + Mathtil.randi(3, 4);
+            bee(x, y);
+            goalBlock(x + 1, y + 4);
         }
     }
     
