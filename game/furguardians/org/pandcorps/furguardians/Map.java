@@ -377,6 +377,10 @@ public class Map {
 		protected Pansound getMenuMusic() {
 		    return FurGuardiansGame.musicMenu;
 		}
+		
+		protected Builder getCaveBuilder() {
+		    return new CaveBuilder();
+		}
 	}
 	
 	protected final static MapTheme[] themes = {MapTheme.Normal, MapTheme.Snow, MapTheme.Sand, MapTheme.Rock, MapTheme.Hive};

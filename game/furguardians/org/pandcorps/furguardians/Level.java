@@ -297,7 +297,7 @@ public class Level {
             }
             
             @Override protected final Builder getBasicBuilder() {
-                return new CaveBuilder();
+                return Map.theme.getCaveBuilder();
             }
             
             @Override protected final String getBgImg() {
@@ -710,7 +710,7 @@ public class Level {
     	bgtm3.info();*/
     }
     
-    private static abstract class Builder {
+    protected static abstract class Builder {
     	public abstract int getW();
     	
     	public abstract int getFloor();
@@ -1254,7 +1254,7 @@ public class Level {
     
     protected final static int MAX_CAVE_CEILING_SIZE = 5;
     
-    private final static class CaveBuilder extends FlatBuilder {
+    protected final static class CaveBuilder extends FlatBuilder {
     	@Override
     	protected final void addNatureTemplate() {
     		addTemplate(new BushTemplate());
@@ -1395,7 +1395,7 @@ public class Level {
         }
     }
     
-    private final static class HexBuilder extends RandomBuilder {
+    private static class HexBuilder extends RandomBuilder {
         @Override
         protected final void loadTemplates() {
             addTemplate(getPitTemplate());
@@ -1472,6 +1472,12 @@ public class Level {
         @Override
         protected final void flatten(final int x, final int w) {
             fillHexagonGaps(x, w);
+        }
+    }
+    
+    protected final static class HexCaveBuilder extends HexBuilder {
+        @Override
+        protected final void buildCeiling() {
         }
     }
     
