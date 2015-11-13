@@ -315,6 +315,10 @@ public class Level {
             @Override protected Pansound getMusic() {
                 return FurGuardiansGame.musicCave;
             }
+            
+            @Override protected final String getImg() {
+                return (Map.theme == Map.MapTheme.Hive) ? Theme.Hive.img : img;
+            }
         };
         public final static Theme Minecart = new Theme("Minecart", MSG) {
             @Override protected final int[] getEnemyIndices(final int worlds, final int levels) {
@@ -492,6 +496,10 @@ public class Level {
     	protected byte getSpecialGroundBehavior() {
     	    return Tile.BEHAVIOR_SOLID;
     	}
+    	
+    	protected String getImg() {
+    	    return img;
+    	}
     }
     
     protected static void setTheme(final Theme theme) {
@@ -607,7 +615,7 @@ public class Level {
     	final Img tileImg = ImtilX.loadImage("org/pandcorps/furguardians/res/bg/Tiles.png", 128, null);
     	final Theme theme = getDayTheme();
     	if (theme != Theme.Normal) {
-    		final Img ext = ImtilX.loadImage("org/pandcorps/furguardians/res/bg/Tiles" + theme.img + ".png", false);
+    		final Img ext = ImtilX.loadImage("org/pandcorps/furguardians/res/bg/Tiles" + theme.getImg() + ".png", false);
     		Imtil.copy(ext, tileImg, 0, 0, 128, 112, 0, 16);
     		ext.close();
     	}
@@ -1477,7 +1485,21 @@ public class Level {
     
     protected final static class HexCaveBuilder extends HexBuilder {
         @Override
+        public final int getFloor() {
+            return Mathtil.randi(3, 4);
+        }
+        
+        @Override
+        protected final int getMaxFloor() {
+            return 4;
+        }
+        
+        @Override
         protected final void buildCeiling() {
+            final int w = tm.getWidth(), h = tm.getHeight();
+            for (int j = 0; j < 2; j++) {
+                tm.fillBackground(imgMap[3 + j][3], 0, h - 1 - j, w, 1, true);
+            }
         }
     }
     

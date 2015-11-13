@@ -3,6 +3,7 @@
 Added new music tracks for hive, bridge, minecart, and night levels.
 Extended music for sand levels.
 Bee bridge pits.
+Underground cave hive levels.
 Helper bees.
 
 *****

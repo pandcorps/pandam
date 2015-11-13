@@ -303,7 +303,10 @@ public class Map {
             @Override protected final boolean hasBeenDefeated(final Statistics stats) {
                 return stats.playedHiveWorlds > 0; }
             @Override protected final Pansound getMenuMusic() {
-                return FurGuardiansGame.musicHive; }};
+                return FurGuardiansGame.musicHive; }
+            @Override protected final Builder getCaveBuilder() {
+                return new HexCaveBuilder();
+            }};
 		
 		protected final String name;
 		protected final String img;
