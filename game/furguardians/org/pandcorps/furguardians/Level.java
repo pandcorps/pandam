@@ -1304,9 +1304,7 @@ public class Level {
     			}
     			tm.setForeground(i, j, imgMap[6][1], Tile.BEHAVIOR_SOLID);
     			fillCeiling(i, j, max);
-    			if (Mathtil.rand(15) && tm.getTile(i, j - 1) == null) {
-    				tm.setBackground(i, j - 1, imgMap[7][2], FurGuardiansGame.TILE_HURT);
-    			}
+    			ceilingSpike(i, j);
     		}
     	}
     	
@@ -1315,6 +1313,13 @@ public class Level {
 				tm.setForeground(i, j2, getDirtImage(), Tile.BEHAVIOR_SOLID);
 			}
 		}
+    }
+    
+    private final static void ceilingSpike(final int i, final int j) {
+        final int j1 = j - 1;
+        if (Mathtil.rand(15) && tm.getTile(i, j1) == null) {
+            tm.setBackground(i, j1, imgMap[7][2], FurGuardiansGame.TILE_HURT);
+        }
     }
     
     private static class PlatformBuilder extends RandomBuilder {
@@ -1499,6 +1504,10 @@ public class Level {
             final int w = tm.getWidth(), h = tm.getHeight();
             for (int j = 0; j < 2; j++) {
                 tm.fillBackground(imgMap[3 + j][3], 0, h - 1 - j, w, 1, true);
+            }
+            final int j = h - 2;
+            for (int i = 0; i < w; i++) {
+                ceilingSpike(i, j);
             }
         }
     }
