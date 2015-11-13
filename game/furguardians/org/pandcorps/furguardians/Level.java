@@ -258,10 +258,6 @@ public class Level {
                 return new HexBuilder();
             }
             
-            @Override protected final int getGroundWidthOffset() {
-                return 1;
-            }
-            
             @Override protected Pansound getMusic() {
                 return FurGuardiansGame.musicHive;
             }
@@ -375,10 +371,6 @@ public class Level {
                 return Map.theme.levelTheme.getBasicBuilder();
             }
             
-            @Override protected final int getGroundWidthOffset() {
-                return Map.theme.levelTheme.getGroundWidthOffset();
-            }
-            
             @Override protected final String getBgImg() {
                 return Map.theme.levelTheme.bgImg;
             }
@@ -465,10 +457,6 @@ public class Level {
     	
     	protected Builder getRandomBuilder() {
     	    return getBasicBuilder();
-    	}
-    	
-    	protected int getGroundWidthOffset() {
-    	    return 0;
     	}
     	
     	protected String getBgImg() {
@@ -731,6 +719,10 @@ public class Level {
     	
     	protected void flatten(final int x, final int w) {
         }
+    	
+    	protected int getGroundWidthOffset() {
+            return 0;
+        }
     }
     
     protected final static class DemoBuilder extends Builder {
@@ -954,7 +946,7 @@ public class Level {
     	}
     	
     	protected final void ground() {
-    		final int stop = Math.min(bx + 1, nt - 1 + theme.getGroundWidthOffset());
+    		final int stop = Math.min(bx + 1, nt - 1 + getGroundWidthOffset());
         	ground(px, stop);
         	px = bx + 2;
     	}
@@ -1415,6 +1407,7 @@ public class Level {
             addFloatTemplates();
             addGiantTemplate();
             addTemplate(new BeeTemplate());
+            addTemplate(new HexSpikeTemplate());
             goals.add(new BeeGoal());
             goals.add(new PlatformGoal());
         }
@@ -1485,6 +1478,10 @@ public class Level {
         @Override
         protected final void flatten(final int x, final int w) {
             fillHexagonGaps(x, w);
+        }
+        
+        @Override protected final int getGroundWidthOffset() {
+            return 1;
         }
     }
     
@@ -2231,11 +2228,31 @@ public class Level {
     	@Override
         protected final void build() {
     		final int y = floor + 1, stop = x + w;
-    		final Tile tile = tm.getTile(imgMap[7][1], null, FurGuardiansGame.TILE_HURT);
     		for (int i = x; i < stop; i++) {
-    			tm.setTile(i, y, tile);
+    			floorSpike(i, y);
     		}
     	}
+    }
+    
+    private final static void floorSpike(final int i, final int j) {
+        tm.setTile(i, j, tm.getTile(imgMap[7][1], null, FurGuardiansGame.TILE_HURT));
+    }
+    
+    private final static class HexSpikeTemplate extends SimpleTemplate {
+        protected HexSpikeTemplate() {
+            super(4, 4, 0);
+        }
+        
+        @Override
+        protected final void build() {
+            final int stop = x + w;
+            for (int i = x; i < stop; i++) {
+                if (getHexagonFloorType(i) == HEX_DOWN) {
+                    floorSpike(i, getFloorIndexForIndex(i));
+                    break;
+                }
+            }
+        }
     }
     
     private final static class GiantTemplate extends SimpleTemplate {
