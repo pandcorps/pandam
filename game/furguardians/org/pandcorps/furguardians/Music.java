@@ -213,7 +213,7 @@ public class Music {
 	    final Song song = new Song("Night");
         final Track track = song.track;
         channel = 0;
-        vol = 72;
+        vol = 68; // 72 for old mid
         deltaTick = 64;
         final int n1 = 64, n2 = 69, n3 = 72, n4 = 76;
         Mustil.unspecifiedNoteDuration = 32;
@@ -231,7 +231,7 @@ public class Music {
         final Track track = song.track;
         channel = 0;
         vol = 80;
-        final int d = 4, line = d * 16, section = 4 * line, volDrum = 96, channelWind = 1, volWind = 52;
+        final int d = 4, line = d * 16, section = 4 * line, volDrum = 96, channelWind = 1, volWind = 60; // 52 for old mid
         final int db = Mustil.PRC_BASS_DRUM_1, dm = Mustil.PRC_MID_TOM_1;
         Mustil.setInstrument(track, channel, Mustil.PRG_PICCOLO);
         Mustil.setInstrument(track, channelWind, Mustil.PRG_FLUTE);
@@ -259,7 +259,7 @@ public class Music {
                         db, -1, -1, -1, dm, -1, -1, -1, db, db, -1, db, dm);
                 }
                 if (j > 1) {
-                    Mustil.addNote(track, f, line, channelWind, b1, volWind);
+                    Mustil.addNote(track, f, line, channelWind, b1 + 12, volWind); // No +12 for old mid
                 }
             }
         }
@@ -439,7 +439,7 @@ public class Music {
         }
         
         channel = 1;
-        vol = 72;
+        vol = 96; // 72 for old mid
         final int first = len, b = 59, amt = 2;
         Mustil.setInstrument(track, channel, Mustil.PRG_SLAP_BASS_2);
         spring(track, first, 64, channel, b, amt, vol);
@@ -1019,8 +1019,8 @@ public class Music {
 	
 	private final static void runGen() throws Exception {
 		System.out.println("Starting");
-		final Song song = newSongSand();
-		//Mustil.save(song.seq, song.name.toLowerCase() + ".mid");
+		final Song song = newSongNight();
+		Mustil.save(song.seq, song.name.toLowerCase() + ".mid");
 		final Panaudio music = Pangine.getEngine().getAudio();
 		//music.ensureCapacity(4);
 		//music.playMusic(seq);
