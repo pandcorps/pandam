@@ -231,7 +231,7 @@ public class Music {
         final Track track = song.track;
         channel = 0;
         vol = 80;
-        final int d = 4, line = d * 16, section = 4 * line, volDrum = 96, channelWind = 1, volWind = 60; // 52 for old mid
+        final int d = 4, line = d * 16, section = 4 * line, volDrum = 96, channelWind = 1, volWind = 52;
         final int db = Mustil.PRC_BASS_DRUM_1, dm = Mustil.PRC_MID_TOM_1;
         Mustil.setInstrument(track, channel, Mustil.PRG_PICCOLO);
         Mustil.setInstrument(track, channelWind, Mustil.PRG_FLUTE);
@@ -1019,7 +1019,7 @@ public class Music {
 	
 	private final static void runGen() throws Exception {
 		System.out.println("Starting");
-		final Song song = newSongNight();
+		final Song song = newSongBridge();
 		Mustil.save(song.seq, song.name.toLowerCase() + ".mid");
 		final Panaudio music = Pangine.getEngine().getAudio();
 		//music.ensureCapacity(4);
