@@ -823,7 +823,7 @@ public class Menu {
 			addActor(new Gem(FurGuardiansGame.gemAchieve), gemX, gemY);
 			addTitle("Trophies", textX, gemY + 8).setRightJustified(true);
 			final CharSequence seq = new CallSequence() {@Override protected String call() {
-				return String.valueOf(pc.profile.achievements.size() + "/" + Achievement.ALL.length);
+				return String.valueOf(pc.profile.getAchievedSize() + "/" + Achievement.ALL.length);
 			}};
 			addTitle(seq, textX, gemY).setRightJustified(true);
 		}
@@ -2731,13 +2731,12 @@ public class Menu {
 		}
 		
 		private final void createAchievementList(final int x, final int y) {
-            final int total = Achievement.ALL.length;
             final StringBuilder b = new StringBuilder();
-            final List<String> ach = new ArrayList<String>(total);
-            for (int i = 0; i < total; i++) {
+            final List<String> ach = new ArrayList<String>(Achievement.ALL.length);
+            for (final Achievement a : Achievement.ALL) {
                 Chartil.clear(b);
-                b.append(getFlag(pc.profile.achievements.contains(Integer.valueOf(i)))).append(' ');
-                b.append(Achievement.ALL[i].getName());
+                b.append(getFlag(pc.profile.isAchieved(a))).append(' ');
+                b.append(a.getName());
                 ach.add(b.toString());
             }
             final RadioSubmitListener achLsn = new RadioSubmitListener() {

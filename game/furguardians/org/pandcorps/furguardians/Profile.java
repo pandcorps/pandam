@@ -54,7 +54,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
     protected boolean autoRun = false;
     protected int frameRate = DEF_FRAME_RATE;
     protected final Statistics stats = new Statistics();
-    protected final TreeSet<Integer> achievements = new TreeSet<Integer>();
+    private final TreeSet<String> achievements = new TreeSet<String>();
     protected final Goal[] currentGoals = new Goal[Goal.NUM_ACTIVE_GOALS];
     protected int goalPoints = 0;
     protected final Set<Clothing> availableClothings = new HashSet<Clothing>();
@@ -181,7 +181,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
     }
     
     protected void loadAchievements(final Segment seg) {
-        addAll(achievements, seg, 0);
+        addAllStrings(achievements, seg, 0);
     }
     
     protected void loadLocation(final Segment seg) {
@@ -199,9 +199,15 @@ public class Profile extends PlayerData implements Segmented, Savable {
     	}
     }
     
+    private void addAllStrings(final Collection<String> values, final Segment seg, final int i) {
+        for (final Field f : Coltil.unnull(seg.getRepetitions(i))) {
+            values.add(f.getValue());
+        }
+    }
+    
     private void saveAchievements(final Segment seg) {
     	seg.setName(FurGuardiansGame.SEG_ACH);
-    	addAll(seg, 0, achievements);
+    	addAllStrings(seg, 0, achievements);
     }
     
     private void saveLocation(final Segment seg) {
@@ -224,6 +230,12 @@ public class Profile extends PlayerData implements Segmented, Savable {
     	for (final Integer ach : Coltil.unnull(values)) {
     		seg.addInteger(i, ach);
     	}
+    }
+    
+    private void addAllStrings(final Segment seg, final int i, final Collection<String> values) {
+        for (final String ach : Coltil.unnull(values)) {
+            seg.addValue(i, ach);
+        }
     }
     
     @Override
@@ -421,7 +433,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
 			add(list, "Total Orb types", totalOrbTypes, availableOrbTypes);
 			final int totalWorldTypes = getDefeatedWorldTypeCount(), availableWorldTypes = Map.themes.length;
             add(list, "Total World types", totalWorldTypes, availableWorldTypes);
-			final int totalTrophies = prf.achievements.size(), availableTrophies = Achievement.ALL.length;
+			final int totalTrophies = prf.getAchievedSize(), availableTrophies = Achievement.ALL.length;
 			add(list, "Total Trophies", totalTrophies, availableTrophies);
 			final int total = totalPurchases + enemyTypesDefeated + totalDefeatTechniques + totalOrbTypes + totalWorldTypes + totalTrophies;
 			final int available = availablePurchases + availableEnemyTypes + availableDefeatTechniques + availableOrbTypes + availableWorldTypes + availableTrophies;
@@ -617,6 +629,18 @@ public class Profile extends PlayerData implements Segmented, Savable {
     
     public final boolean isBirdAvailable(final BirdKind bird) {
         return bird == null || availableBirds.contains(bird);
+    }
+    
+    public final boolean isAchieved(final Achievement a) {
+        return achievements.contains(a.code);
+    }
+    
+    public final int getAchievedSize() {
+        return achievements.size();
+    }
+    
+    public final void addAchievement(final Achievement a) {
+        achievements.add(a.code);
     }
     
     public final int getGemMultiplier() {

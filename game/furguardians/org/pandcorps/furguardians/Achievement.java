@@ -22,14 +22,11 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.furguardians;
 
-import java.util.*;
-
 import org.pandcorps.core.*;
 import org.pandcorps.furguardians.Player.*;
 import org.pandcorps.furguardians.Profile.*;
 
 public abstract class Achievement extends FinName {
-    // Profile/save file refer to these by index, so can't move them or add new ones to middle
 	protected final static Achievement[] ALL = {
 		new LevelFeat("Level 1", "0", 1), new LevelFeat("Level Champ", "1", 50),
 		new WorldFeat("World 1", "2", 1), new WorldFeat("World Tour", "3", 10),
@@ -100,17 +97,13 @@ public abstract class Achievement extends FinName {
 			return;
 		}
 		final Profile profile = pc.profile;
-		final Set<Integer> achieved = profile.achievements;
-		final int size = ALL.length;
 		boolean any = false;
-		for (int i = 0; i < size; i++) {
-			final Integer key = Integer.valueOf(i);
-			if (achieved.contains(key)) {
+		for (final Achievement ach : ALL) {
+			if (profile.isAchieved(ach)) {
 				continue;
 			}
-			final Achievement ach = ALL[i];
 			if (ach.isMet(pc)) {
-				achieved.add(key);
+			    profile.addAchievement(ach);
 				final int award = ach.award;
 				FurGuardiansGame.notify(pc, ach.getName() + ", " + award + " Gem bonus", new Gem(FurGuardiansGame.gemAchieve));
 				pc.addGems(award);
