@@ -31,25 +31,25 @@ import org.pandcorps.furguardians.Profile.*;
 public abstract class Achievement extends FinName {
     // Profile/save file refer to these by index, so can't move them or add new ones to middle
 	protected final static Achievement[] ALL = {
-		new LevelFeat("Level 1", 1), new LevelFeat("Level Champ", 50),
-		new WorldFeat("World 1", 1), new WorldFeat("World Tour", 10),
-		new NoEnemyFeat(), new AllEnemyFeat(),
-		new RankFeat("Promoted", 2), new RankFeat("Knighted", 25),
-		new WordFeat("Wordsmith", 5), new WordFeat("Lexicon", 30),
-		new MonarchFeat(), new PegasusFeat(),
-		new GemFeat("Entrepreneur", 10000), new GemFeat("Tycoon", 100000), new GemFeat("Millionaire", 1000000),
-		new GreenGemFeat(),
-		new BumpFeat("Thud", 1000), new BumpFeat("Thump", 5000),
-		new BreakFeat("Wreckage", 600), new BreakFeat("Devastation", 1500),
-		new EnemyFeat("Monster Hunter", 500), new EnemyFeat("Monster Slayer", 3000),
-		new JumpFeat("Leapfrog", 3000), new HitFeat("Eagle-eyed", 10), new MonsterBumpFeat("Sneak Attack", 50),
-		new BonusLevelFeat("Roll the Dice", 5), new KickFeat("Kick the Ball", 20),
-		new NoGemsFeat(), new AllGemsFeat(), new AllBrokenFeat(),
-		new GiantFeat("Giant Slayer", 50), new HardFeat(),
-		new BuyFeat("Consumer", 1), new BuyFeat("Demander", 5), new BuyFeat("Collector", 15),
-		new NoBirdGemsFeat(), new BirdGemFeat("Nest Egg", 200),
-		new WispFeat("Wisp Slayer", 10), new OrbFeat("Orb Wielder", 25), new MonsterElectrocuteFeat("Lightning Storm", 150),
-		new DoubledGemFeat("Double Down", 7500), new BounceFeat("Busy Bee", 400)
+		new LevelFeat("Level 1", "0", 1), new LevelFeat("Level Champ", "1", 50),
+		new WorldFeat("World 1", "2", 1), new WorldFeat("World Tour", "3", 10),
+		new NoEnemyFeat("4"), new AllEnemyFeat("5"),
+		new RankFeat("Promoted", "6", 2), new RankFeat("Knighted", "7", 25),
+		new WordFeat("Wordsmith", "8", 5), new WordFeat("Lexicon", "9", 30),
+		new MonarchFeat("10"), new PegasusFeat("11"),
+		new GemFeat("Entrepreneur", "12", 10000), new GemFeat("Tycoon", "13", 100000), new GemFeat("Millionaire", "14", 1000000),
+		new GreenGemFeat("15"),
+		new BumpFeat("Thud", "16", 1000), new BumpFeat("Thump", "17", 5000),
+		new BreakFeat("Wreckage", "18", 600), new BreakFeat("Devastation", "19", 1500),
+		new EnemyFeat("Monster Hunter", "20", 500), new EnemyFeat("Monster Slayer", "21", 3000),
+		new JumpFeat("Leapfrog", "22", 3000), new HitFeat("Eagle-eyed", "23", 10), new MonsterBumpFeat("Sneak Attack", "24", 50),
+		new BonusLevelFeat("Roll the Dice", "25", 5), new KickFeat("Kick the Ball", "26", 20),
+		new NoGemsFeat("27"), new AllGemsFeat("28"), new AllBrokenFeat("29"),
+		new GiantFeat("Giant Slayer", "30", 50), new HardFeat("31"),
+		new BuyFeat("Consumer", "32", 1), new BuyFeat("Demander", "33", 5), new BuyFeat("Collector", "34", 15),
+		new NoBirdGemsFeat("35"), new BirdGemFeat("Nest Egg", "36", 200),
+		new WispFeat("Wisp Slayer", "37", 10), new OrbFeat("Orb Wielder", "38", 25), new MonsterElectrocuteFeat("Lightning Storm", "39", 150),
+		new DoubledGemFeat("Double Down", "40", 7500), new BounceFeat("Busy Bee", "41", 400)
 		// Level w/ no damage
 		// Beyond Belief, Finish Level as a flying Pig
 		// Babe, Finish Level as a blue Bull/Ox
@@ -58,11 +58,13 @@ public abstract class Achievement extends FinName {
 		// Bee-line
 	};
 	
+	protected final String code;
 	private final String desc;
 	private final int award;
 	
-	protected Achievement(final String name, final String desc, final int award) {
+	protected Achievement(final String name, final String code, final String desc, final int award) {
 		super(name);
+		this.code = code;
 		this.desc = desc;
 		this.award = award;
 	}
@@ -121,8 +123,8 @@ public abstract class Achievement extends FinName {
 	}
 	
 	private abstract static class ProfileFeat extends Achievement {
-	    protected ProfileFeat(final String name, final String desc, final int award) {
-	        super(name, desc, award);
+	    protected ProfileFeat(final String name, final String code, final String desc, final int award) {
+	        super(name, code, desc, award);
 	    }
 	    
 	    @Override
@@ -137,8 +139,8 @@ public abstract class Achievement extends FinName {
 	private abstract static class CountFeat extends ProfileFeat {
 	    private final int n;
 	    
-	    protected CountFeat(final String name, final int n, final String desc, final int award) {
-	        super(name, desc, award);
+	    protected CountFeat(final String name, final String code, final int n, final String desc, final int award) {
+	        super(name, code, desc, award);
 	        this.n = n;
 	    }
 	    
@@ -157,8 +159,8 @@ public abstract class Achievement extends FinName {
 	}
 	
 	private abstract static class StatFeat extends CountFeat {
-	    protected StatFeat(final String name, final int n, final String desc, final int award) {
-	        super(name, n, desc, award);
+	    protected StatFeat(final String name, final String code, final int n, final String desc, final int award) {
+	        super(name, code, n, desc, award);
 	    }
 	    
 	    @Override
@@ -171,8 +173,8 @@ public abstract class Achievement extends FinName {
 	}
 	
 	private abstract static class AvatarFeat extends ProfileFeat {
-        protected AvatarFeat(final String name, final String desc, final int award) {
-            super(name, desc, award);
+        protected AvatarFeat(final String name, final String code, final String desc, final int award) {
+            super(name, code, desc, award);
         }
         
         @Override
@@ -185,8 +187,8 @@ public abstract class Achievement extends FinName {
     }
 	
 	private abstract static class CurrentFeat extends Achievement {
-        protected CurrentFeat(final String name, final String desc, final int award) {
-            super(name, desc, award);
+        protected CurrentFeat(final String name, final String code, final String desc, final int award) {
+            super(name, code, desc, award);
         }
         
         @Override
@@ -199,8 +201,8 @@ public abstract class Achievement extends FinName {
     }
 	
 	private final static class LevelFeat extends StatFeat {
-		protected LevelFeat(final String name, final int n) {
-			super(name, n, "Defeat " + n + " Level" + getS(n), n * 25);
+		protected LevelFeat(final String name, final String code, final int n) {
+			super(name, code, n, "Defeat " + n + " Level" + getS(n), n * 25);
 		}
 		
 		@Override
@@ -210,8 +212,8 @@ public abstract class Achievement extends FinName {
 	}
 	
 	private final static class WorldFeat extends StatFeat {
-		protected WorldFeat(final String name, final int n) {
-			super(name, n, "Defeat " + n + " World" + getS(n), n * 150);
+		protected WorldFeat(final String name, final String code, final int n) {
+			super(name, code, n, "Defeat " + n + " World" + getS(n), n * 150);
 		}
 		
 		@Override
@@ -221,8 +223,8 @@ public abstract class Achievement extends FinName {
 	}
 	
 	private final static class WordFeat extends StatFeat {
-        protected WordFeat(final String name, final int n) {
-            super(name, n, "Collect " + n + " Bonus Word" + getS(n), n * 30);
+        protected WordFeat(final String name, final String code, final int n) {
+            super(name, code, n, "Collect " + n + " Bonus Word" + getS(n), n * 30);
         }
         
         @Override
@@ -232,8 +234,8 @@ public abstract class Achievement extends FinName {
     }
 	
 	private final static class OrbFeat extends StatFeat {
-        protected OrbFeat(final String name, final int n) {
-            super(name, n, "Collect " + n + " Power Orb" + getS(n), n * 40);
+        protected OrbFeat(final String name, final String code, final int n) {
+            super(name, code, n, "Collect " + n + " Power Orb" + getS(n), n * 40);
         }
         
         @Override
@@ -243,8 +245,8 @@ public abstract class Achievement extends FinName {
     }
 	
 	private final static class GemFeat extends StatFeat {
-        protected GemFeat(final String name, final int n) {
-            super(name, n, "Get " + n + " total Gem" + getS(n), n / 40);
+        protected GemFeat(final String name, final String code, final int n) {
+            super(name, code, n, "Get " + n + " total Gem" + getS(n), n / 40);
         }
         
         @Override
@@ -259,8 +261,8 @@ public abstract class Achievement extends FinName {
     }
 	
 	private final static class BirdGemFeat extends StatFeat {
-        protected BirdGemFeat(final String name, final int n) {
-            super(name, n, "Let a bird get " + n + " total Gem" + getS(n), n * 15);
+        protected BirdGemFeat(final String name, final String code, final int n) {
+            super(name, code, n, "Let a bird get " + n + " total Gem" + getS(n), n * 15);
         }
         
         @Override
@@ -270,8 +272,8 @@ public abstract class Achievement extends FinName {
     }
 	
 	private final static class GreenGemFeat extends StatFeat {
-        protected GreenGemFeat() {
-            super("Serendipity", 1, "Find 1 green Gem in a level", 1000);
+        protected GreenGemFeat(final String code) {
+            super("Serendipity", code, 1, "Find 1 green Gem in a level", 1000);
         }
         
         @Override
@@ -281,8 +283,8 @@ public abstract class Achievement extends FinName {
 	}
 	
 	private final static class DoubledGemFeat extends StatFeat {
-        protected DoubledGemFeat(final String name, final int n) {
-            super(name, n, "Find " + n + " Gem" + getS(n) + " using Double Gem Orbs", (n * 2) / 3);
+        protected DoubledGemFeat(final String name, final String code, final int n) {
+            super(name, code, n, "Find " + n + " Gem" + getS(n) + " using Double Gem Orbs", (n * 2) / 3);
         }
         
         @Override
@@ -292,8 +294,8 @@ public abstract class Achievement extends FinName {
     }
 	
 	private final static class BumpFeat extends StatFeat {
-        protected BumpFeat(final String name, final int n) {
-            super(name, n, "Bump " + n + " Block" + getS(n), n / 4);
+        protected BumpFeat(final String name, final String code, final int n) {
+            super(name, code, n, "Bump " + n + " Block" + getS(n), n / 4);
         }
         
         @Override
@@ -303,8 +305,8 @@ public abstract class Achievement extends FinName {
 	}
 	
 	private final static class BreakFeat extends StatFeat {
-        protected BreakFeat(final String name, final int n) {
-            super(name, n, "Break " + n + " Block" + getS(n), n / 3);
+        protected BreakFeat(final String name, final String code, final int n) {
+            super(name, code, n, "Break " + n + " Block" + getS(n), n / 3);
         }
         
         @Override
@@ -314,8 +316,8 @@ public abstract class Achievement extends FinName {
     }
 	
 	private final static class EnemyFeat extends StatFeat {
-        protected EnemyFeat(final String name, final int n) {
-            super(name, n, "Defeat " + n + " Enemies", n / 2);
+        protected EnemyFeat(final String name, final String code, final int n) {
+            super(name, code, n, "Defeat " + n + " Enemies", n / 2);
         }
         
         @Override
@@ -325,8 +327,8 @@ public abstract class Achievement extends FinName {
     }
 	
 	private final static class GiantFeat extends StatFeat {
-        protected GiantFeat(final String name, final int n) {
-            super(name, n, "Defeat " + n + " Giant" + getS(n), n * 6);
+        protected GiantFeat(final String name, final String code, final int n) {
+            super(name, code, n, "Defeat " + n + " Giant" + getS(n), n * 6);
         }
         
         @Override
@@ -336,8 +338,8 @@ public abstract class Achievement extends FinName {
     }
 	
 	private final static class WispFeat extends StatFeat {
-        protected WispFeat(final String name, final int n) {
-            super(name, n, "Defeat " + n + " Wisp" + getS(n), n * 200);
+        protected WispFeat(final String name, final String code, final int n) {
+            super(name, code, n, "Defeat " + n + " Wisp" + getS(n), n * 200);
         }
         
         @Override
@@ -347,8 +349,8 @@ public abstract class Achievement extends FinName {
     }
 	
 	private final static class JumpFeat extends StatFeat {
-        protected JumpFeat(final String name, final int n) {
-            super(name, n, "Jump " + n + " time" + getS(n), n / 10);
+        protected JumpFeat(final String name, final String code, final int n) {
+            super(name, code, n, "Jump " + n + " time" + getS(n), n / 10);
         }
         
         @Override
@@ -358,8 +360,8 @@ public abstract class Achievement extends FinName {
     }
 	
 	private final static class HitFeat extends StatFeat {
-        protected HitFeat(final String name, final int n) {
-            super(name, n, "Hit " + n + " Enemies with an object", n * 10);
+        protected HitFeat(final String name, final String code, final int n) {
+            super(name, code, n, "Hit " + n + " Enemies with an object", n * 10);
         }
         
         @Override
@@ -369,8 +371,8 @@ public abstract class Achievement extends FinName {
     }
 	
 	private final static class MonsterBumpFeat extends StatFeat {
-        protected MonsterBumpFeat(final String name, final int n) {
-            super(name, n, "Defeat " + n + " Enemies by hitting their Block", n * 4);
+        protected MonsterBumpFeat(final String name, final String code, final int n) {
+            super(name, code, n, "Defeat " + n + " Enemies by hitting their Block", n * 4);
         }
         
         @Override
@@ -380,8 +382,8 @@ public abstract class Achievement extends FinName {
     }
 	
 	private final static class MonsterElectrocuteFeat extends StatFeat {
-        protected MonsterElectrocuteFeat(final String name, final int n) {
-            super(name, n, "Defeat " + n + " Enemies with a Lightning Orb", n * 20);
+        protected MonsterElectrocuteFeat(final String name, final String code, final int n) {
+            super(name, code, n, "Defeat " + n + " Enemies with a Lightning Orb", n * 20);
         }
         
         @Override
@@ -391,8 +393,8 @@ public abstract class Achievement extends FinName {
     }
 	
 	private final static class BonusLevelFeat extends StatFeat {
-        protected BonusLevelFeat(final String name, final int n) {
-            super(name, n, "Play " + n + " Bonus Game" + getS(n), n * 100);
+        protected BonusLevelFeat(final String name, final String code, final int n) {
+            super(name, code, n, "Play " + n + " Bonus Game" + getS(n), n * 100);
         }
         
         @Override
@@ -402,8 +404,8 @@ public abstract class Achievement extends FinName {
     }
 	
 	private final static class KickFeat extends StatFeat {
-        protected KickFeat(final String name, final int n) {
-            super(name, n, "Kick " + n + " object" + getS(n), n * 5);
+        protected KickFeat(final String name, final String code, final int n) {
+            super(name, code, n, "Kick " + n + " object" + getS(n), n * 5);
         }
         
         @Override
@@ -413,8 +415,8 @@ public abstract class Achievement extends FinName {
     }
 	
 	private final static class BounceFeat extends StatFeat {
-        protected BounceFeat(final String name, final int n) {
-            super(name, n, "Bounce on a Bee " + n + " time" + getS(n), (n * 5) / 2);
+        protected BounceFeat(final String name, final String code, final int n) {
+            super(name, code, n, "Bounce on a Bee " + n + " time" + getS(n), (n * 5) / 2);
         }
         
         @Override
@@ -424,8 +426,8 @@ public abstract class Achievement extends FinName {
     }
 	
 	private final static class RankFeat extends CountFeat {
-		protected RankFeat(final String name, final int n) {
-			super(name, n, "Reach rank " + n, n * 100);
+		protected RankFeat(final String name, final String code, final int n) {
+			super(name, code, n, "Reach rank " + n, n * 100);
 		}
 		
 		@Override
@@ -435,8 +437,8 @@ public abstract class Achievement extends FinName {
 	}
 	
 	protected final static class BuyFeat extends CountFeat {
-        protected BuyFeat(final String name, final int n) {
-            super(name, n, "Buy " + n + " item" + getS(n), n * 1000);
+        protected BuyFeat(final String name, final String code, final int n) {
+            super(name, code, n, "Buy " + n + " item" + getS(n), n * 1000);
         }
         
         @Override
@@ -453,8 +455,8 @@ public abstract class Achievement extends FinName {
     }
 	
 	private final static class MonarchFeat extends AvatarFeat {
-        protected MonarchFeat() {
-            super("Monarch", "Wear Royal clothing and a Crown", 5000);
+        protected MonarchFeat(final String code) {
+            super("Monarch", code, "Wear Royal clothing and a Crown", 5000);
         }
         
         @Override
@@ -464,8 +466,8 @@ public abstract class Achievement extends FinName {
     }
 	
 	private final static class PegasusFeat extends AvatarFeat {
-        protected PegasusFeat() {
-            super("Pegasus", "Add Wings to a Horse", 1250);
+        protected PegasusFeat(final String code) {
+            super("Pegasus", code, "Add Wings to a Horse", 1250);
         }
         
         @Override
@@ -475,8 +477,8 @@ public abstract class Achievement extends FinName {
     }
 	
 	private final static class NoEnemyFeat extends CurrentFeat {
-	    protected NoEnemyFeat() {
-            super("Dove", "Finish a Level without defeating any Enemies", 200);
+	    protected NoEnemyFeat(final String code) {
+            super("Dove", code, "Finish a Level without defeating any Enemies", 200);
         }
         
         @Override
@@ -486,8 +488,8 @@ public abstract class Achievement extends FinName {
 	}
 	
 	private final static class AllEnemyFeat extends CurrentFeat {
-        protected AllEnemyFeat() {
-            super("Hawk", "Defeat all Enemies in a Level", 300);
+        protected AllEnemyFeat(final String code) {
+            super("Hawk", code, "Defeat all Enemies in a Level", 300);
         }
         
         @Override
@@ -497,8 +499,8 @@ public abstract class Achievement extends FinName {
     }
 	
 	private final static class NoGemsFeat extends CurrentFeat {
-        protected NoGemsFeat() {
-            super("Bear Market", "Finish a Level with no Gems", 250);
+        protected NoGemsFeat(final String code) {
+            super("Bear Market", code, "Finish a Level with no Gems", 250);
         }
         
         @Override
@@ -508,8 +510,8 @@ public abstract class Achievement extends FinName {
     }
 	
 	private final static class AllGemsFeat extends CurrentFeat {
-        protected AllGemsFeat() {
-            super("Bull Market", "Collect all Gems in a Level", 500);
+        protected AllGemsFeat(final String code) {
+            super("Bull Market", code, "Collect all Gems in a Level", 500);
         }
         
         @Override
@@ -519,8 +521,8 @@ public abstract class Achievement extends FinName {
     }
 	
 	private final static class NoBirdGemsFeat extends CurrentFeat {
-        protected NoBirdGemsFeat() {
-            super("Empty Nest", "Don't let your Bird get any Gems in a Level", 2500);
+        protected NoBirdGemsFeat(final String code) {
+            super("Empty Nest", code, "Don't let your Bird get any Gems in a Level", 2500);
         }
         
         @Override
@@ -530,8 +532,8 @@ public abstract class Achievement extends FinName {
     }
 	
 	private final static class AllBrokenFeat extends CurrentFeat {
-        protected AllBrokenFeat() {
-            super("Juggernaut", "Break all Blocks in a Level", 150);
+        protected AllBrokenFeat(final String code) {
+            super("Juggernaut", code, "Break all Blocks in a Level", 150);
         }
         
         @Override
@@ -541,8 +543,8 @@ public abstract class Achievement extends FinName {
     }
 	
 	private final static class HardFeat extends CurrentFeat {
-	    protected HardFeat() {
-	        super("Lionheart", "Play a Level on highest difficulty", 2000);
+	    protected HardFeat(final String code) {
+	        super("Lionheart", code, "Play a Level on highest difficulty", 2000);
 	    }
 	    
 	    @Override
