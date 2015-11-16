@@ -527,6 +527,13 @@ public class Player extends Character implements CollisionListener {
 	    if (currentComboSize > 1) {
             // The award was given once gradually throughout the combo; reduce multiplier by one when giving the final bonus
             addGems((currentComboSize - 1) * currentComboAward);
+            final Statistics stats = PlayerContext.getStatistics(pc);
+            if (stats != null) {
+                stats.combos++;
+                if (currentComboSize > stats.longestCombo) {
+                    stats.longestCombo = currentComboSize;
+                }
+            }
             //TODO Visual fx
         }
         clearCombo();

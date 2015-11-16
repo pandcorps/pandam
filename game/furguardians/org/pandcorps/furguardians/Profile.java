@@ -289,6 +289,8 @@ public class Profile extends PlayerData implements Segmented, Savable {
     	protected int playedHiveWorlds = 0;
     	protected int foundDoubleOrbs = 0;
     	protected long doubledGems = 0;
+    	protected long combos = 0;
+    	protected int longestCombo = 0;
     	
     	public void load(final Segment seg, final int currGems) {
         	defeatedLevels = seg.initInt(0);
@@ -330,6 +332,8 @@ public class Profile extends PlayerData implements Segmented, Savable {
         	playedHiveWorlds = seg.initInt(26);
         	foundDoubleOrbs = seg.initInt(27);
         	doubledGems = seg.initLong(28);
+        	combos = seg.initLong(29);
+        	longestCombo = seg.initInt(30);
         }
     	
 		@Override
@@ -377,6 +381,8 @@ public class Profile extends PlayerData implements Segmented, Savable {
 	        seg.setInt(26, playedHiveWorlds);
 	        seg.setInt(27, foundDoubleOrbs);
 	        seg.setLong(28, doubledGems);
+	        seg.setLong(29, combos);
+	        seg.setInt(30, longestCombo);
 		}
 		
 		public List<String> toList(final Profile prf) {
@@ -396,6 +402,8 @@ public class Profile extends PlayerData implements Segmented, Savable {
 				    enemyTypesDefeated++;
 				}
 			}
+			list.add("Combos: " + combos);
+			list.add("Longest Combo: " + longestCombo);
 			list.add("Blocks bumped: " + bumpedBlocks);
 			list.add("Blocks broken: " + brokenBlocks);
 			list.add("Jumps: " + jumps);
