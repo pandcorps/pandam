@@ -389,6 +389,8 @@ public class Player extends Character implements CollisionListener {
 	private Panple returnDestination = null;
 	private int returnVelocity = 0;
 	private Player returnPlayer = null;
+	private int currentComboSize = 0;
+	private int currentComboAward = 0;
 	protected int levelGems = 0;
 	protected int levelFloatingGems = 0;
 	protected int levelEndGems = 0;
@@ -514,6 +516,20 @@ public class Player extends Character implements CollisionListener {
 	    levelBrokenBlocks = 0;
         levelFalls = 0;
         levelHits = 0;
+	}
+	
+	private final void clearCombo() {
+	    currentComboSize = 0;
+	    currentComboAward = 0;
+	}
+	
+	private final void evaluateCombo() {
+	    if (currentComboSize > 1) {
+            // The award was given once gradually throughout the combo; reduce multiplier by one when giving the final bonus
+            addGems((currentComboSize - 1) * currentComboAward);
+            //TODO Visual fx
+        }
+        clearCombo();
 	}
 	
 	private final boolean isInputDisabled() {
@@ -970,6 +986,7 @@ public class Player extends Character implements CollisionListener {
 	protected final void onGrounded() {
 		safe.set(getPosition());
 		safeMirror = isMirror();
+		evaluateCombo();
 		if (mode != MODE_FROZEN) {
 			if (hv != 0 && isAnimated()) {
 				changeView(pc.guyRun);
@@ -1058,6 +1075,14 @@ public class Player extends Character implements CollisionListener {
 		        }
 		    }
 		}
+	}
+	
+	protected final void onReward(final EnemyDefinition def) {
+	    if (!isGrounded()) {
+	        currentComboSize++;
+	        currentComboAward += def.award;
+	        //TODO Visual fx
+	    }
 	}
 	
 	private final boolean isBouncePossible() {

@@ -421,6 +421,7 @@ public class Enemy extends Character {
                 throw new IllegalStateException("Unexpected defeatMode " + defeatMode);
         }
         stats.defeatedEnemyTypes.inc(def.code);
+        player.onReward(def);
 	}
 	
 	private final boolean isRewarded(final Player player) {

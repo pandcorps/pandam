@@ -108,6 +108,7 @@ public class FurGuardiansGame extends BaseGame {
 	Can get stuck under bridges in auto-run mode
 	DoubleOrb looks like an invincibility effect; maybe slow down spark frequency would look less like that
 	Creating a new profile should maybe check for a delete map file matching the new name
+	Level end doesn't clear blobs
 	
 	Remove System.out/err/printStackTrace/etc.
 	Screen shots.
