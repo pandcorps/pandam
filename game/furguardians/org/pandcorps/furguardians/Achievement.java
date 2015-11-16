@@ -28,8 +28,8 @@ import org.pandcorps.furguardians.Profile.*;
 
 public abstract class Achievement extends FinName {
 	protected final static Achievement[] ALL = {
-		new LevelFeat("Level 1", "0", 1), new LevelFeat("Level Champ", "1", 50),
-		new WorldFeat("World 1", "2", 1), new WorldFeat("World Tour", "3", 10),
+		new LevelFeat("Level 1", "0", 1), new LevelFeat("Level Champ", "1", 50), new LevelFeat("Level Master", "lvl.mstr", 250),
+		new WorldFeat("World 1", "2", 1), new WorldFeat("World Tour", "3", 10), new WorldFeat("World Master", "wrld.mstr", 30),
 		new NoEnemyFeat("4"), new AllEnemyFeat("5"),
 		new RankFeat("Promoted", "6", 2), new RankFeat("Knighted", "7", 25),
 		new WordFeat("Wordsmith", "8", 5), new WordFeat("Lexicon", "9", 30),
