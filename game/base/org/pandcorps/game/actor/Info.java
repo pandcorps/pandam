@@ -20,35 +20,41 @@ PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY
 TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 */
-package org.pandcorps.fight;
+package org.pandcorps.game.actor;
 
-import org.pandcorps.core.Pantil;
-import org.pandcorps.pandam.Panple;
+import org.pandcorps.core.*;
+import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandax.text.*;
 
 public class Info extends Pantext implements StepListener {
-	private final int vel;
-	private byte age = 0;
-	
-	public Info(final Font font, final int i, final int vel) {
-		this(font, Integer.toString(i), vel);
-	}
-	
-	public Info(final Font font, final String text, final int vel) {
+    private final int velY;
+    private final int velZ;
+    private byte age = 0;
+    
+    public Info(final Font font, final int i, final int vel) {
+        this(font, Integer.toString(i), vel);
+    }
+    
+    public Info(final Font font, final String text, final int vel) {
+        this(font, text, vel, -vel);
+    }
+    
+    public Info(final Font font, final String text, final int velY, final int velZ) {
         super(Pantil.vmid(), font, text);
-        this.vel = vel;
+        this.velY = velY;
+        this.velZ = velZ;
     }
 
-	@Override
-	public final void onStep(final StepEvent event) {
-		age++;
-		if (age > 30) {
-			destroy();
-			return;
-		}
-		final Panple pos = getPosition();
-		pos.setY(pos.getY() + vel);
-		pos.setZ(pos.getZ() - vel);
-	}
+    @Override
+    public final void onStep(final StepEvent event) {
+        age++;
+        if (age > 30) {
+            destroy();
+            return;
+        }
+        final Panple pos = getPosition();
+        pos.setY(pos.getY() + velY);
+        pos.setZ(pos.getZ() + velZ);
+    }
 }

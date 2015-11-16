@@ -22,14 +22,18 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandax.text;
 
-public final class MultiFont {
+import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.impl.*;
+
+public final class MultiFont implements Font {
 	protected final FontLayer[] layers;
 	
 	public MultiFont(final FontLayer... layers) {
 		this.layers = layers;
 	}
 	
-	public int getWidth() {
+	@Override
+	public final int getWidth() {
 		// Doesn't handle Fonts with different widths or negative offsets
 		int maxWidth = 0, maxOff = 0;
 		for (final FontLayer layer : layers) {
@@ -39,7 +43,8 @@ public final class MultiFont {
 		return maxWidth + maxOff;
 	}
     
-    public int getHeight() {
+	@Override
+    public final int getHeight() {
     	int maxHeight = 0, maxOff = 0;
 		for (final FontLayer layer : layers) {
 			maxHeight = Math.max(maxHeight, layer.font.getHeight());
@@ -47,4 +52,38 @@ public final class MultiFont {
 		}
 		return maxHeight + maxOff;
     }
+	
+	@Override
+    public final Panmage getImage() {
+        throw new UnsupportedOperationException();
+    }
+    
+	@Override
+    public final int getRowAmount() {
+        throw new UnsupportedOperationException();
+    }
+    
+	@Override
+    public final int getAmount() {
+        throw new UnsupportedOperationException();
+    }
+    
+	@Override
+    public final int getRow(final char c) {
+        throw new UnsupportedOperationException();
+    }
+    
+	@Override
+    public final int getColumn(final char c) {
+        throw new UnsupportedOperationException();
+    }
+    
+	@Override
+    public final int getIndex(final char c) {
+	    throw new UnsupportedOperationException();
+	}
+	
+	public final static MultiFont toMultiFont(final Font font) {
+	    return (font instanceof MultiFont) ? ((MultiFont) font) : new MultiFont(new FontLayer(font, FinPanple.ORIGIN));
+	}
 }

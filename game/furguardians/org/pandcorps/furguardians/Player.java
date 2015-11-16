@@ -1088,7 +1088,16 @@ public class Player extends Character implements CollisionListener {
 	    if (!isGrounded()) {
 	        currentComboSize++;
 	        currentComboAward += def.award;
-	        //TODO Visual fx
+	        if (currentComboSize > 1) {
+	            final Info info = new Info(FurGuardiansGame.font, currentComboSize + " x " + currentComboAward, 1, 0);
+	            final Panple pos = getPosition();
+	            FurGuardiansGame.setPosition(info, pos.getX(), pos.getY(), FurGuardiansGame.DEPTH_TEXT);
+	            info.centerX();
+	            FurGuardiansGame.room.addActor(info);
+	            if (currentComboSize >= 5) {
+	                evaluateCombo(); // Maximum mostly exists so that winged Players can't get huge combos
+	            }
+	        }
 	    }
 	}
 	

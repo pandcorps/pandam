@@ -27,8 +27,8 @@ import org.pandcorps.core.col.*;
 import org.pandcorps.game.actor.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
-import org.pandcorps.pandam.impl.FinPanple;
-import org.pandcorps.pandax.text.Font;
+import org.pandcorps.pandam.impl.*;
+import org.pandcorps.pandax.text.*;
 
 public final class Fighter extends Guy2 implements CollisionListener, AnimationEndListener {
     

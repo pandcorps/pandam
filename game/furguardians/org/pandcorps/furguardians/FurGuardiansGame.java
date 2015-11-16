@@ -138,6 +138,7 @@ public class FurGuardiansGame extends BaseGame {
 	protected final static int _DEPTH_BUBBLE = 5;
 	protected final static int DEPTH_SHATTER = 14;
 	protected final static int DEPTH_SPARK = 15;
+	protected final static int DEPTH_TEXT = 16;
 	protected final static int DEPTH_OFF_DRAGON = 8;
 	// DEPTH_PLAYER_DRAGON_BACK - BUBBLE = 9 - 13
 	

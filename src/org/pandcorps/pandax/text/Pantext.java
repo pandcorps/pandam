@@ -104,7 +104,7 @@ public class Pantext extends Panctor {
 	}
 	
 	public Pantext(final String id, final Font font, final List<? extends CharSequence> text, final int charactersPerLine) {
-		this(id, new MultiFont(new FontLayer(font, FinPanple.ORIGIN)), text, charactersPerLine);
+		this(id, MultiFont.toMultiFont(font), text, charactersPerLine);
 	}
 	
 	public Pantext(final String id, final MultiFont fonts, final CharSequence text) {
