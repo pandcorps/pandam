@@ -1236,6 +1236,11 @@ public class Player extends Character implements CollisionListener {
 		return (getCurrentJumpMode() == JUMP_FLY) ? gFlying : g;
 	}
 	
+	protected final void onLevelVictory() {
+	    evaluateCombo();
+	    levelEndGems = levelGems; // Capture final total before level-end award, used by NoGemsFeat
+	}
+	
 	@Override
 	protected final void onDestroy() {
 		bubble.destroy();
