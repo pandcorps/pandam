@@ -525,8 +525,12 @@ public class Player extends Character implements CollisionListener {
 	
 	private final void evaluateCombo() {
 	    if (currentComboSize > 1) {
-            // The award was given once gradually throughout the combo; reduce multiplier by one when giving the final bonus
-            addGems((currentComboSize - 1) * currentComboAward);
+            /*
+            The award was given once gradually throughout the combo.
+            Would make sense to reduce multiplier by one when giving the final bonus.
+            Would be more confusing to Player though.
+            */
+            addGems(currentComboSize * currentComboAward);
             final Statistics stats = PlayerContext.getStatistics(pc);
             if (stats != null) {
                 stats.combos++;
@@ -534,7 +538,7 @@ public class Player extends Character implements CollisionListener {
                     stats.longestCombo = currentComboSize;
                 }
             }
-            //TODO Visual fx
+            FurGuardiansGame.notify(pc, "Combo: " + currentComboSize + " x " + currentComboAward);
         }
         clearCombo();
 	}
@@ -1089,9 +1093,9 @@ public class Player extends Character implements CollisionListener {
 	        currentComboSize++;
 	        currentComboAward += def.award;
 	        if (currentComboSize > 1) {
-	            final Info info = new Info(FurGuardiansGame.font, currentComboSize + " x " + currentComboAward, 1, 0);
+	            final Info info = new Info(FurGuardiansGame.font, "x" + currentComboSize, 1, 0);
 	            final Panple pos = getPosition();
-	            FurGuardiansGame.setPosition(info, pos.getX(), pos.getY(), FurGuardiansGame.DEPTH_TEXT);
+	            FurGuardiansGame.setPosition(info, pos.getX(), pos.getY() + 28, FurGuardiansGame.DEPTH_TEXT);
 	            info.centerX();
 	            FurGuardiansGame.room.addActor(info);
 	            if (currentComboSize >= 5) {
