@@ -45,7 +45,8 @@ public abstract class Achievement extends FinName {
 		new GiantFeat("Giant Slayer", "30", 50), new GiantFeat("Giant Destroyer", "gnt.dstryr", 200), new HardFeat("31"),
 		new BuyFeat("Consumer", "32", 1), new BuyFeat("Demander", "33", 5), new BuyFeat("Collector", "34", 15),
 		new NoBirdGemsFeat("35"), new BirdGemFeat("Nest Egg", "36", 200),
-		new WispFeat("Wisp Slayer", "37", 10), new OrbFeat("Orb Wielder", "38", 25), new MonsterElectrocuteFeat("Lightning Storm", "39", 150),
+		new WispFeat("Wisp Slayer", "37", 10), new WispFeat("Wisp Destroyer", "wsp.dstryr", 35),
+		new OrbFeat("Orb Wielder", "38", 25), new MonsterElectrocuteFeat("Lightning Storm", "39", 150),
 		new DoubledGemFeat("Double Down", "40", 7500), new BounceFeat("Busy Bee", "41", 400)
 		// Level w/ no damage
 		// Beyond Belief, Finish Level as a flying Pig
