@@ -31,7 +31,7 @@ public abstract class Achievement extends FinName {
 		new LevelFeat("Level 1", "0", 1), new LevelFeat("Level Champ", "1", 50), new LevelFeat("Level Master", "lvl.mstr", 250),
 		new WorldFeat("World 1", "2", 1), new WorldFeat("World Tour", "3", 10), new WorldFeat("World Master", "wrld.mstr", 30),
 		new NoEnemyFeat("4"), new AllEnemyFeat("5"),
-		new RankFeat("Promoted", "6", 2), new RankFeat("Knighted", "7", 25),
+		new RankFeat("Promoted", "6", 2), new RankFeat("Knighted", "7", 25), new RankFeat("Revered", "rvrd", 150),
 		new WordFeat("Wordsmith", "8", 5), new WordFeat("Lexicon", "9", 30),
 		new MonarchFeat("10"), new PegasusFeat("11"),
 		new GemFeat("Entrepreneur", "12", 10000), new GemFeat("Tycoon", "13", 100000), new GemFeat("Millionaire", "14", 1000000),
