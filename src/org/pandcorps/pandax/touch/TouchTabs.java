@@ -67,7 +67,7 @@ public class TouchTabs {
     private TouchTabs(final int z, final Panmage left, final Panmage leftAct, final Panmage leftOverlay, final Panmage right, final Panmage rightAct, final Panmage rightOverlay, final int xOverlay, final int yOverlay, final TouchButton... buttons) {
         final Pangine engine = Pangine.getEngine();
         final Panple buttonSize = left.getSize();
-        final int screenHeight = engine.getEffectiveHeight();
+        final int screenHeight = engine.getEffectiveTop();
         buttonHeight = (int) buttonSize.getY();
         this.z = z;
         buttonWidth = (int) buttonSize.getX();

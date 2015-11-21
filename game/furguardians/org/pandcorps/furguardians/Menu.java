@@ -108,7 +108,7 @@ public class Menu {
 			rankStarX = getRankStarX();
 			if (touchRadioY == 140) {
 			    final Pangine engine = Pangine.getEngine();
-				final int h = engine.getEffectiveHeight();
+				final int h = engine.getEffectiveTop();
 				// If h is 192, OFF_RADIO_Y should be 72; should increase with h, up to 100
 				OFF_RADIO_Y = Math.min(h - 120, 100);
 				final int menuHeight = OFF_RADIO_Y + FurGuardiansGame.MENU_H; // 112
@@ -207,7 +207,7 @@ public class Menu {
 		}
 		
 		protected final int getTop() {
-			return (Pangine.getEngine().getEffectiveHeight() / 2) + 87;
+			return (Pangine.getEngine().getEffectiveTop() / 2) + 87;
 		}
 		
 		protected final int getBottom() {
@@ -219,7 +219,7 @@ public class Menu {
 		}
 		
 		protected final int getTouchKeyboardY() {
-			return (int) (Pangine.getEngine().getEffectiveHeight() - FurGuardiansGame.menu.getSize().getY() - 16);
+			return (int) (Pangine.getEngine().getEffectiveTop() - FurGuardiansGame.menu.getSize().getY() - 16);
 		}
 		
 		protected final static void initTouchButtons(final Panlayer room, final ControlScheme ctrl) {
@@ -245,7 +245,7 @@ public class Menu {
 			if (input) {
 				engine.clearTouchButtons();
 			}
-			final int r = engine.getEffectiveWidth(), t = engine.getEffectiveHeight();
+			final int r = engine.getEffectiveWidth(), t = engine.getEffectiveTop();
 			int rx = 0, y = 0;
 			TouchButton down = null, up = null, act2 = null;
 			Panmage rt = FurGuardiansGame.right2, rtIn = FurGuardiansGame.right2In, lt = FurGuardiansGame.left2, ltIn = FurGuardiansGame.left2In;
@@ -257,7 +257,7 @@ public class Menu {
 				up = addDiamondButton(room, "Up", rad, dmtr, input, act, ctrl.getOriginalUp());
 				rx = dmtr;
 				//act2 = addCircleButton(room, "Act2", r - d, 0, input, act, ctrl.getOriginal2());
-				//sub = addCircleButton(room, "Sub", r - d, engine.getEffectiveHeight() - d, input, act, ctrl.getOriginalSubmit());
+				//sub = addCircleButton(room, "Sub", r - d, engine.getEffectiveTop() - d, input, act, ctrl.getOriginalSubmit());
 				final Panple ts = FurGuardiansGame.menu.getSize();
 				final int tw = (int) ts.getX();
 				act2 = newFormButton(room, "Act2", r - tw, t - (int) ts.getY(), FurGuardiansGame.menuOptions, "Menu");
@@ -335,7 +335,7 @@ public class Menu {
 		protected final static void promptQuit(final Panlayer room) {
 			destroyPromptQuit();
 		    final Pangine engine = Pangine.getEngine();
-		    final int h = engine.getEffectiveHeight();
+		    final int h = engine.getEffectiveTop();
 		    final Panscreen screen = Panscreen.get();
 		    final boolean platformScreen = screen instanceof FurGuardiansGame.PlatformScreen;
 		    int btnY = 0;
@@ -690,7 +690,7 @@ public class Menu {
 			final int btnW = (int) btnSize.getX(), gapW = (btnW * 5) / 6, difW = btnW + gapW;
 			final int minX = (engine.getEffectiveWidth() - (btnW * 3 + gapW * 2)) / 2;
 			final int btnH = (int) btnSize.getY(), difH = btnH + 16;
-			final int minY = (engine.getEffectiveHeight() - (btnH + difH)) / 2;
+			final int minY = (engine.getEffectiveTop() - (btnH + difH)) / 2;
 			int x = minX, y = minY + difH;
 			if (label != null) {
 				addTitle(label + " Color", x, y + btnH + 1);
@@ -897,7 +897,7 @@ public class Menu {
 			if (!isTabEnabled()) {
 				return;
 			}
-			addTitle(note, touchRadioX + FurGuardiansGame.MENU_W + 2, Pangine.getEngine().getEffectiveHeight() - FurGuardiansGame.MENU_H - 10);
+			addTitle(note, touchRadioX + FurGuardiansGame.MENU_W + 2, Pangine.getEngine().getEffectiveTop() - FurGuardiansGame.MENU_H - 10);
 		}
 		
 		protected final int addPipe(final int x, final int y) {
@@ -1292,7 +1292,7 @@ public class Menu {
 	        final int adSize = ads.length;
 	        for (int i = 0; i < adSize; i++) {
 	            final String ad = ads[i];
-	            addTitle(ad, engine.getEffectiveWidth() - (8 * ad.length()) - 1, engine.getEffectiveHeight() - (9 * (i + 1)));
+	            addTitle(ad, engine.getEffectiveWidth() - (8 * ad.length()) - 1, engine.getEffectiveTop() - (9 * (i + 1)));
 	        }
 	        for (int i = 0; i < NUM_CHRS; i++) {
 	        	final PlayerContext tc = tcs.get(i);
@@ -2697,7 +2697,7 @@ public class Menu {
 					createStatsList(touchRadioX, touchRadioY);
 					break;
 				case TAB_GOALS :
-					createGoalsList(rankStarX, (Pangine.getEngine().getEffectiveHeight() - 124) / 2 + 116);
+					createGoalsList(rankStarX, (Pangine.getEngine().getEffectiveTop() - 124) / 2 + 116);
 					break;
 				case TAB_FOES :
 				    createFoesList(touchRadioX, touchRadioY);
@@ -2820,7 +2820,7 @@ public class Menu {
 			final int x = rankStarX;
 			final boolean tab = isTabEnabled();
 			final int h = tab ? 74 : 90;
-			int y = (engine.getEffectiveHeight() - h) / 2 + h - 8;
+			int y = (engine.getEffectiveTop() - h) / 2 + h - 8;
 			initForm = false;
 			final Pantext success = addTitle("Success!", x, y);
 			y -= 16;
@@ -3069,7 +3069,7 @@ public class Menu {
         
         @Override
         protected final boolean isPlayerDisplayed() {
-			return Pangine.getEngine().getEffectiveHeight() > 204;
+			return Pangine.getEngine().getEffectiveTop() > 204;
 		}
 	}
 	
@@ -3087,7 +3087,7 @@ public class Menu {
         protected final void menuTouch() {
             final Pangine engine = Pangine.getEngine();
             final Panple btnSize = FurGuardiansGame.menu.getSize();
-            final int h = engine.getEffectiveHeight();
+            final int h = engine.getEffectiveTop();
             final int btnW = (int) btnSize.getX(), btnH = (int) btnSize.getY();
             final int offY = (h >= 240) ? (btnH * 5 / 4) : btnH;
             int x = btnW / 2, y = h - btnH - offY;
@@ -3238,7 +3238,7 @@ public class Menu {
             final Pangine engine = Pangine.getEngine();
             final Panple btnSize = FurGuardiansGame.menu.getSize();
             final int btnW = (int) btnSize.getX(), btnH = (int) btnSize.getY(), offY = btnH * 5 / 4;
-            int x = btnW / 2, y = engine.getEffectiveHeight() - btnH - offY;
+            int x = btnW / 2, y = engine.getEffectiveTop() - btnH - offY;
             
             newFormButton("MusicToggle", x, y, FurGuardiansGame.menuMusic, new Runnable() {@Override public final void run() {toggleMusic();}});
             addTitle(msgMusic, x + btnW + 8, y);
@@ -3306,7 +3306,7 @@ public class Menu {
         	final Pangine engine = Pangine.getEngine();
             final Panple btnSize = FurGuardiansGame.menu.getSize();
             final int btnW = (int) btnSize.getX(), btnH = (int) btnSize.getY(), offY = btnH * 5 / 4;
-            int x = btnW / 2, y = engine.getEffectiveHeight() - btnH - offY;
+            int x = btnW / 2, y = engine.getEffectiveTop() - btnH - offY;
             
         	newFormButton("LossDown", x, y, FurGuardiansGame.menuLeft, new Runnable() {@Override public final void run() {incLoss(-1);}});
             newFormButton("LossUp", engine.getEffectiveWidth() - x - btnW, y, FurGuardiansGame.menuRight, new Runnable() {@Override public final void run() {incLoss(1);}});

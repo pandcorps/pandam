@@ -711,7 +711,7 @@ public class Map {
 				    // Maybe Player doesn't want to play Level; show Menu help
 					final String s = "Change appearance, options", s2 = "Goals";
 					final Panple menuSize = FurGuardiansGame.menu.getSize();
-					final int w = engine.getEffectiveWidth(), h = engine.getEffectiveHeight(), mh = (int) menuSize.getY();
+					final int w = engine.getEffectiveWidth(), h = engine.getEffectiveTop(), mh = (int) menuSize.getY();
 					addHelp(s, w - (s.length() * 4), h - mh - 9);
 					addHelp(s2, w - (int) menuSize.getX() - (s2.length() * 4), h - 28);
 				}
@@ -1740,7 +1740,7 @@ public class Map {
 	    final Pangine engine = Pangine.getEngine();
 	    if (!victoryWorld) {
 		    tipMover = new TextMover(hud, FurGuardiansGame.font, FurGuardiansGame.tips, (tipMover == null) ? 0 : tipMover.getIndex(),
-		    		engine.getEffectiveHeight() - 36, -10);
+		    		engine.getEffectiveTop() - 36, -10);
 	    }
 		PlayerScreen.initTouchButtons(hud, getPlayerContext().ctrl);
 		if (engine.isTouchSupported()) {

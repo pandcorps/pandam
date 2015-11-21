@@ -50,7 +50,7 @@ import org.pandcorps.furguardians.Player.*;
 
 public class FurGuardiansGame extends BaseGame {
 	protected final static String TITLE = "Fur-Guardians"; // res/values/strings.xml/app_name
-    protected final static String VERSION = "1.16.0"; // AndroidManifest.xml/versionName
+    protected final static String VERSION = "1.17.0"; // AndroidManifest.xml/versionName
     protected final static String YEAR = "2014-2015";
     protected final static String AUTHOR = "Andrew M. Martin";
 	/*
@@ -485,7 +485,7 @@ public class FurGuardiansGame extends BaseGame {
             	final int gems = p == null ? pc.getGems() : p.getCurrentLevelGems();
             	x += ((Math.max(String.valueOf(gems).length(), pc.getName().length()) * 8) + 1);
             }
-            a.getPosition().set(x, Pangine.getEngine().getEffectiveHeight() - 17);
+            a.getPosition().set(x, Pangine.getEngine().getEffectiveTop() - 17);
         }
 		final String name = n.getName(), s;
 		final int size = Coltil.size(pcs);
@@ -1866,7 +1866,7 @@ public class FurGuardiansGame extends BaseGame {
 	
 	protected final static Panlayer addHud(final Panroom room, final boolean allowAuto, final boolean level) {
 		hud = createHud(room);
-		final int h = Pangine.getEngine().getEffectiveHeight() - 17;
+		final int h = Pangine.getEngine().getEffectiveTop() - 17;
 		hudGem = addHudGem(hud, 0, h);
         final int size = pcs.size();
         for (int i = 0; i < size; i++) {
@@ -1938,7 +1938,7 @@ public class FurGuardiansGame extends BaseGame {
 		if (notifications == null || notifications.isDestroyed()) {
 			notifications = new Notifications(layer, font);
 			notifications.setDestroyAllowed(false);
-			notifications.getLabel().getPosition().set(8, Pangine.getEngine().getEffectiveHeight() - 25);
+			notifications.getLabel().getPosition().set(8, Pangine.getEngine().getEffectiveTop() - 25);
 		} else {
 			layer.addActor(notifications);
 		}
@@ -2001,7 +2001,7 @@ public class FurGuardiansGame extends BaseGame {
 	
 	private final static void showLetterBonusGems(final Panimation anm) {
 		final Pangine engine = Pangine.getEngine();
-		final int x = (engine.getEffectiveWidth() - ImtilX.DIM * 5) / 2, y = engine.getEffectiveHeight() - 96;
+		final int x = (engine.getEffectiveWidth() - ImtilX.DIM * 5) / 2, y = engine.getEffectiveTop() - 96;
 		for (int i = 0; i < 5; i++) {
 			final int xc = x + i * ImtilX.DIM, yc = y + 12 * Math.abs(2 - i);
 			new GemBumped(hud, null, xc, yc, 0, GemBumped.TYPE_DECORATION, anm, Tiles.g);

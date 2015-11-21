@@ -189,7 +189,7 @@ public class Tiles {
     }
     
     private final static int getHudLetterY() {
-    	return Pangine.getEngine().getEffectiveHeight() - ImtilX.DIM - 1;
+    	return Pangine.getEngine().getEffectiveTop() - ImtilX.DIM - 1;
     }
     
     private final static Panctor addLetter(final int i, final Panmage letter) {

@@ -57,7 +57,9 @@ public abstract class Pangine {
 	
 	/*package*/ Map<Object, Set<Object>> collisionGroups = null;
 	
+	private int topOffset = 0;
 	private float zoomMag = 1;
+	private Runnable zoomChangeHandler = null;
 	private Scaler scaler = null;
 	
 	//protected int frameLength = 30;
@@ -79,6 +81,8 @@ public abstract class Pangine {
 	
 	protected Runnable uncaughtBackHandler = null;
 	private boolean fatalLogged = false;
+	
+	private String debugInfo = null;
 
 	static {
 		int i = 0;
@@ -859,12 +863,36 @@ public abstract class Pangine {
 		return layer.rawViewMax;
 	}
 	
+	public void setTopOffset(final int topOffset) {
+		this.topOffset = topOffset;
+	}
+	
+	public final int getTopOffset() {
+		return topOffset;
+	}
+	
+	public final int getEffectiveTopOffset() {
+		return (int) (getTopOffset() / getZoom());
+	}
+	
+	public final int getEffectiveTop() {
+		return getEffectiveHeight() - getEffectiveTopOffset();
+	}
+	
 	public void zoom(final float mag) {
+		final float old = zoomMag;
 	    zoomMag = mag;
+	    if (old != mag && zoomChangeHandler != null) {
+	    	zoomChangeHandler.run();
+	    }
 	}
 	
 	public final float getZoom() {
 	    return zoomMag;
+	}
+	
+	public final void setZoomChangeHandler(final Runnable zoomChangeHandler) {
+		this.zoomChangeHandler = zoomChangeHandler;
 	}
 	
 	// Pre-scales each image, not the rendered screen
@@ -1150,5 +1178,21 @@ public abstract class Pangine {
 	
 	public final Panple getMaxRoomSize() {
 		return maxRoomSize;
+	}
+	
+	public final void setDebugInfo(final String debugInfo) {
+		this.debugInfo = debugInfo;
+	}
+	
+	public final void appendDebugInfo(final String debugInfo) {
+		if (Chartil.isEmpty(this.debugInfo)) {
+			setDebugInfo(debugInfo);
+		} else {
+			this.debugInfo = this.debugInfo + " " + debugInfo;
+		}
+	}
+	
+	public final String getDebugInfo() {
+		return debugInfo;
 	}
 }
