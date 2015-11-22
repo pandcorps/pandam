@@ -1,7 +1,13 @@
+Added Achievements.
+
+*****
+
 1.17.0 (26)
 
 Combos.
 Added Achievements.
+Fixed a touch event bug on some devices.
+Fixed a display bug on some devices.
 
 *****
 

@@ -39,13 +39,16 @@ public abstract class Achievement extends FinName {
 		new BumpFeat("Thud", "16", 1000), new BumpFeat("Thump", "17", 5000),
 		new BreakFeat("Wreckage", "18", 600), new BreakFeat("Devastation", "19", 1500),
 		new EnemyFeat("Monster Hunter", "20", 500), new EnemyFeat("Monster Slayer", "21", 3000), new EnemyFeat("Monster Destroyer", "mnstr.dstryr", 10000),
-		new JumpFeat("Leapfrog", "22", 3000), new HitFeat("Eagle-eyed", "23", 10), new MonsterBumpFeat("Sneak Attack", "24", 50),
+		new ImpFeat("Imp Slayer", "imp.slyr", 160), new ImpFeat("Imp Destroyer", "imp.dstryr", 800),
+		new GiantFeat("Giant Slayer", "30", 50), new GiantFeat("Giant Destroyer", "gnt.dstryr", 200),
+		new WispFeat("Wisp Slayer", "37", 10), new WispFeat("Wisp Destroyer", "wsp.dstryr", 35),
+		new HitFeat("Eagle-eyed", "23", 10), new MonsterBumpFeat("Sneak Attack", "24", 50),
+		new JumpFeat("Leapfrog", "22", 3000),
 		new BonusLevelFeat("Roll the Dice", "25", 5), new KickFeat("Kick the Ball", "26", 20),
 		new NoGemsFeat("27"), new AllGemsFeat("28"), new AllBrokenFeat("29"),
-		new GiantFeat("Giant Slayer", "30", 50), new GiantFeat("Giant Destroyer", "gnt.dstryr", 200), new HardFeat("31"),
+		new HardFeat("31"),
 		new BuyFeat("Consumer", "32", 1), new BuyFeat("Demander", "33", 5), new BuyFeat("Collector", "34", 15),
 		new NoBirdGemsFeat("35"), new BirdGemFeat("Nest Egg", "36", 200),
-		new WispFeat("Wisp Slayer", "37", 10), new WispFeat("Wisp Destroyer", "wsp.dstryr", 35),
 		new OrbFeat("Orb Wielder", "38", 25), new MonsterElectrocuteFeat("Lightning Storm", "39", 150),
 		new DoubledGemFeat("Double Down", "40", 7500), new BounceFeat("Busy Bee", "41", 400)
 		// Level w/ no damage
@@ -317,6 +320,17 @@ public abstract class Achievement extends FinName {
         @Override
         public final long getCurrent(final Statistics stats) {
             return stats.defeatedEnemies;
+        }
+    }
+	
+	private final static class ImpFeat extends StatFeat {
+        protected ImpFeat(final String name, final String code, final int n) {
+            super(name, code, n, "Defeat " + n + " Imp" + getS(n), (n * 5) / 4);
+        }
+        
+        @Override
+        public final long getCurrent(final Statistics stats) {
+            return stats.getDefeatedImps();
         }
     }
 	
