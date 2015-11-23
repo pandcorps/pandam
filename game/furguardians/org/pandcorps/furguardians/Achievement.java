@@ -356,6 +356,17 @@ public abstract class Achievement extends FinName {
         }
     }
 	
+	private final static class ComboFeat extends StatFeat {
+        protected ComboFeat(final String name, final String code, final int n) {
+            super(name, code, n, "Perform " + n + " Combos", n * 8);
+        }
+        
+        @Override
+        public final long getCurrent(final Statistics stats) {
+            return stats.combos;
+        }
+    }
+	
 	private final static class JumpFeat extends StatFeat {
         protected JumpFeat(final String name, final String code, final int n) {
             super(name, code, n, "Jump " + n + " time" + getS(n), n / 10);
