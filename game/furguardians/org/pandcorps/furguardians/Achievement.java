@@ -358,12 +358,23 @@ public abstract class Achievement extends FinName {
 	
 	private final static class ComboFeat extends StatFeat {
         protected ComboFeat(final String name, final String code, final int n) {
-            super(name, code, n, "Perform " + n + " Combos", n * 8);
+            super(name, code, n, "Perform " + n + " Combo" + getS(n), n * 8);
         }
         
         @Override
         public final long getCurrent(final Statistics stats) {
             return stats.combos;
+        }
+    }
+	
+	private final static class ComboLengthFeat extends StatFeat {
+        protected ComboLengthFeat(final String name, final String code, final int n) {
+            super(name, code, n, "Perform a x" + n + " Combo", n * 250);
+        }
+        
+        @Override
+        public final long getCurrent(final Statistics stats) {
+            return stats.longestCombo;
         }
     }
 	
