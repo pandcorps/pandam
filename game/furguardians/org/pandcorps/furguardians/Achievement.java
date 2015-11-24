@@ -43,6 +43,7 @@ public abstract class Achievement extends FinName {
 		new GiantFeat("Giant Slayer", "30", 50), new GiantFeat("Giant Destroyer", "gnt.dstryr", 200),
 		new WispFeat("Wisp Slayer", "37", 10), new WispFeat("Wisp Destroyer", "wsp.dstryr", 35),
 		new HitFeat("Eagle-eyed", "23", 10), new MonsterBumpFeat("Sneak Attack", "24", 50),
+		new ComboFeat("", "", 80),
 		new JumpFeat("Leapfrog", "22", 3000),
 		new BonusLevelFeat("Roll the Dice", "25", 5), new KickFeat("Kick the Ball", "26", 20),
 		new NoGemsFeat("27"), new AllGemsFeat("28"), new AllBrokenFeat("29"),
