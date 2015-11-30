@@ -1988,7 +1988,7 @@ public class FurGuardiansGame extends BaseGame {
                 Gem.spark(actor.getPosition(), false);
                 actor.destroy();
             } else if (actor instanceof Enemy) {
-                ((Enemy) actor).onBump(null);
+                ((Enemy) actor).flipAndFall(Player.VEL_BUMP); // onBump(null);
             //} else if (actor instanceof Gem) {
             //    ((Gem) actor).spark(); // No longer objects
             }

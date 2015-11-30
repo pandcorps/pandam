@@ -1,4 +1,5 @@
 Added Achievements.
+Fixed a bug preventing blobs from being cleared upon level victory.
 
 *****
 
