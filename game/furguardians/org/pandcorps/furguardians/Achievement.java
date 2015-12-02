@@ -37,7 +37,7 @@ public abstract class Achievement extends FinName {
 		new GemFeat("Entrepreneur", "12", 10000), new GemFeat("Tycoon", "13", 100000), new GemFeat("Millionaire", "14", 1000000),
 		new GreenGemFeat("15"),
 		new BumpFeat("Thud", "16", 1000), new BumpFeat("Thump", "17", 5000), new BumpFeat("Thunk", "thnk", 15000),
-		new BreakFeat("Wreckage", "18", 600), new BreakFeat("Devastation", "19", 1500), new BreakFeat("", "", 3000),
+		new BreakFeat("Wreckage", "18", 600), new BreakFeat("Devastation", "19", 1500), new BreakFeat("Ruination", "rntn", 3000),
 		new EnemyFeat("Monster Hunter", "20", 500), new EnemyFeat("Monster Slayer", "21", 3000), new EnemyFeat("Monster Destroyer", "mnstr.dstryr", 10000),
 		new ImpFeat("Imp Slayer", "imp.slyr", 160), new ImpFeat("Imp Destroyer", "imp.dstryr", 800),
 		new GiantFeat("Giant Slayer", "30", 50), new GiantFeat("Giant Destroyer", "gnt.dstryr", 200),
