@@ -2196,6 +2196,16 @@ public class Level {
         }
     }
     
+    private final static class SpikeBlockTemplate extends SimpleTemplate {
+        protected SpikeBlockTemplate() {
+            super(1, 1, 0);
+        }
+        
+        @Override
+        protected void build() {
+        }
+    }
+    
     private final static class BushTemplate extends SimpleTemplate {
     	protected BushTemplate() {
     		super(0, 6);
