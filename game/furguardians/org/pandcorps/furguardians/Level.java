@@ -2203,6 +2203,10 @@ public class Level {
         
         @Override
         protected void build() {
+            final int base = floor + floatOffset + 4;
+            ceilingSpike(x, base - 1);
+            solidBlock(x, base);
+            floorSpike(x, base + 1);
         }
     }
     
