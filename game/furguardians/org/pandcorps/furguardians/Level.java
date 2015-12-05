@@ -1310,8 +1310,12 @@ public class Level {
     private final static void ceilingSpike(final int i, final int j) {
         final int j1 = j - 1;
         if (Mathtil.rand(15) && tm.getTile(i, j1) == null) {
-            tm.setBackground(i, j1, imgMap[7][2], FurGuardiansGame.TILE_HURT);
+            flippedSpike(i, j1);
         }
+    }
+    
+    private final static void flippedSpike(final int i, final int j) {
+        tm.setBackground(i, j, imgMap[7][2], FurGuardiansGame.TILE_HURT);
     }
     
     private static class PlatformBuilder extends RandomBuilder {
@@ -1408,6 +1412,7 @@ public class Level {
             addGiantTemplate();
             addTemplate(new BeeTemplate());
             addTemplate(new HexSpikeTemplate());
+            addTemplate(new SpikeBlockTemplate());
             goals.add(new BeeGoal());
             goals.add(new PlatformGoal());
         }
@@ -2204,7 +2209,7 @@ public class Level {
         @Override
         protected void build() {
             final int base = floor + floatOffset + 4;
-            ceilingSpike(x, base - 1);
+            flippedSpike(x, base - 1);
             solidBlock(x, base);
             floorSpike(x, base + 1);
         }
