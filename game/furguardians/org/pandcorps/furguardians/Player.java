@@ -1464,11 +1464,21 @@ public class Player extends Character implements CollisionListener {
         }
 	}
 	
-	protected final static class Bouncer extends Panctor implements Collidable {
+	protected static class Bouncer extends Panctor implements Collidable {
 	    protected Bouncer() {
             setView(FurGuardiansGame.bee);
             FurGuardiansGame.room.addActor(this);
             setMirror(true);
         }
 	}
+	
+	protected final static class MovingBouncer extends Bouncer implements StepListener {
+        protected MovingBouncer() {
+        }
+
+        @Override
+        public final void onStep(final StepEvent event) {
+            
+        }
+    }
 }
