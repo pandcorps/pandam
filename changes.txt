@@ -1,4 +1,5 @@
 Added Achievements.
+Added spike blocks to hive levels.
 Fixed a bug preventing blobs from being cleared upon level victory.
 
 *****
