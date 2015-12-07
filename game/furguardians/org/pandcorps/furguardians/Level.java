@@ -1164,6 +1164,10 @@ public class Level {
         new Bouncer(x, y);
     }
     
+    private final static void movingBee(final int x, final int y, final int numTiles) {
+        new MovingBouncer(x, y, numTiles);
+    }
+    
     private final static int[] scratch = new int[128];
     
     private final static void swapScratch(final int i, final int j) {
@@ -2197,6 +2201,19 @@ public class Level {
             final int base = floor + floatOffset;
             bee(x, base + 3);
             bonus(x, base + 7);
+        }
+    }
+    
+    private final static class MovingBeeTemplate extends SimpleTemplate {
+        protected MovingBeeTemplate() {
+            super(2, 4, 0);
+        }
+        
+        @Override
+        protected void build() {
+            final int base = floor + floatOffset;
+            movingBee(x, base + 3, w);
+            bonus(x + w - 1, base + 7);
         }
     }
     
