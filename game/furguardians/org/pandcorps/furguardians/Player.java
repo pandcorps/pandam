@@ -1465,20 +1465,39 @@ public class Player extends Character implements CollisionListener {
 	}
 	
 	protected static class Bouncer extends Panctor implements Collidable {
-	    protected Bouncer() {
+	    protected Bouncer(final int x, final int y) {
             setView(FurGuardiansGame.bee);
             FurGuardiansGame.room.addActor(this);
             setMirror(true);
+            final TileMap tm = Level.tm;
+            FurGuardiansGame.setPosition(this,
+                (tm.getTileWidth() * x) + FurGuardiansGame.BIRD_X + 1, (tm.getTileHeight() * y) + FurGuardiansGame.BIRD_Y, FurGuardiansGame.DEPTH_BACK);
         }
 	}
 	
 	protected final static class MovingBouncer extends Bouncer implements StepListener {
-        protected MovingBouncer() {
+	    private final int min;
+	    private final int max;
+	    private byte dir = 1;
+	    
+        protected MovingBouncer(final int x, final int y, final int numTiles) {
+            super(x, y);
+            min = (int) getPosition().getX();
+            max = min + (numTiles - 1) * 16;
+            setMirror(false);
         }
 
         @Override
         public final void onStep(final StepEvent event) {
-            
+            final int x = (int) getPosition().getX();
+            if (x <= min) {
+                dir = 1;
+                setMirror(false);
+            } else if (x >= max) {
+                dir = -1;
+                setMirror(true);
+            }
+            getPosition().addX(dir);
         }
     }
 }
