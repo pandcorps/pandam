@@ -1413,7 +1413,7 @@ public class Level {
             addTemplate(getPitTemplate());
             addFloatTemplates();
             addGiantTemplate();
-            addTemplate(new BeeTemplate());
+            addTemplate(new BeeTemplate(), new MovingBeeTemplate());
             addTemplate(new HexSpikeTemplate());
             addTemplate(new SpikeBlockTemplate());
             goals.add(new BeeGoal());
