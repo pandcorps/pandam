@@ -48,7 +48,7 @@ public abstract class Achievement extends FinName {
 		new BonusLevelFeat("Roll the Dice", "25", 5), new KickFeat("Kick the Ball", "26", 20),
 		new NoGemsFeat("27"), new AllGemsFeat("28"), new AllBrokenFeat("29"),
 		new HardFeat("31"),
-		new BuyFeat("Consumer", "32", 1), new BuyFeat("Demander", "33", 5), new BuyFeat("Collector", "34", 15),
+		new BuyFeat("Consumer", "32", 1), new BuyFeat("Demander", "33", 5), new BuyFeat("Collector", "34", 15), new BuyFeat("", "", 30), //TODO Obsessor? Validate unique codes
 		new NoBirdGemsFeat("35"), new BirdGemFeat("Nest Egg", "36", 200),
 		new OrbFeat("Orb Wielder", "38", 25), new MonsterElectrocuteFeat("Lightning Storm", "39", 150),
 		new DoubledGemFeat("Double Down", "40", 7500), new BounceFeat("Busy Bee", "41", 400)
