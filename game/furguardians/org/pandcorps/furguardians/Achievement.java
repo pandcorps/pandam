@@ -22,6 +22,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.furguardians;
 
+import java.util.*;
 import org.pandcorps.core.*;
 import org.pandcorps.furguardians.Player.*;
 import org.pandcorps.furguardians.Profile.*;
@@ -69,6 +70,30 @@ public abstract class Achievement extends FinName {
 		this.code = code;
 		this.desc = desc;
 		this.award = award;
+	}
+	
+	private final static void validateAchievements() {
+		if (ALL.length < 41) {
+			err("All Achievements not found");
+		}
+		final Set<String> codes = new HashSet<String>();
+		for (final Achievement a : ALL) {
+			final String code = a.code;
+			if (Chartil.isEmpty(code)) {
+				err("Found Achievement with no code");
+			} else if (Chartil.isEmpty(a.getName())) {
+				err("Found Achievement with no name");
+			} else if (!codes.add(code)) {
+				err("Found duplicate Achievement code " + code);
+			}
+		}
+		if (codes.size() != ALL.length) {
+			err("Found " + codes.size() + " Achievement codes but expected " + ALL.length);
+		}
+	}
+	
+	private final static void err(final String s) {
+		throw new IllegalStateException("Achievement validation failed: " + s);
 	}
 	
 	public final String getDescription() {
