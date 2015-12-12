@@ -72,7 +72,7 @@ public abstract class Achievement extends FinName {
 		this.award = award;
 	}
 	
-	private final static void validateAchievements() {
+	protected final static void validateAchievements() {
 		if (ALL.length < 41) {
 			err("All Achievements not found");
 		}
