@@ -65,6 +65,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
     protected boolean endLevelIfHurtWithNoGems = false;
     protected final Set<Animal> availableSpecialAnimals = new HashSet<Animal>();
     protected final Set<BirdKind> availableBirds = new HashSet<BirdKind>();
+    protected MapTheme preferredTheme = null;
     protected int column = -1;
 	protected int row = -1;
 	protected final HashMap<Pair<Integer, Integer>, Boolean> open = new HashMap<Pair<Integer, Integer>, Boolean>();
