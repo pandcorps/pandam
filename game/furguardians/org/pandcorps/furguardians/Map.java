@@ -388,13 +388,17 @@ public class Map {
 	
 	protected final static MapTheme[] themes = {MapTheme.Normal, MapTheme.Snow, MapTheme.Sand, MapTheme.Rock, MapTheme.Hive};
 	
-	protected final static MapTheme getTheme(final String name) {
+	protected final static MapTheme getThemeOrNull(final String name) {
 		for (final MapTheme theme : themes) {
 			if (theme.name.equals(name)) {
 				return theme;
 			}
 		}
-		return MapTheme.Normal;
+		return null;
+	}
+	
+	protected final static MapTheme getTheme(final String name) {
+		return Pantil.nvl(getThemeOrNull(name), MapTheme.Normal);
 	}
 	
 	/*protected final static class MapManipulator extends Manipulator {

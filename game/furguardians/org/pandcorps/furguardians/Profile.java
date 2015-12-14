@@ -143,6 +143,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
     	for (final Field f : Coltil.unnull(seg.getRepetitions(18))) {
             availableBirds.add(Avatar.getBird(f.getValue()));
         }
+    	preferredTheme = Map.getThemeOrNull(seg.getValue(19));
     	//ctrl = seg.intValue(3);
     }
     
@@ -178,6 +179,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
         for (final BirdKind b : Coltil.unnull(availableBirds)) {
             seg.addValue(18, b.getName());
         }
+        seg.setValue(19, (preferredTheme == null) ? null : preferredTheme.name);
         //seg.setInt(3, ctrl);
     }
     
