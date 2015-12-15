@@ -1076,7 +1076,8 @@ public class Map {
 	    } else {
     	    bgTexture = Mathtil.randi(0, FurGuardiansGame.dirts.length - 1);
     	    bgColor = Mathtil.randi(0, 2);
-    	    final Statistics stats = getProfile().stats;
+    	    final Profile prf = getProfile();
+    	    final Statistics stats = prf.stats;
     	    final int worlds = stats.defeatedWorlds;
     	    if (theme == MapTheme.Rock) {
     	        stats.playedRockWorlds++;
@@ -1093,6 +1094,8 @@ public class Map {
 				theme = MapTheme.Rock;
 			} else if (stats.playedHiveWorlds == 0) {
                 theme = MapTheme.Hive;
+			} else if (prf.preferredTheme != null) {
+			    theme = prf.preferredTheme;
 			} else {
 				final MapTheme old = theme;
 				do {
