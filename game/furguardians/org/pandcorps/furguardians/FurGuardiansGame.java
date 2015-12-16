@@ -65,6 +65,7 @@ public class FurGuardiansGame extends BaseGame {
 	Train-riding levels.
 	Ridable dragons - classic menu eyes/name.
 	Enemy Elementals, winged Imp, Banshee, Wraith, Shade, Orc.
+	Nether Wisp in Chaos levels with curse/poison effect.
 	Drolock should walk sometimes.
 	Enemy-specific Level templates (Imp walking into ArmorBall).
 	Gargoyles catch/carry Player, like moving platforms, one can jump to/from them, but not run on them.
