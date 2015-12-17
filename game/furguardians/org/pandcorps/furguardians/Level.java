@@ -2206,14 +2206,14 @@ public class Level {
     
     private final static class MovingBeeTemplate extends SimpleTemplate {
         protected MovingBeeTemplate() {
-            super(2, 4, 0);
+            super(3, 4, 0);
         }
         
         @Override
         protected void build() {
             final int base = floor + floatOffset;
             movingBee(x, base + 3, w);
-            bonus(x + w - 1, base + 7);
+            bonus(x + w - 2, base + 7);
         }
     }
     
