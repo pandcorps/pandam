@@ -1149,6 +1149,9 @@ public class Menu {
             FurGuardiansGame.setScreen(new AssistScreen(pc));
         }
 		
+		protected final void goPreferredTheme() {
+		}
+		
 		protected final void reloadAnimalStrip() {
 			reloadAnimalStrip(pc, actor, false);
 		}
