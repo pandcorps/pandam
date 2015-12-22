@@ -2651,6 +2651,28 @@ public class Menu {
         }
     }
 	
+	protected final static class ThemeScreen extends PlayerScreen {
+	    protected ThemeScreen(final PlayerContext pc) {
+            super(pc, false);
+            tabsSupported = true;
+        }
+        
+        @Override
+        protected final void menu() {
+            if (isTabEnabled()) {
+                //menuTouch();
+            } else {
+                //menuClassic();
+            }
+        }
+        
+        @Override
+        protected void onExit() {
+            save();
+            goOptions();
+        }
+	}
+	
 	protected final static class InfoScreen extends PlayerScreen {
 		private final static byte TAB_AWARD = 0;
 		private final static byte TAB_STATS = 1;
