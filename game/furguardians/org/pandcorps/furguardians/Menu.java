@@ -1150,6 +1150,7 @@ public class Menu {
         }
 		
 		protected final void goPreferredTheme() {
+		    FurGuardiansGame.setScreen(new ThemeScreen(pc));
 		}
 		
 		protected final void reloadAnimalStrip() {
