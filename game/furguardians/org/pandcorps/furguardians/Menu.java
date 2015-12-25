@@ -3141,6 +3141,7 @@ public class Menu {
             newTab(FurGuardiansGame.menuCheck, "Done", new Runnable() {@Override public final void run() {exit();}});
             newTab(FurGuardiansGame.menuMusic, "Music", new Runnable() {@Override public final void run() {goMusic();}});
             newTab(FurGuardiansGame.menuQuestion, "Perks", new Runnable() {@Override public final void run() {goPerks();}});
+            //newTab(FurGuardiansGame.menuWorld, "World", new Runnable() {@Override public final void run() {goPreferredTheme();}});
             newTab(FurGuardiansGame.menuDifficulty, "Easy", new Runnable() {@Override public final void run() {goDifficulty();}});
             if (pc.profile.consoleEnabled) {
             	newTab(FurGuardiansGame.menuKeyboard, "Debug", new Runnable() {@Override public final void run() {goConsole();}});
