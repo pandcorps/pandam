@@ -2661,10 +2661,20 @@ public class Menu {
         @Override
         protected final void menu() {
             if (isTabEnabled()) {
-                //menuTouch();
+                menuTouch();
             } else {
                 //menuClassic();
             }
+        }
+        
+        protected final void menuTouch() {
+            createThemeList(touchRadioX, touchRadioY);
+            newTab(FurGuardiansGame.menuCheck, "Done", new Runnable() {@Override public final void run() {exit();}});
+            newTabs();
+            registerBackExit();
+        }
+        
+        private final void createThemeList(final int x, final int y) {
         }
         
         @Override
