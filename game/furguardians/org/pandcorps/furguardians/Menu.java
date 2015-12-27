@@ -2663,7 +2663,7 @@ public class Menu {
             if (isTabEnabled()) {
                 menuTouch();
             } else {
-                //menuClassic();
+                menuClassic();
             }
         }
         
@@ -2675,6 +2675,9 @@ public class Menu {
         }
         
         private final void createThemeList(final int x, final int y) {
+        }
+        
+        protected final void menuClassic() {
         }
         
         @Override
