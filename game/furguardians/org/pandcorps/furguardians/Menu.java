@@ -2653,6 +2653,8 @@ public class Menu {
     }
 	
 	protected final static class ThemeScreen extends PlayerScreen {
+	    private List<StringBuilder> ts = null;
+	    
 	    protected ThemeScreen(final PlayerContext pc) {
             super(pc, false);
             tabsSupported = true;
@@ -2675,6 +2677,16 @@ public class Menu {
         }
         
         private final void createThemeList(final int x, final int y) {
+            final MapTheme[] themes = Map.themes;
+            ts = new ArrayList<StringBuilder>(themes.length);
+            for (final MapTheme t : themes) {
+                ts.add(new StringBuilder("  " + t.name));
+            }
+            /*
+            AssistScreen lets you select multiple.
+            Could do same thing here, changing Profile.preferredTheme into a List.
+            If left as a single preference, must add a "None" option to this Menu List.
+            */
         }
         
         protected final void menuClassic() {
