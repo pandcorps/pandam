@@ -238,20 +238,22 @@ public class Avatar extends EyeData implements Segmented {
         protected final String res;
         private final int cost;
         private final String body;
+        private final boolean secondaryColor;
         protected Img[] imgs = null;
         protected Img[] imgOverlays = null;
         protected Img[] mapImgs = null;
         protected Img[] rideImgs = null;
         
         protected Clothing(final String name, final String res, final int cost) {
-            this(name, res, cost, null);
+            this(name, res, cost, null, false);
         }
         
-        protected Clothing(final String name, final String res, final int cost, final String body) {
+        protected Clothing(final String name, final String res, final int cost, final String body, final boolean secondaryColor) {
             super(name);
             this.res = res;
             this.cost = cost;
             this.body = body;
+            this.secondaryColor = secondaryColor;
         }
         
         protected String getLoc() {
@@ -289,6 +291,10 @@ public class Avatar extends EyeData implements Segmented {
         public final String getBody() {
             return body;
         }
+        
+        public final boolean isSecondaryColorSupported() {
+            return secondaryColor;
+        }
     }
     
     private final static Clothing royalRobe = new Clothing("Royal Robe", "RoyalRobe", 100000);
@@ -300,7 +306,7 @@ public class Avatar extends EyeData implements Segmented {
         new Clothing("Long Sleeves", "LongShirt", 2000),
         new Clothing("Dress", "Dress", 2500),
         new Clothing("Coat", "Coat", 5000),
-        new Clothing("Armor", "Armor", 50000, "Tough"),
+        new Clothing("Armor", "Armor", 50000, "Tough", false),
         royalRobe,
         royalDress
     };
