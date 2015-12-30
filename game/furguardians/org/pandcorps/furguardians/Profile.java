@@ -65,7 +65,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
     protected boolean endLevelIfHurtWithNoGems = false;
     protected final Set<Animal> availableSpecialAnimals = new HashSet<Animal>();
     protected final Set<BirdKind> availableBirds = new HashSet<BirdKind>();
-    protected MapTheme preferredTheme = null;
+    protected final Set<MapTheme> preferredThemes = new HashSet<MapTheme>();
     protected int column = -1;
 	protected int row = -1;
 	protected final HashMap<Pair<Integer, Integer>, Boolean> open = new HashMap<Pair<Integer, Integer>, Boolean>();
@@ -143,7 +143,9 @@ public class Profile extends PlayerData implements Segmented, Savable {
     	for (final Field f : Coltil.unnull(seg.getRepetitions(18))) {
             availableBirds.add(Avatar.getBird(f.getValue()));
         }
-    	preferredTheme = Map.getThemeOrNull(seg.getValue(19));
+    	for (final Field f : Coltil.unnull(seg.getRepetitions(19))) {
+    	    preferredThemes.add(Map.getThemeOrNull(f.getValue()));
+        }
     	//ctrl = seg.intValue(3);
     }
     
@@ -179,7 +181,9 @@ public class Profile extends PlayerData implements Segmented, Savable {
         for (final BirdKind b : Coltil.unnull(availableBirds)) {
             seg.addValue(18, b.getName());
         }
-        seg.setValue(19, (preferredTheme == null) ? null : preferredTheme.name);
+        for (final MapTheme b : Coltil.unnull(preferredThemes)) {
+            seg.addValue(19, b.name);
+        }
         //seg.setInt(3, ctrl);
     }
     
