@@ -144,7 +144,10 @@ public class Profile extends PlayerData implements Segmented, Savable {
             availableBirds.add(Avatar.getBird(f.getValue()));
         }
     	for (final Field f : Coltil.unnull(seg.getRepetitions(19))) {
-    	    preferredThemes.add(Map.getThemeOrNull(f.getValue()));
+    	    final MapTheme theme = Map.getThemeOrNull(f.getValue());
+    	    if (theme != null) {
+    	        preferredThemes.add(theme);
+    	    }
         }
     	//ctrl = seg.intValue(3);
     }
