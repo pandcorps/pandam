@@ -77,20 +77,26 @@ public class Avatar extends EyeData implements Segmented {
     protected final static class Garb implements Named {
     	protected Clothing clth = null;
     	protected final SimpleColor col = new SimpleColor();
+    	protected final SimpleColor col2 = new SimpleColor();
     	
     	protected final void init() {
     		clth = null;
     		col.init();
+    		col2.init();
     	}
     	
     	protected final void load(final Garb garb) {
     		clth = garb.clth;
     		col.load(garb.col);
+    		col2.load(garb.col2);
     	}
     	
-    	protected final void save(final Segment seg, final int i) {
+    	protected final void save(final Segment seg, final int i, final int i2) {
     		seg.setValue(i, (clth == null) ? "" : clth.res);
         	col.save(seg, i + 1);
+        	if (i2 >= 0) {
+        	    col2.save(seg, i2);
+        	}
     	}
 
         @Override
@@ -442,6 +448,7 @@ public class Avatar extends EyeData implements Segmented {
     	bird.setName(seg.getValue(26, "Bird"));
     	bird.eye = seg.getInt(27, 1);
     	bird.kind = seg.getValue(28);
+    	hat.col2.load(seg, 29);
     }
     
     @Override
@@ -453,8 +460,8 @@ public class Avatar extends EyeData implements Segmented {
     	col.save(seg, 3);
     	seg.setInt(6, jumpMode);
     	jumpCol.save(seg, 7);
-    	clothing.save(seg, 10); // 10 - 13
-    	hat.save(seg, 14); // 14 - 17
+    	clothing.save(seg, 10, -1); // 10 - 13
+    	hat.save(seg, 14, 29); // 14 - 17
     	dragon.col.save(seg, 18);
     	seg.setValue(21, dragon.getName());
     	seg.setInt(22, dragon.eye);
@@ -462,6 +469,7 @@ public class Avatar extends EyeData implements Segmented {
     	seg.setValue(26, bird.getName());
     	seg.setInt(27, bird.eye);
     	seg.setValue(28, bird.kind);
+    	// 29 = hat.col2
     }
     
     protected final Animal getAnimal() {
