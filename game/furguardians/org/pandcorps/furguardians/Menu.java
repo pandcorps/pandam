@@ -937,6 +937,9 @@ public class Menu {
         }
         
         private final void init(final Garb garb) {
+            if (garb == null) {
+                return;
+            }
         	init(garb.col);
         }
         
@@ -2085,6 +2088,7 @@ public class Menu {
 	    private final static byte TAB_BIRD = 9;
 	    private final static byte TAB_BIRD_EYE = 10;
 	    private final static byte TAB_BIRD_NAME = 11;
+	    private final static byte TAB_HAT_COL2 = 12;
         private final static byte TAB_DEFAULT = TAB_CLOTHES;
         private static byte currentTab = TAB_DEFAULT;
         private final static String DEF_CLOTHES = "None";
@@ -2395,7 +2399,19 @@ public class Menu {
                     createHatList(touchRadioX, touchRadioY);
                     break;
                 case TAB_HAT_COL :
-                    addColor(avt.hat.col, 0, 0, "Hat");
+                    final Runnable otherReloader;
+                    final String otherLabel;
+                    if ((avt.hat.clth != null) && avt.hat.clth.isSecondaryColorSupported()) {
+                        otherReloader = newReloader(TAB_HAT_COL2);
+                        otherLabel = "Other";
+                    } else {
+                        otherReloader = null;
+                        otherLabel = null;
+                    }
+                    addColor(avt.hat.col, 0, 0, "Hat", otherReloader, otherLabel);
+                    break;
+                case TAB_HAT_COL2 :
+                    addColor(avt.hat.col2, 0, 0, "Hat Secondary");
                     break;
                 case TAB_JUMP :
                     createJumpList(touchRadioX, touchRadioY);
@@ -2431,8 +2447,12 @@ public class Menu {
 			registerBackExit();
 		}
 		
+		private final Runnable newReloader(final byte tab) {
+            return new Runnable() {@Override public final void run() {reload(tab);}};
+        }
+        
         private final void newTab(final Panmage img, final CharSequence txt, final byte tab) {
-            final TouchButton btn = newTab(img, txt, new Runnable() {@Override public final void run() {reload(tab);}});
+            final TouchButton btn = newTab(img, txt, newReloader(tab));
             if (currentTab == tab) {
                 btn.setEnabled(false);
             }
