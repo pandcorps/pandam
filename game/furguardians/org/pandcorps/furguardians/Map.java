@@ -1094,12 +1094,17 @@ public class Map {
 				theme = MapTheme.Rock;
 			} else if (stats.playedHiveWorlds == 0) {
                 theme = MapTheme.Hive;
-			} else if (prf.preferredTheme != null) {
-			    theme = prf.preferredTheme;
 			} else {
+			    final MapTheme[] availableThemes;
+			    final Set<MapTheme> preferredThemes = prf.preferredThemes;
+			    if (Coltil.isValued(preferredThemes)) {
+			        availableThemes = preferredThemes.toArray(new MapTheme[preferredThemes.size()]);
+			    } else {
+			        availableThemes = themes;
+			    }
 				final MapTheme old = theme;
 				do {
-					theme = Mathtil.rand(themes);
+					theme = Mathtil.rand(availableThemes);
 				} while (old == theme);
 			}
 			lm1 = Mathtil.randi(0, theme.maxLandmark);
