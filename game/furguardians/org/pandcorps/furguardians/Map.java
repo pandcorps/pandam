@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2014, Andrew M. Martin
+Copyright (c) 2009-2016, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -1103,9 +1103,10 @@ public class Map {
 			        availableThemes = themes;
 			    }
 				final MapTheme old = theme;
+				final boolean forceChange = Coltil.size(preferredThemes) > 1;
 				do {
 					theme = Mathtil.rand(availableThemes);
-				} while (old == theme);
+				} while (forceChange && (old == theme));
 			}
 			lm1 = Mathtil.randi(0, theme.maxLandmark);
 			do {
