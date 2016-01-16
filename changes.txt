@@ -1,3 +1,7 @@
+Lowered price of Dragon Stomp Assist.
+
+*****
+
 1.18.0 (28)
 
 Added wolves.
