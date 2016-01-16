@@ -438,7 +438,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
 			add(list, "Shirts bought", Coltil.size(prf.availableClothings), Avatar.clothings.length);
 			add(list, "Hats bought", Coltil.size(prf.availableHats), Avatar.hats.length);
 			add(list, "Powers bought", (Coltil.size(prf.availableJumpModes) - 1), (JumpMode.values().length - 1));
-			add(list, "Assists bought", Coltil.size(prf.availableAssists), Profile.PUBLIC_ASSISTS.length);
+			add(list, "Assists bought", Coltil.size(prf.availableAssists), PUBLIC_ASSISTS.length);
 			add(list, "Animals bought", Coltil.size(prf.availableSpecialAnimals), Avatar.SPECIAL_ANIMALS.size());
 			add(list, "Birds bought", Coltil.size(prf.availableBirds), Avatar.BIRDS.size());
 			final int totalPurchases = Achievement.BuyFeat.getPurchases(prf), availablePurchases = getTotalItemsForSale();
@@ -464,7 +464,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
 		}
 		
 		private final static int getTotalItemsForSale() {
-		    return Avatar.clothings.length + Avatar.hats.length + (JumpMode.values().length - 1) + Profile.PUBLIC_ASSISTS.length
+		    return Avatar.clothings.length + Avatar.hats.length + (JumpMode.values().length - 1) + PUBLIC_ASSISTS.length
 		            + Avatar.SPECIAL_ANIMALS.size() + Avatar.BIRDS.size();
 		}
 		
@@ -571,7 +571,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
         new GemAssist(2, 8),
         new GemAssist(3, 16), // Combine for a max 1024 multiplier
         new Assist("Invincibility", "Cannot be hurt, will not lose Gems", 4, 1000000),
-        new Assist("Dragon Stomp", "Defeat armored enemies even without a Dragon", 5, 150000),
+        new Assist("Dragon Stomp", "Defeat armored enemies even without a Dragon", 5, 90000),
         new Assist("Gem Magnet", "Attract nearby Gems", 6, 15000)
     };
     
