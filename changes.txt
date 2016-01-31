@@ -1,3 +1,7 @@
+Improve Level generator to include a Giant in every level where one is possible.
+
+*****
+
 1.19.0 (29)
 
 Added alicorn headgear and Unicorn Achievement.
