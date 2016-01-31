@@ -865,6 +865,13 @@ public class Level {
     		
     		px = 0;
     		final int floorLim = getMaxFloor(), bxStart = 8, floorChangeWidth = getFloorChangeWidth();
+    		Template requiredTemplate = null;
+    		for (final Template template : templates) {
+    		    if (template instanceof GiantTemplate) {
+    		        requiredTemplate = template;
+    		        break;
+    		    }
+    		}
     		for (bx = bxStart; bx < ng; ) {
     			/*
     			Raise/lower floor with 1-way ramps
@@ -894,6 +901,9 @@ public class Level {
         		    	}
     		    	} else if (currLetter < numLetters && bx >= ng * (currLetter + 1) / (numLetters + 1)) {
 	    		    	template = new BlockLetterTemplate();
+    		    	} else if (bx >= (ng - 40) && requiredTemplate != null && templates.contains(requiredTemplate)) {
+    		    	    template = requiredTemplate;
+    		    	    requiredTemplate = null;
 	    		    } else if (i == 3) {
 	    		    	if (theme == Theme.Minecart) {
 	    		    		template = new GemTemplate(1);
