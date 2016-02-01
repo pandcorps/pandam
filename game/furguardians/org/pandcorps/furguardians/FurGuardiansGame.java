@@ -205,6 +205,7 @@ public class FurGuardiansGame extends BaseGame {
 	protected final static String[][] ads = {
 		{ "Thank you", "for playing" },
 		{ "Thank you", "for downloading" },
+		{ "#gamedev", "#indiedev" },
 		{ "You", "rock!" },
 		{ "You're", "a superstar!" },
 		{ "You're", "awesome!" },
@@ -1987,7 +1988,7 @@ public class FurGuardiansGame extends BaseGame {
 	    for (final Panctor actor : room.getActors()) {
 	        // Trio is sub-class of Enemy, so check for it first
 	        // Wisp can't be bumped; Trio turns into Sprite when bumped
-	        if (actor instanceof Wisp || actor instanceof Trio || actor instanceof Leg) {
+	        if (actor instanceof Wisp || actor instanceof Trio || actor instanceof Leg || actor instanceof Projectile) {
                 Gem.spark(actor.getPosition(), false);
                 actor.destroy();
             } else if (actor instanceof Enemy) {
