@@ -105,7 +105,7 @@ public class Player extends Character implements CollisionListener {
 	    Normal(MODE_NORMAL, "Normal", "Normal jumping", 0),
 	    High(JUMP_HIGH, "Spring Heels", "Jump much higher", 10000),
 	    Fly(JUMP_FLY, "Wings", "Fly as high as you want", 50000),
-	    Dragon(JUMP_DRAGON, "Dragon", "Jump higher, defeat armored enemies", 100000);
+	    Dragon(JUMP_DRAGON, "Dragon", "Jump higher, defeat armored enemies", 60000);
 	    
 	    private final byte index;
 	    
