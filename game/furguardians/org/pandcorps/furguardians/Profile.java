@@ -571,7 +571,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
         new GemAssist(2, 8),
         new GemAssist(3, 16), // Combine for a max 1024 multiplier
         new Assist("Invincibility", "Cannot be hurt, will not lose Gems", 4, 1000000),
-        new Assist("Dragon Stomp", "Defeat armored enemies even without a Dragon", 5, 90000),
+        new Assist("Dragon Stomp", "Defeat armored enemies even without a Dragon", 5, 75000),
         new Assist("Gem Magnet", "Attract nearby Gems", 6, 15000)
     };
     
