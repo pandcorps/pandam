@@ -1,4 +1,6 @@
-Improve Level generator to include a Giant in every level where one is possible.
+Improved Level generator to include a Giant in every level where one is possible.
+Fixed a bug preventing projectiles from being cleared upon level victory.
+Lowered price of Dragon Stomp Assist and Dragon.
 
 *****
 
