@@ -206,6 +206,7 @@ public class FurGuardiansGame extends BaseGame {
 		{ "Thank you", "for playing" },
 		{ "Thank you", "for downloading" },
 		{ "#gamedev", "#indiedev" },
+		{ "Open", "source" },
 		{ "You", "rock!" },
 		{ "You're", "a superstar!" },
 		{ "You're", "awesome!" },
