@@ -634,6 +634,12 @@ public class FurGuardiansGame extends BaseGame {
 	    return new MultiplyPixelFilter(Channel.Blue, r, Channel.Blue, g, Channel.Blue, b);
 	}
 	
+	private static void setMaskedFilter(final PixelFilter f, final boolean needed, final SimpleColor col2) {
+        if (needed) {
+            f.setMaskedFilter(getFilter(col2));
+        }
+    }
+	
 	private final static Img getImg(final HashMap<String, Img> all, final String type, final String anm) {
 		Img raw = all.get(anm);
 		if (raw == null) {
@@ -755,9 +761,7 @@ public class FurGuardiansGame extends BaseGame {
 		    f = getFilter(avatar.col);
 		    final String anm = avatar.anm;
 		    final Animal animal = avatar.getAnimal();
-		    if (animal != null) {
-		        f.setMaskedFilter(getFilter(avatar.col2));
-		    }
+		    setMaskedFilter(f, animal != null, avatar.col2);
 		    final Clothing c = avatar.clothing.clth;
 		    Img[] guysRaw;
 		    final String body = c == null ? null : c.getBody();
@@ -833,7 +837,8 @@ public class FurGuardiansGame extends BaseGame {
 				final Hat h = (Hat) avatar.hat.clth;
 				h.init();
 				hatFilter = getFilter(avatar.hat.col);
-				hat = Imtil.filter(h.imgs[0], hatFilter);
+				setMaskedFilter(hatFilter, h.isSecondaryColorSupported(), avatar.hat.col2);
+				hat = Imtil.filter(h.imgs[0], greyMask, hatFilter);
 				mask = h.maskNeeded ? getImg(masksAll, "mask/Mask", avatar.getBaseAnm()) : null;
 			}
 			if (hat != null) {
