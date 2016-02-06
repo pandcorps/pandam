@@ -941,6 +941,7 @@ public class Menu {
                 return;
             }
         	init(garb.col);
+        	garb.col2.init();
         }
         
         protected final void init(final SimpleColor col) {
