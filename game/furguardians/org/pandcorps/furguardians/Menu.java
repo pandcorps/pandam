@@ -61,6 +61,8 @@ public class Menu {
     private final static String WARN_EMPTY = "Must have a name";
     private final static String WARN_DUPLICATE = "Name already used";
     private final static String INFO_SAVED = "Saved images";
+    private final static String LABEL_COLOR = "Main";
+    private final static String LABEL_COLOR2 = "Other";
     protected final static int Y_PLAYER = 16;
     private final static char CHAR_ON = 2;
     protected final static String NEW_AVATAR_NAME = "New";
@@ -1907,12 +1909,12 @@ public class Menu {
                         otherLabel = null;
 				    } else {
 				        otherReloader = newReloader(TAB_COLOR2);
-                        otherLabel = "Other";
+                        otherLabel = LABEL_COLOR2;
 				    }
 					addColor(avt.col, 0, 0, "Avatar", otherReloader, otherLabel);
 					break;
 				case TAB_COLOR2 :
-                    addColor(avt.col2, 0, 0, "Secondary");
+                    addColor(avt.col2, 0, 0, "Secondary", newReloader(TAB_COLOR), LABEL_COLOR);
                     break;
 				case TAB_NAME :
 					createNameInput(touchKeyboardX, getTouchKeyboardY());
@@ -2404,7 +2406,7 @@ public class Menu {
                     final String otherLabel;
                     if ((avt.hat.clth != null) && avt.hat.clth.isSecondaryColorSupported()) {
                         otherReloader = newReloader(TAB_HAT_COL2);
-                        otherLabel = "Other";
+                        otherLabel = LABEL_COLOR2;
                     } else {
                         otherReloader = null;
                         otherLabel = null;
@@ -2412,7 +2414,7 @@ public class Menu {
                     addColor(avt.hat.col, 0, 0, "Hat", otherReloader, otherLabel);
                     break;
                 case TAB_HAT_COL2 :
-                    addColor(avt.hat.col2, 0, 0, "Hat Secondary");
+                    addColor(avt.hat.col2, 0, 0, "Hat Secondary", newReloader(TAB_HAT_COL), LABEL_COLOR);
                     break;
                 case TAB_JUMP :
                     createJumpList(touchRadioX, touchRadioY);
