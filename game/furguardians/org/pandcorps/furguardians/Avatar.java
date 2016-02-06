@@ -349,7 +349,11 @@ public class Avatar extends EyeData implements Segmented {
         }
         
         protected Hat(final String name, final String res, final int cost, final boolean maskNeeded, final boolean backNeeded) {
-            super(name, res, cost);
+            this(name, res, cost, maskNeeded, backNeeded, false);
+        }
+        
+        protected Hat(final String name, final String res, final int cost, final boolean maskNeeded, final boolean backNeeded, final boolean secondaryColor) {
+            super(name, res, cost, null, secondaryColor);
             this.maskNeeded = maskNeeded;
             this.backNeeded = backNeeded;
         }
@@ -376,6 +380,7 @@ public class Avatar extends EyeData implements Segmented {
         new Hat("Glasses", "Glasses", 3000, false),
         new Hat("Ribbons", "Ribbons", 4000, false),
         new Hat("Bowler", "Bowler", 5000),
+        new Hat("Top Hat", "TopHat", 7000, true, true, true),
         new Hat(HAT_ALICORN, "Alicorn", 25000, false, false),
         new Hat("Helm", "Helm", 50000, false),
         new Hat(HAT_CROWN, "Crown", 100000, false)
