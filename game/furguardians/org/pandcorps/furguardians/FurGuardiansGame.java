@@ -50,7 +50,7 @@ import org.pandcorps.furguardians.Player.*;
 
 public class FurGuardiansGame extends BaseGame {
 	protected final static String TITLE = "Fur-Guardians"; // res/values/strings.xml/app_name
-    protected final static String VERSION = "1.19.0"; // AndroidManifest.xml/versionName
+    protected final static String VERSION = "1.20.0"; // AndroidManifest.xml/versionName
     protected final static String YEAR = "2014-2016";
     protected final static String AUTHOR = "Andrew M. Martin";
 	/*
@@ -364,6 +364,7 @@ public class FurGuardiansGame extends BaseGame {
 	protected static Panmage menuSound = null;
 	protected static Panmage menuDifficulty = null;
 	protected static Panmage menuDefeat = null;
+	protected static Panmage menuWorld = null;
 	protected static Panmage menuAvatar = null;
 	protected static Panmage menuColor = null;
 	protected static Panmage menuAnimal = null;
@@ -939,7 +940,7 @@ public class FurGuardiansGame extends BaseGame {
 			if (hatMapRaw != null) {
 				final Img[] hatMap, maskMap;
 				hatMap = new Img[hatMapRaw.length];
-				filterStrip(hatMapRaw, hatMap, null, pi.hatFilter);
+				filterStrip(hatMapRaw, hatMap, greyMask, pi.hatFilter);
 				final Hat hat = (Hat) avatar.hat.clth;
 				final boolean maskNeeded = hat.maskNeeded;
 				ImtilX.validateDefault = false;
@@ -1758,6 +1759,7 @@ public class FurGuardiansGame extends BaseGame {
 			    menuSound = createMenuImg("Sound");
 			    menuDifficulty = createMenuImg("Difficulty");
 			    menuDefeat = createMenuImg("Defeat");
+			    menuWorld = createMenuImg("World");
 			    menuAvatar = createMenuImg("Avatar");
 			    menuColor = createMenuImg("Color");
 			    menuAnimal = createMenuImg("Animal");
