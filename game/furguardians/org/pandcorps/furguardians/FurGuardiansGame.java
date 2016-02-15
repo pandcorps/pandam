@@ -829,13 +829,13 @@ public class FurGuardiansGame extends BaseGame {
 			        filterStrip(imgOverlays, clothingOverlays, greyMask, clothingFilter);
 			    }
 			}
+			final Hat h = (Hat) avatar.hat.clth;
 			final Img hat, mask;
-			if (avatar.hat.clth == null) {
+			if (h == null) {
 				hatFilter = null;
 				hat = null;
 				mask = null;
 			} else {
-				final Hat h = (Hat) avatar.hat.clth;
 				h.init();
 				hatFilter = getFilter(avatar.hat.col);
 				setMaskedFilter(hatFilter, h.isSecondaryColorSupported(), avatar.hat.col2);
@@ -843,7 +843,13 @@ public class FurGuardiansGame extends BaseGame {
 				mask = h.maskNeeded ? getImg(masksAll, "mask/Mask", avatar.getBaseAnm()) : null;
 			}
 			if (hat != null) {
-		    	Imtil.copy(hat, face, 0, 0, 18, 18, 0, 0, TransparentPixelMask.getInstance(), ImgPixelMask.getMask(mask, Pancolor.BLACK));
+			    final PixelMask dstMask;
+			    if (h.frontNeeded) {
+			        dstMask = ImgPixelMask.getMask(mask, Pancolor.BLACK);
+			    } else {
+			        dstMask = VisiblePixelMask.getInstance();
+			    }
+		    	Imtil.copy(hat, face, 0, 0, 18, 18, 0, 0, TransparentPixelMask.getInstance(), dstMask);
 		    	hat.close();
 		    }
 			if (needDragon) {
@@ -951,6 +957,8 @@ public class FurGuardiansGame extends BaseGame {
 					final PixelMask dstMask;
 					if ((i == 2) && !hat.backNeeded) {
 						dstMask = VisiblePixelMask.getInstance();
+					} else if ((i != 2) && !hat.frontNeeded) {
+					    dstMask = VisiblePixelMask.getInstance();
 					} else if (maskNeeded) {
 						dstMask = new ImgPixelMask(maskMap[i], Pancolor.BLACK);
 					} else {
