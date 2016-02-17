@@ -2700,6 +2700,7 @@ public class Menu {
         }
         
         private final void createThemeList(final int x, final int y) {
+            final TouchButton sub = newSub(x, y);
             final MapTheme[] themes = Map.themes;
             ts = new ArrayList<StringBuilder>(themes.length);
             for (final MapTheme t : themes) {
@@ -2710,9 +2711,56 @@ public class Menu {
             Could do same thing here, changing Profile.preferredTheme into a List.
             If left as a single preference, must add a "None" option to this Menu List.
             */
+            final RadioSubmitListener tLsn = new RadioSubmitListener() {
+                @Override public final void onSubmit(final RadioSubmitEvent event) {
+                    highlightTheme(getTheme(event), sub);
+                }};
+            final RadioSubmitListener tSubLsn = new RadioSubmitListener() {
+                @Override public final void onSubmit(final RadioSubmitEvent event) {
+                    toggleTheme(getTheme(event));
+                }};
+            final String label;
+            if (isTabEnabled()) {
+                label = "Themes";
+                addNote("Can select multiple");
+            } else {
+                label = "Themes (can select multiple)";
+            }
+            addRadio(label, ts, tSubLsn, tLsn, x, y, sub);
+            initThemes();
+            highlightTheme(themes[0], sub);
         }
         
         protected final void menuClassic() {
+            final int left = getLeft();
+            int y = getTop();
+            createThemeList(left, y);
+            y -= 80;
+            addExit("Back", left, y);
+        }
+        
+        private final MapTheme getTheme(final Object event) {
+            return Map.getTheme(event.toString().substring(2));
+        }
+        
+        private final String getSelected(final MapTheme t) {
+            return pc.profile.isThemeSelected(t) ? "Selected" : "Unselected";
+        }
+        
+        private final void highlightTheme(final MapTheme t, final TouchButton sub) {
+            reattach(getSelected(t), sub, FurGuardiansGame.menuExclaim, "Pick");
+        }
+        
+        private final void toggleTheme(final MapTheme t) {
+            pc.profile.toggleTheme(t);
+            initThemes();
+            setInfo(getSelected(t));
+        }
+        
+        private final void initThemes() {
+            for (final StringBuilder t : ts) {
+                t.setCharAt(0, getFlag(pc.profile.isThemeSelected(getTheme(t))));
+            }
         }
         
         @Override
@@ -3189,7 +3237,7 @@ public class Menu {
             newTab(FurGuardiansGame.menuCheck, "Done", new Runnable() {@Override public final void run() {exit();}});
             newTab(FurGuardiansGame.menuMusic, "Music", new Runnable() {@Override public final void run() {goMusic();}});
             newTab(FurGuardiansGame.menuQuestion, "Perks", new Runnable() {@Override public final void run() {goPerks();}});
-            //newTab(FurGuardiansGame.menuWorld, "World", new Runnable() {@Override public final void run() {goPreferredTheme();}});
+            newTab(FurGuardiansGame.menuWorld, "World", new Runnable() {@Override public final void run() {goPreferredTheme();}});
             newTab(FurGuardiansGame.menuDifficulty, "Easy", new Runnable() {@Override public final void run() {goDifficulty();}});
             if (pc.profile.consoleEnabled) {
             	newTab(FurGuardiansGame.menuKeyboard, "Debug", new Runnable() {@Override public final void run() {goConsole();}});

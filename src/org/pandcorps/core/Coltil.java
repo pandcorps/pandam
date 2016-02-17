@@ -229,6 +229,12 @@ public final class Coltil {
 		}
 	}
 	
+	public final static <E, T extends E> void toggle(final Collection<E> col, final T elem) {
+	    if (!col.remove(elem)) {
+            col.add(elem);
+        }
+	}
+	
 	public final static boolean hasNext(final Iterator<?> iter) {
 	    return iter == null ? false : iter.hasNext();
 	}

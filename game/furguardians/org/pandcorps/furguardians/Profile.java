@@ -636,9 +636,15 @@ public class Profile extends PlayerData implements Segmented, Savable {
     
     public final void toggleAssist(final Assist a) {
         final Integer key = a.getKey();
-        if (!activeAssists.remove(key)) {
-            activeAssists.add(key);
-        }
+        Coltil.toggle(activeAssists, key);
+    }
+    
+    public final boolean isThemeSelected(final MapTheme t) {
+        return preferredThemes.contains(t);
+    }
+    
+    public final void toggleTheme(final MapTheme t) {
+        Coltil.toggle(preferredThemes, t);
     }
     
     public final boolean isAnimalAvailable(final Animal animal) {
