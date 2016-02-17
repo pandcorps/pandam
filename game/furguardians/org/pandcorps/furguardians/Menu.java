@@ -2685,6 +2685,7 @@ public class Menu {
         
         @Override
         protected final void menu() {
+            pc.profile.initThemes();
             if (isTabEnabled()) {
                 menuTouch();
             } else {
@@ -2765,6 +2766,7 @@ public class Menu {
         
         @Override
         protected void onExit() {
+            pc.profile.initThemes();
             save();
             goOptions();
         }

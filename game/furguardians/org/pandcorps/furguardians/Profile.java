@@ -149,6 +149,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
     	        preferredThemes.add(theme);
     	    }
         }
+    	initThemes();
     	//ctrl = seg.intValue(3);
     }
     
@@ -184,8 +185,10 @@ public class Profile extends PlayerData implements Segmented, Savable {
         for (final BirdKind b : Coltil.unnull(availableBirds)) {
             seg.addValue(18, b.getName());
         }
-        for (final MapTheme b : Coltil.unnull(preferredThemes)) {
-            seg.addValue(19, b.name);
+        if (preferredThemes.size() < Map.themes.length) {
+            for (final MapTheme b : Coltil.unnull(preferredThemes)) {
+                seg.addValue(19, b.name);
+            }
         }
         //seg.setInt(3, ctrl);
     }
@@ -645,6 +648,12 @@ public class Profile extends PlayerData implements Segmented, Savable {
     
     public final void toggleTheme(final MapTheme t) {
         Coltil.toggle(preferredThemes, t);
+    }
+    
+    public final void initThemes() {
+        if (preferredThemes.isEmpty()) {
+            preferredThemes.addAll(Arrays.asList(Map.themes));
+        }
     }
     
     public final boolean isAnimalAvailable(final Animal animal) {
