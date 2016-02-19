@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2014, Andrew M. Martin
+Copyright (c) 2009-2016, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -22,9 +22,8 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.demo.pandax.physics.velocity;
 
-import org.pandcorps.pandam.event.boundary.CenterOobEvent;
-import org.pandcorps.pandam.event.boundary.CenterOobListener;
-import org.pandcorps.pandax.Pandy;
+import org.pandcorps.pandam.event.boundary.*;
+import org.pandcorps.pandax.*;
 
 public final class VelocityActor extends Pandy implements CenterOobListener {
 	public VelocityActor(final String id) {
