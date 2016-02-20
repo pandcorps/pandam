@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2014, Andrew M. Martin
+Copyright (c) 2009-2016, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -22,20 +22,11 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.animal;
 
-import org.pandcorps.core.Mathtil;
-import org.pandcorps.core.Pantil;
-import org.pandcorps.pandam.Panctor;
-//import org.pandcorps.pandam.Panframe;
-import org.pandcorps.pandam.Pangine;
-//import org.pandcorps.pandam.Panimation;
-import org.pandcorps.pandam.Panmage;
-import org.pandcorps.pandam.Panroom;
-import org.pandcorps.pandam.event.RoomAddEvent;
-import org.pandcorps.pandam.event.RoomAddListener;
+import org.pandcorps.core.*;
+import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandax.text.*;
-import org.pandcorps.pandax.tile.DepthMode;
-//import org.pandcorps.pandax.tile.Tile;
-import org.pandcorps.pandax.tile.TileMap;
+import org.pandcorps.pandax.tile.*;
 
 public class Town extends Panctor implements RoomAddListener {
     

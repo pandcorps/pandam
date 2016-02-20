@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2014, Andrew M. Martin
+Copyright (c) 2009-2016, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -22,8 +22,8 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.animal;
 
-import org.pandcorps.animal.Fruit.FruitType;
-import org.pandcorps.core.Pantil;
+import org.pandcorps.animal.Fruit.*;
+import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandax.tile.*;

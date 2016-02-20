@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2014, Andrew M. Martin
+Copyright (c) 2009-2016, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -22,9 +22,8 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.animal;
 
-import org.pandcorps.pandam.Panctor;
-import org.pandcorps.pandam.event.StepEvent;
-import org.pandcorps.pandam.event.StepListener;
+import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.event.*;
 
 public class Poof extends Panctor implements StepListener {
     
