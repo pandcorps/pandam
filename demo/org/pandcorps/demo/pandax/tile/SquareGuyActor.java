@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2014, Andrew M. Martin
+Copyright (c) 2009-2016, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -23,8 +23,7 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.demo.pandax.tile;
 
 import org.pandcorps.pandam.*;
-import org.pandcorps.pandax.tile.Direction;
-import org.pandcorps.pandax.tile.TileWalker;
+import org.pandcorps.pandax.tile.*;
 
 public final class SquareGuyActor extends TileWalker {
 	public SquareGuyActor(final String id) {
