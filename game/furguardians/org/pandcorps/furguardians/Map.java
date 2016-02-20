@@ -1103,7 +1103,7 @@ public class Map {
 			        availableThemes = themes;
 			    }
 				final MapTheme old = theme;
-				final boolean forceChange = Coltil.size(preferredThemes) > 1;
+				final boolean forceChange = availableThemes.length > 1;
 				do {
 					theme = Mathtil.rand(availableThemes);
 				} while (forceChange && (old == theme));
