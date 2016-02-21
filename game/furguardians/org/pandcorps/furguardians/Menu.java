@@ -3559,6 +3559,13 @@ public class Menu {
 			} else if ("addgems".equalsIgnoreCase(cmd)) {
 				pc.addGems(1000);
 				msg = "Added 1000 Gems";
+			} else if ("addmgems".equalsIgnoreCase(cmd)) {
+                pc.addGems(1000000);
+                msg = "Added 1000000 Gems";
+			} else if ("addrank".equalsIgnoreCase(cmd)) {
+			    msg = addRank(1);
+			} else if ("addkrank".equalsIgnoreCase(cmd)) {
+			    msg = addRank(1000);
 			} else if ("getzoom".equalsIgnoreCase(cmd)) {
 				if (Config.zoomMag <= 0) {
 					msg = "Default (" + FurGuardiansGame.getApproximateFullScreenZoomedDisplaySize() + ")";
@@ -3706,6 +3713,13 @@ public class Menu {
 			Config.zoomMag = zoomMag;
 			Config.serialize();
 			return MSG_RESTART;
+		}
+		
+		private final String addRank(final int n) {
+		    final Profile prf = pc.profile;
+		    final int oldRank = prf.getRank();
+		    prf.goalPoints += (n * Profile.POINTS_PER_RANK);
+            return "Rank " + oldRank + " -> " + prf.getRank();
 		}
 		
 		private final static String getAddedMsg(final boolean added) {
