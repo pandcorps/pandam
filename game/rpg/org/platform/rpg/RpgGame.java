@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2014, Andrew M. Martin
+Copyright (c) 2009-2016, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -28,9 +28,9 @@ import org.pandcorps.game.actor.*;
 import org.pandcorps.game.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandax.text.*;
-import org.pandcorps.pandax.text.Fonts.FontRequest;
+import org.pandcorps.pandax.text.Fonts.*;
 import org.pandcorps.pandax.tile.*;
-import org.pandcorps.pandax.tile.Tile.TileMapImage;
+import org.pandcorps.pandax.tile.Tile.*;
 import org.pandcorps.rpg.Character.*;
 
 public class RpgGame extends BaseGame {

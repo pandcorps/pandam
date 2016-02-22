@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2014, Andrew M. Martin
+Copyright (c) 2009-2016, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -22,9 +22,9 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.rpg;
 
-import org.pandcorps.game.BaseGame;
+import org.pandcorps.game.*;
 import org.pandcorps.game.actor.*;
-import org.pandcorps.pandax.tile.TileOccupant;
+import org.pandcorps.pandax.tile.*;
 
 public class Player extends Character {
     /*package*/ boolean active = true;
