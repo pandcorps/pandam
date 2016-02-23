@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2014, Andrew M. Martin
+Copyright (c) 2009-2016, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -23,12 +23,12 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.shoot;
 
 import org.pandcorps.core.*;
-import org.pandcorps.core.col.IdentityHashSet;
+import org.pandcorps.core.col.*;
 import org.pandcorps.game.actor.*;
 import org.pandcorps.game.actor.Emitter;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
-import org.pandcorps.pandam.impl.FinPanple;
+import org.pandcorps.pandam.impl.*;
 
 public class Projectile extends org.pandcorps.game.actor.Projectile implements Collidee /*Or CollisionListener if we want two Projectiles to collide with each other*/ {
     
