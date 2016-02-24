@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2014, Andrew M. Martin
+Copyright (c) 2009-2016, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -25,7 +25,7 @@ package org.pandcorps.shoot;
 import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
-import org.pandcorps.shoot.Shooter.ShooterDefinition;
+import org.pandcorps.shoot.Shooter.*;
 
 public class Spawner extends Panctor implements StepListener {
     private final static int OFF = 20;
