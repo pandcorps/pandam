@@ -3566,6 +3566,12 @@ public class Menu {
 			    msg = addRank(1);
 			} else if ("addkrank".equalsIgnoreCase(cmd)) {
 			    msg = addRank(1000);
+			} else if ("addmap".equalsIgnoreCase(cmd)) {
+			    msg = addMaps(1);
+			} else if ("addhmaps".equalsIgnoreCase(cmd)) {
+                msg = addMaps(100);
+			} else if ("addkmaps".equalsIgnoreCase(cmd)) {
+                msg = addMaps(1000);
 			} else if ("getzoom".equalsIgnoreCase(cmd)) {
 				if (Config.zoomMag <= 0) {
 					msg = "Default (" + FurGuardiansGame.getApproximateFullScreenZoomedDisplaySize() + ")";
@@ -3721,6 +3727,13 @@ public class Menu {
 		    prf.goalPoints += (n * Profile.POINTS_PER_RANK);
             return "Rank " + oldRank + " -> " + prf.getRank();
 		}
+		
+		private final String addMaps(final int n) {
+            final Statistics stats = pc.profile.stats;
+            final int oldMaps = stats.defeatedWorlds;
+            stats.defeatedWorlds += n;
+            return "Maps " + oldMaps + " -> " + stats.defeatedWorlds;
+        }
 		
 		private final static String getAddedMsg(final boolean added) {
 			return added ? MSG_OK : MSG_LIMIT;
