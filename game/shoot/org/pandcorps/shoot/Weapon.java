@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2014, Andrew M. Martin
+Copyright (c) 2009-2016, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -25,10 +25,10 @@ package org.pandcorps.shoot;
 import java.util.*;
 
 import org.pandcorps.core.*;
-import org.pandcorps.game.actor.Burst;
+import org.pandcorps.game.actor.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
-import org.pandcorps.pandax.Pandy;
+import org.pandcorps.pandax.*;
 
 public class Weapon extends Panctor implements Upgradeable {
     /*package*/ final static int INF = Integer.MAX_VALUE;
