@@ -305,6 +305,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
     	protected long combos = 0;
     	protected int longestCombo = 0;
     	protected int playedJungleWorlds = 0;
+    	protected long clearedVineBlocks = 0;
     	
     	public void load(final Segment seg, final int currGems) {
         	defeatedLevels = seg.initInt(0);
@@ -349,6 +350,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
         	combos = seg.initLong(29);
         	longestCombo = seg.initInt(30);
         	playedJungleWorlds = seg.initInt(31);
+        	clearedVineBlocks = seg.initLong(32);
         }
     	
 		@Override
@@ -399,6 +401,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
 	        seg.setLong(29, combos);
 	        seg.setInt(30, longestCombo);
 	        seg.setInt(31, playedJungleWorlds);
+	        seg.setLong(32, clearedVineBlocks);
 		}
 		
 		public List<String> toList(final Profile prf) {
