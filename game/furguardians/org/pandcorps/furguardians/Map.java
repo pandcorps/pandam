@@ -307,6 +307,22 @@ public class Map {
             @Override protected final Builder getCaveBuilder() {
                 return new HexCaveBuilder();
             }};
+        
+        public final static MapTheme Jungle = new MapTheme("Jungle", Theme.Hive, 1, 7, 4, null) { // Theme.Jungle
+            @Override protected final void step() {
+                stepWater();
+            }
+            @Override protected final PixelFilter getHillFilter0() {
+                return null; }
+            @Override protected final PixelFilter getHillFilter1() {
+                return new SwapPixelFilter(Channel.Red, Channel.Blue, Channel.Green); }
+            @Override protected final PixelFilter getHillFilter2() {
+                return new SwapPixelFilter(Channel.Blue, Channel.Red, Channel.Green); }
+            @Override protected final boolean hasBeenDefeated(final Statistics stats) {
+                return stats.playedJungleWorlds > 0; }
+            @Override protected final Pansound getMenuMusic() {
+                return FurGuardiansGame.musicJungle;
+            }};
 		
 		protected final String name;
 		protected final String img;
@@ -386,7 +402,7 @@ public class Map {
 		}
 	}
 	
-	protected final static MapTheme[] themes = {MapTheme.Normal, MapTheme.Snow, MapTheme.Sand, MapTheme.Rock, MapTheme.Hive};
+	protected final static MapTheme[] themes = {MapTheme.Normal, MapTheme.Snow, MapTheme.Sand, MapTheme.Rock, MapTheme.Hive}; // MapTheme.Jungle TODO JUNGLE
 	
 	protected final static MapTheme getThemeOrNull(final String name) {
 		for (final MapTheme theme : themes) {
@@ -1083,6 +1099,8 @@ public class Map {
     	        stats.playedRockWorlds++;
     	    } else if (theme == MapTheme.Hive) {
     	        stats.playedHiveWorlds++;
+    	    } else if (theme == MapTheme.Jungle) {
+                stats.playedJungleWorlds++;
     	    }
 			if (worlds == DEFEATED_WORLD_COUNT_TO_FORCE_SNOW) {
 				theme = MapTheme.Snow;
@@ -1094,6 +1112,8 @@ public class Map {
 				theme = MapTheme.Rock;
 			} else if (stats.playedHiveWorlds == 0) {
                 theme = MapTheme.Hive;
+			//} else if (stats.playedJungleWorlds == 0) {
+            //    theme = MapTheme.Jungle; //TODO JUNGLE
 			} else {
 			    final MapTheme[] availableThemes;
 			    final Set<MapTheme> preferredThemes = prf.preferredThemes;
@@ -1220,6 +1240,7 @@ public class Map {
            		royAvt.eye = Mathtil.randElemI(hive ? EYES_ROY_BEE : EYES_ROY2);
 	           	royAvt.clothing.clth = Avatar.royalDress;
            	}
+           	//TODO JUNGLE Snake
            	//royAvt.clothingCol.load(royAvt.col); //negate();
            	royAvt.clothing.col.randomizeColorfulDifferent(royAvt.col);
            	if (hive) {

@@ -391,6 +391,7 @@ public class FurGuardiansGame extends BaseGame {
 	protected static Pansound musicSand = null;
 	protected static Pansound musicRock = null;
 	protected static Pansound musicHive = null;
+	protected static Pansound musicJungle = null;
 	protected static Pansound musicBridge = null;
 	protected static Pansound musicCave = null;
 	protected static Pansound musicNight = null;
@@ -1808,6 +1809,7 @@ public class FurGuardiansGame extends BaseGame {
 	    	musicSand = audio.createMusic(RES + "music/sand.mid");
 	    	musicRock = audio.createMusic(RES + "music/rock.mid");
 	    	musicHive = audio.createMusic(RES + "music/hive.mid");
+	    	musicJungle = musicHappy; //TODO JUNGLE
 	    	musicBridge = audio.createMusic(RES + "music/bridge.mid");
 	    	musicCave = audio.createMusic(RES + "music/cave.mid");
 	    	musicNight = audio.createMusic(RES + "music/night.mid");
