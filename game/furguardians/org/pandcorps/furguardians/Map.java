@@ -308,7 +308,7 @@ public class Map {
                 return new HexCaveBuilder();
             }};
         
-        public final static MapTheme Jungle = new MapTheme("Jungle", Theme.Hive, 1, 7, 4, null) { // Theme.Jungle
+        public final static MapTheme Jungle = new MapTheme("Jungle", Theme.Jungle, 1, 7, 4, null) {
             @Override protected final void step() {
                 stepWater();
             }

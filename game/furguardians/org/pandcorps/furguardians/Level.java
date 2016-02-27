@@ -262,6 +262,19 @@ public class Level {
                 return FurGuardiansGame.musicHive;
             }
         };
+        public final static Theme Jungle = new Theme("Jungle", null, MSG) {
+            @Override protected final int[] getEnemyIndices(final int worlds, final int levels) {
+                return NORMAL_ENEMIES;
+            }
+            
+            @Override protected final BackgroundBuilder getRandomBackground() {
+                return new HillBackgroundBuilder(); //TODO JUNGLE JungleBackgroundBuilder
+            }
+            
+            @Override protected Pansound getMusic() {
+                return FurGuardiansGame.musicJungle;
+            }
+        };
     	public final static Theme Bridge = new Theme("Bridge", MSG) {
             @Override protected final int[] getEnemyIndices(final int worlds, final int levels) {
                 return Map.theme.levelTheme.getEnemyIndices(worlds, levels);
