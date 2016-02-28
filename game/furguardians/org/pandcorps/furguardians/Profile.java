@@ -444,6 +444,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
 			list.add("Doubled Gems found: " + doubledGems);
 			list.add("Objects kicked: " + kicks);
 			list.add("Bee bounces: " + bounces);
+			list.add("Vines cleared: " + clearedVineBlocks);
 			add(list, "Shirts bought", Coltil.size(prf.availableClothings), Avatar.clothings.length);
 			add(list, "Hats bought", Coltil.size(prf.availableHats), Avatar.hats.length);
 			add(list, "Powers bought", (Coltil.size(prf.availableJumpModes) - 1), (JumpMode.values().length - 1));

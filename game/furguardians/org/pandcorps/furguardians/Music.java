@@ -468,6 +468,13 @@ public class Music {
         }
     }
 	
+	protected final static Song newSongJungle() throws Exception {
+        final Song song = new Song("Jungle");
+        final Track track = song.track;
+        //TODO JUNGLE
+        return song;
+	}
+	
 	protected final static Sequence newSongHappy2() throws Exception {
 		final Sequence seq = new Sequence(Sequence.SMPTE_30, 1);
 		final Track track = seq.createTrack();
