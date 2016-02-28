@@ -2254,6 +2254,17 @@ public class Level {
         }
     }
     
+    private final static class SnakeTemplate extends SimpleTemplate {
+        protected SnakeTemplate() {
+            super(2, 7, 0);
+        }
+        
+        @Override
+        protected void build() {
+            //TODO JUNGLE
+        }
+    }
+    
     private final static class BushTemplate extends SimpleTemplate {
     	protected BushTemplate() {
     		super(0, 6);
