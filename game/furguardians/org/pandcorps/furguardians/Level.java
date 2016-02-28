@@ -1191,6 +1191,10 @@ public class Level {
         new MovingBouncer(x, y, numTiles);
     }
     
+    private final static void snake(final int x, final int y, final int w) {
+        //TODO JUNGLE
+    }
+    
     private final static int[] scratch = new int[128];
     
     private final static void swapScratch(final int i, final int j) {
@@ -1685,6 +1689,21 @@ public class Level {
             final int x = ng + 1, y = floor + Mathtil.randi(3, 4);
             bee(x, y);
             goalBlock(x + w - 3, y + 4);
+        }
+    }
+    
+    private final static class SnakeGoal extends GoalTemplate {
+        private int w;
+        
+        @Override
+        protected int getWidth() {
+            w = Mathtil.randi(3, 4); // 1 for jump room + 1 for goal + 1 for gap + optional 1 for extra snake room
+            return w;
+        }
+        
+        @Override
+        protected void build() {
+            //TODO JUNGLE
         }
     }
     
@@ -2261,7 +2280,7 @@ public class Level {
         
         @Override
         protected void build() {
-            //TODO JUNGLE
+            snake(x, floor + 1, w);
         }
     }
     
