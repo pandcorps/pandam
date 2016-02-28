@@ -481,6 +481,17 @@ public abstract class Achievement extends FinName {
         }
     }
 	
+	private final static class VineFeat extends StatFeat {
+        protected VineFeat(final String name, final String code, final int n) {
+            super(name, code, n, "Clear Vines from " + n + " Block" + getS(n), (n * 7) / 2);
+        }
+        
+        @Override
+        public final long getCurrent(final Statistics stats) {
+            return stats.clearedVineBlocks;
+        }
+    }
+	
 	private final static class RankFeat extends CountFeat {
 		protected RankFeat(final String name, final String code, final int n) {
 			super(name, code, n, "Reach rank " + n, n * 100);
