@@ -1,3 +1,7 @@
+Added debug commands.
+
+*****
+
 1.20.0 (30)
 
 Added flower, top hat, and support for secondary hat color.
