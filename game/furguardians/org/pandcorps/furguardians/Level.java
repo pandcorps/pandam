@@ -1195,6 +1195,38 @@ public class Level {
         //TODO JUNGLE
     }
     
+    private final static void snakeHead(final int x, final int y) {
+        tm.setTile(x, y, null, imgMap[5][2], FurGuardiansGame.TILE_UPSLOPE);
+    }
+    
+    private final static void snakeTop(final int x, final int y) {
+        tm.setTile(x, y, null, imgMap[7][1], Tile.BEHAVIOR_SOLID);
+    }
+    
+    private final static void snakeTopLeft(final int x, final int y) {
+        tm.setOverlay(x, y, imgMap[6][1], FurGuardiansGame.TILE_UPSLOPE);
+    }
+    
+    private final static void snakeTopRight(final int x, final int y) {
+        tm.setOverlay(x, y, imgMap[6][0], FurGuardiansGame.TILE_DOWNSLOPE);
+    }
+    
+    private final static void snakeVert(final int x, final int y) {
+        tm.setTile(x, y, null, imgMap[6][2], Tile.BEHAVIOR_SOLID);
+    }
+    
+    private final static void snakeBottom(final int x, final int y) {
+        tm.setTile(x, y, null, imgMap[7][2], Tile.BEHAVIOR_SOLID);
+    }
+    
+    private final static void snakeBottomLeft(final int x, final int y) {
+        tm.setOverlay(x, y, imgMap[5][1], Tile.BEHAVIOR_SOLID);
+    }
+    
+    private final static void snakeBottomRight(final int x, final int y) {
+        tm.setOverlay(x, y, imgMap[5][0], Tile.BEHAVIOR_SOLID);
+    }
+    
     private final static int[] scratch = new int[128];
     
     private final static void swapScratch(final int i, final int j) {
