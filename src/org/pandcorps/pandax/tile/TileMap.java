@@ -323,6 +323,22 @@ public class TileMap extends Panctor implements Savable {
         setTile(index, getTile(background, foreground, behavior));
     }
     
+    public final void setOverlay(final int i, final int j, final Object overlay, final byte behavior) {
+        setOverlay(getIndex(i, j), overlay, behavior);
+    }
+    
+    public final void setOverlay(final int index, final Object overlay, final byte behavior) {
+        final Tile oldTile = getTile(index);
+        Object oldImg = null;
+        if (oldTile != null) {
+            oldImg = oldTile.background;
+            if (oldImg == null) {
+                oldImg = oldTile.foreground;
+            }
+        }
+        setTile(index, oldImg, overlay, behavior);
+    }
+    
     private final void rectangle(final boolean bg, final int imX, final int imY, final int tlX, final int tlY, final int w, final int h) {
         for (int j = 0; j < h; j++) {
             final int tlJ = tlY + j, imJ = imY - j;
