@@ -1192,7 +1192,16 @@ public class Level {
     }
     
     private final static void snake(final int x, final int y, final int w) {
+        if (w == 2) {
+            snakeSimple(x + 1, y);
+        }
         //TODO JUNGLE
+    }
+    
+    private final static void snakeSimple(final int x, final int y) {
+        snakeHead(x - 1, y);
+        snakeTopRight(x, y);
+        snakeVert(x, 0, y - 1);
     }
     
     private final static void snakeHead(final int x, final int y) {
@@ -1213,6 +1222,12 @@ public class Level {
     
     private final static void snakeVert(final int x, final int y) {
         tm.setTile(x, y, null, imgMap[6][2], Tile.BEHAVIOR_SOLID);
+    }
+    
+    private final static void snakeVert(final int x, final int yStart, final int yStop) {
+        for (int y = yStart; y <= yStop; y++) {
+            snakeVert(x, y);
+        }
     }
     
     private final static void snakeBottom(final int x, final int y) {
