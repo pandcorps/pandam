@@ -1198,6 +1198,10 @@ public class Level {
         //TODO JUNGLE
     }
     
+    private final static void snakeGoal() {
+        //TODO JUNGLE
+    }
+    
     private final static void snakeSimple(final int x, final int y) {
         snakeHead(x - 1, y);
         snakeTopRight(x, y);
@@ -1751,6 +1755,7 @@ public class Level {
         @Override
         protected void build() {
             //TODO JUNGLE
+            snakeGoal();
         }
     }
     
