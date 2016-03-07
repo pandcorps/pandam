@@ -1198,7 +1198,12 @@ public class Level {
         //TODO JUNGLE
     }
     
-    private final static void snakeGoal() {
+    private final static void snakeGoal(final int w) {
+        if (w == 4) {
+            final int base = floor + 1;
+            snakeHead(ng - 3, base);
+            snakeTop(ng - 2, ng - 1, base);
+        }
         //TODO JUNGLE
     }
     
@@ -1214,6 +1219,12 @@ public class Level {
     
     private final static void snakeTop(final int x, final int y) {
         tm.setTile(x, y, null, imgMap[7][1], Tile.BEHAVIOR_SOLID);
+    }
+    
+    private final static void snakeTop(final int xStart, final int xStop, final int y) {
+        for (int x = xStart; x <= xStop; x++) {
+            snakeTop(x, y);
+        }
     }
     
     private final static void snakeTopLeft(final int x, final int y) {
@@ -1748,14 +1759,15 @@ public class Level {
         
         @Override
         protected int getWidth() {
-            w = Mathtil.randi(3, 4); // 1 for jump room + 1 for goal + 1 for gap + optional 1 for extra snake room
+            w = Mathtil.randi(4, 5); // 1 for jump room + 1 for head + 1 for goal + 1 for gap + optional 1 for extra snake room
             return w;
         }
         
         @Override
         protected void build() {
             //TODO JUNGLE
-            snakeGoal();
+            snakeGoal(w);
+            goalBlock(ng - 2, floor + ((w == 4) ? 5 : 6));
         }
     }
     
