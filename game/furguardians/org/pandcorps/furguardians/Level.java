@@ -1199,31 +1199,38 @@ public class Level {
     }
     
     private final static void snakeGoal(final int w) {
-        if (w == 4) {
-            final int base = floor + 1;
-            snakeHead(ng - 3, base);
-            snakeTop(ng - 2, ng - 1, base);
+        final int off;
+        if (w == 5) {
+            off = 2;
+            snakeUpward(ng - 4, 0, floor);
+            //corner
+            snakeRightward(ng - 3, ng - 1, floor + 1);
+        } else {
+            off = 1;
         }
+        final int base = floor + off;
+        snakeHead(ng - 3, base);
+        snakeLeftward(ng - 2, ng - 1, base);
         //TODO JUNGLE
     }
     
     private final static void snakeSimple(final int x, final int y) {
         snakeHead(x - 1, y);
         snakeTopRight(x, y);
-        snakeVert(x, 0, y - 1);
+        snakeUpward(x, 0, y - 1);
     }
     
     private final static void snakeHead(final int x, final int y) {
         tm.setTile(x, y, null, imgMap[5][2], FurGuardiansGame.TILE_UPSLOPE);
     }
     
-    private final static void snakeTop(final int x, final int y) {
+    private final static void snakeLeftward(final int x, final int y) {
         tm.setTile(x, y, null, imgMap[7][1], Tile.BEHAVIOR_SOLID);
     }
     
-    private final static void snakeTop(final int xStart, final int xStop, final int y) {
+    private final static void snakeLeftward(final int xStart, final int xStop, final int y) {
         for (int x = xStart; x <= xStop; x++) {
-            snakeTop(x, y);
+            snakeLeftward(x, y);
         }
     }
     
@@ -1235,17 +1242,17 @@ public class Level {
         tm.setOverlay(x, y, imgMap[6][0], FurGuardiansGame.TILE_DOWNSLOPE);
     }
     
-    private final static void snakeVert(final int x, final int y) {
+    private final static void snakeUpward(final int x, final int y) {
         tm.setTile(x, y, null, imgMap[6][2], Tile.BEHAVIOR_SOLID);
     }
     
-    private final static void snakeVert(final int x, final int yStart, final int yStop) {
+    private final static void snakeUpward(final int x, final int yStart, final int yStop) {
         for (int y = yStart; y <= yStop; y++) {
-            snakeVert(x, y);
+            snakeUpward(x, y);
         }
     }
     
-    private final static void snakeBottom(final int x, final int y) {
+    private final static void snakeRightward(final int x, final int y) {
         tm.setTile(x, y, null, imgMap[7][2], Tile.BEHAVIOR_SOLID);
     }
     
