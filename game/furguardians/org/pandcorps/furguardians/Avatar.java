@@ -315,7 +315,7 @@ public class Avatar extends EyeData implements Segmented {
         new Clothing("Armor", "Armor", 50000, "Tough", false),
         royalRobe,
         royalDress
-        // Scarf, Cape, Halo
+        // Scarf, Cape, Halo, Overalls
     };
     
     protected final static Clothing[] hiddenClothings = {
