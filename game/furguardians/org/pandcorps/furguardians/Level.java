@@ -1256,6 +1256,12 @@ public class Level {
         tm.setTile(x, y, null, imgMap[7][2], Tile.BEHAVIOR_SOLID);
     }
     
+    private final static void snakeRightward(final int xStart, final int xStop, final int y) {
+        for (int x = xStart; x <= xStop; x++) {
+            snakeRightward(x, y);
+        }
+    }
+    
     private final static void snakeBottomLeft(final int x, final int y) {
         tm.setOverlay(x, y, imgMap[5][1], Tile.BEHAVIOR_SOLID);
     }
