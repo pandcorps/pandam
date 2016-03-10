@@ -167,6 +167,39 @@ public final class Tile {
         }
     }
     
+    public final static class AdjustedTileMapImage extends TileMapImage {
+        /*package*/ final int rot;
+        /*package*/ final boolean mirror;
+        /*package*/ final boolean flip;
+        
+        public AdjustedTileMapImage(final float ix, final float iy, final int rot, final boolean mirror, final boolean flip) {
+            super(ix, iy);
+            this.rot = rot;
+            this.mirror = mirror;
+            this.flip = flip;
+        }
+        
+        public AdjustedTileMapImage(final TileMapImage img, final int rot, final boolean mirror, final boolean flip) {
+            this(img.ix, img.iy, rot, mirror, flip);
+        }
+        
+        @Override
+        public final int hashCode() {
+            return super.hashCode() ^ rot;
+        }
+        
+        @Override
+        public boolean equals(final Object o) {
+            if (this == o) {
+                return true;
+            } else if (o == null || o.getClass() != AdjustedTileMapImage.class) {
+                return false;
+            }
+            final AdjustedTileMapImage t = (AdjustedTileMapImage) o;
+            return ix == t.ix && iy == t.iy && rot == t.rot && mirror == t.mirror && flip == t.flip;
+        }
+    }
+    
     @Override
     public final int hashCode() {
         return Pantil.hashCode(background) ^ Pantil.hashCode(foreground) ^ behavior;

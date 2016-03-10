@@ -37,4 +37,9 @@ public final class Panderer {
 		final float ix, final float iy, final float iw, final float ih) {
 		image.render(layer, x, y, z, ix, iy, iw, ih);
 	}
+	
+	public final void render(final Panlayer layer, final Panmage image, final float x, final float y, final float z,
+	    final float ix, final float iy, final float iw, final float ih, final int rot, final boolean mirror, final boolean flip) {
+	    image.render(layer, x, y, z, ix, iy, iw, ih, rot, mirror, flip);
+	}
 }

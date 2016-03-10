@@ -505,15 +505,15 @@ public class TileMap extends Panctor implements Savable {
     	} else if (imgClass == TileMapImage.class) {
     		timg = (TileMapImage) img;
     		imgMap = this.imgMap;
+    	} else if (imgClass == AdjustedTileMapImage.class) {
+    	    final AdjustedTileMapImage a = (AdjustedTileMapImage) img;
+    	    renderer.render(layer, this.imgMap, xitw, yjth, z, a.ix, a.iy, tw, th, a.rot, a.mirror, a.flip);
+    	    return;
     	} else {
-    		imgMap = null;
-    		timg = null;
+    	    renderer.render(layer, (Panmage) img, xitw, yjth, z);
+    	    return;
     	}
-    	if (imgMap == null) {
-    		renderer.render(layer, (Panmage) img, xitw, yjth, z);
-    	} else {
-    		renderer.render(layer, imgMap, xitw, yjth, z, timg.ix, timg.iy, tw, th);
-    	}
+		renderer.render(layer, imgMap, xitw, yjth, z, timg.ix, timg.iy, tw, th);
     }
     
     public void setOccupantDepth(final float occupantDepth) {
