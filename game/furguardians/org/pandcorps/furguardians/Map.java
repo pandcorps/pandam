@@ -308,7 +308,8 @@ public class Map {
                 return new HexCaveBuilder();
             }};
         
-        public final static MapTheme Jungle = new MapTheme("Jungle", Theme.Jungle, 1, 7, 4, null) {
+        public final static MapTheme Jungle = new MapTheme("Jungle", Theme.Jungle, 1, 7, 4,
+            new SwapPixelFilter(Channel.Green, Channel.Red, Channel.Blue)) {
             @Override protected final void step() {
                 stepWater();
             }
@@ -318,6 +319,8 @@ public class Map {
                 return new SwapPixelFilter(Channel.Red, Channel.Blue, Channel.Green); }
             @Override protected final PixelFilter getHillFilter2() {
                 return new SwapPixelFilter(Channel.Blue, Channel.Red, Channel.Green); }
+            @Override protected final PixelMask getDirtMask() {
+                return getBasicDirtMask(); }
             @Override protected final boolean hasBeenDefeated(final Statistics stats) {
                 return stats.playedJungleWorlds > 0; }
             @Override protected final Pansound getMenuMusic() {
