@@ -77,7 +77,7 @@ public class Level {
     
     protected static TileMapImage[] flashBlock = null;
     private static TileMapImage[] extraAnimBlock = null;
-    private static AdjustedTileMapImage adj1 = null;
+    private static AdjustedTileMapImage adj1 = null, adj2 = null;
     
     protected static long seed = -1;
     protected static Panroom room = null;
@@ -290,6 +290,7 @@ public class Level {
             
             @Override protected TileMapImage[] getExtraAnimBlock() {
                 adj1 = new AdjustedTileMapImage(imgMap[6][0], 0, true, false);
+                adj2 = new AdjustedTileMapImage(imgMap[5][0], 0, true, false);
                 return super.getExtraAnimBlock();
             }
             
@@ -683,7 +684,7 @@ public class Level {
         tm = new TileMap("act.tilemap", room, ImtilX.DIM, ImtilX.DIM);
         room.addActor(tm);
         
-        adj1 = null;
+        adj1 = adj2 = null;
         timg = getTileImage();
         imgMap = tm.splitImageMap(timg);
         final TileMapImage[] row = imgMap[0];
@@ -1237,17 +1238,53 @@ public class Level {
     }
     
     private final static void snake(final int x, final int y, final int w) {
-        if (w == 2) {
-            snakeSimple(x + 1, y);
+        final int xNeck = x + w - 1;
+        snakeRising(x, xNeck, xNeck, floor);
+        snakeTop(xNeck, x, floor + 1);
+        //TODO JUNGLE LOOP here or in snakeRising
+        //TODO Add enemy if flat or add coiling on top
+    }
+    
+    private final static void snakeRising(final int xMin, final int xMax, final int xTop, final int yTop) {
+        snakeUpward(xTop, yTop);
+        if (yTop == 0) {
+            return;
         }
-        //TODO JUNGLE
+        final int yEnd = yTop - 1;
+        int xBelow = Mathtil.randi(xMin, xMax);
+        for (int y = 0; y < yTop; y++) {
+            final int x;
+            if (y == yEnd) {
+                x = xTop;
+            } else if (Mathtil.rand()) {
+                x = xBelow;
+            } else {
+                x = Mathtil.randi(xMin, xMax);
+            }
+            snakeConnect(xBelow, x, y);
+            xBelow = x;
+        }
+    }
+    
+    private final static void snakeConnect(final int xBelow, final int x, final int y) {
+        if (x == xBelow) {
+            snakeUpward(x, y);
+        } else if (x < xBelow) {
+            snakeUpwardToLeftward(xBelow, y);
+            snakeLeftwardToUpward(x, y);
+            snakeLeftward(x + 1, xBelow - 1, y);
+        } else {
+            snakeUpwardToRightward(xBelow, y);
+            snakeRightwardToUpward(x, y);
+            snakeRightward(xBelow + 1, x - 1, y);
+        }
     }
     
     private final static void snakeGoal(final int w) {
         final int off;
         if (w == 5) {
             off = 2;
-            snakeUpward(nt - 4, 0, floor);
+            snakeRising(nt - 4, nt - 1, nt - 4, floor);
             snakeUpwardToRightward(nt - 4, floor + 1);
             snakeRightward(nt - 3, nt - 1, floor + 1);
         } else {
@@ -1258,10 +1295,10 @@ public class Level {
         snakeLeftward(nt - 2, nt - 1, base);
     }
     
-    private final static void snakeSimple(final int x, final int y) {
-        snakeHead(x - 1, y);
-        snakeUpwardToLeftward(x, y);
-        snakeUpward(x, 0, y - 1);
+    private final static void snakeTop(final int xNeck, final int xHead, final int y) {
+        snakeHead(xHead, y);
+        snakeUpwardToLeftward(xNeck, y);
+        snakeLeftward(xHead + 1, xNeck - 1, y);
     }
     
     private final static void snakeHead(final int x, final int y) {
@@ -1316,6 +1353,10 @@ public class Level {
     
     private final static void snakeUpwardToRightward(final int x, final int y) {
         tm.setOverlay(x, y, adj1, FurGuardiansGame.TILE_UPSLOPE);
+    }
+    
+    private final static void snakeLeftwardToUpward(final int x, final int y) {
+        tm.setOverlay(x, y, adj2, Tile.BEHAVIOR_SOLID);
     }
     
     private final static int[] scratch = new int[128];
