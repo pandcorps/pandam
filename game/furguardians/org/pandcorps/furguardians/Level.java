@@ -1237,19 +1237,22 @@ public class Level {
         new MovingBouncer(x, y, numTiles);
     }
     
-    private final static void snake(final int x, final int y, final int w) {
+    private final static void snake(final int x, final int w) {
         final int xNeck = x + w - 1;
         snakeRising(x, xNeck, xNeck, floor);
-        snakeTop(xNeck, x, floor + 1);
+        if ((w < 4) || Mathtil.rand()) {
+            snakeTop(xNeck, x, floor + 1);
+            enemy(x, floor + 2, w);
+        } else {
+            snakeConnect(xNeck, x, floor + 1);
+            snakeConnect(x, xNeck - 1, floor + 2);
+            snakeTop(xNeck - 1, x + 1, floor + 3);
+        }
         //TODO JUNGLE LOOP here or in snakeRising
-        //TODO Add enemy if flat or add coiling on top
     }
     
     private final static void snakeRising(final int xMin, final int xMax, final int xTop, final int yTop) {
         snakeUpward(xTop, yTop);
-        if (yTop == 0) {
-            return;
-        }
         final int yEnd = yTop - 1;
         int xBelow = Mathtil.randi(xMin, xMax);
         for (int y = 0; y < yTop; y++) {
@@ -2439,7 +2442,7 @@ public class Level {
         
         @Override
         protected void build() {
-            snake(x, floor + 1, w);
+            snake(x, w);
         }
     }
     
