@@ -77,6 +77,7 @@ public class Level {
     
     protected static TileMapImage[] flashBlock = null;
     private static TileMapImage[] extraAnimBlock = null;
+    private static AdjustedTileMapImage adj1 = null;
     
     protected static long seed = -1;
     protected static Panroom room = null;
@@ -175,6 +176,10 @@ public class Level {
     				return getBasicBuilder();
     			}
     		}
+    		
+    		@Override protected final void addTemplates(final List<Template> templates) {
+    		    templates.add(new ChoiceTemplate(new BushTemplate(), new TreeTemplate()));
+            }
     	};
     	public final static Theme Snow = new Theme("Snow", null, MSG) {
     	    @Override protected final int[] getEnemyIndices(final int worlds, final int levels) {
@@ -202,6 +207,10 @@ public class Level {
     		
     		@Override protected final byte getSpecialGroundBehavior() {
                 return FurGuardiansGame.TILE_ICE;
+            }
+    		
+    		@Override protected final void addTemplates(final List<Template> templates) {
+    		    templates.add(new SpecialGroundTemplate());
             }
     	};
     	public final static Theme Sand = new Theme("Sand", null, MSG) {
@@ -231,6 +240,10 @@ public class Level {
     		@Override protected final byte getSpecialGroundBehavior() {
                 return FurGuardiansGame.TILE_SAND;
             }
+    		
+    		@Override protected final void addTemplates(final List<Template> templates) {
+    		    templates.add(new SpecialGroundTemplate());
+            }
     	};
     	public final static Theme Rock = new Theme("Rock", null, MSG) {
     	    @Override protected final int[] getEnemyIndices(final int worlds, final int levels) {
@@ -243,6 +256,10 @@ public class Level {
     		
     		@Override protected Pansound getMusic() {
                 return FurGuardiansGame.musicRock;
+            }
+    		
+    		@Override protected final void addTemplates(final List<Template> templates) {
+                templates.add(new BushTemplate());
             }
     	};
     	public final static Theme Hive = new Theme("Hive", null, MSG) {
@@ -271,8 +288,21 @@ public class Level {
                 return new HillBackgroundBuilder(); //TODO JUNGLE JungleBackgroundBuilder
             }
             
+            @Override protected TileMapImage[] getExtraAnimBlock() {
+                adj1 = new AdjustedTileMapImage(imgMap[6][0], 0, true, false);
+                return super.getExtraAnimBlock();
+            }
+            
             @Override protected Pansound getMusic() {
                 return FurGuardiansGame.musicJungle;
+            }
+            
+            @Override protected final void addTemplates(final List<Template> templates) {
+                templates.add(new SnakeTemplate());
+            }
+            
+            @Override protected void addGoals(final List<GoalTemplate> goals) {
+                goals.add(new SnakeGoal());
             }
         };
     	public final static Theme Bridge = new Theme("Bridge", MSG) {
@@ -416,6 +446,10 @@ public class Level {
             @Override protected final byte getSpecialGroundBehavior() {
                 return Map.theme.levelTheme.getSpecialGroundBehavior();
             }
+            
+            @Override protected final void addTemplates(final List<Template> templates) {
+                Map.theme.levelTheme.addTemplates(templates);
+            }
         };
     	private final static String[] MSG_CHAOS = {"CHAOS", "HAVOC", "BEWARE", "FEAR", "DANGER"};
     	public final static Theme Chaos = new Theme("Chaos", MSG_CHAOS) {
@@ -435,6 +469,10 @@ public class Level {
     		@Override protected Pansound getMusic() {
         		return FurGuardiansGame.musicHeartbeat;
         	}
+    		
+    		@Override protected final void addTemplates(final List<Template> templates) {
+                templates.add(new ChoiceTemplate(new BushTemplate(), new TreeTemplate()));
+            }
     	};
     	
     	protected final String img;
@@ -500,6 +538,12 @@ public class Level {
     	
     	protected String getImg() {
     	    return img;
+    	}
+    	
+    	protected void addTemplates(final List<Template> templates) {
+        }
+    	
+    	protected void addGoals(final List<GoalTemplate> goals) {
     	}
     }
     
@@ -639,6 +683,7 @@ public class Level {
         tm = new TileMap("act.tilemap", room, ImtilX.DIM, ImtilX.DIM);
         room.addActor(tm);
         
+        adj1 = null;
         timg = getTileImage();
         imgMap = tm.splitImageMap(timg);
         final TileMapImage[] row = imgMap[0];
@@ -1202,21 +1247,20 @@ public class Level {
         final int off;
         if (w == 5) {
             off = 2;
-            snakeUpward(ng - 4, 0, floor);
-            //corner
-            snakeRightward(ng - 3, ng - 1, floor + 1);
+            snakeUpward(nt - 4, 0, floor);
+            snakeUpwardToRightward(nt - 4, floor + 1);
+            snakeRightward(nt - 3, nt - 1, floor + 1);
         } else {
             off = 1;
         }
         final int base = floor + off;
-        snakeHead(ng - 3, base);
-        snakeLeftward(ng - 2, ng - 1, base);
-        //TODO JUNGLE
+        snakeHead(nt - 3, base);
+        snakeLeftward(nt - 2, nt - 1, base);
     }
     
     private final static void snakeSimple(final int x, final int y) {
         snakeHead(x - 1, y);
-        snakeTopRight(x, y);
+        snakeUpwardToLeftward(x, y);
         snakeUpward(x, 0, y - 1);
     }
     
@@ -1234,11 +1278,11 @@ public class Level {
         }
     }
     
-    private final static void snakeTopLeft(final int x, final int y) {
+    private final static void snakeLeftwardToDownward(final int x, final int y) {
         tm.setOverlay(x, y, imgMap[6][1], FurGuardiansGame.TILE_UPSLOPE);
     }
     
-    private final static void snakeTopRight(final int x, final int y) {
+    private final static void snakeUpwardToLeftward(final int x, final int y) {
         tm.setOverlay(x, y, imgMap[6][0], FurGuardiansGame.TILE_DOWNSLOPE);
     }
     
@@ -1262,12 +1306,16 @@ public class Level {
         }
     }
     
-    private final static void snakeBottomLeft(final int x, final int y) {
+    private final static void snakeDownwardToRightward(final int x, final int y) {
         tm.setOverlay(x, y, imgMap[5][1], Tile.BEHAVIOR_SOLID);
     }
     
-    private final static void snakeBottomRight(final int x, final int y) {
+    private final static void snakeRightwardToUpward(final int x, final int y) {
         tm.setOverlay(x, y, imgMap[5][0], Tile.BEHAVIOR_SOLID);
+    }
+    
+    private final static void snakeUpwardToRightward(final int x, final int y) {
+        tm.setOverlay(x, y, adj1, FurGuardiansGame.TILE_UPSLOPE);
     }
     
     private final static int[] scratch = new int[128];
@@ -1284,20 +1332,14 @@ public class Level {
 	        addTemplate(new WallTemplate());
 	        addTemplate(new StepTemplate());
 	        addTemplate(new RampTemplate());
-	        final Theme theme = getDayTheme();
-	        if (theme == Theme.Snow || theme == Theme.Sand) {
-	        	addTemplate(new SpecialGroundTemplate());
-	        } else if (theme == Theme.Rock) {
-	            addTemplate(new BushTemplate());
-	        } else {
-	        	addTemplate(new BushTemplate(), new TreeTemplate());
-	        }
 	        addTemplate(new AnyPitTemplate());
 	        addTemplate(new UpBlockStepTemplate(), new DownBlockStepTemplate(), new BlockWallTemplate(), new BlockGroupTemplate());
 	        addFloatTemplates();
 	        addTemplate(new SlantTemplate(true), new SlantTemplate(false));
 	        addGiantTemplate();
+	        theme.addTemplates(templates);
 	        addNormalGoals();
+	        theme.addGoals(goals);
 	    }
     	
     	@Override
@@ -1778,9 +1820,8 @@ public class Level {
         
         @Override
         protected void build() {
-            //TODO JUNGLE
             snakeGoal(w);
-            goalBlock(ng - 2, floor + ((w == 4) ? 5 : 6));
+            goalBlock(nt - 2, floor + ((w == 4) ? 5 : 6));
         }
     }
     
