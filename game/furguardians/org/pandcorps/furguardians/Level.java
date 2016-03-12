@@ -285,7 +285,7 @@ public class Level {
             }
             
             @Override protected final BackgroundBuilder getRandomBackground() {
-                return new HillBackgroundBuilder(); //TODO JUNGLE JungleBackgroundBuilder
+                return new JungleBackgroundBuilder();
             }
             
             @Override protected TileMapImage[] getExtraAnimBlock() {
@@ -1114,12 +1114,16 @@ public class Level {
     	}
     }
     
-    private final static class ForestBackgroundBuilder implements BackgroundBuilder {
+    private static class ForestBackgroundBuilder implements BackgroundBuilder {
     	@Override
     	public final Img getImage() {
-    		final Img backImg = Imtil.load("org/pandcorps/furguardians/res/bg/Forest.png");
+    		final Img backImg = loadImage();
     		applyTerrainTexture(backImg, 32, 16, 48, 32, 0, 3, 32);
     		return backImg;
+    	}
+    	
+    	protected Img loadImage() {
+    	    return Imtil.load("org/pandcorps/furguardians/res/bg/Forest.png");
     	}
     	
     	@Override
@@ -1128,11 +1132,25 @@ public class Level {
     	}
     	
     	@Override
-    	public final void build() {
+    	public void build() {
     		buildForest(bgtm1, 0, false);
     		buildForest(bgtm2, 1, false);
     		buildForest(bgtm3, 2, true);
     	}
+    }
+    
+    private final static class JungleBackgroundBuilder extends ForestBackgroundBuilder {
+        @Override
+        protected final Img loadImage() {
+            return ImtilX.loadImage("org/pandcorps/furguardians/res/bg/Jungle.png", 128, null);
+        }
+        
+        @Override
+        public final void build() {
+            buildJungleUnderbrush(bgtm1);
+            buildJungleTrees(bgtm2);
+            //bgtm3 TODO JUNGLE
+        }
     }
     
     private final static class MountainBackgroundBuilder implements BackgroundBuilder {
@@ -2591,9 +2609,13 @@ public class Level {
     	}
     }
     
+    private final static void buildForestMountain(final TileMap tm, final int iy, final int h) {
+        tm.fillBackground(bgMap[iy][2], 0, h);
+    }
+    
     private final static void buildForest(final TileMap tm, final int off, final boolean sky) {
     	final int iy = off * 2;
-    	tm.fillBackground(bgMap[iy + 1][2], 0, off + 1);
+    	buildForestMountain(tm, iy + 1, off + 1);
     	tm.fillBackground(bgMap[iy][2], off + 1, 1);
     	final int tmw = tm.getWidth(), tmh = tm.getHeight();
     	if (sky) {
@@ -2611,6 +2633,51 @@ public class Level {
     		}
     		i += Mathtil.randi(3, 6);
     	}
+    }
+    
+    private final static void buildJungleUnderbrush(final TileMap tm) {
+        buildForestMountain(tm, 1, 1);
+        int h = Mathtil.randi(0, 2);
+        int mode = 0;
+        final int tmw = tm.getWidth();
+        for (int i = 0; i < tmw; i++) {
+            if (mode == 0) {
+                mode = Mathtil.randi(0, 2);
+                if (mode == 1 && h == 0) {
+                    mode = 2;
+                } else if (mode == 2 && h == 2) {
+                    mode = 1;
+                }
+            }
+            int j = 0;
+            if (mode == 0) {
+                if (h > 0) {
+                    tm.setBackground(i, j = h * 2, bgMap[0][2]);
+                }
+            } else if (mode == 1) {
+                tm.setBackground(i, j = h * 2, bgMap[0][3]);
+                mode = 3;
+            } else if (mode == 3) {
+                tm.setBackground(i, j = h * 2 - 1, bgMap[1][3]);
+                mode = 0;
+                h--;
+            } else if (mode == 2) {
+                h++;
+                tm.setBackground(i, j = h * 2 - 1, bgMap[1][1]);
+                mode = 4;
+            } else if (mode == 4) {
+                tm.setBackground(i, j = h * 2, bgMap[0][1]);
+                mode = 0;
+            }
+            for (j = j - 1; j > 0; j--) {
+                tm.setBackground(i, j, bgMap[0][4]);
+            }
+        }
+    }
+    
+    private final static void buildJungleTrees(final TileMap tm) {
+        buildForestMountain(tm, 3, 2);
+        //TODO JUNGLE
     }
     
     private final static void buildMountains(final TileMap tm, final int maxy, final int v, final boolean sky) {
