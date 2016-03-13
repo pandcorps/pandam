@@ -2685,7 +2685,34 @@ public class Level {
     
     private final static void buildJungleTrees(final TileMap tm) {
         buildForestMountain(tm, 3, 2);
+        final int tmw = tm.getWidth(), tmTop = tm.getHeight() - 1;
         //TODO JUNGLE
+        jungleTree(tm, 5, 4);
+        for (int i = 0; i < tmw; i++) {
+            if (i % 2 == 0) {
+                jungleLeaf(tm, i, tmTop - 1);
+            } else {
+                jungleLeafLow(tm, i, tmTop);
+                if (Mathtil.rand()) {
+                    jungleLeaf(tm, i, tmTop - 2);
+                }
+            }
+        }
+    }
+    
+    private final static void jungleTree(final TileMap tm, final int i, final int h) {
+        for (int j = 0; j < h; j++) {
+            tm.setBackground(i, 2 + j, bgMap[3][0]);
+        }
+    }
+    
+    private final static void jungleLeaf(final TileMap tm, final int i, final int j) {
+        jungleLeafLow(tm, i, j);
+        tm.setBackground(i, j + 1, bgMap[1][0]);
+    }
+    
+    private final static void jungleLeafLow(final TileMap tm, final int i, final int j) {
+        tm.setBackground(i, j, bgMap[2][0]);
     }
     
     private final static void buildMountains(final TileMap tm, final int maxy, final int v, final boolean sky) {
