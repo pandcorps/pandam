@@ -2700,9 +2700,25 @@ public class Level {
         }
     }
     
-    private final static void jungleTree(final TileMap tm, final int i, final int h) {
-        for (int j = 0; j < h; j++) {
-            tm.setBackground(i, 2 + j, bgMap[3][0]);
+    private final static void jungleTree(final TileMap tm, final int i, final int _h) {
+        final int base = 2, h = _h + base;
+        for (int j = base; j < h; j++) {
+            tm.setBackground(i, j, bgMap[3][0]);
+        }
+        for (int x = -2; x < 3; x++) {
+            final int ix = i + x;
+            if (tm.isBadColumn(ix)) {
+                continue;
+            }
+            if (Math.abs(x) == 2) {
+                jungleLeaf(tm, ix, h + 1);
+                jungleLeafLow(tm, ix, h);
+                continue;
+            }
+            jungleLeaf(tm, ix, h + 2);
+            for (int y = ((x == 0) ? 0 : -1); y < 2; y++) {
+                jungleLeafLow(tm, ix, h + y);
+            }
         }
     }
     
