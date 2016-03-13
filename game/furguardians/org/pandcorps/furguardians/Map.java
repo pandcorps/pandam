@@ -313,6 +313,8 @@ public class Map {
             @Override protected final void step() {
                 stepWater();
             }
+            @Override protected final PixelFilter getSkyFilter() {
+                return new SwapPixelFilter(Channel.Green, Channel.Blue, Channel.Red); }
             @Override protected final PixelFilter getHillFilter0() {
                 return null; }
             @Override protected final PixelFilter getHillFilter1() {
