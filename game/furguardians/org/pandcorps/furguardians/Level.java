@@ -2639,7 +2639,7 @@ public class Level {
         buildForestMountain(tm, 1, 1);
         int h = Mathtil.randi(0, 2);
         int mode = 0;
-        final int tmw = tm.getWidth();
+        final int tmw = tm.getWidth(), tmTop = tm.getHeight() - 1;
         for (int i = 0; i < tmw; i++) {
             if (mode == 0) {
                 mode = Mathtil.randi(0, 2);
@@ -2671,6 +2671,14 @@ public class Level {
             }
             for (j = j - 1; j > 0; j--) {
                 tm.setBackground(i, j, bgMap[0][4]);
+            }
+            if (Mathtil.rand(25)) {
+                int v = tmTop - Mathtil.randi(1, 4);
+                tm.setBackground(i, v, bgMap[1][5]);
+                v++;
+                for (; v <= tmTop; v++) {
+                    tm.setBackground(i, v, bgMap[0][5]);
+                }
             }
         }
     }
