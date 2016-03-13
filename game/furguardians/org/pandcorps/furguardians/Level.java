@@ -1149,7 +1149,7 @@ public class Level {
         public final void build() {
             buildJungleUnderbrush(bgtm1);
             buildJungleTrees(bgtm2);
-            //bgtm3 TODO JUNGLE
+            buildJungleSky(bgtm3);
         }
     }
     
@@ -2640,12 +2640,13 @@ public class Level {
         int h = Mathtil.randi(0, 2);
         int mode = 0;
         final int tmw = tm.getWidth(), tmTop = tm.getHeight() - 1;
+        final int vineMax = tmTop - 8;
         for (int i = 0; i < tmw; i++) {
             if (mode == 0) {
                 mode = Mathtil.randi(0, 2);
                 if (mode == 1 && h == 0) {
                     mode = 2;
-                } else if (mode == 2 && h == 2) {
+                } else if (mode == 2 && h == 3) {
                     mode = 1;
                 }
             }
@@ -2673,7 +2674,7 @@ public class Level {
                 tm.setBackground(i, j, bgMap[0][4]);
             }
             if (Mathtil.rand(25)) {
-                int v = tmTop - Mathtil.randi(1, 4);
+                int v = tmTop - Mathtil.randi(1, vineMax);
                 tm.setBackground(i, v, bgMap[1][5]);
                 v++;
                 for (; v <= tmTop; v++) {
@@ -2687,7 +2688,8 @@ public class Level {
         buildForestMountain(tm, 3, 2);
         final int tmw = tm.getWidth(), tmTop = tm.getHeight() - 1;
         //TODO JUNGLE
-        jungleTree(tm, 5, 4);
+        final int treeMax = tmTop - 9;
+        jungleTree(tm, 5, Mathtil.randi(4, treeMax));
         for (int i = 0; i < tmw; i++) {
             if (i % 2 == 0) {
                 jungleLeaf(tm, i, tmTop - 1);
@@ -2696,6 +2698,19 @@ public class Level {
                 if (Mathtil.rand()) {
                     jungleLeaf(tm, i, tmTop - 2);
                 }
+            }
+        }
+    }
+    
+    private final static void buildJungleSky(final TileMap tm) {
+        buildForestMountain(tm, 5, 3);
+        final int tmw = tm.getWidth(), tmh = tm.getHeight();
+        buildSky(tm, 4, tmh - 5);
+        for (int j = 0; j < 3; j++) {
+            final TileMapImage[] row = bgMap[7 - j];
+            final int y = 3 + j;
+            for (int i = 0; i < tmw; i++) {
+                tm.setBackground(i, y, row[Mathtil.randi(5, 7)]);
             }
         }
     }
