@@ -130,6 +130,7 @@ public class Castle {
     private abstract static class ThroneScreen extends CastleScreen {
     	private final List<String> msg;
     	private Panimation royAnm = null;
+    	private Panmage royImg = null;
     	
         protected ThroneScreen(final List<String> msg) {
             super("ThroneRoom");
@@ -165,8 +166,8 @@ public class Castle {
             
             addPlayers(48, 32, null);
             
-            final int offY;
-            if (Map.theme == org.pandcorps.furguardians.Map.MapTheme.Hive) {
+            int offY = 0;
+            if (Map.theme == Map.MapTheme.Hive) {
                 royAnm = FurGuardiansGame.getBirdAnm("roy", FurGuardiansGame.KIND_BEE, Map.royAvt.eye);
                 offY = Player.OFF_BIRD;
                 final Panctor crown = new Panctor();
@@ -174,6 +175,28 @@ public class Castle {
                 room.addActor(crown);
                 crown.setMirror(true);
                 crown.getPosition().set(187, 102, 3);
+            } else if (Map.theme == Map.MapTheme.Jungle) {
+                royImg = Pangine.getEngine().createImage(FurGuardiansGame.PRE_IMG + "roy.tiles", Level.loadTileImage(Level.Theme.Jungle));
+                final int royW = 7;
+                //TODO JUNGLE crown
+                final TileMap rm = new TileMap(Pantil.vmid(), royW, 3, ImtilX.DIM, ImtilX.DIM);
+                final TileMapImage[][] royMap = rm.splitImageMap(royImg);
+                rm.getPosition().set(256 - (royW * ImtilX.DIM), 45, 20);
+                rm.setForegroundDepth(21);
+                rm.setForeground(1, 2, royMap[5][2]);
+                rm.setForeground(2, 2, royMap[6][0]);
+                rm.setForeground(2, 1, royMap[6][2]);
+                rm.setForeground(2, 0, royMap[5][0]);
+                rm.setForeground(1, 0, royMap[7][2]);
+                rm.setForeground(0, 0, royMap[5][1]);
+                rm.setForeground(0, 1, royMap[6][1]);
+                rm.setForeground(1, 1, royMap[7][1]);
+                rm.setForeground(3, 1, royMap[6][0]);
+                rm.setForeground(3, 0, royMap[5][1]);
+                rm.setForeground(4, 0, royMap[7][1]);
+                rm.setForeground(5, 0, royMap[7][1]);
+                rm.setForeground(6, 0, royMap[7][1]);
+                room.addActor(rm);
             } else {
                 final PlayerImages pi = new PlayerImages(Map.royAvt);
                 final Img k1 = pi.guys[0], k2 = pi.guyBlink;
@@ -186,13 +209,14 @@ public class Castle {
                 	en.createFrame(FurGuardiansGame.PRE_FRM + "roy.1", en.createImage(FurGuardiansGame.PRE_IMG + "roy.1", k1), FurGuardiansGame.DUR_BLINK + 20),
                 	en.createFrame(FurGuardiansGame.PRE_FRM + "roy.2", en.createImage(FurGuardiansGame.PRE_IMG + "roy.2", k2), FurGuardiansGame.DUR_CLOSED));
                 pi.close();
-                offY = 0;
             }
-            final Panctor roy = new Panctor();
-            roy.setView(royAnm);
-            room.addActor(roy);
-            roy.setMirror(true);
-            roy.getPosition().set(184, 60 + offY, 2);
+            if (royAnm != null) {
+                final Panctor roy = new Panctor();
+                roy.setView(royAnm);
+                room.addActor(roy);
+                roy.setMirror(true);
+                roy.getPosition().set(184, 60 + offY, 2);
+            }
             
             final Pantext text = new Pantext(Pantil.vmid(), FurGuardiansGame.font, msg);
             text.getPosition().set(8, 160, 10);
@@ -209,6 +233,7 @@ public class Castle {
         @Override
         protected final void onDestroy() {
         	Panmage.destroyAll(royAnm);
+        	Panmage.destroy(royImg);
         }
     }
     
