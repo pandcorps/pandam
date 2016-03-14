@@ -658,8 +658,11 @@ public class Level {
     }
     
     private final static Img loadTileImage() {
+        return loadTileImage(getDayTheme());
+    }
+    
+    protected final static Img loadTileImage(final Theme theme) {
     	final Img tileImg = ImtilX.loadImage("org/pandcorps/furguardians/res/bg/Tiles.png", 128, null);
-    	final Theme theme = getDayTheme();
     	if (theme != Theme.Normal) {
     		final Img ext = ImtilX.loadImage("org/pandcorps/furguardians/res/bg/Tiles" + theme.getImg() + ".png", false);
     		Imtil.copy(ext, tileImg, 0, 0, 128, 112, 0, 16);
