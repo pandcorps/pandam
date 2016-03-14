@@ -459,6 +459,9 @@ public class TileMap extends Panctor implements Savable {
     	Then it calls renderView for each Panctor in the Panlayer.
     	So this can trust the view window.
     	*/
+        if (!isVisible()) {
+            return;
+        }
         final Panple pos = getPosition();
         final float x = pos.getX(), y = pos.getY(), z = pos.getZ();
         final float foregroundDepth = getForegroundDepth();
