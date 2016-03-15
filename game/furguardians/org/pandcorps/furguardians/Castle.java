@@ -170,11 +170,7 @@ public class Castle {
             if (Map.theme == Map.MapTheme.Hive) {
                 royAnm = FurGuardiansGame.getBirdAnm("roy", FurGuardiansGame.KIND_BEE, Map.royAvt.eye);
                 offY = Player.OFF_BIRD;
-                final Panctor crown = new Panctor();
-                crown.setView(FurGuardiansGame.getCrown(Map.royCrown));
-                room.addActor(crown);
-                crown.setMirror(true);
-                crown.getPosition().set(187, 102, 3);
+                addCrown(187, 102, 3);
             } else if (Map.theme == Map.MapTheme.Jungle) {
                 royImg = Pangine.getEngine().createImage(FurGuardiansGame.PRE_IMG + "roy.tiles", Level.loadTileImage(Level.Theme.Jungle));
                 final int royW = 7;
@@ -226,6 +222,14 @@ public class Castle {
 				@Override public final void onActionStart(final ActionStartEvent event) {
 					FurGuardiansGame.fadeOut(room, getNextScreen());
 				}});
+        }
+        
+        private void addCrown(final int x, final int y, final int z) {
+            final Panctor crown = new Panctor();
+            crown.setView(FurGuardiansGame.getCrown(Map.royCrown));
+            room.addActor(crown);
+            crown.setMirror(true);
+            crown.getPosition().set(x, y, z);
         }
         
         protected abstract Panscreen getNextScreen();
