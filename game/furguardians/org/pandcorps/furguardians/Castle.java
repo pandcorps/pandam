@@ -174,7 +174,6 @@ public class Castle {
             } else if (Map.theme == Map.MapTheme.Jungle) {
                 royImg = Pangine.getEngine().createImage(FurGuardiansGame.PRE_IMG + "roy.tiles", Level.loadTileImage(Level.Theme.Jungle));
                 final int royW = 7;
-                //TODO JUNGLE crown
                 final TileMap rm = new TileMap(Pantil.vmid(), royW, 3, ImtilX.DIM, ImtilX.DIM);
                 final TileMapImage[][] royMap = rm.splitImageMap(royImg);
                 rm.getPosition().set(256 - (royW * ImtilX.DIM), 45, 20);
@@ -193,6 +192,7 @@ public class Castle {
                 rm.setForeground(5, 0, royMap[7][1]);
                 rm.setForeground(6, 0, royMap[7][1]);
                 room.addActor(rm);
+                addCrown(186, 90, 50);
             } else {
                 final PlayerImages pi = new PlayerImages(Map.royAvt);
                 final Img k1 = pi.guys[0], k2 = pi.guyBlink;
