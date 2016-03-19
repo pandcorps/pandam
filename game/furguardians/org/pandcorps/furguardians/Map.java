@@ -230,6 +230,9 @@ public class Map {
 			if (Level.theme == Theme.Cave) {
 				minR = 96;
 				minG = 48;
+			} else if (theme == MapTheme.Jungle) {
+			    minR = 160;
+			    minG = 80;
 			} else {
 				minR = minG = 80;
 			}
