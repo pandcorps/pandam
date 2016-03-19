@@ -192,7 +192,7 @@ public class Castle {
                 rm.setForeground(5, 0, royMap[7][1]);
                 rm.setForeground(6, 0, royMap[7][1]);
                 room.addActor(rm);
-                addCrown(186, 90, 50);
+                addCrown(176, 90, 50);
             } else {
                 final PlayerImages pi = new PlayerImages(Map.royAvt);
                 final Img k1 = pi.guys[0], k2 = pi.guyBlink;

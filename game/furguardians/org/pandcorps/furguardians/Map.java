@@ -410,7 +410,7 @@ public class Map {
 		}
 	}
 	
-	protected final static MapTheme[] themes = {MapTheme.Normal, MapTheme.Snow, MapTheme.Sand, MapTheme.Rock, MapTheme.Hive}; // MapTheme.Jungle TODO JUNGLE
+	protected final static MapTheme[] themes = {MapTheme.Normal, MapTheme.Snow, MapTheme.Sand, MapTheme.Rock, MapTheme.Hive, MapTheme.Jungle};
 	
 	protected final static MapTheme getThemeOrNull(final String name) {
 		for (final MapTheme theme : themes) {
@@ -1120,8 +1120,8 @@ public class Map {
 				theme = MapTheme.Rock;
 			} else if (stats.playedHiveWorlds == 0) {
                 theme = MapTheme.Hive;
-			//} else if (stats.playedJungleWorlds == 0) {
-            //    theme = MapTheme.Jungle; //TODO JUNGLE
+			} else if (stats.playedJungleWorlds == 0) {
+                theme = MapTheme.Jungle;
 			} else {
 			    final MapTheme[] availableThemes;
 			    final Set<MapTheme> preferredThemes = prf.preferredThemes;
@@ -1248,11 +1248,12 @@ public class Map {
            		royAvt.eye = Mathtil.randElemI(hive ? EYES_ROY_BEE : EYES_ROY2);
 	           	royAvt.clothing.clth = Avatar.royalDress;
            	}
-           	//TODO JUNGLE Snake
            	//royAvt.clothingCol.load(royAvt.col); //negate();
            	royAvt.clothing.col.randomizeColorfulDifferent(royAvt.col);
            	if (hive) {
            	    royCrown = 0;
+           	} else if (theme == MapTheme.Jungle) {
+           	    royCrown = 2;
            	} else {
            	    royCrown = Mathtil.randi(0, FurGuardiansGame.crowns.length - 1);
            	}
