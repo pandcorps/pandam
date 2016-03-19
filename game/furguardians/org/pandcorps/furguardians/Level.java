@@ -2717,6 +2717,18 @@ public class Level {
                 tm.setBackground(i, y, row[Mathtil.randi(5, 7)]);
             }
         }
+        final int hangMin = Math.max(6, tmh - 6), hangMax = tmh - 2;
+        for (int i = 0; i < tmw; i++) {
+            if (Mathtil.rand(20)) {
+                int y = Mathtil.randi(hangMin, hangMax);
+                tm.setForeground(i, y, bgMap[7][0]);
+                y++;
+                while (y < tmh) {
+                    tm.setBackground(i, y, bgMap[6][0]);
+                    y++;
+                }
+            }
+        }
     }
     
     private final static void jungleTree(final TileMap tm, final int i, final int _h) {
