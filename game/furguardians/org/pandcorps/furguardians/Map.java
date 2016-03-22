@@ -321,11 +321,13 @@ public class Map {
             @Override protected final PixelFilter getHillFilter0() {
                 return null; }
             @Override protected final PixelFilter getHillFilter1() {
-                return new SwapPixelFilter(Channel.Red, Channel.Blue, Channel.Green); }
+                return new SwapPixelFilter(Channel.Red, Channel.Green, Channel.Red); }
             @Override protected final PixelFilter getHillFilter2() {
-                return new SwapPixelFilter(Channel.Blue, Channel.Red, Channel.Green); }
+                return new SwapPixelFilter(Channel.Blue, Channel.Green, Channel.Red); }
             @Override protected final PixelMask getDirtMask() {
                 return getBasicDirtMask(); }
+            @Override protected final int getBaseProbability() {
+                return 2; }
             @Override protected final boolean hasBeenDefeated(final Statistics stats) {
                 return stats.playedJungleWorlds > 0; }
             @Override protected final Pansound getMenuMusic() {
