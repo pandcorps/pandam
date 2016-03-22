@@ -1590,7 +1590,7 @@ public class Map {
 		tm.setTile(m, 14, imgMap[0][4], imgMap[2][6], TILE_VERT);
 		tm.setImages(x, 14, imgMap[0][5], imgMap[2][2]);
 		tm.setImages(n, 13, imgMap[0][3], imgMap[0][2]);
-		tm.setTile(m, 13, imgMap[0][4], imgMap[0][6], TILE_VERT);
+		tm.setTile(m, 13, imgMap[0][4], ladder, TILE_VERT);
 		tm.setImages(x, 13, imgMap[0][5], imgMap[0][0]);
 		for (int y = 12; ; y--) {
 			final Tile tile = tm.getTile(m, y);
