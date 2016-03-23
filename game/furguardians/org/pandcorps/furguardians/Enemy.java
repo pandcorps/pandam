@@ -475,7 +475,9 @@ public class Enemy extends Character {
 	protected final static boolean destroyIfOffScreen(final Panctor a, final int off) {
 		final float x = a.getPosition().getX();
 		final Panlayer layer = a.getLayer();
-		if ((x + off) < layer.getViewMinimum().getX() || (x - (off * 2)) > layer.getViewMaximum().getX()) {
+		if (layer == null) {
+		    return false;
+		} else if ((x + off) < layer.getViewMinimum().getX() || (x - (off * 2)) > layer.getViewMaximum().getX()) {
 			a.destroy();
 			return true;
 		}
