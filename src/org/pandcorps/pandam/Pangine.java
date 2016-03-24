@@ -599,7 +599,8 @@ public abstract class Pangine {
 		}
 
 		for (final Panctor actor : actors) {
-			if (actor instanceof StepListener) {
+		    // An actor could be destroyed during this loop and wouldn't be removed from the List yet, so check
+			if (!actor.isDestroyed() && actor instanceof StepListener) {
 				((StepListener) actor).onStep(stepEvent);
 			}
 		}
