@@ -290,6 +290,7 @@ public class FurGuardiansGame extends BaseGame {
 	protected static Panmage block8 = null;
 	protected static Panmage blockLetter8 = null;
 	protected static Panmage blockIce8 = null;
+	protected static Panmage vineShatter = null;
 	protected static Panmage[] gem = null;
 	protected static Panimation gemAnm = null;
 	protected static Panimation gemBlueAnm = null;
@@ -1617,7 +1618,8 @@ public class FurGuardiansGame extends BaseGame {
 		loaders.add(new Runnable() { @Override public final void run() {
 			block8 = createImage("block8", RES + "misc/Block8.png", 8);
 			blockLetter8 = createImage("block.letter8", RES + "misc/BlockLetter8.png", 8);
-			blockIce8 = createImage("block.ice8", RES + "misc/BlockIce8.png", 8); }});
+			blockIce8 = createImage("block.ice8", RES + "misc/BlockIce8.png", 8);
+			vineShatter = createImage("vine.shatter", RES + "misc/VineShatter.png", 8); }});
 	    
 		loaders.add(new Runnable() { @Override public final void run() {
 		    final PixelFilter gemCyanFilter = new SwapPixelFilter(Channel.Green, Channel.Red, Channel.Blue);
