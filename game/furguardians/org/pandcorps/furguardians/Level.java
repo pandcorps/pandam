@@ -298,6 +298,14 @@ public class Level {
                 return FurGuardiansGame.musicJungle;
             }
             
+            @Override protected final void breakableBlock(final int x, final int y) {
+                if (Mathtil.rand()) {
+                    breakableBlockRaw(x, y);
+                } else {
+                    Level.breakableBlock(x, y, imgMap[1][5]);
+                }
+            }
+            
             @Override protected final void addTemplates(final List<Template> templates) {
                 templates.add(new SnakeTemplate());
             }
@@ -448,8 +456,16 @@ public class Level {
                 return Map.theme.levelTheme.getSpecialGroundBehavior();
             }
             
+            @Override protected final void breakableBlock(final int x, final int y) {
+                Map.theme.levelTheme.breakableBlock(x, y);
+            }
+            
             @Override protected final void addTemplates(final List<Template> templates) {
                 Map.theme.levelTheme.addTemplates(templates);
+            }
+            
+            @Override protected final void addGoals(final List<GoalTemplate> templates) {
+                Map.theme.levelTheme.addGoals(templates);
             }
         };
     	private final static String[] MSG_CHAOS = {"CHAOS", "HAVOC", "BEWARE", "FEAR", "DANGER"};
@@ -540,6 +556,10 @@ public class Level {
     	protected String getImg() {
     	    return img;
     	}
+    	
+    	protected void breakableBlock(final int x, final int y) {
+            breakableBlockRaw(x, y);
+        }
     	
     	protected void addTemplates(final List<Template> templates) {
         }
@@ -3051,9 +3071,21 @@ public class Level {
     
     private final static void breakableBlock(final int x, final int y) {
         if (!powerBlock(x, y)) {
-            tm.setForeground(x, y, imgMap[0][5], FurGuardiansGame.TILE_BREAK);
+            if (theme == null) {
+                breakableBlockRaw(x, y);
+            } else {
+                theme.breakableBlock(x, y);
+            }
             numBreakable++;
         }
+    }
+    
+    private final static void breakableBlockRaw(final int x, final int y) {
+        breakableBlock(x, y, imgMap[0][5]);
+    }
+    
+    private final static void breakableBlock(final int x, final int y, final TileMapImage img) {
+        tm.setForeground(x, y, img, FurGuardiansGame.TILE_BREAK);
     }
     
     private final static void letterBlock(final int x, final int y) {
