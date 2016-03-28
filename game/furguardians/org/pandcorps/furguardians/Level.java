@@ -78,6 +78,7 @@ public class Level {
     protected static TileMapImage[] flashBlock = null;
     private static TileMapImage[] extraAnimBlock = null;
     private static AdjustedTileMapImage adj1 = null, adj2 = null;
+    protected static TileMapImage breakableImg = null;
     
     protected static long seed = -1;
     protected static Panroom room = null;
@@ -712,6 +713,7 @@ public class Level {
         imgMap = tm.splitImageMap(timg);
         final TileMapImage[] row = imgMap[0];
         flashBlock = new TileMapImage[] {row[0], row[1], row[2], row[3]};
+        breakableImg = imgMap[0][5];
         extraAnimBlock = theme.getExtraAnimBlock();
         
         final Panlayer bg1 = FurGuardiansGame.createParallax(room, 2);
@@ -3081,7 +3083,7 @@ public class Level {
     }
     
     private final static void breakableBlockRaw(final int x, final int y) {
-        breakableBlock(x, y, imgMap[0][5]);
+        breakableBlock(x, y, breakableImg);
     }
     
     private final static void breakableBlock(final int x, final int y, final TileMapImage img) {

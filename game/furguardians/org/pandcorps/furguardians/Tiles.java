@@ -91,7 +91,8 @@ public class Tiles {
     	    final Statistics stats = player.pc.profile.stats;
     	    final Panmage shatterImg;
     	    if (false) {
-    	        //TODO JUNGLE change this tile to breakable image/behavior
+    	        //TODO JUNGLE
+    	        Level.tm.setForeground(index, Level.breakableImg);
     	        shatterImg = FurGuardiansGame.vineShatter;
     	        newGemBumped(player, index);
     	        stats.clearedVineBlocks++;
