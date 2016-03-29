@@ -90,8 +90,7 @@ public class Tiles {
     	if (b == FurGuardiansGame.TILE_BREAK) {
     	    final Statistics stats = player.pc.profile.stats;
     	    final Panmage shatterImg;
-    	    if (false) {
-    	        //TODO JUNGLE
+    	    if (DynamicTileMap.getRawForeground(t) != Level.breakableImg) {
     	        Level.tm.setForeground(index, Level.breakableImg);
     	        shatterImg = FurGuardiansGame.vineShatter;
     	        newGemBumped(player, index);
