@@ -52,7 +52,8 @@ public abstract class Achievement extends FinName {
 		new BuyFeat("Consumer", "32", 1), new BuyFeat("Demander", "33", 5), new BuyFeat("Collector", "34", 15), new BuyFeat("Obsessor", "obsssr", 30),
 		new NoBirdGemsFeat("35"), new BirdGemFeat("Nest Egg", "36", 200),
 		new OrbFeat("Orb Wielder", "38", 25), new MonsterElectrocuteFeat("Lightning Storm", "39", 150),
-		new DoubledGemFeat("Double Down", "40", 7500), new BounceFeat("Busy Bee", "41", 400)
+		new DoubledGemFeat("Double Down", "40", 7500), new BounceFeat("Busy Bee", "41", 400),
+		new VineFeat("Trailblazer", "trlblzr", 180)
 		// Level w/ no damage
 		// Beyond Belief, Finish Level as a flying Pig
 		// Babe, Finish Level as a blue Bull/Ox
