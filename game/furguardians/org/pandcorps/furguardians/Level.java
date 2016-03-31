@@ -1312,6 +1312,19 @@ public class Level {
         }
     }
     
+    private final static void snakeLoop(final int xBelow, final int x, final int y) {
+        snakeUpward(xBelow, y);
+        final int y1 = y + 1;
+        snakeUpwardToLeftward(xBelow, y1);
+        final int xLeft = Math.min(xBelow, x) - 1;
+        snakeLeftward(xLeft + 1, xBelow - 1, y1);
+        snakeLeftwardToDownward(xLeft, y1);
+        snakeDownwardToRightward(xLeft, y);
+        snakeRightward(xLeft + 1, x - 1, y);
+        snakeRightwardToUpward(x, y);
+        snakeUpward(x, y1);
+    }
+    
     private final static void snakeConnect(final int xBelow, final int x, final int y) {
         if (x == xBelow) {
             snakeUpward(x, y);
