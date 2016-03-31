@@ -1291,23 +1291,44 @@ public class Level {
             snakeConnect(x, xNeck - 1, floor + 2);
             snakeTop(xNeck - 1, x + 1, floor + 3);
         }
-        //TODO JUNGLE LOOP here or in snakeRising
     }
     
     private final static void snakeRising(final int xMin, final int xMax, final int xTop, final int yTop) {
         snakeUpward(xTop, yTop);
-        final int yEnd = yTop - 1;
+        final int yEnd = yTop - 1, loopEnd = yEnd - 2;
+        final boolean wideEnoughForLoop = (xMax - xMin + 1) >= 3;
+        int loopPercentage = 40;
         int xBelow = Mathtil.randi(xMin, xMax);
         for (int y = 0; y < yTop; y++) {
             final int x;
-            if (y == yEnd) {
-                x = xTop;
-            } else if (Mathtil.rand()) {
-                x = xBelow;
+            if (wideEnoughForLoop && (y > 0) && (y <= loopEnd) && (xBelow > xMin) && Mathtil.rand(loopPercentage)) {
+                final boolean right;
+                if (xBelow == (xMin + 1)) {
+                    right = true;
+                } else if (xBelow == xMax) {
+                    right = false;
+                } else {
+                    right = Mathtil.rand();
+                }
+                if (right) {
+                    x = Mathtil.randi(xBelow + 1, xMax);
+                } else {
+                    x = Mathtil.randi(xMin + 1, xBelow - 1);
+                }
+                snakeLoop(xBelow, x, y);
+                y++;
+                loopPercentage = 30;
             } else {
-                x = Mathtil.randi(xMin, xMax);
+                if (y == yEnd) {
+                    x = xTop;
+                } else if (Mathtil.rand()) {
+                    x = xBelow;
+                } else {
+                    x = Mathtil.randi(xMin, xMax);
+                }
+                snakeConnect(xBelow, x, y);
+                loopPercentage = Math.min(100, loopPercentage + 10);
             }
-            snakeConnect(xBelow, x, y);
             xBelow = x;
         }
     }
