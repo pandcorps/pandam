@@ -171,13 +171,18 @@ public class Menu {
 				}
 			    ctrl = pc.ctrl;
 			}
+			final Panteraction interaction = engine.getInteraction();
 			final boolean tabs = tabsSupported && isTabEnabled();
 			if (tabs) {
 				engine.clearTouchButtons();
-				engine.getInteraction().unregisterAll();
+				interaction.unregisterAll();
 			} else {
 				initTouchButtons(room, ctrl);
 			}
+            register(interaction.KEY_F1, new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) {
+                    engine.captureScreen();
+                }});
 			form = new Panform(ctrl);
 			infLbl = addTitle(inf, center, getBottom());
 			infLbl.getPosition().addZ(2);
@@ -1017,10 +1022,12 @@ public class Menu {
 		}
 		
 		protected final void registerBack(final ActionEndListener listener) {
-			final Panteraction interaction = Pangine.getEngine().getInteraction();
-			final Panput back = interaction.BACK;
-			interaction.unregister(back);
-		    tm.register(back, listener);
+		    register(Pangine.getEngine().getInteraction().BACK, listener);
+		}
+		
+		protected final void register(final Panput input, final ActionEndListener listener) {
+		    Pangine.getEngine().getInteraction().unregister(input);
+		    tm.register(input, listener);
 		}
 		
 		protected final void registerBackExit() {
