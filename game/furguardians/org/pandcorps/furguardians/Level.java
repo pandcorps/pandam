@@ -303,12 +303,13 @@ public class Level {
                 if (Mathtil.rand()) {
                     breakableBlockRaw(x, y);
                 } else {
-                    Level.breakableBlock(x, y, imgMap[1][5]);
+                    vineBlock(x, y);
                 }
             }
             
             @Override protected final void addTemplates(final List<Template> templates) {
                 templates.add(new SnakeTemplate());
+                templates.add(new VineBlockTemplate());
             }
             
             @Override protected void addGoals(final List<GoalTemplate> goals) {
@@ -2373,6 +2374,17 @@ public class Level {
         }
     }
     
+    private final static class VineBlockTemplate extends BlockTemplate {
+        protected VineBlockTemplate() {
+            super(6);
+        }
+        
+        @Override
+        protected final void block(final int i, final int y) {
+            vineBlock(i, y);
+        }
+    }
+    
     private abstract static class BlockTemplate extends SimpleTemplate {
     	protected BlockTemplate(final int maxW) {
     		super(1, maxW, 0);
@@ -3135,6 +3147,10 @@ public class Level {
     
     private final static void breakableBlockRaw(final int x, final int y) {
         breakableBlock(x, y, breakableImg);
+    }
+    
+    private final static void vineBlock(final int x, final int y) {
+        breakableBlock(x, y, imgMap[1][5]);
     }
     
     private final static void breakableBlock(final int x, final int y, final TileMapImage img) {
