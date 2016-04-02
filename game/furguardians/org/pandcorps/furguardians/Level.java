@@ -2347,29 +2347,52 @@ public class Level {
     	}
     }
     
-    private final static class BlockBonusTemplate extends SimpleTemplate {
-    	protected BlockBonusTemplate() {
-    		this(8);
-    	}
-    	
-    	protected BlockBonusTemplate(final int maxW) {
+    private final static class BlockBonusTemplate extends BlockTemplate {
+        private boolean flag = false;
+        
+        protected BlockBonusTemplate() {
+            this(8);
+        }
+        
+        protected BlockBonusTemplate(final int maxW) {
+            super(maxW);
+        }
+        
+        @Override
+        protected final void init() {
+            flag = Mathtil.rand();
+        }
+        
+        @Override
+        protected final void block(final int i, final int y) {
+            if (flag) {
+                bumpableBlock(i, y);
+            } else {
+                breakableBlock(i, y);
+            }
+        }
+    }
+    
+    private abstract static class BlockTemplate extends SimpleTemplate {
+    	protected BlockTemplate(final int maxW) {
     		super(1, maxW, 0);
     	}
     	
         @Override
         protected final void build() {
+            init();
         	final int stop = x + w;
-        	final boolean flag = Mathtil.rand();
         	final int y = floor + 3 + floatOffset;
         	for (int i = x; i < stop; i++) {
-        		if (flag) {
-        			bumpableBlock(i, y);
-        		} else {
-        			breakableBlock(i, y);
-        		}
+        	    block(i, y);
         	}
         	enemy(x, y + 1, w);
         }
+        
+        protected void init() {
+        }
+        
+        protected abstract void block(final int i, final int y);
     }
     
     private final static class BlockLetterTemplate extends SimpleTemplate {
