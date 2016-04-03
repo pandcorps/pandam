@@ -472,6 +472,54 @@ public class Music {
         final Song song = new Song("Jungle");
         final Track track = song.track;
         //TODO JUNGLE
+        final int base = 8;
+        channel = Mustil.CHN_PERCUSSION;
+        deltaTick = base;
+        Mustil.unspecifiedNoteDuration = deltaTick;
+        final int lo = Mustil.PRC_LOW_CONGA, hi = Mustil.PRC_OPEN_HIGH_CONGA;
+        Mustil.addRepeatedPercussions(track, 0, deltaTick, 10, lo, lo, hi, lo, hi, hi, -1, -1);
+        channel = 0;
+        vol = 24; //56;
+        deltaTick = base * 8;
+        Mustil.unspecifiedNoteDuration = deltaTick;
+        final int n1 = 60, n2 = 62, n3 = 64;
+        Mustil.setInstrument(track, channel, Mustil.PRG_CELLO);
+        Mustil.addNotes(track, base * 16, channel, vol, deltaTick, n1, -1, n1, -1, n3, -1, n2, -1);
+        channel = 1;
+        vol = 24; //72;
+        deltaTick = base * 2;
+        Mustil.unspecifiedNoteDuration = deltaTick;
+        final int b = 72;
+        Mustil.setInstrument(track, channel, Mustil.PRG_BIRD_TWEET);
+        for (int i = 0; i < 2; i++) {
+            Mustil.addNotes(track, base * 48 + (base * 4 * i), channel, vol, deltaTick, -1, b, -1, b);
+        }
+        channel = 2;
+        vol = 68;
+        tick = base * 16;
+        final int h = base * 4, q = base * 2, e = base;
+        final int p1 = 72, p2 = p1 + 2, p3 = p1 + 4, p4 = p1 + 7;
+        Mustil.setInstrument(track, channel, Mustil.PRG_BRIGHT_ACOUSTIC_PIANO);
+        Mustil.addNote(track, tick, h, channel, p2, vol);
+        Mustil.addNote(track, tick + h, h, channel, p3, vol);
+        Mustil.addNote(track, tick + 2 * h, q, channel, p2, vol);
+        Mustil.addNote(track, tick + 2 * h + q, e, channel, p2, vol);
+        Mustil.addNote(track, tick + 2 * h + q + e, e, channel, p2, vol);
+        Mustil.addNote(track, tick + 3 * h, e, channel, p1, vol);
+        Mustil.addNote(track, tick + 3 * h + e, e, channel, p1, vol);
+        Mustil.addNote(track, tick + 4 * h, h, channel, p2, vol);
+        Mustil.addNote(track, tick + 5 * h, h, channel, p3, vol);
+        Mustil.addNote(track, tick + 6 * h, q, channel, p2, vol);
+        Mustil.addNote(track, tick + 6 * h + q, q, channel, p2, vol);
+        Mustil.addNote(track, tick + 7 * h, q, channel, p1, vol);
+        Mustil.addNote(track, tick + 8 * h, h, channel, p2, vol);
+        Mustil.addNote(track, tick + 9 * h, h, channel, p3, vol);
+        Mustil.addNote(track, tick + 10 * h, h, channel, p4, vol);
+        Mustil.addNote(track, tick + 11 * h, h, channel, p3, vol);
+        Mustil.addNote(track, tick + 12 * h, h, channel, p2, vol);
+        Mustil.addNote(track, tick + 13 * h, h, channel, p3, vol);
+        Mustil.addNote(track, tick + 14 * h, h, channel, p2, vol);
+        Mustil.addNote(track, tick + 15 * h, h, channel, p1, 1);
         return song;
 	}
 	
@@ -1026,8 +1074,8 @@ public class Music {
 	
 	private final static void runGen() throws Exception {
 		System.out.println("Starting");
-		final Song song = newSongBridge();
-		Mustil.save(song.seq, song.name.toLowerCase() + ".mid");
+		final Song song = newSongJungle();
+		//Mustil.save(song.seq, song.name.toLowerCase() + ".mid");
 		final Panaudio music = Pangine.getEngine().getAudio();
 		//music.ensureCapacity(4);
 		//music.playMusic(seq);
