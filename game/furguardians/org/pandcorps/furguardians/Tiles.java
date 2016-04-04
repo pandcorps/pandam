@@ -90,11 +90,13 @@ public class Tiles {
     	if (b == FurGuardiansGame.TILE_BREAK) {
     	    final Statistics stats = player.pc.profile.stats;
     	    final Panmage shatterImg;
+    	    final boolean shatterRot;
     	    if (DynamicTileMap.getRawForeground(t) != Level.breakableImg) {
     	        Level.tm.setForeground(index, Level.breakableImg);
     	        shatterImg = FurGuardiansGame.vineShatter;
     	        newGemBumped(player, index);
     	        stats.clearedVineBlocks++;
+    	        shatterRot = true;
     	    } else {
         		Level.tm.setForeground(index, null, Tile.BEHAVIOR_OPEN);
         		shatterImg = FurGuardiansGame.block8;
@@ -103,8 +105,9 @@ public class Tiles {
         		} // else { // Used to play soundCrumble in this else, but Players wanted to hear crumble even if Gem pops up with its own sound
         		stats.brokenBlocks++;
         		player.levelBrokenBlocks++;
+        		shatterRot = false;
     	    }
-    	    shatterTile(shatterImg, Level.tm.getPosition(index), false);
+    	    shatterTile(shatterImg, Level.tm.getPosition(index), shatterRot);
     	    FurGuardiansGame.soundCrumble.startSound();
             new Bump(chr, index).setVisible(false); // To bump Characters above
     	} else if (b == FurGuardiansGame.TILE_BUMP) {
