@@ -30,6 +30,8 @@ import org.pandcorps.pandam.*;
 public class Music {
 	private final static String COPYRIGHT = "Copyright (c) " + FurGuardiansGame.YEAR + ", " + FurGuardiansGame.AUTHOR;
 	
+	private final static int SILENT = 1;
+	
 	protected final static Sequence newSongCreepy() throws Exception {
 		// channel 0 - 15; key/vol 0 - 127
 		final int channel = 0, vol = 64;
@@ -396,7 +398,7 @@ public class Music {
         Mustil.addNote(track, 1008, 8, channel, 64, vol);
         Mustil.addNote(track, 1016, 8, channel, 64, vol);
         Mustil.addNote(track, 1024, dur, channel, 62, vol);
-        Mustil.addNote(track, (128 * n - 8), 8, channel, 48, 1);
+        Mustil.addNote(track, (128 * n - 8), 8, channel, 48, SILENT);
         return song;
     }
 	
@@ -519,7 +521,7 @@ public class Music {
         Mustil.addNote(track, tick + 12 * h, h, channel, p2, vol);
         Mustil.addNote(track, tick + 13 * h, h, channel, p3, vol);
         Mustil.addNote(track, tick + 14 * h, h, channel, p2, vol);
-        Mustil.addNote(track, tick + 15 * h, h, channel, p1, 1);
+        Mustil.addNote(track, tick + 15 * h, h, channel, p1, SILENT);
         return song;
 	}
 	
