@@ -832,7 +832,9 @@ public abstract class Pangine {
 	}
 
 	protected final void renderView(final Panctor actor) {
-		actor.renderView(renderer);
+	    if (actor.isVisible()) {
+	        actor.renderView(renderer);
+	    }
 	}
 
 	/*protected final void setActive(final Panction action, final boolean active) {
