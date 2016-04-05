@@ -473,32 +473,31 @@ public class Music {
 	protected final static Song newSongJungle() throws Exception {
         final Song song = new Song("Jungle");
         final Track track = song.track;
-        //TODO JUNGLE
         final int base = 8;
         channel = Mustil.CHN_PERCUSSION;
         deltaTick = base;
         Mustil.unspecifiedNoteDuration = deltaTick;
         final int lo = Mustil.PRC_LOW_CONGA, hi = Mustil.PRC_OPEN_HIGH_CONGA;
-        Mustil.addRepeatedPercussions(track, 0, deltaTick, 10, lo, lo, hi, lo, hi, hi, -1, -1);
+        Mustil.addRepeatedPercussions(track, 0, deltaTick, 16, lo, lo, hi, lo, hi, hi, -1, -1);
         channel = 0;
-        vol = 24; //56;
+        vol = 48;
         deltaTick = base * 8;
         Mustil.unspecifiedNoteDuration = deltaTick;
         final int n1 = 60, n2 = 62, n3 = 64;
-        Mustil.setInstrument(track, channel, Mustil.PRG_CELLO);
-        Mustil.addNotes(track, base * 16, channel, vol, deltaTick, n1, -1, n1, -1, n3, -1, n2, -1);
+        Mustil.setInstrument(track, channel, Mustil.PRG_SHAKUHACHI);
+        Mustil.addRepeatedNotes(track, 0, channel, vol, deltaTick, 2, n1, -1, n2, -1, n3, -1, n2, -1);
         channel = 1;
-        vol = 24; //72;
+        vol = 72;
         deltaTick = base * 2;
         Mustil.unspecifiedNoteDuration = deltaTick;
         final int b = 72;
         Mustil.setInstrument(track, channel, Mustil.PRG_BIRD_TWEET);
-        for (int i = 0; i < 2; i++) {
-            Mustil.addNotes(track, base * 48 + (base * 4 * i), channel, vol, deltaTick, -1, b, -1, b);
+        for (int i = 0; i < 4; i++) {
+            Mustil.addNotes(track, base * 24 + (base * 32 * i), channel, vol, deltaTick, -1, b, -1, b);
         }
         channel = 2;
         vol = 68;
-        tick = base * 16;
+        tick = base * 64;
         final int h = base * 4, q = base * 2, e = base;
         final int p1 = 72, p2 = p1 + 2, p3 = p1 + 4, p4 = p1 + 7;
         Mustil.setInstrument(track, channel, Mustil.PRG_BRIGHT_ACOUSTIC_PIANO);
