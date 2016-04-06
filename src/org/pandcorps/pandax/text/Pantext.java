@@ -220,9 +220,6 @@ public class Pantext extends Panctor {
 
 	@Override
 	protected void renderView(final Panderer renderer) {
-	    if (!isVisible()) {
-	        return;
-	    }
 		final Panple pos = getPosition();
 		float x = pos.getX();
 		if (rightJustified) {
