@@ -60,7 +60,7 @@ public class TileActor extends Panctor {
 
     @Override
     protected void renderView(final Panderer renderer) {
-        if (map != null && isVisible()) {
+        if (map != null) {
             final Panple pos = getPosition();
             map.render(renderer, map.getLayer(), view, pos.getX(), pos.getY(), pos.getZ());
         }
