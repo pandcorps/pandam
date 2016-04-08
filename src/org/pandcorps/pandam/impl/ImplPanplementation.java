@@ -99,9 +99,6 @@ public final class ImplPanplementation extends Panplementation {
 
 	@Override
 	protected final void renderView() {
-		if (!vis) {
-			return;
-		}
 		//image.render(actor.getLayer(), x, y, z, mirror ^ currMirror, flip ^ currFlip);
 		render(image, x, y, z, rot + currRot, mirror ^ currMirror, flip ^ currFlip, currOrigin);
 	}
