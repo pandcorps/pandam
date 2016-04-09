@@ -1811,7 +1811,7 @@ public class FurGuardiansGame extends BaseGame {
 	    	musicSand = audio.createMusic(RES + "music/sand.mid");
 	    	musicRock = audio.createMusic(RES + "music/rock.mid");
 	    	musicHive = audio.createMusic(RES + "music/hive.mid");
-	    	musicJungle = musicHappy; //TODO JUNGLE
+	    	musicJungle = audio.createMusic(RES + "music/jungle.mid");
 	    	musicBridge = audio.createMusic(RES + "music/bridge.mid");
 	    	musicCave = audio.createMusic(RES + "music/cave.mid");
 	    	musicNight = audio.createMusic(RES + "music/night.mid");
