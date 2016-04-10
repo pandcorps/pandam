@@ -654,7 +654,7 @@ public class Music {
 		channel = 0;
 		vol = 60;
 		Mustil.setInstrument(track, channel, Mustil.PRG_TUBA);
-		final int n = 36, n2 = 38, n4 = 40;
+		final int n = 48, n2 = n + 2, n4 = n + 4; // n = 36 for old mid
 		tick = 0;
 		dur = 8;
 		Mustil.unspecifiedNoteDuration = 8;
@@ -1074,8 +1074,8 @@ public class Music {
 	}
 	
 	private final static void runGen() throws Exception {
-		System.out.println("Starting");
 		final Song song = newSongJungle();
+		System.out.println("Starting " + song.name);
 		//Mustil.save(song.seq, song.name.toLowerCase() + ".mid");
 		final Panaudio music = Pangine.getEngine().getAudio();
 		//music.ensureCapacity(4);
