@@ -45,6 +45,19 @@ public final class Iotil {
 	private Iotil() {
 		throw new Error();
 	}
+	
+	private final static String getNewestValidInputLocation(final String location) {
+	    return location;
+	}
+	
+	private final static String getLeastImportantOutputLocation(final String location) {
+	    // If two valid files are found, return the older one; if newer file is invalid, return it
+        return location;
+    }
+	
+	private final static boolean isLocationValid(final String location) {
+	    return true;
+	}
 
 	public final static InputStream getInputStream(final String location) {
 		try {
