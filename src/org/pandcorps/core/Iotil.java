@@ -46,6 +46,15 @@ public final class Iotil {
 		throw new Error();
 	}
 	
+	private final static class RobustFile {
+	}
+	
+	private final static class RobustFileVersion {
+	    private String name;
+	    private long versionNumber;
+	    private boolean valid;
+    }
+	
 	private final static String getNewestValidInputLocation(final String location) {
 	    return location;
 	}
