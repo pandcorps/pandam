@@ -47,6 +47,8 @@ public final class Iotil {
 	}
 	
 	private final static class RobustFile {
+	    private RobustFileVersion readVersion;
+	    private RobustFileVersion writeVersion;
 	}
 	
 	private final static class RobustFileVersion {
@@ -56,6 +58,7 @@ public final class Iotil {
     }
 	
 	private final static String getNewestValidInputLocation(final String location) {
+	    // Check both versions; if nothing found, try unversioned raw name
 	    return location;
 	}
 	
