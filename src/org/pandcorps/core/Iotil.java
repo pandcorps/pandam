@@ -49,12 +49,38 @@ public final class Iotil {
 	private final static class RobustFile {
 	    private RobustFileVersion readVersion;
 	    private RobustFileVersion writeVersion;
+	    
+	    private RobustFile(final String location) {
+            final RobustFileVersion v1 = new RobustFileVersion(location, 1);
+            final RobustFileVersion v2 = new RobustFileVersion(location, 2);
+            if (!(v1.valid || v2.valid)) {
+                readVersion = new RobustFileVersion(location, -1);
+                writeVersion = v1;
+            } else if (v1.isMoreImportantThan(v2)) {
+                readVersion = v1;
+                writeVersion = v2;
+            } else {
+                readVersion = v2;
+                writeVersion = v1;
+            }
+        }
 	}
 	
 	private final static class RobustFileVersion {
-	    private String name;
+	    private String location;
 	    private long versionNumber;
 	    private boolean valid;
+	    
+	    private RobustFileVersion(final String location, final int label) {
+	        this.location = location + "." + label + ".panver";
+	    }
+	    
+	    private boolean isMoreImportantThan(final RobustFileVersion v) {
+	        if (valid == v.valid) {
+	            return versionNumber > v.versionNumber;
+	        }
+	        return valid;
+	    }
     }
 	
 	private final static String getNewestValidInputLocation(final String location) {
