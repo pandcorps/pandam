@@ -81,6 +81,18 @@ public final class Iotil {
 	        }
 	        return valid;
 	    }
+	    
+	    private String getCommitLocation() {
+	        return this.location + ".commit";
+	    }
+	    
+	    private void commit() {
+	        //create getCommitLocation()
+	    }
+	    
+	    private void prepareWrite() {
+	        //delete getCommitLocation()
+	    }
     }
 	
 	private final static String getNewestValidInputLocation(final String location) {
