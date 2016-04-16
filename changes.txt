@@ -2,6 +2,7 @@
 
 Added jungle vine blocks.
 Added new music track for jungle levels.
+Improved tuba volume in the music track for minecart levels.
 Added Trailblazer Achievement.
 Added snake loop patterns to jungle levels.
 
