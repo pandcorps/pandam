@@ -480,14 +480,14 @@ public class Music {
         final int lo = Mustil.PRC_LOW_CONGA, hi = Mustil.PRC_OPEN_HIGH_CONGA;
         Mustil.addRepeatedPercussions(track, 0, deltaTick, 16, lo, lo, hi, lo, hi, hi, -1, -1);
         channel = 0;
-        vol = 48;
+        vol = 40; // 48 for old mid
         deltaTick = base * 8;
         Mustil.unspecifiedNoteDuration = deltaTick;
-        final int n1 = 60, n2 = 62, n3 = 64;
+        final int n1 = 84, n2 = n1 + 2, n3 = n1 + 4; // n1 = 60 for old mid
         Mustil.setInstrument(track, channel, Mustil.PRG_SHAKUHACHI);
         Mustil.addRepeatedNotes(track, 0, channel, vol, deltaTick, 2, n1, -1, n2, -1, n3, -1, n2, -1);
         channel = 1;
-        vol = 72;
+        vol = 64; // 72 for old mid
         deltaTick = base * 2;
         Mustil.unspecifiedNoteDuration = deltaTick;
         final int b = 72;
@@ -1074,7 +1074,7 @@ public class Music {
 	}
 	
 	private final static void runGen() throws Exception {
-		final Song song = newSongJungle();
+		final Song song = newSongMinecart();
 		System.out.println("Starting " + song.name);
 		//Mustil.save(song.seq, song.name.toLowerCase() + ".mid");
 		final Panaudio music = Pangine.getEngine().getAudio();
