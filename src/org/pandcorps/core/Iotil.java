@@ -56,12 +56,15 @@ public final class Iotil {
             if (!(v1.valid || v2.valid)) {
                 readVersion = new RobustFileVersion(location, -1);
                 writeVersion = v1;
+                writeVersion.nextVersionNumber = readVersion.nextVersionNumber + 1;
             } else if (v1.isMoreImportantThan(v2)) {
                 readVersion = v1;
                 writeVersion = v2;
+                writeVersion.nextVersionNumber = readVersion.nextVersionNumber + 1;
             } else {
                 readVersion = v2;
                 writeVersion = v1;
+                writeVersion.nextVersionNumber = System.currentTimeMillis();
             }
         }
 	}
@@ -70,9 +73,19 @@ public final class Iotil {
 	    private String location;
 	    private long versionNumber;
 	    private boolean valid;
+	    private long nextVersionNumber;
 	    
 	    private RobustFileVersion(final String location, final int label) {
 	        this.location = location + "." + label + ".panver";
+	        try {
+	            final String commit = read(getCommitLocation());
+	            if (commit.endsWith(".c")) {
+	                versionNumber = Long.parseLong(commit.substring(0, commit.length() - 2));
+	                valid = true;
+	            }
+	        } catch (final Exception e) {
+	            valid = false;
+	        }
 	    }
 	    
 	    private boolean isMoreImportantThan(final RobustFileVersion v) {
@@ -87,11 +100,11 @@ public final class Iotil {
 	    }
 	    
 	    private void commit() {
-	        //create getCommitLocation()
+	        writeFile(getCommitLocation(), nextVersionNumber + ".c");
 	    }
 	    
 	    private void prepareWrite() {
-	        //delete getCommitLocation()
+	        delete(getCommitLocation());
 	    }
     }
 	
