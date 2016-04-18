@@ -56,7 +56,7 @@ public final class Iotil {
             if (!(v1.valid || v2.valid)) {
                 readVersion = new RobustFileVersion(location, -1);
                 writeVersion = v1;
-                writeVersion.nextVersionNumber = readVersion.nextVersionNumber + 1;
+                writeVersion.nextVersionNumber = System.currentTimeMillis();
             } else if (v1.isMoreImportantThan(v2)) {
                 readVersion = v1;
                 writeVersion = v2;
@@ -64,19 +64,27 @@ public final class Iotil {
             } else {
                 readVersion = v2;
                 writeVersion = v1;
-                writeVersion.nextVersionNumber = System.currentTimeMillis();
+                writeVersion.nextVersionNumber = readVersion.nextVersionNumber + 1;
             }
         }
 	}
 	
 	private final static class RobustFileVersion {
-	    private String location;
-	    private long versionNumber;
-	    private boolean valid;
-	    private long nextVersionNumber;
+	    private final String location;
+	    private final long versionNumber;
+	    private final boolean valid;
+	    private long nextVersionNumber = -1;
 	    
 	    private RobustFileVersion(final String location, final int label) {
+	        if (label == -1) {
+	            this.location = location;
+	            versionNumber = -1;
+	            valid = false;
+	            return;
+	        }
 	        this.location = location + "." + label + ".panver";
+	        long versionNumber = -1;
+	        boolean valid = false;
 	        try {
 	            final String commit = read(getCommitLocation());
 	            if (commit.endsWith(".c")) {
@@ -84,8 +92,10 @@ public final class Iotil {
 	                valid = true;
 	            }
 	        } catch (final Exception e) {
-	            valid = false;
+	            // Just keep valid as false
 	        }
+	        this.versionNumber = versionNumber;
+	        this.valid = valid;
 	    }
 	    
 	    private boolean isMoreImportantThan(final RobustFileVersion v) {
@@ -96,7 +106,7 @@ public final class Iotil {
 	    }
 	    
 	    private String getCommitLocation() {
-	        return this.location + ".commit";
+	        return location + ".commit";
 	    }
 	    
 	    private void commit() {
