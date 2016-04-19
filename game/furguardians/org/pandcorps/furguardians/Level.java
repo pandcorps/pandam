@@ -74,10 +74,12 @@ public class Level {
     private final static int DEF_GROUND_TOP = 1;
     private final static int DEF_GROUND_LEFT = 0;
     private final static int DEF_GROUND_RIGHT = 2;
+    private final static int DEF_GROUND_MID_HEIGHT = 2;
     
     private static int groundTop = DEF_GROUND_TOP;
     private static int groundLeft = DEF_GROUND_LEFT;
     private static int groundRight = DEF_GROUND_RIGHT;
+    private static int groundMidHeight = DEF_GROUND_MID_HEIGHT;
     
     protected final static PixelFilter terrainDarkener = new BrightnessPixelFilter((short) -40, (short) -24, (short) -32);
     
@@ -720,6 +722,7 @@ public class Level {
         groundTop = DEF_GROUND_TOP;
         groundLeft = DEF_GROUND_LEFT;
         groundRight = DEF_GROUND_RIGHT;
+        groundMidHeight = DEF_GROUND_MID_HEIGHT;
         adj1 = adj2 = null;
         timg = getTileImage();
         imgMap = tm.splitImageMap(timg);
@@ -3205,10 +3208,10 @@ public class Level {
         final int stop = x + w + 1, ystop = y + h + 1;
         for (int j = y + 1; j < ystop; j++) {
         	if (mode != 2) {
-        		tm.setForeground(x, j, imgMap[2][0], Tile.BEHAVIOR_SOLID);
+        		tm.setForeground(x, j, imgMap[groundMidHeight][groundLeft], Tile.BEHAVIOR_SOLID);
         	}
         	if (mode != 0) {
-        		tm.setForeground(stop, j, imgMap[2][2], Tile.BEHAVIOR_SOLID);
+        		tm.setForeground(stop, j, imgMap[groundMidHeight][groundRight], Tile.BEHAVIOR_SOLID);
         	}
         	if (mode == 1) {
 	            for (int i = x + 1; i < stop; i++) {
