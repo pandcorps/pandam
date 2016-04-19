@@ -1488,6 +1488,15 @@ public class Level {
     	}
     }
     
+    private static class BlockBuilder extends GrassyBuilder {
+        @Override
+        protected final void loadTemplates() {
+            groundLeft = 1;
+            groundRight = 1;
+            groundMidHeight = 1;
+        }
+    }
+    
     private static class FlatBuilder extends GrassyBuilder {
     	@Override
 	    protected final void loadTemplates() {
