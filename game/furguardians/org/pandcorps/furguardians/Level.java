@@ -71,6 +71,14 @@ public class Level {
     private final static int LAST_DEFEATED_LEVEL_COUNT_TO_FORCE_BACKGROUND = 1;
     private final static int LAST_DEFEATED_LEVEL_COUNT_TO_FORCE_ENEMY = 2;
     
+    private final static int DEF_GROUND_TOP = 1;
+    private final static int DEF_GROUND_LEFT = 0;
+    private final static int DEF_GROUND_RIGHT = 2;
+    
+    private static int groundTop = DEF_GROUND_TOP;
+    private static int groundLeft = DEF_GROUND_LEFT;
+    private static int groundRight = DEF_GROUND_RIGHT;
+    
     protected final static PixelFilter terrainDarkener = new BrightnessPixelFilter((short) -40, (short) -24, (short) -32);
     
     private final static Set<Class<? extends Template>> oneUseTemplates = new HashSet<Class<? extends Template>>();
@@ -709,6 +717,9 @@ public class Level {
         tm = new TileMap("act.tilemap", room, ImtilX.DIM, ImtilX.DIM);
         room.addActor(tm);
         
+        groundTop = DEF_GROUND_TOP;
+        groundLeft = DEF_GROUND_LEFT;
+        groundRight = DEF_GROUND_RIGHT;
         adj1 = adj2 = null;
         timg = getTileImage();
         imgMap = tm.splitImageMap(timg);
@@ -1233,7 +1244,7 @@ public class Level {
     
     private static void ground(final int px, final int stop) {
     	for (int i = px; i <= stop; i++) {
-            tm.setForeground(i, floor, imgMap[1][1], Tile.BEHAVIOR_SOLID);
+            tm.setForeground(i, floor, imgMap[groundTop][1], Tile.BEHAVIOR_SOLID);
             for (int j = 0; j < floor; j++) {
             	tm.setForeground(i, j, getDirtImage(), Tile.BEHAVIOR_SOLID);
             }
@@ -2494,7 +2505,7 @@ public class Level {
     		for (int i = x + 1; i < stop; i++) {
     			if (sunken) {
     				tm.removeTile(i, floor);
-    				tm.setForeground(i, y - 1, imgMap[1][1], Tile.BEHAVIOR_SOLID);
+    				tm.setForeground(i, y - 1, imgMap[groundTop][1], Tile.BEHAVIOR_SOLID);
     			}
     			tm.setForeground(i, y, imgMap[1][5], behavior);
     		}
@@ -3206,16 +3217,16 @@ public class Level {
         	}
         }
         if (mode != 2) {
-        	tm.setForeground(x, ystop, imgMap[1][0], Tile.BEHAVIOR_SOLID);
+        	tm.setForeground(x, ystop, imgMap[groundTop][groundLeft], Tile.BEHAVIOR_SOLID);
         }
         if (mode == 1) {
 	        for (int i = x + 1; i < stop; i++) {
-	            tm.setForeground(i, ystop, imgMap[1][1], Tile.BEHAVIOR_SOLID);
+	            tm.setForeground(i, ystop, imgMap[groundTop][1], Tile.BEHAVIOR_SOLID);
 	            tm.setForeground(i, y, getDirtImage(), Tile.BEHAVIOR_SOLID);
 	        }
         }
         if (mode != 0) {
-	        tm.setForeground(stop, ystop, imgMap[1][2], Tile.BEHAVIOR_SOLID);
+	        tm.setForeground(stop, ystop, imgMap[groundTop][groundRight], Tile.BEHAVIOR_SOLID);
 	        tm.setForeground(stop, y, imgMap[3][2], Tile.BEHAVIOR_SOLID);
         }
     }
@@ -3230,7 +3241,7 @@ public class Level {
             }
             if (jo == ystop) {
                 for (int i = x + jb + 1; i <= stop; i++) {
-                    tm.setForeground(i, jo, imgMap[1][1], Tile.BEHAVIOR_SOLID);
+                    tm.setForeground(i, jo, imgMap[groundTop][1], Tile.BEHAVIOR_SOLID);
                 }
             } else {
                 tm.setForeground(x + jb + 1, jo, imgMap[3][0], Tile.BEHAVIOR_SOLID);
@@ -3285,7 +3296,7 @@ public class Level {
         }
         final int stop = x + w;
         for (int i = x + 1; i <= stop; i++) {
-            tm.setBackground(i, ystop, imgMap[1][1], FurGuardiansGame.TILE_FLOOR);
+            tm.setBackground(i, ystop, imgMap[groundTop][1], FurGuardiansGame.TILE_FLOOR);
             for (int j = y; j < ystop; j++) {
                 tm.setBackground(i, j, getDirtImage());
             }
