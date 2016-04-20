@@ -3338,11 +3338,11 @@ public class Level {
         final int ystop = y + h - 1, xstop = x + w + 1;
         for (int j = y; j <= ystop; j++) {
         	final int iy = (floorMode == FLOOR_BRIDGE && j < ystop) ? 5 : 4;
-            setFgShadowed(x, j, iy, 0, Tile.BEHAVIOR_SOLID);
+            setFgShadowed(x, j, iy, groundLeft, Tile.BEHAVIOR_SOLID);
             for (int i = x + 1; i < xstop; i++) {
                 setFgShadowed(i, j, iy, 1, Tile.BEHAVIOR_SOLID);
             }
-            setFgShadowed(xstop, j, iy, 2, Tile.BEHAVIOR_SOLID);
+            setFgShadowed(xstop, j, iy, groundRight, Tile.BEHAVIOR_SOLID);
         }
     }
     
