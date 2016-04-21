@@ -75,11 +75,15 @@ public class Level {
     private final static int DEF_GROUND_LEFT = 0;
     private final static int DEF_GROUND_RIGHT = 2;
     private final static int DEF_GROUND_MID_HEIGHT = 2;
+    private final static int DEF_BUSH_LEFT = 5;
+    private final static int DEF_BUSH_RIGHT = 7;
     
     private static int groundTop = DEF_GROUND_TOP;
     private static int groundLeft = DEF_GROUND_LEFT;
     private static int groundRight = DEF_GROUND_RIGHT;
     private static int groundMidHeight = DEF_GROUND_MID_HEIGHT;
+    private static int bushLeft = DEF_BUSH_LEFT;
+    private static int bushRight = DEF_BUSH_RIGHT;
     
     protected final static PixelFilter terrainDarkener = new BrightnessPixelFilter((short) -40, (short) -24, (short) -32);
     
@@ -723,6 +727,8 @@ public class Level {
         groundLeft = DEF_GROUND_LEFT;
         groundRight = DEF_GROUND_RIGHT;
         groundMidHeight = DEF_GROUND_MID_HEIGHT;
+        bushLeft = DEF_BUSH_LEFT;
+        bushRight = DEF_BUSH_RIGHT;
         adj1 = adj2 = null;
         timg = getTileImage();
         imgMap = tm.splitImageMap(timg);
@@ -3478,12 +3484,12 @@ public class Level {
     }
     
     private final static void bush(final int x, final int y, final int w) {
-        tm.setForeground(x, y, imgMap[1][5]);
+        tm.setForeground(x, y, imgMap[1][bushLeft]);
         final int stop = x + w;
         for (int i = x + 1; i <= stop; i++) {
             tm.setForeground(i, y, imgMap[1][6]);
         }
-        tm.setForeground(stop + 1, y, imgMap[1][7]);
+        tm.setForeground(stop + 1, y, imgMap[1][bushRight]);
     }
     
     private final static void tree(final int x, final int y) {
