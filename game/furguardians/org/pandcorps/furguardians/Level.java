@@ -1500,6 +1500,8 @@ public class Level {
             groundLeft = 1;
             groundRight = 1;
             groundMidHeight = 1;
+            bushLeft = 6;
+            bushRight = 6;
         }
     }
     
