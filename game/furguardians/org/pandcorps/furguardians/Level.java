@@ -920,6 +920,19 @@ public class Level {
         	return new AnyPitTemplate();
         }
         
+        protected final void addPitTemplates() {
+            addTemplate(getPitTemplate());
+        }
+        
+        protected final void addGroundTemplates() {
+            addTemplate(new StepTemplate());
+            addTemplate(new RampTemplate());
+        }
+        
+        protected final void addFloorBlockTemplates() {
+            addTemplate(new UpBlockStepTemplate(), new DownBlockStepTemplate(), new BlockWallTemplate(), new BlockGroupTemplate());
+        }
+        
         protected final void addFloatTemplates() {
             addTemplate(new BlockBonusTemplate());
             addTemplate(new GemTemplate());
@@ -1466,10 +1479,9 @@ public class Level {
 	        addTemplate(new NaturalRiseTemplate());
 	        addTemplate(new ColorRiseTemplate());
 	        addTemplate(new WallTemplate());
-	        addTemplate(new StepTemplate());
-	        addTemplate(new RampTemplate());
-	        addTemplate(new AnyPitTemplate());
-	        addTemplate(new UpBlockStepTemplate(), new DownBlockStepTemplate(), new BlockWallTemplate(), new BlockGroupTemplate());
+	        addGroundTemplates();
+	        addPitTemplates();
+	        addFloorBlockTemplates();
 	        addFloatTemplates();
 	        addTemplate(new SlantTemplate(true), new SlantTemplate(false));
 	        addGiantTemplate();
@@ -1497,6 +1509,10 @@ public class Level {
     private static class BlockBuilder extends GrassyBuilder {
         @Override
         protected final void loadTemplates() {
+            addGroundTemplates();
+            addPitTemplates();
+            addFloorBlockTemplates();
+            addFloatTemplates();
             groundLeft = 1;
             groundRight = 1;
             groundMidHeight = 1;
@@ -1511,8 +1527,8 @@ public class Level {
     		//TODO Multi-level block patterns
 	        addTemplate(new WallTemplate());
 	        addNatureTemplate();
-	        addTemplate(new AnyPitTemplate());
-	        addTemplate(new UpBlockStepTemplate(), new DownBlockStepTemplate(), new BlockWallTemplate(), new BlockGroupTemplate());
+	        addPitTemplates();
+	        addFloorBlockTemplates();
 	        addTemplate(new BlockBonusTemplate());
 	        addTemplate(new GemTemplate());
 	        addTemplate(new GemMsgTemplate());
@@ -1620,7 +1636,7 @@ public class Level {
 	        addTemplate(new PitTemplate());
 	        addTemplate(new BridgePitTemplate());
 	        addTemplate(new BlockPitTemplate());
-	        addTemplate(new UpBlockStepTemplate(), new DownBlockStepTemplate(), new BlockWallTemplate(), new BlockGroupTemplate());
+	        addFloorBlockTemplates();
 	        addTemplate(new BlockBonusTemplate());
 	        addTemplate(new GemTemplate());
 	        addTemplate(new GemMsgTemplate());
@@ -1701,7 +1717,7 @@ public class Level {
     private static class HexBuilder extends RandomBuilder {
         @Override
         protected final void loadTemplates() {
-            addTemplate(getPitTemplate());
+            addPitTemplates();
             addFloatTemplates();
             addGiantTemplate();
             addTemplate(new BeeTemplate(), new MovingBeeTemplate());
@@ -1812,7 +1828,7 @@ public class Level {
     	@Override
 	    protected final void loadTemplates() {
     		floorMode = getFloorMode();
-	        addTemplate(getPitTemplate());
+	        addPitTemplates();
 	        addTemplate(new GemTemplate());
 	        addTemplate(new GemMsgTemplate());
 	        goals.add(new FlatGoal());
