@@ -924,6 +924,11 @@ public class Level {
             addTemplate(getPitTemplate());
         }
         
+        protected final void addConstructedTemplates() {
+            addTemplate(new ColorRiseTemplate());
+            addTemplate(new WallTemplate());
+        }
+        
         protected final void addGroundTemplates() {
             addTemplate(new StepTemplate());
             addTemplate(new RampTemplate());
@@ -1477,8 +1482,7 @@ public class Level {
     	@Override
 	    protected void loadTemplates() {
 	        addTemplate(new NaturalRiseTemplate());
-	        addTemplate(new ColorRiseTemplate());
-	        addTemplate(new WallTemplate());
+	        addConstructedTemplates();
 	        addGroundTemplates();
 	        addPitTemplates();
 	        addFloorBlockTemplates();
@@ -1509,6 +1513,7 @@ public class Level {
     private static class BlockBuilder extends GrassyBuilder {
         @Override
         protected final void loadTemplates() {
+            addConstructedTemplates();
             addGroundTemplates();
             addPitTemplates();
             addFloorBlockTemplates();
