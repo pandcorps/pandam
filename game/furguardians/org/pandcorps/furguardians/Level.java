@@ -75,6 +75,7 @@ public class Level {
     private final static int DEF_GROUND_LEFT = 0;
     private final static int DEF_GROUND_RIGHT = 2;
     private final static int DEF_GROUND_MID_HEIGHT = 2;
+    private final static int DEF_GROUND_STEP_HEIGHT = 3;
     private final static int DEF_BUSH_LEFT = 5;
     private final static int DEF_BUSH_RIGHT = 7;
     private final static int DEF_DIRT_EXTRA = 3;
@@ -83,6 +84,7 @@ public class Level {
     private static int groundLeft = DEF_GROUND_LEFT;
     private static int groundRight = DEF_GROUND_RIGHT;
     private static int groundMidHeight = DEF_GROUND_MID_HEIGHT;
+    private static int groundStepHeight = DEF_GROUND_STEP_HEIGHT;
     private static int bushLeft = DEF_BUSH_LEFT;
     private static int bushRight = DEF_BUSH_RIGHT;
     private static int dirtExtra = DEF_DIRT_EXTRA;
@@ -746,6 +748,7 @@ public class Level {
         groundLeft = DEF_GROUND_LEFT;
         groundRight = DEF_GROUND_RIGHT;
         groundMidHeight = DEF_GROUND_MID_HEIGHT;
+        groundStepHeight = DEF_GROUND_STEP_HEIGHT;
         bushLeft = DEF_BUSH_LEFT;
         bushRight = DEF_BUSH_RIGHT;
         dirtExtra = DEF_DIRT_EXTRA;
@@ -1550,6 +1553,7 @@ public class Level {
             groundLeft = 1;
             groundRight = 1;
             groundMidHeight = 1;
+            groundStepHeight = 1;
             bushLeft = 6;
             bushRight = 6;
             dirtExtra = 1;
@@ -3278,7 +3282,7 @@ public class Level {
     private final static void step(final int x, final int y, final int w, final int h, final int mode) {
         // Will also want 1-way steps going up and 1-way down; same with ramps
     	if (mode != 2) {
-    		tm.setForeground(x, y, imgMap[3][0], Tile.BEHAVIOR_SOLID);
+    		tm.setForeground(x, y, imgMap[groundStepHeight][groundLeft], Tile.BEHAVIOR_SOLID);
     	}
         final int stop = x + w + 1, ystop = y + h + 1;
         for (int j = y + 1; j < ystop; j++) {
@@ -3305,7 +3309,7 @@ public class Level {
         }
         if (mode != 0) {
 	        tm.setForeground(stop, ystop, imgMap[groundTop][groundRight], Tile.BEHAVIOR_SOLID);
-	        tm.setForeground(stop, y, imgMap[3][2], Tile.BEHAVIOR_SOLID);
+	        tm.setForeground(stop, y, imgMap[groundStepHeight][groundRight], Tile.BEHAVIOR_SOLID);
         }
     }
     
