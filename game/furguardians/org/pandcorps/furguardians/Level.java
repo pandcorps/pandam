@@ -77,6 +77,7 @@ public class Level {
     private final static int DEF_GROUND_MID_HEIGHT = 2;
     private final static int DEF_BUSH_LEFT = 5;
     private final static int DEF_BUSH_RIGHT = 7;
+    private final static int DEF_DIRT_EXTRA = 3;
     
     private static int groundTop = DEF_GROUND_TOP;
     private static int groundLeft = DEF_GROUND_LEFT;
@@ -84,6 +85,7 @@ public class Level {
     private static int groundMidHeight = DEF_GROUND_MID_HEIGHT;
     private static int bushLeft = DEF_BUSH_LEFT;
     private static int bushRight = DEF_BUSH_RIGHT;
+    private static int dirtExtra = DEF_DIRT_EXTRA;
     
     protected final static PixelFilter terrainDarkener = new BrightnessPixelFilter((short) -40, (short) -24, (short) -32);
     
@@ -181,7 +183,10 @@ public class Level {
     		
     		@Override protected final Builder getRandomBuilder() {
     			if (backgroundBuilder instanceof HillBackgroundBuilder) {
-    				if (getDefeatedLevels() <= getLastDefeatedLevelCountToForceNormal()) {
+    			    final int defeatedLevels = getDefeatedLevels();
+    			    if (defeatedLevels == 0) {
+    			        return new BlockBuilder();
+    			    } else if (defeatedLevels <= getLastDefeatedLevelCountToForceNormal()) {
     					return getBasicBuilder();
     				}
     				final int r = Mathtil.randi(0, 249);
@@ -743,6 +748,7 @@ public class Level {
         groundMidHeight = DEF_GROUND_MID_HEIGHT;
         bushLeft = DEF_BUSH_LEFT;
         bushRight = DEF_BUSH_RIGHT;
+        dirtExtra = DEF_DIRT_EXTRA;
         adj1 = adj2 = null;
         timg = (builder == null) ? getTileImage() : builder.getTileImage();
         imgMap = tm.splitImageMap(timg);
@@ -1544,6 +1550,7 @@ public class Level {
             groundMidHeight = 1;
             bushLeft = 6;
             bushRight = 6;
+            dirtExtra = 1;
         }
         
         @Override
@@ -3446,7 +3453,7 @@ public class Level {
     }
     
     private final static TileMapImage getDirtImage() {
-        return imgMap[Mathtil.rand(90) ? 2 : 3][1];
+        return imgMap[Mathtil.rand(90) ? 2 : dirtExtra][1];
     }
     
     private final static void pit(final int x, final int y, final int w) {
