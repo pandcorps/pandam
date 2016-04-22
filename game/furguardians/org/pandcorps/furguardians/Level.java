@@ -184,7 +184,13 @@ public class Level {
     				if (getDefeatedLevels() <= getLastDefeatedLevelCountToForceNormal()) {
     					return getBasicBuilder();
     				}
-    				return Mathtil.rand() ? new GrassyBuilder() : new PlatformBuilder();
+    				final int r = Mathtil.randi(0, 249);
+    				if (r < 100) {
+    				    return new GrassyBuilder();
+    				} else if (r < 175) {
+    				    return new PlatformBuilder();
+    				}
+    				return new BlockBuilder();
     			} else if (backgroundBuilder instanceof TownBackgroundBuilder) {
     				return new FlatBuilder();
     			} else {
@@ -698,9 +704,13 @@ public class Level {
     }
     
     protected final static Img loadTileImage(final Theme theme) {
+        return loadTileImage((theme == Theme.Normal) ? null : theme.getImg());
+    }
+    
+    private final static Img loadTileImage(final String themeName) {
     	final Img tileImg = ImtilX.loadImage("org/pandcorps/furguardians/res/bg/Tiles.png", 128, null);
-    	if (theme != Theme.Normal) {
-    		final Img ext = ImtilX.loadImage("org/pandcorps/furguardians/res/bg/Tiles" + theme.getImg() + ".png", false);
+    	if (themeName != null) {
+    		final Img ext = ImtilX.loadImage("org/pandcorps/furguardians/res/bg/Tiles" + themeName + ".png", false);
     		Imtil.copy(ext, tileImg, 0, 0, 128, 112, 0, 16);
     		ext.close();
     	}
@@ -712,6 +722,10 @@ public class Level {
     	if (isNormalTheme() && theme != Theme.Bridge && theme != Theme.Minecart) {
     		applyDirtTexture(tileImg, 0, 16, 80, 128);
     	}
+    	return getTileImage(tileImg);
+    }
+    
+    private final static Panmage getTileImage(final Img tileImg) {
         return Pangine.getEngine().createImage("img.tiles", tileImg);
     }
     
@@ -730,7 +744,7 @@ public class Level {
         bushLeft = DEF_BUSH_LEFT;
         bushRight = DEF_BUSH_RIGHT;
         adj1 = adj2 = null;
-        timg = getTileImage();
+        timg = (builder == null) ? getTileImage() : builder.getTileImage();
         imgMap = tm.splitImageMap(timg);
         final TileMapImage[] row = imgMap[0];
         flashBlock = new TileMapImage[] {row[0], row[1], row[2], row[3]};
@@ -828,6 +842,10 @@ public class Level {
     	protected int getGroundWidthOffset() {
             return 0;
         }
+    	
+    	protected Panmage getTileImage() {
+    	    return Level.getTileImage();
+    	}
     }
     
     protected final static class DemoBuilder extends Builder {
@@ -1510,7 +1528,7 @@ public class Level {
     	}
     }
     
-    private static class BlockBuilder extends GrassyBuilder {
+    private final static class BlockBuilder extends GrassyBuilder {
         @Override
         protected final void loadTemplates() {
             addConstructedTemplates();
@@ -1518,11 +1536,21 @@ public class Level {
             addPitTemplates();
             addFloorBlockTemplates();
             addFloatTemplates();
+            addGiantTemplate();
+            goals.add(new UpBlockGoal());
+            goals.add(new ColorRiseGoal());
             groundLeft = 1;
             groundRight = 1;
             groundMidHeight = 1;
             bushLeft = 6;
             bushRight = 6;
+        }
+        
+        @Override
+        protected final Panmage getTileImage() {
+            final Img tileImg = loadTileImage("Block");
+            applyDirtTexture(tileImg, 0, 16, 48, 64);
+            return Level.getTileImage(tileImg);
         }
     }
     
@@ -3478,9 +3506,9 @@ public class Level {
                     break;
                 }
     	    } else if (floorMode == FLOOR_GRASSY) {
-	    		final int iy = (j == y) ? 1 : 2;
-		    	tm.setForeground(x, j, imgMap[iy][2], SOLID);
-		    	tm.setForeground(stop, j, imgMap[iy][0], SOLID);
+	    		final int iy = (j == y) ? 1 : groundMidHeight;
+		    	tm.setForeground(x, j, imgMap[iy][groundRight], SOLID);
+		    	tm.setForeground(stop, j, imgMap[iy][groundLeft], SOLID);
     		} else if (floorMode == FLOOR_BLOCK) {
     		    if (j == y) {
         			solidBlock(x, j);
