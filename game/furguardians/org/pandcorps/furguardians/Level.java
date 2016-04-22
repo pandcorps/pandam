@@ -218,6 +218,10 @@ public class Level {
     			return Mathtil.rand() ? new HillBackgroundBuilder() : new MountainBackgroundBuilder();
     		}
     		
+    		@Override protected final Builder getRandomBuilder() {
+                return getNormalBuilder();
+            }
+    		
     		@Override protected final TileMapImage[] getExtraAnimBlock() {
     			final TileMapImage[] row = imgMap[1];
     	        return new TileMapImage[] {row[5], row[6], row[7]};
@@ -552,6 +556,10 @@ public class Level {
             return new GrassyBuilder();
         }
     	
+    	protected Builder getNormalBuilder() {
+    	    return (Mathtil.randi(0, 2999) < 2000) ? getBasicBuilder() : new BlockBuilder();
+    	}
+    	
     	protected Builder getRandomBuilder() {
     	    return getBasicBuilder();
     	}
@@ -711,7 +719,7 @@ public class Level {
     }
     
     protected final static Img loadTileImage(final Theme theme) {
-        return loadTileImage((theme == Theme.Normal) ? null : theme.getImg());
+        return loadTileImage(theme.getImg());
     }
     
     private final static Img loadTileImage(final String themeName) {
@@ -1561,7 +1569,7 @@ public class Level {
         
         @Override
         protected final Panmage getTileImage() {
-            final Img tileImg = loadTileImage("Block");
+            final Img tileImg = loadTileImage(((theme == Theme.Normal) ? "" : theme.getImg()) + "Block");
             applyDirtTexture(tileImg, 0, 16, 48, 64);
             return Level.getTileImage(tileImg);
         }
@@ -2573,8 +2581,14 @@ public class Level {
     		if (sunken) {
     			y = floor - 1;
     			for (int i = 0; i <= 2; i++) {
-	    			tm.setForeground(x, floor - i, imgMap[1 + i][2], Tile.BEHAVIOR_SOLID);
-	    			tm.setForeground(stop, floor - i, imgMap[1 + i][0], Tile.BEHAVIOR_SOLID);
+    			    int iy = 1 + i;
+    			    if (iy == DEF_GROUND_MID_HEIGHT) {
+    			        iy = groundMidHeight;
+    			    } else if (iy == DEF_GROUND_STEP_HEIGHT) {
+    			        iy = groundStepHeight;
+    			    }
+	    			tm.setForeground(x, floor - i, imgMap[iy][groundRight], Tile.BEHAVIOR_SOLID);
+	    			tm.setForeground(stop, floor - i, imgMap[iy][groundLeft], Tile.BEHAVIOR_SOLID);
     			}
     		} else {
 	    		for (int i = 1; i <= 2; i++) {
