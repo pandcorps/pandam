@@ -1543,8 +1543,10 @@ public class Level {
             addFloorBlockTemplates();
             addFloatTemplates();
             addGiantTemplate();
+            theme.addTemplates(templates);
             goals.add(new UpBlockGoal());
             goals.add(new ColorRiseGoal());
+            theme.addGoals(goals);
             groundLeft = 1;
             groundRight = 1;
             groundMidHeight = 1;
