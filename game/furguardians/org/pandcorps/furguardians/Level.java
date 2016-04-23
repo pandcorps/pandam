@@ -254,6 +254,10 @@ public class Level {
     			return new HillBackgroundBuilder();
     		}
     		
+    		@Override protected final Builder getRandomBuilder() {
+                return getNormalBuilder();
+            }
+    		
     		@Override protected final TileMapImage[] getExtraAnimBlock() {
     			final TileMapImage[] row = imgMap[1];
     	        return new TileMapImage[] {row[5], row[6], row[7]};
@@ -286,6 +290,10 @@ public class Level {
     			return new HillBackgroundBuilder();
     		}
     		
+    		@Override protected final Builder getRandomBuilder() {
+                return getNormalBuilder();
+            }
+    		
     		@Override protected Pansound getMusic() {
                 return FurGuardiansGame.musicRock;
             }
@@ -307,8 +315,21 @@ public class Level {
                 return new HexBuilder();
             }
             
+            @Override protected final Builder getRandomBuilder() {
+                return getNormalBuilder();
+            }
+            
             @Override protected Pansound getMusic() {
                 return FurGuardiansGame.musicHive;
+            }
+            
+            @Override protected final void addTemplates(final List<Template> templates) {
+                templates.add(new ChoiceTemplate(new BeeTemplate(), new MovingBeeTemplate()));
+                templates.add(new SpikeBlockTemplate());
+            }
+            
+            @Override protected void addGoals(final List<GoalTemplate> goals) {
+                goals.add(new BeeGoal());
             }
         };
         public final static Theme Jungle = new Theme("Jungle", null, MSG) {
@@ -1774,11 +1795,10 @@ public class Level {
             addPitTemplates();
             addFloatTemplates();
             addGiantTemplate();
-            addTemplate(new BeeTemplate(), new MovingBeeTemplate());
             addTemplate(new HexSpikeTemplate());
-            addTemplate(new SpikeBlockTemplate());
-            goals.add(new BeeGoal());
+            theme.addTemplates(templates);
             goals.add(new PlatformGoal());
+            theme.addGoals(goals);
         }
         
         @Override
