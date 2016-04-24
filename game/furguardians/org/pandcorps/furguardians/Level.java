@@ -341,6 +341,10 @@ public class Level {
                 return new JungleBackgroundBuilder();
             }
             
+            @Override protected final Builder getRandomBuilder() {
+                return getNormalBuilder();
+            }
+            
             @Override protected TileMapImage[] getExtraAnimBlock() {
                 adj1 = new AdjustedTileMapImage(imgMap[6][0], 0, true, false);
                 adj2 = new AdjustedTileMapImage(imgMap[5][0], 0, true, false);
