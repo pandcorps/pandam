@@ -429,7 +429,15 @@ public final class GlPanmage extends Panmage {
 	            irw = iw;
 	            irh = ih;
 	            break;
-	        case 1 :
+	        case 3 :
+	            /*
+	            This used to be case 1.
+	            1 should be a 90-degree clockwise rotation.
+	            The right/downward corner should be drawn at the left/downward corner for rot 1.
+	            That's what this was supposed to do.
+	            Something was backward, though, so this was just changed from case 1 to 3.
+	            The default case is now 1.
+	            */
 	            /*trleft = tbdown;
                 trright = tbup;
                 trdown = tbright;
