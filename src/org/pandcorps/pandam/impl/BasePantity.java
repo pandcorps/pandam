@@ -67,6 +67,18 @@ public abstract class BasePantity implements Pantity {
 	    }
 	}
 	
+	public final static boolean contains(final Panimation animation, final Panmage image) {
+	    if (animation == null) {
+	        return false;
+	    }
+	    for (final Panframe frame : animation.getFrames()) {
+	        if (frame.getImage() == image) {
+	            return true;
+	        }
+	    }
+	    return false;
+	}
+	
 	@Override
 	public String toString() {
 		return Pantil.getSimpleName(getClass()) + "(" + id + ")";
