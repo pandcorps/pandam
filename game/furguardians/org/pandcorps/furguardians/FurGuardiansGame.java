@@ -1294,7 +1294,7 @@ public class FurGuardiansGame extends BaseGame {
 			final Panmage pimg1 = createImage("projectile1", RES + "enemy/Projectile1.png", 8, CENTER_8, new FinPanple2(-3, -3), new FinPanple2(2, 2));
 		    final Panframe[] pfrms = new Panframe[4];
 		    for (int i = 0; i < 4; i++) {
-		        pfrms[i] = engine.createFrame(PRE_FRM + "projectile1." + i, pimg1, 4, i, false, false);
+		        pfrms[i] = engine.createFrame(PRE_FRM + "projectile1." + i, pimg1, 4, (4 - i) % 4, false, false);
 		    }
 		    projectile1 = engine.createAnimation(PRE_ANM + "projectile1", pfrms);
 			final EnemyDefinition drolock = new EnemyDefinition("Drolock", 4, null, false, 0, 0);
