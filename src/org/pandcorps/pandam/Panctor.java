@@ -251,10 +251,18 @@ public class Panctor extends BasePantity implements SpecPanctor {
 		impl.setVisible(vis);
 	}
 	
+	// rot = number of counter-clockwise 90-degree rotations, see setRot
 	public final int getRot() {
 	    return impl.getRot();
 	}
 	
+	/*
+	rot = number of counter-clockwise 90-degree rotations.
+	1 = 90, 2 = 180, 3 = 270.
+	Clockwise rotations might be more intuitive in some cases.
+	But geometry usually goes counter-clockwise.
+	(1, 0) = 0, (0, 1) = 90, (-1, 0) = 180, (0, -1) = 270
+	*/
 	public final void setRot(final int rot) {
 	    impl.setRot(rot);
 	}

@@ -200,10 +200,12 @@ public abstract class Pangine {
 	    return createFrame(id, image, dur, 0, false, false);
 	}
 	
+	// rot = number of counter-clockwise 90-degree rotations, see Panctor.setRot
 	public Panframe createFrame(final String id, final Panmage image, final int dur, final int rot, final boolean mirror, final boolean flip) throws Panception {
 	    return createFrame(id, image, dur, rot, mirror, flip, null, null, null);
 	}
 	
+	// rot = number of counter-clockwise 90-degree rotations, see Panctor.setRot
 	public Panframe createFrame(final String id, final Panmage image, final int dur, final int rot, final boolean mirror, final boolean flip,
 	                            final Panple origin, final Panple boundMin, final Panple boundMax) throws Panception {
 		final Panframe frame = newFrame(id, image, dur, rot, mirror, flip, origin, boundMin, boundMax);

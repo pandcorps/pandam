@@ -28,6 +28,7 @@ public interface Panframe extends Pantity{
 
 	public int getDuration();
 	
+	// rot = number of counter-clockwise 90-degree rotations, see Panctor.setRot
 	public int getRot();
 	
 	public boolean isMirror();
