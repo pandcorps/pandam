@@ -171,6 +171,16 @@ public final class Coltil {
 		return col == null ? false : col.contains(o);
 	}
 	
+	public final static boolean contains(final Object[] a, final Object o) {
+	    final int size = size(a);
+	    for (int i = 0; i < size; i++) {
+	        if (Pantil.equals(a[i], o)) {
+	            return true;
+	        }
+	    }
+        return false;
+    }
+	
 	public final static <E> E get(final List<E> list, final int i) {
 	    return size(list) <= i ? null : list.get(i);
 	}
