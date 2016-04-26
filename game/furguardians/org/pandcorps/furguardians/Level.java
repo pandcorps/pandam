@@ -121,6 +121,7 @@ public class Level {
     private static Pancolor topSkyColor = null;
     private static Pancolor bottomSkyColor = null;
     protected static Tile tileGem = null;
+    protected static Tile tileBlueGem = null;
     protected static Tile tileTrackTop = null;
     protected static Tile tileTrackBase = null;
     protected static int numEnemies = 0;
@@ -845,6 +846,7 @@ public class Level {
     	topSkyColor = null;
 	    bottomSkyColor = null;
 	    tileGem = null;
+	    tileBlueGem = null;
 	    tileTrackTop = null;
 	    tileTrackBase = null;
     	backgroundBuilder = theme.getRandomBackground();
@@ -3656,12 +3658,21 @@ public class Level {
         }
     }
     
-    private final static void gem(final int x, final int y) {
+    private final static Tile gem(final int x, final int y, Tile tileGem, final Panmage[] gem) {
         if (tileGem == null) {
-        	tileGem = tm.getTile(null, FurGuardiansGame.gem[0], FurGuardiansGame.TILE_GEM);
+        	tileGem = tm.getTile(null, gem[0], FurGuardiansGame.TILE_GEM);
         }
         tm.setTile(x, y, tileGem);
         numGems++;
+        return tileGem;
+    }
+    
+    private final static void gem(final int x, final int y) {
+        tileGem = gem(x, y, tileGem, FurGuardiansGame.gem);
+    }
+    
+    private final static void gemBlue(final int x, final int y) {
+        tileBlueGem = gem(x, y, tileBlueGem, FurGuardiansGame.gemBlue);
     }
     
     private final static void bonus(final int x, final int y) {
