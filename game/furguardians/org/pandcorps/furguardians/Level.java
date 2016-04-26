@@ -447,6 +447,10 @@ public class Level {
             @Override protected Pansound getMusic() {
                 return FurGuardiansGame.musicMinecart;
             }
+            
+            @Override protected void gem(final int x, final int y) {
+                gemBlue(x, y);
+            }
         };
         private final static int[] getLimitedEnemies(final int worlds, final int levels, final int special) {
         	if (worlds < 3) {
@@ -517,6 +521,10 @@ public class Level {
             
             @Override protected final void breakableBlock(final int x, final int y) {
                 Map.theme.levelTheme.breakableBlock(x, y);
+            }
+            
+            @Override protected final void gem(final int x, final int y) {
+                Map.theme.levelTheme.gem(x, y);
             }
             
             @Override protected final void addTemplates(final List<Template> templates) {
@@ -623,6 +631,10 @@ public class Level {
     	protected void breakableBlock(final int x, final int y) {
             breakableBlockRaw(x, y);
         }
+    	
+    	protected void gem(final int x, final int y) {
+    	    gemPurple(x, y);
+    	}
     	
     	protected void addTemplates(final List<Template> templates) {
         }
@@ -3668,6 +3680,14 @@ public class Level {
     }
     
     private final static void gem(final int x, final int y) {
+        if (theme == null) {
+            gemPurple(x, y);
+        } else {
+            theme.gem(x, y);
+        }
+    }
+    
+    private final static void gemPurple(final int x, final int y) {
         tileGem = gem(x, y, tileGem, FurGuardiansGame.gem);
     }
     
