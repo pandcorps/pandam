@@ -292,6 +292,7 @@ public class FurGuardiansGame extends BaseGame {
 	protected static Panmage blockIce8 = null;
 	protected static Panmage vineShatter = null;
 	protected static Panmage[] gem = null;
+	protected static Panmage[] gemBlue = null;
 	protected static Panimation gemAnm = null;
 	protected static Panimation gemBlueAnm = null;
 	protected static Panimation gemCyanAnm = null;
@@ -540,9 +541,16 @@ public class FurGuardiansGame extends BaseGame {
             	}
                 Tile.animate(Level.flashBlock);
                 Level.theme.flash(i);
-                final Tile tileGem = Level.tileGem;
-                if (i < 3 && tileGem != null) {
-                	tileGem.setForeground(gem[(((int) i) + 1) % 3]);
+                if (i < 3) {
+                    final int gemIndex = (((int) i) + 1) % 3;
+                    final Tile tileGem = Level.tileGem;
+                    if (tileGem != null) {
+                        tileGem.setForeground(gem[gemIndex]);
+                    }
+                    final Tile tileBlueGem = Level.tileBlueGem;
+                    if (tileBlueGem != null) {
+                        tileBlueGem.setForeground(gemBlue[gemIndex]);
+                    }
         		}
             }
             Player.step();
@@ -1633,7 +1641,8 @@ public class FurGuardiansGame extends BaseGame {
 		    gemAnm = createGemAnm("gem", gem);
 		    gemShatter = createImage("gem.shatter", RES + "misc/GemShatter.png", 8);
 		    gemCyanAnm = createGemAnm("cyan", gemStrip, gemCyanFilter);
-		    gemBlueAnm = createGemAnm("blue", gemStrip, gemBlueFilter);
+		    gemBlue = createGemSheet("blue", gemStrip, gemBlueFilter);
+		    gemBlueAnm = createGemAnm("gem.blue", gemBlue);
 		    gemGreenAnm = createGemAnm("green", gemStrip, gemGreenFilter);
 		    gemWhite = engine.createImage(PRE_IMG + "gem.white", Imtil.filter(gem1, gemWhiteFilter));
 		    Img.close(gemStrip);
@@ -1879,6 +1888,15 @@ public class FurGuardiansGame extends BaseGame {
 	
 	private final static Panimation createGemAnm(final String col, final Img[] strip, final PixelFilter gemFilter) {
         return createGemAnm("gem." + col, createGemSheet(col, strip, gemFilter));
+	}
+	
+	protected final static Panimation getGemAnm(final Panmage img) {
+	    if (Panmage.contains(gemAnm, img)) {
+	        return gemAnm;
+	    } else if (Panmage.contains(gemBlueAnm, img)) {
+            return gemBlueAnm;
+        }
+	    return null;
 	}
 	
 	private final static void loadLevel() {
