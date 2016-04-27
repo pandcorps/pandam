@@ -74,26 +74,30 @@ public class Gem extends TileOccupant implements StepListener {
 	}*/
 	
 	protected final static void onCollide(final TileMap tm, final int index, final Player player) {
-		collect(player, getAward(getGemAnm(tm, index)));
+	    getGemInfo(tm, index).collect(player);
 		spark(tm, index);
 	}
 	
-	private final static int getAward(Panimation anm) {
+	private final static int getAward(final Panimation anm) {
 	    if (anm == FurGuardiansGame.gemBlueAnm) {
 	        return GemBumped.AWARD_2;
 	    }
 	    return GemBumped.AWARD_DEF;
 	}
 	
-	private final static Panimation getGemAnm(final TileMap tm, final int index) {
+	private final static GemInfo getGemInfo(final TileMap tm, final int index) {
 	    final Tile tile = tm.getTile(index);
 	    if (tile != null) {
 	        final Object fg = DynamicTileMap.getRawForeground(tile);
 	        if (fg instanceof Panmage) {
-	            return FurGuardiansGame.getGemAnm((Panmage) fg);
+	            return new GemInfo(FurGuardiansGame.getGemAnm((Panmage) fg));
+	        }
+	        final int letterIndex = Tiles.getLetterIndex(FurGuardiansGame.gemLetters, tile);
+	        if (letterIndex >= 0) {
+	            return new GemInfo(letterIndex);
 	        }
 	    }
-	    return null;
+	    return new GemInfo(FurGuardiansGame.gemAnm);
 	}
 	
 	protected final static void collect(final Player player, final int gems) {
@@ -128,17 +132,13 @@ public class Gem extends TileOccupant implements StepListener {
 		private final Player dst;
 		private final Panple viewPos = new ImplPanple();
 		private final Panple vel = new ImplPanple();
-		private final int award;
+		private final GemInfo info;
 		
 		protected GemAttracted(final int index, final Player dst) {
-		    Panimation anm = getGemAnm(Level.tm, index);
-		    if (anm == null) {
-		        anm = FurGuardiansGame.gemAnm;
-		    }
-		    award = getAward(anm);
+		    info = getGemInfo(Level.tm, index);
 			speed = dst.getVelWalk() + 2;
 			this.dst = dst;
-			setView(anm.getFrames()[0].getImage());
+			setView(info.img);
 			Level.tm.savePosition(getPosition(), index);
 			FurGuardiansGame.setDepth(this, FurGuardiansGame.DEPTH_SHATTER);
 			Level.tm.setTile(index, null);
@@ -154,7 +154,7 @@ public class Gem extends TileOccupant implements StepListener {
 			final float mag = (float) vel.getMagnitude2();
 			if (mag <= (speed + 0.5)) {
 				spark(viewPos, false);
-				collect(dst, award);
+				info.collect(dst);
 				playSound();
 				destroy();
 				return;
@@ -163,5 +163,33 @@ public class Gem extends TileOccupant implements StepListener {
 			vel.setZ(0);
 			rawPos.add(vel);
 		}
+	}
+	
+	private final static class GemInfo {
+	    private final Panmage img;
+	    private final int award;
+	    private final int letterIndex;
+	    
+	    private GemInfo(final Panmage img, final int award, final int letterIndex) {
+	        this.img = img;
+	        this.award = award;
+	        this.letterIndex = letterIndex;
+	    }
+	    
+	    private GemInfo(final Panimation anm) {
+	        this(anm.getFrames()[0].getImage(), getAward(anm), -1);
+	    }
+	    
+	    private GemInfo(final int letterIndex) {
+	        this(FurGuardiansGame.getGemWordLetter(letterIndex), -1, letterIndex);
+	    }
+	    
+	    private final void collect(final Player player) {
+	        if (award > 0) {
+	            Gem.collect(player, award);
+	        } else {
+	            Tiles.collectLetter(letterIndex);
+	        }
+	    }
 	}
 }
