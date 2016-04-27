@@ -2172,6 +2172,10 @@ public class FurGuardiansGame extends BaseGame {
 		return letters[(c < 'A' || c > 'Z') ? 26 : (c - 'A')];
 	}
 	
+	protected final static Panmage getImageWordLetter(final Panmage[] letters, final int i) {
+        return getImageLetter(letters, blockWord.charAt(i));
+    }
+	
 	protected final static int getLetterIndex(final Panmage[] letters, final Panmage img) {
 		final int size = letters.length;
 		for (int i = 0; i < size; i++) {
