@@ -159,13 +159,13 @@ public class Tiles {
     	}
     }
     
-    private final static boolean bumpLetter(final Player player, final int index, final Tile t) {
+    protected final static int getLetterIndex(final Panmage[] letters, final Tile t) {
     	Panmage letter = null;
 	    final int size = FurGuardiansGame.blockWord.length();
 	    final Object fg = DynamicTileMap.getRawForeground(t);
 	    int i = 0;
 	    for (; i < size; i++) {
-	    	letter = FurGuardiansGame.getBlockWordLetter(i);
+	    	letter = FurGuardiansGame.getImageWordLetter(letters, i);
 	        if (fg == letter) {
 	        	boolean keep = true;
 	        	for (final Panctor h : Coltil.unnull(Level.collectedLetters)) {
@@ -179,15 +179,24 @@ public class Tiles {
 	        	}
 	        }
 	    }
-	    if (i >= size) {
-	    	return false;
-	    }
+	    return (i >= size) ? -1 : i;
+    }
+    
+    private final static boolean bumpLetter(final Player player, final int index, final Tile t) {
+        final int i = getLetterIndex(FurGuardiansGame.blockLetters, t);
+        if (i < 0) {
+            return false;
+        }
 	    newGemDecoration(player, index, FurGuardiansGame.getGemWordLetter(i));
 	    //final TileActor h = new TileActor();
 	    //h.setViewFromForeground(Level.tm, t);
-	    Level.collectedLetters = Coltil.add(Level.collectedLetters, addLetter(i, letter));
-	    Panctor.destroy(Coltil.get(Level.uncollectedLetters, i));
+	    collectLetter(i);
 	    return true;
+    }
+    
+    protected final static void collectLetter(final int i) {
+	    Level.collectedLetters = Coltil.add(Level.collectedLetters, addLetter(i, FurGuardiansGame.getBlockWordLetter(i)));
+	    Panctor.destroy(Coltil.get(Level.uncollectedLetters, i));
     }
     
     protected final static GemBumped newGemDecoration(final Player player, final int index, final Panmage img) {
