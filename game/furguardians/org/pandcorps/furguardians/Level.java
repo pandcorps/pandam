@@ -1807,6 +1807,14 @@ public class Level {
             if (floor > 0) {
             	fill(i, imgCol);
             }
+            if ((i == 5) && isStartBlockNeeded()) {
+                solidBlock(i, floor + 1);
+            }
+        }
+        
+        //@OverrideMe
+        protected boolean isStartBlockNeeded() {
+            return false;
         }
         
         //@OverrideMe
@@ -1956,6 +1964,11 @@ public class Level {
         @Override
         public final int getFloatOffset() {
             return 1;
+        }
+        
+        @Override
+        protected final boolean isStartBlockNeeded() {
+            return true;
         }
         
         @Override
