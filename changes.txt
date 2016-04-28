@@ -1,7 +1,7 @@
 1.23.0 (34)
 
 Blocky levels.
-Blue gems in minecart levels.
+Blue gems and letter gems in minecart levels.
 Fixed a bug that cased projectiles to rotate backwards.
 
 *****

@@ -451,6 +451,10 @@ public class Level {
             @Override protected void gem(final int x, final int y) {
                 gemBlue(x, y);
             }
+            
+            @Override protected void letterBlock(final int x, final int y, final int currLetter) {
+                letterGem(x, y, currLetter);
+            }
         };
         private final static int[] getLimitedEnemies(final int worlds, final int levels, final int special) {
         	if (worlds < 3) {
@@ -525,6 +529,10 @@ public class Level {
             
             @Override protected final void gem(final int x, final int y) {
                 Map.theme.levelTheme.gem(x, y);
+            }
+            
+            @Override protected void letterBlock(final int x, final int y, final int currLetter) {
+                Map.theme.levelTheme.letterBlock(x, y, currLetter);
             }
             
             @Override protected final void addTemplates(final List<Template> templates) {
@@ -635,6 +643,10 @@ public class Level {
     	protected void gem(final int x, final int y) {
     	    gemPurple(x, y);
     	}
+    	
+    	protected void letterBlock(final int x, final int y, final int currLetter) {
+            Level.letterBlock(x, y, currLetter);
+        }
     	
     	protected void addTemplates(final List<Template> templates) {
         }
@@ -3303,7 +3315,20 @@ public class Level {
     }
     
     private final static void letterBlock(final int x, final int y) {
-        tm.setForeground(x, y, FurGuardiansGame.getBlockWordLetter(currLetter++), FurGuardiansGame.TILE_BUMP);
+        if (theme == null) {
+            letterBlock(x, y, currLetter);
+        } else {
+            theme.letterBlock(x, y, currLetter);
+        }
+        currLetter++;
+    }
+    
+    private final static void letterBlock(final int x, final int y, final int currLetter) {
+        tm.setForeground(x, y, FurGuardiansGame.getBlockWordLetter(currLetter), FurGuardiansGame.TILE_BUMP);
+    }
+    
+    private final static void letterGem(final int x, final int y, final int currLetter) {
+        tm.setForeground(x, y, FurGuardiansGame.getGemWordLetter(currLetter), FurGuardiansGame.TILE_GEM);
     }
     
     private final static void upBlock(final int x, final int y) {

@@ -90,7 +90,10 @@ public class Gem extends TileOccupant implements StepListener {
 	    if (tile != null) {
 	        final Object fg = DynamicTileMap.getRawForeground(tile);
 	        if (fg instanceof Panmage) {
-	            return new GemInfo(FurGuardiansGame.getGemAnm((Panmage) fg));
+	            final Panimation anm = FurGuardiansGame.getGemAnm((Panmage) fg);
+	            if (anm != null) {
+	                return new GemInfo(anm);
+	            }
 	        }
 	        final int letterIndex = Tiles.getLetterIndex(FurGuardiansGame.gemLetters, tile);
 	        if (letterIndex >= 0) {
