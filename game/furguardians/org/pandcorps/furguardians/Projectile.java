@@ -28,12 +28,20 @@ import org.pandcorps.pandam.event.boundary.*;
 import org.pandcorps.pandax.*;
 
 public final class Projectile extends Pandy implements Collidable, AllOobListener {
+    private int delay = 0;
+    
     public Projectile(final Panimation anm, final Panctor src, final Panctor dst) {
         setView(anm);
         final Panple spos = src.getPosition();
         final float x = spos.getX() + (5 * (src.isMirror() ? -1 : 1)), y = spos.getY() + 6;
         FurGuardiansGame.setPosition(this, x, y, FurGuardiansGame.DEPTH_SPARK);
         setVelocity(this, dst, getVelocity(), 2f);
+    }
+    
+    public Projectile(final Panmage img, final int delay, final float acc) {
+        setView(img);
+        this.delay = delay;
+        getAcceleration().setY(acc);
     }
     
     protected final static void setVelocity(final Panctor prj, final Panctor dst, final Panple vel, final float mag) {
@@ -45,6 +53,10 @@ public final class Projectile extends Pandy implements Collidable, AllOobListene
     
     @Override
     public final void onStep(final StepEvent event) {
+        if (delay > 0) {
+            delay--;
+            return;
+        }
     	super.onStep(event);
     	Enemy.destroyIfOffScreen(this, 40);
     }
