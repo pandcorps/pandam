@@ -29,19 +29,27 @@ import org.pandcorps.pandax.*;
 
 public final class Projectile extends Pandy implements Collidable, AllOobListener {
     private int delay = 0;
+    private final Pansound startSound;
     
     public Projectile(final Panimation anm, final Panctor src, final Panctor dst) {
         setView(anm);
         final Panple spos = src.getPosition();
         final float x = spos.getX() + (5 * (src.isMirror() ? -1 : 1)), y = spos.getY() + 6;
-        FurGuardiansGame.setPosition(this, x, y, FurGuardiansGame.DEPTH_SPARK);
+        setPosition(x, y);
         setVelocity(this, dst, getVelocity(), 2f);
+        startSound = null;
     }
     
-    public Projectile(final Panmage img, final int delay, final float acc) {
+    public Projectile(final Panmage img, final float x, final float y, final int delay, final Pansound startSound, final float acc) {
         setView(img);
         this.delay = delay;
+        this.startSound = startSound;
+        setPosition(x, y);
         getAcceleration().setY(acc);
+    }
+    
+    protected final void setPosition(final float x, final float y) {
+        FurGuardiansGame.setPosition(this, x, y, FurGuardiansGame.DEPTH_SPARK);
     }
     
     protected final static void setVelocity(final Panctor prj, final Panctor dst, final Panple vel, final float mag) {
@@ -55,6 +63,9 @@ public final class Projectile extends Pandy implements Collidable, AllOobListene
     public final void onStep(final StepEvent event) {
         if (delay > 0) {
             delay--;
+            if (delay == 0 && startSound != null) {
+                startSound.startSound();
+            }
             return;
         }
     	super.onStep(event);

@@ -423,6 +423,43 @@ public class Level {
                 return FurGuardiansGame.musicCave;
             }
             
+            @Override protected void step(final long clock) {
+                if (tm == null) {
+                    return;
+                }
+                float max = 0;
+                for (final PlayerContext pc : Coltil.unnull(FurGuardiansGame.pcs)) {
+                    if (pc == null) {
+                        continue;
+                    }
+                    final Player player = pc.player;
+                    if (player == null) {
+                        continue;
+                    }
+                    max = Math.max(max, player.getPosition().getX());
+                }
+                final int i = tm.getContainerColumn(max + 64);
+                if (tm.isBadColumn(i)) {
+                    return;
+                }
+                for (int j = tm.getHeight() - 1; j >= 0; j--) {
+                    final int index = tm.getIndex(i, j);
+                    final Tile tile = tm.getTile(index);
+                    if (tile == null) {
+                        break;
+                    } else if ((DynamicTileMap.getRawBackground(tile) == null) && (DynamicTileMap.getRawForeground(tile) == null)) {
+                        break;
+                    }
+                    final byte behavior = tile.getBehavior();
+                    if (behavior == FurGuardiansGame.TILE_HURT) {
+                        final int x = i * tm.getTileWidth(), y = j * tm.getTileHeight();
+                        FurGuardiansGame.room.addActor(new Projectile(FurGuardiansGame.fallingSpike, x, y, 30, FurGuardiansGame.soundCrumble, Character.gFlying));
+                        tm.setTile(index, null);
+                        break;
+                    }
+                }
+            }
+            
             @Override protected final String getImg() {
                 return (Map.theme == Map.MapTheme.Hive) ? Theme.Hive.img : img;
             }
@@ -1807,7 +1844,7 @@ public class Level {
             if (floor > 0) {
             	fill(i, imgCol);
             }
-            if ((i == 5) && isStartBlockNeeded()) {
+            if ((i == 5) && (Coltil.size(FurGuardiansGame.pcs) <= 1) && isStartBlockNeeded()) {
                 solidBlock(i, floor + 1);
             }
         }

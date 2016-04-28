@@ -2,6 +2,7 @@
 
 Blocky levels.
 Blue gems and letter gems in minecart levels.
+Falling spikes in cave levels.
 Fixed a bug that cased projectiles to rotate backwards.
 
 *****
