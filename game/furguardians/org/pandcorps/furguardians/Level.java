@@ -131,6 +131,7 @@ public class Level {
     protected static int currLetter = 0;
     protected static List<Panctor> collectedLetters = null;
     protected static List<Panctor> uncollectedLetters = null;
+    private static int farthestColumn = 0;
     protected static boolean victory = false;
     
     static {
@@ -438,7 +439,15 @@ public class Level {
                     }
                     max = Math.max(max, player.getPosition().getX());
                 }
-                final int i = tm.getContainerColumn(max + 64);
+                final int col = tm.getContainerColumn(max);
+                if (col <= farthestColumn) {
+                    return;
+                }
+                farthestColumn = col;
+                if (Mathtil.rand(75)) {
+                    return;
+                }
+                final int i = col + 4;
                 if (tm.isBadColumn(i)) {
                     return;
                 }
@@ -895,6 +904,7 @@ public class Level {
         powerProbability = DEFAULT_POWER_PROBABILITY;
         currLetter = 0;
         Coltil.clear(collectedLetters);
+        farthestColumn = 0;
     }
     
     protected final static void loadLevel() {
