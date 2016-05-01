@@ -147,6 +147,8 @@ public class FurGuardiansGame extends BaseGame {
 	
 	protected final static int TIME_FLASH = 60;
 	
+	protected final static int ORIG_X_SPIKE = 7;
+	
 	private final static FinPanple2 ORIG_MAP = new FinPanple2(8, -6);
 	private final static FinPanple2 ORIG_MAP_DRAGON_EAST_WEST = new FinPanple2(15, -6);
 	private final static int DUR_MAP = 6;
@@ -291,6 +293,7 @@ public class FurGuardiansGame extends BaseGame {
 	protected static Panmage blockLetter8 = null;
 	protected static Panmage blockIce8 = null;
 	protected static Panmage vineShatter = null;
+	protected static Panmage shakingSpike = null;
 	protected static Panmage fallingSpike = null;
 	protected static Panmage[] gem = null;
 	protected static Panmage[] gemBlue = null;
@@ -1629,7 +1632,9 @@ public class FurGuardiansGame extends BaseGame {
 			blockLetter8 = createImage("block.letter8", RES + "misc/BlockLetter8.png", 8);
 			blockIce8 = createImage("block.ice8", RES + "misc/BlockIce8.png", 8);
 			vineShatter = createImage("vine.shatter", RES + "misc/VineShatter.png", 8);
-			fallingSpike = createImage("falling.spike", RES + "misc/FallingSpike.png", 16); }});
+			final FinPanple2 origSpike = new FinPanple2(ORIG_X_SPIKE, 0);
+			shakingSpike = engine.createImage(PRE_IMG + "shaking.spike", origSpike, null, null, RES + "misc/ShakingSpike.png");
+			fallingSpike = engine.createImage(PRE_IMG + "falling.spike", origSpike, null, null, RES + "misc/FallingSpike.png"); }});
 	    
 		loaders.add(new Runnable() { @Override public final void run() {
 		    final PixelFilter gemCyanFilter = new SwapPixelFilter(Channel.Green, Channel.Red, Channel.Blue);
