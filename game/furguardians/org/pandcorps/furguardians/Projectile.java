@@ -28,7 +28,9 @@ import org.pandcorps.pandam.event.boundary.*;
 import org.pandcorps.pandax.*;
 
 public final class Projectile extends Pandy implements Collidable, AllOobListener {
+    private final Panmage startImg;
     private int delay = 0;
+    private final Pansound shakeSound;
     private final Pansound startSound;
     
     public Projectile(final Panimation anm, final Panctor src, final Panctor dst) {
@@ -37,12 +39,17 @@ public final class Projectile extends Pandy implements Collidable, AllOobListene
         final float x = spos.getX() + (5 * (src.isMirror() ? -1 : 1)), y = spos.getY() + 6;
         setPosition(x, y);
         setVelocity(this, dst, getVelocity(), 2f);
+        startImg = null;
+        shakeSound = null;
         startSound = null;
     }
     
-    public Projectile(final Panmage img, final float x, final float y, final int delay, final Pansound startSound, final float acc) {
-        setView(img);
+    public Projectile(final Panmage shakeImg, final Panmage startImg, final float x, final float y, final int delay, final Pansound shakeSound, final Pansound startSound, final float acc) {
+        setView(shakeImg);
+        Pansound.startSound(shakeSound);
+        this.startImg = startImg;
         this.delay = delay;
+        this.shakeSound = shakeSound;
         this.startSound = startSound;
         setPosition(x, y);
         getAcceleration().setY(acc);
@@ -63,8 +70,15 @@ public final class Projectile extends Pandy implements Collidable, AllOobListene
     public final void onStep(final StepEvent event) {
         if (delay > 0) {
             delay--;
-            if (delay == 0 && startSound != null) {
-                startSound.startSound();
+            if (delay == 0) {
+                setMirror(false);
+                if (startImg != null) {
+                    setView(startImg);
+                }
+                Pansound.startSound(startSound);
+            } else if ((delay % 20) == 0) {
+                setMirror(!isMirror());
+                Pansound.startSound(shakeSound);
             }
             return;
         }
