@@ -461,8 +461,11 @@ public class Level {
                     }
                     final byte behavior = tile.getBehavior();
                     if (behavior == FurGuardiansGame.TILE_HURT) {
-                        final int x = i * tm.getTileWidth(), y = j * tm.getTileHeight();
-                        FurGuardiansGame.room.addActor(new Projectile(FurGuardiansGame.fallingSpike, x, y, 30, FurGuardiansGame.soundCrumble, Character.gFlying));
+                        final int x = i * tm.getTileWidth() + FurGuardiansGame.ORIG_X_SPIKE, y = j * tm.getTileHeight();
+                        final Panmage shakingImg = FurGuardiansGame.shakingSpike, fallingImg = FurGuardiansGame.fallingSpike;
+                        final Projectile p;
+                        p = new Projectile(shakingImg, fallingImg, x, y, 60, FurGuardiansGame.soundArmor, FurGuardiansGame.soundCrumble, Character.gFlying);
+                        FurGuardiansGame.room.addActor(p);
                         tm.setTile(index, null);
                         break;
                     }
