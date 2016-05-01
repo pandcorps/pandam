@@ -30,7 +30,6 @@ import org.pandcorps.pandax.*;
 public final class Projectile extends Pandy implements Collidable, AllOobListener {
     private final Panmage startImg;
     private int delay = 0;
-    private final Pansound shakeSound;
     private final Pansound startSound;
     
     public Projectile(final Panimation anm, final Panctor src, final Panctor dst) {
@@ -40,7 +39,6 @@ public final class Projectile extends Pandy implements Collidable, AllOobListene
         setPosition(x, y);
         setVelocity(this, dst, getVelocity(), 2f);
         startImg = null;
-        shakeSound = null;
         startSound = null;
     }
     
@@ -49,7 +47,6 @@ public final class Projectile extends Pandy implements Collidable, AllOobListene
         Pansound.startSound(shakeSound);
         this.startImg = startImg;
         this.delay = delay;
-        this.shakeSound = shakeSound;
         this.startSound = startSound;
         setPosition(x, y);
         getAcceleration().setY(acc);
@@ -76,9 +73,8 @@ public final class Projectile extends Pandy implements Collidable, AllOobListene
                     setView(startImg);
                 }
                 Pansound.startSound(startSound);
-            } else if ((delay % 20) == 0) {
+            } else if ((delay % 5) == 0) {
                 setMirror(!isMirror());
-                Pansound.startSound(shakeSound);
             }
             return;
         }

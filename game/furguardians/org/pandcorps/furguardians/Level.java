@@ -464,7 +464,7 @@ public class Level {
                         final int x = i * tm.getTileWidth() + FurGuardiansGame.ORIG_X_SPIKE, y = j * tm.getTileHeight();
                         final Panmage shakingImg = FurGuardiansGame.shakingSpike, fallingImg = FurGuardiansGame.fallingSpike;
                         final Projectile p;
-                        p = new Projectile(shakingImg, fallingImg, x, y, 60, FurGuardiansGame.soundArmor, FurGuardiansGame.soundCrumble, Character.gFlying);
+                        p = new Projectile(shakingImg, fallingImg, x, y, 30, FurGuardiansGame.soundCrumble, null, Character.gFlying);
                         FurGuardiansGame.room.addActor(p);
                         tm.setTile(index, null);
                         break;
