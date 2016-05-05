@@ -1157,6 +1157,9 @@ public class Level {
         		    	} else {
 	    		    		// Always start with pit to make fall goal easier
 	    		    		template = getPitTemplate();
+	    		    		if (template == null) {
+	    		    		    template = Mathtil.rand(templates);
+	    		    		}
         		    	}
     		    	} else if (currLetter < numLetters && bx >= ng * (currLetter + 1) / (numLetters + 1)) {
 	    		    	template = new BlockLetterTemplate();
@@ -1790,6 +1793,11 @@ public class Level {
             addFloatTemplates();
             addGiantTemplate();
             goals.add(new UpBlockGoal());
+        }
+        
+        @Override
+        protected Template getPitTemplate() {
+            return null;
         }
         
         @Override
