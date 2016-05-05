@@ -1783,6 +1783,63 @@ public class Level {
         tm.setBackground(i, j, imgMap[7][2], FurGuardiansGame.TILE_HURT);
     }
     
+    private abstract static class AbstractSquareBuilder extends RandomBuilder {
+        @Override
+        protected void loadTemplates() {
+            addFloorBlockTemplates();
+            addFloatTemplates();
+            addGiantTemplate();
+            goals.add(new UpBlockGoal());
+        }
+        
+        @Override
+        protected void ground(final int start, final int stop) {
+            for (int x = start; x < stop; x++) { // <=
+                for (int y = 0; y <= floor; y++) {
+                    square(x, y);
+                }
+            }
+        }
+        
+        @Override
+        protected final void upStep(final int x, final int y, final int h) {
+            //TODO
+        }
+        
+        @Override
+        protected final void downStep(final int x, final int y, final int h) {
+            //TODO
+        }
+        
+        protected abstract void square(final int x, final int y);
+    }
+    
+    private final static class SquareBuilder extends AbstractSquareBuilder {
+        @Override
+        protected final void square(final int x, final int y) {
+            final int r = Mathtil.randi(0, 54);
+            final int iy = (r / 8) + 1;
+            final int ix = (r % 8) + ((iy == 7) ? 1 : 0);
+            tm.setForeground(x, y, imgMap[iy][ix], Tile.BEHAVIOR_SOLID);
+        }
+    }
+    
+    private final static class TriangleBuilder extends AbstractSquareBuilder {
+        @Override
+        protected final void square(final int x, final int y) {
+            final int dir = Mathtil.rand() ? 0 : 3;
+            tm.setTile(x, y, getTriangle(1, dir), getTriangle(0, dir), Tile.BEHAVIOR_SOLID);
+        }
+        
+        private final TileMapImage getTriangle(final int bg, final int dir) {
+            final int r = Mathtil.randi(0, 12);
+            final int iy = (r / 2) + 1;
+            final int col = (r % 2) + ((iy == 7) ? 1 : 0);
+            final int ix = (col * 4) + bg + dir;
+            return imgMap[iy][ix];
+        }
+    }
+    
     private static class PlatformBuilder extends RandomBuilder {
     	@Override
 	    protected void loadTemplates() {
