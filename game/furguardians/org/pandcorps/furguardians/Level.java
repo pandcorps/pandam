@@ -1113,6 +1113,10 @@ public class Level {
     		return 3;
     	}
     	
+    	protected int getStart() {
+    	    return 8;
+    	}
+    	
     	@Override
     	public void build() {
     	    loadTemplates();
@@ -1123,7 +1127,7 @@ public class Level {
     		ng = nt - goal.getWidth();
     		
     		px = 0;
-    		final int floorLim = getMaxFloor(), bxStart = 8, floorChangeWidth = getFloorChangeWidth();
+    		final int floorLim = getMaxFloor(), bxStart = getStart(), floorChangeWidth = getFloorChangeWidth();
     		Template requiredTemplate = null;
     		for (final Template template : templates) {
     		    if (template instanceof GiantTemplate) {
@@ -1922,7 +1926,7 @@ public class Level {
             if (floor > 0) {
             	fill(i, imgCol);
             }
-            if ((i == 5) && (Coltil.size(FurGuardiansGame.pcs) <= 1) && isStartBlockNeeded()) {
+            if ((i == 3) && (Coltil.size(FurGuardiansGame.pcs) <= 1) && isStartBlockNeeded()) {
                 solidBlock(i, floor + 1);
             }
         }
@@ -2075,6 +2079,11 @@ public class Level {
         protected final int getFloorChangeWidth() {
     		return 4;
     	}
+        
+        @Override
+        protected final int getStart() {
+            return 10;
+        }
         
         @Override
         public final int getFloatOffset() {
