@@ -83,6 +83,7 @@ public abstract class Panteraction {
 	public final Key KEY_F1;
 	public final Key KEY_F2;
 	public final Key KEY_F3;
+	public final Key KEY_F4;
 	public final Key KEY_CTRL_RIGHT;
 	public final Key KEY_ALT_RIGHT;
 	public final Key KEY_HOME;
@@ -305,6 +306,7 @@ public abstract class Panteraction {
         KEY_F1 = keys[IND_F1];
         KEY_F2 = keys[IND_F1 + 1];
         KEY_F3 = keys[IND_F1 + 2];
+        KEY_F4 = keys[IND_F1 + 3];
         KEY_CTRL_RIGHT = keys[IND_CTRL_RIGHT];
         KEY_ALT_RIGHT = keys[IND_ALT_RIGHT];
         KEY_HOME = keys[IND_HOME];

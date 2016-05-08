@@ -970,6 +970,22 @@ public abstract class Pangine {
 	    }
 	}
 	
+	public final void zoomToWidth(final int w) {
+	    zoom(((float) getDisplayWidth()) / w);
+	}
+	
+	public final void zoomToHeight(final int h) {
+	    zoom(((float) getDisplayHeight()) / h);
+	}
+	
+	public final void zoomToMinimum(final int min) {
+	    if (getDisplayHeight() > getDisplayWidth()) {
+	        zoomToWidth(min);
+	    } else {
+	        zoomToHeight(min);
+	    }
+	}
+	
 	//@OverrideMe
 	protected void initScreen() {
 	}
