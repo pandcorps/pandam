@@ -27,9 +27,11 @@ import java.util.*;
 import org.pandcorps.pandam.*;
 
 public final class WordScreen extends Panscreen {
-    private static Panroom room = null;
+    private final static int SIZE = 4;
+    private Panroom room = null;
     private List<String> words = null;
     private Letter[][] grid = null;
+    private final List<Letter> currentSelection = new ArrayList<Letter>(SIZE * SIZE);
     
     @Override
     protected final void load() throws Exception {
@@ -54,18 +56,22 @@ public final class WordScreen extends Panscreen {
         //new TouchButton();
     }
     
+    private final void onRelease() {
+        //TODO
+    }
+    
     private final static byte MODE_UNUSED = 0;
     private final static byte MODE_ACTIVE = 1;
     private final static byte MODE_USED = 2;
     
-    private final static class Letter extends Panctor {
+    private final class Letter extends Panctor {
         private final char c;
         private byte mode = MODE_UNUSED;
         
         private Letter(final char c) {
             this.c = c;
             inactivate();
-            room.add(this);
+            room.addActor(this);
         }
         
         private final void inactivate() {
@@ -83,6 +89,20 @@ public final class WordScreen extends Panscreen {
         private final void setMode(final byte mode, final Panmage img) {
             this.mode = mode;
             setView(img);
+        }
+        
+        private final void onTap() {
+            if (mode != MODE_UNUSED) {
+                return;
+            } else if (!(currentSelection.isEmpty() || currentSelection.get(currentSelection.size() - 1).isAdjacentTo(this))) {
+                return;
+            }
+            activate();
+            currentSelection.add(this);
+        }
+        
+        private final boolean isAdjacentTo(final Letter letter) {
+            return true; //TODO
         }
     }
 }
