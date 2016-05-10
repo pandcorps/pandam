@@ -57,12 +57,29 @@ public final class WordScreen extends Panscreen {
     
     private final static class Letter {
         private final char c;
-        private Panmage img;
+        private Panctor actor;
         private byte mode = MODE_UNUSED;
         
         private Letter(final char c) {
             this.c = c;
-            img = FurGuardiansGame.getBlockLetter(c);
+            inactivate();
+        }
+        
+        private final void inactivate() {
+            setMode(MODE_UNUSED, FurGuardiansGame.getBlockLetter(c));
+        }
+        
+        private final void activate() {
+            setMode(MODE_ACTIVE, FurGuardiansGame.getTranslucentBlockLetter(c));
+        }
+        
+        private final void use() {
+            setMode(MODE_USED, FurGuardiansGame.getGemLetter(c));
+        }
+        
+        private final void setMode(final byte mode, final Panmage img) {
+            this.mode = mode;
+            actor.setView(img);
         }
     }
 }
