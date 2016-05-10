@@ -57,7 +57,32 @@ public final class WordScreen extends Panscreen {
     }
     
     private final void onRelease() {
-        //TODO
+        final StringBuilder b = new StringBuilder(currentSelection.size());
+        for (final Letter letter : currentSelection) {
+            b.append(letter.c);
+        }
+        final String currentWord = b.toString();
+        for (final String word : words) {
+            if (currentWord.equals(word)) {
+                award(word);
+                return;
+            }
+        }
+        clearCurrentSelection();
+    }
+    
+    private final void award(final String word) {
+        for (final Letter letter : currentSelection) {
+            letter.use();
+        }
+        currentSelection.clear();
+    }
+    
+    private final void clearCurrentSelection() {
+        for (final Letter letter : currentSelection) {
+            letter.inactivate();
+        }
+        currentSelection.clear();
     }
     
     private final static byte MODE_UNUSED = 0;
@@ -84,6 +109,7 @@ public final class WordScreen extends Panscreen {
         
         private final void use() {
             setMode(MODE_USED, FurGuardiansGame.getGemLetter(c));
+            //TODO shatter
         }
         
         private final void setMode(final byte mode, final Panmage img) {
