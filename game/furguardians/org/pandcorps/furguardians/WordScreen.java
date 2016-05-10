@@ -27,12 +27,15 @@ import java.util.*;
 import org.pandcorps.pandam.*;
 
 public final class WordScreen extends Panscreen {
+    private static Panroom room = null;
     private List<String> words = null;
     private Letter[][] grid = null;
     
     @Override
     protected final void load() throws Exception {
-        Pangine.getEngine().zoomToMinimum(64);
+        final Pangine engine = Pangine.getEngine();
+        engine.zoomToMinimum(64);
+        room = FurGuardiansGame.createRoom(engine.getEffectiveWidth(), engine.getEffectiveHeight());
         initWords();
     }
     
@@ -55,14 +58,14 @@ public final class WordScreen extends Panscreen {
     private final static byte MODE_ACTIVE = 1;
     private final static byte MODE_USED = 2;
     
-    private final static class Letter {
+    private final static class Letter extends Panctor {
         private final char c;
-        private Panctor actor;
         private byte mode = MODE_UNUSED;
         
         private Letter(final char c) {
             this.c = c;
             inactivate();
+            room.add(this);
         }
         
         private final void inactivate() {
@@ -79,7 +82,7 @@ public final class WordScreen extends Panscreen {
         
         private final void setMode(final byte mode, final Panmage img) {
             this.mode = mode;
-            actor.setView(img);
+            setView(img);
         }
     }
 }
