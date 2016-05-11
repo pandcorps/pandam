@@ -47,13 +47,11 @@ public final class WordScreen extends Panscreen {
         words.add("EFGH");
         words.add("IJKL");
         words.add("MNOP");
-        grid = new Letter[][] {
-            { new Letter('A'), new Letter('B'), new Letter('C'), new Letter('D') },
-            { new Letter('E'), new Letter('L'), new Letter('M'), new Letter('N') },
-            { new Letter('F'), new Letter('K'), new Letter('J'), new Letter('O') },
-            { new Letter('G'), new Letter('H'), new Letter('I'), new Letter('P') }
-        };
-        //new TouchButton();
+        grid = new Letter[SIZE][SIZE];
+        new Letter(0, 0, 'A'); new Letter(0, 1, 'B'); new Letter(0, 2, 'C'); new Letter(0, 3, 'D');
+        new Letter(1, 0, 'E'); new Letter(1, 1, 'L'); new Letter(1, 2, 'M'); new Letter(1, 3, 'N');
+        new Letter(2, 0, 'F'); new Letter(2, 1, 'K'); new Letter(2, 2, 'J'); new Letter(2, 3, 'O');
+        new Letter(3, 0, 'G'); new Letter(3, 1, 'H'); new Letter(3, 2, 'I'); new Letter(3, 3, 'P');
     }
     
     private final void onRelease() {
@@ -76,6 +74,11 @@ public final class WordScreen extends Panscreen {
             letter.use();
         }
         currentSelection.clear();
+        //TODO if () victory();
+    }
+    
+    private final void victory() {
+        //TODO
     }
     
     private final void clearCurrentSelection() {
@@ -90,13 +93,19 @@ public final class WordScreen extends Panscreen {
     private final static byte MODE_USED = 2;
     
     private final class Letter extends Panctor {
+        private final int row;
+        private final int col;
         private final char c;
         private byte mode = MODE_UNUSED;
         
-        private Letter(final char c) {
+        private Letter(final int row, final int col, final char c) {
+            this.row = row;
+            this.col = col;
             this.c = c;
             inactivate();
             room.addActor(this);
+            grid[row][col] = this;
+            //new TouchButton();
         }
         
         private final void inactivate() {
@@ -128,7 +137,13 @@ public final class WordScreen extends Panscreen {
         }
         
         private final boolean isAdjacentTo(final Letter letter) {
-            return true; //TODO
+            final int otherRow = letter.row, otherCol = letter.col;
+            if (row == otherRow) {
+                return Math.abs(col - otherCol) == 1;
+            } else if (col == otherCol) {
+                return Math.abs(row - otherRow) == 1;
+            }
+            return false;
         }
     }
 }
