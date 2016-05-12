@@ -25,8 +25,10 @@ package org.pandcorps.furguardians;
 import java.util.*;
 
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.Panput.*;
 
 public final class WordScreen extends Panscreen {
+    private final static int DIM = 16;
     private final static int SIZE = 4;
     private Panroom room = null;
     private List<String> words = null;
@@ -52,6 +54,7 @@ public final class WordScreen extends Panscreen {
         new Letter(1, 0, 'E'); new Letter(1, 1, 'L'); new Letter(1, 2, 'M'); new Letter(1, 3, 'N');
         new Letter(2, 0, 'F'); new Letter(2, 1, 'K'); new Letter(2, 2, 'J'); new Letter(2, 3, 'O');
         new Letter(3, 0, 'G'); new Letter(3, 1, 'H'); new Letter(3, 2, 'I'); new Letter(3, 3, 'P');
+        currentSelection.clear();
     }
     
     private final void onRelease() {
@@ -118,7 +121,11 @@ public final class WordScreen extends Panscreen {
             inactivate();
             room.addActor(this);
             grid[row][col] = this;
-            //new TouchButton();
+            final Pangine engine = Pangine.getEngine();
+            final int x = col * DIM, y = engine.getEffectiveHeight() - (row + 1) * DIM;
+            getPosition().set(x, y);
+            final TouchButton button = new TouchButton(engine.getInteraction(), "", x, y, DIM, DIM);
+            engine.registerTouchButton(button);
         }
         
         private final void inactivate() {
