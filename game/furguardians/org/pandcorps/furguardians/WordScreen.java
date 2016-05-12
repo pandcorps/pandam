@@ -74,7 +74,20 @@ public final class WordScreen extends Panscreen {
             letter.use();
         }
         currentSelection.clear();
-        //TODO if () victory();
+        if (isVictory()) {
+            victory();
+        }
+    }
+    
+    private final boolean isVictory() {
+        for (final Letter[] row : grid) {
+            for (final Letter letter : row) {
+                if (letter.mode != MODE_USED) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
     
     private final void victory() {
