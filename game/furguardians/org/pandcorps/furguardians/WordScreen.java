@@ -24,6 +24,8 @@ package org.pandcorps.furguardians;
 
 import java.util.*;
 
+import org.pandcorps.core.*;
+import org.pandcorps.furguardians.Player.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.Panput.*;
 
@@ -124,7 +126,7 @@ public final class WordScreen extends Panscreen {
             final Pangine engine = Pangine.getEngine();
             final int x = col * DIM, y = engine.getEffectiveHeight() - (row + 1) * DIM;
             getPosition().set(x, y);
-            final TouchButton button = new TouchButton(engine.getInteraction(), "", x, y, DIM, DIM);
+            final TouchButton button = new TouchButton(engine.getInteraction(), "Letter." + row + "." + col, x, y, DIM, DIM);
             engine.registerTouchButton(button);
         }
         
@@ -164,6 +166,17 @@ public final class WordScreen extends Panscreen {
                 return Math.abs(row - otherRow) == 1;
             }
             return false;
+        }
+    }
+    
+    protected final static PlayerContext getPlayerContext() {
+        return Coltil.isEmpty(FurGuardiansGame.pcs) ? null : FurGuardiansGame.pcs.get(0);
+    }
+    
+    protected final static void addGems(final int n) {
+        final PlayerContext pc = getPlayerContext();
+        if (pc != null) {
+            pc.addGems(n);
         }
     }
 }
