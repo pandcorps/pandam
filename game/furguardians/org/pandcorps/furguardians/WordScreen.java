@@ -22,20 +22,31 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.furguardians;
 
+import java.io.*;
 import java.util.*;
 
 import org.pandcorps.core.*;
 import org.pandcorps.furguardians.Player.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.Panput.*;
+import org.pandcorps.pandam.event.action.*;
 
 public final class WordScreen extends Panscreen {
     private final static int DIM = 16;
     private final static int SIZE = 4;
+    private final static String[] SKIP = { "ETBJ", "RGHS" }; //TODO
     private Panroom room = null;
     private List<String> words = null;
     private Letter[][] grid = null;
     private final List<Letter> currentSelection = new ArrayList<Letter>(SIZE * SIZE);
+    
+    public final static void main(final String[] args) {
+        try {
+            validateWordFile();
+        } catch (final Throwable e) {
+            e.printStackTrace();
+        }
+    }
     
     @Override
     protected final void load() throws Exception {
@@ -57,6 +68,13 @@ public final class WordScreen extends Panscreen {
         new Letter(1, 0, 'E'); new Letter(1, 1, 'L'); new Letter(1, 2, 'M'); new Letter(1, 3, 'N');
         new Letter(2, 0, 'F'); new Letter(2, 1, 'K'); new Letter(2, 2, 'J'); new Letter(2, 3, 'O');
         new Letter(3, 0, 'G'); new Letter(3, 1, 'H'); new Letter(3, 2, 'I'); new Letter(3, 3, 'P');
+        grid[0][0].register(new ActionEndListener() {
+            @Override public final void onActionEnd(final ActionEndEvent event) {
+                final Panput input = event.getInput();
+                if (input instanceof TouchButton || input instanceof Touch) {
+                    onRelease();
+                }
+            }});
         currentSelection.clear();
     }
     
@@ -112,10 +130,14 @@ public final class WordScreen extends Panscreen {
             return;
         }
         for (final Letter[] row : grid) {
+            if (row == null) {
+                continue;
+            }
             for (final Letter letter : row) {
-                letter.destroy();
+                Panctor.destroy(letter);
             }
         }
+        grid = null;
     }
     
     private final static byte MODE_UNUSED = 0;
@@ -134,12 +156,18 @@ public final class WordScreen extends Panscreen {
             this.c = c;
             inactivate();
             room.addActor(this);
-            grid[row][col] = this;
+            final Letter[] gridRow = grid[row];
+            Panctor.destroy(gridRow[col]);
+            gridRow[col] = this;
             final Pangine engine = Pangine.getEngine();
             final int x = col * DIM, y = engine.getEffectiveHeight() - (row + 1) * DIM;
             getPosition().set(x, y);
             final TouchButton button = new TouchButton(engine.getInteraction(), "Letter." + row + "." + col, x, y, DIM, DIM);
             engine.registerTouchButton(button);
+            register(button, new ActionStartListener() {
+                @Override public final void onActionStart(final ActionStartEvent event) {
+                    onTap();
+                }});
         }
         
         private final void inactivate() {
@@ -178,6 +206,40 @@ public final class WordScreen extends Panscreen {
                 return Math.abs(row - otherRow) == 1;
             }
             return false;
+        }
+    }
+    
+    private final static void validateWordFile() throws Exception {
+        BufferedReader in = null;
+        try {
+            in = Iotil.getBufferedReader(FurGuardiansGame.RES + "text/words.txt");
+            String prev = null, word;
+            while ((word = in.readLine()) != null) {
+                final int size = word.length();
+                if (size < 3) {
+                    throw new Exception(word + " was less than 3 letters");
+                } else if (size > 5) {
+                    throw new Exception(word + " was more than 5 letters");
+                } else if (prev != null) {
+                    if (prev.compareTo(word) >= 0) {
+                        throw new Exception(word + " should not follow " + prev);
+                    }
+                    final char p0 = prev.charAt(0), ex = (char) (p0 + 1), w0 = word.charAt(0);
+                    if ((w0 != p0) && (ex != 'x') && (w0 != ex)) {
+                        throw new Exception("Letter " + p0 + " was followed by " + w0 + " instead of " + ex);
+                    }
+                }
+                for (int i = 0; i < size; i++) {
+                    final char c = word.charAt(i);
+                    if ((c < 'a') || (c > 'z')) {
+                        throw new Exception(word + " contains " + c);
+                    }
+                }
+                // Check that it's possible to find 3 other words to use with this word
+                prev = word;
+            }
+        } finally {
+            Iotil.close(in);
         }
     }
     
