@@ -51,6 +51,7 @@ public final class WordScreen extends Panscreen {
         words.add("EFGH");
         words.add("IJKL");
         words.add("MNOP");
+        destroyGrid();
         grid = new Letter[SIZE][SIZE];
         new Letter(0, 0, 'A'); new Letter(0, 1, 'B'); new Letter(0, 2, 'C'); new Letter(0, 3, 'D');
         new Letter(1, 0, 'E'); new Letter(1, 1, 'L'); new Letter(1, 2, 'M'); new Letter(1, 3, 'N');
@@ -104,6 +105,17 @@ public final class WordScreen extends Panscreen {
             letter.inactivate();
         }
         currentSelection.clear();
+    }
+    
+    private final void destroyGrid() {
+        if (grid == null) {
+            return;
+        }
+        for (final Letter[] row : grid) {
+            for (final Letter letter : row) {
+                letter.destroy();
+            }
+        }
     }
     
     private final static byte MODE_UNUSED = 0;
