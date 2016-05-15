@@ -209,11 +209,17 @@ public final class WordScreen extends Panscreen {
         }
     }
     
+    private final static boolean isVowel(final char _c) {
+        final char c = java.lang.Character.toLowerCase(_c);
+        return c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u' || c == 'y';
+    }
+    
     private final static void validateWordFile() throws Exception {
         BufferedReader in = null;
         try {
             in = Iotil.getBufferedReader(FurGuardiansGame.RES + "text/words.txt");
             String prev = null, word;
+            final Set<java.lang.Character> vowels = new HashSet<java.lang.Character>(3);
             while ((word = in.readLine()) != null) {
                 final int size = word.length();
                 if (size < 3) {
@@ -229,13 +235,19 @@ public final class WordScreen extends Panscreen {
                         throw new Exception("Letter " + p0 + " was followed by " + w0 + " instead of " + ex);
                     }
                 }
+                vowels.clear();
                 for (int i = 0; i < size; i++) {
                     final char c = word.charAt(i);
                     if ((c < 'a') || (c > 'z')) {
                         throw new Exception(word + " contains " + c);
+                    } else if (isVowel(c)) {
+                        vowels.add(java.lang.Character.valueOf(c));
+                        if (vowels.size() > 2) {
+                            throw new Exception(word + " contained " + vowels);
+                        }
                     }
                 }
-                // Check that it's possible to find 3 other words to use with this word
+                //tODO Check that it's possible to find 3 other words to use with this word
                 prev = word;
             }
         } finally {

@@ -52,6 +52,7 @@ dark
 dash
 day
 deer
+dig
 dirt
 dog
 dove
@@ -62,6 +63,8 @@ ear
 earn
 egg
 elm
+even
+ever
 ewe
 eye
 face
@@ -110,7 +113,6 @@ hero
 hill
 hive
 holly
-honey
 hoof
 hop
 horn
@@ -120,6 +122,8 @@ hound
 howl
 husky
 ice
+jazz
+jig
 jolly
 joy
 jump
@@ -146,22 +150,24 @@ lynx
 map
 match
 merry
+mice
 mink
 mint
+mole
 mom
 moon
 moss
-mouse
 mud
+mule
 music
 nest
 new
 next
 night
-noise
 nose
 note
 oak
+odd
 old
 over
 owl
@@ -191,7 +197,6 @@ river
 robin
 rock
 root
-royal
 run
 rush
 safe
@@ -204,6 +209,7 @@ sight
 sing
 sit
 skill
+sky
 small
 smell
 snake
@@ -231,6 +237,7 @@ teeth
 tiger
 tooth
 tree
+trot
 twig
 uncle
 under
@@ -242,6 +249,7 @@ water
 well
 whale
 white
+wild
 win
 wind
 wing
@@ -252,6 +260,7 @@ wood
 wool
 word
 world
+worm
 yak
 yes
 zap
