@@ -140,6 +140,16 @@ public final class WordScreen extends Panscreen {
         grid = null;
     }
     
+    private final void loadWordFile() {
+        BufferedReader in = null;
+        try {
+            in = openWordFileReader();
+            
+        } finally {
+            Iotil.close(in);
+        }
+    }
+    
     private final static byte MODE_UNUSED = 0;
     private final static byte MODE_ACTIVE = 1;
     private final static byte MODE_USED = 2;
@@ -214,10 +224,14 @@ public final class WordScreen extends Panscreen {
         return c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u' || c == 'y';
     }
     
+    private final static BufferedReader openWordFileReader() {
+        return Iotil.getBufferedReader(FurGuardiansGame.RES + "text/words.txt");
+    }
+    
     private final static void validateWordFile() throws Exception {
         BufferedReader in = null;
         try {
-            in = Iotil.getBufferedReader(FurGuardiansGame.RES + "text/words.txt");
+            in = openWordFileReader();
             String prev = null, word;
             final Set<java.lang.Character> vowels = new HashSet<java.lang.Character>(3);
             while ((word = in.readLine()) != null) {

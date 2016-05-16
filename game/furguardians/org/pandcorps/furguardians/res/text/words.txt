@@ -1,16 +1,22 @@
+act
 ant
 ape
 art
 ash
 aunt
+award
 bark
 bash
+bass
 bat
 bear
 bee
+beech
+beet
 bell
 best
 big
+birch
 bird
 black
 bliss
@@ -23,6 +29,7 @@ book
 bow
 brave
 brick
+brown
 brush
 bug
 build
@@ -35,6 +42,7 @@ buzz
 candy
 cat
 chaos
+check
 cheer
 chill
 claw
@@ -43,8 +51,11 @@ cloud
 coat
 cold
 colt
+comb
 comic
+cool
 cow
+crow
 crown
 cub
 dad
@@ -52,7 +63,9 @@ dark
 dash
 day
 deer
+dew
 dig
+dip
 dirt
 dog
 dove
@@ -61,7 +74,9 @@ duck
 eagle
 ear
 earn
+eel
 egg
+elk
 elm
 even
 ever
@@ -79,6 +94,7 @@ float
 flock
 flood
 fly
+food
 fox
 fresh
 frost
@@ -144,6 +160,7 @@ lift
 light
 lion
 live
+look
 loud
 love
 lynx
