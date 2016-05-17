@@ -140,11 +140,14 @@ public final class WordScreen extends Panscreen {
         grid = null;
     }
     
-    private final void loadWordFile() {
+    private final void loadWordFile() throws Exception {
         BufferedReader in = null;
         try {
             in = openWordFileReader();
-            
+            String word;
+            while ((word = in.readLine()) != null) {
+                
+            }
         } finally {
             Iotil.close(in);
         }

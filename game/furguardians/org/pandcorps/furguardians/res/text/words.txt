@@ -83,13 +83,20 @@ ever
 ewe
 eye
 face
+fall
 fan
 fang
+fast
 feel
 fern
+fig
 fin
+finch
 fish
 fix
+flap
+flax
+flip
 float
 flock
 flood
@@ -97,6 +104,7 @@ fly
 food
 fox
 fresh
+frog
 frost
 fun
 fur
@@ -106,6 +114,7 @@ fuzzy
 game
 gem
 gift
+glass
 goat
 good
 grand
@@ -115,6 +124,7 @@ grow
 growl
 guard
 guess
+gull
 happy
 hare
 hat
@@ -128,6 +138,7 @@ herd
 hero
 hill
 hive
+hog
 holly
 hoof
 hop
@@ -138,6 +149,9 @@ hound
 howl
 husky
 ice
+imp
+inch
+ink
 jazz
 jig
 jolly
@@ -151,7 +165,9 @@ know
 koala
 lamb
 land
+lark
 laugh
+lava
 leaf
 learn
 level
@@ -160,6 +176,7 @@ lift
 light
 lion
 live
+llama
 look
 loud
 love
@@ -256,6 +273,7 @@ tooth
 tree
 trot
 twig
+twist
 uncle
 under
 vine
