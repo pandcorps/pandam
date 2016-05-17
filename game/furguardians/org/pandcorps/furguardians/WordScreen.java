@@ -30,13 +30,14 @@ import org.pandcorps.furguardians.Player.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.Panput.*;
 import org.pandcorps.pandam.event.action.*;
+import org.pandcorps.pandax.text.*;
 
 public final class WordScreen extends Panscreen {
     private final static int DIM = 16;
     private final static int SIZE = 4;
     private final static String[] SKIP = { "ETBJ", "RGHS" }; //TODO
     private Panroom room = null;
-    private List<String> words = null;
+    private List<Word> words = null;
     private Letter[][] grid = null;
     private final List<Letter> currentSelection = new ArrayList<Letter>(SIZE * SIZE);
     
@@ -57,12 +58,12 @@ public final class WordScreen extends Panscreen {
     }
     
     private final void initWords() {
-        words = new ArrayList<String>();
-        words.add("ABCD");
-        words.add("EFGH");
-        words.add("IJKL");
-        words.add("MNOP");
-        destroyGrid();
+        destroyAll();
+        words = new ArrayList<Word>();
+        words.add(new Word("ABCD"));
+        words.add(new Word("EFGH"));
+        words.add(new Word("IJKL"));
+        words.add(new Word("MNOP"));
         grid = new Letter[SIZE][SIZE];
         new Letter(0, 0, 'A'); new Letter(0, 1, 'B'); new Letter(0, 2, 'C'); new Letter(0, 3, 'D');
         new Letter(1, 0, 'E'); new Letter(1, 1, 'L'); new Letter(1, 2, 'M'); new Letter(1, 3, 'N');
@@ -84,8 +85,8 @@ public final class WordScreen extends Panscreen {
             b.append(letter.c);
         }
         final String currentWord = b.toString();
-        for (final String word : words) {
-            if (currentWord.equals(word)) {
+        for (final Word word : words) {
+            if (currentWord.equals(word.value)) {
                 award(word);
                 return;
             }
@@ -93,7 +94,7 @@ public final class WordScreen extends Panscreen {
         clearCurrentSelection();
     }
     
-    private final void award(final String word) {
+    private final void award(final Word word) {
         for (final Letter letter : currentSelection) {
             letter.use();
         }
@@ -101,6 +102,7 @@ public final class WordScreen extends Panscreen {
         if (isVictory()) {
             victory();
         }
+        Chartil.set(word.b, word.value);
     }
     
     private final boolean isVictory() {
@@ -123,6 +125,24 @@ public final class WordScreen extends Panscreen {
             letter.inactivate();
         }
         currentSelection.clear();
+    }
+    
+    private final void destroyAll() {
+        destroyWords();
+        destroyGrid();
+    }
+    
+    private final void destroyWords() {
+        if (words == null) {
+            return;
+        }
+        for (final Word word : words) {
+            if (word == null) {
+                continue;
+            }
+            Panctor.destroy(word.text);
+        }
+        words = null;
     }
     
     private final void destroyGrid() {
@@ -219,6 +239,18 @@ public final class WordScreen extends Panscreen {
                 return Math.abs(row - otherRow) == 1;
             }
             return false;
+        }
+    }
+    
+    private final static class Word {
+        private final String value;
+        private final Pantext text;
+        private final StringBuilder b;
+        
+        private Word(final String value) {
+            this.value = value;
+            b = new StringBuilder();
+            this.text = new Pantext(Pantil.vmid(), FurGuardiansGame.fontTiny, b);
         }
     }
     
