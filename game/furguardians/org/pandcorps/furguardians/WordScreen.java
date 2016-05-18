@@ -242,7 +242,7 @@ public final class WordScreen extends Panscreen {
         }
     }
     
-    private final static class Word {
+    private final class Word {
         private final String value;
         private final Pantext text;
         private final StringBuilder b;
@@ -250,7 +250,10 @@ public final class WordScreen extends Panscreen {
         private Word(final String value) {
             this.value = value;
             b = new StringBuilder();
-            this.text = new Pantext(Pantil.vmid(), FurGuardiansGame.fontTiny, b);
+            Chartil.appendMulti(b, '.', value.length());
+            text = new Pantext(Pantil.vmid(), FurGuardiansGame.fontTiny, b);
+            //text.getPosition().set(x, y); //TODO
+            room.addActor(text);
         }
     }
     
