@@ -60,10 +60,10 @@ public final class WordScreen extends Panscreen {
     private final void initWords() {
         destroyAll();
         words = new ArrayList<Word>();
-        words.add(new Word("ABCD"));
-        words.add(new Word("EFGH"));
-        words.add(new Word("IJKL"));
-        words.add(new Word("MNOP"));
+        new Word("ABCD");
+        new Word("EFGH");
+        new Word("IJKL");
+        new Word("MNOP");
         grid = new Letter[SIZE][SIZE];
         new Letter(0, 0, 'A'); new Letter(0, 1, 'B'); new Letter(0, 2, 'C'); new Letter(0, 3, 'D');
         new Letter(1, 0, 'E'); new Letter(1, 1, 'L'); new Letter(1, 2, 'M'); new Letter(1, 3, 'N');
@@ -252,8 +252,9 @@ public final class WordScreen extends Panscreen {
             b = new StringBuilder();
             Chartil.appendMulti(b, '.', value.length());
             text = new Pantext(Pantil.vmid(), FurGuardiansGame.fontTiny, b);
-            //text.getPosition().set(x, y); //TODO
+            text.getPosition().set(DIM * SIZE + 1, Pangine.getEngine().getEffectiveHeight() - (words.size() + 1) * DIM + 5);
             room.addActor(text);
+            words.add(this);
         }
     }
     
