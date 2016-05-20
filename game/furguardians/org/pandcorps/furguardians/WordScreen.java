@@ -26,10 +26,12 @@ import java.io.*;
 import java.util.*;
 
 import org.pandcorps.core.*;
+import org.pandcorps.core.img.*;
 import org.pandcorps.furguardians.Player.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.Panput.*;
 import org.pandcorps.pandam.event.action.*;
+import org.pandcorps.pandax.in.*;
 import org.pandcorps.pandax.text.*;
 
 public final class WordScreen extends Panscreen {
@@ -53,7 +55,12 @@ public final class WordScreen extends Panscreen {
     protected final void load() throws Exception {
         final Pangine engine = Pangine.getEngine();
         engine.zoomToMinimum(64);
+        engine.setBgColor(Pancolor.BLACK);
         room = FurGuardiansGame.createRoom(engine.getEffectiveWidth(), engine.getEffectiveHeight());
+        final Cursor cursor = FurGuardiansGame.addCursor(room);
+        if (cursor != null) {
+            cursor.getPosition().setZ(20);
+        }
         initWords();
     }
     
@@ -69,14 +76,25 @@ public final class WordScreen extends Panscreen {
         new Letter(1, 0, 'E'); new Letter(1, 1, 'L'); new Letter(1, 2, 'M'); new Letter(1, 3, 'N');
         new Letter(2, 0, 'F'); new Letter(2, 1, 'K'); new Letter(2, 2, 'J'); new Letter(2, 3, 'O');
         new Letter(3, 0, 'G'); new Letter(3, 1, 'H'); new Letter(3, 2, 'I'); new Letter(3, 3, 'P');
-        grid[0][0].register(new ActionEndListener() {
-            @Override public final void onActionEnd(final ActionEndEvent event) {
-                final Panput input = event.getInput();
-                if (input instanceof TouchButton || input instanceof Touch) {
-                    onRelease();
-                }
-            }});
         currentSelection.clear();
+    }
+    
+    @Override
+    public final void step() {
+        if (currentSelection.size() > 0 && !isTouchActive()) {
+            onRelease();
+        }
+    }
+    
+    private final boolean isTouchActive() {
+        for (final Letter[] row : grid) {
+            for (final Letter letter : row) {
+                if (letter.button.isActive()) {
+                    return true;
+                }
+            }
+        }
+        return Pangine.getEngine().getInteraction().TOUCH.isActive();
     }
     
     private final void onRelease() {
@@ -118,6 +136,7 @@ public final class WordScreen extends Panscreen {
     
     private final void victory() {
         //TODO
+        FurGuardiansGame.setScreen(new WordScreen());
     }
     
     private final void clearCurrentSelection() {
@@ -181,6 +200,7 @@ public final class WordScreen extends Panscreen {
         private final int row;
         private final int col;
         private final char c;
+        private final TouchButton button;
         private byte mode = MODE_UNUSED;
         
         private Letter(final int row, final int col, final char c) {
@@ -195,7 +215,7 @@ public final class WordScreen extends Panscreen {
             final Pangine engine = Pangine.getEngine();
             final int x = col * DIM, y = engine.getEffectiveHeight() - (row + 1) * DIM;
             getPosition().set(x, y);
-            final TouchButton button = new TouchButton(engine.getInteraction(), "Letter." + row + "." + col, x, y, DIM, DIM);
+            button = new TouchButton(engine.getInteraction(), "Letter." + row + "." + col, x, y, DIM, DIM);
             engine.registerTouchButton(button);
             register(button, new ActionStartListener() {
                 @Override public final void onActionStart(final ActionStartEvent event) {
