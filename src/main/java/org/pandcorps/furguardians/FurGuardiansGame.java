@@ -22,8 +22,6 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.furguardians;
 
-import org.pandcorps.game.LogoScreen;
-import org.pandcorps.game.BaseGame;
 import java.util.*;
 
 import org.pandcorps.core.*;
@@ -52,7 +50,7 @@ import org.pandcorps.furguardians.Player.*;
 
 public class FurGuardiansGame extends BaseGame {
 	protected final static String TITLE = "Fur-Guardians"; // res/values/strings.xml/app_name
-    protected final static String VERSION = "1.23.0"; // AndroidManifest.xml/versionName
+    protected final static String VERSION = "1.24.0"; // AndroidManifest.xml/versionName
     protected final static String YEAR = "2014-2016";
     protected final static String AUTHOR = "Andrew M. Martin";
 	/*
@@ -1915,6 +1913,10 @@ public class FurGuardiansGame extends BaseGame {
 	    Tiles.initLetters();
 	}
 	
+	protected final static Cursor addCursor(final Panlayer room) {
+        return Cursor.addCursor(room, menuCursor);
+    }
+	
 	protected final static Panlayer addHud(final Panroom room, final boolean allowAuto, final boolean level) {
 		hud = createHud(room);
 		final int h = Pangine.getEngine().getEffectiveTop() - 17;
@@ -2211,8 +2213,12 @@ public class FurGuardiansGame extends BaseGame {
 		return getGemLetter(blockWord.charAt(i));
 	}
 	
+	protected final static Panmage getTranslucentBlockLetter(final char c) {
+        return getImageLetter(translucentBlockLetters, c);
+    }
+	
 	protected final static Panmage getTranslucentBlockWordLetter(final int i) {
-		return getImageLetter(translucentBlockLetters, blockWord.charAt(i));
+		return getTranslucentBlockLetter(blockWord.charAt(i));
 	}
 	
 	protected final static List<String> getAvailableProfiles() {
@@ -2254,7 +2260,7 @@ public class FurGuardiansGame extends BaseGame {
 	}
 	
 	protected final static int getNumEyes() {
-	    return 22;
+	    return 28;
 	}
 	
 	protected final static int getNumDragonEyes() {
