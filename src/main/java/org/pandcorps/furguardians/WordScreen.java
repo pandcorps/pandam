@@ -38,6 +38,7 @@ public final class WordScreen extends Panscreen {
     private final static int DIM = 16;
     private final static int SIZE = 4;
     private final static String[] SKIP = { "ETBJ", "RGHS" }; //TODO
+    private final static HashMap<Integer, List<String>> dictionary = new HashMap<Integer, List<String>>();
     private Panroom room = null;
     private List<Word> words = null;
     private Letter[][] grid = null;
@@ -57,26 +58,103 @@ public final class WordScreen extends Panscreen {
         engine.zoomToMinimum(64);
         engine.setBgColor(Pancolor.BLACK);
         room = FurGuardiansGame.createRoom(engine.getEffectiveWidth(), engine.getEffectiveHeight());
-//        final Cursor cursor = FurGuardiansGame.addCursor(room);
-//        if (cursor != null) {
-//            cursor.getPosition().setZ(20);
-//        }
+        final Cursor cursor = FurGuardiansGame.addCursor(room);
+        if (cursor != null) {
+            cursor.getPosition().setZ(20);
+        }
+        loadWordFile();
+        Mathtil.setNewSeed();
         initWords();
+        //TODO sounds, proper entry/exit, awards, stats
     }
     
     private final void initWords() {
         destroyAll();
         words = new ArrayList<Word>();
-        new Word("ABCD");
-        new Word("EFGH");
-        new Word("IJKL");
-        new Word("MNOP");
-        grid = new Letter[SIZE][SIZE];
-        new Letter(0, 0, 'A'); new Letter(0, 1, 'B'); new Letter(0, 2, 'C'); new Letter(0, 3, 'D');
-        new Letter(1, 0, 'E'); new Letter(1, 1, 'L'); new Letter(1, 2, 'M'); new Letter(1, 3, 'N');
-        new Letter(2, 0, 'F'); new Letter(2, 1, 'K'); new Letter(2, 2, 'J'); new Letter(2, 3, 'O');
-        new Letter(3, 0, 'G'); new Letter(3, 1, 'H'); new Letter(3, 2, 'I'); new Letter(3, 3, 'P');
+        new Word(pickWord(3));
+        new Word(pickWord(4));
+        new Word(pickWord(4));
+        new Word(pickWord(5));
+        //TODO shuffle words; better yet, pick a random grid slot to start
+        buildGrid();
         currentSelection.clear();
+    }
+    
+    private final void buildGrid() {
+        final int[] scrap = new int[4];
+        for (int i = 0; i < 4; i++) {
+            scrap[i] = i;
+        }
+        boolean allOk;
+        final char[][] g = new char[SIZE][SIZE];
+        while (true) {
+            allOk = true;
+            for (final Word word : words) {
+                final String value = word.value;
+                final int size = value.length();
+                int row = 0, col = 0;
+                while (g[row][col] != 0) {
+                    if (col < 3) {
+                        col++;
+                    } else {
+                        col = 0;
+                        row++;
+                    }
+                }
+                boolean wordOk = true;
+                for (int i = 0; i < size; i++) {
+                    g[row][col] = value.charAt(i);
+                    if (i < size - 1) {
+                        Mathtil.shuffle(scrap);
+                        boolean letterOk = false;
+                        for (int j = 0; j < 4; j++) {
+                            final int d = scrap[j], nr, nc;
+                            if (d == 0) {
+                                nr = row + 1;
+                                nc = col;
+                            } else if (d == 1) {
+                                nr = row;
+                                nc = col + 1;
+                            } else if (d == 2) {
+                                nr = row - 1;
+                                nc = col;
+                            } else {
+                                nr = row;
+                                nc = col - 1;
+                            }
+                            if (nr >= 0 && nr < SIZE && nc >= 0 && nc < SIZE && g[nr][nc] == 0) {
+                                row = nr;
+                                col = nc;
+                                letterOk = true;
+                                break;
+                            }
+                        }
+                        if (!letterOk) {
+                            wordOk = false;
+                            break;
+                        }
+                    }
+                }
+                if (!wordOk) {
+                    allOk = false;
+                }
+            }
+            if (allOk) {
+                break;
+            } else {
+                for (int row = 0; row < SIZE; row++) {
+                    for (int col = 0; col < SIZE; col++) {
+                        g[row][col] = 0;
+                    }
+                }
+            }
+        }
+        grid = new Letter[SIZE][SIZE];
+        for (int row = 0; row < SIZE; row++) {
+            for (int col = 0; col < SIZE; col++) {
+                new Letter(row, col, g[row][col]);
+            }
+        }
     }
     
     @Override
@@ -180,16 +258,31 @@ public final class WordScreen extends Panscreen {
     }
     
     private final void loadWordFile() throws Exception {
+        if (dictionary.size() > 0) {
+            return;
+        }
         BufferedReader in = null;
         try {
             in = openWordFileReader();
             String word;
             while ((word = in.readLine()) != null) {
-                
+                final Integer key = Integer.valueOf(word.length());
+                List<String> list = dictionary.get(key);
+                if (list == null) {
+                    list = new ArrayList<String>();
+                    dictionary.put(key, list);
+                }
+                list.add(word);
             }
         } finally {
             Iotil.close(in);
         }
+    }
+    
+    private final String pickWord(final int size) {
+        final List<String> list = dictionary.get(Integer.valueOf(size));
+        //TODO Pick a word with no used letters
+        return Mathtil.rand(list).toUpperCase();
     }
     
     private final static byte MODE_UNUSED = 0;
@@ -228,7 +321,7 @@ public final class WordScreen extends Panscreen {
         }
         
         private final void activate() {
-//            setMode(MODE_ACTIVE, FurGuardiansGame.getTranslucentBlockLetter(c));
+            setMode(MODE_ACTIVE, FurGuardiansGame.getTranslucentBlockLetter(c));
         }
         
         private final void use() {
@@ -320,7 +413,7 @@ public final class WordScreen extends Panscreen {
                         }
                     }
                 }
-                //tODO Check that it's possible to find 3 other words to use with this word
+                //TODO Check that it's possible to find 3 other words to use with this word
                 prev = word;
             }
         } finally {
