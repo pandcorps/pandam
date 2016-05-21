@@ -45,6 +45,10 @@ public final class Mathtil {
 	    rand.setSeed(seed);
 	}
 	
+	public final static void setNewSeed() {
+	    setSeed(newSeed());
+	}
+	
 	public final static boolean rand() {
 	    return rand.nextBoolean();
 	}

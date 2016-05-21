@@ -136,7 +136,7 @@ public class Menu {
 		}
 		
 		protected final static Cursor addCursor(final Panlayer room) {
-			final Cursor cursor = Cursor.addCursor(room, FurGuardiansGame.menuCursor);
+			final Cursor cursor = FurGuardiansGame.addCursor(room);
 			if (cursor != null) {
 				FurGuardiansGame.setDepth(cursor, 20);
 			}
