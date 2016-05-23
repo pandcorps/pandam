@@ -28,6 +28,7 @@ import java.util.*;
 import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
 import org.pandcorps.furguardians.Player.*;
+import org.pandcorps.furguardians.Profile.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.Panput.*;
 import org.pandcorps.pandam.event.action.*;
@@ -66,7 +67,7 @@ public final class WordScreen extends Panscreen {
         loadWordFile();
         Mathtil.setNewSeed();
         initWords();
-        //TODO sounds, proper entry/exit, awards, stats
+        //TODO sounds, proper entry/exit, awards
     }
     
     private final void initWords() {
@@ -234,6 +235,10 @@ public final class WordScreen extends Panscreen {
     
     private final void victory() {
         //TODO
+        final Statistics stats = getStatistics();
+        if (stats != null) {
+            stats.wordMiniGames++;
+        }
         FurGuardiansGame.setScreen(new WordScreen());
     }
     
@@ -483,6 +488,10 @@ public final class WordScreen extends Panscreen {
     
     protected final static PlayerContext getPlayerContext() {
         return Coltil.isEmpty(FurGuardiansGame.pcs) ? null : FurGuardiansGame.pcs.get(0);
+    }
+    
+    protected final static Statistics getStatistics() {
+        return PlayerContext.getStatistics(getPlayerContext());
     }
     
     protected final static void addGems(final int n) {

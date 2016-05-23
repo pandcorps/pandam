@@ -62,6 +62,7 @@ dad
 dark
 dash
 day
+deed
 deer
 dew
 dig
@@ -194,6 +195,7 @@ moss
 mud
 mule
 music
+need
 nest
 new
 newt
@@ -303,6 +305,7 @@ track
 tree
 troll
 trot
+truth
 try
 tusk
 twig
