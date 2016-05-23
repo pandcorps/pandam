@@ -268,9 +268,13 @@ public class Menu {
 				final Panple ts = FurGuardiansGame.menu.getSize();
 				final int tw = (int) ts.getX();
 				act2 = newFormButton(room, "Act2", r - tw, t - (int) ts.getY(), FurGuardiansGame.menuOptions, "Menu");
-				newFormButton(room, "Goals", r - (tw * 2), t - 19, FurGuardiansGame.gemGoal[0], new Runnable() {
+				final int tHigh = t - 19;
+				newFormButton(room, "Goals", r - (tw * 2), tHigh, FurGuardiansGame.gemGoal[0], new Runnable() {
                     @Override public final void run() {
                         FurGuardiansGame.goGoals(FurGuardiansGame.pcs.get(0)); }}).getActorOverlay().getPosition().addY(-10);
+				newFormButton(room, "Games", r - (tw * 3), tHigh, FurGuardiansGame.menuExclaim, new Runnable() {
+                    @Override public final void run() {
+                        FurGuardiansGame.goMiniGames(FurGuardiansGame.pcs.get(0)); }}).getActorOverlay().getPosition().addY(-10);
 				rt = lt = FurGuardiansGame.diamond;
 				rtIn = ltIn = FurGuardiansGame.diamondIn;
 			} else if (mode == TOUCH_HORIZONTAL) {
@@ -664,10 +668,14 @@ public class Menu {
         	if (sub == null) {
         		return;
         	}
-        	sub.setOverlay(img, offx(img), offy(img, txt));
-        	sub.setText(FurGuardiansGame.font, txt, OFF_TEXT_X, OFF_TEXT_Y);
+        	setLabel(sub, img, txt);
         	TouchButton.reattach(sub);
         }
+		
+		protected final void setLabel(final TouchButton sub, final Panmage img, final String txt) {
+		    sub.setOverlay(img, offx(img), offy(img, txt));
+            sub.setText(FurGuardiansGame.font, txt, OFF_TEXT_X, OFF_TEXT_Y);
+		}
         
 		protected final void reattachBuy(final String info, final TouchButton sub) {
         	reattach(info, sub, FurGuardiansGame.gem[0], "Buy");
@@ -3503,6 +3511,55 @@ public class Menu {
         	goOptions();
         }
 	}
+	
+	protected final static class MiniGamesScreen extends PlayerScreen {
+        protected MiniGamesScreen(final PlayerContext pc) {
+            super(pc, false);
+            tabsSupported = true;
+        }
+        
+        @Override
+        protected final void menu() {
+            if (isTabEnabled()) {
+                menuTouch();
+            } else {
+                menuClassic();
+            }
+        }
+        
+        protected final void menuTouch() {
+            createGameList(touchRadioX, touchRadioY);
+            newTab(FurGuardiansGame.menuCheck, "Done", new Runnable() {@Override public final void run() {exit();}});
+            newTabs();
+            registerBackExit();
+        }
+        
+        private final void createGameList(final int x, final int y) {
+            final TouchButton sub = newSub(x, y);
+            setLabel(sub, FurGuardiansGame.menuExclaim, "Play");
+            final HashMap<String, Class<? extends Panscreen>> gameMap = new LinkedHashMap<String, Class<? extends Panscreen>>();
+            gameMap.put("Word-Guardians", WordScreen.class);
+            final List<String> gs = new ArrayList<String>(gameMap.keySet());
+            final RadioSubmitListener aSubLsn = new RadioSubmitListener() {
+                @Override public final void onSubmit(final RadioSubmitEvent event) {
+                    FurGuardiansGame.setScreen(Reftil.newInstance(gameMap.get(event.toString())));
+                }};
+            addRadio("Mini-games", gs, aSubLsn, null, x, y, sub);
+        }
+        
+        protected final void menuClassic() {
+            final int left = getLeft();
+            int y = getTop();
+            createGameList(left, y);
+            y -= 80;
+            addExit("Back", left, y);
+        }
+        
+        @Override
+        protected void onExit() {
+            goMap();
+        }
+    }
 	
 	protected final static class ConsoleScreen extends PlayerScreen {
 		private Input input = null;

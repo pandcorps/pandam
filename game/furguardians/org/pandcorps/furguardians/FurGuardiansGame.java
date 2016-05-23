@@ -2142,6 +2142,10 @@ public class FurGuardiansGame extends BaseGame {
 		fadeOut(room, new InfoScreen(pc, false));
 	}
 	
+	protected final static void goMiniGames(final PlayerContext pc) {
+	    fadeOut(room, new MiniGamesScreen(pc));
+	}
+	
 	protected final static boolean goGoalsIfNeeded() {
 		for (final PlayerContext pc : pcs) {
 			if (Goal.isAnyMet(pc)) {
