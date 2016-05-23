@@ -28,6 +28,7 @@ import java.util.*;
 import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
 import org.pandcorps.furguardians.Player.*;
+import org.pandcorps.furguardians.Profile.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.Panput.*;
 import org.pandcorps.pandam.event.action.*;
@@ -41,6 +42,7 @@ public final class WordScreen extends Panscreen {
     private final static HashMap<Integer, List<String>> dictionary = new HashMap<Integer, List<String>>();
     private Panroom room = null;
     private List<Word> words = null;
+    private final boolean[] letters = new boolean[26];
     private Letter[][] grid = null;
     private final List<Letter> currentSelection = new ArrayList<Letter>(SIZE * SIZE);
     
@@ -65,16 +67,35 @@ public final class WordScreen extends Panscreen {
         loadWordFile();
         Mathtil.setNewSeed();
         initWords();
-        //TODO sounds, proper entry/exit, awards, stats
+        //TODO sounds, proper entry/exit, awards
     }
     
     private final void initWords() {
         destroyAll();
         words = new ArrayList<Word>();
-        new Word(pickWord(3));
-        new Word(pickWord(4));
-        new Word(pickWord(4));
-        new Word(pickWord(5));
+        while (true) {
+            clearLetters();
+            boolean ok = true;
+            for (int i = 0; i < 4; i++) {
+                final int size;
+                if (i == 0) {
+                    size = 3;
+                } else if (i < 3) {
+                    size = 4;
+                } else {
+                    size = 5;
+                }
+                final String word = pickWord(size);
+                if (word == null) {
+                    ok = false;
+                    break;
+                }
+                new Word(word);
+            }
+            if (ok) {
+                break;
+            }
+        }
         //TODO shuffle words; better yet, pick a random grid slot to start
         buildGrid();
         currentSelection.clear();
@@ -214,6 +235,10 @@ public final class WordScreen extends Panscreen {
     
     private final void victory() {
         //TODO
+        final Statistics stats = getStatistics();
+        if (stats != null) {
+            stats.wordMiniGames++;
+        }
         FurGuardiansGame.setScreen(new WordScreen());
     }
     
@@ -222,6 +247,12 @@ public final class WordScreen extends Panscreen {
             letter.inactivate();
         }
         currentSelection.clear();
+    }
+    
+    private final void clearLetters() {
+        for (int i = 0; i < 26; i++) {
+            letters[i] = false;
+        }
     }
     
     private final void destroyAll() {
@@ -272,7 +303,7 @@ public final class WordScreen extends Panscreen {
                     list = new ArrayList<String>();
                     dictionary.put(key, list);
                 }
-                list.add(word);
+                list.add(word.toUpperCase());
             }
         } finally {
             Iotil.close(in);
@@ -281,8 +312,42 @@ public final class WordScreen extends Panscreen {
     
     private final String pickWord(final int size) {
         final List<String> list = dictionary.get(Integer.valueOf(size));
-        //TODO Pick a word with no used letters
-        return Mathtil.rand(list).toUpperCase();
+        final int r = Mathtil.randi(0, list.size() - 1), listSize = list.size();
+        final boolean d = Mathtil.rand();
+        int j = r;
+        while (true) {
+            final String word = list.get(j);
+            boolean ok = true;
+            for (int i = 0; i < size; i++) {
+                if (letters[getLetterIndex(word, i)]) {
+                    ok = false;
+                    break;
+                }
+            }
+            if (ok) {
+                for (int i = 0; i < size; i++) {
+                    letters[getLetterIndex(word, i)] = true;
+                }
+                return word;
+            } else if (d) {
+                j++;
+                if (j >= listSize) {
+                    j = 0;
+                }
+            } else {
+                j--;
+                if (j < 0) {
+                    j = listSize - 1;
+                }
+            }
+            if (j == r) {
+                return null;
+            }
+        }
+    }
+    
+    private final static int getLetterIndex(final String word, final int i) {
+        return word.charAt(i) - 'A';
     }
     
     private final static byte MODE_UNUSED = 0;
@@ -423,6 +488,10 @@ public final class WordScreen extends Panscreen {
     
     protected final static PlayerContext getPlayerContext() {
         return Coltil.isEmpty(FurGuardiansGame.pcs) ? null : FurGuardiansGame.pcs.get(0);
+    }
+    
+    protected final static Statistics getStatistics() {
+        return PlayerContext.getStatistics(getPlayerContext());
     }
     
     protected final static void addGems(final int n) {
