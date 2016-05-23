@@ -73,6 +73,12 @@ public abstract class Panteraction {
 	public final Key KEY_SHIFT_LEFT;
 	public final Key KEY_BACKSLASH;
 	public final Key KEY_Z;
+	public final Key KEY_X;
+	public final Key KEY_C;
+	public final Key KEY_V;
+	public final Key KEY_B;
+	public final Key KEY_N;
+	public final Key KEY_M;
 	public final Key KEY_COMMA;
 	public final Key KEY_PERIOD;
 	public final Key KEY_SLASH;
@@ -188,6 +194,12 @@ public abstract class Panteraction {
 	public final int IND_GRAVE = 41;
 	public final int IND_SHIFT_LEFT = 42;
 	public final int IND_Z = 44;
+	public final int IND_X = 45;
+	public final int IND_C = 46;
+	public final int IND_V = 47;
+	public final int IND_B = 48;
+	public final int IND_N = 49;
+	public final int IND_M = 50;
     public final int IND_SHIFT_RIGHT = 54;
     public final int IND_ALT_LEFT = 56;
     public final int IND_SPACE = 57;
@@ -296,6 +308,12 @@ public abstract class Panteraction {
         KEY_SHIFT_LEFT = keys[IND_SHIFT_LEFT];
         KEY_BACKSLASH = keys[indBackslash];
         KEY_Z = keys[IND_Z];
+        KEY_X = keys[IND_X];
+        KEY_C = keys[IND_C];
+        KEY_V = keys[IND_V];
+        KEY_B = keys[IND_B];
+        KEY_N = keys[IND_N];
+        KEY_M = keys[IND_M];
         KEY_COMMA = keys[51];
         KEY_PERIOD = keys[52];
         KEY_SLASH = keys[53];
