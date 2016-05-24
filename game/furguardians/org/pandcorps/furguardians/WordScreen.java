@@ -67,7 +67,7 @@ public final class WordScreen extends Panscreen {
         loadWordFile();
         Mathtil.setNewSeed();
         initWords();
-        //TODO sounds, proper entry/exit, awards
+        //TODO sounds, proper exit, awards
     }
     
     private final void initWords() {
@@ -96,7 +96,6 @@ public final class WordScreen extends Panscreen {
                 break;
             }
         }
-        //TODO shuffle words; better yet, pick a random grid slot to start
         buildGrid();
         currentSelection.clear();
         Player.registerCaptureScreen(grid[0][0]);
@@ -221,6 +220,7 @@ public final class WordScreen extends Panscreen {
         for (final Letter letter : currentSelection) {
             letter.use();
         }
+        FurGuardiansGame.soundGem.startSound();
         currentSelection.clear();
         if (isVictory()) {
             victory();
@@ -397,7 +397,7 @@ public final class WordScreen extends Panscreen {
         
         private final void use() {
             setMode(MODE_USED, FurGuardiansGame.getGemLetter(c));
-            //TODO shatter
+            Gem.spark(getPosition(), false);
         }
         
         private final void setMode(final byte mode, final Panmage img) {
