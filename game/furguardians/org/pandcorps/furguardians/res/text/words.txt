@@ -45,6 +45,7 @@ chaos
 check
 cheer
 chill
+class
 claw
 climb
 cloud
@@ -69,6 +70,7 @@ dig
 dip
 dirt
 dog
+door
 dove
 dress
 duck
@@ -101,6 +103,7 @@ flip
 float
 flock
 flood
+floor
 fly
 food
 fox
@@ -179,6 +182,7 @@ lion
 live
 llama
 look
+loop
 loud
 love
 lynx
@@ -238,10 +242,13 @@ reed
 river
 robin
 rock
+roll
+room
 root
 run
 rush
 safe
+saga
 sand
 sap
 scarf
