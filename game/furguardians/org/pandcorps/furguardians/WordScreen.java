@@ -99,6 +99,7 @@ public final class WordScreen extends Panscreen {
         //TODO shuffle words; better yet, pick a random grid slot to start
         buildGrid();
         currentSelection.clear();
+        Player.registerCaptureScreen(grid[0][0]);
     }
     
     private final void buildGrid() {

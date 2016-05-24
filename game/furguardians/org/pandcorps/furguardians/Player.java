@@ -450,8 +450,7 @@ public class Player extends Character implements CollisionListener {
 		register(ctrl.getLeft(), new ActionListener() {
 			@Override public final void onAction(final ActionEvent event) { left(); }});
 		
-		register(interaction.KEY_F1, new ActionStartListener() {
-            @Override public final void onActionStart(final ActionStartEvent event) { engine.captureScreen(); }});
+		registerCaptureScreen(this);
 		
 		if (FurGuardiansGame.debugMode) {
 			register(interaction.KEY_1, new ActionStartListener() {
@@ -479,6 +478,12 @@ public class Player extends Character implements CollisionListener {
         if (flyer != null) {
             flyer.init();
         }
+	}
+	
+	protected final static void registerCaptureScreen(final Panctor actor) {
+	    final Pangine engine = Pangine.getEngine();
+	    actor.register(engine.getInteraction().KEY_F1, new ActionStartListener() {
+            @Override public final void onActionStart(final ActionStartEvent event) { engine.captureScreen(); }});
 	}
 	
 	private final void registerPause(final Panput input) {

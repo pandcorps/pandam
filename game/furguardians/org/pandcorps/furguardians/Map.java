@@ -805,6 +805,8 @@ public class Map {
 				engine.captureScreen();
 			} else if (interaction.KEY_G.isActive()) {
 			    FurGuardiansGame.goGoals(getPlayerContext());
+			} else if (interaction.KEY_M.isActive()) {
+                FurGuardiansGame.goMiniGames(getPlayerContext());
 			} else if (Panput.isActive(getMenuInput(ctrl), endListener)) {
 				goMenu(getMenuInput(ctrl), pc);
 			} else if (Coltil.size(FurGuardiansGame.pcs) == 1 && interaction.KEY_ESCAPE.isActive()) {
