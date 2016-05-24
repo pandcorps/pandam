@@ -103,9 +103,13 @@ public final class WordScreen extends Panscreen {
     }
     
     private final void buildGrid() {
-        final int[] scrap = new int[4];
+        final int gridArea = SIZE * SIZE;
+        final int[] scrap = new int[4], scrapGrid = new int[gridArea];
         for (int i = 0; i < 4; i++) {
             scrap[i] = i;
+        }
+        for (int i = 0; i < gridArea; i++) {
+            scrapGrid[i] = i;
         }
         boolean allOk;
         final char[][] g = new char[SIZE][SIZE];
@@ -115,12 +119,13 @@ public final class WordScreen extends Panscreen {
                 final String value = word.value;
                 final int size = value.length();
                 int row = 0, col = 0;
-                while (g[row][col] != 0) {
-                    if (col < 3) {
-                        col++;
-                    } else {
-                        col = 0;
-                        row++;
+                Mathtil.shuffle(scrapGrid);
+                for (int i = 0; i < gridArea; i++) {
+                    final int cell = scrapGrid[i];
+                    row = cell / SIZE;
+                    col = cell % SIZE;
+                    if (g[row][col] == 0) {
+                        break;
                     }
                 }
                 boolean wordOk = true;
