@@ -73,6 +73,7 @@ dog
 door
 dove
 dress
+dry
 duck
 eagle
 ear
@@ -106,6 +107,7 @@ flood
 floor
 fly
 food
+fork
 fox
 fresh
 frog
@@ -281,6 +283,7 @@ sound
 spell
 spill
 spin
+spoon
 stand
 star
 start
@@ -304,6 +307,9 @@ tag
 tail
 tall
 teeth
+tent
+test
+text
 thank
 think
 tiger
