@@ -32,6 +32,7 @@ import org.pandcorps.furguardians.Player.*;
 import org.pandcorps.furguardians.Profile.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.Panput.*;
+import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.action.*;
 import org.pandcorps.pandax.in.*;
 import org.pandcorps.pandax.text.*;
@@ -243,7 +244,10 @@ public final class WordScreen extends Panscreen {
         FurGuardiansGame.soundGem.startSound();
         currentSelection.clear();
         if (isVictory()) {
-            victory();
+            grid[0][0].register(30, new TimerListener() {
+                @Override public final void onTimer(final TimerEvent event) {
+                    victory();
+                }});
         }
         Chartil.set(word.b, word.value);
     }
