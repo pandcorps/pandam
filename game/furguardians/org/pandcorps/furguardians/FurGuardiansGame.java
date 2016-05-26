@@ -314,6 +314,8 @@ public class FurGuardiansGame extends BaseGame {
 	protected static Panmage[] gemLetters = null;
 	protected static Panmage[] blockLetters = null;
 	protected static Panmage[] translucentBlockLetters = null;
+	protected static Panmage[] greenBlockLetters = null;
+	protected static Panmage[] whiteBlockLetters = null;
 	protected static Panmage[] gemGoal = null;
 	protected static Panmage emptyGoal = null;
 	protected static Panmage[] gemRank = null;
@@ -1665,8 +1667,7 @@ public class FurGuardiansGame extends BaseGame {
 		    Img.close(worldStrip);
 		    gemWordAnm = createGemAnm("gem.word", createSheet("gem.word", null, ImtilX.loadStrip(RES + "misc/Gem6.png")));
 		    gemLetters = createSheet("gem.letter", null, ImtilX.loadStrip(RES + "misc/GemLetters.png"));
-		    final Img[] blStrip = ImtilX.loadStrip(RES + "misc/BlockLetters.png");
-		    Img.setTemporary(false, blStrip);
+		    final Img[] blStrip = loadBlockLetterStrip();
 		    blockLetters = createSheet("block.letter", null, blStrip);
 		    for (final Img bl : blStrip) {
 		    	Imtil.setPseudoTranslucent(bl);
@@ -1854,6 +1855,12 @@ public class FurGuardiansGame extends BaseGame {
 	    Achievement.validateAchievements();
 	}
 	
+	protected final static Img[] loadBlockLetterStrip() {
+	    final Img[] blStrip = ImtilX.loadStrip(RES + "misc/BlockLetters.png");
+	    Img.setTemporary(false, blStrip);
+	    return blStrip;
+	}
+	
 	protected final static void reloadButtons() {
 	    Panmage.destroyAll(button, buttonIn, right2, right2In, left2, left2In, diamond, diamondIn);
 	    btnLoader.run();
@@ -2002,7 +2009,7 @@ public class FurGuardiansGame extends BaseGame {
 		//still need to put in character/wing/spring/bubble/onStep as y changes
 		//onStep will need to know base depth
 	    //act.getPosition().set(x, y, Level.tm.getForegroundDepth() - y + depth);
-		act.getPosition().set(x, y, Level.tm.getForegroundDepth() + depth);
+		act.getPosition().set(x, y, (Level.tm == null) ? 0 : Level.tm.getForegroundDepth() + depth);
 	}
 	
 	protected final static void setDepth(final Panctor act, final float depth) {
