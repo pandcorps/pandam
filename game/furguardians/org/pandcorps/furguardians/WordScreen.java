@@ -27,6 +27,7 @@ import java.util.*;
 
 import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
+import org.pandcorps.core.img.Pancolor.*;
 import org.pandcorps.furguardians.Player.*;
 import org.pandcorps.furguardians.Profile.*;
 import org.pandcorps.pandam.*;
@@ -66,8 +67,27 @@ public final class WordScreen extends Panscreen {
         }
         loadWordFile();
         Mathtil.setNewSeed();
+        initImages();
         initWords();
         //TODO sounds, proper exit, awards
+    }
+    
+    private final void initImages() {
+        if (FurGuardiansGame.greenBlockLetters != null) {
+            return;
+        }
+        final Img[] blStrip = FurGuardiansGame.loadBlockLetterStrip();
+        FurGuardiansGame.greenBlockLetters = copyBlockLetters("green", blStrip, new SwapPixelFilter(Channel.Green, Channel.Blue, Channel.Red));
+        FurGuardiansGame.whiteBlockLetters = copyBlockLetters("white", blStrip, new SwapPixelFilter(Channel.Green, Channel.Green, Channel.Green));
+        Img.close(blStrip);
+    }
+    
+    private final Panmage[] copyBlockLetters(final String name, final Img[] blStrip, final PixelFilter f) {
+        final int size = blStrip.length;
+        for (int i = 0; i < size; i++) {
+            Imtil.filterImg(blStrip[i], f);
+        }
+        return FurGuardiansGame.createSheet(name + ".block.letter", null, blStrip);
     }
     
     private final void initWords() {
@@ -392,11 +412,11 @@ public final class WordScreen extends Panscreen {
         }
         
         private final void activate() {
-            setMode(MODE_ACTIVE, FurGuardiansGame.getTranslucentBlockLetter(c));
+            setMode(MODE_ACTIVE, FurGuardiansGame.getImageLetter(FurGuardiansGame.whiteBlockLetters, c));
         }
         
         private final void use() {
-            setMode(MODE_USED, FurGuardiansGame.getGemLetter(c));
+            setMode(MODE_USED, FurGuardiansGame.getImageLetter(FurGuardiansGame.greenBlockLetters, c));
             Gem.spark(getPosition(), false);
         }
         
