@@ -61,6 +61,7 @@ public final class WordScreen extends Panscreen {
         final Pangine engine = Pangine.getEngine();
         engine.zoomToMinimum(64);
         engine.setBgColor(Menu.COLOR_BG);
+        engine.getAudio().stopMusic();
         room = FurGuardiansGame.createRoom(engine.getEffectiveWidth(), engine.getEffectiveHeight());
         final Cursor cursor = FurGuardiansGame.addCursor(room);
         if (cursor != null) {
@@ -70,7 +71,7 @@ public final class WordScreen extends Panscreen {
         Mathtil.setNewSeed();
         initImages();
         initWords();
-        //TODO sounds, proper exit, awards
+        //TODO proper exit
     }
     
     private final void initImages() {
@@ -551,12 +552,17 @@ public final class WordScreen extends Panscreen {
             final Pangine engine = Pangine.getEngine();
             engine.zoomToMinimum(128);
             engine.setBgColor(Menu.COLOR_BG);
+            engine.getAudio().stopMusic();
             final int w = engine.getEffectiveWidth(), h = engine.getEffectiveHeight();
             final Panroom room = FurGuardiansGame.createRoom(w, h);
             final Gem gem = Menu.PlayerScreen.addHudGems(room, pc, (w - 72) / 2, (h - 16) / 2);
             addGems(award);
             gem.register(new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
+                    goNext();
+                }});
+            gem.register(90, new TimerListener() {
+                @Override public final void onTimer(final TimerEvent event) {
                     goNext();
                 }});
         }
