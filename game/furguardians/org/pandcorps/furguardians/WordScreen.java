@@ -60,7 +60,7 @@ public final class WordScreen extends Panscreen {
     protected final void load() throws Exception {
         final Pangine engine = Pangine.getEngine();
         engine.zoomToMinimum(64);
-        engine.setBgColor(Pancolor.BLACK);
+        engine.setBgColor(Menu.COLOR_BG);
         room = FurGuardiansGame.createRoom(engine.getEffectiveWidth(), engine.getEffectiveHeight());
         final Cursor cursor = FurGuardiansGame.addCursor(room);
         if (cursor != null) {
@@ -241,13 +241,15 @@ public final class WordScreen extends Panscreen {
         for (final Letter letter : currentSelection) {
             letter.use();
         }
-        FurGuardiansGame.soundGem.startSound();
         currentSelection.clear();
         if (isVictory()) {
             grid[0][0].register(30, new TimerListener() {
                 @Override public final void onTimer(final TimerEvent event) {
                     victory();
                 }});
+            FurGuardiansGame.playTransition(FurGuardiansGame.musicLevelEnd);
+        } else {
+            FurGuardiansGame.soundGem.startSound();
         }
         Chartil.set(word.b, word.value);
     }
@@ -264,12 +266,11 @@ public final class WordScreen extends Panscreen {
     }
     
     private final void victory() {
-        //TODO
         final Statistics stats = getStatistics();
         if (stats != null) {
             stats.wordMiniGames++;
         }
-        FurGuardiansGame.setScreen(new WordScreen());
+        FurGuardiansGame.setScreen(new MiniAwardScreen(40, new WordScreen()));
     }
     
     private final void clearCurrentSelection() {
@@ -528,6 +529,40 @@ public final class WordScreen extends Panscreen {
         final PlayerContext pc = getPlayerContext();
         if (pc != null) {
             pc.addGems(n);
+        }
+    }
+    
+    protected final static class MiniAwardScreen extends Panscreen {
+        private final int award;
+        private final Panscreen nextScreen;
+        
+        protected MiniAwardScreen(final int award, final Panscreen nextScreen) {
+            this.award = award;
+            this.nextScreen = nextScreen;
+        }
+        
+        @Override
+        protected final void load() throws Exception {
+            final PlayerContext pc = getPlayerContext();
+            if (pc == null) {
+                goNext();
+                return;
+            }
+            final Pangine engine = Pangine.getEngine();
+            engine.zoomToMinimum(128);
+            engine.setBgColor(Menu.COLOR_BG);
+            final int w = engine.getEffectiveWidth(), h = engine.getEffectiveHeight();
+            final Panroom room = FurGuardiansGame.createRoom(w, h);
+            final Gem gem = Menu.PlayerScreen.addHudGems(room, pc, (w - 72) / 2, (h - 16) / 2);
+            addGems(award);
+            gem.register(new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) {
+                    goNext();
+                }});
+        }
+        
+        private final void goNext() {
+            FurGuardiansGame.setScreen(nextScreen);
         }
     }
 }

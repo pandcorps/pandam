@@ -51,6 +51,7 @@ import org.pandcorps.furguardians.Avatar.*;
 import org.pandcorps.furguardians.Player.*;
 
 public class Menu {
+    protected final static Pancolor COLOR_BG = new FinPancolor((short) 128, (short) 192, Pancolor.MAX_VALUE);
     protected final static byte TOUCH_FULL = 0;
     protected final static byte TOUCH_HORIZONTAL = 1;
     protected final static byte TOUCH_JUMP = 2;
@@ -149,9 +150,8 @@ public class Menu {
 			center = w / 2;
 			room = FurGuardiansGame.createRoom(w, FurGuardiansGame.SCREEN_H);
 			final Pangine engine = Pangine.getEngine();
-			final Pancolor bgColor = new FinPancolor((short) 128, (short) 192, Pancolor.MAX_VALUE);
 			final MapTheme theme = Map.theme;
-			engine.setBgColor(PixelFilter.filterColor(theme.getSkyFilter(), bgColor));
+			engine.setBgColor(PixelFilter.filterColor(theme.getSkyFilter(), COLOR_BG));
 			Level.initTheme();
 			
 			tm = new TileMap(Pantil.vmid(), room, ImtilX.DIM, ImtilX.DIM);
@@ -818,9 +818,13 @@ public class Menu {
 		protected final static int HUD_TEXT_Y = 20;
 		
 		protected final void addHudGems() {
-		    final int gemX = center + 16, gemY = HUD_TEXT_Y;
-            FurGuardiansGame.addHudGem(room, gemX, gemY);
+		    addHudGems(room, pc, center + 16, HUD_TEXT_Y);
+		}
+		
+		protected final static Gem addHudGems(final Panlayer room, final PlayerContext pc, final int gemX, final int gemY) {
+            final Gem gem = FurGuardiansGame.addHudGem(room, gemX, gemY);
             FurGuardiansGame.addHud(room, pc, gemX + FurGuardiansGame.OFF_GEM, gemY, false, false);
+            return gem;
 		}
 		
 		protected final void addHudRank() {
