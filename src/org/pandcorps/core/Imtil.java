@@ -339,6 +339,10 @@ public final class Imtil {
         }
     }
     
+    public final static void filterImg(final Img img, final PixelFilter... fs) {
+        filterImg(img, 0, 0, img.getWidth(), img.getHeight(), fs);
+    }
+    
     public final static void filterImg(final Img img, final int ox, final int oy, final int w, final int h, PixelFilter... fs) {
     	filterImg(img, ox, oy, w, h, null, fs);
     }
