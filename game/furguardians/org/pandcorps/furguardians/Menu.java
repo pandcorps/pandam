@@ -272,7 +272,7 @@ public class Menu {
 				newFormButton(room, "Goals", r - (tw * 2), tHigh, FurGuardiansGame.gemGoal[0], new Runnable() {
                     @Override public final void run() {
                         FurGuardiansGame.goGoals(FurGuardiansGame.pcs.get(0)); }}).getActorOverlay().getPosition().addY(-10);
-				newFormButton(room, "Games", r - (tw * 3), tHigh, FurGuardiansGame.menuExclaim, new Runnable() {
+				newFormButton(room, "Games", r - (tw * 3), tHigh, FurGuardiansGame.menuGames, new Runnable() {
                     @Override public final void run() {
                         FurGuardiansGame.goMiniGames(FurGuardiansGame.pcs.get(0)); }}).getActorOverlay().getPosition().addY(-10);
 				rt = lt = FurGuardiansGame.diamond;
