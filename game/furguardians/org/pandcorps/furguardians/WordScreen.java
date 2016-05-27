@@ -58,20 +58,13 @@ public final class WordScreen extends Panscreen {
     
     @Override
     protected final void load() throws Exception {
-        final Pangine engine = Pangine.getEngine();
-        engine.zoomToMinimum(64);
-        engine.setBgColor(Menu.COLOR_BG);
-        engine.getAudio().stopMusic();
-        room = FurGuardiansGame.createRoom(engine.getEffectiveWidth(), engine.getEffectiveHeight());
-        final Cursor cursor = FurGuardiansGame.addCursor(room);
-        if (cursor != null) {
-            cursor.getPosition().setZ(20);
-        }
+        room = initMiniZoom(64);
+        addCursor(room, 20);
         loadWordFile();
         Mathtil.setNewSeed();
         initImages();
         initWords();
-        //TODO proper exit
+        //TODO proper exit, games icon, back button
     }
     
     private final void initImages() {
@@ -522,6 +515,10 @@ public final class WordScreen extends Panscreen {
         return Coltil.isEmpty(FurGuardiansGame.pcs) ? null : FurGuardiansGame.pcs.get(0);
     }
     
+    protected final static Profile getProfile() {
+        return PlayerContext.getProfile(getPlayerContext());
+    }
+    
     protected final static Statistics getStatistics() {
         return PlayerContext.getStatistics(getPlayerContext());
     }
@@ -531,6 +528,29 @@ public final class WordScreen extends Panscreen {
         if (pc != null) {
             pc.addGems(n);
         }
+    }
+    
+    protected final static void save() {
+        final Profile prf = getProfile();
+        if (prf != null) {
+            prf.save();
+        }
+    }
+    
+    protected final static Panroom initMiniZoom(final int min) {
+        final Pangine engine = Pangine.getEngine();
+        engine.zoomToMinimum(min);
+        engine.setBgColor(Menu.COLOR_BG);
+        engine.getAudio().stopMusic();
+        return FurGuardiansGame.createRoom(engine.getEffectiveWidth(), engine.getEffectiveHeight());
+    }
+    
+    protected final static Cursor addCursor(final Panlayer room, final int z) {
+        final Cursor cursor = FurGuardiansGame.addCursor(room);
+        if (cursor != null) {
+            cursor.getPosition().setZ(z);
+        }
+        return cursor;
     }
     
     protected final static class MiniAwardScreen extends Panscreen {
@@ -543,20 +563,18 @@ public final class WordScreen extends Panscreen {
         }
         
         @Override
-        protected final void load() throws Exception {
+        protected final void load() {
             final PlayerContext pc = getPlayerContext();
             if (pc == null) {
                 goNext();
                 return;
             }
+            final Panroom room = initMiniZoom(128);
             final Pangine engine = Pangine.getEngine();
-            engine.zoomToMinimum(128);
-            engine.setBgColor(Menu.COLOR_BG);
-            engine.getAudio().stopMusic();
             final int w = engine.getEffectiveWidth(), h = engine.getEffectiveHeight();
-            final Panroom room = FurGuardiansGame.createRoom(w, h);
             final Gem gem = Menu.PlayerScreen.addHudGems(room, pc, (w - 72) / 2, (h - 16) / 2);
             addGems(award);
+            save();
             gem.register(new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
                     goNext();
@@ -564,6 +582,40 @@ public final class WordScreen extends Panscreen {
             gem.register(90, new TimerListener() {
                 @Override public final void onTimer(final TimerEvent event) {
                     goNext();
+                }});
+        }
+        
+        private final void goNext() {
+            FurGuardiansGame.setScreen(new MiniMenuScreen(nextScreen));
+        }
+    }
+    
+    protected final static class MiniMenuScreen extends Panscreen {
+        private final Panscreen nextScreen;
+        
+        protected MiniMenuScreen(final Panscreen nextScreen) {
+            this.nextScreen = nextScreen;
+        }
+        
+        @Override
+        protected final void load() {
+            final Panroom room = initMiniZoom(128);
+            addCursor(room, 20);
+            final Pangine engine = Pangine.getEngine();
+            final int w = FurGuardiansGame.MENU_W;
+            final int x = (engine.getEffectiveWidth() - (w * 3)) / 2;
+            final int y = (engine.getEffectiveHeight() - FurGuardiansGame.MENU_H) / 2;
+            Menu.PlayerScreen.newFormButton(room, "Next", x, y, FurGuardiansGame.menuRight, "Next", new Runnable() {
+                @Override public final void run() {
+                    goNext();
+                }});
+            Menu.PlayerScreen.newFormButton(room, "Menu", x + w, y, FurGuardiansGame.menuOptions, "Menu", new Runnable() {
+                @Override public final void run() {
+                    FurGuardiansGame.goMiniGames(getPlayerContext());
+                }});
+            Menu.PlayerScreen.newFormButton(room, "Quit", x + (w * 2), y, FurGuardiansGame.menuOff, "Quit", new Runnable() {
+                @Override public final void run() {
+                    engine.exit();
                 }});
         }
         
