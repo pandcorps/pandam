@@ -113,7 +113,7 @@ public final class WordScreen extends Panscreen {
         }
         buildGrid();
         currentSelection.clear();
-        Player.registerCaptureScreen(grid[0][0]);
+        registerMiniInputs(grid[0][0], new WordScreen());
     }
     
     private final void buildGrid() {
@@ -553,6 +553,18 @@ public final class WordScreen extends Panscreen {
         return cursor;
     }
     
+    protected final static void registerMiniInputs(final Panctor actor, final Panscreen nextScreen) {
+        Player.registerCaptureScreen(actor);
+        actor.register(Pangine.getEngine().getInteraction().BACK, new ActionEndListener() {
+            @Override public final void onActionEnd(final ActionEndEvent event) {
+                goMiniMenu(nextScreen);
+            }});
+    }
+    
+    protected final static void goMiniMenu(final Panscreen nextScreen) {
+        FurGuardiansGame.setScreen(new MiniMenuScreen(nextScreen));
+    }
+    
     protected final static class MiniAwardScreen extends Panscreen {
         private final int award;
         private final Panscreen nextScreen;
@@ -586,7 +598,7 @@ public final class WordScreen extends Panscreen {
         }
         
         private final void goNext() {
-            FurGuardiansGame.setScreen(new MiniMenuScreen(nextScreen));
+            goMiniMenu(nextScreen);
         }
     }
     
