@@ -352,6 +352,7 @@ tree
 troll
 trot
 trunk
+trust
 truth
 try
 tusk
