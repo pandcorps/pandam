@@ -557,12 +557,12 @@ public final class WordScreen extends Panscreen {
         Player.registerCaptureScreen(actor);
         actor.register(Pangine.getEngine().getInteraction().BACK, new ActionEndListener() {
             @Override public final void onActionEnd(final ActionEndEvent event) {
-                goMiniMenu(nextScreen);
+                goMiniMenu(nextScreen, "Play", true);
             }});
     }
     
-    protected final static void goMiniMenu(final Panscreen nextScreen) {
-        FurGuardiansGame.setScreen(new MiniMenuScreen(nextScreen));
+    protected final static void goMiniMenu(final Panscreen nextScreen, final String nextLabel, final boolean quitNeeded) {
+        FurGuardiansGame.setScreen(new MiniMenuScreen(nextScreen, nextLabel, quitNeeded));
     }
     
     protected final static class MiniAwardScreen extends Panscreen {
@@ -598,15 +598,19 @@ public final class WordScreen extends Panscreen {
         }
         
         private final void goNext() {
-            goMiniMenu(nextScreen);
+            goMiniMenu(nextScreen, "Next", false);
         }
     }
     
     protected final static class MiniMenuScreen extends Panscreen {
         private final Panscreen nextScreen;
+        private final String nextLabel;
+        private final boolean quitNeeded;
         
-        protected MiniMenuScreen(final Panscreen nextScreen) {
+        protected MiniMenuScreen(final Panscreen nextScreen, final String nextLabel, final boolean quitNeeded) {
             this.nextScreen = nextScreen;
+            this.nextLabel = nextLabel;
+            this.quitNeeded = quitNeeded;
         }
         
         @Override
@@ -614,10 +618,11 @@ public final class WordScreen extends Panscreen {
             final Panroom room = initMiniZoom(128);
             addCursor(room, 20);
             final Pangine engine = Pangine.getEngine();
+            final int numButtons = quitNeeded ? 3 : 2;
             final int w = FurGuardiansGame.MENU_W;
-            final int x = (engine.getEffectiveWidth() - (w * 3)) / 2;
+            final int x = (engine.getEffectiveWidth() - (w * numButtons)) / 2;
             final int y = (engine.getEffectiveHeight() - FurGuardiansGame.MENU_H) / 2;
-            Menu.PlayerScreen.newFormButton(room, "Next", x, y, FurGuardiansGame.menuRight, "Next", new Runnable() {
+            Menu.PlayerScreen.newFormButton(room, "Next", x, y, FurGuardiansGame.menuRight, nextLabel, new Runnable() {
                 @Override public final void run() {
                     goNext();
                 }});
@@ -625,10 +630,12 @@ public final class WordScreen extends Panscreen {
                 @Override public final void run() {
                     FurGuardiansGame.goMiniGames(getPlayerContext());
                 }});
-            Menu.PlayerScreen.newFormButton(room, "Quit", x + (w * 2), y, FurGuardiansGame.menuOff, "Quit", new Runnable() {
-                @Override public final void run() {
-                    engine.exit();
-                }});
+            if (quitNeeded) {
+                Menu.PlayerScreen.newFormButton(room, "Quit", x + (w * 2), y, FurGuardiansGame.menuOff, "Quit", new Runnable() {
+                    @Override public final void run() {
+                        engine.exit();
+                    }});
+            }
         }
         
         private final void goNext() {
