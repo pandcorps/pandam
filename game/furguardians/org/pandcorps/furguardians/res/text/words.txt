@@ -1,10 +1,12 @@
 act
 ant
 ape
+apple
 art
 ash
 aunt
 award
+band
 bark
 bash
 bass
@@ -14,6 +16,7 @@ bee
 beech
 beet
 bell
+berry
 best
 big
 birch
@@ -55,6 +58,7 @@ colt
 comb
 comic
 cool
+cook
 cow
 crow
 crown
@@ -73,6 +77,7 @@ dog
 door
 dove
 dress
+drum
 dry
 duck
 eagle
@@ -82,6 +87,7 @@ eel
 egg
 elk
 elm
+end
 even
 ever
 ewe
@@ -92,8 +98,10 @@ fan
 fang
 fast
 feel
+feet
 fern
 fig
+fill
 fin
 finch
 fish
@@ -107,6 +115,7 @@ flood
 floor
 fly
 food
+foot
 fork
 fox
 fresh
@@ -118,9 +127,11 @@ furry
 fuzz
 fuzzy
 game
+geese
 gem
 gift
 glass
+glee
 goat
 good
 grand
@@ -133,6 +144,7 @@ guess
 gull
 happy
 hare
+harp
 hat
 havoc
 hawk
@@ -141,6 +153,7 @@ heart
 help
 hen
 herd
+here
 hero
 hill
 hive
@@ -176,11 +189,13 @@ laugh
 lava
 leaf
 learn
+left
 level
 life
 lift
 light
 lion
+list
 live
 llama
 look
@@ -194,6 +209,7 @@ merry
 mice
 mink
 mint
+mix
 mole
 mom
 moon
@@ -202,6 +218,7 @@ mud
 mule
 music
 need
+nerve
 nest
 new
 newt
@@ -222,6 +239,7 @@ paw
 peel
 petal
 pig
+pit
 plant
 play
 pond
@@ -241,6 +259,7 @@ raven
 read
 red
 reed
+right
 river
 robin
 rock
@@ -258,6 +277,8 @@ scent
 see
 seed
 sell
+sense
+seven
 shark
 sheep
 shell
@@ -267,9 +288,11 @@ sight
 silk
 sing
 sit
+six
 skill
 skunk
 sky
+sleep
 sloth
 small
 smart
@@ -282,6 +305,7 @@ song
 sound
 spell
 spill
+spike
 spin
 spoon
 stand
@@ -307,11 +331,15 @@ tag
 tail
 tall
 teeth
+ten
 tent
 test
 text
 thank
+theme
+there
 think
+three
 tiger
 tooth
 track
@@ -321,8 +349,10 @@ trot
 truth
 try
 tusk
+tweet
 twig
 twist
+two
 uncle
 under
 vine
@@ -335,7 +365,10 @@ wax
 web
 well
 whale
+where
+which
 white
+why
 wild
 will
 win
