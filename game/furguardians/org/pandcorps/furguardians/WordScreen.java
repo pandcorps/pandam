@@ -64,7 +64,7 @@ public final class WordScreen extends Panscreen {
         Mathtil.setNewSeed();
         initImages();
         initWords();
-        //TODO proper exit, games icon, back button
+        //TODO proper exit, games icon, back button, escape key
     }
     
     private final void initImages() {
@@ -74,6 +74,7 @@ public final class WordScreen extends Panscreen {
         final Img[] blStrip = FurGuardiansGame.loadBlockLetterStrip();
         FurGuardiansGame.greenBlockLetters = copyBlockLetters("green", blStrip, new SwapPixelFilter(Channel.Green, Channel.Blue, Channel.Red));
         FurGuardiansGame.whiteBlockLetters = copyBlockLetters("white", blStrip, new SwapPixelFilter(Channel.Green, Channel.Green, Channel.Green));
+        FurGuardiansGame.menuOptions64 = Pangine.getEngine().createImage(FurGuardiansGame.PRE_IMG + "options64", FurGuardiansGame.RES + "menu/Options64.png");
         Img.close(blStrip);
     }
     
@@ -113,7 +114,7 @@ public final class WordScreen extends Panscreen {
         }
         buildGrid();
         currentSelection.clear();
-        registerMiniInputs(grid[0][0], new WordScreen());
+        registerMiniInputs(grid[0][0], new WordScreen(), FurGuardiansGame.menuOptions64, Pangine.getEngine().getEffectiveWidth() - 7, 0);
     }
     
     private final void buildGrid() {
@@ -553,12 +554,21 @@ public final class WordScreen extends Panscreen {
         return cursor;
     }
     
-    protected final static void registerMiniInputs(final Panctor actor, final Panscreen nextScreen) {
-        Player.registerCaptureScreen(actor);
-        actor.register(Pangine.getEngine().getInteraction().BACK, new ActionEndListener() {
+    private final static ActionEndListener newMenuListener(final Panscreen nextScreen) {
+        return new ActionEndListener() {
             @Override public final void onActionEnd(final ActionEndEvent event) {
                 goMiniMenu(nextScreen, "Play", true);
-            }});
+            }};
+    }
+    
+    protected final static void registerMiniInputs(final Panctor actor, final Panscreen nextScreen, final Panmage menuImg, final int menuX, final int menuY) {
+        final Pangine engine = Pangine.getEngine();
+        final Panteraction interaction = engine.getInteraction();
+        Player.registerCaptureScreen(actor);
+        actor.register(interaction.BACK, newMenuListener(nextScreen));
+        final TouchButton button = new TouchButton(interaction, actor.getLayer(), "mini.menu", menuX, menuY, 0, menuImg, null, true);
+        engine.registerTouchButton(button);
+        actor.register(button, newMenuListener(nextScreen));
     }
     
     protected final static void goMiniMenu(final Panscreen nextScreen, final String nextLabel, final boolean quitNeeded) {

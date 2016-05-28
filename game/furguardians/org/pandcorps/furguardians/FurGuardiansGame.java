@@ -387,6 +387,7 @@ public class FurGuardiansGame extends BaseGame {
 	protected static Panmage menuEyesDragon = null;
 	protected static Panmage menuButtons = null;
 	protected static Panmage menuGames = null;
+	protected static Panmage menuOptions64 = null;
 	protected static Panmage menuCursor = null;
 	protected static Panmage redUp = null;
 	protected static Panmage redDown = null;

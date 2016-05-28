@@ -44,6 +44,7 @@ buy
 buzz
 candy
 cat
+catch
 chaos
 check
 cheer
@@ -57,8 +58,8 @@ cold
 colt
 comb
 comic
-cool
 cook
+cool
 cow
 crow
 crown
@@ -198,6 +199,7 @@ lion
 list
 live
 llama
+log
 look
 loop
 loud
@@ -228,6 +230,7 @@ nose
 note
 oak
 odd
+off
 old
 over
 owl
@@ -235,6 +238,7 @@ oxen
 page
 pal
 panda
+pass
 paw
 peel
 petal
@@ -245,6 +249,7 @@ play
 pond
 power
 print
+pun
 pup
 puppy
 quack
@@ -304,8 +309,8 @@ soft
 song
 sound
 spell
-spill
 spike
+spill
 spin
 spoon
 stand
@@ -346,6 +351,7 @@ track
 tree
 troll
 trot
+trunk
 truth
 try
 tusk
