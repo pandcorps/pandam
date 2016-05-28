@@ -59,6 +59,7 @@ public abstract class Pangine {
 	
 	private int topOffset = 0;
 	private float zoomMag = 1;
+	private boolean zoomInteger = true;
 	private Runnable zoomChangeHandler = null;
 	private Scaler scaler = null;
 	
@@ -885,15 +886,23 @@ public abstract class Pangine {
 	}
 	
 	public void zoom(final float mag) {
-		final float old = zoomMag;
-	    zoomMag = mag;
-	    if (old != mag && zoomChangeHandler != null) {
-	    	zoomChangeHandler.run();
+	    if (zoomMag != mag) {
+	        zoomMag = mag;
+	        final int izoom = (int) mag;
+	        final float fzoom = izoom;
+	        zoomInteger = mag == fzoom;
+	        if (zoomChangeHandler != null) {
+	            zoomChangeHandler.run();
+	        }
 	    }
 	}
 	
 	public final float getZoom() {
 	    return zoomMag;
+	}
+	
+	protected final boolean isZoomInteger() {
+	    return zoomInteger;
 	}
 	
 	public final void setZoomChangeHandler(final Runnable zoomChangeHandler) {
@@ -997,11 +1006,19 @@ public abstract class Pangine {
     Same as truncatedWidth when zooming is disabled.
     */
 	public final int getEffectiveWidth() {
-		return (int) (getTruncatedWidth() / getZoom());
+		return getEffectiveDimension(getTruncatedWidth());
 	}
 	
 	public final int getEffectiveHeight() {
-		return (int) (getTruncatedHeight() / getZoom());
+		return getEffectiveDimension(getTruncatedHeight());
+	}
+	
+	private final int getEffectiveDimension(final int truncatedDimension) {
+	    final float effectiveDimension = truncatedDimension / getZoom();
+	    if (zoomInteger) {
+	        return (int) (effectiveDimension);
+	    }
+	    return Math.round(effectiveDimension);
 	}
 	
 	/*

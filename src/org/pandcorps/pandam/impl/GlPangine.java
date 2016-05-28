@@ -205,10 +205,8 @@ public abstract class GlPangine extends Pangine {
 	
 	private final void initTruncatedSize() {
 		int w = getDisplayWidth(), h = getDisplayHeight();
-		final float z1 = getZoom();
-		final int z = (int) z1;
-		final float z2 = z;
-		if (z1 == z2) {
+		if (isZoomInteger()) {
+		    final int z = (int) getZoom();
 			w = (w / z) * z;
 			h = (h / z) * z;
 		}
