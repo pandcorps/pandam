@@ -64,6 +64,7 @@ public class Castle {
             room.addActor(tm);
             
             Menu.PlayerScreen.registerBackPromptQuit(tm);
+            Player.registerCaptureScreen(tm);
             draw();
             FurGuardiansGame.fadeIn(room);
             getMusic().changeMusic();
