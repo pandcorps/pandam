@@ -23,6 +23,7 @@ birch
 bird
 black
 bliss
+blob
 block
 bloom
 blue
@@ -48,6 +49,7 @@ catch
 chaos
 check
 cheer
+chess
 chill
 class
 claw
@@ -60,6 +62,7 @@ comb
 comic
 cook
 cool
+corn
 cow
 crow
 crown
@@ -92,11 +95,13 @@ end
 even
 ever
 ewe
+excel
 eye
 face
 fall
 fan
 fang
+farm
 fast
 feel
 feet
@@ -143,6 +148,7 @@ growl
 guard
 guess
 gull
+hand
 happy
 hare
 harp
@@ -247,6 +253,7 @@ pit
 plant
 play
 pond
+pop
 power
 print
 pun
@@ -275,6 +282,7 @@ run
 rush
 safe
 saga
+salad
 sand
 sap
 scarf
@@ -308,6 +316,7 @@ snow
 soft
 song
 sound
+speed
 spell
 spike
 spill
@@ -346,6 +355,7 @@ there
 think
 three
 tiger
+tool
 tooth
 track
 tree
@@ -370,6 +380,7 @@ wash
 water
 wax
 web
+week
 well
 whale
 where
