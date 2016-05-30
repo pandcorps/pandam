@@ -42,6 +42,7 @@ public final class WordScreen extends Panscreen {
     private final static int SIZE = 4;
     private final static String[] SKIP = { "ETBJ", "RGHS" }; //TODO
     private final static HashMap<Integer, List<String>> dictionary = new HashMap<Integer, List<String>>();
+    private static long seed = -1;
     private Panroom room = null;
     private List<Word> words = null;
     private final boolean[] letters = new boolean[26];
@@ -61,7 +62,7 @@ public final class WordScreen extends Panscreen {
         room = initMiniZoom(64);
         addCursor(room, 20);
         loadWordFile();
-        Mathtil.setNewSeed();
+        Mathtil.setSeed(seed);
         initImages();
         initWords();
         //TODO proper exit, games icon, back button, escape key
@@ -261,6 +262,7 @@ public final class WordScreen extends Panscreen {
     }
     
     private final void victory() {
+        seed = Mathtil.newSeed();
         final Statistics stats = getStatistics();
         if (stats != null) {
             stats.wordMiniGames++;
@@ -318,6 +320,7 @@ public final class WordScreen extends Panscreen {
         if (dictionary.size() > 0) {
             return;
         }
+        seed = Mathtil.newSeed();
         BufferedReader in = null;
         try {
             in = openWordFileReader();
@@ -472,6 +475,7 @@ public final class WordScreen extends Panscreen {
     }
     
     private final static void validateWordFile() throws Exception {
+        //TODO Separate list of words with 6-8 letters for 5x5 grid must have only 1 vowel and at least one duplicate letter
         BufferedReader in = null;
         try {
             in = openWordFileReader();
