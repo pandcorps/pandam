@@ -200,6 +200,38 @@ public final class WordScreen extends Panscreen {
         }
     }
     
+    private final boolean isSkipped(final char[][] g) {
+        for (final String s : SKIP) {
+            if (isSkipped(g, s)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    private final boolean isSkipped(final char[][] g, final String s) {
+        for (int i = 0; i < SIZE; i++) {
+            if (isSkipped(g, s, i, 0, 0, 1) || isSkipped(g, s, 0, i, 1, 0)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    private final boolean isSkipped(final char[][] g, final String s, int row, int col, final int rowInc, final int colInc) {
+        final int size = s.length();
+        for (int i = 0; i < size; i++) {
+            final char gc = g[row][col];
+            final char sc = (char) (s.charAt(i) + 1);
+            if (gc != sc) {
+                return false;
+            }
+            row += rowInc;
+            col += colInc;
+        }
+        return true;
+    }
+    
     @Override
     public final void step() {
         if (currentSelection.size() > 0 && !isTouchActive()) {
