@@ -1,3 +1,4 @@
+across
 aghast
 armada
 attach
@@ -24,7 +25,9 @@ cohort
 comfort
 common
 concoct
+conform
 contort
+control
 crescent
 crunch
 crutch
@@ -57,6 +60,8 @@ filling
 finish
 fleece
 follow
+forgot
+forlorn
 fragrant
 freeze
 fulcrum
@@ -68,6 +73,7 @@ hollow
 horror
 hurtful
 implicit
+insist
 instinct
 jester
 keeper
@@ -130,10 +136,12 @@ treble
 twelve
 vacant
 vagrant
+vertex
 weekend
 western
 whenever
 wherever
 whether
 willing
+winning
 wrestle

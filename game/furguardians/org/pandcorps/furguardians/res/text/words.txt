@@ -140,6 +140,7 @@ furry
 fuzz
 fuzzy
 game
+gap
 geese
 gem
 gift
@@ -155,6 +156,7 @@ growl
 guard
 guess
 gull
+gum
 hand
 happy
 hare
@@ -296,6 +298,7 @@ rush
 safe
 saga
 salad
+salt
 sand
 sap
 scarf
@@ -310,6 +313,7 @@ sheep
 shell
 shirt
 short
+shy
 sight
 silk
 sing
