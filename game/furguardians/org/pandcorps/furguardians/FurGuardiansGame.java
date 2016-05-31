@@ -1803,7 +1803,7 @@ public class FurGuardiansGame extends BaseGame {
 			    menuRgb = createMenuImg("Rgb");
 			    menuEyesDragon = createMenuImg("EyesDragon");
 			    menuButtons = createMenuImg("Buttons");
-			    menuGames = menuExclaim; //TODO
+			    menuGames = createMenuImg("Games");
 			    //menuIn = engine.createImage(Pantil.vmid(), ImtilX.indent(left));
 			    menuIn = engine.createImage(Pantil.vmid(), ImtilX.newButton(MENU_W, MENU_H, clrIn));
 			    menuDisabled = engine.createImage(Pantil.vmid(), ImtilX.newButton(MENU_W, MENU_H, new FinPancolor((short) 128, (short) 96, (short) 160)));

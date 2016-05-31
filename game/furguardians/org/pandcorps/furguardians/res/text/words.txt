@@ -33,6 +33,7 @@ book
 bow
 brave
 brick
+brook
 brown
 brush
 bug
@@ -50,13 +51,17 @@ chaos
 check
 cheer
 chess
+chick
+child
 chill
 class
 claw
+cliff
 climb
 cloud
 coat
 cold
+color
 colt
 comb
 comic
@@ -64,6 +69,7 @@ cook
 cool
 corn
 cow
+creek
 crow
 crown
 cub
@@ -73,6 +79,7 @@ dash
 day
 deed
 deer
+den
 dew
 dig
 dip
@@ -178,11 +185,13 @@ ice
 imp
 inch
 ink
+inn
 jazz
 jig
 jolly
 joy
 jump
+kid
 kind
 king
 kit
@@ -213,6 +222,7 @@ love
 lynx
 map
 match
+mere
 merry
 mice
 mink
@@ -232,6 +242,7 @@ new
 newt
 next
 night
+north
 nose
 note
 oak
@@ -252,10 +263,12 @@ pig
 pit
 plant
 play
+plum
 pond
 pop
 power
 print
+proof
 pun
 pup
 puppy
@@ -355,6 +368,7 @@ there
 think
 three
 tiger
+tint
 tool
 tooth
 track
@@ -382,6 +396,7 @@ wax
 web
 week
 well
+west
 whale
 where
 which
