@@ -1,4 +1,6 @@
 act
+add
+all
 ant
 ape
 apple
@@ -6,6 +8,7 @@ art
 ash
 aunt
 award
+back
 band
 bark
 bash
@@ -22,6 +25,7 @@ big
 birch
 bird
 black
+blink
 bliss
 blob
 block
@@ -30,6 +34,7 @@ blue
 blush
 bold
 book
+boss
 bow
 brave
 brick
@@ -40,6 +45,7 @@ bug
 build
 bull
 bump
+bunch
 bunny
 burst
 buy
@@ -54,6 +60,7 @@ chess
 chick
 child
 chill
+clam
 class
 claw
 cliff
@@ -87,6 +94,7 @@ dirt
 dog
 door
 dove
+down
 dress
 drum
 dry
@@ -94,6 +102,7 @@ duck
 eagle
 ear
 earn
+edge
 eel
 egg
 elk
@@ -157,6 +166,7 @@ guard
 guess
 gull
 gum
+hall
 hand
 happy
 hare
@@ -172,6 +182,7 @@ herd
 here
 hero
 hill
+hiss
 hive
 hog
 holly
@@ -207,6 +218,7 @@ laugh
 lava
 leaf
 learn
+ledge
 left
 level
 life
@@ -215,12 +227,17 @@ light
 lion
 list
 live
+livid
 llama
+lob
 log
 look
+loom
 loop
 loud
 love
+low
+lunch
 lynx
 map
 match
@@ -254,9 +271,11 @@ old
 over
 owl
 oxen
+pack
 page
 pal
 panda
+parka
 pass
 paw
 peel
@@ -269,6 +288,7 @@ plum
 pond
 pop
 power
+press
 print
 proof
 pun
@@ -339,6 +359,7 @@ spike
 spill
 spin
 spoon
+spry
 stand
 star
 start
@@ -375,6 +396,7 @@ tiger
 tint
 tool
 tooth
+toss
 track
 tree
 troll
@@ -411,7 +433,9 @@ will
 win
 wind
 wing
+wink
 wish
+wisp
 wolf
 won
 wood
