@@ -40,6 +40,7 @@ import org.pandcorps.pandax.text.*;
 public final class WordScreen extends Panscreen {
     private final static int DIM = 16;
     private final static int SIZE = 4;
+    private final static int NUM_WORDS = 4;
     private final static String[] SKIP = { "ETBJ", "RGHS" }; //TODO
     private final static HashMap<Integer, List<String>> dictionary = new HashMap<Integer, List<String>>();
     private static long seed = -1;
@@ -89,11 +90,12 @@ public final class WordScreen extends Panscreen {
     
     private final void initWords() {
         destroyAll();
-        words = new ArrayList<Word>();
+        final List<String> list = new ArrayList<String>(NUM_WORDS);
+        final char[][] g = new char[SIZE][SIZE];
         while (true) {
             clearLetters();
             boolean ok = true;
-            for (int i = 0; i < 4; i++) {
+            for (int i = 0; i < NUM_WORDS; i++) {
                 final int size;
                 if (i == 0) {
                     size = 3;
@@ -107,18 +109,24 @@ public final class WordScreen extends Panscreen {
                     ok = false;
                     break;
                 }
-                new Word(word);
+                list.add(word);
             }
             if (ok) {
-                break;
+                if (buildGrid(list, g)) {
+                    break;
+                }
             }
         }
-        buildGrid();
+        buildGrid(g);
+        words = new ArrayList<Word>(NUM_WORDS);
+        for (final String word : list) {
+            new Word(word);
+        }
         currentSelection.clear();
         registerMiniInputs(grid[0][0], new WordScreen(), FurGuardiansGame.menuOptions64, Pangine.getEngine().getEffectiveWidth() - 7, 0);
     }
     
-    private final void buildGrid() {
+    private boolean buildGrid(final List<String> list, final char[][] g) {
         final int gridArea = SIZE * SIZE;
         final int[] scrap = new int[4], scrapGrid = new int[gridArea];
         for (int i = 0; i < 4; i++) {
@@ -128,11 +136,9 @@ public final class WordScreen extends Panscreen {
             scrapGrid[i] = i;
         }
         boolean allOk;
-        final char[][] g = new char[SIZE][SIZE];
         while (true) {
             allOk = true;
-            for (final Word word : words) {
-                final String value = word.value;
+            for (final String value : list) {
                 final int size = value.length();
                 int row = 0, col = 0;
                 Mathtil.shuffle(scrapGrid);
@@ -192,6 +198,10 @@ public final class WordScreen extends Panscreen {
                 }
             }
         }
+        return !isSkipped(g);
+    }
+    
+    private final void buildGrid(final char[][] g) {
         grid = new Letter[SIZE][SIZE];
         for (int row = 0; row < SIZE; row++) {
             for (int col = 0; col < SIZE; col++) {
@@ -210,8 +220,15 @@ public final class WordScreen extends Panscreen {
     }
     
     private final boolean isSkipped(final char[][] g, final String s) {
+        final int end = SIZE - 1;
         for (int i = 0; i < SIZE; i++) {
-            if (isSkipped(g, s, i, 0, 0, 1) || isSkipped(g, s, 0, i, 1, 0)) {
+            if (isSkipped(g, s, i, 0, 0, 1)) {
+                return true;
+            } else if (isSkipped(g, s, i, end, 0, -1)) {
+                return true;
+            } else if (isSkipped(g, s, 0, i, 1, 0)) {
+                return true;
+            } else if (isSkipped(g, s, end, i, -1, 0)) {
                 return true;
             }
         }
