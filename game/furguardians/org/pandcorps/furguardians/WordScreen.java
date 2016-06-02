@@ -41,7 +41,7 @@ public final class WordScreen extends Panscreen {
     private final static int DIM = 16;
     private final static int SIZE = 4;
     private final static int NUM_WORDS = 4;
-    private final static String[] SKIP = { "ETBJ", "RGHS" }; //TODO
+    private final static String[] SKIP = { "ETBJ", "RGHS", "BTMS", "CZLM" };
     private final static HashMap<Integer, List<String>> dictionary = new HashMap<Integer, List<String>>();
     private static long seed = -1;
     private Panroom room = null;
@@ -66,7 +66,7 @@ public final class WordScreen extends Panscreen {
         Mathtil.setSeed(seed);
         initImages();
         initWords();
-        //TODO proper exit, games icon, back button, escape key
+        //TODO back button, escape key
     }
     
     private final void initImages() {
@@ -232,6 +232,15 @@ public final class WordScreen extends Panscreen {
                 return true;
             }
         }
+        if (isSkipped(g, s, 0, 0, 1, 1)) {
+            return true;
+        } else if (isSkipped(g, s, end, end, -1, -1)) {
+            return true;
+        } else if (isSkipped(g, s, 0, end, 1, -1)) {
+            return true;
+        } else if (isSkipped(g, s, end, 0, -1, 1)) {
+            return true;
+        }
         return false;
     }
     
@@ -239,7 +248,8 @@ public final class WordScreen extends Panscreen {
         final int size = s.length();
         for (int i = 0; i < size; i++) {
             final char gc = g[row][col];
-            final char sc = (char) (s.charAt(i) + 1);
+            final char rc = s.charAt(i);
+            final char sc = (rc == 'Z') ? 'A' : ((char) (rc + 1));
             if (gc != sc) {
                 return false;
             }

@@ -12,7 +12,9 @@ banana
 beetle
 bereft
 better
+binding
 blossom
+borrow
 bottom
 breeze
 cement
@@ -70,6 +72,7 @@ expert
 express
 farmhand
 ferret
+fervent
 filling
 finish
 fleece
@@ -83,6 +86,7 @@ gallant
 giving
 grammar
 hazard
+heedless
 helmet
 hissing
 hollow
@@ -92,6 +96,7 @@ impish
 implicit
 imprint
 indict
+insight
 insist
 instinct
 jester
@@ -107,6 +112,8 @@ mallard
 mammal
 midnight
 missing
+needle
+needless
 peddle
 pepper
 percent
@@ -115,9 +122,11 @@ pester
 pewter
 popcorn
 prefer
+presence
 present
 preserve
 pretend
+pretense
 pretext
 prevent
 recede
@@ -150,12 +159,14 @@ scratch
 screen
 secret
 select
+serene
 serpent
 severe
 singing
 slender
 smiling
 smooth
+sorrow
 spirit
 splash
 standard
@@ -169,6 +180,8 @@ stretch
 strict
 stroll
 surplus
+swerve
+tether
 thinking
 thirst
 thrust
