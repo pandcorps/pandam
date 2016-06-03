@@ -619,7 +619,7 @@ public class TileMap extends Panctor implements Savable {
     	return tm;
     }
     
-    private final TileMapImage getImage(final TileMapImage[][] imgMap, final Field f, final int i) {
+    /*package*/ final TileMapImage getImage(final TileMapImage[][] imgMap, final Field f, final int i) {
     	final String v = f.getValue(i);
     	if (v == null) {
     		return null;
