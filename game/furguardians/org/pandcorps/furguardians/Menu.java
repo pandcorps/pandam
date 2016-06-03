@@ -3925,6 +3925,7 @@ public class Menu {
 	        final Panple pos = getPosition();
             bird.getPosition().set(pos.getX() + 20, pos.getY() + 22, pos.getZ() + 10);
             getLayer().addActor(bird);
+            acc.onStepEnd(this);
         }
 	    
         @Override

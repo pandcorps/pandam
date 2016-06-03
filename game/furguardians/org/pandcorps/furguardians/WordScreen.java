@@ -93,6 +93,7 @@ public final class WordScreen extends Panscreen {
         final List<String> list = new ArrayList<String>(NUM_WORDS);
         final char[][] g = new char[SIZE][SIZE];
         while (true) {
+            list.clear();
             clearLetters();
             boolean ok = true;
             for (int i = 0; i < NUM_WORDS; i++) {
@@ -210,7 +211,7 @@ public final class WordScreen extends Panscreen {
         }
     }
     
-    private final boolean isSkipped(final char[][] g) {
+    /*package*/ final static boolean isSkipped(final char[][] g) {
         for (final String s : SKIP) {
             if (isSkipped(g, s)) {
                 return true;
@@ -219,7 +220,7 @@ public final class WordScreen extends Panscreen {
         return false;
     }
     
-    private final boolean isSkipped(final char[][] g, final String s) {
+    /*package*/ final static boolean isSkipped(final char[][] g, final String s) {
         final int end = SIZE - 1;
         for (int i = 0; i < SIZE; i++) {
             if (isSkipped(g, s, i, 0, 0, 1)) {
@@ -244,7 +245,7 @@ public final class WordScreen extends Panscreen {
         return false;
     }
     
-    private final boolean isSkipped(final char[][] g, final String s, int row, int col, final int rowInc, final int colInc) {
+    private final static boolean isSkipped(final char[][] g, final String s, int row, int col, final int rowInc, final int colInc) {
         final int size = s.length();
         for (int i = 0; i < size; i++) {
             final char gc = g[row][col];
@@ -629,6 +630,9 @@ public final class WordScreen extends Panscreen {
         final Panteraction interaction = engine.getInteraction();
         Player.registerCaptureScreen(actor);
         actor.register(interaction.BACK, newMenuListener(nextScreen));
+        if (engine.isMouseSupported()) {
+            actor.register(interaction.KEY_ESCAPE, newMenuListener(nextScreen));
+        }
         final TouchButton button = new TouchButton(interaction, actor.getLayer(), "mini.menu", menuX, menuY, 0, menuImg, null, true);
         engine.registerTouchButton(button);
         actor.register(button, newMenuListener(nextScreen));
@@ -695,13 +699,14 @@ public final class WordScreen extends Panscreen {
             final int w = FurGuardiansGame.MENU_W;
             final int x = (engine.getEffectiveWidth() - (w * numButtons)) / 2;
             final int y = (engine.getEffectiveHeight() - FurGuardiansGame.MENU_H) / 2;
-            Menu.PlayerScreen.newFormButton(room, "Next", x, y, FurGuardiansGame.menuRight, nextLabel, new Runnable() {
+            final TouchButton nextButton;
+            nextButton = Menu.PlayerScreen.newFormButton(room, "Next", x, y, FurGuardiansGame.menuRight, nextLabel, new Runnable() {
                 @Override public final void run() {
                     goNext();
                 }});
             Menu.PlayerScreen.newFormButton(room, "Menu", x + w, y, FurGuardiansGame.menuOptions, "Menu", new Runnable() {
                 @Override public final void run() {
-                    FurGuardiansGame.goMiniGames(getPlayerContext());
+                    goMenu();
                 }});
             if (quitNeeded) {
                 Menu.PlayerScreen.newFormButton(room, "Quit", x + (w * 2), y, FurGuardiansGame.menuOff, "Quit", new Runnable() {
@@ -709,10 +714,36 @@ public final class WordScreen extends Panscreen {
                         engine.exit();
                     }});
             }
+            final Panctor actor = nextButton.getActor();
+            final Panteraction interaction = engine.getInteraction();
+            actor.register(interaction.BACK, newMenuListener());
+            if (engine.isMouseSupported()) {
+                actor.register(interaction.KEY_SPACE, newNextListener());
+                actor.register(interaction.KEY_ENTER, newNextListener());
+                actor.register(interaction.KEY_ESCAPE, newMenuListener());
+            }
         }
         
         private final void goNext() {
             FurGuardiansGame.setScreen(nextScreen);
+        }
+        
+        private final void goMenu() {
+            FurGuardiansGame.goMiniGames(getPlayerContext());
+        }
+        
+        private final ActionEndListener newNextListener() {
+            return new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) {
+                    goNext();
+                }};
+        }
+        
+        private final ActionEndListener newMenuListener() {
+            return new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) {
+                    goMenu();
+                }};
         }
     }
 }
