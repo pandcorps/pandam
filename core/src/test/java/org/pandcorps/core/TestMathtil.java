@@ -20,9 +20,8 @@ PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY
 TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 */
-package org.pandcorps.test.core;
+package org.pandcorps.core;
 
-import org.pandcorps.core.*;
 import org.pandcorps.test.*;
 
 public final class TestMathtil extends Pantest {

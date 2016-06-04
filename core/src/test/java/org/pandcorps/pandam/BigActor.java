@@ -20,9 +20,7 @@ PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY
 TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 */
-package org.pandcorps.test.pandam;
-
-import org.pandcorps.pandam.*;
+package org.pandcorps.pandam;
 
 public final class BigActor extends Panctor {
 	public BigActor(final String id) {
