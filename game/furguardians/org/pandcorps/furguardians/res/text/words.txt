@@ -147,6 +147,7 @@ fig
 fill
 fin
 finch
+find
 fish
 fix
 flag
@@ -162,6 +163,7 @@ fog
 food
 foot
 fork
+four
 fox
 fresh
 frog
@@ -524,6 +526,7 @@ won
 wood
 wool
 word
+words
 world
 worm
 yak

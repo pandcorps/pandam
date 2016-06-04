@@ -41,7 +41,7 @@ public final class WordScreen extends Panscreen {
     private final static int DIM = 16;
     private final static int SIZE = 4;
     private final static int NUM_WORDS = 4;
-    private final static String[] SKIP = { "ETBJ", "RGHS", "BTMS", "CZLM" };
+    private final static String[] SKIP = { "ETBJ", "RGHS", "BTMS", "CZLM", "CHBJ" };
     private final static HashMap<Integer, List<String>> dictionary = new HashMap<Integer, List<String>>();
     private static long seed = -1;
     private Panroom room = null;
@@ -90,6 +90,17 @@ public final class WordScreen extends Panscreen {
     
     private final void initWords() {
         destroyAll();
+        final Statistics stats = getStatistics();
+        if (stats != null && stats.wordMiniGames < 1) {
+            initFirstWords();
+        } else {
+            initRandomWords();
+        }
+        currentSelection.clear();
+        registerMiniInputs(grid[0][0], new WordScreen(), FurGuardiansGame.menuOptions64, Pangine.getEngine().getEffectiveWidth() - 7, 0);
+    }
+    
+    private final void initRandomWords() {
         final List<String> list = new ArrayList<String>(NUM_WORDS);
         final char[][] g = new char[SIZE][SIZE];
         while (true) {
@@ -123,8 +134,32 @@ public final class WordScreen extends Panscreen {
         for (final String word : list) {
             new Word(word);
         }
-        currentSelection.clear();
-        registerMiniInputs(grid[0][0], new WordScreen(), FurGuardiansGame.menuOptions64, Pangine.getEngine().getEffectiveWidth() - 7, 0);
+    }
+    
+    private final void initFirstWords() {
+        final char[][] g = {
+                { 'F', 'I', 'N', 'D' },
+                { 'A', 'L', 'L', 'R' },
+                { 'W', 'F', 'O', 'U' },
+                { 'O', 'R', 'D', 'S' }
+        };
+        buildGrid(g);
+        words = new ArrayList<Word>(NUM_WORDS);
+        final Word word0 = new Word("FIND");
+        new Word("ALL");
+        new Word("FOUR");
+        final Word word3 = new Word("WORDS");
+        Letter[] row = grid[0];
+        for (int i = 0; i < 4; i++) {
+            currentSelection.add(row[i]);
+        }
+        award(word0);
+        currentSelection.add(grid[2][0]);
+        row = grid[3];
+        for (int i = 0; i < 4; i++) {
+            currentSelection.add(row[i]);
+        }
+        award(word3);
     }
     
     private boolean buildGrid(final List<String> list, final char[][] g) {
