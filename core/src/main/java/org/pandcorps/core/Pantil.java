@@ -25,7 +25,7 @@ package org.pandcorps.core;
 import java.nio.*;
 //import java.rmi.dgc.*;
 
-// Pancorps Utility
+// Pandcorps Utility
 public final class Pantil {
     public final static String RES = "org/pandcorps/res/";
     private final static int INT_SIZE = Integer.SIZE / 8;

@@ -160,7 +160,7 @@ public class FurGuardiansGame extends BaseGame {
 	protected final static int MAX_NAME_PROFILE = 8;
 	protected final static int MAX_NAME_AVATAR = 8;
 	
-	protected final static String RES = "org/pandcorps/furguardians/res/";
+	protected final static String RES = "org/pandcorps/furguardians/";
 	
 	protected final static String FILE_CFG = "Config.txt";
 	protected final static String EXT_PRF = ".prf.txt";
@@ -1603,7 +1603,7 @@ public class FurGuardiansGame extends BaseGame {
 			Coltil.set(allEnemies, Level.ROCK_TRIO, rockTrio);
 			rockLeg = new EnemyDefinition("Rock Leg", 16, null, false, false, 0, Enemy.DEFAULT_X, Enemy.DEFAULT_H, 3);
 			rockLeg.rewardHandler = rockTrio.rewardHandler;
-			rockBack = createImage("rock.back", "org/pandcorps/furguardians/res/enemy/Enemy17.png", 16, rockO, Enemy.DEFAULT_MIN, Enemy.DEFAULT_MAX);
+			rockBack = createImage("rock.back", RES + "enemy/Enemy17.png", 16, rockO, Enemy.DEFAULT_MIN, Enemy.DEFAULT_MAX);
 			Level.initTheme(); }});
 		
 		loaders.add(new Runnable() { @Override public final void run() {

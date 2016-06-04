@@ -63,8 +63,9 @@ public class Cabin {
 			
 			tm = new TileMap(Pantil.vmid(), room, ImtilX.DIM, ImtilX.DIM);
 			Level.tm = tm;
-			final Img tbuf = ImtilX.loadImage("org/pandcorps/furguardians/res/bg/Tiles.png", 128, null);
-			final Img buf = ImtilX.loadImage("org/pandcorps/furguardians/res/bg/Cabin.png", 128, null);
+			final String bg = Level.BG;
+			final Img tbuf = ImtilX.loadImage(bg + "Tiles.png", 128, null);
+			final Img buf = ImtilX.loadImage(bg + "Cabin.png", 128, null);
 			Imtil.copy(tbuf, buf, 64, 0, 16, 16, 32, 64);
 			tbuf.close();
 			timg = engine.createImage("img.cabin", buf);
