@@ -162,7 +162,7 @@ public final class Fonts {
         final Pangine engine = Pangine.getEngine();
         Panmage image = engine.getImage(id);
         if (image == null) {
-            Img img = Imtil.load("org/pandcorps/res/img/Font" + name + ".png");
+            Img img = Imtil.load(Pantil.RES + "img/Font" + name + ".png");
             if (transparent != null) {
             	final int src = img.getRGB(0, 0), dst = PixelFilter.getRgba(transparent);
             	if (filter == null) {

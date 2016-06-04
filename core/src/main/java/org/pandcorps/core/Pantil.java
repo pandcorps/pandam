@@ -27,6 +27,7 @@ import java.nio.*;
 
 // Pancorps Utility
 public final class Pantil {
+    public final static String RES = "org/pandcorps/res/";
     private final static int INT_SIZE = Integer.SIZE / 8;
     private final static int FLOAT_SIZE = Float.SIZE / 8;
     

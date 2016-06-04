@@ -95,7 +95,7 @@ public abstract class Pangame {
 		final Pangine engine = Pangine.getEngine();
 		initBeforeEngine();
 		engine.init();
-		engine.setIcon("org/pandcorps/res/img/PandcorpsIcon32.png", "org/pandcorps/res/img/PandcorpsIcon16.png");
+		engine.setIcon(Pantil.RES + "img/PandcorpsIcon32.png", Pantil.RES + "img/PandcorpsIcon16.png");
 		init(); // Don't know why this happens after engine.init; can't set window size here; don't know what steps should happen here; adding initBeforeEngine
 	}
 	

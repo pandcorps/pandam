@@ -389,8 +389,8 @@ public final class Iotil {
 	    try {
 	        final long start = System.currentTimeMillis();
 	        for (int i = 0; i < 1000; i++) {
-	            //getInputStream("org/pandcorps/res/img/FontSimple8.png").close(); // 251, 231, 231
-	            getResourceInputStream("org/pandcorps/res/img/FontSimple8.png").close(); // 200, 203, 208
+	            //getInputStream(Pantil.RES + "img/FontSimple8.png").close(); // 251, 231, 231
+	            getResourceInputStream(Pantil.RES + "img/FontSimple8.png").close(); // 200, 203, 208
 	        }
 	        System.out.println("Time: " + (System.currentTimeMillis() - start));
 	    } catch (final Throwable e) {
