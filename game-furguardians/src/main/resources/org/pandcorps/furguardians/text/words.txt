@@ -22,6 +22,7 @@ beet
 bell
 berry
 best
+bid
 big
 birch
 bird
@@ -123,6 +124,7 @@ edge
 eel
 egg
 elder
+elect
 elk
 elm
 ember
@@ -158,6 +160,7 @@ float
 flock
 flood
 floor
+flux
 fly
 fog
 food
@@ -339,6 +342,7 @@ plant
 play
 plum
 plump
+poll
 pond
 pop
 power
@@ -394,6 +398,7 @@ sense
 set
 seven
 shark
+she
 shed
 sheep
 shell
@@ -505,6 +510,7 @@ wash
 water
 wax
 web
+weeds
 week
 well
 west

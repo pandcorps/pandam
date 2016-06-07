@@ -26,12 +26,15 @@ import org.pandcorps.test.*;
 
 public class TestWordScreen extends Pantest {
     public final void testSkip() {
-        runSkip(false, "abcdefghihklmnop");
+        runSkip(false, "abcdefghijklmnop");
         runSkip(true, "abzdkcufihylmnop");
         runSkip(true, "cbzdufghnhkltyop");
         runSkip(true, "nbcymfghahkldzop");
         runSkip(true, "sbcdehgyzhilmnot");
         runSkip(true, "kbqwecgyzhilmnod");
+        runSkip(true, "dbcaefgsihksmnop");
+        runSkip(true, "abdcefguihkmznop");
+        runSkip(true, "abdcefgoihzcmnok");
     }
     
     private final void runSkip(final boolean ex, final String grid) {
