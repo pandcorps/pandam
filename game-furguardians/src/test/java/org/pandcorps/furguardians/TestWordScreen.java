@@ -37,6 +37,11 @@ public class TestWordScreen extends Pantest {
         runSkip(true, "abdcefgoihzcmnok");
         runSkip(true, "abcnefyizjkgmnog");
         runSkip(true, "ybcfezxaijkgmnop");
+        runSkip(true, "zbcdefgaijksmnos");
+        runSkip(true, "zbcdefgsijksmnoa");
+        runSkip(true, "zbcsefgsijkamnop");
+        runSkip(true, "abcdpmipyjklmnoz");
+        runSkip(true, "aycdgnobijklmzop");
     }
     
     private final void runSkip(final boolean ex, final String grid) {

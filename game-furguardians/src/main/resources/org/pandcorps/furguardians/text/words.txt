@@ -369,6 +369,7 @@ plant
 play
 plum
 plump
+plus
 poll
 pond
 pop

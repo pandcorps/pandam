@@ -41,7 +41,7 @@ public final class WordScreen extends Panscreen {
     private final static int DIM = 16;
     private final static int SIZE = 4;
     private final static int NUM_WORDS = 4;
-    private final static String[] SKIP = { "ZRR", "BNBJ", "BTL", "BTMS", "CHBJ", "CZLM", "EZF", "ETBJ", "MHFF", "RGHS" };
+    private final static String[] SKIP = { "ZRR", "ANMF", "BNBJ", "BTL", "BTMS", "CHBJ", "CZLM", "EZF", "ETBJ", "MHFF", "OHLO", "RGHS" };
     private final static HashMap<Integer, List<String>> dictionary = new HashMap<Integer, List<String>>();
     private static long seed = -1;
     private Panroom room = null;
@@ -281,8 +281,22 @@ public final class WordScreen extends Panscreen {
     }
     
     private final static boolean isSkipped(final char[][] g, final String s, int row, int col, final int rowInc, final int colInc) {
+        final int diff = SIZE - s.length();
+        if (diff < 0) {
+            return false;
+        }
+        for (int i = 0; i <= diff; i++) {
+            if (isSkipped2(g, s, row, col, rowInc, colInc)) {
+                return true;
+            }
+            row += rowInc;
+            col += colInc;
+        }
+        return false;
+    }
+    
+    private final static boolean isSkipped2(final char[][] g, final String s, int row, int col, final int rowInc, final int colInc) {
         final int size = s.length();
-        //TODO Check short words multiple times
         for (int i = 0; i < size; i++) {
             final char gc = g[row][col];
             final char rc = s.charAt(i);
