@@ -44,6 +44,18 @@ public class TestWordScreen extends Pantest {
         runSkip(true, "aycdgnobijklmzop");
     }
     
+    public final void testSkip5() {
+        runSkip(false, "abcdefghijklmnopqrstuvwxy");
+        runSkip(true, "afzdehctibklmnopqrsguvwxy");
+        runSkip(true, "abczeodlidkgmnfpqrstuvwxy");
+        runSkip(true, "abcdzsinepklmgofqrhtuvwxy");
+        runSkip(true, "zbssafghijklmnopqrctuvwxy");
+        runSkip(true, "zssaefghijklmnopqrctuvwxy");
+        runSkip(true, "ssadefghijklmnopqrctuvwxy");
+        runSkip(true, "akcufzghijblmnopqrstevwxy");
+        runSkip(true, "kcufezghijblmnopqrstavwxy");
+    }
+    
     private final void runSkip(final boolean ex, final String grid) {
         assertEquals(ex, WordScreen.isSkipped(toGrid(grid)));
     }

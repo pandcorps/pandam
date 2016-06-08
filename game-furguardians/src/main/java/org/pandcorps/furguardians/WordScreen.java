@@ -41,7 +41,7 @@ public final class WordScreen extends Panscreen {
     private final static int DIM = 16;
     private static int SIZE = 4;
     private static int NUM_WORDS = 4;
-    private final static String[] SKIP = { "ZRR", "ANMF", "BNBJ", "BTL", "BTMS", "CHBJ", "CZLM", "EZF", "ETBJ", "MHFF", "OHLO", "RGHS" };
+    private final static String[] SKIP = { "ZRR", "AHSBG", "ANMF", "BNBJ", "BTL", "BTMS", "CHBJ", "CHKCN", "CZLM", "EZF", "ETBJ", "MHFF", "ODMHR", "OHLO", "RGHS" };
     private final static HashMap<Integer, List<String>> dictionary = new HashMap<Integer, List<String>>();
     private static long seed = -1;
     private Panroom room = null;
@@ -278,8 +278,9 @@ public final class WordScreen extends Panscreen {
     }
     
     /*package*/ final static boolean isSkipped(final char[][] g, final String s) {
-        final int end = SIZE - 1;
-        for (int i = 0; i < SIZE; i++) {
+        final int size = g.length;
+        final int end = size - 1;
+        for (int i = 0; i < size; i++) {
             if (isSkipped(g, s, i, 0, 0, 1)) {
                 return true;
             } else if (isSkipped(g, s, i, end, 0, -1)) {
@@ -303,7 +304,7 @@ public final class WordScreen extends Panscreen {
     }
     
     private final static boolean isSkipped(final char[][] g, final String s, int row, int col, final int rowInc, final int colInc) {
-        final int diff = SIZE - s.length();
+        final int diff = g.length - s.length();
         if (diff < 0) {
             return false;
         }
