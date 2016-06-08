@@ -89,6 +89,7 @@ fragrant
 freeze
 frigid
 fulcrum
+fungus
 gallant
 gentle
 giving
@@ -197,6 +198,7 @@ strict
 stroll
 surplus
 swerve
+temper
 tender
 tether
 thatch
@@ -215,6 +217,7 @@ vagrant
 vertex
 warrant
 weekend
+wellness
 western
 whenever
 wherever

@@ -39,8 +39,8 @@ import org.pandcorps.pandax.text.*;
 
 public final class WordScreen extends Panscreen {
     private final static int DIM = 16;
-    private final static int SIZE = 4;
-    private final static int NUM_WORDS = 4;
+    private static int SIZE = 4;
+    private static int NUM_WORDS = 4;
     private final static String[] SKIP = { "ZRR", "ANMF", "BNBJ", "BTL", "BTMS", "CHBJ", "CZLM", "EZF", "ETBJ", "MHFF", "OHLO", "RGHS" };
     private final static HashMap<Integer, List<String>> dictionary = new HashMap<Integer, List<String>>();
     private static long seed = -1;
@@ -60,7 +60,14 @@ public final class WordScreen extends Panscreen {
     
     @Override
     protected final void load() throws Exception {
-        room = initMiniZoom(64);
+        if (Pangine.getEngine().getClock() >= 0) { //TODO Check Profile
+            SIZE = 4;
+            NUM_WORDS = 4;
+        } else {
+            SIZE = 5;
+            NUM_WORDS = 5;
+        }
+        room = initMiniZoom(DIM * SIZE);
         addCursor(room, 20);
         loadWordFile();
         Mathtil.setSeed(seed);
@@ -100,23 +107,38 @@ public final class WordScreen extends Panscreen {
         registerMiniInputs(grid[0][0], new WordScreen(), FurGuardiansGame.menuOptions64, Pangine.getEngine().getEffectiveWidth() - 7, 0);
     }
     
+    private final int[] initWordSizes() {
+        final int r = Mathtil.randi(0, 9999);
+        if (NUM_WORDS == 5) {
+            if (r < 3333) {
+                return new int[] { 4, 5, 5, 5, 6 };
+            } else if (r < 6667) {
+                return new int[] { 4, 4, 5, 5, 7 };
+            } else {
+                return new int[] { 4, 4, 4, 5, 8 };
+            }
+        }
+        if (r < 500) {
+            return new int[] { 3, 3, 5, 5 };
+        } else if (r < 1000) {
+            return new int[] { 4, 4, 4, 4 };
+        } else if (r < 2000) {
+            return new int[] { 2, 4, 5, 5 };
+        }
+        return new int[] { 3, 4, 4, 5 };
+    }
+    
     private final void initRandomWords() {
         final List<String> list = new ArrayList<String>(NUM_WORDS);
         final char[][] g = new char[SIZE][SIZE];
+        final int[] wordSizes = initWordSizes();
+        Mathtil.shuffle(wordSizes);
         while (true) {
             list.clear();
             clearLetters();
             boolean ok = true;
             for (int i = 0; i < NUM_WORDS; i++) {
-                final int size;
-                if (i == 0) {
-                    size = 3;
-                } else if (i < 3) {
-                    size = 4;
-                } else {
-                    size = 5;
-                }
-                final String word = pickWord(size);
+                final String word = pickWord(wordSizes[i]);
                 if (word == null) {
                     ok = false;
                     break;
@@ -427,13 +449,31 @@ public final class WordScreen extends Panscreen {
     }
     
     private final void loadWordFile() throws Exception {
+        loadWordFile35();
+        if (SIZE == 4) {
+            loadWordFile("wordsShort", 2);
+        }
+    }
+    
+    private final void loadWordFile35() throws Exception {
         if (dictionary.size() > 0) {
             return;
         }
         seed = Mathtil.newSeed();
+        loadWordFile("words");
+    }
+    
+    private final void loadWordFile(final String name, final int size) throws Exception {
+        if (Coltil.isValued(dictionary.get(Integer.valueOf(size)))) {
+            return;
+        }
+        loadWordFile(name);
+    }
+    
+    private final void loadWordFile(final String name) throws Exception {
         BufferedReader in = null;
         try {
-            in = openWordFileReader();
+            in = openWordFileReader(name);
             String word;
             while ((word = in.readLine()) != null) {
                 final Integer key = Integer.valueOf(word.length());
@@ -580,15 +620,15 @@ public final class WordScreen extends Panscreen {
         return c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u' || c == 'y';
     }
     
-    private final static BufferedReader openWordFileReader() {
-        return Iotil.getBufferedReader(FurGuardiansGame.RES + "text/words.txt");
+    private final static BufferedReader openWordFileReader(final String name) {
+        return Iotil.getBufferedReader(FurGuardiansGame.RES + "text/" + name + ".txt");
     }
     
     private final static void validateWordFile() throws Exception {
         //TODO Separate list of words with 6-8 letters for 5x5 grid must have only 1 vowel and at least one duplicate letter
         BufferedReader in = null;
         try {
-            in = openWordFileReader();
+            in = openWordFileReader("words");
             String prev = null, word;
             final Set<java.lang.Character> vowels = new HashSet<java.lang.Character>(3);
             while ((word = in.readLine()) != null) {

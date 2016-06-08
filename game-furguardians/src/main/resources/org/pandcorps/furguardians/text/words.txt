@@ -6,6 +6,7 @@ and
 ant
 ape
 apple
+aqua
 arm
 art
 ash
@@ -36,6 +37,7 @@ bit
 black
 blink
 bliss
+blitz
 blob
 block
 bloom
@@ -55,6 +57,7 @@ brown
 brush
 bug
 build
+bulk
 bull
 bump
 bunch
@@ -74,6 +77,7 @@ check
 cheer
 chef
 chess
+chew
 chick
 child
 chill
@@ -94,6 +98,7 @@ comb
 comic
 cook
 cool
+cord
 corn
 cow
 creek
@@ -161,6 +166,7 @@ fill
 fin
 finch
 find
+first
 fish
 fix
 flag
@@ -202,6 +208,7 @@ glass
 glee
 goat
 good
+gong
 grand
 grass
 green
@@ -211,6 +218,8 @@ guard
 guess
 gull
 gum
+gym
+half
 hall
 hand
 happy
@@ -251,6 +260,7 @@ imp
 inch
 ink
 inn
+iris
 jazz
 jewel
 jig
@@ -267,6 +277,7 @@ kit
 kitty
 knack
 knock
+knot
 know
 koala
 lamb
@@ -359,6 +370,7 @@ pass
 pasta
 paw
 peel
+pen
 petal
 pig
 pin
@@ -435,6 +447,7 @@ shell
 ship
 shirt
 shook
+shop
 short
 show
 shy
@@ -457,6 +470,7 @@ sly
 small
 smart
 smell
+snack
 snake
 snap
 snow
@@ -476,7 +490,9 @@ staff
 stand
 star
 start
+steed
 steep
+steer
 step
 stick
 still
@@ -485,6 +501,7 @@ stomp
 store
 stork
 story
+straw
 stuff
 stunt
 such
@@ -500,6 +517,7 @@ swim
 tag
 tail
 tall
+task
 teeth
 tell
 ten
@@ -583,3 +601,4 @@ zap
 zebra
 zest
 zip
+zoom
