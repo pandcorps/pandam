@@ -68,10 +68,12 @@ buy
 buzz
 call
 camp
+can
 candy
 cat
 catch
 cell
+chalk
 chaos
 check
 cheer
@@ -101,9 +103,11 @@ cool
 cord
 corn
 cow
+crawl
 creek
 crow
 crown
+crumb
 cub
 cup
 dad
@@ -261,9 +265,13 @@ inch
 ink
 inn
 iris
+jam
+jaw
 jazz
+jest
 jewel
 jig
+job
 jog
 jolly
 joy
@@ -473,6 +481,7 @@ smell
 snack
 snake
 snap
+sniff
 snow
 socks
 soft
