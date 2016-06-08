@@ -3,6 +3,7 @@
 Word-Guardians mini-game.
 Added new eyes.
 Added more distance before first pit in minecart levels.
+Fixed a Dragon display bug on the goal screen.
 
 *****
 
