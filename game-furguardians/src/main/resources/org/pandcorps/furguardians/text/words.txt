@@ -75,7 +75,9 @@ catch
 cell
 chalk
 chaos
+charm
 check
+cheek
 cheer
 chef
 chess
@@ -86,12 +88,14 @@ chill
 chip
 chop
 clam
+clash
 class
 claw
 click
 cliff
 climb
 cloud
+club
 coat
 cold
 color
@@ -108,6 +112,7 @@ creek
 crow
 crown
 crumb
+crush
 cub
 cup
 dad
@@ -126,6 +131,7 @@ dip
 dirt
 dish
 dog
+doll
 door
 dove
 down
@@ -150,6 +156,7 @@ elm
 ember
 end
 even
+event
 ever
 ewe
 excel
@@ -211,6 +218,7 @@ gill
 glass
 glee
 goat
+golf
 gong
 good
 grand
@@ -222,6 +230,7 @@ guard
 guess
 gull
 gum
+gust
 gym
 half
 hall
@@ -235,6 +244,7 @@ hawk
 hear
 heart
 hedge
+heel
 help
 hen
 herd
@@ -245,6 +255,7 @@ hill
 hip
 hiss
 hit
+hitch
 hive
 hog
 holly
@@ -271,6 +282,7 @@ jazz
 jest
 jewel
 jig
+jinx
 job
 jog
 jolly
@@ -321,6 +333,7 @@ loop
 loud
 love
 low
+luck
 lull
 lunch
 lynx
@@ -382,6 +395,7 @@ pen
 petal
 pig
 pin
+pink
 pit
 plan
 plank
@@ -407,6 +421,7 @@ puppy
 quack
 queen
 quest
+queue
 quick
 rain
 ram
@@ -468,10 +483,12 @@ sip
 sit
 six
 skill
+skip
 skunk
 sky
 sled
 sleep
+sleet
 slip
 sloth
 sly
@@ -493,6 +510,8 @@ spike
 spill
 spin
 spoon
+sport
+spot
 spry
 spy
 staff
@@ -518,6 +537,7 @@ sugar
 sum
 sun
 sunny
+swamp
 swan
 sweet
 swell

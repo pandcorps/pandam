@@ -95,6 +95,7 @@ gallant
 gentle
 giving
 grammar
+hangar
 hazard
 heedless
 helmet
@@ -145,6 +146,7 @@ recede
 recent
 reckless
 redeem
+referee
 reflect
 reflex
 refresh
@@ -187,6 +189,7 @@ smooth
 sorrow
 spirit
 splash
+sports
 standard
 stilts
 stirring
@@ -213,6 +216,7 @@ tremble
 tumult
 twelve
 unplug
+unsung
 vacant
 vagrant
 vertex
