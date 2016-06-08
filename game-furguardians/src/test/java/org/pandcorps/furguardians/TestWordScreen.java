@@ -22,6 +22,11 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.furguardians;
 
+import java.io.BufferedReader;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.pandcorps.core.Iotil;
 import org.pandcorps.test.*;
 
 public class TestWordScreen extends Pantest {
@@ -105,5 +110,43 @@ public class TestWordScreen extends Pantest {
             }
         }
         return g;
+    }
+    
+    public final void testWordFile() throws Exception {
+        //TODO Tests for 2-letter words
+        //TODO Separate list of words with 6-8 letters for 5x5 grid must have only 1 vowel and at least one duplicate letter
+        BufferedReader in = null;
+        try {
+            in = WordScreen.openWordFileReader("words");
+            String prev = null, word;
+            final Set<java.lang.Character> vowels = new HashSet<java.lang.Character>(3);
+            while ((word = in.readLine()) != null) {
+                final int size = word.length();
+                assertTrue(word + " was less than 3 letters", size >= 3);
+                assertTrue(word + " was more than 5 letters", size <= 5);
+                if (prev != null) {
+                    assertTrue(word + " should not follow " + prev, prev.compareTo(word) < 0);
+                    final char p0 = prev.charAt(0), ex = (char) (p0 + 1), w0 = word.charAt(0);
+                    if ((w0 != p0) && (ex != 'x') && (w0 != ex)) {
+                        fail("Letter " + p0 + " was followed by " + w0 + " instead of " + ex);
+                    }
+                }
+                vowels.clear();
+                for (int i = 0; i < size; i++) {
+                    final char c = word.charAt(i);
+                    assertTrue(word + " contains " + c, (c >= 'a') && (c <= 'z'));
+                    if (WordScreen.isVowel(c)) {
+                        vowels.add(java.lang.Character.valueOf(c));
+                        if (vowels.size() > 2) {
+                            fail(word + " contained " + vowels);
+                        }
+                    }
+                }
+                //TODO Check that it's possible to find 3 other words to use with this word
+                prev = word;
+            }
+        } finally {
+            Iotil.close(in);
+        }
     }
 }
