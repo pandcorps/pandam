@@ -42,7 +42,8 @@ public final class WordScreen extends Panscreen {
     private static int SIZE = 4;
     private static int NUM_WORDS = 4;
     private final static String[] SKIP = {
-            "ZRR", "AHSBG", "ANMF", "BNBJ", "BTL", "BTMS", "CHBJ", "CHKCN", "CZLM", "EZF", "ETBJ", "GDKK", "HFFDQ", "MHFF", "ODMHR", "OHLO", "OHRR", "ONQM", "RGHS" };
+            "ZRR", "AHSBG", "ANMF", "ANNA", "BNBJ", "BTL", "BTMS", "CHBJ", "CHKCN", "CZLM", "EZF", "ETBJ", "GDKK",
+            "HFFDQ", "JHKK", "JKZM", "MHFF", "MZYH", "ODMHR", "OHLO", "OHRR", "ONQM", "OTRRX", "RDW", "RGHS", "SHS", "VGNQD" };
     private final static HashMap<Integer, List<String>> dictionary = new HashMap<Integer, List<String>>();
     private static long seed = -1;
     private Panroom room = null;

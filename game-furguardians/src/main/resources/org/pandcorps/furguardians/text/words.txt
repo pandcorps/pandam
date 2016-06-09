@@ -25,6 +25,7 @@ bee
 beech
 beet
 bell
+belt
 bend
 bent
 berry
@@ -72,6 +73,8 @@ call
 camp
 can
 candy
+cap
+cart
 cat
 catch
 cell
@@ -109,6 +112,7 @@ cool
 cord
 corn
 cow
+craft
 crawl
 creek
 crow
@@ -200,11 +204,13 @@ fog
 food
 foot
 fork
+form
 four
 fox
 fresh
 frog
 frost
+fry
 fun
 fund
 fur
@@ -263,6 +269,8 @@ hive
 hog
 holly
 hoof
+hoop
+hoot
 hop
 horn
 horse
@@ -331,6 +339,7 @@ live
 livid
 llama
 lob
+lock
 log
 look
 loom
@@ -344,12 +353,14 @@ lunch
 lynx
 map
 mark
+mask
 match
 meek
 mend
 mere
 merry
 mess
+meter
 mice
 mill
 mimic
@@ -387,6 +398,7 @@ over
 owl
 oxen
 pack
+pad
 page
 pal
 palm
@@ -611,6 +623,7 @@ vine
 vixen
 wall
 warm
+warp
 wash
 water
 wax
