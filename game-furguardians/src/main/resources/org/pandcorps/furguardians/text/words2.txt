@@ -1,5 +1,4 @@
 abstract
-across
 aghast
 armada
 attach
@@ -17,6 +16,7 @@ better
 between
 binding
 blossom
+bookworm
 borrow
 bottom
 breeze
@@ -76,6 +76,8 @@ expect
 expense
 expert
 express
+extend
+extreme
 farmhand
 ferret
 fervent
@@ -95,6 +97,7 @@ gallant
 gentle
 giving
 grammar
+hangar
 hazard
 heedless
 helmet
@@ -106,9 +109,11 @@ impish
 implicit
 imprint
 indict
+inflict
 insight
 insist
 instinct
+inviting
 jester
 keeper
 kettle
@@ -118,6 +123,7 @@ legend
 lesser
 letter
 living
+longhorn
 mallard
 mammal
 midnight
@@ -125,6 +131,7 @@ missing
 murmur
 needle
 needless
+oblong
 pebble
 peddle
 pepper
@@ -141,10 +148,12 @@ pretend
 pretense
 pretext
 prevent
+protocol
 recede
 recent
 reckless
 redeem
+referee
 reflect
 reflex
 refresh
@@ -153,15 +162,17 @@ reject
 remember
 render
 reserve
+respect
 restless
 revenge
 revere
+reverent
 reverse
 revert
+rhythm
 ringing
 rippling
 rising
-rhythm
 ruckus
 sandals
 savant
@@ -187,6 +198,7 @@ smooth
 sorrow
 spirit
 splash
+sports
 standard
 stilts
 stirring
@@ -212,7 +224,9 @@ treble
 tremble
 tumult
 twelve
+twisting
 unplug
+unsung
 vacant
 vagrant
 vertex
@@ -227,3 +241,4 @@ willing
 windmill
 winning
 wrestle
+writing

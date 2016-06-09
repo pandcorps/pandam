@@ -22,6 +22,10 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.furguardians;
 
+import java.io.*;
+import java.util.*;
+
+import org.pandcorps.core.*;
 import org.pandcorps.test.*;
 
 public class TestWordScreen extends Pantest {
@@ -42,6 +46,15 @@ public class TestWordScreen extends Pantest {
         runSkip(true, "zbcsefgsijkamnop");
         runSkip(true, "abcdpmipyjklmnoz");
         runSkip(true, "aycdgnobijklmzop");
+        runSkip(true, "abcdssipzjklmnop");
+        runSkip(true, "abcdllehijkzmnop");
+        runSkip(true, "abcdnropijklmxyz");
+        runSkip(true, "abcdzxesijklmnop");
+        runSkip(true, "abcdefghllikmnop");
+        runSkip(true, "ybcdizanvjklmxop");
+        runSkip(true, "ybcdefghnalkmzop");
+        runSkip(true, "bzcdofghojklbnyp");
+        runSkip(true, "tbcdifghtjklmnop");
     }
     
     public final void testSkip5() {
@@ -54,6 +67,9 @@ public class TestWordScreen extends Pantest {
         runSkip(true, "ssadefghijklmnopqrctuvwxy");
         runSkip(true, "akcufzghijblmnopqrstevwxy");
         runSkip(true, "kcufezghijblmnopqrstavwxy");
+        runSkip(true, "abcdnfmhzjreggipqostuvwxy");
+        runSkip(true, "pbcdeughijslmnosqrftyvwxa");
+        runSkip(true, "wbcdahgpijolmnorqustevfxy");
     }
     
     private final void runSkip(final boolean ex, final String grid) {
@@ -102,5 +118,64 @@ public class TestWordScreen extends Pantest {
             }
         }
         return g;
+    }
+    
+    public final void testWordFile() throws Exception {
+        runWordFile("words", 3, 5, 2, true, false);
+    }
+    
+    public final void testLongWordFile() throws Exception {
+        runWordFile("words2", 6, 8, 1, false, true);
+    }
+    
+    public final void testShortWordFile() throws Exception {
+        runWordFile("wordsShort", 2, 2, 1, false, false);
+    }
+    
+    private final void runWordFile(final String name, final int min, final int max, final int maxVowels, final boolean checkMissing, final boolean checkDuplicate) throws Exception {
+        //TODO Long words must have at least one duplicate letter
+        BufferedReader in = null;
+        try {
+            in = WordScreen.openWordFileReader(name);
+            String prev = null, word;
+            final Set<java.lang.Character> vowels, letters;
+            vowels = new HashSet<java.lang.Character>(3);
+            letters = checkDuplicate ? new HashSet<java.lang.Character>(max) : null;
+            while ((word = in.readLine()) != null) {
+                final int size = word.length();
+                assertTrue(word + " was less than " + min + " letters", size >= min);
+                assertTrue(word + " was more than " + max + " letters", size <= max);
+                if (prev != null) {
+                    assertTrue(word + " should not follow " + prev, prev.compareTo(word) < 0);
+                    final char p0 = prev.charAt(0), ex = (char) (p0 + 1), w0 = word.charAt(0);
+                    if (checkMissing && (w0 != p0) && (ex != 'x')) {
+                        assertEquals("Letter " + p0 + " was followed by " + w0 + " instead of " + ex, w0, ex);
+                    }
+                }
+                vowels.clear();
+                Coltil.clear(letters);
+                boolean foundDuplicate = false;
+                for (int i = 0; i < size; i++) {
+                    final char c = word.charAt(i);
+                    assertTrue(word + " contains " + c, (c >= 'a') && (c <= 'z'));
+                    if (WordScreen.isVowel(c)) {
+                        vowels.add(java.lang.Character.valueOf(c));
+                        assertTrue(word + " contained " + vowels, vowels.size() <= maxVowels);
+                    }
+                    if (checkDuplicate && !foundDuplicate) {
+                        if (!letters.add(java.lang.Character.valueOf(c))) {
+                            foundDuplicate = true;
+                        }
+                    }
+                }
+                if (checkDuplicate) {
+                    assertTrue(word + " had no duplicate letter", foundDuplicate);
+                }
+                //TODO Check that it's possible to find 3 other words to use with this word
+                prev = word;
+            }
+        } finally {
+            Iotil.close(in);
+        }
     }
 }

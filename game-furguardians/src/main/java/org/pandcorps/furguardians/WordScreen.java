@@ -41,7 +41,9 @@ public final class WordScreen extends Panscreen {
     private final static int DIM = 16;
     private static int SIZE = 4;
     private static int NUM_WORDS = 4;
-    private final static String[] SKIP = { "ZRR", "AHSBG", "ANMF", "BNBJ", "BTL", "BTMS", "CHBJ", "CHKCN", "CZLM", "EZF", "ETBJ", "MHFF", "ODMHR", "OHLO", "RGHS" };
+    private final static String[] SKIP = {
+            "ZRR", "AHSBG", "ANMF", "ANNA", "BNBJ", "BTL", "BTMS", "CHBJ", "CHKCN", "CZLM", "EZF", "ETBJ", "GDKK",
+            "HFFDQ", "JHKK", "JKZM", "MHFF", "MZYH", "ODMHR", "OHLO", "OHRR", "ONQM", "OTRRX", "RDW", "RGHS", "SHS", "VGNQD" };
     private final static HashMap<Integer, List<String>> dictionary = new HashMap<Integer, List<String>>();
     private static long seed = -1;
     private Panroom room = null;
@@ -49,14 +51,6 @@ public final class WordScreen extends Panscreen {
     private final boolean[] letters = new boolean[26];
     private Letter[][] grid = null;
     private final List<Letter> currentSelection = new ArrayList<Letter>(SIZE * SIZE);
-    
-    public final static void main(final String[] args) {
-        try {
-            validateWordFile();
-        } catch (final Throwable e) {
-            e.printStackTrace();
-        }
-    }
     
     @Override
     protected final void load() throws Exception {
@@ -616,55 +610,13 @@ public final class WordScreen extends Panscreen {
         }
     }
     
-    private final static boolean isVowel(final char _c) {
+    protected final static boolean isVowel(final char _c) {
         final char c = java.lang.Character.toLowerCase(_c);
         return c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u' || c == 'y';
     }
     
-    private final static BufferedReader openWordFileReader(final String name) {
+    protected final static BufferedReader openWordFileReader(final String name) {
         return Iotil.getBufferedReader(FurGuardiansGame.RES + "text/" + name + ".txt");
-    }
-    
-    private final static void validateWordFile() throws Exception {
-        //TODO Separate list of words with 6-8 letters for 5x5 grid must have only 1 vowel and at least one duplicate letter
-        BufferedReader in = null;
-        try {
-            in = openWordFileReader("words");
-            String prev = null, word;
-            final Set<java.lang.Character> vowels = new HashSet<java.lang.Character>(3);
-            while ((word = in.readLine()) != null) {
-                final int size = word.length();
-                if (size < 3) {
-                    throw new Exception(word + " was less than 3 letters");
-                } else if (size > 5) {
-                    throw new Exception(word + " was more than 5 letters");
-                } else if (prev != null) {
-                    if (prev.compareTo(word) >= 0) {
-                        throw new Exception(word + " should not follow " + prev);
-                    }
-                    final char p0 = prev.charAt(0), ex = (char) (p0 + 1), w0 = word.charAt(0);
-                    if ((w0 != p0) && (ex != 'x') && (w0 != ex)) {
-                        throw new Exception("Letter " + p0 + " was followed by " + w0 + " instead of " + ex);
-                    }
-                }
-                vowels.clear();
-                for (int i = 0; i < size; i++) {
-                    final char c = word.charAt(i);
-                    if ((c < 'a') || (c > 'z')) {
-                        throw new Exception(word + " contains " + c);
-                    } else if (isVowel(c)) {
-                        vowels.add(java.lang.Character.valueOf(c));
-                        if (vowels.size() > 2) {
-                            throw new Exception(word + " contained " + vowels);
-                        }
-                    }
-                }
-                //TODO Check that it's possible to find 3 other words to use with this word
-                prev = word;
-            }
-        } finally {
-            Iotil.close(in);
-        }
     }
     
     protected final static PlayerContext getPlayerContext() {
