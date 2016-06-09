@@ -49,6 +49,7 @@ public class TestWordScreen extends Pantest {
         runSkip(true, "aycdgnobijklmzop");
         runSkip(true, "abcdssipzjklmnop");
         runSkip(true, "abcdllehijkzmnop");
+        runSkip(true, "abcdnropijklmxyz");
     }
     
     public final void testSkip5() {
@@ -137,9 +138,7 @@ public class TestWordScreen extends Pantest {
                     assertTrue(word + " contains " + c, (c >= 'a') && (c <= 'z'));
                     if (WordScreen.isVowel(c)) {
                         vowels.add(java.lang.Character.valueOf(c));
-                        if (vowels.size() > 2) {
-                            fail(word + " contained " + vowels);
-                        }
+                        assertTrue(word + " contained " + vowels, vowels.size() <= 2);
                     }
                 }
                 //TODO Check that it's possible to find 3 other words to use with this word

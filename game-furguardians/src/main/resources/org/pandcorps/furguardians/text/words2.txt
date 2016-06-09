@@ -107,6 +107,7 @@ impish
 implicit
 imprint
 indict
+inflict
 insight
 insist
 instinct
@@ -119,6 +120,7 @@ legend
 lesser
 letter
 living
+longhorn
 mallard
 mammal
 midnight
@@ -126,6 +128,7 @@ missing
 murmur
 needle
 needless
+oblong
 pebble
 peddle
 pepper

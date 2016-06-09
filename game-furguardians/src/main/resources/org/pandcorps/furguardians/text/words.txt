@@ -289,6 +289,7 @@ jolly
 joy
 jug
 jump
+keep
 kick
 kid
 kind
@@ -338,6 +339,7 @@ lull
 lunch
 lynx
 map
+mark
 match
 meek
 mend
@@ -456,6 +458,7 @@ scoop
 scoot
 see
 seed
+seek
 sell
 send
 sense
@@ -502,6 +505,7 @@ sniff
 snow
 socks
 soft
+solo
 song
 sound
 speed
@@ -526,6 +530,9 @@ stick
 still
 sting
 stomp
+stood
+stool
+stoop
 store
 stork
 story
