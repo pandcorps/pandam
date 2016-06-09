@@ -114,22 +114,34 @@ public class TestWordScreen extends Pantest {
     }
     
     public final void testWordFile() throws Exception {
+        runWordFile("words", 3, 5, 2, true);
+    }
+    
+    public final void testLongWordFile() throws Exception {
+        runWordFile("words2", 6, 8, 1, false);
+    }
+    
+    public final void testShortWordFile() throws Exception {
+        runWordFile("wordsShort", 2, 2, 1, false);
+    }
+    
+    private final void runWordFile(final String name, final int min, final int max, final int maxVowels, final boolean checkMissing) throws Exception {
         //TODO Tests for 2-letter words
         //TODO Separate list of words with 6-8 letters for 5x5 grid must have only 1 vowel and at least one duplicate letter
         BufferedReader in = null;
         try {
-            in = WordScreen.openWordFileReader("words");
+            in = WordScreen.openWordFileReader(name);
             String prev = null, word;
             final Set<java.lang.Character> vowels = new HashSet<java.lang.Character>(3);
             while ((word = in.readLine()) != null) {
                 final int size = word.length();
-                assertTrue(word + " was less than 3 letters", size >= 3);
-                assertTrue(word + " was more than 5 letters", size <= 5);
+                assertTrue(word + " was less than " + min + " letters", size >= min);
+                assertTrue(word + " was more than " + max + " letters", size <= max);
                 if (prev != null) {
                     assertTrue(word + " should not follow " + prev, prev.compareTo(word) < 0);
                     final char p0 = prev.charAt(0), ex = (char) (p0 + 1), w0 = word.charAt(0);
-                    if ((w0 != p0) && (ex != 'x') && (w0 != ex)) {
-                        fail("Letter " + p0 + " was followed by " + w0 + " instead of " + ex);
+                    if (checkMissing && (w0 != p0) && (ex != 'x')) {
+                        assertEquals("Letter " + p0 + " was followed by " + w0 + " instead of " + ex, w0, ex);
                     }
                 }
                 vowels.clear();
@@ -138,7 +150,7 @@ public class TestWordScreen extends Pantest {
                     assertTrue(word + " contains " + c, (c >= 'a') && (c <= 'z'));
                     if (WordScreen.isVowel(c)) {
                         vowels.add(java.lang.Character.valueOf(c));
-                        assertTrue(word + " contained " + vowels, vowels.size() <= 2);
+                        assertTrue(word + " contained " + vowels, vowels.size() <= maxVowels);
                     }
                 }
                 //TODO Check that it's possible to find 3 other words to use with this word

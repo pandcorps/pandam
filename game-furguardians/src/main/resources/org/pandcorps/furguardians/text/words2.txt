@@ -1,5 +1,4 @@
 abstract
-across
 aghast
 armada
 attach
@@ -163,10 +162,10 @@ revenge
 revere
 reverse
 revert
+rhythm
 ringing
 rippling
 rising
-rhythm
 ruckus
 sandals
 savant
