@@ -16,6 +16,7 @@ better
 between
 binding
 blossom
+bookworm
 borrow
 bottom
 breeze
@@ -75,6 +76,8 @@ expect
 expense
 expert
 express
+extend
+extreme
 farmhand
 ferret
 fervent
@@ -110,6 +113,7 @@ inflict
 insight
 insist
 instinct
+inviting
 jester
 keeper
 kettle

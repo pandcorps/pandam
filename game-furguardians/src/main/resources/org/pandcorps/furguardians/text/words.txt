@@ -4,6 +4,7 @@ alas
 all
 and
 ant
+apart
 ape
 apple
 aqua
@@ -66,6 +67,7 @@ burst
 but
 buy
 buzz
+calf
 call
 camp
 can
@@ -167,6 +169,7 @@ fan
 fang
 farm
 fast
+fawn
 fee
 feel
 feet
@@ -289,6 +292,7 @@ jolly
 joy
 jug
 jump
+keen
 keep
 kick
 kid
@@ -393,6 +397,7 @@ pass
 pasta
 paw
 peel
+peer
 pen
 petal
 pig
@@ -425,6 +430,7 @@ queen
 quest
 queue
 quick
+quill
 rain
 ram
 ramp
@@ -459,6 +465,8 @@ scoot
 see
 seed
 seek
+seem
+seen
 sell
 send
 sense
@@ -523,6 +531,7 @@ stand
 star
 start
 steed
+steel
 steep
 steer
 step
@@ -546,10 +555,12 @@ sun
 sunny
 swamp
 swan
+sweep
 sweet
 swell
 swift
 swim
+swoop
 tag
 tail
 tall

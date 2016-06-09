@@ -126,8 +126,7 @@ public class TestWordScreen extends Pantest {
     }
     
     private final void runWordFile(final String name, final int min, final int max, final int maxVowels, final boolean checkMissing) throws Exception {
-        //TODO Tests for 2-letter words
-        //TODO Separate list of words with 6-8 letters for 5x5 grid must have only 1 vowel and at least one duplicate letter
+        //TODO Long words must have at least one duplicate letter
         BufferedReader in = null;
         try {
             in = WordScreen.openWordFileReader(name);
