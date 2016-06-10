@@ -50,11 +50,11 @@ public abstract class Code extends Entity {
         //return null; // Remove after debugging
     }*/
     
-    protected static <C extends Code> Map<String, C> map(Collection<C> collection) {
-        final Map<String, C> m = Entity.map(collection);
-        for (final C c : collection) {
-            m.put(format(c.code), c);
-        }
-        return m;
-    }
+//    protected static <C extends Code> Map<String, C> map(Collection<C> collection) {
+//        final Map<String, C> m = Entity.map(collection);
+//        for (final C c : collection) {
+//            m.put(format(c.code), c);
+//        }
+//        return m;
+//    }
 }
