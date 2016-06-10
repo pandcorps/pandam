@@ -66,6 +66,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
     protected final Set<Animal> availableSpecialAnimals = new HashSet<Animal>();
     protected final Set<BirdKind> availableBirds = new HashSet<BirdKind>();
     protected final Set<MapTheme> preferredThemes = new HashSet<MapTheme>();
+    protected int wordGridSize = WordScreen.DEF_SIZE;
     protected int column = -1;
 	protected int row = -1;
 	protected final HashMap<Pair<Integer, Integer>, Boolean> open = new HashMap<Pair<Integer, Integer>, Boolean>();
@@ -150,6 +151,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
     	    }
         }
     	initThemes();
+    	wordGridSize = seg.getInt(20, WordScreen.DEF_SIZE);
     	//ctrl = seg.intValue(3);
     }
     
@@ -190,6 +192,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
                 seg.addValue(19, b.name);
             }
         }
+        seg.setInt(20, wordGridSize);
         //seg.setInt(3, ctrl);
     }
     

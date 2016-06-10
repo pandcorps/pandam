@@ -38,8 +38,9 @@ import org.pandcorps.pandax.in.*;
 import org.pandcorps.pandax.text.*;
 
 public final class WordScreen extends Panscreen {
+    protected final static int DEF_SIZE = 4;
     private final static int DIM = 16;
-    private static int SIZE = 4;
+    private static int SIZE = DEF_SIZE;
     private static int NUM_WORDS = 4;
     private final static String[] SKIP = {
             "ZRR", "AHSBG", "ANMF", "ANNA", "BNBJ", "BTL", "BTMS", "CHBJ", "CHKCN", "CZLM", "EZF", "ETBJ", "GDKK",
@@ -54,12 +55,10 @@ public final class WordScreen extends Panscreen {
     
     @Override
     protected final void load() throws Exception {
-        if (Pangine.getEngine().getClock() >= 0) { //TODO Check Profile
-            SIZE = 4;
-            NUM_WORDS = 4;
-        } else {
-            SIZE = 5;
-            NUM_WORDS = 5;
+        final Profile prf = getProfile();
+        if (prf != null) {
+            SIZE = Math.min(Math.max(4, prf.wordGridSize), 5);
+            NUM_WORDS = SIZE;
         }
         room = initMiniZoom(DIM * SIZE);
         addCursor(room, 20);
@@ -98,18 +97,23 @@ public final class WordScreen extends Panscreen {
             initRandomWords();
         }
         currentSelection.clear();
-        registerMiniInputs(grid[0][0], new WordScreen(), FurGuardiansGame.menuOptions64, Pangine.getEngine().getEffectiveWidth() - 7, 0);
+        final Pangine engine = Pangine.getEngine();
+        registerMiniInputs(grid[0][0], new WordScreen(), FurGuardiansGame.menuOptions64, engine.getEffectiveWidth() - 7, (engine.getEffectiveHeight() - 64) / 2);
     }
     
     private final int[] initWordSizes() {
         final int r = Mathtil.randi(0, 9999);
         if (NUM_WORDS == 5) {
-            if (r < 3333) {
+            if (r < 1000) {
+                return new int[] { 4, 4, 5, 6, 6 };
+            } else if (r < 3000) {
                 return new int[] { 4, 5, 5, 5, 6 };
-            } else if (r < 6667) {
+            } else if (r < 6000) {
                 return new int[] { 4, 4, 5, 5, 7 };
-            } else {
+            } else if (r < 8000) {
                 return new int[] { 4, 4, 4, 5, 8 };
+            } else {
+                return new int[] { 3, 4, 5, 5, 8 };
             }
         }
         if (r < 500) {
@@ -447,6 +451,8 @@ public final class WordScreen extends Panscreen {
         loadWordFile35();
         if (SIZE == 4) {
             loadWordFile("wordsShort", 2);
+        } else {
+            loadWordFile("words2", 6);
         }
     }
     
