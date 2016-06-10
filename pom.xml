@@ -21,73 +21,7 @@
     </modules>
     
     <build>
-        <resources>
-            <resource>
-                <directory>demo</directory>
-            </resource>
-            <resource>
-                <directory>game/animal</directory>
-            </resource>
-            <resource>
-                <directory>game/base</directory>
-            </resource>
-            <resource>
-                <directory>game/fight</directory>
-            </resource>
-            <resource>
-                <directory>game/furguardians</directory>
-            </resource>
-            <resource>
-                <directory>game/monster</directory>
-            </resource>
-            <resource>
-                <directory>game/rpg</directory>
-            </resource>
-            <resource>
-                <directory>game/shoot</directory>
-            </resource>
-            <resource>
-                <directory>impl/lwjgl</directory>
-            </resource>
-            <resource>
-                <directory>res</directory>
-            </resource>
-            <resource>
-                <directory>src</directory>
-            </resource>
-        </resources>
-
-        <testResources>
-            <testResource>
-                <directory>test</directory>
-            </testResource>
-        </testResources>
-
-        <plugins>                        
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <version>1.7</version>
-                <executions>
-                    <execution>
-                        <id>add-source</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>add-source</goal>
-                        </goals>
-                        <configuration>
-                            <sources>
-                                <source>src</source>
-                                <source>res</source>
-                                <source>impl/lwjgl</source>
-                                <source>game/base</source>
-                                <source>game/furguardians</source>
-                            </sources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
+        <plugins>
             <plugin>
                 <groupId>com.googlecode.mavennatives</groupId>
                 <artifactId>maven-nativedependencies-plugin</artifactId>
