@@ -10,4 +10,12 @@
     
     <groupId>org.pandcorps.pandam</groupId>
     <artifactId>game-base</artifactId>
+    
+    <dependencies>
+        <dependency>
+            <groupId>org.pandcorps.pandam</groupId>
+            <artifactId>core</artifactId>
+            <version>1.24.0</version>
+        </dependency>
+    </dependencies>
 </project>

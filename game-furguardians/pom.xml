@@ -10,4 +10,17 @@
     
     <groupId>org.pandcorps.pandam</groupId>
     <artifactId>game-furguardians</artifactId>
+    
+    <dependencies>
+        <dependency>
+            <groupId>org.pandcorps.pandam</groupId>
+            <artifactId>game-base</artifactId>
+            <version>1.24.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.pandcorps.pandam</groupId>
+            <artifactId>impl-lwjgl</artifactId>
+            <version>1.24.0</version>
+        </dependency>
+    </dependencies>
 </project>
