@@ -1,5 +1,6 @@
 act
 add
+alarm
 alas
 all
 and
@@ -11,10 +12,12 @@ aqua
 arm
 art
 ash
+asp
 aunt
 award
 back
 band
+bank
 bark
 bash
 bass
@@ -37,6 +40,7 @@ birch
 bird
 bit
 black
+blank
 blink
 bliss
 blitz
@@ -46,8 +50,10 @@ bloom
 blue
 blush
 bold
+bolt
 bomb
 book
+boost
 boot
 boss
 bow
@@ -81,6 +87,7 @@ cell
 chalk
 chaos
 charm
+chasm
 check
 cheek
 cheer
@@ -92,6 +99,7 @@ child
 chill
 chip
 chop
+civil
 clam
 clash
 class
@@ -179,6 +187,7 @@ feel
 feet
 fence
 fern
+fifth
 fig
 fill
 fin
@@ -201,6 +210,7 @@ fluff
 flux
 fly
 fog
+folk
 food
 foot
 fork
@@ -211,6 +221,7 @@ fresh
 frog
 frost
 fry
+full
 fun
 fund
 fur
@@ -247,6 +258,7 @@ hand
 happy
 hare
 harp
+harsh
 hat
 havoc
 hawk
@@ -261,6 +273,7 @@ here
 hero
 hid
 hill
+hint
 hip
 hiss
 hit
@@ -288,15 +301,18 @@ ink
 inn
 iris
 jam
+jar
 jaw
 jazz
 jest
+jet
 jewel
 jig
 jinx
 job
 jog
 jolly
+jolt
 joy
 jug
 jump
@@ -312,6 +328,7 @@ knack
 knock
 knot
 know
+known
 koala
 lamb
 land
@@ -412,6 +429,7 @@ peel
 peer
 pen
 petal
+pick
 pig
 pin
 pink
@@ -420,6 +438,7 @@ plan
 plank
 plant
 play
+plaza
 plum
 plump
 plus
@@ -443,6 +462,7 @@ quest
 queue
 quick
 quill
+quiz
 rain
 ram
 ramp
@@ -463,6 +483,7 @@ room
 root
 rug
 run
+runt
 rush
 safe
 saga
@@ -492,6 +513,7 @@ sheet
 shell
 ship
 shirt
+shock
 shook
 shop
 short
@@ -539,6 +561,7 @@ spot
 spry
 spy
 staff
+stag
 stand
 star
 start
@@ -572,6 +595,7 @@ sweet
 swell
 swift
 swim
+swish
 swoop
 tag
 tail
@@ -590,6 +614,7 @@ there
 thigh
 thing
 think
+third
 three
 tiger
 timid
@@ -625,6 +650,7 @@ wall
 warm
 warp
 wash
+wasp
 water
 wax
 web
@@ -634,6 +660,7 @@ week
 well
 west
 whale
+whelp
 where
 which
 white
@@ -656,6 +683,7 @@ words
 world
 worm
 yak
+yell
 yes
 zap
 zebra

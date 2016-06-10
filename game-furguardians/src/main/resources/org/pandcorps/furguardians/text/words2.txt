@@ -21,6 +21,7 @@ bookworm
 borrow
 bottom
 breeze
+bronco
 cement
 center
 checkers
@@ -69,6 +70,7 @@ element
 eleven
 emerge
 endless
+esteem
 exceed
 except
 excess
@@ -111,12 +113,15 @@ implicit
 imprint
 indict
 inflict
+inkling
 insight
 insist
 instinct
 inviting
+jackal
 jester
 keeper
+kernel
 kettle
 kinship
 landmark
@@ -124,6 +129,7 @@ legend
 lesser
 letter
 living
+longbow
 longhorn
 mallard
 mammal
@@ -176,6 +182,7 @@ rippling
 rising
 ruckus
 sandals
+sarcasm
 savant
 scandal
 scented
@@ -231,6 +238,7 @@ unsung
 vacant
 vagrant
 vertex
+vessel
 warrant
 weekend
 wellness
@@ -242,4 +250,5 @@ willing
 windmill
 winning
 wrestle
+wretched
 writing
