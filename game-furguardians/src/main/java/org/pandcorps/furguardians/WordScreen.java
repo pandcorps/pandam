@@ -28,16 +28,14 @@ import java.util.*;
 import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
 import org.pandcorps.core.img.Pancolor.*;
-import org.pandcorps.furguardians.Player.*;
 import org.pandcorps.furguardians.Profile.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.Panput.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.action.*;
-import org.pandcorps.pandax.in.*;
 import org.pandcorps.pandax.text.*;
 
-public final class WordScreen extends Panscreen {
+public final class WordScreen extends MiniGameScreen {
     protected final static int DEF_SIZE = 4;
     private final static int DIM = 16;
     private static int SIZE = DEF_SIZE;
@@ -66,7 +64,6 @@ public final class WordScreen extends Panscreen {
         Mathtil.setSeed(seed);
         initImages();
         initWords();
-        //TODO back button, escape key
     }
     
     private final void initImages() {
@@ -623,176 +620,5 @@ public final class WordScreen extends Panscreen {
     
     protected final static BufferedReader openWordFileReader(final String name) {
         return Iotil.getBufferedReader(FurGuardiansGame.RES + "text/" + name + ".txt");
-    }
-    
-    protected final static PlayerContext getPlayerContext() {
-        return Coltil.isEmpty(FurGuardiansGame.pcs) ? null : FurGuardiansGame.pcs.get(0);
-    }
-    
-    protected final static Profile getProfile() {
-        return PlayerContext.getProfile(getPlayerContext());
-    }
-    
-    protected final static Statistics getStatistics() {
-        return PlayerContext.getStatistics(getPlayerContext());
-    }
-    
-    protected final static void addGems(final int n) {
-        final PlayerContext pc = getPlayerContext();
-        if (pc != null) {
-            pc.addGems(n);
-        }
-    }
-    
-    protected final static void save() {
-        final Profile prf = getProfile();
-        if (prf != null) {
-            prf.save();
-        }
-    }
-    
-    protected final static Panroom initMiniZoom(final int min) {
-        final Pangine engine = Pangine.getEngine();
-        engine.zoomToMinimum(min);
-        engine.setBgColor(Menu.COLOR_BG);
-        engine.getAudio().stopMusic();
-        return FurGuardiansGame.createRoom(engine.getEffectiveWidth(), engine.getEffectiveHeight());
-    }
-    
-    protected final static Cursor addCursor(final Panlayer room, final int z) {
-        final Cursor cursor = FurGuardiansGame.addCursor(room);
-        if (cursor != null) {
-            cursor.getPosition().setZ(z);
-        }
-        return cursor;
-    }
-    
-    private final static ActionEndListener newMenuListener(final Panscreen nextScreen) {
-        return new ActionEndListener() {
-            @Override public final void onActionEnd(final ActionEndEvent event) {
-                goMiniMenu(nextScreen, "Play", true);
-            }};
-    }
-    
-    protected final static void registerMiniInputs(final Panctor actor, final Panscreen nextScreen, final Panmage menuImg, final int menuX, final int menuY) {
-        final Pangine engine = Pangine.getEngine();
-        final Panteraction interaction = engine.getInteraction();
-        Player.registerCaptureScreen(actor);
-        actor.register(interaction.BACK, newMenuListener(nextScreen));
-        if (engine.isMouseSupported()) {
-            actor.register(interaction.KEY_ESCAPE, newMenuListener(nextScreen));
-        }
-        final TouchButton button = new TouchButton(interaction, actor.getLayer(), "mini.menu", menuX, menuY, 0, menuImg, null, true);
-        engine.registerTouchButton(button);
-        actor.register(button, newMenuListener(nextScreen));
-    }
-    
-    protected final static void goMiniMenu(final Panscreen nextScreen, final String nextLabel, final boolean quitNeeded) {
-        FurGuardiansGame.setScreen(new MiniMenuScreen(nextScreen, nextLabel, quitNeeded));
-    }
-    
-    protected final static class MiniAwardScreen extends Panscreen {
-        private final int award;
-        private final Panscreen nextScreen;
-        
-        protected MiniAwardScreen(final int award, final Panscreen nextScreen) {
-            this.award = award;
-            this.nextScreen = nextScreen;
-        }
-        
-        @Override
-        protected final void load() {
-            final PlayerContext pc = getPlayerContext();
-            if (pc == null) {
-                goNext();
-                return;
-            }
-            final Panroom room = initMiniZoom(128);
-            final Pangine engine = Pangine.getEngine();
-            final int w = engine.getEffectiveWidth(), h = engine.getEffectiveHeight();
-            final Gem gem = Menu.PlayerScreen.addHudGems(room, pc, (w - 72) / 2, (h - 16) / 2);
-            addGems(award);
-            save();
-            gem.register(new ActionEndListener() {
-                @Override public final void onActionEnd(final ActionEndEvent event) {
-                    goNext();
-                }});
-            gem.register(90, new TimerListener() {
-                @Override public final void onTimer(final TimerEvent event) {
-                    goNext();
-                }});
-        }
-        
-        private final void goNext() {
-            goMiniMenu(nextScreen, "Next", false);
-        }
-    }
-    
-    protected final static class MiniMenuScreen extends Panscreen {
-        private final Panscreen nextScreen;
-        private final String nextLabel;
-        private final boolean quitNeeded;
-        
-        protected MiniMenuScreen(final Panscreen nextScreen, final String nextLabel, final boolean quitNeeded) {
-            this.nextScreen = nextScreen;
-            this.nextLabel = nextLabel;
-            this.quitNeeded = quitNeeded;
-        }
-        
-        @Override
-        protected final void load() {
-            final Panroom room = initMiniZoom(128);
-            addCursor(room, 20);
-            final Pangine engine = Pangine.getEngine();
-            final int numButtons = quitNeeded ? 3 : 2;
-            final int w = FurGuardiansGame.MENU_W;
-            final int x = (engine.getEffectiveWidth() - (w * numButtons)) / 2;
-            final int y = (engine.getEffectiveHeight() - FurGuardiansGame.MENU_H) / 2;
-            final TouchButton nextButton;
-            nextButton = Menu.PlayerScreen.newFormButton(room, "Next", x, y, FurGuardiansGame.menuRight, nextLabel, new Runnable() {
-                @Override public final void run() {
-                    goNext();
-                }});
-            Menu.PlayerScreen.newFormButton(room, "Menu", x + w, y, FurGuardiansGame.menuOptions, "Menu", new Runnable() {
-                @Override public final void run() {
-                    goMenu();
-                }});
-            if (quitNeeded) {
-                Menu.PlayerScreen.newFormButton(room, "Quit", x + (w * 2), y, FurGuardiansGame.menuOff, "Quit", new Runnable() {
-                    @Override public final void run() {
-                        engine.exit();
-                    }});
-            }
-            final Panctor actor = nextButton.getActor();
-            final Panteraction interaction = engine.getInteraction();
-            actor.register(interaction.BACK, newMenuListener());
-            if (engine.isMouseSupported()) {
-                actor.register(interaction.KEY_SPACE, newNextListener());
-                actor.register(interaction.KEY_ENTER, newNextListener());
-                actor.register(interaction.KEY_ESCAPE, newMenuListener());
-            }
-        }
-        
-        private final void goNext() {
-            FurGuardiansGame.setScreen(nextScreen);
-        }
-        
-        private final void goMenu() {
-            FurGuardiansGame.goMiniGames(getPlayerContext());
-        }
-        
-        private final ActionEndListener newNextListener() {
-            return new ActionEndListener() {
-                @Override public final void onActionEnd(final ActionEndEvent event) {
-                    goNext();
-                }};
-        }
-        
-        private final ActionEndListener newMenuListener() {
-            return new ActionEndListener() {
-                @Override public final void onActionEnd(final ActionEndEvent event) {
-                    goMenu();
-                }};
-        }
     }
 }
