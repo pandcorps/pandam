@@ -6,6 +6,7 @@ attack
 attract
 avatar
 awkward
+backhand
 backpack
 backward
 ballad
@@ -31,16 +32,19 @@ chilling
 clever
 clinic
 clutch
+cocoon
 cohort
 comfort
 common
 compost
 concoct
 conform
+confront
 contort
 control
 cotton
 crescent
+critic
 crunch
 crutch
 decent
@@ -62,6 +66,7 @@ detect
 dismiss
 distinct
 district
+diving
 doctor
 drenched
 dresser
@@ -114,6 +119,7 @@ imprint
 indict
 inflict
 inkling
+inning
 insight
 insist
 instinct
@@ -194,11 +200,14 @@ screen
 scroll
 secret
 select
+sentence
 serene
 serpent
 settle
 severe
 shipping
+showdown
+showroom
 singing
 slender
 smiling
@@ -219,6 +228,7 @@ strict
 stroll
 surplus
 swerve
+swimming
 temper
 tender
 tether
@@ -232,6 +242,7 @@ treble
 tremble
 tumult
 twelve
+twilight
 twisting
 unplug
 unsung
@@ -249,6 +260,8 @@ whether
 willing
 windmill
 winning
+within
 wrestle
 wretched
 writing
+zipping

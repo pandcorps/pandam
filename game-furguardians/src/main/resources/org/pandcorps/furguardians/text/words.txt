@@ -26,6 +26,7 @@ bath
 bear
 bee
 beech
+been
 beet
 bell
 belt
@@ -33,6 +34,7 @@ bend
 bent
 berry
 best
+bib
 bid
 big
 bill
@@ -60,7 +62,10 @@ bow
 bowl
 brave
 brick
+brood
 brook
+broom
+brow
 brown
 brush
 bug
@@ -80,6 +85,7 @@ camp
 can
 candy
 cap
+carp
 cart
 cat
 catch
@@ -97,7 +103,9 @@ chew
 chick
 child
 chill
+chin
 chip
+chirp
 chop
 civil
 clam
@@ -108,6 +116,7 @@ click
 cliff
 climb
 cloud
+clown
 club
 coat
 cold
@@ -120,6 +129,7 @@ cool
 cord
 corn
 cow
+crab
 craft
 crawl
 creek
@@ -132,6 +142,7 @@ cup
 dad
 dark
 dash
+dawn
 day
 deed
 deer
@@ -144,6 +155,7 @@ digit
 dip
 dirt
 dish
+doe
 dog
 doll
 door
@@ -152,11 +164,13 @@ down
 draw
 dress
 drip
+droop
 drop
 drum
 dry
 duck
 dunk
+dusk
 eagle
 ear
 earn
@@ -219,6 +233,7 @@ four
 fox
 fresh
 frog
+front
 frost
 fry
 full
@@ -244,10 +259,12 @@ good
 grand
 grass
 green
+grin
 grow
 growl
 guard
 guess
+gulf
 gull
 gum
 gust
@@ -260,6 +277,7 @@ hare
 harp
 harsh
 hat
+hatch
 havoc
 hawk
 hear
@@ -325,6 +343,7 @@ king
 kit
 kitty
 knack
+knit
 knock
 knot
 know
@@ -340,10 +359,12 @@ lawn
 leaf
 learn
 ledge
+leech
 left
 leg
 less
 level
+lid
 life
 lift
 light
@@ -351,6 +372,7 @@ limb
 limit
 link
 lion
+lip
 list
 live
 livid
@@ -368,6 +390,7 @@ luck
 lull
 lunch
 lynx
+macaw
 map
 mark
 mask
@@ -389,15 +412,18 @@ mole
 mom
 mood
 moon
+mop
 moss
 much
 mud
 mule
 music
 myth
+neck
 need
 nerve
 nest
+net
 new
 newt
 next
@@ -405,6 +431,7 @@ night
 north
 nose
 note
+now
 nut
 oak
 odd
@@ -434,6 +461,7 @@ pig
 pin
 pink
 pit
+pitch
 plan
 plank
 plant
@@ -449,6 +477,7 @@ power
 press
 print
 proof
+puck
 puff
 pulp
 pump
@@ -456,6 +485,7 @@ pun
 punch
 pup
 puppy
+purr
 quack
 queen
 quest
@@ -505,6 +535,7 @@ send
 sense
 set
 seven
+sew
 shark
 she
 shed
@@ -536,6 +567,8 @@ sleep
 sleet
 slip
 sloth
+slug
+slush
 sly
 small
 smart
@@ -582,6 +615,7 @@ stork
 story
 straw
 stuff
+stump
 stunt
 such
 sugar
@@ -616,6 +650,7 @@ thing
 think
 third
 three
+throw
 tiger
 timid
 tint
@@ -682,7 +717,9 @@ word
 words
 world
 worm
+wrist
 yak
+yarn
 yell
 yes
 zap
