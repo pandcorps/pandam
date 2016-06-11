@@ -39,6 +39,16 @@ public abstract class PandamTest extends Pantest {
 
 	protected PandamTest() {
 	}
+	
+	@Override
+    protected final void setUp() {
+        UnitPangine.clearGame();
+        setUpPandam();
+    }
+	
+	//@OverrideMe
+	protected void setUpPandam() {
+	}
 
 	@Override
 	public final boolean printDiffTrace

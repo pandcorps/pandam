@@ -22,8 +22,6 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.monster;
 
-import java.util.*;
-
 public abstract class Code extends Entity {
 
     private final String code;

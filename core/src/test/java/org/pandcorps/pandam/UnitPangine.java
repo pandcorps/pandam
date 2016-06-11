@@ -195,4 +195,8 @@ public final class UnitPangine extends Pangine {
 	@Override
 	public final void exit(final Throwable cause) {
 	}
+	
+	/*package*/ final static void clearGame() {
+	    Pangame.clearGame();
+	}
 }

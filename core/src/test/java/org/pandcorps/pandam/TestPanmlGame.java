@@ -26,12 +26,13 @@ import org.pandcorps.pandam.impl.*;
 
 public final class TestPanmlGame extends PandamTest {
 	public final void testInit() {
-//		final PanmlGame actual = new PanmlGame("org/pandcorps/test/pandam/test.panml");
-//		actual.init();
-//		UnitPangine.setEngine(new UnitPangine());
-//		final Pangame expected = new ExpectedGame();
-//		expected.init();
-//		assertEquals(expected, actual);
+                final PanmlGame actual = new PanmlGame("org/pandcorps/pandam/test.panml");
+		actual.init();
+		UnitPangine.setEngine(new UnitPangine());
+		UnitPangine.clearGame();
+		final Pangame expected = new ExpectedGame();
+		expected.init();
+		assertEquals(expected, actual);
 	}
 
 	private final static class ExpectedGame extends Pangame {

@@ -58,12 +58,12 @@
 	<Types>
 		<Type>
 			<Id>LilType</Id>
-			<ActorClass>org.pandcorps.test.pandam.LilActor</ActorClass>
+			<ActorClass>org.pandcorps.pandam.LilActor</ActorClass>
 			<AnimationId>LilAnimation</AnimationId>
 		</Type>
 		<Type>
 			<Id>BigType</Id>
-			<ActorClass>org.pandcorps.test.pandam.BigActor</ActorClass>
+			<ActorClass>org.pandcorps.pandam.BigActor</ActorClass>
 			<AnimationId>BigAnimation</AnimationId>
 		</Type>
 	</Types>

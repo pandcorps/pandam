@@ -68,8 +68,15 @@ public abstract class Entity extends Label {
 	
 	protected static <T extends Entity> Map<String, T> map(Collection<T> collection) {
 	    final Map<String, T> m = new HashMap<String, T>();
+	    Boolean coded = null;
         for (final T element : collection) {
             m.put(format(element.name), element);
+            if (coded == null) {
+                coded = Boolean.valueOf(element instanceof Code);
+            }
+            if (coded.booleanValue()) {
+                m.put(format(((Code) element).getCode()), element);
+            }
         }
         return m;
     }

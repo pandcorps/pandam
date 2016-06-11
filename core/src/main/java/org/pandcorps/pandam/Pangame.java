@@ -48,6 +48,11 @@ public abstract class Pangame {
 		return game;
 	}
 	
+	// Should only be used by UnitPangine
+	/*package*/ static void clearGame() {
+	    game = null;
+	}
+	
 	protected abstract FinPanple getFirstRoomSize();
 
 	protected abstract void init(final Panroom room) throws Exception;
