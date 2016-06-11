@@ -26,7 +26,7 @@ import org.pandcorps.pandam.impl.*;
 
 public final class TestPanmlGame extends PandamTest {
 	public final void testInit() {
-		final PanmlGame actual = new PanmlGame("org/pandcorps/pandam/test.panml");
+                final PanmlGame actual = new PanmlGame("org/pandcorps/pandam/test.panml");
 		actual.init();
 		UnitPangine.setEngine(new UnitPangine());
 		UnitPangine.clearGame();
