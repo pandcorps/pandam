@@ -75,14 +75,14 @@ public abstract class MiniGameScreen extends Panscreen {
         return cursor;
     }
     
-    private final static ActionEndListener newMenuListener(final Panscreen nextScreen) {
+    private final ActionEndListener newMenuListener(final Panscreen nextScreen) {
         return new ActionEndListener() {
             @Override public final void onActionEnd(final ActionEndEvent event) {
                 goMiniMenu(nextScreen, "Play", true);
             }};
     }
     
-    protected final static void registerMiniInputs(final Panctor actor, final Panscreen nextScreen, final Panmage menuImg, final int menuX, final int menuY) {
+    protected final void registerMiniInputs(final Panctor actor, final Panscreen nextScreen, final Panmage menuImg, final int menuX, final int menuY) {
         final Pangine engine = Pangine.getEngine();
         final Panteraction interaction = engine.getInteraction();
         Player.registerCaptureScreen(actor);
@@ -95,11 +95,16 @@ public abstract class MiniGameScreen extends Panscreen {
         actor.register(button, newMenuListener(nextScreen));
     }
     
-    protected final static void goMiniMenu(final Panscreen nextScreen, final String nextLabel, final boolean quitNeeded) {
-        FurGuardiansGame.setScreen(new MiniMenuScreen(nextScreen, nextLabel, quitNeeded));
+    protected final void goMiniMenu(final Panscreen nextScreen, final String nextLabel, final boolean quitNeeded) {
+        FurGuardiansGame.setScreen(new MiniMenuScreen(nextScreen, nextLabel, quitNeeded, getExtraButton()));
     }
     
-    protected final static class MiniAwardScreen extends Panscreen {
+    //@OverrideMe
+    protected MiniButton getExtraButton() {
+        return null;
+    }
+    
+    protected final class MiniAwardScreen extends Panscreen {
         private final int award;
         private final Panscreen nextScreen;
         
@@ -140,36 +145,57 @@ public abstract class MiniGameScreen extends Panscreen {
         private final Panscreen nextScreen;
         private final String nextLabel;
         private final boolean quitNeeded;
+        private final MiniButton ext;
+        private Panroom room = null;
+        private int y = 0;
         
-        protected MiniMenuScreen(final Panscreen nextScreen, final String nextLabel, final boolean quitNeeded) {
+        protected MiniMenuScreen(final Panscreen nextScreen, final String nextLabel, final boolean quitNeeded, final MiniButton ext) {
             this.nextScreen = nextScreen;
             this.nextLabel = nextLabel;
             this.quitNeeded = quitNeeded;
+            this.ext = ext;
         }
         
         @Override
         protected final void load() {
-            final Panroom room = initMiniZoom(128);
+            room = initMiniZoom(128);
             addCursor(room, 20);
             final Pangine engine = Pangine.getEngine();
-            final int numButtons = quitNeeded ? 3 : 2;
+            int numButtons = 2;
+            if (quitNeeded) {
+                numButtons++;
+            }
+            if (ext != null) {
+                numButtons++;
+            }
             final int w = FurGuardiansGame.MENU_W;
-            final int x = (engine.getEffectiveWidth() - (w * numButtons)) / 2;
-            final int y = (engine.getEffectiveHeight() - FurGuardiansGame.MENU_H) / 2;
+            int x = (engine.getEffectiveWidth() - (w * numButtons)) / 2;
+            y = (engine.getEffectiveHeight() - FurGuardiansGame.MENU_H) / 2;
             final TouchButton nextButton;
-            nextButton = Menu.PlayerScreen.newFormButton(room, "Next", x, y, FurGuardiansGame.menuRight, nextLabel, new Runnable() {
+            nextButton = newButton("Next", x, FurGuardiansGame.menuRight, nextLabel, new Runnable() {
                 @Override public final void run() {
                     goNext();
                 }});
-            Menu.PlayerScreen.newFormButton(room, "Menu", x + w, y, FurGuardiansGame.menuOptions, "Menu", new Runnable() {
+            x += w;
+            newButton("Menu", x, FurGuardiansGame.menuOptions, "Menu", new Runnable() {
                 @Override public final void run() {
                     goMenu();
                 }});
+            x += w;
+            if (ext != null) {
+                newButton("Extra", x, ext.img, ext.txt, new Runnable() {
+                    @Override public final void run() {
+                        ext.run.run();
+                        goNext();
+                    }});
+                x += w;
+            }
             if (quitNeeded) {
-                Menu.PlayerScreen.newFormButton(room, "Quit", x + (w * 2), y, FurGuardiansGame.menuOff, "Quit", new Runnable() {
+                newButton("Quit", x, FurGuardiansGame.menuOff, "Quit", new Runnable() {
                     @Override public final void run() {
                         engine.exit();
                     }});
+                x += w;
             }
             final Panctor actor = nextButton.getActor();
             final Panteraction interaction = engine.getInteraction();
@@ -179,6 +205,10 @@ public abstract class MiniGameScreen extends Panscreen {
                 actor.register(interaction.KEY_ENTER, newNextListener());
                 actor.register(interaction.KEY_ESCAPE, newMenuListener());
             }
+        }
+        
+        private final TouchButton newButton(final String name, final int x, final Panmage img, final String txt, final Runnable r) {
+            return Menu.PlayerScreen.newFormButton(room, name, x, y, img, txt, r);
         }
         
         private final void goNext() {
@@ -201,6 +231,18 @@ public abstract class MiniGameScreen extends Panscreen {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
                     goMenu();
                 }};
+        }
+    }
+    
+    protected final static class MiniButton {
+        private final Panmage img;
+        private final String txt;
+        private final Runnable run;
+        
+        protected MiniButton(final Panmage img, final String txt, final Runnable run) {
+            this.img = img;
+            this.txt = txt;
+            this.run = run;
         }
     }
 }

@@ -621,4 +621,35 @@ public final class WordScreen extends MiniGameScreen {
     protected final static BufferedReader openWordFileReader(final String name) {
         return Iotil.getBufferedReader(FurGuardiansGame.RES + "text/" + name + ".txt");
     }
+    
+    @Override
+    protected MiniButton getExtraButton() {
+        final Statistics stats = getStatistics();
+        if (stats == null) {
+            return null;
+        } else if (stats.wordMiniGames == 0) {
+            return null;
+        }
+        final Profile prf = getProfile();
+        if (prf == null) {
+            return null;
+        }
+        final Panmage img;
+        final String txt;
+        final int nextSize;
+        if (prf.wordGridSize == 5) {
+            img = null;
+            txt = "4x4";
+            nextSize = 4;
+        } else {
+            img = null;
+            txt = "5x5";
+            nextSize = 5;
+        }
+        return new MiniButton(img, txt, new Runnable() {
+            @Override public final void run() {
+                prf.wordGridSize = nextSize;
+                save();
+            }});
+    }
 }

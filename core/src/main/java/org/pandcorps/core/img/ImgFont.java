@@ -64,8 +64,7 @@ public final class ImgFont {
                 cx = x;
                 y += letterHeight;
                 continue;
-            }
-            if (cx > x) {
+            } else if (cx > x) {
                 cx++;
             }
             final ImgLetter letter = getLetter(c);

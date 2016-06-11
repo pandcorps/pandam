@@ -81,6 +81,7 @@ except
 excess
 exempt
 expect
+expected
 expense
 expert
 express
@@ -152,6 +153,7 @@ percent
 perfect
 pester
 pewter
+picnic
 popcorn
 prefer
 presence
@@ -212,6 +214,7 @@ singing
 slender
 smiling
 smooth
+sneeze
 sorrow
 spirit
 splash
