@@ -26,9 +26,10 @@ import java.io.*;
 import java.util.*;
 
 import org.pandcorps.core.*;
-import org.pandcorps.test.*;
 
-public class TestWordScreen extends Pantest {
+import junit.framework.*;
+
+public class TestWordScreen extends TestCase {
     public final void testSkip() {
         runSkip(false, "abcdefghijklmnop");
         runSkip(true, "abzdkcufihylmnop");

@@ -22,8 +22,6 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.monster;
 
-import java.util.*;
-
 public abstract class Code extends Entity {
 
     private final String code;
@@ -49,12 +47,4 @@ public abstract class Code extends Entity {
         throw new IllegalArgumentException(code);
         //return null; // Remove after debugging
     }*/
-    
-    protected static <C extends Code> Map<String, C> map(Collection<C> collection) {
-        final Map<String, C> m = Entity.map(collection);
-        for (final C c : collection) {
-            m.put(format(c.code), c);
-        }
-        return m;
-    }
 }
