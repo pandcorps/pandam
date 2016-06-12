@@ -56,6 +56,10 @@ public class TestWordScreen extends TestCase {
         runSkip(true, "ybcdefghnalkmzop");
         runSkip(true, "bzcdofghojklbnyp");
         runSkip(true, "tbcdifghtjklmnop");
+        runSkip(true, "ybcdeparijklmnoz");
+        runSkip(true, "abzdtilcyjkxmnop");
+        runSkip(true, "abcjefgiyxkzmnoz");
+        runSkip(true, "azcdreebijklmnop");
     }
     
     public final void testSkip5() {
@@ -71,6 +75,15 @@ public class TestWordScreen extends TestCase {
         runSkip(true, "abcdnfmhzjreggipqostuvwxy");
         runSkip(true, "pbcdeughijslmnosqrftyvwxa");
         runSkip(true, "wbcdahgpijolmnorqustevfxy");
+        runSkip(true, "sbcdaeghijmlfuoeqrstnvwxy");
+        runSkip(true, "sbcdkpghijelunoraratmvwxy");
+        runSkip(true, "abcfglivedkhmnopqrstuzwxy");
+        runSkip(true, "abczfnomedklghipqrstuvwxy");
+        runSkip(true, "sbcdeaghijtlmnoaqrfznvwxy");
+        runSkip(true, "abcdpfghijklmnoreeuqzvwxy");
+        runSkip(true, "zbcdqfghijklmnoevalsupwxy");
+        runSkip(true, "abcdzorgenklmfopqhstuvwxy");
+        runSkip(true, "ragicfbhdjklmnopqzstuvwxy");
     }
     
     private final void runSkip(final boolean ex, final String grid) {

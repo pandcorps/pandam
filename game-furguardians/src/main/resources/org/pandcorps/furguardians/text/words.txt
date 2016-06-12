@@ -30,6 +30,7 @@ been
 beet
 bell
 belt
+bench
 bend
 bent
 berry
@@ -75,6 +76,7 @@ bull
 bump
 bunch
 bunny
+bunt
 burst
 but
 buy
@@ -351,6 +353,7 @@ known
 koala
 lamb
 land
+lap
 lark
 larva
 laugh
@@ -449,6 +452,8 @@ pal
 palm
 pan
 panda
+par
+park
 parka
 pass
 pasta
@@ -473,6 +478,7 @@ plump
 plus
 poll
 pond
+pool
 pop
 power
 press
@@ -505,6 +511,7 @@ reed
 renew
 right
 rigid
+ring
 river
 robin
 rock

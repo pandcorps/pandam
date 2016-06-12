@@ -41,8 +41,10 @@ public final class WordScreen extends MiniGameScreen {
     private static int SIZE = DEF_SIZE;
     private static int NUM_WORDS = 4;
     private final static String[] SKIP = {
-            "ZRR", "AHSBG", "ANMF", "ANNA", "BNBJ", "BTL", "BTMS", "CHBJ", "CHKCN", "CZLM", "EZF", "ETBJ", "GDKK",
-            "HFFDQ", "JHKK", "JKZM", "MHFF", "MZYH", "ODMHR", "OHLO", "OHRR", "ONQM", "OTRRX", "RDW", "RGHS", "SHS", "VGNQD" };
+            "ZRR", "ADDQ", "AHSBG", "ANMF", "ANNA", "BHFZQ", "BKHS", "BNBJ", "BTL",
+            "BTMS", "CDLNM", "CDUHK", "CHBJ", "CHKCN", "CZLM", "EZF", "ETBJ", "GDKK",
+            "HFFDQ", "IHYY", "JHKK", "JKZM", "MDFQN", "MHFF", "MZYH", "ODMHR", "OHLO", "OHRR", "ONQM",
+            "OTRRX", "PTDDQ", "QZOD", "RDLDM", "RDW", "RGHS", "RKZUD", "RODQL", "RZSZM", "SHS", "VGNQD" };
     private final static HashMap<Integer, List<String>> dictionary = new HashMap<Integer, List<String>>();
     private static long seed = -1;
     private Panroom room = null;
