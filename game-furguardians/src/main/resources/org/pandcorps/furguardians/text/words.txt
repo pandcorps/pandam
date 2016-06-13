@@ -173,6 +173,7 @@ dry
 duck
 dunk
 dusk
+dwell
 eagle
 ear
 earn
@@ -461,6 +462,7 @@ paw
 peel
 peer
 pen
+perk
 petal
 pick
 pig
@@ -690,6 +692,7 @@ verb
 verse
 vine
 vixen
+wag
 wall
 warm
 warp

@@ -16,6 +16,7 @@ bereft
 better
 between
 binding
+blatant
 blender
 blossom
 bookworm
@@ -216,6 +217,7 @@ smiling
 smooth
 sneeze
 sorrow
+sphere
 spirit
 splash
 sports
@@ -253,6 +255,7 @@ vacant
 vagrant
 vertex
 vessel
+victim
 warrant
 weekend
 wellness
