@@ -37,9 +37,12 @@ import org.pandcorps.pandax.text.*;
 
 public final class WordScreen extends MiniGameScreen {
     protected final static int DEF_SIZE = 4;
+    private final static int AWARD_4 = 40;
+    private final static int AWARD_5 = 65;
     private final static int DIM = 16;
     private static int SIZE = DEF_SIZE;
     private static int NUM_WORDS = 4;
+    private static int AWARD = AWARD_4;
     private final static String[] SKIP = {
             "ZRR", "ADDQ", "AHSBG", "ANMF", "ANNA", "BHFZQ", "BKHS", "BNBJ", "BTL",
             "BTMS", "CDLNM", "CDUHK", "CHBJ", "CHKCN", "CZLM", "EZF", "ETBJ", "GDKK",
@@ -59,6 +62,11 @@ public final class WordScreen extends MiniGameScreen {
         if (prf != null) {
             SIZE = Math.min(Math.max(4, prf.wordGridSize), 5);
             NUM_WORDS = SIZE;
+        }
+        if (SIZE == 5) {
+            AWARD = AWARD_5;
+        } else {
+            AWARD = AWARD_4;
         }
         room = initMiniZoom(DIM * SIZE);
         addCursor(room, 20);
@@ -397,7 +405,7 @@ public final class WordScreen extends MiniGameScreen {
         if (stats != null) {
             stats.wordMiniGames++;
         }
-        FurGuardiansGame.setScreen(new MiniAwardScreen(40, new WordScreen()));
+        FurGuardiansGame.setScreen(new MiniAwardScreen(AWARD, new WordScreen()));
     }
     
     private final void clearCurrentSelection() {
