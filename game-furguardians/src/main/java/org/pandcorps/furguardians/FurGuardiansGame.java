@@ -395,6 +395,7 @@ public class FurGuardiansGame extends BaseGame {
 	protected static Panmage greenDown = null;
 	protected static Panmage key = null;
 	protected static Panmage keyIn = null;
+	private final static HashMap<String, Panmage> menuMap = new HashMap<String, Panmage>();
 	protected static Pansound musicMenu = null;
 	protected static Pansound musicHappy = null;
 	protected static Pansound musicSnow = null;
@@ -571,6 +572,15 @@ public class FurGuardiansGame extends BaseGame {
 	        Panmage.destroy(Level.timg);
 	        Panmage.destroy(Level.bgimg);
 	    }
+	}
+	
+	protected final static Panmage getMenuImg(final String name) {
+	    Panmage img = menuMap.get(name);
+	    if (img == null) {
+	        img = createMenuImg(name);
+	        menuMap.put(name, img);
+	    }
+	    return img;
 	}
 	
 	private final static Img[] loadChrStrip(final String name, final int dim, final PixelFilter f) {
@@ -2274,7 +2284,7 @@ public class FurGuardiansGame extends BaseGame {
 	}
 	
 	protected final static int getNumEyes() {
-	    return 28;
+	    return 32;
 	}
 	
 	protected final static int getNumDragonEyes() {

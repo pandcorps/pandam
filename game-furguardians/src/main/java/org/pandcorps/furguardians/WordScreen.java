@@ -648,11 +648,11 @@ public final class WordScreen extends MiniGameScreen {
         final String txt;
         final int nextSize;
         if (prf.wordGridSize == 5) {
-            img = null;
+            img = FurGuardiansGame.getMenuImg("Num4");
             txt = "4x4";
             nextSize = 4;
         } else {
-            img = null;
+            img = FurGuardiansGame.getMenuImg("Num5");
             txt = "5x5";
             nextSize = 5;
         }
