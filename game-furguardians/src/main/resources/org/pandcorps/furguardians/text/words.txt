@@ -135,6 +135,7 @@ crab
 craft
 crawl
 creek
+cross
 crow
 crown
 crumb
@@ -396,6 +397,7 @@ lull
 lunch
 lynx
 macaw
+mall
 map
 mark
 mask
@@ -432,6 +434,7 @@ net
 new
 newt
 next
+niece
 night
 north
 nose
@@ -505,6 +508,7 @@ quiz
 rain
 ram
 ramp
+rank
 rat
 raven
 read
@@ -592,6 +596,7 @@ socks
 soft
 solo
 song
+sort
 sound
 speed
 spell
