@@ -117,6 +117,7 @@ claw
 click
 cliff
 climb
+cloth
 cloud
 clown
 club
@@ -205,6 +206,7 @@ feel
 feet
 fence
 fern
+few
 fifth
 fig
 fill
@@ -228,6 +230,7 @@ fluff
 flux
 fly
 fog
+fold
 folk
 food
 foot
@@ -312,6 +315,7 @@ horse
 hot
 hound
 howl
+hub
 hunch
 hush
 husky
@@ -347,6 +351,7 @@ king
 kit
 kitty
 knack
+knee
 knit
 knock
 knot
@@ -389,6 +394,7 @@ log
 look
 loom
 loop
+lot
 loud
 love
 low
@@ -401,6 +407,7 @@ mall
 map
 mark
 mask
+mass
 match
 meek
 mend
@@ -461,6 +468,7 @@ park
 parka
 pass
 pasta
+patch
 paw
 peel
 peer
@@ -556,6 +564,7 @@ shed
 sheep
 sheet
 shell
+shift
 ship
 shirt
 shock
@@ -563,6 +572,8 @@ shook
 shop
 short
 show
+shrew
+shut
 shy
 sight
 sign
@@ -576,9 +587,11 @@ skill
 skip
 skunk
 sky
+slam
 sled
 sleep
 sleet
+slick
 slip
 sloth
 slug
@@ -594,8 +607,10 @@ sniff
 snow
 socks
 soft
+sold
 solo
 song
+soon
 sort
 sound
 speed
@@ -603,6 +618,7 @@ spell
 spike
 spill
 spin
+split
 spoon
 sport
 spot
@@ -618,6 +634,7 @@ steel
 steep
 steer
 step
+stew
 stick
 still
 sting
@@ -664,6 +681,7 @@ thigh
 thing
 think
 third
+thorn
 three
 throw
 tiger

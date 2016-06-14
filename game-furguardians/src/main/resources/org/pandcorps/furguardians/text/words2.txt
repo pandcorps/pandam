@@ -255,6 +255,7 @@ unplug
 unsung
 vacant
 vagrant
+velvet
 vertex
 vessel
 victim
