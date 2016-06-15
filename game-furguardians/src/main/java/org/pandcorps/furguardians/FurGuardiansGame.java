@@ -1864,8 +1864,6 @@ public class FurGuardiansGame extends BaseGame {
 	    	rockTrio.stompSound = soundArmor;
 	    	rockLeg.stompSound = soundArmor;
 	    	}});
-	    
-	    Achievement.validateAchievements();
 	}
 	
 	protected final static Img[] loadBlockLetterStrip() {
