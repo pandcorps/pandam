@@ -60,6 +60,7 @@ public class TestWordScreen extends TestCase {
         runSkip(true, "abzdtilcyjkxmnop");
         runSkip(true, "abcjefgiyxkzmnoz");
         runSkip(true, "azcdreebijklmnop");
+        runSkip(true, "gurdefzhijklmnop");
     }
     
     public final void testSkip5() {
@@ -147,7 +148,6 @@ public class TestWordScreen extends TestCase {
     }
     
     private final void runWordFile(final String name, final int min, final int max, final int maxVowels, final boolean checkMissing, final boolean checkDuplicate) throws Exception {
-        //TODO Long words must have at least one duplicate letter
         BufferedReader in = null;
         try {
             in = WordScreen.openWordFileReader(name);
@@ -185,11 +185,35 @@ public class TestWordScreen extends TestCase {
                 if (checkDuplicate) {
                     assertTrue(word + " had no duplicate letter", foundDuplicate);
                 }
+                assertFalse(word + " was a skip word", isSkipWord(word));
+                assertFalse(word + " was a reversed skip word", isSkipWord(Chartil.reverse(word)));
                 //TODO Check that it's possible to find 3 other words to use with this word
                 prev = word;
             }
         } finally {
             Iotil.close(in);
         }
+    }
+    
+    private final static boolean isSkipWord(final String word) {
+        final int size = word.length();
+        for (final String skip : WordScreen.SKIP) {
+            if (size != skip.length()) {
+                continue;
+            }
+            boolean skipped = true;
+            for (int i = 0; i < size; i++) {
+                char sc = skip.charAt(i);
+                sc = ((sc == 'Z') ? 'A' : (char) (sc + 1));
+                if (java.lang.Character.toUpperCase(sc) != java.lang.Character.toUpperCase(word.charAt(i))) {
+                    skipped = false;
+                    break;
+                }
+            }
+            if (skipped) {
+                return true;
+            }
+        }
+        return false;
     }
 }

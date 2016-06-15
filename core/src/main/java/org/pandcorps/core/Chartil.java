@@ -197,6 +197,15 @@ public final class Chartil {
     	return c;
     }
     
+    public final static String reverse(final String s) {
+        final int size = s.length();
+        final StringBuilder b = new StringBuilder(size);
+        for (int i = size - 1; i >= 0; i--) {
+            b.append(s.charAt(i));
+        }
+        return b.toString();
+    }
+    
     public final static String toCode(final String s) {
         return toCode(s, true);
     }

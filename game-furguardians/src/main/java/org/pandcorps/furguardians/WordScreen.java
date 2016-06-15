@@ -43,9 +43,9 @@ public final class WordScreen extends MiniGameScreen {
     private static int SIZE = DEF_SIZE;
     private static int NUM_WORDS = 4;
     private static int AWARD = AWARD_4;
-    private final static String[] SKIP = {
+    /*package*/ final static String[] SKIP = {
             "ZRR", "ADDQ", "AHSBG", "ANMF", "ANNA", "BHFZQ", "BKHS", "BNBJ", "BTL",
-            "BTMS", "CDLNM", "CDUHK", "CHBJ", "CHKCN", "CZLM", "EZF", "ETBJ", "GDKK",
+            "BTMS", "CDLNM", "CDUHK", "CHBJ", "CHKCN", "CQTF", "CZLM", "EZF", "ETBJ", "GDKK",
             "HFFDQ", "IHYY", "JHKK", "JKZM", "MDFQN", "MHFF", "MZYH", "ODMHR", "OHLO", "OHRR", "ONQM",
             "OTRRX", "PTDDQ", "QZOD", "RDLDM", "RDW", "RGHS", "RKZUD", "RODQL", "RZSZM", "SHS", "VGNQD" };
     private final static HashMap<Integer, List<String>> dictionary = new HashMap<Integer, List<String>>();
@@ -644,19 +644,19 @@ public final class WordScreen extends MiniGameScreen {
         if (prf == null) {
             return null;
         }
-        final Panmage img;
+        final String imgName;
         final String txt;
         final int nextSize;
         if (prf.wordGridSize == 5) {
-            img = FurGuardiansGame.getMenuImg("Num4");
+            imgName = "Num4";
             txt = "4x4";
             nextSize = 4;
         } else {
-            img = FurGuardiansGame.getMenuImg("Num5");
+            imgName = "Num5";
             txt = "5x5";
             nextSize = 5;
         }
-        return new MiniButton(img, txt, new Runnable() {
+        return new MiniButton(FurGuardiansGame.getMenuImg(imgName), txt, new Runnable() {
             @Override public final void run() {
                 prf.wordGridSize = nextSize;
                 save();
