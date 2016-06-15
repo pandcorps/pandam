@@ -22,6 +22,7 @@ bark
 bash
 bass
 bat
+batch
 bath
 bear
 bee
@@ -167,6 +168,7 @@ dish
 doe
 dog
 doll
+donor
 door
 dove
 down
@@ -192,6 +194,7 @@ elder
 elect
 elk
 elm
+else
 ember
 end
 even
@@ -300,11 +303,13 @@ hedge
 heel
 help
 hen
+her
 herd
 here
 hero
 hid
 hill
+him
 hint
 hip
 hiss
@@ -449,6 +454,7 @@ nerve
 nest
 net
 new
+news
 newt
 next
 niece
@@ -566,6 +572,7 @@ seed
 seek
 seem
 seen
+self
 sell
 send
 sense
@@ -660,6 +667,7 @@ stool
 stoop
 store
 stork
+storm
 story
 straw
 stuff
@@ -689,6 +697,7 @@ tell
 ten
 tense
 tent
+term
 test
 text
 thank
@@ -728,6 +737,7 @@ try
 tuft
 tug
 turf
+turn
 tusk
 tweet
 twig
@@ -735,8 +745,11 @@ twist
 two
 uncle
 under
+vast
 verb
+verge
 verse
+vest
 vine
 vixen
 wag
