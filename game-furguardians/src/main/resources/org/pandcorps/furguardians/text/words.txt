@@ -59,6 +59,7 @@ book
 boost
 boot
 boss
+both
 bow
 bowl
 brave
@@ -95,6 +96,7 @@ cell
 chalk
 chaos
 charm
+chart
 chasm
 check
 cheek
@@ -127,6 +129,7 @@ color
 colt
 comb
 comic
+conch
 cook
 cool
 cord
@@ -141,11 +144,13 @@ crow
 crown
 crumb
 crush
+crust
 cub
 cup
 dad
 dark
 dash
+data
 dawn
 day
 deed
@@ -167,6 +172,7 @@ dove
 down
 draw
 dress
+drift
 drip
 droop
 drop
@@ -264,6 +270,7 @@ golf
 gong
 good
 grand
+graph
 grass
 green
 grin
@@ -306,6 +313,7 @@ hitch
 hive
 hog
 holly
+honor
 hoof
 hoop
 hoot
@@ -314,6 +322,7 @@ horn
 horse
 hot
 hound
+how
 howl
 hub
 hunch
@@ -430,6 +439,7 @@ mop
 moss
 much
 mud
+mulch
 mule
 music
 myth
@@ -466,6 +476,7 @@ panda
 par
 park
 parka
+part
 pass
 pasta
 patch
@@ -486,6 +497,7 @@ plank
 plant
 play
 plaza
+plot
 plum
 plump
 plus
@@ -513,6 +525,7 @@ queue
 quick
 quill
 quiz
+raft
 rain
 ram
 ramp
@@ -522,6 +535,7 @@ raven
 read
 red
 reed
+reef
 renew
 right
 rigid
@@ -555,6 +569,7 @@ seen
 sell
 send
 sense
+serve
 set
 seven
 sew
@@ -624,6 +639,7 @@ sport
 spot
 spry
 spy
+stack
 staff
 stag
 stand
@@ -654,6 +670,7 @@ sugar
 sum
 sun
 sunny
+surf
 swamp
 swan
 sweep
@@ -670,21 +687,26 @@ task
 teeth
 tell
 ten
+tense
 tent
 test
 text
 thank
 the
 theme
+then
 there
+these
 thigh
 thing
 think
 third
+this
 thorn
 three
 throw
 tiger
+tight
 timid
 tint
 tip
@@ -696,6 +718,7 @@ toss
 town
 track
 tree
+trend
 troll
 trot
 trunk
@@ -704,6 +727,7 @@ truth
 try
 tuft
 tug
+turf
 tusk
 tweet
 twig
@@ -719,6 +743,7 @@ wag
 wall
 warm
 warp
+was
 wash
 wasp
 water
@@ -730,7 +755,9 @@ week
 well
 west
 whale
+what
 whelp
+when
 where
 which
 white

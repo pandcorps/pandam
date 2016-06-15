@@ -69,6 +69,7 @@ distinct
 district
 diving
 doctor
+dogwood
 drenched
 dresser
 effect
@@ -104,6 +105,7 @@ frigid
 fulcrum
 fungus
 gallant
+garland
 gentle
 giving
 grammar
@@ -132,6 +134,7 @@ keeper
 kernel
 kettle
 kinship
+knapsack
 landmark
 legend
 lesser
@@ -203,6 +206,7 @@ scratch
 screen
 scroll
 secret
+segment
 select
 sentence
 serene
