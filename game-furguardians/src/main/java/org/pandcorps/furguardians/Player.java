@@ -96,6 +96,19 @@ public class Player extends Character implements CollisionListener {
 	        }
 	        powerTimer--;
 	        if (powerTimer == 0) {
+	            if (powerMode == POWER_DOUBLE) {
+    	            for (final PlayerContext pc : Coltil.unnull(FurGuardiansGame.pcs)) {
+    	                if (pc == null) {
+    	                    continue;
+    	                }
+    	                final Player player = pc.player;
+    	                if (player == null) {
+    	                    continue;
+    	                } else if (player.currentComboSize > 0) {
+    	                    player.currentComboDoubled = true;
+        	            }
+    	            }
+	            }
 	            powerMode = MODE_NORMAL;
 	        }
 	    }
@@ -391,6 +404,7 @@ public class Player extends Character implements CollisionListener {
 	private Player returnPlayer = null;
 	private int currentComboSize = 0;
 	private int currentComboAward = 0;
+	private boolean currentComboDoubled = false;
 	protected int levelGems = 0;
 	protected int levelFloatingGems = 0;
 	protected int levelEndGems = 0;
@@ -526,6 +540,7 @@ public class Player extends Character implements CollisionListener {
 	private final void clearCombo() {
 	    currentComboSize = 0;
 	    currentComboAward = 0;
+	    currentComboDoubled = false;
 	}
 	
 	private final void evaluateCombo() {
@@ -535,7 +550,14 @@ public class Player extends Character implements CollisionListener {
             Would make sense to reduce multiplier by one when giving the final bonus.
             Would be more confusing to Player though.
             */
+	        final byte oldPower = powerMode;
+	        if (currentComboDoubled) {
+	            powerMode = POWER_DOUBLE;
+	        }
             addGems(currentComboSize * currentComboAward);
+            if (currentComboDoubled) {
+                powerMode = oldPower;
+            }
             final Statistics stats = PlayerContext.getStatistics(pc);
             if (stats != null) {
                 stats.combos++;
