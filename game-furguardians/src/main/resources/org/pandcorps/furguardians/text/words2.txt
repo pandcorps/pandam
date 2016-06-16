@@ -24,6 +24,7 @@ borrow
 bottom
 breeze
 bronco
+canvas
 cement
 center
 checkers
@@ -275,6 +276,7 @@ willing
 windmill
 winning
 within
+workshop
 wrestle
 wretched
 writing
