@@ -168,6 +168,7 @@ pretend
 pretense
 pretext
 prevent
+prolong
 protocol
 recede
 recent

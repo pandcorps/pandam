@@ -498,6 +498,10 @@ public final class WordScreen extends MiniGameScreen {
     }
     
     private final String pickWord(final int size) {
+        // Y U O I A E
+        if (letters[24] && letters[20] && letters[14] && letters[8] && letters[0] && letters[4]) {
+            return null; // If all vowels have been used, don't waste time looking for a word
+        }
         final List<String> list = dictionary.get(Integer.valueOf(size));
         final int r = Mathtil.randi(0, list.size() - 1), listSize = list.size();
         final boolean d = Mathtil.rand();
