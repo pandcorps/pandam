@@ -160,6 +160,7 @@ perfect
 pester
 pewter
 picnic
+pledge
 popcorn
 prefer
 presence
