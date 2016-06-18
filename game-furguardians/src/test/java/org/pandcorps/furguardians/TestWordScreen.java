@@ -61,6 +61,9 @@ public class TestWordScreen extends TestCase {
         runSkip(true, "abcjefgiyxkzmnoz");
         runSkip(true, "azcdreebijklmnop");
         runSkip(true, "gurdefzhijklmnop");
+        runSkip(true, "abczekydijylmnop");
+        runSkip(true, "abczekidxjylmnop");
+        runSkip(true, "abczekikxjylmnop");
     }
     
     public final void testSkip5() {

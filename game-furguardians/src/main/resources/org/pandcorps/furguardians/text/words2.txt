@@ -138,6 +138,7 @@ kinship
 knapsack
 landmark
 legend
+lender
 lesser
 letter
 living
@@ -184,6 +185,7 @@ regent
 reject
 remember
 render
+renter
 reserve
 respect
 restless
@@ -226,6 +228,7 @@ smiling
 smooth
 sneeze
 sorrow
+spender
 sphere
 spirit
 splash
