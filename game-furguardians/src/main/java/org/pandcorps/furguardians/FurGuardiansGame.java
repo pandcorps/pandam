@@ -2160,8 +2160,8 @@ public class FurGuardiansGame extends BaseGame {
 		fadeOut(room, new InfoScreen(pc, false));
 	}
 	
-	protected final static void goMiniGames(final PlayerContext pc) {
-	    fadeOut(room, new MiniGamesScreen(pc));
+	protected final static void goMiniGames(final PlayerContext pc, final boolean quitNeeded) {
+	    fadeOut(room, new MiniGamesScreen(pc, quitNeeded));
 	}
 	
 	protected final static boolean goGoalsIfNeeded() {

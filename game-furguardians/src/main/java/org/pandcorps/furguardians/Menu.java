@@ -274,7 +274,7 @@ public class Menu {
                         FurGuardiansGame.goGoals(FurGuardiansGame.pcs.get(0)); }}).getActorOverlay().getPosition().addY(-10);
 				newFormButton(room, "Games", r - (tw * 3), tHigh, FurGuardiansGame.menuGames, new Runnable() {
                     @Override public final void run() {
-                        FurGuardiansGame.goMiniGames(FurGuardiansGame.pcs.get(0)); }}).getActorOverlay().getPosition().addY(-10);
+                        FurGuardiansGame.goMiniGames(FurGuardiansGame.pcs.get(0), false); }}).getActorOverlay().getPosition().addY(-10);
 				rt = lt = FurGuardiansGame.diamond;
 				rtIn = ltIn = FurGuardiansGame.diamondIn;
 			} else if (mode == TOUCH_HORIZONTAL) {
@@ -495,6 +495,15 @@ public class Menu {
 			tabs.add(tab);
 			return tab;
 		}
+		
+		protected final TouchButton newQuit() {
+		    return newTab(FurGuardiansGame.menuOff, "Quit", new Runnable() {@Override public final void run() {quit();}});
+		}
+		
+		protected final void quit() {
+            save();
+            Pangine.getEngine().exit(); // Exit to TitleScreen instead? Quit game from there? Or separate Reset link?
+        }
 		
 		protected final void newTabs() {
 			TouchTabs.createWithOverlays(0, FurGuardiansGame.menu, FurGuardiansGame.menuIn, FurGuardiansGame.menuLeft, FurGuardiansGame.menuRight, tabs);
@@ -1649,7 +1658,7 @@ public class Menu {
 				newTab(FurGuardiansGame.menuInfo, "Info", new Runnable() {@Override public final void run() {goInfo();}});
 				if (isPlayer1()) {
 				    newTab(FurGuardiansGame.menuMenu, "Setup", new Runnable() {@Override public final void run() {goOptions();}});
-					newTab(FurGuardiansGame.menuOff, "Quit", new Runnable() {@Override public final void run() {quit();}});
+					newQuit();
 				}
 			}
 			newProfile = false;
@@ -1830,11 +1839,6 @@ public class Menu {
 		
 		private final void goInfo() {
 			FurGuardiansGame.setScreen(new InfoScreen(pc, true));
-		}
-		
-		private final void quit() {
-			save();
-            Pangine.getEngine().exit(); // Exit to TitleScreen instead? Quit game from there? Or separate Reset link?
 		}
 		
 		@Override
@@ -3517,9 +3521,12 @@ public class Menu {
 	}
 	
 	protected final static class MiniGamesScreen extends PlayerScreen {
-        protected MiniGamesScreen(final PlayerContext pc) {
+	    private final boolean quitNeeded;
+	    
+        protected MiniGamesScreen(final PlayerContext pc, final boolean quitNeeded) {
             super(pc, false);
             tabsSupported = true;
+            this.quitNeeded = quitNeeded;
         }
         
         @Override
@@ -3534,6 +3541,9 @@ public class Menu {
         protected final void menuTouch() {
             createGameList(touchRadioX, touchRadioY);
             newTab(FurGuardiansGame.menuCheck, "Done", new Runnable() {@Override public final void run() {exit();}});
+            if (quitNeeded) {
+                newQuit();
+            }
             newTabs();
             registerBackExit();
         }

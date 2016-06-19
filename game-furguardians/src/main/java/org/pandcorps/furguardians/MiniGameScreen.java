@@ -216,7 +216,7 @@ public abstract class MiniGameScreen extends Panscreen {
         }
         
         private final void goMenu() {
-            FurGuardiansGame.goMiniGames(getPlayerContext());
+            FurGuardiansGame.goMiniGames(getPlayerContext(), !quitNeeded);
         }
         
         private final ActionEndListener newNextListener() {
