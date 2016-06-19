@@ -25,12 +25,14 @@ bottom
 breeze
 bronco
 canvas
+catnap
 cement
 center
 checkers
 cheese
 childish
 chilling
+claptrap
 clever
 clinic
 clutch
@@ -162,6 +164,7 @@ pester
 pewter
 picnic
 pledge
+poncho
 popcorn
 prefer
 presence
