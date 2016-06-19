@@ -26,6 +26,8 @@ import java.util.*;
 
 import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.Panput.*;
+import org.pandcorps.pandam.event.action.*;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.tile.Tile.*;
 
@@ -69,7 +71,7 @@ public final class GemScreen extends MiniGameScreen {
         }
     }
     
-    private final void initImages() {
+    private final static void initImages() {
         if (gemTiles != null) {
             return;
         }
@@ -79,7 +81,7 @@ public final class GemScreen extends MiniGameScreen {
         gemTiles3 = engine.createImage("gem.tiles.3", FurGuardiansGame.RES + "misc/GemTiles3.png");
     }
     
-    private final void initGrid() {
+    private final static void initGrid() {
         tm = new TileMap(Pantil.vmid(), SIZE, SIZE, DIM, DIM);
         imgMap = tm.splitImageMap(gemTiles);
         tm.setForegroundDepth(10);
@@ -87,7 +89,7 @@ public final class GemScreen extends MiniGameScreen {
         buildGrid();
     }
     
-    private final void buildGrid() {
+    private final static void buildGrid() {
         final int area = SIZE * SIZE, perColor = area / NUM_COLORS;
         final List<TileMapImage> list = new ArrayList<TileMapImage>(area);
         for (int color = 0; color < NUM_COLORS; color++) {
@@ -98,14 +100,39 @@ public final class GemScreen extends MiniGameScreen {
             }
         }
         Collections.shuffle(list);
-        int x = 0, y = 0;
+        int i = 0, j = 0;
         for (final TileMapImage img : list) {
-            tm.setForeground(x, y, img);
-            x++;
-            if (x >= SIZE) {
-                x = 0;
-                y++;
+            new Cell(i, j, img);
+            i++;
+            if (i >= SIZE) {
+                i = 0;
+                j++;
             }
+        }
+    }
+    
+    private final static class Cell {
+        private final int i;
+        private final int j;
+        
+        private Cell(final int i, final int j, final TileMapImage img) {
+            this.i = i;
+            this.j = j;
+            tm.setBackground(i, j, img);
+            newButton();
+        }
+        
+        private final TouchButton newButton() {
+            final Pangine engine = Pangine.getEngine();
+            final int x = i * DIM;
+            final int y = j * DIM;
+            final TouchButton button = new TouchButton(engine.getInteraction(), "Gem." + i + "." + j, x, y, DIM, DIM);
+            engine.registerTouchButton(button);
+            tm.register(button, new ActionStartListener() {
+                @Override public final void onActionStart(final ActionStartEvent event) {
+                    tm.setForeground(i, j, imgMap[6][4]);
+                }});
+            return button;
         }
     }
 }
