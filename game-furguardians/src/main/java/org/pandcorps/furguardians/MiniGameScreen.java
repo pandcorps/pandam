@@ -75,6 +75,17 @@ public abstract class MiniGameScreen extends Panscreen {
         return cursor;
     }
     
+    protected final boolean isTouchActive(final ButtonWrapper[][] grid) {
+        for (final ButtonWrapper[] row : grid) {
+            for (final ButtonWrapper cell : row) {
+                if (cell.getButton().isActive()) {
+                    return true;
+                }
+            }
+        }
+        return Pangine.getEngine().getInteraction().TOUCH.isActive();
+    }
+    
     private final ActionEndListener newMenuListener(final Panscreen nextScreen) {
         return new ActionEndListener() {
             @Override public final void onActionEnd(final ActionEndEvent event) {
@@ -102,6 +113,10 @@ public abstract class MiniGameScreen extends Panscreen {
     //@OverrideMe
     protected MiniButton getExtraButton() {
         return null;
+    }
+    
+    protected static interface ButtonWrapper {
+        public TouchButton getButton();
     }
     
     protected final class MiniAwardScreen extends Panscreen {

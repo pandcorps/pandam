@@ -340,20 +340,9 @@ public final class WordScreen extends MiniGameScreen {
     
     @Override
     public final void step() {
-        if (currentSelection.size() > 0 && !isTouchActive()) {
+        if (currentSelection.size() > 0 && !isTouchActive(grid)) {
             onRelease();
         }
-    }
-    
-    private final boolean isTouchActive() {
-        for (final Letter[] row : grid) {
-            for (final Letter letter : row) {
-                if (letter.button.isActive()) {
-                    return true;
-                }
-            }
-        }
-        return Pangine.getEngine().getInteraction().TOUCH.isActive();
     }
     
     private final void onRelease() {
@@ -545,7 +534,7 @@ public final class WordScreen extends MiniGameScreen {
     private final static byte MODE_ACTIVE = 1;
     private final static byte MODE_USED = 2;
     
-    private final class Letter extends Panctor {
+    private final class Letter extends Panctor implements ButtonWrapper {
         private final int row;
         private final int col;
         private final char c;
@@ -570,6 +559,11 @@ public final class WordScreen extends MiniGameScreen {
                 @Override public final void onActionStart(final ActionStartEvent event) {
                     onTap();
                 }});
+        }
+        
+        @Override
+        public final TouchButton getButton() {
+            return button;
         }
         
         private final void inactivate() {
