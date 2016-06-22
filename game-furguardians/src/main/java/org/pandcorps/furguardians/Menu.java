@@ -124,6 +124,10 @@ public class Menu {
 			}
 		}
 		
+		protected final Profile getProfile() {
+		    return (pc == null) ? null : pc.profile;
+		}
+		
 		protected final static int getRankStarX() {
 			return (Pangine.getEngine().getEffectiveWidth() - 170) / 2;
 		}
@@ -3552,13 +3556,28 @@ public class Menu {
             final TouchButton sub = newSub(x, y);
             setLabel(sub, FurGuardiansGame.menuExclaim, "Play");
             final HashMap<String, Class<? extends Panscreen>> gameMap = new LinkedHashMap<String, Class<? extends Panscreen>>();
-            gameMap.put("Word-Guardians", WordScreen.class);
+            final String gameWord = "Word-Guardians";
+            gameMap.put(gameWord, WordScreen.class);
             final List<String> gs = new ArrayList<String>(gameMap.keySet());
             final RadioSubmitListener aSubLsn = new RadioSubmitListener() {
                 @Override public final void onSubmit(final RadioSubmitEvent event) {
-                    FurGuardiansGame.setScreen(Reftil.newInstance(gameMap.get(event.toString())));
+                    final String name = event.toString();
+                    final Profile prf = getProfile();
+                    if (prf != null) {
+                        prf.lastMiniGame = name;
+                    }
+                    FurGuardiansGame.setScreen(Reftil.newInstance(gameMap.get(name)));
                 }};
-            addRadio("Mini-games", gs, aSubLsn, null, x, y, sub);
+            final RadioGroup gameGrp = addRadio("Mini-games", gs, aSubLsn, null, x, y, sub);
+            final Profile prf = getProfile();
+            if (prf != null) {
+                if (!gameGrp.setSelectedIfPossible(prf.lastMiniGame)) {
+                    final Statistics stats = prf.stats;
+                    if (stats != null && stats.wordMiniGames > 0) {
+                        gameGrp.setSelectedIfPossible(gameWord);
+                    }
+                }
+            }
         }
         
         protected final void menuClassic() {
