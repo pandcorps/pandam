@@ -271,7 +271,7 @@ public class Menu {
 				//sub = addCircleButton(room, "Sub", r - d, engine.getEffectiveTop() - d, input, act, ctrl.getOriginalSubmit());
 				final Panple ts = FurGuardiansGame.menu.getSize();
 				final int tw = (int) ts.getX();
-				act2 = newFormButton(room, "Act2", r - tw, t - (int) ts.getY(), FurGuardiansGame.menuOptions, "Menu");
+				act2 = newFormButton(room, "Act2", r - tw, t - (int) ts.getY(), FurGuardiansGame.menuOptions, Text.MENU);
 				final int tHigh = t - 19;
 				newFormButton(room, "Goals", r - (tw * 2), tHigh, FurGuardiansGame.gemGoal[0], new Runnable() {
                     @Override public final void run() {
