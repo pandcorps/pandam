@@ -27,7 +27,13 @@ import java.util.ResourceBundle;
 public class Text {
     private static ResourceBundle bundle = getBundle();
     
+    /*package*/ final static String DONE = get("Done");
+    /*package*/ final static String EDIT = get("Edit");
+    /*package*/ final static String ERASE = get("Erase");
+    /*package*/ final static String INFO = get("Info");
     /*package*/ final static String MENU = get("Menu");
+    /*package*/ final static String NEW = get("New");
+    /*package*/ final static String SETUP = get("Setup");
     
     static {
         bundle = null;

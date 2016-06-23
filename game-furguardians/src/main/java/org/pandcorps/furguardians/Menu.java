@@ -1651,17 +1651,17 @@ public class Menu {
 					createNewMenu(touchRadioX, touchRadioY);
 					break;
 			}
-			newTab(FurGuardiansGame.menuCheck, "Done", new Runnable() {@Override public final void run() {exit();}});
-			newTab(FurGuardiansGame.menuAvatar, "Edit", new Runnable() {@Override public final void run() {goAvatar();}});
+			newTab(FurGuardiansGame.menuCheck, Text.DONE, new Runnable() {@Override public final void run() {exit();}});
+			newTab(FurGuardiansGame.menuAvatar, Text.EDIT, new Runnable() {@Override public final void run() {goAvatar();}});
 			if (!newProfile) {
 				//newTab(FurGuardiansGame.menuPlus, "New", new Runnable() {@Override public final void run() {newAvatar();}});
-				newTab(FurGuardiansGame.menuPlus, "New", TAB_NEW);
+				newTab(FurGuardiansGame.menuPlus, Text.NEW, TAB_NEW);
 				if (getAvatarsSize() > 1) {
-					newTab(FurGuardiansGame.menuMinus, "Erase", new Runnable() {@Override public final void run() {delete();}});
+					newTab(FurGuardiansGame.menuMinus, Text.ERASE, new Runnable() {@Override public final void run() {delete();}});
 				}
-				newTab(FurGuardiansGame.menuInfo, "Info", new Runnable() {@Override public final void run() {goInfo();}});
+				newTab(FurGuardiansGame.menuInfo, Text.INFO, new Runnable() {@Override public final void run() {goInfo();}});
 				if (isPlayer1()) {
-				    newTab(FurGuardiansGame.menuMenu, "Setup", new Runnable() {@Override public final void run() {goOptions();}});
+				    newTab(FurGuardiansGame.menuMenu, Text.SETUP, new Runnable() {@Override public final void run() {goOptions();}});
 					newQuit();
 				}
 			}
