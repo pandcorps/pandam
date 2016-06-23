@@ -41,6 +41,9 @@ public final class GemScreen extends MiniGameScreen {
     private static Panroom room = null;
     private static TileMap tm = null;
     private static TileMapImage[][] imgMap = null;
+    private final static Cell[][] grid = new Cell[SIZE][SIZE];
+    private final static List<Cell> currentSelection = new ArrayList<Cell>(2);
+    private static boolean validSelection = true;
     
     /*
     TODO
@@ -69,6 +72,9 @@ public final class GemScreen extends MiniGameScreen {
         } else {
             tm.setImageMap(gemTiles2);
         }
+        if ((!validSelection || currentSelection.size() > 0) && !isTouchActive(grid)) {
+            onRelease();
+        }
     }
     
     private final static void initImages() {
@@ -87,6 +93,8 @@ public final class GemScreen extends MiniGameScreen {
         tm.setForegroundDepth(10);
         room.addActor(tm);
         buildGrid();
+        currentSelection.clear();
+        validSelection = true;
     }
     
     private final static void buildGrid() {
@@ -102,7 +110,7 @@ public final class GemScreen extends MiniGameScreen {
         Collections.shuffle(list);
         int i = 0, j = 0;
         for (final TileMapImage img : list) {
-            new Cell(i, j, img);
+            grid[j][i] = new Cell(i, j, img);
             i++;
             if (i >= SIZE) {
                 i = 0;
@@ -111,15 +119,31 @@ public final class GemScreen extends MiniGameScreen {
         }
     }
     
-    private final static class Cell {
+    private final static void onRelease() {
+        if (currentSelection.size() == 2) {
+            //swap cells
+        }
+        clearCurrentSelection();
+        validSelection = true;
+    }
+    
+    private final static void clearCurrentSelection() {
+        for (final Cell cell : currentSelection) {
+            cell.setForeground(null);
+        }
+        currentSelection.clear();
+    }
+    
+    private final static class Cell implements ButtonWrapper {
         private final int i;
         private final int j;
+        private final TouchButton button;
         
         private Cell(final int i, final int j, final TileMapImage img) {
             this.i = i;
             this.j = j;
             tm.setBackground(i, j, img);
-            newButton();
+            button = newButton();
         }
         
         private final TouchButton newButton() {
@@ -130,8 +154,25 @@ public final class GemScreen extends MiniGameScreen {
             engine.registerTouchButton(button);
             tm.register(button, new ActionStartListener() {
                 @Override public final void onActionStart(final ActionStartEvent event) {
-                    tm.setForeground(i, j, imgMap[6][4]);
+                    if (!validSelection) {
+                        return;
+                    } else if (currentSelection.size() >= 2) {
+                        clearCurrentSelection();
+                        validSelection = false;
+                        return;
+                    }
+                    setForeground(imgMap[6][4]);
+                    currentSelection.add(Cell.this);
                 }});
+            return button;
+        }
+        
+        private final void setForeground(final TileMapImage img) {
+            tm.setForeground(i, j, img);
+        }
+        
+        @Override
+        public final TouchButton getButton() {
             return button;
         }
     }
