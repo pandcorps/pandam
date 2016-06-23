@@ -25,18 +25,19 @@ package org.pandcorps.furguardians;
 import java.util.ResourceBundle;
 
 public class Text {
-    /*package*/ final static String MENU;
+    private static ResourceBundle bundle = getBundle();
+    
+    /*package*/ final static String MENU = get("Menu");
     
     static {
-        final ResourceBundle bundle = getBundle();
-        MENU = get(bundle, "Menu");
+        bundle = null;
     }
     
-    private final static String get(final ResourceBundle bundle, final String s) {
-        return (bundle == null) ? s : get(bundle, s, s);
+    private final static String get(final String s) {
+        return (bundle == null) ? s : get(s, s);
     }
     
-    private final static String get(final ResourceBundle bundle, final String key, final String def) {
+    private final static String get(final String key, final String def) {
         return ((bundle != null) && bundle.containsKey(key)) ? bundle.getString(key) : def;
     }
     
