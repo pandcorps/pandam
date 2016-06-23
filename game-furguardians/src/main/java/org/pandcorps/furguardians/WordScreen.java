@@ -595,13 +595,7 @@ public final class WordScreen extends MiniGameScreen {
         }
         
         private final boolean isAdjacentTo(final Letter letter) {
-            final int otherRow = letter.row, otherCol = letter.col;
-            if (row == otherRow) {
-                return Math.abs(col - otherCol) == 1;
-            } else if (col == otherCol) {
-                return Math.abs(row - otherRow) == 1;
-            }
-            return false;
+            return WordScreen.isAdjacentTo(row, col, letter.row, letter.col);
         }
     }
     

@@ -156,9 +156,13 @@ public final class GemScreen extends MiniGameScreen {
                 @Override public final void onActionStart(final ActionStartEvent event) {
                     if (!validSelection) {
                         return;
-                    } else if (currentSelection.size() >= 2) {
+                    }
+                    final int size = currentSelection.size();
+                    if (size >= 2) {
                         clearCurrentSelection();
                         validSelection = false;
+                        return;
+                    } else if (size > 0 && !isAdjacentTo(currentSelection.get(size - 1))) {
                         return;
                     }
                     setForeground(imgMap[6][4]);
@@ -169,6 +173,10 @@ public final class GemScreen extends MiniGameScreen {
         
         private final void setForeground(final TileMapImage img) {
             tm.setForeground(i, j, img);
+        }
+        
+        private final boolean isAdjacentTo(final Cell cell) {
+            return GemScreen.isAdjacentTo(j, i, cell.j, cell.i);
         }
         
         @Override

@@ -75,7 +75,7 @@ public abstract class MiniGameScreen extends Panscreen {
         return cursor;
     }
     
-    protected final boolean isTouchActive(final ButtonWrapper[][] grid) {
+    protected final static boolean isTouchActive(final ButtonWrapper[][] grid) {
         for (final ButtonWrapper[] row : grid) {
             for (final ButtonWrapper cell : row) {
                 if (cell.getButton().isActive()) {
@@ -84,6 +84,15 @@ public abstract class MiniGameScreen extends Panscreen {
             }
         }
         return Pangine.getEngine().getInteraction().TOUCH.isActive();
+    }
+    
+    protected final static boolean isAdjacentTo(final int row, final int col, final int otherRow, final int otherCol) {
+        if (row == otherRow) {
+            return Math.abs(col - otherCol) == 1;
+        } else if (col == otherCol) {
+            return Math.abs(row - otherRow) == 1;
+        }
+        return false;
     }
     
     private final ActionEndListener newMenuListener(final Panscreen nextScreen) {
