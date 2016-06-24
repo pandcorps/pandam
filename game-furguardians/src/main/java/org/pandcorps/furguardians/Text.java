@@ -30,20 +30,27 @@ public class Text {
     /*package*/ final static String AWARD = get("Award");
     /*package*/ final static String BACK = get("Back");
     /*package*/ final static String BIRD = get("Bird");
+    /*package*/ final static String COLOR = get("Color");
     /*package*/ final static String DONE = get("Done");
+    /*package*/ final static String DUMP = get("Dump");
     /*package*/ final static String EDIT = get("Edit");
     /*package*/ final static String ERASE = get("Erase");
+    /*package*/ final static String EYES = get("Eyes");
     /*package*/ final static String FOES = get("Foes");
+    /*package*/ final static String GEAR = get("Gear");
     /*package*/ final static String GOALS = get("Goals");
     /*package*/ final static String HAT = get("Hat");
     /*package*/ final static String INFO = get("Info");
+    /*package*/ final static String KIND = get("Kind");
     /*package*/ final static String MENU = get("Menu");
+    /*package*/ final static String NAME = get("Name");
     /*package*/ final static String NEW = get("New");
     /*package*/ final static String PLAY = get("Play");
     /*package*/ final static String POWER = get("Power");
     /*package*/ final static String SETUP = get("Setup");
     /*package*/ final static String SHIRT = get("Shirt");
     /*package*/ final static String STATS = get("Stats");
+    /*package*/ final static String UNDO = get("Undo");
     
     static {
         bundle = null;

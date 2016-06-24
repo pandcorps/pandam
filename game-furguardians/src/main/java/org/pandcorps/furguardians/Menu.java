@@ -1948,14 +1948,14 @@ public class Menu {
 					break;
 			}
 			newTab(FurGuardiansGame.menuCheck, Text.DONE, new Runnable() {@Override public final void run() {exit();}});
-			newTab(FurGuardiansGame.menuX, "Undo", new Runnable() {@Override public final void run() {cancel();}});
-			newTab(FurGuardiansGame.menuAnimal, "Kind", TAB_ANIMAL);
-			newTab(FurGuardiansGame.menuEyes, "Eyes", TAB_EYES);
-			newTab(FurGuardiansGame.menuColor, "Color", TAB_COLOR);
-			newTab(FurGuardiansGame.menuGear, "Gear", new Runnable() {@Override public final void run() {goGear();}});
-			newTab(FurGuardiansGame.menuKeyboard, "Name", TAB_NAME);
+			newTab(FurGuardiansGame.menuX, Text.UNDO, new Runnable() {@Override public final void run() {cancel();}});
+			newTab(FurGuardiansGame.menuAnimal, Text.KIND, TAB_ANIMAL);
+			newTab(FurGuardiansGame.menuEyes, Text.EYES, TAB_EYES);
+			newTab(FurGuardiansGame.menuColor, Text.COLOR, TAB_COLOR);
+			newTab(FurGuardiansGame.menuGear, Text.GEAR, new Runnable() {@Override public final void run() {goGear();}});
+			newTab(FurGuardiansGame.menuKeyboard, Text.NAME, TAB_NAME);
 			if (FurGuardiansGame.debugMode) {
-				newTab(FurGuardiansGame.menuRgb, "Dump", new Runnable() {@Override public final void run() {exportGraphics();}});
+				newTab(FurGuardiansGame.menuRgb, Text.DUMP, new Runnable() {@Override public final void run() {exportGraphics();}});
 			}
 			newTabs();
 			registerBack(new ActionEndListener() {
