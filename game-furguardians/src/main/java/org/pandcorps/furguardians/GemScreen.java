@@ -156,6 +156,8 @@ public final class GemScreen extends MiniGameScreen {
                 @Override public final void onActionStart(final ActionStartEvent event) {
                     if (!validSelection) {
                         return;
+                    } else if (currentSelection.contains(Cell.this)) {
+                        return;
                     }
                     final int size = currentSelection.size();
                     if (size >= 2) {
