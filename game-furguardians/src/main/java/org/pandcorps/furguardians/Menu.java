@@ -612,7 +612,7 @@ public class Menu {
 			final RadioGroup grp = new RadioGroup(FurGuardiansGame.font, list, subLsn);
 			if (tab) {
 				if (sub == null && subLsn != null) {
-					newTab(FurGuardiansGame.menuCheck, "Done", new Runnable() {@Override public final void run() {grp.submit();}});
+					newTab(FurGuardiansGame.menuCheck, Text.DONE, new Runnable() {@Override public final void run() {grp.submit();}});
 				}
 				grp.setReactOnEnd(true);
 			}
@@ -1577,7 +1577,7 @@ public class Menu {
 		
 		protected final void menuTouch() {
 			createNameInput(touchKeyboardX, getTouchKeyboardY());
-			newTab(FurGuardiansGame.menuCheck, "Done", new Runnable() {@Override public final void run() {exit();}});
+			newTab(FurGuardiansGame.menuCheck, Text.DONE, new Runnable() {@Override public final void run() {exit();}});
 			newTabs();
 		}
 		
@@ -1947,7 +1947,7 @@ public class Menu {
 					createNameInput(touchKeyboardX, getTouchKeyboardY());
 					break;
 			}
-			newTab(FurGuardiansGame.menuCheck, "Done", new Runnable() {@Override public final void run() {exit();}});
+			newTab(FurGuardiansGame.menuCheck, Text.DONE, new Runnable() {@Override public final void run() {exit();}});
 			newTab(FurGuardiansGame.menuX, "Undo", new Runnable() {@Override public final void run() {cancel();}});
 			newTab(FurGuardiansGame.menuAnimal, "Kind", TAB_ANIMAL);
 			newTab(FurGuardiansGame.menuEyes, "Eyes", TAB_EYES);
@@ -2468,11 +2468,11 @@ public class Menu {
                     createBirdNameInput(touchKeyboardX, getTouchKeyboardY());
                     break;
             }
-			newTab(FurGuardiansGame.menuCheck, "Back", new Runnable() {@Override public final void run() {exit();}});
-			newTab(FurGuardiansGame.menuClothing, "Shirt", TAB_CLOTHES);
-			newTab(FurGuardiansGame.menuHat, "Hat", TAB_HAT);
-			newTab(FurGuardiansGame.menuJump, "Power", TAB_JUMP);
-			newTab(FurGuardiansGame.menuBird, "Bird", TAB_BIRD);
+			newTab(FurGuardiansGame.menuCheck, Text.BACK, new Runnable() {@Override public final void run() {exit();}});
+			newTab(FurGuardiansGame.menuClothing, Text.SHIRT, TAB_CLOTHES);
+			newTab(FurGuardiansGame.menuHat, Text.HAT, TAB_HAT);
+			newTab(FurGuardiansGame.menuJump, Text.POWER, TAB_JUMP);
+			newTab(FurGuardiansGame.menuBird, Text.BIRD, TAB_BIRD);
 			newTabs();
 			registerBackExit();
 		}
@@ -2609,7 +2609,7 @@ public class Menu {
 		
 		protected final void menuTouch() {
 			createAssistList(touchRadioX, touchRadioY);
-			newTab(FurGuardiansGame.menuCheck, "Done", new Runnable() {@Override public final void run() {exit();}});
+			newTab(FurGuardiansGame.menuCheck, Text.DONE, new Runnable() {@Override public final void run() {exit();}});
             newTabs();
             registerBackExit();
 		}
@@ -2722,7 +2722,7 @@ public class Menu {
         
         protected final void menuTouch() {
             createThemeList(touchRadioX, touchRadioY);
-            newTab(FurGuardiansGame.menuCheck, "Done", new Runnable() {@Override public final void run() {exit();}});
+            newTab(FurGuardiansGame.menuCheck, Text.DONE, new Runnable() {@Override public final void run() {exit();}});
             newTabs();
             registerBackExit();
         }
@@ -2856,11 +2856,11 @@ public class Menu {
 			}
 			final Runnable r = new Runnable() {@Override public final void run() {exit();}};
 			if (fullMenu) {
-				newTab(FurGuardiansGame.menuCheck, "Done", r);
-				newTab(FurGuardiansGame.menuTrophy, "Award", TAB_AWARD);
-				newTab(FurGuardiansGame.menuGraph, "Stats", TAB_STATS);
-				newTab(FurGuardiansGame.menuStar, "Goals", TAB_GOALS);
-				newTab(FurGuardiansGame.menuFoes, "Foes", TAB_FOES);
+				newTab(FurGuardiansGame.menuCheck, Text.DONE, r);
+				newTab(FurGuardiansGame.menuTrophy, Text.AWARD, TAB_AWARD);
+				newTab(FurGuardiansGame.menuGraph, Text.STATS, TAB_STATS);
+				newTab(FurGuardiansGame.menuStar, Text.GOALS, TAB_GOALS);
+				newTab(FurGuardiansGame.menuFoes, Text.FOES, TAB_FOES);
 			} else {
 				registerDoneAll(r);
 			}
@@ -2996,7 +2996,7 @@ public class Menu {
 		}
 		
 		private final void registerDoneAll(final Runnable r) {
-			newTab(FurGuardiansGame.menuCheck, "Done", r);
+			newTab(FurGuardiansGame.menuCheck, Text.DONE, r);
 			for (final Panput input : new Panput[] {ctrl.getSubmit(), ctrl.get1(), ctrl.get2()}) {
 				tm.register(input, new ActionStartListener() {
 					@Override public final void onActionStart(final ActionStartEvent event) {
@@ -3263,7 +3263,7 @@ public class Menu {
 	            addTitle(msgBtnSize, x + btnW + 8, y);
             }
             
-            newTab(FurGuardiansGame.menuCheck, "Done", new Runnable() {@Override public final void run() {exit();}});
+            newTab(FurGuardiansGame.menuCheck, Text.DONE, new Runnable() {@Override public final void run() {exit();}});
             newTab(FurGuardiansGame.menuMusic, "Music", new Runnable() {@Override public final void run() {goMusic();}});
             newTab(FurGuardiansGame.menuQuestion, "Perks", new Runnable() {@Override public final void run() {goPerks();}});
             newTab(FurGuardiansGame.menuWorld, "World", new Runnable() {@Override public final void run() {goPreferredTheme();}});
@@ -3401,7 +3401,7 @@ public class Menu {
             addTitle(msgSound, x + btnW + 8, y);
             setMessageSound();
             
-            newTab(FurGuardiansGame.menuCheck, "Done", new Runnable() {@Override public final void run() {exit();}});
+            newTab(FurGuardiansGame.menuCheck, Text.DONE, new Runnable() {@Override public final void run() {exit();}});
             newTabs();
             registerBackExit();
         }
@@ -3470,7 +3470,7 @@ public class Menu {
             addTitle(msgDeath, x + btnW + 8, y);
             setMessageDeath();
             
-            newTab(FurGuardiansGame.menuCheck, "Done", new Runnable() {@Override public final void run() {exit();}});
+            newTab(FurGuardiansGame.menuCheck, Text.DONE, new Runnable() {@Override public final void run() {exit();}});
             newTabs();
             registerBackExit();
         }
@@ -3544,7 +3544,7 @@ public class Menu {
         
         protected final void menuTouch() {
             createGameList(touchRadioX, touchRadioY);
-            newTab(FurGuardiansGame.menuCheck, "Done", new Runnable() {@Override public final void run() {exit();}});
+            newTab(FurGuardiansGame.menuCheck, Text.DONE, new Runnable() {@Override public final void run() {exit();}});
             if (quitNeeded) {
                 newQuit();
             }
@@ -3554,7 +3554,7 @@ public class Menu {
         
         private final void createGameList(final int x, final int y) {
             final TouchButton sub = newSub(x, y);
-            setLabel(sub, FurGuardiansGame.menuExclaim, "Play");
+            setLabel(sub, FurGuardiansGame.menuExclaim, Text.PLAY);
             final HashMap<String, Class<? extends Panscreen>> gameMap = new LinkedHashMap<String, Class<? extends Panscreen>>();
             final String gameWord = "Word-Guardians";
             gameMap.put(gameWord, WordScreen.class);
@@ -3614,7 +3614,7 @@ public class Menu {
 		
 		protected final void menuTouch() {
 			createInput(touchKeyboardX, getTouchKeyboardY());
-			newTab(FurGuardiansGame.menuCheck, "Done", new Runnable() {@Override public final void run() {exit();}});
+			newTab(FurGuardiansGame.menuCheck, Text.DONE, new Runnable() {@Override public final void run() {exit();}});
 			newTab(FurGuardiansGame.menuExclaim, "Run", new Runnable() {@Override public final void run() {exec();}});
 			newTab(FurGuardiansGame.menuMinus, "Clear", new Runnable() {@Override public final void run() {clear();}});
 			newTabs();
