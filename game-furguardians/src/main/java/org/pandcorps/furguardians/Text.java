@@ -31,8 +31,10 @@ public class Text {
     /*package*/ final static String BACK = get("Back");
     /*package*/ final static String BIRD = get("Bird");
     /*package*/ final static String COLOR = get("Color");
+    /*package*/ final static String DEBUG = get("Debug");
     /*package*/ final static String DONE = get("Done");
     /*package*/ final static String DUMP = get("Dump");
+    /*package*/ final static String EASY = get("Easy");
     /*package*/ final static String EDIT = get("Edit");
     /*package*/ final static String ERASE = get("Erase");
     /*package*/ final static String EYES = get("Eyes");
@@ -43,14 +45,18 @@ public class Text {
     /*package*/ final static String INFO = get("Info");
     /*package*/ final static String KIND = get("Kind");
     /*package*/ final static String MENU = get("Menu");
+    /*package*/ final static String MUSIC = get("Music");
     /*package*/ final static String NAME = get("Name");
     /*package*/ final static String NEW = get("New");
+    /*package*/ final static String PERKS = get("Perks");
     /*package*/ final static String PLAY = get("Play");
     /*package*/ final static String POWER = get("Power");
+    /*package*/ final static String QUIT = get("Quit");
     /*package*/ final static String SETUP = get("Setup");
     /*package*/ final static String SHIRT = get("Shirt");
     /*package*/ final static String STATS = get("Stats");
     /*package*/ final static String UNDO = get("Undo");
+    /*package*/ final static String WORLD = get("World");
     
     static {
         bundle = null;

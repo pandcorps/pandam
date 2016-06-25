@@ -373,7 +373,7 @@ public class Menu {
             final boolean menuScreen = screen instanceof PlayerScreen;
             final int numButtons = menuScreen ? 2 : 3, r = engine.getEffectiveWidth();
             final int btnW = (int) btnSize.getX(), btnX = TouchTabs.off(r, btnW * numButtons);
-            quitYes = newFormButton(room, "Quit", btnX + btnW * (numButtons - 1), btnY, FurGuardiansGame.menuOff, "Quit", new Runnable() {
+            quitYes = newFormButton(room, "Quit", btnX + btnW * (numButtons - 1), btnY, FurGuardiansGame.menuOff, Text.QUIT, new Runnable() {
                 @Override public final void run() { engine.exit(); }});
             quitYes.setZ(15);
             final String noLbl;
@@ -384,7 +384,7 @@ public class Menu {
             } else {
             	noLbl = "Play";
             	noImg = FurGuardiansGame.menuRight;
-            	quitMenu = newFormButton(room, "Menu", btnX + btnW, btnY, FurGuardiansGame.menuOptions, "Menu", new Runnable() {
+            	quitMenu = newFormButton(room, "Menu", btnX + btnW, btnY, FurGuardiansGame.menuOptions, Text.MENU, new Runnable() {
                     @Override public final void run() {
                     	FurGuardiansGame.notifications.clear();
                     	destroyPromptQuit();
@@ -3264,12 +3264,12 @@ public class Menu {
             }
             
             newTab(FurGuardiansGame.menuCheck, Text.DONE, new Runnable() {@Override public final void run() {exit();}});
-            newTab(FurGuardiansGame.menuMusic, "Music", new Runnable() {@Override public final void run() {goMusic();}});
-            newTab(FurGuardiansGame.menuQuestion, "Perks", new Runnable() {@Override public final void run() {goPerks();}});
-            newTab(FurGuardiansGame.menuWorld, "World", new Runnable() {@Override public final void run() {goPreferredTheme();}});
-            newTab(FurGuardiansGame.menuDifficulty, "Easy", new Runnable() {@Override public final void run() {goDifficulty();}});
+            newTab(FurGuardiansGame.menuMusic, Text.MUSIC, new Runnable() {@Override public final void run() {goMusic();}});
+            newTab(FurGuardiansGame.menuQuestion, Text.PERKS, new Runnable() {@Override public final void run() {goPerks();}});
+            newTab(FurGuardiansGame.menuWorld, Text.WORLD, new Runnable() {@Override public final void run() {goPreferredTheme();}});
+            newTab(FurGuardiansGame.menuDifficulty, Text.EASY, new Runnable() {@Override public final void run() {goDifficulty();}});
             if (pc.profile.consoleEnabled) {
-            	newTab(FurGuardiansGame.menuKeyboard, "Debug", new Runnable() {@Override public final void run() {goConsole();}});
+            	newTab(FurGuardiansGame.menuKeyboard, Text.DEBUG, new Runnable() {@Override public final void run() {goConsole();}});
             }
             newTabs();
             registerBackExit();
