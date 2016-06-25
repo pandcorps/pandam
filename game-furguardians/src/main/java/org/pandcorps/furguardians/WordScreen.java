@@ -44,7 +44,7 @@ public final class WordScreen extends MiniGameScreen {
     private static int NUM_WORDS = 4;
     private static int AWARD = AWARD_4;
     /*package*/ final static String[] SKIP = {
-            "ZRR", "ADDQ", "AHSBG", "ANMF", "ANNA", "BHFZQ", "BKHS", "BNBJ", "BTL",
+            "ZMZK", "ZRR", "ADDQ", "AHSBG", "ANMF", "ANNA", "BHFZQ", "BKHS", "BNBJ", "BTL",
             "BTMS", "CDLNM", "CDUHK", "CHBJ", "CHJD", "CHKCN", "CQTF", "CXJD", "CZLM", "EZF", "ETBJ", "GDKK",
             "HFFDQ", "IHYY", "JHJD", "JHKK", "JKZM", "MDFQN", "MHFF", "MZYH", "ODMHR", "OHLO", "OHRR", "ONQM",
             "OTRR", "PTDDQ", "QZOD", "RDLDM", "RDW", "RGHS", "RKZUD", "RODQL", "RZSZM", "SHS", "VGNQD" };

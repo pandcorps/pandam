@@ -1,5 +1,6 @@
 abstract
 aghast
+anagram
 armada
 attach
 attack
@@ -102,6 +103,7 @@ fleece
 follow
 forgot
 forlorn
+foxtrot
 fractal
 fragrant
 freeze
