@@ -121,10 +121,14 @@ public final class GemScreen extends MiniGameScreen {
     
     private final static void onRelease() {
         if (currentSelection.size() == 2) {
-            //swap cells
+            swap();
         }
         clearCurrentSelection();
         validSelection = true;
+    }
+    
+    private final static void swap() {
+        currentSelection.get(0).swap(currentSelection.get(1));
     }
     
     private final static void clearCurrentSelection() {
@@ -142,7 +146,7 @@ public final class GemScreen extends MiniGameScreen {
         private Cell(final int i, final int j, final TileMapImage img) {
             this.i = i;
             this.j = j;
-            tm.setBackground(i, j, img);
+            setBackground(img);
             button = newButton();
         }
         
@@ -173,12 +177,31 @@ public final class GemScreen extends MiniGameScreen {
             return button;
         }
         
+        private final Tile getTile() {
+            return tm.getTile(i, j);
+        }
+        
         private final void setForeground(final TileMapImage img) {
             tm.setForeground(i, j, img);
         }
         
+        private final Object getBackground() {
+            return DynamicTileMap.getRawBackground(getTile());
+        }
+        
+        private final void setBackground(final Object img) {
+            tm.setBackground(i, j, img);
+        }
+        
         private final boolean isAdjacentTo(final Cell cell) {
             return GemScreen.isAdjacentTo(j, i, cell.j, cell.i);
+        }
+        
+        private final void swap(final Cell cell) {
+            final Object bg = getBackground();
+            setBackground(cell.getBackground());
+            cell.setBackground(bg);
+            //TODO Spark?
         }
         
         @Override
