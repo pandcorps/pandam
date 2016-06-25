@@ -98,7 +98,7 @@ public abstract class MiniGameScreen extends Panscreen {
     private final ActionEndListener newMenuListener(final Panscreen nextScreen) {
         return new ActionEndListener() {
             @Override public final void onActionEnd(final ActionEndEvent event) {
-                goMiniMenu(nextScreen, "Play", true);
+                goMiniMenu(nextScreen, Text.PLAY, true);
             }};
     }
     
@@ -161,7 +161,7 @@ public abstract class MiniGameScreen extends Panscreen {
         }
         
         private final void goNext() {
-            goMiniMenu(nextScreen, "Next", false);
+            goMiniMenu(nextScreen, Text.NEXT, false);
         }
     }
     
@@ -201,7 +201,7 @@ public abstract class MiniGameScreen extends Panscreen {
                     goNext();
                 }});
             x += w;
-            newButton("Menu", x, FurGuardiansGame.menuOptions, "Menu", new Runnable() {
+            newButton("Menu", x, FurGuardiansGame.menuOptions, Text.MENU, new Runnable() {
                 @Override public final void run() {
                     goMenu();
                 }});
@@ -215,7 +215,7 @@ public abstract class MiniGameScreen extends Panscreen {
                 x += w;
             }
             if (quitNeeded) {
-                newButton("Quit", x, FurGuardiansGame.menuOff, "Quit", new Runnable() {
+                newButton("Quit", x, FurGuardiansGame.menuOff, Text.QUIT, new Runnable() {
                     @Override public final void run() {
                         engine.exit();
                     }});

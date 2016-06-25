@@ -46,6 +46,7 @@ conform
 confront
 contort
 control
+cosmos
 cotton
 crescent
 critic
@@ -139,6 +140,7 @@ kettle
 kinship
 knapsack
 landmark
+ledger
 legend
 lender
 lesser
