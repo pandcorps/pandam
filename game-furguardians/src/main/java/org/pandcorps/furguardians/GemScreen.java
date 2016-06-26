@@ -52,6 +52,7 @@ public final class GemScreen extends MiniGameScreen {
     Profile setting for last mini-game played; Menu should default to that.
     Statistics for biggest gem block, most tiles cleared in one move, Gem-games played.
     Initial shuffle can't allow diamonds beside matching gems or big gem blocks.
+    Awards
     */
     
     @Override
@@ -274,8 +275,8 @@ public final class GemScreen extends MiniGameScreen {
             cell.type = type;
             handleComposite();
             cell.handleComposite();
-            handleBreak();
-            cell.handleBreak();
+            startBreak();
+            cell.startBreak();
             //TODO Spark?
             return true;
         }
@@ -287,26 +288,52 @@ public final class GemScreen extends MiniGameScreen {
             //TODO
         }
         
-        private final void handleBreak() {
+        private final void startBreak() {
             if (type != TYPE_BREAK) {
-                handleBreakNeighbors();
+                startBreakNeighbors();
                 return;
             }
-            //TODO Break neighbors of same color
+            continueBreak(color);
         }
         
-        private final void handleBreakNeighbors() {
-            
+        private final void continueBreak(final int color) {
+            if (this.color != color) {
+                return;
+            }
+            breakCell();
+            continueBreakNeighbor(-1, 0, color);
+            continueBreakNeighbor(1, 0, color);
+            continueBreakNeighbor(0, -1, color);
+            continueBreakNeighbor(0, 1, color);
         }
         
-        private final void handleBreakNeighbor(final int ioff, final int joff) {
+        private final void continueBreakNeighbor(final int ioff, final int joff, final int color) {
+            final Cell n = getNeighbor(ioff, joff);
+            if (n == null) {
+                return;
+            }
+            n.continueBreak(color);
+        }
+        
+        private final void startBreakNeighbors() {
+            startBreakNeighbor(-1, 0);
+            startBreakNeighbor(1, 0);
+            startBreakNeighbor(0, -1);
+            startBreakNeighbor(0, 1);
+        }
+        
+        private final void startBreakNeighbor(final int ioff, final int joff) {
             final Cell n = getNeighbor(ioff, joff);
             if (n == null) {
                 return;
             } else if (n.color != color) {
                 return;
             }
-            n.handleBreak();
+            n.startBreak();
+        }
+        
+        private final void breakCell() {
+            //TODO
         }
         
         @Override
