@@ -106,6 +106,7 @@ forlorn
 foxtrot
 fractal
 fragrant
+freckles
 freeze
 frigid
 fulcrum
@@ -117,6 +118,7 @@ giving
 grammar
 hangar
 hazard
+heckler
 heedless
 helmet
 hissing
