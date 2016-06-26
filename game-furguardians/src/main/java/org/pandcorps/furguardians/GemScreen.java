@@ -35,6 +35,7 @@ public final class GemScreen extends MiniGameScreen {
     private final static int DIM = 16;
     private final static int SIZE = 6;
     private final static int NUM_COLORS = 4;
+    private final static int TYPE_EMPTY = -1;
     private final static int TYPE_NORMAL = 0;
     private final static int TYPE_BREAK = 1;
     private static Panmage gemTiles = null;
@@ -46,6 +47,7 @@ public final class GemScreen extends MiniGameScreen {
     private final static Cell[][] grid = new Cell[SIZE][SIZE];
     private final static List<Cell> currentSelection = new ArrayList<Cell>(2);
     private static boolean validSelection = true;
+    private static int delay = 0;
     
     /*
     TODO
@@ -76,6 +78,12 @@ public final class GemScreen extends MiniGameScreen {
         } else {
             tm.setImageMap(gemTiles2);
         }
+        if (delay > 0) {
+            delay--;
+            if (delay == 0) {
+                fillBrokenCells();
+            }
+        }
         if ((!validSelection || currentSelection.size() > 0) && !isTouchActive(grid)) {
             onRelease();
         }
@@ -99,6 +107,7 @@ public final class GemScreen extends MiniGameScreen {
         buildGrid();
         currentSelection.clear();
         validSelection = true;
+        delay = 0;
     }
     
     private final static TileMapImage getImage(final int color, final int type) {
@@ -164,6 +173,9 @@ public final class GemScreen extends MiniGameScreen {
     }
     
     private final static void onRelease() {
+        if (delay > 0) {
+            return;
+        }
         final int size = currentSelection.size();
         if (validSelection && size < 2) {
             return;
@@ -176,6 +188,10 @@ public final class GemScreen extends MiniGameScreen {
     
     private final static void swap() {
         currentSelection.get(0).swap(currentSelection.get(1));
+    }
+    
+    private final static void fillBrokenCells() {
+        //TODO
     }
     
     private final static void clearCurrentSelection() {
@@ -209,7 +225,9 @@ public final class GemScreen extends MiniGameScreen {
             engine.registerTouchButton(button);
             tm.register(button, new ActionStartListener() {
                 @Override public final void onActionStart(final ActionStartEvent event) {
-                    if (!validSelection) {
+                    if (delay > 0) {
+                        return;
+                    } else if (!validSelection) {
                         return;
                     } else if (currentSelection.contains(Cell.this)) {
                         return;
@@ -333,7 +351,14 @@ public final class GemScreen extends MiniGameScreen {
         }
         
         private final void breakCell() {
-            //TODO
+            if (type == TYPE_BREAK) {
+                return;
+            }
+            color = -1;
+            type = TYPE_EMPTY;
+            setBackground(null);
+            delay = 30;
+            //TODO Spark?
         }
         
         @Override
