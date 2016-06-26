@@ -191,6 +191,28 @@ public final class GemScreen extends MiniGameScreen {
     }
     
     private final static void fillBrokenCells() {
+        final Set<Integer> breakersNeeded = new HashSet<Integer>(4);
+        final List<Integer> emptyCells = new ArrayList<Integer>(SIZE * SIZE);
+        for (int color = 0; color < NUM_COLORS; color++) {
+            breakersNeeded.add(Integer.valueOf(color));
+        }
+        for (int rowIndex = 0; rowIndex < SIZE; rowIndex++) {
+            final Cell[] row = grid[rowIndex];
+            final int rowOff = rowIndex * SIZE;
+            for (int cellIndex = 0; cellIndex < SIZE; cellIndex++) {
+                final Cell cell = row[cellIndex];
+                if (cell.type == TYPE_BREAK) {
+                    breakersNeeded.remove(Integer.valueOf(cell.color));
+                } else if (cell.type == TYPE_EMPTY) {
+                    emptyCells.add(Integer.valueOf(rowOff + cellIndex));
+                }
+            }
+            rowIndex++;
+        }
+        for (final Integer breakerColor : breakersNeeded) {
+            
+        }
+        //Collections.shuffle(emptyCells);
         //TODO
     }
     
@@ -351,9 +373,9 @@ public final class GemScreen extends MiniGameScreen {
         }
         
         private final void breakCell() {
-            if (type == TYPE_BREAK) {
+            /*if (type == TYPE_BREAK) {
                 return;
-            }
+            }*/
             color = -1;
             type = TYPE_EMPTY;
             setBackground(null);
