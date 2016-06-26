@@ -247,16 +247,66 @@ public final class GemScreen extends MiniGameScreen {
             return GemScreen.isAdjacentTo(j, i, cell.j, cell.i);
         }
         
-        private final void swap(final Cell cell) {
+        private final Cell getNeighbor(final int ioff, final int joff) {
+            final int ni = i + ioff, nj = j + joff;
+            if (isBad(ni) || isBad(nj)) {
+                return null;
+            }
+            return grid[nj][ni];
+        }
+        
+        private final boolean isBad(final int i) {
+            return i < 0 || i >= SIZE;
+        }
+        
+        private final boolean swap(final Cell cell) {
+            final int color = this.color;
+            if (color == cell.color) {
+                return false;
+            }
             final Object bg = getBackground();
-            final int color = this.color, type = this.type;
+            final int type = this.type;
             setBackground(cell.getBackground());
             this.color = cell.color;
             this.type = cell.type;
             cell.setBackground(bg);
             cell.color = color;
             cell.type = type;
+            handleComposite();
+            cell.handleComposite();
+            handleBreak();
+            cell.handleBreak();
             //TODO Spark?
+            return true;
+        }
+        
+        private final void handleComposite() {
+            if (type == TYPE_BREAK) {
+                return;
+            }
+            //TODO
+        }
+        
+        private final void handleBreak() {
+            if (type != TYPE_BREAK) {
+                handleBreakNeighbors();
+                return;
+            }
+            //TODO Break neighbors of same color
+        }
+        
+        private final void handleBreakNeighbors() {
+            
+        }
+        
+        private final void handleBreakNeighbor(final int ioff, final int joff) {
+            final Cell n = getNeighbor(ioff, joff);
+            if (n == null) {
+                return;
+            } else if (n.color != color) {
+                return;
+            }
+            n.handleBreak();
         }
         
         @Override
