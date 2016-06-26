@@ -59,6 +59,9 @@ public class Text {
     /*package*/ final static String UNDO = get("Undo");
     /*package*/ final static String WORLD = get("World");
     
+    /*package*/ final static String CABIN_PICK = get("Cabin.Pick", "Hoo! Hoo! Pick one!");
+    /*package*/ final static String CABIN_MATCH = get("Cabin.Match", "Hoo! Hoo! Match them!");
+    
     static {
         bundle = null;
     }

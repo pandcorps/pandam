@@ -193,7 +193,7 @@ public class Cabin {
 				tm.setForeground(3 + (i * 3), ROW_BLOCK, block, FurGuardiansGame.TILE_BUMP);
 			}
 			shuffle(30, 0);
-			return "Hoo! Hoo! Pick one!";
+			return Text.CABIN_PICK;
 		}
 		
 		protected final static int displayName(final String name, final int y, final int oddOff) {
@@ -244,7 +244,7 @@ public class Cabin {
                 tm.setForeground(index, block, FurGuardiansGame.TILE_BUMP);
                 map.put(Integer.valueOf(index), rndImgs.get(i));
             }
-		    return "Hoo! Hoo! Match them!";
+		    return Text.CABIN_MATCH;
 		}
 		
 		@Override
