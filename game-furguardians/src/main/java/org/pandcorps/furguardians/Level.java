@@ -1062,6 +1062,10 @@ public class Level {
             addTemplate(getPitTemplate());
         }
         
+        protected Template getLetterTemplate() {
+            return new BlockLetterTemplate();
+        }
+        
         protected final void addConstructedTemplates() {
             addTemplate(new ColorRiseTemplate());
             addTemplate(new WallTemplate());
@@ -1168,7 +1172,7 @@ public class Level {
 	    		    		}
         		    	}
     		    	} else if (currLetter < numLetters && bx >= ng * (currLetter + 1) / (numLetters + 1)) {
-	    		    	template = new BlockLetterTemplate();
+	    		    	template = getLetterTemplate();
     		    	} else if (bx >= (ng - 40) && requiredTemplate != null && templates.contains(requiredTemplate)) {
     		    	    template = requiredTemplate;
     		    	    requiredTemplate = null;
