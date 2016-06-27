@@ -62,6 +62,12 @@ public class Text {
     /*package*/ final static String CABIN_PICK = get("Cabin.Pick", "Hoo! Hoo! Pick one!");
     /*package*/ final static String CABIN_MATCH = get("Cabin.Match", "Hoo! Hoo! Match them!");
     
+    /*package*/ final static String CASTLE_INTRO_1 = get("Castle.Intro.1", "A portal has appeared outside");
+    /*package*/ final static String CASTLE_INTRO_2 = get("Castle.Intro.2", "the castle. Monsters from the");
+    /*package*/ final static String CASTLE_INTRO_3 = get("Castle.Intro.3", "Realm of Chaos have invaded");
+    /*package*/ final static String CASTLE_INTRO_4 = get("Castle.Intro.4", "the kingdom! Please close the");
+    /*package*/ final static String CASTLE_INTRO_5 = get("Castle.Intro.5", "gateway from the other side.");
+    
     static {
         bundle = null;
     }

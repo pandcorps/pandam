@@ -94,11 +94,11 @@ public class Castle {
     protected final static class ThroneIntroScreen extends ThroneScreen {
     	protected ThroneIntroScreen() {
     		super(Arrays.asList(
-	            "A portal has appeared outside",
-	            "the castle. Monsters from the",
-	            "Realm of Chaos have invaded",
-	            "the kingdom! Please close the",
-	            "gateway from the other side."));
+    		    Text.CASTLE_INTRO_1,
+    		    Text.CASTLE_INTRO_2,
+    		    Text.CASTLE_INTRO_3,
+    		    Text.CASTLE_INTRO_4,
+    		    Text.CASTLE_INTRO_5));
     	}
     	
     	@Override
