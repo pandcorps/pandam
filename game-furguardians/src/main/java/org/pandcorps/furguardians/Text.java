@@ -68,6 +68,12 @@ public class Text {
     /*package*/ final static String CASTLE_INTRO_4 = get("Castle.Intro.4", "the kingdom! Please close the");
     /*package*/ final static String CASTLE_INTRO_5 = get("Castle.Intro.5", "gateway from the other side.");
     
+    /*package*/ final static String CASTLE_WIN_1 = get("Castle.Win.1", "You destroyed the Havoc Stone,");
+    /*package*/ final static String CASTLE_WIN_2 = get("Castle.Win.2", "sending everything that passed");
+    /*package*/ final static String CASTLE_WIN_3 = get("Castle.Win.3", "through the Chaos Gate back to");
+    /*package*/ final static String CASTLE_WIN_4 = get("Castle.Win.4", "the original side! I am");
+    /*package*/ final static String CASTLE_WIN_5 = get("Castle.Win.5", "forever in your debt.");
+    
     static {
         bundle = null;
     }

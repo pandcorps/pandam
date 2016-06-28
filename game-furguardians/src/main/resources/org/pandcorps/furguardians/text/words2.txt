@@ -8,6 +8,7 @@ attract
 avatar
 awkward
 backhand
+backlash
 backpack
 backward
 ballad
@@ -182,6 +183,7 @@ pretext
 prevent
 prolong
 protocol
+rascal
 recede
 recent
 reckless
@@ -262,6 +264,7 @@ thatch
 thinking
 thirst
 thrust
+thwart
 tomorrow
 toolbox
 treble

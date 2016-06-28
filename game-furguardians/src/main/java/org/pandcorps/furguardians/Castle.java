@@ -110,11 +110,11 @@ public class Castle {
     protected final static class ThroneWinScreen extends ThroneScreen {
         protected ThroneWinScreen() {
             super(Arrays.asList(
-                "You destroyed the Havoc Stone,",
-                "sending everything that passed",
-                "through the Chaos Gate back to",
-                "the original side! I am ",
-                "forever in your debt."));
+                Text.CASTLE_WIN_1,
+                Text.CASTLE_WIN_2,
+                Text.CASTLE_WIN_3,
+                Text.CASTLE_WIN_4,
+                Text.CASTLE_WIN_5));
         }
         
         @Override
