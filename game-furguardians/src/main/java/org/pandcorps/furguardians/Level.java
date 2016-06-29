@@ -2712,6 +2712,41 @@ public class Level {
         }
     }
     
+    private abstract static class RowLetterTemplate extends SimpleTemplate {
+        protected RowLetterTemplate() {
+            super(2, 5, 0);
+        }
+        
+        @Override
+        protected final void build() {
+            final int stop = x + w, y = floor + 3 + floatOffset;
+            final int letter = Mathtil.randi(x, stop - 1);
+            for (int i = x; i < stop; i++) {
+                if (i == letter) {
+                    letterBlock(i, y);
+                } else {
+                    block(i, y);
+                }
+            }
+        }
+        
+        protected abstract void block(final int x, final int y);
+    }
+    
+    private final static class BumpableRowLetterTemplate extends RowLetterTemplate {
+        @Override
+        protected final void block(final int x, final int y) {
+            bumpableBlock(x, y);
+        }
+    }
+    
+    private final static class BreakableRowLetterTemplate extends RowLetterTemplate {
+        @Override
+        protected final void block(final int x, final int y) {
+            breakableBlock(x, y);
+        }
+    }
+    
     private final static class GemTemplate extends SimpleTemplate {
     	protected GemTemplate() {
     		this(10);
