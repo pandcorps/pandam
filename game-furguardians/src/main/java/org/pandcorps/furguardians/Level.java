@@ -1040,6 +1040,7 @@ public class Level {
     
     protected abstract static class RandomBuilder extends Builder {
     	protected final ArrayList<Template> templates = new ArrayList<Template>();
+    	protected final ArrayList<Template> letterTemplates = new ArrayList<Template>();
         protected final ArrayList<GoalTemplate> goals = new ArrayList<GoalTemplate>();
         
         protected abstract void loadTemplates();
@@ -1063,7 +1064,24 @@ public class Level {
         }
         
         protected Template getLetterTemplate() {
-            return new BlockLetterTemplate();
+            return Mathtil.rand(letterTemplates);
+        }
+        
+        protected void loadLetterTemplates() {
+            addTinyLetterTemplate();
+        }
+        
+        protected final void addTinyLetterTemplate() {
+            letterTemplates.add(new BlockLetterTemplate());
+        }
+        
+        protected final void addSafeLetterTemplates() {
+            // Not too high, so safe for levels with a ceiling
+            // Can't get stuck in auto-run
+            addTinyLetterTemplate();
+            letterTemplates.add(new BumpableRowLetterTemplate());
+            letterTemplates.add(new BreakableRowLetterTemplate());
+            letterTemplates.add(new SolidRowLetterTemplate());
         }
         
         protected final void addConstructedTemplates() {
@@ -1733,6 +1751,11 @@ public class Level {
     protected final static int MAX_CAVE_CEILING_SIZE = 5;
     
     protected final static class CaveBuilder extends FlatBuilder {
+        @Override
+        protected final void loadLetterTemplates() {
+            addSafeLetterTemplates();
+        }
+        
     	@Override
     	protected final void addNatureTemplate() {
     		addTemplate(new BushTemplate());
@@ -2719,7 +2742,7 @@ public class Level {
         
         @Override
         protected final void build() {
-            final int stop = x + w, y = floor + 3 + floatOffset;
+            final int stop = x + w, y = floor + 3 + floatOffset, y1 = y + 1;
             final int letter = Mathtil.randi(x, stop - 1);
             for (int i = x; i < stop; i++) {
                 if (i == letter) {
@@ -2727,10 +2750,15 @@ public class Level {
                 } else {
                     block(i, y);
                 }
+                above(i, y1);
             }
         }
         
         protected abstract void block(final int x, final int y);
+        
+        //@OverrideMe
+        protected void above(final int x, final int y) {
+        }
     }
     
     private final static class BumpableRowLetterTemplate extends RowLetterTemplate {
@@ -2744,6 +2772,18 @@ public class Level {
         @Override
         protected final void block(final int x, final int y) {
             breakableBlock(x, y);
+        }
+    }
+    
+    private final static class SolidRowLetterTemplate extends RowLetterTemplate {
+        @Override
+        protected final void block(final int x, final int y) {
+            solidBlock(x, y);
+        }
+        
+        @Override
+        protected void above(final int x, final int y) {
+            gem(x, y);
         }
     }
     
