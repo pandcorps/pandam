@@ -60,6 +60,8 @@ public class Text {
     /*package*/ final static String WORLD = get("World");
     
     /*package*/ final static String CABIN_PICK = get("Cabin.Pick", "Hoo! Hoo! Pick one!");
+    /*package*/ final static String CABIN_HIT_1 = get("Cabin.Hit.1", "Hoo! Hoo! Hit the block!");
+    /*package*/ final static String CABIN_HIT_2 = get("Cabin.Hit.2", "Hoo! Hoo! Hit them!");
     /*package*/ final static String CABIN_MATCH = get("Cabin.Match", "Hoo! Hoo! Match them!");
     
     /*package*/ final static String CASTLE_INTRO_1 = get("Castle.Intro.1", "A portal has appeared outside");

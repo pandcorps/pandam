@@ -219,7 +219,7 @@ public class Cabin {
                     instr.destroy();
 				}});
 			Tiles.initLetters();
-			return "Hoo! Hoo! Hit " + ((name.length() == 1) ? "the block" : "them") + "!";
+			return (name.length() == 1) ? Text.CABIN_HIT_1 : Text.CABIN_HIT_2;
 		}
 		
 		private final String loadMatch() {

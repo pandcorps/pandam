@@ -183,6 +183,8 @@ pretext
 prevent
 prolong
 protocol
+rampant
+rampart
 rascal
 recede
 recent
