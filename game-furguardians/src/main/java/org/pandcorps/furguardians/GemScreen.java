@@ -196,17 +196,14 @@ public final class GemScreen extends MiniGameScreen {
         for (int color = 0; color < NUM_COLORS; color++) {
             breakersNeeded.add(Integer.valueOf(color));
         }
-        for (int rowIndex = 0; rowIndex < SIZE; rowIndex++) {
-            final Cell[] row = grid[rowIndex];
-            for (int cellIndex = 0; cellIndex < SIZE; cellIndex++) {
-                final Cell cell = row[cellIndex];
+        for (final Cell[] row : grid) {
+            for (final Cell cell : row) {
                 if (cell.type == TYPE_BREAK) {
                     breakersNeeded.remove(Integer.valueOf(cell.color));
                 } else if (cell.type == TYPE_EMPTY) {
                     emptyCells.add(cell);
                 }
             }
-            rowIndex++;
         }
         final int emptySize = emptyCells.size();
         for (final Integer breakerColor : breakersNeeded) {
@@ -216,8 +213,7 @@ public final class GemScreen extends MiniGameScreen {
                 if (cell.type != TYPE_EMPTY) {
                     continue;
                 } else if (isSafeForBreaker(cell.i, cell.j)) {
-                    cell.type = TYPE_BREAK;
-                    cell.color = breakerColor.intValue();
+                    cell.set(breakerColor.intValue(), TYPE_BREAK);
                     break;
                 }
             }
@@ -226,8 +222,7 @@ public final class GemScreen extends MiniGameScreen {
             if (cell.type != TYPE_EMPTY) {
                 continue;
             }
-            cell.type = TYPE_NORMAL;
-            cell.color = Mathtil.randi(0, NUM_COLORS - 1); //TODO Don't put next to breaker of same color
+            cell.set(Mathtil.randi(0, NUM_COLORS - 1), TYPE_NORMAL); //TODO Don't put next to breaker of same color
         }
         for (final Cell cell : emptyCells) {
             cell.handleComposite();
@@ -281,8 +276,12 @@ public final class GemScreen extends MiniGameScreen {
         private Cell(final int i, final int j, final int color, final int type) {
             this.i = i;
             this.j = j;
-            setBackground(getImage(color, type));
+            set(color, type);
             button = newButton();
+        }
+        
+        private final void set(final int color, final int type) {
+            setBackground(getImage(color, type));
             this.color = color;
             this.type = type;
         }
@@ -373,26 +372,36 @@ public final class GemScreen extends MiniGameScreen {
                 startBreakNeighbors();
                 return;
             }
-            continueBreak(color);
+            continueBreak(color, true);
         }
         
-        private final void continueBreak(final int color) {
+        private final boolean continueBreak(final int color, final boolean first) {
             if (this.color != color) {
-                return;
+                return false;
+            } else if (!first) {
+                breakCell();
             }
-            breakCell();
-            continueBreakNeighbor(-1, 0, color);
-            continueBreakNeighbor(1, 0, color);
-            continueBreakNeighbor(0, -1, color);
-            continueBreakNeighbor(0, 1, color);
+            final boolean left = continueBreakNeighbor(-1, 0, color);
+            final boolean right = continueBreakNeighbor(1, 0, color);
+            final boolean below = continueBreakNeighbor(0, -1, color);
+            final boolean above = continueBreakNeighbor(0, 1, color);
+            final boolean any = left || right || below || above;
+            if (first) {
+                if (any) {
+                    breakCell();
+                    return true;
+                }
+                return false;
+            }
+            return true;
         }
         
-        private final void continueBreakNeighbor(final int ioff, final int joff, final int color) {
+        private final boolean continueBreakNeighbor(final int ioff, final int joff, final int color) {
             final Cell n = getNeighbor(ioff, joff);
             if (n == null) {
-                return;
+                return false;
             }
-            n.continueBreak(color);
+            return n.continueBreak(color, false);
         }
         
         private final void startBreakNeighbors() {
@@ -407,6 +416,8 @@ public final class GemScreen extends MiniGameScreen {
             if (n == null) {
                 return;
             } else if (n.color != color) {
+                return;
+            } else if (n.type != TYPE_BREAK) {
                 return;
             }
             n.startBreak();
