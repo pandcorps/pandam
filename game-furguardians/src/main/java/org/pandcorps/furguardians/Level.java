@@ -1081,6 +1081,7 @@ public class Level {
             addTinyLetterTemplate();
             letterTemplates.add(new BumpableRowLetterTemplate());
             letterTemplates.add(new BreakableRowLetterTemplate());
+            letterTemplates.add(new GemRowLetterTemplate());
             letterTemplates.add(new SolidRowLetterTemplate());
         }
         
@@ -2772,6 +2773,13 @@ public class Level {
         @Override
         protected final void block(final int x, final int y) {
             breakableBlock(x, y);
+        }
+    }
+    
+    private final static class GemRowLetterTemplate extends RowLetterTemplate {
+        @Override
+        protected final void block(final int x, final int y) {
+            gem(x, y);
         }
     }
     
