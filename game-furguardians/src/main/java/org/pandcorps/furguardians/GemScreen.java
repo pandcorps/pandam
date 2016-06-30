@@ -216,6 +216,36 @@ public final class GemScreen extends MiniGameScreen {
         //TODO
     }
     
+    private final static boolean isSafeForBreaker(final int i, final int j) {
+        if (isBreaker(i + 1, j + 1)) {
+            if (isBreaker(i + 2, j) && isBreaker(i + 1, j - 1)) {
+                return false;
+            } else if (isBreaker(i, j + 2) && isBreaker(i - 1, j + 1)) {
+                return false;
+            }
+        } else if (isBreaker(i - 1, j - 1)) {
+            if (isBreaker(i - 2, j) && isBreaker(i - 1, j + 1)) {
+                return false;
+            } else if (isBreaker(i, j - 2) && isBreaker(i + 1, j - 1)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    private final static boolean isBreaker(final int i, final int j) {
+        final Cell cell = getCell(i, j);
+        return cell != null && cell.type == TYPE_BREAK;
+    }
+    
+    private final static Cell getCell(final int i, final int j) {
+        return (isBad(i) || isBad(j)) ? null : grid[j][i];
+    }
+    
+    private final static boolean isBad(final int i) {
+        return i < 0 || i >= SIZE;
+    }
+    
     private final static void clearCurrentSelection() {
         for (final Cell cell : currentSelection) {
             cell.setForeground(null);
@@ -289,15 +319,7 @@ public final class GemScreen extends MiniGameScreen {
         }
         
         private final Cell getNeighbor(final int ioff, final int joff) {
-            final int ni = i + ioff, nj = j + joff;
-            if (isBad(ni) || isBad(nj)) {
-                return null;
-            }
-            return grid[nj][ni];
-        }
-        
-        private final boolean isBad(final int i) {
-            return i < 0 || i >= SIZE;
+            return getCell(i + ioff, j + joff);
         }
         
         private final boolean swap(final Cell cell) {
