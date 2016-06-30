@@ -1269,9 +1269,9 @@ public class Menu {
 	        final boolean touch = engine.isTouchSupported();
 	        final StringBuilder prompt = new StringBuilder();
 	        if (touch) {
-	            prompt.append("Tap to start");
+	            prompt.append(Text.TITLE_PROMPT_TAP);
 	        } else {
-	            prompt.append("Press anything");
+	            prompt.append(Text.TITLE_PROMPT_ANY);
 	        }
 	        text = addTitleCentered(prompt, bottom - 4);
 	        /*engine.addTimer(text, 360, new TimerListener() {@Override public final void onTimer(final TimerEvent event) {

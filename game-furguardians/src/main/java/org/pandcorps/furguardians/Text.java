@@ -59,6 +59,9 @@ public class Text {
     /*package*/ final static String UNDO = get("Undo");
     /*package*/ final static String WORLD = get("World");
     
+    /*package*/ final static String TITLE_PROMPT_TAP = get("Title.Prompt.Tap", "Tap to start");
+    /*package*/ final static String TITLE_PROMPT_ANY = get("Title.Prompt.Any", "Press anything");
+    
     /*package*/ final static String CABIN_PICK = get("Cabin.Pick", "Hoo! Hoo! Pick one!");
     /*package*/ final static String CABIN_HIT_1 = get("Cabin.Hit.1", "Hoo! Hoo! Hit the block!");
     /*package*/ final static String CABIN_HIT_2 = get("Cabin.Hit.2", "Hoo! Hoo! Hit them!");
