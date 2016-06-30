@@ -192,28 +192,46 @@ public final class GemScreen extends MiniGameScreen {
     
     private final static void fillBrokenCells() {
         final Set<Integer> breakersNeeded = new HashSet<Integer>(4);
-        final List<Integer> emptyCells = new ArrayList<Integer>(SIZE * SIZE);
+        final List<Cell> emptyCells = new ArrayList<Cell>(SIZE * SIZE);
         for (int color = 0; color < NUM_COLORS; color++) {
             breakersNeeded.add(Integer.valueOf(color));
         }
         for (int rowIndex = 0; rowIndex < SIZE; rowIndex++) {
             final Cell[] row = grid[rowIndex];
-            final int rowOff = rowIndex * SIZE;
             for (int cellIndex = 0; cellIndex < SIZE; cellIndex++) {
                 final Cell cell = row[cellIndex];
                 if (cell.type == TYPE_BREAK) {
                     breakersNeeded.remove(Integer.valueOf(cell.color));
                 } else if (cell.type == TYPE_EMPTY) {
-                    emptyCells.add(Integer.valueOf(rowOff + cellIndex));
+                    emptyCells.add(cell);
                 }
             }
             rowIndex++;
         }
+        final int emptySize = emptyCells.size();
         for (final Integer breakerColor : breakersNeeded) {
-            
+            final int r = Mathtil.randi(0, emptySize - 1);
+            for (int i = 0; i < emptySize; i++) {
+                final Cell cell = emptyCells.get((r + i) % emptySize);
+                if (cell.type != TYPE_EMPTY) {
+                    continue;
+                } else if (isSafeForBreaker(cell.i, cell.j)) {
+                    cell.type = TYPE_BREAK;
+                    cell.color = breakerColor.intValue();
+                    break;
+                }
+            }
         }
-        //Collections.shuffle(emptyCells);
-        //TODO
+        for (final Cell cell : emptyCells) {
+            if (cell.type != TYPE_EMPTY) {
+                continue;
+            }
+            cell.type = TYPE_NORMAL;
+            cell.color = Mathtil.randi(0, NUM_COLORS - 1); //TODO Don't put next to breaker of same color
+        }
+        for (final Cell cell : emptyCells) {
+            cell.handleComposite();
+        }
     }
     
     private final static boolean isSafeForBreaker(final int i, final int j) {
