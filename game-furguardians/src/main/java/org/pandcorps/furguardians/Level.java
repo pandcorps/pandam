@@ -2795,6 +2795,39 @@ public class Level {
         }
     }
     
+    private final static class StepLetterTemplate extends SimpleTemplate {
+        private int numSteps = 0;
+        private int stepWidth = 0;
+        
+        protected StepLetterTemplate() {
+            super(1, 8, 0);
+        }
+        
+        @Override
+        protected final void build() {
+            int stepX = x, stepY = floor + 3;
+            for (int i = 0; i < numSteps; i++) {
+                step(stepX, stepY);
+                stepX += (stepWidth + 1);
+                stepY++;
+            }
+            letterBlock(stepX - 2, stepY + 2);
+        }
+        
+        @Override
+        protected final int newWidth(final int minW, final int maxW) {
+            numSteps = Mathtil.randi(1, 3);
+            stepWidth = Mathtil.randi(1, 2);
+            return ((stepWidth + 1) * numSteps) - 1;
+        }
+        
+        private final void step(final int x, final int y) {
+            for (int i = 0; i < stepWidth; i++) {
+                solidBlock(x + i, y);
+            }
+        }
+    }
+    
     private final static class GemTemplate extends SimpleTemplate {
     	protected GemTemplate() {
     		this(10);
