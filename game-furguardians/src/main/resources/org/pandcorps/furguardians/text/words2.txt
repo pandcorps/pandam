@@ -148,6 +148,7 @@ landmark
 ledger
 legend
 lender
+lenses
 lesser
 letter
 living

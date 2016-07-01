@@ -387,6 +387,7 @@ ledge
 leech
 left
 leg
+lens
 less
 level
 lid
