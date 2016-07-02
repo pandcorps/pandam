@@ -1191,6 +1191,7 @@ public class Level {
 	    		    		}
         		    	}
     		    	} else if (currLetter < numLetters && bx >= ng * (currLetter + 1) / (numLetters + 1)) {
+    		    	    //TODO if i > 0, use 1-block template
 	    		    	template = getLetterTemplate();
     		    	} else if (bx >= (ng - 40) && requiredTemplate != null && templates.contains(requiredTemplate)) {
     		    	    template = requiredTemplate;
@@ -2753,6 +2754,7 @@ public class Level {
                 }
                 above(i, y1);
             }
+            enemy(x, floor + 1, w);
         }
         
         protected abstract void block(final int x, final int y);
@@ -2812,6 +2814,7 @@ public class Level {
                 stepY++;
             }
             letterBlock(stepX - 2, stepY + 2);
+            enemy(x, floor + 1, w);
         }
         
         @Override
@@ -2827,6 +2830,10 @@ public class Level {
             }
         }
     }
+    
+    //private final static class BreakLetterTemplate
+    
+    //private final static class BeeLetterTemplate
     
     private final static class GemTemplate extends SimpleTemplate {
     	protected GemTemplate() {
