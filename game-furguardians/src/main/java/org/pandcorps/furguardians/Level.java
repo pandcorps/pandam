@@ -2831,7 +2831,31 @@ public class Level {
         }
     }
     
-    //private final static class BreakLetterTemplate
+    private final static class BreakLetterTemplate extends SimpleTemplate {
+        protected BreakLetterTemplate() {
+            super(3, 5, 0);
+        }
+        
+        @Override
+        protected final void build() {
+            final int h = Mathtil.randi(2, 3);
+            final int base = floor + 3 + floatOffset;
+            final int lx = Mathtil.randi(1, w - 2), ly = Mathtil.randi(1, h - 1);
+            for (int i = 0; i < w; i++) {
+                final boolean letterRow = i == lx;
+                final int col = x + i;
+                for (int j = 0; j < h; j++) {
+                    final int row = base + j;
+                    if (letterRow && j == ly) {
+                        letterBlock(col, row);
+                    } else {
+                        breakableBlock(col, row);
+                    }
+                }
+                solidBlock(col, base + h);
+            }
+        }
+    }
     
     private final static class BeeLetterTemplate extends BeeTemplate {
         @Override
