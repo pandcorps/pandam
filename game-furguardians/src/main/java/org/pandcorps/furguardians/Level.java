@@ -2833,7 +2833,19 @@ public class Level {
     
     //private final static class BreakLetterTemplate
     
-    //private final static class BeeLetterTemplate
+    private final static class BeeLetterTemplate extends BeeTemplate {
+        @Override
+        protected void above(final int x, final int y) {
+            letterBlock(x, y);
+        }
+    }
+    
+    private final static class MovingBeeLetterTemplate extends MovingBeeTemplate {
+        @Override
+        protected void above(final int x, final int y) {
+            letterBlock(x, y);
+        }
+    }
     
     private final static class GemTemplate extends SimpleTemplate {
     	protected GemTemplate() {
@@ -2924,7 +2936,7 @@ public class Level {
     	}
     }
     
-    private final static class BeeTemplate extends SimpleTemplate {
+    private static class BeeTemplate extends SimpleTemplate {
         protected BeeTemplate() {
             super(1, 1, 0);
         }
@@ -2933,11 +2945,15 @@ public class Level {
         protected void build() {
             final int base = floor + floatOffset;
             bee(x, base + 3);
-            bonus(x, base + 7);
+            above(x, base + 7);
+        }
+        
+        protected void above(final int x, final int y) {
+            bonus(x, y);
         }
     }
     
-    private final static class MovingBeeTemplate extends SimpleTemplate {
+    private static class MovingBeeTemplate extends SimpleTemplate {
         protected MovingBeeTemplate() {
             super(3, 4, 0);
         }
@@ -2946,7 +2962,11 @@ public class Level {
         protected void build() {
             final int base = floor + floatOffset;
             movingBee(x, base + 3, w);
-            bonus(x + w - 2, base + 7);
+            above(x + w - 2, base + 7);
+        }
+        
+        protected void above(final int x, final int y) {
+            bonus(x, y);
         }
     }
     
