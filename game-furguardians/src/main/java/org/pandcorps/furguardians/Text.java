@@ -30,6 +30,7 @@ public class Text {
     /*package*/ final static String AWARD = get("Award");
     /*package*/ final static String BACK = get("Back");
     /*package*/ final static String BIRD = get("Bird");
+    /*package*/ final static String CLEAR = get("Clear");
     /*package*/ final static String COLOR = get("Color");
     /*package*/ final static String DEBUG = get("Debug");
     /*package*/ final static String DONE = get("Done");
@@ -53,6 +54,7 @@ public class Text {
     /*package*/ final static String PLAY = get("Play");
     /*package*/ final static String POWER = get("Power");
     /*package*/ final static String QUIT = get("Quit");
+    /*package*/ final static String RUN = get("Run");
     /*package*/ final static String SETUP = get("Setup");
     /*package*/ final static String SHIRT = get("Shirt");
     /*package*/ final static String STATS = get("Stats");

@@ -501,7 +501,7 @@ public class Menu {
 		}
 		
 		protected final TouchButton newQuit() {
-		    return newTab(FurGuardiansGame.menuOff, "Quit", new Runnable() {@Override public final void run() {quit();}});
+		    return newTab(FurGuardiansGame.menuOff, Text.QUIT, new Runnable() {@Override public final void run() {quit();}});
 		}
 		
 		protected final void quit() {
@@ -1483,9 +1483,9 @@ public class Menu {
 				return;
 			}
 			newToDefault = false;
-			newTab(FurGuardiansGame.menuPlus, "New", new Runnable() {@Override public final void run() {newProfile();}});
+			newTab(FurGuardiansGame.menuPlus, Text.NEW, new Runnable() {@Override public final void run() {newProfile();}});
 			if (curr != null) {
-				newTab(FurGuardiansGame.menuX, "Back", new Runnable() {@Override public final void run() {exit();}});
+				newTab(FurGuardiansGame.menuX, Text.BACK, new Runnable() {@Override public final void run() {exit();}});
 			}
 			newTabs();
 		}
@@ -3615,8 +3615,8 @@ public class Menu {
 		protected final void menuTouch() {
 			createInput(touchKeyboardX, getTouchKeyboardY());
 			newTab(FurGuardiansGame.menuCheck, Text.DONE, new Runnable() {@Override public final void run() {exit();}});
-			newTab(FurGuardiansGame.menuExclaim, "Run", new Runnable() {@Override public final void run() {exec();}});
-			newTab(FurGuardiansGame.menuMinus, "Clear", new Runnable() {@Override public final void run() {clear();}});
+			newTab(FurGuardiansGame.menuExclaim, Text.RUN, new Runnable() {@Override public final void run() {exec();}});
+			newTab(FurGuardiansGame.menuMinus, Text.CLEAR, new Runnable() {@Override public final void run() {clear();}});
 			newTabs();
 			registerBackExit();
 		}
