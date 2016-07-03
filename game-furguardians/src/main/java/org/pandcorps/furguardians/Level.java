@@ -2807,6 +2807,7 @@ public class Level {
         
         @Override
         protected final void build() {
+            //TODO Allow backward steps when no Player in auto-run mode
             int stepX = x, stepY = floor + 3;
             for (int i = 0; i < numSteps; i++) {
                 step(stepX, stepY);
@@ -2854,6 +2855,25 @@ public class Level {
                 }
                 solidBlock(col, base + h);
             }
+        }
+    }
+    
+    private final static class FloatingEnclosedLetterTemplate extends SimpleTemplate {
+        protected FloatingEnclosedLetterTemplate() {
+            super(5, 6);
+        }
+        
+        @Override
+        protected final void build() {
+            final int base = floor + 3 + floatOffset;
+            final int end = x + w - 1;
+            for (int j = 0; j < 5; j++) {
+                final int y = base + j;
+                solidBlock(x, y);
+                solidBlock(end, y);
+            }
+            final int lx = end - 1; //TODO Allow on opposite side if no Player in auto-run
+            letterBlock(lx, base + 3);
         }
     }
     
