@@ -2892,6 +2892,17 @@ public class Level {
         }
     }
     
+    private final static class SpecialLetterTemplate extends SpecialGroundTemplate {
+        protected SpecialLetterTemplate() {
+            super(5, 5);
+        }
+        
+        @Override
+        protected final void extra(final int minX, final int maxX, final int specialY) {
+            letterBlock((minX + maxX) / 2, specialY + 3);
+        }
+    }
+    
     private final static class BeeLetterTemplate extends BeeTemplate {
         @Override
         protected void above(final int x, final int y) {
@@ -2956,9 +2967,13 @@ public class Level {
 		}
     }
     
-    private final static class SpecialGroundTemplate extends SimpleTemplate {
+    private static class SpecialGroundTemplate extends SimpleTemplate {
     	protected SpecialGroundTemplate() {
-    		super(4, 10);
+    		this(4, 10);
+    	}
+    	
+    	protected SpecialGroundTemplate(final int minW, final int maxW) {
+    	    super(minW, maxW);
     	}
     	
     	@Override
@@ -2992,6 +3007,17 @@ public class Level {
     			}
     			tm.setForeground(i, y, imgMap[1][5], behavior);
     		}
+    		extra(x + 1, stop - 1, y);
+    	}
+    	
+    	protected void extra(final int minX, final int maxX, final int specialY) {
+    	    if (Mathtil.rand()) {
+    	        return;
+    	    }
+    	    final int y = specialY + 3;
+    	    for (int x = minX; x <= maxX; x++) {
+    	        gem(x, y);
+    	    }
     	}
     }
     
