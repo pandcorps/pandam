@@ -65,6 +65,10 @@ public class Level {
     private final static byte FLOOR_BRIDGE = 2;
     private final static byte FLOOR_TRACK = 3;
     
+    private final static byte BLOCK_SOLID = 0;
+    private final static byte BLOCK_BUMP = 1;
+    private final static byte BLOCK_BREAK = 2;
+    
     private final static byte HEX_RISE = 0;
     private final static byte HEX_UP = 1;
     private final static byte HEX_FALL = 2;
@@ -2866,7 +2870,8 @@ public class Level {
         @Override
         protected final void build() {
             final int base = floor + 3 + floatOffset;
-            final int end = x + w - 1;
+            final int w1 = w - 1;
+            final int end = x + w1;
             for (int j = 0; j < 5; j++) {
                 final int y = base + j;
                 solidBlock(x, y);
@@ -2874,6 +2879,12 @@ public class Level {
             }
             final int lx = end - 1; //TODO Allow on opposite side if no Player in auto-run
             letterBlock(lx, base + 3);
+            final int top = base + 4;
+            for (int i = 1; i < w1; i++) {
+                final int xi = x + i;
+                block(xi, base, (xi == lx) ? BLOCK_SOLID : BLOCK_BREAK);
+                solidBlock(xi, top);
+            }
         }
     }
     
@@ -4058,6 +4069,20 @@ public class Level {
             bumpableBlock(x, y);
         } else {
             breakableBlock(x, y);
+        }
+    }
+    
+    private final static void block(final int x, final int y, final byte style) {
+        switch (style) {
+            case BLOCK_BUMP :
+                bumpableBlock(x, y);
+                break;
+            case BLOCK_BREAK :
+                breakableBlock(x, y);
+                break;
+            default :
+                solidBlock(x, y);
+                break;
         }
     }
     
