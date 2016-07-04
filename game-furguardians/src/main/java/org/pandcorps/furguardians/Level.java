@@ -68,6 +68,8 @@ public class Level {
     private final static byte BLOCK_SOLID = 0;
     private final static byte BLOCK_BUMP = 1;
     private final static byte BLOCK_BREAK = 2;
+    private final static byte BLOCK_MIN = BLOCK_SOLID;
+    private final static byte BLOCK_MAX = BLOCK_BREAK;
     
     private final static byte HEX_RISE = 0;
     private final static byte HEX_UP = 1;
@@ -2804,6 +2806,7 @@ public class Level {
     private final static class StepLetterTemplate extends SimpleTemplate {
         private int numSteps = 0;
         private int stepWidth = 0;
+        private byte style = BLOCK_SOLID;
         
         protected StepLetterTemplate() {
             super(1, 8, 0);
@@ -2826,12 +2829,13 @@ public class Level {
         protected final int newWidth(final int minW, final int maxW) {
             numSteps = Mathtil.randi(1, 3);
             stepWidth = Mathtil.randi(1, 2);
+            style = randomBlockStyle();
             return ((stepWidth + 1) * numSteps) - 1;
         }
         
         private final void step(final int x, final int y) {
             for (int i = 0; i < stepWidth; i++) {
-                solidBlock(x + i, y);
+                block(x + i, y, style);
             }
         }
     }
@@ -4084,6 +4088,10 @@ public class Level {
                 solidBlock(x, y);
                 break;
         }
+    }
+    
+    private final static byte randomBlockStyle() {
+        return (byte) Mathtil.randi(BLOCK_MIN, BLOCK_MAX);
     }
     
     private final static String[] gemFont = {
