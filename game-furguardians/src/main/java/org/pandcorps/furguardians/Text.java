@@ -40,6 +40,7 @@ public class Text {
     /*package*/ final static String ERASE = get("Erase");
     /*package*/ final static String EYES = get("Eyes");
     /*package*/ final static String FOES = get("Foes");
+    /*package*/ final static String GAME = get("Game");
     /*package*/ final static String GEAR = get("Gear");
     /*package*/ final static String GOALS = get("Goals");
     /*package*/ final static String HAT = get("Hat");
@@ -51,15 +52,26 @@ public class Text {
     /*package*/ final static String NEW = get("New");
     /*package*/ final static String NEXT = get("Next");
     /*package*/ final static String PERKS = get("Perks");
+    /*package*/ final static String PICK = get("Pick");
     /*package*/ final static String PLAY = get("Play");
     /*package*/ final static String POWER = get("Power");
     /*package*/ final static String QUIT = get("Quit");
     /*package*/ final static String RUN = get("Run");
+    /*package*/ final static String SAVE = get("Save");
     /*package*/ final static String SETUP = get("Setup");
     /*package*/ final static String SHIRT = get("Shirt");
     /*package*/ final static String STATS = get("Stats");
     /*package*/ final static String UNDO = get("Undo");
     /*package*/ final static String WORLD = get("World");
+    
+    /*package*/ final static String ANIMAL = get("Animal");
+    /*package*/ final static String AVATAR = get("Avatar");
+    /*package*/ final static String CANCEL = get("Cancel");
+    /*package*/ final static String CONTINUE = get("Continue");
+    /*package*/ final static String DEFAULT = get("Default");
+    /*package*/ final static String EXPORT = get("Export");
+    /*package*/ final static String PROFILE = get("Profile");
+    /*package*/ final static String SECONDARY = get("Secondary");
     
     /*package*/ final static String TITLE_PROMPT_TAP = get("Title.Prompt.Tap", "Tap to start");
     /*package*/ final static String TITLE_PROMPT_ANY = get("Title.Prompt.Any", "Press anything");
