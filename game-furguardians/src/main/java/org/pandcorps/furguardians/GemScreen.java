@@ -151,7 +151,20 @@ public final class GemScreen extends MiniGameScreen {
     }
     
     private final static boolean findBigBlocks(final int[] list) {
-        return false; //TODO
+        final int area = list.length;
+        final int size = (int) Math.round(Math.sqrt(area));
+        final int size1 = size - 1;
+        for (int j = 0; j < size1; j++) {
+            final int row = j * size;
+            for (int i = 0; i < size1; i++) {
+                final int cell = row + i;
+                final int color = list[cell];
+                if (color == list[cell + 1] && color == list[cell + size] && color == list[cell + size + 1]) {
+                    return true;
+                }
+            }
+        }
+        return false; //TODO Naming - big block or composite?
     }
     
     private final static boolean initBreaks(final int[] list) {
