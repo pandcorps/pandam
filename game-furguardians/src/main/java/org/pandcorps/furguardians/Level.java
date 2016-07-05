@@ -1089,6 +1089,7 @@ public class Level {
             letterTemplates.add(new BreakableRowLetterTemplate());
             letterTemplates.add(new GemRowLetterTemplate());
             letterTemplates.add(new SolidRowLetterTemplate());
+            letterTemplates.add(new GemWrapperLetterTemplate());
         }
         
         protected final void addConstructedTemplates() {
@@ -2439,6 +2440,10 @@ public class Level {
         protected int newWidth(final int minW, final int maxW) {
             return Mathtil.randi(minW, maxW);
         }
+        
+        protected final void enemyFloor() {
+            enemy(x, floor + 1, w);
+        }
     }
     
     private final static class WallTemplate extends SimpleTemplate {
@@ -2760,7 +2765,7 @@ public class Level {
                 }
                 above(i, y1);
             }
-            enemy(x, floor + 1, w);
+            enemyFloor();
         }
         
         protected abstract void block(final int x, final int y);
@@ -2803,6 +2808,28 @@ public class Level {
         }
     }
     
+    private final static class GemWrapperLetterTemplate extends SimpleTemplate {
+        protected GemWrapperLetterTemplate() {
+            super(3, 3, 0);
+        }
+        
+        @Override
+        protected final void build() {
+            final int y = floor + 3 + floatOffset;
+            for (int i = 0; i < 3; i++) {
+                final int xi = x + i;
+                for (int j = 0; j < 3; j++) {
+                    final int yj = y + j;
+                    if (i == 1 && j == 1) {
+                        letterBlock(xi, yj);
+                    } else {
+                        gem(xi, yj);
+                    }
+                }
+            }
+        }
+    }
+    
     private final static class StepLetterTemplate extends SimpleTemplate {
         private int numSteps = 0;
         private int stepWidth = 0;
@@ -2822,7 +2849,7 @@ public class Level {
                 stepY++;
             }
             letterBlock(stepX - 2, stepY + 2);
-            enemy(x, floor + 1, w);
+            enemyFloor();
         }
         
         @Override
@@ -2939,7 +2966,7 @@ public class Level {
     				gem(i, y);
     			}
     		}
-    		enemy(x, floor + 1, w);
+    		enemyFloor();
     	}
     }
     
@@ -3088,7 +3115,7 @@ public class Level {
     	@Override
         protected final void build() {
         	bush(x, floor + 1, w);
-        	enemy(x, floor + 1, w);
+        	enemyFloor();
         }
     }
     
@@ -3100,7 +3127,7 @@ public class Level {
     	@Override
         protected final void build() {
         	tree(x, floor + 1);
-        	enemy(x, floor + 1, w);
+        	enemyFloor();
         }
     }
     
