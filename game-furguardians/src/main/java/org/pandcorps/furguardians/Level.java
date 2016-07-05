@@ -2827,6 +2827,7 @@ public class Level {
                     }
                 }
             }
+            enemyFloor();
         }
     }
     
@@ -2890,6 +2891,7 @@ public class Level {
                 }
                 solidBlock(col, base + h);
             }
+            enemyFloor();
         }
     }
     
@@ -2916,6 +2918,7 @@ public class Level {
                 block(xi, base, (xi == lx) ? BLOCK_SOLID : BLOCK_BREAK);
                 solidBlock(xi, top);
             }
+            enemyFloor();
         }
     }
     
