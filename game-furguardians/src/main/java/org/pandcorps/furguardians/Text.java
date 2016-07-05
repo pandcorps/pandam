@@ -64,6 +64,12 @@ public class Text {
     /*package*/ final static String TITLE_PROMPT_TAP = get("Title.Prompt.Tap", "Tap to start");
     /*package*/ final static String TITLE_PROMPT_ANY = get("Title.Prompt.Any", "Press anything");
     
+    /*package*/ final static String NEW_INFO_1 = get("New.Info.1", "A new Avatar lets one player try a different character.");
+    /*package*/ final static String NEW_INFO_2 = get("New.Info.2", "The old Avatar is kept.  You can switch back and forth.");
+    /*package*/ final static String NEW_INFO_3 = get("New.Info.3", "You keep your Gems and Goals when switching Avatars.");
+    /*package*/ final static String NEW_INFO_4 = get("New.Info.4", "A new Profile is for a new person using this device.");
+    /*package*/ final static String NEW_INFO_5 = get("New.Info.5", "Each Profile has its own set of Gems and Goals.");
+    
     /*package*/ final static String CABIN_PICK = get("Cabin.Pick", "Hoo! Hoo! Pick one!");
     /*package*/ final static String CABIN_HIT_1 = get("Cabin.Hit.1", "Hoo! Hoo! Hit the block!");
     /*package*/ final static String CABIN_HIT_2 = get("Cabin.Hit.2", "Hoo! Hoo! Hit them!");

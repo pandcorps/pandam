@@ -1719,11 +1719,11 @@ public class Menu {
 			final TouchButton sub = newRadioSubmitButton(x, y);
 			addRadio("New Avatar or Profile?", Arrays.asList("Avatar", "Profile", "Cancel"), subLsn, null, x, y, sub);
 			final int bottom = getBottom(), tx = 92;
-			addTitleTiny("A new Avatar lets one player try a different character.", tx, bottom + 23);
-			addTitleTiny("The old Avatar is kept.  You can switch back and forth.", tx, bottom + 17);
-			addTitleTiny("You keep your Gems and Goals when switching Avatars.", tx, bottom + 11);
-			addTitleTiny("A new Profile is for a new person using this device.", tx, bottom + 5);
-			addTitleTiny("Each Profile has its own set of Gems and Goals.", tx, bottom - 1);
+			addTitleTiny(Text.NEW_INFO_1, tx, bottom + 23);
+			addTitleTiny(Text.NEW_INFO_2, tx, bottom + 17);
+			addTitleTiny(Text.NEW_INFO_3, tx, bottom + 11);
+			addTitleTiny(Text.NEW_INFO_4, tx, bottom + 5);
+			addTitleTiny(Text.NEW_INFO_5, tx, bottom - 1);
 		}
 		
 		protected final void menuClassic() {
