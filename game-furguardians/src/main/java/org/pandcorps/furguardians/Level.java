@@ -1092,6 +1092,29 @@ public class Level {
             letterTemplates.add(new GemWrapperLetterTemplate());
         }
         
+        protected final void addHighLetterTemplates() {
+            letterTemplates.add(new StepLetterTemplate());
+            if (isManualRun()) {
+                letterTemplates.add(new BreakLetterTemplate());
+                letterTemplates.add(new FloatingEnclosedLetterTemplate());
+            }
+        }
+        
+        protected final boolean isManualRun() {
+            if (Coltil.isEmpty(FurGuardiansGame.pcs)) {
+                return false;
+            }
+            for (final PlayerContext pc : FurGuardiansGame.pcs) {
+                final Profile prf = PlayerContext.getProfile(pc);
+                if (prf == null) {
+                    return false;
+                } else if (prf.autoRun) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        
         protected final void addConstructedTemplates() {
             addTemplate(new ColorRiseTemplate());
             addTemplate(new WallTemplate());
@@ -1152,6 +1175,7 @@ public class Level {
     	@Override
     	public void build() {
     	    loadTemplates();
+    	    loadLetterTemplates();
     	    
     		backgroundBuilder.build();
     		
@@ -1669,6 +1693,12 @@ public class Level {
 	        addNormalGoals();
 	        theme.addGoals(goals);
 	    }
+    	
+    	@Override
+        protected final void loadLetterTemplates() {
+            addSafeLetterTemplates();
+            addHighLetterTemplates();
+        }
     	
     	@Override
     	protected final void ground(final int start, final int stop) {
