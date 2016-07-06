@@ -62,8 +62,8 @@ public class Menu {
     private final static String WARN_EMPTY = "Must have a name";
     private final static String WARN_DUPLICATE = "Name already used";
     private final static String INFO_SAVED = "Saved images";
-    private final static String LABEL_COLOR = "Main";
-    private final static String LABEL_COLOR2 = "Other";
+    private final static String LABEL_COLOR = Text.MAIN;
+    private final static String LABEL_COLOR2 = Text.OTHER;
     protected final static int Y_PLAYER = 16;
     private final static char CHAR_ON = 2;
     protected final static String NEW_AVATAR_NAME = "New";

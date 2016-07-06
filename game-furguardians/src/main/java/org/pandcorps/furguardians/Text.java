@@ -46,11 +46,13 @@ public class Text {
     /*package*/ final static String HAT = get("Hat");
     /*package*/ final static String INFO = get("Info");
     /*package*/ final static String KIND = get("Kind");
+    /*package*/ final static String MAIN = get("Main");
     /*package*/ final static String MENU = get("Menu");
     /*package*/ final static String MUSIC = get("Music");
     /*package*/ final static String NAME = get("Name");
     /*package*/ final static String NEW = get("New");
     /*package*/ final static String NEXT = get("Next");
+    /*package*/ final static String OTHER = get("Other");
     /*package*/ final static String PERKS = get("Perks");
     /*package*/ final static String PICK = get("Pick");
     /*package*/ final static String PLAY = get("Play");
