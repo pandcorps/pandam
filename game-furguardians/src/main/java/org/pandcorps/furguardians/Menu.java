@@ -721,7 +721,7 @@ public class Menu {
 			final int minY = (engine.getEffectiveTop() - (btnH + difH)) / 2;
 			int x = minX, y = minY + difH;
 			if (label != null) {
-				addTitle(label + " Color", x, y + btnH + 1);
+				addTitle(label + " " + Text.COLOR, x, y + btnH + 1);
 			}
 			final int txtX = btnW / 2, txtY = y - 12;
 			final StringBuilder sbR = new StringBuilder(), sbG = new StringBuilder(), sbB = new StringBuilder();
@@ -2225,7 +2225,7 @@ public class Menu {
                     }
                 }};
             addNote("Equip one at a time");
-            jmpRadio = addRadio("Power-up", jmps, jmpSubLsn, jmpLsn, x, y, sub);
+            jmpRadio = addRadio(Text.POWER_UP, jmps, jmpSubLsn, jmpLsn, x, y, sub);
             addDescription(x, y);
             initJumpMode();
         }
@@ -2292,7 +2292,7 @@ public class Menu {
                     }
                 }};
             addNote("Can collect Gems");
-            brdRadio = addRadio("Bird", brds, brdSubLsn, brdLsn, x, y, sub);
+            brdRadio = addRadio(Text.BIRD, brds, brdSubLsn, brdLsn, x, y, sub);
             initBird();
         }
         
@@ -3568,7 +3568,7 @@ public class Menu {
                     }
                     FurGuardiansGame.setScreen(Reftil.newInstance(gameMap.get(name)));
                 }};
-            final RadioGroup gameGrp = addRadio("Mini-games", gs, aSubLsn, null, x, y, sub);
+            final RadioGroup gameGrp = addRadio(Text.MINI_GAMES, gs, aSubLsn, null, x, y, sub);
             final Profile prf = getProfile();
             if (prf != null) {
                 if (!gameGrp.setSelectedIfPossible(prf.lastMiniGame)) {

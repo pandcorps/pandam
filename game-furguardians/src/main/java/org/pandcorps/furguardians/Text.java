@@ -84,6 +84,9 @@ public class Text {
     /*package*/ final static String STATISTICS = get("Statistics");
     /*package*/ final static String TROPHIES = get("Trophies");
     
+    /*package*/ final static String MINI_GAMES = get("MiniGames", "Mini-games");
+    /*package*/ final static String POWER_UP = get("PowerUp", "Power-up");
+    
     /*package*/ final static String TITLE_PROMPT_TAP = get("Title.Prompt.Tap", "Tap to start");
     /*package*/ final static String TITLE_PROMPT_ANY = get("Title.Prompt.Any", "Press anything");
     
