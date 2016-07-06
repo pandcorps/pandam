@@ -34,6 +34,7 @@ public class Text {
     /*package*/ final static String COLOR = get("Color");
     /*package*/ final static String DEBUG = get("Debug");
     /*package*/ final static String DONE = get("Done");
+    /*package*/ final static String DOWN = get("Down");
     /*package*/ final static String DUMP = get("Dump");
     /*package*/ final static String EASY = get("Easy");
     /*package*/ final static String EDIT = get("Edit");
@@ -46,6 +47,7 @@ public class Text {
     /*package*/ final static String HAT = get("Hat");
     /*package*/ final static String INFO = get("Info");
     /*package*/ final static String KIND = get("Kind");
+    /*package*/ final static String LEFT = get("Left");
     /*package*/ final static String MAIN = get("Main");
     /*package*/ final static String MENU = get("Menu");
     /*package*/ final static String MUSIC = get("Music");
@@ -58,22 +60,29 @@ public class Text {
     /*package*/ final static String PLAY = get("Play");
     /*package*/ final static String POWER = get("Power");
     /*package*/ final static String QUIT = get("Quit");
+    /*package*/ final static String RANK = get("Rank");
+    /*package*/ final static String RIGHT = get("Right");
     /*package*/ final static String RUN = get("Run");
     /*package*/ final static String SAVE = get("Save");
     /*package*/ final static String SETUP = get("Setup");
     /*package*/ final static String SHIRT = get("Shirt");
     /*package*/ final static String STATS = get("Stats");
     /*package*/ final static String UNDO = get("Undo");
+    /*package*/ final static String UP = get("Up");
     /*package*/ final static String WORLD = get("World");
     
+    /*package*/ final static String ACHIEVEMENTS = get("Achievements");
     /*package*/ final static String ANIMAL = get("Animal");
     /*package*/ final static String AVATAR = get("Avatar");
+    /*package*/ final static String BESTIARY = get("Bestiary");
     /*package*/ final static String CANCEL = get("Cancel");
     /*package*/ final static String CONTINUE = get("Continue");
     /*package*/ final static String DEFAULT = get("Default");
     /*package*/ final static String EXPORT = get("Export");
     /*package*/ final static String PROFILE = get("Profile");
     /*package*/ final static String SECONDARY = get("Secondary");
+    /*package*/ final static String STATISTICS = get("Statistics");
+    /*package*/ final static String TROPHIES = get("Trophies");
     
     /*package*/ final static String TITLE_PROMPT_TAP = get("Title.Prompt.Tap", "Tap to start");
     /*package*/ final static String TITLE_PROMPT_ANY = get("Title.Prompt.Any", "Press anything");

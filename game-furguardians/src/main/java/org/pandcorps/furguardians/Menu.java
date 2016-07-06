@@ -843,7 +843,7 @@ public class Menu {
 		protected final void addHudRank() {
 			final int gemX = center - 16 - FurGuardiansGame.OFF_GEM, gemY = HUD_TEXT_Y, textX = gemX - 1;
 			addActor(new Gem(FurGuardiansGame.gemRank), gemX, gemY);
-			addTitle("Rank", textX, gemY + 8).setRightJustified(true);
+			addTitle(Text.RANK, textX, gemY + 8).setRightJustified(true);
 			final CharSequence seq = new CallSequence() {@Override protected String call() {
 				return String.valueOf(pc.profile.getRank());
 			}};
@@ -853,7 +853,7 @@ public class Menu {
 		protected final void addHudAchievement() {
 			final int gemX = center - 16 - FurGuardiansGame.OFF_GEM, gemY = 37, textX = gemX - 1;
 			addActor(new Gem(FurGuardiansGame.gemAchieve), gemX, gemY);
-			addTitle("Trophies", textX, gemY + 8).setRightJustified(true);
+			addTitle(Text.TROPHIES, textX, gemY + 8).setRightJustified(true);
 			final CharSequence seq = new CallSequence() {@Override protected String call() {
 				return String.valueOf(pc.profile.getAchievedSize() + "/" + Achievement.ALL.length);
 			}};
@@ -2894,7 +2894,7 @@ public class Menu {
                 @Override public final void onSubmit(final RadioSubmitEvent event) {
                     setAchDesc(event.toString());
             }};
-            achRadio = addRadio("Achievements", ach, achLsn, x, y);
+            achRadio = addRadio(Text.ACHIEVEMENTS, ach, achLsn, x, y);
             addDescription(x, y);
             addDescription2(x, y);
             addDescription3(x, y);
@@ -2902,7 +2902,7 @@ public class Menu {
 		}
 		
 		private final void createStatsList(final int x, final int y) {
-			addRadio("Statistics", pc.profile.stats.toList(pc.profile), null, x, y);
+			addRadio(Text.STATISTICS, pc.profile.stats.toList(pc.profile), null, x, y);
 		}
 		
 		private final void createFoesList(final int x, final int y) {
@@ -2918,7 +2918,7 @@ public class Menu {
                 @Override public final void onSubmit(final RadioSubmitEvent event) {
                     setEnemy(event.toString());
             }};
-            enemyRadio = addRadio("Bestiary", list, foeLsn, x, y);
+            enemyRadio = addRadio(Text.BESTIARY, list, foeLsn, x, y);
             initEnemy();
         }
 		
@@ -2934,7 +2934,7 @@ public class Menu {
 		}
 		
 		private final void createGoalsList(final int x, int y) {
-			addTitle("Goals", x, y);
+			addTitle(Text.GOALS, x, y);
 			y -= 16;
 			showNew = true;
 			y = displayGoals(x, y, goalStars);
@@ -2948,7 +2948,7 @@ public class Menu {
 		private final int addRankPoints(final int x, int y, final boolean img) {
 			final Profile prf = pc.profile;
 			y -= 8;
-			Chartil.set(rankDesc, "Rank " + prf.getRank());
+			Chartil.set(rankDesc, Text.RANK + " " + prf.getRank());
 			addTitle(rankDesc, img ? (x + 17) : x, y);
 			final int currPoints = prf.getCurrentGoalPoints();
 			if (img) {
@@ -3824,7 +3824,7 @@ public class Menu {
 		    final Profile prf = pc.profile;
 		    final int oldRank = prf.getRank();
 		    prf.goalPoints += (n * Profile.POINTS_PER_RANK);
-            return "Rank " + oldRank + " -> " + prf.getRank();
+            return Text.RANK + " " + oldRank + " -> " + prf.getRank();
 		}
 		
 		private final String addMaps(final int n) {
