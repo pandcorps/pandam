@@ -73,6 +73,7 @@ public class Text {
     
     /*package*/ final static String ACHIEVEMENTS = get("Achievements");
     /*package*/ final static String ANIMAL = get("Animal");
+    /*package*/ final static String ASSISTS = get("Assists");
     /*package*/ final static String AVATAR = get("Avatar");
     /*package*/ final static String BESTIARY = get("Bestiary");
     /*package*/ final static String CANCEL = get("Cancel");
@@ -96,8 +97,9 @@ public class Text {
     /*package*/ final static String NEW_INFO_4 = get("New.Info.4", "A new Profile is for a new person using this device.");
     /*package*/ final static String NEW_INFO_5 = get("New.Info.5", "Each Profile has its own set of Gems and Goals.");
     
-    /*package*/ final static String ASSISTS_TITLE = get("Assists.Title", "Assists");
     /*package*/ final static String ASSISTS_NOTE = get("Assists.Note", "Can equip multiple");
+    /*package*/ final static String BIRD_NOTE = get("Bird.Note", "Can collect Gems");
+    /*package*/ final static String POWER_UP_NOTE = get("PowerUp.Note", "Equip one at a time");
     
     /*package*/ final static String CABIN_PICK = get("Cabin.Pick", "Hoo! Hoo! Pick one!");
     /*package*/ final static String CABIN_HIT_1 = get("Cabin.Hit.1", "Hoo! Hoo! Hit the block!");

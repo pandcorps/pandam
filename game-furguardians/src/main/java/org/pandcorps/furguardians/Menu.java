@@ -2224,7 +2224,7 @@ public class Menu {
                         }
                     }
                 }};
-            addNote("Equip one at a time");
+            addNote(Text.POWER_UP_NOTE);
             jmpRadio = addRadio(Text.POWER_UP, jmps, jmpSubLsn, jmpLsn, x, y, sub);
             addDescription(x, y);
             initJumpMode();
@@ -2291,7 +2291,7 @@ public class Menu {
                         }
                     }
                 }};
-            addNote("Can collect Gems");
+            addNote(Text.BIRD_NOTE);
             brdRadio = addRadio(Text.BIRD, brds, brdSubLsn, brdLsn, x, y, sub);
             initBird();
         }
@@ -2643,10 +2643,10 @@ public class Menu {
                 }};
             final String label;
             if (isTabEnabled()) {
-            	label = Text.ASSISTS_TITLE;
+            	label = Text.ASSISTS;
             	addNote(Text.ASSISTS_NOTE);
             } else {
-            	label = Text.ASSISTS_TITLE + " (" + Text.ASSISTS_NOTE + ")";
+            	label = Text.ASSISTS + " (" + Text.ASSISTS_NOTE + ")";
             }
             addRadio(label, as, aSubLsn, aLsn, x, y, sub);
             addDescription(x, y);
