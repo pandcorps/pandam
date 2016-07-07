@@ -34,35 +34,67 @@ public class Text {
     /*package*/ final static String COLOR = get("Color");
     /*package*/ final static String DEBUG = get("Debug");
     /*package*/ final static String DONE = get("Done");
+    /*package*/ final static String DOWN = get("Down");
     /*package*/ final static String DUMP = get("Dump");
     /*package*/ final static String EASY = get("Easy");
     /*package*/ final static String EDIT = get("Edit");
     /*package*/ final static String ERASE = get("Erase");
     /*package*/ final static String EYES = get("Eyes");
     /*package*/ final static String FOES = get("Foes");
+    /*package*/ final static String GAME = get("Game");
     /*package*/ final static String GEAR = get("Gear");
     /*package*/ final static String GOALS = get("Goals");
     /*package*/ final static String HAT = get("Hat");
     /*package*/ final static String INFO = get("Info");
     /*package*/ final static String KIND = get("Kind");
+    /*package*/ final static String LEFT = get("Left");
+    /*package*/ final static String MAIN = get("Main");
     /*package*/ final static String MENU = get("Menu");
     /*package*/ final static String MUSIC = get("Music");
     /*package*/ final static String NAME = get("Name");
     /*package*/ final static String NEW = get("New");
     /*package*/ final static String NEXT = get("Next");
+    /*package*/ final static String OTHER = get("Other");
     /*package*/ final static String PERKS = get("Perks");
+    /*package*/ final static String PICK = get("Pick");
     /*package*/ final static String PLAY = get("Play");
     /*package*/ final static String POWER = get("Power");
     /*package*/ final static String QUIT = get("Quit");
+    /*package*/ final static String RANK = get("Rank");
+    /*package*/ final static String RIGHT = get("Right");
     /*package*/ final static String RUN = get("Run");
+    /*package*/ final static String SAVE = get("Save");
     /*package*/ final static String SETUP = get("Setup");
     /*package*/ final static String SHIRT = get("Shirt");
     /*package*/ final static String STATS = get("Stats");
     /*package*/ final static String UNDO = get("Undo");
+    /*package*/ final static String UP = get("Up");
     /*package*/ final static String WORLD = get("World");
+    
+    /*package*/ final static String ACHIEVEMENTS = get("Achievements");
+    /*package*/ final static String ANIMAL = get("Animal");
+    /*package*/ final static String AVATAR = get("Avatar");
+    /*package*/ final static String BESTIARY = get("Bestiary");
+    /*package*/ final static String CANCEL = get("Cancel");
+    /*package*/ final static String CONTINUE = get("Continue");
+    /*package*/ final static String DEFAULT = get("Default");
+    /*package*/ final static String EXPORT = get("Export");
+    /*package*/ final static String PROFILE = get("Profile");
+    /*package*/ final static String SECONDARY = get("Secondary");
+    /*package*/ final static String STATISTICS = get("Statistics");
+    /*package*/ final static String TROPHIES = get("Trophies");
+    
+    /*package*/ final static String MINI_GAMES = get("MiniGames", "Mini-games");
+    /*package*/ final static String POWER_UP = get("PowerUp", "Power-up");
     
     /*package*/ final static String TITLE_PROMPT_TAP = get("Title.Prompt.Tap", "Tap to start");
     /*package*/ final static String TITLE_PROMPT_ANY = get("Title.Prompt.Any", "Press anything");
+    
+    /*package*/ final static String NEW_INFO_1 = get("New.Info.1", "A new Avatar lets one player try a different character.");
+    /*package*/ final static String NEW_INFO_2 = get("New.Info.2", "The old Avatar is kept.  You can switch back and forth.");
+    /*package*/ final static String NEW_INFO_3 = get("New.Info.3", "You keep your Gems and Goals when switching Avatars.");
+    /*package*/ final static String NEW_INFO_4 = get("New.Info.4", "A new Profile is for a new person using this device.");
+    /*package*/ final static String NEW_INFO_5 = get("New.Info.5", "Each Profile has its own set of Gems and Goals.");
     
     /*package*/ final static String CABIN_PICK = get("Cabin.Pick", "Hoo! Hoo! Pick one!");
     /*package*/ final static String CABIN_HIT_1 = get("Cabin.Hit.1", "Hoo! Hoo! Hit the block!");

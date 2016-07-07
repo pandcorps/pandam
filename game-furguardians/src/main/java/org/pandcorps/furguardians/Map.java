@@ -729,13 +729,13 @@ public class Map {
 					final int r = PlayerScreen.getTouchButtonRadius();
 				    if (isOpen(getIndex())) {
 				        // Standing on a defeated Level; show help to move
-				    	addHelp("Left", r, r * 2 - 4);
-				    	addHelp("Down", r * 2, r - 4);
-				    	addHelp("Up", r * 2, r * 3 - 4);
-				    	addHelp("Right", r * 3, r * 2 - 4);
+				    	addHelp(Text.LEFT, r, r * 2 - 4);
+				    	addHelp(Text.DOWN, r * 2, r - 4);
+				    	addHelp(Text.UP, r * 2, r * 3 - 4);
+				    	addHelp(Text.RIGHT, r * 3, r * 2 - 4);
 				    } else {
 				        // Standing on an unplayed Level; show help to play
-				        addHelp("Play", engine.getEffectiveWidth() - r, r - 4);
+				        addHelp(Text.PLAY, engine.getEffectiveWidth() - r, r - 4);
 				    }
 				} else if (waitTimer == (lim * 2)) {
 				    // Maybe Player doesn't want to play Level; show Menu help
@@ -1972,7 +1972,7 @@ public class Map {
 	private final static String generateName() {
 		//return Mathtil.rand(ADJECTIVES) + ' ' + Mathtil.rand(NATURES) + ' ' + Mathtil.rand(PLACES);
 	    //return theme.nmr.get();
-		return "World " + (getProfile().stats.defeatedWorlds + 1);
+		return Text.WORLD + " " + (getProfile().stats.defeatedWorlds + 1);
 	}
 	
 	private final static void setPlayerPosition(final int index) {

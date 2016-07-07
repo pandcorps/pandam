@@ -65,6 +65,12 @@ public class Level {
     private final static byte FLOOR_BRIDGE = 2;
     private final static byte FLOOR_TRACK = 3;
     
+    private final static byte BLOCK_SOLID = 0;
+    private final static byte BLOCK_BUMP = 1;
+    private final static byte BLOCK_BREAK = 2;
+    private final static byte BLOCK_MIN = BLOCK_SOLID;
+    private final static byte BLOCK_MAX = BLOCK_BREAK;
+    
     private final static byte HEX_RISE = 0;
     private final static byte HEX_UP = 1;
     private final static byte HEX_FALL = 2;
@@ -1083,6 +1089,30 @@ public class Level {
             letterTemplates.add(new BreakableRowLetterTemplate());
             letterTemplates.add(new GemRowLetterTemplate());
             letterTemplates.add(new SolidRowLetterTemplate());
+            letterTemplates.add(new GemWrapperLetterTemplate());
+        }
+        
+        protected final void addHighLetterTemplates() {
+            letterTemplates.add(new StepLetterTemplate());
+            if (isManualRun()) {
+                letterTemplates.add(new BreakLetterTemplate());
+                letterTemplates.add(new FloatingEnclosedLetterTemplate());
+            }
+        }
+        
+        protected final boolean isManualRun() {
+            if (Coltil.isEmpty(FurGuardiansGame.pcs)) {
+                return false;
+            }
+            for (final PlayerContext pc : FurGuardiansGame.pcs) {
+                final Profile prf = PlayerContext.getProfile(pc);
+                if (prf == null) {
+                    return false;
+                } else if (prf.autoRun) {
+                    return false;
+                }
+            }
+            return true;
         }
         
         protected final void addConstructedTemplates() {
@@ -1145,6 +1175,7 @@ public class Level {
     	@Override
     	public void build() {
     	    loadTemplates();
+    	    loadLetterTemplates();
     	    
     		backgroundBuilder.build();
     		
@@ -1662,6 +1693,12 @@ public class Level {
 	        addNormalGoals();
 	        theme.addGoals(goals);
 	    }
+    	
+    	@Override
+        protected final void loadLetterTemplates() {
+            addSafeLetterTemplates();
+            addHighLetterTemplates();
+        }
     	
     	@Override
     	protected final void ground(final int start, final int stop) {
@@ -2433,6 +2470,10 @@ public class Level {
         protected int newWidth(final int minW, final int maxW) {
             return Mathtil.randi(minW, maxW);
         }
+        
+        protected final void enemyFloor() {
+            enemy(x, floor + 1, w);
+        }
     }
     
     private final static class WallTemplate extends SimpleTemplate {
@@ -2754,7 +2795,7 @@ public class Level {
                 }
                 above(i, y1);
             }
-            enemy(x, floor + 1, w);
+            enemyFloor();
         }
         
         protected abstract void block(final int x, final int y);
@@ -2797,9 +2838,33 @@ public class Level {
         }
     }
     
+    private final static class GemWrapperLetterTemplate extends SimpleTemplate {
+        protected GemWrapperLetterTemplate() {
+            super(3, 3, 0);
+        }
+        
+        @Override
+        protected final void build() {
+            final int y = floor + 3 + floatOffset;
+            for (int i = 0; i < 3; i++) {
+                final int xi = x + i;
+                for (int j = 0; j < 3; j++) {
+                    final int yj = y + j;
+                    if (i == 1 && j == 1) {
+                        letterBlock(xi, yj);
+                    } else {
+                        gem(xi, yj);
+                    }
+                }
+            }
+            enemyFloor();
+        }
+    }
+    
     private final static class StepLetterTemplate extends SimpleTemplate {
         private int numSteps = 0;
         private int stepWidth = 0;
+        private byte style = BLOCK_SOLID;
         
         protected StepLetterTemplate() {
             super(1, 8, 0);
@@ -2815,19 +2880,20 @@ public class Level {
                 stepY++;
             }
             letterBlock(stepX - 2, stepY + 2);
-            enemy(x, floor + 1, w);
+            enemyFloor();
         }
         
         @Override
         protected final int newWidth(final int minW, final int maxW) {
             numSteps = Mathtil.randi(1, 3);
             stepWidth = Mathtil.randi(1, 2);
+            style = randomBlockStyle();
             return ((stepWidth + 1) * numSteps) - 1;
         }
         
         private final void step(final int x, final int y) {
             for (int i = 0; i < stepWidth; i++) {
-                solidBlock(x + i, y);
+                block(x + i, y, style);
             }
         }
     }
@@ -2855,6 +2921,7 @@ public class Level {
                 }
                 solidBlock(col, base + h);
             }
+            enemyFloor();
         }
     }
     
@@ -2866,7 +2933,8 @@ public class Level {
         @Override
         protected final void build() {
             final int base = floor + 3 + floatOffset;
-            final int end = x + w - 1;
+            final int w1 = w - 1;
+            final int end = x + w1;
             for (int j = 0; j < 5; j++) {
                 final int y = base + j;
                 solidBlock(x, y);
@@ -2874,6 +2942,24 @@ public class Level {
             }
             final int lx = end - 1; //TODO Allow on opposite side if no Player in auto-run
             letterBlock(lx, base + 3);
+            final int top = base + 4;
+            for (int i = 1; i < w1; i++) {
+                final int xi = x + i;
+                block(xi, base, (xi == lx) ? BLOCK_SOLID : BLOCK_BREAK);
+                solidBlock(xi, top);
+            }
+            enemyFloor();
+        }
+    }
+    
+    private final static class SpecialLetterTemplate extends SpecialGroundTemplate {
+        protected SpecialLetterTemplate() {
+            super(5, 5);
+        }
+        
+        @Override
+        protected final void extra(final int minX, final int maxX, final int specialY) {
+            letterBlock((minX + maxX) / 2, specialY + 3);
         }
     }
     
@@ -2913,7 +2999,7 @@ public class Level {
     				gem(i, y);
     			}
     		}
-    		enemy(x, floor + 1, w);
+    		enemyFloor();
     	}
     }
     
@@ -2941,9 +3027,13 @@ public class Level {
 		}
     }
     
-    private final static class SpecialGroundTemplate extends SimpleTemplate {
+    private static class SpecialGroundTemplate extends SimpleTemplate {
     	protected SpecialGroundTemplate() {
-    		super(4, 10);
+    		this(4, 10);
+    	}
+    	
+    	protected SpecialGroundTemplate(final int minW, final int maxW) {
+    	    super(minW, maxW);
     	}
     	
     	@Override
@@ -2977,6 +3067,17 @@ public class Level {
     			}
     			tm.setForeground(i, y, imgMap[1][5], behavior);
     		}
+    		extra(x + 1, stop - 1, y);
+    	}
+    	
+    	protected void extra(final int minX, final int maxX, final int specialY) {
+    	    if (Mathtil.rand()) {
+    	        return;
+    	    }
+    	    final int y = specialY + 3;
+    	    for (int x = minX; x <= maxX; x++) {
+    	        gem(x, y);
+    	    }
     	}
     }
     
@@ -3047,7 +3148,7 @@ public class Level {
     	@Override
         protected final void build() {
         	bush(x, floor + 1, w);
-        	enemy(x, floor + 1, w);
+        	enemyFloor();
         }
     }
     
@@ -3059,7 +3160,7 @@ public class Level {
     	@Override
         protected final void build() {
         	tree(x, floor + 1);
-        	enemy(x, floor + 1, w);
+        	enemyFloor();
         }
     }
     
@@ -4059,6 +4160,24 @@ public class Level {
         } else {
             breakableBlock(x, y);
         }
+    }
+    
+    private final static void block(final int x, final int y, final byte style) {
+        switch (style) {
+            case BLOCK_BUMP :
+                bumpableBlock(x, y);
+                break;
+            case BLOCK_BREAK :
+                breakableBlock(x, y);
+                break;
+            default :
+                solidBlock(x, y);
+                break;
+        }
+    }
+    
+    private final static byte randomBlockStyle() {
+        return (byte) Mathtil.randi(BLOCK_MIN, BLOCK_MAX);
     }
     
     private final static String[] gemFont = {

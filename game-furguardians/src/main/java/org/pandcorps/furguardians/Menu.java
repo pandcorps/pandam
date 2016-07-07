@@ -62,8 +62,8 @@ public class Menu {
     private final static String WARN_EMPTY = "Must have a name";
     private final static String WARN_DUPLICATE = "Name already used";
     private final static String INFO_SAVED = "Saved images";
-    private final static String LABEL_COLOR = "Main";
-    private final static String LABEL_COLOR2 = "Other";
+    private final static String LABEL_COLOR = Text.MAIN;
+    private final static String LABEL_COLOR2 = Text.OTHER;
     protected final static int Y_PLAYER = 16;
     private final static char CHAR_ON = 2;
     protected final static String NEW_AVATAR_NAME = "New";
@@ -379,10 +379,10 @@ public class Menu {
             final String noLbl;
             final Panmage noImg;
             if (menuScreen) {
-            	noLbl = "Menu";
+            	noLbl = Text.MENU;
             	noImg = FurGuardiansGame.menuOptions;
             } else {
-            	noLbl = "Play";
+            	noLbl = Text.PLAY;
             	noImg = FurGuardiansGame.menuRight;
             	quitMenu = newFormButton(room, "Menu", btnX + btnW, btnY, FurGuardiansGame.menuOptions, Text.MENU, new Runnable() {
                     @Override public final void run() {
@@ -721,7 +721,7 @@ public class Menu {
 			final int minY = (engine.getEffectiveTop() - (btnH + difH)) / 2;
 			int x = minX, y = minY + difH;
 			if (label != null) {
-				addTitle(label + " Color", x, y + btnH + 1);
+				addTitle(label + " " + Text.COLOR, x, y + btnH + 1);
 			}
 			final int txtX = btnW / 2, txtY = y - 12;
 			final StringBuilder sbR = new StringBuilder(), sbG = new StringBuilder(), sbB = new StringBuilder();
@@ -843,7 +843,7 @@ public class Menu {
 		protected final void addHudRank() {
 			final int gemX = center - 16 - FurGuardiansGame.OFF_GEM, gemY = HUD_TEXT_Y, textX = gemX - 1;
 			addActor(new Gem(FurGuardiansGame.gemRank), gemX, gemY);
-			addTitle("Rank", textX, gemY + 8).setRightJustified(true);
+			addTitle(Text.RANK, textX, gemY + 8).setRightJustified(true);
 			final CharSequence seq = new CallSequence() {@Override protected String call() {
 				return String.valueOf(pc.profile.getRank());
 			}};
@@ -853,7 +853,7 @@ public class Menu {
 		protected final void addHudAchievement() {
 			final int gemX = center - 16 - FurGuardiansGame.OFF_GEM, gemY = 37, textX = gemX - 1;
 			addActor(new Gem(FurGuardiansGame.gemAchieve), gemX, gemY);
-			addTitle("Trophies", textX, gemY + 8).setRightJustified(true);
+			addTitle(Text.TROPHIES, textX, gemY + 8).setRightJustified(true);
 			final CharSequence seq = new CallSequence() {@Override protected String call() {
 				return String.valueOf(pc.profile.getAchievedSize() + "/" + Achievement.ALL.length);
 			}};
@@ -1500,10 +1500,10 @@ public class Menu {
                 @Override public final void onClose() {
                     newProfile(); }};
             y -= 64;
-			x = addLink("New", newLsn, left, y);
+			x = addLink(Text.NEW, newLsn, left, y);
 			if (curr != null) { //TODO also allow if this isn't player 1, but might need extra handling to remove newly added player
 				x = addPipe(x, y);
-				addExit("Cancel", x, y);
+				addExit(Text.CANCEL, x, y);
 			}
 		}
 
@@ -1706,9 +1706,9 @@ public class Menu {
 			final RadioSubmitListener subLsn = new RadioSubmitListener() {
 				@Override public final void onSubmit(final RadioSubmitEvent event) {
 					final String label = event.toString();
-					if ("Avatar".equals(label)) {
+					if (Text.AVATAR.equals(label)) {
 						newAvatar();
-					} else if ("Profile".equals(label)) {
+					} else if (Text.PROFILE.equals(label)) {
 						newToDefault = false;
 						Config.defaultProfileName = null;
 						newProfile(pc);
@@ -1717,13 +1717,13 @@ public class Menu {
 					}
 				}};
 			final TouchButton sub = newRadioSubmitButton(x, y);
-			addRadio("New Avatar or Profile?", Arrays.asList("Avatar", "Profile", "Cancel"), subLsn, null, x, y, sub);
+			addRadio("New Avatar or Profile?", Arrays.asList(Text.AVATAR, Text.PROFILE, Text.CANCEL), subLsn, null, x, y, sub);
 			final int bottom = getBottom(), tx = 92;
-			addTitleTiny("A new Avatar lets one player try a different character.", tx, bottom + 23);
-			addTitleTiny("The old Avatar is kept.  You can switch back and forth.", tx, bottom + 17);
-			addTitleTiny("You keep your Gems and Goals when switching Avatars.", tx, bottom + 11);
-			addTitleTiny("A new Profile is for a new person using this device.", tx, bottom + 5);
-			addTitleTiny("Each Profile has its own set of Gems and Goals.", tx, bottom - 1);
+			addTitleTiny(Text.NEW_INFO_1, tx, bottom + 23);
+			addTitleTiny(Text.NEW_INFO_2, tx, bottom + 17);
+			addTitleTiny(Text.NEW_INFO_3, tx, bottom + 11);
+			addTitleTiny(Text.NEW_INFO_4, tx, bottom + 5);
+			addTitleTiny(Text.NEW_INFO_5, tx, bottom - 1);
 		}
 		
 		protected final void menuClassic() {
@@ -1734,42 +1734,42 @@ public class Menu {
                 @Override public final void onClose() {
                     goAvatar(); }};
             y -= 64;
-            x = addLink("Edit", edtLsn, left, y);
+            x = addLink(Text.EDIT, edtLsn, left, y);
             final MsgCloseListener newLsn = new MsgCloseListener() {
                 @Override public final void onClose() {
                     newAvatar(); }};
             x = addPipe(x, y);
-            x = addLink("New", newLsn, x, y);
+            x = addLink(Text.NEW, newLsn, x, y);
             if (getAvatarsSize() > 1) {
 	            final MsgCloseListener delLsn = new MsgCloseListener() {
 	                @Override public final void onClose() {
 	                    delete(); }};
 	            x = addPipe(x, y);
-	            x = addLink("Erase", delLsn, x, y);
+	            x = addLink(Text.ERASE, delLsn, x, y);
             }
             final MsgCloseListener astLsn = new MsgCloseListener() {
                 @Override public final void onClose() {
                     goPerks(); }};
             x = addPipe(x, y);
-            x = addLink("Perks", astLsn, x, y);
+            x = addLink(Text.PERKS, astLsn, x, y);
 			final MsgCloseListener prfLsn = new MsgCloseListener() {
                 @Override public final void onClose() {
                     save();
                     FurGuardiansGame.setScreen(new SelectScreen(pc, false, null)); }};
             y -= 16;
             x = left;
-            addTitle("Profile", x, y);
+            addTitle(Text.PROFILE, x, y);
             y -= 16;
             x = left + 8;
-            x = addLink("Pick", prfLsn, x, y);
+            x = addLink(Text.PICK, prfLsn, x, y);
             final MsgCloseListener infLsn = new MsgCloseListener() {
                 @Override public final void onClose() {
                     goInfo(); }};
             x = addPipe(x, y);
-            x = addLink("Info", infLsn, x, y);
+            x = addLink(Text.INFO, infLsn, x, y);
             if (isPlayer1()) {
             	x = addPipe(x, y);
-                addTitle("Default", x, y);
+                addTitle(Text.DEFAULT, x, y);
             	final StringBuilder defStr = new StringBuilder();
             	defStr.append(getDefaultProfileText());
                 final MsgCloseListener defLsn = new MsgCloseListener() {
@@ -1786,16 +1786,16 @@ public class Menu {
             }
             y -= 16;
             x = left;
-            addTitle("Game", x, y);
+            addTitle(Text.GAME, x, y);
             y -= 16;
             x = left + 8;
-            x = addExit(Map.started ? "Back" : "Play", x, y);
+            x = addExit(Map.started ? Text.BACK : Text.PLAY, x, y);
             if (isPlayer1()) {
                 final MsgCloseListener qutLsn = new MsgCloseListener() {
                     @Override public final void onClose() {
                         quit(); }};
                 x = addPipe(x, y);
-                addLink("Quit", qutLsn, x, y);
+                addLink(Text.QUIT, qutLsn, x, y);
             }
 			// Rename Profile //TODO
 			// Drop out (if other players? if not player 1?)
@@ -1938,10 +1938,10 @@ public class Menu {
 				        otherReloader = newReloader(TAB_COLOR2);
                         otherLabel = LABEL_COLOR2;
 				    }
-					addColor(avt.col, 0, 0, "Avatar", otherReloader, otherLabel);
+					addColor(avt.col, 0, 0, Text.AVATAR, otherReloader, otherLabel);
 					break;
 				case TAB_COLOR2 :
-                    addColor(avt.col2, 0, 0, "Secondary", newReloader(TAB_COLOR), LABEL_COLOR);
+                    addColor(avt.col2, 0, 0, Text.SECONDARY, newReloader(TAB_COLOR), LABEL_COLOR);
                     break;
 				case TAB_NAME :
 					createNameInput(touchKeyboardX, getTouchKeyboardY());
@@ -2004,7 +2004,7 @@ public class Menu {
                     	avt.anm = value;
                     }
                 }};
-			final RadioGroup anmGrp = addRadio("Animal", animals, anmSubLsn, anmLsn, x, y, sub);
+			final RadioGroup anmGrp = addRadio(Text.ANIMAL, animals, anmSubLsn, anmLsn, x, y, sub);
 			anmGrp.setSelected(animals.indexOf(avt.anm));
 		}
 		
@@ -2034,21 +2034,21 @@ public class Menu {
 			final MsgCloseListener gearLsn = new MsgCloseListener() {
                 @Override public final void onClose() {
                     goGear(); }};
-			addLink("Gear", gearLsn, x, y);
+			addLink(Text.GEAR, gearLsn, x, y);
 			y -= 16;
 			createNameInput(x, y);
 			y -= 16;
-			x = addExit("Save", left, y);
+			x = addExit(Text.SAVE, left, y);
 			final MsgCloseListener canLsn = new MsgCloseListener() {
                 @Override public final void onClose() {
                 	cancel(); }};
             x = addPipe(x, y);
-            x = addLink("Cancel", canLsn, x, y);
+            x = addLink(Text.CANCEL, canLsn, x, y);
             final MsgCloseListener expLsn = new MsgCloseListener() {
                 @Override public final void onClose() {
                     exportGraphics(); }};
             x = addPipe(x, y);
-            x = addLink("Export", expLsn, x, y);
+            x = addLink(Text.EXPORT, expLsn, x, y);
 		}
 		
 		private final void exportGraphics() {
@@ -2225,7 +2225,7 @@ public class Menu {
                     }
                 }};
             addNote("Equip one at a time");
-            jmpRadio = addRadio("Power-up", jmps, jmpSubLsn, jmpLsn, x, y, sub);
+            jmpRadio = addRadio(Text.POWER_UP, jmps, jmpSubLsn, jmpLsn, x, y, sub);
             addDescription(x, y);
             initJumpMode();
         }
@@ -2292,7 +2292,7 @@ public class Menu {
                     }
                 }};
             addNote("Can collect Gems");
-            brdRadio = addRadio("Bird", brds, brdSubLsn, brdLsn, x, y, sub);
+            brdRadio = addRadio(Text.BIRD, brds, brdSubLsn, brdLsn, x, y, sub);
             initBird();
         }
         
@@ -2509,7 +2509,7 @@ public class Menu {
             createHatList(left, y);
             hatMenu.colors = addColor(avt.hat.col, left + 88, y);
             y -= yoff;
-            addExit("Back", left, y);
+            addExit(Text.BACK, left, y);
         }
         
         private final void setJumpMode(final byte index) {
@@ -2659,7 +2659,7 @@ public class Menu {
             int y = getTop();
             createAssistList(left, y);
             y -= 80;
-            addExit("Back", left, y);
+            addExit(Text.BACK, left, y);
 		}
         
         private final Assist getAssist(final Object event) {
@@ -2764,7 +2764,7 @@ public class Menu {
             int y = getTop();
             createThemeList(left, y);
             y -= 80;
-            addExit("Back", left, y);
+            addExit(Text.BACK, left, y);
         }
         
         private final MapTheme getTheme(final Object event) {
@@ -2894,7 +2894,7 @@ public class Menu {
                 @Override public final void onSubmit(final RadioSubmitEvent event) {
                     setAchDesc(event.toString());
             }};
-            achRadio = addRadio("Achievements", ach, achLsn, x, y);
+            achRadio = addRadio(Text.ACHIEVEMENTS, ach, achLsn, x, y);
             addDescription(x, y);
             addDescription2(x, y);
             addDescription3(x, y);
@@ -2902,7 +2902,7 @@ public class Menu {
 		}
 		
 		private final void createStatsList(final int x, final int y) {
-			addRadio("Statistics", pc.profile.stats.toList(pc.profile), null, x, y);
+			addRadio(Text.STATISTICS, pc.profile.stats.toList(pc.profile), null, x, y);
 		}
 		
 		private final void createFoesList(final int x, final int y) {
@@ -2918,7 +2918,7 @@ public class Menu {
                 @Override public final void onSubmit(final RadioSubmitEvent event) {
                     setEnemy(event.toString());
             }};
-            enemyRadio = addRadio("Bestiary", list, foeLsn, x, y);
+            enemyRadio = addRadio(Text.BESTIARY, list, foeLsn, x, y);
             initEnemy();
         }
 		
@@ -2934,7 +2934,7 @@ public class Menu {
 		}
 		
 		private final void createGoalsList(final int x, int y) {
-			addTitle("Goals", x, y);
+			addTitle(Text.GOALS, x, y);
 			y -= 16;
 			showNew = true;
 			y = displayGoals(x, y, goalStars);
@@ -2948,7 +2948,7 @@ public class Menu {
 		private final int addRankPoints(final int x, int y, final boolean img) {
 			final Profile prf = pc.profile;
 			y -= 8;
-			Chartil.set(rankDesc, "Rank " + prf.getRank());
+			Chartil.set(rankDesc, Text.RANK + " " + prf.getRank());
 			addTitle(rankDesc, img ? (x + 17) : x, y);
 			final int currPoints = prf.getCurrentGoalPoints();
 			if (img) {
@@ -3014,7 +3014,7 @@ public class Menu {
 				newTabs();
 				registerBackExit();
 			} else {
-				addLink("Continue", new MsgCloseListener() {
+				addLink(Text.CONTINUE, new MsgCloseListener() {
 					@Override protected final void onClose() {
 						reload(TAB_GOALS);
 					}}, x, y - 16);
@@ -3138,7 +3138,7 @@ public class Menu {
             y -= 80;
             createStatsList(left, y);
             y -= 64;
-            addExit("Back", left, y);
+            addExit(Text.BACK, left, y);
         }
         
         private final void setAchDesc(String achName) {
@@ -3568,7 +3568,7 @@ public class Menu {
                     }
                     FurGuardiansGame.setScreen(Reftil.newInstance(gameMap.get(name)));
                 }};
-            final RadioGroup gameGrp = addRadio("Mini-games", gs, aSubLsn, null, x, y, sub);
+            final RadioGroup gameGrp = addRadio(Text.MINI_GAMES, gs, aSubLsn, null, x, y, sub);
             final Profile prf = getProfile();
             if (prf != null) {
                 if (!gameGrp.setSelectedIfPossible(prf.lastMiniGame)) {
@@ -3585,7 +3585,7 @@ public class Menu {
             int y = getTop();
             createGameList(left, y);
             y -= 80;
-            addExit("Back", left, y);
+            addExit(Text.BACK, left, y);
         }
         
         @Override
@@ -3824,7 +3824,7 @@ public class Menu {
 		    final Profile prf = pc.profile;
 		    final int oldRank = prf.getRank();
 		    prf.goalPoints += (n * Profile.POINTS_PER_RANK);
-            return "Rank " + oldRank + " -> " + prf.getRank();
+            return Text.RANK + " " + oldRank + " -> " + prf.getRank();
 		}
 		
 		private final String addMaps(final int n) {
