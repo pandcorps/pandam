@@ -82,8 +82,11 @@ public class Text {
     /*package*/ final static String EXPORT = get("Export");
     /*package*/ final static String PROFILE = get("Profile");
     /*package*/ final static String SECONDARY = get("Secondary");
+    /*package*/ final static String SELECTED = get("Selected");
     /*package*/ final static String STATISTICS = get("Statistics");
+    /*package*/ final static String THEMES = get("Themes");
     /*package*/ final static String TROPHIES = get("Trophies");
+    /*package*/ final static String UNSELECTED = get("Unselected");
     
     /*package*/ final static String MINI_GAMES = get("MiniGames", "Mini-games");
     /*package*/ final static String POWER_UP = get("PowerUp", "Power-up");
@@ -100,6 +103,7 @@ public class Text {
     /*package*/ final static String ASSISTS_NOTE = get("Assists.Note", "Can equip multiple");
     /*package*/ final static String BIRD_NOTE = get("Bird.Note", "Can collect Gems");
     /*package*/ final static String POWER_UP_NOTE = get("PowerUp.Note", "Equip one at a time");
+    /*package*/ final static String THEMES_NOTE = get("Themes.Note", "Can select multiple");
     
     /*package*/ final static String CABIN_PICK = get("Cabin.Pick", "Hoo! Hoo! Pick one!");
     /*package*/ final static String CABIN_HIT_1 = get("Cabin.Hit.1", "Hoo! Hoo! Hit the block!");

@@ -2749,10 +2749,10 @@ public class Menu {
                 }};
             final String label;
             if (isTabEnabled()) {
-                label = "Themes";
-                addNote("Can select multiple");
+                label = Text.THEMES;
+                addNote(Text.THEMES_NOTE);
             } else {
-                label = "Themes (can select multiple)";
+                label = Text.THEMES + " (" + Text.THEMES_NOTE + ")";
             }
             addRadio(label, ts, tSubLsn, tLsn, x, y, sub);
             initThemes();
@@ -2772,11 +2772,11 @@ public class Menu {
         }
         
         private final String getSelected(final MapTheme t) {
-            return pc.profile.isThemeSelected(t) ? "Selected" : "Unselected";
+            return pc.profile.isThemeSelected(t) ? Text.SELECTED : Text.UNSELECTED;
         }
         
         private final void highlightTheme(final MapTheme t, final TouchButton sub) {
-            reattach(getSelected(t), sub, FurGuardiansGame.menuExclaim, "Pick");
+            reattach(getSelected(t), sub, FurGuardiansGame.menuExclaim, Text.PICK);
         }
         
         private final void toggleTheme(final MapTheme t) {
