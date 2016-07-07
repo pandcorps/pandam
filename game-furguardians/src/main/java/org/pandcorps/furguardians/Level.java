@@ -1222,8 +1222,11 @@ public class Level {
 	    		    		}
         		    	}
     		    	} else if (currLetter < numLetters && bx >= ng * (currLetter + 1) / (numLetters + 1)) {
-    		    	    //TODO if i > 0, use 1-block template
-	    		    	template = getLetterTemplate();
+    		    	    if (i > 0) {
+    		    	        template = new BlockLetterTemplate();
+    		    	    } else {
+    		    	        template = getLetterTemplate();
+    		    	    }
     		    	} else if (bx >= (ng - 40) && requiredTemplate != null && templates.contains(requiredTemplate)) {
     		    	    template = requiredTemplate;
     		    	    requiredTemplate = null;
@@ -1695,7 +1698,7 @@ public class Level {
 	    }
     	
     	@Override
-        protected final void loadLetterTemplates() {
+        protected void loadLetterTemplates() {
             addSafeLetterTemplates();
             addHighLetterTemplates();
         }
