@@ -2643,10 +2643,10 @@ public class Menu {
                 }};
             final String label;
             if (isTabEnabled()) {
-            	label = "Assists";
-            	addNote("Can equip multiple");
+            	label = Text.ASSISTS_TITLE;
+            	addNote(Text.ASSISTS_NOTE);
             } else {
-            	label = "Assists (can equip multiple)";
+            	label = Text.ASSISTS_TITLE + " (" + Text.ASSISTS_NOTE + ")";
             }
             addRadio(label, as, aSubLsn, aLsn, x, y, sub);
             addDescription(x, y);
