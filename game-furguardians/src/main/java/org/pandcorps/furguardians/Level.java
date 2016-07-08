@@ -254,6 +254,10 @@ public class Level {
     		@Override protected final void addTemplates(final List<Template> templates) {
     		    templates.add(new SpecialGroundTemplate());
             }
+    		
+    		@Override protected final void addLetterTemplates(final List<Template> letterTemplates) {
+    		    letterTemplates.add(new SpecialLetterTemplate());
+            }
     	};
     	public final static Theme Sand = new Theme("Sand", null, MSG) {
     	    @Override protected final int[] getEnemyIndices(final int worlds, final int levels) {
@@ -289,6 +293,10 @@ public class Level {
     		
     		@Override protected final void addTemplates(final List<Template> templates) {
     		    templates.add(new SpecialGroundTemplate());
+            }
+    		
+    		@Override protected final void addLetterTemplates(final List<Template> letterTemplates) {
+                letterTemplates.add(new SpecialLetterTemplate());
             }
     	};
     	public final static Theme Rock = new Theme("Rock", null, MSG) {
@@ -338,7 +346,11 @@ public class Level {
                 templates.add(new SpikeBlockTemplate());
             }
             
-            @Override protected void addGoals(final List<GoalTemplate> goals) {
+            @Override protected final void addLetterTemplates(final List<Template> letterTemplates) {
+                letterTemplates.add(new ChoiceTemplate(new BeeLetterTemplate(), new MovingBeeLetterTemplate()));
+            }
+            
+            @Override protected final void addGoals(final List<GoalTemplate> goals) {
                 goals.add(new BeeGoal());
             }
         };
@@ -706,6 +718,9 @@ public class Level {
         }
     	
     	protected void addTemplates(final List<Template> templates) {
+        }
+    	
+    	protected void addLetterTemplates(final List<Template> letterTemplates) {
         }
     	
     	protected void addGoals(final List<GoalTemplate> goals) {
@@ -1222,8 +1237,11 @@ public class Level {
 	    		    		}
         		    	}
     		    	} else if (currLetter < numLetters && bx >= ng * (currLetter + 1) / (numLetters + 1)) {
-    		    	    //TODO if i > 0, use 1-block template
-	    		    	template = getLetterTemplate();
+    		    	    if (i > 0) {
+    		    	        template = new BlockLetterTemplate();
+    		    	    } else {
+    		    	        template = getLetterTemplate();
+    		    	    }
     		    	} else if (bx >= (ng - 40) && requiredTemplate != null && templates.contains(requiredTemplate)) {
     		    	    template = requiredTemplate;
     		    	    requiredTemplate = null;
@@ -1695,9 +1713,10 @@ public class Level {
 	    }
     	
     	@Override
-        protected final void loadLetterTemplates() {
+        protected void loadLetterTemplates() {
             addSafeLetterTemplates();
             addHighLetterTemplates();
+            theme.addLetterTemplates(letterTemplates);
         }
     	
     	@Override
@@ -1936,6 +1955,11 @@ public class Level {
 	        goals.add(new UpBlockGoal());
 	    }
     	
+    	@Override
+        protected void loadLetterTemplates() {
+            addSafeLetterTemplates();
+        }
+    	
     	protected byte getFloorMode() {
     	    return FLOOR_BLOCK;
     	}
@@ -2024,6 +2048,12 @@ public class Level {
             theme.addTemplates(templates);
             goals.add(new PlatformGoal());
             theme.addGoals(goals);
+        }
+        
+        @Override
+        protected final void loadLetterTemplates() {
+            addSafeLetterTemplates();
+            theme.addLetterTemplates(letterTemplates);
         }
         
         @Override
@@ -2132,6 +2162,11 @@ public class Level {
 	        addTemplate(new GemMsgTemplate());
 	        goals.add(new FlatGoal());
 	    }
+    	
+    	@Override
+    	protected final void loadLetterTemplates() {
+            addTinyLetterTemplate();
+        }
     	
     	@Override
     	protected final Template getPitTemplate() {

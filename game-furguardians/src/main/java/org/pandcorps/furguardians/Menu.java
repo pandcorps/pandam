@@ -2224,7 +2224,7 @@ public class Menu {
                         }
                     }
                 }};
-            addNote("Equip one at a time");
+            addNote(Text.POWER_UP_NOTE);
             jmpRadio = addRadio(Text.POWER_UP, jmps, jmpSubLsn, jmpLsn, x, y, sub);
             addDescription(x, y);
             initJumpMode();
@@ -2291,7 +2291,7 @@ public class Menu {
                         }
                     }
                 }};
-            addNote("Can collect Gems");
+            addNote(Text.BIRD_NOTE);
             brdRadio = addRadio(Text.BIRD, brds, brdSubLsn, brdLsn, x, y, sub);
             initBird();
         }
@@ -2643,10 +2643,10 @@ public class Menu {
                 }};
             final String label;
             if (isTabEnabled()) {
-            	label = "Assists";
-            	addNote("Can equip multiple");
+            	label = Text.ASSISTS;
+            	addNote(Text.ASSISTS_NOTE);
             } else {
-            	label = "Assists (can equip multiple)";
+            	label = Text.ASSISTS + " (" + Text.ASSISTS_NOTE + ")";
             }
             addRadio(label, as, aSubLsn, aLsn, x, y, sub);
             addDescription(x, y);
@@ -2749,10 +2749,10 @@ public class Menu {
                 }};
             final String label;
             if (isTabEnabled()) {
-                label = "Themes";
-                addNote("Can select multiple");
+                label = Text.THEMES;
+                addNote(Text.THEMES_NOTE);
             } else {
-                label = "Themes (can select multiple)";
+                label = Text.THEMES + " (" + Text.THEMES_NOTE + ")";
             }
             addRadio(label, ts, tSubLsn, tLsn, x, y, sub);
             initThemes();
@@ -2772,11 +2772,11 @@ public class Menu {
         }
         
         private final String getSelected(final MapTheme t) {
-            return pc.profile.isThemeSelected(t) ? "Selected" : "Unselected";
+            return pc.profile.isThemeSelected(t) ? Text.SELECTED : Text.UNSELECTED;
         }
         
         private final void highlightTheme(final MapTheme t, final TouchButton sub) {
-            reattach(getSelected(t), sub, FurGuardiansGame.menuExclaim, "Pick");
+            reattach(getSelected(t), sub, FurGuardiansGame.menuExclaim, Text.PICK);
         }
         
         private final void toggleTheme(final MapTheme t) {
