@@ -691,7 +691,7 @@ public class Menu {
 		}
         
 		protected final void reattachBuy(final String info, final TouchButton sub) {
-        	reattach(info, sub, FurGuardiansGame.gem[0], "Buy");
+        	reattach(info, sub, FurGuardiansGame.gem[0], Text.BUY);
         }
 		
 		protected final List<RadioGroup> addColor(final SimpleColor col, int x, int y) {

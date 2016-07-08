@@ -30,6 +30,7 @@ public class Text {
     /*package*/ final static String AWARD = get("Award");
     /*package*/ final static String BACK = get("Back");
     /*package*/ final static String BIRD = get("Bird");
+    /*package*/ final static String BUY = get("Buy");
     /*package*/ final static String CLEAR = get("Clear");
     /*package*/ final static String COLOR = get("Color");
     /*package*/ final static String DEBUG = get("Debug");
