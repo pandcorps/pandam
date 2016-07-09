@@ -30,6 +30,7 @@ public class Text {
     /*package*/ final static String AWARD = get("Award");
     /*package*/ final static String BACK = get("Back");
     /*package*/ final static String BIRD = get("Bird");
+    /*package*/ final static String BUY = get("Buy");
     /*package*/ final static String CLEAR = get("Clear");
     /*package*/ final static String COLOR = get("Color");
     /*package*/ final static String DEBUG = get("Debug");
@@ -99,6 +100,9 @@ public class Text {
     /*package*/ final static String NEW_INFO_3 = get("New.Info.3", "You keep your Gems and Goals when switching Avatars.");
     /*package*/ final static String NEW_INFO_4 = get("New.Info.4", "A new Profile is for a new person using this device.");
     /*package*/ final static String NEW_INFO_5 = get("New.Info.5", "Each Profile has its own set of Gems and Goals.");
+    
+    /*package*/ final static String NAME_EMPTY = get("Name.Empty", "Must have a name");
+    /*package*/ final static String NAME_DUPLICATE = get("Name.Duplicate", "Name already used");
     
     /*package*/ final static String ASSISTS_NOTE = get("Assists.Note", "Can equip multiple");
     /*package*/ final static String BIRD_NOTE = get("Bird.Note", "Can collect Gems");
