@@ -2951,7 +2951,7 @@ public class Level {
                     if (letterRow && j == ly) {
                         letterBlock(col, row);
                     } else {
-                        breakableBlock(col, row);
+                        breakableBlockForce(col, row);
                     }
                 }
                 solidBlock(col, base + h);
@@ -2975,7 +2975,8 @@ public class Level {
                 solidBlock(x, y);
                 solidBlock(end, y);
             }
-            final int lx = end - 1; //TODO Allow on opposite side if no Player in auto-run
+            //TODO Fill w/ Gems sometimes? Separate template with Gems instead of letter?
+            final int lx = end - 1; //TODO Allow on opposite side (this only works in manual run either way)
             letterBlock(lx, base + 3);
             final int top = base + 4;
             for (int i = 1; i < w1; i++) {
@@ -3759,13 +3760,17 @@ public class Level {
     
     private final static void breakableBlock(final int x, final int y) {
         if (!powerBlock(x, y)) {
-            if (theme == null) {
-                breakableBlockRaw(x, y);
-            } else {
-                theme.breakableBlock(x, y);
-            }
-            numBreakable++;
+            breakableBlockForce(x, y);
         }
+    }
+    
+    private final static void breakableBlockForce(final int x, final int y) {
+        if (theme == null) {
+            breakableBlockRaw(x, y);
+        } else {
+            theme.breakableBlock(x, y);
+        }
+        numBreakable++;
     }
     
     private final static void breakableBlockRaw(final int x, final int y) {
@@ -4203,7 +4208,7 @@ public class Level {
                 bumpableBlock(x, y);
                 break;
             case BLOCK_BREAK :
-                breakableBlock(x, y);
+                breakableBlockForce(x, y);
                 break;
             default :
                 solidBlock(x, y);
