@@ -101,6 +101,9 @@ public class Text {
     /*package*/ final static String NEW_INFO_4 = get("New.Info.4", "A new Profile is for a new person using this device.");
     /*package*/ final static String NEW_INFO_5 = get("New.Info.5", "Each Profile has its own set of Gems and Goals.");
     
+    /*package*/ final static String NAME_EMPTY = get("Name.Empty", "Must have a name");
+    /*package*/ final static String NAME_DUPLICATE = get("Name.Duplicate", "Name already used");
+    
     /*package*/ final static String ASSISTS_NOTE = get("Assists.Note", "Can equip multiple");
     /*package*/ final static String BIRD_NOTE = get("Bird.Note", "Can collect Gems");
     /*package*/ final static String POWER_UP_NOTE = get("PowerUp.Note", "Equip one at a time");

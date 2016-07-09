@@ -59,8 +59,6 @@ public class Menu {
     private final static int SIZE_FONT = 8;
     protected final static String NAME_NEW = "org.pandcorps.new";
     private final static String WARN_DELETE = "Press Erase again to confirm";
-    private final static String WARN_EMPTY = "Must have a name";
-    private final static String WARN_DUPLICATE = "Name already used";
     private final static String INFO_SAVED = "Saved images";
     private final static String LABEL_COLOR = Text.MAIN;
     private final static String LABEL_COLOR2 = Text.OTHER;
@@ -2075,12 +2073,12 @@ public class Menu {
 		protected boolean allow(final TextItem focused) {
 			final String curr = avt.getName();
 			if (Chartil.isEmpty(curr)) {
-				setInfo(WARN_EMPTY);
+				setInfo(Text.NAME_EMPTY);
 				return false;
 			}
 			for (final Avatar a : pc.profile.avatars) {
 				if (a != avt && a.getName().equals(curr)) {
-					setInfo(WARN_DUPLICATE);
+					setInfo(Text.NAME_DUPLICATE);
 					return false;
 				}
 			}
