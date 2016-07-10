@@ -24,6 +24,7 @@ package org.pandcorps.game.actor;
 
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
+import org.pandcorps.pandam.impl.*;
 
 public abstract class GuyPlatform extends Panctor implements StepListener, Collidable {
     public final static int MAX_V = 10;
@@ -42,5 +43,19 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
         OFF_X = offX;
         H = h;
         OFF_BUTTING = H + 1;
+    }
+    
+    public final static FinPanple2 getMin(final int offX) {
+        return new FinPanple2(-offX - 1, 0);
+    }
+    
+    public final static FinPanple2 getMax(final int offX, final int h) {
+        return new FinPanple2(offX, h);
+    }
+    
+    protected final void setMirror(final int v) {
+        if (v != 0) {
+            setMirror(v < 0);
+        }
     }
 }

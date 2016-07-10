@@ -26,26 +26,11 @@ import org.pandcorps.game.actor.*;
 import org.pandcorps.game.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
-import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.tile.*;
 
 public abstract class Character extends GuyPlatform {
 	protected Character(final int offX, final int h) {
 		super(offX, h);
-	}
-	
-	protected final static FinPanple2 getMin(final int offX) {
-		return new FinPanple2(-offX - 1, 0);
-	}
-	
-	protected final static FinPanple2 getMax(final int offX, final int h) {
-		return new FinPanple2(offX, h);
-	}
-	
-	private final void setMirror(final int v) {
-		if (v != 0) {
-			setMirror(v < 0);
-		}
 	}
 	
 	protected final boolean addX(final int v) {
