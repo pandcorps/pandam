@@ -2814,24 +2814,45 @@ public class Level {
             final int y = floor + 3 + floatOffset;
             switch (style) {
                 case 0 :
-                    quadSquare(x, y);
+                    quadVertical(x, y);
                     break;
                 case 1 :
-                    quadL(x, y);
+                    quadSquare(x, y);
                     break;
                 case 2 :
+                    quadVerticalL(x, y);
+                    break;
+                case 3 :
+                    quadVerticalS(x, y);
+                    break;
+                case 4 :
+                    quadVerticalT(x, y);
+                    break;
+                case 5 :
+                    quadL(x, y);
+                    break;
+                case 6 :
                     quadS(x, y);
                     break;
-                default :
+                case 7 :
                     quadT(x, y);
+                default :
+                    quadHorizontal(x, y);
                     break;
             }
         }
         
         @Override
         protected final int newWidth(final int minW, final int maxW) {
-            style = Mathtil.randi(0, 3);
-            return (style == 0) ? 2 : 3;
+            style = Mathtil.randi(0, 8);
+            if (style == 0) {
+                return 1;
+            } else if (style < 5) {
+                return 2;
+            } else if (style < 8) {
+                return 3;
+            }
+            return 4;
         }
     }
     
@@ -4128,7 +4149,29 @@ public class Level {
     	}
     }
     
+    private final static void quadVertical(final int x, final int y) {
+        for (int j = 0; j < 4; j++) {
+            breakableBlockForce(x, y + j);
+        }
+    }
+    
     private final static void quadSquare(final int x, final int y) {
+        for (int i = 0; i < 2; i++) {
+            for (int j = 0; j < 2; j++) {
+                breakableBlockForce(x + i, y + j);
+            }
+        }
+    }
+    
+    private final static void quadVerticalL(final int x, final int y) {
+        //TODO
+    }
+    
+    private final static void quadVerticalS(final int x, final int y) {
+        //TODO
+    }
+    
+    private final static void quadVerticalT(final int x, final int y) {
         //TODO
     }
     
@@ -4153,6 +4196,12 @@ public class Level {
             breakableBlockForce(x + i, yHorizontal);
         }
         breakableBlockForce(x + 1, yVertical);
+    }
+    
+    private final static void quadHorizontal(final int x, final int y) {
+        for (int i = 0; i < 4; i++) {
+            breakableBlockForce(x + i, y);
+        }
     }
     
     private final static void bush(final int x, final int y, final int w) {
