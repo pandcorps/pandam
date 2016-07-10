@@ -22,29 +22,16 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.furguardians;
 
+import org.pandcorps.game.actor.*;
 import org.pandcorps.game.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.tile.*;
 
-public abstract class Character extends Panctor implements StepListener, Collidable {
-	protected final static int MAX_V = 10;
-	protected final static int MIN_Y = -12;
-	protected final static float g = -0.65f;
-	protected final static float gFlying = -0.38f;
-	protected final int H;
-	protected final int OFF_GROUNDED = -1;
-	private final int OFF_BUTTING;
-	private final int OFF_X;
-	protected float v = 0;
-	protected int hv = 0;
-	protected float chv = 0;
-	
+public abstract class Character extends GuyPlatform {
 	protected Character(final int offX, final int h) {
-		OFF_X = offX;
-		H = h;
-		OFF_BUTTING = H + 1;
+		super(offX, h);
 	}
 	
 	protected final static FinPanple2 getMin(final int offX) {
@@ -66,7 +53,6 @@ public abstract class Character extends Panctor implements StepListener, Collida
 			setMirror(hv);
 			return true; // No movement, but request was successful
 		}
-	    //setMirror(v < 0);
 		setMirror((hv == 0) ? v : hv);
 	    final int mult;
 	    final Panple pos = getPosition();
@@ -192,37 +178,6 @@ public abstract class Character extends Panctor implements StepListener, Collida
 		checkScrolled();
 		
 		onStepEnd();
-		/*
-		Issues with slopes:
-		
-		If Player walks into a slope, it should raise him.
-		If he jumps onto a slope, it should stop him at the right spot.
-		If he jumps from a slope, it should work (realize he's grounded).
-		If he walks down a slope, he should be able to jump while walking
-		(not move horizontally faster than falling vertically, breaking the grounding).
-		If he walks to the end of the slope, he should walk onto the flat ground beyond it.
-		
-		Maybe smarter horizontal movement is key.
-		We do it one pixel at a time anyway.
-		Maybe we should allow collisions at the bottom pixel and raise by one pixel at time of h-move.
-		Previous attempts ignored the slope during h-move and corrected afterward.
-		Each pixel of h-move could also check for a slope one pixel below and lower by one pixel at that time.
-		*/
-		/*if (v <= 0) {
-		    final Tile t = FurGuardiansGame.tm.getContainer(pos);
-		    if (t != null) {
-		        final byte b = t.getBehavior();
-		        if (b == FurGuardiansGame.TILE_UP) {
-		            // trunc/round should match getContainer
-		            final int minHeight = (int) pos.getX() % ImtilX.DIM;
-		            final int iy = (int) pos.getY();
-		            final int curHeight = iy % ImtilX.DIM;
-		            if (curHeight < minHeight) {
-		                pos.setY((iy / ImtilX.DIM) * ImtilX.DIM + minHeight);
-		            }
-		        }
-		    }
-		}*/
 	}
 	
 	protected final void checkScrolled() {
@@ -243,10 +198,6 @@ public abstract class Character extends Panctor implements StepListener, Collida
 		// v == 0 so that jumping through floor doesn't cause big jump
 		return v == 0 && isSolid(OFF_GROUNDED);
 	}
-	
-	/*protected boolean isButting() {
-		return isSolid(OFF_BUTTING);
-	}*/
 	
 	private boolean isSolid(final int off) {
 	    return getSolid(off) != -1;
