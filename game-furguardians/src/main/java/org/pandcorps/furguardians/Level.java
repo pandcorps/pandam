@@ -2802,6 +2802,39 @@ public class Level {
         protected abstract void block(final int i, final int y);
     }
     
+    private final static class QuadTemplate extends SimpleTemplate {
+        private int style = 0;
+        
+        protected QuadTemplate() {
+            super(2, 3, 0);
+        }
+        
+        @Override
+        protected final void build() {
+            final int y = floor + 3 + floatOffset;
+            switch (style) {
+                case 0 :
+                    quadSquare(x, y);
+                    break;
+                case 1 :
+                    quadL(x, y);
+                    break;
+                case 2 :
+                    quadS(x, y);
+                    break;
+                default :
+                    quadT(x, y);
+                    break;
+            }
+        }
+        
+        @Override
+        protected final int newWidth(final int minW, final int maxW) {
+            style = Mathtil.randi(0, 3);
+            return (style == 0) ? 2 : 3;
+        }
+    }
+    
     private final static class BlockLetterTemplate extends SimpleTemplate {
     	protected BlockLetterTemplate() {
     		super(1, 1, 0);
@@ -4093,6 +4126,33 @@ public class Level {
 	    		tm.removeTile(i, j);
 	    	}
     	}
+    }
+    
+    private final static void quadSquare(final int x, final int y) {
+        //TODO
+    }
+    
+    private final static void quadL(final int x, final int y) {
+        //TODO
+    }
+    
+    private final static void quadS(final int x, final int y) {
+        //TODO
+    }
+    
+    private final static void quadT(final int x, final int y) {
+        final int yHorizontal, yVertical;
+        if (Mathtil.rand()) {
+            yHorizontal = y;
+            yVertical = y + 1;
+        } else {
+            yHorizontal = y + 1;
+            yVertical = y;
+        }
+        for (int i = 0; i < 3; i++) {
+            breakableBlockForce(x + i, yHorizontal);
+        }
+        breakableBlockForce(x + 1, yVertical);
     }
     
     private final static void bush(final int x, final int y, final int w) {

@@ -22,7 +22,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.furguardians;
 
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class Text {
     private static ResourceBundle bundle = getBundle();
