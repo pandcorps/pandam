@@ -1080,7 +1080,7 @@ public class Music {
 		final Panaudio music = Pangine.getEngine().getAudio();
 		//music.ensureCapacity(4);
 		//music.playMusic(seq);
-		new org.pandcorps.pandam.lwjgl.JavaxMidiPansound(song.seq).startMusic();
+		//new org.pandcorps.pandam.lwjgl.JavaxMidiPansound(song.seq).startMusic();
 		System.out.println("Started; press enter to play sound; press x and enter to stop");
 		while (!Iotil.readln().equals("x")) {
 			//music.playSound(jump);

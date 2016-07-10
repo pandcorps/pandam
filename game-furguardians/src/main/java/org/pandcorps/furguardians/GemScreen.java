@@ -111,7 +111,7 @@ public final class GemScreen extends MiniGameScreen {
     }
     
     private final static TileMapImage getImage(final int color, final int type) {
-        final int row = color/ 2, col = color % 2, rowOff, colOff = 0;
+        final int row = color / 2, col = color % 2, rowOff, colOff = 0;
         rowOff = (type == TYPE_NORMAL) ? 0 : 1;
         return imgMap[row * 3 + rowOff][col * 4 + colOff];
     }
