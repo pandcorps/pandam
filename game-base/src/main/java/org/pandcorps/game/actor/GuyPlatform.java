@@ -58,4 +58,58 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
             setMirror(v < 0);
         }
     }
+    
+    protected final boolean addX(final int v) {
+        if (v == 0) {
+            setMirror(hv);
+            return true; // No movement, but request was successful
+        }
+        setMirror((hv == 0) ? v : hv);
+        final int mult;
+        final Panple pos = getPosition();
+        if (v > 0) {
+            mult = 1;
+            if (pos.getX() > getLayer().getSize().getX()) {
+                onEnd();
+                return false;
+            }
+        } else {
+            mult = -1;
+            if (pos.getX() <= 0) {
+                return false;
+            }
+        }
+        final int n = v * mult;
+        final int offWall = (OFF_X + 1) * mult;
+        for (int i = 0; i < n; i++) {
+            if (onHorizontal(mult)) {
+                return true; // onHorizontal ran successfully
+            }
+            boolean down = true;
+            if (isWall(offWall, 0)) {
+                if (isWall(offWall, 1)) {
+                    return false;
+                }
+                pos.addY(1);
+                down = false;
+            }
+            if (down && !isWall(offWall, -1) && isWall(offWall, -2)) {
+                pos.addY(-1);
+            }
+            pos.addX(mult);
+        }
+        return true;
+    }
+    
+    //
+    
+    protected abstract boolean isWall(final int off, final int yoff);
+    
+    protected abstract boolean onHorizontal(final int off);
+    
+    protected abstract boolean onAir();
+    
+    protected abstract void onWall();
+    
+    protected abstract void onEnd();
 }
