@@ -2997,7 +2997,7 @@ public class Level {
         protected final void build() {
             final int h = Mathtil.randi(2, 3);
             final int base = floor + 3 + floatOffset;
-            final int lx = Mathtil.randi(1, w - 2), ly = Mathtil.randi(1, h - 1);
+            final int lx = Mathtil.randi(1, w - 2), ly = h - 1;
             for (int i = 0; i < w; i++) {
                 final boolean letterRow = i == lx;
                 final int col = x + i;
@@ -4176,11 +4176,33 @@ public class Level {
     }
     
     private final static void quadVerticalL(final int x, final int y) {
-        //TODO
+        final int x1, xFull;
+        if (Mathtil.rand()) {
+            x1 = x;
+            xFull = x + 1;
+        } else {
+            x1 = x + 1;
+            xFull = x;
+        }
+        for (int j = 0; j < 3; j++) {
+            breakableBlockForce(xFull, y + j);
+        }
+        breakableBlockForce(x1, y + (Mathtil.rand() ? 0 : 2));
     }
     
     private final static void quadVerticalS(final int x, final int y) {
-        //TODO
+        final int yLeft, yRight;
+        if (Mathtil.rand()) {
+            yLeft = y;
+            yRight = y + 1;
+        } else {
+            yLeft = y + 1;
+            yRight = y;
+        }
+        for (int j = 0; j < 2; j++) {
+            breakableBlockForce(x, yLeft + j);
+            breakableBlockForce(x + 1, yRight + j);
+        }
     }
     
     private final static void quadVerticalT(final int x, final int y) {
@@ -4199,7 +4221,18 @@ public class Level {
     }
     
     private final static void quadL(final int x, final int y) {
-        //TODO
+        final int y1, yFull;
+        if (Mathtil.rand()) {
+            y1 = y;
+            yFull = y + 1;
+        } else {
+            y1 = y + 1;
+            yFull = y;
+        }
+        for (int i = 0; i < 3; i++) {
+            breakableBlockForce(x + i, yFull);
+        }
+        breakableBlockForce(x + (Mathtil.rand() ? 0 : 2), y1);
     }
     
     private final static void quadS(final int x, final int y) {
