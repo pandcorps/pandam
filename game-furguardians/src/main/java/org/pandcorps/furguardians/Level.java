@@ -2840,6 +2840,7 @@ public class Level {
                     quadHorizontal(x, y);
                     break;
             }
+            enemyFloor();
         }
         
         @Override
@@ -3302,6 +3303,17 @@ public class Level {
     		blockWall(x + w - 1, base, 1, 2);
     		enemy(Mathtil.rand() ? FurGuardiansGame.trollColossus : FurGuardiansGame.ogreBehemoth, x + 5, base);
     	}
+    }
+    
+    private final static class EnemyPackTemplate extends SimpleTemplate {
+        protected EnemyPackTemplate() {
+            super(7, 9, 0);
+        }
+        
+        @Override
+        protected final void build() {
+            //TODO Solid block on each end, (w - 4) enemies in middle
+        }
     }
     
     private final static void extractSkyColors(final Img img) {
@@ -4172,7 +4184,18 @@ public class Level {
     }
     
     private final static void quadVerticalT(final int x, final int y) {
-        //TODO
+        final int xMiddle, xFull;
+        if (Mathtil.rand()) {
+            xMiddle = x;
+            xFull = x + 1;
+        } else {
+            xMiddle = x + 1;
+            xFull = x;
+        }
+        for (int j = 0; j < 3; j++) {
+            breakableBlockForce(xFull, y + j);
+        }
+        breakableBlockForce(xMiddle, y + 1);
     }
     
     private final static void quadL(final int x, final int y) {
@@ -4180,7 +4203,18 @@ public class Level {
     }
     
     private final static void quadS(final int x, final int y) {
-        //TODO
+        final int xLow, xHigh;
+        if (Mathtil.rand()) {
+            xLow = x;
+            xHigh = x + 1;
+        } else {
+            xLow = x + 1;
+            xHigh = x;
+        }
+        for (int i = 0; i < 2; i++) {
+            breakableBlockForce(xLow + i, y);
+            breakableBlockForce(xHigh + i, y + 1);
+        }
     }
     
     private final static void quadT(final int x, final int y) {
