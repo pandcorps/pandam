@@ -25,6 +25,7 @@ package org.pandcorps.game.actor;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.impl.*;
+import org.pandcorps.pandax.tile.*;
 
 public abstract class GuyPlatform extends Panctor implements StepListener, Collidable {
     public final static int MAX_V = 10;
@@ -115,6 +116,86 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
         return hv;
     }
     
+    @Override
+    public final void onStep(final StepEvent event) {
+        if (onStepCustom()) {
+            onStepEnd();
+            return;
+        }
+        
+        final Panple pos = getPosition();
+        if (isNearCheckNeeded()) {
+            final TileMap tm = getTileMap();
+            final float x = pos.getX() + getOffLeft(), y = pos.getY();
+            for (int i = -1; i < 3; i++) {
+                final float xn = x + (16 * i);
+                for (int j = -1; j < 3; j++) {
+                    onNear(tm.getContainer(xn, y + (16 * j)));
+                }
+            }
+        }
+        final int offSol, mult, n;
+        if (v > 0) {
+            offSol = OFF_BUTTING;
+            mult = 1;
+        } else {
+            offSol = OFF_GROUNDED;
+            mult = -1;
+        }
+        n = Math.round(v * mult);
+        for (int i = 0; i < n; i++) {
+            final int t = getSolid(offSol);
+            if (t != -1) {
+                if (v > 0) {
+                    onBump(t);
+                    v = 0;
+                } else {
+                    onLanded();
+                }
+                break;
+            }
+            pos.addY(mult);
+            final float y = pos.getY();
+            if (y < MIN_Y) {
+                pos.setY(MIN_Y);
+                v = 0;
+                if (onFell()) {
+                    return;
+                }
+                break;
+            } else {
+                final float max = getCeiling();
+                if (y >= max) {
+                    pos.setY(max - 1);
+                    v = 0;
+                    break;
+                }
+            }
+        }
+        
+        if (!addX(initCurrentHorizontalVelocity())) {
+            onWall();
+            chv = 0;
+        }
+        
+        onStepping();
+        if (isGrounded()) {
+            onGrounded();
+        } else {
+            if (!onAir()) {
+                addV(getG());
+            }
+        }
+        
+        checkScrolled();
+        
+        onStepEnd();
+    }
+    
+    //
+    
+    protected abstract TileMap getTileMap();
+    
     //
     
     protected abstract boolean isWall(final int off, final int yoff);
@@ -126,4 +207,36 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
     protected abstract void onWall();
     
     protected abstract void onEnd();
+    
+    protected abstract boolean onStepCustom();
+    
+    protected abstract void onStepping();
+    
+    protected abstract void onScrolled();
+    
+    protected abstract void onStepEnd();
+    
+    protected abstract void onGrounded();
+    
+    protected abstract boolean isGrounded();
+    
+    protected abstract float getG();
+    
+    protected abstract void checkScrolled();
+    
+    protected abstract void onBump(final int t);
+    
+    protected abstract void onLanded();
+    
+    protected abstract boolean isNearCheckNeeded();
+    
+    protected abstract boolean onFell();
+    
+    protected abstract int getOffLeft();
+    
+    protected abstract int getSolid(final int off);
+    
+    protected abstract void onNear(final int tile);
+    
+    protected abstract float getCeiling();
 }

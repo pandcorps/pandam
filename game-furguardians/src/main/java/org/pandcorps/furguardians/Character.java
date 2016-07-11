@@ -25,88 +25,11 @@ package org.pandcorps.furguardians;
 import org.pandcorps.game.actor.*;
 import org.pandcorps.game.core.*;
 import org.pandcorps.pandam.*;
-import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandax.tile.*;
 
 public abstract class Character extends GuyPlatform {
 	protected Character(final int offX, final int h) {
 		super(offX, h);
-	}
-	
-	@Override
-	public final void onStep(final StepEvent event) {
-		if (onStepCustom()) {
-			onStepEnd();
-			return;
-		}
-		
-		final Panple pos = getPosition();
-		if (isNearCheckNeeded()) {
-			final TileMap tm = Level.tm;
-			final float x = pos.getX() + getOffLeft(), y = pos.getY();
-			for (int i = -1; i < 3; i++) {
-				final float xn = x + (16 * i);
-				for (int j = -1; j < 3; j++) {
-					onNear(tm.getContainer(xn, y + (16 * j)));
-				}
-			}
-		}
-		final int offSol, mult, n;
-		if (v > 0) {
-			offSol = OFF_BUTTING;
-			mult = 1;
-		} else {
-			offSol = OFF_GROUNDED;
-			mult = -1;
-		}
-		n = Math.round(v * mult);
-		for (int i = 0; i < n; i++) {
-		    final int t = getSolid(offSol);
-			if (t != -1) {
-			    if (v > 0) {
-			        Tiles.bump(this, t);
-			        v = 0;
-			    } else {
-			        onLanded();
-			    }
-				break;
-			}
-			pos.addY(mult);
-			final float y = pos.getY();
-			if (y < MIN_Y) {
-			    pos.setY(MIN_Y);
-				v = 0;
-				if (onFell()) {
-					return;
-				}
-				break;
-			} else {
-			    final float max = getCeiling();
-			    if (y >= max) {
-    			    pos.setY(max - 1);
-    			    v = 0;
-    			    break;
-			    }
-			}
-		}
-		
-		if (!addX(initCurrentHorizontalVelocity())) {
-			onWall();
-			chv = 0;
-		}
-		
-		onStepping();
-		if (isGrounded()) {
-			onGrounded();
-		} else {
-			if (!onAir()) {
-				addV(getG());
-			}
-		}
-		
-		checkScrolled();
-		
-		onStepEnd();
 	}
 	
 	protected final void checkScrolled() {
@@ -140,7 +63,7 @@ public abstract class Character extends GuyPlatform {
 		return isMirror() ? (OFF_X + 1) : OFF_X;
 	}
 	
-	private int getSolid(final int off) {
+	protected int getSolid(final int off) {
 		final TileMap tm = Level.tm;
 		final Panple pos = getPosition();
 		final float x = pos.getX(), y = pos.getY() + off, x1 = x + getOffLeft(), x2 = x + getOffRight();
@@ -342,6 +265,10 @@ public abstract class Character extends GuyPlatform {
 	protected void onGrounded() {
 	}
 	
+	protected void onBump(final int t) {
+	    Tiles.bump(this, t);
+	}
+	
 	protected void onLanded() {
 	    v = 0;
 	}
@@ -369,4 +296,9 @@ public abstract class Character extends GuyPlatform {
 	}
 	
 	protected abstract boolean onFell();
+	
+	@Override
+	protected final TileMap getTileMap() {
+        return Level.tm;
+    }
 }
