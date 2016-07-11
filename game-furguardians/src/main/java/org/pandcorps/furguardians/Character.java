@@ -33,20 +33,6 @@ public abstract class Character extends GuyPlatform {
 		super(offX, h);
 	}
 	
-	protected final void addV(final float a) {
-	    v += a;
-	    if (a > 0 && v > MAX_V) {
-	        v = MAX_V;
-	    } else if (v < -MAX_V) {
-	        v = -MAX_V;
-	    }
-	}
-	
-	protected int initCurrentHorizontalVelocity() {
-		chv = hv;
-		return hv;
-	}
-	
 	@Override
 	public final void onStep(final StepEvent event) {
 		if (onStepCustom()) {

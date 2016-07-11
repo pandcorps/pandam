@@ -101,6 +101,20 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
         return true;
     }
     
+    protected final void addV(final float a) {
+        v += a;
+        if (a > 0 && v > MAX_V) {
+            v = MAX_V;
+        } else if (v < -MAX_V) {
+            v = -MAX_V;
+        }
+    }
+    
+    protected int initCurrentHorizontalVelocity() {
+        chv = hv;
+        return hv;
+    }
+    
     //
     
     protected abstract boolean isWall(final int off, final int yoff);
