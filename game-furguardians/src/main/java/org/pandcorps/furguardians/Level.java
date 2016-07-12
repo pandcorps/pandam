@@ -140,6 +140,7 @@ public class Level {
     protected static List<Panctor> collectedLetters = null;
     protected static List<Panctor> uncollectedLetters = null;
     private static int farthestColumn = 0;
+    private static boolean goalLocked = false;
     protected static boolean victory = false;
     
     static {
@@ -931,6 +932,7 @@ public class Level {
         currLetter = 0;
         Coltil.clear(collectedLetters);
         farthestColumn = 0;
+        goalLocked = false;
     }
     
     protected final static void loadLevel() {
@@ -3885,8 +3887,25 @@ public class Level {
     }
     
     private final static void goalBlock(final int x, final int y) {
+        if (goalLocked) {
+            havocLockBlock(x, y);
+            return;
+        }
         goalIndex = tm.getIndex(x, y);
+        goalBlock();
+    }
+    
+    private final static void goalBlock() {
         tm.setForeground(goalIndex, imgMap[7][0], FurGuardiansGame.TILE_BUMP);
+    }
+    
+    private final static void havocLockBlock(final int x, final int y) {
+        goalIndex = tm.getIndex(x, y);
+        tm.setForeground(goalIndex, FurGuardiansGame.blockHavocLock, Tile.BEHAVIOR_SOLID);
+    }
+    
+    private final static void unlockGoal() {
+        goalBlock();
     }
     
     private final static void step(final int x, final int y, final int w, final int h) {
