@@ -32,16 +32,6 @@ public abstract class Character extends GuyPlatform {
 		super(offX, h);
 	}
 	
-	protected boolean isSlope(final int index, final float left, final float right, final float y) {
-		// isSolid will check for non-slopes, could cut straight to slope logic
-	    final Tile tile = Level.tm.getTile(index);
-		if (tile == null) {
-		    return false;
-		}
-		final int b = tile.getBehavior();
-		return (b == FurGuardiansGame.TILE_UPSLOPE || b == FurGuardiansGame.TILE_DOWNSLOPE || b == FurGuardiansGame.TILE_UPSLOPE_FLOOR || b == FurGuardiansGame.TILE_DOWNSLOPE_FLOOR) && isSolid(index, left, right, y);
-	}
-	
 	protected boolean isSolid(final int index, final float left, final float right, final float y) {
 		return isSolid(index, false, left, right, y);
 	}

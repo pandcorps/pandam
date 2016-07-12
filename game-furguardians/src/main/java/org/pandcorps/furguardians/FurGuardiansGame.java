@@ -459,6 +459,7 @@ public class FurGuardiansGame extends BaseGame {
 	    engine.setEntityMapEnabled(false);
 	    Imtil.onlyResources = true;
 		FurGuardiansGame.room = room;
+		initTileBehaviors();
 		loadConstants();
 		Panscreen.set(new LogoScreen(TitleScreen.class, loaders));
 	}
@@ -1300,6 +1301,13 @@ public class FurGuardiansGame extends BaseGame {
         zoomMag = Config.zoomMag;
         Config.setMusicEnabled(cfg.getBoolean(3, Config.DEF_MUSIC_ENABLED));
         Config.setSoundEnabled(cfg.getBoolean(4, Config.DEF_SOUND_ENABLED));
+	}
+	
+	private final static void initTileBehaviors() {
+	    Character.TILE_UPSLOPE = TILE_UPSLOPE;
+	    Character.TILE_DOWNSLOPE = TILE_DOWNSLOPE;
+	    Character.TILE_UPSLOPE_FLOOR = TILE_UPSLOPE_FLOOR;
+	    Character.TILE_DOWNSLOPE_FLOOR = TILE_DOWNSLOPE_FLOOR;
 	}
 	
 	private final static void loadConstants() throws Exception {
