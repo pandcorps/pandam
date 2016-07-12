@@ -33,6 +33,7 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
     public final static int MIN_Y = -12;
     public final static float g = -0.65f;
     public final static float gFlying = -0.38f;
+    protected static boolean sandSolid = true;
     public final int H;
     public final int OFF_GROUNDED = -1;
     public final int OFF_BUTTING;
@@ -246,6 +247,51 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
         return -1;
     }
     
+    protected boolean isWall(final int off, final int yoff) {
+        final Panple pos = getPosition();
+        final float px = pos.getX(), f = px + off, y = pos.getY() + yoff;
+        final float left, right, b, top = y + H - 1;
+        if (off > 0) {
+            right = f;
+            left = px - OFF_X;
+            b = left;
+        } else {
+            left = f;
+            right = px + OFF_X;
+            b = right;
+        }
+        boolean sol = false;
+        int t = -1;
+        final TileMap tm = getTileMap();
+        for (int i = 0; true; i += 16) {
+            float yi = y + i;
+            final boolean done = yi >= top;
+            if (done) {
+                yi = top;
+            }
+            final int temp = tm.getContainer(f, yi);
+            if (temp != t) {
+                t = temp;
+                onCollide(t);
+                sandSolid = false;
+                if (!sol && isSolid(t, left, right, y)) {
+                    sol = true;
+                }
+                sandSolid = true;
+            }
+            if (done) {
+                break;
+            }
+        }
+        if (sol) {
+            return true;
+        } else if (yoff < 0) {
+            final int t3 = tm.getContainer(b, y), t4 = tm.getContainer(b, top);
+            return isSlope(t3, left, right, y) || isSlope(t4, left, right, y);
+        }
+        return false;
+    }
+    
     //
     
     protected abstract void onBump(final int t);
@@ -253,8 +299,6 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
     protected abstract TileMap getTileMap();
     
     //
-    
-    protected abstract boolean isWall(final int off, final int yoff);
     
     protected abstract boolean onHorizontal(final int off);
     
@@ -284,5 +328,9 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
     
     protected abstract void onCollide(final int tile);
     
+    protected abstract boolean isSolid(final int index, final float left, final float right, final float y);
+    
     protected abstract boolean isSolid(final int index, final boolean floor, final float left, final float right, final float y);
+    
+    protected abstract boolean isSlope(final int index, final float left, final float right, final float y);
 }

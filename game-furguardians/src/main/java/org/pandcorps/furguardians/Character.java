@@ -32,56 +32,7 @@ public abstract class Character extends GuyPlatform {
 		super(offX, h);
 	}
 	
-	protected boolean isWall(final int off, final int yoff) {
-        final Panple pos = getPosition();
-        final float px = pos.getX(), f = px + off, y = pos.getY() + yoff;
-        final float left, right, b, top = y + H - 1;
-        if (off > 0) {
-        	right = f;
-        	left = px - OFF_X;
-        	b = left;
-        } else {
-        	left = f;
-        	right = px + OFF_X;
-        	b = right;
-        }
-        boolean sol = false;
-        int t = -1;
-        for (int i = 0; true; i += 16) {
-        	float yi = y + i;
-        	final boolean done = yi >= top;
-        	if (done) {
-        		yi = top;
-        	}
-	        final int temp = Level.tm.getContainer(f, yi);
-	        if (temp != t) {
-	        	t = temp;
-		        onCollide(t);
-		        sandSolid = false;
-		        if (!sol && isSolid(t, left, right, y)) {
-		        	sol = true;
-		        }
-		        sandSolid = true;
-		        
-		        /*if (!sol && yoff < 0) {
-		        	final Tile tb = FurGuardiansGame.tm.getContainer(b, yi);
-		        	sol = isSlope(tb, left, right, y);
-		        }*/
-	        }
-	        if (done) {
-	        	break;
-	        }
-        }
-        if (sol) {
-        	return true;
-        } else if (yoff < 0) {
-        	final int t3 = Level.tm.getContainer(b, y), t4 = Level.tm.getContainer(b, top);
-        	return isSlope(t3, left, right, y) || isSlope(t4, left, right, y);
-        }
-        return false;
-    }
-	
-	private boolean isSlope(final int index, final float left, final float right, final float y) {
+	protected boolean isSlope(final int index, final float left, final float right, final float y) {
 		// isSolid will check for non-slopes, could cut straight to slope logic
 	    final Tile tile = Level.tm.getTile(index);
 		if (tile == null) {
@@ -91,11 +42,9 @@ public abstract class Character extends GuyPlatform {
 		return (b == FurGuardiansGame.TILE_UPSLOPE || b == FurGuardiansGame.TILE_DOWNSLOPE || b == FurGuardiansGame.TILE_UPSLOPE_FLOOR || b == FurGuardiansGame.TILE_DOWNSLOPE_FLOOR) && isSolid(index, left, right, y);
 	}
 	
-	private boolean isSolid(final int index, final float left, final float right, final float y) {
+	protected boolean isSolid(final int index, final float left, final float right, final float y) {
 		return isSolid(index, false, left, right, y);
 	}
-	
-	private static boolean sandSolid = true;
 	
 	protected boolean isSolid(final int index, final boolean floor, final float left, final float right, final float y) {
 	    final TileMap map = Level.tm;
@@ -114,12 +63,6 @@ public abstract class Character extends GuyPlatform {
 		final float top = y + H - 1, yoff = y - getPosition().getY();
 		final int iy = (int) y, curHeight = iy % ImtilX.DIM;
 		if (b == FurGuardiansGame.TILE_UPSLOPE || (yoff <= 0 && b == FurGuardiansGame.TILE_UPSLOPE_FLOOR)) {
-			//if (v <= 0) {
-			//final Panple pos = getPosition();
-            // trunc/round should match getContainer
-			//if (right > tile.getPosition().getX() + tile.getMap().getTileWidth()) {
-			//	return false;
-			//}
 			if (map.getContainer(right, y) != index) {
 				if (b == FurGuardiansGame.TILE_UPSLOPE_FLOOR && curHeight != 15) {
 					return false;
@@ -140,7 +83,6 @@ public abstract class Character extends GuyPlatform {
 			}
             final int minHeight = (int) right % ImtilX.DIM;
             return (b == FurGuardiansGame.TILE_UPSLOPE_FLOOR) ? (curHeight == minHeight) : (curHeight <= minHeight);
-			//}
 		} else if (b == FurGuardiansGame.TILE_DOWNSLOPE || (yoff <= 0 && b == FurGuardiansGame.TILE_DOWNSLOPE_FLOOR)) {
             if (map.getContainer(left, y) != index) {
             	if (b == FurGuardiansGame.TILE_DOWNSLOPE_FLOOR && curHeight != 15) {
