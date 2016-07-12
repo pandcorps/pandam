@@ -3312,7 +3312,15 @@ public class Level {
         
         @Override
         protected final void build() {
-            //TODO Solid block on each end, (w - 4) enemies in middle
+            builder.flatten(x, w);
+            final int base = floor + 1 + floatOffset;
+            solidBlock(x, base);
+            final int n = w - 4;
+            final EnemyDefinition def = null; //TODO
+            for (int i = 0; i < n; i++) {
+                enemy(def, x + 2 + i, base);
+            }
+            solidBlock(x + w - 1, base);
         }
     }
     
