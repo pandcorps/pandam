@@ -104,6 +104,8 @@ public class Text {
     /*package*/ final static String NAME_EMPTY = get("Name.Empty", "Must have a name");
     /*package*/ final static String NAME_DUPLICATE = get("Name.Duplicate", "Name already used");
     
+    /*package*/ final static String DELETE_WARN = get("Delete.Warn", "Press Erase again to confirm");
+    
     /*package*/ final static String ASSISTS_NOTE = get("Assists.Note", "Can equip multiple");
     /*package*/ final static String BIRD_NOTE = get("Bird.Note", "Can collect Gems");
     /*package*/ final static String POWER_UP_NOTE = get("PowerUp.Note", "Equip one at a time");

@@ -58,7 +58,6 @@ public class Menu {
     private final static short SPEED_MENU_FADE = 9;
     private final static int SIZE_FONT = 8;
     protected final static String NAME_NEW = "org.pandcorps.new";
-    private final static String WARN_DELETE = "Press Erase again to confirm";
     private final static String INFO_SAVED = "Saved images";
     private final static String LABEL_COLOR = Text.MAIN;
     private final static String LABEL_COLOR2 = Text.OTHER;
@@ -1804,8 +1803,8 @@ public class Menu {
 		private final void delete() {
 			if (getAvatarsSize() <= 1) {
             	return;
-            } else if (!inf.toString().equals(WARN_DELETE)) {
-            	setInfo(WARN_DELETE);
+            } else if (!inf.toString().equals(Text.DELETE_WARN)) {
+            	setInfo(Text.DELETE_WARN);
             	return;
             }
             clearInfo();
