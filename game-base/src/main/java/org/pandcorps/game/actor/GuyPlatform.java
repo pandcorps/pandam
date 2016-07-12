@@ -192,7 +192,40 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
         onStepEnd();
     }
     
+    protected final void checkScrolled() {
+        if (!isInView()) {
+            onScrolled();
+        }
+    }
+    
+    protected float getG() {
+        return g;
+    }
+    
+    protected final float getCeiling() {
+        return getLayer().getSize().getY() + 4 - H;
+    }
+    
+    public boolean isGrounded() {
+        // v == 0 so that jumping through floor doesn't cause big jump
+        return v == 0 && isSolid(OFF_GROUNDED);
+    }
+    
+    private boolean isSolid(final int off) {
+        return getSolid(off) != -1;
+    }
+    
+    protected final int getOffLeft() {
+        return isMirror() ? -OFF_X : (-OFF_X - 1);
+    }
+    
+    protected final int getOffRight() {
+        return isMirror() ? (OFF_X + 1) : OFF_X;
+    }
+    
     //
+    
+    protected abstract void onBump(final int t);
     
     protected abstract TileMap getTileMap();
     
@@ -218,25 +251,13 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
     
     protected abstract void onGrounded();
     
-    protected abstract boolean isGrounded();
-    
-    protected abstract float getG();
-    
-    protected abstract void checkScrolled();
-    
-    protected abstract void onBump(final int t);
-    
     protected abstract void onLanded();
     
     protected abstract boolean isNearCheckNeeded();
     
     protected abstract boolean onFell();
     
-    protected abstract int getOffLeft();
-    
     protected abstract int getSolid(final int off);
     
     protected abstract void onNear(final int tile);
-    
-    protected abstract float getCeiling();
 }

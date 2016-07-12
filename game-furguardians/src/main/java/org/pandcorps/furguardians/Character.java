@@ -32,37 +32,6 @@ public abstract class Character extends GuyPlatform {
 		super(offX, h);
 	}
 	
-	protected final void checkScrolled() {
-		if (!isInView()) {
-			onScrolled();
-		}
-	}
-	
-	protected float getG() {
-		return g;
-	}
-	
-	protected final float getCeiling() {
-		return FurGuardiansGame.room.getSize().getY() + 4 - H;
-	}
-	
-	protected boolean isGrounded() {
-		// v == 0 so that jumping through floor doesn't cause big jump
-		return v == 0 && isSolid(OFF_GROUNDED);
-	}
-	
-	private boolean isSolid(final int off) {
-	    return getSolid(off) != -1;
-	}
-	
-	protected final int getOffLeft() {
-		return isMirror() ? -OFF_X : (-OFF_X - 1);
-	}
-	
-	protected final int getOffRight() {
-		return isMirror() ? (OFF_X + 1) : OFF_X;
-	}
-	
 	protected int getSolid(final int off) {
 		final TileMap tm = Level.tm;
 		final Panple pos = getPosition();
@@ -265,7 +234,8 @@ public abstract class Character extends GuyPlatform {
 	protected void onGrounded() {
 	}
 	
-	protected void onBump(final int t) {
+	@Override
+	protected final void onBump(final int t) {
 	    Tiles.bump(this, t);
 	}
 	
