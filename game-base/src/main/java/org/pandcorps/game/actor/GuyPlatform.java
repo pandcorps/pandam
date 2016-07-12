@@ -22,6 +22,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.game.actor;
 
+import org.pandcorps.game.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.impl.*;
@@ -223,6 +224,28 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
         return isMirror() ? (OFF_X + 1) : OFF_X;
     }
     
+    protected int getSolid(final int off) {
+        final TileMap tm = getTileMap();
+        final Panple pos = getPosition();
+        final float x = pos.getX(), y = pos.getY() + off, x1 = x + getOffLeft(), x2 = x + getOffRight();
+        // Interesting glitch if breakpoint here
+        int t1 = tm.getContainer(x1, y), t2 = tm.getContainer(x2, y);
+        if (t2 == tm.getContainer(x, y)) {
+            final int t = t1;
+            t1 = t2;
+            t2 = t;
+        }
+        onCollide(t1);
+        onCollide(t2);
+        final boolean floor = off < 0 && (Math.round(y) % ImtilX.DIM == 15);
+        if (isSolid(t1, floor, x1, x2, y)) {
+            return t1;
+        } else if (isSolid(t2, floor, x1, x2, y)) {
+            return t2;
+        }
+        return -1;
+    }
+    
     //
     
     protected abstract void onBump(final int t);
@@ -257,7 +280,9 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
     
     protected abstract boolean onFell();
     
-    protected abstract int getSolid(final int off);
-    
     protected abstract void onNear(final int tile);
+    
+    protected abstract void onCollide(final int tile);
+    
+    protected abstract boolean isSolid(final int index, final boolean floor, final float left, final float right, final float y);
 }

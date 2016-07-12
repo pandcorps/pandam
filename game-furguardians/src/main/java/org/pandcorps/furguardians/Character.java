@@ -32,28 +32,6 @@ public abstract class Character extends GuyPlatform {
 		super(offX, h);
 	}
 	
-	protected int getSolid(final int off) {
-		final TileMap tm = Level.tm;
-		final Panple pos = getPosition();
-		final float x = pos.getX(), y = pos.getY() + off, x1 = x + getOffLeft(), x2 = x + getOffRight();
-		// Interesting glitch if breakpoint here
-		int t1 = tm.getContainer(x1, y), t2 = tm.getContainer(x2, y);
-		if (t2 == tm.getContainer(x, y)) {
-		    final int t = t1;
-		    t1 = t2;
-		    t2 = t;
-		}
-		onCollide(t1);
-		onCollide(t2);
-		final boolean floor = off < 0 && (Math.round(y) % ImtilX.DIM == 15);
-		if (isSolid(t1, floor, x1, x2, y)) {
-		    return t1;
-		} else if (isSolid(t2, floor, x1, x2, y)) {
-		    return t2;
-		}
-		return -1;
-	}
-	
 	protected boolean isWall(final int off, final int yoff) {
         final Panple pos = getPosition();
         final float px = pos.getX(), f = px + off, y = pos.getY() + yoff;
@@ -119,7 +97,7 @@ public abstract class Character extends GuyPlatform {
 	
 	private static boolean sandSolid = true;
 	
-	private boolean isSolid(final int index, final boolean floor, final float left, final float right, final float y) {
+	protected boolean isSolid(final int index, final boolean floor, final float left, final float right, final float y) {
 	    final TileMap map = Level.tm;
 	    final Tile tile = map.getTile(index);
 		if (tile == null) {
