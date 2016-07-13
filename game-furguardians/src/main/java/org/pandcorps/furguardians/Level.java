@@ -1767,6 +1767,24 @@ public class Level {
         }
     }
     
+    private final static class QuadBuilder extends GrassyBuilder {
+        @Override
+        protected final void loadTemplates() {
+            templates.add(new QuadTemplate());
+            addNormalGoals();
+        }
+        
+        @Override
+        protected final void loadLetterTemplates() {
+            addTinyLetterTemplate();
+        }
+        
+        @Override
+        protected final Template getPitTemplate() {
+            return new PitTemplate();
+        }
+    }
+    
     private static class FlatBuilder extends GrassyBuilder {
     	@Override
 	    protected final void loadTemplates() {
