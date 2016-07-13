@@ -132,6 +132,11 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
             return;
         }
         
+        // onStepCustom might destroy or detach
+        if (getLayer() == null) {
+            return;
+        }
+        
         final Panple pos = getPosition();
         if (isNearCheckNeeded()) {
             final TileMap tm = getTileMap();

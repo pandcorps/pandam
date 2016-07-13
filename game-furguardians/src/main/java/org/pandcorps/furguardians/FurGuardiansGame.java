@@ -289,6 +289,12 @@ public class FurGuardiansGame extends BaseGame {
 	protected static EnemyDefinition rockTrio = null;
 	protected static EnemyDefinition rockLeg = null;
 	protected static Panmage rockBack = null;
+	protected static Panmage netherCube1 = null;
+	protected static Panmage netherCube2 = null;
+	protected static Panmage netherCube3 = null;
+	protected static Panframe netherCubeMirror1 = null;
+    protected static Panframe netherCubeMirror2 = null;
+    protected static Panframe netherCubeMirror3 = null;
 	protected static Panimation anger = null;
 	protected static Panmage block8 = null;
 	protected static Panmage blockLetter8 = null;
@@ -1626,6 +1632,13 @@ public class FurGuardiansGame extends BaseGame {
 			rockLeg = new EnemyDefinition("Rock Leg", 16, null, false, false, 0, Enemy.DEFAULT_X, Enemy.DEFAULT_H, 3);
 			rockLeg.rewardHandler = rockTrio.rewardHandler;
 			rockBack = createImage("rock.back", RES + "enemy/Enemy17.png", 16, rockO, Enemy.DEFAULT_MIN, Enemy.DEFAULT_MAX);
+			final Panmage[] netherCubeSheet = createSheet("nether.cube", RES + "enemy/Enemy18.png");
+			netherCube1 = netherCubeSheet[0];
+			netherCube2 = netherCubeSheet[1];
+			netherCube3 = netherCubeSheet[2];
+			netherCubeMirror1 = createMirror(netherCube1);
+			netherCubeMirror2 = createMirror(netherCube2);
+			netherCubeMirror3 = createMirror(netherCube3);
 			Level.initTheme(); }});
 		
 		loaders.add(new Runnable() { @Override public final void run() {
@@ -1877,6 +1890,10 @@ public class FurGuardiansGame extends BaseGame {
 	    	rockTrio.stompSound = soundArmor;
 	    	rockLeg.stompSound = soundArmor;
 	    	}});
+	}
+	
+	private final static Panframe createMirror(final Panmage img) {
+	    return Pangine.getEngine().createFrame(PRE_FRM + img.getId() + ".mirror", img, 1, 0, true, false);
 	}
 	
 	protected final static Img[] loadBlockLetterStrip() {

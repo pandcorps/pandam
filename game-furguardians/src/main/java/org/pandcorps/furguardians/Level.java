@@ -635,6 +635,17 @@ public class Level {
     		@Override protected final void addTemplates(final List<Template> templates) {
                 templates.add(new ChoiceTemplate(new BushTemplate(), new TreeTemplate()));
             }
+    		
+    		@Override protected final void addGoals(final List<GoalTemplate> goals) {
+    		    if (!isSpecialGoalRequired()) {
+    		        return;
+    		    }
+    		    goals.add(new NetherCubeBoss());
+            }
+    		
+    		@Override protected final boolean isSpecialGoalRequired() {
+    		    return isManualRun();
+    		}
     	};
     	
     	protected final String img;
@@ -725,6 +736,10 @@ public class Level {
         }
     	
     	protected void addGoals(final List<GoalTemplate> goals) {
+    	}
+    	
+    	protected boolean isSpecialGoalRequired() {
+    	    return false;
     	}
     }
     
@@ -1058,6 +1073,21 @@ public class Level {
         new Enemy(def, 360, 16);
     }
     
+    protected final static boolean isManualRun() {
+        if (Coltil.isEmpty(FurGuardiansGame.pcs)) {
+            return false;
+        }
+        for (final PlayerContext pc : FurGuardiansGame.pcs) {
+            final Profile prf = PlayerContext.getProfile(pc);
+            if (prf == null) {
+                return false;
+            } else if (prf.autoRun) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
     private static int bx;
     private static int px;
     
@@ -1115,21 +1145,6 @@ public class Level {
                 letterTemplates.add(new BreakLetterTemplate());
                 letterTemplates.add(new FloatingEnclosedLetterTemplate());
             }
-        }
-        
-        protected final boolean isManualRun() {
-            if (Coltil.isEmpty(FurGuardiansGame.pcs)) {
-                return false;
-            }
-            for (final PlayerContext pc : FurGuardiansGame.pcs) {
-                final Profile prf = PlayerContext.getProfile(pc);
-                if (prf == null) {
-                    return false;
-                } else if (prf.autoRun) {
-                    return false;
-                }
-            }
-            return true;
         }
         
         protected final void addConstructedTemplates() {
@@ -1710,7 +1725,9 @@ public class Level {
 	        addTemplate(new SlantTemplate(true), new SlantTemplate(false));
 	        addGiantTemplate();
 	        theme.addTemplates(templates);
-	        addNormalGoals();
+	        if (!theme.isSpecialGoalRequired()) {
+	            addNormalGoals();
+	        }
 	        theme.addGoals(goals);
 	    }
     	
@@ -2365,6 +2382,20 @@ public class Level {
                 solidBlock(x + i, y);
             }
             goalBlock(x + 2, y + 3);
+        }
+    }
+    
+    private final static class NetherCubeBoss extends GoalTemplate {
+        @Override
+        protected int getWidth() {
+            //TODO 1-5 cubes (1-3 columns)
+            return 3;
+        }
+        
+        @Override
+        protected final void build() {
+            goalBlock(ng + 1, floor + 3);
+            netherCube(ng + 1, floor + 6);
         }
     }
     
@@ -3924,6 +3955,12 @@ public class Level {
     
     private final static void unlockGoal() {
         goalBlock();
+    }
+    
+    private final static void netherCube(final int x, final int y) {
+        tm.setForeground(x, y, FurGuardiansGame.netherCubeMirror1, FurGuardiansGame.TILE_BUMP);
+        numEnemies++;
+        //TODO Mirror to follow player, shoot projectiles
     }
     
     private final static void step(final int x, final int y, final int w, final int h) {
