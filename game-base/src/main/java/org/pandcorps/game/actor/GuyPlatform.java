@@ -33,10 +33,13 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
     public final static int MIN_Y = -12;
     public final static float g = -0.65f;
     public final static float gFlying = -0.38f;
+    public static byte TILE_FLOOR = -1;
     public static byte TILE_UPSLOPE = -1;
     public static byte TILE_DOWNSLOPE = -1;
     public static byte TILE_UPSLOPE_FLOOR = -1;
     public static byte TILE_DOWNSLOPE_FLOOR = -1;
+    public static byte TILE_ICE = -1;
+    public static byte TILE_SAND = -1;
     protected static boolean sandSolid = true;
     public final int H;
     public final int OFF_GROUNDED = -1;
@@ -310,11 +313,73 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
         return isSolid(index, false, left, right, y);
     }
     
+    protected boolean isSolid(final int index, final boolean floor, final float left, final float right, final float y) {
+        final TileMap map = getTileMap();
+        final Tile tile = map.getTile(index);
+        if (tile == null) {
+            return false;
+        } else if (tile.isSolid()) {
+            return true;
+        }
+        final byte b = tile.getBehavior();
+        if (isSolidBehavior(b) || b == TILE_ICE || (sandSolid && b == TILE_SAND) || (floor && b == TILE_FLOOR)) {
+            return true;
+        }
+        final float top = y + H - 1, yoff = y - getPosition().getY();
+        final int iy = (int) y, curHeight = iy % ImtilX.DIM;
+        if (b == TILE_UPSLOPE || (yoff <= 0 && b == TILE_UPSLOPE_FLOOR)) {
+            if (map.getContainer(right, y) != index) {
+                if (b == TILE_UPSLOPE_FLOOR && curHeight != 15) {
+                    return false;
+                } else if (map.getContainer(left, y) == index) {
+                    final int i = map.getColumn(index), j = map.getRow(index);
+                    return b != TILE_UPSLOPE_FLOOR || Tile.getBehavior(map.getTile(map.getRelative(i, j, 1, 1))) != TILE_UPSLOPE_FLOOR;
+                } else if (b == TILE_UPSLOPE_FLOOR) {
+                    return false;
+                }
+                for (int i = 0; true; i += 16) {
+                    final float t = top - i;
+                    if (t <= y) {
+                        return false;
+                    } else if (map.getContainer(left, t) == index || map.getContainer(right, t) == index) {
+                        return true;
+                    }
+                }
+            }
+            final int minHeight = (int) right % ImtilX.DIM;
+            return (b == TILE_UPSLOPE_FLOOR) ? (curHeight == minHeight) : (curHeight <= minHeight);
+        } else if (b == TILE_DOWNSLOPE || (yoff <= 0 && b == TILE_DOWNSLOPE_FLOOR)) {
+            if (map.getContainer(left, y) != index) {
+                if (b == TILE_DOWNSLOPE_FLOOR && curHeight != 15) {
+                    return false;
+                } else if (map.getContainer(right, y) == index) {
+                    final int i = map.getColumn(index), j = map.getRow(index);
+                    return b != TILE_DOWNSLOPE_FLOOR || Tile.getBehavior(map.getTile(map.getRelative(i, j, -1, 1))) != TILE_DOWNSLOPE_FLOOR;
+                } else if (b == TILE_DOWNSLOPE_FLOOR) {
+                    return false;
+                }
+                for (int i = 0; true; i += 16) {
+                    final float t = top - i;
+                    if (t <= y) {
+                        return false;
+                    } else if (map.getContainer(right, t) == index || map.getContainer(left, t) == index) {
+                        return true;
+                    }
+                }
+            }
+            final int minHeight = 15 - ((int) left % ImtilX.DIM);
+            return (b == TILE_DOWNSLOPE_FLOOR) ? (curHeight == minHeight) : (curHeight <= minHeight);
+        }
+        return false;
+    }
+    
     //
     
     protected abstract void onBump(final int t);
     
     protected abstract TileMap getTileMap();
+    
+    protected abstract boolean isSolidBehavior(final byte b);
     
     //
     
@@ -345,6 +410,4 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
     protected abstract void onNear(final int tile);
     
     protected abstract void onCollide(final int tile);
-    
-    protected abstract boolean isSolid(final int index, final boolean floor, final float left, final float right, final float y);
 }

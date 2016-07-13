@@ -23,75 +23,12 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.furguardians;
 
 import org.pandcorps.game.actor.*;
-import org.pandcorps.game.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandax.tile.*;
 
 public abstract class Character extends GuyPlatform {
 	protected Character(final int offX, final int h) {
 		super(offX, h);
-	}
-	
-	protected boolean isSolid(final int index, final boolean floor, final float left, final float right, final float y) {
-	    final TileMap map = Level.tm;
-	    final Tile tile = map.getTile(index);
-		if (tile == null) {
-			return false;
-		} else if (tile.isSolid()) {
-			return true;
-		}
-		final byte b = tile.getBehavior();
-		if (b == FurGuardiansGame.TILE_BREAK || b == FurGuardiansGame.TILE_BUMP ||
-				b == FurGuardiansGame.TILE_ICE || (sandSolid && b == FurGuardiansGame.TILE_SAND) ||
-				(floor && b == FurGuardiansGame.TILE_FLOOR)) {
-			return true;
-		}
-		final float top = y + H - 1, yoff = y - getPosition().getY();
-		final int iy = (int) y, curHeight = iy % ImtilX.DIM;
-		if (b == FurGuardiansGame.TILE_UPSLOPE || (yoff <= 0 && b == FurGuardiansGame.TILE_UPSLOPE_FLOOR)) {
-			if (map.getContainer(right, y) != index) {
-				if (b == FurGuardiansGame.TILE_UPSLOPE_FLOOR && curHeight != 15) {
-					return false;
-				} else if (map.getContainer(left, y) == index) {
-				    final int i = map.getColumn(index), j = map.getRow(index);
-					return b != FurGuardiansGame.TILE_UPSLOPE_FLOOR || Tile.getBehavior(map.getTile(map.getRelative(i, j, 1, 1))) != FurGuardiansGame.TILE_UPSLOPE_FLOOR;
-				} else if (b == FurGuardiansGame.TILE_UPSLOPE_FLOOR) {
-					return false;
-				}
-				for (int i = 0; true; i += 16) {
-					final float t = top - i;
-					if (t <= y) {
-						return false;
-					} else if (map.getContainer(left, t) == index || map.getContainer(right, t) == index) {
-						return true;
-					}
-				}
-			}
-            final int minHeight = (int) right % ImtilX.DIM;
-            return (b == FurGuardiansGame.TILE_UPSLOPE_FLOOR) ? (curHeight == minHeight) : (curHeight <= minHeight);
-		} else if (b == FurGuardiansGame.TILE_DOWNSLOPE || (yoff <= 0 && b == FurGuardiansGame.TILE_DOWNSLOPE_FLOOR)) {
-            if (map.getContainer(left, y) != index) {
-            	if (b == FurGuardiansGame.TILE_DOWNSLOPE_FLOOR && curHeight != 15) {
-					return false;
-				} else if (map.getContainer(right, y) == index) {
-				    final int i = map.getColumn(index), j = map.getRow(index);
-					return b != FurGuardiansGame.TILE_DOWNSLOPE_FLOOR || Tile.getBehavior(map.getTile(map.getRelative(i, j, -1, 1))) != FurGuardiansGame.TILE_DOWNSLOPE_FLOOR;
-				} else if (b == FurGuardiansGame.TILE_DOWNSLOPE_FLOOR) {
-					return false;
-				}
-            	for (int i = 0; true; i += 16) {
-					final float t = top - i;
-					if (t <= y) {
-						return false;
-					} else if (map.getContainer(right, t) == index || map.getContainer(left, t) == index) {
-						return true;
-					}
-				}
-            }
-            final int minHeight = 15 - ((int) left % ImtilX.DIM);
-            return (b == FurGuardiansGame.TILE_DOWNSLOPE_FLOOR) ? (curHeight == minHeight) : (curHeight <= minHeight);
-        }
-		return false;
 	}
 	
 	protected final void flipAndFall(final float v) {
@@ -176,5 +113,10 @@ public abstract class Character extends GuyPlatform {
 	@Override
 	protected final TileMap getTileMap() {
         return Level.tm;
+    }
+	
+	@Override
+	protected final boolean isSolidBehavior(final byte b) {
+        return b == FurGuardiansGame.TILE_BREAK || b == FurGuardiansGame.TILE_BUMP;
     }
 }

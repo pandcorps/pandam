@@ -1304,10 +1304,13 @@ public class FurGuardiansGame extends BaseGame {
 	}
 	
 	private final static void initTileBehaviors() {
+	    Character.TILE_FLOOR = TILE_FLOOR;
 	    Character.TILE_UPSLOPE = TILE_UPSLOPE;
 	    Character.TILE_DOWNSLOPE = TILE_DOWNSLOPE;
 	    Character.TILE_UPSLOPE_FLOOR = TILE_UPSLOPE_FLOOR;
 	    Character.TILE_DOWNSLOPE_FLOOR = TILE_DOWNSLOPE_FLOOR;
+	    Character.TILE_ICE = TILE_ICE;
+	    Character.TILE_SAND = TILE_SAND;
 	}
 	
 	private final static void loadConstants() throws Exception {
