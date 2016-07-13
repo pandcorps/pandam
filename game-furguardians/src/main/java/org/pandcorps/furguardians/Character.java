@@ -32,10 +32,6 @@ public abstract class Character extends GuyPlatform {
 		super(offX, h);
 	}
 	
-	protected boolean isSolid(final int index, final float left, final float right, final float y) {
-		return isSolid(index, false, left, right, y);
-	}
-	
 	protected boolean isSolid(final int index, final boolean floor, final float left, final float right, final float y) {
 	    final TileMap map = Level.tm;
 	    final Tile tile = map.getTile(index);

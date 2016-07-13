@@ -306,6 +306,10 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
         return (b == TILE_UPSLOPE || b == TILE_DOWNSLOPE || b == TILE_UPSLOPE_FLOOR || b == TILE_DOWNSLOPE_FLOOR) && isSolid(index, left, right, y);
     }
     
+    protected boolean isSolid(final int index, final float left, final float right, final float y) {
+        return isSolid(index, false, left, right, y);
+    }
+    
     //
     
     protected abstract void onBump(final int t);
@@ -341,8 +345,6 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
     protected abstract void onNear(final int tile);
     
     protected abstract void onCollide(final int tile);
-    
-    protected abstract boolean isSolid(final int index, final float left, final float right, final float y);
     
     protected abstract boolean isSolid(final int index, final boolean floor, final float left, final float right, final float y);
 }
