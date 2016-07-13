@@ -43,40 +43,6 @@ public abstract class Character extends GuyPlatform {
         actor.destroy();
     }
 	
-	//@OverrideMe
-	protected boolean onStepCustom() {
-		return false;
-	}
-	
-	//@OverrideMe
-	protected void onCollide(final int tile) {
-	}
-	
-	//@OverrideMe
-	protected boolean isNearCheckNeeded() {
-		return false;
-	}
-	
-	//@OverrideMe
-	protected void onNear(final int tile) {
-	}
-	
-	//@OverrideMe
-	protected void onStepping() {
-	}
-	
-	//@OverrideMe
-	protected void onScrolled() {
-	}
-	
-	//@OverrideMe
-	protected void onStepEnd() {
-	}
-	
-	//@OverrideMe
-	protected void onGrounded() {
-	}
-	
 	@Override
 	protected final void onBump(final int t) {
 	    Tiles.bump(this, t);

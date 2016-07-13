@@ -373,6 +373,40 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
         return false;
     }
     
+    //@OverrideMe
+    protected boolean onStepCustom() {
+        return false;
+    }
+    
+    //@OverrideMe
+    protected void onCollide(final int tile) {
+    }
+    
+    //@OverrideMe
+    protected boolean isNearCheckNeeded() {
+        return false;
+    }
+    
+    //@OverrideMe
+    protected void onNear(final int tile) {
+    }
+    
+    //@OverrideMe
+    protected void onStepping() {
+    }
+    
+    //@OverrideMe
+    protected void onScrolled() {
+    }
+    
+    //@OverrideMe
+    protected void onStepEnd() {
+    }
+    
+    //@OverrideMe
+    protected void onGrounded() {
+    }
+    
     //
     
     protected abstract void onBump(final int t);
@@ -391,23 +425,7 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
     
     protected abstract void onEnd();
     
-    protected abstract boolean onStepCustom();
-    
-    protected abstract void onStepping();
-    
-    protected abstract void onScrolled();
-    
-    protected abstract void onStepEnd();
-    
-    protected abstract void onGrounded();
-    
     protected abstract void onLanded();
     
-    protected abstract boolean isNearCheckNeeded();
-    
     protected abstract boolean onFell();
-    
-    protected abstract void onNear(final int tile);
-    
-    protected abstract void onCollide(final int tile);
 }
