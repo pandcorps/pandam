@@ -43,38 +43,14 @@ public abstract class Character extends GuyPlatform {
         actor.destroy();
     }
 	
+	//@OverrideMe
+    protected void onBump(final Character c) {
+    }
+	
 	@Override
 	protected final void onBump(final int t) {
 	    Tiles.bump(this, t);
 	}
-	
-	protected void onLanded() {
-	    v = 0;
-	}
-	
-	//@OverrideMe
-	protected boolean onHorizontal(final int off) {
-		return false;
-	}
-	
-	//@OverrideMe
-	protected boolean onAir() {
-		return false;
-	}
-	
-	//@OverrideMe
-	protected void onWall() {
-	}
-	
-	//@OverrideMe
-    protected void onEnd() {
-    }
-	
-	//@OverrideMe
-	protected void onBump(final Character c) {
-	}
-	
-	protected abstract boolean onFell();
 	
 	@Override
 	protected final TileMap getTileMap() {

@@ -412,25 +412,33 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
     protected void onGrounded() {
     }
     
-    //
+    protected void onLanded() {
+        v = 0;
+    }
+    
+    //@OverrideMe
+    protected boolean onHorizontal(final int off) {
+        return false;
+    }
+    
+    //@OverrideMe
+    protected boolean onAir() {
+        return false;
+    }
+    
+    //@OverrideMe
+    protected void onWall() {
+    }
+    
+    //@OverrideMe
+    protected void onEnd() {
+    }
+    
+    protected abstract boolean onFell();
     
     protected abstract void onBump(final int t);
     
     protected abstract TileMap getTileMap();
     
     protected abstract boolean isSolidBehavior(final byte b);
-    
-    //
-    
-    protected abstract boolean onHorizontal(final int off);
-    
-    protected abstract boolean onAir();
-    
-    protected abstract void onWall();
-    
-    protected abstract void onEnd();
-    
-    protected abstract void onLanded();
-    
-    protected abstract boolean onFell();
 }
