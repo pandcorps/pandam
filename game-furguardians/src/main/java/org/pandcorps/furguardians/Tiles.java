@@ -145,22 +145,20 @@ public class Tiles {
     	        Player.setPower(power);
     	    } else if (fg == FurGuardiansGame.netherCube1) {
     	        nextImage = FurGuardiansGame.netherCube2;
-    	        GemBumped.create(player, index, GemBumped.AWARD_2);
+    	        bumpNetherCube(player, index);
     	    } else if (fg == FurGuardiansGame.netherCubeMirror1) {
                 nextImage = FurGuardiansGame.netherCubeMirror2;
-                GemBumped.create(player, index, GemBumped.AWARD_2);
+                bumpNetherCube(player, index);
     	    } else if (fg == FurGuardiansGame.netherCube2) {
     	        nextImage = FurGuardiansGame.netherCube3;
-    	        GemBumped.create(player, index, GemBumped.AWARD_2);
+    	        bumpNetherCube(player, index);
     	    } else if (fg == FurGuardiansGame.netherCubeMirror2) {
                 nextImage = FurGuardiansGame.netherCubeMirror3;
-                GemBumped.create(player, index, GemBumped.AWARD_2);
+                bumpNetherCube(player, index);
     	    } else if (fg == FurGuardiansGame.netherCube3) {
-    	        GemBumped.create(player, index, GemBumped.AWARD_2);
-    	        //TODO defeated++
+    	        defeatNetherCube(player, index);
     	    } else if (fg == FurGuardiansGame.netherCubeMirror3) {
-                GemBumped.create(player, index, GemBumped.AWARD_2);
-                //TODO defeated++
+    	        defeatNetherCube(player, index);
     	    } else if (handler.isNormalAward(index, t)) {
     	        newGemBumped(player, index);
     	    } else if (!(handler.handle(index, t) || bumpLetter(player, index, t))) {
@@ -177,6 +175,15 @@ public class Tiles {
 	    		FurGuardiansGame.soundThud.startSound();
     		}
     	}
+    }
+    
+    private final static void bumpNetherCube(final Player player, final int index) {
+        GemBumped.create(player, index, GemBumped.AWARD_2);
+    }
+    
+    private final static void defeatNetherCube(final Player player, final int index) {
+        bumpNetherCube(player, index);
+        Enemy.countDefeat(player, FurGuardiansGame.netherCube, Enemy.DEFEAT_BUMP);
     }
     
     protected final static int getLetterIndex(final Panmage[] letters, final Tile t) {

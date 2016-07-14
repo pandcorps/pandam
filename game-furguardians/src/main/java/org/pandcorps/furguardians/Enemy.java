@@ -38,7 +38,7 @@ import org.pandcorps.furguardians.Profile.*;
 
 public class Enemy extends Character {
 	private final static byte DEFEAT_STOMP = 0;
-	private final static byte DEFEAT_BUMP = 1;
+	protected final static byte DEFEAT_BUMP = 1;
 	private final static byte DEFEAT_HIT = 2;
 	private final static byte DEFEAT_ELECTROCUTE = 3;
 	protected final static int DEFAULT_X = 5;
@@ -200,6 +200,25 @@ public class Enemy extends Character {
 			h = DEFAULT_H;
 			this.hv = hv;
 			factory = spawnFactory;
+		}
+		
+		protected EnemyDefinition(final String name, final Panmage walkImg) {
+		    this(name, FurGuardiansGame.createAnimation(walkImg));
+		}
+		
+		protected EnemyDefinition(final String name, final Panimation walk) {
+		    super(name);
+		    code = Chartil.toCode(name);
+		    this.walk = walk;
+	        ledgeTurn = true;
+	        splat = null;
+	        attack = null;
+	        extra = null;
+	        avoidCount = 0;
+	        offX = DEFAULT_X;
+	        h = DEFAULT_H;
+	        hv = DEFAULT_HV;
+	        factory = null;
 		}
 		
 		protected final void init(final EnemyDefinition ref) {
@@ -402,6 +421,10 @@ public class Enemy extends Character {
 	
 	private final static void reward(final Player player, final Panctor enemy, final EnemyDefinition def, final byte defeatMode) {
 	    new GemBumped(player, enemy, def);
+	    countDefeat(player, def, defeatMode);
+	}
+	
+	protected final static void countDefeat(final Player player, final EnemyDefinition def, final byte defeatMode) {
 	    player.levelDefeatedEnemies++;
         final Statistics stats = player.pc.profile.stats;
         switch (defeatMode) {

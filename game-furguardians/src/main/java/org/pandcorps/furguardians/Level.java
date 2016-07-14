@@ -59,6 +59,7 @@ public class Level {
     protected final static int ROCK_TRIO = 14;
     protected final static int BLOB = 15;
     protected final static int BLACK_BLOB = 16;
+    protected final static int NETHER_CUBE = 17;
     
     private final static byte FLOOR_GRASSY = 0;
     private final static byte FLOOR_BLOCK = 1;
@@ -640,7 +641,20 @@ public class Level {
     		    if (!isSpecialGoalRequired()) {
     		        return;
     		    }
-    		    goals.add(new NetherCubeBoss());
+    		    final GoalTemplate boss;
+    		    final long cubeCount = getDefeatedCount(FurGuardiansGame.netherCube);
+    		    if (cubeCount < 1) {
+    		        boss = new NetherCubeBoss(1);
+    		    } else if (cubeCount < 3) {
+    		        boss = new NetherCubeBoss(2);
+    		    } else if (cubeCount < 6) {
+    		        boss = new NetherCubeBoss(3);
+    		    } else if (cubeCount < 10) {
+    		        boss = new NetherCubeBoss(4);
+    		    } else /*if (cubeCount < 15)*/ {
+    		        boss = new NetherCubeBoss(5);
+    		    }
+    		    goals.add(boss);
             }
     		
     		@Override protected final boolean isSpecialGoalRequired() {
@@ -788,6 +802,11 @@ public class Level {
     
     private final static Statistics getStatistics() {
     	return Profile.getStatistics(getProfile());
+    }
+    
+    private final static long getDefeatedCount(final EnemyDefinition def) {
+        final Statistics stats = getStatistics();
+        return (stats == null) ? 0 : stats.getDefeatedCount(def);
     }
     
     private final static int getDefeatedWorlds() {
@@ -2386,16 +2405,40 @@ public class Level {
     }
     
     private final static class NetherCubeBoss extends GoalTemplate {
+        private final int numCubes;
+        private final int numColumns;
+        private final int w;
+        
+        protected NetherCubeBoss(final int numCubes) {
+            this.numCubes = numCubes;
+            numColumns = (numCubes + 2) / 2;
+            w = numColumns * 3;
+        }
+        
         @Override
         protected int getWidth() {
-            //TODO 1-5 cubes (1-3 columns)
-            return 3;
+            return w;
         }
         
         @Override
         protected final void build() {
-            goalBlock(ng + 1, floor + 3);
-            netherCube(ng + 1, floor + 6);
+            final int low = floor + 3, high = floor + 6;
+            int x = nt - 2;
+            int cubeCount = 0;
+            for (int i = 0; i < numColumns; i++) {
+                if (i == 0) {
+                    goalBlock(x, low);
+                } else {
+                    netherCube(x, low);
+                    cubeCount++;
+                }
+                if (cubeCount == numCubes) {
+                    break;
+                }
+                netherCube(x, high);
+                cubeCount++;
+                x -= 3;
+            }
         }
     }
     

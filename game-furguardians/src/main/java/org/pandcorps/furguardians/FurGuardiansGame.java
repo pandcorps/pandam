@@ -288,6 +288,7 @@ public class FurGuardiansGame extends BaseGame {
 	protected static EnemyDefinition rockSprite = null;
 	protected static EnemyDefinition rockTrio = null;
 	protected static EnemyDefinition rockLeg = null;
+	protected static EnemyDefinition netherCube = null;
 	protected static Panmage rockBack = null;
 	protected static Panmage netherCube1 = null;
 	protected static Panmage netherCube2 = null;
@@ -1632,13 +1633,15 @@ public class FurGuardiansGame extends BaseGame {
 			rockLeg = new EnemyDefinition("Rock Leg", 16, null, false, false, 0, Enemy.DEFAULT_X, Enemy.DEFAULT_H, 3);
 			rockLeg.rewardHandler = rockTrio.rewardHandler;
 			rockBack = createImage("rock.back", RES + "enemy/Enemy17.png", 16, rockO, Enemy.DEFAULT_MIN, Enemy.DEFAULT_MAX);
-			final Panmage[] netherCubeSheet = createSheet("nether.cube", RES + "enemy/Enemy18.png");
+			final Panmage[] netherCubeSheet = createSheet("nether.cube", RES + "enemy/Enemy18.png", ImtilX.DIM, Enemy.DEFAULT_O);
 			netherCube1 = netherCubeSheet[0];
 			netherCube2 = netherCubeSheet[1];
 			netherCube3 = netherCubeSheet[2];
 			netherCubeMirror1 = createMirror(netherCube1);
 			netherCubeMirror2 = createMirror(netherCube2);
 			netherCubeMirror3 = createMirror(netherCube3);
+			netherCube = new EnemyDefinition("Nether Cube", netherCube1);
+			Coltil.set(allEnemies, Level.NETHER_CUBE, netherCube);
 			Level.initTheme(); }});
 		
 		loaders.add(new Runnable() { @Override public final void run() {
@@ -1894,6 +1897,12 @@ public class FurGuardiansGame extends BaseGame {
 	
 	private final static Panframe createMirror(final Panmage img) {
 	    return Pangine.getEngine().createFrame(PRE_FRM + img.getId() + ".mirror", img, 1, 0, true, false);
+	}
+	
+	protected final static Panimation createAnimation(final Panmage img) {
+	    final Pangine engine = Pangine.getEngine();
+	    final String id = img.getId();
+	    return engine.createAnimation(PRE_ANM + id, engine.createFrame(PRE_FRM + id, img, 1));
 	}
 	
 	protected final static Img[] loadBlockLetterStrip() {
