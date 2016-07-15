@@ -289,6 +289,7 @@ public class FurGuardiansGame extends BaseGame {
 	protected static EnemyDefinition rockTrio = null;
 	protected static EnemyDefinition rockLeg = null;
 	protected static EnemyDefinition netherCube = null;
+	protected static EnemyDefinition netherGlob = null;
 	protected static Panmage rockBack = null;
 	protected static Panmage netherCube1 = null;
 	protected static Panmage netherCube2 = null;
@@ -1642,6 +1643,10 @@ public class FurGuardiansGame extends BaseGame {
 			netherCubeMirror3 = createMirror(netherCube3);
 			netherCube = new EnemyDefinition("Nether Cube", netherCube1);
 			Coltil.set(allEnemies, Level.NETHER_CUBE, netherCube);
+			netherGlob = new EnemyDefinition("Nether Glob", 19, null, true);
+			netherGlob.award = GemBumped.AWARD_2;
+			Coltil.set(allEnemies, Level.NETHER_GLOB, netherGlob);
+			// Arch-glob? Greater Glob? Giant Glob?
 			Level.initTheme(); }});
 		
 		loaders.add(new Runnable() { @Override public final void run() {
