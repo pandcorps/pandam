@@ -61,6 +61,7 @@ public class Level {
     protected final static int BLACK_BLOB = 16;
     protected final static int NETHER_CUBE = 17;
     protected final static int NETHER_GLOB = 18;
+    protected final static int GREATER_GLOB = 19;
     
     private final static byte FLOOR_GRASSY = 0;
     private final static byte FLOOR_BLOCK = 1;
@@ -645,10 +646,13 @@ public class Level {
     		    final GoalTemplate boss;
     		    final long globCount = getDefeatedCount(FurGuardiansGame.netherGlob);
     		    final long cubeCount = getDefeatedCount(FurGuardiansGame.netherCube);
+    		    final long greaterGlobCount = getDefeatedCount(FurGuardiansGame.greaterGlob);
     		    if (globCount < 1) {
     		        boss = new Boss(FurGuardiansGame.netherGlob, 7);
     		    } else if (cubeCount < 1) {
     		        boss = new NetherCubeBoss(1);
+    		    } else if (greaterGlobCount < 1) {
+    		        boss = new Boss(FurGuardiansGame.greaterGlob, 9);
     		    } else if (cubeCount < 3) {
     		        boss = new NetherCubeBoss(2);
     		    } else if (cubeCount < 6) {
