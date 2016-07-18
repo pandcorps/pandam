@@ -236,6 +236,10 @@ public class Enemy extends Character {
 	    return new EnemyDefinition(name, ind, f, ledgeTurn, false, 0, 8, 30, 1, 32);
 	}
 	
+	protected final static EnemyDefinition newGiantDefinition(final String name, final int ind, final PixelFilter f, final boolean ledgeTurn) {
+        return new EnemyDefinition(name, ind, f, ledgeTurn, false, 0, 26, 62, 1, 64);
+    }
+	
 	protected final static Img[] loadStrip(final int ind, final int d) {
 		return ImtilX.loadStrip(FurGuardiansGame.RES + "enemy/Enemy" + Chartil.padZero(ind, 2) + ".png", d);
 	}
