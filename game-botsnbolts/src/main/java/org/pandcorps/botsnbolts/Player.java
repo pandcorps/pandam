@@ -24,17 +24,22 @@ package org.pandcorps.botsnbolts;
 
 import org.pandcorps.game.actor.*;
 import org.pandcorps.pandam.*;
-import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandax.tile.*;
 
-public final class Player extends GuyPlatform implements AnimationEndListener {
+public final class Player extends GuyPlatform {
     private final static int SHOOT_DELAY_DEFAULT = 10;
     private final static int SHOOT_DELAY_RAPID = 3;
     private final static int SHOOT_DELAY_SPREAD = 15;
+    private final static int SHOOT_TIME = 12;
+    private final static int HURT_TIME = 20;
+    private final static int RUN_TIME = 5;
     
     private final Profile prf;
     private final PlayerImages pi;
+    private int runIndex = 0;
+    private int runTimer = 0;
     private long lastShot = -1000;
+    private long lastHurt = -1000;
     
     protected Player(final Profile prf, final PlayerImages pi) {
         super(6, 23);
@@ -42,8 +47,35 @@ public final class Player extends GuyPlatform implements AnimationEndListener {
         this.pi = pi;
     }
     
+    private final boolean isHurt() {
+        return (Pangine.getEngine().getClock() - lastHurt) < HURT_TIME;
+    }
+    
+    private final PlayerImagesSubSet getCurrentImagesSubSet() {
+        return ((Pangine.getEngine().getClock() - lastShot) < SHOOT_TIME) ? pi.shootSet : pi.basicSet;
+    }
+    
     @Override
-    public final void onAnimationEnd(final AnimationEndEvent event) {
+    protected final void onGrounded() {
+        if (isHurt()) {
+            changeView(pi.hurt);
+            return;
+        }
+        final PlayerImagesSubSet set = getCurrentImagesSubSet();
+        if (hv == 0) {
+            changeView(set.stand);
+            runIndex = 0;
+        } else {
+            runTimer++;
+            if (runTimer > RUN_TIME) {
+                runTimer = 0;
+                runIndex++;
+                if (runIndex > 3) {
+                    runIndex = 0;
+                }
+            }
+            changeView(set.run[runIndex]);
+        }
     }
     
     @Override
@@ -99,24 +131,28 @@ public final class Player extends GuyPlatform implements AnimationEndListener {
     }
     
     protected final static class PlayerImages {
-        private final Panimation stand;
-        private final Panimation jump;
-        private final Panimation run;
-        private final Panimation shootStand;
-        private final Panimation shootJump;
-        private final Panimation shootRun;
-        private final Panimation hurt;
+        private final PlayerImagesSubSet basicSet;
+        private final PlayerImagesSubSet shootSet;
+        private final Panmage hurt;
         
-        protected PlayerImages(final Panimation stand, final Panimation jump, final Panimation run,
-                               final Panimation shootStand, final Panimation shootJump, final Panimation shootRun,
-                               final Panimation hurt) {
+        protected PlayerImages(final Panimation stand, final Panmage jump, final Panmage[] run,
+                               final Panimation shootStand, final Panmage shootJump, final Panmage[] shootRun,
+                               final Panmage hurt) {
+            basicSet = new PlayerImagesSubSet(stand, jump, run);
+            shootSet = new PlayerImagesSubSet(shootStand, shootJump, shootRun);
+            this.hurt = hurt;
+        }
+    }
+    
+    protected final static class PlayerImagesSubSet {
+        private final Panimation stand;
+        private final Panmage jump;
+        private final Panmage[] run;
+        
+        protected PlayerImagesSubSet(final Panimation stand, final Panmage jump, final Panmage[] run) {
             this.stand = stand;
             this.jump = jump;
             this.run = run;
-            this.shootStand = shootStand;
-            this.shootJump = shootJump;
-            this.shootRun = shootRun;
-            this.hurt = hurt;
         }
     }
     
