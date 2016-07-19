@@ -837,6 +837,63 @@ public class Enemy extends Character {
 	    }
 	}
 	
+	public final static class NetherCube extends Panctor implements StepListener {
+	    private final int x;
+	    private final int y;
+	    
+	    protected NetherCube(final int x, final int y) {
+	        this.x = x;
+	        this.y = y;
+	    }
+	    
+        @Override
+        public final void onStep(final StepEvent event) {
+            final Player target = getTarget();
+            final float diff = getDifference(target);
+            if (Math.abs(diff) >= 160) {
+                return;
+            }
+            final Tile tile = Level.tm.getTile(x, y);
+            if (tile.isSolid() && DynamicTileMap.getRawForeground(tile) != null) {
+                destroy();
+                return;
+            }
+            //TODO shoot
+            //TODO face target
+        }
+        
+        private final Player getTarget() {
+            Player target = null;
+            float targetDistance = -1;
+            for (final PlayerContext pc : Coltil.unnull(FurGuardiansGame.pcs)) {
+                final Player player = PlayerContext.getPlayer(pc);
+                if (player == null) {
+                    continue;
+                } else if (target == null) {
+                    target = player;
+                } else {
+                    final float distance = getDistance(player);
+                    if (targetDistance < 0) {
+                        targetDistance = getDistance(target);
+                    }
+                    if (distance < targetDistance) {
+                        target = player;
+                        targetDistance = distance;
+                    }
+                }
+            }
+            return target;
+        }
+        
+        private final float getDistance(final Player player) {
+            return Math.abs(getDifference(player));
+        }
+        
+        private final float getDifference(final Player player) {
+            return player.getPosition().getX() - getPosition().getX();
+        }
+	}
+	
 	protected final static SpawnFactory enemyFactory = new EnemyFactory();
 	
 	protected final static SpawnFactory trioFactory = new TrioFactory();
