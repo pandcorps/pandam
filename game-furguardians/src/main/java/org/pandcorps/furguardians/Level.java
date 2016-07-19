@@ -62,6 +62,7 @@ public class Level {
     protected final static int NETHER_CUBE = 17;
     protected final static int NETHER_GLOB = 18;
     protected final static int GREATER_GLOB = 19;
+    protected final static int GIANT_GLOB = 20;
     
     private final static byte FLOOR_GRASSY = 0;
     private final static byte FLOOR_BLOCK = 1;
@@ -647,6 +648,7 @@ public class Level {
     		    final long globCount = getDefeatedCount(FurGuardiansGame.netherGlob);
     		    final long cubeCount = getDefeatedCount(FurGuardiansGame.netherCube);
     		    final long greaterGlobCount = getDefeatedCount(FurGuardiansGame.greaterGlob);
+    		    final long giantGlobCount = getDefeatedCount(FurGuardiansGame.giantGlob);
     		    if (globCount < 1) {
     		        boss = new Boss(FurGuardiansGame.netherGlob, 7);
     		    } else if (cubeCount < 1) {
@@ -655,6 +657,8 @@ public class Level {
     		        boss = new Boss(FurGuardiansGame.greaterGlob, 9);
     		    } else if (cubeCount < 3) {
     		        boss = new NetherCubeBoss(2);
+    		    } else if (giantGlobCount < 1) {
+                    boss = new Boss(FurGuardiansGame.giantGlob);
     		    } else if (cubeCount < 6) {
     		        boss = new NetherCubeBoss(3);
     		    } else if (cubeCount < 10) {
@@ -2434,6 +2438,7 @@ public class Level {
         protected final void build() {
             final int base = floor + 1;
             solidBlock(ng, base);
+            solidBlock(ng, base + 1);
             enemy(def, nt - 2, base);
             goalBlock(nt - 2, base + 4);
         }

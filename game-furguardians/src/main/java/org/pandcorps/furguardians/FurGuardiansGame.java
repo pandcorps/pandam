@@ -291,6 +291,7 @@ public class FurGuardiansGame extends BaseGame {
 	protected static EnemyDefinition netherCube = null;
 	protected static EnemyDefinition netherGlob = null;
 	protected static EnemyDefinition greaterGlob = null;
+	protected static EnemyDefinition giantGlob = null;
 	protected static Panmage rockBack = null;
 	protected static Panmage netherCube1 = null;
 	protected static Panmage netherCube2 = null;
@@ -1402,12 +1403,12 @@ public class FurGuardiansGame extends BaseGame {
 			ogre = Enemy.newBigDefinition("Ogre", 5, f, false);
 			ogre.init(troll);
 			Coltil.set(allEnemies, Level.OGRE, ogre);
-			trollColossus = new EnemyDefinition("Troll Colossus", 11, null, true, false, 0, 26, 62, 1, 64);
+			trollColossus = Enemy.newGiantDefinition("Troll Colossus", 11, null, true);
 			trollColossus.award = GemBumped.AWARD_3;
 			trollColossus.stompHandler = new MultiStompHandler(3);
 			trollColossus.stepHandler = troll.stepHandler;
 			Coltil.set(allEnemies, Level.TROLL_COLOSSUS, trollColossus);
-			ogreBehemoth = new EnemyDefinition("Ogre Behemoth", 11, f, false, false, 0, 26, 62, 1, 64);
+			ogreBehemoth = Enemy.newGiantDefinition("Ogre Behemoth", 11, f, false);
 			ogreBehemoth.init(trollColossus);
 			Coltil.set(allEnemies, Level.OGRE_BEHEMOTH, ogreBehemoth);
 			final EnemyDefinition armorBall, thrownImp;
@@ -1648,8 +1649,10 @@ public class FurGuardiansGame extends BaseGame {
 			netherGlob.award = GemBumped.AWARD_2;
 			Coltil.set(allEnemies, Level.NETHER_GLOB, netherGlob);
 			greaterGlob = Enemy.newBigDefinition("Greater Glob", 20, null, true);
+			Coltil.set(allEnemies, Level.GREATER_GLOB, greaterGlob);
+			giantGlob = Enemy.newGiantDefinition("Giant Glob", 21, null, true);
 			//TODO countDefeat without reward, split into 4 netherBlobs
-			// Arch-glob? Giant Glob?
+			Coltil.set(allEnemies, Level.GIANT_GLOB, giantGlob);
 			Level.initTheme(); }});
 		
 		loaders.add(new Runnable() { @Override public final void run() {
