@@ -296,8 +296,7 @@ public class Enemy extends Character {
 	                    break;
 	                case 1 :
 	                    initTimer(2);
-	                    FurGuardiansGame.room.addActor(new Projectile(def.projectile, this, Mathtil.rand(FurGuardiansGame.pcs).player));
-	                    FurGuardiansGame.soundWhoosh.startSound();
+	                    throwProjectile(def.projectile, this, Mathtil.rand(FurGuardiansGame.pcs).player);
 	                    break;
 	                case 2 :
 	                    stepTeleport();
@@ -306,6 +305,11 @@ public class Enemy extends Character {
 	        }
 	    }
 	    return false;
+	}
+	
+	private final static void throwProjectile(final Panimation projectile, final Panctor src, final Panctor dst) {
+	    FurGuardiansGame.room.addActor(new Projectile(projectile, src, dst));
+	    FurGuardiansGame.soundWhoosh.startSound();
 	}
 	
 	private final void stepTeleport() {
@@ -838,13 +842,13 @@ public class Enemy extends Character {
 	}
 	
 	public final static class NetherCube extends Panctor implements StepListener {
-	    private final int x;
-	    private final int y;
+	    private final int index;
 	    private int timer;
 	    
 	    protected NetherCube(final int x, final int y) {
-	        this.x = x;
-	        this.y = y;
+	        index = Level.tm.getIndex(x, y);
+	        final Panple pos = Level.tm.getPosition(index);
+	        getPosition().set(pos.getX() + 8, pos.getY() + 8);
 	        initTimer();
 	    }
 	    
@@ -862,18 +866,33 @@ public class Enemy extends Character {
             if (Math.abs(diff) >= 160) {
                 return;
             }
-            final Tile tile = Level.tm.getTile(x, y);
-            if (tile.isSolid() && DynamicTileMap.getRawForeground(tile) != null) {
+            final Tile tile = Level.tm.getTile(index);
+            final Object fg = DynamicTileMap.getRawForeground(tile);
+            if (tile.isSolid() && fg != null) {
                 destroy();
                 return;
             } else if (diff < 4) {
                 setMirror(true);
+                if (fg == FurGuardiansGame.netherCube1) {
+                    Level.tm.setForeground(index, FurGuardiansGame.netherCubeMirror1);
+                } else if (fg == FurGuardiansGame.netherCube2) {
+                    Level.tm.setForeground(index, FurGuardiansGame.netherCubeMirror2);
+                } else if (fg == FurGuardiansGame.netherCube3) {
+                    Level.tm.setForeground(index, FurGuardiansGame.netherCubeMirror3);
+                }
             } else if (diff > 11) {
                 setMirror(false);
+                if (fg == FurGuardiansGame.netherCubeMirror1) {
+                    Level.tm.setForeground(index, FurGuardiansGame.netherCube1);
+                } else if (fg == FurGuardiansGame.netherCubeMirror2) {
+                    Level.tm.setForeground(index, FurGuardiansGame.netherCube2);
+                } else if (fg == FurGuardiansGame.netherCubeMirror3) {
+                    Level.tm.setForeground(index, FurGuardiansGame.netherCube3);
+                }
             }
             timer--;
             if (timer < 0) {
-                //TODO shoot
+                throwProjectile(FurGuardiansGame.projectile1, this, target);
                 initTimer();
             }
         }
