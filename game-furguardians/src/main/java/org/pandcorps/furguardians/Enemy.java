@@ -840,15 +840,24 @@ public class Enemy extends Character {
 	public final static class NetherCube extends Panctor implements StepListener {
 	    private final int x;
 	    private final int y;
+	    private int timer;
 	    
 	    protected NetherCube(final int x, final int y) {
 	        this.x = x;
 	        this.y = y;
+	        initTimer();
+	    }
+	    
+	    private final void initTimer() {
+	        timer = Mathtil.randi(30, 75);
 	    }
 	    
         @Override
         public final void onStep(final StepEvent event) {
             final Player target = getTarget();
+            if (target == null) {
+                return;
+            }
             final float diff = getDifference(target);
             if (Math.abs(diff) >= 160) {
                 return;
@@ -857,9 +866,16 @@ public class Enemy extends Character {
             if (tile.isSolid() && DynamicTileMap.getRawForeground(tile) != null) {
                 destroy();
                 return;
+            } else if (diff < 4) {
+                setMirror(true);
+            } else if (diff > 11) {
+                setMirror(false);
             }
-            //TODO shoot
-            //TODO face target
+            timer--;
+            if (timer < 0) {
+                //TODO shoot
+                initTimer();
+            }
         }
         
         private final Player getTarget() {

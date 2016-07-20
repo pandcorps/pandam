@@ -4042,8 +4042,8 @@ public class Level {
     
     private final static void netherCube(final int x, final int y) {
         tm.setForeground(x, y, FurGuardiansGame.netherCubeMirror1, FurGuardiansGame.TILE_BUMP);
+        new NetherCube(x, y);
         numEnemies++;
-        //TODO Mirror to follow player, shoot projectiles
     }
     
     private final static void step(final int x, final int y, final int w, final int h) {
