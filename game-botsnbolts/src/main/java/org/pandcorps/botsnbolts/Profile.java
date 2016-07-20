@@ -25,5 +25,5 @@ package org.pandcorps.botsnbolts;
 import org.pandcorps.botsnbolts.Player.*;
 
 public class Profile {
-    private ShootMode shootMode = Player.SHOOT_NORMAL;
+    /*package*/ ShootMode shootMode = Player.SHOOT_NORMAL;
 }

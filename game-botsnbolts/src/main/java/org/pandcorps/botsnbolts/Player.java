@@ -24,6 +24,8 @@ package org.pandcorps.botsnbolts;
 
 import org.pandcorps.game.actor.*;
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.event.action.*;
+import org.pandcorps.pandax.in.*;
 import org.pandcorps.pandax.tile.*;
 
 public final class Player extends GuyPlatform {
@@ -34,6 +36,8 @@ public final class Player extends GuyPlatform {
     private final static int INVINCIBLE_TIME = 60;
     private final static int HURT_TIME = 20;
     private final static int RUN_TIME = 5;
+    private final static int VEL_JUMP = 8;
+    private final static int VEL_WALK = 3;
     
     private final Profile prf;
     private final PlayerImages pi;
@@ -46,6 +50,55 @@ public final class Player extends GuyPlatform {
         super(6, 23);
         this.prf = prf;
         this.pi = pi;
+    }
+    
+    private final void registerInputs(final ControlScheme ctrl) {
+        final Panput jumpInput = ctrl.get1();
+        final Panput shootInput = null; //TODO
+        register(jumpInput, new ActionStartListener() {
+            @Override public final void onActionStart(final ActionStartEvent event) { jump(); }});
+        register(jumpInput, new ActionEndListener() {
+            @Override public final void onActionEnd(final ActionEndEvent event) { releaseJump(); }});
+        register(shootInput, new ActionStartListener() {
+            @Override public final void onActionStart(final ActionStartEvent event) { shoot(); }});
+        register(shootInput, new ActionListener() {
+            @Override public final void onAction(final ActionEvent event) { shooting(); }});
+        register(shootInput, new ActionEndListener() {
+            @Override public final void onActionEnd(final ActionEndEvent event) { releaseShoot(); }});
+        register(ctrl.getRight(), new ActionListener() {
+            @Override public final void onAction(final ActionEvent event) { right(); }});
+        register(ctrl.getLeft(), new ActionListener() {
+            @Override public final void onAction(final ActionEvent event) { left(); }});
+    }
+    
+    private final void jump() {
+        v = VEL_JUMP;
+    }
+    
+    private final void releaseJump() {
+        if (v > 0) {
+            v = 0;
+        }
+    }
+    
+    private final void shoot() {
+        prf.shootMode.onShootStart(this);
+    }
+    
+    private final void shooting() {
+        prf.shootMode.onShooting(this);
+    }
+    
+    private final void releaseShoot() {
+        prf.shootMode.onShootEnd(this);
+    }
+    
+    private final void right() {
+        hv = VEL_WALK;
+    }
+    
+    private final void left() {
+        hv = -VEL_WALK;
     }
     
     private final boolean isHurt() {
