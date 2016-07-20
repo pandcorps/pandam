@@ -31,6 +31,7 @@ public final class Player extends GuyPlatform {
     private final static int SHOOT_DELAY_RAPID = 3;
     private final static int SHOOT_DELAY_SPREAD = 15;
     private final static int SHOOT_TIME = 12;
+    private final static int INVINCIBLE_TIME = 60;
     private final static int HURT_TIME = 20;
     private final static int RUN_TIME = 5;
     
@@ -51,8 +52,27 @@ public final class Player extends GuyPlatform {
         return (Pangine.getEngine().getClock() - lastHurt) < HURT_TIME;
     }
     
+    private final boolean isInvincible() {
+        return (Pangine.getEngine().getClock() - lastHurt) < INVINCIBLE_TIME;
+    }
+    
     private final PlayerImagesSubSet getCurrentImagesSubSet() {
         return ((Pangine.getEngine().getClock() - lastShot) < SHOOT_TIME) ? pi.shootSet : pi.basicSet;
+    }
+    
+    private final void clearRun() {
+        runIndex = 0;
+        runTimer = 0;
+    }
+    
+    @Override
+    protected final boolean onStepCustom() {
+        if (isInvincible()) {
+            setVisible(Pangine.getEngine().isOn(4));
+        } else {
+            setVisible(true);
+        }
+        return false;
     }
     
     @Override
@@ -64,7 +84,7 @@ public final class Player extends GuyPlatform {
         final PlayerImagesSubSet set = getCurrentImagesSubSet();
         if (hv == 0) {
             changeView(set.stand);
-            runIndex = 0;
+            clearRun();
         } else {
             runTimer++;
             if (runTimer > RUN_TIME) {
@@ -76,6 +96,17 @@ public final class Player extends GuyPlatform {
             }
             changeView(set.run[runIndex]);
         }
+    }
+    
+    @Override
+    protected final boolean onAir() {
+        clearRun();
+        if (isHurt()) {
+            changeView(pi.hurt);
+            return false;
+        }
+        changeView(getCurrentImagesSubSet().jump);
+        return false;
     }
     
     @Override
