@@ -119,6 +119,7 @@ public class Tiles {
     	        final byte power;
     	        final Statistics stats = player.pc.profile.stats;
     	        final int r;
+    	        //TODO No Lightning in boss levels
     	        if (stats.foundLightningOrbs == 0) {
     	            r = 500;
     	        } else if (stats.foundDoubleOrbs == 0) {

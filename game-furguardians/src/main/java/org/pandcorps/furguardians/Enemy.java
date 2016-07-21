@@ -37,7 +37,7 @@ import org.pandcorps.furguardians.Player.*;
 import org.pandcorps.furguardians.Profile.*;
 
 public class Enemy extends Character {
-	private final static byte DEFEAT_STOMP = 0;
+    protected final static byte DEFEAT_STOMP = 0;
 	protected final static byte DEFEAT_BUMP = 1;
 	private final static byte DEFEAT_HIT = 2;
 	private final static byte DEFEAT_ELECTROCUTE = 3;
@@ -250,6 +250,7 @@ public class Enemy extends Character {
 	protected int timerMode = 0;
 	protected boolean full = false;
 	protected Player lastStomper = null; // If Enemy requires multiple stomps, keep track of last one
+	protected byte defeatMode = -1;
 	
 	protected Enemy(final EnemyDefinition def, final Panctor ref) {
 		this(def, ref.getPosition());
@@ -426,6 +427,7 @@ public class Enemy extends Character {
 	}
 	
 	private final void reward(final Player player, final byte defeatMode) {
+	    this.defeatMode = defeatMode;
 	    if (isRewarded(player)) {
             reward(player, this, def, defeatMode);
         }

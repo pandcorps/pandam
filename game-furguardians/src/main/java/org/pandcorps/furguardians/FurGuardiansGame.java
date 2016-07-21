@@ -1651,12 +1651,16 @@ public class FurGuardiansGame extends BaseGame {
 			Coltil.set(allEnemies, Level.NETHER_GLOB, netherGlob);
 			greaterGlob = Enemy.newBigDefinition("Greater Glob", 20, null, true);
 			greaterGlob.stompHandler = new SplitHandler(netherGlob, 3, -2, 15);
-            greaterGlob.rewardHandler = neverRewardHandler;
+			final InteractionHandler countWithoutRewardHandler = new InteractionHandler() {
+                @Override public final boolean onInteract(final Enemy enemy, final Player player) {
+                    Enemy.countDefeat(player, enemy.def, (enemy.defeatMode < 0) ? Enemy.DEFEAT_STOMP : enemy.defeatMode);
+                    return false;
+                }};
+            greaterGlob.rewardHandler = countWithoutRewardHandler;
 			Coltil.set(allEnemies, Level.GREATER_GLOB, greaterGlob);
 			giantGlob = Enemy.newGiantDefinition("Giant Glob", 21, null, true);
 			giantGlob.stompHandler = new SplitHandler(greaterGlob, 18, 2, 31);
-			giantGlob.rewardHandler = neverRewardHandler;
-			//TODO countDefeat without reward
+			giantGlob.rewardHandler = countWithoutRewardHandler;
 			Coltil.set(allEnemies, Level.GIANT_GLOB, giantGlob);
 			Level.initTheme(); }});
 		
