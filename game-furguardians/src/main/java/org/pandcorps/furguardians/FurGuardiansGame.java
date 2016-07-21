@@ -1627,10 +1627,11 @@ public class FurGuardiansGame extends BaseGame {
 			Coltil.set(allEnemies, Level.ROCK_SPRITE, rockSprite);
 			Enemy.currentWalkAnm = rockSprite.walk;
 			rockTrio = new EnemyDefinition("Rock Walker", 15, 3, Enemy.trioFactory);
-			rockTrio.rewardHandler = new InteractionHandler() {
+			final InteractionHandler neverRewardHandler = new InteractionHandler() {
                 @Override public final boolean onInteract(final Enemy enemy, final Player player) {
                     return false;
                 }};
+            rockTrio.rewardHandler = neverRewardHandler;
             rockTrio.menu = new TrioEnemyMenu();
 			Coltil.set(allEnemies, Level.ROCK_TRIO, rockTrio);
 			rockLeg = new EnemyDefinition("Rock Leg", 16, null, false, false, 0, Enemy.DEFAULT_X, Enemy.DEFAULT_H, 3);
@@ -1649,9 +1650,13 @@ public class FurGuardiansGame extends BaseGame {
 			netherGlob.award = GemBumped.AWARD_2;
 			Coltil.set(allEnemies, Level.NETHER_GLOB, netherGlob);
 			greaterGlob = Enemy.newBigDefinition("Greater Glob", 20, null, true);
+			greaterGlob.stompHandler = new SplitHandler(netherGlob, 3, -2, 15);
+            greaterGlob.rewardHandler = neverRewardHandler;
 			Coltil.set(allEnemies, Level.GREATER_GLOB, greaterGlob);
 			giantGlob = Enemy.newGiantDefinition("Giant Glob", 21, null, true);
-			//TODO countDefeat without reward, split into 4 netherBlobs
+			giantGlob.stompHandler = new SplitHandler(greaterGlob, 18, 2, 31);
+			giantGlob.rewardHandler = neverRewardHandler;
+			//TODO countDefeat without reward
 			Coltil.set(allEnemies, Level.GIANT_GLOB, giantGlob);
 			Level.initTheme(); }});
 		
@@ -1905,6 +1910,31 @@ public class FurGuardiansGame extends BaseGame {
 	    	rockLeg.stompSound = soundArmor;
 	    	}});
 	}
+	
+	private final static class SplitHandler implements InteractionHandler {
+	    private final EnemyDefinition def;
+	    private final int xoffLow;
+	    private final int xoffHigh;
+	    private final int yoff;
+	    
+	    private SplitHandler(final EnemyDefinition def, final int xoffLow, final int xoffHigh, final int yoff) {
+	        this.def = def;
+	        this.xoffLow = xoffLow;
+	        this.xoffHigh = xoffHigh;
+	        this.yoff = yoff;
+	    }
+	    
+        @Override
+        public final boolean onInteract(final Enemy enemy, final Player player) {
+            final Panple pos = enemy.getPosition();
+            final float x = pos.getX(), y = pos.getY(), yh = y + yoff;
+            new Enemy(def, x - xoffLow, y).setEnemyMirror(true);
+            new Enemy(def, x + xoffLow, y);
+            new Enemy(def, x - xoffHigh, yh).setEnemyMirror(true);
+            new Enemy(def, x + xoffHigh, yh);
+            return true;
+        }
+    }
 	
 	private final static Panframe createMirror(final Panmage img) {
 	    return Pangine.getEngine().createFrame(PRE_FRM + img.getId() + ".mirror", img, 1, 0, true, false);
