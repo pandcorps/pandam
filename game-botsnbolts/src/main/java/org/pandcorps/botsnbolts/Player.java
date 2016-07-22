@@ -41,6 +41,7 @@ public final class Player extends GuyPlatform {
     
     private final Profile prf;
     private final PlayerImages pi;
+    private StateHandler stateHandler = NORMAL_HANDLER;
     private int runIndex = 0;
     private int runTimer = 0;
     private long lastShot = -1000;
@@ -69,6 +70,10 @@ public final class Player extends GuyPlatform {
             @Override public final void onAction(final ActionEvent event) { right(); }});
         register(ctrl.getLeft(), new ActionListener() {
             @Override public final void onAction(final ActionEvent event) { left(); }});
+        register(ctrl.getUp(), new ActionListener() { //TODO Display up/down touch buttons when near ladder, hide otherwise
+            @Override public final void onAction(final ActionEvent event) { up(); }});
+        register(ctrl.getDown(), new ActionListener() {
+            @Override public final void onAction(final ActionEvent event) { down(); }});
     }
     
     private final void jump() {
@@ -94,11 +99,19 @@ public final class Player extends GuyPlatform {
     }
     
     private final void right() {
-        hv = VEL_WALK;
+        stateHandler.onRight(this);
     }
     
     private final void left() {
-        hv = -VEL_WALK;
+        stateHandler.onLeft(this);
+    }
+    
+    private final void up() {
+        stateHandler.onUp(this);
+    }
+    
+    private final void down() {
+        stateHandler.onDown(this);
     }
     
     private final boolean isHurt() {
@@ -180,6 +193,91 @@ public final class Player extends GuyPlatform {
     protected boolean isSolidBehavior(final byte b) {
         return false;
     }
+    
+    protected abstract static class StateHandler {
+        protected abstract void onShootStart(final Player player);
+        
+        protected abstract void onShooting(final Player player);
+        
+        protected abstract void onShootEnd(final Player player);
+        
+        protected abstract void onRight(final Player player);
+        
+        protected abstract void onLeft(final Player player);
+        
+        //@OverrideMe
+        protected void onUp(final Player player) {
+        }
+        
+        //@OverrideMe
+        protected void onDown(final Player player) {
+        }
+    }
+    
+    protected final static StateHandler NORMAL_HANDLER = new StateHandler() {
+        @Override
+        protected final void onShootStart(final Player player) {
+            player.prf.shootMode.onShootStart(player);
+        }
+        
+        @Override
+        protected final void onShooting(final Player player) {
+            player.prf.shootMode.onShooting(player);
+        }
+        
+        @Override
+        protected final void onShootEnd(final Player player) {
+            player.prf.shootMode.onShootEnd(player);
+        }
+        
+        @Override
+        protected final void onRight(final Player player) {
+            player.hv = VEL_WALK;
+        }
+        
+        @Override
+        protected final void onLeft(final Player player) {
+            player.hv = -VEL_WALK;
+        }
+    };
+    
+    protected final static StateHandler LADDER_HANDLER = new StateHandler() {
+        @Override
+        protected final void onShootStart(final Player player) {
+            player.prf.shootMode.onShootStart(player);
+        }
+        
+        @Override
+        protected final void onShooting(final Player player) {
+            player.prf.shootMode.onShooting(player);
+        }
+        
+        @Override
+        protected final void onShootEnd(final Player player) {
+            player.prf.shootMode.onShootEnd(player);
+        }
+        
+        @Override
+        protected final void onRight(final Player player) {
+            //TODO Aim right
+        }
+        
+        @Override
+        protected final void onLeft(final Player player) {
+            //TODO Aim left
+        }
+        
+        @Override
+        protected final void onUp(final Player player) {
+            //TODO Climb up
+        }
+        
+        @Override
+        protected final void onDown(final Player player) {
+        }
+    };
+    
+    //protected final static StateHandler BALL_HANDLER = new StateHandler() { //TODO
     
     protected abstract static class ShootMode {
         protected final int delay;
