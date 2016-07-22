@@ -1651,16 +1651,9 @@ public class FurGuardiansGame extends BaseGame {
 			Coltil.set(allEnemies, Level.NETHER_GLOB, netherGlob);
 			greaterGlob = Enemy.newBigDefinition("Greater Glob", 20, null, true);
 			greaterGlob.stompHandler = new SplitHandler(netherGlob, 3, -2, 15);
-			final InteractionHandler countWithoutRewardHandler = new InteractionHandler() {
-                @Override public final boolean onInteract(final Enemy enemy, final Player player) {
-                    Enemy.countDefeat(player, enemy.def, (enemy.defeatMode < 0) ? Enemy.DEFEAT_STOMP : enemy.defeatMode);
-                    return false;
-                }};
-            greaterGlob.rewardHandler = countWithoutRewardHandler;
 			Coltil.set(allEnemies, Level.GREATER_GLOB, greaterGlob);
 			giantGlob = Enemy.newGiantDefinition("Giant Glob", 21, null, true);
 			giantGlob.stompHandler = new SplitHandler(greaterGlob, 18, 2, 31);
-			giantGlob.rewardHandler = countWithoutRewardHandler;
 			Coltil.set(allEnemies, Level.GIANT_GLOB, giantGlob);
 			Level.initTheme(); }});
 		
@@ -1681,7 +1674,7 @@ public class FurGuardiansGame extends BaseGame {
 			lightningOrb = createImage("orb.lightning", RES + "misc/LightningOrb.png", 16);
 			doubleOrb = createImage("orb.double", RES + "misc/DoubleOrb.png", 16);
 			blockPower = createImage("block.power", RES + "misc/BlockPower.png", 16);
-			//blockHavocLock = createImage("block.power", RES + "misc/BlockHavocLock.png", 16); //TODO
+			blockHavocLock = createImage("block.power", RES + "misc/BlockHavocLock.png", 16);
 			bubble = createImage("bubble", RES + "chr/Bubble.png", 32, og);
 			minecart = createAnm("minecart", RES + "misc/Minecart.png", 32, 2, new FinPanple2(16, 7), null, null); }});
 	    
@@ -1933,9 +1926,11 @@ public class FurGuardiansGame extends BaseGame {
             final Panple pos = enemy.getPosition();
             final float x = pos.getX(), y = pos.getY(), yh = y + yoff;
             new Enemy(def, x - xoffLow, y).setEnemyMirror(true);
-            new Enemy(def, x + xoffLow, y);
+            new Enemy(def, x + xoffLow, y).setEnemyMirror(false);
             new Enemy(def, x - xoffHigh, yh).setEnemyMirror(true);
-            new Enemy(def, x + xoffHigh, yh);
+            new Enemy(def, x + xoffHigh, yh).setEnemyMirror(false);
+            Enemy.countDefeat(player, enemy.def, Enemy.DEFEAT_STOMP);
+            enemy.destroy();
             return true;
         }
     }

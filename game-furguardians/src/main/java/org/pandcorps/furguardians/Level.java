@@ -644,6 +644,7 @@ public class Level {
     		    if (!isSpecialGoalRequired()) {
     		        return;
     		    }
+    		    goalLocked = true;
     		    final GoalTemplate boss;
     		    final long globCount = getDefeatedCount(FurGuardiansGame.netherGlob);
     		    final long cubeCount = getDefeatedCount(FurGuardiansGame.netherCube);
