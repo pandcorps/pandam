@@ -29,6 +29,8 @@ import org.pandcorps.pandax.in.*;
 import org.pandcorps.pandax.tile.*;
 
 public final class Player extends GuyPlatform {
+    protected final static int PLAYER_X = 6;
+    protected final static int PLAYER_H = 23;
     private final static int SHOOT_DELAY_DEFAULT = 10;
     private final static int SHOOT_DELAY_RAPID = 3;
     private final static int SHOOT_DELAY_SPREAD = 15;
@@ -47,10 +49,12 @@ public final class Player extends GuyPlatform {
     private long lastShot = -1000;
     private long lastHurt = -1000;
     
-    protected Player(final Profile prf, final PlayerImages pi) {
-        super(6, 23);
-        this.prf = prf;
-        this.pi = pi;
+    protected Player(final PlayerContext pc) {
+        super(PLAYER_X, PLAYER_H);
+        pc.player = this;
+        this.prf = pc.prf;
+        this.pi = pc.pi;
+        registerInputs(pc.ctrl);
     }
     
     private final void registerInputs(final ControlScheme ctrl) {
@@ -87,15 +91,15 @@ public final class Player extends GuyPlatform {
     }
     
     private final void shoot() {
-        prf.shootMode.onShootStart(this);
+        stateHandler.onShootStart(this);
     }
     
     private final void shooting() {
-        prf.shootMode.onShooting(this);
+        stateHandler.onShooting(this);
     }
     
     private final void releaseShoot() {
-        prf.shootMode.onShootEnd(this);
+        stateHandler.onShootEnd(this);
     }
     
     private final void right() {
@@ -160,7 +164,7 @@ public final class Player extends GuyPlatform {
                     runIndex = 0;
                 }
             }
-            changeView(set.run[runIndex]);
+            changeView(set.run[runIndex == 3 ? 1 : runIndex]);
         }
     }
     
@@ -186,7 +190,7 @@ public final class Player extends GuyPlatform {
 
     @Override
     protected final TileMap getTileMap() {
-        return null;
+        return BotsnBoltsGame.tm;
     }
 
     @Override
@@ -312,26 +316,37 @@ public final class Player extends GuyPlatform {
         }
     }
     
+    protected final static class PlayerContext {
+        protected final Profile prf;
+        protected final ControlScheme ctrl;
+        protected final PlayerImages pi;
+        protected Player player = null;
+        
+        protected PlayerContext(final Profile prf, final ControlScheme ctrl, final PlayerImages pi) {
+            this.prf = prf;
+            this.ctrl = ctrl;
+            this.pi = pi;
+        }
+    }
+    
     protected final static class PlayerImages {
         private final PlayerImagesSubSet basicSet;
         private final PlayerImagesSubSet shootSet;
         private final Panmage hurt;
         
-        protected PlayerImages(final Panimation stand, final Panmage jump, final Panmage[] run,
-                               final Panimation shootStand, final Panmage shootJump, final Panmage[] shootRun,
-                               final Panmage hurt) {
-            basicSet = new PlayerImagesSubSet(stand, jump, run);
-            shootSet = new PlayerImagesSubSet(shootStand, shootJump, shootRun);
+        protected PlayerImages(final PlayerImagesSubSet basicSet, final PlayerImagesSubSet shootSet, final Panmage hurt) {
+            this.basicSet = basicSet;
+            this.shootSet = shootSet;
             this.hurt = hurt;
         }
     }
     
     protected final static class PlayerImagesSubSet {
-        private final Panimation stand;
+        private final Panmage stand;
         private final Panmage jump;
         private final Panmage[] run;
         
-        protected PlayerImagesSubSet(final Panimation stand, final Panmage jump, final Panmage[] run) {
+        protected PlayerImagesSubSet(final Panmage stand, final Panmage jump, final Panmage[] run) {
             this.stand = stand;
             this.jump = jump;
             this.run = run;
