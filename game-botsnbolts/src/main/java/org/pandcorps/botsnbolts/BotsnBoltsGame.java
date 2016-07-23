@@ -31,6 +31,7 @@ import org.pandcorps.game.actor.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.tile.*;
+import org.pandcorps.pandax.tile.Tile.*;
 
 public final class BotsnBoltsGame extends BaseGame {
     protected final static String TITLE = "Bots 'n Bolts";
@@ -98,11 +99,20 @@ public final class BotsnBoltsGame extends BaseGame {
     protected final static class BotsnBoltsScreen extends Panscreen {
         @Override
         protected final void load() throws Exception {
+            final Pangine engine = Pangine.getEngine();
+            engine.setBgColor(new org.pandcorps.core.img.FinPancolor((short) 232, (short) 232, (short) 232));
             final Panroom room = Pangame.getGame().getCurrentRoom();
             tm = new TileMap(Pantil.vmid(), room, 16, 16);
-            for (int i = tm.getWidth() - 1; i >= 0; i--) {
-                tm.setBehavior(i, 0, Tile.BEHAVIOR_SOLID);
+            final TileMapImage[][] imgMap = tm.splitImageMap(engine.createImage("bg", RES + "bg/Bg.png"));
+            final int end = tm.getWidth() - 1;
+            for (int i = end; i >= 0; i--) {
+                tm.setBackground(i, 0, imgMap[0][1], Tile.BEHAVIOR_SOLID);
             }
+            for (int j = tm.getHeight() - 1; j > 0; j--) {
+                tm.setBackground(0, j, imgMap[0][0], Tile.BEHAVIOR_SOLID);
+                tm.setBackground(end, j, imgMap[0][2], Tile.BEHAVIOR_SOLID);
+            }
+            room.addActor(tm);
             final Player player = new Player(pc);
             player.getPosition().set(96, 96);
             room.addActor(player);

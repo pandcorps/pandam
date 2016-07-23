@@ -78,10 +78,15 @@ public final class Player extends GuyPlatform {
             @Override public final void onAction(final ActionEvent event) { up(); }});
         register(ctrl.getDown(), new ActionListener() {
             @Override public final void onAction(final ActionEvent event) { down(); }});
+        final Pangine engine = Pangine.getEngine();
+        register(engine.getInteraction().KEY_F1, new ActionStartListener() {
+            @Override public final void onActionStart(final ActionStartEvent event) { engine.captureScreen(); }});
     }
     
     private final void jump() {
-        v = VEL_JUMP;
+        if (isGrounded()) {
+            v = VEL_JUMP;
+        }
     }
     
     private final void releaseJump() {
@@ -143,6 +148,11 @@ public final class Player extends GuyPlatform {
             setVisible(true);
         }
         return false;
+    }
+    
+    @Override
+    protected final void onStepEnd() {
+        hv = 0;
     }
     
     @Override
