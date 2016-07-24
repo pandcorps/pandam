@@ -44,6 +44,7 @@ public final class Player extends GuyPlatform {
     private final Profile prf;
     private final PlayerImages pi;
     private StateHandler stateHandler = NORMAL_HANDLER;
+    private boolean running = false;
     private int runIndex = 0;
     private int runTimer = 0;
     private long lastShot = -1000;
@@ -165,7 +166,14 @@ public final class Player extends GuyPlatform {
         if (hv == 0) {
             changeView(set.stand);
             clearRun();
+            running = false;
         } else {
+            final boolean wasRunning = running;
+            running = true;
+            if (!wasRunning && set.start != null) {
+                changeView(set.start);
+                return;
+            }
             runTimer++;
             if (runTimer > RUN_TIME) {
                 runTimer = 0;
@@ -355,11 +363,13 @@ public final class Player extends GuyPlatform {
         private final Panmage stand;
         private final Panmage jump;
         private final Panmage[] run;
+        private final Panmage start;
         
-        protected PlayerImagesSubSet(final Panmage stand, final Panmage jump, final Panmage[] run) {
+        protected PlayerImagesSubSet(final Panmage stand, final Panmage jump, final Panmage[] run, final Panmage start) {
             this.stand = stand;
             this.jump = jump;
             this.run = run;
+            this.start = start;
         }
     }
     

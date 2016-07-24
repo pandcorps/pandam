@@ -77,19 +77,26 @@ public final class BotsnBoltsGame extends BaseGame {
     
     private final static PlayerImages loadPlayerImages(final String dir, final String name) {
         final String pre = RES + "chr/" + dir + "/" + name;
-        final PlayerImagesSubSet basicSet = loadPlayerImagesSubSet(pre + ".png", name);
+        final PlayerImagesSubSet basicSet = loadPlayerImagesSubSet(pre, name, true);
+        //final PlayerImagesSubSet shootSet = loadPlayerImagesSubSet(pre + "Shoot", name + ".shoot", false);
         return new PlayerImages(basicSet, null, null);
     }
     
-    private final static PlayerImagesSubSet loadPlayerImagesSubSet(final String path, final String name) {
+    private final static PlayerImagesSubSet loadPlayerImagesSubSet(final String path, final String name, final boolean startNeeded) {
         final String pre = PRE_IMG + "." + name + ".";
-        final Img[] imgs = Imtil.loadStrip(path, 32);
+        final Img[] imgs = Imtil.loadStrip(path + ".png", 32);
         final Panmage still = newPlayerImage(pre + "still", imgs[0]);
         final Panmage run1 = newPlayerImage(pre + "run.1", imgs[1]);
         final Panmage run2 = newPlayerImage(pre + "run.2", imgs[2]);
         final Panmage run3 = newPlayerImage(pre + "run.3", imgs[3]);
         final Panmage jump = newPlayerImage(pre + "jump", imgs[4]);
-        return new PlayerImagesSubSet(still, jump, new Panmage[] { run1, run2, run3 });
+        final Panmage start;
+        if (startNeeded) {
+            start = newPlayerImage(pre + "start", Imtil.load(path + "Start.png"));
+        } else {
+            start = null;
+        }
+        return new PlayerImagesSubSet(still, jump, new Panmage[] { run1, run2, run3 }, start);
     }
     
     private final static Panmage newPlayerImage(final String id, final Img img) {
