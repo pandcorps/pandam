@@ -988,4 +988,19 @@ public class Enemy extends Character {
             enemyFront.getPosition().set(x + Trio.OFF_LEG, Menu.Y_PLAYER);
         }
     }
+	
+	protected abstract static class HavocLockController extends Panctor implements StepListener {
+	    @Override
+	    public final void onStep(final StepEvent event) {
+	        for (final Panctor actor : Coltil.unnull(Level.room.getActors())) {
+	            if (isBoss(actor)) {
+	                return;
+	            }
+	        }
+	        Level.unlockGoal();
+	        destroy();
+	    }
+	    
+	    protected abstract boolean isBoss(final Panctor actor);
+	}
 }

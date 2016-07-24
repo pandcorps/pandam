@@ -4037,7 +4037,7 @@ public class Level {
         tm.setForeground(goalIndex, FurGuardiansGame.blockHavocLock, Tile.BEHAVIOR_SOLID);
     }
     
-    private final static void unlockGoal() {
+    protected final static void unlockGoal() {
         goalBlock();
     }
     
