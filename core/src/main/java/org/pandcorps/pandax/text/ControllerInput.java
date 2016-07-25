@@ -81,7 +81,7 @@ public final class ControllerInput extends Input {
 		} else {
 		    sub = ctrl.getSubmit();
             adv = ctrl.get1();
-            bak = ctrl.get2();
+            bak = ctrl.getMenu();
             up = ctrl.getUp();
             down = ctrl.getDown();
 		}

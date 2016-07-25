@@ -305,7 +305,7 @@ public class Menu {
 				registerPromptQuit(pause.getActor(), pause);
 			}
 			if (input) {
-				ctrl.map(down, up, left, right, act1, act2, null);
+				ctrl.map(down, up, left, right, act1, null, act2, null);
 			}
 			Panctor actor = act1 instanceof TouchButton ? ((TouchButton) act1).getActor() : null;
 			if (actor == null) {
@@ -2994,7 +2994,7 @@ public class Menu {
 		
 		private final void registerDoneAll(final Runnable r) {
 			newTab(FurGuardiansGame.menuCheck, Text.DONE, r);
-			for (final Panput input : new Panput[] {ctrl.getSubmit(), ctrl.get1(), ctrl.get2()}) {
+			for (final Panput input : new Panput[] {ctrl.getSubmit(), ctrl.get1(), ctrl.getMenu()}) {
 				tm.register(input, new ActionStartListener() {
 					@Override public final void onActionStart(final ActionStartEvent event) {
 						r.run();

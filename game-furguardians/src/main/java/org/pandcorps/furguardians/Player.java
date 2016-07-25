@@ -508,7 +508,7 @@ public class Player extends Character implements CollisionListener {
 	
 	private final void registerPause() {
 		registerPause(pc.ctrl.getSubmit());
-		registerPause(pc.ctrl.get2());
+		registerPause(pc.ctrl.getMenu());
 	}
 	
 	private final Panput getJumpInput() {
