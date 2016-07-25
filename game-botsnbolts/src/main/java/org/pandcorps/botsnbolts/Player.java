@@ -60,7 +60,7 @@ public final class Player extends GuyPlatform {
     
     private final void registerInputs(final ControlScheme ctrl) {
         final Panput jumpInput = ctrl.get1();
-        final Panput shootInput = null; //TODO
+        final Panput shootInput = ctrl.get2();
         register(jumpInput, new ActionStartListener() {
             @Override public final void onActionStart(final ActionStartEvent event) { jump(); }});
         register(jumpInput, new ActionEndListener() {

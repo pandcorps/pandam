@@ -43,6 +43,8 @@ public final class BotsnBoltsGame extends BaseGame {
     private final static FinPanple2 ng = GuyPlatform.getMin(Player.PLAYER_X);
     private final static FinPanple2 xg = GuyPlatform.getMax(Player.PLAYER_X, Player.PLAYER_H);
     protected final static FinPanple2 og = new FinPanple2(17, 1);
+    protected final static FinPanple2 oss = new FinPanple2(13, 1);
+    protected final static FinPanple2 os = new FinPanple2(15, 1);
     protected static Queue<Runnable> loaders = new LinkedList<Runnable>();
     private static PlayerImages voidImages = null;
     
@@ -77,30 +79,30 @@ public final class BotsnBoltsGame extends BaseGame {
     
     private final static PlayerImages loadPlayerImages(final String dir, final String name) {
         final String pre = RES + "chr/" + dir + "/" + name;
-        final PlayerImagesSubSet basicSet = loadPlayerImagesSubSet(pre, name, true);
-        //final PlayerImagesSubSet shootSet = loadPlayerImagesSubSet(pre + "Shoot", name + ".shoot", false);
-        return new PlayerImages(basicSet, null, null);
+        final PlayerImagesSubSet basicSet = loadPlayerImagesSubSet(pre, name, true, og, og);
+        final PlayerImagesSubSet shootSet = loadPlayerImagesSubSet(pre + "Shoot", name + ".shoot", false, oss, os);
+        return new PlayerImages(basicSet, shootSet, null);
     }
     
-    private final static PlayerImagesSubSet loadPlayerImagesSubSet(final String path, final String name, final boolean startNeeded) {
+    private final static PlayerImagesSubSet loadPlayerImagesSubSet(final String path, final String name, final boolean startNeeded, final Panple os, final Panple o) {
         final String pre = PRE_IMG + "." + name + ".";
         final Img[] imgs = Imtil.loadStrip(path + ".png", 32);
-        final Panmage still = newPlayerImage(pre + "still", imgs[0]);
-        final Panmage run1 = newPlayerImage(pre + "run.1", imgs[1]);
-        final Panmage run2 = newPlayerImage(pre + "run.2", imgs[2]);
-        final Panmage run3 = newPlayerImage(pre + "run.3", imgs[3]);
-        final Panmage jump = newPlayerImage(pre + "jump", imgs[4]);
+        final Panmage still = newPlayerImage(pre + "still", os, imgs[0]);
+        final Panmage run1 = newPlayerImage(pre + "run.1", o, imgs[1]);
+        final Panmage run2 = newPlayerImage(pre + "run.2", o, imgs[2]);
+        final Panmage run3 = newPlayerImage(pre + "run.3", o, imgs[3]);
+        final Panmage jump = newPlayerImage(pre + "jump", o, imgs[4]);
         final Panmage start;
         if (startNeeded) {
-            start = newPlayerImage(pre + "start", Imtil.load(path + "Start.png"));
+            start = newPlayerImage(pre + "start", o, Imtil.load(path + "Start.png"));
         } else {
             start = null;
         }
         return new PlayerImagesSubSet(still, jump, new Panmage[] { run1, run2, run3 }, start);
     }
     
-    private final static Panmage newPlayerImage(final String id, final Img img) {
-        return Pangine.getEngine().createImage(id, og, ng, xg, img);
+    private final static Panmage newPlayerImage(final String id, final Panple o, final Img img) {
+        return Pangine.getEngine().createImage(id, o, ng, xg, img);
     }
     
     protected final static class BotsnBoltsScreen extends Panscreen {
