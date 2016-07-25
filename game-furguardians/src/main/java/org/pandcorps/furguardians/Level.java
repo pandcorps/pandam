@@ -664,8 +664,15 @@ public class Level {
     		        boss = new NetherCubeBoss(3);
     		    } else if (cubeCount < 10) {
     		        boss = new NetherCubeBoss(4);
-    		    } else /*if (cubeCount < 15)*/ {
+    		    } else if (cubeCount < 15) {
     		        boss = new NetherCubeBoss(5);
+    		    } else {
+    		        final int r = Mathtil.randi(0, 1999);
+    		        if (r < 1000) {
+    		            boss = new Boss(FurGuardiansGame.giantGlob);
+    		        } else {
+    		            boss = new NetherCubeBoss(5);
+    		        }
     		    }
     		    goals.add(boss);
             }
