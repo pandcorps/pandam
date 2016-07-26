@@ -81,7 +81,7 @@ public final class BotsnBoltsGame extends BaseGame {
         final String pre = RES + "chr/" + dir + "/" + name;
         final PlayerImagesSubSet basicSet = loadPlayerImagesSubSet(pre, name, true, og, og);
         final PlayerImagesSubSet shootSet = loadPlayerImagesSubSet(pre + "Shoot", name + ".shoot", false, oss, os);
-        return new PlayerImages(basicSet, shootSet, null);
+        return new PlayerImages(basicSet, shootSet, null, null);
     }
     
     private final static PlayerImagesSubSet loadPlayerImagesSubSet(final String path, final String name, final boolean startNeeded, final Panple os, final Panple o) {
@@ -92,13 +92,15 @@ public final class BotsnBoltsGame extends BaseGame {
         final Panmage run2 = newPlayerImage(pre + "run.2", o, imgs[2]);
         final Panmage run3 = newPlayerImage(pre + "run.3", o, imgs[3]);
         final Panmage jump = newPlayerImage(pre + "jump", o, imgs[4]);
-        final Panmage start;
+        final Panmage start, blink;
         if (startNeeded) {
             start = newPlayerImage(pre + "start", o, Imtil.load(path + "Start.png"));
+            blink = null; //newPlayerImage(pre + "blink", o, Imtil.load(path + "Blink.png"));
         } else {
             start = null;
+            blink = null;
         }
-        return new PlayerImagesSubSet(still, jump, new Panmage[] { run1, run2, run3 }, start);
+        return new PlayerImagesSubSet(still, jump, new Panmage[] { run1, run2, run3 }, start, blink);
     }
     
     private final static Panmage newPlayerImage(final String id, final Panple o, final Img img) {

@@ -351,11 +351,14 @@ public final class Player extends GuyPlatform {
         private final PlayerImagesSubSet basicSet;
         private final PlayerImagesSubSet shootSet;
         private final Panmage hurt;
+        private final Panmage basicProjectile;
         
-        protected PlayerImages(final PlayerImagesSubSet basicSet, final PlayerImagesSubSet shootSet, final Panmage hurt) {
+        protected PlayerImages(final PlayerImagesSubSet basicSet, final PlayerImagesSubSet shootSet, final Panmage hurt,
+                               final Panmage basicProjectile) {
             this.basicSet = basicSet;
             this.shootSet = shootSet;
             this.hurt = hurt;
+            this.basicProjectile = basicProjectile;
         }
     }
     
@@ -364,12 +367,14 @@ public final class Player extends GuyPlatform {
         private final Panmage jump;
         private final Panmage[] run;
         private final Panmage start;
+        private final Panmage blink;
         
-        protected PlayerImagesSubSet(final Panmage stand, final Panmage jump, final Panmage[] run, final Panmage start) {
+        protected PlayerImagesSubSet(final Panmage stand, final Panmage jump, final Panmage[] run, final Panmage start, final Panmage blink) {
             this.stand = stand;
             this.jump = jump;
             this.run = run;
             this.start = start;
+            this.blink = blink;
         }
     }
     
