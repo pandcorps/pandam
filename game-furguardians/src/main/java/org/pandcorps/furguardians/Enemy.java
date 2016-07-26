@@ -1010,4 +1010,15 @@ public class Enemy extends Character {
 	        return actor instanceof NetherCube;
 	    }
 	}
+	
+	protected final static class NetherGlobHavocLockController extends HavocLockController {
+        @Override
+        protected final boolean isBoss(final Panctor actor) {
+            if (!(actor instanceof Enemy)) {
+                return false;
+            }
+            final EnemyDefinition def = ((Enemy) actor).def;
+            return (def == FurGuardiansGame.netherGlob) || (def == FurGuardiansGame.greaterGlob) || (def == FurGuardiansGame.giantGlob);
+        }
+    }
 }
