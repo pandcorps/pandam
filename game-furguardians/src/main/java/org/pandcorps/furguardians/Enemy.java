@@ -1003,4 +1003,11 @@ public class Enemy extends Character {
 	    
 	    protected abstract boolean isBoss(final Panctor actor);
 	}
+	
+	protected final static class NetherCubeHavocLockController extends HavocLockController {
+	    @Override
+	    protected final boolean isBoss(final Panctor actor) {
+	        return actor instanceof NetherCube;
+	    }
+	}
 }
