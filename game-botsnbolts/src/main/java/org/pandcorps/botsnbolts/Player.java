@@ -47,6 +47,7 @@ public final class Player extends GuyPlatform {
     private boolean running = false;
     private int runIndex = 0;
     private int runTimer = 0;
+    private int blinkTimer = 0;
     private long lastShot = -1000;
     private long lastHurt = -1000;
     
@@ -164,7 +165,18 @@ public final class Player extends GuyPlatform {
         }
         final PlayerImagesSubSet set = getCurrentImagesSubSet();
         if (hv == 0) {
-            changeView(set.stand);
+            final Panmage stand;
+            if (set.blink == null) {
+                stand = set.stand;
+                blinkTimer = 0;
+            } else {
+                blinkTimer++;
+                if (blinkTimer > 60) {
+                    blinkTimer = 0;
+                }
+                stand = (blinkTimer > 55) ? set.blink : set.stand;
+            }
+            changeView(stand);
             clearRun();
             running = false;
         } else {
@@ -184,6 +196,11 @@ public final class Player extends GuyPlatform {
             }
             changeView(set.run[runIndex == 3 ? 1 : runIndex]);
         }
+    }
+    
+    @Override
+    protected final void onLanded() {
+        blinkTimer = 0;
     }
     
     @Override
@@ -323,7 +340,7 @@ public final class Player extends GuyPlatform {
             if (clock - player.lastShot > delay) {
                 player.lastShot = clock;
                 createProjectile(player);
-                //player.changeView(view);
+                player.blinkTimer = 0;
             }
         }
         
