@@ -2449,6 +2449,7 @@ public class Level {
             solidBlock(ng, base + 1);
             enemy(def, nt - 2, base);
             goalBlock(nt - 2, base + 4);
+            room.addActor(new NetherGlobHavocLockController());
         }
     }
     
@@ -2487,6 +2488,7 @@ public class Level {
                 cubeCount++;
                 x -= 3;
             }
+            room.addActor(new NetherCubeHavocLockController());
         }
     }
     
@@ -4050,7 +4052,7 @@ public class Level {
     
     private final static void netherCube(final int x, final int y) {
         tm.setForeground(x, y, FurGuardiansGame.netherCubeMirror1, FurGuardiansGame.TILE_BUMP);
-        new NetherCube(x, y);
+        room.addActor(new NetherCube(x, y));
         numEnemies++;
     }
     
