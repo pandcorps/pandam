@@ -697,7 +697,7 @@ public class Map {
 		}
 		
 		private final Panput getMenuInput(final ControlScheme ctrl) {
-			return ctrl.get2();
+			return ctrl.getMenu();
 		}
 		
 		private final Pantext addHelp(final String s, final int x, final int y) {

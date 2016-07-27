@@ -58,7 +58,6 @@ public class Menu {
     private final static short SPEED_MENU_FADE = 9;
     private final static int SIZE_FONT = 8;
     protected final static String NAME_NEW = "org.pandcorps.new";
-    private final static String WARN_DELETE = "Press Erase again to confirm";
     private final static String INFO_SAVED = "Saved images";
     private final static String LABEL_COLOR = Text.MAIN;
     private final static String LABEL_COLOR2 = Text.OTHER;
@@ -306,7 +305,7 @@ public class Menu {
 				registerPromptQuit(pause.getActor(), pause);
 			}
 			if (input) {
-				ctrl.map(down, up, left, right, act1, act2, null);
+				ctrl.map(down, up, left, right, act1, null, act2, null);
 			}
 			Panctor actor = act1 instanceof TouchButton ? ((TouchButton) act1).getActor() : null;
 			if (actor == null) {
@@ -1804,8 +1803,8 @@ public class Menu {
 		private final void delete() {
 			if (getAvatarsSize() <= 1) {
             	return;
-            } else if (!inf.toString().equals(WARN_DELETE)) {
-            	setInfo(WARN_DELETE);
+            } else if (!inf.toString().equals(Text.DELETE_WARN)) {
+            	setInfo(Text.DELETE_WARN);
             	return;
             }
             clearInfo();
@@ -2995,7 +2994,7 @@ public class Menu {
 		
 		private final void registerDoneAll(final Runnable r) {
 			newTab(FurGuardiansGame.menuCheck, Text.DONE, r);
-			for (final Panput input : new Panput[] {ctrl.getSubmit(), ctrl.get1(), ctrl.get2()}) {
+			for (final Panput input : new Panput[] {ctrl.getSubmit(), ctrl.get1(), ctrl.getMenu()}) {
 				tm.register(input, new ActionStartListener() {
 					@Override public final void onActionStart(final ActionStartEvent event) {
 						r.run();

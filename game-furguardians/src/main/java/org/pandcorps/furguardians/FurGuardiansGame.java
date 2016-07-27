@@ -222,7 +222,7 @@ public class FurGuardiansGame extends BaseGame {
 	    { "You can contact", getEmail() },
 	    { "You can visit", "http://pandcorps.org" },
 	    { "Find a bug?", "Tell Pandcorps" },
-	    { "Have a suggesstion?", "Tell Pandcorps" },
+	    { "Have a suggestion?", "Tell Pandcorps" },
 	    { "Trying to be", "fun for all" }};
 	
 	private final static PixelMask greyMask = new GreyScalePixelMask();
@@ -271,6 +271,7 @@ public class FurGuardiansGame extends BaseGame {
 	protected static Panmage lightningOrb = null;
 	protected static Panmage doubleOrb = null;
 	protected static Panmage blockPower = null;
+	protected static Panmage blockHavocLock = null;
 	protected static Panmage bubble = null;
 	protected static Panimation minecart = null;
 	protected static Panimation owl = null;
@@ -287,7 +288,17 @@ public class FurGuardiansGame extends BaseGame {
 	protected static EnemyDefinition rockSprite = null;
 	protected static EnemyDefinition rockTrio = null;
 	protected static EnemyDefinition rockLeg = null;
+	protected static EnemyDefinition netherCube = null;
+	protected static EnemyDefinition netherGlob = null;
+	protected static EnemyDefinition greaterGlob = null;
+	protected static EnemyDefinition giantGlob = null;
 	protected static Panmage rockBack = null;
+	protected static Panmage netherCube1 = null;
+	protected static Panmage netherCube2 = null;
+	protected static Panmage netherCube3 = null;
+	protected static Panframe netherCubeMirror1 = null;
+    protected static Panframe netherCubeMirror2 = null;
+    protected static Panframe netherCubeMirror3 = null;
 	protected static Panimation anger = null;
 	protected static Panmage block8 = null;
 	protected static Panmage blockLetter8 = null;
@@ -458,6 +469,7 @@ public class FurGuardiansGame extends BaseGame {
 	    engine.setEntityMapEnabled(false);
 	    Imtil.onlyResources = true;
 		FurGuardiansGame.room = room;
+		initTileBehaviors();
 		loadConstants();
 		Panscreen.set(new LogoScreen(TitleScreen.class, loaders));
 	}
@@ -1301,6 +1313,16 @@ public class FurGuardiansGame extends BaseGame {
         Config.setSoundEnabled(cfg.getBoolean(4, Config.DEF_SOUND_ENABLED));
 	}
 	
+	private final static void initTileBehaviors() {
+	    Character.TILE_FLOOR = TILE_FLOOR;
+	    Character.TILE_UPSLOPE = TILE_UPSLOPE;
+	    Character.TILE_DOWNSLOPE = TILE_DOWNSLOPE;
+	    Character.TILE_UPSLOPE_FLOOR = TILE_UPSLOPE_FLOOR;
+	    Character.TILE_DOWNSLOPE_FLOOR = TILE_DOWNSLOPE_FLOOR;
+	    Character.TILE_ICE = TILE_ICE;
+	    Character.TILE_SAND = TILE_SAND;
+	}
+	
 	private final static void loadConstants() throws Exception {
 	    if (loaders == null) {
 	        return;
@@ -1339,7 +1361,7 @@ public class FurGuardiansGame extends BaseGame {
 			imp = new EnemyDefinition("Imp", 3, null, true, true, impX, impH);
 			Coltil.set(allEnemies, Level.IMP, imp);
 			final EnemyDefinition troll, ogre;
-			troll = new EnemyDefinition("Troll", 5, null, true, false, 0, 8, 30, 1, 32);
+			troll = Enemy.newBigDefinition("Troll", 5, null, true);
 			troll.award = GemBumped.AWARD_2;
 			final class MultiStompHandler implements InteractionHandler {
 			    private final int n;
@@ -1378,15 +1400,15 @@ public class FurGuardiansGame extends BaseGame {
                     return false;
                 }};
             Coltil.set(allEnemies, Level.TROLL, troll);
-			ogre = new EnemyDefinition("Ogre", 5, f, false, false, 0, 8, 30, 1, 32);
+			ogre = Enemy.newBigDefinition("Ogre", 5, f, false);
 			ogre.init(troll);
 			Coltil.set(allEnemies, Level.OGRE, ogre);
-			trollColossus = new EnemyDefinition("Troll Colossus", 11, null, true, false, 0, 26, 62, 1, 64);
+			trollColossus = Enemy.newGiantDefinition("Troll Colossus", 11, null, true);
 			trollColossus.award = GemBumped.AWARD_3;
 			trollColossus.stompHandler = new MultiStompHandler(3);
 			trollColossus.stepHandler = troll.stepHandler;
 			Coltil.set(allEnemies, Level.TROLL_COLOSSUS, trollColossus);
-			ogreBehemoth = new EnemyDefinition("Ogre Behemoth", 11, f, false, false, 0, 26, 62, 1, 64);
+			ogreBehemoth = Enemy.newGiantDefinition("Ogre Behemoth", 11, f, false);
 			ogreBehemoth.init(trollColossus);
 			Coltil.set(allEnemies, Level.OGRE_BEHEMOTH, ogreBehemoth);
 			final EnemyDefinition armorBall, thrownImp;
@@ -1605,15 +1627,34 @@ public class FurGuardiansGame extends BaseGame {
 			Coltil.set(allEnemies, Level.ROCK_SPRITE, rockSprite);
 			Enemy.currentWalkAnm = rockSprite.walk;
 			rockTrio = new EnemyDefinition("Rock Walker", 15, 3, Enemy.trioFactory);
-			rockTrio.rewardHandler = new InteractionHandler() {
+			final InteractionHandler neverRewardHandler = new InteractionHandler() {
                 @Override public final boolean onInteract(final Enemy enemy, final Player player) {
                     return false;
                 }};
+            rockTrio.rewardHandler = neverRewardHandler;
             rockTrio.menu = new TrioEnemyMenu();
 			Coltil.set(allEnemies, Level.ROCK_TRIO, rockTrio);
 			rockLeg = new EnemyDefinition("Rock Leg", 16, null, false, false, 0, Enemy.DEFAULT_X, Enemy.DEFAULT_H, 3);
 			rockLeg.rewardHandler = rockTrio.rewardHandler;
 			rockBack = createImage("rock.back", RES + "enemy/Enemy17.png", 16, rockO, Enemy.DEFAULT_MIN, Enemy.DEFAULT_MAX);
+			final Panmage[] netherCubeSheet = createSheet("nether.cube", RES + "enemy/Enemy18.png", ImtilX.DIM, Enemy.DEFAULT_O);
+			netherCube1 = netherCubeSheet[0];
+			netherCube2 = netherCubeSheet[1];
+			netherCube3 = netherCubeSheet[2];
+			netherCubeMirror1 = createMirror(netherCube1);
+			netherCubeMirror2 = createMirror(netherCube2);
+			netherCubeMirror3 = createMirror(netherCube3);
+			netherCube = new EnemyDefinition("Nether Cube", netherCube1);
+			Coltil.set(allEnemies, Level.NETHER_CUBE, netherCube);
+			netherGlob = new EnemyDefinition("Nether Glob", 19, null, true);
+			netherGlob.award = GemBumped.AWARD_2;
+			Coltil.set(allEnemies, Level.NETHER_GLOB, netherGlob);
+			greaterGlob = Enemy.newBigDefinition("Greater Glob", 20, null, true);
+			greaterGlob.stompHandler = new SplitHandler(netherGlob, 3, -2, 15);
+			Coltil.set(allEnemies, Level.GREATER_GLOB, greaterGlob);
+			giantGlob = Enemy.newGiantDefinition("Giant Glob", 21, null, true);
+			giantGlob.stompHandler = new SplitHandler(greaterGlob, 18, 2, 31);
+			Coltil.set(allEnemies, Level.GIANT_GLOB, giantGlob);
 			Level.initTheme(); }});
 		
 		loaders.add(new Runnable() { @Override public final void run() {
@@ -1633,6 +1674,7 @@ public class FurGuardiansGame extends BaseGame {
 			lightningOrb = createImage("orb.lightning", RES + "misc/LightningOrb.png", 16);
 			doubleOrb = createImage("orb.double", RES + "misc/DoubleOrb.png", 16);
 			blockPower = createImage("block.power", RES + "misc/BlockPower.png", 16);
+			blockHavocLock = createImage("block.power", RES + "misc/BlockHavocLock.png", 16);
 			bubble = createImage("bubble", RES + "chr/Bubble.png", 32, og);
 			minecart = createAnm("minecart", RES + "misc/Minecart.png", 32, 2, new FinPanple2(16, 7), null, null); }});
 	    
@@ -1864,6 +1906,43 @@ public class FurGuardiansGame extends BaseGame {
 	    	rockTrio.stompSound = soundArmor;
 	    	rockLeg.stompSound = soundArmor;
 	    	}});
+	}
+	
+	private final static class SplitHandler implements InteractionHandler {
+	    private final EnemyDefinition def;
+	    private final int xoffLow;
+	    private final int xoffHigh;
+	    private final int yoff;
+	    
+	    private SplitHandler(final EnemyDefinition def, final int xoffLow, final int xoffHigh, final int yoff) {
+	        this.def = def;
+	        this.xoffLow = xoffLow;
+	        this.xoffHigh = xoffHigh;
+	        this.yoff = yoff;
+	    }
+	    
+        @Override
+        public final boolean onInteract(final Enemy enemy, final Player player) {
+            final Panple pos = enemy.getPosition();
+            final float x = pos.getX(), y = pos.getY(), yh = y + yoff;
+            new Enemy(def, x - xoffLow, y).setEnemyMirror(true);
+            new Enemy(def, x + xoffLow, y).setEnemyMirror(false);
+            new Enemy(def, x - xoffHigh, yh).setEnemyMirror(true);
+            new Enemy(def, x + xoffHigh, yh).setEnemyMirror(false);
+            Enemy.countDefeat(player, enemy.def, Enemy.DEFEAT_STOMP);
+            enemy.destroy();
+            return true;
+        }
+    }
+	
+	private final static Panframe createMirror(final Panmage img) {
+	    return Pangine.getEngine().createFrame(PRE_FRM + img.getId() + ".mirror", img, 1, 0, true, false);
+	}
+	
+	protected final static Panimation createAnimation(final Panmage img) {
+	    final Pangine engine = Pangine.getEngine();
+	    final String id = img.getId();
+	    return engine.createAnimation(PRE_ANM + id, engine.createFrame(PRE_FRM + id, img, 1));
 	}
 	
 	protected final static Img[] loadBlockLetterStrip() {

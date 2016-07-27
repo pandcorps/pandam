@@ -109,14 +109,17 @@ public class Tiles {
     	    }
     	    shatterTile(shatterImg, Level.tm.getPosition(index), shatterRot);
     	    FurGuardiansGame.soundCrumble.startSound();
-            new Bump(chr, index).setVisible(false); // To bump Characters above
+            new Bump(chr, index, null).setVisible(false); // To bump Characters above
     	} else if (b == FurGuardiansGame.TILE_BUMP) {
     	    final TileHandler handler = getHandler();
-    	    if (DynamicTileMap.getRawForeground(t) == FurGuardiansGame.blockPower) {
+    	    final Object fg = DynamicTileMap.getRawForeground(t);
+    	    Object nextImage = null;
+    	    if (fg == FurGuardiansGame.blockPower) {
     	        final Panmage orbImg;
     	        final byte power;
     	        final Statistics stats = player.pc.profile.stats;
     	        final int r;
+    	        //TODO No Lightning in boss levels
     	        if (stats.foundLightningOrbs == 0) {
     	            r = 500;
     	        } else if (stats.foundDoubleOrbs == 0) {
@@ -141,6 +144,22 @@ public class Tiles {
     	        orb.duration += 12;
     	        orb.getVelocity().addY(2);
     	        Player.setPower(power);
+    	    } else if (fg == FurGuardiansGame.netherCube1) {
+    	        nextImage = FurGuardiansGame.netherCube2;
+    	        bumpNetherCube(player, index);
+    	    } else if (fg == FurGuardiansGame.netherCubeMirror1) {
+                nextImage = FurGuardiansGame.netherCubeMirror2;
+                bumpNetherCube(player, index);
+    	    } else if (fg == FurGuardiansGame.netherCube2) {
+    	        nextImage = FurGuardiansGame.netherCube3;
+    	        bumpNetherCube(player, index);
+    	    } else if (fg == FurGuardiansGame.netherCubeMirror2) {
+                nextImage = FurGuardiansGame.netherCubeMirror3;
+                bumpNetherCube(player, index);
+    	    } else if (fg == FurGuardiansGame.netherCube3) {
+    	        defeatNetherCube(player, index);
+    	    } else if (fg == FurGuardiansGame.netherCubeMirror3) {
+    	        defeatNetherCube(player, index);
     	    } else if (handler.isNormalAward(index, t)) {
     	        newGemBumped(player, index);
     	    } else if (!(handler.handle(index, t) || bumpLetter(player, index, t))) {
@@ -149,7 +168,7 @@ public class Tiles {
     	        FurGuardiansGame.levelVictory();
     	        FurGuardiansGame.playTransition(FurGuardiansGame.musicLevelEnd);
     	    }
-    	    bump(player, index);
+    	    bump(player, index, nextImage);
     	} else {
     		final long clock = Pangine.getEngine().getClock();
     		if (player.lastThud < (clock - 2)) {
@@ -157,6 +176,15 @@ public class Tiles {
 	    		FurGuardiansGame.soundThud.startSound();
     		}
     	}
+    }
+    
+    private final static void bumpNetherCube(final Player player, final int index) {
+        GemBumped.create(player, index, GemBumped.AWARD_2);
+    }
+    
+    private final static void defeatNetherCube(final Player player, final int index) {
+        bumpNetherCube(player, index);
+        Enemy.countDefeat(player, FurGuardiansGame.netherCube, Enemy.DEFEAT_BUMP);
     }
     
     protected final static int getLetterIndex(final Panmage[] letters, final Tile t) {
@@ -231,8 +259,8 @@ public class Tiles {
     	}
     }
     
-    private final static void bump(final Player player, final int index) {
-        new Bump(player, index); // Copy image before changing
+    private final static void bump(final Player player, final int index, final Object nextImage) {
+        new Bump(player, index, nextImage); // Copy image before changing
         Level.tm.setForeground(index, null, Tile.BEHAVIOR_SOLID);
         player.pc.profile.stats.bumpedBlocks++;
     }
@@ -298,11 +326,13 @@ public class Tiles {
     private final static class Bump extends TileActor implements StepListener, CollisionListener {
     	private final Character bumper;
     	private final int index;
+    	private final Object nextImage;
         private int age = 0;
         
-        private Bump(final Character bumper, final int index) {
+        private Bump(final Character bumper, final int index, final Object nextImage) {
         	this.bumper = bumper;
         	this.index = index;
+        	this.nextImage = nextImage;
         	setViewFromForeground(Level.tm, Level.tm.getTile(index));
             final Panple pos = Level.tm.getPosition(index);
             FurGuardiansGame.setPosition(this, pos.getX(), pos.getY() + 2, FurGuardiansGame.DEPTH_SHATTER);
@@ -318,7 +348,11 @@ public class Tiles {
             } else {
                 destroy();
                 if (isVisible()) {
-                	Level.tm.setForeground(index, getHandler().getBumpedImage());
+                    if (nextImage != null) {
+                        Level.tm.setForeground(index, nextImage, FurGuardiansGame.TILE_BUMP);
+                    } else {
+                        Level.tm.setForeground(index, getHandler().getBumpedImage());
+                    }
                 }
                 return;
             }

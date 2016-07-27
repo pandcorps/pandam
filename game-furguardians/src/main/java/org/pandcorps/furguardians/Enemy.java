@@ -37,8 +37,8 @@ import org.pandcorps.furguardians.Player.*;
 import org.pandcorps.furguardians.Profile.*;
 
 public class Enemy extends Character {
-	private final static byte DEFEAT_STOMP = 0;
-	private final static byte DEFEAT_BUMP = 1;
+    protected final static byte DEFEAT_STOMP = 0;
+	protected final static byte DEFEAT_BUMP = 1;
 	private final static byte DEFEAT_HIT = 2;
 	private final static byte DEFEAT_ELECTROCUTE = 3;
 	protected final static int DEFAULT_X = 5;
@@ -202,6 +202,25 @@ public class Enemy extends Character {
 			factory = spawnFactory;
 		}
 		
+		protected EnemyDefinition(final String name, final Panmage walkImg) {
+		    this(name, FurGuardiansGame.createAnimation(walkImg));
+		}
+		
+		protected EnemyDefinition(final String name, final Panimation walk) {
+		    super(name);
+		    code = Chartil.toCode(name);
+		    this.walk = walk;
+	        ledgeTurn = true;
+	        splat = null;
+	        attack = null;
+	        extra = null;
+	        avoidCount = 0;
+	        offX = DEFAULT_X;
+	        h = DEFAULT_H;
+	        hv = DEFAULT_HV;
+	        factory = null;
+		}
+		
 		protected final void init(final EnemyDefinition ref) {
 		    award = ref.award;
             stompHandler = ref.stompHandler;
@@ -213,6 +232,14 @@ public class Enemy extends Character {
 		}
 	}
 	
+	protected final static EnemyDefinition newBigDefinition(final String name, final int ind, final PixelFilter f, final boolean ledgeTurn) {
+	    return new EnemyDefinition(name, ind, f, ledgeTurn, false, 0, 8, 30, 1, 32);
+	}
+	
+	protected final static EnemyDefinition newGiantDefinition(final String name, final int ind, final PixelFilter f, final boolean ledgeTurn) {
+        return new EnemyDefinition(name, ind, f, ledgeTurn, false, 0, 26, 62, 1, 64);
+    }
+	
 	protected final static Img[] loadStrip(final int ind, final int d) {
 		return ImtilX.loadStrip(FurGuardiansGame.RES + "enemy/Enemy" + Chartil.padZero(ind, 2) + ".png", d);
 	}
@@ -223,6 +250,7 @@ public class Enemy extends Character {
 	protected int timerMode = 0;
 	protected boolean full = false;
 	protected Player lastStomper = null; // If Enemy requires multiple stomps, keep track of last one
+	protected byte defeatMode = -1;
 	
 	protected Enemy(final EnemyDefinition def, final Panctor ref) {
 		this(def, ref.getPosition());
@@ -269,8 +297,7 @@ public class Enemy extends Character {
 	                    break;
 	                case 1 :
 	                    initTimer(2);
-	                    FurGuardiansGame.room.addActor(new Projectile(def.projectile, this, Mathtil.rand(FurGuardiansGame.pcs).player));
-	                    FurGuardiansGame.soundWhoosh.startSound();
+	                    throwProjectile(def.projectile, this, Mathtil.rand(FurGuardiansGame.pcs).player);
 	                    break;
 	                case 2 :
 	                    stepTeleport();
@@ -279,6 +306,11 @@ public class Enemy extends Character {
 	        }
 	    }
 	    return false;
+	}
+	
+	private final static void throwProjectile(final Panimation projectile, final Panctor src, final Panctor dst) {
+	    FurGuardiansGame.room.addActor(new Projectile(projectile, src, dst));
+	    FurGuardiansGame.soundWhoosh.startSound();
 	}
 	
 	private final void stepTeleport() {
@@ -395,6 +427,7 @@ public class Enemy extends Character {
 	}
 	
 	private final void reward(final Player player, final byte defeatMode) {
+	    this.defeatMode = defeatMode;
 	    if (isRewarded(player)) {
             reward(player, this, def, defeatMode);
         }
@@ -402,6 +435,10 @@ public class Enemy extends Character {
 	
 	private final static void reward(final Player player, final Panctor enemy, final EnemyDefinition def, final byte defeatMode) {
 	    new GemBumped(player, enemy, def);
+	    countDefeat(player, def, defeatMode);
+	}
+	
+	protected final static void countDefeat(final Player player, final EnemyDefinition def, final byte defeatMode) {
 	    player.levelDefeatedEnemies++;
         final Statistics stats = player.pc.profile.stats;
         switch (defeatMode) {
@@ -806,6 +843,94 @@ public class Enemy extends Character {
 	    }
 	}
 	
+	public final static class NetherCube extends Panctor implements StepListener {
+	    private final int index;
+	    private int timer;
+	    
+	    protected NetherCube(final int x, final int y) {
+	        index = Level.tm.getIndex(x, y);
+	        final Panple pos = Level.tm.getPosition(index);
+	        getPosition().set(pos.getX() + 8, pos.getY() + 8);
+	        initTimer();
+	    }
+	    
+	    private final void initTimer() {
+	        timer = Mathtil.randi(30, 75);
+	    }
+	    
+        @Override
+        public final void onStep(final StepEvent event) {
+            final Player target = getTarget();
+            if (target == null) {
+                return;
+            }
+            final float diff = getDifference(target);
+            if (Math.abs(diff) >= 160) {
+                return;
+            }
+            final Tile tile = Level.tm.getTile(index);
+            final Object fg = DynamicTileMap.getRawForeground(tile);
+            if (tile.isSolid() && fg != null) {
+                destroy();
+                return;
+            } else if (diff < 4) {
+                setMirror(true);
+                if (fg == FurGuardiansGame.netherCube1) {
+                    Level.tm.setForeground(index, FurGuardiansGame.netherCubeMirror1);
+                } else if (fg == FurGuardiansGame.netherCube2) {
+                    Level.tm.setForeground(index, FurGuardiansGame.netherCubeMirror2);
+                } else if (fg == FurGuardiansGame.netherCube3) {
+                    Level.tm.setForeground(index, FurGuardiansGame.netherCubeMirror3);
+                }
+            } else if (diff > 11) {
+                setMirror(false);
+                if (fg == FurGuardiansGame.netherCubeMirror1) {
+                    Level.tm.setForeground(index, FurGuardiansGame.netherCube1);
+                } else if (fg == FurGuardiansGame.netherCubeMirror2) {
+                    Level.tm.setForeground(index, FurGuardiansGame.netherCube2);
+                } else if (fg == FurGuardiansGame.netherCubeMirror3) {
+                    Level.tm.setForeground(index, FurGuardiansGame.netherCube3);
+                }
+            }
+            timer--;
+            if (timer < 0) {
+                throwProjectile(FurGuardiansGame.projectile1, this, target);
+                initTimer();
+            }
+        }
+        
+        private final Player getTarget() {
+            Player target = null;
+            float targetDistance = -1;
+            for (final PlayerContext pc : Coltil.unnull(FurGuardiansGame.pcs)) {
+                final Player player = PlayerContext.getPlayer(pc);
+                if (player == null) {
+                    continue;
+                } else if (target == null) {
+                    target = player;
+                } else {
+                    final float distance = getDistance(player);
+                    if (targetDistance < 0) {
+                        targetDistance = getDistance(target);
+                    }
+                    if (distance < targetDistance) {
+                        target = player;
+                        targetDistance = distance;
+                    }
+                }
+            }
+            return target;
+        }
+        
+        private final float getDistance(final Player player) {
+            return Math.abs(getDifference(player));
+        }
+        
+        private final float getDifference(final Player player) {
+            return player.getPosition().getX() - getPosition().getX();
+        }
+	}
+	
 	protected final static SpawnFactory enemyFactory = new EnemyFactory();
 	
 	protected final static SpawnFactory trioFactory = new TrioFactory();
@@ -861,6 +986,39 @@ public class Enemy extends Character {
             enemy.getPosition().set(x, Menu.Y_PLAYER + Trio.OFF_HEAD);
             enemyFront.setView(legImg);
             enemyFront.getPosition().set(x + Trio.OFF_LEG, Menu.Y_PLAYER);
+        }
+    }
+	
+	protected abstract static class HavocLockController extends Panctor implements StepListener {
+	    @Override
+	    public final void onStep(final StepEvent event) {
+	        for (final Panctor actor : Coltil.unnull(Level.room.getActors())) {
+	            if (isBoss(actor)) {
+	                return;
+	            }
+	        }
+	        Level.unlockGoal();
+	        destroy();
+	    }
+	    
+	    protected abstract boolean isBoss(final Panctor actor);
+	}
+	
+	protected final static class NetherCubeHavocLockController extends HavocLockController {
+	    @Override
+	    protected final boolean isBoss(final Panctor actor) {
+	        return actor instanceof NetherCube;
+	    }
+	}
+	
+	protected final static class NetherGlobHavocLockController extends HavocLockController {
+        @Override
+        protected final boolean isBoss(final Panctor actor) {
+            if (!(actor instanceof Enemy)) {
+                return false;
+            }
+            final EnemyDefinition def = ((Enemy) actor).def;
+            return (def == FurGuardiansGame.netherGlob) || (def == FurGuardiansGame.greaterGlob) || (def == FurGuardiansGame.giantGlob);
         }
     }
 }

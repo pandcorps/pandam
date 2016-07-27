@@ -59,6 +59,10 @@ public class Level {
     protected final static int ROCK_TRIO = 14;
     protected final static int BLOB = 15;
     protected final static int BLACK_BLOB = 16;
+    protected final static int NETHER_CUBE = 17;
+    protected final static int NETHER_GLOB = 18;
+    protected final static int GREATER_GLOB = 19;
+    protected final static int GIANT_GLOB = 20;
     
     private final static byte FLOOR_GRASSY = 0;
     private final static byte FLOOR_BLOCK = 1;
@@ -140,6 +144,7 @@ public class Level {
     protected static List<Panctor> collectedLetters = null;
     protected static List<Panctor> uncollectedLetters = null;
     private static int farthestColumn = 0;
+    private static boolean goalLocked = false;
     protected static boolean victory = false;
     
     static {
@@ -634,6 +639,47 @@ public class Level {
     		@Override protected final void addTemplates(final List<Template> templates) {
                 templates.add(new ChoiceTemplate(new BushTemplate(), new TreeTemplate()));
             }
+    		
+    		@Override protected final void addGoals(final List<GoalTemplate> goals) {
+    		    if (!isSpecialGoalRequired()) {
+    		        return;
+    		    }
+    		    goalLocked = true;
+    		    final GoalTemplate boss;
+    		    final long globCount = getDefeatedCount(FurGuardiansGame.netherGlob);
+    		    final long cubeCount = getDefeatedCount(FurGuardiansGame.netherCube);
+    		    final long greaterGlobCount = getDefeatedCount(FurGuardiansGame.greaterGlob);
+    		    final long giantGlobCount = getDefeatedCount(FurGuardiansGame.giantGlob);
+    		    if (globCount < 1) {
+    		        boss = new Boss(FurGuardiansGame.netherGlob, 7);
+    		    } else if (cubeCount < 1) {
+    		        boss = new NetherCubeBoss(1);
+    		    } else if (greaterGlobCount < 1) {
+    		        boss = new Boss(FurGuardiansGame.greaterGlob, 9);
+    		    } else if (cubeCount < 3) {
+    		        boss = new NetherCubeBoss(2);
+    		    } else if (giantGlobCount < 1) {
+                    boss = new Boss(FurGuardiansGame.giantGlob);
+    		    } else if (cubeCount < 6) {
+    		        boss = new NetherCubeBoss(3);
+    		    } else if (cubeCount < 10) {
+    		        boss = new NetherCubeBoss(4);
+    		    } else if (cubeCount < 15) {
+    		        boss = new NetherCubeBoss(5);
+    		    } else {
+    		        final int r = Mathtil.randi(0, 1999);
+    		        if (r < 1000) {
+    		            boss = new Boss(FurGuardiansGame.giantGlob);
+    		        } else {
+    		            boss = new NetherCubeBoss(5);
+    		        }
+    		    }
+    		    goals.add(boss);
+            }
+    		
+    		@Override protected final boolean isSpecialGoalRequired() {
+    		    return isManualRun();
+    		}
     	};
     	
     	protected final String img;
@@ -725,6 +771,10 @@ public class Level {
     	
     	protected void addGoals(final List<GoalTemplate> goals) {
     	}
+    	
+    	protected boolean isSpecialGoalRequired() {
+    	    return false;
+    	}
     }
     
     protected static void setTheme(final Theme theme) {
@@ -772,6 +822,11 @@ public class Level {
     
     private final static Statistics getStatistics() {
     	return Profile.getStatistics(getProfile());
+    }
+    
+    private final static long getDefeatedCount(final EnemyDefinition def) {
+        final Statistics stats = getStatistics();
+        return (stats == null) ? 0 : stats.getDefeatedCount(def);
     }
     
     private final static int getDefeatedWorlds() {
@@ -931,6 +986,7 @@ public class Level {
         currLetter = 0;
         Coltil.clear(collectedLetters);
         farthestColumn = 0;
+        goalLocked = false;
     }
     
     protected final static void loadLevel() {
@@ -1056,6 +1112,21 @@ public class Level {
         new Enemy(def, 360, 16);
     }
     
+    protected final static boolean isManualRun() {
+        if (Coltil.isEmpty(FurGuardiansGame.pcs)) {
+            return false;
+        }
+        for (final PlayerContext pc : FurGuardiansGame.pcs) {
+            final Profile prf = PlayerContext.getProfile(pc);
+            if (prf == null) {
+                return false;
+            } else if (prf.autoRun) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
     private static int bx;
     private static int px;
     
@@ -1113,21 +1184,6 @@ public class Level {
                 letterTemplates.add(new BreakLetterTemplate());
                 letterTemplates.add(new FloatingEnclosedLetterTemplate());
             }
-        }
-        
-        protected final boolean isManualRun() {
-            if (Coltil.isEmpty(FurGuardiansGame.pcs)) {
-                return false;
-            }
-            for (final PlayerContext pc : FurGuardiansGame.pcs) {
-                final Profile prf = PlayerContext.getProfile(pc);
-                if (prf == null) {
-                    return false;
-                } else if (prf.autoRun) {
-                    return false;
-                }
-            }
-            return true;
         }
         
         protected final void addConstructedTemplates() {
@@ -1708,7 +1764,9 @@ public class Level {
 	        addTemplate(new SlantTemplate(true), new SlantTemplate(false));
 	        addGiantTemplate();
 	        theme.addTemplates(templates);
-	        addNormalGoals();
+	        if (!theme.isSpecialGoalRequired()) {
+	            addNormalGoals();
+	        }
 	        theme.addGoals(goals);
 	    }
     	
@@ -1762,6 +1820,24 @@ public class Level {
             final Img tileImg = loadTileImage(((theme == Theme.Normal) ? "" : theme.getImg()) + "Block");
             applyDirtTexture(tileImg, 0, 16, 48, 64);
             return Level.getTileImage(tileImg);
+        }
+    }
+    
+    private final static class QuadBuilder extends GrassyBuilder {
+        @Override
+        protected final void loadTemplates() {
+            templates.add(new QuadTemplate());
+            addNormalGoals();
+        }
+        
+        @Override
+        protected final void loadLetterTemplates() {
+            addTinyLetterTemplate();
+        }
+        
+        @Override
+        protected final Template getPitTemplate() {
+            return new PitTemplate();
         }
     }
     
@@ -2345,6 +2421,74 @@ public class Level {
                 solidBlock(x + i, y);
             }
             goalBlock(x + 2, y + 3);
+        }
+    }
+    
+    private final static class Boss extends GoalTemplate {
+        private final EnemyDefinition def;
+        private final int w;
+        
+        protected Boss(final EnemyDefinition def) {
+            this(def, 11);
+        }
+        
+        protected Boss(final EnemyDefinition def, final int w) {
+            this.def = def;
+            this.w = w;
+        }
+        
+        @Override
+        protected int getWidth() {
+            return w;
+        }
+        
+        @Override
+        protected final void build() {
+            final int base = floor + 1;
+            solidBlock(ng, base);
+            solidBlock(ng, base + 1);
+            enemy(def, nt - 2, base);
+            goalBlock(nt - 2, base + 4);
+            room.addActor(new NetherGlobHavocLockController());
+        }
+    }
+    
+    private final static class NetherCubeBoss extends GoalTemplate {
+        private final int numCubes;
+        private final int numColumns;
+        private final int w;
+        
+        protected NetherCubeBoss(final int numCubes) {
+            this.numCubes = numCubes;
+            numColumns = (numCubes + 2) / 2;
+            w = numColumns * 3;
+        }
+        
+        @Override
+        protected int getWidth() {
+            return w;
+        }
+        
+        @Override
+        protected final void build() {
+            final int low = floor + 3, high = floor + 6;
+            int x = nt - 2;
+            int cubeCount = 0;
+            for (int i = 0; i < numColumns; i++) {
+                if (i == 0) {
+                    goalBlock(x, low);
+                } else {
+                    netherCube(x, low);
+                    cubeCount++;
+                }
+                if (cubeCount == numCubes) {
+                    break;
+                }
+                netherCube(x, high);
+                cubeCount++;
+                x -= 3;
+            }
+            room.addActor(new NetherCubeHavocLockController());
         }
     }
     
@@ -2997,7 +3141,7 @@ public class Level {
         protected final void build() {
             final int h = Mathtil.randi(2, 3);
             final int base = floor + 3 + floatOffset;
-            final int lx = Mathtil.randi(1, w - 2), ly = Mathtil.randi(1, h - 1);
+            final int lx = Mathtil.randi(1, w - 2), ly = h - 1;
             for (int i = 0; i < w; i++) {
                 final boolean letterRow = i == lx;
                 final int col = x + i;
@@ -3312,7 +3456,15 @@ public class Level {
         
         @Override
         protected final void build() {
-            //TODO Solid block on each end, (w - 4) enemies in middle
+            builder.flatten(x, w);
+            final int base = floor + 1 + floatOffset;
+            solidBlock(x, base);
+            final int n = w - 4;
+            final EnemyDefinition def = null; //TODO
+            for (int i = 0; i < n; i++) {
+                enemy(def, x + 2 + i, base);
+            }
+            solidBlock(x + w - 1, base);
         }
     }
     
@@ -3877,8 +4029,31 @@ public class Level {
     }
     
     private final static void goalBlock(final int x, final int y) {
+        if (goalLocked) {
+            havocLockBlock(x, y);
+            return;
+        }
         goalIndex = tm.getIndex(x, y);
+        goalBlock();
+    }
+    
+    private final static void goalBlock() {
         tm.setForeground(goalIndex, imgMap[7][0], FurGuardiansGame.TILE_BUMP);
+    }
+    
+    private final static void havocLockBlock(final int x, final int y) {
+        goalIndex = tm.getIndex(x, y);
+        tm.setForeground(goalIndex, FurGuardiansGame.blockHavocLock, Tile.BEHAVIOR_SOLID);
+    }
+    
+    protected final static void unlockGoal() {
+        goalBlock();
+    }
+    
+    private final static void netherCube(final int x, final int y) {
+        tm.setForeground(x, y, FurGuardiansGame.netherCubeMirror1, FurGuardiansGame.TILE_BUMP);
+        room.addActor(new NetherCube(x, y));
+        numEnemies++;
     }
     
     private final static void step(final int x, final int y, final int w, final int h) {
@@ -4176,11 +4351,33 @@ public class Level {
     }
     
     private final static void quadVerticalL(final int x, final int y) {
-        //TODO
+        final int x1, xFull;
+        if (Mathtil.rand()) {
+            x1 = x;
+            xFull = x + 1;
+        } else {
+            x1 = x + 1;
+            xFull = x;
+        }
+        for (int j = 0; j < 3; j++) {
+            breakableBlockForce(xFull, y + j);
+        }
+        breakableBlockForce(x1, y + (Mathtil.rand() ? 0 : 2));
     }
     
     private final static void quadVerticalS(final int x, final int y) {
-        //TODO
+        final int yLeft, yRight;
+        if (Mathtil.rand()) {
+            yLeft = y;
+            yRight = y + 1;
+        } else {
+            yLeft = y + 1;
+            yRight = y;
+        }
+        for (int j = 0; j < 2; j++) {
+            breakableBlockForce(x, yLeft + j);
+            breakableBlockForce(x + 1, yRight + j);
+        }
     }
     
     private final static void quadVerticalT(final int x, final int y) {
@@ -4199,7 +4396,18 @@ public class Level {
     }
     
     private final static void quadL(final int x, final int y) {
-        //TODO
+        final int y1, yFull;
+        if (Mathtil.rand()) {
+            y1 = y;
+            yFull = y + 1;
+        } else {
+            y1 = y + 1;
+            yFull = y;
+        }
+        for (int i = 0; i < 3; i++) {
+            breakableBlockForce(x + i, yFull);
+        }
+        breakableBlockForce(x + (Mathtil.rand() ? 0 : 2), y1);
     }
     
     private final static void quadS(final int x, final int y) {
