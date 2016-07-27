@@ -98,10 +98,7 @@ public class Player extends Character implements CollisionListener {
 	        if (powerTimer == 0) {
 	            if (powerMode == POWER_DOUBLE) {
     	            for (final PlayerContext pc : Coltil.unnull(FurGuardiansGame.pcs)) {
-    	                if (pc == null) {
-    	                    continue;
-    	                }
-    	                final Player player = pc.player;
+    	                final Player player = PlayerContext.getPlayer(pc);
     	                if (player == null) {
     	                    continue;
     	                } else if (player.currentComboSize > 0) {
@@ -377,6 +374,10 @@ public class Player extends Character implements CollisionListener {
 	    public final static Statistics getStatistics(final PlayerContext pc) {
 	        return Profile.getStatistics(getProfile(pc));
 	    }
+	    
+	    public final static Player getPlayer(final PlayerContext pc) {
+	        return (pc == null) ? null : pc.player;
+	    }
 	}
 	
 	protected static interface Ai {
@@ -507,7 +508,7 @@ public class Player extends Character implements CollisionListener {
 	
 	private final void registerPause() {
 		registerPause(pc.ctrl.getSubmit());
-		registerPause(pc.ctrl.get2());
+		registerPause(pc.ctrl.getMenu());
 	}
 	
 	private final Panput getJumpInput() {
@@ -715,10 +716,7 @@ public class Player extends Character implements CollisionListener {
 	private final static Player getActive() {
 		Player a = null;
 		for (final PlayerContext pc : FurGuardiansGame.pcs) {
-			if (pc == null) {
-				continue;
-			}
-			final Player c = pc.player;
+			final Player c = PlayerContext.getPlayer(pc);
 			if (c == null) {
 				continue;
 			}

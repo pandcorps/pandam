@@ -41,14 +41,16 @@ public class ControlScheme {
     private MappableInput original1 = null;
     private Panput act2 = null;
     private MappableInput original2 = null;
+    private Panput mnu = null;
+    private MappableInput originalMnu = null;
     private Panput sub = null;
     private MappableInput originalSub = null;
     
     public ControlScheme() {
     }
     
-    public ControlScheme(final Panput down, final Panput up, final Panput left, final Panput right, final Panput act1, final Panput act2, final Panput sub) {
-        set(down, up, left, right, act1, act2, sub);
+    public ControlScheme(final Panput down, final Panput up, final Panput left, final Panput right, final Panput act1, final Panput act2, final Panput mnu, final Panput sub) {
+        set(down, up, left, right, act1, act2, mnu, sub);
     }
     
     public final static ControlScheme getDefaultKeyboard() {
@@ -65,16 +67,16 @@ public class ControlScheme {
     
     public final void setDefaultKeyboard() {
         final Panteraction in = Pangine.getEngine().getInteraction();
-        set(in.KEY_DOWN, in.KEY_UP, in.KEY_LEFT, in.KEY_RIGHT, in.KEY_SPACE, in.KEY_ESCAPE, in.KEY_ENTER);
+        set(in.KEY_DOWN, in.KEY_UP, in.KEY_LEFT, in.KEY_RIGHT, in.KEY_SPACE, in.KEY_CTRL_RIGHT, in.KEY_ESCAPE, in.KEY_ENTER);
     }
     
     public final void setDefault(final Device d) {
         if (d instanceof Controller) {
             final Controller c = (Controller) d;
             if (d.getName().startsWith("Controller")) {
-            	set(c.DOWN, c.UP, c.LEFT, c.RIGHT, c.BUTTON_0, c.BUTTONS.get(2), c.BUTTONS.get(c.BUTTONS.size() - 3));
+            	set(c.DOWN, c.UP, c.LEFT, c.RIGHT, c.BUTTON_0, null, c.BUTTONS.get(2), c.BUTTONS.get(c.BUTTONS.size() - 3)); //TODO Fix act2
             } else {
-            	set(c.DOWN, c.UP, c.LEFT, c.RIGHT, c.BUTTON_1, c.BUTTON_0, c.BUTTONS.get(c.BUTTONS.size() - 1));
+            	set(c.DOWN, c.UP, c.LEFT, c.RIGHT, c.BUTTON_1, null, c.BUTTON_0, c.BUTTONS.get(c.BUTTONS.size() - 1));
             }
         } else if (d instanceof Keyboard) {
             setDefaultKeyboard();
@@ -88,23 +90,26 @@ public class ControlScheme {
         }
     }
     
-    public void set(final Panput down, final Panput up, final Panput left, final Panput right, final Panput act1, final Panput act2, final Panput sub) {
+    public void set(final Panput down, final Panput up, final Panput left, final Panput right, final Panput act1, final Panput act2, final Panput mnu, final Panput sub) {
         this.down = down;
         this.up = up;
         this.left = left;
         this.right = right;
         this.act1 = act1;
         this.act2 = act2;
+        this.mnu = mnu;
         this.sub = sub;
     }
     
-    public void map(final MappableInput down, final MappableInput up, final MappableInput left, final MappableInput right, final MappableInput act1, final MappableInput act2, final MappableInput sub) {
+    public void map(final MappableInput down, final MappableInput up, final MappableInput left, final MappableInput right, final MappableInput act1, final MappableInput act2,
+                    final MappableInput mnu, final MappableInput sub) {
     	mapDown(down);
     	mapUp(up);
     	mapLeft(left);
     	mapRight(right);
     	map1(act1);
     	map2(act2);
+    	mapMenu(mnu);
     	mapSubmit(sub);
     }
     
@@ -214,8 +219,25 @@ public class ControlScheme {
     }
     
     public final void map2(final MappableInput act2) {
-    	MappableInput.setMappedInput(act2, this.act2);
-    	original2 = act2;
+        MappableInput.setMappedInput(act2, this.act2);
+        original2 = act2;
+    }
+    
+    public final Panput getMenu() {
+        return mnu;
+    }
+    
+    public final Panput getOriginalMenu() {
+        return originalMnu == null ? mnu : originalMnu;
+    }
+    
+    public final void setMenu(final Panput mnu) {
+        this.mnu = mnu;
+    }
+    
+    public final void mapMenu(final MappableInput mnu) {
+    	MappableInput.setMappedInput(mnu, this.mnu);
+    	originalMnu = mnu;
     }
     
     public final Panput getSubmit() {

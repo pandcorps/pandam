@@ -20,45 +20,10 @@ PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY
 TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 */
-package org.pandcorps.furguardians;
+package org.pandcorps.botsnbolts;
 
-import org.pandcorps.game.actor.*;
-import org.pandcorps.pandam.*;
-import org.pandcorps.pandax.tile.*;
+import org.pandcorps.botsnbolts.Player.*;
 
-public abstract class Character extends GuyPlatform {
-	protected Character(final int offX, final int h) {
-		super(offX, h);
-	}
-	
-	protected final void flipAndFall(final float v) {
-	    flipAndFall(this, H, v);
-	}
-	
-	protected final static void flipAndFall(final Panctor actor, final int h, final float v) {
-        final Panple pos = actor.getPosition();
-        final Tiles.Faller f = new Tiles.Faller((Panmage) actor.getCurrentDisplay(), pos.getX(), pos.getY() + h, 0, v);
-        f.setMirror(actor.isMirror());
-        f.setFlip(true);
-        actor.destroy();
-    }
-	
-	//@OverrideMe
-    protected void onBump(final Character c) {
-    }
-	
-	@Override
-	protected final void onBump(final int t) {
-	    Tiles.bump(this, t);
-	}
-	
-	@Override
-	protected final TileMap getTileMap() {
-        return Level.tm;
-    }
-	
-	@Override
-	protected final boolean isSolidBehavior(final byte b) {
-        return b == FurGuardiansGame.TILE_BREAK || b == FurGuardiansGame.TILE_BUMP;
-    }
+public class Profile {
+    /*package*/ ShootMode shootMode = Player.SHOOT_NORMAL;
 }
