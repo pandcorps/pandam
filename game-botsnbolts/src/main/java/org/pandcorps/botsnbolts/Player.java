@@ -200,6 +200,7 @@ public final class Player extends GuyPlatform {
     
     @Override
     protected final void onLanded() {
+        super.onLanded();
         blinkTimer = 0;
     }
     
@@ -347,7 +348,7 @@ public final class Player extends GuyPlatform {
         protected abstract void createProjectile(final Player player);
         
         protected final void createDefaultProjectile(final Player player) {
-            new Projectile(player, 4, 0);
+            new Projectile(player, 4, 0).setView(player.pi.basicProjectile);
         }
     }
     

@@ -81,7 +81,8 @@ public final class BotsnBoltsGame extends BaseGame {
         final String pre = RES + "chr/" + dir + "/" + name;
         final PlayerImagesSubSet basicSet = loadPlayerImagesSubSet(pre, name, true, og, og);
         final PlayerImagesSubSet shootSet = loadPlayerImagesSubSet(pre + "Shoot", name + ".shoot", false, oss, os);
-        return new PlayerImages(basicSet, shootSet, null, null);
+        final Panmage basicProjectile = Pangine.getEngine().createImage(pre + "Projectile", pre + "Projectile.png");
+        return new PlayerImages(basicSet, shootSet, null, basicProjectile);
     }
     
     private final static PlayerImagesSubSet loadPlayerImagesSubSet(final String path, final String name, final boolean startNeeded, final Panple os, final Panple o) {
