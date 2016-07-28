@@ -113,8 +113,16 @@ public final class Player extends GuyPlatform {
         stateHandler.onRight(this);
     }
     
+    private final void onRightNormal() {
+        hv = VEL_WALK;
+    }
+    
     private final void left() {
         stateHandler.onLeft(this);
+    }
+    
+    private final void onLeftNormal() {
+        hv = -VEL_WALK;
     }
     
     private final void up() {
@@ -163,6 +171,10 @@ public final class Player extends GuyPlatform {
             changeView(pi.hurt);
             return;
         }
+        this.stateHandler.onGrounded(this);
+    }
+    
+    private final void onGroundedNormal() {
         final PlayerImagesSubSet set = getCurrentImagesSubSet();
         if (hv == 0) {
             final Panmage stand;
@@ -252,6 +264,8 @@ public final class Player extends GuyPlatform {
         //@OverrideMe
         protected void onDown(final Player player) {
         }
+        
+        protected abstract void onGrounded(final Player player);
     }
     
     protected final static StateHandler NORMAL_HANDLER = new StateHandler() {
@@ -272,12 +286,17 @@ public final class Player extends GuyPlatform {
         
         @Override
         protected final void onRight(final Player player) {
-            player.hv = VEL_WALK;
+            player.onRightNormal();
         }
         
         @Override
         protected final void onLeft(final Player player) {
-            player.hv = -VEL_WALK;
+            player.onLeftNormal();
+        }
+        
+        @Override
+        protected final void onGrounded(final Player player) {
+            player.onGroundedNormal();
         }
     };
     
@@ -315,9 +334,39 @@ public final class Player extends GuyPlatform {
         @Override
         protected final void onDown(final Player player) {
         }
+        
+        @Override
+        protected final void onGrounded(final Player player) {
+        }
     };
     
-    //protected final static StateHandler BALL_HANDLER = new StateHandler() { //TODO
+    protected final static StateHandler BALL_HANDLER = new StateHandler() {
+        @Override
+        protected final void onShootStart(final Player player) {
+        }
+        
+        @Override
+        protected final void onShooting(final Player player) {
+        }
+        
+        @Override
+        protected final void onShootEnd(final Player player) {
+        }
+        
+        @Override
+        protected final void onRight(final Player player) {
+            player.onRightNormal();
+        }
+        
+        @Override
+        protected final void onLeft(final Player player) {
+            player.onLeftNormal();
+        }
+        
+        @Override
+        protected final void onGrounded(final Player player) {
+        }
+    };
     
     protected abstract static class ShootMode {
         protected final int delay;
