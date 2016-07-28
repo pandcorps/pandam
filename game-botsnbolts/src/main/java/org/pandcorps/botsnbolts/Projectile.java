@@ -31,7 +31,7 @@ public class Projectile extends Pandy {
         final boolean mirror = src.isMirror();
         setMirror(mirror);
         final int xm = mirror ? -1 : 1;
-        getPosition().set(srcPos.getX() + (xm * 12), srcPos.getY() + 13);
+        getPosition().set(srcPos.getX() + (xm * 15), srcPos.getY() + 13);
         getVelocity().set(xm * vx, vy);
         src.getLayer().addActor(this);
     }

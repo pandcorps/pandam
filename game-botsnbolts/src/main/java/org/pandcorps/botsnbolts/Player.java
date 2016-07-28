@@ -409,7 +409,7 @@ public final class Player extends GuyPlatform {
         protected abstract void createProjectile(final Player player);
         
         protected final void createDefaultProjectile(final Player player) {
-            new Projectile(player, 4, 0).setView(player.pi.basicProjectile);
+            new Projectile(player, 8, 0).setView(player.pi.basicProjectile);
         }
     }
     

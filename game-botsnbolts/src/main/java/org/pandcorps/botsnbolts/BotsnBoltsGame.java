@@ -83,7 +83,7 @@ public final class BotsnBoltsGame extends BaseGame {
         final String pre = RES + "chr/" + dir + "/" + name;
         final PlayerImagesSubSet basicSet = loadPlayerImagesSubSet(pre, name, true, og, og, oj);
         final PlayerImagesSubSet shootSet = loadPlayerImagesSubSet(pre + "Shoot", name + ".shoot", false, oss, os, ojs);
-        final Panmage basicProjectile = Pangine.getEngine().createImage(pre + "Projectile", new FinPanple2(3, 3), new FinPanple2(-2, -1), new FinPanple2(4, 3), pre + "Projectile.png");
+        final Panmage basicProjectile = Pangine.getEngine().createImage(pre + "Projectile", new FinPanple2(3, 3), new FinPanple2(-3, -1), new FinPanple2(5, 3), pre + "Projectile.png");
         return new PlayerImages(basicSet, shootSet, null, basicProjectile);
     }
     
