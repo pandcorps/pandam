@@ -50,7 +50,7 @@ import org.pandcorps.furguardians.Player.*;
 
 public class FurGuardiansGame extends BaseGame {
 	protected final static String TITLE = "Fur-Guardians"; // res/values/strings.xml/app_name
-    protected final static String VERSION = "1.25.1"; // AndroidManifest.xml/versionName
+    protected final static String VERSION = "1.26.0"; // AndroidManifest.xml/versionName
     protected final static String YEAR = "2014-2016";
     protected final static String AUTHOR = "Andrew M. Martin";
 	/*
@@ -222,7 +222,7 @@ public class FurGuardiansGame extends BaseGame {
 	    { "You can contact", getEmail() },
 	    { "You can visit", "http://pandcorps.org" },
 	    { "Find a bug?", "Tell Pandcorps" },
-	    { "Have a suggesstion?", "Tell Pandcorps" },
+	    { "Have a suggestion?", "Tell Pandcorps" },
 	    { "Trying to be", "fun for all" }};
 	
 	private final static PixelMask greyMask = new GreyScalePixelMask();
