@@ -183,15 +183,16 @@ public final class Player extends GuyPlatform {
                 blinkTimer = 0;
             } else {
                 blinkTimer++;
-                if (blinkTimer > 60) {
+                if (blinkTimer > 120) {
                     blinkTimer = 0;
                 }
-                stand = (blinkTimer > 55) ? set.blink : set.stand;
+                stand = (blinkTimer > 115) ? set.blink : set.stand;
             }
             changeView(stand);
             clearRun();
             running = false;
         } else {
+            blinkTimer = 0;
             final boolean wasRunning = running;
             running = true;
             if (!wasRunning && set.start != null) {

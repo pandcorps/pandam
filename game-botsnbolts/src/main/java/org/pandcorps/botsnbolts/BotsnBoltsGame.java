@@ -96,7 +96,7 @@ public final class BotsnBoltsGame extends BaseGame {
         final Panmage start, blink;
         if (startNeeded) {
             start = newPlayerImage(pre + "start", o, Imtil.load(path + "Start.png"));
-            blink = null; //newPlayerImage(pre + "blink", o, Imtil.load(path + "Blink.png"));
+            blink = newPlayerImage(pre + "blink", o, Imtil.load(path + "Blink.png"));
         } else {
             start = null;
             blink = null;
