@@ -25,13 +25,14 @@ package org.pandcorps.botsnbolts;
 import org.pandcorps.game.actor.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.action.*;
+import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.in.*;
 import org.pandcorps.pandax.tile.*;
 
 public final class Player extends GuyPlatform {
     protected final static int PLAYER_X = 6;
     protected final static int PLAYER_H = 23;
-    private final static int SHOOT_DELAY_DEFAULT = 10;
+    private final static int SHOOT_DELAY_DEFAULT = 5;
     private final static int SHOOT_DELAY_RAPID = 3;
     private final static int SHOOT_DELAY_SPREAD = 15;
     private final static int SHOOT_TIME = 12;
@@ -40,6 +41,11 @@ public final class Player extends GuyPlatform {
     private final static int RUN_TIME = 5;
     private final static int VEL_JUMP = 8;
     private final static int VEL_WALK = 3;
+    private final static int VEL_PROJECTILE = 8;
+    private final static float VX_SPREAD1;
+    private final static float VY_SPREAD1;
+    private final static float VX_SPREAD2;
+    private final static float VY_SPREAD2;
     
     private final Profile prf;
     private final PlayerImages pi;
@@ -50,6 +56,16 @@ public final class Player extends GuyPlatform {
     private int blinkTimer = 0;
     private long lastShot = -1000;
     private long lastHurt = -1000;
+    
+    static {
+        final Panple tmp = new ImplPanple(VEL_PROJECTILE, 0, 0);
+        tmp.setMagnitudeDirection(VEL_PROJECTILE, Math.PI / 4);
+        VX_SPREAD1 = tmp.getX();
+        VY_SPREAD1 = tmp.getY();
+        tmp.setMagnitudeDirection(VEL_PROJECTILE, Math.PI / 8);
+        VX_SPREAD2 = tmp.getX();
+        VY_SPREAD2 = tmp.getY();
+    }
     
     protected Player(final PlayerContext pc) {
         super(PLAYER_X, PLAYER_H);
@@ -83,7 +99,10 @@ public final class Player extends GuyPlatform {
         registerPause(ctrl.getSubmit());
         registerPause(ctrl.getMenu());
         final Pangine engine = Pangine.getEngine();
-        register(engine.getInteraction().KEY_F1, new ActionStartListener() {
+        final Panteraction interaction = engine.getInteraction();
+        register(interaction.KEY_TAB, new ActionStartListener() {
+            @Override public final void onActionStart(final ActionStartEvent event) { toggleShootMode(); }});
+        register(interaction.KEY_F1, new ActionStartListener() {
             @Override public final void onActionStart(final ActionStartEvent event) { engine.captureScreen(); }});
     }
     
@@ -94,6 +113,18 @@ public final class Player extends GuyPlatform {
     
     private final void togglePause() {
         Pangine.getEngine().togglePause();
+    }
+    
+    private final void toggleShootMode() {
+        if (prf.shootMode == SHOOT_NORMAL) {
+            prf.shootMode = SHOOT_RAPID;
+        } else if (prf.shootMode == SHOOT_RAPID) {
+            prf.shootMode = SHOOT_SPREAD;
+        } else if (prf.shootMode == SHOOT_SPREAD) {
+            prf.shootMode = SHOOT_CHARGE;
+        } else {
+            prf.shootMode = SHOOT_NORMAL;
+        }
     }
     
     private final void jump() {
@@ -409,7 +440,11 @@ public final class Player extends GuyPlatform {
         protected abstract void createProjectile(final Player player);
         
         protected final void createDefaultProjectile(final Player player) {
-            new Projectile(player, 8, 0).setView(player.pi.basicProjectile);
+            createBasicProjectile(player, VEL_PROJECTILE, 0);
+        }
+        
+        protected final void createBasicProjectile(final Player player, final float vx, final float vy) {
+            new Projectile(player, vx, vy).setView(player.pi.basicProjectile);
         }
     }
     
@@ -494,7 +529,10 @@ public final class Player extends GuyPlatform {
         @Override
         protected final void createProjectile(final Player player) {
             createDefaultProjectile(player);
-            //TODO More shots
+            createBasicProjectile(player, VX_SPREAD1, VY_SPREAD1);
+            createBasicProjectile(player, VX_SPREAD1, -VY_SPREAD1);
+            createBasicProjectile(player, VX_SPREAD2, VY_SPREAD2);
+            createBasicProjectile(player, VX_SPREAD2, -VY_SPREAD2);
         }
     };
     
