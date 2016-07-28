@@ -80,9 +80,20 @@ public final class Player extends GuyPlatform {
             @Override public final void onAction(final ActionEvent event) { up(); }});
         register(ctrl.getDown(), new ActionListener() {
             @Override public final void onAction(final ActionEvent event) { down(); }});
+        registerPause(ctrl.getSubmit());
+        registerPause(ctrl.getMenu());
         final Pangine engine = Pangine.getEngine();
         register(engine.getInteraction().KEY_F1, new ActionStartListener() {
             @Override public final void onActionStart(final ActionStartEvent event) { engine.captureScreen(); }});
+    }
+    
+    private final void registerPause(final Panput input) {
+        register(input, new ActionStartListener() {
+            @Override public final void onActionStart(final ActionStartEvent event) { togglePause(); }});
+    }
+    
+    private final void togglePause() {
+        Pangine.getEngine().togglePause();
     }
     
     private final void jump() {

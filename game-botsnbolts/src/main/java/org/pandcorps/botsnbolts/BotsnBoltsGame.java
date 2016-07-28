@@ -43,8 +43,10 @@ public final class BotsnBoltsGame extends BaseGame {
     private final static FinPanple2 ng = GuyPlatform.getMin(Player.PLAYER_X);
     private final static FinPanple2 xg = GuyPlatform.getMax(Player.PLAYER_X, Player.PLAYER_H);
     protected final static FinPanple2 og = new FinPanple2(17, 1);
+    protected final static FinPanple2 oj = new FinPanple2(17, 4);
     protected final static FinPanple2 oss = new FinPanple2(13, 1);
     protected final static FinPanple2 os = new FinPanple2(15, 1);
+    protected final static FinPanple2 ojs = new FinPanple2(15, 4);
     protected static Queue<Runnable> loaders = new LinkedList<Runnable>();
     private static PlayerImages voidImages = null;
     
@@ -79,20 +81,20 @@ public final class BotsnBoltsGame extends BaseGame {
     
     private final static PlayerImages loadPlayerImages(final String dir, final String name) {
         final String pre = RES + "chr/" + dir + "/" + name;
-        final PlayerImagesSubSet basicSet = loadPlayerImagesSubSet(pre, name, true, og, og);
-        final PlayerImagesSubSet shootSet = loadPlayerImagesSubSet(pre + "Shoot", name + ".shoot", false, oss, os);
-        final Panmage basicProjectile = Pangine.getEngine().createImage(pre + "Projectile", pre + "Projectile.png");
+        final PlayerImagesSubSet basicSet = loadPlayerImagesSubSet(pre, name, true, og, og, oj);
+        final PlayerImagesSubSet shootSet = loadPlayerImagesSubSet(pre + "Shoot", name + ".shoot", false, oss, os, ojs);
+        final Panmage basicProjectile = Pangine.getEngine().createImage(pre + "Projectile", new FinPanple2(3, 3), new FinPanple2(-2, -1), new FinPanple2(4, 3), pre + "Projectile.png");
         return new PlayerImages(basicSet, shootSet, null, basicProjectile);
     }
     
-    private final static PlayerImagesSubSet loadPlayerImagesSubSet(final String path, final String name, final boolean startNeeded, final Panple os, final Panple o) {
+    private final static PlayerImagesSubSet loadPlayerImagesSubSet(final String path, final String name, final boolean startNeeded, final Panple os, final Panple o, final Panple oj) {
         final String pre = PRE_IMG + "." + name + ".";
         final Img[] imgs = Imtil.loadStrip(path + ".png", 32);
         final Panmage still = newPlayerImage(pre + "still", os, imgs[0]);
         final Panmage run1 = newPlayerImage(pre + "run.1", o, imgs[1]);
         final Panmage run2 = newPlayerImage(pre + "run.2", o, imgs[2]);
         final Panmage run3 = newPlayerImage(pre + "run.3", o, imgs[3]);
-        final Panmage jump = newPlayerImage(pre + "jump", o, imgs[4]);
+        final Panmage jump = newPlayerImage(pre + "jump", oj, imgs[4]);
         final Panmage start, blink;
         if (startNeeded) {
             start = newPlayerImage(pre + "start", o, Imtil.load(path + "Start.png"));
