@@ -1937,6 +1937,7 @@ public class FurGuardiansGame extends BaseGame {
             new Enemy(def, x + xoffHigh, yh).setEnemyMirror(false);
             Enemy.countDefeat(player, enemy.def, Enemy.DEFEAT_STOMP);
             enemy.destroy();
+            soundBounce.startSound();
             return true;
         }
     }
