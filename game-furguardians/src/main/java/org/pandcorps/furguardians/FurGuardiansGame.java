@@ -1637,7 +1637,7 @@ public class FurGuardiansGame extends BaseGame {
 			rockLeg = new EnemyDefinition("Rock Leg", 16, null, false, false, 0, Enemy.DEFAULT_X, Enemy.DEFAULT_H, 3);
 			rockLeg.rewardHandler = rockTrio.rewardHandler;
 			rockBack = createImage("rock.back", RES + "enemy/Enemy17.png", 16, rockO, Enemy.DEFAULT_MIN, Enemy.DEFAULT_MAX);
-			final Panmage[] netherCubeSheet = createSheet("nether.cube", RES + "enemy/Enemy18.png", ImtilX.DIM, Enemy.DEFAULT_O);
+			final Panmage[] netherCubeSheet = createSheet("nether.cube", RES + "enemy/Enemy18.png", ImtilX.DIM, FinPanple.ORIGIN);
 			netherCube1 = netherCubeSheet[0];
 			netherCube2 = netherCubeSheet[1];
 			netherCube3 = netherCubeSheet[2];
@@ -1646,14 +1646,15 @@ public class FurGuardiansGame extends BaseGame {
 			netherCubeMirror3 = createMirror(netherCube3);
 			netherCube = new EnemyDefinition("Nether Cube", netherCube1);
 			Coltil.set(allEnemies, Level.NETHER_CUBE, netherCube);
+			netherCube.menu = new CubeEnemyMenu();
 			netherGlob = new EnemyDefinition("Nether Glob", 19, null, true);
 			netherGlob.award = GemBumped.AWARD_2;
 			Coltil.set(allEnemies, Level.NETHER_GLOB, netherGlob);
 			greaterGlob = Enemy.newBigDefinition("Greater Glob", 20, null, true);
-			greaterGlob.stompHandler = new SplitHandler(netherGlob, 3, -2, 15);
+			greaterGlob.stompHandler = new SplitHandler(netherGlob, 3, -3, 15);
 			Coltil.set(allEnemies, Level.GREATER_GLOB, greaterGlob);
 			giantGlob = Enemy.newGiantDefinition("Giant Glob", 21, null, true);
-			giantGlob.stompHandler = new SplitHandler(greaterGlob, 18, 2, 31);
+			giantGlob.stompHandler = new SplitHandler(greaterGlob, 18, -8, 31);
 			Coltil.set(allEnemies, Level.GIANT_GLOB, giantGlob);
 			Level.initTheme(); }});
 		
