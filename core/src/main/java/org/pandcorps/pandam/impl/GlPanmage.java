@@ -41,6 +41,7 @@ public final class GlPanmage extends Panmage {
 	private final float offy;
 	private final int tw;
 	private final int th;
+	private Panmage mirrorSource = null;
 	//private final int up = 1; // Could be flipped in Panplementation
 	//private final int down = 0;
 	//private final int left = 0;
@@ -347,6 +348,9 @@ public final class GlPanmage extends Panmage {
 	protected final void render(final Panlayer layer, final float x, final float y, final float z,
 		//final float ix, final float iy, final float iw, final float ih) {
         final float ix, final float iy, final float iw, final float ih, final int rot, final boolean mirror, final boolean flip) {
+	    if (mirror && mirrorSource != null) {
+	        render(mirrorSource, layer, x, y, z, ix, iy, iw, ih, rot, mirror, flip);
+	    }
 		//final boolean mirror = true;
 		//gl.glLoadIdentity();
 		//gl.glTranslatef(x, y, z);
@@ -594,6 +598,11 @@ public final class GlPanmage extends Panmage {
     //    ib.rewind();
     //    return ib;
     //}
+	
+	@Override
+	public final void setMirrorSource(final Panmage mirrorSource) {
+	    this.mirrorSource = mirrorSource;
+	}
 	
 	@Override
     protected final void close() {

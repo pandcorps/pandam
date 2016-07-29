@@ -125,6 +125,11 @@ public abstract class Panmage extends BasePantity implements Panview, Pansplay {
 	    img.render(layer, x, y, z, ix, iy, iw, ih, rot, mirror, flip);
 	}
 	
+	//@OverrideMe
+	public void setMirrorSource(final Panmage mirrorSource) {
+	    throw new UnsupportedOperationException();
+	}
+	
 	@Override
 	protected final void finalize() {
 		if (!isClosed()) {
