@@ -1653,10 +1653,12 @@ public class FurGuardiansGame extends BaseGame {
 			Coltil.set(allEnemies, Level.NETHER_GLOB, netherGlob);
 			greaterGlob = Enemy.newBigDefinition("Greater Glob", 20, null, true);
 			greaterGlob.stompHandler = new SplitHandler(netherGlob, 3, -3, 15);
+			greaterGlob.award = 0;
 			greaterGlob.mustDestroyOffScreen = false;
 			Coltil.set(allEnemies, Level.GREATER_GLOB, greaterGlob);
 			giantGlob = Enemy.newGiantDefinition("Giant Glob", 21, null, true);
 			giantGlob.stompHandler = new SplitHandler(greaterGlob, 18, -8, 31);
+			giantGlob.award = 0;
 			giantGlob.mustDestroyOffScreen = false;
 			Coltil.set(allEnemies, Level.GIANT_GLOB, giantGlob);
 			Level.initTheme(); }});
