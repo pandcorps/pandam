@@ -350,6 +350,7 @@ public final class GlPanmage extends Panmage {
         final float ix, final float iy, final float iw, final float ih, final int rot, final boolean mirror, final boolean flip) {
 	    if (mirror && mirrorSource != null) {
 	        render(mirrorSource, layer, x, y, z, ix, iy, iw, ih, rot, mirror, flip);
+	        return;
 	    }
 		//final boolean mirror = true;
 		//gl.glLoadIdentity();

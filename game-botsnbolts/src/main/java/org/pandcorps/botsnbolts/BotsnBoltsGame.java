@@ -90,15 +90,16 @@ public final class BotsnBoltsGame extends BaseGame {
     private final static PlayerImagesSubSet loadPlayerImagesSubSet(final String path, final String name, final boolean startNeeded, final Panple os, final Panple o, final Panple oj) {
         final String pre = PRE_IMG + "." + name + ".";
         final Img[] imgs = Imtil.loadStrip(path + ".png", 32);
-        final Panmage still = newPlayerImage(pre + "still", os, imgs[0]);
-        final Panmage run1 = newPlayerImage(pre + "run.1", o, imgs[1]);
-        final Panmage run2 = newPlayerImage(pre + "run.2", o, imgs[2]);
-        final Panmage run3 = newPlayerImage(pre + "run.3", o, imgs[3]);
-        final Panmage jump = newPlayerImage(pre + "jump", oj, imgs[4]);
+        final Img[] imgsMirror = Imtil.loadStrip(path + "Mirror.png", 32);
+        final Panmage still = newPlayerImage(pre + "still", os, imgs, imgsMirror, 0);
+        final Panmage run1 = newPlayerImage(pre + "run.1", o, imgs, imgsMirror, 1);
+        final Panmage run2 = newPlayerImage(pre + "run.2", o, imgs, imgsMirror, 2);
+        final Panmage run3 = newPlayerImage(pre + "run.3", o, imgs, imgsMirror, 3);
+        final Panmage jump = newPlayerImage(pre + "jump", oj, imgs, imgsMirror, 4);
         final Panmage start, blink;
         if (startNeeded) {
-            start = newPlayerImage(pre + "start", o, Imtil.load(path + "Start.png"));
-            blink = newPlayerImage(pre + "blink", o, Imtil.load(path + "Blink.png"));
+            start = newPlayerImage(pre + "start", o, path + "Start");
+            blink = newPlayerImage(pre + "blink", o, path + "Blink");
         } else {
             start = null;
             blink = null;
@@ -106,8 +107,19 @@ public final class BotsnBoltsGame extends BaseGame {
         return new PlayerImagesSubSet(still, jump, new Panmage[] { run1, run2, run3 }, start, blink);
     }
     
-    private final static Panmage newPlayerImage(final String id, final Panple o, final Img img) {
-        return Pangine.getEngine().createImage(id, o, ng, xg, img);
+    private final static Panmage newPlayerImage(final String id, final Panple o, final Img[] imgs, final Img[] imgsMirror, final int i) {
+        return newPlayerImage(id, o, imgs[i], imgsMirror[i]);
+    }
+    
+    private final static Panmage newPlayerImage(final String id, final Panple o, final String path) {
+        return newPlayerImage(id, o, Imtil.load(path + ".png"), Imtil.load(path + "Mirror.png"));
+    }
+    
+    private final static Panmage newPlayerImage(final String id, final Panple o, final Img img, final Img imgMirror) {
+        final Pangine engine = Pangine.getEngine();
+        final Panmage image = engine.createImage(id, o, ng, xg, img);
+        image.setMirrorSource(engine.createImage(id + ".mirror", o, ng, xg, imgMirror));
+        return image;
     }
     
     protected final static class BotsnBoltsScreen extends Panscreen {
