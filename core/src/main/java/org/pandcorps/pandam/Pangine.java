@@ -79,6 +79,7 @@ public abstract class Pangine {
 	protected int screenShotY = -1;
 	protected int screenShotW = -1;
 	protected int screenShotH = -1;
+	protected int screenShotZoom = 1;
 	
 	protected SwipeListener swipeListener = null;
 	
@@ -1188,6 +1189,10 @@ public abstract class Pangine {
             screenShotX = 0;
             screenShotY = 0;
         }
+	    final String propZoom = Pantil.getProperty("org.pandcorps.pandam.capture.zoom");
+	    if (Chartil.isValued(propZoom)) {
+	        screenShotZoom = Integer.parseInt(propZoom);
+	    }
 	}
 	
 	public abstract void getClipboard(final Handler<String> handler);

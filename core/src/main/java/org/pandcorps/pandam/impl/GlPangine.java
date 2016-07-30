@@ -28,6 +28,7 @@ import java.util.*;
 import org.pandcorps.core.*;
 import org.pandcorps.core.col.*;
 import org.pandcorps.core.img.*;
+import org.pandcorps.core.img.scale.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.Panput.*;
 import org.pandcorps.pandam.event.action.*;
@@ -744,7 +745,12 @@ public abstract class GlPangine extends Pangine {
 		    	dst = screenShotDst;
 		    	screenShotDst = null;
 		    }
-		    final Img img = Imtil.shrink(Imtil.create(buf, sw, sh, Imtil.TYPE_INT_RGB), Math.round(getZoom()));
+		    Img img = Imtil.shrink(Imtil.create(buf, sw, sh, Imtil.TYPE_INT_RGB), Math.round(getZoom()));
+		    if (screenShotZoom > 1) {
+		        final Img zoomed = new NearestNeighborScaler(screenShotZoom).scale(img);
+		        img.close();
+		        img = zoomed;
+		    }
 		    Imtil.save(img, dst);
 		    img.close();
 		}
