@@ -75,6 +75,10 @@ public abstract class Pangine {
 	private boolean imageSavingEnabled = false;
 	protected String screenShotDst = null;
 	protected int screenShotInd = -1;
+	protected int screenShotX = -1;
+	protected int screenShotY = -1;
+	protected int screenShotW = -1;
+	protected int screenShotH = -1;
 	
 	protected SwipeListener swipeListener = null;
 	
@@ -1147,10 +1151,12 @@ public abstract class Pangine {
 	}
 	
 	public final void captureScreen(final String screenShotDst) {
+	    initCapture();
 	    this.screenShotDst = screenShotDst;
 	}
 	
 	public final void startCaptureFrames() {
+	    initCapture();
 		screenShotInd = 0;
 		screenShotDst = "Pandam" + System.currentTimeMillis() + ".";
 	}
@@ -1158,6 +1164,30 @@ public abstract class Pangine {
 	public final void stopCaptureFrames() {
 		screenShotInd = -1;
 		screenShotDst = null;
+	}
+	
+	private final void initCapture() {
+	    if (screenShotX >= 0) {
+	        return;
+	    }
+	    final String propW = Pantil.getProperty("org.pandcorps.pandam.capture.w");
+	    if (Chartil.isValued(propW)) {
+	        final int zoom = Math.round(getZoom());
+	        screenShotW = Integer.parseInt(propW) * zoom;
+	        screenShotH = Integer.parseInt(Pantil.getProperty("org.pandcorps.pandam.capture.h")) * zoom;
+	    } else {
+	        screenShotW = -1;
+	        screenShotH = -1;
+	    }
+	    final String propX = Pantil.getProperty("org.pandcorps.pandam.capture.x");
+	    if (Chartil.isValued(propX)) {
+            final int zoom = Math.round(getZoom());
+            screenShotX = Integer.parseInt(propX) * zoom;
+            screenShotY = Integer.parseInt(Pantil.getProperty("org.pandcorps.pandam.capture.y")) * zoom;
+        } else {
+            screenShotX = 0;
+            screenShotY = 0;
+        }
 	}
 	
 	public abstract void getClipboard(final Handler<String> handler);
