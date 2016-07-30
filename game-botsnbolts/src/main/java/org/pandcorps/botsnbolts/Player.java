@@ -104,6 +104,10 @@ public final class Player extends GuyPlatform {
             @Override public final void onActionStart(final ActionStartEvent event) { toggleShootMode(); }});
         register(interaction.KEY_F1, new ActionStartListener() {
             @Override public final void onActionStart(final ActionStartEvent event) { engine.captureScreen(); }});
+        register(interaction.KEY_F2, new ActionStartListener() {
+            @Override public final void onActionStart(final ActionStartEvent event) { engine.startCaptureFrames(); }});
+        register(interaction.KEY_F3, new ActionStartListener() {
+            @Override public final void onActionStart(final ActionStartEvent event) { engine.stopCaptureFrames(); }});
     }
     
     private final void registerPause(final Panput input) {
