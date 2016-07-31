@@ -32,6 +32,7 @@ import org.pandcorps.pandax.tile.*;
 public final class Player extends GuyPlatform {
     protected final static int PLAYER_X = 6;
     protected final static int PLAYER_H = 23;
+    protected final static int BALL_H = 15;
     private final static int SHOOT_DELAY_DEFAULT = 5;
     private final static int SHOOT_DELAY_RAPID = 3;
     private final static int SHOOT_DELAY_SPREAD = 15;
@@ -56,6 +57,8 @@ public final class Player extends GuyPlatform {
     private int blinkTimer = 0;
     private long lastShot = -1000;
     private long lastHurt = -1000;
+    private int wallTimer = 0;
+    private boolean wallMirror = false;
     
     static {
         final Panple tmp = new ImplPanple(VEL_PROJECTILE, 0, 0);
@@ -223,6 +226,7 @@ public final class Player extends GuyPlatform {
     private final void onGroundedNormal() {
         final PlayerImagesSubSet set = getCurrentImagesSubSet();
         if (hv == 0) {
+            wallTimer = 0;
             final Panmage stand;
             if (set.blink == null) {
                 stand = set.stand;
@@ -239,6 +243,19 @@ public final class Player extends GuyPlatform {
             running = false;
         } else {
             blinkTimer = 0;
+            if (wallTimer > 0 && set.crouch != null) { //TODO && room for ball
+                if (wallMirror == isMirror()) {
+                    wallTimer++;
+                    if (wallTimer > 5) {
+                        startBall();
+                    } else {
+                        changeView(set.crouch);
+                    }
+                    return;
+                } else {
+                    wallTimer = 0;
+                }
+            }
             final boolean wasRunning = running;
             running = true;
             if (!wasRunning && set.start != null) {
@@ -257,6 +274,13 @@ public final class Player extends GuyPlatform {
         }
     }
     
+    private final void startBall() {
+        stateHandler = BALL_HANDLER;
+        changeView(pi.ball);
+        setH(BALL_H);
+        wallTimer = 0;
+    }
+    
     @Override
     protected final void onLanded() {
         super.onLanded();
@@ -272,6 +296,11 @@ public final class Player extends GuyPlatform {
         }
         changeView(getCurrentImagesSubSet().jump);
         return false;
+    }
+    
+    @Override
+    protected final void onWall() {
+        stateHandler.onWall(this);
     }
     
     @Override
@@ -313,6 +342,10 @@ public final class Player extends GuyPlatform {
         }
         
         protected abstract void onGrounded(final Player player);
+        
+        //@OverrideMe
+        protected void onWall(final Player player) {
+        }
     }
     
     protected final static StateHandler NORMAL_HANDLER = new StateHandler() {
@@ -344,6 +377,14 @@ public final class Player extends GuyPlatform {
         @Override
         protected final void onGrounded(final Player player) {
             player.onGroundedNormal();
+        }
+        
+        @Override
+        protected final void onWall(final Player player) {
+            if (player.wallTimer == 0) {
+                player.wallTimer = 1;
+                player.wallMirror = player.isMirror();
+            }
         }
     };
     
@@ -402,7 +443,7 @@ public final class Player extends GuyPlatform {
         
         @Override
         protected final void onRight(final Player player) {
-            player.onRightNormal();
+            player.onRightNormal(); //TODO Rotate animation
         }
         
         @Override
@@ -412,6 +453,7 @@ public final class Player extends GuyPlatform {
         
         @Override
         protected final void onGrounded(final Player player) {
+            //TODO Revert to NORMAL_HANDLER if there's enough room
         }
     };
     
@@ -470,13 +512,15 @@ public final class Player extends GuyPlatform {
         private final PlayerImagesSubSet shootSet;
         private final Panmage hurt;
         private final Panmage basicProjectile;
+        private final Panmage ball;
         
         protected PlayerImages(final PlayerImagesSubSet basicSet, final PlayerImagesSubSet shootSet, final Panmage hurt,
-                               final Panmage basicProjectile) {
+                               final Panmage basicProjectile, final Panmage ball) {
             this.basicSet = basicSet;
             this.shootSet = shootSet;
             this.hurt = hurt;
             this.basicProjectile = basicProjectile;
+            this.ball = ball;
         }
     }
     
@@ -486,13 +530,15 @@ public final class Player extends GuyPlatform {
         private final Panmage[] run;
         private final Panmage start;
         private final Panmage blink;
+        private final Panmage crouch;
         
-        protected PlayerImagesSubSet(final Panmage stand, final Panmage jump, final Panmage[] run, final Panmage start, final Panmage blink) {
+        protected PlayerImagesSubSet(final Panmage stand, final Panmage jump, final Panmage[] run, final Panmage start, final Panmage blink, final Panmage crouch) {
             this.stand = stand;
             this.jump = jump;
             this.run = run;
             this.start = start;
             this.blink = blink;
+            this.crouch = crouch;
         }
     }
     

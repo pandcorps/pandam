@@ -83,8 +83,10 @@ public final class BotsnBoltsGame extends BaseGame {
         final String pre = RES + "chr/" + dir + "/" + name;
         final PlayerImagesSubSet basicSet = loadPlayerImagesSubSet(pre, name, true, og, og, oj);
         final PlayerImagesSubSet shootSet = loadPlayerImagesSubSet(pre + "Shoot", name + ".shoot", false, oss, os, ojs);
-        final Panmage basicProjectile = Pangine.getEngine().createImage(pre + "Projectile", new FinPanple2(3, 3), new FinPanple2(-3, -1), new FinPanple2(5, 3), pre + "Projectile.png");
-        return new PlayerImages(basicSet, shootSet, null, basicProjectile);
+        final Pangine engine = Pangine.getEngine();
+        final Panmage basicProjectile = engine.createImage(pre + "Projectile", new FinPanple2(3, 3), new FinPanple2(-3, -1), new FinPanple2(5, 3), pre + "Projectile.png");
+        final Panmage ball = engine.createImage(pre + "Ball", new FinPanple2(8, 1), ng, GuyPlatform.getMax(Player.PLAYER_X, Player.BALL_H), pre + "Ball.png");
+        return new PlayerImages(basicSet, shootSet, null, basicProjectile, ball);
     }
     
     private final static PlayerImagesSubSet loadPlayerImagesSubSet(final String path, final String name, final boolean startNeeded, final Panple os, final Panple o, final Panple oj) {
@@ -96,15 +98,17 @@ public final class BotsnBoltsGame extends BaseGame {
         final Panmage run2 = newPlayerImage(pre + "run.2", o, imgs, imgsMirror, 2);
         final Panmage run3 = newPlayerImage(pre + "run.3", o, imgs, imgsMirror, 3);
         final Panmage jump = newPlayerImage(pre + "jump", oj, imgs, imgsMirror, 4);
-        final Panmage start, blink;
+        final Panmage start, blink, crouch;
         if (startNeeded) {
             start = newPlayerImage(pre + "start", o, path + "Start");
             blink = newPlayerImage(pre + "blink", o, path + "Blink");
+            crouch = newPlayerImage(pre + "crouch", o, path + "Crouch");
         } else {
             start = null;
             blink = null;
+            crouch = null;
         }
-        return new PlayerImagesSubSet(still, jump, new Panmage[] { run1, run2, run3 }, start, blink);
+        return new PlayerImagesSubSet(still, jump, new Panmage[] { run1, run2, run3 }, start, blink, crouch);
     }
     
     private final static Panmage newPlayerImage(final String id, final Panple o, final Img[] imgs, final Img[] imgsMirror, final int i) {
@@ -138,9 +142,12 @@ public final class BotsnBoltsGame extends BaseGame {
                 tm.setBackground(0, j, imgMap[0][0], Tile.BEHAVIOR_SOLID);
                 tm.setBackground(end, j, imgMap[0][2], Tile.BEHAVIOR_SOLID);
             }
+            for (int j = 2; j < 4; j++) {
+                tm.setBackground(5, j, imgMap[0][2], Tile.BEHAVIOR_SOLID);
+            }
             room.addActor(tm);
             final Player player = new Player(pc);
-            player.getPosition().set(96, 96);
+            player.getPosition().set(48, 96);
             room.addActor(player);
         }
     }
