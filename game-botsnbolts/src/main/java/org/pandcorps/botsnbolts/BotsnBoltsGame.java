@@ -26,10 +26,14 @@ import java.util.*;
 
 import org.pandcorps.botsnbolts.Player.*;
 import org.pandcorps.core.*;
+import org.pandcorps.core.img.*;
 import org.pandcorps.game.*;
 import org.pandcorps.game.actor.*;
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.event.action.*;
 import org.pandcorps.pandam.impl.*;
+import org.pandcorps.pandax.text.*;
+import org.pandcorps.pandax.text.Fonts.*;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.tile.Tile.*;
 
@@ -48,6 +52,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected final static FinPanple2 os = new FinPanple2(15, 1);
     protected final static FinPanple2 ojs = new FinPanple2(15, 4);
     protected static Queue<Runnable> loaders = new LinkedList<Runnable>();
+    protected static MultiFont font = null;
     private static PlayerImages voidImages = null;
     
     protected static PlayerContext pc = null;
@@ -71,10 +76,11 @@ public final class BotsnBoltsGame extends BaseGame {
                     loadResources();
                 }});
         }
-        Panscreen.set(new LogoScreen(BotsnBoltsScreen.class, loaders));
+        Panscreen.set(new LogoScreen(TitleScreen.class, loaders));
     }
     
     private final static void loadResources() {
+        font = Fonts.getClassics(new FontRequest(8), Pancolor.WHITE, Pancolor.BLACK);
         voidImages = loadPlayerImages("betabot", "Void");
         pc = new PlayerContext(new Profile(), org.pandcorps.pandax.in.ControlScheme.getDefaultKeyboard(), voidImages);
     }
@@ -126,9 +132,46 @@ public final class BotsnBoltsGame extends BaseGame {
         return image;
     }
     
+    private final static class TitleScreen extends Panscreen {
+        private Panmage title = null;
+        
+        @Override
+        protected final void load() {
+            final Pangine engine = Pangine.getEngine();
+            engine.setBgColor(FinPancolor.BLACK);
+            title = engine.createImage("title", RES + "misc/BotsnBoltsTitle.png");
+            final Panctor actor = new Panctor();
+            actor.setView(title);
+            final Panple size = title.getSize();
+            final int w = engine.getEffectiveWidth(), w2 = w / 2;
+            actor.getPosition().set((w - size.getX()) / 2, (engine.getEffectiveHeight() - size.getY()) * 3 / 4);
+            final Panroom room = Pangame.getGame().getCurrentRoom();
+            room.addActor(actor);
+            addText(room, "Press anything", w2, 56);
+            addText(room, "Copyright " + Pantext.CHAR_COPYRIGHT + " " + YEAR, w2, 26);
+            addText(room, AUTHOR, w2, 16);
+            actor.register(new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) {
+                    Panscreen.set(new BotsnBoltsScreen());
+                }});
+        }
+        
+        private final void addText(final Panroom room, final String s, final int x, final int y) {
+            final Pantext text = new Pantext(Pantil.vmid(), font, s);
+            text.getPosition().set(x, y);
+            text.centerX();
+            room.addActor(text);
+        }
+        
+        @Override
+        protected final void destroy() {
+            title.destroy();
+        }
+    }
+    
     protected final static class BotsnBoltsScreen extends Panscreen {
         @Override
-        protected final void load() throws Exception {
+        protected final void load() {
             final Pangine engine = Pangine.getEngine();
             engine.setBgColor(new org.pandcorps.core.img.FinPancolor((short) 232, (short) 232, (short) 232));
             final Panroom room = Pangame.getGame().getCurrentRoom();

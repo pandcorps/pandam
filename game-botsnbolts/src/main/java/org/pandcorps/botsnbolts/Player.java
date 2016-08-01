@@ -246,16 +246,15 @@ public final class Player extends GuyPlatform {
             if (wallTimer > 0 && set.crouch != null) { //TODO && room for ball
                 if (wallMirror == isMirror()) {
                     wallTimer++;
-                    if (wallTimer > 5) {
+                    if (wallTimer > 6) {
                         startBall();
                     } else {
                         changeView(set.crouch);
                     }
                     return;
-                } else {
-                    wallTimer = 0;
                 }
             }
+            wallTimer = 0;
             final boolean wasRunning = running;
             running = true;
             if (!wasRunning && set.start != null) {
@@ -281,6 +280,11 @@ public final class Player extends GuyPlatform {
         wallTimer = 0;
     }
     
+    private final void endBall() {
+        stateHandler = NORMAL_HANDLER;
+        setH(PLAYER_H);
+    }
+    
     @Override
     protected final void onLanded() {
         super.onLanded();
@@ -289,6 +293,11 @@ public final class Player extends GuyPlatform {
     
     @Override
     protected final boolean onAir() {
+        return stateHandler.onAir(this);
+    }
+    
+    private final boolean onAirNormal() {
+        wallTimer = 0;
         clearRun();
         if (isHurt()) {
             changeView(pi.hurt);
@@ -343,6 +352,8 @@ public final class Player extends GuyPlatform {
         
         protected abstract void onGrounded(final Player player);
         
+        protected abstract boolean onAir(final Player player);
+        
         //@OverrideMe
         protected void onWall(final Player player) {
         }
@@ -377,6 +388,11 @@ public final class Player extends GuyPlatform {
         @Override
         protected final void onGrounded(final Player player) {
             player.onGroundedNormal();
+        }
+        
+        @Override
+        protected final boolean onAir(final Player player) {
+            return player.onAirNormal();
         }
         
         @Override
@@ -426,6 +442,11 @@ public final class Player extends GuyPlatform {
         @Override
         protected final void onGrounded(final Player player) {
         }
+        
+        @Override
+        protected final boolean onAir(final Player player) {
+            return false;
+        }
     };
     
     protected final static StateHandler BALL_HANDLER = new StateHandler() {
@@ -453,7 +474,12 @@ public final class Player extends GuyPlatform {
         
         @Override
         protected final void onGrounded(final Player player) {
-            //TODO Revert to NORMAL_HANDLER if there's enough room
+        }
+        
+        @Override
+        protected final boolean onAir(final Player player) {
+            player.endBall();
+            return false;
         }
     };
     
