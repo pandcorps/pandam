@@ -273,14 +273,32 @@ public final class Player extends GuyPlatform {
         }
     }
     
+    private final void onGroundedBall() {
+        changeView(pi.ball[runIndex]);
+        if (hv != 0 /*&& Pangine.getEngine().isOn(1)*/) {
+            if (runTimer < 1) {
+                runTimer++;
+            } else {
+                runTimer = 0;
+                if (runIndex < 7) {
+                    runIndex++;
+                } else {
+                    runIndex = 0;
+                }
+            }
+        }
+    }
+    
     private final void startBall() {
+        clearRun();
         stateHandler = BALL_HANDLER;
-        changeView(pi.ball);
+        changeView(pi.ball[0]);
         setH(BALL_H);
         wallTimer = 0;
     }
     
     private final void endBall() {
+        clearRun();
         stateHandler = NORMAL_HANDLER;
         setH(PLAYER_H);
     }
@@ -464,7 +482,7 @@ public final class Player extends GuyPlatform {
         
         @Override
         protected final void onRight(final Player player) {
-            player.onRightNormal(); //TODO Rotate animation
+            player.onRightNormal();
         }
         
         @Override
@@ -474,6 +492,7 @@ public final class Player extends GuyPlatform {
         
         @Override
         protected final void onGrounded(final Player player) {
+            player.onGroundedBall();
         }
         
         @Override
@@ -538,10 +557,10 @@ public final class Player extends GuyPlatform {
         private final PlayerImagesSubSet shootSet;
         private final Panmage hurt;
         private final Panmage basicProjectile;
-        private final Panmage ball;
+        private final Panmage[] ball;
         
         protected PlayerImages(final PlayerImagesSubSet basicSet, final PlayerImagesSubSet shootSet, final Panmage hurt,
-                               final Panmage basicProjectile, final Panmage ball) {
+                               final Panmage basicProjectile, final Panmage[] ball) {
             this.basicSet = basicSet;
             this.shootSet = shootSet;
             this.hurt = hurt;

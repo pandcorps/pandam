@@ -91,7 +91,22 @@ public final class BotsnBoltsGame extends BaseGame {
         final PlayerImagesSubSet shootSet = loadPlayerImagesSubSet(pre + "Shoot", name + ".shoot", false, oss, os, ojs);
         final Pangine engine = Pangine.getEngine();
         final Panmage basicProjectile = engine.createImage(pre + "Projectile", new FinPanple2(3, 3), new FinPanple2(-3, -1), new FinPanple2(5, 3), pre + "Projectile.png");
-        final Panmage ball = engine.createImage(pre + "Ball", new FinPanple2(8, 1), ng, GuyPlatform.getMax(Player.PLAYER_X, Player.BALL_H), pre + "Ball.png");
+        final Img[] ballImgs = Imtil.loadStrip(pre + "Ball.png", 16);
+        final Panmage ball[] = new Panmage[8];
+        final Panple ob = new FinPanple2(8, 1), xb = GuyPlatform.getMax(Player.PLAYER_X, Player.BALL_H);
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 2; j++) {
+                final int index = i * 2 + j;
+                final Img ballImg = ballImgs[j];
+                ballImg.setTemporary(false);
+                ball[index] = engine.createImage(pre + "Ball." + index, ob, ng, xb, ballImg);
+                if (i < 3) {
+                    Imtil.rotate(ballImg);
+                } else {
+                    ballImg.close();
+                }
+            }
+        }
         return new PlayerImages(basicSet, shootSet, null, basicProjectile, ball);
     }
     
