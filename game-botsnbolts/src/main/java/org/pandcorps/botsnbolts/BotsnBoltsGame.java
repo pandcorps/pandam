@@ -119,11 +119,17 @@ public final class BotsnBoltsGame extends BaseGame {
         final Panmage run2 = newPlayerImage(pre + "run.2", o, imgs, imgsMirror, 2);
         final Panmage run3 = newPlayerImage(pre + "run.3", o, imgs, imgsMirror, 3);
         final Panmage jump = newPlayerImage(pre + "jump", oj, imgs, imgsMirror, 4);
-        final Panmage start, blink, crouch;
+        final Panmage start, blink, crouch[];
         if (startNeeded) {
             start = newPlayerImage(pre + "start", o, path + "Start");
             blink = newPlayerImage(pre + "blink", o, path + "Blink");
-            crouch = newPlayerImage(pre + "crouch", o, path + "Crouch");
+            final Img[] crouchImgs = Imtil.loadStrip(path + "Crouch.png", 32);
+            final Img[] crouchImgsMirror = Imtil.loadStrip(path + "CrouchMirror.png", 32);
+            final int crouchSize = crouchImgs.length;
+            crouch = new Panmage[crouchSize];
+            for (int i = 0; i < crouchSize; i++) {
+                crouch[i] = newPlayerImage(pre + "crouch." + i, o, crouchImgs, crouchImgsMirror, i);
+            }
         } else {
             start = null;
             blink = null;

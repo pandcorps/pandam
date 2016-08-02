@@ -252,8 +252,10 @@ public final class Player extends GuyPlatform {
                     wallTimer++;
                     if (wallTimer > 6) {
                         startBall();
+                    } else if (wallTimer > 3) {
+                        changeView(set.crouch[1]);
                     } else {
-                        changeView(set.crouch);
+                        changeView(set.crouch[0]);
                     }
                     return;
                 }
@@ -584,9 +586,9 @@ public final class Player extends GuyPlatform {
         private final Panmage[] run;
         private final Panmage start;
         private final Panmage blink;
-        private final Panmage crouch;
+        private final Panmage[] crouch;
         
-        protected PlayerImagesSubSet(final Panmage stand, final Panmage jump, final Panmage[] run, final Panmage start, final Panmage blink, final Panmage crouch) {
+        protected PlayerImagesSubSet(final Panmage stand, final Panmage jump, final Panmage[] run, final Panmage start, final Panmage blink, final Panmage[] crouch) {
             this.stand = stand;
             this.jump = jump;
             this.run = run;
