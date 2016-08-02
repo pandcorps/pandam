@@ -178,6 +178,10 @@ public final class Player extends GuyPlatform {
         stateHandler.onUp(this);
     }
     
+    private final void onUpNormal() {
+        //TODO Switch to LADDER_HANDLER if on ladder
+    }
+    
     private final void down() {
         stateHandler.onDown(this);
     }
@@ -401,6 +405,11 @@ public final class Player extends GuyPlatform {
         @Override
         protected final void onLeft(final Player player) {
             player.onLeftNormal();
+        }
+        
+        @Override
+        protected final void onUp(final Player player) {
+            player.onUpNormal();
         }
         
         @Override
