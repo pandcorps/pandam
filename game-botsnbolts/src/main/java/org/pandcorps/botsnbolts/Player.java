@@ -275,7 +275,7 @@ public final class Player extends GuyPlatform {
     
     private final void onGroundedBall() {
         changeView(pi.ball[runIndex]);
-        if (hv != 0 /*&& Pangine.getEngine().isOn(1)*/) {
+        if (hv != 0) {
             if (runTimer < 1) {
                 runTimer++;
             } else {
