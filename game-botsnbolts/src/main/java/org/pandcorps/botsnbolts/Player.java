@@ -59,6 +59,7 @@ public final class Player extends GuyPlatform {
     private long lastHurt = -1000;
     private int wallTimer = 0;
     private boolean wallMirror = false;
+    private int health = 56; //TODO HUD meter
     
     static {
         final Panple tmp = new ImplPanple(VEL_PROJECTILE, 0, 0);
