@@ -44,6 +44,12 @@ public final class BotsnBoltsGame extends BaseGame {
     protected final static String AUTHOR = "Andrew M. Martin";
     
     protected final static String RES = "org/pandcorps/botsnbolts/";
+    
+    protected final static int DEPTH_BG = 0;
+    protected final static int DEPTH_FG = 1;
+    protected final static int DEPTH_PLAYER = 2;
+    protected final static int DEPTH_PROJECTILE = 3;
+    
     private final static FinPanple2 ng = GuyPlatform.getMin(Player.PLAYER_X);
     private final static FinPanple2 xg = GuyPlatform.getMax(Player.PLAYER_X, Player.PLAYER_H);
     protected final static FinPanple2 og = new FinPanple2(17, 1);
@@ -51,9 +57,12 @@ public final class BotsnBoltsGame extends BaseGame {
     protected final static FinPanple2 oss = new FinPanple2(13, 1);
     protected final static FinPanple2 os = new FinPanple2(15, 1);
     protected final static FinPanple2 ojs = new FinPanple2(15, 4);
+    
     protected static Queue<Runnable> loaders = new LinkedList<Runnable>();
     protected static MultiFont font = null;
     private static PlayerImages voidImages = null;
+    protected static Panframe[] doorTunnel = null;
+    protected static Panframe[] doorCyan = null;
     
     protected static PlayerContext pc = null;
     
@@ -81,6 +90,8 @@ public final class BotsnBoltsGame extends BaseGame {
     
     private final static void loadResources() {
         font = Fonts.getClassics(new FontRequest(8), Pancolor.WHITE, Pancolor.BLACK);
+        doorTunnel = newDoor("door.tunnel", "bg/DoorTunnel.png");
+        doorCyan = newDoor("door.cyan", "bg/DoorCyan.png");
         voidImages = loadPlayerImages("betabot", "Void");
         pc = new PlayerContext(new Profile(), org.pandcorps.pandax.in.ControlScheme.getDefaultKeyboard(), voidImages);
     }
@@ -153,6 +164,24 @@ public final class BotsnBoltsGame extends BaseGame {
         return image;
     }
     
+    private final static Panframe[] newDoor(final String id, final String path) {
+        final Img[] imgs = Imtil.loadStrip(RES + path, 16);
+        final Panframe[] door = new Panframe[8];
+        final Pangine engine = Pangine.getEngine();
+        final String pre = id + ".";
+        final Panmage top = engine.createImage(pre + "top", imgs[0]);
+        final Panmage mid = engine.createImage(pre + "mid", imgs[1]);
+        door[0] = engine.createFrame(pre + ".0", top, 1, 0, false, true);
+        door[1] = engine.createFrame(pre + ".1", mid, 1, 0, false, true);
+        door[2] = engine.createFrame(pre + ".2", mid, 1, 0, false, false);
+        door[3] = engine.createFrame(pre + ".3", top, 1, 0, false, false);
+        door[4] = engine.createFrame(pre + ".4", top, 1, 0, true, true);
+        door[5] = engine.createFrame(pre + ".5", mid, 1, 0, true, true);
+        door[6] = engine.createFrame(pre + ".6", mid, 1, 0, true, false);
+        door[7] = engine.createFrame(pre + ".7", top, 1, 0, true, false);
+        return door;
+    }
+    
     private final static class TitleScreen extends Panscreen {
         private Panmage title = null;
         
@@ -197,6 +226,9 @@ public final class BotsnBoltsGame extends BaseGame {
             engine.setBgColor(new org.pandcorps.core.img.FinPancolor((short) 232, (short) 232, (short) 232));
             final Panroom room = Pangame.getGame().getCurrentRoom();
             tm = new TileMap(Pantil.vmid(), room, 16, 16);
+            tm.getPosition().setZ(DEPTH_BG);
+            tm.setForegroundDepth(DEPTH_FG);
+            room.addActor(tm);
             final TileMapImage[][] imgMap = tm.splitImageMap(engine.createImage("bg", RES + "bg/Bg.png"));
             final int end = tm.getWidth() - 1;
             for (int i = end; i >= 0; i--) {
@@ -210,9 +242,10 @@ public final class BotsnBoltsGame extends BaseGame {
             tm.setBackground(4, 3, imgMap[0][3], Tile.BEHAVIOR_SOLID);
             tm.setBackground(5, 2, imgMap[1][4], Tile.BEHAVIOR_SOLID);
             tm.setBackground(5, 3, imgMap[0][4], Tile.BEHAVIOR_SOLID);
-            room.addActor(tm);
+            new ShootableDoor(room, 0, 1);
+            new ShootableDoor(room, end, 1);
             final Player player = new Player(pc);
-            player.getPosition().set(48, 96);
+            player.getPosition().set(48, 96, DEPTH_PLAYER);
             room.addActor(player);
         }
     }
