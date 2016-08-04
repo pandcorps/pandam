@@ -206,9 +206,10 @@ public final class BotsnBoltsGame extends BaseGame {
                 tm.setBackground(0, j, imgMap[0][0], Tile.BEHAVIOR_SOLID);
                 tm.setBackground(end, j, imgMap[0][2], Tile.BEHAVIOR_SOLID);
             }
-            for (int j = 2; j < 4; j++) {
-                tm.setBackground(5, j, imgMap[0][2], Tile.BEHAVIOR_SOLID);
-            }
+            tm.setBackground(4, 2, imgMap[1][3], Tile.BEHAVIOR_SOLID);
+            tm.setBackground(4, 3, imgMap[0][3], Tile.BEHAVIOR_SOLID);
+            tm.setBackground(5, 2, imgMap[1][4], Tile.BEHAVIOR_SOLID);
+            tm.setBackground(5, 3, imgMap[0][4], Tile.BEHAVIOR_SOLID);
             room.addActor(tm);
             final Player player = new Player(pc);
             player.getPosition().set(48, 96);
