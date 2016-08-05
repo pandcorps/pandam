@@ -24,9 +24,13 @@ package org.pandcorps.botsnbolts;
 
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
+import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.tile.*;
 
 public class ShootableDoor extends Panctor implements CollisionListener {
+    private final static Panple min = new FinPanple2(-4, 0);
+    private final static Panple max = new FinPanple2(20, 64);
+    private final static DoorDisplay display = new DoorDisplay();
     private final int x;
     private final int y;
     private final int doorX;
@@ -73,9 +77,31 @@ public class ShootableDoor extends Panctor implements CollisionListener {
             tm.setForeground(doorX, y, null);
         }
     }
-
+    
     @Override
     public final void onCollision(final CollisionEvent event) {
-        
+        //TODO if projectile openDoor();
+    }
+    
+    @Override
+    public final Pansplay getCurrentDisplay() {
+        return display;
+    }
+    
+    private final static class DoorDisplay implements Pansplay {
+        @Override
+        public final Panple getOrigin() {
+            return FinPanple.ORIGIN;
+        }
+    
+        @Override
+        public final Panple getBoundingMinimum() {
+            return min;
+        }
+    
+        @Override
+        public final Panple getBoundingMaximum() {
+            return max;
+        }
     }
 }
