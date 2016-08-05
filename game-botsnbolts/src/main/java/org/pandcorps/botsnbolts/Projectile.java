@@ -23,9 +23,10 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.botsnbolts;
 
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandax.*;
 
-public class Projectile extends Pandy {
+public class Projectile extends Pandy implements Collidable {
     protected Projectile(final Panctor src, final float vx, final float vy) {
         final Panple srcPos = src.getPosition();
         final boolean mirror = src.isMirror();

@@ -23,9 +23,10 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.botsnbolts;
 
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandax.tile.*;
 
-public class ShootableDoor extends Panctor {
+public class ShootableDoor extends Panctor implements CollisionListener {
     private final int x;
     private final int y;
     private final int doorX;
@@ -71,5 +72,10 @@ public class ShootableDoor extends Panctor {
             tm.setBehavior(x, yj, Tile.BEHAVIOR_OPEN);
             tm.setForeground(doorX, y, null);
         }
+    }
+
+    @Override
+    public final void onCollision(final CollisionEvent event) {
+        
     }
 }
