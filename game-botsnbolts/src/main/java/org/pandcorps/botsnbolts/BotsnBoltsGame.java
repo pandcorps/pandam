@@ -25,6 +25,7 @@ package org.pandcorps.botsnbolts;
 import java.util.*;
 
 import org.pandcorps.botsnbolts.Player.*;
+import org.pandcorps.botsnbolts.ShootableDoor.*;
 import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
 import org.pandcorps.game.*;
@@ -65,7 +66,7 @@ public final class BotsnBoltsGame extends BaseGame {
     private static PlayerImages voidImages = null;
     protected static Panframe[] doorTunnel = null;
     protected static Panframe[] doorTunnelOverlay = null;
-    protected static Panframe[] doorCyan = null;
+    protected static ShootableDoorDefinition doorCyan = null;
     
     protected static PlayerContext pc = null;
     
@@ -95,7 +96,7 @@ public final class BotsnBoltsGame extends BaseGame {
         font = Fonts.getClassics(new FontRequest(8), Pancolor.WHITE, Pancolor.BLACK);
         doorTunnel = newDoor("door.tunnel", "bg/DoorTunnel.png");
         doorTunnelOverlay = toOverlay(doorTunnel);
-        doorCyan = newDoor("door.cyan", "bg/DoorCyan.png");
+        doorCyan = newDoorDefinition("door.cyan", "bg/DoorCyan");
         voidImages = loadPlayerImages("betabot", "Void");
         pc = new PlayerContext(new Profile(), org.pandcorps.pandax.in.ControlScheme.getDefaultKeyboard(), voidImages);
     }
@@ -168,13 +169,26 @@ public final class BotsnBoltsGame extends BaseGame {
         return image;
     }
     
+    private final static ShootableDoorDefinition newDoorDefinition(final String id, final String path) {
+        final Panframe[] door = newDoor(id, path + ".png");
+        final Img[] imgs = Imtil.loadStrip(RES + path + "Opening.png", 16);
+        final Panframe[] open1 = newDoor(id + ".1", imgs, 0);
+        final Panframe[] open2 = newDoor(id + ".2", imgs, 2);
+        final Panframe[] open3 = newDoor(id + ".3", imgs, 4);
+        final Panframe[][] opening = { open1, open2, open3 };
+        return new ShootableDoorDefinition(door, opening);
+    }
+    
     private final static Panframe[] newDoor(final String id, final String path) {
-        final Img[] imgs = Imtil.loadStrip(RES + path, 16);
+        return newDoor(id, Imtil.loadStrip(RES + path, 16), 0);
+    }
+    
+    private final static Panframe[] newDoor(final String id, final Img[] imgs, final int off) {
         final Panframe[] door = new Panframe[8];
         final Pangine engine = Pangine.getEngine();
         final String pre = id + ".";
-        final Panmage top = engine.createImage(pre + "top", imgs[0]);
-        final Panmage mid = engine.createImage(pre + "mid", imgs[1]);
+        final Panmage top = engine.createImage(pre + "top", imgs[off]);
+        final Panmage mid = engine.createImage(pre + "mid", imgs[off + 1]);
         door[0] = engine.createFrame(pre + ".0", top, 1, 0, false, true);
         door[1] = engine.createFrame(pre + ".1", mid, 1, 0, false, true);
         door[2] = engine.createFrame(pre + ".2", mid, 1, 0, false, false);
@@ -261,8 +275,8 @@ public final class BotsnBoltsGame extends BaseGame {
             tm.setBackground(4, 3, imgMap[0][3], Tile.BEHAVIOR_SOLID);
             tm.setBackground(5, 2, imgMap[1][4], Tile.BEHAVIOR_SOLID);
             tm.setBackground(5, 3, imgMap[0][4], Tile.BEHAVIOR_SOLID);
-            new ShootableDoor(room, 0, 1);
-            new ShootableDoor(room, end, 1);
+            new ShootableDoor(room, 0, 1, doorCyan);
+            new ShootableDoor(room, end, 1, doorCyan);
             final Player player = new Player(pc);
             player.getPosition().set(48, 96, DEPTH_PLAYER);
             room.addActor(player);

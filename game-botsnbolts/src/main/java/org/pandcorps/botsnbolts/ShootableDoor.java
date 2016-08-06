@@ -34,13 +34,15 @@ public class ShootableDoor extends Panctor implements CollisionListener {
     private final int x;
     private final int y;
     private final int doorX;
+    private final ShootableDoorDefinition def;
     
-    protected ShootableDoor(final Panlayer layer, final int x, final int y) {
+    protected ShootableDoor(final Panlayer layer, final int x, final int y, ShootableDoorDefinition def) {
         setVisible(false);
         final TileMap tm = BotsnBoltsGame.tm;
         tm.getLayer().addActor(this);
         this.x = x;
         this.y = y;
+        this.def = def;
         tm.savePosition(getPosition(), x, y);
         if (x == 0) {
             doorX = 1;
@@ -71,18 +73,38 @@ public class ShootableDoor extends Panctor implements CollisionListener {
     }
     
     private final void closeDoor() {
-        setDoorTiles(doorX, BotsnBoltsGame.doorCyan, Tile.BEHAVIOR_OPEN, false);
+        setDoorEnergyTiles(this.def.door);
+    }
+    
+    private final void setDoorEnergyTiles(final Panframe[] door) {
+        setDoorTiles(doorX, door, Tile.BEHAVIOR_OPEN, false);
     }
     
     private final void openDoor() {
         final TileMap tm = BotsnBoltsGame.tm;
         final int base = getBaseFrameIndex();
+        final Panframe[] opening = def.opening[0];
         for (int j = 0; j < 4; j++) {
-            final int yj = y + j;
-            tm.setBackground(x, yj, BotsnBoltsGame.doorTunnelOverlay[base + j], Tile.BEHAVIOR_OPEN);
-            tm.setForeground(doorX, yj, null);
+            final int yj = y + j, basej = base + j;
+            tm.setBackground(x, yj, BotsnBoltsGame.doorTunnelOverlay[basej], Tile.BEHAVIOR_OPEN);
+            tm.setForeground(doorX, yj, opening[basej]);
         }
+        addOpenTimer(1);
         destroy();
+    }
+    
+    private final void addOpenTimer(final int nextIndex) {
+        Pangine.getEngine().addTimer(BotsnBoltsGame.tm, 1, new TimerListener() {
+            @Override public final void onTimer(final TimerEvent event) {
+                if (nextIndex >= def.opening.length) {
+                    for (int j = 0; j < 4; j++) {
+                        BotsnBoltsGame.tm.setForeground(doorX, y + j, null);
+                    }
+                } else {
+                    setDoorEnergyTiles(def.opening[nextIndex]);
+                    addOpenTimer(nextIndex + 1);
+                }
+            }});
     }
     
     @Override
@@ -113,6 +135,16 @@ public class ShootableDoor extends Panctor implements CollisionListener {
         @Override
         public final Panple getBoundingMaximum() {
             return max;
+        }
+    }
+    
+    protected final static class ShootableDoorDefinition {
+        private final Panframe[] door;
+        private final Panframe[][] opening;
+        
+        protected ShootableDoorDefinition(final Panframe[] door, final Panframe[][] opening) {
+            this.door = door;
+            this.opening = opening;
         }
     }
 }
