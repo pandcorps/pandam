@@ -24,7 +24,7 @@ package org.pandcorps.pandam.impl;
 
 import org.pandcorps.pandam.*;
 
-public interface SpecPanctor {
+public interface SpecPanctor extends Pantity {
 	public Panple getPosition();
 	
 	public Panple getBoundingMinimum();

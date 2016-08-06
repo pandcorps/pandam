@@ -41,6 +41,7 @@ public class ShootableDoor extends Panctor implements CollisionListener {
         tm.getLayer().addActor(this);
         this.x = x;
         this.y = y;
+        tm.savePosition(getPosition(), x, y);
         if (x == 0) {
             doorX = 1;
         } else {
@@ -51,9 +52,13 @@ public class ShootableDoor extends Panctor implements CollisionListener {
         closeDoor();
     }
     
+    private final int getBaseFrameIndex() {
+        return isMirror() ? 4 : 0;
+    }
+    
     private final void setDoorTiles(final int x, final Panframe[] door, final byte behavior, final boolean bg) {
         final TileMap tm = BotsnBoltsGame.tm;
-        final int base = isMirror() ? 4 : 0;
+        final int base = getBaseFrameIndex();
         for (int j = 0; j < 4; j++) {
             final int index = tm.getIndex(x, y + j);
             final Panframe frm = door[base + j];
@@ -71,16 +76,22 @@ public class ShootableDoor extends Panctor implements CollisionListener {
     
     private final void openDoor() {
         final TileMap tm = BotsnBoltsGame.tm;
+        final int base = getBaseFrameIndex();
         for (int j = 0; j < 4; j++) {
             final int yj = y + j;
-            tm.setBehavior(x, yj, Tile.BEHAVIOR_OPEN);
-            tm.setForeground(doorX, y, null);
+            tm.setBackground(x, yj, BotsnBoltsGame.doorTunnelOverlay[base + j], Tile.BEHAVIOR_OPEN);
+            tm.setForeground(doorX, yj, null);
         }
+        destroy();
     }
     
     @Override
     public final void onCollision(final CollisionEvent event) {
-        //TODO if projectile openDoor();
+        final Collidable collider = event.getCollider();
+        if (collider.getClass() == Projectile.class) {
+            openDoor();
+            collider.destroy();
+        }
     }
     
     @Override

@@ -49,6 +49,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected final static int DEPTH_FG = 1;
     protected final static int DEPTH_PLAYER = 2;
     protected final static int DEPTH_PROJECTILE = 3;
+    protected final static int DEPTH_OVERLAY = 4;
     
     private final static FinPanple2 ng = GuyPlatform.getMin(Player.PLAYER_X);
     private final static FinPanple2 xg = GuyPlatform.getMax(Player.PLAYER_X, Player.PLAYER_H);
@@ -57,11 +58,13 @@ public final class BotsnBoltsGame extends BaseGame {
     protected final static FinPanple2 oss = new FinPanple2(13, 1);
     protected final static FinPanple2 os = new FinPanple2(15, 1);
     protected final static FinPanple2 ojs = new FinPanple2(15, 4);
+    protected final static FinPanple originOverlay = new FinPanple(0, 0, DEPTH_OVERLAY);
     
     protected static Queue<Runnable> loaders = new LinkedList<Runnable>();
     protected static MultiFont font = null;
     private static PlayerImages voidImages = null;
     protected static Panframe[] doorTunnel = null;
+    protected static Panframe[] doorTunnelOverlay = null;
     protected static Panframe[] doorCyan = null;
     
     protected static PlayerContext pc = null;
@@ -91,6 +94,7 @@ public final class BotsnBoltsGame extends BaseGame {
     private final static void loadResources() {
         font = Fonts.getClassics(new FontRequest(8), Pancolor.WHITE, Pancolor.BLACK);
         doorTunnel = newDoor("door.tunnel", "bg/DoorTunnel.png");
+        doorTunnelOverlay = toOverlay(doorTunnel);
         doorCyan = newDoor("door.cyan", "bg/DoorCyan.png");
         voidImages = loadPlayerImages("betabot", "Void");
         pc = new PlayerContext(new Profile(), org.pandcorps.pandax.in.ControlScheme.getDefaultKeyboard(), voidImages);
@@ -180,6 +184,21 @@ public final class BotsnBoltsGame extends BaseGame {
         door[6] = engine.createFrame(pre + ".6", mid, 1, 0, true, false);
         door[7] = engine.createFrame(pre + ".7", top, 1, 0, true, false);
         return door;
+    }
+    
+    private final static Panframe[] toOverlay(final Panframe[] frms) {
+        final int size = frms.length;
+        final Panframe[] overlay = new Panframe[size];
+        for (int i = 0; i < size; i++) {
+            overlay[i] = toOverlay(frms[i]);
+        }
+        return overlay;
+    }
+    
+    private final static Panframe toOverlay(final Panframe frm) {
+        return Pangine.getEngine().createFrame(frm.getId() + ".overlay", frm.getImage(), frm.getDuration(), frm.getRot(), frm.isMirror(), frm.isFlip(),
+            originOverlay,
+            frm.getBoundingMinimum(), frm.getBoundingMaximum());
     }
     
     private final static class TitleScreen extends Panscreen {
