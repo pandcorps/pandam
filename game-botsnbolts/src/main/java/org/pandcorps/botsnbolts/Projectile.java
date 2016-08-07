@@ -23,16 +23,23 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.botsnbolts;
 
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.event.*;
+import org.pandcorps.pandam.event.boundary.*;
 import org.pandcorps.pandax.*;
 
-public class Projectile extends Pandy {
+public final class Projectile extends Pandy implements Collidable, AllOobListener {
     protected Projectile(final Panctor src, final float vx, final float vy) {
         final Panple srcPos = src.getPosition();
         final boolean mirror = src.isMirror();
         setMirror(mirror);
         final int xm = mirror ? -1 : 1;
-        getPosition().set(srcPos.getX() + (xm * 12), srcPos.getY() + 16);
+        getPosition().set(srcPos.getX() + (xm * 15), srcPos.getY() + 13, BotsnBoltsGame.DEPTH_PROJECTILE);
         getVelocity().set(xm * vx, vy);
         src.getLayer().addActor(this);
+    }
+
+    @Override
+    public final void onAllOob(final AllOobEvent event) {
+        destroy();
     }
 }

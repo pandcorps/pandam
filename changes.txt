@@ -1,3 +1,9 @@
+1.26.0 (38)
+
+Added Nether Cube and Nether Glob boss monsters.
+
+*****
+
 1.25.1 (37)
 
 Added new F-U-R letter templates.

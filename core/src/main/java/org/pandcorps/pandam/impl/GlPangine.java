@@ -28,6 +28,7 @@ import java.util.*;
 import org.pandcorps.core.*;
 import org.pandcorps.core.col.*;
 import org.pandcorps.core.img.*;
+import org.pandcorps.core.img.scale.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.Panput.*;
 import org.pandcorps.pandam.event.action.*;
@@ -725,9 +726,17 @@ public abstract class GlPangine extends Pangine {
 		}
 		edge();
 		if (screenShotDst != null) {
-		    final ByteBuffer buf = Pantil.allocateDirectByteBuffer(w * h * 3);
+		    final int sw, sh;
+		    if (screenShotW < 0) {
+		        sw = w;
+		        sh = h;
+		    } else {
+		        sw = screenShotW;
+		        sh = screenShotH;
+		    }
+		    final ByteBuffer buf = Pantil.allocateDirectByteBuffer(sw * sh * 3);
 		    //buf.rewind();
-		    gl.glReadPixels(0, 0, w, h, gl.GL_RGB, gl.GL_UNSIGNED_BYTE, buf); // Could read each frame and filter, but very slow
+		    gl.glReadPixels(screenShotX, screenShotY, sw, sh, gl.GL_RGB, gl.GL_UNSIGNED_BYTE, buf); // Could read each frame and filter, but very slow
 		    final String dst;
 		    if (screenShotInd >= 0) {
 		    	dst = screenShotDst + screenShotInd + ".png";
@@ -736,7 +745,12 @@ public abstract class GlPangine extends Pangine {
 		    	dst = screenShotDst;
 		    	screenShotDst = null;
 		    }
-		    final Img img = Imtil.create(buf, w, h, Imtil.TYPE_INT_RGB);
+		    Img img = Imtil.shrink(Imtil.create(buf, sw, sh, Imtil.TYPE_INT_RGB), Math.round(getZoom()));
+		    if (screenShotZoom > 1) {
+		        final Img zoomed = new NearestNeighborScaler(screenShotZoom).scale(img);
+		        img.close();
+		        img = zoomed;
+		    }
 		    Imtil.save(img, dst);
 		    img.close();
 		}

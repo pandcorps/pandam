@@ -545,7 +545,7 @@ public class Player extends Character implements CollisionListener {
 	}
 	
 	private final void evaluateCombo() {
-	    if (currentComboSize > 1) {
+	    if (currentComboSize > 1 && currentComboAward > 0) {
             /*
             The award was given once gradually throughout the combo.
             Would make sense to reduce multiplier by one when giving the final bonus.
