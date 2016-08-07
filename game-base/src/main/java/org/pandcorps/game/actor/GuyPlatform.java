@@ -41,9 +41,9 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
     public static byte TILE_ICE = -1;
     public static byte TILE_SAND = -1;
     protected static boolean sandSolid = true;
-    public final int H;
+    public int H;
     public final int OFF_GROUNDED = -1;
-    public final int OFF_BUTTING;
+    public int OFF_BUTTING;
     public final int OFF_X;
     public float v = 0;
     public int hv = 0;
@@ -51,6 +51,10 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
     
     protected GuyPlatform(final int offX, final int h) {
         OFF_X = offX;
+        setH(h);
+    }
+    
+    protected final void setH(final int h) {
         H = h;
         OFF_BUTTING = H + 1;
     }

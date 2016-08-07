@@ -144,7 +144,7 @@ public class Level {
     protected static List<Panctor> collectedLetters = null;
     protected static List<Panctor> uncollectedLetters = null;
     private static int farthestColumn = 0;
-    private static boolean goalLocked = false;
+    protected static boolean goalLocked = false;
     protected static boolean victory = false;
     
     static {

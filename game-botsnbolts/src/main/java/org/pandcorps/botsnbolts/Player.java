@@ -25,13 +25,15 @@ package org.pandcorps.botsnbolts;
 import org.pandcorps.game.actor.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.action.*;
+import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.in.*;
 import org.pandcorps.pandax.tile.*;
 
 public final class Player extends GuyPlatform {
     protected final static int PLAYER_X = 6;
     protected final static int PLAYER_H = 23;
-    private final static int SHOOT_DELAY_DEFAULT = 10;
+    protected final static int BALL_H = 15;
+    private final static int SHOOT_DELAY_DEFAULT = 5;
     private final static int SHOOT_DELAY_RAPID = 3;
     private final static int SHOOT_DELAY_SPREAD = 15;
     private final static int SHOOT_TIME = 12;
@@ -40,6 +42,11 @@ public final class Player extends GuyPlatform {
     private final static int RUN_TIME = 5;
     private final static int VEL_JUMP = 8;
     private final static int VEL_WALK = 3;
+    private final static int VEL_PROJECTILE = 8;
+    private final static float VX_SPREAD1;
+    private final static float VY_SPREAD1;
+    private final static float VX_SPREAD2;
+    private final static float VY_SPREAD2;
     
     private final Profile prf;
     private final PlayerImages pi;
@@ -50,6 +57,19 @@ public final class Player extends GuyPlatform {
     private int blinkTimer = 0;
     private long lastShot = -1000;
     private long lastHurt = -1000;
+    private int wallTimer = 0;
+    private boolean wallMirror = false;
+    private int health = 28; //TODO HUD meter
+    
+    static {
+        final Panple tmp = new ImplPanple(VEL_PROJECTILE, 0, 0);
+        tmp.setMagnitudeDirection(VEL_PROJECTILE, Math.PI / 4);
+        VX_SPREAD1 = tmp.getX();
+        VY_SPREAD1 = tmp.getY();
+        tmp.setMagnitudeDirection(VEL_PROJECTILE, Math.PI / 8);
+        VX_SPREAD2 = tmp.getX();
+        VY_SPREAD2 = tmp.getY();
+    }
     
     protected Player(final PlayerContext pc) {
         super(PLAYER_X, PLAYER_H);
@@ -80,9 +100,39 @@ public final class Player extends GuyPlatform {
             @Override public final void onAction(final ActionEvent event) { up(); }});
         register(ctrl.getDown(), new ActionListener() {
             @Override public final void onAction(final ActionEvent event) { down(); }});
+        registerPause(ctrl.getSubmit());
+        registerPause(ctrl.getMenu());
         final Pangine engine = Pangine.getEngine();
-        register(engine.getInteraction().KEY_F1, new ActionStartListener() {
+        final Panteraction interaction = engine.getInteraction();
+        register(interaction.KEY_TAB, new ActionStartListener() {
+            @Override public final void onActionStart(final ActionStartEvent event) { toggleShootMode(); }});
+        register(interaction.KEY_F1, new ActionStartListener() {
             @Override public final void onActionStart(final ActionStartEvent event) { engine.captureScreen(); }});
+        register(interaction.KEY_F2, new ActionStartListener() {
+            @Override public final void onActionStart(final ActionStartEvent event) { engine.startCaptureFrames(); }});
+        register(interaction.KEY_F3, new ActionStartListener() {
+            @Override public final void onActionStart(final ActionStartEvent event) { engine.stopCaptureFrames(); }});
+    }
+    
+    private final void registerPause(final Panput input) {
+        register(input, new ActionStartListener() {
+            @Override public final void onActionStart(final ActionStartEvent event) { togglePause(); }});
+    }
+    
+    private final void togglePause() {
+        Pangine.getEngine().togglePause();
+    }
+    
+    private final void toggleShootMode() {
+        if (prf.shootMode == SHOOT_NORMAL) {
+            prf.shootMode = SHOOT_RAPID;
+        } else if (prf.shootMode == SHOOT_RAPID) {
+            prf.shootMode = SHOOT_SPREAD;
+        } else if (prf.shootMode == SHOOT_SPREAD) {
+            prf.shootMode = SHOOT_CHARGE;
+        } else {
+            prf.shootMode = SHOOT_NORMAL;
+        }
     }
     
     private final void jump() {
@@ -113,12 +163,24 @@ public final class Player extends GuyPlatform {
         stateHandler.onRight(this);
     }
     
+    private final void onRightNormal() {
+        hv = VEL_WALK;
+    }
+    
     private final void left() {
         stateHandler.onLeft(this);
     }
     
+    private final void onLeftNormal() {
+        hv = -VEL_WALK;
+    }
+    
     private final void up() {
         stateHandler.onUp(this);
+    }
+    
+    private final void onUpNormal() {
+        //TODO Switch to LADDER_HANDLER if on ladder
     }
     
     private final void down() {
@@ -163,23 +225,43 @@ public final class Player extends GuyPlatform {
             changeView(pi.hurt);
             return;
         }
+        this.stateHandler.onGrounded(this);
+    }
+    
+    private final void onGroundedNormal() {
         final PlayerImagesSubSet set = getCurrentImagesSubSet();
         if (hv == 0) {
+            wallTimer = 0;
             final Panmage stand;
             if (set.blink == null) {
                 stand = set.stand;
                 blinkTimer = 0;
             } else {
                 blinkTimer++;
-                if (blinkTimer > 60) {
+                if (blinkTimer > 120) {
                     blinkTimer = 0;
                 }
-                stand = (blinkTimer > 55) ? set.blink : set.stand;
+                stand = (blinkTimer > 115) ? set.blink : set.stand;
             }
             changeView(stand);
             clearRun();
             running = false;
         } else {
+            blinkTimer = 0;
+            if (wallTimer > 0 && set.crouch != null) { //TODO && room for ball
+                if (wallMirror == isMirror()) {
+                    wallTimer++;
+                    if (wallTimer > 6) {
+                        startBall();
+                    } else if (wallTimer > 3) {
+                        changeView(set.crouch[1]);
+                    } else {
+                        changeView(set.crouch[0]);
+                    }
+                    return;
+                }
+            }
+            wallTimer = 0;
             final boolean wasRunning = running;
             running = true;
             if (!wasRunning && set.start != null) {
@@ -198,13 +280,49 @@ public final class Player extends GuyPlatform {
         }
     }
     
+    private final void onGroundedBall() {
+        changeView(pi.ball[runIndex]);
+        if (hv != 0) {
+            if (runTimer < 1) {
+                runTimer++;
+            } else {
+                runTimer = 0;
+                if (runIndex < 7) {
+                    runIndex++;
+                } else {
+                    runIndex = 0;
+                }
+            }
+        }
+    }
+    
+    private final void startBall() {
+        clearRun();
+        stateHandler = BALL_HANDLER;
+        changeView(pi.ball[0]);
+        setH(BALL_H);
+        wallTimer = 0;
+    }
+    
+    private final void endBall() {
+        clearRun();
+        stateHandler = NORMAL_HANDLER;
+        setH(PLAYER_H);
+    }
+    
     @Override
     protected final void onLanded() {
+        super.onLanded();
         blinkTimer = 0;
     }
     
     @Override
     protected final boolean onAir() {
+        return stateHandler.onAir(this);
+    }
+    
+    private final boolean onAirNormal() {
+        wallTimer = 0;
         clearRun();
         if (isHurt()) {
             changeView(pi.hurt);
@@ -212,6 +330,11 @@ public final class Player extends GuyPlatform {
         }
         changeView(getCurrentImagesSubSet().jump);
         return false;
+    }
+    
+    @Override
+    protected final void onWall() {
+        stateHandler.onWall(this);
     }
     
     @Override
@@ -251,6 +374,14 @@ public final class Player extends GuyPlatform {
         //@OverrideMe
         protected void onDown(final Player player) {
         }
+        
+        protected abstract void onGrounded(final Player player);
+        
+        protected abstract boolean onAir(final Player player);
+        
+        //@OverrideMe
+        protected void onWall(final Player player) {
+        }
     }
     
     protected final static StateHandler NORMAL_HANDLER = new StateHandler() {
@@ -271,12 +402,35 @@ public final class Player extends GuyPlatform {
         
         @Override
         protected final void onRight(final Player player) {
-            player.hv = VEL_WALK;
+            player.onRightNormal();
         }
         
         @Override
         protected final void onLeft(final Player player) {
-            player.hv = -VEL_WALK;
+            player.onLeftNormal();
+        }
+        
+        @Override
+        protected final void onUp(final Player player) {
+            player.onUpNormal();
+        }
+        
+        @Override
+        protected final void onGrounded(final Player player) {
+            player.onGroundedNormal();
+        }
+        
+        @Override
+        protected final boolean onAir(final Player player) {
+            return player.onAirNormal();
+        }
+        
+        @Override
+        protected final void onWall(final Player player) {
+            if (player.wallTimer == 0) {
+                player.wallTimer = 1;
+                player.wallMirror = player.isMirror();
+            }
         }
     };
     
@@ -314,9 +468,51 @@ public final class Player extends GuyPlatform {
         @Override
         protected final void onDown(final Player player) {
         }
+        
+        @Override
+        protected final void onGrounded(final Player player) {
+        }
+        
+        @Override
+        protected final boolean onAir(final Player player) {
+            return false;
+        }
     };
     
-    //protected final static StateHandler BALL_HANDLER = new StateHandler() { //TODO
+    protected final static StateHandler BALL_HANDLER = new StateHandler() {
+        @Override
+        protected final void onShootStart(final Player player) {
+        }
+        
+        @Override
+        protected final void onShooting(final Player player) {
+        }
+        
+        @Override
+        protected final void onShootEnd(final Player player) {
+        }
+        
+        @Override
+        protected final void onRight(final Player player) {
+            player.onRightNormal();
+        }
+        
+        @Override
+        protected final void onLeft(final Player player) {
+            player.onLeftNormal();
+        }
+        
+        @Override
+        protected final void onGrounded(final Player player) {
+            player.onGroundedBall();
+        }
+        
+        @Override
+        protected final boolean onAir(final Player player) {
+            player.endBall();
+            return false;
+        }
+    };
     
     protected abstract static class ShootMode {
         protected final int delay;
@@ -347,7 +543,11 @@ public final class Player extends GuyPlatform {
         protected abstract void createProjectile(final Player player);
         
         protected final void createDefaultProjectile(final Player player) {
-            new Projectile(player, 4, 0);
+            createBasicProjectile(player, VEL_PROJECTILE, 0);
+        }
+        
+        protected final void createBasicProjectile(final Player player, final float vx, final float vy) {
+            new Projectile(player, vx, vy).setView(player.pi.basicProjectile);
         }
     }
     
@@ -369,13 +569,15 @@ public final class Player extends GuyPlatform {
         private final PlayerImagesSubSet shootSet;
         private final Panmage hurt;
         private final Panmage basicProjectile;
+        private final Panmage[] ball;
         
         protected PlayerImages(final PlayerImagesSubSet basicSet, final PlayerImagesSubSet shootSet, final Panmage hurt,
-                               final Panmage basicProjectile) {
+                               final Panmage basicProjectile, final Panmage[] ball) {
             this.basicSet = basicSet;
             this.shootSet = shootSet;
             this.hurt = hurt;
             this.basicProjectile = basicProjectile;
+            this.ball = ball;
         }
     }
     
@@ -385,13 +587,15 @@ public final class Player extends GuyPlatform {
         private final Panmage[] run;
         private final Panmage start;
         private final Panmage blink;
+        private final Panmage[] crouch;
         
-        protected PlayerImagesSubSet(final Panmage stand, final Panmage jump, final Panmage[] run, final Panmage start, final Panmage blink) {
+        protected PlayerImagesSubSet(final Panmage stand, final Panmage jump, final Panmage[] run, final Panmage start, final Panmage blink, final Panmage[] crouch) {
             this.stand = stand;
             this.jump = jump;
             this.run = run;
             this.start = start;
             this.blink = blink;
+            this.crouch = crouch;
         }
     }
     
@@ -432,7 +636,10 @@ public final class Player extends GuyPlatform {
         @Override
         protected final void createProjectile(final Player player) {
             createDefaultProjectile(player);
-            //TODO More shots
+            createBasicProjectile(player, VX_SPREAD1, VY_SPREAD1);
+            createBasicProjectile(player, VX_SPREAD1, -VY_SPREAD1);
+            createBasicProjectile(player, VX_SPREAD2, VY_SPREAD2);
+            createBasicProjectile(player, VX_SPREAD2, -VY_SPREAD2);
         }
     };
     

@@ -35,6 +35,7 @@ import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.furguardians.Player.*;
 import org.pandcorps.furguardians.Profile.*;
+import org.pandcorps.furguardians.Spawner.*;
 
 public class Enemy extends Character {
     protected final static byte DEFEAT_STOMP = 0;
@@ -82,6 +83,7 @@ public class Enemy extends Character {
 		protected InteractionHandler defeatHandler = null;
 		protected Pansound wallSound = null;
 		protected Pansound stompSound = null;
+		protected boolean mustDestroyOffScreen = true;
 		protected final SpawnFactory factory;
 		protected EnemyMenu menu = DEFAULT_MENU;
 		
@@ -500,8 +502,7 @@ public class Enemy extends Character {
 	protected final void onScrolled() {
 		if (isDestroyed()) {
 			return;
-		}
-		if (destroyIfOffScreen(this, 80)) {
+		} else if (((def == null) || def.mustDestroyOffScreen) && destroyIfOffScreen(this, 80)) {
 			onDestroyOffScreen();
 		}
 	}
@@ -850,12 +851,12 @@ public class Enemy extends Character {
 	    protected NetherCube(final int x, final int y) {
 	        index = Level.tm.getIndex(x, y);
 	        final Panple pos = Level.tm.getPosition(index);
-	        getPosition().set(pos.getX() + 8, pos.getY() + 8);
+	        getPosition().set(pos.getX() + 8, pos.getY() + 2);
 	        initTimer();
 	    }
 	    
 	    private final void initTimer() {
-	        timer = Mathtil.randi(30, 75);
+	        timer = Mathtil.randi(60, 150);
 	    }
 	    
         @Override
@@ -873,7 +874,7 @@ public class Enemy extends Character {
             if (tile.isSolid() && fg != null) {
                 destroy();
                 return;
-            } else if (diff < 4) {
+            } else if (diff < -4) {
                 setMirror(true);
                 if (fg == FurGuardiansGame.netherCube1) {
                     Level.tm.setForeground(index, FurGuardiansGame.netherCubeMirror1);
@@ -882,7 +883,7 @@ public class Enemy extends Character {
                 } else if (fg == FurGuardiansGame.netherCube3) {
                     Level.tm.setForeground(index, FurGuardiansGame.netherCubeMirror3);
                 }
-            } else if (diff > 11) {
+            } else if (diff > 4) {
                 setMirror(false);
                 if (fg == FurGuardiansGame.netherCubeMirror1) {
                     Level.tm.setForeground(index, FurGuardiansGame.netherCube1);
@@ -989,16 +990,30 @@ public class Enemy extends Character {
         }
     }
 	
+	protected final static class CubeEnemyMenu implements EnemyMenu {
+        @Override
+        public final void draw(final Panctor enemyBack, final Panctor enemy, final Panctor enemyFront, final EnemyDefinition def, final int x) {
+            enemy.setView(def.getWalkImage());
+            enemy.getPosition().set(x + DEFAULT_O.getX(), Menu.Y_PLAYER - DEFAULT_O.getY());
+        }
+    }
+	
 	protected abstract static class HavocLockController extends Panctor implements StepListener {
+	    private int timer = 0;
+	    
 	    @Override
 	    public final void onStep(final StepEvent event) {
 	        for (final Panctor actor : Coltil.unnull(Level.room.getActors())) {
 	            if (isBoss(actor)) {
+	                timer = 0;
 	                return;
 	            }
 	        }
-	        Level.unlockGoal();
-	        destroy();
+	        timer++;
+	        if (timer > 30) {
+    	        Level.unlockGoal();
+    	        destroy();
+	        }
 	    }
 	    
 	    protected abstract boolean isBoss(final Panctor actor);
@@ -1014,10 +1029,14 @@ public class Enemy extends Character {
 	protected final static class NetherGlobHavocLockController extends HavocLockController {
         @Override
         protected final boolean isBoss(final Panctor actor) {
-            if (!(actor instanceof Enemy)) {
+            final EnemyDefinition def;
+            if (actor instanceof Enemy) {
+                def = ((Enemy) actor).def;
+            } else if (actor instanceof SpecificSpawner) {
+                def = ((SpecificSpawner) actor).getDef();
+            } else {
                 return false;
             }
-            final EnemyDefinition def = ((Enemy) actor).def;
             return (def == FurGuardiansGame.netherGlob) || (def == FurGuardiansGame.greaterGlob) || (def == FurGuardiansGame.giantGlob);
         }
     }

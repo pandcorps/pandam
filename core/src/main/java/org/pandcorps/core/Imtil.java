@@ -215,6 +215,24 @@ public final class Imtil {
         }
     }
     
+    // 90 degrees clockwise
+    public final static void rotate(final Img img) {
+        final int d = img.getWidth(), d2 = d / 2, d1 = d - 1;
+        if (d != img.getHeight()) {
+            throw new IllegalArgumentException("Can only rotate squares");
+        }
+        for (int j = 0; j < d2; j++) {
+            final int end1 = d - j - 1;
+            for (int i = j; i < end1; i++) {
+                final int t = img.getRGB(i, j);
+                img.setRGB(i, j, img.getRGB(j, d1 - i));
+                img.setRGB(j, d1 - i, img.getRGB(d1 - i, end1));
+                img.setRGB(d1 - i, end1, img.getRGB(end1, i));
+                img.setRGB(end1, i, t);
+            }
+        }
+    }
+    
     public final static void move(final Img img, final int x, final int y) {
     	final int clear = img.getRGB(0, 0);
     	final int w = img.getWidth(), h = img.getHeight();

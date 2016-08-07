@@ -514,7 +514,8 @@ public class TileMap extends Panctor implements Savable {
     	    return;
     	} else {
     	    final Panframe frame = (Panframe) img;
-    	    renderer.render(layer, frame.getImage(), xitw, yjth, z, 0, 0, tw, th, frame.getRot(), frame.isMirror(), frame.isFlip());
+    	    final Panple o = frame.getOrigin();
+    	    renderer.render(layer, frame.getImage(), xitw, yjth, z + ((o == null) ? 0 : o.getZ()), 0, 0, tw, th, frame.getRot(), frame.isMirror(), frame.isFlip());
     	    return;
     	}
 		renderer.render(layer, imgMap, xitw, yjth, z, timg.ix, timg.iy, tw, th);
