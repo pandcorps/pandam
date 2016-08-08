@@ -22,13 +22,17 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.botsnbolts;
 
+import org.pandcorps.game.actor.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.boundary.*;
 import org.pandcorps.pandax.*;
 
 public final class Projectile extends Pandy implements Collidable, AllOobListener {
-    protected Projectile(final Panctor src, final float vx, final float vy) {
+    private final Player src;
+    
+    protected Projectile(final Player src, final float vx, final float vy) {
+        this.src = src;
         final Panple srcPos = src.getPosition();
         final boolean mirror = src.isMirror();
         setMirror(mirror);
@@ -36,6 +40,23 @@ public final class Projectile extends Pandy implements Collidable, AllOobListene
         getPosition().set(srcPos.getX() + (xm * 15), srcPos.getY() + 13, BotsnBoltsGame.DEPTH_PROJECTILE);
         getVelocity().set(xm * vx, vy);
         src.getLayer().addActor(this);
+    }
+    
+    protected final void burst() {
+        burst(this);
+    }
+    
+    protected final void burst(final Panctor target) {
+        burst(target.getPosition());
+    }
+    
+    protected final void burst(final Panple loc) {
+        final Burst burst = new Burst(src.pi.burst);
+        final Panple pos = burst.getPosition();
+        pos.set(loc);
+        pos.setZ(BotsnBoltsGame.DEPTH_BURST);
+        burst.setMirror(isMirror());
+        getLayer().addActor(burst);
     }
 
     @Override

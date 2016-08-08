@@ -51,6 +51,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected final static int DEPTH_PLAYER = 2;
     protected final static int DEPTH_PROJECTILE = 3;
     protected final static int DEPTH_OVERLAY = 4;
+    protected final static int DEPTH_BURST = 5;
     
     private final static FinPanple2 ng = GuyPlatform.getMin(Player.PLAYER_X);
     private final static FinPanple2 xg = GuyPlatform.getMax(Player.PLAYER_X, Player.PLAYER_H);
@@ -107,6 +108,7 @@ public final class BotsnBoltsGame extends BaseGame {
         final PlayerImagesSubSet shootSet = loadPlayerImagesSubSet(pre + "Shoot", name + ".shoot", false, oss, os, ojs);
         final Pangine engine = Pangine.getEngine();
         final Panmage basicProjectile = engine.createImage(pre + "Projectile", new FinPanple2(3, 3), new FinPanple2(-3, -1), new FinPanple2(5, 3), pre + "Projectile.png");
+        final Panimation burst = newAnimation(pre + "Burst", pre + "Burst.png", 16, CENTER_16, 2);
         final Img[] ballImgs = Imtil.loadStrip(pre + "Ball.png", 16);
         final Panmage ball[] = new Panmage[8];
         final Panple ob = new FinPanple2(8, 1), xb = GuyPlatform.getMax(Player.PLAYER_X, Player.BALL_H);
@@ -123,7 +125,7 @@ public final class BotsnBoltsGame extends BaseGame {
                 }
             }
         }
-        return new PlayerImages(basicSet, shootSet, null, basicProjectile, ball);
+        return new PlayerImages(basicSet, shootSet, null, basicProjectile, burst, ball);
     }
     
     private final static PlayerImagesSubSet loadPlayerImagesSubSet(final String path, final String name, final boolean startNeeded, final Panple os, final Panple o, final Panple oj) {
@@ -152,6 +154,19 @@ public final class BotsnBoltsGame extends BaseGame {
             crouch = null;
         }
         return new PlayerImagesSubSet(still, jump, new Panmage[] { run1, run2, run3 }, start, blink, crouch);
+    }
+    
+    private final static Panimation newAnimation(final String id, final String path, final int w, final Panple o, final int dur) {
+        final Img[] imgs = Imtil.loadStrip(path, w);
+        final int size = imgs.length;
+        final Panframe[] frames = new Panframe[size];
+        final Pangine engine = Pangine.getEngine();
+        for (int i = 0; i < size; i++) {
+            final String iid = id + "." + i;
+            final Panmage image = engine.createImage(iid, o, null, null, imgs[i]);
+            frames[i] = engine.createFrame(PRE_FRM + iid, image, dur);
+        }
+        return engine.createAnimation(PRE_ANM + id, frames);
     }
     
     private final static Panmage newPlayerImage(final String id, final Panple o, final Img[] imgs, final Img[] imgsMirror, final int i) {
