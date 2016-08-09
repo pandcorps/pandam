@@ -68,6 +68,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static Panframe[] doorTunnel = null;
     protected static Panframe[] doorTunnelOverlay = null;
     protected static ShootableDoorDefinition doorCyan = null;
+    protected static ShootableDoorDefinition doorGold = null;
     
     protected static PlayerContext pc = null;
     
@@ -97,7 +98,22 @@ public final class BotsnBoltsGame extends BaseGame {
         font = Fonts.getClassics(new FontRequest(8), Pancolor.WHITE, Pancolor.BLACK);
         doorTunnel = newDoor("door.tunnel", "bg/DoorTunnel.png");
         doorTunnelOverlay = toOverlay(doorTunnel);
-        doorCyan = newDoorDefinition("door.cyan", "bg/DoorCyan");
+        final Img[] imgsClosed = Imtil.loadStrip(RES + "bg/DoorCyan.png", 16);
+        Img.setTemporary(false, imgsClosed);
+        final Img[] imgsOpening = Imtil.loadStrip(RES + "bg/DoorCyanOpening.png", 16);
+        Img.setTemporary(false, imgsOpening);
+        doorCyan = newDoorDefinition("door.cyan", imgsClosed, imgsOpening);
+        final Map<Pancolor, Pancolor> colorMap = new HashMap<Pancolor, Pancolor>();
+        colorMap.put(FinPancolor.CYAN, FinPancolor.YELLOW);
+        final short s0 = 0, s192 = 192;
+        colorMap.put(new FinPancolor(s0, s192, s192), new FinPancolor(s192, s192, s0));
+        final ReplacePixelFilter goldFilter = new ReplacePixelFilter(colorMap);
+        filterImgs(imgsClosed, goldFilter);
+        filterImgs(imgsOpening, goldFilter);
+        doorGold = newDoorDefinition("door.gold", imgsClosed, imgsOpening);
+        colorMap.clear();
+        Img.close(imgsClosed);
+        Img.close(imgsOpening);
         voidImages = loadPlayerImages("betabot", "Void");
         pc = new PlayerContext(new Profile(), org.pandcorps.pandax.in.ControlScheme.getDefaultKeyboard(), voidImages);
     }
@@ -156,6 +172,12 @@ public final class BotsnBoltsGame extends BaseGame {
         return new PlayerImagesSubSet(still, jump, new Panmage[] { run1, run2, run3 }, start, blink, crouch);
     }
     
+    private final static void filterImgs(final Img[] imgs, final PixelFilter... fs) {
+        for (final Img img : imgs) {
+            Imtil.filterImg(img, fs);
+        }
+    }
+    
     private final static Panimation newAnimation(final String id, final String path, final int w, final Panple o, final int dur) {
         final Img[] imgs = Imtil.loadStrip(path, w);
         final int size = imgs.length;
@@ -184,12 +206,11 @@ public final class BotsnBoltsGame extends BaseGame {
         return image;
     }
     
-    private final static ShootableDoorDefinition newDoorDefinition(final String id, final String path) {
-        final Panframe[] door = newDoor(id, path + ".png");
-        final Img[] imgs = Imtil.loadStrip(RES + path + "Opening.png", 16);
-        final Panframe[] open1 = newDoor(id + ".1", imgs, 0);
-        final Panframe[] open2 = newDoor(id + ".2", imgs, 2);
-        final Panframe[] open3 = newDoor(id + ".3", imgs, 4);
+    private final static ShootableDoorDefinition newDoorDefinition(final String id, final Img[] imgsClosed, final Img[] imgsOpening) {
+        final Panframe[] door = newDoor(id, imgsOpening, 0);
+        final Panframe[] open1 = newDoor(id + ".1", imgsOpening, 0);
+        final Panframe[] open2 = newDoor(id + ".2", imgsOpening, 2);
+        final Panframe[] open3 = newDoor(id + ".3", imgsOpening, 4);
         final Panframe[][] opening = { open1, open2, open3 };
         return new ShootableDoorDefinition(door, opening);
     }
