@@ -27,14 +27,15 @@ import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.tile.*;
 
-public class ShootableDoor extends Panctor implements CollisionListener {
+public class ShootableDoor extends Panctor implements StepListener, CollisionListener {
     private final static Panple min = new FinPanple2(-12, 0);
     private final static Panple max = new FinPanple2(12, 64);
     private final static DoorDisplay display = new DoorDisplay();
     private final int x;
     private final int y;
     private final int doorX;
-    private final ShootableDoorDefinition def;
+    private ShootableDoorDefinition def = null;
+    private int temperature = 0;
     
     protected ShootableDoor(final Panlayer layer, final int x, final int y, ShootableDoorDefinition def) {
         setVisible(false);
@@ -110,13 +111,35 @@ public class ShootableDoor extends Panctor implements CollisionListener {
     }
     
     @Override
+    public final void onStep(final StepEvent event) {
+        if (def.prev != null) {
+            temperature--;
+            if (temperature < def.prev.nextTemperature) {
+                setDefinition(def.prev);
+            }
+        }
+    }
+    
+    @Override
     public final void onCollision(final CollisionEvent event) {
         final Collidable collider = event.getCollider();
         if (collider.getClass() == Projectile.class) {
-            openDoor();
-            ((Projectile) collider).burst();
-            collider.destroy();
+            temperature += 4;
+            if (temperature >= def.nextTemperature) {
+                if (def.next == null) {
+                    openDoor();
+                    ((Projectile) collider).burst();
+                    collider.destroy();
+                } else {
+                    setDefinition(def.next);
+                }
+            }
         }
+    }
+    
+    private final void setDefinition(final ShootableDoorDefinition def) {
+        this.def = def;
+        closeDoor();
     }
     
     @Override
@@ -145,12 +168,14 @@ public class ShootableDoor extends Panctor implements CollisionListener {
         private final Panframe[] door;
         private final Panframe[][] opening;
         private final ShootableDoorDefinition next;
+        private final int nextTemperature;
         private ShootableDoorDefinition prev = null;
         
-        protected ShootableDoorDefinition(final Panframe[] door, final Panframe[][] opening, final ShootableDoorDefinition next) {
+        protected ShootableDoorDefinition(final Panframe[] door, final Panframe[][] opening, final ShootableDoorDefinition next, final int nextTemperature) {
             this.door = door;
             this.opening = opening;
             this.next = next;
+            this.nextTemperature = nextTemperature;
             if (next != null) {
                 next.prev = this;
             }
