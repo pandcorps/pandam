@@ -22,6 +22,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.botsnbolts;
 
+import org.pandcorps.botsnbolts.Player.*;
 import org.pandcorps.game.actor.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
@@ -30,9 +31,11 @@ import org.pandcorps.pandax.*;
 
 public final class Projectile extends Pandy implements Collidable, AllOobListener {
     private final Player src;
+    protected final ShootMode shootMode;
     
     protected Projectile(final Player src, final float vx, final float vy) {
         this.src = src;
+        shootMode = src.prf.shootMode;
         final Panple srcPos = src.getPosition();
         final boolean mirror = src.isMirror();
         setMirror(mirror);

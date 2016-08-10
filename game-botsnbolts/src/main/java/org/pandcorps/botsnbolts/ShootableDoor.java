@@ -22,6 +22,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.botsnbolts;
 
+import org.pandcorps.botsnbolts.Player.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.impl.*;
@@ -124,16 +125,19 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
     public final void onCollision(final CollisionEvent event) {
         final Collidable collider = event.getCollider();
         if (collider.getClass() == Projectile.class) {
-            temperature += 4;
-            if (temperature >= def.nextTemperature) {
+            final Projectile projectile = (Projectile) collider;
+            temperature += 5;
+            if (temperature >= def.nextTemperature && (def.requiredShootMode == null || def.requiredShootMode == projectile.shootMode)) {
                 if (def.next == null) {
                     openDoor();
-                    ((Projectile) collider).burst();
-                    collider.destroy();
                 } else {
                     setDefinition(def.next);
                 }
+            } else {
+                temperature = def.nextTemperature;
             }
+            projectile.burst();
+            collider.destroy();
         }
     }
     
@@ -169,13 +173,15 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
         private final Panframe[][] opening;
         private final ShootableDoorDefinition next;
         private final int nextTemperature;
+        private final ShootMode requiredShootMode;
         private ShootableDoorDefinition prev = null;
         
-        protected ShootableDoorDefinition(final Panframe[] door, final Panframe[][] opening, final ShootableDoorDefinition next, final int nextTemperature) {
+        protected ShootableDoorDefinition(final Panframe[] door, final Panframe[][] opening, final ShootableDoorDefinition next, final int nextTemperature, final ShootMode requiredShootMode) {
             this.door = door;
             this.opening = opening;
             this.next = next;
             this.nextTemperature = nextTemperature;
+            this.requiredShootMode = requiredShootMode;
             if (next != null) {
                 next.prev = this;
             }
