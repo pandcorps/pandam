@@ -144,10 +144,16 @@ public class ShootableDoor extends Panctor implements CollisionListener {
     protected final static class ShootableDoorDefinition {
         private final Panframe[] door;
         private final Panframe[][] opening;
+        private final ShootableDoorDefinition next;
+        private ShootableDoorDefinition prev = null;
         
-        protected ShootableDoorDefinition(final Panframe[] door, final Panframe[][] opening) {
+        protected ShootableDoorDefinition(final Panframe[] door, final Panframe[][] opening, final ShootableDoorDefinition next) {
             this.door = door;
             this.opening = opening;
+            this.next = next;
+            if (next != null) {
+                next.prev = this;
+            }
         }
     }
 }
