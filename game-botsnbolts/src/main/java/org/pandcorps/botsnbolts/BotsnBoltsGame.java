@@ -108,8 +108,13 @@ public final class BotsnBoltsGame extends BaseGame {
         final Img[] imgsOpening = Imtil.loadStrip(RES + "bg/DoorCyanOpening.png", 16);
         Img.setTemporary(false, imgsOpening);
         doorCyan = newDoorDefinition("door.cyan", imgsClosed, imgsOpening, null);
-        final short s0 = 0, s192 = 192, smax = Pancolor.MAX_VALUE;
-        doorGold = filterDoor("door.gold", imgsClosed, imgsOpening, s0, smax, smax, smax, smax, s0, s0, s192, s192, s192, s192, s0, null);
+        final short s0 = 0, s48 = 48, s64 = 64, s96 = 96, s128 = 128, s144 = 144, s192 = 192, smax = Pancolor.MAX_VALUE;
+        final ShootableDoorDefinition doorRed, doorRedOrange, doorOrange, doorOrangeGold;
+        doorRed = filterDoor("door.red", imgsClosed, imgsOpening, s0, smax, smax, smax, s0, s0, s0, s192, s192, s192, s0, s0, null);
+        doorRedOrange = filterDoor("door.red.orange", imgsClosed, null, smax, s0, s0, smax, s64, s0, s192, s0, s0, s192, s48, s0, doorRed);
+        doorOrange = filterDoor("door.orange", imgsClosed, null, smax, s64, s0, smax, s128, s0, s192, s48, s0, s192, s96, s0, doorRedOrange);
+        doorOrangeGold = filterDoor("door.orange.gold", imgsClosed, null, smax, s128, s0, smax, s192, s0, s192, s96, s0, s192, s144, s0, doorOrange);
+        doorGold = filterDoor("door.gold", imgsClosed, null, smax, s192, s0, smax, smax, s0, s192, s144, s0, s192, s192, s0, doorOrangeGold);
         Img.close(imgsClosed);
         Img.close(imgsOpening);
     }
