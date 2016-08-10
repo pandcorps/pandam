@@ -49,7 +49,7 @@ public final class Player extends GuyPlatform {
     private final static float VY_SPREAD2;
     
     private final Profile prf;
-    private final PlayerImages pi;
+    protected final PlayerImages pi;
     private StateHandler stateHandler = NORMAL_HANDLER;
     private boolean running = false;
     private int runIndex = 0;
@@ -569,14 +569,16 @@ public final class Player extends GuyPlatform {
         private final PlayerImagesSubSet shootSet;
         private final Panmage hurt;
         private final Panmage basicProjectile;
+        protected final Panimation burst;
         private final Panmage[] ball;
         
         protected PlayerImages(final PlayerImagesSubSet basicSet, final PlayerImagesSubSet shootSet, final Panmage hurt,
-                               final Panmage basicProjectile, final Panmage[] ball) {
+                               final Panmage basicProjectile, final Panimation burst, final Panmage[] ball) {
             this.basicSet = basicSet;
             this.shootSet = shootSet;
             this.hurt = hurt;
             this.basicProjectile = basicProjectile;
+            this.burst = burst;
             this.ball = ball;
         }
     }
