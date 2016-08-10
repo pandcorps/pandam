@@ -51,6 +51,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected final static int DEPTH_PLAYER = 2;
     protected final static int DEPTH_PROJECTILE = 3;
     protected final static int DEPTH_OVERLAY = 4;
+    protected final static int DEPTH_BURST = 5;
     
     private final static FinPanple2 ng = GuyPlatform.getMin(Player.PLAYER_X);
     private final static FinPanple2 xg = GuyPlatform.getMax(Player.PLAYER_X, Player.PLAYER_H);
@@ -67,6 +68,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static Panframe[] doorTunnel = null;
     protected static Panframe[] doorTunnelOverlay = null;
     protected static ShootableDoorDefinition doorCyan = null;
+    protected static ShootableDoorDefinition doorGold = null;
     
     protected static PlayerContext pc = null;
     
@@ -94,9 +96,42 @@ public final class BotsnBoltsGame extends BaseGame {
     
     private final static void loadResources() {
         font = Fonts.getClassics(new FontRequest(8), Pancolor.WHITE, Pancolor.BLACK);
+        loadDoors();
+        loadPlayer();
+    }
+    
+    private final static void loadDoors() {
         doorTunnel = newDoor("door.tunnel", "bg/DoorTunnel.png");
         doorTunnelOverlay = toOverlay(doorTunnel);
-        doorCyan = newDoorDefinition("door.cyan", "bg/DoorCyan");
+        final Img[] imgsClosed = Imtil.loadStrip(RES + "bg/DoorCyan.png", 16);
+        Img.setTemporary(false, imgsClosed);
+        final Img[] imgsOpening = Imtil.loadStrip(RES + "bg/DoorCyanOpening.png", 16);
+        Img.setTemporary(false, imgsOpening);
+        doorCyan = newDoorDefinition("door.cyan", imgsClosed, imgsOpening, null);
+        final short s0 = 0, s48 = 48, s64 = 64, s96 = 96, s128 = 128, s144 = 144, s192 = 192, smax = Pancolor.MAX_VALUE;
+        final ShootableDoorDefinition doorRed, doorRedOrange, doorOrange, doorOrangeGold;
+        doorRed = filterDoor("door.red", imgsClosed, imgsOpening, s0, smax, smax, smax, s0, s0, s0, s192, s192, s192, s0, s0, null);
+        doorRedOrange = filterDoor("door.red.orange", imgsClosed, null, smax, s0, s0, smax, s64, s0, s192, s0, s0, s192, s48, s0, doorRed);
+        doorOrange = filterDoor("door.orange", imgsClosed, null, smax, s64, s0, smax, s128, s0, s192, s48, s0, s192, s96, s0, doorRedOrange);
+        doorOrangeGold = filterDoor("door.orange.gold", imgsClosed, null, smax, s128, s0, smax, s192, s0, s192, s96, s0, s192, s144, s0, doorOrange);
+        doorGold = filterDoor("door.gold", imgsClosed, null, smax, s192, s0, smax, smax, s0, s192, s144, s0, s192, s192, s0, doorOrangeGold);
+        Img.close(imgsClosed);
+        Img.close(imgsOpening);
+    }
+    
+    private final static ShootableDoorDefinition filterDoor(final String id, final Img[] imgsClosed, final Img[] imgsOpening,
+            final short s1r, final short s1g, final short s1b, final short d1r, final short d1g, final short d1b,
+            final short s2r, final short s2g, final short s2b, final short d2r, final short d2g, final short d2b,
+            final ShootableDoorDefinition next) {
+        final ReplacePixelFilter filter = new ReplacePixelFilter();
+        filter.put(s1r, s1g, s1b, d1r, d1g, d1b);
+        filter.put(s2r, s2g, s2b, d2r, d2g, d2b);
+        filterImgs(imgsClosed, filter);
+        filterImgs(imgsOpening, filter);
+        return newDoorDefinition(id, imgsClosed, imgsOpening, next);
+    }
+    
+    private final static void loadPlayer() {
         voidImages = loadPlayerImages("betabot", "Void");
         pc = new PlayerContext(new Profile(), org.pandcorps.pandax.in.ControlScheme.getDefaultKeyboard(), voidImages);
     }
@@ -107,6 +142,7 @@ public final class BotsnBoltsGame extends BaseGame {
         final PlayerImagesSubSet shootSet = loadPlayerImagesSubSet(pre + "Shoot", name + ".shoot", false, oss, os, ojs);
         final Pangine engine = Pangine.getEngine();
         final Panmage basicProjectile = engine.createImage(pre + "Projectile", new FinPanple2(3, 3), new FinPanple2(-3, -1), new FinPanple2(5, 3), pre + "Projectile.png");
+        final Panimation burst = newAnimation(pre + "Burst", pre + "Burst.png", 16, CENTER_16, 2);
         final Img[] ballImgs = Imtil.loadStrip(pre + "Ball.png", 16);
         final Panmage ball[] = new Panmage[8];
         final Panple ob = new FinPanple2(8, 1), xb = GuyPlatform.getMax(Player.PLAYER_X, Player.BALL_H);
@@ -123,7 +159,7 @@ public final class BotsnBoltsGame extends BaseGame {
                 }
             }
         }
-        return new PlayerImages(basicSet, shootSet, null, basicProjectile, ball);
+        return new PlayerImages(basicSet, shootSet, null, basicProjectile, burst, ball);
     }
     
     private final static PlayerImagesSubSet loadPlayerImagesSubSet(final String path, final String name, final boolean startNeeded, final Panple os, final Panple o, final Panple oj) {
@@ -154,6 +190,28 @@ public final class BotsnBoltsGame extends BaseGame {
         return new PlayerImagesSubSet(still, jump, new Panmage[] { run1, run2, run3 }, start, blink, crouch);
     }
     
+    private final static void filterImgs(final Img[] imgs, final PixelFilter... fs) {
+        if (imgs == null) {
+            return;
+        }
+        for (final Img img : imgs) {
+            Imtil.filterImg(img, fs);
+        }
+    }
+    
+    private final static Panimation newAnimation(final String id, final String path, final int w, final Panple o, final int dur) {
+        final Img[] imgs = Imtil.loadStrip(path, w);
+        final int size = imgs.length;
+        final Panframe[] frames = new Panframe[size];
+        final Pangine engine = Pangine.getEngine();
+        for (int i = 0; i < size; i++) {
+            final String iid = id + "." + i;
+            final Panmage image = engine.createImage(iid, o, null, null, imgs[i]);
+            frames[i] = engine.createFrame(PRE_FRM + iid, image, dur);
+        }
+        return engine.createAnimation(PRE_ANM + id, frames);
+    }
+    
     private final static Panmage newPlayerImage(final String id, final Panple o, final Img[] imgs, final Img[] imgsMirror, final int i) {
         return newPlayerImage(id, o, imgs[i], imgsMirror[i]);
     }
@@ -169,14 +227,18 @@ public final class BotsnBoltsGame extends BaseGame {
         return image;
     }
     
-    private final static ShootableDoorDefinition newDoorDefinition(final String id, final String path) {
-        final Panframe[] door = newDoor(id, path + ".png");
-        final Img[] imgs = Imtil.loadStrip(RES + path + "Opening.png", 16);
-        final Panframe[] open1 = newDoor(id + ".1", imgs, 0);
-        final Panframe[] open2 = newDoor(id + ".2", imgs, 2);
-        final Panframe[] open3 = newDoor(id + ".3", imgs, 4);
-        final Panframe[][] opening = { open1, open2, open3 };
-        return new ShootableDoorDefinition(door, opening);
+    private final static ShootableDoorDefinition newDoorDefinition(final String id, final Img[] imgsClosed, final Img[] imgsOpening, final ShootableDoorDefinition next) {
+        final Panframe[] door = newDoor(id, imgsClosed, 0);
+        final Panframe[][] opening;
+        if (imgsOpening == null) {
+            opening = null;
+        } else {
+            final Panframe[] open1 = newDoor(id + ".1", imgsOpening, 0);
+            final Panframe[] open2 = newDoor(id + ".2", imgsOpening, 2);
+            final Panframe[] open3 = newDoor(id + ".3", imgsOpening, 4);
+            opening = new Panframe[][] { open1, open2, open3 };
+        }
+        return new ShootableDoorDefinition(door, opening, next);
     }
     
     private final static Panframe[] newDoor(final String id, final String path) {
@@ -276,7 +338,7 @@ public final class BotsnBoltsGame extends BaseGame {
             tm.setBackground(5, 2, imgMap[1][4], Tile.BEHAVIOR_SOLID);
             tm.setBackground(5, 3, imgMap[0][4], Tile.BEHAVIOR_SOLID);
             new ShootableDoor(room, 0, 1, doorCyan);
-            new ShootableDoor(room, end, 1, doorCyan);
+            new ShootableDoor(room, end, 1, doorGold);
             final Player player = new Player(pc);
             player.getPosition().set(48, 96, DEPTH_PLAYER);
             room.addActor(player);
