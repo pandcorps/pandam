@@ -69,6 +69,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static Panframe[] doorTunnelOverlay = null;
     protected static ShootableDoorDefinition doorCyan = null;
     protected static ShootableDoorDefinition doorGold = null;
+    protected static Panmage[] cube = null;
     
     protected static PlayerContext pc = null;
     
@@ -97,6 +98,7 @@ public final class BotsnBoltsGame extends BaseGame {
     private final static void loadResources() {
         font = Fonts.getClassics(new FontRequest(8), Pancolor.WHITE, Pancolor.BLACK);
         loadDoors();
+        loadMisc();
         loadPlayer();
     }
     
@@ -117,6 +119,10 @@ public final class BotsnBoltsGame extends BaseGame {
         doorGold = filterDoor("door.gold", imgsClosed, null, smax, s192, s0, smax, smax, s0, s192, s144, s0, s192, s192, s0, doorOrangeGold, 1, null);
         Img.close(imgsClosed);
         Img.close(imgsOpening);
+    }
+    
+    private final static void loadMisc() {
+        cube = newSheet("cube", RES + "misc/Cube.png", 16);
     }
     
     private final static ShootableDoorDefinition filterDoor(final String id, final Img[] imgsClosed, final Img[] imgsOpening,
@@ -197,6 +203,17 @@ public final class BotsnBoltsGame extends BaseGame {
         for (final Img img : imgs) {
             Imtil.filterImg(img, fs);
         }
+    }
+    
+    private final static Panmage[] newSheet(final String id, final String path, final int w) {
+        final Img[] imgs = Imtil.loadStrip(path, w);
+        final int size = imgs.length;
+        final Panmage[] sheet = new Panmage[size];
+        final Pangine engine = Pangine.getEngine();
+        for (int i = 0; i < size; i++) {
+            sheet[i] = engine.createImage(id + "." + i, imgs[i]);
+        }
+        return sheet;
     }
     
     private final static Panimation newAnimation(final String id, final String path, final int w, final Panple o, final int dur) {
@@ -338,8 +355,9 @@ public final class BotsnBoltsGame extends BaseGame {
             tm.setBackground(4, 3, imgMap[0][3], Tile.BEHAVIOR_SOLID);
             tm.setBackground(5, 2, imgMap[1][4], Tile.BEHAVIOR_SOLID);
             tm.setBackground(5, 3, imgMap[0][4], Tile.BEHAVIOR_SOLID);
-            new ShootableDoor(room, 0, 1, doorCyan);
-            new ShootableDoor(room, end, 1, doorGold);
+            new ShootableDoor(0, 1, doorCyan);
+            new ShootableDoor(end, 1, doorGold);
+            Cube.newCube(11, 1);
             final Player player = new Player(pc);
             player.getPosition().set(48, 96, DEPTH_PLAYER);
             room.addActor(player);

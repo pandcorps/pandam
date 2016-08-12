@@ -38,7 +38,7 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
     private ShootableDoorDefinition def = null;
     private int temperature = 0;
     
-    protected ShootableDoor(final Panlayer layer, final int x, final int y, ShootableDoorDefinition def) {
+    protected ShootableDoor(final int x, final int y, ShootableDoorDefinition def) {
         setVisible(false);
         final TileMap tm = BotsnBoltsGame.tm;
         tm.getLayer().addActor(this);
