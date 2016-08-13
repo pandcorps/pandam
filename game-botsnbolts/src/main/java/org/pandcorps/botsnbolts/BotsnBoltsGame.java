@@ -69,6 +69,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static Panframe[] doorTunnelOverlay = null;
     protected static ShootableDoorDefinition doorCyan = null;
     protected static ShootableDoorDefinition doorGold = null;
+    protected static Panmage[] cube = null;
     
     protected static PlayerContext pc = null;
     
@@ -97,6 +98,7 @@ public final class BotsnBoltsGame extends BaseGame {
     private final static void loadResources() {
         font = Fonts.getClassics(new FontRequest(8), Pancolor.WHITE, Pancolor.BLACK);
         loadDoors();
+        loadMisc();
         loadPlayer();
     }
     
@@ -107,28 +109,32 @@ public final class BotsnBoltsGame extends BaseGame {
         Img.setTemporary(false, imgsClosed);
         final Img[] imgsOpening = Imtil.loadStrip(RES + "bg/DoorCyanOpening.png", 16);
         Img.setTemporary(false, imgsOpening);
-        doorCyan = newDoorDefinition("door.cyan", imgsClosed, imgsOpening, null);
+        doorCyan = newDoorDefinition("door.cyan", imgsClosed, imgsOpening, null, 0, null);
         final short s0 = 0, s48 = 48, s64 = 64, s96 = 96, s128 = 128, s144 = 144, s192 = 192, smax = Pancolor.MAX_VALUE;
         final ShootableDoorDefinition doorRed, doorRedOrange, doorOrange, doorOrangeGold;
-        doorRed = filterDoor("door.red", imgsClosed, imgsOpening, s0, smax, smax, smax, s0, s0, s0, s192, s192, s192, s0, s0, null);
-        doorRedOrange = filterDoor("door.red.orange", imgsClosed, null, smax, s0, s0, smax, s64, s0, s192, s0, s0, s192, s48, s0, doorRed);
-        doorOrange = filterDoor("door.orange", imgsClosed, null, smax, s64, s0, smax, s128, s0, s192, s48, s0, s192, s96, s0, doorRedOrange);
-        doorOrangeGold = filterDoor("door.orange.gold", imgsClosed, null, smax, s128, s0, smax, s192, s0, s192, s96, s0, s192, s144, s0, doorOrange);
-        doorGold = filterDoor("door.gold", imgsClosed, null, smax, s192, s0, smax, smax, s0, s192, s144, s0, s192, s192, s0, doorOrangeGold);
+        doorRed = filterDoor("door.red", imgsClosed, imgsOpening, s0, smax, smax, smax, s0, s0, s0, s192, s192, s192, s0, s0, null, 15, Player.SHOOT_RAPID);
+        doorRedOrange = filterDoor("door.red.orange", imgsClosed, null, smax, s0, s0, smax, s64, s0, s192, s0, s0, s192, s48, s0, doorRed, 10, Player.SHOOT_RAPID);
+        doorOrange = filterDoor("door.orange", imgsClosed, null, smax, s64, s0, smax, s128, s0, s192, s48, s0, s192, s96, s0, doorRedOrange, 6, null);
+        doorOrangeGold = filterDoor("door.orange.gold", imgsClosed, null, smax, s128, s0, smax, s192, s0, s192, s96, s0, s192, s144, s0, doorOrange, 3, null);
+        doorGold = filterDoor("door.gold", imgsClosed, null, smax, s192, s0, smax, smax, s0, s192, s144, s0, s192, s192, s0, doorOrangeGold, 1, null);
         Img.close(imgsClosed);
         Img.close(imgsOpening);
+    }
+    
+    private final static void loadMisc() {
+        cube = newSheet("cube", RES + "misc/Cube.png", 16);
     }
     
     private final static ShootableDoorDefinition filterDoor(final String id, final Img[] imgsClosed, final Img[] imgsOpening,
             final short s1r, final short s1g, final short s1b, final short d1r, final short d1g, final short d1b,
             final short s2r, final short s2g, final short s2b, final short d2r, final short d2g, final short d2b,
-            final ShootableDoorDefinition next) {
+            final ShootableDoorDefinition next, final int nextTemperature, final ShootMode requiredShootMode) {
         final ReplacePixelFilter filter = new ReplacePixelFilter();
         filter.put(s1r, s1g, s1b, d1r, d1g, d1b);
         filter.put(s2r, s2g, s2b, d2r, d2g, d2b);
         filterImgs(imgsClosed, filter);
         filterImgs(imgsOpening, filter);
-        return newDoorDefinition(id, imgsClosed, imgsOpening, next);
+        return newDoorDefinition(id, imgsClosed, imgsOpening, next, nextTemperature, requiredShootMode);
     }
     
     private final static void loadPlayer() {
@@ -199,6 +205,17 @@ public final class BotsnBoltsGame extends BaseGame {
         }
     }
     
+    private final static Panmage[] newSheet(final String id, final String path, final int w) {
+        final Img[] imgs = Imtil.loadStrip(path, w);
+        final int size = imgs.length;
+        final Panmage[] sheet = new Panmage[size];
+        final Pangine engine = Pangine.getEngine();
+        for (int i = 0; i < size; i++) {
+            sheet[i] = engine.createImage(id + "." + i, imgs[i]);
+        }
+        return sheet;
+    }
+    
     private final static Panimation newAnimation(final String id, final String path, final int w, final Panple o, final int dur) {
         final Img[] imgs = Imtil.loadStrip(path, w);
         final int size = imgs.length;
@@ -227,7 +244,8 @@ public final class BotsnBoltsGame extends BaseGame {
         return image;
     }
     
-    private final static ShootableDoorDefinition newDoorDefinition(final String id, final Img[] imgsClosed, final Img[] imgsOpening, final ShootableDoorDefinition next) {
+    private final static ShootableDoorDefinition newDoorDefinition(final String id, final Img[] imgsClosed, final Img[] imgsOpening,
+            final ShootableDoorDefinition next, final int nextTemperature, final ShootMode requiredShootMode) {
         final Panframe[] door = newDoor(id, imgsClosed, 0);
         final Panframe[][] opening;
         if (imgsOpening == null) {
@@ -238,7 +256,7 @@ public final class BotsnBoltsGame extends BaseGame {
             final Panframe[] open3 = newDoor(id + ".3", imgsOpening, 4);
             opening = new Panframe[][] { open1, open2, open3 };
         }
-        return new ShootableDoorDefinition(door, opening, next);
+        return new ShootableDoorDefinition(door, opening, next, nextTemperature, requiredShootMode);
     }
     
     private final static Panframe[] newDoor(final String id, final String path) {
@@ -337,8 +355,9 @@ public final class BotsnBoltsGame extends BaseGame {
             tm.setBackground(4, 3, imgMap[0][3], Tile.BEHAVIOR_SOLID);
             tm.setBackground(5, 2, imgMap[1][4], Tile.BEHAVIOR_SOLID);
             tm.setBackground(5, 3, imgMap[0][4], Tile.BEHAVIOR_SOLID);
-            new ShootableDoor(room, 0, 1, doorCyan);
-            new ShootableDoor(room, end, 1, doorGold);
+            new ShootableDoor(0, 1, doorCyan);
+            new ShootableDoor(end, 1, doorGold);
+            Cube.newCube(11, 1);
             final Player player = new Player(pc);
             player.getPosition().set(48, 96, DEPTH_PLAYER);
             room.addActor(player);

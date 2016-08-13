@@ -42,6 +42,7 @@ public abstract class Achievement extends FinName {
 		new ImpFeat("Imp Hunter", "imp.hntr", 32), new ImpFeat("Imp Slayer", "imp.slyr", 160), new ImpFeat("Imp Destroyer", "imp.dstryr", 800),
 		new GiantFeat("Giant Hunter", "gnt.hntr", 12), new GiantFeat("Giant Slayer", "30", 50), new GiantFeat("Giant Destroyer", "gnt.dstryr", 200),
 		new WispFeat("Wisp Hunter", "wsp.hntr", 2), new WispFeat("Wisp Slayer", "37", 10), new WispFeat("Wisp Destroyer", "wsp.dstryr", 35),
+		new NetherFeat("Nether Hunter", "nthr.hntr", 20), new NetherFeat("Nether Slayer", "nthr.slyr", 45), new NetherFeat("Nether Destroyer", "nthr.dstryr", 75),
 		new HitFeat("Eagle-eyed", "23", 10), new MonsterBumpFeat("Sneak Attack", "24", 50),
 		new ComboFeat("Combo Commander", "cmbo.cmndr", 80), new ComboFeat("Combo King", "cmbo.kng", 240), new ComboLengthFeat("Triple Combo", "trpl.cmbo", 3),
 		new JumpFeat("Leapfrog", "22", 3000),
@@ -355,6 +356,17 @@ public abstract class Achievement extends FinName {
         @Override
         public final long getCurrent(final Statistics stats) {
             return stats.getDefeatedWisps();
+        }
+    }
+	
+	private final static class NetherFeat extends StatFeat {
+        protected NetherFeat(final String name, final String code, final int n) {
+            super(name, code, n, "Defeat " + n + " Nether Creatures" + getS(n), n * 300);
+        }
+        
+        @Override
+        public final long getCurrent(final Statistics stats) {
+            return stats.getDefeatedNetherCreatures();
         }
     }
 	
