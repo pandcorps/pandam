@@ -131,7 +131,7 @@ public final class BotsnBoltsGame extends BaseGame {
     
     private final static void loadEnemies() {
         final Pangine engine = Pangine.getEngine();
-        sentryGun = engine.createImage("sentry.gun", new FinPanple2(10, 8), new FinPanple2(-5, -5), new FinPanple2(5, 5), RES + "enemy/SentryGun.png");
+        sentryGun = engine.createImage("sentry.gun", new FinPanple2(8, 8), new FinPanple2(-5, -5), new FinPanple2(5, 5), RES + "enemy/SentryGun.png");
     }
     
     private final static ShootableDoorDefinition filterDoor(final String id, final Img[] imgsClosed, final Img[] imgsOpening,
@@ -366,7 +366,8 @@ public final class BotsnBoltsGame extends BaseGame {
             tm.setBackground(5, 3, imgMap[0][4], Tile.BEHAVIOR_SOLID);
             new ShootableDoor(0, 1, doorCyan);
             new ShootableDoor(end, 1, doorGold);
-            new SentryGun(11, 1);
+            //new SentryGun(11, 1);
+            new SentryGun(8, 3);
             final Player player = new Player(pc);
             player.getPosition().set(48, 96, DEPTH_PLAYER);
             room.addActor(player);

@@ -22,8 +22,11 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.botsnbolts;
 
+import org.pandcorps.botsnbolts.Player.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
+import org.pandcorps.pandam.event.boundary.*;
+import org.pandcorps.pandax.*;
 
 public class Enemy extends Panctor implements CollisionListener {
     private int health;
@@ -51,15 +54,95 @@ public class Enemy extends Panctor implements CollisionListener {
         prj.destroy();
     }
     
-    protected final static class SentryGun extends Enemy {
+    protected final Player getNearestPlayer() {
+        return PlayerContext.getPlayer(BotsnBoltsGame.pc);
+    }
+    
+    protected final static class EnemyProjectile extends Pandy implements CollisionListener, AllOobListener {
+        protected EnemyProjectile(final Enemy src, final float vx, final float vy) {
+            final Panple srcPos = src.getPosition();
+            getPosition().set(srcPos.getX(), srcPos.getY(), BotsnBoltsGame.DEPTH_PROJECTILE);
+            getVelocity().set(vx, vy);
+            final boolean srcMirror = src.isMirror();
+            final boolean src180 = src.getRot() == 2;
+            setMirror((srcMirror && !src180) || (!srcMirror && src180));
+        }
+        
+        @Override
+        public void onCollision(final CollisionEvent event) {
+            final Collidable collider = event.getCollider();
+            if (collider.getClass() == Player.class) {
+                //TODO hurt Player
+                //TODO burst
+                destroy();
+            }
+        }
+        
+        @Override
+        public final void onAllOob(final AllOobEvent event) {
+            destroy();
+        }
+    }
+    
+    protected final static class SentryGun extends Enemy implements StepListener {
+        private final float baseX;
+        private final float baseY;
+        
         protected SentryGun(final int x, final int y) {
             super(5);
             Cube.newCube(x, y);
             final Panple pos = getPosition();
             BotsnBoltsGame.tm.savePosition(pos, x, y);
             pos.add(16, 16);
+            baseX = pos.getX();
+            baseY = pos.getY();
             pos.setZ(BotsnBoltsGame.DEPTH_ENEMY);
             setView(BotsnBoltsGame.sentryGun);
+        }
+
+        @Override
+        public final void onStep(final StepEvent event) {
+            final Player target = getNearestPlayer();
+            if (target == null) {
+                return;
+            }
+            final Panple tarPos = target.getPosition();
+            final float diffX = baseX - tarPos.getX(), diffY = baseY - tarPos.getY() - 14;
+            if (Math.abs(diffX) >= (Math.abs(diffY) - 2)) {
+                if (diffX > 5) {
+                    setLeft();
+                } else if (diffX < -5) {
+                    setRight();
+                }
+            } else {
+                if (diffY > 5) {
+                    setDown();
+                } else if (diffY < -5) {
+                    setUp();
+                }
+            }
+        }
+        
+        private final void setRight() {
+            setDirection(false, 0, 2, 0);
+        }
+        
+        private final void setLeft() {
+            setDirection(true, 0, -3, 0);
+        }
+        
+        private final void setUp() {
+            setDirection(false, 1, 0, 1);
+        }
+        
+        private final void setDown() {
+            setDirection(false, 3, -1, -2);
+        }
+        
+        private final void setDirection(final boolean mirror, final int rot, final int offX, final int offY) {
+            setMirror(mirror);
+            setRot(rot);
+            getPosition().set(baseX + offX, baseY + offY);
         }
     }
 }

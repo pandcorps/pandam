@@ -562,6 +562,10 @@ public final class Player extends GuyPlatform {
             this.ctrl = ctrl;
             this.pi = pi;
         }
+        
+        protected final static Player getPlayer(final PlayerContext pc) {
+            return (pc == null) ? null : pc.player;
+        }
     }
     
     protected final static class PlayerImages {
