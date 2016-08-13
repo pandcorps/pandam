@@ -73,6 +73,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static ShootableDoorDefinition doorGold = null;
     protected static Panmage[] cube = null;
     protected static Panmage[] sentryGun = null;
+    protected static Panmage enemyProjectile = null;
     
     protected static PlayerContext pc = null;
     
@@ -138,6 +139,7 @@ public final class BotsnBoltsGame extends BaseGame {
         for (int i = 0; i < sentrySize; i++) {
             sentryGun[i] = engine.createImage("sentry.gun." + i, sentryO, sentryMin, sentryMax, sentryImgs[i]);
         }
+        enemyProjectile = engine.createImage("projectile.enemy", CENTER_8, new FinPanple2(-3, -3), new FinPanple2(3, 3), RES + "/enemy/EnemyProjectile.png");
     }
     
     private final static ShootableDoorDefinition filterDoor(final String id, final Img[] imgsClosed, final Img[] imgsOpening,

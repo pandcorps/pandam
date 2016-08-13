@@ -29,6 +29,8 @@ import org.pandcorps.pandam.event.boundary.*;
 import org.pandcorps.pandax.*;
 
 public class Enemy extends Panctor implements CollisionListener {
+    private final static int VEL_PROJECTILE = 6;
+    
     private int health;
     
     protected Enemy(final int health) {
@@ -59,13 +61,15 @@ public class Enemy extends Panctor implements CollisionListener {
     }
     
     protected final static class EnemyProjectile extends Pandy implements CollisionListener, AllOobListener {
-        protected EnemyProjectile(final Enemy src, final float vx, final float vy) {
+        protected EnemyProjectile(final Enemy src, final int ox, final int oy, final float vx, final float vy) {
             final Panple srcPos = src.getPosition();
-            getPosition().set(srcPos.getX(), srcPos.getY(), BotsnBoltsGame.DEPTH_PROJECTILE);
+            getPosition().set(srcPos.getX() + ox, srcPos.getY() + oy, BotsnBoltsGame.DEPTH_PROJECTILE);
             getVelocity().set(vx, vy);
             final boolean srcMirror = src.isMirror();
             final boolean src180 = src.getRot() == 2;
             setMirror((srcMirror && !src180) || (!srcMirror && src180));
+            setView(BotsnBoltsGame.enemyProjectile);
+            BotsnBoltsGame.tm.getLayer().addActor(this);
         }
         
         @Override
@@ -88,6 +92,7 @@ public class Enemy extends Panctor implements CollisionListener {
         private final float baseX;
         private final float baseY;
         private int timer = 0;
+        private int dir;
         
         protected SentryGun(final int x, final int y) {
             super(5);
@@ -99,10 +104,16 @@ public class Enemy extends Panctor implements CollisionListener {
             baseY = pos.getY();
             pos.setZ(BotsnBoltsGame.DEPTH_ENEMY);
             setView(BotsnBoltsGame.sentryGun[0]);
+            setLeft();
         }
 
         @Override
         public final void onStep(final StepEvent event) {
+            final boolean shoot = charge();
+            track(shoot);
+        }
+        
+        private final boolean charge() {
             timer++;
             boolean shoot = false;
             final int imgIndex;
@@ -120,6 +131,10 @@ public class Enemy extends Panctor implements CollisionListener {
                 imgIndex = 0;
             }
             changeView(BotsnBoltsGame.sentryGun[imgIndex]);
+            return shoot;
+        }
+        
+        private final void track(final boolean shoot) {
             final Player target = getNearestPlayer();
             if (target == null) {
                 return;
@@ -140,28 +155,46 @@ public class Enemy extends Panctor implements CollisionListener {
                 }
             }
             if (shoot) {
-                //TODO shoot
+                fire();
                 timer = 0;
             }
         }
         
+        private final void fire() {
+            switch (dir) {
+                case 0 :
+                    new EnemyProjectile(this, 8, 0, VEL_PROJECTILE, 0);
+                    break;
+                case 1 :
+                    new EnemyProjectile(this, 0, 9, 0, VEL_PROJECTILE);
+                    break;
+                case 3 :
+                    new EnemyProjectile(this, 1, -8, 0, -VEL_PROJECTILE);
+                    break;
+                default :
+                    new EnemyProjectile(this, -8, 0, -VEL_PROJECTILE, 0);
+                    break;
+            }
+        }
+        
         private final void setRight() {
-            setDirection(false, 0, 2, 0);
+            setDirection(0, false, 0, 2, 0);
         }
         
         private final void setLeft() {
-            setDirection(true, 0, -3, 0);
+            setDirection(2, true, 0, -3, 0);
         }
         
         private final void setUp() {
-            setDirection(false, 1, 0, 1);
+            setDirection(1, false, 1, 0, 1);
         }
         
         private final void setDown() {
-            setDirection(false, 3, -1, -2);
+            setDirection(3, false, 3, -1, -2);
         }
         
-        private final void setDirection(final boolean mirror, final int rot, final int offX, final int offY) {
+        private final void setDirection(final int dir, final boolean mirror, final int rot, final int offX, final int offY) {
+            this.dir = dir;
             setMirror(mirror);
             setRot(rot);
             getPosition().set(baseX + offX, baseY + offY);
