@@ -48,7 +48,7 @@ public final class Player extends GuyPlatform {
     private final static float VX_SPREAD2;
     private final static float VY_SPREAD2;
     
-    private final Profile prf;
+    protected final Profile prf;
     protected final PlayerImages pi;
     private StateHandler stateHandler = NORMAL_HANDLER;
     private boolean running = false;
