@@ -72,7 +72,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static ShootableDoorDefinition doorCyan = null;
     protected static ShootableDoorDefinition doorGold = null;
     protected static Panmage[] cube = null;
-    protected static Panmage sentryGun = null;
+    protected static Panmage[] sentryGun = null;
     
     protected static PlayerContext pc = null;
     
@@ -131,7 +131,13 @@ public final class BotsnBoltsGame extends BaseGame {
     
     private final static void loadEnemies() {
         final Pangine engine = Pangine.getEngine();
-        sentryGun = engine.createImage("sentry.gun", new FinPanple2(8, 8), new FinPanple2(-5, -5), new FinPanple2(5, 5), RES + "enemy/SentryGun.png");
+        final Img[] sentryImgs = Imtil.loadStrip(RES + "enemy/SentryGun.png", 16);
+        final Panple sentryO = new FinPanple2(8, 8), sentryMin = new FinPanple2(-5, -5), sentryMax = new FinPanple2(5, 5);
+        final int sentrySize = sentryImgs.length;
+        sentryGun = new Panmage[sentrySize];
+        for (int i = 0; i < sentrySize; i++) {
+            sentryGun[i] = engine.createImage("sentry.gun." + i, sentryO, sentryMin, sentryMax, sentryImgs[i]);
+        }
     }
     
     private final static ShootableDoorDefinition filterDoor(final String id, final Img[] imgsClosed, final Img[] imgsOpening,

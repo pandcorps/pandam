@@ -87,6 +87,7 @@ public class Enemy extends Panctor implements CollisionListener {
     protected final static class SentryGun extends Enemy implements StepListener {
         private final float baseX;
         private final float baseY;
+        private int timer = 0;
         
         protected SentryGun(final int x, final int y) {
             super(5);
@@ -97,11 +98,28 @@ public class Enemy extends Panctor implements CollisionListener {
             baseX = pos.getX();
             baseY = pos.getY();
             pos.setZ(BotsnBoltsGame.DEPTH_ENEMY);
-            setView(BotsnBoltsGame.sentryGun);
+            setView(BotsnBoltsGame.sentryGun[0]);
         }
 
         @Override
         public final void onStep(final StepEvent event) {
+            timer++;
+            boolean shoot = false;
+            final int imgIndex;
+            if (timer >= 120) {
+                shoot = true;
+                timer = 120;
+                imgIndex = 3;
+            } else if (timer >= 90) {
+                imgIndex = 3;
+            } else if (timer >= 60) {
+                imgIndex = 2;
+            } else if (timer >= 30) {
+                imgIndex = 1;
+            } else {
+                imgIndex = 0;
+            }
+            changeView(BotsnBoltsGame.sentryGun[imgIndex]);
             final Player target = getNearestPlayer();
             if (target == null) {
                 return;
@@ -120,6 +138,10 @@ public class Enemy extends Panctor implements CollisionListener {
                 } else if (diffY < -5) {
                     setUp();
                 }
+            }
+            if (shoot) {
+                //TODO shoot
+                timer = 0;
             }
         }
         
