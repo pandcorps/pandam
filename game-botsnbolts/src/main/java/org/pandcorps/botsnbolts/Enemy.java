@@ -22,6 +22,44 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.botsnbolts;
 
-public class Enemy {
+import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.event.*;
+
+public class Enemy extends Panctor implements CollisionListener {
+    private int health;
     
+    protected Enemy(final int health) {
+        this.health = health;
+        BotsnBoltsGame.tm.getLayer().addActor(this);
+    }
+    
+    @Override
+    public void onCollision(final CollisionEvent event) {
+        final Collidable collider = event.getCollider();
+        if (collider.getClass() == Projectile.class) {
+            onShot((Projectile) collider);
+        }
+    }
+    
+    protected void onShot(final Projectile prj) {
+        health--;
+        if (health <= 0) {
+            prj.burst(this);
+            destroy();
+        }
+        prj.burst();
+        prj.destroy();
+    }
+    
+    protected final static class SentryGun extends Enemy {
+        protected SentryGun(final int x, final int y) {
+            super(5);
+            Cube.newCube(x, y);
+            final Panple pos = getPosition();
+            BotsnBoltsGame.tm.savePosition(pos, x, y);
+            pos.add(16, 16);
+            pos.setZ(BotsnBoltsGame.DEPTH_ENEMY);
+            setView(BotsnBoltsGame.sentryGun);
+        }
+    }
 }

@@ -24,6 +24,7 @@ package org.pandcorps.botsnbolts;
 
 import java.util.*;
 
+import org.pandcorps.botsnbolts.Enemy.*;
 import org.pandcorps.botsnbolts.Player.*;
 import org.pandcorps.botsnbolts.ShootableDoor.*;
 import org.pandcorps.core.*;
@@ -49,9 +50,10 @@ public final class BotsnBoltsGame extends BaseGame {
     protected final static int DEPTH_BG = 0;
     protected final static int DEPTH_FG = 1;
     protected final static int DEPTH_PLAYER = 2;
-    protected final static int DEPTH_PROJECTILE = 3;
-    protected final static int DEPTH_OVERLAY = 4;
-    protected final static int DEPTH_BURST = 5;
+    protected final static int DEPTH_ENEMY = 3;
+    protected final static int DEPTH_PROJECTILE = 4;
+    protected final static int DEPTH_OVERLAY = 5;
+    protected final static int DEPTH_BURST = 6;
     
     private final static FinPanple2 ng = GuyPlatform.getMin(Player.PLAYER_X);
     private final static FinPanple2 xg = GuyPlatform.getMax(Player.PLAYER_X, Player.PLAYER_H);
@@ -70,6 +72,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static ShootableDoorDefinition doorCyan = null;
     protected static ShootableDoorDefinition doorGold = null;
     protected static Panmage[] cube = null;
+    protected static Panmage sentryGun = null;
     
     protected static PlayerContext pc = null;
     
@@ -99,6 +102,7 @@ public final class BotsnBoltsGame extends BaseGame {
         font = Fonts.getClassics(new FontRequest(8), Pancolor.WHITE, Pancolor.BLACK);
         loadDoors();
         loadMisc();
+        loadEnemies();
         loadPlayer();
     }
     
@@ -123,6 +127,11 @@ public final class BotsnBoltsGame extends BaseGame {
     
     private final static void loadMisc() {
         cube = newSheet("cube", RES + "misc/Cube.png", 16);
+    }
+    
+    private final static void loadEnemies() {
+        final Pangine engine = Pangine.getEngine();
+        sentryGun = engine.createImage("sentry.gun", new FinPanple2(10, 8), new FinPanple2(-5, -5), new FinPanple2(5, 5), RES + "enemy/SentryGun.png");
     }
     
     private final static ShootableDoorDefinition filterDoor(final String id, final Img[] imgsClosed, final Img[] imgsOpening,
@@ -357,7 +366,7 @@ public final class BotsnBoltsGame extends BaseGame {
             tm.setBackground(5, 3, imgMap[0][4], Tile.BEHAVIOR_SOLID);
             new ShootableDoor(0, 1, doorCyan);
             new ShootableDoor(end, 1, doorGold);
-            Cube.newCube(11, 1);
+            new SentryGun(11, 1);
             final Player player = new Player(pc);
             player.getPosition().set(48, 96, DEPTH_PLAYER);
             room.addActor(player);
