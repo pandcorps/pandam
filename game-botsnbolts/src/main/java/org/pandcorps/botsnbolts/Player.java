@@ -38,7 +38,7 @@ public final class Player extends GuyPlatform {
     private final static int SHOOT_DELAY_SPREAD = 15;
     private final static int SHOOT_TIME = 12;
     private final static int INVINCIBLE_TIME = 60;
-    private final static int HURT_TIME = 20;
+    private final static int HURT_TIME = 15;
     private final static int RUN_TIME = 5;
     private final static int VEL_JUMP = 8;
     private final static int VEL_WALK = 3;
@@ -136,7 +136,7 @@ public final class Player extends GuyPlatform {
     }
     
     private final void jump() {
-        if (isGrounded()) {
+        if (isGrounded() && !isHurt()) {
             v = VEL_JUMP;
         }
     }
@@ -148,19 +148,27 @@ public final class Player extends GuyPlatform {
     }
     
     private final void shoot() {
-        stateHandler.onShootStart(this);
+        if (!isHurt()) {
+            stateHandler.onShootStart(this);
+        }
     }
     
     private final void shooting() {
-        stateHandler.onShooting(this);
+        if (!isHurt()) {
+            stateHandler.onShooting(this);
+        }
     }
     
     private final void releaseShoot() {
-        stateHandler.onShootEnd(this);
+        if (!isHurt()) {
+            stateHandler.onShootEnd(this);
+        }
     }
     
     private final void right() {
-        stateHandler.onRight(this);
+        if (!isHurt()) {
+            stateHandler.onRight(this);
+        }
     }
     
     private final void onRightNormal() {
@@ -168,7 +176,9 @@ public final class Player extends GuyPlatform {
     }
     
     private final void left() {
-        stateHandler.onLeft(this);
+        if (!isHurt()) {
+            stateHandler.onLeft(this);
+        }
     }
     
     private final void onLeftNormal() {
