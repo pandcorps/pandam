@@ -524,6 +524,10 @@ public class Profile extends PlayerData implements Segmented, Savable {
                     + getDefeatedCount(FurGuardiansGame.spikedImp);
         }
 		
+		public final long getDefeatedDrow() {
+		    return getDefeatedCount(FurGuardiansGame.drowid) + getDefeatedCount(FurGuardiansGame.drolock);
+		}
+		
 		public final long getDefeatedNetherCreatures() {
 		    return getDefeatedCount(FurGuardiansGame.netherCube) + getDefeatedCount(FurGuardiansGame.netherGlob);
 		}
