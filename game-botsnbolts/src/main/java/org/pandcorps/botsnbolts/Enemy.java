@@ -76,7 +76,8 @@ public class Enemy extends Panctor implements CollisionListener {
         public void onCollision(final CollisionEvent event) {
             final Collidable collider = event.getCollider();
             if (collider.getClass() == Player.class) {
-                //TODO hurt Player
+                final Player player = (Player) collider;
+                player.hurt(1);
                 //TODO burst
                 destroy();
             }

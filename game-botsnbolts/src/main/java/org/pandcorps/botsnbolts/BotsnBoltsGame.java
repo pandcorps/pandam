@@ -139,7 +139,7 @@ public final class BotsnBoltsGame extends BaseGame {
         for (int i = 0; i < sentrySize; i++) {
             sentryGun[i] = engine.createImage("sentry.gun." + i, sentryO, sentryMin, sentryMax, sentryImgs[i]);
         }
-        enemyProjectile = engine.createImage("projectile.enemy", CENTER_8, new FinPanple2(-3, -3), new FinPanple2(3, 3), RES + "/enemy/EnemyProjectile.png");
+        enemyProjectile = engine.createImage("projectile.enemy", CENTER_8, new FinPanple2(-2, -2), new FinPanple2(2, 2), RES + "/enemy/EnemyProjectile.png");
     }
     
     private final static ShootableDoorDefinition filterDoor(final String id, final Img[] imgsClosed, final Img[] imgsOpening,
@@ -164,6 +164,7 @@ public final class BotsnBoltsGame extends BaseGame {
         final PlayerImagesSubSet basicSet = loadPlayerImagesSubSet(pre, name, true, og, og, oj);
         final PlayerImagesSubSet shootSet = loadPlayerImagesSubSet(pre + "Shoot", name + ".shoot", false, oss, os, ojs);
         final Pangine engine = Pangine.getEngine();
+        final Panmage hurt = newPlayerImage(PRE_IMG + "." + name + ".hurt", og, pre + "Hurt");
         final Panmage basicProjectile = engine.createImage(pre + "Projectile", new FinPanple2(3, 3), new FinPanple2(-3, -1), new FinPanple2(5, 3), pre + "Projectile.png");
         final Panimation burst = newAnimation(pre + "Burst", pre + "Burst.png", 16, CENTER_16, 2);
         final Img[] ballImgs = Imtil.loadStrip(pre + "Ball.png", 16);
@@ -182,7 +183,7 @@ public final class BotsnBoltsGame extends BaseGame {
                 }
             }
         }
-        return new PlayerImages(basicSet, shootSet, null, basicProjectile, burst, ball);
+        return new PlayerImages(basicSet, shootSet, hurt, basicProjectile, burst, ball);
     }
     
     private final static PlayerImagesSubSet loadPlayerImagesSubSet(final String path, final String name, final boolean startNeeded, final Panple os, final Panple o, final Panple oj) {

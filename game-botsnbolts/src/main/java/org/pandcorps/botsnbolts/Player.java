@@ -187,6 +187,17 @@ public final class Player extends GuyPlatform {
         stateHandler.onDown(this);
     }
     
+    protected final void hurt(final int damage) {
+        if (isInvincible()) {
+            return;
+        }
+        lastHurt = Pangine.getEngine().getClock();
+        health -= damage;
+        if ((v > 0) && !isGrounded()) {
+            v = 0;
+        }
+    }
+    
     private final boolean isHurt() {
         return (Pangine.getEngine().getClock() - lastHurt) < HURT_TIME;
     }
