@@ -288,6 +288,8 @@ public class FurGuardiansGame extends BaseGame {
 	protected static EnemyDefinition rockSprite = null;
 	protected static EnemyDefinition rockTrio = null;
 	protected static EnemyDefinition rockLeg = null;
+	protected static EnemyDefinition drowid = null;
+	protected static EnemyDefinition drolock = null;
 	protected static EnemyDefinition netherCube = null;
 	protected static EnemyDefinition netherGlob = null;
 	protected static EnemyDefinition greaterGlob = null;
@@ -1337,20 +1339,18 @@ public class FurGuardiansGame extends BaseGame {
 		
 		loaders.add(new Runnable() { @Override public final void run() {
 //info("loadConstants start " + System.currentTimeMillis());
-			Coltil.set(allEnemies, Level.DROWID, new EnemyDefinition("Drowid", 1, null, true, 1)); }}); // Teleport when stomped
-		loaders.add(new Runnable() { @Override public final void run() {
+		    drowid = new EnemyDefinition("Drowid", 1, null, true, 1);
+			Coltil.set(allEnemies, Level.DROWID, drowid); // Teleport when stomped
 			final Panmage pimg1 = createImage("projectile1", RES + "enemy/Projectile1.png", 8, CENTER_8, new FinPanple2(-3, -3), new FinPanple2(2, 2));
 		    final Panframe[] pfrms = new Panframe[4];
 		    for (int i = 0; i < 4; i++) {
 		        pfrms[i] = engine.createFrame(PRE_FRM + "projectile1." + i, pimg1, 4, (4 - i) % 4, false, false);
 		    }
 		    projectile1 = engine.createAnimation(PRE_ANM + "projectile1", pfrms);
-			final EnemyDefinition drolock = new EnemyDefinition("Drolock", 4, null, false, 0, 0);
+			drolock = new EnemyDefinition("Drolock", 4, null, false, 0, 0);
 			drolock.projectile = projectile1;
-			Coltil.set(allEnemies, Level.DROLOCK, drolock); }}); // Teleport/shoot periodically
-		loaders.add(new Runnable() { @Override public final void run() {
-		    Coltil.set(allEnemies, Level.HOB_TROLL, new EnemyDefinition("Hob-troll", 2, null, true)); }}); // Was Troblin
-		loaders.add(new Runnable() { @Override public final void run() {
+			Coltil.set(allEnemies, Level.DROLOCK, drolock); // Teleport/shoot periodically
+		    Coltil.set(allEnemies, Level.HOB_TROLL, new EnemyDefinition("Hob-troll", 2, null, true)); // Was Troblin
 			final ReplacePixelFilter f = new ReplacePixelFilter();
 			replace(f, (short) 104, (short) 120, (short) 172);
 			replace(f, (short) 80, (short) 96, (short) 144);

@@ -22,48 +22,15 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.botsnbolts;
 
-import org.pandcorps.botsnbolts.Player.*;
-import org.pandcorps.game.actor.*;
-import org.pandcorps.pandam.*;
-import org.pandcorps.pandam.event.*;
-import org.pandcorps.pandam.event.boundary.*;
-import org.pandcorps.pandax.*;
+import org.pandcorps.pandax.tile.*;
 
-public final class Projectile extends Pandy implements Collidable, AllOobListener {
-    private final Player src;
-    protected final ShootMode shootMode;
-    
-    protected Projectile(final Player src, final float vx, final float vy) {
-        this.src = src;
-        shootMode = src.prf.shootMode;
-        final Panple srcPos = src.getPosition();
-        final boolean mirror = src.isMirror();
-        setMirror(mirror);
-        final int xm = mirror ? -1 : 1;
-        getPosition().set(srcPos.getX() + (xm * 15), srcPos.getY() + 13, BotsnBoltsGame.DEPTH_PROJECTILE);
-        getVelocity().set(xm * vx, vy);
-        src.getLayer().addActor(this);
-    }
-    
-    protected final void burst() {
-        burst(this);
-    }
-    
-    protected final void burst(final Panctor target) {
-        burst(target.getPosition());
-    }
-    
-    protected final void burst(final Panple loc) {
-        final Burst burst = new Burst(src.pi.burst);
-        final Panple pos = burst.getPosition();
-        pos.set(loc);
-        pos.setZ(BotsnBoltsGame.DEPTH_BURST);
-        burst.setMirror(isMirror());
-        getLayer().addActor(burst);
-    }
-
-    @Override
-    public final void onAllOob(final AllOobEvent event) {
-        destroy();
+public class Cube {
+    protected final static void newCube(final int x, final int y) {
+        final TileMap tm = BotsnBoltsGame.tm;
+        final int x1 = x + 1, y1 = y + 1;
+        tm.setForeground(x, y, BotsnBoltsGame.cube[2], Tile.BEHAVIOR_SOLID);
+        tm.setForeground(x1, y, BotsnBoltsGame.cube[3], Tile.BEHAVIOR_SOLID);
+        tm.setForeground(x, y1, BotsnBoltsGame.cube[0], Tile.BEHAVIOR_SOLID);
+        tm.setForeground(x1, y1, BotsnBoltsGame.cube[1], Tile.BEHAVIOR_SOLID);
     }
 }

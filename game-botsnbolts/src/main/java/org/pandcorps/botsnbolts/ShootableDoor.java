@@ -22,21 +22,23 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.botsnbolts;
 
+import org.pandcorps.botsnbolts.Player.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.tile.*;
 
-public class ShootableDoor extends Panctor implements CollisionListener {
+public class ShootableDoor extends Panctor implements StepListener, CollisionListener {
     private final static Panple min = new FinPanple2(-12, 0);
     private final static Panple max = new FinPanple2(12, 64);
     private final static DoorDisplay display = new DoorDisplay();
     private final int x;
     private final int y;
     private final int doorX;
-    private final ShootableDoorDefinition def;
+    private ShootableDoorDefinition def = null;
+    private int temperature = 0;
     
-    protected ShootableDoor(final Panlayer layer, final int x, final int y, ShootableDoorDefinition def) {
+    protected ShootableDoor(final int x, final int y, ShootableDoorDefinition def) {
         setVisible(false);
         final TileMap tm = BotsnBoltsGame.tm;
         tm.getLayer().addActor(this);
@@ -110,13 +112,38 @@ public class ShootableDoor extends Panctor implements CollisionListener {
     }
     
     @Override
+    public final void onStep(final StepEvent event) {
+        if (def.prev != null) {
+            temperature--;
+            if (temperature < def.prev.nextTemperature) {
+                setDefinition(def.prev);
+            }
+        }
+    }
+    
+    @Override
     public final void onCollision(final CollisionEvent event) {
         final Collidable collider = event.getCollider();
         if (collider.getClass() == Projectile.class) {
-            openDoor();
-            ((Projectile) collider).burst();
+            final Projectile projectile = (Projectile) collider;
+            temperature += 5;
+            if (temperature >= def.nextTemperature && (def.requiredShootMode == null || def.requiredShootMode == projectile.shootMode)) {
+                if (def.next == null) {
+                    openDoor();
+                } else {
+                    setDefinition(def.next);
+                }
+            } else {
+                temperature = def.nextTemperature;
+            }
+            projectile.burst();
             collider.destroy();
         }
+    }
+    
+    private final void setDefinition(final ShootableDoorDefinition def) {
+        this.def = def;
+        closeDoor();
     }
     
     @Override
@@ -145,12 +172,16 @@ public class ShootableDoor extends Panctor implements CollisionListener {
         private final Panframe[] door;
         private final Panframe[][] opening;
         private final ShootableDoorDefinition next;
+        private final int nextTemperature;
+        private final ShootMode requiredShootMode;
         private ShootableDoorDefinition prev = null;
         
-        protected ShootableDoorDefinition(final Panframe[] door, final Panframe[][] opening, final ShootableDoorDefinition next) {
+        protected ShootableDoorDefinition(final Panframe[] door, final Panframe[][] opening, final ShootableDoorDefinition next, final int nextTemperature, final ShootMode requiredShootMode) {
             this.door = door;
             this.opening = opening;
             this.next = next;
+            this.nextTemperature = nextTemperature;
+            this.requiredShootMode = requiredShootMode;
             if (next != null) {
                 next.prev = this;
             }
