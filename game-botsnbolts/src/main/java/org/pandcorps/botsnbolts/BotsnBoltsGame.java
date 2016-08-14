@@ -24,6 +24,7 @@ package org.pandcorps.botsnbolts;
 
 import java.util.*;
 
+import org.pandcorps.botsnbolts.Enemy.*;
 import org.pandcorps.botsnbolts.Player.*;
 import org.pandcorps.botsnbolts.ShootableDoor.*;
 import org.pandcorps.core.*;
@@ -49,9 +50,10 @@ public final class BotsnBoltsGame extends BaseGame {
     protected final static int DEPTH_BG = 0;
     protected final static int DEPTH_FG = 1;
     protected final static int DEPTH_PLAYER = 2;
-    protected final static int DEPTH_PROJECTILE = 3;
-    protected final static int DEPTH_OVERLAY = 4;
-    protected final static int DEPTH_BURST = 5;
+    protected final static int DEPTH_ENEMY = 3;
+    protected final static int DEPTH_PROJECTILE = 4;
+    protected final static int DEPTH_OVERLAY = 5;
+    protected final static int DEPTH_BURST = 6;
     
     private final static FinPanple2 ng = GuyPlatform.getMin(Player.PLAYER_X);
     private final static FinPanple2 xg = GuyPlatform.getMax(Player.PLAYER_X, Player.PLAYER_H);
@@ -70,6 +72,8 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static ShootableDoorDefinition doorCyan = null;
     protected static ShootableDoorDefinition doorGold = null;
     protected static Panmage[] cube = null;
+    protected static Panmage[] sentryGun = null;
+    protected static Panmage enemyProjectile = null;
     
     protected static PlayerContext pc = null;
     
@@ -99,6 +103,7 @@ public final class BotsnBoltsGame extends BaseGame {
         font = Fonts.getClassics(new FontRequest(8), Pancolor.WHITE, Pancolor.BLACK);
         loadDoors();
         loadMisc();
+        loadEnemies();
         loadPlayer();
     }
     
@@ -125,6 +130,18 @@ public final class BotsnBoltsGame extends BaseGame {
         cube = newSheet("cube", RES + "misc/Cube.png", 16);
     }
     
+    private final static void loadEnemies() {
+        final Pangine engine = Pangine.getEngine();
+        final Img[] sentryImgs = Imtil.loadStrip(RES + "enemy/SentryGun.png", 16);
+        final Panple sentryO = new FinPanple2(8, 8), sentryMin = new FinPanple2(-5, -5), sentryMax = new FinPanple2(5, 5);
+        final int sentrySize = sentryImgs.length;
+        sentryGun = new Panmage[sentrySize];
+        for (int i = 0; i < sentrySize; i++) {
+            sentryGun[i] = engine.createImage("sentry.gun." + i, sentryO, sentryMin, sentryMax, sentryImgs[i]);
+        }
+        enemyProjectile = engine.createImage("projectile.enemy", CENTER_8, new FinPanple2(-2, -2), new FinPanple2(2, 2), RES + "/enemy/EnemyProjectile.png");
+    }
+    
     private final static ShootableDoorDefinition filterDoor(final String id, final Img[] imgsClosed, final Img[] imgsOpening,
             final short s1r, final short s1g, final short s1b, final short d1r, final short d1g, final short d1b,
             final short s2r, final short s2g, final short s2b, final short d2r, final short d2g, final short d2b,
@@ -147,6 +164,7 @@ public final class BotsnBoltsGame extends BaseGame {
         final PlayerImagesSubSet basicSet = loadPlayerImagesSubSet(pre, name, true, og, og, oj);
         final PlayerImagesSubSet shootSet = loadPlayerImagesSubSet(pre + "Shoot", name + ".shoot", false, oss, os, ojs);
         final Pangine engine = Pangine.getEngine();
+        final Panmage hurt = newPlayerImage(PRE_IMG + "." + name + ".hurt", oj, pre + "Hurt");
         final Panmage basicProjectile = engine.createImage(pre + "Projectile", new FinPanple2(3, 3), new FinPanple2(-3, -1), new FinPanple2(5, 3), pre + "Projectile.png");
         final Panimation burst = newAnimation(pre + "Burst", pre + "Burst.png", 16, CENTER_16, 2);
         final Img[] ballImgs = Imtil.loadStrip(pre + "Ball.png", 16);
@@ -165,7 +183,7 @@ public final class BotsnBoltsGame extends BaseGame {
                 }
             }
         }
-        return new PlayerImages(basicSet, shootSet, null, basicProjectile, burst, ball);
+        return new PlayerImages(basicSet, shootSet, hurt, basicProjectile, burst, ball);
     }
     
     private final static PlayerImagesSubSet loadPlayerImagesSubSet(final String path, final String name, final boolean startNeeded, final Panple os, final Panple o, final Panple oj) {
@@ -357,7 +375,8 @@ public final class BotsnBoltsGame extends BaseGame {
             tm.setBackground(5, 3, imgMap[0][4], Tile.BEHAVIOR_SOLID);
             new ShootableDoor(0, 1, doorCyan);
             new ShootableDoor(end, 1, doorGold);
-            Cube.newCube(11, 1);
+            //new SentryGun(11, 1);
+            new SentryGun(8, 3);
             final Player player = new Player(pc);
             player.getPosition().set(48, 96, DEPTH_PLAYER);
             room.addActor(player);
