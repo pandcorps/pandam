@@ -54,12 +54,16 @@ public final class Projectile extends Pandy implements Collidable, AllOobListene
     }
     
     protected final void burst(final Panple loc) {
-        final Burst burst = new Burst(src.pi.burst);
+        burst(this, src.pi.burst, loc);
+    }
+    
+    protected final static void burst(final Panctor src, final Panimation anm, final Panple loc) {
+        final Burst burst = new Burst(anm);
         final Panple pos = burst.getPosition();
         pos.set(loc);
         pos.setZ(BotsnBoltsGame.DEPTH_BURST);
-        burst.setMirror(isMirror());
-        getLayer().addActor(burst);
+        burst.setMirror(src.isMirror());
+        src.getLayer().addActor(burst);
     }
 
     @Override

@@ -78,7 +78,7 @@ public class Enemy extends Panctor implements CollisionListener {
             if (collider.getClass() == Player.class) {
                 final Player player = (Player) collider;
                 player.hurt(1);
-                //TODO burst
+                Projectile.burst(this, BotsnBoltsGame.enemyBurst, getPosition());
                 destroy();
             }
         }
