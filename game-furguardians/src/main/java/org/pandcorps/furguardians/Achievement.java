@@ -459,6 +459,18 @@ public abstract class Achievement extends FinName {
         }
     }
 	
+	private final static class WordGuardianFeat extends StatFeat {
+        protected WordGuardianFeat(final String name, final String code, final int n) {
+            //super(name, code, n, "Play Word-Guardians " + n + " time" + getS(n), n * ???);
+            super(name, code, n, "Play Word-Guardians " + n + " time" + getS(n), 0); //TODO
+        }
+        
+        @Override
+        public final long getCurrent(final Statistics stats) {
+            return stats.wordMiniGames;
+        }
+    }
+	
 	private final static class KickFeat extends StatFeat {
         protected KickFeat(final String name, final String code, final int n) {
             super(name, code, n, "Kick " + n + " object" + getS(n), n * 5);
