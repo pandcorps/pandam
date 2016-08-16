@@ -44,7 +44,7 @@ public abstract class HudMeter extends Panctor {
         final int value = getValue();
         final int end = MAX_VALUE - 1;
         for (int i = 0; i < MAX_VALUE; i++) {
-            final HudMeterImages set = (value < i) ? null : images; //TODO blankImages
+            final HudMeterImages set = (value < i) ? BotsnBoltsGame.hudMeterBlank : images;
             final Panmage image;
             if (i == 0) {
                 image = set.bottom;
@@ -63,6 +63,10 @@ public abstract class HudMeter extends Panctor {
         private final Panmage bottom;
         private final Panmage middle;
         private final Panmage top;
+        
+        protected HudMeterImages(final Panmage[] images) {
+            this(images[2], images[1], images[0]);
+        }
         
         protected HudMeterImages(final Panmage bottom, final Panmage middle, final Panmage top) {
             this.bottom = bottom;

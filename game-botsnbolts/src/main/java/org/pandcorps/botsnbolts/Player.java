@@ -22,6 +22,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.botsnbolts;
 
+import org.pandcorps.botsnbolts.HudMeter.*;
 import org.pandcorps.game.actor.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.action.*;
@@ -596,15 +597,18 @@ public final class Player extends GuyPlatform {
         private final Panmage basicProjectile;
         protected final Panimation burst;
         private final Panmage[] ball;
+        private final HudMeterImages hudMeterImages;
         
         protected PlayerImages(final PlayerImagesSubSet basicSet, final PlayerImagesSubSet shootSet, final Panmage hurt,
-                               final Panmage basicProjectile, final Panimation burst, final Panmage[] ball) {
+                               final Panmage basicProjectile, final Panimation burst, final Panmage[] ball,
+                               final HudMeterImages hudMeterImages) {
             this.basicSet = basicSet;
             this.shootSet = shootSet;
             this.hurt = hurt;
             this.basicProjectile = basicProjectile;
             this.burst = burst;
             this.ball = ball;
+            this.hudMeterImages = hudMeterImages;
         }
     }
     

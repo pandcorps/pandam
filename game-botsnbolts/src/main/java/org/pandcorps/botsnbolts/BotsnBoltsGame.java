@@ -25,6 +25,7 @@ package org.pandcorps.botsnbolts;
 import java.util.*;
 
 import org.pandcorps.botsnbolts.Enemy.*;
+import org.pandcorps.botsnbolts.HudMeter.*;
 import org.pandcorps.botsnbolts.Player.*;
 import org.pandcorps.botsnbolts.ShootableDoor.*;
 import org.pandcorps.core.*;
@@ -75,6 +76,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static Panmage[] sentryGun = null;
     protected static Panmage enemyProjectile = null;
     protected static Panimation enemyBurst = null;
+    protected static HudMeterImages hudMeterBlank = null;
     
     protected static PlayerContext pc = null;
     
@@ -128,6 +130,7 @@ public final class BotsnBoltsGame extends BaseGame {
     }
     
     private final static void loadMisc() {
+        hudMeterBlank = newHudMeterImages("meter.blank", RES + "misc/MeterBlank.png");
         cube = newSheet("cube", RES + "misc/Cube.png", 16);
     }
     
@@ -185,7 +188,8 @@ public final class BotsnBoltsGame extends BaseGame {
                 }
             }
         }
-        return new PlayerImages(basicSet, shootSet, hurt, basicProjectile, burst, ball);
+        final HudMeterImages hudMeterImages = newHudMeterImages(pre + "Meter", pre + "Meter.png");
+        return new PlayerImages(basicSet, shootSet, hurt, basicProjectile, burst, ball, hudMeterImages);
     }
     
     private final static PlayerImagesSubSet loadPlayerImagesSubSet(final String path, final String name, final boolean startNeeded, final Panple os, final Panple o, final Panple oj) {
@@ -262,6 +266,10 @@ public final class BotsnBoltsGame extends BaseGame {
         final Panmage image = engine.createImage(id, o, ng, xg, img);
         image.setMirrorSource(engine.createImage(id + ".mirror", o, ng, xg, imgMirror));
         return image;
+    }
+    
+    private final static HudMeterImages newHudMeterImages(final String id, final String path) {
+        return new HudMeterImages(newSheet(id, path, 8));
     }
     
     private final static ShootableDoorDefinition newDoorDefinition(final String id, final Img[] imgsClosed, final Img[] imgsOpening,
