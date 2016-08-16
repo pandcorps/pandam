@@ -378,6 +378,13 @@ public final class Player extends GuyPlatform {
         return false;
     }
     
+    protected final HudMeter newHealthMeter() {
+        return new HudMeter(pi.hudMeterImages) {
+            @Override protected final int getValue() {
+                return health;
+            }};
+    }
+    
     protected abstract static class StateHandler {
         protected abstract void onShootStart(final Player player);
         

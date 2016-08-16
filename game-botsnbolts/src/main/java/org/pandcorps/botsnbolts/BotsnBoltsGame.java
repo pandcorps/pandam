@@ -390,6 +390,9 @@ public final class BotsnBoltsGame extends BaseGame {
             final Player player = new Player(pc);
             player.getPosition().set(48, 96, DEPTH_PLAYER);
             room.addActor(player);
+            final HudMeter healthMeter = player.newHealthMeter();
+            healthMeter.getPosition().set(24, engine.getEffectiveHeight() - 73, DEPTH_OVERLAY);
+            room.addActor(healthMeter);
         }
     }
     
