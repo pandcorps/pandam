@@ -22,6 +22,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.botsnbolts;
 
+import org.pandcorps.botsnbolts.Player.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.boundary.*;
@@ -32,20 +33,45 @@ public abstract class PowerUp extends Panctor implements CollisionListener {
         final Collidable collider = event.getCollider();
         if (collider.getClass() == Player.class) {
             award((Player) collider);
+            destroy();
         }
     }
     
     protected abstract void award(final Player player);
     
-    public final static class Battery extends PowerUp implements AllOobListener {
+    protected final static PlayerContext getRandomPlayerContext() {
+        return BotsnBoltsGame.pc;
+    }
+    
+    public abstract static class Battery extends PowerUp implements AllOobListener {
+        protected Battery() {
+            setView(getImage());
+        }
+        
+        protected abstract Panmage getImage();
+        
         @Override
         protected final void award(final Player player) {
-            
+            player.addHealth(getAmount());
         }
+        
+        protected abstract int getAmount();
 
         @Override
         public final void onAllOob(final AllOobEvent event) {
             destroy();
+        }
+    }
+    
+    public final static class BigBattery extends Battery {
+        @Override
+        protected final Panmage getImage() {
+            return getRandomPlayerContext().pi.batteryBig;
+        }
+        
+        @Override
+        protected final int getAmount() {
+            return 7;
         }
     }
     

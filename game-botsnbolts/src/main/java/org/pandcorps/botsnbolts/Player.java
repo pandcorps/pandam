@@ -209,6 +209,16 @@ public final class Player extends GuyPlatform {
         }
     }
     
+    protected final void addHealth(final int amount) {
+        if (health >= HudMeter.MAX_VALUE) {
+            return;
+        }
+        health += amount;
+        if (health > HudMeter.MAX_VALUE) {
+            health = HudMeter.MAX_VALUE;
+        }
+    }
+    
     private final boolean isHurt() {
         return (Pangine.getEngine().getClock() - lastHurt) < HURT_TIME;
     }
@@ -604,10 +614,12 @@ public final class Player extends GuyPlatform {
         private final Panmage basicProjectile;
         protected final Panimation burst;
         private final Panmage[] ball;
+        protected final Panmage batteryBig;
         private final HudMeterImages hudMeterImages;
         
         protected PlayerImages(final PlayerImagesSubSet basicSet, final PlayerImagesSubSet shootSet, final Panmage hurt,
                                final Panmage basicProjectile, final Panimation burst, final Panmage[] ball,
+                               final Panmage batteryBig,
                                final HudMeterImages hudMeterImages) {
             this.basicSet = basicSet;
             this.shootSet = shootSet;
@@ -615,6 +627,7 @@ public final class Player extends GuyPlatform {
             this.basicProjectile = basicProjectile;
             this.burst = burst;
             this.ball = ball;
+            this.batteryBig = batteryBig;
             this.hudMeterImages = hudMeterImages;
         }
     }

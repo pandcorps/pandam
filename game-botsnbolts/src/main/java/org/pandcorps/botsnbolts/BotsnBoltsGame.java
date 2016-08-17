@@ -27,6 +27,7 @@ import java.util.*;
 import org.pandcorps.botsnbolts.Enemy.*;
 import org.pandcorps.botsnbolts.HudMeter.*;
 import org.pandcorps.botsnbolts.Player.*;
+import org.pandcorps.botsnbolts.PowerUp.*;
 import org.pandcorps.botsnbolts.ShootableDoor.*;
 import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
@@ -188,8 +189,9 @@ public final class BotsnBoltsGame extends BaseGame {
                 }
             }
         }
+        final Panmage batteryBig = engine.createImage(pre + "battery.big", new FinPanple2(8, 1), new FinPanple2(-6, 0), new FinPanple2(6, 12), pre + "BatteryBig.png");
         final HudMeterImages hudMeterImages = newHudMeterImages(pre + "Meter", pre + "Meter.png");
-        return new PlayerImages(basicSet, shootSet, hurt, basicProjectile, burst, ball, hudMeterImages);
+        return new PlayerImages(basicSet, shootSet, hurt, basicProjectile, burst, ball, batteryBig, hudMeterImages);
     }
     
     private final static PlayerImagesSubSet loadPlayerImagesSubSet(final String path, final String name, final boolean startNeeded, final Panple os, final Panple o, final Panple oj) {
@@ -387,6 +389,9 @@ public final class BotsnBoltsGame extends BaseGame {
             new ShootableDoor(end, 1, doorGold);
             //new SentryGun(11, 1);
             new SentryGun(8, 3);
+            final BigBattery battery = new BigBattery();
+            battery.getPosition().set(200, 16);
+            room.addActor(battery);
             final Player player = new Player(pc);
             player.getPosition().set(48, 96, DEPTH_PLAYER);
             room.addActor(player);
