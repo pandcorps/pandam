@@ -24,10 +24,35 @@ package org.pandcorps.botsnbolts;
 
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
+import org.pandcorps.pandam.event.boundary.*;
 
-public class PowerUp extends Panctor implements CollisionListener {
+public abstract class PowerUp extends Panctor implements CollisionListener {
     @Override
     public final void onCollision(final CollisionEvent event) {
-        
+        final Collidable collider = event.getCollider();
+        if (collider.getClass() == Player.class) {
+            award((Player) collider);
+        }
+    }
+    
+    protected abstract void award(final Player player);
+    
+    public final static class Battery extends PowerUp implements AllOobListener {
+        @Override
+        protected final void award(final Player player) {
+            
+        }
+
+        @Override
+        public final void onAllOob(final AllOobEvent event) {
+            destroy();
+        }
+    }
+    
+    public final static class Bolt extends PowerUp {
+        @Override
+        protected final void award(final Player player) {
+            
+        }
     }
 }
