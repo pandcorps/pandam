@@ -274,7 +274,7 @@ public abstract class Achievement extends FinName {
 	
 	private final static class GreenGemFeat extends StatFeat {
         protected GreenGemFeat(final String code) {
-            super("Serendipity", code, 1, "Find 1 green Gem in a level", 1000);
+            super("Serendipity", code, 1, "Find 1 green Gem in a Level", 1000);
         }
         
         @Override
@@ -448,6 +448,18 @@ public abstract class Achievement extends FinName {
         }
     }
 	
+	private final static class CaveLevelFeat extends StatFeat {
+        protected CaveLevelFeat(final String name, final String code, final int n) {
+            //super(name, code, n, "Play " + n + " Cave Level" + getS(n), n * ???);
+            super(name, code, n, "Play " + n + " Cave Level" + getS(n), 0); //TODO
+        }
+        
+        @Override
+        public final long getCurrent(final Statistics stats) {
+            return stats.playedCaveLevels;
+        }
+    }
+	
 	private final static class BonusLevelFeat extends StatFeat {
         protected BonusLevelFeat(final String name, final String code, final int n) {
             super(name, code, n, "Play " + n + " Bonus Game" + getS(n), n * 100);
@@ -461,8 +473,8 @@ public abstract class Achievement extends FinName {
 	
 	private final static class MinecartFeat extends StatFeat {
         protected MinecartFeat(final String name, final String code, final int n) {
-            //super(name, code, n, "Play " + n + " Minecart level" + getS(n), n * ???);
-            super(name, code, n, "Play " + n + " Minecart level" + getS(n), 0); //TODO
+            //super(name, code, n, "Play " + n + " Minecart Level" + getS(n), n * ???);
+            super(name, code, n, "Play " + n + " Minecart Level" + getS(n), 0); //TODO
         }
         
         @Override
