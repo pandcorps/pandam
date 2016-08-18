@@ -65,7 +65,7 @@ public abstract class HudMeter extends Panctor {
         private final Panmage top;
         
         protected HudMeterImages(final Panmage[] images) {
-            this(images[images.length - 1], images[images.length - 2], images[0]);
+            this(images[images.length - 1], images[1], images[0]);
         }
         
         protected HudMeterImages(final Panmage bottom, final Panmage middle, final Panmage top) {
