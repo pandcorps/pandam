@@ -47,14 +47,16 @@ public abstract class Achievement extends FinName {
 		new HitFeat("Eagle-eyed", "23", 10), new MonsterBumpFeat("Sneak Attack", "24", 50),
 		new ComboFeat("Combo Commander", "cmbo.cmndr", 80), new ComboFeat("Combo King", "cmbo.kng", 240), new ComboLengthFeat("Triple Combo", "trpl.cmbo", 3),
 		new JumpFeat("Leapfrog", "22", 3000),
-		new BonusLevelFeat("Roll the Dice", "25", 5), new KickFeat("Kick the Ball", "26", 20),
+		new CaveLevelFeat("Cave Dweller", "cv.dwllr", 15),
+		new BonusLevelFeat("Roll the Dice", "25", 5), new MinecartFeat("Ride the Rails", "rd.th.rls", 20), new KickFeat("Kick the Ball", "26", 20),
 		new NoGemsFeat("27"), new AllGemsFeat("28"), new AllBrokenFeat("29"),
 		new HardFeat("31"),
 		new BuyFeat("Consumer", "32", 1), new BuyFeat("Demander", "33", 5), new BuyFeat("Collector", "34", 15), new BuyFeat("Obsessor", "obsssr", 30),
 		new NoBirdGemsFeat("35"), new BirdGemFeat("Nest Egg", "36", 200),
 		new OrbFeat("Orb Wielder", "38", 25), new MonsterElectrocuteFeat("Lightning Storm", "39", 150),
 		new DoubledGemFeat("Double Down", "40", 7500), new BounceFeat("Busy Bee", "41", 400),
-		new VineFeat("Trailblazer", "trlblzr", 180)
+		new VineFeat("Trailblazer", "trlblzr", 180),
+		new WordGuardianFeat("", "TODO", 0)
 		// Level w/ no damage
 		// Beyond Belief, Finish Level as a flying Pig
 		// Babe, Finish Level as a blue Bull/Ox
@@ -450,8 +452,7 @@ public abstract class Achievement extends FinName {
 	
 	private final static class CaveLevelFeat extends StatFeat {
         protected CaveLevelFeat(final String name, final String code, final int n) {
-            //super(name, code, n, "Play " + n + " Cave Level" + getS(n), n * ???);
-            super(name, code, n, "Play " + n + " Cave Level" + getS(n), 0); //TODO
+            super(name, code, n, "Play " + n + " Cave Level" + getS(n), n * 120);
         }
         
         @Override
@@ -473,8 +474,7 @@ public abstract class Achievement extends FinName {
 	
 	private final static class MinecartFeat extends StatFeat {
         protected MinecartFeat(final String name, final String code, final int n) {
-            //super(name, code, n, "Play " + n + " Minecart Level" + getS(n), n * ???);
-            super(name, code, n, "Play " + n + " Minecart Level" + getS(n), 0); //TODO
+            super(name, code, n, "Play " + n + " Minecart Level" + getS(n), n * 105);
         }
         
         @Override
