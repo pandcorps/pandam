@@ -23,24 +23,65 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.botsnbolts;
 
 import org.pandcorps.botsnbolts.Player.*;
+import org.pandcorps.game.actor.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.boundary.*;
+import org.pandcorps.pandax.tile.TileMap;
 
-public abstract class PowerUp extends Panctor implements CollisionListener {
+public abstract class PowerUp extends GuyPlatform implements CollisionListener {
+    protected PowerUp() {
+        super(4, 8);
+    }
+
     @Override
     public final void onCollision(final CollisionEvent event) {
         final Collidable collider = event.getCollider();
         if (collider.getClass() == Player.class) {
-            award((Player) collider);
+            final Player player = (Player) collider;
+            award(player);
+            final Panple pos = getPosition();
+            Projectile.burst(player, player.pi.burst, pos.getX(), pos.getY() + getCurrentDisplay().getBoundingMaximum().getY() / 2);
             destroy();
         }
     }
     
     protected abstract void award(final Player player);
     
+    @Override
+    protected final int getSolid(final int off) {
+        return (off > 0) ? -1 : super.getSolid(off);
+    }
+    
+    @Override
+    protected final boolean onFell() {
+        return false;
+    }
+    
+    @Override
+    protected final void onBump(final int t) {
+    }
+    
+    @Override
+    protected final TileMap getTileMap() {
+        return BotsnBoltsGame.tm;
+    }
+    
+    @Override
+    protected final boolean isSolidBehavior(final byte b) {
+        return false;
+    }
+    
     protected final static PlayerContext getRandomPlayerContext() {
         return BotsnBoltsGame.pc;
+    }
+    
+    protected final static PowerUp newRandomPowerUp(final float x, final float y, final float v) {
+        final PowerUp powerUp = new BigBattery();
+        powerUp.getPosition().set(x, y, BotsnBoltsGame.DEPTH_POWER_UP);
+        powerUp.v = v;
+        BotsnBoltsGame.tm.getLayer().addActor(powerUp);
+        return powerUp;
     }
     
     public abstract static class Battery extends PowerUp implements AllOobListener {

@@ -51,11 +51,12 @@ public final class BotsnBoltsGame extends BaseGame {
     
     protected final static int DEPTH_BG = 0;
     protected final static int DEPTH_FG = 1;
-    protected final static int DEPTH_PLAYER = 2;
-    protected final static int DEPTH_ENEMY = 3;
-    protected final static int DEPTH_PROJECTILE = 4;
-    protected final static int DEPTH_OVERLAY = 5;
-    protected final static int DEPTH_BURST = 6;
+    protected final static int DEPTH_POWER_UP = 2;
+    protected final static int DEPTH_PLAYER = 3;
+    protected final static int DEPTH_ENEMY = 4;
+    protected final static int DEPTH_PROJECTILE = 5;
+    protected final static int DEPTH_OVERLAY = 6;
+    protected final static int DEPTH_BURST = 7;
     
     private final static FinPanple2 ng = GuyPlatform.getMin(Player.PLAYER_X);
     private final static FinPanple2 xg = GuyPlatform.getMax(Player.PLAYER_X, Player.PLAYER_H);
@@ -189,7 +190,7 @@ public final class BotsnBoltsGame extends BaseGame {
                 }
             }
         }
-        final Panmage batteryBig = engine.createImage(pre + "battery.big", new FinPanple2(8, 1), new FinPanple2(-6, 0), new FinPanple2(6, 12), pre + "BatteryBig.png");
+        final Panmage batteryBig = engine.createImage(pre + "battery.big", new FinPanple2(8, 0), new FinPanple2(-6, 1), new FinPanple2(6, 13), pre + "BatteryBig.png");
         final HudMeterImages hudMeterImages = newHudMeterImages(pre + "Meter", pre + "Meter.png");
         return new PlayerImages(basicSet, shootSet, hurt, basicProjectile, burst, ball, batteryBig, hudMeterImages);
     }
@@ -390,7 +391,7 @@ public final class BotsnBoltsGame extends BaseGame {
             //new SentryGun(11, 1);
             new SentryGun(8, 3);
             final BigBattery battery = new BigBattery();
-            battery.getPosition().set(200, 16);
+            battery.getPosition().set(200, 96, DEPTH_POWER_UP);
             room.addActor(battery);
             final Player player = new Player(pc);
             player.getPosition().set(48, 96, DEPTH_PLAYER);

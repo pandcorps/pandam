@@ -50,10 +50,16 @@ public class Enemy extends Panctor implements CollisionListener {
         health--;
         if (health <= 0) {
             prj.burst(this);
+            award();
             destroy();
         }
         prj.burst();
         prj.destroy();
+    }
+    
+    private final void award() {
+        final Panple pos = getPosition();
+        PowerUp.newRandomPowerUp(pos.getX() + 3, pos.getY(), 6);
     }
     
     protected final Player getNearestPlayer() {
