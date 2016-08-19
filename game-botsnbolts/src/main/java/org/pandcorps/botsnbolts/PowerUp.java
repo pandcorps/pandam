@@ -55,8 +55,7 @@ public abstract class PowerUp extends Chr implements CollisionListener {
         return BotsnBoltsGame.pc;
     }
     
-    protected final static PowerUp newRandomPowerUp(final float x, final float y, final float v) {
-        final PowerUp powerUp = new BigBattery();
+    protected final static PowerUp addPowerUp(final PowerUp powerUp, final float x, final float y, final float v) {
         powerUp.getPosition().set(x, y, BotsnBoltsGame.DEPTH_POWER_UP);
         powerUp.v = v;
         BotsnBoltsGame.tm.getLayer().addActor(powerUp);

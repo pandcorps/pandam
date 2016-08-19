@@ -23,12 +23,14 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.botsnbolts;
 
 import org.pandcorps.botsnbolts.Player.*;
+import org.pandcorps.botsnbolts.PowerUp.*;
+import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.boundary.*;
 import org.pandcorps.pandax.*;
 
-public class Enemy extends Panctor implements CollisionListener {
+public abstract class Enemy extends Panctor implements CollisionListener {
     private final static int VEL_PROJECTILE = 6;
     
     private int health;
@@ -57,10 +59,27 @@ public class Enemy extends Panctor implements CollisionListener {
         prj.destroy();
     }
     
-    private final void award() {
-        final Panple pos = getPosition();
-        PowerUp.newRandomPowerUp(pos.getX() + 3, pos.getY(), 6);
+    protected final void award() {
+        final PowerUp powerUp = pickAward();
+        if (powerUp != null) {
+            award(powerUp);
+        }
     }
+    
+    protected PowerUp pickAward() {
+        /*
+        TODO
+        Non-100 probability
+        Make probability higher as health decreases
+        Pick stronger power-ups as health decreases
+        */
+        if (Mathtil.rand(100)) {
+            return new BigBattery();
+        }
+        return null;
+    }
+    
+    protected abstract void award(final PowerUp powerUp);
     
     protected final Player getNearestPlayer() {
         return PlayerContext.getPlayer(BotsnBoltsGame.pc);
@@ -95,14 +114,12 @@ public class Enemy extends Panctor implements CollisionListener {
         }
     }
     
-    protected final static class SentryGun extends Enemy implements StepListener {
-        private final float baseX;
-        private final float baseY;
-        private int timer = 0;
-        private int dir;
+    protected abstract static class CubeEnemy extends Enemy {
+        protected final float baseX;
+        protected final float baseY;
         
-        protected SentryGun(final int x, final int y) {
-            super(5);
+        protected CubeEnemy(final int x, final int y, final int health) {
+            super(health);
             Cube.newCube(x, y);
             final Panple pos = getPosition();
             BotsnBoltsGame.tm.savePosition(pos, x, y);
@@ -110,6 +127,20 @@ public class Enemy extends Panctor implements CollisionListener {
             baseX = pos.getX();
             baseY = pos.getY();
             pos.setZ(BotsnBoltsGame.DEPTH_ENEMY);
+        }
+        
+        @Override
+        protected final void award(final PowerUp powerUp) {
+            PowerUp.addPowerUp(powerUp, baseX, baseY, 6);
+        }
+    }
+    
+    protected final static class SentryGun extends CubeEnemy implements StepListener {
+        private int timer = 0;
+        private int dir;
+        
+        protected SentryGun(final int x, final int y) {
+            super(x, y, 5);
             setView(BotsnBoltsGame.sentryGun[0]);
             setLeft();
         }
