@@ -23,13 +23,11 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.botsnbolts;
 
 import org.pandcorps.botsnbolts.Player.*;
-import org.pandcorps.game.actor.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.boundary.*;
-import org.pandcorps.pandax.tile.TileMap;
 
-public abstract class PowerUp extends GuyPlatform implements CollisionListener {
+public abstract class PowerUp extends Chr implements CollisionListener {
     protected PowerUp() {
         super(4, 8);
     }
@@ -51,25 +49,6 @@ public abstract class PowerUp extends GuyPlatform implements CollisionListener {
     @Override
     protected final int getSolid(final int off) {
         return (off > 0) ? -1 : super.getSolid(off);
-    }
-    
-    @Override
-    protected final boolean onFell() {
-        return false;
-    }
-    
-    @Override
-    protected final void onBump(final int t) {
-    }
-    
-    @Override
-    protected final TileMap getTileMap() {
-        return BotsnBoltsGame.tm;
-    }
-    
-    @Override
-    protected final boolean isSolidBehavior(final byte b) {
-        return false;
     }
     
     protected final static PlayerContext getRandomPlayerContext() {

@@ -23,14 +23,12 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.botsnbolts;
 
 import org.pandcorps.botsnbolts.HudMeter.*;
-import org.pandcorps.game.actor.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.action.*;
 import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.in.*;
-import org.pandcorps.pandax.tile.*;
 
-public final class Player extends GuyPlatform {
+public final class Player extends Chr {
     protected final static int PLAYER_X = 6;
     protected final static int PLAYER_H = 23;
     protected final static int BALL_H = 15;
@@ -367,25 +365,6 @@ public final class Player extends GuyPlatform {
     @Override
     protected final void onWall() {
         stateHandler.onWall(this);
-    }
-    
-    @Override
-    protected final boolean onFell() {
-        return false;
-    }
-
-    @Override
-    protected final void onBump(final int t) {
-    }
-
-    @Override
-    protected final TileMap getTileMap() {
-        return BotsnBoltsGame.tm;
-    }
-
-    @Override
-    protected boolean isSolidBehavior(final byte b) {
-        return false;
     }
     
     protected final HudMeter newHealthMeter() {
