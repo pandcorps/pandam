@@ -56,7 +56,7 @@ public abstract class Achievement extends FinName {
 		new OrbFeat("Orb Wielder", "38", 25), new MonsterElectrocuteFeat("Lightning Storm", "39", 150),
 		new DoubledGemFeat("Double Down", "40", 7500), new BounceFeat("Busy Bee", "41", 400),
 		new VineFeat("Trailblazer", "trlblzr", 180),
-		new WordGuardianFeat("", "TODO", 0)
+		new WordGuardianFeat("Word-Guardian", "wrd.grdn", 50)
 		// Level w/ no damage
 		// Beyond Belief, Finish Level as a flying Pig
 		// Babe, Finish Level as a blue Bull/Ox
@@ -485,8 +485,7 @@ public abstract class Achievement extends FinName {
 	
 	private final static class WordGuardianFeat extends StatFeat {
         protected WordGuardianFeat(final String name, final String code, final int n) {
-            //super(name, code, n, "Play Word-Guardians " + n + " time" + getS(n), n * ???);
-            super(name, code, n, "Play Word-Guardians " + n + " time" + getS(n), 0); //TODO
+            super(name, code, n, "Play Word-Guardians " + n + " time" + getS(n), n * 200);
         }
         
         @Override
