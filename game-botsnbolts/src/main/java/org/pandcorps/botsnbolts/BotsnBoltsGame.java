@@ -190,7 +190,7 @@ public final class BotsnBoltsGame extends BaseGame {
                 }
             }
         }
-        final Panmage batteryBig = engine.createImage(pre + "battery.big", new FinPanple2(8, 0), new FinPanple2(-6, 1), new FinPanple2(6, 13), pre + "BatteryBig.png");
+        final Panimation batteryBig = newAnimation(pre + "battery.big", pre + "BatteryBig.png", 16, new FinPanple2(8, -1), new FinPanple2(-6, 2), new FinPanple2(6, 14), 2);
         final HudMeterImages hudMeterImages = newHudMeterImages(pre + "Meter", pre + "Meter.png");
         return new PlayerImages(basicSet, shootSet, hurt, basicProjectile, burst, ball, batteryBig, hudMeterImages);
     }
@@ -244,6 +244,10 @@ public final class BotsnBoltsGame extends BaseGame {
     }
     
     private final static Panimation newAnimation(final String id, final String path, final int w, final Panple o, final int dur) {
+        return newAnimation(id, path, w, o, null, null, dur);
+    }
+    
+    private final static Panimation newAnimation(final String id, final String path, final int w, final Panple o, final Panple min, final Panple max, final int dur) {
         final Img[] imgs = Imtil.loadStrip(path, w);
         final int size = imgs.length;
         final Panframe[] frames = new Panframe[size];

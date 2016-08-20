@@ -67,7 +67,7 @@ public abstract class PowerUp extends Chr implements CollisionListener {
             setView(getImage());
         }
         
-        protected abstract Panmage getImage();
+        protected abstract Panimation getImage();
         
         @Override
         protected final void award(final Player player) {
@@ -84,7 +84,7 @@ public abstract class PowerUp extends Chr implements CollisionListener {
     
     public final static class MediumBattery extends Battery {
         @Override
-        protected final Panmage getImage() {
+        protected final Panimation getImage() {
             //return getRandomPlayerContext().pi.batteryMedium;
             return getRandomPlayerContext().pi.batteryBig; //TODO
         }
@@ -97,7 +97,7 @@ public abstract class PowerUp extends Chr implements CollisionListener {
     
     public final static class BigBattery extends Battery {
         @Override
-        protected final Panmage getImage() {
+        protected final Panimation getImage() {
             return getRandomPlayerContext().pi.batteryBig;
         }
         
