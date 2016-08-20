@@ -190,9 +190,11 @@ public final class BotsnBoltsGame extends BaseGame {
                 }
             }
         }
-        final Panimation batteryBig = newAnimation(pre + "battery.big", pre + "BatteryBig.png", 16, new FinPanple2(8, -1), new FinPanple2(-6, 2), new FinPanple2(6, 14), 2);
+        final Panple oBattery = new FinPanple2(8, -1);
+        final Panimation batteryMed = newAnimation(pre + "battery.med", pre + "BatteryMedium.png", 16, oBattery, new FinPanple2(-4, 2), new FinPanple2(4, 10), 2);
+        final Panimation batteryBig = newAnimation(pre + "battery.big", pre + "BatteryBig.png", 16, oBattery, new FinPanple2(-6, 2), new FinPanple2(6, 14), 2);
         final HudMeterImages hudMeterImages = newHudMeterImages(pre + "Meter", pre + "Meter.png");
-        return new PlayerImages(basicSet, shootSet, hurt, basicProjectile, burst, ball, batteryBig, hudMeterImages);
+        return new PlayerImages(basicSet, shootSet, hurt, basicProjectile, burst, ball, batteryMed, batteryBig, hudMeterImages);
     }
     
     private final static PlayerImagesSubSet loadPlayerImagesSubSet(final String path, final String name, final boolean startNeeded, final Panple os, final Panple o, final Panple oj) {
@@ -254,7 +256,7 @@ public final class BotsnBoltsGame extends BaseGame {
         final Pangine engine = Pangine.getEngine();
         for (int i = 0; i < size; i++) {
             final String iid = id + "." + i;
-            final Panmage image = engine.createImage(iid, o, null, null, imgs[i]);
+            final Panmage image = engine.createImage(iid, o, min, max, imgs[i]);
             frames[i] = engine.createFrame(PRE_FRM + iid, image, dur);
         }
         return engine.createAnimation(PRE_ANM + id, frames);

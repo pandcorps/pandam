@@ -593,12 +593,13 @@ public final class Player extends Chr {
         private final Panmage basicProjectile;
         protected final Panimation burst;
         private final Panmage[] ball;
+        protected final Panimation batteryMedium;
         protected final Panimation batteryBig;
         private final HudMeterImages hudMeterImages;
         
         protected PlayerImages(final PlayerImagesSubSet basicSet, final PlayerImagesSubSet shootSet, final Panmage hurt,
                                final Panmage basicProjectile, final Panimation burst, final Panmage[] ball,
-                               final Panimation batteryBig,
+                               final Panimation batteryMedium, final Panimation batteryBig,
                                final HudMeterImages hudMeterImages) {
             this.basicSet = basicSet;
             this.shootSet = shootSet;
@@ -606,6 +607,7 @@ public final class Player extends Chr {
             this.basicProjectile = basicProjectile;
             this.burst = burst;
             this.ball = ball;
+            this.batteryMedium = batteryMedium;
             this.batteryBig = batteryBig;
             this.hudMeterImages = hudMeterImages;
         }
