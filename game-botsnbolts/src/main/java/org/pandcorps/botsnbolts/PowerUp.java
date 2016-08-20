@@ -82,6 +82,19 @@ public abstract class PowerUp extends Chr implements CollisionListener {
         }
     }
     
+    public final static class MediumBattery extends Battery {
+        @Override
+        protected final Panmage getImage() {
+            //return getRandomPlayerContext().pi.batteryMedium;
+            return getRandomPlayerContext().pi.batteryBig; //TODO
+        }
+        
+        @Override
+        protected final int getAmount() {
+            return 4;
+        }
+    }
+    
     public final static class BigBattery extends Battery {
         @Override
         protected final Panmage getImage() {
