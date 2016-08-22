@@ -105,7 +105,7 @@ public final class BotsnBoltsGame extends BaseGame {
     }
     
     private final static void loadResources() {
-        font = Fonts.getClassics(new FontRequest(8), Pancolor.WHITE, Pancolor.BLACK);
+        font = Fonts.getClassics(new FontRequest(8), Pancolor.WHITE, Pancolor.BLACK); //TODO 64 characters
         loadDoors();
         loadMisc();
         loadEnemies();
@@ -173,6 +173,7 @@ public final class BotsnBoltsGame extends BaseGame {
         final Pangine engine = Pangine.getEngine();
         final Panmage hurt = newPlayerImage(PRE_IMG + "." + name + ".hurt", oj, pre + "Hurt");
         final Panmage basicProjectile = engine.createImage(pre + "Projectile", new FinPanple2(3, 3), new FinPanple2(-3, -1), new FinPanple2(5, 3), pre + "Projectile.png");
+        final Panimation projectile2 = newAnimation(pre + "Projectile2", pre + "Projectile2.png", 16, new FinPanple2(7, 7), new FinPanple2(-4, -4), new FinPanple2(8, 6), 4);
         final Panimation burst = newAnimation(pre + "Burst", pre + "Burst.png", 16, CENTER_16, 2);
         final Img[] ballImgs = Imtil.loadStrip(pre + "Ball.png", 16);
         final Panmage ball[] = new Panmage[8];
@@ -194,7 +195,7 @@ public final class BotsnBoltsGame extends BaseGame {
         final Panimation batteryMed = newAnimation(pre + "battery.med", pre + "BatteryMedium.png", 16, oBattery, new FinPanple2(-4, 2), new FinPanple2(4, 10), 2);
         final Panimation batteryBig = newAnimation(pre + "battery.big", pre + "BatteryBig.png", 16, oBattery, new FinPanple2(-6, 2), new FinPanple2(6, 14), 2);
         final HudMeterImages hudMeterImages = newHudMeterImages(pre + "Meter", pre + "Meter.png");
-        return new PlayerImages(basicSet, shootSet, hurt, basicProjectile, burst, ball, batteryMed, batteryBig, hudMeterImages);
+        return new PlayerImages(basicSet, shootSet, hurt, basicProjectile, projectile2, burst, ball, batteryMed, batteryBig, hudMeterImages);
     }
     
     private final static PlayerImagesSubSet loadPlayerImagesSubSet(final String path, final String name, final boolean startNeeded, final Panple os, final Panple o, final Panple oj) {
@@ -388,7 +389,7 @@ public final class BotsnBoltsGame extends BaseGame {
                 tm.setBackground(0, j, imgMap[0][0], Tile.BEHAVIOR_SOLID);
                 tm.setBackground(end, j, imgMap[0][2], Tile.BEHAVIOR_SOLID);
             }
-            tm.setBackground(4, 2, imgMap[1][3], Tile.BEHAVIOR_SOLID);
+            /*tm.setBackground(4, 2, imgMap[1][3], Tile.BEHAVIOR_SOLID);
             tm.setBackground(4, 3, imgMap[0][3], Tile.BEHAVIOR_SOLID);
             tm.setBackground(5, 2, imgMap[1][4], Tile.BEHAVIOR_SOLID);
             tm.setBackground(5, 3, imgMap[0][4], Tile.BEHAVIOR_SOLID);
@@ -398,7 +399,7 @@ public final class BotsnBoltsGame extends BaseGame {
             new SentryGun(8, 3);
             final BigBattery battery = new BigBattery();
             battery.getPosition().set(200, 96, DEPTH_POWER_UP);
-            room.addActor(battery);
+            room.addActor(battery);*/
             final Player player = new Player(pc);
             player.getPosition().set(48, 96, DEPTH_PLAYER);
             room.addActor(player);
