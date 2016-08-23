@@ -209,6 +209,8 @@ public final class Player extends Chr {
         if ((v > 0) && !isGrounded()) {
             v = 0;
         }
+        startCharge = -1000;
+        lastCharge = -1000;
     }
     
     protected final void addHealth(final int amount) {
@@ -571,6 +573,12 @@ public final class Player extends Chr {
         protected final void createBasicProjectile(final Player player, final float vx, final float vy) {
             new Projectile(player, vx, vy).setView(player.pi.basicProjectile);
         }
+        
+        protected final void shootSpecial(final Player player, final Panimation anm) {
+            player.lastShot = Pangine.getEngine().getClock();
+            new Projectile(player, VEL_PROJECTILE, 0).setView(anm);
+            player.blinkTimer = 0;
+        }
     }
     
     protected final static class PlayerContext {
@@ -596,6 +604,7 @@ public final class Player extends Chr {
         private final Panmage hurt;
         private final Panmage basicProjectile;
         private final Panimation projectile2;
+        private final Panimation projectile3;
         protected final Panimation burst;
         private final Panmage[] ball;
         protected final Panimation batteryMedium;
@@ -603,7 +612,7 @@ public final class Player extends Chr {
         private final HudMeterImages hudMeterImages;
         
         protected PlayerImages(final PlayerImagesSubSet basicSet, final PlayerImagesSubSet shootSet, final Panmage hurt,
-                               final Panmage basicProjectile, final Panimation projectile2,
+                               final Panmage basicProjectile, final Panimation projectile2, final Panimation projectile3,
                                final Panimation burst, final Panmage[] ball,
                                final Panimation batteryMedium, final Panimation batteryBig,
                                final HudMeterImages hudMeterImages) {
@@ -612,6 +621,7 @@ public final class Player extends Chr {
             this.hurt = hurt;
             this.basicProjectile = basicProjectile;
             this.projectile2 = projectile2;
+            this.projectile3 = projectile3;
             this.burst = burst;
             this.ball = ball;
             this.batteryMedium = batteryMedium;
@@ -699,10 +709,13 @@ public final class Player extends Chr {
             }
             player.lastCharge = clock;
             final long diff = clock - player.startCharge;
-            if (diff > CHARGE_TIME_BIG) {
-                //TODO Show big charging effect
-            } else if (diff > CHARGE_TIME_MEDIUM) {
-                //TODO Show medium charging effect
+            if (diff > CHARGE_TIME_MEDIUM) {
+                player.blinkTimer = 0;
+                if (diff > CHARGE_TIME_BIG) {
+                    //TODO Show big charging effect
+                } else {
+                    //TODO Show medium charging effect
+                }
             }
         }
         
@@ -710,9 +723,9 @@ public final class Player extends Chr {
         protected final void onShootEnd(final Player player) {
             final long diff = Pangine.getEngine().getClock() - player.startCharge;
             if (diff > CHARGE_TIME_BIG) {
-                //TODO Shoot big charged shot
+                shootSpecial(player, player.pi.projectile3);
             } else if (diff > CHARGE_TIME_MEDIUM) {
-                //TODO Shoot medium charged shot
+                shootSpecial(player, player.pi.projectile2);
             }
         }
         
