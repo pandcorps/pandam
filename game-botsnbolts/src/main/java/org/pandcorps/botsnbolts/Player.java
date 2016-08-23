@@ -36,6 +36,8 @@ public final class Player extends Chr {
     private final static int SHOOT_DELAY_RAPID = 3;
     private final static int SHOOT_DELAY_SPREAD = 15;
     private final static int SHOOT_TIME = 12;
+    private final static int CHARGE_TIME_MEDIUM = 15;
+    private final static int CHARGE_TIME_BIG = 45;
     private final static int INVINCIBLE_TIME = 60;
     private final static int HURT_TIME = 15;
     private final static int RUN_TIME = 5;
@@ -55,6 +57,8 @@ public final class Player extends Chr {
     private int runTimer = 0;
     private int blinkTimer = 0;
     private long lastShot = -1000;
+    private long startCharge = -1000;
+    private long lastCharge = -1000;
     private long lastHurt = -1000;
     private int wallTimer = 0;
     private boolean wallMirror = false;
@@ -682,11 +686,34 @@ public final class Player extends Chr {
         @Override
         protected final void onShootStart(final Player player) {
             shoot(player);
+            final long clock = Pangine.getEngine().getClock();
+            player.startCharge = clock;
+            player.lastCharge = clock;
+        }
+        
+        @Override
+        protected final void onShooting(final Player player) {
+            final long clock = Pangine.getEngine().getClock();
+            if (clock - player.lastCharge > 2) {
+                player.startCharge = clock;
+            }
+            player.lastCharge = clock;
+            final long diff = clock - player.startCharge;
+            if (diff > CHARGE_TIME_BIG) {
+                //TODO Show big charging effect
+            } else if (diff > CHARGE_TIME_MEDIUM) {
+                //TODO Show medium charging effect
+            }
         }
         
         @Override
         protected final void onShootEnd(final Player player) {
-            //TODO Shoot charged shot if ready
+            final long diff = Pangine.getEngine().getClock() - player.startCharge;
+            if (diff > CHARGE_TIME_BIG) {
+                //TODO Shoot big charged shot
+            } else if (diff > CHARGE_TIME_MEDIUM) {
+                //TODO Shoot medium charged shot
+            }
         }
         
         @Override
