@@ -23,6 +23,8 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.botsnbolts;
 
 import org.pandcorps.botsnbolts.HudMeter.*;
+import org.pandcorps.core.*;
+import org.pandcorps.game.actor.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.action.*;
 import org.pandcorps.pandam.impl.*;
@@ -605,6 +607,8 @@ public final class Player extends Chr {
         private final Panmage basicProjectile;
         private final Panimation projectile2;
         private final Panimation projectile3;
+        private final Panimation charge;
+        private final Panimation chargeVert;
         protected final Panimation burst;
         private final Panmage[] ball;
         protected final Panimation batteryMedium;
@@ -613,6 +617,7 @@ public final class Player extends Chr {
         
         protected PlayerImages(final PlayerImagesSubSet basicSet, final PlayerImagesSubSet shootSet, final Panmage hurt,
                                final Panmage basicProjectile, final Panimation projectile2, final Panimation projectile3,
+                               final Panimation charge, final Panimation chargeVert,
                                final Panimation burst, final Panmage[] ball,
                                final Panimation batteryMedium, final Panimation batteryBig,
                                final HudMeterImages hudMeterImages) {
@@ -622,6 +627,8 @@ public final class Player extends Chr {
             this.basicProjectile = basicProjectile;
             this.projectile2 = projectile2;
             this.projectile3 = projectile3;
+            this.charge = charge;
+            this.chargeVert = chargeVert;
             this.burst = burst;
             this.ball = ball;
             this.batteryMedium = batteryMedium;
@@ -711,12 +718,46 @@ public final class Player extends Chr {
             final long diff = clock - player.startCharge;
             if (diff > CHARGE_TIME_MEDIUM) {
                 player.blinkTimer = 0;
+                final PlayerImages pi = player.pi;
                 if (diff > CHARGE_TIME_BIG) {
-                    //TODO Show big charging effect
+                    charge(player, pi.charge, pi.chargeVert); //TODO Show big charging effect
                 } else {
-                    //TODO Show medium charging effect
+                    charge(player, pi.charge, pi.chargeVert);
                 }
             }
+        }
+        
+        private final void charge(final Player player, final Panimation diag, final Panimation vert) {
+            final long c = Pangine.getEngine().getClock() % 8;
+            if (c == 0) {
+                chargeDiag(player, diag, 1, 1, 0);
+            } else if (c == 1) {
+                chargeDiag(player, diag, -1, -1, 2);
+            } else if (c == 2) {
+                charge(player, vert, 1, -4, 4, 1, 8, 16, 0);
+            } else if (c == 3) {
+                charge(player, vert, -1, 8, 16, 1, -4, 4, 1);
+            } else if (c == 4) {
+                chargeDiag(player, diag, -1, 1, 1);
+            } else if (c == 5) {
+                chargeDiag(player, diag, 1, -1, 3);
+            } else if (c == 6) {
+                charge(player, vert, 1, -4, 4, -1, 8, 16, 2);
+            } else {
+                charge(player, vert, 1, 8, 16, 1, -4, 4, 3);
+            }
+        }
+        
+        private final void chargeDiag(final Player player, final Panimation anm, final int xdir, final int ydir, final int rot) {
+            charge(player, anm, xdir, 4, 12, ydir, 4, 12, rot);
+        }
+        
+        private final void charge(final Player player, final Panimation anm, final int xdir, final int xmin, final int xmax, final int ydir, final int ymin, final int ymax, final int rot) {
+            final Burst burst = new Burst(anm);
+            final Panple ppos = player.getPosition();
+            burst.getPosition().set(ppos.getX() + (xdir * Mathtil.randi(xmin, xmax)), ppos.getY() + 12 + (ydir * Mathtil.randi(ymin, ymax)), BotsnBoltsGame.DEPTH_BURST);
+            burst.setRot(rot);
+            player.getLayer().addActor(burst);
         }
         
         @Override
