@@ -28,6 +28,7 @@ public abstract class HudMeter extends Panctor {
     protected final static int MAX_VALUE = 28;
     
     private final HudMeterImages images;
+    private int displayValue = MAX_VALUE;
     
     protected HudMeter(final HudMeterImages images) {
         this.images = images;
@@ -41,7 +42,13 @@ public abstract class HudMeter extends Panctor {
         }
         final Panple pos = getPosition();
         final float x = pos.getX(), y = pos.getY(), z = pos.getZ();
-        final int value = getValue();
+        final int actualValue = getValue();
+        if (actualValue < displayValue) {
+            displayValue--;
+        } else if (actualValue > displayValue) {
+            displayValue++;
+        }
+        final int value = displayValue;
         final int end = MAX_VALUE - 1;
         for (int i = 0; i < MAX_VALUE; i++) {
             final HudMeterImages set = (value <= i) ? BotsnBoltsGame.hudMeterBlank : images;
