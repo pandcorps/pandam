@@ -126,8 +126,14 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
         final Collidable collider = event.getCollider();
         if (collider.getClass() == Projectile.class) {
             final Projectile projectile = (Projectile) collider;
-            temperature += 5;
-            if (temperature >= def.nextTemperature && (def.requiredShootMode == null || def.requiredShootMode == projectile.shootMode)) {
+            final int projectilePower = projectile.power;
+            if (projectilePower <= 0) {
+                return;
+            }
+            temperature += (5 * projectilePower);
+            if (temperature >= def.nextTemperature
+                    && (def.requiredShootMode == null || def.requiredShootMode == projectile.shootMode)
+                    && (def.requiredPower == null || def.requiredPower.intValue() <= projectilePower)) {
                 if (def.next == null) {
                     openDoor();
                 } else {
@@ -174,14 +180,17 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
         private final ShootableDoorDefinition next;
         private final int nextTemperature;
         private final ShootMode requiredShootMode;
+        private final Integer requiredPower;
         private ShootableDoorDefinition prev = null;
         
-        protected ShootableDoorDefinition(final Panframe[] door, final Panframe[][] opening, final ShootableDoorDefinition next, final int nextTemperature, final ShootMode requiredShootMode) {
+        protected ShootableDoorDefinition(final Panframe[] door, final Panframe[][] opening, final ShootableDoorDefinition next,
+                                          final int nextTemperature, final ShootMode requiredShootMode, final Integer requiredPower) {
             this.door = door;
             this.opening = opening;
             this.next = next;
             this.nextTemperature = nextTemperature;
             this.requiredShootMode = requiredShootMode;
+            this.requiredPower = requiredPower;
             if (next != null) {
                 next.prev = this;
             }

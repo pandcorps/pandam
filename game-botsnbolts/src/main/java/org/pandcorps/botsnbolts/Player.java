@@ -764,7 +764,7 @@ public final class Player extends Chr {
         protected final void onShootEnd(final Player player) {
             final long diff = Pangine.getEngine().getClock() - player.startCharge;
             if (diff > CHARGE_TIME_BIG) {
-                shootSpecial(player, 5);
+                shootSpecial(player, Projectile.POWER_MAXIMUM);
             } else if (diff > CHARGE_TIME_MEDIUM) {
                 shootSpecial(player, Projectile.POWER_MEDIUM);
             }
