@@ -30,12 +30,16 @@ import org.pandcorps.pandam.event.boundary.*;
 import org.pandcorps.pandax.*;
 
 public final class Projectile extends Pandy implements Collidable, AllOobListener {
+    protected final static int POWER_MEDIUM = 3;
+    
     private final Player src;
     protected final ShootMode shootMode;
+    protected int power;
     
-    protected Projectile(final Player src, final float vx, final float vy) {
+    protected Projectile(final Player src, final float vx, final float vy, final int power) {
         this.src = src;
         shootMode = src.prf.shootMode;
+        setPower(power);
         final Panple srcPos = src.getPosition();
         final boolean mirror = src.isMirror();
         setMirror(mirror);
@@ -43,6 +47,20 @@ public final class Projectile extends Pandy implements Collidable, AllOobListene
         getPosition().set(srcPos.getX() + (xm * 15), srcPos.getY() + 13, BotsnBoltsGame.DEPTH_PROJECTILE);
         getVelocity().set(xm * vx, vy);
         src.getLayer().addActor(this);
+    }
+    
+    protected final void setPower(final int power) {
+        this.power = power;
+        if (power > POWER_MEDIUM) {
+            setView(src.pi.projectile3);
+        } else if (power > 1) {
+            setView(src.pi.projectile2);
+        } else if (power > 0) {
+            setView(src.pi.basicProjectile);
+        } else {
+            burst();
+            destroy();
+        }
     }
     
     protected final void burst() {

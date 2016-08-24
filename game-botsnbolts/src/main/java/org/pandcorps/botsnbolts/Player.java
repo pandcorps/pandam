@@ -573,12 +573,12 @@ public final class Player extends Chr {
         }
         
         protected final void createBasicProjectile(final Player player, final float vx, final float vy) {
-            new Projectile(player, vx, vy).setView(player.pi.basicProjectile);
+            new Projectile(player, vx, vy, 1);
         }
         
-        protected final void shootSpecial(final Player player, final Panimation anm) {
+        protected final void shootSpecial(final Player player, final int power) {
             player.lastShot = Pangine.getEngine().getClock();
-            new Projectile(player, VEL_PROJECTILE, 0).setView(anm);
+            new Projectile(player, VEL_PROJECTILE, 0, power);
             player.blinkTimer = 0;
         }
     }
@@ -604,9 +604,9 @@ public final class Player extends Chr {
         private final PlayerImagesSubSet basicSet;
         private final PlayerImagesSubSet shootSet;
         private final Panmage hurt;
-        private final Panmage basicProjectile;
-        private final Panimation projectile2;
-        private final Panimation projectile3;
+        protected final Panmage basicProjectile;
+        protected final Panimation projectile2;
+        protected final Panimation projectile3;
         private final Panimation charge;
         private final Panimation chargeVert;
         protected final Panimation burst;
@@ -764,9 +764,9 @@ public final class Player extends Chr {
         protected final void onShootEnd(final Player player) {
             final long diff = Pangine.getEngine().getClock() - player.startCharge;
             if (diff > CHARGE_TIME_BIG) {
-                shootSpecial(player, player.pi.projectile3);
+                shootSpecial(player, 5);
             } else if (diff > CHARGE_TIME_MEDIUM) {
-                shootSpecial(player, player.pi.projectile2);
+                shootSpecial(player, Projectile.POWER_MEDIUM);
             }
         }
         
