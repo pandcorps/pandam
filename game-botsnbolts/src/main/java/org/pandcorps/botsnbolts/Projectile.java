@@ -52,11 +52,11 @@ public final class Projectile extends Pandy implements Collidable, AllOobListene
     protected final void setPower(final int power) {
         this.power = power;
         if (power > POWER_MEDIUM) {
-            setView(src.pi.projectile3);
+            changeView(src.pi.projectile3);
         } else if (power > 1) {
-            setView(src.pi.projectile2);
+            changeView(src.pi.projectile2);
         } else if (power > 0) {
-            setView(src.pi.basicProjectile);
+            changeView(src.pi.basicProjectile);
         } else {
             burst();
             destroy();

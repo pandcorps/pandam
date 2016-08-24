@@ -438,6 +438,7 @@ public final class GlPanmage extends Panmage {
 	            /*
 	            90 degree counter-clockwise rotation.
 	            See Panctor.setRot comments.
+	            Also see Panmage.render which alters origin depending on rotation.
 	            */
 	            /*trleft = tbdown;
                 trright = tbup;

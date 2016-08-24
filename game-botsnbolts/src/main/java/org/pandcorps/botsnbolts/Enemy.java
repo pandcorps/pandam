@@ -50,6 +50,9 @@ public abstract class Enemy extends Panctor implements CollisionListener {
     
     protected void onShot(final Projectile prj) {
         final int oldHealth = health, oldPower = prj.power;
+        if (oldPower <= 0) {
+            return;
+        }
         health -= oldPower;
         if (health <= 0) {
             prj.burst(this);
