@@ -611,6 +611,7 @@ public final class Player extends Chr {
         private final Panimation chargeVert;
         protected final Panimation burst;
         private final Panmage[] ball;
+        protected final Panimation batterySmall;
         protected final Panimation batteryMedium;
         protected final Panimation batteryBig;
         protected final Panmage powerBox;
@@ -632,6 +633,7 @@ public final class Player extends Chr {
             this.chargeVert = chargeVert;
             this.burst = burst;
             this.ball = ball;
+            this.batterySmall = null; //TODO
             this.batteryMedium = batteryMedium;
             this.batteryBig = batteryBig;
             this.powerBox = powerBox;
