@@ -66,6 +66,8 @@ public final class BotsnBoltsGame extends BaseGame {
     protected final static FinPanple2 os = new FinPanple2(15, 1);
     protected final static FinPanple2 ojs = new FinPanple2(15, 4);
     protected final static FinPanple originOverlay = new FinPanple(0, 0, DEPTH_OVERLAY);
+    private final static FinPanple2 minCube = new FinPanple2(-5, -5);
+    private final static FinPanple2 maxCube = new FinPanple2(5, 5);
     
     protected static Queue<Runnable> loaders = new LinkedList<Runnable>();
     protected static MultiFont font = null;
@@ -141,11 +143,10 @@ public final class BotsnBoltsGame extends BaseGame {
     private final static void loadEnemies() {
         final Pangine engine = Pangine.getEngine();
         final Img[] sentryImgs = Imtil.loadStrip(RES + "enemy/SentryGun.png", 16);
-        final Panple sentryO = new FinPanple2(8, 8), sentryMin = new FinPanple2(-5, -5), sentryMax = new FinPanple2(5, 5);
         final int sentrySize = sentryImgs.length;
         sentryGun = new Panmage[sentrySize];
         for (int i = 0; i < sentrySize; i++) {
-            sentryGun[i] = engine.createImage("sentry.gun." + i, sentryO, sentryMin, sentryMax, sentryImgs[i]);
+            sentryGun[i] = engine.createImage("sentry.gun." + i, CENTER_16, minCube, maxCube, sentryImgs[i]);
         }
         enemyProjectile = engine.createImage("projectile.enemy", CENTER_8, new FinPanple2(-2, -2), new FinPanple2(2, 2), RES + "/enemy/EnemyProjectile.png");
         enemyBurst = newAnimation("burst.enemy", RES + "/enemy/EnemyBurst.png", 16, CENTER_16, 2);
@@ -199,7 +200,7 @@ public final class BotsnBoltsGame extends BaseGame {
         final Panple oBattery = new FinPanple2(8, -1);
         final Panimation batteryMed = newAnimation(pre + "battery.med", pre + "BatteryMedium.png", 16, oBattery, new FinPanple2(-4, 2), new FinPanple2(4, 10), 2);
         final Panimation batteryBig = newAnimation(pre + "battery.big", pre + "BatteryBig.png", 16, oBattery, new FinPanple2(-6, 2), new FinPanple2(6, 14), 2);
-        final Panmage powerBox = null; //TODO
+        final Panmage powerBox = engine.createImage(pre + "PowerBox", CENTER_16, minCube, maxCube, pre + "PowerBox.png");
         final HudMeterImages hudMeterImages = newHudMeterImages(pre + "Meter", pre + "Meter.png");
         return new PlayerImages(basicSet, shootSet, hurt, basicProjectile, projectile2, projectile3, charge, chargeVert, burst, ball, batteryMed, batteryBig, powerBox, hudMeterImages);
     }
