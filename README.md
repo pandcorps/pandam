@@ -1,5 +1,7 @@
 Pandam (TM) is a 2D event-driven game engine for Java (TM) and/or Android (TM).
 
+[![Build Status](https://travis-ci.org/pandcorps/pandam.svg?branch=master)](https://travis-ci.org/pandcorps/pandam)
+
 The Pandam source code includes the code for several games including Fur-Guardians (TM). Get it here on Google Play (TM):
 
 http://play.google.com/store/apps/details?id=org.pandcorps.furguardians
