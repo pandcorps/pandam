@@ -138,6 +138,18 @@ public abstract class Enemy extends Panctor implements CollisionListener {
         }
     }
     
+    protected final static class PowerBox extends CubeEnemy {
+        protected PowerBox(final int x, final int y) {
+            super(x, y, 1);
+            setView(getNearestPlayer().pi.powerBox);
+        }
+        
+        @Override
+        protected final PowerUp pickAward() {
+            return new BigBattery();
+        }
+    }
+    
     protected final static class SentryGun extends CubeEnemy implements StepListener {
         private int timer = 0;
         private int dir;

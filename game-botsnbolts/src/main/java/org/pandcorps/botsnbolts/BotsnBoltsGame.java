@@ -74,6 +74,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static Panframe[] doorTunnelOverlay = null;
     protected static ShootableDoorDefinition doorCyan = null;
     protected static ShootableDoorDefinition doorGold = null;
+    protected static ShootableDoorDefinition doorSilver = null;
     protected static Panmage[] cube = null;
     protected static Panmage[] sentryGun = null;
     protected static Panmage enemyProjectile = null;
@@ -121,8 +122,9 @@ public final class BotsnBoltsGame extends BaseGame {
         Img.setTemporary(false, imgsOpening);
         doorCyan = newDoorDefinition("door.cyan", imgsClosed, imgsOpening, null, 0, null, null);
         final short s0 = 0, s48 = 48, s64 = 64, s96 = 96, s128 = 128, s144 = 144, s192 = 192, smax = Pancolor.MAX_VALUE;
+        doorSilver = filterDoor("door.silver", imgsClosed, imgsOpening, s0, smax, smax, s192, s192, s192, s0, s192, s192, s128, s128, s128, null, 0, null, Integer.valueOf(Projectile.POWER_MAXIMUM));
         final ShootableDoorDefinition doorRed, doorRedOrange, doorOrange, doorOrangeGold;
-        doorRed = filterDoor("door.red", imgsClosed, imgsOpening, s0, smax, smax, smax, s0, s0, s0, s192, s192, s192, s0, s0, null, 15, Player.SHOOT_RAPID, null);
+        doorRed = filterDoor("door.red", imgsClosed, imgsOpening, s192, s192, s192, smax, s0, s0, s128, s128, s128, s192, s0, s0, null, 15, Player.SHOOT_RAPID, null);
         doorRedOrange = filterDoor("door.red.orange", imgsClosed, null, smax, s0, s0, smax, s64, s0, s192, s0, s0, s192, s48, s0, doorRed, 10, Player.SHOOT_RAPID, null);
         doorOrange = filterDoor("door.orange", imgsClosed, null, smax, s64, s0, smax, s128, s0, s192, s48, s0, s192, s96, s0, doorRedOrange, 6, null, null);
         doorOrangeGold = filterDoor("door.orange.gold", imgsClosed, null, smax, s128, s0, smax, s192, s0, s192, s96, s0, s192, s144, s0, doorOrange, 3, null, null);
@@ -197,8 +199,9 @@ public final class BotsnBoltsGame extends BaseGame {
         final Panple oBattery = new FinPanple2(8, -1);
         final Panimation batteryMed = newAnimation(pre + "battery.med", pre + "BatteryMedium.png", 16, oBattery, new FinPanple2(-4, 2), new FinPanple2(4, 10), 2);
         final Panimation batteryBig = newAnimation(pre + "battery.big", pre + "BatteryBig.png", 16, oBattery, new FinPanple2(-6, 2), new FinPanple2(6, 14), 2);
+        final Panmage powerBox = null; //TODO
         final HudMeterImages hudMeterImages = newHudMeterImages(pre + "Meter", pre + "Meter.png");
-        return new PlayerImages(basicSet, shootSet, hurt, basicProjectile, projectile2, projectile3, charge, chargeVert, burst, ball, batteryMed, batteryBig, hudMeterImages);
+        return new PlayerImages(basicSet, shootSet, hurt, basicProjectile, projectile2, projectile3, charge, chargeVert, burst, ball, batteryMed, batteryBig, powerBox, hudMeterImages);
     }
     
     private final static PlayerImagesSubSet loadPlayerImagesSubSet(final String path, final String name, final boolean startNeeded, final Panple os, final Panple o, final Panple oj) {
@@ -398,6 +401,7 @@ public final class BotsnBoltsGame extends BaseGame {
             tm.setBackground(5, 3, imgMap[0][4], Tile.BEHAVIOR_SOLID);
             new ShootableDoor(0, 1, doorCyan);
             new ShootableDoor(end, 1, doorGold);
+            //new ShootableDoor(end, 1, doorSilver);
             //new SentryGun(11, 1);
             new SentryGun(8, 3);
             final BigBattery battery = new BigBattery();
