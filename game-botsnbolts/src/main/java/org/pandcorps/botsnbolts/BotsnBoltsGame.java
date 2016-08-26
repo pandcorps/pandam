@@ -198,11 +198,12 @@ public final class BotsnBoltsGame extends BaseGame {
             }
         }
         final Panple oBattery = new FinPanple2(8, -1);
+        final Panimation batterySml = null; //TODO
         final Panimation batteryMed = newAnimation(pre + "battery.med", pre + "BatteryMedium.png", 16, oBattery, new FinPanple2(-4, 2), new FinPanple2(4, 10), 2);
         final Panimation batteryBig = newAnimation(pre + "battery.big", pre + "BatteryBig.png", 16, oBattery, new FinPanple2(-6, 2), new FinPanple2(6, 14), 2);
         final Panmage powerBox = engine.createImage(pre + "PowerBox", CENTER_16, minCube, maxCube, pre + "PowerBox.png");
         final HudMeterImages hudMeterImages = newHudMeterImages(pre + "Meter", pre + "Meter.png");
-        return new PlayerImages(basicSet, shootSet, hurt, basicProjectile, projectile2, projectile3, charge, chargeVert, burst, ball, batteryMed, batteryBig, powerBox, hudMeterImages);
+        return new PlayerImages(basicSet, shootSet, hurt, basicProjectile, projectile2, projectile3, charge, chargeVert, burst, ball, batterySml, batteryMed, batteryBig, powerBox, hudMeterImages);
     }
     
     private final static PlayerImagesSubSet loadPlayerImagesSubSet(final String path, final String name, final boolean startNeeded, final Panple os, final Panple o, final Panple oj) {
