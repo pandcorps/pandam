@@ -150,6 +150,7 @@ public class Level {
     static {
     	oneUseTemplates.add(GemMsgTemplate.class);
     	oneUseTemplates.add(GiantTemplate.class);
+    	oneUseTemplates.add(EnemyPackTemplate.class);
     }
     
     protected abstract static class Theme {
@@ -1144,6 +1145,7 @@ public class Level {
         protected final void addGiantTemplate() {
             if (isNormalTheme() && getDefeatedWorlds() >= 5) {
                 addTemplate(new GiantTemplate());
+                addTemplate(new EnemyPackTemplate());
             }
         }
         
@@ -3460,11 +3462,24 @@ public class Level {
             final int base = floor + 1 + floatOffset;
             solidBlock(x, base);
             final int n = w - 4;
-            final EnemyDefinition def = null; //TODO
+            final EnemyDefinition def = pickEnemy();
             for (int i = 0; i < n; i++) {
                 enemy(def, x + 2 + i, base);
             }
             solidBlock(x + w - 1, base);
+        }
+        
+        private final EnemyDefinition pickEnemy() {
+            final List<EnemyDefinition> options = new ArrayList<EnemyDefinition>(3);
+            for (final EnemyDefinition def : FurGuardiansGame.enemies) {
+                if ((def == FurGuardiansGame.imp) || (def == FurGuardiansGame.hobTroll) || (def == FurGuardiansGame.hobOgre)) {
+                    options.add(def);
+                }
+            }
+            if (options.isEmpty()) {
+                options.add(FurGuardiansGame.imp);
+            }
+            return Mathtil.rand(options);
         }
     }
     

@@ -277,6 +277,8 @@ public class FurGuardiansGame extends BaseGame {
 	protected static Panimation owl = null;
 	protected final static List<EnemyDefinition> allEnemies = new ArrayList<EnemyDefinition>();
 	protected static List<EnemyDefinition> enemies = null;
+	protected static EnemyDefinition hobTroll = null;
+	protected static EnemyDefinition hobOgre = null;
 	protected static EnemyDefinition imp = null;
 	protected static EnemyDefinition armoredImp = null;
 	protected static EnemyDefinition spikedImp = null;
@@ -1350,13 +1352,15 @@ public class FurGuardiansGame extends BaseGame {
 			drolock = new EnemyDefinition("Drolock", 4, null, false, 0, 0);
 			drolock.projectile = projectile1;
 			Coltil.set(allEnemies, Level.DROLOCK, drolock); // Teleport/shoot periodically
-		    Coltil.set(allEnemies, Level.HOB_TROLL, new EnemyDefinition("Hob-troll", 2, null, true)); // Was Troblin
+			hobTroll = new EnemyDefinition("Hob-troll", 2, null, true);
+		    Coltil.set(allEnemies, Level.HOB_TROLL, hobTroll); // Was Troblin
 			final ReplacePixelFilter f = new ReplacePixelFilter();
 			replace(f, (short) 104, (short) 120, (short) 172);
 			replace(f, (short) 80, (short) 96, (short) 144);
 			replace(f, (short) 64, (short) 80, (short) 112);
 			replace(f, (short) 48, (short) 56, (short) 80);
-			Coltil.set(allEnemies, Level.HOB_OGRE, new EnemyDefinition("Hob-ogre", 2, f, false)); // Was Obglin
+			hobOgre = new EnemyDefinition("Hob-ogre", 2, f, false);
+			Coltil.set(allEnemies, Level.HOB_OGRE, hobOgre); // Was Obglin
 			final int impX = 4, impH = 14;
 			imp = new EnemyDefinition("Imp", 3, null, true, true, impX, impH);
 			Coltil.set(allEnemies, Level.IMP, imp);

@@ -1,3 +1,7 @@
+Added enemy pack template.
+
+*****
+
 1.26.1 (39)
 
 Added Achievements.
