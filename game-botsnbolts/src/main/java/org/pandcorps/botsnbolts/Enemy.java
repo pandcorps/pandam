@@ -88,6 +88,10 @@ public abstract class Enemy extends Panctor implements CollisionListener {
         return PlayerContext.getPlayer(BotsnBoltsGame.pc);
     }
     
+    protected final PlayerContext getPlayerContext() {
+        return BotsnBoltsGame.pc;
+    }
+    
     protected final static class EnemyProjectile extends Pandy implements CollisionListener, AllOobListener {
         protected EnemyProjectile(final Enemy src, final int ox, final int oy, final float vx, final float vy) {
             final Panple srcPos = src.getPosition();
@@ -141,7 +145,7 @@ public abstract class Enemy extends Panctor implements CollisionListener {
     protected final static class PowerBox extends CubeEnemy {
         protected PowerBox(final int x, final int y) {
             super(x, y, 1);
-            setView(getNearestPlayer().pi.powerBox);
+            setView(getPlayerContext().pi.powerBox);
         }
         
         @Override

@@ -428,9 +428,10 @@ public final class BotsnBoltsGame extends BaseGame {
             //new ShootableDoor(end, 1, doorSilver);
             //new SentryGun(11, 1);
             new SentryGun(8, 3);
-            final BigBattery battery = new BigBattery();
-            battery.getPosition().set(200, 96, DEPTH_POWER_UP);
-            room.addActor(battery);
+            //final BigBattery battery = new BigBattery();
+            //battery.getPosition().set(200, 96, DEPTH_POWER_UP);
+            //room.addActor(battery);
+            new PowerBox(12, 1);
             final Player player = new Player(pc);
             player.getPosition().set(48, 96, DEPTH_PLAYER);
             room.addActor(player);

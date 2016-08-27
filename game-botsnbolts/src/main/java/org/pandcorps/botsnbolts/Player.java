@@ -51,6 +51,7 @@ public final class Player extends Chr {
     private final static float VX_SPREAD2;
     private final static float VY_SPREAD2;
     
+    protected final PlayerContext pc;
     protected final Profile prf;
     protected final PlayerImages pi;
     private StateHandler stateHandler = NORMAL_HANDLER;
@@ -79,6 +80,7 @@ public final class Player extends Chr {
     protected Player(final PlayerContext pc) {
         super(PLAYER_X, PLAYER_H);
         pc.player = this;
+        this.pc = pc;
         this.prf = pc.prf;
         this.pi = pc.pi;
         registerInputs(pc.ctrl);
