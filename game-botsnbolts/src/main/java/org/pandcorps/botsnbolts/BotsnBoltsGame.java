@@ -199,8 +199,8 @@ public final class BotsnBoltsGame extends BaseGame {
         }
         final Panple oBattery = new FinPanple2(8, -1);
         final Panimation batterySml = null; //TODO
-        final Panimation batteryMed = newAnimation(pre + "battery.med", pre + "BatteryMedium.png", 16, oBattery, new FinPanple2(-4, 2), new FinPanple2(4, 10), 2);
-        final Panimation batteryBig = newAnimation(pre + "battery.big", pre + "BatteryBig.png", 16, oBattery, new FinPanple2(-6, 2), new FinPanple2(6, 14), 2);
+        final Panimation batteryMed = newOscillation(pre + "battery.med", pre + "BatteryMedium.png", 16, oBattery, new FinPanple2(-4, 2), new FinPanple2(4, 10), 3, 6);
+        final Panimation batteryBig = newOscillation(pre + "battery.big", pre + "BatteryBig.png", 16, oBattery, new FinPanple2(-6, 2), new FinPanple2(6, 14), 3, 6);
         final Panmage powerBox = engine.createImage(pre + "PowerBox", CENTER_16, minCube, maxCube, pre + "PowerBox.png");
         final HudMeterImages hudMeterImages = newHudMeterImages(pre + "Meter", pre + "Meter.png");
         return new PlayerImages(basicSet, shootSet, hurt, basicProjectile, projectile2, projectile3, charge, chargeVert, burst, ball, batterySml, batteryMed, batteryBig, powerBox, hudMeterImages);
@@ -259,16 +259,38 @@ public final class BotsnBoltsGame extends BaseGame {
     }
     
     private final static Panimation newAnimation(final String id, final String path, final int w, final Panple o, final Panple min, final Panple max, final int dur) {
+        return Pangine.getEngine().createAnimation(PRE_ANM + id, newFrames(id, path, w, o, min, max, dur, dur, dur, false));
+    }
+    
+    private final static Panframe[] newFrames(final String id, final String path, final int w, final Panple o, final Panple min, final Panple max,
+                                              final int durStart, final int durMid, final int durEnd, final boolean oscillate) {
         final Img[] imgs = Imtil.loadStrip(path, w);
-        final int size = imgs.length;
-        final Panframe[] frames = new Panframe[size];
+        final int size = imgs.length, end = size - 1;
+        final Panframe[] frames = new Panframe[oscillate ? ((size * 2) - 2) : size];
         final Pangine engine = Pangine.getEngine();
         for (int i = 0; i < size; i++) {
             final String iid = id + "." + i;
             final Panmage image = engine.createImage(iid, o, min, max, imgs[i]);
+            final int dur;
+            if (i == 0) {
+                dur = durStart;
+            } else if (i == end) {
+                dur = durEnd;
+            } else {
+                dur = durMid;
+            }
             frames[i] = engine.createFrame(PRE_FRM + iid, image, dur);
         }
-        return engine.createAnimation(PRE_ANM + id, frames);
+        return frames;
+    }
+    
+    private final static Panimation newOscillation(final String id, final String path, final int w, final Panple o, final Panple min, final Panple max, final int durEdge, final int durMid) {
+        final Panframe[] frames = newFrames(id, path, w, o, min, max, durEdge, durMid, durEdge, true);
+        final int mid = (frames.length / 2) - 1, off = mid + 2;
+        for (int i = 0; i < mid; i++) {
+            frames[off + i] = frames[mid - i];
+        }
+        return Pangine.getEngine().createAnimation(PRE_ANM + id, frames);
     }
     
     private final static Panmage newPlayerImage(final String id, final Panple o, final Img[] imgs, final Img[] imgsMirror, final int i) {
