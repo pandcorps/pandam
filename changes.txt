@@ -1,4 +1,4 @@
-Added enemy pack template.
+Added enemy templates.
 
 *****
 

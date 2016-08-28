@@ -150,6 +150,7 @@ public class Level {
     static {
     	oneUseTemplates.add(GemMsgTemplate.class);
     	oneUseTemplates.add(GiantTemplate.class);
+    	oneUseTemplates.add(ImpEnterArmorTemplate.class);
     	oneUseTemplates.add(EnemyPackTemplate.class);
     }
     
@@ -1145,7 +1146,11 @@ public class Level {
         protected final void addGiantTemplate() {
             if (isNormalTheme() && getDefeatedWorlds() >= 5) {
                 addTemplate(new GiantTemplate());
-                addTemplate(new EnemyPackTemplate());
+                if (Mathtil.rand()) {
+                    addTemplate(new ImpEnterArmorTemplate());
+                } else {
+                    addTemplate(new EnemyPackTemplate());
+                }
             }
         }
         
@@ -3451,6 +3456,20 @@ public class Level {
     	}
     }
     
+    private final static class ImpEnterArmorTemplate extends SimpleTemplate {
+        protected ImpEnterArmorTemplate() {
+            super(6, 6, 0);
+        }
+        
+        @Override
+        protected final void build() {
+            builder.flatten(x, w);
+            final int base = floor + 1 + floatOffset;
+            enemy(FurGuardiansGame.armorBall, x + 1, base);
+            enemy(FurGuardiansGame.imp, x + 4, base);
+        }
+    }
+    
     private final static class EnemyPackTemplate extends SimpleTemplate {
         protected EnemyPackTemplate() {
             super(7, 9, 0);
@@ -3476,10 +3495,7 @@ public class Level {
                     options.add(def);
                 }
             }
-            if (options.isEmpty()) {
-                options.add(FurGuardiansGame.imp);
-            }
-            return Mathtil.rand(options);
+            return options.isEmpty() ? FurGuardiansGame.imp : Mathtil.rand(options);
         }
     }
     

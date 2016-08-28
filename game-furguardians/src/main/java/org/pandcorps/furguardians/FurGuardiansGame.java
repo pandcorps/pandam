@@ -67,7 +67,6 @@ public class FurGuardiansGame extends BaseGame {
 	Enemy Elementals, winged Imp, Banshee, Wraith, Shade, Orc.
 	Nether Wisp in Chaos levels with curse/poison effect.
 	Drolock should walk sometimes.
-	Enemy-specific Level templates (Imp walking into ArmorBall).
 	Gargoyles catch/carry Player, like moving platforms, one can jump to/from them, but not run on them.
 	Cannons on ground that Player enters to be launched.
 	Cannons in air that auto-fire, others that wait for jump input.
@@ -282,6 +281,7 @@ public class FurGuardiansGame extends BaseGame {
 	protected static EnemyDefinition imp = null;
 	protected static EnemyDefinition armoredImp = null;
 	protected static EnemyDefinition spikedImp = null;
+	protected static EnemyDefinition armorBall = null;
 	protected static EnemyDefinition bounceBall = null;
 	protected static EnemyDefinition trollColossus = null;
 	protected static EnemyDefinition ogreBehemoth = null;
@@ -1415,7 +1415,7 @@ public class FurGuardiansGame extends BaseGame {
 			ogreBehemoth = Enemy.newGiantDefinition("Ogre Behemoth", 11, f, false);
 			ogreBehemoth.init(trollColossus);
 			Coltil.set(allEnemies, Level.OGRE_BEHEMOTH, ogreBehemoth);
-			final EnemyDefinition armorBall, thrownImp;
+			final EnemyDefinition thrownImp;
 			armorBall = new EnemyDefinition("Armor Ball", 7, null, false, 0, 0);
 			Enemy.currentWalk = 3;
 			bounceBall = new EnemyDefinition("Bounce Ball", 7, null, false, 0, 4);
