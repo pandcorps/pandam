@@ -27,7 +27,6 @@ import java.util.*;
 import org.pandcorps.botsnbolts.Enemy.*;
 import org.pandcorps.botsnbolts.HudMeter.*;
 import org.pandcorps.botsnbolts.Player.*;
-import org.pandcorps.botsnbolts.PowerUp.*;
 import org.pandcorps.botsnbolts.ShootableDoor.*;
 import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
@@ -176,7 +175,8 @@ public final class BotsnBoltsGame extends BaseGame {
         final Pangine engine = Pangine.getEngine();
         final Panmage hurt = newPlayerImage(PRE_IMG + "." + name + ".hurt", oj, pre + "Hurt");
         final Panmage basicProjectile = engine.createImage(pre + "Projectile", new FinPanple2(3, 3), new FinPanple2(-3, -1), new FinPanple2(5, 3), pre + "Projectile.png");
-        final Panimation projectile2 = newAnimation(pre + "Projectile2", pre + "Projectile2.png", 16, new FinPanple2(7, 7), new FinPanple2(-4, -4), new FinPanple2(8, 6), 4);
+        //final Panimation projectile2 = newAnimation(pre + "Projectile2", pre + "Projectile2.png", 16, new FinPanple2(7, 7), new FinPanple2(-4, -4), new FinPanple2(8, 6), 4);
+        final Panimation projectile2 = newFlipper(pre + "Projectile2", pre + "Projectile2.png", new FinPanple2(7, 7), new FinPanple2(-4, -4), new FinPanple2(8, 6), 4);
         final Panimation projectile3 = projectile2; //TODO Load distinct animation
         final Panimation burst = newAnimation(pre + "Burst", pre + "Burst.png", 16, CENTER_16, 2);
         final Panimation charge = newAnimation(pre + "Charge", pre + "Charge.png", 8, null, 1);
@@ -291,6 +291,15 @@ public final class BotsnBoltsGame extends BaseGame {
             frames[off + i] = frames[mid - i];
         }
         return Pangine.getEngine().createAnimation(PRE_ANM + id, frames);
+    }
+    
+    private final static Panimation newFlipper(final String id, final String path, final Panple o, final Panple min, final Panple max, final int dur) {
+        final Pangine engine = Pangine.getEngine();
+        final Panmage img = engine.createImage(id, o, min, max, path);
+        final Panframe[] frames = new Panframe[2];
+        frames[0] = engine.createFrame(id + ".0", img, dur);
+        frames[1] = engine.createFrame(id + ".1", img, dur, 0, false, true);
+        return engine.createAnimation(PRE_ANM + id, frames);
     }
     
     private final static Panmage newPlayerImage(final String id, final Panple o, final Img[] imgs, final Img[] imgsMirror, final int i) {
