@@ -208,6 +208,10 @@ public class Level {
     			    } else if (defeatedLevels <= getLastDefeatedLevelCountToForceNormal()) {
     					return getBasicBuilder();
     				}
+    			    final Builder special = getSpecialBuilder();
+    			    if (special != null) {
+    			        return special;
+    			    }
     				final int r = Mathtil.randi(0, 249);
     				if (r < 100) {
     				    return new GrassyBuilder();
@@ -716,7 +720,15 @@ public class Level {
         }
     	
     	protected Builder getNormalBuilder() {
+    	    final Builder special = getSpecialBuilder();
+    	    if (special != null) {
+    	        return special;
+    	    }
     	    return (Mathtil.randi(0, 2999) < 2000) ? getBasicBuilder() : new BlockBuilder();
+    	}
+    	
+    	protected Builder getSpecialBuilder() {
+    	    return false ? new QuadBuilder() : null; //TODO
     	}
     	
     	protected Builder getRandomBuilder() {
