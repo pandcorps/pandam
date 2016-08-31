@@ -728,7 +728,17 @@ public class Level {
     	}
     	
     	protected Builder getSpecialBuilder() {
-    	    return false ? new QuadBuilder() : null; //TODO
+    	    final Statistics stats = getStatistics();
+    	    if (stats == null) {
+    	        return null;
+    	    }
+    	    final int defeatedLevels = stats.defeatedLevels;
+    	    if (defeatedLevels == 0) {
+    	        return null;
+    	    } else if ((defeatedLevels - stats.lastSpecialBuilder) >= 20) {
+    	        stats.lastSpecialBuilder = defeatedLevels;
+    	    }
+    	    return (stats.lastSpecialBuilder == defeatedLevels) ? new QuadBuilder() : null;
     	}
     	
     	protected Builder getRandomBuilder() {
