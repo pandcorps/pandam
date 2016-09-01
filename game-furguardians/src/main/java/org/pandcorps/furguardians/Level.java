@@ -3493,19 +3493,40 @@ public class Level {
     }
     
     private final static class EnemyPackTemplate extends SimpleTemplate {
+        private int numEnemies;
+        private boolean enemiesRaised;
+        
         protected EnemyPackTemplate() {
-            super(7, 9, 0);
+            super(5, 9, 0);
+        }
+        
+        @Override
+        protected final int newWidth(final int minW, final int maxW) {
+            numEnemies = Mathtil.randi(3, 5);
+            enemiesRaised = Mathtil.rand();
+            return numEnemies + (enemiesRaised ? 2 : 4);
         }
         
         @Override
         protected final void build() {
             builder.flatten(x, w);
             final int base = floor + 1 + floatOffset;
+            final int enemyX, enemyY;
+            if (enemiesRaised) {
+                enemyX = x + 1;
+                enemyY = base + 1;
+            } else {
+                enemyX = x + 2;
+                enemyY = base;
+            }
             solidBlock(x, base);
-            final int n = w - 4;
             final EnemyDefinition def = pickEnemy();
-            for (int i = 0; i < n; i++) {
-                enemy(def, x + 2 + i, base);
+            for (int i = 0; i < numEnemies; i++) {
+                final int currX = enemyX + i;
+                if (enemiesRaised) {
+                    solidBlock(currX, base);
+                }
+                enemy(def, currX, enemyY);
             }
             solidBlock(x + w - 1, base);
         }
@@ -3513,7 +3534,9 @@ public class Level {
         private final EnemyDefinition pickEnemy() {
             final List<EnemyDefinition> options = new ArrayList<EnemyDefinition>(3);
             for (final EnemyDefinition def : FurGuardiansGame.enemies) {
-                if ((def == FurGuardiansGame.imp) || (def == FurGuardiansGame.hobTroll) || (def == FurGuardiansGame.hobOgre)) {
+                if ((def == FurGuardiansGame.imp) || (def == FurGuardiansGame.hobTroll)) {
+                    options.add(def);
+                } else if (!enemiesRaised && (def == FurGuardiansGame.hobOgre)) {
                     options.add(def);
                 }
             }
