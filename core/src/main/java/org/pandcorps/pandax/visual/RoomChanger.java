@@ -28,6 +28,7 @@ import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 
 public abstract class RoomChanger extends Panctor implements StepListener {
+    private final Panroom newRoom;
     private final int velX;
     private final int velY;
     private final Panctor tracked;
@@ -36,7 +37,8 @@ public abstract class RoomChanger extends Panctor implements StepListener {
     public RoomChanger(final int velX, final int velY, final List<Panlayer> layersToKeepBeneath, final List<Panlayer> layersToKeepAbove, final List<Panctor> actorsToKeep) {
         this.velX = velX;
         this.velY = velY;
-        final Panroom oldRoom = Pangame.getGame().getCurrentRoom();
+        final Pangame game = Pangame.getGame();
+        final Panroom oldRoom = game.getCurrentRoom();
         setVisible(false);
         detachLayers(layersToKeepBeneath);
         detachLayers(layersToKeepAbove);
@@ -48,7 +50,8 @@ public abstract class RoomChanger extends Panctor implements StepListener {
             actor.detach();
         }
         this.tracked = tracked;
-        final Panroom newRoom = createRoom();
+        newRoom = createRoom();
+        game.setCurrentRoom(newRoom);
         Panlayer tempLayer = newRoom;
         for (final Panlayer layer : layersToKeepBeneath) {
             tempLayer.addBeneath(layer);
@@ -61,6 +64,9 @@ public abstract class RoomChanger extends Panctor implements StepListener {
         }
         for (final Panctor actor : actorsToKeep) {
             newRoom.addActor(actor);
+            if (velX < 0) {
+                actor.getPosition().addX(newRoom.getSize().getX());
+            }
         }
     }
     
@@ -73,6 +79,7 @@ public abstract class RoomChanger extends Panctor implements StepListener {
     @Override
     public final void onStep(final StepEvent event) {
         //TODO Apply velocity
+        newRoom.getOrigin();
         //TODO Call finish() when done
     }
     
