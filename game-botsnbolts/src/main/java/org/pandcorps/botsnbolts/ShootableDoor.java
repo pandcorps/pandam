@@ -32,14 +32,13 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
     private final static Panple min = new FinPanple2(-12, 0);
     private final static Panple max = new FinPanple2(12, 64);
     private final static DoorDisplay display = new DoorDisplay();
-    private final int x;
-    private final int y;
+    protected final int x;
+    protected final int y;
     private final int doorX;
-    private ShootableDoorDefinition def = null;
+    protected ShootableDoorDefinition def = null;
     private int temperature = 0;
     
     protected ShootableDoor(final int x, final int y, ShootableDoorDefinition def) {
-        setVisible(false);
         final TileMap tm = BotsnBoltsGame.tm;
         tm.getLayer().addActor(this);
         this.x = x;
@@ -47,15 +46,28 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
         this.def = def;
         final Panple pos = getPosition();
         tm.savePosition(pos, x, y);
-        pos.addX(8);
-        if (x == 0) {
-            doorX = 1;
-        } else {
-            doorX = x - 1;
-            setMirror(true);
-        }
-        setDoorTiles(x, BotsnBoltsGame.doorTunnel, Tile.BEHAVIOR_SOLID, true);
+        initPosition(pos);
+        doorX = getDoorX();
+        init();
         closeDoor();
+    }
+    
+    protected void initPosition(final Panple pos) {
+        pos.addX(8);
+    }
+    
+    protected int getDoorX() {
+        if (x == 0) {
+            return 1;
+        } else {
+            setMirror(true);
+            return x - 1;
+        }
+    }
+    
+    protected void init() {
+        setVisible(false);
+        setDoorTiles(x, BotsnBoltsGame.doorTunnel, Tile.BEHAVIOR_SOLID, true);
     }
     
     private final int getBaseFrameIndex() {
@@ -76,7 +88,7 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
         }
     }
     
-    private final void closeDoor() {
+    protected void closeDoor() {
         setDoorEnergyTiles(this.def.door);
     }
     
@@ -84,7 +96,7 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
         setDoorTiles(doorX, door, Tile.BEHAVIOR_OPEN, false);
     }
     
-    private final void openDoor() {
+    protected void openDoor() {
         final TileMap tm = BotsnBoltsGame.tm;
         final int base = getBaseFrameIndex();
         final Panframe[] opening = def.opening[0];
@@ -153,7 +165,7 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
     }
     
     @Override
-    public final Pansplay getCurrentDisplay() {
+    public Pansplay getCurrentDisplay() {
         return display;
     }
     
@@ -182,18 +194,93 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
         private final ShootMode requiredShootMode;
         private final Integer requiredPower;
         private ShootableDoorDefinition prev = null;
+        private final Panmage[] barrierImgs;
         
         protected ShootableDoorDefinition(final Panframe[] door, final Panframe[][] opening, final ShootableDoorDefinition next,
-                                          final int nextTemperature, final ShootMode requiredShootMode, final Integer requiredPower) {
+                                          final int nextTemperature, final ShootMode requiredShootMode, final Integer requiredPower,
+                                          final Panmage[] barrierImgs) {
             this.door = door;
             this.opening = opening;
             this.next = next;
             this.nextTemperature = nextTemperature;
             this.requiredShootMode = requiredShootMode;
             this.requiredPower = requiredPower;
+            this.barrierImgs = barrierImgs;
             if (next != null) {
                 next.prev = this;
             }
+        }
+    }
+    
+    protected final static class ShootableBarrier extends ShootableDoor {
+        private int openIndex = 0;
+        
+        protected ShootableBarrier(final int x, final int y, final ShootableDoorDefinition def) {
+            super(x, y, def);
+        }
+        
+        @Override
+        protected final void initPosition(final Panple pos) {
+        }
+        
+        @Override
+        protected final int getDoorX() {
+            return 0;
+        }
+        
+        @Override
+        protected final void init() {
+            setBehavior(Tile.BEHAVIOR_SOLID);
+        }
+        
+        private final void setBehavior(final byte b) {
+            final TileMap tm = BotsnBoltsGame.tm;
+            tm.setBehavior(x, y, b);
+            tm.setBehavior(x, y + 1, b);
+        }
+        
+        @Override
+        protected final void closeDoor() {
+        }
+        
+        @Override
+        protected final void openDoor() {
+            setBehavior(Tile.BEHAVIOR_OPEN);
+            openIndex = 2;
+        }
+        
+        @Override
+        protected final void renderView(final Panderer renderer) {
+            final int indexLeft, indexRight;
+            if (openIndex > 0) {
+                if (openIndex >= def.barrierImgs.length) {
+                    destroy();
+                    return;
+                }
+                indexLeft = openIndex;
+                indexRight = openIndex;
+                openIndex++;
+            } else {
+                indexLeft = 0;
+                indexRight = 1;
+            }
+            renderColumn(renderer, 0, indexLeft);
+            renderColumn(renderer, 8, indexRight);
+        }
+        
+        private final void renderColumn(final Panderer renderer, final int off, final int imgIndex) {
+            final Panlayer layer = getLayer();
+            final Panmage img = def.barrierImgs[imgIndex];
+            final Panple pos = getPosition();
+            final float x = pos.getX() + off, y = pos.getY();
+            for (int j = 0; j < 4; j++) {
+                renderer.render(layer, img, x, y + (j * 8), BotsnBoltsGame.DEPTH_FG);
+            }
+        }
+        
+        @Override
+        public final Pansplay getCurrentDisplay() {
+            return display; //TODO
         }
     }
 }

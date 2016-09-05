@@ -121,7 +121,9 @@ public final class BotsnBoltsGame extends BaseGame {
         Img.setTemporary(false, imgsClosed);
         final Img[] imgsOpening = Imtil.loadStrip(RES + "bg/DoorCyanOpening.png", 16);
         Img.setTemporary(false, imgsOpening);
-        doorCyan = newDoorDefinition("door.cyan", imgsClosed, imgsOpening, null, 0, null, null);
+        final Img[] imgsBarrier = Imtil.loadStrip(RES + "bg/BarrierCyan.png", 8);
+        Img.setTemporary(false, imgsBarrier);
+        doorCyan = newDoorDefinition("door.cyan", imgsClosed, imgsOpening, null, 0, null, null, imgsBarrier);
         final short s0 = 0, s48 = 48, s64 = 64, s96 = 96, s128 = 128, s144 = 144, s192 = 192, smax = Pancolor.MAX_VALUE;
         doorSilver = filterDoor("door.silver", imgsClosed, imgsOpening, s0, smax, smax, s192, s192, s192, s0, s192, s192, s128, s128, s128, null, 0, null, Integer.valueOf(Projectile.POWER_MAXIMUM));
         final ShootableDoorDefinition doorRed, doorRedOrange, doorOrange, doorOrangeGold;
@@ -132,6 +134,7 @@ public final class BotsnBoltsGame extends BaseGame {
         doorGold = filterDoor("door.gold", imgsClosed, null, smax, s192, s0, smax, smax, s0, s192, s144, s0, s192, s192, s0, doorOrangeGold, 1, null, null);
         Img.close(imgsClosed);
         Img.close(imgsOpening);
+        Img.close(imgsBarrier);
     }
     
     private final static void loadMisc() {
@@ -160,7 +163,7 @@ public final class BotsnBoltsGame extends BaseGame {
         filter.put(s2r, s2g, s2b, d2r, d2g, d2b);
         filterImgs(imgsClosed, filter);
         filterImgs(imgsOpening, filter);
-        return newDoorDefinition(id, imgsClosed, imgsOpening, next, nextTemperature, requiredShootMode, requiredPower);
+        return newDoorDefinition(id, imgsClosed, imgsOpening, next, nextTemperature, requiredShootMode, requiredPower, null);
     }
     
     private final static void loadPlayer() {
@@ -261,7 +264,10 @@ public final class BotsnBoltsGame extends BaseGame {
     }
     
     private final static Panmage[] newSheet(final String id, final String path, final int w) {
-        final Img[] imgs = Imtil.loadStrip(path, w);
+        return newSheet(id, Imtil.loadStrip(path, w));
+    }
+    
+    private final static Panmage[] newSheet(final String id, final Img[] imgs) {
         final int size = imgs.length;
         final Panmage[] sheet = new Panmage[size];
         final Pangine engine = Pangine.getEngine();
@@ -339,7 +345,8 @@ public final class BotsnBoltsGame extends BaseGame {
     }
     
     private final static ShootableDoorDefinition newDoorDefinition(final String id, final Img[] imgsClosed, final Img[] imgsOpening,
-            final ShootableDoorDefinition next, final int nextTemperature, final ShootMode requiredShootMode, final Integer requiredPower) {
+            final ShootableDoorDefinition next, final int nextTemperature, final ShootMode requiredShootMode, final Integer requiredPower,
+            final Img[] imgsBarrier) {
         final Panframe[] door = newDoor(id, imgsClosed, 0);
         final Panframe[][] opening;
         if (imgsOpening == null) {
@@ -350,7 +357,8 @@ public final class BotsnBoltsGame extends BaseGame {
             final Panframe[] open3 = newDoor(id + ".3", imgsOpening, 4);
             opening = new Panframe[][] { open1, open2, open3 };
         }
-        return new ShootableDoorDefinition(door, opening, next, nextTemperature, requiredShootMode, requiredPower);
+        final Panmage[] barrier = (imgsBarrier == null) ? null : newSheet(id + ".barrier", imgsBarrier);
+        return new ShootableDoorDefinition(door, opening, next, nextTemperature, requiredShootMode, requiredPower, barrier);
     }
     
     private final static Panframe[] newDoor(final String id, final String path) {
@@ -458,6 +466,7 @@ public final class BotsnBoltsGame extends BaseGame {
             //battery.getPosition().set(200, 96, DEPTH_POWER_UP);
             //room.addActor(battery);
             new PowerBox(12, 1);
+            new ShootableBarrier(6, 1, doorCyan);
             final Player player = new Player(pc);
             player.getPosition().set(48, 96, DEPTH_PLAYER);
             room.addActor(player);
