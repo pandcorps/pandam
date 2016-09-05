@@ -62,10 +62,25 @@ public abstract class RoomChanger extends Panctor implements StepListener {
             tempLayer.addAbove(layer);
             tempLayer = layer;
         }
+        final float offX, offY;
+        if (velX < 0) {
+            offX = newRoom.getSize().getX();
+        } else if (velX > 0) {
+            offX = -1; //TODO
+        } else {
+            offX = 0;
+        }
+        if (velY < 0) {
+            offY = newRoom.getSize().getY();
+        } else if (velY > 0) {
+            offY = -1; //TODO
+        } else {
+            offY = 0;
+        }
         for (final Panctor actor : actorsToKeep) {
             newRoom.addActor(actor);
             if (velX < 0) {
-                actor.getPosition().addX(newRoom.getSize().getX());
+                actor.getPosition().add(offX, offY);
             }
         }
     }
