@@ -177,7 +177,7 @@ public final class BotsnBoltsGame extends BaseGame {
         final Panmage basicProjectile = engine.createImage(pre + "Projectile", new FinPanple2(3, 3), new FinPanple2(-3, -1), new FinPanple2(5, 3), pre + "Projectile.png");
         //final Panimation projectile2 = newAnimation(pre + "Projectile2", pre + "Projectile2.png", 16, new FinPanple2(7, 7), new FinPanple2(-4, -4), new FinPanple2(8, 6), 4);
         final Panimation projectile2 = newFlipper(pre + "Projectile2", pre + "Projectile2.png", new FinPanple2(7, 7), new FinPanple2(-4, -4), new FinPanple2(8, 6), 4);
-        final Panimation projectile3 = projectile2; //TODO Load distinct animation
+        final Panimation projectile3 = newProjectile3(pre);
         final Panimation burst = newAnimation(pre + "Burst", pre + "Burst.png", 16, CENTER_16, 2);
         final Panimation charge = newAnimation(pre + "Charge", pre + "Charge.png", 8, null, 1);
         final Panimation chargeVert = newAnimation(pre + "ChargeVert", pre + "ChargeVert.png", 8, new FinPanple2(4, 0), 1);
@@ -232,6 +232,23 @@ public final class BotsnBoltsGame extends BaseGame {
             crouch = null;
         }
         return new PlayerImagesSubSet(still, jump, new Panmage[] { run1, run2, run3 }, start, blink, crouch);
+    }
+    
+    private final static Panimation newProjectile3(final String pre) {
+        final Pangine engine = Pangine.getEngine();
+        final Img[] imgs = Imtil.loadStrip(pre + "Projectile3.png", 32);
+        final Panmage img0 = engine.createImage(pre + ".0", imgs[0]);
+        final Panmage img1 = engine.createImage(pre + ".1", imgs[1]);
+        final Panple o = new FinPanple2(23, 7), min = new FinPanple2(-6, -6), max = new FinPanple2(8, 8), size = new FinPanple2(32, 16);
+        return engine.createAnimation(pre + ".anm",
+            newProjectile3Frame(pre, 0, o, min, max, img0, 0, 0, size),
+            newProjectile3Frame(pre, 1, o, min, max, img0, 0, 16, size),
+            newProjectile3Frame(pre, 2, o, min, max, img1, 0, 0, size),
+            newProjectile3Frame(pre, 3, o, min, max, img1, 0, 16, size));
+    }
+    
+    private final static Panframe newProjectile3Frame(final String pre, final int i, final Panple o, final Panple min, final Panple max, final Panmage src, final float x, final float y, final Panple size) {
+        return Pangine.getEngine().createFrame(pre + ".frm." + i, new SubPanmage(pre + ".sub." + i, o, min, max, src, x, y, size), 2);
     }
     
     private final static void filterImgs(final Img[] imgs, final PixelFilter... fs) {
