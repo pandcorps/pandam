@@ -92,4 +92,25 @@ public final class Projectile extends Pandy implements Collidable, AllOobListene
     public final void onAllOob(final AllOobEvent event) {
         destroy();
     }
+    
+    public final static class Bomb extends Panctor implements StepListener {
+        private int timer = 30;
+        
+        protected Bomb(final Player src) {
+            final Panple srcPos = src.getPosition();
+            getPosition().set(srcPos.getX(), srcPos.getY() + 7, BotsnBoltsGame.DEPTH_PROJECTILE);
+            setMirror(src.isMirror());
+            setView(src.pi.bomb);
+            src.getLayer().addActor(this);
+        }
+
+        @Override
+        public final void onStep(final StepEvent event) {
+            timer--;
+            if (timer <= 0) {
+                //TODO explode
+                destroy();
+            }
+        }
+    }
 }

@@ -23,6 +23,7 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.botsnbolts;
 
 import org.pandcorps.botsnbolts.HudMeter.*;
+import org.pandcorps.botsnbolts.Projectile.*;
 import org.pandcorps.core.*;
 import org.pandcorps.game.actor.*;
 import org.pandcorps.pandam.*;
@@ -510,6 +511,7 @@ public final class Player extends Chr {
     protected final static StateHandler BALL_HANDLER = new StateHandler() {
         @Override
         protected final void onShootStart(final Player player) {
+            SHOOT_BOMB.onShootStart(player);
         }
         
         @Override
@@ -613,6 +615,7 @@ public final class Player extends Chr {
         private final Panimation chargeVert;
         protected final Panimation burst;
         private final Panmage[] ball;
+        protected final Panimation bomb;
         protected final Panimation batterySmall;
         protected final Panimation batteryMedium;
         protected final Panimation batteryBig;
@@ -622,7 +625,7 @@ public final class Player extends Chr {
         protected PlayerImages(final PlayerImagesSubSet basicSet, final PlayerImagesSubSet shootSet, final Panmage hurt,
                                final Panmage basicProjectile, final Panimation projectile2, final Panimation projectile3,
                                final Panimation charge, final Panimation chargeVert,
-                               final Panimation burst, final Panmage[] ball,
+                               final Panimation burst, final Panmage[] ball, final Panimation bomb,
                                final Panimation batterySmall, final Panimation batteryMedium, final Panimation batteryBig,
                                final Panmage powerBox, final HudMeterImages hudMeterImages) {
             this.basicSet = basicSet;
@@ -635,6 +638,7 @@ public final class Player extends Chr {
             this.chargeVert = chargeVert;
             this.burst = burst;
             this.ball = ball;
+            this.bomb = bomb;
             this.batterySmall = batterySmall;
             this.batteryMedium = batteryMedium;
             this.batteryBig = batteryBig;
@@ -779,6 +783,18 @@ public final class Player extends Chr {
         @Override
         protected final void createProjectile(final Player player) {
             createDefaultProjectile(player);
+        }
+    };
+    
+    protected final static ShootMode SHOOT_BOMB = new ShootMode(SHOOT_DELAY_DEFAULT) {
+        @Override
+        protected final void onShootStart(final Player player) {
+            shoot(player);
+        }
+        
+        @Override
+        protected final void createProjectile(final Player player) {
+            new Bomb(player);
         }
     };
 }
