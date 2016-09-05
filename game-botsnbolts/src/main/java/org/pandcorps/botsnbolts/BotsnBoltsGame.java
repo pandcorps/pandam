@@ -73,9 +73,12 @@ public final class BotsnBoltsGame extends BaseGame {
     private static PlayerImages voidImages = null;
     protected static Panframe[] doorTunnel = null;
     protected static Panframe[] doorTunnelOverlay = null;
+    protected static Panframe[] doorTunnelSmall = null;
+    protected static Panframe[] doorTunnelSmallOverlay = null;
     protected static ShootableDoorDefinition doorCyan = null;
     protected static ShootableDoorDefinition doorGold = null;
     protected static ShootableDoorDefinition doorSilver = null;
+    protected static ShootableDoorDefinition doorSmall = null;
     protected static Panmage[] cube = null;
     protected static Panmage[] sentryGun = null;
     protected static Panmage enemyProjectile = null;
@@ -117,6 +120,8 @@ public final class BotsnBoltsGame extends BaseGame {
     private final static void loadDoors() {
         doorTunnel = newDoor("door.tunnel", "bg/DoorTunnel.png");
         doorTunnelOverlay = toOverlay(doorTunnel);
+        doorTunnelSmall = newDoorSmall("door.tunnel.small", "bg/DoorTunnelSmall.png");
+        doorTunnelSmallOverlay = toOverlay(doorTunnelSmall);
         final Img[] imgsClosed = Imtil.loadStrip(RES + "bg/DoorCyan.png", 16);
         Img.setTemporary(false, imgsClosed);
         final Img[] imgsOpening = Imtil.loadStrip(RES + "bg/DoorCyanOpening.png", 16);
@@ -134,6 +139,13 @@ public final class BotsnBoltsGame extends BaseGame {
         doorGold = filterDoor("door.gold", imgsClosed, null, smax, s192, s0, smax, smax, s0, s192, s144, s0, s192, s192, s0, doorOrangeGold, 1, null, null);
         Img.close(imgsClosed);
         Img.close(imgsOpening);
+        final Img[] imgsSmallClosed = Imtil.loadStrip(RES + "bg/DoorSmall.png", 16);
+        Img.setTemporary(false, imgsSmallClosed);
+        final Img[] imgsSmallOpening = Imtil.loadStrip(RES + "bg/DoorSmallOpening.png", 16);
+        Img.setTemporary(false, imgsSmallOpening);
+        doorSmall = newDoorDefinition("door.small", imgsSmallClosed, imgsSmallOpening, null, 0, null, null, null);
+        Img.close(imgsSmallClosed);
+        Img.close(imgsSmallOpening);
         Img.close(imgsBarrier);
     }
     
@@ -347,14 +359,16 @@ public final class BotsnBoltsGame extends BaseGame {
     private final static ShootableDoorDefinition newDoorDefinition(final String id, final Img[] imgsClosed, final Img[] imgsOpening,
             final ShootableDoorDefinition next, final int nextTemperature, final ShootMode requiredShootMode, final Integer requiredPower,
             final Img[] imgsBarrier) {
-        final Panframe[] door = newDoor(id, imgsClosed, 0);
+        final boolean small = imgsClosed.length <= 1;
+        final Panframe[] door = newDoor(id, imgsClosed, 0, small);
         final Panframe[][] opening;
         if (imgsOpening == null) {
             opening = null;
         } else {
-            final Panframe[] open1 = newDoor(id + ".1", imgsOpening, 0);
-            final Panframe[] open2 = newDoor(id + ".2", imgsOpening, 2);
-            final Panframe[] open3 = newDoor(id + ".3", imgsOpening, 4);
+            final int n = small ? 1 : 2;
+            final Panframe[] open1 = newDoor(id + ".1", imgsOpening, 0, small);
+            final Panframe[] open2 = newDoor(id + ".2", imgsOpening, n, small);
+            final Panframe[] open3 = newDoor(id + ".3", imgsOpening, 2 * n, small);
             opening = new Panframe[][] { open1, open2, open3 };
         }
         final Panmage[] barrier = (imgsBarrier == null) ? null : newSheet(id + ".barrier", imgsBarrier);
@@ -363,6 +377,10 @@ public final class BotsnBoltsGame extends BaseGame {
     
     private final static Panframe[] newDoor(final String id, final String path) {
         return newDoor(id, Imtil.loadStrip(RES + path, 16), 0);
+    }
+    
+    private final static Panframe[] newDoor(final String id, final Img[] imgs, final int off, final boolean small) {
+        return small ? newDoorSmall(id, imgs, off) : newDoor(id, imgs, off);
     }
     
     private final static Panframe[] newDoor(final String id, final Img[] imgs, final int off) {
@@ -379,6 +397,20 @@ public final class BotsnBoltsGame extends BaseGame {
         door[5] = engine.createFrame(pre + ".5", mid, 1, 0, true, true);
         door[6] = engine.createFrame(pre + ".6", mid, 1, 0, true, false);
         door[7] = engine.createFrame(pre + ".7", top, 1, 0, true, false);
+        return door;
+    }
+    
+    private final static Panframe[] newDoorSmall(final String id, final String path) {
+        return newDoorSmall(id, Imtil.loadStrip(RES + path, 16), 0);
+    }
+    
+    private final static Panframe[] newDoorSmall(final String id, final Img[] imgs, final int off) {
+        final Panframe[] door = new Panframe[2];
+        final Pangine engine = Pangine.getEngine();
+        final String pre = id + ".";
+        final Panmage img = engine.createImage(pre + "img", imgs[off]);
+        door[0] = engine.createFrame(pre + ".0", img, 1, 0, false, false);
+        door[1] = engine.createFrame(pre + ".1", img, 1, 0, true, false);
         return door;
     }
     
@@ -457,9 +489,13 @@ public final class BotsnBoltsGame extends BaseGame {
             tm.setBackground(4, 3, imgMap[0][3], Tile.BEHAVIOR_SOLID);
             tm.setBackground(5, 2, imgMap[1][4], Tile.BEHAVIOR_SOLID);
             tm.setBackground(5, 3, imgMap[0][4], Tile.BEHAVIOR_SOLID);
-            new ShootableDoor(0, 1, doorCyan);
-            new ShootableDoor(end, 1, doorGold);
+            //new ShootableDoor(0, 1, doorCyan);
+            tm.setBackground(1, 2, imgMap[1][4], Tile.BEHAVIOR_SOLID);
+            new ShootableDoor(0, 1, doorSmall);
+            //new ShootableDoor(end, 1, doorGold);
             //new ShootableDoor(end, 1, doorSilver);
+            tm.setBackground(end - 1, 2, imgMap[1][3], Tile.BEHAVIOR_SOLID);
+            new ShootableDoor(end, 1, doorSmall);
             //new SentryGun(11, 1);
             new SentryGun(8, 3);
             //final BigBattery battery = new BigBattery();

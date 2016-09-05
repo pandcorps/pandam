@@ -67,17 +67,21 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
     
     protected void init() {
         setVisible(false);
-        setDoorTiles(x, BotsnBoltsGame.doorTunnel, Tile.BEHAVIOR_SOLID, true);
+        setDoorTiles(x, isSmall() ? BotsnBoltsGame.doorTunnelSmall : BotsnBoltsGame.doorTunnel, Tile.BEHAVIOR_SOLID, true);
+    }
+    
+    private final boolean isSmall() {
+        return def.door.length <= 2;
     }
     
     private final int getBaseFrameIndex() {
-        return isMirror() ? 4 : 0;
+        return isMirror() ? (def.door.length / 2) : 0;
     }
     
     private final void setDoorTiles(final int x, final Panframe[] door, final byte behavior, final boolean bg) {
         final TileMap tm = BotsnBoltsGame.tm;
-        final int base = getBaseFrameIndex();
-        for (int j = 0; j < 4; j++) {
+        final int base = getBaseFrameIndex(), n = door.length / 2;
+        for (int j = 0; j < n; j++) {
             final int index = tm.getIndex(x, y + j);
             final Panframe frm = door[base + j];
             if (bg) {
@@ -89,7 +93,7 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
     }
     
     protected void closeDoor() {
-        setDoorEnergyTiles(this.def.door);
+        setDoorEnergyTiles(def.door);
     }
     
     private final void setDoorEnergyTiles(final Panframe[] door) {
@@ -100,9 +104,11 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
         final TileMap tm = BotsnBoltsGame.tm;
         final int base = getBaseFrameIndex();
         final Panframe[] opening = def.opening[0];
-        for (int j = 0; j < 4; j++) {
+        final Panframe[] doorTunnelOverlay = isSmall() ? BotsnBoltsGame.doorTunnelSmallOverlay : BotsnBoltsGame.doorTunnelOverlay;
+        final int n = doorTunnelOverlay.length / 2;
+        for (int j = 0; j < n; j++) {
             final int yj = y + j, basej = base + j;
-            tm.setBackground(x, yj, BotsnBoltsGame.doorTunnelOverlay[basej], Tile.BEHAVIOR_OPEN);
+            tm.setBackground(x, yj, doorTunnelOverlay[basej], Tile.BEHAVIOR_OPEN);
             tm.setForeground(doorX, yj, opening[basej]);
         }
         addOpenTimer(1);
@@ -166,7 +172,7 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
     
     @Override
     public Pansplay getCurrentDisplay() {
-        return display;
+        return display; //TODO handle small door
     }
     
     private final static class DoorDisplay implements Pansplay {
