@@ -31,7 +31,12 @@ import org.pandcorps.pandax.tile.*;
 public class ShootableDoor extends Panctor implements StepListener, CollisionListener {
     private final static Panple min = new FinPanple2(-12, 0);
     private final static Panple max = new FinPanple2(12, 64);
+    private final static Panple maxSmall = new FinPanple2(12, 16);
+    private final static Panple minBarrier = new FinPanple2(2, 0);
+    private final static Panple maxBarrier = new FinPanple2(14, 32);
     private final static DoorDisplay display = new DoorDisplay();
+    private final static SmallDoorDisplay displaySmall = new SmallDoorDisplay();
+    private final static BarrierDisplay displayBarrier = new BarrierDisplay();
     protected final int x;
     protected final int y;
     private final int doorX;
@@ -172,10 +177,10 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
     
     @Override
     public Pansplay getCurrentDisplay() {
-        return display; //TODO handle small door
+        return isSmall() ? displaySmall : display;
     }
     
-    private final static class DoorDisplay implements Pansplay {
+    private static class DoorDisplay implements Pansplay {
         @Override
         public final Panple getOrigin() {
             return FinPanple.ORIGIN;
@@ -187,8 +192,15 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
         }
     
         @Override
-        public final Panple getBoundingMaximum() {
+        public Panple getBoundingMaximum() {
             return max;
+        }
+    }
+    
+    private final static class SmallDoorDisplay extends DoorDisplay {
+        @Override
+        public final Panple getBoundingMaximum() {
+            return maxSmall;
         }
     }
     
@@ -286,7 +298,24 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
         
         @Override
         public final Pansplay getCurrentDisplay() {
-            return display; //TODO
+            return displayBarrier;
+        }
+    }
+    
+    private static class BarrierDisplay implements Pansplay {
+        @Override
+        public final Panple getOrigin() {
+            return FinPanple.ORIGIN;
+        }
+    
+        @Override
+        public final Panple getBoundingMinimum() {
+            return minBarrier;
+        }
+    
+        @Override
+        public Panple getBoundingMaximum() {
+            return maxBarrier;
         }
     }
 }
