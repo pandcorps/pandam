@@ -29,7 +29,7 @@ import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.boundary.*;
 import org.pandcorps.pandax.*;
 
-public final class Projectile extends Pandy implements Collidable, AllOobListener {
+public class Projectile extends Pandy implements Collidable, AllOobListener {
     protected final static int POWER_MEDIUM = 3;
     protected final static int POWER_MAXIMUM = 5;
     
@@ -38,16 +38,20 @@ public final class Projectile extends Pandy implements Collidable, AllOobListene
     protected int power;
     
     protected Projectile(final Player src, final float vx, final float vy, final int power) {
+        this(src, src.prf.shootMode, src, vx, vy, power);
+    }
+    
+    protected Projectile(final Player src, final ShootMode shootMode, final Panctor ref, final float vx, final float vy, final int power) {
         this.src = src;
-        shootMode = src.prf.shootMode;
+        this.shootMode = shootMode;
         setPower(power);
-        final Panple srcPos = src.getPosition();
-        final boolean mirror = src.isMirror();
+        final Panple srcPos = ref.getPosition();
+        final boolean mirror = ref.isMirror();
         setMirror(mirror);
         final int xm = mirror ? -1 : 1;
         getPosition().set(srcPos.getX() + (xm * 15), srcPos.getY() + 13, BotsnBoltsGame.DEPTH_PROJECTILE);
         getVelocity().set(xm * vx, vy);
-        src.getLayer().addActor(this);
+        ref.getLayer().addActor(this);
     }
     
     protected final void setPower(final int power) {
@@ -89,14 +93,16 @@ public final class Projectile extends Pandy implements Collidable, AllOobListene
     }
 
     @Override
-    public final void onAllOob(final AllOobEvent event) {
+    public void onAllOob(final AllOobEvent event) {
         destroy();
     }
     
     public final static class Bomb extends Panctor implements StepListener {
+        private final Player src;
         private int timer = 30;
         
         protected Bomb(final Player src) {
+            this.src = src;
             final Panple srcPos = src.getPosition();
             getPosition().set(srcPos.getX(), srcPos.getY() + 7, BotsnBoltsGame.DEPTH_PROJECTILE);
             setMirror(src.isMirror());
@@ -108,9 +114,27 @@ public final class Projectile extends Pandy implements Collidable, AllOobListene
         public final void onStep(final StepEvent event) {
             timer--;
             if (timer <= 0) {
-                //TODO explode
+                new Explosion(this);
                 destroy();
             }
+        }
+    }
+    
+    public final static class Explosion extends Projectile implements AnimationEndListener {
+        protected Explosion(final Bomb bomb) {
+            super(bomb.src, Player.SHOOT_BOMB, bomb, 0, 0, 1);
+            final Panple bombPos = bomb.getPosition();
+            getPosition().set(bombPos.getX(), bombPos.getY(), BotsnBoltsGame.DEPTH_BURST);
+            setView(bomb.src.pi.burst);
+        }
+
+        @Override
+        public final void onAllOob(final AllOobEvent event) {
+        }
+        
+        @Override
+        public final void onAnimationEnd(final AnimationEndEvent event) {
+            destroy();
         }
     }
 }
