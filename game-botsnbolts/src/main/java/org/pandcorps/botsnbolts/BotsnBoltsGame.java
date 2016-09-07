@@ -196,6 +196,8 @@ public final class BotsnBoltsGame extends BaseGame {
         final Panimation burst = newAnimation(pre + "Burst", pre + "Burst.png", 16, CENTER_16, 2);
         final Panimation charge = newAnimation(pre + "Charge", pre + "Charge.png", 8, null, 1);
         final Panimation chargeVert = newAnimation(pre + "ChargeVert", pre + "ChargeVert.png", 8, new FinPanple2(4, 0), 1);
+        final Panimation charge2 = charge; //TODO
+        final Panimation chargeVert2 = chargeVert; //TODO
         final Img[] ballImgs = Imtil.loadStrip(pre + "Ball.png", 16);
         final Panmage ball[] = new Panmage[8];
         final Panple ob = new FinPanple2(8, 1), xb = GuyPlatform.getMax(Player.PLAYER_X, Player.BALL_H);
@@ -219,7 +221,8 @@ public final class BotsnBoltsGame extends BaseGame {
         final Panimation batteryBig = newOscillation(pre + "battery.big", pre + "BatteryBig.png", 16, oBattery, new FinPanple2(-6, 2), new FinPanple2(6, 14), 3, 6);
         final Panmage powerBox = engine.createImage(pre + "PowerBox", CENTER_16, minCube, maxCube, pre + "PowerBox.png");
         final HudMeterImages hudMeterImages = newHudMeterImages(pre + "Meter", pre + "Meter.png");
-        return new PlayerImages(basicSet, shootSet, hurt, basicProjectile, projectile2, projectile3, charge, chargeVert, burst, ball, bomb, batterySml, batteryMed, batteryBig, powerBox, hudMeterImages);
+        return new PlayerImages(basicSet, shootSet, hurt, basicProjectile, projectile2, projectile3, charge, chargeVert, charge2, chargeVert2,
+            burst, ball, bomb, batterySml, batteryMed, batteryBig, powerBox, hudMeterImages);
     }
     
     private final static PlayerImagesSubSet loadPlayerImagesSubSet(final String path, final String name, final boolean startNeeded, final Panple os, final Panple o, final Panple oj) {
