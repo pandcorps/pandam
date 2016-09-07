@@ -734,7 +734,7 @@ public final class Player extends Chr {
                 player.blinkTimer = 0;
                 final PlayerImages pi = player.pi;
                 if (diff > CHARGE_TIME_BIG) {
-                    charge(player, pi.charge, pi.chargeVert); //TODO Show big charging effect
+                    charge(player, pi.charge2, pi.chargeVert2);
                 } else {
                     charge(player, pi.charge, pi.chargeVert);
                 }
