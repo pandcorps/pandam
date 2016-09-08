@@ -39,8 +39,8 @@ public final class Player extends Chr {
     private final static int SHOOT_DELAY_RAPID = 3;
     private final static int SHOOT_DELAY_SPREAD = 15;
     private final static int SHOOT_TIME = 12;
-    private final static int CHARGE_TIME_MEDIUM = 15;
-    private final static int CHARGE_TIME_BIG = 45;
+    private final static int CHARGE_TIME_MEDIUM = 30;
+    private final static int CHARGE_TIME_BIG = 60;
     private final static int INVINCIBLE_TIME = 60;
     private final static int HURT_TIME = 15;
     private final static int RUN_TIME = 5;

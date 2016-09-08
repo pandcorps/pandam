@@ -197,9 +197,10 @@ public final class BotsnBoltsGame extends BaseGame {
         final Panimation projectile3 = newProjectile3(pre);
         final Panimation burst = newAnimation(pre + "Burst", pre + "Burst.png", 16, CENTER_16, 2);
         final Panimation charge = newAnimation(pre + "Charge", pre + "Charge.png", 8, null, 1);
-        final Panimation chargeVert = newAnimation(pre + "ChargeVert", pre + "ChargeVert.png", 8, new FinPanple2(4, 0), 1);
-        final Panimation charge2 = charge; //TODO
-        final Panimation chargeVert2 = chargeVert; //TODO
+        final Panple oChargeVert = new FinPanple2(4, 0);
+        final Panimation chargeVert = newAnimation(pre + "ChargeVert", pre + "ChargeVert.png", 8, oChargeVert, 1);
+        final Panimation charge2 = newAnimation(pre + "Charge2", pre + "Charge2.png", 8, null, 1);
+        final Panimation chargeVert2 = newAnimation(pre + "ChargeVert2", pre + "ChargeVert2.png", 8, oChargeVert, 1);
         final Img[] ballImgs = Imtil.loadStrip(pre + "Ball.png", 16);
         final Panmage ball[] = new Panmage[8];
         final Panple ob = new FinPanple2(8, 1), xb = GuyPlatform.getMax(Player.PLAYER_X, Player.BALL_H);
