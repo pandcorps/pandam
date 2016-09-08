@@ -130,13 +130,14 @@ public final class BotsnBoltsGame extends BaseGame {
         Img.setTemporary(false, imgsBarrier);
         doorCyan = newDoorDefinition("door.cyan", imgsClosed, imgsOpening, null, 0, null, null, imgsBarrier);
         final short s0 = 0, s48 = 48, s64 = 64, s96 = 96, s128 = 128, s144 = 144, s192 = 192, smax = Pancolor.MAX_VALUE;
-        doorSilver = filterDoor("door.silver", imgsClosed, imgsOpening, s0, smax, smax, s192, s192, s192, s0, s192, s192, s128, s128, s128, null, 0, null, Integer.valueOf(Projectile.POWER_MAXIMUM));
+        doorSilver = filterDoor("door.silver", imgsClosed, imgsOpening, s0, smax, smax, s192, s192, s192, s0, s192, s192, s128, s128, s128, null, 0, null,
+            Integer.valueOf(Projectile.POWER_MAXIMUM), imgsBarrier);
         final ShootableDoorDefinition doorRed, doorRedOrange, doorOrange, doorOrangeGold;
-        doorRed = filterDoor("door.red", imgsClosed, imgsOpening, s192, s192, s192, smax, s0, s0, s128, s128, s128, s192, s0, s0, null, 15, Player.SHOOT_RAPID, null);
-        doorRedOrange = filterDoor("door.red.orange", imgsClosed, null, smax, s0, s0, smax, s64, s0, s192, s0, s0, s192, s48, s0, doorRed, 10, Player.SHOOT_RAPID, null);
-        doorOrange = filterDoor("door.orange", imgsClosed, null, smax, s64, s0, smax, s128, s0, s192, s48, s0, s192, s96, s0, doorRedOrange, 6, null, null);
-        doorOrangeGold = filterDoor("door.orange.gold", imgsClosed, null, smax, s128, s0, smax, s192, s0, s192, s96, s0, s192, s144, s0, doorOrange, 3, null, null);
-        doorGold = filterDoor("door.gold", imgsClosed, null, smax, s192, s0, smax, smax, s0, s192, s144, s0, s192, s192, s0, doorOrangeGold, 1, null, null);
+        doorRed = filterDoor("door.red", imgsClosed, imgsOpening, s192, s192, s192, smax, s0, s0, s128, s128, s128, s192, s0, s0, null, 15, Player.SHOOT_RAPID, null, imgsBarrier);
+        doorRedOrange = filterDoor("door.red.orange", imgsClosed, null, smax, s0, s0, smax, s64, s0, s192, s0, s0, s192, s48, s0, doorRed, 10, Player.SHOOT_RAPID, null, imgsBarrier);
+        doorOrange = filterDoor("door.orange", imgsClosed, null, smax, s64, s0, smax, s128, s0, s192, s48, s0, s192, s96, s0, doorRedOrange, 6, null, null, imgsBarrier);
+        doorOrangeGold = filterDoor("door.orange.gold", imgsClosed, null, smax, s128, s0, smax, s192, s0, s192, s96, s0, s192, s144, s0, doorOrange, 3, null, null, imgsBarrier);
+        doorGold = filterDoor("door.gold", imgsClosed, null, smax, s192, s0, smax, smax, s0, s192, s144, s0, s192, s192, s0, doorOrangeGold, 1, null, null, imgsBarrier);
         Img.close(imgsClosed);
         Img.close(imgsOpening);
         final Img[] imgsSmallClosed = Imtil.loadStrip(RES + "bg/DoorSmall.png", 16);
@@ -169,13 +170,14 @@ public final class BotsnBoltsGame extends BaseGame {
     private final static ShootableDoorDefinition filterDoor(final String id, final Img[] imgsClosed, final Img[] imgsOpening,
             final short s1r, final short s1g, final short s1b, final short d1r, final short d1g, final short d1b,
             final short s2r, final short s2g, final short s2b, final short d2r, final short d2g, final short d2b,
-            final ShootableDoorDefinition next, final int nextTemperature, final ShootMode requiredShootMode, final Integer requiredPower) {
+            final ShootableDoorDefinition next, final int nextTemperature, final ShootMode requiredShootMode, final Integer requiredPower,
+            final Img[] imgsBarrier) {
         final ReplacePixelFilter filter = new ReplacePixelFilter();
         filter.put(s1r, s1g, s1b, d1r, d1g, d1b);
         filter.put(s2r, s2g, s2b, d2r, d2g, d2b);
         filterImgs(imgsClosed, filter);
         filterImgs(imgsOpening, filter);
-        return newDoorDefinition(id, imgsClosed, imgsOpening, next, nextTemperature, requiredShootMode, requiredPower, null);
+        return newDoorDefinition(id, imgsClosed, imgsOpening, next, nextTemperature, requiredShootMode, requiredPower, imgsBarrier);
     }
     
     private final static void loadPlayer() {
