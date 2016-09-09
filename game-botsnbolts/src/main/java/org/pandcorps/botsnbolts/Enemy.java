@@ -43,7 +43,7 @@ public abstract class Enemy extends Panctor implements CollisionListener {
     @Override
     public void onCollision(final CollisionEvent event) {
         final Collidable collider = event.getCollider();
-        if (collider.getClass() == Projectile.class) {
+        if (collider instanceof Projectile) { // Projectile can have sub-classes like Explosion
             onShot((Projectile) collider);
         }
     }
