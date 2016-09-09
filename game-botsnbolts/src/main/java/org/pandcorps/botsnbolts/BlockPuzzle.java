@@ -23,17 +23,71 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.botsnbolts;
 
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.event.*;
+import org.pandcorps.pandax.tile.*;
 
 public abstract class BlockPuzzle {
+    private final TileMap tm;
     protected final Panmage[] blockImgs;
     
     protected BlockPuzzle(final Panmage[] blockImgs) {
+        tm = BotsnBoltsGame.tm; // Remember original TileMap even after room change
         this.blockImgs = blockImgs;
     }
     
+    protected final void fade(final int[] indicesToFadeOut, final int[] indicesToFadeIn) {
+        fade(indicesToFadeOut, indicesToFadeIn, 1);
+    }
+    
+    protected final void fade(final int[] indicesToFadeOut, final int[] indicesToFadeIn, final int step) {
+        if (tm != BotsnBoltsGame.tm) {
+            return;
+        }
+        final int numImgs = blockImgs.length;
+        setTiles(indicesToFadeOut, step);
+        setTiles(indicesToFadeIn, numImgs - step);
+        if (step < numImgs) {
+            Pangine.getEngine().addTimer(tm, 1, new TimerListener() {
+                @Override public final void onTimer(final TimerEvent event) {
+                    fade(indicesToFadeOut, indicesToFadeIn, step + 1);
+                }});
+        }
+    }
+    
+    private final void setTiles(final int[] tileIndices, final int imgIndex) {
+        if (tileIndices == null) {
+            return;
+        }
+        final Panmage img;
+        final byte b;
+        if (imgIndex < blockImgs.length) {
+            img = blockImgs[imgIndex];
+            b = BotsnBoltsGame.TILE_FLOOR;
+        } else {
+            img = null;
+            b = Tile.BEHAVIOR_OPEN;
+        }
+        for (final int index : tileIndices) {
+            tm.setForeground(index, img, b);
+        }
+    }
+    
     protected final static class ShootableBlockPuzzle extends BlockPuzzle {
-        protected ShootableBlockPuzzle(Panmage[] blockImgs) {
-            super(blockImgs);
+        private int[] enabledIndices;
+        private int[] disabledIndices;
+        
+        protected ShootableBlockPuzzle(final int[] initiallyEnabledIndices, final int[] initiallyDisabledIndices) {
+            super(BotsnBoltsGame.blockCyan);
+            enabledIndices = initiallyEnabledIndices;
+            disabledIndices = initiallyDisabledIndices;
+            fade(null, enabledIndices);
+        }
+        
+        private void fade() {
+            fade(enabledIndices, disabledIndices);
+            final int[] tmpIndices = enabledIndices;
+            enabledIndices = disabledIndices;
+            disabledIndices = tmpIndices;
         }
     }
 }
