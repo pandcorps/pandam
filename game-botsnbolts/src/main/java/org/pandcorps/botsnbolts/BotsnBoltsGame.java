@@ -144,7 +144,7 @@ public final class BotsnBoltsGame extends BaseGame {
         Img.setTemporary(false, imgsSmallClosed);
         final Img[] imgsSmallOpening = Imtil.loadStrip(RES + "bg/DoorSmallOpening.png", 16);
         Img.setTemporary(false, imgsSmallOpening);
-        doorSmall = newDoorDefinition("door.small", imgsSmallClosed, imgsSmallOpening, null, 0, null, null, null);
+        doorSmall = newDoorDefinition("door.small", imgsSmallClosed, imgsSmallOpening, null, 0, Player.SHOOT_BOMB, null, null);
         Img.close(imgsSmallClosed);
         Img.close(imgsSmallOpening);
         Img.close(imgsBarrier);
