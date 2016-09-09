@@ -48,6 +48,10 @@ public final class BotsnBoltsGame extends BaseGame {
     
     protected final static String RES = "org/pandcorps/botsnbolts/";
     
+    protected final static byte TILE_LADDER = 2; // Works like non-solid when not climbing
+    protected final static byte TILE_LADDER_TOP = 3; // Works like floor when not climbing
+    protected final static byte TILE_FLOOR = 4; // Used for blocks that fade in/out
+    
     protected final static int DEPTH_BG = 0;
     protected final static int DEPTH_FG = 1;
     protected final static int DEPTH_POWER_UP = 2;
@@ -79,6 +83,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static ShootableDoorDefinition doorGold = null;
     protected static ShootableDoorDefinition doorSilver = null;
     protected static ShootableDoorDefinition doorSmall = null;
+    protected static Panmage[] blockCyan = null;
     protected static Panmage[] cube = null;
     protected static Panmage[] sentryGun = null;
     protected static Panmage enemyProjectile = null;
@@ -100,6 +105,7 @@ public final class BotsnBoltsGame extends BaseGame {
         engine.setTitle(TITLE);
         engine.setEntityMapEnabled(false);
         Imtil.onlyResources = true;
+        initTileBehaviors();
         if (loaders != null) {
             loaders.add(new Runnable() {
                 @Override public final void run() {
@@ -107,6 +113,10 @@ public final class BotsnBoltsGame extends BaseGame {
                 }});
         }
         Panscreen.set(new LogoScreen(TitleScreen.class, loaders));
+    }
+    
+    private final static void initTileBehaviors() {
+        Chr.TILE_FLOOR = TILE_FLOOR;
     }
     
     private final static void loadResources() {
@@ -153,6 +163,7 @@ public final class BotsnBoltsGame extends BaseGame {
     private final static void loadMisc() {
         hudMeterBlank = newHudMeterImages("meter.blank", RES + "misc/MeterBlank.png");
         cube = newSheet("cube", RES + "misc/Cube.png", 16);
+        blockCyan = newSheet("block.cyan", RES + "bg/BlockCyan.png", 16);
     }
     
     private final static void loadEnemies() {
@@ -497,19 +508,19 @@ public final class BotsnBoltsGame extends BaseGame {
             tm.setBackground(5, 2, imgMap[1][4], Tile.BEHAVIOR_SOLID);
             tm.setBackground(5, 3, imgMap[0][4], Tile.BEHAVIOR_SOLID);
             //new ShootableDoor(0, 1, doorCyan);
-            tm.setBackground(1, 2, imgMap[1][4], Tile.BEHAVIOR_SOLID);
-            new ShootableDoor(0, 1, doorSmall);
+            //tm.setBackground(1, 2, imgMap[1][4], Tile.BEHAVIOR_SOLID);
+            //new ShootableDoor(0, 1, doorSmall);
             //new ShootableDoor(end, 1, doorGold);
             //new ShootableDoor(end, 1, doorSilver);
-            tm.setBackground(end - 1, 2, imgMap[1][3], Tile.BEHAVIOR_SOLID);
-            new ShootableDoor(end, 1, doorSmall);
+            //tm.setBackground(end - 1, 2, imgMap[1][3], Tile.BEHAVIOR_SOLID);
+            //new ShootableDoor(end, 1, doorSmall);
             //new SentryGun(11, 1);
             new SentryGun(8, 3);
             //final BigBattery battery = new BigBattery();
             //battery.getPosition().set(200, 96, DEPTH_POWER_UP);
             //room.addActor(battery);
             new PowerBox(12, 1);
-            new ShootableBarrier(6, 1, doorCyan);
+            //new ShootableBarrier(6, 1, doorCyan);
             final Player player = new Player(pc);
             player.getPosition().set(48, 96, DEPTH_PLAYER);
             room.addActor(player);
