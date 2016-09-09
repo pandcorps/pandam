@@ -22,12 +22,14 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.botsnbolts;
 
+import java.util.*;
+
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandax.tile.*;
 
 public abstract class BlockPuzzle {
-    private final TileMap tm;
+    protected final TileMap tm;
     protected final Panmage[] blockImgs;
     
     protected BlockPuzzle(final Panmage[] blockImgs) {
@@ -51,7 +53,13 @@ public abstract class BlockPuzzle {
                 @Override public final void onTimer(final TimerEvent event) {
                     fade(indicesToFadeOut, indicesToFadeIn, step + 1);
                 }});
+        } else {
+            onFadeEnd();
         }
+    }
+    
+    //@OverrideMe
+    protected void onFadeEnd() {
     }
     
     private final void setTiles(final int[] tileIndices, final int imgIndex) {
@@ -73,6 +81,7 @@ public abstract class BlockPuzzle {
     }
     
     protected final static class ShootableBlockPuzzle extends BlockPuzzle {
+        private final List<ShootableBlock> blocks;
         private int[] enabledIndices;
         private int[] disabledIndices;
         
@@ -80,14 +89,46 @@ public abstract class BlockPuzzle {
             super(BotsnBoltsGame.blockCyan);
             enabledIndices = initiallyEnabledIndices;
             disabledIndices = initiallyDisabledIndices;
+            blocks = new ArrayList<ShootableBlock>(Math.max(enabledIndices.length, disabledIndices.length));
             fade(null, enabledIndices);
         }
         
         private void fade() {
+            Panctor.destroy(blocks);
             fade(enabledIndices, disabledIndices);
             final int[] tmpIndices = enabledIndices;
             enabledIndices = disabledIndices;
             disabledIndices = tmpIndices;
+        }
+        
+        @Override
+        protected final void onFadeEnd() {
+            for (final int index : enabledIndices) {
+                blocks.add(new ShootableBlock(this, index));
+            }
+        }
+    }
+    
+    protected final static class ShootableBlock extends Panctor implements CollisionListener {
+        private final ShootableBlockPuzzle puzzle;
+        
+        protected ShootableBlock(final ShootableBlockPuzzle puzzle, final int index) {
+            this.puzzle = puzzle;
+            final Panple pos = getPosition();
+            puzzle.tm.savePosition(pos, index);
+            puzzle.tm.getLayer().addActor(this);
+            setVisible(false);
+            setView(puzzle.blockImgs[0]);
+        }
+
+        @Override
+        public final void onCollision(final CollisionEvent event) {
+            final Collidable collider = event.getCollider();
+            if (collider instanceof Projectile) {
+                puzzle.fade();
+                ((Projectile) collider).burst();
+                collider.destroy();
+            }
         }
     }
 }

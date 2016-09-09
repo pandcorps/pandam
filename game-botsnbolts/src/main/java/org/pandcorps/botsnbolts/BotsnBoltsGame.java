@@ -24,6 +24,7 @@ package org.pandcorps.botsnbolts;
 
 import java.util.*;
 
+import org.pandcorps.botsnbolts.BlockPuzzle.*;
 import org.pandcorps.botsnbolts.Enemy.*;
 import org.pandcorps.botsnbolts.HudMeter.*;
 import org.pandcorps.botsnbolts.Player.*;
@@ -163,7 +164,7 @@ public final class BotsnBoltsGame extends BaseGame {
     private final static void loadMisc() {
         hudMeterBlank = newHudMeterImages("meter.blank", RES + "misc/MeterBlank.png");
         cube = newSheet("cube", RES + "misc/Cube.png", 16);
-        blockCyan = newSheet("block.cyan", RES + "bg/BlockCyan.png", 16);
+        blockCyan = newSheet("block.cyan", RES + "bg/BlockCyan.png", 16, FinPanple.ORIGIN, ShootableDoor.minBarrier, new FinPanple2(14, 16));
     }
     
     private final static void loadEnemies() {
@@ -294,10 +295,18 @@ public final class BotsnBoltsGame extends BaseGame {
     }
     
     private final static Panmage[] newSheet(final String id, final String path, final int w) {
+        return newSheet(id, path, w, null, null, null);
+    }
+    
+    private final static Panmage[] newSheet(final String id, final String path, final int w, final Panple o, final Panple min, final Panple max) {
         return newSheet(id, Imtil.loadStrip(path, w));
     }
     
     private final static Panmage[] newSheet(final String id, final Img[] imgs) {
+        return newSheet(id, imgs, null, null, null);
+    }
+    
+    private final static Panmage[] newSheet(final String id, final Img[] imgs, final Panple o, final Panple min, final Panple max) {
         final int size = imgs.length;
         final Panmage[] sheet = new Panmage[size];
         final Pangine engine = Pangine.getEngine();
@@ -521,6 +530,9 @@ public final class BotsnBoltsGame extends BaseGame {
             //room.addActor(battery);
             new PowerBox(12, 1);
             //new ShootableBarrier(6, 1, doorCyan);
+            new ShootableBlockPuzzle(
+                new int[] { tm.getIndex(14, 4), tm.getIndex(18, 8), tm.getIndex(14, 8), tm.getIndex(18, 12) },
+                new int[] { tm.getIndex(14, 6), tm.getIndex(18, 10), tm.getIndex(14, 10) });
             final Player player = new Player(pc);
             player.getPosition().set(48, 96, DEPTH_PLAYER);
             room.addActor(player);

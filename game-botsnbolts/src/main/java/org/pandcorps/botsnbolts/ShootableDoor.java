@@ -32,7 +32,7 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
     private final static Panple min = new FinPanple2(-12, 0);
     private final static Panple max = new FinPanple2(12, 64);
     private final static Panple maxSmall = new FinPanple2(12, 16);
-    private final static Panple minBarrier = new FinPanple2(2, 0);
+    protected final static Panple minBarrier = new FinPanple2(2, 0);
     private final static Panple maxBarrier = new FinPanple2(14, 32);
     private final static DoorDisplay display = new DoorDisplay();
     private final static SmallDoorDisplay displaySmall = new SmallDoorDisplay();
