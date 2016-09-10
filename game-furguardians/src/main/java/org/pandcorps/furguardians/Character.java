@@ -61,4 +61,9 @@ public abstract class Character extends GuyPlatform {
 	protected final boolean isSolidBehavior(final byte b) {
         return b == FurGuardiansGame.TILE_BREAK || b == FurGuardiansGame.TILE_BUMP;
     }
+	
+	@Override
+    protected final boolean isFloorBehavior(final byte b) {
+        return b == FurGuardiansGame.TILE_FLOOR;
+    }
 }

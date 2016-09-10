@@ -39,7 +39,6 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
     protected final static byte Y_CEILING = 3;
     protected final static byte Y_FLOOR = 4;
     protected final static byte Y_FELL = 5;
-    public static byte TILE_FLOOR = -1;
     public static byte TILE_UPSLOPE = -1;
     public static byte TILE_DOWNSLOPE = -1;
     public static byte TILE_UPSLOPE_FLOOR = -1;
@@ -346,7 +345,7 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
             return true;
         }
         final byte b = tile.getBehavior();
-        if (isSolidBehavior(b) || b == TILE_ICE || (sandSolid && b == TILE_SAND) || (floor && b == TILE_FLOOR)) {
+        if (isSolidBehavior(b) || b == TILE_ICE || (sandSolid && b == TILE_SAND) || (floor && isFloorBehavior(b))) {
             return true;
         }
         final float top = y + H - 1, yoff = y - getPosition().getY();
@@ -460,4 +459,6 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
     protected abstract TileMap getTileMap();
     
     protected abstract boolean isSolidBehavior(final byte b);
+    
+    protected abstract boolean isFloorBehavior(final byte b);
 }

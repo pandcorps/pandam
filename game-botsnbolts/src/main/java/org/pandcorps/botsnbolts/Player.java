@@ -205,13 +205,21 @@ public final class Player extends Chr {
     }
     
     private final void onUpNormal() {
-        final Panple pos = getPosition();
-        final TileMap tm = BotsnBoltsGame.tm;
-        final int tileIndex = tm.getContainer(pos.getX(), pos.getY() + 20);
-        final byte b = Tile.getBehavior(tm.getTile(tileIndex));
-        if (b == BotsnBoltsGame.TILE_LADDER || b == BotsnBoltsGame.TILE_LADDER_TOP) {
+        if (isTouchingLadder()) {
             stateHandler = LADDER_HANDLER;
         }
+    }
+    
+    private final boolean isTouchingLadder() {
+        return isTouchingLadder(20);
+    }
+    
+    private final boolean isTouchingLadder(final int yoff) {
+        final Panple pos = getPosition();
+        final TileMap tm = BotsnBoltsGame.tm;
+        final int tileIndex = tm.getContainer(pos.getX(), pos.getY() + yoff);
+        final byte b = Tile.getBehavior(tm.getTile(tileIndex));
+        return b == BotsnBoltsGame.TILE_LADDER || b == BotsnBoltsGame.TILE_LADDER_TOP;
     }
     
     private final void down() {
@@ -367,6 +375,11 @@ public final class Player extends Chr {
         setH(PLAYER_H);
     }
     
+    private final void endLadder() {
+        clearRun();
+        stateHandler = NORMAL_HANDLER;
+    }
+    
     @Override
     protected final void onLanded() {
         super.onLanded();
@@ -494,7 +507,7 @@ public final class Player extends Chr {
     protected final static StateHandler LADDER_HANDLER = new StateHandler() {
         @Override
         protected final void onJump(final Player player) {
-            player.stateHandler = NORMAL_HANDLER;
+            player.endLadder();
         }
         
         @Override
@@ -534,8 +547,14 @@ public final class Player extends Chr {
         
         @Override
         protected final boolean onStep(final Player player) {
-            if (player.v != 0) {
-                player.addY();
+            final float v = player.v;
+            if (v != 0) {
+                final byte yStatus = player.addY();
+                if (yStatus == Y_LANDED) {
+                    player.endLadder();
+                } else if (!(player.isTouchingLadder() || player.isTouchingLadder(0))) {
+                    player.endLadder();
+                }
                 player.v = 0;
             }
             player.changeView(player.pi.climb);

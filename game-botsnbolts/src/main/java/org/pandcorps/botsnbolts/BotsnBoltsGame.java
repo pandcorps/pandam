@@ -117,7 +117,6 @@ public final class BotsnBoltsGame extends BaseGame {
     }
     
     private final static void initTileBehaviors() {
-        Chr.TILE_FLOOR = TILE_FLOOR;
     }
     
     private final static void loadResources() {
@@ -532,11 +531,14 @@ public final class BotsnBoltsGame extends BaseGame {
             //room.addActor(battery);
             new PowerBox(12, 1);
             //new ShootableBarrier(6, 1, doorCyan);
-            new ShootableBlockPuzzle(
-                new int[] { tm.getIndex(14, 4), tm.getIndex(18, 8), tm.getIndex(14, 8), tm.getIndex(18, 12) },
-                new int[] { tm.getIndex(14, 6), tm.getIndex(18, 10), tm.getIndex(14, 10) });
+            //new ShootableBlockPuzzle(
+            //    new int[] { tm.getIndex(14, 4), tm.getIndex(18, 8), tm.getIndex(14, 8), tm.getIndex(18, 12) },
+            //    new int[] { tm.getIndex(14, 6), tm.getIndex(18, 10), tm.getIndex(14, 10) });
+            for (int j = 4; j < 9; j++) {
+                tm.setForeground(17, j, imgMap[0][1], (j == 8) ? TILE_LADDER_TOP : TILE_LADDER);
+            }
             for (int j = 1; j < 13; j++) {
-                tm.setForeground(20, j, imgMap[0][1], TILE_LADDER);
+                tm.setForeground(20, j, imgMap[0][1], (j == 12) ? TILE_LADDER_TOP : TILE_LADDER);
             }
             final Player player = new Player(pc);
             player.getPosition().set(48, 96, DEPTH_PLAYER);
