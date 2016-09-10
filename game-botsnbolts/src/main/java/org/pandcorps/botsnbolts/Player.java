@@ -30,6 +30,7 @@ import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.action.*;
 import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.in.*;
+import org.pandcorps.pandax.tile.TileMap;
 
 public final class Player extends Chr {
     protected final static int PLAYER_X = 6;
@@ -198,7 +199,13 @@ public final class Player extends Chr {
     }
     
     private final void onUpNormal() {
-        //TODO Switch to LADDER_HANDLER if on ladder
+        final Panple pos = getPosition();
+        final TileMap tm = BotsnBoltsGame.tm;
+        final int tileIndex = tm.getContainer(pos.getX(), pos.getY() + 20);
+        final byte b = tm.getTile(tileIndex).getBehavior();
+        if (b == BotsnBoltsGame.TILE_LADDER || b == BotsnBoltsGame.TILE_LADDER_TOP) {
+            stateHandler = LADDER_HANDLER;
+        }
     }
     
     private final void down() {
@@ -608,6 +615,8 @@ public final class Player extends Chr {
         private final PlayerImagesSubSet basicSet;
         private final PlayerImagesSubSet shootSet;
         private final Panmage hurt;
+        private final Panmage climb;
+        private final Panmage climbShoot;
         protected final Panmage basicProjectile;
         protected final Panimation projectile2;
         protected final Panimation projectile3;
@@ -625,6 +634,7 @@ public final class Player extends Chr {
         private final HudMeterImages hudMeterImages;
         
         protected PlayerImages(final PlayerImagesSubSet basicSet, final PlayerImagesSubSet shootSet, final Panmage hurt,
+                               final Panmage climb, final Panmage climbShoot,
                                final Panmage basicProjectile, final Panimation projectile2, final Panimation projectile3,
                                final Panimation charge, final Panimation chargeVert, final Panimation charge2, final Panimation chargeVert2,
                                final Panimation burst, final Panmage[] ball, final Panimation bomb,
@@ -633,6 +643,8 @@ public final class Player extends Chr {
             this.basicSet = basicSet;
             this.shootSet = shootSet;
             this.hurt = hurt;
+            this.climb = climb;
+            this.climbShoot = climbShoot;
             this.basicProjectile = basicProjectile;
             this.projectile2 = projectile2;
             this.projectile3 = projectile3;

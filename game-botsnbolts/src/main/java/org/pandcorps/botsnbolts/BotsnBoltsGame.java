@@ -203,6 +203,8 @@ public final class BotsnBoltsGame extends BaseGame {
         final PlayerImagesSubSet shootSet = loadPlayerImagesSubSet(pre + "Shoot", name + ".shoot", false, oss, os, ojs);
         final Pangine engine = Pangine.getEngine();
         final Panmage hurt = newPlayerImage(PRE_IMG + "." + name + ".hurt", oj, pre + "Hurt");
+        final Panmage climb = hurt; //TODO
+        final Panmage climbShoot = null; //TODO
         final Panmage basicProjectile = engine.createImage(pre + "Projectile", new FinPanple2(3, 3), new FinPanple2(-3, -1), new FinPanple2(5, 3), pre + "Projectile.png");
         //final Panimation projectile2 = newAnimation(pre + "Projectile2", pre + "Projectile2.png", 16, new FinPanple2(7, 7), new FinPanple2(-4, -4), new FinPanple2(8, 6), 4);
         final Panimation projectile2 = newFlipper(pre + "Projectile2", pre + "Projectile2.png", new FinPanple2(7, 7), new FinPanple2(-4, -4), new FinPanple2(8, 6), 4);
@@ -236,7 +238,7 @@ public final class BotsnBoltsGame extends BaseGame {
         final Panimation batteryBig = newOscillation(pre + "battery.big", pre + "BatteryBig.png", 16, oBattery, new FinPanple2(-6, 2), new FinPanple2(6, 14), 3, 6);
         final Panmage powerBox = engine.createImage(pre + "PowerBox", CENTER_16, minCube, maxCube, pre + "PowerBox.png");
         final HudMeterImages hudMeterImages = newHudMeterImages(pre + "Meter", pre + "Meter.png");
-        return new PlayerImages(basicSet, shootSet, hurt, basicProjectile, projectile2, projectile3, charge, chargeVert, charge2, chargeVert2,
+        return new PlayerImages(basicSet, shootSet, hurt, climb, climbShoot, basicProjectile, projectile2, projectile3, charge, chargeVert, charge2, chargeVert2,
             burst, ball, bomb, batterySml, batteryMed, batteryBig, powerBox, hudMeterImages);
     }
     
@@ -299,7 +301,7 @@ public final class BotsnBoltsGame extends BaseGame {
     }
     
     private final static Panmage[] newSheet(final String id, final String path, final int w, final Panple o, final Panple min, final Panple max) {
-        return newSheet(id, Imtil.loadStrip(path, w));
+        return newSheet(id, Imtil.loadStrip(path, w), o, min, max);
     }
     
     private final static Panmage[] newSheet(final String id, final Img[] imgs) {
@@ -311,7 +313,7 @@ public final class BotsnBoltsGame extends BaseGame {
         final Panmage[] sheet = new Panmage[size];
         final Pangine engine = Pangine.getEngine();
         for (int i = 0; i < size; i++) {
-            sheet[i] = engine.createImage(id + "." + i, imgs[i]);
+            sheet[i] = engine.createImage(id + "." + i, o, min, max, imgs[i]);
         }
         return sheet;
     }
