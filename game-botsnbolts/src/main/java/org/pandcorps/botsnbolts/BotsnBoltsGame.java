@@ -526,7 +526,7 @@ public final class BotsnBoltsGame extends BaseGame {
             //tm.setBackground(end - 1, 2, imgMap[1][3], Tile.BEHAVIOR_SOLID);
             //new ShootableDoor(end, 1, doorSmall);
             //new SentryGun(11, 1);
-            new SentryGun(8, 3);
+            //new SentryGun(8, 3);
             //final BigBattery battery = new BigBattery();
             //battery.getPosition().set(200, 96, DEPTH_POWER_UP);
             //room.addActor(battery);
@@ -535,6 +535,9 @@ public final class BotsnBoltsGame extends BaseGame {
             new ShootableBlockPuzzle(
                 new int[] { tm.getIndex(14, 4), tm.getIndex(18, 8), tm.getIndex(14, 8), tm.getIndex(18, 12) },
                 new int[] { tm.getIndex(14, 6), tm.getIndex(18, 10), tm.getIndex(14, 10) });
+            for (int j = 1; j < 13; j++) {
+                tm.setForeground(20, j, imgMap[0][1], TILE_LADDER);
+            }
             final Player player = new Player(pc);
             player.getPosition().set(48, 96, DEPTH_PLAYER);
             room.addActor(player);

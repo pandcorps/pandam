@@ -33,6 +33,12 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
     public final static int MIN_Y = -12;
     public final static float g = -0.65f;
     public final static float gFlying = -0.38f;
+    protected final static byte Y_NORMAL = 0;
+    protected final static byte Y_BUMP = 1;
+    protected final static byte Y_LANDED = 2;
+    protected final static byte Y_CEILING = 3;
+    protected final static byte Y_FLOOR = 4;
+    protected final static byte Y_FELL = 5;
     public static byte TILE_FLOOR = -1;
     public static byte TILE_UPSLOPE = -1;
     public static byte TILE_DOWNSLOPE = -1;
@@ -71,6 +77,50 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
         if (v != 0) {
             setMirror(v < 0);
         }
+    }
+    
+    protected final byte addY() {
+        final int offSol, mult, n;
+        if (v > 0) {
+            offSol = OFF_BUTTING;
+            mult = 1;
+        } else {
+            offSol = OFF_GROUNDED;
+            mult = -1;
+        }
+        n = Math.round(v * mult);
+        final Panple pos = getPosition();
+        for (int i = 0; i < n; i++) {
+            final int t = getSolid(offSol);
+            if (t != -1) {
+                if (v > 0) {
+                    onBump(t);
+                    v = 0;
+                    return Y_BUMP;
+                } else {
+                    onLanded();
+                    return Y_LANDED;
+                }
+            }
+            pos.addY(mult);
+            final float y = pos.getY();
+            if (y < MIN_Y) {
+                pos.setY(MIN_Y);
+                v = 0;
+                if (onFell()) {
+                    return Y_FELL;
+                }
+                return Y_FLOOR;
+            } else {
+                final float max = getCeiling();
+                if (y >= max) {
+                    pos.setY(max - 1);
+                    v = 0;
+                    return Y_CEILING;
+                }
+            }
+        }
+        return Y_NORMAL;
     }
     
     protected final boolean addX(final int v) {
@@ -141,9 +191,9 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
             return;
         }
         
-        final Panple pos = getPosition();
         if (isNearCheckNeeded()) {
             final TileMap tm = getTileMap();
+            final Panple pos = getPosition();
             final float x = pos.getX() + getOffLeft(), y = pos.getY();
             for (int i = -1; i < 3; i++) {
                 final float xn = x + (16 * i);
@@ -152,43 +202,8 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
                 }
             }
         }
-        final int offSol, mult, n;
-        if (v > 0) {
-            offSol = OFF_BUTTING;
-            mult = 1;
-        } else {
-            offSol = OFF_GROUNDED;
-            mult = -1;
-        }
-        n = Math.round(v * mult);
-        for (int i = 0; i < n; i++) {
-            final int t = getSolid(offSol);
-            if (t != -1) {
-                if (v > 0) {
-                    onBump(t);
-                    v = 0;
-                } else {
-                    onLanded();
-                }
-                break;
-            }
-            pos.addY(mult);
-            final float y = pos.getY();
-            if (y < MIN_Y) {
-                pos.setY(MIN_Y);
-                v = 0;
-                if (onFell()) {
-                    return;
-                }
-                break;
-            } else {
-                final float max = getCeiling();
-                if (y >= max) {
-                    pos.setY(max - 1);
-                    v = 0;
-                    break;
-                }
-            }
+        if (addY() == Y_FELL) {
+            return;
         }
         
         if (!addX(initCurrentHorizontalVelocity())) {

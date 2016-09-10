@@ -30,7 +30,7 @@ import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.action.*;
 import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.in.*;
-import org.pandcorps.pandax.tile.TileMap;
+import org.pandcorps.pandax.tile.*;
 
 public final class Player extends Chr {
     protected final static int PLAYER_X = 6;
@@ -145,7 +145,13 @@ public final class Player extends Chr {
     }
     
     private final void jump() {
-        if (isGrounded() && !isHurt()) {
+        if (!isHurt()) {
+            stateHandler.onJump(this);
+        }
+    }
+    
+    private final void onJumpNormal() {
+        if (isGrounded()) {
             v = VEL_JUMP;
         }
     }
@@ -202,7 +208,7 @@ public final class Player extends Chr {
         final Panple pos = getPosition();
         final TileMap tm = BotsnBoltsGame.tm;
         final int tileIndex = tm.getContainer(pos.getX(), pos.getY() + 20);
-        final byte b = tm.getTile(tileIndex).getBehavior();
+        final byte b = Tile.getBehavior(tm.getTile(tileIndex));
         if (b == BotsnBoltsGame.TILE_LADDER || b == BotsnBoltsGame.TILE_LADDER_TOP) {
             stateHandler = LADDER_HANDLER;
         }
@@ -258,6 +264,9 @@ public final class Player extends Chr {
             setVisible(Pangine.getEngine().isOn(4));
         } else {
             setVisible(true);
+        }
+        if (stateHandler.onStep(this)) {
+            return true;
         }
         return false;
     }
@@ -393,6 +402,8 @@ public final class Player extends Chr {
     }
     
     protected abstract static class StateHandler {
+        protected abstract void onJump(final Player player);
+        
         protected abstract void onShootStart(final Player player);
         
         protected abstract void onShooting(final Player player);
@@ -411,6 +422,11 @@ public final class Player extends Chr {
         protected void onDown(final Player player) {
         }
         
+        //@OverrideMe
+        protected boolean onStep(final Player player) {
+            return false;
+        }
+        
         protected abstract void onGrounded(final Player player);
         
         protected abstract boolean onAir(final Player player);
@@ -421,6 +437,11 @@ public final class Player extends Chr {
     }
     
     protected final static StateHandler NORMAL_HANDLER = new StateHandler() {
+        @Override
+        protected final void onJump(final Player player) {
+            player.onJumpNormal();
+        }
+        
         @Override
         protected final void onShootStart(final Player player) {
             player.prf.shootMode.onShootStart(player);
@@ -472,6 +493,11 @@ public final class Player extends Chr {
     
     protected final static StateHandler LADDER_HANDLER = new StateHandler() {
         @Override
+        protected final void onJump(final Player player) {
+            player.stateHandler = NORMAL_HANDLER;
+        }
+        
+        @Override
         protected final void onShootStart(final Player player) {
             player.prf.shootMode.onShootStart(player);
         }
@@ -498,11 +524,22 @@ public final class Player extends Chr {
         
         @Override
         protected final void onUp(final Player player) {
-            //TODO Climb up
+            player.v = VEL_WALK;
         }
         
         @Override
         protected final void onDown(final Player player) {
+            player.v = -VEL_WALK;
+        }
+        
+        @Override
+        protected final boolean onStep(final Player player) {
+            if (player.v != 0) {
+                player.addY();
+                player.v = 0;
+            }
+            player.changeView(player.pi.climb);
+            return true;
         }
         
         @Override
@@ -516,6 +553,11 @@ public final class Player extends Chr {
     };
     
     protected final static StateHandler BALL_HANDLER = new StateHandler() {
+        @Override
+        protected final void onJump(final Player player) {
+            player.onJumpNormal();
+        }
+        
         @Override
         protected final void onShootStart(final Player player) {
             SHOOT_BOMB.onShootStart(player);
