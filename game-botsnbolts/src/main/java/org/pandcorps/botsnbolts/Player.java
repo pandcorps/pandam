@@ -206,7 +206,7 @@ public final class Player extends Chr {
     
     private final void onUpNormal() {
         if (isTouchingLadder()) {
-            final Panple pos= getPosition();
+            final Panple pos = getPosition();
             pos.setX((Math.round(pos.getX()) / 16) * 16 + 7);
             stateHandler = LADDER_HANDLER;
         }
@@ -259,8 +259,12 @@ public final class Player extends Chr {
         return (Pangine.getEngine().getClock() - lastHurt) < INVINCIBLE_TIME;
     }
     
+    private final boolean isShootPoseNeeded() {
+        return (Pangine.getEngine().getClock() - lastShot) < SHOOT_TIME;
+    }
+    
     private final PlayerImagesSubSet getCurrentImagesSubSet() {
-        return ((Pangine.getEngine().getClock() - lastShot) < SHOOT_TIME) ? pi.shootSet : pi.basicSet;
+        return isShootPoseNeeded() ? pi.shootSet : pi.basicSet;
     }
     
     private final void clearRun() {
@@ -529,22 +533,30 @@ public final class Player extends Chr {
         
         @Override
         protected final void onRight(final Player player) {
-            //TODO Aim right
+            if (!player.isShootPoseNeeded()) {
+                player.setMirror(false);
+            }
         }
         
         @Override
         protected final void onLeft(final Player player) {
-            //TODO Aim left
+            if (!player.isShootPoseNeeded()) {
+                player.setMirror(true);
+            }
         }
         
         @Override
         protected final void onUp(final Player player) {
-            player.v = VEL_WALK;
+            if (!player.isShootPoseNeeded()) {
+                player.v = VEL_WALK;
+            }
         }
         
         @Override
         protected final void onDown(final Player player) {
-            player.v = -VEL_WALK;
+            if (!player.isShootPoseNeeded()) {
+                player.v = -VEL_WALK;
+            }
         }
         
         @Override
@@ -558,8 +570,10 @@ public final class Player extends Chr {
                     player.endLadder();
                 }
                 player.v = 0;
+                final int frameLength = VEL_WALK * RUN_TIME, animLength = frameLength * 2;
+                player.setMirror((Math.round(player.getPosition().getY()) % animLength) < frameLength);
             }
-            player.changeView(player.pi.climb);
+            player.changeView(player.isShootPoseNeeded() ? player.pi.climbShoot : player.pi.climb);
             return true;
         }
         
