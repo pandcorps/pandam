@@ -206,6 +206,8 @@ public final class Player extends Chr {
     
     private final void onUpNormal() {
         if (isTouchingLadder()) {
+            final Panple pos= getPosition();
+            pos.setX((Math.round(pos.getX()) / 16) * 16 + 7);
             stateHandler = LADDER_HANDLER;
         }
     }
@@ -678,6 +680,7 @@ public final class Player extends Chr {
         private final Panmage hurt;
         private final Panmage climb;
         private final Panmage climbShoot;
+        private final Panmage climbTop;
         protected final Panmage basicProjectile;
         protected final Panimation projectile2;
         protected final Panimation projectile3;
@@ -695,7 +698,7 @@ public final class Player extends Chr {
         private final HudMeterImages hudMeterImages;
         
         protected PlayerImages(final PlayerImagesSubSet basicSet, final PlayerImagesSubSet shootSet, final Panmage hurt,
-                               final Panmage climb, final Panmage climbShoot,
+                               final Panmage climb, final Panmage climbShoot, final Panmage climbTop,
                                final Panmage basicProjectile, final Panimation projectile2, final Panimation projectile3,
                                final Panimation charge, final Panimation chargeVert, final Panimation charge2, final Panimation chargeVert2,
                                final Panimation burst, final Panmage[] ball, final Panimation bomb,
@@ -706,6 +709,7 @@ public final class Player extends Chr {
             this.hurt = hurt;
             this.climb = climb;
             this.climbShoot = climbShoot;
+            this.climbTop = climbTop;
             this.basicProjectile = basicProjectile;
             this.projectile2 = projectile2;
             this.projectile3 = projectile3;

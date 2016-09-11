@@ -202,8 +202,12 @@ public final class BotsnBoltsGame extends BaseGame {
         final PlayerImagesSubSet shootSet = loadPlayerImagesSubSet(pre + "Shoot", name + ".shoot", false, oss, os, ojs);
         final Pangine engine = Pangine.getEngine();
         final Panmage hurt = newPlayerImage(PRE_IMG + "." + name + ".hurt", oj, pre + "Hurt");
-        final Panmage climb = hurt; //TODO
-        final Panmage climbShoot = null; //TODO
+        final Panple oClimb = new FinPanple2(15, 1);
+        final Img[] climbImgs = Imtil.loadStrip(pre + "Climb.png", 32);
+        final Img[] climbImgsMirror = Imtil.loadStrip(pre + "ClimbMirror.png", 32);
+        final Panmage climb = newPlayerImage(pre + "Climb", oClimb, climbImgs, climbImgsMirror, 0);
+        final Panmage climbShoot = newPlayerImage(pre + "Climb.Shoot", oClimb, climbImgs, climbImgsMirror, 1);
+        final Panmage climbTop = newPlayerImage(pre + "Climb.Top", oClimb, climbImgs, climbImgsMirror, 2);
         final Panmage basicProjectile = engine.createImage(pre + "Projectile", new FinPanple2(3, 3), new FinPanple2(-3, -1), new FinPanple2(5, 3), pre + "Projectile.png");
         //final Panimation projectile2 = newAnimation(pre + "Projectile2", pre + "Projectile2.png", 16, new FinPanple2(7, 7), new FinPanple2(-4, -4), new FinPanple2(8, 6), 4);
         final Panimation projectile2 = newFlipper(pre + "Projectile2", pre + "Projectile2.png", new FinPanple2(7, 7), new FinPanple2(-4, -4), new FinPanple2(8, 6), 4);
@@ -237,7 +241,7 @@ public final class BotsnBoltsGame extends BaseGame {
         final Panimation batteryBig = newOscillation(pre + "battery.big", pre + "BatteryBig.png", 16, oBattery, new FinPanple2(-6, 2), new FinPanple2(6, 14), 3, 6);
         final Panmage powerBox = engine.createImage(pre + "PowerBox", CENTER_16, minCube, maxCube, pre + "PowerBox.png");
         final HudMeterImages hudMeterImages = newHudMeterImages(pre + "Meter", pre + "Meter.png");
-        return new PlayerImages(basicSet, shootSet, hurt, climb, climbShoot, basicProjectile, projectile2, projectile3, charge, chargeVert, charge2, chargeVert2,
+        return new PlayerImages(basicSet, shootSet, hurt, climb, climbShoot, climbTop, basicProjectile, projectile2, projectile3, charge, chargeVert, charge2, chargeVert2,
             burst, ball, bomb, batterySml, batteryMed, batteryBig, powerBox, hudMeterImages);
     }
     
