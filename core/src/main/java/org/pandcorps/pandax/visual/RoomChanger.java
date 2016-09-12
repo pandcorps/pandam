@@ -66,14 +66,14 @@ public abstract class RoomChanger extends Panctor implements StepListener {
         if (velX < 0) {
             offX = newRoom.getSize().getX();
         } else if (velX > 0) {
-            offX = -1; //TODO
+            offX = -oldRoom.getSize().getX();
         } else {
             offX = 0;
         }
         if (velY < 0) {
             offY = newRoom.getSize().getY();
         } else if (velY > 0) {
-            offY = -1; //TODO
+            offY = -oldRoom.getSize().getY();
         } else {
             offY = 0;
         }
@@ -83,6 +83,7 @@ public abstract class RoomChanger extends Panctor implements StepListener {
                 actor.getPosition().add(offX, offY);
             }
         }
+        //TODO init newRoom origin
     }
     
     private final void detachLayers(final List<Panlayer> layers) {
