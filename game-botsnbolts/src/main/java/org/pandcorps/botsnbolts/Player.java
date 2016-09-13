@@ -212,8 +212,11 @@ public final class Player extends Chr {
         }
     }
     
+    private final static int OFF_LADDER_TOP = 20;
+    private final static int OFF_LADDER_BOTTOM = 8;
+    
     private final boolean isTouchingLadder() {
-        return isTouchingLadder(20);
+        return isTouchingLadder(OFF_LADDER_TOP);
     }
     
     private final boolean isTouchingLadder(final int yoff) {
@@ -566,14 +569,25 @@ public final class Player extends Chr {
                 final byte yStatus = player.addY();
                 if (yStatus == Y_LANDED) {
                     player.endLadder();
-                } else if (!(player.isTouchingLadder() || player.isTouchingLadder(0))) {
+                } else if (!(player.isTouchingLadder() || player.isTouchingLadder(OFF_LADDER_BOTTOM))) {
+                    if (v > 0) {
+                        player.getPosition().addY(OFF_LADDER_BOTTOM);
+                    }
                     player.endLadder();
                 }
                 player.v = 0;
                 final int frameLength = VEL_WALK * RUN_TIME, animLength = frameLength * 2;
                 player.setMirror((Math.round(player.getPosition().getY()) % animLength) < frameLength);
             }
-            player.changeView(player.isShootPoseNeeded() ? player.pi.climbShoot : player.pi.climb);
+            final Panmage view;
+            if (player.isShootPoseNeeded()) {
+                view = player.pi.climbShoot;
+            } else if (!(player.isTouchingLadder() || player.isTouchingLadder(OFF_LADDER_BOTTOM + 3))) {
+                view = player.pi.climbTop;
+            } else {
+                view = player.pi.climb;
+            }
+            player.changeView(view);
             return true;
         }
         
