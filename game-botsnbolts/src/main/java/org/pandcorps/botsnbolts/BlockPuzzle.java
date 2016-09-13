@@ -82,6 +82,7 @@ public abstract class BlockPuzzle {
     
     protected final static class TimedBlockPuzzle extends BlockPuzzle {
         private final List<int[]> steps;
+        private int currentStepIndex = 0;
         
         protected TimedBlockPuzzle(final List<int[]> steps) {
             super(null); //TODO pick color/image
@@ -97,7 +98,16 @@ public abstract class BlockPuzzle {
         }
         
         private final void fade() {
-            //TODO fade
+            final int numSteps = steps.size();
+            int previousStepIndex = currentStepIndex - 2;
+            if (previousStepIndex < 0) {
+                previousStepIndex += numSteps;
+            }
+            fade(steps.get(previousStepIndex), steps.get(currentStepIndex));
+            currentStepIndex++;
+            if (currentStepIndex >= numSteps) {
+                currentStepIndex = 0;
+            }
             schedule();
         }
     }
