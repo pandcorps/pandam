@@ -80,6 +80,28 @@ public abstract class BlockPuzzle {
         }
     }
     
+    protected final static class TimedBlockPuzzle extends BlockPuzzle {
+        private final List<int[]> steps;
+        
+        protected TimedBlockPuzzle(final List<int[]> steps) {
+            super(null); //TODO pick color/image
+            this.steps = steps;
+            schedule();
+        }
+        
+        private final void schedule() {
+            Pangine.getEngine().addTimer(tm, 30, new TimerListener() {
+                @Override public final void onTimer(final TimerEvent event) {
+                    fade();
+                }});
+        }
+        
+        private final void fade() {
+            //TODO fade
+            schedule();
+        }
+    }
+    
     protected final static class ShootableBlockPuzzle extends BlockPuzzle {
         private final List<ShootableBlock> blocks;
         private int[] enabledIndices;
@@ -93,7 +115,7 @@ public abstract class BlockPuzzle {
             fade(null, enabledIndices);
         }
         
-        private void fade() {
+        private final void fade() {
             Panctor.destroy(blocks);
             fade(enabledIndices, disabledIndices);
             final int[] tmpIndices = enabledIndices;
