@@ -163,4 +163,9 @@ public abstract class BlockPuzzle {
             }
         }
     }
+    
+    protected final static class SpikeBlockPuzzle {
+        protected SpikeBlockPuzzle(final int[] initiallyVerticalIndices, final int[] initiallyHorizontalIndices) {
+        }
+    }
 }
