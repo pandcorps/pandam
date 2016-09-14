@@ -243,11 +243,11 @@ public abstract class Enemy extends Panctor implements CollisionListener {
         }
         
         private final void setUp() {
-            setDirection(1, false, 1, 0, 1);
+            setDirection(1, false, 1, -1, 2);
         }
         
         private final void setDown() {
-            setDirection(3, false, 3, -1, -2);
+            setDirection(3, false, 3, 0, -3);
         }
         
         private final void setDirection(final int dir, final boolean mirror, final int rot, final int offX, final int offY) {
