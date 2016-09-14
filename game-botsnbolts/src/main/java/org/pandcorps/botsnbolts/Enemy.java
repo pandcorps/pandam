@@ -45,6 +45,8 @@ public abstract class Enemy extends Panctor implements CollisionListener {
         final Collidable collider = event.getCollider();
         if (collider instanceof Projectile) { // Projectile can have sub-classes like Explosion
             onShot((Projectile) collider);
+        } else if (collider.getClass() == Player.class) {
+            onAttack((Player) collider);
         }
     }
     
@@ -60,6 +62,10 @@ public abstract class Enemy extends Panctor implements CollisionListener {
             destroy();
         }
         prj.setPower(oldPower - oldHealth);
+    }
+    
+    protected void onAttack(final Player player) {
+        player.hurt(1);
     }
     
     protected final void award() {

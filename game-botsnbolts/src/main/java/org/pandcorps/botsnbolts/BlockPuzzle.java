@@ -166,6 +166,29 @@ public abstract class BlockPuzzle {
     
     protected final static class SpikeBlockPuzzle {
         protected SpikeBlockPuzzle(final int[] initiallyVerticalIndices, final int[] initiallyHorizontalIndices) {
+            setTiles(initiallyVerticalIndices);
+            setTiles(initiallyHorizontalIndices);
+        }
+        
+        private final void setTiles(final int[] tileIndices) {
+            for (final int tileIndex : tileIndices) {
+                BotsnBoltsGame.tm.setForeground(tileIndex, null, Tile.BEHAVIOR_SOLID); //TODO
+            }
+        }
+    }
+    
+    protected final static class Spike extends Enemy {
+        protected Spike() {
+            super(1);
+            getPosition().setZ(BotsnBoltsGame.DEPTH_BG);
+        }
+
+        @Override
+        protected final void onShot(final Projectile prj) {
+        }
+        
+        @Override
+        protected final void award(final PowerUp powerUp) {
         }
     }
 }
