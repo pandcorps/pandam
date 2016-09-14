@@ -206,10 +206,14 @@ public final class Player extends Chr {
     
     private final void onUpNormal() {
         if (isTouchingLadder()) {
-            final Panple pos = getPosition();
-            pos.setX((Math.round(pos.getX()) / 16) * 16 + 7);
-            stateHandler = LADDER_HANDLER;
+            startLadder();
         }
+    }
+    
+    private final void startLadder() {
+        final Panple pos = getPosition();
+        pos.setX((Math.round(pos.getX()) / 16) * 16 + 7);
+        stateHandler = LADDER_HANDLER;
     }
     
     private final static int OFF_LADDER_TOP = 20;
@@ -229,6 +233,13 @@ public final class Player extends Chr {
     
     private final void down() {
         stateHandler.onDown(this);
+    }
+    
+    private final void onDownNormal() {
+        if (isGrounded() && isTouchingLadder(-1)) {
+            startLadder();
+            getPosition().addY(-OFF_LADDER_BOTTOM);
+        }
     }
     
     protected final void hurt(final int damage) {
@@ -492,6 +503,11 @@ public final class Player extends Chr {
         @Override
         protected final void onUp(final Player player) {
             player.onUpNormal();
+        }
+        
+        @Override
+        protected final void onDown(final Player player) {
+            player.onDownNormal();
         }
         
         @Override
