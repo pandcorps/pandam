@@ -302,7 +302,7 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
         }
     }
     
-    private static class BarrierDisplay implements Pansplay {
+    private final static class BarrierDisplay implements Pansplay {
         @Override
         public final Panple getOrigin() {
             return FinPanple.ORIGIN;
@@ -317,5 +317,8 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
         public Panple getBoundingMaximum() {
             return maxBarrier;
         }
+    }
+    
+    protected final static class BossDoor extends Panctor {
     }
 }
