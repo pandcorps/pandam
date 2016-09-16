@@ -320,5 +320,14 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
     }
     
     protected final static class BossDoor extends Panctor {
+        @Override
+        protected final void renderView(final Panderer renderer) {
+            //TODO
+        }
+        
+        @Override
+        public final Pansplay getCurrentDisplay() {
+            return null; //TODO
+        }
     }
 }
