@@ -1,3 +1,6 @@
+1.27 (40)
+
+Added quad levels.
 Added enemy templates.
 Added Combo Achievements.
 
