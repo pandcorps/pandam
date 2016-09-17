@@ -100,7 +100,7 @@ public class Tiles {
     	    } else {
         		Level.tm.setForeground(index, null, Tile.BEHAVIOR_OPEN);
         		shatterImg = FurGuardiansGame.block8;
-        		if (Mathtil.rand(70)) {
+        		if (Mathtil.rand(Level.breakableAwardProbability)) {
         		    newGemBumped(player, index); // Plays a sound
         		} // else { // Used to play soundCrumble in this else, but Players wanted to hear crumble even if Gem pops up with its own sound
         		stats.brokenBlocks++;

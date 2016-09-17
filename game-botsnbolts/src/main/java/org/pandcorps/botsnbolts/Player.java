@@ -22,6 +22,9 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.botsnbolts;
 
+import org.pandcorps.botsnbolts.HudMeter.*;
+import org.pandcorps.botsnbolts.Projectile.*;
+import org.pandcorps.core.*;
 import org.pandcorps.game.actor.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.action.*;
@@ -29,7 +32,7 @@ import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.in.*;
 import org.pandcorps.pandax.tile.*;
 
-public final class Player extends GuyPlatform {
+public final class Player extends Chr {
     protected final static int PLAYER_X = 6;
     protected final static int PLAYER_H = 23;
     protected final static int BALL_H = 15;
@@ -37,6 +40,8 @@ public final class Player extends GuyPlatform {
     private final static int SHOOT_DELAY_RAPID = 3;
     private final static int SHOOT_DELAY_SPREAD = 15;
     private final static int SHOOT_TIME = 12;
+    private final static int CHARGE_TIME_MEDIUM = 30;
+    private final static int CHARGE_TIME_BIG = 60;
     private final static int INVINCIBLE_TIME = 60;
     private final static int HURT_TIME = 15;
     private final static int RUN_TIME = 5;
@@ -48,6 +53,7 @@ public final class Player extends GuyPlatform {
     private final static float VX_SPREAD2;
     private final static float VY_SPREAD2;
     
+    protected final PlayerContext pc;
     protected final Profile prf;
     protected final PlayerImages pi;
     private StateHandler stateHandler = NORMAL_HANDLER;
@@ -56,10 +62,12 @@ public final class Player extends GuyPlatform {
     private int runTimer = 0;
     private int blinkTimer = 0;
     private long lastShot = -1000;
+    private long startCharge = -1000;
+    private long lastCharge = -1000;
     private long lastHurt = -1000;
     private int wallTimer = 0;
     private boolean wallMirror = false;
-    private int health = 28; //TODO HUD meter
+    private int health = HudMeter.MAX_VALUE;
     
     static {
         final Panple tmp = new ImplPanple(VEL_PROJECTILE, 0, 0);
@@ -74,6 +82,7 @@ public final class Player extends GuyPlatform {
     protected Player(final PlayerContext pc) {
         super(PLAYER_X, PLAYER_H);
         pc.player = this;
+        this.pc = pc;
         this.prf = pc.prf;
         this.pi = pc.pi;
         registerInputs(pc.ctrl);
@@ -136,7 +145,13 @@ public final class Player extends GuyPlatform {
     }
     
     private final void jump() {
-        if (isGrounded() && !isHurt()) {
+        if (!isHurt()) {
+            stateHandler.onJump(this);
+        }
+    }
+    
+    private final void onJumpNormal() {
+        if (isGrounded()) {
             v = VEL_JUMP;
         }
     }
@@ -190,11 +205,41 @@ public final class Player extends GuyPlatform {
     }
     
     private final void onUpNormal() {
-        //TODO Switch to LADDER_HANDLER if on ladder
+        if (isTouchingLadder()) {
+            startLadder();
+        }
+    }
+    
+    private final void startLadder() {
+        final Panple pos = getPosition();
+        pos.setX((Math.round(pos.getX()) / 16) * 16 + 7);
+        stateHandler = LADDER_HANDLER;
+    }
+    
+    private final static int OFF_LADDER_TOP = 20;
+    private final static int OFF_LADDER_BOTTOM = 8;
+    
+    private final boolean isTouchingLadder() {
+        return isTouchingLadder(OFF_LADDER_TOP);
+    }
+    
+    private final boolean isTouchingLadder(final int yoff) {
+        final Panple pos = getPosition();
+        final TileMap tm = BotsnBoltsGame.tm;
+        final int tileIndex = tm.getContainer(pos.getX(), pos.getY() + yoff);
+        final byte b = Tile.getBehavior(tm.getTile(tileIndex));
+        return b == BotsnBoltsGame.TILE_LADDER || b == BotsnBoltsGame.TILE_LADDER_TOP;
     }
     
     private final void down() {
         stateHandler.onDown(this);
+    }
+    
+    private final void onDownNormal() {
+        if (isGrounded() && isTouchingLadder(-1)) {
+            startLadder();
+            getPosition().addY(-OFF_LADDER_BOTTOM);
+        }
     }
     
     protected final void hurt(final int damage) {
@@ -206,6 +251,18 @@ public final class Player extends GuyPlatform {
         if ((v > 0) && !isGrounded()) {
             v = 0;
         }
+        startCharge = -1000;
+        lastCharge = -1000;
+    }
+    
+    protected final void addHealth(final int amount) {
+        if (health >= HudMeter.MAX_VALUE) {
+            return;
+        }
+        health += amount;
+        if (health > HudMeter.MAX_VALUE) {
+            health = HudMeter.MAX_VALUE;
+        }
     }
     
     private final boolean isHurt() {
@@ -216,8 +273,12 @@ public final class Player extends GuyPlatform {
         return (Pangine.getEngine().getClock() - lastHurt) < INVINCIBLE_TIME;
     }
     
+    private final boolean isShootPoseNeeded() {
+        return (Pangine.getEngine().getClock() - lastShot) < SHOOT_TIME;
+    }
+    
     private final PlayerImagesSubSet getCurrentImagesSubSet() {
-        return ((Pangine.getEngine().getClock() - lastShot) < SHOOT_TIME) ? pi.shootSet : pi.basicSet;
+        return isShootPoseNeeded() ? pi.shootSet : pi.basicSet;
     }
     
     private final void clearRun() {
@@ -231,6 +292,9 @@ public final class Player extends GuyPlatform {
             setVisible(Pangine.getEngine().isOn(4));
         } else {
             setVisible(true);
+        }
+        if (stateHandler.onStep(this)) {
+            return true;
         }
         return false;
     }
@@ -331,6 +395,11 @@ public final class Player extends GuyPlatform {
         setH(PLAYER_H);
     }
     
+    private final void endLadder() {
+        clearRun();
+        stateHandler = NORMAL_HANDLER;
+    }
+    
     @Override
     protected final void onLanded() {
         super.onLanded();
@@ -358,26 +427,16 @@ public final class Player extends GuyPlatform {
         stateHandler.onWall(this);
     }
     
-    @Override
-    protected final boolean onFell() {
-        return false;
-    }
-
-    @Override
-    protected final void onBump(final int t) {
-    }
-
-    @Override
-    protected final TileMap getTileMap() {
-        return BotsnBoltsGame.tm;
-    }
-
-    @Override
-    protected boolean isSolidBehavior(final byte b) {
-        return false;
+    protected final HudMeter newHealthMeter() {
+        return new HudMeter(pi.hudMeterImages) {
+            @Override protected final int getValue() {
+                return health;
+            }};
     }
     
     protected abstract static class StateHandler {
+        protected abstract void onJump(final Player player);
+        
         protected abstract void onShootStart(final Player player);
         
         protected abstract void onShooting(final Player player);
@@ -396,6 +455,11 @@ public final class Player extends GuyPlatform {
         protected void onDown(final Player player) {
         }
         
+        //@OverrideMe
+        protected boolean onStep(final Player player) {
+            return false;
+        }
+        
         protected abstract void onGrounded(final Player player);
         
         protected abstract boolean onAir(final Player player);
@@ -406,6 +470,11 @@ public final class Player extends GuyPlatform {
     }
     
     protected final static StateHandler NORMAL_HANDLER = new StateHandler() {
+        @Override
+        protected final void onJump(final Player player) {
+            player.onJumpNormal();
+        }
+        
         @Override
         protected final void onShootStart(final Player player) {
             player.prf.shootMode.onShootStart(player);
@@ -437,6 +506,11 @@ public final class Player extends GuyPlatform {
         }
         
         @Override
+        protected final void onDown(final Player player) {
+            player.onDownNormal();
+        }
+        
+        @Override
         protected final void onGrounded(final Player player) {
             player.onGroundedNormal();
         }
@@ -457,6 +531,11 @@ public final class Player extends GuyPlatform {
     
     protected final static StateHandler LADDER_HANDLER = new StateHandler() {
         @Override
+        protected final void onJump(final Player player) {
+            player.endLadder();
+        }
+        
+        @Override
         protected final void onShootStart(final Player player) {
             player.prf.shootMode.onShootStart(player);
         }
@@ -473,21 +552,59 @@ public final class Player extends GuyPlatform {
         
         @Override
         protected final void onRight(final Player player) {
-            //TODO Aim right
+            if (!player.isShootPoseNeeded()) {
+                player.setMirror(false);
+            }
         }
         
         @Override
         protected final void onLeft(final Player player) {
-            //TODO Aim left
+            if (!player.isShootPoseNeeded()) {
+                player.setMirror(true);
+            }
         }
         
         @Override
         protected final void onUp(final Player player) {
-            //TODO Climb up
+            if (!player.isShootPoseNeeded()) {
+                player.v = VEL_WALK;
+            }
         }
         
         @Override
         protected final void onDown(final Player player) {
+            if (!player.isShootPoseNeeded()) {
+                player.v = -VEL_WALK;
+            }
+        }
+        
+        @Override
+        protected final boolean onStep(final Player player) {
+            final float v = player.v;
+            if (v != 0) {
+                final byte yStatus = player.addY();
+                if (yStatus == Y_LANDED) {
+                    player.endLadder();
+                } else if (!(player.isTouchingLadder() || player.isTouchingLadder(OFF_LADDER_BOTTOM))) {
+                    if (v > 0) {
+                        player.getPosition().addY(OFF_LADDER_BOTTOM);
+                    }
+                    player.endLadder();
+                }
+                player.v = 0;
+                final int frameLength = VEL_WALK * RUN_TIME, animLength = frameLength * 2;
+                player.setMirror((Math.round(player.getPosition().getY()) % animLength) < frameLength);
+            }
+            final Panmage view;
+            if (player.isShootPoseNeeded()) {
+                view = player.pi.climbShoot;
+            } else if (!(player.isTouchingLadder() || player.isTouchingLadder(OFF_LADDER_BOTTOM + 3))) {
+                view = player.pi.climbTop;
+            } else {
+                view = player.pi.climb;
+            }
+            player.changeView(view);
+            return true;
         }
         
         @Override
@@ -502,7 +619,13 @@ public final class Player extends GuyPlatform {
     
     protected final static StateHandler BALL_HANDLER = new StateHandler() {
         @Override
+        protected final void onJump(final Player player) {
+            player.onJumpNormal();
+        }
+        
+        @Override
         protected final void onShootStart(final Player player) {
+            SHOOT_BOMB.onShootStart(player);
         }
         
         @Override
@@ -568,7 +691,13 @@ public final class Player extends GuyPlatform {
         }
         
         protected final void createBasicProjectile(final Player player, final float vx, final float vy) {
-            new Projectile(player, vx, vy).setView(player.pi.basicProjectile);
+            new Projectile(player, vx, vy, 1);
+        }
+        
+        protected final void shootSpecial(final Player player, final int power) {
+            player.lastShot = Pangine.getEngine().getClock();
+            new Projectile(player, VEL_PROJECTILE, 0, power);
+            player.blinkTimer = 0;
         }
     }
     
@@ -593,18 +722,53 @@ public final class Player extends GuyPlatform {
         private final PlayerImagesSubSet basicSet;
         private final PlayerImagesSubSet shootSet;
         private final Panmage hurt;
-        private final Panmage basicProjectile;
+        private final Panmage climb;
+        private final Panmage climbShoot;
+        private final Panmage climbTop;
+        protected final Panmage basicProjectile;
+        protected final Panimation projectile2;
+        protected final Panimation projectile3;
+        private final Panimation charge;
+        private final Panimation chargeVert;
+        private final Panimation charge2;
+        private final Panimation chargeVert2;
         protected final Panimation burst;
         private final Panmage[] ball;
+        protected final Panimation bomb;
+        protected final Panimation batterySmall;
+        protected final Panimation batteryMedium;
+        protected final Panimation batteryBig;
+        protected final Panmage powerBox;
+        private final HudMeterImages hudMeterImages;
         
         protected PlayerImages(final PlayerImagesSubSet basicSet, final PlayerImagesSubSet shootSet, final Panmage hurt,
-                               final Panmage basicProjectile, final Panimation burst, final Panmage[] ball) {
+                               final Panmage climb, final Panmage climbShoot, final Panmage climbTop,
+                               final Panmage basicProjectile, final Panimation projectile2, final Panimation projectile3,
+                               final Panimation charge, final Panimation chargeVert, final Panimation charge2, final Panimation chargeVert2,
+                               final Panimation burst, final Panmage[] ball, final Panimation bomb,
+                               final Panimation batterySmall, final Panimation batteryMedium, final Panimation batteryBig,
+                               final Panmage powerBox, final HudMeterImages hudMeterImages) {
             this.basicSet = basicSet;
             this.shootSet = shootSet;
             this.hurt = hurt;
+            this.climb = climb;
+            this.climbShoot = climbShoot;
+            this.climbTop = climbTop;
             this.basicProjectile = basicProjectile;
+            this.projectile2 = projectile2;
+            this.projectile3 = projectile3;
+            this.charge = charge;
+            this.chargeVert = chargeVert;
+            this.charge2 = charge2;
+            this.chargeVert2 = chargeVert2;
             this.burst = burst;
             this.ball = ball;
+            this.bomb = bomb;
+            this.batterySmall = batterySmall;
+            this.batteryMedium = batteryMedium;
+            this.batteryBig = batteryBig;
+            this.powerBox = powerBox;
+            this.hudMeterImages = hudMeterImages;
         }
     }
     
@@ -674,16 +838,88 @@ public final class Player extends GuyPlatform {
         @Override
         protected final void onShootStart(final Player player) {
             shoot(player);
+            final long clock = Pangine.getEngine().getClock();
+            player.startCharge = clock;
+            player.lastCharge = clock;
+        }
+        
+        @Override
+        protected final void onShooting(final Player player) {
+            final long clock = Pangine.getEngine().getClock();
+            if (clock - player.lastCharge > 2) {
+                player.startCharge = clock;
+            }
+            player.lastCharge = clock;
+            final long diff = clock - player.startCharge;
+            if (diff > CHARGE_TIME_MEDIUM) {
+                player.blinkTimer = 0;
+                final PlayerImages pi = player.pi;
+                if (diff > CHARGE_TIME_BIG) {
+                    charge(player, pi.charge2, pi.chargeVert2);
+                } else {
+                    charge(player, pi.charge, pi.chargeVert);
+                }
+            }
+        }
+        
+        private final void charge(final Player player, final Panimation diag, final Panimation vert) {
+            final long c = Pangine.getEngine().getClock() % 8;
+            if (c == 0) {
+                chargeDiag(player, diag, 1, 1, 0);
+            } else if (c == 1) {
+                chargeDiag(player, diag, -1, -1, 2);
+            } else if (c == 2) {
+                charge(player, vert, 1, -4, 4, 1, 8, 16, 0);
+            } else if (c == 3) {
+                charge(player, vert, -1, 8, 16, 1, -4, 4, 1);
+            } else if (c == 4) {
+                chargeDiag(player, diag, -1, 1, 1);
+            } else if (c == 5) {
+                chargeDiag(player, diag, 1, -1, 3);
+            } else if (c == 6) {
+                charge(player, vert, 1, -4, 4, -1, 8, 16, 2);
+            } else {
+                charge(player, vert, 1, 8, 16, 1, -4, 4, 3);
+            }
+        }
+        
+        private final void chargeDiag(final Player player, final Panimation anm, final int xdir, final int ydir, final int rot) {
+            charge(player, anm, xdir, 4, 12, ydir, 4, 12, rot);
+        }
+        
+        private final void charge(final Player player, final Panimation anm, final int xdir, final int xmin, final int xmax, final int ydir, final int ymin, final int ymax, final int rot) {
+            final Burst burst = new Burst(anm);
+            final Panple ppos = player.getPosition();
+            burst.getPosition().set(ppos.getX() + (xdir * Mathtil.randi(xmin, xmax)), ppos.getY() + 12 + (ydir * Mathtil.randi(ymin, ymax)), BotsnBoltsGame.DEPTH_BURST);
+            burst.setRot(rot);
+            player.getLayer().addActor(burst);
         }
         
         @Override
         protected final void onShootEnd(final Player player) {
-            //TODO Shoot charged shot if ready
+            final long diff = Pangine.getEngine().getClock() - player.startCharge;
+            if (diff > CHARGE_TIME_BIG) {
+                shootSpecial(player, Projectile.POWER_MAXIMUM);
+            } else if (diff > CHARGE_TIME_MEDIUM) {
+                shootSpecial(player, Projectile.POWER_MEDIUM);
+            }
         }
         
         @Override
         protected final void createProjectile(final Player player) {
             createDefaultProjectile(player);
+        }
+    };
+    
+    protected final static ShootMode SHOOT_BOMB = new ShootMode(SHOOT_DELAY_DEFAULT) {
+        @Override
+        protected final void onShootStart(final Player player) {
+            shoot(player);
+        }
+        
+        @Override
+        protected final void createProjectile(final Player player) {
+            new Bomb(player);
         }
     };
 }

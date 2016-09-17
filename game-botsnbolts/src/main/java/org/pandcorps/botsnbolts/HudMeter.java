@@ -22,6 +22,63 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.botsnbolts;
 
-public class HudMeter {
+import org.pandcorps.pandam.*;
+
+public abstract class HudMeter extends Panctor {
+    protected final static int MAX_VALUE = 28;
     
+    private final HudMeterImages images;
+    private int displayValue = MAX_VALUE;
+    
+    protected HudMeter(final HudMeterImages images) {
+        this.images = images;
+    }
+    
+    @Override
+    protected final void renderView(final Panderer renderer) {
+        final Panlayer layer = getLayer();
+        if (layer == null) {
+            return;
+        }
+        final Panple pos = getPosition();
+        final float x = pos.getX(), y = pos.getY(), z = pos.getZ();
+        final int actualValue = getValue();
+        if (actualValue < displayValue) {
+            displayValue--;
+        } else if (actualValue > displayValue) {
+            displayValue++;
+        }
+        final int value = displayValue;
+        final int end = MAX_VALUE - 1;
+        for (int i = 0; i < MAX_VALUE; i++) {
+            final HudMeterImages set = (value <= i) ? BotsnBoltsGame.hudMeterBlank : images;
+            final Panmage image;
+            if (i == 0) {
+                image = set.bottom;
+            } else if (i < end) {
+                image = set.middle;
+            } else {
+                image = set.top;
+            }
+            renderer.render(layer, image, x, y + (i * 2), z);
+        }
+    }
+    
+    protected abstract int getValue();
+    
+    protected final static class HudMeterImages {
+        private final Panmage bottom;
+        private final Panmage middle;
+        private final Panmage top;
+        
+        protected HudMeterImages(final Panmage[] images) {
+            this(images[images.length - 1], images[1], images[0]);
+        }
+        
+        protected HudMeterImages(final Panmage bottom, final Panmage middle, final Panmage top) {
+            this.bottom = bottom;
+            this.middle = middle;
+            this.top = top;
+        }
+    }
 }
