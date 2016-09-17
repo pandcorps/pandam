@@ -80,6 +80,8 @@ public class Level {
     private final static byte HEX_FALL = 2;
     private final static byte HEX_DOWN = 3;
     
+    private final static int QUAD_VERTICAL = 0;
+    
     private final static int LAST_DEFEATED_LEVEL_COUNT_TO_FORCE_BACKGROUND = 1;
     private final static int LAST_DEFEATED_LEVEL_COUNT_TO_FORCE_ENEMY = 2;
     
@@ -100,6 +102,11 @@ public class Level {
     private static int bushLeft = DEF_BUSH_LEFT;
     private static int bushRight = DEF_BUSH_RIGHT;
     private static int dirtExtra = DEF_DIRT_EXTRA;
+    
+    private final static int DEF_BREAKABLE_AWARD_PROBABILITY = 70;
+    
+    protected static int breakableAwardProbability = DEF_BREAKABLE_AWARD_PROBABILITY;
+    protected static int minRandomAward = GemBumped.AWARD_DEF;
     
     protected final static PixelFilter terrainDarkener = new BrightnessPixelFilter((short) -40, (short) -24, (short) -32);
     
@@ -150,6 +157,8 @@ public class Level {
     static {
     	oneUseTemplates.add(GemMsgTemplate.class);
     	oneUseTemplates.add(GiantTemplate.class);
+    	oneUseTemplates.add(ImpEnterArmorTemplate.class);
+    	oneUseTemplates.add(EnemyPackTemplate.class);
     }
     
     protected abstract static class Theme {
@@ -206,6 +215,10 @@ public class Level {
     			    } else if (defeatedLevels <= getLastDefeatedLevelCountToForceNormal()) {
     					return getBasicBuilder();
     				}
+    			    final Builder special = getSpecialBuilder();
+    			    if (special != null) {
+    			        return special;
+    			    }
     				final int r = Mathtil.randi(0, 249);
     				if (r < 100) {
     				    return new GrassyBuilder();
@@ -714,7 +727,25 @@ public class Level {
         }
     	
     	protected Builder getNormalBuilder() {
+    	    final Builder special = getSpecialBuilder();
+    	    if (special != null) {
+    	        return special;
+    	    }
     	    return (Mathtil.randi(0, 2999) < 2000) ? getBasicBuilder() : new BlockBuilder();
+    	}
+    	
+    	protected Builder getSpecialBuilder() {
+    	    final Statistics stats = getStatistics();
+    	    if (stats == null) {
+    	        return null;
+    	    }
+    	    final int defeatedLevels = stats.defeatedLevels;
+    	    if (defeatedLevels == 0) {
+    	        return null;
+    	    } else if ((defeatedLevels - stats.lastSpecialBuilder) >= 20) {
+    	        stats.lastSpecialBuilder = defeatedLevels;
+    	    }
+    	    return (stats.lastSpecialBuilder == defeatedLevels) ? new QuadBuilder() : null;
     	}
     	
     	protected Builder getRandomBuilder() {
@@ -921,6 +952,11 @@ public class Level {
         return Pangine.getEngine().createImage("img.tiles", tileImg);
     }
     
+    protected final static void restoreDefaults() {
+        breakableAwardProbability = DEF_BREAKABLE_AWARD_PROBABILITY;
+        minRandomAward = GemBumped.AWARD_DEF;
+    }
+    
     protected final static void loadLayers() {
     	final Pangine engine = Pangine.getEngine();
     	ROOM_H = Math.max(DEF_ROOM_H, engine.getEffectiveHeight());
@@ -937,6 +973,7 @@ public class Level {
         bushLeft = DEF_BUSH_LEFT;
         bushRight = DEF_BUSH_RIGHT;
         dirtExtra = DEF_DIRT_EXTRA;
+        restoreDefaults();
         adj1 = adj2 = null;
         timg = (builder == null) ? getTileImage() : builder.getTileImage();
         imgMap = tm.splitImageMap(timg);
@@ -1144,6 +1181,11 @@ public class Level {
         protected final void addGiantTemplate() {
             if (isNormalTheme() && getDefeatedWorlds() >= 5) {
                 addTemplate(new GiantTemplate());
+                if (Mathtil.rand()) {
+                    addTemplate(new ImpEnterArmorTemplate());
+                } else {
+                    addTemplate(new EnemyPackTemplate());
+                }
             }
         }
         
@@ -1153,6 +1195,10 @@ public class Level {
         
         protected final void addPitTemplates() {
             addTemplate(getPitTemplate());
+        }
+        
+        protected Template getTinyTemplate() {
+            return Mathtil.rand() ? new BlockBonusTemplate(1) : new GemTemplate(1);
         }
         
         protected Template getLetterTemplate() {
@@ -1302,11 +1348,7 @@ public class Level {
     		    	    template = requiredTemplate;
     		    	    requiredTemplate = null;
 	    		    } else if (i == 3) {
-	    		    	if (theme == Theme.Minecart) {
-	    		    		template = new GemTemplate(1);
-	    		    	} else {
-	    		    		template = Mathtil.rand() ? new BlockBonusTemplate(1) : new GemTemplate(1);
-	    		    	}
+	    		    	template = getTinyTemplate();
 	    		    } else {
 	    		    	template = Mathtil.rand(templates);
 	    		    }
@@ -1828,6 +1870,8 @@ public class Level {
         protected final void loadTemplates() {
             templates.add(new QuadTemplate());
             addNormalGoals();
+            breakableAwardProbability = 100;
+            minRandomAward = GemBumped.AWARD_2;
         }
         
         @Override
@@ -1838,6 +1882,11 @@ public class Level {
         @Override
         protected final Template getPitTemplate() {
             return new PitTemplate();
+        }
+        
+        @Override
+        protected final Template getTinyTemplate() {
+            return new QuadTemplate(QUAD_VERTICAL);
         }
     }
     
@@ -2247,6 +2296,11 @@ public class Level {
     	@Override
     	protected final Template getPitTemplate() {
         	return new PitTemplate();
+        }
+    	
+    	@Override
+    	protected final Template getTinyTemplate() {
+            return new GemTemplate(1);
         }
     	
         @Override
@@ -2947,17 +3001,23 @@ public class Level {
     }
     
     private final static class QuadTemplate extends SimpleTemplate {
+        private final int forcedStyle;
         private int style = 0;
         
         protected QuadTemplate() {
+            this(-1);
+        }
+        
+        protected QuadTemplate(final int style) {
             super(2, 3, 0);
+            forcedStyle = style;
         }
         
         @Override
         protected final void build() {
             final int y = floor + 3 + floatOffset;
             switch (style) {
-                case 0 :
+                case QUAD_VERTICAL :
                     quadVertical(x, y);
                     break;
                 case 1 :
@@ -2980,6 +3040,7 @@ public class Level {
                     break;
                 case 7 :
                     quadT(x, y);
+                    break;
                 default :
                     quadHorizontal(x, y);
                     break;
@@ -2989,7 +3050,7 @@ public class Level {
         
         @Override
         protected final int newWidth(final int minW, final int maxW) {
-            style = Mathtil.randi(0, 8);
+            style = (forcedStyle < 0) ? Mathtil.randi(0, 8) : forcedStyle;
             if (style == 0) {
                 return 1;
             } else if (style < 5) {
@@ -3449,22 +3510,69 @@ public class Level {
     	}
     }
     
-    private final static class EnemyPackTemplate extends SimpleTemplate {
-        protected EnemyPackTemplate() {
-            super(7, 9, 0);
+    private final static class ImpEnterArmorTemplate extends SimpleTemplate {
+        protected ImpEnterArmorTemplate() {
+            super(6, 6, 0);
         }
         
         @Override
         protected final void build() {
             builder.flatten(x, w);
             final int base = floor + 1 + floatOffset;
+            enemy(FurGuardiansGame.armorBall, x + 1, base);
+            enemy(FurGuardiansGame.imp, x + 4, base);
+        }
+    }
+    
+    private final static class EnemyPackTemplate extends SimpleTemplate {
+        private int numEnemies;
+        private boolean enemiesRaised;
+        
+        protected EnemyPackTemplate() {
+            super(5, 9, 0);
+        }
+        
+        @Override
+        protected final int newWidth(final int minW, final int maxW) {
+            numEnemies = Mathtil.randi(3, 5);
+            enemiesRaised = Mathtil.rand();
+            return numEnemies + (enemiesRaised ? 2 : 4);
+        }
+        
+        @Override
+        protected final void build() {
+            builder.flatten(x, w);
+            final int base = floor + 1 + floatOffset;
+            final int enemyX, enemyY;
+            if (enemiesRaised) {
+                enemyX = x + 1;
+                enemyY = base + 1;
+            } else {
+                enemyX = x + 2;
+                enemyY = base;
+            }
             solidBlock(x, base);
-            final int n = w - 4;
-            final EnemyDefinition def = null; //TODO
-            for (int i = 0; i < n; i++) {
-                enemy(def, x + 2 + i, base);
+            final EnemyDefinition def = pickEnemy();
+            for (int i = 0; i < numEnemies; i++) {
+                final int currX = enemyX + i;
+                if (enemiesRaised) {
+                    solidBlock(currX, base);
+                }
+                enemy(def, currX, enemyY);
             }
             solidBlock(x + w - 1, base);
+        }
+        
+        private final EnemyDefinition pickEnemy() {
+            final List<EnemyDefinition> options = new ArrayList<EnemyDefinition>(3);
+            for (final EnemyDefinition def : FurGuardiansGame.enemies) {
+                if ((def == FurGuardiansGame.imp) || (def == FurGuardiansGame.hobTroll)) {
+                    options.add(def);
+                } else if (!enemiesRaised && (def == FurGuardiansGame.hobOgre)) {
+                    options.add(def);
+                }
+            }
+            return options.isEmpty() ? FurGuardiansGame.imp : Mathtil.rand(options);
         }
     }
     

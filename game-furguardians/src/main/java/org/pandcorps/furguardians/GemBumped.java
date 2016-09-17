@@ -70,7 +70,7 @@ public class GemBumped extends Pandy {
 	    } else if (r < 2800 && Goal.hasCurrentGoal(player, BlueGemGoal.class)) {
 	        return AWARD_2;
 	    }
-	    return AWARD_DEF;
+	    return Level.minRandomAward;
 	}
 	
 	public final static GemBumped create(final Player player, final int index, final int award) {

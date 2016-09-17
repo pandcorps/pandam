@@ -96,7 +96,7 @@ public abstract class Panmage extends BasePantity implements Panview, Pansplay {
                 orx = ox;
                 ory = oy;
                 break;
-            case 1 :
+            case 3 :
                 orx = oy;
                 ory = w - ox - 1;
                 break;
