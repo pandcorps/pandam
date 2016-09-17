@@ -101,6 +101,11 @@ public class Level {
     private static int bushRight = DEF_BUSH_RIGHT;
     private static int dirtExtra = DEF_DIRT_EXTRA;
     
+    private final static int DEF_BREAKABLE_AWARD_PROBABILITY = 70;
+    
+    protected static int breakableAwardProbability = DEF_BREAKABLE_AWARD_PROBABILITY;
+    protected static int minRandomAward = GemBumped.AWARD_DEF;
+    
     protected final static PixelFilter terrainDarkener = new BrightnessPixelFilter((short) -40, (short) -24, (short) -32);
     
     private final static Set<Class<? extends Template>> oneUseTemplates = new HashSet<Class<? extends Template>>();
@@ -945,6 +950,11 @@ public class Level {
         return Pangine.getEngine().createImage("img.tiles", tileImg);
     }
     
+    protected final static void restoreDefaults() {
+        breakableAwardProbability = DEF_BREAKABLE_AWARD_PROBABILITY;
+        minRandomAward = GemBumped.AWARD_DEF;
+    }
+    
     protected final static void loadLayers() {
     	final Pangine engine = Pangine.getEngine();
     	ROOM_H = Math.max(DEF_ROOM_H, engine.getEffectiveHeight());
@@ -961,6 +971,7 @@ public class Level {
         bushLeft = DEF_BUSH_LEFT;
         bushRight = DEF_BUSH_RIGHT;
         dirtExtra = DEF_DIRT_EXTRA;
+        restoreDefaults();
         adj1 = adj2 = null;
         timg = (builder == null) ? getTileImage() : builder.getTileImage();
         imgMap = tm.splitImageMap(timg);
@@ -1857,6 +1868,8 @@ public class Level {
         protected final void loadTemplates() {
             templates.add(new QuadTemplate());
             addNormalGoals();
+            breakableAwardProbability = 100;
+            minRandomAward = GemBumped.AWARD_2;
         }
         
         @Override
@@ -3009,6 +3022,7 @@ public class Level {
                     break;
                 case 7 :
                     quadT(x, y);
+                    break;
                 default :
                     quadHorizontal(x, y);
                     break;

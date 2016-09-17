@@ -463,6 +463,7 @@ public class Map {
 	protected final static class MapScreen extends Panscreen {
 		@Override
         protected final void load() throws Exception {
+		    Level.restoreDefaults();
 			waiting = true;
 			for (final PlayerContext pc : FurGuardiansGame.pcs) {
 				if (pc.guyRun == null) {
