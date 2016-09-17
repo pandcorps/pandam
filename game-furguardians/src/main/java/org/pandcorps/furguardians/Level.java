@@ -80,6 +80,8 @@ public class Level {
     private final static byte HEX_FALL = 2;
     private final static byte HEX_DOWN = 3;
     
+    private final static int QUAD_VERTICAL = 0;
+    
     private final static int LAST_DEFEATED_LEVEL_COUNT_TO_FORCE_BACKGROUND = 1;
     private final static int LAST_DEFEATED_LEVEL_COUNT_TO_FORCE_ENEMY = 2;
     
@@ -1195,6 +1197,10 @@ public class Level {
             addTemplate(getPitTemplate());
         }
         
+        protected Template getTinyTemplate() {
+            return Mathtil.rand() ? new BlockBonusTemplate(1) : new GemTemplate(1);
+        }
+        
         protected Template getLetterTemplate() {
             return Mathtil.rand(letterTemplates);
         }
@@ -1342,11 +1348,7 @@ public class Level {
     		    	    template = requiredTemplate;
     		    	    requiredTemplate = null;
 	    		    } else if (i == 3) {
-	    		    	if (theme == Theme.Minecart) {
-	    		    		template = new GemTemplate(1);
-	    		    	} else {
-	    		    		template = Mathtil.rand() ? new BlockBonusTemplate(1) : new GemTemplate(1);
-	    		    	}
+	    		    	template = getTinyTemplate();
 	    		    } else {
 	    		    	template = Mathtil.rand(templates);
 	    		    }
@@ -1881,6 +1883,11 @@ public class Level {
         protected final Template getPitTemplate() {
             return new PitTemplate();
         }
+        
+        @Override
+        protected final Template getTinyTemplate() {
+            return new QuadTemplate(QUAD_VERTICAL);
+        }
     }
     
     private static class FlatBuilder extends GrassyBuilder {
@@ -2289,6 +2296,11 @@ public class Level {
     	@Override
     	protected final Template getPitTemplate() {
         	return new PitTemplate();
+        }
+    	
+    	@Override
+    	protected final Template getTinyTemplate() {
+            return new GemTemplate(1);
         }
     	
         @Override
@@ -2989,17 +3001,23 @@ public class Level {
     }
     
     private final static class QuadTemplate extends SimpleTemplate {
+        private final int forcedStyle;
         private int style = 0;
         
         protected QuadTemplate() {
+            this(-1);
+        }
+        
+        protected QuadTemplate(final int style) {
             super(2, 3, 0);
+            forcedStyle = style;
         }
         
         @Override
         protected final void build() {
             final int y = floor + 3 + floatOffset;
             switch (style) {
-                case 0 :
+                case QUAD_VERTICAL :
                     quadVertical(x, y);
                     break;
                 case 1 :
@@ -3032,7 +3050,7 @@ public class Level {
         
         @Override
         protected final int newWidth(final int minW, final int maxW) {
-            style = Mathtil.randi(0, 8);
+            style = (forcedStyle < 0) ? Mathtil.randi(0, 8) : forcedStyle;
             if (style == 0) {
                 return 1;
             } else if (style < 5) {
