@@ -1416,6 +1416,7 @@ public class FurGuardiansGame extends BaseGame {
 			Coltil.set(allEnemies, Level.OGRE_BEHEMOTH, ogreBehemoth);
 			final EnemyDefinition thrownImp;
 			armorBall = new EnemyDefinition("Armor Ball", 7, null, false, 0, 0);
+			armorBall.factory = Enemy.armorBallFactory;
 			Enemy.currentWalk = 3;
 			bounceBall = new EnemyDefinition("Bounce Ball", 7, null, false, 0, 4);
 			Enemy.currentSplat = 8;

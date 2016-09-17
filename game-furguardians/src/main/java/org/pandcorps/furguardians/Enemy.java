@@ -84,7 +84,7 @@ public class Enemy extends Character {
 		protected Pansound wallSound = null;
 		protected Pansound stompSound = null;
 		protected boolean mustDestroyOffScreen = true;
-		protected final SpawnFactory factory;
+		protected SpawnFactory factory = enemyFactory;
 		protected EnemyMenu menu = DEFAULT_MENU;
 		
 		protected EnemyDefinition(final String name, final int ind, final PixelFilter f, final boolean ledgeTurn) {
@@ -620,6 +620,10 @@ public class Enemy extends Character {
         protected ColliderEnemy(final EnemyDefinition def, final Panctor ref) {
             super(def, ref);
         }
+        
+        protected ColliderEnemy(final EnemyDefinition def, final float x, final float y) {
+            super(def, x, y);
+        }
 
         @Override
         public final void onCollision(final CollisionEvent event) {
@@ -636,6 +640,10 @@ public class Enemy extends Character {
 	public final static class ArmorBall extends ColliderEnemy {
         protected ArmorBall(final EnemyDefinition def, final Panctor ref) {
             super(def, ref);
+        }
+        
+        protected ArmorBall(final EnemyDefinition def, final float x, final float y) {
+            super(def, x, y);
         }
 
         @Override
@@ -938,6 +946,8 @@ public class Enemy extends Character {
 	
 	protected final static SpawnFactory wispFactory = new WispFactory();
 	
+	protected final static SpawnFactory armorBallFactory = new ArmorBallFactory();
+	
 	protected static interface SpawnFactory {
 		public Panctor spawn(final EnemyDefinition def, final float x, final float y);
 	}
@@ -962,6 +972,13 @@ public class Enemy extends Character {
 			return new Wisp(def, x, y);
 		}
 	}
+	
+	private final static class ArmorBallFactory implements SpawnFactory {
+        @Override
+        public final ArmorBall spawn(final EnemyDefinition def, final float x, final float y) {
+            return new ArmorBall(def, x, y);
+        }
+    }
 	
 	protected static interface EnemyMenu {
 	    public void draw(final Panctor enemyBack, final Panctor enemy, final Panctor enemyFront, final EnemyDefinition def, final int x);
