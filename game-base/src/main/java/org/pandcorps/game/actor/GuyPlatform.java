@@ -235,7 +235,15 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
     }
     
     protected final float getCeiling() {
-        return getLayer().getSize().getY() + 4 - H;
+        Panlayer layer = getLayer();
+        if (layer == null) {
+            layer = Pangame.getGame().getCurrentRoom();
+        }
+        final Panple size = (layer == null) ? null : layer.getSize();
+        if (size == null) {
+            return Float.MAX_VALUE;
+        }
+        return size.getY() + 4 - H;
     }
     
     public boolean isGrounded() {
