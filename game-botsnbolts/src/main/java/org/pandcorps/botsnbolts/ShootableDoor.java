@@ -29,10 +29,9 @@ import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.tile.*;
 
 public class ShootableDoor extends Panctor implements StepListener, CollisionListener {
-    private final static Panple min = new FinPanple2(-12, 0);
     protected final static Panple minBarrier = new FinPanple2(2, 0);
-    private final static Pansplay display = new ImplPansplay(FinPanple.ORIGIN, min, new FinPanple2(12, 64));
-    private final static Pansplay displaySmall = new ImplPansplay(FinPanple.ORIGIN, min, new FinPanple2(12, 16));
+    private final static Pansplay display;
+    private final static Pansplay displaySmall;
     private final static Pansplay displayBarrier = new ImplPansplay(FinPanple.ORIGIN, minBarrier, new FinPanple2(14, 32));
     private final static Pansplay displayBoss = new ImplPansplay(FinPanple.ORIGIN, minBarrier, new FinPanple2(14, 64));
     protected final int x;
@@ -40,6 +39,12 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
     private final int doorX;
     protected ShootableDoorDefinition def = null;
     private int temperature = 0;
+    
+    static {
+        final Panple min = new FinPanple2(-12, 0);
+        display = new ImplPansplay(FinPanple.ORIGIN, min, new FinPanple2(12, 64));
+        displaySmall = new ImplPansplay(FinPanple.ORIGIN, min, new FinPanple2(12, 16));
+    }
     
     protected ShootableDoor(final int x, final int y, ShootableDoorDefinition def) {
         final TileMap tm = BotsnBoltsGame.tm;
