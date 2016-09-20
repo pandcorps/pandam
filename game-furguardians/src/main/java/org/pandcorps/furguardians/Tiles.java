@@ -371,4 +371,34 @@ public class Tiles {
         	}
         }
     }
+    
+    protected final static class TileTrack {
+        private final TileMap tm;
+        private final int[] tileIndices;
+        private final int activeSize;
+        private int currentActiveStart = 0;
+        
+        protected TileTrack(final int[] tileIndices, final int activeSize) {
+            tm = Level.tm;
+            this.tileIndices = tileIndices;
+            this.activeSize = activeSize;
+            initTiles();
+        }
+        
+        protected final void initTiles() {
+            for (int i = 0; i < activeSize; i++) {
+                setTile(i);
+            }
+        }
+        
+        private final void setTile(final int activeTrackPosition) {
+            tm.setForeground(tileIndices[activeTrackPosition], null, Tile.BEHAVIOR_SOLID); //TODO img
+        }
+        
+        protected final void advance() {
+            tm.setForeground(tileIndices[currentActiveStart], null, Tile.BEHAVIOR_OPEN);
+            currentActiveStart++;
+            setTile(currentActiveStart);
+        }
+    }
 }
