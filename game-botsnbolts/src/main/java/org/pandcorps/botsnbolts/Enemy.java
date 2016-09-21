@@ -29,6 +29,7 @@ import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.boundary.*;
 import org.pandcorps.pandax.*;
+import org.pandcorps.pandax.tile.*;
 
 public abstract class Enemy extends Panctor implements CollisionListener {
     private final static int VEL_PROJECTILE = 6;
@@ -127,13 +128,22 @@ public abstract class Enemy extends Panctor implements CollisionListener {
         }
     }
     
+    protected final static void newCube(final int x, final int y) {
+        final TileMap tm = BotsnBoltsGame.tm;
+        final int x1 = x + 1, y1 = y + 1;
+        tm.setForeground(x, y, BotsnBoltsGame.cube[2], Tile.BEHAVIOR_SOLID);
+        tm.setForeground(x1, y, BotsnBoltsGame.cube[3], Tile.BEHAVIOR_SOLID);
+        tm.setForeground(x, y1, BotsnBoltsGame.cube[0], Tile.BEHAVIOR_SOLID);
+        tm.setForeground(x1, y1, BotsnBoltsGame.cube[1], Tile.BEHAVIOR_SOLID);
+    }
+    
     protected abstract static class CubeEnemy extends Enemy {
         protected final float baseX;
         protected final float baseY;
         
         protected CubeEnemy(final int x, final int y, final int health) {
             super(health);
-            Cube.newCube(x, y);
+            newCube(x, y);
             final Panple pos = getPosition();
             BotsnBoltsGame.tm.savePosition(pos, x, y);
             pos.add(16, 16);

@@ -121,6 +121,10 @@ public final class Player extends Chr {
             @Override public final void onActionStart(final ActionStartEvent event) { engine.startCaptureFrames(); }});
         register(interaction.KEY_F3, new ActionStartListener() {
             @Override public final void onActionStart(final ActionStartEvent event) { engine.stopCaptureFrames(); }});
+        register(interaction.KEY_U, new ActionStartListener() {
+            @Override public final void onActionStart(final ActionStartEvent event) { up(); }});
+        register(interaction.KEY_D, new ActionStartListener() {
+            @Override public final void onActionStart(final ActionStartEvent event) { down(); }});
     }
     
     private final void registerPause(final Panput input) {
@@ -217,7 +221,7 @@ public final class Player extends Chr {
     }
     
     private final static int OFF_LADDER_TOP = 20;
-    private final static int OFF_LADDER_BOTTOM = 8;
+    private final static int OFF_LADDER_BOTTOM = 11;
     
     private final boolean isTouchingLadder() {
         return isTouchingLadder(OFF_LADDER_TOP);
@@ -427,6 +431,11 @@ public final class Player extends Chr {
         stateHandler.onWall(this);
     }
     
+    private final void normalizeY(final int offBefore, final int offAfter) {
+        final Panple pos = getPosition();
+        pos.setY(offAfter + (((((int) pos.getY()) + offBefore) / 16) * 16));
+    }
+    
     protected final HudMeter newHealthMeter() {
         return new HudMeter(pi.hudMeterImages) {
             @Override protected final int getValue() {
@@ -583,23 +592,26 @@ public final class Player extends Chr {
             final float v = player.v;
             if (v != 0) {
                 final byte yStatus = player.addY();
+                player.v = 0;
                 if (yStatus == Y_LANDED) {
                     player.endLadder();
                 } else if (!(player.isTouchingLadder() || player.isTouchingLadder(OFF_LADDER_BOTTOM))) {
                     if (v > 0) {
-                        player.getPosition().addY(OFF_LADDER_BOTTOM);
+                        player.normalizeY(OFF_LADDER_BOTTOM, 0);
                     }
                     player.endLadder();
+                    player.changeView(player.pi.basicSet.stand);
+                    return true;
                 }
-                player.v = 0;
                 final int frameLength = VEL_WALK * RUN_TIME, animLength = frameLength * 2;
                 player.setMirror((Math.round(player.getPosition().getY()) % animLength) < frameLength);
             }
             final Panmage view;
             if (player.isShootPoseNeeded()) {
                 view = player.pi.climbShoot;
-            } else if (!(player.isTouchingLadder() || player.isTouchingLadder(OFF_LADDER_BOTTOM + 3))) {
+            } else if (!(player.isTouchingLadder() || player.isTouchingLadder(OFF_LADDER_BOTTOM + VEL_WALK))) {
                 view = player.pi.climbTop;
+                player.normalizeY(0, 2);
             } else {
                 view = player.pi.climb;
             }

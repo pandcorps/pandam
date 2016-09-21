@@ -371,4 +371,44 @@ public class Tiles {
         	}
         }
     }
+    
+    protected final static class TileTrack {
+        private final TileMap tm;
+        private final int[] tileIndices;
+        private final int activeSize;
+        private int currentActiveStart = 0;
+        
+        protected TileTrack(final int[] tileIndices, final int activeSize) {
+            tm = Level.tm;
+            this.tileIndices = tileIndices;
+            this.activeSize = activeSize;
+            initTiles();
+            scheduleAdvance();
+        }
+        
+        protected final void initTiles() {
+            for (int i = 0; i < activeSize; i++) {
+                setTile(i);
+            }
+        }
+        
+        private final void setTile(final int activeTrackPosition) {
+            tm.setForeground(tileIndices[activeTrackPosition], FurGuardiansGame.blockPuzzle, Tile.BEHAVIOR_SOLID);
+        }
+        
+        protected final void advance() {
+            tm.setForeground(tileIndices[currentActiveStart], null, Tile.BEHAVIOR_OPEN);
+            currentActiveStart++;
+            setTile(currentActiveStart);
+            scheduleAdvance();
+        }
+        
+        protected final void scheduleAdvance() {
+            Pangine.getEngine().addTimer(tm, 30, new TimerListener() { //TODO Think about duration
+                @Override
+                public final void onTimer(final TimerEvent event) {
+                    advance();
+                }});
+        }
+    }
 }
