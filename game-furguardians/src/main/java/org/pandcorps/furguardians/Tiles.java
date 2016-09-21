@@ -383,6 +383,7 @@ public class Tiles {
             this.tileIndices = tileIndices;
             this.activeSize = activeSize;
             initTiles();
+            scheduleAdvance();
         }
         
         protected final void initTiles() {
@@ -392,13 +393,22 @@ public class Tiles {
         }
         
         private final void setTile(final int activeTrackPosition) {
-            tm.setForeground(tileIndices[activeTrackPosition], null, Tile.BEHAVIOR_SOLID); //TODO img
+            tm.setForeground(tileIndices[activeTrackPosition], FurGuardiansGame.blockPuzzle, Tile.BEHAVIOR_SOLID);
         }
         
         protected final void advance() {
             tm.setForeground(tileIndices[currentActiveStart], null, Tile.BEHAVIOR_OPEN);
             currentActiveStart++;
             setTile(currentActiveStart);
+            scheduleAdvance();
+        }
+        
+        protected final void scheduleAdvance() {
+            Pangine.getEngine().addTimer(tm, 30, new TimerListener() { //TODO Think about duration
+                @Override
+                public final void onTimer(final TimerEvent event) {
+                    advance();
+                }});
         }
     }
 }
