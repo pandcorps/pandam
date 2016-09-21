@@ -382,6 +382,26 @@ public class Tiles {
         protected final void setPuzzleBlock(final int tileIndex) {
             tm.setForeground(tileIndex, FurGuardiansGame.blockPuzzle, Tile.BEHAVIOR_SOLID);
         }
+        
+        protected final void setPuzzleBlocks(final int[] tileIndices) {
+            for (final int tileIndex : tileIndices) {
+                setPuzzleBlock(tileIndex);
+            }
+        }
+        
+        protected final void clearPuzzleBlock(final int tileIndex) {
+            tm.setForeground(tileIndex, null, Tile.BEHAVIOR_OPEN);
+        }
+        
+        protected final void clearPuzzleBlocks(final int[] tileIndices) {
+            for (final int tileIndex : tileIndices) {
+                clearPuzzleBlock(tileIndex);
+            }
+        }
+        
+        protected final void addTimer(final long duration, final TimerListener listener) {
+            Pangine.getEngine().addTimer(tm, duration, listener);
+        }
     }
     
     protected final static class TileTrack extends TilePuzzle {
@@ -407,14 +427,14 @@ public class Tiles {
         }
         
         protected final void advance() {
-            tm.setForeground(tileIndices[currentActiveStart], null, Tile.BEHAVIOR_OPEN);
+            clearPuzzleBlock(tileIndices[currentActiveStart]);
             currentActiveStart++;
             setTile(currentActiveStart);
             scheduleAdvance();
         }
         
         protected final void scheduleAdvance() {
-            Pangine.getEngine().addTimer(tm, 30, new TimerListener() { //TODO Think about duration
+            addTimer(30, new TimerListener() { //TODO Think about duration
                 @Override
                 public final void onTimer(final TimerEvent event) {
                     advance();
@@ -428,6 +448,42 @@ public class Tiles {
         
         protected AlternatorPuzzle(final int[][] tileGroups) {
             this.tileGroups = tileGroups;
+            enableTiles(0);
+        }
+        
+        protected final void enableTiles(final int groupIndex) {
+            setPuzzleBlocks(tileGroups[groupIndex]);
+        }
+        
+        protected final void enableTiles() {
+            enableTiles(getNextGroupIndex());
+            scheduleDisable();
+        }
+        
+        protected final void disableTiles() {
+            clearPuzzleBlocks(tileGroups[currentGroupIndex]);
+            currentGroupIndex = getNextGroupIndex();
+            scheduleEnable();
+        }
+        
+        protected final int getNextGroupIndex() {
+            return (currentGroupIndex + 1) % tileGroups.length;
+        }
+        
+        protected final void scheduleEnable() {
+            addTimer(25, new TimerListener() {
+                @Override
+                public final void onTimer(final TimerEvent event) {
+                    enableTiles();
+                }});
+        }
+        
+        protected final void scheduleDisable() {
+            addTimer(5, new TimerListener() {
+                @Override
+                public final void onTimer(final TimerEvent event) {
+                    disableTiles();
+                }});
         }
     }
 }
