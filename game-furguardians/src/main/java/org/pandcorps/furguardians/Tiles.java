@@ -372,14 +372,24 @@ public class Tiles {
         }
     }
     
-    protected final static class TileTrack {
-        private final TileMap tm;
+    protected abstract static class TilePuzzle {
+        protected final TileMap tm;
+        
+        protected TilePuzzle() {
+            tm = Level.tm;
+        }
+        
+        protected final void setPuzzleBlock(final int tileIndex) {
+            tm.setForeground(tileIndex, FurGuardiansGame.blockPuzzle, Tile.BEHAVIOR_SOLID);
+        }
+    }
+    
+    protected final static class TileTrack extends TilePuzzle {
         private final int[] tileIndices;
         private final int activeSize;
         private int currentActiveStart = 0;
         
         protected TileTrack(final int[] tileIndices, final int activeSize) {
-            tm = Level.tm;
             this.tileIndices = tileIndices;
             this.activeSize = activeSize;
             initTiles();
@@ -393,7 +403,7 @@ public class Tiles {
         }
         
         private final void setTile(final int activeTrackPosition) {
-            tm.setForeground(tileIndices[activeTrackPosition], FurGuardiansGame.blockPuzzle, Tile.BEHAVIOR_SOLID);
+            setPuzzleBlock(tileIndices[activeTrackPosition]);
         }
         
         protected final void advance() {
@@ -409,6 +419,15 @@ public class Tiles {
                 public final void onTimer(final TimerEvent event) {
                     advance();
                 }});
+        }
+    }
+    
+    protected final static class AlternatorPuzzle extends TilePuzzle {
+        private final int[][] tileGroups;
+        private int currentGroupIndex = 0;
+        
+        protected AlternatorPuzzle(final int[][] tileGroups) {
+            this.tileGroups = tileGroups;
         }
     }
 }
