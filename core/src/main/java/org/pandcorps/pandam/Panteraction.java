@@ -58,6 +58,7 @@ public abstract class Panteraction {
 	public final Key KEY_R;
 	public final Key KEY_T;
 	public final Key KEY_Y;
+	public final Key KEY_U;
 	public final Key KEY_BRACKET_LEFT;
 	public final Key KEY_BRACKET_RIGHT;
 	public final Key KEY_ENTER;
@@ -293,6 +294,7 @@ public abstract class Panteraction {
         KEY_R = keys[IND_Q + 3];
         KEY_T = keys[IND_Q + 4];
         KEY_Y = keys[IND_Q + 5];
+        KEY_U = keys[IND_Q + 6];
         KEY_BRACKET_LEFT = keys[26];
         KEY_BRACKET_RIGHT = keys[27];
 		KEY_ENTER = keys[IND_ENTER];

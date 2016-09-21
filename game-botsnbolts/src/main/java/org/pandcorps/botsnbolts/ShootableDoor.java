@@ -282,9 +282,11 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
     }
     
     protected final static class BossDoor extends Panctor {
+        private final int h = 16;
         protected final int x;
         protected final int y;
         private int base = 0;
+        private int vel = 0;
         
         protected BossDoor(final int x, final int y) {
             final TileMap tm = BotsnBoltsGame.tm;
@@ -294,12 +296,26 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
             tm.savePosition(getPosition(), x, y);
         }
         
+        private final void open() {
+            vel = 1;
+        }
+        
+        private final void close() {
+            vel = -1;
+        }
+        
         @Override
         protected final void renderView(final Panderer renderer) {
             final Panlayer layer = getLayer();
             final Panple pos = getPosition();
             final float x = pos.getX(), y = pos.getY();
-            for (int j = base; j < 16; j++) {
+            base += vel;
+            if (base < 0) {
+                base = 0;
+            } else if (base > h) {
+                base = h;
+            }
+            for (int j = base; j < h; j++) {
                 renderer.render(layer, null, x, y + (j * 4), BotsnBoltsGame.DEPTH_FG); //TODO img
             }
         }
