@@ -22,8 +22,32 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.botsnbolts;
 
+import java.util.*;
+
 import org.pandcorps.botsnbolts.Player.*;
+import org.pandcorps.pandam.*;
 
 public class Profile {
+    /*package*/ final Set<Upgrade> upgrades = new HashSet<Upgrade>();
     /*package*/ ShootMode shootMode = Player.SHOOT_NORMAL;
+    
+    /*package*/ final boolean isUpgradeAvailable(final Upgrade upgrade) {
+        return upgrades.contains(upgrade);
+    }
+    
+    protected static Upgrade UPGRADE_RAPID = null;
+    
+    protected static Upgrade UPGRADE_SPREAD = null;
+    
+    protected static Upgrade UPGRADE_CHARGE = null;
+    
+    protected static Upgrade UPGRADE_BOMB = null;
+    
+    protected static class Upgrade {
+        protected final Panmage boxImage;
+        
+        protected Upgrade(final Panmage boxImage) {
+            this.boxImage = boxImage;
+        }
+    }
 }
