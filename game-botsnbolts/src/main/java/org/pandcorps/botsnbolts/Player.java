@@ -389,6 +389,9 @@ public final class Player extends Chr {
     }
     
     private final void startBall() {
+        if (!isUpgradeAvailable(Profile.UPGRADE_BALL)) {
+            return;
+        }
         clearRun();
         stateHandler = BALL_HANDLER;
         changeView(pi.ball[0]);
@@ -437,6 +440,10 @@ public final class Player extends Chr {
     private final void normalizeY(final int offBefore, final int offAfter) {
         final Panple pos = getPosition();
         pos.setY(offAfter + (((((int) pos.getY()) + offBefore) / 16) * 16));
+    }
+    
+    private final boolean isUpgradeAvailable(final Upgrade upgrade) {
+        return (upgrade == null) || prf.isUpgradeAvailable(upgrade);
     }
     
     protected final HudMeter newHealthMeter() {
@@ -683,8 +690,7 @@ public final class Player extends Chr {
         protected abstract Upgrade getRequiredUpgrade();
         
         protected final boolean isAvailable(final Player player) {
-            final Upgrade upgrade = getRequiredUpgrade();
-            return (upgrade == null) || player.prf.isUpgradeAvailable(upgrade);
+            return player.isUpgradeAvailable(getRequiredUpgrade());
         }
         
         protected abstract void onShootStart(final Player player);

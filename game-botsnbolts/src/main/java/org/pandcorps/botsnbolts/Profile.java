@@ -35,6 +35,8 @@ public class Profile {
         return upgrades.contains(upgrade);
     }
     
+    protected static Upgrade UPGRADE_BALL = null;
+    
     protected static Upgrade UPGRADE_RAPID = null;
     
     protected static Upgrade UPGRADE_SPREAD = null;
