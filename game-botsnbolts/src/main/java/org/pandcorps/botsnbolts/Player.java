@@ -23,6 +23,7 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.botsnbolts;
 
 import org.pandcorps.botsnbolts.HudMeter.*;
+import org.pandcorps.botsnbolts.Profile.*;
 import org.pandcorps.botsnbolts.Projectile.*;
 import org.pandcorps.core.*;
 import org.pandcorps.game.actor.*;
@@ -137,15 +138,17 @@ public final class Player extends Chr {
     }
     
     private final void toggleShootMode() {
-        if (prf.shootMode == SHOOT_NORMAL) {
-            prf.shootMode = SHOOT_RAPID;
-        } else if (prf.shootMode == SHOOT_RAPID) {
-            prf.shootMode = SHOOT_SPREAD;
-        } else if (prf.shootMode == SHOOT_SPREAD) {
-            prf.shootMode = SHOOT_CHARGE;
-        } else {
-            prf.shootMode = SHOOT_NORMAL;
-        }
+        do {
+            if (prf.shootMode == SHOOT_NORMAL) {
+                prf.shootMode = SHOOT_RAPID;
+            } else if (prf.shootMode == SHOOT_RAPID) {
+                prf.shootMode = SHOOT_SPREAD;
+            } else if (prf.shootMode == SHOOT_SPREAD) {
+                prf.shootMode = SHOOT_CHARGE;
+            } else {
+                prf.shootMode = SHOOT_NORMAL;
+            }
+        } while (!prf.shootMode.isAvailable(this));
     }
     
     private final void jump() {
@@ -386,6 +389,9 @@ public final class Player extends Chr {
     }
     
     private final void startBall() {
+        if (!isUpgradeAvailable(Profile.UPGRADE_BALL)) {
+            return;
+        }
         clearRun();
         stateHandler = BALL_HANDLER;
         changeView(pi.ball[0]);
@@ -434,6 +440,10 @@ public final class Player extends Chr {
     private final void normalizeY(final int offBefore, final int offAfter) {
         final Panple pos = getPosition();
         pos.setY(offAfter + (((((int) pos.getY()) + offBefore) / 16) * 16));
+    }
+    
+    private final boolean isUpgradeAvailable(final Upgrade upgrade) {
+        return (upgrade == null) || prf.isUpgradeAvailable(upgrade);
     }
     
     protected final HudMeter newHealthMeter() {
@@ -677,6 +687,12 @@ public final class Player extends Chr {
             this.delay = delay;
         }
         
+        protected abstract Upgrade getRequiredUpgrade();
+        
+        protected final boolean isAvailable(final Player player) {
+            return player.isUpgradeAvailable(getRequiredUpgrade());
+        }
+        
         protected abstract void onShootStart(final Player player);
         
         //@OverrideMe
@@ -750,7 +766,9 @@ public final class Player extends Chr {
         protected final Panimation batterySmall;
         protected final Panimation batteryMedium;
         protected final Panimation batteryBig;
+        protected final Panmage bolt;
         protected final Panmage powerBox;
+        //protected final Panmage boltBox; // Each bolt has a unique box image
         private final HudMeterImages hudMeterImages;
         
         protected PlayerImages(final PlayerImagesSubSet basicSet, final PlayerImagesSubSet shootSet, final Panmage hurt,
@@ -759,6 +777,7 @@ public final class Player extends Chr {
                                final Panimation charge, final Panimation chargeVert, final Panimation charge2, final Panimation chargeVert2,
                                final Panimation burst, final Panmage[] ball, final Panimation bomb,
                                final Panimation batterySmall, final Panimation batteryMedium, final Panimation batteryBig,
+                               final Panmage bolt,
                                final Panmage powerBox, final HudMeterImages hudMeterImages) {
             this.basicSet = basicSet;
             this.shootSet = shootSet;
@@ -779,6 +798,7 @@ public final class Player extends Chr {
             this.batterySmall = batterySmall;
             this.batteryMedium = batteryMedium;
             this.batteryBig = batteryBig;
+            this.bolt = bolt;
             this.powerBox = powerBox;
             this.hudMeterImages = hudMeterImages;
         }
@@ -804,6 +824,11 @@ public final class Player extends Chr {
     
     protected final static ShootMode SHOOT_NORMAL = new ShootMode(SHOOT_DELAY_DEFAULT) {
         @Override
+        protected final Upgrade getRequiredUpgrade() {
+            return null;
+        }
+        
+        @Override
         protected final void onShootStart(final Player player) {
             shoot(player);
         }
@@ -815,6 +840,11 @@ public final class Player extends Chr {
     };
     
     protected final static ShootMode SHOOT_RAPID = new ShootMode(SHOOT_DELAY_RAPID) {
+        @Override
+        protected final Upgrade getRequiredUpgrade() {
+            return Profile.UPGRADE_RAPID;
+        }
+        
         @Override
         protected final void onShootStart(final Player player) {
         }
@@ -832,6 +862,11 @@ public final class Player extends Chr {
     
     protected final static ShootMode SHOOT_SPREAD = new ShootMode(SHOOT_DELAY_SPREAD) {
         @Override
+        protected final Upgrade getRequiredUpgrade() {
+            return Profile.UPGRADE_SPREAD;
+        }
+        
+        @Override
         protected final void onShootStart(final Player player) {
             shoot(player);
         }
@@ -847,6 +882,11 @@ public final class Player extends Chr {
     };
     
     protected final static ShootMode SHOOT_CHARGE = new ShootMode(SHOOT_DELAY_DEFAULT) {
+        @Override
+        protected final Upgrade getRequiredUpgrade() {
+            return Profile.UPGRADE_CHARGE;
+        }
+        
         @Override
         protected final void onShootStart(final Player player) {
             shoot(player);
@@ -924,6 +964,11 @@ public final class Player extends Chr {
     };
     
     protected final static ShootMode SHOOT_BOMB = new ShootMode(SHOOT_DELAY_DEFAULT) {
+        @Override
+        protected final Upgrade getRequiredUpgrade() {
+            return Profile.UPGRADE_BOMB;
+        }
+        
         @Override
         protected final void onShootStart(final Player player) {
             shoot(player);
