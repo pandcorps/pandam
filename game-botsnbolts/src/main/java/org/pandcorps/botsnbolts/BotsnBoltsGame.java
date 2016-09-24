@@ -140,21 +140,29 @@ public final class BotsnBoltsGame extends BaseGame {
         Img.setTemporary(false, imgsBarrier);
         doorCyan = newDoorDefinition("door.cyan", imgsClosed, imgsOpening, null, 0, null, null, imgsBarrier);
         final short s0 = 0, s48 = 48, s64 = 64, s96 = 96, s128 = 128, s144 = 144, s192 = 192, smax = Pancolor.MAX_VALUE;
-        doorSilver = filterDoor("door.silver", imgsClosed, imgsOpening, s0, smax, smax, s192, s192, s192, s0, s192, s192, s128, s128, s128, null, 0, null,
+        final Pancolor cyan = Pancolor.CYAN, silver = Pancolor.GREY, darkCyan = new FinPancolor(s0, s192, s192), darkSilver = Pancolor.DARK_GREY;
+        doorSilver = filterDoor("door.silver", imgsClosed, imgsOpening, cyan, silver, darkCyan, darkSilver, null, 0, null,
             Integer.valueOf(Projectile.POWER_MAXIMUM), imgsBarrier);
         final ShootableDoorDefinition doorRed, doorRedOrange, doorOrange, doorOrangeGold;
-        doorRed = filterDoor("door.red", imgsClosed, imgsOpening, s192, s192, s192, smax, s0, s0, s128, s128, s128, s192, s0, s0, null, 15, Player.SHOOT_RAPID, null, imgsBarrier);
-        doorRedOrange = filterDoor("door.red.orange", imgsClosed, null, smax, s0, s0, smax, s64, s0, s192, s0, s0, s192, s48, s0, doorRed, 10, Player.SHOOT_RAPID, null, imgsBarrier);
-        doorOrange = filterDoor("door.orange", imgsClosed, null, smax, s64, s0, smax, s128, s0, s192, s48, s0, s192, s96, s0, doorRedOrange, 6, null, null, imgsBarrier);
-        doorOrangeGold = filterDoor("door.orange.gold", imgsClosed, null, smax, s128, s0, smax, s192, s0, s192, s96, s0, s192, s144, s0, doorOrange, 3, null, null, imgsBarrier);
-        doorGold = filterDoor("door.gold", imgsClosed, null, smax, s192, s0, smax, smax, s0, s192, s144, s0, s192, s192, s0, doorOrangeGold, 1, null, null, imgsBarrier);
+        final Pancolor red = Pancolor.RED, darkRed = new FinPancolor(s192, s0, s0);
+        doorRed = filterDoor("door.red", imgsClosed, imgsOpening, silver, red, darkSilver, darkRed, null, 15, Player.SHOOT_RAPID, null, imgsBarrier);
+        final Pancolor redOrange = new FinPancolor(smax, s64, s0), darkRedOrange = new FinPancolor(s192, s48, s0);
+        doorRedOrange = filterDoor("door.red.orange", imgsClosed, null, red, redOrange, darkRed, darkRedOrange, doorRed, 10, Player.SHOOT_RAPID, null, imgsBarrier);
+        final Pancolor orange = new FinPancolor(smax, s128, s0), darkOrange = new FinPancolor(s192, s96, s0);
+        doorOrange = filterDoor("door.orange", imgsClosed, null, redOrange, orange, darkRedOrange, darkOrange, doorRedOrange, 6, null, null, imgsBarrier);
+        final Pancolor orangeGold = new FinPancolor(smax, s192, s0), darkOrangeGold = new FinPancolor(s192, s144, s0);
+        doorOrangeGold = filterDoor("door.orange.gold", imgsClosed, null, orange, orangeGold, darkOrange, darkOrangeGold, doorOrange, 3, null, null, imgsBarrier);
+        final Pancolor gold = Pancolor.YELLOW, darkGold = new FinPancolor(s192, s192, s0);
+        doorGold = filterDoor("door.gold", imgsClosed, null, orangeGold, gold, darkOrangeGold, darkGold, doorOrangeGold, 1, null, null, imgsBarrier);
         Img.close(imgsClosed);
         Img.close(imgsOpening);
         final Img[] imgsSmallClosed = Imtil.loadStrip(RES + "bg/DoorSmall.png", 16);
         Img.setTemporary(false, imgsSmallClosed);
         final Img[] imgsSmallOpening = Imtil.loadStrip(RES + "bg/DoorSmallOpening.png", 16);
         Img.setTemporary(false, imgsSmallOpening);
-        doorSmall = newDoorDefinition("door.small", imgsSmallClosed, imgsSmallOpening, null, 0, Player.SHOOT_BOMB, null, null);
+        final Pancolor colSmall = new FinPancolor(smax, s64, smax), darkColSmall = new FinPancolor(s192, s48, s192);
+        filterImgs(imgsBarrier, newFilter(gold, colSmall, darkGold, darkColSmall));
+        doorSmall = newDoorDefinition("door.small", imgsSmallClosed, imgsSmallOpening, null, 0, Player.SHOOT_BOMB, null, imgsBarrier);
         Img.close(imgsSmallClosed);
         Img.close(imgsSmallOpening);
         Img.close(imgsBarrier);
@@ -179,16 +187,20 @@ public final class BotsnBoltsGame extends BaseGame {
     }
     
     private final static ShootableDoorDefinition filterDoor(final String id, final Img[] imgsClosed, final Img[] imgsOpening,
-            final short s1r, final short s1g, final short s1b, final short d1r, final short d1g, final short d1b,
-            final short s2r, final short s2g, final short s2b, final short d2r, final short d2g, final short d2b,
+            final Pancolor s1, final Pancolor d1, final Pancolor s2, final Pancolor d2,
             final ShootableDoorDefinition next, final int nextTemperature, final ShootMode requiredShootMode, final Integer requiredPower,
             final Img[] imgsBarrier) {
-        final ReplacePixelFilter filter = new ReplacePixelFilter();
-        filter.put(s1r, s1g, s1b, d1r, d1g, d1b);
-        filter.put(s2r, s2g, s2b, d2r, d2g, d2b);
+        final PixelFilter filter = newFilter(s1, d1, s2, d2);
         filterImgs(imgsClosed, filter);
         filterImgs(imgsOpening, filter);
         return newDoorDefinition(id, imgsClosed, imgsOpening, next, nextTemperature, requiredShootMode, requiredPower, imgsBarrier);
+    }
+    
+    private final static PixelFilter newFilter(final Pancolor s1, final Pancolor d1, final Pancolor s2, final Pancolor d2) {
+        final ReplacePixelFilter filter = new ReplacePixelFilter();
+        filter.put(s1, d1);
+        filter.put(s2, d2);
+        return filter;
     }
     
     private final static void loadPlayer() {
@@ -534,11 +546,17 @@ public final class BotsnBoltsGame extends BaseGame {
             //final BigBattery battery = new BigBattery();
             //battery.getPosition().set(200, 96, DEPTH_POWER_UP);
             //room.addActor(battery);
-            new PowerBox(12, 1);
+            //new PowerBox(12, 1);
             //new ShootableBarrier(6, 1, doorCyan);
+            new ShootableBarrier(5, 1, doorSmall);
+            //final int px = 3, px2 = px + 4, py = 2; // 14, 4
             //new ShootableBlockPuzzle(
-            //    new int[] { tm.getIndex(14, 4), tm.getIndex(18, 8), tm.getIndex(14, 8), tm.getIndex(18, 12) },
-            //    new int[] { tm.getIndex(14, 6), tm.getIndex(18, 10), tm.getIndex(14, 10) });
+            //    new int[] { tm.getIndex(px, py), tm.getIndex(px2, py + 4), tm.getIndex(px, py + 4), tm.getIndex(px2, py + 8) },
+            //    new int[] { tm.getIndex(px, py + 2), tm.getIndex(px2, py + 6), tm.getIndex(px, py + 6) });
+            //Enemy.newCube(1, 3);
+            //new ShootableBlockPuzzle(
+            //    new int[] { tm.getIndex(4, 2), tm.getIndex(10, 5) },
+            //    new int[] { tm.getIndex(6, 6) });
             for (int j = 4; j < 9; j++) {
                 tm.setForeground(17, j, imgMap[0][1], (j == 8) ? TILE_LADDER_TOP : TILE_LADDER);
             }
