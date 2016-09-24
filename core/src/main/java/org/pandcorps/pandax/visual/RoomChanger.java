@@ -22,8 +22,9 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandax.visual;
 
-import java.util.List;
+import java.util.*;
 
+import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 
@@ -32,18 +33,21 @@ public abstract class RoomChanger extends Panctor implements StepListener {
     private final int velX;
     private final int velY;
     private final Panctor tracked;
+    private final List<? extends Panctor> actorsToDestroy;
     
     // Might keep a constant deep background layer and a HUD layer on top
-    public RoomChanger(final int velX, final int velY, final List<Panlayer> layersToKeepBeneath, final List<Panlayer> layersToKeepAbove, final List<Panctor> actorsToKeep) {
+    public RoomChanger(final int velX, final int velY, final List<Panlayer> layersToKeepBeneath, final List<Panlayer> layersToKeepAbove,
+                       final List<? extends Panctor> actorsToKeep, final List<? extends Panctor> actorsToDestroy) {
         this.velX = velX;
         this.velY = velY;
+        final Pangine engine = Pangine.getEngine();
         final Pangame game = Pangame.getGame();
         final Panroom oldRoom = game.getCurrentRoom();
         setVisible(false);
         detachLayers(layersToKeepBeneath);
         detachLayers(layersToKeepAbove);
         Panctor tracked = null;
-        for (final Panctor actor : actorsToKeep) {
+        for (final Panctor actor : Coltil.unnull(actorsToKeep)) {
             if (actor == oldRoom.getTracked()) {
                 tracked = actor;
             }
@@ -53,55 +57,65 @@ public abstract class RoomChanger extends Panctor implements StepListener {
         newRoom = createRoom();
         game.setCurrentRoom(newRoom);
         Panlayer tempLayer = newRoom;
-        for (final Panlayer layer : layersToKeepBeneath) {
+        for (final Panlayer layer : Coltil.unnull(layersToKeepBeneath)) {
             tempLayer.addBeneath(layer);
             tempLayer = layer;
         }
         tempLayer = newRoom;
-        for (final Panlayer layer : layersToKeepAbove) {
+        for (final Panlayer layer : Coltil.unnull(layersToKeepAbove)) {
             tempLayer.addAbove(layer);
             tempLayer = layer;
         }
-        final float offX, offY;
+        final float offX, offY, roomX, roomY;
         if (velX < 0) {
             offX = newRoom.getSize().getX();
+            roomX = engine.getEffectiveWidth();
         } else if (velX > 0) {
             offX = -oldRoom.getSize().getX();
+            roomX = -engine.getEffectiveWidth();
         } else {
             offX = 0;
+            roomX = 0;
         }
         if (velY < 0) {
             offY = newRoom.getSize().getY();
+            roomY = engine.getEffectiveHeight();
         } else if (velY > 0) {
             offY = -oldRoom.getSize().getY();
+            roomY = -engine.getEffectiveHeight();
         } else {
             offY = 0;
+            roomY = 0;
         }
-        for (final Panctor actor : actorsToKeep) {
+        for (final Panctor actor : Coltil.unnull(actorsToKeep)) {
             newRoom.addActor(actor);
             if (velX < 0) {
                 actor.getPosition().add(offX, offY);
             }
         }
-        //TODO init newRoom origin
+        this.actorsToDestroy = actorsToDestroy;
+        newRoom.addActor(this);
+        newRoom.getOrigin().set(roomX, roomY);
     }
     
     private final void detachLayers(final List<Panlayer> layers) {
-        for (final Panlayer layer : layers) {
+        for (final Panlayer layer : Coltil.unnull(layers)) {
             layer.detach();
         }
     }
     
     @Override
     public final void onStep(final StepEvent event) {
-        //TODO Apply velocity
-        newRoom.getOrigin();
+        newRoom.getOrigin().add(velX, velY);
         //TODO Call finish() when done
     }
     
     private final void finish() {
         if (tracked != null) {
             Pangine.getEngine().track(tracked);
+        }
+        for (final Panctor actor : Coltil.unnull(actorsToDestroy)) {
+            actor.destroy();
         }
         destroy();
     }
