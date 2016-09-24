@@ -193,6 +193,7 @@ public final class BotsnBoltsGame extends BaseGame {
         final PixelFilter filter = newFilter(s1, d1, s2, d2);
         filterImgs(imgsClosed, filter);
         filterImgs(imgsOpening, filter);
+        filterImgs(imgsBarrier, filter);
         return newDoorDefinition(id, imgsClosed, imgsOpening, next, nextTemperature, requiredShootMode, requiredPower, imgsBarrier);
     }
     
