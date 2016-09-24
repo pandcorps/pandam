@@ -29,10 +29,11 @@ import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.tile.*;
 
 public class ShootableDoor extends Panctor implements StepListener, CollisionListener {
-    protected final static Panple minBarrier = new FinPanple2(2, 0);
+    protected final static Panple minBarrier = new FinPanple2(1, 0);
     private final static Pansplay display;
     private final static Pansplay displaySmall;
     private final static Pansplay displayBarrier = new ImplPansplay(FinPanple.ORIGIN, minBarrier, new FinPanple2(14, 32));
+    private final static Pansplay displayBarrierSmall = new ImplPansplay(FinPanple.ORIGIN, minBarrier, new FinPanple2(14, 16));
     private final static Pansplay displayBoss = new ImplPansplay(FinPanple.ORIGIN, minBarrier, new FinPanple2(14, 64));
     protected final int x;
     protected final int y;
@@ -78,7 +79,7 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
         setDoorTiles(x, isSmall() ? BotsnBoltsGame.doorTunnelSmall : BotsnBoltsGame.doorTunnel, Tile.BEHAVIOR_SOLID, true);
     }
     
-    private final boolean isSmall() {
+    protected final boolean isSmall() {
         return def.door.length <= 2;
     }
     
@@ -270,14 +271,15 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
             final Panmage img = def.barrierImgs[imgIndex];
             final Panple pos = getPosition();
             final float x = pos.getX() + off, y = pos.getY();
-            for (int j = 0; j < 4; j++) {
+            final int h = isSmall() ? 2 : 4;
+            for (int j = 0; j < h; j++) {
                 renderer.render(layer, img, x, y + (j * 8), BotsnBoltsGame.DEPTH_FG);
             }
         }
         
         @Override
         public final Pansplay getCurrentDisplay() {
-            return displayBarrier;
+            return isSmall() ? displayBarrierSmall : displayBarrier;
         }
     }
     
