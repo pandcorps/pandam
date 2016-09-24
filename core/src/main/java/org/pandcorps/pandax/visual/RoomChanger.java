@@ -56,6 +56,7 @@ public abstract class RoomChanger extends Panctor implements StepListener {
         this.tracked = tracked;
         newRoom = createRoom();
         game.setCurrentRoom(newRoom);
+        oldRoom.destroy();
         Panlayer tempLayer = newRoom;
         for (final Panlayer layer : Coltil.unnull(layersToKeepBeneath)) {
             tempLayer.addBeneath(layer);
@@ -69,7 +70,7 @@ public abstract class RoomChanger extends Panctor implements StepListener {
         final float offX, offY, roomX, roomY;
         if (velX < 0) {
             offX = newRoom.getSize().getX();
-            roomX = engine.getEffectiveWidth();
+            roomX = offX; // engine.getEffectiveWidth();
         } else if (velX > 0) {
             offX = -oldRoom.getSize().getX();
             roomX = -engine.getEffectiveWidth();
@@ -79,7 +80,7 @@ public abstract class RoomChanger extends Panctor implements StepListener {
         }
         if (velY < 0) {
             offY = newRoom.getSize().getY();
-            roomY = engine.getEffectiveHeight();
+            roomY = offY; // engine.getEffectiveHeight();
         } else if (velY > 0) {
             offY = -oldRoom.getSize().getY();
             roomY = -engine.getEffectiveHeight();
@@ -104,8 +105,30 @@ public abstract class RoomChanger extends Panctor implements StepListener {
     
     @Override
     public final void onStep(final StepEvent event) {
-        newRoom.getOrigin().add(velX, velY);
-        //TODO Call finish() when done
+        final Panple o = newRoom.getOrigin();
+        o.add(velX, velY);
+        boolean finished = false;
+        if (velX > 0) {
+            if (o.getX() >= 0) {
+                finished = true;
+            }
+        } else if (velX < 0) {
+            if (o.getX() <= (newRoom.getSize().getX() - Pangine.getEngine().getEffectiveWidth())) {
+                finished = true;
+            }
+        } else if (velY > 0) {
+            if (o.getY() >= 0) {
+                finished = true;
+            }
+        } else if (velY < 0) {
+            if (o.getY() <= (newRoom.getSize().getY() - Pangine.getEngine().getEffectiveHeight())) {
+                finished = true;
+            }
+        }
+        if (finished) {
+            o.set(0, 0);
+            finish();
+        }
     }
     
     private final void finish() {
