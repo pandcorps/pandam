@@ -89,9 +89,7 @@ public abstract class RoomChanger extends Panctor implements StepListener {
         }
         for (final Panctor actor : Coltil.unnull(actorsToKeep)) {
             newRoom.addActor(actor);
-            if (velX < 0) {
-                actor.getPosition().add(offX, offY);
-            }
+            actor.getPosition().add(offX, offY);
         }
         this.actorsToDestroy = actorsToDestroy;
         newRoom.addActor(this);
