@@ -29,10 +29,10 @@ import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 
 public abstract class RoomChanger extends Panctor implements StepListener {
-    private final Panroom newRoom;
+    private Panroom newRoom = null;
     private final int velX;
     private final int velY;
-    private final Panctor tracked;
+    private Panctor tracked = null;
     private final List<? extends Panctor> actorsToDestroy;
     
     // Might keep a constant deep background layer and a HUD layer on top
@@ -40,6 +40,15 @@ public abstract class RoomChanger extends Panctor implements StepListener {
                        final List<? extends Panctor> actorsToKeep, final List<? extends Panctor> actorsToDestroy) {
         this.velX = velX;
         this.velY = velY;
+        this.actorsToDestroy = actorsToDestroy;
+        Pangine.getEngine().executeInGameThread(new Runnable() {
+            @Override public final void run() {
+                start(layersToKeepBeneath, layersToKeepAbove, actorsToKeep);
+            }});
+    }
+    
+    private final void start(final List<Panlayer> layersToKeepBeneath, final List<Panlayer> layersToKeepAbove,
+                             final List<? extends Panctor> actorsToKeep) {
         final Pangine engine = Pangine.getEngine();
         final Pangame game = Pangame.getGame();
         final Panroom oldRoom = game.getCurrentRoom();
@@ -92,7 +101,6 @@ public abstract class RoomChanger extends Panctor implements StepListener {
             newRoom.addActor(actor);
             actor.getPosition().add(offX, offY);
         }
-        this.actorsToDestroy = actorsToDestroy;
         newRoom.addActor(this);
         newRoom.getOrigin().set(roomX, roomY);
     }

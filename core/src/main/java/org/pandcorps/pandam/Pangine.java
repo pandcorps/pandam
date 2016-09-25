@@ -1133,7 +1133,7 @@ public abstract class Pangine {
 	}
 	
 	public final void executeInGameThread(final Runnable r) {
-	    queuedJobs.offer(r);
+	    queuedJobs.offer(r); // Always enqueue it, even if already in game thread; callers expect the job to be executed at a certain point during the game loop
 	}
 	
 	private final void executeJobs() {
