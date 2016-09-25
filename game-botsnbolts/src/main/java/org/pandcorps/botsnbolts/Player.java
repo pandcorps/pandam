@@ -22,6 +22,8 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.botsnbolts;
 
+import java.util.*;
+
 import org.pandcorps.botsnbolts.HudMeter.*;
 import org.pandcorps.botsnbolts.Profile.*;
 import org.pandcorps.botsnbolts.Projectile.*;
@@ -32,6 +34,7 @@ import org.pandcorps.pandam.event.action.*;
 import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.in.*;
 import org.pandcorps.pandax.tile.*;
+import org.pandcorps.pandax.visual.*;
 
 public final class Player extends Chr {
     protected final static int PLAYER_X = 6;
@@ -435,6 +438,15 @@ public final class Player extends Chr {
     @Override
     protected final void onWall() {
         stateHandler.onWall(this);
+    }
+    
+    @Override
+    protected final void onEnd() {
+        new RoomChanger(10, 0, null, null, Arrays.asList(this, BotsnBoltsGame.tm), Arrays.asList(BotsnBoltsGame.tm)) {
+            @Override
+            protected final Panroom createRoom() {
+                return BotsnBoltsGame.BotsnBoltsScreen.newRoom();
+            }};
     }
     
     private final void normalizeY(final int offBefore, final int offAfter) {
