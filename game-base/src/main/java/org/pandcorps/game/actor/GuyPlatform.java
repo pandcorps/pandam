@@ -115,6 +115,7 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
                 if (y >= max) {
                     pos.setY(max - 1);
                     v = 0;
+                    onCeiling();
                     return Y_CEILING;
                 }
             }
@@ -139,6 +140,7 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
         } else {
             mult = -1;
             if (pos.getX() <= 0) {
+                onStart();
                 return false;
             }
         }
@@ -457,7 +459,15 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
     }
     
     //@OverrideMe
+    protected void onStart() {
+    }
+    
+    //@OverrideMe
     protected void onEnd() {
+    }
+    
+    //@OverrideMe
+    protected void onCeiling() {
     }
     
     protected abstract boolean onFell();

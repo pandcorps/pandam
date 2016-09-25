@@ -441,8 +441,28 @@ public final class Player extends Chr {
     }
     
     @Override
+    protected final void onStart() {
+        changeRoom(-1, 0);
+    }
+    
+    @Override
     protected final void onEnd() {
-        new RoomChanger(10, 0, null, Arrays.asList(BotsnBoltsGame.hud), Arrays.asList(this, BotsnBoltsGame.tm), Arrays.asList(BotsnBoltsGame.tm)) {
+        changeRoom(1, 0);
+    }
+    
+    @Override
+    protected final void onCeiling() {
+        changeRoom(0, 1);
+    }
+    
+    @Override
+    protected final boolean onFell() {
+        changeRoom(0, -1);
+        return true;
+    }
+    
+    private final void changeRoom(final int dirX, final int dirY) {
+        new RoomChanger(10 * dirX, 10 * dirY, null, Arrays.asList(BotsnBoltsGame.hud), Arrays.asList(this, BotsnBoltsGame.tm), Arrays.asList(BotsnBoltsGame.tm)) {
             @Override
             protected final Panroom createRoom() {
                 return BotsnBoltsGame.BotsnBoltsScreen.newRoom();

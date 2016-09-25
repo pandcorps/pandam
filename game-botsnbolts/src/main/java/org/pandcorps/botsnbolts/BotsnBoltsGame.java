@@ -540,7 +540,7 @@ public final class BotsnBoltsGame extends BaseGame {
             for (int i = end; i >= 0; i--) {
                 tm.setBackground(i, 0, imgMap[0][1], Tile.BEHAVIOR_SOLID);
             }
-            for (int j = tm.getHeight() - 1; j > 2; j--) {
+            for (int j = tm.getHeight() - 1; j > 4; j--) {
                 tm.setBackground(0, j, imgMap[0][0], Tile.BEHAVIOR_SOLID);
                 tm.setBackground(end, j, imgMap[0][2], Tile.BEHAVIOR_SOLID);
             }
@@ -551,7 +551,7 @@ public final class BotsnBoltsGame extends BaseGame {
             //new ShootableDoor(0, 1, doorCyan);
             //tm.setBackground(1, 2, imgMap[1][4], Tile.BEHAVIOR_SOLID);
             //new ShootableDoor(0, 1, doorSmall);
-            new ShootableDoor(end, 1, doorCyan);
+            //new ShootableDoor(end, 1, doorCyan);
             //new ShootableDoor(end, 1, doorGold);
             //new ShootableDoor(end, 1, doorSilver);
             //tm.setBackground(end - 1, 2, imgMap[1][3], Tile.BEHAVIOR_SOLID);
@@ -575,7 +575,10 @@ public final class BotsnBoltsGame extends BaseGame {
             for (int j = 4; j < 9; j++) {
                 tm.setForeground(17, j, imgMap[0][1], (j == 8) ? TILE_LADDER_TOP : TILE_LADDER);
             }
-            for (int j = 1; j < 13; j++) {
+            for (int i = 18; i <= 20; i++) {
+                tm.setTile(i, 0, null);
+            }
+            for (int j = 0; j < 13; j++) {
                 tm.setForeground(20, j, imgMap[0][1], (j == 12) ? TILE_LADDER_TOP : TILE_LADDER);
             }
         }
