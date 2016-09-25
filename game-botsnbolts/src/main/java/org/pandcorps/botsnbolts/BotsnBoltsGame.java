@@ -515,9 +515,20 @@ public final class BotsnBoltsGame extends BaseGame {
     protected final static class BotsnBoltsScreen extends Panscreen {
         @Override
         protected final void load() {
-            final Pangine engine = Pangine.getEngine();
-            engine.setBgColor(new org.pandcorps.core.img.FinPancolor((short) 232, (short) 232, (short) 232));
             final Panroom room = Pangame.getGame().getCurrentRoom();
+            fillRoom(room);
+            newPlayer(room);
+        }
+        
+        protected final static Panroom newRoom() {
+            final Panroom room = Pangine.getEngine().createRoom(Pantil.vmid(), (FinPanple) Pangame.getGame().getCurrentRoom().getSize());
+            fillRoom(room);
+            return room;
+        }
+        
+        protected final static void fillRoom(final Panroom room) {
+            final Pangine engine = Pangine.getEngine();
+            engine.setBgColor(new FinPancolor((short) 232, (short) 232, (short) 232));
             tm = new TileMap(Pantil.vmid(), room, 16, 16);
             tm.getPosition().setZ(DEPTH_BG);
             tm.setForegroundDepth(DEPTH_FG);
@@ -527,7 +538,7 @@ public final class BotsnBoltsGame extends BaseGame {
             for (int i = end; i >= 0; i--) {
                 tm.setBackground(i, 0, imgMap[0][1], Tile.BEHAVIOR_SOLID);
             }
-            for (int j = tm.getHeight() - 1; j > 0; j--) {
+            for (int j = tm.getHeight() - 1; j > 2; j--) {
                 tm.setBackground(0, j, imgMap[0][0], Tile.BEHAVIOR_SOLID);
                 tm.setBackground(end, j, imgMap[0][2], Tile.BEHAVIOR_SOLID);
             }
@@ -538,6 +549,7 @@ public final class BotsnBoltsGame extends BaseGame {
             //new ShootableDoor(0, 1, doorCyan);
             //tm.setBackground(1, 2, imgMap[1][4], Tile.BEHAVIOR_SOLID);
             //new ShootableDoor(0, 1, doorSmall);
+            new ShootableDoor(end, 1, doorCyan);
             //new ShootableDoor(end, 1, doorGold);
             //new ShootableDoor(end, 1, doorSilver);
             //tm.setBackground(end - 1, 2, imgMap[1][3], Tile.BEHAVIOR_SOLID);
@@ -549,7 +561,7 @@ public final class BotsnBoltsGame extends BaseGame {
             //room.addActor(battery);
             //new PowerBox(12, 1);
             //new ShootableBarrier(6, 1, doorCyan);
-            new ShootableBarrier(5, 1, doorSmall);
+            //new ShootableBarrier(5, 1, doorSmall);
             //final int px = 3, px2 = px + 4, py = 2; // 14, 4
             //new ShootableBlockPuzzle(
             //    new int[] { tm.getIndex(px, py), tm.getIndex(px2, py + 4), tm.getIndex(px, py + 4), tm.getIndex(px2, py + 8) },
@@ -564,6 +576,10 @@ public final class BotsnBoltsGame extends BaseGame {
             for (int j = 1; j < 13; j++) {
                 tm.setForeground(20, j, imgMap[0][1], (j == 12) ? TILE_LADDER_TOP : TILE_LADDER);
             }
+        }
+        
+        private final static void newPlayer(final Panroom room) {
+            final Pangine engine = Pangine.getEngine();
             final Player player = new Player(pc);
             player.getPosition().set(48, 96, DEPTH_PLAYER);
             room.addActor(player);
