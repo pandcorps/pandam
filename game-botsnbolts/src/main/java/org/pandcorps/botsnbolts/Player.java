@@ -442,7 +442,7 @@ public final class Player extends Chr {
     
     @Override
     protected final void onEnd() {
-        new RoomChanger(10, 0, null, null, Arrays.asList(this, BotsnBoltsGame.tm), Arrays.asList(BotsnBoltsGame.tm)) {
+        new RoomChanger(10, 0, null, Arrays.asList(BotsnBoltsGame.hud), Arrays.asList(this, BotsnBoltsGame.tm), Arrays.asList(BotsnBoltsGame.tm)) {
             @Override
             protected final Panroom createRoom() {
                 return BotsnBoltsGame.BotsnBoltsScreen.newRoom();

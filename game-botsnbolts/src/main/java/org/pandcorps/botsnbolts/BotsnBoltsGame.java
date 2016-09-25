@@ -61,6 +61,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected final static int DEPTH_PROJECTILE = 5;
     protected final static int DEPTH_OVERLAY = 6;
     protected final static int DEPTH_BURST = 7;
+    protected final static int DEPTH_HUD = 8;
     
     private final static FinPanple2 ng = GuyPlatform.getMin(Player.PLAYER_X);
     private final static FinPanple2 xg = GuyPlatform.getMax(Player.PLAYER_X, Player.PLAYER_H);
@@ -93,6 +94,7 @@ public final class BotsnBoltsGame extends BaseGame {
     
     protected static PlayerContext pc = null;
     
+    protected static Panlayer hud = null;
     protected static TileMap tm = null;
 
     @Override
@@ -579,13 +581,19 @@ public final class BotsnBoltsGame extends BaseGame {
         }
         
         private final static void newPlayer(final Panroom room) {
-            final Pangine engine = Pangine.getEngine();
             final Player player = new Player(pc);
             player.getPosition().set(48, 96, DEPTH_PLAYER);
             room.addActor(player);
+            newHud(room, player);
+        }
+        
+        private final static void newHud(final Panroom room, final Player player) {
+            final Pangine engine = Pangine.getEngine();
             final HudMeter healthMeter = player.newHealthMeter();
-            healthMeter.getPosition().set(24, engine.getEffectiveHeight() - 73, DEPTH_OVERLAY);
-            room.addActor(healthMeter);
+            healthMeter.getPosition().set(24, engine.getEffectiveHeight() - 73, DEPTH_HUD);
+            hud = createHud(room);
+            hud.setClearDepthEnabled(false);
+            hud.addActor(healthMeter);
         }
     }
     
