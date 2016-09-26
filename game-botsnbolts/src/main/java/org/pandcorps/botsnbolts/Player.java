@@ -365,7 +365,7 @@ public final class Player extends Chr {
             running = false;
         } else {
             blinkTimer = 0;
-            if (wallTimer > 0 && set.crouch != null) { //TODO && room for ball
+            if (wallTimer > 0 && set.crouch != null && !RoomChanger.isChanging()) { //TODO && room for ball
                 if (wallMirror == isMirror()) {
                     wallTimer++;
                     if (wallTimer > 6) {
@@ -458,8 +458,8 @@ public final class Player extends Chr {
     }
     
     @Override
-    protected final void onWall() {
-        stateHandler.onWall(this);
+    protected final void onWall(final byte xResult) {
+        stateHandler.onWall(this, xResult);
     }
     
     @Override
@@ -538,7 +538,7 @@ public final class Player extends Chr {
         protected abstract boolean onAir(final Player player);
         
         //@OverrideMe
-        protected void onWall(final Player player) {
+        protected void onWall(final Player player, final byte xResult) {
         }
     }
     
@@ -594,8 +594,8 @@ public final class Player extends Chr {
         }
         
         @Override
-        protected final void onWall(final Player player) {
-            if (player.wallTimer == 0) {
+        protected final void onWall(final Player player, final byte xResult) {
+            if (player.wallTimer == 0 && xResult == X_WALL) {
                 player.wallTimer = 1;
                 player.wallMirror = player.isMirror();
             }

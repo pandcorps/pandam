@@ -556,7 +556,7 @@ public class Enemy extends Character {
 	}
 	
 	@Override
-	protected final void onWall() {
+	protected final void onWall(final byte xResult) {
 		hv *= -1;
 		Pansound.startSound(def.wallSound);
 	}
