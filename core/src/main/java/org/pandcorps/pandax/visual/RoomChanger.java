@@ -155,6 +155,14 @@ public abstract class RoomChanger extends Panctor implements StepListener {
         destroy();
     }
     
+    public final int getVelocityX() {
+        return velX;
+    }
+    
+    public final int getVelocityY() {
+        return velY;
+    }
+    
     public final static RoomChanger getActiveChanger() {
         return activeChanger;
     }

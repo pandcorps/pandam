@@ -304,12 +304,21 @@ public final class Player extends Chr {
         runTimer = 0;
     }
     
+    private final int getDirection(final int v) {
+        return (v == 0) ? 0 : v / Math.abs(v);
+    }
+    
     @Override
     protected final boolean onStepCustom() {
         if (isInvincible()) {
             setVisible(Pangine.getEngine().isOn(4));
         } else {
             setVisible(true);
+        }
+        if (RoomChanger.isChanging()) {
+            final RoomChanger changer = RoomChanger.getActiveChanger();
+            hv = getDirection(changer.getVelocityX());
+            v = getDirection(changer.getVelocityY());
         }
         if (stateHandler.onStep(this)) {
             return true;
