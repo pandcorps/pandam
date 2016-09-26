@@ -154,8 +154,12 @@ public final class Player extends Chr {
         } while (!prf.shootMode.isAvailable(this));
     }
     
+    private final boolean isFree() {
+        return !(isHurt() || RoomChanger.isChanging());
+    }
+    
     private final void jump() {
-        if (!isHurt()) {
+        if (isFree()) {
             stateHandler.onJump(this);
         }
     }
@@ -173,25 +177,25 @@ public final class Player extends Chr {
     }
     
     private final void shoot() {
-        if (!isHurt()) {
+        if (isFree()) {
             stateHandler.onShootStart(this);
         }
     }
     
     private final void shooting() {
-        if (!isHurt()) {
+        if (isFree()) {
             stateHandler.onShooting(this);
         }
     }
     
     private final void releaseShoot() {
-        if (!isHurt()) {
+        if (isFree()) {
             stateHandler.onShootEnd(this);
         }
     }
     
     private final void right() {
-        if (!isHurt()) {
+        if (isFree()) {
             stateHandler.onRight(this);
         }
     }
@@ -201,7 +205,7 @@ public final class Player extends Chr {
     }
     
     private final void left() {
-        if (!isHurt()) {
+        if (isFree()) {
             stateHandler.onLeft(this);
         }
     }
@@ -211,7 +215,9 @@ public final class Player extends Chr {
     }
     
     private final void up() {
-        stateHandler.onUp(this);
+        if (isFree()) {
+            stateHandler.onUp(this);
+        }
     }
     
     private final void onUpNormal() {
@@ -242,7 +248,9 @@ public final class Player extends Chr {
     }
     
     private final void down() {
-        stateHandler.onDown(this);
+        if (isFree()) {
+            stateHandler.onDown(this);
+        }
     }
     
     private final void onDownNormal() {
