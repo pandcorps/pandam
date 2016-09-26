@@ -317,8 +317,13 @@ public final class Player extends Chr {
         }
         if (RoomChanger.isChanging()) {
             final RoomChanger changer = RoomChanger.getActiveChanger();
-            hv = getDirection(changer.getVelocityX());
-            v = getDirection(changer.getVelocityY());
+            if (changer.getAge() <= 28) {
+                hv = getDirection(changer.getVelocityX());
+                v = getDirection(changer.getVelocityY());
+            } else {
+                hv = 0;
+                v = 0;
+            }
         }
         if (stateHandler.onStep(this)) {
             return true;

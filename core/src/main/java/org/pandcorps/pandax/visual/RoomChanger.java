@@ -35,6 +35,7 @@ public abstract class RoomChanger extends Panctor implements StepListener {
     private final int velY;
     private Panctor tracked = null;
     private final List<? extends Panctor> actorsToDestroy;
+    private int age = 0;
     
     // Might keep a constant deep background layer and a HUD layer on top
     public RoomChanger(final int velX, final int velY, final List<Panlayer> layersToKeepBeneath, final List<Panlayer> layersToKeepAbove,
@@ -118,6 +119,7 @@ public abstract class RoomChanger extends Panctor implements StepListener {
     public final void onStep(final StepEvent event) {
         final Panple o = newRoom.getOrigin();
         o.add(velX, velY);
+        age++;
         boolean finished = false;
         if (velX > 0) {
             if (o.getX() >= 0) {
@@ -161,6 +163,10 @@ public abstract class RoomChanger extends Panctor implements StepListener {
     
     public final int getVelocityY() {
         return velY;
+    }
+    
+    public final int getAge() {
+        return age;
     }
     
     public final static RoomChanger getActiveChanger() {
