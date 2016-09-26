@@ -105,18 +105,22 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
             final float y = pos.getY();
             if (y < MIN_Y) {
                 pos.setY(MIN_Y);
-                v = 0;
-                if (onFell()) {
-                    return Y_FELL;
+                if (v < 0) { // This check helps with room transitions; might not be needed by games without room transitions
+                    v = 0;
+                    if (onFell()) {
+                        return Y_FELL;
+                    }
+                    return Y_FLOOR;
                 }
-                return Y_FLOOR;
             } else {
                 final float max = getCeiling();
                 if (y >= max) {
                     pos.setY(max - 1);
-                    v = 0;
-                    onCeiling();
-                    return Y_CEILING;
+                    if (v > 0) { // This check helps with room transitions; might not be needed by games without room transitions
+                        v = 0;
+                        onCeiling();
+                        return Y_CEILING;
+                    }
                 }
             }
         }
