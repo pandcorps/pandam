@@ -171,8 +171,9 @@ public abstract class BlockPuzzle {
         }
         
         private final void setTiles(final int[] tileIndices) {
+            final TileMap tm = BotsnBoltsGame.tm;
             for (final int tileIndex : tileIndices) {
-                BotsnBoltsGame.tm.setForeground(tileIndex, null, Tile.BEHAVIOR_SOLID); //TODO
+                tm.setForeground(tileIndex, null, Tile.BEHAVIOR_SOLID); //TODO
             }
         }
     }
