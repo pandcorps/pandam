@@ -164,17 +164,39 @@ public abstract class BlockPuzzle {
         }
     }
     
-    protected final static class SpikeBlockPuzzle {
+    protected final static class SpikeBlockPuzzle extends Panctor implements StepListener {
+        private final SpikeBlock[] verticalBlocks;
+        private final SpikeBlock[] horizontalBlocks;
+        private int timer = 0;
+        
         protected SpikeBlockPuzzle(final int[] initiallyVerticalIndices, final int[] initiallyHorizontalIndices) {
-            setTiles(initiallyVerticalIndices);
-            setTiles(initiallyHorizontalIndices);
+            verticalBlocks = setTiles(initiallyVerticalIndices);
+            horizontalBlocks = setTiles(initiallyHorizontalIndices);
         }
         
-        private final void setTiles(final int[] tileIndices) {
-            final TileMap tm = BotsnBoltsGame.tm;
-            for (final int tileIndex : tileIndices) {
-                tm.setForeground(tileIndex, null, Tile.BEHAVIOR_SOLID); //TODO
+        private final SpikeBlock[] setTiles(final int[] tileIndices) {
+            final int size = tileIndices.length;
+            final SpikeBlock[] blocks = new SpikeBlock[size];
+            for (int i = 0; i < size; i++) {
+                blocks[i] = new SpikeBlock(tileIndices[i]);
             }
+            return blocks;
+        }
+
+        @Override
+        public final void onStep(final StepEvent event) {
+            
+        }
+    }
+    
+    protected final static class SpikeBlock {
+        private final Spike positiveSpike;
+        private final Spike negativeSpike;
+        
+        protected SpikeBlock(final int tileIndex) {
+            BotsnBoltsGame.tm.setForeground(tileIndex, null, Tile.BEHAVIOR_SOLID); //TODO
+            positiveSpike = new Spike();
+            negativeSpike = new Spike();
         }
     }
     
@@ -182,6 +204,7 @@ public abstract class BlockPuzzle {
         protected Spike() {
             super(1);
             getPosition().setZ(BotsnBoltsGame.DEPTH_BG);
+            BotsnBoltsGame.tm.getLayer().addActor(this);
         }
 
         @Override
