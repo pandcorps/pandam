@@ -86,6 +86,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static ShootableDoorDefinition doorSilver = null;
     protected static ShootableDoorDefinition doorSmall = null;
     protected static Panmage[] blockCyan = null;
+    protected static Panmage spike = null; //TODO
     protected static Panmage[] cube = null;
     protected static Panmage[] sentryGun = null;
     protected static Panmage enemyProjectile = null;
