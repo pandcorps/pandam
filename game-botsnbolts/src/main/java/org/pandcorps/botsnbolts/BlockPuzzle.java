@@ -214,7 +214,7 @@ public abstract class BlockPuzzle {
         private final Spike negativeSpike;
         
         protected SpikeBlock(final int tileIndex, final int baseRot) {
-            BotsnBoltsGame.tm.setForeground(tileIndex, null, Tile.BEHAVIOR_SOLID); //TODO
+            BotsnBoltsGame.tm.setForeground(tileIndex, BotsnBoltsGame.blockSpike, Tile.BEHAVIOR_SOLID);
             positiveSpike = new Spike(tileIndex, baseRot);
             negativeSpike = new Spike(tileIndex, baseRot + 2);
         }

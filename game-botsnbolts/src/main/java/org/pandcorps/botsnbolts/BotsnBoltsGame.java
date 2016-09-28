@@ -86,7 +86,8 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static ShootableDoorDefinition doorSilver = null;
     protected static ShootableDoorDefinition doorSmall = null;
     protected static Panmage[] blockCyan = null;
-    protected static Panmage spike = null; //TODO
+    protected static Panmage blockSpike = null;
+    protected static Panmage spike = null;
     protected static Panmage[] cube = null;
     protected static Panmage[] sentryGun = null;
     protected static Panmage enemyProjectile = null;
@@ -175,6 +176,8 @@ public final class BotsnBoltsGame extends BaseGame {
         hudMeterBlank = newHudMeterImages("meter.blank", RES + "misc/MeterBlank.png");
         cube = newSheet("cube", RES + "misc/Cube.png", 16);
         blockCyan = newSheet("block.cyan", RES + "bg/BlockCyan.png", 16, FinPanple.ORIGIN, ShootableDoor.minBarrier, new FinPanple2(14, 16));
+        blockSpike = null; //TODO
+        spike = null; //TODO
     }
     
     private final static void loadEnemies() {
