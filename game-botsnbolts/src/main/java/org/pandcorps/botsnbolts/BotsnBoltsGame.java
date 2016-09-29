@@ -173,11 +173,12 @@ public final class BotsnBoltsGame extends BaseGame {
     }
     
     private final static void loadMisc() {
+        final Pangine engine = Pangine.getEngine();
         hudMeterBlank = newHudMeterImages("meter.blank", RES + "misc/MeterBlank.png");
         cube = newSheet("cube", RES + "misc/Cube.png", 16);
         blockCyan = newSheet("block.cyan", RES + "bg/BlockCyan.png", 16, FinPanple.ORIGIN, ShootableDoor.minBarrier, new FinPanple2(14, 16));
-        blockSpike = null; //TODO
-        spike = null; //TODO
+        blockSpike = engine.createImage("block.spike", RES + "bg/BlockSpike.png");
+        spike = engine.createImage("spike", RES + "bg/Spike.png");
     }
     
     private final static void loadEnemies() {
@@ -578,6 +579,9 @@ public final class BotsnBoltsGame extends BaseGame {
             //new ShootableBlockPuzzle(
             //    new int[] { tm.getIndex(4, 2), tm.getIndex(10, 5) },
             //    new int[] { tm.getIndex(6, 6) });
+            new SpikeBlockPuzzle(
+                new int[] { tm.getIndex(3, 3) },
+                new int[] { tm.getIndex(5, 4) });
             for (int j = 4; j < 9; j++) {
                 tm.setForeground(17, j, imgMap[0][1], (j == 8) ? TILE_LADDER_TOP : TILE_LADDER);
             }

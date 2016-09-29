@@ -172,6 +172,7 @@ public abstract class BlockPuzzle {
         protected SpikeBlockPuzzle(final int[] initiallyVerticalIndices, final int[] initiallyHorizontalIndices) {
             verticalBlocks = setTiles(initiallyVerticalIndices, 1);
             horizontalBlocks = setTiles(initiallyHorizontalIndices, 0);
+            BotsnBoltsGame.tm.getLayer().addActor(this);
         }
         
         private final SpikeBlock[] setTiles(final int[] tileIndices, final int baseRot) {
