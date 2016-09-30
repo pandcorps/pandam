@@ -264,6 +264,7 @@ public final class Player extends Chr {
         if (isInvincible()) {
             return;
         }
+        stateHandler.onHurt(this);
         lastHurt = Pangine.getEngine().getClock();
         health -= damage;
         if ((v > 0) && !isGrounded()) {
@@ -529,6 +530,10 @@ public final class Player extends Chr {
         }
         
         //@OverrideMe
+        protected void onHurt(final Player player) {
+        }
+        
+        //@OverrideMe
         protected boolean onStep(final Player player) {
             return false;
         }
@@ -649,6 +654,11 @@ public final class Player extends Chr {
             if (!player.isShootPoseNeeded()) {
                 player.v = -VEL_WALK;
             }
+        }
+        
+        @Override
+        protected final void onHurt(final Player player) {
+            player.stateHandler = NORMAL_HANDLER;
         }
         
         @Override
