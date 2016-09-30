@@ -100,7 +100,7 @@ public class Tiles {
     	    } else {
         		Level.tm.setForeground(index, null, Tile.BEHAVIOR_OPEN);
         		shatterImg = FurGuardiansGame.block8;
-        		if (Mathtil.rand(70)) {
+        		if (Mathtil.rand(Level.breakableAwardProbability)) {
         		    newGemBumped(player, index); // Plays a sound
         		} // else { // Used to play soundCrumble in this else, but Players wanted to hear crumble even if Gem pops up with its own sound
         		stats.brokenBlocks++;
@@ -369,6 +369,121 @@ public class Tiles {
         	if (c instanceof Character) {
         		((Character) c).onBump(bumper);
         	}
+        }
+    }
+    
+    protected abstract static class TilePuzzle {
+        protected final TileMap tm;
+        
+        protected TilePuzzle() {
+            tm = Level.tm;
+        }
+        
+        protected final void setPuzzleBlock(final int tileIndex) {
+            tm.setForeground(tileIndex, FurGuardiansGame.blockPuzzle, Tile.BEHAVIOR_SOLID);
+        }
+        
+        protected final void setPuzzleBlocks(final int[] tileIndices) {
+            for (final int tileIndex : tileIndices) {
+                setPuzzleBlock(tileIndex);
+            }
+        }
+        
+        protected final void clearPuzzleBlock(final int tileIndex) {
+            tm.setForeground(tileIndex, null, Tile.BEHAVIOR_OPEN);
+        }
+        
+        protected final void clearPuzzleBlocks(final int[] tileIndices) {
+            for (final int tileIndex : tileIndices) {
+                clearPuzzleBlock(tileIndex);
+            }
+        }
+        
+        protected final void addTimer(final long duration, final TimerListener listener) {
+            Pangine.getEngine().addTimer(tm, duration, listener);
+        }
+    }
+    
+    protected final static class TileTrack extends TilePuzzle {
+        private final int[] tileIndices;
+        private final int activeSize;
+        private int currentActiveStart = 0;
+        
+        protected TileTrack(final int[] tileIndices, final int activeSize) {
+            this.tileIndices = tileIndices;
+            this.activeSize = activeSize;
+            initTiles();
+            scheduleAdvance();
+        }
+        
+        protected final void initTiles() {
+            for (int i = 0; i < activeSize; i++) {
+                setTile(i);
+            }
+        }
+        
+        private final void setTile(final int activeTrackPosition) {
+            setPuzzleBlock(tileIndices[activeTrackPosition]);
+        }
+        
+        protected final void advance() {
+            clearPuzzleBlock(tileIndices[currentActiveStart]);
+            currentActiveStart++;
+            setTile(currentActiveStart);
+            scheduleAdvance();
+        }
+        
+        protected final void scheduleAdvance() {
+            addTimer(30, new TimerListener() { //TODO Think about duration
+                @Override
+                public final void onTimer(final TimerEvent event) {
+                    advance();
+                }});
+        }
+    }
+    
+    protected final static class AlternatorPuzzle extends TilePuzzle {
+        private final int[][] tileGroups;
+        private int currentGroupIndex = 0;
+        
+        protected AlternatorPuzzle(final int[][] tileGroups) {
+            this.tileGroups = tileGroups;
+            enableTiles(0);
+        }
+        
+        protected final void enableTiles(final int groupIndex) {
+            setPuzzleBlocks(tileGroups[groupIndex]);
+        }
+        
+        protected final void enableTiles() {
+            enableTiles(getNextGroupIndex());
+            scheduleDisable();
+        }
+        
+        protected final void disableTiles() {
+            clearPuzzleBlocks(tileGroups[currentGroupIndex]);
+            currentGroupIndex = getNextGroupIndex();
+            scheduleEnable();
+        }
+        
+        protected final int getNextGroupIndex() {
+            return (currentGroupIndex + 1) % tileGroups.length;
+        }
+        
+        protected final void scheduleEnable() {
+            addTimer(25, new TimerListener() {
+                @Override
+                public final void onTimer(final TimerEvent event) {
+                    enableTiles();
+                }});
+        }
+        
+        protected final void scheduleDisable() {
+            addTimer(5, new TimerListener() {
+                @Override
+                public final void onTimer(final TimerEvent event) {
+                    disableTiles();
+                }});
         }
     }
 }

@@ -314,6 +314,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
     	protected long clearedVineBlocks = 0;
     	protected int wordMiniGames = 0;
     	protected int gemMiniGames = 0;
+    	protected int lastSpecialBuilder = 0;
     	
     	public void load(final Segment seg, final int currGems) {
         	defeatedLevels = seg.initInt(0);
@@ -361,6 +362,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
         	clearedVineBlocks = seg.initLong(32);
         	wordMiniGames = seg.initInt(33);
         	gemMiniGames = seg.initInt(34);
+        	lastSpecialBuilder = seg.initInt(35);
         }
     	
 		@Override
@@ -414,6 +416,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
 	        seg.setLong(32, clearedVineBlocks);
 	        seg.setInt(33, wordMiniGames);
 	        seg.setInt(34, gemMiniGames);
+	        seg.setInt(35, lastSpecialBuilder);
 		}
 		
 		public List<String> toList(final Profile prf) {

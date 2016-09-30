@@ -22,15 +22,35 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.botsnbolts;
 
+import org.pandcorps.game.actor.*;
 import org.pandcorps.pandax.tile.*;
 
-public class Cube {
-    protected final static void newCube(final int x, final int y) {
-        final TileMap tm = BotsnBoltsGame.tm;
-        final int x1 = x + 1, y1 = y + 1;
-        tm.setForeground(x, y, BotsnBoltsGame.cube[2], Tile.BEHAVIOR_SOLID);
-        tm.setForeground(x1, y, BotsnBoltsGame.cube[3], Tile.BEHAVIOR_SOLID);
-        tm.setForeground(x, y1, BotsnBoltsGame.cube[0], Tile.BEHAVIOR_SOLID);
-        tm.setForeground(x1, y1, BotsnBoltsGame.cube[1], Tile.BEHAVIOR_SOLID);
+public abstract class Chr extends GuyPlatform {
+    protected Chr(final int offX, final int h) {
+        super(offX, h);
+    }
+
+    @Override
+    protected final boolean onFell() {
+        return false;
+    }
+
+    @Override
+    protected final void onBump(final int t) {
+    }
+
+    @Override
+    protected final TileMap getTileMap() {
+        return BotsnBoltsGame.tm;
+    }
+
+    @Override
+    protected final boolean isSolidBehavior(final byte b) {
+        return false;
+    }
+    
+    @Override
+    protected final boolean isFloorBehavior(final byte b) {
+        return b == BotsnBoltsGame.TILE_FLOOR || b == BotsnBoltsGame.TILE_LADDER_TOP;
     }
 }

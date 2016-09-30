@@ -50,7 +50,7 @@ import org.pandcorps.furguardians.Player.*;
 
 public class FurGuardiansGame extends BaseGame {
 	protected final static String TITLE = "Fur-Guardians"; // res/values/strings.xml/app_name
-    protected final static String VERSION = "1.26.0"; // AndroidManifest.xml/versionName
+    protected final static String VERSION = "1.27"; // AndroidManifest.xml/versionName
     protected final static String YEAR = "2014-2016";
     protected final static String AUTHOR = "Andrew M. Martin";
 	/*
@@ -67,7 +67,6 @@ public class FurGuardiansGame extends BaseGame {
 	Enemy Elementals, winged Imp, Banshee, Wraith, Shade, Orc.
 	Nether Wisp in Chaos levels with curse/poison effect.
 	Drolock should walk sometimes.
-	Enemy-specific Level templates (Imp walking into ArmorBall).
 	Gargoyles catch/carry Player, like moving platforms, one can jump to/from them, but not run on them.
 	Cannons on ground that Player enters to be launched.
 	Cannons in air that auto-fire, others that wait for jump input.
@@ -272,14 +271,18 @@ public class FurGuardiansGame extends BaseGame {
 	protected static Panmage doubleOrb = null;
 	protected static Panmage blockPower = null;
 	protected static Panmage blockHavocLock = null;
+	protected static Panmage blockPuzzle = null;
 	protected static Panmage bubble = null;
 	protected static Panimation minecart = null;
 	protected static Panimation owl = null;
 	protected final static List<EnemyDefinition> allEnemies = new ArrayList<EnemyDefinition>();
 	protected static List<EnemyDefinition> enemies = null;
+	protected static EnemyDefinition hobTroll = null;
+	protected static EnemyDefinition hobOgre = null;
 	protected static EnemyDefinition imp = null;
 	protected static EnemyDefinition armoredImp = null;
 	protected static EnemyDefinition spikedImp = null;
+	protected static EnemyDefinition armorBall = null;
 	protected static EnemyDefinition bounceBall = null;
 	protected static EnemyDefinition trollColossus = null;
 	protected static EnemyDefinition ogreBehemoth = null;
@@ -1316,7 +1319,6 @@ public class FurGuardiansGame extends BaseGame {
 	}
 	
 	private final static void initTileBehaviors() {
-	    Character.TILE_FLOOR = TILE_FLOOR;
 	    Character.TILE_UPSLOPE = TILE_UPSLOPE;
 	    Character.TILE_DOWNSLOPE = TILE_DOWNSLOPE;
 	    Character.TILE_UPSLOPE_FLOOR = TILE_UPSLOPE_FLOOR;
@@ -1350,13 +1352,15 @@ public class FurGuardiansGame extends BaseGame {
 			drolock = new EnemyDefinition("Drolock", 4, null, false, 0, 0);
 			drolock.projectile = projectile1;
 			Coltil.set(allEnemies, Level.DROLOCK, drolock); // Teleport/shoot periodically
-		    Coltil.set(allEnemies, Level.HOB_TROLL, new EnemyDefinition("Hob-troll", 2, null, true)); // Was Troblin
+			hobTroll = new EnemyDefinition("Hob-troll", 2, null, true);
+		    Coltil.set(allEnemies, Level.HOB_TROLL, hobTroll); // Was Troblin
 			final ReplacePixelFilter f = new ReplacePixelFilter();
 			replace(f, (short) 104, (short) 120, (short) 172);
 			replace(f, (short) 80, (short) 96, (short) 144);
 			replace(f, (short) 64, (short) 80, (short) 112);
 			replace(f, (short) 48, (short) 56, (short) 80);
-			Coltil.set(allEnemies, Level.HOB_OGRE, new EnemyDefinition("Hob-ogre", 2, f, false)); // Was Obglin
+			hobOgre = new EnemyDefinition("Hob-ogre", 2, f, false);
+			Coltil.set(allEnemies, Level.HOB_OGRE, hobOgre); // Was Obglin
 			final int impX = 4, impH = 14;
 			imp = new EnemyDefinition("Imp", 3, null, true, true, impX, impH);
 			Coltil.set(allEnemies, Level.IMP, imp);
@@ -1411,8 +1415,9 @@ public class FurGuardiansGame extends BaseGame {
 			ogreBehemoth = Enemy.newGiantDefinition("Ogre Behemoth", 11, f, false);
 			ogreBehemoth.init(trollColossus);
 			Coltil.set(allEnemies, Level.OGRE_BEHEMOTH, ogreBehemoth);
-			final EnemyDefinition armorBall, thrownImp;
+			final EnemyDefinition thrownImp;
 			armorBall = new EnemyDefinition("Armor Ball", 7, null, false, 0, 0);
+			armorBall.factory = Enemy.armorBallFactory;
 			Enemy.currentWalk = 3;
 			bounceBall = new EnemyDefinition("Bounce Ball", 7, null, false, 0, 4);
 			Enemy.currentSplat = 8;
@@ -1681,6 +1686,7 @@ public class FurGuardiansGame extends BaseGame {
 			doubleOrb = createImage("orb.double", RES + "misc/DoubleOrb.png", 16);
 			blockPower = createImage("block.power", RES + "misc/BlockPower.png", 16);
 			blockHavocLock = createImage("block.power", RES + "misc/BlockHavocLock.png", 16);
+			blockPuzzle = createImage("block.puzzle", RES + "misc/BlockPuzzle.png", 16);
 			bubble = createImage("bubble", RES + "chr/Bubble.png", 32, og);
 			minecart = createAnm("minecart", RES + "misc/Minecart.png", 32, 2, new FinPanple2(16, 7), null, null); }});
 	    
