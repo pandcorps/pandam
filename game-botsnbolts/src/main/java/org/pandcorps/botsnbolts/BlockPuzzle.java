@@ -85,7 +85,7 @@ public abstract class BlockPuzzle {
         private int currentStepIndex = 0;
         
         protected TimedBlockPuzzle(final List<int[]> steps) {
-            super(null); //TODO pick color/image
+            super(BotsnBoltsGame.blockTimed);
             this.steps = steps;
             schedule();
         }

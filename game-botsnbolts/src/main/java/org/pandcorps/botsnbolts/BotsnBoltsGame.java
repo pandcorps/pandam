@@ -86,6 +86,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static ShootableDoorDefinition doorSilver = null;
     protected static ShootableDoorDefinition doorSmall = null;
     protected static Panmage[] blockCyan = null;
+    protected static Panmage[] blockTimed = null;
     protected static Panmage blockSpike = null;
     protected static Panmage spike = null;
     protected static Panmage[] cube = null;
@@ -187,6 +188,7 @@ public final class BotsnBoltsGame extends BaseGame {
         hudMeterBlank = newHudMeterImages("meter.blank", RES + "misc/MeterBlank.png");
         cube = newSheet("cube", RES + "misc/Cube.png", 16);
         blockCyan = newSheet("block.cyan", RES + "bg/BlockCyan.png", 16, FinPanple.ORIGIN, ShootableDoor.minBarrier, new FinPanple2(14, 16));
+        blockTimed = blockCyan; //TODO
         blockSpike = engine.createImage("block.spike", RES + "bg/BlockSpike.png");
         spike = engine.createImage("spike", CENTER_16, new FinPanple2(-6, -6), new FinPanple2(6, 6), RES + "bg/Spike.png");
     }
@@ -586,9 +588,13 @@ public final class BotsnBoltsGame extends BaseGame {
             //new ShootableBlockPuzzle(
             //    new int[] { tm.getIndex(4, 2), tm.getIndex(10, 5) },
             //    new int[] { tm.getIndex(6, 6) });
-            new SpikeBlockPuzzle(
+            /*new SpikeBlockPuzzle(
                 new int[] { tm.getIndex(4, 3) },
-                new int[] { tm.getIndex(7, 4) });
+                new int[] { tm.getIndex(7, 4) });*/
+            new TimedBlockPuzzle(Arrays.asList(
+                new int[] { tm.getIndex(4, 3), tm.getIndex(4, 9) },
+                new int[] { tm.getIndex(6, 5) },
+                new int[] { tm.getIndex(8, 7) }));
             final int ladderX = 15;
             for (int j = 4; j < 9; j++) {
                 tm.setForeground(ladderX, j, imgMap[0][1], (j == 8) ? TILE_LADDER_TOP : TILE_LADDER);
