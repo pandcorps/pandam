@@ -165,6 +165,10 @@ public abstract class BlockPuzzle {
     }
     
     protected final static class SpikeBlockPuzzle extends Panctor implements StepListener {
+        private final static int vel = 3;
+        private final static int timeAdd = (15 / vel) + 1;
+        private final static int timeWait = timeAdd + 30;
+        private final static int timeSub = timeWait + (15 / vel);
         private SpikeBlock[] verticalBlocks;
         private SpikeBlock[] horizontalBlocks;
         private int timer = 0;
@@ -186,19 +190,21 @@ public abstract class BlockPuzzle {
 
         @Override
         public final void onStep(final StepEvent event) {
-            if (timer < 16) {
-                moveSpikes(verticalBlocks, 0, 1);
-                moveSpikes(horizontalBlocks, 1, 0);
-            } else if (timer < 46) {
+            timer++;
+            if (timer < timeAdd) {
+                moveSpikes(verticalBlocks, 0, vel);
+                moveSpikes(horizontalBlocks, vel, 0);
+            } else if (timer < timeWait) {
                 // Do nothing; just keep the Spikes out
-            } else if (timer < 62) {
-                moveSpikes(verticalBlocks, 0, -1);
-                moveSpikes(horizontalBlocks, -1, 0);
+            } else if (timer < timeSub) {
+                moveSpikes(verticalBlocks, 0, -vel);
+                moveSpikes(horizontalBlocks, -vel, 0);
             } else {
+                rotateSpikes(verticalBlocks, -1);
+                rotateSpikes(horizontalBlocks, 1);
                 final SpikeBlock[] tmp = verticalBlocks;
                 verticalBlocks = horizontalBlocks;
                 horizontalBlocks = tmp;
-                //TODO Rotate Spikes
                 timer = 0;
             }
         }
@@ -206,6 +212,12 @@ public abstract class BlockPuzzle {
         private final void moveSpikes(final SpikeBlock[] blocks, final int x, final int y) {
             for (final SpikeBlock block : blocks) {
                 block.moveSpikes(x, y);
+            }
+        }
+        
+        private final void rotateSpikes(final SpikeBlock[] blocks, final int amtRot) {
+            for (final SpikeBlock block : blocks) {
+                block.rotateSpikes(amtRot);
             }
         }
     }
@@ -223,6 +235,11 @@ public abstract class BlockPuzzle {
         protected final void moveSpikes(final int x, final int y) {
             positiveSpike.getPosition().add(x, y);
             negativeSpike.getPosition().add(-x, -y);
+        }
+        
+        protected final void rotateSpikes(final int amtRot) {
+            positiveSpike.rotate(amtRot);
+            negativeSpike.rotate(amtRot);
         }
     }
     
@@ -248,23 +265,27 @@ public abstract class BlockPuzzle {
             final int offX, offY;
             switch (rot) {
                 case 1 :
-                    offX = 7; //TODO
-                    offY = 7;
+                    offX = 7;
+                    offY = 8;
                     break;
                 case 2 :
                     offX = 7;
                     offY = 7;
                     break;
                 case 3 :
-                    offX = 7;
+                    offX = 8;
                     offY = 7;
                     break;
                 default :
-                    offX = 7;
-                    offY = 7;
+                    offX = 8;
+                    offY = 8;
                     break;
             }
             getPosition().set(baseX + offX, baseY + offY);
+        }
+        
+        protected final void rotate(final int amtRot) {
+            setDirection(getRot() + amtRot);
         }
 
         @Override
