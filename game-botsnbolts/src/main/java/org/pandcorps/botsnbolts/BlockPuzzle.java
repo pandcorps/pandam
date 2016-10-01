@@ -24,6 +24,7 @@ package org.pandcorps.botsnbolts;
 
 import java.util.*;
 
+import org.pandcorps.botsnbolts.Enemy.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandax.tile.*;
@@ -243,16 +244,13 @@ public abstract class BlockPuzzle {
         }
     }
     
-    protected final static class Spike extends Enemy {
+    protected final static class Spike extends TileUnawareEnemy {
         private final float baseX;
         private final float baseY;
         
         protected Spike(final int tileIndex, final int rot) {
-            super(1);
-            final TileMap tm = BotsnBoltsGame.tm;
-            tm.getLayer().addActor(this);
+            super(BotsnBoltsGame.tm.getColumn(tileIndex), BotsnBoltsGame.tm.getRow(tileIndex), 1);
             final Panple pos = getPosition();
-            tm.savePosition(pos, tileIndex);
             pos.setZ(BotsnBoltsGame.DEPTH_BG);
             baseX = pos.getX();
             baseY = pos.getY();

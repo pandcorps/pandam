@@ -91,6 +91,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static Panmage spike = null;
     protected static Panmage[] cube = null;
     protected static Panmage[] sentryGun = null;
+    protected static Panimation propEnemy = null;
     protected static Panmage enemyProjectile = null;
     protected static Panimation enemyBurst = null;
     protected static HudMeterImages hudMeterBlank = null;
@@ -201,6 +202,7 @@ public final class BotsnBoltsGame extends BaseGame {
         for (int i = 0; i < sentrySize; i++) {
             sentryGun[i] = engine.createImage("sentry.gun." + i, CENTER_16, minCube, maxCube, sentryImgs[i]);
         }
+        propEnemy = newAnimation("prop.enemy", RES + "/enemy/PropEnemy.png", 16, new FinPanple2(8, 1), Chr.getMin(Enemy.PROP_OFF_X), Chr.getMax(Enemy.PROP_OFF_X, Enemy.PROP_H), 4);
         enemyProjectile = engine.createImage("projectile.enemy", CENTER_8, new FinPanple2(-2, -2), new FinPanple2(2, 2), RES + "/enemy/EnemyProjectile.png");
         enemyBurst = newAnimation("burst.enemy", RES + "/enemy/EnemyBurst.png", 16, CENTER_16, 2);
     }
@@ -572,8 +574,9 @@ public final class BotsnBoltsGame extends BaseGame {
             //new ShootableDoor(end, 1, doorSilver);
             //tm.setBackground(end - 1, 2, imgMap[1][3], Tile.BEHAVIOR_SOLID);
             //new ShootableDoor(end, 1, doorSmall);
-            //new SentryGun(11, 1);
+            new SentryGun(11, 1);
             //new SentryGun(8, 3);
+            new PropEnemy(6, 2);
             //final BigBattery battery = new BigBattery();
             //battery.getPosition().set(200, 96, DEPTH_POWER_UP);
             //room.addActor(battery);
@@ -588,13 +591,13 @@ public final class BotsnBoltsGame extends BaseGame {
             //new ShootableBlockPuzzle(
             //    new int[] { tm.getIndex(4, 2), tm.getIndex(10, 5) },
             //    new int[] { tm.getIndex(6, 6) });
-            /*new SpikeBlockPuzzle(
+            new SpikeBlockPuzzle(
                 new int[] { tm.getIndex(4, 3) },
-                new int[] { tm.getIndex(7, 4) });*/
-            new TimedBlockPuzzle(Arrays.asList(
+                new int[] { tm.getIndex(7, 4) });
+            /*new TimedBlockPuzzle(Arrays.asList(
                 new int[] { tm.getIndex(4, 3), tm.getIndex(4, 9) },
                 new int[] { tm.getIndex(6, 5) },
-                new int[] { tm.getIndex(8, 7) }));
+                new int[] { tm.getIndex(8, 7) }));*/
             final int ladderX = 15;
             for (int j = 4; j < 9; j++) {
                 tm.setForeground(ladderX, j, imgMap[0][1], (j == 8) ? TILE_LADDER_TOP : TILE_LADDER);
