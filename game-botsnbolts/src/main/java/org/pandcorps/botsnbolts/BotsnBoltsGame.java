@@ -105,6 +105,16 @@ public final class BotsnBoltsGame extends BaseGame {
     }
     
     @Override
+    protected final int getGameWidth() {
+        return 384;
+    }
+    
+    @Override
+    protected final int getGameHeight() {
+        return 224;
+    }
+    
+    @Override
     protected final void init(final Panroom room) throws Exception {
         final Pangine engine = Pangine.getEngine();
         engine.setTitle(TITLE);
@@ -551,10 +561,7 @@ public final class BotsnBoltsGame extends BaseGame {
                 tm.setBackground(0, j, imgMap[0][0], Tile.BEHAVIOR_SOLID);
                 tm.setBackground(end, j, imgMap[0][2], Tile.BEHAVIOR_SOLID);
             }
-            tm.setBackground(4, 2, imgMap[1][3], Tile.BEHAVIOR_SOLID);
-            tm.setBackground(4, 3, imgMap[0][3], Tile.BEHAVIOR_SOLID);
-            tm.setBackground(5, 2, imgMap[1][4], Tile.BEHAVIOR_SOLID);
-            tm.setBackground(5, 3, imgMap[0][4], Tile.BEHAVIOR_SOLID);
+            Enemy.newCube(4, 2);
             //new ShootableDoor(0, 1, doorCyan);
             //tm.setBackground(1, 2, imgMap[1][4], Tile.BEHAVIOR_SOLID);
             //new ShootableDoor(0, 1, doorSmall);
@@ -582,14 +589,15 @@ public final class BotsnBoltsGame extends BaseGame {
             new SpikeBlockPuzzle(
                 new int[] { tm.getIndex(3, 3) },
                 new int[] { tm.getIndex(5, 4) });
+            final int ladderX = 15;
             for (int j = 4; j < 9; j++) {
-                tm.setForeground(17, j, imgMap[0][1], (j == 8) ? TILE_LADDER_TOP : TILE_LADDER);
+                tm.setForeground(ladderX, j, imgMap[0][1], (j == 8) ? TILE_LADDER_TOP : TILE_LADDER);
             }
-            for (int i = 18; i <= 20; i++) {
+            for (int i = ladderX + 1; i <= (ladderX + 3); i++) {
                 tm.setTile(i, 0, null);
             }
-            for (int j = 0; j < 13; j++) {
-                tm.setForeground(20, j, imgMap[0][1], (j == 12) ? TILE_LADDER_TOP : TILE_LADDER);
+            for (int j = 0; j < 14; j++) {
+                tm.setForeground(ladderX + 3, j, imgMap[0][1], (j == 12) ? TILE_LADDER_TOP : TILE_LADDER);
             }
         }
         
