@@ -31,7 +31,7 @@ public abstract class Chr extends GuyPlatform {
     }
 
     @Override
-    protected final boolean onFell() {
+    protected boolean onFell() {
         return false;
     }
 

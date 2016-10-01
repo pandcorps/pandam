@@ -444,14 +444,14 @@ public class FurGuardiansGame extends BaseGame {
     }
 
 	/*
-	// Simulate a tablet
+	// Simulate a tablet, set fullScreen to false above
 	@Override
-	protected final int getDebugWindowWidth() {
+	protected final int getGameWidth() {
 		return 1024;
 	}
 	
 	@Override
-	protected final int getDebugWindowHeight() {
+	protected final int getGameHeight() {
 		//return 600;
 		return 575; // This tablet has a menu bar that takes up part of the height
 	}

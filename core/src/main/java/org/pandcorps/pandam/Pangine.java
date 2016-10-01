@@ -953,6 +953,12 @@ public abstract class Pangine {
 	    zoom(mag);
 	}
 	
+	public final void setFullScreenEffectiveSize(final int w, final int h) {
+        setFullScreen(true);
+        setDisplaySize(getDesktopWidth(), getDesktopHeight()); // Should this be in setFullScreen? Do we ever not want this in full-screen mode?
+        setEffectiveSize(w, h);
+    }
+	
 	public final void setApproximateFullScreenZoomedDisplaySize(final int minWidth, final int minHeight, final boolean pow2) {
 	    setFullScreenZoomed(getApproximateFullScreenZoomedDisplaySize(minWidth, minHeight, pow2));
     }
@@ -1010,21 +1016,11 @@ public abstract class Pangine {
     and the effective screen resolution dimensions will be smaller.
     Same as truncatedWidth when zooming is disabled.
     */
-	public final int getEffectiveWidth() {
-		return getEffectiveDimension(getTruncatedWidth());
-	}
+	public abstract int getEffectiveWidth();
 	
-	public final int getEffectiveHeight() {
-		return getEffectiveDimension(getTruncatedHeight());
-	}
+	public abstract int getEffectiveHeight();
 	
-	private final int getEffectiveDimension(final int truncatedDimension) {
-	    final float effectiveDimension = truncatedDimension / getZoom();
-	    if (zoomInteger) {
-	        return (int) (effectiveDimension);
-	    }
-	    return Math.round(effectiveDimension);
-	}
+	public abstract void setEffectiveSize(final int w, final int h);
 	
 	/*
 	// Used to have these, but getEffectiveWidth/Height are better
@@ -1133,7 +1129,7 @@ public abstract class Pangine {
 	}
 	
 	public final void executeInGameThread(final Runnable r) {
-	    queuedJobs.offer(r);
+	    queuedJobs.offer(r); // Always enqueue it, even if already in game thread; callers expect the job to be executed at a certain point during the game loop
 	}
 	
 	private final void executeJobs() {

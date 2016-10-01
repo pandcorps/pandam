@@ -94,6 +94,22 @@ public final class UnitPangine extends Pangine {
     public final int getTruncatedHeight() {
         return h;
     }
+    
+    @Override
+    public final int getEffectiveWidth() {
+        return w;
+    }
+    
+    @Override
+    public final int getEffectiveHeight() {
+        return h;
+    }
+    
+    @Override
+    public final void setEffectiveSize(final int w, final int h) {
+        this.w = w;
+        this.h = h;
+    }
 	
 	@Override
 	public final void setFullScreen(final boolean full) {

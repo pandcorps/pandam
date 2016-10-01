@@ -22,6 +22,8 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.botsnbolts;
 
+import java.util.*;
+
 import org.pandcorps.botsnbolts.HudMeter.*;
 import org.pandcorps.botsnbolts.Profile.*;
 import org.pandcorps.botsnbolts.Projectile.*;
@@ -32,6 +34,7 @@ import org.pandcorps.pandam.event.action.*;
 import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.in.*;
 import org.pandcorps.pandax.tile.*;
+import org.pandcorps.pandax.visual.*;
 
 public final class Player extends Chr {
     protected final static int PLAYER_X = 6;
@@ -151,8 +154,12 @@ public final class Player extends Chr {
         } while (!prf.shootMode.isAvailable(this));
     }
     
+    private final boolean isFree() {
+        return !(isHurt() || RoomChanger.isChanging());
+    }
+    
     private final void jump() {
-        if (!isHurt()) {
+        if (isFree()) {
             stateHandler.onJump(this);
         }
     }
@@ -170,25 +177,25 @@ public final class Player extends Chr {
     }
     
     private final void shoot() {
-        if (!isHurt()) {
+        if (isFree()) {
             stateHandler.onShootStart(this);
         }
     }
     
     private final void shooting() {
-        if (!isHurt()) {
+        if (isFree()) {
             stateHandler.onShooting(this);
         }
     }
     
     private final void releaseShoot() {
-        if (!isHurt()) {
+        if (isFree()) {
             stateHandler.onShootEnd(this);
         }
     }
     
     private final void right() {
-        if (!isHurt()) {
+        if (isFree()) {
             stateHandler.onRight(this);
         }
     }
@@ -198,7 +205,7 @@ public final class Player extends Chr {
     }
     
     private final void left() {
-        if (!isHurt()) {
+        if (isFree()) {
             stateHandler.onLeft(this);
         }
     }
@@ -208,7 +215,9 @@ public final class Player extends Chr {
     }
     
     private final void up() {
-        stateHandler.onUp(this);
+        if (isFree()) {
+            stateHandler.onUp(this);
+        }
     }
     
     private final void onUpNormal() {
@@ -239,7 +248,9 @@ public final class Player extends Chr {
     }
     
     private final void down() {
-        stateHandler.onDown(this);
+        if (isFree()) {
+            stateHandler.onDown(this);
+        }
     }
     
     private final void onDownNormal() {
@@ -253,6 +264,7 @@ public final class Player extends Chr {
         if (isInvincible()) {
             return;
         }
+        stateHandler.onHurt(this);
         lastHurt = Pangine.getEngine().getClock();
         health -= damage;
         if ((v > 0) && !isGrounded()) {
@@ -293,12 +305,26 @@ public final class Player extends Chr {
         runTimer = 0;
     }
     
+    private final int getDirection(final int v) {
+        return (v == 0) ? 0 : v / Math.abs(v);
+    }
+    
     @Override
     protected final boolean onStepCustom() {
         if (isInvincible()) {
             setVisible(Pangine.getEngine().isOn(4));
         } else {
             setVisible(true);
+        }
+        if (RoomChanger.isChanging()) {
+            final RoomChanger changer = RoomChanger.getActiveChanger();
+            if (changer.getAge() <= 28) {
+                hv = getDirection(changer.getVelocityX());
+                v = getDirection(changer.getVelocityY());
+            } else {
+                hv = 0;
+                v = 0;
+            }
         }
         if (stateHandler.onStep(this)) {
             return true;
@@ -340,7 +366,7 @@ public final class Player extends Chr {
             running = false;
         } else {
             blinkTimer = 0;
-            if (wallTimer > 0 && set.crouch != null) { //TODO && room for ball
+            if (wallTimer > 0 && set.crouch != null && !RoomChanger.isChanging()) { //TODO && room for ball
                 if (wallMirror == isMirror()) {
                     wallTimer++;
                     if (wallTimer > 6) {
@@ -433,8 +459,37 @@ public final class Player extends Chr {
     }
     
     @Override
-    protected final void onWall() {
-        stateHandler.onWall(this);
+    protected final void onWall(final byte xResult) {
+        stateHandler.onWall(this, xResult);
+    }
+    
+    @Override
+    protected final void onStart() {
+        changeRoom(-1, 0);
+    }
+    
+    @Override
+    protected final void onEnd() {
+        changeRoom(1, 0);
+    }
+    
+    @Override
+    protected final void onCeiling() {
+        changeRoom(0, 1);
+    }
+    
+    @Override
+    protected final boolean onFell() {
+        changeRoom(0, -1);
+        return true;
+    }
+    
+    private final void changeRoom(final int dirX, final int dirY) {
+        new RoomChanger(10 * dirX, 10 * dirY, null, Arrays.asList(BotsnBoltsGame.hud), Arrays.asList(this, BotsnBoltsGame.tm), Arrays.asList(BotsnBoltsGame.tm)) {
+            @Override
+            protected final Panroom createRoom() {
+                return BotsnBoltsGame.BotsnBoltsScreen.newRoom();
+            }};
     }
     
     private final void normalizeY(final int offBefore, final int offAfter) {
@@ -475,6 +530,10 @@ public final class Player extends Chr {
         }
         
         //@OverrideMe
+        protected void onHurt(final Player player) {
+        }
+        
+        //@OverrideMe
         protected boolean onStep(final Player player) {
             return false;
         }
@@ -484,7 +543,7 @@ public final class Player extends Chr {
         protected abstract boolean onAir(final Player player);
         
         //@OverrideMe
-        protected void onWall(final Player player) {
+        protected void onWall(final Player player, final byte xResult) {
         }
     }
     
@@ -540,8 +599,8 @@ public final class Player extends Chr {
         }
         
         @Override
-        protected final void onWall(final Player player) {
-            if (player.wallTimer == 0) {
+        protected final void onWall(final Player player, final byte xResult) {
+            if (player.wallTimer == 0 && xResult == X_WALL) {
                 player.wallTimer = 1;
                 player.wallMirror = player.isMirror();
             }
@@ -595,6 +654,11 @@ public final class Player extends Chr {
             if (!player.isShootPoseNeeded()) {
                 player.v = -VEL_WALK;
             }
+        }
+        
+        @Override
+        protected final void onHurt(final Player player) {
+            player.stateHandler = NORMAL_HANDLER;
         }
         
         @Override
@@ -767,8 +831,10 @@ public final class Player extends Chr {
         protected final Panimation batteryMedium;
         protected final Panimation batteryBig;
         protected final Panmage bolt;
+        protected final Panmage byteDisk;
         protected final Panmage powerBox;
         //protected final Panmage boltBox; // Each bolt has a unique box image
+        protected final Panmage byteBox;
         private final HudMeterImages hudMeterImages;
         
         protected PlayerImages(final PlayerImagesSubSet basicSet, final PlayerImagesSubSet shootSet, final Panmage hurt,
@@ -777,8 +843,8 @@ public final class Player extends Chr {
                                final Panimation charge, final Panimation chargeVert, final Panimation charge2, final Panimation chargeVert2,
                                final Panimation burst, final Panmage[] ball, final Panimation bomb,
                                final Panimation batterySmall, final Panimation batteryMedium, final Panimation batteryBig,
-                               final Panmage bolt,
-                               final Panmage powerBox, final HudMeterImages hudMeterImages) {
+                               final Panmage bolt, final Panmage byteDisk,
+                               final Panmage powerBox, final Panmage byteBox, final HudMeterImages hudMeterImages) {
             this.basicSet = basicSet;
             this.shootSet = shootSet;
             this.hurt = hurt;
@@ -799,7 +865,9 @@ public final class Player extends Chr {
             this.batteryMedium = batteryMedium;
             this.batteryBig = batteryBig;
             this.bolt = bolt;
+            this.byteDisk = byteDisk;
             this.powerBox = powerBox;
+            this.byteBox = byteBox;
             this.hudMeterImages = hudMeterImages;
         }
     }

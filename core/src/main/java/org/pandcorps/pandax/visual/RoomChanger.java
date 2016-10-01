@@ -22,28 +22,45 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandax.visual;
 
-import java.util.List;
+import java.util.*;
 
+import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 
 public abstract class RoomChanger extends Panctor implements StepListener {
-    private final Panroom newRoom;
+    private static RoomChanger activeChanger = null;
+    private Panroom newRoom = null;
     private final int velX;
     private final int velY;
-    private final Panctor tracked;
+    private Panctor tracked = null;
+    private final List<? extends Panctor> actorsToDestroy;
+    private int age = 0;
     
     // Might keep a constant deep background layer and a HUD layer on top
-    public RoomChanger(final int velX, final int velY, final List<Panlayer> layersToKeepBeneath, final List<Panlayer> layersToKeepAbove, final List<Panctor> actorsToKeep) {
+    public RoomChanger(final int velX, final int velY, final List<Panlayer> layersToKeepBeneath, final List<Panlayer> layersToKeepAbove,
+                       final List<? extends Panctor> actorsToKeep, final List<? extends Panctor> actorsToDestroy) {
+        Panctor.destroy(activeChanger);
+        activeChanger = this;
         this.velX = velX;
         this.velY = velY;
+        this.actorsToDestroy = actorsToDestroy;
+        Pangine.getEngine().executeInGameThread(new Runnable() {
+            @Override public final void run() {
+                start(layersToKeepBeneath, layersToKeepAbove, actorsToKeep);
+            }});
+    }
+    
+    private final void start(final List<Panlayer> layersToKeepBeneath, final List<Panlayer> layersToKeepAbove,
+                             final List<? extends Panctor> actorsToKeep) {
+        final Pangine engine = Pangine.getEngine();
         final Pangame game = Pangame.getGame();
         final Panroom oldRoom = game.getCurrentRoom();
         setVisible(false);
         detachLayers(layersToKeepBeneath);
         detachLayers(layersToKeepAbove);
         Panctor tracked = null;
-        for (final Panctor actor : actorsToKeep) {
+        for (final Panctor actor : Coltil.unnull(actorsToKeep)) {
             if (actor == oldRoom.getTracked()) {
                 tracked = actor;
             }
@@ -52,58 +69,112 @@ public abstract class RoomChanger extends Panctor implements StepListener {
         this.tracked = tracked;
         newRoom = createRoom();
         game.setCurrentRoom(newRoom);
+        oldRoom.destroy();
         Panlayer tempLayer = newRoom;
-        for (final Panlayer layer : layersToKeepBeneath) {
+        for (final Panlayer layer : Coltil.unnull(layersToKeepBeneath)) {
             tempLayer.addBeneath(layer);
             tempLayer = layer;
         }
         tempLayer = newRoom;
-        for (final Panlayer layer : layersToKeepAbove) {
+        for (final Panlayer layer : Coltil.unnull(layersToKeepAbove)) {
             tempLayer.addAbove(layer);
             tempLayer = layer;
         }
-        final float offX, offY;
+        final float offX, offY, roomX, roomY;
         if (velX < 0) {
             offX = newRoom.getSize().getX();
+            roomX = offX; // engine.getEffectiveWidth();
         } else if (velX > 0) {
             offX = -oldRoom.getSize().getX();
+            roomX = -engine.getEffectiveWidth();
         } else {
             offX = 0;
+            roomX = 0;
         }
         if (velY < 0) {
             offY = newRoom.getSize().getY();
+            roomY = offY; // engine.getEffectiveHeight();
         } else if (velY > 0) {
             offY = -oldRoom.getSize().getY();
+            roomY = -engine.getEffectiveHeight();
         } else {
             offY = 0;
+            roomY = 0;
         }
-        for (final Panctor actor : actorsToKeep) {
+        for (final Panctor actor : Coltil.unnull(actorsToKeep)) {
             newRoom.addActor(actor);
-            if (velX < 0) {
-                actor.getPosition().add(offX, offY);
-            }
+            actor.getPosition().add(offX, offY);
         }
-        //TODO init newRoom origin
+        newRoom.addActor(this);
+        newRoom.getOrigin().set(roomX, roomY);
     }
     
     private final void detachLayers(final List<Panlayer> layers) {
-        for (final Panlayer layer : layers) {
+        for (final Panlayer layer : Coltil.unnull(layers)) {
             layer.detach();
         }
     }
     
     @Override
     public final void onStep(final StepEvent event) {
-        //TODO Apply velocity
-        newRoom.getOrigin();
-        //TODO Call finish() when done
+        final Panple o = newRoom.getOrigin();
+        o.add(velX, velY);
+        age++;
+        boolean finished = false;
+        if (velX > 0) {
+            if (o.getX() >= 0) {
+                finished = true;
+            }
+        } else if (velX < 0) {
+            if (o.getX() <= (newRoom.getSize().getX() - Pangine.getEngine().getEffectiveWidth())) {
+                finished = true;
+            }
+        } else if (velY > 0) {
+            if (o.getY() >= 0) {
+                finished = true;
+            }
+        } else if (velY < 0) {
+            if (o.getY() <= (newRoom.getSize().getY() - Pangine.getEngine().getEffectiveHeight())) {
+                finished = true;
+            }
+        }
+        if (finished) {
+            o.set(0, 0);
+            finish();
+        }
     }
     
     private final void finish() {
         if (tracked != null) {
             Pangine.getEngine().track(tracked);
         }
+        for (final Panctor actor : Coltil.unnull(actorsToDestroy)) {
+            actor.destroy();
+        }
+        if (activeChanger == this) {
+            activeChanger = null;
+        }
         destroy();
+    }
+    
+    public final int getVelocityX() {
+        return velX;
+    }
+    
+    public final int getVelocityY() {
+        return velY;
+    }
+    
+    public final int getAge() {
+        return age;
+    }
+    
+    public final static RoomChanger getActiveChanger() {
+        return activeChanger;
+    }
+    
+    public final static boolean isChanging() {
+        return activeChanger != null && !activeChanger.isDestroyed() && activeChanger.getLayer() != null;
     }
     
     protected abstract Panroom createRoom();
