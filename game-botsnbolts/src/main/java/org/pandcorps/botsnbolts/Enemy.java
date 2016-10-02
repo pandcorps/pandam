@@ -310,7 +310,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
     }
     
-    protected final static int PROP_OFF_X = 5, PROP_H = 10;
+    protected final static int PROP_OFF_X = 4, PROP_H = 10;
     
     protected final static class PropEnemy extends Enemy {
         protected PropEnemy(final int x, final int y) {
@@ -327,7 +327,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
             final Panple pos = getPosition(), targetPos = target.getPosition();
             hv = getDirection(pos.getX(), targetPos.getX(), -2, 2);
             updateMirror();
-            v = getDirection(pos.getY(), targetPos.getY(), 3, 7);
+            v = getDirection(pos.getY(), targetPos.getY(), -7, -3);
             addX(hv);
             addY();
             return true;

@@ -565,7 +565,7 @@ public final class BotsnBoltsGame extends BaseGame {
                 tm.setBackground(0, j, imgMap[0][0], Tile.BEHAVIOR_SOLID);
                 tm.setBackground(end, j, imgMap[0][2], Tile.BEHAVIOR_SOLID);
             }
-            //Enemy.newCube(4, 2);
+            Enemy.newCube(4, 2);
             //new ShootableDoor(0, 1, doorCyan);
             //tm.setBackground(1, 2, imgMap[1][4], Tile.BEHAVIOR_SOLID);
             //new ShootableDoor(0, 1, doorSmall);
@@ -574,7 +574,7 @@ public final class BotsnBoltsGame extends BaseGame {
             //new ShootableDoor(end, 1, doorSilver);
             //tm.setBackground(end - 1, 2, imgMap[1][3], Tile.BEHAVIOR_SOLID);
             //new ShootableDoor(end, 1, doorSmall);
-            new SentryGun(11, 1);
+            //new SentryGun(11, 1);
             //new SentryGun(8, 3);
             new PropEnemy(6, 2);
             //final BigBattery battery = new BigBattery();
@@ -591,9 +591,9 @@ public final class BotsnBoltsGame extends BaseGame {
             //new ShootableBlockPuzzle(
             //    new int[] { tm.getIndex(4, 2), tm.getIndex(10, 5) },
             //    new int[] { tm.getIndex(6, 6) });
-            new SpikeBlockPuzzle(
-                new int[] { tm.getIndex(4, 3) },
-                new int[] { tm.getIndex(7, 4) });
+            //new SpikeBlockPuzzle(
+            //    new int[] { tm.getIndex(4, 3) },
+            //    new int[] { tm.getIndex(7, 4) });
             /*new TimedBlockPuzzle(Arrays.asList(
                 new int[] { tm.getIndex(4, 3), tm.getIndex(4, 9) },
                 new int[] { tm.getIndex(6, 5) },
