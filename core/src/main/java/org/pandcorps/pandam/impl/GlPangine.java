@@ -100,6 +100,7 @@ public abstract class GlPangine extends Pangine {
 	
 	protected int w = 640, h = 480;
 	protected int truncatedWidth = w, truncatedHeight = h;
+	protected int effectiveWidth = w, effectiveHeight = h;
     protected boolean fullScreen = getDefaultFullScreeen();
 	private boolean initialized = false;
 	private float clr = 0.0f, clg = 0.0f, clb = 0.0f, cla = 0.0f;
@@ -151,6 +152,31 @@ public abstract class GlPangine extends Pangine {
 	public final int getTruncatedHeight() {
         return truncatedHeight;
     }
+	
+	/*
+    Effective size of the game.
+    If zooming, then "effective" pixels will be z*z squares,
+    and the effective screen resolution dimensions will be smaller.
+    Same as truncatedWidth when zooming is disabled.
+    */
+	@Override
+    public final int getEffectiveWidth() {
+        return effectiveWidth;
+    }
+    
+	@Override
+    public final int getEffectiveHeight() {
+        return effectiveHeight;
+    }
+	
+	@Override
+    public final void setEffectiveSize(final int w, final int h) {
+	    zoom(-1);
+	    effectiveWidth = w;
+	    effectiveHeight = h;
+	    truncatedWidth = this.w;
+	    truncatedHeight = this.h;
+	}
 	
 	@Override
     public final void setFullScreen(final boolean fullScreen) {
@@ -205,15 +231,29 @@ public abstract class GlPangine extends Pangine {
 	}
 	
 	private final void initTruncatedSize() {
+	    final float zoom = getZoom();
+	    if (zoom < 0) {
+	        return;
+	    }
 		int w = getDisplayWidth(), h = getDisplayHeight();
 		if (isZoomInteger()) {
-		    final int z = (int) getZoom();
+		    final int z = (int) zoom;
 			w = (w / z) * z;
 			h = (h / z) * z;
 		}
 		truncatedWidth = w;
 		truncatedHeight = h;
+		effectiveWidth = getEffectiveDimension(this.truncatedWidth);
+        effectiveHeight = getEffectiveDimension(this.truncatedHeight);
 	}
+    
+    private final int getEffectiveDimension(final int truncatedDimension) {
+        final float effectiveDimension = truncatedDimension / getZoom();
+        if (isZoomInteger()) {
+            return (int) (effectiveDimension);
+        }
+        return Math.round(effectiveDimension);
+    }
 	
 	private final void initViewport() {
 		initTruncatedSize();
@@ -394,7 +434,7 @@ public abstract class GlPangine extends Pangine {
 	}
 	
 	protected final int getEffectiveCoordinate(final float rawCoordinate) {
-		return Math.round(rawCoordinate / getZoom());
+		return Math.round(rawCoordinate / getZoom()); //TODO Base off of effectiveWidth/Height
 	}
 	
 	public final void addTouchEvent(final int id, final byte type, final float x, final float y) {
@@ -630,8 +670,9 @@ public abstract class GlPangine extends Pangine {
 		if (cams.containsKey(layer)) {
 			return;
 		}
-		final float zoomMag = getZoom();
-		final float wz = truncatedWidth / zoomMag, hz = truncatedHeight / zoomMag;
+		//final float zoomMag = getZoom();
+		//final float wz = truncatedWidth / zoomMag, hz = truncatedHeight / zoomMag;
+		final float wz = effectiveWidth, hz = effectiveHeight;
 		final Panlayer master = layer.getMaster();
 		if (master != null) {
 			initCamera(master);
