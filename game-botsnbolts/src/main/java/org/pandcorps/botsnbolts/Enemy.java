@@ -95,12 +95,30 @@ public abstract class Enemy extends Chr implements CollisionListener {
     
     protected abstract void award(final PowerUp powerUp);
     
+    protected final void updateMirror() {
+        if (hv < 0) {
+            setMirror(true);
+        } else if (hv > 0) {
+            setMirror(false);
+        }
+    }
+    
     protected final Player getNearestPlayer() {
         return PlayerContext.getPlayer(BotsnBoltsGame.pc);
     }
     
     protected final PlayerContext getPlayerContext() {
         return BotsnBoltsGame.pc;
+    }
+    
+    protected final int getDirection(final float p, final float op, final int negThresh, final int posThresh) {
+        final float diff = op - p;
+        if (diff >= posThresh) {
+            return 1;
+        } else if (diff <= negThresh) {
+            return -1;
+        }
+        return 0;
     }
     
     protected final static class EnemyProjectile extends Pandy implements CollisionListener, AllOobListener {
@@ -302,8 +320,14 @@ public abstract class Enemy extends Chr implements CollisionListener {
         
         @Override
         protected final boolean onStepCustom() {
-            hv = 1;
-            v = 1;
+            final Player target = getNearestPlayer();
+            if (target == null) {
+                return true;
+            }
+            final Panple pos = getPosition(), targetPos = target.getPosition();
+            hv = getDirection(pos.getX(), targetPos.getX(), -2, 2);
+            updateMirror();
+            v = getDirection(pos.getY(), targetPos.getY(), 3, 7);
             addX(hv);
             addY();
             return true;
