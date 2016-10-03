@@ -338,4 +338,16 @@ public abstract class Enemy extends Chr implements CollisionListener {
             
         }
     }
+    
+    protected final static class SpringEnemy extends Enemy {
+        protected SpringEnemy(final int x, final int y) {
+            super(PROP_OFF_X, PROP_H, x, y, 2);
+            setView(BotsnBoltsGame.springEnemy[0]);
+        }
+        
+        @Override
+        protected final void award(final PowerUp powerUp) {
+            
+        }
+    }
 }
