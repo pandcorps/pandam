@@ -342,7 +342,21 @@ public abstract class Enemy extends Chr implements CollisionListener {
     protected final static class SpringEnemy extends Enemy {
         protected SpringEnemy(final int x, final int y) {
             super(PROP_OFF_X, PROP_H, x, y, 2);
+            endSpring();
+        }
+        
+        protected final void jump() {
+            v = 8;
+            setView(BotsnBoltsGame.springEnemy[1]);
+        }
+        
+        private final void endSpring() {
             setView(BotsnBoltsGame.springEnemy[0]);
+        }
+        
+        @Override
+        protected final void onBump(final int t) {
+            endSpring();
         }
         
         @Override
