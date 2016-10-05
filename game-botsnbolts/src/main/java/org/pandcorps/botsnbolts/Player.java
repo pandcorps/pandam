@@ -27,6 +27,7 @@ import java.util.*;
 import org.pandcorps.botsnbolts.HudMeter.*;
 import org.pandcorps.botsnbolts.Profile.*;
 import org.pandcorps.botsnbolts.Projectile.*;
+import org.pandcorps.botsnbolts.RoomLoader.*;
 import org.pandcorps.core.*;
 import org.pandcorps.game.actor.*;
 import org.pandcorps.pandam.*;
@@ -488,7 +489,7 @@ public final class Player extends Chr {
         new RoomChanger(10 * dirX, 10 * dirY, null, Arrays.asList(BotsnBoltsGame.hud), Arrays.asList(this, BotsnBoltsGame.tm), Arrays.asList(BotsnBoltsGame.tm)) {
             @Override
             protected final Panroom createRoom() {
-                return BotsnBoltsGame.BotsnBoltsScreen.newRoom();
+                return new DemoRoomLoader().newRoom();
             }};
     }
     
