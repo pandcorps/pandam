@@ -355,6 +355,11 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
         
         @Override
+        protected final void onLanded() {
+            endSpring();
+        }
+        
+        @Override
         protected final void onBump(final int t) {
             endSpring();
         }
