@@ -22,10 +22,52 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.botsnbolts;
 
+import org.pandcorps.core.*;
+import org.pandcorps.core.seg.*;
 import org.pandcorps.pandam.*;
 
 public abstract class RoomLoader {
+    protected String roomId = null;
+    
+    protected final void setRoomId(final String roomId) {
+        this.roomId = roomId;
+    }
+    
     protected abstract Panroom newRoom();
+    
+    protected final static class ScriptRoomLoader extends RoomLoader {
+        @Override
+        protected final Panroom newRoom() {
+            SegmentStream in = null;
+            try {
+                Segment seg;
+                in = SegmentStream.openLocation(BotsnBoltsGame.RES + "/level/" + roomId + ".txt");
+                while ((seg = in.read()) != null) {
+                    final String name = seg.getName();
+                    if ("RCT".equals(name)) {
+                        rct(seg.intValue(0), seg.intValue(1), seg.intValue(2), seg.intValue(3), in);
+                    }
+                }
+                return null;
+            } catch (final Exception e) {
+                throw Pantil.toRuntimeException(e);
+            } finally {
+                Iotil.close(in);
+            }
+        }
+    }
+    
+    private final static void rct(final int x, final int y, final int w, final int h, final SegmentStream in) throws Exception {
+        final Segment contentsEG = in.read();
+        final int contentW = 1;
+        final int contentH = 1;
+        for (int i = 0; i < w; i++) {
+            final int currX = x + (i * contentW);
+            for (int j = 0; j < h; j++) {
+                final int currY = y + (j * contentH);
+            }
+        }
+    }
     
     protected final static class DemoRoomLoader extends RoomLoader {
         @Override
