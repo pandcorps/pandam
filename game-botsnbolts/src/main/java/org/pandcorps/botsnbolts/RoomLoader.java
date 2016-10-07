@@ -25,6 +25,8 @@ package org.pandcorps.botsnbolts;
 import org.pandcorps.core.*;
 import org.pandcorps.core.seg.*;
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandax.tile.*;
+import org.pandcorps.pandax.tile.Tile.*;
 
 public abstract class RoomLoader {
     protected String roomId = null;
@@ -38,6 +40,7 @@ public abstract class RoomLoader {
     protected final static class ScriptRoomLoader extends RoomLoader {
         @Override
         protected final Panroom newRoom() {
+            final Panroom room = BotsnBoltsGame.BotsnBoltsScreen.newRoom();
             SegmentStream in = null;
             try {
                 Segment seg;
@@ -45,10 +48,10 @@ public abstract class RoomLoader {
                 while ((seg = in.read()) != null) {
                     final String name = seg.getName();
                     if ("RCT".equals(name)) {
-                        rct(seg.intValue(0), seg.intValue(1), seg.intValue(2), seg.intValue(3), in);
+                        rct(seg.intValue(0), seg.intValue(1), seg.intValue(2), seg.intValue(3), seg, 4);
                     }
                 }
-                return null;
+                return room;
             } catch (final Exception e) {
                 throw Pantil.toRuntimeException(e);
             } finally {
@@ -57,22 +60,32 @@ public abstract class RoomLoader {
         }
     }
     
-    private final static void rct(final int x, final int y, final int w, final int h, final SegmentStream in) throws Exception {
-        final Segment contentsEG = in.read();
-        final int contentW = 1;
-        final int contentH = 1;
+    private final static void rct(final int x, final int y, final int w, final int h, final Segment seg, final int tileOffset) throws Exception {
+        final TileMap tm = BotsnBoltsGame.tm;
+        final TileMapImage bg = getTileMapImage(seg, tileOffset), fg = getTileMapImage(seg, tileOffset + 2);
+        final byte b = seg.getByte(tileOffset + 4, Tile.BEHAVIOR_OPEN);
+        final Tile tile = (bg == null && fg == null && b == Tile.BEHAVIOR_OPEN) ? null : tm.getTile(bg, fg, b);
         for (int i = 0; i < w; i++) {
-            final int currX = x + (i * contentW);
+            final int currX = x + i;
             for (int j = 0; j < h; j++) {
-                final int currY = y + (j * contentH);
+                final int currY = y + j;
+                tm.setTile(currX, currY, tile);
             }
         }
+    }
+    
+    private final static TileMapImage getTileMapImage(final Segment seg, final int imageOffset) {
+        final int imgX = seg.getInt(imageOffset, -1);
+        if (imgX < 0) {
+            return null;
+        }
+        return BotsnBoltsGame.imgMap[seg.intValue(imageOffset + 1)][imgX];
     }
     
     protected final static class DemoRoomLoader extends RoomLoader {
         @Override
         protected final Panroom newRoom() {
-            return BotsnBoltsGame.BotsnBoltsScreen.newRoom();
+            return BotsnBoltsGame.BotsnBoltsScreen.newDemoRoom();
         }
     }
 }

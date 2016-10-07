@@ -101,6 +101,8 @@ public final class BotsnBoltsGame extends BaseGame {
     
     protected static Panlayer hud = null;
     protected static TileMap tm = null;
+    protected static Panmage timg = null;
+    protected static TileMapImage[][] imgMap = null;
 
     @Override
     protected final boolean isFullScreen() {
@@ -109,12 +111,12 @@ public final class BotsnBoltsGame extends BaseGame {
     
     @Override
     protected final int getGameWidth() {
-        return 384;
+        return 384; // 24 tiles
     }
     
     @Override
     protected final int getGameHeight() {
-        return 224;
+        return 224; // 14 tiles
     }
     
     @Override
@@ -541,24 +543,38 @@ public final class BotsnBoltsGame extends BaseGame {
         @Override
         protected final void load() {
             final Panroom room = Pangame.getGame().getCurrentRoom();
+            initRoom(room);
             fillRoom(room);
             newPlayer(room);
         }
         
         protected final static Panroom newRoom() {
             final Panroom room = Pangine.getEngine().createRoom(Pantil.vmid(), (FinPanple) Pangame.getGame().getCurrentRoom().getSize());
+            initRoom(room);
+            return room;
+        }
+        
+        protected final static Panroom newDemoRoom() {
+            final Panroom room = newRoom();
             fillRoom(room);
             return room;
+        }
+        
+        protected final static void initRoom(final Panroom room) {
+            tm = new TileMap(Pantil.vmid(), room, 16, 16);
+            tm.getPosition().setZ(DEPTH_BG);
+            tm.setForegroundDepth(DEPTH_FG);
+            if (timg != null) {
+                tm.setImageMap(timg);
+            }
+            room.addActor(tm);
         }
         
         protected final static void fillRoom(final Panroom room) {
             final Pangine engine = Pangine.getEngine();
             engine.setBgColor(new FinPancolor((short) 232, (short) 232, (short) 232));
-            tm = new TileMap(Pantil.vmid(), room, 16, 16);
-            tm.getPosition().setZ(DEPTH_BG);
-            tm.setForegroundDepth(DEPTH_FG);
-            room.addActor(tm);
-            final TileMapImage[][] imgMap = tm.splitImageMap(engine.createImage("bg", RES + "bg/Bg.png"));
+            timg = engine.createImage("bg", RES + "bg/Bg.png");
+            imgMap = tm.splitImageMap(timg);
             final int end = tm.getWidth() - 1;
             for (int i = end; i >= 0; i--) {
                 tm.setBackground(i, 0, imgMap[0][1], Tile.BEHAVIOR_SOLID);

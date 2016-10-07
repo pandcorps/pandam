@@ -489,7 +489,10 @@ public final class Player extends Chr {
         new RoomChanger(10 * dirX, 10 * dirY, null, Arrays.asList(BotsnBoltsGame.hud), Arrays.asList(this, BotsnBoltsGame.tm), Arrays.asList(BotsnBoltsGame.tm)) {
             @Override
             protected final Panroom createRoom() {
-                return new DemoRoomLoader().newRoom();
+                //final RoomLoader loader = new DemoRoomLoader();
+                final RoomLoader loader = new ScriptRoomLoader();
+                loader.setRoomId("Demo1");
+                return loader.newRoom();
             }};
     }
     
