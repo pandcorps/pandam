@@ -45,6 +45,8 @@ public abstract class RoomLoader {
             try {
                 Segment seg;
                 in = SegmentStream.openLocation(BotsnBoltsGame.RES + "/level/" + roomId + ".txt");
+                seg = in.readRequire("IMG"); //TODO Add bg image and bg color
+                BotsnBoltsGame.BotsnBoltsScreen.loadTileImage(seg.getValue(0));
                 while ((seg = in.read()) != null) {
                     final String name = seg.getName();
                     if ("RCT".equals(name)) {

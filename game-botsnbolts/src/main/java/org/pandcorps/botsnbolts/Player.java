@@ -489,11 +489,24 @@ public final class Player extends Chr {
         new RoomChanger(10 * dirX, 10 * dirY, null, Arrays.asList(BotsnBoltsGame.hud), Arrays.asList(this, BotsnBoltsGame.tm), Arrays.asList(BotsnBoltsGame.tm)) {
             @Override
             protected final Panroom createRoom() {
-                //final RoomLoader loader = new DemoRoomLoader();
-                final RoomLoader loader = new ScriptRoomLoader();
-                loader.setRoomId("Demo1");
-                return loader.newRoom();
-            }};
+                return loadRoom("Demo1");
+            }
+            
+            @Override
+            protected final void onFinished() {
+                if (BotsnBoltsGame.timgPrev != null) {
+                    BotsnBoltsGame.timgPrev.destroy();
+                    BotsnBoltsGame.timgPrev = null;
+                }
+            }
+        };
+    }
+    
+    protected final static Panroom loadRoom(final String roomId) {
+        //final RoomLoader loader = new DemoRoomLoader();
+        final RoomLoader loader = new ScriptRoomLoader();
+        loader.setRoomId(roomId);
+        return loader.newRoom();
     }
     
     private final void normalizeY(final int offBefore, final int offAfter) {

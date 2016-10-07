@@ -101,7 +101,9 @@ public final class BotsnBoltsGame extends BaseGame {
     
     protected static Panlayer hud = null;
     protected static TileMap tm = null;
+    protected static String  timgName = null;
     protected static Panmage timg = null;
+    protected static Panmage timgPrev = null;
     protected static TileMapImage[][] imgMap = null;
 
     @Override
@@ -542,9 +544,11 @@ public final class BotsnBoltsGame extends BaseGame {
     protected final static class BotsnBoltsScreen extends Panscreen {
         @Override
         protected final void load() {
-            final Panroom room = Pangame.getGame().getCurrentRoom();
-            initRoom(room);
-            fillRoom(room);
+            //final Panroom room = Pangame.getGame().getCurrentRoom();
+            //initRoom(room);
+            //fillRoom(room);
+            final Panroom room = Player.loadRoom("Demo1");
+            Pangame.getGame().setCurrentRoom(room);
             newPlayer(room);
         }
         
@@ -564,17 +568,28 @@ public final class BotsnBoltsGame extends BaseGame {
             tm = new TileMap(Pantil.vmid(), room, 16, 16);
             tm.getPosition().setZ(DEPTH_BG);
             tm.setForegroundDepth(DEPTH_FG);
-            if (timg != null) {
+            room.addActor(tm);
+        }
+        
+        protected final static void loadTileImage(final String imgName) {
+            if (imgName.equals(timgName)) {
+                tm.setImageMap(timg);
+                return;
+            }
+            timgPrev = timg;
+            timgName = imgName;
+            timg = Pangine.getEngine().createImage("bg", RES + "bg/" + imgName + ".png");
+            if (imgMap == null) {
+                imgMap = tm.splitImageMap(timg);
+            } else {
                 tm.setImageMap(timg);
             }
-            room.addActor(tm);
         }
         
         protected final static void fillRoom(final Panroom room) {
             final Pangine engine = Pangine.getEngine();
             engine.setBgColor(new FinPancolor((short) 232, (short) 232, (short) 232));
-            timg = engine.createImage("bg", RES + "bg/Bg.png");
-            imgMap = tm.splitImageMap(timg);
+            loadTileImage("Bg");
             final int end = tm.getWidth() - 1;
             for (int i = end; i >= 0; i--) {
                 tm.setBackground(i, 0, imgMap[0][1], Tile.BEHAVIOR_SOLID);
