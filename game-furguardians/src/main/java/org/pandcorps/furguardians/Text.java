@@ -128,6 +128,24 @@ public class Text {
     /*package*/ final static String CASTLE_WIN_4 = get("Castle.Win.4", "the original side! I am");
     /*package*/ final static String CASTLE_WIN_5 = get("Castle.Win.5", "forever in your debt.");
     
+    /*package*/ final static String MAP_TIP_1 = get("Map.Tip.1", "You can turn music and sounds on/off in Menu/Setup/Music");
+    /*package*/ final static String MAP_TIP_2 = get("Map.Tip.2", "You can change your Avatar's appearance in Menu/Edit");
+    /*package*/ final static String MAP_TIP_3 = get("Map.Tip.3", "You can spend Gems on clothing and powerups in Menu/Edit/Gear");
+    /*package*/ final static String MAP_TIP_4 = get("Map.Tip.4", "You can try powerups for 1 Level without spending any Gems");
+    /*package*/ final static String MAP_TIP_5 = get("Map.Tip.5", "You can change the color of clothing that you have purchased");
+    /*package*/ final static String MAP_TIP_6 = get("Map.Tip.6", "You can switch between full control and auto-run in Menu/Setup");
+    /*package*/ final static String MAP_TIP_7 = get("Map.Tip.7", "You can add a Profile for a new user of this device in Menu/Add");
+    /*package*/ final static String MAP_TIP_8 = get("Map.Tip.8", "Spending Gems in one Profile will not take Gems from other Profiles");
+    /*package*/ final static String MAP_TIP_9 = get("Map.Tip.9", "Items purchased in one Profile are unavailable to other Profiles");
+    /*package*/ final static String MAP_TIP_10 = get("Map.Tip.10", "You can create a new Avatar for yourself in Menu/Add");
+    /*package*/ final static String MAP_TIP_11 = get("Map.Tip.11", "A single Profile can have multiple Avatars");
+    /*package*/ final static String MAP_TIP_12 = get("Map.Tip.12", "Items purchased for one Avatar can be used by other Avatars of that Profile");
+    /*package*/ final static String MAP_TIP_13 = get("Map.Tip.13", "You can spend Gems on new abilities in Menu/Setup/Perks");
+    /*package*/ final static String MAP_TIP_14 = get("Map.Tip.14", "You can adjust the game's difficulty in Menu/Setup/Easy-Hard");
+    
+    /*package*/ final static String MAP_TIP_COMPUTER_1 = get("Map.Tip.Computer.1", "You can enter the menu by pressing Esc on the map");
+    /*package*/ final static String MAP_TIP_COMPUTER_2 = get("Map.Tip.Computer.2", "You can view your current Goals by pressing G on the map");
+    
     static {
         bundle = null;
     }

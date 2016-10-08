@@ -183,23 +183,23 @@ public class FurGuardiansGame extends BaseGame {
 	private final static List<String> initTips() {
 		final List<String> list = new ArrayList<String>();
 		if (Pangine.getEngine().isMouseSupported()) {
-			list.add("You can enter the menu by pressing Esc on the map");
-			list.add("You can view your current Goals by pressing G on the map");
+			list.add(Text.MAP_TIP_COMPUTER_1);
+			list.add(Text.MAP_TIP_COMPUTER_2);
 		}
-		list.add("You can turn music and sounds on/off in Menu/Setup/Music");
-		list.add("You can change your Avatar's appearance in Menu/Edit");
-		list.add("You can spend Gems on clothing and powerups in Menu/Edit/Gear");
-		list.add("You can try powerups for 1 Level without spending any Gems");
-		list.add("You can change the color of clothing that you have purchased");
-		list.add("You can switch between full control and auto-run in Menu/Setup"); // on-screen buttons
-		list.add("You can add a Profile for a new user of this device in Menu/Add");
-		list.add("Spending Gems in one Profile will not take Gems from other Profiles");
-		list.add("Items purchased in one Profile are unavailable to other Profiles");
-		list.add("You can create a new Avatar for yourself in Menu/Add");
-		list.add("A single Profile can have multiple Avatars");
-		list.add("Items purchased for one Avatar can be used by other Avatars of that Profile");
-		list.add("You can spend Gems on new abilities in Menu/Setup/Perks");
-		list.add("You can adjust the game's difficulty in Menu/Setup/Easy-Hard");
+		list.add(Text.MAP_TIP_1);
+		list.add(Text.MAP_TIP_2);
+		list.add(Text.MAP_TIP_3);
+		list.add(Text.MAP_TIP_4);
+		list.add(Text.MAP_TIP_5);
+		list.add(Text.MAP_TIP_6); // on-screen buttons
+		list.add(Text.MAP_TIP_7);
+		list.add(Text.MAP_TIP_8);
+		list.add(Text.MAP_TIP_9);
+		list.add(Text.MAP_TIP_10);
+		list.add(Text.MAP_TIP_11);
+		list.add(Text.MAP_TIP_12);
+		list.add(Text.MAP_TIP_13);
+		list.add(Text.MAP_TIP_14);
 		return list;
 	}
 	
