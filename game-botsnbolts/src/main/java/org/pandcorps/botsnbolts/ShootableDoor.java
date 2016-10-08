@@ -128,7 +128,8 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
         Pangine.getEngine().addTimer(BotsnBoltsGame.tm, 1, new TimerListener() {
             @Override public final void onTimer(final TimerEvent event) {
                 if (nextIndex >= def.opening.length) {
-                    for (int j = 0; j < 4; j++) {
+                    final int n = isSmall() ? 1 : 4;
+                    for (int j = 0; j < n; j++) {
                         BotsnBoltsGame.tm.setForeground(doorX, y + j, null);
                     }
                 } else {
