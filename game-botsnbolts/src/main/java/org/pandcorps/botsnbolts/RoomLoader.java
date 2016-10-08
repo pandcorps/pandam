@@ -51,6 +51,8 @@ public abstract class RoomLoader {
                     final String name = seg.getName();
                     if ("RCT".equals(name)) {
                         rct(seg.intValue(0), seg.intValue(1), seg.intValue(2), seg.intValue(3), seg, 4);
+                    } else if ("DOR".equals(name)) {
+                        dor(seg.intValue(0), seg.intValue(1), seg.getValue(2));
                     }
                 }
                 return room;
@@ -74,6 +76,10 @@ public abstract class RoomLoader {
                 tm.setTile(currX, currY, tile);
             }
         }
+    }
+    
+    private final static void dor(final int x, final int y, final String doorType) {
+        new ShootableDoor(x, y, ShootableDoor.getShootableDoorDefinition(doorType));
     }
     
     private final static TileMapImage getTileMapImage(final Segment seg, final int imageOffset) {

@@ -185,6 +185,19 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
         return isSmall() ? displaySmall : display;
     }
     
+    protected final static ShootableDoorDefinition getShootableDoorDefinition(final String doorType) {
+        if ("Cyan".equals(doorType)) {
+            return BotsnBoltsGame.doorCyan;
+        } else if ("Gold".equals(doorType)) {
+            return BotsnBoltsGame.doorGold;
+        } else if ("Silver".equals(doorType)) {
+            return BotsnBoltsGame.doorSilver;
+        } else if ("Small".equals(doorType)) {
+            return BotsnBoltsGame.doorSmall;
+        }
+        throw new IllegalArgumentException("Unrecognized door type: " + doorType);
+    }
+    
     protected final static class ShootableDoorDefinition {
         private final Panframe[] door;
         private final Panframe[][] opening;
