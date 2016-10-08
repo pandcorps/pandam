@@ -47,8 +47,8 @@ public abstract class BlockPuzzle {
             return;
         }
         final int numImgs = blockImgs.length;
-        setTiles(indicesToFadeOut, step);
-        setTiles(indicesToFadeIn, numImgs - step);
+        setTiles(indicesToFadeOut, step, true);
+        setTiles(indicesToFadeIn, numImgs - step, false);
         if (step < numImgs) {
             Pangine.getEngine().addTimer(tm, 1, new TimerListener() {
                 @Override public final void onTimer(final TimerEvent event) {
@@ -63,7 +63,7 @@ public abstract class BlockPuzzle {
     protected void onFadeEnd() {
     }
     
-    private final void setTiles(final int[] tileIndices, final int imgIndex) {
+    private final void setTiles(final int[] tileIndices, final int imgIndex, final boolean fadingOut) {
         if (tileIndices == null) {
             return;
         }
@@ -77,6 +77,9 @@ public abstract class BlockPuzzle {
             b = Tile.BEHAVIOR_OPEN;
         }
         for (final int index : tileIndices) {
+            if (fadingOut && (Tile.getBehavior(tm.getTile(index)) == Tile.BEHAVIOR_OPEN)) {
+                continue;
+            }
             tm.setForeground(index, img, b);
         }
     }
