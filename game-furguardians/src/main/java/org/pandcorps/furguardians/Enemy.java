@@ -436,7 +436,9 @@ public class Enemy extends Character {
 	}
 	
 	private final static void reward(final Player player, final Panctor enemy, final EnemyDefinition def, final byte defeatMode) {
-	    new GemBumped(player, enemy, def);
+	    if (def.award > 0) { // Once reached this point with a 0 reward, maybe with an empty armorBall or bounceBall; causes an Exception inside GemBumped
+	        new GemBumped(player, enemy, def);
+	    }
 	    countDefeat(player, def, defeatMode);
 	}
 	
