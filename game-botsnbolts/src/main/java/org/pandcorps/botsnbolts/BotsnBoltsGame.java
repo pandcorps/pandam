@@ -85,6 +85,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static ShootableDoorDefinition doorGold = null;
     protected static ShootableDoorDefinition doorSilver = null;
     protected static ShootableDoorDefinition doorSmall = null;
+    protected static Panmage doorBoss = null;
     protected static Panmage[] blockCyan = null;
     protected static Panmage[] blockTimed = null;
     protected static Panmage blockSpike = null;
@@ -187,6 +188,7 @@ public final class BotsnBoltsGame extends BaseGame {
         Img.close(imgsSmallClosed);
         Img.close(imgsSmallOpening);
         Img.close(imgsBarrier);
+        doorBoss = Pangine.getEngine().createImage("door.boss", RES + "/bg/DoorBoss.png");
     }
     
     private final static void loadMisc() {

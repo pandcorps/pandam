@@ -332,7 +332,7 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
                 base = h;
             }
             for (int j = base; j < h; j++) {
-                renderer.render(layer, null, x, y + (j * 4), BotsnBoltsGame.DEPTH_FG); //TODO img
+                renderer.render(layer, BotsnBoltsGame.doorBoss, x, y + (j * 4), BotsnBoltsGame.DEPTH_FG);
             }
         }
         

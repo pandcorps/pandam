@@ -22,6 +22,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.botsnbolts;
 
+import org.pandcorps.botsnbolts.ShootableDoor.*;
 import org.pandcorps.core.*;
 import org.pandcorps.core.seg.*;
 import org.pandcorps.pandam.*;
@@ -80,7 +81,11 @@ public abstract class RoomLoader {
     }
     
     private final static void dor(final int x, final int y, final String doorType) {
-        new ShootableDoor(x, y, ShootableDoor.getShootableDoorDefinition(doorType));
+        if ("Boss".equals(doorType)) {
+            new BossDoor(x, y);
+        } else {
+            new ShootableDoor(x, y, ShootableDoor.getShootableDoorDefinition(doorType));
+        }
     }
     
     private final static TileMapImage getTileMapImage(final Segment seg, final int imageOffset) {
