@@ -22,6 +22,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.botsnbolts;
 
+import org.pandcorps.botsnbolts.Enemy.*;
 import org.pandcorps.botsnbolts.ShootableDoor.*;
 import org.pandcorps.core.*;
 import org.pandcorps.core.seg.*;
@@ -52,6 +53,16 @@ public abstract class RoomLoader {
                     final String name = seg.getName();
                     if ("RCT".equals(name)) { // Rectangle
                         rct(seg.intValue(0), seg.intValue(1), seg.intValue(2), seg.intValue(3), seg, 4);
+                    } else if ("BOX".equals(name)) { // Power-up Box
+                        box(seg.intValue(0), seg.intValue(1));
+                    } else if ("ENM".equals(name)) { // Enemy
+                        enm(seg.intValue(0), seg.intValue(1), seg.getValue(2));
+                    } else if ("SHP".equals(name)) { // Shootable Block Puzzle
+                        shp();
+                    } else if ("TMP".equals(name)) { // Timed Block Puzzle
+                        tmp();
+                    } else if ("SPP".equals(name)) { // Spike Block Puzzle
+                        spp();
                     } else if ("LDR".equals(name)) { // Ladder
                         ldr(seg.intValue(0), seg.intValue(1), seg.intValue(2));
                     } else if ("BRR".equals(name)) { // Barrier
@@ -81,6 +92,26 @@ public abstract class RoomLoader {
                 tm.setTile(currX, currY, tile);
             }
         }
+    }
+    
+    private final static void box(final int x, final int y) {
+        new PowerBox(x, y);
+    }
+    
+    private final static void enm(final int x, final int y, final String enemyType) {
+        //TODO
+    }
+    
+    private final static void shp() {
+        //TODO
+    }
+    
+    private final static void tmp() {
+        //TODO
+    }
+    
+    private final static void spp() {
+        //TODO
     }
     
     private final static void ldr(final int x, final int y, final int h) {
