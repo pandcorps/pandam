@@ -22,6 +22,9 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.botsnbolts;
 
+import java.util.*;
+
+import org.pandcorps.botsnbolts.BlockPuzzle.*;
 import org.pandcorps.botsnbolts.Enemy.*;
 import org.pandcorps.botsnbolts.ShootableDoor.*;
 import org.pandcorps.core.*;
@@ -58,11 +61,11 @@ public abstract class RoomLoader {
                     } else if ("ENM".equals(name)) { // Enemy
                         enm(seg.intValue(0), seg.intValue(1), seg.getValue(2));
                     } else if ("SHP".equals(name)) { // Shootable Block Puzzle
-                        shp();
+                        shp(seg);
                     } else if ("TMP".equals(name)) { // Timed Block Puzzle
-                        tmp();
+                        tmp(in);
                     } else if ("SPP".equals(name)) { // Spike Block Puzzle
-                        spp();
+                        spp(seg);
                     } else if ("LDR".equals(name)) { // Ladder
                         ldr(seg.intValue(0), seg.intValue(1), seg.intValue(2));
                     } else if ("BRR".equals(name)) { // Barrier
@@ -102,16 +105,33 @@ public abstract class RoomLoader {
         //TODO
     }
     
-    private final static void shp() {
-        //TODO
+    private final static void shp(final Segment seg) {
+        new ShootableBlockPuzzle(getTileIndexArray(seg, 0), getTileIndexArray(seg, 1));
     }
     
-    private final static void tmp() {
-        //TODO
+    private final static int[] getTileIndexArray(final Segment seg, final int fieldIndex) {
+        final TileMap tm = BotsnBoltsGame.tm;
+        final List<Field> reps = seg.getRepetitions(fieldIndex);
+        final int size = reps.size();
+        final int[] indices = new int[size];
+        for (int i = 0; i < size; i++) {
+            final Field f = reps.get(i);
+            indices[i] = tm.getIndex(f.intValue(0), f.intValue(1));
+        }
+        return indices;
     }
     
-    private final static void spp() {
-        //TODO
+    private final static void tmp(final SegmentStream in) throws Exception {
+        final List<int[]> steps = new ArrayList<int[]>();
+        Segment seg;
+        while ((seg = in.readIf("TMS")) != null) {
+            steps.add(getTileIndexArray(seg, 0));
+        }
+        new TimedBlockPuzzle(steps);
+    }
+    
+    private final static void spp(final Segment seg) {
+        new SpikeBlockPuzzle(getTileIndexArray(seg, 0), getTileIndexArray(seg, 1));
     }
     
     private final static void ldr(final int x, final int y, final int h) {
