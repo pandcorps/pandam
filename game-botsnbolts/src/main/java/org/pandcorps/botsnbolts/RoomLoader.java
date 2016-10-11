@@ -53,7 +53,9 @@ public abstract class RoomLoader {
                     if ("RCT".equals(name)) { // Rectangle
                         rct(seg.intValue(0), seg.intValue(1), seg.intValue(2), seg.intValue(3), seg, 4);
                     } else if ("LDR".equals(name)) { // Ladder
+                        ldr(seg.intValue(0), seg.intValue(1), seg.intValue(2));
                     } else if ("BRR".equals(name)) { // Barrier
+                        brr(seg.intValue(0), seg.intValue(1), seg.getValue(2));
                     } else if ("DOR".equals(name)) { // Door
                         dor(seg.intValue(0), seg.intValue(1), seg.getValue(2));
                     }
@@ -79,6 +81,18 @@ public abstract class RoomLoader {
                 tm.setTile(currX, currY, tile);
             }
         }
+    }
+    
+    private final static void ldr(final int x, final int y, final int h) {
+        final TileMap tm = BotsnBoltsGame.tm;
+        final int end = h - 1;
+        for (int j = 0; j < h; j++) {
+            tm.setForeground(x, y + j, null, (j == end) ? BotsnBoltsGame.TILE_LADDER_TOP : BotsnBoltsGame.TILE_LADDER); //TODO img
+        }
+    }
+    
+    private final static void brr(final int x, final int y, final String doorType) {
+        new ShootableBarrier(x, y, ShootableDoor.getShootableDoorDefinition(doorType));
     }
     
     private final static void dor(final int x, final int y, final String doorType) {
