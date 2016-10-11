@@ -50,10 +50,11 @@ public abstract class RoomLoader {
                 BotsnBoltsGame.BotsnBoltsScreen.loadTileImage(seg.getValue(0));
                 while ((seg = in.read()) != null) {
                     final String name = seg.getName();
-                    if ("RCT".equals(name)) {
+                    if ("RCT".equals(name)) { // Rectangle
                         rct(seg.intValue(0), seg.intValue(1), seg.intValue(2), seg.intValue(3), seg, 4);
-                    } else if ("LDR".equals(name)) {
-                    } else if ("DOR".equals(name)) {
+                    } else if ("LDR".equals(name)) { // Ladder
+                    } else if ("BRR".equals(name)) { // Barrier
+                    } else if ("DOR".equals(name)) { // Door
                         dor(seg.intValue(0), seg.intValue(1), seg.getValue(2));
                     }
                 }
