@@ -28,7 +28,7 @@ import org.lwjgl.openal.*;
 import org.pandcorps.pandam.*;
 
 public class LwjglWavPanaudio extends Panaudio {
-    private final List<LwjglWavPansound> sounds = new ArrayList<LwjglWavPansound>();
+    protected final static List<LwjglWavPansound> sounds = new ArrayList<LwjglWavPansound>();
     
     @Override
     public final Pansound createSound(final String location) {
@@ -86,8 +86,8 @@ public class LwjglWavPanaudio extends Panaudio {
     @Override
     public final void close() {
         stop();
-        for (final LwjglWavPansound sound : sounds) {
-            sound.destroy();
+        for (int i = sounds.size() - 1; i >= 0; i--) {
+            sounds.get(i).destroy();
         }
         sounds.clear();
         AL.destroy();

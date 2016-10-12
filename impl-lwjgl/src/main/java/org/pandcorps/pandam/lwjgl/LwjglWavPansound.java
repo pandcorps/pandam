@@ -124,6 +124,7 @@ public final class LwjglWavPansound extends Pansound {
     protected final void runDestroy() {
         AL10.alDeleteSources(sources);
         AL10.alDeleteBuffers(buffers);
+        LwjglWavPanaudio.sounds.remove(this);
     }
     
     public final static void main(final String[] args) throws Exception {
