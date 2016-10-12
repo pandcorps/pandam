@@ -33,6 +33,7 @@ import org.pandcorps.pandam.*;
 
 public final class LwjglWavPansound extends Pansound {
     private static boolean initialized = false;
+    private static LwjglWavPansound pausedSound = null;
     private final IntBuffer buffers;
     private final IntBuffer sources;
     
@@ -93,21 +94,36 @@ public final class LwjglWavPansound extends Pansound {
         AL10.alSourcePlay(sources.get(0));
     }
     
-    //TODO Call from Panaudio
     protected final void pause() {
         AL10.alSourcePause(sources.get(0));
     }
     
-    //TODO Call from Panaudio
+    protected final static void pauseMusic() {
+        if (currentMusic instanceof LwjglWavPansound) {
+            pausedSound = (LwjglWavPansound) currentMusic;
+            pausedSound.pause();
+        }
+    }
+    
+    protected final static void resumeMusic() throws Exception {
+        if (pausedSound == null) {
+            return;
+        }
+        pausedSound.runMusic();
+    }
+    
+    protected final boolean isMusic() {
+        return this == currentMusic;
+    }
+    
     protected final void stop() {
         AL10.alSourceStop(sources.get(0));
     }
     
-    //TODO Add abstract Pansound.runDestroy; add public Pansound.destroy; call this; clear currentMusic if it matches this; add runDestroy implementations to other Pansound sub-classes
+    @Override
     protected final void runDestroy() {
         AL10.alDeleteSources(sources);
         AL10.alDeleteBuffers(buffers);
-        //AL.destroy(); //TODO Can call this when done with all audio (or with the whole program)
     }
     
     public final static void main(final String[] args) throws Exception {
