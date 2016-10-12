@@ -31,14 +31,18 @@ import org.pandcorps.pandam.event.boundary.*;
 import org.pandcorps.pandax.*;
 import org.pandcorps.pandax.tile.*;
 
-public abstract class Enemy extends Panctor implements CollisionListener {
+public abstract class Enemy extends Chr implements CollisionListener {
     private final static int VEL_PROJECTILE = 6;
     
     private int health;
     
-    protected Enemy(final int health) {
+    protected Enemy(final int offX, final int h, final int x, final int y, final int health) {
+        super(offX, h);
         this.health = health;
         BotsnBoltsGame.tm.getLayer().addActor(this);
+        final Panple pos = getPosition();
+        BotsnBoltsGame.tm.savePosition(pos, x, y);
+        pos.setZ(BotsnBoltsGame.DEPTH_ENEMY);
     }
     
     @Override
@@ -91,12 +95,30 @@ public abstract class Enemy extends Panctor implements CollisionListener {
     
     protected abstract void award(final PowerUp powerUp);
     
+    protected final void updateMirror() {
+        if (hv < 0) {
+            setMirror(true);
+        } else if (hv > 0) {
+            setMirror(false);
+        }
+    }
+    
     protected final Player getNearestPlayer() {
         return PlayerContext.getPlayer(BotsnBoltsGame.pc);
     }
     
     protected final PlayerContext getPlayerContext() {
         return BotsnBoltsGame.pc;
+    }
+    
+    protected final int getDirection(final float p, final float op, final int negThresh, final int posThresh) {
+        final float diff = op - p;
+        if (diff >= posThresh) {
+            return 1;
+        } else if (diff <= negThresh) {
+            return -1;
+        }
+        return 0;
     }
     
     protected final static class EnemyProjectile extends Pandy implements CollisionListener, AllOobListener {
@@ -137,19 +159,33 @@ public abstract class Enemy extends Panctor implements CollisionListener {
         tm.setForeground(x1, y1, BotsnBoltsGame.cube[1], Tile.BEHAVIOR_SOLID);
     }
     
-    protected abstract static class CubeEnemy extends Enemy {
+    protected abstract static class TileUnawareEnemy extends Enemy {
+        protected TileUnawareEnemy(final int x, final int y, final int health) {
+            super(0, 0, x, y, health);
+        }
+        
+        @Override
+        protected final boolean onStepCustom() {
+            onStepEnemy();
+            return true;
+        }
+        
+        //@OverrideMe
+        protected void onStepEnemy() {
+        }
+    }
+    
+    protected abstract static class CubeEnemy extends TileUnawareEnemy {
         protected final float baseX;
         protected final float baseY;
         
         protected CubeEnemy(final int x, final int y, final int health) {
-            super(health);
+            super(x, y, health);
             newCube(x, y);
             final Panple pos = getPosition();
-            BotsnBoltsGame.tm.savePosition(pos, x, y);
             pos.add(16, 16);
             baseX = pos.getX();
             baseY = pos.getY();
-            pos.setZ(BotsnBoltsGame.DEPTH_ENEMY);
         }
         
         @Override
@@ -170,7 +206,7 @@ public abstract class Enemy extends Panctor implements CollisionListener {
         }
     }
     
-    protected final static class SentryGun extends CubeEnemy implements StepListener {
+    protected final static class SentryGun extends CubeEnemy {
         private int timer = 0;
         private int dir;
         
@@ -181,7 +217,7 @@ public abstract class Enemy extends Panctor implements CollisionListener {
         }
 
         @Override
-        public final void onStep(final StepEvent event) {
+        public final void onStepEnemy() {
             final boolean shoot = charge();
             track(shoot);
         }
@@ -271,6 +307,71 @@ public abstract class Enemy extends Panctor implements CollisionListener {
             setMirror(mirror);
             setRot(rot);
             getPosition().set(baseX + offX, baseY + offY);
+        }
+    }
+    
+    protected final static int PROP_OFF_X = 4, PROP_H = 10;
+    
+    protected final static class PropEnemy extends Enemy {
+        protected PropEnemy(final int x, final int y) {
+            super(PROP_OFF_X, PROP_H, x, y, 2);
+            setView(BotsnBoltsGame.propEnemy);
+        }
+        
+        @Override
+        protected final boolean onStepCustom() {
+            final Player target = getNearestPlayer();
+            if (target == null) {
+                return true;
+            }
+            final Panple pos = getPosition(), targetPos = target.getPosition();
+            hv = getDirection(pos.getX(), targetPos.getX(), -2, 2);
+            updateMirror();
+            v = getDirection(pos.getY(), targetPos.getY(), -7, -3);
+            addX(hv);
+            addY();
+            return true;
+        }
+
+        @Override
+        protected final void award(final PowerUp powerUp) {
+            
+        }
+    }
+    
+    protected final static class SpringEnemy extends Enemy {
+        protected SpringEnemy(final int x, final int y) {
+            super(PROP_OFF_X, PROP_H, x, y, 2);
+            endSpring();
+            schedule();
+        }
+        
+        private final void schedule() {
+        }
+        
+        protected final void jump() {
+            v = 8;
+            setView(BotsnBoltsGame.springEnemy[1]);
+            schedule();
+        }
+        
+        private final void endSpring() {
+            setView(BotsnBoltsGame.springEnemy[0]);
+        }
+        
+        @Override
+        protected final void onLanded() {
+            endSpring();
+        }
+        
+        @Override
+        protected final void onBump(final int t) {
+            endSpring();
+        }
+        
+        @Override
+        protected final void award(final PowerUp powerUp) {
+            
         }
     }
 }

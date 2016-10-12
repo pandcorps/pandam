@@ -154,6 +154,7 @@ public abstract class RoomChanger extends Panctor implements StepListener {
         if (activeChanger == this) {
             activeChanger = null;
         }
+        onFinished();
         destroy();
     }
     
@@ -178,4 +179,8 @@ public abstract class RoomChanger extends Panctor implements StepListener {
     }
     
     protected abstract Panroom createRoom();
+    
+    //@OverrideMe
+    protected void onFinished() {
+    }
 }

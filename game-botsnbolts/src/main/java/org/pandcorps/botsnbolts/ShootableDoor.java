@@ -128,7 +128,8 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
         Pangine.getEngine().addTimer(BotsnBoltsGame.tm, 1, new TimerListener() {
             @Override public final void onTimer(final TimerEvent event) {
                 if (nextIndex >= def.opening.length) {
-                    for (int j = 0; j < 4; j++) {
+                    final int n = isSmall() ? 1 : 4;
+                    for (int j = 0; j < n; j++) {
                         BotsnBoltsGame.tm.setForeground(doorX, y + j, null);
                     }
                 } else {
@@ -182,6 +183,19 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
     @Override
     public Pansplay getCurrentDisplay() {
         return isSmall() ? displaySmall : display;
+    }
+    
+    protected final static ShootableDoorDefinition getShootableDoorDefinition(final String doorType) {
+        if ("Cyan".equals(doorType)) {
+            return BotsnBoltsGame.doorCyan;
+        } else if ("Gold".equals(doorType)) {
+            return BotsnBoltsGame.doorGold;
+        } else if ("Silver".equals(doorType)) {
+            return BotsnBoltsGame.doorSilver;
+        } else if ("Small".equals(doorType)) {
+            return BotsnBoltsGame.doorSmall;
+        }
+        throw new IllegalArgumentException("Unrecognized door type: " + doorType);
     }
     
     protected final static class ShootableDoorDefinition {
@@ -318,7 +332,7 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
                 base = h;
             }
             for (int j = base; j < h; j++) {
-                renderer.render(layer, null, x, y + (j * 4), BotsnBoltsGame.DEPTH_FG); //TODO img
+                renderer.render(layer, BotsnBoltsGame.doorBoss, x, y + (j * 4), BotsnBoltsGame.DEPTH_FG);
             }
         }
         

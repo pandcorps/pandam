@@ -85,11 +85,15 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static ShootableDoorDefinition doorGold = null;
     protected static ShootableDoorDefinition doorSilver = null;
     protected static ShootableDoorDefinition doorSmall = null;
+    protected static Panmage doorBoss = null;
     protected static Panmage[] blockCyan = null;
+    protected static Panmage[] blockTimed = null;
     protected static Panmage blockSpike = null;
     protected static Panmage spike = null;
     protected static Panmage[] cube = null;
     protected static Panmage[] sentryGun = null;
+    protected static Panimation propEnemy = null;
+    protected static Panmage[] springEnemy = null;
     protected static Panmage enemyProjectile = null;
     protected static Panimation enemyBurst = null;
     protected static HudMeterImages hudMeterBlank = null;
@@ -98,6 +102,10 @@ public final class BotsnBoltsGame extends BaseGame {
     
     protected static Panlayer hud = null;
     protected static TileMap tm = null;
+    protected static String  timgName = null;
+    protected static Panmage timg = null;
+    protected static Panmage timgPrev = null;
+    protected static TileMapImage[][] imgMap = null;
 
     @Override
     protected final boolean isFullScreen() {
@@ -106,12 +114,12 @@ public final class BotsnBoltsGame extends BaseGame {
     
     @Override
     protected final int getGameWidth() {
-        return 384;
+        return 384; // 24 tiles
     }
     
     @Override
     protected final int getGameHeight() {
-        return 224;
+        return 224; // 14 tiles
     }
     
     @Override
@@ -180,6 +188,7 @@ public final class BotsnBoltsGame extends BaseGame {
         Img.close(imgsSmallClosed);
         Img.close(imgsSmallOpening);
         Img.close(imgsBarrier);
+        doorBoss = Pangine.getEngine().createImage("door.boss", RES + "/bg/DoorBoss.png");
     }
     
     private final static void loadMisc() {
@@ -187,6 +196,7 @@ public final class BotsnBoltsGame extends BaseGame {
         hudMeterBlank = newHudMeterImages("meter.blank", RES + "misc/MeterBlank.png");
         cube = newSheet("cube", RES + "misc/Cube.png", 16);
         blockCyan = newSheet("block.cyan", RES + "bg/BlockCyan.png", 16, FinPanple.ORIGIN, ShootableDoor.minBarrier, new FinPanple2(14, 16));
+        blockTimed = blockCyan; //TODO
         blockSpike = engine.createImage("block.spike", RES + "bg/BlockSpike.png");
         spike = engine.createImage("spike", CENTER_16, new FinPanple2(-6, -6), new FinPanple2(6, 6), RES + "bg/Spike.png");
     }
@@ -199,6 +209,8 @@ public final class BotsnBoltsGame extends BaseGame {
         for (int i = 0; i < sentrySize; i++) {
             sentryGun[i] = engine.createImage("sentry.gun." + i, CENTER_16, minCube, maxCube, sentryImgs[i]);
         }
+        propEnemy = newAnimation("prop.enemy", RES + "/enemy/PropEnemy.png", 16, new FinPanple2(8, 1), Chr.getMin(Enemy.PROP_OFF_X), Chr.getMax(Enemy.PROP_OFF_X, Enemy.PROP_H), 4);
+        springEnemy = null; //TODO
         enemyProjectile = engine.createImage("projectile.enemy", CENTER_8, new FinPanple2(-2, -2), new FinPanple2(2, 2), RES + "/enemy/EnemyProjectile.png");
         enemyBurst = newAnimation("burst.enemy", RES + "/enemy/EnemyBurst.png", 16, CENTER_16, 2);
     }
@@ -534,25 +546,52 @@ public final class BotsnBoltsGame extends BaseGame {
     protected final static class BotsnBoltsScreen extends Panscreen {
         @Override
         protected final void load() {
-            final Panroom room = Pangame.getGame().getCurrentRoom();
-            fillRoom(room);
+            //final Panroom room = Pangame.getGame().getCurrentRoom();
+            //initRoom(room);
+            //fillRoom(room);
+            final Panroom room = Player.loadRoom("Demo1");
+            Pangame.getGame().setCurrentRoom(room);
             newPlayer(room);
         }
         
         protected final static Panroom newRoom() {
             final Panroom room = Pangine.getEngine().createRoom(Pantil.vmid(), (FinPanple) Pangame.getGame().getCurrentRoom().getSize());
+            initRoom(room);
+            return room;
+        }
+        
+        protected final static Panroom newDemoRoom() {
+            final Panroom room = newRoom();
             fillRoom(room);
             return room;
+        }
+        
+        protected final static void initRoom(final Panroom room) {
+            tm = new TileMap(Pantil.vmid(), room, 16, 16);
+            tm.getPosition().setZ(DEPTH_BG);
+            tm.setForegroundDepth(DEPTH_FG);
+            room.addActor(tm);
+        }
+        
+        protected final static void loadTileImage(final String imgName) {
+            if (imgName.equals(timgName)) {
+                tm.setImageMap(timg);
+                return;
+            }
+            timgPrev = timg;
+            timgName = imgName;
+            timg = Pangine.getEngine().createImage("bg", RES + "bg/" + imgName + ".png");
+            if (imgMap == null) {
+                imgMap = tm.splitImageMap(timg);
+            } else {
+                tm.setImageMap(timg);
+            }
         }
         
         protected final static void fillRoom(final Panroom room) {
             final Pangine engine = Pangine.getEngine();
             engine.setBgColor(new FinPancolor((short) 232, (short) 232, (short) 232));
-            tm = new TileMap(Pantil.vmid(), room, 16, 16);
-            tm.getPosition().setZ(DEPTH_BG);
-            tm.setForegroundDepth(DEPTH_FG);
-            room.addActor(tm);
-            final TileMapImage[][] imgMap = tm.splitImageMap(engine.createImage("bg", RES + "bg/Bg.png"));
+            loadTileImage("Bg");
             final int end = tm.getWidth() - 1;
             for (int i = end; i >= 0; i--) {
                 tm.setBackground(i, 0, imgMap[0][1], Tile.BEHAVIOR_SOLID);
@@ -561,7 +600,7 @@ public final class BotsnBoltsGame extends BaseGame {
                 tm.setBackground(0, j, imgMap[0][0], Tile.BEHAVIOR_SOLID);
                 tm.setBackground(end, j, imgMap[0][2], Tile.BEHAVIOR_SOLID);
             }
-            //Enemy.newCube(4, 2);
+            Enemy.newCube(4, 2);
             //new ShootableDoor(0, 1, doorCyan);
             //tm.setBackground(1, 2, imgMap[1][4], Tile.BEHAVIOR_SOLID);
             //new ShootableDoor(0, 1, doorSmall);
@@ -572,6 +611,7 @@ public final class BotsnBoltsGame extends BaseGame {
             //new ShootableDoor(end, 1, doorSmall);
             //new SentryGun(11, 1);
             //new SentryGun(8, 3);
+            new PropEnemy(6, 2);
             //final BigBattery battery = new BigBattery();
             //battery.getPosition().set(200, 96, DEPTH_POWER_UP);
             //room.addActor(battery);
@@ -586,9 +626,13 @@ public final class BotsnBoltsGame extends BaseGame {
             //new ShootableBlockPuzzle(
             //    new int[] { tm.getIndex(4, 2), tm.getIndex(10, 5) },
             //    new int[] { tm.getIndex(6, 6) });
-            new SpikeBlockPuzzle(
-                new int[] { tm.getIndex(4, 3) },
-                new int[] { tm.getIndex(7, 4) });
+            //new SpikeBlockPuzzle(
+            //    new int[] { tm.getIndex(4, 3) },
+            //    new int[] { tm.getIndex(7, 4) });
+            /*new TimedBlockPuzzle(Arrays.asList(
+                new int[] { tm.getIndex(4, 3), tm.getIndex(4, 9) },
+                new int[] { tm.getIndex(6, 5) },
+                new int[] { tm.getIndex(8, 7) }));*/
             final int ladderX = 15;
             for (int j = 4; j < 9; j++) {
                 tm.setForeground(ladderX, j, imgMap[0][1], (j == 8) ? TILE_LADDER_TOP : TILE_LADDER);
