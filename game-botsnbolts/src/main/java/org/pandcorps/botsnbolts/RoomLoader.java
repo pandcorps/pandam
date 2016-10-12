@@ -56,6 +56,8 @@ public abstract class RoomLoader {
                     final String name = seg.getName();
                     if ("RCT".equals(name)) { // Rectangle
                         rct(seg.intValue(0), seg.intValue(1), seg.intValue(2), seg.intValue(3), seg, 4);
+                    } else if ("ROW".equals(name)) { // Row
+                    } else if ("COL".equals(name)) { // Column
                     } else if ("BOX".equals(name)) { // Power-up Box
                         box(seg.intValue(0), seg.intValue(1));
                     } else if ("ENM".equals(name)) { // Enemy
