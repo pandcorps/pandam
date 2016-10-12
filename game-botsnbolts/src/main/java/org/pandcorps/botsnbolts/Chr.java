@@ -36,7 +36,7 @@ public abstract class Chr extends GuyPlatform {
     }
 
     @Override
-    protected final void onBump(final int t) {
+    protected void onBump(final int t) {
     }
 
     @Override
