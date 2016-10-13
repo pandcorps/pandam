@@ -64,6 +64,10 @@ public abstract class Panaudio {
 	
 	protected abstract void setEnabled(final boolean music, final boolean enabled);
 	
+	protected final static void setEnabled(final Panaudio audio, final boolean music, final boolean enabled) {
+	    audio.setEnabled(music, enabled);
+	}
+	
 	public final Pansound getMusic() {
 		return Pansound.currentMusic;
 	}
