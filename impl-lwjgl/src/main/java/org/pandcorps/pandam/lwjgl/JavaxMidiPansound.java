@@ -53,4 +53,11 @@ public final class JavaxMidiPansound extends Pansound {
 	protected final void runSound() throws Exception {
 		JavaxMidiPanaudio.play(seq, 0);
 	}
+	
+	@Override
+	protected final void runDestroy() {
+	    for (final Track track : seq.getTracks()) {
+	        seq.deleteTrack(track);
+	    }
+	}
 }

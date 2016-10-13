@@ -74,4 +74,14 @@ public abstract class Pansound {
 			sound.startSound();
 		}
 	}
+	
+	public final void destroy() {
+	    if (this == currentMusic) {
+	        Pangine.getEngine().getAudio().stopMusic();
+	        currentMusic = null;
+	    }
+	    runDestroy();
+	}
+	
+	protected abstract void runDestroy();
 }
