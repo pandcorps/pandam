@@ -89,77 +89,72 @@ public class Text {
     /*package*/ final static String TROPHIES = get("Trophies");
     /*package*/ final static String UNSELECTED = get("Unselected");
     
-    /*package*/ final static String MINI_GAMES = get("MiniGames", "Mini-games");
-    /*package*/ final static String POWER_UP = get("PowerUp", "Power-up");
+    /*package*/ final static String MINI_GAMES = get("MiniGames");
+    /*package*/ final static String POWER_UP = get("PowerUp");
     
-    /*package*/ final static String TITLE_PROMPT_TAP = get("Title.Prompt.Tap", "Tap to start");
-    /*package*/ final static String TITLE_PROMPT_ANY = get("Title.Prompt.Any", "Press anything");
+    /*package*/ final static String TITLE_PROMPT_TAP = get("Title.Prompt.Tap");
+    /*package*/ final static String TITLE_PROMPT_ANY = get("Title.Prompt.Any");
     
-    /*package*/ final static String NEW_INFO_1 = get("New.Info.1", "A new Avatar lets one player try a different character.");
-    /*package*/ final static String NEW_INFO_2 = get("New.Info.2", "The old Avatar is kept.  You can switch back and forth.");
-    /*package*/ final static String NEW_INFO_3 = get("New.Info.3", "You keep your Gems and Goals when switching Avatars.");
-    /*package*/ final static String NEW_INFO_4 = get("New.Info.4", "A new Profile is for a new person using this device.");
-    /*package*/ final static String NEW_INFO_5 = get("New.Info.5", "Each Profile has its own set of Gems and Goals.");
+    /*package*/ final static String NEW_INFO_1 = get("New.Info.1");
+    /*package*/ final static String NEW_INFO_2 = get("New.Info.2");
+    /*package*/ final static String NEW_INFO_3 = get("New.Info.3");
+    /*package*/ final static String NEW_INFO_4 = get("New.Info.4");
+    /*package*/ final static String NEW_INFO_5 = get("New.Info.5");
     
-    /*package*/ final static String NAME_EMPTY = get("Name.Empty", "Must have a name");
-    /*package*/ final static String NAME_DUPLICATE = get("Name.Duplicate", "Name already used");
+    /*package*/ final static String NAME_EMPTY = get("Name.Empty");
+    /*package*/ final static String NAME_DUPLICATE = get("Name.Duplicate");
     
-    /*package*/ final static String DELETE_WARN = get("Delete.Warn", "Press Erase again to confirm");
+    /*package*/ final static String DELETE_WARN = get("Delete.Warn");
     
-    /*package*/ final static String ASSISTS_NOTE = get("Assists.Note", "Can equip multiple");
-    /*package*/ final static String BIRD_NOTE = get("Bird.Note", "Can collect Gems");
-    /*package*/ final static String POWER_UP_NOTE = get("PowerUp.Note", "Equip one at a time");
-    /*package*/ final static String THEMES_NOTE = get("Themes.Note", "Can select multiple");
+    /*package*/ final static String ASSISTS_NOTE = get("Assists.Note");
+    /*package*/ final static String BIRD_NOTE = get("Bird.Note");
+    /*package*/ final static String POWER_UP_NOTE = get("PowerUp.Note");
+    /*package*/ final static String THEMES_NOTE = get("Themes.Note");
     
-    /*package*/ final static String CABIN_PICK = get("Cabin.Pick", "Hoo! Hoo! Pick one!");
-    /*package*/ final static String CABIN_HIT_1 = get("Cabin.Hit.1", "Hoo! Hoo! Hit the block!");
-    /*package*/ final static String CABIN_HIT_2 = get("Cabin.Hit.2", "Hoo! Hoo! Hit them!");
-    /*package*/ final static String CABIN_MATCH = get("Cabin.Match", "Hoo! Hoo! Match them!");
+    /*package*/ final static String CABIN_PICK = get("Cabin.Pick");
+    /*package*/ final static String CABIN_HIT_1 = get("Cabin.Hit.1");
+    /*package*/ final static String CABIN_HIT_2 = get("Cabin.Hit.2");
+    /*package*/ final static String CABIN_MATCH = get("Cabin.Match");
     
-    /*package*/ final static String CASTLE_INTRO_1 = get("Castle.Intro.1", "A portal has appeared outside");
-    /*package*/ final static String CASTLE_INTRO_2 = get("Castle.Intro.2", "the castle. Monsters from the");
-    /*package*/ final static String CASTLE_INTRO_3 = get("Castle.Intro.3", "Realm of Chaos have invaded");
-    /*package*/ final static String CASTLE_INTRO_4 = get("Castle.Intro.4", "the kingdom! Please close the");
-    /*package*/ final static String CASTLE_INTRO_5 = get("Castle.Intro.5", "gateway from the other side.");
+    /*package*/ final static String CASTLE_INTRO_1 = get("Castle.Intro.1");
+    /*package*/ final static String CASTLE_INTRO_2 = get("Castle.Intro.2");
+    /*package*/ final static String CASTLE_INTRO_3 = get("Castle.Intro.3");
+    /*package*/ final static String CASTLE_INTRO_4 = get("Castle.Intro.4");
+    /*package*/ final static String CASTLE_INTRO_5 = get("Castle.Intro.5");
     
-    /*package*/ final static String CASTLE_WIN_1 = get("Castle.Win.1", "You destroyed the Havoc Stone,");
-    /*package*/ final static String CASTLE_WIN_2 = get("Castle.Win.2", "sending everything that passed");
-    /*package*/ final static String CASTLE_WIN_3 = get("Castle.Win.3", "through the Chaos Gate back to");
-    /*package*/ final static String CASTLE_WIN_4 = get("Castle.Win.4", "the original side! I am");
-    /*package*/ final static String CASTLE_WIN_5 = get("Castle.Win.5", "forever in your debt.");
+    /*package*/ final static String CASTLE_WIN_1 = get("Castle.Win.1");
+    /*package*/ final static String CASTLE_WIN_2 = get("Castle.Win.2");
+    /*package*/ final static String CASTLE_WIN_3 = get("Castle.Win.3");
+    /*package*/ final static String CASTLE_WIN_4 = get("Castle.Win.4");
+    /*package*/ final static String CASTLE_WIN_5 = get("Castle.Win.5");
     
-    /*package*/ final static String MAP_TIP_1 = get("Map.Tip.1", "You can turn music and sounds on/off in Menu/Setup/Music");
-    /*package*/ final static String MAP_TIP_2 = get("Map.Tip.2", "You can change your Avatar's appearance in Menu/Edit");
-    /*package*/ final static String MAP_TIP_3 = get("Map.Tip.3", "You can spend Gems on clothing and powerups in Menu/Edit/Gear");
-    /*package*/ final static String MAP_TIP_4 = get("Map.Tip.4", "You can try powerups for 1 Level without spending any Gems");
-    /*package*/ final static String MAP_TIP_5 = get("Map.Tip.5", "You can change the color of clothing that you have purchased");
-    /*package*/ final static String MAP_TIP_6 = get("Map.Tip.6", "You can switch between full control and auto-run in Menu/Setup");
-    /*package*/ final static String MAP_TIP_7 = get("Map.Tip.7", "You can add a Profile for a new user of this device in Menu/Add");
-    /*package*/ final static String MAP_TIP_8 = get("Map.Tip.8", "Spending Gems in one Profile will not take Gems from other Profiles");
-    /*package*/ final static String MAP_TIP_9 = get("Map.Tip.9", "Items purchased in one Profile are unavailable to other Profiles");
-    /*package*/ final static String MAP_TIP_10 = get("Map.Tip.10", "You can create a new Avatar for yourself in Menu/Add");
-    /*package*/ final static String MAP_TIP_11 = get("Map.Tip.11", "A single Profile can have multiple Avatars");
-    /*package*/ final static String MAP_TIP_12 = get("Map.Tip.12", "Items purchased for one Avatar can be used by other Avatars of that Profile");
-    /*package*/ final static String MAP_TIP_13 = get("Map.Tip.13", "You can spend Gems on new abilities in Menu/Setup/Perks");
-    /*package*/ final static String MAP_TIP_14 = get("Map.Tip.14", "You can adjust the game's difficulty in Menu/Setup/Easy-Hard");
+    /*package*/ final static String MAP_TIP_1 = get("Map.Tip.1");
+    /*package*/ final static String MAP_TIP_2 = get("Map.Tip.2");
+    /*package*/ final static String MAP_TIP_3 = get("Map.Tip.3");
+    /*package*/ final static String MAP_TIP_4 = get("Map.Tip.4");
+    /*package*/ final static String MAP_TIP_5 = get("Map.Tip.5");
+    /*package*/ final static String MAP_TIP_6 = get("Map.Tip.6");
+    /*package*/ final static String MAP_TIP_7 = get("Map.Tip.7");
+    /*package*/ final static String MAP_TIP_8 = get("Map.Tip.8");
+    /*package*/ final static String MAP_TIP_9 = get("Map.Tip.9");
+    /*package*/ final static String MAP_TIP_10 = get("Map.Tip.10");
+    /*package*/ final static String MAP_TIP_11 = get("Map.Tip.11");
+    /*package*/ final static String MAP_TIP_12 = get("Map.Tip.12");
+    /*package*/ final static String MAP_TIP_13 = get("Map.Tip.13");
+    /*package*/ final static String MAP_TIP_14 = get("Map.Tip.14");
     
-    /*package*/ final static String MAP_TIP_COMPUTER_1 = get("Map.Tip.Computer.1", "You can enter the menu by pressing Esc on the map");
-    /*package*/ final static String MAP_TIP_COMPUTER_2 = get("Map.Tip.Computer.2", "You can view your current Goals by pressing G on the map");
+    /*package*/ final static String MAP_TIP_COMPUTER_1 = get("Map.Tip.Computer.1");
+    /*package*/ final static String MAP_TIP_COMPUTER_2 = get("Map.Tip.Computer.2");
     
     static {
         bundle = null;
     }
     
-    private final static String get(final String s) {
-        return (bundle == null) ? s : get(s, s);
-    }
-    
-    private final static String get(final String key, final String def) {
-        return ((bundle != null) && bundle.containsKey(key)) ? bundle.getString(key) : def;
+    private final static String get(final String key) {
+        return bundle.getString(key);
     }
     
     private final static ResourceBundle getBundle() {
-        return null;
-        //return ResourceBundle.getBundle(FurGuardiansGame.RES + "text/text.txt");
+        return ResourceBundle.getBundle(FurGuardiansGame.RES + "text/strings", new Locale("en"));
     }
 }
