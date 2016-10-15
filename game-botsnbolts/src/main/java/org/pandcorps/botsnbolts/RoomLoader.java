@@ -22,6 +22,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.botsnbolts;
 
+import java.lang.reflect.Constructor;
 import java.util.*;
 
 import org.pandcorps.botsnbolts.BlockPuzzle.*;
@@ -117,8 +118,27 @@ public abstract class RoomLoader {
         new PowerBox(x, y);
     }
     
-    private final static void enm(final int x, final int y, final String enemyType) {
-        //TODO
+    private final static void enm(final int x, final int y, final String enemyType) throws Exception {
+        getEnemyConstructor(enemyType).newInstance(Integer.valueOf(x), Integer.valueOf(y));
+    }
+    
+    private final static Map<String, Constructor<? extends Enemy>> enemyTypes = new HashMap<String, Constructor<? extends Enemy>>();
+    
+    @SuppressWarnings("unchecked")
+    private final static Constructor<? extends Enemy> getEnemyConstructor(final String enemyType) throws Exception {
+        Constructor<? extends Enemy> constructor = enemyTypes.get(enemyType);
+        if (constructor != null) {
+            return constructor;
+        }
+        for (final Class<?> c : Enemy.class.getDeclaredClasses()) {
+            final String name = c.getName();
+            if (name.endsWith(enemyType) && name.charAt(name.length() - enemyType.length() - 1) == '$') {
+                constructor = (Constructor<? extends Enemy>) c.getDeclaredConstructor(Integer.TYPE, Integer.TYPE);
+                enemyTypes.put(enemyType, constructor);
+                return constructor;
+            }
+        }
+        throw new IllegalArgumentException("Unrecognized enemyType " + enemyType);
     }
     
     private final static void shp(final Segment seg) {
