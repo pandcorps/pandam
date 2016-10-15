@@ -86,6 +86,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static ShootableDoorDefinition doorSilver = null;
     protected static ShootableDoorDefinition doorSmall = null;
     protected static Panmage doorBoss = null;
+    protected static Panmage ladder = null;
     protected static Panmage[] blockCyan = null;
     protected static Panmage[] blockTimed = null;
     protected static Panmage blockSpike = null;
@@ -195,6 +196,7 @@ public final class BotsnBoltsGame extends BaseGame {
         final Pangine engine = Pangine.getEngine();
         hudMeterBlank = newHudMeterImages("meter.blank", RES + "misc/MeterBlank.png");
         cube = newSheet("cube", RES + "misc/Cube.png", 16);
+        ladder = engine.createImage("ladder", RES + "bg/Ladder.png");
         blockCyan = newSheet("block.cyan", RES + "bg/BlockCyan.png", 16, FinPanple.ORIGIN, ShootableDoor.minBarrier, new FinPanple2(14, 16));
         blockTimed = blockCyan; //TODO
         blockSpike = engine.createImage("block.spike", RES + "bg/BlockSpike.png");

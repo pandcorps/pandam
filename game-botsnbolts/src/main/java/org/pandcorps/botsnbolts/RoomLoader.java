@@ -150,7 +150,17 @@ public abstract class RoomLoader {
         final TileMap tm = BotsnBoltsGame.tm;
         final int end = h - 1;
         for (int j = 0; j < h; j++) {
-            tm.setForeground(x, y + j, null, (j == end) ? BotsnBoltsGame.TILE_LADDER_TOP : BotsnBoltsGame.TILE_LADDER); //TODO img
+            final byte b;
+            if (j == end) {
+                if (j < (tm.getHeight() - 1)) {
+                    b = BotsnBoltsGame.TILE_LADDER_TOP;
+                } else {
+                    b = BotsnBoltsGame.TILE_LADDER;
+                }
+            } else {
+                b = BotsnBoltsGame.TILE_LADDER;
+            }
+            tm.setForeground(x, y + j, BotsnBoltsGame.ladder, b);
         }
     }
     
