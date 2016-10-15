@@ -28,6 +28,7 @@ import org.pandcorps.botsnbolts.BlockPuzzle.*;
 import org.pandcorps.botsnbolts.Enemy.*;
 import org.pandcorps.botsnbolts.ShootableDoor.*;
 import org.pandcorps.core.*;
+import org.pandcorps.core.img.*;
 import org.pandcorps.core.seg.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandax.tile.*;
@@ -45,13 +46,16 @@ public abstract class RoomLoader {
     protected final static class ScriptRoomLoader extends RoomLoader {
         @Override
         protected final Panroom newRoom() {
+            final Pangine engine = Pangine.getEngine();
             final Panroom room = BotsnBoltsGame.BotsnBoltsScreen.newRoom();
             SegmentStream in = null;
             try {
                 Segment seg;
                 in = SegmentStream.openLocation(BotsnBoltsGame.RES + "/level/" + roomId + ".txt");
-                seg = in.readRequire("IMG"); //TODO Add bg image and bg color
+                seg = in.readRequire("CTX"); // Context
                 BotsnBoltsGame.BotsnBoltsScreen.loadTileImage(seg.getValue(0));
+                //TODO Add bg image
+                engine.setBgColor(toColor(seg.getField(2)));
                 while ((seg = in.read()) != null) {
                     final String name = seg.getName();
                     if ("RCT".equals(name)) { // Rectangle
@@ -182,6 +186,10 @@ public abstract class RoomLoader {
             return null;
         }
         return BotsnBoltsGame.imgMap[seg.intValue(imageOffset + 1)][imgX];
+    }
+    
+    private final static Pancolor toColor(final Field fld) {
+        return fld == null ? FinPancolor.BLACK : new FinPancolor(fld.shortValue(0), fld.shortValue(1), fld.shortValue(2));
     }
     
     protected final static class DemoRoomLoader extends RoomLoader {
