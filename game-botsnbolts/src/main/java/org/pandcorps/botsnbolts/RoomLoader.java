@@ -59,6 +59,7 @@ public abstract class RoomLoader {
                     } else if ("ROW".equals(name)) { // Row
                         row(seg);
                     } else if ("COL".equals(name)) { // Column
+                        col(seg);
                     } else if ("BOX".equals(name)) { // Power-up Box
                         box(seg.intValue(0), seg.intValue(1));
                     } else if ("ENM".equals(name)) { // Enemy
@@ -102,6 +103,10 @@ public abstract class RoomLoader {
     
     private final static void row(final Segment seg) throws Exception {
         rct(0, seg.intValue(0), BotsnBoltsGame.tm.getWidth(), 1, seg, 1);
+    }
+    
+    private final static void col(final Segment seg) throws Exception {
+        rct(seg.intValue(0), 0, 1, BotsnBoltsGame.tm.getHeight(), seg, 1);
     }
     
     private final static void box(final int x, final int y) {
