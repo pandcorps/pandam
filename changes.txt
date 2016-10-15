@@ -1,3 +1,9 @@
+1.27.1 (41)
+
+Fixed bugs.
+
+*****
+
 1.27 (40)
 
 Added quad levels.
