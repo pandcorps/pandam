@@ -211,8 +211,9 @@ public final class BotsnBoltsGame extends BaseGame {
         for (int i = 0; i < sentrySize; i++) {
             sentryGun[i] = engine.createImage("sentry.gun." + i, CENTER_16, minCube, maxCube, sentryImgs[i]);
         }
-        propEnemy = newAnimation("prop.enemy", RES + "/enemy/PropEnemy.png", 16, new FinPanple2(8, 1), Chr.getMin(Enemy.PROP_OFF_X), Chr.getMax(Enemy.PROP_OFF_X, Enemy.PROP_H), 4);
-        springEnemy = null; //TODO
+        final Panple propO = new FinPanple2(8, 1), propMin = Chr.getMin(Enemy.PROP_OFF_X), propMax = Chr.getMax(Enemy.PROP_OFF_X, Enemy.PROP_H);
+        propEnemy = newAnimation("prop.enemy", RES + "/enemy/PropEnemy.png", 16, propO, propMin, propMax, 4);
+        springEnemy = newSheet("spring.enemy", RES + "/enemy/SpringEnemy.png", 16, propO, propMin, propMax);
         enemyProjectile = engine.createImage("projectile.enemy", CENTER_8, new FinPanple2(-2, -2), new FinPanple2(2, 2), RES + "/enemy/EnemyProjectile.png");
         enemyBurst = newAnimation("burst.enemy", RES + "/enemy/EnemyBurst.png", 16, CENTER_16, 2);
     }

@@ -103,6 +103,14 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
     }
     
+    protected final void turnTowardPlayer() {
+        final Player player = getNearestPlayer();
+        if (player == null) {
+            return;
+        }
+        setMirror(getPosition().getX() > player.getPosition().getX());
+    }
+    
     protected final Player getNearestPlayer() {
         return PlayerContext.getPlayer(BotsnBoltsGame.pc);
     }
@@ -340,6 +348,8 @@ public abstract class Enemy extends Chr implements CollisionListener {
     }
     
     protected final static class SpringEnemy extends Enemy {
+        private boolean scheduled = false;
+        
         protected SpringEnemy(final int x, final int y) {
             super(PROP_OFF_X, PROP_H, x, y, 2);
             endSpring();
@@ -347,12 +357,27 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
         
         private final void schedule() {
+            if (scheduled) {
+                return;
+            }
+            scheduled = true;
+            Pangine.getEngine().addTimer(this, 30, new TimerListener() {
+                @Override
+                public final void onTimer(final TimerEvent event) {
+                    jump();
+                }});
         }
         
         protected final void jump() {
+            scheduled = false;
+            if (!isGrounded()) {
+                schedule();
+                return;
+            }
+            turnTowardPlayer();
+            hv = isMirror() ? -1 : 1;
             v = 8;
             setView(BotsnBoltsGame.springEnemy[1]);
-            schedule();
         }
         
         private final void endSpring() {
@@ -361,7 +386,10 @@ public abstract class Enemy extends Chr implements CollisionListener {
         
         @Override
         protected final void onLanded() {
+            super.onLanded();
+            hv = 0;
             endSpring();
+            schedule();
         }
         
         @Override
