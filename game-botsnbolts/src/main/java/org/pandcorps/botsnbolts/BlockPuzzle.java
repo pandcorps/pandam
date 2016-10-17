@@ -297,4 +297,7 @@ public abstract class BlockPuzzle {
         protected final void award(final PowerUp powerUp) {
         }
     }
+    
+    protected final static class ConveyorBelt { //TODO
+    }
 }
