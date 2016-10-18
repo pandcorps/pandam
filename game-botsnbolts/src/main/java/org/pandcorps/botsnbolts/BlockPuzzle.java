@@ -168,6 +168,10 @@ public abstract class BlockPuzzle {
         }
     }
     
+    // Blocks fade in when Player approaches; fade out when Player leaves
+    protected final static class HiddenBlock { //TODO
+    }
+    
     protected final static class SpikeBlockPuzzle extends Panctor implements StepListener {
         private final static int vel = 3;
         private final static int timeAdd = (15 / vel) + 1;
