@@ -39,7 +39,6 @@ public abstract class Enemy extends Chr implements CollisionListener {
     protected Enemy(final int offX, final int h, final int x, final int y, final int health) {
         super(offX, h);
         this.health = health;
-        BotsnBoltsGame.tm.getLayer().addActor(this);
         final Panple pos = getPosition();
         BotsnBoltsGame.tm.savePosition(pos, x, y);
         pos.setZ(BotsnBoltsGame.DEPTH_ENEMY);
@@ -347,12 +346,16 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
     }
     
-    protected final static class SpringEnemy extends Enemy {
+    protected final static class SpringEnemy extends Enemy implements RoomAddListener {
         private boolean scheduled = false;
         
         protected SpringEnemy(final int x, final int y) {
             super(PROP_OFF_X, PROP_H, x, y, 2);
             endSpring();
+        }
+        
+        @Override
+        public final void onRoomAdd(final RoomAddEvent event) {
             schedule();
         }
         

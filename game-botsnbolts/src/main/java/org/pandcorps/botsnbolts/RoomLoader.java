@@ -36,6 +36,7 @@ import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.tile.Tile.*;
 
 public abstract class RoomLoader {
+    private final static List<Enemy> enemies = new ArrayList<Enemy>();
     private final static List<ShootableDoor> doors = new ArrayList<ShootableDoor>();
     
     protected String roomId = null;
@@ -122,7 +123,7 @@ public abstract class RoomLoader {
     }
     
     private final static void enm(final int x, final int y, final String enemyType) throws Exception {
-        getEnemyConstructor(enemyType).newInstance(Integer.valueOf(x), Integer.valueOf(y));
+        enemies.add(getEnemyConstructor(enemyType).newInstance(Integer.valueOf(x), Integer.valueOf(y)));
     }
     
     private final static Map<String, Constructor<? extends Enemy>> enemyTypes = new HashMap<String, Constructor<? extends Enemy>>();
@@ -216,6 +217,10 @@ public abstract class RoomLoader {
     }
     
     protected final static void onChangeFinished() {
+        final Panlayer layer = BotsnBoltsGame.tm.getLayer();
+        for (final Enemy enemy : enemies) {
+            layer.addActor(enemy);
+        }
         for (final ShootableDoor door : doors) {
             door.closeDoor();
         }
