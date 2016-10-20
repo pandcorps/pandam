@@ -498,6 +498,7 @@ public final class Player extends Chr {
                     BotsnBoltsGame.timgPrev.destroy();
                     BotsnBoltsGame.timgPrev = null;
                 }
+                RoomLoader.onChangeFinished();
             }
         };
     }

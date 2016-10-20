@@ -58,7 +58,7 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
         initPosition(pos);
         doorX = getDoorX();
         init();
-        closeDoor();
+        openTunnel();
     }
     
     protected void initPosition(final Panple pos) {
@@ -76,6 +76,10 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
     
     protected void init() {
         setVisible(false);
+        closeTunnel();
+    }
+    
+    private final void closeTunnel() {
         setDoorTiles(x, isSmall() ? BotsnBoltsGame.doorTunnelSmall : BotsnBoltsGame.doorTunnel, Tile.BEHAVIOR_SOLID, true);
     }
     
@@ -103,22 +107,31 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
     
     protected void closeDoor() {
         setDoorEnergyTiles(def.door);
+        closeTunnel();
     }
     
     private final void setDoorEnergyTiles(final Panframe[] door) {
         setDoorTiles(doorX, door, Tile.BEHAVIOR_OPEN, false);
     }
     
-    protected void openDoor() {
+    protected int openTunnel() {
         final TileMap tm = BotsnBoltsGame.tm;
         final int base = getBaseFrameIndex();
-        final Panframe[] opening = def.opening[0];
         final Panframe[] doorTunnelOverlay = isSmall() ? BotsnBoltsGame.doorTunnelSmallOverlay : BotsnBoltsGame.doorTunnelOverlay;
         final int n = doorTunnelOverlay.length / 2;
         for (int j = 0; j < n; j++) {
-            final int yj = y + j, basej = base + j;
-            tm.setBackground(x, yj, doorTunnelOverlay[basej], Tile.BEHAVIOR_OPEN);
-            tm.setForeground(doorX, yj, opening[basej]);
+            tm.setBackground(x, y + j, doorTunnelOverlay[base + j], Tile.BEHAVIOR_OPEN);
+        }
+        return n;
+    }
+    
+    protected void openDoor() {
+        final int n = openTunnel();
+        final TileMap tm = BotsnBoltsGame.tm;
+        final int base = getBaseFrameIndex();
+        final Panframe[] opening = def.opening[0];
+        for (int j = 0; j < n; j++) {
+            tm.setForeground(doorX, y + j, opening[base + j]);
         }
         addOpenTimer(1);
         destroy();

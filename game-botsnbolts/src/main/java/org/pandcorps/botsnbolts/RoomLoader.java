@@ -36,6 +36,8 @@ import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.tile.Tile.*;
 
 public abstract class RoomLoader {
+    private final static List<ShootableDoor> doors = new ArrayList<ShootableDoor>();
+    
     protected String roomId = null;
     
     protected final void setRoomId(final String roomId) {
@@ -197,7 +199,7 @@ public abstract class RoomLoader {
         if ("Boss".equals(doorType)) {
             new BossDoor(x, y);
         } else {
-            new ShootableDoor(x, y, ShootableDoor.getShootableDoorDefinition(doorType));
+            doors.add(new ShootableDoor(x, y, ShootableDoor.getShootableDoorDefinition(doorType)));
         }
     }
     
@@ -211,6 +213,13 @@ public abstract class RoomLoader {
     
     private final static Pancolor toColor(final Field fld) {
         return fld == null ? FinPancolor.BLACK : new FinPancolor(fld.shortValue(0), fld.shortValue(1), fld.shortValue(2));
+    }
+    
+    protected final static void onChangeFinished() {
+        for (final ShootableDoor door : doors) {
+            door.closeDoor();
+        }
+        doors.clear();
     }
     
     protected final static class DemoRoomLoader extends RoomLoader {
