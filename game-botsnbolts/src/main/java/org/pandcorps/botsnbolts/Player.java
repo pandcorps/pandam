@@ -486,6 +486,7 @@ public final class Player extends Chr {
     }
     
     private final void changeRoom(final int dirX, final int dirY) {
+        RoomLoader.clear();
         new RoomChanger(10 * dirX, 10 * dirY, null, Arrays.asList(BotsnBoltsGame.hud), Arrays.asList(this, BotsnBoltsGame.tm), Arrays.asList(BotsnBoltsGame.tm)) {
             @Override
             protected final Panroom createRoom() {

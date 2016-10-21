@@ -224,6 +224,11 @@ public abstract class RoomLoader {
         for (final ShootableDoor door : doors) {
             door.closeDoor();
         }
+        clear();
+    }
+    
+    protected final static void clear() {
+        enemies.clear();
         doors.clear();
     }
     
