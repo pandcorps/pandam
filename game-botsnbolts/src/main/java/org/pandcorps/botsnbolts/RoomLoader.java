@@ -38,6 +38,7 @@ import org.pandcorps.pandax.tile.Tile.*;
 public abstract class RoomLoader {
     private final static List<Enemy> enemies = new ArrayList<Enemy>();
     private final static List<ShootableDoor> doors = new ArrayList<ShootableDoor>();
+    private final static List<TileAnimator> animators = new ArrayList<TileAnimator>();
     
     protected String roomId = null;
     
@@ -51,7 +52,7 @@ public abstract class RoomLoader {
         @Override
         protected final Panroom newRoom() {
             final Pangine engine = Pangine.getEngine();
-            final Panroom room = BotsnBoltsGame.BotsnBoltsScreen.newRoom();
+            final Panroom room = BotsnBoltsGame.BotsnBoltsScreen.newRoom(); //TODO pass width
             SegmentStream in = null;
             try {
                 Segment seg;
@@ -62,12 +63,15 @@ public abstract class RoomLoader {
                 engine.setBgColor(toColor(seg.getField(2)));
                 while ((seg = in.read()) != null) {
                     final String name = seg.getName();
-                    if ("RCT".equals(name)) { // Rectangle
+                    if ("ANM".equals(name)) { // Animator
+                        anm(seg);
+                    } else if ("RCT".equals(name)) { // Rectangle
                         rct(seg.intValue(0), seg.intValue(1), seg.intValue(2), seg.intValue(3), seg, 4);
                     } else if ("ROW".equals(name)) { // Row
                         row(seg);
                     } else if ("COL".equals(name)) { // Column
                         col(seg);
+                    //TODO Tile
                     } else if ("BOX".equals(name)) { // Power-up Box
                         box(seg.intValue(0), seg.intValue(1));
                     } else if ("ENM".equals(name)) { // Enemy
@@ -94,6 +98,35 @@ public abstract class RoomLoader {
                 Iotil.close(in);
             }
         }
+    }
+    
+    private final static void anm(final Segment seg) {
+        final TileMap tm = BotsnBoltsGame.tm;
+        Tile tile = null;
+        final byte b = seg.byteValue(0);
+        final boolean bg = seg.booleanValue(1);
+        final int period = seg.intValue(2);
+        final List<Field> fields = seg.getRepetitions(3);
+        final int size = fields.size();
+        final TileFrame[] frames = new TileFrame[size];
+        for (int i = 0; i < size; i++) {
+            final Field field = fields.get(i);
+            final TileMapImage image = getTileMapImage(field, 0);
+            final int duration = field.intValue(2);
+            frames[i] = new TileFrame(image, duration);
+            if (i == 0) {
+                final TileMapImage background, foreground;
+                if (bg) {
+                    background = image;
+                    foreground = null;
+                } else {
+                    background = null;
+                    foreground = image;
+                }
+                tile = tm.getTile(background, foreground, b);
+            }
+        }
+        animators.add(new TileAnimator(tile, bg, period, frames));
     }
     
     private final static void rct(final int x, final int y, final int w, final int h, final Segment seg, final int tileOffset) throws Exception {
@@ -204,7 +237,7 @@ public abstract class RoomLoader {
         }
     }
     
-    private final static TileMapImage getTileMapImage(final Segment seg, final int imageOffset) {
+    private final static TileMapImage getTileMapImage(final Record seg, final int imageOffset) {
         final int imgX = seg.getInt(imageOffset, -1);
         if (imgX < 0) {
             return null;
@@ -224,12 +257,63 @@ public abstract class RoomLoader {
         for (final ShootableDoor door : doors) {
             door.closeDoor();
         }
-        clear();
+        clearChangeFinished();
+    }
+    
+    protected final static void step() {
+        for (final TileAnimator animator : animators) {
+            animator.step();
+        }
+    }
+    
+    private final static void clearChangeFinished() {
+        enemies.clear();
+        doors.clear();
     }
     
     protected final static void clear() {
-        enemies.clear();
-        doors.clear();
+        clearChangeFinished();
+        animators.clear();
+    }
+    
+    protected final static class TileAnimator {
+        private final Tile tile;
+        private final boolean bg;
+        private final int period;
+        private final TileFrame[] frames;
+        
+        protected TileAnimator(final Tile tile, final boolean bg, final int period, final TileFrame[] frames) {
+            this.tile = tile;
+            this.bg = bg;
+            this.period = period;
+            this.frames = frames;
+        }
+        
+        protected final void step() {
+            final long index = Pangine.getEngine().getClock() % period;
+            int limit = 0;
+            for (final TileFrame frame : frames) {
+                limit += frame.duration;
+                if (index < limit) {
+                    if (bg) {
+                        tile.setBackground(frame.image);
+                    } else {
+                        tile.setForeground(frame.image);
+                    }
+                    break;
+                }
+            }
+        }
+    }
+    
+    protected final static class TileFrame {
+        private final Object image;
+        private final int duration;
+        
+        protected TileFrame(final Object image, final int duration) {
+            this.image = image;
+            this.duration = duration;
+        }
     }
     
     protected final static class DemoRoomLoader extends RoomLoader {

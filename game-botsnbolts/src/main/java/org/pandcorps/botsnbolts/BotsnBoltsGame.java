@@ -662,6 +662,11 @@ public final class BotsnBoltsGame extends BaseGame {
             hud.setClearDepthEnabled(false);
             hud.addActor(healthMeter);
         }
+        
+        @Override
+        protected final void step() {
+            RoomLoader.step();
+        }
     }
     
     public final static void main(final String[] args) {

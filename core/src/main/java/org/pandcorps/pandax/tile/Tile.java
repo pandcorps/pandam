@@ -61,7 +61,7 @@ public final class Tile {
         setBehavior(behavior);
     }*/
     
-    /*package*/ final void setBackgroundO(final Object background) {
+    public final void setBackground(final Object background) {
         this.background = background;
     }
     
