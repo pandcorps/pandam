@@ -213,7 +213,7 @@ public final class BotsnBoltsGame extends BaseGame {
         }
         final Panple propO = new FinPanple2(8, 1), propMin = Chr.getMin(Enemy.PROP_OFF_X), propMax = Chr.getMax(Enemy.PROP_OFF_X, Enemy.PROP_H);
         propEnemy = newAnimation("prop.enemy", RES + "/enemy/PropEnemy.png", 16, propO, propMin, propMax, 4);
-        springEnemy = newSheet("spring.enemy", RES + "/enemy/SpringEnemy.png", 16, propO, propMin, propMax);
+        springEnemy = newSheet("spring.enemy", RES + "/enemy/SpringEnemy.png", 16, new FinPanple2(8, 3), propMin, propMax);
         enemyProjectile = engine.createImage("projectile.enemy", CENTER_8, new FinPanple2(-2, -2), new FinPanple2(2, 2), RES + "/enemy/EnemyProjectile.png");
         enemyBurst = newAnimation("burst.enemy", RES + "/enemy/EnemyBurst.png", 16, CENTER_16, 2);
     }
@@ -253,9 +253,8 @@ public final class BotsnBoltsGame extends BaseGame {
         final Panmage climb = newPlayerImage(pre + "Climb", oClimb, climbImgs, climbImgsMirror, 0);
         final Panmage climbShoot = newPlayerImage(pre + "Climb.Shoot", oClimb, climbImgs, climbImgsMirror, 1);
         final Panmage climbTop = newPlayerImage(pre + "Climb.Top", oClimb, climbImgs, climbImgsMirror, 2);
-        final Panmage basicProjectile = engine.createImage(pre + "Projectile", new FinPanple2(3, 3), new FinPanple2(-3, -1), new FinPanple2(5, 3), pre + "Projectile.png");
-        //final Panimation projectile2 = newAnimation(pre + "Projectile2", pre + "Projectile2.png", 16, new FinPanple2(7, 7), new FinPanple2(-4, -4), new FinPanple2(8, 6), 4);
-        final Panimation projectile2 = newFlipper(pre + "Projectile2", pre + "Projectile2.png", new FinPanple2(7, 7), new FinPanple2(-4, -4), new FinPanple2(8, 6), 4);
+        final Panmage basicProjectile = engine.createImage(pre + "Projectile", new FinPanple2(3, 3), new FinPanple2(-3, -2), new FinPanple2(5, 3), pre + "Projectile.png");
+        final Panimation projectile2 = newFlipper(pre + "Projectile2", pre + "Projectile2.png", new FinPanple2(7, 7), new FinPanple2(-4, -5), new FinPanple2(8, 6), 4);
         final Panimation projectile3 = newProjectile3(pre);
         final Panimation burst = newAnimation(pre + "Burst", pre + "Burst.png", 16, CENTER_16, 2);
         final Panimation charge = newAnimation(pre + "Charge", pre + "Charge.png", 8, null, 1);
@@ -326,7 +325,7 @@ public final class BotsnBoltsGame extends BaseGame {
         final Img[] imgs = Imtil.loadStrip(pre + "Projectile3.png", 32);
         final Panmage img0 = engine.createImage(pre + ".0", imgs[0]);
         final Panmage img1 = engine.createImage(pre + ".1", imgs[1]);
-        final Panple o = new FinPanple2(23, 7), min = new FinPanple2(-6, -6), max = new FinPanple2(8, 8), size = new FinPanple2(32, 16);
+        final Panple o = new FinPanple2(23, 7), min = new FinPanple2(-6, -7), max = new FinPanple2(8, 8), size = new FinPanple2(32, 16);
         return engine.createAnimation(pre + ".anm",
             newProjectile3Frame(pre, 0, o, min, max, img0, 0, 0, size),
             newProjectile3Frame(pre, 1, o, min, max, img0, 0, 16, size),

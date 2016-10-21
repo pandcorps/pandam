@@ -317,7 +317,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
     }
     
-    protected final static int PROP_OFF_X = 4, PROP_H = 10;
+    protected final static int PROP_OFF_X = 4, PROP_H = 12;
     
     protected final static class PropEnemy extends Enemy {
         protected PropEnemy(final int x, final int y) {
