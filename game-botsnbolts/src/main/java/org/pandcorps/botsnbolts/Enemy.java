@@ -379,12 +379,22 @@ public abstract class Enemy extends Chr implements CollisionListener {
             }
             turnTowardPlayer();
             hv = isMirror() ? -1 : 1;
+            v = 2;
+            addY();
             v = 8;
             setView(BotsnBoltsGame.springEnemy[1]);
         }
         
         private final void endSpring() {
             setView(BotsnBoltsGame.springEnemy[0]);
+        }
+        
+        @Override
+        protected final boolean onStepCustom() {
+            if (v < 0) {
+                endSpring();
+            }
+            return false;
         }
         
         @Override
