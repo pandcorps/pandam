@@ -157,7 +157,7 @@ public abstract class RoomLoader {
     }
     
     private final static void box(final int x, final int y) {
-        new PowerBox(x, y);
+        enemies.add(new PowerBox(x, y));
     }
     
     private final static void enm(final int x, final int y, final String enemyType) throws Exception {
