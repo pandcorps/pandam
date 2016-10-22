@@ -42,7 +42,11 @@ public final class LwjglPangine extends GlPangine {
 		super(new LwjglPanteraction());
 		engine = this;
 		gl = new LwjglPangl();
-		audio = new JavaxMidiPanaudio();
+		final MultiPanaudio multiAudio = new MultiPanaudio();
+		final Panaudio midAudio = new JavaxMidiPanaudio(), wavAudio = new LwjglWavPanaudio();
+		multiAudio.addMapping("mid", midAudio);
+		multiAudio.addMapping("wav", wavAudio);
+		audio = multiAudio;
 	}
 
 	public final static LwjglPangine getEngine() {

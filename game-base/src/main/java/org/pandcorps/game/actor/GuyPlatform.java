@@ -33,6 +33,10 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
     public final static int MIN_Y = -12;
     public final static float g = -0.65f;
     public final static float gFlying = -0.38f;
+    protected final static byte X_NORMAL = 0;
+    protected final static byte X_END = 1;
+    protected final static byte X_START = 2;
+    protected final static byte X_WALL = 3;
     protected final static byte Y_NORMAL = 0;
     protected final static byte Y_BUMP = 1;
     protected final static byte Y_LANDED = 2;
@@ -105,27 +109,32 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
             final float y = pos.getY();
             if (y < MIN_Y) {
                 pos.setY(MIN_Y);
-                v = 0;
-                if (onFell()) {
-                    return Y_FELL;
+                if (v < 0) { // This check helps with room transitions; might not be needed by games without room transitions
+                    v = 0;
+                    if (onFell()) {
+                        return Y_FELL;
+                    }
+                    return Y_FLOOR;
                 }
-                return Y_FLOOR;
             } else {
                 final float max = getCeiling();
                 if (y >= max) {
                     pos.setY(max - 1);
-                    v = 0;
-                    return Y_CEILING;
+                    if (v > 0) { // This check helps with room transitions; might not be needed by games without room transitions
+                        v = 0;
+                        onCeiling();
+                        return Y_CEILING;
+                    }
                 }
             }
         }
         return Y_NORMAL;
     }
     
-    protected final boolean addX(final int v) {
+    protected final byte addX(final int v) {
         if (v == 0) {
             setMirror(hv);
-            return true; // No movement, but request was successful
+            return X_NORMAL; // No movement, but request was successful
         }
         setMirror((hv == 0) ? v : hv);
         final int mult;
@@ -134,24 +143,25 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
             mult = 1;
             if (pos.getX() > getLayer().getSize().getX()) {
                 onEnd();
-                return false;
+                return X_END;
             }
         } else {
             mult = -1;
             if (pos.getX() <= 0) {
-                return false;
+                onStart();
+                return X_START;
             }
         }
         final int n = v * mult;
         final int offWall = (OFF_X + 1) * mult;
         for (int i = 0; i < n; i++) {
             if (onHorizontal(mult)) {
-                return true; // onHorizontal ran successfully
+                return X_NORMAL; // onHorizontal ran successfully
             }
             boolean down = true;
             if (isWall(offWall, 0)) {
                 if (isWall(offWall, 1)) {
-                    return false;
+                    return X_WALL;
                 }
                 pos.addY(1);
                 down = false;
@@ -161,7 +171,7 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
             }
             pos.addX(mult);
         }
-        return true;
+        return X_NORMAL;
     }
     
     protected final void addV(final float a) {
@@ -205,8 +215,9 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
             return;
         }
         
-        if (!addX(initCurrentHorizontalVelocity())) {
-            onWall();
+        final byte xResult = addX(initCurrentHorizontalVelocity());
+        if (xResult != X_NORMAL) {
+            onWall(xResult);
             chv = 0;
         }
         
@@ -453,11 +464,19 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
     }
     
     //@OverrideMe
-    protected void onWall() {
+    protected void onWall(final byte xResult) {
+    }
+    
+    //@OverrideMe
+    protected void onStart() {
     }
     
     //@OverrideMe
     protected void onEnd() {
+    }
+    
+    //@OverrideMe
+    protected void onCeiling() {
     }
     
     protected abstract boolean onFell();

@@ -35,9 +35,9 @@ import org.pandcorps.pandam.Panput.*;
 
 public abstract class BaseGame extends Pangame {
     /*
-    Sample monitor - 1920 x 1200
-    1080p - 1920 x 1080
-    720p - 1280 x 720
+    Sample monitor - 1920 x 1200 (8 x 5)
+    1080p - 1920 x 1080 (16 x 9)
+    720p - 1280 x 720 (16 x 9)
     1080p / 2 - 960 x 540
     720p / 2 - 640 x 360
     Sample monitor / 4 - 480 x 300
@@ -61,12 +61,12 @@ public abstract class BaseGame extends Pangame {
 	}
 	
 	//@OverrideMe
-	protected int getDebugWindowWidth() {
+	protected int getGameWidth() {
 		return 0;
 	}
 	
 	//@OverrideMe
-	protected int getDebugWindowHeight() {
+	protected int getGameHeight() {
 		return 0;
 	}
 	
@@ -82,9 +82,14 @@ public abstract class BaseGame extends Pangame {
         if (scalerClassName != null) {
         	engine.setImageScaler((Scaler) Reftil.newInstance(scalerClassName));
         }
-        final int debugWidth = getDebugWindowWidth();
-        if (debugWidth > 0) {
-        	engine.setApproximateZoomedDisplaySize(debugWidth, getDebugWindowHeight(), SCREEN_W, SCREEN_H, false);
+        final int gameWidth = getGameWidth();
+        if (gameWidth > 0) {
+            final int gameHeight = getGameHeight();
+            if (isFullScreen()) {
+                engine.setFullScreenEffectiveSize(gameWidth, gameHeight);
+            } else {
+                engine.setApproximateZoomedDisplaySize(gameWidth, gameHeight, SCREEN_W, SCREEN_H, false);
+            }
         	SCREEN_W = engine.getEffectiveWidth();
         	SCREEN_H = engine.getEffectiveHeight();
         } else if (isFullScreen()) {
