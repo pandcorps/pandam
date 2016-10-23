@@ -36,14 +36,15 @@ import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.tile.Tile.*;
 
 public abstract class RoomLoader {
+    private final static Map<BotCell, BotRoom> rooms = new HashMap<BotCell, BotRoom>();
     private final static List<Enemy> enemies = new ArrayList<Enemy>();
     private final static List<ShootableDoor> doors = new ArrayList<ShootableDoor>();
     private final static List<TileAnimator> animators = new ArrayList<TileAnimator>();
     
-    protected String roomId = null;
+    private static BotRoom room = null;
     
-    protected final void setRoomId(final String roomId) {
-        this.roomId = roomId;
+    protected final static void setRoom(final BotRoom room) {
+        RoomLoader.room = room;
     }
     
     protected abstract Panroom newRoom();
@@ -56,7 +57,7 @@ public abstract class RoomLoader {
             SegmentStream in = null;
             try {
                 Segment seg;
-                in = SegmentStream.openLocation(BotsnBoltsGame.RES + "/level/" + roomId + ".txt");
+                in = SegmentStream.openLocation(BotsnBoltsGame.RES + "/level/" + RoomLoader.room.roomId + ".txt");
                 seg = in.readRequire("CTX"); // Context
                 BotsnBoltsGame.BotsnBoltsScreen.loadTileImage(seg.getValue(0));
                 //TODO Add bg image
@@ -281,6 +282,39 @@ public abstract class RoomLoader {
         animators.clear();
     }
     
+    protected final static void loadRooms() {
+        SegmentStream in = null;
+        try {
+            in = SegmentStream.openLocation(BotsnBoltsGame.RES + "/level/Rooms.txt");
+            Segment seg;
+            while ((seg = in.read()) != null) {
+                final int x = seg.intValue(0), y = seg.intValue(1), w = seg.intValue(2);
+                final BotRoom room = new BotRoom(x, y, w, seg.getValue(3));
+                for (int i = 0; i < w; i++) {
+                    rooms.put(new BotCell(x + i, y), room);
+                }
+            }
+        } catch (final Exception e) {
+            throw Pantil.toRuntimeException(e);
+        } finally {
+            Iotil.close(in);
+        }
+    }
+    
+    protected final static BotRoom getRoom(final int x, final int y) {
+        return rooms.get(new BotCell(x, y));
+    }
+    
+    protected final static BotRoom getAdjacentRoom(final Player player, final int dirX, final int dirY) {
+        if (dirX < 0) {
+            return getRoom(room.x - 1, room.y);
+        } else if (dirX > 0) {
+            return getRoom(room.x + room.w, room.y);
+        }
+        final int x = (player.getPosition().getX() < BotsnBoltsGame.GAME_W) ? room.x : (room.x + room.w - 1);
+        return getRoom(x, room.y + dirY);
+    }
+    
     protected final static class TileAnimator {
         private final Tile tile;
         private final boolean bg;
@@ -318,6 +352,44 @@ public abstract class RoomLoader {
         protected TileFrame(final Object image, final int duration) {
             this.image = image;
             this.duration = duration;
+        }
+    }
+    
+    protected final static class BotRoom {
+        protected final int x;
+        protected final int y;
+        protected final int w;
+        protected final String roomId;
+        
+        protected BotRoom(final int x, final int y, final int w, final String roomId) {
+            this.x = x;
+            this.y = y;
+            this.w = w;
+            this.roomId = roomId;
+        }
+    }
+    
+    protected final static class BotCell {
+        protected final int x;
+        protected final int y;
+        
+        protected BotCell(final int x, final int y) {
+            this.x = x;
+            this.y = y;
+        }
+        
+        @Override
+        public final int hashCode() {
+            return (y * 10000) + x;
+        }
+        
+        @Override
+        public final boolean equals(final Object o) {
+            if (!(o instanceof BotCell)) {
+                return false;
+            }
+            final BotCell c = (BotCell) o;
+            return (x == c.x) && (y == c.y);
         }
     }
     

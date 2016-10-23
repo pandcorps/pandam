@@ -49,6 +49,8 @@ public final class BotsnBoltsGame extends BaseGame {
     
     protected final static String RES = "org/pandcorps/botsnbolts/";
     
+    protected final static int GAME_W = 224;
+    
     protected final static byte TILE_LADDER = 2; // Works like non-solid when not climbing
     protected final static byte TILE_LADDER_TOP = 3; // Works like floor when not climbing
     protected final static byte TILE_FLOOR = 4; // Used for blocks that fade in/out
@@ -120,7 +122,7 @@ public final class BotsnBoltsGame extends BaseGame {
     
     @Override
     protected final int getGameHeight() {
-        return 224; // 14 tiles
+        return GAME_W; // 14 tiles
     }
     
     @Override
@@ -148,6 +150,7 @@ public final class BotsnBoltsGame extends BaseGame {
         loadMisc();
         loadEnemies();
         loadPlayer();
+        RoomLoader.loadRooms();
     }
     
     private final static void loadDoors() {
@@ -551,7 +554,7 @@ public final class BotsnBoltsGame extends BaseGame {
             //final Panroom room = Pangame.getGame().getCurrentRoom();
             //initRoom(room);
             //fillRoom(room);
-            final Panroom room = Player.loadRoom("Demo1");
+            final Panroom room = Player.loadRoom(RoomLoader.getRoom(0, 0));
             Pangame.getGame().setCurrentRoom(room);
             newPlayer(room);
             RoomLoader.onChangeFinished();

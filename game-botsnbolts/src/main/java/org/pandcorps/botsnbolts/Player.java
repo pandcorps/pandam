@@ -273,6 +273,13 @@ public final class Player extends Chr {
         }
         startCharge = -1000;
         lastCharge = -1000;
+        if (health <= 0) {
+            defeat();
+        }
+    }
+    
+    protected final void defeat() {
+        //TODO
     }
     
     protected final void addHealth(final int amount) {
@@ -481,16 +488,23 @@ public final class Player extends Chr {
     
     @Override
     protected final boolean onFell() {
-        changeRoom(0, -1);
+        if (changeRoom(0, -1)) {
+            return true;
+        }
+        defeat();
         return true;
     }
     
-    private final void changeRoom(final int dirX, final int dirY) {
+    private final boolean changeRoom(final int dirX, final int dirY) {
+        final BotRoom room = RoomLoader.getAdjacentRoom(this, dirX, dirY);
+        if (room == null) {
+            return false;
+        }
         RoomLoader.clear();
         new RoomChanger(10 * dirX, 10 * dirY, null, Arrays.asList(BotsnBoltsGame.hud), Arrays.asList(this, BotsnBoltsGame.tm), Arrays.asList(BotsnBoltsGame.tm)) {
             @Override
             protected final Panroom createRoom() {
-                return loadRoom("Demo1");
+                return loadRoom(room);
             }
             
             @Override
@@ -502,12 +516,13 @@ public final class Player extends Chr {
                 RoomLoader.onChangeFinished();
             }
         };
+        return true;
     }
     
-    protected final static Panroom loadRoom(final String roomId) {
+    protected final static Panroom loadRoom(final BotRoom room) {
         //final RoomLoader loader = new DemoRoomLoader();
         final RoomLoader loader = new ScriptRoomLoader();
-        loader.setRoomId(roomId);
+        loader.setRoom(room);
         return loader.newRoom();
     }
     
