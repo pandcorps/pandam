@@ -131,11 +131,15 @@ public abstract class RoomLoader {
         animators.add(new TileAnimator(tile, bg, period, frames));
     }
     
-    private final static void rct(final int x, final int y, final int w, final int h, final Segment seg, final int tileOffset) throws Exception {
-        final TileMap tm = BotsnBoltsGame.tm;
+    private final static Tile getTile(final Segment seg, final int tileOffset) throws Exception {
         final TileMapImage bg = getTileMapImage(seg, tileOffset), fg = getTileMapImage(seg, tileOffset + 2);
         final byte b = seg.getByte(tileOffset + 4, Tile.BEHAVIOR_OPEN);
-        final Tile tile = (bg == null && fg == null && b == Tile.BEHAVIOR_OPEN) ? null : tm.getTile(bg, fg, b);
+        return (bg == null && fg == null && b == Tile.BEHAVIOR_OPEN) ? null : BotsnBoltsGame.tm.getTile(bg, fg, b);
+    }
+    
+    private final static void rct(final int x, final int y, final int w, final int h, final Segment seg, final int tileOffset) throws Exception {
+        final TileMap tm = BotsnBoltsGame.tm;
+        final Tile tile = getTile(seg, tileOffset);
         for (int i = 0; i < w; i++) {
             final int currX = x + i;
             for (int j = 0; j < h; j++) {
