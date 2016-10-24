@@ -40,6 +40,8 @@ public abstract class RoomLoader {
     private final static List<Enemy> enemies = new ArrayList<Enemy>();
     private final static List<ShootableDoor> doors = new ArrayList<ShootableDoor>();
     private final static List<TileAnimator> animators = new ArrayList<TileAnimator>();
+    private final static Map<Character, Tile> tiles = new HashMap<Character, Tile>();
+    private static int row = 0;
     
     private static BotRoom room = null;
     
@@ -54,6 +56,7 @@ public abstract class RoomLoader {
         protected final Panroom newRoom() {
             final Pangine engine = Pangine.getEngine();
             final Panroom room = BotsnBoltsGame.BotsnBoltsScreen.newRoom(); //TODO pass width
+            row = BotsnBoltsGame.tm.getHeight() - 1;
             SegmentStream in = null;
             try {
                 Segment seg;
@@ -66,6 +69,10 @@ public abstract class RoomLoader {
                     final String name = seg.getName();
                     if ("ANM".equals(name)) { // Animator
                         anm(seg);
+                    } else if ("PUT".equals(name)) { // Put
+                        put(seg);
+                    } else if ("M".equals(name)) { // Map
+                        m(seg);
                     } else if ("RCT".equals(name)) { // Rectangle
                         rct(seg.intValue(0), seg.intValue(1), seg.intValue(2), seg.intValue(3), seg, 4);
                     } else if ("ROW".equals(name)) { // Row
@@ -131,7 +138,21 @@ public abstract class RoomLoader {
         animators.add(new TileAnimator(tile, bg, period, frames));
     }
     
-    private final static Tile getTile(final Segment seg, final int tileOffset) throws Exception {
+    private final static void put(final Segment seg) {
+        tiles.put(seg.toCharacter(0), getTile(seg, 1));
+    }
+    
+    private final static void m(final Segment seg) {
+        final TileMap tm = BotsnBoltsGame.tm;
+        final String value = seg.getValue(0);
+        final int size = Chartil.size(value);
+        for (int i = 0; i < size; i++) {
+            tm.setTile(i, row, tiles.get(Character.valueOf(value.charAt(i))));
+        }
+        row--;
+    }
+    
+    private final static Tile getTile(final Segment seg, final int tileOffset) {
         final TileMapImage bg = getTileMapImage(seg, tileOffset), fg = getTileMapImage(seg, tileOffset + 2);
         final byte b = seg.getByte(tileOffset + 4, Tile.BEHAVIOR_OPEN);
         return (bg == null && fg == null && b == Tile.BEHAVIOR_OPEN) ? null : BotsnBoltsGame.tm.getTile(bg, fg, b);
@@ -284,6 +305,7 @@ public abstract class RoomLoader {
     protected final static void clear() {
         clearChangeFinished();
         animators.clear();
+        tiles.clear();
     }
     
     protected final static void loadRooms() {
