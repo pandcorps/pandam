@@ -120,6 +120,14 @@ public abstract class Record implements Savable {
         return parseBoolean(getValue(i), def);
     }
     
+    public final char charValue(final int i) {
+        return parseChar(getValue(i));
+    }
+    
+    public final char getChar(final int i, final char def) {
+        return parseChar(getValue(i), def);
+    }
+    
     public final Byte toByte(final int i) {
         return Mathtil.toByte(getValue(i));
     }
@@ -146,6 +154,10 @@ public abstract class Record implements Savable {
     
     public final Boolean toBoolean(final int i) {
         return Pantil.toBoolean(getValue(i));
+    }
+    
+    public final Character toCharacter(final int i) {
+        return Chartil.toCharacter(getValue(i));
     }
     
     public final void setByte(final int i, final byte value) {
@@ -243,6 +255,14 @@ public abstract class Record implements Savable {
     
     public final static boolean parseBoolean(final String value, final boolean def) {
         return Chartil.isEmpty(value) ? def : parseBoolean(value);
+    }
+    
+    public final static char parseChar(final String value) {
+        return Chartil.charValue(value);
+    }
+    
+    public final static char parseChar(final String value, final char def) {
+        return Chartil.isEmpty(value) ? def : parseChar(value);
     }
     
     public final static void clear(final Record r) {

@@ -55,6 +55,26 @@ public final class Chartil {
         return size(s) <= i ? 0 : s.charAt(i);
     }
     
+    public final static char charValue(final Character c) {
+        return charValue(c, ' ');
+    }
+    
+    public final static char charValue(final Character c, final char def) {
+        return (c == null) ? def : c.charValue();
+    }
+    
+    public final static char charValue(final String value) {
+        final int size = size(value);
+        if (size == 1) {
+            return value.charAt(0);
+        }
+        throw new IllegalArgumentException("Cannot convert " + value + " of size " + size + " to a char");
+    }
+    
+    public final static Character toCharacter(final String value) {
+        return isValued(value) ? Character.valueOf(charValue(value)) : null;
+    }
+    
     public final static boolean equals(final CharSequence s1, final CharSequence s2) {
         if (s1 == null) {
             return s2 == null;
