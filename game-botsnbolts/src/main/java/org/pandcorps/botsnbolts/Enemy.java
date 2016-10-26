@@ -128,6 +128,11 @@ public abstract class Enemy extends Chr implements CollisionListener {
         return 0;
     }
     
+    protected final boolean isSolidIndex(final int index) {
+        final byte b = Tile.getBehavior(BotsnBoltsGame.tm.getTile(index));
+        return (b == Tile.BEHAVIOR_SOLID) || isSolidBehavior(b);
+    }
+    
     protected final static class EnemyProjectile extends Pandy implements CollisionListener, AllOobListener {
         protected EnemyProjectile(final Enemy src, final int ox, final int oy, final float vx, final float vy) {
             final Panple srcPos = src.getPosition();
@@ -417,7 +422,74 @@ public abstract class Enemy extends Chr implements CollisionListener {
     }
     
     // Spider legs? Gear?
-    protected final static class CrawlEnemy {
+    protected final static class CrawlEnemy extends TileUnawareEnemy {
+        private final static int VEL = 1;
+        private final static int DURATION = 16 / VEL;
+        private int tileIndex;
+        private Direction surfaceDirection;
+        private int velX;
+        private int velY;
+        private int timer = 0;
+        
+        protected CrawlEnemy(final int x, final int y) {
+            super(x, y, 2);
+            final TileMap tm = BotsnBoltsGame.tm;
+            tileIndex = tm.getIndexRequired(x, y);
+            for (final Direction dir : Direction.values()) {
+                final int surfaceTileIndex = tm.getNeighbor(tileIndex, dir);
+                if (isSolidIndex(surfaceTileIndex)) {
+                    setSurfaceDirection(dir);
+                    break;
+                }
+            }
+            //setView(BotsnBoltsGame.crawlEnemy); //TODO
+        }
+        
+        private final void setSurfaceDirection(final Direction surfaceDirection) {
+            this.surfaceDirection = surfaceDirection;
+            if (surfaceDirection == Direction.South) {
+                velX = -1;
+                velY = 0;
+            } else if (surfaceDirection == Direction.West) {
+                velX = 0;
+                velY = 1;
+            } else if (surfaceDirection == Direction.North) {
+                velX = 1;
+                velY = 0;
+            } else if (surfaceDirection == Direction.East) {
+                velX = 0;
+                velY = -1;
+            } else {
+                throw new IllegalStateException("Unexpected Direction: " + surfaceDirection);
+            }
+        }
+        
+        private final void updateSurfaceDirection() {
+            final TileMap tm = BotsnBoltsGame.tm;
+            final Direction velocityDirection = surfaceDirection.getClockwise();
+            tileIndex = tm.getNeighbor(tileIndex, velocityDirection);
+            final int surfaceTileIndex = tm.getNeighbor(tileIndex, surfaceDirection);
+            if (!isSolidIndex(surfaceTileIndex)) {
+                setSurfaceDirection(surfaceDirection.getCounterclockwise());
+            } else if (isSolidIndex(tm.getNeighbor(tileIndex, velocityDirection))) {
+                setSurfaceDirection(velocityDirection);
+            }
+        }
+        
+        @Override
+        protected final void onStepEnemy() {
+            getPosition().add(velX, velY);
+            timer++;
+            if (timer >= DURATION) {
+                updateSurfaceDirection();
+                timer = 0;
+            }
+        }
+
+        @Override
+        protected final void award(final PowerUp powerUp) {
+            
+        }
     }
     
     protected final static class FireballEnemy {
