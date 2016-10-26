@@ -419,4 +419,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
     // Spider legs? Gear?
     protected final static class CrawlEnemy {
     }
+    
+    protected final static class FireballEnemy {
+    }
 }
