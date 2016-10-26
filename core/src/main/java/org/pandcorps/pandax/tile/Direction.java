@@ -38,4 +38,26 @@ public enum Direction {
         }
         return East;
     }
+    
+    public final Direction getClockwise() {
+        if (this == South) {
+            return West;
+        } else if (this == East) {
+            return South;
+        } else if (this == North) {
+            return East;
+        }
+        return North;
+    }
+    
+    public final Direction getCounterclockwise() {
+        if (this == South) {
+            return East;
+        } else if (this == East) {
+            return North;
+        } else if (this == North) {
+            return West;
+        }
+        return South;
+    }
 }
