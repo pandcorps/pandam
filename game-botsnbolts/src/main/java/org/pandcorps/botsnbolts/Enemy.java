@@ -351,7 +351,13 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
     }
     
-    protected final static class SpringEnemy extends Enemy implements RoomAddListener {
+    private abstract static class JumpEnemy extends Enemy implements RoomAddListener {
+        protected JumpEnemy(final int offX, final int h, final int x, final int y, final int health) {
+            super(offX, h, x, y, health);
+        }
+    }
+    
+    protected final static class SpringEnemy extends JumpEnemy {
         private boolean scheduled = false;
         
         protected SpringEnemy(final int x, final int y) {
@@ -492,6 +498,14 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
     }
     
-    protected final static class FireballEnemy {
+    protected final static class FireballEnemy extends Enemy {
+        protected FireballEnemy(int x, int y) {
+            super(PROP_OFF_X, PROP_H, x, y, 1);
+        }
+
+        @Override
+        protected final void award(final PowerUp powerUp) {
+            
+        }
     }
 }
