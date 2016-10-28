@@ -352,17 +352,10 @@ public abstract class Enemy extends Chr implements CollisionListener {
     }
     
     private abstract static class JumpEnemy extends Enemy implements RoomAddListener {
-        protected JumpEnemy(final int offX, final int h, final int x, final int y, final int health) {
-            super(offX, h, x, y, health);
-        }
-    }
-    
-    protected final static class SpringEnemy extends JumpEnemy {
         private boolean scheduled = false;
         
-        protected SpringEnemy(final int x, final int y) {
-            super(PROP_OFF_X, PROP_H, x, y, 2);
-            endSpring();
+        protected JumpEnemy(final int offX, final int h, final int x, final int y, final int health) {
+            super(offX, h, x, y, health);
         }
         
         @Override
@@ -370,7 +363,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
             schedule();
         }
         
-        private final void schedule() {
+        protected final void schedule() {
             if (scheduled) {
                 return;
             }
@@ -388,6 +381,20 @@ public abstract class Enemy extends Chr implements CollisionListener {
                 schedule();
                 return;
             }
+            onJump();
+        }
+        
+        protected abstract void onJump();
+    }
+    
+    protected final static class SpringEnemy extends JumpEnemy {
+        protected SpringEnemy(final int x, final int y) {
+            super(PROP_OFF_X, PROP_H, x, y, 2);
+            endSpring();
+        }
+        
+        @Override
+        protected final void onJump() {
             turnTowardPlayer();
             hv = isMirror() ? -1 : 1;
             v = 2;
