@@ -385,6 +385,11 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
         
         protected abstract void onJump();
+        
+        @Override
+        protected final void award(final PowerUp powerUp) {
+            
+        }
     }
     
     protected final static class SpringEnemy extends JumpEnemy {
@@ -426,11 +431,6 @@ public abstract class Enemy extends Chr implements CollisionListener {
         @Override
         protected final void onBump(final int t) {
             endSpring();
-        }
-        
-        @Override
-        protected final void award(final PowerUp powerUp) {
-            
         }
     }
     
@@ -505,14 +505,14 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
     }
     
-    protected final static class FireballEnemy extends Enemy {
+    protected final static class FireballEnemy extends JumpEnemy {
         protected FireballEnemy(int x, int y) {
             super(PROP_OFF_X, PROP_H, x, y, 1);
         }
 
         @Override
-        protected final void award(final PowerUp powerUp) {
-            
+        protected final void onJump() {
+            v = 8;
         }
     }
 }
