@@ -508,6 +508,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
     protected final static class FireballEnemy extends JumpEnemy {
         protected FireballEnemy(int x, int y) {
             super(PROP_OFF_X, PROP_H, x, y, 1);
+            //setView(); //TODO
         }
 
         @Override
