@@ -45,6 +45,12 @@ public abstract class Enemy extends Chr implements CollisionListener {
     }
     
     @Override
+    protected boolean onFell() {
+        destroy();
+        return true;
+    }
+    
+    @Override
     public void onCollision(final CollisionEvent event) {
         final Collidable collider = event.getCollider();
         if (collider instanceof Projectile) { // Projectile can have sub-classes like Explosion
