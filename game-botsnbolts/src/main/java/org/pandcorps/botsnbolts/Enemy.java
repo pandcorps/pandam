@@ -383,11 +383,15 @@ public abstract class Enemy extends Chr implements CollisionListener {
         
         protected final void jump() {
             scheduled = false;
-            if (!isGrounded()) {
+            if (!canJump()) {
                 schedule();
                 return;
             }
             onJump();
+        }
+        
+        protected boolean canJump() {
+            return isGrounded();
         }
         
         protected abstract void onJump();
@@ -516,10 +520,21 @@ public abstract class Enemy extends Chr implements CollisionListener {
             super(PROP_OFF_X, PROP_H, x, y, 1);
             //setView(); //TODO
         }
+        
+        @Override
+        protected final boolean canJump() {
+            return super.canJump() || (getPosition().getY() <= 0);
+        }
 
         @Override
         protected final void onJump() {
             v = 8;
+        }
+        
+        @Override
+        protected boolean onFell() {
+            schedule();
+            return true;
         }
     }
 }
