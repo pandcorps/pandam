@@ -97,6 +97,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static Panmage[] sentryGun = null;
     protected static Panimation propEnemy = null;
     protected static Panmage[] springEnemy = null;
+    protected static Panimation crawlEnemy = null;
     protected static Panmage enemyProjectile = null;
     protected static Panimation enemyBurst = null;
     protected static HudMeterImages hudMeterBlank = null;
@@ -217,6 +218,7 @@ public final class BotsnBoltsGame extends BaseGame {
         final Panple propO = new FinPanple2(8, 1), propMin = Chr.getMin(Enemy.PROP_OFF_X), propMax = Chr.getMax(Enemy.PROP_OFF_X, Enemy.PROP_H);
         propEnemy = newAnimation("prop.enemy", RES + "/enemy/PropEnemy.png", 16, propO, propMin, propMax, 4);
         springEnemy = newSheet("spring.enemy", RES + "/enemy/SpringEnemy.png", 16, new FinPanple2(8, 3), propMin, propMax);
+        crawlEnemy = null; //TODO
         enemyProjectile = engine.createImage("projectile.enemy", CENTER_8, new FinPanple2(-2, -2), new FinPanple2(2, 2), RES + "/enemy/EnemyProjectile.png");
         enemyBurst = newAnimation("burst.enemy", RES + "/enemy/EnemyBurst.png", 16, CENTER_16, 2);
     }
