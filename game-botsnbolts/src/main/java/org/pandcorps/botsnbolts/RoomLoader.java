@@ -55,7 +55,7 @@ public abstract class RoomLoader {
         @Override
         protected final Panroom newRoom() {
             final Pangine engine = Pangine.getEngine();
-            final Panroom room = BotsnBoltsGame.BotsnBoltsScreen.newRoom(); //TODO pass width
+            final Panroom room = BotsnBoltsGame.BotsnBoltsScreen.newRoom(RoomLoader.room.w * BotsnBoltsGame.GAME_W);
             row = BotsnBoltsGame.tm.getHeight() - 1;
             SegmentStream in = null;
             try {

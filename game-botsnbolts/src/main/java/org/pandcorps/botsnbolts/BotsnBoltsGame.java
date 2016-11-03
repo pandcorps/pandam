@@ -49,7 +49,10 @@ public final class BotsnBoltsGame extends BaseGame {
     
     protected final static String RES = "org/pandcorps/botsnbolts/";
     
-    protected final static int GAME_W = 224;
+    protected final static int GAME_COLUMNS = 24;
+    protected final static int GAME_ROWS = 14;
+    protected final static int GAME_W = GAME_COLUMNS * 16; // 384
+    protected final static int GAME_H = GAME_ROWS * 16; // 224;
     
     protected final static byte TILE_LADDER = 2; // Works like non-solid when not climbing
     protected final static byte TILE_LADDER_TOP = 3; // Works like floor when not climbing
@@ -118,12 +121,12 @@ public final class BotsnBoltsGame extends BaseGame {
     
     @Override
     protected final int getGameWidth() {
-        return 384; // 24 tiles
+        return GAME_W; // 24 tiles
     }
     
     @Override
     protected final int getGameHeight() {
-        return GAME_W; // 14 tiles
+        return GAME_H; // 14 tiles
     }
     
     @Override
@@ -562,14 +565,15 @@ public final class BotsnBoltsGame extends BaseGame {
             RoomLoader.onChangeFinished();
         }
         
-        protected final static Panroom newRoom() {
-            final Panroom room = Pangine.getEngine().createRoom(Pantil.vmid(), (FinPanple) Pangame.getGame().getCurrentRoom().getSize());
+        protected final static Panroom newRoom(final int w) {
+            final Panple size = Pangame.getGame().getCurrentRoom().getSize();
+            final Panroom room = Pangine.getEngine().createRoom(Pantil.vmid(), w, size.getY(), size.getZ());
             initRoom(room);
             return room;
         }
         
         protected final static Panroom newDemoRoom() {
-            final Panroom room = newRoom();
+            final Panroom room = newRoom(GAME_W);
             fillRoom(room);
             return room;
         }
@@ -657,6 +661,7 @@ public final class BotsnBoltsGame extends BaseGame {
             final Player player = new Player(pc);
             player.getPosition().set(48, 96, DEPTH_PLAYER);
             room.addActor(player);
+            Pangine.getEngine().track(player);
             newHud(room, player);
         }
         
