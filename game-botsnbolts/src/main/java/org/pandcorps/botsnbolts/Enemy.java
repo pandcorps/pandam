@@ -465,7 +465,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
                     break;
                 }
             }
-            //setView(BotsnBoltsGame.crawlEnemy); //TODO
+            setView(BotsnBoltsGame.crawlEnemy);
         }
         
         private final void setSurfaceDirection(final Direction surfaceDirection) {
