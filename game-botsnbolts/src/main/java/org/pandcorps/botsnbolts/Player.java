@@ -496,12 +496,14 @@ public final class Player extends Chr {
     }
     
     private final boolean changeRoom(final int dirX, final int dirY) {
-        final BotRoom room = RoomLoader.getAdjacentRoom(this, dirX, dirY);
-        if (room == null) {
+        final BotRoomCell roomCell = RoomLoader.getAdjacentRoom(this, dirX, dirY);
+        if (roomCell == null) {
             return false;
         }
+        final BotRoom room = roomCell.room;
+        final int nextX = (roomCell.cell.x - room.x) * BotsnBoltsGame.GAME_W;
         RoomLoader.clear();
-        new RoomChanger(10 * dirX, 10 * dirY, null, Arrays.asList(BotsnBoltsGame.hud), Arrays.asList(this, BotsnBoltsGame.tm), Arrays.asList(BotsnBoltsGame.tm)) {
+        new RoomChanger(nextX, 0, 10 * dirX, 10 * dirY, null, Arrays.asList(BotsnBoltsGame.hud), Arrays.asList(this, BotsnBoltsGame.tm), Arrays.asList(BotsnBoltsGame.tm)) {
             @Override
             protected final Panroom createRoom() {
                 return loadRoom(room);
@@ -522,7 +524,7 @@ public final class Player extends Chr {
     protected final static Panroom loadRoom(final BotRoom room) {
         //final RoomLoader loader = new DemoRoomLoader();
         final RoomLoader loader = new ScriptRoomLoader();
-        loader.setRoom(room);
+        RoomLoader.setRoom(room);
         return loader.newRoom();
     }
     

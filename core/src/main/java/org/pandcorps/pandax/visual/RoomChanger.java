@@ -31,6 +31,8 @@ import org.pandcorps.pandam.event.*;
 public abstract class RoomChanger extends Panctor implements StepListener {
     private static RoomChanger activeChanger = null;
     private Panroom newRoom = null;
+    private final int nextX;
+    private final int nextY;
     private final int velX;
     private final int velY;
     private Panctor tracked = null;
@@ -38,10 +40,12 @@ public abstract class RoomChanger extends Panctor implements StepListener {
     private int age = 0;
     
     // Might keep a constant deep background layer and a HUD layer on top
-    public RoomChanger(final int velX, final int velY, final List<Panlayer> layersToKeepBeneath, final List<Panlayer> layersToKeepAbove,
+    public RoomChanger(final int nextX, final int nextY, final int velX, final int velY, final List<Panlayer> layersToKeepBeneath, final List<Panlayer> layersToKeepAbove,
                        final List<? extends Panctor> actorsToKeep, final List<? extends Panctor> actorsToDestroy) {
         Panctor.destroy(activeChanger);
         activeChanger = this;
+        this.nextX = nextX;
+        this.nextY = nextY;
         this.velX = velX;
         this.velY = velY;
         this.actorsToDestroy = actorsToDestroy;
@@ -89,7 +93,7 @@ public abstract class RoomChanger extends Panctor implements StepListener {
             roomX = -engine.getEffectiveWidth();
         } else {
             offX = 0;
-            roomX = 0;
+            roomX = nextX;
         }
         if (velY < 0) {
             offY = newRoom.getSize().getY();
@@ -99,7 +103,7 @@ public abstract class RoomChanger extends Panctor implements StepListener {
             roomY = -engine.getEffectiveHeight();
         } else {
             offY = 0;
-            roomY = 0;
+            roomY = nextY;
         }
         for (final Panctor actor : Coltil.unnull(actorsToKeep)) {
             newRoom.addActor(actor);

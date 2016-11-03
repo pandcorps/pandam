@@ -331,14 +331,24 @@ public abstract class RoomLoader {
         return rooms.get(new BotCell(x, y));
     }
     
-    protected final static BotRoom getAdjacentRoom(final Player player, final int dirX, final int dirY) {
+    protected final static BotRoomCell getAdjacentRoom(final Player player, final int dirX, final int dirY) {
+        final int x, y;
         if (dirX < 0) {
-            return getRoom(room.x - 1, room.y);
+            x = room.x - 1;
+            y = room.y;
         } else if (dirX > 0) {
-            return getRoom(room.x + room.w, room.y);
+            x = room.x + room.w;
+            y = room.y;
+        } else {
+            x = (player.getPosition().getX() < BotsnBoltsGame.GAME_W) ? room.x : (room.x + room.w - 1);
+            y = room.y + dirY;
         }
-        final int x = (player.getPosition().getX() < BotsnBoltsGame.GAME_W) ? room.x : (room.x + room.w - 1);
-        return getRoom(x, room.y + dirY);
+        final BotCell cell = new BotCell(x, y);
+        final BotRoom room = getRoom(x, y);
+        if (room == null) {
+            return null;
+        }
+        return new BotRoomCell(room, cell);
     }
     
     protected final static class TileAnimator {
@@ -416,6 +426,16 @@ public abstract class RoomLoader {
             }
             final BotCell c = (BotCell) o;
             return (x == c.x) && (y == c.y);
+        }
+    }
+    
+    protected final static class BotRoomCell {
+        protected final BotRoom room;
+        protected final BotCell cell;
+        
+        protected BotRoomCell(final BotRoom room, final BotCell cell) {
+            this.room = room;
+            this.cell = cell;
         }
     }
     
