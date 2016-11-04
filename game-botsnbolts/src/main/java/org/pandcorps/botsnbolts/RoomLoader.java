@@ -344,7 +344,7 @@ public abstract class RoomLoader {
             y = room.y + dirY;
         }
         final BotCell cell = new BotCell(x, y);
-        final BotRoom room = getRoom(x, y);
+        final BotRoom room = rooms.get(cell);
         if (room == null) {
             return null;
         }

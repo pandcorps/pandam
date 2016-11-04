@@ -92,7 +92,7 @@ public abstract class RoomChanger extends Panctor implements StepListener {
             offX = -oldRoom.getSize().getX();
             roomX = -engine.getEffectiveWidth();
         } else {
-            offX = 0;
+            offX = nextX - oldRoom.getViewMinimum().getX();
             roomX = nextX;
         }
         if (velY < 0) {
@@ -102,7 +102,7 @@ public abstract class RoomChanger extends Panctor implements StepListener {
             offY = -oldRoom.getSize().getY();
             roomY = -engine.getEffectiveHeight();
         } else {
-            offY = 0;
+            offY = nextY - oldRoom.getViewMinimum().getY();
             roomY = nextY;
         }
         for (final Panctor actor : Coltil.unnull(actorsToKeep)) {
