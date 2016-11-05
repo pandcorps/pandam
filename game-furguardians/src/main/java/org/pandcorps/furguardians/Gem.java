@@ -74,8 +74,9 @@ public class Gem extends TileOccupant implements StepListener {
 	}*/
 	
 	protected final static void onCollide(final TileMap tm, final int index, final Player player) {
-	    getGemInfo(tm, index).collect(player);
-		spark(tm, index);
+	    final GemInfo info = getGemInfo(tm, index);
+	    info.collect(player);
+		spark(tm, index, info);
 	}
 	
 	private final static int getAward(final Panimation anm) {
@@ -107,11 +108,11 @@ public class Gem extends TileOccupant implements StepListener {
 		player.addGems(gems);
 	}
 	
-	protected final static void spark(final TileMap tm, final int index) {
+	protected final static void spark(final TileMap tm, final int index, final GemInfo info) {
 		tm.setTile(index, null);
 		tm.savePosition(sparkPos, index);
 	    spark(sparkPos, false);
-	    playSound();
+	    playSound(info);
 	}
 	
 	protected final static void spark(final Panple pos, final boolean end) {
@@ -122,7 +123,7 @@ public class Gem extends TileOccupant implements StepListener {
 		new Spark(layer, Spark.DEF_COUNT, pos.getX() + 8, pos.getY() + 8, end);
 	}
 	
-	protected final static void playSound() {
+	protected final static void playSound(final GemInfo info) {
 		final long clock = Pangine.getEngine().getClock();
 		if (clock > lastSound) {
 			FurGuardiansGame.soundGem.startSound();
@@ -158,7 +159,7 @@ public class Gem extends TileOccupant implements StepListener {
 			if (mag <= (speed + 0.5)) {
 				spark(viewPos, false);
 				info.collect(dst);
-				playSound();
+				playSound(info);
 				destroy();
 				return;
 			}
@@ -168,22 +169,22 @@ public class Gem extends TileOccupant implements StepListener {
 		}
 	}
 	
-	private final static class GemInfo {
+	protected final static class GemInfo {
 	    private final Panmage img;
 	    private final int award;
 	    private final int letterIndex;
 	    
-	    private GemInfo(final Panmage img, final int award, final int letterIndex) {
+	    protected GemInfo(final Panmage img, final int award, final int letterIndex) {
 	        this.img = img;
 	        this.award = award;
 	        this.letterIndex = letterIndex;
 	    }
 	    
-	    private GemInfo(final Panimation anm) {
+	    protected GemInfo(final Panimation anm) {
 	        this(anm.getFrames()[0].getImage(), getAward(anm), -1);
 	    }
 	    
-	    private GemInfo(final int letterIndex) {
+	    protected GemInfo(final int letterIndex) {
 	        this(FurGuardiansGame.getGemWordLetter(letterIndex), -1, letterIndex);
 	    }
 	    

@@ -216,7 +216,7 @@ public class Tiles {
         if (i < 0) {
             return false;
         }
-	    newGemDecoration(player, index, FurGuardiansGame.getGemWordLetter(i));
+	    newGemDecoration(player, index, FurGuardiansGame.getGemWordLetter(i), i);
 	    //final TileActor h = new TileActor();
 	    //h.setViewFromForeground(Level.tm, t);
 	    collectLetter(i);
@@ -229,7 +229,11 @@ public class Tiles {
     }
     
     protected final static GemBumped newGemDecoration(final Player player, final int index, final Panmage img) {
-    	final GemBumped gem = GemBumped.create(player, index, 0, GemBumped.TYPE_DECORATION, null);
+        return newGemDecoration(player, index, img, -1);
+    }
+    
+    protected final static GemBumped newGemDecoration(final Player player, final int index, final Panmage img, final int letterIndex) {
+    	final GemBumped gem = GemBumped.create(player, index, 0, GemBumped.TYPE_DECORATION, null, letterIndex);
     	gem.setView(img);
     	return gem;
     }
@@ -434,7 +438,7 @@ public class Tiles {
         }
         
         protected final void scheduleAdvance() {
-            addTimer(30, new TimerListener() { //TODO Think about duration
+            addTimer(4, new TimerListener() {
                 @Override
                 public final void onTimer(final TimerEvent event) {
                     advance();

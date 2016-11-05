@@ -26,6 +26,7 @@ import java.util.*;
 
 import org.pandcorps.core.*;
 import org.pandcorps.furguardians.Enemy.*;
+import org.pandcorps.furguardians.Gem.*;
 import org.pandcorps.furguardians.Goal.*;
 import org.pandcorps.furguardians.Player.*;
 import org.pandcorps.furguardians.Profile.*;
@@ -92,7 +93,7 @@ public class GemBumped extends Pandy {
 	}
 	
 	public GemBumped(final Player player, final Panctor defeated, final EnemyDefinition def) {
-		this(player, defeated.getPosition().getX() - 8, defeated.getBoundingMaximum().getY() - Enemy.DEFAULT_H, def.award, TYPE_NORMAL, getAnm(def.award));
+		this(player, defeated.getPosition().getX() - 8, defeated.getBoundingMaximum().getY() - Enemy.DEFAULT_H, def.award, TYPE_NORMAL, getAnm(def.award), -1);
 	}
 	
 	public final static GemBumped newLevelEnd(final Player player, final int index) {
@@ -131,20 +132,29 @@ public class GemBumped extends Pandy {
 	
 	public final static GemBumped newShatter(final Player player) {
 		final Panple pos = player.getPosition();
-	    return new GemBumped(player, pos.getX() - 8, pos.getY(), -1, TYPE_NORMAL, FurGuardiansGame.gemAnm);
+	    return new GemBumped(player, pos.getX() - 8, pos.getY(), -1, TYPE_NORMAL, FurGuardiansGame.gemAnm, -1);
 	}
 	
 	protected final static GemBumped create(final Player player, final int index, final int award, final byte type, final Panimation anm) {
-		Level.tm.savePosition(tilePos, index);
-	    return new GemBumped(player, tilePos.getX(), tilePos.getY(), award, type, anm);
+	    return create(player, index, award, type, anm, -1);
 	}
 	
-	private GemBumped(final Player player, final float x, final float y, final int award, final byte type, final Panimation anm) {
-		this(FurGuardiansGame.room, player, x, y, award, type, anm, Tiles.g);
+	protected final static GemBumped create(final Player player, final int index, final int award, final byte type, final Panimation anm, final int letterIndex) {
+		Level.tm.savePosition(tilePos, index);
+	    return new GemBumped(player, tilePos.getX(), tilePos.getY(), award, type, anm, letterIndex);
+	}
+	
+	private GemBumped(final Player player, final float x, final float y, final int award, final byte type, final Panimation anm, final int letterIndex) {
+		this(FurGuardiansGame.room, player, x, y, award, type, anm, Tiles.g, letterIndex);
 	}
 	
 	protected GemBumped(final Panlayer layer, final Player player, final float x, final float y, final int award, final byte type,
 			final Panimation anm, final Panple acc) {
+	    this(layer, player, x, y, award, type, anm, acc, -1);
+	}
+	
+	protected GemBumped(final Panlayer layer, final Player player, final float x, final float y, final int award, final byte type,
+	        final Panimation anm, final Panple acc, final int letterIndex) {
 		super(acc);
 		this.award = award;
 		this.type = type;
@@ -160,7 +170,13 @@ public class GemBumped extends Pandy {
         	//FurGuardiansGame.soundGemLevel.startSound();
         	// Probably not needed; ending level plays bells
         } else if (good || type == TYPE_DECORATION) {
-        	Gem.playSound();
+            final GemInfo info;
+            if (letterIndex < 0) {
+                info = null;
+            } else {
+                info = new GemInfo((Panmage) getView(), -1, letterIndex);
+            }
+        	Gem.playSound(info);
         } else {
             // gemShatter
         	FurGuardiansGame.soundCrumble.startSound();
