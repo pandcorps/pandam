@@ -302,6 +302,15 @@ public abstract class BlockPuzzle {
         }
     }
     
+    /*
+    Will react when Player stands on it.
+    Might shoot flames.
+    Might have other possible behavior.
+    Might also have different colored blocks that use same behavior(s) based on a timer instead of pressure
+    */
+    protected final static class PressureBlock { //TODO
+    }
+    
     protected final static class ConveyorBelt { //TODO
     }
 }
