@@ -111,6 +111,8 @@ public class Panctor extends BasePantity implements SpecPanctor {
 	
     private final Panple boundPos; // = getPosition();
     private boolean boundMirror;
+    private boolean boundFlip;
+    private int boundRot;
     //private Pansplay boundDisplay;
     private Panple boundMin;
     private Panple boundMax;
@@ -124,19 +126,26 @@ public class Panctor extends BasePantity implements SpecPanctor {
         }
         boundClock = ec;
         final Panview view = impl.getView();
-        final boolean fmir;
+        final boolean fmir, fflp;
+        final int frot;
         final Panple fmin, fmax;
         if (view instanceof Panimation) {
             final Panframe frame = ((Panimation) view).getFrames()[getCurrentFrame()];
             fmir = frame.isMirror();
+            fflp = frame.isFlip();
+            frot = frame.getRot();
             fmin = frame.getBoundingMinimum(); // Need to check current display anyway, so don't use effective boundaries
             fmax = frame.getBoundingMaximum();
         } else {
             fmir = false;
+            fflp = false;
+            frot = 0;
             fmin = null;
             fmax = null;
         }
         boundMirror = isMirror() ^ fmir;
+        boundFlip = isFlip() ^ fflp;
+        boundRot = (getRot() + frot) % 4;
         final Pansplay boundDisplay = getCurrentDisplay();
         if (boundDisplay == null) {
             throw new NullPointerException(getClass() + " boundary needed, but no display found");
@@ -176,20 +185,52 @@ public class Panctor extends BasePantity implements SpecPanctor {
             */
             
             initBound();
-            if (boundMirror) {
+            /*if (boundMirror) {
                 //return boundPos.getX() + boundDisplay.getOrigin().getX() - boundDisplay.getBoundingMaximum().getX();
                 return boundPos.getX() - boundMax.getX();
             } else {
                 //return boundPos.getX() + boundDisplay.getBoundingMinimum().getX() - boundDisplay.getOrigin().getX();
                 return boundPos.getX() + boundMin.getX();
+            }*/
+            final float off;
+            switch (boundRot % 4) {
+                case 0 :
+                    off = boundMirror ? -boundMax.getX() : boundMin.getX();
+                    break;
+                case 1 : // counter-clockwise
+                    off = boundMirror ? boundMin.getY() : -boundMax.getY();
+                    break;
+                case 2 :
+                    off = boundMirror ? boundMin.getX() : -boundMax.getX();
+                    break;
+                default :
+                    off = boundMirror ? -boundMax.getY() : boundMin.getY();
+                    break;
             }
+            return boundPos.getX() + off;
         }
 
         @Override
         public float getY() {
             //final Pansplay display = getCurrentDisplay();
             //return boundPos.getY() + boundDisplay.getBoundingMinimum().getY() - boundDisplay.getOrigin().getY();
-            return boundPos.getY() + boundMin.getY();
+            //return boundPos.getY() + boundMin.getY();
+            final float off;
+            switch (boundRot % 4) {
+                case 0 :
+                    off = boundFlip ? -boundMax.getY() : boundMin.getY();
+                    break;
+                case 1 : // counter-clockwise
+                    off = boundFlip ? -boundMax.getX() : boundMin.getX();
+                    break;
+                case 2 :
+                    off = boundFlip ? boundMin.getY() : -boundMax.getY();
+                    break;
+                default :
+                    off = boundFlip ? boundMin.getX() : -boundMax.getX();
+                    break;
+            }
+            return boundPos.getY() + off;
         }
 
         @Override
@@ -214,20 +255,52 @@ public class Panctor extends BasePantity implements SpecPanctor {
             //return pos.getX() + display.getBoundingMaximum().getX() - display.getOrigin().getX();
             
             initBound();
-            if (boundMirror) {
+            /*if (boundMirror) {
                 //return boundPos.getX() + boundDisplay.getOrigin().getX() - boundDisplay.getBoundingMinimum().getX();
                 return boundPos.getX() - boundMin.getX();
             } else {
                 //return boundPos.getX() + boundDisplay.getBoundingMaximum().getX() - boundDisplay.getOrigin().getX();
                 return boundPos.getX() + boundMax.getX();
+            }*/
+            final float off;
+            switch (boundRot % 4) {
+                case 0 :
+                    off = boundMirror ? -boundMin.getX() : boundMax.getX();
+                    break;
+                case 1 : // counter-clockwise
+                    off = boundMirror ? boundMax.getY() : -boundMin.getY();
+                    break;
+                case 2 :
+                    off = boundMirror ? boundMax.getX() : -boundMin.getX();
+                    break;
+                default :
+                    off = boundMirror ? -boundMin.getY() : boundMax.getY();
+                    break;
             }
+            return boundPos.getX() + off;
         }
 
         @Override
         public float getY() {
             //final Pansplay display = getCurrentDisplay();
             //return boundPos.getY() + boundDisplay.getBoundingMaximum().getY() - boundDisplay.getOrigin().getY();
-            return boundPos.getY() + boundMax.getY();
+            //return boundPos.getY() + boundMax.getY();
+            final float off;
+            switch (boundRot % 4) {
+                case 0 :
+                    off = boundFlip ? -boundMin.getY() : boundMax.getY();
+                    break;
+                case 1 : // counter-clockwise
+                    off = boundFlip ? -boundMin.getX() : boundMax.getX();
+                    break;
+                case 2 :
+                    off = boundFlip ? boundMax.getY() : -boundMin.getY();
+                    break;
+                default :
+                    off = boundFlip ? boundMax.getX() : -boundMin.getX();
+                    break;
+            }
+            return boundPos.getY() + off;
         }
 
         @Override
