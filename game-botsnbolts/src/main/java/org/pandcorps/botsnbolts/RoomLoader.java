@@ -51,6 +51,12 @@ public abstract class RoomLoader {
     
     protected abstract Panroom newRoom();
     
+    /*
+    TODO
+    Validation
+    no overlapping cells
+    no ladders between left side of one long room and right side of another
+    */
     protected final static class ScriptRoomLoader extends RoomLoader {
         @Override
         protected final Panroom newRoom() {
