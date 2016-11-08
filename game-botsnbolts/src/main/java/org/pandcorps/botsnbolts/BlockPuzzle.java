@@ -169,7 +169,16 @@ public abstract class BlockPuzzle {
     }
     
     // Blocks fade in when Player approaches; fade out when Player leaves
-    protected final static class HiddenBlock { //TODO
+    protected final static class HiddenBlockPuzzle { //TODO
+        private final Map<Integer, Integer> indices;
+        
+        protected HiddenBlockPuzzle(final int[] indices) {
+            this.indices = new HashMap<Integer, Integer>(indices.length);
+            final TileMap tm = BotsnBoltsGame.tm;
+            for (final int index : indices) {
+                this.indices.put(Integer.valueOf(tm.getColumn(index)), Integer.valueOf(index));
+            }
+        }
     }
     
     protected final static class SpikeBlockPuzzle extends Panctor implements StepListener {
