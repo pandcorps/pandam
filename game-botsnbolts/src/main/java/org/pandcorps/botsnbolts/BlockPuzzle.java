@@ -25,6 +25,7 @@ package org.pandcorps.botsnbolts;
 import java.util.*;
 
 import org.pandcorps.botsnbolts.Enemy.*;
+import org.pandcorps.botsnbolts.Player.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandax.tile.*;
@@ -169,7 +170,7 @@ public abstract class BlockPuzzle {
     }
     
     // Blocks fade in when Player approaches; fade out when Player leaves
-    protected final static class HiddenBlockPuzzle { //TODO
+    protected final static class HiddenBlockPuzzle extends Panctor implements StepListener { //TODO
         private final Map<Integer, Integer> indices;
         
         protected HiddenBlockPuzzle(final int[] indices) {
@@ -178,6 +179,15 @@ public abstract class BlockPuzzle {
             for (final int index : indices) {
                 this.indices.put(Integer.valueOf(tm.getColumn(index)), Integer.valueOf(index));
             }
+        }
+
+        @Override
+        public final void onStep(final StepEvent event) {
+            final Player player = PlayerContext.getPlayer(BotsnBoltsGame.pc);
+            if (player == null) {
+                return;
+            }
+            //TODO
         }
     }
     
