@@ -170,14 +170,16 @@ public abstract class BlockPuzzle {
     }
     
     // Blocks fade in when Player approaches; fade out when Player leaves
-    protected final static class HiddenBlockPuzzle extends Panctor implements StepListener { //TODO
+    protected final static class HiddenBlockPuzzle extends Panctor implements StepListener {
         private final Map<Integer, Integer> indices;
+        private final Set<Integer> activeIndices = new HashSet<Integer>();
         
         protected HiddenBlockPuzzle(final int[] indices) {
             this.indices = new HashMap<Integer, Integer>(indices.length);
             final TileMap tm = BotsnBoltsGame.tm;
             for (final int index : indices) {
                 this.indices.put(Integer.valueOf(tm.getColumn(index)), Integer.valueOf(index));
+                tm.setBehavior(index, Tile.BEHAVIOR_SOLID);
             }
         }
 
@@ -187,7 +189,24 @@ public abstract class BlockPuzzle {
             if (player == null) {
                 return;
             }
-            //TODO
+            final Panmage[] blockImgs = BotsnBoltsGame.blockCyan; //TODO different color
+            final TileMap tm = BotsnBoltsGame.tm;
+            final int col = tm.getContainerColumn(player.getPosition().getX());
+            for (final Integer activeIndex : activeIndices) {
+                tm.setForeground(activeIndex.intValue(), null);
+            }
+            activeIndices.clear();
+            for (int i = 0; i < 4; i++) {
+                for (int j = ((i == 0) ? 0 : 1); j < 2; j++) {
+                    final int mult = (j == 0) ? 1 : -1;
+                    final Integer tileIndex = indices.get(Integer.valueOf(col + (mult * i)));
+                    if (tileIndex == null) {
+                        continue;
+                    }
+                    tm.setForeground(tileIndex.intValue(), blockImgs[i]);
+                    activeIndices.add(tileIndex);
+                }
+            }
         }
     }
     
