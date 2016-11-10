@@ -95,6 +95,8 @@ public abstract class RoomLoader {
                         shp(seg);
                     } else if ("TMP".equals(name)) { // Timed Block Puzzle
                         tmp(in);
+                    } else if ("HDP".equals(name)) { // Hidden Block Puzzle
+                        hdp(seg);
                     } else if ("SPP".equals(name)) { // Spike Block Puzzle
                         spp(seg);
                     } else if ("LDR".equals(name)) { // Ladder
@@ -238,6 +240,10 @@ public abstract class RoomLoader {
             steps.add(getTileIndexArray(seg, 0));
         }
         new TimedBlockPuzzle(steps);
+    }
+    
+    private final static void hdp(final Segment seg) {
+        new HiddenBlockPuzzle(getTileIndexArray(seg, 0));
     }
     
     private final static void spp(final Segment seg) {
