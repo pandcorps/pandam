@@ -181,6 +181,7 @@ public abstract class BlockPuzzle {
                 this.indices.put(Integer.valueOf(tm.getColumn(index)), Integer.valueOf(index));
                 tm.setBehavior(index, Tile.BEHAVIOR_SOLID);
             }
+            tm.getLayer().addActor(this);
         }
 
         @Override
