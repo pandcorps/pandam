@@ -317,6 +317,10 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
         }
     }
     
+    protected static interface ShootableButtonHandler {
+        public void onShootButton();
+    }
+    
     protected final static class BossDoor extends Panctor {
         private final int h = 16;
         protected final int x;
