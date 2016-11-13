@@ -117,25 +117,50 @@ public abstract class BlockPuzzle {
         }
     }
     
-    protected final static class ShootableBlockPuzzle extends BlockPuzzle {
-        private final List<ShootableBlock> blocks;
-        private int[] enabledIndices;
-        private int[] disabledIndices;
+    protected abstract static class BinaryBlockPuzzle extends BlockPuzzle {
+        protected int[] enabledIndices;
+        protected int[] disabledIndices;
         
-        protected ShootableBlockPuzzle(final int[] initiallyEnabledIndices, final int[] initiallyDisabledIndices) {
-            super(BotsnBoltsGame.blockCyan);
+        protected BinaryBlockPuzzle(final Panmage[] blockImgs, final int[] initiallyEnabledIndices, final int[] initiallyDisabledIndices) {
+            super(blockImgs);
             enabledIndices = initiallyEnabledIndices;
             disabledIndices = initiallyDisabledIndices;
-            blocks = new ArrayList<ShootableBlock>(Math.max(enabledIndices.length, disabledIndices.length));
+            init();
             fade(null, enabledIndices);
         }
         
-        private final void fade() {
-            Panctor.destroy(blocks);
+        //@OverrideMe
+        protected void init() {
+        }
+        
+        protected final void fade() {
+            onfadeStart();
             fade(enabledIndices, disabledIndices);
             final int[] tmpIndices = enabledIndices;
             enabledIndices = disabledIndices;
             disabledIndices = tmpIndices;
+        }
+        
+        //@OverrideMe
+        protected void onfadeStart() {
+        }
+    }
+    
+    protected final static class ShootableBlockPuzzle extends BinaryBlockPuzzle {
+        private List<ShootableBlock> blocks = null;
+        
+        protected ShootableBlockPuzzle(final int[] initiallyEnabledIndices, final int[] initiallyDisabledIndices) {
+            super(BotsnBoltsGame.blockCyan, initiallyEnabledIndices, initiallyDisabledIndices);
+        }
+        
+        @Override
+        protected final void init() {
+            blocks = new ArrayList<ShootableBlock>(Math.max(enabledIndices.length, disabledIndices.length));
+        }
+        
+        @Override
+        protected final void onfadeStart() {
+            Panctor.destroy(blocks);
         }
         
         @Override
