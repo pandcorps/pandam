@@ -22,6 +22,8 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.botsnbolts;
 
+import java.util.*;
+
 import org.pandcorps.botsnbolts.Player.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
@@ -311,14 +313,36 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
     }
     
     protected final static class ShootableButton extends Panctor implements CollisionListener {
+        private final ShootableButtonHandler handler;
+        
+        protected ShootableButton(final int x, final int y, final ShootableButtonHandler handler) {
+            this.handler = handler;
+        }
+        
         @Override
         public final void onCollision(final CollisionEvent event) {
-            //TODO
+            //TODO flash
+            handler.onShootButton();
         }
     }
     
     protected static interface ShootableButtonHandler {
         public void onShootButton();
+    }
+    
+    protected final static class DoorShootableButtonHandler implements ShootableButtonHandler {
+        private final List<ShootableDoor> doors;
+        
+        protected DoorShootableButtonHandler(final List<ShootableDoor> doors) {
+            this.doors = doors;
+        }
+        
+        @Override
+        public final void onShootButton() {
+            for (final ShootableDoor door : doors) {
+                door.openDoor();
+            }
+        }
     }
     
     protected final static class BossDoor extends Panctor {
