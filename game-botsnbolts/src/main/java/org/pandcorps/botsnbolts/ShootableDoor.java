@@ -317,12 +317,19 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
         
         protected ShootableButton(final int x, final int y, final ShootableButtonHandler handler) {
             this.handler = handler;
+            //setView(); //TODO
         }
         
         @Override
         public final void onCollision(final CollisionEvent event) {
-            //TODO flash
-            handler.onShootButton();
+            final Collidable collider = event.getCollider();
+            if (collider instanceof Projectile) {
+                //TODO flash
+                final Projectile projectile = (Projectile) collider;
+                handler.onShootButton();
+                projectile.burst();
+                collider.destroy();
+            }
         }
     }
     
@@ -342,6 +349,7 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
             for (final ShootableDoor door : doors) {
                 door.openDoor();
             }
+            doors.clear();
         }
     }
     
