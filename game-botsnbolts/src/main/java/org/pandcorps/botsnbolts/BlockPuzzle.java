@@ -26,6 +26,7 @@ import java.util.*;
 
 import org.pandcorps.botsnbolts.Enemy.*;
 import org.pandcorps.botsnbolts.Player.*;
+import org.pandcorps.botsnbolts.ShootableDoor.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandax.tile.*;
@@ -191,6 +192,25 @@ public abstract class BlockPuzzle {
                 ((Projectile) collider).burst();
                 collider.destroy();
             }
+        }
+    }
+    
+    protected final static class ButtonBlockPuzzle extends BinaryBlockPuzzle {
+        protected ButtonBlockPuzzle(final int[] initiallyEnabledIndices, final int[] initiallyDisabledIndices) {
+            super(null, initiallyEnabledIndices, initiallyDisabledIndices); //TODO blockImgs
+        }
+    }
+    
+    protected final static class BlockShootableButtonHandler implements ShootableButtonHandler {
+        private final ButtonBlockPuzzle puzzle;
+        
+        protected BlockShootableButtonHandler(final ButtonBlockPuzzle puzzle) {
+            this.puzzle = puzzle;
+        }
+        
+        @Override
+        public final void onShootButton() {
+            puzzle.fade();
         }
     }
     
