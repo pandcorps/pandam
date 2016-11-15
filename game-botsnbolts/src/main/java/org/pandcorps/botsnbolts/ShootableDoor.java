@@ -312,6 +312,8 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
         }
     }
     
+    //TODO Hidden barrier that becomes visible when Player is near, like hidden floor blocks
+    
     protected final static class ShootableButton extends Panctor implements CollisionListener {
         private final ShootableButtonHandler handler;
         
