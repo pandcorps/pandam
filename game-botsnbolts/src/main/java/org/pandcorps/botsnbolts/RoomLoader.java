@@ -105,6 +105,8 @@ public abstract class RoomLoader {
                         brr(seg.intValue(0), seg.intValue(1), seg.getValue(2));
                     } else if ("DOR".equals(name)) { // Door
                         dor(seg.intValue(0), seg.intValue(1), seg.getValue(2));
+                    } else if ("SBT".equals(name)) { // Shootable Button
+                        
                     } else if ("DEF".equals(name)) { // Definition
                     }
                 }
