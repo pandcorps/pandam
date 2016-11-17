@@ -106,7 +106,7 @@ public abstract class RoomLoader {
                     } else if ("DOR".equals(name)) { // Door
                         dor(seg.intValue(0), seg.intValue(1), seg.getValue(2));
                     } else if ("SBT".equals(name)) { // Shootable Button
-                        
+                        sbt(seg, in);
                     } else if ("DEF".equals(name)) { // Definition
                     }
                 }
@@ -280,6 +280,9 @@ public abstract class RoomLoader {
         } else {
             doors.add(new ShootableDoor(x, y, ShootableDoor.getShootableDoorDefinition(doorType)));
         }
+    }
+    
+    private final static void sbt(final Segment seg, final SegmentStream in) {
     }
     
     private final static TileMapImage getTileMapImage(final Record seg, final int imageOffset) {
