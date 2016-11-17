@@ -283,6 +283,7 @@ public abstract class RoomLoader {
     }
     
     private final static void sbt(final Segment seg, final SegmentStream in) {
+        new ShootableButton(seg.intValue(0), seg.intValue(1), null);
     }
     
     private final static TileMapImage getTileMapImage(final Record seg, final int imageOffset) {
