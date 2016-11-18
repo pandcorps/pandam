@@ -41,6 +41,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         this.health = health;
         final Panple pos = getPosition();
         BotsnBoltsGame.tm.savePosition(pos, x, y);
+        pos.addX(8);
         pos.setZ(BotsnBoltsGame.DEPTH_ENEMY);
     }
     
@@ -374,11 +375,15 @@ public abstract class Enemy extends Chr implements CollisionListener {
                 return;
             }
             scheduled = true;
-            Pangine.getEngine().addTimer(this, 30, new TimerListener() {
+            Pangine.getEngine().addTimer(this, getDelay(), new TimerListener() {
                 @Override
                 public final void onTimer(final TimerEvent event) {
                     jump();
                 }});
+        }
+        
+        protected int getDelay() {
+            return 30;
         }
         
         protected final void jump() {
@@ -470,15 +475,12 @@ public abstract class Enemy extends Chr implements CollisionListener {
         
         private final void initSurfaceDirection(final Direction surfaceDirection) {
             final Panple pos = getPosition();
-            final int i = timer;
-            if (surfaceDirection == Direction.South) {
-                pos.addX(i);
-            } else if (surfaceDirection == Direction.West) {
-                pos.addY(i);
+            if (surfaceDirection == Direction.West) {
+                pos.add(-8, 8);
             } else if (surfaceDirection == Direction.North) {
-                pos.add(i, 16);
-            } else {
-                pos.add(16, i);
+                pos.addY(16);
+            } else if (surfaceDirection == Direction.East) {
+                pos.add(8, 8);
             }
             setSurfaceDirection(surfaceDirection);
         }
@@ -549,7 +551,12 @@ public abstract class Enemy extends Chr implements CollisionListener {
     protected final static class FireballEnemy extends JumpEnemy {
         protected FireballEnemy(int x, int y) {
             super(PROP_OFF_X, PROP_H, x, y, 1);
-            //setView(); //TODO
+            setView(BotsnBoltsGame.fireballEnemy[0]);
+        }
+        
+        @Override
+        protected final int getDelay() {
+            return 60;
         }
         
         @Override
@@ -559,13 +566,27 @@ public abstract class Enemy extends Chr implements CollisionListener {
 
         @Override
         protected final void onJump() {
-            v = 8;
+            v = 12;
         }
         
         @Override
         protected boolean onFell() {
             schedule();
             return true;
+        }
+        
+        @Override
+        protected final boolean onStepCustom() {
+            final int imgIndex;
+            if (v > 1) {
+                imgIndex = Pangine.getEngine().isOn(4) ? 0 : 1;
+            } else if (v < -1) {
+                imgIndex = Pangine.getEngine().isOn(4) ? 3 : 4;
+            } else {
+                imgIndex = 2;
+            }
+            setView(BotsnBoltsGame.fireballEnemy[imgIndex]);
+            return false;
         }
     }
 }
