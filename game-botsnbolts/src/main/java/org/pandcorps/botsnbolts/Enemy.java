@@ -328,7 +328,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
     }
     
-    protected final static int PROP_OFF_X = 4, PROP_H = 12;
+    protected final static int PROP_OFF_X = 4, PROP_H = 12, CRAWL_H = 14;
     
     protected final static class PropEnemy extends Enemy {
         protected PropEnemy(final int x, final int y) {
@@ -444,15 +444,14 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
     }
     
-    // Spider legs? Gear?
     protected final static class CrawlEnemy extends TileUnawareEnemy {
         private final static int VEL = 1;
         private final static int DURATION = 16 / VEL;
         private int tileIndex;
-        private Direction surfaceDirection;
+        private Direction surfaceDirection = null;
         private int velX;
         private int velY;
-        private int timer = 0;
+        private int timer = 8;
         
         protected CrawlEnemy(final int x, final int y) {
             super(x, y, 2);
@@ -461,27 +460,56 @@ public abstract class Enemy extends Chr implements CollisionListener {
             for (final Direction dir : Direction.values()) {
                 final int surfaceTileIndex = tm.getNeighbor(tileIndex, dir);
                 if (isSolidIndex(surfaceTileIndex)) {
-                    setSurfaceDirection(dir);
+                    initSurfaceDirection(dir);
                     break;
                 }
             }
             setView(BotsnBoltsGame.crawlEnemy);
+            setMirror(true);
+        }
+        
+        private final void initSurfaceDirection(final Direction surfaceDirection) {
+            final Panple pos = getPosition();
+            final int i = timer;
+            if (surfaceDirection == Direction.South) {
+                pos.addX(i);
+            } else if (surfaceDirection == Direction.West) {
+                pos.addY(i);
+            } else if (surfaceDirection == Direction.North) {
+                pos.add(i, 16);
+            } else {
+                pos.add(16, i);
+            }
+            setSurfaceDirection(surfaceDirection);
         }
         
         private final void setSurfaceDirection(final Direction surfaceDirection) {
+            final Panple pos = getPosition();
+            final Direction oldDirection = this.surfaceDirection;
             this.surfaceDirection = surfaceDirection;
+            if (oldDirection == Direction.North) {
+                pos.addY(1);
+            } else if (oldDirection == Direction.East) {
+                pos.addX(1);
+            }
             if (surfaceDirection == Direction.South) {
                 velX = -1;
                 velY = 0;
+                setRot(0);
             } else if (surfaceDirection == Direction.West) {
                 velX = 0;
                 velY = 1;
+                setRot(1);
             } else if (surfaceDirection == Direction.North) {
                 velX = 1;
                 velY = 0;
+                setRot(2);
+                pos.addY(-1);
             } else if (surfaceDirection == Direction.East) {
                 velX = 0;
                 velY = -1;
+                setRot(3);
+                pos.addX(-1);
             } else {
                 throw new IllegalStateException("Unexpected Direction: " + surfaceDirection);
             }
@@ -490,11 +518,14 @@ public abstract class Enemy extends Chr implements CollisionListener {
         private final void updateSurfaceDirection() {
             final TileMap tm = BotsnBoltsGame.tm;
             final Direction velocityDirection = surfaceDirection.getClockwise();
+            final int oldIndex = tileIndex;
             tileIndex = tm.getNeighbor(tileIndex, velocityDirection);
             final int surfaceTileIndex = tm.getNeighbor(tileIndex, surfaceDirection);
             if (!isSolidIndex(surfaceTileIndex)) {
+                tileIndex = BotsnBoltsGame.tm.getNeighbor(tileIndex, surfaceDirection);
                 setSurfaceDirection(surfaceDirection.getCounterclockwise());
-            } else if (isSolidIndex(tm.getNeighbor(tileIndex, velocityDirection))) {
+            } else if (isSolidIndex(tileIndex)) {
+                tileIndex = oldIndex;
                 setSurfaceDirection(velocityDirection);
             }
         }
