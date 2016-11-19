@@ -32,6 +32,7 @@ import org.pandcorps.pandax.*;
 public class Projectile extends Pandy implements Collidable, AllOobListener {
     protected final static int POWER_MEDIUM = 3;
     protected final static int POWER_MAXIMUM = 5;
+    protected final static int POWER_IMPOSSIBLE = Integer.MAX_VALUE;
     
     private final Player src;
     protected final ShootMode shootMode;

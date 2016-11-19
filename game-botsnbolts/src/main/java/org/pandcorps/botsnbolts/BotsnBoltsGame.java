@@ -89,6 +89,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static ShootableDoorDefinition doorCyan = null;
     protected static ShootableDoorDefinition doorGold = null;
     protected static ShootableDoorDefinition doorSilver = null;
+    protected static ShootableDoorDefinition doorBlue = null;
     protected static ShootableDoorDefinition doorSmall = null;
     protected static Panmage doorBoss = null;
     protected static Panmage ladder = null;
@@ -174,9 +175,12 @@ public final class BotsnBoltsGame extends BaseGame {
         final Pancolor cyan = Pancolor.CYAN, silver = Pancolor.GREY, darkCyan = new FinPancolor(s0, s192, s192), darkSilver = Pancolor.DARK_GREY;
         doorSilver = filterDoor("door.silver", imgsClosed, imgsOpening, cyan, silver, darkCyan, darkSilver, null, 0, null,
             Integer.valueOf(Projectile.POWER_MAXIMUM), imgsBarrier);
+        final Pancolor blue = Pancolor.BLUE, darkBlue = new FinPancolor(s0, s0, s192);
+        doorBlue = filterDoor("door.blue", imgsClosed, imgsOpening, silver, blue, darkSilver, darkBlue, null, 0, null,
+            Integer.valueOf(Projectile.POWER_IMPOSSIBLE), imgsBarrier);
         final ShootableDoorDefinition doorRed, doorRedOrange, doorOrange, doorOrangeGold;
         final Pancolor red = Pancolor.RED, darkRed = new FinPancolor(s192, s0, s0);
-        doorRed = filterDoor("door.red", imgsClosed, imgsOpening, silver, red, darkSilver, darkRed, null, 15, Player.SHOOT_RAPID, null, imgsBarrier);
+        doorRed = filterDoor("door.red", imgsClosed, imgsOpening, blue, red, darkBlue, darkRed, null, 15, Player.SHOOT_RAPID, null, imgsBarrier);
         final Pancolor redOrange = new FinPancolor(smax, s64, s0), darkRedOrange = new FinPancolor(s192, s48, s0);
         doorRedOrange = filterDoor("door.red.orange", imgsClosed, null, red, redOrange, darkRed, darkRedOrange, doorRed, 10, Player.SHOOT_RAPID, null, imgsBarrier);
         final Pancolor orange = new FinPancolor(smax, s128, s0), darkOrange = new FinPancolor(s192, s96, s0);

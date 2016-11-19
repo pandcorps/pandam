@@ -207,6 +207,8 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
             return BotsnBoltsGame.doorGold;
         } else if ("Silver".equals(doorType)) {
             return BotsnBoltsGame.doorSilver;
+        } else if ("Blue".equals(doorType)) {
+            return BotsnBoltsGame.doorBlue;
         } else if ("Small".equals(doorType)) {
             return BotsnBoltsGame.doorSmall;
         }
