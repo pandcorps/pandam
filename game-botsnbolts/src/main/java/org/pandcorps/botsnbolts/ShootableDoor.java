@@ -221,7 +221,7 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
         private final ShootableDoorDefinition next;
         private final int nextTemperature;
         private final ShootMode requiredShootMode;
-        private final Integer requiredPower;
+        protected final Integer requiredPower;
         private ShootableDoorDefinition prev = null;
         private final Panmage[] barrierImgs;
         
@@ -321,14 +321,25 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
         
         protected ShootableButton(final int x, final int y, final ShootableButtonHandler handler) {
             this.handler = handler;
-            //setView(); //TODO
+            setFrame(0);
+            final TileMap tm = BotsnBoltsGame.tm;
+            tm.savePosition(getPosition(), x, y);
+            tm.getLayer().addActor(this);
+        }
+        
+        private final void setFrame(final int i) {
+            setView(BotsnBoltsGame.button[i]);
         }
         
         @Override
         public final void onCollision(final CollisionEvent event) {
             final Collidable collider = event.getCollider();
             if (collider instanceof Projectile) {
-                //TODO flash
+                setFrame(1);
+                Pangine.getEngine().addTimer(this, 5, new TimerListener() {
+                    @Override public final void onTimer(final TimerEvent event) {
+                        setFrame(0);
+                    }});
                 final Projectile projectile = (Projectile) collider;
                 handler.onShootButton();
                 projectile.burst();
@@ -342,9 +353,13 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
     }
     
     protected final static class DoorShootableButtonHandler implements ShootableButtonHandler {
-        private final List<ShootableDoor> doors;
+        private final Collection<ShootableDoor> doors;
         
-        protected DoorShootableButtonHandler(final List<ShootableDoor> doors) {
+        protected DoorShootableButtonHandler() {
+            this(RoomLoader.getButtonDoors());
+        }
+        
+        protected DoorShootableButtonHandler(final Collection<ShootableDoor> doors) {
             this.doors = doors;
         }
         

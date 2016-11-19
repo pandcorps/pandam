@@ -91,6 +91,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static ShootableDoorDefinition doorSilver = null;
     protected static ShootableDoorDefinition doorBlue = null;
     protected static ShootableDoorDefinition doorSmall = null;
+    protected static Panmage[] button = null;
     protected static Panmage doorBoss = null;
     protected static Panmage ladder = null;
     protected static Panmage[] blockCyan = null;
@@ -201,6 +202,7 @@ public final class BotsnBoltsGame extends BaseGame {
         Img.close(imgsSmallClosed);
         Img.close(imgsSmallOpening);
         Img.close(imgsBarrier);
+        button = newSheet("button", RES + "bg/Button.png", 16);
         doorBoss = Pangine.getEngine().createImage("door.boss", RES + "/bg/DoorBoss.png");
     }
     

@@ -252,6 +252,10 @@ public abstract class RoomLoader {
         new SpikeBlockPuzzle(getTileIndexArray(seg, 0), getTileIndexArray(seg, 1));
     }
     
+    private final static ButtonBlockPuzzle btp(final Segment seg) {
+        return new ButtonBlockPuzzle(getTileIndexArray(seg, 0), getTileIndexArray(seg, 1));
+    }
+    
     private final static void ldr(final int x, final int y, final int h) {
         final TileMap tm = BotsnBoltsGame.tm;
         final int end = h - 1;
@@ -282,8 +286,29 @@ public abstract class RoomLoader {
         }
     }
     
-    private final static void sbt(final Segment seg, final SegmentStream in) {
-        new ShootableButton(seg.intValue(0), seg.intValue(1), null);
+    protected final static Collection<ShootableDoor> getButtonDoors() {
+        final Set<ShootableDoor> set = new HashSet<ShootableDoor>();
+        for (final ShootableDoor door : doors) {
+            final Integer req = door.def.requiredPower;
+            if ((req != null) && (req.intValue() == Projectile.POWER_IMPOSSIBLE)) {
+                set.add(door);
+            }
+        }
+        return set;
+    }
+    
+    private final static void sbt(final Segment seg, final SegmentStream in) throws Exception {
+        final String handlerType = seg.getValue(2);
+        final ShootableButtonHandler handler;
+        if ("Door".equals(handlerType)) {
+            handler = new DoorShootableButtonHandler();
+        } else if ("Block".equals(handlerType)) {
+            final ButtonBlockPuzzle puzzle = btp(in.readRequire("BTP"));
+            handler = new BlockShootableButtonHandler(puzzle);
+        } else {
+            throw new IllegalArgumentException("Unexpected ShootableButtonHandler type " + handlerType);
+        }
+        new ShootableButton(seg.intValue(0), seg.intValue(1), handler);
     }
     
     private final static TileMapImage getTileMapImage(final Record seg, final int imageOffset) {
