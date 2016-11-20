@@ -235,7 +235,7 @@ public abstract class BlockPuzzle {
             if (player == null) {
                 return;
             }
-            final Panmage[] blockImgs = BotsnBoltsGame.blockCyan; //TODO different color
+            final Panmage[] blockImgs = BotsnBoltsGame.blockHidden;
             final TileMap tm = BotsnBoltsGame.tm;
             final int col = tm.getContainerColumn(player.getPosition().getX());
             for (final Integer activeIndex : activeIndices) {
