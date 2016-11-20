@@ -96,6 +96,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static Panmage ladder = null;
     protected static Panmage[] blockCyan = null;
     protected static Panmage[] blockTimed = null;
+    protected static Panmage[] blockButton = null;
     protected static Panmage[] blockHidden = null;
     protected static Panmage blockSpike = null;
     protected static Panmage spike = null;
@@ -214,6 +215,7 @@ public final class BotsnBoltsGame extends BaseGame {
         ladder = engine.createImage("ladder", RES + "bg/Ladder.png");
         blockCyan = newSheet("block.cyan", RES + "bg/BlockCyan.png", 16, FinPanple.ORIGIN, ShootableDoor.minBarrier, new FinPanple2(14, 16));
         blockTimed = blockCyan; //TODO
+        blockButton = blockCyan; //TODO
         blockHidden = blockCyan; //TODO
         blockSpike = engine.createImage("block.spike", RES + "bg/BlockSpike.png");
         spike = engine.createImage("spike", CENTER_16, new FinPanple2(-6, -6), new FinPanple2(6, 6), RES + "bg/Spike.png");
