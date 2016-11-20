@@ -275,7 +275,7 @@ public abstract class RoomLoader {
     }
     
     private final static void brr(final int x, final int y, final String doorType) {
-        new ShootableBarrier(x, y, ShootableDoor.getShootableDoorDefinition(doorType));
+        doors.add(new ShootableBarrier(x, y, ShootableDoor.getShootableDoorDefinition(doorType)));
     }
     
     private final static void dor(final int x, final int y, final String doorType) {

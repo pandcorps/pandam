@@ -60,7 +60,6 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
         initPosition(pos);
         doorX = getDoorX();
         init();
-        openTunnel();
     }
     
     protected void initPosition(final Panple pos) {
@@ -79,6 +78,7 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
     protected void init() {
         setVisible(false);
         closeTunnel();
+        openTunnel();
     }
     
     private final void closeTunnel() {
