@@ -213,12 +213,28 @@ public final class BotsnBoltsGame extends BaseGame {
         hudMeterBlank = newHudMeterImages("meter.blank", RES + "misc/MeterBlank.png");
         cube = newSheet("cube", RES + "misc/Cube.png", 16);
         ladder = engine.createImage("ladder", RES + "bg/Ladder.png");
-        blockCyan = newSheet("block.cyan", RES + "bg/BlockCyan.png", 16, FinPanple.ORIGIN, ShootableDoor.minBarrier, new FinPanple2(14, 16));
-        blockTimed = blockCyan; //TODO
-        blockButton = blockCyan; //TODO
-        blockHidden = blockCyan; //TODO
+        final Img[] blockImgs = Imtil.loadStrip(RES + "bg/BlockCyan.png", 16);
+        Img.setTemporary(false, blockImgs);
+        final Panple maxBlock = new FinPanple2(14, 16);
+        final short s0 = 0, s192 = 192;
+        final Pancolor cyan = Pancolor.CYAN, darkCyan = new FinPancolor(s0, s192, s192);
+        blockCyan = newBlock("block.cyan", blockImgs, maxBlock, null, null, null, null);
+        final Pancolor timed = null, darkTimed = null; //TODO
+        blockTimed = newBlock("block.timed", blockImgs, maxBlock, cyan, timed, darkCyan, darkTimed);
+        final Pancolor btn = null, darkBtn = null; //TODO
+        blockButton = newBlock("block.button", blockImgs, maxBlock, timed, btn, darkTimed, darkBtn);
+        final Pancolor hid = null, darkHid = null; //TODO
+        blockHidden = newBlock("block.hidden", blockImgs, maxBlock, btn, hid, darkBtn, darkHid);
+        Img.close(blockImgs);
         blockSpike = engine.createImage("block.spike", RES + "bg/BlockSpike.png");
         spike = engine.createImage("spike", CENTER_16, new FinPanple2(-6, -6), new FinPanple2(6, 6), RES + "bg/Spike.png");
+    }
+    
+    private final static Panmage[] newBlock(final String id, final Img[] blockImgs, final Panple maxBlock, final Pancolor s1, final Pancolor d1, final Pancolor s2, final Pancolor d2) {
+        if (s1 != null) {
+            filterImgs(blockImgs, newFilter(s1, d1, s2, d2));
+        }
+        return newSheet("block.timed", blockImgs, FinPanple.ORIGIN, ShootableDoor.minBarrier, maxBlock);
     }
     
     private final static void loadEnemies() {
