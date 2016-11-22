@@ -98,6 +98,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static Panmage[] blockTimed = null;
     protected static Panmage[] blockButton = null;
     protected static Panmage[] blockHidden = null;
+    protected static Panmage[] barrierHidden = null;
     protected static Panmage blockSpike = null;
     protected static Panmage spike = null;
     protected static Panmage[] cube = null;
@@ -203,6 +204,7 @@ public final class BotsnBoltsGame extends BaseGame {
         doorSmall = newDoorDefinition("door.small", imgsSmallClosed, imgsSmallOpening, null, 0, Player.SHOOT_BOMB, null, imgsBarrier);
         Img.close(imgsSmallClosed);
         Img.close(imgsSmallOpening);
+        barrierHidden = null; //TODO
         Img.close(imgsBarrier);
         button = newSheet("button", RES + "bg/Button.png", 16);
         doorBoss = Pangine.getEngine().createImage("door.boss", RES + "/bg/DoorBoss.png");
