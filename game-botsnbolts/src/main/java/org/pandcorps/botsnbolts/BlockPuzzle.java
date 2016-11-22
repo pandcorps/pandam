@@ -243,7 +243,7 @@ public abstract class BlockPuzzle {
             }
             activeIndices.clear();
             for (int i = 0; i < 4; i++) {
-                for (int j = ((i == 0) ? 0 : 1); j < 2; j++) {
+                for (int j = ((i == 0) ? 1 : 0); j < 2; j++) {
                     final int mult = (j == 0) ? 1 : -1;
                     final Integer tileIndex = indices.get(Integer.valueOf(col + (mult * i)));
                     if (tileIndex == null) {
