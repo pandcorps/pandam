@@ -148,7 +148,7 @@ public abstract class BlockPuzzle {
     }
     
     protected final static class ShootableBlockPuzzle extends BinaryBlockPuzzle {
-        private List<ShootableBlock> blocks = null;
+        private List<ShootableBlock> blocks; // Setting to null here overrides super constructor's init() call
         
         protected ShootableBlockPuzzle(final int[] initiallyEnabledIndices, final int[] initiallyDisabledIndices) {
             super(BotsnBoltsGame.blockCyan, initiallyEnabledIndices, initiallyDisabledIndices);
@@ -197,7 +197,7 @@ public abstract class BlockPuzzle {
     
     protected final static class ButtonBlockPuzzle extends BinaryBlockPuzzle {
         protected ButtonBlockPuzzle(final int[] initiallyEnabledIndices, final int[] initiallyDisabledIndices) {
-            super(null, initiallyEnabledIndices, initiallyDisabledIndices); //TODO blockImgs
+            super(BotsnBoltsGame.blockButton, initiallyEnabledIndices, initiallyDisabledIndices);
         }
     }
     

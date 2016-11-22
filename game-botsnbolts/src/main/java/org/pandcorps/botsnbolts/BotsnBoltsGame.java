@@ -216,14 +216,14 @@ public final class BotsnBoltsGame extends BaseGame {
         final Img[] blockImgs = Imtil.loadStrip(RES + "bg/BlockCyan.png", 16);
         Img.setTemporary(false, blockImgs);
         final Panple maxBlock = new FinPanple2(14, 16);
-        final short s0 = 0, s192 = 192;
+        final short s0 = 0, s64 = 64, s96 = 96, s128 = 128, s144 = 144, s192 = 192;
         final Pancolor cyan = Pancolor.CYAN, darkCyan = new FinPancolor(s0, s192, s192);
         blockCyan = newBlock("block.cyan", blockImgs, maxBlock, null, null, null, null);
-        final Pancolor timed = null, darkTimed = null; //TODO
+        final Pancolor timed = new FinPancolor(s144, s192, s96), darkTimed = new FinPancolor(s96, s128, s64);
         blockTimed = newBlock("block.timed", blockImgs, maxBlock, cyan, timed, darkCyan, darkTimed);
-        final Pancolor btn = null, darkBtn = null; //TODO
+        final Pancolor btn = Pancolor.BLUE, darkBtn = new FinPancolor(s0, s0, s192);
         blockButton = newBlock("block.button", blockImgs, maxBlock, timed, btn, darkTimed, darkBtn);
-        final Pancolor hid = null, darkHid = null; //TODO
+        final Pancolor hid = new FinPancolor(s192, s0, s192), darkHid = new FinPancolor(s128, s0, s128);
         blockHidden = newBlock("block.hidden", blockImgs, maxBlock, btn, hid, darkBtn, darkHid);
         Img.close(blockImgs);
         blockSpike = engine.createImage("block.spike", RES + "bg/BlockSpike.png");
