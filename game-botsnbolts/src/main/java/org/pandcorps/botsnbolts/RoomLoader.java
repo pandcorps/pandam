@@ -323,7 +323,17 @@ public abstract class RoomLoader {
         if (imgX < 0) {
             return null;
         }
-        return BotsnBoltsGame.imgMap[field.intValue(1)][imgX];
+        final TileMapImage img = BotsnBoltsGame.imgMap[field.intValue(1)][imgX];
+        final boolean overlay = field.getBoolean(2, false);
+        final float offZ = overlay ? BotsnBoltsGame.DEPTH_OVERLAY : 0;
+        //final float offZ = field.initFloat(2);
+        final int rot = field.initInt(3);
+        final boolean mirror = field.getBoolean(4, false);
+        final boolean flip = field.getBoolean(5, false);
+        if ((offZ != 0) || (rot != 0) || mirror || flip) {
+            return new AdjustedTileMapImage(img, offZ, rot, mirror, flip);
+        }
+        return img;
     }
     
     private final static Pancolor toColor(final Field fld) {
