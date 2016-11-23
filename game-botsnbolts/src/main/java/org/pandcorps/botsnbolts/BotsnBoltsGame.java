@@ -204,7 +204,7 @@ public final class BotsnBoltsGame extends BaseGame {
         doorSmall = newDoorDefinition("door.small", imgsSmallClosed, imgsSmallOpening, null, 0, Player.SHOOT_BOMB, null, imgsBarrier);
         Img.close(imgsSmallClosed);
         Img.close(imgsSmallOpening);
-        barrierHidden = null; //TODO
+        barrierHidden = newBarrier("hidden", imgsBarrier); //TODO filter
         Img.close(imgsBarrier);
         button = newSheet("button", RES + "bg/Button.png", 16);
         doorBoss = Pangine.getEngine().createImage("door.boss", RES + "/bg/DoorBoss.png");
@@ -489,8 +489,12 @@ public final class BotsnBoltsGame extends BaseGame {
             final Panframe[] open3 = newDoor(id + ".3", imgsOpening, 2 * n, small);
             opening = new Panframe[][] { open1, open2, open3 };
         }
-        final Panmage[] barrier = (imgsBarrier == null) ? null : newSheet(id + ".barrier", imgsBarrier);
+        final Panmage[] barrier = newBarrier(id, imgsBarrier);
         return new ShootableDoorDefinition(door, opening, next, nextTemperature, requiredShootMode, requiredPower, barrier);
+    }
+    
+    private final static Panmage[] newBarrier(final String id, final Img[] imgsBarrier) {
+        return (imgsBarrier == null) ? null : newSheet(id + ".barrier", imgsBarrier);
     }
     
     private final static Panframe[] newDoor(final String id, final String path) {
