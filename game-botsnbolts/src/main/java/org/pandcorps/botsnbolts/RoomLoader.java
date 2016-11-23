@@ -130,7 +130,7 @@ public abstract class RoomLoader {
         final TileFrame[] frames = new TileFrame[size];
         for (int i = 0; i < size; i++) {
             final Field field = fields.get(i);
-            final TileMapImage image = getTileMapImage(field, 0);
+            final TileMapImage image = getTileMapImage(field);
             final int duration = field.intValue(2);
             frames[i] = new TileFrame(image, duration);
             if (i == 0) {
@@ -163,8 +163,8 @@ public abstract class RoomLoader {
     }
     
     private final static Tile getTile(final Segment seg, final int tileOffset) {
-        final TileMapImage bg = getTileMapImage(seg, tileOffset), fg = getTileMapImage(seg, tileOffset + 2);
-        final byte b = seg.getByte(tileOffset + 4, Tile.BEHAVIOR_OPEN);
+        final TileMapImage bg = getTileMapImage(seg, tileOffset), fg = getTileMapImage(seg, tileOffset + 1);
+        final byte b = seg.getByte(tileOffset + 2, Tile.BEHAVIOR_OPEN);
         return (bg == null && fg == null && b == Tile.BEHAVIOR_OPEN) ? null : BotsnBoltsGame.tm.getTile(bg, fg, b);
     }
     
@@ -311,12 +311,19 @@ public abstract class RoomLoader {
         new ShootableButton(seg.intValue(0), seg.intValue(1), handler);
     }
     
-    private final static TileMapImage getTileMapImage(final Record seg, final int imageOffset) {
-        final int imgX = seg.getInt(imageOffset, -1);
+    private final static TileMapImage getTileMapImage(final Segment seg, final int imageOffset) {
+        return getTileMapImage(seg.getField(imageOffset));
+    }
+    
+    private final static TileMapImage getTileMapImage(final Field field) {
+        if (field == null) {
+            return null;
+        }
+        final int imgX = field.getInt(0, -1);
         if (imgX < 0) {
             return null;
         }
-        return BotsnBoltsGame.imgMap[seg.intValue(imageOffset + 1)][imgX];
+        return BotsnBoltsGame.imgMap[field.intValue(1)][imgX];
     }
     
     private final static Pancolor toColor(final Field fld) {
