@@ -168,19 +168,29 @@ public final class Tile {
     }
     
     public final static class AdjustedTileMapImage extends TileMapImage {
+        /*package*/ final float offZ;
         /*package*/ final int rot;
         /*package*/ final boolean mirror;
         /*package*/ final boolean flip;
         
         public AdjustedTileMapImage(final float ix, final float iy, final int rot, final boolean mirror, final boolean flip) {
+            this(ix, iy, 0, rot, mirror, flip);
+        }
+        
+        public AdjustedTileMapImage(final float ix, final float iy, final float offZ, final int rot, final boolean mirror, final boolean flip) {
             super(ix, iy);
+            this.offZ = offZ;
             this.rot = rot;
             this.mirror = mirror;
             this.flip = flip;
         }
         
         public AdjustedTileMapImage(final TileMapImage img, final int rot, final boolean mirror, final boolean flip) {
-            this(img.ix, img.iy, rot, mirror, flip);
+            this(img, 0, rot, mirror, flip);
+        }
+        
+        public AdjustedTileMapImage(final TileMapImage img, final float offZ, final int rot, final boolean mirror, final boolean flip) {
+            this(img.ix, img.iy, offZ, rot, mirror, flip);
         }
         
         @Override

@@ -507,7 +507,7 @@ public class TileMap extends Panctor implements Savable {
     		imgMap = this.imgMap;
     	} else if (imgClass == AdjustedTileMapImage.class) {
     	    final AdjustedTileMapImage a = (AdjustedTileMapImage) img;
-    	    renderer.render(layer, this.imgMap, xitw, yjth, z, a.ix, a.iy, tw, th, a.rot, a.mirror, a.flip);
+    	    renderer.render(layer, this.imgMap, xitw, yjth, z + a.offZ, a.ix, a.iy, tw, th, a.rot, a.mirror, a.flip);
     	    return;
     	} else if (img instanceof Panmage) {
     	    renderer.render(layer, (Panmage) img, xitw, yjth, z);
