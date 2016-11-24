@@ -206,7 +206,7 @@ public final class Tile {
                 return false;
             }
             final AdjustedTileMapImage t = (AdjustedTileMapImage) o;
-            return ix == t.ix && iy == t.iy && rot == t.rot && mirror == t.mirror && flip == t.flip;
+            return ix == t.ix && iy == t.iy && offZ == t.offZ && rot == t.rot && mirror == t.mirror && flip == t.flip;
         }
     }
     
