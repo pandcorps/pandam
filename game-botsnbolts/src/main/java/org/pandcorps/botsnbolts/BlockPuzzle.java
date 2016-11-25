@@ -224,7 +224,7 @@ public abstract class BlockPuzzle {
             final TileMap tm = BotsnBoltsGame.tm;
             for (final int index : indices) {
                 this.indices.put(Integer.valueOf(tm.getColumn(index)), Integer.valueOf(index));
-                tm.setBehavior(index, Tile.BEHAVIOR_SOLID);
+                tm.setBehavior(index, BotsnBoltsGame.TILE_FLOOR);
             }
             tm.getLayer().addActor(this);
         }
