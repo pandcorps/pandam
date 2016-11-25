@@ -204,7 +204,8 @@ public final class BotsnBoltsGame extends BaseGame {
         doorSmall = newDoorDefinition("door.small", imgsSmallClosed, imgsSmallOpening, null, 0, Player.SHOOT_BOMB, null, imgsBarrier);
         Img.close(imgsSmallClosed);
         Img.close(imgsSmallOpening);
-        barrierHidden = newBarrier("hidden", imgsBarrier); //TODO filter
+        filterImgs(imgsBarrier, newFilter(colSmall, newColorHidden(), darkColSmall, newColorHiddenDark()));
+        barrierHidden = newBarrier("hidden", imgsBarrier);
         Img.close(imgsBarrier);
         button = newSheet("button", RES + "bg/Button.png", 16);
         doorBoss = Pangine.getEngine().createImage("door.boss", RES + "/bg/DoorBoss.png");
@@ -225,11 +226,21 @@ public final class BotsnBoltsGame extends BaseGame {
         blockTimed = newBlock("block.timed", blockImgs, maxBlock, cyan, timed, darkCyan, darkTimed);
         final Pancolor btn = Pancolor.BLUE, darkBtn = new FinPancolor(s0, s0, s192);
         blockButton = newBlock("block.button", blockImgs, maxBlock, timed, btn, darkTimed, darkBtn);
-        final Pancolor hid = new FinPancolor(s192, s0, s192), darkHid = new FinPancolor(s128, s0, s128);
+        final Pancolor hid = newColorHidden(), darkHid = newColorHiddenDark();
         blockHidden = newBlock("block.hidden", blockImgs, maxBlock, btn, hid, darkBtn, darkHid);
         Img.close(blockImgs);
         blockSpike = engine.createImage("block.spike", RES + "bg/BlockSpike.png");
         spike = engine.createImage("spike", CENTER_16, new FinPanple2(-6, -6), new FinPanple2(6, 6), RES + "bg/Spike.png");
+    }
+    
+    private final static Pancolor newColorHidden() {
+        final short s0 = 0, s192 = 192;
+        return new FinPancolor(s192, s0, s192);
+    }
+    
+    private final static Pancolor newColorHiddenDark() {
+        final short s0 = 0, s128 = 128;
+        return new FinPancolor(s128, s0, s128);
     }
     
     private final static Panmage[] newBlock(final String id, final Img[] blockImgs, final Panple maxBlock, final Pancolor s1, final Pancolor d1, final Pancolor s2, final Pancolor d2) {
