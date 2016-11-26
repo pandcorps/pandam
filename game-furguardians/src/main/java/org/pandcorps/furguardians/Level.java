@@ -35,6 +35,7 @@ import org.pandcorps.furguardians.Enemy.*;
 import org.pandcorps.furguardians.Player.*;
 import org.pandcorps.furguardians.Profile.*;
 import org.pandcorps.furguardians.Spawner.*;
+import org.pandcorps.furguardians.Tiles.*;
 
 public class Level {
 	private final static int DEF_ROOM_H = 256;
@@ -1222,6 +1223,9 @@ public class Level {
             letterTemplates.add(new GemRowLetterTemplate());
             letterTemplates.add(new SolidRowLetterTemplate());
             letterTemplates.add(new GemWrapperLetterTemplate());
+            if (isManualRun() && (floatOffset == 0)) {
+                letterTemplates.add(new GroundedEnclosedLetterTemplate());
+            }
         }
         
         protected final void addHighLetterTemplates() {
@@ -3248,6 +3252,29 @@ public class Level {
         }
     }
     
+    private final static class GroundedEnclosedLetterTemplate extends SimpleTemplate {
+        protected GroundedEnclosedLetterTemplate() {
+            super(5, 6);
+        }
+        
+        @Override
+        protected final void build() {
+            //TODO Could sink into ground, similar to SpecialGroundTemplate; but that always sinks 2; this could sink 1/2/3
+            final int base = floor + 1;
+            final int end = x + w - 1;
+            for (int j = 0; j < 3; j++) {
+                final int y = base + j;
+                solidBlock(x, y);
+                solidBlock(end, y);
+            }
+            final int lx = end - 1, ly = base + 2;
+            letterBlock(lx, ly);
+            for (int i = x + 3; i < lx; i++) {
+                solidBlock(i, ly);
+            }
+        }
+    }
+    
     private final static class SpecialLetterTemplate extends SpecialGroundTemplate {
         protected SpecialLetterTemplate() {
             super(5, 5);
@@ -4552,6 +4579,41 @@ public class Level {
         for (int i = 0; i < 4; i++) {
             breakableBlockForce(x + i, y);
         }
+    }
+    
+    private final static void trackPuzzle(final int x, final int y, final int w) {
+        // StepLetterTemplate's highest letter block is floor + 8
+        // Highest track should be floor + 5
+        // Lowest track should be floor + 2
+        // Could maybe have track at floor + 6 if letter block is at floor + 5, but then Player could reach letter without track
+        // Could have track at floor + 6 for a section left or right of letter block, then dipping lower to go under letter block
+        final int tmh = tm.getHeight();
+        //final int blockY = tmh - 2;
+        final int trackMinX = x;
+        final int trackMaxX = x + w - 1;
+        final int trackMinY = y + 3; // y would normally be floor, but might be different if there's a track over a pit
+        final int trackMaxY = tmh - 5;
+        final int numTiles = (w + trackMaxY - trackMinY + 1) * 2;
+        final int[] tileIndices = new int[numTiles];
+        int i = 0;
+        //TODO Create tracks that aren't just a simple rectangle loop
+        for (int currX = trackMaxX; currX >= trackMinX; currX--) {
+            tileIndices[i] = tm.getIndex(currX, trackMinY);
+            i++;
+        }
+        for (int currY = trackMinY + 1; currY < trackMinY; currY++) {
+            tileIndices[i] = tm.getIndex(trackMinX, currY);
+            i++;
+        }
+        for (int currX = trackMinX; currX <= trackMaxX; currX++) {
+            tileIndices[i] = tm.getIndex(currX, trackMaxY);
+            i++;
+        }
+        for (int currY = trackMaxY - 1; currY > trackMaxY; currY--) {
+            tileIndices[i] = tm.getIndex(trackMaxX, currY);
+            i++;
+        }
+        new TileTrack(tileIndices, 4);
     }
     
     private final static void bush(final int x, final int y, final int w) {
