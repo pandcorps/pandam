@@ -279,7 +279,7 @@ public final class Player extends Chr {
     }
     
     protected final void defeat() {
-        //TODO
+        RoomLoader.reloadCurrentRoom();
     }
     
     protected final void addHealth(final int amount) {
