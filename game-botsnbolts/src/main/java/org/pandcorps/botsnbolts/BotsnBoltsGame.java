@@ -28,6 +28,7 @@ import org.pandcorps.botsnbolts.BlockPuzzle.*;
 import org.pandcorps.botsnbolts.Enemy.*;
 import org.pandcorps.botsnbolts.HudMeter.*;
 import org.pandcorps.botsnbolts.Player.*;
+import org.pandcorps.botsnbolts.RoomLoader.*;
 import org.pandcorps.botsnbolts.ShootableDoor.*;
 import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
@@ -605,7 +606,11 @@ public final class BotsnBoltsGame extends BaseGame {
             //final Panroom room = Pangame.getGame().getCurrentRoom();
             //initRoom(room);
             //fillRoom(room);
-            final Panroom room = Player.loadRoom(RoomLoader.getRoom(0, 0));
+            loadRoom(RoomLoader.getRoom(0, 0));
+        }
+        
+        protected final static void loadRoom(final BotRoom botRoom) {
+            final Panroom room = Player.loadRoom(botRoom);
             Pangame.getGame().setCurrentRoom(room);
             newPlayer(room);
             RoomLoader.onChangeFinished();
