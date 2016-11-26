@@ -168,6 +168,7 @@ public final class Tile {
     }
     
     public final static class AdjustedTileMapImage extends TileMapImage {
+        private TileMapImage raw = null;
         /*package*/ final float offZ;
         /*package*/ final int rot;
         /*package*/ final boolean mirror;
@@ -191,6 +192,11 @@ public final class Tile {
         
         public AdjustedTileMapImage(final TileMapImage img, final float offZ, final int rot, final boolean mirror, final boolean flip) {
             this(img.ix, img.iy, offZ, rot, mirror, flip);
+            raw = img;
+        }
+        
+        public final TileMapImage getRaw() {
+            return raw;
         }
         
         @Override
