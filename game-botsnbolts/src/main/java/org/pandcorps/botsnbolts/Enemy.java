@@ -41,8 +41,12 @@ public abstract class Enemy extends Chr implements CollisionListener {
         this.health = health;
         final Panple pos = getPosition();
         BotsnBoltsGame.tm.savePosition(pos, x, y);
-        pos.addX(8);
+        pos.addX(getInitialOffsetX());
         pos.setZ(BotsnBoltsGame.DEPTH_ENEMY);
+    }
+    
+    protected int getInitialOffsetX() {
+        return 8;
     }
     
     @Override
@@ -208,6 +212,11 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
         
         @Override
+        protected final int getInitialOffsetX() {
+            return 0;
+        }
+        
+        @Override
         protected final void award(final PowerUp powerUp) {
             PowerUp.addPowerUp(powerUp, baseX, baseY, 6);
         }
@@ -283,7 +292,9 @@ public abstract class Enemy extends Chr implements CollisionListener {
                 }
             }
             if (shoot) {
-                fire();
+                if (this.isInView()) {
+                    fire();
+                }
                 timer = 0;
             }
         }
