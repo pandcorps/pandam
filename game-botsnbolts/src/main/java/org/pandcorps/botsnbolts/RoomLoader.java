@@ -60,63 +60,85 @@ public abstract class RoomLoader {
     protected final static class ScriptRoomLoader extends RoomLoader {
         @Override
         protected final Panroom newRoom() {
-            final Pangine engine = Pangine.getEngine();
             final Panroom room = BotsnBoltsGame.BotsnBoltsScreen.newRoom(RoomLoader.room.w * BotsnBoltsGame.GAME_W);
             row = BotsnBoltsGame.tm.getHeight() - 1;
-            SegmentStream in = null;
-            try {
-                Segment seg;
-                in = SegmentStream.openLocation(BotsnBoltsGame.RES + "/level/" + RoomLoader.room.roomId + ".txt");
-                seg = in.readRequire("CTX"); // Context
-                BotsnBoltsGame.BotsnBoltsScreen.loadTileImage(seg.getValue(0));
-                //TODO Add bg image
-                engine.setBgColor(toColor(seg.getField(2)));
-                while ((seg = in.read()) != null) {
-                    final String name = seg.getName();
-                    if ("ANM".equals(name)) { // Animator
-                        anm(seg);
-                    } else if ("PUT".equals(name)) { // Put
-                        put(seg);
-                    } else if ("M".equals(name)) { // Map
-                        m(seg);
-                    } else if ("RCT".equals(name)) { // Rectangle
-                        rct(seg.intValue(0), seg.intValue(1), seg.intValue(2), seg.intValue(3), seg, 4);
-                    } else if ("ROW".equals(name)) { // Row
-                        row(seg);
-                    } else if ("COL".equals(name)) { // Column
-                        col(seg);
-                    } else if ("TIL".equals(name)) { // Tile
-                        til(seg);
-                    } else if ("BOX".equals(name)) { // Power-up Box
-                        box(seg.intValue(0), seg.intValue(1));
-                    } else if ("ENM".equals(name)) { // Enemy
-                        enm(seg.intValue(0), seg.intValue(1), seg.getValue(2));
-                    } else if ("SHP".equals(name)) { // Shootable Block Puzzle
-                        shp(seg);
-                    } else if ("TMP".equals(name)) { // Timed Block Puzzle
-                        tmp(in);
-                    } else if ("HDP".equals(name)) { // Hidden Block Puzzle
-                        hdp(seg);
-                    } else if ("SPP".equals(name)) { // Spike Block Puzzle
-                        spp(seg);
-                    } else if ("LDR".equals(name)) { // Ladder
-                        ldr(seg.intValue(0), seg.intValue(1), seg.intValue(2));
-                    } else if ("BRR".equals(name)) { // Barrier
-                        brr(seg.intValue(0), seg.intValue(1), seg.getValue(2));
-                    } else if ("DOR".equals(name)) { // Door
-                        dor(seg.intValue(0), seg.intValue(1), seg.getValue(2));
-                    } else if ("SBT".equals(name)) { // Shootable Button
-                        sbt(seg, in);
-                    } else if ("DEF".equals(name)) { // Definition
-                    }
-                }
-                return room;
-            } catch (final Exception e) {
-                throw Pantil.toRuntimeException(e);
-            } finally {
-                Iotil.close(in);
+            processSegmentFile(RoomLoader.room.roomId, true);
+            return room;
+        }
+    }
+    
+    private final static void processSegmentFile(final String fileId, final boolean ctxRequired) {
+        final String fileName = BotsnBoltsGame.RES + "/level/" + fileId + ".txt";
+        SegmentStream in = null;
+        try {
+            in = SegmentStream.openLocation(fileName);
+            processSegments(in, true);
+        } catch (final Exception e) {
+            throw new Panception("Error loading " + fileName, e);
+        } finally {
+            Iotil.close(in);
+        }
+    }
+    
+    private final static void processSegments(final SegmentStream in, final boolean ctxRequired) throws Exception {
+        Segment seg = in.readIf("CTX"); // Context
+        if (seg != null) {
+            ctx(seg);
+        } else {
+            imp(in.readRequire("IMP"), true); // Import
+        }
+        while ((seg = in.read()) != null) {
+            final String name = seg.getName();
+            if ("IMP".equals(name)) { // Import
+                imp(seg, false);
+            } else if ("ANM".equals(name)) { // Animator
+                anm(seg);
+            } else if ("PUT".equals(name)) { // Put
+                put(seg);
+            } else if ("M".equals(name)) { // Map
+                m(seg);
+            } else if ("RCT".equals(name)) { // Rectangle
+                rct(seg.intValue(0), seg.intValue(1), seg.intValue(2), seg.intValue(3), seg, 4);
+            } else if ("ROW".equals(name)) { // Row
+                row(seg);
+            } else if ("COL".equals(name)) { // Column
+                col(seg);
+            } else if ("TIL".equals(name)) { // Tile
+                til(seg);
+            } else if ("BOX".equals(name)) { // Power-up Box
+                box(seg.intValue(0), seg.intValue(1));
+            } else if ("ENM".equals(name)) { // Enemy
+                enm(seg.intValue(0), seg.intValue(1), seg.getValue(2));
+            } else if ("SHP".equals(name)) { // Shootable Block Puzzle
+                shp(seg);
+            } else if ("TMP".equals(name)) { // Timed Block Puzzle
+                tmp(in);
+            } else if ("HDP".equals(name)) { // Hidden Block Puzzle
+                hdp(seg);
+            } else if ("SPP".equals(name)) { // Spike Block Puzzle
+                spp(seg);
+            } else if ("LDR".equals(name)) { // Ladder
+                ldr(seg.intValue(0), seg.intValue(1), seg.intValue(2));
+            } else if ("BRR".equals(name)) { // Barrier
+                brr(seg.intValue(0), seg.intValue(1), seg.getValue(2));
+            } else if ("DOR".equals(name)) { // Door
+                dor(seg.intValue(0), seg.intValue(1), seg.getValue(2));
+            } else if ("SBT".equals(name)) { // Shootable Button
+                sbt(seg, in);
+            } else if ("DEF".equals(name)) { // Definition
             }
         }
+    }
+    
+    private final static void ctx(final Segment seg) {
+        BotsnBoltsGame.BotsnBoltsScreen.loadTileImage(seg.getValue(0));
+        //TODO Add bg image
+        Pangine.getEngine().setBgColor(toColor(seg.getField(2)));
+    }
+    
+    private final static void imp(final Segment seg, final boolean ctxRequired) {
+        //TODO Could cache imported files
+        processSegmentFile(seg.getValue(0), ctxRequired);
     }
     
     private final static void anm(final Segment seg) {
@@ -409,6 +431,10 @@ public abstract class RoomLoader {
             return null;
         }
         return new BotRoomCell(room, cell);
+    }
+    
+    protected final static void reloadCurrentRoom() {
+        BotsnBoltsGame.BotsnBoltsScreen.loadRoom(room);
     }
     
     protected final static class TileAnimator {
