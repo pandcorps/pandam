@@ -29,6 +29,7 @@ import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.tile.*;
+import org.pandcorps.pandax.tile.Tile.*;
 
 public class ShootableDoor extends Panctor implements StepListener, CollisionListener {
     protected final static Panple minBarrier = new FinPanple2(1, 0);
@@ -82,7 +83,10 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
     }
     
     private final void closeTunnel() {
-        setDoorTiles(x, isSmall() ? BotsnBoltsGame.doorTunnelSmall : BotsnBoltsGame.doorTunnel, Tile.BEHAVIOR_SOLID, true);
+        final boolean small = isSmall();
+        setDoorTiles(x, small ? BotsnBoltsGame.doorTunnelSmall : BotsnBoltsGame.doorTunnel, Tile.BEHAVIOR_SOLID, true);
+        disableOverlay(x, y - 1);
+        disableOverlay(x, y + (small ? 1 : 4));
     }
     
     protected final boolean isSmall() {
@@ -124,7 +128,31 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
         for (int j = 0; j < n; j++) {
             tm.setBackground(x, y + j, doorTunnelOverlay[base + j], Tile.BEHAVIOR_OPEN);
         }
+        enableOverlay(x, y - 1);
+        enableOverlay(x, y + n);
         return n;
+    }
+    
+    protected final void enableOverlay(final int x, final int y) {
+        final TileMap tm = BotsnBoltsGame.tm;
+        final int index = tm.getIndex(x, y);
+        final Object bgRaw = DynamicTileMap.getRawBackground(tm.getTile(index));
+        if ((bgRaw == null) || (bgRaw.getClass() != TileMapImage.class)) {
+            return;
+        }
+        final TileMapImage bg = (TileMapImage) bgRaw;
+        tm.setBackground(index, new AdjustedTileMapImage(bg, BotsnBoltsGame.DEPTH_OVERLAY, 0, false, false));
+    }
+    
+    protected final void disableOverlay(final int x, final int y) {
+        final TileMap tm = BotsnBoltsGame.tm;
+        final int index = tm.getIndex(x, y);
+        final Object bgRaw = DynamicTileMap.getRawBackground(tm.getTile(index));
+        if ((bgRaw == null) || (bgRaw.getClass() != AdjustedTileMapImage.class)) {
+            return;
+        }
+        final AdjustedTileMapImage bg = (AdjustedTileMapImage) bgRaw;
+        tm.setBackground(index, bg.getRaw());
     }
     
     protected void openDoor() {
