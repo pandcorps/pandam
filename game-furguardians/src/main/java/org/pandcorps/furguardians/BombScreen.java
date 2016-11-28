@@ -23,7 +23,7 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.furguardians;
 
 import org.pandcorps.core.*;
-import org.pandcorps.game.actor.*;
+import org.pandcorps.furguardians.Player.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.tile.Tile.*;
@@ -39,7 +39,7 @@ public final class BombScreen extends MiniGameScreen {
     @Override
     protected final void load() throws Exception {
         room = initMiniZoom(SCREEN_H);
-        img = null;
+        img = Pangine.getEngine().createImage(Pantil.vmid(), FurGuardiansGame.RES + "bg/Tiles.png");
         tm = new TileMap(Pantil.vmid(), 15, 14, DIM, DIM);
         imgMap = tm.splitImageMap(img);
     }
@@ -48,4 +48,21 @@ public final class BombScreen extends MiniGameScreen {
     protected final void destroy() {
         Panmage.destroy(img);
     }
-}
+    
+    private final void buildBorder() {
+        final int yMin = 0, yMax = 12;
+        final Tile tile = tm.getTile(imgMap[0][4], null, Tile.BEHAVIOR_SOLID);
+        for (int i = 1; i < 14; i++) {
+            tm.setTile(i, yMin, tile);
+        }
+    }
+    
+    protected final static class BombGuy extends Panctor {
+        private final PlayerContext pc;
+        
+        protected BombGuy(final PlayerContext pc) {
+            this.pc = pc;
+            setView(pc.mapSouth);
+        }
+    }
+ }
