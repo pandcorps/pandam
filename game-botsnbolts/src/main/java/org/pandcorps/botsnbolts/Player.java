@@ -780,6 +780,52 @@ public final class Player extends Chr {
         }
     };
     
+    protected final static StateHandler CARRIED_HANDLER = new StateHandler() {
+        @Override
+        protected final void onJump(final Player player) {
+            player.onJumpNormal();
+        }
+        
+        @Override
+        protected final void onShootStart(final Player player) {
+            player.prf.shootMode.onShootStart(player);
+        }
+        
+        @Override
+        protected final void onShooting(final Player player) {
+            player.prf.shootMode.onShooting(player);
+        }
+        
+        @Override
+        protected final void onShootEnd(final Player player) {
+            player.prf.shootMode.onShootEnd(player);
+        }
+        
+        @Override
+        protected final void onRight(final Player player) {
+        }
+        
+        @Override
+        protected final void onLeft(final Player player) {
+        }
+        
+        @Override
+        protected final boolean onStep(final Player player) {
+            //TODO
+            return true;
+        }
+        
+        @Override
+        protected final void onGrounded(final Player player) {
+            player.onGroundedNormal();
+        }
+        
+        @Override
+        protected final boolean onAir(final Player player) {
+            return player.onAirNormal();
+        }
+    };
+    
     protected abstract static class ShootMode {
         protected final int delay;
         
