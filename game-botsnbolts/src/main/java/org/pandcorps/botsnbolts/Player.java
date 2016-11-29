@@ -807,10 +807,12 @@ public final class Player extends Chr {
         
         @Override
         protected final void onRight(final Player player) {
+            player.setMirror(false);
         }
         
         @Override
         protected final void onLeft(final Player player) {
+            player.setMirror(true);
         }
         
         @Override
