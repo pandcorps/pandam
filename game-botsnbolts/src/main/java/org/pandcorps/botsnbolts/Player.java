@@ -51,6 +51,7 @@ public final class Player extends Chr {
     private final static int HURT_TIME = 15;
     private final static int RUN_TIME = 5;
     private final static int VEL_JUMP = 8;
+    protected final static int VEL_BOUNCE_BOMB = 4;
     private final static int VEL_WALK = 3;
     private final static int VEL_PROJECTILE = 8;
     private final static float VX_SPREAD1;
@@ -61,7 +62,7 @@ public final class Player extends Chr {
     protected final PlayerContext pc;
     protected final Profile prf;
     protected final PlayerImages pi;
-    private StateHandler stateHandler = NORMAL_HANDLER;
+    protected StateHandler stateHandler = NORMAL_HANDLER;
     private boolean running = false;
     private int runIndex = 0;
     private int runTimer = 0;
@@ -817,7 +818,7 @@ public final class Player extends Chr {
         
         @Override
         protected final boolean onStep(final Player player) {
-            //TODO
+            // The Carrier moves the Player, so don't need to do that here
             return true;
         }
         

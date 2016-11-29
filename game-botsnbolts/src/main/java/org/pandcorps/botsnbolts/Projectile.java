@@ -127,6 +127,25 @@ public class Projectile extends Pandy implements Collidable, AllOobListener {
             final Panple bombPos = bomb.getPosition();
             getPosition().set(bombPos.getX(), bombPos.getY(), BotsnBoltsGame.DEPTH_BURST);
             setView(bomb.src.pi.burst);
+            bounceIfNeeded();
+        }
+        
+        private final void bounceIfNeeded() {
+            bounceIfNeeded(BotsnBoltsGame.pc);
+        }
+        
+        private final void bounceIfNeeded(final PlayerContext pc) {
+            final Player player = PlayerContext.getPlayer(pc);
+            if (player == null) {
+                return;
+            } else if (player.stateHandler != Player.BALL_HANDLER) {
+                return;
+            } else if (player.v >= Player.VEL_BOUNCE_BOMB) {
+                return;
+            } else if (getPosition().getDistance2(player.getPosition()) > 9) {
+                return;
+            }
+            player.v = Player.VEL_BOUNCE_BOMB;
         }
 
         @Override
