@@ -70,6 +70,7 @@ public final class Player extends Chr {
     private long startCharge = -1000;
     private long lastCharge = -1000;
     private long lastHurt = -1000;
+    private long lastJump = -1000;
     private int wallTimer = 0;
     private boolean wallMirror = false;
     private int health = HudMeter.MAX_VALUE;
@@ -168,6 +169,7 @@ public final class Player extends Chr {
     private final void onJumpNormal() {
         if (isGrounded()) {
             v = VEL_JUMP;
+            lastJump = Pangine.getEngine().getClock();
         }
     }
     
@@ -775,7 +777,9 @@ public final class Player extends Chr {
         
         @Override
         protected final boolean onAir(final Player player) {
-            player.endBall();
+            if ((Pangine.getEngine().getClock() - player.lastJump) <= 1) {
+                player.endBall();
+            }
             return false;
         }
     };
