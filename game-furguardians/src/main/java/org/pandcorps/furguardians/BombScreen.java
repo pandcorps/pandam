@@ -42,6 +42,7 @@ public final class BombScreen extends MiniGameScreen {
         img = Pangine.getEngine().createImage(Pantil.vmid(), FurGuardiansGame.RES + "bg/Tiles.png");
         tm = new TileMap(Pantil.vmid(), 15, 14, DIM, DIM);
         imgMap = tm.splitImageMap(img);
+        buildBorder();
     }
     
     @Override
@@ -65,4 +66,4 @@ public final class BombScreen extends MiniGameScreen {
             setView(pc.mapSouth);
         }
     }
- }
+}
