@@ -27,6 +27,13 @@ import org.pandcorps.pandam.event.*;
 
 public final class Carrier extends Panctor implements StepListener, CollisionListener {
     private Player carried;
+    
+    protected Carrier(final int x, final int y) {
+        final Panple pos = getPosition();
+        BotsnBoltsGame.tm.savePosition(pos, x, y);
+        pos.setZ(BotsnBoltsGame.DEPTH_CARRIER);
+        //setView(); //TODO
+    }
 
     @Override
     public final void onStep(final StepEvent event) {

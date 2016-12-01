@@ -61,13 +61,14 @@ public final class BotsnBoltsGame extends BaseGame {
     
     protected final static int DEPTH_BG = 0;
     protected final static int DEPTH_FG = 1;
-    protected final static int DEPTH_POWER_UP = 2;
-    protected final static int DEPTH_PLAYER = 3;
-    protected final static int DEPTH_ENEMY = 4;
-    protected final static int DEPTH_PROJECTILE = 5;
-    protected final static int DEPTH_OVERLAY = 6;
-    protected final static int DEPTH_BURST = 7;
-    protected final static int DEPTH_HUD = 8;
+    protected final static int DEPTH_CARRIER = 2;
+    protected final static int DEPTH_POWER_UP = 3;
+    protected final static int DEPTH_PLAYER = 4;
+    protected final static int DEPTH_ENEMY = 5;
+    protected final static int DEPTH_PROJECTILE = 6;
+    protected final static int DEPTH_OVERLAY = 7;
+    protected final static int DEPTH_BURST = 8;
+    protected final static int DEPTH_HUD = 9;
     
     private final static FinPanple2 ng = GuyPlatform.getMin(Player.PLAYER_X);
     private final static FinPanple2 xg = GuyPlatform.getMax(Player.PLAYER_X, Player.PLAYER_H);
