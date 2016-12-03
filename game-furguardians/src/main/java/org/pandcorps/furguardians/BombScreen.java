@@ -30,6 +30,10 @@ import org.pandcorps.pandax.tile.Tile.*;
 
 public final class BombScreen extends MiniGameScreen {
     private final static int DIM = 16;
+    private final static int PLAYABLE_COLS = 13;
+    private final static int PLAYABLE_ROWS = 11;
+    private final static int TOTAL_COLS = PLAYABLE_COLS + 2; // Playing field + left border + right border
+    private final static int TOTAL_ROWS = PLAYABLE_ROWS + 3; // Playing field + top border + low border + HUD
     private final static int SCREEN_H = 224;
     private static Panroom room = null;
     private static Panmage img = null;
@@ -40,8 +44,10 @@ public final class BombScreen extends MiniGameScreen {
     protected final void load() throws Exception {
         room = initMiniZoom(SCREEN_H);
         img = Pangine.getEngine().createImage(Pantil.vmid(), FurGuardiansGame.RES + "bg/Tiles.png");
-        tm = new TileMap(Pantil.vmid(), 15, 14, DIM, DIM);
+        tm = new TileMap(Pantil.vmid(), TOTAL_COLS, TOTAL_ROWS, DIM, DIM);
         imgMap = tm.splitImageMap(img);
+        room.addActor(tm);
+        tm.getPosition().setX((Pangine.getEngine().getEffectiveWidth() - (TOTAL_COLS * DIM)) / 2);
         buildBorder();
     }
     
@@ -51,10 +57,15 @@ public final class BombScreen extends MiniGameScreen {
     }
     
     private final void buildBorder() {
-        final int yMin = 0, yMax = 12;
+        final int yMin = 0, yMax = PLAYABLE_ROWS + 1, xMax = PLAYABLE_COLS + 1;
         final Tile tile = tm.getTile(imgMap[0][4], null, Tile.BEHAVIOR_SOLID);
-        for (int i = 1; i < 14; i++) {
+        for (int i = 1; i < xMax; i++) {
             tm.setTile(i, yMin, tile);
+            tm.setTile(i, yMax, tile);
+        }
+        for (int j = yMin; j <= yMax; j++) {
+            tm.setTile(0, j, tile);
+            tm.setTile(xMax, j, tile);
         }
     }
     
