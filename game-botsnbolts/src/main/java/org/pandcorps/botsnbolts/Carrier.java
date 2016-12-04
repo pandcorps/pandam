@@ -46,6 +46,7 @@ public final class Carrier extends Panctor implements StepListener, CollisionLis
     @Override
     public final void onStep(final StepEvent event) {
         getPosition().add(dir * velX, dir * velY);
+        timer++;
         if (timer >= duration) {
             dir *= -1;
             timer = 0;
