@@ -600,4 +600,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
             return false;
         }
     }
+    
+    protected final static class FlamethrowerEnemy {
+    }
 }
