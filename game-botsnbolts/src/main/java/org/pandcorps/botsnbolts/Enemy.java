@@ -602,5 +602,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
     }
     
     protected final static class FlamethrowerEnemy {
+        protected FlamethrowerEnemy(int x, int y) {
+        }
     }
 }
