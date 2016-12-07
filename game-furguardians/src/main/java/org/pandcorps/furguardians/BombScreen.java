@@ -35,6 +35,7 @@ public final class BombScreen extends MiniGameScreen {
     private final static int TOTAL_COLS = PLAYABLE_COLS + 2; // Playing field + left border + right border
     private final static int TOTAL_ROWS = PLAYABLE_ROWS + 3; // Playing field + top border + low border + HUD
     private final static int SCREEN_H = 224;
+    private final static int DEPTH_BG = 0;
     private static Panroom room = null;
     private static Panmage img = null;
     private static TileMap tm = null;
@@ -47,7 +48,7 @@ public final class BombScreen extends MiniGameScreen {
         tm = new TileMap(Pantil.vmid(), TOTAL_COLS, TOTAL_ROWS, DIM, DIM);
         imgMap = tm.splitImageMap(img);
         room.addActor(tm);
-        tm.getPosition().setX((Pangine.getEngine().getEffectiveWidth() - (TOTAL_COLS * DIM)) / 2);
+        tm.getPosition().set((Pangine.getEngine().getEffectiveWidth() - (TOTAL_COLS * DIM)) / 2, 0, DEPTH_BG);
         buildBorder();
     }
     
