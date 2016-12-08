@@ -36,6 +36,8 @@ public final class BombScreen extends MiniGameScreen {
     private final static int TOTAL_ROWS = PLAYABLE_ROWS + 3; // Playing field + top border + low border + HUD
     private final static int SCREEN_H = 224;
     private final static int DEPTH_BG = 0;
+    private final static int DEPTH_BOMB = 1;
+    private final static int DEPTH_PLAYER = 2;
     private static Panroom room = null;
     private static Panmage img = null;
     private static TileMap tm = null;
@@ -76,6 +78,8 @@ public final class BombScreen extends MiniGameScreen {
         protected BombGuy(final PlayerContext pc) {
             this.pc = pc;
             setView(pc.mapSouth);
+            getPosition().setZ(DEPTH_PLAYER);
+            room.addActor(this);
         }
     }
 }
