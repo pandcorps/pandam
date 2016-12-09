@@ -82,4 +82,10 @@ public final class BombScreen extends MiniGameScreen {
             room.addActor(this);
         }
     }
+    
+    protected final static class Bomb extends Panctor {
+        protected Bomb() {
+            getPosition().setZ(DEPTH_BOMB);
+        }
+    }
 }
