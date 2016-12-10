@@ -84,7 +84,7 @@ public final class BombScreen extends MiniGameScreen {
     }
     
     protected final static class Bomb extends Panctor {
-        protected Bomb() {
+        protected Bomb(final BombGuy guy) {
             getPosition().setZ(DEPTH_BOMB);
         }
     }
