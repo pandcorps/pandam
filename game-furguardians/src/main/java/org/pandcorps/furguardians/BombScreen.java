@@ -75,7 +75,7 @@ public final class BombScreen extends MiniGameScreen {
     protected final static class BombGuy extends Panctor {
         private final PlayerContext pc;
         
-        protected BombGuy(final PlayerContext pc) {
+        protected BombGuy(final PlayerContext pc, final int x, final int y) {
             this.pc = pc;
             setView(pc.mapSouth);
             getPosition().setZ(DEPTH_PLAYER);
