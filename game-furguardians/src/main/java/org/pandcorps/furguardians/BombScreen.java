@@ -78,7 +78,9 @@ public final class BombScreen extends MiniGameScreen {
         protected BombGuy(final PlayerContext pc, final int x, final int y) {
             this.pc = pc;
             setView(pc.mapSouth);
-            getPosition().setZ(DEPTH_PLAYER);
+            final Panple pos = getPosition();
+            tm.savePosition(pos, x, y);
+            pos.setZ(DEPTH_PLAYER);
             room.addActor(this);
         }
     }
