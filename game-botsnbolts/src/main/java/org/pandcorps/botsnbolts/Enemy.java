@@ -601,8 +601,16 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
     }
     
-    protected final static class FlamethrowerEnemy {
+    protected final static int HENCHBOT_OFF_X = -1, HENCHBOT_H = -1, HENCHBOT_HEALTH = -1; //TODO
+    
+    protected final static class FlamethrowerEnemy extends Enemy {
         protected FlamethrowerEnemy(int x, int y) {
+            super(HENCHBOT_OFF_X, HENCHBOT_H, x, y, HENCHBOT_HEALTH);
+        }
+
+        @Override
+        protected final void award(final PowerUp powerUp) {
+            
         }
     }
 }
