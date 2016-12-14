@@ -389,12 +389,16 @@ public abstract class Enemy extends Chr implements CollisionListener {
             Pangine.getEngine().addTimer(this, getDelay(), new TimerListener() {
                 @Override
                 public final void onTimer(final TimerEvent event) {
-                    jump();
+                    onAppointment();
                 }});
         }
         
         protected int getDelay() {
             return 30;
+        }
+        
+        protected void onAppointment() {
+            jump();
         }
         
         protected final void jump() {
