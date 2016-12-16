@@ -607,8 +607,8 @@ public abstract class Enemy extends Chr implements CollisionListener {
     
     protected final static int HENCHBOT_OFF_X = -1, HENCHBOT_H = -1, HENCHBOT_HEALTH = -1; //TODO
     
-    protected final static class FlamethrowerEnemy extends JumpEnemy {
-        protected FlamethrowerEnemy(int x, int y) {
+    protected abstract static class HenchbotEnemy extends JumpEnemy {
+        protected HenchbotEnemy(int x, int y) {
             super(HENCHBOT_OFF_X, HENCHBOT_H, x, y, HENCHBOT_HEALTH);
         }
 
@@ -626,6 +626,12 @@ public abstract class Enemy extends Chr implements CollisionListener {
 
         @Override
         protected void onJump() {
+        }
+    }
+    
+    protected final static class FlamethrowerEnemy extends HenchbotEnemy {
+        protected FlamethrowerEnemy(int x, int y) {
+            super(x, y);
         }
     }
 }
