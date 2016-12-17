@@ -622,16 +622,24 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
         
         protected final void shoot() {
+            onShoot();
+            // Shoot 3 fairly quickly; then schedule random after normal delay
         }
 
         @Override
         protected void onJump() {
         }
+        
+        protected abstract void onShoot();
     }
     
     protected final static class FlamethrowerEnemy extends HenchbotEnemy {
         protected FlamethrowerEnemy(int x, int y) {
             super(x, y);
+        }
+        
+        @Override
+        protected final void onShoot() {
         }
     }
 }
