@@ -92,4 +92,7 @@ public final class BombScreen extends MiniGameScreen {
             pos.setZ(DEPTH_BOMB);
         }
     }
+    
+    protected final static class Burst extends Panctor {
+    }
 }
