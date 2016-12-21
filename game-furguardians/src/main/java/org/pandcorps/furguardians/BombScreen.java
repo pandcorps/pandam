@@ -86,7 +86,10 @@ public final class BombScreen extends MiniGameScreen {
     }
     
     protected final static class Bomb extends Panctor {
+        protected final BombGuy guy;
+        
         protected Bomb(final BombGuy guy) {
+            this.guy = guy;
             final Panple pos = getPosition();
             tm.savePosition(pos, tm.getContainer(guy));
             pos.setZ(DEPTH_BOMB);
