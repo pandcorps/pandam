@@ -97,7 +97,10 @@ public final class BombScreen extends MiniGameScreen {
     }
     
     protected final static class Burst extends Panctor {
+        protected final BombGuy guy;
+        
         protected Burst(final Bomb bomb) {
+            guy = bomb.guy;
         }
     }
 }
