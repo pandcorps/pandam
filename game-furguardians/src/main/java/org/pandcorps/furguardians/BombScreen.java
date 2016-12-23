@@ -101,6 +101,8 @@ public final class BombScreen extends MiniGameScreen {
         
         protected Burst(final Bomb bomb) {
             guy = bomb.guy;
+            final Panple pos = getPosition();
+            pos.set(bomb.getPosition());
         }
     }
 }
