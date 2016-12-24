@@ -38,6 +38,7 @@ public final class BombScreen extends MiniGameScreen {
     private final static int DEPTH_BG = 0;
     private final static int DEPTH_BOMB = 1;
     private final static int DEPTH_PLAYER = 2;
+    private final static int DEPTH_BURST = 3;
     private static Panroom room = null;
     private static Panmage img = null;
     private static TileMap tm = null;
