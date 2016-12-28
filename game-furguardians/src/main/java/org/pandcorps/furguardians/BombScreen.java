@@ -75,6 +75,7 @@ public final class BombScreen extends MiniGameScreen {
     
     protected final static class BombGuy extends Panctor {
         private final PlayerContext pc;
+        private int radius = 1;
         
         protected BombGuy(final PlayerContext pc, final int x, final int y) {
             this.pc = pc;
@@ -101,12 +102,16 @@ public final class BombScreen extends MiniGameScreen {
     protected final static class Burst extends Panctor {
         protected final BombGuy guy;
         
+        protected Burst(final BombGuy guy, final int radius, final Direction dir) {
+            this.guy = guy;
+            room.addActor(this);
+        }
+        
         protected Burst(final Bomb bomb) {
-            guy = bomb.guy;
+            this(bomb.guy, bomb.guy.radius, null);
             final Panple pos = getPosition();
             pos.set(bomb.getPosition());
             pos.setZ(DEPTH_BURST);
-            room.addActor(this);
         }
     }
 }
