@@ -105,6 +105,9 @@ public final class BombScreen extends MiniGameScreen {
         protected Burst(final BombGuy guy, final int radius, final Direction dir) {
             this.guy = guy;
             room.addActor(this);
+            if (radius > 0) {
+                
+            }
         }
         
         protected Burst(final Bomb bomb) {
