@@ -116,5 +116,12 @@ public final class BombScreen extends MiniGameScreen {
             pos.set(bomb.getPosition());
             pos.setZ(DEPTH_BURST);
         }
+        
+        protected Burst(final int index, final BombGuy guy, final int radius, final Direction dir) {
+            this(guy, radius, dir);
+            final Panple pos = getPosition();
+            tm.savePosition(pos, index);
+            pos.setZ(DEPTH_BURST);
+        }
     }
 }
