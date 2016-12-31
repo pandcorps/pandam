@@ -116,7 +116,9 @@ public final class BombScreen extends MiniGameScreen {
         private final void grow(final int radius, final Direction dir) {
             final int index = tm.getContainer(this), nextRadius = radius - 1;
             if (dir == null) {
-                
+                for (final Direction d : Direction.values()) {
+                    newBurst(index, guy, nextRadius, d);
+                }
             } else {
                 newBurst(index, guy, nextRadius, dir);
             }
