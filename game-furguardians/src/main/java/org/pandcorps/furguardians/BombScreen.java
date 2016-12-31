@@ -102,26 +102,45 @@ public final class BombScreen extends MiniGameScreen {
     protected final static class Burst extends Panctor {
         protected final BombGuy guy;
         
-        protected Burst(final BombGuy guy, final int radius, final Direction dir) {
+        protected Burst(final BombGuy guy) {
             this.guy = guy;
             room.addActor(this);
+        }
+        
+        private final void scheduleGrow(final int radius, final Direction dir) {
             if (radius > 0) {
+                grow(radius, dir);
+            }
+        }
+        
+        private final void grow(final int radius, final Direction dir) {
+            final int index = tm.getContainer(this), nextRadius = radius - 1;
+            if (dir == null) {
                 
+            } else {
+                newBurst(index, guy, nextRadius, dir);
             }
         }
         
         protected Burst(final Bomb bomb) {
-            this(bomb.guy, bomb.guy.radius, null);
+            this(bomb.guy);
             final Panple pos = getPosition();
             pos.set(bomb.getPosition());
             pos.setZ(DEPTH_BURST);
+            scheduleGrow(bomb.guy.radius, null);
         }
         
-        protected Burst(final int index, final BombGuy guy, final int radius, final Direction dir) {
-            this(guy, radius, dir);
-            final Panple pos = getPosition();
-            tm.savePosition(pos, index);
+        protected final static Burst newBurst(final int index, final BombGuy guy, final int radius, final Direction dir) {
+            final int nextIndex = tm.getNeighbor(index, dir);
+            if (Tile.getBehavior(tm.getTile(nextIndex)) == Tile.BEHAVIOR_SOLID) {
+                return null;
+            }
+            final Burst burst = new Burst(guy);
+            final Panple pos = burst.getPosition();
+            tm.savePosition(pos, nextIndex);
             pos.setZ(DEPTH_BURST);
+            burst.scheduleGrow(radius, dir);
+            return burst;
         }
     }
 }
