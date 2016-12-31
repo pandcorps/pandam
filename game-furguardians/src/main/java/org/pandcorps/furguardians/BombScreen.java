@@ -25,6 +25,7 @@ package org.pandcorps.furguardians;
 import org.pandcorps.core.*;
 import org.pandcorps.furguardians.Player.*;
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.tile.Tile.*;
 
@@ -109,7 +110,10 @@ public final class BombScreen extends MiniGameScreen {
         
         private final void scheduleGrow(final int radius, final Direction dir) {
             if (radius > 0) {
-                grow(radius, dir);
+                Pangine.getEngine().addTimer(this, 2, new TimerListener() {
+                    @Override public final void onTimer(final TimerEvent event) {
+                        grow(radius, dir);
+                    }});
             }
         }
         
