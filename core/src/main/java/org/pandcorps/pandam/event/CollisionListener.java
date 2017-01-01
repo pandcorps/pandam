@@ -24,7 +24,7 @@ package org.pandcorps.pandam.event;
 
 // Every CollisionListener should be a Panctor,
 // so we extend SpecPanctor.
-// Not ever Panstener needs to be a Panctor, so it does not.
+// Not every Panstener needs to be a Panctor, so it does not.
 public interface CollisionListener extends Panstener, Collidable {
 	public void onCollision(final CollisionEvent event);
 }
