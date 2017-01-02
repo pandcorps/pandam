@@ -74,7 +74,7 @@ public final class BombScreen extends MiniGameScreen {
         }
     }
     
-    protected final static class BombGuy extends Panctor {
+    protected final static class BombGuy extends Panctor implements CollisionListener {
         private final PlayerContext pc;
         private int radius = 1;
         
@@ -85,6 +85,11 @@ public final class BombScreen extends MiniGameScreen {
             tm.savePosition(pos, x, y);
             pos.setZ(DEPTH_PLAYER);
             room.addActor(this);
+        }
+
+        @Override
+        public final void onCollision(final CollisionEvent event) {
+            
         }
     }
     
@@ -100,7 +105,7 @@ public final class BombScreen extends MiniGameScreen {
         }
     }
     
-    protected final static class Burst extends Panctor {
+    protected final static class Burst extends Panctor implements Collidable {
         protected final BombGuy guy;
         
         protected Burst(final BombGuy guy) {
