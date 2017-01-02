@@ -406,6 +406,7 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
         protected final int y;
         private int base = 0;
         private int vel = 0;
+        private long startTime;
         
         protected BossDoor(final int x, final int y) {
             final TileMap tm = BotsnBoltsGame.tm;
@@ -413,14 +414,26 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
             this.x = x;
             this.y = y;
             tm.savePosition(getPosition(), x, y);
+            for (int j = 0; j < 4; j++) {
+                tm.setBehavior(x, y + j, Tile.BEHAVIOR_SOLID);
+            }
         }
         
-        private final void open() {
-            vel = 1;
+        private final void start(final int vel) {
+            this.vel = vel;
+            startTime = Pangine.getEngine().getClock();
+        }
+        
+        protected final void open() {
+            start(1);
+        }
+        
+        protected final boolean isOpening() {
+            return vel > 0;
         }
         
         private final void close() {
-            vel = -1;
+            start(-1);
         }
         
         @Override
@@ -428,11 +441,15 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
             final Panlayer layer = getLayer();
             final Panple pos = getPosition();
             final float x = pos.getX(), y = pos.getY();
-            base += vel;
-            if (base < 0) {
-                base = 0;
-            } else if (base > h) {
-                base = h;
+            if (vel != 0 && (Pangine.getEngine().getClock() - startTime) % 3 == 0) {
+                base += vel;
+                if (base < 0) {
+                    base = 0;
+                    vel = 0;
+                } else if (base > h) {
+                    base = h;
+                    vel = 0;
+                }
             }
             for (int j = base; j < h; j++) {
                 renderer.render(layer, BotsnBoltsGame.doorBoss, x, y + (j * 4), BotsnBoltsGame.DEPTH_FG);
