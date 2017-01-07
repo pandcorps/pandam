@@ -786,7 +786,11 @@ public abstract class GlPangine extends Pangine {
 		    	dst = screenShotDst;
 		    	screenShotDst = null;
 		    }
-		    Img img = Imtil.shrink(Imtil.create(buf, sw, sh, Imtil.TYPE_INT_RGB), Math.round(getZoom()));
+		    Img img = Imtil.create(buf, sw, sh, Imtil.TYPE_INT_RGB);
+		    final float zoom = getZoom();
+		    if (zoom > 0) {
+		        img = Imtil.shrink(img, Math.round(zoom));
+		    }
 		    if (screenShotZoom > 1) {
 		        final Img zoomed = new NearestNeighborScaler(screenShotZoom).scale(img);
 		        img.close();

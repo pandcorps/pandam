@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2016, Andrew M. Martin
+Copyright (c) 2009-2017, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -572,6 +572,9 @@ public final class Imtil {
     }
     
     public final static Img shrink(final Img in, final int f) {
+        if (f == 1) {
+            return in;
+        }
     	final int w = in.getWidth() / f, h = in.getHeight() / f;
         final Img out = newImage(w, h);
         for (int j = 0; j < h; j++) {
