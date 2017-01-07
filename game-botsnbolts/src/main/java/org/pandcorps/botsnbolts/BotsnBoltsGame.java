@@ -93,7 +93,8 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static ShootableDoorDefinition doorSilver = null;
     protected static ShootableDoorDefinition doorBlue = null;
     protected static ShootableDoorDefinition doorSmall = null;
-    protected static Panmage[] button = null;
+    protected static Panmage button = null;
+    protected static Panimation buttonFlash = null;
     protected static Panmage doorBoss = null;
     protected static Panmage ladder = null;
     protected static Panmage[] blockCyan = null;
@@ -166,6 +167,7 @@ public final class BotsnBoltsGame extends BaseGame {
     }
     
     private final static void loadDoors() {
+        final Pangine engine = Pangine.getEngine();
         doorTunnel = newDoor("door.tunnel", "bg/DoorTunnel.png");
         doorTunnelOverlay = toOverlay(doorTunnel);
         doorTunnelSmall = newDoorSmall("door.tunnel.small", "bg/DoorTunnelSmall.png");
@@ -209,8 +211,10 @@ public final class BotsnBoltsGame extends BaseGame {
         filterImgs(imgsBarrier, newFilter(colSmall, newColorHidden(), darkColSmall, newColorHiddenDark()));
         barrierHidden = newBarrier("hidden", imgsBarrier);
         Img.close(imgsBarrier);
-        button = newSheet("button", RES + "bg/Button.png", 16);
-        doorBoss = Pangine.getEngine().createImage("door.boss", RES + "/bg/DoorBoss.png");
+        final Img[] btnImgs = Imtil.loadStrip(RES + "bg/Button.png", 16);
+        button = engine.createImage("button", btnImgs[0]);
+        buttonFlash = createAnm("button.flash", 2, null, btnImgs[1], btnImgs[2], btnImgs[3]);
+        doorBoss = engine.createImage("door.boss", RES + "/bg/DoorBoss.png");
     }
     
     private final static void loadMisc() {

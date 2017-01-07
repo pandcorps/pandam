@@ -344,35 +344,36 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
     
     //TODO Hidden barrier that becomes visible when Player is near, like hidden floor blocks
     
-    protected final static class ShootableButton extends Panctor implements CollisionListener {
+    protected final static class ShootableButton extends Panctor implements CollisionListener, AnimationEndListener {
         private final ShootableButtonHandler handler;
         
         protected ShootableButton(final int x, final int y, final ShootableButtonHandler handler) {
             this.handler = handler;
-            setFrame(0);
+            setImage();
             final TileMap tm = BotsnBoltsGame.tm;
             tm.savePosition(getPosition(), x, y);
             tm.getLayer().addActor(this);
         }
         
-        private final void setFrame(final int i) {
-            setView(BotsnBoltsGame.button[i]);
+        private final void setImage() {
+            setView(BotsnBoltsGame.button);
         }
         
         @Override
         public final void onCollision(final CollisionEvent event) {
             final Collidable collider = event.getCollider();
             if (collider instanceof Projectile) {
-                setFrame(1);
-                Pangine.getEngine().addTimer(this, 5, new TimerListener() {
-                    @Override public final void onTimer(final TimerEvent event) {
-                        setFrame(0);
-                    }});
+                setView(BotsnBoltsGame.buttonFlash);
                 final Projectile projectile = (Projectile) collider;
                 handler.onShootButton();
                 projectile.burst();
                 collider.destroy();
             }
+        }
+
+        @Override
+        public final void onAnimationEnd(final AnimationEndEvent event) {
+            setImage();
         }
     }
     
