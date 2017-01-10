@@ -227,9 +227,7 @@ public class Cabin {
 		    cabinTileHandler = matchTileHandler;
 		    final int size = 6;
 		    //final Panmage[] allImgs = {FurGuardiansGame.menuPlus, FurGuardiansGame.menuCheck, FurGuardiansGame.menuX};
-		    if (shapes == null) {
-		        shapes = FurGuardiansGame.createSheet("shape", FurGuardiansGame.RES + "misc/Shapes.png");
-		    }
+		    prepareMatchImages();
 		    final List<Panmage> rndImgs = new ArrayList<Panmage>(size);
 		    for (final Panmage img : shapes) {
 		        for (int i = 0; i < 2; i++) {
@@ -246,6 +244,34 @@ public class Cabin {
             }
 		    return Text.CABIN_MATCH;
 		}
+		
+		private final void prepareMatchImages() {
+		    prepareMatchShapes();
+		    //prepareMatchLetters();
+		}
+		
+		private final void prepareMatchShapes() {
+		    if (shapes == null) {
+                shapes = FurGuardiansGame.createSheet("shape", FurGuardiansGame.RES + "misc/Shapes.png");
+            }
+		}
+		
+		/*private final void prepareMatchLetters() {
+		    final int numShapes = 3;
+		    final Set<Integer> letterIndices = new HashSet<Integer>(numShapes);
+		    while (letterIndices.size() < numShapes) {
+		        letterIndices.add(Integer.valueOf(Mathtil.randi(0, 25)));
+		    }
+		    if (shapes == null) {
+		        shapes = new Panmage[numShapes];
+		    }
+		    final Panmage[] allLetters = FurGuardiansGame.gemLetters;
+		    int i = 0;
+		    for (final Integer letterIndex : letterIndices) {
+		        shapes[i] = allLetters[letterIndex.intValue()];
+		        i++;
+		    }
+		}*/
 		
 		@Override
         protected void destroy() {
