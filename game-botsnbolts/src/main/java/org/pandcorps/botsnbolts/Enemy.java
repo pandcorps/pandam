@@ -605,15 +605,20 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
     }
     
-    protected final static int HENCHBOT_OFF_X = -1, HENCHBOT_H = -1, HENCHBOT_HEALTH = -1; //TODO
+    protected final static int HENCHBOT_OFF_X = 6, HENCHBOT_H = 21, HENCHBOT_HEALTH = 5;
     
     protected abstract static class HenchbotEnemy extends JumpEnemy {
-        protected HenchbotEnemy(int x, int y) {
+        private final Panmage[] imgs;
+        
+        protected HenchbotEnemy(final Panmage[] imgs, int x, int y) {
             super(HENCHBOT_OFF_X, HENCHBOT_H, x, y, HENCHBOT_HEALTH);
+            turnTowardPlayer();
+            this.imgs = imgs;
         }
 
         @Override
         protected final void onAppointment() {
+            turnTowardPlayer();
             if (Mathtil.rand()) {
                 jump();
             } else {
@@ -622,20 +627,39 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
         
         protected final void shoot() {
-            onShoot();
+            //onShoot();
+            jump(); //TODO remove
             // Shoot 3 fairly quickly; then schedule random after normal delay
         }
 
         @Override
         protected void onJump() {
+            v = Player.VEL_JUMP;
         }
         
         protected abstract void onShoot();
+        
+        @Override
+        protected final void onLanded() {
+            super.onLanded();
+            schedule();
+        }
+        
+        @Override
+        protected final void onGrounded() {
+            changeView(imgs[0]);
+        }
+        
+        @Override
+        protected final boolean onAir() {
+            changeView(imgs[2]);
+            return false;
+        }
     }
     
     protected final static class FlamethrowerEnemy extends HenchbotEnemy {
         protected FlamethrowerEnemy(int x, int y) {
-            super(x, y);
+            super(BotsnBoltsGame.flamethrowerEnemy, x, y);
         }
         
         @Override

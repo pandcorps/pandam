@@ -41,6 +41,7 @@ public abstract class RoomLoader {
     private final static List<ShootableDoor> doors = new ArrayList<ShootableDoor>();
     private final static List<TileAnimator> animators = new ArrayList<TileAnimator>();
     private final static Map<Character, Tile> tiles = new HashMap<Character, Tile>();
+    protected static BossDoor bossDoor = null;
     private static int row = 0;
     
     private static BotRoom room = null;
@@ -153,7 +154,7 @@ public abstract class RoomLoader {
         for (int i = 0; i < size; i++) {
             final Field field = fields.get(i);
             final TileMapImage image = getTileMapImage(field);
-            final int duration = field.intValue(2);
+            final int duration = field.intValue(6);
             frames[i] = new TileFrame(image, duration);
             if (i == 0) {
                 final TileMapImage background, foreground;
@@ -302,7 +303,7 @@ public abstract class RoomLoader {
     
     private final static void dor(final int x, final int y, final String doorType) {
         if ("Boss".equals(doorType)) {
-            new BossDoor(x, y);
+            bossDoor = new BossDoor(x, y);
         } else {
             doors.add(new ShootableDoor(x, y, ShootableDoor.getShootableDoorDefinition(doorType)));
         }
@@ -388,6 +389,7 @@ public abstract class RoomLoader {
         clearChangeFinished();
         animators.clear();
         tiles.clear();
+        bossDoor = null;
     }
     
     protected final static void loadRooms() {

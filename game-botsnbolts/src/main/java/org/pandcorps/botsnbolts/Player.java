@@ -28,6 +28,7 @@ import org.pandcorps.botsnbolts.HudMeter.*;
 import org.pandcorps.botsnbolts.Profile.*;
 import org.pandcorps.botsnbolts.Projectile.*;
 import org.pandcorps.botsnbolts.RoomLoader.*;
+import org.pandcorps.botsnbolts.ShootableDoor.*;
 import org.pandcorps.core.*;
 import org.pandcorps.game.actor.*;
 import org.pandcorps.pandam.*;
@@ -50,7 +51,7 @@ public final class Player extends Chr {
     private final static int INVINCIBLE_TIME = 60;
     private final static int HURT_TIME = 15;
     private final static int RUN_TIME = 5;
-    private final static int VEL_JUMP = 8;
+    protected final static int VEL_JUMP = 8;
     protected final static int VEL_BOUNCE_BOMB = 7;
     private final static int VEL_WALK = 3;
     private final static int VEL_PROJECTILE = 8;
@@ -474,6 +475,17 @@ public final class Player extends Chr {
         stateHandler.onWall(this, xResult);
     }
     
+    protected final boolean triggerBossDoor() {
+        final BossDoor bossDoor = RoomLoader.bossDoor;
+        if (bossDoor == null) {
+            return false;
+        } else if (bossDoor.isOpening()) {
+            return false;
+        }
+        bossDoor.open(); //TODO Make sure Player is adjacent to it
+        return true;
+    }
+    
     @Override
     protected final void onStart() {
         changeRoom(-1, 0);
@@ -639,7 +651,9 @@ public final class Player extends Chr {
         
         @Override
         protected final void onWall(final Player player, final byte xResult) {
-            if (player.wallTimer == 0 && xResult == X_WALL) {
+            if (player.triggerBossDoor()) {
+                return;
+            } else if (player.wallTimer == 0 && xResult == X_WALL) {
                 player.wallTimer = 1;
                 player.wallMirror = player.isMirror();
             }
