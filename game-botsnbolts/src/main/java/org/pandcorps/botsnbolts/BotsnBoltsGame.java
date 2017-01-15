@@ -113,6 +113,8 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static Panmage[] flamethrowerEnemy = null;
     protected static Panmage enemyProjectile = null;
     protected static Panimation enemyBurst = null;
+    protected static Panmage[] flame4 = null;
+    protected static Panmage[] flame8 = null;
     protected static HudMeterImages hudMeterBlank = null;
     
     protected static PlayerContext pc = null;
@@ -275,6 +277,8 @@ public final class BotsnBoltsGame extends BaseGame {
         flamethrowerEnemy = newSheet("flamethrower.enemy", RES + "/enemy/Henchbot.png", 32, henchO, henchMin, henchMax);
         enemyProjectile = engine.createImage("projectile.enemy", CENTER_8, new FinPanple2(-2, -2), new FinPanple2(2, 2), RES + "/enemy/EnemyProjectile.png");
         enemyBurst = newAnimation("burst.enemy", RES + "/enemy/EnemyBurst.png", 16, CENTER_16, 2);
+        flame4 = newSheet("flame.4.enemy", RES + "/enemy/Flame4.png", 4);
+        flame8 = newSheet("flame.8.enemy", RES + "/enemy/Flame8.png", 8);
     }
     
     private final static ShootableDoorDefinition filterDoor(final String id, final Img[] imgsClosed, final Img[] imgsOpening,

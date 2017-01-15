@@ -144,15 +144,21 @@ public abstract class Enemy extends Chr implements CollisionListener {
         return (b == Tile.BEHAVIOR_SOLID) || isSolidBehavior(b);
     }
     
-    protected final static class EnemyProjectile extends Pandy implements CollisionListener, AllOobListener {
+    protected static class EnemyProjectile extends Pandy implements CollisionListener, AllOobListener {
         protected EnemyProjectile(final Enemy src, final int ox, final int oy, final float vx, final float vy) {
+            this(BotsnBoltsGame.enemyProjectile, src, ox, oy, vx, vy);
+        }
+        
+        protected EnemyProjectile(final Panmage img, final Enemy src, final int ox, final int oy, final float vx, final float vy) {
             final Panple srcPos = src.getPosition();
-            getPosition().set(srcPos.getX() + ox, srcPos.getY() + oy, BotsnBoltsGame.DEPTH_PROJECTILE);
-            getVelocity().set(vx, vy);
             final boolean srcMirror = src.isMirror();
             final boolean src180 = src.getRot() == 2;
-            setMirror((srcMirror && !src180) || (!srcMirror && src180));
-            setView(BotsnBoltsGame.enemyProjectile);
+            final boolean mirror = (srcMirror && !src180) || (!srcMirror && src180);
+            final int mx = mirror ? -1 : 1;
+            getPosition().set(srcPos.getX() + (mx * ox), srcPos.getY() + oy, BotsnBoltsGame.DEPTH_PROJECTILE);
+            getVelocity().set(vx, vy);
+            setMirror(mirror);
+            setView(img);
             BotsnBoltsGame.tm.getLayer().addActor(this);
         }
         
@@ -170,6 +176,28 @@ public abstract class Enemy extends Chr implements CollisionListener {
         @Override
         public final void onAllOob(final AllOobEvent event) {
             destroy();
+        }
+    }
+    
+    protected final static class TimedEnemyProjectile extends EnemyProjectile {
+        int timer;
+        
+        protected TimedEnemyProjectile(final Panmage img, final Enemy src, final int ox, final int oy, final int timer) {
+            this(img, src, ox, oy, 0, 0, timer);
+        }
+        
+        protected TimedEnemyProjectile(final Panmage img, final Enemy src, final int ox, final int oy, final float vx, final float vy, final int timer) {
+            super(img, src, ox, oy, vx, vy);
+            this.timer = timer;
+        }
+        
+        @Override
+        public void onStep(final StepEvent event) {
+            super.onStep(event);
+            if (timer <= 0) {
+                destroy();
+            }
+            timer--;
         }
     }
     
@@ -311,7 +339,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
                     new EnemyProjectile(this, 1, -8, 0, -VEL_PROJECTILE);
                     break;
                 default :
-                    new EnemyProjectile(this, -8, 0, -VEL_PROJECTILE, 0);
+                    new EnemyProjectile(this, 8, 0, -VEL_PROJECTILE, 0);
                     break;
             }
         }
@@ -385,16 +413,25 @@ public abstract class Enemy extends Chr implements CollisionListener {
             if (scheduled) {
                 return;
             }
+            onSchedule();
             scheduled = true;
             Pangine.getEngine().addTimer(this, getDelay(), new TimerListener() {
                 @Override
                 public final void onTimer(final TimerEvent event) {
-                    onAppointment();
+                    appointment();
                 }});
+        }
+        
+        protected void onSchedule() {
         }
         
         protected int getDelay() {
             return 30;
+        }
+        
+        protected final void appointment() {
+            scheduled = false;
+            onAppointment();
         }
         
         protected void onAppointment() {
@@ -402,7 +439,6 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
         
         protected final void jump() {
-            scheduled = false;
             if (!canJump()) {
                 schedule();
                 return;
@@ -609,11 +645,17 @@ public abstract class Enemy extends Chr implements CollisionListener {
     
     protected abstract static class HenchbotEnemy extends JumpEnemy {
         private final Panmage[] imgs;
+        protected boolean shooting = false;
         
         protected HenchbotEnemy(final Panmage[] imgs, int x, int y) {
             super(HENCHBOT_OFF_X, HENCHBOT_H, x, y, HENCHBOT_HEALTH);
             turnTowardPlayer();
             this.imgs = imgs;
+        }
+        
+        @Override
+        protected final void onSchedule() {
+            shooting = false;
         }
 
         @Override
@@ -627,8 +669,8 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
         
         protected final void shoot() {
-            //onShoot();
-            jump(); //TODO remove
+            shooting = true;
+            onShoot();
             // Shoot 3 fairly quickly; then schedule random after normal delay
         }
 
@@ -647,23 +689,64 @@ public abstract class Enemy extends Chr implements CollisionListener {
         
         @Override
         protected final void onGrounded() {
-            changeView(imgs[0]);
+            changeView(shooting ? 1 : 0);
         }
         
         @Override
         protected final boolean onAir() {
-            changeView(imgs[2]);
+            changeView(2);
             return false;
+        }
+        
+        protected final void changeView(final int i) {
+            changeView(imgs[i]);
         }
     }
     
     protected final static class FlamethrowerEnemy extends HenchbotEnemy {
+        private final static int DURATION_FLAME = 8;
+        
         protected FlamethrowerEnemy(int x, int y) {
             super(BotsnBoltsGame.flamethrowerEnemy, x, y);
         }
         
         @Override
         protected final void onShoot() {
+            flame(0);
+        }
+        
+        private final void flame(final int i) {
+            final Panmage img;
+            final int ox, oy;
+            if (i < 2) {
+                img = BotsnBoltsGame.flame4[0];
+                ox = (i == 0) ? 13 : 17;
+                oy = 9;
+            } else if (i < 4) {
+                img = BotsnBoltsGame.flame4[1];
+                ox = (i == 2) ? 21 : 25;
+                oy = 9;
+            } else if (i < 5) {
+                img = BotsnBoltsGame.flame8[0];
+                ox = 28;
+                oy = 9;
+            } else {
+                img = BotsnBoltsGame.flame8[1];
+                ox = 34;
+                oy = 10;
+            }
+            new TimedEnemyProjectile(img, this, ox, oy, DURATION_FLAME);
+            if (i < 5) {
+                Pangine.getEngine().addTimer(this, 1, new TimerListener() {
+                    @Override public final void onTimer(final TimerEvent event) {
+                        flame(i + 1);
+                    }});
+            } else {
+                Pangine.getEngine().addTimer(this, DURATION_FLAME, new TimerListener() {
+                    @Override public final void onTimer(final TimerEvent event) {
+                        schedule();
+                    }});
+            }
         }
     }
 }
