@@ -26,6 +26,8 @@ import org.pandcorps.core.*;
 import org.pandcorps.furguardians.Player.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
+import org.pandcorps.pandam.event.action.*;
+import org.pandcorps.pandax.in.*;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.tile.Tile.*;
 
@@ -97,6 +99,31 @@ public final class BombScreen extends MiniGameScreen {
             tm.savePosition(pos, x, y);
             pos.setZ(DEPTH_PLAYER);
             room.addActor(this);
+            initControlScheme();
+        }
+        
+        private final void initControlScheme() {
+            final ControlScheme ctrl = pc.ctrl;
+            register(ctrl.getLeft(), new ActionListener() {
+                @Override public final void onAction(final ActionEvent event) { onLeft(); }});
+            register(ctrl.getRight(), new ActionListener() {
+                @Override public final void onAction(final ActionEvent event) { onRight(); }});
+            register(ctrl.getUp(), new ActionListener() {
+                @Override public final void onAction(final ActionEvent event) { onUp(); }});
+            register(ctrl.getDown(), new ActionListener() {
+                @Override public final void onAction(final ActionEvent event) { onDown(); }});
+        }
+        
+        private final void onLeft() {
+        }
+        
+        private final void onRight() {
+        }
+        
+        private final void onUp() {
+        }
+        
+        private final void onDown() {
         }
         
         @Override
