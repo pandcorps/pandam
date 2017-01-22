@@ -60,15 +60,15 @@ public final class BotsnBoltsGame extends BaseGame {
     protected final static byte TILE_FLOOR = 4; // Used for blocks that fade in/out
     
     protected final static int DEPTH_BG = 0;
-    protected final static int DEPTH_FG = 1;
-    protected final static int DEPTH_CARRIER = 2;
-    protected final static int DEPTH_POWER_UP = 3;
-    protected final static int DEPTH_PLAYER = 4;
-    protected final static int DEPTH_ENEMY = 5;
-    protected final static int DEPTH_PROJECTILE = 6;
-    protected final static int DEPTH_OVERLAY = 7;
-    protected final static int DEPTH_BURST = 8;
-    protected final static int DEPTH_HUD = 9;
+    protected final static int DEPTH_FG = 2;
+    protected final static int DEPTH_CARRIER = 4;
+    protected final static int DEPTH_POWER_UP = 6;
+    protected final static int DEPTH_PLAYER = 8;
+    protected final static int DEPTH_ENEMY = 10;
+    protected final static int DEPTH_PROJECTILE = 12;
+    protected final static int DEPTH_OVERLAY = 14;
+    protected final static int DEPTH_BURST = 16;
+    protected final static int DEPTH_HUD = 18;
     
     private final static FinPanple2 ng = GuyPlatform.getMin(Player.PLAYER_X);
     private final static FinPanple2 xg = GuyPlatform.getMax(Player.PLAYER_X, Player.PLAYER_H);
@@ -310,6 +310,7 @@ public final class BotsnBoltsGame extends BaseGame {
         final PlayerImagesSubSet shootSet = loadPlayerImagesSubSet(pre + "Shoot", name + ".shoot", false, oss, os, ojs);
         final Pangine engine = Pangine.getEngine();
         final Panmage hurt = newPlayerImage(PRE_IMG + "." + name + ".hurt", oj, pre + "Hurt");
+        final Panimation defeat = null; //TODO
         final Panple oClimb = new FinPanple2(15, 4);
         final Img[] climbImgs = Imtil.loadStrip(pre + "Climb.png", 32);
         final Img[] climbImgsMirror = Imtil.loadStrip(pre + "ClimbMirror.png", 32);
@@ -351,7 +352,7 @@ public final class BotsnBoltsGame extends BaseGame {
         final Panmage powerBox = engine.createImage(pre + "PowerBox", CENTER_16, minCube, maxCube, pre + "PowerBox.png");
         final Panmage byteBox = null; //TODO
         final HudMeterImages hudMeterImages = newHudMeterImages(pre + "Meter", pre + "Meter.png");
-        return new PlayerImages(basicSet, shootSet, hurt, climb, climbShoot, climbTop, basicProjectile, projectile2, projectile3, charge, chargeVert, charge2, chargeVert2,
+        return new PlayerImages(basicSet, shootSet, hurt, defeat, climb, climbShoot, climbTop, basicProjectile, projectile2, projectile3, charge, chargeVert, charge2, chargeVert2,
             burst, ball, bomb, batterySml, batteryMed, batteryBig, bolt, byteDisk, powerBox, byteBox, hudMeterImages);
     }
     
