@@ -283,7 +283,22 @@ public final class Player extends Chr {
     }
     
     protected final void defeat() {
+        final float baseVelDiag = (float) Math.sqrt(0.5);
+        for (int m = 1; m < 3; m++) {
+            final float velDiag = m * baseVelDiag, vel = m;
+            defeatOrb(0, vel);
+            defeatOrb(velDiag, velDiag);
+            defeatOrb(vel, 0);
+            defeatOrb(velDiag, -velDiag);
+            defeatOrb(0, -vel);
+            defeatOrb(-velDiag, -velDiag);
+            defeatOrb(-vel, 0);
+            defeatOrb(-velDiag, velDiag);
+        }
         RoomLoader.reloadCurrentRoom();
+    }
+    
+    private final void defeatOrb(final float velX, final float velY) {
     }
     
     protected final void addHealth(final int amount) {
