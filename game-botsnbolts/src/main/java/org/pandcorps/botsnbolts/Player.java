@@ -32,6 +32,7 @@ import org.pandcorps.botsnbolts.ShootableDoor.*;
 import org.pandcorps.core.*;
 import org.pandcorps.game.actor.*;
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.action.*;
 import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.in.*;
@@ -295,7 +296,10 @@ public final class Player extends Chr {
             defeatOrb(-vel, 0);
             defeatOrb(-velDiag, velDiag);
         }
-        RoomLoader.reloadCurrentRoom();
+        Pangine.getEngine().addTimer(this, 60, new TimerListener() {
+            @Override public final void onTimer(final TimerEvent event) {
+                RoomLoader.reloadCurrentRoom();
+            }});
     }
     
     private final void defeatOrb(final float velX, final float velY) {
