@@ -34,7 +34,9 @@ import org.pandcorps.game.actor.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.action.*;
+import org.pandcorps.pandam.event.boundary.*;
 import org.pandcorps.pandam.impl.*;
+import org.pandcorps.pandax.*;
 import org.pandcorps.pandax.in.*;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.visual.*;
@@ -1171,4 +1173,11 @@ public final class Player extends Chr {
             new Bomb(player);
         }
     };
+    
+    protected final static class DefeatOrb extends Pandy implements AllOobListener {
+        @Override
+        public final void onAllOob(final AllOobEvent event) {
+            destroy();
+        }
+    }
 }
