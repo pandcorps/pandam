@@ -305,6 +305,16 @@ public final class Player extends Chr {
     }
     
     private final void defeatOrb(final float velX, final float velY) {
+        final DefeatOrb orb = new DefeatOrb();
+        final Panple playerPos = getPosition();
+        orb.getPosition().set(playerPos.getX(), playerPos.getY(), BotsnBoltsGame.DEPTH_BURST);
+        orb.getVelocity().set(velX, velY);
+        getLayerRequired().addActor(orb);
+    }
+    
+    private final Panlayer getLayerRequired() {
+        final Panlayer layer = getLayer();
+        return (layer == null) ? BotsnBoltsGame.tm.getLayer() : layer;
     }
     
     protected final void addHealth(final int amount) {
@@ -1138,7 +1148,7 @@ public final class Player extends Chr {
             final Panple ppos = player.getPosition();
             burst.getPosition().set(ppos.getX() + (xdir * Mathtil.randi(xmin, xmax)), ppos.getY() + 12 + (ydir * Mathtil.randi(ymin, ymax)), BotsnBoltsGame.DEPTH_BURST);
             burst.setRot(rot);
-            player.getLayer().addActor(burst);
+            player.getLayerRequired().addActor(burst);
         }
         
         @Override
