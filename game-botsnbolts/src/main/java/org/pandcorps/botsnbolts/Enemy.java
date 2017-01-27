@@ -599,6 +599,10 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
     }
     
+    // Shield covers enemy's face; can only shoot enemy's back
+    protected final static class ShieldedEnemy {
+    }
+    
     protected final static class FireballEnemy extends JumpEnemy {
         protected FireballEnemy(int x, int y) {
             super(PROP_OFF_X, PROP_H, x, y, 1);
