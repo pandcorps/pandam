@@ -282,7 +282,23 @@ public final class Player extends Chr {
         lastCharge = -1000;
         if (health <= 0) {
             defeat();
+        } else {
+            burst(BotsnBoltsGame.flash, 0, 11, BotsnBoltsGame.DEPTH_POWER_UP);
+            puff(-12, 25);
+            puff(0, 30);
+            puff(12, 25);
         }
+    }
+    
+    protected final void puff(final int offX, final int offY) {
+        burst(BotsnBoltsGame.puff, offX, offY, BotsnBoltsGame.DEPTH_BURST);
+    }
+    
+    protected final void burst(final Panimation anm, final int offX, final int offY, final int z) {
+        final Burst puff = new Burst(anm);
+        final Panple playerPos = getPosition();
+        puff.getPosition().set(playerPos.getX() + offX, playerPos.getY() + offY, z);
+        BotsnBoltsGame.tm.getLayer().addActor(puff);
     }
     
     protected final void defeat() {
@@ -298,14 +314,16 @@ public final class Player extends Chr {
             defeatOrb(-vel, 0);
             defeatOrb(-velDiag, velDiag);
         }
-        Pangine.getEngine().addTimer(this, 60, new TimerListener() {
+        Pangine.getEngine().addTimer(BotsnBoltsGame.tm, 120, new TimerListener() {
             @Override public final void onTimer(final TimerEvent event) {
                 RoomLoader.reloadCurrentRoom();
             }});
+        destroy();
     }
     
     private final void defeatOrb(final float velX, final float velY) {
         final DefeatOrb orb = new DefeatOrb();
+        orb.setView(pi.defeat);
         final Panple playerPos = getPosition();
         orb.getPosition().set(playerPos.getX(), playerPos.getY(), BotsnBoltsGame.DEPTH_BURST);
         orb.getVelocity().set(velX, velY);

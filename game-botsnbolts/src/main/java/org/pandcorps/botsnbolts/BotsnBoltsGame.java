@@ -102,6 +102,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static Panmage[] blockButton = null;
     protected static Panmage[] blockHidden = null;
     protected static Panmage[] barrierHidden = null;
+    protected static Panimation carrier = null;
     protected static Panmage blockSpike = null;
     protected static Panmage spike = null;
     protected static Panmage[] cube = null;
@@ -113,6 +114,8 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static Panmage[] flamethrowerEnemy = null;
     protected static Panmage enemyProjectile = null;
     protected static Panimation enemyBurst = null;
+    protected static Panimation puff = null;
+    protected static Panimation flash = null;
     protected static Panmage[] flame4 = null;
     protected static Panmage[] flame8 = null;
     protected static HudMeterImages hudMeterBlank = null;
@@ -217,7 +220,7 @@ public final class BotsnBoltsGame extends BaseGame {
         final Img[] btnImgs = Imtil.loadStrip(RES + "bg/Button.png", 16);
         button = engine.createImage("button", btnImgs[0]);
         buttonFlash = createAnm("button.flash", 2, null, btnImgs[1], btnImgs[2], btnImgs[3]);
-        doorBoss = engine.createImage("door.boss", RES + "/bg/DoorBoss.png");
+        doorBoss = engine.createImage("door.boss", RES + "bg/DoorBoss.png");
     }
     
     private final static void loadMisc() {
@@ -240,6 +243,8 @@ public final class BotsnBoltsGame extends BaseGame {
         Img.close(blockImgs);
         blockSpike = engine.createImage("block.spike", RES + "bg/BlockSpike.png");
         spike = engine.createImage("spike", CENTER_16, new FinPanple2(-6, -6), new FinPanple2(6, 6), RES + "bg/Spike.png");
+        puff = newAnimation("puff", RES + "misc/Puff.png", 8, CENTER_8, 2);
+        flash = newAnimation("flash", RES + "misc/Flash.png", 32, CENTER_32, 12);
     }
     
     private final static Pancolor newColorHidden() {
@@ -268,17 +273,17 @@ public final class BotsnBoltsGame extends BaseGame {
             sentryGun[i] = engine.createImage("sentry.gun." + i, CENTER_16, minCube, maxCube, sentryImgs[i]);
         }
         final Panple propO = new FinPanple2(8, 1), propMin = Chr.getMin(Enemy.PROP_OFF_X), propMax = Chr.getMax(Enemy.PROP_OFF_X, Enemy.PROP_H);
-        propEnemy = newAnimation("prop.enemy", RES + "/enemy/PropEnemy.png", 16, propO, propMin, propMax, 4);
-        springEnemy = newSheet("spring.enemy", RES + "/enemy/SpringEnemy.png", 16, new FinPanple2(8, 3), propMin, propMax);
+        propEnemy = newAnimation("prop.enemy", RES + "enemy/PropEnemy.png", 16, propO, propMin, propMax, 4);
+        springEnemy = newSheet("spring.enemy", RES + "enemy/SpringEnemy.png", 16, new FinPanple2(8, 3), propMin, propMax);
         final Panple crawlMax = Chr.getMax(Enemy.PROP_OFF_X, Enemy.CRAWL_H);
-        crawlEnemy = newAnimation("crawl.enemy", RES + "/enemy/CrawlEnemy.png", 16, propO, propMin, crawlMax, 4);
-        fireballEnemy = newSheet("fireball.enemy", RES + "/enemy/FireballEnemy.png", 16, propO, propMin, crawlMax);
+        crawlEnemy = newAnimation("crawl.enemy", RES + "enemy/CrawlEnemy.png", 16, propO, propMin, crawlMax, 4);
+        fireballEnemy = newSheet("fireball.enemy", RES + "enemy/FireballEnemy.png", 16, propO, propMin, crawlMax);
         final Panple henchO = new FinPanple2(15, 1), henchMin = Chr.getMin(Enemy.HENCHBOT_OFF_X), henchMax = Chr.getMax(Enemy.HENCHBOT_OFF_X, Enemy.HENCHBOT_H);
-        flamethrowerEnemy = newSheet("flamethrower.enemy", RES + "/enemy/Henchbot.png", 32, henchO, henchMin, henchMax);
-        enemyProjectile = engine.createImage("projectile.enemy", CENTER_8, new FinPanple2(-2, -2), new FinPanple2(2, 2), RES + "/enemy/EnemyProjectile.png");
-        enemyBurst = newAnimation("burst.enemy", RES + "/enemy/EnemyBurst.png", 16, CENTER_16, 2);
-        flame4 = newSheet("flame.4.enemy", RES + "/enemy/Flame4.png", 4);
-        flame8 = newSheet("flame.8.enemy", RES + "/enemy/Flame8.png", 8);
+        flamethrowerEnemy = newSheet("flamethrower.enemy", RES + "enemy/Henchbot.png", 32, henchO, henchMin, henchMax);
+        enemyProjectile = engine.createImage("projectile.enemy", CENTER_8, new FinPanple2(-2, -2), new FinPanple2(2, 2), RES + "enemy/EnemyProjectile.png");
+        enemyBurst = newAnimation("burst.enemy", RES + "enemy/EnemyBurst.png", 16, CENTER_16, 2);
+        flame4 = newSheet("flame.4.enemy", RES + "enemy/Flame4.png", 4);
+        flame8 = newSheet("flame.8.enemy", RES + "enemy/Flame8.png", 8);
     }
     
     private final static ShootableDoorDefinition filterDoor(final String id, final Img[] imgsClosed, final Img[] imgsOpening,
@@ -310,7 +315,7 @@ public final class BotsnBoltsGame extends BaseGame {
         final PlayerImagesSubSet shootSet = loadPlayerImagesSubSet(pre + "Shoot", name + ".shoot", false, oss, os, ojs);
         final Pangine engine = Pangine.getEngine();
         final Panmage hurt = newPlayerImage(PRE_IMG + "." + name + ".hurt", oj, pre + "Hurt");
-        final Panimation defeat = null; //TODO
+        final Panimation defeat = newAnimation(pre + "DefeatOrb", pre + "DefeatOrb.png", 16, CENTER_16, 6);
         final Panple oClimb = new FinPanple2(15, 4);
         final Img[] climbImgs = Imtil.loadStrip(pre + "Climb.png", 32);
         final Img[] climbImgsMirror = Imtil.loadStrip(pre + "ClimbMirror.png", 32);
