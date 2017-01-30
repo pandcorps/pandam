@@ -368,6 +368,9 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
     }
     
+    protected final static class WallCannon {
+    }
+    
     protected final static int PROP_OFF_X = 4, PROP_H = 12, CRAWL_H = 14;
     
     protected final static class PropEnemy extends Enemy {
