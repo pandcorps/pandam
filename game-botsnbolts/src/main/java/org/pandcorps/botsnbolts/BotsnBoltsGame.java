@@ -107,6 +107,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static Panmage spike = null;
     protected static Panmage[] cube = null;
     protected static Panmage[] sentryGun = null;
+    protected static Panmage[] wallCannon = null;
     protected static Panimation propEnemy = null;
     protected static Panmage[] springEnemy = null;
     protected static Panimation crawlEnemy = null;
@@ -272,6 +273,7 @@ public final class BotsnBoltsGame extends BaseGame {
         for (int i = 0; i < sentrySize; i++) {
             sentryGun[i] = engine.createImage("sentry.gun." + i, CENTER_16, minCube, maxCube, sentryImgs[i]);
         }
+        wallCannon = null; //TODO
         final Panple propO = new FinPanple2(8, 1), propMin = Chr.getMin(Enemy.PROP_OFF_X), propMax = Chr.getMax(Enemy.PROP_OFF_X, Enemy.PROP_H);
         propEnemy = newAnimation("prop.enemy", RES + "enemy/PropEnemy.png", 16, propO, propMin, propMax, 4);
         springEnemy = newSheet("spring.enemy", RES + "enemy/SpringEnemy.png", 16, new FinPanple2(8, 3), propMin, propMax);
