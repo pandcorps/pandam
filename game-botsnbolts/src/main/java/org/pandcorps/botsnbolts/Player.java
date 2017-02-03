@@ -325,7 +325,7 @@ public final class Player extends Chr {
         final DefeatOrb orb = new DefeatOrb();
         orb.setView(pi.defeat);
         final Panple playerPos = getPosition();
-        orb.getPosition().set(playerPos.getX(), playerPos.getY(), BotsnBoltsGame.DEPTH_BURST);
+        orb.getPosition().set(playerPos.getX(), playerPos.getY() + 12, BotsnBoltsGame.DEPTH_BURST);
         orb.getVelocity().set(velX, velY);
         getLayerRequired().addActor(orb);
     }
