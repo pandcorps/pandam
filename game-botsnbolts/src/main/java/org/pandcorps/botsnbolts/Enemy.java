@@ -606,6 +606,10 @@ public abstract class Enemy extends Chr implements CollisionListener {
     protected final static class ShieldedEnemy {
     }
     
+    // Guards itself for a while; then lowers guard to attack
+    protected final static class GuardedEnemy {
+    }
+    
     protected final static class FireballEnemy extends JumpEnemy {
         protected FireballEnemy(int x, int y) {
             super(PROP_OFF_X, PROP_H, x, y, 1);
