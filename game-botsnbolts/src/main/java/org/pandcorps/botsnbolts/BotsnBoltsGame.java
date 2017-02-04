@@ -192,7 +192,7 @@ public final class BotsnBoltsGame extends BaseGame {
         final Pancolor cyan = Pancolor.CYAN, silver = Pancolor.GREY, darkCyan = new FinPancolor(s0, s192, s192), darkSilver = Pancolor.DARK_GREY;
         doorSilver = filterDoor("door.silver", imgsClosed, imgsOpening, cyan, silver, darkCyan, darkSilver, null, 0, null,
             Integer.valueOf(Projectile.POWER_MAXIMUM), imgsBarrier);
-        final Pancolor blue = Pancolor.BLUE, darkBlue = new FinPancolor(s0, s0, s192);
+        final Pancolor blue = newColorBlue(), darkBlue = newColorBlueDark();
         doorBlue = filterDoor("door.blue", imgsClosed, imgsOpening, silver, blue, darkSilver, darkBlue, null, 0, null,
             Integer.valueOf(Projectile.POWER_IMPOSSIBLE), imgsBarrier);
         final Pancolor black = new FinPancolor(s96), darkBlack = new FinPancolor(s48);
@@ -242,7 +242,7 @@ public final class BotsnBoltsGame extends BaseGame {
         blockCyan = newBlock("block.cyan", blockImgs, maxBlock, null, null, null, null);
         final Pancolor timed = new FinPancolor(s144, s192, s96), darkTimed = new FinPancolor(s96, s128, s64);
         blockTimed = newBlock("block.timed", blockImgs, maxBlock, cyan, timed, darkCyan, darkTimed);
-        final Pancolor btn = Pancolor.BLUE, darkBtn = new FinPancolor(s0, s0, s192);
+        final Pancolor btn = newColorBlue(), darkBtn = newColorBlueDark();
         blockButton = newBlock("block.button", blockImgs, maxBlock, timed, btn, darkTimed, darkBtn);
         final Pancolor hid = newColorHidden(), darkHid = newColorHiddenDark();
         blockHidden = newBlock("block.hidden", blockImgs, maxBlock, btn, hid, darkBtn, darkHid);
@@ -261,6 +261,15 @@ public final class BotsnBoltsGame extends BaseGame {
     private final static Pancolor newColorHiddenDark() {
         final short s0 = 0, s128 = 128;
         return new FinPancolor(s128, s0, s128);
+    }
+    
+    private final static Pancolor newColorBlue() {
+        return Pancolor.BLUE;
+    }
+    
+    private final static Pancolor newColorBlueDark() {
+        final short s0 = 0, sb = 176;
+        return new FinPancolor(s0, s0, sb);
     }
     
     private final static Panmage[] newBlock(final String id, final Img[] blockImgs, final Panple maxBlock, final Pancolor s1, final Pancolor d1, final Pancolor s2, final Pancolor d2) {
