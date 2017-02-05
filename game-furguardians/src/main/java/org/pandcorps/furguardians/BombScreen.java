@@ -88,13 +88,17 @@ public final class BombScreen extends MiniGameScreen {
         protected abstract void onBurst(final Burst burst);
     }
     
-    protected final static class BombGuy extends BurstListener {
+    protected final static class BombGuy extends BurstListener implements StepListener {
         private final PlayerContext pc;
         private int radius = 1;
+        private Direction dir = Direction.South;
+        private Panimation anm = null;
+        private boolean moving = false;
         
         protected BombGuy(final PlayerContext pc, final int x, final int y) {
             this.pc = pc;
             setView(pc.mapSouth);
+            setDir(Direction.South, pc.mapSouth);
             final Panple pos = getPosition();
             tm.savePosition(pos, x, y);
             pos.setZ(DEPTH_PLAYER);
@@ -115,19 +119,50 @@ public final class BombScreen extends MiniGameScreen {
         }
         
         private final void onLeft() {
+            move(Direction.West, pc.mapWest);
         }
         
         private final void onRight() {
+            move(Direction.East, pc.mapEast);
         }
         
         private final void onUp() {
+            move(Direction.North, pc.mapNorth);
         }
         
         private final void onDown() {
+            move(Direction.South, pc.mapSouth);
+        }
+        
+        private final void move(final Direction dir, final Panimation anm) {
+            setDir(dir, anm);
+            moving = true;
+        }
+        
+        private final void setDir(final Direction dir, final Panimation anm) {
+            this.dir = dir;
+            this.anm = anm;
         }
         
         @Override
         protected final void onBurst(final Burst burst) {
+        }
+
+        @Override
+        public final void onStep(final StepEvent event) {
+            if (moving) {
+                onMoving();
+            } else {
+                onStill();
+            }
+        }
+        
+        private final void onMoving() {
+            changeView(anm);
+        }
+        
+        private final void onStill() {
+            changeView(anm.getFrames()[0].getImage());
         }
     }
     
