@@ -23,10 +23,19 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.pandax.tile;
 
 public enum Direction {
-    South, // A more natural sprite sheet
-    East,
-    North,
-    West;
+    South(0, -1), // A more natural sprite sheet
+    East(1, 0),
+    North(0, 1),
+    West(-1, 0);
+    
+    private final int multiplierX;
+    
+    private final int multiplierY;
+    
+    private Direction(final int multiplierX, final int multiplierY) {
+        this.multiplierX = multiplierX;
+        this.multiplierY = multiplierY;
+    }
     
     public final Direction getOpposite() {
         if (this == South) {
@@ -59,5 +68,13 @@ public enum Direction {
             return West;
         }
         return South;
+    }
+    
+    public final int getMultiplierX() {
+        return multiplierX;
+    }
+    
+    public final int getMultiplierY() {
+        return multiplierY;
     }
 }
