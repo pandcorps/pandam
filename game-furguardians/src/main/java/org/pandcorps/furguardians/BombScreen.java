@@ -152,6 +152,7 @@ public final class BombScreen extends MiniGameScreen {
         public final void onStep(final StepEvent event) {
             if (moving) {
                 onMoving();
+                moving = false;
             } else {
                 onStill();
             }
