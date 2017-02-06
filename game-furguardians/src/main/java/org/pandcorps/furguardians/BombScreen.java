@@ -56,6 +56,7 @@ public final class BombScreen extends MiniGameScreen {
         room.addActor(tm);
         tm.getPosition().set((Pangine.getEngine().getEffectiveWidth() - (TOTAL_COLS * DIM)) / 2, 0, DEPTH_BG);
         buildBorder();
+        new BombGuy(FurGuardiansGame.pcs.get(0), 100, 100);
     }
     
     @Override
@@ -94,6 +95,7 @@ public final class BombScreen extends MiniGameScreen {
         private Direction dir = Direction.South;
         private Panimation anm = null;
         private boolean moving = false;
+        private int speed = 1;
         
         protected BombGuy(final PlayerContext pc, final int x, final int y) {
             this.pc = pc;
@@ -160,10 +162,27 @@ public final class BombScreen extends MiniGameScreen {
         
         private final void onMoving() {
             changeView(anm);
+            final int mx = dir.getMultiplierX(), my = dir.getMultiplierY();
+            for (int i = 0; i < speed; i++) {
+                if (!add(mx, my)) {
+                    break;
+                }
+            }
         }
         
         private final void onStill() {
             changeView(anm.getFrames()[0].getImage());
+        }
+        
+        private final boolean add(final int x, final int y) {
+            final Panple pos = getPosition();
+            final float px = pos.getX() + x, py = pos.getY() + y;
+            final int tileIndex = tm.getContainer(px, py);
+            if (Tile.getBehavior(tm.getTile(tileIndex)) != Tile.BEHAVIOR_OPEN) {
+                return false;
+            }
+            pos.set(px, py);
+            return true;
         }
     }
     
