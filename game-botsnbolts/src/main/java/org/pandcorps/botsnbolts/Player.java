@@ -979,6 +979,7 @@ public final class Player extends Chr {
         private final Panimation chargeVert2;
         protected final Panimation burst;
         private final Panmage[] ball;
+        private final Panmage warp;
         protected final Panimation bomb;
         protected final Panimation batterySmall;
         protected final Panimation batteryMedium;
@@ -994,7 +995,7 @@ public final class Player extends Chr {
                                final Panmage climb, final Panmage climbShoot, final Panmage climbTop,
                                final Panmage basicProjectile, final Panimation projectile2, final Panimation projectile3,
                                final Panimation charge, final Panimation chargeVert, final Panimation charge2, final Panimation chargeVert2,
-                               final Panimation burst, final Panmage[] ball, final Panimation bomb,
+                               final Panimation burst, final Panmage[] ball, final Panmage warp, final Panimation bomb,
                                final Panimation batterySmall, final Panimation batteryMedium, final Panimation batteryBig,
                                final Panmage bolt, final Panmage byteDisk,
                                final Panmage powerBox, final Panmage byteBox, final HudMeterImages hudMeterImages) {
@@ -1014,6 +1015,7 @@ public final class Player extends Chr {
             this.chargeVert2 = chargeVert2;
             this.burst = burst;
             this.ball = ball;
+            this.warp = warp;
             this.bomb = bomb;
             this.batterySmall = batterySmall;
             this.batteryMedium = batteryMedium;

@@ -364,6 +364,7 @@ public final class BotsnBoltsGame extends BaseGame {
                 }
             }
         }
+        final Panmage warp = null; //TODO
         final Panimation bomb = newAnimation(pre + "Bomb", pre + "Bomb.png", 8, CENTER_8, 5);
         final Panple oBattery = new FinPanple2(8, -1);
         final Panimation batterySml = newOscillation(pre + "battery.sml", pre + "BatterySmall.png", 8, new FinPanple2(4, -1), new FinPanple2(-2, 2), new FinPanple2(2, 6), 3, 6);
@@ -375,7 +376,7 @@ public final class BotsnBoltsGame extends BaseGame {
         final Panmage byteBox = null; //TODO
         final HudMeterImages hudMeterImages = newHudMeterImages(pre + "Meter", pre + "Meter.png");
         return new PlayerImages(basicSet, shootSet, hurt, defeat, climb, climbShoot, climbTop, basicProjectile, projectile2, projectile3, charge, chargeVert, charge2, chargeVert2,
-            burst, ball, bomb, batterySml, batteryMed, batteryBig, bolt, byteDisk, powerBox, byteBox, hudMeterImages);
+            burst, ball, warp, bomb, batterySml, batteryMed, batteryBig, bolt, byteDisk, powerBox, byteBox, hudMeterImages);
     }
     
     private final static PlayerImagesSubSet loadPlayerImagesSubSet(final String path, final String name, final boolean startNeeded, final Panple os, final Panple o, final Panple oj) {
