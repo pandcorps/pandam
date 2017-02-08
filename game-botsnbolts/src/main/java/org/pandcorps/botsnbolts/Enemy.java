@@ -79,6 +79,12 @@ public abstract class Enemy extends Chr implements CollisionListener {
         prj.setPower(oldPower - oldHealth);
     }
     
+    @Override
+    protected final void onDestroy() {
+        RoomLoader.onEnemyDefeated();
+        super.onDestroy();
+    }
+    
     protected void onAttack(final Player player) {
         player.hurt(1);
     }
