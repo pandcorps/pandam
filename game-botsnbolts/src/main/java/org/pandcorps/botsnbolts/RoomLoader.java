@@ -363,6 +363,10 @@ public abstract class RoomLoader {
         return fld == null ? FinPancolor.BLACK : new FinPancolor(fld.shortValue(0), fld.shortValue(1), fld.shortValue(2));
     }
     
+    protected final static void onEnemyDefeated() {
+        
+    }
+    
     protected final static void onChangeFinished() {
         final Panlayer layer = BotsnBoltsGame.tm.getLayer();
         for (final Enemy enemy : enemies) {
