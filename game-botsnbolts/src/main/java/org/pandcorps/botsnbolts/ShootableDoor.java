@@ -218,7 +218,7 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
         }
     }
     
-    private final void setDefinition(final ShootableDoorDefinition def) {
+    protected final void setDefinition(final ShootableDoorDefinition def) {
         this.def = def;
         closeDoor();
     }
