@@ -32,6 +32,7 @@ import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
 import org.pandcorps.core.seg.*;
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.tile.Tile.*;
 
@@ -364,7 +365,42 @@ public abstract class RoomLoader {
     }
     
     protected final static void onEnemyDefeated() {
-        
+        if (BotsnBoltsGame.tm == null) {
+            return;
+        }
+        Pangine.getEngine().addTimer(BotsnBoltsGame.tm, 1, new TimerListener() {
+            @Override public final void onTimer(final TimerEvent event) {
+                checkEnemies();
+            }});
+    }
+    
+    protected final static Panlayer getLayer() {
+        return (BotsnBoltsGame.tm == null) ? null : BotsnBoltsGame.tm.getLayer();
+    }
+    
+    protected final static Iterable<Panctor> getActors() {
+        final Panlayer layer = getLayer();
+        return Coltil.unnull(layer == null ? null : layer.getActors());
+    }
+    
+    protected final static void checkEnemies() {
+        for (final Panctor actor : getActors()) {
+            if (actor instanceof Enemy) {
+                return;
+            }
+        }
+        onEnemiesCleared();
+    }
+    
+    protected final static void onEnemiesCleared() {
+        for (final Panctor actor : getActors()) {
+            if (actor instanceof ShootableDoor) {
+                final ShootableDoor door = (ShootableDoor) actor;
+                if (door.def == BotsnBoltsGame.doorBlack) {
+                    door.setDefinition(BotsnBoltsGame.doorCyan);
+                }
+            }
+        }
     }
     
     protected final static void onChangeFinished() {
