@@ -195,9 +195,9 @@ public final class BotsnBoltsGame extends BaseGame {
         final Pancolor blue = newColorBlue(), darkBlue = newColorBlueDark();
         doorBlue = filterDoor("door.blue", imgsClosed, imgsOpening, silver, blue, darkSilver, darkBlue, null, 0, null,
             Integer.valueOf(Projectile.POWER_IMPOSSIBLE), imgsBarrier);
-        final Pancolor black = new FinPancolor(s96), darkBlack = new FinPancolor(s48);
+        final Pancolor black = new FinPancolor(s96), darkBlack = new FinPancolor(s64);
         doorBlack = filterDoor("door.black", imgsClosed, imgsOpening, blue, black, darkBlue, darkBlack, null, 0, null,
-            Integer.valueOf(Projectile.POWER_IMPOSSIBLE), imgsBarrier); //TODO Change to cyan when enemies cleared
+            Integer.valueOf(Projectile.POWER_IMPOSSIBLE), imgsBarrier);
         final ShootableDoorDefinition doorRed, doorRedOrange, doorOrange, doorOrangeGold;
         final Pancolor red = Pancolor.RED, darkRed = new FinPancolor(s192, s0, s0);
         doorRed = filterDoor("door.red", imgsClosed, imgsOpening, black, red, darkBlack, darkRed, null, 15, Player.SHOOT_RAPID, null, imgsBarrier);
