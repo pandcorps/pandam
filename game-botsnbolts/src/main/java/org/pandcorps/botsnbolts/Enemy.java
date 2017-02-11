@@ -616,6 +616,10 @@ public abstract class Enemy extends Chr implements CollisionListener {
     protected final static class GuardedEnemy {
     }
     
+    // Slides back and forth along the ground
+    protected final static class SlideEnemy {
+    }
+    
     protected final static class FireballEnemy extends JumpEnemy {
         protected FireballEnemy(int x, int y) {
             super(PROP_OFF_X, PROP_H, x, y, 1);
