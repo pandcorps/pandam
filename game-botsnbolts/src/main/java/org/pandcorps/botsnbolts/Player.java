@@ -371,6 +371,15 @@ public final class Player extends Chr {
     }
     
     @Override
+    protected final void renderView(final Panderer renderer) {
+        renderViewNormal(renderer);
+    }
+    
+    protected final void renderViewNormal(final Panderer renderer) {
+        super.renderView(renderer);
+    }
+    
+    @Override
     protected final boolean onStepCustom() {
         if (isInvincible()) {
             setVisible(Pangine.getEngine().isOn(4));
