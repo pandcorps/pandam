@@ -372,7 +372,7 @@ public final class Player extends Chr {
     
     @Override
     protected final void renderView(final Panderer renderer) {
-        renderViewNormal(renderer);
+        stateHandler.renderView(this, renderer);
     }
     
     protected final void renderViewNormal(final Panderer renderer) {
@@ -640,6 +640,11 @@ public final class Player extends Chr {
         
         //@OverrideMe
         protected void onHurt(final Player player) {
+        }
+        
+        //@OverrideMe
+        protected void renderView(final Player player, final Panderer renderer) {
+            player.renderViewNormal(renderer);
         }
         
         //@OverrideMe
