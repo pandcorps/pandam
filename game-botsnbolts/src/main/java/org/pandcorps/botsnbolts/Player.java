@@ -910,6 +910,45 @@ public final class Player extends Chr {
         }
     };
     
+    protected final static StateHandler WARP_HANDLER = new StateHandler() {
+        @Override
+        protected final void onJump(final Player player) {
+        }
+        
+        @Override
+        protected final void onShootStart(final Player player) {
+        }
+        
+        @Override
+        protected final void onShooting(final Player player) {
+        }
+        
+        @Override
+        protected final void onShootEnd(final Player player) {
+        }
+        
+        @Override
+        protected final void onRight(final Player player) {
+        }
+        
+        @Override
+        protected final void onLeft(final Player player) {
+        }
+        
+        @Override
+        protected final void renderView(final Player player, final Panderer renderer) {
+        }
+        
+        @Override
+        protected final void onGrounded(final Player player) {
+        }
+        
+        @Override
+        protected final boolean onAir(final Player player) {
+            return player.onAirNormal();
+        }
+    };
+    
     protected abstract static class ShootMode {
         protected final int delay;
         
