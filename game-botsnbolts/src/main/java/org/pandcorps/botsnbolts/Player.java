@@ -910,6 +910,14 @@ public final class Player extends Chr {
         }
     };
     
+    /*
+    As Player enters level, will warp through ceiling.
+    So don't use a Player object that could get stuck.
+    Use a separate Warp object.
+    Some parts of code might always expect to find a Player object.
+    So this handler makes the Player invisible and immovable.
+    When the Warp reaches the Player, it will destroy itself and change the handler.
+    */
     protected final static StateHandler WARP_HANDLER = new StateHandler() {
         @Override
         protected final void onJump(final Player player) {
