@@ -1265,6 +1265,34 @@ public final class Player extends Chr {
         }
     };
     
+    protected final static class Warp extends Panctor implements StepListener {
+        protected final Player player;
+        
+        protected Warp(final Player player) {
+            this.player = player;
+            final Panple ppos = player.getPosition();
+            getPosition().set(ppos.getX(), BotsnBoltsGame.SCREEN_H, BotsnBoltsGame.DEPTH_PLAYER);
+        }
+        
+        @Override
+        protected final void renderView(final Panderer renderer) {
+        }
+
+        @Override
+        public final void onStep(final StepEvent event) {
+            final Panple pos = getPosition();
+            pos.addY(-4);
+            final float py = player.getPosition().getY();
+            if (pos.getY() <= py) {
+                pos.setY(py);
+                finish();
+            }
+        }
+        
+        protected final void finish() {
+        }
+    }
+    
     protected final static class DefeatOrb extends Pandy implements AllOobListener {
         @Override
         public final void onAllOob(final AllOobEvent event) {
