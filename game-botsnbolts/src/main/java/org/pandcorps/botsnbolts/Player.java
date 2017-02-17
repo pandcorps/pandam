@@ -1276,6 +1276,16 @@ public final class Player extends Chr {
         
         @Override
         protected final void renderView(final Panderer renderer) {
+            final Panmage img = player.pi.warp;
+            final Panlayer layer = getLayer();
+            if (layer == null) {
+                return;
+            }
+            final Panple pos = getPosition();
+            final float x = pos.getX(), y = pos.getY(), z = pos.getZ();
+            for (int i = 0; i < 4; i++) {
+                renderer.render(layer, img, x, y + (i * 8), z);
+            }
         }
 
         @Override
