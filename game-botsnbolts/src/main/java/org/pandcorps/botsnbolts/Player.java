@@ -298,7 +298,7 @@ public final class Player extends Chr {
         final Burst puff = new Burst(anm);
         final Panple playerPos = getPosition();
         puff.getPosition().set(playerPos.getX() + offX, playerPos.getY() + offY, z);
-        BotsnBoltsGame.tm.getLayer().addActor(puff);
+        BotsnBoltsGame.addActor(puff);
     }
     
     protected final void defeat() {
@@ -327,12 +327,16 @@ public final class Player extends Chr {
         final Panple playerPos = getPosition();
         orb.getPosition().set(playerPos.getX(), playerPos.getY() + 12, BotsnBoltsGame.DEPTH_BURST);
         orb.getVelocity().set(velX, velY);
-        getLayerRequired().addActor(orb);
+        addActor(orb);
     }
     
     private final Panlayer getLayerRequired() {
         final Panlayer layer = getLayer();
-        return (layer == null) ? BotsnBoltsGame.tm.getLayer() : layer;
+        return (layer == null) ? BotsnBoltsGame.getLayer() : layer;
+    }
+    
+    private final void addActor(final Panctor actor) {
+        getLayerRequired().addActor(actor);
     }
     
     protected final void addHealth(final int amount) {
@@ -1229,7 +1233,7 @@ public final class Player extends Chr {
             final Panple ppos = player.getPosition();
             burst.getPosition().set(ppos.getX() + (xdir * Mathtil.randi(xmin, xmax)), ppos.getY() + 12 + (ydir * Mathtil.randi(ymin, ymax)), BotsnBoltsGame.DEPTH_BURST);
             burst.setRot(rot);
-            player.getLayerRequired().addActor(burst);
+            player.addActor(burst);
         }
         
         @Override
@@ -1272,6 +1276,7 @@ public final class Player extends Chr {
             this.player = player;
             final Panple ppos = player.getPosition();
             getPosition().set(ppos.getX(), BotsnBoltsGame.SCREEN_H, BotsnBoltsGame.DEPTH_PLAYER);
+            BotsnBoltsGame.addActor(this);
         }
         
         @Override
@@ -1300,10 +1305,22 @@ public final class Player extends Chr {
         }
         
         protected final void finish() {
+            new Materialize(player);
+            destroy();
         }
     }
     
-    protected final static class Materialize {
+    protected final static class Materialize extends Panctor {
+        protected final Player player;
+        
+        protected Materialize(final Player player) {
+            this.player = player;
+            BotsnBoltsGame.addActor(this);
+        }
+        
+        protected final void finish() {
+            player.stateHandler = NORMAL_HANDLER;
+        }
     }
     
     protected final static class DefeatOrb extends Pandy implements AllOobListener {
