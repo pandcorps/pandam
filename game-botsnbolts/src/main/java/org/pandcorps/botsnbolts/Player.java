@@ -1303,6 +1303,9 @@ public final class Player extends Chr {
         }
     }
     
+    protected final static class Materialize {
+    }
+    
     protected final static class DefeatOrb extends Pandy implements AllOobListener {
         @Override
         public final void onAllOob(final AllOobEvent event) {
