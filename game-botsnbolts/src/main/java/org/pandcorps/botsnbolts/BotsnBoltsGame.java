@@ -767,6 +767,14 @@ public final class BotsnBoltsGame extends BaseGame {
         }
     }
     
+    protected final static Panlayer getLayer() {
+        return tm.getLayer();
+    }
+    
+    protected final static void addActor(final Panctor actor) {
+        getLayer().addActor(actor);
+    }
+    
     public final static void main(final String[] args) {
         try {
             new BotsnBoltsGame().start();
