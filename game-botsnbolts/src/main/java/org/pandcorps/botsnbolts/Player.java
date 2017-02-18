@@ -298,7 +298,7 @@ public final class Player extends Chr {
         final Burst puff = new Burst(anm);
         final Panple playerPos = getPosition();
         puff.getPosition().set(playerPos.getX() + offX, playerPos.getY() + offY, z);
-        BotsnBoltsGame.addActor(puff);
+        addActor(puff);
     }
     
     protected final void defeat() {
@@ -1276,7 +1276,7 @@ public final class Player extends Chr {
             this.player = player;
             final Panple ppos = player.getPosition();
             getPosition().set(ppos.getX(), BotsnBoltsGame.SCREEN_H, BotsnBoltsGame.DEPTH_PLAYER);
-            BotsnBoltsGame.addActor(this);
+            player.addActor(this);
         }
         
         @Override
@@ -1315,7 +1315,7 @@ public final class Player extends Chr {
         
         protected Materialize(final Player player) {
             this.player = player;
-            BotsnBoltsGame.addActor(this);
+            player.addActor(this);
         }
         
         protected final void finish() {
