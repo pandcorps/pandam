@@ -94,9 +94,10 @@ public final class Player extends Chr {
         super(PLAYER_X, PLAYER_H);
         pc.player = this;
         this.pc = pc;
-        this.prf = pc.prf;
-        this.pi = pc.pi;
+        prf = pc.prf;
+        pi = pc.pi;
         registerInputs(pc.ctrl);
+        setView(pi.basicSet.stand);
     }
     
     private final void registerInputs(final ControlScheme ctrl) {
@@ -1279,6 +1280,7 @@ public final class Player extends Chr {
             final Panple ppos = player.getPosition();
             getPosition().set(ppos.getX(), BotsnBoltsGame.SCREEN_H, BotsnBoltsGame.DEPTH_PLAYER);
             player.addActor(this);
+            player.stateHandler = WARP_HANDLER;
         }
         
         @Override
@@ -1298,7 +1300,7 @@ public final class Player extends Chr {
         @Override
         public final void onStep(final StepEvent event) {
             final Panple pos = getPosition();
-            pos.addY(-4);
+            pos.addY(-16);
             final float py = player.getPosition().getY();
             if (pos.getY() <= py) {
                 pos.setY(py);
@@ -1312,16 +1314,24 @@ public final class Player extends Chr {
         }
     }
     
-    protected final static class Materialize extends Panctor {
+    protected final static class Materialize extends Panctor implements AnimationEndListener {
         protected final Player player;
         
         protected Materialize(final Player player) {
             this.player = player;
+            setView(player.pi.materialize);
+            getPosition().set(player.getPosition());
             player.addActor(this);
+        }
+        
+        @Override
+        public final void onAnimationEnd(final AnimationEndEvent event) {
+            finish();
         }
         
         protected final void finish() {
             player.stateHandler = NORMAL_HANDLER;
+            destroy();
         }
     }
     

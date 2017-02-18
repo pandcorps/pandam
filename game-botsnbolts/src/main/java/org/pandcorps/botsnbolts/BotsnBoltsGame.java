@@ -364,8 +364,8 @@ public final class BotsnBoltsGame extends BaseGame {
                 }
             }
         }
-        final Panmage warp = engine.createImage(pre + "Warp", new FinPanple2(4, 1), null, null, pre + "Warp.png");
-        final Panimation materialize = newAnimation(pre + "Materialize", pre + "Materialize.png", 32, og, 4);
+        final Panmage warp = engine.createImage(pre + "Warp", new FinPanple2(5, 1), null, null, pre + "Warp.png");
+        final Panimation materialize = newAnimation(pre + "Materialize", pre + "Materialize.png", 32, og, 3);
         final Panimation bomb = newAnimation(pre + "Bomb", pre + "Bomb.png", 8, CENTER_8, 5);
         final Panple oBattery = new FinPanple2(8, -1);
         final Panimation batterySml = newOscillation(pre + "battery.sml", pre + "BatterySmall.png", 8, new FinPanple2(4, -1), new FinPanple2(-2, 2), new FinPanple2(2, 6), 3, 6);
@@ -747,9 +747,10 @@ public final class BotsnBoltsGame extends BaseGame {
         
         private final static void newPlayer(final Panroom room) {
             final Player player = new Player(pc);
-            player.getPosition().set(48, 48, DEPTH_PLAYER);
+            player.getPosition().set(48, 32, DEPTH_PLAYER);
             room.addActor(player);
             Pangine.getEngine().track(player);
+            new Warp(player);
             newHud(room, player);
         }
         
