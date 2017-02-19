@@ -377,11 +377,11 @@ public abstract class Enemy extends Chr implements CollisionListener {
     protected final static class WallCannon {
     }
     
-    protected final static int PROP_OFF_X = 4, PROP_H = 12, CRAWL_H = 14;
+    protected final static int PROP_HEALTH = 2, PROP_OFF_X = 4, PROP_H = 12, CRAWL_H = 14;
     
     protected final static class PropEnemy extends Enemy {
         protected PropEnemy(final int x, final int y) {
-            super(PROP_OFF_X, PROP_H, x, y, 2);
+            super(PROP_OFF_X, PROP_H, x, y, PROP_HEALTH);
             setView(BotsnBoltsGame.propEnemy);
         }
         
@@ -469,7 +469,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
     
     protected final static class SpringEnemy extends JumpEnemy {
         protected SpringEnemy(final int x, final int y) {
-            super(PROP_OFF_X, PROP_H, x, y, 2);
+            super(PROP_OFF_X, PROP_H, x, y, PROP_HEALTH);
             endSpring();
         }
         
@@ -519,7 +519,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         private int timer = 8;
         
         protected CrawlEnemy(final int x, final int y) {
-            super(x, y, 2);
+            super(x, y, PROP_HEALTH);
             final TileMap tm = BotsnBoltsGame.tm;
             tileIndex = tm.getIndexRequired(x, y);
             for (final Direction dir : Direction.values()) {
@@ -616,8 +616,17 @@ public abstract class Enemy extends Chr implements CollisionListener {
     protected final static class GuardedEnemy {
     }
     
+    protected final static int SLIDE_H = 14;
+    
     // Slides back and forth along the ground
-    protected final static class SlideEnemy {
+    protected final static class SlideEnemy extends Enemy {
+        protected SlideEnemy(int x, int y) {
+            super(PROP_OFF_X, SLIDE_H, x, y, PROP_HEALTH);
+        }
+
+        @Override
+        protected final void award(final PowerUp powerUp) {
+        }
     }
     
     protected final static class FireballEnemy extends JumpEnemy {
