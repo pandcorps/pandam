@@ -620,8 +620,16 @@ public abstract class Enemy extends Chr implements CollisionListener {
     
     // Slides back and forth along the ground
     protected final static class SlideEnemy extends Enemy {
+        private final static int SLIDE_VELOCITY = 1;
+        
         protected SlideEnemy(int x, int y) {
             super(PROP_OFF_X, SLIDE_H, x, y, PROP_HEALTH);
+            hv = -SLIDE_VELOCITY;
+        }
+        
+        @Override
+        protected final void onWall(final byte xResult) {
+            hv *= -1;
         }
 
         @Override
