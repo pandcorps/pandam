@@ -207,6 +207,22 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
     }
     
+    protected final static class AnimationEnemyProjectile extends EnemyProjectile implements AnimationEndListener {
+        protected AnimationEnemyProjectile(final Panimation anm, final Enemy src, final int ox, final int oy) {
+            this(anm, src, ox, oy, 0, 0);
+        }
+        
+        protected AnimationEnemyProjectile(final Panimation anm, final Enemy src, final int ox, final int oy, final float vx, final float vy) {
+            super(src, ox, oy, vx, vy);
+            setView(anm);
+        }
+        
+        @Override
+        public void onAnimationEnd(final AnimationEndEvent event) {
+            destroy();
+        }
+    }
+    
     protected final static void newCube(final int x, final int y) {
         final TileMap tm = BotsnBoltsGame.tm;
         final int x1 = x + 1, y1 = y + 1;
