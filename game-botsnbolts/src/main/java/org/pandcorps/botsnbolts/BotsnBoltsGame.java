@@ -302,7 +302,7 @@ public final class BotsnBoltsGame extends BaseGame {
         enemyBurst = newAnimation("burst.enemy", RES + "enemy/EnemyBurst.png", 16, CENTER_16, 2);
         flame4 = newSheet("flame.4.enemy", RES + "enemy/Flame4.png", 4);
         flame8 = newSheet("flame.8.enemy", RES + "enemy/Flame8.png", 8);
-        flame16 = newAnimation("flame.16.enemy", "enemy/Flame16.png", 16, propO, propMin, propMax, 3);
+        flame16 = newAnimation("flame.16.enemy", RES + "enemy/Flame16.png", 16, propO, propMin, propMax, 3);
     }
     
     private final static ShootableDoorDefinition filterDoor(final String id, final Img[] imgsClosed, final Img[] imgsOpening,
