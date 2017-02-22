@@ -759,6 +759,8 @@ public abstract class Enemy extends Chr implements CollisionListener {
     
     protected final static class FlamethrowerEnemy extends HenchbotEnemy {
         private final static int DURATION_FLAME = 8;
+        private final static int LENGTH_STREAM = 8;
+        private final static int LENGTH_BURST = 5;
         
         protected FlamethrowerEnemy(int x, int y) {
             super(BotsnBoltsGame.flamethrowerEnemy, x, y);
@@ -770,6 +772,15 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
         
         private final void flame(final int i) {
+            if (i < LENGTH_STREAM) {
+                stream(i);
+            } else {
+                burst(i - LENGTH_STREAM);
+            }
+            next(i);
+        }
+        
+        private final void stream(final int i) {
             final Panmage img;
             final int ox, oy;
             if (i < 2) {
@@ -781,16 +792,54 @@ public abstract class Enemy extends Chr implements CollisionListener {
                 ox = (i == 2) ? 21 : 25;
                 oy = 9;
             } else if (i < 5) {
+                img = BotsnBoltsGame.flame4[0];
+                ox = 29;
+                oy = 9;
+            } else if (i < 6) {
+                img = BotsnBoltsGame.flame4[1];
+                ox = 33;
+                oy = 9;
+            } else if (i < 7) {
                 img = BotsnBoltsGame.flame8[0];
-                ox = 28;
+                ox = 36;
                 oy = 9;
             } else {
                 img = BotsnBoltsGame.flame8[1];
-                ox = 34;
+                ox = 42;
                 oy = 10;
             }
             new TimedEnemyProjectile(img, this, ox, oy, DURATION_FLAME);
-            if (i < 5) {
+        }
+        
+        private final void burst(final int i) {
+            final int ox, oy;
+            switch (i) {
+                case 0 :
+                    ox = 50;
+                    oy = 13;
+                    break;
+                case 1 :
+                    ox = 66;
+                    oy = 8;
+                    break;
+                case 2 :
+                    ox = 58;
+                    oy = 17;
+                    break;
+                case 3 :
+                    ox = 76;
+                    oy = 14;
+                    break;
+                default :
+                    ox = 70;
+                    oy = 23;
+                    break;
+            }
+            new AnimationEnemyProjectile(BotsnBoltsGame.flame16, this, ox, oy);
+        }
+        
+        private final void next(final int i) {
+            if (i < (LENGTH_STREAM + LENGTH_BURST - 1)) {
                 Pangine.getEngine().addTimer(this, 1, new TimerListener() {
                     @Override public final void onTimer(final TimerEvent event) {
                         flame(i + 1);
