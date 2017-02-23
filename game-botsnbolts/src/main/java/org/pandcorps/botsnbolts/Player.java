@@ -57,7 +57,7 @@ public final class Player extends Chr {
     protected final static int VEL_JUMP = 8;
     protected final static int VEL_BOUNCE_BOMB = 7;
     private final static int VEL_WALK = 3;
-    private final static int VEL_PROJECTILE = 8;
+    protected final static int VEL_PROJECTILE = 8;
     private final static float VX_SPREAD1;
     private final static float VY_SPREAD1;
     private final static float VX_SPREAD2;
