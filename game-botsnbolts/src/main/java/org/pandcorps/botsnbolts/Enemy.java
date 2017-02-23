@@ -634,10 +634,16 @@ public abstract class Enemy extends Chr implements CollisionListener {
     
     // Shield covers enemy's face; can only shoot enemy's back
     protected final static class ShieldedEnemy {
+        protected boolean isVulnerableToProjectile(final Projectile prj) {
+            return true; //TODO
+        }
     }
     
     // Guards itself for a while; then lowers guard to attack
     protected final static class GuardedEnemy {
+        protected boolean isVulnerableToProjectile(final Projectile prj) {
+            return true; //TODO
+        }
     }
     
     protected final static int SLIDE_H = 14;
