@@ -75,6 +75,10 @@ public abstract class Panplementation {
 		}
 	}
 	
+	/*package*/ final void setView(final Panplementation impl) {
+	    setView(impl.view);
+	}
+	
 	private final void setFrame(final Panframe frame) {
 	    updateView(frame.getImage());
 	    currRot = frame.getRot();

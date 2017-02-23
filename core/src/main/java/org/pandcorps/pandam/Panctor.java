@@ -96,6 +96,10 @@ public class Panctor extends BasePantity implements SpecPanctor {
 		impl.setView(view);
 	}
 	
+	public final void setView(final Panctor actor) {
+	    impl.setView(actor.impl);
+	}
+	
 	public final boolean changeView(final Panimation view) {
         return impl.changeView(view);
     }
