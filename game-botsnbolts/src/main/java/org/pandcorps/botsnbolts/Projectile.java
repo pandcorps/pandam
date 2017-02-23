@@ -92,6 +92,11 @@ public class Projectile extends Pandy implements Collidable, AllOobListener {
         burst.setMirror(src.isMirror());
         src.getLayer().addActor(burst);
     }
+    
+    protected final void bounce() {
+        destroy();
+        //TODO Add harmless bounce actor
+    }
 
     @Override
     public void onAllOob(final AllOobEvent event) {

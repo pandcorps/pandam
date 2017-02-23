@@ -66,6 +66,10 @@ public abstract class Enemy extends Chr implements CollisionListener {
     }
     
     protected void onShot(final Projectile prj) {
+        if (!isVulnerableToProjectile(prj)) {
+            prj.bounce();
+            return;
+        }
         final int oldHealth = health, oldPower = prj.power;
         if (oldPower <= 0) {
             return;
@@ -77,6 +81,10 @@ public abstract class Enemy extends Chr implements CollisionListener {
             destroy();
         }
         prj.setPower(oldPower - oldHealth);
+    }
+    
+    protected boolean isVulnerableToProjectile(final Projectile prj) {
+        return true;
     }
     
     @Override
