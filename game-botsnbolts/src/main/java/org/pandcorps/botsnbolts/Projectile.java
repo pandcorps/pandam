@@ -94,8 +94,8 @@ public class Projectile extends Pandy implements Collidable, AllOobListener {
     }
     
     protected final void bounce() {
+        new Bounce(this);
         destroy();
-        //TODO Add harmless bounce actor
     }
 
     @Override
@@ -159,6 +159,21 @@ public class Projectile extends Pandy implements Collidable, AllOobListener {
         
         @Override
         public final void onAnimationEnd(final AnimationEndEvent event) {
+            destroy();
+        }
+    }
+    
+    public final static class Bounce extends Pandy implements AllOobListener {
+        protected Bounce(final Projectile prj) {
+            getPosition().set(prj.getPosition());
+            final Panple vel = getVelocity();
+            vel.set((prj.getVelocity().getX() < 0) ? -1 : 1, 1);
+            vel.setMagnitude2(Player.VEL_PROJECTILE);
+            BotsnBoltsGame.addActor(this);
+        }
+        
+        @Override
+        public final void onAllOob(final AllOobEvent event) {
             destroy();
         }
     }
