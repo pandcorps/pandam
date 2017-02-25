@@ -633,16 +633,34 @@ public abstract class Enemy extends Chr implements CollisionListener {
     }
     
     // Shield covers enemy's face; can only shoot enemy's back
-    protected final static class ShieldedEnemy {
-        protected boolean isVulnerableToProjectile(final Projectile prj) {
+    protected final static class ShieldedEnemy extends Enemy {
+        protected ShieldedEnemy(int x, int y) {
+            super(-1, -1, x, y, -1); //TODO
+        }
+
+        @Override
+        protected final boolean isVulnerableToProjectile(final Projectile prj) {
             return true; //TODO
+        }
+
+        @Override
+        protected final void award(final PowerUp powerUp) {
         }
     }
     
     // Guards itself for a while; then lowers guard to attack
-    protected final static class GuardedEnemy {
-        protected boolean isVulnerableToProjectile(final Projectile prj) {
+    protected final static class GuardedEnemy extends Enemy {
+        protected GuardedEnemy(int x, int y) {
+            super(-1, -1, x, y, -1); //TODO
+        }
+        
+        @Override
+        protected final boolean isVulnerableToProjectile(final Projectile prj) {
             return true; //TODO
+        }
+        
+        @Override
+        protected final void award(final PowerUp powerUp) {
         }
     }
     
