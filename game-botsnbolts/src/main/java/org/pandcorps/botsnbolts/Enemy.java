@@ -640,7 +640,13 @@ public abstract class Enemy extends Chr implements CollisionListener {
 
         @Override
         protected final boolean isVulnerableToProjectile(final Projectile prj) {
-            return true; //TODO
+            final float pvx = prj.getVelocity().getX();
+            if (pvx < 0) {
+                return isMirror();
+            } else if (pvx > 0) {
+                return !isMirror();
+            }
+            return true;
         }
 
         @Override
