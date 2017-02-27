@@ -648,6 +648,14 @@ public abstract class Enemy extends Chr implements CollisionListener {
             }
             return true;
         }
+        
+        @Override
+        protected final boolean onStepCustom() {
+            //hv = ; //TODO
+            updateMirror();
+            addX(hv);
+            return true;
+        }
 
         @Override
         protected final void award(final PowerUp powerUp) {
