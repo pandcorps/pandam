@@ -915,6 +915,8 @@ public final class Player extends Chr {
         }
     };
     
+    //protected final static StateHandler GRAPPLING_HANDLER
+    
     /*
     As Player enters level, will warp through ceiling.
     So don't use a Player object that could get stuck.
