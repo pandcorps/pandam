@@ -22,14 +22,19 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.botsnbolts;
 
+import org.pandcorps.pandam.*;
+
 public final class GrapplingHook extends Chr {
     protected final static int GRAPPLING_HOOK_X = 3;
     protected final static int GRAPPLING_HOOK_H = 6;
     
     private final static int speedMultiplier = 16;
     
+    private final Player player;
+    
     protected GrapplingHook(final Player player) {
         super(GRAPPLING_HOOK_X, GRAPPLING_HOOK_H);
+        this.player = player;
         v = 1;
         if (player.isMirror()) {
             setMirror(true);
@@ -51,6 +56,11 @@ public final class GrapplingHook extends Chr {
             }
         }
         return true;
+    }
+    
+    @Override
+    protected final void renderView(final Panderer renderer) {
+        getPosition();
     }
     
     private final void finish() {
