@@ -26,7 +26,33 @@ public final class GrapplingHook extends Chr {
     protected final static int GRAPPLING_HOOK_X = 3;
     protected final static int GRAPPLING_HOOK_H = 6;
     
-    protected GrapplingHook() {
+    private final static int speedMultiplier = 16;
+    
+    protected GrapplingHook(final Player player) {
         super(GRAPPLING_HOOK_X, GRAPPLING_HOOK_H);
+        v = 1;
+        if (player.isMirror()) {
+            setMirror(true);
+            hv = -1;
+        } else {
+            hv = 1;
+        }
+    }
+    
+    @Override
+    protected final boolean onStepCustom() {
+        for (int i = 0; i < speedMultiplier; i++) {
+            if (addY() != Y_NORMAL) {
+                finish();
+                break;
+            } else if (addX(hv) != X_NORMAL) {
+                finish();
+                break;
+            }
+        }
+        return true;
+    }
+    
+    private final void finish() {
     }
 }
