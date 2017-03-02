@@ -28,6 +28,8 @@ public final class GrapplingHook extends Chr {
     protected final static int GRAPPLING_HOOK_X = 3;
     protected final static int GRAPPLING_HOOK_H = 6;
     
+    protected final static int DISTANCE_BETWEEN_LINKS = 8;
+    
     private final static int speedMultiplier = 16;
     
     private final Player player;
@@ -60,7 +62,15 @@ public final class GrapplingHook extends Chr {
     
     @Override
     protected final void renderView(final Panderer renderer) {
-        getPosition();
+        final Panple dir = Panple.subtract(getPosition(), player.getPosition());
+        final double mag = dir.getMagnitude2();
+        if (mag > 0) {
+            dir.multiply((float) (DISTANCE_BETWEEN_LINKS / mag));
+        }
+        for (int i = 0; i < mag; i++) {
+            //renderer.render(layer, image, x, y, z);
+            i+= DISTANCE_BETWEEN_LINKS;
+        }
     }
     
     private final void finish() {
