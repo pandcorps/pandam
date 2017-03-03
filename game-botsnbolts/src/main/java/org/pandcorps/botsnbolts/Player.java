@@ -176,6 +176,8 @@ public final class Player extends Chr {
         if (isGrounded()) {
             v = VEL_JUMP;
             lastJump = Pangine.getEngine().getClock();
+        } else {
+            stateHandler.onAirJump(this);
         }
     }
     
@@ -625,6 +627,10 @@ public final class Player extends Chr {
     protected abstract static class StateHandler {
         protected abstract void onJump(final Player player);
         
+        //@OverrideMe
+        protected void onAirJump(final Player player) {
+        }
+        
         protected abstract void onShootStart(final Player player);
         
         protected abstract void onShooting(final Player player);
@@ -670,6 +676,10 @@ public final class Player extends Chr {
         @Override
         protected final void onJump(final Player player) {
             player.onJumpNormal();
+        }
+        
+        @Override
+        protected final void onAirJump(final Player player) {
         }
         
         @Override
