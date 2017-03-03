@@ -30,6 +30,7 @@ import org.pandcorps.pandam.*;
 public class Profile {
     /*package*/ final Set<Upgrade> upgrades = new HashSet<Upgrade>();
     /*package*/ ShootMode shootMode = Player.SHOOT_NORMAL;
+    /*package*/ JumpMode jumpMode = Player.JUMP_GRAPPLING_HOOK;
     
     /*package*/ final boolean isUpgradeAvailable(final Upgrade upgrade) {
         return upgrades.contains(upgrade);

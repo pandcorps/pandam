@@ -680,6 +680,7 @@ public final class Player extends Chr {
         
         @Override
         protected final void onAirJump(final Player player) {
+            player.prf.jumpMode.onAirJump(player);
         }
         
         @Override
@@ -1283,6 +1284,23 @@ public final class Player extends Chr {
         @Override
         protected final void createProjectile(final Player player) {
             new Bomb(player);
+        }
+    };
+    
+    protected abstract static class JumpMode {
+        protected abstract void onAirJump(final Player player);
+    }
+    
+    protected final static JumpMode JUMP_NORMAL = new JumpMode() {
+        @Override
+        protected final void onAirJump(final Player player) {
+        }
+    };
+    
+    protected final static JumpMode JUMP_GRAPPLING_HOOK = new JumpMode() {
+        @Override
+        protected final void onAirJump(final Player player) {
+            new GrapplingHook(player);
         }
     };
     
