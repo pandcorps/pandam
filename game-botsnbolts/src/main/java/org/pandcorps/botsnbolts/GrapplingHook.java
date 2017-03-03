@@ -44,6 +44,7 @@ public final class GrapplingHook extends Chr {
         } else {
             hv = 1;
         }
+        player.addActor(this);
     }
     
     @Override
@@ -62,13 +63,20 @@ public final class GrapplingHook extends Chr {
     
     @Override
     protected final void renderView(final Panderer renderer) {
-        final Panple dir = Panple.subtract(getPosition(), player.getPosition());
+        final Panlayer layer = getLayer();
+        if (layer == null) {
+            return;
+        }
+        final Panmage image = player.pi.link;
+        final Panple pos = getPosition();
+        final Panple dir = Panple.subtract(pos, player.getPosition());
         final double mag = dir.getMagnitude2();
         if (mag > 0) {
             dir.multiply((float) (DISTANCE_BETWEEN_LINKS / mag));
         }
-        for (int i = 0; i < mag; i++) {
-            //renderer.render(layer, image, x, y, z);
+        final float x = pos.getX(), y = pos.getY(), z = pos.getZ(), dx = dir.getX(), dy = dir.getY();
+        for (int i = 0; i <= mag; i++) {
+            renderer.render(layer, image, x + (i * dx), y + (i * dy), z);
             i+= DISTANCE_BETWEEN_LINKS;
         }
     }

@@ -331,12 +331,12 @@ public final class Player extends Chr {
         addActor(orb);
     }
     
-    private final Panlayer getLayerRequired() {
+    protected final Panlayer getLayerRequired() {
         final Panlayer layer = getLayer();
         return (layer == null) ? BotsnBoltsGame.getLayer() : layer;
     }
     
-    private final void addActor(final Panctor actor) {
+    protected final void addActor(final Panctor actor) {
         getLayerRequired().addActor(actor);
     }
     
