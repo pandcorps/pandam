@@ -83,6 +83,14 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
     }
     
     protected final byte addY() {
+        final byte yStatus = addY(v);
+        if (yStatus != Y_NORMAL) {
+            v = 0;
+        }
+        return yStatus;
+    }
+    
+    protected final byte addY(final float v) {
         final int offSol, mult, n;
         if (v > 0) {
             offSol = OFF_BUTTING;
@@ -98,7 +106,6 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
             if (t != -1) {
                 if (v > 0) {
                     onBump(t);
-                    v = 0;
                     return Y_BUMP;
                 } else {
                     onLanded();
@@ -110,7 +117,6 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
             if (y < MIN_Y) {
                 pos.setY(MIN_Y);
                 if (v < 0) { // This check helps with room transitions; might not be needed by games without room transitions
-                    v = 0;
                     if (onFell()) {
                         return Y_FELL;
                     }
@@ -121,7 +127,6 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
                 if (y >= max) {
                     pos.setY(max - 1);
                     if (v > 0) { // This check helps with room transitions; might not be needed by games without room transitions
-                        v = 0;
                         onCeiling();
                         return Y_CEILING;
                     }
@@ -172,6 +177,28 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
             pos.addX(mult);
         }
         return X_NORMAL;
+    }
+    
+    protected final byte moveTo(final int x, final int y) {
+        final Panple pos = getPosition();
+        final int cx = Math.round(pos.getX()), cy = Math.round(pos.getY());
+        final int diffX = x - cx, diffY = y - cy;
+        final int magX = Math.abs(diffX), magY = Math.abs(diffY);
+        final byte xStatus, yStatus;
+        if (magX > magY) {
+            xStatus = addX(diffX);
+            yStatus = addY(diffY);
+        } else {
+            yStatus = addY(diffY);
+            xStatus = addX(diffX);
+        }
+        if (yStatus != Y_NORMAL) {
+            return yStatus;
+        } else if (xStatus != X_NORMAL) {
+            return Y_BUMP;
+        } else {
+            return Y_NORMAL;
+        }
     }
     
     protected final void addV(final float a) {

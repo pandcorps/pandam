@@ -431,8 +431,7 @@ public final class Player extends Chr {
         final double offT = grapplingT + (Math.PI / 2);
         final double grapplingX = gPos.getX() + (Math.cos(offT) * grapplingR);
         final double grapplingY = gPos.getY() + (Math.sin(offT) * grapplingR);
-        //TODO use addX/Y, check for collisions
-        getPosition().set((float) grapplingX, (float) grapplingY);
+        moveTo((int) Math.round(grapplingX), (int) Math.round(grapplingY));
     }
     
     @Override
