@@ -62,6 +62,8 @@ public final class Player extends Chr {
     private final static float VY_SPREAD1;
     private final static float VX_SPREAD2;
     private final static float VY_SPREAD2;
+    private final static double GRAPPLING_BOOST = 0.01;
+    private final static double GRAPPLING_BOOST_MAX = 0.75;
     
     protected final PlayerContext pc;
     protected final Profile prf;
@@ -83,6 +85,7 @@ public final class Player extends Chr {
     private double grapplingR = 0;
     private double grapplingT = 0;
     private double grapplingV = 0;
+    private boolean grapplingBoostAllowed = true;
     
     static {
         final Panple tmp = new ImplPanple(VEL_PROJECTILE, 0, 0);
@@ -425,7 +428,11 @@ public final class Player extends Chr {
             return;
         }
         final double grapplingA = -getG() * Math.sin(grapplingT) / grapplingR;
+        final double oldV = grapplingV;
         grapplingV += grapplingA;
+        if (grapplingV == 0 || (grapplingV * oldV) < 0) {
+            grapplingBoostAllowed = true;
+        }
         grapplingT += grapplingV;
         final Panple gPos = grapplingHook.getPosition();
         final double offT = grapplingT + (Math.PI / 2);
@@ -556,6 +563,7 @@ public final class Player extends Chr {
             v = 0;
         }
         grapplingV = 0;
+        grapplingBoostAllowed = true;
         stateHandler = GRAPPLING_HANDLER;
     }
     
@@ -580,10 +588,36 @@ public final class Player extends Chr {
         }
     }
     
+    private final void grappleBoost(final int dir) {
+        if (!grapplingBoostAllowed) {
+            return;
+        } else if (Math.abs(grapplingV) >= GRAPPLING_BOOST_MAX) {
+            return;
+        } else if ((dir < 0) && (grapplingV >= 0) && (grapplingV < GRAPPLING_BOOST)) {
+            return;
+        } else if ((dir > 0) && (grapplingV <= 0) && (grapplingV > -GRAPPLING_BOOST)) {
+            return;
+        }
+        grapplingV += (dir * GRAPPLING_BOOST);
+        if (grapplingV > GRAPPLING_BOOST_MAX) {
+            grapplingV = GRAPPLING_BOOST_MAX;
+        } else if (grapplingV < -GRAPPLING_BOOST_MAX) {
+            grapplingV = -GRAPPLING_BOOST_MAX;
+        }
+        grapplingBoostAllowed = false;
+    }
+    
     private final void endGrapple() {
         clearRun();
         stateHandler = NORMAL_HANDLER;
+        if (isGrapplingHookConnected()) {
+            //TODO Preserve positive vertical velocity
+        }
         destroyGrapplingHook();
+    }
+    
+    private final boolean isGrapplingHookConnected() {
+        return (grapplingHook != null) && grapplingHook.finished;
     }
     
     private final void destroyGrapplingHook() {
@@ -1036,7 +1070,7 @@ public final class Player extends Chr {
                 player.onRightNormal();
                 return;
             }
-            //TODO Change speed
+            player.grappleBoost(1);
         }
         
         @Override
@@ -1045,10 +1079,11 @@ public final class Player extends Chr {
                 player.onLeftNormal();
                 return;
             }
+            player.grappleBoost(-1);
         }
         
         private final boolean isConnected(final Player player) {
-            return (player.grapplingHook != null) && player.grapplingHook.finished;
+            return player.isGrapplingHookConnected();
         }
         
         @Override
