@@ -43,6 +43,7 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
     protected final static byte Y_CEILING = 3;
     protected final static byte Y_FLOOR = 4;
     protected final static byte Y_FELL = 5;
+    protected final static byte Y_WALL = 6;
     public static byte TILE_UPSLOPE = -1;
     public static byte TILE_DOWNSLOPE = -1;
     public static byte TILE_UPSLOPE_FLOOR = -1;
@@ -195,7 +196,7 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
         if (yStatus != Y_NORMAL) {
             return yStatus;
         } else if (xStatus != X_NORMAL) {
-            return Y_BUMP;
+            return Y_WALL;
         } else {
             return Y_NORMAL;
         }

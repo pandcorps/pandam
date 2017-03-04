@@ -431,7 +431,18 @@ public final class Player extends Chr {
         final double offT = grapplingT + (Math.PI / 2);
         final double grapplingX = gPos.getX() + (Math.cos(offT) * grapplingR);
         final double grapplingY = gPos.getY() + (Math.sin(offT) * grapplingR);
-        moveTo((int) Math.round(grapplingX), (int) Math.round(grapplingY));
+        final int yStatus = moveTo((int) Math.round(grapplingX), (int) Math.round(grapplingY));
+        switch (yStatus) {
+            case Y_BUMP :
+            case Y_CEILING :
+                grapplingV = 0;
+                break;
+            case Y_LANDED :
+            case Y_FLOOR :
+            case Y_WALL :
+                endGrapple();
+                break;
+        }
     }
     
     @Override
@@ -541,6 +552,9 @@ public final class Player extends Chr {
     private final void startGrapple() {
         destroyGrapplingHook();
         grapplingHook = new GrapplingHook(this);
+        if (v < 0) {
+            v = 0;
+        }
         grapplingV = 0;
         stateHandler = GRAPPLING_HANDLER;
     }

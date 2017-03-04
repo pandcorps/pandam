@@ -78,7 +78,7 @@ public final class GrapplingHook extends Chr {
         final Panple pos = getPosition();
         final Panple dir = Panple.subtract(player.getPosition(), pos);
         final double mag = dir.getMagnitude2();
-        final int numLinks = Math.max(1, (int) (mag / DISTANCE_BETWEEN_LINKS) - 1);
+        final int numLinks = Math.max(1, (int) ((mag - 2) / DISTANCE_BETWEEN_LINKS) - 1);
         if (mag > 0) {
             dir.multiply((float) (DISTANCE_BETWEEN_LINKS / mag));
         }
