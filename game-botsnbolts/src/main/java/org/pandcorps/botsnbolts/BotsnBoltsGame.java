@@ -369,7 +369,7 @@ public final class BotsnBoltsGame extends BaseGame {
         final Panmage warp = engine.createImage(pre + "Warp", new FinPanple2(5, 1), null, null, pre + "Warp.png");
         final Panimation materialize = newAnimation(pre + "Materialize", pre + "Materialize.png", 32, og, 3);
         final Panimation bomb = newAnimation(pre + "Bomb", pre + "Bomb.png", 8, CENTER_8, 5);
-        final Panmage link = engine.createImage(pre + "Link", CENTER_8, null, null, pre + "Link.png");
+        final Panmage link = engine.createImage(pre + "Link", new FinPanple2(4, 1), null, null, pre + "Link.png");
         final Panple oBattery = new FinPanple2(8, -1);
         final Panimation batterySml = newOscillation(pre + "battery.sml", pre + "BatterySmall.png", 8, new FinPanple2(4, -1), new FinPanple2(-2, 2), new FinPanple2(2, 6), 3, 6);
         final Panimation batteryMed = newOscillation(pre + "battery.med", pre + "BatteryMedium.png", 16, oBattery, new FinPanple2(-4, 2), new FinPanple2(4, 10), 3, 6);

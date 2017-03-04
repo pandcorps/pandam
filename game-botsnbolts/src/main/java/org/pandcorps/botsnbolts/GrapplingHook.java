@@ -46,7 +46,8 @@ public final class GrapplingHook extends Chr {
             hv = 1;
         }
         setView(player.pi.link);
-        getPosition().set(player.getPosition());
+        final Panple ppos = player.getPosition();
+        getPosition().set(ppos.getX(), ppos.getY(), BotsnBoltsGame.DEPTH_POWER_UP);
         player.addActor(this);
     }
     
@@ -75,15 +76,16 @@ public final class GrapplingHook extends Chr {
         }
         final Panmage image = player.pi.link;
         final Panple pos = getPosition();
-        final Panple dir = Panple.subtract(pos, player.getPosition());
+        final Panple dir = Panple.subtract(player.getPosition(), pos);
         final double mag = dir.getMagnitude2();
+        final int numLinks = Math.max(1, (int) (mag / DISTANCE_BETWEEN_LINKS) - 1);
         if (mag > 0) {
             dir.multiply((float) (DISTANCE_BETWEEN_LINKS / mag));
         }
         final float x = pos.getX(), y = pos.getY(), z = pos.getZ(), dx = dir.getX(), dy = dir.getY();
-        for (int i = 0; i <= mag; i++) {
+        for (int i = 0; i < numLinks; i++) {
             renderer.render(layer, image, x + (i * dx), y + (i * dy), z);
-            i+= DISTANCE_BETWEEN_LINKS;
+            i++;
         }
     }
     
