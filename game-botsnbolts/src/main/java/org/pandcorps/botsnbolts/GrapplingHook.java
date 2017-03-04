@@ -33,7 +33,7 @@ public final class GrapplingHook extends Chr {
     private final static int speedMultiplier = 16;
     
     private final Player player;
-    private boolean finished = false;
+    protected boolean finished = false;
     
     protected GrapplingHook(final Player player) {
         super(GRAPPLING_HOOK_X, GRAPPLING_HOOK_H);

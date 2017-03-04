@@ -959,6 +959,7 @@ public final class Player extends Chr {
         
         @Override
         protected final void onShootStart(final Player player) {
+            //TODO Retract
         }
         
         @Override
@@ -971,10 +972,31 @@ public final class Player extends Chr {
         
         @Override
         protected final void onRight(final Player player) {
+            if (!isConnected(player)) {
+                player.onRightNormal();
+                return;
+            }
+            //TODO Change speed
         }
         
         @Override
         protected final void onLeft(final Player player) {
+            if (!isConnected(player)) {
+                player.onLeftNormal();
+                return;
+            }
+        }
+        
+        private final boolean isConnected(final Player player) {
+            return (player.grapplingHook != null) && player.grapplingHook.finished;
+        }
+        
+        @Override
+        protected final boolean onStep(final Player player) {
+            if (!isConnected(player)) {
+                return false;
+            }
+            return true;
         }
         
         @Override
@@ -1363,6 +1385,7 @@ public final class Player extends Chr {
             player.destroyGrapplingHook();
             player.grapplingHook = new GrapplingHook(player);
             player.stateHandler = GRAPPLING_HANDLER;
+            //TODO Maybe holding jump until highest point could also trigger grappling
         }
     };
     
