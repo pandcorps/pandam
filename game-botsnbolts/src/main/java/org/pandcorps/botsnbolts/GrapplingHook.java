@@ -91,5 +91,6 @@ public final class GrapplingHook extends Chr {
     
     private final void finish() {
         finished = true;
+        player.onGrappleConnected();
     }
 }

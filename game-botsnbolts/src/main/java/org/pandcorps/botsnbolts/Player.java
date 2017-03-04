@@ -80,6 +80,9 @@ public final class Player extends Chr {
     private boolean wallMirror = false;
     private int health = HudMeter.MAX_VALUE;
     private GrapplingHook grapplingHook = null;
+    private double grapplingR = 0;
+    private double grapplingT = 0;
+    private double grapplingV = 0;
     
     static {
         final Panple tmp = new ImplPanple(VEL_PROJECTILE, 0, 0);
@@ -416,6 +419,22 @@ public final class Player extends Chr {
         return false;
     }
     
+    protected final void onStepGrappling() {
+        if (grapplingR <= 0) {
+            destroyGrapplingHook();
+            return;
+        }
+        final double grapplingA = -getG() * Math.sin(grapplingT) / grapplingR;
+        grapplingV += grapplingA;
+        grapplingT += grapplingV;
+        final Panple gPos = grapplingHook.getPosition();
+        final double offT = grapplingT + (Math.PI / 2);
+        final double grapplingX = gPos.getX() + (Math.cos(offT) * grapplingR);
+        final double grapplingY = gPos.getY() + (Math.sin(offT) * grapplingR);
+        //TODO use addX/Y, check for collisions
+        getPosition().set((float) grapplingX, (float) grapplingY);
+    }
+    
     @Override
     protected final void onStepEnd() {
         hv = 0;
@@ -518,6 +537,34 @@ public final class Player extends Chr {
     private final void endLadder() {
         clearRun();
         stateHandler = NORMAL_HANDLER;
+    }
+    
+    private final void startGrapple() {
+        destroyGrapplingHook();
+        grapplingHook = new GrapplingHook(this);
+        grapplingV = 0;
+        stateHandler = GRAPPLING_HANDLER;
+    }
+    
+    protected final void onGrappleConnected() {
+        if (grapplingHook == null) {
+            return;
+        }
+        grapplingV = 0;
+        final Panple pos = getPosition();
+        final Panple dir = Panple.subtract(pos, grapplingHook.getPosition());
+        dir.set(dir.getY(), dir.getX());
+        final double mag = dir.getMagnitude2();
+        if (mag <= 0) {
+            destroyGrapplingHook();
+            return;
+        }
+        grapplingR = mag;
+        dir.multiply((float) (1.0 / mag));
+        grapplingT = Math.acos(dir.getX());
+        if (isMirror()) {
+            grapplingT = -grapplingT;
+        }
     }
     
     private final void endGrapple() {
@@ -996,6 +1043,7 @@ public final class Player extends Chr {
             if (!isConnected(player)) {
                 return false;
             }
+            player.onStepGrappling();
             return true;
         }
         
@@ -1382,9 +1430,7 @@ public final class Player extends Chr {
     protected final static JumpMode JUMP_GRAPPLING_HOOK = new JumpMode() {
         @Override
         protected final void onAirJump(final Player player) {
-            player.destroyGrapplingHook();
-            player.grapplingHook = new GrapplingHook(player);
-            player.stateHandler = GRAPPLING_HANDLER;
+            player.startGrapple();
             //TODO Maybe holding jump until highest point could also trigger grappling
         }
     };
