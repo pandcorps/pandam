@@ -559,10 +559,9 @@ public final class Player extends Chr {
     
     private final void startGrapple() {
         destroyGrapplingHook();
+        //TODO Launch straight up if hv is 0? and if haven't been grappling since leaving the ground?
         grapplingHook = new GrapplingHook(this);
-        if (v < 0) {
-            v = 0;
-        }
+        v = Math.max(v, VEL_JUMP / 3);
         grapplingV = 0;
         grapplingBoostAllowed = true;
         stateHandler = GRAPPLING_HANDLER;
@@ -573,8 +572,8 @@ public final class Player extends Chr {
             return;
         }
         grapplingV = 0;
-        final Panple pos = getPosition();
-        final Panple dir = Panple.subtract(pos, grapplingHook.getPosition());
+        final Panple pos = getPosition(), gPos = grapplingHook.getPosition();
+        final Panple dir = Panple.subtract(pos, gPos);
         dir.set(dir.getY(), dir.getX());
         final double mag = dir.getMagnitude2();
         if (mag <= 0) {
@@ -584,7 +583,7 @@ public final class Player extends Chr {
         grapplingR = mag;
         dir.multiply((float) (1.0 / mag));
         grapplingT = Math.acos(dir.getX());
-        if (isMirror()) {
+        if (gPos.getX() < pos.getX()) {
             grapplingT = -grapplingT;
         }
     }
@@ -612,7 +611,7 @@ public final class Player extends Chr {
         clearRun();
         stateHandler = NORMAL_HANDLER;
         if (v <= 0) {
-            v = 0;
+            v = VEL_JUMP / 4;
         } else if (v < VEL_JUMP) {
             v = (v + (3 * VEL_JUMP)) / 4;
         }
@@ -1093,6 +1092,9 @@ public final class Player extends Chr {
         @Override
         protected final boolean onStep(final Player player) {
             if (!isConnected(player)) {
+                if (player.v < 0) {
+                    player.v /= 2.0f;
+                }
                 return false;
             }
             player.onStepGrappling();
