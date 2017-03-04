@@ -33,6 +33,7 @@ public final class GrapplingHook extends Chr {
     private final static int speedMultiplier = 16;
     
     private final Player player;
+    private boolean finished = false;
     
     protected GrapplingHook(final Player player) {
         super(GRAPPLING_HOOK_X, GRAPPLING_HOOK_H);
@@ -44,11 +45,16 @@ public final class GrapplingHook extends Chr {
         } else {
             hv = 1;
         }
+        setView(player.pi.link);
+        getPosition().set(player.getPosition());
         player.addActor(this);
     }
     
     @Override
     protected final boolean onStepCustom() {
+        if (finished) {
+            return true;
+        }
         for (int i = 0; i < speedMultiplier; i++) {
             if (addY() != Y_NORMAL) {
                 finish();
@@ -82,5 +88,6 @@ public final class GrapplingHook extends Chr {
     }
     
     private final void finish() {
+        finished = true;
     }
 }
