@@ -186,6 +186,7 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
         final int diffX = x - cx, diffY = y - cy;
         final int magX = Math.abs(diffX), magY = Math.abs(diffY);
         final byte xStatus, yStatus;
+        v = diffY;
         if (magX > magY) {
             xStatus = addX(diffX);
             yStatus = addY(diffY);

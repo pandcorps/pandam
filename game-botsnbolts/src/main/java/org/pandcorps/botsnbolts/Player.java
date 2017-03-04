@@ -450,6 +450,7 @@ public final class Player extends Chr {
                 endGrapple();
                 break;
         }
+        //TODO Set image
     }
     
     @Override
@@ -610,9 +611,12 @@ public final class Player extends Chr {
     private final void endGrapple() {
         clearRun();
         stateHandler = NORMAL_HANDLER;
-        if (isGrapplingHookConnected()) {
-            //TODO Preserve positive vertical velocity
+        if (v <= 0) {
+            v = 0;
+        } else if (v < VEL_JUMP) {
+            v = (v + (3 * VEL_JUMP)) / 4;
         }
+        hv = 0;
         destroyGrapplingHook();
     }
     
