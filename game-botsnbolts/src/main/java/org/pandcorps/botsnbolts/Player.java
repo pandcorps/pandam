@@ -79,6 +79,7 @@ public final class Player extends Chr {
     private int wallTimer = 0;
     private boolean wallMirror = false;
     private int health = HudMeter.MAX_VALUE;
+    private GrapplingHook grapplingHook = null;
     
     static {
         final Panple tmp = new ImplPanple(VEL_PROJECTILE, 0, 0);
@@ -324,6 +325,12 @@ public final class Player extends Chr {
         destroy();
     }
     
+    @Override
+    protected final void onDestroy() {
+        destroyGrapplingHook();
+        super.onDestroy();
+    }
+    
     private final void defeatOrb(final float velX, final float velY) {
         final DefeatOrb orb = new DefeatOrb();
         orb.setView(pi.defeat);
@@ -511,6 +518,19 @@ public final class Player extends Chr {
     private final void endLadder() {
         clearRun();
         stateHandler = NORMAL_HANDLER;
+    }
+    
+    private final void endGrapple() {
+        clearRun();
+        stateHandler = NORMAL_HANDLER;
+        destroyGrapplingHook();
+    }
+    
+    private final void destroyGrapplingHook() {
+        if (grapplingHook != null) {
+            grapplingHook.destroy();
+            grapplingHook = null;
+        }
     }
     
     @Override
@@ -926,7 +946,47 @@ public final class Player extends Chr {
         }
     };
     
-    //protected final static StateHandler GRAPPLING_HANDLER
+    protected final static StateHandler GRAPPLING_HANDLER = new StateHandler() {
+        @Override
+        protected final void onJump(final Player player) {
+            player.onJumpNormal();
+        }
+        
+        @Override
+        protected final void onAirJump(final Player player) {
+            player.endGrapple();
+        }
+        
+        @Override
+        protected final void onShootStart(final Player player) {
+        }
+        
+        @Override
+        protected final void onShooting(final Player player) {
+        }
+        
+        @Override
+        protected final void onShootEnd(final Player player) {
+        }
+        
+        @Override
+        protected final void onRight(final Player player) {
+        }
+        
+        @Override
+        protected final void onLeft(final Player player) {
+        }
+        
+        @Override
+        protected final void onGrounded(final Player player) {
+            player.endGrapple();
+        }
+        
+        @Override
+        protected final boolean onAir(final Player player) {
+            return player.onAirNormal();
+        }
+    };
     
     /*
     As Player enters level, will warp through ceiling.
@@ -1300,7 +1360,9 @@ public final class Player extends Chr {
     protected final static JumpMode JUMP_GRAPPLING_HOOK = new JumpMode() {
         @Override
         protected final void onAirJump(final Player player) {
-            new GrapplingHook(player);
+            player.destroyGrapplingHook();
+            player.grapplingHook = new GrapplingHook(player);
+            player.stateHandler = GRAPPLING_HANDLER;
         }
     };
     
