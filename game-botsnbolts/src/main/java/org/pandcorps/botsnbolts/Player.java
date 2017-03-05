@@ -86,6 +86,7 @@ public final class Player extends Chr {
     private double grapplingT = 0;
     private double grapplingV = 0;
     private boolean grapplingBoostAllowed = true;
+    private boolean grapplingRetractAllowed = false;
     
     static {
         final Panple tmp = new ImplPanple(VEL_PROJECTILE, 0, 0);
@@ -422,9 +423,16 @@ public final class Player extends Chr {
         return false;
     }
     
-    protected final void onStepGrappling() {
+    private final boolean checkGrapplingFinished() {
         if (grapplingR <= 0) {
-            destroyGrapplingHook();
+            endGrapple();
+            return true;
+        }
+        return false;
+    }
+    
+    protected final void onStepGrappling() {
+        if (checkGrapplingFinished()) {
             return;
         }
         final double grapplingA = -getG() * Math.sin(grapplingT) / grapplingR;
@@ -564,6 +572,7 @@ public final class Player extends Chr {
         v = Math.max(v, VEL_JUMP / 3);
         grapplingV = 0;
         grapplingBoostAllowed = true;
+        grapplingRetractAllowed = false;
         stateHandler = GRAPPLING_HANDLER;
     }
     
@@ -605,6 +614,14 @@ public final class Player extends Chr {
             grapplingV = -GRAPPLING_BOOST_MAX;
         }
         grapplingBoostAllowed = false;
+    }
+    
+    private final void grappleRetract() {
+        if (!grapplingRetractAllowed) {
+            return;
+        }
+        grapplingR--;
+        checkGrapplingFinished();
     }
     
     private final void endGrapple() {
@@ -1056,11 +1073,12 @@ public final class Player extends Chr {
         
         @Override
         protected final void onShootStart(final Player player) {
-            //TODO Retract
+            player.grapplingRetractAllowed = true;
         }
         
         @Override
         protected final void onShooting(final Player player) {
+            player.grappleRetract();
         }
         
         @Override
