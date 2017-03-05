@@ -80,6 +80,7 @@ public final class Player extends Chr {
     private long lastJump = -1000;
     private int wallTimer = 0;
     private boolean wallMirror = false;
+    protected boolean movedDuringJump = false;
     private int health = HudMeter.MAX_VALUE;
     private GrapplingHook grapplingHook = null;
     private double grapplingR = 0;
@@ -220,7 +221,14 @@ public final class Player extends Chr {
     }
     
     private final void onRightNormal() {
-        hv = VEL_WALK;
+        moveHorizontal(VEL_WALK);
+    }
+    
+    private final void moveHorizontal(final int vel) {
+        hv = vel;
+        if (!isGrounded()) {
+            movedDuringJump = true;
+        }
     }
     
     private final void left() {
@@ -230,7 +238,7 @@ public final class Player extends Chr {
     }
     
     private final void onLeftNormal() {
-        hv = -VEL_WALK;
+        moveHorizontal(-VEL_WALK);
     }
     
     private final void up() {
@@ -472,6 +480,7 @@ public final class Player extends Chr {
             changeView(pi.hurt);
             return;
         }
+        movedDuringJump = false;
         this.stateHandler.onGrounded(this);
     }
     
@@ -567,7 +576,6 @@ public final class Player extends Chr {
     
     private final void startGrapple() {
         destroyGrapplingHook();
-        //TODO Launch straight up if hv is 0? and if haven't been grappling since leaving the ground?
         grapplingHook = new GrapplingHook(this);
         v = Math.max(v, VEL_JUMP / 3);
         grapplingV = 0;

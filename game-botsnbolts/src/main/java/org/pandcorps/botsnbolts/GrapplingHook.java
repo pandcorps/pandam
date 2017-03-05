@@ -39,11 +39,13 @@ public final class GrapplingHook extends Chr {
         super(GRAPPLING_HOOK_X, GRAPPLING_HOOK_H);
         this.player = player;
         v = 1;
-        if (player.isMirror()) {
-            setMirror(true);
-            hv = -1;
-        } else {
-            hv = 1;
+        if (player.movedDuringJump || (player.hv != 0)) {
+            if (player.isMirror()) {
+                setMirror(true);
+                hv = -1;
+            } else {
+                hv = 1;
+            }
         }
         setView(player.pi.link);
         final Panple ppos = player.getPosition();
@@ -84,7 +86,7 @@ public final class GrapplingHook extends Chr {
         }
         final float x = pos.getX(), y = pos.getY(), z = pos.getZ(), dx = dir.getX(), dy = dir.getY();
         for (int i = 0; i < numLinks; i++) {
-            renderer.render(layer, image, x + (i * dx), y + (i * dy), z);
+            renderer.render(layer, image, x + (i * dx), y + (i * dy), z); //TODO Mirror if needed
             i++;
         }
     }
