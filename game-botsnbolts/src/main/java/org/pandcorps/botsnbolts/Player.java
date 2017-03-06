@@ -1259,6 +1259,8 @@ public final class Player extends Chr {
         private final Panmage climb;
         private final Panmage climbShoot;
         private final Panmage climbTop;
+        private final Panmage jumpAimDiag;
+        private final Panmage jumpAimUp;
         protected final Panmage basicProjectile;
         protected final Panimation projectile2;
         protected final Panimation projectile3;
@@ -1284,6 +1286,7 @@ public final class Player extends Chr {
         
         protected PlayerImages(final PlayerImagesSubSet basicSet, final PlayerImagesSubSet shootSet, final Panmage hurt, final Panimation defeat,
                                final Panmage climb, final Panmage climbShoot, final Panmage climbTop,
+                               final Panmage jumpAimDiag, final Panmage jumpAimUp,
                                final Panmage basicProjectile, final Panimation projectile2, final Panimation projectile3,
                                final Panimation charge, final Panimation chargeVert, final Panimation charge2, final Panimation chargeVert2,
                                final Panimation burst, final Panmage[] ball, final Panmage warp, final Panimation materialize, final Panimation bomb,
@@ -1297,6 +1300,8 @@ public final class Player extends Chr {
             this.climb = climb;
             this.climbShoot = climbShoot;
             this.climbTop = climbTop;
+            this.jumpAimDiag = jumpAimDiag;
+            this.jumpAimUp = jumpAimUp;
             this.basicProjectile = basicProjectile;
             this.projectile2 = projectile2;
             this.projectile3 = projectile3;
