@@ -341,8 +341,10 @@ public final class BotsnBoltsGame extends BaseGame {
         final Panmage climb = newPlayerImage(pre + "Climb", oClimb, climbImgs, climbImgsMirror, 0);
         final Panmage climbShoot = newPlayerImage(pre + "Climb.Shoot", oClimb, climbImgs, climbImgsMirror, 1);
         final Panmage climbTop = newPlayerImage(pre + "Climb.Top", oClimb, climbImgs, climbImgsMirror, 2);
-        final Panmage jumpAimDiag = null; //TODO
-        final Panmage jumpAimUp = null;
+        final Img[] jumpAimImgs = Imtil.loadStrip(pre + "JumpAim.png", 32);
+        final Img[] jumpAimImgsMirror = Imtil.loadStrip(pre + "JumpAimMirror.png", 32);
+        final Panmage jumpAimDiag = newPlayerImage(pre + "Jump.Aim.Diag", ojs, jumpAimImgs, jumpAimImgsMirror, 0);
+        final Panmage jumpAimUp = newPlayerImage(pre + "Jump.Aim.Diag", ojs, jumpAimImgs, jumpAimImgsMirror, 1);
         final Panmage basicProjectile = engine.createImage(pre + "Projectile", new FinPanple2(3, 3), new FinPanple2(-3, -2), new FinPanple2(5, 3), pre + "Projectile.png");
         final Panimation projectile2 = newFlipper(pre + "Projectile2", pre + "Projectile2.png", new FinPanple2(7, 7), new FinPanple2(-4, -5), new FinPanple2(8, 6), 4);
         final Panimation projectile3 = newProjectile3(pre);
