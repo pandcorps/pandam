@@ -466,7 +466,15 @@ public final class Player extends Chr {
                 endGrapple();
                 break;
         }
-        //TODO Set image
+        final double baseT = grapplingT - Math.PI, magT = Math.abs(baseT);
+        setMirror(baseT > 0);
+        if (magT < Math.PI / 8.0) {
+            setView(pi.jumpAimUp);
+        } else if (magT < 3.0 * Math.PI / 8.0) {
+            setView(pi.jumpAimDiag);
+        } else {
+            setView(pi.shootSet.jump);
+        }
     }
     
     @Override
