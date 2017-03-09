@@ -1163,6 +1163,9 @@ public final class Player extends Chr {
         
         @Override
         protected final Panmage getJumpView(final Player player) {
+            if (player.grapplingHook.hv == 0) {
+                return player.pi.jumpAimUp;
+            }
             return player.pi.jumpAimDiag;
         }
     };
