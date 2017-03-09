@@ -688,8 +688,12 @@ public final class Player extends Chr {
             changeView(pi.hurt);
             return false;
         }
-        changeView(getCurrentImagesSubSet().jump);
+        changeView(stateHandler.getJumpView(this));
         return false;
+    }
+    
+    private final Panmage getJumpViewNormal() {
+        return getCurrentImagesSubSet().jump;
     }
     
     @Override
@@ -823,6 +827,11 @@ public final class Player extends Chr {
         protected abstract void onGrounded(final Player player);
         
         protected abstract boolean onAir(final Player player);
+        
+        //@OverrideMe
+        protected Panmage getJumpView(final Player player) {
+            return player.getJumpViewNormal();
+        }
         
         //@OverrideMe
         protected void onWall(final Player player, final byte xResult) {
@@ -1150,6 +1159,11 @@ public final class Player extends Chr {
         @Override
         protected final boolean onAir(final Player player) {
             return player.onAirNormal();
+        }
+        
+        @Override
+        protected final Panmage getJumpView(final Player player) {
+            return player.pi.jumpAimDiag;
         }
     };
     
