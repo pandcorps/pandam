@@ -590,7 +590,10 @@ public final class Player extends Chr {
     }
     
     private final void startGrapple() {
-        destroyGrapplingHook();
+        //destroyGrapplingHook(); // Allows Player to float, constantly starting/stopping grapple
+        if (grapplingHook != null) {
+            return;
+        }
         grapplingHook = new GrapplingHook(this);
         v = Math.max(v, VEL_JUMP / 3);
         grapplingV = 0;
@@ -1100,6 +1103,9 @@ public final class Player extends Chr {
         
         @Override
         protected final void onAirJump(final Player player) {
+            if (!isConnected(player)) {
+                return; // If we don't return here, the Player can "float" by rapidly starting/stopping grapple
+            }
             player.endGrapple();
         }
         
@@ -1163,7 +1169,10 @@ public final class Player extends Chr {
         
         @Override
         protected final Panmage getJumpView(final Player player) {
-            if (player.grapplingHook.hv == 0) {
+            final GrapplingHook grapplingHook = player.grapplingHook;
+            if (grapplingHook == null) {
+                return super.getJumpView(player);
+            } else if (grapplingHook.hv == 0) {
                 return player.pi.jumpAimUp;
             }
             return player.pi.jumpAimDiag;
