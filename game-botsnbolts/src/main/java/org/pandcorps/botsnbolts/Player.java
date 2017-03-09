@@ -64,6 +64,9 @@ public final class Player extends Chr {
     private final static float VY_SPREAD2;
     private final static double GRAPPLING_BOOST = 0.01;
     private final static double GRAPPLING_BOOST_MAX = 0.75;
+    private final static double GRAPPLING_ANGLE_MIRROR_THRESHOLD = 0.01;
+    private final static double GRAPPLING_ANGLE_MAX_UP = Math.PI / 8.0;
+    private final static double GRAPPLING_ANGLE_MAX_DIAG = 3.0 * GRAPPLING_ANGLE_MAX_UP;
     
     protected final PlayerContext pc;
     protected final Profile prf;
@@ -467,10 +470,14 @@ public final class Player extends Chr {
                 break;
         }
         final double baseT = grapplingT - Math.PI, magT = Math.abs(baseT);
-        setMirror(baseT > 0);
-        if (magT < Math.PI / 8.0) {
+        if (baseT > GRAPPLING_ANGLE_MIRROR_THRESHOLD) {
+            setMirror(true);
+        } else if (baseT < -GRAPPLING_ANGLE_MIRROR_THRESHOLD) {
+            setMirror(false);
+        }
+        if (magT < GRAPPLING_ANGLE_MAX_UP) {
             setView(pi.jumpAimUp);
-        } else if (magT < 3.0 * Math.PI / 8.0) {
+        } else if (magT < GRAPPLING_ANGLE_MAX_DIAG) {
             setView(pi.jumpAimDiag);
         } else {
             setView(pi.shootSet.jump);
