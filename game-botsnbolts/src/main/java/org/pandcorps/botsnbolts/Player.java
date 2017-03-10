@@ -1129,6 +1129,8 @@ public final class Player extends Chr {
         protected final void onAirJump(final Player player) {
             if (!isConnected(player)) {
                 return; // If we don't return here, the Player can "float" by rapidly starting/stopping grapple
+            } else if (!player.grapplingAllowed) {
+                return; // Don't let the Player end a grapple so soon that another grapple isn't allowed
             }
             player.endGrapple();
         }
