@@ -454,6 +454,7 @@ public final class Player extends Chr {
             grapplingBoostAllowed = true;
         }
         grapplingT += grapplingV;
+        final float oldX = getPosition().getX();
         final Panple gPos = grapplingHook.getPosition();
         final double offT = grapplingT + (Math.PI / 2);
         final double grapplingX = gPos.getX() + (Math.cos(offT) * grapplingR);
@@ -464,9 +465,15 @@ public final class Player extends Chr {
             case Y_CEILING :
                 grapplingV = 0;
                 break;
+            case Y_WALL :
+                if (grapplingX < oldX) {
+                    addX(1);
+                } else if (grapplingX > oldX) {
+                    addX(-1);
+                }
+                // Fall through
             case Y_LANDED :
             case Y_FLOOR :
-            case Y_WALL :
                 endGrapple();
                 break;
         }
