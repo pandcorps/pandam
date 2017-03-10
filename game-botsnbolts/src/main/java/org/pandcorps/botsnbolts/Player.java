@@ -91,6 +91,7 @@ public final class Player extends Chr {
     private double grapplingV = 0;
     private boolean grapplingBoostAllowed = true;
     private boolean grapplingRetractAllowed = false;
+    private boolean grapplingAllowed = true;
     
     static {
         final Panple tmp = new ImplPanple(VEL_PROJECTILE, 0, 0);
@@ -471,16 +472,22 @@ public final class Player extends Chr {
         }
         final double baseT = grapplingT - Math.PI, magT = Math.abs(baseT);
         if (baseT > GRAPPLING_ANGLE_MIRROR_THRESHOLD) {
+            if (!isMirror()) {
+                grapplingAllowed = true;
+            }
             setMirror(true);
         } else if (baseT < -GRAPPLING_ANGLE_MIRROR_THRESHOLD) {
+            if (isMirror()) {
+                grapplingAllowed = true;
+            }
             setMirror(false);
         }
         if (magT < GRAPPLING_ANGLE_MAX_UP) {
-            setView(pi.jumpAimUp);
+            changeView(pi.jumpAimUp);
         } else if (magT < GRAPPLING_ANGLE_MAX_DIAG) {
-            setView(pi.jumpAimDiag);
+            changeView(pi.jumpAimDiag);
         } else {
-            setView(pi.shootSet.jump);
+            changeView(pi.shootSet.jump);
         }
     }
     
@@ -497,6 +504,7 @@ public final class Player extends Chr {
         }
         movedDuringJump = false;
         this.stateHandler.onGrounded(this);
+        grapplingAllowed = true;
     }
     
     private final void onGroundedNormal() {
@@ -593,12 +601,15 @@ public final class Player extends Chr {
         //destroyGrapplingHook(); // Allows Player to float, constantly starting/stopping grapple
         if (grapplingHook != null) {
             return;
+        } else if (!grapplingAllowed) {
+            return;
         }
         grapplingHook = new GrapplingHook(this);
         v = Math.max(v, VEL_JUMP / 3);
         grapplingV = 0;
         grapplingBoostAllowed = true;
         grapplingRetractAllowed = false;
+        grapplingAllowed = false;
         stateHandler = GRAPPLING_HANDLER;
     }
     
@@ -619,8 +630,14 @@ public final class Player extends Chr {
         dir.multiply((float) (1.0 / mag));
         grapplingT = Math.acos(dir.getX());
         if (gPos.getX() < pos.getX()) {
-            grapplingT = -grapplingT;
+            //grapplingT = -grapplingT;
+            grapplingT = (2 * Math.PI) - grapplingT;
         }
+        //grapplingT = Math.PI / 2; // Player is straight left of hook
+        //grapplingT = 3 * Math.PI / 4; // 2.355; Player is 45 degrees left of hook
+        //grapplingT = Math.PI; // Player is straight below hook
+        //grapplingT = 5 * Math.PI / 4; // 3.925; Player is 45 degrees right of hook
+        //grapplingT = 3 * Math.PI / 2; // Player is straight right of hook
     }
     
     private final void grappleBoost(final int dir) {
@@ -1160,6 +1177,7 @@ public final class Player extends Chr {
         @Override
         protected final void onGrounded(final Player player) {
             player.endGrapple();
+            player.grapplingAllowed = true;
         }
         
         @Override
