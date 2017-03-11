@@ -652,9 +652,11 @@ public final class Player extends Chr {
             return;
         } else if (Math.abs(grapplingV) >= GRAPPLING_BOOST_MAX) {
             return;
-        } else if ((dir < 0) && (grapplingV >= 0) && (grapplingV < GRAPPLING_BOOST)) {
+        }
+        final double magT = Math.abs(grapplingT - Math.PI);
+        if ((dir < 0) && (grapplingV >= 0) && (grapplingV < GRAPPLING_BOOST) && (magT > GRAPPLING_BOOST)) {
             return;
-        } else if ((dir > 0) && (grapplingV <= 0) && (grapplingV > -GRAPPLING_BOOST)) {
+        } else if ((dir > 0) && (grapplingV <= 0) && (grapplingV > -GRAPPLING_BOOST) && (magT > GRAPPLING_BOOST)) {
             return;
         }
         grapplingV += (dir * GRAPPLING_BOOST);
