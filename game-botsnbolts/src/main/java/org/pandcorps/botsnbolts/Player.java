@@ -67,6 +67,7 @@ public final class Player extends Chr {
     private final static double GRAPPLING_ANGLE_MIRROR_THRESHOLD = 0.01;
     private final static double GRAPPLING_ANGLE_MAX_UP = Math.PI / 8.0;
     private final static double GRAPPLING_ANGLE_MAX_DIAG = 3.0 * GRAPPLING_ANGLE_MAX_UP;
+    private final static int GRAPPLING_OFF_Y = 12;
     
     protected final PlayerContext pc;
     protected final Profile prf;
@@ -86,12 +87,13 @@ public final class Player extends Chr {
     protected boolean movedDuringJump = false;
     private int health = HudMeter.MAX_VALUE;
     private GrapplingHook grapplingHook = null;
-    private double grapplingR = 0;
+    protected double grapplingR = 0;
     private double grapplingT = 0;
     private double grapplingV = 0;
     private boolean grapplingBoostAllowed = true;
     private boolean grapplingRetractAllowed = false;
     private boolean grapplingAllowed = true;
+    private final ImplPanple grapplingPosition = new ImplPanple();
     
     static {
         final Panple tmp = new ImplPanple(VEL_PROJECTILE, 0, 0);
@@ -618,6 +620,12 @@ public final class Player extends Chr {
         grapplingRetractAllowed = false;
         grapplingAllowed = false;
         stateHandler = GRAPPLING_HANDLER;
+    }
+    
+    protected final Panple getGrapplingPosition() {
+        grapplingPosition.set(getPosition());
+        grapplingPosition.addY(GRAPPLING_OFF_Y);
+        return grapplingPosition;
     }
     
     protected final void onGrappleConnected() {

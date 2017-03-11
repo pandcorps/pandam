@@ -34,6 +34,8 @@ public final class GrapplingHook extends Chr {
     
     private final Player player;
     protected boolean finished = false;
+    private double mag = 0;
+    private double oldGrapplingR = 0;
     
     protected GrapplingHook(final Player player) {
         super(GRAPPLING_HOOK_X, GRAPPLING_HOOK_H);
@@ -79,9 +81,13 @@ public final class GrapplingHook extends Chr {
         final Panmage image = player.pi.link;
         final boolean mirror = player.isMirror();
         final Panple pos = getPosition();
-        final Panple dir = Panple.subtract(player.getPosition(), pos);
-        final double mag = dir.getMagnitude2();
-        final int numLinks = Math.max(1, (int) ((mag - 2) / DISTANCE_BETWEEN_LINKS) - 1);
+        final Panple dir = Panple.subtract(player.getGrapplingPosition(), pos);
+        final double newGrapplingR = player.grapplingR;
+        if ((mag == 0) || !finished || (newGrapplingR != oldGrapplingR)) {
+            mag = dir.getMagnitude2();
+        }
+        oldGrapplingR = newGrapplingR;
+        final int numLinks = Math.max(1, (int) ((mag - 10) / DISTANCE_BETWEEN_LINKS));
         if (mag > 0) {
             dir.multiply((float) (DISTANCE_BETWEEN_LINKS / mag));
         }
