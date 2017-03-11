@@ -32,6 +32,11 @@ public final class Panderer {
 	public final void render(final Panlayer layer, final Panmage image, final float x, final float y, final float z) {
 		image.render(layer, x, y, z);
 	}
+	
+	public final void render(final Panlayer layer, final Panmage image, final float x, final float y, final float z,
+	    final int rot, final boolean mirror, final boolean flip) {
+	    image.render(layer, x, y, z, rot, mirror, flip);
+	}
 
 	public final void render(final Panlayer layer, final Panmage image, final float x, final float y, final float z,
 		final float ix, final float iy, final float iw, final float ih) {

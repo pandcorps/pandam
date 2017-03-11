@@ -77,6 +77,7 @@ public final class GrapplingHook extends Chr {
             return;
         }
         final Panmage image = player.pi.link;
+        final boolean mirror = player.isMirror();
         final Panple pos = getPosition();
         final Panple dir = Panple.subtract(player.getPosition(), pos);
         final double mag = dir.getMagnitude2();
@@ -86,7 +87,7 @@ public final class GrapplingHook extends Chr {
         }
         final float x = pos.getX(), y = pos.getY(), z = pos.getZ(), dx = dir.getX(), dy = dir.getY();
         for (int i = 0; i < numLinks; i++) {
-            renderer.render(layer, image, x + (i * dx), y + (i * dy), z); //TODO Mirror if needed
+            renderer.render(layer, image, x + (i * dx), y + (i * dy), z, 0, mirror, false);
             i++;
         }
     }
