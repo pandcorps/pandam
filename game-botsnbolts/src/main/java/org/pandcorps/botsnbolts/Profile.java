@@ -46,6 +46,8 @@ public class Profile {
     
     protected static Upgrade UPGRADE_BOMB = null;
     
+    protected static Upgrade UPGRADE_GRAPPLING_HOOOK = null;
+    
     protected static class Upgrade {
         protected final Panmage boxImage;
         
