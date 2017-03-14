@@ -66,14 +66,17 @@ public abstract class Enemy extends Chr implements CollisionListener {
     }
     
     protected void onShot(final Projectile prj) {
-        if (!isVulnerableToProjectile(prj)) {
+        if (prj.power <= 0) {
+            return;
+        } else if (!isVulnerableToProjectile(prj)) {
             prj.bounce();
             return;
         }
+        onHurt(prj);
+    }
+    
+    protected void onHurt(final Projectile prj) {
         final int oldHealth = health, oldPower = prj.power;
-        if (oldPower <= 0) {
-            return;
-        }
         health -= oldPower;
         if (health <= 0) {
             prj.burst(this);
@@ -634,6 +637,8 @@ public abstract class Enemy extends Chr implements CollisionListener {
     
     // Shield covers enemy's face; can only shoot enemy's back
     protected final static class ShieldedEnemy extends Enemy {
+        private boolean shielded = true;
+        
         protected ShieldedEnemy(int x, int y) {
             super(-1, -1, x, y, -1); //TODO
             //setView(); //TODO
@@ -641,10 +646,13 @@ public abstract class Enemy extends Chr implements CollisionListener {
 
         @Override
         protected final boolean isVulnerableToProjectile(final Projectile prj) {
-            return isExposedToProjectile(prj);
+            return (prj.power >= Projectile.POWER_MAXIMUM) && isExposedToProjectile(prj);
         }
         
         protected final boolean isExposedToProjectile(final Projectile prj) {
+            if (!shielded) {
+                return true;
+            }
             final float pvx = prj.getVelocity().getX();
             if (pvx < 0) {
                 return isMirror();
@@ -652,6 +660,17 @@ public abstract class Enemy extends Chr implements CollisionListener {
                 return !isMirror();
             }
             return true;
+        }
+        
+        @Override
+        protected void onHurt(final Projectile prj) {
+            if (shielded && !isExposedToProjectile(prj)) {
+                shielded = false;
+                prj.burst(this);
+                prj.setPower(0);
+            } else {
+                super.onHurt(prj);
+            }
         }
         
         @Override
