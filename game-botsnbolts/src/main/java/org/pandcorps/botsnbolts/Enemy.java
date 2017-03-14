@@ -636,6 +636,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
     protected final static class ShieldedEnemy extends Enemy {
         protected ShieldedEnemy(int x, int y) {
             super(-1, -1, x, y, -1); //TODO
+            //setView(); //TODO
         }
 
         @Override
