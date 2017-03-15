@@ -646,7 +646,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
 
         @Override
         protected final boolean isVulnerableToProjectile(final Projectile prj) {
-            return (prj.power >= Projectile.POWER_MAXIMUM) && isExposedToProjectile(prj);
+            return (prj.power >= Projectile.POWER_MAXIMUM) || isExposedToProjectile(prj);
         }
         
         protected final boolean isExposedToProjectile(final Projectile prj) {
@@ -668,6 +668,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
                 shielded = false;
                 prj.burst(this);
                 prj.setPower(0);
+                //setView(); //TODO
             } else {
                 super.onHurt(prj);
             }
