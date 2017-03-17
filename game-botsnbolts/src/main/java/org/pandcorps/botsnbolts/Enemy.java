@@ -637,11 +637,19 @@ public abstract class Enemy extends Chr implements CollisionListener {
     
     // Shield covers enemy's face; can only shoot enemy's back
     protected final static class ShieldedEnemy extends Enemy {
+        private final static int SPEED = 2;
         private boolean shielded = true;
         
         protected ShieldedEnemy(int x, int y) {
-            super(-1, -1, x, y, -1); //TODO
+            super(PROP_OFF_X, PROP_H, x, y, PROP_HEALTH);
+            getPosition().addY(2);
+            hv = 0;
             setView(BotsnBoltsGame.shieldedEnemy);
+        }
+        
+        private final void initDirection() {
+            turnTowardPlayer();
+            hv = isMirror() ? -SPEED : SPEED;
         }
 
         @Override
@@ -676,9 +684,13 @@ public abstract class Enemy extends Chr implements CollisionListener {
         
         @Override
         protected final boolean onStepCustom() {
-            //hv = ; //TODO
-            updateMirror();
-            addX(hv);
+            if (hv == 0) {
+                initDirection();
+            }
+            if (addX(hv) != X_NORMAL) {
+                hv *= -1;
+                updateMirror();
+            }
             return true;
         }
 
