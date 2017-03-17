@@ -641,7 +641,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         
         protected ShieldedEnemy(int x, int y) {
             super(-1, -1, x, y, -1); //TODO
-            //setView(); //TODO
+            setView(BotsnBoltsGame.shieldedEnemy);
         }
 
         @Override
@@ -668,7 +668,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
                 shielded = false;
                 prj.burst(this);
                 prj.setPower(0);
-                //setView(); //TODO
+                setView(BotsnBoltsGame.unshieldedEnemy);
             } else {
                 super.onHurt(prj);
             }
