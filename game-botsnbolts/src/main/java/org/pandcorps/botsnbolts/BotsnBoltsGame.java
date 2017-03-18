@@ -295,8 +295,9 @@ public final class BotsnBoltsGame extends BaseGame {
         springEnemy = newSheet("spring.enemy", RES + "enemy/SpringEnemy.png", 16, new FinPanple2(8, 3), propMin, propMax);
         final Panple crawlMax = Chr.getMax(Enemy.PROP_OFF_X, Enemy.CRAWL_H);
         crawlEnemy = newAnimation("crawl.enemy", RES + "enemy/CrawlEnemy.png", 16, propO, propMin, crawlMax, 4);
-        shieldedEnemy = null; //TODO
-        unshieldedEnemy = null; //TODO
+        final Panple shieldedO = new FinPanple2(8, 2);
+        shieldedEnemy = newAnimation("shielded.enemy", RES + "enemy/ShieldedEnemy.png", 16, shieldedO, propMin, crawlMax, 3);
+        unshieldedEnemy = newAnimation("unshielded.enemy", RES + "enemy/UnshieldedEnemy.png", 16, shieldedO, propMin, crawlMax, 3);
         fireballEnemy = newSheet("fireball.enemy", RES + "enemy/FireballEnemy.png", 16, propO, propMin, crawlMax);
         final Panple henchO = new FinPanple2(15, 1), henchMin = Chr.getMin(Enemy.HENCHBOT_OFF_X), henchMax = Chr.getMax(Enemy.HENCHBOT_OFF_X, Enemy.HENCHBOT_H);
         flamethrowerEnemy = newSheet("flamethrower.enemy", RES + "enemy/Henchbot.png", 32, henchO, henchMin, henchMax);
