@@ -94,6 +94,7 @@ public final class Player extends Chr {
     private boolean grapplingRetractAllowed = false;
     private boolean grapplingAllowed = true;
     private final ImplPanple grapplingPosition = new ImplPanple();
+    protected Carrier carrier = null;
     
     static {
         final Panple tmp = new ImplPanple(VEL_PROJECTILE, 0, 0);
@@ -189,11 +190,15 @@ public final class Player extends Chr {
     
     private final void onJumpNormal() {
         if (isGrounded()) {
-            v = VEL_JUMP;
-            lastJump = Pangine.getEngine().getClock();
+            startJump();
         } else {
             stateHandler.onAirJump(this);
         }
+    }
+    
+    private final void startJump() {
+        v = VEL_JUMP;
+        lastJump = Pangine.getEngine().getClock();
     }
     
     private final void releaseJump() {
@@ -707,6 +712,19 @@ public final class Player extends Chr {
         }
     }
     
+    protected final void startCarried(final Carrier carrier) {
+        destroyGrapplingHook();
+        carrier.carried = this;
+        this.carrier = carrier;
+        stateHandler = Player.CARRIED_HANDLER;
+    }
+    
+    private final void endCarried() {
+        stateHandler = NORMAL_HANDLER;
+        carrier.carried = null;
+        carrier = null;
+    }
+    
     @Override
     protected final void onLanded() {
         super.onLanded();
@@ -1084,7 +1102,8 @@ public final class Player extends Chr {
     protected final static StateHandler CARRIED_HANDLER = new StateHandler() {
         @Override
         protected final void onJump(final Player player) {
-            player.onJumpNormal();
+            player.startJump();
+            player.endCarried();
         }
         
         @Override
@@ -1115,6 +1134,7 @@ public final class Player extends Chr {
         @Override
         protected final boolean onStep(final Player player) {
             // The Carrier moves the Player, so don't need to do that here
+            player.setView(player.pi.basicSet.stand);
             return true;
         }
         

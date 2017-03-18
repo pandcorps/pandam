@@ -24,9 +24,10 @@ package org.pandcorps.botsnbolts;
 
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
+import org.pandcorps.pandax.tile.*;
 
 public final class Carrier extends Panctor implements StepListener, CollisionListener {
-    private Player carried;
+    protected Player carried;
     private final int velX;
     private final int velY;
     private final int duration;
@@ -35,12 +36,14 @@ public final class Carrier extends Panctor implements StepListener, CollisionLis
     
     protected Carrier(final int x, final int y, final int velX, final int velY, final int duration) {
         final Panple pos = getPosition();
-        BotsnBoltsGame.tm.savePosition(pos, x, y);
+        final TileMap tm = BotsnBoltsGame.tm;
+        tm.savePosition(pos, x, y);
         pos.setZ(BotsnBoltsGame.DEPTH_CARRIER);
         this.velX = velX;
         this.velY = velY;
         this.duration = duration;
-        //setView(); //TODO
+        setView(BotsnBoltsGame.carrier);
+        tm.getLayer().addActor(this);
     }
 
     @Override
@@ -53,7 +56,8 @@ public final class Carrier extends Panctor implements StepListener, CollisionLis
         }
         if (carried != null) {
             final Panple pos = getPosition();
-            carried.getPosition().set(pos.getX(), pos.getY()); //TODO offset
+            final int off = carried.isMirror() ? -1 : 1;
+            carried.getPosition().set(pos.getX() + off, pos.getY());
         }
     }
     
@@ -66,6 +70,14 @@ public final class Carrier extends Panctor implements StepListener, CollisionLis
         if (collider.getClass() != Player.class) {
             return;
         }
-        carried = (Player) collider;
+        final Player player = (Player) collider;
+        if (player.v > 0) {
+            return;
+        } else if (player.getPosition().getY() < (getPosition().getY() - Player.MAX_V)) {
+            return;
+        } else if (player.isGrounded()) {
+            return;
+        }
+        player.startCarried(this);
     }
 }
