@@ -167,8 +167,11 @@ public class Projectile extends Pandy implements Collidable, AllOobListener {
         protected Bounce(final Projectile prj) {
             getPosition().set(prj.getPosition());
             final Panple vel = getVelocity();
-            vel.set((prj.getVelocity().getX() < 0) ? -1 : 1, 1);
+            final boolean mirror = prj.getVelocity().getX() > 0;
+            vel.set(mirror ? -1 : 1, 1);
             vel.setMagnitude2(Player.VEL_PROJECTILE);
+            setMirror(mirror);
+            setView(prj);
             BotsnBoltsGame.addActor(this);
         }
         
