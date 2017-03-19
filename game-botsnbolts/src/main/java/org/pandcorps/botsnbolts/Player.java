@@ -1134,7 +1134,7 @@ public final class Player extends Chr {
         @Override
         protected final boolean onStep(final Player player) {
             // The Carrier moves the Player, so don't need to do that here
-            player.setView(player.pi.basicSet.stand);
+            player.setView(player.getCurrentImagesSubSet().stand);
             return true;
         }
         
