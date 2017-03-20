@@ -249,6 +249,13 @@ public final class BotsnBoltsGame extends BaseGame {
         final Pancolor hid = newColorHidden(), darkHid = newColorHiddenDark();
         blockHidden = newBlock("block.hidden", blockImgs, maxBlock, btn, hid, darkBtn, darkHid);
         Img.close(blockImgs);
+        final String preCarrier = "carrier";
+        final Panmage carrierAll = engine.createImage(preCarrier, RES + "misc/Carrier.png");
+        final Panple oCarrier = new FinPanple2(16, 11), nCarrier = new FinPanple2(-12, -1), xCarrier = new FinPanple2(12, 1), sCarrier = new FinPanple2(32, 16);
+        final int dCarrier = 4;
+        carrier = engine.createAnimation(preCarrier + ".anm",
+            newSubFrame(preCarrier, 0, oCarrier, nCarrier, xCarrier, carrierAll, 0, 0, sCarrier, dCarrier),
+            newSubFrame(preCarrier, 1, oCarrier, nCarrier, xCarrier, carrierAll, 0, 16, sCarrier, dCarrier));
         blockSpike = engine.createImage("block.spike", RES + "bg/BlockSpike.png");
         spike = engine.createImage("spike", CENTER_16, new FinPanple2(-6, -6), new FinPanple2(6, 6), RES + "bg/Spike.png");
         puff = newAnimation("puff", RES + "misc/Puff.png", 8, CENTER_8, 2);
@@ -432,7 +439,11 @@ public final class BotsnBoltsGame extends BaseGame {
     }
     
     private final static Panframe newProjectile3Frame(final String pre, final int i, final Panple o, final Panple min, final Panple max, final Panmage src, final float x, final float y, final Panple size) {
-        return Pangine.getEngine().createFrame(pre + ".frm." + i, new SubPanmage(pre + ".sub." + i, o, min, max, src, x, y, size), 2);
+        return newSubFrame(pre, i, o, min, max, src, x, y, size, 2);
+    }
+    
+    private final static Panframe newSubFrame(final String pre, final int i, final Panple o, final Panple min, final Panple max, final Panmage src, final float x, final float y, final Panple size, final int dur) {
+        return Pangine.getEngine().createFrame(pre + ".frm." + i, new SubPanmage(pre + ".sub." + i, o, min, max, src, x, y, size), dur);
     }
     
     private final static void filterImgs(final Img[] imgs, final PixelFilter... fs) {
