@@ -127,6 +127,8 @@ public abstract class RoomLoader {
                 dor(seg.intValue(0), seg.intValue(1), seg.getValue(2));
             } else if ("SBT".equals(name)) { // Shootable Button
                 sbt(seg, in);
+            } else if ("CRR".equals(name)) { // Carrier
+                crr(seg);
             } else if ("DEF".equals(name)) { // Definition
             }
         }
@@ -333,6 +335,10 @@ public abstract class RoomLoader {
             throw new IllegalArgumentException("Unexpected ShootableButtonHandler type " + handlerType);
         }
         new ShootableButton(seg.intValue(0), seg.intValue(1), handler);
+    }
+    
+    private final static void crr(final Segment seg) throws Exception {
+        new Carrier(seg.intValue(0), seg.intValue(1), seg.intValue(2), seg.intValue(3), seg.intValue(4));
     }
     
     private final static TileMapImage getTileMapImage(final Segment seg, final int imageOffset) {
