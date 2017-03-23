@@ -30,4 +30,12 @@ public class Boss extends Enemy {
     @Override
     protected final void award(final PowerUp powerUp) {
     }
+    
+    protected final static int VOLCANO_OFF_X = 20, VOLCANO_H = 48; //TODO
+    
+    protected final static class VolcanoBot extends Boss {
+        protected VolcanoBot(int x, int y) {
+            super(VOLCANO_OFF_X, VOLCANO_H, x, y);
+        }
+    }
 }
