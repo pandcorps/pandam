@@ -37,5 +37,10 @@ public class Boss extends Enemy {
         protected VolcanoBot(int x, int y) {
             super(VOLCANO_OFF_X, VOLCANO_H, x, y);
         }
+        
+        @Override
+        protected final void onGrounded() {
+            hv = 0;
+        }
     }
 }
