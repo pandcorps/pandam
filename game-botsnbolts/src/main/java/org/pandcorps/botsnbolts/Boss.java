@@ -39,6 +39,11 @@ public class Boss extends Enemy {
         }
         
         @Override
+        protected final boolean onStepCustom() {
+            return false;
+        }
+        
+        @Override
         protected final void onGrounded() {
             hv = 0;
         }
