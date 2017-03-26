@@ -22,10 +22,23 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.botsnbolts;
 
-public class Boss extends Enemy {
+public abstract class Boss extends Enemy {
+    private int waitTimer = 0;
+    
     protected Boss(int offX, int h, int x, int y) {
         super(offX, h, x, y, HudMeter.MAX_VALUE);
     }
+    
+    @Override
+    protected final boolean onStepCustom() {
+        if (waitTimer > 0) {
+            waitTimer--;
+            return false;
+        }
+        return onReady();
+    }
+    
+    protected abstract boolean onReady();
 
     @Override
     protected final void award(final PowerUp powerUp) {
@@ -39,7 +52,7 @@ public class Boss extends Enemy {
         }
         
         @Override
-        protected final boolean onStepCustom() {
+        protected final boolean onReady() {
             return false;
         }
         
