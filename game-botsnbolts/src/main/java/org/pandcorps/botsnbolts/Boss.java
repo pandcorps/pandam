@@ -22,14 +22,21 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.botsnbolts;
 
+import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.impl.*;
 
 public abstract class Boss extends Enemy {
-    private final static String RES_BOSS = BotsnBoltsGame.RES + "boss/";
-    private int waitTimer = 0;
+    protected final static String RES_BOSS = BotsnBoltsGame.RES + "boss/";
+    protected final static byte STATE_STILL = 0;
+    
+    protected int waitTimer = 0;
+    protected byte state = 0;
     
     protected Boss(int offX, int h, int x, int y) {
         super(offX, h, x, y, HudMeter.MAX_VALUE);
+        startStill();
+        setMirror(true);
     }
     
     @Override
@@ -47,28 +54,99 @@ public abstract class Boss extends Enemy {
     protected final void award(final PowerUp powerUp) {
     }
     
-    protected final static Panmage getImage(final Panmage img, final String name) {
+    protected final void startState(final byte state, final int waitTimer, final Panmage img) {
+        this.state = state;
+        this.waitTimer = waitTimer;
+        setView(img);
+    }
+    
+    protected void startStill() {
+        startState(STATE_STILL, Mathtil.randi(15, 30), getStill());
+    }
+    
+    protected final static Panmage getImage(final Panmage img, final String name, final Panple o, final Panple min, final Panple max) {
         if (img != null) {
             return img;
         }
-        return Pangine.getEngine().createImage("boss." + name, RES_BOSS + name + ".png");
+        return Pangine.getEngine().createImage("boss." + name, o, min, max, RES_BOSS + name + ".png");
     }
     
+    protected abstract Panmage getStill();
+    
     protected final static int VOLCANO_OFF_X = 20, VOLCANO_H = 48; //TODO
+    protected final static Panple VOLCANO_O = new FinPanple2(26, 1);
     
     protected final static class VolcanoBot extends Boss {
+        protected final static byte STATE_LIFT = 1;
+        protected final static byte STATE_RAISED = 2;
+        protected final static byte STATE_CROUCH = 3;
+        protected static Panmage still = null;
+        protected static Panmage lift = null;
+        protected static Panmage raised = null;
+        protected static Panmage crouch = null;
+        
         protected VolcanoBot(int x, int y) {
             super(VOLCANO_OFF_X, VOLCANO_H, x, y);
+            setView(getStill());
         }
         
         @Override
         protected final boolean onReady() {
+            switch (state) {
+                case STATE_STILL :
+                    startLift();
+                    break;
+                case STATE_LIFT :
+                    startRaised();
+                    break;
+                case STATE_RAISED :
+                    startCrouch();
+                    break;
+                case STATE_CROUCH :
+                    startStill();
+                    break;
+                default :
+                    throw new IllegalStateException("Unexpected state " + state);
+            }
             return false;
         }
         
         @Override
         protected final void onGrounded() {
             hv = 0;
+        }
+        
+        protected final void startLift() {
+            startState(STATE_LIFT, 5, getLift());
+        }
+        
+        protected final void startRaised() {
+            startState(STATE_RAISED, 10, getRaised());
+        }
+        
+        protected final void startCrouch() {
+            startState(STATE_CROUCH, 30, getCrouch());
+        }
+        
+        @Override
+        protected final Panmage getStill() {
+            return (still = getVolcanoImage(still, "volcanobot/VolcanoBot"));
+        }
+        
+        protected final static Panmage getLift() {
+            return (lift = getVolcanoImage(lift, "volcanobot/VolcanoBotLift"));
+        }
+        
+        protected final static Panmage getRaised() {
+            return (raised = getVolcanoImage(raised, "volcanobot/VolcanoBotRaised"));
+        }
+        
+        protected final static Panmage getCrouch() {
+            return (crouch = getVolcanoImage(crouch, "volcanobot/VolcanoBotCrouch"));
+        }
+        
+        protected final static Panmage getVolcanoImage(final Panmage img, final String name) {
+            return getImage(img, name, VOLCANO_O, null, null);
         }
     }
 }
