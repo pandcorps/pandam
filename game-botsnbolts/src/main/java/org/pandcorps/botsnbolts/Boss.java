@@ -22,7 +22,10 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.botsnbolts;
 
+import org.pandcorps.pandam.*;
+
 public abstract class Boss extends Enemy {
+    private final static String RES_BOSS = BotsnBoltsGame.RES + "boss/";
     private int waitTimer = 0;
     
     protected Boss(int offX, int h, int x, int y) {
@@ -42,6 +45,13 @@ public abstract class Boss extends Enemy {
 
     @Override
     protected final void award(final PowerUp powerUp) {
+    }
+    
+    protected final static Panmage getImage(final Panmage img, final String name) {
+        if (img != null) {
+            return img;
+        }
+        return Pangine.getEngine().createImage("boss." + name, RES_BOSS + name + ".png");
     }
     
     protected final static int VOLCANO_OFF_X = 20, VOLCANO_H = 48; //TODO
