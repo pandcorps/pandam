@@ -191,7 +191,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
         
         @Override
-        public final void onAllOob(final AllOobEvent event) {
+        public void onAllOob(final AllOobEvent event) {
             destroy();
         }
     }
@@ -767,14 +767,22 @@ public abstract class Enemy extends Chr implements CollisionListener {
         protected final boolean onStepCustom() {
             final int imgIndex;
             if (v > 1) {
-                imgIndex = Pangine.getEngine().isOn(4) ? 0 : 1;
+                imgIndex = getIndex(0, 1);
             } else if (v < -1) {
-                imgIndex = Pangine.getEngine().isOn(4) ? 3 : 4;
+                imgIndex = getIndex(3, 4);
             } else {
                 imgIndex = 2;
             }
             setView(BotsnBoltsGame.fireballEnemy[imgIndex]);
             return false;
+        }
+        
+        protected final static int getIndex(final int index1, final int index2) {
+            return isFirstImageActive() ? index1 : index2;
+        }
+        
+        protected final static boolean isFirstImageActive() {
+            return Pangine.getEngine().isOn(4);
         }
     }
     
