@@ -24,6 +24,8 @@ package org.pandcorps.botsnbolts;
 
 import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.event.*;
+import org.pandcorps.pandam.event.boundary.*;
 import org.pandcorps.pandam.impl.*;
 
 public abstract class Boss extends Enemy {
@@ -43,9 +45,13 @@ public abstract class Boss extends Enemy {
     protected final boolean onStepCustom() {
         if (waitTimer > 0) {
             waitTimer--;
-            return false;
+            return onWaiting();
         }
         return onReady();
+    }
+    
+    protected boolean onWaiting() {
+        return false;
     }
     
     protected abstract boolean onReady();
@@ -87,7 +93,16 @@ public abstract class Boss extends Enemy {
         
         protected VolcanoBot(int x, int y) {
             super(VOLCANO_OFF_X, VOLCANO_H, x, y);
-            setView(getStill());
+        }
+        
+        @Override
+        protected final boolean onWaiting() {
+            if (state == STATE_CROUCH) {
+                if (waitTimer == 15) {
+                    new LavaBall(this, 11, 34);
+                }
+            }
+            return false;
         }
         
         @Override
@@ -147,6 +162,50 @@ public abstract class Boss extends Enemy {
         
         protected final static Panmage getVolcanoImage(final Panmage img, final String name) {
             return getImage(img, name, VOLCANO_O, null, null);
+        }
+    }
+    
+    protected final static class LavaBall extends EnemyProjectile {
+        protected static Panmage lava1 = null;
+        protected static Panmage lava2 = null;
+        
+        protected LavaBall(Enemy src, int ox, int oy) {
+            super(getLava1(), src, ox, oy, 0, 16);
+            getAcceleration().setY(g);
+            
+        }
+        
+        @Override
+        public void onStep(final StepEvent event) {
+            super.onStep(event);
+            setView(FireballEnemy.isFirstImageActive() ? getLava1() : getLava2());
+            if (getVelocity().getY() < 0) {
+                if (!isFlip()) {
+                    setFlip(true);
+                    final int m = isMirror() ? -1 : 1;
+                    getPosition().addX(m * 48);
+                }
+            }
+        }
+
+        @Override
+        public void onAllOob(final AllOobEvent event) {
+            if (getPosition().getY() < 0) {
+                super.onAllOob(event);
+            }
+        }
+        
+        protected final static Panmage getLava1() {
+            return (lava1 = getLavaImage(lava1, "volcanobot/LavaBall1"));
+        }
+        
+        protected final static Panmage getLava2() {
+            return (lava2 = getLavaImage(lava2, "volcanobot/LavaBall2"));
+        }
+        
+        protected final static Panmage getLavaImage(final Panmage img, final String name) {
+            final Panmage ref = BotsnBoltsGame.fireballEnemy[0];
+            return getImage(img, name, ref.getOrigin(), ref.getBoundingMinimum(), ref.getBoundingMaximum());
         }
     }
 }
