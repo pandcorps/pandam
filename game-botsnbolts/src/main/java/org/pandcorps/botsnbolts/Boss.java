@@ -90,6 +90,7 @@ public abstract class Boss extends Enemy {
         protected static Panmage lift = null;
         protected static Panmage raised = null;
         protected static Panmage crouch = null;
+        protected static Panmage jump = null;
         
         protected VolcanoBot(int x, int y) {
             super(VOLCANO_OFF_X, VOLCANO_H, x, y);
@@ -158,6 +159,10 @@ public abstract class Boss extends Enemy {
         
         protected final static Panmage getCrouch() {
             return (crouch = getVolcanoImage(crouch, "volcanobot/VolcanoBotCrouch"));
+        }
+        
+        protected final static Panmage getJump() {
+            return (jump = getVolcanoImage(jump, "volcanobot/VolcanoBotJump"));
         }
         
         protected final static Panmage getVolcanoImage(final Panmage img, final String name) {
