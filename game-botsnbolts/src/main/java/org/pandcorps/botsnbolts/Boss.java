@@ -46,15 +46,19 @@ public abstract class Boss extends Enemy {
         if (waitTimer > 0) {
             waitTimer--;
             return onWaiting();
+        } else if (state == STATE_STILL) {
+            return pickState();
         }
-        return onReady();
+        return continueState();
     }
     
     protected boolean onWaiting() {
         return false;
     }
     
-    protected abstract boolean onReady();
+    protected abstract boolean pickState();
+    
+    protected abstract boolean continueState();
 
     @Override
     protected final void award(final PowerUp powerUp) {
@@ -107,11 +111,14 @@ public abstract class Boss extends Enemy {
         }
         
         @Override
-        protected final boolean onReady() {
+        protected final boolean pickState() {
+            startLift();
+            return false;
+        }
+        
+        @Override
+        protected final boolean continueState() {
             switch (state) {
-                case STATE_STILL :
-                    startLift();
-                    break;
                 case STATE_LIFT :
                     startRaised();
                     break;
