@@ -112,7 +112,11 @@ public abstract class Boss extends Enemy {
         
         @Override
         protected final boolean pickState() {
-            startLift();
+            if (Mathtil.rand()) {
+                startLift();
+            } else {
+                startJump();
+            }
             return false;
         }
         
@@ -141,6 +145,9 @@ public abstract class Boss extends Enemy {
         
         protected final void startLift() {
             startState(STATE_LIFT, 5, getLift());
+        }
+        
+        protected final void startJump() {
         }
         
         protected final void startRaised() {
