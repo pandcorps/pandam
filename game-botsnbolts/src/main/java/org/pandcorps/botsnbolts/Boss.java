@@ -70,6 +70,10 @@ public abstract class Boss extends Enemy {
         setView(img);
     }
     
+    protected final void startStateIndefinite(final byte state, final Panmage img) {
+        startState(state, Integer.MAX_VALUE, img);
+    }
+    
     protected void startStill() {
         startState(STATE_STILL, Mathtil.randi(15, 30), getStill());
     }
