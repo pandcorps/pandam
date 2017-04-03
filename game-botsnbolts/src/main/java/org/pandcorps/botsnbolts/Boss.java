@@ -74,6 +74,12 @@ public abstract class Boss extends Enemy {
         startState(state, Integer.MAX_VALUE, img);
     }
     
+    protected final void startJump(final byte state, final Panmage img, final int v, final int hv) {
+        startStateIndefinite(state, img);
+        this.v = v;
+        this.hv = hv;
+    }
+    
     protected void startStill() {
         startState(STATE_STILL, Mathtil.randi(15, 30), getStill());
     }
@@ -94,6 +100,7 @@ public abstract class Boss extends Enemy {
         protected final static byte STATE_LIFT = 1;
         protected final static byte STATE_RAISED = 2;
         protected final static byte STATE_CROUCH = 3;
+        protected final static byte STATE_JUMP = 4;
         protected static Panmage still = null;
         protected static Panmage lift = null;
         protected static Panmage raised = null;
@@ -152,6 +159,7 @@ public abstract class Boss extends Enemy {
         }
         
         protected final void startJump() {
+            startJump(STATE_JUMP, getJump(), 9, 0);
         }
         
         protected final void startRaised() {
