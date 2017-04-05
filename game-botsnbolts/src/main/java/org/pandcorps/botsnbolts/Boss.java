@@ -244,4 +244,18 @@ public abstract class Boss extends Enemy {
             return getImage(img, name, ref.getOrigin(), ref.getBoundingMinimum(), ref.getBoundingMaximum());
         }
     }
+    
+    protected final static class Jump {
+        protected final byte state;
+        protected final Panmage img;
+        protected final int v;
+        protected final int hv;
+        
+        protected Jump(final byte state, final Panmage img, final int v, final int hv) {
+            this.state = state;
+            this.img = img;
+            this.v = v;
+            this.hv = hv;
+        }
+    }
 }
