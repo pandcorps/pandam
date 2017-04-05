@@ -52,6 +52,11 @@ public abstract class Boss extends Enemy {
         return continueState();
     }
     
+    @Override
+    protected final void onLanded() {
+        startStill();
+    }
+    
     protected boolean onWaiting() {
         return false;
     }
