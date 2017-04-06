@@ -79,6 +79,10 @@ public abstract class Boss extends Enemy {
         startState(state, Integer.MAX_VALUE, img);
     }
     
+    protected final void startJump(final Jump jump) {
+        startJump(jump.state, jump.img, jump.v, jump.hv);
+    }
+    
     protected final void startJump(final byte state, final Panmage img, final int v, final int hv) {
         startStateIndefinite(state, img);
         this.v = v;
