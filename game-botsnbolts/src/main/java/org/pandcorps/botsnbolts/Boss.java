@@ -22,6 +22,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.botsnbolts;
 
+import java.util.*;
 import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
@@ -34,6 +35,7 @@ public abstract class Boss extends Enemy {
     
     protected int waitTimer = 0;
     protected byte state = 0;
+    protected Queue<Jump> pendingJumps = null;
     
     protected Boss(int offX, int h, int x, int y) {
         super(offX, h, x, y, HudMeter.MAX_VALUE);
