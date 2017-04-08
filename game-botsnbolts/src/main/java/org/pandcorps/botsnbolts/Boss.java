@@ -56,7 +56,12 @@ public abstract class Boss extends Enemy {
     
     @Override
     protected final void onLanded() {
-        startStill();
+        final Jump nextJump = (pendingJumps == null) ? null : pendingJumps.poll();
+        if (nextJump == null) {
+            startStill();
+        } else {
+            startJump(nextJump);
+        }
     }
     
     protected boolean onWaiting() {
