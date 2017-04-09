@@ -96,6 +96,13 @@ public abstract class Boss extends Enemy {
         this.hv = hv;
     }
     
+    protected final void addPendingJump(final Jump jump) {
+        if (pendingJumps == null) {
+            pendingJumps = new LinkedList<Jump>();
+        }
+        pendingJumps.add(jump);
+    }
+    
     protected void startStill() {
         startState(STATE_STILL, Mathtil.randi(15, 30), getStill());
     }
