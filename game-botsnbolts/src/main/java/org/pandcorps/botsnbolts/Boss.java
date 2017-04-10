@@ -103,6 +103,10 @@ public abstract class Boss extends Enemy {
         pendingJumps.add(jump);
     }
     
+    protected final void addPendingJump(final byte state, final Panmage img, final int v, final int hv) {
+        addPendingJump(new Jump(state, img, v, hv));
+    }
+    
     protected void startStill() {
         startState(STATE_STILL, Mathtil.randi(15, 30), getStill());
     }
