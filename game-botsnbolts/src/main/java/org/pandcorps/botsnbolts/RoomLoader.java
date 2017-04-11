@@ -111,6 +111,8 @@ public abstract class RoomLoader {
                 box(seg.intValue(0), seg.intValue(1));
             } else if ("ENM".equals(name)) { // Enemy
                 enm(seg.intValue(0), seg.intValue(1), seg.getValue(2));
+            } else if ("BOS".equals(name)) { // Boss
+                bos(seg.intValue(0), seg.intValue(1), seg.getValue(2));
             } else if ("SHP".equals(name)) { // Shootable Block Puzzle
                 shp(seg);
             } else if ("TMP".equals(name)) { // Timed Block Puzzle
@@ -228,13 +230,17 @@ public abstract class RoomLoader {
     
     private final static Map<String, Constructor<? extends Enemy>> enemyTypes = new HashMap<String, Constructor<? extends Enemy>>();
     
-    @SuppressWarnings("unchecked")
     private final static Constructor<? extends Enemy> getEnemyConstructor(final String enemyType) throws Exception {
+        return getEnemyConstructor(Enemy.class.getDeclaredClasses(), enemyType);
+    }
+    
+    @SuppressWarnings("unchecked")
+    private final static Constructor<? extends Enemy> getEnemyConstructor(final Class<?>[] classes, final String enemyType) throws Exception {
         Constructor<? extends Enemy> constructor = enemyTypes.get(enemyType);
         if (constructor != null) {
             return constructor;
         }
-        for (final Class<?> c : Enemy.class.getDeclaredClasses()) {
+        for (final Class<?> c : classes) {
             final String name = c.getName();
             if (name.endsWith(enemyType) && name.charAt(name.length() - enemyType.length() - 1) == '$') {
                 constructor = (Constructor<? extends Enemy>) c.getDeclaredConstructor(Integer.TYPE, Integer.TYPE);
@@ -243,6 +249,14 @@ public abstract class RoomLoader {
             }
         }
         throw new IllegalArgumentException("Unrecognized enemyType " + enemyType);
+    }
+    
+    private final static void bos(final int x, final int y, final String enemyType) throws Exception {
+        enemies.add(getBossConstructor(enemyType).newInstance(Integer.valueOf(x), Integer.valueOf(y)));
+    }
+    
+    private final static Constructor<? extends Enemy> getBossConstructor(final String enemyType) throws Exception {
+        return getEnemyConstructor(Boss.class.getDeclaredClasses(), enemyType);
     }
     
     private final static void shp(final Segment seg) {
