@@ -186,7 +186,11 @@ public abstract class Boss extends Enemy {
         }
         
         protected final void startJump() {
-            startJump(STATE_JUMP, getJump(), 9, 0);
+            if (Mathtil.rand()) {
+                startJump(STATE_JUMP, getJump(), 9, 0);
+            } else {
+                
+            }
         }
         
         protected final void startRaised() {
