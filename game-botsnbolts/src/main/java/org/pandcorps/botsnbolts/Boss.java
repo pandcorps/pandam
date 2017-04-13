@@ -186,10 +186,11 @@ public abstract class Boss extends Enemy {
         }
         
         protected final void startJump() {
+            final Panmage img = getJump();
             if (Mathtil.rand()) {
-                startJump(STATE_JUMP, getJump(), 9, 0);
+                startJump(STATE_JUMP, img, 9, 0);
             } else {
-                
+                addPendingJump(STATE_JUMP, img, 9, 0);
             }
         }
         
