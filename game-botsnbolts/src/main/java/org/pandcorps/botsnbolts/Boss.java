@@ -107,6 +107,16 @@ public abstract class Boss extends Enemy {
         addPendingJump(new Jump(state, img, v, hv));
     }
     
+    protected final int getDirection() {
+        final Panlayer layer = getLayer();
+        if (layer == null) {
+            return -1;
+        } else if (getPosition().getX() < (layer.getSize().getX() / 2)) {
+            return 1;
+        }
+        return -1;
+    }
+    
     protected void startStill() {
         startState(STATE_STILL, Mathtil.randi(15, 30), getStill());
     }
