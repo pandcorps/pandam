@@ -114,6 +114,10 @@ public abstract class Boss extends Enemy {
         addPendingJump(new Jump(state, img, v, hv));
     }
     
+    protected final boolean hasPendingJumps() {
+        return Coltil.isValued(pendingJumps);
+    }
+    
     protected final int getDirection() {
         final Panlayer layer = getLayer();
         if (layer == null) {
@@ -201,6 +205,9 @@ public abstract class Boss extends Enemy {
         @Override
         protected final void onGrounded() {
             hv = 0;
+            if (!hasPendingJumps()) {
+                turnTowardPlayer(); // Don't do in onLanded; hv still needed at that point, which overrides this
+            }
         }
         
         protected final void startLift() {
