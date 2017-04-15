@@ -49,6 +49,9 @@ public abstract class Boss extends Enemy {
             waitTimer--;
             return onWaiting();
         } else if (state == STATE_STILL) {
+            if (pollPendingJumps()) {
+                return false;
+            }
             return pickState();
         }
         return continueState();
@@ -56,12 +59,16 @@ public abstract class Boss extends Enemy {
     
     @Override
     protected final void onLanded() {
+        startStill();
+    }
+    
+    protected final boolean pollPendingJumps() {
         final Jump nextJump = (pendingJumps == null) ? null : pendingJumps.poll();
         if (nextJump == null) {
-            startStill();
-        } else {
-            startJump(nextJump);
+            return false;
         }
+        startJump(nextJump);
+        return true;
     }
     
     protected boolean onWaiting() {
@@ -149,6 +156,11 @@ public abstract class Boss extends Enemy {
         }
         
         @Override
+        protected final int getInitialOffsetX() {
+            return 0;
+        }
+        
+        @Override
         protected final boolean onWaiting() {
             if (state == STATE_CROUCH) {
                 if (waitTimer == 15) {
@@ -198,12 +210,13 @@ public abstract class Boss extends Enemy {
         protected final void startJump() {
             final Panmage img = getJump();
             final int dir = getDirection();
+            final int v = 10;
             if (Mathtil.rand()) {
-                startJump(STATE_JUMP, img, 9, dir * 8);
+                startJump(STATE_JUMP, img, v, dir * 9);
             } else {
-                startJump(STATE_JUMP, img, 9, dir * 6);
-                addPendingJump(STATE_JUMP, img, 9, -dir * 4);
-                addPendingJump(STATE_JUMP, img, 9, dir * 6);
+                startJump(STATE_JUMP, img, v, dir * 7);
+                addPendingJump(STATE_JUMP, img, v, -dir * 5);
+                addPendingJump(STATE_JUMP, img, v, dir * 7);
             }
         }
         
