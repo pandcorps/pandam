@@ -59,7 +59,11 @@ public abstract class Boss extends Enemy {
     
     @Override
     protected final void onLanded() {
-        startStill();
+        if (hasPendingJumps()) {
+            startStill(5);
+        } else {
+            startStill();
+        }
     }
     
     protected final boolean pollPendingJumps() {
@@ -129,7 +133,11 @@ public abstract class Boss extends Enemy {
     }
     
     protected void startStill() {
-        startState(STATE_STILL, Mathtil.randi(15, 30), getStill());
+        startStill(Mathtil.randi(15, 30));
+    }
+    
+    protected void startStill(final int waitTimer) {
+        startState(STATE_STILL, waitTimer, getStill());
     }
     
     protected final static Panmage getImage(final Panmage img, final String name, final Panple o, final Panple min, final Panple max) {
