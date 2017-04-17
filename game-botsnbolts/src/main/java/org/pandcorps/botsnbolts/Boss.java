@@ -175,8 +175,12 @@ public abstract class Boss extends Enemy {
         @Override
         protected final boolean onWaiting() {
             if (state == STATE_CROUCH) {
-                if (waitTimer == 15) {
-                    new LavaBall(this, 11, 34);
+                switch (waitTimer) {
+                    case 15 :
+                    case 25 :
+                    case 35 :
+                        new LavaBall(this, 11, 34);
+                        break;
                 }
             }
             return false;
@@ -240,7 +244,7 @@ public abstract class Boss extends Enemy {
         }
         
         protected final void startCrouch() {
-            startState(STATE_CROUCH, 30, getCrouch());
+            startState(STATE_CROUCH, 50, getCrouch());
         }
         
         @Override
