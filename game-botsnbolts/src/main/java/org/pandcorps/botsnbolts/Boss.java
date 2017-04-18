@@ -277,10 +277,12 @@ public abstract class Boss extends Enemy {
         protected static Panmage lava1 = null;
         protected static Panmage lava2 = null;
         
-        protected LavaBall(Enemy src, int ox, int oy) {
+        protected final VolcanoBot src;
+        
+        protected LavaBall(final VolcanoBot src, final int ox, final int oy) {
             super(getLava1(), src, ox, oy, 0, 16);
             getAcceleration().setY(g);
-            
+            this.src = src;
         }
         
         @Override
