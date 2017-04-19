@@ -163,6 +163,8 @@ public abstract class Boss extends Enemy {
         protected static Panmage crouch = null;
         protected static Panmage jump = null;
         
+        protected float targetX = -1;
+        
         protected VolcanoBot(int x, int y) {
             super(VOLCANO_OFF_X, VOLCANO_H, x, y);
         }
