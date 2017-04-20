@@ -246,6 +246,7 @@ public abstract class Boss extends Enemy {
         }
         
         protected final void startCrouch() {
+            targetX = -1;
             startState(STATE_CROUCH, 50, getCrouch());
         }
         
