@@ -281,11 +281,13 @@ public abstract class Boss extends Enemy {
         protected static Panmage lava2 = null;
         
         protected final VolcanoBot src;
+        protected final float t;
         
         protected LavaBall(final VolcanoBot src, final int ox, final int oy) {
             super(getLava1(), src, ox, oy, 0, 16);
             getAcceleration().setY(g);
             this.src = src;
+            this.t = 1;
         }
         
         @Override
@@ -296,7 +298,17 @@ public abstract class Boss extends Enemy {
                 if (!isFlip()) {
                     setFlip(true);
                     final int m = isMirror() ? -1 : 1;
-                    getPosition().addX(m * 48);
+                    final float sourceX = src.getPosition().getX();
+                    float targetX = src.targetX;
+                    if (targetX == -1) {
+                        final Player player = src.getNearestPlayer();
+                        if (player == null) {
+                            targetX = sourceX + (m * 48);
+                        } else {
+                            targetX = player.getPosition().getX();
+                        }
+                    }
+                    getPosition().setX(sourceX + (t * (targetX - sourceX)));
                 }
             }
         }
