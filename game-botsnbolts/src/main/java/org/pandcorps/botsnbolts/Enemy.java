@@ -943,4 +943,15 @@ public abstract class Enemy extends Chr implements CollisionListener {
             }
         }
     }
+    
+    protected final void addHealthMeter() {
+        BotsnBoltsGame.initHealthMeter(newHealthMeter(), false);
+    }
+    
+    protected final HudMeter newHealthMeter() {
+        return new HudMeter(BotsnBoltsGame.hudMeterBoss) {
+            @Override protected final int getValue() {
+                return health;
+            }};
+    }
 }
