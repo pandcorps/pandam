@@ -177,12 +177,23 @@ public abstract class Boss extends Enemy {
         @Override
         protected final boolean onWaiting() {
             if (state == STATE_CROUCH) {
+                final float t;
                 switch (waitTimer) {
                     case 15 :
-                    case 25 :
-                    case 35 :
-                        new LavaBall(this, 11, 34);
+                        t = 1.0f;
                         break;
+                    case 25 :
+                        t = 0.67f;
+                        break;
+                    case 35 :
+                        t = 0.33f;
+                        break;
+                    default :
+                        t = -1.0f;
+                        break;
+                }
+                if (t > 0) {
+                    new LavaBall(this, t);
                 }
             }
             return false;
@@ -283,8 +294,8 @@ public abstract class Boss extends Enemy {
         protected final VolcanoBot src;
         protected final float t;
         
-        protected LavaBall(final VolcanoBot src, final int ox, final int oy) {
-            super(getLava1(), src, ox, oy, 0, 16);
+        protected LavaBall(final VolcanoBot src, final float t) {
+            super(getLava1(), src, 11, 34, 0, 16);
             getAcceleration().setY(g);
             this.src = src;
             this.t = 1;
@@ -307,6 +318,7 @@ public abstract class Boss extends Enemy {
                         } else {
                             targetX = player.getPosition().getX();
                         }
+                        src.targetX = targetX;
                     }
                     getPosition().setX(sourceX + (t * (targetX - sourceX)));
                 }
