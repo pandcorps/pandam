@@ -124,6 +124,8 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static Panmage[] flame8 = null;
     protected static Panimation flame16 = null;
     protected static HudMeterImages hudMeterBlank = null;
+    protected static HudMeterImages hudMeterBoss = null;
+    protected static Img[] hudMeterImgs = null;
     
     protected static PlayerContext pc = null;
     
@@ -174,6 +176,7 @@ public final class BotsnBoltsGame extends BaseGame {
         loadMisc();
         loadEnemies();
         loadPlayer();
+        postProcess();
         RoomLoader.loadRooms();
     }
     
@@ -233,7 +236,7 @@ public final class BotsnBoltsGame extends BaseGame {
     
     private final static void loadMisc() {
         final Pangine engine = Pangine.getEngine();
-        hudMeterBlank = newHudMeterImages("meter.blank", RES + "misc/MeterBlank.png");
+        hudMeterBlank = newHudMeterImages("meter.blank", RES + "misc/MeterBlank.png", false);
         cube = newSheet("cube", RES + "misc/Cube.png", 16);
         ladder = engine.createImage("ladder", RES + "bg/Ladder.png");
         final Img[] blockImgs = Imtil.loadStrip(RES + "bg/BlockCyan.png", 16);
@@ -392,7 +395,7 @@ public final class BotsnBoltsGame extends BaseGame {
         final Panmage byteDisk = null; //TODO
         final Panmage powerBox = engine.createImage(pre + "PowerBox", CENTER_16, minCube, maxCube, pre + "PowerBox.png");
         final Panmage byteBox = null; //TODO
-        final HudMeterImages hudMeterImages = newHudMeterImages(pre + "Meter", pre + "Meter.png");
+        final HudMeterImages hudMeterImages = newHudMeterImages(pre + "Meter", pre + "Meter.png", true);
         return new PlayerImages(basicSet, shootSet, hurt, defeat, climb, climbShoot, climbTop, jumpAimDiag, jumpAimUp, basicProjectile, projectile2, projectile3, charge, chargeVert, charge2, chargeVert2,
             burst, ball, warp, materialize, bomb, link, batterySml, batteryMed, batteryBig, bolt, byteDisk, powerBox, byteBox, hudMeterImages);
     }
@@ -444,6 +447,14 @@ public final class BotsnBoltsGame extends BaseGame {
     
     private final static Panframe newSubFrame(final String pre, final int i, final Panple o, final Panple min, final Panple max, final Panmage src, final float x, final float y, final Panple size, final int dur) {
         return Pangine.getEngine().createFrame(pre + ".frm." + i, new SubPanmage(pre + ".sub." + i, o, min, max, src, x, y, size), dur);
+    }
+    
+    private final static void postProcess() {
+        final short s0 = 0, s96 = 96, s192 = 192;
+        filterImgs(hudMeterImgs, newFilter(Pancolor.GREEN, Pancolor.DARK_GREY, new FinPancolor(s0, s192, s0), new FinPancolor(s96)));
+        hudMeterBoss = newHudMeterImages("meter.boss", hudMeterImgs);
+        Img.close(hudMeterImgs);
+        hudMeterImgs = null;
     }
     
     private final static void filterImgs(final Img[] imgs, final PixelFilter... fs) {
@@ -540,8 +551,17 @@ public final class BotsnBoltsGame extends BaseGame {
         return image;
     }
     
-    private final static HudMeterImages newHudMeterImages(final String id, final String path) {
-        return new HudMeterImages(newSheet(id, path, 8));
+    private final static HudMeterImages newHudMeterImages(final String id, final String path, final boolean saveImgs) {
+        final Img[] imgs = Imtil.loadStrip(path, 8);
+        if (saveImgs) {
+            Img.setTemporary(false, imgs);
+            hudMeterImgs = imgs;
+        }
+        return newHudMeterImages(id, imgs);
+    }
+    
+    private final static HudMeterImages newHudMeterImages(final String id, final Img[] imgs) {
+        return new HudMeterImages(newSheet(id, imgs));
     }
     
     private final static ShootableDoorDefinition newDoorDefinition(final String id, final Img[] imgsClosed, final Img[] imgsOpening,
@@ -776,18 +796,25 @@ public final class BotsnBoltsGame extends BaseGame {
         }
         
         private final static void newHud(final Panroom room, final Player player) {
-            final Pangine engine = Pangine.getEngine();
-            final HudMeter healthMeter = player.newHealthMeter();
-            healthMeter.getPosition().set(24, engine.getEffectiveHeight() - 73, DEPTH_HUD);
             hud = createHud(room);
             hud.setClearDepthEnabled(false);
-            hud.addActor(healthMeter);
+            initHealthMeter(player.newHealthMeter(), true);
         }
         
         @Override
         protected final void step() {
             RoomLoader.step();
         }
+    }
+    
+    protected final static void initHealthMeter(final Panctor healthMeter, final boolean left) {
+        final Pangine engine = Pangine.getEngine();
+        int x = 24;
+        if (!left) {
+            x = engine.getEffectiveWidth() - x - 8;
+        }
+        healthMeter.getPosition().set(x, engine.getEffectiveHeight() - 73, DEPTH_HUD);
+        hud.addActor(healthMeter);
     }
     
     protected final static Panlayer getLayer() {
