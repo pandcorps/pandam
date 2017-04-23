@@ -33,6 +33,7 @@ public abstract class Boss extends Enemy {
     protected final static String RES_BOSS = BotsnBoltsGame.RES + "boss/";
     protected final static byte STATE_STILL = 0;
     
+    private boolean initializationNeeded = true;
     protected int waitTimer = 0;
     protected byte state = 0;
     protected Queue<Jump> pendingJumps = null;
@@ -43,8 +44,16 @@ public abstract class Boss extends Enemy {
         setMirror(true);
     }
     
+    private final void init() {
+        addHealthMeter();
+    }
+    
     @Override
     protected final boolean onStepCustom() {
+        if (initializationNeeded) {
+            init();
+            initializationNeeded = false;
+        }
         if (waitTimer > 0) {
             waitTimer--;
             return onWaiting();
@@ -298,7 +307,7 @@ public abstract class Boss extends Enemy {
             super(getLava1(), src, 11, 34, 0, 16);
             getAcceleration().setY(g);
             this.src = src;
-            this.t = 1;
+            this.t = t;
         }
         
         @Override
@@ -308,12 +317,12 @@ public abstract class Boss extends Enemy {
             if (getVelocity().getY() < 0) {
                 if (!isFlip()) {
                     setFlip(true);
-                    final int m = isMirror() ? -1 : 1;
                     final float sourceX = src.getPosition().getX();
                     float targetX = src.targetX;
                     if (targetX == -1) {
                         final Player player = src.getNearestPlayer();
                         if (player == null) {
+                            final int m = isMirror() ? -1 : 1;
                             targetX = sourceX + (m * 48);
                         } else {
                             targetX = player.getPosition().getX();
