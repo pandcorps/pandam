@@ -43,6 +43,8 @@ public abstract class RoomLoader {
     private final static List<TileAnimator> animators = new ArrayList<TileAnimator>();
     private final static Map<Character, Tile> tiles = new HashMap<Character, Tile>();
     protected static BossDoor bossDoor = null;
+    protected static int startX = 0;
+    protected static int startY = 0;
     private static int row = 0;
     
     private static BotRoom room = null;
@@ -456,6 +458,11 @@ public abstract class RoomLoader {
         SegmentStream in = null;
         try {
             in = SegmentStream.openLocation(BotsnBoltsGame.RES + "/level/Rooms.txt");
+            final Segment ctx = in.readIf("CTX");
+            if (ctx != null) {
+                startX = ctx.intValue(0);
+                startY = ctx.intValue(1);
+            }
             Segment seg;
             while ((seg = in.read()) != null) {
                 final int x = seg.intValue(0), y = seg.intValue(1), w = seg.intValue(2);
@@ -469,6 +476,10 @@ public abstract class RoomLoader {
         } finally {
             Iotil.close(in);
         }
+    }
+    
+    protected final static BotRoom getStartRoom() {
+        return getRoom(startX, startY);
     }
     
     protected final static BotRoom getRoom(final int x, final int y) {
