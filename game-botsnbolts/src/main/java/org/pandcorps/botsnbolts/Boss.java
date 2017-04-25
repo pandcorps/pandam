@@ -158,8 +158,10 @@ public abstract class Boss extends Enemy {
     
     protected abstract Panmage getStill();
     
-    protected final static int VOLCANO_OFF_X = 20, VOLCANO_H = 48; //TODO
+    protected final static int VOLCANO_OFF_X = 20, VOLCANO_H = 40;
     protected final static Panple VOLCANO_O = new FinPanple2(26, 1);
+    protected final static Panple VOLCANO_MIN = getMin(VOLCANO_OFF_X);
+    protected final static Panple VOLCANO_MAX = getMax(VOLCANO_OFF_X, VOLCANO_H);
     
     protected final static class VolcanoBot extends Boss {
         protected final static byte STATE_LIFT = 1;
@@ -292,7 +294,7 @@ public abstract class Boss extends Enemy {
         }
         
         protected final static Panmage getVolcanoImage(final Panmage img, final String name) {
-            return getImage(img, name, VOLCANO_O, null, null);
+            return getImage(img, name, VOLCANO_O, VOLCANO_MIN, VOLCANO_MAX);
         }
     }
     
