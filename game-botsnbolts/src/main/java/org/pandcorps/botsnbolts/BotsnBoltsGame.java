@@ -684,7 +684,7 @@ public final class BotsnBoltsGame extends BaseGame {
             //final Panroom room = Pangame.getGame().getCurrentRoom();
             //initRoom(room);
             //fillRoom(room);
-            loadRoom(RoomLoader.getRoom(0, 0));
+            loadRoom(RoomLoader.getStartRoom());
         }
         
         protected final static void loadRoom(final BotRoom botRoom) {
