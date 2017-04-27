@@ -944,6 +944,9 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
     }
     
+    protected final static class FreezeRayEnemy { // extends HenchbotEnemy {
+    }
+    
     protected final void addHealthMeter() {
         BotsnBoltsGame.initHealthMeter(newHealthMeter(), false);
     }
