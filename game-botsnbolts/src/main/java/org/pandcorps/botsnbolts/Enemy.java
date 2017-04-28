@@ -853,7 +853,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         private final static int LENGTH_STREAM = 8;
         private final static int LENGTH_BURST = 5;
         
-        protected FlamethrowerEnemy(int x, int y) {
+        protected FlamethrowerEnemy(final int x, final int y) {
             super(BotsnBoltsGame.flamethrowerEnemy, x, y);
         }
         
@@ -944,7 +944,15 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
     }
     
-    protected final static class FreezeRayEnemy { // extends HenchbotEnemy {
+    protected final static class FreezeRayEnemy extends HenchbotEnemy {
+        protected FreezeRayEnemy(final int x, final int y) {
+            super(BotsnBoltsGame.flamethrowerEnemy, x, y);
+        }
+
+        @Override
+        protected final void onShoot() {
+            
+        }
     }
     
     protected final void addHealthMeter() {
