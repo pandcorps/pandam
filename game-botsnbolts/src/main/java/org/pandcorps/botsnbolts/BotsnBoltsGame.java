@@ -310,7 +310,10 @@ public final class BotsnBoltsGame extends BaseGame {
         unshieldedEnemy = newAnimation("unshielded.enemy", RES + "enemy/UnshieldedEnemy.png", 16, shieldedO, propMin, crawlMax, 3);
         fireballEnemy = newSheet("fireball.enemy", RES + "enemy/FireballEnemy.png", 16, propO, propMin, crawlMax);
         final Panple henchO = new FinPanple2(15, 1), henchMin = Chr.getMin(Enemy.HENCHBOT_OFF_X), henchMax = Chr.getMax(Enemy.HENCHBOT_OFF_X, Enemy.HENCHBOT_H);
-        flamethrowerEnemy = newSheet("flamethrower.enemy", RES + "enemy/Henchbot.png", 32, henchO, henchMin, henchMax);
+        final Img[] henchImgs = Imtil.loadStrip(RES + "enemy/Henchbot.png", 32);
+        Img.setTemporary(false, henchImgs);
+        flamethrowerEnemy = newSheet("flamethrower.enemy", henchImgs, henchO, henchMin, henchMax);
+        Img.close(henchImgs);
         enemyProjectile = engine.createImage("projectile.enemy", CENTER_8, new FinPanple2(-2, -2), new FinPanple2(2, 2), RES + "enemy/EnemyProjectile.png");
         enemyBurst = newAnimation("burst.enemy", RES + "enemy/EnemyBurst.png", 16, CENTER_16, 2);
         flame4 = newSheet("flame.4.enemy", RES + "enemy/Flame4.png", 4);
