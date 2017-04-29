@@ -116,6 +116,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static Panimation unshieldedEnemy = null;
     protected static Panmage[] fireballEnemy = null;
     protected static Panmage[] flamethrowerEnemy = null;
+    protected static Panmage[] freezeRayEnemy = null;
     protected static Panmage enemyProjectile = null;
     protected static Panimation enemyBurst = null;
     protected static Panimation puff = null;
@@ -313,6 +314,8 @@ public final class BotsnBoltsGame extends BaseGame {
         final Img[] henchImgs = Imtil.loadStrip(RES + "enemy/Henchbot.png", 32);
         Img.setTemporary(false, henchImgs);
         flamethrowerEnemy = newSheet("flamethrower.enemy", henchImgs, henchO, henchMin, henchMax);
+        //filterImgs(henchImgs, filter); //TODO
+        freezeRayEnemy = newSheet("freezeray.enemy", henchImgs, henchO, henchMin, henchMax);
         Img.close(henchImgs);
         enemyProjectile = engine.createImage("projectile.enemy", CENTER_8, new FinPanple2(-2, -2), new FinPanple2(2, 2), RES + "enemy/EnemyProjectile.png");
         enemyBurst = newAnimation("burst.enemy", RES + "enemy/EnemyBurst.png", 16, CENTER_16, 2);
