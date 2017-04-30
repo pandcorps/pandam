@@ -97,7 +97,11 @@ public abstract class Enemy extends Chr implements CollisionListener {
     }
     
     protected void onAttack(final Player player) {
-        player.hurt(1);
+        player.hurt(getDamage());
+    }
+    
+    protected int getDamage() {
+        return 1;
     }
     
     protected final void award() {
@@ -184,10 +188,14 @@ public abstract class Enemy extends Chr implements CollisionListener {
             final Collidable collider = event.getCollider();
             if (collider.getClass() == Player.class) {
                 final Player player = (Player) collider;
-                player.hurt(1);
+                player.hurt(getDamage());
                 Projectile.burst(this, BotsnBoltsGame.enemyBurst, getPosition());
                 destroy();
             }
+        }
+        
+        protected int getDamage() {
+            return 1;
         }
         
         @Override
@@ -946,7 +954,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
     
     protected final static class FreezeRayEnemy extends HenchbotEnemy {
         protected FreezeRayEnemy(final int x, final int y) {
-            super(BotsnBoltsGame.flamethrowerEnemy, x, y);
+            super(BotsnBoltsGame.freezeRayEnemy, x, y);
         }
 
         @Override
