@@ -96,6 +96,11 @@ public abstract class Boss extends Enemy {
     protected final void award(final PowerUp powerUp) {
     }
     
+    @Override
+    protected final int getDamage() {
+        return 4;
+    }
+    
     protected final void startState(final byte state, final int waitTimer, final Panmage img) {
         this.state = state;
         this.waitTimer = waitTimer;
@@ -341,6 +346,11 @@ public abstract class Boss extends Enemy {
             if (getPosition().getY() < 0) {
                 super.onAllOob(event);
             }
+        }
+        
+        @Override
+        protected final int getDamage() {
+            return 3;
         }
         
         protected final static Panmage getLava1() {
