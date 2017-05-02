@@ -239,7 +239,6 @@ public final class BotsnBoltsGame extends BaseGame {
         final Pangine engine = Pangine.getEngine();
         hudMeterBlank = newHudMeterImages("meter.blank", RES + "misc/MeterBlank.png", false);
         cube = newSheet("cube", RES + "misc/Cube.png", 16);
-        ladder = engine.createImage("ladder", RES + "bg/Ladder.png");
         final Img[] blockImgs = Imtil.loadStrip(RES + "bg/BlockCyan.png", 16);
         Img.setTemporary(false, blockImgs);
         final Panple maxBlock = new FinPanple2(14, 16);
@@ -264,6 +263,13 @@ public final class BotsnBoltsGame extends BaseGame {
         spike = engine.createImage("spike", CENTER_16, new FinPanple2(-6, -6), new FinPanple2(6, 6), RES + "bg/Spike.png");
         puff = newAnimation("puff", RES + "misc/Puff.png", 8, CENTER_8, 2);
         flash = newAnimation("flash", RES + "misc/Flash.png", 32, CENTER_32, 12);
+    }
+    
+    protected final static Panmage getLadder() {
+        if (ladder == null) {
+            ladder = Pangine.getEngine().createImage("ladder", RES + "bg/Ladder.png");
+        }
+        return ladder;
     }
     
     private final static Pancolor newColorHidden() {
