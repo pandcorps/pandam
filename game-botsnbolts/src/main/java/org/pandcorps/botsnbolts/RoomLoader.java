@@ -301,6 +301,7 @@ public abstract class RoomLoader {
     private final static void ldr(final int x, final int y, final int h) {
         final TileMap tm = BotsnBoltsGame.tm;
         final int end = h - 1;
+        final Panmage ladder = BotsnBoltsGame.getLadder();
         for (int j = 0; j < h; j++) {
             final byte b;
             if (j == end) {
@@ -312,7 +313,7 @@ public abstract class RoomLoader {
             } else {
                 b = BotsnBoltsGame.TILE_LADDER;
             }
-            tm.setForeground(x, y + j, BotsnBoltsGame.ladder, b);
+            tm.setForeground(x, y + j, ladder, b);
         }
     }
     
