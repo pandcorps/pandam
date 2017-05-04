@@ -259,7 +259,6 @@ public final class BotsnBoltsGame extends BaseGame {
         carrier = engine.createAnimation(preCarrier + ".anm",
             newSubFrame(preCarrier, 0, oCarrier, nCarrier, xCarrier, carrierAll, 0, 0, sCarrier, dCarrier),
             newSubFrame(preCarrier, 1, oCarrier, nCarrier, xCarrier, carrierAll, 0, 16, sCarrier, dCarrier));
-        blockSpike = engine.createImage("block.spike", RES + "bg/BlockSpike.png");
         spike = engine.createImage("spike", CENTER_16, new FinPanple2(-6, -6), new FinPanple2(6, 6), RES + "bg/Spike.png");
         puff = newAnimation("puff", RES + "misc/Puff.png", 8, CENTER_8, 2);
         flash = newAnimation("flash", RES + "misc/Flash.png", 32, CENTER_32, 12);
@@ -270,6 +269,13 @@ public final class BotsnBoltsGame extends BaseGame {
             ladder = Pangine.getEngine().createImage("ladder", RES + "bg/Ladder.png");
         }
         return ladder;
+    }
+    
+    protected final static Panmage getBlockSpike() {
+        if (blockSpike == null) {
+            blockSpike = Pangine.getEngine().createImage("block.spike", RES + "bg/BlockSpike.png");
+        }
+        return blockSpike;
     }
     
     private final static Pancolor newColorHidden() {
