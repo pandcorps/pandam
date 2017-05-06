@@ -232,7 +232,13 @@ public final class BotsnBoltsGame extends BaseGame {
         final Img[] btnImgs = Imtil.loadStrip(RES + "bg/Button.png", 16);
         button = engine.createImage("button", btnImgs[0]);
         buttonFlash = createAnm("button.flash", 2, null, btnImgs[1], btnImgs[2], btnImgs[3]);
-        doorBoss = engine.createImage("door.boss", RES + "bg/DoorBoss.png");
+    }
+    
+    protected final static Panmage getDoorBoss() {
+        if (doorBoss == null) {
+            doorBoss = Pangine.getEngine().createImage("door.boss", RES + "bg/DoorBoss.png");
+        }
+        return doorBoss;
     }
     
     private final static void loadMisc() {
