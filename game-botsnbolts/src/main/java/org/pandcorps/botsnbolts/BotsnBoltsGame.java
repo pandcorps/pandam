@@ -365,10 +365,18 @@ public final class BotsnBoltsGame extends BaseGame {
         return newDoorDefinition(id, imgsClosed, imgsOpening, next, nextTemperature, requiredShootMode, requiredPower, imgsBarrier);
     }
     
-    private final static PixelFilter newFilter(final Pancolor s1, final Pancolor d1, final Pancolor s2, final Pancolor d2) {
+    private final static ReplacePixelFilter newFilter(final Pancolor s1, final Pancolor d1, final Pancolor s2, final Pancolor d2) {
         final ReplacePixelFilter filter = new ReplacePixelFilter();
         filter.put(s1, d1);
         filter.put(s2, d2);
+        return filter;
+    }
+    
+    private final static PixelFilter newFilter(final Pancolor s1, final Pancolor d1, final Pancolor s2, final Pancolor d2,
+                                               final Pancolor s3, final Pancolor d3, final Pancolor s4, final Pancolor d4) {
+        final ReplacePixelFilter filter = newFilter(s1, d1, s2, d2);
+        filter.put(s3, d3);
+        filter.put(s4, d4);
         return filter;
     }
     
