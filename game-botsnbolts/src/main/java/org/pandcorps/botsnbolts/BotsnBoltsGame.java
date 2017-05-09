@@ -338,11 +338,11 @@ public final class BotsnBoltsGame extends BaseGame {
         final Img[] henchImgs = Imtil.loadStrip(RES + "enemy/Henchbot.png", 32);
         Img.setTemporary(false, henchImgs);
         flamethrowerEnemy = newSheet("flamethrower.enemy", henchImgs, henchO, henchMin, henchMax);
-        final short s0 = 0, s96 = 96, s128 = 128, s160 = 160, s176 = 176, s192 = 192, s208 = 208, smax = Pancolor.MAX_VALUE;
+        final short s0 = 0, s48 = 48, s64 = 64, s96 = 96, s144 = 144, s160 = 160, s176 = 176, s192 = 192, s208 = 208, smax = Pancolor.MAX_VALUE;
         final Pancolor fire = new FinPancolor(smax, s160, s0), darkFire = new FinPancolor(smax, s96, s0);
         final Pancolor grey = Pancolor.DARK_GREY, darkGrey = new FinPancolor(s96);
-        final Pancolor ice = new FinPancolor(smax, s160, s0), darkIce = new FinPancolor(smax, s96, s0); //TODO
-        final Pancolor blue = new FinPancolor(smax, s160, s0), darkBlue = new FinPancolor(smax, s96, s0); //TODO
+        final Pancolor ice = new FinPancolor(s160, s208, smax), darkIce = new FinPancolor(s96, s176, smax);
+        final Pancolor blue = new FinPancolor(s64, s64, s192), darkBlue = new FinPancolor(s48, s48, s144);
         filterImgs(henchImgs, newFilter(fire, ice, darkFire, darkIce, grey, blue, darkGrey, darkBlue));
         freezeRayEnemy = newSheet("freezeray.enemy", henchImgs, henchO, henchMin, henchMax);
         Img.close(henchImgs);
