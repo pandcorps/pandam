@@ -167,7 +167,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
     
     protected static class EnemyProjectile extends Pandy implements CollisionListener, AllOobListener {
         protected EnemyProjectile(final Enemy src, final int ox, final int oy, final float vx, final float vy) {
-            this(BotsnBoltsGame.enemyProjectile, src, ox, oy, vx, vy);
+            this(BotsnBoltsGame.getEnemyProjectile(), src, ox, oy, vx, vy);
         }
         
         protected EnemyProjectile(final Panmage img, final Enemy src, final int ox, final int oy, final float vx, final float vy) {
