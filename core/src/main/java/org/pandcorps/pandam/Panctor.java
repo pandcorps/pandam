@@ -352,6 +352,10 @@ public class Panctor extends BasePantity implements SpecPanctor {
         impl.setMirror(mirror);
     }
     
+    public final int getMirrorMultiplier() {
+        return isMirror() ? -1 : 1;
+    }
+    
     public final boolean isFlip() {
         return impl.isFlip();
     }
