@@ -136,7 +136,10 @@ public abstract class Enemy extends Chr implements CollisionListener {
     }
     
     protected final void turnTowardPlayer() {
-        final Player player = getNearestPlayer();
+        turnTowardPlayer(getNearestPlayer());
+    }
+    
+    protected final void turnTowardPlayer(final Player player) {
         if (player == null) {
             return;
         }
@@ -145,6 +148,10 @@ public abstract class Enemy extends Chr implements CollisionListener {
     
     protected final Player getNearestPlayer() {
         return PlayerContext.getPlayer(BotsnBoltsGame.pc);
+    }
+    
+    protected final float getDistanceX(final Panctor other) {
+        return Math.abs(getPosition().getX() - other.getPosition().getX());
     }
     
     protected final PlayerContext getPlayerContext() {
@@ -216,8 +223,13 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
     }
     
-    protected final static class TimedEnemyProjectile extends EnemyProjectile {
+    protected static class TimedEnemyProjectile extends EnemyProjectile {
         int timer;
+        
+        protected TimedEnemyProjectile(final Enemy src, final int ox, final int oy, final int timer) {
+            super(src, ox, oy, 0, 0);
+            this.timer = timer;
+        }
         
         protected TimedEnemyProjectile(final Panmage img, final Enemy src, final int ox, final int oy, final int timer) {
             this(img, src, ox, oy, 0, 0, timer);
@@ -251,6 +263,89 @@ public abstract class Enemy extends Chr implements CollisionListener {
         @Override
         public void onAnimationEnd(final AnimationEndEvent event) {
             destroy();
+        }
+    }
+    
+    protected final static class FreezeRayProjectile extends TimedEnemyProjectile {
+        private final static int DURATION_FREEZE = 20;
+        private final static int MAX_FADE = 6;
+        private static Panmage freezeRayHead = null;
+        private static Panmage freezeRayTail = null;
+        
+        private int index = 0;
+        private int start = 0;
+        private int end = 0;
+        
+        protected FreezeRayProjectile(final Enemy src, final int ox, final int oy) {
+            super(src, ox, oy, DURATION_FREEZE);
+        }
+        
+        @Override
+        public final void onStep(final StepEvent event) {
+            super.onStep(event);
+            index = DURATION_FREEZE - timer;
+            start = getOffset(index - (DURATION_FREEZE - MAX_FADE));
+            end = getOffset(index - 2);
+        }
+        
+        private final static int getOffset(final int index) {
+            if (index < 0) {
+                return 0;
+            }
+            switch (index) {
+                case 0 :
+                    return 1;
+                case 1 :
+                    return 2;
+                case 2 :
+                    return 4;
+                case 3 :
+                    return 7;
+                case 4 :
+                    return 14;
+                case 5 :
+                    return 28;
+                case MAX_FADE :
+                    return 56;
+                default :
+                    return 96;
+            }
+        }
+        
+        @Override
+        protected final void renderView(final Panderer renderer) {
+            final Panlayer layer = getLayer();
+            final Panple pos = getPosition();
+            float x = pos.getX();
+            final float y = pos.getY(), z = pos.getZ();
+            final boolean mirror = isMirror();
+            if (timer > (MAX_FADE + 1)) {
+                renderer.render(layer, getTail(), x, y, z, 0, mirror, false);
+            }
+            if (index < 2) {
+                return;
+            }
+            final Panmage head = getHead();
+            final int off = getMirrorMultiplier() * 4;
+            for (int i = 0; i < end; i++) {
+                x += off;
+                if (i < start) {
+                    continue;
+                }
+                renderer.render(layer, head, x, y, z, 0, mirror, false);
+            }
+        }
+        
+        protected final static Panmage getHead() {
+            return (freezeRayHead = getFreezeRayImage(freezeRayHead, "FreezeRayHead"));
+        }
+        
+        protected final static Panmage getTail() {
+            return (freezeRayTail = getFreezeRayImage(freezeRayTail, "FreezeRayTail"));
+        }
+        
+        protected final static Panmage getFreezeRayImage(final Panmage img, final String name) {
+            return getImage(img, name, null, null, null);
         }
     }
     
@@ -825,12 +920,24 @@ public abstract class Enemy extends Chr implements CollisionListener {
 
         @Override
         protected final void onAppointment() {
-            turnTowardPlayer();
-            if (Mathtil.rand()) {
+            final Player player = getNearestPlayer();
+            if (player == null) {
+                return;
+            } else if (getDistanceX(player) > getMaxDistance()) {
+                schedule();
+                return;
+            }
+            turnTowardPlayer(player);
+            //if (Mathtil.rand()) {
+            if (Pangine.getEngine().getClock() < 0) {
                 jump();
             } else {
                 shoot();
             }
+        }
+        
+        protected int getMaxDistance() {
+            return Pangine.getEngine().getEffectiveWidth();
         }
         
         protected final void shoot() {
@@ -971,7 +1078,16 @@ public abstract class Enemy extends Chr implements CollisionListener {
 
         @Override
         protected final void onShoot() {
-            
+            new FreezeRayProjectile(this, 13, 9);
+            Pangine.getEngine().addTimer(this, 16, new TimerListener() {
+                @Override public final void onTimer(final TimerEvent event) {
+                    schedule();
+                }});
+        }
+        
+        @Override
+        protected final int getMaxDistance() {
+            return 192;
         }
     }
     
