@@ -32,6 +32,7 @@ import org.pandcorps.pandax.*;
 import org.pandcorps.pandax.tile.*;
 
 public abstract class Enemy extends Chr implements CollisionListener {
+    protected final static String RES_ENEMY = BotsnBoltsGame.RES + "enemy/";
     private final static int VEL_PROJECTILE = 6;
     
     private int health;
@@ -163,6 +164,17 @@ public abstract class Enemy extends Chr implements CollisionListener {
     protected final boolean isSolidIndex(final int index) {
         final byte b = Tile.getBehavior(BotsnBoltsGame.tm.getTile(index));
         return (b == Tile.BEHAVIOR_SOLID) || isSolidBehavior(b);
+    }
+    
+    protected static Panmage getImage(final Panmage img, final String name, final Panple o, final Panple min, final Panple max) {
+        return getImage(img, "enemy.", RES_ENEMY, name, o, min, max);
+    }
+    
+    protected static Panmage getImage(final Panmage img, final String pre, final String path, final String name, final Panple o, final Panple min, final Panple max) {
+        if (img != null) {
+            return img;
+        }
+        return Pangine.getEngine().createImage(pre + name, o, min, max, path + name + ".png");
     }
     
     protected static class EnemyProjectile extends Pandy implements CollisionListener, AllOobListener {
