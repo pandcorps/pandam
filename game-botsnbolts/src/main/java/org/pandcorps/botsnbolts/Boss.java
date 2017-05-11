@@ -155,10 +155,7 @@ public abstract class Boss extends Enemy {
     }
     
     protected final static Panmage getImage(final Panmage img, final String name, final Panple o, final Panple min, final Panple max) {
-        if (img != null) {
-            return img;
-        }
-        return Pangine.getEngine().createImage("boss." + name, o, min, max, RES_BOSS + name + ".png");
+        return getImage(img, "boss.", RES_BOSS, name, o, min, max);
     }
     
     protected abstract Panmage getStill();
