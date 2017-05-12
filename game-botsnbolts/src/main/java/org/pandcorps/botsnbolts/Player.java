@@ -45,6 +45,7 @@ public final class Player extends Chr {
     protected final static int PLAYER_X = 6;
     protected final static int PLAYER_H = 23;
     protected final static int BALL_H = 15;
+    protected final static int CENTER_Y = 11;
     private final static int SHOOT_DELAY_DEFAULT = 5;
     private final static int SHOOT_DELAY_RAPID = 3;
     private final static int SHOOT_DELAY_SPREAD = 15;
@@ -313,7 +314,7 @@ public final class Player extends Chr {
         if (health <= 0) {
             defeat();
         } else {
-            burst(BotsnBoltsGame.flash, 0, 11, BotsnBoltsGame.DEPTH_POWER_UP);
+            burst(BotsnBoltsGame.flash, 0, CENTER_Y, BotsnBoltsGame.DEPTH_POWER_UP);
             puff(-12, 25);
             puff(0, 30);
             puff(12, 25);
