@@ -28,6 +28,7 @@ import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.boundary.*;
+import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.*;
 import org.pandcorps.pandax.tile.*;
 
@@ -207,14 +208,25 @@ public abstract class Enemy extends Chr implements CollisionListener {
             final Collidable collider = event.getCollider();
             if (collider.getClass() == Player.class) {
                 final Player player = (Player) collider;
-                player.hurt(getDamage());
-                Projectile.burst(this, BotsnBoltsGame.enemyBurst, getPosition());
-                destroy();
+                if (player.hurt(getDamage())) {
+                    burst(player);
+                    if (isDestroyedOnImpact()) {
+                        destroy();
+                    }
+                }
             }
         }
         
         protected int getDamage() {
             return 1;
+        }
+        
+        protected void burst(final Player player) {
+            Projectile.burst(this, BotsnBoltsGame.enemyBurst, getPosition());
+        }
+        
+        protected boolean isDestroyedOnImpact() {
+            return true;
         }
         
         @Override
@@ -275,9 +287,23 @@ public abstract class Enemy extends Chr implements CollisionListener {
         private int index = 0;
         private int start = 0;
         private int end = 0;
+        private final FreezeRayDisplay display = new FreezeRayDisplay();
+        private final FreezeRayMinimum min = new FreezeRayMinimum();
+        private final FreezeRayMaximum max = new FreezeRayMaximum();
         
         protected FreezeRayProjectile(final Enemy src, final int ox, final int oy) {
             super(src, ox, oy, DURATION_FREEZE);
+        }
+        
+        @Override
+        protected final void burst(final Player player) {
+            final Panple pos = player.getPosition();
+            Projectile.burst(this, BotsnBoltsGame.enemyBurst, pos.getX(), pos.getY() + Player.CENTER_Y);
+        }
+        
+        @Override
+        protected final boolean isDestroyedOnImpact() {
+            return false;
         }
         
         @Override
@@ -333,6 +359,62 @@ public abstract class Enemy extends Chr implements CollisionListener {
                     continue;
                 }
                 renderer.render(layer, head, x, y, z, 0, mirror, false);
+            }
+        }
+        
+        @Override
+        public Pansplay getCurrentDisplay() {
+            return display;
+        }
+        
+        private final class FreezeRayDisplay implements Pansplay {
+            @Override
+            public final Panple getOrigin() {
+                return FinPanple.ORIGIN;
+            }
+
+            @Override
+            public final Panple getBoundingMinimum() {
+                return min;
+            }
+
+            @Override
+            public final Panple getBoundingMaximum() {
+                return max;
+            }
+        }
+        
+        private final class FreezeRayMinimum extends UnmodPanple {
+            @Override
+            public final float getX() {
+                return start * 4;
+            }
+
+            @Override
+            public final float getY() {
+                return 0;
+            }
+
+            @Override
+            public final float getZ() {
+                return 0;
+            }
+        }
+        
+        private final class FreezeRayMaximum extends UnmodPanple {
+            @Override
+            public final float getX() {
+                return (end + 1) * 4;
+            }
+
+            @Override
+            public final float getY() {
+                return 4;
+            }
+
+            @Override
+            public final float getZ() {
+                return 0;
             }
         }
         
@@ -929,7 +1011,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
             }
             turnTowardPlayer(player);
             //if (Mathtil.rand()) {
-            if (Pangine.getEngine().getClock() < 0) {
+            if (Pangine.getEngine().getClock() < 0) { //TODO revert this
                 jump();
             } else {
                 shoot();
@@ -1079,7 +1161,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         @Override
         protected final void onShoot() {
             new FreezeRayProjectile(this, 13, 9);
-            Pangine.getEngine().addTimer(this, 16, new TimerListener() {
+            Pangine.getEngine().addTimer(this, 16, new TimerListener() { //TODO Maybe should be > 16
                 @Override public final void onTimer(final TimerEvent event) {
                     schedule();
                 }});
