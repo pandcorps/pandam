@@ -39,9 +39,9 @@ public abstract class Projectile extends Panctor implements StepListener, StepEn
         this.time = emitter.time;
         setView(emitter.projView);
         final Panple pos = guy.getPosition();
-        final int mult = mirror ? -1 : 1; // Maybe add Panctor.getMirrorMultiplier()
-        getPosition().set(pos.getX() + (emitter.xoff * mult), pos.getY() + emitter.yoff, pos.getZ() + 1);
         setMirror(mirror);
+        final int mult = getMirrorMultiplier();
+        getPosition().set(pos.getX() + (emitter.xoff * mult), pos.getY() + emitter.yoff, pos.getZ() + 1);
         guy.getLayer().addActor(this);
     }
     
