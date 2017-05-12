@@ -298,9 +298,9 @@ public final class Player extends Chr {
         }
     }
     
-    protected final void hurt(final int damage) {
+    protected final boolean hurt(final int damage) {
         if (isInvincible()) {
-            return;
+            return false;
         }
         stateHandler.onHurt(this);
         lastHurt = Pangine.getEngine().getClock();
@@ -318,6 +318,7 @@ public final class Player extends Chr {
             puff(0, 30);
             puff(12, 25);
         }
+        return true;
     }
     
     protected final void puff(final int offX, final int offY) {
