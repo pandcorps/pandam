@@ -1030,6 +1030,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         
         protected final void shoot() {
             shooting = true;
+            changeViewGrounded();
             onShoot();
             // Shoot 3 fairly quickly; then schedule random after normal delay
         }
@@ -1049,6 +1050,10 @@ public abstract class Enemy extends Chr implements CollisionListener {
         
         @Override
         protected final void onGrounded() {
+            changeViewGrounded();
+        }
+        
+        protected final void changeViewGrounded() {
             changeView(shooting ? 1 : 0);
         }
         
