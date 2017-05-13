@@ -24,6 +24,7 @@ package org.pandcorps.botsnbolts;
 
 import org.pandcorps.botsnbolts.Player.*;
 import org.pandcorps.botsnbolts.PowerUp.*;
+import org.pandcorps.botsnbolts.RoomLoader.*;
 import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
@@ -1018,7 +1019,12 @@ public abstract class Enemy extends Chr implements CollisionListener {
             }
         }
         
-        protected int getMaxDistance() {
+        protected final int getMaxDistance() {
+            final BotRoom room = RoomLoader.getCurrentRoom();
+            return ((room == null) || room.w > 1) ? getLongRoomMaxDistance() : Pangine.getEngine().getEffectiveWidth();
+        }
+        
+        protected int getLongRoomMaxDistance() {
             return Pangine.getEngine().getEffectiveWidth();
         }
         
@@ -1161,14 +1167,14 @@ public abstract class Enemy extends Chr implements CollisionListener {
         @Override
         protected final void onShoot() {
             new FreezeRayProjectile(this, 13, 9);
-            Pangine.getEngine().addTimer(this, 16, new TimerListener() { //TODO Maybe should be > 16
+            Pangine.getEngine().addTimer(this, 30, new TimerListener() {
                 @Override public final void onTimer(final TimerEvent event) {
                     schedule();
                 }});
         }
         
         @Override
-        protected final int getMaxDistance() {
+        protected final int getLongRoomMaxDistance() {
             return 192;
         }
     }
