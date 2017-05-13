@@ -507,6 +507,10 @@ public abstract class RoomLoader {
         return new BotRoomCell(room, cell);
     }
     
+    protected final static BotRoom getCurrentRoom() {
+        return room;
+    }
+    
     protected final static void reloadCurrentRoom() {
         BotsnBoltsGame.BotsnBoltsScreen.loadRoom(room);
     }
