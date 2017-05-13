@@ -326,7 +326,7 @@ public abstract class Boss extends Enemy {
                     if (targetX == -1) {
                         final Player player = src.getNearestPlayer();
                         if (player == null) {
-                            final int m = isMirror() ? -1 : 1;
+                            final int m = getMirrorMultiplier();
                             targetX = sourceX + (m * 48);
                         } else {
                             targetX = player.getPosition().getX();
