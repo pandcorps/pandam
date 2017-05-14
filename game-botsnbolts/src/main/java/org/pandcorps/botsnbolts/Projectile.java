@@ -47,9 +47,8 @@ public class Projectile extends Pandy implements Collidable, AllOobListener {
         this.shootMode = shootMode;
         setPower(power);
         final Panple srcPos = ref.getPosition();
-        final boolean mirror = ref.isMirror();
-        setMirror(mirror);
-        final int xm = mirror ? -1 : 1;
+        setMirror(ref.isMirror());
+        final int xm = getMirrorMultiplier();
         getPosition().set(srcPos.getX() + (xm * 15), srcPos.getY() + 13, BotsnBoltsGame.DEPTH_PROJECTILE);
         getVelocity().set(xm * vx, vy);
         ref.getLayer().addActor(this);
