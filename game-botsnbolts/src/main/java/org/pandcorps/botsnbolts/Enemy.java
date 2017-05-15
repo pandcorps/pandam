@@ -209,13 +209,17 @@ public abstract class Enemy extends Chr implements CollisionListener {
             final Collidable collider = event.getCollider();
             if (collider.getClass() == Player.class) {
                 final Player player = (Player) collider;
-                if (player.hurt(getDamage())) {
+                if (hurt(player)) {
                     burst(player);
                     if (isDestroyedOnImpact()) {
                         destroy();
                     }
                 }
             }
+        }
+        
+        protected boolean hurt(final Player player) {
+            return player.hurt(getDamage());
         }
         
         protected int getDamage() {
