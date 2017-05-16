@@ -346,7 +346,7 @@ public abstract class BlockPuzzle {
             baseX = pos.getX();
             baseY = pos.getY();
             setDirection(rot);
-            setView(BotsnBoltsGame.spike);
+            setView(BotsnBoltsGame.getSpike());
         }
         
         protected final void setDirection(final int rot) {
