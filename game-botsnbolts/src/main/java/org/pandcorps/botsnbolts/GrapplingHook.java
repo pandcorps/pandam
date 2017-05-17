@@ -41,13 +41,9 @@ public final class GrapplingHook extends Chr {
         super(GRAPPLING_HOOK_X, GRAPPLING_HOOK_H);
         this.player = player;
         v = 1;
+        setMirror(player.isMirror());
         if (player.movedDuringJump || (player.hv != 0)) {
-            if (player.isMirror()) {
-                setMirror(true);
-                hv = -1;
-            } else {
-                hv = 1;
-            }
+            hv = getMirrorMultiplier();
         }
         setView(player.pi.link);
         final Panple ppos = player.getPosition();
