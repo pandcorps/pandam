@@ -395,8 +395,12 @@ public final class BotsnBoltsGame extends BaseGame {
         final PlayerImagesSubSet basicSet = loadPlayerImagesSubSet(pre, name, true, og, og, oj);
         final PlayerImagesSubSet shootSet = loadPlayerImagesSubSet(pre + "Shoot", name + ".shoot", false, oss, os, ojs);
         final Pangine engine = Pangine.getEngine();
-        final Panmage hurt = newPlayerImage(PRE_IMG + "." + name + ".hurt", oj, pre + "Hurt");
-        final Panmage frozen = hurt; //TODO
+        final Img imgHurt = Imtil.load(pre + "Hurt.png"), imgHurtMirror = Imtil.load(pre + "HurtMirror.png");
+        Img.setTemporary(false, imgHurt, imgHurtMirror);
+        final Panmage hurt = newPlayerImage(PRE_IMG + "." + name + ".hurt", oj, imgHurt, imgHurtMirror);
+        //filterImgs(imgHurt, imgHurtMirror, fs); //TODO
+        final Panmage frozen = newPlayerImage(PRE_IMG + "." + name + ".frozen", oj, imgHurt, imgHurtMirror);
+        Img.close(imgHurt, imgHurtMirror);
         final Panimation defeat = newAnimation(pre + "DefeatOrb", pre + "DefeatOrb.png", 16, CENTER_16, 6);
         final Panple oClimb = new FinPanple2(15, 4);
         final Img[] climbImgs = Imtil.loadStrip(pre + "Climb.png", 32);
