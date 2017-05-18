@@ -1355,6 +1355,7 @@ public final class Player extends Chr {
         private final PlayerImagesSubSet basicSet;
         private final PlayerImagesSubSet shootSet;
         private final Panmage hurt;
+        private final Panmage frozen;
         private final Panimation defeat;
         private final Panmage climb;
         private final Panmage climbShoot;
@@ -1384,7 +1385,8 @@ public final class Player extends Chr {
         protected final Panmage byteBox;
         private final HudMeterImages hudMeterImages;
         
-        protected PlayerImages(final PlayerImagesSubSet basicSet, final PlayerImagesSubSet shootSet, final Panmage hurt, final Panimation defeat,
+        protected PlayerImages(final PlayerImagesSubSet basicSet, final PlayerImagesSubSet shootSet,
+                               final Panmage hurt, final Panmage frozen, final Panimation defeat,
                                final Panmage climb, final Panmage climbShoot, final Panmage climbTop,
                                final Panmage jumpAimDiag, final Panmage jumpAimUp,
                                final Panmage basicProjectile, final Panimation projectile2, final Panimation projectile3,
@@ -1396,6 +1398,7 @@ public final class Player extends Chr {
             this.basicSet = basicSet;
             this.shootSet = shootSet;
             this.hurt = hurt;
+            this.frozen = frozen;
             this.defeat = defeat;
             this.climb = climb;
             this.climbShoot = climbShoot;

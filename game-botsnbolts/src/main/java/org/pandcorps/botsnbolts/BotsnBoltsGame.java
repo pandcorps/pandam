@@ -396,6 +396,7 @@ public final class BotsnBoltsGame extends BaseGame {
         final PlayerImagesSubSet shootSet = loadPlayerImagesSubSet(pre + "Shoot", name + ".shoot", false, oss, os, ojs);
         final Pangine engine = Pangine.getEngine();
         final Panmage hurt = newPlayerImage(PRE_IMG + "." + name + ".hurt", oj, pre + "Hurt");
+        final Panmage frozen = hurt; //TODO
         final Panimation defeat = newAnimation(pre + "DefeatOrb", pre + "DefeatOrb.png", 16, CENTER_16, 6);
         final Panple oClimb = new FinPanple2(15, 4);
         final Img[] climbImgs = Imtil.loadStrip(pre + "Climb.png", 32);
@@ -445,7 +446,7 @@ public final class BotsnBoltsGame extends BaseGame {
         final Panmage powerBox = engine.createImage(pre + "PowerBox", CENTER_16, minCube, maxCube, pre + "PowerBox.png");
         final Panmage byteBox = null; //TODO
         final HudMeterImages hudMeterImages = newHudMeterImages(pre + "Meter", pre + "Meter.png", true);
-        return new PlayerImages(basicSet, shootSet, hurt, defeat, climb, climbShoot, climbTop, jumpAimDiag, jumpAimUp, basicProjectile, projectile2, projectile3, charge, chargeVert, charge2, chargeVert2,
+        return new PlayerImages(basicSet, shootSet, hurt, frozen, defeat, climb, climbShoot, climbTop, jumpAimDiag, jumpAimUp, basicProjectile, projectile2, projectile3, charge, chargeVert, charge2, chargeVert2,
             burst, ball, warp, materialize, bomb, link, batterySml, batteryMed, batteryBig, bolt, byteDisk, powerBox, byteBox, hudMeterImages);
     }
     
