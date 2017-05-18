@@ -341,7 +341,7 @@ public final class BotsnBoltsGame extends BaseGame {
         final short s0 = 0, s48 = 48, s64 = 64, s96 = 96, s144 = 144, s160 = 160, s176 = 176, s192 = 192, s208 = 208, smax = Pancolor.MAX_VALUE;
         final Pancolor fire = new FinPancolor(smax, s160, s0), darkFire = new FinPancolor(smax, s96, s0);
         final Pancolor grey = Pancolor.DARK_GREY, darkGrey = new FinPancolor(s96);
-        final Pancolor ice = new FinPancolor(s160, s208, smax), darkIce = new FinPancolor(s96, s176, smax);
+        final Pancolor ice = newColorIce(), darkIce = newColorIceDark();
         final Pancolor blue = new FinPancolor(s64, s64, s192), darkBlue = new FinPancolor(s48, s48, s144);
         filterImgs(henchImgs, newFilter(fire, ice, darkFire, darkIce, grey, blue, darkGrey, darkBlue));
         freezeRayEnemy = newSheet("freezeray.enemy", henchImgs, henchO, henchMin, henchMax);
@@ -350,6 +350,16 @@ public final class BotsnBoltsGame extends BaseGame {
         flame4 = newSheet("flame.4.enemy", RES + "enemy/Flame4.png", 4);
         flame8 = newSheet("flame.8.enemy", RES + "enemy/Flame8.png", 8);
         flame16 = newAnimation("flame.16.enemy", RES + "enemy/Flame16.png", 16, propO, propMin, propMax, 3);
+    }
+    
+    private final static Pancolor newColorIce() {
+        final short s160 = 160, s208 = 208;
+        return new FinPancolor(s160, s208, Pancolor.MAX_VALUE);
+    }
+    
+    private final static Pancolor newColorIceDark() {
+        final short s96 = 96, s176 = 176;
+        return new FinPancolor(s96, s176, Pancolor.MAX_VALUE);
     }
     
     protected final static Panmage getEnemyProjectile() {
