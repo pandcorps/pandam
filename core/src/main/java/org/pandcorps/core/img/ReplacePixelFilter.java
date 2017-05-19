@@ -40,6 +40,13 @@ public final class ReplacePixelFilter extends PixelFilter {
 	    }
 	}
 	
+	public ReplacePixelFilter(final Pancolor... colors) {
+	    final int size = colors.length;
+	    for (int i = 0; i < size; i += 2) {
+	        put(colors[i], colors[i + 1]);
+	    }
+	}
+	
 	public ReplacePixelFilter(final int src, final int dst) {
 		put(src, dst);
 	}
