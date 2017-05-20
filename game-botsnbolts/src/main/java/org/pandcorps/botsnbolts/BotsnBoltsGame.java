@@ -408,7 +408,14 @@ public final class BotsnBoltsGame extends BaseGame {
         final Img imgHurt = Imtil.load(pre + "Hurt.png"), imgHurtMirror = Imtil.load(pre + "HurtMirror.png");
         Img.setTemporary(false, imgHurt, imgHurtMirror);
         final Panmage hurt = newPlayerImage(PRE_IMG + "." + name + ".hurt", oj, imgHurt, imgHurtMirror);
-        //filterImgs(imgHurt, imgHurtMirror, fs); //TODO
+        final short s0 = 0, s72 = 72, s96 = 96, s128 = 128, s144 = 144, s192 = 192;
+        final Pancolor grey = Pancolor.DARK_GREY, darkGrey = new FinPancolor(s96);
+        final Pancolor pri = Pancolor.GREEN, darkPri = new FinPancolor(s0, s192, s0);
+        final Pancolor skin = new FinPancolor(s192, s128, s96), darkSkin = new FinPancolor(s144, s96, s72);
+        final Pancolor frz = Pancolor.WHITE, darkFrz = newColorIce();
+        final Pancolor out = Pancolor.BLACK, outFrz = newColorIceDark();
+        final ReplacePixelFilter frzFilter = new ReplacePixelFilter(grey, frz, darkGrey, darkFrz, pri, frz, darkPri, darkFrz, skin, frz, darkSkin, darkFrz, out, outFrz);
+        filterImgs(new Img[] { imgHurt, imgHurtMirror }, frzFilter);
         final Panmage frozen = newPlayerImage(PRE_IMG + "." + name + ".frozen", oj, imgHurt, imgHurtMirror);
         Img.close(imgHurt, imgHurtMirror);
         final Panimation defeat = newAnimation(pre + "DefeatOrb", pre + "DefeatOrb.png", 16, CENTER_16, 6);
