@@ -705,7 +705,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         @Override
         protected final void onJump() {
             turnTowardPlayer();
-            hv = isMirror() ? -1 : 1;
+            hv = getMirrorMultiplier();
             v = 2;
             addY();
             v = 8;
