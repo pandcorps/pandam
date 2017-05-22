@@ -37,11 +37,13 @@ import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.tile.Tile.*;
 
 public abstract class RoomLoader {
+    private final static int OFF_ALT = 256;
     private final static Map<BotCell, BotRoom> rooms = new HashMap<BotCell, BotRoom>();
     private final static List<Enemy> enemies = new ArrayList<Enemy>();
     private final static List<ShootableDoor> doors = new ArrayList<ShootableDoor>();
     private final static List<TileAnimator> animators = new ArrayList<TileAnimator>();
     private final static Map<Character, Tile> tiles = new HashMap<Character, Tile>();
+    private static Character alt = null;
     protected static BossDoor bossDoor = null;
     protected static int startX = 0;
     protected static int startY = 0;
@@ -97,8 +99,12 @@ public abstract class RoomLoader {
                 imp(seg, false);
             } else if ("ANM".equals(name)) { // Animator
                 anm(seg);
+            } else if ("ALT".equals(name)) { // Alternate Character
+                alt(seg);
             } else if ("PUT".equals(name)) { // Put
                 put(seg);
+            } else if ("PLT".equals(name)) { // Put Alternate
+                plt(seg);
             } else if ("M".equals(name)) { // Map
                 m(seg);
             } else if ("RCT".equals(name)) { // Rectangle
@@ -178,16 +184,34 @@ public abstract class RoomLoader {
         animators.add(new TileAnimator(tile, bg, period, frames));
     }
     
+    private final static void alt(final Segment seg) {
+        alt = seg.toCharacter(0);
+    }
+    
     private final static void put(final Segment seg) {
         tiles.put(seg.toCharacter(0), getTile(seg, 1));
+    }
+    
+    private final static void plt(final Segment seg) {
+        tiles.put(Character.valueOf((char) (seg.charValue(0) + OFF_ALT)), getTile(seg, 1));
     }
     
     private final static void m(final Segment seg) {
         final TileMap tm = BotsnBoltsGame.tm;
         final String value = seg.getValue(0);
-        final int size = Chartil.size(value);
+        int size = Chartil.size(value);
+        int x = 0;
         for (int i = 0; i < size; i++) {
-            tm.setTile(i, row, tiles.get(Character.valueOf(value.charAt(i))));
+            final char c = value.charAt(i);
+            final char key;
+            if ((alt != null) && (alt.charValue() == c)) {
+                i++;
+                key = (char) (value.charAt(i) + OFF_ALT);
+            } else {
+                key = c;
+            }
+            tm.setTile(x, row, tiles.get(Character.valueOf(key)));
+            x++;
         }
         row--;
     }
@@ -452,6 +476,7 @@ public abstract class RoomLoader {
         clearChangeFinished();
         animators.clear();
         tiles.clear();
+        alt = null;
         bossDoor = null;
     }
     
