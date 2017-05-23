@@ -56,7 +56,7 @@ public final class Carrier extends Panctor implements StepListener, CollisionLis
         }
         if (carried != null) {
             final Panple pos = getPosition();
-            final int off = carried.isMirror() ? -1 : 1;
+            final int off = carried.getMirrorMultiplier();
             carried.getPosition().set(pos.getX() + off, pos.getY());
         }
     }
