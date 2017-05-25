@@ -54,6 +54,7 @@ public final class Player extends Chr {
     private final static int CHARGE_TIME_BIG = 60;
     private final static int INVINCIBLE_TIME = 60;
     private final static int HURT_TIME = 15;
+    private final static int FROZEN_TIME = 60;
     private final static int RUN_TIME = 5;
     protected final static int VEL_JUMP = 8;
     protected final static int VEL_BOUNCE_BOMB = 7;
@@ -82,6 +83,7 @@ public final class Player extends Chr {
     private long startCharge = -1000;
     private long lastCharge = -1000;
     private long lastHurt = -1000;
+    private long lastFrozen = -1000;
     private long lastJump = -1000;
     private int wallTimer = 0;
     private boolean wallMirror = false;
@@ -180,7 +182,7 @@ public final class Player extends Chr {
     }
     
     private final boolean isFree() {
-        return !(isHurt() || RoomChanger.isChanging());
+        return !(isHurt() || isFrozen() || RoomChanger.isChanging());
     }
     
     private final void jump() {
@@ -391,9 +393,16 @@ public final class Player extends Chr {
         return (Pangine.getEngine().getClock() - lastHurt) < HURT_TIME;
     }
     
+    private final boolean isFrozen() {
+        return (Pangine.getEngine().getClock() - lastFrozen) < FROZEN_TIME;
+    }
+    
     private final boolean onHurting() {
         if (isHurt()) {
             changeView(pi.hurt);
+            return true;
+        } else if (isFrozen()) {
+            changeView(pi.frozen);
             return true;
         }
         return false;
