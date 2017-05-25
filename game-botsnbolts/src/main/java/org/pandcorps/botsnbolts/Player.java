@@ -324,6 +324,15 @@ public final class Player extends Chr {
         return true;
     }
     
+    protected final boolean freeze() {
+        if (isInvincible()) {
+            return false;
+        }
+        stateHandler.onHurt(this);
+        lastFrozen = Pangine.getEngine().getClock();
+        return true;
+    }
+    
     protected final void puff(final int offX, final int offY) {
         burst(BotsnBoltsGame.puff, offX, offY, BotsnBoltsGame.DEPTH_BURST);
     }
