@@ -1224,6 +1224,11 @@ public final class Player extends Chr {
             player.grappleBoost(-1);
         }
         
+        @Override
+        protected final void onHurt(final Player player) {
+            player.endGrapple();
+        }
+        
         private final boolean isConnected(final Player player) {
             return player.isGrapplingHookConnected();
         }
