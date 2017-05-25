@@ -409,7 +409,8 @@ public final class Player extends Chr {
     }
     
     private final boolean isInvincible() {
-        return (Pangine.getEngine().getClock() - lastHurt) < INVINCIBLE_TIME;
+        final long clock = Pangine.getEngine().getClock();
+        return (clock - lastHurt) < INVINCIBLE_TIME || (clock - lastFrozen) < (INVINCIBLE_TIME + FROZEN_TIME - HURT_TIME);
     }
     
     private final boolean isShootPoseNeeded() {
