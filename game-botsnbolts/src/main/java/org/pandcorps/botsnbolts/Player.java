@@ -391,6 +391,14 @@ public final class Player extends Chr {
         return (Pangine.getEngine().getClock() - lastHurt) < HURT_TIME;
     }
     
+    private final boolean onHurting() {
+        if (isHurt()) {
+            changeView(pi.hurt);
+            return true;
+        }
+        return false;
+    }
+    
     private final boolean isInvincible() {
         return (Pangine.getEngine().getClock() - lastHurt) < INVINCIBLE_TIME;
     }
@@ -514,8 +522,7 @@ public final class Player extends Chr {
     
     @Override
     protected final void onGrounded() {
-        if (isHurt()) {
-            changeView(pi.hurt);
+        if (onHurting()) {
             return;
         }
         movedDuringJump = false;
@@ -741,8 +748,7 @@ public final class Player extends Chr {
     private final boolean onAirNormal() {
         wallTimer = 0;
         clearRun();
-        if (isHurt()) {
-            changeView(pi.hurt);
+        if (onHurting()) {
             return false;
         }
         changeView(stateHandler.getJumpView(this));
