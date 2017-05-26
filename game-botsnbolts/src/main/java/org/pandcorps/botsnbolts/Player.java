@@ -413,8 +413,13 @@ public final class Player extends Chr {
         } else if (isFrozen()) {
             changeView(pi.frozen);
             return true;
+        } else if (getCurrentDisplay() == pi.frozen) {
+            unfreeze();
         }
         return false;
+    }
+    
+    private final void unfreeze() {
     }
     
     private final boolean isInvincible() {
