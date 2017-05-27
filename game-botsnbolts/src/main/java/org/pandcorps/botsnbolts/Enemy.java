@@ -301,6 +301,11 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
         
         @Override
+        protected final boolean hurt(final Player player) {
+            return player.freeze();
+        }
+        
+        @Override
         protected final void burst(final Player player) {
             final Panple pos = player.getPosition();
             Projectile.burst(this, BotsnBoltsGame.enemyBurst, pos.getX(), pos.getY() + Player.CENTER_Y);
