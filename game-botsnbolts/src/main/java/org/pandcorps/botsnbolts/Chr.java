@@ -23,9 +23,12 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.botsnbolts;
 
 import org.pandcorps.game.actor.*;
+import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.tile.*;
 
 public abstract class Chr extends GuyPlatform {
+    protected final static FinPanple2 gTuple = new FinPanple2(0, g);
+    
     protected Chr(final int offX, final int h) {
         super(offX, h);
     }
