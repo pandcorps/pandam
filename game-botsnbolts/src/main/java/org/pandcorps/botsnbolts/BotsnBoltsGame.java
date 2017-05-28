@@ -124,6 +124,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static Panmage[] flame4 = null;
     protected static Panmage[] flame8 = null;
     protected static Panimation flame16 = null;
+    protected static Panmage iceShatter = null;
     protected static HudMeterImages hudMeterBlank = null;
     protected static HudMeterImages hudMeterBoss = null;
     protected static Img[] hudMeterImgs = null;
@@ -367,6 +368,13 @@ public final class BotsnBoltsGame extends BaseGame {
             enemyProjectile = Pangine.getEngine().createImage("projectile.enemy", CENTER_8, new FinPanple2(-2, -2), new FinPanple2(2, 2), RES + "enemy/EnemyProjectile.png");
         }
         return enemyProjectile;
+    }
+    
+    protected final static Panmage getIceShatter() {
+        if (iceShatter == null) {
+            iceShatter = Pangine.getEngine().createImage("ice.shatter", CENTER_8, null, null, RES + "misc/IceShatter.png");
+        }
+        return iceShatter;
     }
     
     private final static ShootableDoorDefinition filterDoor(final String id, final Img[] imgsClosed, final Img[] imgsOpening,
