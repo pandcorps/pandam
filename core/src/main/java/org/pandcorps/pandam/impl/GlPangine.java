@@ -767,14 +767,8 @@ public abstract class GlPangine extends Pangine {
 		}
 		edge();
 		if (screenShotDst != null) {
-		    final int sw, sh;
-		    if (screenShotW < 0) {
-		        sw = w;
-		        sh = h;
-		    } else {
-		        sw = screenShotW;
-		        sh = screenShotH;
-		    }
+		    final int sw = (screenShotW < 0) ? w : screenShotW;
+		    final int sh = (screenShotH < 0) ? h : screenShotH;
 		    final ByteBuffer buf = Pantil.allocateDirectByteBuffer(sw * sh * 3);
 		    //buf.rewind();
 		    gl.glReadPixels(screenShotX, screenShotY, sw, sh, gl.GL_RGB, gl.GL_UNSIGNED_BYTE, buf); // Could read each frame and filter, but very slow
