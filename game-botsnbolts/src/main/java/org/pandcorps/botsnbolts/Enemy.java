@@ -192,6 +192,11 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
         
         protected EnemyProjectile(final Panmage img, final Enemy src, final int ox, final int oy, final float vx, final float vy) {
+            this(img, src, ox, oy, vx, vy, new ImplPanple());
+        }
+        
+        protected EnemyProjectile(final Panmage img, final Enemy src, final int ox, final int oy, final float vx, final float vy, final Panple g) {
+            super(g);
             final Panple srcPos = src.getPosition();
             final boolean srcMirror = src.isMirror();
             final boolean src180 = src.getRot() == 2;
