@@ -308,8 +308,7 @@ public abstract class Boss extends Enemy {
         protected final float t;
         
         protected LavaBall(final VolcanoBot src, final float t) {
-            super(getLava1(), src, 11, 34, 0, 16);
-            getAcceleration().setY(g);
+            super(getLava1(), src, 11, 34, 0, 16, gTuple);
             this.src = src;
             this.t = t;
         }
