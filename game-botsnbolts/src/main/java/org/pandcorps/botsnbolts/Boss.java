@@ -363,6 +363,29 @@ public abstract class Boss extends Enemy {
         }
     }
     
+    protected final static int HAIL_OFF_X = 6, HAIL_H = 24;
+    
+    protected final static class HailBot extends Boss {
+        protected HailBot(int x, int y) {
+            super(HAIL_OFF_X, HAIL_H, x, y);
+        }
+        
+        @Override
+        protected final boolean pickState() {
+            return false;
+        }
+        
+        @Override
+        protected final boolean continueState() {
+            return false;
+        }
+        
+        @Override
+        protected final Panmage getStill() {
+            return null;
+        }
+    }
+    
     protected final static class Jump {
         protected final byte state;
         protected final Panmage img;
