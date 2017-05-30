@@ -395,6 +395,26 @@ public abstract class Boss extends Enemy {
             return (still = getHailImage(still, "hailbot/HailBot"));
         }
         
+        protected final static Panmage getAim() {
+            return (aim = getHailImage(aim, "hailbot/HailBotAim"));
+        }
+        
+        protected final static Panmage getAimDiag() {
+            return (aimDiag = getHailImage(aimDiag, "hailbot/HailBotAimDiag"));
+        }
+        
+        protected final static Panmage getJump() {
+            return (jump = getHailImage(jump, "hailbot/HailBotJump"));
+        }
+        
+        protected final static Panmage getSlide1() {
+            return (slide1 = getHailImage(slide1, "hailbot/HailBotSlide1"));
+        }
+        
+        protected final static Panmage getSlide2() {
+            return (slide2 = getHailImage(slide2, "hailbot/HailBotSlide2"));
+        }
+        
         protected final static Panmage getHailImage(final Panmage img, final String name) {
             return getImage(img, name, HAIL_O, HAIL_MIN, HAIL_MAX);
         }
