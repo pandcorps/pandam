@@ -364,8 +364,13 @@ public abstract class Boss extends Enemy {
     }
     
     protected final static int HAIL_OFF_X = 6, HAIL_H = 24;
+    protected final static Panple HAIL_O = new FinPanple2(17, 1);
+    protected final static Panple HAIL_MIN = getMin(HAIL_OFF_X);
+    protected final static Panple HAIL_MAX = getMax(HAIL_OFF_X, HAIL_H);
     
     protected final static class HailBot extends Boss {
+        protected static Panmage still = null;
+        
         protected HailBot(int x, int y) {
             super(HAIL_OFF_X, HAIL_H, x, y);
         }
@@ -382,7 +387,11 @@ public abstract class Boss extends Enemy {
         
         @Override
         protected final Panmage getStill() {
-            return null;
+            return (still = getHailImage(still, "hailbot/HailBot"));
+        }
+        
+        protected final static Panmage getHailImage(final Panmage img, final String name) {
+            return getImage(img, name, HAIL_O, HAIL_MIN, HAIL_MAX);
         }
     }
     
