@@ -423,8 +423,9 @@ public abstract class Boss extends Enemy {
     protected final static class TimedDecoration extends Panctor implements StepListener {
         private int timer;
         
-        protected TimedDecoration(final int timer) {
+        protected TimedDecoration(final Panmage img, final int timer) {
             this.timer = timer;
+            setView(img);
         }
         
         @Override
