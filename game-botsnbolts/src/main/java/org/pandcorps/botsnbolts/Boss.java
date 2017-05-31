@@ -420,6 +420,13 @@ public abstract class Boss extends Enemy {
         }
     }
     
+    protected final static class TimedDecoration extends Panctor implements StepListener {
+        @Override
+        public final void onStep(final StepEvent event) {
+            
+        }
+    }
+    
     protected final static class Jump {
         protected final byte state;
         protected final Panmage img;
