@@ -199,7 +199,7 @@ public abstract class RoomLoader {
     private final static void m(final Segment seg) {
         final TileMap tm = BotsnBoltsGame.tm;
         final String value = seg.getValue(0);
-        int size = Chartil.size(value);
+        final int size = Chartil.size(value);
         int x = 0;
         for (int i = 0; i < size; i++) {
             final char c = value.charAt(i);
