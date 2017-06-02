@@ -423,15 +423,20 @@ public abstract class Boss extends Enemy {
     protected final static class TimedDecoration extends Panctor implements StepListener {
         private int timer;
         
-        protected TimedDecoration(final Panctor src, final Panmage img, final int timer) {
+        protected TimedDecoration(final Panctor src, final Panmage img, final int timer, final int offX, final int offY, final int depth) {
             this.timer = timer;
             setView(img);
+            final Panple pos = getPosition();
             if (src != null) {
+                setMirror(src.isMirror());
+                pos.set(src.getPosition());
+                pos.add(offX, offY);
                 final Panlayer layer = src.getLayer();
                 if (layer != null) {
                     layer.addActor(this);
                 }
             }
+            pos.setZ(depth);
         }
         
         @Override
