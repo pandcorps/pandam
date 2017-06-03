@@ -430,7 +430,7 @@ public abstract class Boss extends Enemy {
             if (src != null) {
                 setMirror(src.isMirror());
                 pos.set(src.getPosition());
-                pos.add(offX, offY);
+                pos.add(src.getMirrorMultiplier() * offX, offY);
                 final Panlayer layer = src.getLayer();
                 if (layer != null) {
                     layer.addActor(this);
