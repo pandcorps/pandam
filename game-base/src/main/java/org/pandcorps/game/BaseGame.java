@@ -48,10 +48,10 @@ public abstract class BaseGame extends Pangame {
     */
 	public static int SCREEN_W = 256;
 	public static int SCREEN_H = 192;
-	protected final static FinPanple2 CENTER_32 = new FinPanple2(16, 16);
-	protected final static FinPanple2 CENTER_16 = new FinPanple2(8, 8);
-	protected final static FinPanple2 CENTER_8 = new FinPanple2(4, 4);
-	protected final static FinPanple2 CENTER_4 = new FinPanple2(2, 2);
+	public final static FinPanple2 CENTER_32 = new FinPanple2(16, 16);
+	public final static FinPanple2 CENTER_16 = new FinPanple2(8, 8);
+	public final static FinPanple2 CENTER_8 = new FinPanple2(4, 4);
+	public final static FinPanple2 CENTER_4 = new FinPanple2(2, 2);
 	public final static String PRE_IMG = "img.";
 	public final static String PRE_FRM = "frm.";
 	public final static String PRE_ANM = "anm.";
