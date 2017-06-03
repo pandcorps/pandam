@@ -420,6 +420,27 @@ public abstract class Boss extends Enemy {
         }
     }
     
+    protected final static class HailCluster extends EnemyProjectile {
+        protected static Panmage cluster1 = null;
+        protected static Panmage cluster2 = null;
+        
+        protected HailCluster(final HailBot src) {
+            super(getCluster1(), src, 11, 34, 0, 16);
+        }
+        
+        protected final static Panmage getCluster1() {
+            return (cluster1 = getClusterImage(cluster1, "hailbot/HailCluster1"));
+        }
+        
+        protected final static Panmage getCluster2() {
+            return (cluster2 = getClusterImage(cluster2, "hailbot/HailCluster2"));
+        }
+        
+        protected final static Panmage getClusterImage(final Panmage img, final String name) {
+            return getImage(img, name, BotsnBoltsGame.CENTER_16, BotsnBoltsGame.MIN_16, BotsnBoltsGame.MAX_16);
+        }
+    }
+    
     protected final static class TimedDecoration extends Panctor implements StepListener {
         private int timer;
         

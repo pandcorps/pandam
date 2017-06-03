@@ -70,6 +70,9 @@ public final class BotsnBoltsGame extends BaseGame {
     protected final static int DEPTH_BURST = 16;
     protected final static int DEPTH_HUD = 18;
     
+    protected final static FinPanple2 MIN_16 = new FinPanple2(-6, -6);
+    protected final static FinPanple2 MAX_16 = new FinPanple2(6, 6);
+    
     private final static FinPanple2 ng = GuyPlatform.getMin(Player.PLAYER_X);
     private final static FinPanple2 xg = GuyPlatform.getMax(Player.PLAYER_X, Player.PLAYER_H);
     protected final static FinPanple2 og = new FinPanple2(17, 1);
@@ -286,7 +289,7 @@ public final class BotsnBoltsGame extends BaseGame {
     
     protected final static Panmage getSpike() {
         if (spike == null) {
-            spike = Pangine.getEngine().createImage("spike", CENTER_16, new FinPanple2(-6, -6), new FinPanple2(6, 6), RES + "bg/Spike.png");
+            spike = Pangine.getEngine().createImage("spike", CENTER_16, MIN_16, MAX_16, RES + "bg/Spike.png");
         }
         return spike;
     }
