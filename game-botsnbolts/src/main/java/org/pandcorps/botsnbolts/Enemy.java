@@ -187,15 +187,15 @@ public abstract class Enemy extends Chr implements CollisionListener {
     }
     
     protected static class EnemyProjectile extends Pandy implements CollisionListener, AllOobListener {
-        protected EnemyProjectile(final Enemy src, final int ox, final int oy, final float vx, final float vy) {
+        protected EnemyProjectile(final Panctor src, final int ox, final int oy, final float vx, final float vy) {
             this(BotsnBoltsGame.getEnemyProjectile(), src, ox, oy, vx, vy);
         }
         
-        protected EnemyProjectile(final Panmage img, final Enemy src, final int ox, final int oy, final float vx, final float vy) {
+        protected EnemyProjectile(final Panmage img, final Panctor src, final int ox, final int oy, final float vx, final float vy) {
             this(img, src, ox, oy, vx, vy, new ImplPanple());
         }
         
-        protected EnemyProjectile(final Panmage img, final Enemy src, final int ox, final int oy, final float vx, final float vy, final Panple g) {
+        protected EnemyProjectile(final Panmage img, final Panctor src, final int ox, final int oy, final float vx, final float vy, final Panple g) {
             super(g);
             final Panple srcPos = src.getPosition();
             final boolean srcMirror = src.isMirror();
@@ -1025,8 +1025,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
                 return;
             }
             turnTowardPlayer(player);
-            //if (Mathtil.rand()) {
-            if (Pangine.getEngine().getClock() < 0) { //TODO revert this
+            if (Mathtil.rand()) {
                 jump();
             } else {
                 shoot();
