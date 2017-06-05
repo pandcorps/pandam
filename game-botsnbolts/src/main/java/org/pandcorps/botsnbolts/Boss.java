@@ -423,9 +423,14 @@ public abstract class Boss extends Enemy {
     protected final static class HailCluster extends EnemyProjectile {
         protected static Panmage cluster1 = null;
         protected static Panmage cluster2 = null;
+        protected static Panmage chunk = null;
         
         protected HailCluster(final HailBot src) {
-            super(getCluster1(), src, 11, 34, 0, 16);
+            super(getCluster1(), src, 11, 34, 0, 16); //TODO
+        }
+        
+        protected final EnemyProjectile newHailChunk() {
+            return new EnemyProjectile(getChunk(), this, 0, 0, 1, 1, gTuple); //TODO
         }
         
         protected final static Panmage getCluster1() {
@@ -438,6 +443,10 @@ public abstract class Boss extends Enemy {
         
         protected final static Panmage getClusterImage(final Panmage img, final String name) {
             return getImage(img, name, BotsnBoltsGame.CENTER_16, BotsnBoltsGame.MIN_16, BotsnBoltsGame.MAX_16);
+        }
+        
+        protected final static Panmage getChunk() {
+            return (chunk = getImage(chunk, "hailbot/HailChunk", BotsnBoltsGame.CENTER_8, BotsnBoltsGame.MIN_8, BotsnBoltsGame.MAX_8));
         }
     }
     
