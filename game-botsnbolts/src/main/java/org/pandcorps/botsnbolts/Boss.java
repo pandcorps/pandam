@@ -429,6 +429,27 @@ public abstract class Boss extends Enemy {
             super(getCluster1(), src, 11, 34, 0, 16); //TODO
         }
         
+        @Override
+        public void onStep(final StepEvent event) {
+            super.onStep(event);
+            final Panple pos = getPosition();
+            final float x = pos.getX();
+            if (x < 16) {
+                shatter();
+            } else if (x >= BotsnBoltsGame.GAME_W - 16) {
+                shatter();
+            }
+        }
+        
+        protected final void shatter() {
+            destroy();
+            onShatter();
+        }
+        
+        protected void onShatter() {
+            //TODO
+        }
+        
         protected final EnemyProjectile newHailChunk() {
             return new EnemyProjectile(getChunk(), this, 0, 0, 1, 1, gTuple); //TODO
         }
