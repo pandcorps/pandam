@@ -369,6 +369,8 @@ public abstract class Boss extends Enemy {
     protected final static Panple HAIL_MAX = getMax(HAIL_OFF_X, HAIL_H);
     
     protected final static class HailBot extends Boss {
+        protected final static byte STATE_SHOOT = 1;
+        protected final static int WAIT_SHOOT = 20;
         protected static Panmage still = null;
         protected static Panmage aim = null;
         protected static Panmage aimDiag = null;
@@ -381,13 +383,29 @@ public abstract class Boss extends Enemy {
         }
         
         @Override
+        protected final boolean onWaiting() {
+            if (waitTimer == (WAIT_SHOOT - 1)) {
+                if (state == STATE_SHOOT) {
+                    new HailCluster(this, 18, 13, VEL_PROJECTILE, 0);
+                }
+            }
+            return false;
+        }
+        
+        @Override
         protected final boolean pickState() {
+            startShoot();
             return false;
         }
         
         @Override
         protected final boolean continueState() {
+            startStill();
             return false;
+        }
+        
+        protected final void startShoot() {
+            startState(STATE_SHOOT, WAIT_SHOOT, getAim());
         }
         
         @Override
@@ -425,8 +443,8 @@ public abstract class Boss extends Enemy {
         protected static Panmage cluster2 = null;
         protected static Panmage chunk = null;
         
-        protected HailCluster(final HailBot src) {
-            super(getCluster1(), src, 11, 34, 0, 16); //TODO
+        protected HailCluster(final HailBot src, final int ox, final int oy, final float vx, final float vy) {
+            super(getCluster1(), src, ox, oy, vx * src.getMirrorMultiplier(), vy);
         }
         
         @Override
