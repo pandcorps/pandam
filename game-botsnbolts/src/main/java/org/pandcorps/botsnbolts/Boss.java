@@ -436,22 +436,30 @@ public abstract class Boss extends Enemy {
             final float x = pos.getX();
             if (x < 16) {
                 shatter();
-            } else if (x >= BotsnBoltsGame.GAME_W - 16) {
+            } else if (x >= (BotsnBoltsGame.GAME_W - 16)) {
+                shatter();
+            } else if (pos.getY() >= (BotsnBoltsGame.GAME_H - 32)) {
                 shatter();
             }
         }
         
         protected final void shatter() {
-            destroy();
             onShatter();
+            destroy();
         }
         
         protected void onShatter() {
-            //TODO
+            newHailChunk(-1, 0);
+            newHailChunk(0, 1);
+            newHailChunk(1, 0);
         }
         
-        protected final EnemyProjectile newHailChunk() {
-            return new EnemyProjectile(getChunk(), this, 0, 0, 1, 1, gTuple); //TODO
+        protected final EnemyProjectile newHailChunk(final float vx, final float vy) {
+            return new EnemyProjectile(getChunk(), this, 0, 0, vx + randVel(), vy + randVel(), gTuple);
+        }
+        
+        protected final static float randVel() {
+            return Mathtil.randf(-0.3f, 0.3f);
         }
         
         protected final static Panmage getCluster1() {
