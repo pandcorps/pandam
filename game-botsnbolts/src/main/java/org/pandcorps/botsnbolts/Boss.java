@@ -448,6 +448,11 @@ public abstract class Boss extends Enemy {
         }
         
         @Override
+        protected final void burst(final Player player) {
+            onShatter();
+        }
+        
+        @Override
         public void onStep(final StepEvent event) {
             super.onStep(event);
             final Panple pos = getPosition();
