@@ -308,7 +308,7 @@ public abstract class Boss extends Enemy {
         protected final float t;
         
         protected LavaBall(final VolcanoBot src, final float t) {
-            super(getLava1(), src, 11, 34, 0, 16, gTuple);
+            super(getCurrentImage(), src, 11, 34, 0, 16, gTuple);
             this.src = src;
             this.t = t;
         }
@@ -316,7 +316,7 @@ public abstract class Boss extends Enemy {
         @Override
         public void onStep(final StepEvent event) {
             super.onStep(event);
-            setView(FireballEnemy.isFirstImageActive() ? getLava1() : getLava2());
+            changeView(getCurrentImage());
             if (getVelocity().getY() < 0) {
                 if (!isFlip()) {
                     setFlip(true);
@@ -347,6 +347,10 @@ public abstract class Boss extends Enemy {
         @Override
         protected final int getDamage() {
             return 3;
+        }
+        
+        protected final static Panmage getCurrentImage() {
+            return FireballEnemy.isFirstImageActive() ? getLava1() : getLava2();
         }
         
         protected final static Panmage getLava1() {
