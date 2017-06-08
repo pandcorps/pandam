@@ -368,13 +368,14 @@ public abstract class Boss extends Enemy {
     }
     
     protected final static int HAIL_OFF_X = 6, HAIL_H = 24;
-    protected final static Panple HAIL_O = new FinPanple2(17, 1);
+    protected final static Panple HAIL_O = new FinPanple2(14, 1);
     protected final static Panple HAIL_MIN = getMin(HAIL_OFF_X);
     protected final static Panple HAIL_MAX = getMax(HAIL_OFF_X, HAIL_H);
     
     protected final static class HailBot extends Boss {
         protected final static byte STATE_SHOOT = 1;
-        protected final static int WAIT_SHOOT = 20;
+        protected final static byte STATE_SHOOT_DIAG = 2;
+        protected final static int WAIT_SHOOT = 30;
         protected static Panmage still = null;
         protected static Panmage aim = null;
         protected static Panmage aimDiag = null;
@@ -390,7 +391,9 @@ public abstract class Boss extends Enemy {
         protected final boolean onWaiting() {
             if (waitTimer == (WAIT_SHOOT - 1)) {
                 if (state == STATE_SHOOT) {
-                    new HailCluster(this, 18, 13, VEL_PROJECTILE, 0);
+                    new HailCluster(this, 21, 13, VEL_PROJECTILE, 0);
+                } else if (state == STATE_SHOOT_DIAG) {
+                    new HailCluster(this, 15, 24, VEL_PROJECTILE_45, VEL_PROJECTILE_45);
                 }
             }
             return false;
@@ -398,7 +401,11 @@ public abstract class Boss extends Enemy {
         
         @Override
         protected final boolean pickState() {
-            startShoot();
+            if (Mathtil.rand()) {
+                startShoot();
+            } else {
+                startShootDiag();
+            }
             return false;
         }
         
@@ -410,6 +417,10 @@ public abstract class Boss extends Enemy {
         
         protected final void startShoot() {
             startState(STATE_SHOOT, WAIT_SHOOT, getAim());
+        }
+        
+        protected final void startShootDiag() {
+            startState(STATE_SHOOT_DIAG, WAIT_SHOOT, getAimDiag());
         }
         
         @Override
