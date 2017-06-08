@@ -444,7 +444,7 @@ public abstract class Boss extends Enemy {
         protected static Panmage chunk = null;
         
         protected HailCluster(final HailBot src, final int ox, final int oy, final float vx, final float vy) {
-            super(getCluster1(), src, ox, oy, vx * src.getMirrorMultiplier(), vy);
+            super(getCurrentImage(), src, ox, oy, vx * src.getMirrorMultiplier(), vy);
         }
         
         @Override
@@ -455,6 +455,7 @@ public abstract class Boss extends Enemy {
         @Override
         public void onStep(final StepEvent event) {
             super.onStep(event);
+            changeView(getCurrentImage());
             final Panple pos = getPosition();
             final float x = pos.getX();
             if (x < 16) {
@@ -483,6 +484,10 @@ public abstract class Boss extends Enemy {
         
         protected final static float randVel() {
             return Mathtil.randf(-0.3f, 0.3f);
+        }
+        
+        protected final static Panmage getCurrentImage() {
+            return Pangine.getEngine().isOn(4) ? getCluster1() : getCluster2();
         }
         
         protected final static Panmage getCluster1() {
