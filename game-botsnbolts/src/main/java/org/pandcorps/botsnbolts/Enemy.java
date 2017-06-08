@@ -36,8 +36,15 @@ import org.pandcorps.pandax.tile.*;
 public abstract class Enemy extends Chr implements CollisionListener {
     protected final static String RES_ENEMY = BotsnBoltsGame.RES + "enemy/";
     protected final static int VEL_PROJECTILE = 6;
+    protected final static float VEL_PROJECTILE_45;
     
     private int health;
+    
+    static {
+        final Panple tmp = new ImplPanple(VEL_PROJECTILE, 0, 0);
+        tmp.setMagnitudeDirection(VEL_PROJECTILE, Math.PI / 4);
+        VEL_PROJECTILE_45 = tmp.getX();
+    }
     
     protected Enemy(final int offX, final int h, final int x, final int y, final int health) {
         super(offX, h);
