@@ -375,6 +375,7 @@ public abstract class Boss extends Enemy {
     protected final static class HailBot extends Boss {
         protected final static byte STATE_SHOOT = 1;
         protected final static byte STATE_SHOOT_DIAG = 2;
+        protected final static byte STATE_JUMP = 3;
         protected final static int WAIT_SHOOT = 30;
         protected static Panmage still = null;
         protected static Panmage aim = null;
@@ -401,10 +402,13 @@ public abstract class Boss extends Enemy {
         
         @Override
         protected final boolean pickState() {
-            if (Mathtil.rand()) {
+            final int r = Mathtil.randi(0, 99);
+            if (r < 25) {
                 startShoot();
-            } else {
+            } else if (r < 50) {
                 startShootDiag();
+            } else {
+                startJump();
             }
             return false;
         }
@@ -421,6 +425,10 @@ public abstract class Boss extends Enemy {
         
         protected final void startShootDiag() {
             startState(STATE_SHOOT_DIAG, WAIT_SHOOT, getAimDiag());
+        }
+        
+        protected final void startJump() {
+            startJump(STATE_JUMP, getJump(), 9, 0);
         }
         
         @Override
