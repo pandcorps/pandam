@@ -378,6 +378,7 @@ public abstract class Boss extends Enemy {
         protected final static byte STATE_JUMP = 3;
         protected final static byte STATE_SLIDE = 4;
         protected final static int WAIT_SHOOT = 30;
+        protected final static int WAIT_SLIDE = 32;
         protected static Panmage still = null;
         protected static Panmage aim = null;
         protected static Panmage aimDiag = null;
@@ -430,6 +431,10 @@ public abstract class Boss extends Enemy {
         
         protected final void startJump() {
             startJump(STATE_JUMP, getJump(), 9, 0);
+        }
+        
+        protected final void startSlide() {
+            startState(STATE_SLIDE, WAIT_SLIDE, getSlide1());
         }
         
         @Override
