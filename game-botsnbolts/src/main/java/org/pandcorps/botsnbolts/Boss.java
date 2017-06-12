@@ -385,6 +385,7 @@ public abstract class Boss extends Enemy {
         protected static Panmage jump = null;
         protected static Panmage slide1 = null;
         protected static Panmage slide2 = null;
+        protected static Panmage trail = null;
         
         protected HailBot(int x, int y) {
             super(HAIL_OFF_X, HAIL_H, x, y);
@@ -468,6 +469,10 @@ public abstract class Boss extends Enemy {
         
         protected final static Panmage getHailImage(final Panmage img, final String name) {
             return getImage(img, name, HAIL_O, HAIL_MIN, HAIL_MAX);
+        }
+        
+        protected final static Panmage getTrail() {
+            return (trail = getImage(trail, "hailbot/IceTrail", null, null, null));
         }
     }
     
