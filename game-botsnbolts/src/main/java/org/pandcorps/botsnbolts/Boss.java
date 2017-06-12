@@ -392,7 +392,11 @@ public abstract class Boss extends Enemy {
         
         @Override
         protected final boolean onWaiting() {
-            if (waitTimer == (WAIT_SHOOT - 1)) {
+            if (state == STATE_SLIDE) {
+                new TimedDecoration(this, null, WAIT_SLIDE, 0, 0, BotsnBoltsGame.DEPTH_CARRIER);
+                getPosition().add(4 * getMirrorMultiplier(), 4);
+                return true;
+            } else if (waitTimer == (WAIT_SHOOT - 1)) {
                 if (state == STATE_SHOOT) {
                     new HailCluster(this, 21, 13, VEL_PROJECTILE, 0);
                 } else if (state == STATE_SHOOT_DIAG) {
