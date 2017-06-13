@@ -477,6 +477,7 @@ public abstract class Boss extends Enemy {
     }
     
     protected final static class HailCluster extends EnemyProjectile {
+        protected final static int OFF_WALL = 20;
         protected static Panmage cluster1 = null;
         protected static Panmage cluster2 = null;
         protected static Panmage chunk = null;
@@ -496,11 +497,11 @@ public abstract class Boss extends Enemy {
             changeView(getCurrentImage());
             final Panple pos = getPosition();
             final float x = pos.getX();
-            if (x < 16) {
+            if (x < OFF_WALL) {
                 shatter();
-            } else if (x >= (BotsnBoltsGame.GAME_W - 16)) {
+            } else if (x >= (BotsnBoltsGame.GAME_W - OFF_WALL)) {
                 shatter();
-            } else if (pos.getY() >= (BotsnBoltsGame.GAME_H - 32)) {
+            } else if (pos.getY() >= (BotsnBoltsGame.GAME_H - (16 + OFF_WALL))) {
                 shatter();
             }
         }
@@ -511,9 +512,15 @@ public abstract class Boss extends Enemy {
         }
         
         protected void onShatter() {
-            newHailChunk(-1, 0);
-            newHailChunk(0, 1);
-            newHailChunk(1, 0);
+            for (int i = 1; i < 3; i++) {
+                newHailChunk(-i, i);
+                newHailChunk(i, i);
+            }
+            //newHailChunk(-2, 2);
+            //newHailChunk(-1, 1);
+            newHailChunk(0, 0);
+            //newHailChunk(1, 1);
+            //newHailChunk(2, 2);
         }
         
         protected final EnemyProjectile newHailChunk(final float vx, final float vy) {
