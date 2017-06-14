@@ -497,13 +497,21 @@ public abstract class Boss extends Enemy {
             changeView(getCurrentImage());
             final Panple pos = getPosition();
             final float x = pos.getX();
-            if (x < OFF_WALL) {
+            if (isLeft(x)) {
                 shatter();
-            } else if (x >= (BotsnBoltsGame.GAME_W - OFF_WALL)) {
+            } else if (isRight(x)) {
                 shatter();
             } else if (pos.getY() >= (BotsnBoltsGame.GAME_H - (16 + OFF_WALL))) {
                 shatter();
             }
+        }
+        
+        private final boolean isLeft(final float x) {
+            return x < OFF_WALL;
+        }
+        
+        private final boolean isRight(final float x) {
+            return x >= (BotsnBoltsGame.GAME_W - OFF_WALL);
         }
         
         protected final void shatter() {
@@ -512,15 +520,17 @@ public abstract class Boss extends Enemy {
         }
         
         protected void onShatter() {
+            final float x = getPosition().getX();
+            final boolean leftNeeded = !isLeft(x), rightNeeded = !isRight(x);
             for (int i = 1; i < 3; i++) {
-                newHailChunk(-i, i);
-                newHailChunk(i, i);
+                if (leftNeeded) {
+                    newHailChunk(-i, i);
+                }
+                if (rightNeeded) {
+                    newHailChunk(i, i);
+                }
             }
-            //newHailChunk(-2, 2);
-            //newHailChunk(-1, 1);
             newHailChunk(0, 0);
-            //newHailChunk(1, 1);
-            //newHailChunk(2, 2);
         }
         
         protected final EnemyProjectile newHailChunk(final float vx, final float vy) {
