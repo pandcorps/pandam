@@ -414,8 +414,10 @@ public abstract class Boss extends Enemy {
                 startShoot();
             } else if (r < 50) {
                 startShootDiag();
-            } else {
+            } else if (r < 75) {
                 startJump();
+            } else {
+                startSlide();
             }
             return false;
         }
