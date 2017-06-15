@@ -378,7 +378,7 @@ public abstract class Boss extends Enemy {
         protected final static byte STATE_JUMP = 3;
         protected final static byte STATE_SLIDE = 4;
         protected final static int WAIT_SHOOT = 30;
-        protected final static int WAIT_SLIDE = 32;
+        protected final static int WAIT_SLIDE = 20;
         protected static Panmage still = null;
         protected static Panmage aim = null;
         protected static Panmage aimDiag = null;
@@ -394,7 +394,7 @@ public abstract class Boss extends Enemy {
         @Override
         protected final boolean onWaiting() {
             if (state == STATE_SLIDE) {
-                new TimedDecoration(this, null, WAIT_SLIDE, 0, 0, BotsnBoltsGame.DEPTH_CARRIER);
+                new TimedDecoration(this, getTrail(), WAIT_SLIDE, -14, -1, BotsnBoltsGame.DEPTH_CARRIER);
                 getPosition().add(4 * getMirrorMultiplier(), 4);
                 return true;
             } else if (waitTimer == (WAIT_SHOOT - 1)) {
@@ -424,7 +424,11 @@ public abstract class Boss extends Enemy {
         
         @Override
         protected final boolean continueState() {
-            startStill();
+            if (state == STATE_SLIDE) {
+                startSlideJump();
+            } else {
+                startStill();
+            }
             return false;
         }
         
@@ -442,6 +446,10 @@ public abstract class Boss extends Enemy {
         
         protected final void startSlide() {
             startState(STATE_SLIDE, WAIT_SLIDE, getSlide1());
+        }
+        
+        protected final void startSlideJump() {
+            startJump(STATE_JUMP, getJump(), 9, 4 * getMirrorMultiplier());
         }
         
         @Override
