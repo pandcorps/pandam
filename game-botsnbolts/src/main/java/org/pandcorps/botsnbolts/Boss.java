@@ -37,6 +37,7 @@ public abstract class Boss extends Enemy {
     protected int waitTimer = 0;
     protected byte state = 0;
     protected Queue<Jump> pendingJumps = null;
+    private boolean jumping = false;
     
     protected Boss(int offX, int h, int x, int y) {
         super(offX, h, x, y, HudMeter.MAX_VALUE);
@@ -119,6 +120,7 @@ public abstract class Boss extends Enemy {
         startStateIndefinite(state, img);
         this.v = v;
         this.hv = hv;
+        jumping = true;
     }
     
     protected final void addPendingJump(final Jump jump) {
@@ -134,6 +136,17 @@ public abstract class Boss extends Enemy {
     
     protected final boolean hasPendingJumps() {
         return Coltil.isValued(pendingJumps);
+    }
+    
+    @Override
+    protected final void onGrounded() {
+        if (jumping) {
+            hv = 0;
+            if (!hasPendingJumps()) {
+                turnTowardPlayer(); // Don't do in onLanded; hv still needed at that point, which overrides this
+            }
+            jumping = false;
+        }
     }
     
     protected final int getDirection() {
@@ -238,14 +251,6 @@ public abstract class Boss extends Enemy {
                     throw new IllegalStateException("Unexpected state " + state);
             }
             return false;
-        }
-        
-        @Override
-        protected final void onGrounded() {
-            hv = 0;
-            if (!hasPendingJumps()) {
-                turnTowardPlayer(); // Don't do in onLanded; hv still needed at that point, which overrides this
-            }
         }
         
         protected final void startLift() {
@@ -395,7 +400,8 @@ public abstract class Boss extends Enemy {
         protected final boolean onWaiting() {
             if (state == STATE_SLIDE) {
                 new TimedDecoration(this, getTrail(), WAIT_SLIDE, -14, -1, BotsnBoltsGame.DEPTH_CARRIER);
-                getPosition().add(4 * getMirrorMultiplier(), 4);
+                addX(4 * getMirrorMultiplier());
+                addY(4);
                 return true;
             } else if (waitTimer == (WAIT_SHOOT - 1)) {
                 if (state == STATE_SHOOT) {
