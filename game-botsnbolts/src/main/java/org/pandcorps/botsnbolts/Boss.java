@@ -402,6 +402,13 @@ public abstract class Boss extends Enemy {
                 new TimedDecoration(this, getTrail(), WAIT_SLIDE, -14, -1, BotsnBoltsGame.DEPTH_CARRIER);
                 addX(4 * getMirrorMultiplier());
                 addY(4);
+                final Panmage img;
+                if ((WAIT_SLIDE - waitTimer) % 8 < 4) {
+                    img = getSlide1();
+                } else {
+                    img = getSlide2();
+                }
+                changeView(img);
                 return true;
             } else if (waitTimer == (WAIT_SHOOT - 1)) {
                 if (state == STATE_SHOOT) {
