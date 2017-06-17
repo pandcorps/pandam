@@ -410,14 +410,26 @@ public abstract class Boss extends Enemy {
                 }
                 changeView(img);
                 return true;
+            } else if (state == STATE_JUMP) {
+                if ((v >= 0) && (v < -g)) {
+                    shootJump();
+                }
             } else if (waitTimer == (WAIT_SHOOT - 1)) {
                 if (state == STATE_SHOOT) {
                     new HailCluster(this, 21, 13, VEL_PROJECTILE, 0);
                 } else if (state == STATE_SHOOT_DIAG) {
-                    new HailCluster(this, 15, 24, VEL_PROJECTILE_45, VEL_PROJECTILE_45);
+                    shootDiag(15, 24);
                 }
             }
             return false;
+        }
+        
+        private final void shootDiag(final int ox, final int oy) {
+            new HailCluster(this, ox, oy, VEL_PROJECTILE_45, VEL_PROJECTILE_45);
+        }
+        
+        private final void shootJump() {
+            shootDiag(17, 28);
         }
         
         @Override
