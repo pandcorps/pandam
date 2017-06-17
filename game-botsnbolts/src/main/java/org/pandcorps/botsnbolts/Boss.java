@@ -382,6 +382,7 @@ public abstract class Boss extends Enemy {
         protected final static byte STATE_SHOOT_DIAG = 2;
         protected final static byte STATE_JUMP = 3;
         protected final static byte STATE_SLIDE = 4;
+        protected final static byte STATE_SLIDE_JUMP = 5;
         protected final static int WAIT_SHOOT = 30;
         protected final static int WAIT_SLIDE = 20;
         protected static Panmage still = null;
@@ -412,6 +413,10 @@ public abstract class Boss extends Enemy {
                 return true;
             } else if (state == STATE_JUMP) {
                 if ((v >= 0) && (v < -g)) {
+                    shootJump();
+                }
+            } else if (state == STATE_SLIDE_JUMP) {
+                if ((v > 7.6) && (v < 7.8)) {
                     shootJump();
                 }
             } else if (waitTimer == (WAIT_SHOOT - 1)) {
@@ -474,7 +479,7 @@ public abstract class Boss extends Enemy {
         }
         
         protected final void startSlideJump() {
-            startJump(STATE_JUMP, getJump(), 9, 4 * getMirrorMultiplier());
+            startJump(STATE_SLIDE_JUMP, getJump(), 9, 4 * getMirrorMultiplier());
         }
         
         @Override
