@@ -404,7 +404,7 @@ public abstract class Boss extends Enemy {
                 addX(4 * getMirrorMultiplier());
                 addY(4);
                 final Panmage img;
-                if ((WAIT_SLIDE - waitTimer) % 8 < 4) {
+                if (((WAIT_SLIDE - waitTimer) % 8) < 4) {
                     img = getSlide1();
                 } else {
                     img = getSlide2();
@@ -418,6 +418,11 @@ public abstract class Boss extends Enemy {
             } else if (state == STATE_SLIDE_JUMP) {
                 if ((v > 7.6) && (v < 7.8)) {
                     shootJump();
+                } else if (v < 0) {
+                    final float y = getPosition().getY();
+                    if ((y > 57) && (y < 59)) {
+                        shootJump();
+                    }
                 }
             } else if (waitTimer == (WAIT_SHOOT - 1)) {
                 if (state == STATE_SHOOT) {
