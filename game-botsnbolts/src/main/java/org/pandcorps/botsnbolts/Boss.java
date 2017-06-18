@@ -389,6 +389,7 @@ public abstract class Boss extends Enemy {
         protected static Panmage aim = null;
         protected static Panmage aimDiag = null;
         protected static Panmage jump = null;
+        protected static Panmage fall = null;
         protected static Panmage slide1 = null;
         protected static Panmage slide2 = null;
         protected static Panmage trail = null;
@@ -412,10 +413,12 @@ public abstract class Boss extends Enemy {
                 changeView(img);
                 return true;
             } else if (state == STATE_JUMP) {
+                setJumpImage();
                 if ((v >= 0) && (v < -g)) {
                     shootJump();
                 }
             } else if (state == STATE_SLIDE_JUMP) {
+                setJumpImage();
                 if ((v > 7.6) && (v < 7.8)) {
                     shootJump();
                 } else if (v < 0) {
@@ -432,6 +435,12 @@ public abstract class Boss extends Enemy {
                 }
             }
             return false;
+        }
+        
+        private final void setJumpImage() {
+            if (v < 0) {
+                changeView(getFall());
+            }
         }
         
         private final void shootDiag(final int ox, final int oy) {
@@ -502,6 +511,10 @@ public abstract class Boss extends Enemy {
         
         protected final static Panmage getJump() {
             return (jump = getHailImage(jump, "hailbot/HailBotJump"));
+        }
+        
+        protected final static Panmage getFall() {
+            return (fall = getHailImage(fall, "hailbot/HailBotFall"));
         }
         
         protected final static Panmage getSlide1() {
