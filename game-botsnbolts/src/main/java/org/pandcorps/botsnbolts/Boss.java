@@ -620,6 +620,27 @@ public abstract class Boss extends Enemy {
         }
     }
     
+    protected final static class RockslideBot extends Boss {
+        protected RockslideBot(final int x, final int y) {
+            super(0, 0, x, y);
+        }
+
+        @Override
+        protected final boolean pickState() {
+            return false;
+        }
+
+        @Override
+        protected final boolean continueState() {
+            return false;
+        }
+
+        @Override
+        protected final Panmage getStill() {
+            return null;
+        }
+    }
+    
     protected final static class TimedDecoration extends Panctor implements StepListener {
         private int timer;
         
