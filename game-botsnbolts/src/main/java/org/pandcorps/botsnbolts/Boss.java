@@ -620,6 +620,11 @@ public abstract class Boss extends Enemy {
         }
     }
     
+    protected final static int ROCKSLIDE_OFF_X = 20, ROCKSLIDE_H = 40; //TODO
+    protected final static Panple ROCKSLIDE_O = new FinPanple2(26, 1);
+    protected final static Panple ROCKSLIDE_MIN = getMin(ROCKSLIDE_OFF_X);
+    protected final static Panple ROCKSLIDE_MAX = getMax(ROCKSLIDE_OFF_X, ROCKSLIDE_H);
+    
     protected final static class RockslideBot extends Boss {
         protected RockslideBot(final int x, final int y) {
             super(0, 0, x, y);
