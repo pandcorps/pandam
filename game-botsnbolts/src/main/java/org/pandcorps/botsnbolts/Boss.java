@@ -627,7 +627,7 @@ public abstract class Boss extends Enemy {
     
     protected final static class RockslideBot extends Boss {
         protected RockslideBot(final int x, final int y) {
-            super(0, 0, x, y);
+            super(ROCKSLIDE_OFF_X, ROCKSLIDE_H, x, y);
         }
 
         @Override
