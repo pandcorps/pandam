@@ -644,6 +644,10 @@ public abstract class Boss extends Enemy {
         protected final Panmage getStill() {
             return null;
         }
+        
+        protected final static Panmage getRockslideImage(final Panmage img, final String name) {
+            return getImage(img, name, ROCKSLIDE_O, ROCKSLIDE_MIN, ROCKSLIDE_MAX);
+        }
     }
     
     protected final static class TimedDecoration extends Panctor implements StepListener {
