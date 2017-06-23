@@ -936,28 +936,9 @@ public class Player extends Character implements CollisionListener {
 					backPos.setZ(depthBack);
 				}
 			} else if (belowLeft == FurGuardiansGame.TILE_ICE || belowRight == FurGuardiansGame.TILE_ICE) {
-				final float dif = hv - chv;
-				if (dif > 0) {
-					chv += 0.125f;
-				} else if (dif < 0) {
-					chv -= 0.125f;
-				}
-				thv = Math.round(chv);
+			    thv = initCurrentHorizontalVelocityIce();
 			} else if (hv != 0 && isGrounded()) {
-				if (hv > 0) {
-					if (chv <= 0) {
-						chv = 1;
-					} else {
-						chv = (chv < hv) ? (chv + 1) : hv;
-					}
-				} else {
-					if (chv >= 0) {
-						chv = -1;
-					} else {
-						chv = (chv > hv) ? (chv - 1) : hv;
-					}
-				}
-				thv = Math.round(chv);
+			    thv = initCurrentHorizontalVelocityAccelerating();
 			} else {
 				chv = hv;
 				thv = hv;
