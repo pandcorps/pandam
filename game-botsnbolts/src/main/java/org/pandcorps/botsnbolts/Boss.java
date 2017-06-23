@@ -626,6 +626,8 @@ public abstract class Boss extends Enemy {
     protected final static Panple ROCKSLIDE_MAX = getMax(ROCKSLIDE_OFF_X, ROCKSLIDE_H);
     
     protected final static class RockslideBot extends Boss {
+        protected static Panmage still = null;
+        
         protected RockslideBot(final int x, final int y) {
             super(ROCKSLIDE_OFF_X, ROCKSLIDE_H, x, y);
         }
@@ -642,7 +644,7 @@ public abstract class Boss extends Enemy {
 
         @Override
         protected final Panmage getStill() {
-            return null;
+            return (still = getRockslideImage(still, "rockslidebot/RockslideBot"));
         }
         
         protected final static Panmage getRockslideImage(final Panmage img, final String name) {
