@@ -58,6 +58,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected final static byte TILE_LADDER = 2; // Works like non-solid when not climbing
     protected final static byte TILE_LADDER_TOP = 3; // Works like floor when not climbing
     protected final static byte TILE_FLOOR = 4; // Used for blocks that fade in/out
+    protected final static byte TILE_ICE = 5;
     
     protected final static int DEPTH_BG = 0;
     protected final static int DEPTH_FG = 2;
@@ -175,6 +176,7 @@ public final class BotsnBoltsGame extends BaseGame {
     }
     
     private final static void initTileBehaviors() {
+        Chr.TILE_ICE = TILE_ICE;
     }
     
     private final static void loadResources() {

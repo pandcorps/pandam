@@ -562,6 +562,30 @@ public final class Player extends Chr {
     }
     
     @Override
+    protected final int initCurrentHorizontalVelocity() {
+        final int thv;
+        if (v == 0) {
+            final Panple pos = getPosition();
+            final float px = pos.getX(), py1 = pos.getY() + OFF_GROUNDED;
+            final float pl = px + getOffLeft(), pr = px + getOffRight();
+            final byte belowLeft = Tile.getBehavior(BotsnBoltsGame.tm.getTile(BotsnBoltsGame.tm.getContainer(pl, py1)));
+            final byte belowRight = Tile.getBehavior(BotsnBoltsGame.tm.getTile(BotsnBoltsGame.tm.getContainer(pr, py1)));
+            if (belowLeft == TILE_ICE || belowRight == TILE_ICE) {
+                thv = initCurrentHorizontalVelocityIce();
+            } else if (hv != 0 && isGrounded()) {
+                thv = initCurrentHorizontalVelocityAccelerating();
+            } else {
+                chv = hv;
+                thv = hv;
+            }
+        } else {
+            chv = hv;
+            thv = hv;
+        }
+        return thv;
+    }
+    
+    @Override
     protected final void onStepEnd() {
         hv = 0;
     }
