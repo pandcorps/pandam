@@ -251,7 +251,15 @@ public abstract class RoomLoader {
     }
     
     private final static void enm(final int x, final int y, final String enemyType) throws Exception {
-        enemies.add(getEnemyConstructor(enemyType).newInstance(Integer.valueOf(x), Integer.valueOf(y)));
+        enemies.add(newEnemy(getEnemyConstructor(enemyType), x, y));
+    }
+    
+    protected final static Enemy newEnemy(final Constructor<? extends Enemy> constructor, final int x, final int y) {
+        try {
+            return constructor.newInstance(Integer.valueOf(x), Integer.valueOf(y));
+        } catch (final Exception e) {
+            throw Pantil.toRuntimeException(e);
+        }
     }
     
     private final static Map<String, Constructor<? extends Enemy>> enemyTypes = new HashMap<String, Constructor<? extends Enemy>>();
