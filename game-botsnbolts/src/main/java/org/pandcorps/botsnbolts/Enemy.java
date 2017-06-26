@@ -1005,6 +1005,17 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
     }
     
+    protected final static class BoulderEnemy extends Enemy {
+        protected BoulderEnemy(int x, int y) {
+            super(PROP_OFF_X, PROP_H, x, y, 1);
+            setView(BotsnBoltsGame.fireballEnemy[3]);
+        }
+
+        @Override
+        protected final void award(final PowerUp powerUp) {
+        }
+    }
+    
     protected final static int HENCHBOT_OFF_X = 6, HENCHBOT_H = 21, HENCHBOT_HEALTH = 5;
     
     protected abstract static class HenchbotEnemy extends JumpEnemy {
