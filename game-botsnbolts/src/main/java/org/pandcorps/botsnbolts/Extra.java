@@ -24,6 +24,8 @@ package org.pandcorps.botsnbolts;
 
 import java.lang.reflect.*;
 
+import org.pandcorps.botsnbolts.Enemy.*;
+import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
 
 // Actors designed to be placed in levels; could be spawners, controllers, or just decorations
@@ -34,7 +36,7 @@ public abstract class Extra extends Panctor {
         pos.setZ(z);
     }
     
-    protected abstract class EnemySpawner extends Extra {
+    protected abstract static class EnemySpawner extends Extra {
         private final Constructor<? extends Enemy> constructor;
         private final int x;
         private final int y;
@@ -48,6 +50,29 @@ public abstract class Extra extends Panctor {
         
         protected final Enemy newEnemy() {
             return RoomLoader.newEnemy(constructor, x, y);
+        }
+    }
+    
+    protected final static class BoulderSpawner extends EnemySpawner {
+        private static Constructor<BoulderEnemy> constructor = null;
+        
+        protected BoulderSpawner(final int x, final int y) {
+            super(getBoulderConstructor(), x, y);
+        }
+        
+        private final static Constructor<BoulderEnemy> getBoulderConstructor() {
+            return (constructor = getEnemyConstructor(constructor, BoulderEnemy.class));
+        }
+    }
+    
+    protected static <T extends Enemy> Constructor<T> getEnemyConstructor(final Constructor<T> constructor, final Class<T> c) {
+        if (constructor != null) {
+            return constructor;
+        }
+        try {
+            return c.getDeclaredConstructor(Integer.TYPE, Integer.TYPE);
+        } catch (final Exception e) {
+            throw Pantil.toRuntimeException(e);
         }
     }
 }
