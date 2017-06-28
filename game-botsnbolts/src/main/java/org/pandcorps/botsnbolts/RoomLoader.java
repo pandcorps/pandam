@@ -117,6 +117,8 @@ public abstract class RoomLoader {
                 til(seg);
             } else if ("BOX".equals(name)) { // Power-up Box
                 box(seg.intValue(0), seg.intValue(1));
+            } else if ("EXT".equals(name)) { // Extra Actor
+                ext(seg.intValue(0), seg.intValue(1), seg.getValue(2));
             } else if ("ENM".equals(name)) { // Enemy
                 enm(seg.intValue(0), seg.intValue(1), seg.getValue(2));
             } else if ("BOS".equals(name)) { // Boss
@@ -248,6 +250,9 @@ public abstract class RoomLoader {
     
     private final static void box(final int x, final int y) {
         enemies.add(new PowerBox(x, y));
+    }
+    
+    private final static void ext(final int x, final int y, final String enemyType) throws Exception {
     }
     
     private final static void enm(final int x, final int y, final String enemyType) throws Exception {
