@@ -39,7 +39,7 @@ import org.pandcorps.pandax.tile.Tile.*;
 public abstract class RoomLoader {
     private final static int OFF_ALT = 256;
     private final static Map<BotCell, BotRoom> rooms = new HashMap<BotCell, BotRoom>();
-    private final static List<Enemy> enemies = new ArrayList<Enemy>();
+    private final static List<Panctor> actors = new ArrayList<Panctor>();
     private final static List<ShootableDoor> doors = new ArrayList<ShootableDoor>();
     private final static List<TileAnimator> animators = new ArrayList<TileAnimator>();
     private final static Map<Character, Tile> tiles = new HashMap<Character, Tile>();
@@ -249,17 +249,18 @@ public abstract class RoomLoader {
     }
     
     private final static void box(final int x, final int y) {
-        enemies.add(new PowerBox(x, y));
+        actors.add(new PowerBox(x, y));
     }
     
-    private final static void ext(final int x, final int y, final String enemyType) throws Exception {
+    private final static void ext(final int x, final int y, final String extraType) throws Exception {
+        actors.add(newActor(getActorConstructor(Extra.class.getDeclaredClasses(), extraType), x, y));
     }
     
     private final static void enm(final int x, final int y, final String enemyType) throws Exception {
-        enemies.add(newEnemy(getEnemyConstructor(enemyType), x, y));
+        actors.add(newActor(getEnemyConstructor(enemyType), x, y));
     }
     
-    protected final static Enemy newEnemy(final Constructor<? extends Enemy> constructor, final int x, final int y) {
+    protected final static <T extends Panctor> T newActor(final Constructor<T> constructor, final int x, final int y) {
         try {
             return constructor.newInstance(Integer.valueOf(x), Integer.valueOf(y));
         } catch (final Exception e) {
@@ -296,7 +297,7 @@ public abstract class RoomLoader {
     }
     
     private final static void bos(final int x, final int y, final String enemyType) throws Exception {
-        enemies.add(getBossConstructor(enemyType).newInstance(Integer.valueOf(x), Integer.valueOf(y)));
+        actors.add(getBossConstructor(enemyType).newInstance(Integer.valueOf(x), Integer.valueOf(y)));
     }
     
     private final static Constructor<? extends Enemy> getBossConstructor(final String enemyType) throws Exception {
@@ -470,8 +471,8 @@ public abstract class RoomLoader {
     
     protected final static void onChangeFinished() {
         final Panlayer layer = BotsnBoltsGame.tm.getLayer();
-        for (final Enemy enemy : enemies) {
-            layer.addActor(enemy);
+        for (final Panctor actor : actors) {
+            layer.addActor(actor);
         }
         for (final ShootableDoor door : doors) {
             door.closeDoor();
@@ -486,7 +487,7 @@ public abstract class RoomLoader {
     }
     
     private final static void clearChangeFinished() {
-        enemies.clear();
+        actors.clear();
         doors.clear();
     }
     

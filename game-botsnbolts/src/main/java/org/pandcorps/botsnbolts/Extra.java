@@ -49,7 +49,9 @@ public abstract class Extra extends Panctor {
         }
         
         protected final Enemy newEnemy() {
-            return RoomLoader.newEnemy(constructor, x, y);
+            final Enemy enemy = RoomLoader.newActor(constructor, x, y);
+            BotsnBoltsGame.tm.getLayer().addActor(enemy);
+            return enemy;
         }
     }
     
