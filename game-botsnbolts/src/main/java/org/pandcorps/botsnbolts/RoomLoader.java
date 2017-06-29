@@ -267,7 +267,7 @@ public abstract class RoomLoader {
         }
     }
     
-    private final static Map<String, Constructor<? extends Enemy>> enemyTypes = new HashMap<String, Constructor<? extends Enemy>>();
+    private final static Map<String, Constructor<? extends Panctor>> actorTypes = new HashMap<String, Constructor<? extends Panctor>>();
     
     private final static Constructor<? extends Enemy> getEnemyConstructor(final String enemyType) throws Exception {
         return getEnemyConstructor(Enemy.class.getDeclaredClasses(), enemyType);
@@ -275,19 +275,24 @@ public abstract class RoomLoader {
     
     @SuppressWarnings("unchecked")
     private final static Constructor<? extends Enemy> getEnemyConstructor(final Class<?>[] classes, final String enemyType) throws Exception {
-        Constructor<? extends Enemy> constructor = enemyTypes.get(enemyType);
+        return (Constructor<? extends Enemy>) getActorConstructor(classes, enemyType);
+    }
+    
+    @SuppressWarnings("unchecked")
+    private final static Constructor<? extends Panctor> getActorConstructor(final Class<?>[] classes, final String actorType) throws Exception {
+        Constructor<? extends Panctor> constructor = actorTypes.get(actorType);
         if (constructor != null) {
             return constructor;
         }
         for (final Class<?> c : classes) {
             final String name = c.getName();
-            if (name.endsWith(enemyType) && name.charAt(name.length() - enemyType.length() - 1) == '$') {
-                constructor = (Constructor<? extends Enemy>) c.getDeclaredConstructor(Integer.TYPE, Integer.TYPE);
-                enemyTypes.put(enemyType, constructor);
+            if (name.endsWith(actorType) && name.charAt(name.length() - actorType.length() - 1) == '$') {
+                constructor = (Constructor<? extends Panctor>) c.getDeclaredConstructor(Integer.TYPE, Integer.TYPE);
+                actorTypes.put(actorType, constructor);
                 return constructor;
             }
         }
-        throw new IllegalArgumentException("Unrecognized enemyType " + enemyType);
+        throw new IllegalArgumentException("Unrecognized actorType " + actorType);
     }
     
     private final static void bos(final int x, final int y, final String enemyType) throws Exception {
