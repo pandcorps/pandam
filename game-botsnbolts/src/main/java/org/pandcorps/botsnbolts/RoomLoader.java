@@ -43,6 +43,7 @@ public abstract class RoomLoader {
     private final static List<ShootableDoor> doors = new ArrayList<ShootableDoor>();
     private final static List<TileAnimator> animators = new ArrayList<TileAnimator>();
     private final static Map<Character, Tile> tiles = new HashMap<Character, Tile>();
+    private final static Map<Character, Tile[][]> patterns = new HashMap<Character, Tile[][]>();
     private static Character alt = null;
     protected static BossDoor bossDoor = null;
     protected static int startX = 0;
@@ -105,6 +106,8 @@ public abstract class RoomLoader {
                 put(seg);
             } else if ("PLT".equals(name)) { // Put Alternate
                 plt(seg);
+            } else if ("PAT".equals(name)) { // Put Pattern
+                pat(seg);
             } else if ("M".equals(name)) { // Map
                 m(seg);
             } else if ("RCT".equals(name)) { // Rectangle
@@ -198,6 +201,21 @@ public abstract class RoomLoader {
         tiles.put(Character.valueOf((char) (seg.charValue(0) + OFF_ALT)), getTile(seg, 1));
     }
     
+    private final static void pat(final Segment seg) {
+        final Character key = seg.toCharacter(0);
+        final int w = seg.intValue(1), h = seg.intValue(2);
+        final Tile[][] pattern = new Tile[h][w];
+        int tileOffset = 3;
+        for (int j = 0; j < h; j++) {
+            final Tile[] row = pattern[j];
+            for (int i = 0; i < w; i++) {
+                row[i] = getTile(seg, tileOffset);
+                tileOffset += 3;
+            }
+        }
+        patterns.put(key, pattern);
+    }
+    
     private final static void m(final Segment seg) {
         final TileMap tm = BotsnBoltsGame.tm;
         final String value = seg.getValue(0);
@@ -212,7 +230,24 @@ public abstract class RoomLoader {
             } else {
                 key = c;
             }
-            tm.setTile(x, row, tiles.get(Character.valueOf(key)));
+            final Character keyW = Character.valueOf(key);
+            final Tile tile = tiles.get(keyW);
+            if (tile == null) {
+                final Tile[][] pattern = patterns.get(keyW);
+                if (pattern != null) {
+                    int patRow = row;
+                    for (final Tile[] tileRow : pattern) {
+                        int patX = x;
+                        for (final Tile patTile : tileRow) {
+                            tm.setTile(patX, patRow, patTile);
+                            patX++;
+                        }
+                        patRow--;
+                    }
+                }
+            } else {
+                tm.setTile(x, row, tile);
+            }
             x++;
         }
         row--;
@@ -495,6 +530,7 @@ public abstract class RoomLoader {
         clearChangeFinished();
         animators.clear();
         tiles.clear();
+        patterns.clear();
         alt = null;
         bossDoor = null;
     }
