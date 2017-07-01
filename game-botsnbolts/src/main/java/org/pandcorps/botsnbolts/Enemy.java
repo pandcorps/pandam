@@ -1006,13 +1006,23 @@ public abstract class Enemy extends Chr implements CollisionListener {
     }
     
     protected final static class BoulderEnemy extends Enemy {
+        private static Panmage img = null;
+        
         protected BoulderEnemy(int x, int y) {
             super(PROP_OFF_X, PROP_H, x, y, 1);
-            setView(BotsnBoltsGame.fireballEnemy[3]);
+            setView(getImage());
         }
 
         @Override
         protected final void award(final PowerUp powerUp) {
+        }
+        
+        private final static Panmage getImage() {
+            if (img != null) {
+                return img;
+            }
+            final Panmage ref = BotsnBoltsGame.fireballEnemy[0];
+            return (img = getImage(img, "BoulderEnemy", ref.getOrigin(), ref.getBoundingMinimum(), ref.getBoundingMaximum()));
         }
     }
     
