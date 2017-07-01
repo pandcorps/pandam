@@ -386,6 +386,10 @@ public abstract class BlockPuzzle {
         }
     }
     
+    // Shooting the BurstBlock will start a chain reaction, bursting adjacent blocks in the puzzle
+    protected final static class BurstBlockPuzzle {
+    }
+    
     /*
     Will react when Player stands on it.
     Might shoot flames.
