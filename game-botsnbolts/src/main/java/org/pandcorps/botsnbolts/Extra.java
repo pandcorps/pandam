@@ -27,6 +27,7 @@ import java.lang.reflect.*;
 import org.pandcorps.botsnbolts.Enemy.*;
 import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.event.*;
 
 // Actors designed to be placed in levels; could be spawners, controllers, or just decorations
 public abstract class Extra extends Panctor {
@@ -36,21 +37,40 @@ public abstract class Extra extends Panctor {
         pos.setZ(z);
     }
     
-    protected abstract static class EnemySpawner extends Extra {
+    protected abstract static class EnemySpawner extends Extra implements StepListener {
         private final Constructor<? extends Enemy> constructor;
         private final int x;
         private final int y;
+        private int waitTimer;
         
         protected EnemySpawner(final Constructor<? extends Enemy> constructor, final int x, final int y) {
             super(x, y, BotsnBoltsGame.DEPTH_BG);
             this.constructor = constructor;
             this.x = x;
             this.y = y;
+            initTimer();
+        }
+        
+        protected void initTimer() {
+            waitTimer = 90;
+        }
+        
+        @Override
+        public final void onStep(final StepEvent event) {
+            waitTimer--;
+            if (waitTimer <= 0) {
+                newEnemy();
+                initTimer();
+            }
         }
         
         protected final Enemy newEnemy() {
+            final Panlayer layer = getLayer();
+            if (layer == null) {
+                return null;
+            }
             final Enemy enemy = RoomLoader.newActor(constructor, x, y);
-            BotsnBoltsGame.tm.getLayer().addActor(enemy);
+            layer.addActor(enemy);
             return enemy;
         }
     }
