@@ -63,16 +63,18 @@ public final class BotsnBoltsGame extends BaseGame {
     protected final static byte TILE_DOWNSLOPE = 6;
     protected final static byte TILE_ICE = 7;
     
-    protected final static int DEPTH_BG = 0;
-    protected final static int DEPTH_FG = 2;
-    protected final static int DEPTH_CARRIER = 4;
-    protected final static int DEPTH_POWER_UP = 6;
-    protected final static int DEPTH_PLAYER = 8;
-    protected final static int DEPTH_ENEMY = 10;
-    protected final static int DEPTH_PROJECTILE = 12;
-    protected final static int DEPTH_OVERLAY = 14;
-    protected final static int DEPTH_BURST = 16;
-    protected final static int DEPTH_HUD = 18;
+    protected final static int DEPTH_PARALLAX_BG = 0;
+    protected final static int DEPTH_PARALLAX_FG = 2;
+    protected final static int DEPTH_BG = 4;
+    protected final static int DEPTH_FG = 6;
+    protected final static int DEPTH_CARRIER = 8;
+    protected final static int DEPTH_POWER_UP = 10;
+    protected final static int DEPTH_PLAYER = 12;
+    protected final static int DEPTH_ENEMY = 14;
+    protected final static int DEPTH_PROJECTILE = 16;
+    protected final static int DEPTH_OVERLAY = 18;
+    protected final static int DEPTH_BURST = 20;
+    protected final static int DEPTH_HUD = 22;
     
     protected final static FinPanple2 MIN_16 = new FinPanple2(-6, -6);
     protected final static FinPanple2 MAX_16 = new FinPanple2(6, 6);
@@ -832,8 +834,11 @@ public final class BotsnBoltsGame extends BaseGame {
                 Panctor.destroy(bgTm);
                 bgTm = new TileMap(Pantil.vmid(), GAME_COLUMNS, GAME_ROWS, DIM, DIM);
                 bgTm.setImageMap(timg);
+                bgTm.getPosition().setZ(DEPTH_PARALLAX_BG);
+                bgTm.setForegroundDepth(DEPTH_PARALLAX_FG);
                 bgLayer.addActor(bgTm);
                 RoomLoader.loadBg(bgFileId);
+                room.setClearDepthEnabled(false);
             }
         }
         
