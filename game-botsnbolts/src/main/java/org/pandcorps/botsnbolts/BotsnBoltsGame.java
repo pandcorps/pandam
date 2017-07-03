@@ -827,6 +827,7 @@ public final class BotsnBoltsGame extends BaseGame {
                 final Panroom room = RoomLoader.nextRoom;
                 if (bgLayer == null) {
                     bgLayer = engine.createLayer("layer.bg", GAME_W, GAME_H, room.getSize().getZ(), room);
+                    bgLayer.setConstant(true);
                 }
                 if (bgLayer.getAbove() == null) {
                     room.addBeneath(bgLayer);
