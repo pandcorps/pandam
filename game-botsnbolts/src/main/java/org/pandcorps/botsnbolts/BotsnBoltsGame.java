@@ -50,10 +50,11 @@ public final class BotsnBoltsGame extends BaseGame {
     
     protected final static String RES = "org/pandcorps/botsnbolts/";
     
+    protected final static int DIM = 16;
     protected final static int GAME_COLUMNS = 24;
     protected final static int GAME_ROWS = 14;
-    protected final static int GAME_W = GAME_COLUMNS * 16; // 384
-    protected final static int GAME_H = GAME_ROWS * 16; // 224;
+    protected final static int GAME_W = GAME_COLUMNS * DIM; // 384
+    protected final static int GAME_H = GAME_ROWS * DIM; // 224;
     
     protected final static byte TILE_LADDER = 2; // Works like non-solid when not climbing
     protected final static byte TILE_LADDER_TOP = 3; // Works like floor when not climbing
@@ -145,6 +146,8 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static Panmage timg = null;
     protected static Panmage timgPrev = null;
     protected static TileMapImage[][] imgMap = null;
+    protected static Panlayer bgLayer = null;
+    protected static TileMap bgTm = null;
 
     @Override
     protected final boolean isFullScreen() {
@@ -804,25 +807,40 @@ public final class BotsnBoltsGame extends BaseGame {
             room.addActor(tm);
         }
         
-        protected final static void loadTileImage(final String imgName) {
+        protected final static void loadTileImage(final String imgName, final String bgFileId) {
             if (imgName.equals(timgName)) {
                 tm.setImageMap(timg);
                 return;
             }
             timgPrev = timg;
             timgName = imgName;
-            timg = Pangine.getEngine().createImage("bg", RES + "bg/" + imgName + ".png");
+            final Pangine engine = Pangine.getEngine();
+            timg = engine.createImage("bg", RES + "bg/" + imgName + ".png");
             if (imgMap == null) {
                 imgMap = tm.splitImageMap(timg);
             } else {
                 tm.setImageMap(timg);
+            }
+            if (Chartil.isValued(bgFileId)) {
+                final Panroom room = RoomLoader.nextRoom;
+                if (bgLayer == null) {
+                    bgLayer = engine.createLayer("layer.bg", GAME_W, GAME_H, room.getSize().getZ(), room);
+                }
+                if (bgLayer.getAbove() == null) {
+                    room.addBeneath(bgLayer);
+                }
+                Panctor.destroy(bgTm);
+                bgTm = new TileMap(Pantil.vmid(), GAME_COLUMNS, GAME_ROWS, DIM, DIM);
+                bgTm.setImageMap(timg);
+                bgLayer.addActor(bgTm);
+                RoomLoader.loadBg(bgFileId);
             }
         }
         
         protected final static void fillRoom(final Panroom room) {
             final Pangine engine = Pangine.getEngine();
             engine.setBgColor(new FinPancolor((short) 232, (short) 232, (short) 232));
-            loadTileImage("Bg");
+            loadTileImage("Bg", null);
             final int end = tm.getWidth() - 1;
             for (int i = end; i >= 0; i--) {
                 tm.setBackground(i, 0, imgMap[0][1], Tile.BEHAVIOR_SOLID);

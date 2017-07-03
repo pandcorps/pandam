@@ -45,6 +45,7 @@ public abstract class RoomLoader {
     private final static Map<Character, Tile> tiles = new HashMap<Character, Tile>();
     private final static Map<Character, Tile[][]> patterns = new HashMap<Character, Tile[][]>();
     private static Character alt = null;
+    protected static Panroom nextRoom = null;
     protected static BossDoor bossDoor = null;
     protected static int startX = 0;
     protected static int startY = 0;
@@ -67,19 +68,29 @@ public abstract class RoomLoader {
     protected final static class ScriptRoomLoader extends RoomLoader {
         @Override
         protected final Panroom newRoom() {
-            final Panroom room = BotsnBoltsGame.BotsnBoltsScreen.newRoom(RoomLoader.room.w * BotsnBoltsGame.GAME_W);
-            row = BotsnBoltsGame.tm.getHeight() - 1;
-            processSegmentFile(RoomLoader.room.roomId, true);
-            return room;
+            nextRoom = BotsnBoltsGame.BotsnBoltsScreen.newRoom(RoomLoader.room.w * BotsnBoltsGame.GAME_W);
+            init();
+            processSegmentFile(RoomLoader.room.roomId, true, BotsnBoltsGame.tm);
+            return nextRoom;
         }
     }
     
-    private final static void processSegmentFile(final String fileId, final boolean ctxRequired) {
+    protected final static void init() {
+        row = BotsnBoltsGame.tm.getHeight() - 1;
+    }
+    
+    protected final static void loadBg(final String fileId) {
+        processSegmentFile(fileId, false, BotsnBoltsGame.bgTm);
+        clear();
+        init();
+    }
+    
+    private final static void processSegmentFile(final String fileId, final boolean ctxRequired, final TileMap tm) {
         final String fileName = BotsnBoltsGame.RES + "/level/" + fileId + ".txt";
         SegmentStream in = null;
         try {
             in = SegmentStream.openLocation(fileName);
-            processSegments(in, true);
+            processSegments(in, ctxRequired, tm);
         } catch (final Exception e) {
             throw new Panception("Error loading " + fileName, e);
         } finally {
@@ -87,17 +98,24 @@ public abstract class RoomLoader {
         }
     }
     
-    private final static void processSegments(final SegmentStream in, final boolean ctxRequired) throws Exception {
+    private final static void processSegments(final SegmentStream in, final boolean ctxRequired, final TileMap tm) throws Exception {
         Segment seg = in.readIf("CTX"); // Context
         if (seg != null) {
             ctx(seg);
         } else {
-            imp(in.readRequire("IMP"), true); // Import
+            final Segment segImp = in.readIf("IMP");
+            if (segImp == null) {
+                if (ctxRequired) {
+                    throw new IllegalStateException("No CTX found");
+                }
+            } else {
+                imp(segImp, ctxRequired, tm); // Import
+            }
         }
         while ((seg = in.read()) != null) {
             final String name = seg.getName();
             if ("IMP".equals(name)) { // Import
-                imp(seg, false);
+                imp(seg, false, tm);
             } else if ("ANM".equals(name)) { // Animator
                 anm(seg);
             } else if ("ALT".equals(name)) { // Alternate Character
@@ -109,7 +127,7 @@ public abstract class RoomLoader {
             } else if ("PAT".equals(name)) { // Put Pattern
                 pat(seg);
             } else if ("M".equals(name)) { // Map
-                m(seg);
+                m(seg, tm);
             } else if ("RCT".equals(name)) { // Rectangle
                 rct(seg.intValue(0), seg.intValue(1), seg.intValue(2), seg.intValue(3), seg, 4);
             } else if ("ROW".equals(name)) { // Row
@@ -150,14 +168,13 @@ public abstract class RoomLoader {
     }
     
     private final static void ctx(final Segment seg) {
-        BotsnBoltsGame.BotsnBoltsScreen.loadTileImage(seg.getValue(0));
-        //TODO Add bg image
+        BotsnBoltsGame.BotsnBoltsScreen.loadTileImage(seg.getValue(0), seg.getValue(1));
         Pangine.getEngine().setBgColor(toColor(seg.getField(2)));
     }
     
-    private final static void imp(final Segment seg, final boolean ctxRequired) {
+    private final static void imp(final Segment seg, final boolean ctxRequired, final TileMap tm) {
         //TODO Could cache imported files
-        processSegmentFile(seg.getValue(0), ctxRequired);
+        processSegmentFile(seg.getValue(0), ctxRequired, tm);
     }
     
     private final static void anm(final Segment seg) {
@@ -216,8 +233,7 @@ public abstract class RoomLoader {
         patterns.put(key, pattern);
     }
     
-    private final static void m(final Segment seg) {
-        final TileMap tm = BotsnBoltsGame.tm;
+    private final static void m(final Segment seg, final TileMap tm) {
         final String value = seg.getValue(0);
         final int size = Chartil.size(value);
         int x = 0;
