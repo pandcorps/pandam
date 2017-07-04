@@ -336,12 +336,17 @@ public abstract class RoomLoader {
         if (constructor != null) {
             return constructor;
         }
+        final Class<?> c = getDeclaredClass(classes, actorType);
+        constructor = (Constructor<? extends Panctor>) c.getDeclaredConstructor(Integer.TYPE, Integer.TYPE);
+        actorTypes.put(actorType, constructor);
+        return constructor;
+    }
+    
+    private final static Class<?> getDeclaredClass(final Class<?>[] classes, final String actorType) {
         for (final Class<?> c : classes) {
             final String name = c.getName();
             if (name.endsWith(actorType) && name.charAt(name.length() - actorType.length() - 1) == '$') {
-                constructor = (Constructor<? extends Panctor>) c.getDeclaredConstructor(Integer.TYPE, Integer.TYPE);
-                actorTypes.put(actorType, constructor);
-                return constructor;
+                return c;
             }
         }
         throw new IllegalArgumentException("Unrecognized actorType " + actorType);
