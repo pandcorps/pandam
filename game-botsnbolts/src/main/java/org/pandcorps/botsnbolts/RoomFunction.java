@@ -23,13 +23,26 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.botsnbolts;
 
 import org.pandcorps.pandax.tile.*;
+import org.pandcorps.pandax.tile.Tile.*;
 
 public abstract class RoomFunction {
     public abstract void build(final TileMap tm, final int x, final int y);
     
     public final static class PineTree extends RoomFunction {
+        private final TileMapImage topLeft = BotsnBoltsGame.imgMap[2][0];
+        private final TileMapImage left = BotsnBoltsGame.imgMap[3][0];
+        private final TileMapImage topRight = new AdjustedTileMapImage(topLeft, 0, true, false);
+        private final TileMapImage right = new AdjustedTileMapImage(left, 0, true, false);
+        
         @Override
         public final void build(final TileMap tm, final int x, final int y) {
+            final int x1 = x + 1;
+            tm.setOverlay(x, y, topLeft, Tile.BEHAVIOR_OPEN);
+            tm.setOverlay(x1, y, topRight, Tile.BEHAVIOR_OPEN);
+            for (int j = y - 1; j >= 0; j--) {
+                tm.setOverlay(x, j, left, Tile.BEHAVIOR_OPEN);
+                tm.setOverlay(x1, j, right, Tile.BEHAVIOR_OPEN);
+            }
         }
     }
 }
