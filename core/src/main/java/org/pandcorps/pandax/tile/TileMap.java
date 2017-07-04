@@ -327,6 +327,14 @@ public class TileMap extends Panctor implements Savable {
         setOverlay(getIndex(i, j), overlay, behavior);
     }
     
+    public final void setOverlayOptional(final int i, final int j, final Object overlay, final byte behavior) {
+        final int index = getIndex(i, j);
+        if (isBad(index)) {
+            return;
+        }
+        setOverlay(index, overlay, behavior);
+    }
+    
     public final void setOverlay(final int index, final Object overlay, final byte behavior) {
         final Tile oldTile = getTile(index);
         Object oldImg = null;
