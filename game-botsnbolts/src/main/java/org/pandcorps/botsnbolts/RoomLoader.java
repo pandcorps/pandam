@@ -44,6 +44,7 @@ public abstract class RoomLoader {
     private final static List<TileAnimator> animators = new ArrayList<TileAnimator>();
     private final static Map<Character, Tile> tiles = new HashMap<Character, Tile>();
     private final static Map<Character, Tile[][]> patterns = new HashMap<Character, Tile[][]>();
+    private final static Map<Character, RoomFunction> functions = new HashMap<Character, RoomFunction>();
     private static Character alt = null;
     protected static Panroom nextRoom = null;
     protected static BossDoor bossDoor = null;
@@ -126,6 +127,8 @@ public abstract class RoomLoader {
                 plt(seg);
             } else if ("PAT".equals(name)) { // Put Pattern
                 pat(seg);
+            } else if ("FNC".equals(name)) { // Function
+                fnc(seg);
             } else if ("M".equals(name)) { // Map
                 m(seg, tm);
             } else if ("RCT".equals(name)) { // Rectangle
@@ -233,6 +236,10 @@ public abstract class RoomLoader {
         patterns.put(key, pattern);
     }
     
+    private final static void fnc(final Segment seg) throws Exception {
+        functions.put(seg.toCharacter(0), getRoomFunction(seg.getValue(1)));
+    }
+    
     private final static void m(final Segment seg, final TileMap tm) {
         final String value = seg.getValue(0);
         final int size = Chartil.size(value);
@@ -250,7 +257,12 @@ public abstract class RoomLoader {
             final Tile tile = tiles.get(keyW);
             if (tile == null) {
                 final Tile[][] pattern = patterns.get(keyW);
-                if (pattern != null) {
+                if (pattern == null) {
+                    final RoomFunction function = functions.get(keyW);
+                    if (function != null) {
+                        function.build(tm, x, row);
+                    }
+                } else {
                     int patRow = row;
                     for (final Tile[] tileRow : pattern) {
                         int patX = x;
@@ -358,6 +370,18 @@ public abstract class RoomLoader {
     
     private final static Constructor<? extends Enemy> getBossConstructor(final String enemyType) throws Exception {
         return getEnemyConstructor(Boss.class.getDeclaredClasses(), enemyType);
+    }
+    
+    private final static Map<String, RoomFunction> functionTypes = new HashMap<String, RoomFunction>();
+    
+    private final static RoomFunction getRoomFunction(final String functionType) throws Exception {
+        RoomFunction roomFunction = functionTypes.get(functionType);
+        if (roomFunction != null) {
+            return roomFunction;
+        }
+        roomFunction = (RoomFunction) getDeclaredClass(RoomFunction.class.getDeclaredClasses(), functionType).newInstance();
+        functionTypes.put(functionType, roomFunction);
+        return roomFunction;
     }
     
     private final static void shp(final Segment seg) {
@@ -552,6 +576,7 @@ public abstract class RoomLoader {
         animators.clear();
         tiles.clear();
         patterns.clear();
+        functions.clear();
         alt = null;
         bossDoor = null;
     }
