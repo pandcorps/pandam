@@ -412,6 +412,14 @@ public class TileMap extends Panctor implements Savable {
         tiles[getIndexRequired(x, y)] = tile;
     }
     
+    public final void setTileOptional(final int x, final int y, final Tile tile) {
+        final int index = getIndex(x, y);
+        if (isBad(index)) {
+            return;
+        }
+        tiles[index] = tile;
+    }
+    
     public final void setTile(final int index, final Tile tile) {
         tiles[index] = tile;
     }
