@@ -37,11 +37,11 @@ public abstract class RoomFunction {
         @Override
         public final void build(final TileMap tm, final int x, final int y) {
             final int x1 = x + 1;
-            tm.setOverlay(x, y, topLeft, Tile.BEHAVIOR_OPEN);
-            tm.setOverlay(x1, y, topRight, Tile.BEHAVIOR_OPEN);
+            tm.setOverlayOptional(x, y, topLeft, Tile.BEHAVIOR_OPEN);
+            tm.setOverlayOptional(x1, y, topRight, Tile.BEHAVIOR_OPEN);
             for (int j = y - 1; j >= 0; j--) {
-                tm.setOverlay(x, j, left, Tile.BEHAVIOR_OPEN);
-                tm.setOverlay(x1, j, right, Tile.BEHAVIOR_OPEN);
+                tm.setOverlayOptional(x, j, left, Tile.BEHAVIOR_OPEN);
+                tm.setOverlayOptional(x1, j, right, Tile.BEHAVIOR_OPEN);
             }
         }
     }
