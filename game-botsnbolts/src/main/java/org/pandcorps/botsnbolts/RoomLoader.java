@@ -267,7 +267,7 @@ public abstract class RoomLoader {
                     for (final Tile[] tileRow : pattern) {
                         int patX = x;
                         for (final Tile patTile : tileRow) {
-                            tm.setTile(patX, patRow, patTile);
+                            tm.setTileOptional(patX, patRow, patTile);
                             patX++;
                         }
                         patRow--;
