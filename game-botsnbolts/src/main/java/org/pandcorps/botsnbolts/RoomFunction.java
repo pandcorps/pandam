@@ -40,9 +40,19 @@ public abstract class RoomFunction {
             tm.setOverlayOptional(x, y, topLeft, Tile.BEHAVIOR_OPEN);
             tm.setOverlayOptional(x1, y, topRight, Tile.BEHAVIOR_OPEN);
             for (int j = y - 1; j >= 0; j--) {
-                tm.setOverlayOptional(x, j, left, Tile.BEHAVIOR_OPEN);
-                tm.setOverlayOptional(x1, j, right, Tile.BEHAVIOR_OPEN);
+                setOverlayIfOpen(tm, x, j, left, Tile.BEHAVIOR_OPEN);
+                setOverlayIfOpen(tm, x1, j, right, Tile.BEHAVIOR_OPEN);
             }
         }
+    }
+    
+    protected final static void setOverlayIfOpen(final TileMap tm, final int i, final int j, final Object overlay, final byte behavior) {
+        final int index = tm.getIndex(i, j);
+        if (tm.isBad(index)) {
+            return;
+        } else if (Tile.getBehavior(tm.getTile(index)) != Tile.BEHAVIOR_OPEN) {
+            return;
+        }
+        tm.setOverlay(index, overlay, behavior);
     }
 }
