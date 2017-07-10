@@ -367,6 +367,9 @@ public abstract class Boss extends Enemy {
         }
         
         protected final static Panmage getLavaImage(final Panmage img, final String name) {
+            if (img != null) {
+                return img;
+            }
             final Panmage ref = BotsnBoltsGame.fireballEnemy[0];
             return getImage(img, name, ref.getOrigin(), ref.getBoundingMinimum(), ref.getBoundingMaximum());
         }
