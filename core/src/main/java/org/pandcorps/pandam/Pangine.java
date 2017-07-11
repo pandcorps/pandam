@@ -1173,13 +1173,9 @@ public abstract class Pangine {
 	    screenShotW = Chartil.isValued(propW) ? (Integer.parseInt(propW) * zoom) : -1;
 	    screenShotH = Chartil.isValued(propH) ? (Integer.parseInt(propH) * zoom) : -1;
 	    final String propX = Pantil.getProperty("org.pandcorps.pandam.capture.x");
-	    if (Chartil.isValued(propX)) {
-            screenShotX = Integer.parseInt(propX) * zoom;
-            screenShotY = Integer.parseInt(Pantil.getProperty("org.pandcorps.pandam.capture.y")) * zoom;
-        } else {
-            screenShotX = 0;
-            screenShotY = 0;
-        }
+	    final String propY = Pantil.getProperty("org.pandcorps.pandam.capture.y");
+        screenShotX = Chartil.isValued(propX) ? (Integer.parseInt(propX) * zoom) : 0;
+        screenShotY = Chartil.isValued(propY) ? (Integer.parseInt(propY) * zoom) : 0;
 	    final String propZoom = Pantil.getProperty("org.pandcorps.pandam.capture.zoom");
 	    if (Chartil.isValued(propZoom)) {
 	        screenShotZoom = Integer.parseInt(propZoom);
