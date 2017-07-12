@@ -629,6 +629,8 @@ public abstract class Boss extends Enemy {
     protected final static Panple ROCKSLIDE_MAX = getMax(ROCKSLIDE_OFF_X, ROCKSLIDE_H);
     
     protected final static class RockslideBot extends Boss {
+        protected final static byte STATE_SHOOT = 1;
+        protected final static int WAIT_SHOOT = 30;
         protected static Panmage still = null;
         protected static Panmage aim = null;
         
@@ -644,6 +646,10 @@ public abstract class Boss extends Enemy {
         @Override
         protected final boolean continueState() {
             return false;
+        }
+        
+        protected final void startShoot() {
+            startState(STATE_SHOOT, WAIT_SHOOT, getAim());
         }
 
         @Override
