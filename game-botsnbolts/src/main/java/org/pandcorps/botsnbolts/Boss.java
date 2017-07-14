@@ -670,6 +670,14 @@ public abstract class Boss extends Enemy {
         protected Rock(final int x, final int y) {
             super(0, 0, x, y, 1); //TODO
         }
+        
+        @Override
+        protected final void onWall(final byte xResult) {
+            shatter();
+        }
+        
+        protected final void shatter() {
+        }
 
         @Override
         protected final void award(final PowerUp powerUp) {
