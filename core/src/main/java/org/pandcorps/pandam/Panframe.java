@@ -23,7 +23,7 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.pandam;
 
 // Pandam Frame
-public interface Panframe extends Pantity{
+public interface Panframe extends Panview {
 	public Panmage getImage();
 
 	public int getDuration();

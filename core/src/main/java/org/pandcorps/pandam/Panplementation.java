@@ -61,6 +61,8 @@ public abstract class Panplementation {
 		    currFlip = false;
 		    currOrigin = null;
 			updateView((Panmage) view);
+		} else if (view instanceof Panframe) {
+		    setFrame((Panframe) view);
 		} else {
 		    /*
 		     * Might want to be able to disable this.
@@ -114,7 +116,7 @@ public abstract class Panplementation {
     protected abstract void setFlip(boolean flip);
 
 	/*package*/ final void updateView() {
-		if (view == null || view instanceof Panmage) {
+		if (!(view instanceof Panimation)) {
 			return;
 		}
 		final Pangine engine = Pangine.getEngine();
@@ -155,7 +157,12 @@ public abstract class Panplementation {
 
 	/*package*/ final Pansplay getCurrentDisplay() {
 		// Might want to store the current Pansplay in a separate field
-		return view instanceof Panimation ? (((Panimation) view).getFrames())[currFrame].getImage() : (Panmage) view;
+		if (view instanceof Panimation) {
+		    return (((Panimation) view).getFrames())[currFrame].getImage();
+		} else if (view instanceof Panmage) {
+		    return (Panmage) view;
+		}
+		return ((Panframe) view).getImage();
 	}
 
 	protected abstract void renderView();

@@ -96,6 +96,10 @@ public class Panctor extends BasePantity implements SpecPanctor {
 		impl.setView(view);
 	}
 	
+	public final void setView(final Panframe view) {
+        impl.setView(view);
+    }
+	
 	public final void setView(final Panctor actor) {
 	    impl.setView(actor.impl);
 	}
@@ -133,8 +137,13 @@ public class Panctor extends BasePantity implements SpecPanctor {
         final boolean fmir, fflp;
         final int frot;
         final Panple fmin, fmax;
+        Panframe frame = null;
         if (view instanceof Panimation) {
-            final Panframe frame = ((Panimation) view).getFrames()[getCurrentFrame()];
+            frame = ((Panimation) view).getFrames()[getCurrentFrame()];
+        } else if (view instanceof Panframe) {
+            frame = (Panframe) view;
+        }
+        if (frame != null) {
             fmir = frame.isMirror();
             fflp = frame.isFlip();
             frot = frame.getRot();
