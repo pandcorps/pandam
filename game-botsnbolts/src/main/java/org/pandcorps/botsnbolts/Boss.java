@@ -677,6 +677,7 @@ public abstract class Boss extends Enemy {
         }
         
         protected final void shatter() {
+            destroy();
         }
 
         @Override
