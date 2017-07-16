@@ -190,7 +190,7 @@ public abstract class Guy2 extends Panctor implements StepListener {
     
     public final void add(final Panctor actor, final float xo, final float yo, final float zo) {
         final Panple pos = getPosition();
-        final int mult = isMirror() ? -1 : 1;
+        final int mult = getMirrorMultiplier();
         actor.getPosition().set(pos.getX() + (mult * xo), pos.getY() + yo, pos.getZ() + zo);
         Pangame.getGame().getCurrentRoom().addActor(actor);
     }
