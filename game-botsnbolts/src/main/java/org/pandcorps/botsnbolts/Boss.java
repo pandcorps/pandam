@@ -662,6 +662,9 @@ public abstract class Boss extends Enemy {
         protected final void startShoot() {
             startState(STATE_SHOOT, WAIT_SHOOT, getAim());
         }
+        
+        protected final void startRoll() {
+        }
 
         @Override
         protected final Panmage getStill() {
