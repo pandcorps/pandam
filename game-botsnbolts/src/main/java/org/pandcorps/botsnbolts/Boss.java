@@ -630,6 +630,7 @@ public abstract class Boss extends Enemy {
     
     protected final static class RockslideBot extends Boss {
         protected final static byte STATE_SHOOT = 1;
+        protected final static byte STATE_ROLL = 2;
         protected final static int WAIT_SHOOT = 30;
         protected static Panmage still = null;
         protected static Panmage aim = null;
