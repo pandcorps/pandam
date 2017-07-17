@@ -666,6 +666,9 @@ public abstract class Boss extends Enemy {
         
         protected final void startRoll() {
         }
+        
+        protected final void startJump() {
+        }
 
         @Override
         protected final Panmage getStill() {
