@@ -690,6 +690,7 @@ public abstract class Boss extends Enemy {
         private final static int numFrames = 8;
         private final static Panframe[] frames = new Panframe[numFrames];
         private final static int frameDuration = 2;
+        private final static int speed = 3;
         private int frameIndex = 0;
         private int frameTimer = 0;
         
@@ -697,6 +698,8 @@ public abstract class Boss extends Enemy {
             super(PROP_OFF_X, PROP_H, 0, 0, 1);
             EnemyProjectile.addBySource(this, getRock1(), src, ox, oy);
             setView(getFrame());
+            hv = src.getMirrorMultiplier() * speed;
+            v = -speed;
         }
         
         @Override
