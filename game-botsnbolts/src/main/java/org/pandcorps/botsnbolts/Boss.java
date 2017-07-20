@@ -724,6 +724,14 @@ public abstract class Boss extends Enemy {
         protected final void shatter() {
             destroy();
         }
+        
+        @Override
+        protected final void onEnemyDestroy() {
+            onShatter();
+        }
+        
+        protected final void onShatter() {
+        }
 
         @Override
         protected final void award(final PowerUp powerUp) {
