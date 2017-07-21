@@ -687,6 +687,7 @@ public abstract class Boss extends Enemy {
     protected final static class Rock extends Enemy {
         protected static Panmage rock1 = null;
         protected static Panmage rock2 = null;
+        protected static Panmage rockShatter = null;
         private final static int numFrames = 8;
         private final static Panframe[] frames = new Panframe[numFrames];
         private final static int frameDuration = 2;
@@ -786,6 +787,10 @@ public abstract class Boss extends Enemy {
         
         protected final static Panmage getRock2() {
             return (rock2 = getRockImage(rock2, "rockslidebot/Rock2"));
+        }
+        
+        protected final static Panmage getRockShatter() {
+            return (rockShatter = getImage(rockShatter, "rockslidebot/RockShatter", BotsnBoltsGame.CENTER_8, null, null));
         }
         
         private final static Panmage getRockImage(final Panmage img, final String name) {
