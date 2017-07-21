@@ -420,23 +420,26 @@ public final class Player extends Chr {
     }
     
     private final void unfreeze() {
-        final Panmage img = BotsnBoltsGame.getIceShatter();
-        final int m = getMirrorMultiplier();
-        final Panple pos = getPosition();
-        final float x = pos.getX(), y = pos.getY() + CENTER_Y;
-        newDiver(img, x - m * 4, y + 4, -m, 3, false, false);
-        newDiver(img, x + m * 4, y + 4, m, 3, true, false);
-        newDiver(img, x - m * 4, y - 4, -m * 2, 2, false, true);
-        newDiver(img, x + m * 4, y - 4, m * 2, 2, true, true);
+        shatter(this, BotsnBoltsGame.getIceShatter());
     }
     
-    private final void newDiver(final Panmage img, final float x, final float y, final float xv, final float yv, final boolean mirror, final boolean flip) {
-        final Diver diver = new Diver(getLayer(), img, x, y, BotsnBoltsGame.DEPTH_BURST, xv * newDiveMultiplier(), yv * newDiveMultiplier(), gTuple);
-        diver.setMirror(mirror ^ isMirror());
+    protected final static void shatter(final Panctor src, final Panmage img) {
+        final int m = src.getMirrorMultiplier();
+        final Panple pos = src.getPosition();
+        final float x = pos.getX(), y = pos.getY() + CENTER_Y;
+        newDiver(src, img, x - m * 4, y + 4, -m, 3, false, false);
+        newDiver(src, img, x + m * 4, y + 4, m, 3, true, false);
+        newDiver(src, img, x - m * 4, y - 4, -m * 2, 2, false, true);
+        newDiver(src, img, x + m * 4, y - 4, m * 2, 2, true, true);
+    }
+    
+    private final static void newDiver(final Panctor src, final Panmage img, final float x, final float y, final float xv, final float yv, final boolean mirror, final boolean flip) {
+        final Diver diver = new Diver(src.getLayer(), img, x, y, BotsnBoltsGame.DEPTH_BURST, xv * newDiveMultiplier(), yv * newDiveMultiplier(), gTuple);
+        diver.setMirror(mirror ^ src.isMirror());
         diver.setFlip(flip);
     }
     
-    private final float newDiveMultiplier() {
+    private final static float newDiveMultiplier() {
         return Mathtil.randf(0.7f, 1.3f);
     }
     
