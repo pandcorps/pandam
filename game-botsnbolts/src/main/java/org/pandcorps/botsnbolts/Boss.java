@@ -643,7 +643,7 @@ public abstract class Boss extends Enemy {
         protected final boolean onWaiting() {
             if (state == STATE_SHOOT) {
                 if (waitTimer == (WAIT_SHOOT - 1)) {
-                    new Rock(this, 41, 13);
+                    new Rock(this, 36, 3);
                 }
             }
             return false;
