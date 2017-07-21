@@ -732,6 +732,7 @@ public abstract class Boss extends Enemy {
         }
         
         protected final void onShatter() {
+            Player.shatter(this, getRockShatter());
         }
 
         @Override
@@ -790,7 +791,7 @@ public abstract class Boss extends Enemy {
         }
         
         protected final static Panmage getRockShatter() {
-            return (rockShatter = getImage(rockShatter, "rockslidebot/RockShatter", BotsnBoltsGame.CENTER_8, null, null));
+            return (rockShatter = Boss.getImage(rockShatter, "rockslidebot/RockShatter", BotsnBoltsGame.CENTER_8, null, null));
         }
         
         private final static Panmage getRockImage(final Panmage img, final String name) {
