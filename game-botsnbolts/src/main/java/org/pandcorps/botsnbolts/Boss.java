@@ -636,6 +636,7 @@ public abstract class Boss extends Enemy {
         protected final static int WAIT_SHOOT = 30;
         protected static Panmage still = null;
         protected static Panmage aim = null;
+        protected static Panmage crouch = null;
         
         protected RockslideBot(final int x, final int y) {
             super(ROCKSLIDE_OFF_X, ROCKSLIDE_H, x, y);
@@ -680,6 +681,10 @@ public abstract class Boss extends Enemy {
         
         protected final static Panmage getAim() {
             return (aim = getRockslideImage(aim, "rockslidebot/RockslideBotAim"));
+        }
+        
+        protected final static Panmage getCrouch() {
+            return (crouch = getRockslideImage(crouch, "rockslidebot/RockslideBotCrouch"));
         }
         
         protected final static Panmage getRockslideImage(final Panmage img, final String name) {
