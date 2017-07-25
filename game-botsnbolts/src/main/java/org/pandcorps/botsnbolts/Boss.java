@@ -637,6 +637,9 @@ public abstract class Boss extends Enemy {
         protected static Panmage still = null;
         protected static Panmage aim = null;
         protected static Panmage crouch = null;
+        protected static Panmage curl = null;
+        protected static Panmage roll1 = null;
+        protected static Panmage roll2 = null;
         
         protected RockslideBot(final int x, final int y) {
             super(ROCKSLIDE_OFF_X, ROCKSLIDE_H, x, y);
