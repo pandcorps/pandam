@@ -657,13 +657,27 @@ public abstract class Boss extends Enemy {
 
         @Override
         protected final boolean pickState() {
-            startShoot();
+            //startShoot();
+            startCrouch();
             return false;
         }
 
         @Override
         protected final boolean continueState() {
-            startStill();
+            switch (state) {
+                case STATE_CROUCH :
+                    startCurl();
+                    break;
+                case STATE_CURL :
+                    startRoll();
+                    break;
+                case STATE_ROLL :
+                case STATE_SHOOT :
+                    startStill();
+                    break;
+                default :
+                    throw new IllegalStateException("Unexpected state " + state);
+            }
             return false;
         }
         
@@ -672,10 +686,15 @@ public abstract class Boss extends Enemy {
         }
         
         protected final void startCrouch() {
-            startState(STATE_CROUCH, 5, getCrouch());
+            startState(STATE_CROUCH, 2, getCrouch());
+        }
+        
+        protected final void startCurl() {
+            startState(STATE_CURL, 2, getCurl());
         }
         
         protected final void startRoll() {
+            startState(STATE_ROLL, 60, getRoll1());
         }
         
         protected final void startJump() {
