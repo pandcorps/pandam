@@ -671,6 +671,10 @@ public abstract class Boss extends Enemy {
             startState(STATE_SHOOT, WAIT_SHOOT, getAim());
         }
         
+        protected final void startCrouch() {
+            startState(STATE_CROUCH, 5, getCrouch());
+        }
+        
         protected final void startRoll() {
         }
         
