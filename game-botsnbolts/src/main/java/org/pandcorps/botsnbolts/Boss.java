@@ -627,6 +627,7 @@ public abstract class Boss extends Enemy {
     protected final static Panple ROCKSLIDE_O = new FinPanple2(28, 1);
     protected final static Panple ROCKSLIDE_MIN = getMin(ROCKSLIDE_OFF_X);
     protected final static Panple ROCKSLIDE_MAX = getMax(ROCKSLIDE_OFF_X, ROCKSLIDE_H);
+    protected final static Panple ROCKSLIDE_ROLL_O = new FinPanple2(19, 1);
     
     protected final static class RockslideBot extends Boss {
         protected final static byte STATE_SHOOT = 1;
@@ -640,6 +641,8 @@ public abstract class Boss extends Enemy {
         protected static Panmage curl = null;
         protected static Panmage roll1 = null;
         protected static Panmage roll2 = null;
+        private final static Rotator rots = new RollRotator();
+        private final static Panframe[] frames = new Panframe[Rotator.numFrames];
         
         protected RockslideBot(final int x, final int y) {
             super(ROCKSLIDE_OFF_X, ROCKSLIDE_H, x, y);
@@ -651,6 +654,8 @@ public abstract class Boss extends Enemy {
                 if (waitTimer == (WAIT_SHOOT - 1)) {
                     new Rock(this, 36, 3);
                 }
+            } else if (state == STATE_ROLL) {
+                rots.onStep(this, frames);
             }
             return false;
         }
@@ -695,6 +700,8 @@ public abstract class Boss extends Enemy {
         
         protected final void startRoll() {
             startState(STATE_ROLL, 60, getRoll1());
+            rots.init();
+            setView(rots.getFrame(frames));
         }
         
         protected final void startJump() {
@@ -718,15 +725,36 @@ public abstract class Boss extends Enemy {
         }
         
         protected final static Panmage getRoll1() {
-            return (roll1 = getRockslideImage(roll1, "rockslidebot/RockslideBotRoll1"));
+            return (roll1 = getRockslideRollImage(roll1, "rockslidebot/RockslideBotRoll1"));
         }
         
         protected final static Panmage getRoll2() {
-            return (roll2 = getRockslideImage(roll2, "rockslidebot/RockslideBotRoll2"));
+            return (roll2 = getRockslideRollImage(roll2, "rockslidebot/RockslideBotRoll2"));
         }
         
         protected final static Panmage getRockslideImage(final Panmage img, final String name) {
             return getImage(img, name, ROCKSLIDE_O, ROCKSLIDE_MIN, ROCKSLIDE_MAX);
+        }
+        
+        protected final static Panmage getRockslideRollImage(final Panmage img, final String name) {
+            return getImage(img, name, ROCKSLIDE_ROLL_O, ROCKSLIDE_MIN, ROCKSLIDE_MAX);
+        }
+        
+        private final static class RollRotator extends Rotator {
+            @Override
+            protected final int getDim() {
+                return 41;
+            }
+            
+            @Override
+            protected final Panmage getImage1() {
+                return getRoll1();
+            }
+            
+            @Override
+            protected final Panmage getImage2() {
+                return getRoll2();
+            }
         }
     }
     
@@ -734,32 +762,21 @@ public abstract class Boss extends Enemy {
         protected static Panmage rock1 = null;
         protected static Panmage rock2 = null;
         protected static Panmage rockShatter = null;
-        private final static int numFrames = 8;
-        private final static Panframe[] frames = new Panframe[numFrames];
-        private final static int frameDuration = 2;
+        private final static Rotator rots = new RockRotator();
+        private final static Panframe[] frames = new Panframe[Rotator.numFrames];
         private final static int speed = 3;
-        private int frameIndex = 0;
-        private int frameTimer = 0;
         
         protected Rock(final RockslideBot src, final int ox, final int oy) {
             super(PROP_OFF_X, PROP_H, 0, 0, 1);
             EnemyProjectile.addBySource(this, getRock1(), src, ox, oy);
-            setView(getFrame());
+            setView(rots.getFrame(frames));
             hv = src.getMirrorMultiplier() * speed;
             v = -speed;
         }
         
         @Override
         protected final boolean onStepCustom() {
-            frameTimer++;
-            if (frameTimer >= frameDuration) {
-                frameTimer = 0;
-                frameIndex++;
-                if (frameIndex >= numFrames) {
-                    frameIndex = 0;
-                }
-                setView(getFrame());
-            }
+            rots.onStep(this, frames);
             return super.onStepCustom();
         }
         
@@ -786,31 +803,32 @@ public abstract class Boss extends Enemy {
             
         }
         
-        protected Panframe getFrame() {
+        protected final static Panframe getFrame(final Panframe[] frames, final String name, final int frameIndex, final int frameDuration, final Rotator rots) {
             Panframe frame = frames[frameIndex];
             if (frame == null) {
-                final boolean basedOnRock1 = ((frameIndex % 2) == 0);
-                final Panmage img = basedOnRock1 ? getRock1() : getRock2();
+                final boolean basedOnImg1 = ((frameIndex % 2) == 0);
+                final Panmage img = basedOnImg1 ? rots.getImage1() : rots.getImage2();
                 final int rot = (4 - (frameIndex / 2)) % 4;
                 final Panple o, min, max;
-                if (basedOnRock1) {
+                if (basedOnImg1) {
                     final Panple oBase = img.getOrigin();
                     final Panple minBase = img.getBoundingMinimum();
                     final Panple maxBase = img.getBoundingMaximum();
+                    final int end = rots.getDim() - 1;
                     if (rot == 0) {
                         o = oBase;
                         min = minBase;
                         max = maxBase;
                     } else if (rot == 3) {
-                        o = new FinPanple2(15 - oBase.getY(), oBase.getX());
+                        o = new FinPanple2(end - oBase.getY(), oBase.getX());
                         min = new FinPanple2(-maxBase.getY(), minBase.getX());
                         max = new FinPanple2(-minBase.getY(), maxBase.getX());
                     } else if (rot == 2) {
-                        o = new FinPanple2(15 - oBase.getX(), 15 - oBase.getY());
+                        o = new FinPanple2(end - oBase.getX(), end - oBase.getY());
                         min = new FinPanple2(-maxBase.getX(), -maxBase.getY());
                         max = new FinPanple2(-minBase.getX(), -minBase.getY());
                     } else if (rot == 1) {
-                        o = new FinPanple2(oBase.getY(), 15 - oBase.getX());
+                        o = new FinPanple2(oBase.getY(), end - oBase.getX());
                         min = new FinPanple2(minBase.getY(), -maxBase.getX());
                         max = new FinPanple2(maxBase.getY(), -minBase.getX());
                     } else {
@@ -822,7 +840,7 @@ public abstract class Boss extends Enemy {
                     min = prev.getBoundingMinimum();
                     max = prev.getBoundingMaximum();
                 }
-                frame = Pangine.getEngine().createFrame(BotsnBoltsGame.PRE_FRM + "rock." + frameIndex, img, frameDuration, rot, false, false, o, min, max);
+                frame = Pangine.getEngine().createFrame(BotsnBoltsGame.PRE_FRM + name + "." + frameIndex, img, frameDuration, rot, false, false, o, min, max);
                 frames[frameIndex] = frame;
             }
             return frame;
@@ -847,6 +865,54 @@ public abstract class Boss extends Enemy {
             final Panmage ref = BotsnBoltsGame.fireballEnemy[0];
             return Boss.getImage(img, name, ref.getOrigin(), ref.getBoundingMinimum(), ref.getBoundingMaximum());
         }
+        
+        private final static class RockRotator extends Rotator {
+            @Override
+            protected final Panmage getImage1() {
+                return getRock1();
+            }
+            
+            @Override
+            protected final Panmage getImage2() {
+                return getRock2();
+            }
+        }
+    }
+    
+    protected abstract static class Rotator {
+        private final static int numFrames = 8;
+        private final static int frameDuration = 2;
+        private int frameIndex = 0;
+        private int frameTimer = 0;
+        
+        protected void init() {
+            frameIndex = 0;
+            frameTimer = 0;
+        }
+        
+        protected final void onStep(final Panctor actor, final Panframe[] frames) {
+            frameTimer++;
+            if (frameTimer >= frameDuration) {
+                frameTimer = 0;
+                frameIndex++;
+                if (frameIndex >= numFrames) {
+                    frameIndex = 0;
+                }
+                actor.setView(getFrame(frames));
+            }
+        }
+        
+        protected Panframe getFrame(final Panframe[] frames) {
+            return Rock.getFrame(frames, "rock", frameIndex, frameDuration, this);
+        }
+        
+        protected int getDim() {
+            return Math.round(getImage1().getSize().getX());
+        }
+        
+        protected abstract Panmage getImage1();
+        
+        protected abstract Panmage getImage2();
     }
     
     protected final static class TimedDecoration extends Panctor implements StepListener {
