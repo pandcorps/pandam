@@ -677,6 +677,8 @@ public abstract class Boss extends Enemy {
                     startRoll();
                     break;
                 case STATE_ROLL :
+                    setOffX(ROCKSLIDE_OFF_X);
+                    setH(ROCKSLIDE_H);
                 case STATE_SHOOT :
                     startStill();
                     break;
@@ -699,9 +701,12 @@ public abstract class Boss extends Enemy {
         }
         
         protected final void startRoll() {
-            startState(STATE_ROLL, 60, getRoll1());
+            startStateIndefinite(STATE_ROLL, getRoll1());
             rots.init();
             setView(rots.getFrame(frames));
+            setOffX(14);
+            setH(40);
+            hv = 3 * getMirrorMultiplier();
         }
         
         protected final void startJump() {
@@ -742,7 +747,7 @@ public abstract class Boss extends Enemy {
         
         private final static class RollRotator extends Rotator {
             @Override
-            protected final int getDim() {
+            protected final int getDim(final Panmage img) {
                 return 41;
             }
             
@@ -803,7 +808,7 @@ public abstract class Boss extends Enemy {
             
         }
         
-        protected final static Panframe getFrame(final Panframe[] frames, final String name, final int frameIndex, final int frameDuration, final Rotator rots) {
+        protected final static Panframe getFrame(final Panframe[] frames, final int frameIndex, final int frameDuration, final Rotator rots) {
             Panframe frame = frames[frameIndex];
             if (frame == null) {
                 final boolean basedOnImg1 = ((frameIndex % 2) == 0);
@@ -814,7 +819,7 @@ public abstract class Boss extends Enemy {
                     final Panple oBase = img.getOrigin();
                     final Panple minBase = img.getBoundingMinimum();
                     final Panple maxBase = img.getBoundingMaximum();
-                    final int end = rots.getDim() - 1;
+                    final int end = rots.getDim(img) - 1;
                     if (rot == 0) {
                         o = oBase;
                         min = minBase;
@@ -840,7 +845,7 @@ public abstract class Boss extends Enemy {
                     min = prev.getBoundingMinimum();
                     max = prev.getBoundingMaximum();
                 }
-                frame = Pangine.getEngine().createFrame(BotsnBoltsGame.PRE_FRM + name + "." + frameIndex, img, frameDuration, rot, false, false, o, min, max);
+                frame = Pangine.getEngine().createFrame(BotsnBoltsGame.PRE_FRM + rots.getClass().getSimpleName() + "." + frameIndex, img, frameDuration, rot, false, false, o, min, max);
                 frames[frameIndex] = frame;
             }
             return frame;
@@ -903,11 +908,11 @@ public abstract class Boss extends Enemy {
         }
         
         protected Panframe getFrame(final Panframe[] frames) {
-            return Rock.getFrame(frames, "rock", frameIndex, frameDuration, this);
+            return Rock.getFrame(frames, frameIndex, frameDuration, this);
         }
         
-        protected int getDim() {
-            return Math.round(getImage1().getSize().getX());
+        protected int getDim(final Panmage img) {
+            return Math.round(img.getSize().getX());
         }
         
         protected abstract Panmage getImage1();
