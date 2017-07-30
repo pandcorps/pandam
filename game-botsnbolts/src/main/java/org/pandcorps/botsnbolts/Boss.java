@@ -641,6 +641,7 @@ public abstract class Boss extends Enemy {
         protected static Panmage curl = null;
         protected static Panmage roll1 = null;
         protected static Panmage roll2 = null;
+        protected static Panmage jump = null;
         private final static Rotator rots = new RollRotator();
         private final static Panframe[] frames = new Panframe[Rotator.numFrames];
         
@@ -746,6 +747,10 @@ public abstract class Boss extends Enemy {
         }
         
         private final static class RollRotator extends Rotator {
+            private RollRotator() {
+                super(4);
+            }
+            
             @Override
             protected final int getDim(final Panmage img) {
                 return 41;
@@ -808,7 +813,8 @@ public abstract class Boss extends Enemy {
             
         }
         
-        protected final static Panframe getFrame(final Panframe[] frames, final int frameIndex, final int frameDuration, final Rotator rots) {
+        protected final static Panframe getFrame(final Panframe[] frames, final Rotator rots) {
+            final int frameIndex = rots.frameIndex;
             Panframe frame = frames[frameIndex];
             if (frame == null) {
                 final boolean basedOnImg1 = ((frameIndex % 2) == 0);
@@ -845,7 +851,7 @@ public abstract class Boss extends Enemy {
                     min = prev.getBoundingMinimum();
                     max = prev.getBoundingMaximum();
                 }
-                frame = Pangine.getEngine().createFrame(BotsnBoltsGame.PRE_FRM + rots.getClass().getSimpleName() + "." + frameIndex, img, frameDuration, rot, false, false, o, min, max);
+                frame = Pangine.getEngine().createFrame(BotsnBoltsGame.PRE_FRM + rots.getClass().getSimpleName() + "." + frameIndex, img, rots.frameDuration, rot, false, false, o, min, max);
                 frames[frameIndex] = frame;
             }
             return frame;
@@ -872,6 +878,10 @@ public abstract class Boss extends Enemy {
         }
         
         private final static class RockRotator extends Rotator {
+            private RockRotator() {
+                super(2);
+            }
+            
             @Override
             protected final Panmage getImage1() {
                 return getRock1();
@@ -886,9 +896,13 @@ public abstract class Boss extends Enemy {
     
     protected abstract static class Rotator {
         private final static int numFrames = 8;
-        private final static int frameDuration = 2;
+        private final int frameDuration;
         private int frameIndex = 0;
         private int frameTimer = 0;
+        
+        protected Rotator(final int frameDuration) {
+            this.frameDuration = frameDuration;
+        }
         
         protected void init() {
             frameIndex = 0;
@@ -908,7 +922,7 @@ public abstract class Boss extends Enemy {
         }
         
         protected Panframe getFrame(final Panframe[] frames) {
-            return Rock.getFrame(frames, frameIndex, frameDuration, this);
+            return Rock.getFrame(frames, this);
         }
         
         protected int getDim(final Panmage img) {
