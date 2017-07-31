@@ -738,6 +738,10 @@ public abstract class Boss extends Enemy {
             return (roll2 = getRockslideRollImage(roll2, "rockslidebot/RockslideBotRoll2"));
         }
         
+        protected final static Panmage getJump() {
+            return (jump = getRockslideImage(jump, "rockslidebot/RockslideBotJump"));
+        }
+        
         protected final static Panmage getRockslideImage(final Panmage img, final String name) {
             return getImage(img, name, ROCKSLIDE_O, ROCKSLIDE_MIN, ROCKSLIDE_MAX);
         }
