@@ -898,6 +898,27 @@ public abstract class Boss extends Enemy {
         }
     }
     
+    protected final static class LightningBot extends Boss {
+        protected LightningBot(final int x, final int y) {
+            super(ROCKSLIDE_OFF_X, ROCKSLIDE_H, x, y); //TODO
+        }
+
+        @Override
+        protected final boolean pickState() {
+            return false;
+        }
+
+        @Override
+        protected final boolean continueState() {
+            return false;
+        }
+
+        @Override
+        protected final Panmage getStill() {
+            return null;
+        }
+    }
+    
     protected abstract static class Rotator {
         private final static int numFrames = 8;
         private final int frameDuration;
