@@ -898,9 +898,14 @@ public abstract class Boss extends Enemy {
         }
     }
     
+    protected final static int LIGHTNING_OFF_X = 6, LIGHTNING_H = 24; //TODO
+    protected final static Panple LIGHTNING_O = new FinPanple2(14, 1);
+    protected final static Panple LIGHTNING_MIN = getMin(LIGHTNING_OFF_X);
+    protected final static Panple LIGHTNING_MAX = getMax(LIGHTNING_OFF_X, LIGHTNING_H);
+    
     protected final static class LightningBot extends Boss {
         protected LightningBot(final int x, final int y) {
-            super(ROCKSLIDE_OFF_X, ROCKSLIDE_H, x, y); //TODO
+            super(LIGHTNING_OFF_X, LIGHTNING_H, x, y);
         }
 
         @Override
