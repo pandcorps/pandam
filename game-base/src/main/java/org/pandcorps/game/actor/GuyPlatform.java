@@ -54,14 +54,18 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
     public int H;
     public final int OFF_GROUNDED = -1;
     public int OFF_BUTTING;
-    public final int OFF_X;
+    public int OFF_X;
     public float v = 0;
     public int hv = 0;
     public float chv = 0;
     
     protected GuyPlatform(final int offX, final int h) {
-        OFF_X = offX;
+        setOffX(offX);
         setH(h);
+    }
+    
+    protected final void setOffX(final int offX) {
+        OFF_X = offX;
     }
     
     protected final void setH(final int h) {
