@@ -634,6 +634,7 @@ public abstract class Boss extends Enemy {
         protected final static byte STATE_CROUCH = 2;
         protected final static byte STATE_CURL = 3;
         protected final static byte STATE_ROLL = 4;
+        protected final static byte STATE_JUMP = 5;
         protected final static int WAIT_SHOOT = 30;
         protected static Panmage still = null;
         protected static Panmage aim = null;
@@ -656,15 +657,27 @@ public abstract class Boss extends Enemy {
                     new Rock(this, 36, 3);
                 }
             } else if (state == STATE_ROLL) {
-                rots.onStep(this, frames);
+                if (getPosition().getX() <= 40) {
+                    startJump();
+                } else {
+                    rots.onStep(this, frames);
+                }
             }
             return false;
         }
 
         @Override
         protected final boolean pickState() {
-            //startShoot();
-            startCrouch();
+            turnTowardPlayer();
+            if (isMirror()) {
+                if (Mathtil.rand()) {
+                    startShoot();
+                } else {
+                    startCrouch();
+                }
+            } else {
+                startShoot();
+            }
             return false;
         }
 
@@ -711,6 +724,10 @@ public abstract class Boss extends Enemy {
         }
         
         protected final void startJump() {
+            final Panmage img = getJump();
+            startJump(STATE_JUMP, img, 11, 3);
+            addPendingJump(STATE_JUMP, img, 13, 6);
+            addPendingJump(STATE_JUMP, img, 4, 1);
         }
 
         @Override
@@ -924,6 +941,10 @@ public abstract class Boss extends Enemy {
         @Override
         protected final Panmage getStill() {
             return null;
+        }
+        
+        protected final static Panmage getLightningImage(final Panmage img, final String name) {
+            return getImage(img, name, LIGHTNING_O, LIGHTNING_MIN, LIGHTNING_MAX);
         }
     }
     
