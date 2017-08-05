@@ -627,7 +627,10 @@ public abstract class Boss extends Enemy {
     protected final static Panple ROCKSLIDE_O = new FinPanple2(28, 1);
     protected final static Panple ROCKSLIDE_MIN = getMin(ROCKSLIDE_OFF_X);
     protected final static Panple ROCKSLIDE_MAX = getMax(ROCKSLIDE_OFF_X, ROCKSLIDE_H);
+    protected final static int ROCKSLIDE_ROLL_OFF_X = 13, ROCKSLIDE_ROLL_H = 38;
     protected final static Panple ROCKSLIDE_ROLL_O = new FinPanple2(19, 1);
+    protected final static Panple ROCKSLIDE_ROLL_MIN = getMin(ROCKSLIDE_ROLL_OFF_X);
+    protected final static Panple ROCKSLIDE_ROLL_MAX = getMax(ROCKSLIDE_ROLL_OFF_X, ROCKSLIDE_ROLL_H);
     
     protected final static class RockslideBot extends Boss {
         protected final static byte STATE_SHOOT = 1;
@@ -718,8 +721,8 @@ public abstract class Boss extends Enemy {
             startStateIndefinite(STATE_ROLL, getRoll1());
             rots.init();
             setView(rots.getFrame(frames));
-            setOffX(14);
-            setH(40);
+            setOffX(ROCKSLIDE_ROLL_OFF_X);
+            setH(ROCKSLIDE_ROLL_H);
             hv = 3 * getMirrorMultiplier();
         }
         
@@ -764,7 +767,7 @@ public abstract class Boss extends Enemy {
         }
         
         protected final static Panmage getRockslideRollImage(final Panmage img, final String name) {
-            return getImage(img, name, ROCKSLIDE_ROLL_O, ROCKSLIDE_MIN, ROCKSLIDE_MAX);
+            return getImage(img, name, ROCKSLIDE_ROLL_O, ROCKSLIDE_ROLL_MIN, ROCKSLIDE_ROLL_MAX);
         }
         
         private final static class RollRotator extends Rotator {
