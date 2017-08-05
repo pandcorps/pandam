@@ -904,6 +904,8 @@ public abstract class Boss extends Enemy {
     protected final static Panple LIGHTNING_MAX = getMax(LIGHTNING_OFF_X, LIGHTNING_H);
     
     protected final static class LightningBot extends Boss {
+        protected static Panmage still = null;
+        
         protected LightningBot(final int x, final int y) {
             super(LIGHTNING_OFF_X, LIGHTNING_H, x, y);
         }
