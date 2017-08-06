@@ -943,7 +943,7 @@ public abstract class Boss extends Enemy {
 
         @Override
         protected final Panmage getStill() {
-            return null;
+            return (still = getLightningImage(still, "lightningbot/LightningBot"));
         }
         
         protected final static Panmage getLightningImage(final Panmage img, final String name) {
