@@ -940,6 +940,9 @@ public abstract class Boss extends Enemy {
             startStill();
             return false;
         }
+        
+        protected final void startJump() {
+        }
 
         @Override
         protected final Panmage getStill() {
