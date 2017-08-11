@@ -955,6 +955,29 @@ public abstract class Boss extends Enemy {
         }
     }
     
+    protected final static class Lightning extends TimedEnemyProjectile {
+        private final static int DURATION_LIGHTNING = 20;
+        private static Panmage lightning1 = null;
+        
+        protected Lightning(final LightningBot src) {
+            super(src, 10, 0, DURATION_LIGHTNING);
+        }
+        
+        @Override
+        protected final void renderView(final Panderer renderer) {
+            final Panmage img = getLightning1();
+            
+        }
+        
+        protected final static Panmage getLightning1() {
+            return (lightning1 = getLightningImage(lightning1, "lightningbot/Lightning1"));
+        }
+        
+        protected final static Panmage getLightningImage(final Panmage img, final String name) {
+            return getImage(img, name, null, null, null);
+        }
+    }
+    
     protected abstract static class Rotator {
         private final static int numFrames = 8;
         private final int frameDuration;
