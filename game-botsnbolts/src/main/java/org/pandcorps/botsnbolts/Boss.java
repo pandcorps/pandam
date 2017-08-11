@@ -925,6 +925,7 @@ public abstract class Boss extends Enemy {
     
     protected final static class LightningBot extends Boss {
         protected static Panmage still = null;
+        protected static Panmage jump = null;
         
         protected LightningBot(final int x, final int y) {
             super(LIGHTNING_OFF_X, LIGHTNING_H, x, y);
