@@ -942,23 +942,40 @@ public abstract class Boss extends Enemy {
                     new Lightning(this);
                 }
                 return true;
+            } else if (state == STATE_JUMP) {
+                if ((v > 0) && (getPosition().getY() >= 166)) {
+                    startStrike();
+                }
             }
             return false;
         }
 
         @Override
         protected final boolean pickState() {
-            startStrike();
+            startJump();
             return false;
         }
 
         @Override
         protected final boolean continueState() {
-            startStill();
+            if (state == STATE_STRIKE) {
+                finishJump();
+            } else {
+                startStill();
+            }
             return false;
         }
         
         protected final void startJump() {
+            startJump(13);
+        }
+        
+        protected final void finishJump() {
+            startJump(0);
+        }
+        
+        protected final void startJump(final int v) {
+            startJump(STATE_JUMP, getJump(), v, 4 * getMirrorMultiplier());
         }
         
         protected final void startStrike() {
@@ -968,6 +985,10 @@ public abstract class Boss extends Enemy {
         @Override
         protected final Panmage getStill() {
             return (still = getLightningImage(still, "lightningbot/LightningBot"));
+        }
+        
+        protected final Panmage getJump() {
+            return (jump = getLightningImage(jump, "lightningbot/LightningBotJump"));
         }
         
         protected final Panmage getStrike() {
@@ -996,9 +1017,10 @@ public abstract class Boss extends Enemy {
         private final int[] verticalScratch = { 0, 1, 2, 4, 5, 6, 8, 9, 14 };
         private final int bottom;
         private final boolean mirrorFlag;
+        private final int mirrorBase;
         
         protected Lightning(final LightningBot src) {
-            this(src, 100, ROOT_MAX, ROOT_BASE, DURATION_LIGHTNING);
+            this(src, Math.round(src.getPosition().getX()) - (src.isMirror() ? 8 : 7), ROOT_MAX, ROOT_BASE, DURATION_LIGHTNING);
         }
         
         protected Lightning(final LightningBot src, final int x, final int jMax, final int jBase, final int timer) {
@@ -1024,6 +1046,7 @@ public abstract class Boss extends Enemy {
                 bottom = 13;
             }
             mirrorFlag = Mathtil.rand();
+            mirrorBase = Mathtil.randi(1, 3);
         }
         
         private final boolean isRoot() {
@@ -1052,7 +1075,7 @@ public abstract class Boss extends Enemy {
                 Lightning childLightning = null;
                 if ((j == jMax) && isRoot()) {
                     index = getTop();
-                    mirror = isMirror();
+                    mirror = isMirror(); // Top mirror shouldn't be random; based on this object (which is based on src)
                 } else if ((j == jMin) && (!isRoot() || (j != jBase))) {
                     index = getBottom();
                     mirror = isMirror(j);
@@ -1083,7 +1106,7 @@ public abstract class Boss extends Enemy {
                         if ((i == w) && (childLightning == null)) {
                             final int jNext = jFork - 1;
                             final int baseNext = jBase + (firstFork ? 2 : 1);
-                            childLightning = new Lightning(src, xFork, jNext, baseNext, timer);
+                            childLightning = new Lightning(src, xFork, jNext, baseNext, timer - 1);
                             if (mirror) {
                                 lightningLeft = childLightning;
                             } else {
@@ -1104,7 +1127,7 @@ public abstract class Boss extends Enemy {
         }
         
         protected final boolean isMirror(final int y) {
-            final boolean b = (y % 2) == 0;
+            final boolean b = (y % (2 * mirrorBase)) < mirrorBase;
             return mirrorFlag ? b : !b;
         }
         
