@@ -924,15 +924,31 @@ public abstract class Boss extends Enemy {
     protected final static Panple LIGHTNING_MAX = getMax(LIGHTNING_OFF_X, LIGHTNING_H);
     
     protected final static class LightningBot extends Boss {
+        protected final static byte STATE_JUMP = 1;
+        protected final static byte STATE_STRIKE = 2;
+        protected final static int WAIT_STRIKE = 22;
         protected static Panmage still = null;
         protected static Panmage jump = null;
+        protected static Panmage strike = null;
         
         protected LightningBot(final int x, final int y) {
             super(LIGHTNING_OFF_X, LIGHTNING_H, x, y);
         }
+        
+        @Override
+        protected final boolean onWaiting() {
+            if (state == STATE_STRIKE) {
+                if (waitTimer == (WAIT_STRIKE - 1)) {
+                    new Lightning(this);
+                }
+                return true;
+            }
+            return false;
+        }
 
         @Override
         protected final boolean pickState() {
+            startStrike();
             return false;
         }
 
@@ -944,10 +960,18 @@ public abstract class Boss extends Enemy {
         
         protected final void startJump() {
         }
+        
+        protected final void startStrike() {
+            startState(STATE_STRIKE, WAIT_STRIKE, getStrike());
+        }
 
         @Override
         protected final Panmage getStill() {
             return (still = getLightningImage(still, "lightningbot/LightningBot"));
+        }
+        
+        protected final Panmage getStrike() {
+            return (strike = getLightningImage(strike, "lightningbot/LightningBotStrike"));
         }
         
         protected final static Panmage getLightningImage(final Panmage img, final String name) {
@@ -956,7 +980,7 @@ public abstract class Boss extends Enemy {
     }
     
     protected final static class Lightning extends TimedEnemyProjectile {
-        private final static int DURATION_LIGHTNING = 20;
+        private final static int DURATION_LIGHTNING = LightningBot.WAIT_STRIKE - 2;
         private static Panmage lightning1 = null;
         
         protected Lightning(final LightningBot src) {
@@ -966,7 +990,55 @@ public abstract class Boss extends Enemy {
         @Override
         protected final void renderView(final Panderer renderer) {
             final Panmage img = getLightning1();
-            
+            final int jMax = 10, jMin, jBase = 2;
+            if (timer == DURATION_LIGHTNING) {
+                jMin = 8;
+            } else if (timer == (DURATION_LIGHTNING - 1)) {
+                jMin = 5;
+            } else {
+                jMin = jBase;
+            }
+            for (int j = jMax; j >= jMin; j--) {
+                final int index;
+                if (j == jMax) {
+                    index = getTop();
+                } else if ((j == jMin) && (j != jBase)) {
+                    index = getBottom();
+                } else {
+                    index = getVertical();
+                }
+                renderIndex(renderer, 100, j, index, img);
+            }
+        }
+        
+        private final void renderIndex(final Panderer renderer, final int x, final int j, final int index, final Panmage img) {
+            final int d = 16;
+            final int ix = (index % 4) * d, iy = (index / 4) * d;
+            renderer.render(getLayer(), img, x, j * d, BotsnBoltsGame.DEPTH_PROJECTILE, ix, iy, d, d);
+        }
+        
+        protected final static int getTop() {
+            return 3;
+        }
+        
+        protected final static int getVertical() {
+            return 14;
+        }
+        
+        protected final static int getBottom() {
+            return 7;
+        }
+        
+        protected final static int getFork() {
+            return 10;
+        }
+        
+        protected final static int getDiagonalBottom() {
+            return 11;
+        }
+        
+        protected final static int getDiagonalTop() {
+            return 15;
         }
         
         protected final static Panmage getLightning1() {
