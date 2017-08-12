@@ -982,21 +982,28 @@ public abstract class Boss extends Enemy {
     protected final static class Lightning extends TimedEnemyProjectile {
         private final static int DURATION_LIGHTNING = LightningBot.WAIT_STRIKE - 2;
         private final static int ROOT_MAX = 10;
-        private final static int[] forkScratch = { 4, 5, 6, 7, 8, 9 };
+        private final static int ROOT_BASE = 2;
+        private final static int[] forkScratch = { 5, 6, 7, 8, 9 };
         private static Panmage lightning1 = null;
+        private final LightningBot src;
+        private final int x;
         private final int jMax;
+        private final int jBase;
         private final int jLeft;
         private final int jRight;
         private Lightning lightningLeft = null;
         private Lightning lightningRight = null;
         
         protected Lightning(final LightningBot src) {
-            this(src, ROOT_MAX);
+            this(src, 100, ROOT_MAX, ROOT_BASE, DURATION_LIGHTNING);
         }
         
-        protected Lightning(final LightningBot src, final int jMax) {
-            super(src, 10, 0, DURATION_LIGHTNING);
+        protected Lightning(final LightningBot src, final int x, final int jMax, final int jBase, final int timer) {
+            super(src, 10, 0, timer);
+            this.src = src;
+            this.x = x;
             this.jMax = jMax;
+            this.jBase = jBase;
             if (isRoot()) {
                 Mathtil.shuffle(forkScratch);
                 jLeft = forkScratch[0];
@@ -1013,7 +1020,7 @@ public abstract class Boss extends Enemy {
         @Override
         protected final void renderView(final Panderer renderer) {
             final Panmage img = getLightning1();
-            final int x = 100, jMin, jBase = 2;
+            int jMin;
             if (timer == DURATION_LIGHTNING) {
                 jMin = 8;
             } else if (timer == (DURATION_LIGHTNING - 1)) {
@@ -1021,25 +1028,32 @@ public abstract class Boss extends Enemy {
             } else {
                 jMin = jBase;
             }
+            if (jMin > jMax) {
+                jMin = jMax;
+            }
+            boolean firstFork = true;
             for (int j = jMax; j >= jMin; j--) {
                 final int index;
                 final boolean mirror;
                 boolean fork = false;
-                if (j == jMax) {
+                Lightning childLightning = null;
+                if ((j == jMax) && isRoot()) {
                     index = getTop();
                     //mirror = Mathtil.rand();
                     mirror = false;
-                } else if ((j == jMin) && (j != jBase)) {
+                } else if ((j == jMin) && (!isRoot() || (j != jBase))) {
                     index = getBottom();
                     mirror = false;
                 } else if (j == jLeft) {
                     index = getFork();
                     mirror = true;
                     fork = true;
+                    childLightning = lightningLeft;
                 } else if (j == jRight) {
                     index = getFork();
                     mirror = false;
                     fork = true;
+                    childLightning = lightningRight;
                 } else {
                     index = getVertical();
                     mirror = false;
@@ -1049,12 +1063,24 @@ public abstract class Boss extends Enemy {
                     final int mult = (mirror ? -1 : 1) * 16;
                     final int w = (j == jMin) ? 1 : 2;
                     for (int i = 1; i <= w; i++) {
-                        final int i1 = i - 1;
+                        final int i1 = i - 1, xFork = x + (mult * i), jFork = j - i1;;
                         if (i > 1) {
-                            renderIndex(renderer, x + (mult * i1), j - i1, getDiagonalTop(), img, mirror);
+                            renderIndex(renderer, x + (mult * i1), jFork, getDiagonalTop(), img, mirror);
                         }
-                        renderIndex(renderer, x + (mult * i), j - i1, getDiagonalBottom(), img, mirror);
+                        renderIndex(renderer, xFork, jFork, getDiagonalBottom(), img, mirror);
+                        if ((i == w) && (childLightning == null)) {
+                            final int jNext = jFork - 1;
+                            final int baseNext = jBase + (firstFork ? 2 : 1);
+                            childLightning = new Lightning(src, xFork, jNext, baseNext, timer);
+                            if (mirror) {
+                                lightningLeft = childLightning;
+                            } else {
+                                lightningRight = childLightning;
+                            }
+                            renderIndex(renderer, xFork, jNext, getBottom(), img, mirror); // Actor created during renderView won't be displayed till next frame
+                        }
                     }
+                    firstFork = false;
                 }
             }
         }
