@@ -993,6 +993,9 @@ public abstract class Boss extends Enemy {
         private final int jRight;
         private Lightning lightningLeft = null;
         private Lightning lightningRight = null;
+        private final int[] verticalScratch = { 0, 1, 2, 4, 5, 6, 8, 9, 14 };
+        private final int bottom;
+        private final boolean mirrorFlag;
         
         protected Lightning(final LightningBot src) {
             this(src, 100, ROOT_MAX, ROOT_BASE, DURATION_LIGHTNING);
@@ -1011,6 +1014,16 @@ public abstract class Boss extends Enemy {
             } else {
                 jLeft = jRight = -1;
             }
+            Mathtil.shuffle(verticalScratch);
+            final int r = Mathtil.randi(0, 299);
+            if (r < 100) {
+                bottom = 7;
+            } else if (r < 200) {
+                bottom = 12;
+            } else {
+                bottom = 13;
+            }
+            mirrorFlag = Mathtil.rand();
         }
         
         private final boolean isRoot() {
@@ -1039,11 +1052,10 @@ public abstract class Boss extends Enemy {
                 Lightning childLightning = null;
                 if ((j == jMax) && isRoot()) {
                     index = getTop();
-                    //mirror = Mathtil.rand();
-                    mirror = false;
+                    mirror = isMirror();
                 } else if ((j == jMin) && (!isRoot() || (j != jBase))) {
                     index = getBottom();
-                    mirror = false;
+                    mirror = isMirror(j);
                 } else if (j == jLeft) {
                     index = getFork();
                     mirror = true;
@@ -1055,8 +1067,8 @@ public abstract class Boss extends Enemy {
                     fork = true;
                     childLightning = lightningRight;
                 } else {
-                    index = getVertical();
-                    mirror = false;
+                    index = getVertical(j);
+                    mirror = isMirror(j);
                 }
                 renderIndex(renderer, x, j, index, img, mirror);
                 if (fork) {
@@ -1077,7 +1089,7 @@ public abstract class Boss extends Enemy {
                             } else {
                                 lightningRight = childLightning;
                             }
-                            renderIndex(renderer, xFork, jNext, getBottom(), img, mirror); // Actor created during renderView won't be displayed till next frame
+                            renderIndex(renderer, xFork, jNext, childLightning.getBottom(), img, childLightning.isMirror(jNext)); // Actor created during renderView won't be displayed till next frame
                         }
                     }
                     firstFork = false;
@@ -1091,16 +1103,21 @@ public abstract class Boss extends Enemy {
             renderer.render(getLayer(), img, x, j * d, BotsnBoltsGame.DEPTH_PROJECTILE, ix, iy, d, d, 0, mirror, false);
         }
         
+        protected final boolean isMirror(final int y) {
+            final boolean b = (y % 2) == 0;
+            return mirrorFlag ? b : !b;
+        }
+        
         protected final static int getTop() {
             return 3;
         }
         
-        protected final static int getVertical() {
-            return 14;
+        protected final int getVertical(final int j) {
+            return verticalScratch[(j - ROOT_BASE) % verticalScratch.length];
         }
         
-        protected final static int getBottom() {
-            return 7;
+        protected final int getBottom() {
+            return bottom;
         }
         
         protected final static int getFork() {
