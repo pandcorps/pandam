@@ -981,16 +981,39 @@ public abstract class Boss extends Enemy {
     
     protected final static class Lightning extends TimedEnemyProjectile {
         private final static int DURATION_LIGHTNING = LightningBot.WAIT_STRIKE - 2;
+        private final static int ROOT_MAX = 10;
+        private final static int[] forkScratch = { 4, 5, 6, 7, 8, 9 };
         private static Panmage lightning1 = null;
+        private final int jMax;
+        private final int jLeft;
+        private final int jRight;
+        private Lightning lightningLeft = null;
+        private Lightning lightningRight = null;
         
         protected Lightning(final LightningBot src) {
+            this(src, ROOT_MAX);
+        }
+        
+        protected Lightning(final LightningBot src, final int jMax) {
             super(src, 10, 0, DURATION_LIGHTNING);
+            this.jMax = jMax;
+            if (isRoot()) {
+                Mathtil.shuffle(forkScratch);
+                jLeft = forkScratch[0];
+                jRight = forkScratch[1];
+            } else {
+                jLeft = jRight = -1;
+            }
+        }
+        
+        private final boolean isRoot() {
+            return jMax == ROOT_MAX;
         }
         
         @Override
         protected final void renderView(final Panderer renderer) {
             final Panmage img = getLightning1();
-            final int jMax = 10, jMin, jBase = 2;
+            final int x = 100, jMin, jBase = 2;
             if (timer == DURATION_LIGHTNING) {
                 jMin = 8;
             } else if (timer == (DURATION_LIGHTNING - 1)) {
@@ -1000,21 +1023,46 @@ public abstract class Boss extends Enemy {
             }
             for (int j = jMax; j >= jMin; j--) {
                 final int index;
+                final boolean mirror;
+                boolean fork = false;
                 if (j == jMax) {
                     index = getTop();
+                    //mirror = Mathtil.rand();
+                    mirror = false;
                 } else if ((j == jMin) && (j != jBase)) {
                     index = getBottom();
+                    mirror = false;
+                } else if (j == jLeft) {
+                    index = getFork();
+                    mirror = true;
+                    fork = true;
+                } else if (j == jRight) {
+                    index = getFork();
+                    mirror = false;
+                    fork = true;
                 } else {
                     index = getVertical();
+                    mirror = false;
                 }
-                renderIndex(renderer, 100, j, index, img);
+                renderIndex(renderer, x, j, index, img, mirror);
+                if (fork) {
+                    final int mult = (mirror ? -1 : 1) * 16;
+                    final int w = (j == jMin) ? 1 : 2;
+                    for (int i = 1; i <= w; i++) {
+                        final int i1 = i - 1;
+                        if (i > 1) {
+                            renderIndex(renderer, x + (mult * i1), j - i1, getDiagonalTop(), img, mirror);
+                        }
+                        renderIndex(renderer, x + (mult * i), j - i1, getDiagonalBottom(), img, mirror);
+                    }
+                }
             }
         }
         
-        private final void renderIndex(final Panderer renderer, final int x, final int j, final int index, final Panmage img) {
+        private final void renderIndex(final Panderer renderer, final int x, final int j, final int index, final Panmage img, final boolean mirror) {
             final int d = 16;
             final int ix = (index % 4) * d, iy = (index / 4) * d;
-            renderer.render(getLayer(), img, x, j * d, BotsnBoltsGame.DEPTH_PROJECTILE, ix, iy, d, d);
+            renderer.render(getLayer(), img, x, j * d, BotsnBoltsGame.DEPTH_PROJECTILE, ix, iy, d, d, 0, mirror, false);
         }
         
         protected final static int getTop() {
