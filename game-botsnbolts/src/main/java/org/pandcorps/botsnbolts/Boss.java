@@ -1006,6 +1006,8 @@ public abstract class Boss extends Enemy {
         private final static int ROOT_BASE = 2;
         private final static int[] forkScratch = { 5, 6, 7, 8, 9 };
         private static Panmage lightning1 = null;
+        private static Panmage lightning2 = null;
+        private static Panmage lightning3 = null;
         private final LightningBot src;
         private final int x;
         private final int jMax;
