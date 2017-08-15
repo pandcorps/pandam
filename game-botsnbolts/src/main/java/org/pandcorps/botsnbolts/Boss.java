@@ -1157,12 +1157,26 @@ public abstract class Boss extends Enemy {
             return 15;
         }
         
+        protected final Panmage getCurrentImage() {
+            if (timer < 2) {
+                return getLightning3();
+            } else if (timer < 4) {
+                return getLightning2();
+            } else {
+                return getLightning1();
+            }
+        }
+        
         protected final static Panmage getLightning1() {
             return (lightning1 = getLightningImage(lightning1, "lightningbot/Lightning1"));
         }
         
         protected final static Panmage getLightning2() {
             return (lightning2 = getLightningImage(lightning2, "lightningbot/Lightning2"));
+        }
+        
+        protected final static Panmage getLightning3() {
+            return (lightning3 = getLightningImage(lightning3, "lightningbot/Lightning3"));
         }
         
         protected final static Panmage getLightningImage(final Panmage img, final String name) {
