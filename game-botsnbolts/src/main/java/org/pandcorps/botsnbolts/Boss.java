@@ -1057,7 +1057,7 @@ public abstract class Boss extends Enemy {
         
         @Override
         protected final void renderView(final Panderer renderer) {
-            final Panmage img = getLightning1();
+            final Panmage img = getCurrentImage();
             int jMin;
             if (timer == DURATION_LIGHTNING) {
                 jMin = 8;
