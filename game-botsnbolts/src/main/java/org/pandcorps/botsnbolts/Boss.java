@@ -1196,6 +1196,7 @@ public abstract class Boss extends Enemy {
 
         @Override
         protected final boolean continueState() {
+            startStill();
             return false;
         }
 
