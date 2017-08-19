@@ -1184,9 +1184,14 @@ public abstract class Boss extends Enemy {
         }
     }
     
+    protected final static int CYCLONE_OFF_X = 6, CYCLONE_H = 24; //TODO
+    protected final static Panple CYCLONE_O = new FinPanple2(14, 1);
+    protected final static Panple CYCLONE_MIN = getMin(CYCLONE_OFF_X);
+    protected final static Panple CYCLONE_MAX = getMax(CYCLONE_OFF_X, CYCLONE_H);
+    
     protected final static class CycloneBot extends Boss {
         protected CycloneBot(final int x, final int y) {
-            super(LIGHTNING_OFF_X, LIGHTNING_H, x, y); //TODO
+            super(CYCLONE_OFF_X, CYCLONE_H, x, y);
         }
 
         @Override
