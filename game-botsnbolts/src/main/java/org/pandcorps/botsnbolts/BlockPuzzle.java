@@ -386,6 +386,12 @@ public abstract class BlockPuzzle {
         }
     }
     
+    protected final static class Electricity extends EnemyProjectile {
+        protected Electricity(Panctor src, int ox, int oy, float vx, float vy) {
+            super(src, ox, oy, vx, vy);
+        }
+    }
+    
     // Shooting the BurstBlock will start a chain reaction, bursting adjacent blocks in the puzzle
     protected final static class BurstBlockPuzzle {
     }
