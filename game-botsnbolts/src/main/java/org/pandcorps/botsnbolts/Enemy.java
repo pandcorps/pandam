@@ -215,11 +215,14 @@ public abstract class Enemy extends Chr implements CollisionListener {
         
         protected final static void addBySource(final Panctor toAdd, final Panmage img, final Panctor src, final int ox, final int oy) {
             final Panple srcPos = src.getPosition();
-            final boolean srcMirror = src.isMirror();
-            final boolean src180 = src.getRot() == 2;
+            addBySource(toAdd, img, srcPos.getX(), srcPos.getY(), src.isMirror(), src.getRot(), ox, oy);
+        }
+        
+        protected final static void addBySource(final Panctor toAdd, final Panmage img, final float srcX, final float srcY, final boolean srcMirror, final int srcRot, final int ox, final int oy) {
+            final boolean src180 = srcRot == 2;
             final boolean mirror = (srcMirror && !src180) || (!srcMirror && src180);
             final int mx = mirror ? -1 : 1;
-            toAdd.getPosition().set(srcPos.getX() + (mx * ox), srcPos.getY() + oy, BotsnBoltsGame.DEPTH_PROJECTILE);
+            toAdd.getPosition().set(srcX + (mx * ox), srcY + oy, BotsnBoltsGame.DEPTH_PROJECTILE);
             toAdd.setMirror(mirror);
             toAdd.setView(img);
             BotsnBoltsGame.addActor(toAdd);
