@@ -926,10 +926,11 @@ public abstract class Boss extends Enemy {
     protected final static class LightningBot extends Boss {
         protected final static byte STATE_JUMP = 1;
         protected final static byte STATE_STRIKE = 2;
-        protected final static int WAIT_STRIKE = 22;
+        protected final static int WAIT_STRIKE = 15;
         protected static Panmage still = null;
         protected static Panmage jump = null;
         protected static Panmage strike = null;
+        protected static Panmage fall = null;
         
         protected LightningBot(final int x, final int y) {
             super(LIGHTNING_OFF_X, LIGHTNING_H, x, y);
@@ -943,8 +944,12 @@ public abstract class Boss extends Enemy {
                 }
                 return true;
             } else if (state == STATE_JUMP) {
-                if ((v > 0) && (getPosition().getY() >= 166)) {
-                    startStrike();
+                if (v > 0) {
+                    if (getPosition().getY() >= 166) {
+                        startStrike();
+                    }
+                } else if (v < 0) {
+                    changeView(getFall());
                 }
             }
             return false;
@@ -995,13 +1000,17 @@ public abstract class Boss extends Enemy {
             return (strike = getLightningImage(strike, "lightningbot/LightningBotStrike"));
         }
         
+        protected final Panmage getFall() {
+            return (fall = getLightningImage(fall, "lightningbot/LightningBotFall"));
+        }
+        
         protected final static Panmage getLightningImage(final Panmage img, final String name) {
             return getImage(img, name, LIGHTNING_O, LIGHTNING_MIN, LIGHTNING_MAX);
         }
     }
     
     protected final static class Lightning extends TimedEnemyProjectile {
-        private final static int DURATION_LIGHTNING = LightningBot.WAIT_STRIKE - 2;
+        private final static int DURATION_LIGHTNING = 20;
         private final static int ROOT_MAX = 10;
         private final static int ROOT_BASE = 2;
         private final static int[] forkScratch = { 5, 6, 7, 8, 9 };
@@ -1022,7 +1031,7 @@ public abstract class Boss extends Enemy {
         private final int mirrorBase;
         
         protected Lightning(final LightningBot src) {
-            this(src, Math.round(src.getPosition().getX()) - (src.isMirror() ? 8 : 7), ROOT_MAX, ROOT_BASE, DURATION_LIGHTNING);
+            this(src, Math.round(src.getPosition().getX()) - (src.isMirror() ? 11 : 4), ROOT_MAX, ROOT_BASE, DURATION_LIGHTNING);
         }
         
         protected Lightning(final LightningBot src, final int x, final int jMax, final int jBase, final int timer) {
