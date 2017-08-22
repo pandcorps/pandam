@@ -386,6 +386,9 @@ public abstract class BlockPuzzle {
         }
     }
     
+    protected final static class ElectricityBlock {
+    }
+    
     protected final static class Electricity extends EnemyProjectile {
         protected Electricity(Panctor src, int ox, int oy, float vx, float vy) {
             super(src, ox, oy, vx, vy);
