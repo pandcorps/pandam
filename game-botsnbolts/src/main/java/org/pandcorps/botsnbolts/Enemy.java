@@ -267,16 +267,16 @@ public abstract class Enemy extends Chr implements CollisionListener {
     protected static class TimedEnemyProjectile extends EnemyProjectile {
         int timer;
         
-        protected TimedEnemyProjectile(final Enemy src, final int ox, final int oy, final int timer) {
+        protected TimedEnemyProjectile(final Panctor src, final int ox, final int oy, final int timer) {
             super(src, ox, oy, 0, 0);
             this.timer = timer;
         }
         
-        protected TimedEnemyProjectile(final Panmage img, final Enemy src, final int ox, final int oy, final int timer) {
+        protected TimedEnemyProjectile(final Panmage img, final Panctor src, final int ox, final int oy, final int timer) {
             this(img, src, ox, oy, 0, 0, timer);
         }
         
-        protected TimedEnemyProjectile(final Panmage img, final Enemy src, final int ox, final int oy, final float vx, final float vy, final int timer) {
+        protected TimedEnemyProjectile(final Panmage img, final Panctor src, final int ox, final int oy, final float vx, final float vy, final int timer) {
             super(img, src, ox, oy, vx, vy);
             this.timer = timer;
         }
