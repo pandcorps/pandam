@@ -32,6 +32,8 @@ import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandax.tile.*;
 
 public abstract class BlockPuzzle {
+    protected final static String RES_BG = BotsnBoltsGame.RES + "bg/";
+    
     protected final TileMap tm;
     protected final Panmage[] blockImgs;
     
@@ -386,12 +388,55 @@ public abstract class BlockPuzzle {
         }
     }
     
-    protected final static class ElectricityBlock {
+    protected final static class ElectricityBlock extends Panctor implements StepListener {
+        @Override
+        public final void onStep(final StepEvent event) {
+        }
     }
     
-    protected final static class Electricity extends EnemyProjectile {
-        protected Electricity(Panctor src, int ox, int oy, float vx, float vy) {
-            super(src, ox, oy, vx, vy);
+    protected final static class Electricity extends TimedEnemyProjectile {
+        private final static int DURATION_ELECTRICITY = 15;
+        protected static Panmage image = null;
+        
+        private int min = 3;
+        private int max = 3;
+        
+        protected Electricity(Panctor src, int ox, int oy) {
+            super(null, src, ox, oy, DURATION_ELECTRICITY);
+        }
+        
+        @Override
+        public final void onStep(final StepEvent event) {
+            super.onStep(event);
+            final int index = DURATION_ELECTRICITY - timer;
+            if (index == 0) {
+                min = max = 3;
+            } else if (index == 1) {
+                min = 1;
+                max = 3;
+            } else if (timer == 1) {
+                min = 0;
+                max = 2;
+            } else {
+                min = 0;
+                max = 3;
+            }
+        }
+        
+        @Override
+        protected final void renderView(final Panderer renderer) {
+            for (int i = min; i <= max; i++) {
+                
+            }
+        }
+        
+        @Override
+        public Pansplay getCurrentDisplay() {
+            return null; //TODO
+        }
+        
+        protected final static Panmage getElectricityImage() {
+            return (image = getImage(image, "Electricity", null, null, null));
         }
     }
     
@@ -409,5 +454,9 @@ public abstract class BlockPuzzle {
     }
     
     protected final static class ConveyorBelt { //TODO
+    }
+    
+    protected final static Panmage getImage(final Panmage img, final String name, final Panple o, final Panple min, final Panple max) {
+        return Enemy.getImage(img, "puzzle.", RES_BG, name, o, min, max);
     }
 }
