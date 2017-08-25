@@ -27,8 +27,10 @@ import java.util.*;
 import org.pandcorps.botsnbolts.Enemy.*;
 import org.pandcorps.botsnbolts.Player.*;
 import org.pandcorps.botsnbolts.ShootableDoor.*;
+import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
+import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.tile.*;
 
 public abstract class BlockPuzzle {
@@ -389,34 +391,73 @@ public abstract class BlockPuzzle {
     }
     
     protected final static class ElectricityBlock extends Panctor implements StepListener {
+        private final static int DURATION_PERIOD = 60;
+        protected static Panmage image = null;
+        private int timer = DURATION_PERIOD;
+        
+        protected ElectricityBlock(final int tileIndex) {
+            final TileMap tm = BotsnBoltsGame.tm;
+            tm.savePosition(getPosition(), tileIndex);
+            tm.setForeground(tileIndex, getElectricityBlockImage(), Tile.BEHAVIOR_SOLID);
+            tm.getLayer().addActor(this);
+        }
+        
         @Override
         public final void onStep(final StepEvent event) {
+            timer--;
+            if (timer <= 0) {
+                new Electricity(this, 0, -64);
+                timer = DURATION_PERIOD;
+            }
+        }
+        
+        protected final static Panmage getElectricityBlockImage() {
+            return (image = getImage(image, "BlockElectricity", null, null, null));
         }
     }
     
     protected final static class Electricity extends TimedEnemyProjectile {
-        private final static int DURATION_ELECTRICITY = 15;
+        private final static int DURATION_ELECTRICITY = 12;
+        private final static int NUM_PARTS = 4;
         protected static Panmage image = null;
-        
+        private final int[] parts = new int[NUM_PARTS];
         private int min = 3;
         private int max = 3;
+        private final ElectricityDisplay display = new ElectricityDisplay();
+        private final ElectricityMinimum boundMin = new ElectricityMinimum();
+        private final ElectricityMaximum boundMax = new ElectricityMaximum();
         
         protected Electricity(Panctor src, int ox, int oy) {
             super(null, src, ox, oy, DURATION_ELECTRICITY);
+            randomize();
+        }
+        
+        private final void randomize() {
+            for (int i = 0; i < NUM_PARTS; i++) {
+                parts[i] = Mathtil.randi(-4, 3);
+            }
+        }
+        
+        @Override
+        protected final boolean isDestroyedOnImpact() {
+            return false;
         }
         
         @Override
         public final void onStep(final StepEvent event) {
             super.onStep(event);
             final int index = DURATION_ELECTRICITY - timer;
+            if ((index == 3) || (index == 6) || (index == 9)) {
+                randomize();
+            }
             if (index == 0) {
                 min = max = 3;
             } else if (index == 1) {
                 min = 1;
                 max = 3;
-            } else if (timer == 1) {
+            } else if (timer == 0) {
                 min = 0;
-                max = 2;
+                max = 1;
             } else {
                 min = 0;
                 max = 3;
@@ -425,14 +466,78 @@ public abstract class BlockPuzzle {
         
         @Override
         protected final void renderView(final Panderer renderer) {
+            final Panple pos = getPosition();
+            final Panlayer layer = getLayer();
+            final Panmage image = getElectricityImage();
+            final float x = pos.getX(), y = pos.getY();
             for (int i = min; i <= max; i++) {
-                
+                final int p = parts[i], mag;
+                final boolean m = p < 0;
+                if (m) {
+                    mag = (p + 1) * -1;
+                } else {
+                    mag = p;
+                }
+                final int ix = mag % 2;
+                final int iy = mag / 2;
+                renderer.render(layer, image, x, y + (i * 16), BotsnBoltsGame.DEPTH_PROJECTILE, ix * 16, iy * 16, 16, 16, 0, m, false);
             }
         }
         
         @Override
         public Pansplay getCurrentDisplay() {
-            return null; //TODO
+            return display;
+        }
+        
+        private final class ElectricityDisplay implements Pansplay {
+            @Override
+            public final Panple getOrigin() {
+                return FinPanple.ORIGIN;
+            }
+
+            @Override
+            public final Panple getBoundingMinimum() {
+                return boundMin;
+            }
+
+            @Override
+            public final Panple getBoundingMaximum() {
+                return boundMax;
+            }
+        }
+        
+        private final class ElectricityMinimum extends UnmodPanple {
+            @Override
+            public final float getX() {
+                return 4;
+            }
+
+            @Override
+            public final float getY() {
+                return min * 16;
+            }
+
+            @Override
+            public final float getZ() {
+                return 0;
+            }
+        }
+        
+        private final class ElectricityMaximum extends UnmodPanple {
+            @Override
+            public final float getX() {
+                return 12;
+            }
+
+            @Override
+            public final float getY() {
+                return max * 16;
+            }
+
+            @Override
+            public final float getZ() {
+                return 0;
+            }
         }
         
         protected final static Panmage getElectricityImage() {
