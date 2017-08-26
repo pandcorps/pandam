@@ -157,6 +157,8 @@ public abstract class RoomLoader {
                 hdp(seg);
             } else if ("SPP".equals(name)) { // Spike Block Puzzle
                 spp(seg);
+            } else if ("ELB".equals(name)) { // Electricity Block
+                elb(seg);
             } else if ("LDR".equals(name)) { // Ladder
                 ldr(seg.intValue(0), seg.intValue(1), seg.intValue(2));
             } else if ("BRR".equals(name)) { // Barrier
@@ -432,6 +434,10 @@ public abstract class RoomLoader {
     
     private final static void spp(final Segment seg) {
         new SpikeBlockPuzzle(getTileIndexArray(seg, 0), getTileIndexArray(seg, 1));
+    }
+    
+    private final static void elb(final Segment seg) {
+        new ElectricityBlock(BotsnBoltsGame.tm.getIndex(seg.intValue(0), seg.intValue(1)));
     }
     
     private final static ButtonBlockPuzzle btp(final Segment seg) {
