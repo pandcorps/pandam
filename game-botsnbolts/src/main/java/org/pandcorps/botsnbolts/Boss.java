@@ -1131,6 +1131,11 @@ public abstract class Boss extends Enemy {
             }
         }
         
+        @Override
+        public Pansplay getCurrentDisplay() {
+            return super.getCurrentDisplay(); //TODO
+        }
+        
         private final void renderIndex(final Panderer renderer, final int x, final int j, final int index, final Panmage img, final boolean mirror) {
             final int d = 16;
             final int ix = (index % 4) * d, iy = (index / 4) * d;
