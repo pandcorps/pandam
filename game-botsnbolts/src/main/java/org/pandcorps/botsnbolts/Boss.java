@@ -1204,6 +1204,8 @@ public abstract class Boss extends Enemy {
     protected final static Panple CYCLONE_MAX = getMax(CYCLONE_OFF_X, CYCLONE_H);
     
     protected final static class CycloneBot extends Boss {
+        protected static Panmage still = null;
+        
         protected CycloneBot(final int x, final int y) {
             super(CYCLONE_OFF_X, CYCLONE_H, x, y);
         }
