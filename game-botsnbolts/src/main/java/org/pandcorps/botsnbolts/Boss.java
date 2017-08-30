@@ -1225,6 +1225,10 @@ public abstract class Boss extends Enemy {
         protected final Panmage getStill() {
             return null;
         }
+        
+        protected final static Panmage getCycloneImage(final Panmage img, final String name) {
+            return getImage(img, name, CYCLONE_O, CYCLONE_MIN, CYCLONE_MAX);
+        }
     }
     
     protected abstract static class Rotator {
