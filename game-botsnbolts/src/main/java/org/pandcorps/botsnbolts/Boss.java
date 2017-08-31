@@ -1223,7 +1223,7 @@ public abstract class Boss extends Enemy {
 
         @Override
         protected final Panmage getStill() {
-            return null;
+            return (still = getCycloneImage(still, "cyclonebot/CycloneBot"));
         }
         
         protected final static Panmage getCycloneImage(final Panmage img, final String name) {
