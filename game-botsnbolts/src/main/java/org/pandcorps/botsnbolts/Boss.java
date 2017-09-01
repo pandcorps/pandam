@@ -1136,6 +1136,24 @@ public abstract class Boss extends Enemy {
             return super.getCurrentDisplay(); //TODO
         }
         
+        private final class LightningMinimum extends UnmodPanple {
+            @Override
+            public final float getX() {
+                return 2;
+            }
+
+            @Override
+            public final float getY() {
+                return 0; //TODO
+                //return min * 16;
+            }
+
+            @Override
+            public final float getZ() {
+                return 0;
+            }
+        }
+        
         private final void renderIndex(final Panderer renderer, final int x, final int j, final int index, final Panmage img, final boolean mirror) {
             final int d = 16;
             final int ix = (index % 4) * d, iy = (index / 4) * d;
