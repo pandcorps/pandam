@@ -22,22 +22,9 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandam.impl;
 
-public final class FinPanple2 extends UnmodPanple2 {
-    private final float x;
-    private final float y;
-
-    public FinPanple2(final float x, final float y) {
-        this.x = x;
-        this.y = y;
-    }
-    
+public abstract class UnmodPanple2 extends UnmodPanple {
     @Override
-    public final float getX() {
-        return x;
-    }
-
-    @Override
-    public final float getY() {
-        return y;
+    public final float getZ() {
+        return 0;
     }
 }
