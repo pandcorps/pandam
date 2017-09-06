@@ -506,7 +506,7 @@ public abstract class BlockPuzzle {
             }
         }
         
-        private final class ElectricityMinimum extends UnmodPanple {
+        private final class ElectricityMinimum extends UnmodPanple2 {
             @Override
             public final float getX() {
                 return 4;
@@ -516,14 +516,9 @@ public abstract class BlockPuzzle {
             public final float getY() {
                 return min * 16;
             }
-
-            @Override
-            public final float getZ() {
-                return 0;
-            }
         }
         
-        private final class ElectricityMaximum extends UnmodPanple {
+        private final class ElectricityMaximum extends UnmodPanple2 {
             @Override
             public final float getX() {
                 return 12;
@@ -532,11 +527,6 @@ public abstract class BlockPuzzle {
             @Override
             public final float getY() {
                 return max * 16;
-            }
-
-            @Override
-            public final float getZ() {
-                return 0;
             }
         }
         

@@ -24,7 +24,7 @@ package org.pandcorps.pandam.impl;
 
 import org.pandcorps.pandam.*;
 
-public class OriginPansplay implements Pansplay {
+public final class OriginPansplay implements Pansplay {
     private final Panple min;
     private final Panple max;
     

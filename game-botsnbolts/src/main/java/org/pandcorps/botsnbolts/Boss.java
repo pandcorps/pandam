@@ -1136,7 +1136,7 @@ public abstract class Boss extends Enemy {
             return super.getCurrentDisplay(); //TODO
         }
         
-        private final class LightningMinimum extends UnmodPanple {
+        private final class LightningMinimum extends UnmodPanple2 {
             @Override
             public final float getX() {
                 return 2;
@@ -1147,14 +1147,9 @@ public abstract class Boss extends Enemy {
                 return 0; //TODO
                 //return min * 16;
             }
-
-            @Override
-            public final float getZ() {
-                return 0;
-            }
         }
         
-        private final class LightningMaximum extends UnmodPanple {
+        private final class LightningMaximum extends UnmodPanple2 {
             @Override
             public final float getX() {
                 return 14;
@@ -1164,11 +1159,6 @@ public abstract class Boss extends Enemy {
             public final float getY() {
                 return 0; //TODO
                 //return max * 16;
-            }
-
-            @Override
-            public final float getZ() {
-                return 0;
             }
         }
         

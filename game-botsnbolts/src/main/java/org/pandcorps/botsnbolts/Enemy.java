@@ -418,7 +418,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
             }
         }
         
-        private final class FreezeRayMinimum extends UnmodPanple {
+        private final class FreezeRayMinimum extends UnmodPanple2 {
             @Override
             public final float getX() {
                 return start * 4;
@@ -428,14 +428,9 @@ public abstract class Enemy extends Chr implements CollisionListener {
             public final float getY() {
                 return 0;
             }
-
-            @Override
-            public final float getZ() {
-                return 0;
-            }
         }
         
-        private final class FreezeRayMaximum extends UnmodPanple {
+        private final class FreezeRayMaximum extends UnmodPanple2 {
             @Override
             public final float getX() {
                 return (end + 1) * 4;
@@ -444,11 +439,6 @@ public abstract class Enemy extends Chr implements CollisionListener {
             @Override
             public final float getY() {
                 return 4;
-            }
-
-            @Override
-            public final float getZ() {
-                return 0;
             }
         }
         
