@@ -1029,6 +1029,7 @@ public abstract class Boss extends Enemy {
         private final int bottom;
         private final boolean mirrorFlag;
         private final int mirrorBase;
+        private final Pansplay display = new OriginPansplay(new LightningMinimum(), new LightningMaximum());
         
         protected Lightning(final LightningBot src) {
             this(src, Math.round(src.getPosition().getX()) - (src.isMirror() ? 11 : 4), ROOT_MAX, ROOT_BASE, DURATION_LIGHTNING);
@@ -1133,7 +1134,7 @@ public abstract class Boss extends Enemy {
         
         @Override
         public Pansplay getCurrentDisplay() {
-            return super.getCurrentDisplay(); //TODO
+            return display;
         }
         
         private final class LightningMinimum extends UnmodPanple2 {
