@@ -316,9 +316,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         private int index = 0;
         private int start = 0;
         private int end = 0;
-        private final FreezeRayDisplay display = new FreezeRayDisplay();
-        private final FreezeRayMinimum min = new FreezeRayMinimum();
-        private final FreezeRayMaximum max = new FreezeRayMaximum();
+        private final Pansplay display = new OriginPansplay(new FreezeRayMinimum(), new FreezeRayMaximum());
         
         protected FreezeRayProjectile(final Enemy src, final int ox, final int oy) {
             super(src, ox, oy, DURATION_FREEZE);
@@ -399,23 +397,6 @@ public abstract class Enemy extends Chr implements CollisionListener {
         @Override
         public Pansplay getCurrentDisplay() {
             return display;
-        }
-        
-        private final class FreezeRayDisplay implements Pansplay {
-            @Override
-            public final Panple getOrigin() {
-                return FinPanple.ORIGIN;
-            }
-
-            @Override
-            public final Panple getBoundingMinimum() {
-                return min;
-            }
-
-            @Override
-            public final Panple getBoundingMaximum() {
-                return max;
-            }
         }
         
         private final class FreezeRayMinimum extends UnmodPanple2 {
