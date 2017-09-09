@@ -423,9 +423,7 @@ public abstract class BlockPuzzle {
         private final int[] parts = new int[NUM_PARTS];
         private int min = 3;
         private int max = 3;
-        private final ElectricityDisplay display = new ElectricityDisplay();
-        private final ElectricityMinimum boundMin = new ElectricityMinimum();
-        private final ElectricityMaximum boundMax = new ElectricityMaximum();
+        private final Pansplay display = new OriginPansplay(new ElectricityMinimum(), new ElectricityMaximum());
         
         protected Electricity(Panctor src, int ox, int oy) {
             super(null, src, ox, oy, DURATION_ELECTRICITY);
@@ -487,23 +485,6 @@ public abstract class BlockPuzzle {
         @Override
         public Pansplay getCurrentDisplay() {
             return display;
-        }
-        
-        private final class ElectricityDisplay implements Pansplay {
-            @Override
-            public final Panple getOrigin() {
-                return FinPanple.ORIGIN;
-            }
-
-            @Override
-            public final Panple getBoundingMinimum() {
-                return boundMin;
-            }
-
-            @Override
-            public final Panple getBoundingMaximum() {
-                return boundMax;
-            }
         }
         
         private final class ElectricityMinimum extends UnmodPanple2 {
