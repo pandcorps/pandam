@@ -1225,6 +1225,27 @@ public abstract class Boss extends Enemy {
         }
     }
     
+    protected final static class EarthquakeBot extends Boss {
+        protected EarthquakeBot(final int x, final int y) {
+            super(CYCLONE_OFF_X, CYCLONE_H, x, y); //TODO
+        }
+
+        @Override
+        protected final boolean pickState() {
+            return false;
+        }
+
+        @Override
+        protected final boolean continueState() {
+            return false;
+        }
+
+        @Override
+        protected final Panmage getStill() {
+            return null;
+        }
+    }
+    
     protected final static int CYCLONE_OFF_X = 6, CYCLONE_H = 24; //TODO
     protected final static Panple CYCLONE_O = new FinPanple2(14, 1);
     protected final static Panple CYCLONE_MIN = getMin(CYCLONE_OFF_X);
