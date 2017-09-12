@@ -1226,6 +1226,8 @@ public abstract class Boss extends Enemy {
     }
     
     protected final static class EarthquakeBot extends Boss {
+        protected static Panmage still = null;
+        
         protected EarthquakeBot(final int x, final int y) {
             super(CYCLONE_OFF_X, CYCLONE_H, x, y); //TODO
         }
