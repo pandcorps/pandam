@@ -1225,11 +1225,16 @@ public abstract class Boss extends Enemy {
         }
     }
     
+    protected final static int EARTHQUAKE_OFF_X = 6, EARTHQUAKE_H = 24; //TODO
+    protected final static Panple EARTHQUAKE_O = new FinPanple2(14, 1);
+    protected final static Panple EARTHQUAKE_MIN = getMin(EARTHQUAKE_OFF_X);
+    protected final static Panple EARTHQUAKE_MAX = getMax(EARTHQUAKE_OFF_X, EARTHQUAKE_H);
+    
     protected final static class EarthquakeBot extends Boss {
         protected static Panmage still = null;
         
         protected EarthquakeBot(final int x, final int y) {
-            super(CYCLONE_OFF_X, CYCLONE_H, x, y); //TODO
+            super(EARTHQUAKE_OFF_X, EARTHQUAKE_H, x, y);
         }
 
         @Override
