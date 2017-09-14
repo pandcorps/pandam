@@ -221,6 +221,10 @@ public abstract class RoomLoader {
         tiles.put(seg.toCharacter(0), getTile(seg, 1));
     }
     
+    protected final static Tile getTile(final char c) {
+        return tiles.get(Character.valueOf(c));
+    }
+    
     private final static void plt(final Segment seg) {
         tiles.put(Character.valueOf((char) (seg.charValue(0) + OFF_ALT)), getTile(seg, 1));
     }
