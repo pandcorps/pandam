@@ -842,7 +842,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         private final static int SPEED = 2;
         private boolean shielded = true;
         
-        protected ShieldedEnemy(int x, int y) {
+        protected ShieldedEnemy(final int x, final int y) {
             super(PROP_OFF_X, PROP_H, x, y, PROP_HEALTH);
             getPosition().addY(2);
             hv = 0;
@@ -901,9 +901,102 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
     }
     
+    protected final static class DrillEnemy extends Enemy {
+        private final static int NUM_IMAGES = 8;
+        private final static int FRAME_DURATION = 4;
+        private final static int TOTAL_DURATION = FRAME_DURATION * NUM_IMAGES;
+        private final static Panmage[] drillImgs = new Panmage[NUM_IMAGES];
+        private static Panmage dirtShatter = null;
+        private int animTimer = 0;
+        private int digTimer = 0;
+        
+        protected DrillEnemy(final int x, final int y) {
+            super(PROP_OFF_X, CRAWL_H, x, y, PROP_HEALTH);
+            hv = 0;
+            setCurrentView();
+        }
+        
+        private final void setCurrentView() {
+            final int i = animTimer / FRAME_DURATION;
+            Panmage img = drillImgs[i];
+            if (img == null) {
+                final Panmage ref = BotsnBoltsGame.crawlEnemy.getFrames()[0].getImage();
+                final Panple o = ref.getOrigin();
+                final Panple min = ref.getBoundingMinimum();
+                final Panple max = ref.getBoundingMaximum();
+                img = getImage(null, "DrillEnemy" + (i + 1), o, min, max);
+                drillImgs[i] = img;
+            }
+            changeView(img);
+        }
+        
+        @Override
+        protected final boolean onStepCustom() {
+            animate();
+            return dig();
+        }
+        
+        private final void animate() {
+            animTimer++;
+            if (animTimer >= TOTAL_DURATION) {
+                animTimer = 0;
+            }
+            setCurrentView();
+        }
+        
+        private final boolean dig() {
+            if (digTimer <= 0 && isGrounded()) {
+                digTimer = 16;
+            }
+            if (digTimer > 0) {
+                digTimer--;
+                if (digTimer == 0) {
+                    final TileMap tm = BotsnBoltsGame.tm;
+                    final int index = tm.getContainer(this);
+                    tm.setTile(index, RoomLoader.getTile('b'));
+                    replaceEdge(tm, index, Direction.West, '\\', ')', ',');
+                    replaceEdge(tm, index, Direction.East, '/', '(', '`');
+                    Player.shatter(this, getDirtShatter());
+                }
+                getPosition().addY(-1);
+                return true;
+            }
+            return false;
+        }
+        
+        private final void replaceEdge(final TileMap tm, final int index, final Direction dir, final char replacementTop, final char replacementMid, final char replacementBot) {
+            final int edgeIndex = tm.getNeighbor(index, dir);
+            final Tile edgeTile = tm.getTile(edgeIndex);
+            if (!replaceIf(tm, edgeIndex, edgeTile, '.', replacementMid)) {
+                if (!replaceIf(tm, edgeIndex, edgeTile, '-', replacementTop)) {
+                    replaceIf(tm, edgeIndex, edgeTile, '_', replacementBot);
+                }
+            }
+        }
+        
+        private final boolean replaceIf(final TileMap tm, final int index, final Tile curr, final char condition, final char replacement) {
+            if (curr == RoomLoader.getTile(condition)) {
+                tm.setTile(index, RoomLoader.getTile(replacement));
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        protected final void award(final PowerUp powerUp) {
+        }
+        
+        protected final static Panmage getDirtShatter() {
+            if (dirtShatter == null) {
+                dirtShatter = Pangine.getEngine().createImage("dirt.shatter", BotsnBoltsGame.CENTER_8, null, null, BotsnBoltsGame.RES + "misc/DirtShatter.png");
+            }
+            return dirtShatter;
+        }
+    }
+    
     // Guards itself for a while; then lowers guard to attack
     protected final static class GuardedEnemy extends Enemy {
-        protected GuardedEnemy(int x, int y) {
+        protected GuardedEnemy(final int x, final int y) {
             super(-1, -1, x, y, -1); //TODO
         }
         
@@ -923,7 +1016,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
     protected final static class SlideEnemy extends Enemy {
         private final static int SLIDE_VELOCITY = 1;
         
-        protected SlideEnemy(int x, int y) {
+        protected SlideEnemy(final int x, final int y) {
             super(PROP_OFF_X, SLIDE_H, x, y, PROP_HEALTH);
             hv = -SLIDE_VELOCITY;
         }
@@ -939,7 +1032,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
     }
     
     protected final static class FireballEnemy extends JumpEnemy {
-        protected FireballEnemy(int x, int y) {
+        protected FireballEnemy(final int x, final int y) {
             super(PROP_OFF_X, PROP_H, x, y, 1);
             setView(BotsnBoltsGame.fireballEnemy[0]);
         }
@@ -991,7 +1084,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
     protected final static class BoulderEnemy extends Enemy {
         private static Panmage img = null;
         
-        protected BoulderEnemy(int x, int y) {
+        protected BoulderEnemy(final int x, final int y) {
             super(PROP_OFF_X, PROP_H, x, y, 1);
             setView(getImage());
         }
@@ -1015,7 +1108,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         private final Panmage[] imgs;
         protected boolean shooting = false;
         
-        protected HenchbotEnemy(final Panmage[] imgs, int x, int y) {
+        protected HenchbotEnemy(final Panmage[] imgs, final int x, final int y) {
             super(HENCHBOT_OFF_X, HENCHBOT_H, x, y, HENCHBOT_HEALTH);
             turnTowardPlayer();
             this.imgs = imgs;
