@@ -1250,7 +1250,7 @@ public abstract class Boss extends Enemy {
 
         @Override
         protected final Panmage getStill() {
-            return null;
+            return (still = getEarthquakeImage(still, "earthquakebot/EarthquakeBot"));
         }
         
         protected final static Panmage getEarthquakeImage(final Panmage img, final String name) {
