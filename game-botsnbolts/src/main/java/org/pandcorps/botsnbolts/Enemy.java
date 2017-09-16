@@ -32,6 +32,7 @@ import org.pandcorps.pandam.event.boundary.*;
 import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.*;
 import org.pandcorps.pandax.tile.*;
+import org.pandcorps.pandax.tile.Tile.*;
 
 public abstract class Enemy extends Chr implements CollisionListener {
     protected final static String RES_ENEMY = BotsnBoltsGame.RES + "enemy/";
@@ -907,6 +908,9 @@ public abstract class Enemy extends Chr implements CollisionListener {
         private final static int TOTAL_DURATION = FRAME_DURATION * NUM_IMAGES;
         private final static Panmage[] drillImgs = new Panmage[NUM_IMAGES];
         private static Panmage dirtShatter = null;
+        private static TileMapImage edgeLeft = null;
+        private static TileMapImage edgeRight = null;
+        private static TileMapImage edgeBottom = null;
         private int animTimer = 0;
         private int digTimer = 0;
         
@@ -954,8 +958,14 @@ public abstract class Enemy extends Chr implements CollisionListener {
                     final TileMap tm = BotsnBoltsGame.tm;
                     final int index = tm.getContainer(this);
                     tm.setTile(index, RoomLoader.getTile('b'));
-                    replaceEdge(tm, index, Direction.West, '\\', ')', ',');
-                    replaceEdge(tm, index, Direction.East, '/', '(', '`');
+                    if (edgeLeft == null) {
+                        edgeLeft = BotsnBoltsGame.imgMap[1][3];
+                        edgeRight = new AdjustedTileMapImage(edgeLeft, 0, true, false);
+                        edgeBottom = new AdjustedTileMapImage(edgeLeft, 1, false, false);
+                    }
+                    replaceEdge(tm, index, Direction.West, edgeLeft);
+                    replaceEdge(tm, index, Direction.East, edgeRight);
+                    replaceEdge(tm, index, Direction.South, edgeBottom);
                     Player.shatter(this, getDirtShatter());
                 }
                 getPosition().addY(-1);
@@ -964,24 +974,14 @@ public abstract class Enemy extends Chr implements CollisionListener {
             return false;
         }
         
-        private final void replaceEdge(final TileMap tm, final int index, final Direction dir, final char replacementTop, final char replacementMid, final char replacementBot) {
+        private final void replaceEdge(final TileMap tm, final int index, final Direction dir, final TileMapImage edgeImg) {
             final int edgeIndex = tm.getNeighbor(index, dir);
-            final Tile edgeTile = tm.getTile(edgeIndex);
-            if (!replaceIf(tm, edgeIndex, edgeTile, '.', replacementMid)) {
-                if (!replaceIf(tm, edgeIndex, edgeTile, '-', replacementTop)) {
-                    replaceIf(tm, edgeIndex, edgeTile, '_', replacementBot);
-                }
+            if (!isSolidIndex(edgeIndex)) {
+                return;
             }
+            tm.setOverlay(edgeIndex, edgeImg, Tile.BEHAVIOR_SOLID);
         }
         
-        private final boolean replaceIf(final TileMap tm, final int index, final Tile curr, final char condition, final char replacement) {
-            if (curr == RoomLoader.getTile(condition)) {
-                tm.setTile(index, RoomLoader.getTile(replacement));
-                return true;
-            }
-            return false;
-        }
-
         @Override
         protected final void award(final PowerUp powerUp) {
         }
