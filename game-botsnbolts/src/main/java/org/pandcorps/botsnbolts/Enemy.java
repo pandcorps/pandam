@@ -957,7 +957,8 @@ public abstract class Enemy extends Chr implements CollisionListener {
                 if (digTimer == 0) {
                     final TileMap tm = BotsnBoltsGame.tm;
                     final int index = tm.getContainer(this);
-                    tm.setTile(index, RoomLoader.getTile('b'));
+                    final int row = tm.getRow(index), col = tm.getColumn(index);
+                    tm.setTile(index, RoomLoader.getTile(getTileKey(row, col)));
                     if (edgeLeft == null) {
                         edgeLeft = BotsnBoltsGame.imgMap[1][3];
                         edgeRight = new AdjustedTileMapImage(edgeLeft, 0, true, false);
@@ -972,6 +973,33 @@ public abstract class Enemy extends Chr implements CollisionListener {
                 return true;
             }
             return false;
+        }
+        
+        private final static char getTileKey(final int row, final int col) {
+            final int r = row % 4;
+            if ((col % 2) == 0) {
+                switch (r) {
+                    case 0 :
+                        return 'b';
+                    case 1 :
+                        return 'e';
+                    case 2 :
+                        return 'B';
+                    default :
+                        return 'E';
+                }
+            } else {
+                switch (r) {
+                    case 0 :
+                        return 'E';
+                    case 1 :
+                        return 'B';
+                    case 2 :
+                        return 'e';
+                    default :
+                        return 'b';
+                }
+            }
         }
         
         private final void replaceEdge(final TileMap tm, final int index, final Direction dir, final TileMapImage edgeImg) {
