@@ -1232,6 +1232,7 @@ public abstract class Boss extends Enemy {
     
     protected final static class EarthquakeBot extends Boss {
         protected static Panmage still = null;
+        protected static Panmage jump = null;
         
         protected EarthquakeBot(final int x, final int y) {
             super(EARTHQUAKE_OFF_X, EARTHQUAKE_H, x, y);
