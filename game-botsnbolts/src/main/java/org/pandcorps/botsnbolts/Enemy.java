@@ -930,6 +930,8 @@ public abstract class Enemy extends Chr implements CollisionListener {
                 final Panple max = ref.getBoundingMaximum();
                 img = getImage(null, "DrillEnemy" + (i + 1), o, min, max);
                 drillImgs[i] = img;
+            } else {
+                getDirtShatter(); // Load the image if needed
             }
             changeView(img);
         }
@@ -954,7 +956,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
             }
             if (digTimer > 0) {
                 digTimer--;
-                if (digTimer == 0) {
+                if (digTimer == 2) {
                     final TileMap tm = BotsnBoltsGame.tm;
                     final int index = tm.getContainer(this);
                     final int row = tm.getRow(index), col = tm.getColumn(index);
