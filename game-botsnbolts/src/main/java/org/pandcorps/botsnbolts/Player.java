@@ -424,16 +424,25 @@ public final class Player extends Chr {
     }
     
     protected final static void shatter(final Panctor src, final Panmage img) {
-        final int m = src.getMirrorMultiplier();
-        final Panple pos = src.getPosition();
-        final float x = pos.getX(), y = pos.getY() + CENTER_Y;
-        newDiver(src, img, x - m * 4, y + 4, -m, 3, false, false);
-        newDiver(src, img, x + m * 4, y + 4, m, 3, true, false);
-        newDiver(src, img, x - m * 4, y - 4, -m * 2, 2, false, true);
-        newDiver(src, img, x + m * 4, y - 4, m * 2, 2, true, true);
+        shatter(src, img, CENTER_Y, true, true, true, true);
     }
     
-    private final static void newDiver(final Panctor src, final Panmage img, final float x, final float y, final float xv, final float yv, final boolean mirror, final boolean flip) {
+    protected final static void shatter(final Panctor src, final Panmage img, final int offY,
+                                        final boolean topLeft, final boolean topRight, final boolean bottomLeft, final boolean bottomRight) {
+        final int m = src.getMirrorMultiplier();
+        final Panple pos = src.getPosition();
+        final float x = pos.getX(), y = pos.getY() + offY;
+        newDiver(src, img, x - m * 4, y + 4, -m, 3, false, false, topLeft);
+        newDiver(src, img, x + m * 4, y + 4, m, 3, true, false, topRight);
+        newDiver(src, img, x - m * 4, y - 4, -m * 2, 2, false, true, bottomLeft);
+        newDiver(src, img, x + m * 4, y - 4, m * 2, 2, true, true, bottomRight);
+    }
+    
+    private final static void newDiver(final Panctor src, final Panmage img, final float x, final float y, final float xv, final float yv,
+                                       final boolean mirror, final boolean flip, final boolean needed) {
+        if (!needed) {
+            return;
+        }
         final Diver diver = new Diver(src.getLayer(), img, x, y, BotsnBoltsGame.DEPTH_BURST, xv * newDiveMultiplier(), yv * newDiveMultiplier(), gTuple);
         diver.setMirror(mirror ^ src.isMirror());
         diver.setFlip(flip);
