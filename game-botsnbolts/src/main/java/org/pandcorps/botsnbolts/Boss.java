@@ -1231,17 +1231,52 @@ public abstract class Boss extends Enemy {
     protected final static Panple EARTHQUAKE_MAX = getMax(EARTHQUAKE_OFF_X, EARTHQUAKE_H);
     
     protected final static class EarthquakeBot extends Boss {
+        protected final static byte STATE_JUMP = 1;
+        protected final static byte STATE_JUMP_DRILL = 2;
+        protected final static int WAIT_JUMP_DRILL = 15;
         protected static Panmage still = null;
         protected static Panmage jump = null;
         protected static Panmage jumpDrillStart = null;
         protected static Panmage jumpDrill1 = null;
+        protected static Panmage jumpDrill2 = null;
+        protected static Panmage jumpDrill3 = null;
+        private int drillTimer = -1;
         
         protected EarthquakeBot(final int x, final int y) {
             super(EARTHQUAKE_OFF_X, EARTHQUAKE_H, x, y);
         }
+        
+        @Override
+        protected final boolean onWaiting() {
+            if (state == STATE_JUMP_DRILL) {
+                drillTimer++;
+                if (drillTimer < 2) {
+                    return true;
+                }
+                final Panmage img;
+                final int m = drillTimer % 6;
+                if (m < 2) {
+                    img = getJumpDrill3();
+                } else if (m < 4) {
+                    img = getJumpDrill1();
+                } else {
+                    img = getJumpDrill2();
+                }
+                changeView(img);
+                if (drillTimer < WAIT_JUMP_DRILL) {
+                    return true;
+                }
+            } else if (state == STATE_JUMP) {
+                if ((v > 0) && (getPosition().getY() >= 166)) {
+                    startJumpDrill();
+                }
+            }
+            return false;
+        }
 
         @Override
         protected final boolean pickState() {
+            startJump();
             return false;
         }
 
@@ -1249,6 +1284,16 @@ public abstract class Boss extends Enemy {
         protected final boolean continueState() {
             startStill();
             return false;
+        }
+        
+        protected final void startJump() {
+            startJump(STATE_JUMP, getJump(), 13, 0);
+        }
+        
+        protected final void startJumpDrill() {
+            startStateIndefinite(STATE_JUMP, getJumpDrillStart());
+            v = 0;
+            drillTimer = -1;
         }
 
         @Override
@@ -1258,6 +1303,22 @@ public abstract class Boss extends Enemy {
         
         protected final static Panmage getJump() {
             return (jump = getEarthquakeImage(jump, "earthquakebot/EarthquakeBotJump"));
+        }
+        
+        protected final static Panmage getJumpDrillStart() {
+            return (jumpDrillStart = getEarthquakeImage(jumpDrillStart, "earthquakebot/EarthquakeBotJumpDrillStart"));
+        }
+        
+        protected final static Panmage getJumpDrill1() {
+            return (jumpDrill1 = getEarthquakeImage(jumpDrill1, "earthquakebot/EarthquakeBotJumpDrill1"));
+        }
+        
+        protected final static Panmage getJumpDrill2() {
+            return (jumpDrill2 = getEarthquakeImage(jumpDrill2, "earthquakebot/EarthquakeBotJumpDrill2"));
+        }
+        
+        protected final static Panmage getJumpDrill3() {
+            return (jumpDrill3 = getEarthquakeImage(jumpDrill3, "earthquakebot/EarthquakeBotJumpDrill3"));
         }
         
         protected final static Panmage getEarthquakeImage(final Panmage img, final String name) {
