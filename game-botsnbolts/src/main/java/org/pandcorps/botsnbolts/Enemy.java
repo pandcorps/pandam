@@ -913,6 +913,8 @@ public abstract class Enemy extends Chr implements CollisionListener {
         private static TileMapImage edgeBottom = null;
         private int animTimer = 0;
         private int digTimer = 0;
+        private Panctor partialTileLeft = null;
+        private Panctor partialTileRight = null;
         
         protected DrillEnemy(final int x, final int y) {
             super(PROP_OFF_X, CRAWL_H, x, y, PROP_HEALTH);
@@ -953,10 +955,11 @@ public abstract class Enemy extends Chr implements CollisionListener {
         private final boolean dig() {
             if (digTimer <= 0 && isGrounded()) {
                 digTimer = 16;
+                getPosition().setZ(BotsnBoltsGame.DEPTH_BEHIND);
             }
             if (digTimer > 0) {
                 digTimer--;
-                if (digTimer == 2) {
+                if (digTimer == 10) {
                     final TileMap tm = BotsnBoltsGame.tm;
                     final int index = tm.getContainer(this);
                     final int row = tm.getRow(index), col = tm.getColumn(index);
@@ -969,12 +972,35 @@ public abstract class Enemy extends Chr implements CollisionListener {
                     replaceEdge(tm, index, Direction.West, edgeLeft);
                     replaceEdge(tm, index, Direction.East, edgeRight);
                     replaceEdge(tm, index, Direction.South, edgeBottom);
-                    Player.shatter(this, getDirtShatter());
+                    shatter(6);
+                    partialTileLeft = newPartialTile(true);
+                    partialTileRight = newPartialTile(false);
+                } else if (digTimer == 2) {
+                    destroyPartialTiles();
                 }
                 getPosition().addY(-1);
                 return true;
             }
             return false;
+        }
+        
+        private final void shatter(final int offY) {
+            final boolean left = Mathtil.rand();
+            Player.shatter(this, getDirtShatter(), offY, left, !left, false, false);
+        }
+        
+        private final Panctor newPartialTile(final boolean left) {
+            final Panlayer layer = getLayer();
+            if (layer == null) {
+                return null;
+            }
+            final Panctor actor = new Panctor();
+            actor.setView(getDirtShatter());
+            final Panple pos = getPosition();
+            final int xoff = left ? -4 : 4;
+            actor.getPosition().set(pos.getX() + xoff, pos.getY() - 7, BotsnBoltsGame.DEPTH_BURST);
+            layer.addActor(actor);
+            return actor;
         }
         
         private final static char getTileKey(final int row, final int col) {
@@ -1010,6 +1036,21 @@ public abstract class Enemy extends Chr implements CollisionListener {
                 return;
             }
             tm.setOverlay(edgeIndex, edgeImg, Tile.BEHAVIOR_SOLID);
+        }
+        
+        private final void destroyPartialTiles() {
+            if (partialTileLeft != null) {
+                shatter(2);
+                partialTileLeft.destroy();
+                partialTileRight.destroy();
+                partialTileLeft = null;
+                partialTileRight = null;
+            }
+        }
+        
+        @Override
+        protected final void onEnemyDestroy() {
+            destroyPartialTiles();
         }
         
         @Override
