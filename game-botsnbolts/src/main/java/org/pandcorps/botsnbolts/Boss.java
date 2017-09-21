@@ -1291,7 +1291,7 @@ public abstract class Boss extends Enemy {
         }
         
         protected final void startJumpDrill() {
-            startStateIndefinite(STATE_JUMP, getJumpDrillStart());
+            startStateIndefinite(STATE_JUMP_DRILL, getJumpDrillStart());
             v = 0;
             drillTimer = -1;
         }
