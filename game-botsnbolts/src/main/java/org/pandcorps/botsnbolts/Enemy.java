@@ -962,8 +962,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
                 if (digTimer == 10) {
                     final TileMap tm = BotsnBoltsGame.tm;
                     final int index = tm.getContainer(this);
-                    final int row = tm.getRow(index), col = tm.getColumn(index);
-                    tm.setTile(index, RoomLoader.getTile(getTileKey(row, col)));
+                    tm.setTile(index, null);
                     if (edgeLeft == null) {
                         edgeLeft = BotsnBoltsGame.imgMap[1][3];
                         edgeRight = new AdjustedTileMapImage(edgeLeft, 0, true, false);
@@ -972,7 +971,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
                     replaceEdge(tm, index, Direction.West, edgeLeft);
                     replaceEdge(tm, index, Direction.East, edgeRight);
                     replaceEdge(tm, index, Direction.South, edgeBottom);
-                    shatter(6);
+                    shatter(-2);
                     partialTileLeft = newPartialTile(true);
                     partialTileRight = newPartialTile(false);
                 } else if (digTimer == 2) {
@@ -1003,33 +1002,6 @@ public abstract class Enemy extends Chr implements CollisionListener {
             return actor;
         }
         
-        private final static char getTileKey(final int row, final int col) {
-            final int r = row % 4;
-            if ((col % 2) == 0) {
-                switch (r) {
-                    case 0 :
-                        return 'b';
-                    case 1 :
-                        return 'e';
-                    case 2 :
-                        return 'B';
-                    default :
-                        return 'E';
-                }
-            } else {
-                switch (r) {
-                    case 0 :
-                        return 'E';
-                    case 1 :
-                        return 'B';
-                    case 2 :
-                        return 'e';
-                    default :
-                        return 'b';
-                }
-            }
-        }
-        
         private final void replaceEdge(final TileMap tm, final int index, final Direction dir, final TileMapImage edgeImg) {
             final int edgeIndex = tm.getNeighbor(index, dir);
             if (!isSolidIndex(edgeIndex)) {
@@ -1040,7 +1012,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         
         private final void destroyPartialTiles() {
             if (partialTileLeft != null) {
-                shatter(2);
+                shatter(-2);
                 partialTileLeft.destroy();
                 partialTileRight.destroy();
                 partialTileLeft = null;
