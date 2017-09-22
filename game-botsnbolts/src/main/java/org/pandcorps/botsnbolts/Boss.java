@@ -1225,15 +1225,15 @@ public abstract class Boss extends Enemy {
         }
     }
     
-    protected final static int EARTHQUAKE_OFF_X = 6, EARTHQUAKE_H = 24; //TODO
-    protected final static Panple EARTHQUAKE_O = new FinPanple2(14, 1);
+    protected final static int EARTHQUAKE_OFF_X = 12, EARTHQUAKE_H = 30;
+    protected final static Panple EARTHQUAKE_O = new FinPanple2(16, 1);
     protected final static Panple EARTHQUAKE_MIN = getMin(EARTHQUAKE_OFF_X);
     protected final static Panple EARTHQUAKE_MAX = getMax(EARTHQUAKE_OFF_X, EARTHQUAKE_H);
     
     protected final static class EarthquakeBot extends Boss {
         protected final static byte STATE_JUMP = 1;
         protected final static byte STATE_JUMP_DRILL = 2;
-        protected final static int WAIT_JUMP_DRILL = 15;
+        protected final static int WAIT_JUMP_DRILL = 24;
         protected static Panmage still = null;
         protected static Panmage jump = null;
         protected static Panmage jumpDrillStart = null;
@@ -1267,7 +1267,7 @@ public abstract class Boss extends Enemy {
                     return true;
                 }
             } else if (state == STATE_JUMP) {
-                if ((v > 0) && (getPosition().getY() >= 166)) {
+                if ((v > 0) && (getPosition().getY() >= 133)) {
                     startJumpDrill();
                 }
             }
@@ -1287,7 +1287,7 @@ public abstract class Boss extends Enemy {
         }
         
         protected final void startJump() {
-            startJump(STATE_JUMP, getJump(), 13, 0);
+            startJump(STATE_JUMP, getJump(), 12, 0);
         }
         
         protected final void startJumpDrill() {
