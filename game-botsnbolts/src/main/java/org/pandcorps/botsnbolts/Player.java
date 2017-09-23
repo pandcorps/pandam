@@ -334,14 +334,22 @@ public final class Player extends Chr {
     }
     
     protected final void puff(final int offX, final int offY) {
-        burst(BotsnBoltsGame.puff, offX, offY, BotsnBoltsGame.DEPTH_BURST);
+        puff(this, offX, offY);
+    }
+    
+    protected final static void puff(final Panctor src, final int offX, final int offY) {
+        burst(src, BotsnBoltsGame.puff, offX, offY, BotsnBoltsGame.DEPTH_BURST);
     }
     
     protected final void burst(final Panimation anm, final int offX, final int offY, final int z) {
+        burst(this, anm, offX, offY, z);
+    }
+    
+    protected final static void burst(final Panctor src, final Panimation anm, final int offX, final int offY, final int z) {
         final Burst puff = new Burst(anm);
-        final Panple playerPos = getPosition();
+        final Panple playerPos = src.getPosition();
         puff.getPosition().set(playerPos.getX() + offX, playerPos.getY() + offY, z);
-        addActor(puff);
+        addActor(src, puff);
     }
     
     protected final void defeat() {
@@ -380,12 +388,20 @@ public final class Player extends Chr {
     }
     
     protected final Panlayer getLayerRequired() {
-        final Panlayer layer = getLayer();
+        return getLayerRequired(this);
+    }
+    
+    protected final static Panlayer getLayerRequired(final Panctor src) {
+        final Panlayer layer = (src == null) ? null : src.getLayer();
         return (layer == null) ? BotsnBoltsGame.getLayer() : layer;
     }
     
     protected final void addActor(final Panctor actor) {
-        getLayerRequired().addActor(actor);
+        addActor(this, actor);
+    }
+    
+    protected final static void addActor(final Panctor src, final Panctor actor) {
+        getLayerRequired(src).addActor(actor);
     }
     
     protected final void addHealth(final int amount) {

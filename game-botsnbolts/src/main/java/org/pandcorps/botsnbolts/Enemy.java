@@ -1344,6 +1344,57 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
     }
     
+    protected final static class JackhammerEnemy extends Enemy {
+        private final static Panmage[] imgs = new Panmage[2];
+        private int timer = 0;
+        private boolean active = true;
+        
+        protected JackhammerEnemy(final int x, final int y) {
+            super(HENCHBOT_OFF_X, HENCHBOT_H, x, y, HENCHBOT_HEALTH);
+            setStillImage();
+            turnTowardPlayer();
+        }
+        
+        @Override
+        protected final boolean onStepCustom() {
+            if (timer <= 0) {
+                timer = 30;
+                active = !active;
+                if (active) {
+                    turnTowardPlayer();
+                } else {
+                    setStillImage();
+                }
+            }
+            if (active) {
+                //changeView(getImage(timer % 2));
+                changeView(getImage(((timer + 3) % 4) / 2));
+                if ((timer % 6) == 1) {
+                    Player.puff(this, Mathtil.randi(-4, 4), Mathtil.randi(-8, 0));
+                }
+            }
+            timer--;
+            return false;
+        }
+        
+        private final void setStillImage() {
+            changeView(getImage(0));
+        }
+
+        @Override
+        protected final void award(final PowerUp powerUp) {
+        }
+        
+        private final static Panmage getImage(final int i) {
+            Panmage img = imgs[i];
+            if (img != null) {
+                return img;
+            }
+            final Panmage ref = BotsnBoltsGame.flamethrowerEnemy[0];
+            return (img = getImage(img, "JackhammerEnemy" + (i + 1), ref.getOrigin(), ref.getBoundingMinimum(), ref.getBoundingMaximum()));
+        }
+    }
+    
     protected final void addHealthMeter() {
         BotsnBoltsGame.initHealthMeter(newHealthMeter(), false);
     }
