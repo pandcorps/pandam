@@ -31,6 +31,8 @@ import org.pandcorps.pandam.event.*;
 
 // Actors designed to be placed in levels; could be spawners, controllers, or just decorations
 public abstract class Extra extends Panctor {
+    protected final static int TIMER_SPAWNER = 90;
+    
     protected Extra(final int x, final int y, final int z) {
         final Panple pos = getPosition();
         BotsnBoltsGame.tm.savePosition(pos, x, y);
@@ -52,7 +54,7 @@ public abstract class Extra extends Panctor {
         }
         
         protected void initTimer() {
-            waitTimer = 90;
+            waitTimer = TIMER_SPAWNER;
         }
         
         @Override

@@ -1126,10 +1126,16 @@ public abstract class Enemy extends Chr implements CollisionListener {
     
     protected final static class BoulderEnemy extends Enemy {
         private static Panmage img = null;
+        private boolean held = false;
         
         protected BoulderEnemy(final int x, final int y) {
             super(PROP_OFF_X, PROP_H, x, y, 1);
             setView(getImage());
+        }
+        
+        @Override
+        protected final boolean onStepCustom() {
+            return held;
         }
 
         @Override
@@ -1344,6 +1350,91 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
     }
     
+    protected final static class RockEnemy extends Enemy {
+        private static Panmage rockCatch = null;
+        private static Panmage rockThrow = null;
+        private final int x;
+        private int boulderTimer = Extra.TIMER_SPAWNER;
+        private int holdTimer = 0;
+        private BoulderEnemy boulder = null;
+        
+        protected RockEnemy(final int x, final int y) {
+            super(HENCHBOT_OFF_X, HENCHBOT_H, x, y, HENCHBOT_HEALTH);
+            setStillImage();
+            //turnTowardPlayer();
+            setMirror(true); // Boulders designed to land in specific place
+            this.x = x;
+        }
+        
+        private final void setStillImage() {
+            changeView(getRockCatch());
+        }
+        
+        @Override
+        protected final boolean onStepCustom() {
+            if (boulder != null) {
+                if (boulder.isDestroyed()) {
+                    boulder = null;
+                } else if (boulder.held) {
+                    holdTimer--;
+                    if (holdTimer < 0) {
+                        changeView(getRockThrow());
+                        boulder.hv = getMirrorMultiplier() * 5;
+                        boulder.v = 5;
+                        boulder.held = false;
+                        boulder = null;
+                    }
+                } else {
+                    final float y = getPosition().getY();
+                    final float boulderY = boulder.getPosition().getY();
+                    final int holdThreshold = 19;
+                    if (boulderY <= (y + holdThreshold + 32)) {
+                        changeView(getRockCatch());
+                    }
+                    final float heldY = y + holdThreshold;
+                    if (boulderY <= (heldY + 16)) {
+                        boulder.held = true;
+                        holdTimer = 15;
+                        boulder.getPosition().setY(heldY);
+                    }
+                }
+            }
+            boulderTimer--;
+            if (boulderTimer <= 0) {
+                //turnTowardPlayer(); // This enemy can't turn around; otherwise boulders won't land where intended
+                boulder = new BoulderEnemy(x, BotsnBoltsGame.tm.getHeight());
+                boulder.setMirror(isMirror()); // Make sure shading matches
+                final Panple boulderPos = boulder.getPosition();
+                boulderPos.setZ(BotsnBoltsGame.DEPTH_ENEMY_BACK);
+                //getPosition().setZ(BotsnBoltsGame.DEPTH_ENEMY_BACK);
+                boulderPos.addX(-1);
+                boulderTimer = Extra.TIMER_SPAWNER;
+                getLayer().addActor(boulder);
+            }
+            return false;
+        }
+        
+        @Override
+        protected final void award(final PowerUp powerUp) {
+        }
+        
+        private final static Panmage getRockCatch() {
+            return (rockCatch = getRockImage(rockCatch, "RockEnemyCatch"));
+        }
+        
+        private final static Panmage getRockThrow() {
+            return (rockThrow = getRockImage(rockThrow, "RockEnemyThrow"));
+        }
+        
+        private final static Panmage getRockImage(final Panmage img, final String name) {
+            if (img != null) {
+                return img;
+            }
+            final Panmage ref = BotsnBoltsGame.flamethrowerEnemy[0];
+            return getImage(img, name, ref.getOrigin(), ref.getBoundingMinimum(), ref.getBoundingMaximum());
+        }
+    }
+    
     protected final static class JackhammerEnemy extends Enemy {
         private final static Panmage[] imgs = new Panmage[2];
         private int timer = 0;
@@ -1386,12 +1477,12 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
         
         private final static Panmage getImage(final int i) {
-            Panmage img = imgs[i];
+            final Panmage img = imgs[i];
             if (img != null) {
                 return img;
             }
             final Panmage ref = BotsnBoltsGame.flamethrowerEnemy[0];
-            return (img = getImage(img, "JackhammerEnemy" + (i + 1), ref.getOrigin(), ref.getBoundingMinimum(), ref.getBoundingMaximum()));
+            return (imgs[i] = getImage(img, "JackhammerEnemy" + (i + 1), ref.getOrigin(), ref.getBoundingMinimum(), ref.getBoundingMaximum()));
         }
     }
     
