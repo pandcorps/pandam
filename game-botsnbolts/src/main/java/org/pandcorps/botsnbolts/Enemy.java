@@ -1356,6 +1356,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         private final int x;
         private int boulderTimer = Extra.TIMER_SPAWNER;
         private int holdTimer = 0;
+        private int throwTimer = 0;
         private BoulderEnemy boulder = null;
         
         protected RockEnemy(final int x, final int y) {
@@ -1367,7 +1368,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
         
         private final void setStillImage() {
-            changeView(getRockCatch());
+            changeView(BotsnBoltsGame.rockEnemy);
         }
         
         @Override
@@ -1375,6 +1376,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
             if (boulder != null) {
                 if (boulder.isDestroyed()) {
                     boulder = null;
+                    setStillImage();
                 } else if (boulder.held) {
                     holdTimer--;
                     if (holdTimer < 0) {
@@ -1383,20 +1385,27 @@ public abstract class Enemy extends Chr implements CollisionListener {
                         boulder.v = 5;
                         boulder.held = false;
                         boulder = null;
+                        throwTimer = 20;
                     }
                 } else {
                     final float y = getPosition().getY();
                     final float boulderY = boulder.getPosition().getY();
                     final int holdThreshold = 19;
-                    if (boulderY <= (y + holdThreshold + 32)) {
+                    final float heldY = y + holdThreshold;
+                    if (boulderY <= (heldY + 32)) {
                         changeView(getRockCatch());
                     }
-                    final float heldY = y + holdThreshold;
                     if (boulderY <= (heldY + 16)) {
                         boulder.held = true;
                         holdTimer = 15;
                         boulder.getPosition().setY(heldY);
                     }
+                }
+            }
+            if (throwTimer > 0) {
+                throwTimer--;
+                if (throwTimer <= 0) {
+                    setStillImage();
                 }
             }
             boulderTimer--;
@@ -1412,6 +1421,11 @@ public abstract class Enemy extends Chr implements CollisionListener {
                 getLayer().addActor(boulder);
             }
             return false;
+        }
+        
+        @Override
+        protected final void onEnemyDestroy() {
+            Panctor.destroy(boulder);
         }
         
         @Override
