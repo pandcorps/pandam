@@ -1500,6 +1500,16 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
     }
     
+    protected final static class ElectricityEnemy extends Enemy {
+        protected ElectricityEnemy(final int x, final int y) {
+            super(HENCHBOT_OFF_X, HENCHBOT_H, x, y, HENCHBOT_HEALTH);
+        }
+        
+        @Override
+        protected final void award(final PowerUp powerUp) {
+        }
+    }
+    
     protected final void addHealthMeter() {
         BotsnBoltsGame.initHealthMeter(newHealthMeter(), false);
     }
