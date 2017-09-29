@@ -1530,16 +1530,20 @@ public abstract class Enemy extends Chr implements CollisionListener {
     
     protected final static class DirtCluster extends Enemy {
         private static Panmage img = null;
+        private int timer = 1;
         
         protected DirtCluster(final int x, final int y) {
             super(PROP_OFF_X, PROP_H, x, y, 1);
             setView(getImage());
+            getPosition().addY(8);
         }
         
         @Override
-        protected final void onLanded() {
-            super.onLanded();
-            shatter();
+        protected final void onGrounded() {
+            if (timer <= 0) {
+                shatter();
+            }
+            timer--;
         }
         
         private final void shatter() {
