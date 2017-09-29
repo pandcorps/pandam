@@ -184,8 +184,23 @@ public abstract class Enemy extends Chr implements CollisionListener {
     }
     
     protected final boolean isSolidIndex(final int index) {
-        final byte b = Tile.getBehavior(BotsnBoltsGame.tm.getTile(index));
+        return isSolidTile(BotsnBoltsGame.tm.getTile(index));
+    }
+    
+    protected final boolean isSolidTile(final int i, final int j) {
+        return isSolidTile(BotsnBoltsGame.tm.getTile(i, j));
+    }
+    
+    protected final boolean isSolidTile(final Tile tile) {
+        final byte b = Tile.getBehavior(tile);
         return (b == Tile.BEHAVIOR_SOLID) || isSolidBehavior(b);
+    }
+    
+    protected static Panmage getImage(final Panmage img, final String name, final Panmage ref) {
+        if (img != null) {
+            return img;
+        }
+        return getImage(img, name, ref.getOrigin(), ref.getBoundingMinimum(), ref.getBoundingMaximum());
     }
     
     protected static Panmage getImage(final Panmage img, final String name, final Panple o, final Panple min, final Panple max) {
@@ -1146,8 +1161,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
             if (img != null) {
                 return img;
             }
-            final Panmage ref = BotsnBoltsGame.fireballEnemy[0];
-            return (img = getImage(img, "BoulderEnemy", ref.getOrigin(), ref.getBoundingMinimum(), ref.getBoundingMaximum()));
+            return (img = getImage(img, "BoulderEnemy", BotsnBoltsGame.fireballEnemy[0]));
         }
     }
     
@@ -1451,6 +1465,8 @@ public abstract class Enemy extends Chr implements CollisionListener {
     
     protected final static class JackhammerEnemy extends Enemy {
         private final static Panmage[] imgs = new Panmage[2];
+        private final int x;
+        private final int yCluster;
         private int timer = 0;
         private boolean active = true;
         
@@ -1458,6 +1474,15 @@ public abstract class Enemy extends Chr implements CollisionListener {
             super(HENCHBOT_OFF_X, HENCHBOT_H, x, y, HENCHBOT_HEALTH);
             setStillImage();
             turnTowardPlayer();
+            this.x = x;
+            int j = y - 2;
+            while (j > 0) {
+                if (!isSolidTile(x, j)) {
+                    break;
+                }
+                j--;
+            }
+            yCluster = j;
         }
         
         @Override
@@ -1476,6 +1501,9 @@ public abstract class Enemy extends Chr implements CollisionListener {
                 changeView(getImage(((timer + 3) % 4) / 2));
                 if ((timer % 6) == 1) {
                     Player.puff(this, Mathtil.randi(-4, 4), Mathtil.randi(-8, 0));
+                }
+                if (timer == 2) {
+                    Player.addActor(this, new DirtCluster(x, yCluster));
                 }
             }
             timer--;
@@ -1497,6 +1525,37 @@ public abstract class Enemy extends Chr implements CollisionListener {
             }
             final Panmage ref = BotsnBoltsGame.flamethrowerEnemy[0];
             return (imgs[i] = getImage(img, "JackhammerEnemy" + (i + 1), ref.getOrigin(), ref.getBoundingMinimum(), ref.getBoundingMaximum()));
+        }
+    }
+    
+    protected final static class DirtCluster extends Enemy {
+        private static Panmage img = null;
+        
+        protected DirtCluster(final int x, final int y) {
+            super(PROP_OFF_X, PROP_H, x, y, 1);
+            setView(getImage());
+        }
+        
+        @Override
+        protected final void onLanded() {
+            super.onLanded();
+            shatter();
+        }
+        
+        private final void shatter() {
+            Player.shatter(this, DrillEnemy.getDirtShatter());
+            destroy();
+        }
+        
+        @Override
+        protected final void award(final PowerUp powerUp) {
+        }
+        
+        private final static Panmage getImage() {
+            if (img != null) {
+                return img;
+            }
+            return (img = getImage(img, "DirtCluster", BotsnBoltsGame.fireballEnemy[0]));
         }
     }
     
