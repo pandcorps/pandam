@@ -1573,6 +1573,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         private boolean striking = false;
         private ElectricityEnemy other = null;
         private Electricity electricity = null;
+        private boolean flip = false;
         
         protected ElectricityEnemy(final int x, final int y) {
             this(x, y, false, -3);
@@ -1617,7 +1618,8 @@ public abstract class Enemy extends Chr implements CollisionListener {
                     timer = DURATION_WAIT;
                 }
             } else if (striking && (timer == (DURATION_STRIKE - 1))) {
-                electricity = new Electricity(this, 11, 2, 5, false);
+                electricity = new Electricity(this, 11, 2, 5, false, flip);
+                flip = !flip;
             }
             return false;
         }

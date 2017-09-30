@@ -406,7 +406,7 @@ public abstract class BlockPuzzle {
         public final void onStep(final StepEvent event) {
             timer--;
             if (timer <= 0) {
-                new Electricity(this, 0, -64, 4, true);
+                new Electricity(this, 0, -64, 4, true, false);
                 timer = DURATION_PERIOD;
             }
         }
@@ -422,16 +422,19 @@ public abstract class BlockPuzzle {
         protected static Panmage image = null;
         private final int[] parts;
         private final boolean vertical;
+        private final boolean flip;
         private int min = 3;
         private int max = 3;
         private final Pansplay display = new OriginPansplay(new ElectricityMinimum(), new ElectricityMaximum());
         
-        protected Electricity(final Panctor src, final int ox, final int oy, final int numParts, final boolean vertical) {
+        protected Electricity(final Panctor src, final int ox, final int oy, final int numParts, final boolean vertical, final boolean flip) {
             super(null, src, ox, oy, DURATION_ELECTRICITY);
             NUM_PARTS = numParts;
             parts = new int[NUM_PARTS];
             this.vertical = vertical;
+            this.flip = flip;
             randomize();
+            setSize();
         }
         
         private final void randomize() {
@@ -448,21 +451,31 @@ public abstract class BlockPuzzle {
         @Override
         public final void onStep(final StepEvent event) {
             super.onStep(event);
+            setSize();
+        }
+        
+        private final void setSize() {
             final int index = DURATION_ELECTRICITY - timer;
             if ((index == 3) || (index == 6) || (index == 9)) {
                 randomize();
             }
+            final int lim = NUM_PARTS - 1;
             if (index == 0) {
-                min = max = NUM_PARTS - 1;
+                min = max = lim;
             } else if (index == 1) {
                 min = 1;
-                max = NUM_PARTS - 1;
+                max = lim;
             } else if (timer == 0) {
                 min = 0;
                 max = 1;
             } else {
                 min = 0;
-                max = NUM_PARTS - 1;
+                max = lim;
+            }
+            if (flip) {
+                final int t = lim - min;
+                min = lim - max;
+                max = t;
             }
         }
         
