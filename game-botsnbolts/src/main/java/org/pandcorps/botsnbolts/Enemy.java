@@ -22,6 +22,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.botsnbolts;
 
+import org.pandcorps.botsnbolts.BlockPuzzle.*;
 import org.pandcorps.botsnbolts.Player.*;
 import org.pandcorps.botsnbolts.PowerUp.*;
 import org.pandcorps.botsnbolts.RoomLoader.*;
@@ -1564,12 +1565,89 @@ public abstract class Enemy extends Chr implements CollisionListener {
     }
     
     protected final static class ElectricityEnemy extends Enemy {
+        private final static int DURATION_WAIT = 45;
+        private final static int DURATION_STRIKE = 15;
+        private static Panmage still = null;
+        private static Panmage strike = null;
+        private int timer = DURATION_WAIT;
+        private boolean striking = false;
+        private ElectricityEnemy other = null;
+        private Electricity electricity = null;
+        
         protected ElectricityEnemy(final int x, final int y) {
+            this(x, y, false, -3);
+            other = new ElectricityEnemy(x + 6, y, true, 2);
+            other.other = this;
+            RoomLoader.addActor(other);
+        }
+        
+        protected ElectricityEnemy(final int x, final int y, final boolean mirror, final int offX) {
             super(HENCHBOT_OFF_X, HENCHBOT_H, x, y, HENCHBOT_HEALTH);
+            setStill();
+            setMirror(mirror);
+            getPosition().addX(offX);
+        }
+        
+        protected final void setStill() {
+            setBoth(getStill());
+        }
+        
+        protected final void setBoth(final Panmage img) {
+            changeView(img);
+            if (!Panctor.isDestroyed(other)) {
+                other.changeView(img);
+            }
+        }
+        
+        @Override
+        public final boolean onStepCustom() {
+            if (isMirror()) {
+                return false;
+            } if (Panctor.isDestroyed(other)) {
+                return false;
+            }
+            timer--;
+            if (timer <= 0) {
+                striking = !striking;
+                if (striking) {
+                    setBoth(getStrike());
+                    timer = DURATION_STRIKE;
+                } else {
+                    setStill();
+                    timer = DURATION_WAIT;
+                }
+            } else if (striking && (timer == (DURATION_STRIKE - 1))) {
+                electricity = new Electricity(this, 11, 2, 5, false);
+            }
+            return false;
+        }
+        
+        @Override
+        protected final void onEnemyDestroy() {
+            Panctor.destroy(electricity);
+            if (!Panctor.isDestroyed(other)) {
+                Panctor.destroy(other.electricity);
+                other.setStill();
+            }
         }
         
         @Override
         protected final void award(final PowerUp powerUp) {
+        }
+        
+        private final static Panmage getStill() {
+            return (still = getElectricityImage(still, "ElectricityEnemy"));
+        }
+        
+        private final static Panmage getStrike() {
+            return (strike = getElectricityImage(strike, "ElectricityEnemyStrike"));
+        }
+        
+        private final static Panmage getElectricityImage(final Panmage img, final String name) {
+            if (img != null) {
+                return img;
+            }
+            return getImage(img, name, BotsnBoltsGame.flamethrowerEnemy[0]);
         }
     }
     

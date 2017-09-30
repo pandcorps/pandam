@@ -335,15 +335,19 @@ public abstract class RoomLoader {
     }
     
     private final static void box(final int x, final int y) {
-        actors.add(new PowerBox(x, y));
+        addActor(new PowerBox(x, y));
     }
     
     private final static void ext(final int x, final int y, final String extraType) throws Exception {
-        actors.add(newActor(getActorConstructor(Extra.class.getDeclaredClasses(), extraType), x, y));
+        addActor(newActor(getActorConstructor(Extra.class.getDeclaredClasses(), extraType), x, y));
     }
     
     private final static void enm(final int x, final int y, final String enemyType) throws Exception {
-        actors.add(newActor(getEnemyConstructor(enemyType), x, y));
+        addActor(newActor(getEnemyConstructor(enemyType), x, y));
+    }
+    
+    protected final static void addActor(final Panctor actor) {
+        actors.add(actor);
     }
     
     protected final static <T extends Panctor> T newActor(final Constructor<T> constructor, final int x, final int y) {
@@ -388,7 +392,7 @@ public abstract class RoomLoader {
     }
     
     private final static void bos(final int x, final int y, final String enemyType) throws Exception {
-        actors.add(getBossConstructor(enemyType).newInstance(Integer.valueOf(x), Integer.valueOf(y)));
+        addActor(getBossConstructor(enemyType).newInstance(Integer.valueOf(x), Integer.valueOf(y)));
     }
     
     private final static Constructor<? extends Enemy> getBossConstructor(final String enemyType) throws Exception {

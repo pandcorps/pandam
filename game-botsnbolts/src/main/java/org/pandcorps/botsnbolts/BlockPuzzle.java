@@ -406,7 +406,7 @@ public abstract class BlockPuzzle {
         public final void onStep(final StepEvent event) {
             timer--;
             if (timer <= 0) {
-                new Electricity(this, 0, -64);
+                new Electricity(this, 0, -64, 4, true);
                 timer = DURATION_PERIOD;
             }
         }
@@ -418,15 +418,19 @@ public abstract class BlockPuzzle {
     
     protected final static class Electricity extends TimedEnemyProjectile {
         private final static int DURATION_ELECTRICITY = 12;
-        private final static int NUM_PARTS = 4;
+        private final int NUM_PARTS;
         protected static Panmage image = null;
-        private final int[] parts = new int[NUM_PARTS];
+        private final int[] parts;
+        private final boolean vertical;
         private int min = 3;
         private int max = 3;
         private final Pansplay display = new OriginPansplay(new ElectricityMinimum(), new ElectricityMaximum());
         
-        protected Electricity(Panctor src, int ox, int oy) {
+        protected Electricity(final Panctor src, final int ox, final int oy, final int numParts, final boolean vertical) {
             super(null, src, ox, oy, DURATION_ELECTRICITY);
+            NUM_PARTS = numParts;
+            parts = new int[NUM_PARTS];
+            this.vertical = vertical;
             randomize();
         }
         
@@ -449,16 +453,16 @@ public abstract class BlockPuzzle {
                 randomize();
             }
             if (index == 0) {
-                min = max = 3;
+                min = max = NUM_PARTS - 1;
             } else if (index == 1) {
                 min = 1;
-                max = 3;
+                max = NUM_PARTS - 1;
             } else if (timer == 0) {
                 min = 0;
                 max = 1;
             } else {
                 min = 0;
-                max = 3;
+                max = NUM_PARTS - 1;
             }
         }
         
@@ -468,6 +472,8 @@ public abstract class BlockPuzzle {
             final Panlayer layer = getLayer();
             final Panmage image = getElectricityImage();
             final float x = pos.getX(), y = pos.getY();
+            final int rot = vertical ? 0 : 1;
+            final int xm = vertical ? 0 : 1, ym = vertical ? 1 : 0;
             for (int i = min; i <= max; i++) {
                 final int p = parts[i], mag;
                 final boolean m = p < 0;
@@ -478,7 +484,8 @@ public abstract class BlockPuzzle {
                 }
                 final int ix = mag % 2;
                 final int iy = mag / 2;
-                renderer.render(layer, image, x, y + (i * 16), BotsnBoltsGame.DEPTH_PROJECTILE, ix * 16, iy * 16, 16, 16, 0, m, false);
+                final int off = i * 16;
+                renderer.render(layer, image, x + (xm * off), y + (ym * off), BotsnBoltsGame.DEPTH_PROJECTILE, ix * 16, iy * 16, 16, 16, rot, m, false);
             }
         }
         
@@ -490,24 +497,24 @@ public abstract class BlockPuzzle {
         private final class ElectricityMinimum extends UnmodPanple2 {
             @Override
             public final float getX() {
-                return 4;
+                return vertical ? 4 : (min * 16);
             }
 
             @Override
             public final float getY() {
-                return min * 16;
+                return vertical ? (min * 16) : 4;
             }
         }
         
         private final class ElectricityMaximum extends UnmodPanple2 {
             @Override
             public final float getX() {
-                return 12;
+                return vertical ? 12 : (max * 16);
             }
 
             @Override
             public final float getY() {
-                return max * 16;
+                return vertical ? (max * 16) : 12;
             }
         }
         
