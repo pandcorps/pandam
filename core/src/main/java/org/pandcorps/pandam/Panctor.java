@@ -415,6 +415,9 @@ public class Panctor extends BasePantity implements SpecPanctor {
 
 	@Override
 	public final void destroy() {
+	    if (destroyed) {
+	        return;
+	    }
 	    onDestroy();
 	    unregisterListeners();
 		//Pangame.getGame().getCurrentRoom().removeActor(this);
