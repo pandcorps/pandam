@@ -1240,6 +1240,7 @@ public abstract class Boss extends Enemy {
         protected static Panmage jumpDrill1 = null;
         protected static Panmage jumpDrill2 = null;
         protected static Panmage jumpDrill3 = null;
+        protected static Panmage drill1 = null;
         private int drillTimer = -1;
         
         protected EarthquakeBot(final int x, final int y) {
