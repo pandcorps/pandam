@@ -1328,6 +1328,10 @@ public abstract class Boss extends Enemy {
             return (drill1 = getEarthquakeImage(drill1, "earthquakebot/EarthquakeBotDrill1"));
         }
         
+        protected final static Panmage getDrill2() {
+            return (drill2 = getEarthquakeImage(drill2, "earthquakebot/EarthquakeBotDrill2"));
+        }
+        
         protected final static Panmage getEarthquakeImage(final Panmage img, final String name) {
             return getImage(img, name, EARTHQUAKE_O, EARTHQUAKE_MIN, EARTHQUAKE_MAX);
         }
