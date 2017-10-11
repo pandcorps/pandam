@@ -1233,6 +1233,7 @@ public abstract class Boss extends Enemy {
     protected final static class EarthquakeBot extends Boss {
         protected final static byte STATE_JUMP = 1;
         protected final static byte STATE_JUMP_DRILL = 2;
+        protected final static byte STATE_DRILL1 = 3;
         protected final static int WAIT_JUMP_DRILL = 24;
         protected static Panmage still = null;
         protected static Panmage jump = null;
