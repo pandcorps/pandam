@@ -1234,6 +1234,7 @@ public abstract class Boss extends Enemy {
         protected final static byte STATE_JUMP = 1;
         protected final static byte STATE_JUMP_DRILL = 2;
         protected final static byte STATE_DRILL1 = 3;
+        protected final static byte STATE_DRILL2 = 4;
         protected final static int WAIT_JUMP_DRILL = 24;
         protected static Panmage still = null;
         protected static Panmage jump = null;
@@ -1287,7 +1288,14 @@ public abstract class Boss extends Enemy {
 
         @Override
         protected final boolean continueState() {
-            startStill();
+            switch (state) {
+                case STATE_DRILL1 :
+                    startDrill2();
+                    break;
+                default :
+                    startStill();
+                    break;
+            }
             return false;
         }
         
@@ -1299,6 +1307,14 @@ public abstract class Boss extends Enemy {
             startStateIndefinite(STATE_JUMP_DRILL, getJumpDrillStart());
             v = 0;
             drillTimer = -1;
+        }
+        
+        protected final void startDrill1() {
+            startState(STATE_DRILL1, 5, getDrill1());
+        }
+        
+        protected final void startDrill2() {
+            startState(STATE_DRILL2, 5, getDrill2());
         }
 
         @Override
