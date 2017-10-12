@@ -1227,6 +1227,7 @@ public abstract class Boss extends Enemy {
     
     protected final static int EARTHQUAKE_OFF_X = 12, EARTHQUAKE_H = 30;
     protected final static Panple EARTHQUAKE_O = new FinPanple2(16, 1);
+    protected final static Panple EARTHQUAKE_O2 = new FinPanple2(15, 1);
     protected final static Panple EARTHQUAKE_MIN = getMin(EARTHQUAKE_OFF_X);
     protected final static Panple EARTHQUAKE_MAX = getMax(EARTHQUAKE_OFF_X, EARTHQUAKE_H);
     
@@ -1235,6 +1236,8 @@ public abstract class Boss extends Enemy {
         protected final static byte STATE_JUMP_DRILL = 2;
         protected final static byte STATE_DRILL1 = 3;
         protected final static byte STATE_DRILL2 = 4;
+        protected final static byte STATE_DRILL3 = 5;
+        protected final static byte STATE_DRILL4 = 6;
         protected final static int WAIT_JUMP_DRILL = 24;
         protected static Panmage still = null;
         protected static Panmage jump = null;
@@ -1245,6 +1248,7 @@ public abstract class Boss extends Enemy {
         protected static Panmage drill1 = null;
         protected static Panmage drill2 = null;
         protected static Panmage drill3 = null;
+        protected static Panmage drill3b = null;
         protected static Panmage drill4 = null;
         private int drillTimer = -1;
         
@@ -1276,13 +1280,20 @@ public abstract class Boss extends Enemy {
                 if ((v > 0) && (getPosition().getY() >= 133)) {
                     startJumpDrill();
                 }
+            } else if (state == STATE_DRILL3) {
+                drillTimer++;
+                if (drillTimer < 12) {
+                    return false;
+                }
+                changeView(((drillTimer % 4) < 2) ? getDrill3b() : getDrill3());
             }
             return false;
         }
 
         @Override
         protected final boolean pickState() {
-            startJump();
+            //startJump();
+            startDrill1();
             return false;
         }
 
@@ -1291,6 +1302,12 @@ public abstract class Boss extends Enemy {
             switch (state) {
                 case STATE_DRILL1 :
                     startDrill2();
+                    break;
+                case STATE_DRILL2 :
+                    startDrill3();
+                    break;
+                case STATE_DRILL3 :
+                    startDrill4();
                     break;
                 default :
                     startStill();
@@ -1310,11 +1327,20 @@ public abstract class Boss extends Enemy {
         }
         
         protected final void startDrill1() {
-            startState(STATE_DRILL1, 5, getDrill1());
+            startState(STATE_DRILL1, 2, getDrill1());
         }
         
         protected final void startDrill2() {
-            startState(STATE_DRILL2, 5, getDrill2());
+            startState(STATE_DRILL2, 2, getDrill2());
+        }
+        
+        protected final void startDrill3() {
+            startState(STATE_DRILL3, 24, getDrill3());
+            drillTimer = -1;
+        }
+        
+        protected final void startDrill4() {
+            startState(STATE_DRILL4, 30, getDrill4());
         }
 
         @Override
@@ -1354,12 +1380,20 @@ public abstract class Boss extends Enemy {
             return (drill3 = getEarthquakeImage(drill3, "earthquakebot/EarthquakeBotDrill3"));
         }
         
+        protected final static Panmage getDrill3b() {
+            return (drill3b = getEarthquakeImage(drill3b, "earthquakebot/EarthquakeBotDrill3b"));
+        }
+        
         protected final static Panmage getDrill4() {
-            return (drill4 = getEarthquakeImage(drill4, "earthquakebot/EarthquakeBotDrill4"));
+            return (drill4 = getEarthquakeImage(drill4, "earthquakebot/EarthquakeBotDrill4", EARTHQUAKE_O2));
         }
         
         protected final static Panmage getEarthquakeImage(final Panmage img, final String name) {
-            return getImage(img, name, EARTHQUAKE_O, EARTHQUAKE_MIN, EARTHQUAKE_MAX);
+            return getEarthquakeImage(img, name, EARTHQUAKE_O);
+        }
+        
+        protected final static Panmage getEarthquakeImage(final Panmage img, final String name, final Panple o) {
+            return getImage(img, name, o, EARTHQUAKE_MIN, EARTHQUAKE_MAX);
         }
     }
     
