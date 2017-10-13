@@ -1286,6 +1286,12 @@ public abstract class Boss extends Enemy {
                     return false;
                 }
                 changeView(((drillTimer % 4) < 2) ? getDrill3b() : getDrill3());
+            } else if (state == STATE_DRILL4) {
+                drillTimer++;
+                if (drillTimer == 0) {
+                    new Earthquake(this, -17, 0, 30);
+                    new Earthquake(this, 12, 0, 30).setMirror(!isMirror());
+                }
             }
             return false;
         }
@@ -1341,6 +1347,7 @@ public abstract class Boss extends Enemy {
         
         protected final void startDrill4() {
             startState(STATE_DRILL4, 30, getDrill4());
+            drillTimer = -1;
         }
 
         @Override
@@ -1394,6 +1401,66 @@ public abstract class Boss extends Enemy {
         
         protected final static Panmage getEarthquakeImage(final Panmage img, final String name, final Panple o) {
             return getImage(img, name, o, EARTHQUAKE_MIN, EARTHQUAKE_MAX);
+        }
+    }
+    
+    protected final static class Earthquake extends TimedEnemyProjectile {
+        private static Panmage fullImage = null;
+        private final static Panmage[] images = new Panmage[3];
+        private final int dir;
+        private int timer = 0;
+        private int index = 0;
+        
+        protected Earthquake(final Panctor src, final int ox, final int oy, final int timer) {
+            super(getSubImage(0), src, ox, oy, timer);
+            dir = getMirrorMultiplier() * ox / Math.abs(ox);
+        }
+        
+        @Override
+        public final void onStep(final StepEvent event) {
+            super.onStep(event);
+            timer++;
+            if ((timer % 4) == 0) {
+                getPosition().addX(16 * dir);
+                if (index < 2) {
+                    index++;
+                    changeView(getSubImage(index));
+                }
+            }
+        }
+        
+        protected final static Panmage getSubImage(final int i) {
+            Panmage image = images[i];
+            if (image == null) {
+                final float subX, subY;
+                final Panple o = new FinPanple2(7, 1), min = new FinPanple2(-5, 0), max, size;
+                if (i == 0) {
+                    subX = 17;
+                    subY = 0;
+                    //o = new FinPanple2(24, 13);
+                    max = new FinPanple2(5, 5);
+                    size = new FinPanple2(15, 15);
+                } else if (i == 1) {
+                    subX = 17;
+                    subY = 16;
+                    //o = new FinPanple2(24, 1);
+                    max = new FinPanple2(5, 10);
+                    size = new FinPanple2(15, 15);
+                } else {
+                    subX = 0;
+                    subY = 0;
+                    //o = new FinPanple2(7, 1);
+                    max = new FinPanple2(5, 24);
+                    size = new FinPanple2(15, 32);
+                }
+                image = new SubPanmage("Earthquake." + i, o, min, max, getFullImage(), subX, subY, size);
+                images[i] = image;
+            }
+            return image;
+        }
+        
+        protected final static Panmage getFullImage() {
+            return (fullImage = getImage(fullImage, "earthquakebot/Earthquake", null, null, null));
         }
     }
     
