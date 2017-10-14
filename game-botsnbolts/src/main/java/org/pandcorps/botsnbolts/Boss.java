@@ -1289,8 +1289,9 @@ public abstract class Boss extends Enemy {
             } else if (state == STATE_DRILL4) {
                 drillTimer++;
                 if (drillTimer == 0) {
-                    new Earthquake(this, -17, 0, 30);
-                    new Earthquake(this, 12, 0, 30).setMirror(!isMirror());
+                    new Earthquake(this, -17, 0, 2);
+                    new Earthquake(this, 12, 0, 2).setMirror(!isMirror());
+                    Player.shatter(this, DrillEnemy.getDirtShatter());
                 }
             }
             return false;
@@ -1316,6 +1317,7 @@ public abstract class Boss extends Enemy {
                     startDrill4();
                     break;
                 default :
+                    turnTowardPlayer();
                     startStill();
                     break;
             }
@@ -1404,27 +1406,34 @@ public abstract class Boss extends Enemy {
         }
     }
     
-    protected final static class Earthquake extends TimedEnemyProjectile {
+    protected final static class Earthquake extends EnemyProjectile {
         private static Panmage fullImage = null;
         private final static Panmage[] images = new Panmage[3];
-        private final int dir;
+        private final static int positionDuration = 1;
+        private final int velX;
+        private final int frameDuration;
         private int timer = 0;
         private int index = 0;
         
-        protected Earthquake(final Panctor src, final int ox, final int oy, final int timer) {
-            super(getSubImage(0), src, ox, oy, timer);
-            dir = getMirrorMultiplier() * ox / Math.abs(ox);
+        protected Earthquake(final Panctor src, final int ox, final int oy, final int size) {
+            super(getSubImage(0), src, ox, oy, 0, 0);
+            velX = 8 * getMirrorMultiplier() * ox / Math.abs(ox);
+            frameDuration = positionDuration * size * 2;
         }
         
         @Override
         public final void onStep(final StepEvent event) {
             super.onStep(event);
             timer++;
-            if ((timer % 4) == 0) {
-                getPosition().addX(16 * dir);
-                if (index < 2) {
-                    index++;
-                    changeView(getSubImage(index));
+            if ((timer % positionDuration) == 0) {
+                getPosition().addX(velX);
+                if ((timer % frameDuration) == 0) {
+                    if (index < 2) {
+                        index++;
+                        changeView(getSubImage(index));
+                    } else {
+                        destroy();
+                    }
                 }
             }
         }
