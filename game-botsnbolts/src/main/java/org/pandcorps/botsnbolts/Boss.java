@@ -1433,25 +1433,29 @@ public abstract class Boss extends Enemy {
             Panmage image = images[i];
             if (image == null) {
                 final float subX, subY;
-                final Panple o = new FinPanple2(7, 1), min = new FinPanple2(-5, 0), max, size;
+                final Panple o, min, max, size;
                 if (i == 0) {
                     subX = 17;
                     subY = 0;
-                    //o = new FinPanple2(24, 13);
+                    o = new FinPanple2(7, 1);
+                    min = new FinPanple2(-5, 0);
                     max = new FinPanple2(5, 5);
                     size = new FinPanple2(15, 15);
-                } else if (i == 1) {
-                    subX = 17;
-                    subY = 16;
-                    //o = new FinPanple2(24, 1);
-                    max = new FinPanple2(5, 10);
-                    size = new FinPanple2(15, 15);
                 } else {
-                    subX = 0;
-                    subY = 0;
-                    //o = new FinPanple2(7, 1);
-                    max = new FinPanple2(5, 24);
-                    size = new FinPanple2(15, 32);
+                    final Panmage image0 = getSubImage(0);
+                    o = image0.getOrigin();
+                    min = image0.getBoundingMinimum();
+                    if (i == 1) {
+                        subX = 17;
+                        subY = 16;
+                        max = new FinPanple2(5, 10);
+                        size = image0.getSize();
+                    } else {
+                        subX = 0;
+                        subY = 0;
+                        max = new FinPanple2(5, 24);
+                        size = new FinPanple2(15, 32);
+                    }
                 }
                 image = new SubPanmage("Earthquake." + i, o, min, max, getFullImage(), subX, subY, size);
                 images[i] = image;
