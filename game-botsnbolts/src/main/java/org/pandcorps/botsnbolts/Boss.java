@@ -38,6 +38,7 @@ public abstract class Boss extends Enemy {
     protected byte state = 0;
     protected Queue<Jump> pendingJumps = null;
     private boolean jumping = false;
+    protected int moves = -1;
     
     protected Boss(int offX, int h, int x, int y) {
         super(offX, h, x, y, HudMeter.MAX_VALUE);
@@ -62,6 +63,7 @@ public abstract class Boss extends Enemy {
             if (pollPendingJumps()) {
                 return false;
             }
+            moves++;
             return pickState();
         }
         return continueState();
@@ -71,9 +73,13 @@ public abstract class Boss extends Enemy {
     protected final void onLanded() {
         if (hasPendingJumps()) {
             startStill(5);
-        } else {
+        } else if (!onBossLanded()) {
             startStill();
         }
+    }
+    
+    protected boolean onBossLanded() {
+        return false;
     }
     
     protected final boolean pollPendingJumps() {
@@ -1227,17 +1233,17 @@ public abstract class Boss extends Enemy {
     
     protected final static int EARTHQUAKE_OFF_X = 12, EARTHQUAKE_H = 30;
     protected final static Panple EARTHQUAKE_O = new FinPanple2(16, 1);
-    protected final static Panple EARTHQUAKE_O2 = new FinPanple2(15, 1);
     protected final static Panple EARTHQUAKE_MIN = getMin(EARTHQUAKE_OFF_X);
     protected final static Panple EARTHQUAKE_MAX = getMax(EARTHQUAKE_OFF_X, EARTHQUAKE_H);
     
     protected final static class EarthquakeBot extends Boss {
         protected final static byte STATE_JUMP = 1;
         protected final static byte STATE_JUMP_DRILL = 2;
-        protected final static byte STATE_DRILL1 = 3;
-        protected final static byte STATE_DRILL2 = 4;
-        protected final static byte STATE_DRILL3 = 5;
-        protected final static byte STATE_DRILL4 = 6;
+        protected final static byte STATE_JUMP_DRILL_IMPACT = 3;
+        protected final static byte STATE_DRILL1 = 4;
+        protected final static byte STATE_DRILL2 = 5;
+        protected final static byte STATE_DRILL3 = 6;
+        protected final static byte STATE_DRILL4 = 7;
         protected final static int WAIT_JUMP_DRILL = 24;
         protected static Panmage still = null;
         protected static Panmage jump = null;
@@ -1245,6 +1251,7 @@ public abstract class Boss extends Enemy {
         protected static Panmage jumpDrill1 = null;
         protected static Panmage jumpDrill2 = null;
         protected static Panmage jumpDrill3 = null;
+        protected static Panmage jumpDrillImpact = null;
         protected static Panmage drill1 = null;
         protected static Panmage drill2 = null;
         protected static Panmage drill3 = null;
@@ -1289,18 +1296,42 @@ public abstract class Boss extends Enemy {
             } else if (state == STATE_DRILL4) {
                 drillTimer++;
                 if (drillTimer == 0) {
-                    new Earthquake(this, -17, 0, 2);
-                    new Earthquake(this, 12, 0, 2).setMirror(!isMirror());
-                    Player.shatter(this, DrillEnemy.getDirtShatter());
+                    startEarthquake(-17, 2);
+                } else if (drillTimer == 1) {
+                    startDirtShatter();
                 }
+            }
+            return false;
+        }
+        
+        private final void startEarthquake(final int backOx, final int size) {
+            new Earthquake(this, backOx, 0, size);
+            new Earthquake(this, 12, 0, size).setMirror(!isMirror());
+        }
+        
+        private final void startDirtShatter() {
+            Player.shatter(this, DrillEnemy.getDirtShatter());
+        }
+        
+        @Override
+        protected final boolean onBossLanded() {
+            if (state == STATE_JUMP_DRILL) {
+                startJumpDrillImpact();
+                startEarthquake(-11, 4);
+                startDirtShatter();
+                return true;
             }
             return false;
         }
 
         @Override
         protected final boolean pickState() {
-            //startJump();
-            startDrill1();
+            if (moves == 0) {
+                startDrill1(); // Start with this; loads images needed for jump impact
+                return false;
+            }
+            startJump();
+            //startDrill1();
             return false;
         }
 
@@ -1316,6 +1347,9 @@ public abstract class Boss extends Enemy {
                 case STATE_DRILL3 :
                     startDrill4();
                     break;
+                case STATE_JUMP_DRILL_IMPACT :
+                    startJump(2);
+                    break;
                 default :
                     turnTowardPlayer();
                     startStill();
@@ -1325,13 +1359,21 @@ public abstract class Boss extends Enemy {
         }
         
         protected final void startJump() {
-            startJump(STATE_JUMP, getJump(), 12, 0);
+            startJump(12);
+        }
+        
+        protected final void startJump(final int v) {
+            startJump(STATE_JUMP, getJump(), v, 0);
         }
         
         protected final void startJumpDrill() {
             startStateIndefinite(STATE_JUMP_DRILL, getJumpDrillStart());
             v = 0;
             drillTimer = -1;
+        }
+        
+        protected final void startJumpDrillImpact() {
+            startState(STATE_JUMP_DRILL_IMPACT, 20, getJumpDrillImpact());
         }
         
         protected final void startDrill1() {
@@ -1377,6 +1419,13 @@ public abstract class Boss extends Enemy {
             return (jumpDrill3 = getEarthquakeImage(jumpDrill3, "earthquakebot/EarthquakeBotJumpDrill3"));
         }
         
+        protected final static Panmage getJumpDrillImpact() {
+            if (jumpDrillImpact != null) {
+                return jumpDrillImpact;
+            }
+            return (jumpDrillImpact = getEarthquakeImage(jumpDrillImpact, "earthquakebot/EarthquakeBotJumpDrillImpact", new FinPanple2(16, 11)));
+        }
+        
         protected final static Panmage getDrill1() {
             return (drill1 = getEarthquakeImage(drill1, "earthquakebot/EarthquakeBotDrill1"));
         }
@@ -1394,7 +1443,10 @@ public abstract class Boss extends Enemy {
         }
         
         protected final static Panmage getDrill4() {
-            return (drill4 = getEarthquakeImage(drill4, "earthquakebot/EarthquakeBotDrill4", EARTHQUAKE_O2));
+            if (drill4 != null) {
+                return drill4;
+            }
+            return (drill4 = getEarthquakeImage(drill4, "earthquakebot/EarthquakeBotDrill4", new FinPanple2(15, 1)));
         }
         
         protected final static Panmage getEarthquakeImage(final Panmage img, final String name) {
