@@ -369,7 +369,7 @@ public class Enemy extends Character {
 	    final Panple pos = getPosition();
         final int d = ImtilX.DIM;
         final float cx = pos.getX();
-        final int bx = (int) cx + ((isMirror() ? -1 : 1) * off);
+        final int bx = (int) cx + (getMirrorMultiplier() * off);
         float x = ((bx / d) * d) + 8;
         float y = Level.ROOM_H - d, fy = -1;
         boolean prevFree = isFree(Level.tm.getContainer(x, y));
