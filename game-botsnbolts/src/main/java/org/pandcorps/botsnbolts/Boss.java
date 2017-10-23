@@ -1554,6 +1554,7 @@ public abstract class Boss extends Enemy {
     protected final static class CycloneBot extends Boss {
         protected static Panmage still = null;
         protected static Panmage whirl1 = null;
+        protected static Panmage whirl2 = null;
         
         protected CycloneBot(final int x, final int y) {
             super(CYCLONE_OFF_X, CYCLONE_H, x, y);
