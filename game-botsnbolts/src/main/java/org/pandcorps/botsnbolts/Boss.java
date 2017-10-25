@@ -1577,6 +1577,10 @@ public abstract class Boss extends Enemy {
             return (still = getCycloneImage(still, "cyclonebot/CycloneBot"));
         }
         
+        protected final static Panmage getWhirl1() {
+            return (whirl1 = getCycloneImage(whirl1, "cyclonebot/CycloneBotWhirl1"));
+        }
+        
         protected final static Panmage getCycloneImage(final Panmage img, final String name) {
             return getImage(img, name, CYCLONE_O, CYCLONE_MIN, CYCLONE_MAX);
         }
