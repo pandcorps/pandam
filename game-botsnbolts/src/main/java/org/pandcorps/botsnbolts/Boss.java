@@ -1561,6 +1561,14 @@ public abstract class Boss extends Enemy {
         protected CycloneBot(final int x, final int y) {
             super(CYCLONE_OFF_X, CYCLONE_H, x, y);
         }
+        
+        @Override
+        protected final boolean onWaiting() {
+            if (state == STATE_STILL) {
+                
+            }
+            return false;
+        }
 
         @Override
         protected final boolean pickState() {
