@@ -1553,6 +1553,7 @@ public abstract class Boss extends Enemy {
     
     protected final static class CycloneBot extends Boss {
         protected static Panmage still = null;
+        protected static Panmage whirlStart = null;
         protected static Panmage whirl1 = null;
         protected static Panmage whirl2 = null;
         protected static Panmage whirl3 = null;
