@@ -1565,13 +1565,24 @@ public abstract class Boss extends Enemy {
         @Override
         protected final boolean onWaiting() {
             if (state == STATE_STILL) {
-                
+                final long clock = Pangine.getEngine().getClock();
+                final long i = (int) (clock % 6);
+                final Panmage img;
+                if (i < 2) {
+                    img = getWhirl1();
+                } else if (i < 4) {
+                    img = getWhirl2();
+                } else {
+                    img = getWhirl3();
+                }
+                changeView(img);
             }
             return false;
         }
 
         @Override
         protected final boolean pickState() {
+            waitTimer = 30; // Remove this when we have attacks/jumps to pick
             return false;
         }
 
@@ -1596,6 +1607,10 @@ public abstract class Boss extends Enemy {
         
         protected final static Panmage getWhirl3() {
             return (whirl3 = getCycloneImage(whirl3, "cyclonebot/CycloneBotWhirl3"));
+        }
+        
+        protected final static Panmage getWhirlStart() {
+            return (whirlStart = getCycloneImage(whirlStart, "cyclonebot/CycloneBotWhirlStart"));
         }
         
         protected final static Panmage getCycloneImage(final Panmage img, final String name) {
