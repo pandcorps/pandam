@@ -1558,7 +1558,7 @@ public abstract class Boss extends Enemy {
         protected static Panmage whirl1 = null;
         protected static Panmage whirl2 = null;
         protected static Panmage whirl3 = null;
-        private int age = 0;
+        private long age = 0;
         
         protected CycloneBot(final int x, final int y) {
             super(CYCLONE_OFF_X, CYCLONE_H, x, y);
@@ -1572,9 +1572,11 @@ public abstract class Boss extends Enemy {
             } else if (age < 92) {
                 changeView(getWhirlStart1());
                 return false;
+            } else if (age < 94) {
+                changeView(getWhirlStart2());
+                return false;
             } else if (state == STATE_STILL) {
-                final long clock = Pangine.getEngine().getClock();
-                final long i = (int) (clock % 6);
+                final long i = (int) (age % 6);
                 final Panmage img;
                 if (i < 2) {
                     img = getWhirl1();
