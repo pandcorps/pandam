@@ -197,20 +197,20 @@ public abstract class RoomLoader {
             final Field field = fields.get(i);
             final TileMapImage image = getTileMapImage(field);
             final int duration = field.intValue(6);
-            frames[i] = new TileFrame(image, duration);
+            final TileMapImage background, foreground;
+            if (bg) {
+                background = image;
+                foreground = null;
+            } else {
+                background = null;
+                foreground = image;
+            }
+            frames[i] = new TileFrame(background, foreground, duration);
             if (i == 0) {
-                final TileMapImage background, foreground;
-                if (bg) {
-                    background = image;
-                    foreground = null;
-                } else {
-                    background = null;
-                    foreground = image;
-                }
                 tile = tm.getTile(background, foreground, b);
             }
         }
-        animators.add(new TileAnimator(tile, bg, period, frames));
+        animators.add(new TileAnimator(tile, period, frames));
     }
     
     private final static void alt(final Segment seg) {
@@ -674,13 +674,11 @@ public abstract class RoomLoader {
     
     protected final static class TileAnimator {
         private final Tile tile;
-        private final boolean bg;
         private final int period;
         private final TileFrame[] frames;
         
-        protected TileAnimator(final Tile tile, final boolean bg, final int period, final TileFrame[] frames) {
+        protected TileAnimator(final Tile tile, final int period, final TileFrame[] frames) {
             this.tile = tile;
-            this.bg = bg;
             this.period = period;
             this.frames = frames;
         }
@@ -691,11 +689,8 @@ public abstract class RoomLoader {
             for (final TileFrame frame : frames) {
                 limit += frame.duration;
                 if (index < limit) {
-                    if (bg) {
-                        tile.setBackground(frame.image);
-                    } else {
-                        tile.setForeground(frame.image);
-                    }
+                    tile.setBackground(frame.bg);
+                    tile.setForeground(frame.fg);
                     break;
                 }
             }
@@ -703,11 +698,13 @@ public abstract class RoomLoader {
     }
     
     protected final static class TileFrame {
-        private final Object image;
+        private final Object bg;
+        private final Object fg;
         private final int duration;
         
-        protected TileFrame(final Object image, final int duration) {
-            this.image = image;
+        protected TileFrame(final Object bg, final Object fg, final int duration) {
+            this.bg = bg;
+            this.fg = fg;
             this.duration = duration;
         }
     }
