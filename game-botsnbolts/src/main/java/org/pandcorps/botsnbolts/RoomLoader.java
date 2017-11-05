@@ -41,7 +41,7 @@ public abstract class RoomLoader {
     private final static Map<BotCell, BotRoom> rooms = new HashMap<BotCell, BotRoom>();
     private final static List<Panctor> actors = new ArrayList<Panctor>();
     private final static List<ShootableDoor> doors = new ArrayList<ShootableDoor>();
-    private final static List<TileAnimator> animators = new ArrayList<TileAnimator>();
+    protected final static List<TileAnimator> animators = new ArrayList<TileAnimator>();
     private final static Map<Character, Tile> tiles = new HashMap<Character, Tile>();
     private final static Map<Character, Tile[][]> patterns = new HashMap<Character, Tile[][]>();
     private final static Map<Character, RoomFunction> functions = new HashMap<Character, RoomFunction>();
@@ -677,10 +677,23 @@ public abstract class RoomLoader {
         private final int period;
         private final TileFrame[] frames;
         
-        protected TileAnimator(final Tile tile, final int period, final TileFrame[] frames) {
+        //TODO Remove the period parameter; always calculate it
+        protected TileAnimator(final Tile tile, final int period, final TileFrame... frames) {
             this.tile = tile;
             this.period = period;
             this.frames = frames;
+        }
+        
+        protected TileAnimator(final Tile tile, final TileFrame... frames) {
+            this(tile, getPeriod(frames), frames);
+        }
+        
+        protected final static int getPeriod(final TileFrame... frames) {
+            int p = 0;
+            for (final TileFrame frame : frames) {
+                p += frame.duration;
+            }
+            return p;
         }
         
         protected final void step() {
