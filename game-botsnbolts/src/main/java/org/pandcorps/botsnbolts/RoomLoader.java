@@ -189,8 +189,7 @@ public abstract class RoomLoader {
         Tile tile = null;
         final byte b = seg.byteValue(0);
         final boolean bg = seg.booleanValue(1);
-        final int period = seg.intValue(2);
-        final List<Field> fields = seg.getRepetitions(3);
+        final List<Field> fields = seg.getRepetitions(2);
         final int size = fields.size();
         final TileFrame[] frames = new TileFrame[size];
         for (int i = 0; i < size; i++) {
@@ -210,7 +209,7 @@ public abstract class RoomLoader {
                 tile = tm.getTile(background, foreground, b);
             }
         }
-        animators.add(new TileAnimator(tile, period, frames));
+        animators.add(new TileAnimator(tile, frames));
     }
     
     private final static void alt(final Segment seg) {
@@ -677,15 +676,10 @@ public abstract class RoomLoader {
         private final int period;
         private final TileFrame[] frames;
         
-        //TODO Remove the period parameter; always calculate it
-        protected TileAnimator(final Tile tile, final int period, final TileFrame... frames) {
-            this.tile = tile;
-            this.period = period;
-            this.frames = frames;
-        }
-        
         protected TileAnimator(final Tile tile, final TileFrame... frames) {
-            this(tile, getPeriod(frames), frames);
+            this.tile = tile;
+            this.period = getPeriod(frames);
+            this.frames = frames;
         }
         
         protected final static int getPeriod(final TileFrame... frames) {
