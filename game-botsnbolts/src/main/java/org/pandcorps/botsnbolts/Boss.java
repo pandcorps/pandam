@@ -173,6 +173,13 @@ public abstract class Boss extends Enemy {
         startState(STATE_STILL, waitTimer, getStill());
     }
     
+    protected static Panmage getImage(final Panmage img, final String name, final Panmage ref) {
+        if (img != null) {
+            return img;
+        }
+        return getImage(img, name, ref.getOrigin(), ref.getBoundingMinimum(), ref.getBoundingMaximum());
+    }
+    
     protected final static Panmage getImage(final Panmage img, final String name, final Panple o, final Panple min, final Panple max) {
         return getImage(img, "boss.", RES_BOSS, name, o, min, max);
     }
@@ -376,8 +383,7 @@ public abstract class Boss extends Enemy {
             if (img != null) {
                 return img;
             }
-            final Panmage ref = BotsnBoltsGame.fireballEnemy[0];
-            return getImage(img, name, ref.getOrigin(), ref.getBoundingMinimum(), ref.getBoundingMaximum());
+            return getImage(img, name, BotsnBoltsGame.fireballEnemy[0]);
         }
     }
     
@@ -903,8 +909,7 @@ public abstract class Boss extends Enemy {
             if (img != null) {
                 return img;
             }
-            final Panmage ref = BotsnBoltsGame.fireballEnemy[0];
-            return Boss.getImage(img, name, ref.getOrigin(), ref.getBoundingMinimum(), ref.getBoundingMaximum());
+            return Boss.getImage(img, name, BotsnBoltsGame.fireballEnemy[0]);
         }
         
         private final static class RockRotator extends Rotator {
@@ -1636,6 +1641,17 @@ public abstract class Boss extends Enemy {
         protected static Panmage wind1 = null;
         protected static Panmage wind2 = null;
         protected static Panmage wind3 = null;
+        
+        protected final static Panmage getWind1() {
+            return (wind1 = getWindImage(wind1, "cyclonebot/Whirlwind1"));
+        }
+        
+        private final static Panmage getWindImage(final Panmage img, final String name) {
+            if (img != null) {
+                return img;
+            }
+            return Boss.getImage(img, name, BotsnBoltsGame.fireballEnemy[0]);
+        }
     }
     
     protected abstract static class Rotator {
