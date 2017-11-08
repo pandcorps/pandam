@@ -1633,6 +1633,9 @@ public abstract class Boss extends Enemy {
     }
     
     protected final static class Whirlwind {
+        protected static Panmage wind1 = null;
+        protected static Panmage wind2 = null;
+        protected static Panmage wind3 = null;
     }
     
     protected abstract static class Rotator {
