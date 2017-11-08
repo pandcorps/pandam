@@ -1646,6 +1646,14 @@ public abstract class Boss extends Enemy {
             return (wind1 = getWindImage(wind1, "cyclonebot/Whirlwind1"));
         }
         
+        protected final static Panmage getWind2() {
+            return (wind2 = getWindImage(wind2, "cyclonebot/Whirlwind2"));
+        }
+        
+        protected final static Panmage getWind3() {
+            return (wind3 = getWindImage(wind3, "cyclonebot/Whirlwind3"));
+        }
+        
         private final static Panmage getWindImage(final Panmage img, final String name) {
             if (img != null) {
                 return img;
