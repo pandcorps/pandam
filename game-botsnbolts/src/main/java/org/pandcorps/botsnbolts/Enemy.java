@@ -298,6 +298,11 @@ public abstract class Enemy extends Chr implements CollisionListener {
             this.timer = timer;
         }
         
+        protected TimedEnemyProjectile(final Panmage img, final Panctor src, final int ox, final int oy, final float vx, final float vy, final Panple g, final int timer) {
+            super(img, src, ox, oy, vx, vy, g);
+            this.timer = timer;
+        }
+        
         @Override
         public void onStep(final StepEvent event) {
             super.onStep(event);
