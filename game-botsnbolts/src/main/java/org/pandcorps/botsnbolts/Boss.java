@@ -1637,10 +1637,26 @@ public abstract class Boss extends Enemy {
         }
     }
     
-    protected final static class Whirlwind {
+    protected final static class Whirlwind extends TimedEnemyProjectile {
+        protected final static int duration = 300;
         protected static Panmage wind1 = null;
         protected static Panmage wind2 = null;
         protected static Panmage wind3 = null;
+        
+        protected Whirlwind(final Panctor src) {
+            super(getWind(duration), src, 0, 0, 0, 0, gTuple, duration);
+        }
+        
+        protected final static Panmage getWind(final int timer) {
+            final int m = timer % 6;
+            if (m < 2) {
+                return getWind1();
+            } else if (m < 4) {
+                return getWind2();
+            } else {
+                return getWind3();
+            }
+        }
         
         protected final static Panmage getWind1() {
             return (wind1 = getWindImage(wind1, "cyclonebot/Whirlwind1"));
