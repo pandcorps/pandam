@@ -1,4 +1,4 @@
-Pandam (TM) is a 2D event-driven game engine for Java (TM) and/or Android (TM).
+Pandam (TM) is a 2D event-driven game engine for Java (TM) and/or Android (TM).                               ![webp net-resizeimage](https://user-images.githubusercontent.com/22865665/32693380-43f50378-c73b-11e7-9590-de4b016d2194.png)
 
 [![Build Status](https://travis-ci.org/pandcorps/pandam.svg?branch=master)](https://travis-ci.org/pandcorps/pandam)
 
