@@ -1557,12 +1557,18 @@ public abstract class Boss extends Enemy {
     protected final static Panple CYCLONE_MAX = getMax(CYCLONE_OFF_X, CYCLONE_H);
     
     protected final static class CycloneBot extends Boss {
+        protected final static byte STATE_LAUNCH = 1;
+        protected final static byte STATE_LAUNCH_END = 2;
+        protected final static int WAIT_LAUNCH = 19;
         protected static Panmage still = null;
         protected static Panmage whirlStart1 = null;
         protected static Panmage whirlStart2 = null;
         protected static Panmage whirl1 = null;
         protected static Panmage whirl2 = null;
         protected static Panmage whirl3 = null;
+        protected static Panmage launchStart = null;
+        protected static Panmage launch1 = null;
+        protected static Panmage launch2 = null;
         private long age = 0;
         
         protected CycloneBot(final int x, final int y) {
@@ -1572,12 +1578,12 @@ public abstract class Boss extends Enemy {
         @Override
         protected final boolean onWaiting() {
             age++;
-            if (age < 90) {
+            if (age < 10) {
                 return false;
-            } else if (age < 92) {
+            } else if (age < 12) {
                 changeView(getWhirlStart1());
                 return false;
-            } else if (age < 94) {
+            } else if (age < 14) {
                 changeView(getWhirlStart2());
                 return false;
             } else if (state == STATE_STILL) {
@@ -1591,20 +1597,46 @@ public abstract class Boss extends Enemy {
                     img = getWhirl3();
                 }
                 changeView(img);
+            } else if (state == STATE_LAUNCH) {
+                final int index = WAIT_LAUNCH - waitTimer;
+                if (index == 1) {
+                    new Whirlwind(this);
+                } else if (index > 1) {
+                    changeView(((index % 4) < 2) ? getLaunch1() : getLaunch2());
+                }
+            } else if (state == STATE_LAUNCH_END) {
+                if (waitTimer == 2) {
+                    changeView(getWhirlStart1());
+                } else if (waitTimer == 0) {
+                    age = 0;
+                    startStill();
+                }
             }
             return false;
         }
 
         @Override
         protected final boolean pickState() {
-            waitTimer = 30; // Remove this when we have attacks/jumps to pick
+            startLaunch();
             return false;
         }
 
         @Override
         protected final boolean continueState() {
-            startStill();
+            if (state == STATE_LAUNCH) {
+                startLaunchEnd();
+            } else {
+                startStill();
+            }
             return false;
+        }
+        
+        private final void startLaunch() {
+            startState(STATE_LAUNCH, WAIT_LAUNCH, getLaunchStart());
+        }
+        
+        private final void startLaunchEnd() {
+            startState(STATE_LAUNCH_END, 4, getWhirlStart2());
         }
 
         @Override
@@ -1632,6 +1664,18 @@ public abstract class Boss extends Enemy {
             return (whirlStart2 = getCycloneImage(whirlStart2, "cyclonebot/CycloneBotWhirlStart2"));
         }
         
+        protected final static Panmage getLaunch1() {
+            return (launch1 = getCycloneImage(launch1, "cyclonebot/CycloneBotLaunch1"));
+        }
+        
+        protected final static Panmage getLaunch2() {
+            return (launch2 = getCycloneImage(launch2, "cyclonebot/CycloneBotLaunch2"));
+        }
+        
+        protected final static Panmage getLaunchStart() {
+            return (launchStart = getCycloneImage(launchStart, "cyclonebot/CycloneBotLaunchStart"));
+        }
+        
         protected final static Panmage getCycloneImage(final Panmage img, final String name) {
             return getImage(img, name, CYCLONE_O, CYCLONE_MIN, CYCLONE_MAX);
         }
@@ -1639,17 +1683,38 @@ public abstract class Boss extends Enemy {
     
     protected final static class Whirlwind extends TimedEnemyProjectile {
         protected final static int duration = 300;
+        protected final static int speed = 2;
         protected static Panmage wind1 = null;
         protected static Panmage wind2 = null;
         protected static Panmage wind3 = null;
         
         protected Whirlwind(final Panctor src) {
-            super(getWind(duration), src, 0, 0, 0, 0, gTuple, duration);
+            super(getWind(duration), src, -2, 20, speed * src.getMirrorMultiplier(), 6, gTuple, duration);
         }
         
         @Override
         public void onStep(final StepEvent event) {
             super.onStep(event);
+            final boolean m = isMirror();
+            final Panple pos = getPosition();
+            final float x = pos.getX();
+            boolean reverse = false;
+            if (m) {
+                if (x < 20) {
+                    reverse = true;
+                }
+            } else {
+                if (x >= (Pangine.getEngine().getEffectiveWidth() - 20)) {
+                    reverse = true;
+                }
+            }
+            if (reverse) {
+                setMirror(!m);
+                getVelocity().setX(speed * getMirrorMultiplier());
+            }
+            if (pos.getY() < 52) {
+                getVelocity().setY(4);
+            }
             changeView(getWind(timer));
         }
         
