@@ -1647,6 +1647,12 @@ public abstract class Boss extends Enemy {
             super(getWind(duration), src, 0, 0, 0, 0, gTuple, duration);
         }
         
+        @Override
+        public void onStep(final StepEvent event) {
+            super.onStep(event);
+            changeView(getWind(timer));
+        }
+        
         protected final static Panmage getWind(final int timer) {
             final int m = timer % 6;
             if (m < 2) {
