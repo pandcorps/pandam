@@ -1645,9 +1645,25 @@ public abstract class Boss extends Enemy {
                     } else {
                         img = getSpin3();
                     }
-                    getPosition().addX(2 * getMirrorMultiplier());
+                    final int vi = (index - 6) % 48;
+                    final int v;
+                    if (vi < 8) {
+                        v = 1;
+                    } else if (vi < 16) {
+                        v = 2;
+                    } else if (vi < 24) {
+                        v = 1;
+                    } else if (vi < 32) {
+                        v = -1;
+                    } else if (vi < 40) {
+                        v = -2;
+                    } else {
+                        v = -1;
+                    }
+                    getPosition().add(2 * getMirrorMultiplier(), ((index < 150) || (v < 0)) ? v : 0);
                 }
                 changeView(img);
+                return true;
             }
             return false;
         }
