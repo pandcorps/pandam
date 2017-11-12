@@ -1564,7 +1564,7 @@ public abstract class Boss extends Enemy {
         protected final static byte STATE_LAUNCH_END = 2;
         protected final static byte STATE_SPIN = 3;
         protected final static int WAIT_LAUNCH = 19;
-        protected final static int WAIT_SPIN = 240;
+        protected final static int WAIT_SPIN = 165;
         protected static Panmage still = null;
         protected static Panmage whirlStart1 = null;
         protected static Panmage whirlStart2 = null;
@@ -1584,6 +1584,11 @@ public abstract class Boss extends Enemy {
         
         protected CycloneBot(final int x, final int y) {
             super(CYCLONE_OFF_X, CYCLONE_H, x, y);
+        }
+        
+        @Override
+        protected final int getInitialOffsetX() {
+            return 0;
         }
         
         @Override
@@ -1640,6 +1645,7 @@ public abstract class Boss extends Enemy {
                     } else {
                         img = getSpin3();
                     }
+                    getPosition().addX(2 * getMirrorMultiplier());
                 }
                 changeView(img);
             }
@@ -1657,6 +1663,10 @@ public abstract class Boss extends Enemy {
         protected final boolean continueState() {
             if (state == STATE_LAUNCH) {
                 startLaunchEnd();
+            } else if (state == STATE_SPIN) {
+                getPosition().addX(getMirrorMultiplier());
+                setMirror(!isMirror());
+                startStill();
             } else {
                 startStill();
             }
