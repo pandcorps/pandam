@@ -1555,11 +1555,16 @@ public abstract class Boss extends Enemy {
     protected final static Panple CYCLONE_O = new FinPanple2(14, 1);
     protected final static Panple CYCLONE_MIN = getMin(CYCLONE_OFF_X);
     protected final static Panple CYCLONE_MAX = getMax(CYCLONE_OFF_X, CYCLONE_H);
+    protected final static Panple CYCLONE_SPIN_O = new FinPanple2(30, 1);
+    protected final static Panple CYCLONE_SPIN_MIN = getMin(CYCLONE_OFF_X);
+    protected final static Panple CYCLONE_SPIN_MAX = getMax(CYCLONE_OFF_X, CYCLONE_H);
     
     protected final static class CycloneBot extends Boss {
         protected final static byte STATE_LAUNCH = 1;
         protected final static byte STATE_LAUNCH_END = 2;
+        protected final static byte STATE_SPIN = 3;
         protected final static int WAIT_LAUNCH = 19;
+        protected final static int WAIT_SPIN = 240;
         protected static Panmage still = null;
         protected static Panmage whirlStart1 = null;
         protected static Panmage whirlStart2 = null;
@@ -1569,6 +1574,12 @@ public abstract class Boss extends Enemy {
         protected static Panmage launchStart = null;
         protected static Panmage launch1 = null;
         protected static Panmage launch2 = null;
+        protected static Panmage spinStart1 = null;
+        protected static Panmage spinStart2 = null;
+        protected static Panmage spinStart3 = null;
+        protected static Panmage spin1 = null;
+        protected static Panmage spin2 = null;
+        protected static Panmage spin3 = null;
         private long age = 0;
         
         protected CycloneBot(final int x, final int y) {
@@ -1587,7 +1598,7 @@ public abstract class Boss extends Enemy {
                 changeView(getWhirlStart2());
                 return false;
             } else if (state == STATE_STILL) {
-                final long i = (int) (age % 6);
+                final long i = age % 6;
                 final Panmage img;
                 if (i < 2) {
                     img = getWhirl1();
@@ -1611,13 +1622,34 @@ public abstract class Boss extends Enemy {
                     age = 0;
                     startStill();
                 }
+            } else if (state == STATE_SPIN) {
+                final int index = WAIT_SPIN - waitTimer;
+                final Panmage img;
+                if (index < 2) {
+                    img = getSpinStart1();
+                } else if (index < 4) {
+                    img = getSpinStart2();
+                } else if (index < 6) {
+                    img = getSpinStart3();
+                } else {
+                    final int i = index % 6;
+                    if (i < 2) {
+                        img = getSpin1();
+                    } else if (i < 4) {
+                        img = getSpin2();
+                    } else {
+                        img = getSpin3();
+                    }
+                }
+                changeView(img);
             }
             return false;
         }
 
         @Override
         protected final boolean pickState() {
-            startLaunch();
+            //startLaunch();
+            startSpin();
             return false;
         }
 
@@ -1637,6 +1669,10 @@ public abstract class Boss extends Enemy {
         
         private final void startLaunchEnd() {
             startState(STATE_LAUNCH_END, 4, getWhirlStart2());
+        }
+        
+        private final void startSpin() {
+            startState(STATE_SPIN, WAIT_SPIN, getSpinStart1());
         }
 
         @Override
@@ -1676,8 +1712,40 @@ public abstract class Boss extends Enemy {
             return (launchStart = getCycloneImage(launchStart, "cyclonebot/CycloneBotLaunchStart"));
         }
         
+        protected final static Panmage getSpin1() {
+            return (spin1 = getCycloneSpinImage(spin1, "cyclonebot/CycloneBotSpin1"));
+        }
+        
+        protected final static Panmage getSpin2() {
+            return (spin2 = getCycloneSpinImage(spin2, "cyclonebot/CycloneBotSpin2"));
+        }
+        
+        protected final static Panmage getSpin3() {
+            return (spin3 = getCycloneSpinImage(spin3, "cyclonebot/CycloneBotSpin3"));
+        }
+        
+        protected final static Panmage getSpinStart1() {
+            return (spinStart1 = getCycloneImage(spinStart1, "cyclonebot/CycloneBotSpinStart1"));
+        }
+        
+        protected final static Panmage getSpinStart2() {
+            return (spinStart2 = getCycloneSpinStartImage(spinStart2, "cyclonebot/CycloneBotSpinStart2"));
+        }
+        
+        protected final static Panmage getSpinStart3() {
+            return (spinStart3 = getCycloneSpinStartImage(spinStart3, "cyclonebot/CycloneBotSpinStart3"));
+        }
+        
         protected final static Panmage getCycloneImage(final Panmage img, final String name) {
             return getImage(img, name, CYCLONE_O, CYCLONE_MIN, CYCLONE_MAX);
+        }
+        
+        protected final static Panmage getCycloneSpinImage(final Panmage img, final String name) {
+            return getImage(img, name, CYCLONE_SPIN_O, CYCLONE_SPIN_MIN, CYCLONE_SPIN_MAX);
+        }
+        
+        protected final static Panmage getCycloneSpinStartImage(final Panmage img, final String name) {
+            return getImage(img, name, CYCLONE_SPIN_O, CYCLONE_MIN, CYCLONE_MAX);
         }
     }
     
