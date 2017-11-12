@@ -1564,7 +1564,7 @@ public abstract class Boss extends Enemy {
         protected final static byte STATE_LAUNCH_END = 2;
         protected final static byte STATE_SPIN = 3;
         protected final static int WAIT_LAUNCH = 19;
-        protected final static int WAIT_SPIN = 165;
+        protected final static int WAIT_SPIN = 171;
         protected static Panmage still = null;
         protected static Panmage whirlStart1 = null;
         protected static Panmage whirlStart2 = null;
@@ -1630,11 +1630,11 @@ public abstract class Boss extends Enemy {
             } else if (state == STATE_SPIN) {
                 final int index = WAIT_SPIN - waitTimer;
                 final Panmage img;
-                if (index < 2) {
+                if ((index < 2) || (waitTimer < 2)) {
                     img = getSpinStart1();
-                } else if (index < 4) {
+                } else if ((index < 4) || (waitTimer < 4)) {
                     img = getSpinStart2();
-                } else if (index < 6) {
+                } else if ((index < 6) || (waitTimer < 6)) {
                     img = getSpinStart3();
                 } else {
                     final int i = index % 6;
