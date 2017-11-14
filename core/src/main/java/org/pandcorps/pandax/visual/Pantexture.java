@@ -25,11 +25,14 @@ package org.pandcorps.pandax.visual;
 import org.pandcorps.pandam.*;
 
 public class Pantexture extends Panctor {
-	protected final Panmage image;
+	protected Panmage image = null;
 	protected int offX = 0;
 	protected int offY = 0;
 	protected int width = 0;
 	protected int height = 0;
+	
+	public Pantexture() {
+    }
 	
 	public Pantexture(final Panmage image) {
 	    this.image = image;
@@ -38,6 +41,10 @@ public class Pantexture extends Panctor {
 	public Pantexture(final String id, final Panmage image) {
 		super(id);
 		this.image = image;
+	}
+	
+	public void setImage(final Panmage image) {
+	    this.image = image;
 	}
 	
 	public void setOffset(final int offX, final int offY) {
