@@ -41,6 +41,7 @@ import org.pandcorps.pandax.text.*;
 import org.pandcorps.pandax.text.Fonts.*;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.tile.Tile.*;
+import org.pandcorps.pandax.visual.*;
 
 public final class BotsnBoltsGame extends BaseGame {
     protected final static String TITLE = "Bots 'n Bolts";
@@ -153,6 +154,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static TileMapImage[][] imgMap = null;
     protected static Panlayer bgLayer = null;
     protected static TileMap bgTm = null;
+    protected static Pantexture bgTexture = null;
 
     @Override
     protected final boolean isFullScreen() {
@@ -840,12 +842,19 @@ public final class BotsnBoltsGame extends BaseGame {
                     room.addBeneath(bgLayer);
                 }
                 Panctor.destroy(bgTm);
-                bgTm = new TileMap(Pantil.vmid(), GAME_COLUMNS, GAME_ROWS, DIM, DIM);
-                bgTm.setImageMap(timg);
-                bgTm.getPosition().setZ(DEPTH_PARALLAX_BG);
-                bgTm.setForegroundDepth(DEPTH_PARALLAX_FG);
-                bgLayer.addActor(bgTm);
-                RoomLoader.loadBg(bgFileId);
+                Panctor.destroy(bgTexture);
+                if (bgFileId.endsWith("Tex")) {
+                    RoomLoader.loadTex(bgFileId);
+                    bgTexture.setSize(GAME_W, GAME_H);
+                    bgLayer.addActor(bgTexture);
+                } else {
+                    bgTm = new TileMap(Pantil.vmid(), GAME_COLUMNS, GAME_ROWS, DIM, DIM);
+                    bgTm.setImageMap(timg);
+                    bgTm.getPosition().setZ(DEPTH_PARALLAX_BG);
+                    bgTm.setForegroundDepth(DEPTH_PARALLAX_FG);
+                    bgLayer.addActor(bgTm);
+                    RoomLoader.loadBg(bgFileId);
+                }
                 room.setClearDepthEnabled(false);
             }
         }

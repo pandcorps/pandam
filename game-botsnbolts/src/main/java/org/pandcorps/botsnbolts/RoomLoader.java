@@ -35,6 +35,7 @@ import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.tile.Tile.*;
+import org.pandcorps.pandax.visual.*;
 
 public abstract class RoomLoader {
     private final static int OFF_ALT = 256;
@@ -84,6 +85,30 @@ public abstract class RoomLoader {
         processSegmentFile(fileId, false, BotsnBoltsGame.bgTm);
         clear();
         init();
+    }
+    
+    protected final static void loadTex(final String fileId) {
+        final String fileName = BotsnBoltsGame.RES + "/level/" + fileId + ".txt";
+        SegmentStream in = null;
+        final int frameDuration;
+        final Panmage images[];
+        try {
+            in = SegmentStream.openLocation(fileName);
+            final Segment tex = in.readRequire("TEX");
+            frameDuration = tex.intValue(0);
+            final List<Field> reps = tex.getRepetitions(1);
+            final int size = reps.size();
+            images = new Panmage[size];
+            final Pangine engine = Pangine.getEngine();
+            for (int i = 0; i < size; i++) {
+                images[i] = engine.createImage(Pantil.vmid(), BotsnBoltsGame.RES + "/bg/" + reps.get(i).getValue() + ".png");
+            }
+        } catch (final Exception e) {
+            throw new Panception("Error loading " + fileName, e);
+        } finally {
+            Iotil.close(in);
+        }
+        BotsnBoltsGame.bgTexture = new AnimTexture(frameDuration, images);
     }
     
     private final static void processSegmentFile(final String fileId, final boolean ctxRequired, final TileMap tm) {
