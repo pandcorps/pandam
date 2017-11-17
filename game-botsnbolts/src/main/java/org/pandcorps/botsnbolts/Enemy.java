@@ -184,19 +184,6 @@ public abstract class Enemy extends Chr implements CollisionListener {
         return 0;
     }
     
-    protected final boolean isSolidIndex(final int index) {
-        return isSolidTile(BotsnBoltsGame.tm.getTile(index));
-    }
-    
-    protected final boolean isSolidTile(final int i, final int j) {
-        return isSolidTile(BotsnBoltsGame.tm.getTile(i, j));
-    }
-    
-    protected final boolean isSolidTile(final Tile tile) {
-        final byte b = Tile.getBehavior(tile);
-        return (b == Tile.BEHAVIOR_SOLID) || isSolidBehavior(b);
-    }
-    
     protected static Panmage getImage(final Panmage img, final String name, final Panmage ref) {
         if (img != null) {
             return img;
