@@ -52,6 +52,7 @@ public abstract class RoomLoader {
     protected static int startX = 0;
     protected static int startY = 0;
     private static int row = 0;
+    protected static int waterLevel = 0;
     
     private static BotRoom room = null;
     
@@ -194,6 +195,8 @@ public abstract class RoomLoader {
                 sbt(seg, in);
             } else if ("CRR".equals(name)) { // Carrier
                 crr(seg);
+            } else if ("WTR".equals(name)) { // Water
+                wtr(seg);
             } else if ("DEF".equals(name)) { // Definition
             }
         }
@@ -534,6 +537,34 @@ public abstract class RoomLoader {
     
     private final static void crr(final Segment seg) throws Exception {
         new Carrier(seg.intValue(0), seg.intValue(1), seg.intValue(2), seg.intValue(3), seg.intValue(4));
+    }
+    
+    private final static void wtr(final Segment seg) throws Exception {
+        final int waterTile = seg.intValue(0);
+        waterLevel = waterTile * 16;
+        if (waterTile <= 0) {
+            return;
+        }
+        final TileMap tm = BotsnBoltsGame.tm;
+        final int w = tm.getWidth();
+        final TileMapImage[][] imgMap = BotsnBoltsGame.imgMap;
+        for (int j = 0; j <= waterTile; j++) {
+            final int imgRow;
+            if (j == waterTile) {
+                imgRow = 5;
+            } else if (j == (waterTile - 1)) {
+                imgRow = 6;
+            } else {
+                imgRow = 7;
+            }
+            final TileMapImage img = imgMap[imgRow][0];
+            for (int i = 0; i < w; i++) {
+                final int index = tm.getIndex(i, j);
+                if (tm.getTile(index) == null) {
+                    tm.setBackground(index, img, Tile.BEHAVIOR_OPEN);
+                }
+            }
+        }
     }
     
     private final static TileMapImage getTileMapImage(final Segment seg, final int imageOffset) {
