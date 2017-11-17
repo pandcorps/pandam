@@ -28,6 +28,7 @@ import org.pandcorps.pandax.tile.*;
 
 public abstract class Chr extends GuyPlatform {
     protected final static FinPanple2 gTuple = new FinPanple2(0, g);
+    public final static float gWater = -0.3f;
     
     protected Chr(final int offX, final int h) {
         super(offX, h);
@@ -55,5 +56,13 @@ public abstract class Chr extends GuyPlatform {
     @Override
     protected final boolean isFloorBehavior(final byte b) {
         return b == BotsnBoltsGame.TILE_FLOOR || b == BotsnBoltsGame.TILE_LADDER_TOP;
+    }
+    
+    @Override
+    protected final float getG() {
+        if ((RoomLoader.waterLevel > 0) && (getPosition().getY() < RoomLoader.waterLevel)) {
+            return gWater;
+        }
+        return g;
     }
 }
