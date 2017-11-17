@@ -307,9 +307,13 @@ public abstract class Enemy extends Chr implements CollisionListener {
         public void onStep(final StepEvent event) {
             super.onStep(event);
             if (timer <= 0) {
+                onExpire();
                 destroy();
             }
             timer--;
+        }
+        
+        protected void onExpire() {
         }
     }
     
