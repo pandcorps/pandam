@@ -846,6 +846,7 @@ public final class BotsnBoltsGame extends BaseGame {
                 if (bgFileId.endsWith("Tex")) {
                     RoomLoader.loadTex(bgFileId);
                     bgTexture.setSize(GAME_W, GAME_H);
+                    bgTexture.getPosition().setZ(DEPTH_PARALLAX_BG);
                     bgLayer.addActor(bgTexture);
                 } else {
                     bgTm = new TileMap(Pantil.vmid(), GAME_COLUMNS, GAME_ROWS, DIM, DIM);
