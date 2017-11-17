@@ -55,6 +55,7 @@ public final class Player extends Chr {
     private final static int INVINCIBLE_TIME = 60;
     private final static int HURT_TIME = 15;
     private final static int FROZEN_TIME = 60;
+    private final static int BUBBLE_TIME = 90;
     private final static int RUN_TIME = 5;
     protected final static int VEL_JUMP = 8;
     protected final static int VEL_BOUNCE_BOMB = 7;
@@ -84,6 +85,7 @@ public final class Player extends Chr {
     private long lastCharge = -1000;
     private long lastHurt = -1000;
     private long lastFrozen = -1000;
+    private long lastBubble = -1000;
     private long lastJump = -1000;
     private int wallTimer = 0;
     private boolean wallMirror = false;
@@ -520,10 +522,21 @@ public final class Player extends Chr {
                 v = 0;
             }
         }
+        if ((RoomLoader.waterLevel > 0) && ((getPosition().getY() + 48) < RoomLoader.waterLevel)) {
+            onStepUnderwater();
+        }
         if (stateHandler.onStep(this)) {
             return true;
         }
         return false;
+    }
+    
+    private final void onStepUnderwater() {
+        final long clock = Pangine.getEngine().getClock();
+        if ((clock > (lastBubble + BUBBLE_TIME))) {
+            new Bubble(this);
+            lastBubble = clock;
+        }
     }
     
     private final boolean checkGrapplingFinished() {
@@ -1731,6 +1744,47 @@ public final class Player extends Chr {
             //TODO Maybe holding jump until highest point could also trigger grappling
         }
     };
+    
+    protected final static class Bubble extends Panctor implements StepListener {
+        private final Chr src;
+        private int dir;
+        private int timer = 0;
+        
+        protected Bubble(final Chr src) {
+            this.src = src;
+            final Panple pos = src.getPosition();
+            getPosition().set(pos.getX(), pos.getY() + 32, BotsnBoltsGame.DEPTH_CARRIER);
+            dir = src.getMirrorMultiplier();
+            setView(BotsnBoltsGame.bubble[0]);
+            src.getLayer().addActor(this);
+        }
+        
+        @Override
+        public final void onStep(final StepEvent event) {
+            final Panple pos = getPosition();
+            if (pos.getY() >= (RoomLoader.waterLevel - 16)) {
+                destroy();
+                return;
+            }
+            final TileMap tm = BotsnBoltsGame.tm;
+            final int index = tm.getContainer(this);
+            final int x = tm.getColumn(index), y = tm.getRow(index);
+            if ((x < 2) || src.isSolidTile(x - 1, y)) {
+                dir = 1;
+            } else if ((x > (tm.getWidth() - 3)) || src.isSolidTile(x + 1, y)) {
+                dir = -1;
+            } else if (Mathtil.rand(10)) {
+                dir *= -1;
+            }
+            pos.add(dir, 1);
+            timer++;
+            if (timer > 30) {
+                changeView(BotsnBoltsGame.bubble[2]);
+            } else if (timer > 15) {
+                changeView(BotsnBoltsGame.bubble[1]);
+            }
+        }
+    }
     
     protected final static class Warp extends Panctor implements StepListener {
         protected final Player player;
