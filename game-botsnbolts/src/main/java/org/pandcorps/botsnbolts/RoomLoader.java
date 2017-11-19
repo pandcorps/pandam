@@ -546,9 +546,9 @@ public abstract class RoomLoader {
             return;
         }
         final TileMap tm = BotsnBoltsGame.tm;
-        final int w = tm.getWidth();
+        final int w = tm.getWidth(), max = Math.min(waterTile, tm.getHeight() - 1);
         final TileMapImage[][] imgMap = BotsnBoltsGame.imgMap;
-        for (int j = 0; j <= waterTile; j++) {
+        for (int j = 0; j <= max; j++) {
             final int imgRow;
             if (j == waterTile) {
                 imgRow = 5;
