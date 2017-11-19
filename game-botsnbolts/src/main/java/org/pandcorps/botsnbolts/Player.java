@@ -55,7 +55,7 @@ public final class Player extends Chr {
     private final static int INVINCIBLE_TIME = 60;
     private final static int HURT_TIME = 15;
     private final static int FROZEN_TIME = 60;
-    private final static int BUBBLE_TIME = 90;
+    private final static int BUBBLE_TIME = 60;
     private final static int RUN_TIME = 5;
     protected final static int VEL_JUMP = 8;
     protected final static int VEL_BOUNCE_BOMB = 7;
@@ -87,6 +87,7 @@ public final class Player extends Chr {
     private long lastFrozen = -1000;
     private long lastBubble = -1000;
     private long lastJump = -1000;
+    private boolean prevUnderwater = false;
     private int wallTimer = 0;
     private boolean wallMirror = false;
     protected boolean movedDuringJump = false;
@@ -522,13 +523,27 @@ public final class Player extends Chr {
                 v = 0;
             }
         }
-        if ((RoomLoader.waterLevel > 0) && ((getPosition().getY() + 48) < RoomLoader.waterLevel)) {
-            onStepUnderwater();
+        if (RoomLoader.waterLevel > 0) {
+            final float y = getPosition().getY();
+            boolean underwater = y < RoomLoader.waterLevel;
+            if (underwater != prevUnderwater) {
+                splash();
+                prevUnderwater = underwater;
+            }
+            if (underwater && ((y + 48) < RoomLoader.waterLevel)) {
+                onStepUnderwater();
+            }
         }
         if (stateHandler.onStep(this)) {
             return true;
         }
         return false;
+    }
+    
+    private final void splash() {
+        final Burst burst = new Burst(BotsnBoltsGame.splash);
+        burst.getPosition().set(getPosition().getX(), RoomLoader.waterLevel, BotsnBoltsGame.DEPTH_CARRIER);
+        addActor(burst);
     }
     
     private final void onStepUnderwater() {
