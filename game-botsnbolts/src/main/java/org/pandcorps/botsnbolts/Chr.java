@@ -50,20 +50,24 @@ public abstract class Chr extends GuyPlatform {
 
     @Override
     protected final boolean isSolidBehavior(final byte b) {
+        return isCustomSolidBehavior(b);
+    }
+    
+    protected final static boolean isCustomSolidBehavior(final byte b) {
         return false;
     }
     
-    protected final boolean isSolidIndex(final int index) {
+    protected final static boolean isSolidIndex(final int index) {
         return isSolidTile(BotsnBoltsGame.tm.getTile(index));
     }
     
-    protected final boolean isSolidTile(final int i, final int j) {
+    protected final static boolean isSolidTile(final int i, final int j) {
         return isSolidTile(BotsnBoltsGame.tm.getTile(i, j));
     }
     
-    protected final boolean isSolidTile(final Tile tile) {
+    protected final static boolean isSolidTile(final Tile tile) {
         final byte b = Tile.getBehavior(tile);
-        return (b == Tile.BEHAVIOR_SOLID) || isSolidBehavior(b);
+        return (b == Tile.BEHAVIOR_SOLID) || isCustomSolidBehavior(b);
     }
     
     @Override
