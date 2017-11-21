@@ -1670,8 +1670,11 @@ public abstract class Boss extends Enemy {
 
         @Override
         protected final boolean pickState() {
-            //startLaunch();
-            startSpin();
+            if (Mathtil.rand()) {
+                startLaunch();
+            } else {
+                startSpin();
+            }
             return false;
         }
 
@@ -1812,6 +1815,11 @@ public abstract class Boss extends Enemy {
             changeView(getWind(timer));
         }
         
+        @Override
+        protected final void onExpire() {
+            Player.puff(this, 0, 0);
+        }
+        
         protected final static Panmage getWind(final int timer) {
             final int m = timer % 6;
             if (m < 2) {
@@ -1840,6 +1848,27 @@ public abstract class Boss extends Enemy {
                 return img;
             }
             return Boss.getImage(img, name, BotsnBoltsGame.fireballEnemy[0]);
+        }
+    }
+    
+    protected final static class FloodBot extends Boss {
+        protected FloodBot(final int x, final int y) {
+            super(CYCLONE_OFF_X, CYCLONE_H, x, y); //TODO
+        }
+
+        @Override
+        protected boolean pickState() {
+            return false;
+        }
+
+        @Override
+        protected boolean continueState() {
+            return false;
+        }
+
+        @Override
+        protected Panmage getStill() {
+            return null;
         }
     }
     
