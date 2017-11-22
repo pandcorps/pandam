@@ -1851,9 +1851,14 @@ public abstract class Boss extends Enemy {
         }
     }
     
+    protected final static int FLOOD_OFF_X = 6, FLOOD_H = 24; //TODO
+    protected final static Panple FLOOD_O = new FinPanple2(14, 1);
+    protected final static Panple FLOOD_MIN = getMin(FLOOD_OFF_X);
+    protected final static Panple FLOOD_MAX = getMax(FLOOD_OFF_X, FLOOD_H);
+    
     protected final static class FloodBot extends Boss {
         protected FloodBot(final int x, final int y) {
-            super(CYCLONE_OFF_X, CYCLONE_H, x, y); //TODO
+            super(FLOOD_OFF_X, FLOOD_H, x, y);
         }
 
         @Override
@@ -1863,12 +1868,17 @@ public abstract class Boss extends Enemy {
 
         @Override
         protected boolean continueState() {
+            startStill();
             return false;
         }
 
         @Override
         protected Panmage getStill() {
             return null;
+        }
+        
+        protected final static Panmage getFloodImage(final Panmage img, final String name) {
+            return getImage(img, name, FLOOD_O, FLOOD_MIN, FLOOD_MAX);
         }
     }
     
