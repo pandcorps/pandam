@@ -1858,6 +1858,9 @@ public abstract class Boss extends Enemy {
     
     protected final static class FloodBot extends Boss {
         protected static Panmage still = null;
+        protected static Panmage start1 = null;
+        protected static Panmage start2 = null;
+        protected static Panmage start3 = null;
         
         protected FloodBot(final int x, final int y) {
             super(FLOOD_OFF_X, FLOOD_H, x, y);
@@ -1877,6 +1880,18 @@ public abstract class Boss extends Enemy {
         @Override
         protected Panmage getStill() {
             return (still = getFloodImage(still, "floodbot/FloodBot"));
+        }
+        
+        protected final static Panmage getStart1() {
+            return (start1 = getFloodImage(start1, "floodbot/FloodBotStart1"));
+        }
+        
+        protected final static Panmage getStart2() {
+            return (start2 = getFloodImage(start2, "floodbot/FloodBotStart2"));
+        }
+        
+        protected final static Panmage getStart3() {
+            return (start3 = getFloodImage(start3, "floodbot/FloodBotStart3"));
         }
         
         protected final static Panmage getFloodImage(final Panmage img, final String name) {
