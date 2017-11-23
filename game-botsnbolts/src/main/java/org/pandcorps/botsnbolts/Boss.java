@@ -1857,6 +1857,8 @@ public abstract class Boss extends Enemy {
     protected final static Panple FLOOD_MAX = getMax(FLOOD_OFF_X, FLOOD_H);
     
     protected final static class FloodBot extends Boss {
+        protected static Panmage still = null;
+        
         protected FloodBot(final int x, final int y) {
             super(FLOOD_OFF_X, FLOOD_H, x, y);
         }
@@ -1874,7 +1876,7 @@ public abstract class Boss extends Enemy {
 
         @Override
         protected Panmage getStill() {
-            return null;
+            return (still = getFloodImage(still, "floodbot/FloodBot"));
         }
         
         protected final static Panmage getFloodImage(final Panmage img, final String name) {
