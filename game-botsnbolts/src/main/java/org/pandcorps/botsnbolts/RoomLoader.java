@@ -782,7 +782,7 @@ public abstract class RoomLoader {
     }
     
     protected final static class TileAnimator {
-        private final Tile tile;
+        protected final Tile tile;
         private final int period;
         private final TileFrame[] frames;
         

@@ -28,6 +28,7 @@ import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.boundary.*;
 import org.pandcorps.pandam.impl.*;
+import org.pandcorps.pandax.tile.*;
 
 public abstract class Boss extends Enemy {
     protected final static String RES_BOSS = BotsnBoltsGame.RES + "boss/";
@@ -592,7 +593,7 @@ public abstract class Boss extends Enemy {
             destroy();
         }
         
-        protected void onShatter() {
+        protected final void onShatter() {
             final float x = getPosition().getX();
             final boolean leftNeeded = !isLeft(x), rightNeeded = !isRight(x);
             for (int i = 1; i < 3; i++) {
@@ -1857,28 +1858,89 @@ public abstract class Boss extends Enemy {
     protected final static Panple FLOOD_MAX = getMax(FLOOD_OFF_X, FLOOD_H);
     
     protected final static class FloodBot extends Boss {
+        protected final static byte STATE_RAISE = 1;
+        protected final static int RAISE_FRAMES = 28;
+        protected final static int RAISE_FRAME_DURATION = 3;
+        protected final static int WAIT_RAISE = RAISE_FRAMES * RAISE_FRAME_DURATION;
         protected static Panmage still = null;
         protected static Panmage start1 = null;
         protected static Panmage start2 = null;
         protected static Panmage start3 = null;
+        private Tile flowTile = null;
+        private Tile brickTile = null;
         
         protected FloodBot(final int x, final int y) {
             super(FLOOD_OFF_X, FLOOD_H, x, y);
         }
+        
+        @Override
+        protected final boolean onWaiting() {
+            if (state == STATE_RAISE) {
+                onRaising();
+            }
+            return false;
+        }
+        
+        protected final void onRaising() {
+            final int temp = WAIT_RAISE - waitTimer - 1;
+            if ((temp % RAISE_FRAME_DURATION) != 0) {
+                return;
+            }
+            final int index = temp / RAISE_FRAME_DURATION;
+            if (index < 10) {
+                setTiles(index, 0, getFlowTile());
+            } else if (index < 18) {
+                if (((index % 2) == 0) && ((index < 16) || (RoomLoader.getWaterTile() < 6))) {
+                    RoomLoader.raiseWaterTile();
+                }
+            } else if (index < RAISE_FRAMES) {
+                setTiles(index, 18, brickTile);
+            }
+        }
+        
+        private final Tile getFlowTile() {
+            if (flowTile == null) {
+                flowTile = RoomLoader.getAnimatorByBackground(BotsnBoltsGame.imgMap[0][3]).tile;
+            }
+            return flowTile;
+        }
+        
+        private final void setTiles(final int index, final int timerOffset, final Tile tile) {
+            final int y = 11 - (index - timerOffset);
+            if (y < RoomLoader.getWaterTile()) {
+                return;
+            }
+            final TileMap tm = BotsnBoltsGame.tm;
+            final int tileIndex = tm.getIndex(3, y);
+            if (brickTile == null) {
+                brickTile = tm.getTile(tileIndex);
+            }
+            tm.setTile(tileIndex, tile);
+            tm.setTile(4, y, tile);
+            tm.setTile(19, y, tile);
+            tm.setTile(20, y, tile);
+        }
 
         @Override
-        protected boolean pickState() {
+        protected final boolean pickState() {
+            if (RoomLoader.getWaterTile() < 12) {
+                startRaise();
+            }
             return false;
         }
 
         @Override
-        protected boolean continueState() {
+        protected final boolean continueState() {
             startStill();
             return false;
         }
+        
+        protected final void startRaise() {
+            startState(STATE_RAISE, WAIT_RAISE, getStill());
+        }
 
         @Override
-        protected Panmage getStill() {
+        protected final Panmage getStill() {
             return (still = getFloodImage(still, "floodbot/FloodBot"));
         }
         
