@@ -240,10 +240,10 @@ public abstract class RoomLoader {
         animators.add(new TileAnimator(tile, frames));
     }
     
-    protected final static TileAnimator getAnimatorByBackground(final Object bg) {
+    protected final static TileAnimator getAnimator(final Object img, final boolean bg) {
         for (final TileAnimator animator : animators) {
             for (final TileFrame frame : animator.frames) {
-                if (bg.equals(frame.bg)) {
+                if (img.equals(bg ? frame.bg : frame.fg)) {
                     return animator;
                 }
             }
@@ -551,10 +551,10 @@ public abstract class RoomLoader {
     }
     
     private final static void wtr(final Segment seg) throws Exception {
-        setWaterTile(seg.intValue(0), false);
+        setWaterTile(seg.intValue(0), false, false);
     }
     
-    protected final static void setWaterTile(final int waterTile, final boolean anyOpen) {
+    protected final static void setWaterTile(final int waterTile, final boolean anyOpen, final boolean replaceWholeTile) {
         waterLevel = waterTile * 16;
         if (waterTile <= 0) {
             return;
@@ -575,12 +575,12 @@ public abstract class RoomLoader {
             final TileMapImage img;
             if (imgRow < 7) {
                 final TileMapImage tmp = imgMap[imgRow][0];
-                final TileAnimator animator = getAnimatorByBackground(tmp);
-                tile = (animator == null) ? tm.getTile(tmp, null, Tile.BEHAVIOR_OPEN) : animator.tile;
+                final TileAnimator animator = getAnimator(tmp, false);
+                tile = (animator == null) ? tm.getTile(null, tmp, Tile.BEHAVIOR_OPEN) : animator.tile;
                 img = null;
             } else {
-                tile = null;
                 img = imgMap[imgRow][0];
+                tile = replaceWholeTile ? tm.getTile(img, null, Tile.BEHAVIOR_OPEN) : null;
             }
             for (int i = 0; i < w; i++) {
                 final int index = tm.getIndex(i, j);
@@ -608,7 +608,7 @@ public abstract class RoomLoader {
     }
     
     protected final static void raiseWaterTile() {
-        setWaterTile(getWaterTile() + 1, true);
+        setWaterTile(getWaterTile() + 1, true, true);
     }
     
     private final static boolean isOpenAbove(final int x, final int y) {

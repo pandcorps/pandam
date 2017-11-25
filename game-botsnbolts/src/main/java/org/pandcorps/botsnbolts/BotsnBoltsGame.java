@@ -68,16 +68,17 @@ public final class BotsnBoltsGame extends BaseGame {
     protected final static int DEPTH_PARALLAX_FG = 2;
     protected final static int DEPTH_BEHIND = 4;
     protected final static int DEPTH_BG = 6;
-    protected final static int DEPTH_FG = 8;
-    protected final static int DEPTH_CARRIER = 10;
-    protected final static int DEPTH_POWER_UP = 12;
-    protected final static int DEPTH_PLAYER = 14;
-    protected final static int DEPTH_ENEMY_BACK = 16;
-    protected final static int DEPTH_ENEMY = 18;
-    protected final static int DEPTH_PROJECTILE = 20;
-    protected final static int DEPTH_OVERLAY = 22;
-    protected final static int DEPTH_BURST = 24;
-    protected final static int DEPTH_HUD = 26;
+    protected final static int DEPTH_BETWEEN = 8;
+    protected final static int DEPTH_FG = 10;
+    protected final static int DEPTH_CARRIER = 12;
+    protected final static int DEPTH_POWER_UP = 14;
+    protected final static int DEPTH_PLAYER = 16;
+    protected final static int DEPTH_ENEMY_BACK = 18;
+    protected final static int DEPTH_ENEMY = 20;
+    protected final static int DEPTH_PROJECTILE = 22;
+    protected final static int DEPTH_OVERLAY = 24;
+    protected final static int DEPTH_BURST = 26;
+    protected final static int DEPTH_HUD = 28;
     
     protected final static FinPanple2 MIN_16 = new FinPanple2(-6, -6);
     protected final static FinPanple2 MAX_16 = new FinPanple2(6, 6);

@@ -1873,17 +1873,19 @@ public abstract class Boss extends Enemy {
         protected static Panmage start1 = null;
         protected static Panmage start2 = null;
         protected static Panmage start3 = null;
+        private final Valve valve;
         private boolean fillNeeded = true; // Called after super constructor
         private Tile flowTile = null;
         private Tile brickTile = null;
         
         protected FloodBot(final int x, final int y) {
             super(FLOOD_OFF_X, FLOOD_H, x, y);
+            valve = new Valve(this);
         }
         
         @Override
         protected final void init() {
-            this.fillNeeded = true;
+            this.fillNeeded = true; // Called by super constructor
         }
         
         @Override
@@ -1920,6 +1922,9 @@ public abstract class Boss extends Enemy {
             } else if (index < 18) {
                 if (((index % 2) == 0) && ((index < 16) || (RoomLoader.getWaterTile() < 6))) {
                     RoomLoader.raiseWaterTile();
+                    if (RoomLoader.getWaterTile() == 12) {
+                        valve.destroy();
+                    }
                 }
             } else if (index < RAISE_FRAMES) {
                 setTiles(index, 18, brickTile);
@@ -1928,7 +1933,7 @@ public abstract class Boss extends Enemy {
         
         private final Tile getFlowTile() {
             if (flowTile == null) {
-                flowTile = RoomLoader.getAnimatorByBackground(BotsnBoltsGame.imgMap[0][3]).tile;
+                flowTile = RoomLoader.getAnimator(BotsnBoltsGame.imgMap[0][3], true).tile;
             }
             return flowTile;
         }
@@ -1967,7 +1972,7 @@ public abstract class Boss extends Enemy {
         }
         
         protected final void startFill() {
-            startState(STATE_FILL, WAIT_FILL, getStill());
+            startState(STATE_FILL, WAIT_FILL, getStart1());
         }
         
         protected final void startRaise() {
@@ -1997,6 +2002,20 @@ public abstract class Boss extends Enemy {
         
         protected final static Panmage getFloodImage(final Panmage img, final String name) {
             return getImage(img, name, FLOOD_O, FLOOD_MIN, FLOOD_MAX);
+        }
+    }
+    
+    protected final static class Valve extends Panctor {
+        private static Panmage image = null;
+        
+        protected Valve(final FloodBot src) {
+            setView(getValveImage());
+            getPosition().set(184, 168, BotsnBoltsGame.DEPTH_BETWEEN);
+            BotsnBoltsGame.tm.getLayer().addActor(this);
+        }
+        
+        protected final static Panmage getValveImage() {
+            return (image = getImage(image, "floodbot/Valve", null, null, null));
         }
     }
     
