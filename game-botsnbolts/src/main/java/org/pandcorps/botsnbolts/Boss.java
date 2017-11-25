@@ -43,18 +43,22 @@ public abstract class Boss extends Enemy {
     
     protected Boss(int offX, int h, int x, int y) {
         super(offX, h, x, y, HudMeter.MAX_VALUE);
+        init();
         startStill();
         setMirror(true);
     }
     
-    private final void init() {
+    protected void init() {
+    }
+    
+    private final void onFirstStep() {
         addHealthMeter();
     }
     
     @Override
     protected final boolean onStepCustom() {
         if (initializationNeeded) {
-            init();
+            onFirstStep();
             initializationNeeded = false;
         }
         if (waitTimer > 0) {
@@ -1858,7 +1862,10 @@ public abstract class Boss extends Enemy {
     protected final static Panple FLOOD_MAX = getMax(FLOOD_OFF_X, FLOOD_H);
     
     protected final static class FloodBot extends Boss {
-        protected final static byte STATE_RAISE = 1;
+        protected final static byte STATE_FILL = 1;
+        protected final static byte STATE_RAISE = 2;
+        protected final static int FILL_FRAME_DURATION = 3;
+        protected final static int WAIT_FILL = 4 * FILL_FRAME_DURATION;
         protected final static int RAISE_FRAMES = 28;
         protected final static int RAISE_FRAME_DURATION = 3;
         protected final static int WAIT_RAISE = RAISE_FRAMES * RAISE_FRAME_DURATION;
@@ -1866,6 +1873,7 @@ public abstract class Boss extends Enemy {
         protected static Panmage start1 = null;
         protected static Panmage start2 = null;
         protected static Panmage start3 = null;
+        private boolean fillNeeded = true; // Called after super constructor
         private Tile flowTile = null;
         private Tile brickTile = null;
         
@@ -1874,11 +1882,31 @@ public abstract class Boss extends Enemy {
         }
         
         @Override
+        protected final void init() {
+            this.fillNeeded = true;
+        }
+        
+        @Override
         protected final boolean onWaiting() {
             if (state == STATE_RAISE) {
                 onRaising();
+            } else if (state == STATE_FILL) {
+                onFilling();
             }
             return false;
+        }
+        
+        protected final void onFilling() {
+            final int index = (WAIT_FILL - waitTimer - 1) / FILL_FRAME_DURATION;
+            if (index < 1) {
+                changeView(getStart1());
+            } else if (index < 2) {
+                changeView(getStart2());
+            } else if (index < 3) {
+                changeView(getStart3());
+            } else {
+                changeView(getStillNormal());
+            }
         }
         
         protected final void onRaising() {
@@ -1923,7 +1951,10 @@ public abstract class Boss extends Enemy {
 
         @Override
         protected final boolean pickState() {
-            if (RoomLoader.getWaterTile() < 12) {
+            if (fillNeeded) {
+                startFill();
+                fillNeeded = false;
+            } else if (RoomLoader.getWaterTile() < 12) {
                 startRaise();
             }
             return false;
@@ -1935,12 +1966,20 @@ public abstract class Boss extends Enemy {
             return false;
         }
         
+        protected final void startFill() {
+            startState(STATE_FILL, WAIT_FILL, getStill());
+        }
+        
         protected final void startRaise() {
             startState(STATE_RAISE, WAIT_RAISE, getStill());
         }
 
         @Override
         protected final Panmage getStill() {
+            return fillNeeded ? getStart1() : getStillNormal();
+        }
+        
+        protected final static Panmage getStillNormal() {
             return (still = getFloodImage(still, "floodbot/FloodBot"));
         }
         
