@@ -1863,7 +1863,8 @@ public abstract class Boss extends Enemy {
     
     protected final static class FloodBot extends Boss {
         protected final static byte STATE_FILL = 1;
-        protected final static byte STATE_RAISE = 2;
+        protected final static byte STATE_JUMP = 2;
+        protected final static byte STATE_RAISE = 3;
         protected final static int FILL_FRAME_DURATION = 3;
         protected final static int WAIT_FILL = 4 * FILL_FRAME_DURATION;
         protected final static int RAISE_FRAMES = 28;
@@ -1873,6 +1874,7 @@ public abstract class Boss extends Enemy {
         protected static Panmage start1 = null;
         protected static Panmage start2 = null;
         protected static Panmage start3 = null;
+        protected static Panmage jump = null;
         private final Valve valve;
         private boolean fillNeeded = true; // Called after super constructor
         private Tile flowTile = null;
@@ -1975,6 +1977,10 @@ public abstract class Boss extends Enemy {
             startState(STATE_FILL, WAIT_FILL, getStart1());
         }
         
+        protected final void startJump() {
+            startJump(STATE_JUMP, getJump(), 9, 0);
+        }
+        
         protected final void startRaise() {
             startState(STATE_RAISE, WAIT_RAISE, getStill());
         }
@@ -1998,6 +2004,10 @@ public abstract class Boss extends Enemy {
         
         protected final static Panmage getStart3() {
             return (start3 = getFloodImage(start3, "floodbot/FloodBotStart3"));
+        }
+        
+        protected final static Panmage getJump() {
+            return (jump = getFloodImage(jump, "floodbot/FloodBotJump"));
         }
         
         protected final static Panmage getFloodImage(final Panmage img, final String name) {
