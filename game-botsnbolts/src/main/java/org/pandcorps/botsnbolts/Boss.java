@@ -1875,6 +1875,7 @@ public abstract class Boss extends Enemy {
         protected static Panmage start2 = null;
         protected static Panmage start3 = null;
         protected static Panmage jump = null;
+        protected static Panmage open = null;
         private final Valve valve;
         private boolean fillNeeded = true; // Called after super constructor
         private Tile flowTile = null;
@@ -1920,6 +1921,11 @@ public abstract class Boss extends Enemy {
             }
             final int index = temp / RAISE_FRAME_DURATION;
             if (index < 10) {
+                if (index == 0) {
+                    valve.setDirection(-1);
+                } else if (index == 9) {
+                    valve.setDirection(1);
+                }
                 setTiles(index, 0, getFlowTile());
             } else if (index < 18) {
                 if (((index % 2) == 0) && ((index < 16) || (RoomLoader.getWaterTile() < 6))) {
@@ -1929,6 +1935,9 @@ public abstract class Boss extends Enemy {
                     }
                 }
             } else if (index < RAISE_FRAMES) {
+                if (index == 18) {
+                    valve.setDirection(0);
+                }
                 setTiles(index, 18, brickTile);
             }
         }
@@ -2010,18 +2019,70 @@ public abstract class Boss extends Enemy {
             return (jump = getFloodImage(jump, "floodbot/FloodBotJump"));
         }
         
+        protected final static Panmage getOpen() {
+            return (open = getFloodImage(open, "floodbot/FloodBotOpen"));
+        }
+        
         protected final static Panmage getFloodImage(final Panmage img, final String name) {
             return getImage(img, name, FLOOD_O, FLOOD_MIN, FLOOD_MAX);
         }
     }
     
-    protected final static class Valve extends Panctor {
+    protected final static class Valve extends Panctor implements StepListener {
+        private final static int BASE_X = 184;
+        private final static int BASE_Y = 168;
         private static Panmage image = null;
+        private int dir = 0;
+        private boolean waiting = false;
         
         protected Valve(final FloodBot src) {
             setView(getValveImage());
-            getPosition().set(184, 168, BotsnBoltsGame.DEPTH_BETWEEN);
+            getPosition().set(BASE_X, BASE_Y, BotsnBoltsGame.DEPTH_BETWEEN);
             BotsnBoltsGame.tm.getLayer().addActor(this);
+        }
+        
+        @Override
+        public final void onStep(final StepEvent event) {
+            waiting = !waiting;
+            if (waiting) {
+                setRotation(getRot() + dir);
+            }
+        }
+        
+        protected void setRotation(final int rot) {
+            final int r;
+            if (rot < 0) {
+                r = rot + 4;
+            } else if (rot > 3) {
+                r = rot - 4;
+            } else {
+                r = rot;
+            }
+            final int offX, offY;
+            switch (r) {
+                case 0 :
+                    offX = 0;
+                    offY = 0;
+                    break;
+                case 1 :
+                    offX = 15;
+                    offY = 0;
+                    break;
+                case 2 :
+                    offX = 15;
+                    offY = 15;
+                    break;
+                default :
+                    offX = 0;
+                    offY = 15;
+            }
+            getPosition().set(BASE_X + offX, BASE_Y + offY);
+            setRot(r);
+        }
+        
+        protected void setDirection(final int dir) {
+            this.dir = dir;
+            waiting = false;
         }
         
         protected final static Panmage getValveImage() {
