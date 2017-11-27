@@ -1876,6 +1876,7 @@ public abstract class Boss extends Enemy {
         protected static Panmage start3 = null;
         protected static Panmage jump = null;
         protected static Panmage open = null;
+        protected static Panmage close = null;
         private final Valve valve;
         private boolean fillNeeded = true; // Called after super constructor
         private Tile flowTile = null;
@@ -2021,6 +2022,10 @@ public abstract class Boss extends Enemy {
         
         protected final static Panmage getOpen() {
             return (open = getFloodImage(open, "floodbot/FloodBotOpen"));
+        }
+        
+        protected final static Panmage getClose() {
+            return (close = getFloodImage(close, "floodbot/FloodBotClose"));
         }
         
         protected final static Panmage getFloodImage(final Panmage img, final String name) {
