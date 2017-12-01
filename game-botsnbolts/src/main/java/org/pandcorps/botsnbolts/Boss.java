@@ -127,7 +127,7 @@ public abstract class Boss extends Enemy {
         startJump(jump.state, jump.img, jump.v, jump.hv);
     }
     
-    protected final void startJump(final byte state, final Panmage img, final int v, final int hv) {
+    protected final void startJump(final byte state, final Panmage img, final float v, final int hv) {
         startStateIndefinite(state, img);
         this.v = v;
         this.hv = hv;
@@ -1856,7 +1856,7 @@ public abstract class Boss extends Enemy {
         }
     }
     
-    protected final static int FLOOD_OFF_X = 6, FLOOD_H = 24; //TODO
+    protected final static int FLOOD_OFF_X = 6, FLOOD_H = 28; //TODO
     protected final static Panple FLOOD_O = new FinPanple2(14, 1);
     protected final static Panple FLOOD_MIN = getMin(FLOOD_OFF_X);
     protected final static Panple FLOOD_MAX = getMax(FLOOD_OFF_X, FLOOD_H);
@@ -1881,6 +1881,7 @@ public abstract class Boss extends Enemy {
         private boolean fillNeeded = true; // Called after super constructor
         private Tile flowTile = null;
         private Tile brickTile = null;
+        private float prevY = 0;
         
         protected FloodBot(final int x, final int y) {
             super(FLOOD_OFF_X, FLOOD_H, x, y);
@@ -1893,9 +1894,17 @@ public abstract class Boss extends Enemy {
         }
         
         @Override
+        protected float getG() {
+            return gWater;
+        }
+        
+        @Override
         protected final boolean onWaiting() {
             if (state == STATE_RAISE) {
                 onRaising();
+                return true;
+            } else if (state == STATE_JUMP) {
+                onJumping();
             } else if (state == STATE_FILL) {
                 onFilling();
             }
@@ -1915,6 +1924,16 @@ public abstract class Boss extends Enemy {
             }
         }
         
+        protected final void onJumping() {
+            final float y = getPosition().getY();
+            if (y < prevY) {
+                getPosition().set(192 - (getMirrorMultiplier() * 32), 161);
+                v = 0;
+                startRaise();
+            }
+            prevY = y;
+        }
+        
         protected final void onRaising() {
             final int temp = WAIT_RAISE - waitTimer - 1;
             if ((temp % RAISE_FRAME_DURATION) != 0) {
@@ -1926,6 +1945,7 @@ public abstract class Boss extends Enemy {
                     valve.setDirection(-1);
                 } else if (index == 9) {
                     valve.setDirection(1);
+                    setView(getCurrentClose());
                 }
                 setTiles(index, 0, getFlowTile());
             } else if (index < 18) {
@@ -1972,7 +1992,7 @@ public abstract class Boss extends Enemy {
                 startFill();
                 fillNeeded = false;
             } else if (RoomLoader.getWaterTile() < 12) {
-                startRaise();
+                startJump();
             }
             return false;
         }
@@ -1988,11 +2008,12 @@ public abstract class Boss extends Enemy {
         }
         
         protected final void startJump() {
-            startJump(STATE_JUMP, getJump(), 9, 0);
+            prevY = 0;
+            startJump(STATE_JUMP, getJump(), 8.75f, 4 * getMirrorMultiplier());
         }
         
         protected final void startRaise() {
-            startState(STATE_RAISE, WAIT_RAISE, getStill());
+            startState(STATE_RAISE, WAIT_RAISE, getCurrentOpen());
         }
 
         @Override
@@ -2026,6 +2047,14 @@ public abstract class Boss extends Enemy {
         
         protected final static Panmage getClose() {
             return (close = getFloodImage(close, "floodbot/FloodBotClose"));
+        }
+        
+        protected final Panmage getCurrentOpen() {
+            return isMirror() ? getOpen() : getClose();
+        }
+        
+        protected final Panmage getCurrentClose() {
+            return isMirror() ? getClose() : getOpen();
         }
         
         protected final static Panmage getFloodImage(final Panmage img, final String name) {

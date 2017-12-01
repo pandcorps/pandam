@@ -76,7 +76,7 @@ public abstract class Chr extends GuyPlatform {
     }
     
     @Override
-    protected final float getG() {
+    protected float getG() {
         if ((RoomLoader.waterLevel > 0) && (getPosition().getY() < RoomLoader.waterLevel)) {
             return gWater;
         }
