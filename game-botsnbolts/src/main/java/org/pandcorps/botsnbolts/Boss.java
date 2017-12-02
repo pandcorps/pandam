@@ -1878,6 +1878,9 @@ public abstract class Boss extends Enemy {
         protected static Panmage open = null;
         protected static Panmage close = null;
         protected static Panmage fall = null;
+        protected static Panmage swim1 = null;
+        protected static Panmage swim2 = null;
+        protected static Panmage swim3 = null;
         private final Valve valve;
         private boolean fillNeeded = true; // Called after super constructor
         private Tile flowTile = null;
@@ -2052,6 +2055,18 @@ public abstract class Boss extends Enemy {
         
         protected final static Panmage getFall() {
             return (fall = getFloodImage(fall, "floodbot/FloodBotFall"));
+        }
+        
+        protected final static Panmage getSwim1() {
+            return (swim1 = getFloodImage(swim1, "floodbot/FloodBotSwim1"));
+        }
+        
+        protected final static Panmage getSwim2() {
+            return (swim2 = getFloodImage(swim2, "floodbot/FloodBotSwim2"));
+        }
+        
+        protected final static Panmage getSwim3() {
+            return (swim3 = getFloodImage(swim3, "floodbot/FloodBotSwim3"));
         }
         
         protected final Panmage getCurrentOpen() {
