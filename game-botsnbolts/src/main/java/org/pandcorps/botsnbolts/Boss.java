@@ -1881,6 +1881,7 @@ public abstract class Boss extends Enemy {
         protected static Panmage swim1 = null;
         protected static Panmage swim2 = null;
         protected static Panmage swim3 = null;
+        protected static Panmage whoosh = null;
         private final Valve valve;
         private boolean fillNeeded = true; // Called after super constructor
         private Tile flowTile = null;
@@ -1947,12 +1948,17 @@ public abstract class Boss extends Enemy {
             if (index < 10) {
                 if (index == 0) {
                     valve.setDirection(-1);
+                } else if (index == 1) {
+                    newWhoosh(false);
                 } else if (index == 9) {
                     valve.setDirection(1);
                     setView(getCurrentClose());
                 }
                 setTiles(index, 0, getFlowTile());
             } else if (index < 18) {
+                if (index == 10) {
+                    newWhoosh(true);
+                }
                 if (((index % 2) == 0) && ((index < 16) || (RoomLoader.getWaterTile() < 6))) {
                     RoomLoader.raiseWaterTile();
                     if (RoomLoader.getWaterTile() == 12) {
@@ -1965,6 +1971,10 @@ public abstract class Boss extends Enemy {
                 }
                 setTiles(index, 18, brickTile);
             }
+        }
+        
+        private final void newWhoosh(final boolean flip) {
+            new TimedDecoration(this, getWhoosh(), 6, 10, 0, BotsnBoltsGame.DEPTH_BURST).setFlip(flip);
         }
         
         private final Tile getFlowTile() {
@@ -2067,6 +2077,13 @@ public abstract class Boss extends Enemy {
         
         protected final static Panmage getSwim3() {
             return (swim3 = getFloodImage(swim3, "floodbot/FloodBotSwim3"));
+        }
+        
+        protected final static Panmage getWhoosh() {
+            if (whoosh == null) {
+                whoosh = Pangine.getEngine().createImage("whoosh", BotsnBoltsGame.CENTER_16, null, null, BotsnBoltsGame.RES + "misc/Whoosh.png");
+            }
+            return whoosh;
         }
         
         protected final Panmage getCurrentOpen() {
