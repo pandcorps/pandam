@@ -1941,6 +1941,11 @@ public abstract class Boss extends Enemy {
         
         protected final void onRaising() {
             final int temp = WAIT_RAISE - waitTimer - 1;
+            if (temp == 0) {
+                newWhoosh(22, !isMirror());
+            } else if (temp == ((9 * RAISE_FRAME_DURATION) + 1)) {
+                newWhoosh(10, isMirror());
+            }
             if ((temp % RAISE_FRAME_DURATION) != 0) {
                 return;
             }
@@ -1948,17 +1953,12 @@ public abstract class Boss extends Enemy {
             if (index < 10) {
                 if (index == 0) {
                     valve.setDirection(-1);
-                } else if (index == 1) {
-                    newWhoosh(false);
                 } else if (index == 9) {
                     valve.setDirection(1);
                     setView(getCurrentClose());
                 }
                 setTiles(index, 0, getFlowTile());
             } else if (index < 18) {
-                if (index == 10) {
-                    newWhoosh(true);
-                }
                 if (((index % 2) == 0) && ((index < 16) || (RoomLoader.getWaterTile() < 6))) {
                     RoomLoader.raiseWaterTile();
                     if (RoomLoader.getWaterTile() == 12) {
@@ -1973,8 +1973,8 @@ public abstract class Boss extends Enemy {
             }
         }
         
-        private final void newWhoosh(final boolean flip) {
-            new TimedDecoration(this, getWhoosh(), 6, 10, 0, BotsnBoltsGame.DEPTH_BURST).setFlip(flip);
+        private final void newWhoosh(final int offY, final boolean flip) {
+            new TimedDecoration(this, getWhoosh(), 6, 23, offY, BotsnBoltsGame.DEPTH_BURST).setFlip(flip);
         }
         
         private final Tile getFlowTile() {
