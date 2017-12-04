@@ -1933,7 +1933,7 @@ public abstract class Boss extends Enemy {
         protected final void onJumping() {
             final float y = getPosition().getY();
             if (y < prevY) {
-                getPosition().set(192 - (getMirrorMultiplier() * 32), 161);
+                getPosition().set(isMirror() ? 224 : 159, 161);
                 v = 0;
                 startRaise();
             }
