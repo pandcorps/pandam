@@ -1865,6 +1865,7 @@ public abstract class Boss extends Enemy {
         protected final static byte STATE_FILL = 1;
         protected final static byte STATE_JUMP = 2;
         protected final static byte STATE_RAISE = 3;
+        protected final static byte STATE_FALL = 4;
         protected final static int FILL_FRAME_DURATION = 3;
         protected final static int WAIT_FILL = 4 * FILL_FRAME_DURATION;
         protected final static int RAISE_FRAMES = 28;
@@ -2013,7 +2014,11 @@ public abstract class Boss extends Enemy {
 
         @Override
         protected final boolean continueState() {
-            startStill();
+            if (state == STATE_RAISE) {
+                startFall();
+            } else {
+                startStill();
+            }
             return false;
         }
         
@@ -2028,6 +2033,10 @@ public abstract class Boss extends Enemy {
         
         protected final void startRaise() {
             startState(STATE_RAISE, WAIT_RAISE, getCurrentOpen());
+        }
+        
+        protected final void startFall() {
+            startJump(STATE_FALL, getFall(), 0, 4 * getMirrorMultiplier());
         }
 
         @Override
