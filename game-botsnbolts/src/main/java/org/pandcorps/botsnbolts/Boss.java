@@ -1943,9 +1943,9 @@ public abstract class Boss extends Enemy {
         protected final void onRaising() {
             final int temp = WAIT_RAISE - waitTimer - 1;
             if (temp == 0) {
-                newWhoosh(22, !isMirror());
+                newWhoosh(!isMirror());
             } else if (temp == ((9 * RAISE_FRAME_DURATION) + 1)) {
-                newWhoosh(10, isMirror());
+                newWhoosh(isMirror());
             }
             if ((temp % RAISE_FRAME_DURATION) != 0) {
                 return;
@@ -1972,6 +1972,10 @@ public abstract class Boss extends Enemy {
                 }
                 setTiles(index, 18, brickTile);
             }
+        }
+        
+        private final void newWhoosh(final boolean flip) {
+            newWhoosh(flip ? 10 : 22, flip);
         }
         
         private final void newWhoosh(final int offY, final boolean flip) {
