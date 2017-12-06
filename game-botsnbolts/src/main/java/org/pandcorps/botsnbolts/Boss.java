@@ -2045,7 +2045,7 @@ public abstract class Boss extends Enemy {
         }
         
         protected final void startSwim() {
-            startStateIndefinite(STATE_SWIM, getSwim1());
+            startStateIndefinite(STATE_SWIM, getCurrentSwim());
         }
 
         @Override
@@ -2110,6 +2110,19 @@ public abstract class Boss extends Enemy {
         
         protected final Panmage getCurrentClose() {
             return isMirror() ? getClose() : getOpen();
+        }
+        
+        protected final Panmage getCurrentSwim() {
+            final int frameDuration = 4;
+            final long i = Pangine.getEngine().getClock() % (4 * frameDuration);
+            if (i < frameDuration) {
+                return getSwim1();
+            } else if (i < (frameDuration * 2)) {
+                return getSwim2();
+            } else if (i < (frameDuration * 3)) {
+                return getSwim3();
+            }
+            return getSwim2();
         }
         
         protected final static Panmage getFloodImage(final Panmage img, final String name) {
