@@ -1907,7 +1907,9 @@ public abstract class Boss extends Enemy {
         
         @Override
         protected final boolean onWaiting() {
-            if (state == STATE_RAISE) {
+            if (state == STATE_SWIM) {
+                onSwimming();
+            } else if (state == STATE_RAISE) {
                 onRaising();
                 return true;
             } else if (state == STATE_JUMP) {
@@ -1973,6 +1975,10 @@ public abstract class Boss extends Enemy {
                 }
                 setTiles(index, 18, brickTile);
             }
+        }
+        
+        protected final void onSwimming() {
+            
         }
         
         private final void newWhoosh(final boolean flip) {
