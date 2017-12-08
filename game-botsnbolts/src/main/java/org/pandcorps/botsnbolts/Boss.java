@@ -153,11 +153,15 @@ public abstract class Boss extends Enemy {
     protected final void onGrounded() {
         if (jumping) {
             hv = 0;
-            if (!hasPendingJumps()) {
+            if (isTurnTowardPlayerNeeded()) {
                 turnTowardPlayer(); // Don't do in onLanded; hv still needed at that point, which overrides this
             }
             jumping = false;
         }
+    }
+    
+    protected boolean isTurnTowardPlayerNeeded() {
+        return !hasPendingJumps();
     }
     
     protected final int getDirection() {
@@ -2048,17 +2052,30 @@ public abstract class Boss extends Enemy {
             if (fillNeeded) {
                 startFill();
                 fillNeeded = false;
-            } else if (RoomLoader.getWaterTile() < 6) {
+                return false;
+            }
+            final int waterTile = RoomLoader.getWaterTile();
+            if (waterTile < 6) {
                 startJump();
+            } else if (isInMiddle()) {
+                startSwim();
+            } else if ((health <= (HudMeter.MAX_VALUE - 7)) && (waterTile < 9)) {
+                pickRaiseWaterLevel();
+            } else if ((health <= (HudMeter.MAX_VALUE - 14)) && (waterTile < 12)) {
+                pickRaiseWaterLevel();
             } else {
-                final int x = getX();
-                if ((x > xLeft) && (x < xRight)) {
-                    startSwim();
-                } else if (RoomLoader.getWaterTile() < 12) {
-                    startJump();
-                }
+                startSwim(); // Or float higher/lower
             }
             return false;
+        }
+        
+        private final boolean isInMiddle() {
+            final int x = getX();
+            return (x > xLeft) && (x < xRight);
+        }
+        
+        private final void pickRaiseWaterLevel() {
+            startJump(); // Or sink to bottom if not already there
         }
 
         @Override
@@ -2069,6 +2086,11 @@ public abstract class Boss extends Enemy {
                 startStill();
             }
             return false;
+        }
+        
+        @Override
+        protected final boolean isTurnTowardPlayerNeeded() {
+            return !isInMiddle();
         }
         
         protected final void startFill() {

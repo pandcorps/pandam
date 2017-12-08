@@ -40,7 +40,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
     protected final static int VEL_PROJECTILE = 6;
     protected final static float VEL_PROJECTILE_45;
     
-    private int health;
+    protected int health;
     
     static {
         final Panple tmp = new ImplPanple(VEL_PROJECTILE, 0, 0);
