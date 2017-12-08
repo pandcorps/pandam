@@ -1885,6 +1885,8 @@ public abstract class Boss extends Enemy {
         protected static Panmage swim3 = null;
         protected static Panmage whoosh = null;
         private final Valve valve;
+        private final int xRight;
+        private final int xLeft;
         private boolean fillNeeded = true; // Called after super constructor
         private Tile flowTile = null;
         private Tile brickTile = null;
@@ -1893,6 +1895,12 @@ public abstract class Boss extends Enemy {
         protected FloodBot(final int x, final int y) {
             super(FLOOD_OFF_X, FLOOD_H, x, y);
             valve = new Valve(this);
+            xRight = getX();
+            xLeft = BotsnBoltsGame.GAME_W - xRight - 1;
+        }
+        
+        private final int getX() {
+            return Math.round(getPosition().getX());
         }
         
         @Override
@@ -1909,6 +1917,7 @@ public abstract class Boss extends Enemy {
         protected final boolean onWaiting() {
             if (state == STATE_SWIM) {
                 onSwimming();
+                return true;
             } else if (state == STATE_RAISE) {
                 onRaising();
                 return true;
@@ -1978,7 +1987,29 @@ public abstract class Boss extends Enemy {
         }
         
         protected final void onSwimming() {
-            
+            changeView(getCurrentSwim());
+            addX(hv);
+            final Panple pos = getPosition();
+            final int x = Math.round(pos.getX());
+            if (hv < 0) {
+                if (x <= xLeft) {
+                    pos.setX(xLeft);
+                    endSwim();
+                }
+            } else if (x >= xRight) {
+                pos.setX(xRight);
+                endSwim();
+            }
+        }
+        
+        private final void endSwim() {
+            hv = 0;
+            setMirror(!isMirror());
+            if (getPosition().getY() > 32) {
+                startFall();
+            } else {
+                startStill();
+            }
         }
         
         private final void newWhoosh(final boolean flip) {
@@ -2017,8 +2048,15 @@ public abstract class Boss extends Enemy {
             if (fillNeeded) {
                 startFill();
                 fillNeeded = false;
-            } else if (RoomLoader.getWaterTile() < 12) {
+            } else if (RoomLoader.getWaterTile() < 6) {
                 startJump();
+            } else {
+                final int x = getX();
+                if ((x > xLeft) && (x < xRight)) {
+                    startSwim();
+                } else if (RoomLoader.getWaterTile() < 12) {
+                    startJump();
+                }
             }
             return false;
         }
@@ -2051,6 +2089,7 @@ public abstract class Boss extends Enemy {
         }
         
         protected final void startSwim() {
+            hv = 3 * getMirrorMultiplier();
             startStateIndefinite(STATE_SWIM, getCurrentSwim());
         }
 
