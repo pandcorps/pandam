@@ -2064,7 +2064,7 @@ public abstract class Boss extends Enemy {
             } else if ((health <= (HudMeter.MAX_VALUE - 14)) && (waterTile < 12)) {
                 pickRaiseWaterLevel();
             } else {
-                startSwim(); // Or float higher/lower
+                pickBasic();
             }
             return false;
         }
@@ -2075,7 +2075,22 @@ public abstract class Boss extends Enemy {
         }
         
         private final void pickRaiseWaterLevel() {
-            startJump(); // Or sink to bottom if not already there
+            if (isGrounded()) {
+                startJump();
+            } else {
+                //TODO sink to bottom
+            }
+        }
+        
+        private final void pickBasic() {
+            final int waterTile = RoomLoader.getWaterTile();
+            if (waterTile < 9) {
+                startSwim();
+            } else if (Mathtil.rand()) {
+                //TODO float higher/lower
+            } else {
+                startSwim();
+            }
         }
 
         @Override
