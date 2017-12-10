@@ -523,27 +523,36 @@ public final class Player extends Chr {
                 v = 0;
             }
         }
+        prevUnderwater = splashIfNeeded(this, prevUnderwater, this);
+        return onStepState();
+    }
+    
+    protected final static boolean splashIfNeeded(final Panctor src, final boolean prevUnderwater, final Player player) {
         if (RoomLoader.waterLevel > 0) {
-            final float y = getPosition().getY();
-            boolean underwater = y < RoomLoader.waterLevel;
+            final float y = src.getPosition().getY();
+            final boolean underwater = y < RoomLoader.waterLevel;
             if (underwater != prevUnderwater) {
-                splash();
-                prevUnderwater = underwater;
+                splash(src);
             }
-            if (underwater && ((y + 48) < RoomLoader.waterLevel)) {
-                onStepUnderwater();
+            if ((player != null) && underwater && ((y + 48) < RoomLoader.waterLevel)) {
+                player.onStepUnderwater();
             }
+            return underwater;
         }
+        return false;
+    }
+    
+    private final boolean onStepState() {
         if (stateHandler.onStep(this)) {
             return true;
         }
         return false;
     }
     
-    private final void splash() {
+    private final static void splash(final Panctor src) {
         final Burst burst = new Burst(BotsnBoltsGame.splash);
-        burst.getPosition().set(getPosition().getX(), RoomLoader.waterLevel, BotsnBoltsGame.DEPTH_CARRIER);
-        addActor(burst);
+        burst.getPosition().set(src.getPosition().getX(), RoomLoader.waterLevel, BotsnBoltsGame.DEPTH_CARRIER);
+        addActor(src, burst);
     }
     
     private final void onStepUnderwater() {

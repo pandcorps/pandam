@@ -1895,6 +1895,7 @@ public abstract class Boss extends Enemy {
         private Tile flowTile = null;
         private Tile brickTile = null;
         private float prevY = 0;
+        private boolean prevUnderwater = false;
         
         protected FloodBot(final int x, final int y) {
             super(FLOOD_OFF_X, FLOOD_H, x, y);
@@ -1919,6 +1920,7 @@ public abstract class Boss extends Enemy {
         
         @Override
         protected final boolean onWaiting() {
+            prevUnderwater = Player.splashIfNeeded(this, prevUnderwater, null);
             if (state == STATE_SWIM) {
                 onSwimming();
                 return true;
