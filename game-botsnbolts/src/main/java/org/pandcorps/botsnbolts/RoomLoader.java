@@ -43,6 +43,7 @@ public abstract class RoomLoader {
     private final static List<Panctor> actors = new ArrayList<Panctor>();
     private final static List<ShootableDoor> doors = new ArrayList<ShootableDoor>();
     protected final static List<TileAnimator> animators = new ArrayList<TileAnimator>();
+    protected final static List<Runnable> stepHandlers = new ArrayList<Runnable>();
     private final static Map<Character, Tile> tiles = new HashMap<Character, Tile>();
     private final static Map<Character, Tile[][]> patterns = new HashMap<Character, Tile[][]>();
     private final static Map<Character, RoomFunction> functions = new HashMap<Character, RoomFunction>();
@@ -145,6 +146,8 @@ public abstract class RoomLoader {
                 imp(seg, false, tm);
             } else if ("ANM".equals(name)) { // Animator
                 anm(seg);
+            } else if ("STP".equals(name)) { // Step Handler
+                stp(seg);
             } else if ("ALT".equals(name)) { // Alternate Character
                 alt(seg);
             } else if ("PUT".equals(name)) { // Put
@@ -249,6 +252,10 @@ public abstract class RoomLoader {
             }
         }
         return null;
+    }
+    
+    private final static void stp(final Segment seg) {
+        //stepHandlers.add();
     }
     
     private final static void alt(final Segment seg) {
@@ -704,6 +711,9 @@ public abstract class RoomLoader {
         for (final TileAnimator animator : animators) {
             animator.step();
         }
+        for (final Runnable stepHandler : stepHandlers) {
+            stepHandler.run();
+        }
     }
     
     private final static void clearChangeFinished() {
@@ -714,6 +724,7 @@ public abstract class RoomLoader {
     protected final static void clear() {
         clearChangeFinished();
         animators.clear();
+        stepHandlers.clear();
         tiles.clear();
         patterns.clear();
         functions.clear();
