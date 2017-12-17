@@ -143,6 +143,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static Panmage iceShatter = null;
     protected static Panmage[] bubble = null;
     protected static Panimation splash = null;
+    protected static Panmage[] ripple = null;
     protected static HudMeterImages hudMeterBlank = null;
     protected static HudMeterImages hudMeterBoss = null;
     protected static Img[] hudMeterImgs = null;
@@ -294,6 +295,7 @@ public final class BotsnBoltsGame extends BaseGame {
         flash = newAnimation("flash", RES + "misc/Flash.png", 32, CENTER_32, 12);
         bubble = newSheet("bubble", RES + "misc/Bubble.png", 8, CENTER_8, null, null);
         splash = newAnimation("splash", RES + "misc/Splash.png", 16, new FinPanple2(8, 0), 3);
+        ripple = newSheet("ripple", RES + "misc/Ripple.png", 16, null, null, null);
     }
     
     protected final static Panmage getLadder() {
