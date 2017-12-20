@@ -23,6 +23,7 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.botsnbolts;
 
 import org.pandcorps.botsnbolts.RoomLoader.*;
+import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.tile.Tile.*;
@@ -114,5 +115,64 @@ public abstract class RoomFunction {
             return;
         }
         tm.setOverlay(index, overlay, behavior);
+    }
+    
+    public abstract static class StepHandler {
+        protected void init() {
+        }
+        
+        protected abstract void step();
+        
+        protected void finish() {
+        }
+    }
+    
+    public final static class WaterRipple extends StepHandler {
+        private TileMapImage imgWater = null;
+        private Tile tileWater = null;
+        private int currentIndex = -1;
+        private int currentTimer = 0;
+        
+        @Override
+        protected final void init() {
+            imgWater = BotsnBoltsGame.imgMap[7][0];
+            tileWater = BotsnBoltsGame.tm.getTile(imgWater, null, Tile.BEHAVIOR_OPEN);
+            currentIndex = -1;
+        }
+        
+        @Override
+        protected final void step() {
+            if (currentIndex == -1) {
+                pickTile();
+            } else {
+                ripple();
+            }
+        }
+        
+        private final void pickTile() {
+            final TileMap tm = BotsnBoltsGame.tm;
+            final int potentialIndex = tm.getIndex(Mathtil.randi(0, tm.getWidth() - 1), Mathtil.randi(0, tm.getHeight() - 1));
+            if (tm.getTile(potentialIndex) == tileWater) {
+                currentIndex = potentialIndex;
+                currentTimer = 0;
+            }
+        }
+        
+        private final void ripple() {
+            final int frameIndex;
+            if (currentTimer < 4) {
+                frameIndex = 0;
+            } else if (currentTimer < 7) {
+                frameIndex = 1;
+            } else if (currentTimer < 10) {
+                frameIndex = 2;
+            } else {
+                BotsnBoltsGame.tm.setBackground(currentIndex, imgWater);
+                currentIndex = -1;
+                return;
+            }
+            BotsnBoltsGame.tm.setBackground(currentIndex, BotsnBoltsGame.ripple[frameIndex]);
+            currentTimer++;
+        }
     }
 }
