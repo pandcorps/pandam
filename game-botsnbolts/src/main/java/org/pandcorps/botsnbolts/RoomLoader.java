@@ -27,6 +27,7 @@ import java.util.*;
 
 import org.pandcorps.botsnbolts.BlockPuzzle.*;
 import org.pandcorps.botsnbolts.Enemy.*;
+import org.pandcorps.botsnbolts.RoomFunction.*;
 import org.pandcorps.botsnbolts.ShootableDoor.*;
 import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
@@ -43,7 +44,7 @@ public abstract class RoomLoader {
     private final static List<Panctor> actors = new ArrayList<Panctor>();
     private final static List<ShootableDoor> doors = new ArrayList<ShootableDoor>();
     protected final static List<TileAnimator> animators = new ArrayList<TileAnimator>();
-    protected final static List<Runnable> stepHandlers = new ArrayList<Runnable>();
+    protected final static List<StepHandler> stepHandlers = new ArrayList<StepHandler>();
     private final static Map<Character, Tile> tiles = new HashMap<Character, Tile>();
     private final static Map<Character, Tile[][]> patterns = new HashMap<Character, Tile[][]>();
     private final static Map<Character, RoomFunction> functions = new HashMap<Character, RoomFunction>();
@@ -254,8 +255,8 @@ public abstract class RoomLoader {
         return null;
     }
     
-    private final static void stp(final Segment seg) {
-        //stepHandlers.add();
+    private final static void stp(final Segment seg) throws Exception {
+        stepHandlers.add(getStepHandler(seg.getValue(0)));
     }
     
     private final static void alt(final Segment seg) {
@@ -447,13 +448,24 @@ public abstract class RoomLoader {
     private final static Map<String, RoomFunction> functionTypes = new HashMap<String, RoomFunction>();
     
     private final static RoomFunction getRoomFunction(final String functionType) throws Exception {
-        RoomFunction roomFunction = functionTypes.get(functionType);
+        return getRoomFunction(functionTypes, functionType);
+    }
+    
+    @SuppressWarnings("unchecked")
+    private final static <T> T getRoomFunction(final Map<String, T> functionTypes, final String functionType) throws Exception {
+        T roomFunction = functionTypes.get(functionType);
         if (roomFunction != null) {
             return roomFunction;
         }
-        roomFunction = (RoomFunction) getDeclaredClass(RoomFunction.class.getDeclaredClasses(), functionType).newInstance();
+        roomFunction = (T) getDeclaredClass(RoomFunction.class.getDeclaredClasses(), functionType).newInstance();
         functionTypes.put(functionType, roomFunction);
         return roomFunction;
+    }
+    
+    private final static Map<String, StepHandler> handlerTypes = new HashMap<String, StepHandler>();
+    
+    private final static StepHandler getStepHandler(final String handlerType) throws Exception {
+        return getRoomFunction(handlerTypes, handlerType);
     }
     
     private final static void shp(final Segment seg) {
@@ -704,6 +716,9 @@ public abstract class RoomLoader {
         for (final ShootableDoor door : doors) {
             door.closeDoor();
         }
+        for (final StepHandler stepHandler : stepHandlers) {
+            stepHandler.init();
+        }
         clearChangeFinished();
     }
     
@@ -711,8 +726,8 @@ public abstract class RoomLoader {
         for (final TileAnimator animator : animators) {
             animator.step();
         }
-        for (final Runnable stepHandler : stepHandlers) {
-            stepHandler.run();
+        for (final StepHandler stepHandler : stepHandlers) {
+            stepHandler.step();
         }
     }
     
@@ -724,6 +739,9 @@ public abstract class RoomLoader {
     protected final static void clear() {
         clearChangeFinished();
         animators.clear();
+        for (final StepHandler stepHandler : stepHandlers) {
+            stepHandler.finish();
+        }
         stepHandlers.clear();
         tiles.clear();
         patterns.clear();
