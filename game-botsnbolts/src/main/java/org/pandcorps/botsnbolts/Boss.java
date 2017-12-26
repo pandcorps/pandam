@@ -2276,7 +2276,25 @@ public abstract class Boss extends Enemy {
         }
     }
     
-    protected final static class Volatile {
+    protected final static class Volatile extends Boss {
+        protected Volatile(final int x, final int y) {
+            super(VOLCANO_OFF_X, VOLCANO_H, x, y); //TODO
+        }
+
+        @Override
+        protected final boolean pickState() {
+            return false;
+        }
+
+        @Override
+        protected final boolean continueState() {
+            return false;
+        }
+
+        @Override
+        protected final Panmage getStill() {
+            return null;
+        }
     }
     
     protected abstract static class Rotator {
