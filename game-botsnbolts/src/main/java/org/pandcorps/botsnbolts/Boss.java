@@ -2276,6 +2276,9 @@ public abstract class Boss extends Enemy {
         }
     }
     
+    protected final static class Volatile {
+    }
+    
     protected abstract static class Rotator {
         private final static int numFrames = 8;
         private final int frameDuration;
