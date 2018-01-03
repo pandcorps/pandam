@@ -116,6 +116,11 @@ public final class Tile {
         return behavior;
     }
     
+    @Override
+    public final String toString() {
+        return "Bg: " + background + "; Fg: " + foreground + "; B: " + behavior;
+    }
+    
     public static class TileMapImage {
     	/*package*/ float ix; // These could probably be int
     	/*package*/ float iy;
@@ -139,6 +144,11 @@ public final class Tile {
     	    }
     	    final TileMapImage t = (TileMapImage) o;
     	    return ix == t.ix && iy == t.iy;
+    	}
+    	
+    	@Override
+        public final String toString() {
+    	    return "(" + ix + ", " + iy + ")";
     	}
     }
     
