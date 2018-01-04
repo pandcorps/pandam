@@ -392,6 +392,10 @@ public class TileMap extends Panctor implements Savable {
     }
     
     public final Tile getTile(final Object background, final Object foreground, final byte behavior) {
+        return getTile(background, foreground, behavior, true);
+    }
+    
+    public final Tile getTile(final Object background, final Object foreground, final byte behavior, final boolean createAllowed) {
         if (scratch == null) {
             scratch = new Tile();
         }
@@ -399,7 +403,7 @@ public class TileMap extends Panctor implements Savable {
         scratch.foreground = foreground;
         scratch.behavior = behavior;
         Tile m = map.get(scratch);
-        if (m != null) {
+        if ((m != null) || !createAllowed) {
             return m;
         }
         m = scratch;
