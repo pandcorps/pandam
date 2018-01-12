@@ -63,6 +63,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected final static byte TILE_UPSLOPE = 5;
     protected final static byte TILE_DOWNSLOPE = 6;
     protected final static byte TILE_ICE = 7;
+    protected final static byte TILE_LIFT = 8;
     
     protected final static int DEPTH_PARALLAX_BG = 0;
     protected final static int DEPTH_PARALLAX_FG = 2;
@@ -119,6 +120,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static Panmage[] blockHidden = null;
     protected static Panmage[] barrierHidden = null;
     protected static Panimation carrier = null;
+    protected static Panimation lifter = null;
     protected static Panmage blockSpike = null;
     protected static Panmage spike = null;
     protected static Panmage[] cube = null;
@@ -291,6 +293,13 @@ public final class BotsnBoltsGame extends BaseGame {
         carrier = engine.createAnimation(preCarrier + ".anm",
             newSubFrame(preCarrier, 0, oCarrier, nCarrier, xCarrier, carrierAll, 0, 0, sCarrier, dCarrier),
             newSubFrame(preCarrier, 1, oCarrier, nCarrier, xCarrier, carrierAll, 0, 16, sCarrier, dCarrier));
+        final String preLifter = "lifter";
+        final Panmage lifterAll = engine.createImage(preLifter, RES + "misc/Lifter.png");
+        final Panple sLifter = sCarrier;
+        final int dLifter = 4;
+        lifter = engine.createAnimation(preLifter + ".anm",
+            newSubFrame(preLifter, 0, new FinPanple2(0, 1), null, null, lifterAll, 0, 0, sLifter, dLifter),
+            newSubFrame(preLifter, 1, null, null, null, lifterAll, 0, 16, sLifter, dLifter));
         puff = newAnimation("puff", RES + "misc/Puff.png", 8, CENTER_8, 2);
         flash = newAnimation("flash", RES + "misc/Flash.png", 32, CENTER_32, 12);
         bubble = newSheet("bubble", RES + "misc/Bubble.png", 8, CENTER_8, null, null);

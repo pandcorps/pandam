@@ -87,6 +87,7 @@ public final class Player extends Chr {
     private long lastFrozen = -1000;
     private long lastBubble = -1000;
     private long lastJump = -1000;
+    private long lastLift = -1000;
     private boolean prevUnderwater = false;
     private int wallTimer = 0;
     private boolean wallMirror = false;
@@ -285,9 +286,8 @@ public final class Player extends Chr {
     
     private final boolean isTouchingLadder(final int yoff) {
         final Panple pos = getPosition();
-        final TileMap tm = BotsnBoltsGame.tm;
-        final int tileIndex = tm.getContainer(pos.getX(), pos.getY() + yoff);
-        final byte b = Tile.getBehavior(tm.getTile(tileIndex));
+        final int tileIndex = BotsnBoltsGame.tm.getContainer(pos.getX(), pos.getY() + yoff);
+        final byte b = getBehavior(tileIndex);
         return b == BotsnBoltsGame.TILE_LADDER || b == BotsnBoltsGame.TILE_LADDER_TOP;
     }
     
@@ -627,14 +627,30 @@ public final class Player extends Chr {
     }
     
     @Override
+    protected final void onCollide(final int index) {
+        final byte b = getBehavior(index);
+        if (BotsnBoltsGame.TILE_LIFT == b) {
+            final long clock = Pangine.getEngine().getClock();
+            if (clock > lastLift) {
+                addV(-1.5f * getG());
+                lastLift = clock;
+            }
+        }
+    }
+    
+    private final static byte getBehavior(final int index) {
+        return Tile.getBehavior(BotsnBoltsGame.tm.getTile(index));
+    }
+    
+    @Override
     protected final int initCurrentHorizontalVelocity() {
         final int thv;
         if (v == 0) {
             final Panple pos = getPosition();
             final float px = pos.getX(), py1 = pos.getY() + OFF_GROUNDED;
             final float pl = px + getOffLeft(), pr = px + getOffRight();
-            final byte belowLeft = Tile.getBehavior(BotsnBoltsGame.tm.getTile(BotsnBoltsGame.tm.getContainer(pl, py1)));
-            final byte belowRight = Tile.getBehavior(BotsnBoltsGame.tm.getTile(BotsnBoltsGame.tm.getContainer(pr, py1)));
+            final byte belowLeft = getBehavior(BotsnBoltsGame.tm.getContainer(pl, py1));
+            final byte belowRight = getBehavior(BotsnBoltsGame.tm.getContainer(pr, py1));
             if (belowLeft == TILE_ICE || belowRight == TILE_ICE) {
                 thv = initCurrentHorizontalVelocityIce();
             } else if (hv != 0 && isGrounded()) {
@@ -1793,9 +1809,9 @@ public final class Player extends Chr {
             final TileMap tm = BotsnBoltsGame.tm;
             final int index = tm.getContainer(this);
             final int x = tm.getColumn(index), y = tm.getRow(index);
-            if ((x < 2) || src.isSolidTile(x - 1, y)) {
+            if ((x < 2) || isSolidTile(x - 1, y)) {
                 dir = 1;
-            } else if ((x > (tm.getWidth() - 3)) || src.isSolidTile(x + 1, y)) {
+            } else if ((x > (tm.getWidth() - 3)) || isSolidTile(x + 1, y)) {
                 dir = -1;
             } else if (Mathtil.rand(10)) {
                 dir *= -1;

@@ -35,15 +35,18 @@ public final class Carrier extends Panctor implements StepListener, CollisionLis
     private int timer = 0;
     
     protected Carrier(final int x, final int y, final int velX, final int velY, final int duration) {
-        final Panple pos = getPosition();
-        final TileMap tm = BotsnBoltsGame.tm;
-        tm.savePosition(pos, x, y);
-        pos.setZ(BotsnBoltsGame.DEPTH_CARRIER);
+        setPosition(this, x, y, BotsnBoltsGame.DEPTH_CARRIER);
         this.velX = velX;
         this.velY = velY;
         this.duration = duration;
         setView(BotsnBoltsGame.carrier);
-        tm.getLayer().addActor(this);
+    }
+    
+    protected final static void setPosition(final Panctor actor, final int x, final int y, final int z) {
+        final Panple pos = actor.getPosition();
+        final TileMap tm = BotsnBoltsGame.tm;
+        tm.savePosition(pos, x, y);
+        pos.setZ(z);
     }
 
     @Override
@@ -79,5 +82,12 @@ public final class Carrier extends Panctor implements StepListener, CollisionLis
             return;
         }
         player.startCarried(this);
+    }
+    
+    protected final static class Lifter extends Panctor {
+        protected Lifter(final int x, final int y) {
+            setPosition(this, x, y, BotsnBoltsGame.DEPTH_CARRIER);
+            setView(BotsnBoltsGame.lifter);
+        }
     }
 }
