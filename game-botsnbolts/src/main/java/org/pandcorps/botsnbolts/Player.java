@@ -209,7 +209,7 @@ public final class Player extends Chr {
     }
     
     private final void releaseJump() {
-        if (v > 0) {
+        if ((v > 0) && (Pangine.getEngine().getClock() > (lastLift + 1))) {
             v = 0;
         }
     }
@@ -1786,12 +1786,10 @@ public final class Player extends Chr {
     };
     
     protected final static class Bubble extends Panctor implements StepListener {
-        private final Chr src;
         private int dir;
         private int timer = 0;
         
         protected Bubble(final Chr src) {
-            this.src = src;
             final Panple pos = src.getPosition();
             getPosition().set(pos.getX(), pos.getY() + 32, BotsnBoltsGame.DEPTH_CARRIER);
             dir = src.getMirrorMultiplier();

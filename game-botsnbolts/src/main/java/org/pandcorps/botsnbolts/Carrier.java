@@ -22,6 +22,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.botsnbolts;
 
+import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandax.tile.*;
@@ -84,10 +85,44 @@ public final class Carrier extends Panctor implements StepListener, CollisionLis
         player.startCarried(this);
     }
     
-    protected final static class Lifter extends Panctor {
+    protected final static class Lifter extends Panctor implements StepListener {
+        private final static int DURATION = 4;
+        
+        private int timer = DURATION;
+        
         protected Lifter(final int x, final int y) {
             setPosition(this, x, y, BotsnBoltsGame.DEPTH_CARRIER);
             setView(BotsnBoltsGame.lifter);
+        }
+        
+        @Override
+        public final void onStep(final StepEvent event) {
+            timer--;
+            if (timer <= 0) {
+                final Panple pos = getPosition();
+                new Wind(pos.getX() + Mathtil.randi(0, 29), pos.getY() + Mathtil.randi(15, 29));
+                timer = DURATION;
+            }
+        }
+    }
+    
+    protected final static class Wind extends Panctor implements StepListener {
+        private int timer = 8;
+        
+        protected Wind(final float x, final float y) {
+            getPosition().set(x, y, BotsnBoltsGame.DEPTH_BURST);
+            setView(BotsnBoltsGame.wind);
+            BotsnBoltsGame.tm.getLayer().addActor(this);
+        }
+
+        @Override
+        public final void onStep(final StepEvent event) {
+            if (timer < 0) {
+                destroy();
+                return;
+            }
+            getPosition().addY(6);
+            timer--;
         }
     }
 }

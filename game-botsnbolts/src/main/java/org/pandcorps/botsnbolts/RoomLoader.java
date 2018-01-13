@@ -26,6 +26,7 @@ import java.lang.reflect.Constructor;
 import java.util.*;
 
 import org.pandcorps.botsnbolts.BlockPuzzle.*;
+import org.pandcorps.botsnbolts.Carrier.*;
 import org.pandcorps.botsnbolts.Enemy.*;
 import org.pandcorps.botsnbolts.RoomFunction.*;
 import org.pandcorps.botsnbolts.ShootableDoor.*;
@@ -199,6 +200,8 @@ public abstract class RoomLoader {
                 sbt(seg, in);
             } else if ("CRR".equals(name)) { // Carrier
                 crr(seg);
+            } else if ("LFT".equals(name)) { // Lift
+                lft(seg);
             } else if ("WTR".equals(name)) { // Water
                 wtr(seg);
             } else if ("DEF".equals(name)) { // Definition
@@ -566,7 +569,25 @@ public abstract class RoomLoader {
     }
     
     private final static void crr(final Segment seg) throws Exception {
-        new Carrier(seg.intValue(0), seg.intValue(1), seg.intValue(2), seg.intValue(3), seg.intValue(4));
+        addActor(new Carrier(seg.intValue(0), seg.intValue(1), seg.intValue(2), seg.intValue(3), seg.intValue(4)));
+    }
+    
+    private final static void lft(final Segment seg) throws Exception {
+        final int x = seg.intValue(0), y = seg.intValue(1);
+        final TileMap tm = BotsnBoltsGame.tm;
+        final int h = tm.getHeight();
+        addActor(new Lifter(seg.intValue(0), seg.intValue(1)));
+        for (int i = 0; i < 2; i++) {
+            final int xi = x + i;
+            tm.setBehavior(xi, y, Tile.BEHAVIOR_SOLID);
+            for (int yj = y + 1; yj < h; yj++) {
+                final int index = tm.getIndex(xi, yj);
+                if (Tile.getBehavior(tm.getTile(index)) != Tile.BEHAVIOR_OPEN) {
+                    break;
+                }
+                tm.setBehavior(index, BotsnBoltsGame.TILE_LIFT);
+            }
+        }
     }
     
     private final static void wtr(final Segment seg) throws Exception {
