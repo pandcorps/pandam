@@ -146,6 +146,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static Panmage[] bubble = null;
     protected static Panimation splash = null;
     protected static Panmage[] ripple = null;
+    protected static Panmage wind = null;
     protected static HudMeterImages hudMeterBlank = null;
     protected static HudMeterImages hudMeterBoss = null;
     protected static Img[] hudMeterImgs = null;
@@ -305,6 +306,7 @@ public final class BotsnBoltsGame extends BaseGame {
         bubble = newSheet("bubble", RES + "misc/Bubble.png", 8, CENTER_8, null, null);
         splash = newAnimation("splash", RES + "misc/Splash.png", 16, new FinPanple2(8, 0), 3);
         ripple = newSheet("ripple", RES + "misc/Ripple.png", 16, null, null, null);
+        wind = engine.createImage("wind", RES + "misc/Wind.png");
     }
     
     protected final static Panmage getLadder() {
