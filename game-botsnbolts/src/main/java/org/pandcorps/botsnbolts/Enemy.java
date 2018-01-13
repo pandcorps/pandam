@@ -616,7 +616,50 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
     }
     
-    protected final static class WallCannon {
+    protected final static class WallCannon extends TileUnawareEnemy {
+        private final static int DURATION = 60;
+        private int timer;
+        
+        protected WallCannon(final int x, final int y) {
+            super(x, y, 3);
+            timer = ((y % 2) == 0) ? (DURATION / 2) : DURATION;
+            setView(0);
+            final Panple pos = getPosition();
+            if (isSolidTile(x + 1, y)) {
+                setMirror(true);
+                pos.addX(7);
+            } else {
+                pos.addX(-8);
+            }
+        }
+        
+        @Override
+        protected final void onStepEnemy() {
+            timer--;
+            if (timer == 6) {
+                fire();
+                setView(1);
+            } else if (timer == 4) {
+                setView(2);
+            } else if (timer == 2) {
+                setView(3);
+            } else if (timer <= 0) {
+                setView(0);
+                timer = DURATION;
+            }
+        }
+        
+        private final void fire() {
+            new EnemyProjectile(this, 12, 8, getMirrorMultiplier() * VEL_PROJECTILE, 0);
+        }
+        
+        private final void setView(final int i) {
+            setView(BotsnBoltsGame.wallCannon[i]);
+        }
+
+        @Override
+        protected final void award(final PowerUp powerUp) {
+        }
     }
     
     protected final static int PROP_HEALTH = 2, PROP_OFF_X = 4, PROP_H = 12, CRAWL_H = 14;
