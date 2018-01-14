@@ -106,6 +106,9 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
         }
         n = Math.round(v * mult);
         final Panple pos = getPosition();
+        if (n == 0) {
+            getSolid(0); // Calls onCollide
+        }
         for (int i = 0; i < n; i++) {
             final int t = getSolid(offSol);
             if (t != -1) {
