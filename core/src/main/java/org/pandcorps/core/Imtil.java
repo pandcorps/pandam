@@ -52,6 +52,12 @@ public final class Imtil {
         }
     }
     
+    public final static Img load(final String location, final boolean temp) {
+        final Img img = load(location);
+        img.setTemporary(temp);
+        return img;
+    }
+    
     public final static Img create(final ByteBuffer buf, final int w, final int h, final int type) {
         if (type != TYPE_INT_RGB) {
             throw new UnsupportedOperationException("Currently only support INT_RGB");
@@ -81,15 +87,25 @@ public final class Imtil {
     }
     
     public final static Img[] loadStrip(final String location, final int w) {
-        return toStrip(load(location), w);
+        return loadStrip(location, w, true);
+    }
+    
+    public final static Img[] loadStrip(final String location, final int w, final boolean temp) {
+        return toStrip(load(location), w, temp);
     }
     
     public final static Img[] toStrip(final Img img, final int w) {
+        return toStrip(img, w, true);
+    }
+    
+    public final static Img[] toStrip(final Img img, final int w, final boolean temp) {
         final int tw = img.getWidth();
         final Img[] strip = new Img[tw / w];
         final int h = img.getHeight();
         for (int x = 0, i = 0; x < tw; x += w, i++) {
-            strip[i] = img.getSubimage(x, 0, w, h);
+            final Img s = img.getSubimage(x, 0, w, h);
+            s.setTemporary(temp);
+            strip[i] = s;
         }
         img.closeIfTemporary();
         return strip;
