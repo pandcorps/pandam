@@ -216,12 +216,9 @@ public final class BotsnBoltsGame extends BaseGame {
         doorTunnelOverlay = toOverlay(doorTunnel);
         doorTunnelSmall = newDoorSmall("door.tunnel.small", "bg/DoorTunnelSmall.png");
         doorTunnelSmallOverlay = toOverlay(doorTunnelSmall);
-        final Img[] imgsClosed = Imtil.loadStrip(RES + "bg/DoorCyan.png", 16);
-        Img.setTemporary(false, imgsClosed);
-        final Img[] imgsOpening = Imtil.loadStrip(RES + "bg/DoorCyanOpening.png", 16);
-        Img.setTemporary(false, imgsOpening);
-        final Img[] imgsBarrier = Imtil.loadStrip(RES + "bg/BarrierCyan.png", 8);
-        Img.setTemporary(false, imgsBarrier);
+        final Img[] imgsClosed = Imtil.loadStrip(RES + "bg/DoorCyan.png", 16, false);
+        final Img[] imgsOpening = Imtil.loadStrip(RES + "bg/DoorCyanOpening.png", 16, false);
+        final Img[] imgsBarrier = Imtil.loadStrip(RES + "bg/BarrierCyan.png", 8, false);
         doorCyan = newDoorDefinition("door.cyan", imgsClosed, imgsOpening, null, 0, null, null, imgsBarrier);
         final short s0 = 0, s48 = 48, s64 = 64, s96 = 96, s128 = 128, s144 = 144, s192 = 192, smax = Pancolor.MAX_VALUE;
         final Pancolor cyan = Pancolor.CYAN, silver = Pancolor.GREY, darkCyan = new FinPancolor(s0, s192, s192), darkSilver = Pancolor.DARK_GREY;
@@ -246,10 +243,8 @@ public final class BotsnBoltsGame extends BaseGame {
         doorGold = filterDoor("door.gold", imgsClosed, null, orangeGold, gold, darkOrangeGold, darkGold, doorOrangeGold, 1, null, null, imgsBarrier);
         Img.close(imgsClosed);
         Img.close(imgsOpening);
-        final Img[] imgsSmallClosed = Imtil.loadStrip(RES + "bg/DoorSmall.png", 16);
-        Img.setTemporary(false, imgsSmallClosed);
-        final Img[] imgsSmallOpening = Imtil.loadStrip(RES + "bg/DoorSmallOpening.png", 16);
-        Img.setTemporary(false, imgsSmallOpening);
+        final Img[] imgsSmallClosed = Imtil.loadStrip(RES + "bg/DoorSmall.png", 16, false);
+        final Img[] imgsSmallOpening = Imtil.loadStrip(RES + "bg/DoorSmallOpening.png", 16, false);
         final Pancolor colSmall = new FinPancolor(smax, s64, smax), darkColSmall = new FinPancolor(s192, s48, s192);
         filterImgs(imgsBarrier, newFilter(gold, colSmall, darkGold, darkColSmall));
         doorSmall = newDoorDefinition("door.small", imgsSmallClosed, imgsSmallOpening, null, 0, Player.SHOOT_BOMB, null, imgsBarrier);
@@ -272,10 +267,9 @@ public final class BotsnBoltsGame extends BaseGame {
     
     private final static void loadMisc() {
         final Pangine engine = Pangine.getEngine();
-        hudMeterBlank = newHudMeterImages("meter.blank", RES + "misc/MeterBlank.png", false);
+        hudMeterBlank = newHudMeterImages("meter.blank", RES + "misc/MeterBlank.png");
         cube = newSheet("cube", RES + "misc/Cube.png", 16);
-        final Img[] blockImgs = Imtil.loadStrip(RES + "bg/BlockCyan.png", 16);
-        Img.setTemporary(false, blockImgs);
+        final Img[] blockImgs = Imtil.loadStrip(RES + "bg/BlockCyan.png", 16, false);
         final Panple maxBlock = new FinPanple2(14, 16);
         final short s0 = 0, s64 = 64, s96 = 96, s128 = 128, s144 = 144, s192 = 192;
         final Pancolor cyan = Pancolor.CYAN, darkCyan = new FinPancolor(s0, s192, s192);
@@ -375,8 +369,7 @@ public final class BotsnBoltsGame extends BaseGame {
         unshieldedEnemy = newAnimation("unshielded.enemy", RES + "enemy/UnshieldedEnemy.png", 16, shieldedO, propMin, crawlMax, 3);
         fireballEnemy = newSheet("fireball.enemy", RES + "enemy/FireballEnemy.png", 16, propO, propMin, crawlMax);
         final Panple henchO = new FinPanple2(15, 1), henchMin = Chr.getMin(Enemy.HENCHBOT_OFF_X), henchMax = Chr.getMax(Enemy.HENCHBOT_OFF_X, Enemy.HENCHBOT_H);
-        final Img[] henchImgs = Imtil.loadStrip(RES + "enemy/Henchbot.png", 32);
-        Img.setTemporary(false, henchImgs);
+        final Img[] henchImgs = Imtil.loadStrip(RES + "enemy/Henchbot.png", 32, false);
         flamethrowerEnemy = newSheet("flamethrower.enemy", henchImgs, henchO, henchMin, henchMax);
         final short s0 = 0, s96 = 96, s128 = 128, s160 = 160, s192 = 192, smax = Pancolor.MAX_VALUE;
         final Pancolor fire = new FinPancolor(smax, s160, s0), darkFire = new FinPancolor(smax, s96, s0);
@@ -447,17 +440,81 @@ public final class BotsnBoltsGame extends BaseGame {
     }
     
     private final static void loadPlayer() {
-        voidImages = loadPlayerImages("betabot", "Void");
+        final String dir = "betabot", name = "Void";
+        openPlayerImages(dir, name);
+        voidImages = loadPlayerImages(dir, name);
+        closePlayerImages();
         pc = new PlayerContext(new Profile(), org.pandcorps.pandax.in.ControlScheme.getDefaultKeyboard(), voidImages);
     }
     
+    private static Img playerProjectile = null;
+    private static Img playerProjectile2 = null;
+    private static Img[] playerProjectile3 = null;
+    private static Img[] playerBurst = null;
+    private static Img[] playerCharge = null;
+    private static Img[] playerChargeVert = null;
+    private static Img[] playerCharge2 = null;
+    private static Img[] playerChargeVert2 = null;
+    private static Img playerWarp = null;
+    private static Img[] playerMaterialize = null;
+    private static Img[] playerBomb = null;
+    private static Img playerLink = null;
+    private static Img[] playerBatterySmall = null;
+    private static Img[] playerBatteryMedium = null;
+    private static Img[] playerBatteryBig = null;
+    private static Img playerPowerBox = null;
+    
+    private final static void openPlayerImages(final String dir, final String name) {
+        final String pre = getCharacterPrefix(dir, name);
+        playerProjectile = Imtil.load(pre + "Projectile.png", false);
+        playerProjectile2 = Imtil.load(pre + "Projectile2.png", false);
+        playerProjectile3 = Imtil.loadStrip(pre + "Projectile3.png", 32, false);
+        playerBurst = Imtil.loadStrip(pre + "Burst.png", 16, false);
+        playerCharge = Imtil.loadStrip(pre + "Charge.png", 8, false);
+        playerChargeVert = Imtil.loadStrip(pre + "ChargeVert.png", 8, false);
+        playerCharge2 = Imtil.loadStrip(pre + "Charge2.png", 8, false);
+        playerChargeVert2 = Imtil.loadStrip(pre + "ChargeVert2.png", 8, false);
+        playerWarp = Imtil.load(pre + "Warp.png", false);
+        playerMaterialize = Imtil.loadStrip(pre + "Materialize.png", 32, false);
+        playerBomb = Imtil.loadStrip(pre + "Bomb.png", 8, false);
+        playerLink = Imtil.load(pre + "Link.png", false);
+        playerBatterySmall = Imtil.loadStrip(pre + "BatterySmall.png", 8, false);
+        playerBatteryMedium = Imtil.loadStrip(pre + "BatteryMedium.png", 16, false);
+        playerBatteryBig = Imtil.loadStrip(pre + "BatteryBig.png", 16, false);
+        playerPowerBox = Imtil.load(pre + "PowerBox.png", false);
+        hudMeterImgs = Imtil.loadStrip(pre + "Meter.png", 8, false);
+    }
+    
+    private final static void closePlayerImages() {
+        playerProjectile.close();
+        playerProjectile2.close();
+        Img.close(playerProjectile3);
+        Img.close(playerBurst);
+        Img.close(playerCharge);
+        Img.close(playerChargeVert);
+        Img.close(playerCharge2);
+        Img.close(playerChargeVert2);
+        playerWarp.close();
+        Img.close(playerMaterialize);
+        Img.close(playerBomb);
+        playerLink.close();
+        Img.close(playerBatterySmall);
+        Img.close(playerBatteryMedium);
+        Img.close(playerBatteryBig);
+        playerPowerBox.close();
+        //hudMeterImgs closed separately
+    }
+    
+    private final static String getCharacterPrefix(final String dir, final String name) {
+        return RES + "chr/" + dir + "/" + name;
+    }
+    
     private final static PlayerImages loadPlayerImages(final String dir, final String name) {
-        final String pre = RES + "chr/" + dir + "/" + name;
+        final String pre = getCharacterPrefix(dir, name);
         final PlayerImagesSubSet basicSet = loadPlayerImagesSubSet(pre, name, true, og, og, oj);
         final PlayerImagesSubSet shootSet = loadPlayerImagesSubSet(pre + "Shoot", name + ".shoot", false, oss, os, ojs);
         final Pangine engine = Pangine.getEngine();
-        final Img imgHurt = Imtil.load(pre + "Hurt.png"), imgHurtMirror = Imtil.load(pre + "HurtMirror.png");
-        Img.setTemporary(false, imgHurt, imgHurtMirror);
+        final Img imgHurt = Imtil.load(pre + "Hurt.png", false), imgHurtMirror = Imtil.load(pre + "HurtMirror.png", false);
         final Panmage hurt = newPlayerImage(PRE_IMG + "." + name + ".hurt", oj, imgHurt, imgHurtMirror);
         final short s0 = 0, s72 = 72, s96 = 96, s128 = 128, s144 = 144, s192 = 192;
         final Pancolor grey = Pancolor.DARK_GREY, darkGrey = new FinPancolor(s96);
@@ -480,15 +537,17 @@ public final class BotsnBoltsGame extends BaseGame {
         final Img[] jumpAimImgsMirror = Imtil.loadStrip(pre + "JumpAimMirror.png", 32);
         final Panmage jumpAimDiag = newPlayerImage(pre + "Jump.Aim.Diag", ojs, jumpAimImgs, jumpAimImgsMirror, 0);
         final Panmage jumpAimUp = newPlayerImage(pre + "Jump.Aim.Diag", ojs, jumpAimImgs, jumpAimImgsMirror, 1);
-        final Panmage basicProjectile = engine.createImage(pre + "Projectile", new FinPanple2(3, 3), new FinPanple2(-3, -2), new FinPanple2(5, 3), pre + "Projectile.png");
-        final Panimation projectile2 = newFlipper(pre + "Projectile2", pre + "Projectile2.png", new FinPanple2(7, 7), new FinPanple2(-4, -5), new FinPanple2(8, 6), 4);
+        
+        final Panmage basicProjectile = engine.createImage(pre + "Projectile", new FinPanple2(3, 3), new FinPanple2(-3, -2), new FinPanple2(5, 3), playerProjectile);
+        final Panimation projectile2 = newFlipper(pre + "Projectile2", playerProjectile2, new FinPanple2(7, 7), new FinPanple2(-4, -5), new FinPanple2(8, 6), 4);
         final Panimation projectile3 = newProjectile3(pre);
-        final Panimation burst = newAnimation(pre + "Burst", pre + "Burst.png", 16, CENTER_16, 2);
-        final Panimation charge = newAnimation(pre + "Charge", pre + "Charge.png", 8, null, 1);
+        final Panimation burst = newAnimation(pre + "Burst", playerBurst, CENTER_16, 2);
+        final Panimation charge = newAnimation(pre + "Charge", playerCharge, null, 1);
         final Panple oChargeVert = new FinPanple2(4, 0);
-        final Panimation chargeVert = newAnimation(pre + "ChargeVert", pre + "ChargeVert.png", 8, oChargeVert, 1);
-        final Panimation charge2 = newAnimation(pre + "Charge2", pre + "Charge2.png", 8, null, 1);
-        final Panimation chargeVert2 = newAnimation(pre + "ChargeVert2", pre + "ChargeVert2.png", 8, oChargeVert, 1);
+        final Panimation chargeVert = newAnimation(pre + "ChargeVert", playerChargeVert, oChargeVert, 1);
+        final Panimation charge2 = newAnimation(pre + "Charge2", playerCharge2, null, 1);
+        final Panimation chargeVert2 = newAnimation(pre + "ChargeVert2", playerChargeVert2, oChargeVert, 1);
+        
         final Img[] ballImgs = Imtil.loadStrip(pre + "Ball.png", 16);
         final Panmage ball[] = new Panmage[8];
         final Panple ob = new FinPanple2(8, 1), xb = GuyPlatform.getMax(Player.PLAYER_X, Player.BALL_H);
@@ -505,19 +564,20 @@ public final class BotsnBoltsGame extends BaseGame {
                 }
             }
         }
-        final Panmage warp = engine.createImage(pre + "Warp", new FinPanple2(5, 1), null, null, pre + "Warp.png");
-        final Panimation materialize = newAnimation(pre + "Materialize", pre + "Materialize.png", 32, og, 3);
-        final Panimation bomb = newAnimation(pre + "Bomb", pre + "Bomb.png", 8, CENTER_8, 5);
-        final Panmage link = engine.createImage(pre + "Link", new FinPanple2(4, 1), null, null, pre + "Link.png");
+        
+        final Panmage warp = engine.createImage(pre + "Warp", new FinPanple2(5, 1), null, null, playerWarp);
+        final Panimation materialize = newAnimation(pre + "Materialize", playerMaterialize, og, 3);
+        final Panimation bomb = newAnimation(pre + "Bomb", playerBomb, CENTER_8, 5);
+        final Panmage link = engine.createImage(pre + "Link", new FinPanple2(4, 1), null, null, playerLink);
         final Panple oBattery = new FinPanple2(8, -1);
-        final Panimation batterySml = newOscillation(pre + "battery.sml", pre + "BatterySmall.png", 8, new FinPanple2(4, -1), new FinPanple2(-2, 2), new FinPanple2(2, 6), 3, 6);
-        final Panimation batteryMed = newOscillation(pre + "battery.med", pre + "BatteryMedium.png", 16, oBattery, new FinPanple2(-4, 2), new FinPanple2(4, 10), 3, 6);
-        final Panimation batteryBig = newOscillation(pre + "battery.big", pre + "BatteryBig.png", 16, oBattery, new FinPanple2(-6, 2), new FinPanple2(6, 14), 3, 6);
+        final Panimation batterySml = newOscillation(pre + "battery.sml", playerBatterySmall, new FinPanple2(4, -1), new FinPanple2(-2, 2), new FinPanple2(2, 6), 3, 6);
+        final Panimation batteryMed = newOscillation(pre + "battery.med", playerBatteryMedium, oBattery, new FinPanple2(-4, 2), new FinPanple2(4, 10), 3, 6);
+        final Panimation batteryBig = newOscillation(pre + "battery.big", playerBatteryBig, oBattery, new FinPanple2(-6, 2), new FinPanple2(6, 14), 3, 6);
         final Panmage bolt = null; //TODO
         final Panmage byteDisk = null; //TODO
-        final Panmage powerBox = engine.createImage(pre + "PowerBox", CENTER_16, minCube, maxCube, pre + "PowerBox.png");
+        final Panmage powerBox = engine.createImage(pre + "PowerBox", CENTER_16, minCube, maxCube, playerPowerBox);
         final Panmage byteBox = null; //TODO
-        final HudMeterImages hudMeterImages = newHudMeterImages(pre + "Meter", pre + "Meter.png", true);
+        final HudMeterImages hudMeterImages = newHudMeterImages(pre + "Meter", hudMeterImgs);
         return new PlayerImages(basicSet, shootSet, hurt, frozen, defeat, climb, climbShoot, climbTop, jumpAimDiag, jumpAimUp, basicProjectile, projectile2, projectile3, charge, chargeVert, charge2, chargeVert2,
             burst, ball, warp, materialize, bomb, link, batterySml, batteryMed, batteryBig, bolt, byteDisk, powerBox, byteBox, hudMeterImages);
     }
@@ -552,9 +612,8 @@ public final class BotsnBoltsGame extends BaseGame {
     
     private final static Panimation newProjectile3(final String pre) {
         final Pangine engine = Pangine.getEngine();
-        final Img[] imgs = Imtil.loadStrip(pre + "Projectile3.png", 32);
-        final Panmage img0 = engine.createImage(pre + ".0", imgs[0]);
-        final Panmage img1 = engine.createImage(pre + ".1", imgs[1]);
+        final Panmage img0 = engine.createImage(pre + ".0", playerProjectile3[0]);
+        final Panmage img1 = engine.createImage(pre + ".1", playerProjectile3[1]);
         final Panple o = new FinPanple2(23, 7), min = new FinPanple2(-6, -7), max = new FinPanple2(8, 8), size = new FinPanple2(32, 16);
         return engine.createAnimation(pre + ".anm",
             newProjectile3Frame(pre, 0, o, min, max, img0, 0, 0, size),
@@ -611,16 +670,23 @@ public final class BotsnBoltsGame extends BaseGame {
     }
     
     private final static Panimation newAnimation(final String id, final String path, final int w, final Panple o, final int dur) {
-        return newAnimation(id, path, w, o, null, null, dur);
+        return newAnimation(id, Imtil.loadStrip(path, w), o, dur);
+    }
+    
+    private final static Panimation newAnimation(final String id, final Img[] imgs, final Panple o, final int dur) {
+        return newAnimation(id, imgs, o, null, null, dur);
     }
     
     private final static Panimation newAnimation(final String id, final String path, final int w, final Panple o, final Panple min, final Panple max, final int dur) {
-        return Pangine.getEngine().createAnimation(PRE_ANM + id, newFrames(id, path, w, o, min, max, dur, dur, dur, false));
+        return newAnimation(id, Imtil.loadStrip(path, w), o, min, max, dur);
     }
     
-    private final static Panframe[] newFrames(final String id, final String path, final int w, final Panple o, final Panple min, final Panple max,
+    private final static Panimation newAnimation(final String id, final Img[] imgs, final Panple o, final Panple min, final Panple max, final int dur) {
+        return Pangine.getEngine().createAnimation(PRE_ANM + id, newFrames(id, imgs, o, min, max, dur, dur, dur, false));
+    }
+    
+    private final static Panframe[] newFrames(final String id, final Img[] imgs, final Panple o, final Panple min, final Panple max,
                                               final int durStart, final int durMid, final int durEnd, final boolean oscillate) {
-        final Img[] imgs = Imtil.loadStrip(path, w);
         final int size = imgs.length, end = size - 1;
         final Panframe[] frames = new Panframe[oscillate ? ((size * 2) - 2) : size];
         final Pangine engine = Pangine.getEngine();
@@ -640,8 +706,8 @@ public final class BotsnBoltsGame extends BaseGame {
         return frames;
     }
     
-    private final static Panimation newOscillation(final String id, final String path, final int w, final Panple o, final Panple min, final Panple max, final int durEdge, final int durMid) {
-        final Panframe[] frames = newFrames(id, path, w, o, min, max, durEdge, durMid, durEdge, true);
+    private final static Panimation newOscillation(final String id, final Img[] imgs, final Panple o, final Panple min, final Panple max, final int durEdge, final int durMid) {
+        final Panframe[] frames = newFrames(id, imgs, o, min, max, durEdge, durMid, durEdge, true);
         final int mid = (frames.length / 2) - 1, off = mid + 2;
         for (int i = 0; i < mid; i++) {
             frames[off + i] = frames[mid - i];
@@ -649,9 +715,9 @@ public final class BotsnBoltsGame extends BaseGame {
         return Pangine.getEngine().createAnimation(PRE_ANM + id, frames);
     }
     
-    private final static Panimation newFlipper(final String id, final String path, final Panple o, final Panple min, final Panple max, final int dur) {
+    private final static Panimation newFlipper(final String id, final Img _img, final Panple o, final Panple min, final Panple max, final int dur) {
         final Pangine engine = Pangine.getEngine();
-        final Panmage img = engine.createImage(id, o, min, max, path);
+        final Panmage img = engine.createImage(id, o, min, max, _img);
         final Panframe[] frames = new Panframe[2];
         frames[0] = engine.createFrame(id + ".0", img, dur);
         frames[1] = engine.createFrame(id + ".1", img, dur, 0, false, true);
@@ -673,13 +739,8 @@ public final class BotsnBoltsGame extends BaseGame {
         return image;
     }
     
-    private final static HudMeterImages newHudMeterImages(final String id, final String path, final boolean saveImgs) {
-        final Img[] imgs = Imtil.loadStrip(path, 8);
-        if (saveImgs) {
-            Img.setTemporary(false, imgs);
-            hudMeterImgs = imgs;
-        }
-        return newHudMeterImages(id, imgs);
+    private final static HudMeterImages newHudMeterImages(final String id, final String path) {
+        return newHudMeterImages(id, Imtil.loadStrip(path, 8));
     }
     
     private final static HudMeterImages newHudMeterImages(final String id, final Img[] imgs) {
