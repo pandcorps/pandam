@@ -1692,6 +1692,46 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
     }
     
+    protected final static class SwimEnemy extends Enemy {
+        private final static Panmage[] imgs = new Panmage[3];
+        
+        protected SwimEnemy(final int x, final int y) {
+            super(HENCHBOT_OFF_X, HENCHBOT_H, x, y, HENCHBOT_HEALTH);
+            setMirror(false);
+            hv = -2;
+        }
+        
+        @Override
+        protected final boolean onStepCustom() {
+            changeView(getCurrentSwim());
+            if (addX(hv) != X_NORMAL){
+                hv *= -1;
+                updateMirror();
+            }
+            return true;
+        }
+        
+        @Override
+        protected final void award(final PowerUp powerUp) {
+        }
+        
+        private final static Panmage getCurrentSwim() {
+            final int frameDuration = 5;
+            final long c = (Pangine.getEngine().getClock() % (4 * frameDuration)) / frameDuration;
+            return getSwimImage((c < 3) ? ((int) c) : 1);
+        }
+        
+        private final static Panmage getSwimImage(final int i) {
+            Panmage img = imgs[i];
+            if (img != null) {
+                return img;
+            }
+            img = getImage(img, "SwimEnemy" + (i + 1), BotsnBoltsGame.flamethrowerEnemy[0]);
+            imgs[i] = img;
+            return img;
+        }
+    }
+    
     protected final void addHealthMeter() {
         BotsnBoltsGame.initHealthMeter(newHealthMeter(), false);
     }
