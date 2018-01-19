@@ -194,4 +194,8 @@ public class Segment extends Record {
     public final void addBoolean(final int i, final Boolean value) {
     	addValue(i, Chartil.toString(value));
     }
+    
+    public final int size() {
+        return fields.size();
+    }
 }

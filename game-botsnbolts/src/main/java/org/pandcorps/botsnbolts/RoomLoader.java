@@ -158,6 +158,8 @@ public abstract class RoomLoader {
                 plt(seg);
             } else if ("PAT".equals(name)) { // Put Pattern
                 pat(seg);
+            } else if ("PAN".equals(name)) { // Put Animation
+                pan(seg);
             } else if ("FNC".equals(name)) { // Function
                 fnc(seg);
             } else if ("M".equals(name)) { // Map
@@ -244,6 +246,26 @@ public abstract class RoomLoader {
                 tile = tm.getTile(background, foreground, b);
             }
         }
+        animators.add(new TileAnimator(tile, frames));
+    }
+    
+    private final static void pan(final Segment seg) {
+        final Character key = seg.toCharacter(0);
+        final byte b = seg.byteValue(1);
+        final int segSize = seg.size();
+        final int anmSize = (segSize - 1) / 3;
+        final TileFrame[] frames = new TileFrame[anmSize];
+        Tile tile = null;
+        for (int i = 2, f = 0; i < segSize; i += 3, f++) {
+            final TileMapImage bg = getTileMapImage(seg, i);
+            final TileMapImage fg = getTileMapImage(seg, i + 1);
+            final int dur = seg.intValue(i + 2);
+            frames[f] = new TileFrame(bg, fg, dur);
+            if (tile == null) {
+                tile = BotsnBoltsGame.tm.getTile(bg, fg, b);
+            }
+        }
+        tiles.put(key, tile);
         animators.add(new TileAnimator(tile, frames));
     }
     
