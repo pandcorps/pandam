@@ -224,6 +224,12 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
         return hv;
     }
     
+    protected final int initCurrentHorizontalVelocitySand() {
+        final int thv = (hv == 0) ? 0 : (hv / Math.abs(hv));
+        chv = thv;
+        return thv;
+    }
+    
     protected final int initCurrentHorizontalVelocityIce() {
         final float dif = hv - chv;
         if (dif > 0) {

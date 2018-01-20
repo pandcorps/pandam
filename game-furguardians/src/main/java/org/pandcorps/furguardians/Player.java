@@ -928,8 +928,7 @@ public class Player extends Character implements CollisionListener {
 				if (belowSand) {
 					pos.addY(-1);
 				}
-			    thv = (hv == 0) ? 0 : (hv / Math.abs(hv));
-			    chv = thv;
+				thv = initCurrentHorizontalVelocitySand();
 			    sanded = true;
 			    pos.setZ(depth);
 				if (backPos != null) {
