@@ -526,28 +526,7 @@ public class Enemy extends Character {
 	
 	@Override
 	protected final boolean onHorizontal(final int off) {
-		if (!def.ledgeTurn) {
-			return false;
-		} else if (!isGrounded()) { // Don't change direction if already in air
-			return false;
-		}
-		final Panple pos = getPosition();
-		final float x = pos.getX(), y = pos.getY();
-		pos.addX(off);
-		try {
-			if (!isGrounded()) {
-				pos.addY(-1);
-				if (!isGrounded()) {
-					hv *= -1;
-					/*info("pos " + getPosition() + " bmin " + getBoundingMinimum() + " bmax " + getBoundingMaximum()
-							+ " ol " + getOffLeft() + " or " + getOffRight());*/
-					return true;
-				}
-			}
-		} finally {
-			pos.set(x, y);
-		}
-		return false;
+		return def.ledgeTurn && onHorizontalEdgeTurn(off);
 	}
 	
 	@Override

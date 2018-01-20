@@ -527,6 +527,34 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
         return false;
     }
     
+    protected final boolean onHorizontalEdgeTurn(final int off) {
+        if (isOnEdge(off)) {
+            hv *= -1;
+            return true;
+        }
+        return false;
+    }
+    
+    protected final boolean isOnEdge(final int off) {
+        if (!isGrounded()) { // Don't change direction if already in air
+            return false;
+        }
+        final Panple pos = getPosition();
+        final float x = pos.getX(), y = pos.getY();
+        pos.addX(off);
+        try {
+            if (!isGrounded()) {
+                pos.addY(-1);
+                if (!isGrounded()) {
+                    return true;
+                }
+            }
+        } finally {
+            pos.set(x, y);
+        }
+        return false;
+    }
+    
     //@OverrideMe
     protected boolean onAir() {
         return false;

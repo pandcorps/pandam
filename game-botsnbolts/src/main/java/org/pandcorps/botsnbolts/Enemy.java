@@ -1152,6 +1152,11 @@ public abstract class Enemy extends Chr implements CollisionListener {
         protected final void onWall(final byte xResult) {
             hv *= -1;
         }
+        
+        @Override
+        protected final boolean onHorizontal(final int off) {
+            return onHorizontalEdgeTurn(off);
+        }
 
         @Override
         protected final void award(final PowerUp powerUp) {
