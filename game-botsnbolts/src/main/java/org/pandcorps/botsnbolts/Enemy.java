@@ -1109,14 +1109,42 @@ public abstract class Enemy extends Chr implements CollisionListener {
     }
     
     protected final static int SLIDE_H = 14;
+    protected final static Panple SLIDE_MAX = getMax(PROP_OFF_X, SLIDE_H);
+    protected final static Panple SLIDE_O_MIRROR = new FinPanple2(7, 1);
     
     // Slides back and forth along the ground
     protected final static class SlideEnemy extends Enemy {
         private final static int SLIDE_VELOCITY = 1;
+        private final static int SLIDE_VELOCITY_NEAR = 4;
+        private final static Panframe[] frames = new Panframe[5];
+        private final static Panmage[] images = new Panmage[3];
         
         protected SlideEnemy(final int x, final int y) {
             super(PROP_OFF_X, SLIDE_H, x, y, PROP_HEALTH);
             hv = -SLIDE_VELOCITY;
+        }
+        
+        @Override
+        protected final boolean onStepCustom() {
+            final int frameDuration = 3;
+            setView(getFrame((int) (Pangine.getEngine().getClock() % (5 * frameDuration)) / frameDuration));
+            setVelocity();
+            return false;
+        }
+        
+        private final void setVelocity() {
+            final Player p = getNearestPlayer();
+            if (p == null) {
+                return;
+            }
+            final float diff = Math.abs(p.getPosition().getY() - getPosition().getY());
+            final int speed = (diff < 4) ? SLIDE_VELOCITY_NEAR : SLIDE_VELOCITY;
+            hv = speed * hv / Math.abs(hv);
+        }
+        
+        @Override
+        protected final void onStepEnd() {
+            setMirror(false);
         }
         
         @Override
@@ -1126,6 +1154,40 @@ public abstract class Enemy extends Chr implements CollisionListener {
 
         @Override
         protected final void award(final PowerUp powerUp) {
+        }
+        
+        private final static Panframe getFrame(final int i) {
+            Panframe frame = frames[i];
+            if (frame != null) {
+                return frame;
+            }
+            final int ii;
+            final boolean mirror;
+            final Panple o;
+            if (i < 3) {
+                ii = i;
+                mirror = false;
+                o = null;
+            } else {
+                ii = (4 - i);
+                mirror = true;
+                o = SLIDE_O_MIRROR;
+            }
+            final Panmage image = getImage(ii);
+            frame = Pangine.getEngine().createFrame(BotsnBoltsGame.PRE_FRM + "slide." + i, image, 3, 0, mirror, false, o, null, null);
+            frames[i] = frame;
+            return frame;
+        }
+        
+        private final static Panmage getImage(final int i) {
+            Panmage image = images[i];
+            if (image != null) {
+                return image;
+            }
+            final Panmage ref = BotsnBoltsGame.propEnemy.getFrames()[0].getImage();
+            image = getImage(image, "SlideEnemy" + (i + 1), ref.getOrigin(), ref.getBoundingMinimum(), SLIDE_MAX);
+            images[i] = image;
+            return image;
         }
     }
     

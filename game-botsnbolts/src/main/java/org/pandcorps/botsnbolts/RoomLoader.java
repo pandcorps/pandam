@@ -253,7 +253,7 @@ public abstract class RoomLoader {
         final Character key = seg.toCharacter(0);
         final byte b = seg.byteValue(1);
         final int segSize = seg.size();
-        final int anmSize = (segSize - 1) / 3;
+        final int anmSize = (segSize - 2) / 3;
         final TileFrame[] frames = new TileFrame[anmSize];
         Tile tile = null;
         for (int i = 2, f = 0; i < segSize; i += 3, f++) {
