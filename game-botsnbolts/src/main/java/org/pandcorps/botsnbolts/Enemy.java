@@ -1108,9 +1108,10 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
     }
     
-    protected final static int SLIDE_H = 14;
+    protected final static int SLIDE_H = 12;
     protected final static Panple SLIDE_MAX = getMax(PROP_OFF_X, SLIDE_H);
-    protected final static Panple SLIDE_O_MIRROR = new FinPanple2(7, 1);
+    protected final static Panple SLIDE_O = new FinPanple2(8, 0);
+    protected final static Panple SLIDE_O_MIRROR = new FinPanple2(7, 0);
     
     // Slides back and forth along the ground
     protected final static class SlideEnemy extends Enemy {
@@ -1185,7 +1186,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
                 return image;
             }
             final Panmage ref = BotsnBoltsGame.propEnemy.getFrames()[0].getImage();
-            image = getImage(image, "SlideEnemy" + (i + 1), ref.getOrigin(), ref.getBoundingMinimum(), SLIDE_MAX);
+            image = getImage(image, "SlideEnemy" + (i + 1), SLIDE_O, ref.getBoundingMinimum(), SLIDE_MAX);
             images[i] = image;
             return image;
         }

@@ -66,7 +66,10 @@ public abstract class Chr extends GuyPlatform {
     }
     
     protected final static boolean isSolidTile(final Tile tile) {
-        final byte b = Tile.getBehavior(tile);
+        return isAnySolidBehavior(Tile.getBehavior(tile));
+    }
+    
+    protected final static boolean isAnySolidBehavior(final byte b) {
         return (b == Tile.BEHAVIOR_SOLID) || isCustomSolidBehavior(b);
     }
     

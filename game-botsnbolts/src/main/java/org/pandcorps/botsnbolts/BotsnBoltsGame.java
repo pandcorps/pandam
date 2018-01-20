@@ -64,6 +64,8 @@ public final class BotsnBoltsGame extends BaseGame {
     protected final static byte TILE_DOWNSLOPE = 6;
     protected final static byte TILE_ICE = 7;
     protected final static byte TILE_LIFT = 8;
+    protected final static byte TILE_SAND = 9;
+    protected final static byte TILE_DEFEAT = 10;
     
     protected final static int DEPTH_PARALLAX_BG = 0;
     protected final static int DEPTH_PARALLAX_FG = 2;
@@ -78,8 +80,8 @@ public final class BotsnBoltsGame extends BaseGame {
     protected final static int DEPTH_ENEMY = 20;
     protected final static int DEPTH_PROJECTILE = 22;
     protected final static int DEPTH_OVERLAY = 24;
-    protected final static int DEPTH_BURST = 26;
-    protected final static int DEPTH_HUD = 28;
+    protected final static int DEPTH_BURST = 50;
+    protected final static int DEPTH_HUD = 52;
     
     protected final static FinPanple2 MIN_16 = new FinPanple2(-6, -6);
     protected final static FinPanple2 MAX_16 = new FinPanple2(6, 6);
@@ -199,6 +201,7 @@ public final class BotsnBoltsGame extends BaseGame {
         Chr.TILE_UPSLOPE = TILE_UPSLOPE;
         Chr.TILE_DOWNSLOPE = TILE_DOWNSLOPE;
         Chr.TILE_ICE = TILE_ICE;
+        Chr.TILE_SAND = TILE_SAND;
     }
     
     private final static void loadResources() {

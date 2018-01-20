@@ -89,6 +89,7 @@ public final class Player extends Chr {
     private long lastJump = -1000;
     private long lastLift = -1000;
     private boolean prevUnderwater = false;
+    private boolean sanded = false;
     private int wallTimer = 0;
     private boolean wallMirror = false;
     protected boolean movedDuringJump = false;
@@ -205,6 +206,9 @@ public final class Player extends Chr {
     
     private final void startJump() {
         v = VEL_JUMP;
+        if (sanded) {
+            v -= 2;
+        }
         lastJump = Pangine.getEngine().getClock();
     }
     
@@ -635,6 +639,8 @@ public final class Player extends Chr {
                 addV(-1.5f * getG());
                 lastLift = clock;
             }
+        } else if (BotsnBoltsGame.TILE_DEFEAT == b) {
+            defeat();
         }
     }
     
@@ -644,14 +650,25 @@ public final class Player extends Chr {
     
     @Override
     protected final int initCurrentHorizontalVelocity() {
+        sanded = false;
         final int thv;
         if (v == 0) {
             final Panple pos = getPosition();
-            final float px = pos.getX(), py1 = pos.getY() + OFF_GROUNDED;
+            final float px = pos.getX(), py = pos.getY(), py1 = py + OFF_GROUNDED;
             final float pl = px + getOffLeft(), pr = px + getOffRight();
+            final byte left = Tile.getBehavior(BotsnBoltsGame.tm.getTile(BotsnBoltsGame.tm.getContainer(pl, py)));
+            final byte right = Tile.getBehavior(BotsnBoltsGame.tm.getTile(BotsnBoltsGame.tm.getContainer(pr, py)));
             final byte belowLeft = getBehavior(BotsnBoltsGame.tm.getContainer(pl, py1));
             final byte belowRight = getBehavior(BotsnBoltsGame.tm.getContainer(pr, py1));
-            if (belowLeft == TILE_ICE || belowRight == TILE_ICE) {
+            final boolean sand = left == TILE_SAND || right == TILE_SAND;
+            final boolean belowSand = belowLeft == TILE_SAND || belowRight == TILE_SAND;
+            if (sand || belowSand) {
+                if (belowSand || !isAnySolidBehavior(belowLeft) || !isAnySolidBehavior(belowRight)) {
+                    pos.addY(-1);
+                }
+                thv = initCurrentHorizontalVelocitySand();
+                sanded = true;
+            } else if (belowLeft == TILE_ICE || belowRight == TILE_ICE) {
                 thv = initCurrentHorizontalVelocityIce();
             } else if (hv != 0 && isGrounded()) {
                 thv = initCurrentHorizontalVelocityAccelerating();
