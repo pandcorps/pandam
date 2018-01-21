@@ -2276,6 +2276,39 @@ public abstract class Boss extends Enemy {
         }
     }
     
+    protected final static int DROUGHT_OFF_X = 6, DROUGHT_H = 24; //TODO
+    protected final static Panple DROUGHT_O = new FinPanple2(14, 1);
+    protected final static Panple DROUGHT_MIN = getMin(DROUGHT_OFF_X);
+    protected final static Panple DROUGHT_MAX = getMax(DROUGHT_OFF_X, DROUGHT_H);
+    
+    protected final static class DroughtBot extends Boss {
+        protected static Panmage still = null;
+        
+        protected DroughtBot(final int x, final int y) {
+            super(DROUGHT_OFF_X, DROUGHT_H, x, y);
+        }
+        
+        @Override
+        protected final boolean pickState() {
+            return false;
+        }
+
+        @Override
+        protected final boolean continueState() {
+            startStill();
+            return false;
+        }
+
+        @Override
+        protected final Panmage getStill() {
+            return (still = getDroughtImage(still, "droughtbot/DroughtBot"));
+        }
+        
+        protected final static Panmage getDroughtImage(final Panmage img, final String name) {
+            return getImage(img, name, DROUGHT_O, DROUGHT_MIN, DROUGHT_MAX);
+        }
+    }
+    
     protected final static class Volatile extends Boss {
         protected Volatile(final int x, final int y) {
             super(VOLCANO_OFF_X, VOLCANO_H, x, y); //TODO
