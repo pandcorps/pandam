@@ -2282,7 +2282,11 @@ public abstract class Boss extends Enemy {
     protected final static Panple DROUGHT_MAX = getMax(DROUGHT_OFF_X, DROUGHT_H);
     
     protected final static class DroughtBot extends Boss {
+        protected final static byte STATE_MORPH = 1;
+        protected final static byte STATE_SAND = 2;
         protected static Panmage still = null;
+        protected final static Panmage[] morphs = new Panmage[7];
+        protected static Panmage sand = null;
         
         protected DroughtBot(final int x, final int y) {
             super(DROUGHT_OFF_X, DROUGHT_H, x, y);
@@ -2302,6 +2306,21 @@ public abstract class Boss extends Enemy {
         @Override
         protected final Panmage getStill() {
             return (still = getDroughtImage(still, "droughtbot/DroughtBot"));
+        }
+        
+        protected final static Panmage getMorph(final int i) {
+            Panmage image = morphs[i];
+            if (image != null) {
+                return image;
+            }
+            //TODO At i=5 (Morph6.png), start changing bounding box at this point, or don't allow to be hit while morphing (or to hurt Player)
+            image = getDroughtImage(null, "droughtbot/DroughtBotMorph" + (i + 1));
+            morphs[i] = image;
+            return image;
+        }
+        
+        protected final static Panmage getSand() {
+            return (sand = getDroughtImage(sand, "droughtbot/DroughtBotSand"));
         }
         
         protected final static Panmage getDroughtImage(final Panmage img, final String name) {
