@@ -662,6 +662,91 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
     }
     
+    private final static Panple CEILING_CANNON_MIN = new FinPanple2(2, 3);
+    private final static Panple CEILING_CANNON_MAX = new FinPanple2(14, 15);
+    
+    protected final static class CeilingCannon extends TileUnawareEnemy {
+        private final static int DURATION = 120;
+        private final static Panmage[] images = new Panmage[3];
+        private int timer;
+        
+        protected CeilingCannon(final int x, final int y) {
+            super(x, y, 3);
+            setDown();
+        }
+        
+        @Override
+        protected final int getInitialOffsetX() {
+            return 0;
+        }
+        
+        @Override
+        protected final void onStepEnemy() {
+            timer--;
+            switch (timer) {
+                case 105 :
+                    fireDown();
+                    break;
+                case 90 :
+                    setView(0); // Left
+                    break;
+                case 75 :
+                    fire45(1, -1); // Left
+                    break;
+                case 60 :
+                    setDown();
+                    break;
+                case 45 :
+                    fireDown();
+                    break;
+                case 30 :
+                    setView(2); // Right
+                    break;
+                case 15 :
+                    fire45(15, 1); // Right
+                    break;
+            }
+            if (timer <= 0) {
+                setDown();
+                timer = DURATION;
+            }
+        }
+        
+        private final void setView(final int i) {
+            changeView(getImage(i));
+        }
+        
+        private final void setDown() {
+            setView(1);
+        }
+        
+        private final void fire(final int ox, final int oy, final float vx, final float vy) {
+            new EnemyProjectile(this, ox, oy, vx, vy);
+        }
+        
+        private final void fireDown() {
+            fire(8, 1, 0, -VEL_PROJECTILE);
+        }
+        
+        private final void fire45(final int ox, final int vxMult) {
+            fire(ox, 3, vxMult * VEL_PROJECTILE_45, -VEL_PROJECTILE_45);
+        }
+        
+        @Override
+        protected final void award(final PowerUp powerUp) {
+        }
+        
+        private final static Panmage getImage(final int i) {
+            Panmage image = images[i];
+            if (image != null) {
+                return image;
+            }
+            image = getImage(image, "CeilingCannon" + (i + 1), null, CEILING_CANNON_MIN, CEILING_CANNON_MAX);
+            images[i] = image;
+            return image;
+        }
+    }
+    
     protected final static int PROP_HEALTH = 2, PROP_OFF_X = 4, PROP_H = 12, CRAWL_H = 14;
     
     protected final static class PropEnemy extends Enemy {
