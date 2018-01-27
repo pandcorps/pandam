@@ -329,15 +329,18 @@ public class Panctor extends BasePantity implements SpecPanctor {
 	    return max;
     }
 
+	@Override
 	public final boolean isVisible() {
 		return impl.isVisible();
 	}
 
+	@Override
 	public final void setVisible(final boolean vis) {
 		impl.setVisible(vis);
 	}
 	
 	// rot = number of counter-clockwise 90-degree rotations, see setRot
+	@Override
 	public final int getRot() {
 	    return impl.getRot();
 	}
@@ -349,14 +352,17 @@ public class Panctor extends BasePantity implements SpecPanctor {
 	But geometry usually goes counter-clockwise.
 	(1, 0) = 0, (0, 1) = 90, (-1, 0) = 180, (0, -1) = 270
 	*/
+	@Override
 	public final void setRot(final int rot) {
 	    impl.setRot(rot);
 	}
 	
+	@Override
 	public final boolean isMirror() {
         return impl.isMirror();
     }
 
+	@Override
     public final void setMirror(final boolean mirror) {
         impl.setMirror(mirror);
     }
@@ -365,10 +371,12 @@ public class Panctor extends BasePantity implements SpecPanctor {
         return isMirror() ? -1 : 1;
     }
     
+    @Override
     public final boolean isFlip() {
         return impl.isFlip();
     }
 
+    @Override
     public final void setFlip(final boolean flip) {
         impl.setFlip(flip);
     }

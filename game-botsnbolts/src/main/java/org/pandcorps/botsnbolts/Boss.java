@@ -23,6 +23,8 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.botsnbolts;
 
 import java.util.*;
+
+import org.pandcorps.botsnbolts.Player.*;
 import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
@@ -2292,17 +2294,19 @@ public abstract class Boss extends Enemy {
     protected final static Panple DROUGHT_MIN = getMin(DROUGHT_OFF_X);
     protected final static Panple DROUGHT_MAX = getMax(DROUGHT_OFF_X, DROUGHT_H);
     
-    protected final static class DroughtBot extends Boss {
+    protected final static class DroughtBot extends Boss implements Wrapper {
         private final static int NUM_MORPHS = 7;
         protected final static byte STATE_MORPH = 1;
         protected final static byte STATE_SAND = 2;
-        protected final static byte STATE_UNMORPH = 3;
-        protected final static byte STATE_HOLD = 4;
+        protected final static byte STATE_WRAP = 3;
+        protected final static byte STATE_UNMORPH = 4;
+        protected final static byte STATE_HOLD = 5;
         protected final static int WAIT_MORPH = NUM_MORPHS * 2 - 1;
         protected final static int WAIT_HOLD = 60;
         protected static Panmage still = null;
         protected final static Panmage[] morphs = new Panmage[NUM_MORPHS];
         protected static Panmage sand = null;
+        protected final static Panmage[] wraps = new Panmage[2];
         protected static Panmage hold = null;
         protected static Panmage launch = null;
         private final int xRight;
@@ -2322,6 +2326,8 @@ public abstract class Boss extends Enemy {
                 onMorphing(true);
             } else if (state == STATE_UNMORPH) {
                 onMorphing(false);
+            } else if (state == STATE_WRAP) {
+                return onWrapping();
             } else if ((state == STATE_HOLD) && (waitTimer == (WAIT_HOLD - 1))) {
                 new Scythe(this);
             }
@@ -2348,6 +2354,19 @@ public abstract class Boss extends Enemy {
             return true;
         }
         
+        private final boolean onWrapping() {
+            changeView(getCurrentWrap());
+            return true;
+        }
+        
+        @Override
+        protected void onAttack(final Player player) {
+            if ((state == STATE_SAND) && !player.isInvincible()) { // Check invincibility before hurting Player
+                startWrap(player);
+            }
+            super.onAttack(player);
+        }
+        
         @Override
         protected final boolean pickState() {
             startMorph();
@@ -2372,6 +2391,17 @@ public abstract class Boss extends Enemy {
         protected final void startSand() {
             startStateIndefinite(STATE_SAND, getSand());
             hv = getMirrorMultiplier() * 6;
+        }
+        
+        protected final void startWrap(final Player player) {
+            hv = 0;
+            startStateIndefinite(STATE_WRAP, getCurrentWrap());
+            player.startWrapped(this);
+        }
+        
+        @Override
+        public final void endWrap(final Player player) {
+            startSand();
         }
         
         protected final void startUnmorph() {
@@ -2403,12 +2433,26 @@ public abstract class Boss extends Enemy {
             return (sand = getDroughtImage(sand, "droughtbot/DroughtBotSand"));
         }
         
+        protected final static Panmage getWrap(final int i) {
+            Panmage image = wraps[i];
+            if (image != null) {
+                return image;
+            }
+            image = getImage(null, "droughtbot/DroughtBotWrap" + (i + 1), BotsnBoltsGame.oj, BotsnBoltsGame.ng, BotsnBoltsGame.xg);
+            wraps[i] = image;
+            return image;
+        }
+        
         protected final static Panmage getHold() {
             return (hold = getDroughtImage(hold, "droughtbot/DroughtBotHold"));
         }
         
         protected final static Panmage getLaunch() {
             return (launch = getDroughtImage(launch, "droughtbot/DroughtBotLaunch"));
+        }
+        
+        protected final static Panmage getCurrentWrap() {
+            return getWrap((Pangine.getEngine().getClock() % 12) < 3 ? 0 : 1);
         }
         
         protected final static Panmage getDroughtImage(final Panmage img, final String name) {

@@ -30,6 +30,22 @@ public interface SpecPanctor extends Pantity {
 	public Panple getBoundingMinimum();
 
     public Panple getBoundingMaximum();
+    
+    public boolean isVisible();
+
+    public void setVisible(final boolean vis);
+    
+    public int getRot();
+    
+    public void setRot(final int rot);
+    
+    public boolean isMirror();
+
+    public void setMirror(final boolean mirror);
+    
+    public boolean isFlip();
+
+    public void setFlip(final boolean flip);
 
 	public Pansplay getCurrentDisplay();
 

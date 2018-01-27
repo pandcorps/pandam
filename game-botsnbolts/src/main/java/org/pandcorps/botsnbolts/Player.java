@@ -88,6 +88,7 @@ public final class Player extends Chr {
     private long lastBubble = -1000;
     private long lastJump = -1000;
     private long lastLift = -1000;
+    private int wrappedJumps = 0;
     private boolean prevUnderwater = false;
     private boolean sanded = false;
     private int wallTimer = 0;
@@ -103,6 +104,7 @@ public final class Player extends Chr {
     private boolean grapplingAllowed = true;
     private final ImplPanple grapplingPosition = new ImplPanple();
     protected Carrier carrier = null;
+    private Wrapper wrapper = null;
     
     static {
         final Panple tmp = new ImplPanple(VEL_PROJECTILE, 0, 0);
@@ -382,6 +384,7 @@ public final class Player extends Chr {
     @Override
     protected final void onDestroy() {
         destroyGrapplingHook();
+        freeWrapper();
         super.onDestroy();
     }
     
@@ -475,7 +478,7 @@ public final class Player extends Chr {
         return Mathtil.randf(0.7f, 1.3f);
     }
     
-    private final boolean isInvincible() {
+    protected final boolean isInvincible() {
         return isInvincible(true);
     }
     
@@ -686,6 +689,11 @@ public final class Player extends Chr {
     @Override
     protected final void onStepEnd() {
         hv = 0;
+        if (wrapper != null) {
+            final Panple pos = getPosition();
+            wrapper.getPosition().set(pos.getX(), pos.getY());
+            wrapper.setMirror(isMirror());
+        }
     }
     
     @Override
@@ -893,13 +901,31 @@ public final class Player extends Chr {
         destroyGrapplingHook();
         carrier.carried = this;
         this.carrier = carrier;
-        stateHandler = Player.CARRIED_HANDLER;
+        stateHandler = CARRIED_HANDLER;
     }
     
     private final void endCarried() {
         stateHandler = NORMAL_HANDLER;
         carrier.carried = null;
         carrier = null;
+    }
+    
+    protected final void startWrapped(final Wrapper wrapper) {
+        changeView(pi.hurt);
+        this.wrapper = wrapper;
+        stateHandler = WRAPPED_HANDLER;
+        wrappedJumps = 0;
+    }
+    
+    private final void endWrapped() {
+        stateHandler = NORMAL_HANDLER;
+        lastFrozen = Pangine.getEngine().getClock() - FROZEN_TIME + 1;
+        freeWrapper();
+    }
+    
+    private final void freeWrapper() {
+        wrapper.endWrap(this);
+        wrapper = null;
     }
     
     @Override
@@ -1464,6 +1490,46 @@ public final class Player extends Chr {
         }
     };
     
+    protected final static StateHandler WRAPPED_HANDLER = new StateHandler() {
+        @Override
+        protected final void onJump(final Player player) {
+            player.wrappedJumps++;
+            if (player.wrappedJumps >= 5) {
+                player.endWrapped();
+                player.onJumpNormal();
+            }
+        }
+
+        @Override
+        protected final void onShootStart(final Player player) {
+        }
+
+        @Override
+        protected final void onShooting(final Player player) {
+        }
+
+        @Override
+        protected final void onShootEnd(final Player player) {
+        }
+
+        @Override
+        protected final void onRight(final Player player) {
+        }
+
+        @Override
+        protected final void onLeft(final Player player) {
+        }
+
+        @Override
+        protected final void onGrounded(final Player player) {
+        }
+
+        @Override
+        protected final boolean onAir(final Player player) {
+            return player.onAirNormal();
+        }
+    };
+    
     protected abstract static class ShootMode {
         protected final int delay;
         
@@ -1909,5 +1975,9 @@ public final class Player extends Chr {
         public final void onAllOob(final AllOobEvent event) {
             destroy();
         }
+    }
+    
+    protected static interface Wrapper extends SpecPanctor {
+        public void endWrap(final Player player);
     }
 }

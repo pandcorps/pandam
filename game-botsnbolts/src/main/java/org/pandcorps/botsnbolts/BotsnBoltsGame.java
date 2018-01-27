@@ -88,8 +88,8 @@ public final class BotsnBoltsGame extends BaseGame {
     protected final static FinPanple2 MIN_8 = new FinPanple2(-3, -3);
     protected final static FinPanple2 MAX_8 = new FinPanple2(3, 3);
     
-    private final static FinPanple2 ng = GuyPlatform.getMin(Player.PLAYER_X);
-    private final static FinPanple2 xg = GuyPlatform.getMax(Player.PLAYER_X, Player.PLAYER_H);
+    protected final static FinPanple2 ng = GuyPlatform.getMin(Player.PLAYER_X);
+    protected final static FinPanple2 xg = GuyPlatform.getMax(Player.PLAYER_X, Player.PLAYER_H);
     protected final static FinPanple2 og = new FinPanple2(17, 1);
     protected final static FinPanple2 oj = new FinPanple2(17, 4);
     protected final static FinPanple2 oss = new FinPanple2(13, 1);
