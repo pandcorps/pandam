@@ -68,7 +68,13 @@ public final class ImplPanplementation extends Panplementation {
 	
 	@Override
 	public final void setRot(final int rot) {
-	    this.rot = rot;
+	    if (rot < 0) {
+	        this.rot = rot + 4;
+	    } else if (rot > 4) {
+	        this.rot = rot - 4;
+	    } else {
+	        this.rot = rot;
+	    }
 	}
 	
 	@Override
