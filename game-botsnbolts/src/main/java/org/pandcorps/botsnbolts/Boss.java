@@ -2356,8 +2356,13 @@ public abstract class Boss extends Enemy {
     private final static Panple SCYTHE_O = new FinPanple2(11, 16);
     private final static Panple SCYTHE_MIN = new FinPanple2(-1, 3);
     private final static Panple SCYTHE_MAX = new FinPanple2(-14, 12);
+    private final static Panple SCYTHE_SUB_O = new FinPanple2(1, 9);
+    private final static Panple SCYTHE_SUB_SIZE = new FinPanple2(3, 16);
     
     protected final static class Scythe extends EnemyProjectile {
+        private static Panmage grow = null;
+        private static Panmage grow1 = null;
+        private static Panmage grow2 = null;
         private static Panmage grow3 = null;
         private static Panmage grow4 = null;
         private static Panmage scythe1 = null;
@@ -2369,7 +2374,7 @@ public abstract class Boss extends Enemy {
         protected Scythe(final DroughtBot src) {
             super(src, -11, 16, 0, 0);
             this.src = src;
-            setView(getGrow3());
+            setView(getGrow1());
             setMirror(!src.isMirror());
             getPosition().setZ(BotsnBoltsGame.DEPTH_ENEMY_BACK);
         }
@@ -2387,10 +2392,14 @@ public abstract class Boss extends Enemy {
         
         private final void onHeld() {
             if (timer == 2) {
-                changeView(getGrow4());
+                changeView(getGrow2());
             } else if (timer == 4) {
+                changeView(getGrow3());
+            } else if (timer == 6) {
+                changeView(getGrow4());
+            } else if (timer == 8) {
                 changeView(getScythe1());
-            } else if (timer == 14) {
+            } else if (timer == 18) {
                 launch();
             }
         }
@@ -2418,6 +2427,26 @@ public abstract class Boss extends Enemy {
             timer = 0;
             launched = true;
             src.setView(DroughtBot.getLaunch());
+        }
+        
+        private final static Panmage getGrow() {
+            return (grow = getImage(grow, "droughtbot/ScytheGrow", null, null, null));
+        }
+        
+        private final static Panmage getGrow1() {
+            return (grow1 = getGrowSubImage(grow1, 1));
+        }
+        
+        private final static Panmage getGrow2() {
+            return (grow2 = getGrowSubImage(grow2, 12));
+        }
+        
+        private final static Panmage getGrowSubImage(Panmage img, final int x) {
+            if (img != null) {
+                return img;
+            }
+            final Panmage grow = getGrow();
+            return new SubPanmage("droughtbot/ScytheGrow." + x, SCYTHE_SUB_O, FinPanple.ORIGIN, FinPanple.ORIGIN, grow, x, 0, SCYTHE_SUB_SIZE);
         }
         
         private final static Panmage getGrow3() {
