@@ -2282,12 +2282,14 @@ public abstract class Boss extends Enemy {
     protected final static Panple DROUGHT_MAX = getMax(DROUGHT_OFF_X, DROUGHT_H);
     
     protected final static class DroughtBot extends Boss {
+        private final static int NUM_MORPHS = 7;
         protected final static byte STATE_MORPH = 1;
         protected final static byte STATE_SAND = 2;
         protected final static byte STATE_HOLD = 3;
+        protected final static int WAIT_MORPH = NUM_MORPHS * 2 - 1;
         protected final static int WAIT_HOLD = 60;
         protected static Panmage still = null;
-        protected final static Panmage[] morphs = new Panmage[7];
+        protected final static Panmage[] morphs = new Panmage[NUM_MORPHS];
         protected static Panmage sand = null;
         protected static Panmage hold = null;
         protected static Panmage launch = null;
@@ -2298,22 +2300,44 @@ public abstract class Boss extends Enemy {
         
         @Override
         protected final boolean onWaiting() {
-            if ((state == STATE_HOLD) && (waitTimer == (WAIT_HOLD - 1))) {
+            if (state == STATE_MORPH) {
+                onMorphing();
+            } else if ((state == STATE_HOLD) && (waitTimer == (WAIT_HOLD - 1))) {
                 new Scythe(this);
             }
             return false;
         }
         
+        private final void onMorphing() {
+            final int i = WAIT_MORPH - waitTimer;
+            if ((i % 2) == 0) {
+                changeView(getMorph(i / 2));
+            }
+        }
+        
         @Override
         protected final boolean pickState() {
-            startHold();
+            startMorph();
+            //startHold();
             return false;
         }
 
         @Override
         protected final boolean continueState() {
-            startStill();
+            if (state == STATE_MORPH) {
+                startSand();
+            } else {
+                startStill();
+            }
             return false;
+        }
+        
+        protected final void startMorph() {
+            startState(STATE_MORPH, WAIT_MORPH, getMorph(0));
+        }
+        
+        protected final void startSand() {
+            startStateIndefinite(STATE_SAND, getSand());
         }
         
         protected final void startHold() {
