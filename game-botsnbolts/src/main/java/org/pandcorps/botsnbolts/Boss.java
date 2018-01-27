@@ -2284,16 +2284,29 @@ public abstract class Boss extends Enemy {
     protected final static class DroughtBot extends Boss {
         protected final static byte STATE_MORPH = 1;
         protected final static byte STATE_SAND = 2;
+        protected final static byte STATE_HOLD = 3;
+        protected final static int WAIT_HOLD = 60;
         protected static Panmage still = null;
         protected final static Panmage[] morphs = new Panmage[7];
         protected static Panmage sand = null;
+        protected static Panmage hold = null;
+        protected static Panmage launch = null;
         
         protected DroughtBot(final int x, final int y) {
             super(DROUGHT_OFF_X, DROUGHT_H, x, y);
         }
         
         @Override
+        protected final boolean onWaiting() {
+            if ((state == STATE_HOLD) && (waitTimer == (WAIT_HOLD - 1))) {
+                new Scythe(this);
+            }
+            return false;
+        }
+        
+        @Override
         protected final boolean pickState() {
+            startHold();
             return false;
         }
 
@@ -2301,6 +2314,10 @@ public abstract class Boss extends Enemy {
         protected final boolean continueState() {
             startStill();
             return false;
+        }
+        
+        protected final void startHold() {
+            startState(STATE_HOLD, WAIT_HOLD, getHold());
         }
 
         @Override
@@ -2323,8 +2340,111 @@ public abstract class Boss extends Enemy {
             return (sand = getDroughtImage(sand, "droughtbot/DroughtBotSand"));
         }
         
+        protected final static Panmage getHold() {
+            return (hold = getDroughtImage(hold, "droughtbot/DroughtBotHold"));
+        }
+        
+        protected final static Panmage getLaunch() {
+            return (launch = getDroughtImage(launch, "droughtbot/DroughtBotLaunch"));
+        }
+        
         protected final static Panmage getDroughtImage(final Panmage img, final String name) {
             return getImage(img, name, DROUGHT_O, DROUGHT_MIN, DROUGHT_MAX);
+        }
+    }
+    
+    private final static Panple SCYTHE_O = new FinPanple2(11, 16);
+    private final static Panple SCYTHE_MIN = new FinPanple2(-1, 3);
+    private final static Panple SCYTHE_MAX = new FinPanple2(-14, 12);
+    
+    protected final static class Scythe extends EnemyProjectile {
+        private static Panmage grow3 = null;
+        private static Panmage grow4 = null;
+        private static Panmage scythe1 = null;
+        private static Panmage scythe2 = null;
+        private final DroughtBot src;
+        private int timer = 0;
+        private boolean launched = false;
+        
+        protected Scythe(final DroughtBot src) {
+            super(src, -11, 16, 0, 0);
+            this.src = src;
+            setView(getGrow3());
+            setMirror(!src.isMirror());
+            getPosition().setZ(BotsnBoltsGame.DEPTH_ENEMY_BACK);
+        }
+        
+        @Override
+        public final void onStep(final StepEvent event) {
+            super.onStep(event);
+            timer++;
+            if (launched) {
+                onLaunched();
+            } else {
+                onHeld();
+            }
+        }
+        
+        private final void onHeld() {
+            if (timer == 2) {
+                changeView(getGrow4());
+            } else if (timer == 4) {
+                changeView(getScythe1());
+            } else if (timer == 14) {
+                launch();
+            }
+        }
+        
+        private final void onLaunched() {
+            final int f = timer % 4;
+            if (f == 0) {
+                changeView(getScythe2());
+            } else if (f == 2) {
+                changeView(getScythe1());
+                setRot(getRot() - 1);
+            }
+            if (timer >= 16) {
+                timer = 0;
+            }
+        }
+        
+        private final void launch() {
+            setMirror(!isMirror());
+            final Panple pos = getPosition();
+            pos.setZ(BotsnBoltsGame.DEPTH_PROJECTILE);
+            final int mm = getMirrorMultiplier();
+            pos.addX(12 * mm);
+            getVelocity().setX(6 * mm);
+            timer = 0;
+            launched = true;
+            src.setView(DroughtBot.getLaunch());
+        }
+        
+        private final static Panmage getGrow3() {
+            return (grow3 = getScytheImage(grow3, "droughtbot/ScytheGrow3"));
+        }
+        
+        private final static Panmage getGrow4() {
+            return (grow4 = getScytheImage(grow4, "droughtbot/ScytheGrow4"));
+        }
+        
+        private final static Panmage getScythe1() {
+            return (scythe1 = getScytheImage(scythe1, "droughtbot/Scythe1"));
+        }
+        
+        private final static Panmage getScythe2() {
+            if (scythe2 != null) {
+                return scythe2;
+            }
+            return (scythe2 = getScytheImage(scythe2, "droughtbot/Scythe2", new FinPanple2(6, -10), new FinPanple2(17, 10)));
+        }
+        
+        private final static Panmage getScytheImage(final Panmage img, final String name) {
+            return getScytheImage(img, name, SCYTHE_MIN, SCYTHE_MAX);
+        }
+        
+        private final static Panmage getScytheImage(final Panmage img, final String name, final Panple min, final Panple max) {
+            return getImage(img, name, SCYTHE_O, min, max);
         }
     }
     
