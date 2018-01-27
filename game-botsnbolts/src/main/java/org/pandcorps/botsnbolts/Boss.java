@@ -174,6 +174,30 @@ public abstract class Boss extends Enemy {
         return -1;
     }
     
+    protected final int getX() {
+        return Math.round(getPosition().getX());
+    }
+    
+    protected final int getMirroredX(final int x) {
+        return BotsnBoltsGame.GAME_W - x - 1;
+    }
+    
+    protected final boolean addBoundedX(final int xLeft, final int xRight) {
+        addX(hv);
+        final Panple pos = getPosition();
+        final int x = Math.round(pos.getX());
+        if (hv < 0) {
+            if (x <= xLeft) {
+                pos.setX(xLeft);
+                return false;
+            }
+        } else if (x >= xRight) {
+            pos.setX(xRight);
+            return false;
+        }
+        return true;
+    }
+    
     protected void startStill() {
         startStill(Mathtil.randi(15, 30));
     }
@@ -1901,11 +1925,7 @@ public abstract class Boss extends Enemy {
             super(FLOOD_OFF_X, FLOOD_H, x, y);
             valve = new Valve(this);
             xRight = getX();
-            xLeft = BotsnBoltsGame.GAME_W - xRight - 1;
-        }
-        
-        private final int getX() {
-            return Math.round(getPosition().getX());
+            xLeft = getMirroredX(xRight);
         }
         
         @Override
@@ -1994,16 +2014,7 @@ public abstract class Boss extends Enemy {
         
         protected final void onSwimming() {
             changeView(getCurrentSwim());
-            addX(hv);
-            final Panple pos = getPosition();
-            final int x = Math.round(pos.getX());
-            if (hv < 0) {
-                if (x <= xLeft) {
-                    pos.setX(xLeft);
-                    endSwim();
-                }
-            } else if (x >= xRight) {
-                pos.setX(xRight);
+            if (!addBoundedX(xLeft, xRight)) {
                 endSwim();
             }
         }
@@ -2285,7 +2296,8 @@ public abstract class Boss extends Enemy {
         private final static int NUM_MORPHS = 7;
         protected final static byte STATE_MORPH = 1;
         protected final static byte STATE_SAND = 2;
-        protected final static byte STATE_HOLD = 3;
+        protected final static byte STATE_UNMORPH = 3;
+        protected final static byte STATE_HOLD = 4;
         protected final static int WAIT_MORPH = NUM_MORPHS * 2 - 1;
         protected final static int WAIT_HOLD = 60;
         protected static Panmage still = null;
@@ -2293,26 +2305,47 @@ public abstract class Boss extends Enemy {
         protected static Panmage sand = null;
         protected static Panmage hold = null;
         protected static Panmage launch = null;
+        private final int xRight;
+        private final int xLeft;
         
         protected DroughtBot(final int x, final int y) {
             super(DROUGHT_OFF_X, DROUGHT_H, x, y);
+            xRight = getX();
+            xLeft = getMirroredX(xRight);
         }
         
         @Override
         protected final boolean onWaiting() {
-            if (state == STATE_MORPH) {
-                onMorphing();
+            if (state == STATE_SAND) {
+                return onSanding();
+            } else if (state == STATE_MORPH) {
+                onMorphing(true);
+            } else if (state == STATE_UNMORPH) {
+                onMorphing(false);
             } else if ((state == STATE_HOLD) && (waitTimer == (WAIT_HOLD - 1))) {
                 new Scythe(this);
             }
             return false;
         }
         
-        private final void onMorphing() {
+        private final void onMorphing(final boolean morphingToSand) {
             final int i = WAIT_MORPH - waitTimer;
             if ((i % 2) == 0) {
-                changeView(getMorph(i / 2));
+                final int num = morphingToSand ? i : waitTimer;
+                changeView(getMorph(num / 2));
             }
+        }
+        
+        private final boolean onSanding() {
+            if (!addBoundedX(xLeft, xRight)) {
+                setMirror(!isMirror());
+                if (Mathtil.rand()) {
+                    hv *= -1;
+                } else {
+                    startUnmorph();
+                }
+            }
+            return true;
         }
         
         @Override
@@ -2338,6 +2371,12 @@ public abstract class Boss extends Enemy {
         
         protected final void startSand() {
             startStateIndefinite(STATE_SAND, getSand());
+            hv = getMirrorMultiplier() * 6;
+        }
+        
+        protected final void startUnmorph() {
+            hv = 0;
+            startState(STATE_UNMORPH, WAIT_MORPH, getMorph(NUM_MORPHS - 1));
         }
         
         protected final void startHold() {
