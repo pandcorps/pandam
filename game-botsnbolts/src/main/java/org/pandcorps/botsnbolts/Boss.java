@@ -2293,6 +2293,7 @@ public abstract class Boss extends Enemy {
     protected final static Panple DROUGHT_O = new FinPanple2(14, 1);
     protected final static Panple DROUGHT_MIN = getMin(DROUGHT_OFF_X);
     protected final static Panple DROUGHT_MAX = getMax(DROUGHT_OFF_X, DROUGHT_H);
+    protected final static Panple DROUGHT_SAND_MAX = getMax(DROUGHT_OFF_X, 4);
     
     protected final static class DroughtBot extends Boss implements Wrapper {
         private final static int NUM_MORPHS = 7;
@@ -2423,14 +2424,14 @@ public abstract class Boss extends Enemy {
             if (image != null) {
                 return image;
             }
-            //TODO At i=5 (Morph6.png), start changing bounding box at this point, or don't allow to be hit while morphing (or to hurt Player)
-            image = getDroughtImage(null, "droughtbot/DroughtBotMorph" + (i + 1));
+            final Panple max = (i >= 5) ? DROUGHT_SAND_MAX : DROUGHT_MAX;
+            image = getDroughtImage(null, "droughtbot/DroughtBotMorph" + (i + 1), max);
             morphs[i] = image;
             return image;
         }
         
         protected final static Panmage getSand() {
-            return (sand = getDroughtImage(sand, "droughtbot/DroughtBotSand"));
+            return (sand = getDroughtImage(sand, "droughtbot/DroughtBotSand", DROUGHT_SAND_MAX));
         }
         
         protected final static Panmage getWrap(final int i) {
@@ -2455,8 +2456,12 @@ public abstract class Boss extends Enemy {
             return getWrap((Pangine.getEngine().getClock() % 12) < 3 ? 0 : 1);
         }
         
-        protected final static Panmage getDroughtImage(final Panmage img, final String name) {
-            return getImage(img, name, DROUGHT_O, DROUGHT_MIN, DROUGHT_MAX);
+        private final static Panmage getDroughtImage(final Panmage img, final String name) {
+            return getDroughtImage(img, name, DROUGHT_MAX);
+        }
+        
+        private final static Panmage getDroughtImage(final Panmage img, final String name, final Panple max) {
+            return getImage(img, name, DROUGHT_O, DROUGHT_MIN, max);
         }
     }
     

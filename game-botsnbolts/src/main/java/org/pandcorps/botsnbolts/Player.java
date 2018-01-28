@@ -689,6 +689,10 @@ public final class Player extends Chr {
     @Override
     protected final void onStepEnd() {
         hv = 0;
+        updateWrapper();
+    }
+    
+    private final void updateWrapper() {
         if (wrapper != null) {
             final Panple pos = getPosition();
             wrapper.getPosition().set(pos.getX(), pos.getY());
@@ -913,6 +917,7 @@ public final class Player extends Chr {
     protected final void startWrapped(final Wrapper wrapper) {
         changeView(pi.hurt);
         this.wrapper = wrapper;
+        updateWrapper();
         stateHandler = WRAPPED_HANDLER;
         wrappedJumps = 0;
     }
