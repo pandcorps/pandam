@@ -24,9 +24,10 @@ package org.pandcorps.pandam.impl;
 
 import org.pandcorps.core.*;
 import org.pandcorps.core.seg.*;
+import org.pandcorps.pandam.*;
 
 public final class FinPanple extends UnmodPanple {
-	public final static FinPanple ORIGIN = new FinPanple(0, 0, 0);
+	public final static Panple ORIGIN = new FinPanple2(0, 0);
 
 	private final float x;
 	private final float y;
