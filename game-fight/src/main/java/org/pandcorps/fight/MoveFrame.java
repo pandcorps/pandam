@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2017, Andrew M. Martin
+Copyright (c) 2009-2018, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -38,7 +38,7 @@ public final class MoveFrame {
     That would also be good for lobbing projectiles.
     Could treat y-value in velocity as origin change instead of position change.
     */
-    /*package*/ final FinPanple velocity;
+    /*package*/ final Panple velocity;
     /*package*/ final Panmage trail;
     /*package*/ final Emitter[] emitters;
     
@@ -46,7 +46,7 @@ public final class MoveFrame {
         this(pframe, velocity, null, emitters);
     }
     
-    public MoveFrame(final Panframe pframe, final FinPanple velocity, final Panmage trail, final Emitter... emitters) {
+    public MoveFrame(final Panframe pframe, final Panple velocity, final Panmage trail, final Emitter... emitters) {
         this.pframe = pframe;
         this.velocity = velocity == null ? FinPanple.ORIGIN : velocity;
         this.trail = trail;

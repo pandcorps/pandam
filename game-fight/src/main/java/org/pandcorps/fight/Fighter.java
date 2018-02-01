@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2017, Andrew M. Martin
+Copyright (c) 2009-2018, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -27,7 +27,6 @@ import org.pandcorps.core.col.*;
 import org.pandcorps.game.actor.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
-import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.text.*;
 
 public final class Fighter extends Guy2 implements CollisionListener, AnimationEndListener {
@@ -358,7 +357,7 @@ public final class Fighter extends Guy2 implements CollisionListener, AnimationE
         change along with an animation frame change.
         For that we would need to do the position change after the exit check.
         */
-        final FinPanple vel = mframe.velocity;
+        final Panple vel = mframe.velocity;
         //pos.add(vel.getX() * mult, vel.getY(), vel.getZ()); // Ignores boundaries, Z would be clobbered anyway
         dx = vel.getX() * tmult;
         dy = vel.getY();
