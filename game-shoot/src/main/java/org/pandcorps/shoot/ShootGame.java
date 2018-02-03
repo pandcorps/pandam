@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2017, Andrew M. Martin
+Copyright (c) 2009-2018, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -72,7 +72,7 @@ public class ShootGame extends Guy2Game {
 	/*package*/ static Panroom room = null;
 	/*package*/ static Panlayer hud = null;
 	/*package*/ static Shooter shooter = null;
-	/*package*/ final static FinPanple min = FinPanple.ORIGIN;
+	/*package*/ final static Panple min = FinPanple.ORIGIN;
 	/*package*/ static FinPanple2 max = null;
 	/*package*/ static Panimation smokeBigAnm = null;
 	/*package*/ static Panimation flameLoopAnm = null;
