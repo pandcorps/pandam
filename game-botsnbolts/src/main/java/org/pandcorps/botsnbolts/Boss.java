@@ -2411,10 +2411,10 @@ public abstract class Boss extends Enemy {
                     tex = new Pantexture(getLight());
                     addActor(tex);
                 } else {
-                    tex.setVisible(true);
                     tex.setImage(getLight());
+                    tex.setVisible(true);
                 }
-                final int i0 = i - 5, i16 = (i0) * 16, i32 = i16 * 2;
+                final int i0 = i - 5, i16 = i0 * 16, i32 = i16 * 2;
                 final int z = (i0 < 8) ? BotsnBoltsGame.DEPTH_ENEMY_BACK : BotsnBoltsGame.DEPTH_OVERLAY;
                 tex.getPosition().set(160 - i16, 112 - i16, z);
                 final int s = 64 + i32;
@@ -2446,9 +2446,14 @@ public abstract class Boss extends Enemy {
         
         @Override
         protected final boolean pickState() {
-            //startMorph();
-            //startHold();
-            startJump();
+            final int r = Mathtil.randi(0, 2999);
+            if (r < 1000) {
+                startMorph();
+            } else if (r < 2000) {
+                startHold();
+            } else {
+                startJump();
+            }
             return false;
         }
 
@@ -2502,8 +2507,6 @@ public abstract class Boss extends Enemy {
         }
         
         protected final void startJump(final float v) {
-            //startJump(STATE_JUMP, getJump(), 12.6f, 7 * getMirrorMultiplier());
-            //startJump(STATE_JUMP, getJump(), 11.7f, 8 * getMirrorMultiplier());
             startJump(STATE_JUMP, getJump(), v, 8 * getMirrorMultiplier());
         }
         
@@ -2632,9 +2635,9 @@ public abstract class Boss extends Enemy {
                 changeView(getGrow3());
             } else if (timer == 6) {
                 changeView(getGrow4());
-            } else if (timer == 8) {
+            } else if (timer == 16) {
                 changeView(getScythe1());
-            } else if (timer == 18) {
+            } else if (timer == 26) {
                 launch();
             }
         }
