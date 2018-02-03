@@ -730,18 +730,16 @@ public final class Player extends Chr {
             running = false;
         } else {
             blinkTimer = 0;
-            if (wallTimer > 0 && set.crouch != null && !RoomChanger.isChanging()) { //TODO && room for ball
-                if (wallMirror == isMirror()) {
-                    wallTimer++;
-                    if (wallTimer > 6) {
-                        startBall();
-                    } else if (wallTimer > 3) {
-                        changeView(set.crouch[1]);
-                    } else {
-                        changeView(set.crouch[0]);
-                    }
-                    return;
+            if (wallTimer > 0 && set.crouch != null && !RoomChanger.isChanging() && wallMirror == isMirror() && isBallAvailable() && isRoomForBall()) {
+                wallTimer++;
+                if (wallTimer > 6) {
+                    startBall();
+                } else if (wallTimer > 3) {
+                    changeView(set.crouch[1]);
+                } else {
+                    changeView(set.crouch[0]);
                 }
+                return;
             }
             wallTimer = 0;
             final boolean wasRunning = running;
@@ -778,8 +776,20 @@ public final class Player extends Chr {
         }
     }
     
+    private final boolean isRoomForBall() {
+        final TileMap tm = BotsnBoltsGame.tm;
+        final int currIndex = tm.getContainer(this);
+        final int neighborIndex = tm.getNeighbor(currIndex, isMirror() ? Direction.West : Direction.East);
+        final byte b = Tile.getBehavior(tm.getTile(neighborIndex));
+        return !isAnySolidBehavior(b);
+    }
+    
+    private final boolean isBallAvailable() {
+        return isUpgradeAvailable(Profile.UPGRADE_BALL);
+    }
+    
     private final void startBall() {
-        if (!isUpgradeAvailable(Profile.UPGRADE_BALL)) {
+        if (!isBallAvailable()) {
             return;
         }
         clearRun();
