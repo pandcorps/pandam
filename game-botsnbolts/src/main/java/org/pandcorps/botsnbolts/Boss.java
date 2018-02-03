@@ -222,8 +222,40 @@ public abstract class Boss extends Enemy {
     
     protected abstract Panmage getStill();
     
+    @Override
+    protected final void onEnemyDestroy() {
+        if (!isOtherBossPresent()) {
+            destroyEnemies();
+        }
+    }
+    
+    protected final boolean isOtherBossPresent() {
+        for (final Panctor actor : getActors()) {
+            if ((actor != this) && (actor instanceof Boss)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    protected final static void destroyEnemies() {
+        for (final Panctor actor : getActors()) {
+            if (((actor instanceof Enemy) && !(actor instanceof Boss)) || (actor instanceof EnemyProjectile)) {
+                actor.destroy();
+            }
+        }
+    }
+    
     protected final static void addActor(final Panctor actor) {
-        BotsnBoltsGame.tm.getLayer().addActor(actor);
+        getLayerRequired().addActor(actor);
+    }
+    
+    protected final static Panlayer getLayerRequired() {
+        return BotsnBoltsGame.tm.getLayer();
+    }
+    
+    protected final static Set<Panctor> getActors() {
+        return getLayerRequired().getActors();
     }
     
     protected final static int VOLCANO_OFF_X = 20, VOLCANO_H = 40;
