@@ -31,6 +31,7 @@ import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.boundary.*;
 import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.tile.*;
+import org.pandcorps.pandax.visual.*;
 
 public abstract class Boss extends Enemy {
     protected final static String RES_BOSS = BotsnBoltsGame.RES + "boss/";
@@ -220,6 +221,10 @@ public abstract class Boss extends Enemy {
     }
     
     protected abstract Panmage getStill();
+    
+    protected final static void addActor(final Panctor actor) {
+        BotsnBoltsGame.tm.getLayer().addActor(actor);
+    }
     
     protected final static int VOLCANO_OFF_X = 20, VOLCANO_H = 40;
     protected final static Panple VOLCANO_O = new FinPanple2(26, 1);
@@ -2237,7 +2242,7 @@ public abstract class Boss extends Enemy {
         protected Valve(final FloodBot src) {
             setView(getValveImage());
             getPosition().set(BASE_X, BASE_Y, BotsnBoltsGame.DEPTH_BETWEEN);
-            BotsnBoltsGame.tm.getLayer().addActor(this);
+            addActor(this);
         }
         
         @Override
@@ -2302,21 +2307,54 @@ public abstract class Boss extends Enemy {
         protected final static byte STATE_WRAP = 3;
         protected final static byte STATE_UNMORPH = 4;
         protected final static byte STATE_HOLD = 5;
+        protected final static byte STATE_JUMP = 6;
+        protected final static byte STATE_FLARE = 7;
+        protected final static byte STATE_FADE = 8;
         protected final static int WAIT_MORPH = NUM_MORPHS * 2 - 1;
         protected final static int WAIT_HOLD = 60;
+        protected final static int WAIT_FLARE = 30;
+        protected final static int WAIT_FADE = 30;
         protected static Panmage still = null;
         protected final static Panmage[] morphs = new Panmage[NUM_MORPHS];
         protected static Panmage sand = null;
         protected final static Panmage[] wraps = new Panmage[2];
         protected static Panmage hold = null;
         protected static Panmage launch = null;
+        protected static Panmage jump = null;
+        protected static Panmage flare = null;
+        protected static Panmage light = null;
+        protected final static Panmage[] fades = new Panmage[3];
         private final int xRight;
         private final int xLeft;
+        private Pantexture tex = null;
         
         protected DroughtBot(final int x, final int y) {
             super(DROUGHT_OFF_X, DROUGHT_H, x, y);
             xRight = getX();
             xLeft = getMirroredX(xRight);
+        }
+        
+        @Override
+        protected final boolean onBossLanded() {
+            if (Panctor.isVisible(tex)) {
+                startFade();
+                return true;
+            }
+            return false;
+        }
+        
+        @Override
+        protected final void onStepEnd() {
+            super.onStepEnd();
+            if (state == STATE_FADE && waitTimer == WAIT_FADE) {
+                final Panple pos = getPosition();
+                final float x = pos.getX();
+                if (Math.abs(x - xLeft) < 3.0f) {
+                    pos.setX(xLeft);
+                } else if (Math.abs(x - xRight) < 3.0f) {
+                    pos.setX(xRight);
+                }
+            }
         }
         
         @Override
@@ -2329,8 +2367,14 @@ public abstract class Boss extends Enemy {
                 onMorphing(false);
             } else if (state == STATE_WRAP) {
                 return onWrapping();
+            } else if (state == STATE_FLARE) {
+                return onFlaring();
+            } else if (state == STATE_FADE) {
+                onFading();
             } else if ((state == STATE_HOLD) && (waitTimer == (WAIT_HOLD - 1))) {
                 new Scythe(this);
+            } else if ((state == STATE_JUMP) && (Math.abs(getPosition().getX() + hv - 192.0f) < 4.0f)) {
+                startFlare();
             }
             return false;
         }
@@ -2360,6 +2404,38 @@ public abstract class Boss extends Enemy {
             return true;
         }
         
+        private final boolean onFlaring() {
+            final int i = WAIT_FLARE - waitTimer;
+            if ((i > 4) && (i < 16)) {
+                if (tex == null) {
+                    tex = new Pantexture(getLight());
+                    addActor(tex);
+                } else {
+                    tex.setVisible(true);
+                    tex.setImage(getLight());
+                }
+                final int i0 = i - 5, i16 = (i0) * 16, i32 = i16 * 2;
+                final int z = (i0 < 8) ? BotsnBoltsGame.DEPTH_ENEMY_BACK : BotsnBoltsGame.DEPTH_OVERLAY;
+                tex.getPosition().set(160 - i16, 112 - i16, z);
+                final int s = 64 + i32;
+                tex.setSize(s, s);
+            }
+            return true;
+        }
+        
+        private final void onFading() {
+            switch (waitTimer) {
+                case 10 :
+                case 7 :
+                case 4 :
+                    tex.setImage(getFade(2 - ((waitTimer - 4) / 3)));
+                    break;
+                case 1 :
+                    Panctor.setInvisible(tex);
+                    break;
+            }
+        }
+        
         @Override
         protected void onAttack(final Player player) {
             if ((state == STATE_SAND) && !player.isInvincible()) { // Check invincibility before hurting Player
@@ -2370,8 +2446,9 @@ public abstract class Boss extends Enemy {
         
         @Override
         protected final boolean pickState() {
-            startMorph();
+            //startMorph();
             //startHold();
+            startJump();
             return false;
         }
 
@@ -2379,6 +2456,8 @@ public abstract class Boss extends Enemy {
         protected final boolean continueState() {
             if (state == STATE_MORPH) {
                 startSand();
+            } else if (state == STATE_FLARE) {
+                finishJump();
             } else {
                 startStill();
             }
@@ -2412,6 +2491,28 @@ public abstract class Boss extends Enemy {
         
         protected final void startHold() {
             startState(STATE_HOLD, WAIT_HOLD, getHold());
+        }
+        
+        protected final void startJump() {
+            startJump(11.7f);
+        }
+        
+        protected final void finishJump() {
+            startJump(v);
+        }
+        
+        protected final void startJump(final float v) {
+            //startJump(STATE_JUMP, getJump(), 12.6f, 7 * getMirrorMultiplier());
+            //startJump(STATE_JUMP, getJump(), 11.7f, 8 * getMirrorMultiplier());
+            startJump(STATE_JUMP, getJump(), v, 8 * getMirrorMultiplier());
+        }
+        
+        protected final void startFlare() {
+            startState(STATE_FLARE, WAIT_FLARE, getFlare());
+        }
+        
+        protected final void startFade() {
+            startState(STATE_FADE, WAIT_FADE, getStill());
         }
 
         @Override
@@ -2450,6 +2551,28 @@ public abstract class Boss extends Enemy {
         
         protected final static Panmage getLaunch() {
             return (launch = getDroughtImage(launch, "droughtbot/DroughtBotLaunch"));
+        }
+        
+        protected final static Panmage getJump() {
+            return (jump = getDroughtImage(jump, "droughtbot/DroughtBotJump"));
+        }
+        
+        protected final static Panmage getFlare() {
+            return (flare = getDroughtImage(flare, "droughtbot/DroughtBotFlare"));
+        }
+        
+        protected final static Panmage getLight() {
+            return (light = getImage(light, "droughtbot/Light", null, null, null));
+        }
+        
+        protected final static Panmage getFade(final int i) {
+            Panmage image = fades[i];
+            if (image != null) {
+                return image;
+            }
+            image = getImage(null, "droughtbot/Fade" + (i + 1), null, null, null);
+            fades[i] = image;
+            return image;
         }
         
         protected final static Panmage getCurrentWrap() {
