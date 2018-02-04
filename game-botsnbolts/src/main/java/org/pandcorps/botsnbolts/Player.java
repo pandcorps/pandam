@@ -351,14 +351,15 @@ public final class Player extends Chr {
         return burst(src, BotsnBoltsGame.puff, offX, offY, BotsnBoltsGame.DEPTH_BURST);
     }
     
-    protected final BurstFollower burst(final Panimation anm, final int offX, final int offY, final int z) {
+    private final BurstFollower burst(final Panimation anm, final int offX, final int offY, final int z) {
         return burst(this, anm, offX, offY, z);
     }
     
-    protected final static BurstFollower burst(final Panctor src, final Panimation anm, final int offX, final int offY, final int z) {
+    private final static BurstFollower burst(final Panctor src, final Panimation anm, final int offX, final int offY, final int z) {
         final BurstFollower puff = new BurstFollower(anm, offX, offY);
         final Panple playerPos = src.getPosition();
         puff.getPosition().set(playerPos.getX() + offX, playerPos.getY() + offY, z);
+        puff.setMirror(src.isMirror());
         addActor(src, puff);
         return puff;
     }
@@ -706,6 +707,7 @@ public final class Player extends Chr {
     private final void updateFollowers() {
         if (Coltil.isValued(followers)) {
             final Panple pos = getPosition();
+            final float x = pos.getX(), y = pos.getY();
             final boolean mirror = isMirror();
             final Iterator<Follower> iter = followers.iterator();
             while (iter.hasNext()) {
@@ -714,7 +716,7 @@ public final class Player extends Chr {
                     iter.remove();
                     continue;
                 }
-                follower.getPosition().set(pos.getX() + follower.getOffsetX(), pos.getY() + follower.getOffsetY());
+                follower.getPosition().set(x + follower.getOffsetX(), y + follower.getOffsetY());
                 follower.setMirror(mirror);
             }
         }
