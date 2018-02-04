@@ -105,6 +105,7 @@ public final class Player extends Chr {
     private final ImplPanple grapplingPosition = new ImplPanple();
     protected Carrier carrier = null;
     private Wrapper wrapper = null;
+    private List<Follower> followers = null;
     
     static {
         final Panple tmp = new ImplPanple(VEL_PROJECTILE, 0, 0);
@@ -325,7 +326,7 @@ public final class Player extends Chr {
         if (health <= 0) {
             defeat();
         } else {
-            burst(BotsnBoltsGame.flash, 0, CENTER_Y, BotsnBoltsGame.DEPTH_POWER_UP);
+            addFollower(burst(BotsnBoltsGame.flash, 0, CENTER_Y, BotsnBoltsGame.DEPTH_POWER_UP));
             puff(-12, 25);
             puff(0, 30);
             puff(12, 25);
@@ -342,23 +343,24 @@ public final class Player extends Chr {
         return true;
     }
     
-    protected final void puff(final int offX, final int offY) {
-        puff(this, offX, offY);
+    private final void puff(final int offX, final int offY) {
+        addFollower(puff(this, offX, offY));
     }
     
-    protected final static void puff(final Panctor src, final int offX, final int offY) {
-        burst(src, BotsnBoltsGame.puff, offX, offY, BotsnBoltsGame.DEPTH_BURST);
+    protected final static BurstFollower puff(final Panctor src, final int offX, final int offY) {
+        return burst(src, BotsnBoltsGame.puff, offX, offY, BotsnBoltsGame.DEPTH_BURST);
     }
     
-    protected final void burst(final Panimation anm, final int offX, final int offY, final int z) {
-        burst(this, anm, offX, offY, z);
+    protected final BurstFollower burst(final Panimation anm, final int offX, final int offY, final int z) {
+        return burst(this, anm, offX, offY, z);
     }
     
-    protected final static void burst(final Panctor src, final Panimation anm, final int offX, final int offY, final int z) {
-        final Burst puff = new Burst(anm);
+    protected final static BurstFollower burst(final Panctor src, final Panimation anm, final int offX, final int offY, final int z) {
+        final BurstFollower puff = new BurstFollower(anm, offX, offY);
         final Panple playerPos = src.getPosition();
         puff.getPosition().set(playerPos.getX() + offX, playerPos.getY() + offY, z);
         addActor(src, puff);
+        return puff;
     }
     
     protected final void defeat() {
@@ -690,6 +692,7 @@ public final class Player extends Chr {
     protected final void onStepEnd() {
         hv = 0;
         updateWrapper();
+        updateFollowers();
     }
     
     private final void updateWrapper() {
@@ -698,6 +701,27 @@ public final class Player extends Chr {
             wrapper.getPosition().set(pos.getX(), pos.getY());
             wrapper.setMirror(isMirror());
         }
+    }
+    
+    private final void updateFollowers() {
+        if (Coltil.isValued(followers)) {
+            final Panple pos = getPosition();
+            final boolean mirror = isMirror();
+            final Iterator<Follower> iter = followers.iterator();
+            while (iter.hasNext()) {
+                final Follower follower = iter.next();
+                if (follower.isDestroyed()) {
+                    iter.remove();
+                    continue;
+                }
+                follower.getPosition().set(pos.getX() + follower.getOffsetX(), pos.getY() + follower.getOffsetY());
+                follower.setMirror(mirror);
+            }
+        }
+    }
+    
+    private final void addFollower(final Follower follower) {
+        followers = Coltil.add(followers, follower);
     }
     
     @Override
@@ -1994,5 +2018,32 @@ public final class Player extends Chr {
     
     protected static interface Wrapper extends SpecPanctor {
         public void endWrap(final Player player);
+    }
+    
+    protected static interface Follower extends SpecPanctor {
+        public int getOffsetX();
+        
+        public int getOffsetY();
+    }
+    
+    protected final static class BurstFollower extends Burst implements Follower {
+        private final int offsetX;
+        private final int offsetY;
+        
+        public BurstFollower(final Panimation anim, final int offsetX, final int offsetY) {
+            super(anim);
+            this.offsetX = offsetX;
+            this.offsetY = offsetY;
+        }
+        
+        @Override
+        public final int getOffsetX() {
+            return offsetX;
+        }
+        
+        @Override
+        public final int getOffsetY() {
+            return offsetY;
+        }
     }
 }
