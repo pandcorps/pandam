@@ -566,4 +566,8 @@ public class Panctor extends BasePantity implements SpecPanctor {
 			actor.setVisible(false);
 		}
 	}
+	
+	public final static boolean isVisible(final Panctor actor) {
+	    return (actor != null) && actor.isVisible();
+	}
 }
