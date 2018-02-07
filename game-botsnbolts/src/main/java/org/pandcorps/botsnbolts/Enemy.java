@@ -1066,11 +1066,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
             final int i = animTimer / FRAME_DURATION;
             Panmage img = drillImgs[i];
             if (img == null) {
-                final Panmage ref = BotsnBoltsGame.crawlEnemy.getFrames()[0].getImage();
-                final Panple o = ref.getOrigin();
-                final Panple min = ref.getBoundingMinimum();
-                final Panple max = ref.getBoundingMaximum();
-                img = getImage(null, "DrillEnemy" + (i + 1), o, min, max);
+                img = getImage(null, "DrillEnemy" + (i + 1), BotsnBoltsGame.crawlEnemy.getFrames()[0].getImage());
                 drillImgs[i] = img;
             } else {
                 getDirtShatter(); // Load the image if needed
@@ -1174,6 +1170,54 @@ public abstract class Enemy extends Chr implements CollisionListener {
                 dirtShatter = Pangine.getEngine().createImage("dirt.shatter", BotsnBoltsGame.CENTER_8, null, null, BotsnBoltsGame.RES + "misc/DirtShatter.png");
             }
             return dirtShatter;
+        }
+    }
+    
+    protected final static class SaucerEnemy extends Enemy {
+        private final static Panmage[] images = new Panmage[3];
+        
+        protected SaucerEnemy(final int x, final int y) {
+            super(PROP_OFF_X, CRAWL_H, x, y, PROP_HEALTH);
+            setView(getCurrentImage());
+            setMirror(true);
+            hv = -1;
+            v = -1;
+        }
+        
+        @Override
+        protected final boolean onStepCustom() {
+            changeView(getCurrentImage());
+            if (addX(hv) != X_NORMAL) {
+                hv *= -1;
+                setMirror(!isMirror());
+            }
+            if (addY(v) != Y_NORMAL) {
+                v *= -1;
+            }
+            return true;
+        }
+        
+        @Override
+        protected final void onLanded() {
+            // Skip parent logic of clearing v
+        }
+
+        @Override
+        protected final void award(final PowerUp powerUp) {
+        }
+        
+        private final static Panmage getImage(final int i) {
+            Panmage image = images[i];
+            if (image != null) {
+                return image;
+            }
+            image = getImage(image, "SaucerEnemy" + (i + 1), BotsnBoltsGame.crawlEnemy.getFrames()[0].getImage());
+            images[i] = image;
+            return image;
+        }
+        
+        private final static Panmage getCurrentImage() {
+            return getImage(((int) (Pangine.getEngine().getClock() % 9)) / 3);
         }
     }
     
