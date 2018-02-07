@@ -145,6 +145,10 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
     }
     
     protected final byte addX(final int v) {
+        return addX(v, false);
+    }
+    
+    protected final byte addX(final int v, final boolean adjustY) {
         if (v == 0) {
             setMirror(hv);
             return X_NORMAL; // No movement, but request was successful
@@ -175,12 +179,15 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
             if (isWall(offWall, 0)) {
                 if (isWall(offWall, 1)) {
                     return X_WALL;
+                } else if (adjustY) {
+                    pos.addY(1);
                 }
-                pos.addY(1);
                 down = false;
             }
             if (down && !isWall(offWall, -1) && isWall(offWall, -2)) {
-                pos.addY(-1);
+                if (adjustY) {
+                    pos.addY(-1);
+                }
             }
             pos.addX(mult);
         }
@@ -284,7 +291,7 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
             return;
         }
         
-        final byte xResult = addX(initCurrentHorizontalVelocity());
+        final byte xResult = addX(initCurrentHorizontalVelocity(), true);
         if (xResult != X_NORMAL) {
             onWall(xResult);
             chv = 0;
