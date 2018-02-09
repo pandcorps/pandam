@@ -1175,6 +1175,8 @@ public abstract class Enemy extends Chr implements CollisionListener {
     
     protected final static class SaucerEnemy extends Enemy {
         private final static Panmage[] images = new Panmage[3];
+        private final static int speedMultiplier = 3;
+        private int speedMultiplied = speedMultiplier;
         
         protected SaucerEnemy(final int x, final int y) {
             super(PROP_OFF_X, CRAWL_H, x, y, PROP_HEALTH);
@@ -1187,6 +1189,21 @@ public abstract class Enemy extends Chr implements CollisionListener {
         @Override
         protected final boolean onStepCustom() {
             changeView(getCurrentImage());
+            final long sinceLastShot = Pangine.getEngine().getClock() - Player.lastShotByAnyPlayer;
+            final int desiredSpeedMultiplied = ((sinceLastShot < 45) ? 4 : 1) * speedMultiplier;
+            if (speedMultiplied < desiredSpeedMultiplied) {
+                speedMultiplied++;
+            } else if (speedMultiplied > desiredSpeedMultiplied) {
+                speedMultiplied--;
+            }
+            final int speed = speedMultiplied / speedMultiplier;
+            for (int i = 0; i < speed; i++) {
+                move();
+            }
+            return true;
+        }
+        
+        private final void move() {
             if (addX(hv) != X_NORMAL) {
                 hv *= -1;
                 setMirror(!isMirror());
@@ -1194,7 +1211,6 @@ public abstract class Enemy extends Chr implements CollisionListener {
             if (addY(v) != Y_NORMAL) {
                 v *= -1;
             }
-            return true;
         }
         
         @Override

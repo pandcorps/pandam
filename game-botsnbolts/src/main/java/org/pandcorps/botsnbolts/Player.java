@@ -81,6 +81,7 @@ public final class Player extends Chr {
     private int runTimer = 0;
     private int blinkTimer = 0;
     private long lastShot = -1000;
+    protected static long lastShotByAnyPlayer = -1000;
     private long startCharge = -1000;
     private long lastCharge = -1000;
     private long lastHurt = -1000;
@@ -237,6 +238,12 @@ public final class Player extends Chr {
         if (isFree()) {
             stateHandler.onShootEnd(this);
         }
+    }
+    
+    private final void afterShoot(final long clock) {
+        lastShot = clock;
+        lastShotByAnyPlayer = clock;
+        blinkTimer = 0;
     }
     
     private final void right() {
@@ -1039,6 +1046,7 @@ public final class Player extends Chr {
         if (roomCell == null) {
             return false;
         }
+        lastShotByAnyPlayer = -1000;
         final BotRoom room = roomCell.room;
         final int nextX = (roomCell.cell.x - room.x) * BotsnBoltsGame.GAME_W;
         RoomLoader.clear();
@@ -1597,9 +1605,8 @@ public final class Player extends Chr {
         protected final void shoot(final Player player) {
             final long clock = Pangine.getEngine().getClock();
             if (clock - player.lastShot > delay) {
-                player.lastShot = clock;
+                player.afterShoot(clock);
                 createProjectile(player);
-                player.blinkTimer = 0;
             }
         }
         
@@ -1614,9 +1621,8 @@ public final class Player extends Chr {
         }
         
         protected final void shootSpecial(final Player player, final int power) {
-            player.lastShot = Pangine.getEngine().getClock();
+            player.afterShoot(Pangine.getEngine().getClock());
             new Projectile(player, VEL_PROJECTILE, 0, power);
-            player.blinkTimer = 0;
         }
     }
     
