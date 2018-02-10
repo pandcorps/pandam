@@ -1016,7 +1016,14 @@ public final class Player extends Chr {
         } else if (bossDoor.isOpening()) {
             return false;
         }
-        bossDoor.open(); //TODO Make sure Player is adjacent to it
+        final float doorX = bossDoor.getPosition().getX();
+        final float playerX = getPosition().getX();
+        if (doorX < playerX) {
+            return false;
+        } else if ((doorX - playerX) > 12.0f) {
+            return false;
+        }
+        bossDoor.open();
         return true;
     }
     

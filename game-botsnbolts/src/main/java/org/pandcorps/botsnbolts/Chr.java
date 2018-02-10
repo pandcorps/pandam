@@ -70,7 +70,7 @@ public abstract class Chr extends GuyPlatform {
     }
     
     protected final static boolean isAnySolidBehavior(final byte b) {
-        return (b == Tile.BEHAVIOR_SOLID) || isCustomSolidBehavior(b);
+        return (b == Tile.BEHAVIOR_SOLID) || (b == TILE_ICE) || isCustomSolidBehavior(b);
     }
     
     @Override
