@@ -972,6 +972,9 @@ public final class Player extends Chr {
     }
     
     private final void freeWrapper() {
+        if (wrapper == null) {
+            return;
+        }
         wrapper.endWrap(this);
         wrapper = null;
     }
@@ -1050,7 +1053,11 @@ public final class Player extends Chr {
         final BotRoom room = roomCell.room;
         final int nextX = (roomCell.cell.x - room.x) * BotsnBoltsGame.GAME_W;
         RoomLoader.clear();
-        new RoomChanger(nextX, 0, 10 * dirX, 10 * dirY, null, Arrays.asList(BotsnBoltsGame.hud), Arrays.asList(this, BotsnBoltsGame.tm), Arrays.asList(BotsnBoltsGame.tm)) {
+        final List<Panlayer> layersToKeepBeneath = Arrays.asList(BotsnBoltsGame.bgLayer);
+        final List<Panlayer> layersToKeepAbove = Arrays.asList(BotsnBoltsGame.hud);
+        final List<? extends Panctor> actorsToKeep = Arrays.asList(this, BotsnBoltsGame.tm); // Keep Player and old TileMap while scrolling
+        final List<? extends Panctor> actorsToDestroy = Arrays.asList(BotsnBoltsGame.tm); // Destroy old TileMap after scrolling
+        new RoomChanger(nextX, 0, 10 * dirX, 10 * dirY, layersToKeepBeneath, layersToKeepAbove, actorsToKeep, actorsToDestroy) {
             @Override
             protected final Panroom createRoom() {
                 return loadRoom(room);
