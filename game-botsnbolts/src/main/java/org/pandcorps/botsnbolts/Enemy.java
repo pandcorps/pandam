@@ -616,14 +616,22 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
     }
     
-    protected final static class WallCannon extends TileUnawareEnemy {
+    protected static class WallCannon extends TileUnawareEnemy {
         private final static int DURATION = 60;
         private int timer;
         
         protected WallCannon(final int x, final int y) {
             super(x, y, 3);
-            timer = ((y % 2) == 0) ? (DURATION / 2) : DURATION;
+            timer = isEarly(x, y) ? (DURATION / 2) : DURATION;
             setView(0);
+            initCannon(x, y);
+        }
+        
+        protected boolean isEarly(final int x, final int y) {
+            return (y % 2) == 0;
+        }
+        
+        protected void initCannon(final int x, final int y) {
             final Panple pos = getPosition();
             if (isSolidTile(x + 1, y)) {
                 setMirror(true);
@@ -649,12 +657,16 @@ public abstract class Enemy extends Chr implements CollisionListener {
             }
         }
         
-        private final void fire() {
+        protected void fire() {
             new EnemyProjectile(this, 12, 8, getMirrorMultiplier() * VEL_PROJECTILE, 0);
         }
         
         private final void setView(final int i) {
-            setView(BotsnBoltsGame.wallCannon[i]);
+            setView(getView(i));
+        }
+        
+        protected Panmage getView(final int i) {
+            return BotsnBoltsGame.wallCannon[i];
         }
 
         @Override
@@ -1942,6 +1954,49 @@ public abstract class Enemy extends Chr implements CollisionListener {
             img = getImage(img, "SwimEnemy" + (i + 1), BotsnBoltsGame.flamethrowerEnemy[0]);
             imgs[i] = img;
             return img;
+        }
+    }
+    
+    protected final static Panple FORT_CANNON_O = new FinPanple2(4, 0);
+    protected final static Panple FORT_CANNON_MIN = new FinPanple2(0, 4);
+    protected final static Panple FORT_CANNON_MAX = new FinPanple2(7, 12);
+    
+    protected final static class FortCannon extends WallCannon {
+        private final static Panmage[] images = new Panmage[5];
+        
+        protected FortCannon(final int x, final int y) {
+            super(x, y);
+        }
+        
+        @Override
+        protected final boolean isEarly(final int x, final int y) {
+            return x == 22;
+        }
+        
+        @Override
+        protected final void initCannon(final int x, final int y) {
+            setMirror(true);
+            getPosition().addX(6);
+        }
+        
+        @Override
+        protected final void fire() {
+            new EnemyProjectile(BotsnBoltsGame.getEnemyProjectile(), this, 7, 8, getMirrorMultiplier() * VEL_PROJECTILE, 0, gTuple);
+        }
+
+        @Override
+        protected final Panmage getView(final int i) {
+            return getFortCannonImage(i);
+        }
+        
+        protected final static Panmage getFortCannonImage(final int i) {
+            Panmage image = images[i];
+            if (image != null) {
+                return image;
+            }
+            image = Boss.getImage(null, "fort/FortCannon" + (i + 1), FORT_CANNON_O, FORT_CANNON_MIN, FORT_CANNON_MAX);
+            images[i] = image;
+            return image;
         }
     }
     

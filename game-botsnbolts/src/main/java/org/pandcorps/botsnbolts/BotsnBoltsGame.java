@@ -391,6 +391,7 @@ public final class BotsnBoltsGame extends BaseGame {
         flame4 = newSheet("flame.4.enemy", RES + "enemy/Flame4.png", 4);
         flame8 = newSheet("flame.8.enemy", RES + "enemy/Flame8.png", 8);
         flame16 = newAnimation("flame.16.enemy", RES + "enemy/Flame16.png", 16, propO, propMin, propMax, 3);
+        Boss.FortCannon.getFortCannonImage(0);
     }
     
     private final static Pancolor newColorIce() {

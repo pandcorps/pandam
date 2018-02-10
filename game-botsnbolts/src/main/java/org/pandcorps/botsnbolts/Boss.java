@@ -44,7 +44,7 @@ public abstract class Boss extends Enemy {
     private boolean jumping = false;
     protected int moves = -1;
     
-    protected Boss(int offX, int h, int x, int y) {
+    protected Boss(final int offX, final int h, final int x, final int y) {
         super(offX, h, x, y, HudMeter.MAX_VALUE);
         init();
         startStill();
@@ -55,7 +55,13 @@ public abstract class Boss extends Enemy {
     }
     
     private final void onFirstStep() {
-        addHealthMeter();
+        if (isHealthMeterNeeded()) {
+            addHealthMeter();
+        }
+    }
+    
+    protected boolean isHealthMeterNeeded() {
+        return true;
     }
     
     @Override
@@ -258,6 +264,49 @@ public abstract class Boss extends Enemy {
         return getLayerRequired().getActors();
     }
     
+    protected final static class Fort extends Boss {
+        private static Panmage still = null;
+        
+        protected Fort(final int x, final int y) {
+            super(0, 0, x, y);
+            setView(getStill());
+            setMirror(false);
+        }
+        
+        @Override
+        protected final int getInitialOffsetX() {
+            return 0;
+        }
+        
+        @Override
+        protected final boolean isHealthMeterNeeded() {
+            return false;
+        }
+        
+        @Override
+        protected final boolean onWaiting() {
+            return true;
+        }
+        
+        @Override
+        protected final boolean pickState() {
+            return false;
+        }
+
+        @Override
+        protected final boolean continueState() {
+            return false;
+        }
+
+        @Override
+        protected final Panmage getStill() {
+            if (still != null) {
+                return still;
+            }
+            return (still = getImage(still, "fort/FortPower", null, new FinPanple2(5, 5), new FinPanple2(26, 30)));
+        }
+    }
+    
     protected final static int VOLCANO_OFF_X = 20, VOLCANO_H = 40;
     protected final static Panple VOLCANO_O = new FinPanple2(26, 1);
     protected final static Panple VOLCANO_MIN = getMin(VOLCANO_OFF_X);
@@ -276,7 +325,7 @@ public abstract class Boss extends Enemy {
         
         protected float targetX = -1;
         
-        protected VolcanoBot(int x, int y) {
+        protected VolcanoBot(final int x, final int y) {
             super(VOLCANO_OFF_X, VOLCANO_H, x, y);
         }
         
@@ -481,7 +530,7 @@ public abstract class Boss extends Enemy {
         protected static Panmage slide2 = null;
         protected static Panmage trail = null;
         
-        protected HailBot(int x, int y) {
+        protected HailBot(final int x, final int y) {
             super(HAIL_OFF_X, HAIL_H, x, y);
         }
         
