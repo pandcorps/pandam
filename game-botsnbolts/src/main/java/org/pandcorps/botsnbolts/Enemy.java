@@ -1438,6 +1438,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
     }
     
     protected final static int HENCHBOT_OFF_X = 6, HENCHBOT_H = 21, HENCHBOT_HEALTH = 5;
+    protected final static int HENCHBOT_SHOOT_OFF_X = 14, HENCHBOT_SHOOT_OFF_Y = 11;
     
     protected abstract static class HenchbotEnemy extends JumpEnemy {
         private final Panmage[] imgs;
@@ -1529,16 +1530,20 @@ public abstract class Enemy extends Chr implements CollisionListener {
         
         @Override
         protected final void onShoot() {
-            final Player player = null;//getNearestPlayer();
+            final Player player = getNearestPlayer();
             final float vx, vy;
-            //if (player == null) {
+            if (player == null) {
                 vx = getMirrorMultiplier() * VEL_PROJECTILE;
                 vy = 0;
-            /*} else {
-                player.getPosition();
-                vx = vy = 0;
-            }*/
-            new EnemyProjectile(this, 13, 9, vx, vy);
+            } else {
+                scratch.set(getPosition());
+                scratch.add(getMirrorMultiplier() * HENCHBOT_SHOOT_OFF_X, HENCHBOT_SHOOT_OFF_Y);
+                Panple.subtract(scratch, player.getPosition(), scratch);
+                scratch.multiply((float) (VEL_PROJECTILE / scratch.getMagnitude2()));
+                vx = scratch.getX();
+                vy = scratch.getY();
+            }
+            new EnemyProjectile(this, HENCHBOT_SHOOT_OFF_X, HENCHBOT_SHOOT_OFF_Y, vx, vy);
             hold(30);
         }
     }
