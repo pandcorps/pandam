@@ -843,6 +843,13 @@ public abstract class Enemy extends Chr implements CollisionListener {
         
         protected abstract void onJump();
         
+        protected final void hold(final int delay) {
+            Pangine.getEngine().addTimer(this, delay, new TimerListener() {
+                @Override public final void onTimer(final TimerEvent event) {
+                    schedule();
+                }});
+        }
+        
         @Override
         protected final void award(final PowerUp powerUp) {
             
@@ -1513,6 +1520,29 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
     }
     
+    protected final static class CyanEnemy extends HenchbotEnemy {
+        private final static Panple scratch = new ImplPanple();
+        
+        protected CyanEnemy(final int x, final int y) {
+            super(BotsnBoltsGame.henchbotEnemy, x, y);
+        }
+        
+        @Override
+        protected final void onShoot() {
+            final Player player = null;//getNearestPlayer();
+            final float vx, vy;
+            //if (player == null) {
+                vx = getMirrorMultiplier() * VEL_PROJECTILE;
+                vy = 0;
+            /*} else {
+                player.getPosition();
+                vx = vy = 0;
+            }*/
+            new EnemyProjectile(this, 13, 9, vx, vy);
+            hold(30);
+        }
+    }
+    
     protected final static class FlamethrowerEnemy extends HenchbotEnemy {
         private final static int DURATION_FLAME = 8;
         private final static int LENGTH_STREAM = 8;
@@ -1617,10 +1647,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         @Override
         protected final void onShoot() {
             new FreezeRayProjectile(this, 13, 9);
-            Pangine.getEngine().addTimer(this, 30, new TimerListener() {
-                @Override public final void onTimer(final TimerEvent event) {
-                    schedule();
-                }});
+            hold(30);
         }
         
         @Override
@@ -1982,6 +2009,16 @@ public abstract class Enemy extends Chr implements CollisionListener {
         @Override
         protected final void fire() {
             new EnemyProjectile(BotsnBoltsGame.getEnemyProjectile(), this, 7, 8, getMirrorMultiplier() * VEL_PROJECTILE, 0, gTuple);
+        }
+        
+        @Override
+        protected final void onEnemyDestroy() {
+            super.onEnemyDestroy();
+            final Panctor remains = new Panctor();
+            remains.setView(getView(4));
+            remains.getPosition().set(getPosition());
+            remains.setMirror(isMirror());
+            BotsnBoltsGame.tm.getLayer().addActor(remains);
         }
 
         @Override

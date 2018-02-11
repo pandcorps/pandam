@@ -24,6 +24,7 @@ package org.pandcorps.botsnbolts;
 
 import java.util.*;
 
+import org.pandcorps.botsnbolts.Extra.*;
 import org.pandcorps.botsnbolts.Player.*;
 import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
@@ -246,7 +247,7 @@ public abstract class Boss extends Enemy {
     
     protected final static void destroyEnemies() {
         for (final Panctor actor : getActors()) {
-            if (((actor instanceof Enemy) && !(actor instanceof Boss)) || (actor instanceof EnemyProjectile)) {
+            if (((actor instanceof Enemy) && !(actor instanceof Boss)) || (actor instanceof EnemyProjectile) || (actor instanceof EnemySpawner)) {
                 actor.destroy();
             }
         }
@@ -266,6 +267,8 @@ public abstract class Boss extends Enemy {
     
     protected final static class Fort extends Boss {
         private static Panmage still = null;
+        private int spawnTimer = 0;
+        private CyanEnemy bot = null;
         
         protected Fort(final int x, final int y) {
             super(0, 0, x, y);
@@ -285,17 +288,36 @@ public abstract class Boss extends Enemy {
         
         @Override
         protected final boolean onWaiting() {
+            stepFort();
             return true;
         }
         
         @Override
         protected final boolean pickState() {
-            return false;
+            stepFort();
+            return true;
         }
 
         @Override
         protected final boolean continueState() {
-            return false;
+            stepFort();
+            return true;
+        }
+        
+        private final void stepFort() {
+            if (Panctor.isDestroyed(bot)) {
+                spawnTimer++;
+                if (spawnTimer >= 60) {
+                    spawn();
+                }
+            }
+        }
+        
+        private final void spawn() {
+            spawnTimer = 0;
+            bot = new CyanEnemy(22, 14);
+            bot.getPosition().addX(-3);
+            BotsnBoltsGame.tm.getLayer().addActor(bot);
         }
 
         @Override

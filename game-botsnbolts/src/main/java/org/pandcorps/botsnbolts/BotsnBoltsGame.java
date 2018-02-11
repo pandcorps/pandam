@@ -136,6 +136,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static Panimation unshieldedEnemy = null;
     protected static Panmage[] fireballEnemy = null;
     protected static Panmage[] flamethrowerEnemy = null;
+    protected static Panmage[] henchbotEnemy = null;
     protected static Panmage[] freezeRayEnemy = null;
     protected static Panmage rockEnemy = null;
     protected static Panmage enemyProjectile = null;
@@ -378,9 +379,12 @@ public final class BotsnBoltsGame extends BaseGame {
         final short s0 = 0, s96 = 96, s128 = 128, s160 = 160, s192 = 192, smax = Pancolor.MAX_VALUE;
         final Pancolor fire = new FinPancolor(smax, s160, s0), darkFire = new FinPancolor(smax, s96, s0);
         final Pancolor grey = Pancolor.DARK_GREY, darkGrey = new FinPancolor(s96);
+        final Pancolor cyan = Pancolor.CYAN, darkCyan = new FinPancolor(s0, s192, s192);
+        filterImgs(henchImgs, newFilter(fire, cyan, darkFire, darkCyan));
+        henchbotEnemy = newSheet("henchbot.enemy", henchImgs, henchO, henchMin, henchMax);
         final Pancolor ice = newColorIce(), darkIce = newColorIceDark();
         final Pancolor blue = new FinPancolor(s128, s128, smax), darkBlue = new FinPancolor(s96, s96, s192);
-        filterImgs(henchImgs, newFilter(fire, ice, darkFire, darkIce, grey, blue, darkGrey, darkBlue));
+        filterImgs(henchImgs, newFilter(cyan, ice, darkCyan, darkIce, grey, blue, darkGrey, darkBlue));
         freezeRayEnemy = newSheet("freezeray.enemy", henchImgs, henchO, henchMin, henchMax);
         final Img henchStill = henchImgs[0];
         final Pancolor rock = Pancolor.GREY, darkRock = new FinPancolor(s160);
