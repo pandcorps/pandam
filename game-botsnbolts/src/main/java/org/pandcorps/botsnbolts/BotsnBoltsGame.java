@@ -24,8 +24,6 @@ package org.pandcorps.botsnbolts;
 
 import java.util.*;
 
-import org.pandcorps.botsnbolts.BlockPuzzle.*;
-import org.pandcorps.botsnbolts.Enemy.*;
 import org.pandcorps.botsnbolts.HudMeter.*;
 import org.pandcorps.botsnbolts.Player.*;
 import org.pandcorps.botsnbolts.RoomLoader.*;
@@ -935,12 +933,6 @@ public final class BotsnBoltsGame extends BaseGame {
             return room;
         }
         
-        protected final static Panroom newDemoRoom() {
-            final Panroom room = newRoom(GAME_W);
-            fillRoom(room);
-            return room;
-        }
-        
         protected final static void initRoom(final Panroom room) {
             tm = new TileMap(Pantil.vmid(), room, 16, 16);
             tm.getPosition().setZ(DEPTH_BG);
@@ -951,6 +943,7 @@ public final class BotsnBoltsGame extends BaseGame {
         protected final static void loadTileImage(final String imgName, final String bgFileId) {
             if (imgName.equals(timgName)) {
                 tm.setImageMap(timg);
+                attachBgLayer(RoomLoader.nextRoom);
                 return;
             }
             timgPrev = timg;
@@ -968,9 +961,7 @@ public final class BotsnBoltsGame extends BaseGame {
                     bgLayer = engine.createLayer("layer.bg", GAME_W, GAME_H, room.getSize().getZ(), room);
                     bgLayer.setConstant(true);
                 }
-                if (bgLayer.getAbove() == null) {
-                    room.addBeneath(bgLayer);
-                }
+                attachBgLayer(room);
                 Panctor.destroy(bgTm);
                 Panctor.destroy(bgTexture);
                 if (bgFileId.endsWith("Tex")) {
@@ -990,60 +981,9 @@ public final class BotsnBoltsGame extends BaseGame {
             }
         }
         
-        protected final static void fillRoom(final Panroom room) {
-            final Pangine engine = Pangine.getEngine();
-            engine.setBgColor(new FinPancolor((short) 232, (short) 232, (short) 232));
-            loadTileImage("Bg", null);
-            final int end = tm.getWidth() - 1;
-            for (int i = end; i >= 0; i--) {
-                tm.setBackground(i, 0, imgMap[0][1], Tile.BEHAVIOR_SOLID);
-            }
-            for (int j = tm.getHeight() - 1; j > 4; j--) {
-                tm.setBackground(0, j, imgMap[0][0], Tile.BEHAVIOR_SOLID);
-                tm.setBackground(end, j, imgMap[0][2], Tile.BEHAVIOR_SOLID);
-            }
-            Enemy.newCube(4, 2);
-            //new ShootableDoor(0, 1, doorCyan);
-            //tm.setBackground(1, 2, imgMap[1][4], Tile.BEHAVIOR_SOLID);
-            //new ShootableDoor(0, 1, doorSmall);
-            //new ShootableDoor(end, 1, doorCyan);
-            //new ShootableDoor(end, 1, doorGold);
-            //new ShootableDoor(end, 1, doorSilver);
-            //tm.setBackground(end - 1, 2, imgMap[1][3], Tile.BEHAVIOR_SOLID);
-            //new ShootableDoor(end, 1, doorSmall);
-            //new SentryGun(11, 1);
-            //new SentryGun(8, 3);
-            new PropEnemy(6, 2);
-            //final BigBattery battery = new BigBattery();
-            //battery.getPosition().set(200, 96, DEPTH_POWER_UP);
-            //room.addActor(battery);
-            //new PowerBox(12, 1);
-            //new ShootableBarrier(6, 1, doorCyan);
-            //new ShootableBarrier(5, 1, doorSmall);
-            //final int px = 3, px2 = px + 4, py = 2; // 14, 4
-            //new ShootableBlockPuzzle(
-            //    new int[] { tm.getIndex(px, py), tm.getIndex(px2, py + 4), tm.getIndex(px, py + 4), tm.getIndex(px2, py + 8) },
-            //    new int[] { tm.getIndex(px, py + 2), tm.getIndex(px2, py + 6), tm.getIndex(px, py + 6) });
-            //Enemy.newCube(1, 3);
-            //new ShootableBlockPuzzle(
-            //    new int[] { tm.getIndex(4, 2), tm.getIndex(10, 5) },
-            //    new int[] { tm.getIndex(6, 6) });
-            //new SpikeBlockPuzzle(
-            //    new int[] { tm.getIndex(4, 3) },
-            //    new int[] { tm.getIndex(7, 4) });
-            /*new TimedBlockPuzzle(Arrays.asList(
-                new int[] { tm.getIndex(4, 3), tm.getIndex(4, 9) },
-                new int[] { tm.getIndex(6, 5) },
-                new int[] { tm.getIndex(8, 7) }));*/
-            final int ladderX = 15;
-            for (int j = 4; j < 9; j++) {
-                tm.setForeground(ladderX, j, imgMap[0][1], (j == 8) ? TILE_LADDER_TOP : TILE_LADDER);
-            }
-            for (int i = ladderX + 1; i <= (ladderX + 3); i++) {
-                tm.setTile(i, 0, null);
-            }
-            for (int j = 0; j < 14; j++) {
-                tm.setForeground(ladderX + 3, j, imgMap[0][1], (j == 12) ? TILE_LADDER_TOP : TILE_LADDER);
+        private final static void attachBgLayer(final Panroom room) {
+            if (bgLayer.getAbove() != room) {
+                room.addBeneath(bgLayer);
             }
         }
         

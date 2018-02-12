@@ -945,11 +945,4 @@ public abstract class RoomLoader {
             this.cell = cell;
         }
     }
-    
-    protected final static class DemoRoomLoader extends RoomLoader {
-        @Override
-        protected final Panroom newRoom() {
-            return BotsnBoltsGame.BotsnBoltsScreen.newDemoRoom();
-        }
-    }
 }

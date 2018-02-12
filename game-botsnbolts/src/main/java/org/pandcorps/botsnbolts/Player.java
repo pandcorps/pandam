@@ -1083,7 +1083,6 @@ public final class Player extends Chr {
     }
     
     protected final static Panroom loadRoom(final BotRoom room) {
-        //final RoomLoader loader = new DemoRoomLoader();
         final RoomLoader loader = new ScriptRoomLoader();
         RoomLoader.setRoom(room);
         return loader.newRoom();
