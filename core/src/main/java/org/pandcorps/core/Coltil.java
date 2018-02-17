@@ -229,7 +229,7 @@ public final class Coltil {
 	    return set;
 	}
 	
-	public final static <E, T extends E> List<E> addIfValued(List<E> list, final T elem) {
+	public final static <E, T extends E> List<E> addIfValued(final List<E> list, final T elem) {
 		return elem == null ? list : add(list, elem);
 	}
 	
@@ -237,6 +237,10 @@ public final class Coltil {
 		for (final E elem : unnull(src)) {
 			dst.add(elem);
 		}
+	}
+	
+	public final static <E> List<E> singletonList(final E elem) {
+	    return (elem == null) ? null : Collections.singletonList(elem);
 	}
 	
 	public final static <E, T extends E> void toggle(final Collection<E> col, final T elem) {
