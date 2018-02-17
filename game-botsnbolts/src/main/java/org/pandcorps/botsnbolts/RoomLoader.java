@@ -341,8 +341,7 @@ public abstract class RoomLoader {
                 key = c;
             }
             final Character keyW = Character.valueOf(key);
-            final Tile tile = tiles.get(keyW);
-            if (tile == null) {
+            if (!tiles.containsKey(keyW)) {
                 final Tile[][] pattern = patterns.get(keyW);
                 if (pattern == null) {
                     final RoomFunction function = functions.get(keyW);
@@ -361,7 +360,7 @@ public abstract class RoomLoader {
                     }
                 }
             } else {
-                tm.setTile(x, row, tile);
+                tm.setTile(x, row, tiles.get(keyW));
             }
         }
         return i;

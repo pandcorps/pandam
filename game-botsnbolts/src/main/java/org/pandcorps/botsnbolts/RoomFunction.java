@@ -24,6 +24,7 @@ package org.pandcorps.botsnbolts;
 
 import org.pandcorps.botsnbolts.RoomLoader.*;
 import org.pandcorps.core.*;
+import org.pandcorps.core.img.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.tile.Tile.*;
@@ -173,6 +174,35 @@ public abstract class RoomFunction {
             }
             BotsnBoltsGame.tm.setBackground(currentIndex, BotsnBoltsGame.ripple[frameIndex]);
             currentTimer++;
+        }
+    }
+    
+    public final static class FinalBackground extends StepHandler {
+        final Pancolor[] colors = new Pancolor[9];
+        
+        {
+            final short s0 = 0;
+            for (short i = 0; i < 9; i++) {
+                final short c = (short) ((i * 16) + 128);
+                colors[i] = new FinPancolor(s0, c, c);
+            }
+        }
+        
+        @Override
+        protected final void step() {
+            final Pangine engine = Pangine.getEngine();
+            final int i = (int) (engine.getClock() % 120);
+            final int c;
+            if (i < 9) {
+                c = i;
+            } else if (i < 60) {
+                c = 8;
+            } else if (i < 69) {
+                c = 8 - (i - 60);
+            } else {
+                c = 0;
+            }
+            engine.setBgColor(colors[c]);
         }
     }
 }
