@@ -156,6 +156,8 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static PlayerContext pc = null;
     
     protected static Panlayer hud = null;
+    protected static int prevTileSize = DIM;
+    protected static int tileSize = DIM;
     protected static TileMap tm = null;
     protected static String  timgName = null;
     protected static Panmage timg = null;
@@ -934,7 +936,7 @@ public final class BotsnBoltsGame extends BaseGame {
         }
         
         protected final static void initRoom(final Panroom room) {
-            tm = new TileMap(Pantil.vmid(), room, 16, 16);
+            tm = new TileMap(Pantil.vmid(), room, tileSize, tileSize);
             tm.getPosition().setZ(DEPTH_BG);
             tm.setForegroundDepth(DEPTH_FG);
             room.addActor(tm);
@@ -950,7 +952,7 @@ public final class BotsnBoltsGame extends BaseGame {
             timgName = imgName;
             final Pangine engine = Pangine.getEngine();
             timg = engine.createImage("bg", RES + "bg/" + imgName + ".png");
-            if (imgMap == null) {
+            if ((imgMap == null) || (tileSize != prevTileSize)) {
                 imgMap = tm.splitImageMap(timg);
             } else {
                 tm.setImageMap(timg);
@@ -982,7 +984,7 @@ public final class BotsnBoltsGame extends BaseGame {
         }
         
         private final static void attachBgLayer(final Panroom room) {
-            if (bgLayer.getAbove() != room) {
+            if ((bgLayer != null) && (bgLayer.getAbove() != room)) {
                 room.addBeneath(bgLayer);
             }
         }

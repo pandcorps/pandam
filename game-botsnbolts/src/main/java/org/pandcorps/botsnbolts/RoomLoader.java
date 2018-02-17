@@ -74,6 +74,8 @@ public abstract class RoomLoader {
     protected final static class ScriptRoomLoader extends RoomLoader {
         @Override
         protected final Panroom newRoom() {
+            BotsnBoltsGame.prevTileSize = BotsnBoltsGame.tileSize;
+            BotsnBoltsGame.tileSize = room.tileSize;
             nextRoom = BotsnBoltsGame.BotsnBoltsScreen.newRoom(RoomLoader.room.w * BotsnBoltsGame.GAME_W);
             init();
             processSegmentFile(RoomLoader.room.roomId, true, BotsnBoltsGame.tm);
@@ -804,7 +806,7 @@ public abstract class RoomLoader {
             Segment seg;
             while ((seg = in.read()) != null) {
                 final int x = seg.intValue(0), y = seg.intValue(1), w = seg.intValue(2);
-                final BotRoom room = new BotRoom(x, y, w, seg.getValue(3));
+                final BotRoom room = new BotRoom(x, y, w, seg.getValue(3), seg.getInt(4, BotsnBoltsGame.DIM));
                 for (int i = 0; i < w; i++) {
                     rooms.put(new BotCell(x + i, y), room);
                 }
@@ -902,12 +904,14 @@ public abstract class RoomLoader {
         protected final int y;
         protected final int w;
         protected final String roomId;
+        protected final int tileSize;
         
-        protected BotRoom(final int x, final int y, final int w, final String roomId) {
+        protected BotRoom(final int x, final int y, final int w, final String roomId, final int tileSize) {
             this.x = x;
             this.y = y;
             this.w = w;
             this.roomId = roomId;
+            this.tileSize = tileSize;
         }
     }
     
