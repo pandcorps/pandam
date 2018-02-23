@@ -44,12 +44,17 @@ public abstract class Boss extends Enemy {
     protected Queue<Jump> pendingJumps = null;
     private boolean jumping = false;
     protected int moves = -1;
+    private static boolean clipping = true;
+    protected static boolean dropping = false;
     
     protected Boss(final int offX, final int h, final int x, final int y) {
-        super(offX, h, x, y, HudMeter.MAX_VALUE);
+        super(offX, h, x, y, 0);
         init();
         startStill();
         setMirror(true);
+        getPosition().setY(Pangine.getEngine().getEffectiveHeight() - 1);
+        clipping = false;
+        dropping = true;
     }
     
     protected void init() {
@@ -59,6 +64,7 @@ public abstract class Boss extends Enemy {
         if (isHealthMeterNeeded()) {
             addHealthMeter();
         }
+        health = HudMeter.MAX_VALUE;
     }
     
     protected boolean isHealthMeterNeeded() {
@@ -66,10 +72,28 @@ public abstract class Boss extends Enemy {
     }
     
     @Override
+    protected final int getSolid(final int off) {
+        final int s = super.getSolid(off);
+        if (clipping) {
+            return s;
+        } else if ((s == -1) && (getPosition().getY() < (Pangine.getEngine().getEffectiveHeight() - 48))) {
+            clipping = true;
+        }
+        return -1;
+    }
+    
+    @Override
     protected final boolean onStepCustom() {
         if (initializationNeeded) {
             onFirstStep();
             initializationNeeded = false;
+        }
+        if (dropping) {
+            if (clipping && isGrounded()) {
+                dropping = false;
+            } else {
+                return false;
+            }
         }
         if (waitTimer > 0) {
             waitTimer--;

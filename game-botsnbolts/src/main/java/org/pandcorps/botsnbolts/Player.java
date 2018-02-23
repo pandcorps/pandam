@@ -193,7 +193,7 @@ public final class Player extends Chr {
     }
     
     private final boolean isFree() {
-        return !(isHurt() || isFrozen() || RoomChanger.isChanging() || RoomLoader.isBossDoorClosing());
+        return !(isHurt() || isFrozen() || Boss.dropping || RoomChanger.isChanging() || RoomLoader.isBossDoorClosing());
     }
     
     private final void jump() {

@@ -28,7 +28,7 @@ public abstract class HudMeter extends Panctor {
     protected final static int MAX_VALUE = 28;
     
     private final HudMeterImages images;
-    private int displayValue = MAX_VALUE;
+    private int displayValue = getValue();
     
     protected HudMeter(final HudMeterImages images) {
         this.images = images;
