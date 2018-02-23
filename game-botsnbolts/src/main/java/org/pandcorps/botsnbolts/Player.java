@@ -1024,11 +1024,17 @@ public final class Player extends Chr {
         } else if (bossDoor.isOpening()) {
             return false;
         }
-        final float doorX = bossDoor.getPosition().getX();
-        final float playerX = getPosition().getX();
+        final Panple doorPos = bossDoor.getPosition(), pos = getPosition();
+        final float doorX = doorPos.getX(), playerX = pos.getX();
         if (doorX < playerX) {
             return false;
         } else if ((doorX - playerX) > 12.0f) {
+            return false;
+        }
+        final float doorY = doorPos.getY(), playerY = pos.getY();
+        if (playerY < doorY) {
+            return false;
+        } else if ((playerY + PLAYER_H) >= (doorY + 63)) {
             return false;
         }
         bossDoor.open();
