@@ -407,7 +407,7 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
         private final int h = 16;
         protected final int x;
         protected final int y;
-        private int base = 0;
+        private int base;
         private int vel = 0;
         private long startTime;
         
@@ -417,8 +417,19 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
             this.x = x;
             this.y = y;
             tm.savePosition(getPosition(), x, y);
+            if (RoomLoader.changing && (x == 0)) {
+                setBehavior(Tile.BEHAVIOR_OPEN);
+                base = h;
+            } else {
+                setBehavior(Tile.BEHAVIOR_SOLID);
+                base = 0;
+            }
+        }
+        
+        private final void setBehavior(final byte b) {
+            final TileMap tm = BotsnBoltsGame.tm;
             for (int j = 0; j < 4; j++) {
-                tm.setBehavior(x, y + j, Tile.BEHAVIOR_SOLID);
+                tm.setBehavior(x, y + j, b);
             }
         }
         
@@ -429,14 +440,16 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
         
         protected final void open() {
             start(1);
+            setBehavior(Tile.BEHAVIOR_OPEN);
         }
         
         protected final boolean isOpening() {
             return vel > 0;
         }
         
-        private final void close() {
+        protected final void close() {
             start(-1);
+            setBehavior(Tile.BEHAVIOR_SOLID);
         }
         
         @Override

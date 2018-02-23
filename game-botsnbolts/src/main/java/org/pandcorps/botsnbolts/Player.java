@@ -1059,7 +1059,7 @@ public final class Player extends Chr {
         lastShotByAnyPlayer = -1000;
         final BotRoom room = roomCell.room;
         final int nextX = (roomCell.cell.x - room.x) * BotsnBoltsGame.GAME_W;
-        RoomLoader.clear();
+        RoomLoader.onChangeStarted();
         final List<Panlayer> layersToKeepBeneath = Coltil.singletonList(BotsnBoltsGame.bgLayer);
         final List<Panlayer> layersToKeepAbove = Arrays.asList(BotsnBoltsGame.hud);
         final List<? extends Panctor> actorsToKeep = Arrays.asList(this, BotsnBoltsGame.tm); // Keep Player and old TileMap while scrolling

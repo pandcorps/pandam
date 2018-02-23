@@ -49,6 +49,7 @@ public abstract class RoomLoader {
     private final static Map<Character, Tile> tiles = new HashMap<Character, Tile>();
     private final static Map<Character, Tile[][]> patterns = new HashMap<Character, Tile[][]>();
     private final static Map<Character, RoomFunction> functions = new HashMap<Character, RoomFunction>();
+    protected final static Map<String, String> variables = new HashMap<String, String>();
     private static Character alt = null;
     protected static Panroom nextRoom = null;
     protected static BossDoor bossDoor = null;
@@ -56,6 +57,7 @@ public abstract class RoomLoader {
     protected static int startY = 0;
     private static int row = 0;
     protected static int waterLevel = 0;
+    protected static boolean changing = false;
     
     private static BotRoom room = null;
     
@@ -76,9 +78,9 @@ public abstract class RoomLoader {
         protected final Panroom newRoom() {
             BotsnBoltsGame.prevTileSize = BotsnBoltsGame.tileSize;
             BotsnBoltsGame.tileSize = room.tileSize;
-            nextRoom = BotsnBoltsGame.BotsnBoltsScreen.newRoom(RoomLoader.room.w * BotsnBoltsGame.GAME_W);
+            nextRoom = BotsnBoltsGame.BotsnBoltsScreen.newRoom(room.w * BotsnBoltsGame.GAME_W);
             init();
-            processSegmentFile(RoomLoader.room.roomId, true, BotsnBoltsGame.tm);
+            processSegmentFile(room.roomId, true, BotsnBoltsGame.tm);
             return nextRoom;
         }
     }
@@ -164,6 +166,8 @@ public abstract class RoomLoader {
                 pan(seg);
             } else if ("FNC".equals(name)) { // Function
                 fnc(seg);
+            } else if ("VAR".equals(name)) { // Variable
+                var(seg);
             } else if ("M".equals(name)) { // Map
                 m(seg, tm);
             } else if ("CEL".equals(name)) { // Cell
@@ -319,6 +323,10 @@ public abstract class RoomLoader {
     
     private final static void fnc(final Segment seg) throws Exception {
         functions.put(seg.toCharacter(0), getRoomFunction(seg.getValue(1)));
+    }
+    
+    private final static void var(final Segment seg) throws Exception {
+        variables.put(seg.getValue(0), seg.getValue(1));
     }
     
     private final static void m(final Segment seg, final TileMap tm) {
@@ -752,6 +760,11 @@ public abstract class RoomLoader {
         }
     }
     
+    protected final static void onChangeStarted() {
+        clear();
+        changing = true;
+    }
+    
     protected final static void onChangeFinished() {
         final Panlayer layer = BotsnBoltsGame.tm.getLayer();
         for (final Panctor actor : actors) {
@@ -760,10 +773,14 @@ public abstract class RoomLoader {
         for (final ShootableDoor door : doors) {
             door.closeDoor();
         }
+        if (bossDoor != null) {
+            bossDoor.close();
+        }
         for (final StepHandler stepHandler : stepHandlers) {
             stepHandler.init();
         }
         clearChangeFinished();
+        changing = false;
     }
     
     protected final static void step() {
@@ -790,6 +807,7 @@ public abstract class RoomLoader {
         tiles.clear();
         patterns.clear();
         functions.clear();
+        variables.clear();
         alt = null;
         bossDoor = null;
     }
