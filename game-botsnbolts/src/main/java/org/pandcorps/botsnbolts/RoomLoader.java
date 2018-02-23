@@ -574,6 +574,10 @@ public abstract class RoomLoader {
         }
     }
     
+    protected final static boolean isBossDoorClosing() {
+        return (bossDoor != null) && bossDoor.isClosing();
+    }
+    
     protected final static Collection<ShootableDoor> getButtonDoors() {
         final Set<ShootableDoor> set = new HashSet<ShootableDoor>();
         for (final ShootableDoor door : doors) {

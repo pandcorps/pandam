@@ -448,8 +448,19 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
         }
         
         protected final void close() {
+            if (isClosed()) {
+                return;
+            }
             start(-1);
             setBehavior(Tile.BEHAVIOR_SOLID);
+        }
+        
+        protected final boolean isClosing() {
+            return vel < 0;
+        }
+        
+        protected final boolean isClosed() {
+            return base <= 0;
         }
         
         @Override
@@ -465,6 +476,7 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
                 } else if (base > h) {
                     base = h;
                     vel = 0;
+                    PlayerContext.getPlayer(BotsnBoltsGame.pc).onBossDoorOpened();
                 }
             }
             for (int j = base; j < h; j++) {

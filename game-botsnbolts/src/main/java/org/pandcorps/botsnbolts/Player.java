@@ -71,6 +71,7 @@ public final class Player extends Chr {
     private final static double GRAPPLING_ANGLE_MAX_UP = Math.PI / 8.0;
     private final static double GRAPPLING_ANGLE_MAX_DIAG = 3.0 * GRAPPLING_ANGLE_MAX_UP;
     private final static int GRAPPLING_OFF_Y = 12;
+    private final static int VEL_ROOM_CHANGE = 10;
     
     protected final PlayerContext pc;
     protected final Profile prf;
@@ -95,6 +96,7 @@ public final class Player extends Chr {
     private int wallTimer = 0;
     private boolean wallMirror = false;
     protected boolean movedDuringJump = false;
+    private byte bossDoorStatus = 0;
     private int health = HudMeter.MAX_VALUE;
     private GrapplingHook grapplingHook = null;
     protected double grapplingR = 0;
@@ -191,7 +193,7 @@ public final class Player extends Chr {
     }
     
     private final boolean isFree() {
-        return !(isHurt() || isFrozen() || RoomChanger.isChanging());
+        return !(isHurt() || isFrozen() || RoomChanger.isChanging() || RoomLoader.isBossDoorClosing());
     }
     
     private final void jump() {
@@ -539,6 +541,12 @@ public final class Player extends Chr {
                 hv = 0;
                 v = 0;
             }
+        } else if (bossDoorStatus == 1) {
+            hv = 0;
+            v = 0;
+        } else if (bossDoorStatus == 2) {
+            hv = VEL_WALK;
+            v = 0;
         }
         prevUnderwater = splashIfNeeded(this, prevUnderwater, this);
         return onStepState();
@@ -1024,7 +1032,12 @@ public final class Player extends Chr {
             return false;
         }
         bossDoor.open();
+        bossDoorStatus = 1;
         return true;
+    }
+    
+    protected final void onBossDoorOpened() {
+        bossDoorStatus = 2;
     }
     
     @Override
@@ -1064,7 +1077,8 @@ public final class Player extends Chr {
         final List<Panlayer> layersToKeepAbove = Arrays.asList(BotsnBoltsGame.hud);
         final List<? extends Panctor> actorsToKeep = Arrays.asList(this, BotsnBoltsGame.tm); // Keep Player and old TileMap while scrolling
         final List<? extends Panctor> actorsToDestroy = Arrays.asList(BotsnBoltsGame.tm); // Destroy old TileMap after scrolling
-        new RoomChanger(nextX, 0, 10 * dirX, 10 * dirY, layersToKeepBeneath, layersToKeepAbove, actorsToKeep, actorsToDestroy) {
+        final int velX = VEL_ROOM_CHANGE * dirX, velY = VEL_ROOM_CHANGE * dirY;
+        new RoomChanger(nextX, 0, velX, velY, layersToKeepBeneath, layersToKeepAbove, actorsToKeep, actorsToDestroy) {
             @Override
             protected final Panroom createRoom() {
                 return loadRoom(room);
@@ -1079,6 +1093,7 @@ public final class Player extends Chr {
                 RoomLoader.onChangeFinished();
             }
         };
+        bossDoorStatus = 0;
         return true;
     }
     
