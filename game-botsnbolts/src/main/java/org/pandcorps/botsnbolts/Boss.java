@@ -45,6 +45,7 @@ public abstract class Boss extends Enemy {
     private boolean jumping = false;
     protected int moves = -1;
     private static boolean clipping = true;
+    private static boolean delaying = false;
     protected static boolean dropping = false;
     
     protected Boss(final int offX, final int h, final int x, final int y) {
@@ -54,7 +55,9 @@ public abstract class Boss extends Enemy {
         setMirror(true);
         getPosition().setY(Pangine.getEngine().getEffectiveHeight() - 1);
         clipping = false;
+        delaying = true;
         dropping = true;
+        setVisible(false);
     }
     
     protected void init() {
@@ -84,6 +87,13 @@ public abstract class Boss extends Enemy {
     
     @Override
     protected final boolean onStepCustom() {
+        if (delaying) {
+            if (RoomLoader.isBossDoorClosing()) {
+                return true;
+            }
+            delaying = false;
+            setVisible(true);
+        }
         if (initializationNeeded) {
             onFirstStep();
             initializationNeeded = false;
