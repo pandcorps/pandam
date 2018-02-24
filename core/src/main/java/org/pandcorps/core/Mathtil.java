@@ -132,6 +132,14 @@ public final class Mathtil {
 		return p;
 	}
 	
+	public final static int floor(final float f) {
+	    /*
+	    Don't really need this method; could always just cast to int instead.
+	    But could be confusing if we see ceil without floor and forgot why floor wasn't there.
+	    */
+        return (int) f;
+    }
+	
 	public final static int ceil(final float f) {
 		final int i = (int) f;
 		final float fi = i;
