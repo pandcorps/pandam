@@ -151,7 +151,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
     }
     
-    protected final void turnTowardPlayer() {
+    protected void turnTowardPlayer() {
         turnTowardPlayer(getNearestPlayer());
     }
     
