@@ -270,12 +270,12 @@ public final class LwjglPangine extends GlPangine {
     
     @Override
     public final int getMouseX() {
-    	return getEffectiveCoordinate(Mouse.getX());
+    	return getEffectiveCoordinateX(Mouse.getX());
     }
     
     @Override
     public final int getMouseY() {
-    	return getEffectiveCoordinate(Mouse.getY());
+    	return getEffectiveCoordinateY(Mouse.getY());
     }
     
     @Override
