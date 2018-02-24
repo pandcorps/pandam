@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2017, Andrew M. Martin
+Copyright (c) 2009-2018, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -51,7 +51,7 @@ import org.pandcorps.furguardians.Player.*;
 public class FurGuardiansGame extends BaseGame {
 	protected final static String TITLE = "Fur-Guardians"; // res/values/strings.xml/app_name
     protected final static String VERSION = "1.27.2"; // AndroidManifest.xml/versionName
-    protected final static String YEAR = "2014-2017";
+    protected final static String YEAR = "2014-2018";
     protected final static String AUTHOR = "Andrew M. Martin";
 	/*
 	Hippo/squirrel/gator/pig/walrus/beaver/stag/bull/ram player face.
