@@ -140,12 +140,22 @@ public final class ImtilX {
     }
     
     public final static void highlight(final Img raw, final int amt) {
+        final int wht = ImgFactory.getFactory().getDataElement(new int[] {Pancolor.MAX_VALUE, Pancolor.MAX_VALUE, Pancolor.MAX_VALUE, Pancolor.MAX_VALUE}, 0);
+        final int[] cols = new int[amt];
+        for (int i = 0; i < amt; i++) {
+            cols[i] = wht;
+        }
+        highlight(raw, cols, true);
+    }
+    
+    public final static void highlight(final Img raw, final int[] cols, final boolean top) {
         final int w = raw.getWidth(), h = raw.getHeight();
         final ImgFactory cm = ImgFactory.getFactory();
-        final int wht = cm.getDataElement(new int[] {Pancolor.MAX_VALUE, Pancolor.MAX_VALUE, Pancolor.MAX_VALUE, Pancolor.MAX_VALUE}, 0);
+        final int amt = cols.length;
         for (int x = 0; x < w; x++) {
-            int mode = 0, edge = 0, currAmt = amt;
-            for (int y = 0; y < h; y++) {
+            int mode = 0, edge = 0, currAmt = 0;
+            for (int yRaw = 0; yRaw < h; yRaw++) {
+                final int y = top ? yRaw : (h - yRaw - 1);
                 final int rgb = raw.getRGB(x, y);
                 if (mode == 0) {
                     if (cm.getAlpha(rgb) != 0) {
@@ -161,9 +171,9 @@ public final class ImtilX {
                         if (cm.getAlpha(rgb) == 0) {
                             break; // Left or right edge, nothing to highlight
                         }
-                        raw.setRGB(x, y, wht);
-                        currAmt--;
-                        if (currAmt == 0) {
+                        raw.setRGB(x, y, cols[currAmt]);
+                        currAmt++;
+                        if (currAmt >= amt) {
                             break;
                         }
                         mode = 2;
