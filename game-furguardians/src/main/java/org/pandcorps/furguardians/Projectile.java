@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2017, Andrew M. Martin
+Copyright (c) 2009-2018, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -35,7 +35,7 @@ public final class Projectile extends Pandy implements Collidable, AllOobListene
     public Projectile(final Panimation anm, final Panctor src, final Panctor dst) {
         setView(anm);
         final Panple spos = src.getPosition();
-        final float x = spos.getX() + (5 * (src.isMirror() ? -1 : 1)), y = spos.getY() + 6;
+        final float x = spos.getX() + (5 * src.getMirrorMultiplier()), y = spos.getY() + 6;
         setPosition(x, y);
         setVelocity(this, dst, getVelocity(), 2f);
         startImg = null;
