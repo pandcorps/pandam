@@ -139,6 +139,33 @@ public final class ImtilX {
         return img;
     }
     
+    public final static void indent2(final Img raw, final int indent) {
+        final int w = raw.getWidth(), h = raw.getHeight();
+        final ImgFactory cm = ImgFactory.getFactory();
+        final int b = cm.getDataElement(new int[] {Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, Pancolor.MAX_VALUE}, 0);
+        final int c = cm.getDataElement(new int[] {Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, Pancolor.MIN_VALUE}, 0);
+        for (int x = 0; x < w; x++) {
+            byte indenting = 0;
+            for (int y = h - 1; y >= 0; y--) {
+                if (indenting == 0) {
+                    if (raw.getRGB(x, y) == b) {
+                        indenting = 1;
+                    }
+                    continue;
+                } else if (indenting == 1) {
+                    if (raw.getRGB(x, y) != b) {
+                        indenting = 2;
+                    } else if ((y < indent) || (raw.getRGB(x, y - indent) == c)) {
+                        indenting = 2;
+                    } else {
+                        continue;
+                    }
+                }
+                raw.setRGB(x, y, (y < indent) ? c : raw.getRGB(x, y - indent));
+            }
+        }
+    }
+    
     public final static void highlight(final Img raw, final int amt) {
         final int wht = ImgFactory.getFactory().getDataElement(new int[] {Pancolor.MAX_VALUE, Pancolor.MAX_VALUE, Pancolor.MAX_VALUE, Pancolor.MAX_VALUE}, 0);
         final int[] cols = new int[amt];
