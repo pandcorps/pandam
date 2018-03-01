@@ -202,6 +202,7 @@ public abstract class Panput {
 		private byte overlapMode = OVERLAP_ANY;
 		private boolean enabled = true;
 		private final boolean moveCancel;
+		private TouchButtonActiveListener activeListener = null;
 		
 		public TouchButton(final Panteraction interaction, final String name, final int x, final int y, final int w, final int h) {
 		    this(interaction, name, x, y, w, h, false);
@@ -310,6 +311,22 @@ public abstract class Panput {
 			layer = actor.getLayer();
 		}
 		
+		private final void replaceView(final Panmage original, final Panmage replacement) {
+		    if ((actor != null) && (actor.getView() == original)) {
+		        actor.setView(replacement);
+            }
+		}
+		
+		public final void setImageActive(final Panmage imgActive) {
+		    replaceView(this.imgActive, imgActive);
+		    this.imgActive = imgActive;
+		}
+		
+		public final void setImageInactive(final Panmage imgInactive) {
+		    replaceView(this.imgInactive, imgInactive);
+            this.imgInactive = imgInactive;
+        }
+		
 		public final void setImageDisabled(final Panmage imgDisabled) {
 			this.imgDisabled = imgDisabled;
 		}
@@ -376,7 +393,15 @@ public abstract class Panput {
 		public void activate(final boolean active) {
 			if (enabled && actor != null && imgActive != null) {
 				actor.setView(active ? imgActive : imgInactive);
+				if (active && activeListener != null) {
+				    activeListener.onActive(this);
+				}
 			}
+		}
+		
+		// Action events should be handled like any other input; TouchButton-specific reactions can be handled separately here
+		public void setActiveListener(final TouchButtonActiveListener activeListener) {
+		    this.activeListener = activeListener;
 		}
 		
 		public final void detach() {
@@ -440,6 +465,10 @@ public abstract class Panput {
 		        button.destroy();
 		    }
 		}
+	}
+	
+	public static interface TouchButtonActiveListener {
+	    public void onActive(final TouchButton btn);
 	}
 	
 	public final static class TouchEvent {
