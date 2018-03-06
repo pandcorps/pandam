@@ -130,9 +130,33 @@ public final class Player extends Chr {
         setView(pi.basicSet.stand);
     }
     
+    private final void register(final Panput[] inputs, final ActionStartListener listener) {
+        for (final Panput input : inputs) {
+            register(input, listener);
+        }
+    }
+    
+    private final void register(final Panput[] inputs, final ActionEndListener listener) {
+        for (final Panput input : inputs) {
+            register(input, listener);
+        }
+    }
+    
+    private final void register(final Panput[] inputs, final ActionListener listener) {
+        for (final Panput input : inputs) {
+            register(input, listener);
+        }
+    }
+    
+    private final static Panput[] getInputArray(final Panput key, final Panput touchButton) {
+        return (touchButton == null) ? new Panput[] { key } : new Panput[] {key, touchButton};
+    }
+    
     private final void registerInputs(final ControlScheme ctrl) {
-        final Panput jumpInput = ctrl.get1();
-        final Panput shootInput = ctrl.get2();
+        final Panput[] jumpInput = getInputArray(ctrl.get1(), Menu.jump);
+        final Panput[] shootInput = getInputArray(ctrl.get2(), Menu.attack);
+        final Panput[] rightInput = getInputArray(ctrl.getRight(), Menu.right);
+        final Panput[] leftInput = getInputArray(ctrl.getLeft(), Menu.left);
         register(jumpInput, new ActionStartListener() {
             @Override public final void onActionStart(final ActionStartEvent event) { jump(); }});
         register(jumpInput, new ActionEndListener() {
@@ -143,9 +167,9 @@ public final class Player extends Chr {
             @Override public final void onAction(final ActionEvent event) { shooting(); }});
         register(shootInput, new ActionEndListener() {
             @Override public final void onActionEnd(final ActionEndEvent event) { releaseShoot(); }});
-        register(ctrl.getRight(), new ActionListener() {
+        register(rightInput, new ActionListener() {
             @Override public final void onAction(final ActionEvent event) { right(); }});
-        register(ctrl.getLeft(), new ActionListener() {
+        register(leftInput, new ActionListener() {
             @Override public final void onAction(final ActionEvent event) { left(); }});
         register(ctrl.getUp(), new ActionListener() { //TODO Display up/down touch buttons when near ladder, hide otherwise
             @Override public final void onAction(final ActionEvent event) { up(); }});

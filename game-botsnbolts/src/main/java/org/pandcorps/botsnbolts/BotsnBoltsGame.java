@@ -47,6 +47,15 @@ public final class BotsnBoltsGame extends BaseGame {
     protected final static String YEAR = "2016-2018";
     protected final static String AUTHOR = "Andrew M. Martin";
     
+    /*
+    Cyclone Henchbot
+    Drought Henchbot
+    Lightning Bot electrocution attack
+    Volcano Bot new art
+    Volcano Bot new attack
+    Flood Bot torpedo attack 
+    */
+    
     protected final static String RES = "org/pandcorps/botsnbolts/";
     
     protected final static int DIM = 16;
@@ -80,6 +89,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected final static int DEPTH_OVERLAY = 24;
     protected final static int DEPTH_BURST = 50;
     protected final static int DEPTH_HUD = 52;
+    protected final static int DEPTH_CURSOR = 54;
     
     protected final static FinPanple2 MIN_16 = new FinPanple2(-6, -6);
     protected final static FinPanple2 MAX_16 = new FinPanple2(6, 6);
@@ -212,6 +222,7 @@ public final class BotsnBoltsGame extends BaseGame {
         loadEnemies();
         loadPlayer();
         postProcess();
+        Menu.loadMenu();
         RoomLoader.loadRooms();
     }
     
@@ -990,12 +1001,14 @@ public final class BotsnBoltsGame extends BaseGame {
         }
         
         private final static void newPlayer(final Panroom room) {
+            Menu.addGameplayButtonInputs();
             final Player player = new Player(pc);
             player.getPosition().set(48, 32, DEPTH_PLAYER);
             room.addActor(player);
             Pangine.getEngine().track(player);
             new Warp(player);
             newHud(room, player);
+            Menu.addGameplayButtonActors();
         }
         
         private final static void newHud(final Panroom room, final Player player) {
