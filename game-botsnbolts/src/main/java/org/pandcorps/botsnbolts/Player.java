@@ -130,24 +130,6 @@ public final class Player extends Chr {
         setView(pi.basicSet.stand);
     }
     
-    private final void register(final Panput[] inputs, final ActionStartListener listener) {
-        for (final Panput input : inputs) {
-            register(input, listener);
-        }
-    }
-    
-    private final void register(final Panput[] inputs, final ActionEndListener listener) {
-        for (final Panput input : inputs) {
-            register(input, listener);
-        }
-    }
-    
-    private final void register(final Panput[] inputs, final ActionListener listener) {
-        for (final Panput input : inputs) {
-            register(input, listener);
-        }
-    }
-    
     private final static Panput[] getInputArray(final Panput key, final Panput touchButton) {
         return (touchButton == null) ? new Panput[] { key } : new Panput[] {key, touchButton};
     }

@@ -401,9 +401,21 @@ public class Panctor extends BasePantity implements SpecPanctor {
 		Pangine.getEngine().getInteraction().register(this, input, listener);
 	}
 	
+	public final void register(final Panput[] inputs, final ActionStartListener listener) {
+        for (final Panput input : inputs) {
+            register(input, listener);
+        }
+    }
+	
 	public final void register(final Panput input, final ActionListener listener) {
 		Pangine.getEngine().getInteraction().register(this, input, listener);
 	}
+	
+	public final void register(final Panput[] inputs, final ActionListener listener) {
+        for (final Panput input : inputs) {
+            register(input, listener);
+        }
+    }
 	
 	public final void register(final ActionEndListener listener) {
 		Pangine.getEngine().getInteraction().register(this, listener);
@@ -412,6 +424,12 @@ public class Panctor extends BasePantity implements SpecPanctor {
 	public final void register(final Panput input, final ActionEndListener listener) {
 		Pangine.getEngine().getInteraction().register(this, input, listener);
 	}
+	
+	public final void register(final Panput[] inputs, final ActionEndListener listener) {
+        for (final Panput input : inputs) {
+            register(input, listener);
+        }
+    }
 	
 	public final void register(final long duration, final TimerListener listener) {
 		Pangine.getEngine().addTimer(this, duration, listener);
