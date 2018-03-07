@@ -159,6 +159,8 @@ public class Menu {
         Panctor.destroy(cursor);
         TouchButton.destroy(jump);
         TouchButton.destroy(attack);
+        TouchButton.destroy(right);
+        TouchButton.destroy(left);
     }
 
     private final static void addGameplayButtons(final boolean input, final boolean act) {
