@@ -24,6 +24,7 @@ package org.pandcorps.botsnbolts;
 
 import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
+import org.pandcorps.core.img.process.*;
 import org.pandcorps.game.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.Panput.*;
@@ -36,12 +37,16 @@ public class Menu {
     protected static Panmage imgCursor = null;
     protected static ButtonImages circleImages = null;
     protected static ButtonImages rightImages = null;
+    protected static ButtonImages upImages = null;
+    protected static ButtonImages downImages = null;
     
     protected static Cursor cursor = null;
     protected static TouchButton jump = null;
     protected static TouchButton attack = null;
     protected static TouchButton right = null;
     protected static TouchButton left = null;
+    protected static TouchButton up = null;
+    protected static TouchButton down = null;
     
     protected final static void loadMenu() {
         loadCursor();
@@ -76,8 +81,10 @@ public class Menu {
         ImtilX.highlight(circle, new int[] { white }, true);
         ImtilX.highlight(circle, new int[] { darkGrey, grey, grey, grey, white, black, darkGrey }, false);
         final PixelFilter clearFilter = new ReplacePixelFilter(Pancolor.DARK_GREY, Pancolor.CLEAR);
-        circleImages = newButtonImages(circle, clearFilter);
+        circleImages = newButtonImages(circle, clearFilter, DIM_BUTTON, null);
         loadTriangleButton(white, grey, darkGrey, black, clearFilter);
+        loadUpButton(white, grey, darkGrey, black);
+        loadDownButton(white, grey, darkGrey, black);
     }
     
     private final static void loadTriangleButton(final int white, final int grey, final int darkGrey, final int black, final PixelFilter clearFilter) {
@@ -117,21 +124,127 @@ public class Menu {
         for (int j = 0; j < 7; j++) {
             img.setRGB(d1, y + j, black);
         }
-        rightImages = newButtonImages(img, clearFilter);
+        rightImages = newButtonImages(img, clearFilter, DIM_BUTTON, null);
+    }
+    
+    private final static void loadUpButton(final int white, final int grey, final int darkGrey, final int black) {
+        final Img img = newButtonImg(32);
+        for (int x = 3; x < 28; x++) {
+            img.setRGB(x, 31, black);
+            img.setRGB(x, 30, darkGrey);
+            img.setRGB(x, 26, white);
+            img.setRGB(x, 25, black);
+            img.setRGB(x, 24, darkGrey);
+        }
+        for (int x = 3; x < 16; x++) {
+            img.setRGB(x, 16 - x, black);
+            img.setRGB(x, 17 - x, white);
+        }
+        for (int x = 16; x < 28; x++) {
+            img.setRGB(x, x - 14, black);
+            img.setRGB(x, x - 13, white);
+        }
+        for (int y = 18; y < 28; y++) {
+            img.setRGB(0, y, black);
+            img.setRGB(30, y, black);
+        }
+        for (int i = 0; i < 2; i++) {
+            final int x = (i == 0) ? 1 : 29;
+            for (int j = 0; j < 2; j++) {
+                final int y = (j == 0) ? 16 : 22;
+                img.setRGB(x, y, black);
+                img.setRGB(x, y + 1, black);
+                img.setRGB(x, y + 2, white);
+                img.setRGB(x, y + 5, darkGrey);
+            }
+            img.setRGB(x, 28, black);
+            img.setRGB(x, 29, black);
+            final int x1 = (i == 0) ? 2 : 28;
+            img.setRGB(x1, 14, black);
+            img.setRGB(x1, 15, black);
+            img.setRGB(x1, 16, white);
+            img.setRGB(x1, 23, darkGrey);
+            img.setRGB(x1, 24, black);
+            img.setRGB(x1, 25, white);
+            img.setRGB(x1, 29, darkGrey);
+            img.setRGB(x1, 30, black);
+        }
+        upImages = newButtonImages(img, null, 31, null);
+    }
+    
+    private final static void loadDownButton(final int white, final int grey, final int darkGrey, final int black) {
+        final Img img = newButtonImg(32);
+        for (int x = 3; x < 28; x++) {
+            img.setRGB(x, 1, black);
+            img.setRGB(x, 2, white);
+            final int y = (x < 16) ? (x + 9) : (39 - x);
+            img.setRGB(x, y, darkGrey);
+            img.setRGB(x, y + 1, black);
+            img.setRGB(x, y + 2, white);
+            img.setRGB(x, y + 6, darkGrey);
+            img.setRGB(x, y + 7, black);
+        }
+        for (int y = 26; y < 31; y++) {
+            img.setRGB(15, y, black);
+        }
+        for (int y = 5; y < 15; y++) {
+            img.setRGB(0, y, black);
+            img.setRGB(30, y, black);
+        }
+        for (int i = 0; i < 2; i++) {
+            final int x = (i == 0) ? 1 : 29;
+            for (int j = 0; j < 2; j++) {
+                final int y = (j == 0) ? 3 : 9;
+                img.setRGB(x, y, black);
+                img.setRGB(x, y + 1, black);
+                img.setRGB(x, y + 2, white);
+                img.setRGB(x, y + 5, darkGrey);
+            }
+            img.setRGB(x, 15, black);
+            img.setRGB(x, 16, black);
+            final int x1 = (i == 0) ? 2 : 28;
+            img.setRGB(x1, 2, black);
+            img.setRGB(x1, 3, white);
+            img.setRGB(x1, 10, darkGrey);
+            img.setRGB(x1, 11, black);
+            img.setRGB(x1, 12, black);
+            img.setRGB(x1, 13, white);
+            img.setRGB(x1, 16, darkGrey);
+            img.setRGB(x1, 17, black);
+            img.setRGB(x1, 18, black);
+        }
+        downImages = newButtonImages(img, null, 31, new ImgProcessor() {
+            @Override public final void process(final Img img) {
+                final int c = PixelTool.getRgba(Pancolor.CLEAR);
+                for (int y = 25; y < 28; y++) {
+                    img.setRGB(15, y, c);
+                }
+                img.setRGB(15, 28, darkGrey);
+            }});
     }
     
     private final static Img newButtonImg() {
-        final Img img = Imtil.newImage(DIM_BUTTON, DIM_BUTTON);
+        return newButtonImg(DIM_BUTTON);
+    }
+    
+    private final static Img newButtonImg(final int d) {
+        final Img img = Imtil.newImage(d, d);
         img.setTemporary(false);
         return img;
     }
     
-    private final static ButtonImages newButtonImages(final Img img, final PixelFilter clearFilter) {
+    private final static ButtonImages newButtonImages(final Img img, final PixelFilter clearFilter, final int w, final ImgProcessor postIndentProcessor) {
         final Pangine engine = Pangine.getEngine();
         final Panmage full = engine.createImage(Pantil.vmid(), img);
-        Imtil.filterImg(img, clearFilter);
-        final Panmage base = engine.createImage(Pantil.vmid(), img);
-        ImtilX.indent2(img, 4);
+        final Panmage base;
+        if (clearFilter == null) {
+            base = full;
+        } else {
+            Imtil.filterImg(img, clearFilter);
+            base = engine.createImage(Pantil.vmid(), img);
+        }
+        ImtilX.indent2(img, 4, w);
+        ImgProcessor.process(postIndentProcessor, img);
         final Panmage pressed = engine.createImage(Pantil.vmid(), img);
         img.close();
         return new ButtonImages(full, base, pressed);
@@ -161,6 +274,8 @@ public class Menu {
         TouchButton.destroy(attack);
         TouchButton.destroy(right);
         TouchButton.destroy(left);
+        TouchButton.destroy(up);
+        TouchButton.destroy(down);
     }
 
     private final static void addGameplayButtons(final boolean input, final boolean act) {
@@ -175,12 +290,17 @@ public class Menu {
                 right.setImageInactive(rightImages.base);
                 left.setImageInactive(rightImages.base);
             }};
-        final int w = Pangine.getEngine().getEffectiveWidth();
+        final Pangine engine = Pangine.getEngine();
+        final int w = engine.getEffectiveWidth(), h = engine.getEffectiveHeight();
         final int o = 1;
-        jump = addButton(hud, "Jump", w - DIM_BUTTON - o, o, input, act, jump, circleImages, false, activeListener, false);
-        attack = addButton(hud, "Attack", w - (2 * DIM_BUTTON) - 1 - o, o, input, act, attack, circleImages, false, activeListener, false);
-        right = addButton(hud, "Right", DIM_BUTTON + 1 + o, o, input, act, right, rightImages, false, activeListener, false);
-        left = addButton(hud, "Left", o, o, input, act, left, rightImages, false, activeListener, true);
+        final int d = DIM_BUTTON;
+        jump = addButton(hud, "Jump", w - DIM_BUTTON - o, o, input, act, jump, circleImages, false, activeListener, false, d);
+        attack = addButton(hud, "Attack", w - (2 * DIM_BUTTON) - 1 - o, o, input, act, attack, circleImages, false, activeListener, false, d);
+        right = addButton(hud, "Right", DIM_BUTTON + 1 + o, o, input, act, right, rightImages, false, activeListener, false, d);
+        left = addButton(hud, "Left", o, o, input, act, left, rightImages, false, activeListener, true, d);
+        final int ds = 31, upDownX = o + DIM_BUTTON - 15;
+        up = addButton(hud, "Up", upDownX, h - DIM_BUTTON, input, act, up, upImages, false, activeListener, false, ds);
+        down = addButton(hud, "Down", upDownX, o + DIM_BUTTON + 1, input, act, down, downImages, false, activeListener, false, ds);
         if (act) {
             addCursor(hud);
         }
@@ -188,12 +308,11 @@ public class Menu {
     
     private final static TouchButton addButton(final Panlayer room, final String name, final int x, final int y,
             final boolean input, final boolean act, final Panput old, final ButtonImages images,
-            final boolean moveCancel, final TouchButtonActiveListener activeListener, final boolean mirror) {
+            final boolean moveCancel, final TouchButtonActiveListener activeListener, final boolean mirror, final int d) {
         final TouchButton button;
         if (input) {
             final Pangine engine = Pangine.getEngine();
             final Panteraction in = engine.getInteraction();
-            final int d = DIM_BUTTON;
             button = new TouchButton(in, name, x, y, d, d, moveCancel);
             engine.registerTouchButton(button);
         } else {
