@@ -140,7 +140,11 @@ public final class ImtilX {
     }
     
     public final static void indent2(final Img raw, final int indent) {
-        final int w = raw.getWidth(), h = raw.getHeight();
+        indent2(raw, indent, raw.getWidth());
+    }
+    
+    public final static void indent2(final Img raw, final int indent, final int w) {
+        final int h = raw.getHeight();
         final ImgFactory cm = ImgFactory.getFactory();
         final int b = cm.getDataElement(new int[] {Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, Pancolor.MAX_VALUE}, 0);
         final int c = cm.getDataElement(new int[] {Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, Pancolor.MIN_VALUE}, 0);
