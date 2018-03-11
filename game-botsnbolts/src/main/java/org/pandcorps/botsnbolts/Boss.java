@@ -53,11 +53,17 @@ public abstract class Boss extends Enemy {
         init();
         startStill();
         setMirror(true);
-        getPosition().setY(Pangine.getEngine().getEffectiveHeight() - 1);
-        clipping = false;
-        delaying = true;
-        dropping = true;
-        setVisible(false);
+        if (isDropNeeded()) {
+            getPosition().setY(Pangine.getEngine().getEffectiveHeight() - 1);
+            clipping = false;
+            delaying = true;
+            dropping = true;
+            setVisible(false);
+        } else {
+            clipping = true;
+            delaying = false;
+            dropping = false;
+        }
     }
     
     protected void init() {
@@ -71,6 +77,10 @@ public abstract class Boss extends Enemy {
     }
     
     protected boolean isHealthMeterNeeded() {
+        return true;
+    }
+    
+    protected boolean isDropNeeded() {
         return true;
     }
     
@@ -325,6 +335,11 @@ public abstract class Boss extends Enemy {
         
         @Override
         protected final boolean isHealthMeterNeeded() {
+            return false;
+        }
+        
+        @Override
+        protected final boolean isDropNeeded() {
             return false;
         }
         
