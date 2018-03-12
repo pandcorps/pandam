@@ -294,13 +294,13 @@ public class Menu {
         final int w = engine.getEffectiveWidth(), h = engine.getEffectiveHeight();
         final int o = 1;
         final int d = DIM_BUTTON;
-        jump = addButton(hud, "Jump", w - DIM_BUTTON - o, o, input, act, jump, circleImages, false, activeListener, false, d);
-        attack = addButton(hud, "Attack", w - (2 * DIM_BUTTON) - 1 - o, o, input, act, attack, circleImages, false, activeListener, false, d);
-        right = addButton(hud, "Right", DIM_BUTTON + 1 + o, o, input, act, right, rightImages, false, activeListener, false, d);
+        jump = addButton(hud, "Jump", w - d - o, o, input, act, jump, circleImages, false, activeListener, false, d);
+        attack = addButton(hud, "Attack", w - (2 * d) - 1 - o, o, input, act, attack, circleImages, false, activeListener, false, d);
+        right = addButton(hud, "Right", d + 1 + o, o, input, act, right, rightImages, false, activeListener, false, d);
         left = addButton(hud, "Left", o, o, input, act, left, rightImages, false, activeListener, true, d);
-        final int ds = 31, upDownX = o + DIM_BUTTON - 15;
-        up = addButton(hud, "Up", upDownX, h - DIM_BUTTON, input, act, up, upImages, false, activeListener, false, ds);
-        down = addButton(hud, "Down", upDownX, o + DIM_BUTTON + 1, input, act, down, downImages, false, activeListener, false, ds);
+        final int ds = 31, upDownX = o + d - 15;
+        up = addButton(hud, "Up", upDownX, h - d, input, act, up, upImages, false, activeListener, false, ds);
+        down = addButton(hud, "Down", upDownX, o + d + 1, input, act, down, downImages, false, activeListener, false, ds);
         if (act) {
             addCursor(hud);
         }

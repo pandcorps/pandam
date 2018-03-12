@@ -139,6 +139,8 @@ public final class Player extends Chr {
         final Panput[] shootInput = getInputArray(ctrl.get2(), Menu.attack);
         final Panput[] rightInput = getInputArray(ctrl.getRight(), Menu.right);
         final Panput[] leftInput = getInputArray(ctrl.getLeft(), Menu.left);
+        final Panput[] upInput = getInputArray(ctrl.getUp(), Menu.up);
+        final Panput[] downInput = getInputArray(ctrl.getDown(), Menu.down);
         register(jumpInput, new ActionStartListener() {
             @Override public final void onActionStart(final ActionStartEvent event) { jump(); }});
         register(jumpInput, new ActionEndListener() {
@@ -153,9 +155,9 @@ public final class Player extends Chr {
             @Override public final void onAction(final ActionEvent event) { right(); }});
         register(leftInput, new ActionListener() {
             @Override public final void onAction(final ActionEvent event) { left(); }});
-        register(ctrl.getUp(), new ActionListener() { //TODO Display up/down touch buttons when near ladder, hide otherwise
+        register(upInput, new ActionListener() { //TODO Display up/down touch buttons when near ladder, hide otherwise
             @Override public final void onAction(final ActionEvent event) { up(); }});
-        register(ctrl.getDown(), new ActionListener() {
+        register(downInput, new ActionListener() {
             @Override public final void onAction(final ActionEvent event) { down(); }});
         registerPause(ctrl.getSubmit());
         registerPause(ctrl.getMenu());
