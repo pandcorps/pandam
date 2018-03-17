@@ -404,23 +404,35 @@ public abstract class Panput {
 		    this.activeListener = activeListener;
 		}
 		
-		public final void detach() {
-		    Pangine.getEngine().unregisterTouchButton(this);
+		private final void initLayer() {
+		    if (layer != null) {
+		        return;
+		    }
+		    if (actor != null) {
+		        layer = actor.getLayer();
+		    }
+		}
+		
+		public final boolean detach() {
+		    final boolean detached = Pangine.getEngine().unregisterTouchButton(this);
+		    initLayer();
 		    Panctor.detach(actor);
 		    Panctor.detach(actorOverlay);
 		    Panctor.detach(text);
+		    return detached;
 		}
 		
-		public final static void detach(final TouchButton button) {
+		public final static boolean detach(final TouchButton button) {
 			if (button != null) {
-				button.detach();
+				return button.detach();
 			}
+			return false;
 		}
 		
-		public final void reattach() {
+		public final boolean reattach() {
 			final Pangine engine = Pangine.getEngine();
 			if (engine.isTouchButtonRegistered(this)) {
-				return;
+				return false;
 			}
 		    engine.registerTouchButton(this);
 		    if (layer != null) {
@@ -432,12 +444,14 @@ public abstract class Panput {
 		            layer.addActor(text);
 		        }
 		    }
+		    return true;
 		}
 		
-		public final static void reattach(final TouchButton button) {
+		public final static boolean reattach(final TouchButton button) {
 			if (button != null) {
-				button.reattach();
+				return button.reattach();
 			}
+			return false;
 		}
 		
 		public final static void reattach(final TouchButton button, final boolean attached) {
