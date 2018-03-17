@@ -440,7 +440,7 @@ public abstract class Pangine {
 	
 	public abstract void registerTouchButton(final TouchButton button);
 	
-	public abstract void unregisterTouchButton(final TouchButton button);
+	public abstract boolean unregisterTouchButton(final TouchButton button);
 	
 	public abstract boolean isTouchButtonRegistered(final TouchButton button);
 	

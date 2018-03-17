@@ -141,7 +141,8 @@ public final class UnitPangine extends Pangine {
 	}
 	
 	@Override
-    public final void unregisterTouchButton(final TouchButton button) {
+    public final boolean unregisterTouchButton(final TouchButton button) {
+	    return false;
 	}
 	
 	@Override
