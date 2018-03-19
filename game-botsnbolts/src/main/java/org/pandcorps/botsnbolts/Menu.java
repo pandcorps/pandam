@@ -330,6 +330,18 @@ public class Menu {
         return button;
     }
     
+    protected final static void showUpDown() {
+        if (TouchButton.reattach(up)) {
+            TouchButton.reattach(down);
+        }
+    }
+    
+    protected final static void hideUpDown() {
+        if (TouchButton.detach(up)) {
+            TouchButton.detach(down);
+        }
+    }
+    
     private final static class ButtonImages {
         private final Panmage full;
         private final Panmage base;
