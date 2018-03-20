@@ -322,10 +322,14 @@ public final class Player extends Chr {
     }
     
     private final void onDownNormal() {
-        if (isGrounded() && isTouchingLadder(-1)) {
+        if (isAboveLadder()) {
             startLadder();
             getPosition().addY(-OFF_LADDER_BOTTOM);
         }
+    }
+    
+    private final boolean isAboveLadder() {
+        return isGrounded() && isTouchingLadder(-1);
     }
     
     protected final boolean hurt(final int damage) {
@@ -576,8 +580,25 @@ public final class Player extends Chr {
     }
     
     private final boolean onStepState() {
+        if (!stateHandler.isLadderPossible()) {
+            Menu.hideUpDown();
+        }
         if (stateHandler.onStep(this)) {
             return true;
+        }
+        return false;
+    }
+    
+    private final boolean onStepNormal() {
+        if (isAboveLadder()) {
+            Menu.showUpDown();
+        } else if (isTouchingLadder()) {
+            Menu.showUpDown();
+            if (prf.autoClimb && (v > 0)) {
+                startLadder();
+            }
+        } else {
+            Menu.hideUpDown();
         }
         return false;
     }
@@ -1172,6 +1193,11 @@ public final class Player extends Chr {
             return false;
         }
         
+        //@OverrideMe
+        protected boolean isLadderPossible() {
+            return false;
+        }
+        
         protected abstract void onGrounded(final Player player);
         
         protected abstract boolean onAir(final Player player);
@@ -1230,6 +1256,16 @@ public final class Player extends Chr {
         @Override
         protected final void onDown(final Player player) {
             player.onDownNormal();
+        }
+        
+        @Override
+        protected final boolean onStep(final Player player) {
+            return player.onStepNormal();
+        }
+        
+        @Override
+        protected final boolean isLadderPossible() {
+            return true;
         }
         
         @Override
@@ -1308,8 +1344,14 @@ public final class Player extends Chr {
         }
         
         @Override
+        protected final boolean isLadderPossible() {
+            return true;
+        }
+        
+        @Override
         protected final boolean onStep(final Player player) {
             final float v = player.v;
+            Menu.showUpDown();
             if (v != 0) {
                 final byte yStatus = player.addY();
                 player.v = 0;
