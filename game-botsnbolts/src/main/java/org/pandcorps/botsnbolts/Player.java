@@ -108,6 +108,7 @@ public final class Player extends Chr {
     private final ImplPanple grapplingPosition = new ImplPanple();
     protected Carrier carrier = null;
     private Wrapper wrapper = null;
+    private int ladderColumn = -1;
     private List<Follower> followers = null;
     
     static {
@@ -594,8 +595,9 @@ public final class Player extends Chr {
             Menu.showUpDown();
         } else if (isTouchingLadder()) {
             Menu.showUpDown();
-            if (prf.autoClimb && (v > 0)) {
+            if (prf.autoClimb && ((v > 0) || (ladderColumn != getColumn()))) {
                 startLadder();
+                return true;
             }
         } else {
             Menu.hideUpDown();
@@ -781,6 +783,7 @@ public final class Player extends Chr {
     }
     
     private final void onGroundedNormal() {
+        ladderColumn = -1;
         final PlayerImagesSubSet set = getCurrentImagesSubSet();
         if (hv == 0) {
             wallTimer = 0;
@@ -878,6 +881,12 @@ public final class Player extends Chr {
     private final void endLadder() {
         clearRun();
         stateHandler = NORMAL_HANDLER;
+        ladderColumn = getColumn();
+    }
+    
+    private final int getColumn() {
+        final TileMap tm = BotsnBoltsGame.tm;
+        return tm.getColumn(tm.getContainer(this));
     }
     
     private final void startGrapple() {
@@ -1350,6 +1359,7 @@ public final class Player extends Chr {
         
         @Override
         protected final boolean onStep(final Player player) {
+            player.ladderColumn = -1;
             final float v = player.v;
             Menu.showUpDown();
             if (v != 0) {
@@ -1470,6 +1480,7 @@ public final class Player extends Chr {
         protected final boolean onStep(final Player player) {
             // The Carrier moves the Player, so don't need to do that here
             player.setView(player.getCurrentImagesSubSet().stand);
+            player.ladderColumn = -1;
             return true;
         }
         
