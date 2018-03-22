@@ -177,6 +177,37 @@ public abstract class RoomFunction {
         }
     }
     
+    public final static class HailBackground extends StepHandler {
+        final Pancolor[] colors = new Pancolor[11];
+        
+        {
+            for (int i = 0; i < 3; i++) {
+                colors[i] = new FinPancolor(0, 96, 48 + (24 * i));
+            }
+            for (int i = 0; i < 4; i++) {
+                colors[3 + i] = new FinPancolor(0, 24 * (3 - i), 96);
+            }
+            for (int i = 0; i < 4; i++) {
+                colors[7 + i] = new FinPancolor(24 * (i + 1), 0, 96);
+            }
+        }
+        
+        @Override
+        protected final void step() {
+            final Pangine engine = Pangine.getEngine();
+            final int size = colors.length, m = 4, wait = 8;
+            final int _i = ((int) (engine.getClock() % (((size * 2) + wait) * m))) / m;
+            final int c;
+            if (_i < wait) {
+                c = 0;
+            } else {
+                final int i = _i - wait;
+                c = (i < size) ? i : ((size * 2) - 1 - i);
+            }
+            engine.setBgColor(colors[c]);
+        }
+    }
+    
     public final static class LightningBackground extends StepHandler {
         private final static int fadeFrameDuration = 2;
         private final static int lightningDuration = 15;
@@ -196,7 +227,7 @@ public abstract class RoomFunction {
             final long clock = engine.getClock();
             final long diff = clock - currentStart;
             final int i;
-            if (diff >= totalPeriod) {
+            if ((currentStart < 0) || (diff >= totalPeriod)) {
                 currentStart = clock;
                 totalPeriod = Mathtil.randi(40, 240);
                 i = 0;
