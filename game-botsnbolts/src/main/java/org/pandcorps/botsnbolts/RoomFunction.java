@@ -247,6 +247,34 @@ public abstract class RoomFunction {
         }
     }
     
+    public final static class DroughtBackground extends StepHandler {
+        final int numColors = 10;
+        final Pancolor[] colors = new Pancolor[numColors];
+        private int index = 3;
+        
+        {
+            for (int i = 0; i < numColors; i++) {
+                final int o = (i + 5) * 8;
+                colors[i] = new FinPancolor(Pancolor.MAX_VALUE, 128 + o, 64 + o);
+            }
+        }
+        
+        @Override
+        protected final void step() {
+            final Pangine engine = Pangine.getEngine();
+            if ((engine.getClock() % 5) == 0) {
+                if (index < 1) {
+                    index = 1;
+                } else if (index > (numColors - 2)) {
+                    index = numColors - 2;
+                } else {
+                    index += (Mathtil.rand() ? 1 : -1);
+                }
+                engine.setBgColor(colors[index]);
+            }
+        }
+    }
+    
     public final static class FinalBackground extends StepHandler {
         final Pancolor[] colors = new Pancolor[9];
         
