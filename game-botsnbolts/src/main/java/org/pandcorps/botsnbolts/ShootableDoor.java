@@ -38,6 +38,7 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
     private final static Pansplay displayBarrier = new ImplPansplay(FinPanple.ORIGIN, minBarrier, new FinPanple2(14, 32));
     private final static Pansplay displayBarrierSmall = new ImplPansplay(FinPanple.ORIGIN, minBarrier, new FinPanple2(14, 16));
     private final static Pansplay displayBoss = new ImplPansplay(FinPanple.ORIGIN, minBarrier, new FinPanple2(14, 64));
+    private final static Pansplay displayBolt = new ImplPansplay(FinPanple.ORIGIN, new FinPanple2(1, 32), new FinPanple2(30, 96));
     protected final int x;
     protected final int y;
     private final int doorX;
@@ -494,7 +495,7 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
         }
     }
     
-    protected final static class BoltDoor extends Panctor {
+    protected final static class BoltDoor extends Panctor implements CollisionListener {
         private final int x;
         private final int y;
         
@@ -505,22 +506,30 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
             this.y = y;
             tm.savePosition(getPosition(), x, y);
             setMirror(x > 0);
-            setBehavior(0, Tile.BEHAVIOR_SOLID);
-            setBehavior(3, Tile.BEHAVIOR_SOLID);
+            final Tile tile = tm.getTile(null, null, Tile.BEHAVIOR_SOLID);
+            setBehavior(0, tile, Tile.BEHAVIOR_SOLID);
+            setBehavior(3, tile, Tile.BEHAVIOR_SOLID);
         }
         
-        private final void setBehavior(final int yoff, final byte b) {
-            final TileMap tm = BotsnBoltsGame.tm;
-            if (tm.getHeight() <= 7) {
-                tm.setBehavior(x, y + yoff, b);
+        private final void setBehavior(final int yoff, final Tile tile, final byte b) {
+            if (BotsnBoltsGame.tm.getHeight() <= 7) {
+                setBehavior(x, y + yoff, tile, b);
             } else {
                 final int yBase = y + (yoff * 2);
                 for (int j = 0; j < 2; j++) {
                     final int yj = yBase + j;
                     for (int i = 0; i < 2; i++) {
-                        tm.setBehavior(x + i, yj, b);
+                        setBehavior(x + i, yj, tile, b);
                     }
                 }
+            }
+        }
+        
+        private final static void setBehavior(final int x, final int y, final Tile tile, final byte b) {
+            if (tile == null) {
+                BotsnBoltsGame.tm.setBehavior(x, y, b);
+            } else {
+                BotsnBoltsGame.tm.setTile(x, y, tile);
             }
         }
         
@@ -529,6 +538,32 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
             if ((player != null) && (Math.abs(player.getPosition().getX() - getPosition().getX()) < 48)) {
                 return;
             }
+            setDoorBehavior(Tile.BEHAVIOR_SOLID);
+        }
+        
+        private final void open() {
+            setDoorBehavior(Tile.BEHAVIOR_OPEN);
+        }
+        
+        private final void setDoorBehavior(final byte b) {
+            for (int y = 1; y < 3; y++) {
+                setBehavior(y, null, b);
+            }
+        }
+        
+        @Override
+        public final void onCollision(final CollisionEvent event) {
+            final Collidable collider = event.getCollider();
+            if (collider instanceof Projectile) {
+                open();
+                ((Projectile) collider).burst();
+                collider.destroy();
+            }
+        }
+        
+        @Override
+        public Pansplay getCurrentDisplay() {
+            return displayBolt;
         }
         
         @Override

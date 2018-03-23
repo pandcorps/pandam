@@ -1116,11 +1116,12 @@ public final class Player extends Chr {
         lastShotByAnyPlayer = -1000;
         final BotRoom room = roomCell.room;
         final int nextX = (roomCell.cell.x - room.x) * BotsnBoltsGame.GAME_W;
+        final BoltDoor boltDoor = RoomLoader.boltDoor; // Save this before RoomLoader clears it
         RoomLoader.onChangeStarted();
         final List<Panlayer> layersToKeepBeneath = Coltil.singletonList(BotsnBoltsGame.bgLayer);
         final List<Panlayer> layersToKeepAbove = Arrays.asList(BotsnBoltsGame.hud);
-        final List<? extends Panctor> actorsToKeep = Arrays.asList(this, BotsnBoltsGame.tm); // Keep Player and old TileMap while scrolling
-        final List<? extends Panctor> actorsToDestroy = Arrays.asList(BotsnBoltsGame.tm); // Destroy old TileMap after scrolling
+        final List<? extends Panctor> actorsToKeep = Coltil.asList(this, BotsnBoltsGame.tm, boltDoor); // Keep Player and old TileMap while scrolling
+        final List<? extends Panctor> actorsToDestroy = Coltil.asList(BotsnBoltsGame.tm, boltDoor); // Destroy old TileMap after scrolling
         final int velX = VEL_ROOM_CHANGE * dirX, velY = VEL_ROOM_CHANGE * dirY;
         new RoomChanger(nextX, 0, velX, velY, layersToKeepBeneath, layersToKeepAbove, actorsToKeep, actorsToDestroy) {
             @Override
