@@ -245,6 +245,10 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
         throw new IllegalArgumentException("Unrecognized door type: " + doorType);
     }
     
+    private final static Player getPlayer() {
+        return PlayerContext.getPlayer(BotsnBoltsGame.pc);
+    }
+    
     protected final static class ShootableDoorDefinition {
         private final Panframe[] door;
         private final Panframe[][] opening;
@@ -476,7 +480,7 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
                 } else if (base > h) {
                     base = h;
                     vel = 0;
-                    PlayerContext.getPlayer(BotsnBoltsGame.pc).onBossDoorOpened();
+                    getPlayer().onBossDoorOpened();
                 }
             }
             for (int j = base; j < h; j++) {
@@ -487,6 +491,81 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
         @Override
         public final Pansplay getCurrentDisplay() {
             return displayBoss;
+        }
+    }
+    
+    protected final static class BoltDoor extends Panctor {
+        private final int x;
+        private final int y;
+        
+        protected BoltDoor(final int x, final int y) {
+            final TileMap tm = BotsnBoltsGame.tm;
+            tm.getLayer().addActor(this);
+            this.x = x;
+            this.y = y;
+            tm.savePosition(getPosition(), x, y);
+            setMirror(x > 0);
+            setBehavior(0, Tile.BEHAVIOR_SOLID);
+            setBehavior(3, Tile.BEHAVIOR_SOLID);
+        }
+        
+        private final void setBehavior(final int yoff, final byte b) {
+            final TileMap tm = BotsnBoltsGame.tm;
+            if (tm.getHeight() <= 7) {
+                tm.setBehavior(x, y + yoff, b);
+            } else {
+                final int yBase = y + (yoff * 2);
+                for (int j = 0; j < 2; j++) {
+                    final int yj = yBase + j;
+                    for (int i = 0; i < 2; i++) {
+                        tm.setBehavior(x + i, yj, b);
+                    }
+                }
+            }
+        }
+        
+        protected void close() {
+            final Player player = getPlayer();
+            if ((player != null) && (Math.abs(player.getPosition().getX() - getPosition().getX()) < 48)) {
+                return;
+            }
+        }
+        
+        @Override
+        protected final void renderView(final Panderer renderer) {
+            final Panlayer layer = getLayer();
+            final Panple pos = getPosition();
+            final float x = pos.getX(), y = pos.getY();
+            final boolean m = isMirror();
+            final int out, in;
+            if (m) {
+                out = 0;
+                in = 16;
+            } else {
+                out = 16;
+                in = 0;
+            }
+            final float xOut = x + out, xIn = x + in, y32 = y + 32;
+            final Panmage gen = BotsnBoltsGame.getDoorBoltGenerator(), door = BotsnBoltsGame.pc.pi.doorBolt;
+            renderer.render(layer, gen, x, y, BotsnBoltsGame.DEPTH_FG, 0, 0, 32, 32, 0, m, false);
+            renderer.render(layer, door, xOut, y32, BotsnBoltsGame.DEPTH_FG, 0, 0, 16, 16, 0, m, false);
+            for (int i = 0; i < 16; i += 8) {
+                renderer.render(layer, door, xIn + i, y32, BotsnBoltsGame.DEPTH_FG, 0, 8, 8, 8, 0, false, false);
+            }
+            for (int j = 40; j < 88; j += 8) {
+                final float yj = y + j;
+                if (j > 40 && j < 80) {
+                    renderer.render(layer, door, xOut, yj, BotsnBoltsGame.DEPTH_FG, 0, 0, 16, 8, 0, m, false);
+                }
+                for (int i = 0; i < 16; i += 8) {
+                    renderer.render(layer, door, xIn + i, yj, BotsnBoltsGame.DEPTH_FG, 0, 0, 8, 8, 0, false, false);
+                }
+            }
+            renderer.render(layer, door, xOut, y + 80, BotsnBoltsGame.DEPTH_FG, 0, 0, 16, 16, 0, m, true);
+            for (int i = 0; i < 16; i += 8) {
+                renderer.render(layer, door, xIn + i, y + 88, BotsnBoltsGame.DEPTH_FG, 0, 8, 8, 8, 0, false, true);
+            }
+            renderer.render(layer, gen, x, y + 96, BotsnBoltsGame.DEPTH_FG, 0, 0, 32, 32, 0, m, false);
         }
     }
 }
