@@ -115,6 +115,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static Panframe[] doorTunnelOverlay = null;
     protected static Panframe[] doorTunnelSmall = null;
     protected static Panframe[] doorTunnelSmallOverlay = null;
+    protected static Panmage doorBoltGenerator = null;
     protected static ShootableDoorDefinition doorCyan = null;
     protected static ShootableDoorDefinition doorGold = null;
     protected static ShootableDoorDefinition doorSilver = null;
@@ -279,6 +280,13 @@ public final class BotsnBoltsGame extends BaseGame {
             doorBoss = Pangine.getEngine().createImage("door.boss", RES + "bg/DoorBoss.png");
         }
         return doorBoss;
+    }
+    
+    protected final static Panmage getDoorBoltGenerator() {
+        if (doorBoltGenerator == null) {
+            doorBoltGenerator = Pangine.getEngine().createImage("door.bolt.generator", RES + "bg/DoorBoltGenerator.png");
+        }
+        return doorBoltGenerator;
     }
     
     private final static void loadMisc() {
@@ -487,6 +495,7 @@ public final class BotsnBoltsGame extends BaseGame {
     private static Img[] playerBatterySmall = null;
     private static Img[] playerBatteryMedium = null;
     private static Img[] playerBatteryBig = null;
+    private static Img playerDoorBolt = null;
     private static Img playerPowerBox = null;
     private static boolean playerMirror = true;
     
@@ -508,6 +517,7 @@ public final class BotsnBoltsGame extends BaseGame {
         playerBatterySmall = Imtil.loadStrip(pre + "BatterySmall.png", 8, false);
         playerBatteryMedium = Imtil.loadStrip(pre + "BatteryMedium.png", 16, false);
         playerBatteryBig = Imtil.loadStrip(pre + "BatteryBig.png", 16, false);
+        playerDoorBolt = Imtil.load(pre + "DoorBolt.png", false);
         playerPowerBox = Imtil.load(pre + "PowerBox.png", false);
         hudMeterImgs = Imtil.loadStrip(pre + "Meter.png", 8, false);
     }
@@ -530,6 +540,7 @@ public final class BotsnBoltsGame extends BaseGame {
         filterImgs(playerBatterySmall, f);
         filterImgs(playerBatteryMedium, f);
         filterImgs(playerBatteryBig, f);
+        Imtil.filterImg(playerDoorBolt, f);
         Imtil.filterImg(playerPowerBox, f);
         filterImgs(hudMeterImgs, f);
     }
@@ -551,6 +562,7 @@ public final class BotsnBoltsGame extends BaseGame {
         Img.close(playerBatterySmall);
         Img.close(playerBatteryMedium);
         Img.close(playerBatteryBig);
+        playerDoorBolt.close();
         playerPowerBox.close();
         //hudMeterImgs closed separately
     }
@@ -629,13 +641,14 @@ public final class BotsnBoltsGame extends BaseGame {
         final Panimation batterySml = newOscillation(pre + "battery.sml", playerBatterySmall, new FinPanple2(4, -1), new FinPanple2(-2, 2), new FinPanple2(2, 6), 3, 6);
         final Panimation batteryMed = newOscillation(pre + "battery.med", playerBatteryMedium, oBattery, new FinPanple2(-4, 2), new FinPanple2(4, 10), 3, 6);
         final Panimation batteryBig = newOscillation(pre + "battery.big", playerBatteryBig, oBattery, new FinPanple2(-6, 2), new FinPanple2(6, 14), 3, 6);
+        final Panmage doorBolt = engine.createImage(pre + "DoorBolt", playerDoorBolt);
         final Panmage bolt = null; //TODO
-        final Panmage byteDisk = null; //TODO
+        final Panmage disk = null; //TODO
         final Panmage powerBox = engine.createImage(pre + "PowerBox", CENTER_16, minCube, maxCube, playerPowerBox);
         final Panmage byteBox = null; //TODO
         final HudMeterImages hudMeterImages = newHudMeterImages(pre + "Meter", hudMeterImgs);
         return new PlayerImages(basicSet, shootSet, hurt, frozen, defeat, climb, climbShoot, climbTop, jumpAimDiag, jumpAimUp, basicProjectile, projectile2, projectile3, charge, chargeVert, charge2, chargeVert2,
-            burst, ball, warp, materialize, bomb, link, batterySml, batteryMed, batteryBig, bolt, byteDisk, powerBox, byteBox, hudMeterImages);
+            burst, ball, warp, materialize, bomb, link, batterySml, batteryMed, batteryBig, doorBolt, bolt, disk, powerBox, byteBox, hudMeterImages);
     }
     
     private final static PlayerImagesSubSet loadPlayerImagesSubSet(final String path, final String name, final boolean startNeeded, final Panple os, final Panple o, final Panple oj) {
