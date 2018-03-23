@@ -53,6 +53,7 @@ public abstract class RoomLoader {
     private static Character alt = null;
     protected static Panroom nextRoom = null;
     protected static BossDoor bossDoor = null;
+    protected static BoltDoor boltDoor = null;
     protected static int startX = 0;
     protected static int startY = 0;
     private static int row = 0;
@@ -569,6 +570,8 @@ public abstract class RoomLoader {
     private final static void dor(final int x, final int y, final String doorType) {
         if ("Boss".equals(doorType)) {
             bossDoor = new BossDoor(x, y);
+        } else if ("Bolt".equals(doorType)) {
+            boltDoor = new BoltDoor(x, y);
         } else {
             doors.add(new ShootableDoor(x, y, ShootableDoor.getShootableDoorDefinition(doorType)));
         }
@@ -780,6 +783,9 @@ public abstract class RoomLoader {
         if (bossDoor != null) {
             bossDoor.close();
         }
+        if (boltDoor != null) {
+            boltDoor.close();
+        }
         for (final StepHandler stepHandler : stepHandlers) {
             stepHandler.init();
         }
@@ -814,6 +820,7 @@ public abstract class RoomLoader {
         variables.clear();
         alt = null;
         bossDoor = null;
+        boltDoor = null;
     }
     
     protected final static void loadRooms() {
