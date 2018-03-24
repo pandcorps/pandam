@@ -37,23 +37,43 @@ public class Profile {
         return upgrades.contains(upgrade);
     }
     
-    protected static Upgrade UPGRADE_BALL = null;
+    /*package*/ final static Upgrade getUpgrade(final String name) {
+        for (final Upgrade upgrade : UPGRADES) {
+            if (upgrade.name.equals(name)) {
+                return upgrade;
+            }
+        }
+        return null;
+    }
     
-    protected static Upgrade UPGRADE_RAPID = null;
+    protected static Upgrade UPGRADE_BALL = new Upgrade("Ball");
     
-    protected static Upgrade UPGRADE_SPREAD = null;
+    protected static Upgrade UPGRADE_RAPID = new Upgrade("Rapid");
     
-    protected static Upgrade UPGRADE_CHARGE = null;
+    protected static Upgrade UPGRADE_SPREAD = new Upgrade("Spread");
     
-    protected static Upgrade UPGRADE_BOMB = null;
+    protected static Upgrade UPGRADE_CHARGE = new Upgrade("Charge");
     
-    protected static Upgrade UPGRADE_GRAPPLING_HOOOK = null;
+    protected static Upgrade UPGRADE_BOMB = new Upgrade("Bomb");
+    
+    protected static Upgrade UPGRADE_GRAPPLING_BEAM = new Upgrade("GrapplingBeam");
+    
+    protected final static Upgrade[] UPGRADES = { UPGRADE_BALL, UPGRADE_RAPID, UPGRADE_SPREAD, UPGRADE_CHARGE, UPGRADE_BOMB, UPGRADE_GRAPPLING_BEAM };
     
     protected static class Upgrade {
-        protected final Panmage boxImage;
+        protected final String name;
+        protected Panmage boxImage = null;
         
-        protected Upgrade(final Panmage boxImage) {
-            this.boxImage = boxImage;
+        protected Upgrade(final String name) {
+            this.name = name;
+        }
+        
+        protected final Panmage getBoxImage() {
+            if (boxImage != null) {
+                return boxImage;
+            }
+            boxImage = Pangine.getEngine().createImage("bolt." + name, BotsnBoltsGame.CENTER_16, BotsnBoltsGame.minCube, BotsnBoltsGame.maxCube, BotsnBoltsGame.RES + "misc/Bolt" + name + ".png");
+            return boxImage;
         }
     }
 }

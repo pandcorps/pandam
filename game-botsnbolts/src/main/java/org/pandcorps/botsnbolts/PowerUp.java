@@ -119,6 +119,10 @@ public abstract class PowerUp extends Chr implements CollisionListener {
     }
     
     public final static class Bolt extends PowerUp {
+        {
+            setView(getRandomPlayerContext().pi.bolt);
+        }
+        
         @Override
         protected final void award(final Player player) {
             

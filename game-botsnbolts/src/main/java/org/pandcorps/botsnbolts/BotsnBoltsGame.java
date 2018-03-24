@@ -53,7 +53,8 @@ public final class BotsnBoltsGame extends BaseGame {
     Lightning Bot electrocution attack
     Volcano Bot new art
     Volcano Bot new attack
-    Flood Bot torpedo attack 
+    Flood Bot torpedo attack
+    Composite tiles
     */
     
     protected final static String RES = "org/pandcorps/botsnbolts/";
@@ -104,8 +105,8 @@ public final class BotsnBoltsGame extends BaseGame {
     protected final static FinPanple2 os = new FinPanple2(15, 1);
     protected final static FinPanple2 ojs = new FinPanple2(15, 4);
     protected final static FinPanple originOverlay = new FinPanple(0, 0, DEPTH_OVERLAY);
-    private final static FinPanple2 minCube = new FinPanple2(-5, -5);
-    private final static FinPanple2 maxCube = new FinPanple2(5, 5);
+    protected final static FinPanple2 minCube = new FinPanple2(-5, -5);
+    protected final static FinPanple2 maxCube = new FinPanple2(5, 5);
     
     protected static Queue<Runnable> loaders = new LinkedList<Runnable>();
     protected static MultiFont font = null;
@@ -496,6 +497,7 @@ public final class BotsnBoltsGame extends BaseGame {
     private static Img[] playerBatteryMedium = null;
     private static Img[] playerBatteryBig = null;
     private static Img playerDoorBolt = null;
+    private static Img playerBolt = null;
     private static Img playerPowerBox = null;
     private static boolean playerMirror = true;
     
@@ -518,6 +520,7 @@ public final class BotsnBoltsGame extends BaseGame {
         playerBatteryMedium = Imtil.loadStrip(pre + "BatteryMedium.png", 16, false);
         playerBatteryBig = Imtil.loadStrip(pre + "BatteryBig.png", 16, false);
         playerDoorBolt = Imtil.load(pre + "DoorBolt.png", false);
+        playerBolt = Imtil.load(pre + "Bolt.png", false);
         playerPowerBox = Imtil.load(pre + "PowerBox.png", false);
         hudMeterImgs = Imtil.loadStrip(pre + "Meter.png", 8, false);
     }
@@ -541,6 +544,7 @@ public final class BotsnBoltsGame extends BaseGame {
         filterImgs(playerBatteryMedium, f);
         filterImgs(playerBatteryBig, f);
         Imtil.filterImg(playerDoorBolt, f);
+        Imtil.filterImg(playerBolt, f);
         Imtil.filterImg(playerPowerBox, f);
         filterImgs(hudMeterImgs, f);
     }
@@ -563,6 +567,7 @@ public final class BotsnBoltsGame extends BaseGame {
         Img.close(playerBatteryMedium);
         Img.close(playerBatteryBig);
         playerDoorBolt.close();
+        playerBolt.close();
         playerPowerBox.close();
         //hudMeterImgs closed separately
     }
@@ -640,9 +645,10 @@ public final class BotsnBoltsGame extends BaseGame {
         final Panple oBattery = new FinPanple2(8, -1);
         final Panimation batterySml = newOscillation(pre + "battery.sml", playerBatterySmall, new FinPanple2(4, -1), new FinPanple2(-2, 2), new FinPanple2(2, 6), 3, 6);
         final Panimation batteryMed = newOscillation(pre + "battery.med", playerBatteryMedium, oBattery, new FinPanple2(-4, 2), new FinPanple2(4, 10), 3, 6);
-        final Panimation batteryBig = newOscillation(pre + "battery.big", playerBatteryBig, oBattery, new FinPanple2(-6, 2), new FinPanple2(6, 14), 3, 6);
+        final Panple minBatteryBig = new FinPanple2(-6, 2), maxBatteryBig = new FinPanple2(6, 14);
+        final Panimation batteryBig = newOscillation(pre + "battery.big", playerBatteryBig, oBattery, minBatteryBig, maxBatteryBig, 3, 6);
         final Panmage doorBolt = engine.createImage(pre + "DoorBolt", playerDoorBolt);
-        final Panmage bolt = null; //TODO
+        final Panmage bolt = engine.createImage(pre + "Bolt", oBattery, minBatteryBig, maxBatteryBig, playerBolt);
         final Panmage disk = null; //TODO
         final Panmage powerBox = engine.createImage(pre + "PowerBox", CENTER_16, minCube, maxCube, playerPowerBox);
         final Panmage byteBox = null; //TODO

@@ -25,6 +25,7 @@ package org.pandcorps.botsnbolts;
 import org.pandcorps.botsnbolts.BlockPuzzle.*;
 import org.pandcorps.botsnbolts.Player.*;
 import org.pandcorps.botsnbolts.PowerUp.*;
+import org.pandcorps.botsnbolts.Profile.*;
 import org.pandcorps.botsnbolts.RoomLoader.*;
 import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
@@ -170,7 +171,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         return Math.abs(getPosition().getX() - other.getPosition().getX());
     }
     
-    protected final PlayerContext getPlayerContext() {
+    protected final static PlayerContext getPlayerContext() {
         return BotsnBoltsGame.pc;
     }
     
@@ -474,15 +475,23 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
     }
     
+    private final static int OFF_CUBE = 16;
+    
     protected abstract static class CubeEnemy extends TileUnawareEnemy {
         protected final float baseX;
         protected final float baseY;
         
         protected CubeEnemy(final int x, final int y, final int health) {
+            this(x, y, health, true);
+        }
+        
+        protected CubeEnemy(final int x, final int y, final int health, final boolean cubeNeeded) {
             super(x, y, health);
-            newCube(x, y);
+            if (cubeNeeded) {
+                newCube(x, y);
+            }
             final Panple pos = getPosition();
-            pos.add(16, 16);
+            pos.add(OFF_CUBE, OFF_CUBE);
             baseX = pos.getX();
             baseY = pos.getY();
         }
@@ -507,6 +516,20 @@ public abstract class Enemy extends Chr implements CollisionListener {
         @Override
         protected final PowerUp pickAward() {
             return new BigBattery();
+        }
+    }
+    
+    protected final static class BoltBox extends CubeEnemy {
+        protected BoltBox(final int x, final int y, final Upgrade upgrade) {
+            super(x, y, 1, false);
+            final TileMap tm = BotsnBoltsGame.tm;
+            tm.setBehavior(x, y, Tile.BEHAVIOR_SOLID);
+            setView(upgrade.getBoxImage());
+        }
+        
+        @Override
+        protected final PowerUp pickAward() {
+            return new Bolt();
         }
     }
     
