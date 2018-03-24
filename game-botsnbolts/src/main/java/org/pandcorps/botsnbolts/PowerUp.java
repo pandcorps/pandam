@@ -47,7 +47,7 @@ public abstract class PowerUp extends Chr implements CollisionListener {
     protected abstract void award(final Player player);
     
     @Override
-    protected final int getSolid(final int off) {
+    protected int getSolid(final int off) {
         return (off > 0) ? -1 : super.getSolid(off);
     }
     
@@ -126,7 +126,7 @@ public abstract class PowerUp extends Chr implements CollisionListener {
         }
     }
     
-    public final static class Disk extends PowerUp {
+    public static class Disk extends PowerUp {
         protected Disk(final Player player) {
             setView(player.pi.disk);
         }
@@ -134,6 +134,18 @@ public abstract class PowerUp extends Chr implements CollisionListener {
         @Override
         protected final void award(final Player player) {
             player.addHealth(HudMeter.MAX_VALUE);
+        }
+    }
+    
+    public final static class VictoryDisk extends Disk {
+        protected VictoryDisk(final Player player) {
+            super(player);
+            Boss.clipping = false;
+        }
+        
+        @Override
+        protected final int getSolid(final int off) {
+            return Boss.getSolid(this, off);
         }
     }
     

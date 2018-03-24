@@ -73,6 +73,10 @@ public abstract class Chr extends GuyPlatform {
         return (b == Tile.BEHAVIOR_SOLID) || (b == TILE_ICE) || isCustomSolidBehavior(b);
     }
     
+    protected final int getIdentitySolid(final int off) {
+        return getSolid(off, true);
+    }
+    
     @Override
     protected final boolean isFloorBehavior(final byte b) {
         return b == BotsnBoltsGame.TILE_FLOOR || b == BotsnBoltsGame.TILE_LADDER_TOP;

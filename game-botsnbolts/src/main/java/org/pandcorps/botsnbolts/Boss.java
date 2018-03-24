@@ -26,6 +26,7 @@ import java.util.*;
 
 import org.pandcorps.botsnbolts.Extra.*;
 import org.pandcorps.botsnbolts.Player.*;
+import org.pandcorps.botsnbolts.PowerUp.*;
 import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
@@ -44,7 +45,7 @@ public abstract class Boss extends Enemy {
     protected Queue<Jump> pendingJumps = null;
     private boolean jumping = false;
     protected int moves = -1;
-    private static boolean clipping = true;
+    protected static boolean clipping = true;
     private static boolean delaying = false;
     protected static boolean dropping = false;
     
@@ -54,7 +55,7 @@ public abstract class Boss extends Enemy {
         startStill();
         setMirror(true);
         if (isDropNeeded()) {
-            getPosition().setY(Pangine.getEngine().getEffectiveHeight() - 1);
+            getPosition().setY(getDropY());
             clipping = false;
             delaying = true;
             dropping = true;
@@ -64,6 +65,10 @@ public abstract class Boss extends Enemy {
             delaying = false;
             dropping = false;
         }
+    }
+    
+    private final static int getDropY() {
+        return Pangine.getEngine().getEffectiveHeight() - 1;
     }
     
     protected void init() {
@@ -86,10 +91,14 @@ public abstract class Boss extends Enemy {
     
     @Override
     protected final int getSolid(final int off) {
-        final int s = super.getSolid(off);
+        return getSolid(this, off);
+    }
+    
+    protected final static int getSolid(final Chr chr, final int off) {
+        final int s = chr.getIdentitySolid(off);
         if (clipping) {
             return s;
-        } else if ((s == -1) && (getPosition().getY() < (Pangine.getEngine().getEffectiveHeight() - 48))) {
+        } else if ((s == -1) && (chr.getPosition().getY() < (Pangine.getEngine().getEffectiveHeight() - 48))) {
             clipping = true;
         }
         return -1;
@@ -157,9 +166,16 @@ public abstract class Boss extends Enemy {
     protected abstract boolean pickState();
     
     protected abstract boolean continueState();
+    
+    @Override
+    protected final PowerUp pickAward(final Player player) {
+        return new VictoryDisk(player);
+    }
 
     @Override
     protected final void award(final PowerUp powerUp) {
+        powerUp.getPosition().set(192, getDropY());
+        getLayer().addActor(powerUp);
     }
     
     @Override

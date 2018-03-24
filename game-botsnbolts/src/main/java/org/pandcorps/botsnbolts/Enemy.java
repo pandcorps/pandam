@@ -142,7 +142,10 @@ public abstract class Enemy extends Chr implements CollisionListener {
         return null;
     }
     
-    protected abstract void award(final PowerUp powerUp);
+    protected void award(final PowerUp powerUp) {
+        final Panple pos = getPosition();
+        PowerUp.addPowerUp(powerUp, pos.getX(), pos.getY(), 6); // vel 0?
+    }
     
     protected final void updateMirror() {
         if (hv < 0) {
@@ -706,10 +709,6 @@ public abstract class Enemy extends Chr implements CollisionListener {
         protected Panmage getView(final int i) {
             return BotsnBoltsGame.wallCannon[i];
         }
-
-        @Override
-        protected final void award(final PowerUp powerUp) {
-        }
     }
     
     private final static Panple CEILING_CANNON_MIN = new FinPanple2(2, 3);
@@ -782,10 +781,6 @@ public abstract class Enemy extends Chr implements CollisionListener {
             fire(ox, 3, vxMult * VEL_PROJECTILE_45, -VEL_PROJECTILE_45);
         }
         
-        @Override
-        protected final void award(final PowerUp powerUp) {
-        }
-        
         private final static Panmage getImage(final int i) {
             Panmage image = images[i];
             if (image != null) {
@@ -818,11 +813,6 @@ public abstract class Enemy extends Chr implements CollisionListener {
             addX(hv);
             addY();
             return true;
-        }
-
-        @Override
-        protected final void award(final PowerUp powerUp) {
-            
         }
     }
     
@@ -886,11 +876,6 @@ public abstract class Enemy extends Chr implements CollisionListener {
                 @Override public final void onTimer(final TimerEvent event) {
                     schedule();
                 }});
-        }
-        
-        @Override
-        protected final void award(final PowerUp powerUp) {
-            
         }
     }
     
@@ -1028,11 +1013,6 @@ public abstract class Enemy extends Chr implements CollisionListener {
                 timer = 0;
             }
         }
-
-        @Override
-        protected final void award(final PowerUp powerUp) {
-            
-        }
     }
     
     // Shield covers enemy's face; can only shoot enemy's back
@@ -1092,10 +1072,6 @@ public abstract class Enemy extends Chr implements CollisionListener {
                 updateMirror();
             }
             return true;
-        }
-
-        @Override
-        protected final void award(final PowerUp powerUp) {
         }
     }
     
@@ -1218,10 +1194,6 @@ public abstract class Enemy extends Chr implements CollisionListener {
             destroyPartialTiles();
         }
         
-        @Override
-        protected final void award(final PowerUp powerUp) {
-        }
-        
         protected final static Panmage getDirtShatter() {
             if (dirtShatter == null) {
                 dirtShatter = Pangine.getEngine().createImage("dirt.shatter", BotsnBoltsGame.CENTER_8, null, null, BotsnBoltsGame.RES + "misc/DirtShatter.png");
@@ -1274,10 +1246,6 @@ public abstract class Enemy extends Chr implements CollisionListener {
         protected final void onLanded() {
             // Skip parent logic of clearing v
         }
-
-        @Override
-        protected final void award(final PowerUp powerUp) {
-        }
         
         private final static Panmage getImage(final int i) {
             Panmage image = images[i];
@@ -1303,10 +1271,6 @@ public abstract class Enemy extends Chr implements CollisionListener {
         @Override
         protected final boolean isVulnerableToProjectile(final Projectile prj) {
             return true; //TODO
-        }
-        
-        @Override
-        protected final void award(final PowerUp powerUp) {
         }
     }
     
@@ -1358,10 +1322,6 @@ public abstract class Enemy extends Chr implements CollisionListener {
         @Override
         protected final boolean onHorizontal(final int off) {
             return onHorizontalEdgeTurn(off);
-        }
-
-        @Override
-        protected final void award(final PowerUp powerUp) {
         }
         
         private final static Panframe getFrame(final int i) {
@@ -1461,10 +1421,6 @@ public abstract class Enemy extends Chr implements CollisionListener {
         @Override
         protected final boolean onStepCustom() {
             return held;
-        }
-
-        @Override
-        protected final void award(final PowerUp powerUp) {
         }
         
         private final static Panmage getImage() {
@@ -1777,10 +1733,6 @@ public abstract class Enemy extends Chr implements CollisionListener {
             Panctor.destroy(boulder);
         }
         
-        @Override
-        protected final void award(final PowerUp powerUp) {
-        }
-        
         private final static Panmage getRockCatch() {
             return (rockCatch = getRockImage(rockCatch, "RockEnemyCatch"));
         }
@@ -1848,10 +1800,6 @@ public abstract class Enemy extends Chr implements CollisionListener {
         private final void setStillImage() {
             changeView(getImage(0));
         }
-
-        @Override
-        protected final void award(final PowerUp powerUp) {
-        }
         
         private final static Panmage getImage(final int i) {
             final Panmage img = imgs[i];
@@ -1884,10 +1832,6 @@ public abstract class Enemy extends Chr implements CollisionListener {
         private final void shatter() {
             Player.shatter(this, DrillEnemy.getDirtShatter());
             destroy();
-        }
-        
-        @Override
-        protected final void award(final PowerUp powerUp) {
         }
         
         private final static Panmage getImage() {
@@ -1967,10 +1911,6 @@ public abstract class Enemy extends Chr implements CollisionListener {
             }
         }
         
-        @Override
-        protected final void award(final PowerUp powerUp) {
-        }
-        
         private final static Panmage getStill() {
             return (still = getElectricityImage(still, "ElectricityEnemy"));
         }
@@ -2004,10 +1944,6 @@ public abstract class Enemy extends Chr implements CollisionListener {
                 updateMirror();
             }
             return true;
-        }
-        
-        @Override
-        protected final void award(final PowerUp powerUp) {
         }
         
         private final static Panmage getCurrentSwim() {
