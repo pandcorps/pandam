@@ -22,7 +22,6 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.botsnbolts;
 
-import org.pandcorps.botsnbolts.Player.*;
 import org.pandcorps.botsnbolts.Profile.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
@@ -52,10 +51,6 @@ public abstract class PowerUp extends Chr implements CollisionListener {
         return (off > 0) ? -1 : super.getSolid(off);
     }
     
-    protected final static PlayerContext getRandomPlayerContext() {
-        return BotsnBoltsGame.pc;
-    }
-    
     protected final static PowerUp addPowerUp(final PowerUp powerUp, final float x, final float y, final float v) {
         powerUp.getPosition().set(x, y, BotsnBoltsGame.DEPTH_POWER_UP);
         powerUp.v = v;
@@ -64,11 +59,11 @@ public abstract class PowerUp extends Chr implements CollisionListener {
     }
     
     public abstract static class Battery extends PowerUp implements AllOobListener {
-        protected Battery() {
-            setView(getImage());
+        protected Battery(final Player player) {
+            setView(getImage(player));
         }
         
-        protected abstract Panimation getImage();
+        protected abstract Panimation getImage(final Player player);
         
         @Override
         protected final void award(final Player player) {
@@ -84,9 +79,13 @@ public abstract class PowerUp extends Chr implements CollisionListener {
     }
     
     public final static class SmallBattery extends Battery {
+        protected SmallBattery(final Player player) {
+            super(player);
+        }
+        
         @Override
-        protected final Panimation getImage() {
-            return getRandomPlayerContext().pi.batterySmall;
+        protected final Panimation getImage(final Player player) {
+            return player.pi.batterySmall;
         }
         
         @Override
@@ -96,9 +95,13 @@ public abstract class PowerUp extends Chr implements CollisionListener {
     }
     
     public final static class MediumBattery extends Battery {
+        protected MediumBattery(final Player player) {
+            super(player);
+        }
+        
         @Override
-        protected final Panimation getImage() {
-            return getRandomPlayerContext().pi.batteryMedium;
+        protected final Panimation getImage(final Player player) {
+            return player.pi.batteryMedium;
         }
         
         @Override
@@ -108,9 +111,13 @@ public abstract class PowerUp extends Chr implements CollisionListener {
     }
     
     public final static class BigBattery extends Battery {
+        protected BigBattery(final Player player) {
+            super(player);
+        }
+        
         @Override
-        protected final Panimation getImage() {
-            return getRandomPlayerContext().pi.batteryBig;
+        protected final Panimation getImage(final Player player) {
+            return player.pi.batteryBig;
         }
         
         @Override
@@ -120,20 +127,21 @@ public abstract class PowerUp extends Chr implements CollisionListener {
     }
     
     public final static class Disk extends PowerUp {
-        {
-            setView(getRandomPlayerContext().pi.disk);
+        protected Disk(final Player player) {
+            setView(player.pi.disk);
         }
         
         @Override
         protected final void award(final Player player) {
+            player.addHealth(HudMeter.MAX_VALUE);
         }
     }
     
     public final static class Bolt extends PowerUp {
         private final Upgrade upgrade;
         
-        protected Bolt(final Upgrade upgrade) {
-            setView(getRandomPlayerContext().pi.bolt);
+        protected Bolt(final Player player, final Upgrade upgrade) {
+            setView(player.pi.bolt);
             this.upgrade = upgrade;
         }
         

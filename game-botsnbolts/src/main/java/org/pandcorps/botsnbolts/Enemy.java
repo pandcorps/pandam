@@ -93,7 +93,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         health -= oldPower;
         if (health <= 0) {
             prj.burst(this);
-            award();
+            award(prj.src);
             destroy();
         }
         prj.setPower(oldPower - oldHealth);
@@ -122,14 +122,14 @@ public abstract class Enemy extends Chr implements CollisionListener {
         return 1;
     }
     
-    protected final void award() {
-        final PowerUp powerUp = pickAward();
+    protected final void award(final Player player) {
+        final PowerUp powerUp = pickAward(player);
         if (powerUp != null) {
             award(powerUp);
         }
     }
     
-    protected PowerUp pickAward() {
+    protected PowerUp pickAward(final Player player) {
         /*
         TODO
         Non-100 probability
@@ -137,7 +137,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         Pick stronger power-ups as health decreases
         */
         if (Mathtil.rand(100)) {
-            return new BigBattery();
+            return new BigBattery(player);
         }
         return null;
     }
@@ -514,8 +514,8 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
         
         @Override
-        protected final PowerUp pickAward() {
-            return new BigBattery();
+        protected final PowerUp pickAward(final Player player) {
+            return new BigBattery(player);
         }
     }
     
@@ -526,8 +526,8 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
         
         @Override
-        protected final PowerUp pickAward() {
-            return new Disk();
+        protected final PowerUp pickAward(final Player player) {
+            return new Disk(player);
         }
     }
     
@@ -543,8 +543,8 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
         
         @Override
-        protected final PowerUp pickAward() {
-            return new Bolt(upgrade);
+        protected final PowerUp pickAward(final Player player) {
+            return new Bolt(player, upgrade);
         }
     }
     
