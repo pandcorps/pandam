@@ -498,7 +498,9 @@ public final class BotsnBoltsGame extends BaseGame {
     private static Img[] playerBatteryBig = null;
     private static Img playerDoorBolt = null;
     private static Img playerBolt = null;
+    private static Img playerDisk = null;
     private static Img playerPowerBox = null;
+    private static Img playerDiskBox = null;
     private static boolean playerMirror = true;
     
     private final static void openPlayerImages(final String dir, final String name) {
@@ -521,7 +523,9 @@ public final class BotsnBoltsGame extends BaseGame {
         playerBatteryBig = Imtil.loadStrip(pre + "BatteryBig.png", 16, false);
         playerDoorBolt = Imtil.load(pre + "DoorBolt.png", false);
         playerBolt = Imtil.load(pre + "Bolt.png", false);
+        playerDisk = Imtil.load(pre + "Disk.png", false);
         playerPowerBox = Imtil.load(pre + "PowerBox.png", false);
+        playerDiskBox = Imtil.load(pre + "DiskBox.png", false);
         hudMeterImgs = Imtil.loadStrip(pre + "Meter.png", 8, false);
     }
     
@@ -545,7 +549,9 @@ public final class BotsnBoltsGame extends BaseGame {
         filterImgs(playerBatteryBig, f);
         Imtil.filterImg(playerDoorBolt, f);
         Imtil.filterImg(playerBolt, f);
+        Imtil.filterImg(playerDisk, f);
         Imtil.filterImg(playerPowerBox, f);
+        Imtil.filterImg(playerDiskBox, f);
         filterImgs(hudMeterImgs, f);
     }
     
@@ -568,7 +574,9 @@ public final class BotsnBoltsGame extends BaseGame {
         Img.close(playerBatteryBig);
         playerDoorBolt.close();
         playerBolt.close();
+        playerDisk.close();
         playerPowerBox.close();
+        playerDiskBox.close();
         //hudMeterImgs closed separately
     }
     
@@ -649,12 +657,12 @@ public final class BotsnBoltsGame extends BaseGame {
         final Panimation batteryBig = newOscillation(pre + "battery.big", playerBatteryBig, oBattery, minBatteryBig, maxBatteryBig, 3, 6);
         final Panmage doorBolt = engine.createImage(pre + "DoorBolt", playerDoorBolt);
         final Panmage bolt = engine.createImage(pre + "Bolt", oBattery, minBatteryBig, maxBatteryBig, playerBolt);
-        final Panmage disk = null; //TODO
+        final Panmage disk = engine.createImage(pre + "Disk", oBattery, minBatteryBig, maxBatteryBig, playerDisk);
         final Panmage powerBox = engine.createImage(pre + "PowerBox", CENTER_16, minCube, maxCube, playerPowerBox);
-        final Panmage byteBox = null; //TODO
+        final Panmage diskBox = engine.createImage(pre + "DiskBox", CENTER_16, minCube, maxCube, playerDiskBox);
         final HudMeterImages hudMeterImages = newHudMeterImages(pre + "Meter", hudMeterImgs);
         return new PlayerImages(basicSet, shootSet, hurt, frozen, defeat, climb, climbShoot, climbTop, jumpAimDiag, jumpAimUp, basicProjectile, projectile2, projectile3, charge, chargeVert, charge2, chargeVert2,
-            burst, ball, warp, materialize, bomb, link, batterySml, batteryMed, batteryBig, doorBolt, bolt, disk, powerBox, byteBox, hudMeterImages);
+            burst, ball, warp, materialize, bomb, link, batterySml, batteryMed, batteryBig, doorBolt, bolt, disk, powerBox, diskBox, hudMeterImages);
     }
     
     private final static PlayerImagesSubSet loadPlayerImagesSubSet(final String path, final String name, final boolean startNeeded, final Panple os, final Panple o, final Panple oj) {

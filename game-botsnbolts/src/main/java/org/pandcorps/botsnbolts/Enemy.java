@@ -519,6 +519,18 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
     }
     
+    protected final static class DiskBox extends CubeEnemy {
+        protected DiskBox(final int x, final int y) {
+            super(x, y, 1);
+            setView(getPlayerContext().pi.diskBox);
+        }
+        
+        @Override
+        protected final PowerUp pickAward() {
+            return new Disk();
+        }
+    }
+    
     protected final static class BoltBox extends CubeEnemy {
         private final Upgrade upgrade;
         

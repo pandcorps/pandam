@@ -119,6 +119,16 @@ public abstract class PowerUp extends Chr implements CollisionListener {
         }
     }
     
+    public final static class Disk extends PowerUp {
+        {
+            setView(getRandomPlayerContext().pi.disk);
+        }
+        
+        @Override
+        protected final void award(final Player player) {
+        }
+    }
+    
     public final static class Bolt extends PowerUp {
         private final Upgrade upgrade;
         
