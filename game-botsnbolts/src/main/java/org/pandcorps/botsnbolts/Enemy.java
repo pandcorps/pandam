@@ -520,16 +520,19 @@ public abstract class Enemy extends Chr implements CollisionListener {
     }
     
     protected final static class BoltBox extends CubeEnemy {
+        private final Upgrade upgrade;
+        
         protected BoltBox(final int x, final int y, final Upgrade upgrade) {
             super(x, y, 1, false);
             final TileMap tm = BotsnBoltsGame.tm;
             tm.setBehavior(x, y, Tile.BEHAVIOR_SOLID);
             setView(upgrade.getBoxImage());
+            this.upgrade = upgrade;
         }
         
         @Override
         protected final PowerUp pickAward() {
-            return new Bolt();
+            return new Bolt(upgrade);
         }
     }
     

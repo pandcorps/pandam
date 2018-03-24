@@ -48,11 +48,11 @@ public class Profile {
     
     protected static Upgrade UPGRADE_BALL = new Upgrade("Ball");
     
-    protected static Upgrade UPGRADE_RAPID = new Upgrade("Rapid");
+    protected static Upgrade UPGRADE_RAPID = new RapidUpgrade();
     
-    protected static Upgrade UPGRADE_SPREAD = new Upgrade("Spread");
+    protected static Upgrade UPGRADE_SPREAD = new SpreadUpgrade();
     
-    protected static Upgrade UPGRADE_CHARGE = new Upgrade("Charge");
+    protected static Upgrade UPGRADE_CHARGE = new ChargeUpgrade();
     
     protected static Upgrade UPGRADE_BOMB = new Upgrade("Bomb");
     
@@ -68,12 +68,66 @@ public class Profile {
             this.name = name;
         }
         
+        protected final void award(final Player player) {
+            player.prf.upgrades.add(this);
+            enable(player);
+        }
+        
+        protected void enable(final Player player) {
+        }
+        
         protected final Panmage getBoxImage() {
             if (boxImage != null) {
                 return boxImage;
             }
             boxImage = Pangine.getEngine().createImage("bolt." + name, BotsnBoltsGame.CENTER_16, BotsnBoltsGame.minCube, BotsnBoltsGame.maxCube, BotsnBoltsGame.RES + "misc/Bolt" + name + ".png");
             return boxImage;
+        }
+    }
+    
+    protected abstract static class ShootUpgrade extends Upgrade {
+        protected ShootUpgrade(final String name) {
+            super(name);
+        }
+        
+        @Override
+        protected final void enable(final Player player) {
+            player.prf.shootMode = getShootMode();
+        }
+        
+        protected abstract ShootMode getShootMode();
+    }
+    
+    protected final static class RapidUpgrade extends ShootUpgrade {
+        protected RapidUpgrade() {
+            super("Rapid");
+        }
+        
+        @Override
+        protected final ShootMode getShootMode() {
+            return Player.SHOOT_RAPID;
+        }
+    }
+    
+    protected final static class SpreadUpgrade extends ShootUpgrade {
+        protected SpreadUpgrade() {
+            super("Spread");
+        }
+        
+        @Override
+        protected final ShootMode getShootMode() {
+            return Player.SHOOT_SPREAD;
+        }
+    }
+    
+    protected final static class ChargeUpgrade extends ShootUpgrade {
+        protected ChargeUpgrade() {
+            super("Charge");
+        }
+        
+        @Override
+        protected final ShootMode getShootMode() {
+            return Player.SHOOT_CHARGE;
         }
     }
 }

@@ -23,6 +23,7 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.botsnbolts;
 
 import org.pandcorps.botsnbolts.Player.*;
+import org.pandcorps.botsnbolts.Profile.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.boundary.*;
@@ -119,13 +120,16 @@ public abstract class PowerUp extends Chr implements CollisionListener {
     }
     
     public final static class Bolt extends PowerUp {
-        {
+        private final Upgrade upgrade;
+        
+        protected Bolt(final Upgrade upgrade) {
             setView(getRandomPlayerContext().pi.bolt);
+            this.upgrade = upgrade;
         }
         
         @Override
         protected final void award(final Player player) {
-            
+            upgrade.award(player);
         }
     }
 }
