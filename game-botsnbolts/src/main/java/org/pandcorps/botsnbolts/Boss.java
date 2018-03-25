@@ -174,8 +174,7 @@ public abstract class Boss extends Enemy {
 
     @Override
     protected final void award(final PowerUp powerUp) {
-        powerUp.getPosition().set(192, getDropY());
-        getLayer().addActor(powerUp);
+        PowerUp.addPowerUp(powerUp, 192, getDropY(), 0);
     }
     
     @Override

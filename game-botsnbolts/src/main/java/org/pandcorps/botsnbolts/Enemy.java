@@ -130,21 +130,28 @@ public abstract class Enemy extends Chr implements CollisionListener {
     }
     
     protected PowerUp pickAward(final Player player) {
-        /*
-        TODO
-        Non-100 probability
-        Make probability higher as health decreases
-        Pick stronger power-ups as health decreases
-        */
-        if (Mathtil.rand(100)) {
-            return new BigBattery(player);
+        final int health = player.getHealth(); // 1 to MAX
+        final float damage = HudMeter.MAX_VALUE - health; // 0 to (MAX - 1)
+        final float damageNormalized = damage / (HudMeter.MAX_VALUE - 1); // 0 to 1
+        final int rewardPercentage = Math.round(damageNormalized * 80) + 10; // 10 to 90
+        if (Mathtil.rand(rewardPercentage)) { // MAX health -> 10%; 1 health -> 90%
+            final int r = Mathtil.randi(0, 99);
+            final int bigThreshold = Math.round(damageNormalized * 70); // 0 to 70
+            final int mediumThreshold = bigThreshold + 30; // 30 to 100
+            if (r < bigThreshold) { // MAX health -> 0%; 1 health -> 70%
+                return new BigBattery(player);
+            } else if (r < mediumThreshold) {
+                return new MediumBattery(player);
+            } else {
+                return new SmallBattery(player);
+            }
         }
         return null;
     }
     
     protected void award(final PowerUp powerUp) {
         final Panple pos = getPosition();
-        PowerUp.addPowerUp(powerUp, pos.getX(), pos.getY(), 6); // vel 0?
+        PowerUp.addPowerUp(powerUp, pos.getX(), pos.getY(), 6);
     }
     
     protected final void updateMirror() {
@@ -506,6 +513,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         
         @Override
         protected final void award(final PowerUp powerUp) {
+            powerUp.liftRequired = true;
             PowerUp.addPowerUp(powerUp, baseX, baseY, 6);
         }
     }

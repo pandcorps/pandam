@@ -439,6 +439,10 @@ public final class Player extends Chr {
         getLayerRequired(src).addActor(actor);
     }
     
+    protected final int getHealth() {
+        return health;
+    }
+    
     protected final void addHealth(final int amount) {
         if (health >= HudMeter.MAX_VALUE) {
             return;

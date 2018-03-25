@@ -28,6 +28,8 @@ import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.boundary.*;
 
 public abstract class PowerUp extends Chr implements CollisionListener {
+    protected boolean liftRequired = false;
+    
     protected PowerUp() {
         super(4, 8);
     }
@@ -48,7 +50,11 @@ public abstract class PowerUp extends Chr implements CollisionListener {
     
     @Override
     protected int getSolid(final int off) {
-        return (off > 0) ? -1 : super.getSolid(off);
+        if (liftRequired) {
+            return (off > 0) ? -1 : super.getSolid(off);
+        } else {
+            return super.getSolid(off);
+        }
     }
     
     protected final static PowerUp addPowerUp(final PowerUp powerUp, final float x, final float y, final float v) {
