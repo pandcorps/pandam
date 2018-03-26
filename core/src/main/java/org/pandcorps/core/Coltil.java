@@ -103,7 +103,27 @@ public final class Coltil {
 	
 	public final static <E> List<E> asList(final E... a) {
 		final int size = size((Object[]) a);
-		return (size == 0 || (size == 1 && a[0] == null)) ? null : Arrays.asList(a);
+		if (size == 0) {
+		    return null;
+		}
+		int valued = 0;
+		for (final E elem : a) {
+		    if (elem != null) {
+		        valued++;
+		    }
+		}
+		if (valued == size) {
+		    return Arrays.asList(a);
+		} else if (valued == 0) {
+		    return null;
+		}
+		final List<E> list = new ArrayList<E>(valued);
+		for (final E elem : a) {
+		    if (elem != null) {
+		        list.add(elem);
+		    }
+		}
+		return list;
 	}
 	
 	public final static <E> Iterable<E> unnull(final Iterable<E> i) {

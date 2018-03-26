@@ -248,13 +248,13 @@ public abstract class RoomFunction {
     }
     
     public final static class DroughtBackground extends StepHandler {
-        final int numColors = 10;
+        final int numColors = 9;
         final Pancolor[] colors = new Pancolor[numColors];
-        private int index = 3;
+        private int index = 2;
         
         {
             for (int i = 0; i < numColors; i++) {
-                final int o = (i + 5) * 8;
+                final int o = (i + 6) * 8;
                 colors[i] = new FinPancolor(Pancolor.MAX_VALUE, 128 + o, 64 + o);
             }
         }
