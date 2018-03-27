@@ -1774,7 +1774,7 @@ public final class Player extends Chr {
         protected final Panmage bolt;
         protected final Panmage disk;
         protected final Panmage powerBox;
-        //protected final Panmage boltBox; // Each bolt has a unique box image
+        protected final Map<String, Panmage> boltBoxes = new HashMap<String, Panmage>(Profile.UPGRADES.length); // Each bolt has a unique box image
         protected final Panmage diskBox;
         private final HudMeterImages hudMeterImages;
         
