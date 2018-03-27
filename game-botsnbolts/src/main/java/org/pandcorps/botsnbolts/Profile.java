@@ -62,7 +62,6 @@ public class Profile {
     
     protected static class Upgrade {
         protected final String name;
-        protected Panmage boxImage = null;
         
         protected Upgrade(final String name) {
             this.name = name;
@@ -76,12 +75,8 @@ public class Profile {
         protected void enable(final Player player) {
         }
         
-        protected final Panmage getBoxImage() {
-            if (boxImage != null) {
-                return boxImage;
-            }
-            boxImage = Pangine.getEngine().createImage("bolt." + name, BotsnBoltsGame.CENTER_16, BotsnBoltsGame.minCube, BotsnBoltsGame.maxCube, BotsnBoltsGame.RES + "misc/Bolt" + name + ".png");
-            return boxImage;
+        protected final Panmage getBoxImage(final PlayerContext pc) {
+            return pc.pi.boltBoxes.get(name);
         }
     }
     

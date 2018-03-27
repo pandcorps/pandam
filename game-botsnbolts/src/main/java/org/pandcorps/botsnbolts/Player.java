@@ -1774,7 +1774,7 @@ public final class Player extends Chr {
         protected final Panmage bolt;
         protected final Panmage disk;
         protected final Panmage powerBox;
-        protected final Map<String, Panmage> boltBoxes = new HashMap<String, Panmage>(Profile.UPGRADES.length); // Each bolt has a unique box image
+        protected final Map<String, Panmage> boltBoxes; // Each bolt has a unique box image
         protected final Panmage diskBox;
         private final HudMeterImages hudMeterImages;
         
@@ -1787,7 +1787,7 @@ public final class Player extends Chr {
                                final Panimation burst, final Panmage[] ball, final Panmage warp, final Panimation materialize, final Panimation bomb,
                                final Panmage link, final Panimation batterySmall, final Panimation batteryMedium, final Panimation batteryBig,
                                final Panmage doorBolt, final Panmage bolt, final Panmage disk,
-                               final Panmage powerBox, final Panmage diskBox, final HudMeterImages hudMeterImages) {
+                               final Panmage powerBox, final Map<String, Panmage> boltBoxes, final Panmage diskBox, final HudMeterImages hudMeterImages) {
             this.basicSet = basicSet;
             this.shootSet = shootSet;
             this.hurt = hurt;
@@ -1818,6 +1818,7 @@ public final class Player extends Chr {
             this.bolt = bolt;
             this.disk = disk;
             this.powerBox = powerBox;
+            this.boltBoxes = boltBoxes;
             this.diskBox = diskBox;
             this.hudMeterImages = hudMeterImages;
         }

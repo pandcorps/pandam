@@ -23,9 +23,11 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.botsnbolts;
 
 import java.util.*;
+import java.util.Map.*;
 
 import org.pandcorps.botsnbolts.HudMeter.*;
 import org.pandcorps.botsnbolts.Player.*;
+import org.pandcorps.botsnbolts.Profile.*;
 import org.pandcorps.botsnbolts.RoomLoader.*;
 import org.pandcorps.botsnbolts.ShootableDoor.*;
 import org.pandcorps.core.*;
@@ -55,6 +57,7 @@ public final class BotsnBoltsGame extends BaseGame {
     Volcano Bot new attack
     Flood Bot torpedo attack
     Composite tiles
+    Bug: Rapid jump inputs with grappling beam while running into a wall slowly climbs the wall
     */
     
     protected final static String RES = "org/pandcorps/botsnbolts/";
@@ -500,6 +503,7 @@ public final class BotsnBoltsGame extends BaseGame {
     private static Img playerBolt = null;
     private static Img playerDisk = null;
     private static Img playerPowerBox = null;
+    private static Map<String, Img> playerBoltBoxes = null;
     private static Img playerDiskBox = null;
     private static boolean playerMirror = true;
     
@@ -525,6 +529,11 @@ public final class BotsnBoltsGame extends BaseGame {
         playerBolt = Imtil.load(pre + "Bolt.png", false);
         playerDisk = Imtil.load(pre + "Disk.png", false);
         playerPowerBox = Imtil.load(pre + "PowerBox.png", false);
+        playerBoltBoxes = new HashMap<String, Img>(Profile.UPGRADES.length);
+        for (final Upgrade upgrade : Profile.UPGRADES) {
+            final String upgradeName = upgrade.name;
+            playerBoltBoxes.put(upgradeName, Imtil.load(pre + upgradeName + "Box.png", false));
+        }
         playerDiskBox = Imtil.load(pre + "DiskBox.png", false);
         hudMeterImgs = Imtil.loadStrip(pre + "Meter.png", 8, false);
     }
@@ -551,32 +560,60 @@ public final class BotsnBoltsGame extends BaseGame {
         Imtil.filterImg(playerBolt, f);
         Imtil.filterImg(playerDisk, f);
         Imtil.filterImg(playerPowerBox, f);
+        for (final Img img : playerBoltBoxes.values()) {
+            Imtil.filterImg(img, f);
+        }
         Imtil.filterImg(playerDiskBox, f);
         filterImgs(hudMeterImgs, f);
     }
     
     private final static void closePlayerImages() {
         Img.close(playerDefeatOrb);
+        playerDefeatOrb = null;
         playerProjectile.close();
+        playerProjectile = null;
         playerProjectile2.close();
+        playerProjectile2 = null;
         Img.close(playerProjectile3);
+        playerProjectile3 = null;
         Img.close(playerBurst);
+        playerBurst = null;
         Img.close(playerCharge);
+        playerCharge = null;
         Img.close(playerChargeVert);
+        playerChargeVert = null;
         Img.close(playerCharge2);
+        playerCharge2 = null;
         Img.close(playerChargeVert2);
+        playerChargeVert2 = null;
         playerWarp.close();
+        playerWarp = null;
         Img.close(playerMaterialize);
+        playerMaterialize = null;
         Img.close(playerBomb);
+        playerBomb = null;
         playerLink.close();
+        playerLink = null;
         Img.close(playerBatterySmall);
+        playerBatterySmall = null;
         Img.close(playerBatteryMedium);
+        playerBatteryMedium = null;
         Img.close(playerBatteryBig);
+        playerBatteryBig = null;
         playerDoorBolt.close();
+        playerDoorBolt = null;
         playerBolt.close();
+        playerBolt = null;
         playerDisk.close();
+        playerDisk = null;
         playerPowerBox.close();
+        playerPowerBox = null;
+        for (final Img img : playerBoltBoxes.values()) {
+            img.close();
+        }
+        playerBoltBoxes = null;
         playerDiskBox.close();
+        playerDiskBox = null;
         //hudMeterImgs closed separately
     }
     
@@ -659,10 +696,15 @@ public final class BotsnBoltsGame extends BaseGame {
         final Panmage bolt = engine.createImage(pre + "Bolt", oBattery, minBatteryBig, maxBatteryBig, playerBolt);
         final Panmage disk = engine.createImage(pre + "Disk", oBattery, minBatteryBig, maxBatteryBig, playerDisk);
         final Panmage powerBox = engine.createImage(pre + "PowerBox", CENTER_16, minCube, maxCube, playerPowerBox);
+        final Map<String, Panmage> boltBoxes = new HashMap<String, Panmage>(Profile.UPGRADES.length);
+        for (final Entry<String, Img> entry : playerBoltBoxes.entrySet()) {
+            final String boltName = entry.getKey();
+            boltBoxes.put(boltName, engine.createImage(pre + boltName + "Box", BotsnBoltsGame.CENTER_16, BotsnBoltsGame.minCube, BotsnBoltsGame.maxCube, entry.getValue()));
+        }
         final Panmage diskBox = engine.createImage(pre + "DiskBox", CENTER_16, minCube, maxCube, playerDiskBox);
         final HudMeterImages hudMeterImages = newHudMeterImages(pre + "Meter", hudMeterImgs);
         return new PlayerImages(basicSet, shootSet, hurt, frozen, defeat, climb, climbShoot, climbTop, jumpAimDiag, jumpAimUp, basicProjectile, projectile2, projectile3, charge, chargeVert, charge2, chargeVert2,
-            burst, ball, warp, materialize, bomb, link, batterySml, batteryMed, batteryBig, doorBolt, bolt, disk, powerBox, diskBox, hudMeterImages);
+            burst, ball, warp, materialize, bomb, link, batterySml, batteryMed, batteryBig, doorBolt, bolt, disk, powerBox, boltBoxes, diskBox, hudMeterImages);
     }
     
     private final static PlayerImagesSubSet loadPlayerImagesSubSet(final String path, final String name, final boolean startNeeded, final Panple os, final Panple o, final Panple oj) {

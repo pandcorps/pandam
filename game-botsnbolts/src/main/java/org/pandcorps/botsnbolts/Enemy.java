@@ -549,7 +549,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
             super(x, y, 1, false);
             final TileMap tm = BotsnBoltsGame.tm;
             tm.setBehavior(x, y, Tile.BEHAVIOR_SOLID);
-            setView(upgrade.getBoxImage());
+            setView(upgrade.getBoxImage(getPlayerContext()));
             this.upgrade = upgrade;
         }
         
