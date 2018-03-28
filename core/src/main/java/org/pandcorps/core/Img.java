@@ -114,4 +114,15 @@ public abstract class Img implements Closeable {
 			}
 		}
 	}
+	
+	public final static void close(final Iterable<Img> imgs) {
+        if (imgs == null) {
+            return;
+        }
+        for (final Img img : imgs) {
+            if (img != null) {
+                img.close();
+            }
+        }
+    }
 }
