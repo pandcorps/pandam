@@ -164,6 +164,8 @@ public final class Player extends Chr {
         registerPause(ctrl.getMenu());
         final Pangine engine = Pangine.getEngine();
         final Panteraction interaction = engine.getInteraction();
+        register(interaction.KEY_SHIFT_LEFT, new ActionStartListener() {
+            @Override public final void onActionStart(final ActionStartEvent event) { toggleJumpMode(); }});
         register(interaction.KEY_TAB, new ActionStartListener() {
             @Override public final void onActionStart(final ActionStartEvent event) { toggleShootMode(); }});
         register(interaction.KEY_F1, new ActionStartListener() {
@@ -185,6 +187,18 @@ public final class Player extends Chr {
     
     private final void togglePause() {
         Pangine.getEngine().togglePause();
+    }
+    
+    private final void toggleJumpMode() {
+        do {
+            if (prf.jumpMode == JUMP_NORMAL) {
+                prf.jumpMode = JUMP_BALL;
+            } else if (prf.jumpMode == JUMP_BALL) {
+                prf.jumpMode = JUMP_GRAPPLING_HOOK;
+            } else {
+                prf.jumpMode = JUMP_NORMAL;
+            }
+        } while (!prf.shootMode.isAvailable(this));
     }
     
     private final void toggleShootMode() {
@@ -2001,16 +2015,40 @@ public final class Player extends Chr {
     };
     
     protected abstract static class JumpMode {
+        protected abstract Upgrade getRequiredUpgrade();
+        
         protected abstract void onAirJump(final Player player);
     }
     
     protected final static JumpMode JUMP_NORMAL = new JumpMode() {
         @Override
+        protected final Upgrade getRequiredUpgrade() {
+            return null;
+        }
+        
+        @Override
         protected final void onAirJump(final Player player) {
         }
     };
     
+    protected final static JumpMode JUMP_BALL = new JumpMode() {
+        @Override
+        protected final Upgrade getRequiredUpgrade() {
+            return Profile.UPGRADE_BALL;
+        }
+        
+        @Override
+        protected final void onAirJump(final Player player) {
+            player.startBall();
+        }
+    };
+    
     protected final static JumpMode JUMP_GRAPPLING_HOOK = new JumpMode() {
+        @Override
+        protected final Upgrade getRequiredUpgrade() {
+            return Profile.UPGRADE_GRAPPLING_BEAM;
+        }
+        
         @Override
         protected final void onAirJump(final Player player) {
             player.startGrapple();

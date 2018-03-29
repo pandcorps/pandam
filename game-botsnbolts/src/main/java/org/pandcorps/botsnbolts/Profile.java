@@ -30,7 +30,7 @@ import org.pandcorps.pandam.*;
 public class Profile {
     /*package*/ final Set<Upgrade> upgrades = new HashSet<Upgrade>();
     /*package*/ ShootMode shootMode = Player.SHOOT_NORMAL;
-    /*package*/ JumpMode jumpMode = Player.JUMP_GRAPPLING_HOOK;
+    /*package*/ JumpMode jumpMode = Player.JUMP_NORMAL;
     /*package*/ boolean autoClimb = true;
     
     /*package*/ final boolean isUpgradeAvailable(final Upgrade upgrade) {
@@ -58,10 +58,12 @@ public class Profile {
     
     protected final static Upgrade UPGRADE_GRAPPLING_BEAM = new Upgrade("GrapplingBeam");
     
+    protected final static Upgrade BASIC_JUMP = new Upgrade("BasicJump");
+    
     protected final static Upgrade BASIC_ATTACK = new Upgrade("BasicAttack");
     
     protected final static Upgrade[] UPGRADES = { UPGRADE_BALL, UPGRADE_RAPID, UPGRADE_SPREAD, UPGRADE_CHARGE, UPGRADE_BOMB, UPGRADE_GRAPPLING_BEAM,
-            BASIC_ATTACK };
+            BASIC_ATTACK, BASIC_JUMP };
     
     protected static class Upgrade {
         protected final String name;

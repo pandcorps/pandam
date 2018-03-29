@@ -1085,6 +1085,7 @@ public final class BotsnBoltsGame extends BaseGame {
             hud.setClearDepthEnabled(false);
             initHealthMeter(player.newHealthMeter(), true);
             hud.addActor(new HudShootMode(player.pc));
+            hud.addActor(new HudJumpMode(player.pc));
         }
         
         @Override

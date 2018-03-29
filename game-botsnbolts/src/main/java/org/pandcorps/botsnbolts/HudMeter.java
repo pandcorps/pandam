@@ -22,7 +22,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.botsnbolts;
 
-import org.pandcorps.botsnbolts.Player.PlayerContext;
+import org.pandcorps.botsnbolts.Player.*;
 import org.pandcorps.botsnbolts.Profile.*;
 import org.pandcorps.pandam.*;
 
@@ -84,21 +84,20 @@ public abstract class HudMeter extends Panctor {
         }
     }
     
-    protected final static class HudShootMode extends Panctor {
-        private final PlayerContext pc;
+    protected abstract static class HudIcon extends Panctor {
+        protected final PlayerContext pc;
         
-        protected HudShootMode(final PlayerContext pc) {
+        protected HudIcon(final PlayerContext pc, final int yOff) {
             this.pc = pc;
-            getPosition().set(3, Pangine.getEngine().getEffectiveHeight() - 36, BotsnBoltsGame.DEPTH_HUD);
+            getPosition().set(3, Pangine.getEngine().getEffectiveHeight() - yOff, BotsnBoltsGame.DEPTH_HUD);
         }
         
         @Override
         protected final void renderView(final Panderer renderer) {
-            final Profile prf = pc.prf;
-            Upgrade upgrade = prf.shootMode.getRequiredUpgrade();
+            Upgrade upgrade = getCurrent();
             if (upgrade == null) {
-                if (prf.isUpgradeAvailable(Profile.UPGRADE_SPREAD) || prf.isUpgradeAvailable(Profile.UPGRADE_CHARGE) || prf.isUpgradeAvailable(Profile.UPGRADE_RAPID)) {
-                    upgrade = Profile.BASIC_ATTACK;
+                if (isBasicIconNeeded()) {
+                    upgrade = getBasic();
                 } else {
                     return;
                 }
@@ -112,7 +111,56 @@ public abstract class HudMeter extends Panctor {
                 renderer.render(layer, BotsnBoltsGame.black, x + i, y1, z, 0, 0, 1, 16, 0, false, false);
                 renderer.render(layer, BotsnBoltsGame.black, x1, y + i, z, 0, 0, 16, 1, 0, false, false);
             }
-            super.renderView(renderer);
+        }
+        
+        protected abstract Upgrade getCurrent();
+        
+        protected abstract boolean isBasicIconNeeded();
+        
+        protected abstract Upgrade getBasic();
+    }
+    
+    protected final static class HudShootMode extends HudIcon {
+        protected HudShootMode(final PlayerContext pc) {
+            super(pc, 36);
+        }
+        
+        @Override
+        protected final Upgrade getCurrent() {
+            return pc.prf.shootMode.getRequiredUpgrade();
+        }
+        
+        @Override
+        protected final boolean isBasicIconNeeded() {
+            final Profile prf = pc.prf;
+            return prf.isUpgradeAvailable(Profile.UPGRADE_SPREAD) || prf.isUpgradeAvailable(Profile.UPGRADE_CHARGE) || prf.isUpgradeAvailable(Profile.UPGRADE_RAPID);
+        }
+        
+        @Override
+        protected final Upgrade getBasic() {
+            return Profile.BASIC_ATTACK;
+        }
+    }
+    
+    protected final static class HudJumpMode extends HudIcon {
+        protected HudJumpMode(final PlayerContext pc) {
+            super(pc, 73);
+        }
+        
+        @Override
+        protected final Upgrade getCurrent() {
+            return pc.prf.jumpMode.getRequiredUpgrade();
+        }
+        
+        @Override
+        protected final boolean isBasicIconNeeded() {
+            final Profile prf = pc.prf;
+            return prf.isUpgradeAvailable(Profile.UPGRADE_BALL) || prf.isUpgradeAvailable(Profile.UPGRADE_GRAPPLING_BEAM);
+        }
+        
+        @Override
+        protected final Upgrade getBasic() {
+            return Profile.BASIC_JUMP;
         }
     }
 }
