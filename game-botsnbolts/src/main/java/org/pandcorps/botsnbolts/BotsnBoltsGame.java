@@ -164,6 +164,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static Panimation splash = null;
     protected static Panmage[] ripple = null;
     protected static Panmage wind = null;
+    protected static Panmage black = null;
     protected static HudMeterImages hudMeterBlank = null;
     protected static HudMeterImages hudMeterBoss = null;
     protected static Img[] hudMeterImgs = null;
@@ -295,6 +296,7 @@ public final class BotsnBoltsGame extends BaseGame {
     
     private final static void loadMisc() {
         final Pangine engine = Pangine.getEngine();
+        black = engine.createImage("black", RES + "misc/Black.png");
         hudMeterBlank = newHudMeterImages("meter.blank", RES + "misc/MeterBlank.png");
         cube = newSheet("cube", RES + "misc/Cube.png", 16);
         final Img[] blockImgs = Imtil.loadStrip(RES + "bg/BlockCyan.png", 16, false);
@@ -608,9 +610,7 @@ public final class BotsnBoltsGame extends BaseGame {
         playerDisk = null;
         playerPowerBox.close();
         playerPowerBox = null;
-        for (final Img img : playerBoltBoxes.values()) {
-            img.close();
-        }
+        Img.close(playerBoltBoxes.values());
         playerBoltBoxes = null;
         playerDiskBox.close();
         playerDiskBox = null;
@@ -699,7 +699,7 @@ public final class BotsnBoltsGame extends BaseGame {
         final Map<String, Panmage> boltBoxes = new HashMap<String, Panmage>(Profile.UPGRADES.length);
         for (final Entry<String, Img> entry : playerBoltBoxes.entrySet()) {
             final String boltName = entry.getKey();
-            boltBoxes.put(boltName, engine.createImage(pre + boltName + "Box", BotsnBoltsGame.CENTER_16, BotsnBoltsGame.minCube, BotsnBoltsGame.maxCube, entry.getValue()));
+            boltBoxes.put(boltName, engine.createImage(pre + boltName + "Box", CENTER_16, minCube, maxCube, entry.getValue()));
         }
         final Panmage diskBox = engine.createImage(pre + "DiskBox", CENTER_16, minCube, maxCube, playerDiskBox);
         final HudMeterImages hudMeterImages = newHudMeterImages(pre + "Meter", hudMeterImgs);
@@ -1084,6 +1084,7 @@ public final class BotsnBoltsGame extends BaseGame {
             hud = createHud(room);
             hud.setClearDepthEnabled(false);
             initHealthMeter(player.newHealthMeter(), true);
+            hud.addActor(new HudShootMode(player.pc));
         }
         
         @Override

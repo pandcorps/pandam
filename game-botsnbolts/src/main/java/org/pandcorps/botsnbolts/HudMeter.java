@@ -22,6 +22,8 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.botsnbolts;
 
+import org.pandcorps.botsnbolts.Player.PlayerContext;
+import org.pandcorps.botsnbolts.Profile.*;
 import org.pandcorps.pandam.*;
 
 public abstract class HudMeter extends Panctor {
@@ -79,6 +81,38 @@ public abstract class HudMeter extends Panctor {
             this.bottom = bottom;
             this.middle = middle;
             this.top = top;
+        }
+    }
+    
+    protected final static class HudShootMode extends Panctor {
+        private final PlayerContext pc;
+        
+        protected HudShootMode(final PlayerContext pc) {
+            this.pc = pc;
+            getPosition().set(3, Pangine.getEngine().getEffectiveHeight() - 36, BotsnBoltsGame.DEPTH_HUD);
+        }
+        
+        @Override
+        protected final void renderView(final Panderer renderer) {
+            final Profile prf = pc.prf;
+            Upgrade upgrade = prf.shootMode.getRequiredUpgrade();
+            if (upgrade == null) {
+                if (prf.isUpgradeAvailable(Profile.UPGRADE_SPREAD) || prf.isUpgradeAvailable(Profile.UPGRADE_CHARGE) || prf.isUpgradeAvailable(Profile.UPGRADE_RAPID)) {
+                    upgrade = Profile.BASIC_ATTACK;
+                } else {
+                    return;
+                }
+            }
+            final Panlayer layer = getLayer();
+            final Panple pos = getPosition();
+            final float x = pos.getX(), y = pos.getY(), z = BotsnBoltsGame.DEPTH_HUD, x1 = x + 1, y1 = y + 1;
+            final Panmage img = upgrade.getBoxImage(pc);
+            renderer.render(layer, img, x + 1, y + 1, z, 0, 0, 16, 16, 0, false, false);
+            for (int i = 0; i < 18; i += 17) {
+                renderer.render(layer, BotsnBoltsGame.black, x + i, y1, z, 0, 0, 1, 16, 0, false, false);
+                renderer.render(layer, BotsnBoltsGame.black, x1, y + i, z, 0, 0, 16, 1, 0, false, false);
+            }
+            super.renderView(renderer);
         }
     }
 }
