@@ -198,7 +198,7 @@ public final class Player extends Chr {
             } else {
                 prf.jumpMode = JUMP_NORMAL;
             }
-        } while (!prf.shootMode.isAvailable(this));
+        } while (!prf.jumpMode.isAvailable(this));
     }
     
     private final void toggleShootMode() {
@@ -400,19 +400,23 @@ public final class Player extends Chr {
         return puff;
     }
     
-    protected final void defeat() {
+    protected final static void defeatOrbs(final Panctor src, final Panimation defeat) {
         final float baseVelDiag = (float) Math.sqrt(0.5);
         for (int m = 1; m < 3; m++) {
             final float velDiag = m * baseVelDiag, vel = m;
-            defeatOrb(0, vel);
-            defeatOrb(velDiag, velDiag);
-            defeatOrb(vel, 0);
-            defeatOrb(velDiag, -velDiag);
-            defeatOrb(0, -vel);
-            defeatOrb(-velDiag, -velDiag);
-            defeatOrb(-vel, 0);
-            defeatOrb(-velDiag, velDiag);
+            defeatOrb(src, defeat, 0, vel);
+            defeatOrb(src, defeat, velDiag, velDiag);
+            defeatOrb(src, defeat, vel, 0);
+            defeatOrb(src, defeat, velDiag, -velDiag);
+            defeatOrb(src, defeat, 0, -vel);
+            defeatOrb(src, defeat, -velDiag, -velDiag);
+            defeatOrb(src, defeat, -vel, 0);
+            defeatOrb(src, defeat, -velDiag, velDiag);
         }
+    }
+    
+    protected final void defeat() {
+        defeatOrbs(this, pi.defeat);
         Pangine.getEngine().addTimer(BotsnBoltsGame.tm, 120, new TimerListener() {
             @Override public final void onTimer(final TimerEvent event) {
                 RoomLoader.reloadCurrentRoom();
@@ -427,13 +431,13 @@ public final class Player extends Chr {
         super.onDestroy();
     }
     
-    private final void defeatOrb(final float velX, final float velY) {
+    private final static void defeatOrb(final Panctor src, final Panimation defeat, final float velX, final float velY) {
         final DefeatOrb orb = new DefeatOrb();
-        orb.setView(pi.defeat);
-        final Panple playerPos = getPosition();
+        orb.setView(defeat);
+        final Panple playerPos = src.getPosition();
         orb.getPosition().set(playerPos.getX(), playerPos.getY() + 12, BotsnBoltsGame.DEPTH_BURST);
         orb.getVelocity().set(velX, velY);
-        addActor(orb);
+        addActor(src, orb);
     }
     
     protected final Panlayer getLayerRequired() {
@@ -1693,17 +1697,19 @@ public final class Player extends Chr {
         }
     };
     
-    protected abstract static class ShootMode {
-        protected final int delay;
-        
-        protected ShootMode(final int delay) {
-            this.delay = delay;
-        }
-        
+    protected abstract static class InputMode {
         protected abstract Upgrade getRequiredUpgrade();
         
         protected final boolean isAvailable(final Player player) {
             return player.isUpgradeAvailable(getRequiredUpgrade());
+        }
+    }
+    
+    protected abstract static class ShootMode extends InputMode {
+        protected final int delay;
+        
+        protected ShootMode(final int delay) {
+            this.delay = delay;
         }
         
         protected abstract void onShootStart(final Player player);
@@ -1762,7 +1768,7 @@ public final class Player extends Chr {
         private final PlayerImagesSubSet shootSet;
         private final Panmage hurt;
         private final Panmage frozen;
-        private final Panimation defeat;
+        protected final Panimation defeat;
         private final Panmage climb;
         private final Panmage climbShoot;
         private final Panmage climbTop;
@@ -2014,9 +2020,7 @@ public final class Player extends Chr {
         }
     };
     
-    protected abstract static class JumpMode {
-        protected abstract Upgrade getRequiredUpgrade();
-        
+    protected abstract static class JumpMode extends InputMode {
         protected abstract void onAirJump(final Player player);
     }
     

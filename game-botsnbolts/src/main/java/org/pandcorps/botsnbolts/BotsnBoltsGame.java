@@ -165,6 +165,8 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static Panmage[] ripple = null;
     protected static Panmage wind = null;
     protected static Panmage black = null;
+    protected static Panimation defeatOrbBoss = null;
+    protected static Panmage diskGrey = null;
     protected static HudMeterImages hudMeterBlank = null;
     protected static HudMeterImages hudMeterBoss = null;
     protected static Img[] hudMeterImgs = null;
@@ -541,7 +543,7 @@ public final class BotsnBoltsGame extends BaseGame {
     }
     
     private final static void filterPlayerImages(final Pancolor s1, final Pancolor d1, final Pancolor s2, final Pancolor d2) {
-        final PixelFilter f = newFilter(s1, d1, s2, d2);
+        final PixelFilter[] f = { newFilter(s1, d1, s2, d2) };
         filterImgs(playerDefeatOrb, f);
         Imtil.filterImg(playerProjectile, f);
         Imtil.filterImg(playerProjectile2, f);
@@ -570,8 +572,6 @@ public final class BotsnBoltsGame extends BaseGame {
     }
     
     private final static void closePlayerImages() {
-        Img.close(playerDefeatOrb);
-        playerDefeatOrb = null;
         playerProjectile.close();
         playerProjectile = null;
         playerProjectile2.close();
@@ -606,15 +606,13 @@ public final class BotsnBoltsGame extends BaseGame {
         playerDoorBolt = null;
         playerBolt.close();
         playerBolt = null;
-        playerDisk.close();
-        playerDisk = null;
         playerPowerBox.close();
         playerPowerBox = null;
         Img.close(playerBoltBoxes.values());
         playerBoltBoxes = null;
         playerDiskBox.close();
         playerDiskBox = null;
-        //hudMeterImgs closed separately
+        //playerDefeatOrb/playerDisk/hudMeterImgs closed separately
     }
     
     private final static String getCharacterPrefix(final String dir, final String name) {
@@ -761,8 +759,18 @@ public final class BotsnBoltsGame extends BaseGame {
     
     private final static void postProcess() {
         final short s0 = 0, s96 = 96, s192 = 192;
-        filterImgs(hudMeterImgs, newFilter(Pancolor.CYAN, Pancolor.DARK_GREY, new FinPancolor(s0, s192, s192), new FinPancolor(s96)));
+        final PixelFilter[] greyFilter = { newFilter(Pancolor.CYAN, Pancolor.DARK_GREY, new FinPancolor(s0, s192, s192), new FinPancolor(s96)) };
+        filterImgs(playerDefeatOrb, greyFilter);
+        defeatOrbBoss = newAnimation("defeat.orb.boss", playerDefeatOrb, CENTER_16, voidImages.defeat.getFrames()[0].getDuration());
+        Imtil.filterImg(playerDisk, greyFilter);
+        final Panmage disk = voidImages.disk;
+        diskGrey = Pangine.getEngine().createImage("disk.grey", disk.getOrigin(), disk.getBoundingMinimum(), disk.getBoundingMaximum(), playerDisk);
+        filterImgs(hudMeterImgs, greyFilter);
         hudMeterBoss = newHudMeterImages("meter.boss", hudMeterImgs);
+        Img.close(playerDefeatOrb);
+        playerDefeatOrb = null;
+        playerDisk.close();
+        playerDisk = null;
         Img.close(hudMeterImgs);
         hudMeterImgs = null;
     }

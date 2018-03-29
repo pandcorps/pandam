@@ -94,7 +94,7 @@ public abstract class HudMeter extends Panctor {
         
         @Override
         protected final void renderView(final Panderer renderer) {
-            Upgrade upgrade = getCurrent();
+            Upgrade upgrade = getMode().getRequiredUpgrade();
             if (upgrade == null) {
                 if (isBasicIconNeeded()) {
                     upgrade = getBasic();
@@ -113,7 +113,7 @@ public abstract class HudMeter extends Panctor {
             }
         }
         
-        protected abstract Upgrade getCurrent();
+        protected abstract InputMode getMode();
         
         protected abstract boolean isBasicIconNeeded();
         
@@ -126,8 +126,8 @@ public abstract class HudMeter extends Panctor {
         }
         
         @Override
-        protected final Upgrade getCurrent() {
-            return pc.prf.shootMode.getRequiredUpgrade();
+        protected final InputMode getMode() {
+            return pc.prf.shootMode;
         }
         
         @Override
@@ -148,8 +148,8 @@ public abstract class HudMeter extends Panctor {
         }
         
         @Override
-        protected final Upgrade getCurrent() {
-            return pc.prf.jumpMode.getRequiredUpgrade();
+        protected final InputMode getMode() {
+            return pc.prf.jumpMode;
         }
         
         @Override

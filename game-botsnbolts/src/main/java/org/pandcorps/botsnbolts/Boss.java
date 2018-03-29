@@ -298,6 +298,7 @@ public abstract class Boss extends Enemy {
     
     @Override
     protected final void onEnemyDestroy() {
+        Player.defeatOrbs(this, BotsnBoltsGame.defeatOrbBoss);
         if (!isOtherBossPresent()) {
             destroyEnemies();
         }
