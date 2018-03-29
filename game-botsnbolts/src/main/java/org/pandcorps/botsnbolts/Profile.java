@@ -46,19 +46,22 @@ public class Profile {
         return null;
     }
     
-    protected static Upgrade UPGRADE_BALL = new Upgrade("Ball");
+    protected final static Upgrade UPGRADE_BALL = new Upgrade("Ball");
     
-    protected static Upgrade UPGRADE_RAPID = new RapidUpgrade();
+    protected final static Upgrade UPGRADE_RAPID = new RapidUpgrade();
     
-    protected static Upgrade UPGRADE_SPREAD = new SpreadUpgrade();
+    protected final static Upgrade UPGRADE_SPREAD = new SpreadUpgrade();
     
-    protected static Upgrade UPGRADE_CHARGE = new ChargeUpgrade();
+    protected final static Upgrade UPGRADE_CHARGE = new ChargeUpgrade();
     
-    protected static Upgrade UPGRADE_BOMB = new Upgrade("Bomb");
+    protected final static Upgrade UPGRADE_BOMB = new Upgrade("Bomb");
     
-    protected static Upgrade UPGRADE_GRAPPLING_BEAM = new Upgrade("GrapplingBeam");
+    protected final static Upgrade UPGRADE_GRAPPLING_BEAM = new Upgrade("GrapplingBeam");
     
-    protected final static Upgrade[] UPGRADES = { UPGRADE_BALL, UPGRADE_RAPID, UPGRADE_SPREAD, UPGRADE_CHARGE, UPGRADE_BOMB, UPGRADE_GRAPPLING_BEAM };
+    protected final static Upgrade BASIC_ATTACK = new Upgrade("BasicAttack");
+    
+    protected final static Upgrade[] UPGRADES = { UPGRADE_BALL, UPGRADE_RAPID, UPGRADE_SPREAD, UPGRADE_CHARGE, UPGRADE_BOMB, UPGRADE_GRAPPLING_BEAM,
+            BASIC_ATTACK };
     
     protected static class Upgrade {
         protected final String name;
