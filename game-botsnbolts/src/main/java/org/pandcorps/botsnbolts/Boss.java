@@ -169,7 +169,7 @@ public abstract class Boss extends Enemy {
     
     @Override
     protected final PowerUp pickAward(final Player player) {
-        return new VictoryDisk(player);
+        return new VictoryDisk(player, this);
     }
 
     @Override

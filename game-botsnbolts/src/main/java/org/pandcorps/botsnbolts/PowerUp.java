@@ -133,19 +133,23 @@ public abstract class PowerUp extends Chr implements CollisionListener {
     }
     
     public static class Disk extends PowerUp {
-        protected Disk(final Player player) {
-            setView(player.pi.disk);
+        protected final String id;
+        
+        protected Disk(final Player player, final String id) {
+            setView(player.prf.disks.contains(id) ? BotsnBoltsGame.diskGrey : player.pi.disk);
+            this.id = id;
         }
         
         @Override
         protected final void award(final Player player) {
             player.addHealth(HudMeter.MAX_VALUE);
+            player.prf.disks.add(id);
         }
     }
     
     public final static class VictoryDisk extends Disk {
-        protected VictoryDisk(final Player player) {
-            super(player);
+        protected VictoryDisk(final Player player, final Boss src) {
+            super(player, src.getClass().getSimpleName());
             Boss.clipping = false;
         }
         

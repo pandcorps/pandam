@@ -29,6 +29,7 @@ import org.pandcorps.pandam.*;
 
 public class Profile {
     /*package*/ final Set<Upgrade> upgrades = new HashSet<Upgrade>();
+    /*package*/ final Set<String> disks = new HashSet<String>();
     /*package*/ ShootMode shootMode = Player.SHOOT_NORMAL;
     /*package*/ JumpMode jumpMode = Player.JUMP_NORMAL;
     /*package*/ boolean autoClimb = true;
@@ -46,7 +47,7 @@ public class Profile {
         return null;
     }
     
-    protected final static Upgrade UPGRADE_BALL = new Upgrade("Ball");
+    protected final static Upgrade UPGRADE_BALL = new BallUpgrade();
     
     protected final static Upgrade UPGRADE_RAPID = new RapidUpgrade();
     
@@ -56,7 +57,7 @@ public class Profile {
     
     protected final static Upgrade UPGRADE_BOMB = new Upgrade("Bomb");
     
-    protected final static Upgrade UPGRADE_GRAPPLING_BEAM = new Upgrade("GrapplingBeam");
+    protected final static Upgrade UPGRADE_GRAPPLING_BEAM = new GrapplingBeamUpgrade();
     
     protected final static Upgrade BASIC_JUMP = new Upgrade("BasicJump");
     
@@ -82,6 +83,41 @@ public class Profile {
         
         protected final Panmage getBoxImage(final PlayerContext pc) {
             return pc.pi.boltBoxes.get(name);
+        }
+    }
+    
+    protected abstract static class JumpUpgrade extends Upgrade {
+        protected JumpUpgrade(final String name) {
+            super(name);
+        }
+        
+        @Override
+        protected final void enable(final Player player) {
+            player.prf.jumpMode = getJumpMode();
+        }
+        
+        protected abstract JumpMode getJumpMode();
+    }
+    
+    protected final static class BallUpgrade extends JumpUpgrade {
+        protected BallUpgrade() {
+            super("Ball");
+        }
+        
+        @Override
+        protected final JumpMode getJumpMode() {
+            return Player.JUMP_BALL;
+        }
+    }
+    
+    protected final static class GrapplingBeamUpgrade extends JumpUpgrade {
+        protected GrapplingBeamUpgrade() {
+            super("GrapplingBeam");
+        }
+        
+        @Override
+        protected final JumpMode getJumpMode() {
+            return Player.JUMP_GRAPPLING_HOOK;
         }
     }
     

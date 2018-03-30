@@ -538,7 +538,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         
         @Override
         protected final PowerUp pickAward(final Player player) {
-            return new Disk(player);
+            return new Disk(player, RoomLoader.getCurrentRoom().roomId);
         }
     }
     
