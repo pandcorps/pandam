@@ -22,6 +22,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.botsnbolts;
 
+import org.pandcorps.botsnbolts.HudMeter.*;
 import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
 import org.pandcorps.core.img.process.*;
@@ -47,6 +48,8 @@ public class Menu {
     protected static TouchButton left = null;
     protected static TouchButton up = null;
     protected static TouchButton down = null;
+    protected static TouchButton toggleAttack = null;
+    protected static TouchButton toggleJump = null;
     
     protected final static void loadMenu() {
         loadCursor();
@@ -276,6 +279,8 @@ public class Menu {
         TouchButton.destroy(left);
         TouchButton.destroy(up);
         TouchButton.destroy(down);
+        TouchButton.destroy(toggleAttack);
+        TouchButton.destroy(toggleJump);
     }
 
     private final static void addGameplayButtons(final boolean input, final boolean act) {
@@ -304,6 +309,20 @@ public class Menu {
         if (act) {
             addCursor(hud);
         }
+    }
+    
+    protected final static void addToggleButtons(final HudShootMode hudShootMode, final HudJumpMode hudJumpMode) {
+        toggleJump = addToggleButton("ToggleJump", hudJumpMode);
+        toggleAttack = addToggleButton("ToggleAttack", hudShootMode);
+    }
+    
+    private final static TouchButton addToggleButton(final String name, final HudIcon hudIcon) {
+        final Panlayer hud = BotsnBoltsGame.hud;
+        hud.addActor(hudIcon);
+        final Panple pos = hudIcon.getPosition();
+        final TouchButton button = addButton(hud, name, Math.round(pos.getX()), Math.round(pos.getY()), true, false, null, null, false, null, false, 18);
+        button.setLayer(hud);
+        return button;
     }
     
     private final static TouchButton addButton(final Panlayer room, final String name, final int x, final int y,

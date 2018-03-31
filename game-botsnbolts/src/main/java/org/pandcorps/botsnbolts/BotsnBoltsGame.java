@@ -58,7 +58,7 @@ public final class BotsnBoltsGame extends BaseGame {
     Flood Bot torpedo attack
     Composite tiles
     Save state to file (defeated levels, discovered Bolts/Disks, Profile preferences)
-    Touch HudIcons to toggle Jump/ShootMode
+    Pause TouchButton
     Bug: Rapid jump inputs with grappling beam while running into a wall slowly climbs the wall
     */
     
@@ -1088,14 +1088,14 @@ public final class BotsnBoltsGame extends BaseGame {
             new Warp(player);
             newHud(room, player);
             Menu.addGameplayButtonActors();
+            player.registerInputs(pc.ctrl);
         }
         
         private final static void newHud(final Panroom room, final Player player) {
             hud = createHud(room);
             hud.setClearDepthEnabled(false);
             initHealthMeter(player.newHealthMeter(), true);
-            hud.addActor(new HudShootMode(player.pc));
-            hud.addActor(new HudJumpMode(player.pc));
+            Menu.addToggleButtons(new HudShootMode(player.pc), new HudJumpMode(player.pc));
         }
         
         @Override

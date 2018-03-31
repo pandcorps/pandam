@@ -127,7 +127,6 @@ public final class Player extends Chr {
         this.pc = pc;
         prf = pc.prf;
         pi = pc.pi;
-        registerInputs(pc.ctrl);
         setView(pi.basicSet.stand);
     }
     
@@ -135,7 +134,7 @@ public final class Player extends Chr {
         return (touchButton == null) ? new Panput[] { key } : new Panput[] {key, touchButton};
     }
     
-    private final void registerInputs(final ControlScheme ctrl) {
+    protected final void registerInputs(final ControlScheme ctrl) {
         final Panput[] jumpInput = getInputArray(ctrl.get1(), Menu.jump);
         final Panput[] shootInput = getInputArray(ctrl.get2(), Menu.attack);
         final Panput[] rightInput = getInputArray(ctrl.getRight(), Menu.right);
@@ -164,9 +163,11 @@ public final class Player extends Chr {
         registerPause(ctrl.getMenu());
         final Pangine engine = Pangine.getEngine();
         final Panteraction interaction = engine.getInteraction();
-        register(interaction.KEY_SHIFT_LEFT, new ActionStartListener() {
+        final Panput[] toggleJumpInput = getInputArray(interaction.KEY_SHIFT_LEFT, Menu.toggleJump);
+        final Panput[] toggleAttackInput = getInputArray(interaction.KEY_TAB, Menu.toggleAttack);
+        register(toggleJumpInput, new ActionStartListener() {
             @Override public final void onActionStart(final ActionStartEvent event) { toggleJumpMode(); }});
-        register(interaction.KEY_TAB, new ActionStartListener() {
+        register(toggleAttackInput, new ActionStartListener() {
             @Override public final void onActionStart(final ActionStartEvent event) { toggleShootMode(); }});
         register(interaction.KEY_F1, new ActionStartListener() {
             @Override public final void onActionStart(final ActionStartEvent event) { engine.captureScreen(); }});
@@ -174,10 +175,6 @@ public final class Player extends Chr {
             @Override public final void onActionStart(final ActionStartEvent event) { engine.startCaptureFrames(); }});
         register(interaction.KEY_F3, new ActionStartListener() {
             @Override public final void onActionStart(final ActionStartEvent event) { engine.stopCaptureFrames(); }});
-        register(interaction.KEY_U, new ActionStartListener() {
-            @Override public final void onActionStart(final ActionStartEvent event) { up(); }});
-        register(interaction.KEY_D, new ActionStartListener() {
-            @Override public final void onActionStart(final ActionStartEvent event) { down(); }});
     }
     
     private final void registerPause(final Panput input) {

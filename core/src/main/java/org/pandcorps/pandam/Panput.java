@@ -308,7 +308,11 @@ public abstract class Panput {
 			this.actor = actor;
 			this.imgActive = imgActive;
 			this.imgInactive = (Panmage) actor.getView();
-			layer = actor.getLayer();
+			setLayer(actor.getLayer());
+		}
+		
+		public final void setLayer(final Panlayer layer) {
+		    this.layer = layer;
 		}
 		
 		private final void replaceView(final Panmage original, final Panmage replacement) {
@@ -391,12 +395,17 @@ public abstract class Panput {
 		
 		// If this ever does more than change the view, then we might need to change swiping
 		public void activate(final boolean active) {
-			if (enabled && actor != null && imgActive != null) {
-				actor.setView(active ? imgActive : imgInactive);
-				if (active && activeListener != null) {
-				    activeListener.onActive(this);
-				}
+		    if (!enabled) {
+		        return;
+		    } else if (actor != null) {
+		        final Panmage img = active ? imgActive : imgInactive;
+		        if (img != null) {
+		            actor.setView(img);
+		        }
 			}
+			if (active && (activeListener != null)) {
+                activeListener.onActive(this);
+            }
 		}
 		
 		// Action events should be handled like any other input; TouchButton-specific reactions can be handled separately here
@@ -409,7 +418,7 @@ public abstract class Panput {
 		        return;
 		    }
 		    if (actor != null) {
-		        layer = actor.getLayer();
+		        setLayer(actor.getLayer());
 		    }
 		}
 		
