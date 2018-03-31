@@ -549,13 +549,19 @@ public abstract class Enemy extends Chr implements CollisionListener {
             super(x, y, 1, false);
             final TileMap tm = BotsnBoltsGame.tm;
             tm.setBehavior(x, y, Tile.BEHAVIOR_SOLID);
-            setView(upgrade.getBoxImage(getPlayerContext()));
-            this.upgrade = upgrade;
+            final PlayerContext pc = getPlayerContext();
+            if (pc.prf.upgrades.contains(upgrade)) {
+                setView(pc.pi.powerBox);
+                this.upgrade = null;
+            } else {
+                setView(upgrade.getBoxImage(pc));
+                this.upgrade = upgrade;
+            }
         }
         
         @Override
         protected final PowerUp pickAward(final Player player) {
-            return new Bolt(player, upgrade);
+            return (upgrade == null) ? new BigBattery(player) : new Bolt(player, upgrade);
         }
     }
     
