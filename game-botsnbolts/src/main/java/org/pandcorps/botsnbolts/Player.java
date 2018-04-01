@@ -161,6 +161,9 @@ public final class Player extends Chr {
             @Override public final void onAction(final ActionEvent event) { down(); }});
         registerPause(ctrl.getSubmit());
         registerPause(ctrl.getMenu());
+        if (Menu.pause != null) {
+            registerPause(Menu.pause);
+        }
         final Pangine engine = Pangine.getEngine();
         final Panteraction interaction = engine.getInteraction();
         final Panput[] toggleJumpInput = getInputArray(interaction.KEY_SHIFT_LEFT, Menu.toggleJump);
@@ -213,7 +216,7 @@ public final class Player extends Chr {
     }
     
     private final boolean isFree() {
-        return !(isHurt() || isFrozen() || Boss.dropping || RoomChanger.isChanging() || RoomLoader.isBossDoorClosing());
+        return !(isHurt() || isFrozen() || Boss.dropping || RoomChanger.isChanging() || RoomLoader.isBossDoorClosing() || Pangine.getEngine().isPaused());
     }
     
     private final void jump() {

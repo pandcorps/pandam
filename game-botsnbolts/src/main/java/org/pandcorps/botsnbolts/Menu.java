@@ -40,6 +40,7 @@ public class Menu {
     protected static ButtonImages rightImages = null;
     protected static ButtonImages upImages = null;
     protected static ButtonImages downImages = null;
+    protected static ButtonImages pauseImages = null;
     
     protected static Cursor cursor = null;
     protected static TouchButton jump = null;
@@ -50,6 +51,7 @@ public class Menu {
     protected static TouchButton down = null;
     protected static TouchButton toggleAttack = null;
     protected static TouchButton toggleJump = null;
+    protected static TouchButton pause = null;
     
     protected final static void loadMenu() {
         loadCursor();
@@ -68,13 +70,15 @@ public class Menu {
         if (!isCursorNeeded()) {
             return;
         }
-        imgCursor = Pangine.getEngine().createImage(Pantil.vmid(), new FinPanple2(0, 15), null, null, BotsnBoltsGame.RES + "menu/Cursor.png");
+        imgCursor = Pangine.getEngine().createImage("Cursor", new FinPanple2(0, 15), null, null, BotsnBoltsGame.RES + "menu/Cursor.png");
     }
     
     private final static void loadGameplayButtons() {
         if (!isScreenGameplayLayoutNeeded()) {
             return;
         }
+        final Panmage imgPause = Pangine.getEngine().createImage("Pause", BotsnBoltsGame.RES + "menu/Pause.png");
+        pauseImages = new ButtonImages(imgPause, imgPause, imgPause);
         final Img circle = newButtonImg();
         Imtil.drawCircle(circle, Pancolor.BLACK, Pancolor.BLACK, Pancolor.DARK_GREY);
         final int white = PixelTool.getRgba(Pancolor.WHITE);
@@ -314,6 +318,10 @@ public class Menu {
     protected final static void addToggleButtons(final HudShootMode hudShootMode, final HudJumpMode hudJumpMode) {
         toggleJump = addToggleButton("ToggleJump", hudJumpMode);
         toggleAttack = addToggleButton("ToggleAttack", hudShootMode);
+        final Panple pos = hudShootMode.getPosition();
+        final int pd = 16;
+        final int px = Pangine.getEngine().getEffectiveWidth() - pd - Math.round(pos.getX()), py = Math.round(pos.getY());
+        pause = addButton(BotsnBoltsGame.hud, "Pause", px, py, true, true, null, pauseImages, false, null, false, pd);
     }
     
     private final static TouchButton addToggleButton(final String name, final HudIcon hudIcon) {
