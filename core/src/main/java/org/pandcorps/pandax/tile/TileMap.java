@@ -54,6 +54,7 @@ public class TileMap extends Panctor implements Savable {
     private TileMapImage[][] imgs = null;
     private final Map<Tile, Tile> map = new HashMap<Tile, Tile>();
     private static Tile scratch = null;
+    private static Set<ExtensionTileMapImage> renderedExtensions = null;
     
     protected final ImplPansplay tileDisplay;
     
@@ -115,7 +116,7 @@ public class TileMap extends Panctor implements Savable {
     }
     
     public final void removeTile(final int i, final int j) {
-        tiles[getIndexRequired(i, j)] = null;
+        setTile(getIndexRequired(i, j), null);
     }
     
     public final int getContainer(final Panctor act) {
@@ -413,7 +414,7 @@ public class TileMap extends Panctor implements Savable {
     }
     
     public final void setTile(final int x, final int y, final Tile tile) {
-        tiles[getIndexRequired(x, y)] = tile;
+        setTile(getIndexRequired(x, y), tile);
     }
     
     public final void setTileOptional(final int x, final int y, final Tile tile) {
@@ -421,19 +422,48 @@ public class TileMap extends Panctor implements Savable {
         if (isBad(index)) {
             return;
         }
-        tiles[index] = tile;
+        setTile(index, tile);
     }
     
     public final void setTile(final int index, final Tile tile) {
         tiles[index] = tile;
+        if (tile != null) {
+            setExtensions(index, tile.background, true);
+            setExtensions(index, tile.foreground, false);
+        }
+    }
+    
+    private final void setExtensions(final int index, final Object img, final boolean background) {
+        if ((img != null) && (img.getClass() == MultiTileMapImage.class)) {
+            final int srcI = getColumn(index), srcJ = getRow(index);
+            final MultiTileMapImage srcImg = (MultiTileMapImage) img;
+            final int w = srcImg.w, h = srcImg.h;
+            final ExtensionTileMapImage ext = new ExtensionTileMapImage(srcI * tw, srcJ * th, srcImg, w * tw, h * th);
+            for (int j = 0; j < h; j++) {
+                final int extJ = srcJ + j;
+                if (isBadRow(extJ)) {
+                    continue;
+                }
+                for (int i = 0; i < w; i++) {
+                    final int extI = srcI + i;
+                    if (isBadColumn(extI)) {
+                        continue;
+                    } else if (background) {
+                        setBackground(extI, extJ, ext);
+                    } else {
+                        setForeground(extI, extJ, ext);
+                    }
+                }
+            }
+        }
     }
     
     public final void setTile(final int x, final int y, final Object background, final Object foreground, final byte behavior) {
-        tiles[getIndexRequired(x, y)] = getTile(background, foreground, behavior);
+        setTile(getIndexRequired(x, y), getTile(background, foreground, behavior));
     }
     
     public final void setTile(final int index, final Object background, final Object foreground, final byte behavior) {
-        tiles[index] = getTile(background, foreground, behavior);
+        setTile(index, getTile(background, foreground, behavior));
     }
     
     public final void randBackground(final Object img, final int y, final int h, final int n) {
@@ -509,6 +539,7 @@ public class TileMap extends Panctor implements Savable {
                 render(renderer, layer, tile.background, xitw, yjth, z);
             }
         }
+        Coltil.clear(renderedExtensions);
     }
     
     protected final void render(final Panderer renderer, final Panlayer layer, final Object img, final float xitw, final float yjth, final float z) {
@@ -525,6 +556,17 @@ public class TileMap extends Panctor implements Savable {
     	} else if (imgClass == TileMapImage.class) {
     		timg = (TileMapImage) img;
     		imgMap = this.imgMap;
+    	} else if (imgClass == ExtensionTileMapImage.class) {
+    	    if (renderedExtensions == null) {
+    	        renderedExtensions = new HashSet<ExtensionTileMapImage>();
+    	    }
+    	    final ExtensionTileMapImage ext = (ExtensionTileMapImage) img;
+    	    if (renderedExtensions.add(ext)) {
+        	    final MultiTileMapImage m = ext.srcImg;
+        	    final Panple pos = getPosition();
+                renderer.render(layer, this.imgMap, pos.getX() + ext.itw, pos.getY() + ext.jth, z + m.offZ, m.ix, m.iy, ext.tw, ext.th, m.rot, m.mirror, m.flip);
+    	    }
+            return;
     	} else if (imgClass == AdjustedTileMapImage.class) {
     	    final AdjustedTileMapImage a = (AdjustedTileMapImage) img;
     	    renderer.render(layer, this.imgMap, xitw, yjth, z + a.offZ, a.ix, a.iy, tw, th, a.rot, a.mirror, a.flip);

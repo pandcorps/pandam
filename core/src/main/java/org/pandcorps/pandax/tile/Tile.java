@@ -142,7 +142,10 @@ public final class Tile {
             } else if (o == null || o.getClass() != TileMapImage.class) {
     	        return false;
     	    }
-    	    final TileMapImage t = (TileMapImage) o;
+    	    return equalsTileMapImage((TileMapImage) o);
+    	}
+    	
+    	protected final boolean equalsTileMapImage(final TileMapImage t) {
     	    return ix == t.ix && iy == t.iy;
     	}
     	
@@ -166,18 +169,21 @@ public final class Tile {
         }
     	
     	@Override
-        public boolean equals(final Object o) {
+        public final boolean equals(final Object o) {
     	    if (this == o) {
     	        return true;
     	    } else if (o == null || o.getClass() != TileImage.class) {
                 return false;
             }
-            final TileImage t = (TileImage) o;
-            return ix == t.ix && iy == t.iy && img == t.img;
+            return equalsTileImage((TileImage) o);
+    	}
+    	
+    	protected final boolean equalsTileImage(final TileImage t) {
+            return equalsTileMapImage(t) && img == t.img;
         }
     }
     
-    public final static class AdjustedTileMapImage extends TileMapImage {
+    public static class AdjustedTileMapImage extends TileMapImage {
         private TileMapImage raw = null;
         /*package*/ final float offZ;
         /*package*/ final int rot;
@@ -210,7 +216,7 @@ public final class Tile {
         }
         
         @Override
-        public final int hashCode() {
+        public int hashCode() {
             return super.hashCode() ^ rot;
         }
         
@@ -221,8 +227,63 @@ public final class Tile {
             } else if (o == null || o.getClass() != AdjustedTileMapImage.class) {
                 return false;
             }
-            final AdjustedTileMapImage t = (AdjustedTileMapImage) o;
-            return ix == t.ix && iy == t.iy && offZ == t.offZ && rot == t.rot && mirror == t.mirror && flip == t.flip;
+            return equalsAdjustedTileMapImage((AdjustedTileMapImage) o);
+        }
+        
+        protected final boolean equalsAdjustedTileMapImage(final AdjustedTileMapImage t) {
+            return equalsTileMapImage(t) && offZ == t.offZ && rot == t.rot && mirror == t.mirror && flip == t.flip;
+        }
+    }
+    
+    public final static class MultiTileMapImage extends AdjustedTileMapImage {
+        /*package*/ final int w;
+        /*package*/ final int h;
+        
+        public MultiTileMapImage(final float ix, final float iy, final float offZ, final int rot, final boolean mirror, final boolean flip, final int w, final int h) {
+            super(ix, iy, offZ, rot, mirror, flip);
+            this.w = w;
+            this.h = h;
+        }
+        
+        public MultiTileMapImage(final TileMapImage img, final float offZ, final int rot, final boolean mirror, final boolean flip, final int w, final int h) {
+            super(img, offZ, rot, mirror, flip);
+            this.w = w;
+            this.h = h;
+        }
+        
+        @Override
+        public final int hashCode() {
+            return super.hashCode() ^ w ^ h;
+        }
+        
+        @Override
+        public final boolean equals(final Object o) {
+            if (this == o) {
+                return true;
+            } else if (o == null || o.getClass() != MultiTileMapImage.class) {
+                return false;
+            }
+            return equalsMultiTileMapImage((MultiTileMapImage) o);
+        }
+        
+        protected final boolean equalsMultiTileMapImage(final MultiTileMapImage t) {
+            return equalsAdjustedTileMapImage(t) && w == t.w && h == t.h;
+        }
+    }
+    
+    /*package*/ final static class ExtensionTileMapImage {
+        /*package*/ final int itw;
+        /*package*/ final int jth;
+        /*package*/ final MultiTileMapImage srcImg;
+        /*package*/ final int tw;
+        /*package*/ final int th;
+        
+        /*package*/ ExtensionTileMapImage(final int itw, final int jth, final MultiTileMapImage srcImg, final int tw, final int th) {
+            this.itw = itw;
+            this.jth = jth;
+            this.srcImg = srcImg;
+            this.tw = tw;
+            this.th = th;
         }
     }
     
