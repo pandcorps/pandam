@@ -726,7 +726,11 @@ public abstract class RoomLoader {
         final int rot = field.initInt(3);
         final boolean mirror = field.getBoolean(4, false);
         final boolean flip = field.getBoolean(5, false);
-        if ((offZ != 0) || (rot != 0) || mirror || flip) {
+        final int w = field.initInt(6);
+        final int h = field.initInt(7);
+        if (w != 0) {
+            return new MultiTileMapImage(img, offZ, rot, mirror, flip, w, h);
+        } else if ((offZ != 0) || (rot != 0) || mirror || flip) {
             return new AdjustedTileMapImage(img, offZ, rot, mirror, flip);
         }
         return img;

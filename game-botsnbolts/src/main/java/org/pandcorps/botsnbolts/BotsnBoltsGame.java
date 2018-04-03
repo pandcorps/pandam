@@ -56,7 +56,6 @@ public final class BotsnBoltsGame extends BaseGame {
     Volcano Bot new art
     Volcano Bot new attack
     Flood Bot torpedo attack
-    Composite tiles
     Save state to file (defeated levels, discovered Bolts/Disks, Profile preferences)
     Pause TouchButton
     Bug: Rapid jump inputs with grappling beam while running into a wall slowly climbs the wall
