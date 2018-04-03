@@ -496,6 +496,10 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
         }
     }
     
+    protected final static boolean isBigTileMode() {
+        return BotsnBoltsGame.tm.getHeight() <= 7;
+    }
+    
     protected final static class BoltDoor extends Panctor implements CollisionListener {
         private final static int maxSize = 3;
         private final int x;
@@ -517,7 +521,7 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
         }
         
         private final void setBehavior(final int yoff, final Tile tile, final byte b) {
-            if (BotsnBoltsGame.tm.getHeight() <= 7) {
+            if (isBigTileMode()) {
                 setBehavior(x, y + yoff, tile, b);
             } else {
                 final int yBase = y + (yoff * 2);

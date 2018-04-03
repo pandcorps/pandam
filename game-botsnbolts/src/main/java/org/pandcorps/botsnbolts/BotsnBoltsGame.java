@@ -130,6 +130,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static Panmage button = null;
     protected static Panimation buttonFlash = null;
     protected static Panmage doorBoss = null;
+    protected static Panmage box = null;
     protected static Panmage ladder = null;
     protected static Panmage[] blockCyan = null;
     protected static Panmage[] blockTimed = null;
@@ -140,7 +141,6 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static Panimation lifter = null;
     protected static Panmage blockSpike = null;
     protected static Panmage spike = null;
-    protected static Panmage[] cube = null;
     protected static Panmage[] sentryGun = null;
     protected static Panmage[] wallCannon = null;
     protected static Panimation propEnemy = null;
@@ -301,7 +301,6 @@ public final class BotsnBoltsGame extends BaseGame {
         final Pangine engine = Pangine.getEngine();
         black = engine.createImage("black", RES + "misc/Black.png");
         hudMeterBlank = newHudMeterImages("meter.blank", RES + "misc/MeterBlank.png");
-        cube = newSheet("cube", RES + "misc/Cube.png", 16);
         final Img[] blockImgs = Imtil.loadStrip(RES + "bg/BlockCyan.png", 16, false);
         final Panple maxBlock = new FinPanple2(14, 16);
         final short s0 = 0, s64 = 64, s96 = 96, s128 = 128, s144 = 144, s192 = 192;
@@ -334,6 +333,13 @@ public final class BotsnBoltsGame extends BaseGame {
         splash = newAnimation("splash", RES + "misc/Splash.png", 16, new FinPanple2(8, 0), 3);
         ripple = newSheet("ripple", RES + "misc/Ripple.png", 16, null, null, null);
         wind = engine.createImage("wind", RES + "misc/Wind.png");
+    }
+    
+    protected final static Panmage getBox() {
+        if (box == null) {
+            box = Pangine.getEngine().createImage("box", RES + "misc/Box.png");
+        }
+        return box;
     }
     
     protected final static Panmage getLadder() {

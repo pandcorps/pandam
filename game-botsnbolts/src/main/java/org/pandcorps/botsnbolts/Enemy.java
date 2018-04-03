@@ -463,10 +463,13 @@ public abstract class Enemy extends Chr implements CollisionListener {
     protected final static void newCube(final int x, final int y) {
         final TileMap tm = BotsnBoltsGame.tm;
         final int x1 = x + 1, y1 = y + 1;
-        tm.setForeground(x, y, BotsnBoltsGame.cube[2], Tile.BEHAVIOR_SOLID);
-        tm.setForeground(x1, y, BotsnBoltsGame.cube[3], Tile.BEHAVIOR_SOLID);
-        tm.setForeground(x, y1, BotsnBoltsGame.cube[0], Tile.BEHAVIOR_SOLID);
-        tm.setForeground(x1, y1, BotsnBoltsGame.cube[1], Tile.BEHAVIOR_SOLID);
+        if (!ShootableDoor.isBigTileMode()) {
+            final Tile solid = tm.getTile(null, null, Tile.BEHAVIOR_SOLID);
+            tm.setTile(x1, y, solid);
+            tm.setTile(x, y1, solid);
+            tm.setTile(x1, y1, solid);
+        }
+        tm.setTile(x, y, tm.getTile(null, BotsnBoltsGame.getBox(), Tile.BEHAVIOR_SOLID));
     }
     
     protected abstract static class TileUnawareEnemy extends Enemy {
@@ -492,14 +495,8 @@ public abstract class Enemy extends Chr implements CollisionListener {
         protected final float baseY;
         
         protected CubeEnemy(final int x, final int y, final int health) {
-            this(x, y, health, true);
-        }
-        
-        protected CubeEnemy(final int x, final int y, final int health, final boolean cubeNeeded) {
             super(x, y, health);
-            if (cubeNeeded) {
-                newCube(x, y);
-            }
+            newCube(x, y);
             final Panple pos = getPosition();
             pos.add(OFF_CUBE, OFF_CUBE);
             baseX = pos.getX();
@@ -546,9 +543,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         private final Upgrade upgrade;
         
         protected BoltBox(final int x, final int y, final Upgrade upgrade) {
-            super(x, y, 1, false);
-            final TileMap tm = BotsnBoltsGame.tm;
-            tm.setBehavior(x, y, Tile.BEHAVIOR_SOLID);
+            super(x, y, 1);
             final PlayerContext pc = getPlayerContext();
             if (pc.prf.upgrades.contains(upgrade)) {
                 setView(pc.pi.powerBox);
