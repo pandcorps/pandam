@@ -428,12 +428,12 @@ public class TileMap extends Panctor implements Savable {
     public final void setTile(final int index, final Tile tile) {
         tiles[index] = tile;
         if (tile != null) {
-            setExtensions(index, tile.background, true);
-            setExtensions(index, tile.foreground, false);
+            setExtensions(index, tile.background, true, tile.behavior);
+            setExtensions(index, tile.foreground, false, tile.behavior);
         }
     }
     
-    private final void setExtensions(final int index, final Object img, final boolean background) {
+    private final void setExtensions(final int index, final Object img, final boolean background, final byte behavior) {
         if ((img != null) && (img.getClass() == MultiTileMapImage.class)) {
             final int srcI = getColumn(index), srcJ = getRow(index);
             final MultiTileMapImage srcImg = (MultiTileMapImage) img;
@@ -449,9 +449,9 @@ public class TileMap extends Panctor implements Savable {
                     if (isBadColumn(extI)) {
                         continue;
                     } else if (background) {
-                        setBackground(extI, extJ, ext);
+                        setBackground(extI, extJ, ext, behavior);
                     } else {
-                        setForeground(extI, extJ, ext);
+                        setForeground(extI, extJ, ext, behavior);
                     }
                 }
             }
