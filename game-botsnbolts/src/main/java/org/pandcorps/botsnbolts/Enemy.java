@@ -1973,13 +1973,41 @@ public abstract class Enemy extends Chr implements CollisionListener {
     }
     
     protected final static class JetpackEnemy extends Enemy {
+        private final static int DURATION_FRAME = 5;
+        private final static int DURATION_ANIM = DURATION_FRAME * 2;
+        private final static Panmage[] flyImgs = new Panmage[2];
+        private final static Panmage[] attackImgs = new Panmage[2];
+        private int vy = 1;
+        
         protected JetpackEnemy(final int x, final int y) {
             super(HENCHBOT_OFF_X, HENCHBOT_H, x, y, HENCHBOT_HEALTH);
+            setMirror(true);
         }
         
         @Override
         protected final boolean onStepCustom() {
+            turnTowardPlayer();
+            changeView(getJetpackImage(flyImgs, (int) ((Pangine.getEngine().getClock() % DURATION_ANIM) / DURATION_FRAME)));
+            if (addY(vy) != Y_NORMAL) {
+                vy *= -1;
+                shoot();
+            }
             return true;
+        }
+        
+        private final void shoot() {
+            new EnemyProjectile(this, HENCHBOT_SHOOT_OFF_X, HENCHBOT_SHOOT_OFF_Y, getMirrorMultiplier() * VEL_PROJECTILE, 0);
+        }
+        
+        private final static Panmage getJetpackImage(final Panmage[] imgs, final int i) {
+            Panmage img = imgs[i];
+            if (img != null) {
+                return img;
+            }
+            final String mode = (imgs == attackImgs) ? "Attack" : "";
+            img = getImage(img, "JetpackEnemy" + mode + (i + 1), BotsnBoltsGame.flamethrowerEnemy[0]);
+            imgs[i] = img;
+            return img;
         }
     }
     
