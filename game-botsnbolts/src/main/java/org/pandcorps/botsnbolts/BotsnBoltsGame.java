@@ -50,14 +50,13 @@ public final class BotsnBoltsGame extends BaseGame {
     protected final static String AUTHOR = "Andrew M. Martin";
     
     /*
-    Cyclone Henchbot
     Drought Henchbot
     Lightning Bot electrocution attack
     Volcano Bot new art
     Volcano Bot new attack
     Flood Bot torpedo attack
     Save state to file (defeated levels, discovered Bolts/Disks, Profile preferences)
-    Pause TouchButton
+    Pause info/menu
     Bug: Rapid jump inputs with grappling beam while running into a wall slowly climbs the wall
     */
     
