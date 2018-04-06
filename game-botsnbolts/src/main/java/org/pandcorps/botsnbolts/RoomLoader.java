@@ -181,6 +181,8 @@ public abstract class RoomLoader {
                 col(seg);
             } else if ("TIL".equals(name)) { // Tile
                 til(seg);
+            } else if ("RPT".equals(name)) { // Repeating Texture
+                rpt(seg);
             } else if ("BOX".equals(name)) { // Power-up Box
                 box(seg.intValue(0), seg.intValue(1));
             } else if ("BLT".equals(name)) { // Upgrade Bolt Box
@@ -415,6 +417,34 @@ public abstract class RoomLoader {
     
     private final static void til(final Segment seg) throws Exception {
         rct(seg.intValue(0), seg.intValue(1), 1, 1, seg, 2);
+    }
+    
+    private final static void rpt(final Segment seg) throws Exception {
+        final int d = BotsnBoltsGame.DIM;
+        final TileMap tm = BotsnBoltsGame.tm;
+        final int _x = seg.initInt(0), _y = seg.initInt(1);
+        final int x = _x * d, y = _y * d;
+        final int w = seg.getInt(2, tm.getWidth() - _x) * d;
+        final int h = seg.getInt(3, tm.getHeight() - _y) * d;
+        final String src = seg.getValue(4);
+        final int offX = seg.initInt(5), offY = seg.initInt(6);
+        final Pantexture tex = new Pantexture(getTextureImage(src));
+        tex.getPosition().set(x, y, BotsnBoltsGame.DEPTH_TEXTURE);
+        tex.setSize(w, h);
+        tex.setOffset(offX, offY);
+        tm.getLayer().addActor(tex);
+    }
+    
+    private final static Map<String, Panmage> textures = new HashMap<String, Panmage>();
+    
+    private final static Panmage getTextureImage(final String name) {
+        Panmage img = textures.get(name);
+        if (img == null) {
+            final String loc = BotsnBoltsGame.RES + "bg/Tex" + name + ".png";
+            img = Pangine.getEngine().createImage("tex." + name, loc);
+            textures.put(name, img);
+        }
+        return img;
     }
     
     private final static void box(final int x, final int y) {
@@ -785,7 +815,7 @@ public abstract class RoomLoader {
     }
     
     protected final static void onChangeFinished() {
-        final Panlayer layer = BotsnBoltsGame.tm.getLayer();
+        final Panlayer layer = getLayer();
         for (final Panctor actor : actors) {
             layer.addActor(actor);
         }

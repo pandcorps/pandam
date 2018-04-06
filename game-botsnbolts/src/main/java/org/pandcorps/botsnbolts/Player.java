@@ -1142,8 +1142,19 @@ public final class Player extends Chr {
         RoomLoader.onChangeStarted();
         final List<Panlayer> layersToKeepBeneath = Coltil.singletonList(BotsnBoltsGame.bgLayer);
         final List<Panlayer> layersToKeepAbove = Arrays.asList(BotsnBoltsGame.hud);
-        final List<? extends Panctor> actorsToKeep = Coltil.asList(this, BotsnBoltsGame.tm, boltDoor); // Keep Player and old TileMap while scrolling
-        final List<? extends Panctor> actorsToDestroy = Coltil.asList(BotsnBoltsGame.tm, boltDoor); // Destroy old TileMap after scrolling
+        final List<Panctor> actorsToKeep = new ArrayList<Panctor>();
+        actorsToKeep.add(this);
+        actorsToKeep.add(BotsnBoltsGame.tm);
+        Coltil.addIfValued(actorsToKeep, boltDoor); // Keep Player and old TileMap while scrolling
+        final List<Panctor> actorsToDestroy = new ArrayList<Panctor>();
+        actorsToDestroy.add(BotsnBoltsGame.tm);
+        Coltil.addIfValued(actorsToDestroy, boltDoor); // Destroy old TileMap after scrolling
+        for (final Panctor actor : getLayer().getActors()) {
+            if (actor instanceof Pantexture) {
+                actorsToKeep.add(actor);
+                actorsToDestroy.add(actor);
+            }
+        }
         final int velX = VEL_ROOM_CHANGE * dirX, velY = VEL_ROOM_CHANGE * dirY;
         new RoomChanger(nextX, 0, velX, velY, layersToKeepBeneath, layersToKeepAbove, actorsToKeep, actorsToDestroy) {
             @Override
