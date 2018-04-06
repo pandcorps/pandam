@@ -434,25 +434,40 @@ public class TileMap extends Panctor implements Savable {
     }
     
     private final void setExtensions(final int index, final Object img, final boolean background, final byte behavior) {
-        if ((img != null) && (img.getClass() == MultiTileMapImage.class)) {
-            final int srcI = getColumn(index), srcJ = getRow(index);
+        if (img == null) {
+            return;
+        }
+        final int w, h;
+        if ((img.getClass() == MultiTileMapImage.class)) {
             final MultiTileMapImage srcImg = (MultiTileMapImage) img;
-            final int w = srcImg.w, h = srcImg.h;
-            final ExtensionTileMapImage ext = new ExtensionTileMapImage(srcI * tw, srcJ * th, srcImg, w * tw, h * th);
-            for (int j = 0; j < h; j++) {
-                final int extJ = srcJ + j;
-                if (isBadRow(extJ)) {
+            w = srcImg.w;
+            h = srcImg.h;
+        } else if (img instanceof Panmage) {
+            final Panmage srcImg = (Panmage) img;
+            final Panple size = srcImg.getSize();
+            w = Math.round(size.getX() / tw);
+            h = Math.round(size.getY() / th);
+            if ((w <= 1) || (h <= 1)) {
+                return;
+            }
+        } else {
+            return;
+        }
+        final int srcI = getColumn(index), srcJ = getRow(index);
+        final ExtensionTileMapImage ext = new ExtensionTileMapImage(srcI * tw, srcJ * th, img, w * tw, h * th);
+        for (int j = 0; j < h; j++) {
+            final int extJ = srcJ + j;
+            if (isBadRow(extJ)) {
+                continue;
+            }
+            for (int i = 0; i < w; i++) {
+                final int extI = srcI + i;
+                if (isBadColumn(extI)) {
                     continue;
-                }
-                for (int i = 0; i < w; i++) {
-                    final int extI = srcI + i;
-                    if (isBadColumn(extI)) {
-                        continue;
-                    } else if (background) {
-                        setBackground(extI, extJ, ext, behavior);
-                    } else {
-                        setForeground(extI, extJ, ext, behavior);
-                    }
+                } else if (background) {
+                    setBackground(extI, extJ, ext, behavior);
+                } else {
+                    setForeground(extI, extJ, ext, behavior);
                 }
             }
         }
@@ -562,9 +577,15 @@ public class TileMap extends Panctor implements Savable {
     	    }
     	    final ExtensionTileMapImage ext = (ExtensionTileMapImage) img;
     	    if (renderedExtensions.add(ext)) {
-        	    final MultiTileMapImage m = ext.srcImg;
-        	    final Panple pos = getPosition();
-                renderer.render(layer, this.imgMap, pos.getX() + ext.itw, pos.getY() + ext.jth, z + m.offZ, m.ix, m.iy, ext.tw, ext.th, m.rot, m.mirror, m.flip);
+    	        final Object srcImg = ext.srcImg;
+    	        final Panple pos = getPosition();
+    	        final float extXitw = pos.getX() + ext.itw, extYjth = pos.getY() + ext.jth;
+    	        if (srcImg.getClass() == MultiTileMapImage.class) {
+            	    final MultiTileMapImage m = (MultiTileMapImage) srcImg;
+                    renderer.render(layer, this.imgMap, extXitw, extYjth, z + m.offZ, m.ix, m.iy, ext.tw, ext.th, m.rot, m.mirror, m.flip);
+    	        } else {
+    	            renderer.render(layer, (Panmage) srcImg, extXitw, extYjth, z);
+    	        }
     	    }
             return;
     	} else if (imgClass == AdjustedTileMapImage.class) {

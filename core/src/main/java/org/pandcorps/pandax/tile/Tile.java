@@ -274,11 +274,11 @@ public final class Tile {
     /*package*/ final static class ExtensionTileMapImage {
         /*package*/ final int itw;
         /*package*/ final int jth;
-        /*package*/ final MultiTileMapImage srcImg;
+        /*package*/ final Object srcImg;
         /*package*/ final int tw;
         /*package*/ final int th;
         
-        /*package*/ ExtensionTileMapImage(final int itw, final int jth, final MultiTileMapImage srcImg, final int tw, final int th) {
+        /*package*/ ExtensionTileMapImage(final int itw, final int jth, final Object srcImg, final int tw, final int th) {
             this.itw = itw;
             this.jth = jth;
             this.srcImg = srcImg;
