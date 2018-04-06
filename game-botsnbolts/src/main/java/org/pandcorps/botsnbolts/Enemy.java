@@ -2028,6 +2028,13 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
     }
     
+    protected final static class QuicksandEnemy extends Enemy {
+        protected QuicksandEnemy(final int x, final int y) {
+            super(HENCHBOT_OFF_X, HENCHBOT_H, x, y, HENCHBOT_HEALTH);
+            setMirror(true);
+        }
+    }
+    
     protected final static Panple FORT_CANNON_O = new FinPanple2(4, 0);
     protected final static Panple FORT_CANNON_MIN = new FinPanple2(0, 4);
     protected final static Panple FORT_CANNON_MAX = new FinPanple2(7, 12);
