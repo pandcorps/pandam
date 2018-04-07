@@ -2078,11 +2078,13 @@ public abstract class Boss extends Enemy {
         protected final static byte STATE_RAISE = 3;
         protected final static byte STATE_FALL = 4;
         protected final static byte STATE_SWIM = 5;
+        protected final static byte STATE_TORPEDO = 6;
         protected final static int FILL_FRAME_DURATION = 3;
         protected final static int WAIT_FILL = 4 * FILL_FRAME_DURATION;
         protected final static int RAISE_FRAMES = 28;
         protected final static int RAISE_FRAME_DURATION = 3;
         protected final static int WAIT_RAISE = RAISE_FRAMES * RAISE_FRAME_DURATION;
+        protected final static int WAIT_TORPEDO = 30;
         protected static Panmage still = null;
         protected static Panmage start1 = null;
         protected static Panmage start2 = null;
@@ -2094,6 +2096,7 @@ public abstract class Boss extends Enemy {
         protected static Panmage swim1 = null;
         protected static Panmage swim2 = null;
         protected static Panmage swim3 = null;
+        protected static Panmage launch = null;
         protected static Panmage whoosh = null;
         private final Valve valve;
         private final int xRight;
@@ -2134,6 +2137,8 @@ public abstract class Boss extends Enemy {
                 onJumping();
             } else if (state == STATE_FILL) {
                 onFilling();
+            } else if ((state == STATE_TORPEDO) && (waitTimer == (WAIT_TORPEDO - 1))) {
+                new Torpedo(this);
             }
             return false;
         }
@@ -2281,9 +2286,18 @@ public abstract class Boss extends Enemy {
         private final void pickBasic() {
             final int waterTile = RoomLoader.getWaterTile();
             if (waterTile < 9) {
-                startSwim();
-            } else if (Mathtil.rand()) {
+                if (Mathtil.rand()) {
+                    startTorpedo();
+                } else {
+                    startSwim();
+                }
+                return;
+            }
+            final int r = Mathtil.randi(0, 299);
+            if (r < 100) {
                 //TODO float higher/lower
+            } else if (r < 200) {
+                startTorpedo();
             } else {
                 startSwim();
             }
@@ -2324,6 +2338,10 @@ public abstract class Boss extends Enemy {
         protected final void startSwim() {
             hv = 3 * getMirrorMultiplier();
             startStateIndefinite(STATE_SWIM, getCurrentSwim());
+        }
+        
+        protected final void startTorpedo() {
+            startState(STATE_TORPEDO, WAIT_TORPEDO, getLaunch());
         }
 
         @Override
@@ -2375,6 +2393,10 @@ public abstract class Boss extends Enemy {
             return (swim3 = getFloodImage(swim3, "floodbot/FloodBotSwim3"));
         }
         
+        protected final static Panmage getLaunch() {
+            return (launch = getFloodImage(launch, "floodbot/FloodBotLaunch"));
+        }
+        
         protected final static Panmage getWhoosh() {
             if (whoosh == null) {
                 whoosh = Pangine.getEngine().createImage("whoosh", BotsnBoltsGame.CENTER_16, null, null, BotsnBoltsGame.RES + "misc/Whoosh.png");
@@ -2405,6 +2427,46 @@ public abstract class Boss extends Enemy {
         
         protected final static Panmage getFloodImage(final Panmage img, final String name) {
             return getImage(img, name, FLOOD_O, FLOOD_MIN, FLOOD_MAX);
+        }
+    }
+    
+    private final static int TORPEDO_OFF_X = 6;
+    private final static int TORPEDO_H = 4;
+    private final static Panple TORPEDO_O = new FinPanple2(9, 6);
+    private final static Panple TORPEDO_MIN = getMin(TORPEDO_OFF_X);
+    private final static Panple TORPEDO_MAX = getMax(TORPEDO_OFF_X, TORPEDO_H);
+    
+    protected final static class Torpedo extends Enemy {
+        private final static Panmage[] imgs = new Panmage[2];
+        private int timer = 0;
+        
+        protected Torpedo(final FloodBot src) {
+            super(TORPEDO_OFF_X, TORPEDO_H, 0, 0, 2);
+            EnemyProjectile.addBySource(this, getTorpedoImage(0), src, 14, 8);
+        }
+        
+        @Override
+        public boolean onStepCustom() {
+            final int t = timer / 2;
+            changeView(getTorpedoImage(t % 2));
+            final int v = Math.min(t, 8) * getMirrorMultiplier();
+            if (addX(v) != X_NORMAL) {
+                EnemyProjectile.burstEnemy(this);
+                destroy();
+            } else if ((timer % 10) == 9) {
+                new Bubble(this, 0);
+            }
+            timer++;
+            return true;
+        }
+        
+        private final static Panmage getTorpedoImage(final int i) {
+            Panmage img = imgs[i];
+            if (img == null) {
+                img = Boss.getImage(null, "floodbot/Torpedo" + (i + 1), TORPEDO_O, TORPEDO_MIN, TORPEDO_MAX);
+                imgs[i] = img;
+            }
+            return img;
         }
     }
     

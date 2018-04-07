@@ -636,7 +636,7 @@ public final class Player extends Chr {
     private final void onStepUnderwater() {
         final long clock = Pangine.getEngine().getClock();
         if ((clock > (lastBubble + BUBBLE_TIME))) {
-            new Bubble(this);
+            new Bubble(this, 32);
             lastBubble = clock;
         }
     }
@@ -2075,9 +2075,9 @@ public final class Player extends Chr {
         private int dir;
         private int timer = 0;
         
-        protected Bubble(final Chr src) {
+        protected Bubble(final Chr src, final int offY) {
             final Panple pos = src.getPosition();
-            getPosition().set(pos.getX(), pos.getY() + 32, BotsnBoltsGame.DEPTH_CARRIER);
+            getPosition().set(pos.getX(), pos.getY() + offY, BotsnBoltsGame.DEPTH_CARRIER);
             dir = src.getMirrorMultiplier();
             setView(BotsnBoltsGame.bubble[0]);
             src.getLayer().addActor(this);

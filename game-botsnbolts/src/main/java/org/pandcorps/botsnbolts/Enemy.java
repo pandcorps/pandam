@@ -266,7 +266,11 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
         
         protected void burst(final Player player) {
-            Projectile.burst(this, BotsnBoltsGame.enemyBurst, getPosition());
+            burstEnemy(this);
+        }
+        
+        protected final static void burstEnemy(final Panctor src) {
+            Projectile.burst(src, BotsnBoltsGame.enemyBurst, src.getPosition());
         }
         
         protected boolean isDestroyedOnImpact() {
@@ -2047,7 +2051,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
                 onWaiting();
             } else if (mode == 2) {
                 onRising();
-            } else if (mode == 3) {
+            } else {
                 onAttacking();
             }
             return true;
