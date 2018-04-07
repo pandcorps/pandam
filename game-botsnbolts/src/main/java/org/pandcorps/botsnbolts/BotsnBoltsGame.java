@@ -57,6 +57,7 @@ public final class BotsnBoltsGame extends BaseGame {
     Flood Bot torpedo attack
     Save state to file (defeated levels, discovered Bolts/Disks, Profile preferences)
     Pause info/menu
+    Rotate rolling images dynamically instead of creating new images
     Bug: Rapid jump inputs with grappling beam while running into a wall slowly climbs the wall
     */
     
@@ -153,6 +154,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static Panmage[] henchbotEnemy = null;
     protected static Panmage[] freezeRayEnemy = null;
     protected static Panmage electricityEnemy = null;
+    protected static Panmage quicksandEnemy = null;
     protected static Panmage rockEnemy = null;
     protected static Panmage enemyProjectile = null;
     protected static Panimation enemyBurst = null;
@@ -411,7 +413,7 @@ public final class BotsnBoltsGame extends BaseGame {
         final Panple henchO = new FinPanple2(15, 1), henchMin = Chr.getMin(Enemy.HENCHBOT_OFF_X), henchMax = Chr.getMax(Enemy.HENCHBOT_OFF_X, Enemy.HENCHBOT_H);
         final Img[] henchImgs = Imtil.loadStrip(RES + "enemy/Henchbot.png", 32, false);
         flamethrowerEnemy = newSheet("flamethrower.enemy", henchImgs, henchO, henchMin, henchMax);
-        final short s0 = 0, s96 = 96, s128 = 128, s160 = 160, s192 = 192, smax = Pancolor.MAX_VALUE;
+        final short s0 = 0, s48 = 48, s64 = 64, s72 = 72, s96 = 96, s128 = 128, s144 = 144, s160 = 160, s192 = 192, smax = Pancolor.MAX_VALUE;
         final Pancolor fire = new FinPancolor(smax, s160, s0), darkFire = new FinPancolor(smax, s96, s0);
         final Pancolor grey = Pancolor.DARK_GREY, darkGrey = new FinPancolor(s96);
         final Pancolor cyan = Pancolor.CYAN, darkCyan = new FinPancolor(s0, s192, s192);
@@ -428,6 +430,11 @@ public final class BotsnBoltsGame extends BaseGame {
         Img.close(henchImgs);
         final Img henchF = Imtil.load(RES + "enemy/ElectricityEnemy.png", false);
         electricityEnemy = engine.createImage("electricity.enemy", henchO, henchMin, henchMax, henchF);
+        final Pancolor yellow = Pancolor.YELLOW, darkYellow = new FinPancolor(s192, s192, s0);
+        final Pancolor sand = new FinPancolor(s192, s192, s72), darkSand = new FinPancolor(s128, s128, s48);
+        final Pancolor brown = new FinPancolor(s144, s96, s72), darkBrown = new FinPancolor(s96, s64, s48);
+        Imtil.filterImg(henchF, newFilter(yellow, sand, darkYellow, darkSand, grey, brown, darkGrey, darkBrown));
+        quicksandEnemy = engine.createImage("quicksand.enemy", henchO, henchMin, henchMax, henchF);
         Img.close(henchF);
         enemyBurst = newAnimation("burst.enemy", RES + "enemy/EnemyBurst.png", 16, CENTER_16, 2);
         flame4 = newSheet("flame.4.enemy", RES + "enemy/Flame4.png", 4);

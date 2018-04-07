@@ -2008,7 +2008,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         
         private final void shoot() {
             new EnemyProjectile(this, HENCHBOT_SHOOT_OFF_X, HENCHBOT_SHOOT_OFF_Y, getMirrorMultiplier() * VEL_PROJECTILE, 0);
-            attackTimer = 30;
+            attackTimer = 16;
         }
         
         private final static Panmage getJetpackImage(final Panmage[] imgs, final int i) {
@@ -2024,9 +2024,79 @@ public abstract class Enemy extends Chr implements CollisionListener {
     }
     
     protected final static class QuicksandEnemy extends Enemy {
+        private static Panmage attack = null;
+        private final float maxY;
+        private final float minY;
+        private byte mode = 0;
+        private int timer = 0;
+        
         protected QuicksandEnemy(final int x, final int y) {
             super(HENCHBOT_OFF_X, HENCHBOT_H, x, y, HENCHBOT_HEALTH);
             setMirror(true);
+            maxY = getPosition().getY();
+            minY = maxY - 28;
+            setView(BotsnBoltsGame.quicksandEnemy);
+        }
+        
+        @Override
+        protected final boolean onStepCustom() {
+            turnTowardPlayer();
+            if (mode == 0) {
+                onFalling();
+            } else if (mode == 1) {
+                onWaiting();
+            } else if (mode == 2) {
+                onRising();
+            } else if (mode == 3) {
+                onAttacking();
+            }
+            return true;
+        }
+        
+        private final void onFalling() {
+            final Panple pos = getPosition();
+            if (pos.getY() <= minY) {
+                incMode();
+                return;
+            }
+            pos.addY(-1);
+        }
+        
+        private final void onWaiting() {
+            timer++;
+            if (timer >= 30) {
+                mode++;
+            }
+        }
+        
+        private final void onRising() {
+            final Panple pos = getPosition();
+            if (pos.getY() >= maxY) {
+                incMode();
+                return;
+            }
+            pos.addY(1);
+        }
+        
+        private final void onAttacking() {
+            timer++;
+            if (timer == 15) {
+                new EnemyProjectile(this, HENCHBOT_SHOOT_OFF_X, HENCHBOT_SHOOT_OFF_Y, getMirrorMultiplier() * VEL_PROJECTILE, 0);
+                setView(getAttack());
+            } else if (timer == 45) {
+                setView(BotsnBoltsGame.quicksandEnemy);
+            } else if (timer >= 60) {
+                mode = 0;
+            }
+        }
+        
+        private final void incMode() {
+            mode++;
+            timer = 0;
+        }
+        
+        private final static Panmage getAttack() {
+            return (attack == null) ? (attack = getImage(attack, "QuicksandEnemyAttack", BotsnBoltsGame.flamethrowerEnemy[0])) : attack;
         }
     }
     
