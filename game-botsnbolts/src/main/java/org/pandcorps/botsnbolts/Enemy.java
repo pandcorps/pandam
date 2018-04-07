@@ -1854,7 +1854,6 @@ public abstract class Enemy extends Chr implements CollisionListener {
     protected final static class ElectricityEnemy extends Enemy {
         private final static int DURATION_WAIT = 45;
         private final static int DURATION_STRIKE = 15;
-        private static Panmage still = null;
         private static Panmage strike = null;
         private int timer = DURATION_WAIT;
         private boolean striking = false;
@@ -1877,7 +1876,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
         
         protected final void setStill() {
-            setBoth(getStill());
+            setBoth(BotsnBoltsGame.electricityEnemy);
         }
         
         protected final void setBoth(final Panmage img) {
@@ -1918,10 +1917,6 @@ public abstract class Enemy extends Chr implements CollisionListener {
                 Panctor.destroy(other.electricity);
                 other.setStill();
             }
-        }
-        
-        private final static Panmage getStill() {
-            return (still = getElectricityImage(still, "ElectricityEnemy"));
         }
         
         private final static Panmage getStrike() {

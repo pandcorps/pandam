@@ -152,6 +152,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static Panmage[] flamethrowerEnemy = null;
     protected static Panmage[] henchbotEnemy = null;
     protected static Panmage[] freezeRayEnemy = null;
+    protected static Panmage electricityEnemy = null;
     protected static Panmage rockEnemy = null;
     protected static Panmage enemyProjectile = null;
     protected static Panimation enemyBurst = null;
@@ -425,6 +426,9 @@ public final class BotsnBoltsGame extends BaseGame {
         Imtil.filterImg(henchStill, newFilter(ice, rock, darkIce, darkRock, blue, grey, darkBlue, darkGrey));
         rockEnemy = engine.createImage("rock.enemy", henchO, henchMin, henchMax, henchStill);
         Img.close(henchImgs);
+        final Img henchF = Imtil.load(RES + "enemy/ElectricityEnemy.png", false);
+        electricityEnemy = engine.createImage("electricity.enemy", henchO, henchMin, henchMax, henchF);
+        Img.close(henchF);
         enemyBurst = newAnimation("burst.enemy", RES + "enemy/EnemyBurst.png", 16, CENTER_16, 2);
         flame4 = newSheet("flame.4.enemy", RES + "enemy/Flame4.png", 4);
         flame8 = newSheet("flame.8.enemy", RES + "enemy/Flame8.png", 8);
