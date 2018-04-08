@@ -1153,11 +1153,14 @@ public abstract class Boss extends Enemy {
     protected final static class LightningBot extends Boss {
         protected final static byte STATE_JUMP = 1;
         protected final static byte STATE_STRIKE = 2;
+        protected final static byte STATE_BURST = 3;
         protected final static int WAIT_STRIKE = 15;
+        protected final static int WAIT_BURST = 30;
         protected static Panmage still = null;
         protected static Panmage jump = null;
         protected static Panmage strike = null;
         protected static Panmage fall = null;
+        protected static Panmage burst = null;
         
         protected LightningBot(final int x, final int y) {
             super(LIGHTNING_OFF_X, LIGHTNING_H, x, y);
@@ -1184,7 +1187,8 @@ public abstract class Boss extends Enemy {
 
         @Override
         protected final boolean pickState() {
-            startJump();
+            //startJump();
+            startBurst();
             return false;
         }
 
@@ -1213,6 +1217,10 @@ public abstract class Boss extends Enemy {
         protected final void startStrike() {
             startState(STATE_STRIKE, WAIT_STRIKE, getStrike());
         }
+        
+        protected final void startBurst() {
+            startState(STATE_BURST, WAIT_BURST, getBurst());
+        }
 
         @Override
         protected final Panmage getStill() {
@@ -1231,8 +1239,19 @@ public abstract class Boss extends Enemy {
             return (fall = getLightningImage(fall, "lightningbot/LightningBotFall"));
         }
         
+        protected final Panmage getBurst() {
+            if (burst != null) {
+                return burst;
+            }
+            return (burst = getLightningImage(burst, "lightningbot/LightningBotBurst", new FinPanple2(LIGHTNING_O.getX() + 2, LIGHTNING_O.getY())));
+        }
+        
         protected final static Panmage getLightningImage(final Panmage img, final String name) {
-            return getImage(img, name, LIGHTNING_O, LIGHTNING_MIN, LIGHTNING_MAX);
+            return getLightningImage(img, name, LIGHTNING_O);
+        }
+        
+        protected final static Panmage getLightningImage(final Panmage img, final String name, final Panple o) {
+            return getImage(img, name, o, LIGHTNING_MIN, LIGHTNING_MAX);
         }
     }
     
