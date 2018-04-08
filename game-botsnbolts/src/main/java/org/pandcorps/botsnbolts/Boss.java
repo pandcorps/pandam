@@ -1187,8 +1187,11 @@ public abstract class Boss extends Enemy {
 
         @Override
         protected final boolean pickState() {
-            //startJump();
-            startBurst();
+            if (Mathtil.rand()) {
+                startJump();
+            } else {
+                startBurst();
+            }
             return false;
         }
 

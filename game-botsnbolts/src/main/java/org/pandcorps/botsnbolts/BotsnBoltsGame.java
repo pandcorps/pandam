@@ -50,11 +50,9 @@ public final class BotsnBoltsGame extends BaseGame {
     protected final static String AUTHOR = "Andrew M. Martin";
     
     /*
-    Drought Henchbot
     Lightning Bot electrocution attack
     Volcano Bot new art
     Volcano Bot new attack
-    Flood Bot torpedo attack
     Save state to file (defeated levels, discovered Bolts/Disks, Profile preferences)
     Pause info/menu
     Rotate rolling images dynamically instead of creating new images
