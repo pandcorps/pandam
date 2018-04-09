@@ -243,7 +243,7 @@ public abstract class RoomLoader {
         for (int i = 0; i < size; i++) {
             final Field field = fields.get(i);
             final TileMapImage image = getTileMapImage(field);
-            final int duration = field.intValue(6);
+            final int duration = field.intValue(LAST_TILE_MAP_IMAGE_FIELD_INDEX + 1);
             final TileMapImage background, foreground;
             if (bg) {
                 background = image;
@@ -741,6 +741,8 @@ public abstract class RoomLoader {
         return getTileMapImage(seg.getField(imageOffset));
     }
     
+    private final static int LAST_TILE_MAP_IMAGE_FIELD_INDEX = 7;
+    
     private final static TileMapImage getTileMapImage(final Field field) {
         if (field == null) {
             return null;
@@ -757,7 +759,7 @@ public abstract class RoomLoader {
         final boolean mirror = field.getBoolean(4, false);
         final boolean flip = field.getBoolean(5, false);
         final int w = field.initInt(6);
-        final int h = field.initInt(7);
+        final int h = field.initInt(LAST_TILE_MAP_IMAGE_FIELD_INDEX);
         if (w != 0) {
             return new MultiTileMapImage(img, offZ, rot, mirror, flip, w, h);
         } else if ((offZ != 0) || (rot != 0) || mirror || flip) {
