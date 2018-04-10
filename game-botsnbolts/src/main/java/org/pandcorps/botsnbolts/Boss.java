@@ -1173,6 +1173,12 @@ public abstract class Boss extends Enemy {
                     new Lightning(this);
                 }
                 return true;
+            } else if (state == STATE_BURST) {
+                if (waitTimer == (WAIT_BURST - 1)) {
+                    new LightningBurst(this, -32, 15, 0);
+                    new LightningBurst(this, 30, 14, 2);
+                    new LightningBurst(this, 0, 44, 3);
+                }
             } else if (state == STATE_JUMP) {
                 if (v > 0) {
                     if (getPosition().getY() >= 166) {
@@ -1259,8 +1265,18 @@ public abstract class Boss extends Enemy {
     }
     
     protected final static class LightningBurst extends TimedEnemyProjectile {
-        protected LightningBurst(final LightningBot src) {
-            super(null, src, 0, 0, 30);
+        private static Panmage burst = null;
+        
+        protected LightningBurst(final LightningBot src, final int ox, final int oy, final int rot) {
+            super(getBurst(), src, ox, oy, 28);
+            setRot(rot);
+        }
+        
+        private final static Panmage getBurst() {
+            if (burst != null) {
+                return burst;
+            }
+            return (burst = getImage(null, "lightningbot/LightningBurst", BotsnBoltsGame.CENTER_32, new FinPanple2(-14, -14), new FinPanple2(14, 14)));
         }
     }
     
