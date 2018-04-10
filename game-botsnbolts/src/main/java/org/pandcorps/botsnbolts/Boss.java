@@ -1175,9 +1175,14 @@ public abstract class Boss extends Enemy {
                 return true;
             } else if (state == STATE_BURST) {
                 if (waitTimer == (WAIT_BURST - 1)) {
-                    new LightningBurst(this, -32, 15, 0);
-                    new LightningBurst(this, 30, 14, 2);
-                    new LightningBurst(this, 0, 44, 3);
+                    final Panmage burst = LightningBurst.getBurst();
+                    new LightningBurst(burst, this, -32, 15, 28, 0);
+                    new LightningBurst(burst, this, 30, 14, 28, 2);
+                    new LightningBurst(burst, this, 0, 44, 28, 3);
+                } else if (waitTimer == (WAIT_BURST - 2)) {
+                    final Panmage burst2 = LightningBurst.getBurst2();
+                    new LightningBurst(burst2, this, -19, 34, 26, 0);
+                    new LightningBurst(burst2, this, 18, 31, 26, 3);
                 }
             } else if (state == STATE_JUMP) {
                 if (v > 0) {
@@ -1266,9 +1271,10 @@ public abstract class Boss extends Enemy {
     
     protected final static class LightningBurst extends TimedEnemyProjectile {
         private static Panmage burst = null;
+        private static Panmage burst2 = null;
         
-        protected LightningBurst(final LightningBot src, final int ox, final int oy, final int rot) {
-            super(getBurst(), src, ox, oy, 28);
+        protected LightningBurst(final Panmage img, final LightningBot src, final int ox, final int oy, final int timer, final int rot) {
+            super(img, src, ox, oy, timer);
             setRot(rot);
         }
         
@@ -1277,6 +1283,13 @@ public abstract class Boss extends Enemy {
                 return burst;
             }
             return (burst = getImage(null, "lightningbot/LightningBurst", BotsnBoltsGame.CENTER_32, new FinPanple2(-14, -14), new FinPanple2(14, 14)));
+        }
+        
+        private final static Panmage getBurst2() {
+            if (burst2 != null) {
+                return burst2;
+            }
+            return (burst2 = getImage(null, "lightningbot/LightningBurst2", BotsnBoltsGame.CENTER_16, BotsnBoltsGame.MIN_16, BotsnBoltsGame.MAX_16));
         }
     }
     
