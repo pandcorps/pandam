@@ -1258,6 +1258,12 @@ public abstract class Boss extends Enemy {
         }
     }
     
+    protected final static class LightningBurst extends TimedEnemyProjectile {
+        protected LightningBurst(final LightningBot src) {
+            super(null, src, 0, 0, 30);
+        }
+    }
+    
     protected final static class Lightning extends TimedEnemyProjectile {
         private final static int DURATION_LIGHTNING = 20;
         private final static int ROOT_MAX = 10;
