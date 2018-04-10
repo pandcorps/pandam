@@ -1155,7 +1155,7 @@ public abstract class Boss extends Enemy {
         protected final static byte STATE_STRIKE = 2;
         protected final static byte STATE_BURST = 3;
         protected final static int WAIT_STRIKE = 15;
-        protected final static int WAIT_BURST = 30;
+        protected final static int WAIT_BURST = 31;
         protected static Panmage still = null;
         protected static Panmage jump = null;
         protected static Panmage strike = null;
@@ -1176,13 +1176,14 @@ public abstract class Boss extends Enemy {
             } else if (state == STATE_BURST) {
                 if (waitTimer == (WAIT_BURST - 1)) {
                     final Panmage burst = LightningBurst.getBurst();
-                    new LightningBurst(burst, this, -32, 15, 28, 0);
-                    new LightningBurst(burst, this, 30, 14, 28, 2);
-                    new LightningBurst(burst, this, 0, 44, 28, 3);
+                    LightningBurst.start = Pangine.getEngine().getClock();
+                    new LightningBurst(burst, this, -32, 15, 29, 0);
+                    new LightningBurst(burst, this, 30, 14, 29, 2);
+                    new LightningBurst(burst, this, 0, 44, 29, 3);
                 } else if (waitTimer == (WAIT_BURST - 2)) {
                     final Panmage burst2 = LightningBurst.getBurst2();
-                    new LightningBurst(burst2, this, -19, 34, 26, 0);
-                    new LightningBurst(burst2, this, 18, 31, 26, 3);
+                    new LightningBurst(burst2, this, -19, 34, 27, 0);
+                    new LightningBurst(burst2, this, 18, 31, 27, 3);
                 }
             } else if (state == STATE_JUMP) {
                 if (v > 0) {
@@ -1198,9 +1199,9 @@ public abstract class Boss extends Enemy {
 
         @Override
         protected final boolean pickState() {
-            if (Mathtil.rand()) {
+            /*if (Mathtil.rand()) {
                 startJump();
-            } else {
+            } else*/ {
                 startBurst();
             }
             return false;
@@ -1272,10 +1273,19 @@ public abstract class Boss extends Enemy {
     protected final static class LightningBurst extends TimedEnemyProjectile {
         private static Panmage burst = null;
         private static Panmage burst2 = null;
+        private static long start = 0;
         
         protected LightningBurst(final Panmage img, final LightningBot src, final int ox, final int oy, final int timer, final int rot) {
             super(img, src, ox, oy, timer);
             setRot(rot);
+        }
+        
+        @Override
+        public final void onStep(final StepEvent event) {
+            super.onStep(event);
+            final long age = Pangine.getEngine().getClock() - start;
+            final long m = age % 4;
+            setVisible(m < 2);
         }
         
         private final static Panmage getBurst() {
