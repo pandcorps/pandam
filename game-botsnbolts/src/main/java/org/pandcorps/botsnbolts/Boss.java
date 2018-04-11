@@ -1199,9 +1199,9 @@ public abstract class Boss extends Enemy {
 
         @Override
         protected final boolean pickState() {
-            /*if (Mathtil.rand()) {
+            if (Mathtil.rand()) {
                 startJump();
-            } else*/ {
+            } else {
                 startBurst();
             }
             return false;
@@ -1278,6 +1278,11 @@ public abstract class Boss extends Enemy {
         protected LightningBurst(final Panmage img, final LightningBot src, final int ox, final int oy, final int timer, final int rot) {
             super(img, src, ox, oy, timer);
             setRot(rot);
+        }
+        
+        @Override
+        protected final boolean isDestroyedOnImpact() {
+            return false;
         }
         
         @Override

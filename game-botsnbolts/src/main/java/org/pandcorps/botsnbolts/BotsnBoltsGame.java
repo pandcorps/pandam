@@ -50,11 +50,11 @@ public final class BotsnBoltsGame extends BaseGame {
     protected final static String AUTHOR = "Andrew M. Martin";
     
     /*
-    Lightning Bot electrocution attack
     Volcano Bot new art
     Volcano Bot new attack
     Save state to file (defeated levels, discovered Bolts/Disks, Profile preferences)
     Pause info/menu
+    Automatically charge the charged shot in touchscreen mode and fire shot when button is pressed instead of when it's released
     Rotate rolling images dynamically instead of creating new images
     Bug: Rapid jump inputs with grappling beam while running into a wall slowly climbs the wall
     */
