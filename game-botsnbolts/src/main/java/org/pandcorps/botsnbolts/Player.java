@@ -617,7 +617,7 @@ public final class Player extends Chr {
             Menu.showUpDown();
         } else if (isTouchingLadder()) {
             Menu.showUpDown();
-            if (prf.autoClimb && ((v > 0) || (ladderColumn != getColumn()))) {
+            if (prf.autoClimb && ((v > 0) || ((ladderColumn != getColumn()) && !isGrounded()))) {
                 startLadder();
                 return true;
             }
