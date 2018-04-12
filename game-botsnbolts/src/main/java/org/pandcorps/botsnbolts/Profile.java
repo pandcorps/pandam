@@ -33,6 +33,7 @@ public class Profile {
     /*package*/ ShootMode shootMode = Player.SHOOT_NORMAL;
     /*package*/ JumpMode jumpMode = Player.JUMP_NORMAL;
     /*package*/ boolean autoClimb = true;
+    /*package*/ boolean autoCharge = true;
     
     /*package*/ final boolean isUpgradeAvailable(final Upgrade upgrade) {
         return upgrades.contains(upgrade);
@@ -128,7 +129,9 @@ public class Profile {
         
         @Override
         protected final void enable(final Player player) {
-            player.prf.shootMode = getShootMode();
+            final ShootMode shootMode = getShootMode();
+            player.prf.shootMode = shootMode;
+            shootMode.onSelect(player);
         }
         
         protected abstract ShootMode getShootMode();

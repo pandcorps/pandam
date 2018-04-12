@@ -213,6 +213,7 @@ public final class Player extends Chr {
                 prf.shootMode = SHOOT_NORMAL;
             }
         } while (!prf.shootMode.isAvailable(this));
+        prf.shootMode.onSelect(this);
     }
     
     private final boolean isFree() {
@@ -624,6 +625,7 @@ public final class Player extends Chr {
         } else {
             Menu.hideUpDown();
         }
+        prf.shootMode.onStep(this);
         return false;
     }
     
@@ -1396,6 +1398,7 @@ public final class Player extends Chr {
             player.ladderColumn = -1;
             final float v = player.v;
             Menu.showUpDown();
+            player.prf.shootMode.onStep(player);
             if (v != 0) {
                 final byte yStatus = player.addY();
                 player.v = 0;
@@ -1515,6 +1518,7 @@ public final class Player extends Chr {
             // The Carrier moves the Player, so don't need to do that here
             player.setView(player.getCurrentImagesSubSet().stand);
             player.ladderColumn = -1;
+            player.prf.shootMode.onStep(player);
             return true;
         }
         
@@ -1723,10 +1727,18 @@ public final class Player extends Chr {
             this.delay = delay;
         }
         
+        //@OverrideMe
+        protected void onSelect(final Player player) {
+        }
+        
         protected abstract void onShootStart(final Player player);
         
         //@OverrideMe
         protected void onShooting(final Player player) {
+        }
+        
+        //@OverrideMe
+        protected void onStep(final Player player) {
         }
         
         //@OverrideMe
@@ -1939,8 +1951,25 @@ public final class Player extends Chr {
         }
         
         @Override
+        protected final void onSelect(final Player player) {
+            if (player.prf.autoCharge) {
+                startCharge(player);
+            }
+        }
+        
+        @Override
         protected final void onShootStart(final Player player) {
-            shoot(player);
+            if (player.prf.autoCharge) {
+                if (!shootChargedIfNeeded(player)) {
+                    shoot(player);
+                }
+            } else {
+                shoot(player);
+            }
+            startCharge(player);
+        }
+        
+        private final void startCharge(final Player player) {
             final long clock = Pangine.getEngine().getClock();
             player.startCharge = clock;
             player.lastCharge = clock;
@@ -1948,6 +1977,12 @@ public final class Player extends Chr {
         
         @Override
         protected final void onShooting(final Player player) {
+            if (!player.prf.autoCharge) {
+                onCharging(player);
+            }
+        }
+        
+        private final void onCharging(final Player player) {
             final long clock = Pangine.getEngine().getClock();
             if (clock - player.lastCharge > 2) {
                 player.startCharge = clock;
@@ -1962,6 +1997,13 @@ public final class Player extends Chr {
                 } else {
                     charge(player, pi.charge, pi.chargeVert);
                 }
+            }
+        }
+        
+        @Override
+        protected final void onStep(final Player player) {
+            if (player.prf.autoCharge) {
+                onCharging(player);
             }
         }
         
@@ -2000,12 +2042,21 @@ public final class Player extends Chr {
         
         @Override
         protected final void onShootEnd(final Player player) {
+            if (!player.prf.autoCharge) {
+                shootChargedIfNeeded(player);
+            }
+        }
+        
+        private final boolean shootChargedIfNeeded(final Player player) {
             final long diff = Pangine.getEngine().getClock() - player.startCharge;
             if (diff > CHARGE_TIME_BIG) {
                 shootSpecial(player, Projectile.POWER_MAXIMUM);
+                return true;
             } else if (diff > CHARGE_TIME_MEDIUM) {
                 shootSpecial(player, Projectile.POWER_MEDIUM);
+                return true;
             }
+            return false;
         }
         
         @Override
