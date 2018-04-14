@@ -859,7 +859,6 @@ public final class Player extends Chr {
     
     private final void onGroundedBall() {
         changeView(pi.ball[runIndex]);
-System.out.println(this.getBoundingMinimum() + " - " + this.getBoundingMaximum());
         if (hv != 0) {
             if (runTimer < 1) {
                 runTimer++;

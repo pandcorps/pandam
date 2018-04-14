@@ -111,6 +111,10 @@ public class Panctor extends BasePantity implements SpecPanctor {
     public final boolean changeView(final Panmage view) {
         return impl.changeView(view);
     }
+    
+    public final boolean changeView(final Panframe view) {
+        return impl.changeView(view);
+    }
 
 	@Override
 	public final Panple getPosition() {
