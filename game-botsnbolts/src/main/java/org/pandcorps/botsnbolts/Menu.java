@@ -63,7 +63,7 @@ public class Menu {
     }
     
     protected final static boolean isScreenGameplayLayoutNeeded() {
-        return true;
+        return false;
     }
     
     private final static void loadCursor() {
@@ -318,6 +318,13 @@ public class Menu {
     protected final static void addToggleButtons(final HudShootMode hudShootMode, final HudJumpMode hudJumpMode) {
         toggleJump = addToggleButton("ToggleJump", hudJumpMode);
         toggleAttack = addToggleButton("ToggleAttack", hudShootMode);
+        addPauseButton(hudShootMode);
+    }
+    
+    private final static void addPauseButton(final HudShootMode hudShootMode) {
+        if (!isScreenGameplayLayoutNeeded()) {
+            return;
+        }
         final Panple pos = hudShootMode.getPosition();
         final int pd = 16;
         final int px = Pangine.getEngine().getEffectiveWidth() - pd - Math.round(pos.getX()), py = Math.round(pos.getY());
@@ -378,6 +385,45 @@ public class Menu {
             this.full = full;
             this.base = base;
             this.pressed = pressed;
+        }
+    }
+    
+    protected final static class LevelSelectScreen extends Panscreen {
+        @Override
+        protected final void load() throws Exception {
+            final Pangine engine = Pangine.getEngine();
+            engine.setBgColor(new FinPancolor(96, 96, 96));
+            //TODO Create a constant layer for the grid
+            Pangame.getGame().getCurrentRoom().addActor(new LevelSelectGrid());
+        }
+    }
+    
+    private final static class LevelSelectGrid extends Panctor {
+        @Override
+        protected final void renderView(final Panderer renderer) {
+            final Panlayer layer = getLayer();
+            for (int j = 0; j < 3; j++) {
+                final int y = 24 + (j * 64);
+                for (int i = 0; i < 3; i++) {
+                    renderBox(renderer, layer, 88 + (i * 80), y);
+                }
+            }
+        }
+        
+        private final static void renderBox(final Panderer renderer, final Panlayer layer, final int x, final int y) {
+            final Panmage img = BotsnBoltsGame.getBox();
+            final int x8 = x + 8, y8 = y + 8, x40 = x + 40, y40 = y + 40;
+            renderer.render(layer, img, x, y, BotsnBoltsGame.DEPTH_BG, 0, 24, 8, 8, 0, false, false);
+            renderer.render(layer, img, x40, y, BotsnBoltsGame.DEPTH_BG, 24, 24, 8, 8, 0, false, false);
+            renderer.render(layer, img, x, y40, BotsnBoltsGame.DEPTH_BG, 0, 0, 8, 8, 0, false, false);
+            renderer.render(layer, img, x40, y40, BotsnBoltsGame.DEPTH_BG, 24, 0, 8, 8, 0, false, false);
+            for (int i = 0; i < 2; i++) {
+                final int i16 = i * 16;
+                renderer.render(layer, img, x8 + i16, y, BotsnBoltsGame.DEPTH_BG, 8, 24, 16, 8, 0, false, false);
+                renderer.render(layer, img, x8 + i16, y40, BotsnBoltsGame.DEPTH_BG, 8, 0, 16, 8, 0, false, false);
+                renderer.render(layer, img, x, y8 + i16, BotsnBoltsGame.DEPTH_BG, 0, 8, 8, 16, 0, false, false);
+                renderer.render(layer, img, x40, y8 + i16, BotsnBoltsGame.DEPTH_BG, 24, 8, 8, 16, 0, false, false);
+            }
         }
     }
 }
