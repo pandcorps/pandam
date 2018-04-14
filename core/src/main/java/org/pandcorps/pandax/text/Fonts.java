@@ -102,7 +102,7 @@ public final class Fonts {
     }
     
     public final static Font getOutline(final FontRequest req, final Pancolor base, final Pancolor background, final Pancolor cursor, final Pancolor outline, final Pancolor transparent) {
-        return getBasic("Outline", req, base, background, cursor, outline, transparent);
+        return getBasic("Outline", req, base, background, cursor, outline, transparent, null);
     }
     
     public final static Font getSimple(final FontRequest req, final Pancolor color) {
@@ -114,7 +114,11 @@ public final class Fonts {
     }
     
     public final static Font getSimple(final FontRequest req, final Pancolor base, final Pancolor background, final Pancolor cursor, final Pancolor transparent) {
-        return getBasic("Simple", req, base, background, cursor, COLOR_OUTLINE, transparent);
+        return getSimple(req, base, background, cursor, transparent, null);
+    }
+    
+    public final static Font getSimple(final FontRequest req, final Pancolor base, final Pancolor background, final Pancolor cursor, final Pancolor transparent, final Pancolor shadow) {
+        return getBasic("Simple", req, base, background, cursor, COLOR_OUTLINE, transparent, shadow);
     }
     
     public final static Font getClassic(final FontRequest req, final Pancolor color) {
@@ -126,7 +130,11 @@ public final class Fonts {
     }
     
     public final static Font getClassic(final FontRequest req, final Pancolor base, final Pancolor background, final Pancolor cursor, final Pancolor transparent) {
-        return getBasic("Classic", req, base, background, cursor, COLOR_OUTLINE, transparent);
+        return getClassic(req, base, background, cursor, transparent, null);
+    }
+    
+    public final static Font getClassic(final FontRequest req, final Pancolor base, final Pancolor background, final Pancolor cursor, final Pancolor transparent, final Pancolor shadow) {
+        return getBasic("Classic", req, base, background, cursor, COLOR_OUTLINE, transparent, shadow);
     }
     
     public final static Font getTiny(final FontType type, final Pancolor color) {
@@ -138,20 +146,26 @@ public final class Fonts {
     }
     
     public final static Font getTiny(final FontType type, final Pancolor base, final Pancolor background, final Pancolor cursor, final Pancolor transparent) {
-        return getBasic("Tiny", newTinyRequest(type), base, background, cursor, COLOR_OUTLINE, transparent);
+        return getTiny(type, base, background, cursor, transparent, null);
     }
     
-    private final static Font getBasic(final String style, final FontRequest req, final Pancolor base, final Pancolor background, final Pancolor cursor, final Pancolor outline, final Pancolor transparent) {
+    public final static Font getTiny(final FontType type, final Pancolor base, final Pancolor background, final Pancolor cursor, final Pancolor transparent, final Pancolor shadow) {
+        return getBasic("Tiny", newTinyRequest(type), base, background, cursor, COLOR_OUTLINE, transparent, shadow);
+    }
+    
+    private final static Font getBasic(final String style, final FontRequest req, final Pancolor base, final Pancolor background, final Pancolor cursor,
+                                       final Pancolor outline, final Pancolor transparent, final Pancolor shadow) {
         final HashMap<Pancolor, Pancolor> map = new HashMap<Pancolor, Pancolor>();
         map.put(COLOR_BASE, base);
         map.put(COLOR_BACKGROUND, background);
         map.put(COLOR_CURSOR, cursor);
         map.put(COLOR_OUTLINE, outline);
         final ReplacePixelFilter filter = new ReplacePixelFilter(map);
-        return get(style, req, base.toString() + '.' + background + '.' + cursor, filter, transparent);
+        return get(style, req, base.toString() + '.' + background + '.' + cursor, filter, base, transparent, shadow);
     }
     
-    private final static Font get(final String style, FontRequest req, final String filterDesc, ReplacePixelFilter filter, final Pancolor transparent) {
+    private final static Font get(final String style, FontRequest req, final String filterDesc, ReplacePixelFilter filter,
+                                  final Pancolor base, final Pancolor transparent, final Pancolor shadow) {
         if (req == null) {
             req = DEFAULT_REQUEST;
         }
@@ -197,7 +211,12 @@ public final class Fonts {
                 img.close();
                 img = out;
             }
-            image = engine.createImage(id, Imtil.filter(img, filter));
+            //Imtil.filterImg(img, filter); // Input is fixed palette; must create new Img to change colors
+            img = Imtil.filter(img, filter);
+            if (shadow != null) {
+                drawShadow(img, base, shadow, w, h);
+            }
+            image = engine.createImage(id, img);
         }
         if (type == FontType.Number) {
             return new NumberFont(image);
@@ -205,6 +224,15 @@ public final class Fonts {
             return new UpperFont(image);
         }
         return new ByteFont(image);
+    }
+    
+    private final static void drawShadow(final Img img, final Pancolor base, final Pancolor shadow, final int w, final int h) {
+        final int fw = img.getWidth(), fh = img.getHeight();
+        for (int y = 0; y < fh; y += h) {
+            for (int x = 0; x < fw; x += w) {
+                Imtil.drawShadow(img, base, shadow, x, y, w, h);
+            }
+        }
     }
     
     public final static MultiFont getClassics(final FontRequest req, final Pancolor foreground, final Pancolor shadow) {

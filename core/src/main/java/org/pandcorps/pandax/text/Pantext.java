@@ -376,7 +376,11 @@ public class Pantext extends Panctor {
                 continue;
             }
             //render(renderer, layer, x, y, z, c, i, j);
-            render(renderer, layer, x, y, z, c, offi, j);
+            try {
+                render(renderer, layer, x, y, z, c, offi, j);
+            } catch (final IllegalArgumentException e) {
+                throw new IllegalArgumentException("Error rendering " + line, e);
+            }
             if (underlineEnabled && (!cursorEnabled || cursorChar != offi || cursorLine != j)) {
             	render(renderer, layer, x, y, z - 2, CHAR_CURSOR, offi, j);
             }
