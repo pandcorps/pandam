@@ -1446,6 +1446,9 @@ public final class Player extends Chr {
         
         @Override
         protected final void onShootStart(final Player player) {
+            if (!SHOOT_BOMB.isAvailable(player)) {
+                return;
+            }
             SHOOT_BOMB.onShootStart(player);
         }
         

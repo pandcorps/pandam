@@ -56,7 +56,6 @@ public final class BotsnBoltsGame extends BaseGame {
     Save state to file (defeated levels, discovered Bolts/Disks, Profile preferences)
     Pause info/menu
     Bug: Rapid jump inputs with grappling beam while running into a wall slowly climbs the wall
-    Bug: Can use bombs without unlocking them
     */
     
     protected final static String RES = "org/pandcorps/botsnbolts/";
