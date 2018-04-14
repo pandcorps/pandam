@@ -155,7 +155,7 @@ public final class Fonts {
     
     private final static Font getBasic(final String style, final FontRequest req, final Pancolor base, final Pancolor background, final Pancolor cursor,
                                        final Pancolor outline, final Pancolor transparent, final Pancolor shadow) {
-        final HashMap<Pancolor, Pancolor> map = new HashMap<Pancolor, Pancolor>();
+        final Map<Pancolor, Pancolor> map = new HashMap<Pancolor, Pancolor>();
         map.put(COLOR_BASE, base);
         map.put(COLOR_BACKGROUND, background);
         map.put(COLOR_CURSOR, cursor);
@@ -187,19 +187,18 @@ public final class Fonts {
             }
             final int w = req.width, h = req.height;
             if (type == FontType.Number) {
-                //Imtil.save(img, "c:\\raw.png");
                 final Img out = Imtil.newImage(w * NumberFont.NUM, h * NumberFont.NUM);
                 Imtil.copy(img, out, 10 * w, 2 * h, 4 * w, h, 0, 0);
                 Imtil.copy(img, out, 14 * w, 2 * h, 2 * w, h, 0, h);
                 Imtil.copy(img, out, 0, 3 * h, 2 * w, h, w * 2, h);
                 Imtil.copy(img, out, 2 * w, 3 * h, 4 * w, h, 0, h * 2);
                 Imtil.copy(img, out, 6 * w, 3 * h, 4 * w, h, 0, h * 3);
-                //Imtil.save(out, "c:\\num.png");
                 img.close();
                 img = out;
             } else if (type == FontType.Upper) {
                 final Img out = Imtil.newImage(w * UpperFont.NUM, h * UpperFont.NUM);
-                Imtil.copy(img, out, 0, 2 * h, 8 * w, h, 0, 0);
+                Imtil.copy(img, out, 6 * w, 10 * h, w, h, 0, 0);
+                Imtil.copy(img, out, w, 2 * h, 7 * w, h, w, 0);
                 Imtil.copy(img, out, 8 * w, 2 * h, 8 * w, h, 0, h);
                 Imtil.copy(img, out, 0, 3 * h, 8 * w, h, 0, h * 2);
                 Imtil.copy(img, out, 8 * w, 3 * h, 8 * w, h, 0, h * 3);
@@ -207,7 +206,6 @@ public final class Fonts {
                 Imtil.copy(img, out, 8 * w, 4 * h, 8 * w, h, 0, h * 5);
                 Imtil.copy(img, out, 0, 5 * h, 8 * w, h, 0, h * 6);
                 Imtil.copy(img, out, 8 * w, 5 * h, 8 * w, h, 0, h * 7);
-                //Imtil.save(out, "c:\\up.png");
                 img.close();
                 img = out;
             }
