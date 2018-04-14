@@ -1065,8 +1065,7 @@ public abstract class Boss extends Enemy {
             
         }
         
-        protected final static Panframe getFrame(final Panframe[] frames, final Rotator rots) {
-            final int frameIndex = rots.frameIndex;
+        protected final static Panframe getFrame(final Panframe[] frames, final Rotator rots, final int frameIndex) {
             Panframe frame = frames[frameIndex];
             if (frame == null) {
                 final boolean basedOnImg1 = ((frameIndex % 2) == 0);
@@ -3073,8 +3072,12 @@ public abstract class Boss extends Enemy {
             }
         }
         
-        protected Panframe getFrame(final Panframe[] frames) {
-            return Rock.getFrame(frames, this);
+        protected final Panframe getFrame(final Panframe[] frames) {
+            return getFrame(frames, frameIndex);
+        }
+        
+        protected final Panframe getFrame(final Panframe[] frames, final int frameIndex) {
+            return Rock.getFrame(frames, this, frameIndex);
         }
         
         protected int getDim(final Panmage img) {

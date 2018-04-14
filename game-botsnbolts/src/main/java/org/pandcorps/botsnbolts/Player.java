@@ -859,6 +859,7 @@ public final class Player extends Chr {
     
     private final void onGroundedBall() {
         changeView(pi.ball[runIndex]);
+System.out.println(this.getBoundingMinimum() + " - " + this.getBoundingMaximum());
         if (hv != 0) {
             if (runTimer < 1) {
                 runTimer++;
@@ -1805,7 +1806,7 @@ public final class Player extends Chr {
         private final Panimation charge2;
         private final Panimation chargeVert2;
         protected final Panimation burst;
-        private final Panmage[] ball;
+        private final Panframe[] ball;
         private final Panmage warp;
         private final Panimation materialize;
         protected final Panimation bomb;
@@ -1827,7 +1828,7 @@ public final class Player extends Chr {
                                final Panmage jumpAimDiag, final Panmage jumpAimUp,
                                final Panmage basicProjectile, final Panimation projectile2, final Panimation projectile3,
                                final Panimation charge, final Panimation chargeVert, final Panimation charge2, final Panimation chargeVert2,
-                               final Panimation burst, final Panmage[] ball, final Panmage warp, final Panimation materialize, final Panimation bomb,
+                               final Panimation burst, final Panframe[] ball, final Panmage warp, final Panimation materialize, final Panimation bomb,
                                final Panmage link, final Panimation batterySmall, final Panimation batteryMedium, final Panimation batteryBig,
                                final Panmage doorBolt, final Panmage bolt, final Panmage disk,
                                final Panmage powerBox, final Map<String, Panmage> boltBoxes, final Panmage diskBox, final HudMeterImages hudMeterImages) {

@@ -25,6 +25,7 @@ package org.pandcorps.botsnbolts;
 import java.util.*;
 import java.util.Map.*;
 
+import org.pandcorps.botsnbolts.Boss.*;
 import org.pandcorps.botsnbolts.HudMeter.*;
 import org.pandcorps.botsnbolts.Player.*;
 import org.pandcorps.botsnbolts.Profile.*;
@@ -54,9 +55,8 @@ public final class BotsnBoltsGame extends BaseGame {
     Volcano Bot new attack
     Save state to file (defeated levels, discovered Bolts/Disks, Profile preferences)
     Pause info/menu
-    Automatically charge the charged shot in touchscreen mode and fire shot when button is pressed instead of when it's released
-    Rotate rolling images dynamically instead of creating new images
     Bug: Rapid jump inputs with grappling beam while running into a wall slowly climbs the wall
+    Bug: Can use bombs without unlocking them
     */
     
     protected final static String RES = "org/pandcorps/botsnbolts/";
@@ -680,21 +680,16 @@ public final class BotsnBoltsGame extends BaseGame {
         final Panimation charge2 = newAnimation(pre + "Charge2", playerCharge2, null, 1);
         final Panimation chargeVert2 = newAnimation(pre + "ChargeVert2", playerChargeVert2, oChargeVert, 1);
         
-        final Img[] ballImgs = Imtil.loadStrip(pre + "Ball.png", 16);
-        final Panmage ball[] = new Panmage[8];
+        final Panframe ball[] = new Panframe[8];
         final Panple ob = new FinPanple2(8, 1), xb = GuyPlatform.getMax(Player.PLAYER_X, Player.BALL_H);
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < 2; j++) {
-                final int index = i * 2 + j;
-                final Img ballImg = ballImgs[j];
-                ballImg.setTemporary(false);
-                ball[index] = engine.createImage(pre + "Ball." + index, ob, ng, xb, ballImg);
-                if (i < 3) {
-                    Imtil.rotate(ballImg);
-                } else {
-                    ballImg.close();
-                }
-            }
+        final Panmage[] ballImgs = createSheet(pre + "Ball", pre + "Ball.png", 16, ob, ng, xb);
+        final Rotator rots = new Rotator(4) {
+            @Override protected final Panmage getImage1() {
+                return ballImgs[0]; }
+            @Override protected final Panmage getImage2() {
+                return ballImgs[1]; }};
+        for (int i = 0; i < 8; i++) {
+            rots.getFrame(ball, i);
         }
         
         final Panmage warp = engine.createImage(pre + "Warp", new FinPanple2(5, 1), null, null, playerWarp);
