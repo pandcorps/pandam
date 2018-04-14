@@ -587,6 +587,28 @@ public final class Imtil {
         in.setRGB(cmaxj, cmini, t);
     }
     
+    public final static void drawShadow(final Img in, final Pancolor base, final Pancolor shadow, final int x, final int y, final int w, final int h) {
+        final int b = getDataElement(base), s = getDataElement(shadow);
+        final int w1 = w - 1, h1 = h - 1;
+        for (int j = 0; j < h1; j++) {
+            final int yj = y + j, yj1 = yj + 1;
+            for (int i = 0; i < w1; i++) {
+                final int xi = x + i, xi1 = xi + 1;
+                if (in.getRGB(xi, yj) == b) {
+                    if (in.getRGB(xi, yj1) != b) {
+                        in.setRGB(xi, yj1, s);
+                    }
+                    if (in.getRGB(xi1, yj) != b) {
+                        in.setRGB(xi1, yj, s);
+                    }
+                    if (in.getRGB(xi1, yj1) != b) {
+                        in.setRGB(xi1, yj1, s);
+                    }
+                }
+            }
+        }
+    }
+    
     public final static Img shrink(final Img in, final int f) {
         if (f == 1) {
             return in;
