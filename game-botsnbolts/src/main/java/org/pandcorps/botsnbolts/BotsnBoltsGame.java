@@ -111,7 +111,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected final static FinPanple2 maxCube = new FinPanple2(5, 5);
     
     protected static Queue<Runnable> loaders = new LinkedList<Runnable>();
-    protected static MultiFont font = null;
+    protected static Font font = null;
     protected static PlayerImages voidImages = null;
     protected static PlayerImages volatileImages = null;
     protected static Panframe[] doorTunnel = null;
@@ -225,7 +225,7 @@ public final class BotsnBoltsGame extends BaseGame {
     }
     
     private final static void loadResources() {
-        font = Fonts.getClassics(new FontRequest(8), Pancolor.WHITE, Pancolor.BLACK); //TODO 64 characters
+        font = Fonts.getClassic(new FontRequest(FontType.Upper, 8), Pancolor.WHITE, Pancolor.WHITE, Pancolor.WHITE, null, Pancolor.BLACK);
         loadDoors();
         loadMisc();
         loadEnemies();
@@ -993,21 +993,21 @@ public final class BotsnBoltsGame extends BaseGame {
             addText(room, AUTHOR, w2, 16);
             actor.register(new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
-                    Panscreen.set(new BotsnBoltsScreen());
+                    Panscreen.set(new Menu.LevelSelectScreen());
                 }});
-        }
-        
-        private final void addText(final Panroom room, final String s, final int x, final int y) {
-            final Pantext text = new Pantext(Pantil.vmid(), font, s);
-            text.getPosition().set(x, y);
-            text.centerX();
-            room.addActor(text);
         }
         
         @Override
         protected final void destroy() {
             title.destroy();
         }
+    }
+    
+    public final static void addText(final Panlayer room, final String s, final int x, final int y) {
+        final Pantext text = new Pantext(Pantil.vmid(), font, s);
+        text.getPosition().set(x, y);
+        text.centerX();
+        room.addActor(text);
     }
     
     protected final static class BotsnBoltsScreen extends Panscreen {

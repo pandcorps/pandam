@@ -32,7 +32,7 @@ public final class EmptyPanmage extends Panmage {
     
     @Override
     public final Panple getSize() {
-        return FinPanple.ORIGIN;
+        return getBoundingMaximum();
     }
 
     @Override

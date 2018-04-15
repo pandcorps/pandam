@@ -29,6 +29,7 @@ import org.pandcorps.core.img.process.*;
 import org.pandcorps.game.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.Panput.*;
+import org.pandcorps.pandam.event.action.*;
 import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.in.*;
 
@@ -389,24 +390,54 @@ public class Menu {
     }
     
     protected final static class LevelSelectScreen extends Panscreen {
+        private static Panmage imgEmpty = null;
+        private static LevelSelectGrid grid = null;
+        
         @Override
         protected final void load() throws Exception {
             final Pangine engine = Pangine.getEngine();
+            if (imgEmpty == null) {
+                imgEmpty = engine.createEmptyImage("select.level", FinPanple.ORIGIN, FinPanple.ORIGIN, new FinPanple2(48, 48));
+            }
             engine.setBgColor(new FinPancolor(96, 96, 96));
-            //TODO Create a constant layer for the grid
-            Pangame.getGame().getCurrentRoom().addActor(new LevelSelectGrid());
+            final Panroom room = Pangame.getGame().getCurrentRoom();
+            final Panlayer layer = engine.createLayer("layer.grid", BotsnBoltsGame.GAME_W, BotsnBoltsGame.GAME_H, room.getSize().getZ(), room);
+            grid = new LevelSelectGrid();
+            layer.addActor(grid);
+            BotsnBoltsGame.addText(layer, "VOLCANO", 112, 16);
+            BotsnBoltsGame.addText(layer, "BOT", 112, 8);
+            layer.setConstant(true);
+            room.addBeneath(layer);
+            addCursor(room);
+            addLevelButton(room, 88, 24);
+        }
+        
+        private final static void addLevelButton(final Panlayer layer, final int x, final int y) {
+            final Pangine engine = Pangine.getEngine();
+            final TouchButton btn = new TouchButton(engine.getInteraction(), layer, "level." + x + "." + y, x, y, BotsnBoltsGame.DEPTH_FG, imgEmpty, null, true);
+            engine.registerTouchButton(btn);
+            grid.register(btn, new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) {
+                    Panscreen.set(new BotsnBoltsGame.BotsnBoltsScreen());
+                }});
         }
     }
     
     private final static class LevelSelectGrid extends Panctor {
+        private static Panmage bg = null;
+        
         @Override
         protected final void renderView(final Panderer renderer) {
             final Panlayer layer = getLayer();
+            if (bg == null) {
+                bg = Pangine.getEngine().createImage("select.bg", BotsnBoltsGame.RES + "menu/SelectBg.png");
+            }
             for (int j = 0; j < 3; j++) {
                 final int y = 24 + (j * 64);
                 for (int i = 0; i < 3; i++) {
                     renderBox(renderer, layer, 88 + (i * 80), y);
                 }
+                renderer.render(layer, bg, 0, y + 8, BotsnBoltsGame.DEPTH_BEHIND, 0, 0, BotsnBoltsGame.GAME_W, 32, 0, false, false);
             }
         }
         

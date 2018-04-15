@@ -278,6 +278,9 @@ public abstract class Panput {
 		    setActor(addActor(layer, xMin, yMin, z, img), imgActive);
 		    setOverlay(imgOverlay, xOverlay, yOverlay);
 		    setText(fonts, txt, xText, yText);
+		    if (this.layer == null) {
+		        this.layer = layer;
+		    }
 		}
 		
 		public final void setOverlay(final Panmage imgOverlay, final int xOverlay, final int yOverlay) {
