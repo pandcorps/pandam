@@ -23,6 +23,7 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.botsnbolts;
 
 import org.pandcorps.botsnbolts.HudMeter.*;
+import org.pandcorps.botsnbolts.RoomLoader.*;
 import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
 import org.pandcorps.core.img.process.*;
@@ -404,12 +405,15 @@ public class Menu {
             final Panlayer layer = engine.createLayer("layer.grid", BotsnBoltsGame.GAME_W, BotsnBoltsGame.GAME_H, room.getSize().getZ(), room);
             grid = new LevelSelectGrid();
             layer.addActor(grid);
-            BotsnBoltsGame.addText(layer, "VOLCANO", 112, 16);
-            BotsnBoltsGame.addText(layer, "BOT", 112, 8);
+            for (final BotLevel level : RoomLoader.levels) {
+                final int x = 88 + (level.selectX * 80), y = 24 + (level.selectY * 64), x24 = x + 24;
+                BotsnBoltsGame.addText(layer, level.name1, x24, y - 8);
+                BotsnBoltsGame.addText(layer, level.name2, x24, y - 16);
+                addLevelButton(room, x, y);
+            }
             layer.setConstant(true);
             room.addBeneath(layer);
             addCursor(room);
-            addLevelButton(room, 88, 24);
         }
         
         private final static void addLevelButton(final Panlayer layer, final int x, final int y) {

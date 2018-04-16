@@ -42,6 +42,7 @@ import org.pandcorps.pandax.visual.*;
 public abstract class RoomLoader {
     private final static int OFF_ALT = 256;
     private final static Map<BotCell, BotRoom> rooms = new HashMap<BotCell, BotRoom>();
+    protected final static List<BotLevel> levels = new ArrayList<BotLevel>();
     private final static List<Panctor> actors = new ArrayList<Panctor>();
     private final static List<ShootableDoor> doors = new ArrayList<ShootableDoor>();
     protected final static List<TileAnimator> animators = new ArrayList<TileAnimator>();
@@ -884,10 +885,20 @@ public abstract class RoomLoader {
                     rooms.put(new BotCell(x + i, y), room);
                 }
             }
+            in.close();
+            in = SegmentStream.openLocation(BotsnBoltsGame.RES + "/level/Levels.txt");
+            loadLevels(in);
         } catch (final Exception e) {
             throw Pantil.toRuntimeException(e);
         } finally {
             Iotil.close(in);
+        }
+    }
+    
+    protected final static void loadLevels(final SegmentStream in) throws Exception {
+        Segment seg;
+        while ((seg = in.read()) != null) {
+            levels.add(new BotLevel(seg.getValue(0), seg.getValue(1), seg.intValue(2), seg.intValue(3)));
         }
     }
     
@@ -969,6 +980,20 @@ public abstract class RoomLoader {
             this.bg = bg;
             this.fg = fg;
             this.duration = duration;
+        }
+    }
+    
+    protected final static class BotLevel {
+        protected final String name1;
+        protected final String name2;
+        protected final int selectX;
+        protected final int selectY;
+        
+        protected BotLevel(final String name1, final String name2, final int selectX, final int selectY) {
+            this.name1 = name1;
+            this.name2 = name2;
+            this.selectX = selectX;
+            this.selectY = selectY;
         }
     }
     
