@@ -409,19 +409,21 @@ public class Menu {
                 final int x = 88 + (level.selectX * 80), y = 24 + (level.selectY * 64), x24 = x + 24;
                 BotsnBoltsGame.addText(layer, level.name1, x24, y - 8);
                 BotsnBoltsGame.addText(layer, level.name2, x24, y - 16);
-                addLevelButton(room, x, y);
+                addLevelButton(room, x, y, level);
             }
             layer.setConstant(true);
             room.addBeneath(layer);
             addCursor(room);
         }
         
-        private final static void addLevelButton(final Panlayer layer, final int x, final int y) {
+        private final static void addLevelButton(final Panlayer layer, final int x, final int y, final BotLevel level) {
             final Pangine engine = Pangine.getEngine();
             final TouchButton btn = new TouchButton(engine.getInteraction(), layer, "level." + x + "." + y, x, y, BotsnBoltsGame.DEPTH_FG, imgEmpty, null, true);
             engine.registerTouchButton(btn);
             grid.register(btn, new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
+                    RoomLoader.startX = level.levelX;
+                    RoomLoader.startY = level.levelY;
                     Panscreen.set(new BotsnBoltsGame.BotsnBoltsScreen());
                 }});
         }
