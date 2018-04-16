@@ -55,7 +55,6 @@ public final class BotsnBoltsGame extends BaseGame {
     Volcano Bot new attack
     Save state to file (defeated levels, discovered Bolts/Disks, Profile preferences)
     Pause info/menu
-    Bug: Rapid jump inputs with grappling beam while running into a wall slowly climbs the wall
     */
     
     protected final static String RES = "org/pandcorps/botsnbolts/";

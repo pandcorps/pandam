@@ -679,11 +679,12 @@ public final class Player extends Chr {
                 } else if (grapplingX > oldX) {
                     addX(-1);
                 }
+                grapplingAllowed = false;
                 // Fall through
             case Y_LANDED :
             case Y_FLOOR :
                 endGrapple();
-                break;
+                return;
         }
         final double baseT = grapplingT - Math.PI, magT = Math.abs(baseT);
         if (baseT > GRAPPLING_ANGLE_MIRROR_THRESHOLD) {
@@ -991,7 +992,7 @@ public final class Player extends Chr {
         checkGrapplingFinished();
     }
     
-    private final void endGrapple() {
+    protected final void endGrapple() {
         clearRun();
         stateHandler = NORMAL_HANDLER;
         if (v <= 0) {

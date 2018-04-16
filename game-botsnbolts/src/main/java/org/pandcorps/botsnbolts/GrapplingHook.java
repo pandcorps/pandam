@@ -57,11 +57,20 @@ public final class GrapplingHook extends Chr {
             return true;
         }
         for (int i = 0; i < speedMultiplier; i++) {
-            if (addY() != Y_NORMAL) {
+            final byte yStatus = addY();
+            if (yStatus == Y_BUMP) {
                 finish();
                 break;
-            } else if (addX(hv) != X_NORMAL) {
+            } else if (yStatus != Y_NORMAL) {
+                cancel();
+                break;
+            }
+            final byte xStatus = addX(hv);
+            if (xStatus == X_WALL) {
                 finish();
+                break;
+            } else if (xStatus != X_NORMAL) {
+                cancel();
                 break;
             }
         }
@@ -97,5 +106,9 @@ public final class GrapplingHook extends Chr {
     private final void finish() {
         finished = true;
         player.onGrappleConnected();
+    }
+    
+    private final void cancel() {
+        player.endGrapple();
     }
 }
