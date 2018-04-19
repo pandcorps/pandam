@@ -409,11 +409,26 @@ public class Menu {
                 final int x = 88 + (level.selectX * 80), y = 24 + (level.selectY * 64), x24 = x + 24;
                 BotsnBoltsGame.addText(layer, level.name1, x24, y - 8);
                 BotsnBoltsGame.addText(layer, level.name2, x24, y - 16);
+                addPortrait(layer, x + 8, y + 8, level);
                 addLevelButton(room, x, y, level);
             }
             layer.setConstant(true);
             room.addBeneath(layer);
             addCursor(room);
+        }
+        
+        private final static void addPortrait(final Panlayer layer, final int x, final int y, final BotLevel level) {
+            final Panctor portrait = new Panctor();
+            final int off;
+            if ((x < 176) || ((x == 176) && (y < 112))) {
+                off = 0;
+            } else {
+                off = 31;
+                portrait.setMirror(true);
+            }
+            portrait.getPosition().set(x + off, y, BotsnBoltsGame.DEPTH_ENEMY);
+            portrait.setView(level.portrait);
+            layer.addActor(portrait);
         }
         
         private final static void addLevelButton(final Panlayer layer, final int x, final int y, final BotLevel level) {

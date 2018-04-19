@@ -900,7 +900,7 @@ public abstract class RoomLoader {
     protected final static void loadLevels(final SegmentStream in) throws Exception {
         Segment seg;
         while ((seg = in.read()) != null) {
-            levels.add(new BotLevel(seg.getValue(0), seg.getValue(1), seg.intValue(2), seg.intValue(3), seg.intValue(4), seg.intValue(5)));
+            levels.add(new BotLevel(seg));
         }
     }
     
@@ -992,14 +992,20 @@ public abstract class RoomLoader {
         protected final int selectY;
         protected final int levelX;
         protected final int levelY;
+        protected final Panmage portrait;
         
-        protected BotLevel(final String name1, final String name2, final int selectX, final int selectY, final int levelX, final int levelY) {
-            this.name1 = name1;
-            this.name2 = name2;
-            this.selectX = selectX;
-            this.selectY = selectY;
-            this.levelX = levelX;
-            this.levelY = levelY;
+        protected BotLevel(final Segment seg) {
+            name1 = seg.getValue(0);
+            name2 = seg.getValue(1);
+            selectX = seg.intValue(2);
+            selectY = seg.intValue(3);
+            levelX = seg.intValue(4);
+            levelY = seg.intValue(5);
+            String portraitLoc = seg.getValue(6);
+            if (Chartil.isEmpty(portraitLoc)) {
+                portraitLoc = "boss/" + name1.toLowerCase() + name2.toLowerCase() + "/" + name1 + name2 + "Portrait";
+            }
+            portrait = Pangine.getEngine().createImage(portraitLoc, BotsnBoltsGame.RES + portraitLoc + ".png");
         }
     }
     
