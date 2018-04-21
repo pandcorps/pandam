@@ -709,9 +709,13 @@ public final class BotsnBoltsGame extends BaseGame {
             boltBoxes.put(boltName, engine.createImage(pre + boltName + "Box", CENTER_16, minCube, maxCube, entry.getValue()));
         }
         final Panmage diskBox = engine.createImage(pre + "DiskBox", CENTER_16, minCube, maxCube, playerDiskBox);
+        
+        final Panmage portrait = engine.createImage(pre + "Portrait", pre + "Portrait.png");
+        
         final HudMeterImages hudMeterImages = newHudMeterImages(pre + "Meter", hudMeterImgs);
+        
         return new PlayerImages(basicSet, shootSet, hurt, frozen, defeat, climb, climbShoot, climbTop, jumpAimDiag, jumpAimUp, basicProjectile, projectile2, projectile3, charge, chargeVert, charge2, chargeVert2,
-            burst, ball, warp, materialize, bomb, link, batterySml, batteryMed, batteryBig, doorBolt, bolt, disk, powerBox, boltBoxes, diskBox, hudMeterImages);
+            burst, ball, warp, materialize, bomb, link, batterySml, batteryMed, batteryBig, doorBolt, bolt, disk, powerBox, boltBoxes, diskBox, portrait, hudMeterImages);
     }
     
     private final static PlayerImagesSubSet loadPlayerImagesSubSet(final String path, final String name, final boolean startNeeded, final Panple os, final Panple o, final Panple oj) {
