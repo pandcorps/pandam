@@ -25,15 +25,81 @@ package org.pandcorps.botsnbolts;
 import java.util.*;
 
 import org.pandcorps.botsnbolts.Player.*;
+import org.pandcorps.core.*;
+import org.pandcorps.core.io.*;
+import org.pandcorps.core.seg.*;
 import org.pandcorps.pandam.*;
 
 public class Profile {
+    private final static String LOC_BOLT = "Bolt.txt";
+    private final static String LOC_DISK = "Disk.txt";
+    private final static String SEG_BOLT = "BLT";
+    private final static String SEG_DISK = "DSK";
+    
     /*package*/ final Set<Upgrade> upgrades = new HashSet<Upgrade>();
     /*package*/ final Set<String> disks = new HashSet<String>();
     /*package*/ ShootMode shootMode = Player.SHOOT_NORMAL;
     /*package*/ JumpMode jumpMode = Player.JUMP_NORMAL;
     /*package*/ boolean autoClimb = true;
     /*package*/ boolean autoCharge = true;
+    
+    {
+        loadBolts();
+        loadDisks();
+    }
+    
+    /*package*/ final void loadBolts() {
+        loadValues(LOC_BOLT, SEG_BOLT, upgrades, new ValueLoader<Upgrade>() {
+            @Override public final Upgrade newValue(final String s) {
+                return getUpgrade(s); }});
+    }
+    
+    /*package*/ final void loadDisks() {
+        loadValues(LOC_DISK, SEG_DISK, disks, new ValueLoader<String>() {
+            @Override public final String newValue(final String s) {
+                return s; }});
+    }
+    
+    private static interface ValueLoader<T> {
+        T newValue(final String s);
+    }
+    
+    private final static <T> void loadValues(final String loc, final String segName, final Collection<T> values, final ValueLoader<T> loader) {
+        SegmentStream in = null;
+        try {
+            in = SegmentStream.openLocation(loc);
+            final Segment seg = in.readIf(segName);
+            if (seg == null) {
+                return;
+            }
+            for (final Field f : seg.getRepetitions(0)) {
+                final T elem = loader.newValue(f.getValue());
+                if (elem != null) {
+                    values.add(elem);
+                }
+            }
+        } catch (final Exception e) {
+            // File doesn't yet exist... or it's corrupted and unusable
+        } finally {
+            Iotil.close(in);
+        }
+    }
+    
+    /*package*/ final void saveBolts() {
+        saveValues(LOC_BOLT, SEG_BOLT, upgrades);
+    }
+    
+    /*package*/ final void saveDisks() {
+        saveValues(LOC_DISK, SEG_DISK, disks);
+    }
+    
+    private final static void saveValues(final String loc, final String segName, final Iterable<?> values) {
+        final Segment seg = new Segment(segName);
+        for (final Object value : values) {
+            seg.addValue(0, value.toString());
+        }
+        Savtil.save(seg, loc);
+    }
     
     /*package*/ final boolean isUpgradeAvailable(final Upgrade upgrade) {
         return upgrades.contains(upgrade);
@@ -75,7 +141,10 @@ public class Profile {
         }
         
         protected final void award(final Player player) {
-            player.prf.upgrades.add(this);
+            final Profile prf = player.prf;
+            if (prf.upgrades.add(this)) {
+                prf.saveBolts();
+            }
             enable(player);
         }
         
@@ -84,6 +153,11 @@ public class Profile {
         
         protected final Panmage getBoxImage(final PlayerContext pc) {
             return pc.pi.boltBoxes.get(name);
+        }
+        
+        @Override
+        public final String toString() {
+            return name;
         }
     }
     
