@@ -188,6 +188,8 @@ public abstract class RoomLoader {
                 box(seg.intValue(0), seg.intValue(1));
             } else if ("BLT".equals(name)) { // Upgrade Bolt Box
                 blt(seg);
+            } else if ("DSK".equals(name)) { // Disk Box
+                dsk(seg);
             } else if ("EXT".equals(name)) { // Extra Actor
                 ext(seg.intValue(0), seg.intValue(1), seg.getValue(2));
             } else if ("ENM".equals(name)) { // Enemy
@@ -456,6 +458,11 @@ public abstract class RoomLoader {
         final int x = seg.intValue(0), y = seg.intValue(1);
         final String name = seg.getValue(2);
         addActor(new BoltBox(x, y, Profile.getUpgrade(name)));
+    }
+    
+    private final static void dsk(final Segment seg) throws Exception {
+        final int x = seg.intValue(0), y = seg.intValue(1);
+        addActor(new DiskBox(x, y));
     }
     
     private final static void ext(final int x, final int y, final String extraType) throws Exception {
