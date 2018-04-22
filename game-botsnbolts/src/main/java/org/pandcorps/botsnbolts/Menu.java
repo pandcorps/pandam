@@ -412,22 +412,27 @@ public class Menu {
                 addPortrait(layer, x + 8, y + 8, level);
                 addLevelButton(room, x, y, level);
             }
+            addPortrait(layer, 176, 96, BotsnBoltsGame.pc.pi.portrait, true);
             layer.setConstant(true);
             room.addBeneath(layer);
             addCursor(room);
         }
         
         private final static void addPortrait(final Panlayer layer, final int x, final int y, final BotLevel level) {
+            addPortrait(layer, x, y, level.portrait, (x < 176) || ((x == 176) && (y < 112)));
+        }
+        
+        private final static void addPortrait(final Panlayer layer, final int x, final int y, final Panmage image, final boolean right) {
             final Panctor portrait = new Panctor();
             final int off;
-            if ((x < 176) || ((x == 176) && (y < 112))) {
+            if (right) {
                 off = 0;
             } else {
                 off = 31;
                 portrait.setMirror(true);
             }
             portrait.getPosition().set(x + off, y, BotsnBoltsGame.DEPTH_ENEMY);
-            portrait.setView(level.portrait);
+            portrait.setView(image);
             layer.addActor(portrait);
         }
         
