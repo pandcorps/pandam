@@ -143,7 +143,10 @@ public abstract class PowerUp extends Chr implements CollisionListener {
         @Override
         protected final void award(final Player player) {
             player.addHealth(HudMeter.MAX_VALUE);
-            player.prf.disks.add(id);
+            final Profile prf = player.prf;
+            if (prf.disks.add(id)) {
+                prf.saveDisks();
+            }
         }
     }
     
