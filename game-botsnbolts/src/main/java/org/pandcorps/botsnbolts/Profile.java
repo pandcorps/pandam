@@ -33,28 +33,53 @@ import org.pandcorps.pandam.*;
 public class Profile {
     private final static String LOC_BOLT = "Bolt.txt";
     private final static String LOC_DISK = "Disk.txt";
+    private final static String LOC_PROFILE = "Prof.txt";
     private final static String SEG_BOLT = "BLT";
     private final static String SEG_DISK = "DSK";
+    private final static String SEG_PROFILE = "PRF";
     
-    /*package*/ final Set<Upgrade> upgrades = new HashSet<Upgrade>();
-    /*package*/ final Set<String> disks = new HashSet<String>();
+    /*package*/ final Set<Upgrade> upgrades;
+    /*package*/ final Set<String> disks;
     /*package*/ ShootMode shootMode = Player.SHOOT_NORMAL;
     /*package*/ JumpMode jumpMode = Player.JUMP_NORMAL;
     /*package*/ boolean autoClimb = true;
     /*package*/ boolean autoCharge = true;
+    private final Profile old;
     
-    {
+    /*package*/ Profile() {
+        upgrades = new HashSet<Upgrade>();
+        disks = new HashSet<String>();
         loadBolts();
         loadDisks();
+        loadProfile();
+        old = new Profile(this);
     }
     
-    /*package*/ final void loadBolts() {
+    private Profile(final Profile src) {
+        upgrades = null;
+        disks = null;
+        load(src);
+        old = null;
+    }
+    
+    private final void load(final Profile src) {
+        shootMode = src.shootMode;
+        jumpMode = src.jumpMode;
+        autoClimb = src.autoClimb;
+        autoCharge = src.autoCharge;
+    }
+    
+    private final boolean isSame() {
+        return (shootMode == old.shootMode) && (jumpMode == old.jumpMode) && (autoClimb == old.autoClimb) && (autoCharge == old.autoCharge);
+    }
+    
+    private final void loadBolts() {
         loadValues(LOC_BOLT, SEG_BOLT, upgrades, new ValueLoader<Upgrade>() {
             @Override public final Upgrade newValue(final String s) {
                 return getUpgrade(s); }});
     }
     
-    /*package*/ final void loadDisks() {
+    private final void loadDisks() {
         loadValues(LOC_DISK, SEG_DISK, disks, new ValueLoader<String>() {
             @Override public final String newValue(final String s) {
                 return s; }});
@@ -67,8 +92,7 @@ public class Profile {
     private final static <T> void loadValues(final String loc, final String segName, final Collection<T> values, final ValueLoader<T> loader) {
         SegmentStream in = null;
         try {
-            in = SegmentStream.openLocation(loc);
-            final Segment seg = in.readIf(segName);
+            final Segment seg = readSegment(loc, segName);
             if (seg == null) {
                 return;
             }
@@ -85,6 +109,30 @@ public class Profile {
         }
     }
     
+    private final static Segment readSegment(final String loc, final String segName) {
+        SegmentStream in = null;
+        try {
+            in = SegmentStream.openLocation(loc);
+            return in.readIf(segName);
+        } catch (final Exception e) {
+            // File doesn't yet exist... or it's corrupted and unusable
+            return null;
+        } finally {
+            Iotil.close(in);
+        }
+    }
+    
+    private final void loadProfile() {
+        final Segment seg = readSegment(LOC_PROFILE, SEG_PROFILE);
+        if (seg == null) {
+            return;
+        }
+        shootMode = getShootMode(seg.getValue(0));
+        jumpMode = getJumpMode(seg.getValue(1));
+        autoClimb = seg.booleanValue(2);
+        autoCharge = seg.booleanValue(3);
+    }
+    
     /*package*/ final void saveBolts() {
         saveValues(LOC_BOLT, SEG_BOLT, upgrades);
     }
@@ -99,6 +147,29 @@ public class Profile {
             seg.addValue(0, value.toString());
         }
         Savtil.save(seg, loc);
+    }
+    
+    /*package*/ final void saveProfile() {
+        if (isSame()) {
+            return;
+        }
+        final Segment seg = new Segment(SEG_PROFILE);
+        seg.setValue(0, shootMode.getName());
+        seg.setValue(1, jumpMode.getName());
+        seg.setBoolean(2, autoClimb);
+        seg.setBoolean(3, autoCharge);
+        Savtil.save(seg, LOC_PROFILE);
+        old.load(this);
+    }
+    
+    /*package*/ final ShootMode getShootMode(final String name) {
+        final Upgrade upgrade = getUpgrade(name);
+        return (upgrade instanceof ShootUpgrade) ? ((ShootUpgrade) upgrade).getShootMode() : Player.SHOOT_NORMAL;
+    }
+    
+    /*package*/ final JumpMode getJumpMode(final String name) {
+        final Upgrade upgrade = getUpgrade(name);
+        return (upgrade instanceof JumpUpgrade) ? ((JumpUpgrade) upgrade).getJumpMode() : Player.JUMP_NORMAL;
     }
     
     /*package*/ final boolean isUpgradeAvailable(final Upgrade upgrade) {

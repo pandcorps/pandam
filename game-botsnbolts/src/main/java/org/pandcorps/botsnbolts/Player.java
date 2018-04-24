@@ -1717,7 +1717,19 @@ public final class Player extends Chr {
     };
     
     protected abstract static class InputMode {
-        protected abstract Upgrade getRequiredUpgrade();
+        private final Upgrade requiredUpgrade;
+        
+        protected InputMode(final Upgrade requiredUpgrade) {
+            this.requiredUpgrade = requiredUpgrade;
+        }
+        
+        protected final String getName() {
+            return (requiredUpgrade == null) ? null : requiredUpgrade.name;
+        }
+        
+        protected final Upgrade getRequiredUpgrade() {
+            return requiredUpgrade;
+        }
         
         protected final boolean isAvailable(final Player player) {
             return player.isUpgradeAvailable(getRequiredUpgrade());
@@ -1727,7 +1739,8 @@ public final class Player extends Chr {
     protected abstract static class ShootMode extends InputMode {
         protected final int delay;
         
-        protected ShootMode(final int delay) {
+        protected ShootMode(final Upgrade requiredUpgrade, final int delay) {
+            super(requiredUpgrade);
             this.delay = delay;
         }
         
@@ -1892,12 +1905,7 @@ public final class Player extends Chr {
         }
     }
     
-    protected final static ShootMode SHOOT_NORMAL = new ShootMode(SHOOT_DELAY_DEFAULT) {
-        @Override
-        protected final Upgrade getRequiredUpgrade() {
-            return null;
-        }
-        
+    protected final static ShootMode SHOOT_NORMAL = new ShootMode(null, SHOOT_DELAY_DEFAULT) {
         @Override
         protected final void onShootStart(final Player player) {
             shoot(player);
@@ -1909,12 +1917,7 @@ public final class Player extends Chr {
         }
     };
     
-    protected final static ShootMode SHOOT_RAPID = new ShootMode(SHOOT_DELAY_RAPID) {
-        @Override
-        protected final Upgrade getRequiredUpgrade() {
-            return Profile.UPGRADE_RAPID;
-        }
-        
+    protected final static ShootMode SHOOT_RAPID = new ShootMode(Profile.UPGRADE_RAPID, SHOOT_DELAY_RAPID) {
         @Override
         protected final void onShootStart(final Player player) {
         }
@@ -1930,12 +1933,7 @@ public final class Player extends Chr {
         }
     };
     
-    protected final static ShootMode SHOOT_SPREAD = new ShootMode(SHOOT_DELAY_SPREAD) {
-        @Override
-        protected final Upgrade getRequiredUpgrade() {
-            return Profile.UPGRADE_SPREAD;
-        }
-        
+    protected final static ShootMode SHOOT_SPREAD = new ShootMode(Profile.UPGRADE_SPREAD, SHOOT_DELAY_SPREAD) {
         @Override
         protected final void onShootStart(final Player player) {
             shoot(player);
@@ -1951,12 +1949,7 @@ public final class Player extends Chr {
         }
     };
     
-    protected final static ShootMode SHOOT_CHARGE = new ShootMode(SHOOT_DELAY_DEFAULT) {
-        @Override
-        protected final Upgrade getRequiredUpgrade() {
-            return Profile.UPGRADE_CHARGE;
-        }
-        
+    protected final static ShootMode SHOOT_CHARGE = new ShootMode(Profile.UPGRADE_CHARGE, SHOOT_DELAY_DEFAULT) {
         @Override
         protected final void onSelect(final Player player) {
             if (player.prf.autoCharge) {
@@ -2072,12 +2065,7 @@ public final class Player extends Chr {
         }
     };
     
-    protected final static ShootMode SHOOT_BOMB = new ShootMode(SHOOT_DELAY_DEFAULT) {
-        @Override
-        protected final Upgrade getRequiredUpgrade() {
-            return Profile.UPGRADE_BOMB;
-        }
-        
+    protected final static ShootMode SHOOT_BOMB = new ShootMode(Profile.UPGRADE_BOMB, SHOOT_DELAY_DEFAULT) {
         @Override
         protected final void onShootStart(final Player player) {
             shoot(player);
@@ -2090,38 +2078,27 @@ public final class Player extends Chr {
     };
     
     protected abstract static class JumpMode extends InputMode {
+        protected JumpMode(final Upgrade requiredUpgrade) {
+            super(requiredUpgrade);
+        }
+        
         protected abstract void onAirJump(final Player player);
     }
     
-    protected final static JumpMode JUMP_NORMAL = new JumpMode() {
-        @Override
-        protected final Upgrade getRequiredUpgrade() {
-            return null;
-        }
-        
+    protected final static JumpMode JUMP_NORMAL = new JumpMode(null) {
         @Override
         protected final void onAirJump(final Player player) {
         }
     };
     
-    protected final static JumpMode JUMP_BALL = new JumpMode() {
-        @Override
-        protected final Upgrade getRequiredUpgrade() {
-            return Profile.UPGRADE_BALL;
-        }
-        
+    protected final static JumpMode JUMP_BALL = new JumpMode(Profile.UPGRADE_BALL) {
         @Override
         protected final void onAirJump(final Player player) {
             player.startBall();
         }
     };
     
-    protected final static JumpMode JUMP_GRAPPLING_HOOK = new JumpMode() {
-        @Override
-        protected final Upgrade getRequiredUpgrade() {
-            return Profile.UPGRADE_GRAPPLING_BEAM;
-        }
-        
+    protected final static JumpMode JUMP_GRAPPLING_HOOK = new JumpMode(Profile.UPGRADE_GRAPPLING_BEAM) {
         @Override
         protected final void onAirJump(final Player player) {
             player.startGrapple();
