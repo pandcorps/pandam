@@ -66,6 +66,7 @@ public class Panlayer extends BasePantity {
     private boolean active = true;
     private boolean constant = false;
     private boolean built = false;
+    private boolean destroyed = false;
     private ActorHandler addHandler = null;
     
     /*package*/ Panlayer(
@@ -372,6 +373,15 @@ public class Panlayer extends BasePantity {
         detach();
         super.destroy();
         Pangine.getEngine().destroyLayer(this);
+        destroyed = true;
+    }
+    
+    public final boolean isDestroyed() {
+        return destroyed;
+    }
+    
+    public final static boolean isDestroyed(final Panlayer layer) {
+        return (layer == null) || layer.isDestroyed();
     }
     
     private final void destroy(final Collection<Panctor> actors) {
