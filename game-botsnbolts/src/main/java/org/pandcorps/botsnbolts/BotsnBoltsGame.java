@@ -171,6 +171,10 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static Img[] hudMeterImgs = null;
     
     protected static PlayerContext pc = null;
+    private static final float defPlayerStartX = 48;
+    private static final float defPlayerStartY = 32;
+    protected static float playerStartX = defPlayerStartX;
+    protected static float playerStartY = defPlayerStartY;
     
     protected static Panlayer hud = null;
     protected static int prevTileSize = DIM;
@@ -1101,7 +1105,8 @@ public final class BotsnBoltsGame extends BaseGame {
         private final static void newPlayer(final Panroom room) {
             Menu.addGameplayButtonInputs();
             final Player player = new Player(pc);
-            player.getPosition().set(48, 32, DEPTH_PLAYER);
+            player.getPosition().set(playerStartX, playerStartY, DEPTH_PLAYER);
+            initPlayerStart();
             room.addActor(player);
             Pangine.getEngine().track(player);
             new Warp(player);
@@ -1131,6 +1136,11 @@ public final class BotsnBoltsGame extends BaseGame {
         }
         healthMeter.getPosition().set(x, engine.getEffectiveHeight() - 73, DEPTH_HUD);
         hud.addActor(healthMeter);
+    }
+    
+    protected final static void initPlayerStart() {
+        playerStartX = defPlayerStartX;
+        playerStartY = defPlayerStartY;
     }
     
     protected final static Panlayer getLayer() {

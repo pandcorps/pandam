@@ -67,6 +67,10 @@ public abstract class RoomLoader {
         RoomLoader.room = room;
     }
     
+    protected final static BotRoom getRoom() {
+        return room;
+    }
+    
     protected abstract Panroom newRoom();
     
     /*
@@ -944,6 +948,10 @@ public abstract class RoomLoader {
     }
     
     protected final static void reloadCurrentRoom() {
+        loadRoom(room);
+    }
+    
+    protected final static void loadRoom(final BotRoom room) {
         BotsnBoltsGame.BotsnBoltsScreen.loadRoom(room);
     }
     
@@ -1029,6 +1037,11 @@ public abstract class RoomLoader {
             this.w = w;
             this.roomId = roomId;
             this.tileSize = tileSize;
+        }
+        
+        @Override
+        public final String toString() {
+            return roomId;
         }
     }
     

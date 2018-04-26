@@ -72,6 +72,8 @@ public final class Player extends Chr {
     private final static double GRAPPLING_ANGLE_MAX_DIAG = 3.0 * GRAPPLING_ANGLE_MAX_UP;
     private final static int GRAPPLING_OFF_Y = 12;
     private final static int VEL_ROOM_CHANGE = 10;
+    private final static long NULL_CLOCK = -1000;
+    private final static float NULL_COORD = -2000;
     
     protected final PlayerContext pc;
     protected final Profile prf;
@@ -81,15 +83,15 @@ public final class Player extends Chr {
     private int runIndex = 0;
     private int runTimer = 0;
     private int blinkTimer = 0;
-    private long lastShot = -1000;
-    protected static long lastShotByAnyPlayer = -1000;
-    private long startCharge = -1000;
-    private long lastCharge = -1000;
-    private long lastHurt = -1000;
-    private long lastFrozen = -1000;
-    private long lastBubble = -1000;
-    private long lastJump = -1000;
-    private long lastLift = -1000;
+    private long lastShot = NULL_CLOCK;
+    protected static long lastShotByAnyPlayer = NULL_CLOCK;
+    private long startCharge = NULL_CLOCK;
+    private long lastCharge = NULL_CLOCK;
+    private long lastHurt = NULL_CLOCK;
+    private long lastFrozen = NULL_CLOCK;
+    private long lastBubble = NULL_CLOCK;
+    private long lastJump = NULL_CLOCK;
+    private long lastLift = NULL_CLOCK;
     private int wrappedJumps = 0;
     private boolean prevUnderwater = false;
     private boolean sanded = false;
@@ -109,6 +111,10 @@ public final class Player extends Chr {
     protected Carrier carrier = null;
     private Wrapper wrapper = null;
     private int ladderColumn = -1;
+    private boolean startRoomNeeded = true;
+    private BotRoom startRoom = null;
+    private float startX = NULL_COORD;
+    private float startY = NULL_COORD;
     private List<Follower> followers = null;
     
     static {
@@ -218,7 +224,23 @@ public final class Player extends Chr {
     }
     
     private final boolean isFree() {
-        return !(isHurt() || isFrozen() || Boss.dropping || RoomChanger.isChanging() || RoomLoader.isBossDoorClosing() || Pangine.getEngine().isPaused());
+        final boolean free = !(isHurt() || isFrozen() || Boss.dropping || RoomChanger.isChanging() || RoomLoader.isBossDoorClosing() || Pangine.getEngine().isPaused());
+        if (free) {
+            onFree();
+        }
+        return free;
+    }
+    
+    private final void onFree() {
+        if (!isGrounded()) {
+            return;
+        } else if (startRoomNeeded) {
+            final Panple pos = getPosition();
+            startRoom = RoomLoader.getCurrentRoom();
+            startX = pos.getX();
+            startY = pos.getY();
+            startRoomNeeded = false;
+        }
     }
     
     private final void jump() {
@@ -359,8 +381,8 @@ public final class Player extends Chr {
         if ((v > 0) && !isGrounded()) {
             v = 0;
         }
-        startCharge = -1000;
-        lastCharge = -1000;
+        startCharge = NULL_CLOCK;
+        lastCharge = NULL_CLOCK;
         if (health <= 0) {
             defeat();
         } else {
@@ -421,7 +443,13 @@ public final class Player extends Chr {
         defeatOrbs(this, pi.defeat);
         Pangine.getEngine().addTimer(BotsnBoltsGame.tm, 120, new TimerListener() {
             @Override public final void onTimer(final TimerEvent event) {
-                RoomLoader.reloadCurrentRoom();
+                if (startRoom == null) {
+                    RoomLoader.reloadCurrentRoom();
+                } else {
+                    BotsnBoltsGame.playerStartX = startX;
+                    BotsnBoltsGame.playerStartY = startY;
+                    RoomLoader.loadRoom(startRoom);
+                }
             }});
         destroy();
     }
@@ -1139,7 +1167,8 @@ public final class Player extends Chr {
         if (roomCell == null) {
             return false;
         }
-        lastShotByAnyPlayer = -1000;
+        lastShotByAnyPlayer = NULL_CLOCK;
+        startRoomNeeded = true;
         final BotRoom room = roomCell.room;
         final int nextX = (roomCell.cell.x - room.x) * BotsnBoltsGame.GAME_W;
         final BoltDoor boltDoor = RoomLoader.boltDoor; // Save this before RoomLoader clears it
