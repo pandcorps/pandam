@@ -128,6 +128,7 @@ public final class Player extends Chr {
         prf = pc.prf;
         pi = pc.pi;
         setView(pi.basicSet.stand);
+        destroyTimgPrev();
     }
     
     private final static Panput[] getInputArray(final Panput key, final Panput touchButton) {
@@ -1167,15 +1168,19 @@ public final class Player extends Chr {
             
             @Override
             protected final void onFinished() {
-                if (BotsnBoltsGame.timgPrev != null) {
-                    BotsnBoltsGame.timgPrev.destroy();
-                    BotsnBoltsGame.timgPrev = null;
-                }
+                destroyTimgPrev();
                 RoomLoader.onChangeFinished();
             }
         };
         bossDoorStatus = 0;
         return true;
+    }
+    
+    private final void destroyTimgPrev() {
+        if (BotsnBoltsGame.timgPrev != null) {
+            BotsnBoltsGame.timgPrev.destroy();
+            BotsnBoltsGame.timgPrev = null;
+        }
     }
     
     protected final static Panroom loadRoom(final BotRoom room) {

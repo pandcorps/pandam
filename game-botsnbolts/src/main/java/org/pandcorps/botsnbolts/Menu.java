@@ -23,6 +23,7 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.botsnbolts;
 
 import org.pandcorps.botsnbolts.HudMeter.*;
+import org.pandcorps.botsnbolts.Player.*;
 import org.pandcorps.botsnbolts.RoomLoader.*;
 import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
@@ -397,6 +398,8 @@ public class Menu {
         @Override
         protected final void load() throws Exception {
             final Pangine engine = Pangine.getEngine();
+            final PlayerContext pc = BotsnBoltsGame.pc;
+            pc.prf.saveProfile();
             if (imgEmpty == null) {
                 imgEmpty = engine.createEmptyImage("select.level", FinPanple.ORIGIN, FinPanple.ORIGIN, new FinPanple2(48, 48));
             }
@@ -412,7 +415,7 @@ public class Menu {
                 addPortrait(layer, x + 8, y + 8, level);
                 addLevelButton(room, x, y, level);
             }
-            addPortrait(layer, 176, 96, BotsnBoltsGame.pc.pi.portrait, true);
+            addPortrait(layer, 176, 96, pc.pi.portrait, true);
             layer.setConstant(true);
             room.addBeneath(layer);
             addCursor(room);

@@ -141,7 +141,7 @@ public abstract class PowerUp extends Chr implements CollisionListener {
         }
         
         @Override
-        protected final void award(final Player player) {
+        protected void award(final Player player) {
             player.addHealth(HudMeter.MAX_VALUE);
             final Profile prf = player.prf;
             if (prf.disks.add(id)) {
@@ -159,6 +159,14 @@ public abstract class PowerUp extends Chr implements CollisionListener {
         @Override
         protected final int getSolid(final int off) {
             return Boss.getSolid(this, off);
+        }
+        
+        @Override
+        protected void award(final Player player) {
+            Pangine.getEngine().addTimer(player, 30, new TimerListener() {
+                @Override public final void onTimer(final TimerEvent event) {
+                    Panscreen.set(new Menu.LevelSelectScreen());
+                }});
         }
     }
     

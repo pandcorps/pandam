@@ -53,7 +53,6 @@ public final class BotsnBoltsGame extends BaseGame {
     /*
     Volcano Bot new art
     Volcano Bot new attack
-    Save state to file (defeated levels, discovered Bolts/Disks, Profile preferences)
     Pause info/menu
     */
     
@@ -1046,7 +1045,11 @@ public final class BotsnBoltsGame extends BaseGame {
         protected final static void loadTileImage(final String imgName, final String bgFileId) {
             if (imgName.equals(timgName)) {
                 tm.setImageMap(timg);
-                attachBgLayer(RoomLoader.nextRoom);
+                if (Panlayer.isDestroyed(bgLayer)) {
+                    loadBg(bgFileId);
+                } else {
+                    attachBgLayer(RoomLoader.nextRoom);
+                }
                 return;
             }
             timgPrev = timg;
@@ -1058,9 +1061,14 @@ public final class BotsnBoltsGame extends BaseGame {
             } else {
                 tm.setImageMap(timg);
             }
+            loadBg(bgFileId);
+        }
+        
+        private final static void loadBg(final String bgFileId) {
+            final Pangine engine = Pangine.getEngine();
             if (Chartil.isValued(bgFileId)) {
                 final Panroom room = RoomLoader.nextRoom;
-                if (bgLayer == null) {
+                if (Panlayer.isDestroyed(bgLayer)) {
                     bgLayer = engine.createLayer("layer.bg", GAME_W, GAME_H, room.getSize().getZ(), room);
                     bgLayer.setConstant(true);
                 }
