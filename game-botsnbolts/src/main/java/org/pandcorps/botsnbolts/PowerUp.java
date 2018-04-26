@@ -163,6 +163,7 @@ public abstract class PowerUp extends Chr implements CollisionListener {
         
         @Override
         protected void award(final Player player) {
+            super.award(player);
             Pangine.getEngine().addTimer(player, 30, new TimerListener() {
                 @Override public final void onTimer(final TimerEvent event) {
                     Panscreen.set(new Menu.LevelSelectScreen());

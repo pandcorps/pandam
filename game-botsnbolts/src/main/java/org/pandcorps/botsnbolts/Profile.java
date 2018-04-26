@@ -90,7 +90,6 @@ public class Profile {
     }
     
     private final static <T> void loadValues(final String loc, final String segName, final Collection<T> values, final ValueLoader<T> loader) {
-        SegmentStream in = null;
         try {
             final Segment seg = readSegment(loc, segName);
             if (seg == null) {
@@ -104,8 +103,6 @@ public class Profile {
             }
         } catch (final Exception e) {
             // File doesn't yet exist... or it's corrupted and unusable
-        } finally {
-            Iotil.close(in);
         }
     }
     
