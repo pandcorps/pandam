@@ -400,6 +400,7 @@ public class Menu {
             final Pangine engine = Pangine.getEngine();
             final PlayerContext pc = BotsnBoltsGame.pc;
             pc.prf.saveProfile();
+            BotsnBoltsGame.initPlayerStart();
             if (imgEmpty == null) {
                 imgEmpty = engine.createEmptyImage("select.level", FinPanple.ORIGIN, FinPanple.ORIGIN, new FinPanple2(48, 48));
             }
