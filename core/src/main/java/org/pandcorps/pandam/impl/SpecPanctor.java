@@ -46,6 +46,8 @@ public interface SpecPanctor extends Pantity {
     public boolean isFlip();
 
     public void setFlip(final boolean flip);
+    
+    public Panlayer getLayer();
 
 	public Pansplay getCurrentDisplay();
 

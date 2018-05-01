@@ -393,6 +393,7 @@ public class Panctor extends BasePantity implements SpecPanctor {
         return impl.currFrameDur;
     }
 	
+    @Override
 	public final Panlayer getLayer() {
 	    return layer;
 	}
