@@ -156,6 +156,8 @@ public abstract class RoomLoader {
             final String name = seg.getName();
             if ("IMP".equals(name)) { // Import
                 imp(seg, false, tm);
+            } else if ("ROM".equals(name)) { // Room Information
+                rom(seg);
             } else if ("ANM".equals(name)) { // Animator
                 anm(seg);
             } else if ("STP".equals(name)) { // Step Handler
@@ -237,6 +239,17 @@ public abstract class RoomLoader {
     private final static void imp(final Segment seg, final boolean ctxRequired, final TileMap tm) {
         //TODO Could cache imported files
         processSegmentFile(seg.getValue(0), ctxRequired, tm);
+    }
+    
+    private final static void rom(final Segment seg) {
+        final String playerStartX = seg.getValue(0);
+        if (Chartil.isValued(playerStartX)) {
+            BotsnBoltsGame.playerStartX = Segment.parseInt(playerStartX) * BotsnBoltsGame.DIM;
+        }
+        final String playerStartY = seg.getValue(1);
+        if (Chartil.isValued(playerStartY)) {
+            BotsnBoltsGame.playerStartY = Segment.parseInt(playerStartY) * BotsnBoltsGame.DIM;
+        }
     }
     
     private final static void anm(final Segment seg) {
