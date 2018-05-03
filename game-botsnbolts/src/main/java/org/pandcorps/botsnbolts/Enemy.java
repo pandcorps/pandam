@@ -213,6 +213,13 @@ public abstract class Enemy extends Chr implements CollisionListener {
         return Pangine.getEngine().createImage(pre + name, o, min, max, path + name + ".png");
     }
     
+    protected EnemyProjectile newEnemyProjectile(final Panctor src, final int ox, final int oy, final float vx, final float vy) {
+        if (!src.isInView()) {
+            return null;
+        }
+        return new EnemyProjectile(src, ox, oy, vx, vy);
+    }
+    
     protected static class EnemyProjectile extends Pandy implements CollisionListener, AllOobListener {
         protected EnemyProjectile(final Panctor src, final int ox, final int oy, final float vx, final float vy) {
             this(BotsnBoltsGame.getEnemyProjectile(), src, ox, oy, vx, vy);
@@ -280,6 +287,14 @@ public abstract class Enemy extends Chr implements CollisionListener {
         @Override
         public void onAllOob(final AllOobEvent event) {
             destroy();
+        }
+        
+        @Override
+        public void onStep(final StepEvent event) {
+            super.onStep(event);
+            if (!isInView()) {
+                destroy();
+            }
         }
     }
     
@@ -622,9 +637,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
                 }
             }
             if (shoot) {
-                if (this.isInView()) {
-                    fire();
-                }
+                fire();
                 timer = 0;
             }
         }
@@ -632,16 +645,16 @@ public abstract class Enemy extends Chr implements CollisionListener {
         private final void fire() {
             switch (dir) {
                 case 0 :
-                    new EnemyProjectile(this, 8, 0, VEL_PROJECTILE, 0);
+                    newEnemyProjectile(this, 8, 0, VEL_PROJECTILE, 0);
                     break;
                 case 1 :
-                    new EnemyProjectile(this, 0, 9, 0, VEL_PROJECTILE);
+                    newEnemyProjectile(this, 0, 9, 0, VEL_PROJECTILE);
                     break;
                 case 3 :
-                    new EnemyProjectile(this, 1, -8, 0, -VEL_PROJECTILE);
+                    newEnemyProjectile(this, 1, -8, 0, -VEL_PROJECTILE);
                     break;
                 default :
-                    new EnemyProjectile(this, 8, 0, -VEL_PROJECTILE, 0);
+                    newEnemyProjectile(this, 8, 0, -VEL_PROJECTILE, 0);
                     break;
             }
         }
@@ -712,7 +725,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
         
         protected void fire() {
-            new EnemyProjectile(this, 12, 8, getMirrorMultiplier() * VEL_PROJECTILE, 0);
+            newEnemyProjectile(this, 12, 8, getMirrorMultiplier() * VEL_PROJECTILE, 0);
         }
         
         private final void setView(final int i) {
@@ -783,7 +796,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
         
         private final void fire(final int ox, final int oy, final float vx, final float vy) {
-            new EnemyProjectile(this, ox, oy, vx, vy);
+            newEnemyProjectile(this, ox, oy, vx, vy);
         }
         
         private final void fireDown() {
@@ -1550,7 +1563,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
                 vx = scratch.getX();
                 vy = scratch.getY();
             }
-            new EnemyProjectile(this, HENCHBOT_SHOOT_OFF_X, HENCHBOT_SHOOT_OFF_Y, vx, vy);
+            newEnemyProjectile(this, HENCHBOT_SHOOT_OFF_X, HENCHBOT_SHOOT_OFF_Y, vx, vy);
             hold(30);
         }
     }
@@ -2011,7 +2024,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
         
         private final void shoot() {
-            new EnemyProjectile(this, HENCHBOT_SHOOT_OFF_X, HENCHBOT_SHOOT_OFF_Y, getMirrorMultiplier() * VEL_PROJECTILE, 0);
+            newEnemyProjectile(this, HENCHBOT_SHOOT_OFF_X, HENCHBOT_SHOOT_OFF_Y, getMirrorMultiplier() * VEL_PROJECTILE, 0);
             attackTimer = 16;
         }
         
@@ -2085,7 +2098,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         private final void onAttacking() {
             timer++;
             if (timer == 15) {
-                new EnemyProjectile(this, HENCHBOT_SHOOT_OFF_X, HENCHBOT_SHOOT_OFF_Y, getMirrorMultiplier() * VEL_PROJECTILE, 0);
+                newEnemyProjectile(this, HENCHBOT_SHOOT_OFF_X, HENCHBOT_SHOOT_OFF_Y, getMirrorMultiplier() * VEL_PROJECTILE, 0);
                 setView(getAttack());
             } else if (timer == 45) {
                 setView(BotsnBoltsGame.quicksandEnemy);
