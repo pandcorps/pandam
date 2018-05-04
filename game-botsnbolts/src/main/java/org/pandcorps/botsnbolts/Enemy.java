@@ -851,6 +851,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         
         @Override
         public final void onRoomAdd(final RoomAddEvent event) {
+            turnTowardPlayer();
             schedule();
         }
         
@@ -876,7 +877,11 @@ public abstract class Enemy extends Chr implements CollisionListener {
         
         protected final void appointment() {
             scheduled = false;
-            onAppointment();
+            if (isInView()) {
+                onAppointment();
+            } else {
+                schedule();
+            }
         }
         
         protected void onAppointment() {
