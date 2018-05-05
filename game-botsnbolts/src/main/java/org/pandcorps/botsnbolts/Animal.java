@@ -28,12 +28,13 @@ import org.pandcorps.botsnbolts.Extra.*;
 import org.pandcorps.botsnbolts.Player.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
-import org.pandcorps.pandax.tile.TileMap;
+import org.pandcorps.pandax.tile.*;
 
 public class Animal {
-    private final static Panple ANM_O = null; //TODO
-    private final static Panple ANM_MIN = null;
-    private final static Panple ANM_MAX = null;
+    private final static int ANM_OFF_X = 9, ANM_H = 20;
+    private final static Panple ANM_O = BotsnBoltsGame.og;
+    private final static Panple ANM_MIN = Chr.getMin(ANM_OFF_X);
+    private final static Panple ANM_MAX = Chr.getMax(ANM_OFF_X, ANM_H);
     
     private final static Map<String, Panmage> cache = new HashMap<String, Panmage>();
     
@@ -50,13 +51,14 @@ public class Animal {
         return getImage(name, ANM_O, ANM_MIN, ANM_MAX);
     }
     
-    protected final static class Spring extends Panctor implements Warpable, StepListener, CollisionListener {
+    protected final static class Spring extends Chr implements Warpable, CollisionListener {
         private final PlayerImages pi;
         private final Panmage img;
         private Panmage imgActive;
         private int timer = 0;
         
         protected Spring(final Player p) {
+            super(ANM_OFF_X, ANM_H);
             pi = p.pi;
             this.img = getImage(pi.animalName);
             setView(img);
@@ -71,9 +73,10 @@ public class Animal {
                     break;
                 }
             }
-            getPosition().set(x, (j + 1) * BotsnBoltsGame.DIM, BotsnBoltsGame.DEPTH_CARRIER);
+            getPosition().set(x, (j + 1) * BotsnBoltsGame.DIM, BotsnBoltsGame.DEPTH_ENEMY);
+            setMirror(p.isMirror());
             p.addActor(this);
-            new Warp(this, pi.warp, pi.materialize);
+            new Warp(this, pi);
         }
         
         @Override
@@ -97,13 +100,20 @@ public class Animal {
         }
 
         @Override
-        public final void onStep(final StepEvent event) {
+        public final boolean onStepCustom() {
             if (timer > 0) {
                 timer--;
                 if (timer == 0) {
                     changeView(img);
                 }
             }
+            return false;
+        }
+        
+        @Override
+        protected final boolean onFell() {
+            destroy();
+            return true;
         }
 
         @Override

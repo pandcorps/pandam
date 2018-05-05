@@ -2236,18 +2236,16 @@ public final class Player extends Chr implements Warpable {
     
     protected final static class Warp extends Panctor implements StepListener {
         protected final Warpable actor;
-        private final Panmage img;
-        private final Panimation materialize;
+        private final PlayerImages pi;
         
         protected Warp(final Player player) {
-            this(player, player.pi.warp, player.pi.materialize);
+            this(player, player.pi);
             player.stateHandler = WARP_HANDLER;
         }
         
-        protected Warp(final Warpable actor, final Panmage img, final Panimation materialize) {
+        protected Warp(final Warpable actor, final PlayerImages pi) {
             this.actor = actor;
-            this.img = img;
-            this.materialize = materialize;
+            this.pi = pi;
             final Panple ppos = actor.getPosition();
             getPosition().set(ppos.getX(), BotsnBoltsGame.SCREEN_H, ppos.getZ());
             addActor(actor, this);
@@ -2259,6 +2257,7 @@ public final class Player extends Chr implements Warpable {
             if (layer == null) {
                 return;
             }
+            final Panmage img = pi.warp;
             final Panple pos = getPosition();
             final float x = pos.getX(), y = pos.getY(), z = pos.getZ();
             for (int i = 0; i < 4; i++) {
@@ -2278,7 +2277,7 @@ public final class Player extends Chr implements Warpable {
         }
         
         protected final void finish() {
-            new Materialize(actor, materialize);
+            new Materialize(actor, pi.materialize);
             destroy();
         }
     }
