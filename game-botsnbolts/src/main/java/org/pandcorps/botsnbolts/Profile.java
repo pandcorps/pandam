@@ -194,11 +194,13 @@ public class Profile {
     
     protected final static Upgrade UPGRADE_GRAPPLING_BEAM = new GrapplingBeamUpgrade();
     
+    protected final static Upgrade UPGRADE_SPRING = new SpringUpgrade();
+    
     protected final static Upgrade BASIC_JUMP = new Upgrade("BasicJump");
     
     protected final static Upgrade BASIC_ATTACK = new Upgrade("BasicAttack");
     
-    protected final static Upgrade[] UPGRADES = { UPGRADE_BALL, UPGRADE_RAPID, UPGRADE_SPREAD, UPGRADE_CHARGE, UPGRADE_BOMB, UPGRADE_GRAPPLING_BEAM,
+    protected final static Upgrade[] UPGRADES = { UPGRADE_BALL, UPGRADE_RAPID, UPGRADE_SPREAD, UPGRADE_CHARGE, UPGRADE_BOMB, UPGRADE_GRAPPLING_BEAM, UPGRADE_SPRING,
             BASIC_ATTACK, BASIC_JUMP };
     
     protected static class Upgrade {
@@ -261,6 +263,17 @@ public class Profile {
         @Override
         protected final JumpMode getJumpMode() {
             return Player.JUMP_GRAPPLING_HOOK;
+        }
+    }
+    
+    protected final static class SpringUpgrade extends JumpUpgrade {
+        protected SpringUpgrade() {
+            super("Spring");
+        }
+        
+        @Override
+        protected final JumpMode getJumpMode() {
+            return Player.JUMP_SPRING;
         }
     }
     

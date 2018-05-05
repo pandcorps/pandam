@@ -28,6 +28,7 @@ import org.pandcorps.botsnbolts.Enemy.*;
 import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
+import org.pandcorps.pandam.impl.*;
 
 // Actors designed to be placed in levels; could be spawners, controllers, or just decorations
 public abstract class Extra extends Panctor {
@@ -44,6 +45,7 @@ public abstract class Extra extends Panctor {
         private final int x;
         private final int y;
         private int waitTimer;
+        private static Panmage img = null;
         
         protected EnemySpawner(final Constructor<? extends Enemy> constructor, final int x, final int y) {
             super(x, y, BotsnBoltsGame.DEPTH_BG);
@@ -51,6 +53,7 @@ public abstract class Extra extends Panctor {
             this.x = x;
             this.y = y;
             initTimer();
+            setView(getImage());
         }
         
         protected void initTimer() {
@@ -61,7 +64,9 @@ public abstract class Extra extends Panctor {
         public final void onStep(final StepEvent event) {
             waitTimer--;
             if (waitTimer <= 0) {
-                newEnemy();
+                if (isInView()) {
+                    newEnemy();
+                }
                 initTimer();
             }
         }
@@ -74,6 +79,13 @@ public abstract class Extra extends Panctor {
             final Enemy enemy = RoomLoader.newActor(constructor, x, y);
             layer.addActor(enemy);
             return enemy;
+        }
+        
+        private final static Panmage getImage() {
+            if (img == null) {
+                img = Pangine.getEngine().createEmptyImage("spawner", FinPanple.ORIGIN, FinPanple.ORIGIN, BotsnBoltsGame.CENTER_32);
+            }
+            return img;
         }
     }
     
@@ -98,5 +110,9 @@ public abstract class Extra extends Panctor {
         } catch (final Exception e) {
             throw Pantil.toRuntimeException(e);
         }
+    }
+    
+    protected static interface Warpable extends SpecPanctor {
+        public void onMaterialized();
     }
 }

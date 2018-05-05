@@ -24,6 +24,8 @@ package org.pandcorps.botsnbolts;
 
 import java.util.*;
 
+import org.pandcorps.botsnbolts.Animal.*;
+import org.pandcorps.botsnbolts.Extra.*;
 import org.pandcorps.botsnbolts.HudMeter.*;
 import org.pandcorps.botsnbolts.Profile.*;
 import org.pandcorps.botsnbolts.Projectile.*;
@@ -41,7 +43,7 @@ import org.pandcorps.pandax.in.*;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.visual.*;
 
-public final class Player extends Chr {
+public final class Player extends Chr implements Warpable {
     protected final static int PLAYER_X = 6;
     protected final static int PLAYER_H = 23;
     protected final static int BALL_H = 15;
@@ -59,6 +61,7 @@ public final class Player extends Chr {
     private final static int RUN_TIME = 5;
     protected final static int VEL_JUMP = 8;
     protected final static int VEL_BOUNCE_BOMB = 7;
+    protected final static int VEL_SPRING = 10;
     private final static int VEL_WALK = 3;
     protected final static int VEL_PROJECTILE = 8;
     private final static float VX_SPREAD1;
@@ -108,6 +111,7 @@ public final class Player extends Chr {
     private boolean grapplingRetractAllowed = false;
     private boolean grapplingAllowed = true;
     private final ImplPanple grapplingPosition = new ImplPanple();
+    private Spring spring = null;
     protected Carrier carrier = null;
     private Wrapper wrapper = null;
     private int ladderColumn = -1;
@@ -179,11 +183,17 @@ public final class Player extends Chr {
             @Override public final void onActionStart(final ActionStartEvent event) { toggleJumpMode(); }});
         register(toggleAttackInput, new ActionStartListener() {
             @Override public final void onActionStart(final ActionStartEvent event) { toggleShootMode(); }});
-        register(interaction.KEY_F1, new ActionStartListener() {
+        registerCapture(this);
+    }
+    
+    protected final static void registerCapture(final Panctor actor) {
+        final Pangine engine = Pangine.getEngine();
+        final Panteraction interaction = engine.getInteraction();
+        actor.register(interaction.KEY_F1, new ActionStartListener() {
             @Override public final void onActionStart(final ActionStartEvent event) { engine.captureScreen(); }});
-        register(interaction.KEY_F2, new ActionStartListener() {
+        actor.register(interaction.KEY_F2, new ActionStartListener() {
             @Override public final void onActionStart(final ActionStartEvent event) { engine.startCaptureFrames(); }});
-        register(interaction.KEY_F3, new ActionStartListener() {
+        actor.register(interaction.KEY_F3, new ActionStartListener() {
             @Override public final void onActionStart(final ActionStartEvent event) { engine.stopCaptureFrames(); }});
     }
     
@@ -197,10 +207,13 @@ public final class Player extends Chr {
     }
     
     private final void toggleJumpMode() {
+        prf.jumpMode.onDeselect(this);
         do {
             if (prf.jumpMode == JUMP_NORMAL) {
                 prf.jumpMode = JUMP_BALL;
             } else if (prf.jumpMode == JUMP_BALL) {
+                prf.jumpMode = JUMP_SPRING;
+            } else if (prf.jumpMode == JUMP_SPRING) {
                 prf.jumpMode = JUMP_GRAPPLING_HOOK;
             } else {
                 prf.jumpMode = JUMP_NORMAL;
@@ -371,6 +384,11 @@ public final class Player extends Chr {
         return isGrounded() && isTouchingLadder(-1);
     }
     
+    @Override
+    public final void onMaterialized() {
+        stateHandler = NORMAL_HANDLER;
+    }
+    
     protected final boolean hurt(final int damage) {
         if (isInvincible()) {
             return false;
@@ -474,7 +492,7 @@ public final class Player extends Chr {
         return getLayerRequired(this);
     }
     
-    protected final static Panlayer getLayerRequired(final Panctor src) {
+    protected final static Panlayer getLayerRequired(final SpecPanctor src) {
         final Panlayer layer = (src == null) ? null : src.getLayer();
         return (layer == null) ? BotsnBoltsGame.getLayer() : layer;
     }
@@ -483,7 +501,7 @@ public final class Player extends Chr {
         addActor(this, actor);
     }
     
-    protected final static void addActor(final Panctor src, final Panctor actor) {
+    protected final static void addActor(final SpecPanctor src, final Panctor actor) {
         getLayerRequired(src).addActor(actor);
     }
     
@@ -734,6 +752,16 @@ public final class Player extends Chr {
         } else {
             changeView(pi.shootSet.jump);
         }
+    }
+    
+    protected final boolean onSpring() {
+        if (v >= 0) {
+            return false;
+        } else if (isGrounded()) {
+            return false;
+        }
+        v = VEL_SPRING;
+        return true;
     }
     
     @Override
@@ -1042,6 +1070,15 @@ public final class Player extends Chr {
             grapplingHook.destroy();
             grapplingHook = null;
         }
+    }
+    
+    private final void startSpring() {
+        destroySpring();
+        spring = new Spring(this);
+    }
+    
+    private final void destroySpring() {
+        Panctor.destroy(spring);
     }
     
     protected final void startCarried(final Carrier carrier) {
@@ -1857,8 +1894,8 @@ public final class Player extends Chr {
         private final Panimation chargeVert2;
         protected final Panimation burst;
         private final Panframe[] ball;
-        private final Panmage warp;
-        private final Panimation materialize;
+        protected final Panmage warp;
+        protected final Panimation materialize;
         protected final Panimation bomb;
         protected final Panmage link;
         protected final Panimation batterySmall;
@@ -1872,6 +1909,7 @@ public final class Player extends Chr {
         protected final Panmage diskBox;
         protected final Panmage portrait;
         private final HudMeterImages hudMeterImages;
+        protected final String animalName;
         
         protected PlayerImages(final PlayerImagesSubSet basicSet, final PlayerImagesSubSet shootSet,
                                final Panmage hurt, final Panmage frozen, final Panimation defeat,
@@ -1883,7 +1921,7 @@ public final class Player extends Chr {
                                final Panmage link, final Panimation batterySmall, final Panimation batteryMedium, final Panimation batteryBig,
                                final Panmage doorBolt, final Panmage bolt, final Panmage disk,
                                final Panmage powerBox, final Map<String, Panmage> boltBoxes, final Panmage diskBox,
-                               final Panmage portrait, final HudMeterImages hudMeterImages) {
+                               final Panmage portrait, final HudMeterImages hudMeterImages, final String animalName) {
             this.basicSet = basicSet;
             this.shootSet = shootSet;
             this.hurt = hurt;
@@ -1918,6 +1956,7 @@ public final class Player extends Chr {
             this.diskBox = diskBox;
             this.portrait = portrait;
             this.hudMeterImages = hudMeterImages;
+            this.animalName = animalName;
         }
     }
     
@@ -2117,6 +2156,10 @@ public final class Player extends Chr {
         }
         
         protected abstract void onAirJump(final Player player);
+        
+        //@OverrideMe
+        protected void onDeselect(final Player player) {
+        }
     }
     
     protected final static JumpMode JUMP_NORMAL = new JumpMode(null) {
@@ -2137,6 +2180,18 @@ public final class Player extends Chr {
         protected final void onAirJump(final Player player) {
             player.startGrapple();
             //TODO Maybe holding jump until highest point could also trigger grappling
+        }
+        
+        @Override
+        protected final void onDeselect(final Player player) {
+            player.endGrapple();
+        }
+    };
+    
+    protected final static JumpMode JUMP_SPRING = new JumpMode(Profile.UPGRADE_SPRING) {
+        @Override
+        protected final void onAirJump(final Player player) {
+            player.startSpring();
         }
     };
     
@@ -2180,19 +2235,26 @@ public final class Player extends Chr {
     }
     
     protected final static class Warp extends Panctor implements StepListener {
-        protected final Player player;
+        protected final Warpable actor;
+        private final Panmage img;
+        private final Panimation materialize;
         
         protected Warp(final Player player) {
-            this.player = player;
-            final Panple ppos = player.getPosition();
-            getPosition().set(ppos.getX(), BotsnBoltsGame.SCREEN_H, BotsnBoltsGame.DEPTH_PLAYER);
-            player.addActor(this);
+            this(player, player.pi.warp, player.pi.materialize);
             player.stateHandler = WARP_HANDLER;
+        }
+        
+        protected Warp(final Warpable actor, final Panmage img, final Panimation materialize) {
+            this.actor = actor;
+            this.img = img;
+            this.materialize = materialize;
+            final Panple ppos = actor.getPosition();
+            getPosition().set(ppos.getX(), BotsnBoltsGame.SCREEN_H, ppos.getZ());
+            addActor(actor, this);
         }
         
         @Override
         protected final void renderView(final Panderer renderer) {
-            final Panmage img = player.pi.warp;
             final Panlayer layer = getLayer();
             if (layer == null) {
                 return;
@@ -2208,7 +2270,7 @@ public final class Player extends Chr {
         public final void onStep(final StepEvent event) {
             final Panple pos = getPosition();
             pos.addY(-16);
-            final float py = player.getPosition().getY();
+            final float py = actor.getPosition().getY();
             if (pos.getY() <= py) {
                 pos.setY(py);
                 finish();
@@ -2216,19 +2278,19 @@ public final class Player extends Chr {
         }
         
         protected final void finish() {
-            new Materialize(player);
+            new Materialize(actor, materialize);
             destroy();
         }
     }
     
     protected final static class Materialize extends Panctor implements AnimationEndListener {
-        protected final Player player;
+        protected final Warpable actor;
         
-        protected Materialize(final Player player) {
-            this.player = player;
-            setView(player.pi.materialize);
-            getPosition().set(player.getPosition());
-            player.addActor(this);
+        protected Materialize(final Warpable actor, final Panimation anm) {
+            this.actor = actor;
+            setView(anm);
+            getPosition().set(actor.getPosition());
+            addActor(actor, this);
         }
         
         @Override
@@ -2237,7 +2299,7 @@ public final class Player extends Chr {
         }
         
         protected final void finish() {
-            player.stateHandler = NORMAL_HANDLER;
+            actor.onMaterialized();
             destroy();
         }
     }
