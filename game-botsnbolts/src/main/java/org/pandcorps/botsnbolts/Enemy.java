@@ -150,8 +150,12 @@ public abstract class Enemy extends Chr implements CollisionListener {
     }
     
     protected void award(final PowerUp powerUp) {
+        award(powerUp, 0, 0);
+    }
+    
+    protected final void award(final PowerUp powerUp, final int offX, final int offY) {
         final Panple pos = getPosition();
-        PowerUp.addPowerUp(powerUp, pos.getX(), pos.getY(), 6);
+        PowerUp.addPowerUp(powerUp, pos.getX() + offX, pos.getY() + offY, 6);
     }
     
     protected final void updateMirror() {
@@ -734,6 +738,11 @@ public abstract class Enemy extends Chr implements CollisionListener {
         
         protected Panmage getView(final int i) {
             return BotsnBoltsGame.wallCannon[i];
+        }
+        
+        @Override
+        protected final void award(final PowerUp powerUp) {
+            award(powerUp, isMirror() ? -7 : 8, 0);
         }
     }
     
