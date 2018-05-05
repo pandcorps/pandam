@@ -53,7 +53,7 @@ public abstract class RoomLoader {
     protected final static Map<String, String> variables = new HashMap<String, String>();
     private static Character alt = null;
     protected static Panroom nextRoom = null;
-    protected static BossDoor bossDoor = null;
+    protected final static List<BossDoor> bossDoors = new ArrayList<BossDoor>(2);
     protected static BoltDoor boltDoor = null;
     protected static int startX = 0;
     protected static int startY = 0;
@@ -577,7 +577,7 @@ public abstract class RoomLoader {
         final int[] indices = new int[size];
         for (int i = 0; i < size; i++) {
             final Field f = reps.get(i);
-            indices[i] = tm.getIndex(f.intValue(0), f.intValue(1));
+            indices[i] = tm.getIndexRequired(f.intValue(0), f.intValue(1));
         }
         return indices;
     }
@@ -632,7 +632,7 @@ public abstract class RoomLoader {
     
     private final static void dor(final int x, final int y, final String doorType) {
         if ("Boss".equals(doorType)) {
-            bossDoor = new BossDoor(x, y);
+            bossDoors.add(new BossDoor(x, y));
         } else if ("Bolt".equals(doorType)) {
             boltDoor = new BoltDoor(x, y);
         } else {
@@ -640,8 +640,23 @@ public abstract class RoomLoader {
         }
     }
     
+    protected final static BossDoor getBossDoorExit() {
+        for (final BossDoor bossDoor : bossDoors) {
+            if (bossDoor.getPosition().getX() < 32) {
+                continue;
+            }
+            return bossDoor;
+        }
+        return null;
+    }
+    
     protected final static boolean isBossDoorClosing() {
-        return (bossDoor != null) && bossDoor.isClosing();
+        for (final BossDoor bossDoor : bossDoors) {
+            if (bossDoor.isClosing()) {
+                return true;
+            }
+        }
+        return false;
     }
     
     protected final static Collection<ShootableDoor> getButtonDoors() {
@@ -849,7 +864,7 @@ public abstract class RoomLoader {
         for (final ShootableDoor door : doors) {
             door.closeDoor();
         }
-        if (bossDoor != null) {
+        for (final BossDoor bossDoor : bossDoors) {
             bossDoor.close();
         }
         if (boltDoor != null) {
@@ -888,7 +903,7 @@ public abstract class RoomLoader {
         functions.clear();
         variables.clear();
         alt = null;
-        bossDoor = null;
+        bossDoors.clear();
         boltDoor = null;
     }
     

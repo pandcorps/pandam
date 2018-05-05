@@ -1147,7 +1147,7 @@ public final class Player extends Chr implements Warpable {
     }
     
     protected final boolean triggerBossDoor() {
-        final BossDoor bossDoor = RoomLoader.bossDoor;
+        final BossDoor bossDoor = RoomLoader.getBossDoorExit();
         if (bossDoor == null) {
             return false;
         } else if (bossDoor.isOpening()) {
