@@ -945,7 +945,7 @@ public abstract class RoomLoader {
             x = room.x + room.w;
             y = room.y;
         } else {
-            x = (player.getPosition().getX() < BotsnBoltsGame.GAME_W) ? room.x : (room.x + room.w - 1);
+            x = room.x + Math.min(room.w - 1, Math.max(0, Mathtil.floor(player.getPosition().getX() / BotsnBoltsGame.GAME_W)));
             y = room.y + dirY;
         }
         final BotCell cell = new BotCell(x, y);
