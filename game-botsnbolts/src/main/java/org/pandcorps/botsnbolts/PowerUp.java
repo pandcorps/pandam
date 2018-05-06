@@ -57,6 +57,12 @@ public abstract class PowerUp extends Chr implements CollisionListener {
         }
     }
     
+    @Override
+    protected final boolean onFell() {
+        destroy();
+        return true;
+    }
+    
     protected final static PowerUp addPowerUp(final PowerUp powerUp, final float x, final float y, final float v) {
         powerUp.getPosition().set(x, y, BotsnBoltsGame.DEPTH_POWER_UP);
         powerUp.v = v;
