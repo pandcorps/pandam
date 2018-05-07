@@ -229,14 +229,6 @@ public abstract class Boss extends Enemy {
         }
     }
     
-    @Override
-    protected final void turnTowardPlayer() {
-        super.turnTowardPlayer();
-        if (!isJumpPossible()) {
-            getPosition().addX(getMirrorMultiplier());
-        }
-    }
-    
     protected boolean isTurnTowardPlayerNeeded() {
         return !hasPendingJumps();
     }
