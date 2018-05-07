@@ -1245,6 +1245,61 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
     }
     
+    protected final static class WalkerEnemy extends Enemy {
+        private final static int numImages = 6;
+        private final static Panmage[] images = new Panmage[numImages];
+        private int timer = -1;
+        private int i = -1;
+        
+        protected WalkerEnemy(final int x, final int y) {
+            super(PROP_OFF_X, CRAWL_H, x, y, PROP_HEALTH);
+            setView(getImage(0));
+            setMirror(true);
+        }
+        
+        @Override
+        protected final boolean onStepCustom() {
+            timer++;
+            if (timer < 3) {
+                return false;
+            }
+            timer = 0;
+            if (addX(2 * getMirrorMultiplier()) != X_NORMAL) {
+                turn();
+            }
+            i++;
+            if (i >= numImages) {
+                i = 0;
+            }
+            setView(getImage(i));
+            return false;
+        }
+        
+        @Override
+        protected final boolean onHorizontal(final int off) {
+            if (isOnEdge(off)) {
+                turn();
+                addX(getMirrorMultiplier());
+                return true;
+            }
+            return false;
+        }
+        
+        private final void turn() {
+            setMirror(!isMirror());
+        }
+        
+        private final static Panmage getImage(final int i) {
+            Panmage image = images[i];
+            if (image != null) {
+                return image;
+            }
+            image = getImage(image, "WalkerEnemy" + (i + 1), BotsnBoltsGame.crawlEnemy.getFrames()[0].getImage());
+            images[i] = image;
+            return image;
+        }
+    }
+    
     protected final static class SaucerEnemy extends Enemy {
         private final static Panmage[] images = new Panmage[3];
         private final static int speedMultiplier = 3;
