@@ -248,8 +248,12 @@ public final class Player extends Chr implements Warpable {
         if (!isGrounded()) {
             return;
         } else if (startRoomNeeded) {
+            final BotRoom currentRoom = RoomLoader.getCurrentRoom();
+            if (currentRoom == startRoom) {
+                return;
+            }
             final Panple pos = getPosition();
-            startRoom = RoomLoader.getCurrentRoom();
+            startRoom = currentRoom;
             startX = pos.getX();
             startY = pos.getY();
             startRoomNeeded = false;
@@ -393,6 +397,7 @@ public final class Player extends Chr implements Warpable {
         if (isInvincible()) {
             return false;
         }
+        isFree(); // Calls onFree()
         stateHandler.onHurt(this);
         lastHurt = Pangine.getEngine().getClock();
         health -= damage;
