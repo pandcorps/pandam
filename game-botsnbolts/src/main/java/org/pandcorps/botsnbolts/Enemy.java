@@ -1249,7 +1249,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         private final static int numImages = 6;
         private final static Panmage[] images = new Panmage[numImages];
         private int timer = -1;
-        private int i = -1;
+        private int i = 0;
         
         protected WalkerEnemy(final int x, final int y) {
             super(PROP_OFF_X, CRAWL_H, x, y, PROP_HEALTH);
@@ -1260,7 +1260,8 @@ public abstract class Enemy extends Chr implements CollisionListener {
         @Override
         protected final boolean onStepCustom() {
             timer++;
-            if (timer < 3) {
+            final int frameDuration = ((i % 3) == 0) ? 6 : 3;
+            if (timer < frameDuration) {
                 return false;
             }
             timer = 0;
@@ -1297,6 +1298,12 @@ public abstract class Enemy extends Chr implements CollisionListener {
             image = getImage(image, "WalkerEnemy" + (i + 1), BotsnBoltsGame.crawlEnemy.getFrames()[0].getImage());
             images[i] = image;
             return image;
+        }
+    }
+    
+    protected static class GliderEnemy extends TileUnawareEnemy {
+        protected GliderEnemy(final int x, final int y) {
+            super(x, y, PROP_HEALTH);
         }
     }
     
