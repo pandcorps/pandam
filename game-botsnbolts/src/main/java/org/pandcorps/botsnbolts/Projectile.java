@@ -102,6 +102,14 @@ public class Projectile extends Pandy implements Collidable, AllOobListener {
         destroy();
     }
     
+    @Override
+    public final void onStep(final StepEvent event) {
+        super.onStep(event);
+        if (!isInView()) { // onAllOob above checks the whole room, not just the current view
+            destroy();
+        }
+    }
+    
     public final static class Bomb extends Panctor implements StepListener {
         private final Player src;
         private int timer = 30;
