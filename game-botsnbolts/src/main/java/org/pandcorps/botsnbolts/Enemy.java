@@ -1302,8 +1302,125 @@ public abstract class Enemy extends Chr implements CollisionListener {
     }
     
     protected static class GliderEnemy extends TileUnawareEnemy {
-        protected GliderEnemy(final int x, final int y) {
+        private final static Panmage[] images = new Panmage[3];
+        private final int velX;
+        private final int velY;
+        private int timer = 0;
+        private int dir = 0;
+        private int sleepTimer = 0;
+        
+        protected GliderEnemy(final int x, final int y, final int velX, final int velY) {
             super(x, y, PROP_HEALTH);
+            setView(getImage(0));
+            this.velX = velX;
+            this.velY = velY;
+        }
+        
+        @Override
+        protected final int getInitialOffsetX() {
+            return 0;
+        }
+        
+        @Override
+        protected final boolean isMirrorable() {
+            return false;
+        }
+        
+        @Override
+        public final void onStepEnemy() {
+            sleepIfNeeded();
+            handleTimer();
+            if (dir != 0) {
+                move();
+            }
+        }
+        
+        private final void sleepIfNeeded() {
+            if (sleepTimer > 0) {
+                sleepTimer--;
+                if (sleepTimer == 0) {
+                    changeView(0);
+                }
+            }
+        }
+        
+        private final void handleTimer() {
+            timer++;
+            if (timer >= 120) {
+                startMove();
+                timer = 0;
+            } else if (timer >= 115) {
+                changeView(2);
+            } else if (timer >= 110) {
+                changeView(1);
+            }
+        }
+        
+        private final void move() {
+            final int speed;
+            if (timer < 2) {
+                speed = 1;
+            } else if (timer < 3) {
+                speed = 2;
+            } else {
+                speed = 4;
+            }
+            final int mult = dir * speed;
+            final int vx = velX * mult, vy = velY * mult;
+            final Panple pos = getPosition();
+            final int offX = (vx > 0) ? 15 : 0, offY = (vy > 0) ? 15 : 0;
+            if (isSolidIndex(BotsnBoltsGame.tm.getContainer(pos.getX() + vx + offX, pos.getY() + vy + offY))) {
+                dir = 0;
+                changeView(1);
+                sleepTimer = 5;
+            } else {
+                getPosition().add(vx, vy);
+            }
+        }
+        
+        private final void startMove() {
+            final TileMap tm = BotsnBoltsGame.tm;
+            final int index = tm.getContainer(this);
+            final int row = tm.getRow(index), col = tm.getColumn(index);
+            dir = isSolidTile(col + velX, row + velY) ? -1 : 1;
+        }
+        
+        private final void changeView(final int i) {
+            changeView(getImage(i));
+        }
+        
+        private final static Panmage getImage(final int i) {
+            Panmage image = images[i];
+            if (image != null) {
+                return image;
+            }
+            image = getImage(image, "GliderEnemy" + (i + 1), null, null, null);
+            images[i] = image;
+            return image;
+        }
+    }
+    
+    protected static class HorizontalGliderEnemy extends GliderEnemy {
+        protected HorizontalGliderEnemy(final int x, final int y) {
+            super(x, y, 1, 0);
+        }
+    }
+    
+    protected static class VerticalGliderEnemy extends GliderEnemy {
+        protected VerticalGliderEnemy(final int x, final int y) {
+            super(x, y, 0, 1);
+        }
+    }
+    
+    protected static class PositiveGliderEnemy extends GliderEnemy {
+        protected PositiveGliderEnemy(final int x, final int y) {
+            super(x, y, 1, 1);
+        }
+    }
+    
+    protected static class NegativeGliderEnemy extends GliderEnemy {
+        protected NegativeGliderEnemy(final int x, final int y) {
+            super(x, y, 1, -1);
         }
     }
     
