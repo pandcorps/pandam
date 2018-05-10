@@ -62,11 +62,16 @@ public class Menu {
     }
     
     protected final static boolean isCursorNeeded() {
-        return true;
+        return Pangine.getEngine().isMouseSupported();
     }
     
     protected final static boolean isScreenGameplayLayoutNeeded() {
-        return false;
+        return isTouchEnabled();
+    }
+    
+    protected final static boolean isTouchEnabled() {
+        final Pangine engine = Pangine.getEngine();
+        return engine.isTouchSupported() && !engine.isMouseSupported();
     }
     
     private final static void loadCursor() {
@@ -409,6 +414,7 @@ public class Menu {
             final Panlayer layer = engine.createLayer("layer.grid", BotsnBoltsGame.GAME_W, BotsnBoltsGame.GAME_H, room.getSize().getZ(), room);
             grid = new LevelSelectGrid();
             layer.addActor(grid);
+            Player.registerCapture(grid);
             for (final BotLevel level : RoomLoader.levels) {
                 final int x = 88 + (level.selectX * 80), y = 24 + (level.selectY * 64), x24 = x + 24;
                 BotsnBoltsGame.addText(layer, level.name1, x24, y - 8);
