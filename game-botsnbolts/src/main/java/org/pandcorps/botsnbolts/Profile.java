@@ -121,13 +121,16 @@ public class Profile {
     
     private final void loadProfile() {
         final Segment seg = readSegment(LOC_PROFILE, SEG_PROFILE);
+        final boolean touchEnabled = Menu.isTouchEnabled();
         if (seg == null) {
+            autoClimb = touchEnabled;
+            autoCharge = touchEnabled;
             return;
         }
         shootMode = getShootMode(seg.getValue(0));
         jumpMode = getJumpMode(seg.getValue(1));
-        autoClimb = seg.booleanValue(2);
-        autoCharge = seg.booleanValue(3);
+        autoClimb = seg.getBoolean(2, touchEnabled);
+        autoCharge = seg.getBoolean(3, touchEnabled);
     }
     
     /*package*/ final void saveBolts() {
