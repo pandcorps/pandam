@@ -1424,6 +1424,60 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
     }
     
+    protected final static class SubEnemy extends Enemy {
+        private final static Panmage[] images = new Panmage[2];
+        
+        protected SubEnemy(final int x, final int y) {
+            super(PROP_OFF_X, PROP_H, x, y, PROP_HEALTH);
+            setMirror(false);
+            hv = -1;
+            setView(getCurrentImage());
+        }
+        
+        @Override
+        protected final boolean onStepCustom() {
+            changeView(getCurrentImage());
+            moveX();
+            moveY();
+            return true;
+        }
+        
+        private final void moveX() {
+            if (addX(hv) != X_NORMAL){
+                hv *= -1;
+                updateMirror();
+            }
+        }
+        
+        private final void moveY() {
+            final Player p = getNearestPlayer();
+            if (p == null) {
+                return;
+            }
+            final float py = p.getPosition().getY() + Player.CENTER_Y;
+            final float y = getPosition().getY() + 6;
+            if (py > (y + 4)) {
+                addY(1);
+            } else if (py < (y - 4)) {
+                addY(-1);
+            }
+        }
+        
+        private final static Panmage getCurrentImage() {
+            return getImage(Pangine.getEngine().isOn(4) ? 0 : 1);
+        }
+        
+        private final static Panmage getImage(final int i) {
+            Panmage image = images[i];
+            if (image != null) {
+                return image;
+            }
+            image = getImage(image, "SubEnemy" + (i + 1), BotsnBoltsGame.unshieldedEnemy.getFrames()[0].getImage());
+            images[i] = image;
+            return image;
+        }
+    }
+    
     protected final static class SaucerEnemy extends Enemy {
         private final static Panmage[] images = new Panmage[3];
         private final static int speedMultiplier = 3;
@@ -2151,6 +2205,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
             super(HENCHBOT_OFF_X, HENCHBOT_H, x, y, HENCHBOT_HEALTH);
             setMirror(false);
             hv = -2;
+            setView(getCurrentSwim());
         }
         
         @Override
