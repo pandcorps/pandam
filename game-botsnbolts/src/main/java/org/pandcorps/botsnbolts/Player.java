@@ -2205,9 +2205,17 @@ public final class Player extends Chr implements Warpable {
         private int timer = 0;
         
         protected Bubble(final Chr src, final int offY) {
+            this(src, 0, offY);
+        }
+        
+        protected Bubble(final Chr src, final int offX, final int offY) {
             final Panple pos = src.getPosition();
-            getPosition().set(pos.getX(), pos.getY() + offY, BotsnBoltsGame.DEPTH_CARRIER);
             dir = src.getMirrorMultiplier();
+            getPosition().set(pos.getX() + (dir * offX), pos.getY() + offY, BotsnBoltsGame.DEPTH_CARRIER);
+            if (isSolidIndex(BotsnBoltsGame.tm.getContainer(this))) {
+                destroy();
+                return;
+            }
             setView(BotsnBoltsGame.bubble[0]);
             src.getLayer().addActor(this);
         }

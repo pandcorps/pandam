@@ -158,6 +158,12 @@ public abstract class Enemy extends Chr implements CollisionListener {
         PowerUp.addPowerUp(powerUp, pos.getX() + offX, pos.getY() + offY, 6);
     }
     
+    protected final void bubbleRandom(final int offX, final int offY) {
+        if (Mathtil.randi(0, 5999) < 100) {
+            new Bubble(this, offX, offY);
+        }
+    }
+    
     protected final void updateMirror() {
         if (hv < 0) {
             setMirror(true);
@@ -1439,6 +1445,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
             changeView(getCurrentImage());
             moveX();
             moveY();
+            bubbleRandom(8, 3);
             return true;
         }
         
@@ -1457,7 +1464,9 @@ public abstract class Enemy extends Chr implements CollisionListener {
             final float py = p.getPosition().getY() + Player.CENTER_Y;
             final float y = getPosition().getY() + 6;
             if (py > (y + 4)) {
-                addY(1);
+                if (y < (RoomLoader.waterLevel - 10)) {
+                    addY(1);
+                }
             } else if (py < (y - 4)) {
                 addY(-1);
             }
@@ -2215,6 +2224,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
                 hv *= -1;
                 updateMirror();
             }
+            bubbleRandom(16, 10);
             return true;
         }
         
