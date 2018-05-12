@@ -95,6 +95,7 @@ public final class Player extends Chr implements Warpable {
     private long lastBubble = NULL_CLOCK;
     private long lastJump = NULL_CLOCK;
     private long lastLift = NULL_CLOCK;
+    private long lastBall = NULL_CLOCK;
     private int wrappedJumps = 0;
     private boolean prevUnderwater = false;
     private boolean sanded = false;
@@ -954,7 +955,13 @@ public final class Player extends Chr implements Warpable {
         }
         clearRun();
         stateHandler = BALL_HANDLER;
-        changeView(pi.ball[0]);
+        lastBall = Pangine.getEngine().getClock();
+        final Panmage[] crouch = pi.basicSet.crouch;
+        if (getCurrentDisplay() == crouch[1]) {
+            setView(pi.ball[0]);
+        } else {
+            changeView(crouch[0]);
+        }
         setH(BALL_H);
         wallTimer = 0;
     }
@@ -1545,6 +1552,20 @@ public final class Player extends Chr implements Warpable {
         @Override
         protected final void onLeft(final Player player) {
             player.onLeftNormal();
+        }
+        
+        @Override
+        protected final boolean onStep(final Player player) {
+            final Pansplay currentDisplay = player.getCurrentDisplay();
+            final PlayerImages pi = player.pi;
+            final Panmage[] crouch = pi.basicSet.crouch;
+            final long clock = Pangine.getEngine().getClock(), lastBall = player.lastBall;
+            if ((currentDisplay == crouch[0]) && (clock > (lastBall + 3))) {
+                player.setView(crouch[1]);
+            } else if ((currentDisplay == crouch[1]) && (clock > (lastBall + 6))) {
+                player.setView(pi.ball[0]);
+            }
+            return false;
         }
         
         @Override
