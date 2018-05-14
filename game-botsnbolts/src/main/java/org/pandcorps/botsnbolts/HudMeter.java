@@ -155,7 +155,7 @@ public abstract class HudMeter extends Panctor {
         @Override
         protected final boolean isBasicIconNeeded() {
             final Profile prf = pc.prf;
-            return prf.isUpgradeAvailable(Profile.UPGRADE_BALL) || prf.isUpgradeAvailable(Profile.UPGRADE_GRAPPLING_BEAM);
+            return prf.isUpgradeAvailable(Profile.UPGRADE_BALL) || prf.isUpgradeAvailable(Profile.UPGRADE_GRAPPLING_BEAM) || prf.isUpgradeAvailable(Profile.UPGRADE_SPRING);
         }
         
         @Override
