@@ -854,13 +854,15 @@ public abstract class Boss extends Enemy {
     
     protected final static class RockslideBot extends Boss {
         protected final static byte STATE_SHOOT = 1;
-        protected final static byte STATE_CROUCH = 2;
-        protected final static byte STATE_CURL = 3;
-        protected final static byte STATE_ROLL = 4;
-        protected final static byte STATE_JUMP = 5;
+        protected final static byte STATE_SHOOT_HORIZONTAL = 2;
+        protected final static byte STATE_CROUCH = 3;
+        protected final static byte STATE_CURL = 4;
+        protected final static byte STATE_ROLL = 5;
+        protected final static byte STATE_JUMP = 6;
         protected final static int WAIT_SHOOT = 30;
         protected static Panmage still = null;
         protected static Panmage aim = null;
+        protected static Panmage aimHorizontal = null;
         protected static Panmage crouch = null;
         protected static Panmage curl = null;
         protected static Panmage roll1 = null;
@@ -879,6 +881,10 @@ public abstract class Boss extends Enemy {
                 if (waitTimer == (WAIT_SHOOT - 1)) {
                     new Rock(this, 36, 3);
                 }
+            } else if (state == STATE_SHOOT_HORIZONTAL) {
+                if (waitTimer == (WAIT_SHOOT - 1)) {
+                    new RockHorizontal(this, 45, 28);
+                }
             } else if (state == STATE_ROLL) {
                 if (getPosition().getX() <= 40) {
                     startJump();
@@ -893,8 +899,11 @@ public abstract class Boss extends Enemy {
         protected final boolean pickState() {
             turnTowardPlayer();
             if (isMirror()) {
-                if (Mathtil.rand()) {
+                final int r = Mathtil.randi(0, 3499);
+                if (r < 1000) {
                     startShoot();
+                } else if (r < 2000) {
+                    startShootHorizontal();
                 } else {
                     startCrouch();
                 }
@@ -917,6 +926,7 @@ public abstract class Boss extends Enemy {
                     setOffX(ROCKSLIDE_OFF_X);
                     setH(ROCKSLIDE_H);
                 case STATE_SHOOT :
+                case STATE_SHOOT_HORIZONTAL :
                     startStill();
                     break;
                 default :
@@ -927,6 +937,10 @@ public abstract class Boss extends Enemy {
         
         protected final void startShoot() {
             startState(STATE_SHOOT, WAIT_SHOOT, getAim());
+        }
+        
+        protected final void startShootHorizontal() {
+            startState(STATE_SHOOT_HORIZONTAL, WAIT_SHOOT, getAimHorizontal());
         }
         
         protected final void startCrouch() {
@@ -962,6 +976,13 @@ public abstract class Boss extends Enemy {
             return (aim = getRockslideImage(aim, "rockslidebot/RockslideBotAim"));
         }
         
+        protected final static Panmage getAimHorizontal() {
+            if (aimHorizontal != null) {
+                return aimHorizontal;
+            }
+            return (aimHorizontal = getRockslideImage(aimHorizontal, "rockslidebot/RockslideBotAimHorizontal", new FinPanple2(21, 1)));
+        }
+        
         protected final static Panmage getCrouch() {
             return (crouch = getRockslideImage(crouch, "rockslidebot/RockslideBotCrouch"));
         }
@@ -983,7 +1004,11 @@ public abstract class Boss extends Enemy {
         }
         
         protected final static Panmage getRockslideImage(final Panmage img, final String name) {
-            return getImage(img, name, ROCKSLIDE_O, ROCKSLIDE_MIN, ROCKSLIDE_MAX);
+            return getRockslideImage(img, name, ROCKSLIDE_O);
+        }
+        
+        protected final static Panmage getRockslideImage(final Panmage img, final String name, final Panple o) {
+            return getImage(img, name, o, ROCKSLIDE_MIN, ROCKSLIDE_MAX);
         }
         
         protected final static Panmage getRockslideRollImage(final Panmage img, final String name) {
@@ -1012,7 +1037,7 @@ public abstract class Boss extends Enemy {
         }
     }
     
-    protected final static class Rock extends Enemy {
+    protected static class Rock extends Enemy {
         protected static Panmage rock1 = null;
         protected static Panmage rock2 = null;
         protected static Panmage rockShatter = null;
@@ -1029,7 +1054,7 @@ public abstract class Boss extends Enemy {
         }
         
         @Override
-        protected final boolean onStepCustom() {
+        protected boolean onStepCustom() {
             rots.onStep(this, frames);
             return super.onStepCustom();
         }
@@ -1133,6 +1158,40 @@ public abstract class Boss extends Enemy {
             protected final Panmage getImage2() {
                 return getRock2();
             }
+        }
+    }
+    
+    protected final static class RockHorizontal extends Rock {
+        private boolean flying = true;
+        
+        protected RockHorizontal(final RockslideBot src, final int ox, final int oy) {
+            super(src, ox, oy);
+            hv = src.getMirrorMultiplier() * 6;
+            v = 0;
+        }
+        
+        @Override
+        protected final boolean onStepCustom() {
+            if (flying) {
+                if (addX(hv) != X_NORMAL) {
+                    bounce();
+                    return super.onStepCustom();
+                }
+                return true;
+            } else {
+                return super.onStepCustom();
+            }
+        }
+        
+        protected final void bounce() {
+            flying = false;
+            setMirrorEnemy(!isMirror());
+            hv = 2 * getMirrorMultiplier();
+        }
+        
+        @Override
+        protected final void onGrounded() {
+            shatter();
         }
     }
     
