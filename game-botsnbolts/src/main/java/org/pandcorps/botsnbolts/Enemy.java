@@ -166,14 +166,18 @@ public abstract class Enemy extends Chr implements CollisionListener {
     
     protected final void updateMirror() {
         if (hv < 0) {
-            setMirror(true);
+            setMirrorEnemy(true);
         } else if (hv > 0) {
-            setMirror(false);
+            setMirrorEnemy(false);
         }
     }
     
     protected final void turnTowardPlayer() {
         turnTowardPlayer(getNearestPlayer());
+    }
+    
+    protected final void setMirrorEnemy(final boolean mirror) {
+        setMirror(mirror);
         if (!isJumpPossible()) {
             getPosition().addX(getMirrorMultiplier());
         }
@@ -183,7 +187,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         if (player == null) {
             return;
         }
-        setMirror(getPosition().getX() > player.getPosition().getX());
+        setMirrorEnemy(getPosition().getX() > player.getPosition().getX());
     }
     
     protected final Player getNearestPlayer() {
