@@ -120,6 +120,11 @@ public final class Player extends Chr implements Warpable {
     private BotRoom startRoom = null;
     private float startX = NULL_COORD;
     private float startY = NULL_COORD;
+    private int availableRescues = 0;
+    protected Rescue rescue = null;
+    private float safeX = NULL_COORD;
+    private float safeY = NULL_COORD;
+    private boolean safeMirror = false;
     private List<Follower> followers = null;
     
     static {
@@ -140,6 +145,7 @@ public final class Player extends Chr implements Warpable {
         pi = pc.pi;
         setView(pi.basicSet.stand);
         destroyTimgPrev();
+        initAvailableRescues();
     }
     
     private final static Panput[] getInputArray(final Panput key, final Panput touchButton) {
@@ -248,15 +254,21 @@ public final class Player extends Chr implements Warpable {
     private final void onFree() {
         if (!isGrounded()) {
             return;
-        } else if (startRoomNeeded) {
+        } else if (!startRoomNeeded && (availableRescues == 0)) {
+            return;
+        }
+        final Panple pos = getPosition();
+        safeX = pos.getX();
+        safeY = pos.getY();
+        safeMirror = isMirror();
+        if (startRoomNeeded) {
             final BotRoom currentRoom = RoomLoader.getCurrentRoom();
             if (currentRoom == startRoom) {
                 return;
             }
-            final Panple pos = getPosition();
             startRoom = currentRoom;
-            startX = pos.getX();
-            startY = pos.getY();
+            startX = safeX;
+            startY = safeY;
             startRoomNeeded = false;
         }
     }
@@ -526,7 +538,7 @@ public final class Player extends Chr implements Warpable {
     }
     
     private final boolean isHurt() {
-        return (Pangine.getEngine().getClock() - lastHurt) < HURT_TIME;
+        return (stateHandler == RESCUED_HANDLER) || ((Pangine.getEngine().getClock() - lastHurt) < HURT_TIME);
     }
     
     private final boolean isFrozen() {
@@ -585,7 +597,9 @@ public final class Player extends Chr implements Warpable {
     
     private final boolean isInvincible(final boolean frozenConsidered) {
         final long clock = Pangine.getEngine().getClock();
-        return (clock - lastHurt) < INVINCIBLE_TIME || (frozenConsidered && (clock - lastFrozen) < (INVINCIBLE_TIME + FROZEN_TIME - HURT_TIME));
+        return (stateHandler == RESCUED_HANDLER)
+                || ((clock - lastHurt) < INVINCIBLE_TIME)
+                || (frozenConsidered && (clock - lastFrozen) < (INVINCIBLE_TIME + FROZEN_TIME - HURT_TIME));
     }
     
     private final boolean isShootPoseNeeded() {
@@ -1206,9 +1220,59 @@ public final class Player extends Chr implements Warpable {
     protected final boolean onFell() {
         if (changeRoom(0, -1)) {
             return true;
+        } else if ((availableRescues > 0) && (safeX != NULL_COORD)) {
+            availableRescues--;
+            startRescue();
+            return true;
         }
         defeat();
         return true;
+    }
+    
+    private final void startRescue() {
+        destroyGrapplingHook();
+        stateHandler = RESCUED_HANDLER;
+        new Rescue(this);
+    }
+    
+    private final void initAvailableRescues() {
+        availableRescues = prf.upgrades.contains(Profile.UPGRADE_RESCUE) ? 1 : 0;
+    }
+    
+    protected final void startRescued(final Rescue rescue) {
+        this.rescue = rescue;
+        grapplingPosition.set(safeX, safeY);
+        Panple.subtract(grapplingPosition, grapplingPosition, getPosition());
+        grapplingPosition.setMagnitude2(Rescue.SPEED_FLAP);
+        final float vx = grapplingPosition.getX();
+        if (vx < 0) {
+            setMirror(true);
+        } else if (vx > 0) {
+            setMirror(false);
+        }
+        rescue.setMirror(isMirror());
+    }
+    
+    private final void onStepRescued() {
+        changeView(pi.hurt);
+        if (rescue == null) {
+            return;
+        }
+        getPosition().add(grapplingPosition.getX(), grapplingPosition.getY());
+        if (getPosition().getDistance2(safeX, safeY) <= Rescue.SPEED_FLAP) {
+            endRescued();
+        } else {
+            rescue.onCarrying();
+        }
+    }
+    
+    private final void endRescued() {
+        getPosition().set(safeX, safeY);
+        setMirror(safeMirror);
+        rescue.startExit();
+        rescue = null;
+        stateHandler = NORMAL_HANDLER;
+        lastHurt = Pangine.getEngine().getClock();
     }
     
     private final boolean changeRoom(final int dirX, final int dirY) {
@@ -1218,6 +1282,8 @@ public final class Player extends Chr implements Warpable {
         }
         lastShotByAnyPlayer = NULL_CLOCK;
         startRoomNeeded = true;
+        initAvailableRescues();
+        safeX = safeY = NULL_COORD;
         final BotRoom room = roomCell.room;
         final int nextX = (roomCell.cell.x - room.x) * BotsnBoltsGame.GAME_W;
         final BoltDoor boltDoor = RoomLoader.boltDoor; // Save this before RoomLoader clears it
@@ -1634,6 +1700,47 @@ public final class Player extends Chr implements Warpable {
         }
     };
     
+    protected final static StateHandler RESCUED_HANDLER = new StateHandler() {
+        @Override
+        protected final void onJump(final Player player) {
+        }
+
+        @Override
+        protected final void onShootStart(final Player player) {
+        }
+
+        @Override
+        protected final void onShooting(final Player player) {
+        }
+
+        @Override
+        protected final void onShootEnd(final Player player) {
+        }
+
+        @Override
+        protected final void onRight(final Player player) {
+        }
+
+        @Override
+        protected final void onLeft(final Player player) {
+        }
+        
+        @Override
+        protected final boolean onStep(final Player player) {
+            player.onStepRescued();
+            return true;
+        }
+
+        @Override
+        protected final void onGrounded(final Player player) {
+        }
+
+        @Override
+        protected final boolean onAir(final Player player) {
+            return false;
+        }
+    };
+    
     protected final static StateHandler GRAPPLING_HANDLER = new StateHandler() {
         @Override
         protected final void onJump(final Player player) {
@@ -1936,6 +2043,7 @@ public final class Player extends Chr implements Warpable {
         protected final Panmage portrait;
         private final HudMeterImages hudMeterImages;
         protected final String animalName;
+        protected final String birdName;
         
         protected PlayerImages(final PlayerImagesSubSet basicSet, final PlayerImagesSubSet shootSet,
                                final Panmage hurt, final Panmage frozen, final Panimation defeat,
@@ -1947,7 +2055,7 @@ public final class Player extends Chr implements Warpable {
                                final Panmage link, final Panimation batterySmall, final Panimation batteryMedium, final Panimation batteryBig,
                                final Panmage doorBolt, final Panmage bolt, final Panmage disk,
                                final Panmage powerBox, final Map<String, Panmage> boltBoxes, final Panmage diskBox,
-                               final Panmage portrait, final HudMeterImages hudMeterImages, final String animalName) {
+                               final Panmage portrait, final HudMeterImages hudMeterImages, final String animalName, final String birdName) {
             this.basicSet = basicSet;
             this.shootSet = shootSet;
             this.hurt = hurt;
@@ -1983,6 +2091,7 @@ public final class Player extends Chr implements Warpable {
             this.portrait = portrait;
             this.hudMeterImages = hudMeterImages;
             this.animalName = animalName;
+            this.birdName = birdName;
         }
     }
     

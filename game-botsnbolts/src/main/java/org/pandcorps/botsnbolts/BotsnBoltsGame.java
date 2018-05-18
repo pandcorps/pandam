@@ -495,11 +495,11 @@ public final class BotsnBoltsGame extends BaseGame {
     private final static void loadPlayer() {
         final String dir = "betabot", name = "Void";
         openPlayerImages(dir, name);
-        voidImages = loadPlayerImages(dir, name, "Byte");
+        voidImages = loadPlayerImages(dir, name, "Byte", "Baud");
         final short s0 = 0, s192 = 192;
         filterPlayerImages(Pancolor.GREEN, Pancolor.CYAN, new FinPancolor(s0, s192, s0), new FinPancolor(s0, s192, s192));
         playerMirror = false;
-        volatileImages = loadPlayerImages("volatile", "Volatile", "Byte");
+        volatileImages = loadPlayerImages("volatile", "Volatile", "Byte", "Baud");
         closePlayerImages();
         pc = new PlayerContext(new Profile(), org.pandcorps.pandax.in.ControlScheme.getDefaultKeyboard(), voidImages);
     }
@@ -636,7 +636,7 @@ public final class BotsnBoltsGame extends BaseGame {
         return RES + "chr/" + dir + "/" + name;
     }
     
-    private final static PlayerImages loadPlayerImages(final String dir, final String name, final String animalName) {
+    private final static PlayerImages loadPlayerImages(final String dir, final String name, final String animalName, final String birdName) {
         final String pre = getCharacterPrefix(dir, name);
         final PlayerImagesSubSet basicSet = loadPlayerImagesSubSet(pre, name, true, og, og, oj);
         final PlayerImagesSubSet shootSet = loadPlayerImagesSubSet(pre + "Shoot", name + ".shoot", false, oss, os, ojs);
@@ -718,7 +718,7 @@ public final class BotsnBoltsGame extends BaseGame {
         final HudMeterImages hudMeterImages = newHudMeterImages(pre + "Meter", hudMeterImgs);
         
         return new PlayerImages(basicSet, shootSet, hurt, frozen, defeat, climb, climbShoot, climbTop, jumpAimDiag, jumpAimUp, basicProjectile, projectile2, projectile3, charge, chargeVert, charge2, chargeVert2,
-            burst, ball, warp, materialize, bomb, link, batterySml, batteryMed, batteryBig, doorBolt, bolt, disk, powerBox, boltBoxes, diskBox, portrait, hudMeterImages, animalName);
+            burst, ball, warp, materialize, bomb, link, batterySml, batteryMed, batteryBig, doorBolt, bolt, disk, powerBox, boltBoxes, diskBox, portrait, hudMeterImages, animalName, birdName);
     }
     
     private final static PlayerImagesSubSet loadPlayerImagesSubSet(final String path, final String name, final boolean startNeeded, final Panple os, final Panple o, final Panple oj) {

@@ -28,6 +28,7 @@ import org.pandcorps.botsnbolts.Extra.*;
 import org.pandcorps.botsnbolts.Player.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
+import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.tile.*;
 
 public class Animal {
@@ -126,6 +127,82 @@ public class Animal {
                 return imgActive;
             }
             return (imgActive = getImage(pi.animalName + "Spring"));
+        }
+    }
+    
+    protected final static class Rescue extends Panctor implements StepListener {
+        protected final static double SPEED_DIVE = 12;
+        protected final static double SPEED_FLAP = 4;
+        protected final static float SPEED_EXIT = 3; // (float) Math.sqrt((SPEED_FLAP * SPEED_FLAP) / 2.0);
+        private final static int OFF_X = -6;
+        private final static int OFF_Y = 18;
+        private final static byte MODE_DIVE = 0;
+        private final static byte MODE_CARRY = 1;
+        private final static byte MODE_EXIT = 2;
+        private final Player p;
+        private final Panple dst;
+        private float vx = 0;
+        private float vy = 0;
+        private byte mode = MODE_DIVE;
+        
+        protected Rescue(final Player p) {
+            this.p = p;
+            final Panlayer layer = p.getLayer();
+            if (layer == null) {
+                dst = null;
+                destroy();
+                return;
+            }
+            setView(getImage(p.pi.birdName));
+            final Panple pos = getPosition(), ppos = p.getPosition();
+            pos.set(layer.getViewMinimum().getX(), BotsnBoltsGame.GAME_H - ANM_H, BotsnBoltsGame.DEPTH_CARRIER);
+            dst = new FinPanple2(getDstX(ppos), getDstY(ppos));
+            final Panple diff = Panple.subtract(dst, pos);
+            diff.setMagnitude2(SPEED_DIVE);
+            vx = diff.getX();
+            vy = diff.getY();
+            p.addActor(this);
+        }
+        
+        private final float getDstX(final Panple pos) {
+            return pos.getX() + (p.getMirrorMultiplier() * OFF_X);
+        }
+        
+        private final float getDstY(final Panple pos) {
+            return pos.getY() + OFF_Y;
+        }
+
+        @Override
+        public final void onStep(final StepEvent event) {
+            if (mode != MODE_CARRY) {
+                final Panple pos = getPosition();
+                pos.add(vx, vy);
+                if (mode == MODE_DIVE) {
+                    if (pos.getDistance2(dst) <= SPEED_DIVE) {
+                        startCarry();
+                    }
+                } else if (!isInView()) {
+                    destroy();
+                }
+            }
+        }
+        
+        private final void startCarry() {
+            mode = MODE_CARRY;
+            getPosition().set(dst.getX(), dst.getY());
+            p.startRescued(this);
+        }
+        
+        protected final void onCarrying() {
+            final Panple ppos = p.getPosition();
+            getPosition().set(getDstX(ppos), getDstY(ppos));
+        }
+        
+        protected final void startExit() {
+            mode = MODE_EXIT;
+            setMirror(false);
+            vx = SPEED_EXIT;
+            vy = SPEED_EXIT;
         }
     }
 }

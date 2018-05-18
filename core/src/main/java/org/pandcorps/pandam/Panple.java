@@ -169,11 +169,19 @@ public abstract class Panple {
     }
 	
 	public double getDistance(final Panple p) {
-	    return getMagnitude(getX() - p.getX(), getY() - p.getY(), getZ() - p.getZ());
+	    return getDistance(p.getX(), p.getY(), p.getZ());
+	}
+	
+	public double getDistance(final float x, final float y, final float z) {
+	    return getMagnitude(getX() - x, getY() - y, getZ() - z);
 	}
 	
 	public double getDistance2(final Panple p) {
-        return getMagnitude2(getX() - p.getX(), getY() - p.getY());
+	    return getDistance2(p.getX(), p.getY());
+	}
+	
+	public double getDistance2(final float x, final float y) {
+        return getMagnitude2(getX() - x, getY() - y);
     }
 	
 	public double getDirection2() {
