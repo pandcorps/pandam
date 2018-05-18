@@ -34,6 +34,7 @@ import org.pandcorps.pandax.tile.*;
 public class Animal {
     private final static int ANM_OFF_X = 9, ANM_H = 20;
     private final static Panple ANM_O = BotsnBoltsGame.og;
+    private final static Panple BIRD_O = new FinPanple2(ANM_O.getX(), ANM_O.getY() + 6);
     private final static Panple ANM_MIN = Chr.getMin(ANM_OFF_X);
     private final static Panple ANM_MAX = Chr.getMax(ANM_OFF_X, ANM_H);
     
@@ -50,6 +51,10 @@ public class Animal {
     
     private final static Panmage getImage(final String name) {
         return getImage(name, ANM_O, ANM_MIN, ANM_MAX);
+    }
+    
+    private final static Panmage getBirdImage(final String name) {
+        return getImage(name, BIRD_O, ANM_MIN, ANM_MAX);
     }
     
     protected final static class Spring extends Chr implements Warpable, CollisionListener {
@@ -140,10 +145,12 @@ public class Animal {
         private final static byte MODE_CARRY = 1;
         private final static byte MODE_EXIT = 2;
         private final Player p;
+        private final Panmage[] imgs = new Panmage[3];
         private final Panple dst;
         private float vx = 0;
         private float vy = 0;
         private byte mode = MODE_DIVE;
+        private int timer = 0;
         
         protected Rescue(final Player p) {
             this.p = p;
@@ -153,7 +160,9 @@ public class Animal {
                 destroy();
                 return;
             }
-            setView(getImage(p.pi.birdName));
+            final Panmage img = getBirdImage(p.pi.birdName);
+            imgs[0] = img;
+            setView(img);
             final Panple pos = getPosition(), ppos = p.getPosition();
             pos.set(layer.getViewMinimum().getX(), BotsnBoltsGame.GAME_H - ANM_H, BotsnBoltsGame.DEPTH_CARRIER);
             dst = new FinPanple2(getDstX(ppos), getDstY(ppos));
@@ -174,14 +183,18 @@ public class Animal {
 
         @Override
         public final void onStep(final StepEvent event) {
-            if (mode != MODE_CARRY) {
+            if (mode == MODE_CARRY) {
+                flap();
+            } else {
                 final Panple pos = getPosition();
                 pos.add(vx, vy);
                 if (mode == MODE_DIVE) {
                     if (pos.getDistance2(dst) <= SPEED_DIVE) {
                         startCarry();
                     }
-                } else if (!isInView()) {
+                } else if (isInView()) {
+                    flap();
+                } else {
                     destroy();
                 }
             }
@@ -203,6 +216,30 @@ public class Animal {
             setMirror(false);
             vx = SPEED_EXIT;
             vy = SPEED_EXIT;
+        }
+        
+        private final void flap() {
+            timer++;
+            final Panmage img;
+            if (timer < 12) {
+                img = getImage(1);
+            } else if (timer < 17) {
+                img = getImage(2);
+            } else {
+                img = getImage(0);
+                if (timer >= 24) {
+                    timer = 0;
+                }
+            }
+            changeView(img);
+        }
+        
+        private final Panmage getImage(final int i) {
+            final Panmage img = imgs[i];
+            if (img != null) {
+                return img;
+            }
+            return (imgs[i] = getBirdImage(p.pi.birdName + (i + 1)));
         }
     }
 }
