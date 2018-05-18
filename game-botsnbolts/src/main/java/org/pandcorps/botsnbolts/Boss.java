@@ -962,7 +962,12 @@ public abstract class Boss extends Enemy {
         
         protected final void startJump() {
             final Panmage img = getJump();
-            startJump(STATE_JUMP, img, 11, 3);
+            if (Mathtil.rand(60)) {
+                startJump(STATE_JUMP, img, 11, 3);
+            } else {
+                startJump(STATE_JUMP, img, 11, 0);
+                addPendingJump(STATE_JUMP, img, 11, 3);
+            }
             addPendingJump(STATE_JUMP, img, 13, 6);
             addPendingJump(STATE_JUMP, img, 4, 1);
         }
@@ -1041,7 +1046,7 @@ public abstract class Boss extends Enemy {
         protected static Panmage rock1 = null;
         protected static Panmage rock2 = null;
         protected static Panmage rockShatter = null;
-        private final static Rotator rots = new RockRotator();
+        private final Rotator rots = new RockRotator(); // Can't be static; keeps state for each Rock on screen
         private final static Panframe[] frames = new Panframe[Rotator.numFrames];
         private final static int speed = 3;
         
