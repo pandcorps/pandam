@@ -33,6 +33,10 @@ public final class FinPanple extends UnmodPanple {
 	private final float y;
 	private final float z;
 
+	public FinPanple(final Panple p) {
+        this(p.getX(), p.getY(), p.getZ());
+    }
+	
 	public FinPanple(final float x, final float y, final float z) {
 		this.x = x;
 		this.y = y;
