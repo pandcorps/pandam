@@ -186,8 +186,8 @@ public abstract class Panput {
 	    public final static byte OVERLAP_ANY = 0; // Choose any TouchButton
 	    public final static byte OVERLAP_BEST = 1; // Choose closest TouchButton
 	    //public final static byte OVERLAP_ALL = 2; // Activate all TouchButtons
-	    private final static byte Z_OVERLAY = 1;
-	    private final static byte Z_TEXT = 2;
+	    private static byte Z_OVERLAY = 1;
+	    private static byte Z_TEXT = 2;
 		private int xMin;
 		private int yMin;
 		private int xMax;
@@ -290,6 +290,11 @@ public abstract class Panput {
 		    }
 		}
 		
+		public final static void setOverlayOffsets(final byte zOverlay, final byte zText) {
+            Z_OVERLAY = zOverlay;
+            Z_TEXT = zText;
+        }
+		
 		public final void setText(final MultiFont fonts, final CharSequence txt, final int xText, final int yText) {
 			Panctor.destroy(text);
 		    if (txt != null) {
@@ -311,7 +316,10 @@ public abstract class Panput {
 			this.actor = actor;
 			this.imgActive = imgActive;
 			this.imgInactive = (Panmage) actor.getView();
-			setLayer(actor.getLayer());
+			final Panlayer actorLayer = actor.getLayer();
+			if (actorLayer != null) {
+			    setLayer(actorLayer);
+			}
 		}
 		
 		public final void setLayer(final Panlayer layer) {
