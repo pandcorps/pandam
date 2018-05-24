@@ -104,6 +104,7 @@ public final class Player extends Chr implements Warpable {
     protected boolean movedDuringJump = false;
     private byte bossDoorStatus = 0;
     private int health = HudMeter.MAX_VALUE;
+    protected HudMeter healthMeter = null;
     private GrapplingHook grapplingHook = null;
     protected double grapplingR = 0;
     private double grapplingT = 0;
@@ -204,13 +205,27 @@ public final class Player extends Chr implements Warpable {
             @Override public final void onActionStart(final ActionStartEvent event) { engine.stopCaptureFrames(); }});
     }
     
-    private final void registerPause(final Panput input) {
-        register(input, new ActionStartListener() {
-            @Override public final void onActionStart(final ActionStartEvent event) { togglePause(); }});
+    protected final void registerPause(final Panput input) {
+        healthMeter.register(input, new ActionEndListener() {
+            @Override public final void onActionEnd(final ActionEndEvent event) { togglePause(); }});
     }
     
     private final void togglePause() {
-        Pangine.getEngine().togglePause();
+        final boolean newPaused;
+        if (Menu.isCursorNeeded()) {
+            final boolean oldPaused = Menu.isPauseMenuEnabled();
+            newPaused = !oldPaused;
+            Panlayer.setActive(getLayer(), oldPaused);
+        } else {
+            final Pangine engine = Pangine.getEngine();
+            engine.togglePause();
+            newPaused = engine.isPaused();
+        }
+        if (newPaused) {
+            Menu.addPauseMenu(this);
+        } else {
+            Menu.destroyPauseMenu();
+        }
     }
     
     private final void toggleJumpMode() {
@@ -1343,10 +1358,11 @@ public final class Player extends Chr implements Warpable {
     }
     
     protected final HudMeter newHealthMeter() {
-        return new HudMeter(pi.hudMeterImages) {
+        healthMeter = new HudMeter(pi.hudMeterImages) {
             @Override protected final int getValue() {
                 return health;
             }};
+        return healthMeter;
     }
     
     protected abstract static class StateHandler {

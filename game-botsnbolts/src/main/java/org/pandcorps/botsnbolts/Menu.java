@@ -43,7 +43,10 @@ public class Menu {
     protected static ButtonImages rightImages = null;
     protected static ButtonImages upImages = null;
     protected static ButtonImages downImages = null;
-    protected static ButtonImages pauseImages = null;
+    protected static Panmage imgPause = null;
+    protected static Panmage imgPlay = null;
+    protected static Panmage imgLevelSelect = null;
+    protected static Panmage imgQuit = null;
     
     protected static Cursor cursor = null;
     protected static TouchButton jump = null;
@@ -55,10 +58,14 @@ public class Menu {
     protected static TouchButton toggleAttack = null;
     protected static TouchButton toggleJump = null;
     protected static TouchButton pause = null;
+    protected static TouchButton play = null;
+    protected static TouchButton levelSelect = null;
+    protected static TouchButton quit = null;
     
     protected final static void loadMenu() {
         loadCursor();
         loadGameplayButtons();
+        loadPauseMenuButtons();
     }
     
     protected final static boolean isCursorNeeded() {
@@ -85,8 +92,7 @@ public class Menu {
         if (!isScreenGameplayLayoutNeeded()) {
             return;
         }
-        final Panmage imgPause = Pangine.getEngine().createImage("Pause", BotsnBoltsGame.RES + "menu/Pause.png");
-        pauseImages = new ButtonImages(imgPause, imgPause, imgPause);
+        imgPause = Pangine.getEngine().createImage("Pause", BotsnBoltsGame.RES + "menu/Pause.png");
         final Img circle = newButtonImg();
         Imtil.drawCircle(circle, Pancolor.BLACK, Pancolor.BLACK, Pancolor.DARK_GREY);
         final int white = PixelTool.getRgba(Pancolor.WHITE);
@@ -100,6 +106,12 @@ public class Menu {
         loadTriangleButton(white, grey, darkGrey, black, clearFilter);
         loadUpButton(white, grey, darkGrey, black);
         loadDownButton(white, grey, darkGrey, black);
+    }
+    
+    private final static void loadPauseMenuButtons() {
+        imgPlay = Pangine.getEngine().createImage("Play", BotsnBoltsGame.RES + "menu/Play.png");
+        imgLevelSelect = Pangine.getEngine().createImage("LevelSelect", BotsnBoltsGame.RES + "menu/LevelSelect.png");
+        imgQuit = Pangine.getEngine().createImage("Quit", BotsnBoltsGame.RES + "menu/Quit.png");
     }
     
     private final static void loadTriangleButton(final int white, final int grey, final int darkGrey, final int black, final PixelFilter clearFilter) {
@@ -336,20 +348,26 @@ public class Menu {
         final Panple pos = hudShootMode.getPosition();
         final int pd = 16;
         final int px = Pangine.getEngine().getEffectiveWidth() - pd - Math.round(pos.getX()), py = Math.round(pos.getY());
-        pause = addButton(BotsnBoltsGame.hud, "Pause", px, py, true, true, null, pauseImages, false, null, false, pd);
+        pause = addButton(BotsnBoltsGame.hud, "Pause", px, py, true, true, null, imgPause, imgPause, false, null, false, pd);
     }
     
     private final static TouchButton addToggleButton(final String name, final HudIcon hudIcon) {
         final Panlayer hud = BotsnBoltsGame.hud;
         hud.addActor(hudIcon);
         final Panple pos = hudIcon.getPosition();
-        final TouchButton button = addButton(hud, name, Math.round(pos.getX()), Math.round(pos.getY()), true, false, null, null, false, null, false, 18);
+        final TouchButton button = addButton(hud, name, Math.round(pos.getX()), Math.round(pos.getY()), true, false, null, null, null, false, null, false, 18);
         button.setLayer(hud);
         return button;
     }
     
     private final static TouchButton addButton(final Panlayer room, final String name, final int x, final int y,
             final boolean input, final boolean act, final Panput old, final ButtonImages images,
+            final boolean moveCancel, final TouchButtonActiveListener activeListener, final boolean mirror, final int d) {
+        return addButton(room, name, x, y, input, act, old, images.full, images.pressed, moveCancel, activeListener, mirror, d);
+    }
+    
+    private final static TouchButton addButton(final Panlayer room, final String name, final int x, final int y,
+            final boolean input, final boolean act, final Panput old, final Panmage full, final Panmage pressed,
             final boolean moveCancel, final TouchButtonActiveListener activeListener, final boolean mirror, final int d) {
         final TouchButton button;
         if (input) {
@@ -362,8 +380,8 @@ public class Menu {
         }
         if (act) {
             final Panctor actor = new Panctor();
-            actor.setView(images.full);
-            button.setActor(actor, images.pressed);
+            actor.setView(full);
+            button.setActor(actor, pressed);
             button.setActiveListener(activeListener);
             actor.getPosition().set(x + (mirror ? (DIM_BUTTON - 1) : 0), y, BotsnBoltsGame.DEPTH_HUD);
             actor.setMirror(mirror);
@@ -384,6 +402,56 @@ public class Menu {
         }
     }
     
+    protected final static void addPauseMenu(final Player player) {
+        final int numBtns = 3, btnSize = 32, spaceBetween = 32, nextOffset = btnSize + spaceBetween;
+        final int px = (BotsnBoltsGame.GAME_W - (numBtns * btnSize) - ((numBtns - 1) * spaceBetween)) / 2;
+        final int py = (BotsnBoltsGame.GAME_H - btnSize) / 2;
+        final Panlayer layer = BotsnBoltsGame.hud;
+        play = addPauseMenuButton(layer, "Play", px, py, imgPlay);
+        player.registerPause(play);
+        levelSelect = addPauseMenuButton(layer, "LevelSelect", px + nextOffset, py, imgLevelSelect);
+        player.healthMeter.register(levelSelect, new ActionEndListener() {
+            @Override public final void onActionEnd(final ActionEndEvent event) {
+                destroyPauseMenu();
+                goLevelSelect();
+            }});
+        quit = addPauseMenuButton(layer, "Quit", px + (nextOffset * 2), py, imgQuit);
+        player.healthMeter.register(quit, new ActionEndListener() {
+            @Override public final void onActionEnd(final ActionEndEvent event) {
+                Pangine.getEngine().exit();
+            }});
+        addCursor(layer);
+    }
+    
+    private final static TouchButton addPauseMenuButton(final Panlayer layer, final String name, final int x, final int y, final Panmage img) {
+        final TouchButton button;
+        final Pangine engine = Pangine.getEngine();
+        final Panteraction in = engine.getInteraction();
+        button = new TouchButton(in, name, x, y, 32, 32, false);
+        button.setLayer(layer);
+        engine.registerTouchButton(button);
+        final Panctor actor = new Panctor();
+        final Panmage box = BotsnBoltsGame.getBox();
+        actor.setView(box);
+        button.setActor(actor, box);
+        actor.getPosition().set(x, y, BotsnBoltsGame.DEPTH_HUD);
+        button.setOverlay(img, 8, 8);
+        layer.addActor(actor);
+        return button;
+    }
+    
+    protected final static void destroyPauseMenu() {
+        Panctor.destroy(cursor);
+        TouchButton.destroy(play);
+        play = null;
+        TouchButton.destroy(levelSelect);
+        TouchButton.destroy(quit);
+    }
+    
+    protected final static boolean isPauseMenuEnabled() {
+        return play != null;
+    }
+    
     private final static class ButtonImages {
         private final Panmage full;
         private final Panmage base;
@@ -394,6 +462,10 @@ public class Menu {
             this.base = base;
             this.pressed = pressed;
         }
+    }
+    
+    protected final static void goLevelSelect() {
+        Panscreen.set(new LevelSelectScreen());
     }
     
     protected final static class LevelSelectScreen extends Panscreen {
@@ -410,8 +482,15 @@ public class Menu {
                 imgEmpty = engine.createEmptyImage("select.level", FinPanple.ORIGIN, FinPanple.ORIGIN, new FinPanple2(48, 48));
             }
             engine.setBgColor(new FinPancolor(96, 96, 96));
-            final Panroom room = Pangame.getGame().getCurrentRoom();
-            final Panlayer layer = engine.createLayer("layer.grid", BotsnBoltsGame.GAME_W, BotsnBoltsGame.GAME_H, room.getSize().getZ(), room);
+            final Pangame game = Pangame.getGame();
+            Panroom room = game.getCurrentRoom();
+            final float roomZ = room.getSize().getZ();
+            if (room.getSize().getX() > BotsnBoltsGame.GAME_W) {
+                room.destroy();
+                room = Pangine.getEngine().createRoom(Pantil.vmid(), BotsnBoltsGame.GAME_W, BotsnBoltsGame.GAME_H, roomZ);
+                game.setCurrentRoom(room);
+            }
+            final Panlayer layer = engine.createLayer("layer.grid", BotsnBoltsGame.GAME_W, BotsnBoltsGame.GAME_H, roomZ, room);
             grid = new LevelSelectGrid();
             layer.addActor(grid);
             Player.registerCapture(grid);

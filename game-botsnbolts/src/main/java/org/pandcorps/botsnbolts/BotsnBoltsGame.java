@@ -179,6 +179,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static Panlayer hud = null;
     protected static int prevTileSize = DIM;
     protected static int tileSize = DIM;
+    protected static Panroom room = null;
     protected static TileMap tm = null;
     protected static String  timgName = null;
     protected static Panmage timg = null;
@@ -209,6 +210,8 @@ public final class BotsnBoltsGame extends BaseGame {
         engine.setTitle(TITLE);
         engine.setEntityMapEnabled(false);
         Imtil.onlyResources = true;
+        final byte zOverlay = 2, zText = 4;
+        Panput.TouchButton.setOverlayOffsets(zOverlay, zText);
         initTileBehaviors();
         if (loaders != null) {
             loaders.add(new Runnable() {
@@ -999,7 +1002,7 @@ public final class BotsnBoltsGame extends BaseGame {
             addText(room, AUTHOR, w2, 16);
             actor.register(new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
-                    Panscreen.set(new Menu.LevelSelectScreen());
+                    Menu.goLevelSelect();
                 }});
         }
         
@@ -1034,7 +1037,7 @@ public final class BotsnBoltsGame extends BaseGame {
         
         protected final static Panroom newRoom(final int w) {
             final Panple size = Pangame.getGame().getCurrentRoom().getSize();
-            final Panroom room = Pangine.getEngine().createRoom(Pantil.vmid(), w, size.getY(), size.getZ());
+            room = Pangine.getEngine().createRoom(Pantil.vmid(), w, size.getY(), size.getZ());
             initRoom(room);
             return room;
         }
