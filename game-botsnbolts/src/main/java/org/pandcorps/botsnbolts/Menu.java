@@ -485,11 +485,9 @@ public class Menu {
             final Pangame game = Pangame.getGame();
             Panroom room = game.getCurrentRoom();
             final float roomZ = room.getSize().getZ();
-            if (room.getSize().getX() > BotsnBoltsGame.GAME_W) {
-                room.destroy();
-                room = Pangine.getEngine().createRoom(Pantil.vmid(), BotsnBoltsGame.GAME_W, BotsnBoltsGame.GAME_H, roomZ);
-                game.setCurrentRoom(room);
-            }
+            room.destroy();
+            room = Pangine.getEngine().createRoom(Pantil.vmid(), BotsnBoltsGame.GAME_W, BotsnBoltsGame.GAME_H, roomZ);
+            game.setCurrentRoom(room);
             final Panlayer layer = engine.createLayer("layer.grid", BotsnBoltsGame.GAME_W, BotsnBoltsGame.GAME_H, roomZ, room);
             grid = new LevelSelectGrid();
             layer.addActor(grid);

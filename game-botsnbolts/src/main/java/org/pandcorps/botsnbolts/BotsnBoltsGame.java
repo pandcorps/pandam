@@ -90,7 +90,9 @@ public final class BotsnBoltsGame extends BaseGame {
     protected final static int DEPTH_OVERLAY = 26;
     protected final static int DEPTH_BURST = 54;
     protected final static int DEPTH_HUD = 56;
-    protected final static int DEPTH_CURSOR = 58;
+    protected final static byte Z_OFF_OVERLAY = 2;
+    protected final static byte Z_OFF_TEXT = 4;
+    protected final static int DEPTH_CURSOR = 62;
     
     protected final static FinPanple2 MIN_16 = new FinPanple2(-6, -6);
     protected final static FinPanple2 MAX_16 = new FinPanple2(6, 6);
@@ -210,8 +212,7 @@ public final class BotsnBoltsGame extends BaseGame {
         engine.setTitle(TITLE);
         engine.setEntityMapEnabled(false);
         Imtil.onlyResources = true;
-        final byte zOverlay = 2, zText = 4;
-        Panput.TouchButton.setOverlayOffsets(zOverlay, zText);
+        Panput.TouchButton.setOverlayOffsets(Z_OFF_OVERLAY, Z_OFF_TEXT);
         initTileBehaviors();
         if (loaders != null) {
             loaders.add(new Runnable() {
@@ -1042,7 +1043,7 @@ public final class BotsnBoltsGame extends BaseGame {
             return room;
         }
         
-        protected final static void initRoom(final Panroom room) {
+        private final static void initRoom(final Panroom room) {
             tm = new TileMap(Pantil.vmid(), room, tileSize, tileSize);
             tm.getPosition().setZ(DEPTH_BG);
             tm.setForegroundDepth(DEPTH_FG);
@@ -1147,7 +1148,7 @@ public final class BotsnBoltsGame extends BaseGame {
     }
     
     protected final static Panlayer getLayer() {
-        return tm.getLayer();
+        return room;
     }
     
     protected final static void addActor(final Panctor actor) {
