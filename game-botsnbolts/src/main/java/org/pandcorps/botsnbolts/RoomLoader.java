@@ -823,7 +823,7 @@ public abstract class RoomLoader {
     }
     
     protected final static Panlayer getLayer() {
-        return (BotsnBoltsGame.tm == null) ? null : BotsnBoltsGame.tm.getLayer();
+        return BotsnBoltsGame.room;
     }
     
     protected final static Iterable<Panctor> getActors() {

@@ -2416,7 +2416,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
             remains.setView(getView(4));
             remains.getPosition().set(getPosition());
             remains.setMirror(isMirror());
-            BotsnBoltsGame.tm.getLayer().addActor(remains);
+            BotsnBoltsGame.addActor(remains);
         }
 
         @Override

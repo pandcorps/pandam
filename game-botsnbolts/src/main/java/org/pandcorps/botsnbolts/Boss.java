@@ -318,7 +318,7 @@ public abstract class Boss extends Enemy {
     }
     
     protected final static Panlayer getLayerRequired() {
-        return BotsnBoltsGame.tm.getLayer();
+        return BotsnBoltsGame.getLayer();
     }
     
     protected final static Set<Panctor> getActors() {
