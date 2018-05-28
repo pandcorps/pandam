@@ -944,7 +944,11 @@ public abstract class RoomLoader {
     }
     
     protected final static BotRoom getStartRoom() {
-        return getRoom(startX, startY);
+        final BotRoom room = getRoom(startX, startY);
+        if (room == null) {
+            throw new IllegalStateException("Could not find room (" + startX + ", " + startY + ")");
+        }
+        return room;
     }
     
     protected final static BotRoom getRoom(final int x, final int y) {
