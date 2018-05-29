@@ -855,7 +855,11 @@ public abstract class Enemy extends Chr implements CollisionListener {
                 return true;
             }
             final Panple pos = getPosition(), targetPos = target.getPosition();
-            hv = getDirection(pos.getX(), targetPos.getX(), -2, 2);
+            final float x = pos.getX(), targetX = targetPos.getX();
+            if (!isInView() && (Math.abs(targetX - x) > 224)) {
+                return true;
+            }
+            hv = getDirection(x, targetX, -2, 2);
             updateMirror();
             v = getDirection(pos.getY(), targetPos.getY(), -7, -3);
             addX(hv);
