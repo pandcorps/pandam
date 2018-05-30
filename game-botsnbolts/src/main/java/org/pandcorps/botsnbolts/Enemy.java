@@ -1614,7 +1614,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         
         @Override
         protected final boolean onHorizontal(final int off) {
-            return onHorizontalEdgeTurn(off);
+            return onHorizontalEdgeTurn(8 * off) || onHorizontalEdgeTurn(off);
         }
         
         private final static Panframe getFrame(final int i) {
@@ -1752,7 +1752,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
                 return;
             }
             turnTowardPlayer(player);
-            if (Mathtil.rand()) {
+            if (Mathtil.rand(20)) {
                 jump();
             } else {
                 shoot();
@@ -1944,7 +1944,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         
         @Override
         protected final int getLongRoomMaxDistance() {
-            return 192;
+            return 336;
         }
     }
     
