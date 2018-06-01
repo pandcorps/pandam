@@ -425,6 +425,11 @@ public final class Player extends Chr implements Warpable {
         if (isInvincible()) {
             return false;
         }
+        hurtForce(damage);
+        return true;
+    }
+    
+    private final void hurtForce(final int damage) {
         isFree(); // Calls onFree()
         stateHandler.onHurt(this);
         lastHurt = Pangine.getEngine().getClock();
@@ -442,7 +447,6 @@ public final class Player extends Chr implements Warpable {
             puff(0, 30);
             puff(12, 25);
         }
-        return true;
     }
     
     protected final boolean freeze() {
@@ -574,6 +578,7 @@ public final class Player extends Chr implements Warpable {
     }
     
     private final void unfreeze() {
+        hurtForce(1);
         shatter(this, BotsnBoltsGame.getIceShatter());
     }
     
