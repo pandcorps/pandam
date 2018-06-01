@@ -81,7 +81,7 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
         return new FinPanple2(offX, h);
     }
     
-    protected final void setMirror(final int v) {
+    protected void setMirror(final int v) {
         if ((v != 0) && isMirrorable()) {
             setMirror(v < 0);
         }

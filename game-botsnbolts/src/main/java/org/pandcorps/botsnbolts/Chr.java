@@ -89,4 +89,10 @@ public abstract class Chr extends GuyPlatform {
         }
         return g;
     }
+    
+    protected final void fixX() {
+        if (!isJumpPossible()) {
+            getPosition().addX(getMirrorMultiplier());
+        }
+    }
 }
