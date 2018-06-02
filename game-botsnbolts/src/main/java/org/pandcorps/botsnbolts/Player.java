@@ -357,6 +357,15 @@ public final class Player extends Chr implements Warpable {
         }
     }
     
+    @Override
+    protected final void setMirror(final int v) {
+        final boolean oldMirror = isMirror();
+        super.setMirror(v);
+        if (oldMirror != isMirror()) {
+            fixX();
+        }
+    }
+    
     private final void left() {
         if (isFree()) {
             stateHandler.onLeft(this);
