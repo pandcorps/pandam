@@ -573,7 +573,7 @@ public abstract class RoomLoader {
     private final static int[] getTileIndexArray(final Segment seg, final int fieldIndex) {
         final TileMap tm = BotsnBoltsGame.tm;
         final List<Field> reps = seg.getRepetitions(fieldIndex);
-        final int size = reps.size();
+        final int size = Coltil.size(reps);
         final int[] indices = new int[size];
         for (int i = 0; i < size; i++) {
             final Field f = reps.get(i);
