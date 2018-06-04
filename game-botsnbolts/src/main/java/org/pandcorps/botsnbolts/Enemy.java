@@ -1700,6 +1700,111 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
     }
     
+    protected static class Icicle extends Enemy {
+        private static Panmage img = null;
+        
+        protected Icicle(final int x, final int y) {
+            super(PROP_OFF_X, PROP_H, x, y, 1);
+            getPosition().addY(1);
+            setView(getIcicleImage());
+        }
+        
+        @Override
+        protected boolean onStepCustom() {
+            return true;
+        }
+        
+        private final static Panmage getIcicleImage() {
+            return getIcicleImage(img, "Icicle");
+        }
+        
+        protected final static Panmage getIcicleImage(final Panmage img, final String name) {
+            return getImage(img, name, BotsnBoltsGame.fireballEnemy[0]);
+        }
+    }
+    
+    protected final static class IcicleEnemy extends Icicle {
+        private final static byte STATE_WAITING = 0;
+        private final static byte STATE_WAKING = 1;
+        private final static byte STATE_FALLING = 2;
+        private final static Panmage[] imgs = new Panmage[3];
+        private byte state = 0;
+        private int timer = 10;
+        
+        protected IcicleEnemy(final int x, final int y) {
+            super(x, y);
+            setView(getIcicleImage(0));
+        }
+        
+        @Override
+        protected final boolean onStepCustom() {
+            if (state == STATE_WAITING) {
+                onWaiting();
+                return true;
+            } else if (state == STATE_WAKING) {
+                onWaking();
+                return true;
+            } else {
+                return false;
+            }
+        }
+        
+        private final void onWaiting() {
+            final Player p = getNearestPlayer();
+            if (p == null) {
+                return;
+            } else if (Math.abs(p.getPosition().getX() - getPosition().getX()) < 5) {
+                startWake();
+            }
+        }
+        
+        private final void onWaking() {
+            timer--;
+            if (timer <= 0) {
+                startFall();
+            } else if (timer <= 5) {
+                changeView(2);
+            }
+        }
+        
+        private final void startWake() {
+            this.state = STATE_WAKING;
+            changeView(1);
+        }
+        
+        private final void startFall() {
+            this.state = STATE_FALLING;
+            timer = 1;
+        }
+        
+        private final void changeView(final int imgIndex) {
+            changeView(getIcicleImage(imgIndex));
+        }
+        
+        @Override
+        protected final void onGrounded() {
+            if (timer <= 0) {
+                shatter();
+            }
+            timer--;
+        }
+        
+        private final void shatter() {
+            Player.shatter(this, BotsnBoltsGame.getIceShatter());
+            destroy();
+        }
+        
+        private final static Panmage getIcicleImage(final int i) {
+            Panmage img = imgs[i];
+            if (img != null) {
+                return img;
+            }
+            img = getIcicleImage(null, "IcicleEnemy" + (i + 1));
+            imgs[i] = img;
+            return img;
+        }
+    }
+    
     protected final static class BoulderEnemy extends Enemy {
         private static Panmage img = null;
         private boolean held = false;
