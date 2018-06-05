@@ -309,10 +309,10 @@ public final class BotsnBoltsGame extends BaseGame {
         hudMeterBlank = newHudMeterImages("meter.blank", RES + "misc/MeterBlank.png");
         final Img[] blockImgs = Imtil.loadStrip(RES + "bg/BlockCyan.png", 16, false);
         final Panple maxBlock = new FinPanple2(14, 16);
-        final short s0 = 0, s64 = 64, s96 = 96, s128 = 128, s144 = 144, s192 = 192;
+        final short s0 = 0, s96 = 96, s128 = 128, s144 = 144, s192 = 192, smax = Pancolor.MAX_VALUE;
         final Pancolor cyan = Pancolor.CYAN, darkCyan = new FinPancolor(s0, s192, s192);
         blockCyan = newBlock("block.cyan", blockImgs, maxBlock, null, null, null, null);
-        final Pancolor timed = new FinPancolor(s144, s192, s96), darkTimed = new FinPancolor(s96, s128, s64);
+        final Pancolor timed = new FinPancolor(s128, s192, smax), darkTimed = new FinPancolor(s96, s144, s192);
         blockTimed = newBlock("block.timed", blockImgs, maxBlock, cyan, timed, darkCyan, darkTimed);
         final Pancolor btn = newColorBlue(), darkBtn = newColorBlueDark();
         blockButton = newBlock("block.button", blockImgs, maxBlock, timed, btn, darkTimed, darkBtn);
@@ -392,7 +392,7 @@ public final class BotsnBoltsGame extends BaseGame {
         if (s1 != null) {
             filterImgs(blockImgs, newFilter(s1, d1, s2, d2));
         }
-        return newSheet("block.timed", blockImgs, FinPanple.ORIGIN, ShootableDoor.minBarrier, maxBlock);
+        return newSheet(id, blockImgs, FinPanple.ORIGIN, ShootableDoor.minBarrier, maxBlock);
     }
     
     private final static void loadEnemies() {
