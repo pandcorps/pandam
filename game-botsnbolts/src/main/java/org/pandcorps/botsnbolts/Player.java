@@ -1259,6 +1259,8 @@ public final class Player extends Chr implements Warpable {
     }
     
     private final void startRescue() {
+        hv = 0;
+        chv = 0;
         destroyGrapplingHook();
         stateHandler = RESCUED_HANDLER;
         new Rescue(this);
