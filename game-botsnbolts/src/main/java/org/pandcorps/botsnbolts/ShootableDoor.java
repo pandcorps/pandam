@@ -278,7 +278,7 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
     }
     
     protected final static class ShootableBarrier extends ShootableDoor {
-        private int openIndex = 0;
+        private int openIndex = -1;
         
         protected ShootableBarrier(final int x, final int y, final ShootableDoorDefinition def) {
             super(x, y, def);
@@ -306,6 +306,7 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
         
         @Override
         protected final void closeDoor() {
+            openIndex = 0;
         }
         
         @Override
@@ -316,6 +317,9 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
         
         @Override
         protected final void renderView(final Panderer renderer) {
+            if (openIndex < 0) {
+                return;
+            }
             final int indexLeft, indexRight;
             if (openIndex > 0) {
                 if (openIndex >= def.barrierImgs.length) {
