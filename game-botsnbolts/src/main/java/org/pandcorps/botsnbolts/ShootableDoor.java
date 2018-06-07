@@ -360,7 +360,6 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
             setImage();
             final TileMap tm = BotsnBoltsGame.tm;
             tm.savePosition(getPosition(), x, y);
-            tm.getLayer().addActor(this);
         }
         
         private final void setImage() {

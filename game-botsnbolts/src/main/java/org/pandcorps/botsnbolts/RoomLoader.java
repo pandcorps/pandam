@@ -681,7 +681,7 @@ public abstract class RoomLoader {
         } else {
             throw new IllegalArgumentException("Unexpected ShootableButtonHandler type " + handlerType);
         }
-        new ShootableButton(seg.intValue(0), seg.intValue(1), handler);
+        addActor(new ShootableButton(seg.intValue(0), seg.intValue(1), handler));
     }
     
     private final static void crr(final Segment seg) throws Exception {
