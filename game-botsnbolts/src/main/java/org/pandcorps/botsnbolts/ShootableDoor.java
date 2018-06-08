@@ -40,6 +40,7 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
     private final static Pansplay displayBarrierSmall = new ImplPansplay(FinPanple.ORIGIN, minBarrier, new FinPanple2(14, 16));
     private final static Pansplay displayBoss = new ImplPansplay(FinPanple.ORIGIN, minBarrier, new FinPanple2(14, 64));
     private final static Pansplay displayBolt = new ImplPansplay(FinPanple.ORIGIN, new FinPanple2(1, 32), new FinPanple2(30, 96));
+    private final TileMap tm;
     protected final int x;
     protected final int y;
     private final int doorX;
@@ -53,7 +54,7 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
     }
     
     protected ShootableDoor(final int x, final int y, ShootableDoorDefinition def) {
-        final TileMap tm = BotsnBoltsGame.tm;
+        tm = BotsnBoltsGame.tm;
         tm.getLayer().addActor(this);
         this.x = x;
         this.y = y;
@@ -173,15 +174,26 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
         Pangine.getEngine().addTimer(BotsnBoltsGame.tm, 1, new TimerListener() {
             @Override public final void onTimer(final TimerEvent event) {
                 if (nextIndex >= def.opening.length) {
-                    final int n = isSmall() ? 1 : 4;
-                    for (int j = 0; j < n; j++) {
-                        BotsnBoltsGame.tm.setForeground(doorX, y + j, null);
-                    }
+                    setOpened(BotsnBoltsGame.tm);
                 } else {
                     setDoorEnergyTiles(def.opening[nextIndex]);
                     addOpenTimer(nextIndex + 1);
                 }
             }});
+    }
+    
+    private final void setOpened(final TileMap tm) {
+        final int n = isSmall() ? 1 : 4;
+        for (int j = 0; j < n; j++) {
+            tm.setForeground(doorX, y + j, null);
+        }
+    }
+    
+    @Override
+    public final void onDestroy() {
+        if (tm != null) {
+            setOpened(tm);
+        }
     }
     
     @Override
