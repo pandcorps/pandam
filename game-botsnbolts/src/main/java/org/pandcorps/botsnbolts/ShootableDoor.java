@@ -190,7 +190,7 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
     }
     
     @Override
-    public final void onDestroy() {
+    public void onDestroy() {
         if (tm != null) {
             setOpened(tm);
         }
@@ -363,6 +363,10 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
         @Override
         public final Pansplay getCurrentDisplay() {
             return isSmall() ? displayBarrierSmall : displayBarrier;
+        }
+        
+        @Override
+        public final void onDestroy() {
         }
     }
     
