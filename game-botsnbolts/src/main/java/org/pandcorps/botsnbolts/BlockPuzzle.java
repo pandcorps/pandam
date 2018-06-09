@@ -44,6 +44,10 @@ public abstract class BlockPuzzle {
         this.blockImgs = blockImgs;
     }
     
+    protected abstract void init();
+    
+    protected abstract void clear();
+    
     protected final void fade(final int[] indicesToFadeOut, final int[] indicesToFadeIn) {
         fade(indicesToFadeOut, indicesToFadeIn, 1);
     }
@@ -90,6 +94,10 @@ public abstract class BlockPuzzle {
         }
     }
     
+    protected final void clear(final int[] tileIndices) {
+        setTiles(tileIndices, blockImgs.length, true);
+    }
+    
     protected final static class TimedBlockPuzzle extends BlockPuzzle {
         private final List<int[]> steps;
         private int currentStepIndex = 0;
@@ -97,7 +105,18 @@ public abstract class BlockPuzzle {
         protected TimedBlockPuzzle(final List<int[]> steps) {
             super(BotsnBoltsGame.blockTimed);
             this.steps = steps;
+        }
+        
+        @Override
+        protected final void init() {
             schedule();
+        }
+        
+        @Override
+        protected final void clear() {
+            for (final int[] tileIndices : steps) {
+                clear(tileIndices);
+            }
         }
         
         private final void schedule() {
@@ -130,12 +149,22 @@ public abstract class BlockPuzzle {
             super(blockImgs);
             enabledIndices = initiallyEnabledIndices;
             disabledIndices = initiallyDisabledIndices;
-            init();
+            prepare();
+        }
+        
+        @Override
+        protected final void init() {
             fade(null, enabledIndices);
         }
         
+        @Override
+        protected final void clear() {
+            clear(enabledIndices);
+            clear(disabledIndices);
+        }
+        
         //@OverrideMe
-        protected void init() {
+        protected void prepare() {
         }
         
         protected final void fade() {
@@ -152,14 +181,14 @@ public abstract class BlockPuzzle {
     }
     
     protected final static class ShootableBlockPuzzle extends BinaryBlockPuzzle {
-        private List<ShootableBlock> blocks; // Setting to null here overrides super constructor's init() call
+        private List<ShootableBlock> blocks; // Setting to null here overrides super constructor's prepare() call
         
         protected ShootableBlockPuzzle(final int[] initiallyEnabledIndices, final int[] initiallyDisabledIndices) {
             super(BotsnBoltsGame.blockCyan, initiallyEnabledIndices, initiallyDisabledIndices);
         }
         
         @Override
-        protected final void init() {
+        protected final void prepare() {
             blocks = new ArrayList<ShootableBlock>(Math.max(enabledIndices.length, disabledIndices.length));
         }
         
