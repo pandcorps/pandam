@@ -507,6 +507,7 @@ public final class Player extends Chr implements Warpable {
         defeatOrbs(this, pi.defeat);
         Pangine.getEngine().addTimer(BotsnBoltsGame.tm, 120, new TimerListener() {
             @Override public final void onTimer(final TimerEvent event) {
+                healthMeter.destroy();
                 if (startRoom == null) {
                     RoomLoader.reloadCurrentRoom();
                 } else {
