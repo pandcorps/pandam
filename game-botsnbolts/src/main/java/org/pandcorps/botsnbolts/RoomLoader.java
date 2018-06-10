@@ -55,6 +55,7 @@ public abstract class RoomLoader {
     protected static Panroom nextRoom = null;
     protected final static List<BossDoor> bossDoors = new ArrayList<BossDoor>(2);
     protected static BoltDoor boltDoor = null;
+    protected final static List<BlockPuzzle> blockPuzzles = new ArrayList<BlockPuzzle>(1);
     protected static int startX = 0;
     protected static int startY = 0;
     private static int row = 0;
@@ -567,7 +568,7 @@ public abstract class RoomLoader {
     }
     
     private final static void shp(final Segment seg) {
-        new ShootableBlockPuzzle(getTileIndexArray(seg, 0), getTileIndexArray(seg, 1));
+        blockPuzzles.add(new ShootableBlockPuzzle(getTileIndexArray(seg, 0), getTileIndexArray(seg, 1)));
     }
     
     private final static int[] getTileIndexArray(final Segment seg, final int fieldIndex) {
@@ -588,7 +589,7 @@ public abstract class RoomLoader {
         while ((seg = in.readIf("TMS")) != null) {
             steps.add(getTileIndexArray(seg, 0));
         }
-        new TimedBlockPuzzle(steps);
+        blockPuzzles.add(new TimedBlockPuzzle(steps));
     }
     
     private final static void hdp(final Segment seg) {
@@ -604,7 +605,9 @@ public abstract class RoomLoader {
     }
     
     private final static ButtonBlockPuzzle btp(final Segment seg) {
-        return new ButtonBlockPuzzle(getTileIndexArray(seg, 0), getTileIndexArray(seg, 1));
+        final ButtonBlockPuzzle puzzle = new ButtonBlockPuzzle(getTileIndexArray(seg, 0), getTileIndexArray(seg, 1));
+        blockPuzzles.add(puzzle);
+        return puzzle;
     }
     
     private final static void ldr(final int x, final int y, final int h) {
@@ -870,6 +873,9 @@ public abstract class RoomLoader {
         if (boltDoor != null) {
             boltDoor.close();
         }
+        for (final BlockPuzzle blockPuzzle : blockPuzzles) {
+            blockPuzzle.init();
+        }
         for (final StepHandler stepHandler : stepHandlers) {
             stepHandler.init();
         }
@@ -905,6 +911,10 @@ public abstract class RoomLoader {
         alt = null;
         bossDoors.clear();
         boltDoor = null;
+        for (final BlockPuzzle blockPuzzle : blockPuzzles) {
+            blockPuzzle.clear();
+        }
+        blockPuzzles.clear();
     }
     
     protected final static void loadRooms() {
