@@ -867,7 +867,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
     }
     
     private abstract static class JumpEnemy extends Enemy implements RoomAddListener {
-        private boolean scheduled = false;
+        protected boolean scheduled = false;
         
         protected JumpEnemy(final int offX, final int h, final int x, final int y, final int health) {
             super(offX, h, x, y, health);
@@ -900,6 +900,10 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
         
         protected final void appointment() {
+            if (!(scheduled && isGrounded())) {
+                schedule();
+                return;
+            }
             scheduled = false;
             if (isInView()) {
                 onAppointment();
@@ -1841,7 +1845,27 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
         
         @Override
+        public boolean onStepCustom() {
+            if (!(scheduled && isGrounded())) {
+                return false;
+            }
+            final Panple pos = getPosition();
+            final float x = pos.getX(), y = pos.getY();
+            for (final Projectile prj : Projectile.currentProjectiles) {
+                final Panple prjPos = prj.getPosition();
+                final float prjX = prjPos.getX(), prjY = prjPos.getY();
+                if ((prjY > (y - 6)) && (prjY < (y + 26)) && (prjX > (x - 44)) && (prjX < (x + 44))) {
+                    scheduled = false;
+                    jump();
+                    break;
+                }
+            }
+            return false;
+        }
+        
+        @Override
         protected final void onSchedule() {
+            turnTowardPlayer(getNearestPlayer());
             shooting = false;
         }
 
@@ -1855,11 +1879,12 @@ public abstract class Enemy extends Chr implements CollisionListener {
                 return;
             }
             turnTowardPlayer(player);
-            if (Mathtil.rand(20)) {
-                jump();
-            } else {
+            // Now jumping only happens in onStepCustom when a Projectile is near
+            //if (Mathtil.rand(20)) {
+            //    jump();
+            //} else {
                 shoot();
-            }
+            //}
         }
         
         protected final int getMaxDistance() {
