@@ -22,6 +22,8 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.botsnbolts;
 
+import java.util.*;
+
 import org.pandcorps.botsnbolts.Player.*;
 import org.pandcorps.game.actor.*;
 import org.pandcorps.pandam.*;
@@ -33,6 +35,7 @@ public class Projectile extends Pandy implements Collidable, AllOobListener {
     protected final static int POWER_MEDIUM = 3;
     protected final static int POWER_MAXIMUM = 5;
     protected final static int POWER_IMPOSSIBLE = Integer.MAX_VALUE;
+    protected final static Set<Projectile> currentProjectiles = new HashSet<Projectile>();
     
     protected final Player src;
     protected final ShootMode shootMode;
@@ -43,6 +46,7 @@ public class Projectile extends Pandy implements Collidable, AllOobListener {
     }
     
     protected Projectile(final Player src, final ShootMode shootMode, final Panctor ref, final float vx, final float vy, final int power) {
+        currentProjectiles.add(this);
         this.src = src;
         this.shootMode = shootMode;
         setPower(power);
@@ -108,6 +112,12 @@ public class Projectile extends Pandy implements Collidable, AllOobListener {
         if (!isInView()) { // onAllOob above checks the whole room, not just the current view
             destroy();
         }
+    }
+    
+    @Override
+    public final void onDestroy() {
+        currentProjectiles.remove(this);
+        super.onDestroy();
     }
     
     public final static class Bomb extends Panctor implements StepListener {
