@@ -1718,12 +1718,25 @@ public abstract class Enemy extends Chr implements CollisionListener {
             return true;
         }
         
+        @Override
+        protected final int getDamage() {
+            return 2;
+        }
+        
         private final static Panmage getIcicleImage() {
             return getIcicleImage(img, "Icicle");
         }
         
         protected final static Panmage getIcicleImage(final Panmage img, final String name) {
             return getImage(img, name, BotsnBoltsGame.fireballEnemy[0]);
+        }
+    }
+    
+    protected final static class IceSpike extends Icicle {
+        protected IceSpike(final int x, final int y) {
+            super(x, y);
+            setFlip(true);
+            getPosition().addY(13);
         }
     }
     
