@@ -75,7 +75,6 @@ public final class Player extends Chr implements Warpable {
     private final static double GRAPPLING_ANGLE_MAX_DIAG = 3.0 * GRAPPLING_ANGLE_MAX_UP;
     private final static int GRAPPLING_OFF_Y = 12;
     private final static int VEL_ROOM_CHANGE = 10;
-    private final static long NULL_CLOCK = -1000;
     private final static float NULL_COORD = -2000;
     
     protected final PlayerContext pc;

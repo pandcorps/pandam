@@ -29,6 +29,7 @@ import org.pandcorps.pandax.tile.*;
 public abstract class Chr extends GuyPlatform {
     protected final static FinPanple2 gTuple = new FinPanple2(0, g);
     public final static float gWater = -0.3f;
+    protected final static long NULL_CLOCK = -1000;
     
     protected Chr(final int offX, final int h) {
         super(offX, h);

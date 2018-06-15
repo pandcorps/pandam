@@ -1578,18 +1578,30 @@ public abstract class Enemy extends Chr implements CollisionListener {
     protected final static class SlideEnemy extends Enemy {
         private final static int SLIDE_VELOCITY = 1;
         private final static int SLIDE_VELOCITY_NEAR = 4;
+        private final static long DURATION_FREEZE = 30;
         private final static Panframe[] frames = new Panframe[5];
         private final static Panmage[] images = new Panmage[3];
+        private long lastHurt = NULL_CLOCK;
+        private int oldHv;
         
         protected SlideEnemy(final int x, final int y) {
-            super(PROP_OFF_X, SLIDE_H, x, y, PROP_HEALTH);
+            super(PROP_OFF_X, SLIDE_H, x, y, 5);
             hv = -SLIDE_VELOCITY;
+            oldHv = hv;
         }
         
         @Override
         protected final boolean onStepCustom() {
+            final long clock = Pangine.getEngine().getClock();
+            if ((clock - lastHurt) <= DURATION_FREEZE) {
+                if (hv != 0) {
+                    oldHv = hv;
+                }
+                hv = 0;
+                return false;
+            }
             final int frameDuration = 3;
-            setView(getFrame((int) (Pangine.getEngine().getClock() % (5 * frameDuration)) / frameDuration));
+            setView(getFrame((int) (clock % (5 * frameDuration)) / frameDuration));
             setVelocity();
             return false;
         }
@@ -1601,6 +1613,12 @@ public abstract class Enemy extends Chr implements CollisionListener {
             }
             final float diff = Math.abs(p.getPosition().getY() - getPosition().getY());
             final int speed = (diff < 4) ? SLIDE_VELOCITY_NEAR : SLIDE_VELOCITY;
+            if (hv == 0) {
+                hv = oldHv;
+                if (hv == 0) {
+                    hv = -SLIDE_VELOCITY;
+                }
+            }
             hv = speed * hv / Math.abs(hv);
         }
         
@@ -1617,6 +1635,12 @@ public abstract class Enemy extends Chr implements CollisionListener {
         @Override
         protected final boolean onHorizontal(final int off) {
             return onHorizontalEdgeTurn(8 * off) || onHorizontalEdgeTurn(off);
+        }
+        
+        @Override
+        protected final void onHurt(final Projectile prj) {
+            super.onHurt(prj);
+            lastHurt = Pangine.getEngine().getClock();
         }
         
         private final static Panframe getFrame(final int i) {
