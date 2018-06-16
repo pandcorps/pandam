@@ -1883,7 +1883,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         
         @Override
         public boolean onStepCustom() {
-            if (!(scheduled && isGrounded())) {
+            if (!(scheduled && isGrounded()) || shooting) {
                 return false;
             }
             final Panple pos = getPosition();
@@ -1909,9 +1909,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         @Override
         protected final void onAppointment() {
             final Player player = getNearestPlayer();
-            if (player == null) {
-                return;
-            } else if (getDistanceX(player) > getMaxDistance()) {
+            if ((player == null) || (getDistanceX(player) > getMaxDistance())) {
                 schedule();
                 return;
             }
