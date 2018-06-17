@@ -867,7 +867,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
     }
     
     private abstract static class JumpEnemy extends Enemy implements RoomAddListener {
-        protected boolean scheduled = false;
+        protected TimerListener timer = null;
         
         protected JumpEnemy(final int offX, final int h, final int x, final int y, final int health) {
             super(offX, h, x, y, health);
@@ -880,12 +880,12 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
         
         protected final void schedule() {
-            if (scheduled) {
+            if (timer != null) {
                 return;
             }
             onSchedule();
-            scheduled = true;
-            Pangine.getEngine().addTimer(this, getDelay(), new TimerListener() {
+            clearSchedule();
+            Pangine.getEngine().addTimer(this, getDelay(), timer = new TimerListener() {
                 @Override
                 public final void onTimer(final TimerEvent event) {
                     appointment();
@@ -895,16 +895,24 @@ public abstract class Enemy extends Chr implements CollisionListener {
         protected void onSchedule() {
         }
         
+        protected final void clearSchedule() {
+            if (timer == null) {
+                return;
+            }
+            Pangine.getEngine().removeTimer(timer);
+            timer = null;
+        }
+        
         protected int getDelay() {
             return 30;
         }
         
         protected final void appointment() {
-            if (!(scheduled && isGrounded())) {
+            if ((timer == null) || !isGrounded()) {
                 schedule();
                 return;
             }
-            scheduled = false;
+            clearSchedule();
             if (isInView()) {
                 onAppointment();
             } else {
@@ -1883,7 +1891,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         
         @Override
         public boolean onStepCustom() {
-            if (!(scheduled && isGrounded()) || shooting) {
+            if ((timer == null) || !isGrounded() || shooting) {
                 return false;
             }
             final Panple pos = getPosition();
@@ -1892,7 +1900,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
                 final Panple prjPos = prj.getPosition();
                 final float prjX = prjPos.getX(), prjY = prjPos.getY();
                 if ((prjY > (y - 6)) && (prjY < (y + 26)) && (prjX > (x - 44)) && (prjX < (x + 44))) {
-                    scheduled = false;
+                    clearSchedule();
                     jump();
                     break;
                 }
