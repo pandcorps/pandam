@@ -35,6 +35,7 @@ import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.*;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.tile.Tile.*;
+import org.pandcorps.pandax.visual.*;
 
 public abstract class Enemy extends Chr implements CollisionListener {
     protected final static String RES_ENEMY = BotsnBoltsGame.RES + "enemy/";
@@ -94,9 +95,14 @@ public abstract class Enemy extends Chr implements CollisionListener {
         if (health <= 0) {
             prj.burst(this);
             award(prj.src);
+            onDefeat();
             destroy();
         }
         prj.setPower(oldPower - oldHealth);
+    }
+    
+    //@OverrideMe
+    protected void onDefeat() {
     }
     
     protected boolean isVulnerableToProjectile(final Projectile prj) {
@@ -1142,7 +1148,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
     }
     
-    protected final static class DrillEnemy extends Enemy {
+    protected static class DrillEnemy extends Enemy {
         private final static int NUM_IMAGES = 8;
         private final static int FRAME_DURATION = 4;
         private final static int TOTAL_DURATION = FRAME_DURATION * NUM_IMAGES;
@@ -1157,7 +1163,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         private Panctor partialTileRight = null;
         
         protected DrillEnemy(final int x, final int y) {
-            super(PROP_OFF_X, CRAWL_H, x, y, PROP_HEALTH);
+            super(PROP_OFF_X, CRAWL_H, x, y, 1);
             hv = 0;
             setCurrentView();
         }
@@ -1272,6 +1278,26 @@ public abstract class Enemy extends Chr implements CollisionListener {
                 dirtShatter = Pangine.getEngine().createImage("dirt.shatter", BotsnBoltsGame.CENTER_8, null, null, BotsnBoltsGame.RES + "misc/DirtShatter.png");
             }
             return dirtShatter;
+        }
+    }
+    
+    protected final static class RespawnableDrillEnemy extends DrillEnemy {
+        private final int x;
+        
+        protected RespawnableDrillEnemy(final int x, final int y) {
+            super(x, y);
+            this.x = x;
+        }
+        
+        @Override
+        public final void onDefeat() {
+            Pangine.getEngine().addTimer(BotsnBoltsGame.tm, 30, new TimerListener() {
+                @Override public final void onTimer(final TimerEvent event) {
+                    if (RoomChanger.isChanging()) {
+                        return;
+                    }
+                    BotsnBoltsGame.addActor(new RespawnableDrillEnemy(x, 14));
+            }});
         }
     }
     
