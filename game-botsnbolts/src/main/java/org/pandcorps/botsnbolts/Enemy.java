@@ -1914,6 +1914,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
     protected abstract static class HenchbotEnemy extends JumpEnemy {
         private final Panmage[] imgs;
         protected boolean shooting = false;
+        private long lastJump = NULL_CLOCK;
         
         protected HenchbotEnemy(final Panmage[] imgs, final int x, final int y) {
             super(HENCHBOT_OFF_X, HENCHBOT_H, x, y, HENCHBOT_HEALTH);
@@ -1923,7 +1924,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         
         @Override
         public boolean onStepCustom() {
-            if ((timer == null) || !isGrounded() || shooting) {
+            if (shooting || (timer == null) || !isGrounded() || ((Pangine.getEngine().getClock() - lastJump) < (getDelay() / 2))) {
                 return false;
             }
             final Panple pos = getPosition();
@@ -1988,6 +1989,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         @Override
         protected final void onLanded() {
             super.onLanded();
+            lastJump = Pangine.getEngine().getClock();
             schedule();
         }
         
