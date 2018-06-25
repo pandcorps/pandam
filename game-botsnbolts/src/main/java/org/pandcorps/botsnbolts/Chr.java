@@ -55,7 +55,7 @@ public abstract class Chr extends GuyPlatform {
     }
     
     protected final static boolean isCustomSolidBehavior(final byte b) {
-        return false;
+        return b == BotsnBoltsGame.TILE_CRUMBLE;
     }
     
     protected final static boolean isSolidIndex(final int index) {
