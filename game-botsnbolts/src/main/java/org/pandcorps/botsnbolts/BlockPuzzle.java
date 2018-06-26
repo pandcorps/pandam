@@ -32,6 +32,7 @@ import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.tile.*;
+import org.pandcorps.pandax.visual.*;
 
 public abstract class BlockPuzzle {
     protected final static String RES_BG = BotsnBoltsGame.RES + "bg/";
@@ -563,6 +564,45 @@ public abstract class BlockPuzzle {
         protected final static Panmage getElectricityImage() {
             return (image = getImage(image, "Electricity", null, null, null));
         }
+    }
+    
+    protected final static void crumble(final int tileIndex) {
+        continueCrumble(BotsnBoltsGame.tm, tileIndex, 0);
+    }
+    
+    private final static void continueCrumble(final TileMap tm, final int tileIndex, final int imgIndex) {
+        if (imgIndex > 2) {
+            finishCrumble(tm, tileIndex);
+            return;
+        }
+        tm.setForeground(tileIndex, getCrumbleImage(imgIndex), Tile.BEHAVIOR_SOLID);
+        Pangine.getEngine().addTimer(tm, 5, new TimerListener() {
+            @Override public final void onTimer(final TimerEvent event) {
+                if (RoomChanger.isChanging()) {
+                    return;
+                }
+                continueCrumble(tm, tileIndex, imgIndex + 1);
+            }});
+    }
+    
+    private final static void finishCrumble(final TileMap tm, final int tileIndex) {
+        tm.setForeground(tileIndex, null, Tile.BEHAVIOR_OPEN);
+        DrillEnemy.removeShadow(tm, tileIndex);
+        final Panple pos = new ImplPanple();
+        tm.savePosition(pos, tileIndex);
+        pos.addX(8);
+        Player.shatter(pos, DrillEnemy.getDirtShatter());
+    }
+    
+    private final static Panmage[] crumble = new Panmage[3];
+    
+    private final static Panmage getCrumbleImage(final int i) {
+        Panmage img = crumble[i];
+        if (img == null) {
+            img = Pangine.getEngine().createImage("dirt.crumble." + i, null, null, null, BotsnBoltsGame.RES + "misc/DirtCrumble" + (i + 1) + ".png");
+            crumble[i] = img;
+        }
+        return img;
     }
     
     // Shooting the BurstBlock will start a chain reaction, bursting adjacent blocks in the puzzle

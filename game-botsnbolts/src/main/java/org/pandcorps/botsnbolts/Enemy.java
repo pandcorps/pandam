@@ -1260,11 +1260,14 @@ public abstract class Enemy extends Chr implements CollisionListener {
                 partialTileLeft = null;
                 partialTileRight = null;
                 final TileMap tm = BotsnBoltsGame.tm;
-                final int index = tm.getContainer(this);
-                final int edgeIndex = tm.getNeighbor(index, Direction.South);
-                if (tm.getTile(edgeIndex) == RoomLoader.getTile('D')) {
-                    tm.setTile(edgeIndex, null);
-                }
+                removeShadow(tm, tm.getContainer(this));
+            }
+        }
+        
+        protected final static void removeShadow(final TileMap tm, final int index) {
+            final int edgeIndex = tm.getNeighbor(index, Direction.South);
+            if (tm.getTile(edgeIndex) == RoomLoader.getTile('D')) {
+                tm.setTile(edgeIndex, null);
             }
         }
         

@@ -597,22 +597,30 @@ public final class Player extends Chr implements Warpable {
     
     protected final static void shatter(final Panctor src, final Panmage img, final int offY,
                                         final boolean topLeft, final boolean topRight, final boolean bottomLeft, final boolean bottomRight) {
-        final int m = src.getMirrorMultiplier();
-        final Panple pos = src.getPosition();
-        final float x = pos.getX(), y = pos.getY() + offY;
-        newDiver(src, img, x - m * 4, y + 4, -m, 3, false, false, topLeft);
-        newDiver(src, img, x + m * 4, y + 4, m, 3, true, false, topRight);
-        newDiver(src, img, x - m * 4, y - 4, -m * 2, 2, false, true, bottomLeft);
-        newDiver(src, img, x + m * 4, y - 4, m * 2, 2, true, true, bottomRight);
+        shatter(src.getLayer(), src.getPosition(), src.isMirror(), img, offY, topLeft, topRight, bottomLeft, bottomRight);
     }
     
-    private final static void newDiver(final Panctor src, final Panmage img, final float x, final float y, final float xv, final float yv,
+    protected final static void shatter(final Panple pos, final Panmage img) {
+        shatter(BotsnBoltsGame.getLayer(), pos, false, img, CENTER_Y, true, true, true, true);
+    }
+    
+    protected final static void shatter(final Panlayer layer, final Panple pos, final boolean mirror, final Panmage img, final int offY,
+                                        final boolean topLeft, final boolean topRight, final boolean bottomLeft, final boolean bottomRight) {
+        final int m = Panctor.getMirrorMultiplier(mirror);
+        final float x = pos.getX(), y = pos.getY() + offY;
+        newDiver(layer, mirror, img, x - m * 4, y + 4, -m, 3, false, false, topLeft);
+        newDiver(layer, mirror, img, x + m * 4, y + 4, m, 3, true, false, topRight);
+        newDiver(layer, mirror, img, x - m * 4, y - 4, -m * 2, 2, false, true, bottomLeft);
+        newDiver(layer, mirror, img, x + m * 4, y - 4, m * 2, 2, true, true, bottomRight);
+    }
+    
+    private final static void newDiver(final Panlayer layer, final boolean srcMirror, final Panmage img, final float x, final float y, final float xv, final float yv,
                                        final boolean mirror, final boolean flip, final boolean needed) {
         if (!needed) {
             return;
         }
-        final Diver diver = new Diver(src.getLayer(), img, x, y, BotsnBoltsGame.DEPTH_BURST, xv * newDiveMultiplier(), yv * newDiveMultiplier(), gTuple);
-        diver.setMirror(mirror ^ src.isMirror());
+        final Diver diver = new Diver(layer, img, x, y, BotsnBoltsGame.DEPTH_BURST, xv * newDiveMultiplier(), yv * newDiveMultiplier(), gTuple);
+        diver.setMirror(mirror ^ srcMirror);
         diver.setFlip(flip);
     }
     
@@ -827,7 +835,7 @@ public final class Player extends Chr implements Warpable {
         } else if (BotsnBoltsGame.TILE_CRUMBLE == b) {
             final TileMap tm = BotsnBoltsGame.tm;
             if ((v <= 0) && (getPosition().getY() == ((tm.getRow(index) + 1) * tm.getTileHeight()))) {
-                //TODO
+                BlockPuzzle.crumble(index);
             }
         }
     }
