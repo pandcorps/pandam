@@ -824,6 +824,11 @@ public final class Player extends Chr implements Warpable {
             }
         } else if (BotsnBoltsGame.TILE_DEFEAT == b) {
             defeat();
+        } else if (BotsnBoltsGame.TILE_CRUMBLE == b) {
+            final TileMap tm = BotsnBoltsGame.tm;
+            if ((v <= 0) && (getPosition().getY() == ((tm.getRow(index) + 1) * tm.getTileHeight()))) {
+                //TODO
+            }
         }
     }
     
