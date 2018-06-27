@@ -372,7 +372,11 @@ public class Panctor extends BasePantity implements SpecPanctor {
     }
     
     public final int getMirrorMultiplier() {
-        return isMirror() ? -1 : 1;
+        return getMirrorMultiplier(isMirror());
+    }
+    
+    public final static int getMirrorMultiplier(final boolean mirror) {
+        return mirror ? -1 : 1;
     }
     
     @Override
