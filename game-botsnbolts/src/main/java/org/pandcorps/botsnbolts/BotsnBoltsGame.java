@@ -36,8 +36,10 @@ import org.pandcorps.core.img.*;
 import org.pandcorps.game.*;
 import org.pandcorps.game.actor.*;
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.Panteraction.*;
 import org.pandcorps.pandam.event.action.*;
 import org.pandcorps.pandam.impl.*;
+import org.pandcorps.pandax.in.*;
 import org.pandcorps.pandax.text.*;
 import org.pandcorps.pandax.text.Fonts.*;
 import org.pandcorps.pandax.tile.*;
@@ -506,7 +508,7 @@ public final class BotsnBoltsGame extends BaseGame {
         playerMirror = false;
         volatileImages = loadPlayerImages("volatile", "Volatile", "Byte", "Baud");
         closePlayerImages();
-        pc = new PlayerContext(new Profile(), org.pandcorps.pandax.in.ControlScheme.getDefaultKeyboard(), voidImages);
+        pc = new PlayerContext(new Profile(), voidImages);
     }
     
     private static Img[] playerDefeatOrb = null;
@@ -999,11 +1001,20 @@ public final class BotsnBoltsGame extends BaseGame {
             actor.getPosition().set((w - size.getX()) / 2, (engine.getEffectiveHeight() - size.getY()) * 3 / 4);
             final Panroom room = Pangame.getGame().getCurrentRoom();
             room.addActor(actor);
-            addText(room, "Press anything", w2, 56);
+            addText(room, Menu.isTouchEnabled() ? "Tap to start" : "Press anything", w2, 56);
             addText(room, "Copyright " + Pantext.CHAR_COPYRIGHT + " " + YEAR, w2, 26);
             addText(room, AUTHOR, w2, 16);
             actor.register(new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
+                    final Device device = event.getInput().getDevice();
+                    final ControlScheme ctrl;
+                    if (device instanceof Touchscreen) {
+                        ctrl = ControlScheme.getDefaultKeyboard();
+                        ctrl.setDevice(device);
+                    } else {
+                        ctrl = ControlScheme.getDefault(device);
+                    }
+                    pc.setControlScheme(ctrl);
                     Menu.goLevelSelect();
                 }});
         }

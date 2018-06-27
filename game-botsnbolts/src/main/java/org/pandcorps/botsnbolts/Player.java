@@ -2037,14 +2037,17 @@ public final class Player extends Chr implements Warpable {
     
     protected final static class PlayerContext {
         protected final Profile prf;
-        protected final ControlScheme ctrl;
+        protected ControlScheme ctrl;
         protected final PlayerImages pi;
         protected Player player = null;
         
-        protected PlayerContext(final Profile prf, final ControlScheme ctrl, final PlayerImages pi) {
+        protected PlayerContext(final Profile prf, final PlayerImages pi) {
             this.prf = prf;
-            this.ctrl = ctrl;
             this.pi = pi;
+        }
+        
+        protected final void setControlScheme(final ControlScheme ctrl) {
+            this.ctrl = ctrl;
         }
         
         protected final static Player getPlayer(final PlayerContext pc) {
