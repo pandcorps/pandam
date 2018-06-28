@@ -586,7 +586,16 @@ public class Menu {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
                     startLevel(level);
                 }});
-            grid.cells[level.selectY][level.selectX].level = level;
+            final LevelSelectCell cell = grid.cells[level.selectY][level.selectX];
+            cell.level = level;
+            grid.register(btn, new ActionStartListener() {
+                @Override public final void onActionStart(final ActionStartEvent event) {
+                    grid.currentCell = cell;
+                }});
+            btn.setActiveListener(new TouchButtonActiveListener() {
+                @Override public final void onActive(final TouchButton btn) {
+                    grid.currentCell = cell;
+                }});
         }
     }
     
