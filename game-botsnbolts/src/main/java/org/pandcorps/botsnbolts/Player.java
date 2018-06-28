@@ -2088,6 +2088,7 @@ public final class Player extends Chr implements Warpable {
         protected final Panmage powerBox;
         protected final Map<String, Panmage> boltBoxes; // Each bolt has a unique box image
         protected final Panmage diskBox;
+        protected final Panmage highlightBox;
         protected final Panmage portrait;
         private final HudMeterImages hudMeterImages;
         protected final String animalName;
@@ -2102,7 +2103,7 @@ public final class Player extends Chr implements Warpable {
                                final Panimation burst, final Panframe[] ball, final Panmage warp, final Panimation materialize, final Panimation bomb,
                                final Panmage link, final Panimation batterySmall, final Panimation batteryMedium, final Panimation batteryBig,
                                final Panmage doorBolt, final Panmage bolt, final Panmage disk,
-                               final Panmage powerBox, final Map<String, Panmage> boltBoxes, final Panmage diskBox,
+                               final Panmage powerBox, final Map<String, Panmage> boltBoxes, final Panmage diskBox, final Panmage highlightBox,
                                final Panmage portrait, final HudMeterImages hudMeterImages, final String animalName, final String birdName) {
             this.basicSet = basicSet;
             this.shootSet = shootSet;
@@ -2136,6 +2137,7 @@ public final class Player extends Chr implements Warpable {
             this.powerBox = powerBox;
             this.boltBoxes = boltBoxes;
             this.diskBox = diskBox;
+            this.highlightBox = highlightBox;
             this.portrait = portrait;
             this.hudMeterImages = hudMeterImages;
             this.animalName = animalName;

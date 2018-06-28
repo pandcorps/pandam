@@ -345,9 +345,6 @@ public final class BotsnBoltsGame extends BaseGame {
     }
     
     protected final static Panmage getBox() {
-        if (box == null) {
-            box = Pangine.getEngine().createImage("box", RES + "misc/Box.png");
-        }
         return box;
     }
     
@@ -533,6 +530,7 @@ public final class BotsnBoltsGame extends BaseGame {
     private static Img playerPowerBox = null;
     private static Map<String, Img> playerBoltBoxes = null;
     private static Img playerDiskBox = null;
+    private static Img playerHighlightBox = null;
     private static boolean playerMirror = true;
     
     private final static void openPlayerImages(final String dir, final String name) {
@@ -563,7 +561,11 @@ public final class BotsnBoltsGame extends BaseGame {
             playerBoltBoxes.put(upgradeName, Imtil.load(pre + upgradeName + "Box.png", false));
         }
         playerDiskBox = Imtil.load(pre + "DiskBox.png", false);
+        playerHighlightBox = Imtil.load(RES + "misc/Box.png", false);
         hudMeterImgs = Imtil.loadStrip(pre + "Meter.png", 8, false);
+        box = Pangine.getEngine().createImage("box", playerHighlightBox);
+        final short s0 = 0, s96 = 96, s192 = 192;
+        Imtil.filterImg(playerHighlightBox, newFilter(Pancolor.DARK_GREY, Pancolor.GREEN, new Pancolor(s96), new Pancolor(s0, s192, s0)));
     }
     
     private final static void filterPlayerImages(final Pancolor s1, final Pancolor d1, final Pancolor s2, final Pancolor d2) {
@@ -592,6 +594,7 @@ public final class BotsnBoltsGame extends BaseGame {
             Imtil.filterImg(img, f);
         }
         Imtil.filterImg(playerDiskBox, f);
+        Imtil.filterImg(playerHighlightBox, f);
         filterImgs(hudMeterImgs, f);
     }
     
@@ -636,6 +639,8 @@ public final class BotsnBoltsGame extends BaseGame {
         playerBoltBoxes = null;
         playerDiskBox.close();
         playerDiskBox = null;
+        playerHighlightBox.close();
+        playerHighlightBox = null;
         //playerDefeatOrb/playerDisk/hudMeterImgs closed separately
     }
     
@@ -719,13 +724,14 @@ public final class BotsnBoltsGame extends BaseGame {
             boltBoxes.put(boltName, engine.createImage(pre + boltName + "Box", CENTER_16, minCube, maxCube, entry.getValue()));
         }
         final Panmage diskBox = engine.createImage(pre + "DiskBox", CENTER_16, minCube, maxCube, playerDiskBox);
+        final Panmage highlightBox = engine.createImage(pre + "HighlightBox", playerHighlightBox);
         
         final Panmage portrait = engine.createImage(pre + "Portrait", pre + "Portrait.png");
         
         final HudMeterImages hudMeterImages = newHudMeterImages(pre + "Meter", hudMeterImgs);
         
         return new PlayerImages(basicSet, shootSet, hurt, frozen, defeat, climb, climbShoot, climbTop, jumpAimDiag, jumpAimUp, basicProjectile, projectile2, projectile3, charge, chargeVert, charge2, chargeVert2,
-            burst, ball, warp, materialize, bomb, link, batterySml, batteryMed, batteryBig, doorBolt, bolt, disk, powerBox, boltBoxes, diskBox, portrait, hudMeterImages, animalName, birdName);
+            burst, ball, warp, materialize, bomb, link, batterySml, batteryMed, batteryBig, doorBolt, bolt, disk, powerBox, boltBoxes, diskBox, highlightBox, portrait, hudMeterImages, animalName, birdName);
     }
     
     private final static PlayerImagesSubSet loadPlayerImagesSubSet(final String path, final String name, final boolean startNeeded, final Panple os, final Panple o, final Panple oj) {

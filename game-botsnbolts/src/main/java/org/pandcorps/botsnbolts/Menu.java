@@ -529,15 +529,67 @@ public class Menu {
             engine.registerTouchButton(btn);
             grid.register(btn, new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
-                    RoomLoader.startX = level.levelX;
-                    RoomLoader.startY = level.levelY;
-                    Panscreen.set(new BotsnBoltsGame.BotsnBoltsScreen());
+                    startLevel(level);
                 }});
+            grid.cells[level.selectY][level.selectX].level = level;
         }
+    }
+    
+    private final static void startLevel(final BotLevel level) {
+        RoomLoader.startX = level.levelX;
+        RoomLoader.startY = level.levelY;
+        Panscreen.set(new BotsnBoltsGame.BotsnBoltsScreen());
     }
     
     private final static class LevelSelectGrid extends Panctor {
         private static Panmage bg = null;
+        private final LevelSelectCell[][] cells = new LevelSelectCell[3][3];
+        private LevelSelectCell currentCell;
+        
+        {
+            for (int j = 0; j < 3; j++) {
+                final LevelSelectCell[] row = cells[j];
+                for (int i = 0; i < 3; i++) {
+                    row[i] = new LevelSelectCell(i, j);
+                }
+            }
+            currentCell = cells[1][1];
+            final ControlScheme ctrl = BotsnBoltsGame.pc.ctrl;
+            register(ctrl.getUp(), new ActionStartListener() {
+                @Override public final void onActionStart(final ActionStartEvent event) {
+                    if (currentCell.j < 2) {
+                        currentCell = cells[currentCell.j + 1][currentCell.i];
+                    }
+                }});
+            register(ctrl.getDown(), new ActionStartListener() {
+                @Override public final void onActionStart(final ActionStartEvent event) {
+                    if (currentCell.j > 0) {
+                        currentCell = cells[currentCell.j - 1][currentCell.i];
+                    }
+                }});
+            register(ctrl.getRight(), new ActionStartListener() {
+                @Override public final void onActionStart(final ActionStartEvent event) {
+                    if (currentCell.i < 2) {
+                        currentCell = cells[currentCell.j][currentCell.i + 1];
+                    }
+                }});
+            register(ctrl.getLeft(), new ActionStartListener() {
+                @Override public final void onActionStart(final ActionStartEvent event) {
+                    if (currentCell.i > 0) {
+                        currentCell = cells[currentCell.j][currentCell.i - 1];
+                    }
+                }});
+            final ActionEndListener selectListener = new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) {
+                    final BotLevel level = currentCell.level;
+                    if (level != null) {
+                        startLevel(level);
+                    }
+                }};
+            register(ctrl.get1(), selectListener);
+            register(ctrl.get2(), selectListener);
+            register(ctrl.getSubmit(), selectListener);
+        }
         
         @Override
         protected final void renderView(final Panderer renderer) {
@@ -545,17 +597,17 @@ public class Menu {
             if (bg == null) {
                 bg = Pangine.getEngine().createImage("select.bg", BotsnBoltsGame.RES + "menu/SelectBg.png");
             }
-            for (int j = 0; j < 3; j++) {
-                final int y = 24 + (j * 64);
-                for (int i = 0; i < 3; i++) {
-                    renderBox(renderer, layer, 88 + (i * 80), y);
+            final Panmage box = BotsnBoltsGame.getBox();
+            for (final LevelSelectCell[] row : cells) {
+                int y = 0;
+                for (final LevelSelectCell cell : row) {
+                    renderBox(renderer, layer, cell.x, y = cell.y, (cell == currentCell) ? BotsnBoltsGame.pc.pi.highlightBox : box);
                 }
                 renderer.render(layer, bg, 0, y + 8, BotsnBoltsGame.DEPTH_BEHIND, 0, 0, BotsnBoltsGame.GAME_W, 32, 0, false, false);
             }
         }
         
-        private final static void renderBox(final Panderer renderer, final Panlayer layer, final int x, final int y) {
-            final Panmage img = BotsnBoltsGame.getBox();
+        private final static void renderBox(final Panderer renderer, final Panlayer layer, final int x, final int y, final Panmage img) {
             final int x8 = x + 8, y8 = y + 8, x40 = x + 40, y40 = y + 40;
             renderer.render(layer, img, x, y, BotsnBoltsGame.DEPTH_BG, 0, 24, 8, 8, 0, false, false);
             renderer.render(layer, img, x40, y, BotsnBoltsGame.DEPTH_BG, 24, 24, 8, 8, 0, false, false);
@@ -568,6 +620,21 @@ public class Menu {
                 renderer.render(layer, img, x, y8 + i16, BotsnBoltsGame.DEPTH_BG, 0, 8, 8, 16, 0, false, false);
                 renderer.render(layer, img, x40, y8 + i16, BotsnBoltsGame.DEPTH_BG, 24, 8, 8, 16, 0, false, false);
             }
+        }
+    }
+    
+    private final static class LevelSelectCell {
+        private final int i;
+        private final int j;
+        private final int x;
+        private final int y;
+        private BotLevel level = null;
+        
+        private LevelSelectCell(final int i, final int j) {
+            this.i = i;
+            this.j = j;
+            x = 88 + (i * 80);
+            y = 24 + (j * 64);
         }
     }
 }
