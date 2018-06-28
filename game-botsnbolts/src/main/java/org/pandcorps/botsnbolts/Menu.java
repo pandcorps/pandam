@@ -429,9 +429,14 @@ public class Menu {
         addCursor(layer);
         final Panctor actor = play.getActor();
         for (int i = 0; i < 3; i++) {
+            final TouchButton pauseMenuButton = pauseMenuButtons[i];
             final int newPauseMenuIndex = i;
-            actor.register(pauseMenuButtons[i], new ActionStartListener() {
+            actor.register(pauseMenuButton, new ActionStartListener() {
                 @Override public final void onActionStart(final ActionStartEvent event) {
+                    setPauseMenuButton(newPauseMenuIndex);
+                }});
+            pauseMenuButton.setActiveListener(new TouchButtonActiveListener() {
+                @Override public final void onActive(final TouchButton btn) {
                     setPauseMenuButton(newPauseMenuIndex);
                 }});
         }
