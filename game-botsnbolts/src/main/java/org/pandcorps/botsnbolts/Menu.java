@@ -410,23 +410,31 @@ public class Menu {
         final int px = (BotsnBoltsGame.GAME_W - (numBtns * btnSize) - ((numBtns - 1) * spaceBetween)) / 2;
         final int py = (BotsnBoltsGame.GAME_H - btnSize) / 2;
         final Panlayer layer = BotsnBoltsGame.hud;
-        final Panmage box = BotsnBoltsGame.getBox();
+        final Panmage active = player.pi.highlightBox;
         pauseMenuIndex = 0;
-        pauseMenuButtons[0] = play = addPauseMenuButton(layer, "Play", px, py, player.pi.highlightBox, imgPlay);
+        pauseMenuButtons[0] = play = addPauseMenuButton(layer, "Play", px, py, active, imgPlay);
         player.registerPause(play);
-        pauseMenuButtons[1] = levelSelect = addPauseMenuButton(layer, "LevelSelect", px + nextOffset, py, box, imgLevelSelect);
+        play.activate(true);
+        pauseMenuButtons[1] = levelSelect = addPauseMenuButton(layer, "LevelSelect", px + nextOffset, py, active, imgLevelSelect);
         player.healthMeter.register(levelSelect, new ActionEndListener() {
             @Override public final void onActionEnd(final ActionEndEvent event) {
                 destroyPauseMenu();
                 goLevelSelect();
             }});
-        pauseMenuButtons[2] = quit = addPauseMenuButton(layer, "Quit", px + (nextOffset * 2), py, box, imgQuit);
+        pauseMenuButtons[2] = quit = addPauseMenuButton(layer, "Quit", px + (nextOffset * 2), py, active, imgQuit);
         player.healthMeter.register(quit, new ActionEndListener() {
             @Override public final void onActionEnd(final ActionEndEvent event) {
                 Pangine.getEngine().exit();
             }});
         addCursor(layer);
         final Panctor actor = play.getActor();
+        for (int i = 0; i < 3; i++) {
+            final int newPauseMenuIndex = i;
+            actor.register(pauseMenuButtons[i], new ActionStartListener() {
+                @Override public final void onActionStart(final ActionStartEvent event) {
+                    setPauseMenuButton(newPauseMenuIndex);
+                }});
+        }
         final ControlScheme ctrl = player.pc.ctrl;
         actor.register(ctrl.getRight(), new ActionStartListener() {
             @Override public final void onActionStart(final ActionStartEvent event) {
@@ -438,7 +446,12 @@ public class Menu {
             }});
         final ActionEndListener selectListener = new ActionEndListener() {
             @Override public final void onActionEnd(final ActionEndEvent event) {
-                for (final ActionEndListener listener : Coltil.copy(Pangine.getEngine().getInteraction().getEndListeners(pauseMenuButtons[pauseMenuIndex]))) {
+                final TouchButton pauseMenuButton = pauseMenuButtons[pauseMenuIndex];
+                if (!pauseMenuButton.isActivated()) {
+                    pauseMenuButton.activate(true);
+                    return;
+                }
+                for (final ActionEndListener listener : Coltil.copy(Pangine.getEngine().getInteraction().getEndListeners(pauseMenuButton))) {
                     listener.onActionEnd(event);
                 }
             }};
@@ -447,26 +460,35 @@ public class Menu {
     }
     
     private final static void changePauseMenuButton(final int dir) {
-        if ((dir == -1) && (pauseMenuIndex == 0)) {
-            return;
-        } else if ((dir == 1) && (pauseMenuIndex == 2)) {
+        if (((dir == -1) && (pauseMenuIndex == 0)) || ((dir == 1) && (pauseMenuIndex == 2))) {
+            final TouchButton pauseMenuButton = pauseMenuButtons[pauseMenuIndex];
+            if (!pauseMenuButton.isActivated()) {
+                pauseMenuButton.activate(true);
+            }
             return;
         }
-        pauseMenuButtons[pauseMenuIndex].getActor().setView(BotsnBoltsGame.getBox());
-        pauseMenuIndex += dir;
-        pauseMenuButtons[pauseMenuIndex].getActor().setView(BotsnBoltsGame.pc.pi.highlightBox);
+        setPauseMenuButton(pauseMenuIndex + dir);
     }
     
-    private final static TouchButton addPauseMenuButton(final Panlayer layer, final String name, final int x, final int y, final Panmage box, final Panmage img) {
+    private final static void setPauseMenuButton(final int newPauseMenuIndex) {
+        if (newPauseMenuIndex == pauseMenuIndex) {
+            return;
+        }
+        pauseMenuButtons[pauseMenuIndex].activate(false);
+        pauseMenuIndex = newPauseMenuIndex;
+        pauseMenuButtons[pauseMenuIndex].activate(true);
+    }
+    
+    private final static TouchButton addPauseMenuButton(final Panlayer layer, final String name, final int x, final int y, final Panmage active, final Panmage img) {
         final TouchButton button;
         final Pangine engine = Pangine.getEngine();
         final Panteraction in = engine.getInteraction();
-        button = new TouchButton(in, name, x, y, 32, 32, false);
+        button = new TouchButton(in, name, x, y, 32, 32, true);
         button.setLayer(layer);
         engine.registerTouchButton(button);
         final Panctor actor = new Panctor();
-        actor.setView(box);
-        button.setActor(actor, box);
+        actor.setView(BotsnBoltsGame.getBox());
+        button.setActor(actor, active);
         actor.getPosition().set(x, y, BotsnBoltsGame.DEPTH_HUD);
         button.setOverlay(img, 8, 8);
         layer.addActor(actor);
