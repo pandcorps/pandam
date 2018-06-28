@@ -402,28 +402,62 @@ public class Menu {
         }
     }
     
+    private static TouchButton[] pauseMenuButtons = new TouchButton[3];
+    private static int pauseMenuIndex = 0;
+    
     protected final static void addPauseMenu(final Player player) {
         final int numBtns = 3, btnSize = 32, spaceBetween = 32, nextOffset = btnSize + spaceBetween;
         final int px = (BotsnBoltsGame.GAME_W - (numBtns * btnSize) - ((numBtns - 1) * spaceBetween)) / 2;
         final int py = (BotsnBoltsGame.GAME_H - btnSize) / 2;
         final Panlayer layer = BotsnBoltsGame.hud;
-        play = addPauseMenuButton(layer, "Play", px, py, imgPlay);
+        final Panmage box = BotsnBoltsGame.getBox();
+        pauseMenuIndex = 0;
+        pauseMenuButtons[0] = play = addPauseMenuButton(layer, "Play", px, py, player.pi.highlightBox, imgPlay);
         player.registerPause(play);
-        levelSelect = addPauseMenuButton(layer, "LevelSelect", px + nextOffset, py, imgLevelSelect);
+        pauseMenuButtons[1] = levelSelect = addPauseMenuButton(layer, "LevelSelect", px + nextOffset, py, box, imgLevelSelect);
         player.healthMeter.register(levelSelect, new ActionEndListener() {
             @Override public final void onActionEnd(final ActionEndEvent event) {
                 destroyPauseMenu();
                 goLevelSelect();
             }});
-        quit = addPauseMenuButton(layer, "Quit", px + (nextOffset * 2), py, imgQuit);
+        pauseMenuButtons[2] = quit = addPauseMenuButton(layer, "Quit", px + (nextOffset * 2), py, box, imgQuit);
         player.healthMeter.register(quit, new ActionEndListener() {
             @Override public final void onActionEnd(final ActionEndEvent event) {
                 Pangine.getEngine().exit();
             }});
         addCursor(layer);
+        final Panctor actor = play.getActor();
+        final ControlScheme ctrl = player.pc.ctrl;
+        actor.register(ctrl.getRight(), new ActionStartListener() {
+            @Override public final void onActionStart(final ActionStartEvent event) {
+                changePauseMenuButton(1);
+            }});
+        actor.register(ctrl.getLeft(), new ActionStartListener() {
+            @Override public final void onActionStart(final ActionStartEvent event) {
+                changePauseMenuButton(-1);
+            }});
+        final ActionEndListener selectListener = new ActionEndListener() {
+            @Override public final void onActionEnd(final ActionEndEvent event) {
+                for (final ActionEndListener listener : Coltil.copy(Pangine.getEngine().getInteraction().getEndListeners(pauseMenuButtons[pauseMenuIndex]))) {
+                    listener.onActionEnd(event);
+                }
+            }};
+        actor.register(ctrl.get1(), selectListener);
+        actor.register(ctrl.get2(), selectListener);
     }
     
-    private final static TouchButton addPauseMenuButton(final Panlayer layer, final String name, final int x, final int y, final Panmage img) {
+    private final static void changePauseMenuButton(final int dir) {
+        if ((dir == -1) && (pauseMenuIndex == 0)) {
+            return;
+        } else if ((dir == 1) && (pauseMenuIndex == 2)) {
+            return;
+        }
+        pauseMenuButtons[pauseMenuIndex].getActor().setView(BotsnBoltsGame.getBox());
+        pauseMenuIndex += dir;
+        pauseMenuButtons[pauseMenuIndex].getActor().setView(BotsnBoltsGame.pc.pi.highlightBox);
+    }
+    
+    private final static TouchButton addPauseMenuButton(final Panlayer layer, final String name, final int x, final int y, final Panmage box, final Panmage img) {
         final TouchButton button;
         final Pangine engine = Pangine.getEngine();
         final Panteraction in = engine.getInteraction();
@@ -431,7 +465,6 @@ public class Menu {
         button.setLayer(layer);
         engine.registerTouchButton(button);
         final Panctor actor = new Panctor();
-        final Panmage box = BotsnBoltsGame.getBox();
         actor.setView(box);
         button.setActor(actor, box);
         actor.getPosition().set(x, y, BotsnBoltsGame.DEPTH_HUD);
