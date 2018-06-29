@@ -419,6 +419,10 @@ public abstract class Panput {
             }
 		}
 		
+		public boolean isActivated() {
+		    return (actor != null) && (actor.getView() == imgActive);
+		}
+		
 		// Action events should be handled like any other input; TouchButton-specific reactions can be handled separately here
 		public void setActiveListener(final TouchButtonActiveListener activeListener) {
 		    this.activeListener = activeListener;
