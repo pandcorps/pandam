@@ -186,10 +186,18 @@ public final class Player extends Chr implements Warpable {
         final Panteraction interaction = engine.getInteraction();
         final Panput[] toggleJumpInput = getInputArray(interaction.KEY_SHIFT_LEFT, Menu.toggleJump);
         final Panput[] toggleAttackInput = getInputArray(interaction.KEY_TAB, Menu.toggleAttack);
-        register(toggleJumpInput, new ActionStartListener() {
-            @Override public final void onActionStart(final ActionStartEvent event) { toggleJumpMode(); }});
-        register(toggleAttackInput, new ActionStartListener() {
-            @Override public final void onActionStart(final ActionStartEvent event) { toggleShootMode(); }});
+        final ActionStartListener toggleJumpListener = new ActionStartListener() {
+            @Override public final void onActionStart(final ActionStartEvent event) { toggleJumpMode(1); }};
+        final ActionStartListener toggleShootListener = new ActionStartListener() {
+            @Override public final void onActionStart(final ActionStartEvent event) { toggleShootMode(1); }};
+        register(toggleJumpInput, toggleJumpListener);
+        register(toggleAttackInput, toggleShootListener);
+        register(interaction.KEY_COMMA, new ActionStartListener() {
+            @Override public final void onActionStart(final ActionStartEvent event) { toggleJumpMode(-1); }});
+        register(interaction.KEY_BRACKET_LEFT, new ActionStartListener() {
+            @Override public final void onActionStart(final ActionStartEvent event) { toggleShootMode(-1); }});
+        register(interaction.KEY_PERIOD, toggleJumpListener);
+        register(interaction.KEY_BRACKET_RIGHT, toggleShootListener);
         registerCapture(this);
     }
     
@@ -227,34 +235,42 @@ public final class Player extends Chr implements Warpable {
         }
     }
     
-    private final void toggleJumpMode() {
+    private final void toggleJumpMode(final int dir) {
         prf.jumpMode.onDeselect(this);
-        do {
-            if (prf.jumpMode == JUMP_NORMAL) {
-                prf.jumpMode = JUMP_BALL;
-            } else if (prf.jumpMode == JUMP_BALL) {
-                prf.jumpMode = JUMP_SPRING;
-            } else if (prf.jumpMode == JUMP_SPRING) {
-                prf.jumpMode = JUMP_GRAPPLING_HOOK;
-            } else {
-                prf.jumpMode = JUMP_NORMAL;
-            }
-        } while (!prf.jumpMode.isAvailable(this));
+        prf.jumpMode = toggleInputMode(JUMP_MODES, prf.jumpMode, dir);
     }
     
-    private final void toggleShootMode() {
-        do {
-            if (prf.shootMode == SHOOT_NORMAL) {
-                prf.shootMode = SHOOT_RAPID;
-            } else if (prf.shootMode == SHOOT_RAPID) {
-                prf.shootMode = SHOOT_SPREAD;
-            } else if (prf.shootMode == SHOOT_SPREAD) {
-                prf.shootMode = SHOOT_CHARGE;
-            } else {
-                prf.shootMode = SHOOT_NORMAL;
-            }
-        } while (!prf.shootMode.isAvailable(this));
+    private final void toggleShootMode(final int dir) {
+        prf.shootMode = toggleInputMode(SHOOT_MODES, prf.shootMode, dir);
         prf.shootMode.onSelect(this);
+    }
+    
+    private final <T extends InputMode> T toggleInputMode(final T[] modes, final T currentMode, final int dir) {
+        final int last = modes.length - 1;
+        int index = getIndex(modes, currentMode);
+        while(true) {
+            index += dir;
+            if (index > last) {
+                index = 0;
+            } else if (index < 0) {
+                index = last;
+            }
+            final T newMode = modes[index];
+            if (newMode.isAvailable(this)) {
+                return newMode;
+            }
+        }
+    }
+    
+    private final static int getIndex(final Object[] a, final Object toFind) {
+        final int size = a.length;
+        for (int i = 0; i < size; i++) {
+            final Object o = a[i];
+            if (toFind.equals(o)) {
+                return i;
+            }
+        }
+        return 0;
     }
     
     private final boolean isFree() {
@@ -2335,6 +2351,8 @@ public final class Player extends Chr implements Warpable {
         }
     };
     
+    private final static ShootMode[] SHOOT_MODES = { SHOOT_NORMAL, SHOOT_CHARGE, SHOOT_SPREAD, SHOOT_RAPID };
+    
     protected abstract static class JumpMode extends InputMode {
         protected JumpMode(final Upgrade requiredUpgrade) {
             super(requiredUpgrade);
@@ -2379,6 +2397,8 @@ public final class Player extends Chr implements Warpable {
             player.startSpring();
         }
     };
+    
+    private final static JumpMode[] JUMP_MODES = { JUMP_NORMAL, JUMP_BALL, JUMP_SPRING, JUMP_GRAPPLING_HOOK };
     
     protected final static class Bubble extends Panctor implements StepListener {
         private int dir;
