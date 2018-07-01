@@ -76,7 +76,7 @@ public class ControlScheme {
             if (d.getName().startsWith("Controller")) {
             	set(c.DOWN, c.UP, c.LEFT, c.RIGHT, c.BUTTON_0, null, c.BUTTONS.get(2), c.BUTTONS.get(c.BUTTONS.size() - 3)); //TODO Fix act2
             } else {
-            	set(c.DOWN, c.UP, c.LEFT, c.RIGHT, c.BUTTON_1, null, c.BUTTON_0, c.BUTTONS.get(c.BUTTONS.size() - 1));
+            	set(c.DOWN, c.UP, c.LEFT, c.RIGHT, c.BUTTON_1, c.BUTTON_0, c.BUTTONS.get(c.BUTTONS.size() - 2), c.BUTTONS.get(c.BUTTONS.size() - 1));
             }
         } else if (d instanceof Keyboard) {
             setDefaultKeyboard();
