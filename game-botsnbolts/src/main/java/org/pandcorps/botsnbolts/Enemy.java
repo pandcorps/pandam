@@ -2343,6 +2343,9 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
     }
     
+    protected final static class ShovelEnemy {
+    }
+    
     protected final static class ElectricityEnemy extends Enemy {
         private final static int DURATION_WAIT = 45;
         private final static int DURATION_STRIKE = 15;
