@@ -98,6 +98,7 @@ public final class Player extends Chr implements Warpable {
     private int wrappedJumps = 0;
     private boolean prevUnderwater = false;
     private boolean sanded = false;
+    private int queuedX = 0;
     private int wallTimer = 0;
     private boolean wallMirror = false;
     protected boolean movedDuringJump = false;
@@ -705,7 +706,9 @@ public final class Player extends Chr implements Warpable {
             v = 0;
         }
         prevUnderwater = splashIfNeeded(this, prevUnderwater, this);
-        return onStepState();
+        final boolean ret = onStepState();
+        queuedX = 0;
+        return ret;
     }
     
     protected final static boolean splashIfNeeded(final Panctor src, final boolean prevUnderwater, final Player player) {
@@ -746,7 +749,14 @@ public final class Player extends Chr implements Warpable {
             Menu.hideUpDown();
         }
         prf.shootMode.onStep(this);
+        addQueuedX();
         return false;
+    }
+    
+    private final void addQueuedX() {
+        if (queuedX != 0) {
+            addX(queuedX);
+        }
     }
     
     private final static void splash(final Panctor src) {
@@ -840,19 +850,32 @@ public final class Player extends Chr implements Warpable {
     @Override
     protected final void onCollide(final int index) {
         final byte b = getBehavior(index);
-        if (BotsnBoltsGame.TILE_LIFT == b) {
-            final long clock = Pangine.getEngine().getClock();
-            if (clock > lastLift) {
-                addV(-1.5f * getG());
-                lastLift = clock;
-            }
-        } else if (BotsnBoltsGame.TILE_DEFEAT == b) {
-            defeat();
-        } else if (BotsnBoltsGame.TILE_CRUMBLE == b) {
-            final TileMap tm = BotsnBoltsGame.tm;
-            if ((v <= 0) && (getPosition().getY() == ((tm.getRow(index) + 1) * tm.getTileHeight()))) {
-                BlockPuzzle.crumble(index);
-            }
+        switch (b) {
+            case BotsnBoltsGame.TILE_LIFT :
+                final long clock = Pangine.getEngine().getClock();
+                if (clock > lastLift) {
+                    addV(-1.5f * getG());
+                    lastLift = clock;
+                }
+                break;
+            case BotsnBoltsGame.TILE_DEFEAT :
+                defeat();
+                break;
+            case BotsnBoltsGame.TILE_CRUMBLE :
+                if (isCollisionStandingOnTile(index)) {
+                    BlockPuzzle.crumble(index);
+                }
+                break;
+            case BotsnBoltsGame.TILE_CONVEYOR_LEFT :
+                if (isCollisionStandingOnTile(index)) {
+                    queuedX = -2;
+                }
+                break;
+            case BotsnBoltsGame.TILE_CONVEYOR_RIGHT :
+                if (isCollisionStandingOnTile(index)) {
+                    queuedX = 2;
+                }
+                break;
         }
     }
     
@@ -1692,6 +1715,7 @@ public final class Player extends Chr implements Warpable {
             } else if ((currentDisplay == crouch[1]) && (clock > (lastBall + 6))) {
                 player.setView(pi.ball[0]);
             }
+            player.addQueuedX();
             return false;
         }
         

@@ -514,6 +514,11 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
     protected void onCollide(final int tile) {
     }
     
+    protected final boolean isCollisionStandingOnTile(final int tile) {
+        final TileMap tm = getTileMap();
+        return (v <= 0) && (getPosition().getY() == ((tm.getRow(tile) + 1) * tm.getTileHeight()));
+    }
+    
     //@OverrideMe
     protected boolean isNearCheckNeeded() {
         return false;
