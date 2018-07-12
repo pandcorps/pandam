@@ -76,6 +76,8 @@ public final class BotsnBoltsGame extends BaseGame {
     protected final static byte TILE_SAND = 9;
     protected final static byte TILE_DEFEAT = 10;
     protected final static byte TILE_CRUMBLE = 11;
+    protected final static byte TILE_CONVEYOR_LEFT = 12;
+    protected final static byte TILE_CONVEYOR_RIGHT = 13;
     
     protected final static int DEPTH_PARALLAX_BG = 0;
     protected final static int DEPTH_PARALLAX_FG = 2;
@@ -84,18 +86,19 @@ public final class BotsnBoltsGame extends BaseGame {
     protected final static int DEPTH_BG = 8;
     protected final static int DEPTH_BETWEEN = 10;
     protected final static int DEPTH_FG = 12;
-    protected final static int DEPTH_CARRIER = 14;
-    protected final static int DEPTH_POWER_UP = 16;
-    protected final static int DEPTH_PLAYER = 18;
-    protected final static int DEPTH_ENEMY_BACK = 20;
-    protected final static int DEPTH_ENEMY = 22;
-    protected final static int DEPTH_PROJECTILE = 24;
-    protected final static int DEPTH_OVERLAY = 26;
-    protected final static int DEPTH_BURST = 54;
-    protected final static int DEPTH_HUD = 56;
+    protected final static int DEPTH_ABOVE = 14;
+    protected final static int DEPTH_CARRIER = 16;
+    protected final static int DEPTH_POWER_UP = 18;
+    protected final static int DEPTH_PLAYER = 20;
+    protected final static int DEPTH_ENEMY_BACK = 22;
+    protected final static int DEPTH_ENEMY = 24;
+    protected final static int DEPTH_PROJECTILE = 26;
+    protected final static int DEPTH_OVERLAY = 28;
+    protected final static int DEPTH_BURST = 58;
+    protected final static int DEPTH_HUD = 60;
     protected final static byte Z_OFF_OVERLAY = 2;
     protected final static byte Z_OFF_TEXT = 4;
-    protected final static int DEPTH_CURSOR = 62;
+    protected final static int DEPTH_CURSOR = 66;
     
     protected final static FinPanple2 MIN_16 = new FinPanple2(-6, -6);
     protected final static FinPanple2 MAX_16 = new FinPanple2(6, 6);

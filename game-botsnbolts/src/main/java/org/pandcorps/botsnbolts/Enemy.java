@@ -1164,6 +1164,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         
         protected DrillEnemy(final int x, final int y) {
             super(PROP_OFF_X, CRAWL_H, x, y, 1);
+            getPosition().setZ(BotsnBoltsGame.DEPTH_BETWEEN);
             hv = 0;
             setCurrentView();
         }
@@ -1197,7 +1198,6 @@ public abstract class Enemy extends Chr implements CollisionListener {
         private final boolean dig() {
             if (digTimer <= 0 && isGrounded()) {
                 digTimer = 16;
-                getPosition().setZ(BotsnBoltsGame.DEPTH_BEHIND);
             }
             if (digTimer > 0) {
                 digTimer--;
@@ -1206,9 +1206,11 @@ public abstract class Enemy extends Chr implements CollisionListener {
                     final int index = tm.getContainer(this);
                     tm.setTile(index, null);
                     if (edgeLeft == null) {
-                        edgeLeft = BotsnBoltsGame.imgMap[1][3];
-                        edgeRight = new AdjustedTileMapImage(edgeLeft, 0, true, false);
-                        edgeBottom = new AdjustedTileMapImage(edgeLeft, 1, false, false);
+                        final TileMapImage edgeRaw = BotsnBoltsGame.imgMap[1][3];
+                        final int offZ = BotsnBoltsGame.DEPTH_ABOVE - BotsnBoltsGame.DEPTH_BG;
+                        edgeLeft = new AdjustedTileMapImage(edgeRaw, offZ, 0, false, false);
+                        edgeRight = new AdjustedTileMapImage(edgeRaw, offZ, 0, true, false);
+                        edgeBottom = new AdjustedTileMapImage(edgeRaw, offZ, 1, false, false);
                     }
                     replaceEdge(tm, index, Direction.West, edgeLeft);
                     replaceEdge(tm, index, Direction.East, edgeRight);
@@ -1249,7 +1251,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
             if (!isSolidIndex(edgeIndex)) {
                 return;
             }
-            tm.setOverlay(edgeIndex, edgeImg, Tile.BEHAVIOR_SOLID);
+            tm.setBackground(edgeIndex, edgeImg, Tile.BEHAVIOR_SOLID);
         }
         
         private final void destroyPartialTiles() {
