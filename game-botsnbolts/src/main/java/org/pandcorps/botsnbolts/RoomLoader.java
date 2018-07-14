@@ -56,6 +56,7 @@ public abstract class RoomLoader {
     protected final static List<BossDoor> bossDoors = new ArrayList<BossDoor>(2);
     protected static BoltDoor boltDoor = null;
     protected final static List<BlockPuzzle> blockPuzzles = new ArrayList<BlockPuzzle>(1);
+    private static boolean conveyorBelt = false;
     protected static int startX = 0;
     protected static int startY = 0;
     private static int row = 0;
@@ -225,6 +226,8 @@ public abstract class RoomLoader {
                 crr(seg);
             } else if ("LFT".equals(name)) { // Lift
                 lft(seg);
+            } else if ("CNV".equals(name)) { // Conveyor Belt
+                cnv(seg);
             } else if ("WTR".equals(name)) { // Water
                 wtr(seg);
             } else if ("DEF".equals(name)) { // Definition
@@ -709,6 +712,25 @@ public abstract class RoomLoader {
         }
     }
     
+    private final static void cnv(final Segment seg) throws Exception {
+        final int x = seg.intValue(0), y = seg.intValue(1), w = seg.intValue(2), w1 = w - 1;
+        final boolean right = seg.booleanValue(3);
+        final int dirIndex = right ? 1 : 0;
+        final TileMap tm = BotsnBoltsGame.tm;
+        for (int i = 0; i < w; i++) {
+            final int partIndex;
+            if (i == 0) {
+                partIndex = 0;
+            } else if (i == w1) {
+                partIndex = 2;
+            } else {
+                partIndex = 1;
+            }
+            tm.setTile(x + i, y, BotsnBoltsGame.conveyorBeltTiles[partIndex][dirIndex]);
+        }
+        conveyorBelt = true;
+    }
+    
     private final static void wtr(final Segment seg) throws Exception {
         setWaterTile(seg.intValue(0), false, false);
     }
@@ -890,6 +912,9 @@ public abstract class RoomLoader {
         for (final StepHandler stepHandler : stepHandlers) {
             stepHandler.step();
         }
+        if (conveyorBelt) {
+            BotsnBoltsGame.stepConveyorBelt();
+        }
     }
     
     private final static void clearChangeFinished() {
@@ -915,6 +940,7 @@ public abstract class RoomLoader {
             blockPuzzle.clear();
         }
         blockPuzzles.clear();
+        conveyorBelt = false;
     }
     
     protected final static void loadRooms() {

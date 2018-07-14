@@ -143,6 +143,8 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static Panmage[] barrierHidden = null;
     protected static Panimation carrier = null;
     protected static Panimation lifter = null;
+    protected static Panframe[][][] conveyorBelt = null;
+    protected static Tile[][] conveyorBeltTiles = null;
     protected static Panmage blockSpike = null;
     protected static Panmage spike = null;
     protected static Panmage[] sentryGun = null;
@@ -339,12 +341,59 @@ public final class BotsnBoltsGame extends BaseGame {
         lifter = engine.createAnimation(preLifter + ".anm",
             newSubFrame(preLifter, 0, new FinPanple2(0, 1), null, null, lifterAll, 0, 0, sLifter, dLifter),
             newSubFrame(preLifter, 1, null, null, null, lifterAll, 0, 16, sLifter, dLifter));
+        final Panmage[] sheetCb = newSheet("conveyor.belt", RES + "misc/ConveyorBelt.png", 16);
+        final String preCb = PRE_FRM + "conveyor.belt.";
+        final int framesCb = 4, partsCb = 3, dirsCb = 2;
+        conveyorBelt = new Panframe[framesCb][partsCb][dirsCb];
+        for (int frame = 0; frame < framesCb; frame++) {
+            for (int part = 0; part < partsCb; part++) {
+                final int partIndex, rot;
+                if (part < 2) {
+                    partIndex = part;
+                    rot = 0;
+                } else {
+                    partIndex = 0;
+                    rot = 2;
+                }
+                final Panmage imgCb = sheetCb[(frame * 2) + partIndex];
+                for (int dir = 0; dir < dirsCb; dir++) {
+                    final int partDir = (dir == 1) ? (2 - part) : part;
+                    conveyorBelt[frame][partDir][dir] = engine.createFrame(preCb + frame + "." + part + "." + dir, imgCb, 1, rot, dir == 1, false);
+                }
+            }
+        }
         puff = newAnimation("puff", RES + "misc/Puff.png", 8, CENTER_8, 2);
         flash = newAnimation("flash", RES + "misc/Flash.png", 32, CENTER_32, 12);
         bubble = newSheet("bubble", RES + "misc/Bubble.png", 8, CENTER_8, null, null);
         splash = newAnimation("splash", RES + "misc/Splash.png", 16, new FinPanple2(8, 0), 3);
         ripple = newSheet("ripple", RES + "misc/Ripple.png", 16, null, null, null);
         wind = engine.createImage("wind", RES + "misc/Wind.png");
+    }
+    
+    protected final static void initConveyorBeltTiles() {
+        if (conveyorBeltTiles != null) {
+            return;
+        }
+        final Panframe[][] cb0 = conveyorBelt[0];
+        final int partsCb = cb0.length, dirsCb = cb0[0].length;
+        conveyorBeltTiles = new Tile[partsCb][dirsCb];
+        final TileMapImage bg = imgMap[7][0];
+        for (int part = 0; part < partsCb; part++) {
+            final TileMapImage bgPart = (part == 1) ? bg : null;
+            for (int dir = 0; dir < dirsCb; dir++) {
+                conveyorBeltTiles[part][dir] = tm.getTile(bgPart, cb0[part][dir], (dir == 1) ? TILE_CONVEYOR_RIGHT : TILE_CONVEYOR_LEFT);
+            }
+        }
+    }
+    
+    protected final static void stepConveyorBelt() {
+        final Panframe[][] cbCurr = conveyorBelt[(int) (Pangine.getEngine().getClock() % 4)];
+        final int partsCb = conveyorBeltTiles.length, dirsCb = conveyorBeltTiles[0].length;
+        for (int part = 0; part < partsCb; part++) {
+            for (int dir = 0; dir < dirsCb; dir++) {
+                conveyorBeltTiles[part][dir].setForeground(cbCurr[part][dir]);
+            }
+        }
     }
     
     protected final static Panmage getBox() {
@@ -1087,6 +1136,7 @@ public final class BotsnBoltsGame extends BaseGame {
             timg = engine.createImage("bg", RES + "bg/" + imgName + ".png");
             if ((imgMap == null) || (tileSize != prevTileSize)) {
                 imgMap = tm.splitImageMap(timg);
+                initConveyorBeltTiles();
             } else {
                 tm.setImageMap(timg);
             }
