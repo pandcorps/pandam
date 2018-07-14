@@ -631,7 +631,7 @@ public final class Player extends Chr implements Warpable {
         newDiver(layer, mirror, img, x + m * 4, y - 4, m * 2, 2, true, true, bottomRight);
     }
     
-    private final static void newDiver(final Panlayer layer, final boolean srcMirror, final Panmage img, final float x, final float y, final float xv, final float yv,
+    protected final static void newDiver(final Panlayer layer, final boolean srcMirror, final Panmage img, final float x, final float y, final float xv, final float yv,
                                        final boolean mirror, final boolean flip, final boolean needed) {
         if (!needed) {
             return;

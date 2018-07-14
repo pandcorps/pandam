@@ -2345,7 +2345,58 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
     }
     
-    protected final static class ShovelEnemy {
+    protected final static class ShovelEnemy extends Enemy {
+        private final static Panmage[] imgs = new Panmage[3];
+        private final int x;
+        private final int y;
+        private int timer = 0;
+        
+        protected ShovelEnemy(final int x, final int y) {
+            super(HENCHBOT_OFF_X, HENCHBOT_H, x, y, HENCHBOT_HEALTH);
+            setView(0);
+            this.x = x;
+            this.y = y;
+        }
+        
+        @Override
+        protected final boolean onStepCustom() {
+            final Panlayer layer = getLayer();
+            if (layer == null) {
+                return false;
+            }
+            timer++;
+            if (timer == 5) {
+                setView(1);
+            } else if (timer == 6) {
+                final Panple pos = getPosition();
+                final int m = getMirrorMultiplier();
+                Player.newDiver(layer, true, DrillEnemy.getDirtShatter(), pos.getX() + (12 * m), pos.getY(), 2 * m, 2, Mathtil.rand(), Mathtil.rand(), true);
+            } else if (timer == 30) {
+                setView(2);
+            } else if (timer == 31) {
+                final DirtCluster dirtCluster = new DirtCluster(x, y);
+                dirtCluster.hv = getMirrorMultiplier() * -6;
+                dirtCluster.v = 6;
+                Player.addActor(this, dirtCluster);
+            } else if (timer == 60) {
+                setView(0);
+                timer = 0;
+            }
+            return false;
+        }
+        
+        private final void setView(final int i) {
+            setView(getImage(i));
+        }
+        
+        private final static Panmage getImage(final int i) {
+            final Panmage img = imgs[i];
+            if (img != null) {
+                return img;
+            }
+            final Panmage ref = BotsnBoltsGame.flamethrowerEnemy[0];
+            return (imgs[i] = getImage(img, "ShovelEnemy" + (i + 1), ref.getOrigin(), ref.getBoundingMinimum(), ref.getBoundingMaximum()));
+        }
     }
     
     protected final static class ElectricityEnemy extends Enemy {
