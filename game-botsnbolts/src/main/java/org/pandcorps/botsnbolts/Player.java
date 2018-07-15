@@ -236,6 +236,10 @@ public final class Player extends Chr implements Warpable {
         }
     }
     
+    protected final static boolean isPaused() {
+        return Menu.isCursorNeeded() ? Menu.isPauseMenuEnabled() : Pangine.getEngine().isPaused();
+    }
+    
     private final void toggleJumpMode(final int dir) {
         prf.jumpMode.onDeselect(this);
         prf.jumpMode = toggleInputMode(JUMP_MODES, prf.jumpMode, dir);
