@@ -387,6 +387,9 @@ public final class BotsnBoltsGame extends BaseGame {
     }
     
     protected final static void stepConveyorBelt() {
+        if (Player.isPaused()) {
+            return;
+        }
         final Panframe[][] cbCurr = conveyorBelt[(int) (Pangine.getEngine().getClock() % 4)];
         final int partsCb = conveyorBeltTiles.length, dirsCb = conveyorBeltTiles[0].length;
         for (int part = 0; part < partsCb; part++) {
