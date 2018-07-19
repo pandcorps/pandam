@@ -2345,6 +2345,8 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
     }
     
+    private final static Panple SHOVEL_O = new FinPanple2(BotsnBoltsGame.flamethrowerEnemy[0].getOrigin().getX() - 1, 1);
+    
     protected final static class ShovelEnemy extends Enemy {
         private final static Panmage[] imgs = new Panmage[3];
         private final int x;
@@ -2395,7 +2397,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
                 return img;
             }
             final Panmage ref = BotsnBoltsGame.flamethrowerEnemy[0];
-            return (imgs[i] = getImage(img, "ShovelEnemy" + (i + 1), ref.getOrigin(), ref.getBoundingMinimum(), ref.getBoundingMaximum()));
+            return (imgs[i] = getImage(img, "ShovelEnemy" + (i + 1), SHOVEL_O, ref.getBoundingMinimum(), ref.getBoundingMaximum()));
         }
     }
     
