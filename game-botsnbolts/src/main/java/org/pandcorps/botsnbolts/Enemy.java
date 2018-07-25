@@ -2329,7 +2329,14 @@ public abstract class Enemy extends Chr implements CollisionListener {
             if (timer <= 0) {
                 shatter();
             }
+            hv = 0;
             timer--;
+        }
+        
+        @Override
+        protected final void onLanded() {
+            super.onLanded();
+            hv = 0;
         }
         
         private final void shatter() {
