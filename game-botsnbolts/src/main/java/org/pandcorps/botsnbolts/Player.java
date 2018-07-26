@@ -1347,7 +1347,14 @@ public final class Player extends Chr implements Warpable {
         }
         getPosition().add(grapplingPosition.getX(), grapplingPosition.getY());
         if (getPosition().getDistance2(safeX, safeY) <= Rescue.SPEED_FLAP) {
-            endRescued();
+            if (isGrounded()) {
+                endRescued();
+            } else {
+                safeX = startX;
+                safeY = startY;
+                startRescued(rescue);
+                rescue.onCarrying();
+            }
         } else {
             rescue.onCarrying();
         }
