@@ -128,7 +128,7 @@ public abstract class RoomLoader {
     }
     
     private final static void processSegmentFile(final String fileId, final boolean ctxRequired, final TileMap tm) {
-        final String fileName = BotsnBoltsGame.RES + "/level/" + fileId + ".txt";
+        final String fileName = BotsnBoltsGame.RES + "/level/" + room.dir + "/" + fileId + ".txt";
         SegmentStream in = null;
         try {
             in = SegmentStream.openLocation(fileName);
@@ -957,7 +957,7 @@ public abstract class RoomLoader {
             */
             while ((seg = in.read()) != null) {
                 final int x = seg.intValue(0), y = seg.intValue(1), w = seg.intValue(2);
-                final BotRoom room = new BotRoom(x, y, w, seg.getValue(3), seg.getInt(4, BotsnBoltsGame.DIM));
+                final BotRoom room = new BotRoom(x, y, w, seg.getValue(3), seg.getValue(4), seg.getInt(5, BotsnBoltsGame.DIM));
                 for (int i = 0; i < w; i++) {
                     rooms.put(new BotCell(x + i, y), room);
                 }
@@ -1096,13 +1096,15 @@ public abstract class RoomLoader {
         protected final int x;
         protected final int y;
         protected final int w;
+        protected final String dir;
         protected final String roomId;
         protected final int tileSize;
         
-        protected BotRoom(final int x, final int y, final int w, final String roomId, final int tileSize) {
+        protected BotRoom(final int x, final int y, final int w, final String dir, final String roomId, final int tileSize) {
             this.x = x;
             this.y = y;
             this.w = w;
+            this.dir = dir;
             this.roomId = roomId;
             this.tileSize = tileSize;
         }
