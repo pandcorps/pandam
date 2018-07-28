@@ -1305,7 +1305,7 @@ public final class Player extends Chr implements Warpable {
     protected final boolean onFell() {
         if (changeRoom(0, -1)) {
             return true;
-        } else if ((availableRescues > 0) && (safeX != NULL_COORD)) {
+        } else if ((availableRescues > 0) && (safeX != NULL_COORD) && !RoomLoader.variables.containsKey("rescueDisabled")) {
             availableRescues--;
             startRescue();
             return true;
