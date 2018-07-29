@@ -1298,7 +1298,9 @@ public final class Player extends Chr implements Warpable {
     
     @Override
     protected final void onCeiling() {
-        changeRoom(0, 1);
+        if (stateHandler == LADDER_HANDLER) {
+            changeRoom(0, 1);
+        }
     }
     
     @Override
