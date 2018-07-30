@@ -266,12 +266,9 @@ public final class BotsnBoltsGame extends BaseGame {
         final Pancolor blue = newColorBlue(), darkBlue = newColorBlueDark();
         doorBlue = filterDoor("door.blue", imgsClosed, imgsOpening, silver, blue, darkSilver, darkBlue, null, 0, null,
             Integer.valueOf(Projectile.POWER_IMPOSSIBLE), imgsBarrier);
-        final Pancolor black = new FinPancolor(s96), darkBlack = new FinPancolor(s64);
-        doorBlack = filterDoor("door.black", imgsClosed, imgsOpening, blue, black, darkBlue, darkBlack, null, 0, null,
-            Integer.valueOf(Projectile.POWER_IMPOSSIBLE), imgsBarrier);
         final ShootableDoorDefinition doorRed, doorRedOrange, doorOrange, doorOrangeGold;
         final Pancolor red = Pancolor.RED, darkRed = new FinPancolor(s192, s0, s0);
-        doorRed = filterDoor("door.red", imgsClosed, imgsOpening, black, red, darkBlack, darkRed, null, 15, Player.SHOOT_RAPID, null, imgsBarrier);
+        doorRed = filterDoor("door.red", imgsClosed, imgsOpening, blue, red, darkBlue, darkRed, null, 15, Player.SHOOT_RAPID, null, imgsBarrier);
         final Pancolor redOrange = new FinPancolor(smax, s64, s0), darkRedOrange = new FinPancolor(s192, s48, s0);
         doorRedOrange = filterDoor("door.red.orange", imgsClosed, null, red, redOrange, darkRed, darkRedOrange, doorRed, 10, Player.SHOOT_RAPID, null, imgsBarrier);
         final Pancolor orange = new FinPancolor(smax, s128, s0), darkOrange = new FinPancolor(s192, s96, s0);
@@ -280,6 +277,10 @@ public final class BotsnBoltsGame extends BaseGame {
         doorOrangeGold = filterDoor("door.orange.gold", imgsClosed, null, orange, orangeGold, darkOrange, darkOrangeGold, doorOrange, 3, null, null, imgsBarrier);
         final Pancolor gold = Pancolor.YELLOW, darkGold = new FinPancolor(s192, s192, s0);
         doorGold = filterDoor("door.gold", imgsClosed, null, orangeGold, gold, darkOrangeGold, darkGold, doorOrangeGold, 1, null, null, imgsBarrier);
+        // No black barrier; it's not used; all barriers use grey 96 which is the black door's light color; do last so door/barrier images stay synchronized
+        final Pancolor black = new FinPancolor(s96), darkBlack = new FinPancolor(s64);
+        doorBlack = filterDoor("door.black", imgsClosed, imgsOpening, gold, black, darkGold, darkBlack, null, 0, null,
+            Integer.valueOf(Projectile.POWER_IMPOSSIBLE), null); 
         Img.close(imgsClosed);
         Img.close(imgsOpening);
         final Img[] imgsSmallClosed = Imtil.loadStrip(RES + "bg/DoorSmall.png", 16, false);
