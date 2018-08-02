@@ -1347,11 +1347,17 @@ public final class Player extends Chr implements Warpable {
         if (rescue == null) {
             return;
         }
-        getPosition().add(grapplingPosition.getX(), grapplingPosition.getY());
-        if (getPosition().getDistance2(safeX, safeY) <= Rescue.SPEED_FLAP) {
+        final Panple pos = getPosition();
+        pos.add(grapplingPosition.getX(), grapplingPosition.getY());
+        if (pos.getDistance2(safeX, safeY) <= Rescue.SPEED_FLAP) {
+            final float oldX = pos.getX(), oldY = pos.getY();
+            final boolean oldMirror = isMirror();
+            setEndRescuedPosition();
             if (isGrounded()) {
                 endRescued();
             } else {
+                pos.set(oldX, oldY);
+                setMirror(oldMirror);
                 safeX = startX;
                 safeY = startY;
                 startRescued(rescue);
@@ -1362,9 +1368,12 @@ public final class Player extends Chr implements Warpable {
         }
     }
     
-    private final void endRescued() {
+    private final void setEndRescuedPosition() {
         getPosition().set(safeX, safeY);
         setMirror(safeMirror);
+    }
+    
+    private final void endRescued() {
         rescue.startExit();
         rescue = null;
         stateHandler = NORMAL_HANDLER;
