@@ -185,6 +185,7 @@ public final class BotsnBoltsGame extends BaseGame {
     private static final float defPlayerStartY = 32;
     protected static float playerStartX = defPlayerStartX;
     protected static float playerStartY = defPlayerStartY;
+    protected static boolean playerStartMirror = false;
     
     protected static Panlayer hud = null;
     protected static int prevTileSize = DIM;
@@ -1185,6 +1186,7 @@ public final class BotsnBoltsGame extends BaseGame {
             Menu.addGameplayButtonInputs();
             final Player player = new Player(pc);
             player.getPosition().set(playerStartX, playerStartY, DEPTH_PLAYER);
+            player.setMirror(playerStartMirror);
             initPlayerStart();
             room.addActor(player);
             Pangine.getEngine().track(player);
@@ -1220,6 +1222,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected final static void initPlayerStart() {
         playerStartX = defPlayerStartX;
         playerStartY = defPlayerStartY;
+        playerStartMirror = false;
     }
     
     protected final static Panlayer getLayer() {

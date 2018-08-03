@@ -121,6 +121,7 @@ public final class Player extends Chr implements Warpable {
     private BotRoom startRoom = null;
     private float startX = NULL_COORD;
     private float startY = NULL_COORD;
+    private boolean startMirror = false;
     private int availableRescues = 0;
     protected Rescue rescue = null;
     private float safeX = NULL_COORD;
@@ -304,6 +305,7 @@ public final class Player extends Chr implements Warpable {
             startRoom = currentRoom;
             startX = safeX;
             startY = safeY;
+            startMirror = safeMirror;
             startRoomNeeded = false;
         }
     }
@@ -533,6 +535,7 @@ public final class Player extends Chr implements Warpable {
                 } else {
                     BotsnBoltsGame.playerStartX = startX;
                     BotsnBoltsGame.playerStartY = startY;
+                    BotsnBoltsGame.playerStartMirror = startMirror;
                     RoomLoader.loadRoom(startRoom);
                 }
             }});
@@ -1360,6 +1363,7 @@ public final class Player extends Chr implements Warpable {
                 setMirror(oldMirror);
                 safeX = startX;
                 safeY = startY;
+                safeMirror = startMirror;
                 startRescued(rescue);
                 rescue.onCarrying();
             }
