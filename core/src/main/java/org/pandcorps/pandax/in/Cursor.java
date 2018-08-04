@@ -42,6 +42,10 @@ public class Cursor extends Panctor implements StepListener {
 		return active;
 	}
 	
+	public final static Cursor addCursorIfNeeded(final Panlayer layer, final Panmage img) {
+	    return isEnabled() ? getActive() : addCursor(layer, img);
+	}
+	
 	public final static Cursor getActive() {
 		if (active != null && !active.isDestroyed() && active.getLayer() != null) {
 			return active;

@@ -281,7 +281,7 @@ public class Menu {
         if (!isCursorNeeded()) {
             return null;
         }
-        cursor = Cursor.addCursor(room, imgCursor);
+        cursor = Cursor.addCursorIfNeeded(room, imgCursor);
         cursor.getPosition().setZ(BotsnBoltsGame.DEPTH_CURSOR);
         return cursor;
     }
@@ -402,27 +402,44 @@ public class Menu {
         }
     }
     
-    private static TouchButton[] pauseMenuButtons = new TouchButton[3];
+    private static int numPauseMenuButtons = 3;
+    private final static TouchButton[] pauseMenuButtons = new TouchButton[numPauseMenuButtons];
     private static int pauseMenuIndex = 0;
     
     protected final static void addPauseMenu(final Player player) {
-        final int numBtns = 3, btnSize = 32, spaceBetween = 32, nextOffset = btnSize + spaceBetween;
-        final int px = (BotsnBoltsGame.GAME_W - (numBtns * btnSize) - ((numBtns - 1) * spaceBetween)) / 2;
+        addPauseMenu(BotsnBoltsGame.hud, player.pc, player.healthMeter, player, true);
+    }
+    
+    private final static void addPauseMenu(final Panlayer layer, final PlayerContext pc, final Panctor registrar, final Player player, final boolean levelSelectNeeded) {
+        final int numBtns = levelSelectNeeded ? 3 : 2, btnSize = 32, spaceBetween = 32, nextOffset = btnSize + spaceBetween;
+        int px = (BotsnBoltsGame.GAME_W - (numBtns * btnSize) - ((numBtns - 1) * spaceBetween)) / 2;
         final int py = (BotsnBoltsGame.GAME_H - btnSize) / 2;
-        final Panlayer layer = BotsnBoltsGame.hud;
-        final Panmage active = player.pi.highlightBox;
+        final Panmage active = pc.pi.highlightBox;
         pauseMenuIndex = 0;
-        pauseMenuButtons[0] = play = addPauseMenuButton(layer, "Play", px, py, active, imgPlay);
-        player.registerPause(play);
+        int currIndex = 0;
+        pauseMenuButtons[currIndex++] = play = addPauseMenuButton(layer, "Play", px, py, active, imgPlay);
+        px += nextOffset;
+        numPauseMenuButtons = numBtns;
+        if (player == null) {
+            registrar.register(play, new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) {
+                    destroyPauseMenu();
+                }});
+        } else {
+            player.registerPause(play);
+        }
         play.activate(true);
-        pauseMenuButtons[1] = levelSelect = addPauseMenuButton(layer, "LevelSelect", px + nextOffset, py, active, imgLevelSelect);
-        player.healthMeter.register(levelSelect, new ActionEndListener() {
-            @Override public final void onActionEnd(final ActionEndEvent event) {
-                destroyPauseMenu();
-                goLevelSelect();
-            }});
-        pauseMenuButtons[2] = quit = addPauseMenuButton(layer, "Quit", px + (nextOffset * 2), py, active, imgQuit);
-        player.healthMeter.register(quit, new ActionEndListener() {
+        if (levelSelectNeeded) {
+            pauseMenuButtons[currIndex++] = levelSelect = addPauseMenuButton(layer, "LevelSelect", px, py, active, imgLevelSelect);
+            px += nextOffset;
+            registrar.register(levelSelect, new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) {
+                    destroyPauseMenu();
+                    goLevelSelect();
+                }});
+        }
+        pauseMenuButtons[currIndex++] = quit = addPauseMenuButton(layer, "Quit", px, py, active, imgQuit);
+        registrar.register(quit, new ActionEndListener() {
             @Override public final void onActionEnd(final ActionEndEvent event) {
                 Pangine.getEngine().exit();
             }});
@@ -430,6 +447,9 @@ public class Menu {
         final Panctor actor = play.getActor();
         for (int i = 0; i < 3; i++) {
             final TouchButton pauseMenuButton = pauseMenuButtons[i];
+            if (pauseMenuButton == null) {
+                continue;
+            }
             final int newPauseMenuIndex = i;
             actor.register(pauseMenuButton, new ActionStartListener() {
                 @Override public final void onActionStart(final ActionStartEvent event) {
@@ -440,7 +460,7 @@ public class Menu {
                     setPauseMenuButton(newPauseMenuIndex);
                 }});
         }
-        final ControlScheme ctrl = player.pc.ctrl;
+        final ControlScheme ctrl = pc.ctrl;
         actor.register(ctrl.getRight(), new ActionStartListener() {
             @Override public final void onActionStart(final ActionStartEvent event) {
                 changePauseMenuButton(1);
@@ -465,7 +485,7 @@ public class Menu {
     }
     
     private final static void changePauseMenuButton(final int dir) {
-        if (((dir == -1) && (pauseMenuIndex == 0)) || ((dir == 1) && (pauseMenuIndex == 2))) {
+        if (((dir == -1) && (pauseMenuIndex == 0)) || ((dir == 1) && (pauseMenuIndex == (numPauseMenuButtons - 1)))) {
             final TouchButton pauseMenuButton = pauseMenuButtons[pauseMenuIndex];
             if (!pauseMenuButton.isActivated()) {
                 pauseMenuButton.activate(true);
@@ -501,7 +521,9 @@ public class Menu {
     }
     
     protected final static void destroyPauseMenu() {
-        Panctor.destroy(cursor);
+        if (!(Panscreen.get() instanceof LevelSelectScreen)) {
+            Panctor.destroy(cursor);
+        }
         TouchButton.destroy(play);
         play = null;
         TouchButton.destroy(levelSelect);
@@ -544,11 +566,12 @@ public class Menu {
             engine.setBgColor(new FinPancolor(96, 96, 96));
             final Pangame game = Pangame.getGame();
             Panroom room = game.getCurrentRoom();
+            final int roomW = BotsnBoltsGame.GAME_W, roomH = BotsnBoltsGame.GAME_H;
             final float roomZ = room.getSize().getZ();
             room.destroy();
-            room = Pangine.getEngine().createRoom(Pantil.vmid(), BotsnBoltsGame.GAME_W, BotsnBoltsGame.GAME_H, roomZ);
+            room = Pangine.getEngine().createRoom(Pantil.vmid(), roomW, roomH, roomZ);
             game.setCurrentRoom(room);
-            final Panlayer layer = engine.createLayer("layer.grid", BotsnBoltsGame.GAME_W, BotsnBoltsGame.GAME_H, roomZ, room);
+            final Panlayer layer = engine.createLayer("layer.grid", roomW, roomH, roomZ, room);
             grid = new LevelSelectGrid();
             layer.addActor(grid);
             Player.registerCapture(grid);
@@ -560,6 +583,19 @@ public class Menu {
                 addLevelButton(room, x, y, level);
             }
             addPortrait(layer, 176, 96, pc.pi.portrait, true);
+            final TouchButton quit = addButton(layer, "Quit", roomW - 17, roomH - 17, true, true, null, imgQuit, imgQuit, false, null, false, 16);
+            grid.register(quit, new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) {
+                    addPauseMenu(layer, pc, grid, null, false);
+                }});
+            grid.register(pc.ctrl.getMenu(), new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) {
+                    if (isPauseMenuEnabled()) {
+                        destroyPauseMenu();
+                    } else {
+                        addPauseMenu(layer, pc, grid, null, false);
+                    }
+                }});
             layer.setConstant(true);
             room.addBeneath(layer);
             addCursor(room);
@@ -587,21 +623,27 @@ public class Menu {
             final Pangine engine = Pangine.getEngine();
             final TouchButton btn = new TouchButton(engine.getInteraction(), layer, "level." + x + "." + y, x, y, BotsnBoltsGame.DEPTH_FG, imgEmpty, null, true);
             engine.registerTouchButton(btn);
-            grid.register(btn, new ActionEndListener() {
-                @Override public final void onActionEnd(final ActionEndEvent event) {
+            grid.register(btn, new GridEndListener() {
+                @Override public final void onGridEnd() {
                     startLevel(level);
                 }});
             final LevelSelectCell cell = grid.cells[level.selectY][level.selectX];
             cell.level = level;
-            grid.register(btn, new ActionStartListener() {
-                @Override public final void onActionStart(final ActionStartEvent event) {
+            grid.register(btn, new GridStartListener() {
+                @Override public final void onGridStart() {
                     grid.currentCell = cell;
                 }});
             btn.setActiveListener(new TouchButtonActiveListener() {
                 @Override public final void onActive(final TouchButton btn) {
-                    grid.currentCell = cell;
+                    if (isGridEnabled()) {
+                        grid.currentCell = cell;
+                    }
                 }});
         }
+    }
+    
+    private final static boolean isGridEnabled() {
+        return !isPauseMenuEnabled();
     }
     
     private final static void startLevel(final BotLevel level) {
@@ -624,32 +666,32 @@ public class Menu {
             }
             currentCell = cells[1][1];
             final ControlScheme ctrl = BotsnBoltsGame.pc.ctrl;
-            register(ctrl.getUp(), new ActionStartListener() {
-                @Override public final void onActionStart(final ActionStartEvent event) {
+            register(ctrl.getUp(), new GridStartListener() {
+                @Override public final void onGridStart() {
                     if (currentCell.j < 2) {
                         currentCell = cells[currentCell.j + 1][currentCell.i];
                     }
                 }});
-            register(ctrl.getDown(), new ActionStartListener() {
-                @Override public final void onActionStart(final ActionStartEvent event) {
+            register(ctrl.getDown(), new GridStartListener() {
+                @Override public final void onGridStart() {
                     if (currentCell.j > 0) {
                         currentCell = cells[currentCell.j - 1][currentCell.i];
                     }
                 }});
-            register(ctrl.getRight(), new ActionStartListener() {
-                @Override public final void onActionStart(final ActionStartEvent event) {
+            register(ctrl.getRight(), new GridStartListener() {
+                @Override public final void onGridStart() {
                     if (currentCell.i < 2) {
                         currentCell = cells[currentCell.j][currentCell.i + 1];
                     }
                 }});
-            register(ctrl.getLeft(), new ActionStartListener() {
-                @Override public final void onActionStart(final ActionStartEvent event) {
+            register(ctrl.getLeft(), new GridStartListener() {
+                @Override public final void onGridStart() {
                     if (currentCell.i > 0) {
                         currentCell = cells[currentCell.j][currentCell.i - 1];
                     }
                 }});
-            final ActionEndListener selectListener = new ActionEndListener() {
-                @Override public final void onActionEnd(final ActionEndEvent event) {
+            final ActionEndListener selectListener = new GridEndListener() {
+                @Override public final void onGridEnd() {
                     final BotLevel level = currentCell.level;
                     if (level != null) {
                         startLevel(level);
@@ -705,5 +747,27 @@ public class Menu {
             x = 88 + (i * 80);
             y = 24 + (j * 64);
         }
+    }
+    
+    private abstract static class GridStartListener implements ActionStartListener {
+        @Override
+        public final void onActionStart(final ActionStartEvent event) {
+            if (isGridEnabled()) {
+                onGridStart();
+            }
+        }
+        
+        public abstract void onGridStart();
+    }
+    
+    private abstract static class GridEndListener implements ActionEndListener {
+        @Override
+        public final void onActionEnd(final ActionEndEvent event) {
+            if (isGridEnabled()) {
+                onGridEnd();
+            }
+        }
+        
+        public abstract void onGridEnd();
     }
 }
