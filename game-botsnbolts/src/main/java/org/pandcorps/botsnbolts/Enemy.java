@@ -2253,7 +2253,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
     }
     
-    protected final static class JackhammerEnemy extends Enemy {
+    protected final static class JackhammerEnemy extends Enemy implements RoomAddListener {
         private final static Panmage[] imgs = new Panmage[2];
         private final int x;
         private final int yCluster;
@@ -2273,6 +2273,11 @@ public abstract class Enemy extends Chr implements CollisionListener {
                 j--;
             }
             yCluster = j;
+        }
+        
+        @Override
+        public final void onRoomAdd(final RoomAddEvent event) {
+            turnTowardPlayer();
         }
         
         @Override
