@@ -586,19 +586,25 @@ public class Menu {
             final TouchButton quit = addButton(layer, "Quit", roomW - 17, roomH - 17, true, true, null, imgQuit, imgQuit, false, null, false, 16);
             grid.register(quit, new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
-                    addPauseMenu(layer, pc, grid, null, false);
+                    if (isGridEnabled()) {
+                        addQuitMenu(layer, pc);
+                    }
                 }});
             grid.register(pc.ctrl.getMenu(), new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
                     if (isPauseMenuEnabled()) {
                         destroyPauseMenu();
                     } else {
-                        addPauseMenu(layer, pc, grid, null, false);
+                        addQuitMenu(layer, pc);
                     }
                 }});
             layer.setConstant(true);
             room.addBeneath(layer);
             addCursor(room);
+        }
+        
+        private final static void addQuitMenu(final Panlayer layer, final PlayerContext pc) {
+            addPauseMenu(layer, pc, grid, null, false);
         }
         
         private final static void addPortrait(final Panlayer layer, final int x, final int y, final BotLevel level) {
@@ -712,7 +718,7 @@ public class Menu {
             for (final LevelSelectCell[] row : cells) {
                 int y = 0;
                 for (final LevelSelectCell cell : row) {
-                    renderBox(renderer, layer, cell.x, y = cell.y, (cell == currentCell) ? BotsnBoltsGame.pc.pi.highlightBox : box);
+                    renderBox(renderer, layer, cell.x, y = cell.y, ((cell == currentCell) && isGridEnabled()) ? BotsnBoltsGame.pc.pi.highlightBox : box);
                 }
                 renderer.render(layer, bg, 0, y + 8, BotsnBoltsGame.DEPTH_BEHIND, 0, 0, BotsnBoltsGame.GAME_W, 32, 0, false, false);
             }
