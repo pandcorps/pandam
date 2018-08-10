@@ -34,6 +34,10 @@ import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.tile.Tile.*;
 
 public class TileMap extends Panctor implements Savable {
+    public final static byte RETRIEVE_ANY = 0;
+    public final static byte RETRIEVE_OLD = 1;
+    public final static byte RETRIEVE_NEW = 2;
+    
 	private final static String SEG_TMP = "TMP";
     private final static String SEG_ROW = "ROW";
     
@@ -393,19 +397,22 @@ public class TileMap extends Panctor implements Savable {
     }
     
     public final Tile getTile(final Object background, final Object foreground, final byte behavior) {
-        return getTile(background, foreground, behavior, true);
+        return getTile(background, foreground, behavior, RETRIEVE_ANY);
     }
     
-    public final Tile getTile(final Object background, final Object foreground, final byte behavior, final boolean createAllowed) {
+    public final Tile getTile(final Object background, final Object foreground, final byte behavior, final byte retrieveMode) {
         if (scratch == null) {
             scratch = new Tile();
         }
         scratch.background = background;
         scratch.foreground = foreground;
         scratch.behavior = behavior;
-        Tile m = map.get(scratch);
-        if ((m != null) || !createAllowed) {
-            return m;
+        Tile m;
+        if (retrieveMode != RETRIEVE_NEW) {
+            m = map.get(scratch);
+            if ((m != null) || (retrieveMode == RETRIEVE_OLD)) {
+                return m;
+            }
         }
         m = scratch;
         map.put(m, m);

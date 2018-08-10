@@ -286,7 +286,8 @@ public abstract class RoomLoader {
     
     private final static void pan(final Segment seg) {
         final Character key = seg.toCharacter(0);
-        final byte b = seg.byteValue(1);
+        final Field f1 = seg.getField(1);
+        final byte b = f1.byteValue(0), rm = f1.getByte(1, TileMap.RETRIEVE_ANY);
         final int segSize = seg.size();
         final int anmSize = (segSize - 2) / 3;
         final TileFrame[] frames = new TileFrame[anmSize];
@@ -297,7 +298,7 @@ public abstract class RoomLoader {
             final int dur = seg.intValue(i + 2);
             frames[f] = new TileFrame(bg, fg, dur);
             if (tile == null) {
-                tile = BotsnBoltsGame.tm.getTile(bg, fg, b);
+                tile = BotsnBoltsGame.tm.getTile(bg, fg, b, rm);
             }
         }
         tiles.put(key, tile);
@@ -906,6 +907,9 @@ public abstract class RoomLoader {
     }
     
     protected final static void step() {
+        if (Player.isPaused()) {
+            return;
+        }
         for (final TileAnimator animator : animators) {
             animator.step();
         }

@@ -618,9 +618,6 @@ public abstract class BlockPuzzle {
     protected final static class PressureBlock { //TODO
     }
     
-    protected final static class ConveyorBelt { //TODO
-    }
-    
     protected final static Panmage getImage(final Panmage img, final String name, final Panple o, final Panple min, final Panple max) {
         return Enemy.getImage(img, "puzzle.", RES_BG, name, o, min, max);
     }
