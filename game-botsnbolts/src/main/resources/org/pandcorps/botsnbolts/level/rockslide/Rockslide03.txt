@@ -1,0 +1,32 @@
+IMP|Rockslide
+
+M|>                    t                                                lf
+M|]                  t                                                  <.
+M|>                     t                                                (
+M|]                                                                      l
+M|)                                                                      l
+M|r          t      (-=---)                                              l
+M|r                 [wWwww]                  t                           <
+M|r             (--=----=-)   (=-)                        (-=-)           
+M|r             [wwWwwwWww]   l  r                        [wWw]           
+M|>         (=--==--=--=--)   lp r   (--)               (--=--=-)         
+M|]         [wwwWwwwWwwwWw]   lfPr   lfFr               [wWwwWww]         
+M|)     (-=----==----=----)   lFfr   lPfr   (-=-=)    (=--=---==---=--=--=
+M|]     [wwwwWwwwwwWwwwwWw]   [Ww]   [ww]   lfP  r    l  fPfFsf  fPfPff  f
+M|)     (---=-----=----=--)   (-=)   (==)   lFfp r    lp ffFPFfp fFFfFfp F
+
+LDR|3|0|3
+
+ENM|9|3|WallCannon
+ENM|9|4|WallCannon
+
+ENM|17|7|WallCannon
+ENM|17|8|WallCannon
+
+EXT|26|14|BoulderSpawner
+EXT|33|14|BoulderSpawner
+EXT|40|14|BoulderSpawner
+
+ENM|58|7|RockEnemy
+
+DOR|71|3|Cyan
