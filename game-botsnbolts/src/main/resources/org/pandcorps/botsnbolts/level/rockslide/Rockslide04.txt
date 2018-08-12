@@ -1,0 +1,29 @@
+IMP|Rockslide
+
+M|r......................l
+M|>eeeeeeeeeeeeeeeeeeeeeel
+M|)            d         l
+M|r    c             D   l
+M|r         D            l
+M|r(--)         c     (-)l
+M|><..>      d        <.><
+M| eelr       s       eee 
+M|   <>       e      d    
+M|   ee c        D        
+M|                        
+M|---=-=---==--=----=-=---
+M|f  fPff  fPfffPff  FffPf
+M|Fp FfFfp fFPfFfffp fFPfF
+
+DOR|0|3|Cyan
+BRR|4|3|Cyan
+DOR|23|3|Cyan
+
+BOX|2|9
+
+ENM|22|9|WallCannon
+ENM|22|10|WallCannon
+
+SHP|8^4~16^7|8^7~16^4
+
+RPT|1|3|22|9|RockslideRockDark
