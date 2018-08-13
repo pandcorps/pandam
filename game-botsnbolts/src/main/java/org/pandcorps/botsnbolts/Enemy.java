@@ -2414,8 +2414,8 @@ public abstract class Enemy extends Chr implements CollisionListener {
     }
     
     protected final static class ElectricityEnemy extends Enemy {
-        private final static int DURATION_WAIT = 45;
-        private final static int DURATION_STRIKE = 15;
+        private final static int DURATION_WAIT = BlockPuzzle.ElectricityBlock.DURATION_PERIOD - BlockPuzzle.Electricity.DURATION_ELECTRICITY;
+        private final static int DURATION_STRIKE = BlockPuzzle.Electricity.DURATION_ELECTRICITY;
         private static Panmage strike = null;
         private int timer = DURATION_WAIT;
         private boolean striking = false;
@@ -2424,10 +2424,15 @@ public abstract class Enemy extends Chr implements CollisionListener {
         private boolean flip = false;
         
         protected ElectricityEnemy(final int x, final int y) {
+            this(x, y, 0);
+        }
+        
+        protected ElectricityEnemy(final int x, final int y, final int timerOffset) {
             this(x, y, false, -3);
             other = new ElectricityEnemy(x + 6, y, true, 2);
             other.other = this;
             RoomLoader.addActor(other);
+            timer -= (timerOffset * 16);
         }
         
         protected ElectricityEnemy(final int x, final int y, final boolean mirror, final int offX) {

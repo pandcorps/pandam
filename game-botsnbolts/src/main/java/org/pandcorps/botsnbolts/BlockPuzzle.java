@@ -430,7 +430,7 @@ public abstract class BlockPuzzle {
             tm.savePosition(getPosition(), tileIndex);
             tm.setForeground(tileIndex, getElectricityBlockImage(), Tile.BEHAVIOR_SOLID);
             tm.getLayer().addActor(this);
-            timer -= timerOffset * 16;
+            timer -= (timerOffset * 16);
         }
         
         @Override
@@ -448,7 +448,7 @@ public abstract class BlockPuzzle {
     }
     
     protected final static class Electricity extends TimedEnemyProjectile {
-        private final static int DURATION_ELECTRICITY = 12;
+        protected final static int DURATION_ELECTRICITY = 12;
         private final int NUM_PARTS;
         protected static Panmage image = null;
         private final int[] parts;
