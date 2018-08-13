@@ -421,15 +421,16 @@ public abstract class BlockPuzzle {
     }
     
     protected final static class ElectricityBlock extends Panctor implements StepListener {
-        private final static int DURATION_PERIOD = 60;
+        protected final static int DURATION_PERIOD = 64;
         protected static Panmage image = null;
         private int timer = DURATION_PERIOD;
         
-        protected ElectricityBlock(final int tileIndex) {
+        protected ElectricityBlock(final int tileIndex, final int timerOffset) {
             final TileMap tm = BotsnBoltsGame.tm;
             tm.savePosition(getPosition(), tileIndex);
             tm.setForeground(tileIndex, getElectricityBlockImage(), Tile.BEHAVIOR_SOLID);
             tm.getLayer().addActor(this);
+            timer -= timerOffset * 16;
         }
         
         @Override

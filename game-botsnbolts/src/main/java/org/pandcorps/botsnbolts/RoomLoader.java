@@ -605,7 +605,7 @@ public abstract class RoomLoader {
     }
     
     private final static void elb(final Segment seg) {
-        new ElectricityBlock(BotsnBoltsGame.tm.getIndex(seg.intValue(0), seg.intValue(1)));
+        new ElectricityBlock(BotsnBoltsGame.tm.getIndex(seg.intValue(0), seg.intValue(1)), seg.getInt(2, 0));
     }
     
     private final static ButtonBlockPuzzle btp(final Segment seg) {
