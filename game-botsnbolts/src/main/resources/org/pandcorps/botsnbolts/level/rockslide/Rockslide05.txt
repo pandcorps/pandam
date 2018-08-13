@@ -1,0 +1,30 @@
+IMP|Rockslide
+
+M|r                                                                   lfPf
+M|r                                                                   <...
+M|r                             t                                       [w
+M|r                                                                     <.
+M|r                              t                        12223           
+M|r                                    t               1sss00402223       
+M|>                                                   1 555    4   3      
+M|                                    t              10   4        0s23   
+M|           '/-=---\`                  t           140            4500(-=
+M|          '/f  ffPf\`     '/-=-=-\`              1000     4  (-) 0040lfP
+M|         '/Pfp f  Ff----=--fPffPff\`    '/)     10004        [w] 0000lFf
+M|---=----=-f  fFfp fFfP  fPf  FPFsFP--=---fr    104000     (--=---)400l  
+M|  ffPf  fPfp FfPFfF  fp f  p FffF  fPfff  r    (--)40     [wwWwww]000lp 
+M|p fFfFp FfPfFfPffFfp FffFp fffFFfp FfsFfp r    lffr00 4(-=-----=-)004lfF
+
+ENM|13|6|SpringEnemy
+ENM|17|6|SpringEnemy
+ENM|25|4|SpringEnemy
+ENM|32|5|SpringEnemy
+
+ENM|55|9|RockEnemy
+ENM|59|3|RockEnemy
+ENM|62|5|RockEnemy
+
+DOR|0|3|Cyan
+DOR|71|6|Cyan
+
+RPT|53|0|12|8|RockslideRockBlue
