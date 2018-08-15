@@ -1,0 +1,30 @@
+IMP|Rockslide
+
+M|.>                                                                 lfPfF
+M|]                                                                  <....
+M|)                                                                    [ww
+M|r                                                                    <..
+M|r                           1sss3                                      [
+M|r              122223    12205550222223                                (
+M|>         1222204(-)022220000000400000022ss3                           l
+M|         1       <.>    s          4     55 3                          l
+M|        1(-=-)   5554   5                   03                         l
+M|       10<...>              s 4     sss     403              (--=)     l
+M|      14055555         4    5       555     0043             [wWw]     l
+M|---=--)004                     sss     4    00(-----=---==----=--)hhhhhl
+M|f  f  r000       4             555          04[wwwWwwwwWwwwWwwwww]eeeeel
+M|Fp fp r040                 4                00(---=---=-----=----)DDDDDl
+
+EXT|15|14|BoulderSpawner
+EXT|44|14|BoulderSpawner
+
+ENM|30|10|RockEnemy
+ENM|37|5|RockEnemy
+ENM|50|3|RockEnemy
+
+ENM|60|3|WallCannon
+ENM|60|4|WallCannon
+
+DOR|0|3|Cyan
+
+RPT|10|0|34|7|RockslideRockBlue
