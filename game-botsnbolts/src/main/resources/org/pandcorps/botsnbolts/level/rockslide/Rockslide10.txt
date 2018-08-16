@@ -1,0 +1,25 @@
+IMP|Rockslide
+
+M|.................>     l
+M|]eeeeeeeeeeeeeeees     l
+M|)                s   D l
+M|r    D           s     l
+M|r  d       D     s c   l
+M|r       s     ssss     l
+M|r       e     eeee     l
+M|r         d            l
+M|r c                 D  l
+M|r     (-=-)   D        l
+M|r     [wWw]            [
+M|rhhhhh(--=------=-----==
+M|reeeee[wwwWwwwWwwwwwWwww
+M|r     (-=---==----=-----
+
+BOX|15|9
+
+ENM|8|5|SpringEnemy
+ENM|13|3|SpringEnemy
+
+SHP|11^8|4^6~2^10
+
+RPT|1|0|22|14|RockslideRockDark
