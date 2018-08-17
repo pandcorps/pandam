@@ -1,0 +1,31 @@
+IMP|Rockslide
+
+M|>     <........................><................><..................> <
+M|] d   eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee [
+M|)                                                                      (
+M|r  c             d D               D                    c              l
+M|r       D         s     s     s     s     s     s D   s     s  d  s    l
+M|rhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhl
+M|rTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT<
+M|r V       V            V                    V                   V
+M|r     V       V    V        V       V   V      V       V      V     V
+M|>   V   V   V   V         V     V         V         V     V       V
+M|]bbbbbbbb V          V            V   V          V     V    V  bbbbbbbb
+M|-=--=---)                     V                                (---=---=
+M|f  fP  frbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbl  fPff  
+M|Fp Ffp fr(-=--=----=)(--=---==-----=-=----=-)(=---=-=----=----)lp ffFfp 
+
+SHP|15^4~21^8~27^12~33^8~39^12~45^8~51^12~57^8~63^12~69^8|10^5~14^7~21^12~27^8~33^12~39^8~45^12~51^8~57^12~63^8~69^12
+
+ENM|18|10|SpringEnemy
+ENM|30|10|SpringEnemy
+ENM|42|10|SpringEnemy
+ENM|54|10|SpringEnemy
+ENM|66|10|SpringEnemy
+
+LDR|70|11|3
+
+DOR|71|3|Cyan
+
+RPT|1|9|70|5|RockslideRockDark
+RPT|1|1|70|7|RockslideWood
