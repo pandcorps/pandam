@@ -854,23 +854,43 @@ public abstract class Enemy extends Chr implements CollisionListener {
     
     protected final static class Rocket extends Enemy {
         private static Panmage img = null;
+        private final boolean vertical;
         private int timer = 0;
         
         protected Rocket(final int x, final int y) {
             super(ROCKET_OFF_X, ROCKET_H, x, y, 1);
             setView(getRocketImage());
+            vertical = y == 0;
             setMirror(true);
-            hv = -VEL_PROJECTILE;
+            if (vertical) {
+                setRot(1);
+                getPosition().add(-6, -18);
+                hv = VEL_PROJECTILE;
+            } else {
+                hv = -VEL_PROJECTILE;
+            }
         }
         
         @Override
         protected final boolean onStepCustom() {
-            if (addX(hv) != X_NORMAL) {
+            if (vertical) {
+                final Panple pos = getPosition();
+                final float y = pos.getY() + hv;
+                if (y > (BotsnBoltsGame.GAME_H + 16)) {
+                    destroy();
+                } else {
+                    pos.setY(y);
+                }
+            } else if (addX(hv) != X_NORMAL) {
                 burst();
             }
             timer++;
             if (timer >= 8) {
-                Player.puff(this, -hv * 2, Mathtil.randi(3, 8));
+                if (vertical) {
+                    Player.puff(this, Mathtil.randi(3, 8), -hv * 2);
+                } else {
+                    Player.puff(this, -hv * 2, Mathtil.randi(4, 9));
+                }
                 timer = 0;
             }
             return true;
