@@ -298,7 +298,12 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
         
         protected final static void burstEnemy(final Panctor src) {
-            Projectile.burst(src, BotsnBoltsGame.enemyBurst, src.getPosition());
+            burstEnemy(src, 0);
+        }
+        
+        protected final static void burstEnemy(final Panctor src, final float offY) {
+            final Panple loc = src.getPosition();
+            Projectile.burst(src, BotsnBoltsGame.enemyBurst, loc.getX(), loc.getY() + offY);
         }
         
         protected boolean isDestroyedOnImpact() {
@@ -841,6 +846,46 @@ public abstract class Enemy extends Chr implements CollisionListener {
             image = getImage(image, "CeilingCannon" + (i + 1), null, CEILING_CANNON_MIN, CEILING_CANNON_MAX);
             images[i] = image;
             return image;
+        }
+    }
+    
+    private final static int ROCKET_OFF_X = 12;
+    private final static int ROCKET_H = 14;
+    
+    protected final static class Rocket extends Enemy {
+        private static Panmage img = null;
+        private int timer = 0;
+        
+        protected Rocket(final int x, final int y) {
+            super(ROCKET_OFF_X, ROCKET_H, x, y, 1);
+            setView(getRocketImage());
+            setMirror(true);
+            hv = -VEL_PROJECTILE;
+        }
+        
+        @Override
+        protected final boolean onStepCustom() {
+            if (addX(hv) != X_NORMAL) {
+                burst();
+            }
+            timer++;
+            if (timer >= 8) {
+                Player.puff(this, -hv * 2, Mathtil.randi(3, 8));
+                timer = 0;
+            }
+            return true;
+        }
+        
+        private final void burst() {
+            EnemyProjectile.burstEnemy(this, 8);
+            destroy();
+        }
+        
+        private final static Panmage getRocketImage() {
+            if (img != null) {
+                return img;
+            }
+            return (img = getImage(img, "Rocket", new FinPanple2(14, 5), getMin(ROCKET_OFF_X), getMax(ROCKET_OFF_X, ROCKET_H)));
         }
     }
     
