@@ -64,11 +64,15 @@ public abstract class Extra extends Panctor {
         public final void onStep(final StepEvent event) {
             waitTimer--;
             if (waitTimer <= 0) {
-                if (isInView()) {
+                if (isSpawningAllowed()) {
                     newEnemy();
                 }
                 initTimer();
             }
+        }
+        
+        protected boolean isSpawningAllowed() {
+            return isInView();
         }
         
         protected final Enemy newEnemy() {
@@ -98,6 +102,25 @@ public abstract class Extra extends Panctor {
         
         private final static Constructor<BoulderEnemy> getBoulderConstructor() {
             return (constructor = getEnemyConstructor(constructor, BoulderEnemy.class));
+        }
+    }
+    
+    protected final static class RocketSpawner extends EnemySpawner {
+        private static Constructor<Rocket> constructor = null;
+        private final boolean vertical;
+        
+        protected RocketSpawner(final int x, final int y) {
+            super(getRocketConstructor(), x, y);
+            vertical = (y == 0);
+        }
+        
+        @Override
+        protected final boolean isSpawningAllowed() {
+            return vertical ? isInView() : !isInView();
+        }
+        
+        private final static Constructor<Rocket> getRocketConstructor() {
+            return (constructor = getEnemyConstructor(constructor, Rocket.class));
         }
     }
     
