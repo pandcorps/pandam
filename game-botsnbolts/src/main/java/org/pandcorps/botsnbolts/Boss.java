@@ -28,6 +28,7 @@ import org.pandcorps.botsnbolts.Extra.*;
 import org.pandcorps.botsnbolts.Player.*;
 import org.pandcorps.botsnbolts.PowerUp.*;
 import org.pandcorps.core.*;
+import org.pandcorps.core.seg.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.boundary.*;
@@ -49,8 +50,8 @@ public abstract class Boss extends Enemy {
     private static boolean delaying = false;
     protected static boolean dropping = false;
     
-    protected Boss(final int offX, final int h, final int x, final int y) {
-        super(offX, h, x, y, 0);
+    protected Boss(final int offX, final int h, final Segment seg) {
+        super(offX, h, seg, 0);
         init();
         startStill();
         setMirror(true);
@@ -330,8 +331,8 @@ public abstract class Boss extends Enemy {
         private int spawnTimer = 0;
         private CyanEnemy bot = null;
         
-        protected Fort(final int x, final int y) {
-            super(0, 0, x, y);
+        protected Fort(final Segment seg) {
+            super(0, 0, seg);
             setView(getStill());
             setMirror(false);
         }
@@ -412,8 +413,8 @@ public abstract class Boss extends Enemy {
         
         protected float targetX = -1;
         
-        protected VolcanoBot(final int x, final int y) {
-            super(VOLCANO_OFF_X, VOLCANO_H, x, y);
+        protected VolcanoBot(final Segment seg) {
+            super(VOLCANO_OFF_X, VOLCANO_H, seg);
         }
         
         @Override
@@ -617,8 +618,8 @@ public abstract class Boss extends Enemy {
         protected static Panmage slide2 = null;
         protected static Panmage trail = null;
         
-        protected HailBot(final int x, final int y) {
-            super(HAIL_OFF_X, HAIL_H, x, y);
+        protected HailBot(final Segment seg) {
+            super(HAIL_OFF_X, HAIL_H, seg);
         }
         
         @Override
@@ -871,8 +872,8 @@ public abstract class Boss extends Enemy {
         private final static Rotator rots = new RollRotator();
         private final static Panframe[] frames = new Panframe[Rotator.numFrames];
         
-        protected RockslideBot(final int x, final int y) {
-            super(ROCKSLIDE_OFF_X, ROCKSLIDE_H, x, y);
+        protected RockslideBot(final Segment seg) {
+            super(ROCKSLIDE_OFF_X, ROCKSLIDE_H, seg);
         }
         
         @Override
@@ -1217,8 +1218,8 @@ public abstract class Boss extends Enemy {
         protected static Panmage fall = null;
         protected static Panmage burst = null;
         
-        protected LightningBot(final int x, final int y) {
-            super(LIGHTNING_OFF_X, LIGHTNING_H, x, y);
+        protected LightningBot(final Segment seg) {
+            super(LIGHTNING_OFF_X, LIGHTNING_H, seg);
         }
         
         @Override
@@ -1607,8 +1608,8 @@ public abstract class Boss extends Enemy {
         protected static Panmage drill4 = null;
         private int drillTimer = -1;
         
-        protected EarthquakeBot(final int x, final int y) {
-            super(EARTHQUAKE_OFF_X, EARTHQUAKE_H, x, y);
+        protected EarthquakeBot(final Segment seg) {
+            super(EARTHQUAKE_OFF_X, EARTHQUAKE_H, seg);
         }
         
         @Override
@@ -1925,8 +1926,8 @@ public abstract class Boss extends Enemy {
         protected static Panmage spin3 = null;
         private long age = 0;
         
-        protected CycloneBot(final int x, final int y) {
-            super(CYCLONE_OFF_X, CYCLONE_H, x, y);
+        protected CycloneBot(final Segment seg) {
+            super(CYCLONE_OFF_X, CYCLONE_H, seg);
         }
         
         @Override
@@ -2234,8 +2235,8 @@ public abstract class Boss extends Enemy {
         private float prevY = 0;
         private boolean prevUnderwater = false;
         
-        protected FloodBot(final int x, final int y) {
-            super(FLOOD_OFF_X, FLOOD_H, x, y);
+        protected FloodBot(final Segment seg) {
+            super(FLOOD_OFF_X, FLOOD_H, seg);
             valve = new Valve(this);
             xRight = getX();
             xLeft = getMirroredX(xRight);
@@ -2693,8 +2694,8 @@ public abstract class Boss extends Enemy {
         private final int xLeft;
         private Pantexture tex = null;
         
-        protected DroughtBot(final int x, final int y) {
-            super(DROUGHT_OFF_X, DROUGHT_H, x, y);
+        protected DroughtBot(final Segment seg) {
+            super(DROUGHT_OFF_X, DROUGHT_H, seg);
             xRight = getX();
             xLeft = getMirroredX(xRight);
         }
@@ -3081,8 +3082,8 @@ public abstract class Boss extends Enemy {
     }
     
     protected final static class Volatile extends Boss {
-        protected Volatile(final int x, final int y) {
-            super(VOLCANO_OFF_X, VOLCANO_H, x, y); //TODO
+        protected Volatile(final Segment seg) {
+            super(VOLCANO_OFF_X, VOLCANO_H, seg); //TODO
         }
 
         @Override

@@ -28,6 +28,7 @@ import org.pandcorps.botsnbolts.PowerUp.*;
 import org.pandcorps.botsnbolts.Profile.*;
 import org.pandcorps.botsnbolts.RoomLoader.*;
 import org.pandcorps.core.*;
+import org.pandcorps.core.seg.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.boundary.*;
@@ -50,6 +51,10 @@ public abstract class Enemy extends Chr implements CollisionListener {
         VEL_PROJECTILE_45 = tmp.getX();
     }
     
+    protected Enemy(final int offX, final int h, final Segment seg, final int health) {
+        this(offX, h, getX(seg), getY(seg), health);
+    }
+    
     protected Enemy(final int offX, final int h, final int x, final int y, final int health) {
         super(offX, h);
         this.health = health;
@@ -57,6 +62,19 @@ public abstract class Enemy extends Chr implements CollisionListener {
         BotsnBoltsGame.tm.savePosition(pos, x, y);
         pos.addX(getInitialOffsetX());
         pos.setZ(BotsnBoltsGame.DEPTH_ENEMY);
+        initTileCoordinates(x, y);
+    }
+    
+    protected final static int getX(final Segment seg) {
+        return seg.intValue(0);
+    }
+    
+    protected final static int getY(final Segment seg) {
+        return seg.intValue(1);
+    }
+    
+    //@OverrideMe
+    protected void initTileCoordinates(final int x, final int y) {
     }
     
     protected int getInitialOffsetX() {
@@ -522,6 +540,10 @@ public abstract class Enemy extends Chr implements CollisionListener {
             super(0, 0, x, y, health);
         }
         
+        protected TileUnawareEnemy(final Segment seg, final int health) {
+            super(0, 0, seg, health);
+        }
+        
         @Override
         protected final boolean onStepCustom() {
             onStepEnemy();
@@ -539,13 +561,17 @@ public abstract class Enemy extends Chr implements CollisionListener {
         protected final float baseX;
         protected final float baseY;
         
-        protected CubeEnemy(final int x, final int y, final int health) {
-            super(x, y, health);
-            newCube(x, y);
+        protected CubeEnemy(final Segment seg, final int health) {
+            super(seg, health);
             final Panple pos = getPosition();
             pos.add(OFF_CUBE, OFF_CUBE);
             baseX = pos.getX();
             baseY = pos.getY();
+        }
+        
+        @Override
+        protected final void initTileCoordinates(final int x, final int y) {
+            newCube(x, y);
         }
         
         @Override
@@ -561,8 +587,8 @@ public abstract class Enemy extends Chr implements CollisionListener {
     }
     
     protected final static class PowerBox extends CubeEnemy {
-        protected PowerBox(final int x, final int y) {
-            super(x, y, 1);
+        protected PowerBox(final Segment seg) {
+            super(seg, 1);
             setView(getPlayerContext().pi.powerBox);
         }
         
@@ -573,8 +599,8 @@ public abstract class Enemy extends Chr implements CollisionListener {
     }
     
     protected final static class DiskBox extends CubeEnemy {
-        protected DiskBox(final int x, final int y) {
-            super(x, y, 1);
+        protected DiskBox(final Segment seg) {
+            super(seg, 1);
             setView(getPlayerContext().pi.diskBox);
         }
         
@@ -587,8 +613,8 @@ public abstract class Enemy extends Chr implements CollisionListener {
     protected final static class BoltBox extends CubeEnemy {
         private final Upgrade upgrade;
         
-        protected BoltBox(final int x, final int y, final Upgrade upgrade) {
-            super(x, y, 1);
+        protected BoltBox(final Segment seg, final Upgrade upgrade) {
+            super(seg, 1);
             final PlayerContext pc = getPlayerContext();
             if (pc.prf.upgrades.contains(upgrade)) {
                 setView(pc.pi.powerBox);
@@ -609,8 +635,8 @@ public abstract class Enemy extends Chr implements CollisionListener {
         private int timer = 0;
         private int dir;
         
-        protected SentryGun(final int x, final int y) {
-            super(x, y, 5);
+        protected SentryGun(final Segment seg) {
+            super(seg, 5);
             setView(BotsnBoltsGame.sentryGun[0]);
             setLeft();
         }
@@ -713,8 +739,16 @@ public abstract class Enemy extends Chr implements CollisionListener {
         private final static int DURATION = 60;
         private int timer;
         
-        protected WallCannon(final int x, final int y) {
-            super(x, y, 3);
+        protected WallCannon(final int x, final int y, final int health) {
+            super(x, y, health);
+        }
+        
+        protected WallCannon(final Segment seg) {
+            super(seg, 3);
+        }
+        
+        @Override
+        protected final void initTileCoordinates(final int x, final int y) {
             timer = isEarly(x, y) ? (DURATION / 2) : DURATION;
             setView(0);
             initCannon(x, y);
@@ -776,8 +810,8 @@ public abstract class Enemy extends Chr implements CollisionListener {
         private final static Panmage[] images = new Panmage[3];
         private int timer;
         
-        protected CeilingCannon(final int x, final int y) {
-            super(x, y, 3);
+        protected CeilingCannon(final Segment seg) {
+            super(seg, 3);
             setDown();
         }
         
@@ -860,13 +894,18 @@ public abstract class Enemy extends Chr implements CollisionListener {
         protected Rocket(final int x, final int y) {
             super(ROCKET_OFF_X, ROCKET_H, x, y, 1);
             setView(getRocketImage());
-            vertical = y == 0;
+            vertical = getPosition().getY() < 1;
             setMirror(true);
             if (vertical) {
                 setRot(1);
                 getPosition().add(-6, -18);
                 hv = VEL_PROJECTILE;
             } else {
+                if (isInView()) {
+                    setVisible(false);
+                    destroy();
+                    return;
+                }
                 hv = -VEL_PROJECTILE;
             }
         }
@@ -912,8 +951,8 @@ public abstract class Enemy extends Chr implements CollisionListener {
     protected final static int PROP_HEALTH = 2, PROP_OFF_X = 4, PROP_H = 12, CRAWL_H = 14;
     
     protected final static class PropEnemy extends Enemy {
-        protected PropEnemy(final int x, final int y) {
-            super(PROP_OFF_X, PROP_H, x, y, PROP_HEALTH);
+        protected PropEnemy(final Segment seg) {
+            super(PROP_OFF_X, PROP_H, seg, PROP_HEALTH);
             setView(BotsnBoltsGame.propEnemy);
         }
         
@@ -942,6 +981,10 @@ public abstract class Enemy extends Chr implements CollisionListener {
         
         protected JumpEnemy(final int offX, final int h, final int x, final int y, final int health) {
             super(offX, h, x, y, health);
+        }
+        
+        protected JumpEnemy(final int offX, final int h, final Segment seg, final int health) {
+            super(offX, h, seg, health);
         }
         
         @Override
@@ -1018,8 +1061,8 @@ public abstract class Enemy extends Chr implements CollisionListener {
     }
     
     protected final static class SpringEnemy extends JumpEnemy {
-        protected SpringEnemy(final int x, final int y) {
-            super(PROP_OFF_X, PROP_H, x, y, PROP_HEALTH);
+        protected SpringEnemy(final Segment seg) {
+            super(PROP_OFF_X, PROP_H, seg, PROP_HEALTH);
             endSpring();
         }
         
@@ -1068,8 +1111,12 @@ public abstract class Enemy extends Chr implements CollisionListener {
         private int velY;
         private int timer = 8;
         
-        protected CrawlEnemy(final int x, final int y) {
-            super(x, y, PROP_HEALTH);
+        protected CrawlEnemy(final Segment seg) {
+            super(seg, PROP_HEALTH);
+        }
+        
+        @Override
+        protected final void initTileCoordinates(final int x, final int y) {
             final TileMap tm = BotsnBoltsGame.tm;
             tileIndex = tm.getIndexRequired(x, y);
             for (final Direction dir : Direction.values()) {
@@ -1158,8 +1205,8 @@ public abstract class Enemy extends Chr implements CollisionListener {
         private final static int SPEED = 2;
         private boolean shielded = true;
         
-        protected ShieldedEnemy(final int x, final int y) {
-            super(PROP_OFF_X, PROP_H, x, y, PROP_HEALTH);
+        protected ShieldedEnemy(final Segment seg) {
+            super(PROP_OFF_X, PROP_H, seg, PROP_HEALTH);
             getPosition().addY(2);
             hv = 0;
             setView(BotsnBoltsGame.shieldedEnemy);
@@ -1213,6 +1260,8 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
     }
     
+    private final static int DRILL_HEALTH = 1;
+    
     protected static class DrillEnemy extends Enemy {
         private final static int NUM_IMAGES = 8;
         private final static int FRAME_DURATION = 4;
@@ -1226,12 +1275,28 @@ public abstract class Enemy extends Chr implements CollisionListener {
         private int digTimer = 0;
         private Panctor partialTileLeft = null;
         private Panctor partialTileRight = null;
+        private final boolean respawnable;
+        private int x;
+        
+        protected DrillEnemy(final Segment seg) {
+            super(PROP_OFF_X, CRAWL_H, seg, DRILL_HEALTH);
+            respawnable = seg.getBoolean(3, false);
+        }
         
         protected DrillEnemy(final int x, final int y) {
-            super(PROP_OFF_X, CRAWL_H, x, y, 1);
+            super(PROP_OFF_X, CRAWL_H, x, y, DRILL_HEALTH);
+            respawnable = true;
+        }
+        
+        {
             getPosition().setZ(BotsnBoltsGame.DEPTH_BETWEEN);
             hv = 0;
             setCurrentView();
+        }
+        
+        @Override
+        protected final void initTileCoordinates(final int x, final int y) {
+            this.x = x;
         }
         
         private final void setCurrentView() {
@@ -1349,24 +1414,18 @@ public abstract class Enemy extends Chr implements CollisionListener {
             }
             return dirtShatter;
         }
-    }
-    
-    protected final static class RespawnableDrillEnemy extends DrillEnemy {
-        private final int x;
-        
-        protected RespawnableDrillEnemy(final int x, final int y) {
-            super(x, y);
-            this.x = x;
-        }
         
         @Override
         public final void onDefeat() {
+            if (!respawnable) {
+                return;
+            }
             Pangine.getEngine().addTimer(BotsnBoltsGame.tm, 30, new TimerListener() {
                 @Override public final void onTimer(final TimerEvent event) {
                     if (RoomChanger.isChanging()) {
                         return;
                     }
-                    BotsnBoltsGame.addActor(new RespawnableDrillEnemy(x, 14));
+                    BotsnBoltsGame.addActor(new DrillEnemy(x, 14));
             }});
         }
     }
@@ -1377,8 +1436,8 @@ public abstract class Enemy extends Chr implements CollisionListener {
         private int timer = -1;
         private int i = 0;
         
-        protected WalkerEnemy(final int x, final int y) {
-            super(PROP_OFF_X, CRAWL_H, x, y, PROP_HEALTH);
+        protected WalkerEnemy(final Segment seg) {
+            super(PROP_OFF_X, CRAWL_H, seg, PROP_HEALTH);
             setView(getImage(0));
             setMirror(true);
         }
@@ -1435,11 +1494,11 @@ public abstract class Enemy extends Chr implements CollisionListener {
         private int dir = 0;
         private int sleepTimer = 0;
         
-        protected GliderEnemy(final int x, final int y, final int velX, final int velY) {
-            super(x, y, PROP_HEALTH);
+        protected GliderEnemy(final Segment seg) {
+            super(seg, PROP_HEALTH);
             setView(getImage(0));
-            this.velX = velX;
-            this.velY = velY;
+            this.velX = seg.intValue(3);
+            this.velY = seg.intValue(4);
         }
         
         @Override
@@ -1526,35 +1585,11 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
     }
     
-    protected static class HorizontalGliderEnemy extends GliderEnemy {
-        protected HorizontalGliderEnemy(final int x, final int y) {
-            super(x, y, 1, 0);
-        }
-    }
-    
-    protected static class VerticalGliderEnemy extends GliderEnemy {
-        protected VerticalGliderEnemy(final int x, final int y) {
-            super(x, y, 0, 1);
-        }
-    }
-    
-    protected static class PositiveGliderEnemy extends GliderEnemy {
-        protected PositiveGliderEnemy(final int x, final int y) {
-            super(x, y, 1, 1);
-        }
-    }
-    
-    protected static class NegativeGliderEnemy extends GliderEnemy {
-        protected NegativeGliderEnemy(final int x, final int y) {
-            super(x, y, 1, -1);
-        }
-    }
-    
     protected final static class SubEnemy extends Enemy {
         private final static Panmage[] images = new Panmage[2];
         
-        protected SubEnemy(final int x, final int y) {
-            super(PROP_OFF_X, PROP_H, x, y, PROP_HEALTH);
+        protected SubEnemy(final Segment seg) {
+            super(PROP_OFF_X, PROP_H, seg, PROP_HEALTH);
             setMirror(false);
             hv = -1;
             setView(getCurrentImage());
@@ -1612,8 +1647,8 @@ public abstract class Enemy extends Chr implements CollisionListener {
         private final static int speedMultiplier = 3;
         private int speedMultiplied = speedMultiplier;
         
-        protected SaucerEnemy(final int x, final int y) {
-            super(PROP_OFF_X, CRAWL_H, x, y, PROP_HEALTH);
+        protected SaucerEnemy(final Segment seg) {
+            super(PROP_OFF_X, CRAWL_H, seg, PROP_HEALTH);
             setView(getCurrentImage());
             setMirror(true);
             hv = -1;
@@ -1669,8 +1704,8 @@ public abstract class Enemy extends Chr implements CollisionListener {
     
     // Guards itself for a while; then lowers guard to attack
     protected final static class GuardedEnemy extends Enemy {
-        protected GuardedEnemy(final int x, final int y) {
-            super(-1, -1, x, y, -1); //TODO
+        protected GuardedEnemy(final Segment seg) {
+            super(-1, -1, seg, -1); //TODO
         }
         
         @Override
@@ -1694,8 +1729,8 @@ public abstract class Enemy extends Chr implements CollisionListener {
         private long lastHurt = NULL_CLOCK;
         private int oldHv;
         
-        protected SlideEnemy(final int x, final int y) {
-            super(PROP_OFF_X, SLIDE_H, x, y, 5);
+        protected SlideEnemy(final Segment seg) {
+            super(PROP_OFF_X, SLIDE_H, seg, 5);
             hv = -SLIDE_VELOCITY;
             oldHv = hv;
         }
@@ -1789,8 +1824,8 @@ public abstract class Enemy extends Chr implements CollisionListener {
     }
     
     protected final static class FireballEnemy extends JumpEnemy {
-        protected FireballEnemy(final int x, final int y) {
-            super(PROP_OFF_X, PROP_H, x, y, 1);
+        protected FireballEnemy(final Segment seg) {
+            super(PROP_OFF_X, PROP_H, seg, 1);
             setView(BotsnBoltsGame.fireballEnemy[0]);
         }
         
@@ -1841,8 +1876,8 @@ public abstract class Enemy extends Chr implements CollisionListener {
     protected static class Icicle extends Enemy {
         private static Panmage img = null;
         
-        protected Icicle(final int x, final int y) {
-            super(PROP_OFF_X, PROP_H, x, y, 1);
+        protected Icicle(final Segment seg) {
+            super(PROP_OFF_X, PROP_H, seg, 1);
             getPosition().addY(1);
             setView(getIcicleImage());
         }
@@ -1867,8 +1902,8 @@ public abstract class Enemy extends Chr implements CollisionListener {
     }
     
     protected final static class IceSpike extends Icicle {
-        protected IceSpike(final int x, final int y) {
-            super(x, y);
+        protected IceSpike(final Segment seg) {
+            super(seg);
             setFlip(true);
             getPosition().addY(13);
         }
@@ -1882,8 +1917,8 @@ public abstract class Enemy extends Chr implements CollisionListener {
         private byte state = 0;
         private int timer = 10;
         
-        protected IcicleEnemy(final int x, final int y) {
-            super(x, y);
+        protected IcicleEnemy(final Segment seg) {
+            super(seg);
             setView(getIcicleImage(0));
         }
         
@@ -1988,8 +2023,16 @@ public abstract class Enemy extends Chr implements CollisionListener {
         
         protected HenchbotEnemy(final Panmage[] imgs, final int x, final int y) {
             super(HENCHBOT_OFF_X, HENCHBOT_H, x, y, HENCHBOT_HEALTH);
-            turnTowardPlayer();
             this.imgs = imgs;
+        }
+        
+        protected HenchbotEnemy(final Panmage[] imgs, final Segment seg) {
+            super(HENCHBOT_OFF_X, HENCHBOT_H, seg, HENCHBOT_HEALTH);
+            this.imgs = imgs;
+        }
+        
+        {
+            turnTowardPlayer();
         }
         
         @Override
@@ -2090,6 +2133,10 @@ public abstract class Enemy extends Chr implements CollisionListener {
             super(BotsnBoltsGame.henchbotEnemy, x, y);
         }
         
+        protected CyanEnemy(final Segment seg) {
+            super(BotsnBoltsGame.henchbotEnemy, seg);
+        }
+        
         @Override
         protected final void onShoot() {
             final Player player = getNearestPlayer();
@@ -2115,8 +2162,8 @@ public abstract class Enemy extends Chr implements CollisionListener {
         private final static int LENGTH_STREAM = 8;
         private final static int LENGTH_BURST = 5;
         
-        protected FlamethrowerEnemy(final int x, final int y) {
-            super(BotsnBoltsGame.flamethrowerEnemy, x, y);
+        protected FlamethrowerEnemy(final Segment seg) {
+            super(BotsnBoltsGame.flamethrowerEnemy, seg);
         }
         
         @Override
@@ -2207,8 +2254,8 @@ public abstract class Enemy extends Chr implements CollisionListener {
     }
     
     protected final static class FreezeRayEnemy extends HenchbotEnemy {
-        protected FreezeRayEnemy(final int x, final int y) {
-            super(BotsnBoltsGame.freezeRayEnemy, x, y);
+        protected FreezeRayEnemy(final Segment seg) {
+            super(BotsnBoltsGame.freezeRayEnemy, seg);
         }
 
         @Override
@@ -2226,17 +2273,21 @@ public abstract class Enemy extends Chr implements CollisionListener {
     protected final static class RockEnemy extends Enemy {
         private static Panmage rockCatch = null;
         private static Panmage rockThrow = null;
-        private final int x;
+        private int x;
         private int boulderTimer = Extra.TIMER_SPAWNER;
         private int holdTimer = 0;
         private int throwTimer = 0;
         private BoulderEnemy boulder = null;
         
-        protected RockEnemy(final int x, final int y) {
-            super(HENCHBOT_OFF_X, HENCHBOT_H, x, y, HENCHBOT_HEALTH);
+        protected RockEnemy(final Segment seg) {
+            super(HENCHBOT_OFF_X, HENCHBOT_H, seg, HENCHBOT_HEALTH);
             setStillImage();
             //turnTowardPlayer();
             setMirror(true); // Boulders designed to land in specific place
+        }
+        
+        @Override
+        protected final void initTileCoordinates(final int x, final int y) {
             this.x = x;
         }
         
@@ -2320,15 +2371,19 @@ public abstract class Enemy extends Chr implements CollisionListener {
     
     protected final static class JackhammerEnemy extends Enemy implements RoomAddListener {
         private final static Panmage[] imgs = new Panmage[2];
-        private final int x;
-        private final int yCluster;
+        private int x;
+        private int yCluster;
         private int timer = 0;
         private boolean active = true;
         
-        protected JackhammerEnemy(final int x, final int y) {
-            super(HENCHBOT_OFF_X, HENCHBOT_H, x, y, HENCHBOT_HEALTH);
+        protected JackhammerEnemy(final Segment seg) {
+            super(HENCHBOT_OFF_X, HENCHBOT_H, seg, HENCHBOT_HEALTH);
             setStillImage();
             turnTowardPlayer();
+        }
+        
+        @Override
+        protected final void initTileCoordinates(final int x, final int y) {
             this.x = x;
             int j = y - 2;
             while (j > 0) {
@@ -2426,13 +2481,17 @@ public abstract class Enemy extends Chr implements CollisionListener {
     
     protected final static class ShovelEnemy extends Enemy {
         private final static Panmage[] imgs = new Panmage[3];
-        private final int x;
-        private final int y;
+        private int x;
+        private int y;
         private int timer = 0;
         
-        protected ShovelEnemy(final int x, final int y) {
-            super(HENCHBOT_OFF_X, HENCHBOT_H, x, y, HENCHBOT_HEALTH);
+        protected ShovelEnemy(final Segment seg) {
+            super(HENCHBOT_OFF_X, HENCHBOT_H, seg, HENCHBOT_HEALTH);
             setView(0);
+        }
+        
+        @Override
+        protected final void initTileCoordinates(final int x, final int y) {
             this.x = x;
             this.y = y;
         }
@@ -2488,8 +2547,8 @@ public abstract class Enemy extends Chr implements CollisionListener {
         private Electricity electricity = null;
         private boolean flip = false;
         
-        protected ElectricityEnemy(final int x, final int y) {
-            this(x, y, 0);
+        protected ElectricityEnemy(final Segment seg) {
+            this(getX(seg), getY(seg), 0);
         }
         
         protected ElectricityEnemy(final int x, final int y, final int timerOffset) {
@@ -2566,8 +2625,8 @@ public abstract class Enemy extends Chr implements CollisionListener {
     protected final static class SwimEnemy extends Enemy {
         private final static Panmage[] imgs = new Panmage[3];
         
-        protected SwimEnemy(final int x, final int y) {
-            super(HENCHBOT_OFF_X, HENCHBOT_H, x, y, HENCHBOT_HEALTH);
+        protected SwimEnemy(final Segment seg) {
+            super(HENCHBOT_OFF_X, HENCHBOT_H, seg, HENCHBOT_HEALTH);
             setMirror(false);
             hv = -2;
             setView(getCurrentSwim());
@@ -2609,8 +2668,8 @@ public abstract class Enemy extends Chr implements CollisionListener {
         private int vy = 1;
         private int attackTimer = 0;
         
-        protected JetpackEnemy(final int x, final int y) {
-            super(HENCHBOT_OFF_X, HENCHBOT_H, x, y, HENCHBOT_HEALTH);
+        protected JetpackEnemy(final Segment seg) {
+            super(HENCHBOT_OFF_X, HENCHBOT_H, seg, HENCHBOT_HEALTH);
             setMirror(true);
         }
         
@@ -2664,8 +2723,8 @@ public abstract class Enemy extends Chr implements CollisionListener {
         private byte mode = 0;
         private int timer = 0;
         
-        protected QuicksandEnemy(final int x, final int y) {
-            super(HENCHBOT_OFF_X, HENCHBOT_H, x, y, HENCHBOT_HEALTH);
+        protected QuicksandEnemy(final Segment seg) {
+            super(HENCHBOT_OFF_X, HENCHBOT_H, seg, HENCHBOT_HEALTH);
             setMirror(true);
             maxY = getPosition().getY();
             minY = maxY - 28;
@@ -2742,7 +2801,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         private final static Panmage[] images = new Panmage[5];
         
         protected FortCannon(final int x, final int y) {
-            super(x, y);
+            super(x, y, 5);
         }
         
         @Override
