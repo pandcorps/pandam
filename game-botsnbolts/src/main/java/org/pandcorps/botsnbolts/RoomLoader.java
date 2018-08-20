@@ -41,6 +41,7 @@ import org.pandcorps.pandax.visual.*;
 
 public abstract class RoomLoader {
     private final static int OFF_ALT = 256;
+    private final static Class<?>[] SEGMENT_TYPES = { Segment.class };
     private final static Map<BotCell, BotRoom> rooms = new HashMap<BotCell, BotRoom>();
     protected final static List<BotLevel> levels = new ArrayList<BotLevel>();
     private final static List<Panctor> actors = new ArrayList<Panctor>();
@@ -193,17 +194,17 @@ public abstract class RoomLoader {
             } else if ("RPT".equals(name)) { // Repeating Texture
                 rpt(seg);
             } else if ("BOX".equals(name)) { // Power-up Box
-                box(seg.intValue(0), seg.intValue(1));
+                box(seg);
             } else if ("BLT".equals(name)) { // Upgrade Bolt Box
                 blt(seg);
             } else if ("DSK".equals(name)) { // Disk Box
                 dsk(seg);
             } else if ("EXT".equals(name)) { // Extra Actor
-                ext(seg.intValue(0), seg.intValue(1), seg.getValue(2));
+                ext(seg);
             } else if ("ENM".equals(name)) { // Enemy
-                enm(seg.intValue(0), seg.intValue(1), seg.getValue(2));
+                enm(seg);
             } else if ("BOS".equals(name)) { // Boss
-                bos(seg.intValue(0), seg.intValue(1), seg.getValue(2));
+                bos(seg);
             } else if ("SHP".equals(name)) { // Shootable Block Puzzle
                 shp(seg);
             } else if ("TMP".equals(name)) { // Timed Block Puzzle
@@ -474,36 +475,34 @@ public abstract class RoomLoader {
         return img;
     }
     
-    private final static void box(final int x, final int y) {
-        addActor(new PowerBox(x, y));
+    private final static void box(final Segment seg) {
+        addActor(new PowerBox(seg));
     }
     
     private final static void blt(final Segment seg) throws Exception {
-        final int x = seg.intValue(0), y = seg.intValue(1);
         final String name = seg.getValue(2);
-        addActor(new BoltBox(x, y, Profile.getUpgrade(name)));
+        addActor(new BoltBox(seg, Profile.getUpgrade(name)));
     }
     
     private final static void dsk(final Segment seg) throws Exception {
-        final int x = seg.intValue(0), y = seg.intValue(1);
-        addActor(new DiskBox(x, y));
+        addActor(new DiskBox(seg));
     }
     
-    private final static void ext(final int x, final int y, final String extraType) throws Exception {
-        addActor(newActor(getActorConstructor(Extra.class.getDeclaredClasses(), extraType), x, y));
+    private final static void ext(final Segment seg) throws Exception {
+        addActor(newActor(getActorConstructor(Extra.class.getDeclaredClasses(), seg.getValue(2)), seg));
     }
     
-    private final static void enm(final int x, final int y, final String enemyType) throws Exception {
-        addActor(newActor(getEnemyConstructor(enemyType), x, y));
+    private final static void enm(final Segment seg) throws Exception {
+        addActor(newActor(getEnemyConstructor(seg.getValue(2)), seg));
     }
     
     protected final static void addActor(final Panctor actor) {
         actors.add(actor);
     }
     
-    protected final static <T extends Panctor> T newActor(final Constructor<T> constructor, final int x, final int y) {
+    protected final static <T extends Panctor> T newActor(final Constructor<T> constructor, final Segment seg) {
         try {
-            return constructor.newInstance(Integer.valueOf(x), Integer.valueOf(y));
+            return constructor.newInstance(seg);
         } catch (final Exception e) {
             throw Pantil.toRuntimeException(e);
         }
@@ -527,7 +526,7 @@ public abstract class RoomLoader {
             return constructor;
         }
         final Class<?> c = getDeclaredClass(classes, actorType);
-        constructor = (Constructor<? extends Panctor>) c.getDeclaredConstructor(Integer.TYPE, Integer.TYPE);
+        constructor = (Constructor<? extends Panctor>) c.getDeclaredConstructor(SEGMENT_TYPES);
         actorTypes.put(actorType, constructor);
         return constructor;
     }
@@ -542,8 +541,8 @@ public abstract class RoomLoader {
         throw new IllegalArgumentException("Unrecognized actorType " + actorType);
     }
     
-    private final static void bos(final int x, final int y, final String enemyType) throws Exception {
-        addActor(getBossConstructor(enemyType).newInstance(Integer.valueOf(x), Integer.valueOf(y)));
+    private final static void bos(final Segment seg) throws Exception {
+        addActor(getBossConstructor(seg.getValue(2)).newInstance(seg));
     }
     
     private final static Constructor<? extends Enemy> getBossConstructor(final String enemyType) throws Exception {

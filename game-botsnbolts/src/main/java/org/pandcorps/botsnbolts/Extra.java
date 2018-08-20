@@ -22,10 +22,9 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.botsnbolts;
 
-import java.lang.reflect.*;
-
 import org.pandcorps.botsnbolts.Enemy.*;
 import org.pandcorps.core.*;
+import org.pandcorps.core.seg.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.impl.*;
@@ -34,26 +33,34 @@ import org.pandcorps.pandam.impl.*;
 public abstract class Extra extends Panctor {
     protected final static int TIMER_SPAWNER = 90;
     
-    protected Extra(final int x, final int y, final int z) {
+    protected Extra(final Segment seg, final int z) {
         final Panple pos = getPosition();
+        final int x = Enemy.getX(seg), y = Enemy.getY(seg);
         BotsnBoltsGame.tm.savePosition(pos, x, y);
         pos.setZ(z);
+        initTileCoordinates(x, y);
+    }
+    
+    //@OverrideMe
+    protected void initTileCoordinates(final int x, final int y) {
     }
     
     protected abstract static class EnemySpawner extends Extra implements StepListener {
-        private final Constructor<? extends Enemy> constructor;
-        private final int x;
-        private final int y;
+        protected int x;
+        protected int y;
         private int waitTimer;
         private static Panmage img = null;
         
-        protected EnemySpawner(final Constructor<? extends Enemy> constructor, final int x, final int y) {
-            super(x, y, BotsnBoltsGame.DEPTH_BG);
-            this.constructor = constructor;
-            this.x = x;
-            this.y = y;
+        protected EnemySpawner(final Segment seg) {
+            super(seg, BotsnBoltsGame.DEPTH_BG);
             initTimer();
             setView(getImage());
+        }
+        
+        @Override
+        protected final void initTileCoordinates(final int x, final int y) {
+            this.x = x;
+            this.y = y;
         }
         
         protected void initTimer() {
@@ -65,7 +72,7 @@ public abstract class Extra extends Panctor {
             waitTimer--;
             if (waitTimer <= 0) {
                 if (isSpawningAllowed()) {
-                    newEnemy();
+                    spawnEnemy();
                 }
                 initTimer();
             }
@@ -75,15 +82,17 @@ public abstract class Extra extends Panctor {
             return isInView();
         }
         
-        protected final Enemy newEnemy() {
+        protected final Enemy spawnEnemy() {
             final Panlayer layer = getLayer();
             if (layer == null) {
                 return null;
             }
-            final Enemy enemy = RoomLoader.newActor(constructor, x, y);
+            final Enemy enemy = newEnemy();
             layer.addActor(enemy);
             return enemy;
         }
+        
+        protected abstract Enemy newEnemy();
         
         private final static Panmage getImage() {
             if (img == null) {
@@ -94,24 +103,24 @@ public abstract class Extra extends Panctor {
     }
     
     protected final static class BoulderSpawner extends EnemySpawner {
-        private static Constructor<BoulderEnemy> constructor = null;
-        
-        protected BoulderSpawner(final int x, final int y) {
-            super(getBoulderConstructor(), x, y);
+        protected BoulderSpawner(final Segment seg) {
+            super(seg);
         }
         
-        private final static Constructor<BoulderEnemy> getBoulderConstructor() {
-            return (constructor = getEnemyConstructor(constructor, BoulderEnemy.class));
+        @Override
+        protected final Enemy newEnemy() {
+            return new BoulderEnemy(x, y);
         }
     }
     
     protected final static class RocketSpawner extends EnemySpawner {
-        private static Constructor<Rocket> constructor = null;
         private final boolean vertical;
+        private final int max;
         
-        protected RocketSpawner(final int x, final int y) {
-            super(getRocketConstructor(), x, y);
+        protected RocketSpawner(final Segment seg) {
+            super(seg);
             vertical = (y == 0);
+            max = seg.getInt(3, 1);
         }
         
         @Override
@@ -119,19 +128,9 @@ public abstract class Extra extends Panctor {
             return vertical ? isInView() : !isInView();
         }
         
-        private final static Constructor<Rocket> getRocketConstructor() {
-            return (constructor = getEnemyConstructor(constructor, Rocket.class));
-        }
-    }
-    
-    protected static <T extends Enemy> Constructor<T> getEnemyConstructor(final Constructor<T> constructor, final Class<T> c) {
-        if (constructor != null) {
-            return constructor;
-        }
-        try {
-            return c.getDeclaredConstructor(Integer.TYPE, Integer.TYPE);
-        } catch (final Exception e) {
-            throw Pantil.toRuntimeException(e);
+        @Override
+        protected final Enemy newEnemy() {
+            return new Rocket(x, (max == 1) ? y : (y + Mathtil.randi(0, max - 1)));
         }
     }
     
