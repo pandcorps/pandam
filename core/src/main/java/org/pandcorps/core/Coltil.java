@@ -149,8 +149,29 @@ public final class Coltil {
     }
 	
 	public final static <E> Iterable<E> copy(final Iterable<E> i) {
-		final List<E> list = new ArrayList<E>();
-		addAll(list, i);
+	    if (i == null) {
+	        return Collections.emptyList();
+	    }
+	    final Iterator<E> iter = i.iterator();
+	    boolean hasNext = iter.hasNext();
+	    if (!hasNext) {
+	        return Collections.emptyList();
+	    }
+	    List<E> list = null;
+	    while (hasNext) {
+	        final E elem = iter.next();
+	        hasNext = iter.hasNext();
+	        if (list == null) {
+	            if (hasNext) {
+	                list = new ArrayList<E>();
+	                list.add(elem);
+	            } else {
+	                list = Collections.singletonList(elem);
+	            }
+	        } else {
+	            list.add(elem);
+	        }
+	    }
 		return list;
 	}
 	

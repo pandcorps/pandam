@@ -211,7 +211,9 @@ public class Panlayer extends BasePantity {
     	tracked = null;
         applyActorChanges(); // If we detach an actor before clearing the layer, this prevents its destruction
     	destroy(actors.keySet());
-        destroy(addedActors);
+    	actors.clear();
+        destroy(Coltil.copy(addedActors));
+        addedActors.clear();
     }
     
     private final void applyRemoveActor(final Panctor actor) {
@@ -384,11 +386,10 @@ public class Panlayer extends BasePantity {
         return (layer == null) || layer.isDestroyed();
     }
     
-    private final void destroy(final Collection<Panctor> actors) {
+    private final void destroy(final Iterable<Panctor> actors) {
         for (final Panctor actor : actors) {
             actor.destroy(); // will call removeActor
         }
-        actors.clear();
     }
     
     public final void setClearDepthEnabled(final boolean clearDepthEnabled) {

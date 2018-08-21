@@ -159,6 +159,7 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
     }
     
     protected void openDoor() {
+        destroy(); // Do before changing tiles; onDestroy will clobber tile changes in this method
         final int n = openTunnel();
         final TileMap tm = BotsnBoltsGame.tm;
         final int base = getBaseFrameIndex();
@@ -167,7 +168,6 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
             tm.setForeground(doorX, y + j, opening[base + j]);
         }
         addOpenTimer(1);
-        destroy();
     }
     
     private final void addOpenTimer(final int nextIndex) {
