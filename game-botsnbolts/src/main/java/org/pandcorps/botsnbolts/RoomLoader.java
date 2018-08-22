@@ -489,23 +489,15 @@ public abstract class RoomLoader {
     }
     
     private final static void ext(final Segment seg) throws Exception {
-        addActor(newActor(getActorConstructor(Extra.class.getDeclaredClasses(), seg.getValue(2)), seg));
+        addActor(getActorConstructor(Extra.class.getDeclaredClasses(), seg.getValue(2)).newInstance(seg));
     }
     
     private final static void enm(final Segment seg) throws Exception {
-        addActor(newActor(getEnemyConstructor(seg.getValue(2)), seg));
+        addActor(getEnemyConstructor(seg.getValue(2)).newInstance(seg));
     }
     
     protected final static void addActor(final Panctor actor) {
         actors.add(actor);
-    }
-    
-    protected final static <T extends Panctor> T newActor(final Constructor<T> constructor, final Segment seg) {
-        try {
-            return constructor.newInstance(seg);
-        } catch (final Exception e) {
-            throw Pantil.toRuntimeException(e);
-        }
     }
     
     private final static Map<String, Constructor<? extends Panctor>> actorTypes = new HashMap<String, Constructor<? extends Panctor>>();
