@@ -2548,7 +2548,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         private boolean flip = false;
         
         protected ElectricityEnemy(final Segment seg) {
-            this(getX(seg), getY(seg), 0);
+            this(getX(seg), getY(seg), seg.getInt(3, 0));
         }
         
         protected ElectricityEnemy(final int x, final int y, final int timerOffset) {
