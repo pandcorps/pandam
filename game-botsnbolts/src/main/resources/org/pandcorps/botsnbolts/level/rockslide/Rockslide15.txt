@@ -1,0 +1,25 @@
+IMP|Rockslide
+
+M|.........> <............
+M|--)eeeeeee eeeeeeeeeeee(
+M|..>                    <
+M|)ee D      (-) D       (
+M|>          <.>     c   <
+M|--)  c     ee(-)       (
+M|..>          <.>       <
+M|)ee          eee     d (
+M|r                      l
+M|r      D           D   l
+M|r D          d         l
+M|r               D      l
+M|r  c                   l
+M|r                   D  l
+
+ENM|1|9|WallCannon
+ENM|1|10|WallCannon
+
+LDR|14|0|7
+LDR|12|3|6
+LDR|10|5|9
+
+RPT|1|0|22|14|RockslideRockDark
