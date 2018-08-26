@@ -1,0 +1,26 @@
+IMP|Rockslide
+
+M|........................
+M|wWw]eeeeeeeeeeeeeeeeeee[
+M|=--)    d              (
+M|...>          D        l
+M|)eee      c            l
+M|r                   d  l
+M|r     D          c     <
+M|r              d        
+M|r  c       D            
+M|r              (-) D    
+M|>    d         <.>      
+M|=----==--) (-=-----=-=--
+M|f  fPf  fr lPff  fFf  fP
+M|fp FfFp Fr lfsfp fPfp Ff
+
+LDR|10|0|3
+
+BOX|1|3
+
+ENM|16|5|SpringEnemy
+
+DOR|23|3|Cyan
+
+RPT|1|0|22|14|RockslideRockDark
