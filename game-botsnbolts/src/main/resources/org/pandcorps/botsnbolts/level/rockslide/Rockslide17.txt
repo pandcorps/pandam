@@ -1,0 +1,36 @@
+IMP|Rockslide
+
+M|.>                                                                   lff
+M|w]                                                                   lff
+M|-)                                                                   <..
+M|fr                                                                    (-
+M|fr          12(-=--=)23              12(=--==--)3                     lf
+M|fr         104<.....>003           1200<.......>023                   lf
+M|.>        1000555555500023   12222000405555555()0002223               <.
+M|         1    4           (=)                 <>       22223
+M|        10 (-)            <.>              4  55       000()23
+M|       100 <.>     4      555   (---=-)                400<>0023
+M|      1040 555       (-=-)      <.....>  4         (--=-=--)00403
+M|=--=--=-)0       4   <...>      5555555            <.......>000(--=--=--
+M|f  fPf  r4           55555                   4     555555555400lf    fPf
+M|fp Fffp r0                     4                       00400000lFp p FfF
+
+LDR|13|6|4
+LDR|21|4|6
+LDR|38|5|5
+
+ENM|24|4|RockEnemy
+ENM|27|7|RockEnemy
+
+ENM|45|6|WallCannon
+ENM|45|7|WallCannon
+ENM|57|4|WallCannon
+ENM|57|5|WallCannon
+
+EXT|49|14|BoulderSpawner
+EXT|61|14|BoulderSpawner
+
+DOR|0|3|Cyan
+DOR|71|3|Cyan
+
+RPT|10|0|45|7|RockslideRockBlue
