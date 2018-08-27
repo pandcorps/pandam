@@ -906,7 +906,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
                     destroy();
                     return;
                 }
-                hv = -VEL_PROJECTILE;
+                hv = (x < 0) ? VEL_PROJECTILE : -VEL_PROJECTILE;
             }
         }
         
