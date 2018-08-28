@@ -38,7 +38,8 @@ public final class EmptyPanmage extends Panmage {
     @Override
     protected final void render(final Panlayer layer, final float x, final float y, final float z,
                                 final float ix, final float iy, final float iw, final float ih,
-                                final int rot, final boolean mirror, final boolean flip) {
+                                final int rot, final boolean mirror, final boolean flip,
+                                final float r, final float g, final float b) {
     }
     
     @Override

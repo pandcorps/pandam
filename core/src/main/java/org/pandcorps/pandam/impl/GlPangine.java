@@ -960,6 +960,12 @@ public abstract class GlPangine extends Pangine {
 	}
 	
 	@Override
+	public final void enableColorArray() {
+	    gl.glEnableClientState(gl.GL_COLOR_ARRAY);
+	    GlPanmage.colorArrayEnabled = true;
+	}
+	
+	@Override
 	public final boolean enableBuffers() {
 	    try {
 	        gl.glEnable(gl.GL_ARRAY_BUFFER_BINDING);

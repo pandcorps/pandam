@@ -117,13 +117,25 @@ public abstract class Panmage extends BasePantity implements Panview, Pansplay {
 	    render(layer, x, y, z, ix, iy, iw, ih, 0, false, false);
 	}
 	
+	protected final void render(final Panlayer layer, final float x, final float y, final float z,
+        final float ix, final float iy, final float iw, final float ih, final int rot, final boolean mirror, final boolean flip) {
+	    render(layer, x, y, z, ix, iy, iw, ih, rot, mirror, flip, 1, 1, 1);
+	}
+	
 	protected abstract void render(final Panlayer layer, final float x, final float y, final float z,
-        final float ix, final float iy, final float iw, final float ih, final int rot, final boolean mirror, final boolean flip);
+        final float ix, final float iy, final float iw, final float ih, final int rot, final boolean mirror, final boolean flip,
+        final float r, final float g, final float b);
 	
 	protected final static void render(final Panmage img, final Panlayer layer, final float x, final float y, final float z,
 	    final float ix, final float iy, final float iw, final float ih, final int rot, final boolean mirror, final boolean flip) {
 	    img.render(layer, x, y, z, ix, iy, iw, ih, rot, mirror, flip);
 	}
+	
+	protected final static void render(final Panmage img, final Panlayer layer, final float x, final float y, final float z,
+        final float ix, final float iy, final float iw, final float ih, final int rot, final boolean mirror, final boolean flip,
+        final float r, final float g, final float b) {
+        img.render(layer, x, y, z, ix, iy, iw, ih, rot, mirror, flip, r, g, b);
+    }
 	
 	//@OverrideMe
 	public void setMirrorSource(final Panmage mirrorSource) {

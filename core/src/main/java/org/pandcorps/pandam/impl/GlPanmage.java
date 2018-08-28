@@ -31,6 +31,7 @@ import org.pandcorps.pandam.*;
 
 public final class GlPanmage extends Panmage {
 	private final static int NULL_TID = 0;
+	/*package*/ static boolean colorArrayEnabled = false;
 	public static boolean saveTextures = false;
 	private final int w;
 	private final int h;
@@ -51,13 +52,19 @@ public final class GlPanmage extends Panmage {
 	private final static class ImageLayer {
 	    private final FloatChain t = new FloatChain();
 	    private final FloatChain v = new FloatChain();
+	    private final FloatChain c = new FloatChain();
 	    private int bufT = NULL_TID;
 	    private int bufV = NULL_TID;
+	    private int bufC = NULL_TID;
 	    private final void destroy() {
 	    	if (bufT != NULL_TID) {
 				final Pangl gl = GlPangine.gl;
 				gl.glDeleteBuffers(bufT);
 				gl.glDeleteBuffers(bufV);
+				if (bufC != NULL_TID) {
+				    gl.glDeleteBuffers(bufC);
+				    bufC = NULL_TID;
+				}
 				bufT = NULL_TID;
 				bufV = NULL_TID;
 			}
@@ -221,6 +228,10 @@ public final class GlPanmage extends Panmage {
     	gl.glBufferData(gl.GL_ARRAY_BUFFER, l.t.getBuffer(), gl.GL_STATIC_DRAW);
     	gl.glBindBuffer(gl.GL_ARRAY_BUFFER, l.bufV);
     	gl.glBufferData(gl.GL_ARRAY_BUFFER, l.v.getBuffer(), gl.GL_STATIC_DRAW);
+    	if (colorArrayEnabled) {
+    	    gl.glBindBuffer(gl.GL_ARRAY_BUFFER, l.bufC);
+            gl.glBufferData(gl.GL_ARRAY_BUFFER, l.c.getBuffer(), gl.GL_STATIC_DRAW);
+    	}
 	}
 	
 	private GlPanmage(final String id, final Panple origin,
@@ -298,6 +309,7 @@ public final class GlPanmage extends Panmage {
 	    if (l != null) {
 	        l.t.clear();
 	        l.v.clear();
+	        l.c.clear();
 	    }
 	}
 	
@@ -318,10 +330,11 @@ public final class GlPanmage extends Panmage {
 	    	    }
 	    	}
     	    if (buffered && l.bufT == NULL_TID) {
-    	    	final IntBuffer ids = Pantil.allocateDirectIntBuffer(2);
+    	    	final IntBuffer ids = Pantil.allocateDirectIntBuffer(colorArrayEnabled ? 3 : 2);
     	    	gl.glGenBuffers(ids);
     	    	l.bufT = ids.get(0);
     	    	l.bufV = ids.get(1);
+    	    	l.bufC = colorArrayEnabled ? ids.get(2) : NULL_TID;
     	    	rebindBuffer(l);
     	    }
     	    gl.glLoadIdentity();
@@ -334,6 +347,9 @@ public final class GlPanmage extends Panmage {
                 gl.glVertexPointer(3, gl.GL_FLOAT, 0, 0);
     	    } else {
 	    	    gl.glTexCoordPointer(2, 0, t.getBuffer());
+	    	    if (colorArrayEnabled) {
+	    	        gl.glColorPointer(3, 0, l.c.getBuffer());
+	    	    }
 	            gl.glVertexPointer(3, 0, l.v.getBuffer());
     	    }
             //gl.glDrawElements(gl.GL_QUADS, wrap(i)); // Allows you to specify the index of a single vertex multiple times, less total vertices required
@@ -347,9 +363,10 @@ public final class GlPanmage extends Panmage {
 	@Override
 	protected final void render(final Panlayer layer, final float x, final float y, final float z,
 		//final float ix, final float iy, final float iw, final float ih) {
-        final float ix, final float iy, final float iw, final float ih, final int rot, final boolean mirror, final boolean flip) {
+        final float ix, final float iy, final float iw, final float ih, final int rot, final boolean mirror, final boolean flip,
+        final float r, final float g, final float b) {
 	    if (mirror && mirrorSource != null) {
-	        render(mirrorSource, layer, x, y, z, ix, iy, iw, ih, rot, mirror, flip);
+	        render(mirrorSource, layer, x, y, z, ix, iy, iw, ih, rot, mirror, flip, r, g, b);
 	        return;
 	    }
 		//final boolean mirror = true;
@@ -414,8 +431,7 @@ public final class GlPanmage extends Panmage {
 	    //final float trleft, trright, trdown, trup;
 	    final float trdlx, trdly, trulx, truly, trurx, trury, trdrx, trdry;
 	    final float irw, irh;
-	    final int r = rot % 4;
-	    switch (r) {
+	    switch (rot % 4) {
 	        case 0 :
 	            /*trleft = tbleft;
 	            trright = tbright;
@@ -557,7 +573,7 @@ public final class GlPanmage extends Panmage {
             l = new ImageLayer();
             layers.put(layer, l);
         }
-        final FloatChain t = l.t, v = l.v;
+        final FloatChain t = l.t, v = l.v, c = l.c;
 /*if (r == 1) {
     info("Up: " + tup + "; Left: " + tleft + "; Down: " + tdown + "; Right: " + tright);
 }*/
@@ -569,11 +585,18 @@ public final class GlPanmage extends Panmage {
         v.append(vleft); v.append(vdown); v.append(z);
         t.append(tdrx); t.append(tdry);
         v.append(vright); v.append(vdown); v.append(z);
-        if (!GlPangine.gl.isQuadSupported()) {
+        final boolean quadSupported = GlPangine.gl.isQuadSupported();
+        if (!quadSupported) {
         	t.append(turx); t.append(tury);
             v.append(vright); v.append(vup); v.append(z);
             t.append(tdlx); t.append(tdly);
             v.append(vleft); v.append(vdown); v.append(z);
+        }
+        if (colorArrayEnabled) {
+            final int size = quadSupported ? 4 : 6;
+            for (int i = 0; i < size; i++) {
+                c.append(r); c.append(g); c.append(b);
+            }
         }
         
         /*

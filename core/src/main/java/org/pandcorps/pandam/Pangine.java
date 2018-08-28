@@ -1192,6 +1192,8 @@ public abstract class Pangine {
 	
 	public abstract void setBgColor(final Pancolor color);
 	
+	public abstract void enableColorArray();
+	
 	public boolean enableBuffers() {
 	    return false;
 	}

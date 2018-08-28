@@ -201,6 +201,10 @@ public final class UnitPangine extends Pangine {
 	}
 	
 	@Override
+	public final void enableColorArray() {
+	}
+	
+	@Override
     public final boolean isRunning() {
 	    return true;
     }
