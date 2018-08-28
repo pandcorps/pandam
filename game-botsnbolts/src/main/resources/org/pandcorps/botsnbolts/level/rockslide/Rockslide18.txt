@@ -1,0 +1,23 @@
+IMP|Rockslide
+
+M|Ffr<................>l  
+M|fPreeeeeeeeeeeeeeeeeelp 
+M|..>       d          <..
+M|)ee             D    ee(
+M|r     D           c    l
+M|r            D  (-=-=-)l
+M|>       c      d<.....>l
+M|  d             (-)eeeel
+M|           d    lfr    l
+M|     D          <.>    l
+M|                       <
+M|--=---=--)    (-=-----=-
+M|fff  ffPfr    lff  fPf  
+M|FFfp fPfFr    lFFp ffFp 
+
+DOR|0|3|Cyan
+
+BRR|17|3|Small
+DSK|21|3
+
+RPT|1|0|22|14|RockslideRockDark
