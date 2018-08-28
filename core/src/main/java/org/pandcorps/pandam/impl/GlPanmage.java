@@ -343,6 +343,10 @@ public final class GlPanmage extends Panmage {
     	    if (buffered) {
     	    	gl.glBindBuffer(gl.GL_ARRAY_BUFFER, l.bufT);
                 gl.glTexCoordPointer(2, gl.GL_FLOAT, 0, 0);
+                if (colorArrayEnabled) {
+                    gl.glBindBuffer(gl.GL_ARRAY_BUFFER, l.bufC);
+                    gl.glColorPointer(3, gl.GL_FLOAT, 0, 0);
+                }
     	    	gl.glBindBuffer(gl.GL_ARRAY_BUFFER, l.bufV);
                 gl.glVertexPointer(3, gl.GL_FLOAT, 0, 0);
     	    } else {

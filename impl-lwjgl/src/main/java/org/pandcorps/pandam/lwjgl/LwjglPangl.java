@@ -29,7 +29,7 @@ import org.pandcorps.pandam.*;
 
 public final class LwjglPangl extends Pangl {
 	protected LwjglPangl() {
-		super(GL11.GL_ALPHA_TEST, GL15.GL_ARRAY_BUFFER, GL15.GL_ARRAY_BUFFER_BINDING, GL11.GL_BLEND, GL11.GL_COLOR_BUFFER_BIT, GL11.GL_DEPTH_BUFFER_BIT, GL11.GL_DEPTH_TEST, GL11.GL_FLOAT, GL11.GL_GREATER, GL11.GL_LESS, GL11.GL_MODELVIEW, GL11.GL_NEAREST, GL11.GL_NO_ERROR, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_PROJECTION, GL11.GL_QUADS, GL11.GL_RGB, GL11.GL_RGBA, GL11.GL_SRC_ALPHA, GL15.GL_STATIC_DRAW, GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_COORD_ARRAY, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_TRIANGLES, GL11.GL_UNSIGNED_BYTE, GL11.GL_VERTEX_ARRAY);
+		super(GL11.GL_ALPHA_TEST, GL15.GL_ARRAY_BUFFER, GL15.GL_ARRAY_BUFFER_BINDING, GL11.GL_BLEND, GL11.GL_COLOR_ARRAY, GL11.GL_COLOR_BUFFER_BIT, GL11.GL_DEPTH_BUFFER_BIT, GL11.GL_DEPTH_TEST, GL11.GL_FLOAT, GL11.GL_GREATER, GL11.GL_LESS, GL11.GL_MODELVIEW, GL11.GL_NEAREST, GL11.GL_NO_ERROR, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_PROJECTION, GL11.GL_QUADS, GL11.GL_RGB, GL11.GL_RGBA, GL11.GL_SRC_ALPHA, GL15.GL_STATIC_DRAW, GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_COORD_ARRAY, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_TRIANGLES, GL11.GL_UNSIGNED_BYTE, GL11.GL_VERTEX_ARRAY);
 	}
 	
 	@Override
@@ -74,7 +74,24 @@ public final class LwjglPangl extends Pangl {
 	
 	@Override
 	public final void glColor4b(final byte red, final byte green, final byte blue, final byte alpha) {
+	    // Only uses range 0 to Byte.MAX_VALUE (127); Byte.MIN_VALUE (-128) through -1 (anything less than 0) is treated as 0
 		GL11.glColor4b(red, green, blue, alpha);
+	}
+	
+	@Override
+    public final void glColor4ub(final byte red, final byte green, final byte blue, final byte alpha) {
+	    // Acts like (byte) 255 is 255, even though it's actually -1
+        GL11.glColor4ub(red, green, blue, alpha);
+    }
+	
+	@Override
+    public final void glColorPointer(final int size, final int stride, final FloatBuffer pointer) {
+        GL11.glColorPointer(size, stride, pointer);
+    }
+	
+	@Override
+	public final void glColorPointer(final int size, final int type, final int stride, final int offset) {
+	    GL11.glColorPointer(size, type, stride, offset);
 	}
 	
 	@Override

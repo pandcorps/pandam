@@ -108,6 +108,8 @@ public abstract class Pangl {
 	
 	public abstract void glColorPointer(final int size, final int stride, final FloatBuffer pointer);
 	
+	public abstract void glColorPointer(final int size, final int type, final int stride, final int offset);
+	
 	public abstract void glDeleteBuffers(final int buffer);
 	
 	public abstract void glDeleteTextures(final int texture);
