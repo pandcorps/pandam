@@ -1,0 +1,23 @@
+IMP|Rockslide
+
+M|.........>s  s<.........
+M|fr()eeeeeee  eeeeeee()lf
+M|fr<>                <>lf
+M|free          D     eelF
+M|fr  D                 lf
+M|Fr        d        D  lf
+M|fr    c               lP
+M|Pr   d                lf
+M|Fr D                  <.
+M|fr               c    ee
+M|fr          D           
+M|Pr      c           D   
+M|fr                 d    
+M|---=--=-=---==----=-----
+
+BOX|2|1
+BOX|4|1
+
+DOR|23|1|Boss
+
+RPT|1|1|23|13|RockslideRockDark
