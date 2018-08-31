@@ -1,0 +1,22 @@
+IMP|Rockslide
+
+M|s                      s
+M|        p            F  
+M|  F             s       
+M|            P           
+M|    p                   
+M|             F    p     
+M|         s              
+M|     P                  
+M|........................
+M|eeeeeeeeeeeeeeeeeeeeeeee
+M|               D        
+M|  D   c       d     D   
+M|    d     D             
+M|--=-=----==---=--=---=--
+
+DOR|0|1|Boss
+DOR|23|1|Boss
+
+RPT|0|1|24|3|RockslideRockDark
+RPT|0|6|24|8|RockslideRockLight
