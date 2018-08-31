@@ -455,6 +455,9 @@ public abstract class Pangine {
 	    return false;
 	}
 	
+	public void setRangeZ(final int minZ, final int maxZ) {
+	}
+	
 	public void setEntityMapEnabled(final boolean entityMapEnabled) {
 		this.entityMapEnabled = entityMapEnabled;
 		if (!entityMapEnabled) {

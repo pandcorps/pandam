@@ -651,14 +651,20 @@ public abstract class GlPangine extends Pangine {
 	    return set;
 	}
 	
-	private final static int near = -1000, far = 1000;
+	private static int near = -1000, far = 1000;
+	
+	@Override
+	public final void setRangeZ(final int minZ, final int maxZ) {
+	    GlPangine.near = -maxZ;
+	    GlPangine.far = -minZ;
+	}
 	
 	private final float[] cr = new float[2];
 	
 	private final static class Camera {
 		final float xi, xa, yi, ya, zi, za;
 		
-		private Camera(final float xi, final float xa, final float yi, final float ya, final float zi, final float za) {
+		private Camera(final float xi, final float xa, final float yi, final float ya, final int zi, final int za) {
 		    /*
 		    Format right away so that dependent layers are based on the final values.
 		    Otherwise it might be possible to move layers 1 and 3 but not 2, which looks wrong.
@@ -667,8 +673,8 @@ public abstract class GlPangine extends Pangine {
 			this.xa = formatCam(xa);
 			this.yi = formatCam(yi);
 			this.ya = formatCam(ya);
-			this.zi = formatCam(zi);
-			this.za = formatCam(za);
+			this.zi = zi;
+			this.za = za;
 		}
 	}
 	
