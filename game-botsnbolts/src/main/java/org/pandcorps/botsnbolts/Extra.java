@@ -48,7 +48,7 @@ public abstract class Extra extends Panctor {
     protected abstract static class EnemySpawner extends Extra implements StepListener {
         protected int x;
         protected int y;
-        private int waitTimer;
+        protected int waitTimer;
         private static Panmage img = null;
         
         protected EnemySpawner(final Segment seg) {
@@ -121,6 +121,7 @@ public abstract class Extra extends Panctor {
             super(seg);
             vertical = (y == 0);
             max = seg.getInt(3, 1);
+            waitTimer -= seg.getInt(4, 0);
         }
         
         @Override
