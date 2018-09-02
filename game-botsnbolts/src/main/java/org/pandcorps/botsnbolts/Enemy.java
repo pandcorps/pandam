@@ -1490,7 +1490,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         private final static Panmage[] images = new Panmage[3];
         private final int velX;
         private final int velY;
-        private int timer = 0;
+        private int timer = 60;
         private int dir = 0;
         private int sleepTimer = 0;
         
