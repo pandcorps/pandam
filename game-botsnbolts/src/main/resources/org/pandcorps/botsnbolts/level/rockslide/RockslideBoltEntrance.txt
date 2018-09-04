@@ -1,0 +1,25 @@
+IMP|Rockslide
+
+M|<.......................
+M|()eeeeeeeeeeeeeeeeeeeee(
+M|<>                     <
+M|[]  (--=----=-=------) [
+M|()  <................> (
+M|<>  []eeeeeeeeeeeeee[] l
+M|    lr D         c  lr l
+M|    lr              lr l
+M|   dlr              lr l
+M|    []        D     [] l
+M|    ee   c          ee l
+M|                       l
+M|  (-==------=-=----==) l
+M|  lfffPffPfffPfffFfffr l
+
+LDR|22|0|11
+
+RPT|0|0|23|12|RockslideRockDark
+
+DOR|0|0|Bolt
+
+BRR|21|2|Blue
+SBT|19|8|Door
