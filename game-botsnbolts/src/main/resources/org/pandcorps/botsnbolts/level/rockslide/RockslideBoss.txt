@@ -1,0 +1,20 @@
+IMP|Rockslide
+
+M|........................
+M|r                      l
+M|r                      l
+M|r                      l
+M|r                      <
+M|r               '/-=-=--
+M|r              '/f  fPff
+M|r             '/  p Fff 
+M|>            '/fp fF  fp
+M|            '/fFf  fp ff
+M|           '/  Ffp ffFff
+M|          '/fp fFff  f  
+M|         '/  ff  ffp fp 
+M|--=---=---fp ffp fPffPfF
+
+BOS|19|9|RockslideBot
+
+DOR|0|1|Boss
