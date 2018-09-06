@@ -1486,7 +1486,10 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
     }
     
-    protected static class GliderEnemy extends TileUnawareEnemy {
+    private final static Panple GLIDER_MIN = new FinPanple2(1, 0);
+    private final static Panple GLIDER_MAX = new FinPanple2(15, 16);
+    
+    protected final static class GliderEnemy extends TileUnawareEnemy {
         private final static Panmage[] images = new Panmage[3];
         private final int velX;
         private final int velY;
@@ -1579,7 +1582,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
             if (image != null) {
                 return image;
             }
-            image = getImage(image, "GliderEnemy" + (i + 1), null, null, null);
+            image = getImage(image, "GliderEnemy" + (i + 1), null, GLIDER_MIN, GLIDER_MAX);
             images[i] = image;
             return image;
         }
