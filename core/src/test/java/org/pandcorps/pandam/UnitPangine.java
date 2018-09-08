@@ -201,6 +201,10 @@ public final class UnitPangine extends Pangine {
 	}
 	
 	@Override
+	public final void setBgColor(final float r, final float g, final float b, final float a) {
+    }
+	
+	@Override
 	public final void enableColorArray() {
 	}
 	
