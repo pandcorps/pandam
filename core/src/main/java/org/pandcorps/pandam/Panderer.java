@@ -22,8 +22,13 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandam;
 
+import org.pandcorps.core.*;
+import org.pandcorps.core.img.*;
+
 // Pandam Renderer
 public final class Panderer {
+    private static Panmage imgRectangle = null;
+    
 	//TODO Throw an Exception if invoked by anything other than the Pangine
 	// to thwart instantiation by reflection
 	/*package*/ Panderer() {
@@ -53,4 +58,14 @@ public final class Panderer {
         final float r, final float g, final float b) {
         image.render(layer, x, y, z, ix, iy, iw, ih, rot, mirror, flip, r, g, b);
     }
+	
+	public final void rectangle(final Panlayer layer, final float x, final float y, final float z, final float w, final float h,
+	    final float r, final float g, final float b) {
+	    if (imgRectangle == null) {
+	        final Img img = Imtil.newImage(1, 1);
+	        img.setRGB(0, 0, Imtil.getDataElement(Pancolor.MAX_VALUE, Pancolor.MAX_VALUE, Pancolor.MAX_VALUE, Pancolor.MAX_VALUE));
+	        imgRectangle = Pangine.getEngine().createImage(Pantil.vmid(), img);
+	    }
+	    render(layer, imgRectangle, x, y, z, 0, 0, w, h, 0, false, false, r, g, b);
+	}
 }

@@ -954,10 +954,15 @@ public abstract class GlPangine extends Pangine {
 	
 	@Override
 	public final void setBgColor(final Pancolor color) {
-	    this.clr = color.getRf();
-	    this.clg = color.getGf();
-	    this.clb = color.getBf();
-	    this.cla = color.getAf();
+	    setBgColor(color.getRf(), color.getGf(), color.getBf(), color.getAf());
+	}
+	
+	@Override
+    public final void setBgColor(final float r, final float g, final float b, final float a) {
+	    this.clr = r;
+	    this.clg = g;
+	    this.clb = b;
+	    this.cla = a;
 	    setBgColor();
 	}
 	

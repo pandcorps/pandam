@@ -1195,6 +1195,12 @@ public abstract class Pangine {
 	
 	public abstract void setBgColor(final Pancolor color);
 	
+	public final void setBgColor(final float r, final float g, final float b) {
+	    setBgColor(r, g, b, 1.0f);
+	}
+	
+	public abstract void setBgColor(final float r, final float g, final float b, final float a);
+	
 	public abstract void enableColorArray();
 	
 	public boolean enableBuffers() {
