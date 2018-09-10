@@ -1,0 +1,28 @@
+IMP|Hail
+
+M|.,.........,....)[    ](
+M|)'BBBBBBBBBBBBBBB     ](
+M|)[     d              ](
+M|)[                 d  ](
+M|)[            d       ](
+M|)[ d   i{ {           ](
+M|)[     { { { { { { { { (
+M|)[   d BBBBBBBBBBBBBBBB 
+M|)                       
+M|)                       
+M|)                       
+M|){ { { {       { { { { /
+M|)-*----\{ { { { /--**--(
+M|....,..)--*----*(....,..
+
+DOR|23|3|Cyan
+
+ENM|9|9|SlideEnemy
+ENM|12|2|SlideEnemy
+
+#ENM|15|12|IcicleEnemy
+#ENM|14|12|Icicle
+
+#RPT|2|2|21|12|HailBrickDark
+RPT|1|2|22|4|HailIceDark
+RPT|2|6|21|8|HailBrickDark
