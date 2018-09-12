@@ -510,6 +510,10 @@ public abstract class BlockPuzzle {
         }
         
         @Override
+        protected final void burst(final Player player) {
+        }
+        
+        @Override
         public final void onStep(final StepEvent event) {
             super.onStep(event);
             setSize();
@@ -691,6 +695,10 @@ public abstract class BlockPuzzle {
         @Override
         protected final boolean isDestroyedOnImpact() {
             return false;
+        }
+        
+        @Override
+        protected final void burst(final Player player) {
         }
         
         @Override
