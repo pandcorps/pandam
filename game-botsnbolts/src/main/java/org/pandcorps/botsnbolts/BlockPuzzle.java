@@ -420,29 +420,59 @@ public abstract class BlockPuzzle {
         }
     }
     
-    protected final static class ElectricityBlock extends Panctor implements StepListener {
-        protected final static int DURATION_PERIOD = 64;
-        protected static Panmage image = null;
-        private int timer = DURATION_PERIOD;
-        
-        protected ElectricityBlock(final int tileIndex, final int timerOffset) {
+    protected abstract static class ActorBlock extends Panctor {
+        protected ActorBlock(final int tileIndex) {
             final TileMap tm = BotsnBoltsGame.tm;
             tm.savePosition(getPosition(), tileIndex);
-            tm.setForeground(tileIndex, getElectricityBlockImage(), Tile.BEHAVIOR_SOLID);
+            tm.setForeground(tileIndex, getBlockImage(), Tile.BEHAVIOR_SOLID);
             tm.getLayer().addActor(this);
-            timer -= (timerOffset * 16);
+        }
+        
+        protected abstract Panmage getBlockImage();
+    }
+    
+    protected abstract static class TimerBlock extends ActorBlock implements StepListener {
+        private int timer;
+        
+        protected TimerBlock(final int tileIndex, final int timerOffset) {
+            super(tileIndex);
+            timer = getDurationPeriod() - (timerOffset * 16);
         }
         
         @Override
         public final void onStep(final StepEvent event) {
             timer--;
             if (timer <= 0) {
-                new Electricity(this, 0, -64, 4, true, false);
-                timer = DURATION_PERIOD;
+                onTimer();
+                timer = getDurationPeriod();
             }
         }
         
-        protected final static Panmage getElectricityBlockImage() {
+        protected abstract int getDurationPeriod();
+        
+        protected abstract void onTimer();
+    }
+    
+    protected final static class ElectricityBlock extends TimerBlock {
+        protected final static int DURATION_PERIOD = 64;
+        protected static Panmage image = null;
+        
+        protected ElectricityBlock(final int tileIndex, final int timerOffset) {
+            super(tileIndex, timerOffset);
+        }
+        
+        @Override
+        protected final int getDurationPeriod() {
+            return DURATION_PERIOD;
+        }
+        
+        @Override
+        protected final void onTimer() {
+            new Electricity(this, 0, -64, 4, true, false);
+        }
+        
+        @Override
+        protected final Panmage getBlockImage() {
             return (image = getImage(image, "BlockElectricity", null, null, null));
         }
     }
@@ -610,13 +640,144 @@ public abstract class BlockPuzzle {
     protected final static class BurstBlockPuzzle {
     }
     
-    /*
-    Will react when Player stands on it.
-    Might shoot flames.
-    Might have other possible behavior.
-    Might also have different colored blocks that use same behavior(s) based on a timer instead of pressure
-    */
-    protected final static class PressureBlock { //TODO
+    protected final static class FireTimedBlock extends TimerBlock {
+        protected static Panmage image = null;
+        
+        protected FireTimedBlock(final int tileIndex, final int timerOffset) {
+            super(tileIndex, timerOffset);
+        }
+        
+        @Override
+        protected final int getDurationPeriod() {
+            return 64;
+        }
+        
+        @Override
+        protected final void onTimer() {
+            new Fire(this);
+        }
+        
+        @Override
+        protected final Panmage getBlockImage() {
+            return (image = getImage(image, "BlockFireTimed", null, null, null));
+        }
+    }
+    
+    protected final static class FirePressureBlock extends ActorBlock {
+        protected static Panmage image = null;
+        
+        protected FirePressureBlock(final int tileIndex) {
+            super(tileIndex);
+        }
+        
+        @Override
+        protected final Panmage getBlockImage() {
+            return (image = getImage(image, "BlockFirePressure", null, null, null));
+        }
+    }
+    
+    protected final static class Fire extends TimedEnemyProjectile {
+        protected static Panmage image = null;
+        private int h = 0;
+        private int top = 3;
+        private int timer = 1;
+        private boolean ascending = true;
+        private final Pansplay display = new OriginPansplay(new FinPanple2(3, 0), new FireMaximum());
+        
+        protected Fire(final Panctor src) {
+            super(null, src, 0, 16, Integer.MAX_VALUE);
+        }
+        
+        @Override
+        protected final boolean isDestroyedOnImpact() {
+            return false;
+        }
+        
+        @Override
+        public final void onStep(final StepEvent event) {
+            super.onStep(event);
+            setSize();
+        }
+        
+        private final void setSize() {
+            if (timer < 1) {
+                timer++;
+            } else {
+                timer = 0;
+                if (ascending) {
+                    ascend();
+                } else {
+                    descend();
+                }
+            }
+        }
+        
+        private final void ascend() {
+            if (top > 1) {
+                if (h < 3) {
+                    top = 0;
+                    h++;
+                } else {
+                    ascending = false;
+                    descend();
+                }
+            } else {
+                top++;
+            }
+        }
+        
+        private final void descend() {
+            if (top > 0) {
+                top--;
+            } else {
+                top = 2;
+                h--;
+                if (h <= 0) {
+                    destroy();
+                }
+            }
+        }
+        
+        @Override
+        protected final void renderView(final Panderer renderer) {
+            final Panlayer layer = getLayer();
+            final Panmage img = getFireImage();
+            final Panple pos = getPosition();
+            final float x = pos.getX(), y = pos.getY();
+            for (int i = 0; i < h; i++) {
+                final int ix, iy, yoff;
+                if (i == (h - 1)) {
+                    ix = (top / 2) * 16;
+                    iy = (top % 2) * 16;
+                    yoff = (top == 0) ? -10 : 0;
+                } else {
+                    ix = iy = 16;
+                    yoff = 0;
+                }
+                renderer.render(layer, img, x, y + (i * 16) + yoff, BotsnBoltsGame.DEPTH_PROJECTILE, ix, iy, 16, 16);
+            }
+        }
+        
+        @Override
+        public Pansplay getCurrentDisplay() {
+            return display;
+        }
+        
+        private final class FireMaximum extends UnmodPanple2 {
+            @Override
+            public final float getX() {
+                return 13;
+            }
+
+            @Override
+            public final float getY() {
+                return ((h - 1) * 16) + ((top + 1) * 4);
+            }
+        }
+        
+        protected final static Panmage getFireImage() {
+            return (image = getImage(image, "Fire", null, null, null));
+        }
     }
     
     protected final static Panmage getImage(final Panmage img, final String name, final Panple o, final Panple min, final Panple max) {
