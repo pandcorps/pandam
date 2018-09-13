@@ -752,17 +752,21 @@ public abstract class BlockPuzzle {
             final Panmage img = getFireImage();
             final Panple pos = getPosition();
             final float x = pos.getX(), y = pos.getY();
+            final int baseMirror = (h + (ascending ? 0 : 1)) % 2;
             for (int i = 0; i < h; i++) {
                 final int ix, iy, yoff;
+                final boolean mirror;
                 if (i == (h - 1)) {
                     ix = (top / 2) * 16;
                     iy = (top % 2) * 16;
                     yoff = (top == 0) ? -10 : 0;
+                    mirror = false;
                 } else {
                     ix = iy = 16;
                     yoff = 0;
+                    mirror = (i % 2) == baseMirror;
                 }
-                renderer.render(layer, img, x, y + (i * 16) + yoff, BotsnBoltsGame.DEPTH_PROJECTILE, ix, iy, 16, 16);
+                renderer.render(layer, img, x, y + (i * 16) + yoff, BotsnBoltsGame.DEPTH_PROJECTILE, ix, iy, 16, 16, 0, mirror, false);
             }
         }
         
