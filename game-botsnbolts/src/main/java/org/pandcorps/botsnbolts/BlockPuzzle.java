@@ -658,7 +658,8 @@ public abstract class BlockPuzzle {
         
         @Override
         protected final void onTimer() {
-            new Fire(this);
+            final Panple pos = getPosition();
+            new Fire(pos.getX(), pos.getY());
         }
         
         @Override
@@ -667,15 +668,19 @@ public abstract class BlockPuzzle {
         }
     }
     
-    protected final static class FirePressureBlock extends ActorBlock {
+    protected final static class FirePressureBlock {
         protected static Panmage image = null;
         
-        protected FirePressureBlock(final int tileIndex) {
-            super(tileIndex);
+        protected final static void init(final int tileIndex) {
+            BotsnBoltsGame.tm.setForeground(tileIndex, getBlockImage(), BotsnBoltsGame.TILE_PRESSURE_FIRE);
         }
         
-        @Override
-        protected final Panmage getBlockImage() {
+        protected final static void activate(final int tileIndex) {
+            final TileMap tm = BotsnBoltsGame.tm;
+            new Fire(tm.getX(tileIndex), tm.getY(tileIndex));
+        }
+        
+        protected final static Panmage getBlockImage() {
             return (image = getImage(image, "BlockFirePressure", null, null, null));
         }
     }
@@ -688,8 +693,8 @@ public abstract class BlockPuzzle {
         private boolean ascending = true;
         private final Pansplay display = new OriginPansplay(new FinPanple2(3, 0), new FireMaximum());
         
-        protected Fire(final Panctor src) {
-            super(null, src, 0, 16, Integer.MAX_VALUE);
+        protected Fire(final float x, final float y) {
+            super(null, x, y, false, 0, 0, 16, 0, 0, Integer.MAX_VALUE);
         }
         
         @Override

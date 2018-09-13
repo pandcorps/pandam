@@ -265,12 +265,18 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
         
         protected EnemyProjectile(final Panmage img, final Panctor src, final int ox, final int oy, final float vx, final float vy) {
-            this(img, src, ox, oy, vx, vy, new ImplPanple());
+            this(img, src, ox, oy, vx, vy, FinPanple.ORIGIN);
         }
         
         protected EnemyProjectile(final Panmage img, final Panctor src, final int ox, final int oy, final float vx, final float vy, final Panple g) {
             super(g);
             addBySource(this, img, src, ox, oy);
+            getVelocity().set(vx, vy);
+        }
+        
+        protected EnemyProjectile(final Panmage img, final float srcX, final float srcY, final boolean srcMirror, final int srcRot, final int ox, final int oy, final float vx, final float vy) {
+            super(FinPanple.ORIGIN);
+            addBySource(this, img, srcX, srcY, srcMirror, srcRot, ox, oy);
             getVelocity().set(vx, vy);
         }
         
@@ -361,6 +367,12 @@ public abstract class Enemy extends Chr implements CollisionListener {
         
         protected TimedEnemyProjectile(final Panmage img, final Panctor src, final int ox, final int oy, final float vx, final float vy, final Panple g, final int timer) {
             super(img, src, ox, oy, vx, vy, g);
+            this.timer = timer;
+        }
+        
+        protected TimedEnemyProjectile(final Panmage img, final float srcX, final float srcY, final boolean srcMirror, final int srcRot,
+                                       final int ox, final int oy, final float vx, final float vy, final int timer) {
+            super(img, srcX, srcY, srcMirror, srcRot, ox, oy, vx, vy);
             this.timer = timer;
         }
         

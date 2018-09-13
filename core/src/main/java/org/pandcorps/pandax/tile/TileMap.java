@@ -111,6 +111,14 @@ public class TileMap extends Panctor implements Savable {
         return index % w;
     }
     
+    public final float getX(final int index) {
+        return getPosition().getX() + (getColumn(index) * tw);
+    }
+    
+    public final float getY(final int index) {
+        return getPosition().getY() + (getRow(index) * th);
+    }
+    
     public final Tile getTile(final int i, final int j) {
         return getTile(getIndex(i, j));
     }
