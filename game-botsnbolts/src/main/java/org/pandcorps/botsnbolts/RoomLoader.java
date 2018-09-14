@@ -882,6 +882,7 @@ public abstract class RoomLoader {
     
     protected final static void onChangeStarted() {
         clear();
+        BlockPuzzle.onRoomChange();
         changing = true;
     }
     

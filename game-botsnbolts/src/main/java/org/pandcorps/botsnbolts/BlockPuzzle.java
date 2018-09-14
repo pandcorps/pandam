@@ -659,7 +659,7 @@ public abstract class BlockPuzzle {
         @Override
         protected final void onTimer() {
             final Panple pos = getPosition();
-            new Fire(pos.getX(), pos.getY());
+            new Fire(pos.getX(), pos.getY(), null);
         }
         
         @Override
@@ -667,6 +667,8 @@ public abstract class BlockPuzzle {
             return (image = getImage(image, "BlockFireTimed", null, null, null));
         }
     }
+    
+    private final static Set<Integer> fireIndices = new HashSet<Integer>();
     
     protected final static class FirePressureBlock {
         protected static Panmage image = null;
@@ -676,8 +678,15 @@ public abstract class BlockPuzzle {
         }
         
         protected final static void activate(final int tileIndex) {
-            final TileMap tm = BotsnBoltsGame.tm;
-            new Fire(tm.getX(tileIndex), tm.getY(tileIndex));
+            final Integer key = Integer.valueOf(tileIndex);
+            if (!fireIndices.add(key)) {
+                return;
+            }
+            Enemy.addRoomTimer(8, new RoomTimerListener() {
+                @Override public final void onTimer() {
+                    final TileMap tm = BotsnBoltsGame.tm;
+                    new Fire(tm.getX(tileIndex), tm.getY(tileIndex), key);
+            }});
         }
         
         protected final static Panmage getBlockImage() {
@@ -692,9 +701,11 @@ public abstract class BlockPuzzle {
         private int timer = 1;
         private boolean ascending = true;
         private final Pansplay display = new OriginPansplay(new FinPanple2(3, 0), new FireMaximum());
+        private final Integer key;
         
-        protected Fire(final float x, final float y) {
+        protected Fire(final float x, final float y, final Integer key) {
             super(null, x, y, false, 0, 0, 16, 0, 0, Integer.MAX_VALUE);
+            this.key = key;
         }
         
         @Override
@@ -704,6 +715,11 @@ public abstract class BlockPuzzle {
         
         @Override
         protected final void burst(final Player player) {
+        }
+        
+        @Override
+        protected final void onDestroy() {
+            fireIndices.remove(key);
         }
         
         @Override
@@ -799,5 +815,9 @@ public abstract class BlockPuzzle {
     
     protected final static Panmage getImage(final Panmage img, final String name, final Panple o, final Panple min, final Panple max) {
         return Enemy.getImage(img, "puzzle.", RES_BG, name, o, min, max);
+    }
+    
+    protected final static void onRoomChange() {
+        fireIndices.clear();
     }
 }

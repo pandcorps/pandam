@@ -1432,14 +1432,27 @@ public abstract class Enemy extends Chr implements CollisionListener {
             if (!respawnable) {
                 return;
             }
-            Pangine.getEngine().addTimer(BotsnBoltsGame.tm, 30, new TimerListener() {
-                @Override public final void onTimer(final TimerEvent event) {
-                    if (RoomChanger.isChanging()) {
-                        return;
-                    }
+            addRoomTimer(30, new RoomTimerListener() {
+                @Override public final void onTimer() {
                     BotsnBoltsGame.addActor(new DrillEnemy(x, 14));
             }});
         }
+    }
+    
+    protected final static void addRoomTimer(final long duration, final RoomTimerListener listener) {
+        Pangine.getEngine().addTimer(BotsnBoltsGame.tm, duration, listener);
+    }
+    
+    protected abstract static class RoomTimerListener implements TimerListener {
+        @Override
+        public final void onTimer(final TimerEvent event) {
+            if (RoomChanger.isChanging()) {
+                return;
+            }
+            onTimer();
+        }
+        
+        protected abstract void onTimer();
     }
     
     protected final static class WalkerEnemy extends Enemy {
