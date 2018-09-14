@@ -217,6 +217,8 @@ public abstract class RoomLoader {
                 elb(seg);
             } else if ("FTB".equals(name)) { // Fire Timed Block
                 ftb(seg);
+            } else if ("FPB".equals(name)) { // Fire Pressure Block
+                fpb(seg);
             } else if ("LDR".equals(name)) { // Ladder
                 ldr(seg.intValue(0), seg.intValue(1), seg.intValue(2));
             } else if ("BRR".equals(name)) { // Barrier
@@ -603,6 +605,10 @@ public abstract class RoomLoader {
     
     private final static void ftb(final Segment seg) {
         new FireTimedBlock(BotsnBoltsGame.tm.getIndex(seg.intValue(0), seg.intValue(1)), seg.getInt(2, 0));
+    }
+    
+    private final static void fpb(final Segment seg) {
+        FirePressureBlock.init(BotsnBoltsGame.tm.getIndex(seg.intValue(0), seg.intValue(1)));
     }
     
     private final static ButtonBlockPuzzle btp(final Segment seg) {

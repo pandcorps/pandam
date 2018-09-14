@@ -883,6 +883,11 @@ public final class Player extends Chr implements Warpable {
                     queuedX = 2;
                 }
                 break;
+            case BotsnBoltsGame.TILE_PRESSURE_FIRE :
+                if (isCollisionStandingOnTile(index)) {
+                    BlockPuzzle.FirePressureBlock.activate(index);
+                }
+                break;
         }
     }
     
