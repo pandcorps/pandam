@@ -1,0 +1,40 @@
+IMP|Hail
+
+M|.)[(,.................,.
+M|.)[BBBBBBBBBBBBBBBBBBB`(
+M|.)[                   ](
+M|,)[     d    ]< [     ](
+M|.)[         ]< < [  i{ (
+M|,)[{ {       BBBB   BB`(
+M|.)[BBBB               ](
+M|.)[            d    i{ (
+M|.)[       {         BB`(
+M|,)[       BB          ](
+M|.)[ d                 ](
+M|,)[            { { { i](
+M|.){ { { { { { { /-*--\](
+M|.)-*---**-----*-()==()](
+
+ENM|2|2|IceSpike
+ENM|3|2|IceSpike
+ENM|4|2|IceSpike
+ENM|5|2|IceSpike
+ENM|6|2|IceSpike
+ENM|7|2|IceSpike
+ENM|8|2|IceSpike
+ENM|9|2|IceSpike
+ENM|10|2|IceSpike
+ENM|11|2|IceSpike
+ENM|12|2|IceSpike
+ENM|13|2|IceSpike
+ENM|14|2|IceSpike
+ENM|21|7|FreezeRayEnemy
+ENM|21|10|FreezeRayEnemy
+ENM|11|12|IcicleEnemy
+ENM|6|12|IcicleEnemy
+ENM|5|12|Icicle
+
+LDR|22|0|3
+LDR|2|11|3
+
+RPT|3|2|19|10|HailBrickDark
