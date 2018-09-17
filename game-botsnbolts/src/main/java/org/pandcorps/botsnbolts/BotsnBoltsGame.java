@@ -184,9 +184,10 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static PlayerContext pc = null;
     private static final float defPlayerStartX = 48;
     private static final float defPlayerStartY = 32;
+    private static final boolean defPlayerStartMirror = false;
     protected static float playerStartX = defPlayerStartX;
     protected static float playerStartY = defPlayerStartY;
-    protected static boolean playerStartMirror = false;
+    protected static boolean playerStartMirror = defPlayerStartMirror;
     
     protected static Panlayer hud = null;
     protected static int prevTileSize = DIM;
@@ -1220,7 +1221,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected final static void initPlayerStart() {
         playerStartX = defPlayerStartX;
         playerStartY = defPlayerStartY;
-        playerStartMirror = false;
+        playerStartMirror = defPlayerStartMirror;
     }
     
     protected final static Panlayer getLayer() {

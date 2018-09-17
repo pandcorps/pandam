@@ -259,6 +259,10 @@ public abstract class RoomLoader {
         if (Chartil.isValued(playerStartY)) {
             BotsnBoltsGame.playerStartY = Segment.parseInt(playerStartY) * BotsnBoltsGame.DIM;
         }
+        final String playerStartMirror = seg.getValue(2);
+        if (Chartil.isValued(playerStartMirror)) {
+            BotsnBoltsGame.playerStartMirror = Segment.parseBoolean(playerStartMirror);
+        }
     }
     
     private final static void anm(final Segment seg) {
