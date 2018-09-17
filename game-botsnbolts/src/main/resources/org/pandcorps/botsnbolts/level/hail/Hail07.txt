@@ -1,0 +1,50 @@
+IMP|Hail
+
+M|                                               'BBBBBBBBBBBBBBBBBBBBBB`(
+M|                                               [              d       ](
+M|*\                                             [  d               d   ](
+M|,)                                             [           d          ](
+M|.)                                             [               d      ](
+M|,)                                             [       d             d](
+M|.)                                             [d                  /---(
+M|.)                                             [   d               (....
+M|,)                                             [            d      BBB`(
+M|.)[/--*-\                                      [                   d  ](
+M|.)[(..,.)                                      [     d       ]< < < [ ](
+M|.)[()==()                                      [            ]< < < '  ](
+M|,)[(,.,.)-----*--*------*\                     [ d           BBBBBB   ](
+M|.)[(...,..,....,........,)                     [        d             ](
+
+BOX|4|5
+
+ENM|13|10|PropEnemy
+ENM|9|2|IceSpike
+ENM|10|2|IceSpike
+ENM|11|2|IceSpike
+ENM|12|2|IceSpike
+ENM|13|2|IceSpike
+ENM|14|2|IceSpike
+ENM|15|2|IceSpike
+ENM|16|2|IceSpike
+ENM|17|2|IceSpike
+ENM|18|2|IceSpike
+ENM|19|2|IceSpike
+ENM|20|2|IceSpike
+ENM|21|2|IceSpike
+ENM|22|2|IceSpike
+ENM|23|2|IceSpike
+ENM|24|2|IceSpike
+ENM|25|2|IceSpike
+
+LDR|2|0|5
+LDR|70|11|3
+
+TMP
+TMS|11^7~41^8
+TMS|16^8~46^7
+TMS|21^8~51^7
+TMS|26^7~56^8
+TMS|31^7~61^8
+TMS|36^8~66^7
+
+RPT|48|0|23|13|HailBrickDark
