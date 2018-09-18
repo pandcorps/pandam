@@ -1034,16 +1034,20 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
         
         protected final void appointment() {
-            if ((timer == null) || !isGrounded()) {
+            if ((timer == null) || !canJump()) {
                 schedule();
                 return;
             }
             clearSchedule();
-            if (isInView()) {
+            if (isAppointmentAllowed()) {
                 onAppointment();
             } else {
                 schedule();
             }
+        }
+        
+        protected boolean isAppointmentAllowed() {
+            return isInView();
         }
         
         protected void onAppointment() {
@@ -1860,6 +1864,11 @@ public abstract class Enemy extends Chr implements CollisionListener {
         @Override
         protected final int getDelay() {
             return 60;
+        }
+        
+        @Override
+        protected final boolean isAppointmentAllowed() {
+            return true;
         }
         
         @Override
