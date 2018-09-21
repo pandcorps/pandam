@@ -24,6 +24,8 @@ package org.pandcorps.pandam;
 
 public abstract class Pansound {
 	protected static Pansound currentMusic = null;
+	private static int replayThreshold = 1;
+	private long lastSound = -1;
 	
 	public final boolean changeMusic() {
 		if (currentMusic != this) {
@@ -49,7 +51,13 @@ public abstract class Pansound {
 	}
 	
 	public final void startSound() {
-		if (!Pangine.getEngine().getAudio().isSoundEnabled()) {
+	    final Pangine engine = Pangine.getEngine();
+	    final long clock = engine.getClock();
+	    if (clock <= lastSound) {
+	        return;
+	    }
+	    lastSound = clock + replayThreshold;
+		if (!engine.getAudio().isSoundEnabled()) {
 			return;
 		}
 		try {
@@ -57,6 +65,10 @@ public abstract class Pansound {
 		} catch (final Exception e) {
 			throw Panception.get(e);
 		}
+	}
+	
+	public final static void setReplayThreshold(final int replayThreshold) {
+	    Pansound.replayThreshold = replayThreshold;
 	}
 	
 	protected abstract void runMusic() throws Exception;

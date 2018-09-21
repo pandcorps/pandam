@@ -29,7 +29,6 @@ import org.pandcorps.pandax.tile.*;
 
 public class Gem extends TileOccupant implements StepListener {
 	private final static Panple sparkPos = new ImplPanple();
-	private static long lastSound = -1;
 	private Panmage[] gem = null;
 	
 	public Gem() {
@@ -124,11 +123,7 @@ public class Gem extends TileOccupant implements StepListener {
 	}
 	
 	protected final static void playSound(final GemInfo info) {
-		final long clock = Pangine.getEngine().getClock();
-		if (clock > lastSound) {
-			FurGuardiansGame.soundGem.startSound();
-			lastSound = clock + 1;
-		}
+		FurGuardiansGame.soundGem.startSound();
 	}
 	
 	protected final static class GemAttracted extends Panctor implements StepListener {
