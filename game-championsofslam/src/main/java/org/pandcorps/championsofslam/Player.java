@@ -34,6 +34,9 @@ import org.pandcorps.pandax.text.*;
 
 public class Player extends Champion {
     protected final static Set<Player> players = new IdentityHashSet<Player>();
+    private final static SlamOption fileOption = new SlamOption("", "") {
+        @Override protected final Object getValue(final PlayerContext pc) {
+            return (pc.fileIndex == -1) ? "NEW?" : "PICK?"; }};
     private final static ChampionOption[] pausedOptions = {
             new ChampionOption("", "PAUSE") {
                 @Override protected final Object getValue(ChampionDefinition def) {
@@ -157,7 +160,7 @@ public class Player extends Champion {
         register(ctrl.getSubmit(), pauseListener);
         register(ctrl.getMenu(), pauseListener);
         players.add(this);
-        onPause();
+        togglePause();
     }
     
     protected final void onLeftStart() {
@@ -202,10 +205,37 @@ public class Player extends Champion {
     }
     
     protected final void onPause() {
+        if (!pc.fileSelected) {
+            initFile();
+            return;
+        }
+        togglePause();
+    }
+    
+    private final void togglePause() {
         paused = !paused;
         state = paused ? statePaused : stateNormal;
         state.onPause(this);
         clearWalk();
+    }
+    
+    private final void initFile() {
+        if (pc.fileIndex < 0) {
+            pc.fileIndex = ChampionsOfSlamGame.saveFiles.size();
+            ChampionsOfSlamGame.saveFiles.add(null);
+        }
+        pc.fileSelected = true;
+        setPausedText();
+    }
+    
+    private final void saveIfNeeded() {
+        final String content = def.toString();
+        final int fileIndex = pc.fileIndex;
+        if (content.equals(ChampionsOfSlamGame.saveFiles.get(fileIndex))) {
+            return;
+        }
+        ChampionsOfSlamGame.saveFiles.set(fileIndex, content);
+        Iotil.writeFile(ChampionsOfSlamGame.getFileName(fileIndex), content);
     }
     
     @Override
@@ -229,6 +259,16 @@ public class Player extends Champion {
         players.remove(this);
     }
     
+    private final SlamOption getPausedOption() {
+        return pc.fileSelected ? pausedOptions[pausedOption] : fileOption;
+    }
+    
+    private final void setPausedText() {
+        pausedText.uncenterX();
+        getPausedOption().append(pausedSequences, pc);
+        pausedText.centerX();
+    }
+    
     protected final int getPausedX() {
         if (numPlayers == 1) {
             return ChampionsOfSlamGame.GAME_W / 2;
@@ -239,12 +279,27 @@ public class Player extends Champion {
         return ((x % 2) == 1) ? (x + 1) : x;
     }
     
+    private final boolean isFileAvailable() {
+        final int fileIndex = pc.fileIndex;
+        if (fileIndex < 0) {
+            return true;
+        }
+        for (final Player player : players) {
+            if (player == this) {
+                continue;
+            } else if (player.pc.fileIndex == fileIndex) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
     protected final static Integer getIndexKey(final int index, final int off) {
         return Integer.valueOf(index + off);
     }
     
     protected final static Integer getColorKey(final float color) {
-        return Integer.valueOf(Math.round(color / INC_COLOR));
+        return Integer.valueOf(getColorInt(color));
     }
     
     protected final static boolean isAllPaused() {
@@ -261,6 +316,8 @@ public class Player extends Champion {
         private final ControlScheme ctrl;
         private final int index;
         private final Panple pausedPosition = new ImplPanple();
+        private int fileIndex = -1;
+        private boolean fileSelected = false;
         
         public PlayerContext(final ChampionDefinition def, final ControlScheme ctrl) {
             this.def = def;
@@ -344,6 +401,7 @@ public class Player extends Champion {
         
         @Override
         public final void onPause(final Player player) {
+            player.saveIfNeeded();
             Panctor.detach(player.pausedText);
         }
     };
@@ -377,18 +435,25 @@ public class Player extends Champion {
                 pausedOption = (pausedOption > (pausedOptions.length - 2)) ? 0 : (pausedOption + 1);
             }
             player.pausedOption = pausedOption;
-            setPausedText(player);
-        }
-        
-        private final void setPausedText(final Player player) {
-            final Pantext pausedText = player.pausedText;
-            pausedText.uncenterX();
-            pausedOptions[player.pausedOption].append(player.pausedSequences, player.def);
-            pausedText.centerX();
+            player.setPausedText();
         }
         
         private final void increment(final Player player, final int dir) {
-            final ChampionDefinition def = player.pc.def;
+            final PlayerContext pc = player.pc;
+            final ChampionDefinition def = pc.def;
+            if (!pc.fileSelected) {
+                do {
+                    pc.fileIndex = increment(pc.fileIndex, -1, ChampionsOfSlamGame.saveFiles.size(), dir);
+                } while (!player.isFileAvailable());
+                if (pc.fileIndex < 0) {
+                    pc.fileIndex = -1;
+                    randomize(def);
+                } else {
+                    def.load(ChampionsOfSlamGame.saveFiles.get(pc.fileIndex));
+                }
+                player.setPausedText();
+                return;
+            }
             switch (player.pausedOption) {
                 case 0:
                     // Just paused
@@ -455,7 +520,7 @@ public class Player extends Champion {
                     def.bootsColor.b = increment(def.bootsColor.b, dir);
                     break;
             }
-            setPausedText(player);
+            player.setPausedText();
         }
         
         private final float increment(final float color, final int dir) {
@@ -516,8 +581,8 @@ public class Player extends Champion {
             Pantext pausedText = player.pausedText;
             if (pausedText == null) {
                 final List<StringBuilder> pausedSequences = Arrays.asList(new StringBuilder(), new StringBuilder());
-                final ChampionOption pausedOption = pausedOptions[player.pausedOption];
-                pausedOption.append(pausedSequences, player.def);
+                final SlamOption pausedOption = player.getPausedOption();
+                pausedOption.append(pausedSequences, player.pc);
                 player.pausedSequences = pausedSequences;
                 pausedText = new Pantext(Pantil.vmid(), ChampionsOfSlamGame.font, pausedSequences);
                 pausedText.getPosition().set(0, 41, DEPTH_TEXT);
@@ -528,26 +593,39 @@ public class Player extends Champion {
         }
     };
     
-    public abstract static class ChampionOption {
+    public abstract static class SlamOption {
         private final String label;
         private final String detail;
         
-        ChampionOption(final String label, final String detail) {
+        SlamOption(final String label, final String detail) {
             this.label = label;
             this.detail = detail;
         }
         
-        public final void append(final List<StringBuilder> sequences, final ChampionDefinition def) {
+        public final void append(final List<StringBuilder> sequences, final PlayerContext pc) {
             final StringBuilder labelSequence = sequences.get(0);
             labelSequence.setLength(0);
             labelSequence.append(label);
             final StringBuilder detailSequence = sequences.get(1);
             detailSequence.setLength(0);
             detailSequence.append(detail);
-            final Object value = getValue(def);
+            final Object value = getValue(pc);
             if (value != null) {
                 detailSequence.append(value);
             }
+        }
+        
+        protected abstract Object getValue(final PlayerContext pc);
+    }
+    
+    public abstract static class ChampionOption extends SlamOption {
+        ChampionOption(final String label, final String detail) {
+            super(label, detail);
+        }
+        
+        @Override
+        protected final Object getValue(final PlayerContext pc) {
+            return getValue(pc.def);
         }
         
         protected abstract Object getValue(final ChampionDefinition def);

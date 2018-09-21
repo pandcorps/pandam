@@ -75,6 +75,8 @@ public final class ChampionsOfSlamGame extends BaseGame {
     };
     protected static Panmage boundingBox = null;
     protected static boolean paused = true;
+    private static boolean initialized = false;
+    protected static List<String> saveFiles = null;
     private final static Set<Device> devices = new IdentityHashSet<Device>();
     private final static Set<Champion> team = new IdentityHashSet<Champion>();
     
@@ -118,6 +120,22 @@ public final class ChampionsOfSlamGame extends BaseGame {
         final Panaudio audio = engine.getAudio();
         soundJab = audio.createSound(RES + "Jab.mid");
         soundUppercut = audio.createSound(RES + "Uppercut.mid");
+        findFiles();
+    }
+    
+    protected final static String getFileName(final int fileIndex) {
+        return fileIndex + ".champion.txt";
+    }
+    
+    private final static void findFiles() {
+        int n = 0;
+        while (Iotil.exists(getFileName(n))) {
+            n++;
+        }
+        saveFiles = new ArrayList<String>(n + 1);
+        for (int i = 0; i < n; i++) {
+            saveFiles.add(Iotil.read(getFileName(i)));
+        }
     }
     
     protected final static void initOpponents() {
@@ -158,7 +176,6 @@ public final class ChampionsOfSlamGame extends BaseGame {
                     final PlayerContext pc = new PlayerContext(Champion.randomChampionDefinition(), ControlScheme.getDefault(device));
                     team.add(new Player(room, pc, team));
                 }});
-            initOpponents();
             soundJab.startSound();
             soundUppercut.startSound();
         }
@@ -166,6 +183,11 @@ public final class ChampionsOfSlamGame extends BaseGame {
         @Override
         public final void step() {
             paused = Player.isAllPaused();
+            if (initialized) {
+                return;
+            }
+            initOpponents();
+            initialized = true;
         }
     }
     

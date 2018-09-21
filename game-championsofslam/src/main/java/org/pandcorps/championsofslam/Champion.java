@@ -26,6 +26,7 @@ import java.util.*;
 
 import org.pandcorps.core.*;
 import org.pandcorps.core.col.*;
+import org.pandcorps.core.seg.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.impl.*;
@@ -334,8 +335,17 @@ public abstract class Champion extends Panctor implements StepListener, Collidab
         return INC_COLOR * Mathtil.randi(0, 8);
     }
     
+    protected final static int getColorInt(final float color) {
+        return Math.round(color / INC_COLOR);
+    }
+    
     public final static ChampionDefinition randomChampionDefinition() {
         final ChampionDefinition def = new ChampionDefinition();
+        randomize(def);
+        return def;
+    }
+    
+    public final static void randomize(final ChampionDefinition def) {
         final FloatColor bodyColor = def.bodyColor, hairColor = def.hairColor, shirtColor = def.shirtColor, pantsColor = def.pantsColor, bootsColor = def.bootsColor;
         final int bodyColorR = Mathtil.randi(4, 8), bodyColorG = Mathtil.randi(bodyColorR / 2, bodyColorR - 1);
         bodyColor.r = INC_COLOR * bodyColorR;
@@ -369,7 +379,6 @@ public abstract class Champion extends Panctor implements StepListener, Collidab
         def.hairIndex = Mathtil.randi(-1, NUM_HAIR - 1);
         def.shirtStyle = Mathtil.rand(ChampionsOfSlamGame.shirtStyles);
         def.pantsStyle = ChampionsOfSlamGame.pantsStyles[Mathtil.randi(def.shirtStyle.pantsRequired ? 1 : 0, ChampionsOfSlamGame.pantsStyles.length - 1)];
-        return def;
     }
     
     public final static class ChampionDefinition {
@@ -385,6 +394,35 @@ public abstract class Champion extends Panctor implements StepListener, Collidab
         
         protected final boolean isInvalid() {
             return shirtStyle.pantsRequired && (pantsStyle.iy < 0);
+        }
+        
+        public final void load(final String s) {
+            final Segment seg = Segment.parse(s);
+            bodyColor.load(seg.getField(0));
+            eyesIndex = seg.intValue(1);
+            hairIndex = seg.intValue(2);
+            hairColor.load(seg.getField(3));
+            shirtStyle = ChampionsOfSlamGame.shirtStyles[seg.intValue(4)];
+            shirtColor.load(seg.getField(5));
+            pantsStyle = ChampionsOfSlamGame.pantsStyles[seg.intValue(6)];
+            pantsColor.load(seg.getField(7));
+            bootsColor.load(seg.getField(8));
+        }
+        
+        @Override
+        public final String toString() {
+            final StringBuilder b = new StringBuilder();
+            b.append("CHM").append('|');
+            bodyColor.append(b).append('|');
+            b.append(eyesIndex).append('|');
+            b.append(hairIndex).append('|');
+            hairColor.append(b).append('|');
+            b.append(shirtStyle.shirtIndex).append('|');
+            shirtColor.append(b).append('|');
+            b.append(pantsStyle.pantsIndex).append('|');
+            pantsColor.append(b).append('|');
+            bootsColor.append(b);
+            return b.toString();
         }
     }
     
@@ -418,6 +456,16 @@ public abstract class Champion extends Panctor implements StepListener, Collidab
         protected float r = 1.0f;
         protected float g = 1.0f;
         protected float b = 1.0f;
+        
+        public final void load(final Record rec) {
+            r = INC_COLOR * rec.intValue(0);
+            g = INC_COLOR * rec.intValue(1);
+            b = INC_COLOR * rec.intValue(2);
+        }
+        
+        public final StringBuilder append(final StringBuilder sb) {
+            return sb.append(getColorInt(r)).append('^').append(getColorInt(g)).append('^').append(getColorInt(b));
+        }
     }
     
     public final static class ChampionFrame {
