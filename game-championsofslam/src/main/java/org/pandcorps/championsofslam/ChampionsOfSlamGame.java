@@ -1,0 +1,179 @@
+/*
+Copyright (c) 2009-2018, Andrew M. Martin
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
+conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this list of conditions and the following
+   disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following
+   disclaimer in the documentation and/or other materials provided with the distribution.
+ * Neither the name of Pandam nor the names of its contributors may be used to endorse or promote products derived from this
+   software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
+BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+*/
+package org.pandcorps.championsofslam;
+
+import java.util.*;
+
+import org.pandcorps.core.*;
+import org.pandcorps.core.col.*;
+import org.pandcorps.core.img.*;
+import org.pandcorps.game.*;
+import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.Panteraction.*;
+import org.pandcorps.pandam.event.action.*;
+import org.pandcorps.pandam.impl.*;
+import org.pandcorps.pandax.in.*;
+import org.pandcorps.pandax.text.*;
+import org.pandcorps.pandax.text.Fonts.*;
+import org.pandcorps.championsofslam.Arena.*;
+import org.pandcorps.championsofslam.Player.*;
+import org.pandcorps.championsofslam.Champion.*;
+
+public final class ChampionsOfSlamGame extends BaseGame {
+    protected final static String TITLE = "Champions of Slam";
+    protected final static String VERSION = "0.0.1";
+    protected final static String YEAR = "2018";
+    protected final static String AUTHOR = "Andrew M. Martin";
+    
+    protected final static String RES = "org/pandcorps/championsofslam/";
+    
+    protected final static int DIM = 16;
+    protected final static int GAME_COLUMNS = 24;
+    protected final static int GAME_ROWS = 14;
+    protected final static int GAME_W = GAME_COLUMNS * DIM; // 384
+    protected final static int GAME_H = GAME_ROWS * DIM; // 224;
+    protected final static int INITIAL_OPPONENTS = 30;
+    
+    protected static Queue<Runnable> loaders = new LinkedList<Runnable>();
+    protected static Panroom room = null;
+    protected static Arena arena = null;
+    protected static Font font = null;
+    protected static Panmage imgArena = null;
+    protected static Panmage imgChampion = null;
+    protected static Pansound soundJab = null;
+    protected static Pansound soundUppercut = null;
+    protected static ShirtStyle[] shirtStyles = {
+            new ShirtStyle(-1, 0, true),
+            new ShirtStyle(32, 1, true),
+            new ShirtStyle(32, 0, false)
+    };
+    protected static PantsStyle[] pantsStyles = {
+            new PantsStyle(-1),
+            new PantsStyle(64),
+            new PantsStyle(160),
+            new PantsStyle(128)
+    };
+    protected static Panmage boundingBox = null;
+    protected static boolean paused = true;
+    private final static Set<Device> devices = new IdentityHashSet<Device>();
+    private final static Set<Champion> team = new IdentityHashSet<Champion>();
+    
+    @Override
+    protected final boolean isFullScreen() {
+        return true;
+    }
+    
+    @Override
+    protected final int getGameWidth() {
+        return GAME_W; // 24 tiles
+    }
+    
+    @Override
+    protected final int getGameHeight() {
+        return GAME_H; // 14 tiles
+    }
+    
+    @Override
+    protected final void init(final Panroom room) throws Exception {
+        final Pangine engine = Pangine.getEngine();
+        engine.setTitle(TITLE);
+        engine.setEntityMapEnabled(false);
+        Pansound.setReplayThreshold(3);
+        Imtil.onlyResources = true;
+        if (loaders != null) {
+            loaders.add(new Runnable() {
+                @Override public final void run() {
+                    loadResources();
+                }});
+        }
+        Panscreen.set(new LogoScreen(ChampionsOfSlamScreen.class, loaders));
+    }
+    
+    private final static void loadResources() {
+        final Pangine engine = Pangine.getEngine();
+        font = Fonts.getClassic(new FontRequest(FontType.Upper, 8), Pancolor.WHITE, Pancolor.WHITE, Pancolor.WHITE, null, Pancolor.BLACK);
+        imgArena = engine.createImage(PRE_IMG + "arena", RES + "Arena.png");
+        imgChampion = engine.createImage(PRE_IMG + "champion", RES + "Champion.png");
+        boundingBox = engine.createEmptyImage(PRE_IMG + "boundingBox", null, new FinPanple2(-10, -2), new FinPanple2(10, 5));
+        final Panaudio audio = engine.getAudio();
+        soundJab = audio.createSound(RES + "Jab.mid");
+        soundUppercut = audio.createSound(RES + "Uppercut.mid");
+    }
+    
+    protected final static void initOpponents() {
+        final int minX = Math.round(Champion.minX) / 2, maxX = Math.round(Champion.maxX) / 2, minY = Math.round(Champion.minY) / 2, maxY = Math.round(Champion.maxY) / 2;
+        for (int i = 0; i < INITIAL_OPPONENTS; i++) {
+            final ChampionDefinition d2 = Champion.randomChampionDefinition();
+            final Cpu cpu = new Cpu(d2, null);
+            cpu.getPosition().set(Mathtil.randi(minX, maxX) * 2, Mathtil.randi(minY, maxY) * 2);
+            cpu.setMirror(Mathtil.rand());
+            room.addActor(cpu);
+        }
+    }
+    
+    protected final static class ChampionsOfSlamScreen extends Panscreen {
+        @Override
+        protected final void load() {
+            final Pangine engine = Pangine.getEngine();
+            engine.setRangeZ(-1, 1999);
+            engine.enableColorArray();
+            room = Pangame.getGame().getCurrentRoom();
+            final Panlayer bg = engine.createLayer("bg", GAME_W, GAME_H, 0, room);
+            room.addBeneath(bg);
+            final ArenaDefinition arenaDef = new ArenaDefinition();
+            arenaDef.ropeColor.r = arenaDef.ropeColor.g = 0.0f;
+            arenaDef.turnbuckleColor.r = arenaDef.turnbuckleColor.g = arenaDef.turnbuckleColor.b = 0.5f;
+            arenaDef.apronColor.r = arenaDef.apronColor.g = 0.5f;
+            engine.setBgColor(arenaDef.ringColor.r, arenaDef.ringColor.g, arenaDef.ringColor.b);
+            arena = new Arena(arenaDef);
+            bg.addActor(arena);
+            bg.setConstant(true);
+            room.setClearDepthEnabled(false);
+            arena.register(new ActionStartListener() {
+                @Override public final void onActionStart(final ActionStartEvent event) {
+                    final Device device = event.getDevice();
+                    if (!devices.add(device)) {
+                        return;
+                    }
+                    final PlayerContext pc = new PlayerContext(Champion.randomChampionDefinition(), ControlScheme.getDefault(device));
+                    team.add(new Player(room, pc, team));
+                }});
+            initOpponents();
+            soundJab.startSound();
+            soundUppercut.startSound();
+        }
+        
+        @Override
+        public final void step() {
+            paused = Player.isAllPaused();
+        }
+    }
+    
+    public final static void main(final String[] args) {
+        try {
+            new ChampionsOfSlamGame().start();
+        } catch (final Throwable e) {
+            e.printStackTrace();
+        }
+    }
+}
