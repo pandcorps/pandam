@@ -108,6 +108,13 @@ public abstract class RoomFunction {
         }
     }
     
+    public final static class FirePressureTile extends RoomFunction {
+        @Override
+        public final void build(final TileMap tm, final int x, final int y) {
+            BlockPuzzle.FirePressureBlock.init(tm.getIndex(x, y));
+        }
+    }
+    
     protected final static void setOverlayIfOpen(final TileMap tm, final int i, final int j, final Object overlay, final byte behavior) {
         final int index = tm.getIndex(i, j);
         if (tm.isBad(index)) {
