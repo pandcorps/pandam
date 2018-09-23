@@ -1,0 +1,28 @@
+IMP|Hail
+
+M|..,.)[](.,......)[](,...
+M|)'BBB  BBBBBBBBBB  BBB`(
+M|)[                    ](
+M|)[   ]< < < [         ](
+M|)[  ]< < 'BB          ](
+M|)[   `< < [           ](
+M|)[    BBBB       {    ](
+M|)[         {     BB   ](
+M|)[   {     BB         ](
+M|)[   BB        ]< [   ](
+M|)[              BB    ](
+M|--*---*-----*-------*---
+M|....,....,..............
+M|..,..,..........,.....,.
+
+LDR|17|11|3
+
+ENM|12|3|SlideEnemy
+ENM|4|12|Icicle
+ENM|7|12|Icicle
+ENM|11|12|IcicleEnemy
+ENM|12|12|IcicleEnemy
+ENM|16|12|Icicle
+ENM|19|12|Icicle
+
+RPT|2|3|20|10|HailBrickDark
