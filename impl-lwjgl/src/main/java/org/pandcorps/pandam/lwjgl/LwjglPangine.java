@@ -226,16 +226,45 @@ public final class LwjglPangine extends GlPangine {
 					pos = pc.DOWN;
 					neg = pc.UP;
 				} else {
+				    final int size = src.getAxisCount();
+				    boolean foundX = false, foundY = false;
+				    for (int i = 0; i < size; i++) {
+				        final String name = src.getAxisName(i);
+                        if (Chartil.isEmpty(name)) {
+                            continue;
+                        }
+                        final char axis = name.charAt(0);
+                        final float value = src.getAxisValue(i);
+                        if (axis == 'X') {
+                            if (foundX) {
+                                continue;
+                            }
+                            foundX = true;
+                            handleUnspecifiedAxis(value, pc.RIGHT, pc.LEFT);
+                            if (foundY) {
+                                continue;
+                            }
+                        } else if (axis == 'Y') {
+                            if (foundY) {
+                                continue;
+                            }
+                            foundY = true;
+                            handleUnspecifiedAxis(value, pc.DOWN, pc.UP);
+                            if (foundX) {
+                                continue;
+                            }
+                        }
+				    }
 					continue;
 				}
 				if (val > 0) {
 					button = pos;
 					// Check for immediate direction change without releasing axis
-					activate(Pantil.nvl(Coltil.has(active, neg), Coltil.has(newActive, neg)), false);
+					activate(ifActive(neg), false);
 					a = true;
 				} else if (val < 0) {
 					button = neg;
-					activate(Pantil.nvl(Coltil.has(active, pos), Coltil.has(newActive, pos)), false);
+					activate(ifActive(pos), false);
 					a = true;
 				} else {
 					button = Pantil.nvl(Coltil.has(active, pos), Coltil.has(active, neg), Coltil.has(newActive, pos), Coltil.has(newActive, neg));
@@ -267,6 +296,32 @@ public final class LwjglPangine extends GlPangine {
 			addTouchEvent(0, type, Mouse.getEventX(), Mouse.getEventY());
 		}
 	}
+    
+    private static boolean activatedUnspecifiedAxis = false;
+    
+    private final void handleUnspecifiedAxis(final float val, final Button pos, final Button neg) {
+        if (val > 0) {
+            // Check for immediate direction change without releasing axis
+            activate(ifActive(neg), false);
+            activate(ifInactive(pos), true);
+            activatedUnspecifiedAxis = true;
+        } else if (val < 0) {
+            activate(ifActive(pos), false);
+            activate(ifInactive(neg), true);
+            activatedUnspecifiedAxis = true;
+        } else if (activatedUnspecifiedAxis) { // Newer code; don't know if we could get unspecified 0 signals after specified signals; wouldn't want to clear in that case
+            activate(ifActive(pos), false);
+            activate(ifActive(neg), false);
+        }
+    }
+    
+    private final Button ifActive(final Button btn) {
+        return Pantil.nvl(Coltil.has(active, btn), Coltil.has(newActive, btn));
+    }
+    
+    private final Button ifInactive(final Button btn) {
+        return (active.contains(btn) || newActive.contains(btn)) ? null : btn;
+    }
     
     @Override
     public final int getMouseX() {
