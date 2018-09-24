@@ -176,6 +176,10 @@ public final class ChampionsOfSlamGame extends BaseGame {
                     final PlayerContext pc = new PlayerContext(Champion.randomChampionDefinition(), ControlScheme.getDefault(device));
                     team.add(new Player(room, pc, team));
                 }});
+            arena.register(engine.getInteraction().KEY_F1, new ActionStartListener() {
+                @Override public final void onActionStart(final ActionStartEvent event) {
+                    engine.captureScreen();
+                }});
             soundJab.startSound();
             soundUppercut.startSound();
         }

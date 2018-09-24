@@ -147,18 +147,14 @@ public class Player extends Champion {
             @Override public final void onAction(final ActionEvent event) {
                 onDown();
             }});
-        final ActionStartListener attackListener = new ActionStartListener() {
+        ctrl.registerActionInputs(this, new ActionStartListener() {
             @Override public final void onActionStart(final ActionStartEvent event) {
                 onAttackStart();
-            }};
-        register(ctrl.get1(), attackListener);
-        register(ctrl.get2(), attackListener);
-        final ActionStartListener pauseListener = new ActionStartListener() {
+            }});
+        ctrl.registerMenuInputs(this, new ActionStartListener() {
             @Override public final void onActionStart(final ActionStartEvent event) {
                 onPause();
-            }};
-        register(ctrl.getSubmit(), pauseListener);
-        register(ctrl.getMenu(), pauseListener);
+            }});
         players.add(this);
         togglePause();
     }
