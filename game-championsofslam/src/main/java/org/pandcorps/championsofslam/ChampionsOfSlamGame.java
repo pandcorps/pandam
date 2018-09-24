@@ -167,18 +167,25 @@ public final class ChampionsOfSlamGame extends BaseGame {
             bg.addActor(arena);
             bg.setConstant(true);
             room.setClearDepthEnabled(false);
+            final Panput f1 = engine.getInteraction().KEY_F1;
             arena.register(new ActionStartListener() {
                 @Override public final void onActionStart(final ActionStartEvent event) {
+                    final Panput input = event.getInput();
+                    if (f1.equals(input)) {
+                        engine.captureScreen();
+                        return;
+                    }
                     final Device device = event.getDevice();
                     if (!devices.add(device)) {
                         return;
                     }
-                    final PlayerContext pc = new PlayerContext(Champion.randomChampionDefinition(), ControlScheme.getDefault(device));
+                    final ControlScheme ctrl = ControlScheme.getDefault(device);
+                    if (!(ctrl.isMenuInput(input) || ctrl.isActionInput(input))) {
+                        devices.remove(device);
+                        return;
+                    }
+                    final PlayerContext pc = new PlayerContext(Champion.randomChampionDefinition(), ctrl);
                     team.add(new Player(room, pc, team));
-                }});
-            arena.register(engine.getInteraction().KEY_F1, new ActionStartListener() {
-                @Override public final void onActionStart(final ActionStartEvent event) {
-                    engine.captureScreen();
                 }});
             soundJab.startSound();
             soundUppercut.startSound();

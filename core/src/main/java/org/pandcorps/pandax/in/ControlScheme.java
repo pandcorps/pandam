@@ -135,6 +135,31 @@ public class ControlScheme {
         actor.register(mnu, listener);
     }
     
+    public final boolean isActionInput(final Panput input) {
+        if ((input == act1) || (input == act2)) {
+            return true;
+        }
+        final Device device = getDevice();
+        if (device instanceof Controller) {
+            for (final Button button : ((Controller) device).BUTTONS) {
+                if ((button == sub) || (button == mnu)) {
+                    continue;
+                } else if (input == button) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    public final boolean isMenuInput(final Panput input) {
+        return (input == sub) || (input == mnu);
+    }
+    
+    public final boolean isDirectionInput(final Panput input) {
+        return (input == down) || (input == up) || (input == left) || (input == right);
+    }
+    
     public final Device getDevice() {
     	return device == null ? get1().getDevice() : device;
     }

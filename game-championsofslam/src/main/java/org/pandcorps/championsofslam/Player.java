@@ -399,6 +399,10 @@ public class Player extends Champion {
         public final void onPause(final Player player) {
             player.saveIfNeeded();
             Panctor.detach(player.pausedText);
+            final Panple pos = player.getPosition();
+            if (pos.getY() <= minY) {
+                pos.setX(player.getPausedX());
+            }
         }
     };
     
