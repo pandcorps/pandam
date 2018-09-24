@@ -25,6 +25,7 @@ package org.pandcorps.pandax.in;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.Panput.*;
 import org.pandcorps.pandam.Panteraction.*;
+import org.pandcorps.pandam.event.action.*;
 
 public class ControlScheme {
 	// Each input below could be a key, but device could be a touch screen mapping buttons to keys
@@ -61,6 +62,7 @@ public class ControlScheme {
     
     public final static ControlScheme getDefault(final Device d) {
         final ControlScheme ctrl = new ControlScheme();
+        ctrl.setDevice(d);
         ctrl.setDefault(d);
         return ctrl;
     }
@@ -111,6 +113,26 @@ public class ControlScheme {
     	map2(act2);
     	mapMenu(mnu);
     	mapSubmit(sub);
+    }
+    
+    // Registers the listener for Action 1, Action 2, etc. but not Up/Down/Left/Right/Menu/Submit
+    public final void registerActionInputs(final Panctor actor, final ActionStartListener listener) {
+        actor.register(act1, listener);
+        actor.register(act2, listener);
+        final Device device = getDevice();
+        if (device instanceof Controller) {
+            for (final Button button : ((Controller) device).BUTTONS) {
+                if ((button == act1) || (button == act2) || (button == sub) || (button == mnu)) {
+                    continue;
+                }
+                actor.register(button, listener);
+            }
+        }
+    }
+    
+    public final void registerMenuInputs(final Panctor actor, final ActionStartListener listener) {
+        actor.register(sub, listener);
+        actor.register(mnu, listener);
     }
     
     public final Device getDevice() {
