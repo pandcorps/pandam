@@ -159,5 +159,7 @@ public abstract class Pangl {
 	
 	public abstract void glViewport(final int x, final int y, final int width, final int height);
 	
+	public abstract boolean isOpenGl15Supported();
+	
 	public abstract boolean isQuadSupported();
 }

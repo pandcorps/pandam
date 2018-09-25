@@ -979,6 +979,9 @@ public abstract class GlPangine extends Pangine {
 	@Override
 	public final boolean enableBuffers() {
 	    try {
+	        if (!gl.isOpenGl15Supported()) {
+	            return false;
+	        }
 	        gl.glEnable(gl.GL_ARRAY_BUFFER_BINDING);
 	        return true;
 	    } catch (final Exception e) {

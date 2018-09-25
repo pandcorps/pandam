@@ -213,6 +213,11 @@ public final class LwjglPangl extends Pangl {
 	}
 	
 	@Override
+	public final boolean isOpenGl15Supported() {
+	    return GLContext.getCapabilities().OpenGL15;
+	}
+	
+	@Override
 	public final boolean isQuadSupported() {
 		return true;
 	}
