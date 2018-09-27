@@ -167,12 +167,21 @@ public final class ChampionsOfSlamGame extends BaseGame {
             bg.addActor(arena);
             bg.setConstant(true);
             room.setClearDepthEnabled(false);
-            final Panput f1 = engine.getInteraction().KEY_F1;
+            final Panteraction interaction = engine.getInteraction();
+            final Panput f1 = interaction.KEY_F1;
+            final Panput f2 = interaction.KEY_F2;
+            final Panput f3 = interaction.KEY_F3;
             arena.register(new ActionStartListener() {
                 @Override public final void onActionStart(final ActionStartEvent event) {
                     final Panput input = event.getInput();
                     if (f1.equals(input)) {
                         engine.captureScreen();
+                        return;
+                    } else if (f2.equals(input)) {
+                        engine.startCaptureFrames();
+                        return;
+                    } else if (f3.equals(input)) {
+                        engine.stopCaptureFrames();
                         return;
                     }
                     final Device device = event.getDevice();
