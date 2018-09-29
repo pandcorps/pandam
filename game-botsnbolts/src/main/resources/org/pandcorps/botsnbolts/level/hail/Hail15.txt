@@ -1,0 +1,24 @@
+IMP|Hail
+
+M|)            1         (
+M|)            1         (
+M|)            1         (
+M|)                      (
+M|)                      (
+M|){               {     (
+M|)                      (
+M|)                      (
+M|)           {          (
+M|)                      (
+M|)                      (
+M|){               {    1(
+M|)                      (
+M|)                      (
+
+ENM|1|3|FreezeRayEnemy
+ENM|1|9|FreezeRayEnemy
+
+LDR|22|0|3
+LDR|13|11|3
+
+RPT|1|0|22|14|HailIceDark
