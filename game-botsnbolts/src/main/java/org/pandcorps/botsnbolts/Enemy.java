@@ -1859,6 +1859,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         protected FireballEnemy(final Segment seg) {
             super(PROP_OFF_X, PROP_H, seg, 1);
             setView(BotsnBoltsGame.fireballEnemy[0]);
+            setVisible(false);
         }
         
         @Override
@@ -1888,9 +1889,17 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
         
         @Override
+        protected final void onLanded() {
+            super.onLanded();
+            setVisible(false);
+            schedule();
+        }
+        
+        @Override
         protected final boolean onStepCustom() {
             final int imgIndex;
             if (v > 1) {
+                setVisible(true);
                 imgIndex = getIndex(0, 1);
             } else if (v < -1) {
                 imgIndex = getIndex(3, 4);
