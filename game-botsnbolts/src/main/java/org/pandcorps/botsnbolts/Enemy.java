@@ -1856,15 +1856,21 @@ public abstract class Enemy extends Chr implements CollisionListener {
     }
     
     protected final static class FireballEnemy extends JumpEnemy {
+        private final static int DURATION_PERIOD = BlockPuzzle.FireTimedBlock.DURATION_PERIOD;
+        private int delay = DURATION_PERIOD;
+        
         protected FireballEnemy(final Segment seg) {
             super(PROP_OFF_X, PROP_H, seg, 1);
+            delay -= (seg.getInt(3, 0) * 16);
             setView(BotsnBoltsGame.fireballEnemy[0]);
             setVisible(false);
         }
         
         @Override
         protected final int getDelay() {
-            return 60;
+            final int r = delay;
+            delay = DURATION_PERIOD;
+            return r;
         }
         
         @Override

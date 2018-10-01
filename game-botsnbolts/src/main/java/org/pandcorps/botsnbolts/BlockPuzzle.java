@@ -645,6 +645,7 @@ public abstract class BlockPuzzle {
     }
     
     protected final static class FireTimedBlock extends TimerBlock {
+        protected final static int DURATION_PERIOD = 64;
         protected static Panmage image = null;
         
         protected FireTimedBlock(final int tileIndex, final int timerOffset) {
@@ -653,7 +654,7 @@ public abstract class BlockPuzzle {
         
         @Override
         protected final int getDurationPeriod() {
-            return 64;
+            return DURATION_PERIOD;
         }
         
         @Override
