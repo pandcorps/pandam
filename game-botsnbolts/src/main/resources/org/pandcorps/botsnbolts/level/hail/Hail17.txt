@@ -1,0 +1,39 @@
+IMP|Hail
+
+M|...,...................,.......,......,.,........,..........,......,...,
+M|.)'BBB()BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB()BBB`(.
+M|,)[   ()                                              d         ()   ](.
+M|.)[   BB          /*--\            d                            ()   ](.
+M|.)[            d  (..,)                                       d BB   ](,
+M|,)---*-------*----()=()----------\       /-*---\  /----*\  /-*----*---(.
+M|...........,.......,.......,.....)    d  (...,.)  (..,..)  (..,.......,.
+M|.)'BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB       BBBBBBB  BBBBBBB  BBBBBBBBBBBB 
+M|.)[                                 /*\         d                  d    
+M|,)[                d                (.)                   d             
+M|,)[                                 BBB  ]_____[               d        
+M|.)[/-------*---------*--\  /-*---\                 d    /*------*----*--
+M|,)[(..,...,.....,.....,.)  (...,.)  d                   (....,.....,....
+M|.)[(.)================(.)  (,)=(.)                      (.)===========(.
+
+DSK|3|9
+BOX|67|9
+
+ENM|12|6|IcicleEnemy
+ENM|25|6|Icicle
+ENM|26|6|Icicle
+ENM|36|12|IcicleEnemy
+ENM|37|12|IcicleEnemy
+ENM|38|12|IcicleEnemy
+ENM|48|12|Icicle
+ENM|49|12|Icicle
+ENM|57|12|Icicle
+ENM|58|12|Icicle
+ENM|9|9|SlideEnemy
+ENM|24|9|SlideEnemy
+
+LDR|2|0|3
+
+BRR|6|9|Silver
+DOR|71|3|Cyan
+
+RPT|2|0|69|13|HailBrickDark
