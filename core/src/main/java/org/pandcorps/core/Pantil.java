@@ -43,6 +43,11 @@ public final class Pantil {
 	    final String val = getProperty(key);
 	    return Chartil.isValued(val) ? Boolean.parseBoolean(val) : def;
 	}
+	
+	public final static int getProperty(final String key, final int def) {
+		final String val = getProperty(key);
+		return Chartil.isValued(val) ? Integer.parseInt(val) : def;
+	}
 
 	private static long nextId = 0;
 	
