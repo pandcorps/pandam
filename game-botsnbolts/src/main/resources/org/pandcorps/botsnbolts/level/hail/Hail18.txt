@@ -1,0 +1,27 @@
+IMP|Hail
+
+M|................................................
+M|)'BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB`(
+M|)[                                            ](
+M|)[  ]< < < [                 { { { { { { { {  ](
+M|)[ ]< < < < [                iBBBBBBBBBBBBBBB ](
+M|)[  BBBBBBBB              i  i                ](
+M|)[                        B  i  i{ { { { { { { (
+M|                     /-\     i  BBBBBBBBBBBBBBB 
+M|                     (.)     i                  
+M|            /-\   /--(.)     i                  
+M|            (.)   (....)     i                  
+M|-----\   /--(.)   ()==()     /------------------
+M|.....)   (....)   (....)     (..................
+M|)===()   ()==()   ()==()     ()================(
+
+ENM|13|5|FreezeRayEnemy
+ENM|22|7|FreezeRayEnemy
+ENM|26|12|IcicleEnemy
+ENM|37|11|SlideEnemy
+ENM|39|8|SlideEnemy
+
+DOR|0|3|Cyan
+DOR|47|3|Cyan
+
+RPT|1|0|46|13|HailBrickDark
