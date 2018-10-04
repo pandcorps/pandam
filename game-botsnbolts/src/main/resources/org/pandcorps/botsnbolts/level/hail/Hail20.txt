@@ -1,0 +1,34 @@
+IMP|Hail
+
+M|...........,..,.....)(..
+M|)'BBBBBBBBBBBBBBBBBB`(.,
+M|)[                   BBB
+M|)[  ]_____________[     
+M|)[                      
+M|)[ d     6   7   8      
+M|)[   5               /*-
+M|)[             d     (.,
+M|)[    d              B`(
+M|)[  4   3   2     d   ](
+M|                1     ](
+M|          d        111](
+M|                   1  ](
+M|---*-----*---------*---(
+
+DOR|0|1|Cyan
+DOR|23|8|Boss
+
+BOX|19|1
+BOX|21|1
+
+TMP
+TMS|16^3
+TMS|9^8
+TMS|12^4
+TMS|13^8
+TMS|8^4
+TMS|17^8
+TMS|4^4
+TMS|5^7
+
+RPT|1|1|23|11|HailBrickDark
