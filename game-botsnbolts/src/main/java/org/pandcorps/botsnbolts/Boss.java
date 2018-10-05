@@ -541,7 +541,7 @@ public abstract class Boss extends Enemy {
         }
         
         @Override
-        public void onStep(final StepEvent event) {
+        public final void onStep(final StepEvent event) {
             super.onStep(event);
             changeView(getCurrentImage());
             if (getVelocity().getY() < 0) {
@@ -565,10 +565,14 @@ public abstract class Boss extends Enemy {
         }
 
         @Override
-        public void onAllOob(final AllOobEvent event) {
+        public final void onAllOob(final AllOobEvent event) {
             if (getPosition().getY() < 0) {
                 super.onAllOob(event);
             }
+        }
+        
+        @Override
+        protected final void onOutOfView() {
         }
         
         @Override
@@ -1862,12 +1866,12 @@ public abstract class Boss extends Enemy {
                 final float subX, subY;
                 final Panple o, min, max, size;
                 if (i == 0) {
-                    subX = 17;
+                    subX = 17; //TODO sub-coordinates and sizes for SubPanmage and/or renderView should be powers of 2; adjust origin/position to put in right place
                     subY = 0;
                     o = new FinPanple2(7, 1);
                     min = new FinPanple2(-5, 0);
                     max = new FinPanple2(5, 5);
-                    size = new FinPanple2(15, 15);
+                    size = new FinPanple2(15, 15); //TODO see above
                 } else {
                     final Panmage image0 = getSubImage(0);
                     o = image0.getOrigin();

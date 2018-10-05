@@ -343,8 +343,12 @@ public abstract class Enemy extends Chr implements CollisionListener {
         public void onStep(final StepEvent event) {
             super.onStep(event);
             if (!isInView()) {
-                destroy();
+                onOutOfView();
             }
+        }
+        
+        protected void onOutOfView() {
+            destroy();
         }
     }
     
