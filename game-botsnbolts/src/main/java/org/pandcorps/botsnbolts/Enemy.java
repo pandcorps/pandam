@@ -1001,7 +1001,9 @@ public abstract class Enemy extends Chr implements CollisionListener {
         
         @Override
         public final void onRoomAdd(final RoomAddEvent event) {
-            turnTowardPlayer();
+            if (isMirrorable()) {
+                turnTowardPlayer();
+            }
             schedule();
         }
         
@@ -1913,6 +1915,11 @@ public abstract class Enemy extends Chr implements CollisionListener {
                 imgIndex = 2;
             }
             setView(BotsnBoltsGame.fireballEnemy[imgIndex]);
+            return false;
+        }
+        
+        @Override
+        protected final boolean isMirrorable() {
             return false;
         }
         
