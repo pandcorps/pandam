@@ -79,7 +79,7 @@ public class Animal {
                     break;
                 }
             }
-            getPosition().set(x, (j + 1) * BotsnBoltsGame.DIM, BotsnBoltsGame.DEPTH_ENEMY);
+            getPosition().set(x, (j + 1) * BotsnBoltsGame.tileSize, BotsnBoltsGame.DEPTH_ENEMY);
             setMirror(p.isMirror());
             p.addActor(this);
             new Warp(this, pi);
