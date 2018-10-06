@@ -435,6 +435,7 @@ public class Menu {
             registrar.register(levelSelect, new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
                     destroyPauseMenu();
+                    RoomLoader.clear(); // Exit from Bolt room to Menu; start Earthquake level; TileMapImage Map wasn't cleared without this, causing graphical bug
                     goLevelSelect();
                 }});
         }
