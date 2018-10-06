@@ -971,7 +971,11 @@ public abstract class RoomLoader {
                 final int x = seg.intValue(0), y = seg.intValue(1), w = seg.intValue(2);
                 final BotRoom room = new BotRoom(x, y, w, seg.getValue(3), seg.getValue(4), seg.getInt(5, BotsnBoltsGame.DIM));
                 for (int i = 0; i < w; i++) {
-                    rooms.put(new BotCell(x + i, y), room);
+                    final int xi = x + i;
+                    if (rooms.put(new BotCell(xi, y), room) != null) {
+                        in.close();
+                        throw new IllegalStateException("Two room cells found at (" + xi + ", " + y + ")");
+                    }
                 }
             }
             in.close();
