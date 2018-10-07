@@ -1,0 +1,21 @@
+IMP|Hail
+
+M|.......,........,.......
+M|.)'BBBBBBBBBBBBBBBBBBB`(
+M|,)[                   ](
+M|.)[     { {      d    ](
+M|  [     i{ {          ](
+M|  [     { BB{         ](
+M|BB      i{  B{        ](
+M|      d { B  B{         
+M|        i{ { { {        
+M|        BBBBBi{ {       
+M|  /-*---*--\  BBBBB     
+M|  (..,.....)--*---*-----
+M|/-(....,...,.......,....
+M|(...,.,......,...,...,..
+
+DOR|0|2|Bolt
+DOR|23|3|Cyan
+
+RPT|0|3|23|9|HailBrickDark
