@@ -8,7 +8,7 @@ M|()  <................> (
 M|<>  []eeeeeeeeeeeeee[] l
 M|    lr D         c  lr l
 M|    lr              lr l
-M|   dlr              lr l
+M|ee dlr              lr l
 M|    []        D     [] l
 M|    ee   c          ee l
 M|                       l
