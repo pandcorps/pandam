@@ -1,0 +1,25 @@
+IMP|Earthquake
+
+M|..;.:.;;.:.:.)   (:...:;
+M|_____________,   `______
+M|\                  /----
+M|)dddddddddddddddddd(.;.:
+M|)DDDDDDDDDDDDDDDDDD`____
+M|)   [===]g[===========]/
+M|) S DDDDDDDDDDDDDDDDDDD(
+M|)E         B     E     (
+M|)  B   S      S     e  (
+M|)[===========]g[===] B (
+M|)DDDDDDDDDDDDDDD{b}D   (
+M|)     B    e    {b} S  (
+M|)       E       {b}    `
+M|) B /-------------------
+
+LDR|14|11|3
+
+ENM|9|11|CeilingCannon
+ENM|14|7|CeilingCannon
+ENM|9|3|CeilingCannon
+
+RPT|1|11|18|3|EarthquakeGreen
+RPT|1|0|22|10|EarthquakeDirtDark
