@@ -1,0 +1,23 @@
+IMP|Earthquake
+
+M|)   (.;...:...;:;..;.:.;
+M|) e `___________________
+M|)   DDDDDDDDDDDDDDDDDDD/
+M|)  B       E          e(
+M|,            S  E      (
+M|/--\  E            S   (
+M|(.;)      S    B /-\   (
+M|(:.)/\ B         (.)   (
+M|`__,`,  S    e   `_, B `
+M|-------\         DDD    
+M|_______,  B    S        
+M|-\/\0=0/-\  E      e    
+M|;)()1c1(.)      B   E   
+M|:)`,2=2`_,/--\0cCc0/----
+
+ENM|12|11|CeilingCannon
+ENM|18|8|JackhammerEnemy
+
+DOR|23|1|Cyan
+
+RPT|1|1|22|13|EarthquakeDirtDark
