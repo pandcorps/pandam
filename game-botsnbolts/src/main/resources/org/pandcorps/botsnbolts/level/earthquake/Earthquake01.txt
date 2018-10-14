@@ -1,0 +1,23 @@
+IMP|Earthquake
+
+M|;.;)`_______________,(.;
+M|.::)DDDDDDDDDDDDDDDDD(;.
+M|___,     E           (.:
+M|\DDD          S   B  `__
+M|)      S    e        DD/
+M|)    B          E     B(
+M|)S           S       e (
+M|)     e   S    e       (
+M|)  E    B          S   (
+M|,uuuuuuuuuuuuuuuuuuuuuu`
+M|-------------\   /------
+M|  ..:.;:....;)   (;:..;.
+M|# .;.:.  ;.:.)   (..:.;.
+M|;.:..;.# .;.;)   (::.;.;
+
+ROM|10|4
+
+LDR|14|0|4
+
+RPT|1|5|22|7|EarthquakeDirtDark
+RPT|14|0|3|4|EarthquakeGreen
