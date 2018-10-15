@@ -1,0 +1,29 @@
+IMP|Earthquake
+
+M|..;# .::..;:;)(.:.;.  ;:)/\     (:.  )`___,/----
+M|_____________,(  :.;# :.)()     (.;# )     (.;.:
+M|\/-----------\(# .;.;..:)()/---\(:  .)     `____
+M|)`___________,(:.;.:.:;.)`,`___,(.# ;)/---------
+M|)DDDDDDDDDDDDD`_________,DDDDDDD`____,`_________
+M|)           B DDDDDDDDDDD   B   DDDDDDDDDDDDDDD 
+M|)    e   S           e    S        e     B      
+M|)   E           S       E      S             B  
+M|,         S  E             e      B   E   S     
+M|  S    E           B          B     e     /-----
+M|            B  /------\   /\0=======0/\   (  .;;
+M|   B /-----\   (.:;.  ) S ()1cCcCcCc1() E (# ;:.
+M|     (..;.:)  e(  ;.# )   ()1=======1()   (.;  :
+M|----\(:;.:.)   (# .;.:)B  ()1/-----\1()   (:.# .
+
+ENM|7|14|DrillEnemy
+ENM|8|14|DrillEnemy
+ENM|9|14|DrillEnemy
+ENM|18|14|DrillEnemy
+ENM|19|14|DrillEnemy
+ENM|29|12|JackhammerEnemy
+ENM|40|11|JackhammerEnemy
+
+DOR|0|1|Cyan
+DOR|47|5|Cyan
+
+RPT|1|0|46|14|EarthquakeDirtDark
