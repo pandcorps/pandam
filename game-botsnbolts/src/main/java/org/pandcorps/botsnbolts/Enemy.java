@@ -1740,15 +1740,151 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
     }
     
+    private final static Panple GUARDED_MIN = new FinPanple2(4, 0);
+    private final static Panple GUARDED_MAX = new FinPanple2(12, 16);
+    
     // Guards itself for a while; then lowers guard to attack
-    protected final static class GuardedEnemy extends Enemy {
+    protected final static class GuardedEnemy extends Enemy implements AllOobListener {
+        private final static int DURATION_MOVE = 64;
+        private final static byte MODE_MOVE = 0;
+        private final static byte MODE_OPEN = 1;
+        private final static byte MODE_ATTACK = 2;
+        private final static byte MODE_CLOSE = 3;
+        private final static Panmage[] images = new Panmage[4];
+        private final Segment seg;
+        private int timer;
+        private int frame = 0;
+        private byte mode;
+        
         protected GuardedEnemy(final Segment seg) {
-            super(-1, -1, seg, -1); //TODO
+            super(7, 15, seg, 1);
+            this.seg = seg;
+            startMove();
+            setView();
+            setMirror(true);
+        }
+        
+        private final void startMode(final byte mode) {
+            timer = 0;
+            this.mode = mode;
+        }
+        
+        private final void startMove() {
+            startMode(MODE_MOVE);
+            hv = -2;
+        }
+        
+        @Override
+        protected final boolean onStepCustom() {
+            timer++;
+            switch (mode) {
+                case MODE_MOVE :
+                    onStepMove();
+                    break;
+                case MODE_OPEN :
+                    onStepOpen();
+                    break;
+                case MODE_ATTACK :
+                    onStepAttack();
+                    break;
+                case MODE_CLOSE :
+                    onStepClose();
+                    break;
+            }
+            return true;
+        }
+        
+        private final void onStepMove() {
+            if (addX(hv) == X_START) {
+                respawnAndDestroy();
+            }
+            if (timer >= DURATION_MOVE) {
+                hv = 0;
+                startMode(MODE_OPEN);
+            }
+        }
+        
+        private final void onStepOpen() {
+            if (animate(1, 3)) {
+                startMode(MODE_ATTACK);
+            }
+        }
+        
+        private final void onStepAttack() {
+            if (timer == 8) {
+                if (!isInView()) {
+                    return;
+                }
+                final int m = getMirrorMultiplier(), ox = 10, oy = 8; // EnemyProjectile applies mirror multiplier to ox
+                final float m45 = m * VEL_PROJECTILE_45;
+                new EnemyProjectile(this, ox, oy, m45, VEL_PROJECTILE_45);
+                new EnemyProjectile(this, ox, oy, m * VEL_PROJECTILE, 0);
+                new EnemyProjectile(this, ox, oy, m45, -VEL_PROJECTILE_45);
+            } else if (timer >= 16) {
+                startMode(MODE_CLOSE);
+            }
+        }
+        
+        private final void onStepClose() {
+            if (animate(-1, 0)) {
+                startMove();
+            }
+        }
+        
+        private final boolean animate(final int frameDir, final int lastFrame) {
+            if (timer >= 2) {
+                timer = 0;
+                if (frame == lastFrame) {
+                    return true;
+                } else {
+                    frame += frameDir;
+                    setView();
+                }
+            }
+            return false;
         }
         
         @Override
         protected final boolean isVulnerableToProjectile(final Projectile prj) {
-            return true; //TODO
+            return (frame > 1) && (prj.isMirror() != isMirror());
+        }
+        
+        private final void respawn() {
+            addRoomTimer(32, new RoomTimerListener() {
+                @Override public final void onTimer() {
+                    BotsnBoltsGame.addActor(new GuardedEnemy(seg));
+            }});
+        }
+        
+        private final void respawnAndDestroy() {
+            respawn();
+            destroy();
+        }
+        
+        @Override
+        public final void onDefeat() {
+            respawn();
+        }
+        
+        @Override
+        public final void onAllOob(final AllOobEvent event) {
+            if (isMirror() == (getPosition().getX() < 0)) {
+                respawnAndDestroy();
+            }
+        }
+        
+        private final void setView() {
+            changeView(getImage(frame));
+        }
+        
+        private final static Panmage getImage(final int i) {
+            Panmage image = images[i];
+            if (image != null) {
+                return image;
+            }
+            image = getImage(image, "GuardedEnemy" + (i + 1), null, GUARDED_MIN, GUARDED_MAX);
+            images[i] = image;
+            return image;
         }
     }
     
