@@ -1,0 +1,29 @@
+IMP|Earthquake
+
+M|)   E(.:)/-------\(;  .)(.:;)`_,2===2`_,/-\0===0/-\(  :.# .)/-------\(:.
+M|)    `__,(.::.;:;)(.# :)`___,DDDDDDDDDDD`_,2===2`_,(# .;:.;)(;  .:.:)(.;
+M|)S   DDDD`_______,(:.;.)DDDDD         E DDDDDDDDDDD`_______,(.# ;.:;)(  
+M|)        DDD{     `____,    B   e   S        e     DDDDDDDDD`_______,(# 
+M|)    S  e   {        }DD           E   B            B       DDDDDDDDD`__
+M|) B         {        }     S   B            E    B      S     e      DD
+M|)   E      B{        }           /-\     S            e    B
+M|)     e   E {        } S      E  `_, e         E  S                B
+M|)  S        {  /-\   }      e    DDD               /---\  e     E   e
+M|)       B   {  (:)   }   B     B      S  E /---\   `___,   /---\   /----
+M|,   B       {  `_,  /---\          B       `___,   DDDDD E `___, S (  .;
+M|------\   /------\  (  ;) E /---\          DDDDD S   e     DDDDD   (# :.
+M|.:.  ;) S (.  :;.)  (# .)   (:;.)  /---\  e        E        B      (.:  
+M|:.;# .)   (;# .:.)  (.;:)   `___,e (;.:)      B        S          e(:;# 
+
+ENM|12|3|ShovelEnemy
+ENM|16|6|ShovelEnemy
+ENM|30|3|ShovelEnemy
+ENM|34|8|ShovelEnemy
+ENM|45|5|ShovelEnemy
+ENM|61|5|ShovelEnemy
+
+DOR|71|5|Cyan
+
+RPT|1|0|11|14|EarthquakeDirtDark
+RPT|13|0|8|14|EarthquakeGreen
+RPT|22|0|51|14|EarthquakeDirtDark
