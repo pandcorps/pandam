@@ -1744,8 +1744,10 @@ public abstract class Enemy extends Chr implements CollisionListener {
     private final static Panple GUARDED_MAX = new FinPanple2(12, 16);
     
     // Guards itself for a while; then lowers guard to attack
-    protected final static class GuardedEnemy extends Enemy implements AllOobListener {
+    protected final static class GuardedEnemy extends Enemy {
         private final static int DURATION_MOVE = 64;
+        private final static int MULT_JET = 2;
+        private final static int DURATION_JET = MULT_JET * 3;
         private final static byte MODE_MOVE = 0;
         private final static byte MODE_OPEN = 1;
         private final static byte MODE_ATTACK = 2;
@@ -1755,13 +1757,19 @@ public abstract class Enemy extends Chr implements CollisionListener {
         private int timer;
         private int frame = 0;
         private byte mode;
+        private int jetTimer = (MULT_JET * 2) - 1;
         
         protected GuardedEnemy(final Segment seg) {
             super(7, 15, seg, 1);
             this.seg = seg;
+            final Panple pos = getPosition();
+            final float x = pos.getX();
+            if (x > 192) {
+                setMirror(true);
+                pos.setX(x - 1);
+            }
             startMove();
             setView();
-            setMirror(true);
         }
         
         private final void startMode(final byte mode) {
@@ -1771,12 +1779,16 @@ public abstract class Enemy extends Chr implements CollisionListener {
         
         private final void startMove() {
             startMode(MODE_MOVE);
-            hv = -2;
+            hv = 2 * getMirrorMultiplier();
         }
         
         @Override
         protected final boolean onStepCustom() {
             timer++;
+            jetTimer++;
+            if (jetTimer >= DURATION_JET) {
+                jetTimer = 0;
+            }
             switch (mode) {
                 case MODE_MOVE :
                     onStepMove();
@@ -1795,7 +1807,8 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
         
         private final void onStepMove() {
-            if (addX(hv) == X_START) {
+            final int xStatus = addX(hv);
+            if ((xStatus == X_START) || (xStatus == X_END)) {
                 respawnAndDestroy();
             }
             if (timer >= DURATION_MOVE) {
@@ -1867,10 +1880,14 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
         
         @Override
-        public final void onAllOob(final AllOobEvent event) {
-            if (isMirror() == (getPosition().getX() < 0)) {
-                respawnAndDestroy();
+        protected final void renderView(final Panderer renderer) {
+            super.renderView(renderer);
+            final int jetIndex = jetTimer / MULT_JET;
+            if (jetIndex == 2) {
+                return;
             }
+            final Panple pos = getPosition();
+            renderer.render(getLayer(), getJetImage(jetIndex), pos.getX() + (6 * getMirrorMultiplier()), pos.getY() - 2, pos.getZ(), 0, isMirror(), false);
         }
         
         private final void setView() {
@@ -1886,6 +1903,18 @@ public abstract class Enemy extends Chr implements CollisionListener {
             images[i] = image;
             return image;
         }
+    }
+    
+    private final static Panmage[] jetImages = new Panmage[2];
+    
+    private final static Panmage getJetImage(final int i) {
+        Panmage image = jetImages[i];
+        if (image != null) {
+            return image;
+        }
+        image = getImage(image, "Jet" + (i + 1), null, null, null);
+        jetImages[i] = image;
+        return image;
     }
     
     protected final static int SLIDE_H = 12;
