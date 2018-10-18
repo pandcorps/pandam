@@ -162,21 +162,8 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
             return X_NORMAL; // No movement, but request was successful
         }
         setMirror((hv == 0) ? v : hv);
-        final int mult;
+        final int mult = (v > 0) ? 1 : -1;
         final Panple pos = getPosition();
-        if (v > 0) {
-            mult = 1;
-            if (pos.getX() > getLayer().getSize().getX()) {
-                onEnd();
-                return X_END;
-            }
-        } else {
-            mult = -1;
-            if (pos.getX() <= 0) {
-                onStart();
-                return X_START;
-            }
-        }
         final int n = v * mult;
         final int offWall = (OFF_X + 1) * mult;
         for (int i = 0; i < n; i++) {
@@ -198,6 +185,23 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
                 }
             }
             pos.addX(mult);
+        }
+        if (v > 0) {
+            final Panlayer layer = getLayer();
+            if (layer != null) {
+                final float end = layer.getSize().getX() - 1;
+                if (pos.getX() > end) {
+                    pos.setX(end);
+                    onEnd();
+                    return X_END;
+                }
+            }
+        } else {
+            if (pos.getX() < 0) {
+                pos.setX(0);
+                onStart();
+                return X_START;
+            }
         }
         return X_NORMAL;
     }
