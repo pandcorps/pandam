@@ -1,0 +1,30 @@
+IMP|Earthquake
+
+M|  )(;:.:;.)/\/---\`_,2=2`___,2=2`___,2=2`___,(.;:;.)(.)1lLl1(:)/-------\
+M|# )`______,()(.;:)DDDDDDDDD{bbbbb}DDDDDDDDDDD`_____,(;)1LlL1(.)`_______,
+M|.;)DDDDDDDD()`___,   B  e  {bbbbb}E     B   eDDDDDDD`_,2===2`_,DDDD/---- 
+M|:.)e       ()DDDDD        B{bbbbb}   B            B DDDDDDDDDDD B  (:.;.
+M|__,      E `,    B  S      {bbbbb}         S   e         B         `____
+M| DD  S     DD          E   {bbbbb}  S   E       S    E        e    DDDD/
+M|        B    /------\0=0/---\0=0/---\0=0/------\          S          e (
+M|  E        /\`______,2=2`___,2=2`___,2=2`______,   B       E     S     (
+M|   S     E `,DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD       S           e   (
+M|----\      DD      e    E       B           E    S       e     E       (
+M|:;  )  e      S          e    E       B  e          e       B     E   B(
+M|  # )/-----------\   B       /--\   S         B         /--\    e      (
+M|# :.)(;  :.;.;:  )/---------\(  )/--------\0=0/--------\(;:)/-----\ S  (
+M|.;.;)(.# ;..;:.# )(;..;.:.;:)(# )`________,2=2`________,(.;)(.:.;:)    (
+
+ENM|11|14|DrillEnemy
+ENM|12|14|DrillEnemy
+ENM|22|5|CeilingCannon
+ENM|26|8|JackhammerEnemy
+ENM|34|2|ShovelEnemy
+ENM|57|10|CeilingCannon
+ENM|61|2|ShovelEnemy
+
+BOX|43|8
+
+DOR|0|5|Cyan
+
+RPT|1|0|70|14|EarthquakeDirtDark
