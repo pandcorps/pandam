@@ -1,0 +1,20 @@
+IMP|Earthquake
+
+M|/------\(:.)`_____, B  (
+M|(.;:.;.)`__,DDDDDDD   E(
+M|`______,DDDD B       B (
+M|\DDDDDDD e      E  S   (
+M|, B     E S   B      e `
+M|------\     e    /------
+M|:.;..:)??????????(..;.;.
+M|______,DDDDDDDDDD`______
+M|\DDDDDD      e   DDDDDD/
+M|) E     B  S      E  e `
+M|,   B/----\0=====0/----\
+M|\S   (;  .)1[]gCg1(  .;)
+M|)  e (.# :)1ggc[]1(# :.)
+M|)B   `____,2=====2`____,
+
+ENM|5|9|JackhammerEnemy
+
+RPT|1|0|22|14|EarthquakeDirtDark
