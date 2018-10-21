@@ -1,0 +1,25 @@
+IMP|Earthquake
+
+M|)    /------\/-\0/--\0/-\(.# ;.:;.)`_______,/-\0/-\0/-\(:.  :)(# .)/----
+M|)  S (;  :.;)(:)1(;.)1(:)`________,DDDDDDDDD`_,2`_,2`_,(.;# .)(:  )(.;  
+M|)    (:# .;:)`_,2`__,2`_,DDDDDDDDDD    e    DDDDDDDDDDD`_____,(;# )(  # 
+M|,   B`______,DDDDDDDDDDDD  e        /-\      e   E     DDDDDDD`___,(# .;
+M|\    DDDDDDDD  E         B    S  E  `_,   S       B  S      E DDDDD`____
+M|)S    E      e      B S     e       DDD B     B    ??  B           DD/--
+M|)  e        E   S               e     E    e    E  DD      e   B     `__
+M|)    B   B           E    ????    [=]g[=]    ???   E     S   ??    S DD 
+M|)      S  ????    ????  e DDDD B  DDDDDDD   EDDD       ???   DD      
+M|) E       DDDD  B DDDD      E      e     B      e   S  DDD  E    e   B  
+M|,uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu 
+M|---------------\                                                 /------
+M|;  .:.;  ;.:.:.)                                                 (:.  .:
+M|.# ..;:# .:..;:)                                                 (.;# ;.
+
+ENM|37|11|JackhammerEnemy
+
+DOR|71|3|Cyan
+
+RPT|1|4|70|10|EarthquakeDirtDark
+RPT|1|0|70|3|EarthquakeGreen
+
+VAR|rescueDisabled|Y
