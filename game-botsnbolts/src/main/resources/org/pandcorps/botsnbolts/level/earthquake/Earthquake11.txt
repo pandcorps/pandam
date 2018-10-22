@@ -1,0 +1,26 @@
+IMP|Earthquake
+
+M|-\        (  )      e (.
+M|.)     e  (# )S       (.
+M|;) S      `__, E      (:
+M|:)  B    ?D[]D     S  ( 
+M|_,   E   D []  B     E(#
+M|-\  ?      /\ e       (.
+M|_,  D  S   `,     B   (;
+M| D         DD         `_
+M|   B    ?    e  S     /\
+M|    S   D          E  ()
+M| uuuuuuuuuuuuuuuuuuuuu()
+M|------\        /-----\()
+M|  ;  :)/------\(.;  .)()
+M|# .# ;)`______,(:.# ;)`,
+
+ENM|18|3|ShovelEnemy
+
+DOR|0|3|Cyan
+
+LDR|9|11|3
+LDR|21|6|8
+
+RPT|1|4|22|10|EarthquakeDirtDark
+RPT|1|0|22|3|EarthquakeGreen
