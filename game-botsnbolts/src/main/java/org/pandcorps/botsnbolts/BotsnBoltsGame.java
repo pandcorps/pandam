@@ -342,7 +342,7 @@ public final class BotsnBoltsGame extends BaseGame {
         final Panmage lifterAll = engine.createImage(preLifter, RES + "misc/Lifter.png");
         final Panple sLifter = sCarrier;
         final int dLifter = 4;
-        lifter = engine.createAnimation(preLifter + ".anm",
+        lifter = engine.createAnimation(preLifter + ".anm", //TODO Inconsistent conversion from pixels to rectangles; weird vibration effect; maybe need to always render squares
             newSubFrame(preLifter, 0, new FinPanple2(0, 1), null, null, lifterAll, 0, 0, sLifter, dLifter),
             newSubFrame(preLifter, 1, null, null, null, lifterAll, 0, 16, sLifter, dLifter));
         final Panmage[] sheetCb = newSheet("conveyor.belt", RES + "misc/ConveyorBelt.png", 16);
@@ -466,7 +466,7 @@ public final class BotsnBoltsGame extends BaseGame {
         final Panple crawlMax = Chr.getMax(Enemy.PROP_OFF_X, Enemy.CRAWL_H);
         crawlEnemy = newAnimation("crawl.enemy", RES + "enemy/CrawlEnemy.png", 16, propO, propMin, crawlMax, 4);
         final Panple shieldedO = new FinPanple2(8, 2);
-        shieldedEnemy = newAnimation("shielded.enemy", RES + "enemy/ShieldedEnemy.png", 16, shieldedO, propMin, crawlMax, 3);
+        shieldedEnemy = newAnimation("shielded.enemy", RES + "enemy/ShieldedEnemy.png", 16, shieldedO, new FinPanple2(propMin.getX(), -2), crawlMax, 3);
         unshieldedEnemy = newAnimation("unshielded.enemy", RES + "enemy/UnshieldedEnemy.png", 16, shieldedO, propMin, crawlMax, 3);
         fireballEnemy = newSheet("fireball.enemy", RES + "enemy/FireballEnemy.png", 16, propO, propMin, crawlMax);
         final Panple henchO = new FinPanple2(15, 1), henchMin = Chr.getMin(Enemy.HENCHBOT_OFF_X), henchMax = Chr.getMax(Enemy.HENCHBOT_OFF_X, Enemy.HENCHBOT_H);
