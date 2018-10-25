@@ -1203,11 +1203,18 @@ public final class Player extends Chr implements Warpable {
         Panctor.destroy(spring);
     }
     
-    protected final void startCarried(final Carrier carrier) {
+    private final void startState(final StateHandler stateHandler) {
         destroyGrapplingHook();
+        if (this.stateHandler == BALL_HANDLER) {
+            endBall();
+        }
+        this.stateHandler = stateHandler;
+    }
+    
+    protected final void startCarried(final Carrier carrier) {
         carrier.carried = this;
         this.carrier = carrier;
-        stateHandler = CARRIED_HANDLER;
+        startState(CARRIED_HANDLER);
     }
     
     private final void endCarried() {
@@ -1330,8 +1337,7 @@ public final class Player extends Chr implements Warpable {
     private final void startRescue() {
         hv = 0;
         chv = 0;
-        destroyGrapplingHook();
-        stateHandler = RESCUED_HANDLER;
+        startState(RESCUED_HANDLER);
         new Rescue(this);
     }
     

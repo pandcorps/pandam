@@ -36,7 +36,7 @@ public final class Carrier extends Panctor implements StepListener, CollisionLis
     private int timer = 0;
     
     protected Carrier(final int x, final int y, final int velX, final int velY, final int duration) {
-        setPosition(this, x, y, BotsnBoltsGame.DEPTH_CARRIER);
+        setPosition(this, x, y + 1, BotsnBoltsGame.DEPTH_CARRIER);
         this.velX = velX;
         this.velY = velY;
         this.duration = duration;
