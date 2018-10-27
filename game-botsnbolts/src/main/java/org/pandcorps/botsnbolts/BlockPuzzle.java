@@ -369,6 +369,8 @@ public abstract class BlockPuzzle {
         }
     }
     
+    protected final static int DAMAGE_SPIKE = HudMeter.MAX_VALUE / 4;
+    
     protected final static class Spike extends TileUnawareEnemy {
         private final float baseX;
         private final float baseY;
@@ -410,6 +412,11 @@ public abstract class BlockPuzzle {
         protected final void rotate(final int amtRot) {
             setDirection(getRot() + amtRot);
         }
+        
+        @Override
+        protected final int getDamage() {
+            return DAMAGE_SPIKE;
+        }
 
         @Override
         protected final void onShot(final Projectile prj) {
@@ -418,6 +425,19 @@ public abstract class BlockPuzzle {
         @Override
         protected final void award(final PowerUp powerUp) {
         }
+    }
+    
+    private static Panframe spikeFloor = null;
+    
+    protected final static void setSpikeFloor(final int tileIndex) {
+        if (spikeFloor == null) {
+            spikeFloor = Pangine.getEngine().createFrame(BotsnBoltsGame.PRE_FRM + "SpikeFloor", BotsnBoltsGame.getSpikeTile(), 1, 2, false, false);
+        }
+        BotsnBoltsGame.tm.setForeground(tileIndex, spikeFloor, BotsnBoltsGame.TILE_HURT);
+    }
+    
+    protected final static void setSpikeCeiling(final int tileIndex) {
+        BotsnBoltsGame.tm.setForeground(tileIndex, BotsnBoltsGame.getSpikeTile(), BotsnBoltsGame.TILE_HURT);
     }
     
     protected abstract static class ActorBlock extends Panctor {

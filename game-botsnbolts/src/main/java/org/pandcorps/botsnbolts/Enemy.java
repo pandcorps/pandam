@@ -2117,7 +2117,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         
         @Override
         protected final int getDamage() {
-            return 2;
+            return BlockPuzzle.DAMAGE_SPIKE;
         }
         
         private final static Panmage getIcicleImage() {

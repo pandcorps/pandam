@@ -79,6 +79,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected final static byte TILE_CONVEYOR_LEFT = 12;
     protected final static byte TILE_CONVEYOR_RIGHT = 13;
     protected final static byte TILE_PRESSURE_FIRE = 14;
+    protected final static byte TILE_HURT = 15;
     
     protected final static int DEPTH_PARALLAX_BG = 0;
     protected final static int DEPTH_PARALLAX_FG = 2;
@@ -148,6 +149,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static Tile[][] conveyorBeltTiles = null;
     protected static Panmage blockSpike = null;
     protected static Panmage spike = null;
+    protected static Panmage spikeTile = null;
     protected static Panmage[] sentryGun = null;
     protected static Panmage[] wallCannon = null;
     protected static Panimation propEnemy = null;
@@ -423,6 +425,13 @@ public final class BotsnBoltsGame extends BaseGame {
             spike = Pangine.getEngine().createImage("spike", CENTER_16, MIN_16, MAX_16, RES + "bg/Spike.png");
         }
         return spike;
+    }
+    
+    protected final static Panmage getSpikeTile() {
+        if (spikeTile == null) {
+            spikeTile = Pangine.getEngine().createImage("spikeTile", RES + "bg/SpikeTile.png");
+        }
+        return spikeTile;
     }
     
     private final static Pancolor newColorHidden() {
