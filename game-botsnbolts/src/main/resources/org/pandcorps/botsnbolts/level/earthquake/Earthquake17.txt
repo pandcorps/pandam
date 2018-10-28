@@ -1,0 +1,34 @@
+IMP|Earthquake
+
+M|;)(.  ;.  .:)(.;.)/----\(  .)   /;  )   /\(# )`_____,2`____,2`__________
+M|.)(:# .:# ;.)(:.;)(.:;.)(# ;)   (:# )   ()`__,DDDDDDDDDDDDDDDDDDDDDDDDD 
+M|.)`_________,(;:.)(:.:;)`___,/-\`___,/-\`,DDDD      B          E        
+M|:)DDDDDDDDDDD`___,(;:..)DDDDD`_,DDDDD`_,DD    e           E          e  
+M|_,B       e  DDDDD`____,e    DDD  E  DDD  B    E      e      B    S     
+M| D  S       B     DDDDDD    E                    S         ??   ?   /---
+M|         S        B  E         B        E  S         ?? S  DD   D   `___
+M|  e    E        e     e   S     e  S         B ??    DD      e    e DDD 
+M|    B        S               e        e  ??    DD   e       B       B 
+M|---\      E      E  S /\0=0/\  E     B   DD             E     S         
+M|  .)   S   e        /\()1g1()   /---\    B         B     S       E      
+M|# :)  /\       B/--\()()1l1() S `___,       S  B     E     B  /---------
+M|;  ) E()      /\(.:)()()1g1()   DDDDD  E         e /----\/---\(;:  :.  .
+M|.# )  ()S /--\`,(:;)()`,2=2`, B      e  /--\/-----\(.;:.)`___,(:.# .;# :
+
+ENM|6|14|DrillEnemy
+ENM|7|14|DrillEnemy
+ENM|14|14|DrillEnemy
+ENM|15|14|DrillEnemy
+ENM|20|14|DrillEnemy
+ENM|21|14|DrillEnemy
+ENM|30|12|JackhammerEnemy
+ENM|34|4|ShovelEnemy
+ENM|38|12|JackhammerEnemy
+ENM|53|2|ShovelEnemy
+ENM|64|3|ShovelEnemy
+
+DOR|0|5|Cyan
+DOR|71|3|Cyan
+DOR|71|9|Cyan
+
+RPT|1|0|70|14|EarthquakeDirtDark
