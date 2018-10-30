@@ -1,0 +1,23 @@
+IMP|Earthquake
+
+M|;:..;  .;:;.)/\0/\     (
+M|.;.:.# :..:.)`,2`,    e`
+M|____________,DDDDD S   /
+M|----\DDDD{b}D   E      (
+M|.;.:)B   {b}        B  (
+M|;..;)  e {b} S   e     `
+M|:.;:)   E{b}  B      S [
+M|.;:.)S   {b}  /---------
+M|____,    {b}E (;..  .;:.
+M|-\/-\  S {b}  (.;:# ;  :
+M|;)(.) E  {b} B(:.;.:.# .
+M|.)(:)/-------\(.  ..;.:;
+M|:)(;)(.  .:;:)(;# ;  .;.
+M|.)`_,(;# :.:.)(.;:.# ;.:
+
+ENM|2|14|DrillEnemy|true
+ENM|3|14|DrillEnemy|true
+ENM|4|14|DrillEnemy|true
+ENM|10|10|CeilingCannon
+
+RPT|2|0|21|14|EarthquakeDirtDark
