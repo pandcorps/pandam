@@ -1,0 +1,22 @@
+IMP|Earthquake
+
+M|.)   (.;:.:..)`_________,2ggggg2`____________,(# )(;  .)0/\0/\0(:  ;:  ;)(.;:..;.)`___,2`___,(# 
+M|;)  E`_______,DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD`__,(.# :)2`,2`,2(;# .;# :)`_______,DDDDDDDDDDD`__
+M|.)   DDDDDDDDD   E              e          B  DDDD`____,DDDDDDD`________,DDDDDDDDD         e D/-
+M|:) S     e      B       ????????????? E           DDDDDD  e    DDDDDDD/\D    B    E   S       (.
+M|_,         E        B   DDDDDDDDDDDDD    S   e   E      B     E      B()  S     B     ??/\   E(:
+M|]D   e       S              E         ???      S           S          `,       e    ??DD()    (.
+M|\                e    ??????        E DDD e         e              E  /\E  ?????????DD  () S  `_
+M|)E      S             DDDDDD ?    B            B      S       B       () e DDDDDDDDD  e ()    D 
+M|)      B       E           E D         e    ???  S         e    e     ()        B       ()e   
+M|,  S       ???     S                  E     DDD   e      ??  E      B `,?????????????   `,      
+M|]     e    DDD           B     ?  S          B     ??    DD      S    DDDDDDDDDDDDDDDS  /\  B   
+M|/-----\       B   ??? e     e  D         S       e DD          ??        e            E ()/-----
+M|(:  ;.)   E       DDD               e      B         e    S    DD    ???????????????????()(:.  ;
+M|(.# .:)         e       ??????????             E        B         E  DDDDDDDDDDDDDDDDDDD()(.;# :
+
+DOR|95|3|Cyan
+
+RPT|1|0|94|14|EarthquakeDirtDark
+
+VAR|rescueDisabled|Y
