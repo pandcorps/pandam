@@ -22,6 +22,8 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.botsnbolts;
 
+import java.util.*;
+
 import org.pandcorps.botsnbolts.BlockPuzzle.*;
 import org.pandcorps.botsnbolts.Player.*;
 import org.pandcorps.botsnbolts.PowerUp.*;
@@ -1758,6 +1760,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         private int frame = 0;
         private byte mode;
         private int jetTimer = (MULT_JET * 2) - 1;
+        private List<Segment> siblings = null;
         
         protected GuardedEnemy(final Segment seg) {
             super(7, 15, seg, 1);
@@ -1866,6 +1869,11 @@ public abstract class Enemy extends Chr implements CollisionListener {
             addRoomTimer(32, new RoomTimerListener() {
                 @Override public final void onTimer() {
                     BotsnBoltsGame.addActor(new GuardedEnemy(seg));
+                    if (siblings != null) {
+                        for (final Segment sibling : siblings) {
+                            BotsnBoltsGame.addActor(new GuardedEnemy(sibling));
+                        }
+                    }
             }});
         }
         
@@ -1876,7 +1884,29 @@ public abstract class Enemy extends Chr implements CollisionListener {
         
         @Override
         public final void onDefeat() {
-            respawn();
+            final GuardedEnemy sibling = getSibling();
+            if (sibling == null) {
+                respawn();
+            } else {
+                final int size = Coltil.size(siblings);
+                if (sibling.siblings == null) {
+                    sibling.siblings = new ArrayList<Segment>(2 + size);
+                }
+                sibling.siblings.add(seg);
+                if (size > 0) {
+                    sibling.siblings.addAll(siblings);
+                }
+            }
+        }
+        
+        private final GuardedEnemy getSibling() {
+            for (final Panctor actor : getLayer().getActors()) {
+                if ((actor == this) || actor.isDestroyed() || (actor.getClass() != GuardedEnemy.class)) {
+                    continue;
+                }
+                return (GuardedEnemy) actor;
+            }
+            return null;
         }
         
         @Override
