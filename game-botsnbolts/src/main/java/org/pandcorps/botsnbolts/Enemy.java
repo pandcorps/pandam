@@ -1888,14 +1888,12 @@ public abstract class Enemy extends Chr implements CollisionListener {
             if (sibling == null) {
                 respawn();
             } else {
-                final int size = Coltil.size(siblings);
                 if (sibling.siblings == null) {
-                    sibling.siblings = new ArrayList<Segment>(2 + size);
-                }
-                sibling.siblings.add(seg);
-                if (size > 0) {
+                    sibling.siblings = (siblings == null) ? new ArrayList<Segment>(2) : siblings;
+                } else if (siblings != null) {
                     sibling.siblings.addAll(siblings);
                 }
+                sibling.siblings.add(seg);
             }
         }
         
