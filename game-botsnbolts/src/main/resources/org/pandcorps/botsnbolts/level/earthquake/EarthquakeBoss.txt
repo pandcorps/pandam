@@ -1,0 +1,24 @@
+IMP|Earthquake
+
+M|)`__,2`__________,2`____
+M|)                      /
+M|)                      (
+M|)dddddddddddddddddddddd(
+M|)bb}DDDDDD{bb}DDDDDD{bb(
+M|)bb}      {bb}    B {bb`
+M|,bb}   S  {bb}     E{bb/
+M|{bb} e    {bb} S    {bb(
+M|uuuuuuuuuuuuuuuuuuuuuuu(
+M|                       (
+M|                       `
+M|------------------\/----
+M|;  .:;  :.;.:.:;..)(:  .
+M|.# ;.:# .;.:;..;:.)(.# ;
+
+BOS|21|3|EarthquakeBot
+
+DOR|0|3|Boss
+
+RPT|0|3|23|2|EarthquakeGreen
+RPT|4|6|18|4|EarthquakeDirtDark
+RPT|1|11|22|2|EarthquakeGreen
