@@ -2926,6 +2926,8 @@ public abstract class Enemy extends Chr implements CollisionListener {
         
         protected JetpackEnemy(final Segment seg) {
             super(HENCHBOT_OFF_X, HENCHBOT_H, seg, HENCHBOT_HEALTH);
+            getPosition().addY(-2);
+            vy = seg.getInt(3, vy);
             setMirror(true);
         }
         
@@ -2949,7 +2951,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
         
         private final void move() {
-            if (addY(vy) != Y_NORMAL) {
+            if ((addY(vy) != Y_NORMAL) || ((vy > 0) && (getPosition().getY() > 202.5f)) || ((vy < 0) && (getPosition().getY() < 1.5f))) {
                 vy *= -1;
                 shoot();
             }
@@ -2958,6 +2960,11 @@ public abstract class Enemy extends Chr implements CollisionListener {
         private final void shoot() {
             newEnemyProjectile(this, HENCHBOT_SHOOT_OFF_X, HENCHBOT_SHOOT_OFF_Y, getMirrorMultiplier() * VEL_PROJECTILE, 0);
             attackTimer = 16;
+        }
+        
+        @Override
+        protected final boolean onFell() {
+            return false;
         }
         
         private final static Panmage getJetpackImage(final Panmage[] imgs, final int i) {
