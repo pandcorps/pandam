@@ -1810,10 +1810,24 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
         
         private final void onStepMove() {
+            if (hv != 0) {
+                if (onStepX()) {
+                    return;
+                }
+            }
+            startOpenIfNeeded();
+        }
+        
+        private final boolean onStepX() {
             final int xStatus = addX(hv);
             if ((xStatus == X_START) || (xStatus == X_END)) {
                 respawnAndDestroy();
+                return true;
             }
+            return false;
+        }
+        
+        private final void startOpenIfNeeded() {
             if (timer >= DURATION_MOVE) {
                 hv = 0;
                 startMode(MODE_OPEN);
