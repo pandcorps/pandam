@@ -1756,6 +1756,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         private final static byte MODE_CLOSE = 3;
         private final static Panmage[] images = new Panmage[4];
         private final Segment seg;
+        private final int vv;
         private int timer;
         private int frame = 0;
         private byte mode;
@@ -1765,9 +1766,13 @@ public abstract class Enemy extends Chr implements CollisionListener {
         protected GuardedEnemy(final Segment seg) {
             super(7, 15, seg, 1);
             this.seg = seg;
+            vv = seg.getInt(3, 0);
             final Panple pos = getPosition();
             final float x = pos.getX();
-            if (x > 192) {
+            if (vv != 0) {
+                setMirror(true);
+                pos.setX(x + 7);
+            } else if (x > 192) {
                 setMirror(true);
                 pos.setX(x - 1);
             }
@@ -1782,7 +1787,11 @@ public abstract class Enemy extends Chr implements CollisionListener {
         
         private final void startMove() {
             startMode(MODE_MOVE);
-            hv = 2 * getMirrorMultiplier();
+            if (vv == 0) {
+                hv = 2 * getMirrorMultiplier();
+            } else {
+                v = vv;
+            }
         }
         
         @Override
@@ -1815,6 +1824,11 @@ public abstract class Enemy extends Chr implements CollisionListener {
                     return;
                 }
             }
+            if (v != 0) {
+                if (onStepY()) {
+                    return;
+                }
+            }
             startOpenIfNeeded();
         }
         
@@ -1827,9 +1841,24 @@ public abstract class Enemy extends Chr implements CollisionListener {
             return false;
         }
         
+        private final boolean onStepY() {
+            final Panple pos = getPosition();
+            pos.addY(v);
+            final float y = pos.getY();
+            if ((v < 0) && (y < -16)) {
+                respawnAndDestroy();
+                return true;
+            } else if ((v > 0) && (y > BotsnBoltsGame.GAME_H)) {
+                respawnAndDestroy();
+                return true;
+            }
+            return false;
+        }
+        
         private final void startOpenIfNeeded() {
             if (timer >= DURATION_MOVE) {
                 hv = 0;
+                v = 0;
                 startMode(MODE_OPEN);
             }
         }
