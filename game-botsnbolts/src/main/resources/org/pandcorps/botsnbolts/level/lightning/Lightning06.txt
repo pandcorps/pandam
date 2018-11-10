@@ -1,0 +1,25 @@
+IMP|Lightning
+
+M|            v (,().(,.(\
+M|            * EDEDEDEDEv
+M|            i          .
+M|            v           
+M|            /).().()   4
+M|            vDEDEDED   *
+M|            .HhHhc     i
+M|            *    w    .`
+M|            v   ()(-).(\
+M|            *HhcEDEDEDEv
+M|            v  w       .
+M|            /) w       /
+M|            i  .*/)  * i
+M|            v7 /,vf9 v `
+
+LDR|22|0|2
+LDR|13|10|4
+
+ENM|13|4|GliderEnemy|1|0
+ENM|22|8|GliderEnemy|-1|0
+ENM|13|12|GliderEnemy|1|0
+
+RPT|12|0|12|14|LightningWall
