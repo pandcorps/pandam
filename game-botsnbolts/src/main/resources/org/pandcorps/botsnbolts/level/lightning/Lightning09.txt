@@ -1,0 +1,42 @@
+IMP|Lightning
+
+M|                        
+M|                        
+M|           (-).(-).()(-)().(--).().(-)()(-).().(-).()().(-).().(-)(-).(\
+M|         4 DEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEv
+M|         *D                                                            /
+M|         iHhHhHhHhHhHhHhHhHhHhHhHhHhHhc                                v
+M|         v                            w                >>>>             
+M|         .HhHhHhHhHhHhc         >>>>> w <<<<<   >>>>>hcDEDE  >>>>  .(-)4
+M|         *            w <<<<<   D   D w D   D   D   D w      EDED  EDE  
+M|         v      >>>>> w EDEDE    DED  w  DED     DED  w               6 
+M|         .      DEDED w               w               w               D.
+M|         *            w               w               w                 
+M|         i (\  .*(-).  /)             w               w                8
+M|         v *v5 /,d(-\9 vS7 (-).()/-).(-)(\.*.(-).()*(-).()./-).*       .
+
+LDR|10|0|2
+
+CNV|16|4|5|true
+CNV|24|5|5|false
+CNV|32|6|5|true
+CNV|40|6|5|false
+CNV|48|6|5|true
+CNV|55|7|4|true
+CNV|61|6|4|true
+
+BOX|69|7
+
+ELB|33|5
+ELB|34|5
+ELB|35|5
+
+ELB|41|5
+ELB|42|5
+ELB|43|5
+
+ELB|49|5
+ELB|50|5
+ELB|51|5
+
+RPT|10|0|62|12|LightningWall
