@@ -241,7 +241,10 @@ public abstract class RoomLoader {
     
     private final static void ctx(final Segment seg) {
         BotsnBoltsGame.BotsnBoltsScreen.loadTileImage(seg.getValue(0), seg.getValue(1));
-        Pangine.getEngine().setBgColor(toColor(seg.getField(2)));
+        final Field field = seg.getField(2);
+        if (field != null) {
+            Pangine.getEngine().setBgColor(toColor(field));
+        }
     }
     
     private final static void imp(final Segment seg, final boolean ctxRequired, final TileMap tm) {
