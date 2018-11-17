@@ -1,0 +1,35 @@
+IMP|Lightning
+
+M|            (-)  (\  * i
+M|            /).6 .v7 v `
+M|            vEDEDEDEDE .
+M|            *          *
+M|            v ()     (-,
+M|            . EDEDEDEDE 
+M|            *           
+M|            vHhHhHhc    
+M|            .      w    
+M|            *  ().(-).(-
+M|            i  EDEDEDED*
+M|            v          v
+M|              (\  /)   .
+M|            5 Sv9 vb4  /
+
+LDR|22|0|2
+LDR|13|7|3
+LDR|22|10|4
+LDR|11|0|14
+
+DOR|23|5|Silver
+
+EXT|-2|4|RocketSpawner|3|20
+EXT|-2|7|RocketSpawner|3|50
+EXT|-2|10|RocketSpawner|3|80
+
+ELB|16|9
+ELB|17|9
+ELB|18|9
+ELB|19|9
+ELB|20|9
+
+RPT|12|0|12|14|LightningWall
