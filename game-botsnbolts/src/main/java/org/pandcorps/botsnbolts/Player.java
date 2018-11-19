@@ -464,6 +464,7 @@ public final class Player extends Chr implements Warpable {
         isFree(); // Calls onFree()
         stateHandler.onHurt(this);
         lastHurt = Pangine.getEngine().getClock();
+        blinkTimer = 0;
         health -= damage;
         if ((v > 0) && !isGrounded()) {
             v = 0;
