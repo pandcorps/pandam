@@ -1,0 +1,38 @@
+IMP|Lightning
+
+M|         it(-)()`-).(-,.
+M|         vtDEDEDEDEDEDE*
+M|         *tt           i
+M|         `)t*()(-)     `
+M|          *tvEDEDE     .
+M|          vt*          *
+M|            v        .(,
+M|            . >>>>   DE.
+M|            *          /
+M|            v 8 9      i
+M|            * DEDE     v
+M|            v       (\  
+M|              /)  *  v 4
+M|            6 v*5 v7 * .
+
+LDR|22|0|3
+LDR|13|2|5
+LDR|10|11|3
+LDR|11|0|11
+
+CNV|14|6|4|true
+
+EXT|-2|1|RocketSpawner|1|2
+EXT|-2|2|RocketSpawner|2|20
+EXT|-2|4|RocketSpawner|2|56
+EXT|-2|6|RocketSpawner|1|38
+EXT|-2|7|RocketSpawner|1|74
+
+ENM|13|3|GliderEnemy|-1|0
+ENM|13|9|GliderEnemy|-1|0
+
+ENM|21|9|GliderEnemy|0|1
+ENM|13|12|GliderEnemy|0|-1
+ENM|15|11|GliderEnemy|0|1
+
+RPT|12|0|12|14|LightningWall
