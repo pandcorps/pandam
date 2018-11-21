@@ -115,6 +115,20 @@ public abstract class RoomFunction {
         }
     }
     
+    public final static class BurstTile extends RoomFunction {
+        @Override
+        public final void build(final TileMap tm, final int x, final int y) {
+            new BlockPuzzle.BurstBlock(tm.getIndex(x, y));
+        }
+    }
+    
+    public final static class BurstableTile extends RoomFunction {
+        @Override
+        public final void build(final TileMap tm, final int x, final int y) {
+            BlockPuzzle.setBurstable(tm.getIndex(x, y));
+        }
+    }
+    
     public final static class SpikeFloor extends RoomFunction {
         @Override
         public final void build(final TileMap tm, final int x, final int y) {

@@ -211,22 +211,32 @@ public abstract class BlockPuzzle {
         
         protected ShootableBlock(final ShootableBlockPuzzle puzzle, final int index) {
             this.puzzle = puzzle;
-            final Panple pos = getPosition();
-            puzzle.tm.savePosition(pos, index);
-            puzzle.tm.getLayer().addActor(this);
+            initTileActor(puzzle.tm, this, index, puzzle.blockImgs[0]);
             setVisible(false);
-            setView(puzzle.blockImgs[0]);
         }
 
         @Override
         public final void onCollision(final CollisionEvent event) {
-            final Collidable collider = event.getCollider();
-            if (collider instanceof Projectile) {
+            if (onCollisionProjectile(event)) {
                 puzzle.fade();
-                ((Projectile) collider).burst();
-                collider.destroy();
             }
         }
+    }
+    
+    private final static void initTileActor(final TileMap tm, final Panctor actor, final int index, final Panmage image) {
+        tm.savePosition(actor.getPosition(), index);
+        tm.getLayer().addActor(actor);
+        actor.setView(image);
+    }
+    
+    private final static boolean onCollisionProjectile(final CollisionEvent event) {
+        final Collidable collider = event.getCollider();
+        if (collider instanceof Projectile) {
+            ((Projectile) collider).burst();
+            collider.destroy();
+            return true;
+        }
+        return false;
     }
     
     protected final static class ButtonBlockPuzzle extends BinaryBlockPuzzle {
@@ -661,7 +671,83 @@ public abstract class BlockPuzzle {
     }
     
     // Shooting the BurstBlock will start a chain reaction, bursting adjacent blocks in the puzzle
-    protected final static class BurstBlockPuzzle {
+    protected final static class BurstBlock extends Panctor implements CollisionListener {
+        private static Panmage image = null;
+        private final TileMap tm;
+        private final int tileIndex;
+        
+        protected BurstBlock(final int tileIndex) {
+            tm = BotsnBoltsGame.tm;
+            this.tileIndex = tileIndex;
+            initTileActor(tm, this, tileIndex, getBlockImage());
+        }
+        
+        @Override
+        public final void onCollision(final CollisionEvent event) {
+            if (onCollisionProjectile(event)) {
+                new BurstingBlock(tm, tileIndex);
+                destroy();
+            }
+        }
+        
+        private final static Panmage getBlockImage() {
+            final Panmage ref = BotsnBoltsGame.blockCyan[0];
+            return (image = getImage(image, "BlockBurster", ref.getOrigin(), ref.getBoundingMinimum(), ref.getBoundingMaximum()));
+        }
+    }
+    
+    private static Panmage burstable = null;
+    
+    protected final static void setBurstable(final int tileIndex) {
+        burstable = getImage(burstable, "BlockBurstable", null, null, null);
+        BotsnBoltsGame.tm.setForeground(tileIndex, burstable, BotsnBoltsGame.TILE_BURSTABLE);
+    }
+    
+    protected final static class BurstingBlock extends ActorBlock implements StepListener {
+        private static Panmage[] images = new Panmage[2];
+        private final TileMap tm;
+        private final int tileIndex;
+        private int timer = 0;
+        
+        protected BurstingBlock(final TileMap tm, final int tileIndex) {
+            super(tileIndex);
+            this.tm = tm;
+            this.tileIndex = tileIndex;
+            tm.setBehavior(tileIndex, Tile.BEHAVIOR_OPEN);
+        }
+        
+        @Override
+        public final void onStep(final StepEvent event) {
+            timer++;
+            if (timer == 2) {
+                tm.setForeground(tileIndex, getBlockImage(1));
+            } else if (timer == 3) {
+                tm.setTile(tileIndex, null);
+                destroy();
+                final int x = tm.getColumn(tileIndex), y = tm.getRow(tileIndex);
+                for (final Direction dir : Direction.values()) {
+                    final int neighborIndex = tm.getNeighbor(x, y, dir);
+                    if (Tile.getBehavior(tm.getTile(neighborIndex)) == BotsnBoltsGame.TILE_BURSTABLE) {
+                        new BurstingBlock(tm, neighborIndex);
+                    }
+                }
+            }
+        }
+        
+        @Override
+        protected final Panmage getBlockImage() {
+            return getBlockImage(0);
+        }
+        
+        private final static Panmage getBlockImage(final int i) {
+            Panmage image = images[i];
+            if (image != null) {
+                return image;
+            }
+            image = getImage(null, "BlockBurst" + (i + 1), null, null, null);
+            images[i] = image;
+            return image;
+        }
     }
     
     protected final static class FireTimedBlock extends TimerBlock {
