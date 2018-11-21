@@ -1,0 +1,45 @@
+IMP|Lightning
+
+M|                        
+M|                                                         (-).().(--).()().(-)
+M|         .().(\.(-)().()(-).(-).(-)().(--).(-).(--).(-).  DEDEDEDEDEDEDEDEDE(-)().(-)(\         
+M|         *EDEDvDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDED4                     EDEDEDEDv         
+M|         i    *                                         (\Hhc               4 Hhc     .         
+M|         v    v  >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>        .v  w       (\Hhc   .*  w     *         
+M|         .    D  *DEDEDEDEDEDEDEDEDEDEDEDEDEDEDE            w     8 bv  w   (,  ()    v         
+M|         /).()  (,hHhHhc                                6 *.      ED  .  *      ED  . *         
+M|         vDEDE6 DE     w                          <<<     `)7       5 .6 v  9       * i         
+M|         *hHhcED       w                          EDE   5 EDED      EDEDED  *S  Hhc i v         
+M|         i   w      >>>>>>>   >>>>>>>   >>>>>>>         ()      9 hHhc      `)7   w v .         
+M|         v   w      EDEDEDE   EDEDEDE   EDEDEDE         ED      ()   w      EDED    . *         
+M|         .     /)*                                            8      w            8 * i         
+M|         * 8 7 v*v(-).*.(-)./).(-).*().(-\.(-)./)().(\()/).(-\()4 (-).*(-)./).(-)(-)i v         
+
+LDR|10|0|2
+
+CNV|20|3|7|true
+CNV|30|3|7|true
+CNV|40|3|7|true
+CNV|50|5|3|false
+CNV|17|8|31|true
+
+BOX|70|7
+DSK|10|7
+
+ENM|13|5|GliderEnemy|-1|0
+ENM|14|2|GliderEnemy|0|1
+ENM|18|7|GliderEnemy|0|-1
+
+ENM|28|1|GliderEnemy|0|1
+ENM|38|7|GliderEnemy|0|-1
+
+ENM|58|4|GliderEnemy|1|-1
+ENM|65|8|GliderEnemy|-1|0
+ENM|65|5|GliderEnemy|0|1
+ENM|72|10|GliderEnemy|0|-1
+ENM|75|3|GliderEnemy|-1|0
+
+ENM|78|5|GliderEnemy|1|0
+ENM|78|10|GliderEnemy|0|-1
+
+RPT|10|0|76|12|LightningWall
