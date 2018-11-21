@@ -80,6 +80,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected final static byte TILE_CONVEYOR_RIGHT = 13;
     protected final static byte TILE_PRESSURE_FIRE = 14;
     protected final static byte TILE_HURT = 15;
+    protected final static byte TILE_BURSTABLE = 16;
     
     protected final static int DEPTH_PARALLAX_BG = 0;
     protected final static int DEPTH_PARALLAX_FG = 2;
