@@ -2097,6 +2097,68 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
     }
     
+    protected final static class GearEnemy extends Enemy {
+        private final static Panmage[] images = new Panmage[4];
+        private static Panmage display = null;
+        private int timer = 0;
+        private int frm = 0;
+        private int rot = 0;
+        
+        protected GearEnemy(final Segment seg) {
+            super(PROP_OFF_X, CRAWL_H, seg, 2);
+            if (display == null) {
+                final Panmage ref = BotsnBoltsGame.fireballEnemy[0];
+                display = Pangine.getEngine().createEmptyImage(Pantil.vmid(), ref.getOrigin(), ref.getBoundingMinimum(), ref.getBoundingMaximum());
+            }
+            setView(display);
+            setMirror(true);
+            hv = -2;
+        }
+        
+        @Override
+        protected boolean onStepCustom() {
+            timer++;
+            if (timer > 1) {
+                timer = 0;
+                frm++;
+                if (frm > 3) {
+                    frm = 0;
+                    rot--;
+                    if (rot < 0) {
+                        rot = 3;
+                    }
+                }
+            }
+            return false;
+        }
+        
+        @Override
+        protected final void onWall(final byte xResult) {
+            setMirror(!isMirror());
+            hv *= -1;
+        }
+        
+        @Override
+        protected final void renderView(final Panderer renderer) {
+            final Panlayer layer = getLayer();
+            final Panple pos = getPosition();
+            final float x = pos.getX(), y = pos.getY(), z = pos.getZ();
+            final Panmage img = getImage(frm);
+            final boolean mirror = isMirror();
+            renderer.render(layer, img, x - getCurrentDisplay().getOrigin().getX() + (mirror ? 1 : 0), y, z, 0, 0, 16, 16, rot, mirror, false);
+        }
+        
+        private final static Panmage getImage(final int i) {
+            Panmage image = images[i];
+            if (image != null) {
+                return image;
+            }
+            image = getImage(image, "GearEnemy" + (i + 1), null, null, null);
+            images[i] = image;
+            return image;
+        }
+    }
+    
     protected final static class FireballEnemy extends JumpEnemy {
         private final static int DURATION_PERIOD = BlockPuzzle.FireTimedBlock.DURATION_PERIOD;
         private int delay = DURATION_PERIOD;
