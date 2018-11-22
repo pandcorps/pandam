@@ -1,0 +1,25 @@
+IMP|Lightning
+
+M|/).v*(-) (-)vt*
+M|v.(-,DEDEDEDEtv
+M|  S(\       st*
+M|4   vHhHhc  *(,
+M|  8 *    w .`)
+M|6 .(,  >>>>/)
+M|  DED  EDEDv
+M|5          *
+M|/).()Hhc()(,
+M|vDEDE  wEDE*
+M|\      w   v
+M|v().   .(\  
+M|  /)*    v9 
+M|7 v*v  5 b/)
+
+ELB|8|13|2
+
+CNV|7|8|4|true
+
+ENM|3|6|ElectricityEnemy|2
+ENM|2|3|ElectricityEnemy|2
+
+RPT|0|0|12|14|LightningWall
