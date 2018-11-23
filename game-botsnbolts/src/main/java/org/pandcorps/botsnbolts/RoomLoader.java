@@ -128,7 +128,7 @@ public abstract class RoomLoader {
     }
     
     private final static void processSegmentFile(final String fileId, final boolean ctxRequired, final TileMap tm) {
-        final String fileName = BotsnBoltsGame.RES + "/level/" + room.dir + "/" + fileId + ".txt";
+        final String fileName = BotsnBoltsGame.RES + "level/" + room.dir + "/" + fileId + ".txt";
         SegmentStream in = null;
         try {
             in = SegmentStream.openLocation(fileName);
@@ -960,7 +960,7 @@ public abstract class RoomLoader {
     protected final static void loadRooms() {
         SegmentStream in = null;
         try {
-            in = SegmentStream.openLocation(BotsnBoltsGame.RES + "/level/Rooms.txt");
+            in = SegmentStream.openLocation(BotsnBoltsGame.RES + "level/Rooms.txt");
             Segment seg;
             seg = in.readIf("CTX");
             /*
@@ -981,7 +981,7 @@ public abstract class RoomLoader {
                 }
             }
             in.close();
-            in = SegmentStream.openLocation(BotsnBoltsGame.RES + "/level/Levels.txt");
+            in = SegmentStream.openLocation(BotsnBoltsGame.RES + "level/Levels.txt");
             loadLevels(in);
         } catch (final Exception e) {
             throw Pantil.toRuntimeException(e);
