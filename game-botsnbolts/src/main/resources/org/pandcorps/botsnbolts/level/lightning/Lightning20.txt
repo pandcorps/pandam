@@ -1,0 +1,35 @@
+IMP|Lightning
+
+M|.  v     v.*
+M|\  DEDEDEDE.
+M|vHhHhc     *
+M|.    w     i
+M|*    w     v
+M|,<<<<<<<<  .
+M|/).        *
+M|vDEDEDEDE  v
+M|*hHhHhc    .
+M|v     w    *
+M|.     w    i
+M|\  >>>>>>>>v
+M|i  *(\  /)  
+M|v  ibv9 v*7 
+
+ELB|3|13|0
+ELB|4|13|3
+ELB|5|13|2
+ELB|6|13|1
+ELB|7|13|0
+ELB|8|13|3
+
+ELB|3|7|0
+ELB|4|7|1
+ELB|5|7|2
+ELB|6|7|3
+ELB|7|7|0
+ELB|8|7|1
+
+CNV|1|8|8|false
+CNV|3|2|8|true
+
+RPT|0|0|12|14|LightningWall
