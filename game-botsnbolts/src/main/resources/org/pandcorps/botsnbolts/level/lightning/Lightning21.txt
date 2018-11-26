@@ -1,0 +1,25 @@
+IMP|Lightning
+
+M|\  v*    v*.
+M|i  (,4 5 (,*
+M|,      EDE(,
+M|*  DE6    .*
+M|iHhc   /)  i
+M|`)*w DEvS7 v
+M|  iw     *  
+M|5 v()  DEv8 
+M|b        .(\
+M|.9 4     DEv
+M|DEDED6     .
+M|     *(-)  *
+M|     `)    i
+M|-).(-\d7   v
+
+ELB|3|11|3
+ELB|4|11|3
+ELB|5|9|2
+ELB|6|9|2
+ELB|7|7|1
+ELB|8|7|1
+
+RPT|0|0|12|14|LightningWall
