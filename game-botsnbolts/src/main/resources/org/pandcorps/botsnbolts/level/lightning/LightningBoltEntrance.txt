@@ -1,0 +1,23 @@
+IMP|Lightning
+
+M|.*  *d  *12301230  v*(\v
+M|)i9 `)5 `)(-).(-)4 (,.v.
+M|.vDEDEDEDEDEDEDEDEDEDE/)
+M|                      vl
+M|4 hHhHhc                
+M| D     w              6 
+M|       w                
+M|       w   9            
+M|       w   (\HhHhc    DE
+M|-).*   w   .v    w      
+M|S*(,   w         w      
+M|(,/)   w   5     w      
+M|.*v  *()*./)  /)*  (\.  
+M|)`)8 `)(,*vb6 vFi7 fv*  
+
+DOR|0|5|Silver
+DOR|22|0|Bolt
+
+LDR|10|2|6
+
+RPT|0|0|24|14|LightningWall
