@@ -1,0 +1,20 @@
+IMP|Lightning
+
+M|*  .v.  v*  *d  (\  *v.(
+M|,4 (-)6 (,5 `)7 .v8 `)(\
+M|*                      v
+M|i                       
+M|v                      9
+M|)                      .
+M|*                      *
+M|v                      i
+M|_                      `
+M|e                       
+M|e                      5
+M|e                      .
+M|.*  *.  (\  /)  *.  (\  
+M|-,7 `\5 bv9 vS4 `)6 *v8 
+
+BOS|21|2|LightningBot
+
+DOR|0|2|Boss
