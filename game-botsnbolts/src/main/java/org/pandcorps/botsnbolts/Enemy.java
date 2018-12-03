@@ -1130,7 +1130,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         private final static int VEL = 1;
         private final static int DURATION = 16 / VEL;
         private int tileIndex;
-        private Direction surfaceDirection = null;
+        private Direction surfaceDirection;
         private int velX;
         private int velY;
         private int timer = 8;
