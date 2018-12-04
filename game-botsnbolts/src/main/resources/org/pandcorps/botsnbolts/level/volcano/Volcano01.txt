@@ -1,0 +1,20 @@
+IMP|Volcano
+
+M|ffffffffffffffffffffffff
+M|/----------------------\
+M|ipBBBBBBBBBBBBPXXXXXXXPi
+M|ip            PxxYxxxxPi
+M|ip            PxxxxxYxPi
+M|ip S          PYx/-----,
+M|ip            Pxxiffffff
+M|ip            PxYif/----
+M|ip         /-----,fi0101
+M|ip     S   ifffffffi1010
+M|ip         ifff  ffi0101
+M|`\   /-----,fffs ffi1010
+M|fi   iffffff  fffff`----
+M|fi   iffffffs ffffffffff
+
+ROM|19|9|true
+
+RPT|||||Volcano
