@@ -204,7 +204,13 @@ public abstract class Enemy extends Chr implements CollisionListener {
     
     protected final void setMirrorEnemy(final boolean mirror) {
         setMirror(mirror);
-        fixX();
+        if (isFixXNeeded()) {
+            fixX();
+        }
+    }
+    
+    protected boolean isFixXNeeded() {
+        return true;
     }
     
     protected final void turnTowardPlayer(final Player player) {
@@ -3097,6 +3103,11 @@ public abstract class Enemy extends Chr implements CollisionListener {
             maxY = getPosition().getY();
             minY = maxY - 28;
             setView(BotsnBoltsGame.quicksandEnemy);
+        }
+        
+        @Override
+        protected final boolean isFixXNeeded() {
+            return false;
         }
         
         @Override
