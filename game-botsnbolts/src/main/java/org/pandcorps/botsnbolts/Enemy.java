@@ -2117,8 +2117,8 @@ public abstract class Enemy extends Chr implements CollisionListener {
                 display = Pangine.getEngine().createEmptyImage(Pantil.vmid(), ref.getOrigin(), ref.getBoundingMinimum(), ref.getBoundingMaximum());
             }
             setView(display);
-            setMirror(true);
-            hv = -2;
+            setMirror(seg.getBoolean(3, true));
+            hv = 2 * getMirrorMultiplier();
         }
         
         @Override
