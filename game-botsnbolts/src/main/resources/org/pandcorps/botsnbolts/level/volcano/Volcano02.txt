@@ -1,0 +1,30 @@
+IMP|Volcano
+
+M|fi   iffffffffffffffffffffffs fffffffffs ffffffffffffffffs fffffffffffff
+M|/,   `-----------------------------------------------------------------\
+M|ip   BBBBBBBBBPXXXXXXXPBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBi
+M|ip            PxxxxYxxP                                                i
+M|ip            PxxYxxxxP       S                                        i
+M|ip       S    PxxxxxYxP /---\  /-------\  /---\  /-------\S /-\      /-,
+M|ip            PYxxxxxxP ifffi  ifffffffi  ifffi  ifffffffi  ifi      iff
+M|ip            PxxxYxxYP `---,  `-------,  `---,  `-------,  `-,      `-\
+M|ip            Pxx/---\P BBBBB  BBBBBBBBB  BBBBB  BPXXXXXPB  BBB   S  BBi
+M|ip  S         PxYifffiP                           PxYxxxP              i
+M|ip            PxxifffiP                 S         PxxxYxP              i
+M|`----------\ /---,fff`---\ /----\ /----\  /\ /\  /--\x/------------\   i
+M|fpfffffffff`-,fffffffffff`-,ffff`-,ffff`--,`-,`--,ff`-,ffffffffffffi###i
+M|fL++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++CiXXXi
+
+FTB|12|2|3
+FTB|26|2|1
+FTB|33|2|3
+FTB|40|2|1
+FTB|41|2|1
+FTB|44|2|3
+FTB|47|2|1
+FTB|48|2|1
+FTB|53|2|3
+
+ENM|69|9|SentryGun
+
+RPT|||||Volcano
