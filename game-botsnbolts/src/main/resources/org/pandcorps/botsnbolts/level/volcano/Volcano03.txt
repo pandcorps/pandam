@@ -1,0 +1,20 @@
+IMP|Volcano
+
+M|ffff  fffffff  fffpixxxi
+M|ffffs fffffffs fffpixxYi
+M|f/-----------------,xYxi
+M|fiBBBBBBBBBBBBBBBBPXxxxi
+M|fi                PxYxxi
+M|fi                Pxxxxi
+M|fi       S        PxxYxi
+M|fi                PYxxxi
+M|fi S              PxxxYi
+M|fi            S   Pxxxxi
+M|fi                PxYxxi
+M|fi   /-\   /-\   /-----,
+M|fiEEEifvEEEvfvEEEvpfffff
+M|+i###i+}VVV{+}VVV{cfffff
+
+ENM|9|0|FireballEnemy|3
+
+RPT|||||Volcano
