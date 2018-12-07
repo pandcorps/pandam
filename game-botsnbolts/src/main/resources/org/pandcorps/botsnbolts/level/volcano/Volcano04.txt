@@ -1,0 +1,30 @@
+IMP|Volcano
+
+M|fiBBBiffffffffffffffffffff/-----------------------\ffffffffs fffffffffff
+M|fi   `------------------\fiBBBPXXXPBBBBBBBBBBBBBBB`--------------------\
+M|fi   BBBBBBBBBBBBBBBBBBBifi   PxYxP               BBBBBBBBBBBBBBBBBBBBBi
+M|fi                      ifi /---------------)/-\                       i
+M|fi S                    ifi iBPXXXPBBBBBBBBBBifi                    S  i
+M|fi                      ifi i PYxxP          ifi         S     /---\   i
+M|fi               S      ifi v PxxYP        * ifi               ifffi   i
+M|fi                      ifi B PxxxP   S    i ifi               ifffi###i
+M|fi                      ifi   PYxxP        i ifi S        /----,fffiXXXi
+M|fi       S              `-,(---------------, ifi          ifffff  fixxYi
+M|fi                 S    BBBBBBPXXXPBBBBBBBBB ifi      S   ifffffs fi###i
+M|f`-------------------\        PxxxP          if`----------,f  fffffiBBBi
+M|fffff  fffff  fffffff`-----------------------,fffff  fffffffs fff  i   i
+M|fffffs fffffs fffffffffffffffffffffffffffffffffffffs ffffffffffffs i   i
+
+ENM|19|3|WalkerEnemy
+ENM|15|3|WalkerEnemy
+
+ENM|34|5|WalkerEnemy
+ENM|29|11|WalkerEnemy
+
+ENM|61|6|WalkerEnemy
+ENM|66|9|WalkerEnemy
+
+LDR|44|2|6
+LDR|27|5|6
+
+RPT|||||Volcano
