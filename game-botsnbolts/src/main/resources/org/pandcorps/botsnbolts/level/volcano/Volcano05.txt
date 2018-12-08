@@ -1,0 +1,21 @@
+IMP|Volcano
+
+M|fffffffffffffffffffi   i
+M|f/-----------------,   i
+M|fiBBBBPXPBBBBBBBBBBB   i
+M|fi    PYP              i
+M|fi    PxP S            i
+M|fi   /---\             i
+M|fi   ifffi             i
+M|fi   ifffi          S  i
+M|fiS  ifff`----\        i
+M|fi   iffffffffi        i
+M|fi   ifffff  fi S      i
+M|fi   if  ffs f`--------,
+M|fi   ifs fffffffffffffff
+M|fi   i$+++++++++++++++++
+
+ENM|13|6|FlamethrowerEnemy
+ENM|8|9|FlamethrowerEnemy
+
+RPT|||||Volcano
