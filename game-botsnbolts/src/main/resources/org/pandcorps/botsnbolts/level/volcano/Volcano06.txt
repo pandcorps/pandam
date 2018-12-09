@@ -1,0 +1,37 @@
+IMP|Volcano
+
+M|fi   ipffffffffffffffffffffffffs ffffs ffffffffffffffffffffffffffffffi i
+M|fi   `---------------------------------------------------------------, i
+M|fi   BPBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBPXXPBBBBBBBBBB i
+M|fi    P                                                 PxYP           i
+M|fi    P       S                              S          PYxP           i
+M|fi    P                    /--\   S                /--\ PxxP  S        i
+M|fi    P  S          (-----)iffi(------------------)iffi(-------------) i
+M|fi    P             BBBBBBB`--,BBBBBBBBBBBBBBBPXXPB`--,BBBBBBBBBBBBBBB i
+M|fi S  P                    BBBB               PYxP BBBB                i
+M|fi    P               S                       PxxP                  S  i
+M|fi    P     S                          S      PxYP              /-\    i
+M|f`--------\   /--------------\ /\ /\ /\ /-----------\   S   /---,f`----,
+M|f  fffpfffvEEEvffffffffff  ff`-,`-,`-,`-,ff  fffffff`-------,ffffff  fff
+M|fs fffL+++}lll{+++++++Cffs ffffffffffffffffs ffffffffffffffffffffffs fff
+
+ENM|16|3|SentryGun
+
+ENM|22|8|WalkerEnemy
+ENM|34|8|WalkerEnemy
+ENM|46|8|WalkerEnemy
+ENM|58|8|WalkerEnemy
+
+ENM|26|3|FlamethrowerEnemy
+ENM|47|3|FlamethrowerEnemy
+ENM|56|2|FlamethrowerEnemy
+ENM|65|4|FlamethrowerEnemy
+
+FTB|30|2|3
+FTB|33|2|2
+FTB|36|2|1
+FTB|39|2|0
+
+LDR|70|3|11
+
+RPT|||||Volcano
