@@ -1,0 +1,28 @@
+IMP|Volcano
+
+M|ff  i iffffffffffff/---\
+M|ffs i `------------,BBBi
+M|f/--, BBBBBBBBBBBBBB   i
+M|fiBBB               S  i
+M|fi          S    /---\ i
+M|fi   /---\FFFFFF ifffi i
+M|fi ()ifffi(-----)`-\fi i
+M|fi BB`---,BBBPXPBBBifi i
+M|fi   BBBBB   PYP   ifi i
+M|fi S         PxP   ifi i
+M|fi        S  PxP   ifi i
+M|f`--\FFFFFFF/------,fi i
+M|  ff`-------,fff  fffi i
+M|s ffffffffffffffs fffi i
+
+LDR|22|0|10
+LDR|2|3|5
+LDR|5|9|5
+
+FTB|16|8|3
+
+ENM|13|3|FlamethrowerEnemy
+
+BOX|17|3
+
+RPT|||||Volcano
