@@ -1,0 +1,27 @@
+IMP|Volcano
+
+M|  fffffffffffi ifi   iff
+M|s f/---------, ifi   iff
+M|f/-,BBBBBBBBBB ifi   iff
+M|fiBB           ifi   i  
+M|fi    S        ifi   is 
+M|fi           /-,fi   iff
+M|fi S         ifffi   iff
+M|fi     /-----,  fi S iff
+M|fi     iffffffs fi   `--
+M|fi     iff  fffffi   BB 
+M|fi     iffs fffff`------
+M|f`--\ /,ffffffffff  ffff
+M|ffffi ifffff  ffffs ffff
+M|ffffi ifffffs ffffffffff
+
+LDR|5|0|3
+LDR|14|9|5
+LDR|18|4|10
+
+DOR|23|4|Small
+
+ENM|2|3|SentryGun
+ENM|11|7|SentryGun
+
+RPT|||||Volcano
