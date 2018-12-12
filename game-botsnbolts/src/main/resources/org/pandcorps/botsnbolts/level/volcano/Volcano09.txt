@@ -1,0 +1,25 @@
+IMP|Volcano
+
+M|fffffffffffffff/----, if
+M|f/-------------,BBBPB if
+M|fiBBBPXXPBBBBBBB   P  if
+M|fi   PYxP          ?  if
+M|fi  (----)     S      if
+M|fi  BBBBBB.FFF.      /,f
+M|fi        BBBBB/-\   iff
+M|fiF/-\         ifi   iff
+M|f`-,fi         ifi   iff
+M|fffffiF/-\ S   ifi   i  
+M|f  ff`-,fi     ifi   is 
+M|fs ffffffiF/-\ ifi   iff
+M|fffff  ff`-,fi ifi   iff
+M|fffffs ffffffi ifi   iff
+
+LDR|14|0|3
+LDR|18|0|8
+LDR|21|9|5
+
+ENM|8|5|FlamethrowerEnemy
+ENM|4|7|FlamethrowerEnemy
+
+RPT|||||Volcano
