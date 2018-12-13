@@ -1,0 +1,25 @@
+IMP|Volcano
+
+M|fiB`---\ffffffff  ffffff
+M|fi BBBB`-----\ffs fff  f
+M|fi     BBBBBB`-----\fs f
+M|fi           BBBBBB`--\f
+M|fi       S         BBBif
+M|fi                    if
+M|fi S                  if
+M|f`\   /-\          S  if
+M|ffvEEEvfi      S      i 
+M|++}lll{Ci   /-\       is
+M|ff`---,pvEEEvfi       if
+M|fff  ffL}lll{Ci   /-\ if
+M|  fs fff`---,pvEEEvfi if
+M|s fffffffffffL}lll{Ci if
+
+LDR|21|0|3
+LDR|2|10|4
+
+ENM|16|0|FireballEnemy|3
+ENM|10|2|FireballEnemy|3
+ENM|4|4|FireballEnemy|3
+
+RPT|||||Volcano
