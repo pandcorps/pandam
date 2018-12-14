@@ -104,7 +104,7 @@ public abstract class RoomLoader {
     }
     
     protected final static void loadTex(final String fileId) {
-        final String fileName = BotsnBoltsGame.RES + "/level/" + fileId + ".txt";
+        final String fileName = BotsnBoltsGame.RES + "level/" + fileId + ".txt";
         SegmentStream in = null;
         final int frameDuration;
         final Panmage images[];
