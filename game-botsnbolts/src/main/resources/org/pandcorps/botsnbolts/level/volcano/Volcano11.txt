@@ -1,0 +1,25 @@
+IMP|Volcano
+
+M|ffffffff  fffffffs ffffffffff  fffffffffffs ffffffffffffffffffffffffi if
+M|  f/---\s f/--------------\ffs f/-----------------------------------, if
+M|s fiBBB`---,BBBBBBBBBBBBBB`-\f/-,BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB i 
+M|ff/,   BBBBB              BB`-,BB                                     is
+M|ffiB                        BBB          FF            S              if
+M|ffi                 S                    BB                           vf
+M|f/,                             S                                 S (-)f
+M|fiB   S        FFF                    F    S                    F   BB*f
+M|fi             BBB   FFF              B             (-)   (-) S B     if
+M|fi        FFF        BBB   FFF                    S BBB   BBB         if
+M|fi        BBB     S        BBB   FFF         FFFFF                  S if
+M|fi /---\                         BBB    S    BBBBB       S            if
+M|fi ifffvEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEvf
+M|+i#i+++}llllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll{+
+
+LDR|2|0|3
+LDR|69|11|3
+
+ENM|19|0|FireballEnemy|3
+
+ENM|59|7|FlamethrowerEnemy
+
+RPT|||||Volcano
