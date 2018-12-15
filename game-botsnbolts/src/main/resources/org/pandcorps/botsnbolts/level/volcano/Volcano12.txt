@@ -1,0 +1,31 @@
+IMP|Volcano
+
+M|fi `--\fffff  ffffffffff
+M|fi BBB`---\fs /-------\f
+M|fi    BBBB`---,BBBBBBBif
+M|fi S      BBBBB       if
+M|fi                    i 
+M|fi              S     vs
+M|fi       S        (---)f
+M|f`--\ /-\         BBBB*f
+M|f  f`-,fi             if
+M|fs fffff`-\ /-\   S   if
+M|------\fff`-,fi       if
+M|101010iffff  f`-\ /-\ if
+M|------,f  fs f  `-,fi if
+M|ffffffffs ffffs ffffi if
+
+LDR|21|0|3
+LDR|2|11|3
+
+FTB|17|2|3
+FTB|11|4|1
+FTB|5|6|3
+
+ENM|15|3|SentryGun
+ENM|9|5|SentryGun
+ENM|3|7|SentryGun
+
+BOX|20|8
+
+RPT|||||Volcano
