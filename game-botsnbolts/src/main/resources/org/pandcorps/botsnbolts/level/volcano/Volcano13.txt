@@ -1,0 +1,41 @@
+IMP|Volcano
+
+M|fffffpffffffffffffs ffffffffffff/--------\ffffffffffs fffffffffff  fffff
+M|f  ffpf/------------------------,PBBBBBBP`---------------------\fs ff  f
+M|fs /---,BBBBBBBBBBBBBBBBBBBBBBBPXP      PXPBBBBBBBBBBBBBBBBBBBB`---\fs f
+M|ff/,BPBB                       PxP  S   PYP                    BBBB`-\ff
+M|ffiB P     S                   PYP      PxP          S             BB`\f
+M|f/,  P          S              PxP      PxP                      S   Bif
+M|fiB  P                  S     /---\    /---\  S                       if
+M|fi   P S                      ifffi    ifffi   (-)FFFF(-)      S      i 
+M|fi   P                        `---,  S `---,   BBBBBBBBBB             is
+M|fi S P     /-\ /-\   /-\ /-\  BPXPB    BPXPB               S          if
+M|fi   P     if`-,fi   if`-,fiS  PxP      PYP      S                    if
+M|fi /---\   ifffffiS  ifffff`-------\  /-------------------\    /---\  if
+M|fi ifpfvEEEvfffffvEEEvfffffffffffffvEEvfffffffffffffffffffvEEEEvfffiS if
+M|fi ifL+}lll{+++++}lll{+++++++++++++}ll{+++++++++++++++++++}llll{+Cfi  if
+
+LDR|2|0|3
+
+FTB|14|4|1
+FTB|24|4|1
+
+ENM|9|0|FireballEnemy|3
+ENM|19|0|FireballEnemy|1
+
+ENM|36|0|FireballEnemy|3
+ENM|37|0|FireballEnemy|1
+
+ENM|41|8|FlamethrowerEnemy
+
+ENM|45|3|FlamethrowerEnemy
+ENM|55|3|FlamethrowerEnemy
+
+ENM|59|0|FireballEnemy|3
+ENM|60|0|FireballEnemy|2
+ENM|61|0|FireballEnemy|1
+ENM|62|0|FireballEnemy|0
+
+ENM|65|3|FlamethrowerEnemy
+
+RPT|||||Volcano
