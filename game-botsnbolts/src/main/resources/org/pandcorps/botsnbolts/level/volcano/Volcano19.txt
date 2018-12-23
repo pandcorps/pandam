@@ -1,0 +1,40 @@
+IMP|Volcano
+
+M|ffff  fffffffff  fffffffs fffffff/---,BBBBBBBBBBBBBBBBB`\ffffs fffff  ff
+M|ffffs f/------\s f/--------------,BBBB                 B`---------\fs ff
+M|f  f/--,BBBBBB`---,BBBBBBBBBBPXPBB               S      BBBBBBBBBB`-\fff
+M|fs /,BBB      BBBBB          PxP        S                           `\  
+M|ff/,B                   S    PYP                               S     is 
+M|ffiB        S                PxP            (---)    /-\  S          `\f
+M|f/,                          PxP S  (---)   BBBBB    ifi              if
+M|fiB  S   /--\               (---)   BBBBB            if`-\       S    if
+M|fi       iffi     S         BPXPB            S       i  fi            if
+M|fi     /-,ffi        /--\ S  PYP                     is f`-\     /-\  i 
+M|fi     i  ffi        iffi    PxP      S              ifff  i     ifi  is
+M|fi /---,s   i S      i  `----------------------------,f  s `-----,fi  if
+M|fi if  fffs `--------,s fffff  ffff  ffffff  ffffffffffs ffff  ffffiS if
+M|fi ifs ffffffffffffffffffffffs ffffs ffffffs ffffffffffffffffs ffffi  if
+
+LDR|2|0|3
+
+ENM|5|3|SentryGun
+ENM|7|5|SentryGun
+ENM|9|7|SentryGun
+
+ENM|16|2|WalkerEnemy
+ENM|17|2|WalkerEnemy
+ENM|18|2|WalkerEnemy
+ENM|19|2|WalkerEnemy
+
+ENM|30|7|WalkerEnemy
+ENM|38|8|WalkerEnemy
+ENM|46|9|WalkerEnemy
+
+ENM|26|3|WalkerEnemy
+ENM|34|3|WalkerEnemy
+ENM|42|3|WalkerEnemy
+ENM|50|3|WalkerEnemy
+
+ENM|62|3|WalkerEnemy
+
+RPT|||||Volcano
