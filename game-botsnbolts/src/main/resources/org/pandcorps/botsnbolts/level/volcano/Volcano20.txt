@@ -1,0 +1,23 @@
+IMP|Volcano
+
+M|fff  ffffffff  ffffi  if
+M|fffs ffffffffs ffffi  if
+M|f/-----------------,  if
+M|fiBBBBBBBBBBBBBPXXPB  if
+M|fi             PxYP S if
+M|fi  S          PxxP   if
+M|fi         S   PYxP   if
+M|fi    (--------------)`-
+M|fi    BPXXPBBBBBBBBBBBBP
+M|fiS    PxxP            P
+M|fi     PYxP      S     P
+M|fi     PxxP  S         P
+M|f`----------------------
+M|ffffffffffffffffffffffff
+
+BOX|10|7
+BOX|12|7
+
+DOR|23|2|Boss
+
+RPT|||||Volcano
