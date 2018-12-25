@@ -1,0 +1,24 @@
+IMP|Volcano
+
+M|ffffffffffffs ffffffffff
+M|ff/-------------------\f
+M|ffiBBBBBBBBBBPXPBBBBBBif
+M|ffi          PYP      if
+M|  i          PxP      if
+M|s i    S    /---\     vf
+M|ffi         ifffi       
+M|ffi         ifffi S     
+M|--, S   (--)`---,     BB
+M| BB     BBBBBPXPB       
+M|-----\       PxP   S    
+M|ff  f`------------\     
+M|ffs ffffff  ffffff`--\  
+M|ffffffffffs fffffffffv  
+
+DOR|0|4|Small
+DOR|22|0|Bolt
+
+BRR|8|3|Silver
+BRR|16|3|Silver
+
+RPT|||||Volcano
