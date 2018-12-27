@@ -1,0 +1,22 @@
+IMP|Volcano
+
+M|mmmmmmmmmmmmmmmmmmmmmmmm
+M|/======================\
+M|iggggggggggggggggggggggi
+M|iyyyyyyyyyyyyyyyyyyyyyyi
+M|iooooooooooooooooooooooi
+M|iddddddddddddddddddddddi
+M|i                      i
+M|,                      i
+M|g                      i
+M|                       i
+M|                       i
+M|                       i
+M|=======================,
+M|mmmmmmmmmmmmmmmmmmmmmmmm
+
+BOS|21|2|VolcanoBot
+
+DOR|0|2|Boss
+
+RPT|||||VolcanoBoss
