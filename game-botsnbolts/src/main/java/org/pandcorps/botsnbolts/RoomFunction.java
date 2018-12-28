@@ -145,13 +145,18 @@ public abstract class RoomFunction {
     
     protected final static int copyNeighbor(final TileMap tm, final int x, final int y) {
         final int tileIndex = tm.getIndex(x, y);
-        if (Chr.isSolidTile(x, y + 1)) {
+        if (isWallTile(x, y + 1)) {
             // x+1 neighbor won't be poulated yet, RoomFunctions are called while processing tiles from left to right
             tm.setTile(tileIndex, tm.getTile(x - 1, y));
-        } else if (Chr.isSolidTile(x - 1, y)) {
+        } else if (isWallTile(x - 1, y)) {
             tm.setTile(tileIndex, tm.getTile(x, y + 1)); // y-1 neighbor not populated yet
         }
         return tileIndex;
+    }
+    
+    protected final static boolean isWallTile(final int x, final int y) {
+        final byte b = Tile.getBehavior(BotsnBoltsGame.tm.getTile(x, y));
+        return Chr.isAnySolidBehavior(b) && (b != BotsnBoltsGame.TILE_BURSTABLE);
     }
     
     protected final static void setOverlayIfOpen(final TileMap tm, final int i, final int j, final Object overlay, final byte behavior) {
