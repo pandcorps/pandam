@@ -1,0 +1,24 @@
+IMP|Cyclone
+
+M|.P)                      {=======}                                    ()
+M|__,                      # *   * #                                    ()
+M|i)                       !       !                                    ()
+M|p)                       @       @                                    ()
+M|.)                       *       *                                    ()
+M|f)                                                      {=}         /-()
+M|_,                    {=============}                   * *         (.()
+M|               {=}     **         **                          {=}   (f()
+M|               * *                       /-\       /-\    F   * *   (.()
+M|         {=}       F                     (.)       (p)              (p()
+M|         * *                         F   `_,{=====}`_,              (D()
+M|-----\                                    *  *   *  *               (M()
+M|PIlcp)                                                              (I()
+M|.psmg)                                                              (P()
+
+DOR|0|3|Cyan
+
+LDR|69|9|5
+
+ENM|29|10|ShieldedEnemy
+ENM|47|5|ShieldedEnemy
+ENM|63|8|ShieldedEnemy
