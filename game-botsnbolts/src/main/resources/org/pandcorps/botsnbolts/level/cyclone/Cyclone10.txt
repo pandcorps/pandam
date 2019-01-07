@@ -1,0 +1,26 @@
+IMP|Cyclone
+
+M|                        
+M|                        
+M|                        
+M|                        
+M|                        
+M|         ?              
+M|         *              
+M|                        
+M|                        
+M|                        
+M|                        
+M|        ? ?             
+M|        * *             
+M|                        
+
+LDR|9|0|3
+LDR|9|9|5
+
+CRR|16|2|-1|0|48
+CRR|19|2|0|1|96
+CRR|16|8|-1|0|48
+
+ENM|28|4|GuardedEnemy
+ENM|-5|10|GuardedEnemy
