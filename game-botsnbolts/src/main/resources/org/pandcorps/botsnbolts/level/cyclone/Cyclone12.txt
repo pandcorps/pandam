@@ -1,0 +1,22 @@
+IMP|Cyclone
+
+M|                        
+M|                        
+M|                        
+M|                        
+M|     ?                  
+M|     *                  
+M| ?                      
+M| *                      
+M|   ?                    
+M|   *                    
+M|                        
+M|       ?    ?    ? ?    
+M|       *    *    * *    
+M|                        
+
+LDR|18|0|3
+LDR|5|10|4
+
+ENM|9|2|JetpackEnemy|1
+ENM|14|11|JetpackEnemy|-1
