@@ -1,0 +1,24 @@
+IMP|Cyclone
+
+M|g)                      
+M|m)                      
+M|.)                      
+M|.)                      
+M|f)                      
+M|.)               {=}    
+M|_,               * *    
+M|                      ? 
+M|                      * 
+M|                        
+M|                     ?  
+M|--\                  *  
+M|Il)               ?     
+M|.p)               *     
+
+DOR|0|3|Cyan
+
+LDR|18|9|5
+
+CRR|13|8|-1|-1|96
+
+ENM|18|4|JetpackEnemy
