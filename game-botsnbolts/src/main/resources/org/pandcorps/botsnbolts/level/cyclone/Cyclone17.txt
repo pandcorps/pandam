@@ -1,0 +1,23 @@
+IMP|Cyclone
+
+M|                        
+M|                        
+M|                        
+M|                        
+M|                        
+M|                 ? ?    
+M|                 * *    
+M|                        
+M|   **                   
+M|       ?     ?          
+M|       *$$$$$*          
+M|        {===}    ? ?    
+M|         * *     * *    
+M|                        
+
+LDR|18|0|14
+
+ENM|-5|5|GuardedEnemy
+ENM|-5|11|GuardedEnemy
+
+BOX|3|6
