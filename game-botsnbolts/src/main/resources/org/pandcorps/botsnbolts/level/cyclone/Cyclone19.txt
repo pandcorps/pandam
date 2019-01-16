@@ -1,0 +1,25 @@
+IMP|Cyclone
+
+M|.m.L..CGP.f.IlM.gciD.f..
+M|________________________
+M| 232323232323232323232(.
+M|                      (d
+M|                      (m
+M|                      (p
+M|--\                   (.
+M|.l)                   `_
+M|Ds)                   3 
+M|.I)                     
+M|f.)                     
+M|..)                     
+M|----\ /-----------------
+M|.g..) (.iMc..f.Gsm..d.PM
+
+LDR|5|0|2
+
+DOR|0|8|Cyan
+DOR|23|2|Cyan
+
+ENM|19|8|JetpackEnemy
+
+RPT|1||||Cyclone
