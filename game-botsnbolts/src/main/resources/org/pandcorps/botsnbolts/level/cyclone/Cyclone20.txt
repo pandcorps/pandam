@@ -1,0 +1,25 @@
+IMP|Cyclone
+
+M|.M.f.cI..d.gmP.f.DCsGp..
+M|________________________
+M|G)32323232323232323232(.
+M|.)                    (i
+M|f)                    (.
+M|.)                    (f
+M|p)      ?             `_
+M|_,      2             2 
+M| 2          ?           
+M|            2           
+M|                        
+M|                /-------
+M|----------------(.pgsmd.
+M|.D.pGCsl.f..PLd.(..DcI..
+
+DOR|0|2|Blue
+DOR|23|3|Blue
+SBT|21|11|Door
+
+ENM|16|7|ShieldedEnemy
+ENM|8|4|JetpackEnemy
+
+RPT|1||||Cyclone
