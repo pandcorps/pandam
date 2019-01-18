@@ -1,0 +1,34 @@
+IMP|Cyclone
+
+M|cD)                 {==}              {==}                            (.
+M|__,                 *SS*              *SS*                            (f
+M|.)                                                                    (.
+M|f)                                                                    (l
+M|p)                                                                    (s
+M|d)                                                                    (P
+M|_,              /\       {}  {}            {}  {}           F         `_
+M|        F       ()       **  **            **  **                       
+M|                ()                                  {}                  
+M|                ()       F                      F   **                  
+M|                ()            F             F            {}             
+M|------\   /\  /-()   /\            /\  /\             F  **       /-----
+M|.DgMIp)   ()  (f()   ()            ()  ()                     {}  (.DgLM
+M|GCid..)   ()  (.()   ()            ()  ()                     **  (P.pcG
+
+DOR|0|3|Cyan
+DOR|71|3|Cyan
+
+LFT|5|3
+LFT|10|3
+LFT|14|3
+LFT|16|8
+LFT|21|3
+LFT|25|8
+LFT|29|8
+LFT|35|3
+LFT|39|3
+LFT|43|8
+LFT|47|8
+LFT|52|6
+LFT|57|4
+LFT|62|2
