@@ -680,6 +680,7 @@ public abstract class BlockPuzzle {
             tm = BotsnBoltsGame.tm;
             this.tileIndex = tileIndex;
             initTileActor(tm, this, tileIndex, getBlockImage());
+            tm.setBehavior(tileIndex, Tile.BEHAVIOR_SOLID);
         }
         
         @Override
@@ -722,7 +723,7 @@ public abstract class BlockPuzzle {
             if (timer == 2) {
                 tm.setForeground(tileIndex, getBlockImage(1));
             } else if (timer == 3) {
-                tm.setTile(tileIndex, null);
+                tm.setForeground(tileIndex, null);
                 destroy();
                 final int x = tm.getColumn(tileIndex), y = tm.getRow(tileIndex);
                 for (final Direction dir : Direction.values()) {
