@@ -403,6 +403,8 @@ public abstract class Enemy extends Chr implements CollisionListener {
     }
     
     protected final static class AnimationEnemyProjectile extends EnemyProjectile implements AnimationEndListener {
+        private int damage = -1;
+        
         protected AnimationEnemyProjectile(final Panimation anm, final Enemy src, final int ox, final int oy) {
             this(anm, src, ox, oy, 0, 0);
         }
@@ -410,6 +412,11 @@ public abstract class Enemy extends Chr implements CollisionListener {
         protected AnimationEnemyProjectile(final Panimation anm, final Enemy src, final int ox, final int oy, final float vx, final float vy) {
             super(src, ox, oy, vx, vy);
             setView(anm);
+        }
+        
+        @Override
+        public final int getDamage() {
+            return (damage < 0) ? super.getDamage() : damage;
         }
         
         @Override
@@ -2119,6 +2126,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
             setView(display);
             setMirror(seg.getBoolean(3, true));
             hv = 2 * getMirrorMultiplier();
+            //TODO Offset if not mirrored; so two gears can perfectly mirror each other
         }
         
         @Override
@@ -2160,6 +2168,111 @@ public abstract class Enemy extends Chr implements CollisionListener {
                 return image;
             }
             image = getImage(image, "GearEnemy" + (i + 1), null, null, null);
+            images[i] = image;
+            return image;
+        }
+    }
+    
+    private final static Panple NAVAL_MINE_MIN = new FinPanple2(1, 2);
+    private final static Panple NAVAL_MINE_MAX = new FinPanple2(14, 15);
+    
+    protected final static class NavalMine extends TileUnawareEnemy {
+        private final static float DISTANCE_THRESHOLD = 32;
+        private final static Panmage[] images = new Panmage[3];
+        private int timer = 0;
+        
+        protected NavalMine(final Segment seg) {
+            super(seg, 5);
+            setView(0);
+        }
+        
+        @Override
+        protected final int getInitialOffsetX() {
+            return 0;
+        }
+        
+        @Override
+        protected final int getDamage() {
+            return BlockPuzzle.DAMAGE_SPIKE;
+        }
+        
+        @Override
+        protected final void onStepEnemy() {
+            if (timer == 0) {
+                onStepScanning();
+            } else {
+                onStepBursting();
+            }
+        }
+        
+        private final void onStepScanning() {
+            final Player player = getNearestPlayer();
+            if (player == null) {
+                return;
+            }
+            final Panple pos = getPosition(), ppos = player.getPosition();
+            if (Math.abs(pos.getX() - ppos.getX()) > DISTANCE_THRESHOLD) {
+                return;
+            } else if (Math.abs(pos.getY() - ppos.getY()) > DISTANCE_THRESHOLD) {
+                return;
+            }
+            timer = 1;
+            setView(1);
+        }
+        
+        private final void onStepBursting() {
+            timer++;
+            if ((timer == 25) || (timer == 41) || (timer == 49) || (timer == 55)) {
+                setView(1);
+            } else if ((timer == 3) || (timer == 27) || (timer == 43) || (timer == 51) || (timer == 57)) {
+                setView(2);
+            } else if ((timer == 5) || (timer == 29) || (timer == 45) || (timer == 53)) {
+                setView(0);
+            } else if (timer == 59) {
+                burst();
+                destroy();
+            }
+        }
+        
+        private final void burst() {
+            burst(7, 8);
+            burst(-8, 8);
+            burst(7, -7);
+            burst(22, 8);
+            burst(7, 23);
+            burst(-4, -3);
+            burst(18, -3);
+            burst(18, 19);
+            burst(-4, 19);
+        }
+        
+        private final void burst(final int ox, final int oy) {
+            final AnimationEnemyProjectile b = new AnimationEnemyProjectile(BotsnBoltsGame.enemyBurst, this, ox, oy);
+            b.damage = getDamage();
+        }
+        
+        @Override
+        protected final void onEnemyDestroy() {
+            burst();
+        }
+        
+        @Override
+        protected void onAttack(final Player player) {
+            super.onAttack(player);
+            burst();
+            destroy();
+        }
+        
+        private final void setView(final int i) {
+            setView(getImage(i));
+        }
+        
+        private final static Panmage getImage(final int i) {
+            Panmage image = images[i];
+            if (image != null) {
+                return image;
+            }
+            image = getImage(image, "NavalMine" + (i + 1), null, NAVAL_MINE_MIN, NAVAL_MINE_MAX);
             images[i] = image;
             return image;
         }

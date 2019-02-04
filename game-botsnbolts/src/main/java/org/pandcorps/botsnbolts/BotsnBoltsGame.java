@@ -505,7 +505,7 @@ public final class BotsnBoltsGame extends BaseGame {
         Imtil.filterImg(henchF, newFilter(yellow, sand, darkYellow, darkSand, grey, brown, darkGrey, darkBrown));
         quicksandEnemy = engine.createImage("quicksand.enemy", henchO, henchMin, henchMax, henchF);
         Img.close(henchF);
-        enemyBurst = newAnimation("burst.enemy", RES + "enemy/EnemyBurst.png", 16, CENTER_16, 2);
+        enemyBurst = newAnimation("burst.enemy", RES + "enemy/EnemyBurst.png", 16, CENTER_16, minCube, maxCube, 2);
         flame4 = newSheet("flame.4.enemy", RES + "enemy/Flame4.png", 4);
         flame8 = newSheet("flame.8.enemy", RES + "enemy/Flame8.png", 8);
         flame16 = newAnimation("flame.16.enemy", RES + "enemy/Flame16.png", 16, propO, propMin, propMax, 3);
