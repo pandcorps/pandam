@@ -62,6 +62,7 @@ public abstract class RoomLoader {
     protected static int startY = 0;
     private static int row = 0;
     protected static int waterLevel = 0;
+    protected static Pantexture waterTexture = null;
     protected static boolean changing = false;
     
     private static BotRoom room = null;
@@ -753,6 +754,12 @@ public abstract class RoomLoader {
         final TileMap tm = BotsnBoltsGame.tm;
         final int w = tm.getWidth(), max = Math.min(waterTile, tm.getHeight() - 1);
         final TileMapImage[][] imgMap = BotsnBoltsGame.imgMap;
+        if (waterTexture == null) {
+            waterTexture = new Pantexture(getTextureImage("Water"));
+            waterTexture.getPosition().setZ(BotsnBoltsGame.DEPTH_TEXTURE);
+            tm.getLayer().addActor(waterTexture);
+        }
+        waterTexture.setSize(BotsnBoltsGame.GAME_W, waterLevel);
         for (int j = 0; j <= max; j++) {
             final int imgRow;
             if (j == waterTile) {
@@ -763,21 +770,18 @@ public abstract class RoomLoader {
                 imgRow = 7;
             }
             final Tile tile;
-            final TileMapImage img;
             if (imgRow < 7) {
                 final TileMapImage tmp = imgMap[imgRow][0];
                 final TileAnimator animator = getAnimator(tmp, false);
                 tile = (animator == null) ? tm.getTile(null, tmp, Tile.BEHAVIOR_OPEN) : animator.tile;
-                img = null;
             } else {
-                img = imgMap[imgRow][0];
-                tile = replaceWholeTile ? tm.getTile(img, null, Tile.BEHAVIOR_OPEN) : null;
+                tile = replaceWholeTile ? tm.getTile(null, null, BotsnBoltsGame.TILE_WATER) : null;
             }
             for (int i = 0; i < w; i++) {
                 final int index = tm.getIndex(i, j);
                 if (isWaterAllowed(index, anyOpen) && ((j < waterTile) || isOpenAbove(i, j))) {
                     if (tile == null) {
-                        tm.setBackground(index, img, Tile.BEHAVIOR_OPEN);
+                        tm.setBackground(index, null, BotsnBoltsGame.TILE_WATER);
                     } else {
                         tm.setTile(index, tile);
                     }
@@ -955,6 +959,8 @@ public abstract class RoomLoader {
         }
         blockPuzzles.clear();
         conveyorBelt = false;
+        waterLevel = 0;
+        waterTexture = null;
     }
     
     protected final static void loadRooms() {

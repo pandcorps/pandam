@@ -180,15 +180,11 @@ public abstract class RoomFunction {
     }
     
     public final static class WaterRipple extends StepHandler {
-        private TileMapImage imgWater = null;
-        private Tile tileWater = null;
         private int currentIndex = -1;
         private int currentTimer = 0;
         
         @Override
         protected final void init() {
-            imgWater = BotsnBoltsGame.imgMap[7][0];
-            tileWater = BotsnBoltsGame.tm.getTile(imgWater, null, Tile.BEHAVIOR_OPEN);
             currentIndex = -1;
         }
         
@@ -204,7 +200,7 @@ public abstract class RoomFunction {
         private final void pickTile() {
             final TileMap tm = BotsnBoltsGame.tm;
             final int potentialIndex = tm.getIndex(Mathtil.randi(0, tm.getWidth() - 1), Mathtil.randi(0, tm.getHeight() - 1));
-            if (tm.getTile(potentialIndex) == tileWater) {
+            if (Tile.getBehavior(tm.getTile(potentialIndex)) == BotsnBoltsGame.TILE_WATER) {
                 currentIndex = potentialIndex;
                 currentTimer = 0;
             }
@@ -219,7 +215,7 @@ public abstract class RoomFunction {
             } else if (currentTimer < 10) {
                 frameIndex = 2;
             } else {
-                BotsnBoltsGame.tm.setBackground(currentIndex, imgWater);
+                BotsnBoltsGame.tm.setBackground(currentIndex, null);
                 currentIndex = -1;
                 return;
             }
