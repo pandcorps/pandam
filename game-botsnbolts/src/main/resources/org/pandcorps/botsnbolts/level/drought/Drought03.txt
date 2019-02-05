@@ -1,0 +1,25 @@
+IMP|Drought
+
+M|                                                                      /-
+M|                                                                      (.
+M|                                                                      (.
+M|/\                                                                    `_
+M|`,                                                                    {}
+M|{}                                                                    /-
+M|/\                                                                    (.
+M|()                                                              /-\   `_
+M|()                                                     ?     /-\(.)   /\
+M|`,       /------\     /---\                  /-\     /-\QQQQQ(.)`_,0D1()
+M|/\       `______,QQQQQ(...)               /-\(.)QQQQQ`_,qqqqq(.)/-\[ ]()
+M|()[{=}?{==}/----\qqqqq`___,      ?     /-\(.)`_,qqqqq/-\ddddd`_,(.)[ ]`,
+M|()[/---\/-\(....)ddddd/-\/---\?/-\QQQQQ(.)(.){=}ddddd(.)/-----\?`_,[ ]?{
+M|()[(...)`_,(....)/---\(.)`___,#(.)qqqqq(.)`_,?{===}/\`_,(.....){==}[ ]/-
+
+LDR|2|0|3
+
+ENM|19|4|QuicksandEnemy
+ENM|36|2|QuicksandEnemy
+ENM|50|4|QuicksandEnemy
+ENM|58|5|QuicksandEnemy
+
+RPT|68|0|1|4|Drought
