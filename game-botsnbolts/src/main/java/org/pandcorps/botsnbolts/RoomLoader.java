@@ -747,7 +747,7 @@ public abstract class RoomLoader {
     }
     
     protected final static void setWaterTile(final int waterTile, final boolean anyOpen, final boolean replaceWholeTile) {
-        waterLevel = waterTile * 16;
+        waterLevel = waterTile * BotsnBoltsGame.DIM;
         if (waterTile <= 0) {
             return;
         }
@@ -759,7 +759,7 @@ public abstract class RoomLoader {
             waterTexture.getPosition().setZ(BotsnBoltsGame.DEPTH_TEXTURE);
             tm.getLayer().addActor(waterTexture);
         }
-        waterTexture.setSize(BotsnBoltsGame.GAME_W, waterLevel);
+        waterTexture.setSize(w * BotsnBoltsGame.DIM, waterLevel);
         for (int j = 0; j <= max; j++) {
             final int imgRow;
             if (j == waterTile) {

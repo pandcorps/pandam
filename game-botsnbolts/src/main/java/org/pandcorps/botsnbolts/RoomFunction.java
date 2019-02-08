@@ -22,6 +22,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.botsnbolts;
 
+import org.pandcorps.botsnbolts.Enemy.*;
 import org.pandcorps.botsnbolts.RoomLoader.*;
 import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
@@ -140,6 +141,13 @@ public abstract class RoomFunction {
         @Override
         public final void build(final TileMap tm, final int x, final int y) {
             BlockPuzzle.setSpikeCeiling(tm.getIndex(x, y));
+        }
+    }
+    
+    public final static class NavalMineTile extends RoomFunction {
+        @Override
+        public final void build(final TileMap tm, final int x, final int y) {
+            RoomLoader.addActor(new NavalMine(x, y));
         }
     }
     

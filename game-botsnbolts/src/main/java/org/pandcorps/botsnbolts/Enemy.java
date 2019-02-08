@@ -2175,15 +2175,23 @@ public abstract class Enemy extends Chr implements CollisionListener {
     
     private final static Panple NAVAL_MINE_MIN = new FinPanple2(1, 2);
     private final static Panple NAVAL_MINE_MAX = new FinPanple2(14, 15);
+    private final static int NAVAL_MINE_HEALTH = 5;
     
     protected final static class NavalMine extends TileUnawareEnemy {
         private final static float DISTANCE_THRESHOLD = 32;
         private final static Panmage[] images = new Panmage[3];
         private int timer = 0;
         
-        protected NavalMine(final Segment seg) {
-            super(seg, 5);
+        {
             setView(0);
+        }
+        
+        protected NavalMine(final Segment seg) {
+            super(seg, NAVAL_MINE_HEALTH);
+        }
+        
+        protected NavalMine(final int x, final int y) {
+            super(x, y, NAVAL_MINE_HEALTH);
         }
         
         @Override
