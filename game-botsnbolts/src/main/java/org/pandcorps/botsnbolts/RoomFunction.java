@@ -29,6 +29,7 @@ import org.pandcorps.core.img.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.tile.Tile.*;
+import org.pandcorps.pandax.visual.*;
 
 public abstract class RoomFunction {
     public abstract void build(final TileMap tm, final int x, final int y);
@@ -208,8 +209,25 @@ public abstract class RoomFunction {
         }
         
         private final void pickTile() {
+            if (RoomChanger.isChanging()) {
+                finish();
+                return;
+            }
+            final int maxY = RoomLoader.getWaterTile() - 2;
+            if (maxY < 0) {
+                return;
+            }
             tm = BotsnBoltsGame.tm;
-            final int potentialIndex = tm.getIndex(Mathtil.randi(0, tm.getWidth() - 1), Mathtil.randi(0, tm.getHeight() - 1));
+            if (tm == null) {
+                return;
+            }
+            final Panlayer layer = tm.getLayer();
+            if (layer == null) {
+                return;
+            }
+            final int minX = Math.max(0, Math.round(layer.getViewMinimum().getX() / BotsnBoltsGame.DIM));
+            final int maxX = Math.min(tm.getWidth() - 1, Math.round(layer.getViewMaximum().getX() / BotsnBoltsGame.DIM));
+            final int potentialIndex = tm.getIndex(Mathtil.randi(minX, maxX), Mathtil.randi(0, maxY));
             if (Tile.getBehavior(tm.getTile(potentialIndex)) == BotsnBoltsGame.TILE_WATER) {
                 currentIndex = potentialIndex;
                 currentTimer = 0;
