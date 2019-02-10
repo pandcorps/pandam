@@ -1,0 +1,25 @@
+IMP|Drought
+
+M|       @[`___,{===}`___,
+M|       ?[DDDDDDDDDDDD1/-
+M|       #[            ](.
+M|       ![  ]{=}[     ](.
+M|       @[   DDD      ](.
+M|       {=}[          ](.
+M|       #[       ]{=}[]`_
+M|       ![        DDD ]?{
+M|       ![            ]/-
+M|       ![   ]{=}[    ](.
+M|       @[    DDD     ](.
+M|       /--\[     ]/-\](.
+M|       (..)/-----\(.)](.
+M|       `__,`_____,(.)]`_
+
+LDR|21|0|3
+LDR|8|9|5
+
+ENM|14|5|CrawlEnemy
+ENM|18|8|CrawlEnemy
+ENM|13|11|CrawlEnemy
+
+RPT|9|2|12|10|Drought
