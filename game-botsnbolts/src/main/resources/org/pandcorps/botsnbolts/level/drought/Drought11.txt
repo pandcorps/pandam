@@ -1,0 +1,38 @@
+IMP|Drought
+
+M|_______,(...){==}`___,?`_____,?{====}`__,??`___,{=}`__,(.)/-\`_,?{==}](.
+M|---\0DD1`___,0DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD1(.)`_,0DDDDDDD](.
+M|...)[   DDDDD                                         ]`_,0DD        ](.
+M|___,[                               ]/-\{===========}[ DDD           ]`_
+M|{=}0                   ]/-\[     ]/-\`_,0DDDDDDDDDDDD         ]??[]{===}
+M|/\0               ]{===}`_,{=====}`_,0DD                       DD  DD1/-
+M|`,[         ]{===}[DDDDDDDDDDDDDDDDDD          ]#[                   ](.
+M| D     ]?[   DDDDD                             ]![        ]{}[       ](.
+M|        D                                      ]![         DD        ]`_
+M|                                               ]![                   ]{}
+M|     ]/---\[                               ]/--\![    ]??[        ]/----
+M|-----\(...)QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ(..)![     DD       ]/\(....
+M|_____,`___,qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq`__,@[           ]{=}`,(....
+M|/--------\?ddddddddddddddddddddddddddddddddd/--------\{===}/---\{=}(....
+
+DOR|0|3|Cyan
+
+LDR|69|10|4
+
+ENM|8|7|CrawlEnemy
+
+ENM|21|9|GearEnemy
+ENM|30|9|GearEnemy
+
+ENM|25|3|QuicksandEnemy
+ENM|36|3|QuicksandEnemy
+
+ENM|56|4|CrawlEnemy
+ENM|60|7|CrawlEnemy
+ENM|64|10|CrawlEnemy
+
+ENM|59|1|GearEnemy
+
+BOX|46|4
+
+RPT|1|0|69|14|Drought
