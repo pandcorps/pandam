@@ -1,0 +1,32 @@
+IMP|Drought
+
+M|.){=====}`_____,/-\                            (..)`___,{=}?`__,{===}](.
+M|_,0DDDDDDDDDDDb1(.)                            `__,0DDDDDDDDDDDDDDDDD]`_
+M|\#[           B]`_,                            {=}0                  ]/\
+M|)![           b D1                              0D     bbbbbbbb  {===}()
+M|)![           b  ]                              [      B      bb DDDD1`,
+M|)![       {=} b  ]                              [              bb    ]?{
+M|,![       DDD b  ]                              [bbbbbbbb  {=}  bbbb ]/\
+M|?@[           b  ]                              [B      bb DDD       ]()
+M|-\[  {=}      b  ]                              [        bb          ]`,
+M|.)[  DDD      b  ]/-\                           [    {=}  bbbb       ]/-
+M|.)[           b  ]`_,                           [    DDD             ](.
+M|_,[/\{=}?{========}/----\       /-\           /\[                    ](.
+M|}?[()/-----\/----\#(....)QQQQQQQ(.)QQQQQQQQQQQ(){====}?/---\?{=}#/---\(.
+M|/\[()`_____,(....)@(....)qqqqqqq`_,qqqqqqqqqqq()/-----\`___,{=}?!(...)`_
+
+LDR|2|0|3
+LDR|69|11|3
+
+ENM|6|6|CrawlEnemy
+ENM|11|9|CrawlEnemy
+
+ENM|28|2|QuicksandEnemy
+ENM|30|2|GearEnemy
+
+ENM|36|2|GearEnemy|false
+ENM|40|2|QuicksandEnemy
+ENM|44|2|GearEnemy
+
+RPT|3|3|14|9|Drought
+RPT|49|2|20|10|Drought
