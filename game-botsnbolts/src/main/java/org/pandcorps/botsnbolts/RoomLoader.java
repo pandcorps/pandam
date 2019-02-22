@@ -757,8 +757,8 @@ public abstract class RoomLoader {
         if (waterTexture == null) {
             waterTexture = new Pantexture(getTextureImage("Water"));
             waterTexture.getPosition().setZ(BotsnBoltsGame.DEPTH_TEXTURE);
-            tm.getLayer().addActor(waterTexture);
         }
+        tm.getLayer().addActor(waterTexture);
         waterTexture.setSize(w * BotsnBoltsGame.DIM, waterLevel);
         for (int j = 0; j <= max; j++) {
             final int imgRow;
