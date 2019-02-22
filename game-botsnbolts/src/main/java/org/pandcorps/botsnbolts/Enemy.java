@@ -2243,20 +2243,28 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
         
         private final void burst() {
-            burst(7, 8);
-            burst(-8, 8);
-            burst(7, -7);
-            burst(22, 8);
-            burst(7, 23);
-            burst(-4, -3);
-            burst(18, -3);
-            burst(18, 19);
-            burst(-4, 19);
+            burst(this);
         }
         
-        private final void burst(final int ox, final int oy) {
-            final AnimationEnemyProjectile b = new AnimationEnemyProjectile(BotsnBoltsGame.enemyBurst, this, ox, oy);
-            b.damage = getDamage();
+        protected final static void burst(final Enemy enm) {
+            burst(enm, 0);
+        }
+        
+        protected final static void burst(final Enemy enm, final int ox) {
+            burst(enm, ox + 7, 8);
+            burst(enm, ox - 8, 8);
+            burst(enm, ox + 7, -7);
+            burst(enm, ox + 22, 8);
+            burst(enm, ox + 7, 23);
+            burst(enm, ox - 4, -3);
+            burst(enm, ox + 18, -3);
+            burst(enm, ox + 18, 19);
+            burst(enm, ox - 4, 19);
+        }
+        
+        protected final static void burst(final Enemy enm, final int ox, final int oy) {
+            final AnimationEnemyProjectile b = new AnimationEnemyProjectile(BotsnBoltsGame.enemyBurst, enm, ox, oy);
+            b.damage = enm.getDamage();
         }
         
         @Override
@@ -2283,6 +2291,97 @@ public abstract class Enemy extends Chr implements CollisionListener {
             image = getImage(image, "NavalMine" + (i + 1), null, NAVAL_MINE_MIN, NAVAL_MINE_MAX);
             images[i] = image;
             return image;
+        }
+    }
+    
+    private final static Panple DESTROYER_MIN = new FinPanple2(7, 0);
+    private final static Panple DESTROYER_MAX = new FinPanple2(59, 19);
+    
+    protected final static class Destroyer extends TileUnawareEnemy {
+        private static Panmage image = null;
+        private int timer = 0;
+        
+        protected Destroyer(final Segment seg) {
+            super(seg, 8);
+            setView(getImage());
+        }
+        
+        @Override
+        protected final int getInitialOffsetX() {
+            return 0;
+        }
+        
+        @Override
+        protected final void onStepEnemy() {
+            if (timer < 45) {
+                timer++;
+            } else {
+                final Player player = getNearestPlayer();
+                if (player == null) {
+                    return;
+                }
+                final Panple pos = getPosition(), ppos = player.getPosition();
+                final float x = pos.getX() + 31, y = pos.getY(), px = ppos.getX(), py = ppos.getY();
+                if ((y > py) && (Math.abs(x - px) < 12)) {
+                    timer = 0;
+                    BotsnBoltsGame.addActor(new DepthCharge(Math.round(x / BotsnBoltsGame.DIM), Math.round(y / BotsnBoltsGame.DIM)));
+                }
+            }
+        }
+        
+        @Override
+        protected final void onEnemyDestroy() {
+            NavalMine.burst(this, 24);
+        }
+        
+        private final static Panmage getImage() {
+            return (image = getImage(image, "Destroyer", null, DESTROYER_MIN, DESTROYER_MAX));
+        }
+    }
+    
+    protected final static int DEPTH_CHARGE_HEALTH = 1, DEPTH_CHARGE_OFF_X = 6, DEPTH_CHARGE_H = 14;
+    
+    protected final static class DepthCharge extends Enemy {
+        private static Panmage image = null;
+        
+        protected DepthCharge(final int x, final int y) {
+            super(DEPTH_CHARGE_OFF_X, DEPTH_CHARGE_H, x, y, DEPTH_CHARGE_HEALTH);
+            getPosition().add(-8, -4);
+            setView(getImage());
+        }
+        
+        @Override
+        protected final int getDamage() {
+            return BlockPuzzle.DAMAGE_SPIKE;
+        }
+        
+        @Override
+        protected final void onGrounded() {
+            burst();
+            destroy();
+        }
+        
+        private final void burst() {
+            NavalMine.burst(this, -7);
+        }
+        
+        @Override
+        protected final void onEnemyDestroy() {
+            burst();
+        }
+        
+        @Override
+        protected void onAttack(final Player player) {
+            super.onAttack(player);
+            burst();
+            destroy();
+        }
+        
+        private final static Panmage getImage() {
+            if (image != null) {
+                return image;
+            }
+            return (image = getImage(image, "DepthCharge", new FinPanple2(8, 0), getMin(DEPTH_CHARGE_OFF_X), getMax(DEPTH_CHARGE_OFF_X, DEPTH_CHARGE_H)));
         }
     }
     
