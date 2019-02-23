@@ -393,6 +393,12 @@ public abstract class BlockPuzzle {
             baseY = pos.getY();
             setDirection(rot);
             setView(BotsnBoltsGame.getSpike());
+            RoomLoader.addActor(this);
+        }
+        
+        @Override
+        protected final int getInitialOffsetX() {
+            return 0;
         }
         
         protected final void setDirection(final int rot) {
