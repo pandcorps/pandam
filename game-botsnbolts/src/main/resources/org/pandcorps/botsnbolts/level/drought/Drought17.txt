@@ -1,0 +1,27 @@
+IMP|Drought
+
+M|.)[/----\`_________,(..)
+M|_,[`____,{==}?{====}`__,
+M|/\[DDDDDDDDDDDDDDDDDD1?{
+M|()[                  ]/-
+M|()[                  ](.
+M|`,[                  ](.
+M|=====}?{===}?{===}[  ]`_
+M|-\0DDDDDDDDDDDDDDD   ]?{
+M|.)[                  ]/\
+M|.)[                  ]()
+M|.)[                  ]`,
+M|_,[?{====}?/----\/------
+M|/\[/-\/---\`____,(......
+M|`,[(.)`___,/---\?(......
+
+LDR|2|0|3
+LDR|2|8|6
+
+BOX|20|3
+
+ENM|4|8|GearEnemy|false
+ENM|8|8|GearEnemy|false
+ENM|12|8|GearEnemy|false
+
+RPT|3|2|20|10|Drought
