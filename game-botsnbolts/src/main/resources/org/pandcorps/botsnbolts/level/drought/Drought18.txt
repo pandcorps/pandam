@@ -1,0 +1,38 @@
+IMP|Drought
+
+M|(.)                                                                                          `__
+M|`_,                                                                                           /-
+M|=}?                                                                                           (.
+M|--\                                                                                           (.
+M|..)                                                                                           `_
+M|__,[#?{==}/---\#/\{}?/-\                                   /-----\{====}?                     /\
+M|==}[@{==}?`___,@`,?{}`_,{=========}?{=======}?{===========}`_____,?{====}                     ()
+M|\/\[DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDb1?                      `,
+M|)`,[            bbbbb                                                b]                       ?{
+M|,?0  ]{===}[    B   b          ]{===}[    bbbbb                      B]                       /-
+M|-\[   DDDDD     bbbbb           DDDDD     B   b    ]{===}[           b]              /-\      (.
+M|.)[                                       bbbbb     DDDDD            b]?       /----\(.)0DDDD1(.
+M|.)[/-\/-\?{=}?{===}?/--\                                            /---\#?{==}(....)(.)[    ](.
+M|.)[`_,`_,/---------\(..)QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ(...)@{==}?(....)`_,[    ](.
+
+LDR|2|0|2
+LDR|3|5|4
+
+ENM|8|5|CrawlEnemy
+ENM|18|4|GearEnemy
+ENM|26|1|QuicksandEnemy
+ENM|34|5|CrawlEnemy
+ENM|44|3|GearEnemy
+ENM|54|4|CrawlEnemy
+ENM|62|1|QuicksandEnemy
+
+ENM|26|8|GearEnemy
+ENM|31|8|GearEnemy|false
+ENM|36|8|GearEnemy
+ENM|41|8|GearEnemy|false
+ENM|46|8|GearEnemy
+ENM|51|8|GearEnemy|false
+ENM|56|8|GearEnemy
+
+RPT|3|1|67|5|Drought
+RPT|89|0|4|2|Drought
