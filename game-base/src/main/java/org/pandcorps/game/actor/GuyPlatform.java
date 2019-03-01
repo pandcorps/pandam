@@ -233,9 +233,16 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
         v += a;
         if (a > 0 && v > MAX_V) {
             v = MAX_V;
-        } else if (v < -MAX_V) {
-            v = -MAX_V;
+        } else {
+            final float minV = getMinV();
+            if (v < minV) {
+                v = minV;
+            }
         }
+    }
+    
+    protected float getMinV() {
+        return -MAX_V;
     }
     
     protected int initCurrentHorizontalVelocity() {
