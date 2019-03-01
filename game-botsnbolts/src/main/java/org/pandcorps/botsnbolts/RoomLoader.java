@@ -461,15 +461,25 @@ public abstract class RoomLoader {
         final TileMap tm = BotsnBoltsGame.tm;
         final int _x = seg.initInt(0), _y = seg.initInt(1);
         final int x = _x * d, y = _y * d;
-        final int w = seg.getInt(2, tm.getWidth() - _x) * d;
-        final int h = seg.getInt(3, tm.getHeight() - _y) * d;
+        final int _w = seg.getInt(2, tm.getWidth() - _x);
+        final int _h = seg.getInt(3, tm.getHeight() - _y);
+        final int w = _w * d, h = _h * d;
         final String src = seg.getValue(4);
-        final int offX = seg.initInt(5), offY = seg.initInt(6);
+        final int offX = seg.initInt(5), offY = seg.initInt(6), offZ = seg.initInt(7);
+        final byte b = seg.initByte(8);
         final Pantexture tex = new Pantexture(getTextureImage(src));
-        tex.getPosition().set(x, y, BotsnBoltsGame.DEPTH_TEXTURE);
+        tex.getPosition().set(x, y, BotsnBoltsGame.DEPTH_TEXTURE + offZ);
         tex.setSize(w, h);
         tex.setOffset(offX, offY);
         tm.getLayer().addActor(tex);
+        if (b != 0) {
+            for (int i = 0; i < _w; i++) {
+                final int xi = _x + i;
+                for (int j = 0; j < _h; j++) {
+                    tm.setBehavior(xi, _y + j, b);
+                }
+            }
+        }
     }
     
     private final static Map<String, Panmage> textures = new HashMap<String, Panmage>();
