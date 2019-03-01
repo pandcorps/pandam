@@ -84,12 +84,18 @@ public abstract class Chr extends GuyPlatform {
         return b == BotsnBoltsGame.TILE_FLOOR || b == BotsnBoltsGame.TILE_LADDER_TOP;
     }
     
+    protected final boolean isUnderWater() {
+        return (RoomLoader.waterLevel > 0) && (getPosition().getY() < RoomLoader.waterLevel);
+    }
+    
     @Override
     protected float getG() {
-        if ((RoomLoader.waterLevel > 0) && (getPosition().getY() < RoomLoader.waterLevel)) {
-            return gWater;
-        }
-        return g;
+        return isUnderWater() ? gWater : g;
+    }
+    
+    @Override
+    protected final float getMinV() {
+        return isUnderWater() ? -4 : -MAX_V;
     }
     
     protected final void fixX() {
