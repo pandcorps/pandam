@@ -571,6 +571,7 @@ public class Menu {
             final float roomZ = room.getSize().getZ();
             room.destroy();
             room = Pangine.getEngine().createRoom(Pantil.vmid(), roomW, roomH, roomZ);
+            final Panroom newRoom = room;
             game.setCurrentRoom(room);
             final Panlayer layer = engine.createLayer("layer.grid", roomW, roomH, roomZ, room);
             grid = new LevelSelectGrid();
@@ -588,7 +589,7 @@ public class Menu {
             grid.register(quit, new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
                     if (isGridEnabled()) {
-                        addQuitMenu(layer, pc);
+                        addQuitMenu(newRoom, pc);
                     }
                 }});
             grid.register(pc.ctrl.getMenu(), new ActionEndListener() {
@@ -596,11 +597,12 @@ public class Menu {
                     if (isPauseMenuEnabled()) {
                         destroyPauseMenu();
                     } else {
-                        addQuitMenu(layer, pc);
+                        addQuitMenu(newRoom, pc);
                     }
                 }});
             layer.setConstant(true);
             room.addBeneath(layer);
+            room.addActor(new CurrentSelection(grid));
             addCursor(room);
         }
         
@@ -719,25 +721,42 @@ public class Menu {
             for (final LevelSelectCell[] row : cells) {
                 int y = 0;
                 for (final LevelSelectCell cell : row) {
-                    renderBox(renderer, layer, cell.x, y = cell.y, ((cell == currentCell) && isGridEnabled()) ? BotsnBoltsGame.pc.pi.highlightBox : box);
+                    renderBox(renderer, layer, cell.x, y = cell.y, BotsnBoltsGame.DEPTH_BG, box);
                 }
                 renderer.render(layer, bg, 0, y + 8, BotsnBoltsGame.DEPTH_BEHIND, 0, 0, BotsnBoltsGame.GAME_W, 32, 0, false, false);
             }
         }
         
-        private final static void renderBox(final Panderer renderer, final Panlayer layer, final int x, final int y, final Panmage img) {
+        private final static void renderBox(final Panderer renderer, final Panlayer layer, final int x, final int y, final int z, final Panmage img) {
             final int x8 = x + 8, y8 = y + 8, x40 = x + 40, y40 = y + 40;
-            renderer.render(layer, img, x, y, BotsnBoltsGame.DEPTH_BG, 0, 24, 8, 8, 0, false, false);
-            renderer.render(layer, img, x40, y, BotsnBoltsGame.DEPTH_BG, 24, 24, 8, 8, 0, false, false);
-            renderer.render(layer, img, x, y40, BotsnBoltsGame.DEPTH_BG, 0, 0, 8, 8, 0, false, false);
-            renderer.render(layer, img, x40, y40, BotsnBoltsGame.DEPTH_BG, 24, 0, 8, 8, 0, false, false);
+            renderer.render(layer, img, x, y, z, 0, 24, 8, 8, 0, false, false);
+            renderer.render(layer, img, x40, y, z, 24, 24, 8, 8, 0, false, false);
+            renderer.render(layer, img, x, y40, z, 0, 0, 8, 8, 0, false, false);
+            renderer.render(layer, img, x40, y40, z, 24, 0, 8, 8, 0, false, false);
             for (int i = 0; i < 2; i++) {
                 final int i16 = i * 16;
-                renderer.render(layer, img, x8 + i16, y, BotsnBoltsGame.DEPTH_BG, 8, 24, 16, 8, 0, false, false);
-                renderer.render(layer, img, x8 + i16, y40, BotsnBoltsGame.DEPTH_BG, 8, 0, 16, 8, 0, false, false);
-                renderer.render(layer, img, x, y8 + i16, BotsnBoltsGame.DEPTH_BG, 0, 8, 8, 16, 0, false, false);
-                renderer.render(layer, img, x40, y8 + i16, BotsnBoltsGame.DEPTH_BG, 24, 8, 8, 16, 0, false, false);
+                renderer.render(layer, img, x8 + i16, y, z, 8, 24, 16, 8, 0, false, false);
+                renderer.render(layer, img, x8 + i16, y40, z, 8, 0, 16, 8, 0, false, false);
+                renderer.render(layer, img, x, y8 + i16, z, 0, 8, 8, 16, 0, false, false);
+                renderer.render(layer, img, x40, y8 + i16, z, 24, 8, 8, 16, 0, false, false);
             }
+        }
+    }
+    
+    private final static class CurrentSelection extends Panctor {
+        private final LevelSelectGrid grid;
+        
+        private CurrentSelection(final LevelSelectGrid grid) {
+            this.grid = grid;
+        }
+        
+        @Override
+        protected final void renderView(final Panderer renderer) {
+            if (!isGridEnabled()) {
+                return;
+            }
+            final LevelSelectCell cell = grid.currentCell;
+            LevelSelectGrid.renderBox(renderer, getLayer(), cell.x, cell.y, BotsnBoltsGame.DEPTH_FG, BotsnBoltsGame.pc.pi.highlightBox);
         }
     }
     
