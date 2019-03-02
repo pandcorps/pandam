@@ -2268,7 +2268,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
         
         @Override
-        protected final void onEnemyDestroy() {
+        protected final void onDefeat() {
             burst();
         }
         
@@ -2330,7 +2330,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
         
         @Override
-        protected final void onEnemyDestroy() {
+        protected final void onDefeat() {
             NavalMine.burst(this, 24);
         }
         
@@ -2366,7 +2366,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
         
         @Override
-        protected final void onEnemyDestroy() {
+        protected final void onDefeat() {
             burst();
         }
         
