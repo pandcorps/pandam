@@ -49,7 +49,7 @@ import org.pandcorps.pandax.visual.*;
 public final class BotsnBoltsGame extends BaseGame {
     protected final static String TITLE = "Bots 'n Bolts";
     protected final static String VERSION = "0.0.1";
-    protected final static String YEAR = "2016-2018";
+    protected final static String YEAR = "2016-2019";
     protected final static String AUTHOR = "Andrew M. Martin";
     
     /*
@@ -424,7 +424,7 @@ public final class BotsnBoltsGame extends BaseGame {
     
     protected final static Panmage getSpike() {
         if (spike == null) {
-            spike = Pangine.getEngine().createImage("spike", CENTER_16, MIN_16, MAX_16, RES + "bg/Spike.png");
+            spike = Pangine.getEngine().createImage("spike", CENTER_16, new FinPanple2(-6, -8), new FinPanple2(6, 7), RES + "bg/Spike.png");
         }
         return spike;
     }
