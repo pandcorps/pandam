@@ -1,0 +1,23 @@
+IMP|Drought
+
+M|)/----\`____,/-\[    ](.
+M|)`____,{===}?`_,[    ]`_
+M|,?0DDDDDDDDDDDDD     ]?{
+M|-\[                  ]/-
+M|.)[    ]#[           ](.
+M|.)[]?[ ]@[           ]`_
+M|.)[ D  ]{===}?{}?{======
+M|_,[     DDDDDDDDDDDDD1#/
+M|}?[ ]?[              ]@`
+M|/\[  D               ]/-
+M|`,[            ]/-\[ ](.
+M|----\/-\[      ](.)QQQ(.
+M|....)`_,[      ]`_,ddd`_
+M|....)/-\[      ]/-------
+
+ENM|8|10|GearEnemy|false
+ENM|4|9|CrawlEnemy
+ENM|5|6|CrawlEnemy
+ENM|20|3|QuicksandEnemy
+
+RPT|3|0|20|14|Drought
