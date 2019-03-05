@@ -1643,8 +1643,8 @@ public abstract class Enemy extends Chr implements CollisionListener {
         
         protected SubEnemy(final Segment seg) {
             super(PROP_OFF_X, PROP_H, seg, PROP_HEALTH);
-            setMirror(false);
-            hv = -1;
+            setMirror(seg.getBoolean(3, true));
+            hv = getMirrorMultiplier();
             setView(getCurrentImage());
         }
         
@@ -3214,8 +3214,8 @@ public abstract class Enemy extends Chr implements CollisionListener {
         
         protected SwimEnemy(final Segment seg) {
             super(HENCHBOT_OFF_X, HENCHBOT_H, seg, HENCHBOT_HEALTH);
-            setMirror(false);
-            hv = -2;
+            setMirror(seg.getBoolean(3, true));
+            hv = 2 * getMirrorMultiplier();
             setView(getCurrentSwim());
         }
         
