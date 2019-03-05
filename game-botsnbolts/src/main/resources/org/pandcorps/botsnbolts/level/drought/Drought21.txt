@@ -1,0 +1,18 @@
+IMP|Drought
+
+M|----\[            ](..)(
+M|....)[            ](..)(
+M|____,[            ](..)(
+M|-\/-\[            ](..)`
+M|.)`_,[            ]`__,?
+M|.)#0D              D1/--
+M|_,![                ](..
+M|=}@[                ](..
+M|/-\[                ](..
+M|(.)[                ]`__
+M|(.)[                ]?{=
+M|`_,QQQQQQQQQQQQQQQQQQ/-\
+M|--\qqqqqqqqqqqqqqqqqq(.)
+M|..)qqqqqqqqqqqqqqqqqq`_,
+
+RPT|3|0|20|14|Drought
