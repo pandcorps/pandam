@@ -861,13 +861,16 @@ public abstract class RoomLoader {
         return fld == null ? FinPancolor.BLACK : new FinPancolor(fld.shortValue(0), fld.shortValue(1), fld.shortValue(2));
     }
     
-    protected final static void onEnemyDefeated() {
-        if (BotsnBoltsGame.tm == null) {
+    protected final static void onEnemyDefeated(final Enemy enemy) {
+        final TileMap tm = BotsnBoltsGame.tm;
+        if ((tm == null) || (tm.getLayer() != enemy.getLayer())) {
             return;
         }
-        Pangine.getEngine().addTimer(BotsnBoltsGame.tm, 1, new TimerListener() {
+        Pangine.getEngine().addTimer(tm, 1, new TimerListener() {
             @Override public final void onTimer(final TimerEvent event) {
-                checkEnemies();
+                if (tm == BotsnBoltsGame.tm) {
+                    checkEnemies();
+                }
             }});
     }
     

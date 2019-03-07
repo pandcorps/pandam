@@ -131,7 +131,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
     
     @Override
     protected final void onDestroy() {
-        RoomLoader.onEnemyDefeated();
+        RoomLoader.onEnemyDefeated(this);
         super.onDestroy();
         onEnemyDestroy();
     }
