@@ -1,0 +1,21 @@
+IMP|Drought
+
+M|-\{==}?/-\`,(..)!/\@/---
+M|.)#{==}`_,{}`__,@`,?`___
+M|_,!0DDDbbbbDDbbbbDDD1#{=
+M|=}@[   b  b  b  b   ]!/-
+M|--\[   b  b  b  b   ]!(.
+M|..)[   b  b  b  b   ]@`_
+M|..)[   b  b  b  b   ]/--
+M|__,[   b  b  b  b   ]`__
+M|DDD    b  b  b  b    DDD
+M|       b  b  b  b       
+M|       B  b  b  b       
+M|       b  bbbb  b       
+M|---\#/-\/---\{===}?/---\
+M|...)!`_,(...)#{===}(...)
+
+DOR|0|2|Boss
+DOR|23|2|Boss
+
+RPT|0|0|24|14|Drought
