@@ -721,6 +721,7 @@ public abstract class BlockPuzzle {
             this.tm = tm;
             this.tileIndex = tileIndex;
             tm.setBehavior(tileIndex, Tile.BEHAVIOR_OPEN);
+            RoomLoader.removeShadow(tm, tm.getColumn(tileIndex), tm.getRow(tileIndex) - 1);
         }
         
         @Override

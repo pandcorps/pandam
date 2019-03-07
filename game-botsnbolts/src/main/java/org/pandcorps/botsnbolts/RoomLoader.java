@@ -51,6 +51,7 @@ public abstract class RoomLoader {
     private final static Map<Character, Tile> tiles = new HashMap<Character, Tile>();
     private final static Map<Character, Tile[][]> patterns = new HashMap<Character, Tile[][]>();
     private final static Map<Character, RoomFunction> functions = new HashMap<Character, RoomFunction>();
+    private static Shader shader = null;
     protected final static Map<String, String> variables = new HashMap<String, String>();
     private static Character alt = null;
     protected static Panroom nextRoom = null;
@@ -177,6 +178,8 @@ public abstract class RoomLoader {
                 pan(seg);
             } else if ("FNC".equals(name)) { // Function
                 fnc(seg);
+            } else if ("SHD".equals(name)) { // Shader
+                shd(seg);
             } else if ("VAR".equals(name)) { // Variable
                 var(seg);
             } else if ("M".equals(name)) { // Map
@@ -238,6 +241,11 @@ public abstract class RoomLoader {
             } else if ("DEF".equals(name)) { // Definition
             }
         }
+        postprocess();
+    }
+    
+    private final static void postprocess() {
+        addShadows();
     }
     
     private final static void ctx(final Segment seg) {
@@ -365,6 +373,38 @@ public abstract class RoomLoader {
     
     private final static void fnc(final Segment seg) throws Exception {
         functions.put(seg.toCharacter(0), getRoomFunction(seg.getValue(1)));
+    }
+    
+    private final static void shd(final Segment seg) throws Exception {
+        shader = new Shader(getTileMapImage(seg.getField(0)), getTileMapImage(seg.getField(1)), getTileMapImage(seg.getField(2)),
+            getTileMapImage(seg.getField(3)), getTileMapImage(seg.getField(4)), getTileMapImage(seg.getField(5)));
+    }
+    
+    private final static void addShadows() {
+        if (shader == null) {
+            return;
+        }
+        final TileMap tm = BotsnBoltsGame.tm;
+        final int w = tm.getWidth(), h = tm.getHeight();
+        for (int y = 1; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+                if (Tile.getBehavior(tm.getTile(x, y)) == BotsnBoltsGame.TILE_BURSTABLE) {
+                    shader.addShadow(tm, x, y - 1);
+                }
+            }
+        }
+    }
+    
+    protected final static void addShadow(final TileMap tm, final int x, final int y) {
+        if (shader != null) {
+            shader.addShadow(tm, x, y);
+        }
+    }
+    
+    protected final static void removeShadow(final TileMap tm, final int x, final int y) {
+        if (shader != null) {
+            shader.removeShadow(tm, x, y);
+        }
     }
     
     private final static void var(final Segment seg) throws Exception {
@@ -963,6 +1003,7 @@ public abstract class RoomLoader {
         tiles.clear();
         patterns.clear();
         functions.clear();
+        shader = null;
         variables.clear();
         alt = null;
         bossDoors.clear();

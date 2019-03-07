@@ -389,4 +389,60 @@ public abstract class RoomFunction {
             engine.setBgColor(colors[c]);
         }
     }
+    
+    public final static class Shader {
+        private final Object top;
+        private final Object topLeft;
+        private final Object topRight;
+        private final Object mid;
+        private final Object left;
+        private final Object right;
+        
+        public Shader(final Object top, final Object topLeft, final Object topRight, final Object mid, final Object left, final Object right) {
+            this.top = top;
+            this.topLeft = topLeft;
+            this.topRight = topRight;
+            this.mid = mid;
+            this.left = left;
+            this.right = right;
+        }
+        
+        public final void addShadow(final TileMap tm, final int x, final int y) {
+            final int index = tm.getIndex(x, y);
+            final Tile tile = tm.getTile(index);
+            if (Chr.isSolidTile(tile)) {
+                return;
+            }
+            final Object bg = DynamicTileMap.getRawBackground(tile);
+            if (bg == mid) {
+                tm.setBackground(index, top);
+            } else if (bg == null) {
+                return;
+            } else if (bg == left) {
+                tm.setBackground(index, topLeft);
+            } else if (bg == right) {
+                tm.setBackground(index, topRight);
+            }
+        }
+        
+        public final void removeShadow(final TileMap tm, final int x, final int y) {
+            final int index = tm.getIndex(x, y);
+            final Tile tile = tm.getTile(index);
+            if (tile == null) {
+                return;
+            } else if (Chr.isSolidTile(tile)) {
+                return;
+            }
+            final Object bg = DynamicTileMap.getRawBackground(tile);
+            if (bg == null) {
+                return;
+            } else if (bg == top) {
+                tm.setBackground(index, mid);
+            } else if (bg == topLeft) {
+                tm.setBackground(index, left);
+            } else if (bg == topRight) {
+                tm.setBackground(index, right);
+            }
+        }
+    }
 }
