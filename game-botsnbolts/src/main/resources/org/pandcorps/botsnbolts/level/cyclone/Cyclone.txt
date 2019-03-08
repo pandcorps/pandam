@@ -53,3 +53,5 @@ FNC|F|BigFan
 
 FNC|S|SpikeCeiling
 FNC|$|SpikeFloor
+
+SHD|6^2|7^2||7^3|6^3
