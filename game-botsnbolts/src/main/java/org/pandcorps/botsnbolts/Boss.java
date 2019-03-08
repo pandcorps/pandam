@@ -2235,7 +2235,6 @@ public abstract class Boss extends Enemy {
         private final int xLeft;
         private boolean fillNeeded = true; // Called after super constructor
         private Tile flowTile = null;
-        private Tile brickTile = null;
         private float prevY = 0;
         private boolean prevUnderwater = false;
         
@@ -2328,7 +2327,7 @@ public abstract class Boss extends Enemy {
                 if (index == 18) {
                     valve.setDirection(0);
                 }
-                setTiles(index, 18, brickTile);
+                setTiles(index, 18, null);
             }
         }
         
@@ -2364,17 +2363,16 @@ public abstract class Boss extends Enemy {
             return flowTile;
         }
         
-        private final void setTiles(final int index, final int timerOffset, final Tile tile) {
+        private final void setTiles(final int index, final int timerOffset, Tile tile) {
             final int y = 11 - (index - timerOffset);
             if (y < RoomLoader.getWaterTile()) {
                 return;
             }
             final TileMap tm = BotsnBoltsGame.tm;
-            final int tileIndex = tm.getIndex(3, y);
-            if (brickTile == null) {
-                brickTile = tm.getTile(tileIndex);
+            if (tile == null) {
+                tile = tm.getTile(2, y);
             }
-            tm.setTile(tileIndex, tile);
+            tm.setTile(3, y, tile);
             tm.setTile(4, y, tile);
             tm.setTile(19, y, tile);
             tm.setTile(20, y, tile);
