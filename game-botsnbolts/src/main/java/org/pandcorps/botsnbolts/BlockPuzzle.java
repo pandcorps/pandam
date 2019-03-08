@@ -393,7 +393,7 @@ public abstract class BlockPuzzle {
         protected Spike(final int tileIndex, final int rot) {
             super(BotsnBoltsGame.tm.getColumn(tileIndex), BotsnBoltsGame.tm.getRow(tileIndex), 1);
             final Panple pos = getPosition();
-            pos.setZ(BotsnBoltsGame.DEPTH_BG);
+            pos.setZ(BotsnBoltsGame.DEPTH_BETWEEN);
             baseX = pos.getX();
             baseY = pos.getY();
             setDirection(rot);
