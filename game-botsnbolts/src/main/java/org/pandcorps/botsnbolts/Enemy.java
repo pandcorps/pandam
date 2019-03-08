@@ -2304,6 +2304,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         protected Destroyer(final Segment seg) {
             super(seg, 8);
             setView(getImage());
+            timer = 44;
         }
         
         @Override
