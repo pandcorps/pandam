@@ -691,7 +691,7 @@ public abstract class BlockPuzzle {
             tm = BotsnBoltsGame.tm;
             this.tileIndex = tileIndex;
             initTileActor(tm, this, tileIndex, getBlockImage());
-            tm.setBehavior(tileIndex, Tile.BEHAVIOR_SOLID);
+            tm.setBehavior(tileIndex, BotsnBoltsGame.TILE_BURSTABLE);
         }
         
         @Override
