@@ -401,10 +401,18 @@ public abstract class RoomLoader {
         }
     }
     
+    protected final static void addShadowBelow(final TileMap tm, final int tileIndex) {
+        addShadow(tm, tm.getColumn(tileIndex), tm.getRow(tileIndex) - 1);
+    }
+    
     protected final static void removeShadow(final TileMap tm, final int x, final int y) {
         if (shader != null) {
             shader.removeShadow(tm, x, y);
         }
+    }
+    
+    protected final static void removeShadowBelow(final TileMap tm, final int tileIndex) {
+        removeShadow(tm, tm.getColumn(tileIndex), tm.getRow(tileIndex) - 1);
     }
     
     private final static void var(final Segment seg) throws Exception {

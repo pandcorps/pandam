@@ -92,6 +92,11 @@ public abstract class BlockPuzzle {
                 continue;
             }
             tm.setForeground(index, img, b);
+            if (imgIndex == 0) {
+                RoomLoader.addShadowBelow(tm, index);
+            } else {
+                RoomLoader.removeShadowBelow(tm, index);
+            }
         }
     }
     
@@ -721,7 +726,7 @@ public abstract class BlockPuzzle {
             this.tm = tm;
             this.tileIndex = tileIndex;
             tm.setBehavior(tileIndex, Tile.BEHAVIOR_OPEN);
-            RoomLoader.removeShadow(tm, tm.getColumn(tileIndex), tm.getRow(tileIndex) - 1);
+            RoomLoader.removeShadowBelow(tm, tileIndex);
         }
         
         @Override

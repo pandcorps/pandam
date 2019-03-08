@@ -415,7 +415,9 @@ public abstract class RoomFunction {
             }
             final Object bg = DynamicTileMap.getRawBackground(tile);
             if (bg == mid) {
-                tm.setBackground(index, top);
+                if (!tm.isBad(index)) {
+                    tm.setBackground(index, top);
+                }
             } else if (bg == null) {
                 return;
             } else if (bg == left) {
