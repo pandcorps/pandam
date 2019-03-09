@@ -2498,9 +2498,19 @@ public final class Player extends Chr implements Warpable {
             final TileMap tm = BotsnBoltsGame.tm;
             final int index = tm.getContainer(this);
             final int x = tm.getColumn(index), y = tm.getRow(index);
-            if ((x < 2) || isSolidTile(x - 1, y)) {
+            final boolean solidLeft = isSolidTile(x - 1, y), solidRight = isSolidTile(x + 1, y);
+            if (!solidLeft && isSolidTile(x - 1, y + 1)) {
+                destroy();
+                return;
+            } else if (!solidRight && isSolidTile(x + 1, y + 1)) {
+                destroy();
+                return;
+            } else if (isSolidTile(x, y + 1)) {
+                destroy();
+                return;
+            } else if ((x < 2) || solidLeft) {
                 dir = 1;
-            } else if ((x > (tm.getWidth() - 3)) || isSolidTile(x + 1, y)) {
+            } else if ((x > (tm.getWidth() - 3)) || solidRight) {
                 dir = -1;
             } else if (Mathtil.rand(10)) {
                 dir *= -1;
