@@ -227,7 +227,7 @@ public final class Coltil {
 	}
 	
 	public final static <E> E get(final E[] a, final int i) {
-    	return size(a) <= i ? null : a[i];
+    	return ((i < 0) || (size(a) <= i)) ? null : a[i];
     }
 	
 	public final static <E> E getOnly(final List<E> list) {

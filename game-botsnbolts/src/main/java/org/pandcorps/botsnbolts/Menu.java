@@ -37,6 +37,14 @@ import org.pandcorps.pandax.in.*;
 
 public class Menu {
     private final static int DIM_BUTTON = 59;
+    private final static int LEVEL_SELECT_X = 8;
+    private final static int LEVEL_SELECT_Y = 24;
+    private final static int LEVEL_W = 80;
+    private final static int LEVEL_H = 64;
+    private final static int LEVEL_COLUMNS = 5;
+    private final static int LEVEL_ROWS = 3;
+    private final static int LEVEL_DEFAULT_ROW = 1;
+    private final static int LEVEL_DEFAULT_COLUMN = 2;
     
     protected static Panmage imgCursor = null;
     protected static ButtonImages circleImages = null;
@@ -578,7 +586,7 @@ public class Menu {
             layer.addActor(grid);
             Player.registerCapture(grid);
             for (final BotLevel level : RoomLoader.levels) {
-                final int x = 88 + (level.selectX * 80), y = 24 + (level.selectY * 64), x24 = x + 24;
+                final int x = LEVEL_SELECT_X + (level.selectX * LEVEL_W), y = LEVEL_SELECT_Y + (level.selectY * LEVEL_H), x24 = x + 24;
                 BotsnBoltsGame.addText(layer, level.name1, x24, y - 8);
                 BotsnBoltsGame.addText(layer, level.name2, x24, y - 16);
                 addPortrait(layer, x + 8, y + 8, level);
@@ -663,41 +671,33 @@ public class Menu {
     
     private final static class LevelSelectGrid extends Panctor {
         private static Panmage bg = null;
-        private final LevelSelectCell[][] cells = new LevelSelectCell[3][3];
+        private final LevelSelectCell[][] cells = new LevelSelectCell[LEVEL_ROWS][LEVEL_COLUMNS];
         private LevelSelectCell currentCell;
         
         {
-            for (int j = 0; j < 3; j++) {
+            for (int j = 0; j < LEVEL_ROWS; j++) {
                 final LevelSelectCell[] row = cells[j];
-                for (int i = 0; i < 3; i++) {
+                for (int i = 0; i < LEVEL_COLUMNS; i++) {
                     row[i] = new LevelSelectCell(i, j);
                 }
             }
-            currentCell = cells[1][1];
+            currentCell = cells[LEVEL_DEFAULT_ROW][LEVEL_DEFAULT_COLUMN];
             final ControlScheme ctrl = BotsnBoltsGame.pc.ctrl;
             register(ctrl.getUp(), new GridStartListener() {
                 @Override public final void onGridStart() {
-                    if (currentCell.j < 2) {
-                        currentCell = cells[currentCell.j + 1][currentCell.i];
-                    }
+                    moveCurrentCell(0, 1);
                 }});
             register(ctrl.getDown(), new GridStartListener() {
                 @Override public final void onGridStart() {
-                    if (currentCell.j > 0) {
-                        currentCell = cells[currentCell.j - 1][currentCell.i];
-                    }
+                    moveCurrentCell(0, -1);
                 }});
             register(ctrl.getRight(), new GridStartListener() {
                 @Override public final void onGridStart() {
-                    if (currentCell.i < 2) {
-                        currentCell = cells[currentCell.j][currentCell.i + 1];
-                    }
+                    moveCurrentCell(1, 0);
                 }});
             register(ctrl.getLeft(), new GridStartListener() {
                 @Override public final void onGridStart() {
-                    if (currentCell.i > 0) {
-                        currentCell = cells[currentCell.j][currentCell.i - 1];
-                    }
+                    moveCurrentCell(-1, 0);
                 }});
             final ActionEndListener selectListener = new GridEndListener() {
                 @Override public final void onGridEnd() {
@@ -711,6 +711,13 @@ public class Menu {
             register(ctrl.getSubmit(), selectListener);
         }
         
+        private final void moveCurrentCell(final int xAmt, final int yAmt) {
+            final LevelSelectCell newCell = Coltil.get(Coltil.get(cells, currentCell.j + yAmt), currentCell.i + xAmt);
+            if ((newCell != null) && newCell.isSelectable()) {
+                currentCell = newCell;
+            }
+        }
+        
         @Override
         protected final void renderView(final Panderer renderer) {
             final Panlayer layer = getLayer();
@@ -721,6 +728,9 @@ public class Menu {
             for (final LevelSelectCell[] row : cells) {
                 int y = 0;
                 for (final LevelSelectCell cell : row) {
+                    if (!cell.isSelectable()) {
+                        continue;
+                    }
                     renderBox(renderer, layer, cell.x, y = cell.y, BotsnBoltsGame.DEPTH_BG, box);
                 }
                 renderer.render(layer, bg, 0, y + 8, BotsnBoltsGame.DEPTH_BEHIND, 0, 0, BotsnBoltsGame.GAME_W, 32, 0, false, false);
@@ -770,8 +780,12 @@ public class Menu {
         private LevelSelectCell(final int i, final int j) {
             this.i = i;
             this.j = j;
-            x = 88 + (i * 80);
-            y = 24 + (j * 64);
+            x = LEVEL_SELECT_X + (i * LEVEL_W);
+            y = LEVEL_SELECT_Y + (j * LEVEL_H);
+        }
+        
+        private final boolean isSelectable() {
+            return ((level != null) || ((j == LEVEL_DEFAULT_ROW) && (i == LEVEL_DEFAULT_COLUMN)));
         }
     }
     
