@@ -61,6 +61,7 @@ public abstract class RoomLoader {
     private static boolean conveyorBelt = false;
     protected static int startX = 0;
     protected static int startY = 0;
+    protected static int levelVersion = 0;
     private static int row = 0;
     protected static int waterLevel = 0;
     protected static Pantexture waterTexture = null;
@@ -145,7 +146,7 @@ public abstract class RoomLoader {
     private final static void processSegments(final SegmentStream in, final boolean ctxRequired, final TileMap tm) throws Exception {
         Segment seg = in.readIf("CTX"); // Context
         if (seg != null) {
-            ctx(seg);
+            ctx(seg, in);
         } else {
             final Segment segImp = in.readIf("IMP");
             if (segImp == null) {
@@ -182,6 +183,8 @@ public abstract class RoomLoader {
                 shd(seg);
             } else if ("VAR".equals(name)) { // Variable
                 var(seg);
+            } else if ("VER".equals(name)) { // Version
+                ver(seg, in);
             } else if ("M".equals(name)) { // Map
                 m(seg, tm);
             } else if ("CEL".equals(name)) { // Cell
@@ -248,12 +251,18 @@ public abstract class RoomLoader {
         addShadows();
     }
     
-    private final static void ctx(final Segment seg) {
+    private final static void ctx(Segment seg, final SegmentStream in) throws Exception {
+        int version = seg.getInt(3, 0);
+        while (version != levelVersion) {
+            seg = in.readRequire("CTX");
+            version = seg.intValue(3);
+        }
         BotsnBoltsGame.BotsnBoltsScreen.loadTileImage(seg.getValue(0), seg.getValue(1));
         final Field field = seg.getField(2);
         if (field != null) {
             Pangine.getEngine().setBgColor(toColor(field));
         }
+        while (in.readIf("CTX") != null);
     }
     
     private final static void imp(final Segment seg, final boolean ctxRequired, final TileMap tm) {
@@ -417,6 +426,12 @@ public abstract class RoomLoader {
     
     private final static void var(final Segment seg) throws Exception {
         variables.put(seg.getValue(0), seg.getValue(1));
+    }
+    
+    private final static void ver(final Segment seg, final SegmentStream in) throws Exception {
+        if (seg.intValue(0) != levelVersion) {
+            in.read(); // Skip the next Segment if current version is not the desired version
+        }
     }
     
     private final static void m(final Segment seg, final TileMap tm) {
@@ -1162,6 +1177,7 @@ public abstract class RoomLoader {
         protected final int levelX;
         protected final int levelY;
         protected final Panmage portrait;
+        protected final int version;
         
         protected BotLevel(final Segment seg) {
             name1 = seg.getValue(0);
@@ -1175,6 +1191,7 @@ public abstract class RoomLoader {
                 portraitLoc = "boss/" + name1.toLowerCase() + name2.toLowerCase() + "/" + name1 + name2 + "Portrait";
             }
             portrait = Pangine.getEngine().createImage(portraitLoc, BotsnBoltsGame.RES + portraitLoc + ".png");
+            version = seg.getInt(7, 0);
         }
     }
     

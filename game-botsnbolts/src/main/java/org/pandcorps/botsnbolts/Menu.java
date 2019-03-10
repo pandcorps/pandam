@@ -666,6 +666,7 @@ public class Menu {
     private final static void startLevel(final BotLevel level) {
         RoomLoader.startX = level.levelX;
         RoomLoader.startY = level.levelY;
+        RoomLoader.levelVersion = level.version;
         Panscreen.set(new BotsnBoltsGame.BotsnBoltsScreen());
     }
     
