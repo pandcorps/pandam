@@ -586,6 +586,9 @@ public class Menu {
             layer.addActor(grid);
             Player.registerCapture(grid);
             for (final BotLevel level : RoomLoader.levels) {
+                if (!level.isAllowed()) {
+                    continue;
+                }
                 final int x = LEVEL_SELECT_X + (level.selectX * LEVEL_W), y = LEVEL_SELECT_Y + (level.selectY * LEVEL_H), x24 = x + 24;
                 BotsnBoltsGame.addText(layer, level.name1, x24, y - 8);
                 BotsnBoltsGame.addText(layer, level.name2, x24, y - 16);
@@ -786,7 +789,7 @@ public class Menu {
         }
         
         private final boolean isSelectable() {
-            return ((level != null) || ((j == LEVEL_DEFAULT_ROW) && (i == LEVEL_DEFAULT_COLUMN)));
+            return (((level != null) && level.isAllowed()) || ((j == LEVEL_DEFAULT_ROW) && (i == LEVEL_DEFAULT_COLUMN)));
         }
     }
     

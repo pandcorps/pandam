@@ -1178,6 +1178,7 @@ public abstract class RoomLoader {
         protected final int levelY;
         protected final Panmage portrait;
         protected final int version;
+        protected final List<String> prerequisites;
         
         protected BotLevel(final Segment seg) {
             name1 = seg.getValue(0);
@@ -1192,6 +1193,22 @@ public abstract class RoomLoader {
             }
             portrait = Pangine.getEngine().createImage(portraitLoc, BotsnBoltsGame.RES + portraitLoc + ".png");
             version = seg.getInt(7, 0);
+            final List<Field> prerequisiteFields = seg.getRepetitions(8);
+            final int prerequisitesSize = Coltil.size(prerequisiteFields);
+            prerequisites = new ArrayList<String>(prerequisitesSize);
+            for (int i = 0; i < prerequisitesSize; i++) {
+                prerequisites.add(prerequisiteFields.get(i).getValue());
+            }
+        }
+        
+        protected final boolean isAllowed() {
+            final Profile prf = BotsnBoltsGame.pc.prf;
+            for (final String prerequisite : prerequisites) {
+                if (!(prf.disks.contains(prerequisite) || prf.isUpgradeAvailable(Profile.getUpgrade(prerequisite)))) {
+                    return false;
+                }
+            }
+            return true;
         }
     }
     
