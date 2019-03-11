@@ -201,6 +201,8 @@ public abstract class RoomLoader {
                 rpt(seg);
             } else if ("BOX".equals(name)) { // Power-up Box
                 box(seg);
+            } else if ("VBX".equals(name)) { // Versioned Box
+                vbx(seg);
             } else if ("BLT".equals(name)) { // Upgrade Bolt Box
                 blt(seg);
             } else if ("DSK".equals(name)) { // Disk Box
@@ -559,6 +561,14 @@ public abstract class RoomLoader {
     
     private final static void box(final Segment seg) {
         addActor(new PowerBox(seg));
+    }
+    
+    private final static void vbx(final Segment seg) {
+        if (levelVersion == 0) {
+            box(seg);
+        } else {
+            addActor(new SentryGun(seg));
+        }
     }
     
     private final static void blt(final Segment seg) throws Exception {
