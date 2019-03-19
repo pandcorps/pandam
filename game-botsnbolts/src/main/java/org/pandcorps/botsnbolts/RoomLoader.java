@@ -432,7 +432,10 @@ public abstract class RoomLoader {
     
     private final static void ver(final Segment seg, final SegmentStream in) throws Exception {
         if (seg.intValue(0) != levelVersion) {
-            in.read(); // Skip the next Segment if current version is not the desired version
+            final int n = seg.getInt(1, 1);
+            for (int i = 0; i < n; i++) {
+                in.read(); // Skip the next Segment if current version is not the desired version
+            }
         }
     }
     
