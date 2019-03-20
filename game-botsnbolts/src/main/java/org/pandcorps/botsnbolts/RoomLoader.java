@@ -185,6 +185,8 @@ public abstract class RoomLoader {
                 var(seg);
             } else if ("VER".equals(name)) { // Version
                 ver(seg, in);
+            } else if ("VND".equals(name)) { // Version End
+                // VER reads until VND when version doesn't match; nothing to do here if version does match
             } else if ("M".equals(name)) { // Map
                 m(seg, tm);
             } else if ("CEL".equals(name)) { // Cell
@@ -203,6 +205,10 @@ public abstract class RoomLoader {
                 box(seg);
             } else if ("VBX".equals(name)) { // Versioned Box
                 vbx(seg);
+            } else if ("VDR".equals(name)) { // Versioned Door
+                vdr(seg);
+            } else if ("VBR".equals(name)) { // Versioned Barrier
+                vbr(seg);
             } else if ("BLT".equals(name)) { // Upgrade Bolt Box
                 blt(seg);
             } else if ("DSK".equals(name)) { // Disk Box
@@ -432,9 +438,11 @@ public abstract class RoomLoader {
     
     private final static void ver(final Segment seg, final SegmentStream in) throws Exception {
         if (seg.intValue(0) != levelVersion) {
-            final int n = seg.getInt(1, 1);
-            for (int i = 0; i < n; i++) {
-                in.read(); // Skip the next Segment if current version is not the desired version
+            while (true) {
+                final Segment skp = in.read(); // Skip the next Segment if current version is not the desired version
+                if ("VND".equals(skp.getName())) {
+                    break;
+                }
             }
         }
     }
@@ -572,6 +580,14 @@ public abstract class RoomLoader {
         } else {
             addActor(new SentryGun(seg));
         }
+    }
+    
+    private final static void vdr(final Segment seg) {
+        doors.add(new ShootableDoor(seg.intValue(0), seg.intValue(1), (levelVersion == 0) ? BotsnBoltsGame.doorCyan : BotsnBoltsGame.doorSilver));
+    }
+    
+    private final static void vbr(final Segment seg) {
+        doors.add(new ShootableBarrier(seg.intValue(0), seg.intValue(1), (levelVersion == 0) ? BotsnBoltsGame.doorCyan : BotsnBoltsGame.doorSilver));
     }
     
     private final static void blt(final Segment seg) throws Exception {
