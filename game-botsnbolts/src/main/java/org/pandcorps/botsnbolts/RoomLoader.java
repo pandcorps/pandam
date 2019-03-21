@@ -540,9 +540,13 @@ public abstract class RoomLoader {
         final int _w = seg.getInt(2, tm.getWidth() - _x);
         final int _h = seg.getInt(3, tm.getHeight() - _y);
         final int w = _w * d, h = _h * d;
-        final String src = seg.getValue(4);
+        String src = seg.getValue(4);
         final int offX = seg.initInt(5), offY = seg.initInt(6), offZ = seg.initInt(7);
         final byte b = seg.initByte(8);
+        final String altSrc = seg.getValue(9);
+        if ((altSrc != null) && (levelVersion > 0)) {
+            src = altSrc;
+        }
         final Pantexture tex = new Pantexture(getTextureImage(src));
         tex.getPosition().set(x, y, BotsnBoltsGame.DEPTH_TEXTURE + offZ);
         tex.setSize(w, h);
