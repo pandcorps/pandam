@@ -2729,16 +2729,23 @@ public abstract class Enemy extends Chr implements CollisionListener {
         protected final void onShoot() {
             final Player player = getNearestPlayer();
             final float vx, vy;
+            final int m = getMirrorMultiplier();
             if (player == null) {
-                vx = getMirrorMultiplier() * VEL_PROJECTILE;
+                vx = m * VEL_PROJECTILE;
                 vy = 0;
             } else {
                 scratch.set(getPosition());
-                scratch.add(getMirrorMultiplier() * HENCHBOT_SHOOT_OFF_X, HENCHBOT_SHOOT_OFF_Y);
+                scratch.addX(m * HENCHBOT_SHOOT_OFF_X);
                 Panple.subtract(scratch, player.getPosition(), scratch);
                 scratch.multiply((float) (VEL_PROJECTILE / scratch.getMagnitude2()));
-                vx = scratch.getX();
-                vy = scratch.getY();
+                final float sx = scratch.getX();
+                if ((Math.abs(sx) < 2) || (sx * m) <= 0) {
+                    vx = m * VEL_PROJECTILE;
+                    vy = 0;
+                } else {
+                    vx = sx;
+                    vy = scratch.getY();
+                }
             }
             newEnemyProjectile(this, HENCHBOT_SHOOT_OFF_X, HENCHBOT_SHOOT_OFF_Y, vx, vy);
             hold(30);
