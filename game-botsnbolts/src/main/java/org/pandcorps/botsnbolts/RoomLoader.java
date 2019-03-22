@@ -450,12 +450,19 @@ public abstract class RoomLoader {
     private final static void m(final Segment seg, final TileMap tm) {
         final String value = seg.getValue(0);
         final int size = Chartil.size(value);
-        int x = 0;
+        int x = seg.initInt(1);
+        final int _y = seg.getInt(2, -1), y = (_y < 0) ? row : _y;
         for (int i = 0; i < size; i++) {
-            i = cel(value, i, tm, x, row);
+            try {
+                i = cel(value, i, tm, x, y);
+            } catch (final Exception e) {
+                throw new IllegalStateException("Error setting tiles: " + seg, e);
+            }
             x++;
         }
-        row--;
+        if (_y < 0) {
+            row--;
+        }
     }
     
     private final static int cel(final String value, int i, final TileMap tm, final int x, final int row) {
