@@ -145,6 +145,13 @@ public abstract class RoomFunction {
         }
     }
     
+    public final static class SpikeCeilingCopyNeighbor extends RoomFunction {
+        @Override
+        public final void build(final TileMap tm, final int x, final int y) {
+            BlockPuzzle.setSpikeCeiling(copyNeighbor(tm, x, y));
+        }
+    }
+    
     public final static class NavalMineTile extends RoomFunction {
         @Override
         public final void build(final TileMap tm, final int x, final int y) {
