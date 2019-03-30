@@ -2125,7 +2125,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
             }
             setView(display);
             setMirror(seg.getBoolean(3, true));
-            hv = 2 * getMirrorMultiplier();
+            hv = seg.getInt(4, 2) * getMirrorMultiplier();
             //TODO Offset if not mirrored; so two gears can perfectly mirror each other
         }
         
