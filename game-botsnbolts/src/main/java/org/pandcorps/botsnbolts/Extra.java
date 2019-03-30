@@ -126,6 +126,9 @@ public abstract class Extra extends Panctor {
         
         @Override
         protected final boolean isSpawningAllowed() {
+            if (x >= BotsnBoltsGame.tm.getWidth()) {
+                return true;
+            }
             return vertical ? isInView() : !isInView();
         }
         
