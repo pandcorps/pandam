@@ -1,0 +1,29 @@
+IMP|Flood
+
+M|.)                    (.
+M|.)                    (.
+M|.)                    (.
+M|.....)                (.
+M|....)                 (.
+M|...)                  (.
+M|..)                   (.
+M|.)m                   (.
+M|.)                    (.
+M|.)                    (.
+M|.)                    (.
+M|.) ()                 (.
+M|.)                    (.
+M|.)                    (.
+
+WTR|15
+
+LDR|2|0|3
+LDR|2|11|3
+
+SPP|13^5|
+
+ENM|20|2|SwimEnemy
+
+ENM|11|6|SubEnemy
+ENM|17|4|SubEnemy
+ENM|14|8|SubEnemy
