@@ -1737,6 +1737,11 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
         
         @Override
+        protected boolean onFell() {
+            return true;
+        }
+        
+        @Override
         protected final void onLanded() {
             // Skip parent logic of clearing v
         }
