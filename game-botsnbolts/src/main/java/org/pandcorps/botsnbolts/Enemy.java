@@ -1729,6 +1729,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
             if (addX(hv) != X_NORMAL) {
                 hv *= -1;
                 setMirror(!isMirror());
+                getPosition().addX(hv);
             }
             if (addY(v) != Y_NORMAL) {
                 v *= -1;
