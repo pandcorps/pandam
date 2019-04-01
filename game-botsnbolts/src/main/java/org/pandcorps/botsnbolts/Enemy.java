@@ -1703,8 +1703,8 @@ public abstract class Enemy extends Chr implements CollisionListener {
         protected SaucerEnemy(final Segment seg) {
             super(PROP_OFF_X, CRAWL_H, seg, PROP_HEALTH);
             setView(getCurrentImage());
-            setMirror(true);
-            hv = -1;
+            setMirror(seg.getBoolean(3, true));
+            hv = getMirrorMultiplier();
             v = -1;
         }
         
