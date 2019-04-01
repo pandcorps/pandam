@@ -1063,6 +1063,10 @@ public abstract class RoomLoader {
             stepHandler.finish();
         }
         stepHandlers.clear();
+        for (final BlockPuzzle blockPuzzle : blockPuzzles) { // Depends on shader; clear puzzles before nulling shader
+            blockPuzzle.clear();
+        }
+        blockPuzzles.clear();
         tiles.clear();
         patterns.clear();
         functions.clear();
@@ -1071,10 +1075,6 @@ public abstract class RoomLoader {
         alt = null;
         bossDoors.clear();
         boltDoor = null;
-        for (final BlockPuzzle blockPuzzle : blockPuzzles) {
-            blockPuzzle.clear();
-        }
-        blockPuzzles.clear();
         conveyorBelt = false;
         waterLevel = 0;
         waterTexture = null;
