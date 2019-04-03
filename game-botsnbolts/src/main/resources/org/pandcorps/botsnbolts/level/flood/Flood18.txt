@@ -1,0 +1,28 @@
+IMP|Flood
+
+M|........................
+M|.)/DDDDDDDDDDDDDDDDDD\(.
+M|.)[                  ](.
+M|.)[                  ](.
+M|.)[                  ](.
+M|.)[                  ](.
+M|.)                    (.
+M|.)                      
+M|.)                      
+M|.)                      
+M|.)                      
+M|.) (.................)(.
+M|.)                    (.
+M|.)                    (.
+
+WTR|8
+
+LDR|2|0|3
+DOR|23|3|Cyan
+
+BOX|18|3
+
+ENM|17|4|SubEnemy
+ENM|14|6|SubEnemy
+
+RPT|0|8|24|5|FloodInterior
