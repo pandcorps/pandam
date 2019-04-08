@@ -1,0 +1,24 @@
+IMP|Flood
+
+M|........................
+M|.)/DDDDDDDDDDDDDDDDDDDDD
+M|.)[                     
+M|.)[                     
+M|.)[                     
+M|.)[           (.........
+M|.........)    DDDDDDD\(.
+M| DDDDDDD()           ](.
+M|        (........)   ](.
+M|        DDDDDDDDDD   ](.
+M|                     ](.
+M|...)                (...
+M|...)                (...
+M|........................
+
+DOR|0|3|Cyan
+DOR|23|9|Boss
+
+BOX|2|8
+BOX|4|8
+
+RPT|0|0|24|14|FloodInterior
