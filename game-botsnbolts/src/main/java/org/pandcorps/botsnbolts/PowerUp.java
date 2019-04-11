@@ -162,8 +162,11 @@ public abstract class PowerUp extends Chr implements CollisionListener {
     }
     
     public final static class VictoryDisk extends Disk {
+        private final Boss src;
+        
         protected VictoryDisk(final Player player, final Boss src) {
             super(player, src.getClass().getSimpleName());
+            this.src = src;
             Boss.clipping = false;
         }
         
@@ -177,7 +180,7 @@ public abstract class PowerUp extends Chr implements CollisionListener {
             super.award(player);
             Pangine.getEngine().addTimer(player, 30, new TimerListener() {
                 @Override public final void onTimer(final TimerEvent event) {
-                    Menu.goLevelSelect();
+                    src.getAwardHandler().run();
                 }});
         }
     }

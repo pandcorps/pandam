@@ -176,6 +176,13 @@ public abstract class Boss extends Enemy {
     protected boolean isVictoryDiskNeeded() {
         return true;
     }
+    
+    protected Runnable getAwardHandler() {
+        return new Runnable() {
+            @Override public final void run() {
+                Menu.goLevelSelect();
+            }};
+    }
 
     @Override
     protected final void award(final PowerUp powerUp) {
@@ -336,7 +343,7 @@ public abstract class Boss extends Enemy {
         return getLayerRequired().getActors();
     }
     
-    protected final static class Fort extends Boss {
+    protected static class Fort extends Boss {
         private static Panmage still = null;
         private int spawnTimer = 0;
         private CyanEnemy bot = null;
@@ -407,6 +414,12 @@ public abstract class Boss extends Enemy {
                 return still;
             }
             return (still = getImage(still, "fort/FortPower", null, new FinPanple2(5, 5), new FinPanple2(26, 30)));
+        }
+    }
+    
+    protected final static class Fort2 extends Fort {
+        protected Fort2(final Segment seg) {
+            super(seg);
         }
     }
     
