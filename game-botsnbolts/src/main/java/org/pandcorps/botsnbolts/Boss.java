@@ -170,7 +170,11 @@ public abstract class Boss extends Enemy {
     
     @Override
     protected final PowerUp pickAward(final Player player) {
-        return new VictoryDisk(player, this);
+        return isVictoryDiskNeeded() ? new VictoryDisk(player, this) : null;
+    }
+    
+    protected boolean isVictoryDiskNeeded() {
+        return true;
     }
 
     @Override
@@ -291,10 +295,16 @@ public abstract class Boss extends Enemy {
     
     @Override
     protected final void onEnemyDestroy() {
-        Player.defeatOrbs(this, BotsnBoltsGame.defeatOrbBoss);
+        if (isDefeatOrbNeeded()) {
+            Player.defeatOrbs(this, BotsnBoltsGame.defeatOrbBoss);
+        }
         if (!isOtherBossPresent()) {
             destroyEnemies();
         }
+    }
+    
+    protected boolean isDefeatOrbNeeded() {
+        return true;
     }
     
     protected final boolean isOtherBossPresent() {
@@ -349,6 +359,11 @@ public abstract class Boss extends Enemy {
         
         @Override
         protected final boolean isDropNeeded() {
+            return false;
+        }
+        
+        @Override
+        protected final boolean isDefeatOrbNeeded() {
             return false;
         }
         
