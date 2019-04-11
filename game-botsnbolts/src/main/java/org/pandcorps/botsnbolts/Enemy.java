@@ -770,8 +770,8 @@ public abstract class Enemy extends Chr implements CollisionListener {
         private final static int DURATION = 60;
         private int timer;
         
-        protected WallCannon(final int x, final int y, final int health) {
-            super(x, y, health);
+        protected WallCannon(final Segment seg, final int health) {
+            super(seg, health);
         }
         
         protected WallCannon(final Segment seg) {
@@ -3413,8 +3413,8 @@ public abstract class Enemy extends Chr implements CollisionListener {
     protected final static class FortCannon extends WallCannon {
         private final static Panmage[] images = new Panmage[5];
         
-        protected FortCannon(final int x, final int y) {
-            super(x, y, 5);
+        protected FortCannon(final Segment seg) {
+            super(seg, 5);
         }
         
         @Override
