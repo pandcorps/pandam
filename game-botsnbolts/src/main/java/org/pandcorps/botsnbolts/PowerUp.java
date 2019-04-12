@@ -180,7 +180,7 @@ public abstract class PowerUp extends Chr implements CollisionListener {
             super.award(player);
             Pangine.getEngine().addTimer(player, 30, new TimerListener() {
                 @Override public final void onTimer(final TimerEvent event) {
-                    src.getAwardHandler().run();
+                    src.onAward();
                 }});
         }
     }

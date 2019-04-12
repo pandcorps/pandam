@@ -177,11 +177,8 @@ public abstract class Boss extends Enemy {
         return true;
     }
     
-    protected Runnable getAwardHandler() {
-        return new Runnable() {
-            @Override public final void run() {
-                Menu.goLevelSelect();
-            }};
+    protected void onAward() {
+        Menu.goLevelSelect();
     }
 
     @Override
@@ -395,11 +392,8 @@ public abstract class Boss extends Enemy {
         }
         
         @Override
-        protected final Runnable getAwardHandler() {
-            return new Runnable() {
-                @Override public final void run() {
-                    // Move Void to left; Spawn Volatile
-                }};
+        protected final void onAward() {
+            // Move Void to left; Spawn Volatile
         }
         
         @Override
