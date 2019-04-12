@@ -334,8 +334,12 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
         
         protected final static void burstEnemy(final Panctor src, final float offY) {
+            burstEnemy(src, 0, offY);
+        }
+        
+        protected final static void burstEnemy(final Panctor src, final float offX, final float offY) {
             final Panple loc = src.getPosition();
-            Projectile.burst(src, BotsnBoltsGame.enemyBurst, loc.getX(), loc.getY() + offY);
+            Projectile.burst(src, BotsnBoltsGame.enemyBurst, loc.getX() + offX, loc.getY() + offY);
         }
         
         protected boolean isDestroyedOnImpact() {

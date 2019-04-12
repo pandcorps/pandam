@@ -302,12 +302,16 @@ public abstract class Boss extends Enemy {
     
     @Override
     protected final void onEnemyDestroy() {
+        onBossDestroy();
         if (isDefeatOrbNeeded()) {
             Player.defeatOrbs(this, BotsnBoltsGame.defeatOrbBoss);
         }
         if (!isOtherBossPresent()) {
             destroyEnemies();
         }
+    }
+    
+    protected void onBossDestroy() {
     }
     
     protected boolean isDefeatOrbNeeded() {
@@ -370,8 +374,32 @@ public abstract class Boss extends Enemy {
         }
         
         @Override
+        protected final void onBossDestroy() {
+            burst(10);
+        }
+        
+        private final void burst(final int n) {
+            final Panctor src = BotsnBoltsGame.tm;
+            EnemyProjectile.burstEnemy(src, Mathtil.randi(342, 382), Mathtil.randi(56, 184));
+            if (n > 1) {
+                Pangine.getEngine().addTimer(src, 3, new TimerListener() {
+                    @Override public final void onTimer(final TimerEvent event) {
+                        burst(n - 1);
+                    }});
+            }
+        }
+        
+        @Override
         protected final boolean isDefeatOrbNeeded() {
             return false;
+        }
+        
+        @Override
+        protected final Runnable getAwardHandler() {
+            return new Runnable() {
+                @Override public final void run() {
+                    // Move Void to left; Spawn Volatile
+                }};
         }
         
         @Override
