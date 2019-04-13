@@ -298,8 +298,8 @@ public abstract class Boss extends Enemy {
     protected abstract Panmage getStill();
     
     @Override
-    protected final void onEnemyDestroy() {
-        onBossDestroy();
+    protected final void onDefeat() {
+        onBossDefeat();
         if (isDefeatOrbNeeded()) {
             Player.defeatOrbs(this, BotsnBoltsGame.defeatOrbBoss);
         }
@@ -308,7 +308,7 @@ public abstract class Boss extends Enemy {
         }
     }
     
-    protected void onBossDestroy() {
+    protected void onBossDefeat() {
     }
     
     protected boolean isDefeatOrbNeeded() {
@@ -371,7 +371,7 @@ public abstract class Boss extends Enemy {
         }
         
         @Override
-        protected final void onBossDestroy() {
+        protected final void onBossDefeat() {
             burst(10);
         }
         

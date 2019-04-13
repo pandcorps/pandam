@@ -805,6 +805,9 @@ public abstract class Enemy extends Chr implements CollisionListener {
         
         @Override
         protected final void onStepEnemy() {
+            if (isWaiting()) {
+                return;
+            }
             timer--;
             if (timer == 6) {
                 fire();
@@ -817,6 +820,10 @@ public abstract class Enemy extends Chr implements CollisionListener {
                 setView(0);
                 timer = DURATION;
             }
+        }
+        
+        protected boolean isWaiting() {
+            return false;
         }
         
         protected void fire() {
@@ -3430,6 +3437,11 @@ public abstract class Enemy extends Chr implements CollisionListener {
         protected final void initCannon(final int x, final int y) {
             setMirror(true);
             getPosition().addX(6);
+        }
+        
+        @Override
+        protected final boolean isWaiting() {
+            return RoomLoader.isBossDoorClosing();
         }
         
         @Override
