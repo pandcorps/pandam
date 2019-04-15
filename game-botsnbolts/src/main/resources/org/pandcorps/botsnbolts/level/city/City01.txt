@@ -1,0 +1,28 @@
+IMP|City
+
+M|                                                                     ixx
+M|                                                                     `--
+M|                                                                      ix
+M|                                                                     /--
+M|                                                                     ixx
+M|                                                                     ixx
+M|                                                                     `--
+M|                                                                      E
+M|                                                                      e
+M|                                                                      e
+M|                                   /---\                              e
+M|                         /---\     ixxxi           /---\          /-----
+M|         (-)             ixxxi     ixxxi   /---\   ixxxi    /-\   ixxxxx
+M|---------------------------------------)   ixxxi   ixxxi    ixi   ixxxxx
+
+ROM|10|2
+
+VDR|71|3
+
+VER|1
+ENM|24|1|WallCannon
+ENM|24|2|WallCannon
+ENM|33|1|SlideEnemy
+EXT|41|0|RocketSpawner|1|75
+EXT|49|0|RocketSpawner|1|30
+VND
