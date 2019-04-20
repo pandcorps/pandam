@@ -1109,15 +1109,18 @@ public abstract class Enemy extends Chr implements CollisionListener {
     }
     
     protected final static class SpringEnemy extends JumpEnemy {
+        private final int speed;
+        
         protected SpringEnemy(final Segment seg) {
             super(PROP_OFF_X, PROP_H, seg, PROP_HEALTH);
+            speed = seg.getInt(3, 1);
             endSpring();
         }
         
         @Override
         protected final void onJump() {
             turnTowardPlayer();
-            hv = getMirrorMultiplier();
+            hv = getMirrorMultiplier() * speed;
             v = 2;
             addY();
             v = 8;
