@@ -1,0 +1,36 @@
+IMP|City
+
+M|xi     g        g      i
+M|xi     g        g      i
+M|xi     g        g      i
+M|xi     g        g      i
+M|xi     g        g      `
+M|xi    .g   .    .    (-\
+M|x`)   Dg   D    G    DDi
+M|-\D    g        g      i
+M|xi     g        g      i
+M|xi .   g        g      i
+M|xi D   g        g      i
+M|xi    .g   .    .    . i
+M|xi    Dg   D    G    D i
+M|xi     g        g      i
+
+LDR|22|0|3
+LDR|22|11|3
+
+ENM|22|9|CyanEnemy
+
+VER|0
+M|()   ()   ()|6|2
+M|DG   DD   GD|6|1
+M|()   ()   ()|6|8
+M|DG   DD   GD|6|7
+VND
+
+VER|1
+ENM|6|7|CeilingCannon
+ENM|11|7|CeilingCannon
+ENM|16|7|CeilingCannon
+VND
+
+RPT|||||CityDay|||||CityNight
