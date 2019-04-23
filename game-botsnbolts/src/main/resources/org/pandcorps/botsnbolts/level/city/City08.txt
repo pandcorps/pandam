@@ -1,0 +1,26 @@
+IMP|City
+
+M|                        
+M|                        
+M|                        
+M|                        
+M|                        
+M|                        
+M|                        
+M|                        
+M|                        
+M|                        
+M|                        
+M|-\ /--------------\   /-
+M|xiDixxxxxxxxxxxxxxiDDDix
+M|xi i(-------------,   ix
+
+LDR|2|0|3
+
+ENM|21|11|SaucerEnemy
+
+VER|1
+ENM|28|6|GuardedEnemy
+VND
+
+RPT|0|0|24|1|CityDay|||||CityNight
