@@ -663,7 +663,7 @@ public abstract class BlockPuzzle {
     
     private final static void finishCrumble(final TileMap tm, final int tileIndex) {
         tm.setForeground(tileIndex, null, Tile.BEHAVIOR_OPEN);
-        DrillEnemy.removeShadow(tm, tileIndex);
+        RoomLoader.removeShadowBelow(tm, tileIndex);
         final Panple pos = new ImplPanple();
         tm.savePosition(pos, tileIndex);
         pos.addX(8);
