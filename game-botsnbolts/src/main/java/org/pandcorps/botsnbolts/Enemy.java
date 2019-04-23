@@ -3103,6 +3103,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         protected ShovelEnemy(final Segment seg) {
             super(HENCHBOT_OFF_X, HENCHBOT_H, seg, HENCHBOT_HEALTH);
             setView(0);
+            setMirror(seg.getBoolean(3, false));
         }
         
         @Override
