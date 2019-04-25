@@ -1,0 +1,42 @@
+IMP|City
+
+M|xi                                                                                ixxxxxxxxxxxxx
+M|xi                                                                                ix/---------\x
+M|xi                                                                                ixiDDDDGDDDDix
+M|xi                                                                                ixi    g    ix
+M|xi                                                                                ixi    g    ix
+M|xi                                                                                ixi    g    ix
+M|-,                                                                                ixi    g (-)`-
+M|                                                                                  ixi    g DDDD
+M|          /-\                                                                     `-,(-) g      
+M|          ixi                                                                      EDDDD g     
+M|          ixi                                                                      e     g     
+M|----------,xi     /-\     /-\                     /---\           /--\         /----------------
+M|xxxxxxxxxxxxi     ix`-----,xi             /---\   ixxxi        /--,xxi         ixxxxxxxxxxxxxxxx
+M|xxxxxxxxxxxxi     ixxxxxxxxxi     (---)   ixxxi   ixxxi     (--,xxxxx`---------,xxxxxxxxxxxxxxxx
+
+ROM|10|2
+
+VDR|0|3
+VDR|95|3
+
+VBR|83|3
+
+VBX|92|8
+
+ENM|27|3|CyanEnemy
+ENM|52|3|CyanEnemy
+ENM|77|3|CyanEnemy
+
+VER|1
+ENM|11|6|GearEnemy
+EXT|15|0|RocketSpawner|1|75
+ENM|23|2|GearEnemy
+EXT|31|0|RocketSpawner|1|30
+EXT|57|0|RocketSpawner|1|75
+ENM|71|1|GearEnemy|false
+ENM|77|1|GearEnemy
+EXT|82|3|RocketSpawner|3
+VND
+
+RPT|84|3|12|9|CityDay|||||CityNight
