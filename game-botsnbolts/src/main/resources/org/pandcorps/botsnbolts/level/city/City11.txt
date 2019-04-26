@@ -1,0 +1,30 @@
+IMP|City
+
+M|xi     g        g      i
+M|xi     g        g      i
+M|xi     g        g      i
+M|xi     g        g      i
+M|xi     g        g      i
+M|xi     g        g (----,
+M|-,     g        g DDDD/-
+M| D     g        g     ix
+M|       g(------)g     ix
+M|       gDDDDDDDDg     ix
+M|       g        g  (-\`-
+M|-----\ g        g  DDixx
+M|xxxxxi g        g    ixx
+M|xxxxxi g        g    ixx
+
+VDR|0|3
+
+LDR|22|11|3
+
+ENM|6|12|SaucerEnemy
+ENM|20|4|CyanEnemy
+
+VER|1
+ENM|21|9|GearEnemy||3
+M|S|21|7
+VND
+
+RPT|||||CityDay|||||CityNight
