@@ -1,0 +1,41 @@
+IMP|City
+
+M|xi     g        g      i
+M|xi     g        g      i
+M|xi     g        g      i
+M|xi     g  (----)g      i
+M|xi     g  DDDDDDg      i
+M|xi    %g        g      i
+M|xi     g        g      i
+M|xi     g        g      i
+M|xi     g        g      i
+M|xi    %g        g      i
+M|xi     g        g      i
+M|xi     g  %    %g   () i
+M|xi     g        g   DD i
+M|xi     g        g      i
+
+LDR|22|0|3
+LDR|15|11|3
+
+ENM|3|5|SaucerEnemy|false
+
+VER|0
+M|    ()        g|2|7
+M|    DG        g|2|6
+M|     g  ()    g|2|4
+M|     g  DD   ()|2|3
+M|     g       DG|2|2
+VND
+
+VER|1
+ENM|10|9|CeilingCannon
+SBT|15|9|Block
+BTP|6^4|15^2~6^8
+M|.|2|6
+M|D|2|5
+M|.|10|2
+M|D|10|1
+VND
+
+RPT|||||CityDay|||||CityNight
