@@ -1,0 +1,33 @@
+IMP|City
+
+M|xi     g        g      i
+M|xi     g        g      i
+M|xi     g        g      i
+M|xi     g        g      i
+M|-,     g        g      i
+M|x/-)   g   (-)  g      i
+M|xiDD   g   DDD  g      i
+M|xi     g        g      i
+M|xi     g        g      i
+M|xi     G        g      i
+M|xi     g  %     g      i
+M|xi     g  D  () g      i
+M|xi     g     DD g      i
+M|xi     g        g      i
+
+LDR|15|0|3
+LDR|13|9|5
+
+ENM|2|9|CyanEnemy
+
+VER|0
+M|.|10|3
+M|.|7|5
+VND
+
+VER|1
+SPP|10^3|7^5
+M|SSS|11|7
+VND
+
+RPT|||||CityDay|||||CityNight
