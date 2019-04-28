@@ -452,9 +452,10 @@ public abstract class RoomLoader {
         final int size = Chartil.size(value);
         int x = seg.initInt(1);
         final int _y = seg.getInt(2, -1), y = (_y < 0) ? row : _y;
+        final boolean fg = seg.getBoolean(3, false);
         for (int i = 0; i < size; i++) {
             try {
-                i = cel(value, i, tm, x, y);
+                i = cel(value, i, tm, x, y, fg);
             } catch (final Exception e) {
                 throw new IllegalStateException("Error setting tiles: " + seg, e);
             }
@@ -465,7 +466,7 @@ public abstract class RoomLoader {
         }
     }
     
-    private final static int cel(final String value, int i, final TileMap tm, final int x, final int row) {
+    private final static int cel(final String value, int i, final TileMap tm, final int x, final int row, final boolean fg) {
         if (value != null) {
             final char c = value.charAt(i);
             final char key;
@@ -488,14 +489,23 @@ public abstract class RoomLoader {
                     for (final Tile[] tileRow : pattern) {
                         int patX = x;
                         for (final Tile patTile : tileRow) {
-                            tm.setTileOptional(patX, patRow, patTile);
+                            if (fg) {
+                                tm.setForeground(patX, patRow, DynamicTileMap.getRawForeground(patTile), patTile.getBehavior());
+                            } else {
+                                tm.setTileOptional(patX, patRow, patTile);
+                            }
                             patX++;
                         }
                         patRow--;
                     }
                 }
             } else {
-                tm.setTile(x, row, tiles.get(keyW));
+                final Tile tile = tiles.get(keyW);
+                if (fg) {
+                    tm.setForeground(x, row, DynamicTileMap.getRawForeground(tile), tile.getBehavior());
+                } else {
+                    tm.setTile(x, row, tile);
+                }
             }
         }
         return i;
@@ -503,7 +513,7 @@ public abstract class RoomLoader {
     
     private final static void cel(final Segment seg, final TileMap tm) {
         final String value = seg.getValue(2);
-        final int i = cel(value, 0, tm, seg.intValue(0), seg.intValue(1));
+        final int i = cel(value, 0, tm, seg.intValue(0), seg.intValue(1), false);
         if (i != Chartil.size(value) - 1) {
             throw new IllegalStateException("Could not process cell " + value);
         }
