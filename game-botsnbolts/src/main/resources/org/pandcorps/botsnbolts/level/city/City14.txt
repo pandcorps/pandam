@@ -1,0 +1,53 @@
+IMP|City
+
+M|xi /----------\(---\   i
+M|xi iDDDGDDDDDDiDGDDi   i
+M|xi     g      i g  i   i
+M|xi     g      i g (,   i
+M|xi     g      i g DD   i
+M|xi     g      i g      i
+M|xi     g      i g       
+M|xi     g      i g       
+M|xi     g      i g       
+M|xi     g      i g       
+M|xi     g      i g       
+M|x`----------) `--------\
+M|-\DDDDDGDDDDD DDGDDDDDDi
+M|xi     g        g      i
+
+LDR|13|0|3
+LDR|2|11|3
+
+ENM|18|12|SaucerEnemy
+
+VER|0
+M|xi `---------)|0|11
+M|xi DDDDGDDDDDD|0|10
+M|x`---------)  |0|8
+M|-\DDDDDGDDDD  i g (---)`|0|7
+M|xi     g      i g DDDDD |0|6
+M|xi  (--------)|0|5
+M|xi  DDDGDDDDDD|0|4
+BRR|5|3|Cyan
+BRR|10|6|Cyan
+BRR|5|9|Cyan
+DOR|23|3|Cyan
+VND
+
+VER|1
+M|xi i          |0|11
+M|xi i          |0|10
+M|xi i          |0|9
+M|xi `--------\ |0|8
+M|xi DDDDGDDDDi i g /----,|0|7
+M|x`--------) i i g ixxxxx|0|6
+M|-\DDDDDGDDD i.i g ixxxxx|0|5
+M|xi (--------,Di g `-----|0|4
+M|xi DDDDGDDDDD i g DDDDD |0|3
+BRR|4|3|Small
+BRR|9|5|Small
+BRR|4|7|Small
+DOR|23|3|Small
+VND
+
+RPT|||||CityDay|||||CityNight
