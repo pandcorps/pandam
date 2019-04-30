@@ -1,0 +1,28 @@
+IMP|City
+
+M|                        
+M|                        
+M|                        
+M|                        
+M|                        
+M|                        
+M|                        
+M|                        
+M|                        
+M|                        
+M|                        
+M|-\ /---------------\   /
+M|xiDixxxxxxxxxxxxxxxiDDDi
+M|xi `---------------,   i
+
+LDR|2|0|3
+
+ENM|21|11|SaucerEnemy
+
+VER|1
+EXT|25|4|RocketSpawner|1|75
+ENM|-5|5|GuardedEnemy
+ENM|28|6|GuardedEnemy
+VND
+
+RPT|0|0|24|1|CityDay|||||CityNight
