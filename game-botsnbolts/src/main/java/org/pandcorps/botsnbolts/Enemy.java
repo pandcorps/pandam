@@ -1259,12 +1259,22 @@ public abstract class Enemy extends Chr implements CollisionListener {
         protected ShieldedEnemy(final Segment seg) {
             super(PROP_OFF_X, PROP_H, seg, PROP_HEALTH);
             getPosition().addY(2);
-            hv = 0;
+            final Boolean mirror = seg.toBoolean(3);
+            if (mirror == null) {
+                hv = 0;
+            } else {
+                setMirror(mirror.booleanValue());
+                initVelocity();
+            }
             setView(BotsnBoltsGame.shieldedEnemy);
         }
         
         private final void initDirection() {
             turnTowardPlayer();
+            initVelocity();
+        }
+        
+        private final void initVelocity() {
             hv = isMirror() ? -SPEED : SPEED;
         }
 
@@ -1496,7 +1506,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         protected WalkerEnemy(final Segment seg) {
             super(PROP_OFF_X, CRAWL_H, seg, PROP_HEALTH);
             setView(getImage(0));
-            setMirror(true);
+            setMirror(seg.getBoolean(3, true));
         }
         
         @Override
