@@ -883,20 +883,14 @@ public abstract class RoomLoader {
         }
         tm.getLayer().addActor(waterTexture);
         waterTexture.setSize(w * BotsnBoltsGame.DIM, waterLevel);
+        final Tile tile5 = getWaterTile(imgMap, tm, 5);
+        final Tile tile6 = getWaterTile(imgMap, tm, 6);
         for (int j = 0; j <= max; j++) {
-            final int imgRow;
-            if (j == waterTile) {
-                imgRow = 5;
-            } else if (j == (waterTile - 1)) {
-                imgRow = 6;
-            } else {
-                imgRow = 7;
-            }
             final Tile tile;
-            if (imgRow < 7) {
-                final TileMapImage tmp = imgMap[imgRow][0];
-                final TileAnimator animator = getAnimator(tmp, false);
-                tile = (animator == null) ? tm.getTile(null, tmp, Tile.BEHAVIOR_OPEN) : animator.tile;
+            if (j == waterTile) {
+                tile = tile5;
+            } else if (j == (waterTile - 1)) {
+                tile = tile6;
             } else {
                 tile = replaceWholeTile ? tm.getTile(null, null, BotsnBoltsGame.TILE_WATER) : null;
             }
@@ -904,13 +898,23 @@ public abstract class RoomLoader {
                 final int index = tm.getIndex(i, j);
                 if (isWaterAllowed(index, anyOpen) && ((j < waterTile) || isOpenAbove(i, j))) {
                     if (tile == null) {
-                        tm.setBackground(index, null, BotsnBoltsGame.TILE_WATER);
+                        if ((i > 1) && (i < (tm.getWidth() - 2)) && Chr.isSolidTile(i, j + 1)) {
+                            tm.setTile(index, tile6);
+                        } else {
+                            tm.setBackground(index, null, BotsnBoltsGame.TILE_WATER);
+                        }
                     } else {
                         tm.setTile(index, tile);
                     }
                 }
             }
         }
+    }
+    
+    private final static Tile getWaterTile(final TileMapImage[][] imgMap, final TileMap tm, final int imgRow) {
+        final TileMapImage tmp = imgMap[imgRow][0];
+        final TileAnimator animator = getAnimator(tmp, false);
+        return (animator == null) ? tm.getTile(null, tmp, Tile.BEHAVIOR_OPEN) : animator.tile;
     }
     
     private final static boolean isWaterAllowed(final int index, final boolean anyOpen) {
