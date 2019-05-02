@@ -1,0 +1,36 @@
+IMP|City
+
+M|x/----\          /--, ix
+M|xiDDDDi          iDDD ix
+M|xi    i          i    ix
+M|-,    i          i    ix
+M| D    i          i    ix
+M|      i          i    ix
+M|      i          i    ix
+M|      `----------,    ix
+M|--\   DGDDDDDDDDGD    ix
+M|x/,    g        g     ix
+M|xiD    g        g     ix
+M|xi     g        g     ix
+M|                        
+M|                        
+
+VDR|0|6
+LDR|21|2|12
+
+ENM|2|12|SaucerEnemy|false
+
+VER|0
+M|x`--------------------,x|0|1
+M|xxxxxxxxxxxxxxxxxxxxxxxx|0|0
+VND
+
+VER|1
+M|xi     g        g     ix|0|1
+M|xi     g        g     ix|0|0
+VND
+
+RPT|0|0|6|14|CityDay|||||CityNight
+RPT|6|0|12|6|CityDay|||||CityNight
+RPT|18|0|6|14|CityDay|||||CityNight
+RPT|7|7|10|7|CityForeground
