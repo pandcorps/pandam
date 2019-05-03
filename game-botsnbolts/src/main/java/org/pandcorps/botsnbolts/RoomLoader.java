@@ -222,7 +222,7 @@ public abstract class RoomLoader {
             } else if ("SHP".equals(name)) { // Shootable Block Puzzle
                 shp(seg);
             } else if ("TMP".equals(name)) { // Timed Block Puzzle
-                tmp(in);
+                tmp(seg, in);
             } else if ("HDP".equals(name)) { // Hidden Block Puzzle
                 hdp(seg);
             } else if ("SPP".equals(name)) { // Spike Block Puzzle
@@ -712,13 +712,13 @@ public abstract class RoomLoader {
         return indices;
     }
     
-    private final static void tmp(final SegmentStream in) throws Exception {
+    private final static void tmp(final Segment tmp, final SegmentStream in) throws Exception {
         final List<int[]> steps = new ArrayList<int[]>();
         Segment seg;
         while ((seg = in.readIf("TMS")) != null) {
             steps.add(getTileIndexArray(seg, 0));
         }
-        blockPuzzles.add(new TimedBlockPuzzle(steps));
+        blockPuzzles.add(new TimedBlockPuzzle(tmp, steps));
     }
     
     private final static void hdp(final Segment seg) {
@@ -1092,6 +1092,12 @@ public abstract class RoomLoader {
         conveyorBelt = false;
         waterLevel = 0;
         waterTexture = null;
+    }
+    
+    protected final static void activate() {
+        for (final BlockPuzzle blockPuzzle : blockPuzzles) {
+            blockPuzzle.activate();
+        }
     }
     
     protected final static void loadRooms() {

@@ -28,6 +28,7 @@ import org.pandcorps.botsnbolts.Enemy.*;
 import org.pandcorps.botsnbolts.Player.*;
 import org.pandcorps.botsnbolts.ShootableDoor.*;
 import org.pandcorps.core.*;
+import org.pandcorps.core.seg.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.impl.*;
@@ -46,6 +47,10 @@ public abstract class BlockPuzzle {
     }
     
     protected abstract void init();
+    
+    //@OverrideMe
+    protected void activate() {
+    }
     
     protected abstract void clear();
     
@@ -107,15 +112,27 @@ public abstract class BlockPuzzle {
     protected final static class TimedBlockPuzzle extends BlockPuzzle {
         private final List<int[]> steps;
         private int currentStepIndex = 0;
+        private boolean waiting = false;
         
-        protected TimedBlockPuzzle(final List<int[]> steps) {
+        protected TimedBlockPuzzle(final Segment tmp, final List<int[]> steps) {
             super(BotsnBoltsGame.blockTimed);
+            waiting = tmp.getBoolean(0, false);
             this.steps = steps;
         }
         
         @Override
         protected final void init() {
-            schedule();
+            if (!waiting) {
+                schedule();
+            }
+        }
+        
+        @Override
+        protected final void activate() {
+            if (waiting) {
+                waiting = false;
+                schedule();
+            }
         }
         
         @Override

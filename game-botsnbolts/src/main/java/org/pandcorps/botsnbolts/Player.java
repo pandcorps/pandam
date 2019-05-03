@@ -903,6 +903,9 @@ public final class Player extends Chr implements Warpable {
                     BlockPuzzle.FirePressureBlock.activate(index);
                 }
                 break;
+            case BotsnBoltsGame.TILE_ACTIVATE :
+                RoomLoader.activate();
+                break;
         }
     }
     
