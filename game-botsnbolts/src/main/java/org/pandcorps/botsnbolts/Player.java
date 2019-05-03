@@ -873,7 +873,9 @@ public final class Player extends Chr implements Warpable {
                 defeat();
                 break;
             case BotsnBoltsGame.TILE_HURT :
-                hurt(BlockPuzzle.DAMAGE_SPIKE);
+                if (!isCollisionStandingOnTile(index)) {
+                    hurt(BlockPuzzle.DAMAGE_SPIKE);
+                }
                 break;
             case BotsnBoltsGame.TILE_CRUMBLE :
                 if (isCollisionStandingOnTile(index)) {
