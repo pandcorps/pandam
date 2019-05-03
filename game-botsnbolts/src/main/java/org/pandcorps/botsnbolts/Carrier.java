@@ -77,10 +77,20 @@ public final class Carrier extends Panctor implements StepListener, CollisionLis
         final Player player = (Player) collider;
         if (player.v > 0) {
             return;
-        } else if (player.getPosition().getY() < (getPosition().getY() - Player.MAX_V)) {
+        }
+        final Panple ppos = player.getPosition(), pos = getPosition();
+        if (ppos.getY() < (pos.getY() - Player.MAX_V)) {
             return;
         } else if (player.isGrounded()) {
             return;
+        } else if (player.jumpStartedOnCarrier) {
+            final float px = ppos.getX(), x = pos.getX();
+            final float phv = player.chv;
+            if ((phv < 0) && (px < (x - 6))) {
+                return;
+            } else if ((phv > 0) && (px > (x + 6))) {
+                return;
+            }
         }
         player.startCarried(this);
     }

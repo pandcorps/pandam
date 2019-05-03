@@ -96,6 +96,7 @@ public final class Player extends Chr implements Warpable {
     private long lastLift = NULL_CLOCK;
     private long lastBall = NULL_CLOCK;
     private int wrappedJumps = 0;
+    protected boolean jumpStartedOnCarrier = false;
     private boolean prevUnderwater = false;
     private boolean sanded = false;
     private int queuedX = 0;
@@ -325,6 +326,11 @@ public final class Player extends Chr implements Warpable {
     }
     
     private final void startJump() {
+        startJump(false);
+    }
+    
+    private final void startJump(final boolean jumpStartedOnCarrier) {
+        this.jumpStartedOnCarrier = jumpStartedOnCarrier;
         v = VEL_JUMP;
         if (sanded) {
             v -= 2;
@@ -984,6 +990,7 @@ public final class Player extends Chr implements Warpable {
         movedDuringJump = false;
         this.stateHandler.onGrounded(this);
         grapplingAllowed = true;
+        jumpStartedOnCarrier = false;
     }
     
     private final void onGroundedNormal() {
@@ -1782,7 +1789,7 @@ public final class Player extends Chr implements Warpable {
     protected final static StateHandler CARRIED_HANDLER = new StateHandler() {
         @Override
         protected final void onJump(final Player player) {
-            player.startJump();
+            player.startJump(true);
             player.endCarried();
         }
         
