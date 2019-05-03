@@ -1,0 +1,39 @@
+IMP|City
+
+M|xi (------------------\x
+M|xi DDDDGDDDDDDDDGDDDDDix
+M|-,     g        g     ix
+M|x/-----------------)  ix
+M|xiDDDDDGDDDDDDDDGDDD  ix
+M|xi     g        g     ix
+M|xi    /----\    g /---,x
+M|xi    ixxxxi    g ixxxxx
+M|xi  (-,(--)`------,(--\x
+M|xi  DDDGDDDDDDDDGDDDDDix
+M|xi     g        g     ix
+M|x`------\      /----\ ix
+M|xxxxxxxx`------,xxxxi ix
+M|xxxxxxxxxxxxxxxxxxxxi ix
+
+LDR|21|0|3
+LDR|2|11|3
+
+ENM|8|4|SaucerEnemy|false
+ENM|19|9|SaucerEnemy
+ENM|2|12|SaucerEnemy|false
+
+VBR|18|3
+VBR|8|8
+VBR|13|11
+
+VER|1
+ENM|16|3|SlideEnemy
+ENM|11|2|GearEnemy|false
+ENM|5|3|SlideEnemy
+ENM|10|8|SlideEnemy
+ENM|15|6|GearEnemy
+ENM|20|8|SlideEnemy
+ENM|12|11|SlideEnemy
+VND
+
+RPT|||||CityDay|||||CityNight
