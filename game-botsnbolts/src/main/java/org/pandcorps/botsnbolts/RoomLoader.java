@@ -866,10 +866,14 @@ public abstract class RoomLoader {
     }
     
     private final static void wtr(final Segment seg) throws Exception {
-        setWaterTile(seg.intValue(0), false, false);
+        setWaterTile(seg.intValue(0), false, false, seg.initInt(1), seg.initInt(2), seg.getInt(3, -1));
     }
     
     protected final static void setWaterTile(final int waterTile, final boolean anyOpen, final boolean replaceWholeTile) {
+        setWaterTile(waterTile, anyOpen, replaceWholeTile, 0, 0, -1);
+    }
+    
+    protected final static void setWaterTile(final int waterTile, final boolean anyOpen, final boolean replaceWholeTile, final int waterX, final int waterY, final int waterWidth) {
         waterLevel = waterTile * BotsnBoltsGame.DIM;
         if (waterTile <= 0) {
             return;
@@ -882,7 +886,9 @@ public abstract class RoomLoader {
             waterTexture.getPosition().setZ(BotsnBoltsGame.DEPTH_TEXTURE);
         }
         tm.getLayer().addActor(waterTexture);
-        waterTexture.setSize(w * BotsnBoltsGame.DIM, waterLevel);
+        final int yd = waterY * BotsnBoltsGame.DIM;
+        waterTexture.getPosition().set(waterX * BotsnBoltsGame.DIM, yd);
+        waterTexture.setSize(((waterWidth < 0) ? w : waterWidth) * BotsnBoltsGame.DIM, waterLevel - yd);
         final Tile tile5 = getWaterTile(imgMap, tm, 5);
         final Tile tile6 = getWaterTile(imgMap, tm, 6);
         for (int j = 0; j <= max; j++) {
