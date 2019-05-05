@@ -881,14 +881,16 @@ public abstract class RoomLoader {
         final TileMap tm = BotsnBoltsGame.tm;
         final int w = tm.getWidth(), max = Math.min(waterTile, tm.getHeight() - 1);
         final TileMapImage[][] imgMap = BotsnBoltsGame.imgMap;
-        if (waterTexture == null) {
-            waterTexture = new Pantexture(getTextureImage("Water"));
-            waterTexture.getPosition().setZ(BotsnBoltsGame.DEPTH_TEXTURE);
+        if (waterX != -1) {
+            if (waterTexture == null) {
+                waterTexture = new Pantexture(getTextureImage("Water"));
+                waterTexture.getPosition().setZ(BotsnBoltsGame.DEPTH_TEXTURE);
+            }
+            tm.getLayer().addActor(waterTexture);
+            final int yd = waterY * BotsnBoltsGame.DIM;
+            waterTexture.getPosition().set(waterX * BotsnBoltsGame.DIM, yd);
+            waterTexture.setSize(((waterWidth < 0) ? w : waterWidth) * BotsnBoltsGame.DIM, waterLevel - yd);
         }
-        tm.getLayer().addActor(waterTexture);
-        final int yd = waterY * BotsnBoltsGame.DIM;
-        waterTexture.getPosition().set(waterX * BotsnBoltsGame.DIM, yd);
-        waterTexture.setSize(((waterWidth < 0) ? w : waterWidth) * BotsnBoltsGame.DIM, waterLevel - yd);
         final Tile tile5 = getWaterTile(imgMap, tm, 5);
         final Tile tile6 = getWaterTile(imgMap, tm, 6);
         for (int j = 0; j <= max; j++) {
