@@ -1,0 +1,32 @@
+IMP|City
+
+M|x/--------------------\x
+M|xiDDDDDGDDDDDDDDGDDDDDix
+M|xi     g        g     ix
+M|xi     g        g     ix
+M|xi     g        g     ix
+M|xi     g        g     ix
+M|-,     g        g/-\  ix
+M| D     g        gixi  ix
+M|       g        gixi  ix
+M|       g        gixi  ix
+M|       g        gixi  ix
+M|-----------------,xi  ix
+M|xxxxxxxxxxxxxxxxxxxi  ix
+M|xxxxxxxxxxxxxxxxxxxi  ix
+
+VDR|0|3
+
+ENM|3|11|SaucerEnemy|false
+ENM|18|8|CyanEnemy
+
+VER|0
+DSK|15|3
+VND
+
+VER|1
+ENM|16|4|WallCannon
+ENM|16|3|WallCannon
+VND
+
+RPT|||||CityDay|||||CityNight
