@@ -1,0 +1,32 @@
+IMP|City
+
+M|x/-----------------,  ix
+M|xiDDDDDGDDDDDDDDGDDD  ix
+M|xi     g        g     ix
+M|xi     g        g     ix
+M|xi  (-----------------,x
+M|xi  DDDGDDDDDDDDGDDDDD/-
+M|xi     g        g     ix
+M|x`-----------------)  ix
+M|-\DDDDDGDDDDDDDDGDDD  ix
+M|xi     g        g     ix
+M|xi     g        g     ix
+M|xi  /-----------------,x
+M|xi  ixxxxxxxxxxxxxxxxxxx
+M|xi  ixxxxxxxxxxxxxxxxxxx
+
+ENM|5|10|CyanEnemy
+ENM|5|5|SaucerEnemy|false
+
+VER|0
+BRR|12|7|Cyan
+VND
+
+VER|1
+ENM|12|12|CeilingCannon
+ENM|11|8|CeilingCannon
+ENM|12|5|CeilingCannon
+BRR|12|7|Gold
+VND
+
+RPT|||||CityDay|||||CityNight
