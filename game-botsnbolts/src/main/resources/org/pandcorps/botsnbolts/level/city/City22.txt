@@ -1,0 +1,31 @@
+IMP|City
+
+M|xi  `-----------------\x
+M|xi  DDDGDDDDDDDDGDDDDDix
+M|xi     g        g     ix
+M|xi     g        g     ix
+M|xi     g        g     ix
+M|-,     g        g     ix
+M|x/------------) g     `-
+M|xiDDDDDGDDDDDDD g     DD
+M|xi     g        g       
+M|xi     g        g       
+M|xi     g        g       
+M|x`----------------------
+M|xxxxxxxxxxxxxxxxxxxxxxxx
+M|xxxxxxxxxxxxxxxxxxxxxxxx
+
+DOR|23|3|Boss
+
+VBX|13|8
+
+VER|0
+BOX|2|3
+VND
+
+VER|1
+M|SSSSS|5|12
+DSK|2|3
+VND
+
+RPT|||||CityDay|||||CityNight
