@@ -47,7 +47,7 @@ public abstract class RoomLoader {
     private final static List<Panctor> actors = new ArrayList<Panctor>();
     private final static List<ShootableDoor> doors = new ArrayList<ShootableDoor>();
     protected final static List<TileAnimator> animators = new ArrayList<TileAnimator>();
-    protected final static List<StepHandler> stepHandlers = new ArrayList<StepHandler>();
+    protected final static Set<StepHandler> stepHandlers = new HashSet<StepHandler>();
     private final static Map<Character, Tile> tiles = new HashMap<Character, Tile>();
     private final static Map<Character, Tile[][]> patterns = new HashMap<Character, Tile[][]>();
     private final static Map<Character, RoomFunction> functions = new HashMap<Character, RoomFunction>();
