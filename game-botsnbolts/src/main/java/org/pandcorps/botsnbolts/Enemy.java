@@ -1110,11 +1110,26 @@ public abstract class Enemy extends Chr implements CollisionListener {
     
     protected final static class SpringEnemy extends JumpEnemy {
         private final int speed;
+        private final int vspeed;
+        private Integer firstDelay;
         
         protected SpringEnemy(final Segment seg) {
             super(PROP_OFF_X, PROP_H, seg, PROP_HEALTH);
             speed = seg.getInt(3, 1);
+            vspeed = seg.getInt(4, 8);
+            setMirror(seg.getBoolean(5, false));
+            firstDelay = seg.toInteger(6);
             endSpring();
+        }
+        
+        @Override
+        protected final int getDelay() {
+            if (firstDelay == null) {
+                return super.getDelay();
+            }
+            final int delay = firstDelay.intValue();
+            firstDelay = null;
+            return delay;
         }
         
         @Override
@@ -1123,7 +1138,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
             hv = getMirrorMultiplier() * speed;
             v = 2;
             addY();
-            v = 8;
+            v = vspeed;
             setView(BotsnBoltsGame.springEnemy[1]);
         }
         
