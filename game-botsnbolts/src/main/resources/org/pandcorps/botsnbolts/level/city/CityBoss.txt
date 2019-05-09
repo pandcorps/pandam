@@ -1,0 +1,48 @@
+IMP|City
+
+PUT|:|7^2||1
+PUT|;|7^1^true||1
+PUT|a|5^4||1
+PUT|b|6^4||1
+PUT|c|7^4||1
+PUT|d|5^3||1
+PUT|r|6^3||1
+PUT|f|7^3||1
+PUT|g|5^4^^^^true||1
+PUT|h|6^4^^^^true||1
+PUT|q|7^4^^^^true||1
+PUT|j|5^2||1
+PUT|k|6^2^true||1
+PUT|l|5^1||0
+PUT|m|6^1|4^1^true|0
+PUT|n|5^0||0
+PUT|o|6^0|4^0^true|0
+PUT|p|7^0^true||1
+
+M|xi                      
+M|xi                      
+M|xi                   nop
+M|xi                   lm;
+M|xi                   jk;
+M|xi                   ghq
+M|-,                   drf
+M|E                    abc
+M|e                    ::;
+M|e                    ::;
+M|e                    ::;
+M|------------------------
+M|xxxxxxxxxxxxxxxxxxxxxxxx
+M|xxxxxxxxxxxxxxxxxxxxxxxx
+
+DOR|0|3|Boss
+
+VER|0
+BOS|21|4|Fort
+VND
+
+VER|1
+BOS|21|4|Fort2
+VND
+
+ENM|21|7|FortCannon
+ENM|22|7|FortCannon
