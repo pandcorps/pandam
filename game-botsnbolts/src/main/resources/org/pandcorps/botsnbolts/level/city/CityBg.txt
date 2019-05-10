@@ -1,0 +1,44 @@
+IMP|City
+
+PUT|s||7^5|0
+PUT|S||7^6|0
+PUT|=||7^7|0
+
+PUT|1|5^6|3^7|0
+PUT|2|5^6|3^6|0
+PUT|3|5^6|4^6|0
+PUT|4|5^6|4^7|0
+
+PUT|5|6^6|3^7|0
+PUT|6|6^6|3^6|0
+PUT|7|6^6|4^6|0
+PUT|8|6^6|4^7|0
+
+PUT|a|6^7|3^7|0
+PUT|b|6^7|3^6|0
+PUT|c|6^7|4^6|0
+PUT|d|6^7|4^7|0
+PUT|z|6^7|3^7^^3|0
+PUT|y|6^7||0
+
+PUT|e|5^7|3^7|0
+PUT|f|5^7|3^6|0
+PUT|g|5^7|4^6|0
+PUT|h|5^7|4^7|0
+PUT|x|5^7|3^7^^3|0
+PUT|w|5^7||0
+
+M|ssssssssssssssssssssssss
+M|ssssssssssssssssssssssss
+M|SSSSSSSSSSSSSSSSSSSSSSSS
+M|                        
+M|  bzc                   
+M|  ayd    fg             
+M|  ay67   eh         bzc 
+M| 23y58   eh   23 23 ayd 
+M| 14y58  fxxg  14 14 ayd 
+M| 14y58 67wwh  14 14 ayd 
+M| 14y58 58ww67 14 14 ayd 
+M| 14y58 523w58 14 14 ayd 
+M|=14y58=514w58=14=14=ayd=
+M|=14y58=514w58=14=14=ayd=
