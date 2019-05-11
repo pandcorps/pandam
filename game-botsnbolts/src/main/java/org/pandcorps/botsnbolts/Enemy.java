@@ -1011,9 +1011,12 @@ public abstract class Enemy extends Chr implements CollisionListener {
             }
             hv = getDirection(x, targetX, -2, 2);
             updateMirror();
-            v = getDirection(pos.getY(), targetPos.getY(), -7, -3);
+            final float y = pos.getY();
+            v = getDirection(y, targetPos.getY(), -7, -3);
             addX(hv);
-            addY();
+            if ((v > 0) || (y > (RoomLoader.waterLevel + 2))) {
+                addY();
+            }
             return true;
         }
     }
