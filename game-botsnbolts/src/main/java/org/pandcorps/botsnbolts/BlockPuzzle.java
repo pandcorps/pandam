@@ -239,7 +239,7 @@ public abstract class BlockPuzzle {
 
         @Override
         public final void onCollision(final CollisionEvent event) {
-            if (onCollisionProjectile(event)) {
+            if (onCollisionProjectile(this, event, 0)) {
                 puzzle.fade();
             }
         }
@@ -251,10 +251,16 @@ public abstract class BlockPuzzle {
         actor.setView(image);
     }
     
-    private final static boolean onCollisionProjectile(final CollisionEvent event) {
+    private final static boolean onCollisionProjectile(final Panctor block, final CollisionEvent event, final int maxDistance) {
         final Collidable collider = event.getCollider();
         if (collider instanceof Projectile) {
-            ((Projectile) collider).burst();
+            final Projectile prj = (Projectile) collider;
+            if (maxDistance > 0) {
+                if (Math.abs(prj.src.getPosition().getX() - block.getPosition().getX()) > maxDistance) {
+                    return false;
+                }
+            }
+            prj.burst();
             collider.destroy();
             return true;
         }
@@ -703,17 +709,19 @@ public abstract class BlockPuzzle {
         private static Panmage image = null;
         private final TileMap tm;
         private final int tileIndex;
+        private final int maxDistance;
         
         protected BurstBlock(final int tileIndex) {
             tm = BotsnBoltsGame.tm;
             this.tileIndex = tileIndex;
             initTileActor(tm, this, tileIndex, getBlockImage());
             tm.setBehavior(tileIndex, BotsnBoltsGame.TILE_BURSTABLE);
+            maxDistance = (getPosition().getX() >= BotsnBoltsGame.GAME_W) ? 160 : 0;
         }
         
         @Override
         public final void onCollision(final CollisionEvent event) {
-            if (onCollisionProjectile(event)) {
+            if (onCollisionProjectile(this, event, maxDistance)) {
                 new BurstingBlock(tm, tileIndex);
                 destroy();
             }
