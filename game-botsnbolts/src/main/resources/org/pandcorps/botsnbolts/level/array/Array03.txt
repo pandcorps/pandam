@@ -1,0 +1,35 @@
+IMP|Array
+
+M|}i4i{===================
+M|}i7i(-----)/----------\{
+M|}i1i2222222i1222222223i{
+M|}i4i       i4        6i{
+M|}i4`---)/--,.55(----)6i{
+M|}i4DDDDDiDDEC  DDDS D6i{
+M|}i4     i  64        6i{
+M|}i4     i  64     S  6i{
+M|}i455555`--)455(-)  56i{
+M|}i4     DDDE4  DDDS  6i{
+M|}i7888888889788888  89i{
+M|}`------------------\3i{
+M|                   }i6i{
+M|                   }i6i{
+
+LDR|21|0|10
+LDR|2|6|8
+
+ENM|20|5|GliderEnemy|1|0
+ENM|21|8|GliderEnemy|-1|0
+ENM|19|11|GliderEnemy|0|-1
+ENM|12|10|WallCannon
+ENM|12|11|WallCannon
+ENM|10|6|ElectricityEnemy
+ENM|2|3|GliderEnemy|1|1
+
+RPT|2|3|20|2|Array
+RPT|2|6|6|3|Array
+RPT|9|6|13|3|Array
+RPT|4|10|7|2|Array
+RPT|12|10|10|2|Array
+
+RPT|0|0|20|2|ArrayForeground
