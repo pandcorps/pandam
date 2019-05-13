@@ -97,6 +97,7 @@ public final class Player extends Chr implements Warpable {
     private long lastBall = NULL_CLOCK;
     private int wrappedJumps = 0;
     protected boolean jumpStartedOnCarrier = false;
+    private boolean jumpAllowed = true;
     private boolean prevUnderwater = false;
     private boolean sanded = false;
     private int queuedX = 0;
@@ -312,7 +313,7 @@ public final class Player extends Chr implements Warpable {
     }
     
     private final void jump() {
-        if (isFree()) {
+        if (jumpAllowed && isFree()) {
             stateHandler.onJump(this);
         }
     }
@@ -342,6 +343,10 @@ public final class Player extends Chr implements Warpable {
         if ((v > 0) && (Pangine.getEngine().getClock() > (lastLift + 1))) {
             v = 0;
         }
+    }
+    
+    protected final void setJumpAllowed(final boolean jumpAllowed) {
+        this.jumpAllowed = jumpAllowed;
     }
     
     private final void shoot() {

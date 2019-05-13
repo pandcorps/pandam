@@ -23,11 +23,13 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.botsnbolts;
 
 import org.pandcorps.botsnbolts.Enemy.*;
+import org.pandcorps.botsnbolts.Player.*;
 import org.pandcorps.core.*;
 import org.pandcorps.core.seg.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.impl.*;
+import org.pandcorps.pandax.tile.*;
 
 // Actors designed to be placed in levels; could be spawners, controllers, or just decorations
 public abstract class Extra extends Panctor {
@@ -135,6 +137,101 @@ public abstract class Extra extends Panctor {
         @Override
         protected final Enemy newEnemy() {
             return new Rocket(x, (max == 1) ? y : (y + Mathtil.randi(0, max - 1)));
+        }
+    }
+    
+    protected final static class LaunchCapsule extends Extra implements StepListener {
+        private static Panmage img = null;
+        private final static Panmage[] baseImgs = new Panmage[3];
+        private final TileMap tm;
+        private Player occupant = null;
+        private int zLeft;
+        private int zRight;
+        
+        protected LaunchCapsule(final Segment seg) {
+            super(seg, BotsnBoltsGame.DEPTH_BG);
+            tm = BotsnBoltsGame.tm;
+            init();
+            final int x = Enemy.getX(seg), y = Enemy.getY(seg);
+            for (int i = 0; i < 2; i++) {
+                final int xi = x + i;
+                for (int j = -1; j < 3; j += 3) {
+                    tm.setBehavior(xi, y + j, Tile.BEHAVIOR_SOLID);
+                }
+            }
+            setView(Pangine.getEngine().createEmptyImage(Pantil.vmid(), FinPanple.ORIGIN, FinPanple.ORIGIN, new FinPanple2(32, 32)));
+        }
+        
+        @Override
+        public final void onStep(final StepEvent event) {
+            final Player player = PlayerContext.getPlayer(BotsnBoltsGame.pc);
+            if (!Panctor.isDestroyed(player) && Pangine.getEngine().isCollision(player, this)) {
+                if (occupant == null) {
+                    occupant = player;
+                    onEntrance();
+                }
+            } else if (occupant != null) {
+                onExit();
+                occupant = null;
+            }
+            if (occupant != null) {
+                onOccupied();
+            }
+        }
+        
+        private final void onEntrance() {
+            final float center = getPosition().getX() + 16;
+            if (occupant.getPosition().getX() < center) {
+                zRight = BotsnBoltsGame.DEPTH_OVERLAY;
+            } else {
+                zLeft = BotsnBoltsGame.DEPTH_OVERLAY;
+            }
+        }
+        
+        private final void onOccupied() {
+            if (zLeft == BotsnBoltsGame.DEPTH_OVERLAY) {
+                occupant.setJumpAllowed(occupant.getPosition().getX() >= (getPosition().getX() + 28));
+            } else {
+                occupant.setJumpAllowed(occupant.getPosition().getX() < (getPosition().getX() + 4));
+            }
+        }
+        
+        private final void onExit() {
+            occupant.setJumpAllowed(true);
+            init();
+        }
+        
+        private final void init() {
+            zLeft = BotsnBoltsGame.DEPTH_FG;
+            zRight = BotsnBoltsGame.DEPTH_FG;
+        }
+        
+        @Override
+        protected final void renderView(final Panderer renderer) {
+            final Panlayer layer = getLayer();
+            final Panple pos = getPosition();
+            final float x = pos.getX(), y = pos.getY();
+            renderer.render(layer, BotsnBoltsGame.black, x, y, BotsnBoltsGame.DEPTH_BG, 0, 0, 32, 32, 0, false, false);
+            img = getImage();
+            renderer.render(layer, img, x, y, zLeft, 0, 0, 16, 32, 0, false, false);
+            renderer.render(layer, img, x + 16, y, zRight, 16, 0, 16, 32, 0, false, false);
+            final int frameDir = 6;
+            final Panmage baseImg = getBaseImage(((int) (Pangine.getEngine().getClock() % (frameDir * 3))) / frameDir);
+            renderer.render(layer, baseImg, x, y - 16, BotsnBoltsGame.DEPTH_FG, 0, 16, 32, 16, 0, false, false);
+            renderer.render(layer, baseImg, x, y + 32, BotsnBoltsGame.DEPTH_FG, 0, 0, 32, 16, 0, false, false);
+        }
+        
+        private final static Panmage getImage() {
+            return (img = BlockPuzzle.getImage(img, "LaunchCapsule", null, null, null));
+        }
+        
+        private final static Panmage getBaseImage(final int i) {
+            Panmage img = baseImgs[i];
+            if (img == null) {
+                img = BlockPuzzle.getImage(null, "LaunchCapsuleBase" + (i + 1), null, null, null);
+                baseImgs[i] = img;
+            }
+            return img;
         }
     }
     
