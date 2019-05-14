@@ -98,6 +98,8 @@ public final class Player extends Chr implements Warpable {
     private int wrappedJumps = 0;
     protected boolean jumpStartedOnCarrier = false;
     private boolean jumpAllowed = true;
+    private float minX = Integer.MIN_VALUE;
+    private float maxX = Integer.MAX_VALUE;
     private boolean prevUnderwater = false;
     private boolean sanded = false;
     private int queuedX = 0;
@@ -953,9 +955,24 @@ public final class Player extends Chr implements Warpable {
         return thv;
     }
     
+    protected final void setMinX(final float minX) {
+        this.minX = minX;
+    }
+    
+    protected final void setMaxX(final float maxX) {
+        this.maxX = maxX;
+    }
+    
     @Override
     protected final void onStepEnd() {
         hv = 0;
+        final Panple pos = getPosition();
+        final float x = pos.getX();
+        if (x < minX) {
+            pos.setX(minX);
+        } else if (x > maxX) {
+            pos.setX(maxX);
+        }
         updateWrapper();
         updateFollowers();
     }
