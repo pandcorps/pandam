@@ -233,6 +233,16 @@ public abstract class Pangine {
 
 		return anim;
 	}
+	
+	public Panimation createReverseAnimation(final String id, final Panimation src) {
+	    final Panframe[] srcFrames = src.getFrames();
+	    final int size = srcFrames.length;
+	    final Panframe[] frames = new Panframe[size];
+	    for (int i = 0; i < size; i++) {
+	        frames[i] = srcFrames[size - i - 1];
+	    }
+	    return createAnimation(id, frames);
+	}
 
 	public final Pantype createType(
 		final String id,
