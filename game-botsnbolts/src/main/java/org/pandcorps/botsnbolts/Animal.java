@@ -127,6 +127,10 @@ public class Animal {
             setVisible(true);
         }
         
+        @Override
+        public final void onUnwarped() {
+        }
+        
         private final Panmage getActive() {
             if (imgActive != null) {
                 return imgActive;

@@ -145,6 +145,8 @@ public abstract class Extra extends Panctor {
         private final static Panmage[] baseImgs = new Panmage[3];
         private final TileMap tm;
         private final boolean active;
+        private final int dstX;
+        private final int dstY;
         private Player occupant = null;
         private int zLeft;
         private int zRight;
@@ -154,6 +156,8 @@ public abstract class Extra extends Panctor {
             super(seg, BotsnBoltsGame.DEPTH_BG);
             tm = BotsnBoltsGame.tm;
             active = true; //TODO
+            dstX = seg.intValue(3);
+            dstY = seg.intValue(4);
             init();
             final int x = Enemy.getX(seg), y = Enemy.getY(seg);
             for (int i = 0; i < 2; i++) {
@@ -215,6 +219,8 @@ public abstract class Extra extends Panctor {
         
         private final void launch() {
             if (!launched) {
+                RoomLoader.startX = dstX;
+                RoomLoader.startY = dstY;
                 launched = true;
                 occupant.active = false;
                 new Dematerialize(occupant);
@@ -229,6 +235,7 @@ public abstract class Extra extends Panctor {
         }
         
         private final void onExit() {
+            resetOccupant();
             init();
         }
         
@@ -274,5 +281,7 @@ public abstract class Extra extends Panctor {
     
     protected static interface Warpable extends SpecPanctor {
         public void onMaterialized();
+        
+        public void onUnwarped();
     }
 }

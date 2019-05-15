@@ -153,6 +153,10 @@ public final class Player extends Chr implements Warpable {
         setView(pi.basicSet.stand);
         destroyTimgPrev();
         initAvailableRescues();
+        if (pc.srcPlayer != null) {
+            health = pc.srcPlayer.health;
+            pc.srcPlayer = null;
+        }
     }
     
     private final static Panput[] getInputArray(final Panput key, final Panput touchButton) {
@@ -464,6 +468,12 @@ public final class Player extends Chr implements Warpable {
     @Override
     public final void onMaterialized() {
         stateHandler = NORMAL_HANDLER;
+    }
+    
+    @Override
+    public final void onUnwarped() {
+        pc.srcPlayer = this;
+        Panscreen.set(new BotsnBoltsGame.BotsnBoltsScreen());
     }
     
     protected final boolean hurt(final int damage) {
@@ -2177,6 +2187,7 @@ public final class Player extends Chr implements Warpable {
         protected ControlScheme ctrl;
         protected final PlayerImages pi;
         protected Player player = null;
+        private Player srcPlayer = null;
         
         protected PlayerContext(final Profile prf, final PlayerImages pi) {
             this.prf = prf;
@@ -2639,6 +2650,7 @@ public final class Player extends Chr implements Warpable {
             final Panple pos = getPosition();
             pos.addY(16);
             if (pos.getY() >= BotsnBoltsGame.GAME_H) {
+                actor.onUnwarped();
                 destroy();
             }
         }
