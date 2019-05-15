@@ -132,6 +132,7 @@ public final class Player extends Chr implements Warpable {
     private float safeY = NULL_COORD;
     private boolean safeMirror = false;
     private List<Follower> followers = null;
+    protected boolean active = true;
     
     static {
         final Panple tmp = new ImplPanple(VEL_PROJECTILE, 0, 0);
@@ -284,7 +285,7 @@ public final class Player extends Chr implements Warpable {
     }
     
     private final boolean isFree() {
-        final boolean free = !(isHurt() || isFrozen() || Boss.dropping || RoomChanger.isChanging() || RoomLoader.isBossDoorClosing() || Pangine.getEngine().isPaused());
+        final boolean free = active && !(isHurt() || isFrozen() || Boss.dropping || RoomChanger.isChanging() || RoomLoader.isBossDoorClosing() || Pangine.getEngine().isPaused());
         if (free) {
             onFree();
         }
@@ -708,7 +709,9 @@ public final class Player extends Chr implements Warpable {
     
     @Override
     protected final boolean onStepCustom() {
-        if (isInvincible(false)) {
+        if (!active) {
+            return false;
+        } else if (isInvincible(false)) {
             setVisible(Pangine.getEngine().isOn(4));
         } else {
             setVisible(true);
@@ -955,8 +958,16 @@ public final class Player extends Chr implements Warpable {
         return thv;
     }
     
+    protected final float getMinX() {
+        return minX;
+    }
+    
     protected final void setMinX(final float minX) {
         this.minX = minX;
+    }
+    
+    protected final float getMaxX() {
+        return maxX;
     }
     
     protected final void setMaxX(final float maxX) {
@@ -2203,6 +2214,7 @@ public final class Player extends Chr implements Warpable {
         private final Panframe[] ball;
         protected final Panmage warp;
         protected final Panimation materialize;
+        protected final Panimation dematerialize;
         protected final Panimation bomb;
         protected final Panmage link;
         protected final Panimation batterySmall;
@@ -2252,6 +2264,7 @@ public final class Player extends Chr implements Warpable {
             this.ball = ball;
             this.warp = warp;
             this.materialize = materialize;
+            dematerialize = Pangine.getEngine().createReverseAnimation(materialize.getId() + ".reverse", materialize);
             this.bomb = bomb;
             this.link = link;
             this.batterySmall = batterySmall;
@@ -2567,7 +2580,7 @@ public final class Player extends Chr implements Warpable {
         }
     }
     
-    protected final static class Warp extends Panctor implements StepListener {
+    protected static class Warp extends Panctor implements StepListener {
         protected final Warpable actor;
         private final PlayerImages pi;
         
@@ -2599,7 +2612,7 @@ public final class Player extends Chr implements Warpable {
         }
 
         @Override
-        public final void onStep(final StepEvent event) {
+        public void onStep(final StepEvent event) {
             final Panple pos = getPosition();
             pos.addY(-16);
             final float py = actor.getPosition().getY();
@@ -2615,7 +2628,23 @@ public final class Player extends Chr implements Warpable {
         }
     }
     
-    protected final static class Materialize extends Panctor implements AnimationEndListener {
+    protected static class Unwarp extends Warp {
+        protected Unwarp(final Warpable actor, final PlayerImages pi) {
+            super(actor, pi);
+            getPosition().set(actor.getPosition());
+        }
+        
+        @Override
+        public void onStep(final StepEvent event) {
+            final Panple pos = getPosition();
+            pos.addY(16);
+            if (pos.getY() >= BotsnBoltsGame.GAME_H) {
+                destroy();
+            }
+        }
+    }
+    
+    protected static class Materialize extends Panctor implements AnimationEndListener {
         protected final Warpable actor;
         
         protected Materialize(final Warpable actor, final Panimation anm) {
@@ -2630,8 +2659,24 @@ public final class Player extends Chr implements Warpable {
             finish();
         }
         
-        protected final void finish() {
+        protected void finish() {
             actor.onMaterialized();
+            destroy();
+        }
+    }
+    
+    protected final static class Dematerialize extends Materialize {
+        private final Player player;
+        
+        protected Dematerialize(final Player actor) {
+            super(actor, actor.pi.dematerialize);
+            actor.setVisible(false);
+            this.player = actor;
+        }
+        
+        @Override
+        protected final void finish() {
+            new Unwarp(player, player.pi);
             destroy();
         }
     }

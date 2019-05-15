@@ -148,6 +148,7 @@ public abstract class Extra extends Panctor {
         private Player occupant = null;
         private int zLeft;
         private int zRight;
+        private boolean launched = false;
         
         protected LaunchCapsule(final Segment seg) {
             super(seg, BotsnBoltsGame.DEPTH_BG);
@@ -196,17 +197,38 @@ public abstract class Extra extends Panctor {
         }
         
         private final void onOccupied() {
+            final float x = getPosition().getX(), px = occupant.getPosition().getX();
             if (zLeft == BotsnBoltsGame.DEPTH_OVERLAY) {
-                occupant.setJumpAllowed(occupant.getPosition().getX() >= (getPosition().getX() + 28));
+                if (px <= occupant.getMinX()) {
+                    launch();
+                } else {
+                    occupant.setJumpAllowed(px >= (x + 28));
+                }
             } else {
-                occupant.setJumpAllowed(occupant.getPosition().getX() < (getPosition().getX() + 4));
+                if (px >= occupant.getMaxX()) {
+                    launch();
+                } else {
+                    occupant.setJumpAllowed(px < (x + 4));
+                }
             }
         }
         
-        private final void onExit() {
+        private final void launch() {
+            if (!launched) {
+                launched = true;
+                occupant.active = false;
+                new Dematerialize(occupant);
+                resetOccupant();
+            }
+        }
+        
+        private final void resetOccupant() {
             occupant.setJumpAllowed(true);
             occupant.setMinX(Integer.MIN_VALUE);
             occupant.setMaxX(Integer.MAX_VALUE);
+        }
+        
+        private final void onExit() {
             init();
         }
         
