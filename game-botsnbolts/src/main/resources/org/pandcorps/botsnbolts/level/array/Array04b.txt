@@ -1,0 +1,34 @@
+IMP|Array
+
+PAN|q|9|1^7^true||5|2^7^true||5|3^7^true||5
+PAN|Q|9|1^7^true|4^7^true|5|2^7^true|4^7^true|5|3^7^true|4^7^true|5
+PAN|d|10|1^7^true||5|2^7^true||5|3^7^true||5
+
+M|===================}i6i{
+M|}/------------------,9i{
+M|}i12222222231222222223i{
+M|}i4        64        6`\
+M|}i4        64        64i
+M|}i4        64        64i
+M|}i4555(---------------)i
+M|}i4   DDDDDECDDDDDDDDE/,
+M|}i4        64        6i{
+M|}`-\88888889788888/-\9i{
+M|==}iQQQQQQQQQQQQQQi#i3i{
+M|==}iqqqqqqqqqqqqqqi#i6i{
+M|==}iddddddddddddddi#i6i{
+M|==}`--------------,#i6i{
+
+LDR|21|0|3
+LDR|21|10|4
+
+ENM|13|4|QuicksandEnemy
+ENM|8|4|QuicksandEnemy
+ENM|2|7|GliderEnemy|1|0
+ENM|6|11|GliderEnemy|0|-1
+ENM|13|8|GliderEnemy|0|1
+ENM|22|8|WallCannon
+ENM|22|9|WallCannon
+
+RPT|2|5|20|2|Array
+RPT|2|8|20|4|Array
