@@ -491,6 +491,8 @@ public abstract class Pangine {
 	public void unregister(final Pantity entity) {
 		entities.remove(entity.getId());
 	}
+	
+	private final Set<Panlayer> steppedLayers = new IdentityHashSet<Panlayer>();
 
 	protected void step() {
 		// Input might add a button and then pause; want button displayed; finish current frame
@@ -512,9 +514,21 @@ public abstract class Pangine {
 		if (room == null) {
 			return;
 		}
+		steppedLayers.clear();
 		for (Panlayer layer = room.base; layer != null; layer = layer.getAbove()) {
 			step(layer);
+			steppedLayers.add(layer);
 		}
+		final Panroom newRoom = game.getCurrentRoom(); // This step could have changed the current room; start rendering its actors right away
+		if (newRoom == null) {
+		    return;
+		}
+		for (Panlayer layer = newRoom.base; layer != null; layer = layer.getAbove()) {
+		    if (!steppedLayers.contains(layer)) {
+		        layer.applyActorChanges();
+		    }
+		}
+		steppedLayers.clear();
 	}
 	
 	private abstract static class OobEvaluator {
