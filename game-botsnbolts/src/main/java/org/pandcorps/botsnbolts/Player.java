@@ -1488,7 +1488,7 @@ public final class Player extends Chr implements Warpable {
         actorsToDestroy.add(BotsnBoltsGame.tm);
         Coltil.addIfValued(actorsToDestroy, boltDoor); // Destroy old TileMap after scrolling
         for (final Panctor actor : getLayer().getActors()) {
-            if (actor instanceof Pantexture) {
+            if ((actor instanceof Pantexture) || ((actor instanceof Extra) && ((Extra) actor).isVisibleWhileRoomChanging())) {
                 actorsToKeep.add(actor);
                 actorsToDestroy.add(actor);
             }

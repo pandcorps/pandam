@@ -30,6 +30,7 @@ import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.tile.*;
+import org.pandcorps.pandax.visual.*;
 
 // Actors designed to be placed in levels; could be spawners, controllers, or just decorations
 public abstract class Extra extends Panctor {
@@ -45,6 +46,10 @@ public abstract class Extra extends Panctor {
     
     //@OverrideMe
     protected void initTileCoordinates(final int x, final int y) {
+    }
+    
+    protected boolean isVisibleWhileRoomChanging() {
+        return false;
     }
     
     protected abstract static class EnemySpawner extends Extra implements StepListener {
@@ -170,6 +175,11 @@ public abstract class Extra extends Panctor {
         }
         
         @Override
+        protected final boolean isVisibleWhileRoomChanging() {
+            return true;
+        }
+        
+        @Override
         public final void onStep(final StepEvent event) {
             if (!active) {
                 return;
@@ -255,7 +265,7 @@ public abstract class Extra extends Panctor {
             renderer.render(layer, img, x + 16, y, zRight, 16, 0, 16, 32, 0, false, false);
             final int frameDir = 6;
             final int baseImgIndex;
-            if (active) {
+            if (active && !RoomChanger.isChanging()) {
                 baseImgIndex = ((int) (Pangine.getEngine().getClock() % (frameDir * 3))) / frameDir;
             } else {
                 baseImgIndex = 0;

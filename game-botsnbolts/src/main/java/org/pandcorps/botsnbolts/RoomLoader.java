@@ -621,7 +621,12 @@ public abstract class RoomLoader {
     }
     
     private final static void ext(final Segment seg) throws Exception {
-        addActor(getActorConstructor(Extra.class.getDeclaredClasses(), seg.getValue(2)).newInstance(seg));
+        final Extra extra = (Extra) getActorConstructor(Extra.class.getDeclaredClasses(), seg.getValue(2)).newInstance(seg);
+        if (extra.isVisibleWhileRoomChanging()) {
+            getLayer().addActor(extra);
+        } else {
+            addActor(extra);
+        }
     }
     
     private final static void enm(final Segment seg) throws Exception {
