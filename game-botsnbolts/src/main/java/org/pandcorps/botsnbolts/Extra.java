@@ -24,6 +24,7 @@ package org.pandcorps.botsnbolts;
 
 import org.pandcorps.botsnbolts.Enemy.*;
 import org.pandcorps.botsnbolts.Player.*;
+import org.pandcorps.botsnbolts.RoomLoader.*;
 import org.pandcorps.core.*;
 import org.pandcorps.core.seg.*;
 import org.pandcorps.pandam.*;
@@ -46,6 +47,10 @@ public abstract class Extra extends Panctor {
     
     //@OverrideMe
     protected void initTileCoordinates(final int x, final int y) {
+    }
+    
+    protected boolean isAllowed() {
+        return true;
     }
     
     protected boolean isVisibleWhileRoomChanging() {
@@ -145,13 +150,21 @@ public abstract class Extra extends Panctor {
         }
     }
     
+    protected final static String VAR_LAUNCH_RETURN_ROOM_X = "launchReturnRoomX";
+    protected final static String VAR_LAUNCH_RETURN_ROOM_Y = "launchReturnRoomY";
+    protected final static String VAR_LAUNCH_RETURN_POS_X = "launchReturnPosX";
+    protected final static String VAR_LAUNCH_RETURN_POS_Y = "launchReturnPosY";
+    protected final static String VAR_LAUNCH_RETURN_POS_MIRROR = "launchReturnPosMirror";
+    
     protected final static class LaunchCapsule extends Extra implements StepListener {
         private static Panmage img = null;
         private final static Panmage[] baseImgs = new Panmage[3];
         private final TileMap tm;
+        private final String activeUntil;
         private final boolean active;
         private final int dstX;
         private final int dstY;
+        private boolean allowed = true;
         private Player occupant = null;
         private int zLeft;
         private int zRight;
@@ -160,9 +173,16 @@ public abstract class Extra extends Panctor {
         protected LaunchCapsule(final Segment seg) {
             super(seg, BotsnBoltsGame.DEPTH_BG);
             tm = BotsnBoltsGame.tm;
-            active = true; //TODO
+            activeUntil = seg.getValue(5);
+            active = (activeUntil == null) || !RoomLoader.levelVariables.containsKey(activeUntil);
             dstX = seg.intValue(3);
             dstY = seg.intValue(4);
+            for (final Field f : Coltil.unnull(seg.getRepetitions(6))) {
+                if (!RoomLoader.levelVariables.containsKey(f.getValue())) {
+                    allowed = false;
+                    return;
+                }
+            }
             init();
             final int x = Enemy.getX(seg), y = Enemy.getY(seg);
             for (int i = 0; i < 2; i++) {
@@ -172,6 +192,11 @@ public abstract class Extra extends Panctor {
                 }
             }
             setView(Pangine.getEngine().createEmptyImage(Pantil.vmid(), FinPanple.ORIGIN, FinPanple.ORIGIN, new FinPanple2(32, 32)));
+        }
+        
+        @Override
+        protected final boolean isAllowed() {
+            return allowed;
         }
         
         @Override
@@ -229,11 +254,17 @@ public abstract class Extra extends Panctor {
         
         private final void launch() {
             if (!launched) {
-                RoomLoader.startX = dstX;
-                RoomLoader.startY = dstY;
+                if (activeUntil != null) {
+                    final Panple ppos = occupant.getPosition();
+                    final BotRoom room = RoomLoader.getRoom();
+                    RoomLoader.levelVariables.put(VAR_LAUNCH_RETURN_ROOM_X, Integer.toString(room.x));
+                    RoomLoader.levelVariables.put(VAR_LAUNCH_RETURN_ROOM_Y, Integer.toString(room.y));
+                    RoomLoader.levelVariables.put(VAR_LAUNCH_RETURN_POS_X, Integer.toString(Math.round(ppos.getX())));
+                    RoomLoader.levelVariables.put(VAR_LAUNCH_RETURN_POS_Y, Integer.toString(Math.round(ppos.getY())));
+                    RoomLoader.levelVariables.put(VAR_LAUNCH_RETURN_POS_MIRROR, Boolean.toString(!occupant.isMirror()));
+                }
                 launched = true;
-                occupant.active = false;
-                new Dematerialize(occupant);
+                occupant.launch(dstX, dstY);
                 resetOccupant();
             }
         }

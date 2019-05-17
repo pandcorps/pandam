@@ -667,6 +667,7 @@ public class Menu {
     }
     
     private final static void startLevel(final BotLevel level) {
+        RoomLoader.levelVariables.clear();
         RoomLoader.startX = level.levelX;
         RoomLoader.startY = level.levelY;
         RoomLoader.levelVersion = level.version;

@@ -177,8 +177,13 @@ public abstract class Boss extends Enemy {
         return true;
     }
     
-    protected void onAward() {
-        Menu.goLevelSelect();
+    protected void onAward(final Player player) {
+        final String launchReturnX = RoomLoader.levelVariables.get(Extra.VAR_LAUNCH_RETURN_ROOM_X);
+        if (launchReturnX == null) {
+            player.dematerialize(Player.levelSelectHandler);
+        } else {
+            player.launch(Integer.parseInt(launchReturnX), Integer.parseInt(RoomLoader.levelVariables.get(Extra.VAR_LAUNCH_RETURN_ROOM_Y)));
+        }
     }
 
     @Override
@@ -306,6 +311,7 @@ public abstract class Boss extends Enemy {
         if (!isOtherBossPresent()) {
             destroyEnemies();
         }
+        RoomLoader.levelVariables.put(getClass().getSimpleName(), "");
     }
     
     protected void onBossDefeat() {
@@ -392,7 +398,7 @@ public abstract class Boss extends Enemy {
         }
         
         @Override
-        protected final void onAward() {
+        protected final void onAward(final Player player) {
             // Move Void to left; Spawn Volatile
         }
         

@@ -52,7 +52,8 @@ public abstract class RoomLoader {
     private final static Map<Character, Tile[][]> patterns = new HashMap<Character, Tile[][]>();
     private final static Map<Character, RoomFunction> functions = new HashMap<Character, RoomFunction>();
     private static Shader shader = null;
-    protected final static Map<String, String> variables = new HashMap<String, String>();
+    protected final static Map<String, String> variables = new HashMap<String, String>(); // Room variables
+    protected final static Map<String, String> levelVariables = new HashMap<String, String>();
     private static Character alt = null;
     protected static Panroom nextRoom = null;
     protected final static List<BossDoor> bossDoors = new ArrayList<BossDoor>(2);
@@ -279,6 +280,16 @@ public abstract class RoomLoader {
     }
     
     private final static void rom(final Segment seg) {
+        final boolean launchReturn = seg.getBoolean(3, false);
+        if (launchReturn) {
+            final String launchReturnPosX = levelVariables.get(Extra.VAR_LAUNCH_RETURN_POS_X);
+            if (launchReturnPosX != null) {
+                BotsnBoltsGame.playerStartX = Integer.parseInt(launchReturnPosX);
+                BotsnBoltsGame.playerStartY = Integer.parseInt(levelVariables.get(Extra.VAR_LAUNCH_RETURN_POS_Y));
+                BotsnBoltsGame.playerStartMirror = Boolean.parseBoolean(levelVariables.get(Extra.VAR_LAUNCH_RETURN_POS_MIRROR));
+                return;
+            }
+        }
         final String playerStartX = seg.getValue(0);
         if (Chartil.isValued(playerStartX)) {
             BotsnBoltsGame.playerStartX = Segment.parseInt(playerStartX) * BotsnBoltsGame.DIM;
@@ -622,7 +633,9 @@ public abstract class RoomLoader {
     
     private final static void ext(final Segment seg) throws Exception {
         final Extra extra = (Extra) getActorConstructor(Extra.class.getDeclaredClasses(), seg.getValue(2)).newInstance(seg);
-        if (extra.isVisibleWhileRoomChanging()) {
+        if (!extra.isAllowed()) {
+            return;
+        } else if (extra.isVisibleWhileRoomChanging()) {
             getLayer().addActor(extra);
         } else {
             addActor(extra);

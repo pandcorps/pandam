@@ -470,11 +470,41 @@ public final class Player extends Chr implements Warpable {
         stateHandler = NORMAL_HANDLER;
     }
     
+    private Runnable unwarpHandler = null;
+    
+    protected final void dematerialize(final Runnable unwarpHandler) {
+        this.unwarpHandler = unwarpHandler;
+        active = false;
+        new Dematerialize(this);
+    }
+    
     @Override
     public final void onUnwarped() {
-        pc.srcPlayer = this;
-        Panscreen.set(new BotsnBoltsGame.BotsnBoltsScreen());
+        unwarpHandler.run();
     }
+    
+    protected final void launch(final int dstX, final int dstY) {
+        RoomLoader.startX = dstX;
+        RoomLoader.startY = dstY;
+        dematerialize(getLaunchHandler());
+    }
+    
+    protected final Runnable getLaunchHandler() {
+        return new Runnable() {
+            @Override
+            public final void run() {
+                pc.srcPlayer = Player.this;
+                Panscreen.set(new BotsnBoltsGame.BotsnBoltsScreen());
+            }
+        };
+    }
+    
+    protected final static Runnable levelSelectHandler = new Runnable() {
+        @Override
+        public final void run() {
+            Menu.goLevelSelect();
+        }
+    };
     
     protected final boolean hurt(final int damage) {
         if (isInvincible()) {
