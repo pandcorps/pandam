@@ -267,11 +267,15 @@ public abstract class RoomLoader {
             version = seg.intValue(3);
         }
         BotsnBoltsGame.BotsnBoltsScreen.loadTileImage(seg.getValue(0), seg.getValue(1));
-        final Field field = seg.getField(2);
+        setBgColor(seg, 2);
+        while (in.readIf("CTX") != null);
+    }
+    
+    private final static void setBgColor(final Segment seg, final int i) {
+        final Field field = seg.getField(i);
         if (field != null) {
             Pangine.getEngine().setBgColor(toColor(field));
         }
-        while (in.readIf("CTX") != null);
     }
     
     private final static void imp(final Segment seg, final boolean ctxRequired, final TileMap tm) {
@@ -302,6 +306,7 @@ public abstract class RoomLoader {
         if (Chartil.isValued(playerStartMirror)) {
             BotsnBoltsGame.playerStartMirror = Segment.parseBoolean(playerStartMirror);
         }
+        setBgColor(seg, 4);
     }
     
     private final static void anm(final Segment seg) {
@@ -365,7 +370,12 @@ public abstract class RoomLoader {
     }
     
     private final static void stp(final Segment seg) throws Exception {
-        stepHandlers.add(getStepHandler(seg.getValue(0)));
+        final String handlerType = seg.getValue(0);
+        if (Chartil.isValued(handlerType)) {
+            stepHandlers.add(getStepHandler(handlerType));
+        } else {
+            stepHandlers.clear();
+        }
     }
     
     private final static void alt(final Segment seg) {
