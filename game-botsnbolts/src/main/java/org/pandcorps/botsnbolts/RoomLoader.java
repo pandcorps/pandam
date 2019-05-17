@@ -65,6 +65,9 @@ public abstract class RoomLoader {
     protected static int levelVersion = 0;
     private static int row = 0;
     protected static int waterLevel = 0;
+    private static int waterX = 0;
+    private static int waterY = 0;
+    private static int waterWidth = -1;
     protected static Pantexture waterTexture = null;
     protected static boolean changing = false;
     
@@ -894,15 +897,18 @@ public abstract class RoomLoader {
     }
     
     private final static void wtr(final Segment seg) throws Exception {
-        setWaterTile(seg.intValue(0), false, false, seg.initInt(1), seg.initInt(2), seg.getInt(3, -1));
+        setWaterTile(seg.intValue(0), false, false, seg.initInt(1), seg.initInt(2), seg.getInt(3, -1), seg.initInt(4));
     }
     
     protected final static void setWaterTile(final int waterTile, final boolean anyOpen, final boolean replaceWholeTile) {
-        setWaterTile(waterTile, anyOpen, replaceWholeTile, 0, 0, -1);
+        setWaterTile(waterTile, anyOpen, replaceWholeTile, waterX, waterY, waterWidth, 0);
     }
     
-    protected final static void setWaterTile(final int waterTile, final boolean anyOpen, final boolean replaceWholeTile, final int waterX, final int waterY, final int waterWidth) {
+    protected final static void setWaterTile(final int waterTile, final boolean anyOpen, final boolean replaceWholeTile, final int waterX, final int waterY, final int waterWidth, final int offZ) {
         waterLevel = waterTile * BotsnBoltsGame.DIM;
+        RoomLoader.waterX = waterX;
+        RoomLoader.waterY = waterY;
+        RoomLoader.waterWidth = waterWidth;
         if (waterTile <= 0) {
             return;
         }
@@ -912,7 +918,7 @@ public abstract class RoomLoader {
         if (waterX != -1) {
             if (waterTexture == null) {
                 waterTexture = new Pantexture(getTextureImage("Water"));
-                waterTexture.getPosition().setZ(BotsnBoltsGame.DEPTH_TEXTURE);
+                waterTexture.getPosition().setZ(BotsnBoltsGame.DEPTH_TEXTURE + offZ);
             }
             tm.getLayer().addActor(waterTexture);
             final int yd = waterY * BotsnBoltsGame.DIM;
@@ -921,7 +927,7 @@ public abstract class RoomLoader {
         }
         final Tile tile5 = getWaterTile(imgMap, tm, 5);
         final Tile tile6 = getWaterTile(imgMap, tm, 6);
-        for (int j = 0; j <= max; j++) {
+        for (int j = waterY; j <= max; j++) {
             final Tile tile;
             if (j == waterTile) {
                 tile = tile5;
@@ -1127,6 +1133,9 @@ public abstract class RoomLoader {
         boltDoor = null;
         conveyorBelt = false;
         waterLevel = 0;
+        waterX = 0;
+        waterY = 0;
+        waterWidth = -1;
         waterTexture = null;
     }
     
