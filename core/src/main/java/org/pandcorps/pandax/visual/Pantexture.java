@@ -43,19 +43,39 @@ public class Pantexture extends Panctor {
 		this.image = image;
 	}
 	
-	public void setImage(final Panmage image) {
+	public final void setImage(final Panmage image) {
 	    this.image = image;
 	}
 	
-	public void setOffset(final int offX, final int offY) {
+	public final Panmage getImage() {
+	    return image;
+	}
+	
+	public final void setOffset(final int offX, final int offY) {
 		this.offX = offX;
 		this.offY = offY;
 	}
 	
-	public void setSize(final int width, final int height) {
+	public final int gettOffsetX() {
+	    return offX;
+	}
+	
+	public final int gettOffsetY() {
+        return offY;
+    }
+	
+	public final void setSize(final int width, final int height) {
 		this.width = width;
 		this.height = height;
 	}
+	
+	public final int getWidth() {
+	    return width;
+	}
+	
+	public final int getHeight() {
+        return height;
+    }
 	
 	@Override
 	protected void updateView() {		
