@@ -831,14 +831,10 @@ public abstract class GlPangine extends Pangine {
 	    }
 		camera(room); // Must be after step() for tracking to work right
 		final boolean hasNew = !newImages.isEmpty();
-		while (!newImages.isEmpty()) {
-		    images.add(newImages.remove(newImages.size() - 1));
-		}
-		final int size = images.size();
-		//for (final GlPanmage image : images) { // ConcurrentModificationException if bg Thread loads images at same time
+		addNewImages();
 		if (hasNew || !room.isBuffered() || !room.isBuilt()) {
-			for (int i = 0; i < size; i++) { // If size has grown, we shouldn't be drawing new images yet anyway
-	            images.get(i).clear(room);
+			for (final GlPanmage image : images) {
+	            image.clear(room);
 	        }
 			final Collection<Panctor> actors = room.getActors();
 			if (actors != null) {
@@ -846,18 +842,24 @@ public abstract class GlPangine extends Pangine {
 					renderView(actor);
 				}
 			}
+			addNewImages(); // New images can be created by renderView; don't need to be cleared since they're new
 		}
-		//for (final GlPanmage image : images) { // See above
-		for (int i = 0; i < size; i++) {
+		for (final GlPanmage image : images) {
 		    /*try { // Try to see if double buffering is enabled
                 Thread.sleep(30);
             } catch (final InterruptedException e) {
                 throw new RuntimeException(e);
             }*/
-		    images.get(i).renderAll(room);
+		    image.renderAll(room);
 		}
 		blend(room);
 		//Display.update();
+	}
+	
+	private final void addNewImages() {
+	    while (!newImages.isEmpty()) {
+            images.add(newImages.remove(newImages.size() - 1));
+        }
 	}
 	
 	private final byte toByte(final short c) {
