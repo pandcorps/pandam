@@ -1,0 +1,48 @@
+IMP|Array
+
+PUT|@||5^4|1
+PUT|!||5^5|1
+PUT|_||5^6|1
+
+PUT|D|4^1||0
+PUT|e|4^2||0
+
+FNC|B|BurstTile
+FNC|b|BurstableTile
+
+SHD|4^1
+
+M|==}i!!!!!!i{========}ieeei{======}ieeei{===================================================}iei{
+M|==}i!!!!!!i{}/-------,eee`--------,eee`-----------------------------------------------------,ei{
+M|==}i______i{}iDDDDDDDD e DDDDDDDDDDe eDDDDDDbDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD i{
+M|}/-,DDDDDD`--,      e   e         e e       b     e        e     e      eee e                 i{
+M|}iDD      DDDD     e       e          e     B        ee     ee           eee          eee     i{
+M|}i                    e         e  e       eb       ee     eeee e  e          e               i{
+M|-,    e      e                 eee      bbbbb   e           ee e       e                   ?? i{
+M| e         .        e       .  ee       b          e                  ?  e?        e ???   DD i{
+M| ee        D    e     ...   D      ...  bbbbbbbbbbbbbbbb  ?   ? e ?   D   D    ??? eeDDD      i{
+M| e e    e     e   e   DDD      e   DDD                    D   D   De         eeDDD            i{
+M| e   e      e  e           e               e     e   e         e               e       eee    i{
+M|---\e    e/-\eeee/-\ e      e   .   e    e      eee     e               e   e         eeeee   i{
+M|==}i@@@@@@i#ieeeei#i     e      D     e          eee e          e  eee     e     e     ee  e  i{
+M|==}i!!!!!!i#ieeeei#i   e      e             e  e            e     eeee e            e         i{
+
+DOR|0|3|Silver
+
+LDR|93|10|4
+
+ENM|5|14|DrillEnemy
+ENM|6|14|DrillEnemy
+ENM|7|14|DrillEnemy
+ENM|8|14|DrillEnemy
+ENM|11|7|CrawlEnemy
+ENM|23|6|RockEnemy
+ENM|28|7|CrawlEnemy
+ENM|36|6|RockEnemy
+
+VAR|rescueDisabled|Y
+
+RPT|2|3|12|7|EarthquakeDirtDark
+RPT|5|0|4|14|EarthquakeDirtDark
+RPT|14|3|80|9|EarthquakeDirtDark
+RPT|20|0|74|3|EarthquakeDirtDark
