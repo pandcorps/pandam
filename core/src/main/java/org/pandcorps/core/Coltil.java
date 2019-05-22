@@ -226,6 +226,10 @@ public final class Coltil {
 	    return size(list) <= i ? null : list.get(i);
 	}
 	
+	public final static <V> V get(final Map<?, V> map, final Object key) {
+	    return (map == null) ? null : map.get(key);
+	}
+	
 	public final static <E> E get(final E[] a, final int i) {
     	return ((i < 0) || (size(a) <= i)) ? null : a[i];
     }

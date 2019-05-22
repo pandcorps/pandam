@@ -22,12 +22,18 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.core.col;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 
 public class HashMultimap<K, E> extends HashMap<K, ArrayList<E>> {
     
 	private static final long serialVersionUID = -846704073570078523L;
+	
+	public HashMultimap() {
+	}
+	
+	public HashMultimap(final int initialCapacity) {
+	    super(initialCapacity);
+    }
 
 	public void add(final K key, final E element) {
         ArrayList<E> value = get(key);
