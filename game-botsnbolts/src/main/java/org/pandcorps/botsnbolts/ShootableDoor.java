@@ -350,11 +350,12 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
         }
         
         private final void renderColumn(final Panderer renderer, final int off, final int imgIndex) {
-            final Panlayer layer = getLayer();
-            final Panmage img = def.barrierImgs[imgIndex];
             final Panple pos = getPosition();
-            final float x = pos.getX() + off, y = pos.getY();
-            final int h = isSmall() ? 2 : 4;
+            renderColumn(renderer, getLayer(), def.barrierImgs, imgIndex, pos.getX() + off, pos.getY(), isSmall() ? 2 : 4);
+        }
+        
+        protected final static void renderColumn(final Panderer renderer, final Panlayer layer, final Panmage[] imgs, final int imgIndex, final float x, final float y, final int h) {
+            final Panmage img = imgs[imgIndex];
             for (int j = 0; j < h; j++) {
                 renderer.render(layer, img, x, y + (j * 8), BotsnBoltsGame.DEPTH_FG);
             }
@@ -370,7 +371,7 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
         }
     }
     
-    //TODO Hidden barrier that becomes visible when Player is near, like hidden floor blocks
+    // Hidden/invisible barrier implemented in BlockPuzzle.HiddenBlockPuzzle
     
     protected final static class ShootableButton extends Panctor implements CollisionListener, AnimationEndListener {
         private final ShootableButtonHandler handler;

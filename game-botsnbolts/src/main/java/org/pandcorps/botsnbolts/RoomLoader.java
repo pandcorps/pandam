@@ -753,7 +753,7 @@ public abstract class RoomLoader {
     }
     
     private final static void hdp(final Segment seg) {
-        new HiddenBlockPuzzle(getTileIndexArray(seg, 0));
+        new HiddenBlockPuzzle(getTileIndexArray(seg, 0), getTileIndexArray(seg, 1));
     }
     
     private final static void spp(final Segment seg) {

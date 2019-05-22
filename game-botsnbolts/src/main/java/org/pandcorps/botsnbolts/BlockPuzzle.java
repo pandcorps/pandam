@@ -28,6 +28,7 @@ import org.pandcorps.botsnbolts.Enemy.*;
 import org.pandcorps.botsnbolts.Player.*;
 import org.pandcorps.botsnbolts.ShootableDoor.*;
 import org.pandcorps.core.*;
+import org.pandcorps.core.col.*;
 import org.pandcorps.core.seg.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
@@ -286,19 +287,35 @@ public abstract class BlockPuzzle {
         }
     }
     
-    // Blocks fade in when Player approaches; fade out when Player leaves
+    // Blocks are invisible; fade in when Player approaches; fade out when Player leaves
     protected final static class HiddenBlockPuzzle extends Panctor implements StepListener {
-        private final Map<Integer, Integer> indices;
+        private final HashMultimap<Integer, Integer> indices;
         private final Set<Integer> activeIndices = new HashSet<Integer>();
+        private final HashMultimap<Integer, Integer> barrierIndices;
+        private final Set<HiddenBarrier> activeBarrierIndices = new HashSet<HiddenBarrier>();
+        private final ImplPanple scratch = new ImplPanple();
         
-        protected HiddenBlockPuzzle(final int[] indices) {
-            this.indices = new HashMap<Integer, Integer>(indices.length);
+        protected HiddenBlockPuzzle(final int[] indices, final int[] barrierIndices) {
+            this.indices = initMap(indices);
+            this.barrierIndices = initMap(barrierIndices);
+            BotsnBoltsGame.tm.getLayer().addActor(this);
+        }
+        
+        private final static HashMultimap<Integer, Integer> initMap(final int[] indices) {
+            if (indices == null) {
+                return null;
+            }
+            final int size = indices.length;
+            if (size == 0) {
+                return null;
+            }
+            final HashMultimap<Integer, Integer> map = new HashMultimap<Integer, Integer>(size);
             final TileMap tm = BotsnBoltsGame.tm;
             for (final int index : indices) {
-                this.indices.put(Integer.valueOf(tm.getColumn(index)), Integer.valueOf(index));
-                tm.setBehavior(index, BotsnBoltsGame.TILE_FLOOR);
+                map.add(Integer.valueOf(tm.getColumn(index)), Integer.valueOf(index));
+                tm.setBehavior(index, Tile.BEHAVIOR_SOLID);
             }
-            tm.getLayer().addActor(this);
+            return map;
         }
 
         @Override
@@ -307,24 +324,63 @@ public abstract class BlockPuzzle {
             if (player == null) {
                 return;
             }
-            final Panmage[] blockImgs = BotsnBoltsGame.blockHidden;
             final TileMap tm = BotsnBoltsGame.tm;
             final int col = tm.getContainerColumn(player.getPosition().getX());
+            final Panmage[] blockImgs = BotsnBoltsGame.blockHidden;
             for (final Integer activeIndex : activeIndices) {
                 tm.setForeground(activeIndex.intValue(), null);
             }
             activeIndices.clear();
+            activeBarrierIndices.clear();
             for (int i = 0; i < 4; i++) {
                 for (int j = ((i == 0) ? 1 : 0); j < 2; j++) {
                     final int mult = (j == 0) ? 1 : -1;
-                    final Integer tileIndex = indices.get(Integer.valueOf(col + (mult * i)));
-                    if (tileIndex == null) {
-                        continue;
+                    final Integer cmi = Integer.valueOf(col + (mult * i));
+                    final List<Integer> tileIndices = Coltil.get(indices, cmi);
+                    if (tileIndices != null) {
+                        for (final Integer tileIndex : tileIndices) {
+                            tm.setForeground(tileIndex.intValue(), blockImgs[i]);
+                            activeIndices.add(tileIndex);
+                        }
                     }
-                    tm.setForeground(tileIndex.intValue(), blockImgs[i]);
-                    activeIndices.add(tileIndex);
+                    final List<Integer> tileBarrierIndices = Coltil.get(barrierIndices, cmi);
+                    if (tileBarrierIndices != null) {
+                        for (final Integer tileBarrierIndex : tileBarrierIndices) {
+                            tm.savePosition(scratch, tileBarrierIndex.intValue());
+                            activeBarrierIndices.add(new HiddenBarrier(i, scratch.getX(), scratch.getY()));
+                        }
+                    }
                 }
             }
+        }
+        
+        @Override
+        protected final void renderView(final Panderer renderer) {
+            final Panlayer layer = getLayer();
+            for (final HiddenBarrier hb : activeBarrierIndices) {
+                final int imgIndex = hb.imgIndex, imgLeft, imgRight;
+                if (imgIndex < 2) {
+                    imgLeft = 0;
+                    imgRight = 1;
+                } else {
+                    imgLeft = imgRight = imgIndex;
+                }
+                final float x = hb.x, y = hb.y;
+                ShootableBarrier.renderColumn(renderer, layer, BotsnBoltsGame.barrierHidden, imgLeft, x, y, 2);
+                ShootableBarrier.renderColumn(renderer, layer, BotsnBoltsGame.barrierHidden, imgRight, x + 8, y, 2);
+            }
+        }
+    }
+    
+    private final static class HiddenBarrier {
+        private final int imgIndex;
+        private final float x;
+        private final float y;
+        
+        private HiddenBarrier(final int imgIndex, final float x, final float y) {
+            this.imgIndex = imgIndex;
+            this.x = x;
+            this.y = y;
         }
     }
     
