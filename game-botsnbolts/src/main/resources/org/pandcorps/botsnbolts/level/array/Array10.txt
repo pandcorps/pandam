@@ -1,0 +1,35 @@
+IMP|Array
+
+PUT|d|4^1||0
+PUT|e|4^2||0
+
+SHD|4^1
+
+M|=======================/-----------,ddddddddddddddddddddddd.`-----------\===================i6i{
+M|}/---------------------,122222222223eeeeeeeeeeeeeeeeeeeeeee.dddddddddddd`-------------------,9i{
+M|}i12224          62222234          6  eee e eee  e  eee e  .         e  ddddddddddddddd1222223i{
+M|}i4   4          6     64     1223 6     e   e    e    e   .     e                     4     6i{
+M|}i4   788888888889     64     4  6 6        e              .   ee     ???????????????? 4     6i{
+M|}i4        64          64     7889 6 e     ?   ??   fffff  .  eee     dddddddddddddddd 4     6i{
+M|-,4        64          64          6    ?  d   dd   .dddd  .  ee  ?             e      4     6i{
+M| 34        64          64         ffff  d           . e    .      d                    4fff  6i{
+M| 64        64      fffffff    f   DEdd          e   .  ffff.             e   e         4DDD  6i{
+M| 64        64      DDDDECD    D    6     e          .  ddddd     e  ?       e e   e    4     6i{
+M| 97888888889788888888889788888888889  e e eee       .    e          d      e eee       4   122i{
+M|-----) (-\2312fff2222223122222222223e    eeeee e    .??????  e              eeeeee   e 4   4  i{
+M|========}i 64 DDD      64          6   e  eee       ddddddd ??????      e     eeee     4   4  i{
+M|========}i 64          64          6       e       e        dddddd        e    e       78884  i{
+
+DOR|0|3|Silver
+LDR|93|9|5
+
+FTB|6|2|3
+
+ENM|8|3|FlamethrowerEnemy
+
+VAR|rescueDisabled|Y
+
+RPT|2|3|8|9|Array
+RPT|10|0|26|12|Array
+RPT|36|0|51|12|EarthquakeDirtDark
+RPT|87|0|7|12|Array
