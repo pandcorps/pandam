@@ -93,10 +93,24 @@ public abstract class Enemy extends Chr implements CollisionListener {
     public void onCollision(final CollisionEvent event) {
         final Collidable collider = event.getCollider();
         if (collider instanceof Projectile) { // Projectile can have sub-classes like Explosion
-            onShot((Projectile) collider);
+            if (isVulnerable()) {
+                onShot((Projectile) collider);
+            }
         } else if (collider.getClass() == Player.class) {
-            onAttack((Player) collider);
+            if (isHarmful()) {
+                onAttack((Player) collider);
+            }
         }
+    }
+    
+    //@OverrideMe
+    protected boolean isVulnerable() {
+        return true;
+    }
+    
+    //@OverrideMe
+    protected boolean isHarmful() {
+        return true;
     }
     
     protected void onShot(final Projectile prj) {
@@ -1803,6 +1817,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         private final static Panframe[] frames = new Panframe[12];
         private int timer = -1;
         private int dir = 1;
+        private boolean harmful = false;
         
         protected RingEnemy(final Segment seg) {
             super(seg, PROP_HEALTH);
@@ -1815,8 +1830,19 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
         
         @Override
+        protected final boolean isVulnerable() {
+            return isVisible();
+        }
+        
+        @Override
+        protected final boolean isHarmful() {
+            return harmful;
+        }
+        
+        @Override
         protected final void onStepEnemy() {
             if ((timer < 0) && (dir < 0)) {
+                move();
                 dir = 1;
             }
             timer += dir;
@@ -1828,20 +1854,29 @@ public abstract class Enemy extends Chr implements CollisionListener {
             setVisible(true);
             final int f = _f - 5;
             if (f < 5) {
-                changeView(getFrame(f));
+                setView(f);
             } else if (f < 17) {
-                changeView(getFrame(f - 5));
+                setView(f - 5);
             } else if (f < 22) {
-                changeView(getFrame(f - 10));
+                setView(f - 10);
             } else if (f < 27) {
-                changeView(getFrame(f - 15));
+                setView(f - 15);
             } else if (f < 28) {
-                changeView(getFrame(7));
+                setView(7);
             } else if (f < 33) {
-                changeView(getFrame(8));
+                setView(8);
             } else {
                 dir = -1;
             }
+        }
+        
+        private final void setView(final int f) {
+            harmful = f >= 5;
+            changeView(getFrame(f));
+        }
+        
+        private final void move() {
+            
         }
         
         private final static Panmage getImage(final int i) {
