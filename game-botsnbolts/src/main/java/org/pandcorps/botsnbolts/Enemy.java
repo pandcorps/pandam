@@ -1796,6 +1796,91 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
     }
     
+    private final static Panple RING_O_MIRROR = new FinPanple2(15, 0);
+    
+    protected final static class RingEnemy extends TileUnawareEnemy {
+        private final static Panmage[] images = new Panmage[10];
+        private final static Panframe[] frames = new Panframe[12];
+        private int timer = -1;
+        private int dir = 1;
+        
+        protected RingEnemy(final Segment seg) {
+            super(seg, PROP_HEALTH);
+            setView(getFrame(0));
+        }
+        
+        @Override
+        protected final int getInitialOffsetX() {
+            return 0;
+        }
+        
+        @Override
+        protected final void onStepEnemy() {
+            if ((timer < 0) && (dir < 0)) {
+                dir = 1;
+            }
+            timer += dir;
+            final int _f = timer / 3;
+            if (_f < 5) {
+                setVisible(false);
+                return;
+            }
+            setVisible(true);
+            final int f = _f - 5;
+            if (f < 5) {
+                changeView(getFrame(f));
+            } else if (f < 17) {
+                changeView(getFrame(f - 5));
+            } else if (f < 22) {
+                changeView(getFrame(f - 10));
+            } else if (f < 27) {
+                changeView(getFrame(f - 15));
+            } else if (f < 28) {
+                changeView(getFrame(7));
+            } else if (f < 33) {
+                changeView(getFrame(8));
+            } else {
+                dir = -1;
+            }
+        }
+        
+        private final static Panmage getImage(final int i) {
+            Panmage image = images[i];
+            if (image != null) {
+                return image;
+            }
+            image = getImage(image, "RingEnemy" + (i + 1), null, GLIDER_MIN, GLIDER_MAX);
+            images[i] = image;
+            return image;
+        }
+        
+        private final static Panframe getFrame(final int i) {
+            Panframe frame = frames[i];
+            if (frame != null) {
+                return frame;
+            }
+            if (i == 0) {
+                frame = newFrame(getImage(0), false);
+            } else if (i == 1) {
+                frame = newFrame(getImage(0), true);
+            } else if (i == 2) {
+                frame = newFrame(getImage(1), true);
+            } else if (i == 3) {
+                frame = newFrame(getImage(2), false);
+            } else if (i == 4) {
+                frame = newFrame(getImage(1), false);
+            } else {
+                frame = newFrame(getImage(i - 2), false);
+            }
+            frames[i] = frame;
+            return frame;
+        }
+        
+        private final static Panframe newFrame(final Panmage img, final boolean mirror) {
+            return Pangine.getEngine().createFrame(BotsnBoltsGame.PRE_FRM + img.getId(), img, 1, 0, mirror, false, mirror ? RING_O_MIRROR : null, null, null);
+        }
+    }
+    
     private final static Panple GUARDED_MIN = new FinPanple2(4, 0);
     private final static Panple GUARDED_MAX = new FinPanple2(12, 16);
     
