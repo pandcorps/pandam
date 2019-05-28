@@ -1,0 +1,58 @@
+IMP|Array
+
+PUT|a|||18
+
+M|}i12222222231222222222351222222222231222222222235122222222231222222223i{
+M|}i4        64         684          64          684         64        6i{
+M|}i4        64         6t4       %  64          6t4         64        6i{
+M|}i4        64         6i4         %64          6i4         64        6i{
+M|}i4        64         6i4         %64%         6i4         64        6i{
+M|}i4       .64       . 6i4 % %  %   64 %   %   %6i4         64        6i{
+M|}i4       D64       D 6i4         %64          6i4         64        6i{
+M|}i4   .    64   .     6i4%    %    64          6i4         64        6i{
+M|}i4   D    64   D     6i4        %%64%  %      6i4 ....... 64 ...    6i{
+M|}i4        6.         .i4       %  64          6i4 DDDDDDD 64 DDD    6i{
+M|}i4        6C         Ei4%   %     64          6i4         64        6i{
+M|}i788888888978888888889i4aaaaaaaaaa64aaaaaaaaaa6i788888888897888/-\889i{
+M|}i1/------------------)i788888888889788888888889i(--------------,#i123i{
+M|}i4i{=================}`------------------------,{===============}i456i{
+
+LDR|2|0|2
+
+ENM|22|8|PropEnemy
+ENM|10|12|PropEnemy
+
+ENM|20|4|ShieldedEnemy
+ENM|14|6|ShieldedEnemy
+ENM|18|8|ShieldedEnemy
+
+M|a|24|2|true
+
+TMP|true
+TMS|25^3
+TMS|29^3
+TMS|25^6~32^4
+TMS|26^8~34^5
+TMS|31^8~37^5
+TMS|34^9~40^5
+TMS|28^8~37^9
+TMS|30^6
+TMS|34^7
+TMS|38^8
+TMS|42^8~33^5
+TMS|46^8~37^5
+TMS
+
+M|$$$$$$$$$$$$$$$|49|2
+
+ENM|36|2|SlideEnemy
+
+ENM|68|5|ShieldedEnemy
+
+ENM|62|11|PropEnemy
+ENM|65|8|PropEnemy
+ENM|68|5|PropEnemy
+
+RPT|2|2|21|12|Array
+RPT|24|1|24|13|Array
+RPT|49|3|21|11|Array
