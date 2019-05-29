@@ -1,0 +1,37 @@
+IMP|Array
+
+M|=================}i456i{
+M|}/----------------,789i{
+M|}i12222222231222222223i{
+M|}i4        64        6i{
+M|}i4        64        6i{
+M|}i4        64        6i{
+M|}i4        64        6i{
+M|}i4        6I   I   I6i{
+M|}i4        6C   D   D6i{
+M|}i4     I  64        6i{
+M|}i788888I8897888888889i{
+M|}i12223/--------------,{
+M|}i45556i{===============
+M|}i45556i{===============
+
+ENM|16|11|Icicle
+ENM|12|11|Icicle
+
+ENM|6|9|PropEnemy
+
+ENM|9|3|IceSpike
+ENM|10|3|IceSpike
+ENM|11|3|IceSpike
+ENM|12|3|IceSpike
+ENM|13|3|IceSpike
+ENM|14|3|IceSpike
+ENM|15|3|IceSpike
+ENM|16|3|IceSpike
+ENM|17|3|IceSpike
+ENM|18|3|IceSpike
+ENM|19|3|IceSpike
+ENM|20|3|IceSpike
+ENM|21|3|IceSpike
+
+RPT|2|3|20|9|Array
