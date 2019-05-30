@@ -1,0 +1,23 @@
+IMP|Array
+
+M|}i45556i{===============
+M|}i78889`--------------\{
+M|}i12222222231222222223i{
+M|}i4        64        6i{
+M|}i4        64        6i{
+M|}i4        64        6i{
+M|}iIIIIIIIIII4    III 6i{
+M|}iCDDDDDDDDE4    DDD 6i{
+M|}i4        64        6i{
+M|}i4        64        6i{
+M|}i78888888897888888889i{
+M|}i12223/--------------,{
+M|}i45556i{===============
+M|}i45556i{===============
+
+ENM|18|8|FreezeRayEnemy
+ENM|8|3|FreezeRayEnemy
+
+ENM|20|4|PropEnemy
+
+RPT|2|3|20|9|Array
