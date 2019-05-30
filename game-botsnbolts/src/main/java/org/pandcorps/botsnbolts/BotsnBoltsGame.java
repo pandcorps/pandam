@@ -166,6 +166,8 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static Panmage[] freezeRayEnemy = null;
     protected static Panmage electricityEnemy = null;
     protected static Panmage quicksandEnemy = null;
+    protected static Panmage quicksandEnemyAttack = null;
+    protected static Panmage[] magentaEnemy = null;
     protected static Panmage rockEnemy = null;
     protected static Panmage enemyProjectile = null;
     protected static Panimation enemyBurst = null;
@@ -506,7 +508,17 @@ public final class BotsnBoltsGame extends BaseGame {
         final Pancolor brown = new FinPancolor(s144, s96, s72), darkBrown = new FinPancolor(s96, s64, s48);
         Imtil.filterImg(henchF, newFilter(yellow, sand, darkYellow, darkSand, grey, brown, darkGrey, darkBrown));
         quicksandEnemy = engine.createImage("quicksand.enemy", henchO, henchMin, henchMax, henchF);
+        final Img henchAttackF = Imtil.load(RES + "enemy/QuicksandEnemyAttack.png", false);
+        quicksandEnemyAttack = engine.createImage("quicksand.enemy.attack", henchO, henchMin, henchMax, henchAttackF);
+        final Pancolor magenta = new FinPancolor(s192, s0, s192), darkMagenta = new FinPancolor(s128, s0, s128);
+        filterImgs(new Img[] { henchF, henchAttackF }, newFilter(sand, magenta, darkSand, darkMagenta, brown, grey, darkBrown, darkGrey));
+        magentaEnemy = new Panmage[] {
+                engine.createImage("magenta.enemy", henchO, henchMin, henchMax, henchF),
+                engine.createImage("magenta.enemy.attack", henchO, henchMin, henchMax, henchAttackF),
+                engine.createImage("magenta.enemy.jump", henchO, henchMin, henchMax, RES + "enemy/MagentaEnemyJump.png")
+        };
         Img.close(henchF);
+        Img.close(henchAttackF);
         enemyBurst = newAnimation("burst.enemy", RES + "enemy/EnemyBurst.png", 16, CENTER_16, minCube, maxCube, 2);
         flame4 = newSheet("flame.4.enemy", RES + "enemy/Flame4.png", 4);
         flame8 = newSheet("flame.8.enemy", RES + "enemy/Flame8.png", 8);

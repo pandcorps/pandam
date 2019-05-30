@@ -1815,12 +1815,16 @@ public abstract class Enemy extends Chr implements CollisionListener {
     protected final static class RingEnemy extends TileUnawareEnemy {
         private final static Panmage[] images = new Panmage[10];
         private final static Panframe[] frames = new Panframe[12];
+        private int x;
+        private int y;
         private int timer = -1;
         private int dir = 1;
         private boolean harmful = false;
         
         protected RingEnemy(final Segment seg) {
             super(seg, PROP_HEALTH);
+            x = getX(seg);
+            y = getY(seg);
             setView(getFrame(0));
         }
         
@@ -1876,7 +1880,24 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
         
         private final void move() {
-            
+            int newX, newY;
+            do {
+                int off1 = Mathtil.randi(-2, 3);
+                if (off1 <= 0) {
+                    off1--;
+                }
+                final int off2 = Mathtil.randi(-3, 3);
+                if (Mathtil.rand()) {
+                    newX = x + off1;
+                    newY = y + off2;
+                } else {
+                    newX = x + off2;
+                    newY = y + off1;
+                }
+            } while (isSolidTile(newX, newY));
+            BotsnBoltsGame.tm.savePosition(getPosition(), newX, newY);
+            x = newX;
+            y = newY;
         }
         
         private final static Panmage getImage(final int i) {
@@ -3481,7 +3502,6 @@ public abstract class Enemy extends Chr implements CollisionListener {
     }
     
     protected final static class QuicksandEnemy extends Enemy {
-        private static Panmage attack = null;
         private final float maxY;
         private final float minY;
         private byte mode = 0;
@@ -3544,7 +3564,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
             timer++;
             if (timer == 15) {
                 newEnemyProjectile(this, HENCHBOT_SHOOT_OFF_X, HENCHBOT_SHOOT_OFF_Y, getMirrorMultiplier() * VEL_PROJECTILE, 0);
-                setView(getAttack());
+                setView(BotsnBoltsGame.quicksandEnemyAttack);
             } else if (timer == 45) {
                 setView(BotsnBoltsGame.quicksandEnemy);
             } else if (timer >= 60) {
@@ -3556,9 +3576,19 @@ public abstract class Enemy extends Chr implements CollisionListener {
             mode++;
             timer = 0;
         }
+    }
+    
+    protected final static class MagentaEnemy extends HenchbotEnemy {
+        protected MagentaEnemy(final Segment seg) {
+            super(BotsnBoltsGame.magentaEnemy, seg);
+        }
         
-        private final static Panmage getAttack() {
-            return (attack == null) ? (attack = getImage(attack, "QuicksandEnemyAttack", BotsnBoltsGame.flamethrowerEnemy[0])) : attack;
+        @Override
+        protected final void onShoot() {
+            final int m = getMirrorMultiplier();
+            final float vx = m * VEL_PROJECTILE, vy = 0;
+            newEnemyProjectile(this, HENCHBOT_SHOOT_OFF_X, HENCHBOT_SHOOT_OFF_Y, vx, vy);
+            hold(30);
         }
     }
     
