@@ -61,7 +61,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         super(offX, h);
         this.health = health;
         final Panple pos = getPosition();
-        BotsnBoltsGame.tm.savePosition(pos, x, y);
+        BotsnBoltsGame.tm.savePositionXy(pos, x, y);
         pos.addX(getInitialOffsetX());
         pos.setZ(BotsnBoltsGame.DEPTH_ENEMY);
         initTileCoordinates(x, y);
@@ -1895,7 +1895,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
                     newY = y + off1;
                 }
             } while (isSolidTile(newX, newY));
-            BotsnBoltsGame.tm.savePosition(getPosition(), newX, newY);
+            BotsnBoltsGame.tm.savePositionXy(getPosition(), newX, newY);
             x = newX;
             y = newY;
         }
@@ -3586,8 +3586,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         @Override
         protected final void onShoot() {
             final int m = getMirrorMultiplier();
-            final float vx = m * VEL_PROJECTILE, vy = 0;
-            newEnemyProjectile(this, HENCHBOT_SHOOT_OFF_X, HENCHBOT_SHOOT_OFF_Y, vx, vy);
+            newEnemyProjectile(this, HENCHBOT_SHOOT_OFF_X, HENCHBOT_SHOOT_OFF_Y, m * VEL_PROJECTILE, 0);
             hold(30);
         }
     }
