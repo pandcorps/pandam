@@ -183,6 +183,15 @@ public class TileMap extends Panctor implements Savable {
         savePosition(pos, getColumn(index), getRow(index));
     }
     
+    public final void savePositionXy(final Panple pos, final int i, final int j) {
+        final Panple mapPos = getPosition();
+        pos.set(mapPos.getX() + i * tw, mapPos.getY() + j * th);
+    }
+    
+    public final void savePositionXy(final Panple pos, final int index) {
+        savePositionXy(pos, getColumn(index), getRow(index));
+    }
+    
     public final TileOccupant getOccupant(final int index) {
         return occupants.get(Integer.valueOf(index));
     }
