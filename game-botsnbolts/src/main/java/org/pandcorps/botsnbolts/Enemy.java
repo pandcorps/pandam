@@ -1105,6 +1105,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         
         protected final void jump() {
             if (!canJump()) {
+                onJumpDenied();
                 schedule();
                 return;
             }
@@ -1113,6 +1114,10 @@ public abstract class Enemy extends Chr implements CollisionListener {
         
         protected boolean canJump() {
             return isGrounded();
+        }
+        
+        //@OverrideMe
+        protected void onJumpDenied() {
         }
         
         protected abstract void onJump();
@@ -2790,6 +2795,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         private final Panmage[] imgs;
         protected boolean shooting = false;
         private long lastJump = NULL_CLOCK;
+        private boolean anotherJumpReady = false;
         
         protected HenchbotEnemy(final Panmage[] imgs, final int x, final int y) {
             super(HENCHBOT_OFF_X, HENCHBOT_H, x, y, HENCHBOT_HEALTH);
@@ -2872,12 +2878,25 @@ public abstract class Enemy extends Chr implements CollisionListener {
         @Override
         protected final void onLanded() {
             super.onLanded();
+            if (isAnotherJumpNeeded()) {
+                anotherJumpReady = true;
+                return;
+            }
             lastJump = Pangine.getEngine().getClock();
             schedule();
         }
         
+        //@OverrideMe
+        protected boolean isAnotherJumpNeeded() {
+            return false;
+        }
+        
         @Override
         protected final void onGrounded() {
+            if (anotherJumpReady) {
+                anotherJumpReady = false;
+                jump();
+            }
             changeViewGrounded();
         }
         
@@ -3579,8 +3598,26 @@ public abstract class Enemy extends Chr implements CollisionListener {
     }
     
     protected final static class MagentaEnemy extends HenchbotEnemy {
+        private final static int numJumps = 3;
+        private int jumpsRemaining = 0;
+        
         protected MagentaEnemy(final Segment seg) {
             super(BotsnBoltsGame.magentaEnemy, seg);
+        }
+        
+        @Override
+        protected final void onJumpDenied() {
+            hv = 0;
+        }
+        
+        @Override
+        protected void onJump() {
+            turnTowardPlayer();
+            super.onJump();
+            hv = 3 * getMirrorMultiplier();
+            if (jumpsRemaining <= 0) {
+                jumpsRemaining = numJumps;
+            }
         }
         
         @Override
@@ -3588,6 +3625,16 @@ public abstract class Enemy extends Chr implements CollisionListener {
             final int m = getMirrorMultiplier();
             newEnemyProjectile(this, HENCHBOT_SHOOT_OFF_X, HENCHBOT_SHOOT_OFF_Y, m * VEL_PROJECTILE, 0);
             hold(30);
+        }
+        
+        @Override
+        protected final boolean isAnotherJumpNeeded() {
+            jumpsRemaining--;
+            if (jumpsRemaining > 0) {
+                return true;
+            }
+            hv = 0;
+            return false;
         }
     }
     
