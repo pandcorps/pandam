@@ -962,7 +962,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
                     destroy();
                     return;
                 }
-                hv = (x < 0) ? VEL_PROJECTILE : -VEL_PROJECTILE;
+                hv = (x < (BotsnBoltsGame.tm.getWidth() / 2)) ? VEL_PROJECTILE : -VEL_PROJECTILE;
             }
         }
         
