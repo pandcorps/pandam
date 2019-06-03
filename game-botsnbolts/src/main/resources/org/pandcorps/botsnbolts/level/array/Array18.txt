@@ -1,0 +1,28 @@
+IMP|Array
+
+M|=================}i456i{
+M|}/----------------,789i{
+M|}i12222222231222222223i{
+M|}i4        64        6i{
+M|}i4        64        6i{
+M|}i4        67888888889i{
+M|}i4555555556(--------)i{
+M|}i                    i{
+M|}i                    i{
+M|}i                    i{
+M|}i                    i{
+M|}`----------------\   i{
+M|=================}i   i{
+M|=================}i   i{
+
+WTR|7|2|3|20
+
+ENM|3|10|PropEnemy
+ENM|7|8|PropEnemy
+ENM|20|5|SubEnemy
+ENM|3|4|SwimEnemy
+
+RPT|2|8|20|4|Array
+RPT|19|0|3|3|Water||||17
+
+STP|WaterRipple
