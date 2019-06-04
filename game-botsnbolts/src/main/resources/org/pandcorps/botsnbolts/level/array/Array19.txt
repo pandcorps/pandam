@@ -1,0 +1,40 @@
+IMP|Array
+
+RPT|2|0|3|12|Water||||17
+RPT|5|10|9|2|Water||||17
+RPT|7|2|15|8|Water||||17
+RPT|19|10|3|4|Water||||17
+
+M|}/------------\{=}i   i{
+M|}i            i{=}i   i{
+M|}i            `---,   i{
+M|}i                    i{
+M|}i   S                i{
+M|}i                    i{
+M|}i   S    I           i{
+M|}i        I           i{
+M|}i   S    I   I       i{
+M|}i        I   I       i{
+M|}i   S    I   I   I   i{
+M|}i        I   I   I   i{
+M|}i   /----------------,{
+M|}i   i{=================
+
+WTR|15|-1
+
+ENM|16|10|IcicleEnemy
+
+ENM|7|2|IceSpike
+ENM|8|2|IceSpike
+ENM|9|2|IceSpike
+ENM|11|2|IceSpike
+ENM|12|2|IceSpike
+ENM|13|2|IceSpike
+ENM|15|2|IceSpike
+ENM|16|2|IceSpike
+ENM|17|2|IceSpike
+
+ENM|10|12|SubEnemy|false
+ENM|3|11|SwimEnemy|false
+
+STP|WaterRipple
