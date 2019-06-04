@@ -22,6 +22,8 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.botsnbolts;
 
+import java.util.*;
+
 import org.pandcorps.botsnbolts.Enemy.*;
 import org.pandcorps.botsnbolts.RoomLoader.*;
 import org.pandcorps.core.*;
@@ -157,6 +159,24 @@ public abstract class RoomFunction {
         public final void build(final TileMap tm, final int x, final int y) {
             RoomLoader.addActor(new NavalMine(x, y));
         }
+    }
+    
+    public final static class HiddenBlockTile extends RoomFunction {
+        @Override
+        public final void build(final TileMap tm, final int x, final int y) {
+            RoomLoader.hiddenBlockIndices = addIndex(RoomLoader.hiddenBlockIndices, tm, x, y);
+        }
+    }
+    
+    public final static class HiddenBarrierTile extends RoomFunction {
+        @Override
+        public final void build(final TileMap tm, final int x, final int y) {
+            RoomLoader.hiddenBarrierIndices = addIndex(RoomLoader.hiddenBarrierIndices, tm, x, y);
+        }
+    }
+    
+    protected final static List<Integer> addIndex(final List<Integer> list, final TileMap tm, final int x, final int y) {
+        return Coltil.add(list, Integer.valueOf(tm.getIndex(x, y)));
     }
     
     protected final static int copyNeighbor(final TileMap tm, final int x, final int y) {
@@ -368,7 +388,7 @@ public abstract class RoomFunction {
         }
     }
     
-    public final static class FinalBackground extends StepHandler {
+    public final static class ArrayBackground extends StepHandler {
         final Pancolor[] colors = new Pancolor[9];
         
         {

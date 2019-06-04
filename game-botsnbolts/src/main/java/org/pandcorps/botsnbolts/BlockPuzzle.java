@@ -295,6 +295,22 @@ public abstract class BlockPuzzle {
         private final Set<HiddenBarrier> activeBarrierIndices = new HashSet<HiddenBarrier>();
         private final ImplPanple scratch = new ImplPanple();
         
+        protected HiddenBlockPuzzle(final List<Integer> indices, final List<Integer> barrierIndices) {
+            this(toArray(indices), toArray(barrierIndices));
+        }
+        
+        private final static int[] toArray(final List<Integer> list) {
+            final int size = Coltil.size(list);
+            if (size == 0) {
+                return null;
+            }
+            final int[] a = new int[size];
+            for (int i = 0; i < size; i++) {
+                a[i] = list.get(i).intValue();
+            }
+            return a;
+        }
+        
         protected HiddenBlockPuzzle(final int[] indices, final int[] barrierIndices) {
             this.indices = initMap(indices);
             this.barrierIndices = initMap(barrierIndices);

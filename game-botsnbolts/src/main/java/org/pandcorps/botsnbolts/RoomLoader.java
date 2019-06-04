@@ -59,6 +59,8 @@ public abstract class RoomLoader {
     protected final static List<BossDoor> bossDoors = new ArrayList<BossDoor>(2);
     protected static BoltDoor boltDoor = null;
     protected final static List<BlockPuzzle> blockPuzzles = new ArrayList<BlockPuzzle>(1);
+    protected static List<Integer> hiddenBlockIndices = null;
+    protected static List<Integer> hiddenBarrierIndices = null;
     private static boolean conveyorBelt = false;
     protected static int startX = 0;
     protected static int startY = 0;
@@ -261,6 +263,7 @@ public abstract class RoomLoader {
     
     private final static void postprocess() {
         addShadows();
+        addHiddenTiles();
     }
     
     private final static void ctx(Segment seg, final SegmentStream in) throws Exception {
@@ -454,6 +457,10 @@ public abstract class RoomLoader {
     
     protected final static void removeShadowBelow(final TileMap tm, final int tileIndex) {
         removeShadow(tm, tm.getColumn(tileIndex), tm.getRow(tileIndex) - 1);
+    }
+    
+    protected final static void addHiddenTiles() {
+        new HiddenBlockPuzzle(hiddenBlockIndices, hiddenBarrierIndices);
     }
     
     private final static void var(final Segment seg) throws Exception {
