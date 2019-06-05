@@ -460,7 +460,12 @@ public abstract class RoomLoader {
     }
     
     protected final static void addHiddenTiles() {
+        if (Coltil.isEmpty(hiddenBlockIndices) && Coltil.isEmpty(hiddenBarrierIndices)) {
+            return;
+        }
         new HiddenBlockPuzzle(hiddenBlockIndices, hiddenBarrierIndices);
+        Coltil.clear(hiddenBlockIndices);
+        Coltil.clear(hiddenBarrierIndices);
     }
     
     private final static void var(final Segment seg) throws Exception {
