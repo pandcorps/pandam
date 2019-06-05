@@ -1831,6 +1831,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
             x = getX(seg);
             y = getY(seg);
             setView(getFrame(0));
+            setVisible(false);
         }
         
         @Override
