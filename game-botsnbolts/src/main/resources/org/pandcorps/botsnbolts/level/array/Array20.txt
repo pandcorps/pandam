@@ -1,0 +1,45 @@
+IMP|Array
+
+RPT|2|2|3|12|Water||||17
+RPT|5|2|3|10|Water||||17
+RPT|8|0|17|12|Water||||17
+RPT|25|0|22|14|Water||||17
+RPT|47|0|17|12|Water||||17
+RPT|64|2|5|10|Water||||17
+RPT|69|2|1|12|Water||||17
+
+FNC|m|NavalMineTile
+
+SHD
+
+M|}i   `------------------,                      `--------------------, i{
+M|}i                 m m m                       S                      i{
+M|}i                                                                    i{
+M|}i                                             ..                     i{
+M|}i                                             S                      i{
+M|}i                                                                    i{
+M|}i                                                                    i{
+M|}i                                                              S     i{
+M|}i                          %                                         i{
+M|}i                   %                                          ..    i{
+M|}i            %                        %               %        S     i{
+M|}i                                                                m  mi{
+M|}`-----\                                       %                /-----,{
+M|======}i                                                        i{======
+
+LDR|69|10|4
+
+WTR|15|-1
+
+ENM|23|11|SubEnemy
+ENM|67|11|SwimEnemy
+
+TMP
+TMS|14^3
+TMS|21^4~39^3~55^3
+TMS|28^5
+TMS|47^1
+
+STP|WaterRipple
+
+VAR|rescueDisabled|Start
