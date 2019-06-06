@@ -1,0 +1,35 @@
+IMP|Array
+
+RPT|2|2|20|10|Water||||17
+RPT|2|2|1|12|Water||||17
+RPT|21|0|1|4|Water||||17
+
+M|}i `------------------\{
+M|}i                    i{
+M|}i                    i{
+M|}i                    i{
+M|}i   .                i{
+M|}i   .                i{
+M|}i   .                i{
+M|}i   .                i{
+M|}i   .   .            i{
+M|}i   .   .            i{
+M|}i   .   .   .        i{
+M|}i$$$.   .   .   .    i{
+M|}`------------------\ i{
+M|===================}i i{
+
+LDR|21|0|2
+LDR|2|8|6
+
+WTR|15|-1
+
+ENM|6|12|CeilingCannon
+ENM|10|12|CeilingCannon
+ENM|11|12|SubEnemy|false
+ENM|3|2|SpringEnemy|0||false|20
+ENM|7|2|SpringEnemy|0||false|15
+ENM|11|2|SpringEnemy|0||false|10
+ENM|15|2|SpringEnemy|0||false|5
+
+STP|WaterRipple
