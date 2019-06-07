@@ -344,7 +344,9 @@ public abstract class BlockPuzzle {
             final int col = tm.getContainerColumn(player.getPosition().getX());
             final Panmage[] blockImgs = BotsnBoltsGame.blockHidden;
             for (final Integer activeIndex : activeIndices) {
-                tm.setForeground(activeIndex.intValue(), null);
+                final int ai = activeIndex.intValue();
+                tm.setForeground(ai, null);
+                RoomLoader.removeShadowBelow(tm, ai);
             }
             activeIndices.clear();
             activeBarrierIndices.clear();
@@ -355,7 +357,11 @@ public abstract class BlockPuzzle {
                     final List<Integer> tileIndices = Coltil.get(indices, cmi);
                     if (tileIndices != null) {
                         for (final Integer tileIndex : tileIndices) {
-                            tm.setForeground(tileIndex.intValue(), blockImgs[i]);
+                            final int ti = tileIndex.intValue();
+                            tm.setForeground(ti, blockImgs[i]);
+                            if (i == 0) {
+                                RoomLoader.addShadowBelow(tm, ti);
+                            }
                             activeIndices.add(tileIndex);
                         }
                     }
