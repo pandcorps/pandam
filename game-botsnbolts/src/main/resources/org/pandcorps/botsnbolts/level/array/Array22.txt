@@ -1,0 +1,34 @@
+IMP|Array
+
+RPT|2|8|20|4|Array
+RPT|2|0|1|3|Water||||17
+
+FNC|m|NavalMineTile
+
+M|}i4i{===================
+M|}i7`------------------\{
+M|}i12222222231222222223i{
+M|}i4        64        6i{
+M|}i4        64        6i{
+M|}i78888888894        6i{
+M|}i(--------)4555555556i{
+M|}im                   i{
+M|}i                    i{
+M|}i                    i{
+M|}i                    i{
+M|}i /------------------,{
+M|}i i{===================
+M|}i i{===================
+
+LDR|2|0|3
+LDR|2|8|6
+
+WTR|7|2|3|20
+
+ENM|21|3|WallCannon
+ENM|21|4|WallCannon
+ENM|15|7|Destroyer
+ENM|19|5|SubEnemy
+ENM|15|9|PropEnemy
+
+STP|WaterRipple
