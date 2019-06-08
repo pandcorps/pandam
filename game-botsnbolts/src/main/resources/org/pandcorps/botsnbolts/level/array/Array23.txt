@@ -1,0 +1,33 @@
+IMP|Array
+
+M|===================}i6i{
+M|}/------------------,9i{
+M|}i12222231222231222223i{
+M|}i4     64    64     6i{
+M|}i4     64    64     6i{
+M|}i4     64    64  ....i{
+M|}i4     64    64  DDDEi{
+M|}i4     64   <<<     6i{
+M|}i4     64   DEC     6i{
+M|}i4     <<<   64     6i{
+M|}i4     ECD   64     6i{
+M|}i7/-\8897888897888889i{
+M|}i1i#`----------------,{
+M|}i4i{===================
+
+LDR|2|0|3
+LDR|21|9|5
+
+ENM|14|9|PropEnemy
+ENM|4|9|SaucerEnemy|false
+ENM|19|9|CyanEnemy
+
+ENM|7|2|GearEnemy|false
+ENM|11|2|GearEnemy|false
+ENM|16|2|GearEnemy|true
+ENM|20|2|GearEnemy|true
+
+CNV|8|4|3|false
+CNV|13|6|3|false
+
+RPT|2|3|20|9|Array
