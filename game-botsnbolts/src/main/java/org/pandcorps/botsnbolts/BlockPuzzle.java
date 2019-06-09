@@ -23,6 +23,7 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.botsnbolts;
 
 import java.util.*;
+import java.util.Map.*;
 
 import org.pandcorps.botsnbolts.Enemy.*;
 import org.pandcorps.botsnbolts.Player.*;
@@ -287,12 +288,14 @@ public abstract class BlockPuzzle {
         }
     }
     
+    private final static int HIDDEN_INDEX_MAX = 3;
+    
     // Blocks are invisible; fade in when Player approaches; fade out when Player leaves
     protected final static class HiddenBlockPuzzle extends Panctor implements StepListener {
         private final HashMultimap<Integer, Integer> indices;
-        private final Set<Integer> activeIndices = new HashSet<Integer>();
+        private final Map<Integer, HiddenBarrier> activeIndices = new HashMap<Integer, HiddenBarrier>();
         private final HashMultimap<Integer, Integer> barrierIndices;
-        private final Set<HiddenBarrier> activeBarrierIndices = new HashSet<HiddenBarrier>();
+        private final Map<Integer, HiddenBarrier> activeBarrierIndices = new HashMap<Integer, HiddenBarrier>();
         private final ImplPanple scratch = new ImplPanple();
         
         protected HiddenBlockPuzzle(final List<Integer> indices, final List<Integer> barrierIndices) {
@@ -343,13 +346,8 @@ public abstract class BlockPuzzle {
             final TileMap tm = BotsnBoltsGame.tm;
             final int col = tm.getContainerColumn(player.getPosition().getX());
             final Panmage[] blockImgs = BotsnBoltsGame.blockHidden;
-            for (final Integer activeIndex : activeIndices) {
-                final int ai = activeIndex.intValue();
-                tm.setForeground(ai, null);
-                RoomLoader.removeShadowBelow(tm, ai);
-            }
-            activeIndices.clear();
-            activeBarrierIndices.clear();
+            fadeOut(activeIndices, true);
+            fadeOut(activeBarrierIndices,  false);
             for (int i = 0; i < 4; i++) {
                 for (int j = ((i == 0) ? 1 : 0); j < 2; j++) {
                     final int mult = (j == 0) ? 1 : -1;
@@ -358,20 +356,62 @@ public abstract class BlockPuzzle {
                     if (tileIndices != null) {
                         for (final Integer tileIndex : tileIndices) {
                             final int ti = tileIndex.intValue();
-                            tm.setForeground(ti, blockImgs[i]);
-                            if (i == 0) {
+                            final HiddenBarrier b = activeIndices.get(tileIndex);
+                            final int imgIndex;
+                            if (b == null) {
+                                imgIndex = HIDDEN_INDEX_MAX;
+                                activeIndices.put(tileIndex, new HiddenBarrier(-1, -1));
+                            } else {
+                                imgIndex = Math.max(0, b.imgIndex - 2);
+                                b.imgIndex = imgIndex;
+                            }
+                            tm.setForeground(ti, blockImgs[imgIndex]);
+                            if (imgIndex == 0) {
                                 RoomLoader.addShadowBelow(tm, ti);
                             }
-                            activeIndices.add(tileIndex);
                         }
                     }
                     final List<Integer> tileBarrierIndices = Coltil.get(barrierIndices, cmi);
                     if (tileBarrierIndices != null) {
                         for (final Integer tileBarrierIndex : tileBarrierIndices) {
-                            tm.savePosition(scratch, tileBarrierIndex.intValue());
-                            activeBarrierIndices.add(new HiddenBarrier(i, scratch.getX(), scratch.getY()));
+                            final HiddenBarrier b = activeBarrierIndices.get(tileBarrierIndex);
+                            if (b == null) {
+                                tm.savePosition(scratch, tileBarrierIndex.intValue());
+                                activeBarrierIndices.put(tileBarrierIndex, new HiddenBarrier(scratch.getX(), scratch.getY()));
+                            } else {
+                                b.imgIndex = Math.max(0, b.imgIndex - 2);
+                            }
                         }
                     }
+                }
+            }
+            clear(activeIndices);
+            clear(activeBarrierIndices);
+        }
+        
+        private final void fadeOut(final Map<Integer, HiddenBarrier> map, final boolean updateFg) {
+            final Iterator<Entry<Integer, HiddenBarrier>> iter = map.entrySet().iterator();
+            final TileMap tm = BotsnBoltsGame.tm;
+            final Panmage[] blockImgs = BotsnBoltsGame.blockHidden;
+            while (iter.hasNext()) {
+                final Entry<Integer, HiddenBarrier> entry = iter.next();
+                final HiddenBarrier b = entry.getValue();
+                final int imgIndex = b.imgIndex + 1;
+                b.imgIndex = imgIndex;
+                if (updateFg) {
+                    final int ti = entry.getKey().intValue();
+                    tm.setForeground(ti, (imgIndex > HIDDEN_INDEX_MAX) ? null : blockImgs[imgIndex]);
+                    RoomLoader.removeShadowBelow(tm, ti);
+                }
+            }
+        }
+        
+        private final void clear(final Map<Integer, HiddenBarrier> map) {
+            final Iterator<Entry<Integer, HiddenBarrier>> iter = map.entrySet().iterator();
+            while (iter.hasNext()) {
+                final Entry<Integer, HiddenBarrier> entry = iter.next();
+                if (entry.getValue().imgIndex > HIDDEN_INDEX_MAX) {
+                    iter.remove();
                 }
             }
         }
@@ -379,7 +419,7 @@ public abstract class BlockPuzzle {
         @Override
         protected final void renderView(final Panderer renderer) {
             final Panlayer layer = getLayer();
-            for (final HiddenBarrier hb : activeBarrierIndices) {
+            for (final HiddenBarrier hb : activeBarrierIndices.values()) {
                 final int imgIndex = hb.imgIndex, imgLeft, imgRight;
                 if (imgIndex < 2) {
                     imgLeft = 0;
@@ -395,12 +435,12 @@ public abstract class BlockPuzzle {
     }
     
     private final static class HiddenBarrier {
-        private final int imgIndex;
+        private int imgIndex;
         private final float x;
         private final float y;
         
-        private HiddenBarrier(final int imgIndex, final float x, final float y) {
-            this.imgIndex = imgIndex;
+        private HiddenBarrier(final float x, final float y) {
+            this.imgIndex = HIDDEN_INDEX_MAX;
             this.x = x;
             this.y = y;
         }
