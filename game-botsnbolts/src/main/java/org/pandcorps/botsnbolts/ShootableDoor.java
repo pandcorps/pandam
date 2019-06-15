@@ -313,7 +313,9 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
         private final void setBehavior(final byte b) {
             final TileMap tm = BotsnBoltsGame.tm;
             tm.setBehavior(x, y, b);
-            tm.setBehavior(x, y + 1, b);
+            if (!isSmall()) {
+                tm.setBehavior(x, y + 1, b);
+            }
         }
         
         @Override
