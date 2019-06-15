@@ -815,7 +815,9 @@ public abstract class RoomLoader {
     
     private final static void dor(final int x, final int y, final String doorType) {
         if ("Boss".equals(doorType)) {
-            bossDoors.add(new BossDoor(x, y));
+            bossDoors.add(new BossDoor(x, y, true));
+        } else if ("BossLeft".equals(doorType)) {
+            bossDoors.add(new BossDoor(x, y, false));
         } else if ("Bolt".equals(doorType)) {
             boltDoor = new BoltDoor(x, y);
         } else {
@@ -825,8 +827,14 @@ public abstract class RoomLoader {
     
     protected final static BossDoor getBossDoorExit() {
         for (final BossDoor bossDoor : bossDoors) {
-            if (bossDoor.getPosition().getX() < 32) {
-                continue;
+            if (bossDoor.isLeftToRight()) {
+                if (bossDoor.getPosition().getX() < 32) {
+                    continue;
+                }
+            } else {
+                if (bossDoor.getPosition().getX() >= (BotsnBoltsGame.tm.getLayer().getSize().getX() - 32)) {
+                    continue;
+                }
             }
             return bossDoor;
         }

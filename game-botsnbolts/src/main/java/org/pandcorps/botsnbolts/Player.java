@@ -771,6 +771,9 @@ public final class Player extends Chr implements Warpable {
         } else if (bossDoorStatus == 2) {
             hv = VEL_WALK;
             v = 0;
+        } else if (bossDoorStatus == 3) {
+            hv = -VEL_WALK;
+            v = 0;
         }
         prevUnderwater = splashIfNeeded(this, prevUnderwater, this);
         final boolean ret = onStepState();
@@ -1373,10 +1376,18 @@ public final class Player extends Chr implements Warpable {
         }
         final Panple doorPos = bossDoor.getPosition(), pos = getPosition();
         final float doorX = doorPos.getX(), playerX = pos.getX();
-        if (doorX < playerX) {
-            return false;
-        } else if ((doorX - playerX) > 12.0f) {
-            return false;
+        if (bossDoor.isLeftToRight()) {
+            if (doorX < playerX) {
+                return false;
+            } else if ((doorX - playerX) > 12.0f) {
+                return false;
+            }
+        } else {
+            if (doorX > playerX) {
+                return false;
+            } else if ((playerX - doorX) > 28.0f) {
+                return false;
+            }
         }
         final float doorY = doorPos.getY(), playerY = pos.getY();
         if (playerY < doorY) {
@@ -1389,8 +1400,12 @@ public final class Player extends Chr implements Warpable {
         return true;
     }
     
-    protected final void onBossDoorOpened() {
-        bossDoorStatus = 2;
+    protected final void onBossDoorOpened(final BossDoor door) {
+        if (door.isLeftToRight()) {
+            bossDoorStatus = 2;
+        } else {
+            bossDoorStatus = 3;
+        }
     }
     
     @Override

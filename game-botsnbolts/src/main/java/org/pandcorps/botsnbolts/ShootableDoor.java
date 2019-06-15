@@ -435,23 +435,33 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
         private final int h = 16;
         protected final int x;
         protected final int y;
+        private final boolean leftToRight;
         private int base;
         private int vel = 0;
         private long startTime;
         
-        protected BossDoor(final int x, final int y) {
+        protected BossDoor(final int x, final int y, final boolean leftToRight) {
             final TileMap tm = BotsnBoltsGame.tm;
             tm.getLayer().addActor(this);
             this.x = x;
             this.y = y;
+            this.leftToRight = leftToRight;
             tm.savePosition(getPosition(), x, y);
-            if (RoomLoader.changing && (x == 0)) {
+            if (RoomLoader.changing && isEntryPoint()) {
                 setBehavior(Tile.BEHAVIOR_OPEN);
                 base = h;
             } else {
                 setBehavior(Tile.BEHAVIOR_SOLID);
                 base = 0;
             }
+        }
+        
+        protected boolean isEntryPoint() {
+            return isLeftToRight() ? (x == 0) : (x > 0);
+        }
+        
+        protected boolean isLeftToRight() {
+            return leftToRight;
         }
         
         private final void setBehavior(final byte b) {
@@ -504,7 +514,7 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
                 } else if (base > h) {
                     base = h;
                     vel = 0;
-                    getPlayer().onBossDoorOpened();
+                    getPlayer().onBossDoorOpened(this);
                 }
             }
             for (int j = base; j < h; j++) {
