@@ -766,7 +766,7 @@ public final class BotsnBoltsGame extends BaseGame {
         final Panmage basicProjectile = engine.createImage(pre + "Projectile", new FinPanple2(3, 3), new FinPanple2(-3, -2), new FinPanple2(5, 3), playerProjectile);
         final Panimation projectile2 = newFlipper(pre + "Projectile2", playerProjectile2, new FinPanple2(7, 7), new FinPanple2(-4, -5), new FinPanple2(8, 6), 4);
         final Panimation projectile3 = newProjectile3(pre);
-        final Panimation burst = newAnimation(pre + "Burst", playerBurst, CENTER_16, 2);
+        final Panimation burst = newAnimation(pre + "Burst", playerBurst, CENTER_16, new FinPanple2(-10, -10), new FinPanple2(10, 10), 2);
         final Panimation charge = newAnimation(pre + "Charge", playerCharge, null, 1);
         final Panple oChargeVert = new FinPanple2(4, 0);
         final Panimation chargeVert = newAnimation(pre + "ChargeVert", playerChargeVert, oChargeVert, 1);
