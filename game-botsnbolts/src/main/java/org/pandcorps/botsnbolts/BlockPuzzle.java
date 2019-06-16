@@ -292,6 +292,7 @@ public abstract class BlockPuzzle {
     
     // Blocks are invisible; fade in when Player approaches; fade out when Player leaves
     protected final static class HiddenBlockPuzzle extends Panctor implements StepListener {
+        private final TileMap tm;
         private final HashMultimap<Integer, Integer> indices;
         private final Map<Integer, HiddenBarrier> activeIndices = new HashMap<Integer, HiddenBarrier>();
         private final HashMultimap<Integer, Integer> barrierIndices;
@@ -315,12 +316,13 @@ public abstract class BlockPuzzle {
         }
         
         protected HiddenBlockPuzzle(final int[] indices, final int[] barrierIndices) {
+            tm = BotsnBoltsGame.tm;
             this.indices = initMap(indices);
             this.barrierIndices = initMap(barrierIndices);
-            BotsnBoltsGame.tm.getLayer().addActor(this);
+            tm.getLayer().addActor(this);
         }
         
-        private final static HashMultimap<Integer, Integer> initMap(final int[] indices) {
+        private final HashMultimap<Integer, Integer> initMap(final int[] indices) {
             if (indices == null) {
                 return null;
             }
@@ -329,7 +331,6 @@ public abstract class BlockPuzzle {
                 return null;
             }
             final HashMultimap<Integer, Integer> map = new HashMultimap<Integer, Integer>(size);
-            final TileMap tm = BotsnBoltsGame.tm;
             for (final int index : indices) {
                 map.add(Integer.valueOf(tm.getColumn(index)), Integer.valueOf(index));
                 tm.setBehavior(index, Tile.BEHAVIOR_SOLID);
@@ -343,12 +344,12 @@ public abstract class BlockPuzzle {
             if (player == null) {
                 return;
             }
-            final TileMap tm = BotsnBoltsGame.tm;
             final int col = tm.getContainerColumn(player.getPosition().getX());
             final Panmage[] blockImgs = BotsnBoltsGame.blockHidden;
-            fadeOut(activeIndices, true);
-            fadeOut(activeBarrierIndices,  false);
-            for (int i = 0; i < 4; i++) {
+            final boolean changing = RoomChanger.isChanging();
+            fadeOut(changing);
+            final int n = changing ? 0 : 4;
+            for (int i = 0; i < n; i++) {
                 for (int j = ((i == 0) ? 1 : 0); j < 2; j++) {
                     final int mult = (j == 0) ? 1 : -1;
                     final Integer cmi = Integer.valueOf(col + (mult * i));
@@ -389,14 +390,18 @@ public abstract class BlockPuzzle {
             clear(activeBarrierIndices);
         }
         
-        private final void fadeOut(final Map<Integer, HiddenBarrier> map, final boolean updateFg) {
+        private final void fadeOut(final boolean clear) {
+            fadeOut(activeIndices, true, clear);
+            fadeOut(activeBarrierIndices, false, clear);
+        }
+        
+        private final void fadeOut(final Map<Integer, HiddenBarrier> map, final boolean updateFg, final boolean clear) {
             final Iterator<Entry<Integer, HiddenBarrier>> iter = map.entrySet().iterator();
-            final TileMap tm = BotsnBoltsGame.tm;
             final Panmage[] blockImgs = BotsnBoltsGame.blockHidden;
             while (iter.hasNext()) {
                 final Entry<Integer, HiddenBarrier> entry = iter.next();
                 final HiddenBarrier b = entry.getValue();
-                final int imgIndex = b.imgIndex + 1;
+                final int imgIndex = (clear ? HIDDEN_INDEX_MAX : b.imgIndex) + 1;
                 b.imgIndex = imgIndex;
                 if (updateFg) {
                     final int ti = entry.getKey().intValue();
@@ -414,6 +419,11 @@ public abstract class BlockPuzzle {
                     iter.remove();
                 }
             }
+        }
+        
+        @Override
+        protected final void onDestroy() {
+            fadeOut(true);
         }
         
         @Override
