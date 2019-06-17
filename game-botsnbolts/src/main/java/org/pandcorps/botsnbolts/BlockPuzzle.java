@@ -293,6 +293,7 @@ public abstract class BlockPuzzle {
     // Blocks are invisible; fade in when Player approaches; fade out when Player leaves
     protected final static class HiddenBlockPuzzle extends Panctor implements StepListener {
         private final TileMap tm;
+        private final int size;
         private final HashMultimap<Integer, Integer> indices;
         private final Map<Integer, HiddenBarrier> activeIndices = new HashMap<Integer, HiddenBarrier>();
         private final HashMultimap<Integer, Integer> barrierIndices;
@@ -317,6 +318,8 @@ public abstract class BlockPuzzle {
         
         protected HiddenBlockPuzzle(final int[] indices, final int[] barrierIndices) {
             tm = BotsnBoltsGame.tm;
+            final String sizeValue = RoomLoader.variables.get("hiddenPuzzleSize");
+            size = (sizeValue == null) ? 4 : Integer.parseInt(sizeValue);
             this.indices = initMap(indices);
             this.barrierIndices = initMap(barrierIndices);
             tm.getLayer().addActor(this);
@@ -348,7 +351,7 @@ public abstract class BlockPuzzle {
             final Panmage[] blockImgs = BotsnBoltsGame.blockHidden;
             final boolean changing = RoomChanger.isChanging();
             fadeOut(changing);
-            final int n = changing ? 0 : 4;
+            final int n = changing ? 0 : size;
             for (int i = 0; i < n; i++) {
                 for (int j = ((i == 0) ? 1 : 0); j < 2; j++) {
                     final int mult = (j == 0) ? 1 : -1;
