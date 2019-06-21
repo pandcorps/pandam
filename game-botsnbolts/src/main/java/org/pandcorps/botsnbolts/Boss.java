@@ -125,7 +125,9 @@ public abstract class Boss extends Enemy {
                 return false;
             }
         }
-        if (waitTimer > 0) {
+        if (onStepBoss()) {
+            return false;
+        } else if (waitTimer > 0) {
             waitTimer--;
             return onWaiting();
         } else if (state == STATE_STILL) {
@@ -136,6 +138,10 @@ public abstract class Boss extends Enemy {
             return pickState();
         }
         return continueState();
+    }
+    
+    protected boolean onStepBoss() {
+        return false;
     }
     
     @Override
@@ -3144,6 +3150,94 @@ public abstract class Boss extends Enemy {
             super(VOLCANO_OFF_X, VOLCANO_H, seg); //TODO
         }
 
+        @Override
+        protected final boolean pickState() {
+            return false;
+        }
+
+        @Override
+        protected final boolean continueState() {
+            return false;
+        }
+
+        @Override
+        protected final Panmage getStill() {
+            return null;
+        }
+    }
+    
+    protected final static class FinalWagon extends Boss {
+        private static Panmage box = null;
+        private static Panmage hull = null;
+        private static Panmage wheel = null;
+        private int rot = 0;
+        
+        protected FinalWagon(final Segment seg) {
+            super(0, 0, seg);
+            setMirror(false);
+        }
+        
+        @Override
+        protected final boolean pickState() {
+            return false;
+        }
+
+        @Override
+        protected final boolean continueState() {
+            return false;
+        }
+
+        @Override
+        protected final Panmage getStill() {
+            if (box == null) {
+                box = Pangine.getEngine().createEmptyImage(BotsnBoltsGame.PRE_IMG + "final.wagon", FinPanple.ORIGIN, new FinPanple2(6, 6), new FinPanple2(135, 63));
+            }
+            return box;
+        }
+        
+        @Override
+        protected final boolean onStepBoss() {
+            // Wheel diameter: 63; circumference: 198; rotation: 30 degrees (1/12 of wheel, 16 pixels)
+            if (Pangine.getEngine().getClock() % 10 == 0) {
+                rot++;
+                if (rot > 3) {
+                    rot = 0;
+                }
+            }
+            return true;
+        }
+        
+        @Override
+        protected final void renderView(final Panderer renderer) {
+            final Panlayer layer = getLayer();
+            final Panple pos = getPosition();
+            final float x = pos.getX(), y = pos.getY();
+            renderer.render(layer, getHull(), x, y + 20, BotsnBoltsGame.DEPTH_ENEMY, 0, 0, 128, 128, 0, true, false);
+            final Panmage wheel = getWheel();
+            final float wx = x - (((rot == 1) || (rot == 2)) ? 1 : 0), wy = y - ((rot > 1) ? 2 : 1);
+            renderer.render(layer, wheel, wx + 22, wy, BotsnBoltsGame.DEPTH_ENEMY_FRONT, 0, 0, 64, 64, rot, false, false);
+            renderer.render(layer, wheel, wx - 2, wy, BotsnBoltsGame.DEPTH_BEHIND, 0, 0, 64, 64, rot, false, false);
+            renderer.render(layer, wheel, wx + 86, wy, BotsnBoltsGame.DEPTH_ENEMY_FRONT, 0, 0, 64, 64, rot, false, false);
+            renderer.render(layer, wheel, wx + 62, wy, BotsnBoltsGame.DEPTH_BEHIND, 0, 0, 64, 64, rot, false, false);
+            // Saucer - DEPTH_ENEMY_BACK, Final - DEPTH_ENEMY_BACK_2
+        }
+        
+        private final static Panmage getHull() {
+            return (hull = getImage(hull, "final/Hull", null, null, null));
+        }
+        
+        private final static Panmage getWheel() {
+            return (wheel = getImage(wheel, "final/Wheel", null, null, null));
+        }
+    }
+    
+    protected final static class FinalSaucer extends Boss {
+        private static Panmage img = null;
+        
+        protected FinalSaucer(final Segment seg) {
+            super(VOLCANO_OFF_X, VOLCANO_H, seg); //TODO
+        }
+        
         @Override
         protected final boolean pickState() {
             return false;
