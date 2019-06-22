@@ -22,6 +22,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.botsnbolts;
 
+import org.pandcorps.botsnbolts.Boss.*;
 import org.pandcorps.botsnbolts.Enemy.*;
 import org.pandcorps.botsnbolts.Player.*;
 import org.pandcorps.botsnbolts.RoomLoader.*;
@@ -317,6 +318,27 @@ public abstract class Extra extends Panctor {
                 baseImgs[i] = img;
             }
             return img;
+        }
+    }
+    
+    protected final static class FinalWagonSpawner extends Extra implements StepListener {
+        private final Segment seg;
+        
+        protected FinalWagonSpawner(final Segment seg) {
+            super(seg, 0);
+            this.seg = seg;
+        }
+
+        @Override
+        public final void onStep(final StepEvent event) {
+            final Player player = PlayerContext.getPlayer(BotsnBoltsGame.pc);
+            if (player == null) {
+                return;
+            } else if (player.getPosition().getX() <= 16) {
+                BotsnBoltsGame.addActor(new FinalWagon(seg));
+                player.setMirror(false);
+                destroy();
+            }
         }
     }
     
