@@ -1,0 +1,25 @@
+IMP|Final
+
+M|BBBi----------------iBBB
+M|B/-,DdDdDdDdDdDdDdDd`---
+M|BiDd                DdiB
+M|Bi                   /--
+M|Bi                   iBB
+M|Bi        /--\       iBB
+M|-,        iBBi    (-)`--
+M| d        iBBi    DdDdD 
+M|          i--i          
+M|          i##i          
+M|          i!*i          
+M|----\#####i@@i/-\###/---
+M|BBBBi!*@!!i--iiBi*!@iBBB
+M|BBBBi!!#*!iBBi`-,@*#iBBB
+
+DOR|23|3|Cyan
+DOR|0|3|Cyan
+
+ENM|14|3|SentryGun
+
+ENM|5|10|RingEnemy
+
+RPT|||||Final
