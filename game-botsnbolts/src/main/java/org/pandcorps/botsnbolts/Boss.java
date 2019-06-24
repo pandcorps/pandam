@@ -3167,9 +3167,12 @@ public abstract class Boss extends Enemy {
     }
     
     protected final static class FinalWagon extends Boss {
+        private final static byte STATE_ADVANCE = 1;
+        private final static byte STATE_RETREAT = 2;
         private static Panmage box = null;
         private static Panmage hull = null;
         private static Panmage wheel = null;
+        private int advanceIndex = 0;
         private int rot = 0;
         
         protected FinalWagon(final Segment seg) {
@@ -3179,12 +3182,64 @@ public abstract class Boss extends Enemy {
         
         @Override
         protected final boolean pickState() {
+            if (advanceIndex > 0) {
+                startRetreat();
+            } else {
+                startAdvance();
+            }
             return false;
         }
 
         @Override
         protected final boolean continueState() {
             return false;
+        }
+        
+        @Override
+        protected final boolean onWaiting() {
+            if (state == STATE_ADVANCE) {
+                onAdvancing();
+            } else if (state == STATE_RETREAT) {
+                onRetreating();
+            }
+            return false;
+        }
+        
+        private final void startAdvance() {
+            startStateIndefinite(STATE_ADVANCE, getStill());
+        }
+        
+        private final void startRetreat() {
+            startStateIndefinite(STATE_RETREAT, getStill());
+        }
+        
+        private final void onAdvancing() {
+            // Wheel diameter: 63; circumference: 198; rotation: 30 degrees (1/12 of wheel, 16 pixels)
+            advanceIndex++;
+            getPosition().addX(-4);
+            if ((advanceIndex % 4) == 1) {
+                rot--;
+                if (rot < 0) {
+                    rot = 3;
+                }
+                if (advanceIndex == 53) {
+                    startStill();
+                }
+            }
+        }
+        
+        private final void onRetreating() {
+            advanceIndex--;
+            getPosition().addX(4);
+            if ((advanceIndex % 4) == 0) {
+                rot++;
+                if (rot > 3) {
+                    rot = 0;
+                }
+                if (advanceIndex == 0) {
+                    startStill();
+                }
+            }
         }
 
         @Override
@@ -3193,18 +3248,6 @@ public abstract class Boss extends Enemy {
                 box = Pangine.getEngine().createEmptyImage(BotsnBoltsGame.PRE_IMG + "final.wagon", FinPanple.ORIGIN, new FinPanple2(6, 6), new FinPanple2(135, 63));
             }
             return box;
-        }
-        
-        @Override
-        protected final boolean onStepBoss() {
-            // Wheel diameter: 63; circumference: 198; rotation: 30 degrees (1/12 of wheel, 16 pixels)
-            if (Pangine.getEngine().getClock() % 10 == 0) {
-                rot++;
-                if (rot > 3) {
-                    rot = 0;
-                }
-            }
-            return true;
         }
         
         @Override
