@@ -1,0 +1,28 @@
+IMP|Final
+
+M|BBBi!*!iBBBi i          
+M|B/-,@@@`---, i          
+M|BiDdDdDdDdDd b          
+M|Bi           .          
+M|-,           t          
+M|#t           i          
+M|!i           i          
+M|@b         /-,          
+M|-\         iBt          
+M|Bi       ##iBi          
+M|Bi       *!iBi          
+M|Bi /-\===@@iBi          
+M|Bi iB`-----,Bi          
+M|Bi iBBBBBBBBBi          
+
+LDR|2|0|3
+LDR|12|9|5
+
+ENM|7|3|SentryGun
+ENM|9|5|SentryGun
+ENM|11|7|SentryGun
+
+ENM|3|10|RingEnemy
+ENM|9|8|RingEnemy
+
+RPT|0|0|13|14|Final
