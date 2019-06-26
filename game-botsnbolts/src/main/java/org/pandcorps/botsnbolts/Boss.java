@@ -52,6 +52,18 @@ public abstract class Boss extends Enemy {
     
     protected Boss(final int offX, final int h, final Segment seg) {
         super(offX, h, seg, 0);
+        construct();
+    }
+    
+    protected Boss(final int offX, final int h, final int x, final int y) {
+        super(offX, h, x, y, 0);
+        construct();
+    }
+    
+    private final void construct() {
+        if (!isConstructNeeded()) {
+            return;
+        }
         init();
         startStill();
         setMirror(true);
@@ -66,6 +78,10 @@ public abstract class Boss extends Enemy {
             delaying = false;
             dropping = false;
         }
+    }
+    
+    protected boolean isConstructNeeded() {
+        return true;
     }
     
     private final static int getDropY() {
@@ -3166,7 +3182,7 @@ public abstract class Boss extends Enemy {
         }
     }
     
-    protected final static class FinalWagon extends Boss {
+    protected final static class FinalWagon extends Boss implements RoomAddListener, StepEndListener {
         private final static byte STATE_ADVANCE = 1;
         private final static byte STATE_RETREAT = 2;
         private static Panmage box = null;
@@ -3174,10 +3190,17 @@ public abstract class Boss extends Enemy {
         private static Panmage wheel = null;
         private int advanceIndex = 0;
         private int rot = 0;
+        private WagonSaucer saucer;
         
         protected FinalWagon(final Segment seg) {
             super(0, 0, seg);
             setMirror(false);
+            saucer = new WagonSaucer(this);
+        }
+        
+        @Override
+        public final void onRoomAdd(final RoomAddEvent event) {
+            addActor(saucer);
         }
         
         @Override
@@ -3241,6 +3264,19 @@ public abstract class Boss extends Enemy {
                 }
             }
         }
+        
+        @Override
+        public final void onStepEnd(final StepEndEvent event) {
+            if (saucer != null) {
+                final Panple pos = getPosition();
+                saucer.getPosition().set(pos.getX() + 48, pos.getY() + 45);
+            }
+        }
+        
+        @Override
+        protected final boolean isVulnerableToProjectile(final Projectile prj) {
+            return false;
+        }
 
         @Override
         protected final Panmage getStill() {
@@ -3262,7 +3298,6 @@ public abstract class Boss extends Enemy {
             renderer.render(layer, wheel, wx - 2, wy, BotsnBoltsGame.DEPTH_BEHIND, 0, 0, 64, 64, rot, false, false);
             renderer.render(layer, wheel, wx + 86, wy, BotsnBoltsGame.DEPTH_ENEMY_FRONT, 0, 0, 64, 64, rot, false, false);
             renderer.render(layer, wheel, wx + 62, wy, BotsnBoltsGame.DEPTH_BEHIND, 0, 0, 64, 64, rot, false, false);
-            // Saucer - DEPTH_ENEMY_BACK, Final - DEPTH_ENEMY_BACK_2
         }
         
         private final static Panmage getHull() {
@@ -3274,11 +3309,44 @@ public abstract class Boss extends Enemy {
         }
     }
     
-    protected final static class FinalSaucer extends Boss {
+    protected abstract static class BaseSaucer extends Boss {
         private static Panmage img = null;
         
-        protected FinalSaucer(final Segment seg) {
-            super(VOLCANO_OFF_X, VOLCANO_H, seg); //TODO
+        protected BaseSaucer() {
+            super(VOLCANO_OFF_X, VOLCANO_H, 0, 0); //TODO
+            setView(getSaucer());
+            setMirror(true);
+        }
+        
+        @Override
+        protected final boolean isConstructNeeded() {
+            return false;
+        }
+        
+        @Override
+        protected final Panmage getStill() {
+            return getSaucer();
+        }
+        
+        @Override
+        protected final void renderView(final Panderer renderer) {
+            final Panlayer layer = getLayer();
+            final Panple pos = getPosition();
+            final float x = pos.getX(), y = pos.getY();
+            renderer.render(layer, getSaucer(), x, y, BotsnBoltsGame.DEPTH_ENEMY_BACK, 0, 0, 64, 64, 0, true, false);
+            renderer.render(layer, Final.getCoat(), x + 17, y + 13, BotsnBoltsGame.DEPTH_ENEMY_BACK_2, 0, 0, 32, 32, 0, true, false);
+        }
+        
+        private final static Panmage getSaucer() {
+            return (img = getImage(img, "final/Saucer", null, null, null));
+        }
+    }
+    
+    protected final static class WagonSaucer extends BaseSaucer {
+        private final FinalWagon wagon;
+        
+        protected WagonSaucer(final FinalWagon wagon) {
+            this.wagon = wagon;
         }
         
         @Override
@@ -3290,10 +3358,18 @@ public abstract class Boss extends Enemy {
         protected final boolean continueState() {
             return false;
         }
-
+        
         @Override
-        protected final Panmage getStill() {
-            return null;
+        protected final void onHurt(final Projectile prj) {
+            wagon.onHurt(prj);
+        }
+    }
+    
+    protected final static class Final {
+        private static Panmage coat = null;
+        
+        private final static Panmage getCoat() {
+            return (coat = getImage(coat, "final/FinalCoat", null, null, null));
         }
     }
     
