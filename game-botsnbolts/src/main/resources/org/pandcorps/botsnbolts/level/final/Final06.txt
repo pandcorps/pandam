@@ -1,0 +1,26 @@
+IMP|Final
+
+M|Bi iBi!@*iBBBBi#*!iBBBBB
+M|Bi `-,@=@`----,@@@`---\B
+M|Bi dDdDdDdDdDdDdDdDdDdiB
+M|Bi                    iB
+M|Bi                    iB
+M|Bi                    iB
+M|Bi                    iB
+M|Bi  hhh               `-
+M|Bi  GgG   hhh         D 
+M|Bi        GgG   /-\     
+M|Bi              iBi     
+M|Bi$$$$$$$$$$$$$$iBi     
+M|B`-----\#=#####=iB`-----
+M|BBBBBBBi*#!@*!!#iBBBBBBB
+
+DOR|23|2|Cyan
+LDR|2|9|5
+
+ENM|11|6|MagentaEnemy
+ENM|5|7|MagentaEnemy
+
+ENM|20|10|RingEnemy
+
+RPT|||||Final
