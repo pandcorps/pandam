@@ -1,0 +1,31 @@
+IMP|Final
+
+M|Bi `------------------------------------------------------------------------------------------\B
+M|Bi dDdDdDdDdDdDdDdDdDdDdDdDdDdDdDdDdDdDdDdDdDdDdDdDdDdDdDdDdDdDdDdDdDdDdDdDdDdDdDdDdDdDdDdDdDdiB
+M|Bi            H                                               H                               iB
+M|Bihh  hhhhhhhhhhhhh  hhhhh  hhhhhhhhhhhhhhhhhhhhhh  hhhhhhhhhhhhhhhhhhh  hhhhhhhhhhhhhhhhh/-\ iB
+M|BiGg  GgGgGgGgGgGgG  gGgGg  GgGgGgGgGgGgGgGgGgGgGg  GgGgGgGgGgGgGgGgGgG  gGgGgGgGgGgGgGgGgiBi iB
+M|Bi    H              H      H                             H                      H        iBi iB
+M|Bi  hhh  hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh  hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh  h  hhhh  iBi iB
+M|Bi  GgG  gGgGgGgGgGgGgGgGgGgGgGgGgGgGgGgG  gGgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGgG  g  GgGg  iBi iB
+M|Bi       H              H                  H          H                             H     iBi iB
+M|Bihhhhhhhh  hhhh  hhhhhhhhhhhhhhh  hhhhhhhhhhhhhhhhh  hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh  hhhiBi iB
+M|BiGgGgGgGg  GgGg  GgGgGgGgGgGgGgG  gGgGgGgGgGgGgGgGg  GgGgGgGgGgGgGgGgGgGgGgGgGgGgGgG  gGgiBi iB
+M|Bi             H                                                                          iBi iB
+M|Bihhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh/------------------,Bi iB
+M|BiGgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGiBBBBBBBBBBBBBBBBBBBBi iB
+
+M|              H                                               H|0|12|true
+M|      H              H      H                             H                      H|0|9|true
+M|         H              H                  H          H                             H|0|6|true
+M|               H|0|3|true
+
+LDR|93|0|11
+LDR|2|11|3
+
+ENM|83|12|RingEnemy
+ENM|59|3|RingEnemy
+ENM|35|9|RingEnemy
+ENM|11|6|RingEnemy
+
+RPT|||||Final
