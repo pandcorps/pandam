@@ -1,0 +1,28 @@
+IMP|Final
+
+M|BBBi@iBBBi*iBBBi!iBBi iB
+M|B/-,=`---,@`---,@`--, bB
+M|BiDdDdDdDdDdDdDdDdDdD /-
+M|Bi                    iB
+M|-,                    bB
+M|Bt                (---\B
+M|Bi                DdDdiB
+M|Bi           hhh      `-
+M|Bb           gGg      tB
+M|-\      hhh           iB
+M|Bi      GgG           iB
+M|Bi /-\$$$$$$$$$$$$$$/-,B
+M|Bi iB`--------------,BBB
+M|Bi iBBBBBBBBBBBBBBBBBBBB
+
+LDR|2|0|3
+LDR|21|9|5
+
+ENM|21|3|WallCannon
+ENM|21|4|WallCannon
+
+ENM|20|9|GearEnemy||3
+
+ENM|3|9|RingEnemy
+
+RPT|||||Final
