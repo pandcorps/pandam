@@ -3381,7 +3381,7 @@ public abstract class Boss extends Enemy {
             final Panple pos = getPosition();
             final float x = pos.getX(), y = pos.getY();
             if (saucer != null) {
-                saucer.getPosition().set(x + 48, y + 45);
+                saucer.getPosition().set(x + 79, y + 45);
             }
             if (spikes != null) {
                 spikes.getPosition().set(x + 14, y + 22);
@@ -3499,12 +3499,13 @@ public abstract class Boss extends Enemy {
             final Panlayer layer = getLayer();
             final Panple pos = getPosition();
             final float x = pos.getX(), y = pos.getY();
-            renderer.render(layer, getSaucer(), x, y, BotsnBoltsGame.DEPTH_ENEMY_BACK, 0, 0, 64, 64, 0, true, false);
-            renderer.render(layer, Final.getCoat(), x + 17, y + 13, BotsnBoltsGame.DEPTH_ENEMY_BACK_2, 0, 0, 32, 32, 0, true, false);
+            final boolean mirror = isMirror();
+            renderer.render(layer, getSaucer(), x, y, BotsnBoltsGame.DEPTH_ENEMY_BACK, 0, mirror, false);
+            renderer.render(layer, Final.getCoat(), x, y + 14, BotsnBoltsGame.DEPTH_ENEMY_BACK_2, 0, mirror, false);
         }
         
         private final static Panmage getSaucer() {
-            return (img = getImage(img, "final/Saucer", null, null, null));
+            return (img = getImage(img, "final/Saucer", new FinPanple2(32, 0), null, null));
         }
     }
     
@@ -3535,7 +3536,7 @@ public abstract class Boss extends Enemy {
         private static Panmage coat = null;
         
         private final static Panmage getCoat() {
-            return (coat = getImage(coat, "final/FinalCoat", null, null, null));
+            return (coat = getImage(coat, "final/FinalCoat", BotsnBoltsGame.og, null, null));
         }
     }
     
