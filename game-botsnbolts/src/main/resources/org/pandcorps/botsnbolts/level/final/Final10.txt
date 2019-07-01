@@ -1,0 +1,23 @@
+IMP|Final
+
+M|BBBi@iBBBi*iBBBi!iBBBBBB
+M|B/-,=`---,@`---,@`----\B
+M|BiDdDdDdDdDdDdDdDdDdDdiB
+M|Bb                    iB
+M|Bt                    iB
+M|Bi                    `-
+M|-,                    tB
+M|                      bB
+M|      /-\#/--\#/-\    /-
+M|      iBi*iBBi@iBi    iB
+M|      `-,@`--,=`-,    bB
+M|---\#/---\=/---\#/--\ .B
+M|BBBi*iBBBi#iBBBi!iBBi tB
+M|BBBi!iBBBi!iBBBi*iBBi iB
+
+LDR|21|0|3
+DOR|0|3|Cyan
+
+ENM|9|6|MagentaEnemy
+
+RPT|||||Final
