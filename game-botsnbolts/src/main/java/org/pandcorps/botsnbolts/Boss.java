@@ -3183,12 +3183,20 @@ public abstract class Boss extends Enemy {
     }
     
     protected final static class FinalWagon extends Boss implements RoomAddListener, StepEndListener {
-        private final static byte STATE_ADVANCE = 1;
-        private final static byte STATE_RETREAT = 2;
+        private final static byte STATE_UNCOVER = 1;
+        private final static byte STATE_COVER = 2;
+        private final static byte STATE_ADVANCE = 3;
+        private final static byte STATE_RETREAT = 4;
+        private final static int COVER_MAX = 6;
         private static Panmage box = null;
         private static Panmage hull = null;
         private static Panmage wheel = null;
+        private static Panmage plate = null;
+        private static Panmage plateTilt = null;
+        private final static Panmage[] spikes = new Panmage[3];
         private int advanceIndex = 0;
+        private int coverIndex = COVER_MAX;
+        private int animTimer = 0;
         private int rot = 0;
         private WagonSaucer saucer;
         
@@ -3208,7 +3216,7 @@ public abstract class Boss extends Enemy {
             if (advanceIndex > 0) {
                 startRetreat();
             } else {
-                startAdvance();
+                startUncover();
             }
             return false;
         }
@@ -3220,12 +3228,29 @@ public abstract class Boss extends Enemy {
         
         @Override
         protected final boolean onWaiting() {
-            if (state == STATE_ADVANCE) {
-                onAdvancing();
-            } else if (state == STATE_RETREAT) {
-                onRetreating();
+            switch (state) {
+                case STATE_UNCOVER :
+                    onUncovering();
+                    break;
+                case STATE_COVER :
+                    onCovering();
+                    break;
+                case STATE_ADVANCE :
+                    onAdvancing();
+                    break;
+                case STATE_RETREAT :
+                    onRetreating();
+                    break;
             }
             return false;
+        }
+        
+        private final void startUncover() {
+            startStateIndefinite(STATE_UNCOVER, getStill());
+        }
+        
+        private final void startCover() {
+            startStateIndefinite(STATE_COVER, getStill());
         }
         
         private final void startAdvance() {
@@ -3234,6 +3259,28 @@ public abstract class Boss extends Enemy {
         
         private final void startRetreat() {
             startStateIndefinite(STATE_RETREAT, getStill());
+        }
+        
+        private final void onUncovering() {
+            animTimer++;
+            if (animTimer > 2) {
+                animTimer = 0;
+                coverIndex--;
+                if (coverIndex <= 0) {
+                    startAdvance();
+                }
+            }
+        }
+        
+        private final void onCovering() {
+            animTimer++;
+            if (animTimer > 2) {
+                animTimer = 0;
+                coverIndex++;
+                if (coverIndex >= COVER_MAX) {
+                    startStill();
+                }
+            }
         }
         
         private final void onAdvancing() {
@@ -3260,7 +3307,7 @@ public abstract class Boss extends Enemy {
                     rot = 0;
                 }
                 if (advanceIndex == 0) {
-                    startStill();
+                    startCover();
                 }
             }
         }
@@ -3298,14 +3345,41 @@ public abstract class Boss extends Enemy {
             renderer.render(layer, wheel, wx - 2, wy, BotsnBoltsGame.DEPTH_BEHIND, 0, 0, 64, 64, rot, false, false);
             renderer.render(layer, wheel, wx + 86, wy, BotsnBoltsGame.DEPTH_ENEMY_FRONT, 0, 0, 64, 64, rot, false, false);
             renderer.render(layer, wheel, wx + 62, wy, BotsnBoltsGame.DEPTH_BEHIND, 0, 0, 64, 64, rot, false, false);
+            final Panmage plate = getPlate();
+            final int plateAmount = coverIndex / 2;
+            final boolean tilted = (coverIndex % 2) == 1;
+            final float px = x - 1, py = y + (tilted ? 34 : 40);
+            if (tilted) {
+                renderer.render(layer, getPlateTilt(), px, y + 43, BotsnBoltsGame.DEPTH_ENEMY_FRONT, 0, 0, 16, 16, 0, true, false);
+            }
+            for (int i = 0; i < plateAmount; i++) {
+                renderer.render(layer, plate, px, py - (9 * i), BotsnBoltsGame.DEPTH_ENEMY_FRONT, 0, 0, 16, 16, 0, true, false);
+            }
         }
         
         private final static Panmage getHull() {
-            return (hull = getImage(hull, "final/Hull", null, null, null));
+            return (hull = getImage(hull, "final/WagonHull", null, null, null));
         }
         
         private final static Panmage getWheel() {
-            return (wheel = getImage(wheel, "final/Wheel", null, null, null));
+            return (wheel = getImage(wheel, "final/WagonWheel", null, null, null));
+        }
+        
+        private final static Panmage getPlate() {
+            return (plate = getImage(plate, "final/WagonPlate", null, null, null));
+        }
+        
+        private final static Panmage getPlateTilt() {
+            return (plateTilt = getImage(plateTilt, "final/WagonPlateTilt", null, null, null));
+        }
+        
+        private final static Panmage getSpikes(final int i) {
+            Panmage img = spikes[i];
+            if (img == null) {
+                img = getImage(img, "final/WagonSpikes" + (i + 1), null, null, null);
+                spikes[i] = img;
+            }
+            return img;
         }
     }
     
