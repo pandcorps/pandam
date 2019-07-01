@@ -3185,20 +3185,23 @@ public abstract class Boss extends Enemy {
     protected final static class FinalWagon extends Boss implements RoomAddListener, StepEndListener {
         private final static byte STATE_UNCOVER = 1;
         private final static byte STATE_COVER = 2;
-        private final static byte STATE_ADVANCE = 3;
-        private final static byte STATE_RETREAT = 4;
+        private final static byte STATE_SPIKE_REVEAL = 3;
+        private final static byte STATE_SPIKE_RETRACT = 4;
+        private final static byte STATE_ADVANCE = 5;
+        private final static byte STATE_RETREAT = 6;
         private final static int COVER_MAX = 6;
+        private final static int SPIKE_MAX = 2;
         private static Panmage box = null;
         private static Panmage hull = null;
         private static Panmage wheel = null;
         private static Panmage plate = null;
         private static Panmage plateTilt = null;
-        private final static Panmage[] spikes = new Panmage[3];
         private int advanceIndex = 0;
         private int coverIndex = COVER_MAX;
         private int animTimer = 0;
         private int rot = 0;
         private WagonSaucer saucer;
+        private WagonSpikes spikes = null;
         
         protected FinalWagon(final Segment seg) {
             super(0, 0, seg);
@@ -3235,6 +3238,12 @@ public abstract class Boss extends Enemy {
                 case STATE_COVER :
                     onCovering();
                     break;
+                case STATE_SPIKE_REVEAL :
+                    onSpikeRevealing();
+                    break;
+                case STATE_SPIKE_RETRACT :
+                    onSpikeRetracting();
+                    break;
                 case STATE_ADVANCE :
                     onAdvancing();
                     break;
@@ -3253,6 +3262,16 @@ public abstract class Boss extends Enemy {
             startStateIndefinite(STATE_COVER, getStill());
         }
         
+        private final void startSpikeReveal() {
+            startStateIndefinite(STATE_SPIKE_REVEAL, getStill());
+            spikes = new WagonSpikes(this);
+            addActor(spikes);
+        }
+        
+        private final void startSpikeRetract() {
+            startStateIndefinite(STATE_SPIKE_RETRACT, getStill());
+        }
+        
         private final void startAdvance() {
             startStateIndefinite(STATE_ADVANCE, getStill());
         }
@@ -3265,9 +3284,10 @@ public abstract class Boss extends Enemy {
             animTimer++;
             if (animTimer > 2) {
                 animTimer = 0;
-                coverIndex--;
                 if (coverIndex <= 0) {
-                    startAdvance();
+                    startSpikeReveal();
+                } else {
+                    coverIndex--;
                 }
             }
         }
@@ -3276,15 +3296,51 @@ public abstract class Boss extends Enemy {
             animTimer++;
             if (animTimer > 2) {
                 animTimer = 0;
-                coverIndex++;
                 if (coverIndex >= COVER_MAX) {
                     startStill();
+                } else {
+                    coverIndex++;
+                }
+            }
+        }
+        
+        private final void onSpikeRevealing() {
+            animTimer++;
+            if (animTimer > 2) {
+                animTimer = 0;
+                if (spikes.index >= SPIKE_MAX) {
+                    startAdvance();
+                } else {
+                    spikes.index++;
+                    spikes.changeView();
+                }
+            }
+        }
+        
+        private final void onSpikeRetracting() {
+            if (isSpikeDestroyed()) {
+                startCover();
+                return;
+            }
+            animTimer++;
+            if (animTimer > 2) {
+                animTimer = 0;
+                if (spikes.index <= 0) {
+                    spikes.destroy();
+                    startCover();
+                } else {
+                    spikes.index--;
+                    spikes.changeView();
                 }
             }
         }
         
         private final void onAdvancing() {
             // Wheel diameter: 63; circumference: 198; rotation: 30 degrees (1/12 of wheel, 16 pixels)
+            if (isSpikeDestroyed()) {
+                startStill();
+                return;
+            }
             advanceIndex++;
             getPosition().addX(-4);
             if ((advanceIndex % 4) == 1) {
@@ -3307,16 +3363,28 @@ public abstract class Boss extends Enemy {
                     rot = 0;
                 }
                 if (advanceIndex == 0) {
-                    startCover();
+                    if (isSpikeDestroyed()) {
+                        startCover();
+                    } else {
+                        startSpikeRetract();
+                    }
                 }
             }
         }
         
+        private final boolean isSpikeDestroyed() {
+            return Panctor.isDestroyed(spikes);
+        }
+        
         @Override
         public final void onStepEnd(final StepEndEvent event) {
+            final Panple pos = getPosition();
+            final float x = pos.getX(), y = pos.getY();
             if (saucer != null) {
-                final Panple pos = getPosition();
-                saucer.getPosition().set(pos.getX() + 48, pos.getY() + 45);
+                saucer.getPosition().set(x + 48, y + 45);
+            }
+            if (spikes != null) {
+                spikes.getPosition().set(x + 14, y + 22);
             }
         }
         
@@ -3372,11 +3440,35 @@ public abstract class Boss extends Enemy {
         private final static Panmage getPlateTilt() {
             return (plateTilt = getImage(plateTilt, "final/WagonPlateTilt", null, null, null));
         }
+    }
+    
+    private final static class WagonSpikes extends TileUnawareEnemy {
+        private final FinalWagon wagon;
+        private int index = 0;
+        
+        protected WagonSpikes(final FinalWagon wagon) {
+            super(0, 0, 5);
+            this.wagon = wagon;
+            getPosition().setZ(BotsnBoltsGame.DEPTH_ENEMY_FRONT);
+            setMirror(true);
+            changeView();
+        }
+        
+        @Override
+        protected final int getDamage() {
+            return wagon.getDamage();
+        }
+        
+        private final void changeView() {
+            setView(getSpikes(index));
+        }
+
+        private final static Panmage[] spikes = new Panmage[3];
         
         private final static Panmage getSpikes(final int i) {
             Panmage img = spikes[i];
             if (img == null) {
-                img = getImage(img, "final/WagonSpikes" + (i + 1), null, null, null);
+                img = Boss.getImage(img, "final/WagonSpikes" + (i + 1), null, null, null);
                 spikes[i] = img;
             }
             return img;
