@@ -1,0 +1,32 @@
+IMP|Final
+
+M|Bi         `----------\Bi                             iBBBBBBBBBBBBBBBBB
+M|-,                    iBi                             iBBBBBBBB/------\B
+M|*!                    `-,                             iBB/--\BBiDdDdDdiB
+M|-\                    i!i        /-\                  `--,==`--,      iB
+M|B`-------\            /-\        iBi                   EDdDdDdDd      iB
+M|BBBBBBB/-,            iBi        i/,                   e     /---\    iB
+M|BBBBB/-,Dd    /-------,Bi        ii*                   e     iBBBi    `-
+M|BBB/-,Dd      `-\BBBBBBBi        i`\                   e     `\B/,      
+M|B/-,Dd        Dd`-\BBBBBi        iBi    /-\            e     *iBi!      
+M|BiDd            Dd`-\BBBi        `\i    iBi            e     /,B`\      
+M|Bi                Dd`---,        !ii    `-,            e     iBBBi      
+M|Bi                  DdDE         /,i    !*=           /--\=/-,BtB`-\=/--
+M|B`-----\=#==#=##/---\###=#/-\    iBi    /-\           iBB`-,BBBiBBB`-,BB
+M|BBBBBBBi#*##!#@*iBBBi!*@#!iBi    iBi    iBi    /-\    iBBBBBBBBiBBBBBBBB
+
+DOR|71|3|Cyan
+LDR|2|10|4
+
+ENM|41|6|MagentaEnemy
+ENM|34|11|MagentaEnemy
+
+ENM|59|4|RingEnemy
+
+ENM|14|5|CeilingCannon
+ENM|9|7|CeilingCannon
+
+ENM|20|8|MagentaEnemy
+
+RPT|56|0|16|14|Final
+RPT|0|0|23|14|Final
