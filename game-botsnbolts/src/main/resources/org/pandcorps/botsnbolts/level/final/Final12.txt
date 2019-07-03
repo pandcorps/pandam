@@ -1,0 +1,23 @@
+IMP|Final
+
+M|Bi                    iB
+M|Bi                    iB
+M|-,                    iB
+M|Bt                    bB
+M|Bi                 (----
+M|Bi                 dDdtB
+M|Bi                    iB
+M|Bi                    iB
+M|Bb        (--)        iB
+M|-\        DdDd        iB
+M|Bi                    iB
+M|Bi                    iB
+M|Bi ()      /----------,B
+M|Bi dD      iBBBBBBBBBBBB
+
+LDR|2|0|2
+LDR|21|10|4
+
+ENM|20|2|MagentaEnemy
+
+RPT|||||Final
