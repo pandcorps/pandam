@@ -1,0 +1,23 @@
+IMP|Final
+
+M|Bi                    iB
+M|Bi                    iB
+M|Bi                    iB
+M|Bb                    iB
+M|-)                    iB
+M|=.             h      iB
+M|-)       h     g    h iB
+M|Bt h     g          G bB
+M|Bi g                  .B
+M|Bi               h    tB
+M|-,            h  g    iB
+M|Bt         h  G       iB
+M|Bi         g        h iB
+M|Bi                  G iB
+
+LDR|21|0|2
+LDR|2|9|5
+
+ENM|4|2|RingEnemy
+
+RPT|||||Final
