@@ -1,0 +1,26 @@
+IMP|Final
+
+M|BBBi*!@#iBBBBBBi!#*!iBBB
+M|B/-,@@=@`------,@@@@`-\B
+M|BiDdDdDdDdDdDdDdDdDdDdiB
+M|Bb                    iB
+M|B.                    iB
+M|Bt                    iB
+M|-,                    iB
+M| d                    `-
+M|                      .=
+M|                      /-
+M|                      iB
+M|----)              () iB
+M|BtDdD              dD iB
+M|Bi                    iB
+
+LDR|21|0|3
+DOR|0|3|Cyan
+
+ENM|3|10|RingEnemy
+ENM|8|4|RingEnemy
+ENM|13|7|RingEnemy
+ENM|2|3|MagentaEnemy
+
+RPT|||||Final
