@@ -130,13 +130,19 @@ public abstract class Enemy extends Chr implements CollisionListener {
             prj.burst(this);
             award(prj.src);
             onDefeat();
-            destroy();
+            if (isDestroyedAfterDefeat()) {
+                destroy();
+            }
         }
         prj.setPower(oldPower - oldHealth);
     }
     
     //@OverrideMe
     protected void onDefeat() {
+    }
+    
+    protected boolean isDestroyedAfterDefeat() {
+        return true;
     }
     
     protected boolean isVulnerableToProjectile(final Projectile prj) {
@@ -3697,8 +3703,10 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
     }
     
-    protected final void addHealthMeter() {
-        BotsnBoltsGame.initHealthMeter(newHealthMeter(), false);
+    protected final HudMeter addHealthMeter() {
+        final HudMeter healthMeter = newHealthMeter();
+        BotsnBoltsGame.initHealthMeter(healthMeter, false);
+        return healthMeter;
     }
     
     protected final HudMeter newHealthMeter() {

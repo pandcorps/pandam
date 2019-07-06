@@ -49,6 +49,7 @@ public abstract class Boss extends Enemy {
     protected static boolean clipping = true;
     private static boolean delaying = false;
     protected static boolean dropping = false;
+    private static HudMeter healthMeter = null;
     
     protected Boss(final int offX, final int h, final Segment seg) {
         super(offX, h, seg, 0);
@@ -93,7 +94,7 @@ public abstract class Boss extends Enemy {
     
     private final void onFirstStep() {
         if (isHealthMeterNeeded()) {
-            addHealthMeter();
+            healthMeter = addHealthMeter();
         }
         health = HudMeter.MAX_VALUE;
     }
@@ -357,6 +358,13 @@ public abstract class Boss extends Enemy {
             if (((actor instanceof Enemy) && !(actor instanceof Boss)) || (actor instanceof EnemyProjectile) || (actor instanceof EnemySpawner)) {
                 actor.destroy();
             }
+        }
+    }
+    
+    protected final static void setPlayerActive(final boolean active) {
+        final Player player = PlayerContext.getPlayer(getPlayerContext());
+        if (player != null) {
+            player.active = active;
         }
     }
     
@@ -3189,6 +3197,7 @@ public abstract class Boss extends Enemy {
         private final static byte STATE_SPIKE_RETRACT = 4;
         private final static byte STATE_ADVANCE = 5;
         private final static byte STATE_RETREAT = 6;
+        private final static byte STATE_DEFEATED = 7;
         private final static int COVER_MAX = 6;
         private final static int SPIKE_MAX = 2;
         private static Panmage box = null;
@@ -3255,29 +3264,37 @@ public abstract class Boss extends Enemy {
         }
         
         private final void startUncover() {
-            startStateIndefinite(STATE_UNCOVER, getStill());
+            startState(STATE_UNCOVER);
         }
         
         private final void startCover() {
-            startStateIndefinite(STATE_COVER, getStill());
+            startState(STATE_COVER);
         }
         
         private final void startSpikeReveal() {
-            startStateIndefinite(STATE_SPIKE_REVEAL, getStill());
+            startState(STATE_SPIKE_REVEAL);
             spikes = new WagonSpikes(this);
             addActor(spikes);
         }
         
         private final void startSpikeRetract() {
-            startStateIndefinite(STATE_SPIKE_RETRACT, getStill());
+            startState(STATE_SPIKE_RETRACT);
         }
         
         private final void startAdvance() {
-            startStateIndefinite(STATE_ADVANCE, getStill());
+            startState(STATE_ADVANCE);
         }
         
         private final void startRetreat() {
-            startStateIndefinite(STATE_RETREAT, getStill());
+            startState(STATE_RETREAT);
+        }
+        
+        private final void startDefeated() {
+            startState(STATE_DEFEATED);
+        }
+        
+        private final void startState(final byte state) {
+            startStateIndefinite(state, getStill());
         }
         
         private final void onUncovering() {
@@ -3392,6 +3409,39 @@ public abstract class Boss extends Enemy {
         protected final boolean isVulnerableToProjectile(final Projectile prj) {
             return false;
         }
+        
+        @Override
+        protected final boolean isHarmful() {
+            return state != STATE_DEFEATED;
+        }
+        
+        @Override
+        protected final void onBossDefeat() {
+            if (saucer != null) {
+                saucer.separate();
+            }
+            clear();
+            startDefeated();
+            setPlayerActive(false);
+        }
+        
+        private final void clear() {
+            saucer = null;
+            Panctor.destroy(spikes);
+            spikes = null;
+            Panctor.destroy(healthMeter);
+            healthMeter = null;
+        }
+        
+        @Override
+        protected final boolean isDefeatOrbNeeded() {
+            return false;
+        }
+        
+        @Override
+        protected final boolean isDestroyedAfterDefeat() {
+            return false;
+        }
 
         @Override
         protected final Panmage getStill() {
@@ -3459,6 +3509,10 @@ public abstract class Boss extends Enemy {
             return wagon.getDamage();
         }
         
+        @Override
+        protected final void award(final PowerUp powerUp) {
+        }
+        
         private final void changeView() {
             setView(getSpikes(index));
         }
@@ -3475,11 +3529,16 @@ public abstract class Boss extends Enemy {
         }
     }
     
+    protected final static int SAUCER_OFF_X = 16, SAUCER_H = 43;
+    protected final static Panple SAUCER_O = new FinPanple2(32, 0);
+    protected final static Panple SAUCER_MIN = getMin(SAUCER_OFF_X);
+    protected final static Panple SAUCER_MAX = getMax(SAUCER_OFF_X, SAUCER_H);
+    
     protected abstract static class BaseSaucer extends Boss {
         private static Panmage img = null;
         
         protected BaseSaucer() {
-            super(VOLCANO_OFF_X, VOLCANO_H, 0, 0); //TODO
+            super(SAUCER_OFF_X, SAUCER_H, 0, 0);
             setView(getSaucer());
             setMirror(true);
         }
@@ -3505,7 +3564,10 @@ public abstract class Boss extends Enemy {
         }
         
         private final static Panmage getSaucer() {
-            return (img = getImage(img, "final/Saucer", new FinPanple2(32, 0), null, null));
+            if (img != null) {
+                return img;
+            }
+            return (img = getImage(img, "final/Saucer1", SAUCER_O, SAUCER_MIN, SAUCER_MAX));
         }
     }
     
@@ -3517,18 +3579,91 @@ public abstract class Boss extends Enemy {
         }
         
         @Override
-        protected final boolean pickState() {
+        protected final boolean isHealthMeterNeeded() {
             return false;
+        }
+        
+        @Override
+        protected final boolean pickState() {
+            return true;
         }
 
         @Override
         protected final boolean continueState() {
-            return false;
+            return true;
+        }
+        
+        protected final void separate() {
+            wagon.saucer = null;
+            final FinalSaucer saucer = new FinalSaucer();
+            saucer.getPosition().set(getPosition());
+            saucer.setMirror(isMirror());
+            addActor(saucer);
+            destroy();
         }
         
         @Override
         protected final void onHurt(final Projectile prj) {
             wagon.onHurt(prj);
+        }
+    }
+    
+    protected final static class FinalSaucer extends BaseSaucer {
+        private final static byte STATE_INTRO_RISE = 1;
+        private final static byte STATE_INTRO_DESTROY = 2;
+        private boolean introNeeded = true;
+        
+        @Override
+        protected final boolean pickState() {
+            if (introNeeded) {
+                startIntroRise();
+            }
+            return false;
+        }
+        
+        private final void startIntroRise() {
+            startState(STATE_INTRO_RISE, 100, getStill());
+            introNeeded = false;
+        }
+        
+        private final void startIntroDestroy() {
+            startState(STATE_INTRO_DESTROY, 90, getStill());
+        }
+
+        @Override
+        protected final boolean continueState() {
+            switch (state) {
+                case STATE_INTRO_RISE :
+                    startIntroDestroy();
+                    break;
+                case STATE_INTRO_DESTROY :
+                    setPlayerActive(true);
+                    break;
+                default :
+                    throw new IllegalStateException("Unexpected state " + state);
+            }
+            return false;
+        }
+        
+        @Override
+        protected final boolean onWaiting() {
+            switch (state) {
+                case STATE_INTRO_RISE :
+                    onIntroRising();
+                    break;
+                case STATE_INTRO_DESTROY :
+                    onIntroDestroying();
+                    break;
+            }
+            return false;
+        }
+        
+        private final void onIntroRising() {
+            getPosition().addY(1);
+        }
+        
+        private final void onIntroDestroying() {
+            
         }
     }
     
