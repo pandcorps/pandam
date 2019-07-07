@@ -1,0 +1,29 @@
+IMP|Final
+
+M|BBBi*!!#iBBBBBBi!#*!i iB
+M|BBBi!!@*iBBBBBBi*!!@i iB
+M|B/-,@@=@`------,@@@=b iB
+M|BiDdDdDdDdDdDdDdDtDdD iB
+M|Bi               i    bB
+M|-,  (-\(--)/--\  i  (-\B
+M|Bt  DdidDdDiDdi  i  DdiB
+M|Bb    i    i  i  i    iB
+M|B/-)  b  (-,  i  `-)  iB
+M|BiDd  D  dDd  i  dDd  iB
+M|Bi            b       iB
+M|Bi /--------\###=#/---,B
+M|-, iBBBBBBBBi!@*#!iBBBBB
+M|Bt iBBBBBBBBi*#!!@iBBBBB
+
+LDR|2|0|3
+LDR|21|9|5
+
+BRR|11|3|Silver
+BRR|19|3|Silver
+BRR|14|9|Silver
+
+ENM|20|4|RingEnemy
+ENM|8|6|RingEnemy
+ENM|3|9|RingEnemy
+
+RPT|||||Final
