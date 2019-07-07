@@ -192,12 +192,8 @@ public abstract class Boss extends Enemy {
     protected abstract boolean continueState();
     
     @Override
-    protected final PowerUp pickAward(final Player player) {
-        return isVictoryDiskNeeded() ? new VictoryDisk(player, this) : null;
-    }
-    
-    protected boolean isVictoryDiskNeeded() {
-        return true;
+    protected PowerUp pickAward(final Player player) {
+        return new VictoryDisk(player, this);
     }
     
     protected void onAward(final Player player) {
@@ -211,7 +207,11 @@ public abstract class Boss extends Enemy {
 
     @Override
     protected final void award(final PowerUp powerUp) {
-        PowerUp.addPowerUp(powerUp, 192, getDropY(), 0);
+        PowerUp.addPowerUp(powerUp, getDropX(), getDropY(), 0);
+    }
+    
+    protected float getDropX() {
+        return 192;
     }
     
     @Override
@@ -361,11 +361,20 @@ public abstract class Boss extends Enemy {
         }
     }
     
+    protected final static Player getPlayer() {
+        return PlayerContext.getPlayer(getPlayerContext());
+    }
+    
     protected final static void setPlayerActive(final boolean active) {
-        final Player player = PlayerContext.getPlayer(getPlayerContext());
+        final Player player = getPlayer();
         if (player != null) {
             player.active = active;
         }
+    }
+    
+    protected final static float getPlayerX() {
+        final Player player = getPlayer();
+        return (player == null) ? 192 : player.getPosition().getX();
     }
     
     protected final static void addActor(final Panctor actor) {
@@ -3240,6 +3249,7 @@ public abstract class Boss extends Enemy {
         
         @Override
         protected final boolean onWaiting() {
+if (health > 1) health = 1;
             switch (state) {
                 case STATE_UNCOVER :
                     onUncovering();
@@ -3420,13 +3430,13 @@ public abstract class Boss extends Enemy {
             if (saucer != null) {
                 saucer.separate();
             }
+            saucer = null;
             clear();
             startDefeated();
             setPlayerActive(false);
         }
         
         private final void clear() {
-            saucer = null;
             Panctor.destroy(spikes);
             spikes = null;
             Panctor.destroy(healthMeter);
@@ -3436,6 +3446,16 @@ public abstract class Boss extends Enemy {
         @Override
         protected final boolean isDefeatOrbNeeded() {
             return false;
+        }
+        
+        @Override
+        protected PowerUp pickAward(final Player player) {
+            return new Disk(player, "FinalWagon");
+        }
+        
+        @Override
+        protected final float getDropX() {
+            return getPlayerX();
         }
         
         @Override
@@ -3535,7 +3555,7 @@ public abstract class Boss extends Enemy {
     protected final static Panple SAUCER_MAX = getMax(SAUCER_OFF_X, SAUCER_H);
     
     protected abstract static class BaseSaucer extends Boss {
-        private static Panmage img = null;
+        private final static Panmage[] imgs = new Panmage[4];
         
         protected BaseSaucer() {
             super(SAUCER_OFF_X, SAUCER_H, 0, 0);
@@ -3549,25 +3569,29 @@ public abstract class Boss extends Enemy {
         }
         
         @Override
-        protected final Panmage getStill() {
-            return getSaucer();
-        }
-        
-        @Override
         protected final void renderView(final Panderer renderer) {
             final Panlayer layer = getLayer();
             final Panple pos = getPosition();
             final float x = pos.getX(), y = pos.getY();
             final boolean mirror = isMirror();
-            renderer.render(layer, getSaucer(), x, y, BotsnBoltsGame.DEPTH_ENEMY_BACK, 0, mirror, false);
+            renderer.render(layer, getStill(), x, y, BotsnBoltsGame.DEPTH_ENEMY_BACK, 0, mirror, false);
             renderer.render(layer, Final.getCoat(), x, y + 14, BotsnBoltsGame.DEPTH_ENEMY_BACK_2, 0, mirror, false);
         }
         
-        private final static Panmage getSaucer() {
-            if (img != null) {
-                return img;
+        protected final static Panmage getSaucer() {
+            return getSaucer(0);
+        }
+        
+        protected final static Panmage getSaucer(final int i) {
+            Panmage img = imgs[i];
+            if (img == null) {
+                img = getImage(img, "final/Saucer" + (i + 1), SAUCER_O, SAUCER_MIN, SAUCER_MAX);
             }
-            return (img = getImage(img, "final/Saucer1", SAUCER_O, SAUCER_MIN, SAUCER_MAX));
+            return img;
+        }
+        
+        protected final static Panmage getSaucerAnimated() {
+            return getSaucer(((int) (Pangine.getEngine().getClock() % 16)) / 4);
         }
     }
     
@@ -3606,6 +3630,11 @@ public abstract class Boss extends Enemy {
         protected final void onHurt(final Projectile prj) {
             wagon.onHurt(prj);
         }
+        
+        @Override
+        protected final Panmage getStill() {
+            return getSaucer();
+        }
     }
     
     protected final static class FinalSaucer extends BaseSaucer {
@@ -3618,7 +3647,7 @@ public abstract class Boss extends Enemy {
             if (introNeeded) {
                 startIntroRise();
             }
-            return false;
+            return true;
         }
         
         private final void startIntroRise() {
@@ -3642,7 +3671,7 @@ public abstract class Boss extends Enemy {
                 default :
                     throw new IllegalStateException("Unexpected state " + state);
             }
-            return false;
+            return true;
         }
         
         @Override
@@ -3655,7 +3684,7 @@ public abstract class Boss extends Enemy {
                     onIntroDestroying();
                     break;
             }
-            return false;
+            return true;
         }
         
         private final void onIntroRising() {
@@ -3663,7 +3692,33 @@ public abstract class Boss extends Enemy {
         }
         
         private final void onIntroDestroying() {
-            
+            if ((waitTimer % 15) == 0) {
+                shootSelfDestruct();
+            }
+        }
+        
+        private final void shootCharged() {
+            initCharged(new EnemyProjectile(this, 0, 0, 0, -VEL_PROJECTILE));
+        }
+        
+        private final void shootSelfDestruct() {
+            initCharged(new Projectile(getPlayer(), Player.SHOOT_CHARGE, this, 0, -VEL_PROJECTILE, Projectile.POWER_MAXIMUM));
+        }
+        
+        private final void initCharged(final Panctor prj) {
+            prj.getPosition().set(getPosition());
+            prj.setRot(3);
+            prj.setView(BotsnBoltsGame.volatileImages.projectile3);
+        }
+        
+        @Override
+        protected final boolean isVulnerable() {
+            return state != STATE_INTRO_DESTROY;
+        }
+        
+        @Override
+        protected final Panmage getStill() {
+            return getSaucerAnimated();
         }
     }
     
