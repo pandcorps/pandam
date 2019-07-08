@@ -1,0 +1,29 @@
+IMP|Final
+
+M|Bi d                  iB
+M|Bi                    iB
+M|Bb                    iB
+M|Bt                    iB
+M|Bi                    `-
+M|Bi    %   %           .=
+M|Bi    G   G           /-
+M|Bi                    iB
+M|Bi           %   %    `-
+M|Bb           g   g    .=
+M|Bt                    /-
+M|Bi$$$$$$$$$$$$$$$$$$t iB
+M|B`-\=###/------\##=#i iB
+M|BBBi#*!@iBBBBBBi*@#*i iB
+
+LDR|21|0|3
+LDR|2|9|5
+
+SBT|3|13|Block
+BTP||17^5~13^5~10^8~6^8
+
+ENM|15|7|RingEnemy
+ENM|8|10|RingEnemy
+ENM|3|4|RingEnemy
+ENM|20|12|RingEnemy
+
+RPT|||||Final
