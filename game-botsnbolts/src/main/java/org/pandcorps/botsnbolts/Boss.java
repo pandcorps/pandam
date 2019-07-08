@@ -29,6 +29,7 @@ import org.pandcorps.botsnbolts.Player.*;
 import org.pandcorps.botsnbolts.PowerUp.*;
 import org.pandcorps.core.*;
 import org.pandcorps.core.seg.*;
+import org.pandcorps.game.actor.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.boundary.*;
@@ -49,7 +50,7 @@ public abstract class Boss extends Enemy {
     protected static boolean clipping = true;
     private static boolean delaying = false;
     protected static boolean dropping = false;
-    private static HudMeter healthMeter = null;
+    protected HudMeter healthMeter = null;
     
     protected Boss(final int offX, final int h, final Segment seg) {
         super(offX, h, seg, 0);
@@ -3220,6 +3221,7 @@ public abstract class Boss extends Enemy {
         private int rot = 0;
         private WagonSaucer saucer;
         private WagonSpikes spikes = null;
+        private int selfDestructCounter = 0;
         
         protected FinalWagon(final Segment seg) {
             super(0, 0, seg);
@@ -3416,8 +3418,22 @@ if (health > 1) health = 1;
         }
         
         @Override
+        protected final void onShot(final Projectile prj) {
+            super.onShot(prj);
+            prj.setPower(0);
+            if ((state == STATE_DEFEATED) && (prj.getVelocity().getX() == 0f)) {
+                selfDestructCounter++;
+                if (selfDestructCounter >= 6) {
+                    clear();
+                    burst();
+                    destroy();
+                }
+            }
+        }
+        
+        @Override
         protected final boolean isVulnerableToProjectile(final Projectile prj) {
-            return false;
+            return state == STATE_DEFEATED;
         }
         
         @Override
@@ -3427,11 +3443,12 @@ if (health > 1) health = 1;
         
         @Override
         protected final void onBossDefeat() {
-            if (saucer != null) {
+            if (state == STATE_DEFEATED) {
+                return;
+            } else if (saucer != null) {
                 saucer.separate();
             }
             saucer = null;
-            clear();
             startDefeated();
             setPlayerActive(false);
         }
@@ -3443,6 +3460,17 @@ if (health > 1) health = 1;
             healthMeter = null;
         }
         
+        private final void burst() {
+            final Panple pos = getPosition();
+            final float x = pos.getX(), y = pos.getY();
+            final Panimation anm = BotsnBoltsGame.volatileImages.burst;
+            for (int i = 0; i < 8; i++) {
+                final Burst burst = new Burst(anm);
+                burst.getPosition().set(x + Mathtil.randi(16, 108), y + Mathtil.randi(20, 68), BotsnBoltsGame.DEPTH_BURST);
+                addActor(burst);
+            }
+        }
+        
         @Override
         protected final boolean isDefeatOrbNeeded() {
             return false;
@@ -3450,7 +3478,7 @@ if (health > 1) health = 1;
         
         @Override
         protected PowerUp pickAward(final Player player) {
-            return new Disk(player, "FinalWagon");
+            return (state == STATE_DEFEATED) ? null : new Disk(player, "FinalWagon");
         }
         
         @Override
@@ -3591,7 +3619,8 @@ if (health > 1) health = 1;
         }
         
         protected final static Panmage getSaucerAnimated() {
-            return getSaucer(((int) (Pangine.getEngine().getClock() % 16)) / 4);
+            final int frameDuration = 5;
+            return getSaucer(((int) (Pangine.getEngine().getClock() % (4 * frameDuration))) / frameDuration);
         }
     }
     
@@ -3639,8 +3668,9 @@ if (health > 1) health = 1;
     
     protected final static class FinalSaucer extends BaseSaucer {
         private final static byte STATE_INTRO_RISE = 1;
-        private final static byte STATE_INTRO_DESTROY = 2;
+        private final static byte STATE_INTRO_DESTROY = 2; // isVulnerable depends on intro states being less than later states
         private boolean introNeeded = true;
+        private Panctor lastProjectile = null;
         
         @Override
         protected final boolean pickState() {
@@ -3651,7 +3681,7 @@ if (health > 1) health = 1;
         }
         
         private final void startIntroRise() {
-            startState(STATE_INTRO_RISE, 100, getStill());
+            startState(STATE_INTRO_RISE, 80, getStill());
             introNeeded = false;
         }
         
@@ -3676,6 +3706,7 @@ if (health > 1) health = 1;
         
         @Override
         protected final boolean onWaiting() {
+            updateLastProjectile();
             switch (state) {
                 case STATE_INTRO_RISE :
                     onIntroRising();
@@ -3702,18 +3733,34 @@ if (health > 1) health = 1;
         }
         
         private final void shootSelfDestruct() {
-            initCharged(new Projectile(getPlayer(), Player.SHOOT_CHARGE, this, 0, -VEL_PROJECTILE, Projectile.POWER_MAXIMUM));
+            initCharged(new Projectile(getPlayer(), BotsnBoltsGame.volatileImages, Player.SHOOT_CHARGE, this, 0, -VEL_PROJECTILE, Projectile.POWER_MAXIMUM));
         }
         
         private final void initCharged(final Panctor prj) {
-            prj.getPosition().set(getPosition());
+            final Panple pos = getPosition();
+            prj.getPosition().set(pos.getX() + 17, pos.getY(), BotsnBoltsGame.DEPTH_CARRIER);
             prj.setRot(3);
             prj.setView(BotsnBoltsGame.volatileImages.projectile3);
+            if (lastProjectile != null) {
+                lastProjectile.getPosition().setZ(BotsnBoltsGame.DEPTH_PROJECTILE);
+            }
+            lastProjectile = prj;
+        }
+        
+        private final void updateLastProjectile() {
+            if (lastProjectile == null) {
+                return;
+            }
+            final Panple pos = lastProjectile.getPosition();
+            if (pos.getY() > 140) {
+                return;
+            }
+            pos.setZ(BotsnBoltsGame.DEPTH_PROJECTILE);
         }
         
         @Override
         protected final boolean isVulnerable() {
-            return state != STATE_INTRO_DESTROY;
+            return state > STATE_INTRO_DESTROY;
         }
         
         @Override

@@ -38,16 +38,18 @@ public class Projectile extends Pandy implements Collidable, AllOobListener {
     protected final static Set<Projectile> currentProjectiles = new HashSet<Projectile>();
     
     protected final Player src;
+    protected final PlayerImages pi;
     protected final ShootMode shootMode;
     protected int power;
     
     protected Projectile(final Player src, final float vx, final float vy, final int power) {
-        this(src, src.prf.shootMode, src, vx, vy, power);
+        this(src, src.pi, src.prf.shootMode, src, vx, vy, power);
     }
     
-    protected Projectile(final Player src, final ShootMode shootMode, final Panctor ref, final float vx, final float vy, final int power) {
+    protected Projectile(final Player src, final PlayerImages pi, final ShootMode shootMode, final Panctor ref, final float vx, final float vy, final int power) {
         currentProjectiles.add(this);
         this.src = src;
+        this.pi = pi;
         this.shootMode = shootMode;
         setPower(power);
         final Panple srcPos = ref.getPosition();
@@ -61,11 +63,11 @@ public class Projectile extends Pandy implements Collidable, AllOobListener {
     protected final void setPower(final int power) {
         this.power = power;
         if (power > POWER_MEDIUM) {
-            changeView(src.pi.projectile3);
+            changeView(pi.projectile3);
         } else if (power > 1) {
-            changeView(src.pi.projectile2);
+            changeView(pi.projectile2);
         } else if (power > 0) {
-            changeView(src.pi.basicProjectile);
+            changeView(pi.basicProjectile);
         } else {
             burst();
             destroy();
@@ -81,7 +83,7 @@ public class Projectile extends Pandy implements Collidable, AllOobListener {
     }
     
     protected final void burst(final Panple loc) {
-        burst(this, src.pi.burst, loc);
+        burst(this, pi.burst, loc);
     }
     
     protected final static void burst(final Panctor src, final Panimation anm, final Panple loc) {
@@ -93,7 +95,7 @@ public class Projectile extends Pandy implements Collidable, AllOobListener {
         final Panple pos = burst.getPosition();
         pos.set(x, y, BotsnBoltsGame.DEPTH_BURST);
         burst.setMirror(src.isMirror());
-        src.getLayer().addActor(burst);
+        BotsnBoltsGame.addActor(burst);
     }
     
     protected final void bounce() {
@@ -145,7 +147,7 @@ public class Projectile extends Pandy implements Collidable, AllOobListener {
     
     public final static class Explosion extends Projectile implements AnimationEndListener {
         protected Explosion(final Bomb bomb) {
-            super(bomb.src, Player.SHOOT_BOMB, bomb, 0, 0, 1);
+            super(bomb.src, bomb.src.pi, Player.SHOOT_BOMB, bomb, 0, 0, 1);
             final Panple bombPos = bomb.getPosition();
             getPosition().set(bombPos.getX(), bombPos.getY(), BotsnBoltsGame.DEPTH_BURST);
             setView(bomb.src.pi.burst);
