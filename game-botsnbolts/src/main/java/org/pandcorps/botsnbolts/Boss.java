@@ -3222,6 +3222,7 @@ public abstract class Boss extends Enemy {
         private WagonSaucer saucer;
         private WagonSpikes spikes = null;
         private int selfDestructCounter = 0;
+        private FinalSaucer nextSaucer = null;
         
         protected FinalWagon(final Segment seg) {
             super(0, 0, seg);
@@ -3426,6 +3427,7 @@ if (health > 1) health = 1;
                 if (selfDestructCounter >= 6) {
                     clear();
                     burst();
+                    nextSaucer.startBattle();
                     destroy();
                 }
             }
@@ -3649,6 +3651,7 @@ if (health > 1) health = 1;
         protected final void separate() {
             wagon.saucer = null;
             final FinalSaucer saucer = new FinalSaucer();
+            wagon.nextSaucer = saucer;
             saucer.getPosition().set(getPosition());
             saucer.setMirror(isMirror());
             addActor(saucer);
@@ -3719,13 +3722,20 @@ if (health > 1) health = 1;
         }
         
         private final void onIntroRising() {
+            health = 0;
             getPosition().addY(1);
         }
         
         private final void onIntroDestroying() {
+            health = 0;
             if ((waitTimer % 15) == 0) {
                 shootSelfDestruct();
             }
+        }
+        
+        private final void startBattle() {
+            health = HudMeter.MAX_VALUE;
+            startStateIndefinite(STATE_STILL, getStill());
         }
         
         private final void shootCharged() {
@@ -3760,7 +3770,7 @@ if (health > 1) health = 1;
         
         @Override
         protected final boolean isVulnerable() {
-            return state > STATE_INTRO_DESTROY;
+            return (state > STATE_INTRO_DESTROY) || (state == STATE_STILL);
         }
         
         @Override
