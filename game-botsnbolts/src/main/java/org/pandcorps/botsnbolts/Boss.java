@@ -3420,9 +3420,10 @@ if (health > 1) health = 1;
         
         @Override
         protected final void onShot(final Projectile prj) {
-            super.onShot(prj);
-            prj.setPower(0);
             if ((state == STATE_DEFEATED) && (prj.getVelocity().getX() == 0f)) {
+                final Panple pos = prj.getPosition();
+                burst(pos.getX() - 17, pos.getY());
+                prj.destroy();
                 selfDestructCounter++;
                 if (selfDestructCounter >= 6) {
                     clear();
@@ -3465,12 +3466,15 @@ if (health > 1) health = 1;
         private final void burst() {
             final Panple pos = getPosition();
             final float x = pos.getX(), y = pos.getY();
-            final Panimation anm = BotsnBoltsGame.volatileImages.burst;
             for (int i = 0; i < 8; i++) {
-                final Burst burst = new Burst(anm);
-                burst.getPosition().set(x + Mathtil.randi(16, 108), y + Mathtil.randi(20, 68), BotsnBoltsGame.DEPTH_BURST);
-                addActor(burst);
+                burst(x + Mathtil.randi(16, 108), y + Mathtil.randi(20, 68));
             }
+        }
+        
+        private final void burst(final float x, final float y) {
+            final Burst burst = new Burst(BotsnBoltsGame.volatileImages.burst);
+            burst.getPosition().set(x, y, BotsnBoltsGame.DEPTH_BURST);
+            addActor(burst);
         }
         
         @Override
