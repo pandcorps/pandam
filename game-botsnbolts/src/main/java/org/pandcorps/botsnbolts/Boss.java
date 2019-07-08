@@ -3420,17 +3420,21 @@ if (health > 1) health = 1;
         
         @Override
         protected final void onShot(final Projectile prj) {
-            if ((state == STATE_DEFEATED) && (prj.getVelocity().getX() == 0f)) {
-                final Panple pos = prj.getPosition();
-                burst(pos.getX() - 17, pos.getY());
-                prj.destroy();
-                selfDestructCounter++;
-                if (selfDestructCounter >= 6) {
-                    clear();
-                    burst();
-                    nextSaucer.startBattle();
-                    destroy();
+            if (state == STATE_DEFEATED) {
+                if (prj.getVelocity().getX() == 0f) {
+                    final Panple pos = prj.getPosition();
+                    burst(pos.getX() - 17, pos.getY());
+                    prj.destroy();
+                    selfDestructCounter++;
+                    if (selfDestructCounter >= 6) {
+                        clear();
+                        burst();
+                        nextSaucer.startBattle();
+                        destroy();
+                    }
                 }
+            } else {
+                super.onShot(prj);
             }
         }
         
