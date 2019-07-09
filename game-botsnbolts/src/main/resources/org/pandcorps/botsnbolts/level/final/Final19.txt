@@ -1,0 +1,36 @@
+IMP|Final
+
+M|Bb                  i iB
+M|B/                  , iB
+M|BiDdDdDdDdDdDdDdDdDdD iB
+M|Bb. /                 ,B
+M|B.D idDdDdDdDdDdDdDd  tB
+M|Bt (, /            )  iB
+M|Bi dD idDdD.DdDdDdDd  bB
+M|-,(--)i (--\  (-)/------
+M|#iDdDdi DdDi  DdDiDdDd.=
+M|@i    `-)  `--)  `--) /-
+M|-\    DdD  dDdD  dDdD iB
+M|Bi /                  ,B
+M|Bi iDdDdDdDdDdDdDdDdDdtB
+M|Bi b                  iB
+
+LDR|2|0|3
+LDR|21|11|3
+
+BRR|8|3|Small
+BRR|19|7|Small
+BRR|6|9|Small
+BRR|20|11|Small
+BRR|20|3|Small
+
+ENM|17|7|RingEnemy
+ENM|19|5|RingEnemy
+ENM|7|9|RingEnemy
+ENM|2|11|RingEnemy
+
+RPT|||||Final
+RPT|2|12|18|1|FinalSolid|||2|1
+RPT|5|10|17|1|FinalSolid|||2|1
+RPT|7|8|12|1|FinalSolid|||2|1
+RPT|4|2|18|1|FinalSolid|||2|1
