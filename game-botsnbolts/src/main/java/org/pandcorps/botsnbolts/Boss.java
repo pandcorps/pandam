@@ -3607,13 +3607,18 @@ if (health > 1) health = 1;
         }
         
         @Override
-        protected final void renderView(final Panderer renderer) {
+        protected void renderView(final Panderer renderer) {
             final Panlayer layer = getLayer();
             final Panple pos = getPosition();
             final float x = pos.getX(), y = pos.getY();
+            final int zoff = getZoff();
             final boolean mirror = isMirror();
-            renderer.render(layer, getStill(), x, y, BotsnBoltsGame.DEPTH_ENEMY_BACK, 0, mirror, false);
-            renderer.render(layer, Final.getCoat(), x, y + 14, BotsnBoltsGame.DEPTH_ENEMY_BACK_2, 0, mirror, false);
+            renderer.render(layer, getStill(), x, y, BotsnBoltsGame.DEPTH_ENEMY_BACK + zoff, 0, mirror, false);
+            renderer.render(layer, Final.getCoat(), x, y + 14, BotsnBoltsGame.DEPTH_ENEMY_BACK_2 + zoff, 0, mirror, false);
+        }
+        
+        protected int getZoff() {
+            return 0;
         }
         
         protected final static Panmage getSaucer() {
@@ -3680,13 +3685,21 @@ if (health > 1) health = 1;
     protected final static class FinalSaucer extends BaseSaucer {
         private final static byte STATE_INTRO_RISE = 1;
         private final static byte STATE_INTRO_DESTROY = 2; // isVulnerable depends on intro states being less than later states
+        private final static byte STATE_TRACTOR_BEAM_SEEK = 3;
+        private final static byte STATE_TRACTOR_BEAM = 4;
+        private final static int TRACTOR_BEAM_TOP = 11;
+        private final static Panmage[] tractorBeams = new Panmage[3];
         private boolean introNeeded = true;
         private Panctor lastProjectile = null;
+        private int tractorBeamX = 0;
+        private int tractorBeamSize = 0;
         
         @Override
         protected final boolean pickState() {
             if (introNeeded) {
                 startIntroRise();
+            } else {
+                startTractorBeamSeek();
             }
             return true;
         }
@@ -3699,6 +3712,16 @@ if (health > 1) health = 1;
         private final void startIntroDestroy() {
             startState(STATE_INTRO_DESTROY, 90, getStill());
         }
+        
+        private final void startTractorBeamSeek() {
+            hv = (getPlayerX() < getPosition().getX()) ? -1 : 1;
+            startStateIndefinite(STATE_TRACTOR_BEAM_SEEK, getStill());
+        }
+        
+        private final void startTractorBeam() {
+            tractorBeamX = BotsnBoltsGame.tm.getContainerColumn(getPosition().getX());
+            startState(STATE_TRACTOR_BEAM, 90, getStill());
+        }
 
         @Override
         protected final boolean continueState() {
@@ -3710,13 +3733,14 @@ if (health > 1) health = 1;
                     setPlayerActive(true);
                     break;
                 default :
-                    throw new IllegalStateException("Unexpected state " + state);
+                    startStill();
             }
             return true;
         }
         
         @Override
         protected final boolean onWaiting() {
+            setMirror(true);
             updateLastProjectile();
             switch (state) {
                 case STATE_INTRO_RISE :
@@ -3724,6 +3748,12 @@ if (health > 1) health = 1;
                     break;
                 case STATE_INTRO_DESTROY :
                     onIntroDestroying();
+                    break;
+                case STATE_TRACTOR_BEAM_SEEK :
+                    onTractorBeamSeeking();
+                    break;
+                case STATE_TRACTOR_BEAM :
+                    onTractorBeaming();
                     break;
             }
             return true;
@@ -3741,9 +3771,69 @@ if (health > 1) health = 1;
             }
         }
         
+        private final void onTractorBeamSeeking() {
+            final float x = getPosition().getX();
+            final int rx = Math.round(x);
+            if (((rx % 16) == 15) && (Math.abs(x - getPlayerX()) < 16)) {
+                hv = 0;
+                startTractorBeam();
+            } else if (Math.abs(hv) == 1) {
+                final int m = rx % 4;
+                if (m != 3) {
+                    if (hv < 0) {
+                        seek(-(m + 1));
+                    } else if (hv > 0) {
+                        seek(3 - m);
+                    }
+                }
+                hv *= 4;
+            } else {
+                seek(hv);
+            }
+        }
+        
+        private final void seek(final int hv) {
+            if (addX(hv) != X_NORMAL) {
+                startStill();
+            }
+        }
+        
+        private final void onTractorBeaming() {
+            if (waitTimer > 81) {
+                tractorBeamSize++;
+                setBehavior(BotsnBoltsGame.TILE_TRACTOR_BEAM);
+            } else if (waitTimer < 8) {
+                setBehavior(Tile.BEHAVIOR_OPEN);
+                tractorBeamSize--;
+            }
+        }
+        
+        private final void setBehavior(final byte b) {
+            final int y = TRACTOR_BEAM_TOP - tractorBeamSize;
+            setBehavior(tractorBeamX, y, b);
+            setBehavior(tractorBeamX + 1, y, b);
+        }
+        
+        private final void setBehavior(final int x, final int y, final byte b) {
+            final TileMap tm = BotsnBoltsGame.tm;
+            if (tm.isBad(x, y)) {
+                return;
+            } else if (Tile.getBehavior(tm.getTile(x, y)) == Tile.BEHAVIOR_SOLID) {
+                return;
+            }
+            tm.setBehavior(x, y, b);
+        }
+        
+        private final void clearTractorBeam() {
+            while (tractorBeamSize > 0) {
+                setBehavior(Tile.BEHAVIOR_OPEN);
+                tractorBeamSize--;
+            }
+        }
+        
         private final void startBattle() {
             health = HudMeter.MAX_VALUE;
-            startStateIndefinite(STATE_STILL, getStill());
+            startStill();
         }
         
         private final void shootCharged() {
@@ -3782,8 +3872,42 @@ if (health > 1) health = 1;
         }
         
         @Override
+        protected final void renderView(final Panderer renderer) {
+            super.renderView(renderer);
+            final Panlayer layer = getLayer();
+            final Panmage timg = getTractorBeam();
+            final float tx = tractorBeamX * BotsnBoltsGame.DIM;
+            for (int j = 0; j < tractorBeamSize; j++) {
+                final float ty = (TRACTOR_BEAM_TOP - j - 1) * BotsnBoltsGame.DIM;
+                renderer.render(layer, timg, tx, ty, BotsnBoltsGame.DEPTH_ENEMY_BACK_2);
+                renderer.render(layer, timg, tx + 16, ty, BotsnBoltsGame.DEPTH_ENEMY_BACK_2, 0, 0, 16, 16, 0, true, true);
+            }
+        }
+        
+        @Override
+        protected final int getZoff() {
+            return 2;
+        }
+        
+        @Override
         protected final Panmage getStill() {
             return getSaucerAnimated();
+        }
+        
+        private final static Panmage getTractorBeam() {
+            final int frameDuration = 3;
+            final int frameIndex = ((int) (Pangine.getEngine().getClock() % (4 * frameDuration))) / frameDuration;
+            final int imgIndex = (frameIndex < 3) ? frameIndex : 1;
+            return getTractorBeam(imgIndex);
+        }
+        
+        private final static Panmage getTractorBeam(final int i) {
+            Panmage img = tractorBeams[i];
+            if (img == null) {
+                img = getImage(null, "final/TractorBeam" + (i + 1), null, null, null);
+                tractorBeams[i] = img;
+            }
+            return img;
         }
     }
     

@@ -83,6 +83,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected final static byte TILE_BURSTABLE = 16;
     protected final static byte TILE_WATER = 17;
     protected final static byte TILE_ACTIVATE = 18;
+    protected final static byte TILE_TRACTOR_BEAM = 19;
     
     protected final static int DEPTH_PARALLAX_BG = 0;
     protected final static int DEPTH_PARALLAX_FG = 2;
@@ -213,7 +214,7 @@ public final class BotsnBoltsGame extends BaseGame {
 
     @Override
     protected final boolean isFullScreen() {
-        return true;
+        return false;
     }
     
     @Override

@@ -959,6 +959,12 @@ public final class Player extends Chr implements Warpable {
             case BotsnBoltsGame.TILE_ACTIVATE :
                 RoomLoader.activate();
                 break;
+            case BotsnBoltsGame.TILE_TRACTOR_BEAM :
+                if (!isInvincible()) {
+                    v = 0;
+                    getPosition().addY(2);
+                }
+                break;
         }
     }
     
