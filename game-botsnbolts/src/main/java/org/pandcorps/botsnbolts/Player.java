@@ -917,15 +917,22 @@ public final class Player extends Chr implements Warpable {
         return true;
     }
     
+    private final boolean isLiftAllowed() {
+        final long clock = Pangine.getEngine().getClock();
+        if (clock > lastLift) {
+            lastLift = clock;
+            return true;
+        }
+        return false;
+    }
+    
     @Override
     protected final void onCollide(final int index) {
         final byte b = getBehavior(index);
         switch (b) {
             case BotsnBoltsGame.TILE_LIFT :
-                final long clock = Pangine.getEngine().getClock();
-                if (clock > lastLift) {
+                if (isLiftAllowed()) {
                     addV(-1.5f * getG());
-                    lastLift = clock;
                 }
                 break;
             case BotsnBoltsGame.TILE_DEFEAT :
@@ -960,9 +967,9 @@ public final class Player extends Chr implements Warpable {
                 RoomLoader.activate();
                 break;
             case BotsnBoltsGame.TILE_TRACTOR_BEAM :
-                if (!isInvincible()) {
+                if (isLiftAllowed() && !isInvincible()) {
                     v = 0;
-                    getPosition().addY(2);
+                    getPosition().addY(4);
                 }
                 break;
         }

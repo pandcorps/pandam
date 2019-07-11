@@ -214,7 +214,7 @@ public final class BotsnBoltsGame extends BaseGame {
 
     @Override
     protected final boolean isFullScreen() {
-        return false;
+        return true;
     }
     
     @Override
