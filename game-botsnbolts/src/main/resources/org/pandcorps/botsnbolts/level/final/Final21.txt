@@ -1,0 +1,25 @@
+IMP|Final
+
+VAR|hiddenPuzzleSize|3
+
+M|Bi                    iB
+M|Bi                    iB
+M|Bi     hhhhhhhhhht    iB
+M|Bi     gGgGgGgGgGi    iB
+M|Bi               i    iB
+M|Bihhh            i    iB
+M|-,GgG            `---)`-
+M|Dd               dDdDdD 
+M|        h               
+M|        G               
+M|                        
+M|----\      h       /----
+M|BBBBi      g   h   iBBBB
+M|BBBBi          g   iBBBB
+
+DOR|23|3|Gold
+DOR|0|3|BossLeft
+
+DSK|20|8
+
+RPT|||||Final
