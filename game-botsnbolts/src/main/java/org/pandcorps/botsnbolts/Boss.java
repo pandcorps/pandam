@@ -3607,6 +3607,11 @@ if (health > 1) health = 1;
         }
         
         @Override
+        protected final boolean isMirrorable() {
+            return false;
+        }
+        
+        @Override
         protected void renderView(final Panderer renderer) {
             final Panlayer layer = getLayer();
             final Panple pos = getPosition();
@@ -3740,7 +3745,6 @@ if (health > 1) health = 1;
         
         @Override
         protected final boolean onWaiting() {
-            setMirror(true);
             updateLastProjectile();
             switch (state) {
                 case STATE_INTRO_RISE :
