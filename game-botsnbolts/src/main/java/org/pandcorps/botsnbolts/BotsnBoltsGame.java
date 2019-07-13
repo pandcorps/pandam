@@ -768,7 +768,7 @@ public final class BotsnBoltsGame extends BaseGame {
         
         final Panmage basicProjectile = engine.createImage(pre + "Projectile", new FinPanple2(3, 3), new FinPanple2(-3, -2), new FinPanple2(5, 3), playerProjectile);
         final Panimation projectile2 = newFlipper(pre + "Projectile2", playerProjectile2, new FinPanple2(7, 7), new FinPanple2(-4, -5), new FinPanple2(8, 6), 4);
-        final Panimation projectile3 = newProjectile3(pre);
+        final Panimation projectile3 = createAnm(pre + "Projectile3", 2, new FinPanple2(23, 7), new FinPanple2(-6, -7), new FinPanple2(8, 8), playerProjectile3);;
         final Panimation burst = newAnimation(pre + "Burst", playerBurst, CENTER_16, new FinPanple2(-10, -10), new FinPanple2(10, 10), 2);
         final Panimation charge = newAnimation(pre + "Charge", playerCharge, null, 1);
         final Panple oChargeVert = new FinPanple2(4, 0);
@@ -847,22 +847,6 @@ public final class BotsnBoltsGame extends BaseGame {
     
     private final static Img[] loadPlayerMirrorStrip(final String loc) {
         return playerMirror ? Imtil.loadStrip(loc, 32) : null;
-    }
-    
-    private final static Panimation newProjectile3(final String pre) {
-        final Pangine engine = Pangine.getEngine();
-        final Panmage img0 = engine.createImage(pre + ".0", playerProjectile3[0]);
-        final Panmage img1 = engine.createImage(pre + ".1", playerProjectile3[1]);
-        final Panple o = new FinPanple2(23, 7), min = new FinPanple2(-6, -7), max = new FinPanple2(8, 8), size = new FinPanple2(32, 16);
-        return engine.createAnimation(pre + ".anm",
-            newProjectile3Frame(pre, 0, o, min, max, img0, 0, 0, size),
-            newProjectile3Frame(pre, 1, o, min, max, img0, 0, 16, size),
-            newProjectile3Frame(pre, 2, o, min, max, img1, 0, 0, size),
-            newProjectile3Frame(pre, 3, o, min, max, img1, 0, 16, size));
-    }
-    
-    private final static Panframe newProjectile3Frame(final String pre, final int i, final Panple o, final Panple min, final Panple max, final Panmage src, final float x, final float y, final Panple size) {
-        return newSubFrame(pre, i, o, min, max, src, x, y, size, 2);
     }
     
     private final static Panframe newSubFrame(final String pre, final int i, final Panple o, final Panple min, final Panple max, final Panmage src, final float x, final float y, final Panple size, final int dur) {

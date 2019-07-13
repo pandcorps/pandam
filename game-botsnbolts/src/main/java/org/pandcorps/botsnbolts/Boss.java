@@ -3904,7 +3904,7 @@ if (health > 1) health = 1;
         
         private final void initCharged(final Panctor prj) {
             final Panple pos = getPosition();
-            prj.getPosition().set(pos.getX() + 17, pos.getY(), BotsnBoltsGame.DEPTH_CARRIER);
+            prj.getPosition().set(pos.getX() + 1, pos.getY(), BotsnBoltsGame.DEPTH_CARRIER);
             prj.setRot(3);
             prj.setView(BotsnBoltsGame.volatileImages.projectile3);
             if (lastProjectile != null) {
