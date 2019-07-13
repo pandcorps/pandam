@@ -3750,7 +3750,10 @@ if (health > 1) health = 1;
         private final void startBlast() {
             pickDirection();
             startStateIndefinite(STATE_BLAST);
-            shootCharged();
+            final float x = getPosition().getX();
+            if ((x < 40) || (x > 343)) {
+                shootCharged();
+            }
         }
 
         @Override
