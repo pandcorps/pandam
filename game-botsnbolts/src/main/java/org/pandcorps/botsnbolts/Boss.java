@@ -3378,7 +3378,7 @@ if (health > 1) health = 1;
                 if (rot < 0) {
                     rot = 3;
                 }
-                if (advanceIndex == 53) {
+                if (advanceIndex == 49) {
                     startStill();
                 }
             }
@@ -3611,6 +3611,14 @@ if (health > 1) health = 1;
             return false;
         }
         
+        protected final void startState(final byte state, final int waitTimer) {
+            startState(state, waitTimer, getStill());
+        }
+        
+        protected final void startStateIndefinite(final byte state) {
+            startStateIndefinite(state, getStill());
+        }
+        
         @Override
         protected void renderView(final Panderer renderer) {
             final Panlayer layer = getLayer();
@@ -3692,7 +3700,9 @@ if (health > 1) health = 1;
         private final static byte STATE_INTRO_DESTROY = 2; // isVulnerable depends on intro states being less than later states
         private final static byte STATE_TRACTOR_BEAM_SEEK = 3;
         private final static byte STATE_TRACTOR_BEAM = 4;
+        private final static byte STATE_BLAST = 5;
         private final static int TRACTOR_BEAM_TOP = 11;
+        private final static int SPEED = 4;
         private final static Panmage[] tractorBeams = new Panmage[3];
         private boolean introNeeded = true;
         private Panctor lastProjectile = null;
@@ -3704,28 +3714,43 @@ if (health > 1) health = 1;
             if (introNeeded) {
                 startIntroRise();
             } else {
-                startTractorBeamSeek();
+                final int r = Mathtil.randi(0, 1999);
+                //if (r < 1000) {
+                //    startTractorBeamSeek();
+                //} else {
+                    startBlast();
+                //}
             }
             return true;
         }
         
         private final void startIntroRise() {
-            startState(STATE_INTRO_RISE, 80, getStill());
+            startState(STATE_INTRO_RISE, 80);
             introNeeded = false;
         }
         
         private final void startIntroDestroy() {
-            startState(STATE_INTRO_DESTROY, 90, getStill());
+            startState(STATE_INTRO_DESTROY, 90);
+        }
+        
+        private final void pickDirection() {
+            hv = (getPlayerX() < getPosition().getX()) ? -1 : 1;
         }
         
         private final void startTractorBeamSeek() {
-            hv = (getPlayerX() < getPosition().getX()) ? -1 : 1;
-            startStateIndefinite(STATE_TRACTOR_BEAM_SEEK, getStill());
+            pickDirection();
+            startStateIndefinite(STATE_TRACTOR_BEAM_SEEK);
         }
         
         private final void startTractorBeam() {
             tractorBeamX = BotsnBoltsGame.tm.getContainerColumn(getPosition().getX());
-            startState(STATE_TRACTOR_BEAM, 90, getStill());
+            startState(STATE_TRACTOR_BEAM, 90);
+        }
+        
+        private final void startBlast() {
+            pickDirection();
+            startStateIndefinite(STATE_BLAST);
+            shootCharged();
         }
 
         @Override
@@ -3759,6 +3784,9 @@ if (health > 1) health = 1;
                 case STATE_TRACTOR_BEAM :
                     onTractorBeaming();
                     break;
+                case STATE_BLAST :
+                    onBlasting();
+                    break;
             }
             return true;
         }
@@ -3781,25 +3809,37 @@ if (health > 1) health = 1;
             if (((rx % 16) == 15) && (Math.abs(x - getPlayerX()) < 16)) {
                 hv = 0;
                 startTractorBeam();
-            } else if (Math.abs(hv) == 1) {
-                final int m = rx % 4;
-                if (m != 3) {
-                    if (hv < 0) {
-                        seek(-(m + 1));
-                    } else if (hv > 0) {
-                        seek(3 - m);
-                    }
-                }
-                hv *= 4;
             } else {
-                seek(hv);
+                seekFrom(rx);
             }
         }
         
-        private final void seek(final int hv) {
+        private final boolean seekFrom(final int rx) {
+            final boolean ret;
+            if (Math.abs(hv) == 1) {
+                final int m = rx % SPEED;
+                if (m != 3) {
+                    if (hv < 0) {
+                        ret = seek(-(m + 1));
+                    } else {
+                        ret = seek(3 - m);
+                    }
+                } else {
+                    ret = true;
+                }
+                hv *= SPEED;
+            } else {
+                ret = seek(hv);
+            }
+            return ret;
+        }
+        
+        private final boolean seek(final int hv) {
             if (addX(hv) != X_NORMAL) {
                 startStill();
+                return false;
             }
+            return true;
         }
         
         private final void onTractorBeaming() {
@@ -3809,6 +3849,17 @@ if (health > 1) health = 1;
             } else if (waitTimer < 8) {
                 setBehavior(Tile.BEHAVIOR_OPEN);
                 tractorBeamSize--;
+            }
+        }
+        
+        private final void onBlasting() {
+            final int rx = Math.round(getPosition().getX());
+            if (seekFrom(rx)) {
+                if ((rx > 32) && (rx < 336) && ((rx % 48) == 19)) {
+                    shootCharged();
+                }
+            } else {
+                shootCharged();
             }
         }
         
