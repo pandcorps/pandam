@@ -3725,11 +3725,11 @@ if (health > 1) health = 1;
                 startIntroRise();
             } else {
                 final int r = Mathtil.randi(0, 1999);
-                //if (r < 1000) {
-                //    startTractorBeamSeek();
-                //} else {
+                if (r < 1000) {
+                    startTractorBeamSeek();
+                } else {
                     startBlast();
-                //}
+                }
             }
             return true;
         }
@@ -3823,14 +3823,18 @@ if (health > 1) health = 1;
                 hv = 0;
                 startTractorBeam();
             } else {
-                seekFrom(rx);
+                seek();
             }
         }
         
-        private final boolean seekFrom(final int rx) {
+        private final int getRoundedX() {
+            return Math.round(getPosition().getX());
+        }
+        
+        private final boolean seek() {
             final boolean ret;
             if (Math.abs(hv) == 1) {
-                final int m = rx % SPEED;
+                final int m = getRoundedX() % SPEED;
                 if (m != 3) {
                     if (hv < 0) {
                         ret = seek(-(m + 1));
@@ -3866,9 +3870,9 @@ if (health > 1) health = 1;
         }
         
         private final void onBlasting() {
-            final int rx = Math.round(getPosition().getX());
-            if (seekFrom(rx)) {
-                if ((rx > 32) && (rx < 336) && ((rx % 48) == 19)) {
+            if (seek()) {
+                final int rx = Math.round(getPosition().getX());
+                if ((rx > 32) && (rx < 336) && ((rx % 48) == 23)) {
                     shootCharged();
                 }
             } else {
