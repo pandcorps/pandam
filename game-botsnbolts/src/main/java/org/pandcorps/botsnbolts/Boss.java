@@ -3423,7 +3423,7 @@ if (health > 1) health = 1;
             if (state == STATE_DEFEATED) {
                 if (prj.getVelocity().getX() == 0f) {
                     final Panple pos = prj.getPosition();
-                    burst(pos.getX() - 17, pos.getY());
+                    burst(pos.getX() - 1, pos.getY());
                     prj.destroy();
                     selfDestructCounter++;
                     if (selfDestructCounter >= 6) {
@@ -3441,6 +3441,11 @@ if (health > 1) health = 1;
         @Override
         protected final boolean isVulnerableToProjectile(final Projectile prj) {
             return state == STATE_DEFEATED;
+        }
+        
+        @Override
+        protected final boolean isBurstNeeded() {
+            return false;
         }
         
         @Override
@@ -3560,6 +3565,11 @@ if (health > 1) health = 1;
             getPosition().setZ(BotsnBoltsGame.DEPTH_ENEMY_FRONT);
             setMirror(true);
             changeView();
+        }
+        
+        @Override
+        protected final boolean isHarmful() {
+            return wagon.isHarmful();
         }
         
         @Override
@@ -3895,6 +3905,7 @@ if (health > 1) health = 1;
         }
         
         private final void shootCharged() {
+//TODO When this hits Void it should use the cyan burst; think it uses white burst (maybe in 2 places)
             initCharged(new EnemyProjectile(this, 0, 0, 0, -VEL_PROJECTILE));
         }
         

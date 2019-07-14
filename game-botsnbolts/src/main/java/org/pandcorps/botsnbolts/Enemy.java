@@ -127,7 +127,9 @@ public abstract class Enemy extends Chr implements CollisionListener {
         final int oldHealth = health, oldPower = prj.power;
         health -= oldPower;
         if (health <= 0) {
-            prj.burst(this);
+            if (isBurstNeeded()) {
+                prj.burst(this);
+            }
             award(prj.src);
             onDefeat();
             if (isDestroyedAfterDefeat()) {
@@ -135,6 +137,10 @@ public abstract class Enemy extends Chr implements CollisionListener {
             }
         }
         prj.setPower(oldPower - oldHealth);
+    }
+    
+    protected boolean isBurstNeeded() {
+        return true;
     }
     
     //@OverrideMe
