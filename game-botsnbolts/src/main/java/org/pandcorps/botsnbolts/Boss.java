@@ -3522,10 +3522,11 @@ if (health > 1) health = 1;
             renderer.render(layer, getHull(), x, y + 20, BotsnBoltsGame.DEPTH_ENEMY, 0, 0, 128, 128, 0, true, false);
             final Panmage wheel = getWheel();
             final float wx = x - (((rot == 1) || (rot == 2)) ? 1 : 0), wy = y - ((rot > 1) ? 2 : 1);
+            final float wrz = (y > 64) ? BotsnBoltsGame.DEPTH_ABOVE : BotsnBoltsGame.DEPTH_BEHIND;
             renderer.render(layer, wheel, wx + 22, wy, BotsnBoltsGame.DEPTH_ENEMY_FRONT, 0, 0, 64, 64, rot, false, false);
-            renderer.render(layer, wheel, wx - 2, wy, BotsnBoltsGame.DEPTH_ABOVE, 0, 0, 64, 64, rot, false, false);
+            renderer.render(layer, wheel, wx - 2, wy, wrz, 0, 0, 64, 64, rot, false, false);
             renderer.render(layer, wheel, wx + 86, wy, BotsnBoltsGame.DEPTH_ENEMY_FRONT, 0, 0, 64, 64, rot, false, false);
-            renderer.render(layer, wheel, wx + 62, wy, BotsnBoltsGame.DEPTH_ABOVE, 0, 0, 64, 64, rot, false, false);
+            renderer.render(layer, wheel, wx + 62, wy, wrz, 0, 0, 64, 64, rot, false, false);
             final Panmage plate = getPlate();
             final int plateAmount = coverIndex / 2;
             final boolean tilted = (coverIndex % 2) == 1;
@@ -3711,27 +3712,53 @@ if (health > 1) health = 1;
         private final static byte STATE_TRACTOR_BEAM_SEEK = 3;
         private final static byte STATE_TRACTOR_BEAM = 4;
         private final static byte STATE_BLAST = 5;
+        private final static byte STATE_FLY_U = 6;
+        private final static byte STATE_FLY_W = 7;
         private final static int TRACTOR_BEAM_TOP = 11;
         private final static int SPEED = 4;
         private final static Panmage[] tractorBeams = new Panmage[3];
         private boolean introNeeded = true;
+        private float maxY;
         private Panctor lastProjectile = null;
         private int tractorBeamX = 0;
         private int tractorBeamSize = 0;
+        private boolean edge = false;
         
         @Override
         protected final boolean pickState() {
             if (introNeeded) {
                 startIntroRise();
             } else {
-                final int r = Mathtil.randi(0, 1999);
-                if (r < 1000) {
-                    startTractorBeamSeek();
+                if (edge) {
+                    final int r = Mathtil.randi(0, 1999);
+                    if (r < 1000) {
+                        pickWeapon();
+                    } else {
+                        pickFlight();
+                    }
                 } else {
-                    startBlast();
+                    pickWeapon();
                 }
             }
             return true;
+        }
+        
+        private final void pickWeapon() {
+            final int r = Mathtil.randi(0, 1999);
+            if (r < 1000) {
+                startTractorBeamSeek();
+            } else {
+                startBlast();
+            }
+        }
+        
+        private final void pickFlight() {
+            final int r = Mathtil.randi(0, 1999);
+            if (r < 1000) {
+                startFlyU();
+            } else {
+                startFlyW();
+            }
         }
         
         private final void startIntroRise() {
@@ -3744,7 +3771,14 @@ if (health > 1) health = 1;
         }
         
         private final void pickDirection() {
-            hv = (getPlayerX() < getPosition().getX()) ? -1 : 1;
+            final float x = getPosition().getX();
+            if (x < 40) {
+                hv = 1;
+            } else if (x > 344) {
+                hv = -1;
+            } else {
+                hv = (getPlayerX() < x) ? -1 : 1;
+            }
         }
         
         private final void startTractorBeamSeek() {
@@ -3764,6 +3798,21 @@ if (health > 1) health = 1;
             if ((x < 40) || (x > 343)) {
                 shootCharged();
             }
+        }
+        
+        private final void pickFlyDirection() {
+            pickDirection();
+            hv *= 4;
+        }
+        
+        private final void startFlyU() {
+            pickFlyDirection();
+            startStateIndefinite(STATE_FLY_U);
+        }
+        
+        private final void startFlyW() {
+            pickFlyDirection();
+            startStateIndefinite(STATE_FLY_W);
         }
 
         @Override
@@ -3799,6 +3848,12 @@ if (health > 1) health = 1;
                     break;
                 case STATE_BLAST :
                     onBlasting();
+                    break;
+                case STATE_FLY_U :
+                    onFlyingU();
+                    break;
+                case STATE_FLY_W :
+                    onFlyingW();
                     break;
             }
             return true;
@@ -3849,9 +3904,11 @@ if (health > 1) health = 1;
         
         private final boolean seek(final int hv) {
             if (addX(hv) != X_NORMAL) {
+                edge = true;
                 startStill();
                 return false;
             }
+            edge = false;
             return true;
         }
         
@@ -3873,6 +3930,42 @@ if (health > 1) health = 1;
                 }
             } else {
                 shootCharged();
+            }
+        }
+        
+        private final void onFlyingU() {
+            final int i = Integer.MAX_VALUE - waitTimer - 1; // 0 - 79
+            final int divisor = 5, maxSpeed = 6;
+            final int v = (i < 40) ? -Math.max(maxSpeed - (i / divisor), 0) : Math.max(maxSpeed - ((79 - i) / divisor), 0);
+            getPosition().addY(v);
+            fly();
+        }
+        
+        private final void onFlyingW() {
+            final int i = Integer.MAX_VALUE - waitTimer - 1; // 0 - 79
+            final int baseSpeed = 18, maxSpeed = 8;
+            final int v;
+            if (i < 20) {
+                v = -Math.min(maxSpeed, Math.max(baseSpeed - i, 0));
+            } else if (i < 30) {
+                v = i - 20;
+            } else if (i < 40) {
+                v = 39 - i;
+            } else if (i < 50) {
+                v = -(i - 40);
+            } else if (i < 60) {
+                v = -(59 - i);
+            } else {
+                v = Math.min(maxSpeed, Math.max(baseSpeed - (79 - i), 0));
+            }
+            getPosition().addY(v);
+            fly();
+        }
+        
+        private final void fly() {
+            if (!seek(hv)) {
+                getPosition().setY(maxY);
+                startStill();
             }
         }
         
@@ -3901,6 +3994,7 @@ if (health > 1) health = 1;
         
         private final void startBattle() {
             health = HudMeter.MAX_VALUE;
+            maxY = getPosition().getY();
             startStill();
         }
         
@@ -3936,6 +4030,11 @@ if (health > 1) health = 1;
         @Override
         protected final boolean isVulnerable() {
             return (state > STATE_INTRO_DESTROY) || (state == STATE_STILL);
+        }
+        
+        @Override
+        protected final void onBossDefeat() {
+            clearTractorBeam();
         }
         
         @Override
