@@ -3523,9 +3523,9 @@ if (health > 1) health = 1;
             final Panmage wheel = getWheel();
             final float wx = x - (((rot == 1) || (rot == 2)) ? 1 : 0), wy = y - ((rot > 1) ? 2 : 1);
             renderer.render(layer, wheel, wx + 22, wy, BotsnBoltsGame.DEPTH_ENEMY_FRONT, 0, 0, 64, 64, rot, false, false);
-            renderer.render(layer, wheel, wx - 2, wy, BotsnBoltsGame.DEPTH_BEHIND, 0, 0, 64, 64, rot, false, false);
+            renderer.render(layer, wheel, wx - 2, wy, BotsnBoltsGame.DEPTH_ABOVE, 0, 0, 64, 64, rot, false, false);
             renderer.render(layer, wheel, wx + 86, wy, BotsnBoltsGame.DEPTH_ENEMY_FRONT, 0, 0, 64, 64, rot, false, false);
-            renderer.render(layer, wheel, wx + 62, wy, BotsnBoltsGame.DEPTH_BEHIND, 0, 0, 64, 64, rot, false, false);
+            renderer.render(layer, wheel, wx + 62, wy, BotsnBoltsGame.DEPTH_ABOVE, 0, 0, 64, 64, rot, false, false);
             final Panmage plate = getPlate();
             final int plateAmount = coverIndex / 2;
             final boolean tilted = (coverIndex % 2) == 1;
@@ -3827,14 +3827,10 @@ if (health > 1) health = 1;
             }
         }
         
-        private final int getRoundedX() {
-            return Math.round(getPosition().getX());
-        }
-        
         private final boolean seek() {
             final boolean ret;
             if (Math.abs(hv) == 1) {
-                final int m = getRoundedX() % SPEED;
+                final int m = getX() % SPEED;
                 if (m != 3) {
                     if (hv < 0) {
                         ret = seek(-(m + 1));
@@ -3871,7 +3867,7 @@ if (health > 1) health = 1;
         
         private final void onBlasting() {
             if (seek()) {
-                final int rx = Math.round(getPosition().getX());
+                final int rx = getX();
                 if ((rx > 32) && (rx < 336) && ((rx % 48) == 23)) {
                     shootCharged();
                 }
