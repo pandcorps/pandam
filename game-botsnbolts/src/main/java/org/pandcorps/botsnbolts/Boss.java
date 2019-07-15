@@ -3905,8 +3905,7 @@ if (health > 1) health = 1;
         }
         
         private final void shootCharged() {
-//TODO When this hits Void it should use the cyan burst; think it uses white burst (maybe in 2 places)
-            initCharged(new EnemyProjectile(this, 0, 0, 0, -VEL_PROJECTILE));
+            initCharged(new AiProjectile(this, 0, 0, 0, -VEL_PROJECTILE, BotsnBoltsGame.volatileImages, Projectile.POWER_MAXIMUM));
         }
         
         private final void shootSelfDestruct() {
@@ -3917,7 +3916,6 @@ if (health > 1) health = 1;
             final Panple pos = getPosition();
             prj.getPosition().set(pos.getX() + 1, pos.getY(), BotsnBoltsGame.DEPTH_CARRIER);
             prj.setRot(3);
-            prj.setView(BotsnBoltsGame.volatileImages.projectile3);
             if (lastProjectile != null) {
                 lastProjectile.getPosition().setZ(BotsnBoltsGame.DEPTH_PROJECTILE);
             }

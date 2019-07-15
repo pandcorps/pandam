@@ -25,6 +25,20 @@ package org.pandcorps.pandam.impl;
 import org.pandcorps.pandam.*;
 
 public interface SpecPanctor extends Pantity {
+    public void setView(final Panimation view);
+
+    public void setView(Panmage view);
+    
+    public void setView(Panframe view);
+    
+    public void setView(Panctor actor);
+    
+    public boolean changeView(Panimation view);
+
+    public boolean changeView(Panmage view);
+    
+    public boolean changeView(Panframe view);
+    
 	public Panple getPosition();
 	
 	public Panple getBoundingMinimum();

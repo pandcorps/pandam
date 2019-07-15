@@ -390,6 +390,42 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
     }
     
+    protected final static class AiProjectile extends EnemyProjectile implements SpecProjectile {
+        private final PlayerImages pi;
+        private int power;
+        
+        protected AiProjectile(final Panctor src, final int ox, final int oy, final float vx, final float vy, final PlayerImages pi, final int power) {
+            super(src, ox, oy, vx, vy);
+            this.pi = pi;
+            Projectile.setPower(this, power);
+        }
+        
+        @Override
+        protected final int getDamage() {
+            return power;
+        }
+        
+        @Override
+        protected final void burst(final Player player) {
+            burst();
+        }
+        
+        @Override
+        public final void assignPower(final int power) {
+            this.power = power;
+        }
+        
+        @Override
+        public final PlayerImages getPlayerImages() {
+            return pi;
+        }
+        
+        @Override
+        public final void burst() {
+            Projectile.burst(this, pi.burst, getPosition());
+        }
+    }
+    
     protected static class TimedEnemyProjectile extends EnemyProjectile {
         int timer;
         

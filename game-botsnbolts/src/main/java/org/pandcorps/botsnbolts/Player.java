@@ -2788,4 +2788,12 @@ public final class Player extends Chr implements Warpable {
             return offsetY;
         }
     }
+    
+    public static interface SpecProjectile extends SpecPanctor {
+        public void assignPower(final int power);
+        
+        public PlayerImages getPlayerImages();
+        
+        public void burst();
+    }
 }

@@ -31,7 +31,7 @@ import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.boundary.*;
 import org.pandcorps.pandax.*;
 
-public class Projectile extends Pandy implements Collidable, AllOobListener {
+public class Projectile extends Pandy implements Collidable, AllOobListener, SpecProjectile {
     protected final static int POWER_MEDIUM = 3;
     protected final static int POWER_MAXIMUM = 5;
     protected final static int POWER_IMPOSSIBLE = Integer.MAX_VALUE;
@@ -61,20 +61,35 @@ public class Projectile extends Pandy implements Collidable, AllOobListener {
     }
     
     protected final void setPower(final int power) {
-        this.power = power;
+        setPower(this, power);
+    }
+    
+    protected final static void setPower(final SpecProjectile prj, final int power) {
+        prj.assignPower(power);
         if (power > POWER_MEDIUM) {
-            changeView(pi.projectile3);
+            prj.changeView(prj.getPlayerImages().projectile3);
         } else if (power > 1) {
-            changeView(pi.projectile2);
+            prj.changeView(prj.getPlayerImages().projectile2);
         } else if (power > 0) {
-            changeView(pi.basicProjectile);
+            prj.changeView(prj.getPlayerImages().basicProjectile);
         } else {
-            burst();
-            destroy();
+            prj.burst();
+            prj.destroy();
         }
     }
     
-    protected final void burst() {
+    @Override
+    public final void assignPower(final int power) {
+        this.power = power;
+    }
+    
+    @Override
+    public final PlayerImages getPlayerImages() {
+        return pi;
+    }
+    
+    @Override
+    public final void burst() {
         burst(this);
     }
     
