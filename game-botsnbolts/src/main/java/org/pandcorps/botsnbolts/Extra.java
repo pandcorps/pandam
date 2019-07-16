@@ -334,7 +334,7 @@ public abstract class Extra extends Panctor {
             final Player player = PlayerContext.getPlayer(BotsnBoltsGame.pc);
             if (player == null) {
                 return;
-            } else if (player.getPosition().getX() <= 16) {
+            } else if (player.getPosition().getX() <= 32) {
                 BotsnBoltsGame.addActor(new FinalWagon(seg));
                 player.setMirror(false);
                 destroy();

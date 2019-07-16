@@ -3717,7 +3717,7 @@ if (health > 1) health = 1;
         private final static int TRACTOR_BEAM_TOP = 11;
         private final static int SPEED = 4;
         private final static Panmage[] tractorBeams = new Panmage[3];
-        private boolean introNeeded = true;
+        private int introCount = 0;
         private float maxY;
         private Panctor lastProjectile = null;
         private int tractorBeamX = 0;
@@ -3726,8 +3726,17 @@ if (health > 1) health = 1;
         
         @Override
         protected final boolean pickState() {
-            if (introNeeded) {
+            if (introCount == 0) {
                 startIntroRise();
+            } else if (introCount == 1) {
+                startTractorBeamSeek();
+                introCount = 2;
+            } else if (introCount == 2) {
+                startBlast();
+                introCount = 3;
+            } else if (introCount == 3) {
+                startFlyU();
+                introCount = 4;
             } else {
                 if (edge) {
                     final int r = Mathtil.randi(0, 1999);
@@ -3753,6 +3762,11 @@ if (health > 1) health = 1;
         }
         
         private final void pickFlight() {
+            if (introCount == 4) {
+                startFlyW();
+                introCount = 5;
+                return;
+            }
             final int r = Mathtil.randi(0, 1999);
             if (r < 1000) {
                 startFlyU();
@@ -3763,7 +3777,7 @@ if (health > 1) health = 1;
         
         private final void startIntroRise() {
             startState(STATE_INTRO_RISE, 80);
-            introNeeded = false;
+            introCount = 1;
         }
         
         private final void startIntroDestroy() {
