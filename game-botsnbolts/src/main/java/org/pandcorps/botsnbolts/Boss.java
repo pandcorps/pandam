@@ -3210,7 +3210,7 @@ public abstract class Boss extends Enemy {
         private final static byte STATE_HATCH_OPEN = 7;
         private final static byte STATE_HATCH_FIRE = 8;
         private final static byte STATE_HATCH_CLOSE = 9;
-        private final static byte STATE_DEFEATED = 9;
+        private final static byte STATE_DEFEATED = 10;
         private final static int COVER_MAX = 6;
         private final static int SPIKE_MAX = 2;
         private final static int HATCH_MAX = 4;
@@ -4191,7 +4191,7 @@ if (health > 1) health = 1;
         
         @Override
         protected final int getZoff() {
-            return 2;
+            return (state == STATE_INTRO_RISE) ? 0 : 2;
         }
         
         @Override
