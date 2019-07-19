@@ -3677,7 +3677,7 @@ if (health > 1) health = 1;
     
     private final static class WagonRocket extends TileUnawareEnemy {
         private static Panmage img = null;
-        //private boolean first = true;
+        private int timer = 0;
         
         private WagonRocket() {
             super(0, 0, 1);
@@ -3688,10 +3688,11 @@ if (health > 1) health = 1;
         
         @Override
         protected final void onStepEnemy() {
-            /*if (first) {
-                first = false;
-                return;
-            }*/
+            timer++;
+            if (timer > 10) {
+                Player.puff(this, -1, 4);
+                timer = 0;
+            }
             final Player player = getPlayer();
             if (player == null) {
                 return;
@@ -3704,6 +3705,16 @@ if (health > 1) health = 1;
                 pos.addY(1);
             }
             pos.addX(hv);
+            if (pos.getX() < -16) {
+                destroy();
+            }
+        }
+        
+        @Override
+        protected void onAttack(final Player player) {
+            super.onAttack(player);
+            EnemyProjectile.burstEnemy(this, 4);
+            destroy();
         }
         
         private final static Panmage getRocket() {
