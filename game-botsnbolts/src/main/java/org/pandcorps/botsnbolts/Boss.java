@@ -3207,16 +3207,21 @@ public abstract class Boss extends Enemy {
         private final static byte STATE_SPIKE_RETRACT = 4;
         private final static byte STATE_ADVANCE = 5;
         private final static byte STATE_RETREAT = 6;
-        private final static byte STATE_DEFEATED = 7;
+        private final static byte STATE_HATCH_OPEN = 7;
+        private final static byte STATE_HATCH_CLOSE = 8;
+        private final static byte STATE_DEFEATED = 9;
         private final static int COVER_MAX = 6;
         private final static int SPIKE_MAX = 2;
+        private final static int HATCH_MAX = 4;
         private static Panmage box = null;
         private static Panmage hull = null;
         private static Panmage wheel = null;
         private static Panmage plate = null;
         private static Panmage plateTilt = null;
+        private final static Panmage[] hatches = new Panmage[6];
         private int advanceIndex = 0;
         private int coverIndex = COVER_MAX;
+        private int hatchIndex = HATCH_MAX;
         private int animTimer = 0;
         private int rot = 0;
         private WagonSaucer saucer;
@@ -3240,7 +3245,8 @@ public abstract class Boss extends Enemy {
             if (advanceIndex > 0) {
                 startRetreat();
             } else {
-                startUncover();
+                //startUncover();
+                startHatchOpen();
             }
             return false;
         }
@@ -3272,6 +3278,12 @@ if (health > 1) health = 1;
                 case STATE_RETREAT :
                     onRetreating();
                     break;
+                case STATE_HATCH_OPEN :
+                    onHatchOpening();
+                    break;
+                case STATE_HATCH_CLOSE :
+                    onHatchClosing();
+                    break;
             }
             return false;
         }
@@ -3300,6 +3312,14 @@ if (health > 1) health = 1;
         
         private final void startRetreat() {
             startState(STATE_RETREAT);
+        }
+        
+        private final void startHatchOpen() {
+            startState(STATE_HATCH_OPEN);
+        }
+        
+        private final void startHatchClose() {
+            startState(STATE_HATCH_CLOSE);
         }
         
         private final void startDefeated() {
@@ -3398,6 +3418,30 @@ if (health > 1) health = 1;
                     } else {
                         startSpikeRetract();
                     }
+                }
+            }
+        }
+        
+        private final void onHatchOpening() {
+            animTimer++;
+            if (animTimer > 2) {
+                animTimer = 0;
+                if (hatchIndex > 0) {
+                    hatchIndex--;
+                } else {
+                    startHatchClose();
+                }
+            }
+        }
+        
+        private final void onHatchClosing() {
+            animTimer++;
+            if (animTimer > 2) {
+                animTimer = 0;
+                if (hatchIndex < HATCH_MAX) {
+                    hatchIndex++;
+                } else {
+                    startStill();
                 }
             }
         }
@@ -3537,6 +3581,9 @@ if (health > 1) health = 1;
             for (int i = 0; i < plateAmount; i++) {
                 renderer.render(layer, plate, px, py - (9 * i), BotsnBoltsGame.DEPTH_ENEMY_FRONT, 0, 0, 16, 16, 0, true, false);
             }
+            if (hatchIndex > 0) {
+                renderer.render(layer, getHatch(HATCH_MAX - hatchIndex), x + 76, y + 51, BotsnBoltsGame.DEPTH_ENEMY_FRONT, 0, 0, 16, 16, 0, true, false);
+            }
         }
         
         private final static Panmage getHull() {
@@ -3553,6 +3600,14 @@ if (health > 1) health = 1;
         
         private final static Panmage getPlateTilt() {
             return (plateTilt = getImage(plateTilt, "final/WagonPlateTilt", null, null, null));
+        }
+        
+        private final static Panmage getHatch(final int i) {
+            Panmage img = hatches[i];
+            if (img == null) {
+                img = getImage(img, "final/WagonHatch" + (i + 1), null, null, null);
+            }
+            return img;
         }
     }
     
@@ -3595,6 +3650,36 @@ if (health > 1) health = 1;
                 spikes[i] = img;
             }
             return img;
+        }
+    }
+    
+    private final static class WagonRocket extends TileUnawareEnemy {
+        private static Panmage img = null;
+        
+        private WagonRocket() {
+            super(0, 0, 1);
+            setView(getRocket());
+            setMirror(true);
+            hv = -6;
+        }
+        
+        @Override
+        protected final void onStepEnemy() {
+            final Player player = getPlayer();
+            if (player == null) {
+                return;
+            }
+            final Panple pos = getPosition();
+            final float y = pos.getY(), py = player.getPosition().getY() + Player.CENTER_Y;
+            if (y > (py + 3)) {
+                pos.addY(-1);
+            } else if (y < (py - 3)) {
+                pos.addY(1);
+            }
+        }
+        
+        private final static Panmage getRocket() {
+            return (img = Boss.getImage(img, "final/Rocket", null, null, null));
         }
     }
     
