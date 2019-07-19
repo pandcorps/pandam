@@ -3208,7 +3208,8 @@ public abstract class Boss extends Enemy {
         private final static byte STATE_ADVANCE = 5;
         private final static byte STATE_RETREAT = 6;
         private final static byte STATE_HATCH_OPEN = 7;
-        private final static byte STATE_HATCH_CLOSE = 8;
+        private final static byte STATE_HATCH_FIRE = 8;
+        private final static byte STATE_HATCH_CLOSE = 9;
         private final static byte STATE_DEFEATED = 9;
         private final static int COVER_MAX = 6;
         private final static int SPIKE_MAX = 2;
@@ -3281,6 +3282,9 @@ if (health > 1) health = 1;
                 case STATE_HATCH_OPEN :
                     onHatchOpening();
                     break;
+                case STATE_HATCH_FIRE :
+                    onHatchFiring();
+                    break;
                 case STATE_HATCH_CLOSE :
                     onHatchClosing();
                     break;
@@ -3316,6 +3320,10 @@ if (health > 1) health = 1;
         
         private final void startHatchOpen() {
             startState(STATE_HATCH_OPEN);
+        }
+        
+        private final void startHatchFire() {
+            startState(STATE_HATCH_FIRE);
         }
         
         private final void startHatchClose() {
@@ -3429,8 +3437,20 @@ if (health > 1) health = 1;
                 if (hatchIndex > 0) {
                     hatchIndex--;
                 } else {
-                    startHatchClose();
+                    startHatchFire();
                 }
+            }
+        }
+        
+        private final void onHatchFiring() {
+            if (hatchIndex > -2) {
+                hatchIndex--;
+            } else {
+                hatchIndex = 0;
+                final WagonRocket rocket = new WagonRocket();
+                rocket.getPosition().set(304, 100, BotsnBoltsGame.DEPTH_PROJECTILE);
+                addActor(rocket);
+                startHatchClose();
             }
         }
         
@@ -3581,8 +3601,9 @@ if (health > 1) health = 1;
             for (int i = 0; i < plateAmount; i++) {
                 renderer.render(layer, plate, px, py - (9 * i), BotsnBoltsGame.DEPTH_ENEMY_FRONT, 0, 0, 16, 16, 0, true, false);
             }
-            if (hatchIndex > 0) {
-                renderer.render(layer, getHatch(HATCH_MAX - hatchIndex), x + 76, y + 51, BotsnBoltsGame.DEPTH_ENEMY_FRONT, 0, 0, 16, 16, 0, true, false);
+            if (hatchIndex != 0) {
+                final int hi = HATCH_MAX - hatchIndex - ((hatchIndex > 0) ? 0 : 1);
+                renderer.render(layer, getHatch(hi), x + 76, y + 51, BotsnBoltsGame.DEPTH_ENEMY_FRONT, 0, 0, 16, 16, 0, true, false);
             }
         }
         
@@ -3606,6 +3627,7 @@ if (health > 1) health = 1;
             Panmage img = hatches[i];
             if (img == null) {
                 img = getImage(img, "final/WagonHatch" + (i + 1), null, null, null);
+                hatches[i] = img;
             }
             return img;
         }
@@ -3655,6 +3677,7 @@ if (health > 1) health = 1;
     
     private final static class WagonRocket extends TileUnawareEnemy {
         private static Panmage img = null;
+        //private boolean first = true;
         
         private WagonRocket() {
             super(0, 0, 1);
@@ -3665,6 +3688,10 @@ if (health > 1) health = 1;
         
         @Override
         protected final void onStepEnemy() {
+            /*if (first) {
+                first = false;
+                return;
+            }*/
             final Player player = getPlayer();
             if (player == null) {
                 return;
@@ -3676,6 +3703,7 @@ if (health > 1) health = 1;
             } else if (y < (py - 3)) {
                 pos.addY(1);
             }
+            pos.addX(hv);
         }
         
         private final static Panmage getRocket() {
@@ -3738,6 +3766,7 @@ if (health > 1) health = 1;
             Panmage img = imgs[i];
             if (img == null) {
                 img = getImage(img, "final/Saucer" + (i + 1), SAUCER_O, SAUCER_MIN, SAUCER_MAX);
+                imgs[i] = img;
             }
             return img;
         }
