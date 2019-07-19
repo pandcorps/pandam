@@ -136,7 +136,9 @@ public abstract class Enemy extends Chr implements CollisionListener {
                 destroy();
             }
         }
-        prj.setPower(oldPower - oldHealth);
+        if (oldHealth > 0) {
+            prj.setPower(oldPower - oldHealth);
+        }
     }
     
     protected boolean isBurstNeeded() {
