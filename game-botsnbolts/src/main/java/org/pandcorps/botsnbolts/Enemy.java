@@ -392,7 +392,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
     }
     
-    protected final static class AiProjectile extends EnemyProjectile implements SpecProjectile {
+    protected static class AiProjectile extends EnemyProjectile implements SpecProjectile {
         private final PlayerImages pi;
         private int power;
         

@@ -3546,7 +3546,13 @@ if (health > 1) health = 1;
         }
         
         private final void onTubeFiring() {
-            startTubeRetract();
+            animTimer++;
+            if ((animTimer == 8) || (animTimer == 16) || (animTimer == 24)) {
+                new WagonMortar(this, 224 - (animTimer * 8));
+            } else if (animTimer == 32) {
+                animTimer = 0;
+                startTubeRetract();
+            }
         }
 
         private final void onTubeRetracting() {
@@ -3566,7 +3572,7 @@ if (health > 1) health = 1;
             final Panple pos = getPosition();
             final float x = pos.getX(), y = pos.getY();
             if (saucer != null) {
-                saucer.getPosition().set(x + 79, y + 45);
+                saucer.getPosition().set(x + 75, y + 45);
             }
             if (spikes != null) {
                 spikes.getPosition().set(x + 14, y + 22);
@@ -3698,19 +3704,19 @@ if (health > 1) health = 1;
             }
             if (hoodIndex > 0) {
                 final int hi = (hoodIndex - 1) * 2;
-                final float hy = y + 68, hfx;
+                final float hy = y + 68, hx = x + 80, hfx;
                 final int df;
                 if (hoodIndex < 3) {
-                    hfx = x + 15;
+                    hfx = hx + 15;
                     df = 32;
                 } else {
-                    hfx = x + 31;
+                    hfx = hx + 31;
                     df = 16;
                 }
-                renderer.render(layer, getHood(hi), x + 18, hy, BotsnBoltsGame.DEPTH_ENEMY_BACK, 0, 0, 16, 16, 0, true, false);
+                renderer.render(layer, getHood(hi), hx + 18, hy, BotsnBoltsGame.DEPTH_ENEMY_BACK_2, 0, 0, 16, 16, 0, true, false);
                 renderer.render(layer, getHood(hi + 1), hfx, hy, BotsnBoltsGame.DEPTH_ENEMY_FRONT, 0, 0, df, df, 0, true, false);
                 if (tubeIndex > 0) {
-                    renderer.render(layer, getTube(), x + 25, hy - 16 + (tubeIndex * 2), BotsnBoltsGame.DEPTH_ENEMY, 0, 0, 16, 16, 0, true, false);
+                    renderer.render(layer, getTube(), hx + 23, hy - 16 + (tubeIndex * 2), BotsnBoltsGame.DEPTH_ENEMY, 0, 0, 16, 16, 0, true, false);
                 }
             }
         }
@@ -3840,11 +3846,60 @@ if (health > 1) health = 1;
         
         @Override
         protected final int getDamage() {
-            return 2;
+            return Projectile.POWER_MEDIUM;
         }
         
         private final static Panmage getRocket() {
             return (img = Boss.getImage(img, "final/Rocket", null, null, null));
+        }
+    }
+    
+    private final static class WagonMortar extends AiProjectile {
+        private static Panimation anim = null;
+        private int dropX;
+        
+        private WagonMortar(final Panctor src, final int dropX) {
+            super(src, 111, 83, 0, Player.VEL_PROJECTILE, BotsnBoltsGame.volatileImages, Projectile.POWER_MEDIUM);
+            setRot(1);
+            getPosition().setZ(BotsnBoltsGame.DEPTH_ENEMY_BACK_2);
+            setView(getAnim());
+            this.dropX = dropX;
+        }
+        
+        @Override
+        public final void onAllOob(final AllOobEvent event) {
+            if (dropX < 0) {
+                return;
+            } else if (getPosition().getY() < 0) {
+                super.onAllOob(event);
+            } else {
+                final int x = dropX;
+                dropX = -1;
+                Pangine.getEngine().addTimer(this, 15, new TimerListener() {
+                    @Override public final void onTimer(final TimerEvent event) {
+                        setRot(3);
+                        getVelocity().setY(-Player.VEL_PROJECTILE);
+                        final Panple pos = getPosition();
+                        pos.setX(x);
+                        pos.setZ(BotsnBoltsGame.DEPTH_PROJECTILE);
+                    }});
+            }
+        }
+        
+        @Override
+        protected final void onOutOfView() {
+        }
+        
+        private final Panimation getAnim() {
+            if (anim != null) {
+                return anim;
+            }
+            final Pangine engine = Pangine.getEngine();
+            final Panimation base = (Panimation) getView();
+            final Panframe frames[] = base.getFrames(), frame1 = frames[1];
+            final Panframe flip = engine.createFrame(frame1.getId() + ".rot", frame1.getImage(), frame1.getDuration(), 0, true, false);
+            anim = engine.createAnimation(base.getId() + ".rot", frames[0], flip);
+            return anim;
         }
     }
     
