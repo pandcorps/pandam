@@ -3212,22 +3212,28 @@ public abstract class Boss extends Enemy {
         private final static byte STATE_HATCH_CLOSE = 9;
         private final static byte STATE_HOOD_OPEN = 10;
         private final static byte STATE_HOOD_CLOSE = 11;
-        private final static byte STATE_DEFEATED = 12;
+        private final static byte STATE_TUBE_REVEAL = 12;
+        private final static byte STATE_TUBE_FIRE = 13;
+        private final static byte STATE_TUBE_RETRACT = 14;
+        private final static byte STATE_DEFEATED = 15;
         private final static int COVER_MAX = 6;
         private final static int SPIKE_MAX = 2;
         private final static int HATCH_MAX = 4;
         private final static int HOOD_MAX = 4;
+        private final static int TUBE_MAX = 8;
         private static Panmage box = null;
         private static Panmage hull = null;
         private static Panmage wheel = null;
         private static Panmage plate = null;
         private static Panmage plateTilt = null;
+        private static Panmage tube = null;
         private final static Panmage[] hatches = new Panmage[6];
         private final static Panmage[] hoods = new Panmage[8];
         private int advanceIndex = 0;
         private int coverIndex = COVER_MAX;
         private int hatchIndex = HATCH_MAX;
         private int hoodIndex = 0;
+        private int tubeIndex = 0;
         private int animTimer = 0;
         private int rot = 0;
         private WagonSaucer saucer;
@@ -3300,6 +3306,15 @@ if (health > 1) health = 1;
                 case STATE_HOOD_CLOSE :
                     onHoodClosing();
                     break;
+                case STATE_TUBE_REVEAL :
+                    onTubeRevealing();
+                    break;
+                case STATE_TUBE_FIRE :
+                    onTubeFiring();
+                    break;
+                case STATE_TUBE_RETRACT :
+                    onTubeRetracting();
+                    break;
             }
             return false;
         }
@@ -3348,6 +3363,18 @@ if (health > 1) health = 1;
         
         private final void startHoodClose() {
             startState(STATE_HOOD_CLOSE);
+        }
+        
+        private final void startTubeReveal() {
+            startState(STATE_TUBE_REVEAL);
+        }
+        
+        private final void startTubeFire() {
+            startState(STATE_TUBE_FIRE);
+        }
+        
+        private final void startTubeRetract() {
+            startState(STATE_TUBE_RETRACT);
         }
         
         private final void startDefeated() {
@@ -3493,7 +3520,7 @@ if (health > 1) health = 1;
                 if (hoodIndex < HOOD_MAX) {
                     hoodIndex++;
                 } else {
-                    startHoodClose();
+                    startTubeReveal();
                 }
             }
         }
@@ -3507,6 +3534,26 @@ if (health > 1) health = 1;
                 } else {
                     startStill();
                 }
+            }
+        }
+        
+        private final void onTubeRevealing() {
+            if (tubeIndex < TUBE_MAX) {
+                tubeIndex++;
+            } else {
+                startTubeFire();
+            }
+        }
+        
+        private final void onTubeFiring() {
+            startTubeRetract();
+        }
+
+        private final void onTubeRetracting() {
+            if (tubeIndex > 0) {
+                tubeIndex--;
+            } else {
+                startHoodClose();
             }
         }
         
@@ -3660,8 +3707,11 @@ if (health > 1) health = 1;
                     hfx = x + 31;
                     df = 16;
                 }
-                renderer.render(layer, getHood(hi), x + 18, hy, BotsnBoltsGame.DEPTH_ENEMY, 0, 0, 16, 16, 0, true, false);
+                renderer.render(layer, getHood(hi), x + 18, hy, BotsnBoltsGame.DEPTH_ENEMY_BACK, 0, 0, 16, 16, 0, true, false);
                 renderer.render(layer, getHood(hi + 1), hfx, hy, BotsnBoltsGame.DEPTH_ENEMY_FRONT, 0, 0, df, df, 0, true, false);
+                if (tubeIndex > 0) {
+                    renderer.render(layer, getTube(), x + 25, hy - 16 + (tubeIndex * 2), BotsnBoltsGame.DEPTH_ENEMY, 0, 0, 16, 16, 0, true, false);
+                }
             }
         }
         
@@ -3679,6 +3729,10 @@ if (health > 1) health = 1;
         
         private final static Panmage getPlateTilt() {
             return (plateTilt = getImage(plateTilt, "final/WagonPlateTilt", null, null, null));
+        }
+        
+        private final static Panmage getTube() {
+            return (tube = getImage(tube, "final/WagonTube", null, null, null));
         }
         
         private final static Panmage getHatch(final int i) {
