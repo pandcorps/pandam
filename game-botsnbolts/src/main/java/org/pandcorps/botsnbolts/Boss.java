@@ -3210,19 +3210,24 @@ public abstract class Boss extends Enemy {
         private final static byte STATE_HATCH_OPEN = 7;
         private final static byte STATE_HATCH_FIRE = 8;
         private final static byte STATE_HATCH_CLOSE = 9;
-        private final static byte STATE_DEFEATED = 10;
+        private final static byte STATE_HOOD_OPEN = 10;
+        private final static byte STATE_HOOD_CLOSE = 11;
+        private final static byte STATE_DEFEATED = 12;
         private final static int COVER_MAX = 6;
         private final static int SPIKE_MAX = 2;
         private final static int HATCH_MAX = 4;
+        private final static int HOOD_MAX = 4;
         private static Panmage box = null;
         private static Panmage hull = null;
         private static Panmage wheel = null;
         private static Panmage plate = null;
         private static Panmage plateTilt = null;
         private final static Panmage[] hatches = new Panmage[6];
+        private final static Panmage[] hoods = new Panmage[8];
         private int advanceIndex = 0;
         private int coverIndex = COVER_MAX;
         private int hatchIndex = HATCH_MAX;
+        private int hoodIndex = 0;
         private int animTimer = 0;
         private int rot = 0;
         private WagonSaucer saucer;
@@ -3247,7 +3252,8 @@ public abstract class Boss extends Enemy {
                 startRetreat();
             } else {
                 //startUncover();
-                startHatchOpen();
+                //startHatchOpen();
+                startHoodOpen();
             }
             return false;
         }
@@ -3287,6 +3293,12 @@ if (health > 1) health = 1;
                     break;
                 case STATE_HATCH_CLOSE :
                     onHatchClosing();
+                    break;
+                case STATE_HOOD_OPEN :
+                    onHoodOpening();
+                    break;
+                case STATE_HOOD_CLOSE :
+                    onHoodClosing();
                     break;
             }
             return false;
@@ -3328,6 +3340,14 @@ if (health > 1) health = 1;
         
         private final void startHatchClose() {
             startState(STATE_HATCH_CLOSE);
+        }
+        
+        private final void startHoodOpen() {
+            startState(STATE_HOOD_OPEN);
+        }
+        
+        private final void startHoodClose() {
+            startState(STATE_HOOD_CLOSE);
         }
         
         private final void startDefeated() {
@@ -3460,6 +3480,30 @@ if (health > 1) health = 1;
                 animTimer = 0;
                 if (hatchIndex < HATCH_MAX) {
                     hatchIndex++;
+                } else {
+                    startStill();
+                }
+            }
+        }
+        
+        private final void onHoodOpening() {
+            animTimer++;
+            if (animTimer > 2) {
+                animTimer = 0;
+                if (hoodIndex < HOOD_MAX) {
+                    hoodIndex++;
+                } else {
+                    startHoodClose();
+                }
+            }
+        }
+        
+        private final void onHoodClosing() {
+            animTimer++;
+            if (animTimer > 2) {
+                animTimer = 0;
+                if (hoodIndex > 0) {
+                    hoodIndex--;
                 } else {
                     startStill();
                 }
@@ -3605,6 +3649,20 @@ if (health > 1) health = 1;
                 final int hi = HATCH_MAX - hatchIndex - ((hatchIndex > 0) ? 0 : 1);
                 renderer.render(layer, getHatch(hi), x + 76, y + 51, BotsnBoltsGame.DEPTH_ENEMY_FRONT, 0, 0, 16, 16, 0, true, false);
             }
+            if (hoodIndex > 0) {
+                final int hi = (hoodIndex - 1) * 2;
+                final float hy = y + 68, hfx;
+                final int df;
+                if (hoodIndex < 3) {
+                    hfx = x + 15;
+                    df = 32;
+                } else {
+                    hfx = x + 31;
+                    df = 16;
+                }
+                renderer.render(layer, getHood(hi), x + 18, hy, BotsnBoltsGame.DEPTH_ENEMY, 0, 0, 16, 16, 0, true, false);
+                renderer.render(layer, getHood(hi + 1), hfx, hy, BotsnBoltsGame.DEPTH_ENEMY_FRONT, 0, 0, df, df, 0, true, false);
+            }
         }
         
         private final static Panmage getHull() {
@@ -3628,6 +3686,15 @@ if (health > 1) health = 1;
             if (img == null) {
                 img = getImage(img, "final/WagonHatch" + (i + 1), null, null, null);
                 hatches[i] = img;
+            }
+            return img;
+        }
+        
+        private final static Panmage getHood(final int i) {
+            Panmage img = hoods[i];
+            if (img == null) {
+                img = getImage(img, "final/WagonHood" + (i + 1), null, null, null);
+                hoods[i] = img;
             }
             return img;
         }
@@ -3715,6 +3782,11 @@ if (health > 1) health = 1;
             super.onAttack(player);
             EnemyProjectile.burstEnemy(this, 4);
             destroy();
+        }
+        
+        @Override
+        protected final int getDamage() {
+            return 2;
         }
         
         private final static Panmage getRocket() {
