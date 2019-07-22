@@ -53,8 +53,6 @@ public final class BotsnBoltsGame extends BaseGame {
     protected final static String AUTHOR = "Andrew M. Martin";
     
     /*
-    Volcano Bot new art
-    Volcano Bot new attack
     Pause info/menu
     */
     

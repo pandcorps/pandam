@@ -260,10 +260,10 @@ public abstract class Boss extends Enemy {
     protected final void onGrounded() {
         if (jumping) {
             hv = 0;
+            jumping = false; // Clear right away in case below methods start a new jump for a sub-class like VolcanoBot
             if (isTurnTowardPlayerNeeded()) {
                 turnTowardPlayer(); // Don't do in onLanded; hv still needed at that point, which overrides this
             }
-            jumping = false;
         }
     }
     
@@ -501,13 +501,19 @@ public abstract class Boss extends Enemy {
         protected final static byte STATE_RAISED = 2;
         protected final static byte STATE_CROUCH = 3;
         protected final static byte STATE_JUMP = 4;
+        protected final static byte STATE_JUMP_DIVE = 5;
+        protected final static byte STATE_WAIT_DIVE = 6;
+        protected final static byte STATE_DIVE = 7;
         protected static Panmage still = null;
         protected static Panmage lift = null;
         protected static Panmage raised = null;
         protected static Panmage crouch = null;
         protected static Panmage jump = null;
+        protected static Panmage dive = null;
+        protected final static Panmage[] burns = new Panmage[2];
         
         protected float targetX = -1;
+        private int pendingDives = 0;
         
         protected VolcanoBot(final Segment seg) {
             super(VOLCANO_OFF_X, VOLCANO_H, seg);
@@ -539,14 +545,23 @@ public abstract class Boss extends Enemy {
                 if (t > 0) {
                     new LavaBall(this, t);
                 }
+            } else if (state == STATE_DIVE) {
+                changeView(getBurn());
+            } else if (state == STATE_WAIT_DIVE) {
+                return true;
+            } else if ((state == STATE_JUMP_DIVE) && (v < g)) {
+                startWaitDive();
             }
             return false;
         }
         
         @Override
         protected final boolean pickState() {
-            if (Mathtil.rand()) {
+            final int r = Mathtil.randi(0, 2999);
+            if (r < 1000) {
                 startLift();
+            } else if (r < 2000) {
+                startJumpDive();
             } else {
                 startJump();
             }
@@ -565,10 +580,29 @@ public abstract class Boss extends Enemy {
                 case STATE_CROUCH :
                     startStill();
                     break;
+                case STATE_WAIT_DIVE :
+                    startDive();
+                    break;
                 default :
                     throw new IllegalStateException("Unexpected state " + state);
             }
             return false;
+        }
+        
+        @Override
+        protected final boolean isTurnTowardPlayerNeeded() {
+            if (pendingDives > 0) {
+                pendingDives--;
+                hv = 0;
+                if (pendingDives > 0) {
+                    if (pendingDives == 2) {
+                        setMirror(!isMirror());
+                    }
+                    startJumpDive();
+                    return false;
+                }
+            }
+            return true;
         }
         
         protected final void startLift() {
@@ -586,6 +620,23 @@ public abstract class Boss extends Enemy {
                 addPendingJump(STATE_JUMP, img, v, -dir * 5);
                 addPendingJump(STATE_JUMP, img, v, dir * 7);
             }
+        }
+        
+        protected final void startJumpDive() {
+            if (pendingDives == 0) {
+                pendingDives = 4;
+            }
+            startJump(STATE_JUMP_DIVE, getJump(), 10, 0);
+        }
+        
+        protected final void startWaitDive() {
+            v = 0;
+            startState(STATE_WAIT_DIVE, 10, getDive());
+        }
+        
+        protected final void startDive() {
+            hv = getMirrorMultiplier() * 6;
+            startStateIndefinite(STATE_DIVE, getBurn());
         }
         
         protected final void startRaised() {
@@ -616,6 +667,23 @@ public abstract class Boss extends Enemy {
         
         protected final static Panmage getJump() {
             return (jump = getVolcanoImage(jump, "volcanobot/VolcanoBotJump"));
+        }
+        
+        protected final static Panmage getDive() {
+            return (dive = getVolcanoImage(dive, "volcanobot/VolcanoBotDive"));
+        }
+        
+        protected final static Panmage getBurn() {
+            return getBurn(((int) (Pangine.getEngine().getClock() % 6)) / 3);
+        }
+        
+        protected final static Panmage getBurn(final int i) {
+            Panmage img = burns[i];
+            if (img == null) {
+                img = getVolcanoImage(img, "volcanobot/VolcanoBotBurn" + (i + 1));
+                burns[i] = img;
+            }
+            return img;
         }
         
         protected final static Panmage getVolcanoImage(final Panmage img, final String name) {
@@ -3229,6 +3297,7 @@ public abstract class Boss extends Enemy {
         private static Panmage tube = null;
         private final static Panmage[] hatches = new Panmage[6];
         private final static Panmage[] hoods = new Panmage[8];
+        private int counter = 0;
         private int advanceIndex = 0;
         private int coverIndex = COVER_MAX;
         private int hatchIndex = HATCH_MAX;
@@ -3257,9 +3326,23 @@ public abstract class Boss extends Enemy {
             if (advanceIndex > 0) {
                 startRetreat();
             } else {
-                //startUncover();
-                //startHatchOpen();
-                startHoodOpen();
+                if (counter == 3) {
+                    final int r = Mathtil.randi(0, 2999);
+                    if (r < 1000) {
+                        startUncover();
+                    } else if (r < 2000) {
+                        startHatchOpen();
+                    } else {
+                        startHoodOpen();
+                    }
+                } else if (counter == 0) {
+                    startHatchOpen();
+                } else if (counter == 1) {
+                    startUncover();
+                } else if (counter == 2) {
+                    startHoodOpen();
+                }
+                counter++;
             }
             return false;
         }
