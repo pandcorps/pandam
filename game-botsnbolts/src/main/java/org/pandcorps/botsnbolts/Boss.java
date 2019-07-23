@@ -216,7 +216,7 @@ public abstract class Boss extends Enemy {
     }
     
     @Override
-    protected final int getDamage() {
+    protected int getDamage() {
         return 4;
     }
     
@@ -504,6 +504,8 @@ public abstract class Boss extends Enemy {
         protected final static byte STATE_JUMP_DIVE = 5;
         protected final static byte STATE_WAIT_DIVE = 6;
         protected final static byte STATE_DIVE = 7;
+        private final static int SPEED_JUMP_Y = 10;
+        private final static int NUM_DIVES = 4;
         protected static Panmage still = null;
         protected static Panmage lift = null;
         protected static Panmage raised = null;
@@ -522,6 +524,11 @@ public abstract class Boss extends Enemy {
         @Override
         protected final int getInitialOffsetX() {
             return 0;
+        }
+        
+        @Override
+        protected final int getDamage() {
+            return (state == STATE_DIVE) ? 6 : super.getDamage();
         }
         
         @Override
@@ -595,7 +602,7 @@ public abstract class Boss extends Enemy {
                 pendingDives--;
                 hv = 0;
                 if (pendingDives > 0) {
-                    if (pendingDives == 2) {
+                    if (pendingDives == (NUM_DIVES / 2)) {
                         setMirror(!isMirror());
                     }
                     startJumpDive();
@@ -612,7 +619,7 @@ public abstract class Boss extends Enemy {
         protected final void startJump() {
             final Panmage img = getJump();
             final int dir = getDirection();
-            final int v = 10;
+            final int v = SPEED_JUMP_Y;
             if (Mathtil.rand()) {
                 startJump(STATE_JUMP, img, v, dir * 9);
             } else {
@@ -624,18 +631,22 @@ public abstract class Boss extends Enemy {
         
         protected final void startJumpDive() {
             if (pendingDives == 0) {
-                pendingDives = 4;
+                pendingDives = NUM_DIVES;
             }
-            startJump(STATE_JUMP_DIVE, getJump(), 10, 0);
+            startJump(STATE_JUMP_DIVE, getJump(), SPEED_JUMP_Y, getSpeedDiveX());
+        }
+        
+        private final int getSpeedDiveX() {
+            return getMirrorMultiplier() * 4;
         }
         
         protected final void startWaitDive() {
             v = 0;
-            startState(STATE_WAIT_DIVE, 10, getDive());
+            startState(STATE_WAIT_DIVE, 5, getDive());
         }
         
         protected final void startDive() {
-            hv = getMirrorMultiplier() * 6;
+            hv = getSpeedDiveX();
             startStateIndefinite(STATE_DIVE, getBurn());
         }
         
@@ -3326,7 +3337,7 @@ public abstract class Boss extends Enemy {
             if (advanceIndex > 0) {
                 startRetreat();
             } else {
-                if (counter == 3) {
+                if (counter > 2) {
                     final int r = Mathtil.randi(0, 2999);
                     if (r < 1000) {
                         startUncover();
