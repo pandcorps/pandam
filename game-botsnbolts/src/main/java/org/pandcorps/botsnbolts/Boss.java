@@ -619,13 +619,12 @@ public abstract class Boss extends Enemy {
         protected final void startJump() {
             final Panmage img = getJump();
             final int dir = getDirection();
-            final int v = SPEED_JUMP_Y;
             if (Mathtil.rand()) {
-                startJump(STATE_JUMP, img, v, dir * 9);
+                startJump(STATE_JUMP, img, SPEED_JUMP_Y, dir * 9);
             } else {
-                startJump(STATE_JUMP, img, v, dir * 7);
-                addPendingJump(STATE_JUMP, img, v, -dir * 5);
-                addPendingJump(STATE_JUMP, img, v, dir * 7);
+                startJump(STATE_JUMP, img, SPEED_JUMP_Y, dir * 7);
+                addPendingJump(STATE_JUMP, img, SPEED_JUMP_Y, -dir * 5);
+                addPendingJump(STATE_JUMP, img, SPEED_JUMP_Y, dir * 7);
             }
         }
         
@@ -633,10 +632,10 @@ public abstract class Boss extends Enemy {
             if (pendingDives == 0) {
                 pendingDives = NUM_DIVES;
             }
-            startJump(STATE_JUMP_DIVE, getJump(), SPEED_JUMP_Y, getSpeedDiveX());
+            startJump(STATE_JUMP_DIVE, getJump(), SPEED_JUMP_Y, getVelDiveX());
         }
         
-        private final int getSpeedDiveX() {
+        private final int getVelDiveX() {
             return getMirrorMultiplier() * 4;
         }
         
@@ -646,7 +645,7 @@ public abstract class Boss extends Enemy {
         }
         
         protected final void startDive() {
-            hv = getSpeedDiveX();
+            hv = getVelDiveX();
             startStateIndefinite(STATE_DIVE, getBurn());
         }
         
@@ -1380,7 +1379,7 @@ public abstract class Boss extends Enemy {
         }
     }
     
-    protected final static int LIGHTNING_OFF_X = 6, LIGHTNING_H = 24; //TODO
+    protected final static int LIGHTNING_OFF_X = 6, LIGHTNING_H = 24;
     protected final static Panple LIGHTNING_O = new FinPanple2(14, 1);
     protected final static Panple LIGHTNING_MIN = getMin(LIGHTNING_OFF_X);
     protected final static Panple LIGHTNING_MAX = getMax(LIGHTNING_OFF_X, LIGHTNING_H);
@@ -1516,6 +1515,11 @@ public abstract class Boss extends Enemy {
         }
         
         @Override
+        protected final int getDamage() {
+            return 4;
+        }
+        
+        @Override
         protected final boolean isDestroyedOnImpact() {
             return false;
         }
@@ -1557,6 +1561,7 @@ public abstract class Boss extends Enemy {
         private final int jBase;
         private final int jLeft;
         private final int jRight;
+        private int jMin;
         private Lightning lightningLeft = null;
         private Lightning lightningRight = null;
         private final int[] verticalScratch = { 0, 1, 2, 4, 5, 6, 8, 9, 14 };
@@ -1571,10 +1576,13 @@ public abstract class Boss extends Enemy {
         
         protected Lightning(final LightningBot src, final int x, final int jMax, final int jBase, final int timer) {
             super(src, 10, 0, timer);
+            getPosition().set(x, 0);
+            setMirror(false);
             this.src = src;
             this.x = x;
             this.jMax = jMax;
             this.jBase = jBase;
+            jMin = jBase;
             if (isRoot()) {
                 Mathtil.shuffle(forkScratch);
                 jLeft = forkScratch[0];
@@ -1593,6 +1601,7 @@ public abstract class Boss extends Enemy {
             }
             mirrorFlag = Mathtil.rand();
             mirrorBase = Mathtil.randi(1, 3);
+            step();
         }
         
         private final boolean isRoot() {
@@ -1600,9 +1609,12 @@ public abstract class Boss extends Enemy {
         }
         
         @Override
-        protected final void renderView(final Panderer renderer) {
-            final Panmage img = getCurrentImage();
-            int jMin;
+        public final void onStep(final StepEvent event) {
+            super.onStep(event);
+            step();
+        }
+        
+        private final void step() {
             if (timer == DURATION_LIGHTNING) {
                 jMin = 8;
             } else if (timer == (DURATION_LIGHTNING - 1)) {
@@ -1613,6 +1625,11 @@ public abstract class Boss extends Enemy {
             if (jMin > jMax) {
                 jMin = jMax;
             }
+        }
+        
+        @Override
+        protected final void renderView(final Panderer renderer) {
+            final Panmage img = getCurrentImage();
             boolean firstFork = true;
             for (int j = jMax; j >= jMin; j--) {
                 final int index;
@@ -1621,7 +1638,7 @@ public abstract class Boss extends Enemy {
                 Lightning childLightning = null;
                 if ((j == jMax) && isRoot()) {
                     index = getTop();
-                    mirror = isMirror(); // Top mirror shouldn't be random; based on this object (which is based on src)
+                    mirror = src.isMirror(); // Top mirror shouldn't be random; based on src
                 } else if ((j == jMin) && (!isRoot() || (j != jBase))) {
                     index = getBottom();
                     mirror = isMirror(j);
@@ -1667,6 +1684,24 @@ public abstract class Boss extends Enemy {
         }
         
         @Override
+        protected final int getDamage() {
+            return 4;
+        }
+        
+        @Override
+        protected final boolean isDestroyedOnImpact() {
+            return false;
+        }
+        
+        @Override
+        public final void onAllOob(final AllOobEvent event) {
+        }
+        
+        @Override
+        protected final void onOutOfView() {
+        }
+        
+        @Override
         public Pansplay getCurrentDisplay() {
             return display;
         }
@@ -1679,8 +1714,7 @@ public abstract class Boss extends Enemy {
 
             @Override
             public final float getY() {
-                return 0; //TODO
-                //return min * 16;
+                return jMin * BotsnBoltsGame.DIM;
             }
         }
         
@@ -1692,13 +1726,12 @@ public abstract class Boss extends Enemy {
 
             @Override
             public final float getY() {
-                return 0; //TODO
-                //return max * 16;
+                return jMax * BotsnBoltsGame.DIM;
             }
         }
         
         private final void renderIndex(final Panderer renderer, final int x, final int j, final int index, final Panmage img, final boolean mirror) {
-            final int d = 16;
+            final int d = BotsnBoltsGame.DIM;
             final int ix = (index % 4) * d, iy = (index / 4) * d;
             renderer.render(getLayer(), img, x, j * d, BotsnBoltsGame.DEPTH_PROJECTILE, ix, iy, d, d, 0, mirror, false);
         }
