@@ -342,6 +342,8 @@ public abstract class Enemy extends Chr implements CollisionListener {
                         destroy();
                     }
                 }
+            } else if (collider instanceof Projectile) {
+                onCollisionWithPlayerProjectile((Projectile) collider);
             }
         }
         
@@ -351,6 +353,10 @@ public abstract class Enemy extends Chr implements CollisionListener {
         
         protected int getDamage() {
             return 1;
+        }
+        
+        //@OverrideMe
+        protected void onCollisionWithPlayerProjectile(final Projectile prj) {
         }
         
         protected void burst(final Player player) {
@@ -490,6 +496,12 @@ public abstract class Enemy extends Chr implements CollisionListener {
         @Override
         public void onAnimationEnd(final AnimationEndEvent event) {
             destroy();
+        }
+    }
+    
+    protected static class DamageBox extends EnemyProjectile {
+        protected DamageBox(final Panmage boundBox, final Panctor src) {
+            super(boundBox, src, 0, 0, 0, 0);
         }
     }
     

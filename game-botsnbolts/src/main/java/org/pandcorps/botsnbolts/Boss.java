@@ -974,6 +974,11 @@ public abstract class Boss extends Enemy {
             return x >= (BotsnBoltsGame.GAME_W - OFF_WALL);
         }
         
+        @Override
+        protected final int getDamage() {
+            return 4;
+        }
+        
         protected final void shatter() {
             onShatter();
             destroy();
@@ -994,7 +999,11 @@ public abstract class Boss extends Enemy {
         }
         
         protected final EnemyProjectile newHailChunk(final float vx, final float vy) {
-            return new EnemyProjectile(getChunk(), this, 0, 0, vx + randVel(), vy + randVel(), gTuple);
+            return new EnemyProjectile(getChunk(), this, 0, 0, vx + randVel(), vy + randVel(), gTuple) {
+                @Override protected final int getDamage() {
+                    return 2;
+                }
+            };
         }
         
         protected final static float randVel() {
@@ -2107,15 +2116,15 @@ public abstract class Boss extends Enemy {
         }
     }
     
-    protected final static int CYCLONE_OFF_X = 6, CYCLONE_H = 24; //TODO
+    protected final static int CYCLONE_OFF_X = 6, CYCLONE_H = 24, CYCLONE_TOP_OFF_Y = 18;
     protected final static Panple CYCLONE_O = new FinPanple2(14, 1);
     protected final static Panple CYCLONE_MIN = getMin(CYCLONE_OFF_X);
     protected final static Panple CYCLONE_MAX = getMax(CYCLONE_OFF_X, CYCLONE_H);
     protected final static Panple CYCLONE_SPIN_O = new FinPanple2(30, 1);
-    protected final static Panple CYCLONE_SPIN_MIN = getMin(CYCLONE_OFF_X);
-    protected final static Panple CYCLONE_SPIN_MAX = getMax(CYCLONE_OFF_X, CYCLONE_H);
+    protected final static Panple CYCLONE_SPIN_MIN = new FinPanple2(CYCLONE_MIN.getX(), CYCLONE_TOP_OFF_Y + 20);
+    protected final static Panple CYCLONE_SPIN_MAX = getMax(CYCLONE_OFF_X, 58);
     
-    protected final static class CycloneBot extends Boss {
+    protected final static class CycloneBot extends Boss implements StepEndListener {
         protected final static byte STATE_LAUNCH = 1;
         protected final static byte STATE_LAUNCH_END = 2;
         protected final static byte STATE_SPIN = 3;
@@ -2136,7 +2145,11 @@ public abstract class Boss extends Enemy {
         protected static Panmage spin1 = null;
         protected static Panmage spin2 = null;
         protected static Panmage spin3 = null;
+        protected static Panmage spinBoundBoxTop = null;
+        protected static Panmage spinBoundBoxBottom = null;
         private long age = 0;
+        private DamageBox spinDamageBoxTop = null;
+        private DamageBox spinDamageBoxBottom = null;
         
         protected CycloneBot(final Segment seg) {
             super(CYCLONE_OFF_X, CYCLONE_H, seg);
@@ -2192,7 +2205,15 @@ public abstract class Boss extends Enemy {
                     img = getSpinStart2();
                 } else if ((index < 6) || (waitTimer < 6)) {
                     img = getSpinStart3();
+                    Panctor.destroy(spinDamageBoxTop);
+                    spinDamageBoxTop = null;
+                    Panctor.destroy(spinDamageBoxBottom);
+                    spinDamageBoxBottom = null;
                 } else {
+                    if (spinDamageBoxTop == null) {
+                        spinDamageBoxTop = newDamageBox(getSpinBoundBoxTop());
+                        spinDamageBoxBottom = newDamageBox(getSpinBoundBoxBottom());
+                    }
                     final int i = index % 6;
                     if (i < 2) {
                         img = getSpin1();
@@ -2223,6 +2244,20 @@ public abstract class Boss extends Enemy {
             }
             return false;
         }
+        
+        private final DamageBox newDamageBox(final Panmage img) {
+            return new DamageBox(img, this) {
+                @Override protected final int getDamage() {
+                    return 4;
+                }
+                @Override protected final boolean isDestroyedOnImpact() {
+                    return false;
+                }
+                @Override protected final void onCollisionWithPlayerProjectile(final Projectile prj) {
+                    prj.bounce();
+                }
+            };
+        }
 
         @Override
         protected final boolean pickState() {
@@ -2246,6 +2281,20 @@ public abstract class Boss extends Enemy {
                 startStill();
             }
             return false;
+        }
+        
+        @Override
+        public final void onStepEnd(final StepEndEvent event) {
+            if (spinDamageBoxTop != null) {
+                spinDamageBoxTop.getPosition().set(getPosition());
+                spinDamageBoxBottom.getPosition().set(getPosition());
+            }
+        }
+        
+        @Override
+        protected final void onEnemyDestroy() {
+            Panctor.destroy(spinDamageBoxTop);
+            Panctor.destroy(spinDamageBoxBottom);
         }
         
         private final void startLaunch() {
@@ -2332,6 +2381,22 @@ public abstract class Boss extends Enemy {
         protected final static Panmage getCycloneSpinStartImage(final Panmage img, final String name) {
             return getImage(img, name, CYCLONE_SPIN_O, CYCLONE_MIN, CYCLONE_MAX);
         }
+        
+        protected final static Panmage getSpinBoundBoxTop() {
+            if (spinBoundBoxTop == null) {
+                spinBoundBoxTop = Pangine.getEngine().createEmptyImage(Pantil.vmid(), CYCLONE_SPIN_O,
+                    new FinPanple2(CYCLONE_SPIN_MIN.getX() - Player.VEL_PROJECTILE - 1, CYCLONE_TOP_OFF_Y - 1),
+                    new FinPanple2(CYCLONE_SPIN_MAX.getX() + Player.VEL_PROJECTILE + 1, 39));
+            }
+            return spinBoundBoxTop;
+        }
+        
+        protected final static Panmage getSpinBoundBoxBottom() {
+            if (spinBoundBoxBottom == null) {
+                spinBoundBoxBottom = Pangine.getEngine().createEmptyImage(Pantil.vmid(), CYCLONE_SPIN_O, CYCLONE_MIN, new FinPanple2(CYCLONE_MAX.getX(), CYCLONE_TOP_OFF_Y + 1));
+            }
+            return spinBoundBoxBottom;
+        }
     }
     
     protected final static class Whirlwind extends TimedEnemyProjectile {
@@ -2374,6 +2439,11 @@ public abstract class Boss extends Enemy {
         @Override
         protected final void onExpire() {
             Player.puff(this, 0, 0);
+        }
+        
+        @Override
+        protected final int getDamage() {
+            return 2;
         }
         
         protected final static Panmage getWind(final int timer) {
