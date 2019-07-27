@@ -431,6 +431,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         @Override
         public final void burst() {
             Projectile.burst(this, pi.burst, getPosition());
+            destroy();
         }
     }
     

@@ -74,7 +74,6 @@ public class Projectile extends Pandy implements Collidable, AllOobListener, Spe
             prj.changeView(prj.getPlayerImages().basicProjectile);
         } else {
             prj.burst();
-            prj.destroy();
         }
     }
     
@@ -91,6 +90,7 @@ public class Projectile extends Pandy implements Collidable, AllOobListener, Spe
     @Override
     public final void burst() {
         burst(this);
+        destroy();
     }
     
     protected final void burst(final Panctor target) {

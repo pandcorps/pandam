@@ -228,7 +228,6 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
                 temperature = def.nextTemperature;
             }
             projectile.burst();
-            collider.destroy();
         }
     }
     
@@ -397,7 +396,6 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
                 final Projectile projectile = (Projectile) collider;
                 handler.onShootButton();
                 projectile.burst();
-                collider.destroy();
             }
         }
 
@@ -620,7 +618,6 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
             if (collider instanceof Projectile) {
                 open();
                 ((Projectile) collider).burst();
-                collider.destroy();
             }
         }
         

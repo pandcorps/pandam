@@ -51,6 +51,8 @@ public abstract class Boss extends Enemy {
     private static boolean delaying = false;
     protected static boolean dropping = false;
     protected HudMeter healthMeter = null;
+    private static int prevRand = -1;
+    private static int prevPrevRand = -1;
     
     protected Boss(final int offX, final int h, final Segment seg) {
         super(offX, h, seg, 0);
@@ -220,6 +222,17 @@ public abstract class Boss extends Enemy {
         return 4;
     }
     
+    protected final static int rand(final int max) {
+        while (true) {
+            final int r = (Mathtil.randi(0, ((max + 1) * 1000) - 1)) / 1000;
+            if ((r != prevRand) || (r != prevPrevRand)) {
+                prevPrevRand = prevRand;
+                prevRand = r;
+                return r;
+            }
+        }
+    }
+    
     protected final void startState(final byte state, final int waitTimer, final Panmage img) {
         this.state = state;
         this.waitTimer = waitTimer;
@@ -252,7 +265,7 @@ public abstract class Boss extends Enemy {
         addPendingJump(new Jump(state, img, v, hv));
     }
     
-    protected final boolean hasPendingJumps() {
+    protected boolean hasPendingJumps() {
         return Coltil.isValued(pendingJumps);
     }
     
@@ -325,6 +338,18 @@ public abstract class Boss extends Enemy {
     }
     
     protected abstract Panmage getStill();
+    
+    @Override
+    protected void onHurt(final Projectile prj) {
+        final int oldHealth = health;
+        super.onHurt(prj);
+        if (state == STATE_STILL) {
+            final int damage = oldHealth - health;
+            if (damage > 0) {
+                waitTimer = Math.max(1, waitTimer - (damage * 10));
+            }
+        }
+    }
     
     @Override
     protected final void onDefeat() {
@@ -1397,8 +1422,10 @@ public abstract class Boss extends Enemy {
         protected final static byte STATE_JUMP = 1;
         protected final static byte STATE_STRIKE = 2;
         protected final static byte STATE_BURST = 3;
+        protected final static byte STATE_JUMPS = 4;
         protected final static int WAIT_STRIKE = 15;
         protected final static int WAIT_BURST = 31;
+        private final static int VEL_JUMPS = 10;
         protected static Panmage still = null;
         protected static Panmage jump = null;
         protected static Panmage strike = null;
@@ -1433,19 +1460,32 @@ public abstract class Boss extends Enemy {
                     if (getPosition().getY() >= 166) {
                         startStrike();
                     }
-                } else if (v < 0) {
-                    changeView(getFall());
+                } else {
+                    checkFall();
                 }
+            } else if (state == STATE_JUMPS) {
+                checkFall();
+            }
+            return false;
+        }
+        
+        private final boolean checkFall() {
+            if (v < 0) {
+                changeView(getFall());
+                return true;
             }
             return false;
         }
 
         @Override
         protected final boolean pickState() {
-            if (Mathtil.rand()) {
+            final int r = rand(2);
+            if (r == 0) {
                 startJump();
-            } else {
+            } else if (r == 1) {
                 startBurst();
+            } else {
+                startJumps();
             }
             return false;
         }
@@ -1458,6 +1498,36 @@ public abstract class Boss extends Enemy {
                 startStill();
             }
             return false;
+        }
+        
+        @Override
+        protected final boolean hasPendingJumps() {
+            if (super.hasPendingJumps()) {
+                return true;
+            }
+            final float x = getPosition().getX();
+            if (isMirror()) {
+                if (x > 32) {
+                    continueJumps();
+                    return true;
+                }
+            } else if (x < 352) {
+                continueJumps();
+                return true;
+            }
+            return false;
+        }
+        
+        protected final void startJumps() {
+            startJump(STATE_JUMPS, getJump(), VEL_JUMPS, getJumpsHv());
+        }
+        
+        private final void continueJumps() {
+            addPendingJump(STATE_JUMPS, getJump(), VEL_JUMPS, getJumpsHv());
+        }
+        
+        private final int getJumpsHv() {
+            return 3 * getMirrorMultiplier();
         }
         
         protected final void startJump() {
@@ -1531,6 +1601,11 @@ public abstract class Boss extends Enemy {
         @Override
         protected final boolean isDestroyedOnImpact() {
             return false;
+        }
+        
+        @Override
+        protected final void onCollisionWithPlayerProjectile(final Projectile prj) {
+            prj.burst();
         }
         
         @Override

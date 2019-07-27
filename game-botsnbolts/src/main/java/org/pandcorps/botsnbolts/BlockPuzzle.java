@@ -263,7 +263,6 @@ public abstract class BlockPuzzle {
                 }
             }
             prj.burst();
-            collider.destroy();
             return true;
         }
         return false;
