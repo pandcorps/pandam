@@ -1504,6 +1504,8 @@ public abstract class Boss extends Enemy {
         protected final boolean hasPendingJumps() {
             if (super.hasPendingJumps()) {
                 return true;
+            } else if (state != STATE_JUMPS) {
+                return false;
             }
             final float x = getPosition().getX();
             if (isMirror()) {
