@@ -2523,6 +2523,13 @@ public abstract class Boss extends Enemy {
             return 2;
         }
         
+        @Override
+        protected final void onCollisionWithPlayerProjectile(final Projectile prj) {
+            prj.burst();
+            onExpire();
+            destroy();
+        }
+        
         protected final static Panmage getWind(final int timer) {
             final int m = timer % 6;
             if (m < 2) {
