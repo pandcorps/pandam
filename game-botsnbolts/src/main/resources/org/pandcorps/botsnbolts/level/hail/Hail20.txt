@@ -1,10 +1,10 @@
 IMP|Hail
 
-M|...........,..,.....)(..
-M|)'BBBBBBBBBBBBBBBBBB`(.,
-M|)[                   BBB
-M|)[  ]_____________[     
-M|)[                      
+M|)'BBBBBBBBBBBBBBBBBB`(..
+M|)[  d        d      ](.,
+M|)[      d            BBB
+M|)[  ]_____________[ d   
+M|)[         d            
 M|)[ d     6   7   8      
 M|)[   5   b   b   b   /*-
 M|)[   b         d     (.,
@@ -12,7 +12,7 @@ M|)[    d              B`(
 M|)[  4   3   2     d   ](
 M|    b   b   b   1     ](
 M|          d     b  111](
-M|                   1  ](
+M|  d                1  ](
 M|---*-----*---------*---(
 
 DOR|0|1|Cyan
@@ -31,4 +31,4 @@ TMS|17^8
 TMS|4^4
 TMS|5^7
 
-RPT|1|1|23|11|HailBrickDark
+RPT|1|1|23|12|HailBrickDark
