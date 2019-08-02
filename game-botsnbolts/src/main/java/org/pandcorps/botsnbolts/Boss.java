@@ -3208,10 +3208,10 @@ public abstract class Boss extends Enemy {
         
         @Override
         protected final boolean pickState() {
-            final int r = Mathtil.randi(0, 2999);
-            if (r < 1000) {
+            final int r = rand(2);
+            if (r == 0) {
                 startMorph();
-            } else if (r < 2000) {
+            } else if (r == 1) {
                 startHold();
             } else {
                 startJump();
