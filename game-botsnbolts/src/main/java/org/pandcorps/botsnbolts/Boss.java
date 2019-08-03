@@ -3354,8 +3354,8 @@ public abstract class Boss extends Enemy {
     }
     
     private final static Panple SCYTHE_O = new FinPanple2(11, 16);
-    private final static Panple SCYTHE_MIN = new FinPanple2(-1, 3);
-    private final static Panple SCYTHE_MAX = new FinPanple2(-14, 12);
+    private final static Panple SCYTHE_MIN = new FinPanple2(-2, -4);
+    private final static Panple SCYTHE_MAX = new FinPanple2(16, 13);
     private final static Panple SCYTHE_SUB_O = new FinPanple2(1, 9);
     private final static Panple SCYTHE_SUB_SIZE = new FinPanple2(3, 16);
     
@@ -3429,6 +3429,18 @@ public abstract class Boss extends Enemy {
             src.setView(DroughtBot.getLaunch());
         }
         
+        @Override
+        protected final void onCollisionWithPlayerProjectile(final Projectile prj) {
+            if (launched) {
+                prj.bounce();
+            }
+        }
+        
+        @Override
+        protected final int getDamage() {
+            return 3;
+        }
+        
         private final static Panmage getGrow() {
             return (grow = getImage(grow, "droughtbot/ScytheGrow", null, null, null));
         }
@@ -3465,7 +3477,7 @@ public abstract class Boss extends Enemy {
             if (scythe2 != null) {
                 return scythe2;
             }
-            return (scythe2 = getScytheImage(scythe2, "droughtbot/Scythe2", new FinPanple2(6, -10), new FinPanple2(17, 10)));
+            return (scythe2 = getScytheImage(scythe2, "droughtbot/Scythe2", new FinPanple2(0, -12), new FinPanple2(18, 10)));
         }
         
         private final static Panmage getScytheImage(final Panmage img, final String name) {
