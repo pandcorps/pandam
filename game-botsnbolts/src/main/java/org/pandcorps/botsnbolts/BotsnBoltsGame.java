@@ -1163,7 +1163,6 @@ public final class BotsnBoltsGame extends BaseGame {
                 final Panroom room = RoomLoader.nextRoom;
                 if (Panlayer.isDestroyed(bgLayer)) {
                     bgLayer = engine.createLayer("layer.bg", GAME_W, GAME_H, room.getSize().getZ(), room);
-                    bgLayer.setConstant(true);
                 }
                 attachBgLayer(room);
                 Panctor.destroy(bgTm);
@@ -1173,12 +1172,14 @@ public final class BotsnBoltsGame extends BaseGame {
                     bgTexture.setSize(GAME_W, GAME_H);
                     bgTexture.getPosition().setZ(DEPTH_PARALLAX_BG);
                     bgLayer.addActor(bgTexture);
+                    bgLayer.setConstant(false);
                 } else {
                     bgTm = new TileMap(Pantil.vmid(), GAME_COLUMNS, GAME_ROWS, DIM, DIM);
                     bgTm.setImageMap(timg);
                     bgTm.getPosition().setZ(DEPTH_PARALLAX_BG);
                     bgTm.setForegroundDepth(DEPTH_PARALLAX_FG);
                     bgLayer.addActor(bgTm);
+                    bgLayer.setConstant(true);
                     RoomLoader.loadBg(bgFileId);
                 }
                 room.setClearDepthEnabled(false);
