@@ -1947,7 +1947,7 @@ public abstract class Boss extends Enemy {
             } else if (state == STATE_DRILL4) {
                 drillTimer++;
                 if (drillTimer == 0) {
-                    startEarthquake(-17, 2, 1);
+                    startEarthquake(-17, 1, 1);
                 } else if (drillTimer == 1) {
                     startDirtShatter();
                 }
@@ -1955,9 +1955,9 @@ public abstract class Boss extends Enemy {
             return false;
         }
         
-        private final void startEarthquake(final int backOx, final int size, final int remaining) {
-            new Earthquake(this, backOx, 0, size, remaining);
-            new Earthquake(this, 12, 0, size, remaining).setMirror(!isMirror());
+        private final void startEarthquake(final int backOx, final int remaining, final int maxIndex) {
+            new Earthquake(this, backOx, 0, remaining, maxIndex);
+            new Earthquake(this, 12, 0, remaining, maxIndex).setMirror(!isMirror());
         }
         
         private final void startDirtShatter() {
@@ -1968,7 +1968,7 @@ public abstract class Boss extends Enemy {
         protected final boolean onBossLanded() {
             if (state == STATE_JUMP_DRILL) {
                 startJumpDrillImpact();
-                startEarthquake(-11, 8, 3);
+                startEarthquake(-11, 3, 2);
                 startDirtShatter();
                 return true;
             }
@@ -2116,21 +2116,19 @@ public abstract class Boss extends Enemy {
         private final static int positionDuration = 1;
         private final static int frameDuration = positionDuration * 4;
         private final int velX;
-        private final int size;
         private final int remaining;
         private final int maxIndex;
         private int timer = 0;
         private int index = 0;
         private int distance = 0;
         
-        protected Earthquake(final Panctor src, final int ox, final int oy, final int size, final int remaining) {
-            this(src, ox, oy, size, remaining, 2, 0);
+        protected Earthquake(final Panctor src, final int ox, final int oy, final int remaining, final int maxIndex) {
+            this(src, ox, oy, remaining, maxIndex, 0);
         }
         
-        protected Earthquake(final Panctor src, final int ox, final int oy, final int size, final int remaining, final int maxIndex, final int velX) {
+        protected Earthquake(final Panctor src, final int ox, final int oy, final int remaining, final int maxIndex, final int velX) {
             super(getSubImage(0), src, ox, oy, 0, 0);
             this.velX = (velX == 0) ? (8 * getMirrorMultiplier() * ox / Math.abs(ox)) : velX;
-            this.size = size;
             this.remaining = remaining;
             this.maxIndex = maxIndex;
         }
@@ -2143,19 +2141,25 @@ public abstract class Boss extends Enemy {
                 getPosition().addX(velX);
                 distance += Math.abs(velX);
                 if ((distance == 16) && (remaining > 0)) {
-                    new Earthquake(this, 16, 0, size, remaining - 1, Math.max(0, maxIndex - 1), velX);
+                    new Earthquake(this, 16, 0, remaining - 1, Math.max(0, maxIndex - 1), velX);
                 }
                 if ((timer % frameDuration) == 0) {
-                    if (index < size) {
-                        index++;
-                        if (index <= maxIndex) {
-                            changeView(getSubImage(index));
-                        }
-                    } else {
-                        destroy();
+                    index++;
+                    if (index <= maxIndex) {
+                        changeView(getSubImage(index));
                     }
                 }
             }
+        }
+        
+        @Override
+        protected final int getDamage() {
+            return 3;
+        }
+        
+        @Override
+        protected final void onCollisionWithPlayerProjectile(final Projectile prj) {
+            prj.bounce();
         }
         
         protected final static Panmage getSubImage(final int i) {
