@@ -126,7 +126,7 @@ public abstract class RoomLoader {
             images = new Panmage[size];
             final Pangine engine = Pangine.getEngine();
             for (int i = 0; i < size; i++) {
-                images[i] = engine.createImage(Pantil.vmid(), BotsnBoltsGame.RES + "/bg/" + reps.get(i).getValue() + ".png");
+                images[i] = engine.createImage(Pantil.vmid(), BotsnBoltsGame.RES + "bg/" + reps.get(i).getValue() + ".png");
             }
         } catch (final Exception e) {
             throw new Panception("Error loading " + fileName, e);
