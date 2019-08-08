@@ -1172,7 +1172,7 @@ public final class BotsnBoltsGame extends BaseGame {
                     bgTexture.setSize(GAME_W, GAME_H);
                     bgTexture.getPosition().setZ(DEPTH_PARALLAX_BG);
                     bgLayer.addActor(bgTexture);
-                    bgLayer.setConstant(false);
+                    bgLayer.setConstant(!(bgTexture instanceof AnimTexture));
                 } else {
                     bgTm = new TileMap(Pantil.vmid(), GAME_COLUMNS, GAME_ROWS, DIM, DIM);
                     bgTm.setImageMap(timg);

@@ -266,7 +266,62 @@ public abstract class Boss extends Enemy {
     }
     
     protected boolean hasPendingJumps() {
+        return hasPendingJumpsDefault();
+    }
+    
+    private final boolean hasPendingJumpsDefault() {
         return Coltil.isValued(pendingJumps);
+    }
+    
+    protected boolean hasPendingOrContinuedJumps(final byte stateJumps) {
+        if (hasPendingJumpsDefault()) {
+            return true;
+        } else if (state != stateJumps) {
+            return false;
+        }
+        final float x = getPosition().getX(), px = getPlayerX();
+        if (isMirror()) {
+            if (x > (px + 4)) {
+                continueJumps();
+                return true;
+            }
+        } else if (x < (px - 4)) {
+            continueJumps();
+            return true;
+        }
+        return false;
+    }
+    
+    protected final void startJumps() {
+        startJump(getStateJumps(), getJump(), getJumpsV(), getJumpsH());
+    }
+    
+    protected final void continueJumps() {
+        addPendingJump(getStateJumps(), getJump(), getJumpsV(), getJumpsH());
+    }
+    
+    protected final int getJumpsH() {
+        return getJumpsHv() * getMirrorMultiplier();
+    }
+    
+    //@OverrideMe
+    protected byte getStateJumps() {
+        return 0;
+    }
+    
+    //@OverrideMe
+    protected Panmage getJump() {
+        return null;
+    }
+    
+    //@OverrideMe
+    protected int getJumpsV() {
+        return 0;
+    }
+    
+    //@OverrideMe
+    protected int getJumpsHv() {
+        return 0;
     }
     
     @Override
@@ -704,7 +759,8 @@ public abstract class Boss extends Enemy {
             return (crouch = getVolcanoImage(crouch, "volcanobot/VolcanoBotCrouch"));
         }
         
-        protected final static Panmage getJump() {
+        @Override
+        protected final Panmage getJump() {
             return (jump = getVolcanoImage(jump, "volcanobot/VolcanoBotJump"));
         }
         
@@ -940,7 +996,8 @@ public abstract class Boss extends Enemy {
             return (aimDiag = getHailImage(aimDiag, "hailbot/HailBotAimDiag"));
         }
         
-        protected final static Panmage getJump() {
+        @Override
+        protected final Panmage getJump() {
             return (jump = getHailImage(jump, "hailbot/HailBotJump"));
         }
         
@@ -1221,7 +1278,8 @@ public abstract class Boss extends Enemy {
             return (roll2 = getRockslideRollImage(roll2, "rockslidebot/RockslideBotRoll2"));
         }
         
-        protected final static Panmage getJump() {
+        @Override
+        protected final Panmage getJump() {
             return (jump = getRockslideImage(jump, "rockslidebot/RockslideBotJump"));
         }
         
@@ -1506,34 +1564,22 @@ public abstract class Boss extends Enemy {
         
         @Override
         protected final boolean hasPendingJumps() {
-            if (super.hasPendingJumps()) {
-                return true;
-            } else if (state != STATE_JUMPS) {
-                return false;
-            }
-            final float x = getPosition().getX();
-            if (isMirror()) {
-                if (x > 32) {
-                    continueJumps();
-                    return true;
-                }
-            } else if (x < 352) {
-                continueJumps();
-                return true;
-            }
-            return false;
+            return hasPendingOrContinuedJumps(STATE_JUMPS);
         }
         
-        protected final void startJumps() {
-            startJump(STATE_JUMPS, getJump(), VEL_JUMPS, getJumpsHv());
+        @Override
+        protected final byte getStateJumps() {
+            return STATE_JUMPS;
         }
         
-        private final void continueJumps() {
-            addPendingJump(STATE_JUMPS, getJump(), VEL_JUMPS, getJumpsHv());
+        @Override
+        protected final int getJumpsV() {
+            return VEL_JUMPS;
         }
         
-        private final int getJumpsHv() {
-            return 3 * getMirrorMultiplier();
+        @Override
+        protected final int getJumpsHv() {
+            return 3;
         }
         
         protected final void startJump() {
@@ -1561,6 +1607,7 @@ public abstract class Boss extends Enemy {
             return (still = getLightningImage(still, "lightningbot/LightningBot"));
         }
         
+        @Override
         protected final Panmage getJump() {
             return (jump = getLightningImage(jump, "lightningbot/LightningBotJump"));
         }
@@ -1895,6 +1942,7 @@ public abstract class Boss extends Enemy {
         protected final static byte STATE_DRILL2 = 5;
         protected final static byte STATE_DRILL3 = 6;
         protected final static byte STATE_DRILL4 = 7;
+        protected final static byte STATE_JUMPS = 8;
         protected final static int WAIT_JUMP_DRILL = 24;
         protected static Panmage still = null;
         protected static Panmage jump = null;
@@ -1979,10 +2027,17 @@ public abstract class Boss extends Enemy {
         protected final boolean pickState() {
             if (moves == 0) {
                 startDrill1(); // Start with this; loads images needed for jump impact
-                return false;
-            } else {
+            } else if (moves == 1) {
                 startJump();
-                moves = -1;
+            } else {
+                final int r = rand((moves == 2) ? 1 : 2);
+                if (r == 0) {
+                    startDrill1();
+                } else if (r == 1) {
+                    startJumps();
+                } else {
+                    startJump();
+                }
             }
             return false;
         }
@@ -2008,6 +2063,26 @@ public abstract class Boss extends Enemy {
                     break;
             }
             return false;
+        }
+        
+        @Override
+        protected final boolean hasPendingJumps() {
+            return hasPendingOrContinuedJumps(STATE_JUMPS);
+        }
+        
+        @Override
+        protected final byte getStateJumps() {
+            return STATE_JUMPS;
+        }
+        
+        @Override
+        protected final int getJumpsV() {
+            return 9;
+        }
+        
+        @Override
+        protected final int getJumpsHv() {
+            return 5;
         }
         
         protected final void startJump() {
@@ -2051,7 +2126,8 @@ public abstract class Boss extends Enemy {
             return (still = getEarthquakeImage(still, "earthquakebot/EarthquakeBot"));
         }
         
-        protected final static Panmage getJump() {
+        @Override
+        protected final Panmage getJump() {
             return (jump = getEarthquakeImage(jump, "earthquakebot/EarthquakeBotJump"));
         }
         
@@ -2421,6 +2497,7 @@ public abstract class Boss extends Enemy {
             return getCurrent(whirls, "Whirl", CYCLONE_O);
         }
         
+        @Override
         protected final Panmage getJump() {
             return getCurrent(jumps, "Jump", CYCLONE_JUMP_O);
         }
@@ -2893,7 +2970,8 @@ public abstract class Boss extends Enemy {
             return (start3 = getFloodImage(start3, "floodbot/FloodBotStart3"));
         }
         
-        protected final static Panmage getJump() {
+        @Override
+        protected final Panmage getJump() {
             return (jump = getFloodImage(jump, "floodbot/FloodBotJump"));
         }
         
@@ -3322,7 +3400,8 @@ public abstract class Boss extends Enemy {
             return (launch = getDroughtImage(launch, "droughtbot/DroughtBotLaunch"));
         }
         
-        protected final static Panmage getJump() {
+        @Override
+        protected final Panmage getJump() {
             return (jump = getDroughtImage(jump, "droughtbot/DroughtBotJump"));
         }
         
