@@ -273,10 +273,10 @@ public abstract class Boss extends Enemy {
         return Coltil.isValued(pendingJumps);
     }
     
-    protected boolean hasPendingOrContinuedJumps(final byte stateJumps) {
+    protected boolean hasPendingOrContinuedJumps() {
         if (hasPendingJumpsDefault()) {
             return true;
-        } else if (state != stateJumps) {
+        } else if (state != getStateJumps()) {
             return false;
         }
         final float x = getPosition().getX(), px = getPlayerX();
@@ -1564,7 +1564,7 @@ public abstract class Boss extends Enemy {
         
         @Override
         protected final boolean hasPendingJumps() {
-            return hasPendingOrContinuedJumps(STATE_JUMPS);
+            return hasPendingOrContinuedJumps();
         }
         
         @Override
@@ -2067,7 +2067,7 @@ public abstract class Boss extends Enemy {
         
         @Override
         protected final boolean hasPendingJumps() {
-            return hasPendingOrContinuedJumps(STATE_JUMPS);
+            return hasPendingOrContinuedJumps();
         }
         
         @Override
