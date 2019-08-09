@@ -235,7 +235,7 @@ public final class LwjglPangine extends GlPangine {
                         }
                         final char axis = name.charAt(0);
                         final float value = src.getAxisValue(i);
-                        if (axis == 'X') {
+                        if ((axis == 'X') || name.equals("rx")) {
                             if (foundX) {
                                 continue;
                             }
@@ -244,7 +244,7 @@ public final class LwjglPangine extends GlPangine {
                             if (foundY) {
                                 continue;
                             }
-                        } else if (axis == 'Y') {
+                        } else if ((axis == 'Y') || name.equals("ry")) {
                             if (foundY) {
                                 continue;
                             }
