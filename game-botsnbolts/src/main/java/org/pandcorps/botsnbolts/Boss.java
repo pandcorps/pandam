@@ -1983,7 +1983,7 @@ public abstract class Boss extends Enemy {
                     return true;
                 }
             } else if (state == STATE_JUMP) {
-                if ((v > 0) && (getPosition().getY() >= 133)) {
+                if ((v > 0) && (getPosition().getY() >= 165)) {
                     startJumpDrill();
                 }
             } else if (state == STATE_DRILL3) {
@@ -2055,7 +2055,7 @@ public abstract class Boss extends Enemy {
                     startDrill4();
                     break;
                 case STATE_JUMP_DRILL_IMPACT :
-                    startJump(2);
+                    startJump(2, 0);
                     break;
                 default :
                     turnTowardPlayer();
@@ -2086,16 +2086,17 @@ public abstract class Boss extends Enemy {
         }
         
         protected final void startJump() {
-            startJump(12);
+            startJump(12, Mathtil.rand() ? 0 : (getMirrorMultiplier() * 10));
         }
         
-        protected final void startJump(final int v) {
-            startJump(STATE_JUMP, getJump(), v, 0);
+        protected final void startJump(final int v, final int hv) {
+            startJump(STATE_JUMP, getJump(), v, hv);
         }
         
         protected final void startJumpDrill() {
             startStateIndefinite(STATE_JUMP_DRILL, getJumpDrillStart());
             v = 0;
+            hv = 0;
             drillTimer = -1;
         }
         
