@@ -150,7 +150,7 @@ public abstract class Boss extends Enemy {
         } else if (waitTimer > 0) {
             waitTimer--;
             return onWaiting();
-        } else if (state == STATE_STILL) {
+        } else if (isStill()) {
             if (pollPendingJumps()) {
                 return false;
             }
@@ -158,6 +158,10 @@ public abstract class Boss extends Enemy {
             return pickState();
         }
         return continueState();
+    }
+    
+    protected boolean isStill() {
+        return state == STATE_STILL;
     }
     
     protected boolean onStepBoss() {
@@ -1340,6 +1344,11 @@ public abstract class Boss extends Enemy {
         }
         
         @Override
+        protected final int getDamage() {
+            return 2;
+        }
+        
+        @Override
         protected final void onWall(final byte xResult) {
             shatter();
         }
@@ -1359,7 +1368,6 @@ public abstract class Boss extends Enemy {
 
         @Override
         protected final void award(final PowerUp powerUp) {
-            
         }
         
         protected final static Panframe getFrame(final Panframe[] frames, final Rotator rots, final int frameIndex) {
@@ -2675,7 +2683,7 @@ public abstract class Boss extends Enemy {
         }
     }
     
-    protected final static int FLOOD_OFF_X = 6, FLOOD_H = 28; //TODO
+    protected final static int FLOOD_OFF_X = 6, FLOOD_H = 28;
     protected final static Panple FLOOD_O = new FinPanple2(14, 1);
     protected final static Panple FLOOD_MIN = getMin(FLOOD_OFF_X);
     protected final static Panple FLOOD_MAX = getMax(FLOOD_OFF_X, FLOOD_H);
@@ -2687,6 +2695,9 @@ public abstract class Boss extends Enemy {
         protected final static byte STATE_FALL = 4;
         protected final static byte STATE_SWIM = 5;
         protected final static byte STATE_TORPEDO = 6;
+        protected final static byte STATE_SWIM_UP = 7;
+        protected final static byte STATE_SWIM_DOWN = 8;
+        protected final static byte STATE_SWIM_STILL = 9;
         protected final static int FILL_FRAME_DURATION = 3;
         protected final static int WAIT_FILL = 4 * FILL_FRAME_DURATION;
         protected final static int RAISE_FRAMES = 28;
@@ -2732,6 +2743,11 @@ public abstract class Boss extends Enemy {
         }
         
         @Override
+        protected final boolean isStill() {
+            return super.isStill() || (state == STATE_SWIM_STILL);
+        }
+        
+        @Override
         protected final boolean onWaiting() {
             prevUnderwater = Player.splashIfNeeded(this, prevUnderwater, null);
             if (state == STATE_SWIM) {
@@ -2744,8 +2760,20 @@ public abstract class Boss extends Enemy {
                 onJumping();
             } else if (state == STATE_FILL) {
                 onFilling();
-            } else if ((state == STATE_TORPEDO) && (waitTimer == (WAIT_TORPEDO - 1))) {
-                new Torpedo(this);
+            } else if (state == STATE_SWIM_UP) {
+                onSwimmingUp();
+                return true;
+            } else if (state == STATE_SWIM_DOWN) {
+                onSwimmingDown();
+                return true;
+            } else if (state == STATE_SWIM_STILL) {
+                onSwimmingStill();
+                return true;
+            } else if (state == STATE_TORPEDO) {
+                if (waitTimer == (WAIT_TORPEDO - 1)) {
+                    new Torpedo(this);
+                }
+                return true;
             }
             return false;
         }
@@ -2808,7 +2836,7 @@ public abstract class Boss extends Enemy {
         }
         
         protected final void onSwimming() {
-            changeView(getCurrentSwim());
+            setCurrentSwim();
             if (!addBoundedX(xLeft, xRight)) {
                 endSwim();
             }
@@ -2817,11 +2845,33 @@ public abstract class Boss extends Enemy {
         private final void endSwim() {
             hv = 0;
             setMirror(!isMirror());
-            if (getPosition().getY() > 32) {
-                startFall();
-            } else {
+            startStill();
+        }
+        
+        private final void onSwimmingUp() {
+            setCurrentSwim();
+            if ((addY(2) != Y_NORMAL) || isAtWaterLevel()) {
                 startStill();
             }
+        }
+        
+        private final void onSwimmingDown() {
+            setCurrentSwim();
+            if (addY(-2) != Y_NORMAL) {
+                startStill();
+            }
+        }
+        
+        private final void onSwimmingStill() {
+            setCurrentSwim();
+        }
+        
+        private final boolean isAtWaterLevel() {
+            return getPosition().getY() >= (RoomLoader.waterLevel - 32);
+        }
+        
+        private final boolean isOnGround() {
+            return isGrounded() || (getPosition().getY() < 33);
         }
         
         private final void newWhoosh(final boolean flip) {
@@ -2866,12 +2916,14 @@ public abstract class Boss extends Enemy {
                 startJump();
             } else if (isInMiddle()) {
                 startSwim();
+                return true;
             } else if ((health <= (HudMeter.MAX_VALUE - 7)) && (waterTile < 9)) {
                 pickRaiseWaterLevel();
             } else if ((health <= (HudMeter.MAX_VALUE - 14)) && (waterTile < 12)) {
                 pickRaiseWaterLevel();
             } else {
                 pickBasic();
+                return true;
             }
             return false;
         }
@@ -2882,27 +2934,27 @@ public abstract class Boss extends Enemy {
         }
         
         private final void pickRaiseWaterLevel() {
-            if (isGrounded()) {
+            if (isOnGround()) {
                 startJump();
             } else {
-                //TODO sink to bottom
+                startSwimSink();
             }
         }
         
         private final void pickBasic() {
             final int waterTile = RoomLoader.getWaterTile();
             if (waterTile < 9) {
-                if (Mathtil.rand()) {
+                if (rand(1) == 0) {
                     startTorpedo();
                 } else {
                     startSwim();
                 }
                 return;
             }
-            final int r = Mathtil.randi(0, 299);
-            if (r < 100) {
-                //TODO float higher/lower
-            } else if (r < 200) {
+            final int r = rand(2);
+            if (r == 0) {
+                startSwimVert();
+            } else if (r == 1) {
                 startTorpedo();
             } else {
                 startSwim();
@@ -2915,6 +2967,7 @@ public abstract class Boss extends Enemy {
                 startFall();
             } else {
                 startStill();
+                return true;
             }
             return false;
         }
@@ -2922,6 +2975,15 @@ public abstract class Boss extends Enemy {
         @Override
         protected final boolean isTurnTowardPlayerNeeded() {
             return !isInMiddle();
+        }
+        
+        @Override
+        protected final void startStill() {
+            super.startStill();
+            if (!isOnGround()) {
+                state = STATE_SWIM_STILL;
+                setCurrentSwim();
+            }
         }
         
         protected final void startFill() {
@@ -2948,6 +3010,30 @@ public abstract class Boss extends Enemy {
         
         protected final void startTorpedo() {
             startState(STATE_TORPEDO, WAIT_TORPEDO, getLaunch());
+        }
+        
+        private final void startSwimVert() {
+            if (isOnGround()) {
+                startSwimUp();
+            } else if (isAtWaterLevel()) {
+                startSwimDown();
+            } else if (Mathtil.rand()) {
+                startSwimUp();
+            } else {
+                startSwimDown();
+            }
+        }
+        
+        private final void startSwimUp() {
+            startState(STATE_SWIM_UP, Mathtil.randi(15, 75), getCurrentSwim());
+        }
+        
+        private final void startSwimDown() {
+            startState(STATE_SWIM_DOWN, Mathtil.randi(15, 75), getCurrentSwim());
+        }
+        
+        private final void startSwimSink() {
+            startStateIndefinite(STATE_SWIM_DOWN, getCurrentSwim());
         }
 
         @Override
@@ -3019,6 +3105,10 @@ public abstract class Boss extends Enemy {
             return isMirror() ? getClose() : getOpen();
         }
         
+        private final void setCurrentSwim() {
+            changeView(getCurrentSwim());
+        }
+        
         protected final Panmage getCurrentSwim() {
             final int frameDuration = 4;
             final long i = Pangine.getEngine().getClock() % (4 * frameDuration);
@@ -3065,6 +3155,15 @@ public abstract class Boss extends Enemy {
             }
             timer++;
             return true;
+        }
+        
+        @Override
+        protected final int getDamage() {
+            return 3;
+        }
+        
+        @Override
+        protected final void award(final PowerUp powerUp) {
         }
         
         private final static Panmage getTorpedoImage(final int i) {
@@ -3139,7 +3238,7 @@ public abstract class Boss extends Enemy {
         }
     }
     
-    protected final static int DROUGHT_OFF_X = 6, DROUGHT_H = 24; //TODO
+    protected final static int DROUGHT_OFF_X = 6, DROUGHT_H = 24;
     protected final static Panple DROUGHT_O = new FinPanple2(14, 1);
     protected final static Panple DROUGHT_MIN = getMin(DROUGHT_OFF_X);
     protected final static Panple DROUGHT_MAX = getMax(DROUGHT_OFF_X, DROUGHT_H);
