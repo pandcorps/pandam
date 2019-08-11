@@ -3752,10 +3752,10 @@ public abstract class Boss extends Enemy {
                 startRetreat();
             } else {
                 if (counter > 2) {
-                    final int r = Mathtil.randi(0, 2999);
-                    if (r < 1000) {
+                    final int r = rand((counter == 3) ? 1 : 2);
+                    if (r == 0) {
                         startUncover();
-                    } else if (r < 2000) {
+                    } else if (r == 1) {
                         startHatchOpen();
                     } else {
                         startHoodOpen();
