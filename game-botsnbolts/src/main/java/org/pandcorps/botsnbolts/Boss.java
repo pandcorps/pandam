@@ -4553,8 +4553,8 @@ if (health > 1) health = 1;
                 introCount = 4;
             } else {
                 if (edge) {
-                    final int r = Mathtil.randi(0, 1999);
-                    if (r < 1000) {
+                    final int r = rand(1);
+                    if (r == 0) {
                         pickWeapon();
                     } else {
                         pickFlight();
