@@ -23,6 +23,7 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.botsnbolts;
 
 import org.pandcorps.game.actor.*;
+import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.tile.*;
 
@@ -102,5 +103,27 @@ public abstract class Chr extends GuyPlatform {
         if (!isJumpPossible()) {
             getPosition().addX(getMirrorMultiplier());
         }
+    }
+    
+    protected static interface SpecEnemy extends CollisionListener {
+        public boolean isVulnerable();
+        
+        public void onShot(final Projectile prj);
+        
+        public boolean isHarmful();
+        
+        public void onAttack(final Player player);
+        
+        public int getHealth();
+        
+        public void setHealth(final int health);
+        
+        public boolean isBurstNeeded();
+        
+        public void award(final Player player);
+        
+        public void onDefeat();
+        
+        public boolean isDestroyedAfterDefeat();
     }
 }
