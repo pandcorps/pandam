@@ -593,7 +593,7 @@ public abstract class BlockPuzzle {
         }
 
         @Override
-        protected final void onShot(final Projectile prj) {
+        public final void onShot(final Projectile prj) {
         }
         
         @Override
