@@ -29,6 +29,7 @@ import org.pandcorps.game.actor.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.boundary.*;
+import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.*;
 
 public class Projectile extends Pandy implements Collidable, AllOobListener, SpecProjectile {
@@ -93,7 +94,7 @@ public class Projectile extends Pandy implements Collidable, AllOobListener, Spe
         destroy();
     }
     
-    protected final void burst(final Panctor target) {
+    protected final void burst(final SpecPanctor target) {
         burst(target.getPosition());
     }
     
