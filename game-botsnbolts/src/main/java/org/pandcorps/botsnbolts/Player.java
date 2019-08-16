@@ -43,7 +43,7 @@ import org.pandcorps.pandax.in.*;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.visual.*;
 
-public final class Player extends Chr implements Warpable {
+public class Player extends Chr implements Warpable {
     protected final static int PLAYER_X = 6;
     protected final static int PLAYER_H = 23;
     protected final static int BALL_H = 15;
@@ -107,7 +107,7 @@ public final class Player extends Chr implements Warpable {
     private boolean wallMirror = false;
     protected boolean movedDuringJump = false;
     private byte bossDoorStatus = 0;
-    private int health = HudMeter.MAX_VALUE;
+    protected int health = HudMeter.MAX_VALUE;
     protected HudMeter healthMeter = null;
     private GrapplingHook grapplingHook = null;
     protected double grapplingR = 0;
@@ -133,6 +133,7 @@ public final class Player extends Chr implements Warpable {
     private boolean safeMirror = false;
     private List<Follower> followers = null;
     protected boolean active = true;
+    protected Ai ai = null;
     
     static {
         final Panple tmp = new ImplPanple(VEL_PROJECTILE, 0, 0);
@@ -319,7 +320,7 @@ public final class Player extends Chr implements Warpable {
         }
     }
     
-    private final void jump() {
+    protected final void jump() {
         if (jumpAllowed && isFree()) {
             stateHandler.onJump(this);
         }
@@ -356,19 +357,19 @@ public final class Player extends Chr implements Warpable {
         this.jumpAllowed = jumpAllowed;
     }
     
-    private final void shoot() {
+    protected final void shoot() {
         if (isFree()) {
             stateHandler.onShootStart(this);
         }
     }
     
-    private final void shooting() {
+    protected final void shooting() {
         if (isFree()) {
             stateHandler.onShooting(this);
         }
     }
     
-    private final void releaseShoot() {
+    protected final void releaseShoot() {
         if (isFree()) {
             stateHandler.onShootEnd(this);
         }
@@ -380,7 +381,7 @@ public final class Player extends Chr implements Warpable {
         blinkTimer = 0;
     }
     
-    private final void right() {
+    protected final void right() {
         if (isFree()) {
             stateHandler.onRight(this);
         }
@@ -406,7 +407,7 @@ public final class Player extends Chr implements Warpable {
         }
     }
     
-    private final void left() {
+    protected final void left() {
         if (isFree()) {
             stateHandler.onLeft(this);
         }
@@ -416,7 +417,7 @@ public final class Player extends Chr implements Warpable {
         moveHorizontal(-VEL_WALK);
     }
     
-    private final void up() {
+    protected final void up() {
         if (isFree()) {
             stateHandler.onUp(this);
         }
@@ -448,7 +449,7 @@ public final class Player extends Chr implements Warpable {
         return b == BotsnBoltsGame.TILE_LADDER || b == BotsnBoltsGame.TILE_LADDER_TOP;
     }
     
-    private final void down() {
+    protected final void down() {
         if (isFree()) {
             stateHandler.onDown(this);
         }
@@ -633,7 +634,7 @@ public final class Player extends Chr implements Warpable {
         getLayerRequired(src).addActor(actor);
     }
     
-    protected final int getHealth() {
+    public final int getHealth() {
         return health;
     }
     
@@ -797,7 +798,9 @@ public final class Player extends Chr implements Warpable {
     }
     
     private final boolean onStepState() {
-        if (!stateHandler.isLadderPossible()) {
+        if (ai != null) {
+            ai.onStep(this);
+        } else if (!stateHandler.isLadderPossible()) {
             Menu.hideUpDown();
         }
         if (stateHandler.onStep(this)) {
@@ -1376,7 +1379,7 @@ public final class Player extends Chr implements Warpable {
     }
     
     @Override
-    protected final void onWall(final byte xResult) {
+    protected void onWall(final byte xResult) {
         stateHandler.onWall(this, xResult);
     }
     
@@ -2795,5 +2798,9 @@ public final class Player extends Chr implements Warpable {
         public PlayerImages getPlayerImages();
         
         public void burst();
+    }
+    
+    protected static interface Ai {
+        public void onStep(final Player player);
     }
 }
