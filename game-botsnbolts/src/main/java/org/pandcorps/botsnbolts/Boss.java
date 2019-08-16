@@ -3685,7 +3685,7 @@ public abstract class Boss extends Enemy {
     }
     
     protected final static PlayerContext newPlayerContext(final PlayerImages pi) {
-        return new PlayerContext(new Profile(), pi);
+        return new PlayerContext(new Profile(true), pi);
     }
     
     protected static class AiBoss extends Player implements SpecEnemy, RoomAddListener {
@@ -3694,6 +3694,7 @@ public abstract class Boss extends Enemy {
         protected boolean defeated = false;
         protected boolean needMirror = false;
         protected int waitTimer = 0;
+        protected int shootTimer = 0;
         
         protected AiBoss(final PlayerImages pi, final Ai ai) {
             super(newPlayerContext(pi));
@@ -3713,22 +3714,36 @@ public abstract class Boss extends Enemy {
                 mirror();
                 needMirror = false;
                 return;
+            } else if (shootTimer > 0) {
+                shooting();
+                shootTimer--;
+                if (shootTimer == 0) {
+                    releaseShoot();
+                }
             }
             if (handler == null) {
                 startHandler(rand(handlers));
             }
             handler.onStep(this);
-            if (waitTimer < Integer.MAX_VALUE) {
+            if (!isIndefinite()) {
                 waitTimer--;
                 if (waitTimer < 0) {
-                    handler = (handler == stillHandler) ? null : stillHandler;
+                    startHandler((handler == stillHandler) ? null : stillHandler);
                 }
             }
         }
         
+        protected final boolean isIndefinite() {
+            return waitTimer == Integer.MAX_VALUE;
+        }
+        
         protected final void startHandler(final AiHandler handler) {
+            prf.shootMode = SHOOT_NORMAL;
             this.handler = handler;
-            waitTimer = handler.initTimer();
+            if (handler != null) {
+                handler.init(this);
+                waitTimer = handler.initTimer();
+            }
         }
         
         protected final void mirror() {
@@ -3739,11 +3754,23 @@ public abstract class Boss extends Enemy {
             }
         }
         
+        protected final void startStill() {
+            startHandler(stillHandler);
+        }
+        
         @Override
         protected final void onWall(final byte xResult) {
             super.onWall(xResult);
             needMirror = true;
-            startHandler(stillHandler);
+            startStill();
+        }
+        
+        @Override
+        protected final void onLanded() {
+            super.onLanded();
+            if (isIndefinite()) {
+                startStill();
+            }
         }
         
         @Override
@@ -3804,8 +3831,9 @@ public abstract class Boss extends Enemy {
         protected Volatile(final Segment seg) {
             super(BotsnBoltsGame.volatileImages, new BossAi());
             BotsnBoltsGame.tm.savePositionXy(getPosition(), getX(seg), getY(seg));
-            handlers.add(new RunHandler());
-            handlers.add(new RunHandler());
+            //handlers.add(new RunHandler());
+            handlers.add(new RappidAttackRunHandler());
+            handlers.add(new JumpHandler());
         }
     }
     
@@ -3817,6 +3845,9 @@ public abstract class Boss extends Enemy {
     }
     
     private abstract static class AiHandler {
+        protected void init(final AiBoss boss) {
+        }
+        
         protected int initTimer() {
             return Integer.MAX_VALUE;
         }
@@ -3837,7 +3868,7 @@ public abstract class Boss extends Enemy {
         }
     }
     
-    private final static class RunHandler extends AiHandler {
+    private static class RunHandler extends AiHandler {
         @Override
         protected final void onStep(final AiBoss boss) {
             if (boss.hv < 0) {
@@ -3849,6 +3880,21 @@ public abstract class Boss extends Enemy {
             } else {
                 boss.right();
             }
+        }
+    }
+    
+    private final static class RappidAttackRunHandler extends RunHandler {
+        @Override
+        protected final void init(final AiBoss boss) {
+            boss.prf.shootMode = Player.SHOOT_RAPID;
+            boss.shootTimer = 20;
+        }
+    }
+    
+    private final static class JumpHandler extends AiHandler {
+        @Override
+        protected final void onStep(final AiBoss boss) {
+            boss.jump();
         }
     }
     

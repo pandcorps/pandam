@@ -1354,7 +1354,7 @@ public class Player extends Chr implements Warpable {
     }
     
     @Override
-    protected final void onLanded() {
+    protected void onLanded() {
         super.onLanded();
         blinkTimer = 0;
     }

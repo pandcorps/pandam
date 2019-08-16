@@ -47,8 +47,16 @@ public class Profile {
     private final Profile old;
     
     /*package*/ Profile() {
+        this(false);
+    }
+    
+    /*package*/ Profile(final boolean ai) {
         upgrades = new HashSet<Upgrade>();
         disks = new HashSet<String>();
+        if (ai) {
+            old = null;
+            return;
+        }
         loadBolts();
         loadDisks();
         loadProfile();

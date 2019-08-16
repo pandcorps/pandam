@@ -25,6 +25,7 @@ package org.pandcorps.botsnbolts;
 import java.util.*;
 
 import org.pandcorps.botsnbolts.BlockPuzzle.*;
+import org.pandcorps.botsnbolts.Chr.*;
 import org.pandcorps.botsnbolts.Player.*;
 import org.pandcorps.botsnbolts.PowerUp.*;
 import org.pandcorps.botsnbolts.Profile.*;
@@ -40,7 +41,7 @@ import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.tile.Tile.*;
 import org.pandcorps.pandax.visual.*;
 
-public abstract class Enemy extends Chr implements CollisionListener {
+public abstract class Enemy extends Chr implements SpecEnemy {
     protected final static String RES_ENEMY = BotsnBoltsGame.RES + "enemy/";
     protected final static int VEL_PROJECTILE = 6;
     protected final static float VEL_PROJECTILE_45;
@@ -91,29 +92,34 @@ public abstract class Enemy extends Chr implements CollisionListener {
     
     @Override
     public void onCollision(final CollisionEvent event) {
+        onCollision(this, event);
+    }
+    
+    public static void onCollision(final SpecEnemy enemy, final CollisionEvent event) {
         final Collidable collider = event.getCollider();
         if (collider instanceof Projectile) { // Projectile can have sub-classes like Explosion
-            if (isVulnerable()) {
-                onShot((Projectile) collider);
+            if (enemy.isVulnerable()) {
+                enemy.onShot((Projectile) collider);
             }
         } else if (collider.getClass() == Player.class) {
-            if (isHarmful()) {
-                onAttack((Player) collider);
+            if (enemy.isHarmful()) {
+                enemy.onAttack((Player) collider);
             }
         }
     }
     
-    //@OverrideMe
-    protected boolean isVulnerable() {
+    @Override
+    public boolean isVulnerable() {
         return true;
     }
     
-    //@OverrideMe
-    protected boolean isHarmful() {
+    @Override
+    public boolean isHarmful() {
         return true;
     }
     
-    protected void onShot(final Projectile prj) {
+    @Override
+    public void onShot(final Projectile prj) {
         if (prj.power <= 0) {
             return;
         } else if (!isVulnerableToProjectile(prj)) {
@@ -124,16 +130,22 @@ public abstract class Enemy extends Chr implements CollisionListener {
     }
     
     protected void onHurt(final Projectile prj) {
+        onHurt(this, prj);
+    }
+    
+    protected final static void onHurt(final SpecEnemy enemy, final Projectile prj) {
+        int health = enemy.getHealth();
         final int oldHealth = health, oldPower = prj.power;
         health -= oldPower;
+        enemy.setHealth(health);
         if (health <= 0) {
-            if (isBurstNeeded()) {
-                prj.burst(this);
+            if (enemy.isBurstNeeded()) {
+                prj.burst(enemy);
             }
-            award(prj.src);
-            onDefeat();
-            if (isDestroyedAfterDefeat()) {
-                destroy();
+            enemy.award(prj.src);
+            enemy.onDefeat();
+            if (enemy.isDestroyedAfterDefeat()) {
+                enemy.destroy();
             }
         }
         if (oldHealth > 0) {
@@ -141,15 +153,27 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
     }
     
-    protected boolean isBurstNeeded() {
+    @Override
+    public final int getHealth() {
+        return health;
+    }
+    
+    @Override
+    public final void setHealth(final int health) {
+        this.health = health;
+    }
+    
+    @Override
+    public boolean isBurstNeeded() {
         return true;
     }
     
-    //@OverrideMe
-    protected void onDefeat() {
+    @Override
+    public void onDefeat() {
     }
     
-    protected boolean isDestroyedAfterDefeat() {
+    @Override
+    public boolean isDestroyedAfterDefeat() {
         return true;
     }
     
@@ -168,7 +192,8 @@ public abstract class Enemy extends Chr implements CollisionListener {
     protected void onEnemyDestroy() {
     }
     
-    protected void onAttack(final Player player) {
+    @Override
+    public void onAttack(final Player player) {
         player.hurt(getDamage());
     }
     
@@ -176,7 +201,8 @@ public abstract class Enemy extends Chr implements CollisionListener {
         return 1;
     }
     
-    protected final void award(final Player player) {
+    @Override
+    public final void award(final Player player) {
         final PowerUp powerUp = pickAward(player);
         if (powerUp != null) {
             award(powerUp);
@@ -1903,12 +1929,12 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
         
         @Override
-        protected final boolean isVulnerable() {
+        public final boolean isVulnerable() {
             return isVisible();
         }
         
         @Override
-        protected final boolean isHarmful() {
+        public final boolean isHarmful() {
             return harmful;
         }
         
@@ -2519,12 +2545,12 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
         
         @Override
-        protected final void onDefeat() {
+        public final void onDefeat() {
             burst();
         }
         
         @Override
-        protected void onAttack(final Player player) {
+        public void onAttack(final Player player) {
             super.onAttack(player);
             burst();
             destroy();
@@ -2582,7 +2608,7 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
         
         @Override
-        protected final void onDefeat() {
+        public final void onDefeat() {
             NavalMine.burst(this, 24);
         }
         
@@ -2618,12 +2644,12 @@ public abstract class Enemy extends Chr implements CollisionListener {
         }
         
         @Override
-        protected final void onDefeat() {
+        public final void onDefeat() {
             burst();
         }
         
         @Override
-        protected void onAttack(final Player player) {
+        public void onAttack(final Player player) {
             super.onAttack(player);
             burst();
             destroy();
@@ -3767,9 +3793,13 @@ public abstract class Enemy extends Chr implements CollisionListener {
     }
     
     protected final HudMeter newHealthMeter() {
+        return newHealthMeter(this);
+    }
+    
+    protected final static HudMeter newHealthMeter(final SpecEnemy enemy) {
         return new HudMeter(BotsnBoltsGame.hudMeterBoss) {
             @Override protected final int getValue() {
-                return health;
+                return enemy.getHealth();
             }};
     }
 }
