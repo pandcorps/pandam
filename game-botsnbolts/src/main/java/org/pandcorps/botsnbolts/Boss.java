@@ -40,6 +40,7 @@ import org.pandcorps.pandax.visual.*;
 public abstract class Boss extends Enemy {
     protected final static String RES_BOSS = BotsnBoltsGame.RES + "boss/";
     protected final static byte STATE_STILL = 0;
+    private final static int DAMAGE = 4;
     
     private boolean initializationNeeded = true;
     protected int waitTimer = 0;
@@ -223,18 +224,25 @@ public abstract class Boss extends Enemy {
     
     @Override
     protected int getDamage() {
-        return 4;
+        return DAMAGE;
     }
     
     protected final static int rand(final int max) {
+        if (max <= 1) {
+            throw new IllegalArgumentException("Called rand(" + max + "), input must be at least 2");
+        }
         while (true) {
-            final int r = (Mathtil.randi(0, ((max + 1) * 1000) - 1)) / 1000;
+            final int r = (Mathtil.randi(0, (max * 1000) - 1)) / 1000;
             if ((r != prevRand) || (r != prevPrevRand)) {
                 prevPrevRand = prevRand;
                 prevRand = r;
                 return r;
             }
         }
+    }
+    
+    protected final static <E> E rand(final List<E> list) {
+        return list.get(rand(list.size()));
     }
     
     protected final void startState(final byte state, final int waitTimer, final Panmage img) {
@@ -381,8 +389,12 @@ public abstract class Boss extends Enemy {
         return true;
     }
     
+    protected final static int initStillTimer() {
+        return Mathtil.randi(15, 30);
+    }
+    
     protected void startStill() {
-        startStill(Mathtil.randi(15, 30));
+        startStill(initStillTimer());
     }
     
     protected void startStill(final int waitTimer) {
@@ -415,7 +427,7 @@ public abstract class Boss extends Enemy {
     }
     
     @Override
-    protected final void onDefeat() {
+    public final void onDefeat() {
         onBossDefeat();
         if (isDefeatOrbNeeded()) {
             Player.defeatOrbs(this, BotsnBoltsGame.defeatOrbBoss);
@@ -652,7 +664,7 @@ public abstract class Boss extends Enemy {
         
         @Override
         protected final boolean pickState() {
-            final int r = rand(2);
+            final int r = rand(3);
             if (r == 0) {
                 startLift();
             } else if (r == 1) {
@@ -1549,7 +1561,7 @@ public abstract class Boss extends Enemy {
 
         @Override
         protected final boolean pickState() {
-            final int r = rand(2);
+            final int r = rand(3);
             if (r == 0) {
                 startJump();
             } else if (r == 1) {
@@ -2038,7 +2050,7 @@ public abstract class Boss extends Enemy {
             } else if (moves == 1) {
                 startJump();
             } else {
-                final int r = rand((moves == 2) ? 1 : 2);
+                final int r = rand((moves == 2) ? 2 : 3);
                 if (r == 0) {
                     startDrill1();
                 } else if (r == 1) {
@@ -2429,7 +2441,7 @@ public abstract class Boss extends Enemy {
 
         @Override
         protected final boolean pickState() {
-            final int r = rand(2);
+            final int r = rand(3);
             if (r == 0) {
                 startLaunch();
             } else if (r == 1) {
@@ -2944,14 +2956,14 @@ public abstract class Boss extends Enemy {
         private final void pickBasic() {
             final int waterTile = RoomLoader.getWaterTile();
             if (waterTile < 9) {
-                if (rand(1) == 0) {
+                if (rand(2) == 0) {
                     startTorpedo();
                 } else {
                     startSwim();
                 }
                 return;
             }
-            final int r = rand(2);
+            final int r = rand(3);
             if (r == 0) {
                 startSwimVert();
             } else if (r == 1) {
@@ -3381,7 +3393,7 @@ public abstract class Boss extends Enemy {
         }
         
         @Override
-        protected void onAttack(final Player player) {
+        public void onAttack(final Player player) {
             if ((state == STATE_SAND) && !player.isInvincible()) { // Check invincibility before hurting Player
                 startWrap(player);
             }
@@ -3390,7 +3402,7 @@ public abstract class Boss extends Enemy {
         
         @Override
         protected final boolean pickState() {
-            final int r = rand(2);
+            final int r = rand(3);
             if (r == 0) {
                 startMorph();
             } else if (r == 1) {
@@ -3672,24 +3684,171 @@ public abstract class Boss extends Enemy {
         }
     }
     
-    protected final static class Volatile extends Boss {
+    protected final static PlayerContext newPlayerContext(final PlayerImages pi) {
+        return new PlayerContext(new Profile(), pi);
+    }
+    
+    protected static class AiBoss extends Player implements SpecEnemy, RoomAddListener {
+        protected final List<AiHandler> handlers = new ArrayList<AiHandler>();
+        protected AiHandler handler = null;
+        protected boolean defeated = false;
+        protected boolean needMirror = false;
+        protected int waitTimer = 0;
+        
+        protected AiBoss(final PlayerImages pi, final Ai ai) {
+            super(newPlayerContext(pi));
+            getPosition().setZ(BotsnBoltsGame.DEPTH_ENEMY);
+            setMirror(true);
+            BotsnBoltsGame.addActor(this);
+            this.ai = ai;
+        }
+        
+        @Override
+        public final void onRoomAdd(final RoomAddEvent event) {
+            BotsnBoltsGame.initHealthMeter(healthMeter = Enemy.newHealthMeter(this), false);
+        }
+        
+        protected final void onStepAi() {
+            if (needMirror) {
+                mirror();
+                needMirror = false;
+                return;
+            }
+            if (handler == null) {
+                startHandler(rand(handlers));
+            }
+            handler.onStep(this);
+            if (waitTimer < Integer.MAX_VALUE) {
+                waitTimer--;
+                if (waitTimer < 0) {
+                    handler = (handler == stillHandler) ? null : stillHandler;
+                }
+            }
+        }
+        
+        protected final void startHandler(final AiHandler handler) {
+            this.handler = handler;
+            waitTimer = handler.initTimer();
+        }
+        
+        protected final void mirror() {
+            if (isMirror()) {
+                right();
+            } else {
+                left();
+            }
+        }
+        
+        @Override
+        protected final void onWall(final byte xResult) {
+            super.onWall(xResult);
+            needMirror = true;
+            startHandler(stillHandler);
+        }
+        
+        @Override
+        public final void onCollision(final CollisionEvent event) {
+            Enemy.onCollision(this, event);
+        }
+        
+        @Override
+        public final boolean isVulnerable() {
+            return true;
+        }
+        
+        @Override
+        public final void onShot(final Projectile prj) {
+            Enemy.onHurt(this, prj);
+        }
+        
+        @Override
+        public final boolean isHarmful() {
+            return !defeated;
+        }
+        
+        @Override
+        public final void onAttack(final Player player) {
+            player.hurt(getDamage());
+        }
+        
+        public int getDamage() {
+            return DAMAGE;
+        }
+        
+        @Override
+        public final void setHealth(final int health) {
+            this.health = health;
+        }
+        
+        @Override
+        public final boolean isBurstNeeded() {
+            return false;
+        }
+        
+        @Override
+        public final void award(final Player player) {
+        }
+        
+        @Override
+        public final void onDefeat() {
+            defeated = true;
+        }
+        
+        @Override
+        public final boolean isDestroyedAfterDefeat() {
+            return false;
+        }
+    }
+    
+    protected final static class Volatile extends AiBoss {
         protected Volatile(final Segment seg) {
-            super(VOLCANO_OFF_X, VOLCANO_H, seg); //TODO
+            super(BotsnBoltsGame.volatileImages, new BossAi());
+            BotsnBoltsGame.tm.savePositionXy(getPosition(), getX(seg), getY(seg));
+            handlers.add(new RunHandler());
+            handlers.add(new RunHandler());
         }
-
+    }
+    
+    protected final static class BossAi implements Ai {
         @Override
-        protected final boolean pickState() {
-            return false;
+        public final void onStep(final Player player) {
+            ((AiBoss) player).onStepAi();
         }
-
-        @Override
-        protected final boolean continueState() {
-            return false;
+    }
+    
+    private abstract static class AiHandler {
+        protected int initTimer() {
+            return Integer.MAX_VALUE;
         }
-
+        
+        protected abstract void onStep(final AiBoss boss);
+    }
+    
+    private final static StillHandler stillHandler = new StillHandler();
+    
+    private final static class StillHandler extends AiHandler {
         @Override
-        protected final Panmage getStill() {
-            return null;
+        protected final int initTimer() {
+            return initStillTimer();
+        }
+        
+        @Override
+        protected final void onStep(final AiBoss boss) {
+        }
+    }
+    
+    private final static class RunHandler extends AiHandler {
+        @Override
+        protected final void onStep(final AiBoss boss) {
+            if (boss.hv < 0) {
+                boss.left();
+            } else if (boss.hv > 0) {
+                boss.right();
+            } else if (boss.isMirror()) {
+                boss.left();
+            } else {
+                boss.right();
+            }
         }
     }
     
@@ -3752,7 +3911,7 @@ public abstract class Boss extends Enemy {
                 startRetreat();
             } else {
                 if (counter > 2) {
-                    final int r = rand((counter == 3) ? 1 : 2);
+                    final int r = rand((counter == 3) ? 2 : 3);
                     if (r == 0) {
                         startUncover();
                     } else if (r == 1) {
@@ -4088,7 +4247,7 @@ if (health > 1) health = 1;
         }
         
         @Override
-        protected final void onShot(final Projectile prj) {
+        public final void onShot(final Projectile prj) {
             if (state == STATE_DEFEATED) {
                 if (prj.getVelocity().getX() == 0f) {
                     final Panple pos = prj.getPosition();
@@ -4113,12 +4272,12 @@ if (health > 1) health = 1;
         }
         
         @Override
-        protected final boolean isBurstNeeded() {
+        public final boolean isBurstNeeded() {
             return false;
         }
         
         @Override
-        protected final boolean isHarmful() {
+        public final boolean isHarmful() {
             return state != STATE_DEFEATED;
         }
         
@@ -4171,7 +4330,7 @@ if (health > 1) health = 1;
         }
         
         @Override
-        protected final boolean isDestroyedAfterDefeat() {
+        public final boolean isDestroyedAfterDefeat() {
             return false;
         }
 
@@ -4281,7 +4440,7 @@ if (health > 1) health = 1;
         }
         
         @Override
-        protected final boolean isHarmful() {
+        public final boolean isHarmful() {
             return wagon.isHarmful();
         }
         
@@ -4346,7 +4505,7 @@ if (health > 1) health = 1;
         }
         
         @Override
-        protected void onAttack(final Player player) {
+        public void onAttack(final Player player) {
             super.onAttack(player);
             EnemyProjectile.burstEnemy(this, 4);
             destroy();
@@ -4553,7 +4712,7 @@ if (health > 1) health = 1;
                 introCount = 4;
             } else {
                 if (edge) {
-                    final int r = rand(1);
+                    final int r = rand(2);
                     if (r == 0) {
                         pickWeapon();
                     } else {
@@ -4856,7 +5015,7 @@ if (health > 1) health = 1;
         }
         
         @Override
-        protected final boolean isVulnerable() {
+        public final boolean isVulnerable() {
             return (state > STATE_INTRO_DESTROY) || (state == STATE_STILL);
         }
         
