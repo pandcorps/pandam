@@ -51,7 +51,7 @@ public class Player extends Chr implements Warpable {
     private final static int SHOOT_DELAY_DEFAULT = 5;
     private final static int SHOOT_DELAY_RAPID = 3;
     private final static int SHOOT_DELAY_SPREAD = 15;
-    private final static int SHOOT_TIME = 12;
+    protected final static int SHOOT_TIME = 12;
     private final static int CHARGE_TIME_MEDIUM = 30;
     private final static int CHARGE_TIME_BIG = 60;
     private final static int INVINCIBLE_TIME = 60;
@@ -133,7 +133,9 @@ public class Player extends Chr implements Warpable {
     private boolean safeMirror = false;
     private List<Follower> followers = null;
     protected boolean active = true;
+    private boolean scripted = false;
     protected Ai ai = null;
+    private Runnable scriptFinisher = null;
     
     static {
         final Panple tmp = new ImplPanple(VEL_PROJECTILE, 0, 0);
@@ -289,8 +291,24 @@ public class Player extends Chr implements Warpable {
         return 0;
     }
     
+    protected final void startScript(final Ai ai, final Runnable scriptFinisher) {
+        this.ai = ai;
+        scripted = true;
+        active = true;
+        this.scriptFinisher = scriptFinisher;
+    }
+    
+    protected final void finishScript() {
+        ai = null;
+        scripted = false;
+        if (scriptFinisher != null) {
+            scriptFinisher.run();
+            scriptFinisher = null;
+        }
+    }
+    
     private final boolean isFree() {
-        final boolean free = active && !(isHurt() || isFrozen() || Boss.dropping || RoomChanger.isChanging() || RoomLoader.isBossDoorClosing() || Pangine.getEngine().isPaused());
+        final boolean free = active && !scripted && !(isHurt() || isFrozen() || Boss.dropping || RoomChanger.isChanging() || RoomLoader.isBossDoorClosing() || Pangine.getEngine().isPaused());
         if (free) {
             onFree();
         }
@@ -373,6 +391,10 @@ public class Player extends Chr implements Warpable {
         if (isFree()) {
             stateHandler.onShootEnd(this);
         }
+    }
+    
+    protected void newProjectile(final float vx, final float vy, final int power) {
+        new Projectile(this, vx, vy, power);
     }
     
     private final void afterShoot(final long clock) {
@@ -467,7 +489,7 @@ public class Player extends Chr implements Warpable {
     }
     
     @Override
-    public final void onMaterialized() {
+    public void onMaterialized() {
         stateHandler = NORMAL_HANDLER;
     }
     
@@ -2234,12 +2256,12 @@ public class Player extends Chr implements Warpable {
         }
         
         protected final void createBasicProjectile(final Player player, final float vx, final float vy) {
-            new Projectile(player, vx, vy, 1);
+            player.newProjectile(vx, vy, 1);
         }
         
         protected final void shootSpecial(final Player player, final int power) {
             player.afterShoot(Pangine.getEngine().getClock());
-            new Projectile(player, VEL_PROJECTILE, 0, power);
+            player.newProjectile(VEL_PROJECTILE, 0, power);
         }
     }
     
@@ -2802,5 +2824,23 @@ public class Player extends Chr implements Warpable {
     
     protected static interface Ai {
         public void onStep(final Player player);
+    }
+    
+    protected final static class LeftAi implements Ai {
+        private final float dstX;
+        
+        protected LeftAi(final float dstX) {
+            this.dstX = dstX;
+        }
+        
+        @Override
+        public final void onStep(final Player player) {
+            if (player.getPosition().getX() <= dstX) {
+                player.setMirror(false);
+                player.finishScript();
+                return;
+            }
+            player.stateHandler.onLeft(player);
+        }
     }
 }

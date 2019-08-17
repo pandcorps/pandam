@@ -421,9 +421,13 @@ public abstract class Boss extends Enemy {
         if (state == STATE_STILL) {
             final int damage = oldHealth - health;
             if (damage > 0) {
-                waitTimer = Math.max(1, waitTimer - (damage * 10));
+                waitTimer = adjustWaitTimerOnHurt(waitTimer, damage);
             }
         }
+    }
+    
+    protected final static int adjustWaitTimerOnHurt(final int waitTimer, final int damage) {
+        return Math.max(1, waitTimer - (damage * 10));
     }
     
     @Override
@@ -518,6 +522,7 @@ public abstract class Boss extends Enemy {
         
         @Override
         protected final void onBossDefeat() {
+            Panctor.destroy(bot);
             burst(10);
         }
         
@@ -539,7 +544,10 @@ public abstract class Boss extends Enemy {
         
         @Override
         protected final void onAward(final Player player) {
-            // Move Void to left; Spawn Volatile
+            player.startScript(new LeftAi(32.0f), new Runnable() {
+                @Override public final void run() {
+                    new Warp(new Volatile(20, 3));
+                }});
         }
         
         @Override
@@ -561,6 +569,7 @@ public abstract class Boss extends Enemy {
         }
         
         private final void stepFort() {
+if (health > 1) {health = 1;}
             if (Panctor.isDestroyed(bot)) {
                 spawnTimer++;
                 if (spawnTimer >= 60) {
@@ -570,6 +579,9 @@ public abstract class Boss extends Enemy {
         }
         
         private final void spawn() {
+            if (health < 1) {
+                return;
+            }
             spawnTimer = 0;
             bot = new CyanEnemy(22, 14);
             bot.getPosition().addX(-3);
@@ -3688,7 +3700,7 @@ public abstract class Boss extends Enemy {
         return new PlayerContext(new Profile(true), pi);
     }
     
-    protected static class AiBoss extends Player implements SpecEnemy, RoomAddListener {
+    protected abstract static class AiBoss extends Player implements SpecEnemy, RoomAddListener {
         protected final List<AiHandler> handlers = new ArrayList<AiHandler>();
         protected AiHandler handler = null;
         protected boolean defeated = false;
@@ -3702,11 +3714,18 @@ public abstract class Boss extends Enemy {
             setMirror(true);
             BotsnBoltsGame.addActor(this);
             this.ai = ai;
+            health = 0;
         }
         
         @Override
         public final void onRoomAdd(final RoomAddEvent event) {
             BotsnBoltsGame.initHealthMeter(healthMeter = Enemy.newHealthMeter(this), false);
+        }
+        
+        @Override
+        public final void onMaterialized() {
+            super.onMaterialized();
+            health = HudMeter.MAX_VALUE;
         }
         
         protected final void onStepAi() {
@@ -3728,10 +3747,20 @@ public abstract class Boss extends Enemy {
             if (!isIndefinite()) {
                 waitTimer--;
                 if (waitTimer < 0) {
-                    startHandler((handler == stillHandler) ? null : stillHandler);
+                    if (handler == stillHandler) {
+                        if (isGrounded()) {
+                            startHandler(null);
+                        } else {
+                            waitTimer++;
+                        }
+                    } else {
+                        startHandler(stillHandler);
+                    }
                 }
             }
         }
+        
+        protected abstract int initStillTimer();
         
         protected final void moveX() {
             if (hv < 0) {
@@ -3755,7 +3784,7 @@ public abstract class Boss extends Enemy {
             this.handler = handler;
             if (handler != null) {
                 handler.init(this);
-                waitTimer = handler.initTimer();
+                waitTimer = handler.initTimer(this);
             }
         }
         
@@ -3778,6 +3807,11 @@ public abstract class Boss extends Enemy {
             shoot();
             shooting();
             releaseShoot();
+        }
+        
+        @Override
+        protected final void newProjectile(final float vx, final float vy, final int power) {
+            new AiProjectile(this, Projectile.OFF_X, Projectile.OFF_Y, getMirrorMultiplier() * vx, vy, pi, power);
         }
         
         protected final void startStill() {
@@ -3829,6 +3863,10 @@ public abstract class Boss extends Enemy {
         
         @Override
         public final void setHealth(final int health) {
+            if (health < this.health) {
+                final int damage = this.health - health;
+                waitTimer = adjustWaitTimerOnHurt(waitTimer, damage);
+            }
             this.health = health;
         }
         
@@ -3854,13 +3892,22 @@ public abstract class Boss extends Enemy {
     
     protected final static class Volatile extends AiBoss {
         protected Volatile(final Segment seg) {
+            this(getX(seg), getY(seg));
+        }
+        
+        protected Volatile(final int x, final int y) {
             super(BotsnBoltsGame.volatileImages, new BossAi());
-            BotsnBoltsGame.tm.savePositionXy(getPosition(), getX(seg), getY(seg));
+            BotsnBoltsGame.tm.savePositionXy(getPosition(), x, y);
             //handlers.add(new RunHandler());
             handlers.add(new AttackHandler());
-            //handlers.add(new RappidAttackRunHandler());
+            //handlers.add(new RapidAttackRunHandler());
             //handlers.add(new JumpHandler());
             handlers.add(new JumpsHandler());
+        }
+        
+        @Override
+        protected final int initStillTimer() {
+            return Mathtil.randi(30, 45);
         }
     }
     
@@ -3875,7 +3922,7 @@ public abstract class Boss extends Enemy {
         protected void init(final AiBoss boss) {
         }
         
-        protected int initTimer() {
+        protected int initTimer(final AiBoss boss) {
             return Integer.MAX_VALUE;
         }
         
@@ -3886,8 +3933,8 @@ public abstract class Boss extends Enemy {
     
     private final static class StillHandler extends AiHandler {
         @Override
-        protected final int initTimer() {
-            return initStillTimer();
+        protected final int initTimer(final AiBoss boss) {
+            return boss.initStillTimer();
         }
         
         @Override
@@ -3902,7 +3949,7 @@ public abstract class Boss extends Enemy {
         }
     }
     
-    private final static class RappidAttackRunHandler extends RunHandler {
+    private final static class RapidAttackRunHandler extends RunHandler {
         @Override
         protected final void init(final AiBoss boss) {
             boss.prf.shootMode = Player.SHOOT_RAPID;
@@ -3928,13 +3975,13 @@ public abstract class Boss extends Enemy {
     
     private final static class AttackHandler extends AiHandler {
         @Override
-        protected final int initTimer() {
-            return 2;
+        protected final int initTimer(final AiBoss boss) {
+            return Player.SHOOT_TIME + 2;
         }
         
         @Override
         protected final void onStep(final AiBoss boss) {
-            if (boss.waitTimer == 1) {
+            if (boss.waitTimer == (Player.SHOOT_TIME + 1)) {
                 boss.attack();
             }
         }

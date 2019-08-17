@@ -36,6 +36,8 @@ public class Projectile extends Pandy implements Collidable, AllOobListener, Spe
     protected final static int POWER_MEDIUM = 3;
     protected final static int POWER_MAXIMUM = 5;
     protected final static int POWER_IMPOSSIBLE = Integer.MAX_VALUE;
+    protected final static int OFF_X = 15;
+    protected final static int OFF_Y = 13;
     protected final static Set<Projectile> currentProjectiles = new HashSet<Projectile>();
     
     protected final Player src;
@@ -56,7 +58,7 @@ public class Projectile extends Pandy implements Collidable, AllOobListener, Spe
         final Panple srcPos = ref.getPosition();
         setMirror(ref.isMirror());
         final int xm = getMirrorMultiplier();
-        getPosition().set(srcPos.getX() + (xm * 15), srcPos.getY() + 13, BotsnBoltsGame.DEPTH_PROJECTILE);
+        getPosition().set(srcPos.getX() + (xm * OFF_X), srcPos.getY() + OFF_Y, BotsnBoltsGame.DEPTH_PROJECTILE);
         getVelocity().set(xm * vx, vy);
         ref.getLayer().addActor(this);
     }
