@@ -24,6 +24,7 @@ package org.pandcorps.botsnbolts;
 
 import java.util.*;
 
+import org.pandcorps.botsnbolts.Chr.*;
 import org.pandcorps.botsnbolts.Extra.*;
 import org.pandcorps.botsnbolts.Player.*;
 import org.pandcorps.botsnbolts.PowerUp.*;
@@ -37,10 +38,11 @@ import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.visual.*;
 
-public abstract class Boss extends Enemy {
+public abstract class Boss extends Enemy implements SpecBoss {
     protected final static String RES_BOSS = BotsnBoltsGame.RES + "boss/";
     protected final static byte STATE_STILL = 0;
     private final static int DAMAGE = 4;
+    private final static float DROP_X = 192;
     
     private boolean initializationNeeded = true;
     protected int waitTimer = 0;
@@ -204,7 +206,12 @@ public abstract class Boss extends Enemy {
         return new VictoryDisk(player, this);
     }
     
-    protected void onAward(final Player player) {
+    @Override
+    public void onAward(final Player player) {
+        onAwardBoss(player);
+    }
+    
+    protected final static void onAwardBoss(final Player player) {
         final String launchReturnX = RoomLoader.levelVariables.get(Extra.VAR_LAUNCH_RETURN_ROOM_X);
         if (launchReturnX == null) {
             player.dematerialize(Player.levelSelectHandler);
@@ -215,11 +222,15 @@ public abstract class Boss extends Enemy {
 
     @Override
     protected final void award(final PowerUp powerUp) {
-        PowerUp.addPowerUp(powerUp, getDropX(), getDropY(), 0);
+        award(powerUp, getDropX());
+    }
+    
+    protected final static void award(final PowerUp powerUp, final float dropX) {
+        PowerUp.addPowerUp(powerUp, dropX, getDropY(), 0);
     }
     
     protected float getDropX() {
-        return 192;
+        return DROP_X;
     }
     
     @Override
@@ -543,7 +554,7 @@ public abstract class Boss extends Enemy {
         }
         
         @Override
-        protected final void onAward(final Player player) {
+        public final void onAward(final Player player) {
             player.startScript(new LeftAi(32.0f), new Runnable() {
                 @Override public final void run() {
                     new Warp(new Volatile(20, 3));
@@ -3700,7 +3711,7 @@ if (health > 1) {health = 1;}
         return new PlayerContext(new Profile(true), pi);
     }
     
-    protected abstract static class AiBoss extends Player implements SpecEnemy, RoomAddListener {
+    protected abstract static class AiBoss extends Player implements SpecBoss, RoomAddListener {
         protected final List<AiHandler> handlers = new ArrayList<AiHandler>();
         protected AiHandler handler = null;
         protected boolean defeated = false;
@@ -3747,7 +3758,7 @@ if (health > 1) {health = 1;}
             if (!isIndefinite()) {
                 waitTimer--;
                 if (waitTimer < 0) {
-                    if (handler == stillHandler) {
+                    if (isStill()) {
                         if (isGrounded()) {
                             startHandler(null);
                         } else {
@@ -3758,6 +3769,10 @@ if (health > 1) {health = 1;}
                     }
                 }
             }
+        }
+        
+        protected final boolean isStill() {
+            return handler == stillHandler;
         }
         
         protected abstract int initStillTimer();
@@ -3863,7 +3878,7 @@ if (health > 1) {health = 1;}
         
         @Override
         public final void setHealth(final int health) {
-            if (health < this.health) {
+            if ((health < this.health) && isStill()) {
                 final int damage = this.health - health;
                 waitTimer = adjustWaitTimerOnHurt(waitTimer, damage);
             }
@@ -3881,7 +3896,24 @@ if (health > 1) {health = 1;}
         
         @Override
         public final void onDefeat() {
+            if (defeated) {
+                return;
+            }
             defeated = true;
+            exit();
+        }
+        
+        protected final void exit() {
+            destroy();
+            dematerialize(new Runnable() {
+                @Override public final void run() {
+                    Boss.award(new VictoryDisk(getPlayer(), AiBoss.this), DROP_X);
+                }});
+        }
+        
+        @Override
+        public final void onAward(final Player player) {
+            onAwardBoss(player);
         }
         
         @Override

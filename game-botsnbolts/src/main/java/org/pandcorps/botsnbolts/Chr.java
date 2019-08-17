@@ -126,4 +126,8 @@ public abstract class Chr extends GuyPlatform {
         
         public boolean isDestroyedAfterDefeat();
     }
+    
+    protected static interface SpecBoss extends SpecEnemy {
+        public void onAward(final Player player);
+    }
 }

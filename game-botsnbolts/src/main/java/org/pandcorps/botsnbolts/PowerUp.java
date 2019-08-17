@@ -162,9 +162,9 @@ public abstract class PowerUp extends Chr implements CollisionListener {
     }
     
     public final static class VictoryDisk extends Disk {
-        private final Boss src;
+        private final SpecBoss src;
         
-        protected VictoryDisk(final Player player, final Boss src) {
+        protected VictoryDisk(final Player player, final SpecBoss src) {
             super(player, src.getClass().getSimpleName());
             this.src = src;
             Boss.clipping = false;
