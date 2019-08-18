@@ -126,6 +126,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static Font font = null;
     protected static PlayerImages voidImages = null;
     protected static PlayerImages volatileImages = null;
+    protected static PlayerImages finalImages = null;
     protected static Panframe[] doorTunnel = null;
     protected static Panframe[] doorTunnelOverlay = null;
     protected static Panframe[] doorTunnelSmall = null;
@@ -580,11 +581,12 @@ public final class BotsnBoltsGame extends BaseGame {
     private final static void loadPlayer() {
         final String dir = "betabot", name = "Void";
         openPlayerImages(dir, name);
-        voidImages = loadPlayerImages(dir, name, "Byte", "Baud");
+        voidImages = loadPlayerImages(dir, name, "Byte", "Baud", null);
         final short s0 = 0, s192 = 192;
         filterPlayerImages(Pancolor.GREEN, Pancolor.CYAN, new FinPancolor(s0, s192, s0), new FinPancolor(s0, s192, s192));
         playerMirror = false;
-        volatileImages = loadPlayerImages("volatile", "Volatile", "Byte", "Baud");
+        volatileImages = loadPlayerImages("volatile", "Volatile", "Byte", "Baud", null);
+        finalImages = loadPlayerImages("final", "Final", "Byte", "Baud", volatileImages);
         closePlayerImages();
         pc = new PlayerContext(new Profile(), voidImages);
     }
@@ -729,7 +731,7 @@ public final class BotsnBoltsGame extends BaseGame {
         return RES + "chr/" + dir + "/" + name;
     }
     
-    private final static PlayerImages loadPlayerImages(final String dir, final String name, final String animalName, final String birdName) {
+    private final static PlayerImages loadPlayerImages(final String dir, final String name, final String animalName, final String birdName, final PlayerImages src) {
         final String pre = getCharacterPrefix(dir, name);
         final PlayerImagesSubSet basicSet = loadPlayerImagesSubSet(pre, name, true, og, og, oj);
         final PlayerImagesSubSet shootSet = loadPlayerImagesSubSet(pre + "Shoot", name + ".shoot", false, oss, os, ojs);
@@ -764,15 +766,15 @@ public final class BotsnBoltsGame extends BaseGame {
         final Panmage jumpAimDiag = newPlayerImage(pre + "Jump.Aim.Diag", ojs, jumpAimImgs, jumpAimImgsMirror, 0);
         final Panmage jumpAimUp = newPlayerImage(pre + "Jump.Aim.Diag", ojs, jumpAimImgs, jumpAimImgsMirror, 1);
         
-        final Panmage basicProjectile = engine.createImage(pre + "Projectile", new FinPanple2(3, 3), new FinPanple2(-3, -2), new FinPanple2(5, 3), playerProjectile);
-        final Panimation projectile2 = newFlipper(pre + "Projectile2", playerProjectile2, new FinPanple2(7, 7), new FinPanple2(-4, -5), new FinPanple2(8, 6), 4);
-        final Panimation projectile3 = createAnm(pre + "Projectile3", 2, new FinPanple2(23, 7), new FinPanple2(-6, -7), new FinPanple2(8, 8), playerProjectile3);;
-        final Panimation burst = newAnimation(pre + "Burst", playerBurst, CENTER_16, new FinPanple2(-10, -10), new FinPanple2(10, 10), 2);
-        final Panimation charge = newAnimation(pre + "Charge", playerCharge, null, 1);
+        final Panmage basicProjectile = (src == null) ? engine.createImage(pre + "Projectile", new FinPanple2(3, 3), new FinPanple2(-3, -2), new FinPanple2(5, 3), playerProjectile) : src.basicProjectile;
+        final Panimation projectile2 = (src == null) ? newFlipper(pre + "Projectile2", playerProjectile2, new FinPanple2(7, 7), new FinPanple2(-4, -5), new FinPanple2(8, 6), 4) : src.projectile2;
+        final Panimation projectile3 = (src == null) ? createAnm(pre + "Projectile3", 2, new FinPanple2(23, 7), new FinPanple2(-6, -7), new FinPanple2(8, 8), playerProjectile3) : src.projectile3;
+        final Panimation burst = (src == null) ? newAnimation(pre + "Burst", playerBurst, CENTER_16, new FinPanple2(-10, -10), new FinPanple2(10, 10), 2) : src.burst;
+        final Panimation charge = (src == null) ? newAnimation(pre + "Charge", playerCharge, null, 1) : src.charge;
         final Panple oChargeVert = new FinPanple2(4, 0);
-        final Panimation chargeVert = newAnimation(pre + "ChargeVert", playerChargeVert, oChargeVert, 1);
-        final Panimation charge2 = newAnimation(pre + "Charge2", playerCharge2, null, 1);
-        final Panimation chargeVert2 = newAnimation(pre + "ChargeVert2", playerChargeVert2, oChargeVert, 1);
+        final Panimation chargeVert = (src == null) ? newAnimation(pre + "ChargeVert", playerChargeVert, oChargeVert, 1) : src.chargeVert;
+        final Panimation charge2 = (src == null) ? newAnimation(pre + "Charge2", playerCharge2, null, 1) : src.charge2;
+        final Panimation chargeVert2 = (src == null) ? newAnimation(pre + "ChargeVert2", playerChargeVert2, oChargeVert, 1) : src.chargeVert2;
         
         final Panframe ball[] = new Panframe[8];
         final Panple ob = new FinPanple2(8, 1), xb = GuyPlatform.getMax(Player.PLAYER_X, Player.BALL_H);
@@ -786,30 +788,30 @@ public final class BotsnBoltsGame extends BaseGame {
             rots.getFrame(ball, i);
         }
         
-        final Panmage warp = engine.createImage(pre + "Warp", new FinPanple2(5, 1), null, null, playerWarp);
-        final Panimation materialize = newAnimation(pre + "Materialize", playerMaterialize, og, 3);
-        final Panimation bomb = newAnimation(pre + "Bomb", playerBomb, CENTER_8, 5);
-        final Panmage link = engine.createImage(pre + "Link", new FinPanple2(4, 1), null, null, playerLink);
+        final Panmage warp = (src == null) ? engine.createImage(pre + "Warp", new FinPanple2(5, 1), null, null, playerWarp) : src.warp;
+        final Panimation materialize = (src == null) ? newAnimation(pre + "Materialize", playerMaterialize, og, 3) : src.materialize;
+        final Panimation bomb = (src == null) ? newAnimation(pre + "Bomb", playerBomb, CENTER_8, 5) : src.bomb;
+        final Panmage link = (src == null) ? engine.createImage(pre + "Link", new FinPanple2(4, 1), null, null, playerLink) : src.link;
         final Panple oBattery = new FinPanple2(8, -1);
-        final Panimation batterySml = newOscillation(pre + "battery.sml", playerBatterySmall, new FinPanple2(4, -1), new FinPanple2(-2, 2), new FinPanple2(2, 6), 3, 6);
-        final Panimation batteryMed = newOscillation(pre + "battery.med", playerBatteryMedium, oBattery, new FinPanple2(-4, 2), new FinPanple2(4, 10), 3, 6);
+        final Panimation batterySml = (src == null) ? newOscillation(pre + "battery.sml", playerBatterySmall, new FinPanple2(4, -1), new FinPanple2(-2, 2), new FinPanple2(2, 6), 3, 6) : src.batterySmall;
+        final Panimation batteryMed = (src == null) ? newOscillation(pre + "battery.med", playerBatteryMedium, oBattery, new FinPanple2(-4, 2), new FinPanple2(4, 10), 3, 6) : src.batteryMedium;
         final Panple minBatteryBig = new FinPanple2(-6, 2), maxBatteryBig = new FinPanple2(6, 14);
-        final Panimation batteryBig = newOscillation(pre + "battery.big", playerBatteryBig, oBattery, minBatteryBig, maxBatteryBig, 3, 6);
-        final Panmage doorBolt = engine.createImage(pre + "DoorBolt", playerDoorBolt);
-        final Panmage bolt = engine.createImage(pre + "Bolt", oBattery, minBatteryBig, maxBatteryBig, playerBolt);
-        final Panmage disk = engine.createImage(pre + "Disk", oBattery, minBatteryBig, maxBatteryBig, playerDisk);
-        final Panmage powerBox = engine.createImage(pre + "PowerBox", CENTER_16, minCube, maxCube, playerPowerBox);
+        final Panimation batteryBig = (src == null) ? newOscillation(pre + "battery.big", playerBatteryBig, oBattery, minBatteryBig, maxBatteryBig, 3, 6) : src.batteryBig;
+        final Panmage doorBolt = (src == null) ? engine.createImage(pre + "DoorBolt", playerDoorBolt) : src.doorBolt;
+        final Panmage bolt = (src == null) ? engine.createImage(pre + "Bolt", oBattery, minBatteryBig, maxBatteryBig, playerBolt) : src.bolt;
+        final Panmage disk = (src == null) ? engine.createImage(pre + "Disk", oBattery, minBatteryBig, maxBatteryBig, playerDisk) : src.disk;
+        final Panmage powerBox = (src == null) ? engine.createImage(pre + "PowerBox", CENTER_16, minCube, maxCube, playerPowerBox) : src.powerBox;
         final Map<String, Panmage> boltBoxes = new HashMap<String, Panmage>(Profile.UPGRADES.length);
         for (final Entry<String, Img> entry : playerBoltBoxes.entrySet()) {
             final String boltName = entry.getKey();
-            boltBoxes.put(boltName, engine.createImage(pre + boltName + "Box", CENTER_16, minCube, maxCube, entry.getValue()));
+            boltBoxes.put(boltName, (src == null) ? engine.createImage(pre + boltName + "Box", CENTER_16, minCube, maxCube, entry.getValue()) : src.boltBoxes.get(boltName));
         }
-        final Panmage diskBox = engine.createImage(pre + "DiskBox", CENTER_16, minCube, maxCube, playerDiskBox);
-        final Panmage highlightBox = engine.createImage(pre + "HighlightBox", playerHighlightBox);
+        final Panmage diskBox = (src == null) ? engine.createImage(pre + "DiskBox", CENTER_16, minCube, maxCube, playerDiskBox) : src.diskBox;
+        final Panmage highlightBox = (src == null) ? engine.createImage(pre + "HighlightBox", playerHighlightBox) : src.highlightBox;
         
         final Panmage portrait = engine.createImage(pre + "Portrait", pre + "Portrait.png");
         
-        final HudMeterImages hudMeterImages = newHudMeterImages(pre + "Meter", hudMeterImgs);
+        final HudMeterImages hudMeterImages = (src == null) ? newHudMeterImages(pre + "Meter", hudMeterImgs) : src.hudMeterImages;
         
         return new PlayerImages(basicSet, shootSet, hurt, frozen, defeat, climb, climbShoot, climbTop, jumpAimDiag, jumpAimUp, basicProjectile, projectile2, projectile3, charge, chargeVert, charge2, chargeVert2,
             burst, ball, warp, materialize, bomb, link, batterySml, batteryMed, batteryBig, doorBolt, bolt, disk, powerBox, boltBoxes, diskBox, highlightBox, portrait, hudMeterImages, animalName, birdName);
