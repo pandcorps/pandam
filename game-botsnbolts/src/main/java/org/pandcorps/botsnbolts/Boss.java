@@ -4476,7 +4476,7 @@ if (health > 1) health = 1;
         }
         
         private final void burst(final float x, final float y) {
-            final Burst burst = new Burst(BotsnBoltsGame.volatileImages.burst);
+            final Burst burst = new Burst(BotsnBoltsGame.finalImages.burst);
             burst.getPosition().set(x, y, BotsnBoltsGame.DEPTH_BURST);
             addActor(burst);
         }
@@ -4693,7 +4693,7 @@ if (health > 1) health = 1;
         private int dropX;
         
         private WagonMortar(final Panctor src, final int dropX) {
-            super(src, 111, 83, 0, Player.VEL_PROJECTILE, BotsnBoltsGame.volatileImages, Projectile.POWER_MEDIUM);
+            super(src, 111, 83, 0, Player.VEL_PROJECTILE, BotsnBoltsGame.finalImages, Projectile.POWER_MEDIUM);
             setRot(1);
             getPosition().setZ(BotsnBoltsGame.DEPTH_ENEMY_BACK_2);
             setView(getAnim());
@@ -5153,11 +5153,11 @@ if (health > 1) health = 1;
         }
         
         private final void shootCharged() {
-            initCharged(new AiProjectile(this, 0, 0, 0, -VEL_PROJECTILE, BotsnBoltsGame.volatileImages, Projectile.POWER_MAXIMUM));
+            initCharged(new AiProjectile(this, 0, 0, 0, -VEL_PROJECTILE, BotsnBoltsGame.finalImages, Projectile.POWER_MAXIMUM));
         }
         
         private final void shootSelfDestruct() {
-            initCharged(new Projectile(getPlayer(), BotsnBoltsGame.volatileImages, Player.SHOOT_CHARGE, this, 0, -VEL_PROJECTILE, Projectile.POWER_MAXIMUM));
+            initCharged(new Projectile(getPlayer(), BotsnBoltsGame.finalImages, Player.SHOOT_CHARGE, this, 0, -VEL_PROJECTILE, Projectile.POWER_MAXIMUM));
         }
         
         private final void initCharged(final Panctor prj) {
