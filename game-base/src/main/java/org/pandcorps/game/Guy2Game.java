@@ -34,7 +34,7 @@ public abstract class Guy2Game extends BaseGame {
     }
 	
 	protected final static Img[] loadConstantImgs() {
-	    return ImtilX.loadStrip("org/pandcorps/game/res/misc/Constants.png");
+	    return ImtilX.loadStrip("org/pandcorps/game/misc/Constants.png");
 	}
 	
 	protected final static Panimation createBloodAnm(final Img[] constantImgs, final int dur) {

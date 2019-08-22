@@ -46,6 +46,7 @@ public class ShootGame extends Guy2Game {
     Save/load (weapon args, ammo, money, constitution, health, experience).
     Use all available tiles.
     */
+    protected final static String RES = "org/pandcorps/shoot/";
     private final static String PROP_DEBUG = "org.pandcorps.shoot.ShootGame.debug";
     private final static boolean debug = Boolean.getBoolean(PROP_DEBUG);
 	/*package*/ final static char CHAR_HEALTH = 2;
@@ -88,7 +89,7 @@ public class ShootGame extends Guy2Game {
 
 	@Override
 	protected void init(final Panroom room) throws Exception {
-	    Pangine.getEngine().setIcon("org/pandcorps/shoot/res/misc/WillKillemIcon32.png", "org/pandcorps/shoot/res/misc/WillKillemIcon16.png");
+	    Pangine.getEngine().setIcon(RES + "misc/WillKillemIcon32.png", RES + "misc/WillKillemIcon16.png");
 		ShootGame.room = room;
 		loadConstants();
 		Panscreen.set(new LogoScreen(TitleScreen.class));
@@ -106,8 +107,8 @@ public class ShootGame extends Guy2Game {
         puff = createPuffAnm(constantImgs, 1);
         bam = createBamAnm(constantImgs, 2);
         Ai.bamDelay = bam.getDuration() + 2;
-        rain = createSheet("rain", "org/pandcorps/game/res/misc/Rain.png");
-        splash = createAnm("rain4", "org/pandcorps/game/res/misc/Rain4.png", 4, 3);
+        rain = createSheet("rain", "org/pandcorps/game/misc/Rain.png");
+        splash = createAnm("rain4", "org/pandcorps/game/misc/Rain4.png", 4, 3);
         interact = engine.createEmptyImage("img.interact", new FinPanple(1, 1, 1), new FinPanple2(0, 0), new FinPanple(2, 2, 2));
         font = Fonts.getSimple(new FontRequest(8), Pancolor.BLUE, Pancolor.CYAN, Pancolor.CYAN, Pancolor.BLACK);
         hudFont = Fonts.getOutline(new FontRequest(8), Pancolor.BLUE, Pancolor.BLUE, Pancolor.BLUE, new FinPancolor(Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, (short) 128, Pancolor.MAX_VALUE));
@@ -183,7 +184,7 @@ public class ShootGame extends Guy2Game {
         final Panframe casing5Frm = engine.createFrame("frm.casing.5", casing1Img, cd, 2, false, false);
         final Panframe casing6Frm = engine.createFrame("frm.casing.6", casing2Img, cd, 2, false, false);
 		final Panimation casingAnm = engine.createAnimation("anm.casing", casing1Frm, casing2Frm, casing3Frm, casing4Frm, casing5Frm, casing6Frm);
-		final Panmage projSawImg = engine.createEmptyImage("img.proj.saw", CENTER_4, null, null);
+		final Panmage projSawImg = engine.createEmptyImage("img.proj.saw", CENTER_4, null, CENTER_8);
 		final Panmage projMagImg = engine.createImage("img.proj.mag", new FinPanple2(2, 1), null, null, strip4[0]);
 		final Panmage projShotImg = engine.createImage("img.proj.shot", new FinPanple2(1, 2), null, null, strip4[1]);
 		final Panmage projMiniImg = engine.createImage("img.proj.mini", CENTER_4, null, null, strip4[2]);
@@ -262,11 +263,11 @@ public class ShootGame extends Guy2Game {
 	}
 	
 	protected final static Img[] loadStrip(final String loc, final int dim) {
-		return ImtilX.loadStrip("org/pandcorps/shoot/res/" + loc + ".png", dim);
+		return ImtilX.loadStrip(RES + loc + ".png", dim);
 	}
 	
 	protected final static Img loadImage(final String loc, final int dim) {
-		return ImtilX.loadImage("org/pandcorps/shoot/res/" + loc + ".png", dim, null);
+		return ImtilX.loadImage(RES + loc + ".png", dim, null);
 	}
 	
 	protected final static Panmage createImage(final String loc, final int dim) {

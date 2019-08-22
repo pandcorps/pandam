@@ -222,7 +222,7 @@ public class Story {
 	}
 	
 	private final static Panmage getImg(final String type, final String name) {
-		return Pangine.getEngine().createImage("img." + type + '.' + name, "org/pandcorps/shoot/res/" + type + '/' + name + ".png");
+		return Pangine.getEngine().createImage("img." + type + '.' + name, ShootGame.RES + type + '/' + name + ".png");
 	}
 	
 	private final static Panmage getBg(final String name) {

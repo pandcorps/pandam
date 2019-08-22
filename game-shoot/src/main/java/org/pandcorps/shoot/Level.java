@@ -43,7 +43,7 @@ public abstract class Level {
 	}
 	
     private final static Img createBlueCityImage() {
-        final Img raw = Imtil.load("org/pandcorps/shoot/res/bg/TileCity.png");
+        final Img raw = Imtil.load(ShootGame.RES + "bg/TileCity.png");
         final HashMap<Pancolor, Pancolor> map = new HashMap<Pancolor, Pancolor>();
         putBlue(map, 40, 40, 24);
         putBlue(map, 56, 64, 0);
@@ -126,7 +126,7 @@ public abstract class Level {
             final int w = tm.getWidth(), s = w / 16;
             final Pangine engine = Pangine.getEngine();
             final String tmName = "img.bg.city";
-            tm.setImageMap(engine.getImage(tmName, "org/pandcorps/shoot/res/bg/TileCity.png"));
+            tm.setImageMap(engine.getImage(tmName, ShootGame.RES + "bg/TileCity.png"));
             final TileMapImage[][] imgMap = tm.splitImageMap();
             tm.fillBackground(imgMap[7][0], 0, 2);
             tm.fillBackground(imgMap[6][0], 2, 1);
