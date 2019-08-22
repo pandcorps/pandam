@@ -19,13 +19,13 @@ PUT|n|5^0||0
 PUT|o|6^0|4^0^true|0
 PUT|p|7^0^true||1
 
-M|xi                      
-M|xi                      
-M|xi                   nop
-M|xi                   lm;
-M|xi                   jk;
-M|xi                   ghq
-M|-,                   drf
+M|i                       
+M|i                       
+M|i                    nop
+M|i                    lm;
+M|i                    jk;
+M|i                    ghq
+M|,                    drf
 M|E                    abc
 M|e                    ::;
 M|e                    ::;
@@ -38,11 +38,12 @@ DOR|0|3|Boss
 
 VER|0
 BOS|21|4|Fort
+ENM|21|7|FortCannon
+ENM|22|7|FortCannon
 VND
 
 VER|1
 BOS|21|4|Fort2
+ENM|21|7|FortCannon2
+ENM|22|7|FortCannon2
 VND
-
-ENM|21|7|FortCannon
-ENM|22|7|FortCannon

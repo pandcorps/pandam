@@ -3732,11 +3732,13 @@ public abstract class Enemy extends Chr implements SpecEnemy {
     protected final static Panple FORT_CANNON_MIN = new FinPanple2(0, 4);
     protected final static Panple FORT_CANNON_MAX = new FinPanple2(7, 12);
     
-    protected final static class FortCannon extends WallCannon {
+    protected static class FortCannon extends WallCannon {
         private final static Panmage[] images = new Panmage[5];
+        private final boolean left;
         
         protected FortCannon(final Segment seg) {
             super(seg, 5);
+            left = getX(seg) == 21;
         }
         
         @Override
@@ -3757,7 +3759,23 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         
         @Override
         protected final void fire() {
-            new EnemyProjectile(BotsnBoltsGame.getEnemyProjectile(), this, 7, 8, getMirrorMultiplier() * VEL_PROJECTILE, 0, gTuple);
+            if (left) {
+                fireLeft();
+            } else {
+                fireRight();
+            }
+        }
+        
+        protected void fireLeft() {
+            fire(VEL_PROJECTILE + 5);
+        }
+        
+        protected void fireRight() {
+            fire(VEL_PROJECTILE);
+        }
+        
+        protected final void fire(final int speed) {
+            new EnemyProjectile(BotsnBoltsGame.getEnemyProjectile(), this, 7, 8, getMirrorMultiplier() * speed, 0, gTuple);
         }
         
         @Override
@@ -3783,6 +3801,26 @@ public abstract class Enemy extends Chr implements SpecEnemy {
             image = Boss.getImage(null, "fort/FortCannon" + (i + 1), FORT_CANNON_O, FORT_CANNON_MIN, FORT_CANNON_MAX);
             images[i] = image;
             return image;
+        }
+    }
+    
+    protected final static class FortCannon2 extends FortCannon {
+        protected FortCannon2(final Segment seg) {
+            super(seg);
+        }
+        
+        @Override
+        protected final void fireLeft() {
+            fire(12);
+            fire(10);
+            fire(8);
+        }
+        
+        @Override
+        protected final void fireRight() {
+            fire(7);
+            fire(5);
+            fire(3);
         }
     }
     

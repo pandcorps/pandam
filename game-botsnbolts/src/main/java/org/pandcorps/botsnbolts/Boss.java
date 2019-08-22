@@ -557,8 +557,12 @@ public abstract class Boss extends Enemy implements SpecBoss {
         public final void onAward(final Player player) {
             player.startScript(new LeftAi(32.0f), new Runnable() {
                 @Override public final void run() {
-                    new Warp(new Volatile(20, 3));
+                    new Warp(getNextBoss(20, 3));
                 }});
+        }
+        
+        protected AiBoss getNextBoss(final int x, final int y) {
+            return new Volatile(x, y);
         }
         
         @Override
@@ -580,7 +584,6 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         private final void stepFort() {
-if (health > 1) {health = 1;}
             if (Panctor.isDestroyed(bot)) {
                 spawnTimer++;
                 if (spawnTimer >= 60) {
@@ -611,6 +614,11 @@ if (health > 1) {health = 1;}
     protected final static class Fort2 extends Fort {
         protected Fort2(final Segment seg) {
             super(seg);
+        }
+        
+        @Override
+        protected final AiBoss getNextBoss(final int x, final int y) {
+            return new Volatile2(x, y);
         }
     }
     
@@ -3719,12 +3727,14 @@ if (health > 1) {health = 1;}
         protected int waitTimer = 0;
         protected int shootTimer = 0;
         
-        protected AiBoss(final PlayerImages pi, final Ai ai) {
+        protected AiBoss(final PlayerImages pi, final int x, final int y) {
             super(newPlayerContext(pi));
-            getPosition().setZ(BotsnBoltsGame.DEPTH_ENEMY);
+            final Panple pos = getPosition();
+            BotsnBoltsGame.tm.savePositionXy(pos, x, y);
+            pos.setZ(BotsnBoltsGame.DEPTH_ENEMY);
             setMirror(true);
             BotsnBoltsGame.addActor(this);
-            this.ai = ai;
+            ai = new BossAi();
             health = 0;
         }
         
@@ -3923,16 +3933,10 @@ if (health > 1) {health = 1;}
     }
     
     protected final static class Volatile extends AiBoss {
-        protected Volatile(final Segment seg) {
-            this(getX(seg), getY(seg));
-        }
-        
         protected Volatile(final int x, final int y) {
-            super(BotsnBoltsGame.volatileImages, new BossAi());
-            BotsnBoltsGame.tm.savePositionXy(getPosition(), x, y);
+            super(BotsnBoltsGame.volatileImages, x, y);
             //handlers.add(new RunHandler());
             handlers.add(new AttackHandler());
-            //handlers.add(new RapidAttackRunHandler());
             //handlers.add(new JumpHandler());
             handlers.add(new JumpsHandler());
         }
@@ -3940,6 +3944,21 @@ if (health > 1) {health = 1;}
         @Override
         protected final int initStillTimer() {
             return Mathtil.randi(30, 45);
+        }
+    }
+    
+    protected final static class Volatile2 extends AiBoss {
+        protected Volatile2(final int x, final int y) {
+            super(BotsnBoltsGame.volatileImages, x, y);
+            //handlers.add(new RunHandler());
+            handlers.add(new RapidAttackRunHandler());
+            //handlers.add(new JumpHandler());
+            handlers.add(new JumpsHandler());
+        }
+        
+        @Override
+        protected final int initStillTimer() {
+            return Mathtil.randi(15, 30);
         }
     }
     

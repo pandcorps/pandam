@@ -2300,10 +2300,10 @@ public class Player extends Chr implements Warpable {
         protected final Panmage basicProjectile;
         protected final Panimation projectile2;
         protected final Panimation projectile3;
-        private final Panimation charge;
-        private final Panimation chargeVert;
-        private final Panimation charge2;
-        private final Panimation chargeVert2;
+        protected final Panimation charge;
+        protected final Panimation chargeVert;
+        protected final Panimation charge2;
+        protected final Panimation chargeVert2;
         protected final Panimation burst;
         private final Panframe[] ball;
         protected final Panmage warp;
@@ -2322,7 +2322,7 @@ public class Player extends Chr implements Warpable {
         protected final Panmage diskBox;
         protected final Panmage highlightBox;
         protected final Panmage portrait;
-        private final HudMeterImages hudMeterImages;
+        protected final HudMeterImages hudMeterImages;
         protected final String animalName;
         protected final String birdName;
         
