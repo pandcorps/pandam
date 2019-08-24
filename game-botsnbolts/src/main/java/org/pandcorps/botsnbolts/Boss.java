@@ -284,7 +284,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         pendingJumps.add(jump);
     }
     
-    protected final void addPendingJump(final byte state, final Panmage img, final int v, final int hv) {
+    protected final void addPendingJump(final byte state, final Panmage img, final float v, final int hv) {
         addPendingJump(new Jump(state, img, v, hv));
     }
     
@@ -338,7 +338,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
     }
     
     //@OverrideMe
-    protected int getJumpsV() {
+    protected float getJumpsV() {
         return 0;
     }
     
@@ -1624,7 +1624,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         @Override
-        protected final int getJumpsV() {
+        protected final float getJumpsV() {
             return VEL_JUMPS;
         }
         
@@ -2127,7 +2127,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         @Override
-        protected final int getJumpsV() {
+        protected final float getJumpsV() {
             return 9;
         }
         
@@ -4038,6 +4038,102 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
     }
     
+    protected final static int TITAN_OFF_X = 32, TITAN_H = 92, TITAN_JUMP_H = 72;
+    protected final static Panple TITAN_O = new FinPanple2(44, 1);
+    protected final static Panple TITAN_MIN = getMin(TITAN_OFF_X);
+    protected final static Panple TITAN_MAX = getMax(TITAN_OFF_X, TITAN_H);
+    
+    protected final static class CyanTitan extends Boss {
+        protected final static byte STATE_ATTACK = 1;
+        protected final static byte STATE_JUMPS = 2;
+        
+        protected static Panmage still = null;
+        protected static Panmage jump = null;
+        
+        protected CyanTitan(final Segment seg) {
+            super(TITAN_OFF_X, TITAN_H, seg);
+        }
+
+        @Override
+        protected final boolean pickState() {
+//            startAttack();
+            setH(TITAN_JUMP_H);
+            startJumps();
+//            todo;
+            return false;
+        }
+
+        @Override
+        protected final boolean continueState() {
+            setH(TITAN_H);
+            return false;
+        }
+        
+        @Override
+        protected float getG() {
+            return -0.4f;
+        }
+        
+        @Override
+        protected final boolean hasPendingJumps() {
+            return hasPendingOrContinuedJumps();
+        }
+        
+        @Override
+        protected final byte getStateJumps() {
+            return STATE_JUMPS;
+        }
+        
+        @Override
+        protected final float getJumpsV() {
+            return scaleByHealthFloat(5.9f, 8.1f);
+        }
+        
+        @Override
+        protected final int getJumpsHv() {
+            return scaleByHealthInt(3, 7);
+        }
+        
+        protected final void startAttack() {
+            startState(STATE_ATTACK, scaleByHealthInt(2, 15), getStill());
+        }
+        
+        @Override
+        protected final void startStill() {
+            startStill(scaleByHealthInt(2, 30)); // randomly 15 - 30 for other Bosses
+        }
+        
+        private final int scaleByHealthInt(final float min, final float max) {
+            return Math.round(scaleByHealthFloat(min, max));
+        }
+        
+        private final float scaleByHealthFloat(final float min, final float max) {
+            if (health < 2) {
+                return min;
+            }
+            final float healthNumerator = health - 1, healthDenominator = HudMeter.MAX_VALUE - 1;
+            final float healthScore = healthNumerator / healthDenominator; // health = 1, score = 0.0; health = max, score = 1.0
+            return min + (healthScore * (max - min));
+        }
+
+        @Override
+        protected final Panmage getStill() {
+            if (still == null) {
+                still = getImage(null, "cyantitan/CyanTitan", TITAN_O, TITAN_MIN, TITAN_MAX);
+            }
+            return still;
+        }
+        
+        @Override
+        protected final Panmage getJump() {
+            if (jump == null) {
+                final int jumpOffX = 29;
+                jump = getImage(null, "cyantitan/CyanTitanJump", new FinPanple2(44, 11), getMin(jumpOffX), getMax(jumpOffX, TITAN_JUMP_H));
+            }
+            return jump;
+        }
+    }
+    
     protected final static class FinalWagon extends Boss implements RoomAddListener, StepEndListener {
         private final static byte STATE_UNCOVER = 1;
         private final static byte STATE_COVER = 2;
@@ -5250,8 +5346,19 @@ if (health > 1) health = 1;
         }
     }
     
-    protected final static class Final {
+    protected final static class Final extends AiBoss {
         private static Panmage coat = null;
+        
+        protected Final(final int x, final int y) {
+            super(BotsnBoltsGame.volatileImages, x, y);
+            handlers.add(new RapidAttackRunHandler());
+            handlers.add(new JumpsHandler());
+        }
+        
+        @Override
+        protected final int initStillTimer() {
+            return Mathtil.randi(2, 15);
+        }
         
         private final static Panmage getCoat() {
             return (coat = getImage(coat, "final/FinalCoat", BotsnBoltsGame.og, null, null));
@@ -5333,10 +5440,10 @@ if (health > 1) health = 1;
     protected final static class Jump {
         protected final byte state;
         protected final Panmage img;
-        protected final int v;
+        protected final float v;
         protected final int hv;
         
-        protected Jump(final byte state, final Panmage img, final int v, final int hv) {
+        protected Jump(final byte state, final Panmage img, final float v, final int hv) {
             this.state = state;
             this.img = img;
             this.v = v;
