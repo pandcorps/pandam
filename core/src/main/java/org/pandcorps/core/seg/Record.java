@@ -250,7 +250,7 @@ public abstract class Record implements Savable {
     }
     
     public final static boolean parseBoolean(final String value) {
-        return Boolean.parseBoolean(value);
+        return Pantil.parseBoolean(value);
     }
     
     public final static boolean parseBoolean(final String value, final boolean def) {

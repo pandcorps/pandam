@@ -236,7 +236,7 @@ public final class PanmlGame extends Pangame {
 	}
 
 	private final boolean getBoolean(final ChildElementIter iter, final String localName) {
-		return Boolean.parseBoolean(getText(iter, localName));
+		return Pantil.parseBoolean(getText(iter, localName));
 	}
 
 	private final static void assertNode(final Element node, final String localName) {

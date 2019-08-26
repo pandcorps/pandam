@@ -56,15 +56,18 @@ public abstract class Boss extends Enemy implements SpecBoss {
     protected HudMeter healthMeter = null;
     private static int prevRand = -1;
     private static int prevPrevRand = -1;
+    private final boolean launchPossible;
     
     protected Boss(final int offX, final int h, final Segment seg) {
         super(offX, h, seg, 0);
         construct();
+        launchPossible = seg.getBoolean(3, true);
     }
     
     protected Boss(final int offX, final int h, final int x, final int y) {
         super(offX, h, x, y, 0);
         construct();
+        launchPossible = true;
     }
     
     private final void construct() {
@@ -208,16 +211,21 @@ public abstract class Boss extends Enemy implements SpecBoss {
     
     @Override
     public void onAward(final Player player) {
-        onAwardBoss(player);
+        onAwardBoss(this, player);
     }
     
-    protected final static void onAwardBoss(final Player player) {
-        final String launchReturnX = RoomLoader.levelVariables.get(Extra.VAR_LAUNCH_RETURN_ROOM_X);
+    protected final static void onAwardBoss(final SpecBoss boss, final Player player) {
+        final String launchReturnX = boss.isLaunchPossible() ? RoomLoader.levelVariables.get(Extra.VAR_LAUNCH_RETURN_ROOM_X) : null;
         if (launchReturnX == null) {
             player.dematerialize(Player.levelSelectHandler);
         } else {
             player.launch(Integer.parseInt(launchReturnX), Integer.parseInt(RoomLoader.levelVariables.get(Extra.VAR_LAUNCH_RETURN_ROOM_Y)));
         }
+    }
+    
+    @Override
+    public final boolean isLaunchPossible() {
+        return launchPossible;
     }
 
     @Override
@@ -3923,7 +3931,12 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         @Override
         public final void onAward(final Player player) {
-            onAwardBoss(player);
+            onAwardBoss(this, player);
+        }
+        
+        @Override
+        public final boolean isLaunchPossible() {
+            return true;
         }
         
         @Override

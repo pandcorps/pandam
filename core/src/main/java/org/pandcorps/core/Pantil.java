@@ -28,11 +28,23 @@ import java.nio.*;
 // Pandcorps Utility
 public final class Pantil {
     public final static String RES = "org/pandcorps/res/";
+    private final static String TRUE = Boolean.toString(true);
+    private final static String FALSE = Boolean.toString(false);
     private final static int INT_SIZE = Integer.SIZE / 8;
     private final static int FLOAT_SIZE = Float.SIZE / 8;
     
 	private Pantil() {
 		throw new Error();
+	}
+	
+	public final static boolean parseBoolean(final String val) {
+	    // This method doesn't ignore unexpected values, so we want a NullPointerException if it's null
+	    if (val.equalsIgnoreCase(TRUE)) {
+	        return true;
+	    } else if (val.equalsIgnoreCase(FALSE)) {
+	        return false;
+	    }
+	    throw new IllegalArgumentException("Invalid boolean String: " + val);
 	}
 	
 	public final static String getProperty(final String key) {
@@ -41,7 +53,7 @@ public final class Pantil {
 	
 	public final static boolean isProperty(final String key, final boolean def) {
 	    final String val = getProperty(key);
-	    return Chartil.isValued(val) ? Boolean.parseBoolean(val) : def;
+	    return Chartil.isValued(val) ? parseBoolean(val) : def;
 	}
 	
 	public final static int getProperty(final String key, final int def) {
