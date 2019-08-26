@@ -314,7 +314,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         return Pangine.getEngine().createImage(pre + name, o, min, max, path + name + ".png");
     }
     
-    protected EnemyProjectile newEnemyProjectile(final Panctor src, final int ox, final int oy, final float vx, final float vy) {
+    protected static EnemyProjectile newEnemyProjectile(final Panctor src, final int ox, final int oy, final float vx, final float vy) {
         if (!src.isInView()) {
             return null;
         }
@@ -3016,21 +3016,20 @@ public abstract class Enemy extends Chr implements SpecEnemy {
             super(BotsnBoltsGame.henchbotEnemy, seg);
         }
         
-        @Override
-        protected final void onShoot() {
-            final Player player = getNearestPlayer();
+        protected final static void shoot(final Enemy src, final int offX, final int offY, final boolean angleLimited) {
+            final Player player = src.getNearestPlayer();
             final float vx, vy;
-            final int m = getMirrorMultiplier();
+            final int m = src.getMirrorMultiplier();
             if (player == null) {
                 vx = m * VEL_PROJECTILE;
                 vy = 0;
             } else {
-                scratch.set(getPosition());
-                scratch.addX(m * HENCHBOT_SHOOT_OFF_X);
+                scratch.set(src.getPosition());
+                scratch.add(m * offX, offY - Player.CENTER_Y);
                 Panple.subtract(scratch, player.getPosition(), scratch);
                 scratch.multiply((float) (VEL_PROJECTILE / scratch.getMagnitude2()));
                 final float sx = scratch.getX();
-                if ((Math.abs(sx) < 2) || (sx * m) <= 0) {
+                if (angleLimited && ((Math.abs(sx) < 2) || ((sx * m) <= 0))) {
                     vx = m * VEL_PROJECTILE;
                     vy = 0;
                 } else {
@@ -3038,7 +3037,12 @@ public abstract class Enemy extends Chr implements SpecEnemy {
                     vy = scratch.getY();
                 }
             }
-            newEnemyProjectile(this, HENCHBOT_SHOOT_OFF_X, HENCHBOT_SHOOT_OFF_Y, vx, vy);
+            newEnemyProjectile(src, offX, offY, vx, vy);
+        }
+        
+        @Override
+        protected final void onShoot() {
+            shoot(this, HENCHBOT_SHOOT_OFF_X, HENCHBOT_SHOOT_OFF_Y, true);
             hold(30);
         }
     }

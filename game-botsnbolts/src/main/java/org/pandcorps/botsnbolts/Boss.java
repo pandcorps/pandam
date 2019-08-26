@@ -4046,7 +4046,6 @@ public abstract class Boss extends Enemy implements SpecBoss {
     protected final static class CyanTitan extends Boss {
         protected final static byte STATE_ATTACK = 1;
         protected final static byte STATE_JUMPS = 2;
-        
         protected static Panmage still = null;
         protected static Panmage jump = null;
         
@@ -4056,17 +4055,36 @@ public abstract class Boss extends Enemy implements SpecBoss {
 
         @Override
         protected final boolean pickState() {
-//            startAttack();
-            setH(TITAN_JUMP_H);
-            startJumps();
-//            todo;
+            final int r = Mathtil.randi(0, 999);
+            final int attackThreshold = scaleByHealthInt(100, 500);
+            if (r < attackThreshold) {
+                startAttack();
+            } else {
+                setH(TITAN_JUMP_H);
+                startJumps();
+            }
             return false;
         }
 
         @Override
         protected final boolean continueState() {
             setH(TITAN_H);
+            startStill();
             return false;
+        }
+        
+        @Override
+        protected final boolean onWaiting() {
+            if (state == STATE_ATTACK) {
+                onAttacking();
+            }
+            return false;
+        }
+        
+        private final void onAttacking() {
+            if (waitTimer == 1) {
+                CyanEnemy.shoot(this, 3, 78, false);
+            }
         }
         
         @Override
@@ -4095,7 +4113,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         protected final void startAttack() {
-            startState(STATE_ATTACK, scaleByHealthInt(2, 15), getStill());
+            startState(STATE_ATTACK, 2, getStill());
         }
         
         @Override
@@ -5350,7 +5368,7 @@ if (health > 1) health = 1;
         private static Panmage coat = null;
         
         protected Final(final int x, final int y) {
-            super(BotsnBoltsGame.volatileImages, x, y);
+            super(BotsnBoltsGame.finalImages, x, y);
             handlers.add(new RapidAttackRunHandler());
             handlers.add(new JumpsHandler());
         }
