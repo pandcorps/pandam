@@ -3734,6 +3734,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected boolean needMirror = false;
         protected int waitTimer = 0;
         protected int shootTimer = 0;
+        protected int extra = 0;
         
         protected AiBoss(final PlayerImages pi, final int x, final int y) {
             super(newPlayerContext(pi));
@@ -3830,10 +3831,14 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         protected final void turnTowardPlayer() {
-            final boolean mirrorNeeded = getPlayerX() < getPosition().getX();
-            if (mirrorNeeded != isMirror()) {
+            if (!isFacingPlayer()) {
                 mirror();
             }
+        }
+        
+        protected final boolean isFacingPlayer() {
+            final boolean mirrorNeeded = getPlayerX() < getPosition().getX();
+            return mirrorNeeded == isMirror();
         }
         
         protected final void attack() {
@@ -3860,7 +3865,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         @Override
         protected final void onLanded() {
             super.onLanded();
-            if (isIndefinite()) {
+            if (isIndefinite() && handler.isDoneWhenLanded(this)) {
                 startStill();
             }
         }
@@ -3991,6 +3996,10 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         protected abstract void onStep(final AiBoss boss);
+        
+        protected boolean isDoneWhenLanded(final AiBoss boss) {
+            return true;
+        }
     }
     
     private final static StillHandler stillHandler = new StillHandler();
@@ -4032,8 +4041,21 @@ public abstract class Boss extends Enemy implements SpecBoss {
     private final static class JumpsHandler extends AiHandler {
         @Override
         protected final void onStep(final AiBoss boss) {
-            boss.jump();
             boss.moveX();
+            if (boss.extra > 0) {
+                boss.extra--;
+                return;
+            }
+            boss.jump();
+        }
+        
+        @Override
+        protected boolean isDoneWhenLanded(final AiBoss boss) {
+            if (boss.isFacingPlayer()) {
+                boss.extra = 3;
+                return false;
+            }
+            return true;
         }
     }
     
