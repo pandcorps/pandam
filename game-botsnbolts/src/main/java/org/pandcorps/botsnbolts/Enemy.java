@@ -29,6 +29,7 @@ import org.pandcorps.botsnbolts.Chr.*;
 import org.pandcorps.botsnbolts.Player.*;
 import org.pandcorps.botsnbolts.PowerUp.*;
 import org.pandcorps.botsnbolts.Profile.*;
+import org.pandcorps.botsnbolts.Projectile.*;
 import org.pandcorps.botsnbolts.RoomLoader.*;
 import org.pandcorps.core.*;
 import org.pandcorps.core.seg.*;
@@ -458,6 +459,17 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         public final void burst() {
             Projectile.burst(this, pi.burst, getPosition());
             destroy();
+        }
+    }
+    
+    protected final static class AiBomb extends Bomb {
+        protected AiBomb(final Player src) {
+            super(src);
+        }
+        
+        @Override
+        protected final void newExplosion() {
+            new Explosion(this); //TODO
         }
     }
     

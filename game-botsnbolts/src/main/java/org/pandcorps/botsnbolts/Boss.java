@@ -3874,9 +3874,19 @@ public abstract class Boss extends Enemy implements SpecBoss {
             releaseShoot();
         }
         
+        protected final void startAttacking(final int attackTimer) {
+            shootTimer = attackTimer;
+            shoot();
+        }
+        
         @Override
         protected final void newProjectile(final float vx, final float vy, final int power) {
             new AiProjectile(this, Projectile.OFF_X, Projectile.OFF_Y, getMirrorMultiplier() * vx, vy, pi, power);
+        }
+        
+        @Override
+        protected final void newBomb() {
+            new AiBomb(this);
         }
         
         protected final void startStill() {
@@ -4189,7 +4199,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected final void onStep(final AiBoss boss) {
             super.onStep(boss);
             if ((boss.shootTimer <= 0) && (boss.v > 0) && (boss.v < 5)) {
-                boss.shootTimer = 20;
+                boss.startAttacking(20);
             }
         }
     }
@@ -4254,8 +4264,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         @Override
         protected final int initTimer(final AiBoss boss) {
             boss.prf.shootMode = Player.SHOOT_RAPID;
-            boss.shootTimer = 16;
-            boss.shoot();
+            boss.startAttacking(16);
             return 22;
         }
         

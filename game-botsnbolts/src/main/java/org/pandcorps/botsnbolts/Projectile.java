@@ -140,7 +140,7 @@ public class Projectile extends Pandy implements Collidable, AllOobListener, Spe
         super.onDestroy();
     }
     
-    public final static class Bomb extends Panctor implements StepListener {
+    public static class Bomb extends Panctor implements StepListener {
         private final Player src;
         private int timer = 30;
         
@@ -157,9 +157,13 @@ public class Projectile extends Pandy implements Collidable, AllOobListener, Spe
         public final void onStep(final StepEvent event) {
             timer--;
             if (timer <= 0) {
-                new Explosion(this);
+                newExplosion();
                 destroy();
             }
+        }
+        
+        protected void newExplosion() {
+            new Explosion(this);
         }
     }
     

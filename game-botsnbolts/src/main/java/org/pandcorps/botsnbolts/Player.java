@@ -397,6 +397,10 @@ public class Player extends Chr implements Warpable {
         new Projectile(this, vx, vy, power);
     }
     
+    protected void newBomb() {
+        new Bomb(this);
+    }
+    
     private final void afterShoot(final long clock) {
         lastShot = clock;
         lastShotByAnyPlayer = clock;
@@ -2583,7 +2587,7 @@ public class Player extends Chr implements Warpable {
         
         @Override
         protected final void createProjectile(final Player player) {
-            new Bomb(player);
+            player.newBomb();
         }
     };
     
