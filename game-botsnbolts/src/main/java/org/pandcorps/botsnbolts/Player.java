@@ -1161,10 +1161,14 @@ public class Player extends Chr implements Warpable {
         }
     }
     
-    private final void onGroundedBall() {
+    private final boolean isCrouching() {
         final Panmage[] crouch = pi.basicSet.crouch;
         final Pansplay display = getCurrentDisplay();
-        if ((display == crouch[0]) || (display == crouch[1])) {
+        return (display == crouch[0]) || (display == crouch[1]);
+    }
+    
+    private final void onGroundedBall() {
+        if (isCrouching()) {
             return;
         }
         changeView(pi.ball[runIndex]);
@@ -1889,13 +1893,23 @@ public class Player extends Chr implements Warpable {
         protected final void onShootEnd(final Player player) {
         }
         
+        private final boolean isCrouching(final Player player) {
+            return player.isCrouching() && player.isGrounded();
+        }
+        
         @Override
         protected final void onRight(final Player player) {
+            if (isCrouching(player)) {
+                return;
+            }
             player.onRightNormal();
         }
         
         @Override
         protected final void onLeft(final Player player) {
+            if (isCrouching(player)) {
+                return;
+            }
             player.onLeftNormal();
         }
         
