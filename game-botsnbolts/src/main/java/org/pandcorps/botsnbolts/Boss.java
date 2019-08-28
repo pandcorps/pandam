@@ -3837,6 +3837,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 }
             }
             nextHandler = null;
+            shootTimer = 0;
             extra = 0;
             turnTowardPlayer();
             prf.shootMode = SHOOT_NORMAL;
@@ -3995,10 +3996,11 @@ public abstract class Boss extends Enemy implements SpecBoss {
     protected final static class Volatile2 extends AiBoss {
         protected Volatile2(final int x, final int y) {
             super(BotsnBoltsGame.volatileImages, x, y);
-            handlers.add(new RapidAttackRunHandler());
-            handlers.add(new SpreadAttackJumpHandler());
+            //handlers.add(new SpreadAttackRunHandler());
             //handlers.add(new ChargeAttackJumpsHandler());
-            //handlers.add(new BombRollHandler());
+            //handlers.add(new RapidAttackHandler()); // If he has a turret attack, will be similar to this; then move this to Final
+            handlers.add(new RapidAttackJumpHandler());
+            handlers.add(new BombRollHandler());
         }
         
         @Override
@@ -4060,7 +4062,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
     
     private static class RunHandler extends AiHandler {
         @Override
-        protected final void onStep(final AiBoss boss) {
+        protected void onStep(final AiBoss boss) {
             boss.moveX();
             onRun(boss);
         }
@@ -4091,8 +4093,12 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         protected final void startAttack(final AiBoss boss) {
-            boss.shootTimer = 16;
+            boss.shootTimer = initShootTimer();
             attack(boss);
+        }
+        
+        protected int initShootTimer() {
+            return 16;
         }
         
         protected void attack(final AiBoss boss) {
@@ -4104,6 +4110,11 @@ public abstract class Boss extends Enemy implements SpecBoss {
         @Override
         protected final ShootMode getShootMode() {
             return Player.SHOOT_SPREAD;
+        }
+        
+        @Override
+        protected final int initShootTimer() {
+            return 32;
         }
     }
     
@@ -4134,12 +4145,22 @@ public abstract class Boss extends Enemy implements SpecBoss {
     }
     
     private final static class BombRollHandler extends RollHandler {
-        //TODO
+        @Override
+        protected final void onStep(final AiBoss boss) {
+            super.onStep(boss);
+            if (boss.extra <= 0) {
+                boss.extra = 25;
+            }
+            boss.extra--;
+            if (boss.extra == 5) {
+                boss.shoot();
+            }
+        }
     }
     
     private static class JumpHandler extends AiHandler {
         @Override
-        protected final void onStep(final AiBoss boss) {
+        protected void onStep(final AiBoss boss) {
             boss.jump();
         }
     }
@@ -4155,6 +4176,21 @@ public abstract class Boss extends Enemy implements SpecBoss {
         @Override
         protected final void init(final AiBoss boss) {
             boss.prf.shootMode = Player.SHOOT_SPREAD;
+        }
+    }
+    
+    private static class RapidAttackJumpHandler extends JumpHandler {
+        @Override
+        protected final void init(final AiBoss boss) {
+            boss.prf.shootMode = Player.SHOOT_RAPID;
+        }
+        
+        @Override
+        protected final void onStep(final AiBoss boss) {
+            super.onStep(boss);
+            if ((boss.shootTimer <= 0) && (boss.v > 0) && (boss.v < 5)) {
+                boss.shootTimer = 20;
+            }
         }
     }
     
@@ -4211,6 +4247,21 @@ public abstract class Boss extends Enemy implements SpecBoss {
             if (boss.waitTimer == (Player.SHOOT_TIME + 1)) {
                 boss.attack();
             }
+        }
+    }
+    
+    private final static class RapidAttackHandler extends AiHandler {
+        @Override
+        protected final int initTimer(final AiBoss boss) {
+            boss.prf.shootMode = Player.SHOOT_RAPID;
+            boss.shootTimer = 16;
+            boss.shoot();
+            return 22;
+        }
+        
+        @Override
+        protected final void onStep(final AiBoss boss) {
+            // AiBoss handles everything based on shootTimer
         }
     }
     
@@ -5552,9 +5603,9 @@ if (health > 1) health = 1;
         
         protected Final(final int x, final int y) {
             super(BotsnBoltsGame.finalImages, x, y);
-            handlers.add(new SpreadAttackRunHandler());
-            handlers.add(new RapidAttackRunHandler());
+            handlers.add(new SpreadAttackJumpHandler());
             handlers.add(new ChargeAttackJumpsHandler());
+            handlers.add(new RapidAttackRunHandler());
             handlers.add(new GrappleHandler());
         }
         
