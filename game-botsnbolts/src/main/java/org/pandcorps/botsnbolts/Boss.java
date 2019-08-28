@@ -28,6 +28,7 @@ import org.pandcorps.botsnbolts.Chr.*;
 import org.pandcorps.botsnbolts.Extra.*;
 import org.pandcorps.botsnbolts.Player.*;
 import org.pandcorps.botsnbolts.PowerUp.*;
+import org.pandcorps.botsnbolts.Profile.*;
 import org.pandcorps.core.*;
 import org.pandcorps.core.seg.*;
 import org.pandcorps.game.actor.*;
@@ -3724,20 +3725,25 @@ public abstract class Boss extends Enemy implements SpecBoss {
     }
     
     protected final static PlayerContext newPlayerContext(final PlayerImages pi) {
-        return new PlayerContext(new Profile(true), pi);
+        final Profile prf = new Profile(true);
+        prf.autoCharge = true;
+        return new PlayerContext(prf, pi);
     }
     
     protected abstract static class AiBoss extends Player implements SpecBoss, RoomAddListener {
         protected final List<AiHandler> handlers = new ArrayList<AiHandler>();
         protected AiHandler handler = null;
+        protected AiHandler nextHandler = null;
         protected boolean defeated = false;
         protected boolean needMirror = false;
         protected int waitTimer = 0;
         protected int shootTimer = 0;
         protected int extra = 0;
+        private float lastV = 0;
         
         protected AiBoss(final PlayerImages pi, final int x, final int y) {
             super(newPlayerContext(pi));
+            addUpgrades(prf.upgrades);
             final Panple pos = getPosition();
             BotsnBoltsGame.tm.savePositionXy(pos, x, y);
             pos.setZ(BotsnBoltsGame.DEPTH_ENEMY);
@@ -3745,6 +3751,9 @@ public abstract class Boss extends Enemy implements SpecBoss {
             BotsnBoltsGame.addActor(this);
             ai = new BossAi();
             health = 0;
+        }
+        
+        protected void addUpgrades(final Set<Upgrade> upgrades) {
         }
         
         @Override
@@ -3759,7 +3768,9 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         protected final void onStepAi() {
-            if (needMirror) {
+            if (stateHandler == WARP_HANDLER) {
+                return;
+            } else if (needMirror) {
                 mirror();
                 needMirror = false;
                 return;
@@ -3770,9 +3781,15 @@ public abstract class Boss extends Enemy implements SpecBoss {
                     releaseShoot();
                 }
             }
-            if (handler == null) {
+            if (nextHandler != null) {
+                startHandler(nextHandler);
+            } if (handler == null) {
                 startHandler(rand(handlers));
             }
+            if ((v <= 0) && (lastV > 0)) {
+                handler.onJumpPeak(this);
+            }
+            lastV = v;
             handler.onStep(this);
             if (!isIndefinite()) {
                 waitTimer--;
@@ -3813,8 +3830,17 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         protected final void startHandler(final AiHandler handler) {
+            if (this.handler != null) {
+                if (!this.handler.finish(this)) {
+                    nextHandler = handler;
+                    return;
+                }
+            }
+            nextHandler = null;
+            extra = 0;
             turnTowardPlayer();
             prf.shootMode = SHOOT_NORMAL;
+            prf.jumpMode = JUMP_NORMAL;
             this.handler = handler;
             if (handler != null) {
                 handler.init(this);
@@ -3859,6 +3885,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         @Override
         protected final void onWall(final byte xResult) {
             super.onWall(xResult);
+            needMirror = true;
             startStill();
         }
         
@@ -3953,9 +3980,9 @@ public abstract class Boss extends Enemy implements SpecBoss {
     protected final static class Volatile extends AiBoss {
         protected Volatile(final int x, final int y) {
             super(BotsnBoltsGame.volatileImages, x, y);
-            //handlers.add(new RunHandler());
+            //handlers.add(new AttackRunHandler());
             handlers.add(new AttackHandler());
-            //handlers.add(new JumpHandler());
+            //handlers.add(new AttackJumpHandler());
             handlers.add(new JumpsHandler());
         }
         
@@ -3968,10 +3995,18 @@ public abstract class Boss extends Enemy implements SpecBoss {
     protected final static class Volatile2 extends AiBoss {
         protected Volatile2(final int x, final int y) {
             super(BotsnBoltsGame.volatileImages, x, y);
-            //handlers.add(new RunHandler());
             handlers.add(new RapidAttackRunHandler());
-            //handlers.add(new JumpHandler());
-            handlers.add(new JumpsHandler());
+            handlers.add(new SpreadAttackJumpHandler());
+            handlers.add(new ChargeAttackJumpsHandler());
+            handlers.add(new RollHandler());
+        }
+        
+        @Override
+        protected final void addUpgrades(final Set<Upgrade> upgrades) {
+            upgrades.add(Profile.UPGRADE_SPREAD);
+            upgrades.add(Profile.UPGRADE_CHARGE);
+            upgrades.add(Profile.UPGRADE_RAPID);
+            upgrades.add(Profile.UPGRADE_BALL);
         }
         
         @Override
@@ -3997,7 +4032,14 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         protected abstract void onStep(final AiBoss boss);
         
+        protected void onJumpPeak(final AiBoss boss) {
+        }
+        
         protected boolean isDoneWhenLanded(final AiBoss boss) {
+            return true;
+        }
+        
+        protected boolean finish(final AiBoss boss) {
             return true;
         }
     }
@@ -4022,6 +4064,14 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
     }
     
+    private final static class AttackRunHandler extends RunHandler {
+        //TODO
+    }
+    
+    private final static class SpreadAttackRunHandler extends RunHandler {
+        //TODO
+    }
+    
     private final static class RapidAttackRunHandler extends RunHandler {
         @Override
         protected final void init(final AiBoss boss) {
@@ -4031,16 +4081,51 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
     }
     
-    private final static class JumpHandler extends AiHandler {
+    private static class RollHandler extends RunHandler {
+        @Override
+        protected final void init(final AiBoss boss) {
+            boss.prf.jumpMode = Player.JUMP_BALL;
+            boss.startBall();
+        }
+        
+        @Override
+        protected final boolean finish(final AiBoss boss) {
+            boss.endBall();
+            return true;
+        }
+    }
+    
+    private final static class BombRollHandler extends RollHandler {
+        //TODO
+    }
+    
+    private static class JumpHandler extends AiHandler {
         @Override
         protected final void onStep(final AiBoss boss) {
             boss.jump();
         }
     }
     
-    private final static class JumpsHandler extends AiHandler {
+    private static class AttackJumpHandler extends JumpHandler {
+        @Override
+        protected final void onJumpPeak(final AiBoss boss) {
+            boss.attack();
+        }
+    }
+    
+    private final static class SpreadAttackJumpHandler extends AttackJumpHandler {
+        @Override
+        protected final void init(final AiBoss boss) {
+            boss.prf.shootMode = Player.SHOOT_SPREAD;
+        }
+    }
+    
+    private static class JumpsHandler extends AiHandler {
         @Override
         protected final void onStep(final AiBoss boss) {
+            if (boss.nextHandler != null) {
+                return;
+            }
             boss.moveX();
             if (boss.extra > 0) {
                 boss.extra--;
@@ -4059,6 +4144,24 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
     }
     
+    private final static class ChargeAttackJumpsHandler extends JumpsHandler {
+        @Override
+        protected final void init(final AiBoss boss) {
+            boss.prf.shootMode = Player.SHOOT_CHARGE;
+        }
+        
+        @Override
+        protected final boolean finish(final AiBoss boss) {
+            if (boss.isFacingPlayer()) {
+                boss.attack(); // AiBoss uses autoCharge, so don't need to start charging; just attack when ready
+                return true;
+            } else {
+                boss.turnTowardPlayer();
+                return false;
+            }
+        }
+    }
+    
     private final static class AttackHandler extends AiHandler {
         @Override
         protected final int initTimer(final AiBoss boss) {
@@ -4070,6 +4173,13 @@ public abstract class Boss extends Enemy implements SpecBoss {
             if (boss.waitTimer == (Player.SHOOT_TIME + 1)) {
                 boss.attack();
             }
+        }
+    }
+    
+    private final static class GrappleHandler extends AiHandler {
+        @Override
+        protected final void onStep(final AiBoss boss) {
+            //TODO
         }
     }
     
@@ -5404,8 +5514,19 @@ if (health > 1) health = 1;
         
         protected Final(final int x, final int y) {
             super(BotsnBoltsGame.finalImages, x, y);
+            handlers.add(new SpreadAttackRunHandler());
             handlers.add(new RapidAttackRunHandler());
-            handlers.add(new JumpsHandler());
+            handlers.add(new ChargeAttackJumpsHandler());
+            handlers.add(new BombRollHandler());
+        }
+        
+        @Override
+        protected final void addUpgrades(final Set<Upgrade> upgrades) {
+            upgrades.add(Profile.UPGRADE_SPREAD);
+            upgrades.add(Profile.UPGRADE_CHARGE);
+            upgrades.add(Profile.UPGRADE_RAPID);
+            upgrades.add(Profile.UPGRADE_BALL);
+            upgrades.add(Profile.UPGRADE_BOMB);
         }
         
         @Override

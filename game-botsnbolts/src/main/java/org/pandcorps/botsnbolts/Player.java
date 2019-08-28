@@ -307,7 +307,7 @@ public class Player extends Chr implements Warpable {
         }
     }
     
-    private final boolean isFree() {
+    protected final boolean isFree() {
         final boolean free = active && !scripted && !(isHurt() || isFrozen() || Boss.dropping || RoomChanger.isChanging() || RoomLoader.isBossDoorClosing() || Pangine.getEngine().isPaused());
         if (free) {
             onFree();
@@ -365,7 +365,7 @@ public class Player extends Chr implements Warpable {
         lastJump = Pangine.getEngine().getClock();
     }
     
-    private final void releaseJump() {
+    protected final void releaseJump() {
         if ((v > 0) && (Pangine.getEngine().getClock() > (lastLift + 1))) {
             v = 0;
         }
@@ -1162,6 +1162,11 @@ public class Player extends Chr implements Warpable {
     }
     
     private final void onGroundedBall() {
+        final Panmage[] crouch = pi.basicSet.crouch;
+        final Pansplay display = getCurrentDisplay();
+        if ((display == crouch[0]) || (display == crouch[1])) {
+            return;
+        }
         changeView(pi.ball[runIndex]);
         if (hv != 0) {
             if (runTimer < 1) {
@@ -1189,7 +1194,7 @@ public class Player extends Chr implements Warpable {
         return isUpgradeAvailable(Profile.UPGRADE_BALL);
     }
     
-    private final void startBall() {
+    protected final void startBall() {
         if (!isBallAvailable()) {
             return;
         }
@@ -1206,7 +1211,7 @@ public class Player extends Chr implements Warpable {
         wallTimer = 0;
     }
     
-    private final void endBall() {
+    protected final void endBall() {
         clearRun();
         stateHandler = NORMAL_HANDLER;
         setH(PLAYER_H);
