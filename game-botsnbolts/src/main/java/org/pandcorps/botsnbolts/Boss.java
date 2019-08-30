@@ -4276,8 +4276,37 @@ public abstract class Boss extends Enemy implements SpecBoss {
     
     private final static class GrappleHandler extends AiHandler {
         @Override
+        protected final void init(final AiBoss boss) {
+            boss.prf.jumpMode = Player.JUMP_GRAPPLING_HOOK;
+            boss.jump();
+        }
+        
+        @Override
         protected final void onStep(final AiBoss boss) {
-            //TODO
+            boss.moveX();
+            boss.extra++;
+            if (boss.stateHandler == Player.GRAPPLING_HANDLER) {
+                onStepGrappling(boss);
+            } else {
+                onStepNormal(boss);
+            }
+        }
+        
+        private final void onStepNormal(final AiBoss boss) {
+            if (boss.extra == 20) {
+                boss.releaseJump();
+                boss.jump();
+                boss.extra = 0;
+            }
+        }
+        
+        private final void onStepGrappling(final AiBoss boss) {
+            if (boss.extra == 1) {
+                boss.releaseJump();
+            } else if (boss.extra == 20) {
+                boss.jump();
+                boss.extra = 0;
+            }
         }
     }
     
@@ -5230,6 +5259,7 @@ if (health > 1) health = 1;
         private final static byte STATE_BLAST = 5;
         private final static byte STATE_FLY_U = 6;
         private final static byte STATE_FLY_W = 7;
+        private final static byte STATE_DEFEATED = 8;
         private final static int TRACTOR_BEAM_TOP = 11;
         private final static int SPEED = 4;
         private final static Panmage[] tractorBeams = new Panmage[3];
@@ -5239,6 +5269,8 @@ if (health > 1) health = 1;
         private int tractorBeamX = 0;
         private int tractorBeamSize = 0;
         private boolean edge = false;
+        private boolean readyForFinalBattle = false;
+        private int floorIndex = 0;
         
         @Override
         protected final boolean pickState() {
@@ -5344,6 +5376,10 @@ if (health > 1) health = 1;
             pickFlyDirection();
             startStateIndefinite(STATE_FLY_W);
         }
+        
+        private final void startDefeated() {
+            startStateIndefinite(STATE_DEFEATED);
+        }
 
         @Override
         protected final boolean continueState() {
@@ -5362,6 +5398,7 @@ if (health > 1) health = 1;
         
         @Override
         protected final boolean onWaiting() {
+if (health > 1) health = 1;
             updateLastProjectile();
             switch (state) {
                 case STATE_INTRO_RISE :
@@ -5384,6 +5421,9 @@ if (health > 1) health = 1;
                     break;
                 case STATE_FLY_W :
                     onFlyingW();
+                    break;
+                case STATE_DEFEATED :
+                    onDefeated();
                     break;
             }
             return true;
@@ -5499,6 +5539,52 @@ if (health > 1) health = 1;
             }
         }
         
+        private final void onDefeated() {
+            final Panple pos = getPosition();
+            final float dstX = 334, dstY = 49;
+            float x = pos.getX(), y = pos.getY();
+            boolean readyX = false, readyY = false;
+            if (Math.abs(x - dstX) < 3) {
+                x = dstX;
+                readyX = true;
+            } else if (x < dstX) {
+                x += 3;
+            } else if (x > dstX) {
+                x -= 3;
+            }
+            if (Math.abs(y - dstY) < 3) {
+                y = dstY;
+                readyY = true;
+            } else if (y < dstY) {
+                y += 3;
+            } else if (y > dstY) {
+                y -= 3;
+            }
+            pos.set(x, y);
+            if (readyX && readyY && readyForFinalBattle) {
+                if (floorIndex == 23) {
+                    new Final(20, 3);
+                    destroy();
+                } else if (floorIndex == 22) {
+                    final TileMap tm = BotsnBoltsGame.tm;
+                    for (int i = 1; i < 23; i++) {
+                        for (int j = 0; j < 3; j++) {
+                            tm.setBehavior(i, j, Tile.BEHAVIOR_OPEN);
+                        }
+                    }
+                } else if ((floorIndex % 2) == 1) {
+                    final TileMap tm = BotsnBoltsGame.tm;
+                    final int fi = floorIndex / 2;
+                    final int xLeft = 11 - fi, xRight = 12 + fi;
+                    for (int j = 0; j < 3; j++) {
+                        tm.setBackground(xLeft, j, null);
+                        tm.setBackground(xRight, j, null);
+                    }
+                }
+                floorIndex++;
+            }
+        }
+        
         private final void setBehavior(final byte b) {
             final int y = TRACTOR_BEAM_TOP - tractorBeamSize;
             setBehavior(tractorBeamX, y, b);
@@ -5563,8 +5649,46 @@ if (health > 1) health = 1;
         }
         
         @Override
+        public final boolean isHarmful() {
+            return state != STATE_DEFEATED;
+        }
+        
+        @Override
         protected final void onBossDefeat() {
+            if (state == STATE_DEFEATED) {
+                return;
+            }
             clearTractorBeam();
+            startDefeated();
+            setPlayerActive(false);
+        }
+        
+        @Override
+        protected final boolean isDefeatOrbNeeded() {
+            return false;
+        }
+        
+        @Override
+        protected PowerUp pickAward(final Player player) {
+            return (state == STATE_DEFEATED) ? null : new VictoryDisk(player, this);
+        }
+        
+        @Override
+        public final void onAward(final Player player) {
+            player.startScript(new LeftAi(32.0f), new Runnable() {
+                @Override public final void run() {
+                    readyForFinalBattle = true;
+                }});
+        }
+        
+        @Override
+        protected final float getDropX() {
+            return getPlayerX();
+        }
+        
+        @Override
+        public final boolean isDestroyedAfterDefeat() {
+            return false;
         }
         
         @Override
