@@ -5317,6 +5317,8 @@ if (health > 1) health = 1;
         private final static byte STATE_CEILING_CLOSE = 12;
         private final static int TRACTOR_BEAM_TOP = 11;
         private final static int SPEED = 4;
+        private final static int FINAL_BOSS_X = 22;
+        private final static int FINAL_BOSS_Y = 3;
         private final static Panmage[] tractorBeams = new Panmage[3];
         private int introCount = 0;
         private float maxY;
@@ -5612,7 +5614,7 @@ if (health > 1) health = 1;
         
         private final void onDefeated() {
             final Panple pos = getPosition();
-            final float dstX = 334, dstY = 49;
+            final float dstX = 352, dstY = 34;
             float x = pos.getX(), y = pos.getY();
             boolean readyX = false, readyY = false;
             if (Math.abs(x - dstX) < 3) {
@@ -5644,14 +5646,14 @@ if (health > 1) health = 1;
             for (int i = 0; i < 10; i++) {
                 burst();
             }
-            finalActor = Final.newFinalActor(20, 3, true);
+            finalActor = Final.newFinalActor(FINAL_BOSS_X, FINAL_BOSS_Y, true);
             setVisible(false);
         }
         
         private final void startArmor() {
             startStateIndefinite(STATE_ARMOR);
             healthMeter.destroy();
-            finalBoss = new Final(20, 3);
+            finalBoss = new Final(FINAL_BOSS_X, FINAL_BOSS_Y);
             //TODO Throw coat
             finalBoss.startHandler(new JumpAndWaitHandler(new Runnable() {
                 @Override public final void run() {
