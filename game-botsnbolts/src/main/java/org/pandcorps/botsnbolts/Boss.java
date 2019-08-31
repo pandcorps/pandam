@@ -4353,9 +4353,10 @@ public abstract class Boss extends Enemy implements SpecBoss {
         private final void onStepGrappling(final AiBoss boss) {
             if (boss.extra == 1) {
                 boss.releaseJump();
-            } else if (boss.extra == 20) {
+            } else if (boss.extra == 39) {
                 boss.jump();
-                boss.extra = 0;
+                boss.extra = 19;
+                boss.needMirror = true;
             }
         }
     }
@@ -5883,8 +5884,8 @@ if (health > 1) health = 1;
         protected Final(final int x, final int y) {
             super(BotsnBoltsGame.finalImages, x, y);
             handlers.add(new SpreadAttackJumpHandler());
-            handlers.add(new ChargeAttackJumpsHandler());
-            handlers.add(new RapidAttackRunHandler());
+            //handlers.add(new ChargeAttackJumpsHandler());
+            //handlers.add(new RapidAttackRunHandler());
             handlers.add(new GrappleHandler());
         }
         
