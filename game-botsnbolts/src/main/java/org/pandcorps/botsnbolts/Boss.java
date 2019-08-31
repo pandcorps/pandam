@@ -58,6 +58,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
     private static int prevRand = -1;
     private static int prevPrevRand = -1;
     private final boolean launchPossible;
+    protected static AiBoss aiBoss = null;
     
     protected Boss(final int offX, final int h, final Segment seg) {
         super(offX, h, seg, 0);
@@ -500,6 +501,13 @@ public abstract class Boss extends Enemy implements SpecBoss {
     protected final static float getPlayerX() {
         final Player player = getPlayer();
         return (player == null) ? 192 : player.getPosition().getX();
+    }
+    
+    protected final static void clearPlayerExtras() {
+        final Player player = getPlayer();
+        if (player != null) {
+            Panctor.destroy(player.spring);
+        }
     }
     
     protected final static void addActor(final Panctor actor) {
@@ -3751,6 +3759,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
             BotsnBoltsGame.addActor(this);
             ai = new BossAi();
             health = 0;
+            aiBoss = this;
         }
         
         protected void addUpgrades(final Set<Upgrade> upgrades) {
@@ -3906,6 +3915,11 @@ public abstract class Boss extends Enemy implements SpecBoss {
             if (isIndefinite() && handler.isDoneWhenLanded(this)) {
                 startStill();
             }
+        }
+        
+        @Override
+        protected final boolean onFell() {
+            return false;
         }
         
         @Override
@@ -4171,6 +4185,42 @@ public abstract class Boss extends Enemy implements SpecBoss {
     private static class JumpHandler extends AiHandler {
         @Override
         protected void onStep(final AiBoss boss) {
+            boss.jump();
+        }
+    }
+    
+    private static class WaitHandler extends AiHandler {
+        private final Runnable stepHandler;
+        private final Runnable landedHandler;
+        
+        private WaitHandler(final Runnable stepHandler, final Runnable landedHandler) {
+            this.stepHandler = stepHandler;
+            this.landedHandler = landedHandler;
+        }
+        
+        @Override
+        protected void onStep(final AiBoss boss) {
+            if (stepHandler != null) {
+                stepHandler.run();
+            }
+        }
+        
+        @Override
+        protected final boolean isDoneWhenLanded(final AiBoss boss) {
+            if (landedHandler != null) {
+                landedHandler.run();
+            }
+            return false;
+        }
+    }
+    
+    private static class JumpAndWaitHandler extends WaitHandler {
+        private JumpAndWaitHandler(final Runnable landedHandler) {
+            super(null, landedHandler);
+        }
+        
+        @Override
+        protected void init(final AiBoss boss) {
             boss.jump();
         }
     }
@@ -4880,7 +4930,7 @@ if (health > 1) health = 1;
             }
         }
         
-        private final void burst(final float x, final float y) {
+        private final static void burst(final float x, final float y) {
             final Burst burst = new Burst(BotsnBoltsGame.finalImages.burst);
             burst.getPosition().set(x, y, BotsnBoltsGame.DEPTH_BURST);
             addActor(burst);
@@ -5238,6 +5288,7 @@ if (health > 1) health = 1;
             saucer.setMirror(isMirror());
             addActor(saucer);
             destroy();
+            clearPlayerExtras();
         }
         
         @Override
@@ -5260,6 +5311,10 @@ if (health > 1) health = 1;
         private final static byte STATE_FLY_U = 6;
         private final static byte STATE_FLY_W = 7;
         private final static byte STATE_DEFEATED = 8;
+        private final static byte STATE_COAT = 9;
+        private final static byte STATE_ARMOR = 10;
+        private final static byte STATE_FLOOR_OPEN = 11;
+        private final static byte STATE_CEILING_CLOSE = 12;
         private final static int TRACTOR_BEAM_TOP = 11;
         private final static int SPEED = 4;
         private final static Panmage[] tractorBeams = new Panmage[3];
@@ -5271,6 +5326,8 @@ if (health > 1) health = 1;
         private boolean edge = false;
         private boolean readyForFinalBattle = false;
         private int floorIndex = 0;
+        private Panctor finalActor = null;
+        private Final finalBoss = null;
         
         @Override
         protected final boolean pickState() {
@@ -5379,6 +5436,7 @@ if (health > 1) health = 1;
         
         private final void startDefeated() {
             startStateIndefinite(STATE_DEFEATED);
+            clearPlayerExtras();
         }
 
         @Override
@@ -5389,6 +5447,9 @@ if (health > 1) health = 1;
                     break;
                 case STATE_INTRO_DESTROY :
                     setPlayerActive(true);
+                    break;
+                case STATE_COAT :
+                    startArmor();
                     break;
                 default :
                     startStill();
@@ -5424,6 +5485,16 @@ if (health > 1) health = 1;
                     break;
                 case STATE_DEFEATED :
                     onDefeated();
+                    break;
+                case STATE_COAT :
+                    break;
+                case STATE_ARMOR :
+                    break;
+                case STATE_FLOOR_OPEN :
+                    onFloorOpen();
+                    break;
+                case STATE_CEILING_CLOSE :
+                    onCeilingClose();
                     break;
             }
             return true;
@@ -5562,27 +5633,100 @@ if (health > 1) health = 1;
             }
             pos.set(x, y);
             if (readyX && readyY && readyForFinalBattle) {
-                if (floorIndex == 23) {
-                    new Final(20, 3);
-                    destroy();
-                } else if (floorIndex == 22) {
-                    final TileMap tm = BotsnBoltsGame.tm;
-                    for (int i = 1; i < 23; i++) {
-                        for (int j = 0; j < 3; j++) {
-                            tm.setBehavior(i, j, Tile.BEHAVIOR_OPEN);
-                        }
+                startCoat();
+            } else {
+                burst();
+            }
+        }
+        
+        private final void startCoat() {
+            startState(STATE_COAT, 30);
+            for (int i = 0; i < 10; i++) {
+                burst();
+            }
+            finalActor = Final.newFinalActor(20, 3, true);
+            setVisible(false);
+        }
+        
+        private final void startArmor() {
+            startStateIndefinite(STATE_ARMOR);
+            healthMeter.destroy();
+            finalBoss = new Final(20, 3);
+            //TODO Throw coat
+            finalBoss.startHandler(new JumpAndWaitHandler(new Runnable() {
+                @Override public final void run() {
+                    startFloorOpen();
+                }}));
+            finalActor.destroy();
+        }
+        
+        protected final void startFloorOpen() {
+            finalBoss.startHandler(new WaitHandler(
+                new Runnable() {
+                    @Override final public void run() {
+                        onCeilingClose();
+                    }},
+                new Runnable() {
+                    @Override final public void run() {
+                        startCeilingClose();
                     }
-                } else if ((floorIndex % 2) == 1) {
-                    final TileMap tm = BotsnBoltsGame.tm;
-                    final int fi = floorIndex / 2;
-                    final int xLeft = 11 - fi, xRight = 12 + fi;
+                }));
+            startStateIndefinite(STATE_FLOOR_OPEN);
+        }
+        
+        private final void onFloorOpen() {
+            if (floorIndex == 22) {
+                destroy();
+                final TileMap tm = BotsnBoltsGame.tm;
+                for (int i = 1; i < 23; i++) {
                     for (int j = 0; j < 3; j++) {
-                        tm.setBackground(xLeft, j, null);
-                        tm.setBackground(xRight, j, null);
+                        tm.setBehavior(i, j, Tile.BEHAVIOR_OPEN);
                     }
                 }
-                floorIndex++;
+            } else if ((floorIndex % 2) == 1) {
+                final TileMap tm = BotsnBoltsGame.tm;
+                final int fi = floorIndex / 2;
+                final int xLeft = 11 - fi, xRight = 12 + fi;
+                for (int j = 0; j < 3; j++) {
+                    tm.setBackground(xLeft, j, null);
+                    tm.setBackground(xRight, j, null);
+                }
             }
+            floorIndex++;
+        }
+        
+        private final void startCeilingClose() {
+            floorIndex = 0;
+            startStateIndefinite(STATE_CEILING_CLOSE);
+        }
+        
+        private final void onCeilingClose() {
+            if (state != STATE_CEILING_CLOSE) {
+                return;
+            } else if (floorIndex == 22) {
+                startFinalBattle();
+            } else if ((floorIndex % 2) == 1) {
+                final TileMap tm = BotsnBoltsGame.tm;
+                final int fi = floorIndex / 2;
+                final int xLeft = 1 + fi, xRight = 22 - fi;
+                final Tile tile = RoomLoader.getTile(((fi % 5) == 3) ? 'b' : '@');
+                final boolean shadow = (xLeft % 2) == 0;
+                tm.setTile(xLeft, 13, tile);
+                tm.setTile(xRight, 13, tile);
+                tm.setTile(xLeft, 12, RoomLoader.getTile(shadow ? 'D' : 'd'));
+                tm.setTile(xRight, 12, RoomLoader.getTile(shadow ? 'd' : 'D'));
+            }
+            floorIndex++;
+        }
+        
+        private final void startFinalBattle() {
+            finalBoss.health = HudMeter.MAX_VALUE;
+            finalBoss.startStill();
+        }
+        
+        private final void burst() {
+            final Panple pos = getPosition();
+            FinalWagon.burst(pos.getX() + Mathtil.randi(-31, 31), pos.getY() + Mathtil.randi(1, 40));
         }
         
         private final void setBehavior(final byte b) {
@@ -5757,6 +5901,17 @@ if (health > 1) health = 1;
         
         private final static Panmage getCoat() {
             return (coat = getImage(coat, "final/FinalCoat", BotsnBoltsGame.og, null, null));
+        }
+        
+        protected final static Panctor newFinalActor(final int x, final int y, final boolean mirror) {
+            final Panctor actor = new Panctor();
+            actor.setView(getCoat());
+            final Panple pos = actor.getPosition();
+            BotsnBoltsGame.tm.savePositionXy(pos, x, y);
+            pos.setZ(BotsnBoltsGame.DEPTH_ENEMY);
+            actor.setMirror(mirror);
+            BotsnBoltsGame.addActor(actor);
+            return actor;
         }
     }
     

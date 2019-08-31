@@ -117,7 +117,7 @@ public class Player extends Chr implements Warpable {
     private boolean grapplingRetractAllowed = false;
     private boolean grapplingAllowed = true;
     private final ImplPanple grapplingPosition = new ImplPanple();
-    private Spring spring = null;
+    protected Spring spring = null;
     protected Carrier carrier = null;
     private Wrapper wrapper = null;
     private int ladderColumn = -1;
@@ -1477,7 +1477,7 @@ public class Player extends Chr implements Warpable {
     }
     
     @Override
-    protected final boolean onFell() {
+    protected boolean onFell() {
         if (changeRoom(0, -1)) {
             return true;
         } else if ((availableRescues > 0) && (safeX != NULL_COORD)) {
@@ -1579,6 +1579,9 @@ public class Player extends Chr implements Warpable {
         final List<Panctor> actorsToKeep = new ArrayList<Panctor>();
         actorsToKeep.add(this);
         actorsToKeep.add(BotsnBoltsGame.tm);
+        if (!Panctor.isDestroyed(Boss.aiBoss) && (Boss.aiBoss.getLayer() == getLayer())) {
+            actorsToKeep.add(Boss.aiBoss);
+        }
         Coltil.addIfValued(actorsToKeep, boltDoor); // Keep Player and old TileMap while scrolling
         final List<Panctor> actorsToDestroy = new ArrayList<Panctor>();
         actorsToDestroy.add(BotsnBoltsGame.tm);
