@@ -5939,13 +5939,20 @@ if (health > 1) health = 1;
         
         protected final static Pandy newCoatThrown(final Panctor src) {
             final Pandy coat = new Pandy(gTuple) {
+                private int timer = 1;
                 @Override public final void onStep(final StepEvent event) {
                     super.onStep(event);
-                    changeView(getCoatThrown(((int) (Pangine.getEngine().getClock() % 9)) / 3));
+                    changeView(getCoatThrown(timer / 3));
+                    timer++;
+                    if (timer > 8) {
+                        timer = 0;
+                    }
                 }
             };
+            coat.setView(getCoatThrown(0));
+            coat.setMirror(src.isMirror());
             final Panple pos = coat.getPosition(), srcPos = src.getPosition();
-            pos.set(srcPos.getX() + 3, srcPos.getY(), BotsnBoltsGame.DEPTH_ENEMY_BACK);
+            pos.set(srcPos.getX() + 2, srcPos.getY() - 3, BotsnBoltsGame.DEPTH_ENEMY_BACK);
             coat.getVelocity().set(2, 1);
             BotsnBoltsGame.addActor(coat);
             return coat;
