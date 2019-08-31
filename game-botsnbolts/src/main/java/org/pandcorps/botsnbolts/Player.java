@@ -121,7 +121,7 @@ public class Player extends Chr implements Warpable {
     protected Carrier carrier = null;
     private Wrapper wrapper = null;
     private int ladderColumn = -1;
-    private boolean startRoomNeeded = true;
+    protected boolean startRoomNeeded = true;
     private BotRoom startRoom = null;
     private float startX = NULL_COORD;
     private float startY = NULL_COORD;
@@ -1567,7 +1567,7 @@ public class Player extends Chr implements Warpable {
             return false;
         }
         lastShotByAnyPlayer = NULL_CLOCK;
-        startRoomNeeded = true;
+        startRoomNeeded = true; // Can also be initialized in RoomLoader, but only if a ROM segment is present
         initAvailableRescues();
         safeX = safeY = NULL_COORD;
         final BotRoom room = roomCell.room;
@@ -2313,7 +2313,7 @@ public class Player extends Chr implements Warpable {
     }
     
     protected final static class PlayerImages {
-        private final PlayerImagesSubSet basicSet;
+        protected final PlayerImagesSubSet basicSet;
         private final PlayerImagesSubSet shootSet;
         private final Panmage hurt;
         private final Panmage frozen;
@@ -2406,7 +2406,7 @@ public class Player extends Chr implements Warpable {
     
     protected final static class PlayerImagesSubSet {
         private final Panmage stand;
-        private final Panmage jump;
+        protected final Panmage jump;
         private final Panmage[] run;
         private final Panmage start;
         private final Panmage blink;

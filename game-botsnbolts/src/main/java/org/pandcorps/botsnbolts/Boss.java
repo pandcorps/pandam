@@ -36,6 +36,7 @@ import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.boundary.*;
 import org.pandcorps.pandam.impl.*;
+import org.pandcorps.pandax.*;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.visual.*;
 
@@ -457,7 +458,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         if (isDefeatOrbNeeded()) {
             Player.defeatOrbs(this, BotsnBoltsGame.defeatOrbBoss);
         }
-        if (!isOtherBossPresent()) {
+        if (isDestroyEnemiesNeeded()) {
             destroyEnemies();
         }
         RoomLoader.levelVariables.put(getClass().getSimpleName(), "");
@@ -467,6 +468,11 @@ public abstract class Boss extends Enemy implements SpecBoss {
     }
     
     protected boolean isDefeatOrbNeeded() {
+        return true;
+    }
+    
+    protected boolean isDestroyEnemiesNeeded() {
+        // Might eventually have player fight two bosses simultaneously; might want to return !isOtherBossPresent() then
         return true;
     }
     
@@ -495,6 +501,9 @@ public abstract class Boss extends Enemy implements SpecBoss {
         final Player player = getPlayer();
         if (player != null) {
             player.active = active;
+            if (!active) {
+                player.setVisible(true);
+            }
         }
     }
     
@@ -5655,7 +5664,8 @@ if (health > 1) health = 1;
             startStateIndefinite(STATE_ARMOR);
             healthMeter.destroy();
             finalBoss = new Final(FINAL_BOSS_X, FINAL_BOSS_Y);
-            //TODO Throw coat
+            finalBoss.setView(BotsnBoltsGame.finalImages.basicSet.jump);
+            Final.newCoatThrown(finalActor);
             finalBoss.startHandler(new JumpAndWaitHandler(new Runnable() {
                 @Override public final void run() {
                     startFloorOpen();
@@ -5880,6 +5890,7 @@ if (health > 1) health = 1;
     
     protected final static class Final extends AiBoss {
         private static Panmage coat = null;
+        private final static Panmage[] coatThrown = new Panmage[3];
         
         protected Final(final int x, final int y) {
             super(BotsnBoltsGame.finalImages, x, y);
@@ -5906,6 +5917,15 @@ if (health > 1) health = 1;
             return (coat = getImage(coat, "final/FinalCoat", BotsnBoltsGame.og, null, null));
         }
         
+        private final static Panmage getCoatThrown(final int i) {
+            Panmage img = coatThrown[i];
+            if (img == null) {
+                img = getImage(img, "final/CoatThrown" + (i + 1), BotsnBoltsGame.og, null, null);
+                coatThrown[i] = img;
+            }
+            return img;
+        }
+        
         protected final static Panctor newFinalActor(final int x, final int y, final boolean mirror) {
             final Panctor actor = new Panctor();
             actor.setView(getCoat());
@@ -5915,6 +5935,20 @@ if (health > 1) health = 1;
             actor.setMirror(mirror);
             BotsnBoltsGame.addActor(actor);
             return actor;
+        }
+        
+        protected final static Pandy newCoatThrown(final Panctor src) {
+            final Pandy coat = new Pandy(gTuple) {
+                @Override public final void onStep(final StepEvent event) {
+                    super.onStep(event);
+                    changeView(getCoatThrown(((int) (Pangine.getEngine().getClock() % 9)) / 3));
+                }
+            };
+            final Panple pos = coat.getPosition(), srcPos = src.getPosition();
+            pos.set(srcPos.getX() + 3, srcPos.getY(), BotsnBoltsGame.DEPTH_ENEMY_BACK);
+            coat.getVelocity().set(2, 1);
+            BotsnBoltsGame.addActor(coat);
+            return coat;
         }
     }
     

@@ -28,6 +28,7 @@ import java.util.*;
 import org.pandcorps.botsnbolts.BlockPuzzle.*;
 import org.pandcorps.botsnbolts.Carrier.*;
 import org.pandcorps.botsnbolts.Enemy.*;
+import org.pandcorps.botsnbolts.Player.*;
 import org.pandcorps.botsnbolts.RoomFunction.*;
 import org.pandcorps.botsnbolts.ShootableDoor.*;
 import org.pandcorps.core.*;
@@ -291,6 +292,11 @@ public abstract class RoomLoader {
     
     private final static void rom(final Segment seg) {
         final boolean launchReturn = seg.getBoolean(3, false);
+        setBgColor(seg, 4);
+        final Player p = PlayerContext.getPlayer(BotsnBoltsGame.pc);
+        if (p != null) {
+            p.startRoomNeeded = seg.getBoolean(5, true);
+        }
         if (launchReturn) {
             final String launchReturnPosX = levelVariables.get(Extra.VAR_LAUNCH_RETURN_POS_X);
             if (launchReturnPosX != null) {
@@ -312,7 +318,6 @@ public abstract class RoomLoader {
         if (Chartil.isValued(playerStartMirror)) {
             BotsnBoltsGame.playerStartMirror = Segment.parseBoolean(playerStartMirror);
         }
-        setBgColor(seg, 4);
     }
     
     private final static void anm(final Segment seg) {
