@@ -4014,9 +4014,9 @@ public abstract class Boss extends Enemy implements SpecBoss {
     protected final static class Volatile extends AiBoss {
         protected Volatile(final int x, final int y) {
             super(BotsnBoltsGame.volatileImages, x, y);
-            //handlers.add(new AttackRunHandler());
+            handlers.add(new AttackRunHandler());
             handlers.add(new AttackHandler());
-            //handlers.add(new AttackJumpHandler());
+            handlers.add(new AttackJumpHandler());
             handlers.add(new JumpsHandler());
         }
         
@@ -4029,9 +4029,9 @@ public abstract class Boss extends Enemy implements SpecBoss {
     protected final static class Volatile2 extends AiBoss {
         protected Volatile2(final int x, final int y) {
             super(BotsnBoltsGame.volatileImages, x, y);
-            //handlers.add(new SpreadAttackRunHandler());
-            //handlers.add(new ChargeAttackJumpsHandler());
-            //handlers.add(new RapidAttackHandler()); // If he has a turret attack, will be similar to this; then move this to Final
+            handlers.add(new SpreadAttackRunHandler());
+            handlers.add(new ChargeAttackJumpsHandler());
+            handlers.add(new RapidAttackHandler()); // If he has a turret attack, will be similar to this; then move this to Final
             handlers.add(new RapidAttackJumpHandler());
             handlers.add(new BombRollHandler());
         }
@@ -4573,7 +4573,6 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         @Override
         protected final boolean onWaiting() {
-if (health > 1) health = 1;
             switch (state) {
                 case STATE_UNCOVER :
                     onUncovering();
@@ -5474,7 +5473,6 @@ if (health > 1) health = 1;
         
         @Override
         protected final boolean onWaiting() {
-if (health > 1) health = 1;
             updateLastProjectile();
             switch (state) {
                 case STATE_INTRO_RISE :
@@ -5898,8 +5896,8 @@ if (health > 1) health = 1;
         protected Final(final int x, final int y) {
             super(BotsnBoltsGame.finalImages, x, y);
             handlers.add(new SpreadAttackJumpHandler());
-            //handlers.add(new ChargeAttackJumpsHandler());
-            //handlers.add(new RapidAttackRunHandler());
+            handlers.add(new ChargeAttackJumpsHandler());
+            handlers.add(new RapidAttackRunHandler());
             handlers.add(new GrappleHandler());
         }
         
@@ -5945,6 +5943,10 @@ if (health > 1) health = 1;
                 private int timer = 1;
                 @Override public final void onStep(final StepEvent event) {
                     super.onStep(event);
+                    if (!isInView()) {
+                        destroy();
+                        return;
+                    }
                     changeView(getCoatThrown(timer / 3));
                     timer++;
                     if (timer > 8) {

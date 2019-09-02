@@ -435,6 +435,11 @@ public abstract class Enemy extends Chr implements SpecEnemy {
             Projectile.setPower(this, power);
         }
         
+        protected AiProjectile(final Player src, final PlayerImages pi, final ShootMode shootMode, final Panctor ref, final float vx, final float vy, final int power) {
+            this(src, Projectile.OFF_X, Projectile.OFF_Y, vx, vy, pi, power);
+            Projectile.init(this, this, src, pi, shootMode, ref, vx, vy, power);
+        }
+        
         @Override
         protected final int getDamage() {
             return power;
@@ -469,7 +474,19 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         
         @Override
         protected final void newExplosion() {
-            new Explosion(this); //TODO
+            new AiExplosion(this);
+        }
+    }
+    
+    protected final static class AiExplosion extends AiProjectile implements AnimationEndListener {
+        protected AiExplosion(final Bomb bomb) {
+            super(bomb.src, bomb.src.pi, Player.SHOOT_BOMB, bomb, 0, 0, 1);
+            Explosion.init(this, bomb);
+        }
+        
+        @Override
+        public final void onAnimationEnd(final AnimationEndEvent event) {
+            destroy();
         }
     }
     
