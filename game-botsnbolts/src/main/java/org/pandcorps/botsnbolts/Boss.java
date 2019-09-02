@@ -4095,8 +4095,12 @@ public abstract class Boss extends Enemy implements SpecBoss {
     
     private static class RunHandler extends AiHandler {
         @Override
-        protected void onStep(final AiBoss boss) {
+        protected final void onStep(final AiBoss boss) {
             boss.moveX();
+            if (!boss.isFacingPlayer() && (Math.abs(boss.getPosition().getX() - getPlayerX()) > 64)) {
+                boss.startStill();
+                return;
+            }
             onRun(boss);
         }
         
@@ -4179,8 +4183,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
     
     private final static class BombRollHandler extends RollHandler {
         @Override
-        protected final void onStep(final AiBoss boss) {
-            super.onStep(boss);
+        protected final void onRun(final AiBoss boss) {
             if (boss.extra <= 0) {
                 boss.extra = 25;
             }
