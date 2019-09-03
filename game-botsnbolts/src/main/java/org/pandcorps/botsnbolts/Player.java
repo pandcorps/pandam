@@ -85,7 +85,8 @@ public class Player extends Chr implements Warpable {
     private int runIndex = 0;
     private int runTimer = 0;
     private int blinkTimer = 0;
-    private long lastShot = NULL_CLOCK;
+    private long lastShotFired = NULL_CLOCK;
+    private long lastShotPosed = NULL_CLOCK;
     protected static long lastShotByAnyPlayer = NULL_CLOCK;
     private long startCharge = NULL_CLOCK;
     private long lastCharge = NULL_CLOCK;
@@ -402,7 +403,8 @@ public class Player extends Chr implements Warpable {
     }
     
     private final void afterShoot(final long clock) {
-        lastShot = clock;
+        lastShotFired = clock;
+        lastShotPosed = clock;
         lastShotByAnyPlayer = clock;
         blinkTimer = 0;
     }
@@ -429,8 +431,13 @@ public class Player extends Chr implements Warpable {
         final boolean oldMirror = isMirror();
         super.setMirror(v);
         if (oldMirror != isMirror()) {
+            onMirror();
             fixX();
         }
+    }
+    
+    private final void onMirror() {
+        lastShotPosed = NULL_CLOCK;
     }
     
     protected final void left() {
@@ -749,7 +756,7 @@ public class Player extends Chr implements Warpable {
     }
     
     private final boolean isShootPoseNeeded() {
-        return (Pangine.getEngine().getClock() - lastShot) < SHOOT_TIME;
+        return (Pangine.getEngine().getClock() - lastShotPosed) < SHOOT_TIME;
     }
     
     private final PlayerImagesSubSet getCurrentImagesSubSet() {
@@ -776,12 +783,13 @@ public class Player extends Chr implements Warpable {
     
     @Override
     protected final boolean onStepCustom() {
-        if (!active) {
-            return false;
-        } else if (isInvincible(false)) {
+        if (isInvincible(false)) {
             setVisible(Pangine.getEngine().isOn(4));
         } else {
             setVisible(true);
+        }
+        if (!active) {
+            return false;
         }
         if (RoomChanger.isChanging()) {
             final RoomChanger changer = RoomChanger.getActiveChanger();
@@ -2269,7 +2277,7 @@ public class Player extends Chr implements Warpable {
         
         protected final void shoot(final Player player) {
             final long clock = Pangine.getEngine().getClock();
-            if (clock - player.lastShot > delay) {
+            if (clock - player.lastShotFired > delay) {
                 player.afterShoot(clock);
                 createProjectile(player);
             }
