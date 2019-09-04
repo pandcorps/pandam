@@ -3984,6 +3984,15 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 return;
             }
             defeated = true;
+            destroyEnemies();
+            if (isGrounded()) {
+                afterDefeat();
+            } else {
+                startHandler(new DefeatedHandler());
+            }
+        }
+        
+        private final void afterDefeat() {
             exit();
         }
         
@@ -4090,6 +4099,18 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         @Override
         protected final void onStep(final AiBoss boss) {
+        }
+    }
+    
+    private final static class DefeatedHandler extends AiHandler {
+        @Override
+        protected final void onStep(final AiBoss boss) {
+        }
+        
+        @Override
+        protected final boolean isDoneWhenLanded(final AiBoss boss) {
+            boss.afterDefeat();
+            return false;
         }
     }
     
