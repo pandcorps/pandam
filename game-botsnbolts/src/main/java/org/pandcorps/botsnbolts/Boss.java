@@ -487,7 +487,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
     
     protected final static void destroyEnemies() {
         for (final Panctor actor : getActors()) {
-            if (((actor instanceof Enemy) && !(actor instanceof Boss)) || (actor instanceof EnemyProjectile) || (actor instanceof EnemySpawner)) {
+            if (((actor instanceof Enemy) && !(actor instanceof Boss)) || (actor instanceof EnemyProjectile) || (actor instanceof EnemySpawner) || (actor instanceof AiBomb)) {
                 actor.destroy();
             }
         }
