@@ -161,6 +161,8 @@ public abstract class Panplementation {
 		    return (((Panimation) view).getFrames())[currFrame].getImage();
 		} else if (view instanceof Panmage) {
 		    return (Panmage) view;
+		} else if (view == null) {
+		    throw new NullPointerException("No view found for " + actor);
 		}
 		return ((Panframe) view).getImage();
 	}

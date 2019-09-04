@@ -2919,14 +2919,17 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         protected HenchbotEnemy(final Panmage[] imgs, final int x, final int y) {
             super(HENCHBOT_OFF_X, HENCHBOT_H, x, y, HENCHBOT_HEALTH);
             this.imgs = imgs;
+            init();
         }
         
         protected HenchbotEnemy(final Panmage[] imgs, final Segment seg) {
             super(HENCHBOT_OFF_X, HENCHBOT_H, seg, HENCHBOT_HEALTH);
             this.imgs = imgs;
+            init();
         }
         
-        {
+        private final void init() {
+            changeView(0);
             turnTowardPlayer();
         }
         
