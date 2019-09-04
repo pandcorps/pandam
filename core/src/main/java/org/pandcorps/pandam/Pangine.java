@@ -527,7 +527,7 @@ public abstract class Pangine {
 		}
 		for (Panlayer layer = newRoom.base; layer != null; layer = layer.getAbove()) {
 		    if (!steppedLayers.contains(layer)) {
-		        layer.applyActorChanges();
+		        layer.applyActorChanges(true);
 		    }
 		}
 		steppedLayers.clear();
@@ -698,6 +698,8 @@ public abstract class Pangine {
     		    eval.trigger(oobs.get(i), oobs.get(i + 1));
     		}
 		}
+		
+		room.applyActorChanges(true);
 
 		final ArrayList<FinPantry<Object, ArrayList<CollisionListener>>> colliderGroups = room.colliders;
 		final int numColliderGroups = colliderGroups.size();
@@ -770,7 +772,7 @@ public abstract class Pangine {
             }
         }
 		
-		room.applyActorChanges();
+		room.applyActorChanges(false);
 	}
 
 	public final boolean hasCollision(final Panctor actor, final Object group) {

@@ -209,7 +209,7 @@ public class Panlayer extends BasePantity {
     
     public final void destroyAllActors() {
     	tracked = null;
-        applyActorChanges(); // If we detach an actor before clearing the layer, this prevents its destruction
+        applyActorChanges(true); // If we detach an actor before clearing the layer, this prevents its destruction
     	destroy(actors.keySet());
     	actors.clear();
         destroy(Coltil.copy(addedActors));
@@ -221,9 +221,11 @@ public class Panlayer extends BasePantity {
         removeCol(actor);
     }
     
-    /*package*/ final void applyActorChanges() {
+    /*package*/ final void applyActorChanges(final boolean firstCallForThisStep) {
         IdentityHashSet<Panctor> buf;
-        built = true;
+        if (firstCallForThisStep) {
+            built = true;
+        }
         
         buf = addedActors;
         addedActors = addedActorsBack;
