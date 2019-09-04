@@ -2326,6 +2326,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
             super(PROP_OFF_X, SLIDE_H, seg, 5);
             hv = -SLIDE_VELOCITY;
             oldHv = hv;
+            setViewClock(Pangine.getEngine().getClock());
         }
         
         @Override
@@ -2338,10 +2339,14 @@ public abstract class Enemy extends Chr implements SpecEnemy {
                 hv = 0;
                 return false;
             }
-            final int frameDuration = 3;
-            setView(getFrame((int) (clock % (5 * frameDuration)) / frameDuration));
+            setViewClock(clock);
             setVelocity();
             return false;
+        }
+        
+        private final void setViewClock(final long clock) {
+            final int frameDuration = 3;
+            setView(getFrame((int) (clock % (5 * frameDuration)) / frameDuration));
         }
         
         private final void setVelocity() {
