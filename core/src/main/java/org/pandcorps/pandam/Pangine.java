@@ -502,9 +502,11 @@ public abstract class Pangine {
 		} else if (paused == PAUSED_YES) {
 			return;
 		}
-		clock++;
-		executeJobs();
 		final Pangame game = Pangame.getGame();
+		if (game.isClockRunning()) {
+		    clock++;
+		}
+		executeJobs();
 	    game.step();
 	    final Panscreen screen = Panscreen.get();
 	    if (screen != null) {

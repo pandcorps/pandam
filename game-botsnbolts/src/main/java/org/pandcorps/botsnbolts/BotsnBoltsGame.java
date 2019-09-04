@@ -243,6 +243,11 @@ public final class BotsnBoltsGame extends BaseGame {
         Panscreen.set(new LogoScreen(TitleScreen.class, loaders));
     }
     
+    @Override
+    protected final boolean isClockRunning() {
+        return Menu.isCursorNeeded() ? !Menu.isPauseMenuEnabled() : super.isClockRunning(); // Handle same as Player.isPaused
+    }
+    
     private final static void initTileBehaviors() {
         Chr.TILE_UPSLOPE = TILE_UPSLOPE;
         Chr.TILE_DOWNSLOPE = TILE_DOWNSLOPE;

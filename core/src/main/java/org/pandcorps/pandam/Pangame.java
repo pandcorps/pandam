@@ -57,6 +57,10 @@ public abstract class Pangame {
 
 	protected abstract void init(final Panroom room) throws Exception;
 	
+	protected boolean isClockRunning() {
+        return true;
+    }
+	
 	protected Panroom getFirstRoom() throws Exception {
 	    /*
 	    Games can override this and retrieve the first room however they want.
