@@ -3601,6 +3601,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
             getPosition().addY(-2);
             vy = seg.getInt(3, vy);
             setMirror(true);
+            changeView(flyImgs);
         }
         
         @Override
@@ -3612,13 +3613,15 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         }
         
         private final void changeView() {
-            final Panmage[] imgs;
             if (attackTimer <= 0) {
-                imgs = flyImgs;
+                changeView(flyImgs);
             } else {
                 attackTimer--;
-                imgs = attackImgs;
+                changeView(attackImgs);
             }
+        }
+        
+        private final void changeView(final Panmage[] imgs) {
             changeView(getJetpackImage(imgs, (int) ((Pangine.getEngine().getClock() % DURATION_ANIM) / DURATION_FRAME)));
         }
         
