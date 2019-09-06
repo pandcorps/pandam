@@ -23,6 +23,7 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.botsnbolts;
 
 import org.pandcorps.game.actor.*;
+import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.tile.*;
@@ -103,6 +104,10 @@ public abstract class Chr extends GuyPlatform {
         if (!isJumpPossible()) {
             getPosition().addX(getMirrorMultiplier());
         }
+    }
+    
+    protected final static long getClock() {
+        return Pangine.getEngine().getClock();
     }
     
     protected static interface SpecEnemy extends CollisionListener {
