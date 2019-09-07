@@ -487,7 +487,8 @@ public abstract class Boss extends Enemy implements SpecBoss {
     
     protected final static void destroyEnemies() {
         for (final Panctor actor : getActors()) {
-            if (((actor instanceof Enemy) && !(actor instanceof Boss)) || (actor instanceof EnemyProjectile) || (actor instanceof EnemySpawner) || (actor instanceof AiBomb)) {
+            if (((actor instanceof Enemy) && !(actor instanceof Boss)) || (actor instanceof EnemyProjectile) || (actor instanceof EnemySpawner)
+                    || (actor instanceof AiBomb) || (actor instanceof Flare)) {
                 actor.destroy();
             }
         }
@@ -3421,7 +3422,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
             final int i = WAIT_FLARE - waitTimer;
             if ((i > 4) && (i < 16)) {
                 if (tex == null) {
-                    tex = new Pantexture(getLight());
+                    tex = new Flare(getLight());
                     addActor(tex);
                 } else {
                     tex.setImage(getLight());
@@ -3602,6 +3603,12 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         private final static Panmage getDroughtImage(final Panmage img, final String name, final Panple max) {
             return getImage(img, name, DROUGHT_O, DROUGHT_MIN, max);
+        }
+    }
+    
+    protected final static class Flare extends Pantexture {
+        protected Flare(final Panmage img) {
+            super(img);
         }
     }
     
