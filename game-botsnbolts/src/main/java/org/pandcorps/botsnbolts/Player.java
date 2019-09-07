@@ -293,7 +293,15 @@ public class Player extends Chr implements Warpable {
         return 0;
     }
     
+    protected final void prepareForScript() {
+        lastHurt = NULL_CLOCK;
+        if (!hidden) {
+            setVisible(true);
+        }
+    }
+    
     protected final void startScript(final Ai ai, final Runnable scriptFinisher) {
+        prepareForScript();
         this.ai = ai;
         scripted = true;
         active = true;

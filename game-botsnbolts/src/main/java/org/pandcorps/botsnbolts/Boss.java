@@ -502,7 +502,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         if (player != null) {
             player.active = active;
             if (!active) {
-                player.setVisible(true);
+                player.prepareForScript();
             }
         }
     }
@@ -5932,7 +5932,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         @Override
         protected final int initStillTimer() {
-            return Mathtil.randi(2, 15);
+            return Mathtil.randi(12, 15);
         }
         
         private final static Panmage getCoat() {
