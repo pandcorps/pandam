@@ -957,7 +957,7 @@ public abstract class BlockPuzzle {
             if (!fireIndices.add(key)) {
                 return;
             }
-            Enemy.addRoomTimer(8, new RoomTimerListener() {
+            Enemy.addRoomTimer(9, new RoomTimerListener() {
                 @Override public final void onTimer() {
                     final TileMap tm = BotsnBoltsGame.tm;
                     new Fire(tm.getX(tileIndex), tm.getY(tileIndex), key);

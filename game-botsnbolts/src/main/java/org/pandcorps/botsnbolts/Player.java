@@ -133,6 +133,7 @@ public class Player extends Chr implements Warpable {
     private float safeY = NULL_COORD;
     private boolean safeMirror = false;
     private List<Follower> followers = null;
+    private boolean hidden = false;
     protected boolean active = true;
     private boolean scripted = false;
     protected Ai ai = null;
@@ -251,7 +252,7 @@ public class Player extends Chr implements Warpable {
     }
     
     protected final static boolean isPaused() {
-        return Menu.isCursorNeeded() ? Menu.isPauseMenuEnabled() : Pangine.getEngine().isPaused();
+        return Menu.isCursorNeeded() ? Menu.isPauseMenuEnabled() : Pangine.getEngine().isPaused(); // Handle same as BotsnBoltsGame.isClockRunning
     }
     
     private final void toggleJumpMode(final int dir) {
@@ -363,11 +364,11 @@ public class Player extends Chr implements Warpable {
         if (sanded) {
             v -= 2;
         }
-        lastJump = Pangine.getEngine().getClock();
+        lastJump = getClock();
     }
     
     protected final void releaseJump() {
-        if ((v > 0) && (Pangine.getEngine().getClock() > (lastLift + 1))) {
+        if ((v > 0) && (getClock() > (lastLift + 1))) {
             v = 0;
         }
     }
@@ -550,7 +551,7 @@ public class Player extends Chr implements Warpable {
     
     private final void hurtForce(final int damage) {
         stateHandler.onHurt(this);
-        lastHurt = Pangine.getEngine().getClock();
+        lastHurt = getClock();
         isFree(); // Calls onFree(); do after setting lastHurt to avoid loop
         blinkTimer = 0;
         health -= damage;
@@ -574,7 +575,7 @@ public class Player extends Chr implements Warpable {
             return false;
         }
         stateHandler.onHurt(this);
-        lastFrozen = Pangine.getEngine().getClock();
+        lastFrozen = getClock();
         return true;
     }
     
@@ -682,11 +683,11 @@ public class Player extends Chr implements Warpable {
     }
     
     private final boolean isHurt() {
-        return (stateHandler == RESCUED_HANDLER) || ((Pangine.getEngine().getClock() - lastHurt) < HURT_TIME);
+        return (stateHandler == RESCUED_HANDLER) || ((getClock() - lastHurt) < HURT_TIME);
     }
     
     private final boolean isFrozen() {
-        return (Pangine.getEngine().getClock() - lastFrozen) < FROZEN_TIME;
+        return (getClock() - lastFrozen) < FROZEN_TIME;
     }
     
     private final boolean onHurting() {
@@ -749,14 +750,14 @@ public class Player extends Chr implements Warpable {
     }
     
     private final boolean isInvincible(final boolean frozenConsidered) {
-        final long clock = Pangine.getEngine().getClock();
+        final long clock = getClock();
         return (stateHandler == RESCUED_HANDLER)
                 || ((clock - lastHurt) < INVINCIBLE_TIME)
                 || (frozenConsidered && (clock - lastFrozen) < (INVINCIBLE_TIME + FROZEN_TIME - HURT_TIME));
     }
     
     private final boolean isShootPoseNeeded() {
-        return (Pangine.getEngine().getClock() - lastShotPosed) < SHOOT_TIME;
+        return (getClock() - lastShotPosed) < SHOOT_TIME;
     }
     
     private final PlayerImagesSubSet getCurrentImagesSubSet() {
@@ -781,13 +782,26 @@ public class Player extends Chr implements Warpable {
         super.renderView(renderer);
     }
     
-    @Override
-    protected final boolean onStepCustom() {
-        if (isInvincible(false)) {
+    protected final void setHidden(final boolean hidden) {
+        this.hidden = hidden;
+        if (hidden) {
+            setVisible(false);
+        }
+    }
+    
+    private final void updateVisibility() {
+        if (hidden) {
+            setVisible(false);
+        } else if (isInvincible(false)) {
             setVisible(Pangine.getEngine().isOn(4));
         } else {
             setVisible(true);
         }
+    }
+    
+    @Override
+    protected final boolean onStepCustom() {
+        updateVisibility();
         if (!active) {
             return false;
         }
@@ -873,7 +887,7 @@ public class Player extends Chr implements Warpable {
     }
     
     private final void onStepUnderwater() {
-        final long clock = Pangine.getEngine().getClock();
+        final long clock = getClock();
         if ((clock > (lastBubble + BUBBLE_TIME))) {
             new Bubble(this, 32);
             lastBubble = clock;
@@ -955,7 +969,7 @@ public class Player extends Chr implements Warpable {
     }
     
     private final boolean isLiftAllowed() {
-        final long clock = Pangine.getEngine().getClock();
+        final long clock = getClock();
         if (clock > lastLift) {
             lastLift = clock;
             return true;
@@ -1216,7 +1230,7 @@ public class Player extends Chr implements Warpable {
         }
         clearRun();
         stateHandler = BALL_HANDLER;
-        lastBall = Pangine.getEngine().getClock();
+        lastBall = getClock();
         final Panmage[] crouch = pi.basicSet.crouch;
         if (getCurrentDisplay() == crouch[1]) {
             setView(pi.ball[0]);
@@ -1384,7 +1398,7 @@ public class Player extends Chr implements Warpable {
     
     private final void endWrapped() {
         stateHandler = NORMAL_HANDLER;
-        lastFrozen = Pangine.getEngine().getClock() - FROZEN_TIME + 1;
+        lastFrozen = getClock() - FROZEN_TIME + 1;
         freeWrapper();
     }
     
@@ -1566,7 +1580,7 @@ public class Player extends Chr implements Warpable {
         rescue.startExit();
         rescue = null;
         stateHandler = NORMAL_HANDLER;
-        lastHurt = Pangine.getEngine().getClock();
+        lastHurt = getClock();
     }
     
     private final boolean changeRoom(final int dirX, final int dirY) {
@@ -1933,7 +1947,7 @@ public class Player extends Chr implements Warpable {
             final Pansplay currentDisplay = player.getCurrentDisplay();
             final PlayerImages pi = player.pi;
             final Panmage[] crouch = pi.basicSet.crouch;
-            final long clock = Pangine.getEngine().getClock(), lastBall = player.lastBall;
+            final long clock = getClock(), lastBall = player.lastBall;
             if ((currentDisplay == crouch[0]) && (clock > (lastBall + 3))) {
                 player.setView(crouch[1]);
             } else if ((currentDisplay == crouch[1]) && (clock > (lastBall + 6))) {
@@ -1950,7 +1964,7 @@ public class Player extends Chr implements Warpable {
         
         @Override
         protected final boolean onAir(final Player player) {
-            if ((Pangine.getEngine().getClock() - player.lastJump) <= 1) {
+            if ((getClock() - player.lastJump) <= 1) {
                 player.endBall();
             }
             return false;
@@ -2276,7 +2290,7 @@ public class Player extends Chr implements Warpable {
         }
         
         protected final void shoot(final Player player) {
-            final long clock = Pangine.getEngine().getClock();
+            final long clock = getClock();
             if (clock - player.lastShotFired > delay) {
                 player.afterShoot(clock);
                 createProjectile(player);
@@ -2294,7 +2308,7 @@ public class Player extends Chr implements Warpable {
         }
         
         protected final void shootSpecial(final Player player, final int power) {
-            player.afterShoot(Pangine.getEngine().getClock());
+            player.afterShoot(getClock());
             player.newProjectile(VEL_PROJECTILE, 0, power);
         }
     }
@@ -2495,7 +2509,7 @@ public class Player extends Chr implements Warpable {
         }
         
         private final void startCharge(final Player player) {
-            final long clock = Pangine.getEngine().getClock();
+            final long clock = getClock();
             player.startCharge = clock;
             player.lastCharge = clock;
         }
@@ -2508,7 +2522,7 @@ public class Player extends Chr implements Warpable {
         }
         
         private final void onCharging(final Player player) {
-            final long clock = Pangine.getEngine().getClock();
+            final long clock = getClock();
             if (clock - player.lastCharge > 2) {
                 player.startCharge = clock;
             }
@@ -2533,7 +2547,7 @@ public class Player extends Chr implements Warpable {
         }
         
         private final void charge(final Player player, final Panimation diag, final Panimation vert) {
-            final long c = Pangine.getEngine().getClock() % 8;
+            final long c = getClock() % 8;
             if (c == 0) {
                 chargeDiag(player, diag, 1, 1, 0);
             } else if (c == 1) {
@@ -2573,7 +2587,7 @@ public class Player extends Chr implements Warpable {
         }
         
         private final boolean shootChargedIfNeeded(final Player player) {
-            final long diff = Pangine.getEngine().getClock() - player.startCharge;
+            final long diff = getClock() - player.startCharge;
             if (diff > CHARGE_TIME_BIG) {
                 shootSpecial(player, Projectile.POWER_MAXIMUM);
                 return true;
@@ -2799,7 +2813,7 @@ public class Player extends Chr implements Warpable {
         
         protected Dematerialize(final Player actor) {
             super(actor, actor.pi.dematerialize);
-            actor.setVisible(false);
+            actor.setHidden(true);
             this.player = actor;
         }
         
