@@ -25,6 +25,7 @@ package org.pandcorps.championsofslam;
 import javax.sound.midi.*;
 
 import org.pandcorps.core.*;
+import org.pandcorps.core.Mustil.*;
 import org.pandcorps.pandam.*;
 
 public class SlamMusic {
@@ -33,33 +34,8 @@ public class SlamMusic {
 	private static int channel = 0, vol, deltaTick;
 	private static long tick = 0;
 	
-	protected final static Sequence newSequence() throws Exception {
-		return new Sequence(Sequence.PPQ, 96);
-	}
-	
-	protected final static Track newTrack(final Sequence seq, final String name) throws Exception {
-		final Track track = seq.createTrack();
-		Mustil.setName(track, name);
-		Mustil.setCopyright(track, COPYRIGHT);
-		//Mustil.setTimeSignature(track, 4, 2, 30, 8);
-		Mustil.setDefaultTempo(track);
-		return track;
-	}
-	
-	private final static class Song {
-		private final String name;
-		private final Sequence seq;
-		private final Track track;
-		
-		private Song(final String name) throws Exception {
-			this.name = name;
-			seq = newSequence();
-			track = newTrack(seq, name);
-		}
-	}
-	
 	protected final static Song newSongSlam() throws Exception {
-		final Song song = new Song("Champions of Slam");
+		final Song song = newSong("Champions of Slam");
 		final Track track = song.track;
 		int dur, keys[];
 		long start = -1;
@@ -134,7 +110,7 @@ public class SlamMusic {
 	}
 	
 	protected final static Song newSongTest() throws Exception {
-		final Song song = new Song("Test");
+		final Song song = newSong("Test");
 		final Track track = song.track;
 		Mustil.unspecifiedNoteDuration = 30;
 		channel = 0;
@@ -149,6 +125,10 @@ public class SlamMusic {
 				-1, -1, -1, -1);
 		return song;
 	}
+	
+	private final static Song newSong(final String name) throws Exception {
+        return new Song(name, COPYRIGHT);
+    }
 	
 	private final static void run(final String[] args) throws Exception {
 		if ("load".equalsIgnoreCase(Coltil.get(args, 0))) {

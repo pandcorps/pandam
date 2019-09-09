@@ -25,6 +25,7 @@ package org.pandcorps.furguardians;
 import javax.sound.midi.*;
 
 import org.pandcorps.core.*;
+import org.pandcorps.core.Mustil.*;
 import org.pandcorps.pandam.*;
 
 public class Music {
@@ -147,7 +148,7 @@ public class Music {
 	}
 	
 	protected final static Song newSongCave() throws Exception {
-		final Song song = new Song("Cave");
+		final Song song = newSong("Cave");
 		final Track track = song.track;
 		//final int length = 2048;
 		int dur, keys[];
@@ -212,7 +213,7 @@ public class Music {
 	}
 	
 	protected final static Song newSongNight() throws Exception {
-	    final Song song = new Song("Night");
+	    final Song song = newSong("Night");
         final Track track = song.track;
         channel = 0;
         vol = 68; // 72 for old mid
@@ -229,7 +230,7 @@ public class Music {
 	}
 	
 	protected final static Song newSongBridge() throws Exception {
-        final Song song = new Song("Bridge");
+        final Song song = newSong("Bridge");
         final Track track = song.track;
         channel = 0;
         vol = 80;
@@ -269,7 +270,7 @@ public class Music {
 	}
 	
 	protected final static Song newSongSnow() throws Exception {
-        final Song song = new Song("Snow");
+        final Song song = newSong("Snow");
         final Track track = song.track;
         channel = 0;
         final int channel2 = 1;
@@ -306,7 +307,7 @@ public class Music {
 	}
 	
 	protected final static Song newSongSand() throws Exception {
-        final Song song = new Song("Sand");
+        final Song song = newSong("Sand");
         final Track track = song.track;
         
         channel = Mustil.CHN_PERCUSSION;
@@ -368,7 +369,7 @@ public class Music {
 	}
 	
 	protected final static Song newSongRock() throws Exception {
-        final Song song = new Song("Rock");
+        final Song song = newSong("Rock");
         final Track track = song.track;
         channel = Mustil.CHN_PERCUSSION;
         vol = 120; // 64 for old mid
@@ -403,7 +404,7 @@ public class Music {
     }
 	
 	protected final static Song newSongHive() throws Exception {
-        final Song song = new Song("Hive");
+        final Song song = newSong("Hive");
         final Track track = song.track;
         channel = 0;
         vol = 84;
@@ -471,7 +472,7 @@ public class Music {
     }
 	
 	protected final static Song newSongJungle() throws Exception {
-        final Song song = new Song("Jungle");
+        final Song song = newSong("Jungle");
         final Track track = song.track;
         final int base = 8;
         channel = Mustil.CHN_PERCUSSION;
@@ -619,33 +620,8 @@ public class Music {
 		tick = Mustil.addRepeatedNotes(track, tick, channel, vol, dur, r, keys);
 	}
 	
-	protected final static Sequence newSequence() throws Exception {
-		return new Sequence(Sequence.PPQ, 96);
-	}
-	
-	protected final static Track newTrack(final Sequence seq, final String name) throws Exception {
-		final Track track = seq.createTrack();
-		Mustil.setName(track, name);
-		Mustil.setCopyright(track, COPYRIGHT);
-		//Mustil.setTimeSignature(track, 4, 2, 30, 8);
-		Mustil.setDefaultTempo(track);
-		return track;
-	}
-	
-	private final static class Song {
-		private final String name;
-		private final Sequence seq;
-		private final Track track;
-		
-		private Song(final String name) throws Exception {
-			this.name = name;
-			seq = newSequence();
-			track = newTrack(seq, name);
-		}
-	}
-	
 	protected final static Song newSongMinecart() throws Exception {
-		final Song song = new Song("Minecart");
+		final Song song = newSong("Minecart");
 		final Track track = song.track;
 		int dur, keys[];
 		final int r = 6;
@@ -697,7 +673,7 @@ public class Music {
 	}
 	
 	protected final static Song newSongGrass() throws Exception {
-		final Song song = new Song("Happy");
+		final Song song = newSong("Happy");
 		final Track track = song.track;
 		addPercussionHappy(track, 8, true);
 		//addPercussionHappy(track, 4, true);
@@ -742,7 +718,7 @@ public class Music {
 	// Map/Menu - 2 0 2 0 2 2 2 0 3 00000 2 0 2 0 2 2 2 0 1 00000 2 0 2 0 2 2 2 0 3 0 0 0 2 2 2 0 3
 	
 	protected final static Song newSongMenu() throws Exception {
-		final Song song = new Song("Menu");
+		final Song song = newSong("Menu");
 		final Track track = song.track;
 		//int dur, keys[];
 		addPercussionHappy(track, 2, false);
@@ -765,7 +741,7 @@ public class Music {
 	}
 	
 	protected final static Song newSongHeartbeat() throws Exception {
-		final Song song = new Song("Heartbeat");
+		final Song song = newSong("Heartbeat");
 		final Track track = song.track;
 		channel = 0;
 		vol = Mustil.VOL_MAX;
@@ -809,7 +785,7 @@ public class Music {
 	}
 	
 	protected final static Song newSongChant() throws Exception {
-		final Song song = new Song("Chant");
+		final Song song = newSong("Chant");
 		final Track track = song.track;
 		Mustil.unspecifiedNoteDuration = 60;
 		channel = 0;
@@ -830,7 +806,7 @@ public class Music {
 	}
 	
 	protected final static Song newSongOcarina() throws Exception {
-		final Song song = new Song("Ocarina");
+		final Song song = newSong("Ocarina");
 		final Track track = song.track;
 		Mustil.unspecifiedNoteDuration = 7;
 		channel = 0;
@@ -854,7 +830,7 @@ public class Music {
 	}
 	
 	protected final static Song newSongLevelStart() throws Exception {
-		final Song song = new Song("LevelStart");
+		final Song song = newSong("LevelStart");
 		final Track track = song.track;
 		Mustil.unspecifiedNoteDuration = 2;
 		channel = 0;
@@ -872,7 +848,7 @@ public class Music {
 	}
 	
 	protected final static Song newSongLevelEnd() throws Exception {
-		final Song song = new Song("LevelEnd");
+		final Song song = newSong("LevelEnd");
 		final Track track = song.track;
 		Mustil.unspecifiedNoteDuration = 60;
 		channel = 0;
@@ -889,7 +865,7 @@ public class Music {
 	}
 	
 	protected final static Song newSongLevelEnd3() throws Exception {
-		final Song song = new Song("LevelEnd");
+		final Song song = newSong("LevelEnd");
 		final Track track = song.track;
 		Mustil.unspecifiedNoteDuration = 4;
 		channel = 0;
@@ -908,7 +884,7 @@ public class Music {
 	}
 	
 	protected final static Song newSongLevelEnd2() throws Exception {
-		final Song song = new Song("LevelEnd");
+		final Song song = newSong("LevelEnd");
 		final Track track = song.track;
 		Mustil.unspecifiedNoteDuration = 60;
 		channel = 0;
@@ -951,7 +927,7 @@ public class Music {
 	}
 	
 	protected final static Song newSongTest() throws Exception {
-		final Song song = new Song("Test");
+		final Song song = newSong("Test");
 		final Track track = song.track;
 		Mustil.unspecifiedNoteDuration = 30;
 		channel = 0;
@@ -969,7 +945,7 @@ public class Music {
 	
 	protected final static Song newFxGem(/*final int mag*/) throws Exception {
 		final int channel = 0, vol = 64;
-		final Song song = new Song("Gem");
+		final Song song = newSong("Gem");
 		final Track track = song.track;
 		/*Mustil.setInstrument(track, channel, Mustil.PRG_TINKLE_BELL);
 		final int d = 2;
@@ -994,7 +970,7 @@ public class Music {
 	
 	protected final static Song newFxCrumble() throws Exception {
 		final int channel = 0, vol = 80;
-		final Song song = new Song("Crumble");
+		final Song song = newSong("Crumble");
 		final Track track = song.track;
 		Mustil.setInstrument(track, channel, Mustil.PRG_MELODIC_TOM);
 		for (int i = 0; i < 6; i++) {
@@ -1005,7 +981,7 @@ public class Music {
 	}
 	
 	protected final static Song newFxThud() throws Exception {
-		final Song song = new Song("Thud");
+		final Song song = newSong("Thud");
 		final Track track = song.track;
 		Mustil.addPercussion(track, 0, Mustil.PRC_HIGH_BONGO);
 		Mustil.setInstrument(track, channel, Mustil.PRG_MUSIC_BOX);
@@ -1018,7 +994,7 @@ public class Music {
 	
 	protected final static Song newFxJump() throws Exception {
 		final int channel = 0, vol = 40;
-		final Song song = new Song("Jump");
+		final Song song = newSong("Jump");
 		final Track track = song.track;
 		Mustil.setInstrument(track, channel, Mustil.PRG_WHISTLE); // PRG_SLAP_BASS_2
 		Mustil.addNote(track, 0, 8, channel, 77, vol);
@@ -1032,7 +1008,7 @@ public class Music {
 	
 	protected final static Song newFxBounce() throws Exception {
 		final int channel = 0;
-		final Song song = new Song("Bounce");
+		final Song song = newSong("Bounce");
 		final Track track = song.track;
 		Mustil.setInstrument(track, channel, Mustil.PRG_SLAP_BASS_2);
 		Mustil.addNote(track, 0, 8, channel, 48, 72);
@@ -1041,14 +1017,14 @@ public class Music {
 	}
 	
 	protected final static Song newFxArmor() throws Exception {
-		final Song song = new Song("Armor");
+		final Song song = newSong("Armor");
 		final Track track = song.track;
 		Mustil.addPercussionAtVolume(track, 0, 8, Mustil.PRC_HIGH_BONGO, 96);
 		return song;
 	}
 	
 	protected final static Song newFxWhoosh() throws Exception {
-		final Song song = new Song("Whoosh");
+		final Song song = newSong("Whoosh");
 		final Track track = song.track;
 		/*Mustil.setInstrument(track, channel, Mustil.PRG_BLOWN_BOTTLE);
 		Mustil.addNote(track, 0, 2, channel, 68, 60);
@@ -1064,6 +1040,10 @@ public class Music {
 		Mustil.addNote(track, 0, 8, 1, 40, 112);
 		return song;
 	}
+	
+	private final static Song newSong(final String name) throws Exception {
+        return new Song(name, COPYRIGHT);
+    }
 	
 	private final static void run(final String[] args) throws Exception {
 		if ("load".equalsIgnoreCase(Coltil.get(args, 0))) {

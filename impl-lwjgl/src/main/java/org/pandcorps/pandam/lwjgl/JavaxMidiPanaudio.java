@@ -35,7 +35,7 @@ public class JavaxMidiPanaudio extends Panaudio {
 	@Override
 	public final Pansound createSound(final String location) {
 		try {
-			return new JavaxMidiPansound(Mustil.load(location));
+			return new JavaxMidiPansound(Audtil.load(location));
 		} catch (final Exception e) {
 			throw Panception.get(e);
 		}

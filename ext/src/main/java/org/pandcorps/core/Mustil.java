@@ -395,14 +395,33 @@ public final class Mustil {
 	}
 	
 	public final static Sequence load(final String loc) throws Exception {
-		InputStream in = null;
-		try {
-			in = Iotil.getInputStream(loc);
-			return MidiSystem.getSequence(in);
-		} finally {
-			Iotil.close(in);
-		}
+	    return Audtil.load(loc);
 	}
+	
+	public final static Sequence newSequence() throws Exception {
+        return new Sequence(Sequence.PPQ, 96);
+    }
+    
+    public final static Track newTrack(final Sequence seq, final String name, final String copyright) throws Exception {
+        final Track track = seq.createTrack();
+        setName(track, name);
+        setCopyright(track, copyright);
+        //setTimeSignature(track, 4, 2, 30, 8);
+        setDefaultTempo(track);
+        return track;
+    }
+    
+    public final static class Song {
+        public final String name;
+        public final Sequence seq;
+        public final Track track;
+        
+        public Song(final String name, final String copyright) throws Exception {
+            this.name = name;
+            seq = newSequence();
+            track = newTrack(seq, name, copyright);
+        }
+    }
 	
 	public final static void main(final String[] args) {
 		try {
