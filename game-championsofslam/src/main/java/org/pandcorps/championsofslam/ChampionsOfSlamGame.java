@@ -52,7 +52,7 @@ public final class ChampionsOfSlamGame extends BaseGame {
     protected final static int GAME_ROWS = 14;
     protected final static int GAME_W = GAME_COLUMNS * DIM; // 384
     protected final static int GAME_H = GAME_ROWS * DIM; // 224;
-    protected final static int INITIAL_OPPONENTS = 30;
+    protected final static int INITIAL_OPPONENTS = Pantil.getProperty("org.pandcorps.championsofslam.opponents", 30);
     
     protected static Queue<Runnable> loaders = new LinkedList<Runnable>();
     protected static Panroom room = null;
@@ -117,10 +117,14 @@ public final class ChampionsOfSlamGame extends BaseGame {
         imgArena = engine.createImage(PRE_IMG + "arena", RES + "Arena.png");
         imgChampion = engine.createImage(PRE_IMG + "champion", RES + "Champion.png");
         boundingBox = engine.createEmptyImage(PRE_IMG + "boundingBox", null, new FinPanple2(-10, -2), new FinPanple2(10, 5));
-        final Panaudio audio = engine.getAudio();
+        loadSounds();
+        findFiles();
+    }
+    
+    private final static void loadSounds() {
+        final Panaudio audio = Pangine.getEngine().getAudio();
         soundJab = audio.createSound(RES + "Jab.mid");
         soundUppercut = audio.createSound(RES + "Uppercut.mid");
-        findFiles();
     }
     
     protected final static String getFileName(final int fileIndex) {
