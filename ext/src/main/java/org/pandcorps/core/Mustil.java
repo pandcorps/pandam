@@ -27,22 +27,23 @@ import java.io.*;
 import javax.sound.midi.*;
 
 // Music Utility
-public final class Mustil {
+public class Mustil {
 	/*
-      1  2  3  4  5  (Octave)
-    C 24 36 48 60 72
-      25 37 49 61 73
-    D 26 38 50 62 74
-      27 39 51 63 75
-    E 28 40 52 64 76
-    F 29 41 53 65 77
-      30 42 54 66 78
-    G 31 43 55 67 79
-      32 44 56 68 80
-    A 33 45 57 69 81
-      34 46 58 70 82
-    B 35 47 59 71 83
+         1     2     3     4     5  (Octave)
+    C 14:24 21:36 28:48 35:60 42:72
+         25    37    49    61    73
+    D 15:26 22:38 29:50 36:62 43:74
+         27    39    51    63    75
+    E 16:28 23:40 30:52 37:64 44:76
+    F 17:29 24:41 31:53 38:65 45:77
+         30    42    54    66    78
+    G 18:31 25:43 32:55 39:67 46:79
+         32    44    56    68    80
+    A 19:33 26:45 33:57 40:69 47:81
+         34    46    58    70    82
+    B 20:35 27:47 34:59 41:71 48:83
 	*/
+    public final static int[] WHITE_KEYS = generateWhiteKeys();
 	
 	public final static int CHN_PERCUSSION = 9;
 	
@@ -225,12 +226,34 @@ public final class Mustil {
     public final static int PRC_MUTE_TRIANGLE = 80;
     public final static int PRC_OPEN_TRIANGLE = 81;
     
+    public final static int SILENT = 1;
+    
     public final static int DEF_NOTE_DURATION = 30;
     public static int unspecifiedNoteDuration = DEF_NOTE_DURATION;
+    public static boolean whiteKeyMode = false;
+    public static int channel = 0, key, vol, deltaTick;
+    public static long tick = 0;
 	
-	private Mustil() {
+	protected Mustil() {
         throw new Error();
     }
+	
+	private final static int[] generateWhiteKeys() {
+	    final int numScales = 8, numNotes = 7;
+	    final int[] whiteKeys = new int[numScales * numNotes];
+	    for (int i = 0; i < numScales; i++) {
+	        final int baseIndex = i * numNotes;
+	        final int baseNote = i * 12;
+	        whiteKeys[baseIndex] = baseNote;
+	        whiteKeys[baseIndex + 1] = baseNote + 2;
+	        whiteKeys[baseIndex + 2] = baseNote + 4;
+	        whiteKeys[baseIndex + 3] = baseNote + 5;
+	        whiteKeys[baseIndex + 4] = baseNote + 7;
+	        whiteKeys[baseIndex + 5] = baseNote + 9;
+	        whiteKeys[baseIndex + 6] = baseNote + 11;
+	    }
+	    return whiteKeys;
+	}
 	
 	private final static void addShort(final Track track, final int cmd, final long tick, final int channel, final int a1, final int a2) throws Exception {
 		final ShortMessage message = new ShortMessage();
@@ -243,6 +266,10 @@ public final class Mustil {
 	}
 	
 	public final static void addNote(final Track track, final long tick, final int dur, final int channel, final int key, final int vol) throws Exception {
+	    addNoteRaw(track, tick, dur, channel, whiteKeyMode ? WHITE_KEYS[key] : key, vol);
+	}
+	
+	public final static void addNoteRaw(final Track track, final long tick, final int dur, final int channel, final int key, final int vol) throws Exception {
 		//info(tick + " - " + key);
 		addShort(track, ShortMessage.NOTE_ON, tick, channel, key, vol);
 		addShort(track, ShortMessage.NOTE_OFF, tick + dur, channel, key, 0);
@@ -305,7 +332,7 @@ public final class Mustil {
 	}
 	
 	public final static void addPercussionAtVolume(final Track track, final long tick, final int dur, final int key, final int vol) throws Exception {
-		addNote(track, tick, dur, CHN_PERCUSSION, key, vol);
+		addNoteRaw(track, tick, dur, CHN_PERCUSSION, key, vol);
 	}
 	
 	public final static long addPercussions(final Track track, final long firstTick, final int deltaTick, final int... keys) throws Exception {
@@ -342,6 +369,13 @@ public final class Mustil {
 	public final static void setPitch(final Track track, final int tick, final int channel, final int amt) throws Exception {
 		addShort(track, ShortMessage.PITCH_BEND, tick, channel, 0, amt); // < 64 to lower, > 65 to raise
 	}
+	
+	/*
+	command out of range: 0xf2
+	*/
+	/*public final static void setPosition(final Track track, final int tick, final int pos) throws Exception {
+	    addShort(track, ShortMessage.SONG_POSITION_POINTER, tick, channel, 0, pos);
+	}*/
 	
 	/*
 	Don't know how CONTROL_CHANGE 7 is supposed to work.
@@ -398,6 +432,26 @@ public final class Mustil {
 	    return Audtil.load(loc);
 	}
 	
+	private static Sequencer sequencer = null;
+	
+	public final static void play(final Song song) throws Exception {
+	    stop();
+	    sequencer = MidiSystem.getSequencer();
+	    sequencer.open();
+	    sequencer.setLoopCount(Sequencer.LOOP_CONTINUOUSLY);
+	    sequencer.setSequence(song.seq);
+	    sequencer.start();
+	}
+	
+	public final static void stop() {
+	    if (sequencer == null) {
+	        return;
+	    }
+	    sequencer.stop();
+	    sequencer.close();
+	    sequencer = null;
+	}
+	
 	public final static Sequence newSequence() throws Exception {
         return new Sequence(Sequence.PPQ, 96);
     }
@@ -423,7 +477,7 @@ public final class Mustil {
         }
     }
 	
-	public final static void main(final String[] args) {
+	public static void main(final String[] args) {
 		try {
 			for (final String loc : args) {
 				final Sequence seq = load(loc);
