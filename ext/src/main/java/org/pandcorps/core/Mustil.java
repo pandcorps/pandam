@@ -229,7 +229,9 @@ public class Mustil {
     public final static int SILENT = 1;
     
     public final static int DEF_NOTE_DURATION = 30;
+    public static int sequenceResolution = 96;
     public static int unspecifiedNoteDuration = DEF_NOTE_DURATION;
+    public static int volPercussion = VOL_MAX;
     public static boolean whiteKeyMode = false;
     public static int channel = 0, key, vol, deltaTick;
     public static long tick = 0;
@@ -328,7 +330,7 @@ public class Mustil {
 	}
 	
 	public final static void addPercussion(final Track track, final long tick, final int dur, final int key) throws Exception {
-		addPercussionAtVolume(track, tick, dur, key, VOL_MAX);
+		addPercussionAtVolume(track, tick, dur, key, volPercussion);
 	}
 	
 	public final static void addPercussionAtVolume(final Track track, final long tick, final int dur, final int key, final int vol) throws Exception {
@@ -453,7 +455,7 @@ public class Mustil {
 	}
 	
 	public final static Sequence newSequence() throws Exception {
-        return new Sequence(Sequence.PPQ, 96);
+        return new Sequence(Sequence.PPQ, sequenceResolution); // Higher resolution is faster
     }
     
     public final static Track newTrack(final Sequence seq, final String name, final String copyright) throws Exception {
