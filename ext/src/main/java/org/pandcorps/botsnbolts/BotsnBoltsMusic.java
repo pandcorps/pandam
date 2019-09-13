@@ -29,13 +29,15 @@ import org.pandcorps.core.*;
 public class BotsnBoltsMusic extends Mustil {
     private final static String COPYRIGHT = "Copyright (c) " + BotsnBoltsGame.YEAR + ", " + BotsnBoltsGame.AUTHOR;
     
-    private final static int PRG_BG = PRG_SQUARE;
-    private final static int PRG_FG = PRG_CLAVINET; // PRG_NEW_AGE, PRG_ELECTRIC_PIANO_2
+    private final static int BG = PRG_SQUARE;
+    private final static int FG = PRG_CLAVINET; // PRG_NEW_AGE, PRG_ELECTRIC_PIANO_2
+    private final static int DRUM = PRC_CLOSED_HI_HAT; // PRC_BASS_DRUM_1
     
     private static int arg = 0;
     
     static {
         sequenceResolution = 128;
+        volPercussion = 48;
         whiteKeyMode = true;
     }
     
@@ -47,25 +49,22 @@ public class BotsnBoltsMusic extends Mustil {
         vol = 56;
         deltaTick = 4;
         unspecifiedNoteDuration = deltaTick;
-        volPercussion = 96;
-        setInstrument(track, channel, PRG_BG);
+        setInstrument(track, channel, BG);
         final int reps = 24;
         final int n = 21, h = 28;
         addRepeatedNotes(track, 0, channel, vol, deltaTick, reps, n, n, -1, -1, h, -1, n, n, n, n, -1, -1, h, -1, -1, -1);
         addNote(track, (reps * deltaTick * 16) - (deltaTick * 4), deltaTick * 4, channel, n, SILENT);
         
-        final int p = PRC_BASS_DRUM_1;
-        //TODO Add more drum beats, try different drum instruments, adjust volume
-        addRepeatedPercussions(track, 0, deltaTick, reps / 2, -1, -1, -1, -1, p, -1, -1, -1, -1, -1, -1, -1, p, -1, -1, -1, -1, -1, -1, -1, p, -1, -1, -1, -1, -1, -1, -1, p, p, -1, -1);
+        final int p = DRUM;
+        addRepeatedPercussions(track, 0, deltaTick, reps * 2, p, -1, -1, -1, p, p, -1, -1);
         
         channel = 1;
         vol = 64;
-        setInstrument(track, channel, PRG_FG);
+        setInstrument(track, channel, FG);
         final int off = 0;
         final int baseNote = 28;
         for (int i = 0; i < 4; i++) {
             final int o = baseNote + ((i < 2) ? 0 : 3);
-            //TODO Try lowering second note even more
             final int n1 = o + 4, n2 = o + 3, n3 = o + 2, n4 = o + 1, n5 = o;
             final int start = off + (i * 256);
             addNote(track, start, 16, channel, n1, vol);
@@ -102,6 +101,19 @@ public class BotsnBoltsMusic extends Mustil {
     
     protected final static Song newSongLightning() throws Exception {
         final Song song = newSong("LightningBot");
+        final Track track = song.track;
+        
+        channel = 0;
+        vol = 56;
+        deltaTick = 4;
+        unspecifiedNoteDuration = deltaTick;
+        setInstrument(track, channel, BG);
+        final int reps = 24;
+        final int n = 21, h = 28, l = 20;
+        //addRepeatedNotes(track, 0, channel, vol, deltaTick, reps, n, n, -1, -1, n, n, -1, -1, n, n, -1, -1, n, n, -1, -1, n, n, -1, -1, n, n, -1, -1, -1, -1, -1, h, h, -1, -1, -1);
+        addRepeatedNotes(track, 0, channel, vol, deltaTick, reps, n, n, -1, -1, l, l, -1, -1, n, n, -1, -1, l, l, -1, -1, n, n, -1, -1, l, l, -1, -1, -1, -1, h, -1, h, -1, -1, -1);
+        //addRepeatedNotes(track, 0, channel, vol, deltaTick, reps, n, n, n, -1, l, -1, -1, -1, n, n, n, -1, -1, h, -1, h); // Tried for drought, still close to it
+        
         return song;
     }
     
@@ -138,56 +150,74 @@ public class BotsnBoltsMusic extends Mustil {
         vol = 56;
         deltaTick = 4;
         unspecifiedNoteDuration = deltaTick;
-        volPercussion = 96;
-        setInstrument(track, channel, PRG_BG);
+        setInstrument(track, channel, BG);
         final int reps = 24;
-        final int n = 21, h = 28;
-        addRepeatedNotes(track, 0, channel, vol, deltaTick, reps, n, n, n, -1, n, -1, -1, -1, n, n, n, -1, n, -1, h, h);
+        final int n = 21, h = 28, l = 20;
+        addRepeatedNotes(track, 0, channel, vol, deltaTick, reps, n, n, n, -1, h, -1, n, -1, n, n, n, -1, l, l, -1, -1);
+        addNote(track, (reps * deltaTick * 16) - (deltaTick * 2), deltaTick * 2, channel, n, SILENT);
         
-        final int p = PRC_BASS_DRUM_1, d = PRC_HAND_CLAP;
-        //TODO Try different drum instruments, adjust volume
-        //addRepeatedPercussions(track, 0, deltaTick, reps / 2, d, -1, p, -1, d, -1, p, -1, d, -1, p, -1, d, -1, p, -1);
+        final int p = DRUM;
+        addRepeatedPercussions(track, 0, deltaTick, reps * 2, p, p, -1, -1, p, -1, p, -1);
         
         channel = 1;
         vol = 64;
-        setInstrument(track, channel, PRG_BLOWN_BOTTLE);
-        final int off = 0;
-        final int baseNote = 28;
-        for (int i = 0; i < 4; i++) {
-            final int o = baseNote + ((i < 2) ? 0 : 3);
-            //TODO Try lowering second note even more
-            //final int n1 = o + 4, n2 = o + 3, n3 = o + 2, n4 = o + 1, n5 = o;
-            final int start = off + (i * 256);
-            /*addNote(track, start, 63, channel, 44, vol);
-            addNote(track, start + 64, 15, channel, 43, vol);
-            addNote(track, start + 80, 15, channel, 43, vol);
-            addNote(track, start + 112, 63, channel, 44, vol);
-            addNote(track, start + 240, 15, channel, 43, vol);*/
-            /*addNote(track, start, 47, channel, 44, vol);
-            addNote(track, start + 48, 11, channel, 43, vol);
-            addNote(track, start + 60, 15, channel, 43, vol);
-            addNote(track, start + 76, 47, channel, 44, vol);*/
-            addNote(track, start, 47, channel, 44, vol);
-            addNote(track, start + 48, 7, channel, 43, vol);
-            addNote(track, start + 56, 7, channel, 43, vol);
-            addNote(track, start + 64, 47, channel, 44, vol);
-            addNote(track, start + 112, 15, channel, 43, vol);
-            
-            addNote(track, start + 128, 47, channel, 44, vol);
-            addNote(track, start + 128 + 48, 7, channel, 43, vol);
-            addNote(track, start + 128 + 56, 7, channel, 43, vol);
-            addNote(track, start + 128 + 64, 47, channel, 44, vol);
-            addNote(track, start + 128 + 112, 15, channel, 43, vol);
-            /*if ((i % 2) == 0) {
-                addNote(track, start + 192, 16, channel, n1, vol);
-                addNote(track, start + 208, 16, channel, n2, vol);
-                addNote(track, start + 224, 16, channel, n3, vol);
-            } else {
-                addNote(track, start + 192, 16, channel, n3, vol);
-            }*/
+        setInstrument(track, channel, FG);
+        final int baseNote = 42;
+        final int n1 = baseNote, n2 = baseNote + 1, n3 = baseNote + 2;
+        for (int i = 0; i < 8; i++) {
+            final int start = i * 128;
+            final int i4 = i % 4;
+            if (i4 == 1) {
+                addDroughtNote(track, start - 16, 16, n2);
+            } else if (i4 == 3) {
+                addDroughtNote(track, start - 16, 8, n2);
+                addDroughtNote(track, start - 8, 8, n1);
+            }
+            addDroughtNote(track, start, 32, n3);
+            if ((i4 % 2) == 0) {
+                addDroughtNote(track, start + 48, 8, n2);
+                addDroughtNote(track, start + 56, 8, n1);
+                addDroughtNote(track, start + 64, 16, n3);
+                addDroughtNote(track, start + 80, 16, n2);
+                addDroughtNote(track, start + 96, 16, n1);
+            } else if (i4 == 1) {
+                addDroughtNote(track, start + 48, 16, n2);
+                addDroughtNote(track, start + 64, 16, n1);
+                addDroughtNote(track, start + 112, 16, n2);
+            } else if (i4 == 3) {
+                addDroughtNote(track, start + 48, 16, n2);
+                addDroughtNote(track, start + 64, 16, n1);
+            }
         }
+        final int start = 128 * 8;
+        addNote(track, start, 32, channel, n3, vol);
+        addNote(track, start + 48, 16, channel, n2, vol);
+        addNote(track, start + 64, 32, channel, n3, vol);
+        addNote(track, start + 128, 32, channel, n3, vol);
+        addNote(track, start + 176, 8, channel, n2, vol);
+        addNote(track, start + 184, 8, channel, n1, vol);
+        addNote(track, start + 192, 32, channel, n2, vol);
+        addNote(track, start + 256, 32, channel, n3, vol);
+        addNote(track, start + 304, 8, channel, n1, vol);
+        addNote(track, start + 312, 8, channel, n2, vol);
+        addNote(track, start + 320, 32, channel, n3, vol);
+        addNote(track, start + 368, 16, channel, n2, vol);
+        addNote(track, start + 384, 32, channel, n3, vol);
+        addNote(track, start + 432, 16, channel, n2, vol);
+        addNote(track, start + 448, 32, channel, n1, vol);
         
         return song;
+    }
+    
+    private final static void addDroughtNote(final Track track, final int tick, final int dur, final int key) throws Exception {
+        if (tick < 512) {
+            addNote(track, tick, dur, channel, key, vol);
+        } else {
+            final int dur4 = dur / 4;
+            for (int i = 0; i < 4; i++) {
+                addNote(track, tick + (i * dur4), dur4, channel, key, vol);
+            }
+        }
     }
     
     protected final static Song newSongCity() throws Exception {
@@ -233,7 +263,7 @@ public class BotsnBoltsMusic extends Mustil {
         do {
             stop();
             final boolean first = song == null;
-            song = newSongDrought();
+            song = newSongVolcano();
             if (first) {
                 System.out.println("Playing " + song.name);
                 System.out.println("Press enter to adjust; press x and enter to stop");
