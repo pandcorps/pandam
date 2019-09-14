@@ -231,10 +231,12 @@ public class Mustil {
     public final static int DEF_NOTE_DURATION = 30;
     public static int sequenceResolution = 96;
     public static int unspecifiedNoteDuration = DEF_NOTE_DURATION;
+    public static boolean durationSameAsDelta = false;
     public static int volPercussion = VOL_MAX;
     public static boolean whiteKeyMode = false;
     public static int channel = 0, key, vol, deltaTick;
     public static long tick = 0;
+    public static long next = 0;
 	
 	protected Mustil() {
         throw new Error();
@@ -268,13 +270,18 @@ public class Mustil {
 	}
 	
 	public final static void addNote(final Track track, final long tick, final int dur, final int channel, final int key, final int vol) throws Exception {
-	    addNoteRaw(track, tick, dur, channel, whiteKeyMode ? WHITE_KEYS[key] : key, vol);
+	    addNoteRaw(track, tick, dur, channel, getKey(key), vol);
+	}
+	
+	private final static int getKey(final int key) {
+	    return whiteKeyMode ? WHITE_KEYS[key] : key;
 	}
 	
 	public final static void addNoteRaw(final Track track, final long tick, final int dur, final int channel, final int key, final int vol) throws Exception {
 		//info(tick + " - " + key);
 		addShort(track, ShortMessage.NOTE_ON, tick, channel, key, vol);
-		addShort(track, ShortMessage.NOTE_OFF, tick + dur, channel, key, 0);
+		next = tick + dur;
+		addShort(track, ShortMessage.NOTE_OFF, next, channel, key, 0);
 	}
 	
 	public final static long addNotes(final Track track, final long firstTick, final int channel, final int vol, final int deltaTick, final int... keys) throws Exception {
@@ -290,7 +297,7 @@ public class Mustil {
 				if (extend && i < (size - 1) && keys[i + 1] == -1) {
 					addNote(track, tick, unspecifiedNoteDuration + deltaTick, channel, key, vol);
 				} else {
-					addNote(track, tick, channel, key, vol);
+					addNote(track, tick, durationSameAsDelta ? deltaTick : unspecifiedNoteDuration, channel, key, vol);
 				}
 			}
 			tick += deltaTick;
@@ -304,6 +311,21 @@ public class Mustil {
 			tick = addNotes(track, tick, channel, vol, deltaTick, keys);
 		}
 		return tick;
+	}
+	
+	public final static void addMajorChordRoot(final Track track, final long tick, final int dur, final int channel, final int root, final int vol) throws Exception {
+	    addMajorChordRootRaw(track, tick, dur, channel, getKey(root), vol);
+	}
+	
+	public final static void addMajorChordRootRaw(final Track track, final long tick, final int dur, final int channel, final int root, final int vol) throws Exception {
+	    final int majorThird = root + 4, perfectFifth = root + 7;
+	    addNoteRaw(track, tick, dur, channel, root, vol);
+	    addNoteRaw(track, tick, dur, channel, majorThird, vol);
+	    addNoteRaw(track, tick, dur, channel, perfectFifth, vol);
+	}
+	
+	public final static void addMajorChordMajorThird(final Track track, final long tick, final int dur, final int channel, final int majorThird, final int vol) throws Exception {
+	    addMajorChordRootRaw(track, tick, dur, channel, getKey(majorThird) - 4, vol);
 	}
 	
 	public final static long addRise(final Track track, final long firstTick, final int channel, final int firstKey, final int vol,
@@ -338,7 +360,7 @@ public class Mustil {
 	}
 	
 	public final static long addPercussions(final Track track, final long firstTick, final int deltaTick, final int... keys) throws Exception {
-		return addPercussionsAtVolume(track, firstTick, VOL_MAX, deltaTick, keys);
+		return addPercussionsAtVolume(track, firstTick, volPercussion, deltaTick, keys);
 	}
 	
 	public final static long addPercussionsAtVolume(final Track track, final long firstTick, final int vol, final int deltaTick, final int... keys) throws Exception {
