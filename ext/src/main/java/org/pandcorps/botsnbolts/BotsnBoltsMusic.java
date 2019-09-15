@@ -115,7 +115,7 @@ public class BotsnBoltsMusic extends Mustil {
         addNote(track, 1536 - deltaTick, deltaTick, channel, m, SILENT);
         
         final int p = DRUM, p2 = DRUM_HEAVY;
-        addRepeatedPercussions(track, 0, deltaTick, reps * 8, p2, -1, -1, -1, p, -1, -1, -1);
+        addRepeatedPercussions(track, 0, deltaTick, reps * 8, p2, -1, -1, -1, p, p, -1, -1);
         
         channel = 1;
         vol = VOL_FG;
@@ -160,16 +160,166 @@ public class BotsnBoltsMusic extends Mustil {
     
     protected final static Song newSongRockslide() throws Exception {
         final Song song = newSong("RockslideBot");
+        final Track track = song.track;
+        
+        channel = 0;
+        vol = VOL_BG;
+        deltaTick = 4;
+        setInstrument(track, channel, BG);
+        final int reps = 16;
+        final int m = 21, l = 20, h = 22;
+        addRepeatedNotes(track, 0, channel, vol, deltaTick, reps, m, m, m, -1, l, -1, -1, -1, m, m, m, -1, h, h, -1, -1);
+        
+        final int p = DRUM;
+        addRepeatedPercussions(track, 0, deltaTick, reps, p, p, -1, -1, p, -1, -1, -1, p, p, -1, -1, p, p, -1, -1);
+        
+        channel = 1;
+        setInstrument(track, channel, FG);
+        final int baseNote = 28;
+        next = 0;
+        final int volEcho = (VOL_FG + VOL_BG) / 2;
+        for (int i = 0; i < 7; i++) {
+            if (i == 3) {
+                continue;
+            }
+            final int i2 = i % 2, o = baseNote - ((i2 == 0) ? 0 : 2), n2 = o + 2, n3 = o + 3, n4 = o + 4;
+            vol = (i2 == 0) ? VOL_FG : volEcho;
+            final int nf = n3 + ((i < 4) ? 0 : 2), ns = nf - 1;
+            addNotes(track, next, channel, vol, 16, nf, ns);
+            addNotes(track, next, channel, vol, 8, n3, n3);
+            final int nl;
+            if ((i == 0) || (i == 1) || (i == 4) || (i == 5)) {
+                nl = n2;
+            } else if ((i == 2) || (i == 3)) {
+                nl = n4;
+            } else {
+                nl = n4;
+            }
+            addNote(track, next, 8, channel, nl, vol);
+            addNotes(track, next, channel, vol, 4, nl, nl);
+            if (i == 2) {
+                addNotes(track, next, channel, volEcho, 16, nl, nl, nl, nl);
+                continue;
+            }
+        }
+        final int o = baseNote, nn = o - 1, n0 = o, n1 = o + 1, n2 = o + 2, n3 = o + 3, n4 = o + 4, n5 = o + 5;
+        addNote(track, next, 32, channel, n5, vol);
+        addNote(track, next, 8, channel, n4, volEcho);
+        addNotes(track, next, channel, volEcho, 4, n4, n4);
+        addNote(track, next, 16, channel, n5, volEcho);
+        for (int j = 0; j < 2; j++) {
+            for (int i = 0; i < 3; i++) {
+                final int n4i = n4 - i;
+                addNote(track, next, 16, channel, n4i, vol);
+                addNotes(track, next, channel, vol, 8, n4i, n4i);
+                addNotes(track, next, channel, vol, 16, n3 - i, n2 - i);
+            }
+            if (j == 0) {
+                addNotes(track, next, channel, vol, 4, n1, n1);
+                addNotes(track, next, channel, vol, 8, n1, n1, n1);
+                addNotes(track, next, channel, vol, 4, n2, n2);
+                addNote(track, next, 8, channel, n2, vol);
+                addNote(track, next, 16, channel, n3, vol);
+            } else {
+                addNotes(track, next, channel, vol, 16, n1, n1);
+                addNotes(track, next, channel, vol, 8, n0, n0);
+                addNote(track, next, 16, channel, nn, vol);
+            }
+        }
+        
         return song;
     }
     
     protected final static Song newSongEarthquake() throws Exception {
         final Song song = newSong("EarthquakeBot");
+        final Track track = song.track;
+        
+        channel = 0;
+        vol = VOL_BG;
+        deltaTick = 8;
+        setInstrument(track, channel, BG);
+        final int reps = 16;
+        final int m = 21, l = 20, h = 22;
+        /*addRepeatedNotes(track, 0, channel, vol, deltaTick, reps, m, -1, m, -1, m, -1, m, -1, m, -1, m, -1, m, -1, m, -1,
+            l, -1, l, -1, l, -1, l, -1, l, -1, l, -1, l, -1, l, -1,
+            m, -1, m, -1, m, -1, m, -1, m, -1, m, -1, m, -1, m, -1,
+            h, -1, h, -1, h, -1, h, -1, h, -1, h, -1, h, -1, h, -1); // Lightning
+        addNote(track, 1536 - deltaTick, deltaTick, channel, m, SILENT);*/
+        //12334455
+        next = 0;
+        int t = m;
+        for (int i = 0; i < reps; i++) {
+            //addNotes(track, next, channel, vol, 8, m, m);
+            //addNotes(track, next, channel, vol, 16, m, m, m);
+            //addNotes(track, next, channel, vol, 8, m, l, m, l);
+            //addNotes(track, next, channel, vol, 8, m, m, l, l);
+            //addNotes(track, next, channel, vol, 8, m, m, h, h);
+            addNotes(track, next, channel, vol, 8, m, m, m, m);
+            /*addNotes(track, next, channel, vol, 8, t, t, t, t);
+            if (i < 2) {
+                t++;
+            } else {
+                t--;
+            }*/
+            next += 32;
+            //next += 16; addNotes(track, next, channel, vol, 16, m);
+        }
+        
+        deltaTick = 4;
+        final int p = DRUM, p2 = DRUM_HEAVY;
+        //addRepeatedPercussions(track, 0, deltaTick, reps * 8, p2, -1, -1, -1, p, -1, -1, -1); // Lightning
+        //addRepeatedPercussions(track, 0, deltaTick, reps * 4, p2, -1, p, p, p, -1, -1, -1, p2, -1, -1, -1, p, -1, -1, -1); // New, might work
+        //addRepeatedPercussions(track, 0, deltaTick, reps * 4,  p, p, p, -1, -1, -1, -1, -1, p, p, p, -1, p, -1, p, -1);
+        addRepeatedPercussions(track, 0, deltaTick, reps,  p, p, p, -1, p2, -1, p, p, p, -1, p2, -1, p2, -1, -1, -1);
+        
+        channel = 1;
+        vol = VOL_FG;
+        setInstrument(track, channel, FG);
+        int n0 = 28, n1 = n0 + 1, n2 = n1 + 1, n3 = n2 + 1, n4 = n3 + 1, n5 = n4 + 1, n6 = n5 + 1, n7 = n6 + 1;
+        next = 0;
+        addNotes(track, next, channel, vol, 64, n2, n3, n4, n3, n2, n1, -1, -1);
+        addNotes(track, 512, channel, vol, 64, n2, n3, n4, n3, n2, n1, -1, -1);
+        
+        //addNote(track, next, 48, channel, n3, vol);
+        
         return song;
     }
     
     protected final static Song newSongCyclone() throws Exception {
         final Song song = newSong("CycloneBot");
+        final Track track = song.track;
+        
+        channel = 0;
+        vol = VOL_BG;
+        deltaTick = 8;
+        setInstrument(track, channel, BG);
+        final int reps = 6;
+        final int m = 21, l = 20, h = 22;
+        /*addRepeatedNotes(track, 0, channel, vol, deltaTick, reps, m, -1, m, -1, m, -1, m, -1, m, -1, m, -1, m, -1, m, -1,
+            l, -1, l, -1, l, -1, l, -1, l, -1, l, -1, l, -1, l, -1,
+            m, -1, m, -1, m, -1, m, -1, m, -1, m, -1, m, -1, m, -1,
+            h, -1, h, -1, h, -1, h, -1, h, -1, h, -1, h, -1, h, -1);
+        addNote(track, 1536 - deltaTick, deltaTick, channel, m, SILENT);*/
+        addRepeatedNotes(track, 0, channel, vol, deltaTick, 128, m);
+        
+        deltaTick = 4;
+        final int p = DRUM, p2 = DRUM_HEAVY;
+        addRepeatedPercussions(track, 0, deltaTick, 128, p, -1);
+        
+        channel = 1;
+        vol = VOL_FG;
+        setInstrument(track, channel, FG);
+        //int n0 = 28, n1 = n0 + 1, n2 = n1 + 1, n3 = n2 + 1, n4 = n3 + 1, n5 = n4 + 1, n6 = n5 + 1, n7 = n6 + 1;
+        int n0 = 42, n1 = n0 + 1, n2 = n1 + 1, n3 = n2 + 1, n4 = n3 + 1, n5 = n4 + 1, n6 = n5 + 1, n7 = n6 + 1;
+        next = 0;
+        //addNotes(track, next, channel, vol, 64, n1, n2, n3, n4, n3, n2, n1, n0);
+        //addNotes(track, next, channel, vol, 64, n3, n4, n3, n2, n1, n0, n1, n2);
+        for (int i = 0; i < 2; i++) {
+            addNotes(track, next, channel, vol, 64, n3, n4, n3, n2, n3, n4, n3, n2);
+        }
+        
+        //addNote(track, next, 48, channel, n3, vol);
+        
         return song;
     }
     
@@ -402,9 +552,9 @@ public class BotsnBoltsMusic extends Mustil {
         do {
             stop();
             final boolean first = song == null;
-            song = newSongLightning();
+            song = newSongRockslide();
             if (first) {
-                System.out.println("Playing " + song.name);
+                System.out.println("Playing " + song.name + " - " + song.track.ticks() + " ticks");
                 System.out.println("Press enter to adjust; press x and enter to stop");
             }
             System.out.println("arg=" + arg);
