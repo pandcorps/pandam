@@ -29,7 +29,7 @@ import org.pandcorps.core.*;
 public class BotsnBoltsMusic extends Mustil {
     private final static String COPYRIGHT = "Copyright (c) " + BotsnBoltsGame.YEAR + ", " + BotsnBoltsGame.AUTHOR;
     
-    private final static int BG = PRG_SQUARE;
+    private final static int BG = PRG_SQUARE, BG2 = PRG_SAWTOOTH;
     private final static int FG = PRG_CLAVINET; // PRG_NEW_AGE, PRG_ELECTRIC_PIANO_2
     private final static int DRUM = PRC_CLOSED_HI_HAT, DRUM_HEAVY = PRC_BASS_DRUM_2;
     private final static int VOL_BG = 56;
@@ -521,6 +521,20 @@ public class BotsnBoltsMusic extends Mustil {
     
     protected final static Song newSongFinal() throws Exception {
         final Song song = newSong("Final");
+        final Track track = song.track;
+        
+        channel = 0;
+        vol = VOL_BG;
+        setInstrument(track, channel, BG2);
+        final int reps = 24;
+        final int n = 21;
+        next = 0;
+        final int dur = 16, dur3 = dur * 3;
+        for (int i = 0; i < reps; i++) {
+            addNotes(track, next, channel, vol, dur3, n, n);
+            addNotes(track, next, channel, vol, dur, n, n);
+        }
+        
         return song;
     }
     
@@ -552,7 +566,7 @@ public class BotsnBoltsMusic extends Mustil {
         do {
             stop();
             final boolean first = song == null;
-            song = newSongRockslide();
+            song = newSongFinal();
             if (first) {
                 System.out.println("Playing " + song.name + " - " + song.track.ticks() + " ticks");
                 System.out.println("Press enter to adjust; press x and enter to stop");
