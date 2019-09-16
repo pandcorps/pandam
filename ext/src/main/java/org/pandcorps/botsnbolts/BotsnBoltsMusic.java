@@ -56,8 +56,8 @@ public class BotsnBoltsMusic extends Mustil {
         final int n = 21, h = 28;
         addRepeatedNotes(track, 0, channel, vol, deltaTick, reps, n, n, -1, -1, h, -1, n, n, n, n, -1, -1, h, -1, -1, -1);
         
-        final int p = DRUM;
-        addRepeatedPercussions(track, 0, deltaTick, reps * 2, p, -1, -1, -1, p, p, -1, -1);
+        final int p = DRUM, p2 = DRUM_HEAVY;
+        addRepeatedPercussions(track, 0, deltaTick, reps * 2, p, -1, p2, -1, p, p, -1, -1);
         
         channel = 1;
         vol = VOL_FG;
@@ -150,6 +150,11 @@ public class BotsnBoltsMusic extends Mustil {
         addNote(track, next, 16, channel, n2, vol);
         addNote(track, next, 128, channel, n1, vol);
         
+        next += 96;
+        addNotes(track, next, channel, vol, 8, n3, n3);
+        addNote(track, next, 16, channel, n2, vol);
+        addNote(track, next, 64, channel, n1, vol);
+        
         return song;
     }
     
@@ -170,8 +175,8 @@ public class BotsnBoltsMusic extends Mustil {
         final int m = 21, h = 22;
         addRepeatedNotes(track, 0, channel, vol, deltaTick, reps, m, -1, h, -1, m, -1, -1, -1, m, -1, h, -1, h, h, -1, -1);
         
-        final int p = DRUM;
-        addRepeatedPercussions(track, 0, deltaTick, reps, p, p, -1, -1, p, -1, -1, -1, p, p, -1, -1, p, p, -1, -1);
+        final int p = DRUM, p2 = DRUM_HEAVY;
+        addRepeatedPercussions(track, 0, deltaTick, reps, p, p, -1, -1, p2, -1, -1, -1, p, p, -1, -1, p, p, -1, -1);
         
         channel = 1;
         vol = VOL_FG;
@@ -417,8 +422,8 @@ public class BotsnBoltsMusic extends Mustil {
         addRepeatedNotes(track, 0, channel, vol, deltaTick, reps, n, -1, n, -1, n, -1, n, -1, n, -1, n, -1, -1, n, n, -1);
         addNote(track, (reps * deltaTick * 16) - deltaTick, deltaTick, channel, n, SILENT);
         
-        final int p = DRUM;
-        addRepeatedPercussions(track, 0, deltaTick, reps, p, -1, -1, -1, p, -1, -1, -1, p, p, -1, -1, p, -1, -1, -1);
+        final int p = DRUM, p2 = DRUM_HEAVY;
+        addRepeatedPercussions(track, 0, deltaTick, reps, p, -1, -1, -1, p2, -1, -1, -1, p, p, -1, -1, p2, -1, -1, -1);
         
         channel = 1;
         vol = VOL_FG;
@@ -565,7 +570,7 @@ public class BotsnBoltsMusic extends Mustil {
         do {
             stop();
             final boolean first = song == null;
-            song = newSongCity();
+            song = newSongLightning();
             if (first) {
                 System.out.println("Playing " + song.name + " - " + song.track.ticks() + " ticks");
                 System.out.println("Press enter to adjust; press x and enter to stop");
