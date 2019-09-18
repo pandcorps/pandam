@@ -237,6 +237,7 @@ public class Mustil {
     public static int channel = 0, key, vol, deltaTick;
     public static long tick = 0;
     public static long next = 0;
+    public static Track track = null;
 	
 	protected Mustil() {
         throw new Error();
@@ -313,6 +314,32 @@ public class Mustil {
 		return tick;
 	}
 	
+	public final static long compose(final Track track, final long firstTick, final int channel, final int vol, final int... notes) throws Exception {
+	    long tick = firstTick;
+	    final int size = notes.length;
+	    for (int i = 0; i < size; i+= 2) {
+	        final int dur = notes[i];
+	        final int key = notes[i + 1];
+	        if (key != -1) {
+	            addNote(track, tick, dur, channel, key, vol);
+	        }
+	        tick += dur;
+	    }
+	    next = tick;
+	    return tick;
+	}
+	
+	public final static long compose(final int... notes) throws Exception {
+	    return compose(track, next, channel, vol, notes);
+	}
+	
+	public final static long composeRepeated(final int reps, final int... notes) throws Exception {
+	    for (int i = 0; i < reps; i++) {
+	        compose(notes);
+	    }
+	    return next;
+	}
+	
 	public final static void addMajorChordRoot(final Track track, final long tick, final int dur, final int channel, final int root, final int vol) throws Exception {
 	    addMajorChordRootRaw(track, tick, dur, channel, getKey(root), vol);
 	}
@@ -387,10 +414,14 @@ public class Mustil {
 	}
 	
 	public final static void setInstrument(final Track track, final int channel, final int program) throws Exception {
-		addShort(track, ShortMessage.PROGRAM_CHANGE, 0, channel, program, 0);
+	    setInstrument(track, 0, channel, program);
 	}
 	
-	public final static void setPitch(final Track track, final int tick, final int channel, final int amt) throws Exception {
+	public final static void setInstrument(final Track track, final long tick, final int channel, final int program) throws Exception {
+		addShort(track, ShortMessage.PROGRAM_CHANGE, tick, channel, program, 0);
+	}
+	
+	public final static void setPitch(final Track track, final long tick, final int channel, final int amt) throws Exception {
 		addShort(track, ShortMessage.PITCH_BEND, tick, channel, 0, amt); // < 64 to lower, > 65 to raise
 	}
 	
@@ -498,6 +529,7 @@ public class Mustil {
             this.name = name;
             seq = newSequence();
             track = newTrack(seq, name, copyright);
+            Mustil.track = track;
         }
     }
 	
