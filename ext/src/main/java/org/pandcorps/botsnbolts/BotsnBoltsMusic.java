@@ -238,43 +238,20 @@ public class BotsnBoltsMusic extends Mustil {
         final Song song = newSong("EarthquakeBot");
         final Track track = song.track;
         
-        channel = 0;
+        /*channel = 0;
         vol = VOL_BG;
-        deltaTick = 8;
         setInstrument(track, channel, BG);
-        final int reps = 16;
-        final int m = 21, l = 20, h = 22;
-        /*addRepeatedNotes(track, 0, channel, vol, deltaTick, reps, m, -1, m, -1, m, -1, m, -1, m, -1, m, -1, m, -1, m, -1,
-            l, -1, l, -1, l, -1, l, -1, l, -1, l, -1, l, -1, l, -1,
-            m, -1, m, -1, m, -1, m, -1, m, -1, m, -1, m, -1, m, -1,
-            h, -1, h, -1, h, -1, h, -1, h, -1, h, -1, h, -1, h, -1); // Lightning
-        addNote(track, 1536 - deltaTick, deltaTick, channel, m, SILENT);*/
-        //12334455
+        final int reps = 16, m = 21;
         next = 0;
         int t = m;
         for (int i = 0; i < reps; i++) {
-            //addNotes(track, next, channel, vol, 8, m, m);
-            //addNotes(track, next, channel, vol, 16, m, m, m);
-            //addNotes(track, next, channel, vol, 8, m, l, m, l);
-            //addNotes(track, next, channel, vol, 8, m, m, l, l);
-            //addNotes(track, next, channel, vol, 8, m, m, h, h);
             addNotes(track, next, channel, vol, 8, m, m, m, m);
-            /*addNotes(track, next, channel, vol, 8, t, t, t, t);
-            if (i < 2) {
-                t++;
-            } else {
-                t--;
-            }*/
             next += 32;
-            //next += 16; addNotes(track, next, channel, vol, 16, m);
         }
         
-        deltaTick = 4;
         final int p = DRUM, p2 = DRUM_HEAVY;
-        //addRepeatedPercussions(track, 0, deltaTick, reps * 8, p2, -1, -1, -1, p, -1, -1, -1); // Lightning
-        //addRepeatedPercussions(track, 0, deltaTick, reps * 4, p2, -1, p, p, p, -1, -1, -1, p2, -1, -1, -1, p, -1, -1, -1); // New, might work
-        //addRepeatedPercussions(track, 0, deltaTick, reps * 4,  p, p, p, -1, -1, -1, -1, -1, p, p, p, -1, p, -1, p, -1);
-        addRepeatedPercussions(track, 0, deltaTick, reps,  p, p, p, -1, p2, -1, p, p, p, -1, p2, -1, p2, -1, -1, -1);
+        //addRepeatedPercussions(track, 0, 4, reps * 4, p2, -1, p, p, p, -1, -1, -1, p2, -1, -1, -1, p, -1, -1, -1); // New, might work
+        addRepeatedPercussions(track, 0, 4, reps,  p, p, p, -1, p2, -1, p, p, p, -1, p2, -1, p2, -1, -1, -1);
         
         channel = 1;
         vol = VOL_FG;
@@ -282,9 +259,32 @@ public class BotsnBoltsMusic extends Mustil {
         int n0 = 28, n1 = n0 + 1, n2 = n1 + 1, n3 = n2 + 1, n4 = n3 + 1, n5 = n4 + 1, n6 = n5 + 1, n7 = n6 + 1;
         next = 0;
         addNotes(track, next, channel, vol, 64, n2, n3, n4, n3, n2, n1, -1, -1);
-        addNotes(track, 512, channel, vol, 64, n2, n3, n4, n3, n2, n1, -1, -1);
+        addNotes(track, 512, channel, vol, 64, n2, n3, n4, n3, n2, n1, -1, -1);*/
         
-        //addNote(track, next, 48, channel, n3, vol);
+        channel = 0;
+        vol = VOL_BG;
+        setInstrument(track, channel, BG);
+        final int reps = 24;
+        final int d = 8, s = 4;
+        final int l = 20, m = 21, h = 22, v = 23;
+        composeRepeated(reps, d, v, s, h, s, h, d, v, s, h, s, h, d, v, s, h, s, h, d, v, s, h, s, h, d, v, s, h, s, h, d, v, s, h, s, h, d, v, s, h, s, h, d, v, s, h, s, h,
+            d, m, s, l, s, l, d, m, s, l, s, l, d, m, s, l, s, l, d, m, s, l, s, l, d, m, s, l, s, l, d, m, s, l, s, l, d, m, s, l, s, l, d, m, s, l, s, l);
+        
+        final int p = DRUM, p2 = DRUM_HEAVY;
+        //addRepeatedPercussions(track, 0, deltaTick, reps, );
+        
+        channel = 1;
+        vol = VOL_FG;
+        next = 0;
+        setInstrument(track, channel, FG);
+        final int o = 28;
+        final int n0 = o, n1 = o + 1, n2 = o + 2, n3 = o + 3, n4 = o + 4, n5 = o + 5;
+        final int d1 = 8;
+        final int d2 = d1 * 2, d3 = d1 * 3, d4 = d1 * 4, dc = d1 * 12, dg = d1 * 16;
+        compose(d4, n0, d4, n1, d4, n2, d1, n3, d3, n3, dg, n4);
+        compose(dc, n5, d4, n4, dg, n3);
+        compose(d4, n0, d2, n1, d2, n1, d4, n2, d1, n3, d3, n3, dg, n4);
+        compose(d2, n5, d2, n5, d2, n4, d2, n4, d4, n5, d4, n4, dg, n3);
         
         return song;
     }
@@ -295,38 +295,31 @@ public class BotsnBoltsMusic extends Mustil {
         
         channel = 0;
         vol = VOL_BG;
-        deltaTick = 8;
         setInstrument(track, channel, BG);
-        final int reps = 6;
-        final int m = 21, l = 20, h = 22;
-        //addRepeatedNotes(track, 0, channel, vol, deltaTick, 128, m);
+        final int reps = 64;
+        final int d = 8, s = 4;
+        final int l = 20, m = 21, h = 22, v = 23;
+        //composeRepeated(reps, );
         
-        deltaTick = 4;
         final int p = DRUM, p2 = DRUM_HEAVY;
-        addRepeatedPercussions(track, 0, deltaTick, 64, p, -1);
+        addRepeatedPercussions(track, 0, 16, reps, p);
         
         channel = 1;
         vol = VOL_FG;
-        setInstrument(track, channel, FG);
-        /*
-        16 8 8 16 8 8 16 8 8 16 8 8 m l m hv
-        16 4 4 8 16 4 4 8 16 4 4 8 16 4 4 8 m l m hv
-         */
-        int n0 = 28, n1 = n0 + 1, n2 = n1 + 1, n3 = n2 + 1, n4 = n3 + 1, n5 = n4 + 1, n6 = n5 + 1, n7 = n6 + 1;
         next = 0;
-        for (int i = 0; i < 4; i++) {
-            final int n;
-            if (i == 1) {
-                n = n1;
-            } else if (i == 3) {
-                n = n3;
+        setInstrument(track, channel, FG);
+        final int baseNote = 28;
+        final int o = baseNote;
+        final int n0 = o, n1 = o + 1, n2 = o + 2, n3 = o + 3;
+        final int d1 = 8;
+        final int d2 = d1 * 2, d3 = d1 * 3, d4 = d1 * 4, d6 = d1 * 6;
+        for (int i = 0; i < 2; i++) {
+            compose(d2, n2, d2, n2, d2, n2, d2, n2, d2, n2, d2, -1, d2, n1, d1, n1, d3, n0, d2, n0, d2, n0, d2, n0, d2, n0, d6, -1);
+            compose(d4, n1, d4, n2, d4, n3, d4, n2);
+            if (i == 0) {
+                compose(d2, n1, d2, n2, d2, n1, d2, n2, d2, n3, d6, -1);
             } else {
-                n = n2;
-            }
-            for (int j = 0; j < 4; j++) {
-                addNote(track, next, 16, channel, n, vol);
-                addNotes(track, next, channel, vol, 4, n, n);
-                addNote(track, next, 8, channel, n, vol);
+                compose(d4, n1, d4, n1, d4, n0, d4, -1);
             }
         }
         
@@ -347,7 +340,7 @@ public class BotsnBoltsMusic extends Mustil {
         //n, n, n, -1, n, n, -1, -1, n, n, n, -1, -1, -1, -1, -1
         
         final int p = DRUM, p2 = DRUM_HEAVY;
-        //addRepeatedPercussions(track, 0, deltaTick, reps * 2, );
+        addRepeatedPercussions(track, 0, 8, 128, DRUM);
         
         channel = 1;
         vol = VOL_FG;
@@ -355,29 +348,56 @@ public class BotsnBoltsMusic extends Mustil {
         final int off = 0;
         final int baseNote = 28;
         next = 0;
-        final int o = baseNote;
-        final int n0 = o, n1 = o + 1, n2 = o + 2, n3 = o + 3, n4 = o + 4;
-        for (int i = 0; i < 4; i++) {
-            addNotes(track, next, channel, vol, 16, n1, n1, n1); // 48
+        for (int i = 0; i < 8; i++) {
+            final boolean firstHalf = i < 4;
+            final int o = baseNote + (firstHalf ? 0 : 2);
+            final int n0 = o, n1 = o + 1, n2 = o + 2, n3 = o + 3, n4 = o + 4;
+            addNotes(track, next, channel, vol, 16, n1, n0, n1); // 48
             final int nl = ((i % 2) == 0) ? n2 : n0;
             //addNotes(track, next, channel, vol, 8, nl, nl); // 16
-            addNote(track, next, 4, channel, nl, vol); // or 4 4 8 at end here?
-            addNote(track, next, 12, channel, nl, vol);
+            addNote(track, next, 4, channel, nl, vol); // or 4 4 8 at end here? or first 4-12 for 4 iterations, then 4-4-8 for 4 more?
+            if (firstHalf) {
+                addNote(track, next, 12, channel, nl, vol);
+            } else {
+                addNote(track, next, 4, channel, nl, vol);
+                addNote(track, next, 8, channel, nl, vol);
+            }
+System.out.println(next);
         }
+        final int o = baseNote + 2;
+        final int nn = o - 1, n0 = o, n1 = o + 1, n2 = o + 2, n3 = o + 3, n4 = o + 4, n5 = o + 5, n6 = o + 6;
         /*for (int i = 0; i < 8; i++) {
             addNotes(track, next, channel, vol, 8, n1, n1, n1); // 24
             addNotes(track, next, channel, vol, 4, n1, n1); // 8
             addNote(track, next, 32, channel, ((i % 2) == 0) ? n2 : n0, vol);
         }*/
-        addNote(track, next, 32, channel, n3, vol);
-        addNotes(track, next, channel, vol, 8, n1, n1, n1); // 24
-        addNotes(track, next, channel, vol, 4, n1, n1); // 8
-        addNote(track, next, 32, channel, n0, vol);
-        addNotes(track, next, channel, vol, 8, n1, n1, n1, n1);
-        addNote(track, next, 32, channel, n3, vol);
-        addNotes(track, next, channel, vol, 8, n1, n1, n1); // 24
-        addNotes(track, next, channel, vol, 4, n1, n1); // 8
-        addNote(track, next, 32, channel, n0, vol);
+        //setInstrument(track, next, channel, BG2);
+        for (int i = 0; i < 4; i++) {
+            final int i2 = i % 2;
+            final int nf = n3 + 1;
+            addNote(track, next, 32, channel, nf, vol);
+            addNotes(track, next, channel, vol, 8, n2, n2, n2); // 24
+            //addNotes(track, next, channel, vol, 4, n2, n2);
+            //addNotes(track, next, channel, vol, 3, n2, n2); // 6
+            addNote(track, next, 4, channel, n2, vol);
+            addNote(track, next, 3, channel, n2, vol);
+            next += 1; // 2
+            if (i2 == 0) {
+                addNote(track, next, 32, channel, nf, vol);
+                addNotes(track, next, channel, vol, 8, n2, n2, n2, n2);
+            } else if (i == 1) {
+                //addNotes(track, next, channel, vol, 16, n1, n2, n3, n4);
+                addNotes(track, next, channel, vol, 16, n3, n4, n5, n6);
+System.out.println(next);
+            } else if (i == 3) {
+                /*addNotes(track, next, channel, vol, 16, n1, n2);
+                addNote(track, next, 32, channel, n1, vol);*/
+                //addNotes(track, next, channel, vol, 16, n1, n2, n1);
+                addNotes(track, next, channel, vol, 16, n1, n0, nn);
+                addNote(track, next, 16, channel, n1, SILENT);
+System.out.println(next);
+            }
+        }
         
         return song;
     }
@@ -631,7 +651,7 @@ public class BotsnBoltsMusic extends Mustil {
         do {
             stop();
             final boolean first = song == null;
-            song = newSongFlood();
+            song = newSongCyclone();
             if (first) {
                 System.out.println("Playing " + song.name + " - " + song.track.ticks() + " ticks");
                 System.out.println("Press enter to adjust; press x and enter to stop");
