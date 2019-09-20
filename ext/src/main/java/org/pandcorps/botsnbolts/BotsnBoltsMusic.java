@@ -296,13 +296,13 @@ public class BotsnBoltsMusic extends Mustil {
         channel = 0;
         vol = VOL_BG;
         setInstrument(track, channel, BG);
-        final int reps = 64;
-        final int d = 8, s = 4;
-        final int l = 20, m = 21, h = 22, v = 23;
-        //composeRepeated(reps, );
+        final int d1 = 4, d2 = d1 * 2, d3 = d1 * 3, d4 = d1 * 4, d6 = d1 * 6;
+        final int m = 21, h = 22;
+        final int size = 1536;
+        composeUntil(size, d1, m, d1, m, d2, h);
         
         final int p = DRUM, p2 = DRUM_HEAVY;
-        addRepeatedPercussions(track, 0, 16, reps, p);
+        addPercussionsUntil(track, 0, d2, size, p, p2); //TODO Fast group at end
         
         channel = 1;
         vol = VOL_FG;
@@ -310,17 +310,32 @@ public class BotsnBoltsMusic extends Mustil {
         setInstrument(track, channel, FG);
         final int baseNote = 28;
         final int o = baseNote;
-        final int n0 = o, n1 = o + 1, n2 = o + 2, n3 = o + 3;
-        final int d1 = 8;
-        final int d2 = d1 * 2, d3 = d1 * 3, d4 = d1 * 4, d6 = d1 * 6;
+        final int n0 = o, n1 = o + 1, n2 = o + 2, n3 = o + 3, n4 = o + 4, n5 = o + 5;
         for (int i = 0; i < 2; i++) {
-            compose(d2, n2, d2, n2, d2, n2, d2, n2, d2, n2, d2, -1, d2, n1, d1, n1, d3, n0, d2, n0, d2, n0, d2, n0, d2, n0, d6, -1);
-            compose(d4, n1, d4, n2, d4, n3, d4, n2);
+            compose(d2, n2, d2, n2, d2, n2, d2, n2, d2, n2, d2, -1, d2, n1, d1, n1);
+            compose(d3, n0, d2, n0, d2, n0, d2, n0, d2, n0, d2, -1);
             if (i == 0) {
-                compose(d2, n1, d2, n2, d2, n1, d2, n2, d2, n3, d6, -1);
+                compose(d2, n1, d1, n1, d3, n2, d2, n2, d2, n2, d2, n2, d2, n2, d2, -1, d2, n1, d2, n1);
+                compose(d4, n2, d4, n3, d4, n4, d4, n5);
             } else {
+                compose(d4, -1, d4, n1, d4, n2, d2, n3, d2, n3, d4, n2);
                 compose(d4, n1, d4, n1, d4, n0, d4, -1);
             }
+        }
+        for (int i = 0; i < 4; i++) {
+            compose(d2, n2, d2, n2, d2, n2, d2, n2, d2, n2, d4, -1);
+            if (i == 1) {
+                compose(d1, n3, d3, n4, d2, n4, d2, n4, d2, n4, d2, n4, d6, -1);
+            } else {
+                compose(d1, n1, d3, n0, d2, n0, d2, n0, d2, n0, d2, n0, d6, -1);
+            }
+        }
+        final int xm = n5, xh = xm + 1, xl = xm - 1;
+        for (int i = 0; i < 2; i++) {
+            compose(d4, xm, d4, xm, d1, xm, d1, xm, d2, xm, d4, xm);
+            compose(d2, xl, d2, xl, d4, xl, d1, xl, d1, xl, d2, xl, d2, xl, d2, -1);
+            compose(d4, xm, d4, xm, d1, xm, d1, xm, d2, xm, d4, xm);
+            compose(d2, xh, d2, xh, d1, xh, d1, xh, d2, xh, d4, xh, d4, -1);
         }
         
         return song;
@@ -653,7 +668,12 @@ System.out.println(next);
             final boolean first = song == null;
             song = newSongCyclone();
             if (first) {
-                System.out.println("Playing " + song.name + " - " + song.track.ticks() + " ticks");
+                final long size = song.track.ticks();
+                final int sectionLength = 512;
+                if ((size % sectionLength) != 0) {
+                    throw new IllegalStateException("Song not a multiple of " + sectionLength + ": " + size);
+                }
+                System.out.println("Playing " + song.name + " - " + size + " ticks");
                 System.out.println("Press enter to adjust; press x and enter to stop");
             }
             System.out.println("arg=" + arg);
