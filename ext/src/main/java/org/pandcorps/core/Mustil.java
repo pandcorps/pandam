@@ -340,6 +340,17 @@ public class Mustil {
 	    return next;
 	}
 	
+	public final static long composeUntil(final int end, final int... notes) throws Exception {
+        while (true) {
+            compose(notes);
+            if (next == end) {
+                return next;
+            } else if (next > end) {
+                throw new IllegalStateException("Composed until " + next + " > " + end);
+            }
+        }
+    }
+	
 	public final static void addMajorChordRoot(final Track track, final long tick, final int dur, final int channel, final int root, final int vol) throws Exception {
 	    addMajorChordRootRaw(track, tick, dur, channel, getKey(root), vol);
 	}
@@ -412,6 +423,18 @@ public class Mustil {
 		}
 		return tick;
 	}
+	
+	public final static long addPercussionsUntil(final Track track, final long firstTick, final int deltaTick, final int end, final int... keys) throws Exception {
+        long tick = firstTick;
+        while (true) {
+            tick = addPercussions(track, tick, deltaTick, keys);
+            if (tick == end) {
+                return tick;
+            } else if (tick > end) {
+                throw new IllegalStateException("Added percussions until " + tick + " > " + end);
+            }
+        }
+    }
 	
 	public final static void setInstrument(final Track track, final int channel, final int program) throws Exception {
 	    setInstrument(track, 0, channel, program);
