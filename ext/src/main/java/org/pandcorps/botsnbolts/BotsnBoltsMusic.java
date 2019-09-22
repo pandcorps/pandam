@@ -638,6 +638,149 @@ System.out.println(next);
         return song;
     }
     
+    protected final static Song newSongTmp() throws Exception {
+        final Song song = newSong("TmpBot");
+        final Track track = song.track;
+        
+        channel = 0;
+        vol = VOL_BG;
+        setInstrument(track, channel, BG);
+        //TODO Double tempo?
+        //final int d1 = 4, d2 = d1 * 2, d3 = d1 * 3, d4 = d1 * 4, d6 = d1 * 6, d8 = d1 * 8, d12 = d1 * 12, dg = d1 * 16;
+        final int d1 = 2, d2 = d1 * 2, d3 = d1 * 3, d4 = d1 * 4, d6 = d1 * 6, d8 = d1 * 8, d12 = d1 * 12, dc = d1 * 12, dg = d1 * 16;
+        final int m = 21, h = 22;
+        final int size = 1024;
+        //final int size = 1536;
+        //composeUntil(size, );
+        
+        final int p = DRUM, p2 = DRUM_HEAVY;
+        addPercussionsUntil(track, 0, d8, size, p);
+        
+        channel = 1;
+        vol = VOL_FG;
+        next = 0;
+        setInstrument(track, channel, FG);
+        final int baseNote = 28;
+        final int o = baseNote - 1;
+        final int n0 = o, n1 = o + 1, n2 = o + 2, n3 = o + 3, n4 = o + 4, n5 = o + 5;
+        for (int i = 0; i < 2; i++) {
+        //for (int i = 0; i < 0; i++) {
+            if (i == 0) {
+                //compose(d1, n2, d4, n2, d3, -1, d12, n3, d2, n2, d2, n2, d4, n3, d4, n3);
+                compose(d4, n2, d1, n2, d3, -1, d12, n3, d2, n2, d2, n2, d4, n3, d4, n3);
+                compose(d8, n2, d4, n3, d8, n3, d4, n2, d8, n3);
+                //compose(d1, n2, d4, n2, d3, -1, d12, n3, d2, n2, d2, n2, d4, n1, d4, n1);
+                compose(d4, n2, d1, n2, d3, -1, d12, n3, d2, n2, d2, n2, d4, n1, d4, n1);
+            } else {
+                compose(d1, n2, dg, n2, d3, -1, d2, n2, d2, n2, d4, n3, d4, n3);
+                compose(dg, n2, d4, -1, d4, n2, d8, n3);
+                compose(d1, n2, dg, n2, d3, -1, d2, n2, d2, n2, d4, n1, d4, n1);
+            }
+            compose(d1, n3, d4, n3, d3, -1, d1, n2, d4, n2, d3, -1, d1, n1, d4, n1, d3, -1, d8, -1);
+System.out.println(next); //TODO another 512 of variations of this?
+        }
+        /*for (int i = 0; i < 2; i++) {
+            compose(d8, n3, d6, n2, d1, n1, d1, n1, d4, n3, d4, n4, d4, n3, d4, n2);
+            if (i == 0) {
+                compose(d8, n3, d6, n2, d1, n1, d1, n1, d4, n3, d4, n3, d4, n2, d4, -1);
+            } else {
+                compose(d8, n3, d8, n2, d8, n1, d8, -1);
+            }
+        }*/
+        /*for (int i = 0; i < 2; i++) {
+            compose(dg, n3, dc, n2, d2, n1, d2, n1, d8, n3, d8, n4, d8, n3, d8, n2);
+            if (i == 0) {
+                compose(dg, n3, dc, n2, d2, n1, d2, n1, d8, n3, d8, n3, d8, n2, d8, -1);
+            } else {
+                compose(dg, n3, dg, n2, dg, n1, dg, -1);
+            }
+        }*/
+        final int x1 = n1 + 2, x2 = x1 + 1, x3 = x1 + 2, x4 = x1 + 3;
+        for (int i = 0; i < 2; i++) {
+            compose(dg, x3, dc, x2, d2, x1, d2, x1, d8, x3, d8, x2, d8, x3, d8, x2);
+            if (i == 0) {
+                compose(dg, x3, dc, x2, d2, x1, d2, x1, d8, x3, d8, x3, d8, x2, d8, -1);
+            } else {
+                //compose(dg, x3, dg, x2, dg, x1, dg, -1);
+                compose(dg, x4, dg, x2, dg, x1, dg, -1);
+            }
+        }
+System.out.println(next);
+        
+        return song;
+    }
+    
+    protected final static Song newSongTmp2() throws Exception {
+        final Song song = newSong("Tmp2Bot");
+        final Track track = song.track;
+        
+        channel = 0;
+        vol = VOL_BG;
+        setInstrument(track, channel, BG);
+        final int d1 = 4, d2 = d1 * 2, d3 = d1 * 3, d4 = d1 * 4, d6 = d1 * 6, d8 = d1 * 8, d12 = d1 * 12, dc = d1 * 12, dg = d1 * 16;
+        final int m = 21, h = 22;
+        final int size = 512;
+        //composeUntil(size, );
+        
+        final int p = DRUM, p2 = DRUM_HEAVY;
+        addPercussionsUntil(track, 0, dg, size, p2);
+        
+        channel = 1;
+        vol = VOL_FG;
+        next = 0;
+        setInstrument(track, channel, FG);
+        final int baseNote = 28;
+        final int o = baseNote - 1;
+        final int n0 = o, n1 = o + 1, n2 = o + 2, n3 = o + 3, n4 = o + 4, n5 = o + 5;
+        /*for (int i = 0; i < 4; i++) {
+            compose(dg, n2, d4, n3, d4, n2, d4, n1, d4, n0);
+        }
+        compose(d8, n2, d4, n1, d4, n1, dg, n2);
+        next += dg;*/
+        for (int i = 0; i < 3; i++) {
+            /*compose(d4, n2, d4, n2, d4, n3, d4, n3);
+            if (i < 2) {
+                compose(d8, -1, d8, n1);
+            }*/
+            compose(d2, n2, d2, n2, d2, n3, d2, n3);
+            if (i < 2) {
+                compose(d4, -1, d4, n1);
+            }
+        }
+        
+        return song;
+    }
+    
+    protected final static Song newSongRock() throws Exception {
+        final Song song = newSong("RockBot");
+        final Track track = song.track;
+        
+        channel = 0;
+        vol = VOL_BG;
+        setInstrument(track, channel, BG);
+        //final int reps = 16;
+        final int reps = 8;
+        //final int n = 21, h = 28, l = 20;
+        final int n = 21, h = 22, l = 20;
+        addRepeatedNotes(track, 0, channel, vol, 4, reps, n, -1, n, -1, l, -1, l, -1, h, -1, h, -1, -1, -1, -1, -1);
+        addNote(track, 1020, 4, channel, n, SILENT);
+        
+        final int p = DRUM, p2 = DRUM_HEAVY;
+        addRepeatedPercussions(track, 0, 4, reps, p, -1, -1, -1, p, -1, -1, -1, p, -1, p2, -1, p, -1, p, -1);
+        
+        channel = 1;
+        vol = VOL_FG;
+        next = 0;
+        setInstrument(track, channel, FG);
+        final int n0 = 28, n1 = n0 + 1, n2 = n0 + 2;
+        //compose(8, n2, 8, n2, 8, n2, 8, n2, 4, n1, 4, n2);
+        compose(16, n2, 16, n2, 16, n2, 16, n2, 8, n1, 8, n2);
+        next += 48;
+        compose(16, n2, 16, n2, 16, n2, 16, n2, 8, n1, 8, n2);
+        
+        return song;
+    }
+    
     protected final static Song newSongBoss() throws Exception {
         final Song song = newSong("Boss");
         return song;
@@ -666,7 +809,7 @@ System.out.println(next);
         do {
             stop();
             final boolean first = song == null;
-            song = newSongCyclone();
+            song = newSongRock();
             if (first) {
                 final long size = song.track.ticks();
                 final int sectionLength = 512;
