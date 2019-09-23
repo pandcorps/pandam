@@ -758,72 +758,9 @@ System.out.println(next);
         channel = 0;
         vol = VOL_BG;
         setInstrument(track, channel, BG);
-        final int d1 = 4, d2 = d1 * 2, d3 = d1 * 3, d4 = d1 * 4, d6 = d1 * 6, d8 = d1 * 8, d12 = d1 * 12, dc = d1 * 12, dg = d1 * 16;
-        final int m = 21, h = 22;
-        final int size = 1536;
-        //composeUntil(size, );
-        
-        final int p = DRUM, p2 = DRUM_HEAVY;
-        addPercussionsUntil(track, 0, dg, size, p2);
-        
-        channel = 1;
-        vol = VOL_FG;
-        next = 0;
-        setInstrument(track, channel, FG);
-        final int baseNote = 28;
-        final int o = baseNote - 1;
-        final int n0 = o, n1 = o + 1, n2 = o + 2, n3 = o + 3, n4 = o + 4, n5 = o + 5;
-        add6(n2); add6(n2); add6(n2); add6(n2); // 256
-        add6(n1); add6(n1); add6(n0); add6(n0); // 256
-System.out.println(next);
-        // Slow 1 0 2 1 3 2 4
-        add8(n2); add6(n2); add16(n2); // 256
-        add8(n1); add6(n1); add16(n2); // 256
-System.out.println(next);
-        compose(d1, n0, d1, n0, d1, n0, d1, -1, d4, -1, d8, n1, d8, n0, d8, n2, d8, n1, d8, n3, d8, n2, d8, n4); // 256
-System.out.println(next);
-        add8(n2); add6(n2); add16(n2); // 256
-System.out.println(next);
-        
-        return song;
-    }
-    
-    private final static void add6(final int n) throws Exception {
-        add6(n, true);
-    }
-    
-    private final static void add6(final int n, final boolean pause) throws Exception {
-        //(4 4) 8 8 8 8 8 [16]
-        final int d1 = 4, d2 = d1 * 2, d4 = d1 * 4;
-        compose(d1, n, d1, n, d2, n, d2, n, d2, n, d2, n, d2, n);
-        if (pause) {
-            compose(d4, -1);
-        }
-    }
-    
-    private final static void add8(final int n) throws Exception {
-        add6(n, false);
-        compose(8, n, 8, n);
-    }
-    
-    private final static void add16(final int n0) throws Exception {
-        final int n1 = n0 - 1, n2 = n0 - 2, d2 = 8, d4 = d2 * 2;
-        add6(n0, false);
-        compose(d2, n1, d2, n1, d4, n2, d4, n1, d4, n2, d4, -1);
-    }
-    
-    protected final static Song newSongTmp4() throws Exception {
-        final Song song = newSong("Tmp4Bot");
-        final Track track = song.track;
-        
-        channel = 0;
-        vol = VOL_BG;
-        setInstrument(track, channel, BG);
-        final int d1 = 4, d2 = d1 * 2, d3 = d1 * 3, d4 = d1 * 4, d6 = d1 * 6, d8 = d1 * 8, d12 = d1 * 12, dc = d1 * 12, dg = d1 * 16;
-        //final int m = 21, h = 22;
+        final int d1 = 4, d2 = d1 * 2;
         final int b0 = 20, b1 = 21, b2 = 22, b3 = 23, b4 = 24, b5 = 25;
-        final int size = 1536;
-        //composeUntil(size, d1, m, d1, h, d2, -1);
+        final int size = 2048;
         composeUntil(size, d1, b4, d1, b5, d2, -1, d1, b4, d1, b5, d2, -1, d1, b4, d1, b5, d2, -1, d1, b4, d1, b5, d2, -1,
             d1, b4, d1, b5, d2, -1, d1, b4, d1, b5, d2, -1, d1, b4, d1, b5, d2, -1, d1, b4, d1, b5, d2, -1,
             d1, b2, d1, b3, d2, -1, d1, b2, d1, b3, d2, -1, d1, b2, d1, b3, d2, -1, d1, b2, d1, b3, d2, -1,
@@ -838,30 +775,32 @@ System.out.println(next);
         setInstrument(track, channel, FG);
         final int baseNote = 28;
         final int o = baseNote - 1;
-        final int n0 = o, n1 = o + 1, n2 = o + 2, n3 = o + 3, n4 = o + 4, n5 = o + 5;
-        add8(n2, 0); add8(n2, 0); add8(n1, 0); add8(n0, 0); // 256
-        add8(n2, 0); add8(n2, 0); add8(n1, 0); add8(n0, 0); // 256
-System.out.println(next);
-        add8(n2, 0); add8(n2, 0); add8(n1, 1); add8(n0, 2); // 256
-        add8(n2, 0); add8(n2, 0); add8(n1, 1); add8(n0, 2); // 256 see tmp3 for more ideas, maybe especially in the middle part
-        // Slow 1 0 2 1 3 2 4
-System.out.println(next);
-        add8(n2, 3); add8(n2, 4); add8(n1, 0); add8(n0, 0); // 256
-        add8(n2, 3); add8(n2, 4); add8(n1, 0); add8(n0, 0); // 256
-System.out.println(next);
-//addNote(track, 1532, 4, channel, n0, SILENT);
+        final int n0 = o, n1 = o + 1, n2 = o + 2;
+        for (int j = 0; j < 2; j++) {
+            for (int i = 0; i < 2; i++) {
+                if (j == 0) {
+                    add8(n2, 0); add8(n2, 0); add8(n1, 0); add8(n0, 0);
+                } else {
+                    add8(n2, 0); add8(n2, 0); add8(n1, 1); add8(n0, 2);
+                }
+            }
+            for (int i = 0; i < 2; i++) {
+                add8(n2, 3); add8(n2, 4); add8(n1, 0); add8(n0, 0);
+            }
+        }
         
         return song;
     }
     
     private final static void add8(final int n, final int mode) throws Exception {
+        final int ns = n + ((mode == 2) ? 1 : 0); 
         final int d1 = 4, d2 = d1 * 2, d4 = d1 * 4;
-        if ((mode == 0) || (mode == 3)) {
-            compose(d1, n, d1, n);
+        if ((mode == 0) || (mode == 1) || (mode == 3)) {
+            compose(d1, ns, d1, ns);
         } else if (mode == 4) {
             compose(d2, -1);
         } else {
-            compose(d2, n);
+            compose(d2, ns);
         }
         if ((mode == 3) || (mode == 4)) {
             compose(d4, n - 1);
@@ -870,11 +809,12 @@ System.out.println(next);
             compose(d2, -1);
             return;
         }
-        compose(d2, n, d2, n, d2, n, d2, n, d2, n);
+        final int nl = n - ((mode == 1) ? 1 : 0);
+        compose(d2, ns, d2, ns, d2, ns, d2, nl, d2, nl);
         if (mode != 1) {
             compose(d4, -1);
         } else {
-            compose(d2, n, d2, n);
+            compose(d2, nl, d2, nl);
         }
     }
     
@@ -936,7 +876,7 @@ System.out.println(next);
         do {
             stop();
             final boolean first = song == null;
-            song = newSongTmp4();
+            song = newSongTmp3();
             if (first) {
                 final long size = song.track.ticks();
                 final int sectionLength = 512;
