@@ -31,7 +31,7 @@ public class BotsnBoltsMusic extends Mustil {
     
     private final static int BG = PRG_SQUARE, BG2 = PRG_SAWTOOTH;
     private final static int FG = PRG_CLAVINET; // PRG_NEW_AGE, PRG_ELECTRIC_PIANO_2
-    private final static int DRUM = PRC_CLOSED_HI_HAT, DRUM_HEAVY = PRC_BASS_DRUM_2;
+    private final static int CHCK = PRC_CLOSED_HI_HAT, DRUM = PRC_BASS_DRUM_2;
     private final static int VOL_BG = 56;
     private final static int VOL_FG = 64;
     
@@ -56,7 +56,7 @@ public class BotsnBoltsMusic extends Mustil {
         final int n = 21, h = 28;
         addRepeatedNotes(track, 0, channel, vol, deltaTick, reps, n, n, -1, -1, h, -1, n, n, n, n, -1, -1, h, -1, -1, -1);
         
-        final int p = DRUM, p2 = DRUM_HEAVY;
+        final int p = CHCK, p2 = DRUM;
         addRepeatedPercussions(track, 0, deltaTick, reps * 2, p, -1, p2, -1, p, p, -1, -1);
         
         channel = 1;
@@ -106,56 +106,74 @@ public class BotsnBoltsMusic extends Mustil {
         vol = VOL_BG;
         deltaTick = 4;
         setInstrument(track, channel, BG);
-        final int reps = 6;
+        final int size = 1536, reps = 6;
         final int m = 21, l = 20, h = 22;
-        addRepeatedNotes(track, 0, channel, vol, deltaTick, reps, m, -1, m, -1, m, -1, m, -1, m, -1, m, -1, m, -1, m, -1,
-            l, -1, l, -1, l, -1, l, -1, l, -1, l, -1, l, -1, l, -1,
-            m, -1, m, -1, m, -1, m, -1, m, -1, m, -1, m, -1, m, -1,
-            h, -1, h, -1, h, -1, h, -1, h, -1, h, -1, h, -1, h, -1);
+        addRepeatedNotes(track, 0, channel, vol, deltaTick, reps, h, -1, h, -1, h, h, h, -1, h, h, h, -1, h, -1, h, -1,
+            m, -1, m, -1, m, m, m, -1, m, m, m, -1, m, -1, m, -1,
+            l, -1, l, -1, l, l, l, -1, l, l, l, -1, l, -1, l, -1,
+            m, -1, m, -1, m, m, m, -1, m, m, m, -1, m, -1, m, -1);
         addNote(track, 1536 - deltaTick, deltaTick, channel, m, SILENT);
         
-        final int p = DRUM, p2 = DRUM_HEAVY;
-        addRepeatedPercussions(track, 0, deltaTick, reps * 8, p2, -1, -1, -1, p, p, -1, -1);
+        final int p = CHCK, p2 = DRUM;
+        addPercussionsUntil(track, 0, deltaTick, size, p, -1, p, p, p, -1, p, p, p, p, p, -1, p, -1, p2, -1);
         
         channel = 1;
         vol = VOL_FG;
         setInstrument(track, channel, FG);
-        int n0 = 28, n1 = n0 + 1, n2 = n1 + 1, n3 = n2 + 1, n4 = n3 + 1, n5 = n4 + 1, n6 = n5 + 1, n7 = n6 + 1;
-        next = 256;
-        addNotes(track, next, channel, vol, 64, n3, n2, n3, n4);
+        int n0 = 28, n1 = n0 + 1, n2 = n1 + 1, n3 = n2 + 1, n4 = n3 + 1, n5 = n4 + 1, n6 = n5 + 1;
+        next = 0;
+        addLightning64(n4); addLightning64(n3); addLightning64(n2); addLightning64(n3);
         
-        addNote(track, next, 48, channel, n3, vol);
-        addNotes(track, next, channel, vol, 8, n1, n1);
-        addNote(track, next, 48, channel, n2, vol);
-        addNote(track, next, 16, channel, n2, vol);
-        addNote(track, next, 48, channel, n3, vol);
-        addNotes(track, next, channel, vol, 8, n3, n3);
-        addNote(track, next, 64, channel, n4, vol);
+        addLightning48(n4);
+        addNotes(track, next, channel, vol, 8, n2, n2);
+        addLightning48(n3);
+        addNote(track, next, 16, channel, n1, vol);
+        addLightning48(n2);
+        addNotes(track, next, channel, vol, 8, n2, n2);
+        addLightning64(n3);
         
-        addNote(track, next, 48, channel, n5, vol);
-        addNotes(track, next, channel, vol, 8, n3, n3);
-        addNote(track, next, 32, channel, n4, vol);
-        addNotes(track, next, channel, vol, 8, n3, n3);
+        addLightning48(n4);
+        addNotes(track, next, channel, vol, 8, n2, n2);
+        addLightning32(n3);
+        addNotes(track, next, channel, vol, 8, n2, n2);
+        addNote(track, next, 16, channel, n3, vol);
+        addLightning48(n4);
+        addNotes(track, next, channel, vol, 8, n4, n4);
+        addLightning64(n5);
+        
+        addLightning48(n6);
+        addNotes(track, next, channel, vol, 8, n4, n4);
+        addLightning48(n5);
         addNote(track, next, 16, channel, n4, vol);
-        addNote(track, next, 48, channel, n5, vol);
-        addNotes(track, next, channel, vol, 8, n5, n5);
-        addNote(track, next, 64, channel, n6, vol);
-        
-        addNote(track, next, 48, channel, n7, vol);
-        addNotes(track, next, channel, vol, 8, n5, n5);
-        addNote(track, next, 48, channel, n6, vol);
-        addNote(track, next, 16, channel, n4, vol);
+        addNotes(track, next, channel, vol, 8, n5, n5, n6, n6, n5, n5, n4, n4);
         addNote(track, next, 32, channel, n5, vol);
-        addNotes(track, next, channel, vol, 8, n3, n3);
-        addNote(track, next, 16, channel, n2, vol);
-        addNote(track, next, 128, channel, n1, vol);
-        
-        next += 96;
-        addNotes(track, next, channel, vol, 8, n3, n3);
-        addNote(track, next, 16, channel, n2, vol);
-        addNote(track, next, 64, channel, n1, vol);
+        for (int i = 0; i < 2; i++) {
+            addNotes(track, next, channel, vol, 8, n3, n3);
+            addNote(track, next, 16, channel, n2, vol);
+            addLightning64(n1, vol); addLightning64(n1, vol - 12); addLightning64(n1, vol - 24); addLightning32(n1, vol - 36);
+        }
         
         return song;
+    }
+    
+    private final static void addLightning64(final int n) throws Exception {
+        addLightning64(n, vol);
+    }
+    
+    private final static void addLightning64(final int n, final int vol) throws Exception {
+        composeAtVolume(vol, 16, n, 4, n, 4, n, 8, n, 4, n, 4, n, 8, n, 16, n);
+    }
+    
+    private final static void addLightning48(final int n) throws Exception {
+        compose(16, n, 4, n, 4, n, 24, n);
+    }
+    
+    private final static void addLightning32(final int n) throws Exception {
+        addLightning32(n, vol);
+    }
+    
+    private final static void addLightning32(final int n, final int vol) throws Exception {
+        composeAtVolume(vol, 16, n, 4, n, 4, n, 8, n);
     }
     
     protected final static Song newSongHail() throws Exception {
@@ -175,7 +193,7 @@ public class BotsnBoltsMusic extends Mustil {
         final int m = 21, h = 22;
         addRepeatedNotes(track, 0, channel, vol, deltaTick, reps, m, -1, h, -1, m, -1, -1, -1, m, -1, h, -1, h, h, -1, -1);
         
-        final int p = DRUM, p2 = DRUM_HEAVY;
+        final int p = CHCK, p2 = DRUM;
         addRepeatedPercussions(track, 0, deltaTick, reps, p, p, -1, -1, p2, -1, -1, -1, p, p, -1, -1, p, p, -1, -1);
         
         channel = 1;
@@ -249,7 +267,7 @@ public class BotsnBoltsMusic extends Mustil {
             next += 32;
         }
         
-        final int p = DRUM, p2 = DRUM_HEAVY;
+        final int p = CHCK, p2 = DRUM;
         //addRepeatedPercussions(track, 0, 4, reps * 4, p2, -1, p, p, p, -1, -1, -1, p2, -1, -1, -1, p, -1, -1, -1); // New, might work
         addRepeatedPercussions(track, 0, 4, reps,  p, p, p, -1, p2, -1, p, p, p, -1, p2, -1, p2, -1, -1, -1);
         
@@ -270,7 +288,7 @@ public class BotsnBoltsMusic extends Mustil {
         composeRepeated(reps, d, v, s, h, s, h, d, v, s, h, s, h, d, v, s, h, s, h, d, v, s, h, s, h, d, v, s, h, s, h, d, v, s, h, s, h, d, v, s, h, s, h, d, v, s, h, s, h,
             d, m, s, l, s, l, d, m, s, l, s, l, d, m, s, l, s, l, d, m, s, l, s, l, d, m, s, l, s, l, d, m, s, l, s, l, d, m, s, l, s, l, d, m, s, l, s, l);
         
-        final int p = DRUM, p2 = DRUM_HEAVY;
+        final int p = CHCK, p2 = DRUM;
         //addRepeatedPercussions(track, 0, deltaTick, reps, );
         
         channel = 1;
@@ -301,7 +319,7 @@ public class BotsnBoltsMusic extends Mustil {
         final int size = 1536;
         composeUntil(size, d1, m, d1, m, d2, h);
         
-        final int p = DRUM, p2 = DRUM_HEAVY;
+        final int p = CHCK, p2 = DRUM;
         addPercussionsUntil(track, 0, d2, size, p, p2); //TODO Fast group at end
         
         channel = 1;
@@ -354,8 +372,8 @@ public class BotsnBoltsMusic extends Mustil {
         //addRepeatedNotes(track, 0, channel, vol, deltaTick, reps, n, n, n, -1, n, -1, -1, -1, n, n, n, -1, -1, -1, -1, -1); // might work, untested
         //n, n, n, -1, n, n, -1, -1, n, n, n, -1, -1, -1, -1, -1
         
-        final int p = DRUM, p2 = DRUM_HEAVY;
-        addRepeatedPercussions(track, 0, 8, 128, DRUM);
+        final int p = CHCK, p2 = DRUM;
+        addRepeatedPercussions(track, 0, 8, 128, CHCK);
         
         channel = 1;
         vol = VOL_FG;
@@ -430,7 +448,7 @@ System.out.println(next);
         addRepeatedNotes(track, 0, channel, vol, deltaTick, reps, n, n, n, -1, h, -1, n, -1, n, n, n, -1, l, l, -1, -1);
         addNote(track, (reps * deltaTick * 16) - (deltaTick * 2), deltaTick * 2, channel, n, SILENT);
         
-        final int p = DRUM;
+        final int p = CHCK;
         addRepeatedPercussions(track, 0, deltaTick, reps * 2, p, p, -1, -1, p, -1, p, -1);
         
         channel = 1;
@@ -507,7 +525,7 @@ System.out.println(next);
         addRepeatedNotes(track, 0, channel, vol, deltaTick, reps, n, -1, n, -1, n, -1, n, -1, n, -1, n, -1, -1, n, n, -1);
         addNote(track, (reps * deltaTick * 16) - deltaTick, deltaTick, channel, n, SILENT);
         
-        final int p = DRUM, p2 = DRUM_HEAVY;
+        final int p = CHCK, p2 = DRUM;
         addRepeatedPercussions(track, 0, deltaTick, reps, p, -1, -1, -1, p2, -1, -1, -1, p, p, -1, -1, p2, -1, -1, -1);
         
         channel = 1;
@@ -578,7 +596,7 @@ System.out.println(next);
         //addRepeatedNotes(track, 0, channel, vol, 4, reps, n, -1, -1, -1, n, -1, n, -1, n, -1, -1, -1, n, -1, -1, -1, n, -1, n, -1, n, -1, -1, -1, n, -1, -1, -1, h, h, -1, -1);
         addRepeatedNotes(track, 0, channel, vol, 4, reps, n, -1, -1, -1, n, -1, n, -1, n, -1, -1, -1, n, -1, -1, -1, n, -1, n, -1, n, -1, -1, -1, n, -1, -1, -1, n, n, -1, -1);
         
-        final int p = DRUM, p2 = DRUM_HEAVY;
+        final int p = CHCK, p2 = DRUM;
         //addRepeatedPercussions(track, 0, 4, reps, p2, -1, -1, -1, p, -1, -1, -1, p2, -1, -1, -1, p, -1, -1, -1, p2, -1, -1, -1, p, -1, -1, -1, p2, -1, -1, -1, p, p, p, -1);
         addRepeatedPercussions(track, 0, 4, reps, p, -1, p2, -1, p, -1, p2, -1, p, -1, p2, -1, p, -1, p2, -1, p, -1, p2, -1, p, -1, p2, -1, p, -1, p2, -1, p, p, p, -1);
         
@@ -653,7 +671,7 @@ System.out.println(next);
         //final int size = 1536;
         //composeUntil(size, );
         
-        final int p = DRUM, p2 = DRUM_HEAVY;
+        final int p = CHCK, p2 = DRUM;
         addPercussionsUntil(track, 0, d8, size, p);
         
         channel = 1;
@@ -722,7 +740,7 @@ System.out.println(next);
         final int size = 512;
         //composeUntil(size, );
         
-        final int p = DRUM, p2 = DRUM_HEAVY;
+        final int p = CHCK, p2 = DRUM;
         addPercussionsUntil(track, 0, dg, size, p2);
         
         channel = 1;
@@ -758,16 +776,13 @@ System.out.println(next);
         channel = 0;
         vol = VOL_BG;
         setInstrument(track, channel, BG);
-        final int d1 = 4, d2 = d1 * 2;
-        final int b0 = 20, b1 = 21, b2 = 22, b3 = 23, b4 = 24, b5 = 25;
+        final int b2 = 22, b3 = 23;
         final int size = 2048;
-        composeUntil(size, d1, b4, d1, b5, d2, -1, d1, b4, d1, b5, d2, -1, d1, b4, d1, b5, d2, -1, d1, b4, d1, b5, d2, -1,
-            d1, b4, d1, b5, d2, -1, d1, b4, d1, b5, d2, -1, d1, b4, d1, b5, d2, -1, d1, b4, d1, b5, d2, -1,
-            d1, b2, d1, b3, d2, -1, d1, b2, d1, b3, d2, -1, d1, b2, d1, b3, d2, -1, d1, b2, d1, b3, d2, -1,
-            d1, b0, d1, b1, d2, -1, d1, b0, d1, b1, d2, -1, d1, b0, d1, b1, d2, -1, d1, b0, d1, b1, d2, -1);
+        final int db = 7, dp = 1;
+        composeUntil(size, db, b2, dp, -1, db, b3, dp, -1, db, b2, dp, -1, db, b3, dp, -1, db, -1, dp, -1, db, -1, dp, -1, db, b2, dp, -1, db, b3, dp, -1);
         
-        final int p = DRUM, p2 = DRUM_HEAVY;
-        addPercussionsUntil(track, 0, d2, size, -1, p);
+        final int p = CHCK, p2 = DRUM;
+        addPercussionsUntil(track, 0, 4, size, p, -1, p, -1, p2, -1, p, -1, p2, -1, p, -1, p, p, -1, p);
         
         channel = 1;
         vol = VOL_FG;
@@ -832,7 +847,7 @@ System.out.println(next);
         addRepeatedNotes(track, 0, channel, vol, 4, reps, n, -1, n, -1, l, -1, l, -1, h, -1, h, -1, -1, -1, -1, -1);
         addNote(track, 1020, 4, channel, n, SILENT);
         
-        final int p = DRUM, p2 = DRUM_HEAVY;
+        final int p = CHCK, p2 = DRUM;
         addRepeatedPercussions(track, 0, 4, reps, p, -1, -1, -1, p, -1, -1, -1, p, -1, p2, -1, p, -1, p, -1);
         
         channel = 1;
@@ -876,7 +891,7 @@ System.out.println(next);
         do {
             stop();
             final boolean first = song == null;
-            song = newSongTmp3();
+            song = newSongLightning();
             if (first) {
                 final long size = song.track.ticks();
                 final int sectionLength = 512;

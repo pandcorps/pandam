@@ -339,6 +339,16 @@ public class Mustil {
 	    return compose(track, next, channel, vol, notes);
 	}
 	
+	public final static long composeAtVolume(final int vol, final int... notes) throws Exception {
+	    final int old = Mustil.vol;
+	    try {
+	        Mustil.vol = vol;
+	        return compose(notes);
+	    } finally {
+	        Mustil.vol = old;
+	    }
+	}
+	
 	public final static long composeRepeated(final int reps, final int... notes) throws Exception {
 	    for (int i = 0; i < reps; i++) {
 	        compose(notes);
