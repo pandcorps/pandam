@@ -260,6 +260,12 @@ public class Mustil {
 	    return whiteKeys;
 	}
 	
+	protected final static void initTrack() {
+	    channel = 0;
+	    tick = 0;
+	    next = 0;
+	}
+	
 	private final static void addShort(final Track track, final int cmd, final long tick, final int channel, final int a1, final int a2) throws Exception {
 		final ShortMessage message = new ShortMessage();
 		message.setMessage(cmd, channel, a1, a2);
@@ -551,6 +557,7 @@ public class Mustil {
         public Song(final String name, final String copyright) throws Exception {
             this.name = name;
             seq = newSequence();
+            initTrack();
             track = newTrack(seq, name, copyright);
             Mustil.track = track;
         }
