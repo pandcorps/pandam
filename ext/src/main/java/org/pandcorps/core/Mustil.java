@@ -286,6 +286,9 @@ public class Mustil {
 	
 	public final static void addNoteRaw(final Track track, final long tick, final int dur, final int channel, final int key, final int vol) throws Exception {
 		//info(tick + " - " + key);
+	    if (dur <= 0) {
+	        throw new IllegalArgumentException("Duration must be positive but was " + dur);
+	    }
 		addShort(track, ShortMessage.NOTE_ON, tick, channel, key, vol);
 		next = tick + dur;
 		addShort(track, ShortMessage.NOTE_OFF, next, channel, key, 0);
@@ -365,6 +368,26 @@ public class Mustil {
                 throw new IllegalStateException("Composed until " + next + " > " + end);
             }
         }
+    }
+	
+	public final static long composeWithVolumes(final Track track, final long firstTick, final int channel, final int... notes) throws Exception {
+        long tick = firstTick;
+        final int size = notes.length;
+        for (int i = 0; i < size; i+= 3) {
+            final int dur = notes[i];
+            final int key = notes[i + 1];
+            final int vol = notes[i + 2];
+            if (key != -1) {
+                addNote(track, tick, dur, channel, key, vol);
+            }
+            tick += dur;
+        }
+        next = tick;
+        return tick;
+    }
+    
+    public final static long composeWithVolumes(final int... notes) throws Exception {
+        return composeWithVolumes(track, next, channel, notes);
     }
 	
 	public final static void addMajorChordRoot(final Track track, final long tick, final int dur, final int channel, final int root, final int vol) throws Exception {
@@ -451,6 +474,10 @@ public class Mustil {
             }
         }
     }
+	
+	public final static void addSilent(final int end, final int dur) throws Exception {
+	    addNote(track, end - dur, dur, channel, 28, SILENT);
+	}
 	
 	public final static void setInstrument(final Track track, final int channel, final int program) throws Exception {
 	    setInstrument(track, 0, channel, program);
