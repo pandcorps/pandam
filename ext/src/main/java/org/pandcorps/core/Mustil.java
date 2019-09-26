@@ -316,6 +316,7 @@ public class Mustil {
 			}
 			tick += deltaTick;
 		}
+		next = tick;
 		return tick;
 	}
 	
