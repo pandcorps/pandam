@@ -294,6 +294,10 @@ public class Mustil {
 		addShort(track, ShortMessage.NOTE_OFF, next, channel, key, 0);
 	}
 	
+	public final static long addNotes(final int deltaTick, final int... keys) throws Exception {
+	    return addNotes(track, next, channel, vol, deltaTick, keys);
+	}
+	
 	public final static long addNotes(final Track track, final long firstTick, final int channel, final int vol, final int deltaTick, final int... keys) throws Exception {
 		return addNotes(track, firstTick, channel, vol, deltaTick, false, keys);
 	}
@@ -388,6 +392,15 @@ public class Mustil {
     
     public final static long composeWithVolumes(final int... notes) throws Exception {
         return composeWithVolumes(track, next, channel, notes);
+    }
+    
+    public final static long addEcho(final int dur, final int key, final int volDelta, final int n) throws Exception {
+        int vol = Mustil.vol;
+        for (int i = 0; i < n; i++) {
+            addNote(track, next, dur, channel, key, vol);
+            vol -= volDelta;
+        }
+        return next;
     }
 	
 	public final static void addMajorChordRoot(final Track track, final long tick, final int dur, final int channel, final int root, final int vol) throws Exception {
