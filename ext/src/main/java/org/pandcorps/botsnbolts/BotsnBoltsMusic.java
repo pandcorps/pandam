@@ -991,6 +991,68 @@ System.out.println(next);
         return song;
     }
     
+    protected final static Song newSongTmp7() throws Exception {
+        final Song song = newSong("Tmp6Bot");
+        final Track track = song.track;
+        
+        channel = 0;
+        vol = VOL_BG;
+        deltaTick = 4;
+        setInstrument(track, channel, BG);
+        final int size = 1536;
+        final int l = 20, n = 21;
+        //composeUntil(size, 4, n, 4, l);
+        //composeUntil(size, 4, n, 4, -1);
+        //composeUntil(size, 2, n, 2, -1, 2, l, 2, -1);
+        composeUntil(size, 3, n, 1, -1, 3, l, 1, -1);
+        
+        final int p = CHCK, p2 = DRUM;
+        addPercussionsUntil(track, 0, 16, size, p2); //TODO
+        
+        channel = 1;
+        vol = VOL_FG;
+        next = 0;
+        setInstrument(track, channel, FG);
+        final int o = 28, n0 = o, n1 = o + 1, n2 = o + 2, n3 = o + 3;
+        final int nfa = n1, nfb = n0, nsa = n3, nsb = n2;
+        /*compose(8, n4, 4, n3, 4, n3, 16, n4, 32, -1);
+        compose(8, n4, 4, n3, 4, n3, 16, n4, 32, -1);
+        compose(8, n7, 4, n6, 4, n6, 16, n7, 32, -1);
+        compose(8, n7, 4, n6, 4, n6, 16, n7, 32, -1);*/
+        for (int i = 0; i < 4; i++) {
+            compose(8, nfa, 4, nfb, 4, nfb, 16, nfa, 32, -1);
+        }
+        for (int i = 0; i < 4; i++) {
+            compose(8, nsa, 4, nsb, 4, nsb, 16, nsa, 32, -1);
+        }
+        /*compose(8, nfa, 4, nfb, 4, nfb, 16, nfa, 8, nfa, 8, nfb, 16, -1);
+        compose(8, nfa, 4, nfb, 4, nfb, 16, nfa, 8, nfa, 8, nfb, 16, -1);
+        compose(8, nsa, 4, nsb, 4, nsb, 16, nsa, 8, nsa, 8, nsb, 16, -1);
+        compose(8, nsa, 4, nsb, 4, nsb, 16, nsa, 8, nsa, 8, nsb, 16, -1);*/
+        
+        /*compose(8, nfa, 4, nfb, 4, nfb, 16, nfa, 8, nfa, 8, -1, 8, nfa, 8, -1);
+        compose(8, nfa, 4, nfb, 4, nfb, 16, nfa, 8, nfa, 8, -1, 8, nfa, 8, -1);
+        compose(8, nsa, 4, nsb, 4, nsb, 16, nsa, 8, nsa, 8, -1, 8, nsa, 8, -1);
+        compose(8, nsa, 4, nsb, 4, nsb, 16, nsa, 8, nsa, 8, -1, 8, nsa, 8, -1);*/
+        for (int j = 0; j < 2; j++) {
+            for (int i = 0; i < 2; i++) {
+                compose(8, nfa, 4, nfb, 4, nfb, 16, nfa, 16, -1, 8, nfb, 8, nfb);
+            }
+            for (int i = 0; i < 2; i++) {
+                compose(8, nsa, 4, nsb, 4, nsb, 16, nsa, 16, -1, 8, nsb, 8, nsb);
+            }
+        }
+
+        //addNotes(16, n1, n1, n0, n0, n1, n1, n0, n1, n2, n2, n2, n2, -1, -1, -1, -1);
+        //addNotes(16, n1, n1, n0, n0, n1, n1, n0, n1, n0, n0, n0, n0, -1, -1, -1, -1);
+        addNotes(16, n1, n1, n0, n0, n1, n1, n0, n1);
+        addEcho(16, n2, 6, 8);
+        addNotes(16, n1, n1, n0, n0, n1, n1, n0, n1);
+        addEcho(16, n0, 6, 8);
+        
+        return song;
+    }
+    
     protected final static Song newSongRock() throws Exception {
         final Song song = newSong("RockBot");
         final Track track = song.track;
@@ -1050,7 +1112,7 @@ System.out.println(next);
         do {
             stop();
             final boolean first = song == null;
-            song = newSongTmp6();
+            song = newSongTmp7();
             if (first) {
                 final long size = song.track.ticks();
                 final int sectionLength = 512;
