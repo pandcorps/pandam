@@ -139,9 +139,10 @@ public abstract class Boss extends Enemy implements SpecBoss {
         if (delaying) {
             if (RoomLoader.isBossDoorClosing()) {
                 return true;
+            } else if (isConstructNeeded()) {
+                delaying = false;
+                setVisible(true);
             }
-            delaying = false;
-            setVisible(true);
         }
         if (initializationNeeded) {
             onFirstStep();
