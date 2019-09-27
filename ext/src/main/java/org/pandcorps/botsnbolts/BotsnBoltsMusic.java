@@ -373,68 +373,61 @@ public class BotsnBoltsMusic extends Mustil {
         vol = VOL_BG;
         deltaTick = 4;
         setInstrument(track, channel, BG);
-        final int reps = 24;
+        final int size = 1536;
         final int n = 21, h = 28;
         //addRepeatedNotes(track, 0, channel, vol, deltaTick, reps, n, n, n, -1, n, -1, -1, -1, n, n, n, -1, -1, -1, -1, -1); // might work, untested
         //n, n, n, -1, n, n, -1, -1, n, n, n, -1, -1, -1, -1, -1
         
         final int p = CHCK, p2 = DRUM;
-        addRepeatedPercussions(track, 0, 8, 128, CHCK);
+        addPercussionsUntil(track, 0, 8, size, p);
         
         channel = 1;
         vol = VOL_FG;
         setInstrument(track, channel, FG);
-        final int off = 0;
         final int baseNote = 28;
         next = 0;
-        for (int i = 0; i < 8; i++) {
-            final boolean firstHalf = i < 4;
-            final int o = baseNote + (firstHalf ? 0 : 2);
-            final int n0 = o, n1 = o + 1, n2 = o + 2, n3 = o + 3, n4 = o + 4;
-            addNotes(track, next, channel, vol, 16, n1, n0, n1); // 48
-            final int nl = ((i % 2) == 0) ? n2 : n0;
-            //addNotes(track, next, channel, vol, 8, nl, nl); // 16
-            addNote(track, next, 4, channel, nl, vol); // or 4 4 8 at end here? or first 4-12 for 4 iterations, then 4-4-8 for 4 more?
-            if (firstHalf) {
-                addNote(track, next, 12, channel, nl, vol);
+        for (int i = 0; i < 16; i++) {
+            final boolean low = (i % 8) < 4;
+            final boolean slow = i < 8;
+            final int o = baseNote + (low ? 0 : 2);
+            final int n0 = o, n1 = o + 1, n2 = o + 2;
+            if (slow) {
+                addNotes(16, n1, n0, n1);
             } else {
-                addNote(track, next, 4, channel, nl, vol);
-                addNote(track, next, 8, channel, nl, vol);
+                compose(16, n1, 4, n0, 12, n0, 16, n1);
             }
-System.out.println(next);
+            final int nl = ((i % 2) == 0) ? n2 : n0;
+            addNote(4, nl);
+            if (slow) {
+                addNote(12, nl);
+            } else {
+                addNote(4, nl);
+                addNote(8, nl);
+            }
         }
         final int o = baseNote + 2;
-        final int nn = o - 1, n0 = o, n1 = o + 1, n2 = o + 2, n3 = o + 3, n4 = o + 4, n5 = o + 5, n6 = o + 6;
+        final int nn = o - 1, n0 = o, n1 = o + 1, n2 = o + 2, n3 = o + 3, n4 = o + 4;
         /*for (int i = 0; i < 8; i++) {
-            addNotes(track, next, channel, vol, 8, n1, n1, n1); // 24
-            addNotes(track, next, channel, vol, 4, n1, n1); // 8
-            addNote(track, next, 32, channel, ((i % 2) == 0) ? n2 : n0, vol);
+            final int b = (i < 4) ? nn : n1;
+            addNotes(track, next, channel, vol, 8, b, b, b); // 24
+            addNotes(track, next, channel, vol, 4, b, b); // 8
+            addNote(track, next, 32, channel, b + (((i % 2) == 0) ? 1 : -1), vol);
         }*/
-        //setInstrument(track, next, channel, BG2);
         for (int i = 0; i < 4; i++) {
             final int i2 = i % 2;
-            final int nf = n3 + 1;
-            addNote(track, next, 32, channel, nf, vol);
-            addNotes(track, next, channel, vol, 8, n2, n2, n2); // 24
-            //addNotes(track, next, channel, vol, 4, n2, n2);
-            //addNotes(track, next, channel, vol, 3, n2, n2); // 6
-            addNote(track, next, 4, channel, n2, vol);
-            addNote(track, next, 3, channel, n2, vol);
-            next += 1; // 2
+            addNotes(16, n2, n2);
+            addNotes(8, n1, n1, n1);
+            addNote(4, n2);
+            addNote(3, n2);
+            next += 1;
             if (i2 == 0) {
-                addNote(track, next, 32, channel, nf, vol);
-                addNotes(track, next, channel, vol, 8, n2, n2, n2, n2);
+                addNotes(16, n1, n1);
+                addNotes(8, n0, n0, n0, n0);
             } else if (i == 1) {
-                //addNotes(track, next, channel, vol, 16, n1, n2, n3, n4);
-                addNotes(track, next, channel, vol, 16, n3, n4, n5, n6);
-System.out.println(next);
+                addNotes(16, n3, n3, n4, n4);
             } else if (i == 3) {
-                /*addNotes(track, next, channel, vol, 16, n1, n2);
-                addNote(track, next, 32, channel, n1, vol);*/
-                //addNotes(track, next, channel, vol, 16, n1, n2, n1);
                 addNotes(track, next, channel, vol, 16, n1, n0, nn);
                 addNote(track, next, 16, channel, n1, SILENT);
-System.out.println(next);
             }
         }
         
@@ -984,7 +977,7 @@ System.out.println(next);
         do {
             stop();
             final boolean first = song == null;
-            song = newSongTmp4();
+            song = newSongFlood();
             if (first) {
                 final long size = song.track.ticks();
                 final int sectionLength = 512;
