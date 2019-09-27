@@ -272,6 +272,10 @@ public class Mustil {
 		track.add(new MidiEvent(message, tick));
 	}
 	
+	public final static void addNote(final int dur, final int key) throws Exception {
+	    addNote(track, next, dur, channel, key, vol);
+	}
+	
 	public final static void addNote(final Track track, final long tick, final int channel, final int key, final int vol) throws Exception {
 		addNote(track, tick, unspecifiedNoteDuration, channel, key, vol);
 	}

@@ -211,8 +211,8 @@ public class BotsnBoltsMusic extends Mustil {
             }
             final int i2 = i % 2, o = baseNote - ((i2 == 0) ? 0 : 2), n2 = o + 2, n3 = o + 3, n4 = o + 4;
             final int nf = n3 + ((i < 4) ? 0 : 2), ns = nf - 1;
-            addNotes(track, next, channel, vol, 16, nf, ns);
-            addNotes(track, next, channel, vol, 8, n3, n3);
+            addNotes(16, nf, ns);
+            addNotes(8, n3, n3);
             final int nl;
             if ((i == 0) || (i == 1) || (i == 4) || (i == 5)) {
                 nl = n2;
@@ -221,35 +221,35 @@ public class BotsnBoltsMusic extends Mustil {
             } else {
                 nl = n4;
             }
-            addNote(track, next, 8, channel, nl, vol);
-            addNotes(track, next, channel, vol, 4, nl, nl);
+            addNote(8, nl);
+            addNotes(4, nl, nl);
             if (i == 2) {
-                addNotes(track, next, channel, vol, 16, nl, nl, nl, nl);
+                addNotes(16, nl, nl, nl, nl);
                 continue;
             }
         }
         final int o = baseNote, nn = o - 1, n0 = o, n1 = o + 1, n2 = o + 2, n3 = o + 3, n4 = o + 4, n5 = o + 5;
-        addNote(track, next, 32, channel, n5, vol);
-        addNote(track, next, 8, channel, n4, vol);
-        addNotes(track, next, channel, vol, 4, n4, n4);
-        addNote(track, next, 16, channel, n5, vol);
+        addNote(32, n5);
+        addNote(8, n4);
+        addNotes(4, n4, n4);
+        addNote(16, n5);
         for (int j = 0; j < 2; j++) {
             for (int i = 0; i < 3; i++) {
                 final int n4i = n4 - i;
-                addNote(track, next, 16, channel, n4i, vol);
-                addNotes(track, next, channel, vol, 8, n4i, n4i);
-                addNotes(track, next, channel, vol, 16, n3 - i, n2 - i);
+                addNote(16, n4i);
+                addNotes(8, n4i, n4i);
+                addNotes(16, n3 - i, n2 - i);
             }
             if (j == 0) {
-                addNotes(track, next, channel, vol, 4, n1, n1);
-                addNotes(track, next, channel, vol, 8, n1, n1, n1);
-                addNotes(track, next, channel, vol, 4, n2, n2);
-                addNote(track, next, 8, channel, n2, vol);
-                addNote(track, next, 16, channel, n3, vol);
+                addNotes(4, n1, n1);
+                addNotes(8, n1, n1, n1);
+                addNotes(4, n2, n2);
+                addNote(8, n2);
+                addNote(16, n3);
             } else {
-                addNotes(track, next, channel, vol, 16, n1, n1);
-                addNotes(track, next, channel, vol, 8, n0, n0);
-                addNote(track, next, 16, channel, nn, vol);
+                addNotes(16, n1, n1);
+                addNotes(8, n0, n0);
+                addNote(16, nn);
             }
         }
         
@@ -375,11 +375,11 @@ public class BotsnBoltsMusic extends Mustil {
         setInstrument(track, channel, BG);
         final int size = 1536;
         final int n = 21, h = 28;
-        //addRepeatedNotes(track, 0, channel, vol, deltaTick, reps, n, n, n, -1, n, -1, -1, -1, n, n, n, -1, -1, -1, -1, -1); // might work, untested
+        //addRepeatedNotes(track, 0, channel, vol, deltaTick, reps, n, n, n, -1, n, -1, -1, -1, n, n, n, -1, -1, -1, -1, -1); //TODO might work, untested
         //n, n, n, -1, n, n, -1, -1, n, n, n, -1, -1, -1, -1, -1
         
         final int p = CHCK, p2 = DRUM;
-        addPercussionsUntil(track, 0, 8, size, p);
+        addPercussionsUntil(track, 0, 8, size, p); //TODO
         
         channel = 1;
         vol = VOL_FG;
@@ -413,21 +413,32 @@ public class BotsnBoltsMusic extends Mustil {
             addNotes(track, next, channel, vol, 4, b, b); // 8
             addNote(track, next, 32, channel, b + (((i % 2) == 0) ? 1 : -1), vol);
         }*/
-        for (int i = 0; i < 4; i++) {
+        /*for (int i = 0; i < 4; i++) {
             final int i2 = i % 2;
             addNotes(16, n2, n2);
             addNotes(8, n1, n1, n1);
-            addNote(4, n2);
-            addNote(3, n2);
+            addNote(4, n1);
+            addNote(3, n1);
             next += 1;
             if (i2 == 0) {
-                addNotes(16, n1, n1);
-                addNotes(8, n0, n0, n0, n0);
+                addNotes(16, n0, n0);
+                addNotes(8, nn, nn, nn, nn);
             } else if (i == 1) {
                 addNotes(16, n3, n3, n4, n4);
             } else if (i == 3) {
-                addNotes(track, next, channel, vol, 16, n1, n0, nn);
+                addNotes(track, next, channel, vol, 16, n0, n0, nn);
                 addNote(track, next, 16, channel, n1, SILENT);
+            }
+        }*/
+        for (int j = 0; j < 2; j++) {
+            for (int i = 0; i < 3; i++) {
+                final int ne = n2 - i;
+                compose(16, ne, 16, ne, 4, ne, 4, ne, 8, ne, 8, ne, 8, -1);
+            }
+            if (j == 0) {
+                addNotes(16, nn, nn, n0, n1);
+            } else {
+                addNotes(16, nn, nn, nn - 1, nn - 2);
             }
         }
         
@@ -851,22 +862,52 @@ System.out.println(next);
         vol = VOL_FG;
         next = 0;
         setInstrument(track, channel, FG);
+        final int dl = 30;
         for (int i = 0; i < 4; i++) {
             final int i2 = i % 2;
             final int ns = (i < 2) ? 31 : -1, nt = (i < 2) ? 32 : -1;
-            compose(16, 31, 16, ns, 16, nt, 16, 32, 16, -1, 8, 31, 8, 31, 4, 30, 4, 30, 4, 30, 4, 30, 8, 32, 8, 32);
+            final int df = (i < 2) ? 16 : dl, dsa = (i < 2) ? 12 : 1, dsb = (i < 2) ? 4 : 1;
+            /*compose(16, 31, 16, ns, 16, nt, 16, 32, 16, -1, 8, 31, 8, 31, 4, 30, 4, 30, 4, 30, 4, 30, 8, 32, 8, 32);
             if (i2 == 0) {
                 compose(16, 31, 16, ns, 16, nt, 16, 32, 16, -1, 8, -1, 8, -1, 4, 30, 4, 30, 4, 30, 4, 30, 8, 32, 8, -1);
             } else {
                 compose(16, 31, 16, ns, 16, nt, 16, 32, 16, -1, 16, 31, 16, 30, 16, -1);
-            }
+            }*/
+            /*compose(df, 31, dsa, ns, dsb, ns, 12, nt, 4, nt, 16, 32, 16, -1, 8, 31, 8, 31, 4, 30, 4, 30, 4, 30, 4, 30, 8, 32, 8, 32);
+            if (i2 == 0) {
+                compose(df, 31, dsa, ns, dsb, ns, 12, nt, 4, nt, 16, 32, 16, -1, 8, -1, 8, -1, 4, 30, 4, 30, 4, 30, 4, 30, 8, 32, 8, -1);
+            } else {
+                compose(df, 31, dsa, ns, dsb, ns, 12, nt, 4, nt, 16, 32, 16, -1, 16, 31, 16, 30, 16, -1);
+            }*/
         }
+        final int d1 = 4, d2 = d1 * 2, d3 = d1 * 3, d4 = d1 * 4, d8 = d1 * 8;
+        compose(d4, 31, d3, 31, d1, 31, d3, 32, d1, 32, d4, 32, d4, -1, d2, 31, d2, 31, d1, 30, d1, 30, d1, 30, d1, 30, d2, 32, d2, 32);
+        compose(d4, 31, d3, 31, d1, 31, d3, 32, d1, 32, d4, 32, d4, -1, d2, -1, d2, -1, d1, 30, d1, 30, d1, 30, d1, 30, d2, 32, d2, -1);
+        compose(d4, 31, d3, 31, d1, 31, d3, 32, d1, 32, d4, 32, d4, -1, d2, 31, d2, 31, d1, 30, d1, 30, d1, 30, d1, 30, d2, 32, d2, 32);
+        compose(d4, 31, d3, 31, d1, 31, d3, 32, d1, 32, d4, 32, d4, -1, d4, 31, d4, 30, d4, -1);
+        
+        compose(d8, 31, d4, -1, d4, 32, d4, -1, d2, 31, d2, 31, d1, 30, d1, 30, d1, 30, d1, 30, d2, 32, d2, 32);
+        compose(d8, 31, d4, -1, d4, 32, d4, -1, d2, -1, d2, -1, d1, 30, d1, 30, d1, 30, d1, 30, d2, 32, d2, -1);
+        compose(d8, 31, d4, -1, d4, 32, d4, -1, d2, 31, d2, 31, d1, 30, d1, 30, d1, 30, d1, 30, d2, 32, d2, 32);
+        compose(d8, 31, d4, -1, d4, 32, d4, -1, d4, 31, d4, 30, d4, -1);
         for (int i = 0; i < 2; i++) {
-            addNotes(16, 31, -1, 31, -1, -1, 31, 32, -1);
+            /*addNotes(16, 31, -1, 31, -1, -1, 31, 32, -1);
             if (i == 0) {
                 addNotes(16, 31, -1, 31, -1, -1, 31, 30, -1);
             } else {
                 addNotes(16, 31, -1, 31, -1, 30, -1, -1, -1);
+            }*/
+            /*compose(dl, 31, 2, -1, dl, 31, 2, -1, 16, -1, 16, 31, dl, 32, 2, -1);
+            if (i == 0) {
+                compose(dl, 31, 2, -1, dl, 31, 2, -1, 16, -1, 16, 31, dl, 30, 2, -1);
+            } else {
+                compose(dl, 31, 2, -1, dl, 31, 2, -1, dl, 30, 2, -1, 32, -1);
+            }*/
+            compose(d8, 31, d8, 31, d4, -1, d4, 31, d8, 32);
+            if (i == 0) {
+                compose(d8, 31, d8, 31, d4, -1, d4, 31, d8, 30);
+            } else {
+                compose(d8, 31, d8, 31, d8, 30, d8, -1);
             }
         }
         addSilent(size, 4);
@@ -913,6 +954,38 @@ System.out.println(next);
             //addNotes(d, n, h, n, h, h, s, s, s, n, h, n, h, h, s, s, s);
 System.out.println(next);
         }
+        addSilent(size, 4);
+        
+        return song;
+    }
+    
+    protected final static Song newSongTmp6() throws Exception {
+        final Song song = newSong("Tmp6Bot");
+        final Track track = song.track;
+        
+        channel = 0;
+        vol = VOL_BG;
+        deltaTick = 4;
+        setInstrument(track, channel, BG);
+        final int size = 512;
+        //final int l = 20, n = 21, h = 28;
+        //composeUntil(size);
+        
+        final int p = CHCK, p2 = DRUM;
+        addPercussionsUntil(track, 0, 16, size, p2);
+        
+        channel = 1;
+        vol = VOL_FG;
+        next = 0;
+        setInstrument(track, channel, FG);
+        final int d = 8;
+        //final int n = 28, h = 35, s = -1;
+        final int l = 27, n = 28, m = 30, h = 32, s = -1;
+        compose(16, n, 16, n, 16, n, 16, -1, 4, l, 12, l, 48, -1);
+        compose(16, l, 16, l, 16, l, 16, -1, 4, n, 4, n, 8, n, 48, -1);
+        compose(16, n, 16, n, 16, n, 16, -1, 4, l, 12, l, 48, -1);
+        compose(16, l, 16, l, 16, l, 16, -1, 4, n, 4, n, 8, n, 48, -1);
+System.out.println(next);
         addSilent(size, 4);
         
         return song;
@@ -977,7 +1050,7 @@ System.out.println(next);
         do {
             stop();
             final boolean first = song == null;
-            song = newSongFlood();
+            song = newSongTmp6();
             if (first) {
                 final long size = song.track.ticks();
                 final int sectionLength = 512;
